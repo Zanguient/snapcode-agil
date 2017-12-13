@@ -40,7 +40,7 @@ var postgrator = new Postgrator({
   // Driver: must be pg, mysql, or mssql
   driver: 'mysql',
   // Database connection config
-  host: '127.0.0.1',
+  host: '138.197.35.199',
   port: 3306,
   database: database,
   username: username,
