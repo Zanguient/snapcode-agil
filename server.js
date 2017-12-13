@@ -147,18 +147,18 @@ router.get('/', function(req, res) {
 
 // replace ip address
 
-dns.lookup(os.hostname(), function (err, add, fam) {
+/*dns.lookup(os.hostname(), function (err, add, fam) {
 	var replace = require('replace-in-file');
 	replace({
 	  files: './public/agil client/www/js/servicios.js',
-	  replace: /http.*/g,
+	  replace: /http.*//*g,
 	  with: 'http://'+add+':8083/";'
 	}, function(error, changedFiles) { 
 	  if (error) {
 		return console.error('Error occurred:', error);
 	  }
 	});
-});
+});*/
 
 // REGISTER OUR ROUTES -------------------------------
 // all of our routes will be prefixed with /api
