@@ -60,7 +60,7 @@ var Sequelize = require('sequelize');
 
 //DATOS DE CONEXION A LA BASE DE DATOS
 var sequelize = new Sequelize(database,username, dbpass, {
-  host: '127.0.0.1',
+  host: '138.197.35.199',
   dialect: 'mysql',
   timezone : "-04:00",
   pool: {
