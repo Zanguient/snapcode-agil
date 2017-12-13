@@ -1,0 +1,315 @@
+#rrhh #dialog-empleado, .input-group-addon {
+    border: none;
+    background: none;
+}
+
+#rrhh #dialog-empleado, input[type=checkbox].ace.ace-switch.big-switch+.lbl::before{
+    width: 100px;
+    text-indent: -50px;
+    background-color: #fcd;
+    color: black;
+}
+
+#rrhh #dialog-empleado, input[type=checkbox].ace.ace-switch.big-switch:checked+.lbl::before{
+    text-indent: 10px;
+    background-color: #428bca;
+    color: white;
+}
+
+#rrhh #dialog-empleado, input[type=checkbox].ace.ace-switch.big-switch:checked+.lbl::after {
+    left: 80px;
+}
+
+@media (min-width: 768px) and (max-width: 1199px) {
+    .form-group>.col-sm-3 {
+        min-height: 50px;
+    }
+}
+#rrhh #dialog-empleado, .modal-header.ficha {
+    background: #307ECC;
+    color: white;
+    text-align: center;
+}
+
+#rrhh #dialog-empleado, .modal-dialog.ficha{
+    width: 95%;
+}
+
+#rrhh #dialog-empleado, .width150{
+    width: 150px;
+}
+
+#rrhh #dialog-empleado, .text-white{
+    color: white;
+}
+
+#rrhh #dialog-empleado, .margin-0-5{
+    margin: 0 5px;
+}
+
+#rrhh #dialog-empleado, .editable{
+    border: 1px solid orange;
+}
+
+#rrhh #dialog-empleado, .point-edit{
+	cursor: pointer;
+	font-size: 18px;
+}
+
+#rrhh #modal-hoja-vida, .modal-header.hoja {
+    background: #FF9800;
+    color: white;
+    text-align: center;
+}
+
+#rrhh, #modal-hoja-vida .steps li.active:before, #modal-hoja-vida .steps li.complete:before, #modal-hoja-vida .steps li.active .step, #modal-hoja-vida .steps li.complete .step {
+    border-color: #ff9800;
+}
+
+#rrhh #modal-hoja-vida, .modal-footer-hoja {
+    padding-top: 12px;
+    padding-bottom: 14px;
+    border-top-color: rgba(255, 152, 0, 0.33);
+    -webkit-box-shadow: none;
+    box-shadow: none;
+    background-color: rgba(255, 152, 0, 0.21);
+    padding: 15px; 
+    text-align: right;
+    border-top: 1px solid #e5e5e5;
+}
+/* .modal {
+    background-color: rgba(0, 0, 0, .5) !important;
+    z-index: 1051 !important;
+}*/
+
+.datepicker{z-index:99999999 !important;}
+
+/*==== stylo checkbox ====== */
+#rrhh #dialog-empleado, .check-espaniol::before{
+    content: "SI\a0\a0\a0\a0\a0\a0\a0\a0\a0\a0\a0  NO" !important;
+}
+.text-center {
+    text-align: center !important;
+}
+.text-left{
+	text-align: left;
+}
+
+.checkbox-align{
+	display: block;
+    width: 100%;
+    height: 34px;
+    padding: 6px 12px;
+    font-size: 14px;
+    line-height: 1.42857143;
+}
+
+#dialog-ausencias-vacaciones input[type=checkbox].ace.ace-switch.big-switch+.lbl::before{
+    width: 80px;
+    text-indent: -20px;
+    background-color: #fcd;
+    color: black;
+}
+#dialog-ausencias-vacaciones input[type=checkbox].ace.ace-switch.big-switch:checked+.lbl::before{
+    text-indent: 10px;
+    background-color: #428bca;
+    color: white;
+}
+
+#dialog-ausencias-vacaciones input[type=checkbox].ace.ace-switch.big-switch:checked+.lbl::after {
+    left: 60px;
+}
+
+
+
+#dialog-feriados .fc-state-default, .fc-button-inner {
+    border: none;
+    background-color: #ABBAC3 !important;
+    color: #FFF !important;
+    background-image: none;
+    box-shadow: none;
+    text-shadow: none;
+    border-radius: 0!important;
+    margin-left: 2px;
+}
+#dialog-feriados .fc-state-active, .fc-state-active .fc-button-inner {
+    border-color: #4F99C6!important;
+    background-color: #6FB3E0!important;
+}
+#dialog-compesacion .fc-state-default, .fc-state-default .fc-button-inner {
+    border: none;
+    background-color: #ABBAC3;
+    color: #FFF;
+    background-image: none;
+    box-shadow: none;
+    text-shadow: none;
+    border-radius: 0!important;
+    margin-left: 2px;
+}
+
+#dialog-compesacion .fc-state-active, .fc-state-active .fc-button-inner {
+    border-color: #4F99C6;
+    background-color: #6FB3E0;
+}
+
+.modal-delete{
+	z-index: 999999!important;
+}
+.margin-icons{
+	margin-right: 20px;
+}
+
+.buttons-align{
+    margin-top: 26px;
+}
+#dialog-rol-turnos input[type=checkbox].ace.ace-switch.big-switch+.lbl::before{
+    width: 90px;
+    text-indent: -20px;
+    background-color: #fcd;
+    color: black;
+}
+#dialog-rol-turnos input[type=checkbox].ace.ace-switch.big-switch:checked+.lbl::before{
+    text-indent: 25px;
+    background-color: #428bca;
+    color: white;
+}
+
+#dialog-rol-turnos input[type=checkbox].ace.ace-switch.big-switch:checked+.lbl::after {
+    left: 70px;
+}
+
+.table-head-conpensaciones{
+	background-color: #428bca;
+    color: white;
+}
+
+.table-head-blue{
+	background-color: #428bca;
+    color: white;
+}
+.table-head-white{
+	background-color: white;
+	color: #393f4b;
+}
+.row-table{
+	margin-bottom: -5px;
+    margin-top: -10px;
+    margin-left: -20px;
+}
+.imput-width{
+	width: 300px;
+}
+.line-dashed{
+    border-bottom: 1px dashed #BBB;
+    font-weight: 400;
+}
+
+..multiSelect .checkboxLayer {
+    position: fixed !important;
+    top: auto !important;
+    left: auto !important;
+    width: inherit !important;
+  }
+
+
+table.table-viajes tr {
+width: 100%;
+display: inline-table;
+}
+
+table.table-viajes{
+ height:210px; 
+}
+table.table-viajes tbody{
+  overflow-y: scroll;
+  height: 140px;
+  width: 97.5%;
+  position: absolute;
+}
+
+​
+
+/*#dialog-nueva-planilla-sueldos, .headcol {
+    left: 0; top: 0;
+  position: absolute;
+  transition: box-shadow 0.25s ease;
+  width: 8.0625rem;
+  z-index: 1;
+  white-space: nowrap;
+}*/
+
+
+
+
+
+
+
+
+#dialog-nueva-planilla-sueldos, .table__side {
+    position:absolute; 
+    /*width:6.5em;  */
+    width: auto;
+    right:0;
+    top:auto;
+   /* margin-top:-3px;*/
+    background-color: white;
+    margin-right: 15px;
+    /*margin-right: 15px;*/
+    height: 8.2%;
+
+}
+
+#dialog-nueva-planilla-sueldos, .table-planillas { 
+    /*width: 1170px;*/
+    width: 95.7%;
+    overflow-x:scroll;  
+    overflow-y:visible;
+}
+#dialog-nueva-planilla-sueldos th.head-planilla {
+  padding-right: 90px;
+}
+#dialog-nueva-planilla-sueldos th.head-side {
+    height: 10.9%;
+    text-align: center !important;
+    background-image: linear-gradient(to bottom,#f8f8f8 0,#ececec 100%);
+}
+
+#dialog-empleado .label-input{
+    width: 70px;
+}
+#dialog-empleado .imput-empleado{
+    width: 125px !important;
+}
+.imput-width1{
+    width: 150px;
+}
+.imput-width2{
+        width: 50px;
+}
+.table-planillas-rc-iva{
+    width: 90%;
+    overflow-x:scroll;  
+    overflow-y:visible;
+}
+.table__side-rc-iva{
+    position:absolute; 
+    width: 9.9%;
+    right:0;
+    top:auto;
+    background-color: white;
+    margin-right: 15px;
+    height: auto;
+}
+th.head-side-rc-iva {
+    height: auto;
+    width: 9.9%;
+    text-align: center !important;
+    background-image: linear-gradient(to bottom,#f8f8f8 0,#ececec 100%);
+}
+
+#dialog-nueva-planilla-rc-iva th.head-planilla {
+  padding-right: 90px;
+}
+.table-planillas-rc-iva td, .table-planillas-rc-iva th{
+    white-space: nowrap;
+}

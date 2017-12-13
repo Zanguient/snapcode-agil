@@ -1,0 +1,853 @@
+<div class="row">
+	<div class="col-xs-12">
+		<h3 class="header smaller lighter blue">USUARIOS</h3>
+		
+		<button ng-disabled="!aplicacion.puede_crear" class="btn btn-primary" ng-click="crearNuevoUsuario()">
+			<i class="ace-icon fa fa-plus align-top bigger-125"></i>
+			Nuevo
+		</button>
+		
+		<div class="clearfix">
+			<div class="pull-right tableTools-container"></div>
+		</div>
+		<div class="table-header">
+			Lista de Usuarios
+		</div>
+
+		<!-- div.table-responsive -->
+
+		<!-- div.dataTables_borderWrap -->
+		<div>
+<!-- 		<div id="tabla-usuarios_wrapper" class="dataTables_wrapper form-inline no-footer">
+			<div class="row"><div class="col-xs-6"><div class="dataTables_length" id="tabla-usuarios_length"><label>
+				Mostrar <select ng-model="itemsPorPagina" ng-change="buscarUsuarios(1,itemsPorPagina,textoBusqueda)" name="tabla-usuarios_length" aria-controls="tabla-usuarios" class="form-control input-sm">
+							<option selected value="10">10</option>
+							<option value="25">25</option>
+							<option value="50">50</option>
+							<option value="100">100</option>
+					    </select> usuarios por página</label></div></div>
+						<div class="col-xs-6">
+							<div id="tabla-usuarios_filter" class="dataTables_filter">
+								<label>Search:<input type="search" class="form-control input-sm" ng-model="textoBusqueda" placeholder="" aria-controls="tabla-usuarios" ng-keydown="verificarPulso($event,textoBusqueda)">
+								</label>
+							</div>
+						</div>
+			</div> -->
+			<table id="tabla-usuarios" class="table table-striped table-bordered table-hover">
+				<thead>
+					<tr>
+						<th class="center">
+							<label class="pos-rel">
+								<input type="checkbox" class="ace" />
+								<span class="lbl"></span>
+							</label>
+						</th>
+						<th>NOMBRES</th>
+						<th>Primer Apellido</th>
+						<th>Segundo Apellido</th>
+						<th class="hidden-480">Foto</th>
+						<th>
+							<i class="ace-icon fa fa-clock-o bigger-110 hidden-480"></i>
+							Nombre de Usuario
+						</th>
+						<th class="hidden-480">ROL</th>
+						<th>Empresa</th>
+						<th>Sucursales</th>
+						<th>Activo</th>
+						<th>Acciones</th>
+					</tr>
+				</thead>
+
+				<tbody>
+					<tr ng-repeat="usuario in usuarios">
+						<td class="center">
+							<label class="pos-rel">
+								<input type="checkbox" class="ace" />
+								<span class="lbl"></span>
+							</label>
+						</td>
+
+						<td>
+							{{usuario.persona.nombres}}
+						</td>
+						<td>{{usuario.persona.apellido_paterno}}</td>
+						<td>{{usuario.persona.apellido_materno}}</td>
+						<td><img src="{{usuario.persona.imagen}}" width="50"></td>
+						<td>{{usuario.nombre_usuario}}</td>
+						<td>{{usuario.rolesUsuario[0].rol.nombre}}</td>
+
+						<td ng-if="usuario.empresa">
+							{{usuario.empresa.razon_social}}
+						</td>
+						<td ng-if="!usuario.empresa">
+							TODOS
+						</td>
+						<td ng-if="!usuario.empresa">
+							TODOS
+						</td>
+						<td style="color:red;" ng-if="usuario.empresa && usuario.sucursalesUsuario.length==0">
+							No Asignado
+						</td>
+						<td ng-if="usuario.empresa && usuario.sucursalesUsuario.length>1">
+							VARIOS
+						</td>
+						<td ng-if="usuario.empresa && usuario.sucursalesUsuario.length==1">
+							{{usuario.sucursalesUsuario[0].sucursal.nombre}}
+						</td>
+						<td ng-if="usuario.activo">
+							<span class="label label-sm label-success">Si</span>
+						</td>
+						<td ng-if="!usuario.activo">
+							<span class="label label-sm label-warning">No</span>
+						</td>
+						<td>
+							<div class="hidden-sm hidden-xs action-buttons">
+								<a class="blue" href="javascript:void(0)" e-disabled="!aplicacion.puede_ver" ng-click="verUsuario(usuario)">
+									<i class="ace-icon fa fa-search-plus bigger-130"></i>
+								</a>
+
+								<a class="green" href="javascript:void(0)" e-disabled="!aplicacion.puede_modificar" ng-click="modificarUsuario(usuario)">
+									<i class="ace-icon fa fa-pencil bigger-130"></i>
+								</a>
+								
+								<a ng-if="usuario.rolesUsuario[0].rol.nombre==diccionario.ROL_VENDEDOR" class="blue" href="javascript:void(0)" ng-click="modificarRutas(usuario)">
+									<i class="ace-icon fa fa-map-marker bigger-130"></i>
+								</a>
+								
+								<a ng-if="usuario.rolesUsuario[0].rol.nombre==diccionario.ROL_VENDEDOR" class="blue" href="javascript:void(0)" ng-click="modificarComisiones(usuario)">
+									<i class="ace-icon fa fa-money bigger-130"></i>
+								</a>
+
+								<a class="red" href="javascript:void(0)" e-disabled="!aplicacion.puede_eliminar" ng-click="mostrarConfirmacionEliminacion(usuario)">
+									<i class="ace-icon fa fa-trash-o bigger-130"></i>
+								</a>
+							</div>
+
+							<div class="hidden-md hidden-lg">
+								<div class="inline pos-rel">
+									<button class="btn btn-minier btn-yellow dropdown-toggle" data-toggle="dropdown" data-position="auto">
+										<i class="ace-icon fa fa-caret-down icon-only bigger-120"></i>
+									</button>
+
+									<ul class="dropdown-menu dropdown-only-icon dropdown-yellow dropdown-menu-right dropdown-caret dropdown-close">
+										<li>
+											<a href="javascript:void(0)" e-disabled="!aplicacion.puede_ver" ng-click="verUsuario(usuario)" class="tooltip-info" data-rel="tooltip" title="View">
+												<span class="blue">
+													<i class="ace-icon fa fa-search-plus bigger-120"></i>
+												</span>
+											</a>
+										</li>
+
+										<li>
+											<a href="javascript:void(0)" e-disabled="!aplicacion.puede_modificar" ng-click="modificarUsuario(usuario)" class="tooltip-success" data-rel="tooltip" title="Edit">
+												<span class="green">
+													<i class="ace-icon fa fa-pencil-square-o bigger-120"></i>
+												</span>
+											</a>
+										</li>
+										
+										<li>
+											<a ng-if="usuario.rolesUsuario[0].rol.nombre==diccionario.ROL_VENDEDOR"href="javascript:void(0)" ng-click="modificarRutas(usuario)" class="tooltip-success" data-rel="tooltip" title="Edit">
+												<span class="blue">
+													<i class="ace-icon fa fa-map-marker bigger-130"></i>
+												</span>
+											</a>
+										</li>
+										<li>
+											<a ng-if="usuario.rolesUsuario[0].rol.nombre==diccionario.ROL_VENDEDOR" href="javascript:void(0)" ng-click="modificarComisiones(usuario)" class="tooltip-success" data-rel="tooltip" title="Edit">
+												<span class="blue">	
+													<i class="ace-icon fa fa-money bigger-130"></i>
+												</span>
+											</a>
+										</li>
+
+										<li>
+											<a href="javascript:void(0)" e-disabled="!aplicacion.puede_eliminar" ng-click="mostrarConfirmacionEliminacion(usuario)" class="tooltip-error" data-rel="tooltip" title="Delete">
+												<span class="red">
+													<i class="ace-icon fa fa-trash-o bigger-120"></i>
+												</span>
+											</a>
+										</li>
+									</ul>
+								</div>
+							</div>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			<!-- <div class="row">
+				<div class="col-xs-6">
+					<div class="dataTables_info" id="tabla-usuarios_info" role="status" aria-live="polite">Mostrando página {{paginaActual}} de {{paginas.length}}</div>
+				</div>
+				<div class="col-xs-6">
+					<div class="dataTables_paginate paging_simple_numbers" id="tabla-usuarios_paginate">
+						<ul class="pagination">
+							<li class="paginate_button previous" aria-controls="tabla-usuarios" tabindex="0" id="tabla-usuarios_previous"><a href="javascript:void(0)" ng-click="buscarUsuarios(1,itemsPorPagina,textoBusqueda)">Primero</a></li>
+							<li class="paginate_button previous" ng-class="{disabled:paginaActual==1}" aria-controls="tabla-usuarios" tabindex="0" id="tabla-usuarios_previous"><a href="javascript:void(0)" e-disabled="paginaActual==1" ng-click="buscarUsuarios(paginaActual-1,itemsPorPagina,textoBusqueda)"><<</a></li>
+							<li class="paginate_button" ng-class="{active:paginaActual==pagina}" aria-controls="tabla-usuarios" tabindex="0" ng-repeat="pagina in paginas" ng-if="abs(paginaActual-pagina)<4"><a href="javascript:void(0)" ng-click="buscarUsuarios(pagina,itemsPorPagina,textoBusqueda)">{{pagina}}</a></li>
+							<li class="paginate_button" ng-class="{disabled:paginaActual==paginas.length}" aria-controls="tabla-usuarios" tabindex="0" id="tabla-usuarios_next"><a href="javascript:void(0)" e-disabled="paginaActual==paginas.length" ng-click="buscarUsuarios(paginaActual+1,itemsPorPagina,textoBusqueda)">>></a></li>
+							<li class="paginate_button previous" aria-controls="tabla-usuarios" tabindex="0" id="tabla-usuarios_previous"><a href="javascript:void(0)" ng-click="buscarUsuarios(paginas.length,itemsPorPagina,textoBusqueda)">Ultimo</a></li>
+						</ul>
+					</div>
+				</div>
+			</div>
+			</div>
+ -->		</div>
+	</div>
+</div>
+
+<div id="modal-wizard-usuario" class="modal wizard-posicion">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<form ng-submit="saveForm(usuario)">
+			<div id="modal-wizard-container-usuario-edicion">
+				<div class="modal-header">
+					<ul class="steps">
+						<li data-step="1" class="active">
+							<span class="step">1</span>
+							<span class="title">Datos Personales</span>
+						</li>
+
+						<li data-step="2">
+							<span class="step">2</span>
+							<span class="title">Datos de usuario</span>
+						</li>
+
+						<li data-step="3">
+							<span class="step">3</span>
+							<span class="title">ROL</span>
+						</li>
+						
+						<li data-step="4">
+							<span class="step">4</span>
+							<span class="title">Datos de la Empresa</span>
+						</li>
+
+						<li data-step="5">
+							<span class="step">5</span>
+							<span class="title">Finalizar</span>
+						</li>
+					</ul>
+				</div>
+
+				<div class="modal-body step-content">
+					<div class="step-pane active" data-step="1">
+						<div class="form-group">
+							<label class="col-sm-3 control-label no-padding-right" for="nombre">NOMBRES</label>
+
+							<div class="col-sm-9">
+								<input required type="text" id="nombre" ng-model="usuario.persona.nombres" placeholder="Nombres" class="col-xs-10 col-sm-5" />
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label class="col-sm-3 control-label no-padding-right" for="primer_apellido">Primer Apellido</label>
+
+							<div class="col-sm-9">
+								<input type="text" id="primer_apellido" ng-model="usuario.persona.apellido_paterno" placeholder="Primer Apellido" class="form-control" />
+							</div>
+						</div>
+
+						<div class="space-4"></div>
+
+						<div class="form-group">
+							<label class="col-sm-3 control-label no-padding-right" for="segundo_apellido">Segundo Apellido</label>
+
+							<div class="col-sm-9">
+								<input type="text" id="segundo_apellido" ng-model="usuario.persona.apellido_materno" placeholder="Segundo Apellido" class="form-control" />
+							</div>
+						</div>
+						
+						<div class="form-group">
+							<label class="control-label col-xs-12 col-sm-3 no-padding-right">Foto</label>
+							<div class="col-xs-12 col-xs-12 col-sm-9">
+								<img ng-if="usuario.id" src="{{usuario.persona.imagen}}" width="100">
+								<input type="file" id="imagen-persona" onchange="uploadImage(this,'imagen-persona-oculto')"/>
+								<input id="imagen-persona-oculto" ng-model="usuario.persona.imagen" name="imagen" type="hidden" ng-update-hidden>
+							</div>
+						</div>
+						
+					</div>
+
+					<div class="step-pane" data-step="2">
+						<div class="form-group">
+							<label class="col-sm-3 control-label no-padding-right" for="nombre_usuario">Usuario</label>
+
+							<div class="col-sm-9">
+								<input required type="text" id="nombre_usuario" ng-model="usuario.nombre_usuario" placeholder="Nombre de usuario" class="col-xs-10 col-sm-5"  ng-change="validarUsuario(usuario.nombre_usuario)"/><p ng-class ="{'text-red':data.type,'text-green':!data.type}">{{data.message}}</p>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label no-padding-right" for="clave">Clave</label>
+
+							<div class="col-sm-9">
+								<input required type="password" id="clave" ng-model="usuario.clave" placeholder="Clave" class="col-xs-10 col-sm-5" />
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="control-label col-xs-12 col-sm-3 no-padding-right">Rol</label>
+
+							<div class="col-xs-12 col-sm-9">
+								<select required id="rol" name="rol" ng-model="usuario.id_rol" data-placeholder="Click para escoger" ng-change="buscarRol(usuario.id_rol)">
+									<option ng-if="rol.nombre!='SUPER-ADMINISTRADOR' &&  usuario.rolesUsuario[0].rol.nombre!='SUPER-ADMINISTRADOR'" 
+											ng-selected="rol.id==usuario.rolesUsuario[0].id_rol" ng-repeat="rol in roles" value="{{rol.id}}">{{rol.nombre}}</option>
+								</select>
+								<!--<select ng-init="usuario.id_rol=usuario.rolesUsuario[0].id_rol" required size="1"  id="rol" name="rol" 
+										ng-model="usuario.id_rol" data-placeholder="Click para escoger" 
+										ng-change="buscarRol(usuario.id_rol)" ng-options="rol.id as rol.nombre for rol in roles track by rol.id">
+								</select>-->
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="control-label col-xs-12 col-sm-3 no-padding-right">¿Activo?</label>
+
+							<div class="col-xs-3">
+								<label>
+									<input name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="usuario.activo"/>
+									<span class="lbl check-descuento"></span>
+								</label>
+							</div>
+						</div>
+					</div>
+
+					<div class="step-pane" data-step="3">
+						<table ng-if="rol" id="tabla-permisos" class="table table-striped table-bordered table-hover">
+							<thead>
+								<tr>
+									<th>Nombre Aplicacón</th>
+									<th>¿Puede Crear?</th>
+									<th>¿Puede Ver?</th>
+									<th>¿Puede Modificar?</th>
+									<th>¿Puede Eliminar?</th>
+								</tr>
+							</thead>
+
+							<tbody>
+								<tr ng-repeat="aplicacionUsuario in usuario.aplicacionesUsuario">
+									<td>
+										{{aplicacionUsuario.aplicacion.titulo}}
+									</td>
+									<td class="center">
+										<label class="pos-rel">
+											<input type="checkbox" class="ace" ng-model="aplicacionUsuario.puede_crear"/>
+											<span class="lbl"></span>
+										</label>
+									</td>
+									<td class="center">
+										<label class="pos-rel">
+											<input type="checkbox" class="ace" ng-model="aplicacionUsuario.puede_ver"/>
+											<span class="lbl"></span>
+										</label>
+									</td>
+									<td class="center">
+										<label class="pos-rel">
+											<input type="checkbox" class="ace" ng-model="aplicacionUsuario.puede_modificar"/>
+											<span class="lbl"></span>
+										</label>
+									</td>
+									<td class="center">
+										<label class="pos-rel">
+											<input type="checkbox" class="ace" ng-model="aplicacionUsuario.puede_eliminar"/>
+											<span class="lbl"></span>
+										</label>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+					
+					<div class="step-pane" data-step="4">
+						<div class="form-group">
+							<label class="col-sm-3 control-label no-padding-right" for="empresa">Empresa</label>
+							<div class="col-sm-9">
+								<select ng-disabled="usuarioSesion.id_empresa!=null" required id="empresa" name="empresa" data-placeholder="Click para escoger" ng-model="usuario.id_empresa" ng-change="buscarSucursales(usuario.id_empresa)">
+									<option ng-selected="empresa.id==usuario.id_empresa" ng-repeat="empresa in empresas" value="{{empresa.id}}">{{empresa.razon_social}}</option>
+								</select>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="control-label col-xs-12 col-sm-3 no-padding-right">Sucursales</label>
+
+							<div class="col-xs-12 col-sm-9">
+								<div     
+									isteven-multi-select
+									input-model="sucursales"
+									output-model="usuario.sucursales"
+									button-label="icon name"
+									item-label="icon name maker"
+									tick-property="ticked">
+								</div>
+								<!--<select required id="sucursal" multiple name="sucursal" ng-init="usuario.sucursales=usuario.sucursalesUsuario" ng-model="usuario.sucursales" ng-options="sucursal.id as sucursal.nombre for sucursal in sucursales track by sucursal.id"  data-placeholder="Click para escoger"></select>-->
+							</div>
+						</div>
+					</div>
+
+					<div class="step-pane" data-step="5">
+						<div class="center">
+							<h4 class="blue">Finalización</h4>
+						</div>
+					</div>
+				
+				</div>
+			</div>
+
+			<div class="modal-footer wizard-actions">
+				<button class="btn btn-sm btn-prev">
+					<i class="ace-icon fa fa-arrow-left"></i>
+					Anterior
+				</button>
+
+				<button type="submit" id="siguiente" class="btn btn-success btn-sm btn-next" data-last="Finish">
+					Siguiente
+					<i class="ace-icon fa fa-arrow-right icon-on-right"></i>
+				</button>
+
+				<button type="button" class="btn btn-danger btn-sm pull-left" data-dismiss="modal" ng-click="cerrarPopPupNuevo()">
+					<i class="ace-icon fa fa-times"></i>
+					Cancelar
+				</button>
+			</div>
+			</form>
+		</div>
+	</div>
+</div><!-- PAGE CONTENT ENDS -->
+
+<div id="modal-wizard-usuario-vista" class="modal wizard-posicion">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div id="modal-wizard-container-usuario-vista">
+				<div class="modal-header">
+					<ul class="steps">
+						<li data-step="1" class="active">
+							<span class="step">1</span>
+							<span class="title">Datos Personales</span>
+						</li>
+
+						<li data-step="2">
+							<span class="step">2</span>
+							<span class="title">Datos de usuario</span>
+						</li>
+
+						<li data-step="3">
+							<span class="step">3</span>
+							<span class="title">ROL</span>
+						</li>
+						
+						<li data-step="4">
+							<span class="step">4</span>
+							<span class="title">Datos de la Empresa</span>
+						</li>
+
+						<li data-step="5">
+							<span class="step">5</span>
+							<span class="title">Finalizar</span>
+						</li>
+					</ul>
+				</div>
+
+				<div class="modal-body step-content">
+					<div class="step-pane active" data-step="1">
+						<div class="form-group">
+							<label class="col-sm-3 control-label no-padding-right" for="nombre">NOMBRES</label>
+
+							<div class="col-sm-9">
+								<input disabled required type="text" id="nombre" ng-model="usuario.persona.nombres" placeholder="Nombres" class="col-xs-10 col-sm-5" />
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label class="col-sm-3 control-label no-padding-right" for="primer_apellido">Primer Apellido</label>
+
+							<div class="col-sm-9">
+								<input disabled required type="text" id="primer_apellido" ng-model="usuario.persona.apellido_paterno" placeholder="Primer Apellido" class="form-control" />
+							</div>
+						</div>
+
+						<div class="space-4"></div>
+
+						<div class="form-group">
+							<label class="col-sm-3 control-label no-padding-right" for="segundo_apellido">Segundo Apellido</label>
+
+							<div class="col-sm-9">
+								<input disabled required type="text" id="segundo_apellido" ng-model="usuario.persona.apellido_materno" placeholder="Segundo Apellido" class="form-control" />
+							</div>
+						</div>
+						
+						<div class="form-group">
+							<label class="control-label col-xs-12 col-sm-3 no-padding-right">Foto</label>
+							<div class="col-xs-12 col-xs-12 col-sm-9">
+								<img src="{{usuario.persona.imagen}}" width="100">
+							</div>
+						</div>
+						
+					</div>
+
+					<div class="step-pane" data-step="2">
+						<div class="form-group">
+							<label class="col-sm-3 control-label no-padding-right" for="nombre_usuario">Usuario</label>
+
+							<div class="col-sm-9">
+								<input disabled required type="text" id="nombre_usuario" ng-model="usuario.nombre_usuario" placeholder="Nombre de usuario" class="col-xs-10 col-sm-5" />
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label no-padding-right" for="clave">Clave</label>
+
+							<div class="col-sm-9">
+								<input disabled required type="password" id="clave" ng-model="usuario.clave" placeholder="Clave" class="col-xs-10 col-sm-5" />
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="control-label col-xs-12 col-sm-3 no-padding-right">ROL</label>
+
+							<div class="col-xs-12 col-sm-9">
+								<select disabled required id="rol" name="rol" ng-model="usuario.id_rol" data-placeholder="Click para escoger" ng-change="buscarRol(usuario.id_rol)">
+									<option ng-selected="rol.id==usuario.rolesUsuario[0].id_rol" ng-repeat="rol in roles" value="{{rol.id}}">{{rol.nombre}}</option>
+								</select>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="control-label col-xs-12 col-sm-3 no-padding-right">¿Activo?</label>
+
+							<div class="col-xs-3">
+								<label>
+									<input disabled name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="usuario.activo"/>
+									<span class="lbl"></span>
+								</label>
+							</div>
+						</div>
+					</div>
+
+					<div class="step-pane" data-step="3">
+						<table ng-if="rol" id="tabla-permisos" class="table table-striped table-bordered table-hover">
+							<thead>
+								<tr>
+									<th>Nombre Aplicacón</th>
+									<th>¿Puede Crear?</th>
+									<th>¿Puede Ver?</th>
+									<th>¿Puede Modificar?</th>
+									<th>¿Puede Eliminar?</th>
+								</tr>
+							</thead>
+
+							<tbody>
+								<tr ng-repeat="aplicacionUsuario in usuario.aplicacionesUsuario">
+									<td>
+										{{aplicacionUsuario.aplicacion.titulo}}
+									</td>
+									<td class="center">
+										<label class="pos-rel">
+											<input disabled type="checkbox" class="ace" ng-model="aplicacionUsuario.puede_crear"/>
+											<span class="lbl"></span>
+										</label>
+									</td>
+									<td class="center">
+										<label class="pos-rel">
+											<input disabled type="checkbox" class="ace" ng-model="aplicacionUsuario.puede_ver"/>
+											<span class="lbl"></span>
+										</label>
+									</td>
+									<td class="center">
+										<label class="pos-rel">
+											<input disabled type="checkbox" class="ace" ng-model="aplicacionUsuario.puede_modificar"/>
+											<span class="lbl"></span>
+										</label>
+									</td>
+									<td class="center">
+										<label class="pos-rel">
+											<input disabled type="checkbox" class="ace" ng-model="aplicacionUsuario.puede_eliminar"/>
+											<span class="lbl"></span>
+										</label>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+					
+					<div class="step-pane" data-step="4">
+						<div class="form-group">
+							<label class="col-sm-3 control-label no-padding-right" for="empresa">Empresa</label>
+							<div class="col-sm-9">
+								<select disabled required id="empresa" name="empresa" data-placeholder="Click para escoger" ng-model="usuario.id_empresa" ng-change="buscarSucursales(usuario.id_empresa)">
+									<option ng-selected="empresa.id==usuario.id_empresa" ng-repeat="empresa in empresas" value="{{empresa.id}}">{{empresa.razon_social}}</option>
+								</select>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="control-label col-xs-12 col-sm-3 no-padding-right">Sucursales</label>
+
+							<div class="col-xs-12 col-sm-9">
+								<select disabled required id="sucursal" multiple name="sucursal" ng-init="usuario.sucursales=usuario.sucursalesUsuario" ng-model="usuario.sucursales" ng-options="sucursal.id as sucursal.nombre for sucursal in sucursales track by sucursal.id"  data-placeholder="Click para escoger"></select>
+							</div>
+						</div>
+					</div>
+
+					<div class="step-pane" data-step="5">
+						<div class="center">
+							<h4 class="blue">Finalización</h4>
+						</div>
+					</div>
+				
+				</div>
+			</div>
+
+			<div class="modal-footer wizard-actions">
+				<button class="btn btn-sm btn-prev">
+					<i class="ace-icon fa fa-arrow-left"></i>
+					Anterior
+				</button>
+
+				<button type="submit" id="siguiente" class="btn btn-success btn-sm btn-next" data-last="Finish">
+					Siguiente
+					<i class="ace-icon fa fa-arrow-right icon-on-right"></i>
+				</button>
+
+				<button type="button" class="btn btn-danger btn-sm pull-left" data-dismiss="modal" ng-click="cerrarPopPupVista()">
+					<i class="ace-icon fa fa-times"></i>
+					Cancelar
+				</button>
+			</div>
+			</form>
+		</div>
+	</div>
+</div>
+
+<div id="dialog-eliminar-usuario" title="¿Eliminación de Usuario?">
+  <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>¿Esta seguro de eliminar el usuario seleccionado?</p>
+  <button type="button" class="btn btn-danger" ng-click="eliminarUsuario(usuario)">Si</button>
+  <button type="button" class="btn btn-success"  ng-click="cerrarConfirmacionEliminacion()">No</button>
+</div>
+
+<div id="modal-wizard-usuario-rutas" class="modal wizard-posicion">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<form ng-submit="guardarRutas(usuario)">
+			<div id="modal-wizard-container-usuario-rutas">
+				<div class="modal-header">
+					<ul class="steps">
+						<li data-step="1" class="active">
+							<span class="step">1</span>
+							<span class="title">Rutas Asignadas</span>
+						</li>
+						<li data-step="2">
+							<span class="step">2</span>
+							<span class="title">Rutas por Asignar</span>
+						</li>
+						<li data-step="3">
+							<span class="step">3</span>
+							<span class="title">Finalizar</span>
+						</li>
+					</ul>
+				</div>
+
+				<div class="modal-body step-content">
+					<div class="step-pane active" data-step="1">
+						<table id="tabla-rutas-asignadas" class="table table-striped table-bordered table-hover">
+							<thead>
+								<tr>
+									<th>Nº</th>
+									<th>Nombre Ruta</th>
+									<th>¿Activo?</th>
+								</tr>
+							</thead>
+
+							<tbody>
+								<tr ng-repeat="usuarioRuta in usuario.rutas">
+									<td>
+										{{$index+1}}
+									</td>
+									<td>
+										{{usuarioRuta.ruta.nombre}}
+									</td>
+									<td class="center">
+										<label>
+											<input name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="usuarioRuta.activo"/>
+											<span class="lbl check-descuento"></span>
+										</label>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+
+					<div class="step-pane" data-step="2">
+						<table id="tabla-rutas" class="table table-striped table-bordered table-hover">
+							<thead>
+								<tr>
+									<th>Nº</th>
+									<th>Nombre Ruta</th>
+									<th>Elección</th>
+									<th>Asignación 1</th>
+									<th>Asignación 2</th>
+									<th>Asignación 3</th>
+								</tr>
+							</thead>
+
+							<tbody>
+								<tr ng-repeat="ruta in rutas">
+									<td>
+										{{$index+1}}
+									</td>
+									<td>
+										{{ruta.nombre}}
+									</td>
+									<td class="center">
+										<label class="pos-rel">
+											<input ng-checked="veirificarUsuarioRuta(ruta,usuario)" ng-disabled="(ruta.usuarios.length==3 && !existenNuevosUsuariosRuta(ruta,usuario)) || (veirificarUsuarioRuta(ruta,usuario) && !existenNuevosUsuariosRuta(ruta,usuario))" type="checkbox" class="ace" ng-model="ruta.elegida" ng-change="asignarRutaUsuario(ruta)"/>
+											<!--<input ng-checked="usuarioRuta.usuario.nombre_usuario==usuario.nombre_usuario" ng-repeat="usuarioRuta in ruta.usuarios" ng-if="usuarioRuta.usuario.nombre_usuario==usuario.nombre_usuario" ng-disabled="ruta.usuarios.length==3 || usuarioRuta.usuario.nombre_usuario==usuario.nombre_usuario" type="checkbox" class="ace" ng-model="ruta.elegida" ng-change="asignarRutaUsuario(ruta)"/>
+											<input ng-repeat="usuarioRuta in ruta.usuarios" ng-if="usuarioRuta.usuario.nombre_usuario!=usuario.nombre_usuario && $index==0" ng-disabled="ruta.usuarios.length==3" type="checkbox" class="ace" ng-model="ruta.elegida" ng-change="asignarRutaUsuario(ruta)"/>
+											<input ng-if="ruta.usuarios.length==0" type="checkbox" class="ace" ng-model="ruta.elegida" ng-change="asignarRutaUsuario(ruta)"/>-->
+											<span class="lbl"></span>
+										</label>
+									</td>
+									<td ng-repeat="usuarioRuta in ruta.usuarios" ng-if="$index < 3">
+										{{usuarioRuta.usuario.nombre_usuario}}
+									</td>
+									<td style="color:red;" ng-repeat="i in [1,2,3]" ng-if="$index < (3-ruta.usuarios.length)">
+										LIBRE
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+
+					<div class="step-pane" data-step="3">
+						<div class="center">
+							<h4 class="blue">Finalización</h4>
+						</div>
+					</div>
+				
+				</div>
+			</div>
+
+			<div class="modal-footer wizard-actions">
+				<button class="btn btn-sm btn-prev">
+					<i class="ace-icon fa fa-arrow-left"></i>
+					Anterior
+				</button>
+
+				<button type="submit" id="siguiente-rutas" class="btn btn-success btn-sm btn-next" data-last="Finish">
+					Siguiente
+					<i class="ace-icon fa fa-arrow-right icon-on-right"></i>
+				</button>
+
+				<button type="button" class="btn btn-danger btn-sm pull-left" data-dismiss="modal" ng-click="cerrarPopPupRutas()">
+					<i class="ace-icon fa fa-times"></i>
+					Cancelar
+				</button>
+			</div>
+			</form>
+		</div>
+	</div>
+</div>
+
+<div id="modal-wizard-usuario-comisiones" class="modal wizard-posicion">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<form ng-submit="guardarComisiones(usuario)">
+			<div id="modal-wizard-container-usuario-comisiones">
+				<div class="modal-header">
+					<ul class="steps">
+						<li data-step="1" class="active">
+							<span class="step">1</span>
+							<span class="title">Comision General</span>
+						</li>
+						<li data-step="2">
+							<span class="step">2</span>
+							<span class="title">Comision por Producto</span>
+						</li>
+						<li data-step="3">
+							<span class="step">3</span>
+							<span class="title">Finalizar</span>
+						</li>
+					</ul>
+				</div>
+
+				<div class="modal-body step-content">
+					<div class="step-pane active" data-step="1">
+						<div class="form-group">
+							<label class="col-sm-3 control-label no-padding-right" for="clave">Comisión General</label>
+							<div class="col-sm-9 col-xs-12">
+								<input required type="number" id="comision" ng-model="usuario.comision_general" placeholder="Comisión" class="col-xs-10 col-sm-5" />
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="control-label col-xs-12 col-sm-3 no-padding-right" for="clave">¿Activo?</label>
+							<div class="col-sm-9 col-xs-12">
+								<label>
+									<input name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="usuario.comision_activa"/>
+									<span class="lbl check-descuento"></span>
+								</label>
+							</div>
+						</div>
+					</div>
+
+					<div class="step-pane" data-step="2">
+						<div class="fileUpload btn btn-primary btn-success">
+							<span class="fileUpload-button ace-icon fa fa-cloud-upload align-top bigger-125">&nbsp&nbspImportar</span>
+							<input ng-disabled="!aplicacion.puede_crear" class="upload" type="file" custom-on-file-change="subirExcelProductosComisiones"/>&nbsp&nbsp
+						</div>
+						<a href="/recursos/EJEMPLO-DATOS-PRODUCTOS-COMISIONES.xlsx" class="btn btn-primary btn-danger">
+							<i class="ace-icon fa fa-cloud-download align-top bigger-125"></i>
+							Ejemplo Importacion
+						</a>
+						<table id="tabla-comisiones" class="table table-striped table-bordered table-hover">
+							<thead>
+								<tr>
+									<th>Nº</th>
+									<th>Código Producto</th>
+									<th>Nombre Producto</th>
+									<th>Comisión</th>
+								</tr>
+							</thead>
+
+							<tbody>
+								<tr ng-repeat="producto in productos">
+									<td>
+										{{$index+1}}
+									</td>
+									<td>
+										{{producto.codigo}}
+									</td>
+									<td>
+										{{producto.nombre}}
+									</td>
+									<td class="center">
+										<label class="pos-rel">
+											<input type="number" class="ace" ng-model="producto.comisionesVendedores[0].comision"/>
+										</label>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+
+					<div class="step-pane" data-step="3">
+						<div class="center">
+							<h4 class="blue">Finalización</h4>
+						</div>
+					</div>
+				
+				</div>
+			</div>
+
+			<div class="modal-footer wizard-actions">
+				<button class="btn btn-sm btn-prev">
+					<i class="ace-icon fa fa-arrow-left"></i>
+					Anterior
+				</button>
+
+				<button type="submit" id="siguiente-comisiones" class="btn btn-success btn-sm btn-next" data-last="Finish">
+					Siguiente
+					<i class="ace-icon fa fa-arrow-right icon-on-right"></i>
+				</button>
+
+				<button type="button" class="btn btn-danger btn-sm pull-left" data-dismiss="modal" ng-click="cerrarPopPupComisiones()">
+					<i class="ace-icon fa fa-times"></i>
+					Cancelar
+				</button>
+			</div>
+			</form>
+		</div>
+	</div>
+</div>

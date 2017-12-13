@@ -1,0 +1,1 @@
+ALTER TABLE agil_medico_paciente ADD es_empleado tinyint default 0;

@@ -1,0 +1,17 @@
+<div class="page-header">
+	<h1>APLICACIONES</h1>
+</div><!-- /.page-header -->
+
+<div class="row">
+	<div class="col-xs-12">
+		<!-- PAGE CONTENT BEGINS -->
+		<div class="row">
+			<div class="col-xs-12">
+				<a href="#/{{aplicacion.url}}" class="btn btn-app btn-success opcion-inicio" ng-repeat="aplicacion in aplicaciones">
+					<i class="ace-icon fa {{aplicacion.atributo_clase}} bigger-230"></i>
+					{{aplicacion.titulo}}
+				</a>
+			</div>
+		</div>
+	</div><!-- /.col -->
+</div><!-- /.row -->

@@ -1,0 +1,1126 @@
+<div id="mantenimiento">  
+    <div class="row">
+        <div class="col-xs-12">
+            <!-- PAGE CONTENT BEGINS -->
+            <h2 class="text-primary">MANTENIMIENTO</h2>
+
+            <div class="row">
+                <div class="col-xs-12">
+                    <button  class="btn btn-primary" ng-click="abrirDialogInicioMantenimiento()" >
+                        <i class="ace-icon fa fa-plus align-top bigger-125"></i>
+                        Nuevo OT
+                    </button>
+                    <div class="fileUpload btn btn-primary btn-success">
+                        <span class="fileUpload-button ace-icon fa fa-cloud-upload align-top bigger-125">&nbsp; Importar</span>
+                        <input ng-disabled="!aplicacion.puede_crear" class="upload" type="file" custom-on-file-change="subirExcelProductos">&nbsp;
+                    </div>
+                    <a href="/recursos/EJEMPLO-DATOS-PRODUCTOS.xlsx" class="btn btn-primary btn-danger">
+                        <i class="ace-icon fa fa-cloud-download align-top bigger-125"></i> Ejemplo Importacion
+                    </a>
+                    <br>
+                    <br>
+                    <fieldset>
+                        <legend>Filtro mantenimiento</legend>
+                        <table class="table table-striped table-bordered table-hover table-block" align="center">
+                            <tbody>
+                                <tr>
+                                    <td class="no-border-right"></td>
+                                    <td>
+                                        <label>Desde</label>&nbsp;
+                                    </td>
+                                    <td>
+                                        <label>Hasta</label>&nbsp;
+                                    </td>
+                                    <td colspan="3">
+
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="no-border-right text-right">PERIODO</td>
+                                    <td>
+                                        <input type="text" ng-model="filtro.razon_social" class="date-picker">
+                                        
+                                    </td>
+                                    <td>
+                                        <input type="text" ng-model="filtro.nit" class="date-picker">
+                                    </td>
+                                    <td colspan="3">
+                                        <button type="submit" ng-disabled="formularioFiltroVentas.$invalid" class="btn btn-primary">
+                                            <i class="ace-icon fa fa-search  align-top bigger-125"></i>
+                                                Filtrar
+                                        </button>
+                                        <button class="btn btn-danger btn-md">
+                                            <i class="ace-icon fa fa-print align-top bigger-125"></i>
+                                                PDF
+                                        </button>
+                                        <button class="btn btn-success btn-md">
+                                            <i class="ace-icon fa fa-print bigger-125"></i>
+                                                Excel
+                                        </button>
+                                        <button class="btn btn-info btn-md" id="id-btn-calendar">
+                                            <i class="ace-icon fa fa-calendar bigger-125"></i>
+                                                Agenda OT.
+                                        </button>
+                                            <button class="btn btn-purple btn-md" id="id-btn-calendar"  data-toggle="modal" data-target="#dialog-buscar-maquinaria">
+                                            <i class="icono-ficha_medica icono-font bigger-125"></i>
+                                                Vehiculo/Maquinaria
+                                        </button>
+
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="no-border-right"></td>
+                                    <td>
+                                        <label>Tipo de activo fijo
+                                            <br>
+                                            <small>VEHICULO/MAQUINARIA</small>      
+                                        </label>&nbsp;
+                                    </td>
+                                    <td>
+                                        <label>Placa/Nº de Serie</label>&nbsp;
+                                    </td>
+                                    <td>
+                                        <label>Marca</label>&nbsp;
+                                    </td>
+                                    <td>
+                                        <label>Modelo</label>&nbsp;
+                                    </td>
+                                    <td>
+                                        <label>OT. Terminada</label>&nbsp;
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="no-border-right text-right">FILTRO</td>
+                                    <td>
+                                        <select id="sucursal" name="sucursal" data-placeholder="Elija una sucursal" class="ng-pristine ng-untouched ng-valid ng-empty">
+                                            Filtro
+                                            <option ></option>
+                                            <option value="0">Vehiculo</option>
+                                            <option  value="3" >Maquinaria</option>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <input type="text" ng-model="filtro.razon_social" class="ng-pristine ng-untouched ng-valid ng-empty">
+                                    </td>
+                                    <td>
+                                        <select id="pago" name="pago" data-placeholder="Elija un tipo de pago" class="ng-pristine ng-untouched ng-valid ng-empty">
+                                            <option value="? undefined:undefined ?"></option>
+                                            <option value="0">TODOS</option>
+                                            <option  value="17" class="ng-binding ng-scope">CONTADO</option>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <input type="text" ng-model="filtro.razon_social" class="ng-pristine ng-untouched ng-valid ng-empty">
+                                    </td>
+                                    <td>
+                                        <label>
+                                            <input name="switch-field-1" class="ace ace-switch ace-switch-5" type="checkbox">
+                                            <span class="lbl check-espaniol"></span>
+                                        </label>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="no-border-right"></td>
+                                    <td>
+                                        <label>Año</label>&nbsp;
+                                    </td>
+                                    <td>
+                                        <label>Tipo de mantenimiento
+                                            <br>
+                                            <small>PREVENTIVO, CORRECTIVO, RUTINA</small>
+                                        </label>&nbsp;
+                                    </td>
+                                    <td>
+                                        <label>Numero de OT.</label>&nbsp;
+                                    </td>
+                                    <td>
+                                        <label>Estado OT.</label>&nbsp;
+                                    </td>
+                                    <td>
+                                        <label>Campamento</label>&nbsp;
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="no-border-right text-right">FILTRO</td>
+                                    <td>
+                                        <input type="text" ng-model="filtro.razon_social" class="ng-pristine ng-untouched ng-valid ng-empty">
+                                    </td>
+                                    <td>
+                                        <select id="" name="" data-placeholder="Tipo de mantenimiento" class="ng-pristine ng-untouched ng-valid ng-empty">
+                                            Filtro
+                                            <option ></option>
+                                            <option value="0">Preventivo</option>
+                                            <option  value="1" >Correctivo</option>
+                                            <option  value="2" >Rutina</option>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <input type="number" ng-model="filtro.razon_social" class="ng-pristine ng-untouched ng-valid ng-empty">
+                                    </td>
+                                    <td>
+                                        <input type="text" ng-model="filtro.razon_social" class="ng-pristine ng-untouched ng-valid ng-empty">
+                                    </td>
+                                    <td>
+                                        <input type="text" ng-model="filtro.razon_social" class="ng-pristine ng-untouched ng-valid ng-empty" placeholder="">
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </fieldset>
+                    <div class="table-header">
+                        <a class="white" href="#" data-toggle="modal" data-target="#dialog-editar-historico">
+                            <i class="ace-icon fa fa-h-square bigger-130"></i>
+                        </a> Lista de orden de trabajo
+                        <div class="inline pos-rel pull-right">
+                            <a data-toggle="dropdown" href="javascript:void(0)" class="dropdown-toggle button-columna" aria-expanded="false">
+                                <i class="glyphicon  glyphicon-list-alt"></i>
+                            </a>
+                            <ul id="campos-detalle-venta" class="dropdown-menu-right dropdown-menu dropdown-yellow dropdown-caret lista-columna">
+                                <li>
+                                    <label>
+                                        <input class="ace ace-switch ace-switch-4  toggle-vis" type="checkbox"  data-column="1">
+                                        <span class="lbl check-descuento"></span>
+                                    </label>
+                                    <label>Fecha aviso</label>
+                                </li>
+                                <li>
+                                    <label>
+                                        <input class="ace ace-switch ace-switch-4 ng-pristine ng-untouched ng-valid ng-not-empty" type="checkbox" ng-model="configuracionVentaVista.mostrar_codigo_producto" ng-change="guardarConfiguracionVentaVista()">
+                                        <span class="lbl check-descuento"></span>
+                                    </label>
+                                    <label>Fecha Inicio</label>
+                                </li>
+                                <li>
+                                    <label>
+                                        <input class="ace ace-switch ace-switch-4 ng-pristine ng-untouched ng-valid ng-empty" type="checkbox" ng-model="configuracionVentaVista.mostrar_unidad_producto" ng-change="guardarConfiguracionVentaVista()">
+                                        <span class="lbl check-descuento"></span>
+                                    </label>
+                                    <label>Fecha de entrega</label>
+                                </li>
+                                <li>
+                                    <label>
+                                        <input class="ace ace-switch ace-switch-4 ng-pristine ng-untouched ng-valid ng-empty" type="checkbox" ng-model="configuracionVentaVista.mostrar_precio_unitario" ng-change="guardarConfiguracionVentaVista()">
+                                        <span class="lbl check-descuento"></span>
+                                    </label>
+                                    <label>Prioridad</label>
+                                </li>
+                                <li>
+                                    <label>
+                                        <input class="ace ace-switch ace-switch-4 ng-pristine ng-untouched ng-valid ng-not-empty" type="checkbox" ng-model="configuracionVentaVista.mostrar_cantidad" ng-change="guardarConfiguracionVentaVista()">
+                                        <span class="lbl check-descuento"></span>
+                                    </label>
+                                    <label>Cod. Usuario</label>
+                                </li>
+                                <!-- ngIf: usuario.empresa.usar_vencimientos -->
+                                <li ng-if="usuario.empresa.usar_vencimientos" class="ng-scope">
+                                    <label>
+                                        <input class="ace ace-switch ace-switch-4 ng-pristine ng-untouched ng-valid ng-not-empty" type="checkbox" ng-model="configuracionVentaVista.mostrar_fecha_vencimiento" ng-change="guardarConfiguracionVentaVista()">
+                                        <span class="lbl check-descuento"></span>
+                                    </label>
+                                    <label>Reportado por</label>
+                                </li>
+                                <!-- end ngIf: usuario.empresa.usar_vencimientos -->
+                                <!-- ngIf: usuario.empresa.usar_vencimientos -->
+                                <li ng-if="usuario.empresa.usar_vencimientos" class="ng-scope">
+                                    <label>
+                                        <input class="ace ace-switch ace-switch-4 ng-pristine ng-untouched ng-valid ng-not-empty" type="checkbox" ng-model="configuracionVentaVista.mostrar_lote" ng-change="guardarConfiguracionVentaVista()">
+                                        <span class="lbl check-descuento"></span>
+                                    </label>
+                                    <label>Imagen</label>
+                                </li>
+                                <!-- end ngIf: usuario.empresa.usar_vencimientos -->
+                                <li>
+                                    <label>
+                                        <input class="ace ace-switch ace-switch-4 ng-pristine ng-untouched ng-valid ng-empty" type="checkbox" ng-model="configuracionVentaVista.mostrar_importe" ng-change="guardarConfiguracionVentaVista()">
+                                        <span class="lbl check-descuento"></span>
+                                    </label>
+                                    <label>OT</label>
+                                </li>
+                                <li>
+                                    <label>
+                                        <input class="ace ace-switch ace-switch-4 ng-pristine ng-untouched ng-valid ng-empty" type="checkbox" ng-model="configuracionVentaVista.mostrar_descuento" ng-change="guardarConfiguracionVentaVista()">
+                                        <span class="lbl check-descuento"></span>
+                                    </label>
+                                    <label>Estado OT</label>
+                                </li>
+                                <li>
+                                    <label>
+                                        <input class="ace ace-switch ace-switch-4 ng-pristine ng-untouched ng-valid ng-empty" type="checkbox" ng-model="configuracionVentaVista.mostrar_descuento" ng-change="guardarConfiguracionVentaVista()">
+                                        <span class="lbl check-descuento"></span>
+                                    </label>
+                                    <label>Tipo de activo</label>
+                                </li>
+                                <li>
+                                    <label>
+                                        <input class="ace ace-switch ace-switch-4 ng-pristine ng-untouched ng-valid ng-empty" type="checkbox" ng-model="configuracionVentaVista.mostrar_descuento" ng-change="guardarConfiguracionVentaVista()">
+                                        <span class="lbl check-descuento"></span>
+                                    </label>
+                                    <label>Km</label>
+                                </li>
+                                <li>
+                                    <label>
+                                        <input class="ace ace-switch ace-switch-4 ng-pristine ng-untouched ng-valid ng-empty" type="checkbox" ng-model="configuracionVentaVista.mostrar_descuento" ng-change="guardarConfiguracionVentaVista()">
+                                        <span class="lbl check-descuento"></span>
+                                    </label>
+                                    <label>Marca</label>
+                                </li>
+                                <li>
+                                    <label>
+                                        <input class="ace ace-switch ace-switch-4 ng-pristine ng-untouched ng-valid ng-empty" type="checkbox" ng-model="configuracionVentaVista.mostrar_descuento" ng-change="guardarConfiguracionVentaVista()">
+                                        <span class="lbl check-descuento"></span>
+                                    </label>
+                                    <label>Modelo</label>
+                                </li>
+                                <li>
+                                    <label>
+                                        <input class="ace ace-switch ace-switch-4 ng-pristine ng-untouched ng-valid ng-empty" type="checkbox" ng-model="configuracionVentaVista.mostrar_descuento" ng-change="guardarConfiguracionVentaVista()">
+                                        <span class="lbl check-descuento"></span>
+                                    </label>
+                                    <label>Año</label>
+                                </li>
+                                <li>
+                                    <label>
+                                        <input class="ace ace-switch ace-switch-4 ng-pristine ng-untouched ng-valid ng-empty" type="checkbox" ng-model="configuracionVentaVista.mostrar_descuento" ng-change="guardarConfiguracionVentaVista()">
+                                        <span class="lbl check-descuento"></span>
+                                    </label>
+                                    <label>Tipo de Mant.</label>
+                                </li>
+                                <li>
+                                    <label>
+                                        <input class="ace ace-switch ace-switch-4 ng-pristine ng-untouched ng-valid ng-empty" type="checkbox" ng-model="configuracionVentaVista.mostrar_descuento" ng-change="guardarConfiguracionVentaVista()">
+                                        <span class="lbl check-descuento"></span>
+                                    </label>
+                                    <label>Detalle de Producto</label>
+                                </li>
+                                <li>
+                                    <label>
+                                        <input class="ace ace-switch ace-switch-4 ng-pristine ng-untouched ng-valid ng-empty" type="checkbox" ng-model="configuracionVentaVista.mostrar_descuento" ng-change="guardarConfiguracionVentaVista()">
+                                        <span class="lbl check-descuento"></span>
+                                    </label>
+                                    <label>Encargado</label>
+                                </li>
+                                <li>
+                                    <label>
+                                        <input class="ace ace-switch ace-switch-4 ng-pristine ng-untouched ng-valid ng-empty" type="checkbox" ng-model="configuracionVentaVista.mostrar_descuento" ng-change="guardarConfiguracionVentaVista()">
+                                        <span class="lbl check-descuento"></span>
+                                    </label>
+                                    <label>Area de Taller</label>
+                                </li>
+                                <li>
+                                    <label>
+                                        <input class="ace ace-switch ace-switch-4 ng-pristine ng-untouched ng-valid ng-empty" type="checkbox" ng-model="configuracionVentaVista.mostrar_descuento" ng-change="guardarConfiguracionVentaVista()">
+                                        <span class="lbl check-descuento"></span>
+                                    </label>
+                                    <label>Servicio Externo</label>
+                                </li>
+                                <li>
+                                    <label>
+                                        <input class="ace ace-switch ace-switch-4 ng-pristine ng-untouched ng-valid ng-empty" type="checkbox" ng-model="configuracionVentaVista.mostrar_descuento" ng-change="guardarConfiguracionVentaVista()">
+                                        <span class="lbl check-descuento"></span>
+                                    </label>
+                                    <label>Campamento</label>
+                                </li>
+                                <li class="divider"></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <!-- div.table-responsive -->
+                    <table id="dynamic-table" class="table table-striped table-bordered table-hover nowrap">
+                        <thead>
+                            <tr>
+                                <th>Nro.</th>
+                                <th>Fecha</th>
+                                <th>Cod. Usuario</th>
+                                <th>Imagen</th>
+                                <th>OT</th>
+                                <th>Estado OT.</th>
+                                <th>Tipo de activo</th>
+                                <th>Km</th>
+                                <th>Marca</th>
+                                <th>Modelo</th>
+                                <th>Año</th>
+                                <th>Manteniminto</th>
+                                <th>Campamento</th>
+                                <th class="icons-table">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td>11/09/17</td>
+                                <td>Escalera123</td>
+                                <td>
+                                    <img class="nav-user-photo" src="" alt="Jason's Photo" width="70px">
+                                </td>
+                                <td class="text-center">-</td>
+                                <td class="text-center">-</td>
+                                <td>VEHICULO</td>
+                                <td>10000</td>
+                                <td>TOYOTA</td>
+                                <td>HILUX</td>
+                                <td>99</td>
+                                <td>CORRECTIVO</td>
+                                <td>REPSOL</td>
+                                <td class="icons-table">
+                                    <div class="hidden-sm hidden-xs action-buttons">
+                                        <a class="btn-ot" href="#" id="id-btn-edicion-correctivo">OT</a>
+                                        <a class="green" href="#" data-toggle="modal" data-target="#dialog-ficha-vehiculo">
+                                            <i class="icono-ficha_medica icono-font"></i>
+                                        </a>
+                                        <a class="blue" href="#">
+                                            <i class="ace-icon glyphicon glyphicon-print bigger-130"></i>
+                                        </a>
+                                        <a class="red" href="#" data-toggle="modal" data-target="#dialog-editar-historico">
+                                            <i class="ace-icon fa fa-h-square bigger-130"></i>
+                                        </a>
+                                        <a class="blue" href="#">
+                                            <i class="ace-icon fa fa-search-plus bigger-130"></i>
+                                        </a>
+                                        <!-- <a class="green" href="#">
+                                            <i class="ace-icon fa fa-pencil bigger-130"></i>
+                                        </a> -->
+                                        <a class="red" href="#">
+                                            <i class="ace-icon fa fa-trash-o bigger-130"></i>
+                                        </a>
+                                        <a class="text-warning orange" href="#">
+                                            <i class="icono-auto-gps icono-font"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>1</td>
+                                <td>11/09/17</td>
+                                <td>Escalera123</td>
+                                <td>
+                                    <img class="nav-user-photo" src="" alt="Jason's Photo" width="70px">
+                                </td>
+                                <td class="text-center">-</td>
+                                <td class="text-center">-</td>
+                                <td>VEHICULO</td>
+                                <td>10000</td>
+                                <td>CHEVROLET</td>
+                                <td>HILUX</td>
+                                <td>99</td>
+                                <td>CORRECTIVO</td>
+                                <td>REPSOL</td>
+                                <td class="icons-table">
+                                    <div class="hidden-sm hidden-xs action-buttons">
+                                        <a class="btn-ot" href="#">OT</a>
+                                        <a class="green" href="#">
+                                            <i class="icono-ficha_medica icono-font"></i>
+                                        </a>
+                                        <a class="blue" href="#">
+                                            <i class="ace-icon glyphicon glyphicon-print bigger-130"></i>
+                                        </a>
+                                        <a class="red" href="#">
+                                            <i class="ace-icon fa fa-h-square bigger-130"></i>
+                                        </a>
+                                        <a class="blue" href="#">
+                                            <i class="ace-icon fa fa-search-plus bigger-130"></i>
+                                        </a>
+                                        <!-- <a class="green" href="#">
+                                            <i class="ace-icon fa fa-pencil bigger-130"></i>
+                                        </a> -->
+                                        <a class="red" href="#">
+                                            <i class="ace-icon fa fa-trash-o bigger-130"></i>
+                                        </a>
+                                        <a class="text-warning orange" href="#">
+                                            <i class="icono-auto-gps icono-font"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>11/09/17</td>
+                                <td>Escalera123</td>
+                                <td>
+                                    <img class="nav-user-photo" src="" alt="Jason's Photo" width="70px">
+                                </td>
+                                <td class="text-center">-</td>
+                                <td class="text-center">-</td>
+                                <td>VEHICULO</td>
+                                <td>10000</td>
+                                <td>TOYOTA</td>
+                                <td>HILUX</td>
+                                <td>99</td>
+                                <td>CORRECTIVO</td>
+                                <td>REPSOL</td>
+                                <td class="icons-table">
+                                    <div class="hidden-sm hidden-xs action-buttons">
+                                        <a class="btn-ot" href="#">OT</a>
+                                         <a class="green" href="#">
+                                            <i class="icono-ficha_medica icono-font"></i>
+                                        </a>
+                                        <a class="blue" href="#">
+                                            <i class="ace-icon glyphicon glyphicon-print bigger-130"></i>
+                                        </a>
+                                        <a class="red" href="#">
+                                            <i class="ace-icon fa fa-h-square bigger-130"></i>
+                                        </a>
+                                        <a class="blue" href="#">
+                                            <i class="ace-icon fa fa-search-plus bigger-130"></i>
+                                        </a>
+                                        <!-- <a class="green" href="#">
+                                            <i class="ace-icon fa fa-pencil bigger-130"></i>
+                                        </a> -->
+                                        <a class="red" href="#">
+                                            <i class="ace-icon fa fa-trash-o bigger-130"></i>
+                                        </a>
+                                        <a class="text-warning orange" href="#">
+                                            <i class="icono-auto-gps icono-font"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td>11/09/17</td>
+                                <td>Escalera123</td>
+                                <td>
+                                    <img class="nav-user-photo" src="" alt="Jason's Photo" width="70px">
+                                </td>
+                                <td class="text-center">-</td>
+                                <td class="text-center">-</td>
+                                <td>VEHICULO</td>
+                                <td>10000</td>
+                                <td>TOYOTA</td>
+                                <td>HILUX</td>
+                                <td>99</td>
+                                <td>CORRECTIVO</td>
+                                <td>REPSOL</td>
+                                <td class="icons-table">
+                                    <div class="hidden-sm hidden-xs action-buttons">
+                                        <a class="btn-ot" href="#">OT</a>
+                                         <a class="green" href="#">
+                                            <i class="icono-ficha_medica icono-font"></i>
+                                        </a>
+                                        <a class="blue" href="#">
+                                            <i class="ace-icon glyphicon glyphicon-print bigger-130"></i>
+                                        </a>
+                                        <a class="red" href="#">
+                                            <i class="ace-icon fa fa-h-square bigger-130"></i>
+                                        </a>
+                                        <a class="blue" href="#">
+                                            <i class="ace-icon fa fa-search-plus bigger-130"></i>
+                                        </a>
+                                        <!-- <a class="green" href="#">
+                                            <i class="ace-icon fa fa-pencil bigger-130"></i>
+                                        </a> -->
+                                        <a class="red" href="#">
+                                            <i class="ace-icon fa fa-trash-o bigger-130"></i>
+                                        </a>
+                                        <a class="text-warning orange" href="#">
+                                            <i class="icono-auto-gps icono-font"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!-- PAGE CONTENT ENDS -->
+    </div>
+
+    <!-- Modal Iniciar Mantenimiento-->
+    <div class="modal" id="dialog-iniciar-mantenimiento">
+        <div class="modal-dialog fluid-dialog-sm">
+            <div class="modal-content">
+                <div class="modal-header bg-primary">
+                    <h4 class='smaller text-white text-uppercase'><i class='glyphicon glyphicon-log-in'></i> <label> &nbsp; Mantenimiento de vehículo / Maquinaria</label></h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row flex-center">
+                        <div class="col-md-12">
+                            <form class="form-horizontal">
+                                <div class="form-group">
+                                    <label for="" class="col-sm-5 control-label text-primary">Nro. de placa/Nro. de serie</label>
+                                    <div class="col-sm-7">
+                                        <input type="text" class="form-control" id="">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="" class="col-sm-5 control-label text-primary">Mantenimiento</label>
+                                    <div class="col-sm-7">
+                                        <select class="form-control">
+                                            <option></option>
+                                            <option value="0">Preventivo</option>
+                                            <option value="0">Correctivo</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary btn-sm" ng-click="abrirDialogOTnuevo()">
+                        <i class="glyphicon glyphicon-ok" aria-hidden="true"></i> Generar OT
+                    </button>
+                    
+                    <button type="button" class="btn btn-danger btn-sm" ng-click="cerrarPopUpInicioMantenimiento()">
+                        <i class="glyphicon glyphicon-remove" aria-hidden="true"></i> Salir
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Fin Modal Iniciar Mantenimiento-->
+    <!---================  Modal OT nuevo ====== -->
+    <div id="dialog-ot-nuevo" class="modal wizard-posicion">
+        <div class="modal-">
+            <div class="modal-content">
+                <form name="form" ng-submit="saveForm(paciente)" novalidate>                     
+                <div id="modal-wizard-ot-nuevo-container">
+                    <div class="modal-header modal-header-ficha">
+                        <div class="titulo-ficha">
+                            <h4>REGISTRO ORDEN DE TRABAJO (OT)</h4>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <h4 class="">Vehiculo: Toyota Hilux blanca</h4>
+                                    
+                                </div>
+                                <div class="col-sm-6">
+                                    <h4 class="">Placa: 1598 MNF</h4>
+                                    
+                                </div>
+                            </div> 
+                        </div>
+                    </div>
+                    <div class="modal-header">
+                        <ul class="steps">
+                            <li data-step="1" class="active">
+                                <span class="step"><span class="fa fa-file-text"></span></span>
+                                <span class="title">Orden de Trabajo</span>
+                            </li>
+                            <li data-step="2">
+                                <span class="step"><span class="icono-mantenimiento"></span></span>
+                                <span class="title">Mano de Obra</span>
+                            </li>
+                            <li data-step="3">
+                                <span class="step"><span class="fa fa-gift"></span></span>
+                                <span class="title">Materiales</span>
+                            </li>
+                            <li data-step="4">
+                                <span class="step"><span class="fa fa-external-link-square"></span></span>
+                                <span class="title">Servicio Externo</span>
+                            </li>
+                        </ul>
+                                                                
+                    </div>
+
+                    <div class="modal-body step-content">
+                        <div class="step-pane active" data-step="1">
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        
+                                        <div class="row">
+                                            <div class="col-sm-6 form-group">
+                                                <label for="form-field-select-2">Sistema principal</label>
+
+                                                <select class="form-control select-sistema" id="form-field-select-2" multiple="multiple">
+                                                    <option>Motor</option>
+                                                        <option>Tren Propulsor</option>
+                                                        <option>Rines, llantas y frenos</option>
+                                                        <option>Suspencion del auto</option>
+                                                        <option>Direccion</option>
+                                                        <option>Sistema electrico</option>
+                                                        <option>Carroceria y chasis</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-sm-6 form-group">
+                                                <label class="">Observaciones</label>
+                                                <textarea name="" class="form-control" cols="30" rows="4">RINES, LLANTAS Y FRENOS: Suena el freno &nbsp; DIRECCIÓN: la direccion no gira facil</textarea>
+                                            </div>
+                                          
+                                        </div>
+                                       
+                                        <div class="row form-group">
+                                            <div class="col-lg-6">
+                                                <label class="text-uppercase text-primary">Diagnóstico taller</label>
+                                                <textarea name="" class="form-control" cols="30" rows="1">Se necesita pastillas nuevas, cambio de aceite en la dirección</textarea>
+                                            </div>
+                                            <div class="col-lg-3">
+                                                <label class="text-uppercase text-primary">Prioridad</label>
+                                                <select class="form-control">
+                                                    <option></option>
+                                                    <option value="0">Alta</option>
+                                                    <option value="0">Media</option>
+                                                    <option value="3">Baja</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-lg-3">
+                                                <label class="text-uppercase text-primary">Tiempo estimado</label>
+                                                <input type="text" id=""  class="form-control timepicker1" />
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <label class="text-uppercase ">Aviso</label><br>
+                                                <label class="text-uppercase text-primary small" for="">Fecha</label>
+                                                <input type="text" class="form-control date-picker">
+                                                <label class="text-uppercase text-primary small" for="">Hora</label>
+                                                <input type="text" class="form-control timepicker1">
+                                            </div>
+                                            <div class="col-md-4">
+                                                <label class="text-uppercase ">Inicio Labores</label><br>
+                                                <label class="text-uppercase text-primary small" for="">Fecha</label>
+                                                <input type="text" class="form-control date-picker">
+                                                <label class="text-uppercase text-primary small" for="">Hora</label>
+                                                <input type="text" class="form-control timepicker1">
+                                            </div>
+                                            <div class="col-md-4">
+                                                <label class="text-uppercase ">Fin Labores</label><br>
+                                                <label class="text-uppercase text-primary small" for="">Fecha</label>
+                                                <input type="text" class="form-control date-picker">
+                                                <label class="text-uppercase text-primary small" for="">Hora</label>
+                                                <input type='text' class="form-control timepicker1" />
+                                                    
+                                            </div>
+                                        </div>
+                                        
+                                    </div>
+                                    
+                                </div>                   
+                        </div>
+
+                        <div class="step-pane" data-step="2">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    
+                                    <div class="row form-group">
+                                        <div class="col-md-3">
+                                            <label class="text-uppercase text-primary" for="">Especialidad 1:</label>
+                                            <select class="form-control text-uppercase">
+                                                <option>Mecánica</option>
+                                                <option>Electrónica</option>
+                                                <option value="">Chaperia</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label class="text-uppercase text-primary" for="">Encargado</label>
+                                            
+                                            <div class="input-group">
+                                                
+
+                                                <input type="text" class="form-control search-query" placeholder="Encargado">
+                                                <span class="input-group-btn">
+                                                    
+                                                    <a href="#" class="btn btn-sm button-search">
+                                                        <span class="ace-icon green fa fa-search icon-on-right bigger-110"></span>
+                                                    </a>
+                                                </span>
+                                            </div>
+                                            
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label class="text-uppercase text-primary" for="">Inicio</label>
+                                            <input type="text" class="form-control date-timepicker">
+                                            
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label class="text-uppercase text-primary" for="">Fin</label>
+                                            <input type="text" class="form-control date-timepicker">
+                                        </div>
+                                        
+                                    </div>  
+                                    <div class="row form-group">
+                                        <div class="col-md-9">
+                                            <label class="text-uppercase text-primary" for="">Diagnóstico Especialidad</label>
+                                            <textarea name="" class="form-control" cols="30" rows="1"></textarea>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <br>
+                                            <a class="btn btn-sm btn-success" href="#">
+                                                <i class="ace-icon fa fa-plus"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <table id="dynamic-table" class="table table-striped table-bordered table-hover nowrap">
+                                        <thead>
+                                            <tr>
+                                                <td>Apellido/Nombre</td>
+                                                <td>Cargo</td>
+                                                <td>Area de operacion</td>
+                                                <td>Fecha inicio</td>
+                                                <td>Fecha fin</td>
+                                                <td>Nro. de horas</td>
+                                                <td>Diagnostico</td>
+                                                <td>monto</td>
+                                                <td>Acciones</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>Roca Daniel</td>
+                                                <td>Mecanico</td>
+                                                <td>Taller mecanico</td>
+                                                <td>10/17/2017 4:04 PM</td>
+                                                <td>10/18/2017 4:04 PM</td>
+                                                <td>5</td>
+                                                <td>Se necesita pastillas nuevas, cambio de aceite en la dirección</td>
+                                                <td>100</td>
+                                                <td>
+                                                    <a class="green" href="#">
+                                                        <i class="glyphicon glyphicon-pencil" aria-hidden="true"></i>
+                                                    </a>
+                                                    <a class="red" href="#">
+                                                        <i class="glyphicon glyphicon-trash" aria-hidden="true"></i>
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="6"></td>
+                                                <td >Total</td>
+                                                <td>100</td>
+                                                <td></td>
+                                            </tr>
+                                        
+                                        </tbody>
+                                    </table>  
+                                </div>
+                            </div>
+                        </div>
+                        <div class="step-pane" data-step="3">
+                            
+                            <button type="button" ng-click="abrirDialogRepuestosOT()" class="btn btn-success btn-sm">
+                                <i class="ace-icon fa fa-plus bigger-110"></i>
+                                Repuestos e Insumos
+                            </button>
+                            <div class="space-6"></div>
+                            <table id="dynamic-table" class="table table-striped table-bordered table-hover nowrap">
+                                <thead>
+                                    <tr>
+                                        <td>#</td>
+                                        <td>Producto</td>
+                                        <td>Codigo item</td>
+                                        <td>Cantidad</td>
+                                        <td>Valuado</td>
+                                        <td>Acciones</td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>1</td>
+                                        <td>pastillas</td>
+                                        <td>123-kfc</td>
+                                        <td>4</td>
+                                        <td>250 Bs</td>
+                                        <td>
+                                            <a class="green" href="#">
+                                                <i class="glyphicon glyphicon-pencil" aria-hidden="true"></i>
+                                            </a>
+                                            <a class="red" href="#">
+                                                <i class="glyphicon glyphicon-trash" aria-hidden="true"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                  
+                                    <tr>
+                                        <td colspan="3"></td>
+                                        <td >Total</td>
+                                        <td>250 Bs</td>
+                                        <td></td>
+                                    </tr>
+                                </tbody>
+                            </table>                            
+                        </div>
+                        <div class="step-pane" data-step="4">
+                            
+                            <div class="row form-group">
+                                <div class="col-md-3">
+                                    <label class="" for="">Empresa: </label>
+                                    <input type="text" class="form-control">
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="" for="">Servicio: </label>
+                                    <input type="text" class="form-control">
+                                </div>
+                                <div class="col-md-2">
+                                    <label class="text-uppercase text-primary" for="">Inicio</label>
+                                    <input type="text" class="form-control date-timepicker">
+                                    
+                                </div>
+                                <div class="col-md-2">
+                                    <label class="text-uppercase text-primary" for="">Fin</label>
+                                    <input type="text" class="form-control date-timepicker">
+                                </div>
+                                <div class="col-md-2">
+                                    <br>
+                                    <a class="btn btn-sm btn-success" href="#">
+                                        <i class="ace-icon fa fa-plus"></i>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <table id="dynamic-table" class="table table-striped table-bordered table-hover nowrap">
+                                        <thead>
+                                            <tr>
+                                                <td>#</td>
+                                                <td>Empresa</td>
+                                                <td>Servicio</td>
+                                                <td>Fecha Inicio</td>
+                                                <td>Fecha Fin</td>
+                                                <td>Factura</td>
+                                                <td>Monto</td>
+                                                <td>Acciones</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>1</td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td>100</td>
+                                                <td>
+                                                    <a href="javascript:void(0)" ng-click="abrirDialogFacturaServicioExterno()"  class="orange"  >
+                                                        <i class="ace-icon fa fa-file-text bigger-130"></i>
+                                                    </a>
+                                                    <a class="blue" href="#">
+                                                        <i class="ace-icon glyphicon glyphicon-print bigger-130"></i>
+                                                    </a>
+                                                    <a class="green" href="#">
+                                                        <i class="glyphicon glyphicon-pencil bigger-130" aria-hidden="true"></i>
+                                                    </a>
+                                                    <a class="red" href="#">
+                                                        <i class="glyphicon glyphicon-trash bigger-130" aria-hidden="true"></i>
+                                                    </a>
+                                                    
+                                                </td>
+                                            </tr>
+                                          
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="modal-footer wizard-actions">
+                    
+                    <button type="button" class="btn btn-primary btn-sm "><i class="ace-icon fa fa-floppy-o bigger-110"></i>&nbsp; Guardar</button>
+
+                    <button class="btn btn-sm btn-prev">
+                        <i class="ace-icon fa fa-arrow-left"></i>
+                        Anterior
+                    </button>
+
+                    <button type="submit" id="siguiente"  class="btn btn-success btn-sm btn-next" data-last="Finish">
+                        Siguiente
+                        <i class="ace-icon fa fa-arrow-right icon-on-right"></i>
+                    </button>
+
+                    <button class="btn btn-danger btn-sm pull-left" data-dismiss="modal" ng-click="cerrarOTnuevo()">
+                        <i class="ace-icon fa fa-times"></i>
+                        Cancelar
+                    </button>
+                </div>
+                </form>
+            </div>
+        </div>
+    </div><!-- Fin dialog OT nuevo -->
+
+    <!-- Modal factura servicio externo -->
+    <div class="modal" id="dialog-factura-servicioExterno">
+        <div class="">
+            <div class="modal-content">
+                <div class="modal-header bg-primary">
+                    <h4 class='smaller text-white text-uppercase'><i class='fa fa-file-text'></i> <label>Factura/ Empresa ...</label></h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row flex-center">
+                        <div class="col-md-12">
+                            <form class="form-horizontal">
+                                <div class="form-group">
+                                    <label for="" class="col-sm-5 control-label text-primary">NIT</label>
+                                    <div class="col-sm-7">
+                                        <input type="text" class="form-control" id="">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="" class="col-sm-5 control-label text-primary">Razon Social</label>
+                                    <div class="col-sm-7">
+                                        <input type="text" class="form-control" id="">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="" class="col-sm-5 control-label text-primary">N° Factura</label>
+                                    <div class="col-sm-7">
+                                        <input type="text" class="form-control" id="">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="" class="col-sm-5 control-label text-primary">N° Autorización</label>
+                                    <div class="col-sm-7">
+                                        <input type="text" class="form-control" id="">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="" class="col-sm-5 control-label text-primary">Monto</label>
+                                    <div class="col-sm-7">
+                                        <input type="text" class="form-control" id="">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="" class="col-sm-5 control-label text-primary">Código de Control</label>
+                                    <div class="col-sm-7">
+                                        <input type="text" class="form-control" id="">
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary btn-sm" ng-click="cerrarDialogFacturaServicioExterno()">
+                        <i class="glyphicon glyphicon-print" aria-hidden="true"></i> Guardar Factura
+                    </button>
+                    
+                    <button type="button" class="btn btn-danger btn-sm" ng-click="cerrarDialogFacturaServicioExterno()">
+                        <i class="glyphicon glyphicon-remove" aria-hidden="true"></i> Salir
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Fin Modal factura servicio externo-->
+    <!-- Panel repuestos OT -->
+    <div class="modal" id="panel-repuestos-ot">
+        <div class="">
+            <div class="modal-content">
+                <div class="modal-header bg-primary">
+                    <h4 class='smaller text-white text-uppercase'><i class='fa fa-gift'></i> <label>Solicitud de Repuestos e Insumos</label></h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row flex-center">
+                        <div class="col-md-12">
+                            <div class="widget-box">
+                                <div class="widget-header">
+                                    <h4 class="widget-title">BUSQUEDA PRODUCTO</h4>
+                                </div>
+                                <div class="widget-body">
+                                    <div class="widget-main">
+                                        <table class="table table-striped table-bordered table-hover">
+                                                <thead>
+                                                    <tr>
+                                                        <th>
+                                                            <label>PRODUCTO</label>
+                                                        </th>
+                                                        <th>
+                                                            <label>CÓD. ITEM</label>
+                                                        </th>
+                                                        <th>
+                                                            <label>INVENTARIO DISPONIBLE</label>
+                                                        </th>
+                                                        <th style="width: 90px;">
+                                                            <label>CANT. (u)</label>
+                                                        </th>
+                                                        <th>
+                                                            <label>Valuado (Bs)</label>
+                                                        </th>
+                                                        <th>
+                                                            <label>ACC.</label>
+                                                        </th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td>
+                                                            <input   type="text"  placeholder="Ingrese el nombre del producto..." >
+                                                            <button  id="mostrar_inv" type="button" class="btn btn-info btn-sm">
+                                                                <i class="ace-icon fa fa-search-plus bigger-110"></i>
+                                                            </button>
+                                                        </td>
+                                                        <td>
+                                                            
+                                                        </td>
+                                                        <td>
+                                                            <div class="c100 p small circle-progress" >
+                                                                <span style="color:black !important;" ></span>
+                                                                <div class="slice">
+                                                                    <div class="bar"></div>
+                                                                    <div class="fill"></div>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <input type="number" class="form-control">
+                                                        </td>
+                                                        <td>
+                                                        </td>
+                                                        <td>
+                                                            <button  type="button"   class="btn btn-success btn-sm">
+                                                                <i class="ace-icon fa fa-plus bigger-110"></i>
+                                                            </button>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                    </div>
+                                </div>
+                            </div>
+                            <table id="dynamic-table" class="table table-striped table-bordered table-hover nowrap">
+                                <thead>
+                                    <tr>
+                                        <td>#</td>
+                                        <td>Producto</td>
+                                        <td>Codigo item</td>
+                                        <td>Cantidad</td>
+                                        <td>Valuado</td>
+                                        <td>Acciones</td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>1</td>
+                                        <td>pastillas</td>
+                                        <td>123-kfc</td>
+                                        <td>4</td>
+                                        <td>250 Bs</td>
+                                        <td>
+                                            <a class="green" href="#">
+                                                <i class="glyphicon glyphicon-pencil" aria-hidden="true"></i>
+                                            </a>
+                                            <a class="red" href="#">
+                                                <i class="glyphicon glyphicon-trash" aria-hidden="true"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                  
+                                    <tr>
+                                        <td colspan="3"></td>
+                                        <td >Total</td>
+                                        <td>250 Bs</td>
+                                        <td></td>
+                                    </tr>
+                                </tbody>
+                            </table>                            
+                        </div>
+                        
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary btn-sm" ng-click="cerrarDialogRepuestosOT()">
+                        <i class="glyphicon glyphicon-print" aria-hidden="true"></i> Guardar
+                    </button>
+                    
+                    <button type="button" class="btn btn-danger btn-sm" ng-click="cerrarDialogRepuestosOT()">
+                        <i class="glyphicon glyphicon-remove" aria-hidden="true"></i> Salir
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Fin panel repuestos OT-->
+</div>

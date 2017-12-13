@@ -1,0 +1,152 @@
+@font-face {
+  font-family: 'icomoon';
+  src:  url('fonts/icomoon.eot?k49lor');
+  src:  url('fonts/icomoon.eot?k49lor#iefix') format('embedded-opentype'),
+    url('fonts/icomoon.ttf?k49lor') format('truetype'),
+    url('fonts/icomoon.woff?k49lor') format('woff'),
+    url('fonts/icomoon.svg?k49lor#icomoon') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+
+[class^="icono-"], [class*=" icono-"] {
+  /* use !important to prevent issues with browser extensions that change fonts */
+  font-family: 'icomoon' !important;
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icono-alarma:before {
+  content: "\e927";
+}
+.icono-patologia:before {
+  content: "\e928";
+}
+.icono-pre3:before {
+  content: "\e925";
+}
+.icono-pre4:before {
+  content: "\e924";
+}
+.icono-pre2:before {
+  content: "\e926";
+}
+.icono-pre:before {
+  content: "\e929";
+}
+.icono-lupa-calendario:before {
+  content: "\e900";
+}
+.icono-fa-user:before {
+  content: "\e901";
+}
+.icono-fa-users:before {
+  content: "\e902";
+}
+.icono-fa-calculator:before {
+  content: "\e903";
+}
+.icono-fa-home:before {
+  content: "\e904";
+}
+.icono-fa-book:before {
+  content: "\e905";
+}
+.icono-fa-tachometer:before {
+  content: "\e906";
+}
+.icono-fa-bar-chart-o:before {
+  content: "\e907";
+}
+.icono-fa-briefcase:before {
+  content: "\e908";
+}
+.icono-fa-credit-card:before {
+  content: "\e909";
+}
+.icono-fa-newspaper-o:before {
+  content: "\e90a";
+}
+.icono-fa-road:before {
+  content: "\e90b";
+}
+.icono-fa-gift:before {
+  content: "\e90c";
+}
+.icono-fa-cogs:before {
+  content: "\e90d";
+}
+.icono-graficosv:before {
+  content: "\e90e";
+}
+.icono-diagnostico:before {
+  content: "\e90f";
+}
+.icono-credencial_salud:before {
+  content: "\e910";
+}
+.icono-ficha_medica:before {
+  content: "\e911";
+}
+.icono-consulta:before {
+  content: "\e912";
+}
+.icono-fa-filter:before {
+  content: "\e913";
+}
+.icono-fa-desktop:before {
+  content: "\e914";
+}
+.icono-fa-eye:before {
+  content: "\e915";
+}
+.icono-plan-de-cuentas:before {
+  content: "\e916";
+}
+.icono-comprobantes:before {
+  content: "\e917";
+}
+.icono-libro-mayor:before {
+  content: "\e918";
+}
+.icono-reportes-contables:before {
+  content: "\e919";
+}
+.icono-caja-chica:before {
+  content: "\e91a";
+}
+.icono-presupuestos:before {
+  content: "\e91b";
+}
+.icono-activos-fijos:before {
+  content: "\e91c";
+}
+.icono-recursos-humanos:before {
+  content: "\e91d";
+}
+.icono-mantenimiento:before {
+  content: "\e91e";
+}
+.icono-produccion:before {
+  content: "\e91f";
+}
+.icono-fa-lock:before {
+  content: "\e920";
+}
+.icono-laboratorio:before {
+  content: "\e921";
+}
+.icono-vacuna:before {
+  content: "\e922";
+}
+.icono-prerequisito:before {
+  content: "\e923";
+}

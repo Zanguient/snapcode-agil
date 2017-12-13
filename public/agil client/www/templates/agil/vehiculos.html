@@ -1,0 +1,2793 @@
+<div class="">
+    <div class="col-xs-12">
+        <!-- PAGE CONTENT BEGINS -->
+        <h2 class="text-primary">MANTENIMIENTO</h2>
+
+        <div class="row">
+            <div class="col-xs-12">
+                <!-- CAMBIAR A !aplicacion.puede_crear -->
+                <button ng-disabled="aplicacion.puede_crear" class="btn btn-primary" ng-click="abrirDialogInicioMantenimiento()">
+                <i class="ace-icon fa fa-plus align-top bigger-125"></i>
+                Nuevo OT
+            </button>
+
+                <br>
+                <br>
+                <form name="formularioFiltroVentas" novalidate ng-submit="paginator.getSearch(paginator.search,filtro,null)">
+                    <fieldset>
+                        <legend>Filtro mantenimiento</legend>
+                        <table class="table table-striped table-bordered table-hover table-block" align="center">
+                            <tbody>
+                                <tr>
+                                    <td class="no-border-right"></td>
+                                    <td>
+                                        <label>Desde</label>&nbsp;
+                                    </td>
+                                    <td>
+                                        <label>Hasta</label>&nbsp;
+                                    </td>
+                                    <td colspan="3">
+
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="no-border-right text-right">PERIODO</td>
+                                    <td>
+                                        <input required ng-update-hidden class="form-control date-picker" type="text" data-date-format="dd/mm/yyyy" id="fechainicio"
+                                            ng-model="filtro.inicio" placeholder="Ingrese la fecha inicial">
+
+                                    </td>
+                                    <td>
+                                        <input required ng-update-hidden class="form-control date-picker" type="text" data-date-format="dd/mm/yyyy" id="fechafin"
+                                            ng-model="filtro.fin" placeholder="Ingrese la fecha final">
+                                    </td>
+                                    <td colspan="3">
+                                        <button type="submit" 
+                                         class="btn btn-primary">
+                                    <i class="ace-icon fa fa-search  align-top bigger-125"></i>
+                                        Filtrar
+                                </button>
+                                        <button class="btn btn-danger btn-md">
+                                    <i class="ace-icon fa fa-print align-top bigger-125"></i>
+                                        PDF
+                                </button>
+                                        <button class="btn btn-success btn-md">
+                                    <i class="ace-icon fa fa-print bigger-125"></i>
+                                        Excel
+                                </button>
+                                        <button class="btn btn-info btn-md" ng-click="abrirOTCalendar()" id="id-btn-calendar">
+                                    <i class="ace-icon fa fa-calendar bigger-125"></i>
+                                        Agenda OT.
+                                </button>
+                                        <button class="btn btn-purple btn-md" ng-click="abrirBuscarMaquinaria()">
+                                    <i class="icono-ficha_medica icono-font bigger-125"></i>
+                                        Vehiculo/Maquinaria
+                                </button>
+
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="no-border-right"></td>
+                                    <td>
+                                        <label>Tipo de activo fijo
+                                    <br>
+                                    <small>VEHICULO/MAQUINARIA</small>		
+                                </label>&nbsp;
+                                    </td>
+                                    <td>
+                                        <label>Placa/Nº de Serie</label>&nbsp;
+                                    </td>
+                                    <td>
+                                        <label>Marca</label>&nbsp;
+                                    </td>
+                                    <td>
+                                        <label>Modelo</label>&nbsp;
+                                    </td>
+                                    <td>
+                                        <label>OT. Terminada</label>&nbsp;
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="no-border-right text-right">FILTRO</td>
+                                    <td>
+                                        <select id="sucursal" name="sucursal"  ng-model="filtro.tipo_activo" data-placeholder="Elija una sucursal" class="ng-pristine ng-untouched ng-valid ng-empty">
+                                    Filtro
+                                    <option ></option>
+                                    <option value="0">Vehiculo</option>
+                                    <option  value="3" >Maquinaria</option>
+                                </select>
+                                    </td>
+                                    <td>
+                                        <input type="text" ng-model="filtro.placa" class="ng-pristine ng-untouched ng-valid ng-empty">
+                                    </td>
+                                    <td>
+                                            <input type="text" ng-model="filtro.marca" class="ng-pristine ng-untouched ng-valid ng-empty">
+     <!--                                    <select id="pago" name="pago" ng-model="filtro.marca" data-placeholder="Elija un tipo de pago" class="ng-pristine ng-untouched ng-valid ng-empty">
+                                    <option value="? undefined:undefined ?"></option>
+                                    <option value="0">TODOS</option>
+                                    <option  value="17" class="ng-binding ng-scope">CONTADO</option> -->
+                                </select>
+                                    </td>
+                                    <td>
+                                        <input type="text" ng-model="filtro.modelo" class="ng-pristine ng-untouched ng-valid ng-empty">
+                                    </td>
+                                    <td>
+                                        <label>
+                                    <input name="switch-field-1" class="ace ace-switch ace-switch-5" type="checkbox">
+                                    <span class="lbl check-espaniol"></span>
+                                </label>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="no-border-right"></td>
+                                    <td>
+                                        <label>Año</label>&nbsp;
+                                    </td>
+                                    <td>
+                                        <label>Tipo de mantenimiento
+                                    <br>
+                                    <small>PREVENTIVO, CORRECTIVO, RUTINA</small>
+                                </label>&nbsp;
+                                    </td>
+                                    <td>
+                                        <label>Numero de OT.</label>&nbsp;
+                                    </td>
+                                    <td>
+                                        <label>Estado OT.</label>&nbsp;
+                                    </td>
+                                    <td>
+                                        <label>Campamento</label>&nbsp;
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="no-border-right text-right">FILTRO</td>
+                                    <td>
+                                        <input type="text" ng-model="filtro.anio" class="ng-pristine ng-untouched ng-valid ng-empty">
+                                    </td>
+                                    <td>
+                                        <select class="form-control" required id='id_tipo' ng-model='filtro.tipo_mantenimiento' data-placeholder="Click para escoger" class="col-sm5" ng-options="Tipo.nombre as Tipo.nombre for Tipo in tiposMantenimiento">                                    
+                                            <option value="0">Seleccionar</option>
+                                    </td>
+                                    <td>
+                                        <input type="number" ng-model="filtro.numero_ot" class="ng-pristine ng-untouched ng-valid ng-empty">
+                                    </td>
+                                    <td>
+                                        <input type="text" ng-model="filtro.estado_ot" class="ng-pristine ng-untouched ng-valid ng-empty">
+                                    </td>
+                                    <td>
+                                        <input type="text" ng-model="filtro.campamento" class="ng-pristine ng-untouched ng-valid ng-empty" placeholder="">
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </fieldset>
+                </form>
+                <div class="table-header">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <h4 class="widget-title">Lista de vehiculos</h4>
+                        </div>
+                        <div class="col-sm-5" ng-include src="'/templates/gral/fields-viewer.html'"></div>
+                    </div>
+                </div>
+                <!--lista de comprobanntes ng-repeat-->
+                <div>
+                    <div id="tabla-comprobamte_wrapper" class="dataTables_wrapper form-inline no-footer">
+                        <div class="row" ng-include src="'/templates/GRAL/paginator-header-1.html'">
+                        </div>
+                        <table id="tabla-comprobantes" class="table table-striped table-bordered table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Nro.</th>
+                                    <th ng-if="fieldViewer.getConfiguration().fecha.show"><a href="javascript:void(0)" ng-click="paginator.sortColumn('fecha_hora_aviso')">Fecha <span id="comprobante" class="sort fa fa-sort icon-only"></span></a></th>
+                                    <th ng-if="fieldViewer.getConfiguration().cod_usuario.show"><a href="javascript:void(0)" ng-click="paginator.sortColumn('codigo')">Cod. Usuario <span id="comprobante" class="sort fa fa-sort icon-only"></span></a></th>
+                                    <th ng-if="fieldViewer.getConfiguration().imagen.show"><a href="javascript:void(0)" ng-click="paginator.sortColumn('imagen')">Imagen <span id="comprobante" class="sort fa fa-sort icon-only"></span></a></th>
+                                    <th ng-if="fieldViewer.getConfiguration().ot.show">
+                                        <!-- <a href="javascript:void(0)" ng-click="paginator.sortColumn('ot')"> -->OT
+                                        <!-- <span id="comprobante" class="sort fa fa-sort icon-only"></span></a> --></th>
+                                    <th ng-if="fieldViewer.getConfiguration().estado_OT.show">
+                                        <!-- <a href="javascript:void(0)" ng-click="paginator.sortColumn('estado')"> -->Estado OT.
+                                        <!--  <span id="comprobante" class="sort fa fa-sort icon-only"></span></a> --></th>
+                                    <th ng-if="fieldViewer.getConfiguration().Tipo_de_activo.show">
+                                        <!-- <a href="javascript:void(0)" ng-click="paginator.sortColumn('comprobante')"> -->Tipo de activo
+                                        <!-- <span id="comprobante" class="sort fa fa-sort icon-only"></span></a> --></th>
+                                    <th ng-if="fieldViewer.getConfiguration().km.show">
+                                        <!-- <a href="javascript:void(0)" ng-click="paginator.sortColumn('km')"> -->Km
+                                        <!--  <span id="comprobante" class="sort fa fa-sort icon-only"></span></a> --></th>
+                                    <th ng-if="fieldViewer.getConfiguration().marca.show"><a href="javascript:void(0)" ng-click="paginator.sortColumn('marca')">Marca <span id="comprobante" class="sort fa fa-sort icon-only"></span></a></th>
+                                    <th ng-if="fieldViewer.getConfiguration().modelo.show"><a href="javascript:void(0)" ng-click="paginator.sortColumn('modelo')">Modelo <span id="comprobante" class="sort fa fa-sort icon-only"></span></a></th>
+                                    <th ng-if="fieldViewer.getConfiguration().anio.show"><a href="javascript:void(0)" ng-click="paginator.sortColumn('anio')">Año <span id="comprobante" class="sort fa fa-sort icon-only"></span></a></th>
+                                    <th ng-if="fieldViewer.getConfiguration().mantenimiento.show">
+                                        <!-- <a href="javascript:void(0)" ng-click="paginator.sortColumn('mantenimiento')"> -->Manteniminto
+                                        <!-- <span id="comprobante" class="sort fa fa-sort icon-only"></span></a> --></th>
+                                    <th ng-if="fieldViewer.getConfiguration().campamento.show">
+                                        <!-- <a href="javascript:void(0)" ng-click="paginator.sortColumn('campamento')"> -->Campamento
+                                        <!-- <span id="comprobante" class="sort fa fa-sort icon-only"></span></a> --></th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="vehiculo in vehiculos">
+                                    <td>{{$index+1}}</td>
+                                    <td ng-if="fieldViewer.getConfiguration().fecha.show">{{vehiculo.fecha_hora_aviso | date:"dd/MM/yyyy" }}</td>
+                                    <td ng-if="fieldViewer.getConfiguration().cod_usuario.show">sdfsdf</td>
+                                    <td ng-if="fieldViewer.getConfiguration().imagen.show">
+                                        <img src="{{vehiculo.imagen}}" width="70">
+                                    </td>
+                                    <td ng-if="fieldViewer.getConfiguration().ot.show" class="text-center">-</td>
+                                    <td ng-if="fieldViewer.getConfiguration().estado_OT.show" class="text-center">-</td>
+                                    <td ng-if="fieldViewer.getConfiguration().Tipo_de_activo.show">VEHICULO</td>
+                                    <td ng-if="fieldViewer.getConfiguration().km.show">10000</td>
+                                    <td ng-if="fieldViewer.getConfiguration().marca.show">{{vehiculo.marca}}</td>
+                                    <td ng-if="fieldViewer.getConfiguration().modelo.show">{{vehiculo.modelo}}</td>
+                                    <td ng-if="fieldViewer.getConfiguration().anio.show">{{vehiculo.anio}}</td>
+                                    <td ng-if="fieldViewer.getConfiguration().mantenimiento.show">{{vehiculo.nombre}}</td>
+                                    <td ng-if="fieldViewer.getConfiguration().campamento.show">REPSOL</td>
+                                    <td class="icons-table">
+                                        <div class="hidden-sm hidden-xs action-buttons">
+                                            <a class="btn-ot" ng-click="abrirOTEdicionCorrectivo(vehiculo)" id="id-btn-edicion-correctivo">OT</a>
+                                            <a class="green" ng-click="suma()">
+                                    <i class="icono-ficha_medica icono-font"></i>
+                                </a>
+                                            <a class="blue">
+                                    <i class="ace-icon glyphicon glyphicon-print bigger-130"></i>
+                                </a>
+                                            <a class="red" ng-click="abrirEditarHistorico()">
+                                    <i class="ace-icon fa fa-h-square bigger-130"></i>
+                                </a>
+                                            <a class="blue">
+                                    <i class="ace-icon fa fa-search-plus bigger-130"></i>
+                                </a>
+
+                                            <a class="red" href="#">
+                                    <i class="ace-icon fa fa-trash-o bigger-130"></i>
+                                </a>
+                                            <a class="text-warning orange">
+                                    <i class="icono-auto-gps icono-font"></i>
+                                </a>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                            </tbody>
+                        </table>
+                        <!--fin tabla comprobantes-->
+                        <div class="row" ng-include src="'/templates/GRAL/paginator.html'">
+                        </div>
+                    </div>
+                </div>
+               
+            </div>
+        </div>
+    </div>
+</div>
+<!-- FIN PANEL PRINCIPAL -->
+
+<!-- ORDEN DE TRABAJO EDICION CORRECTIVO -->
+<div class="container container-fluid" style="display:inline-block">
+    <div class="modal" id="dialog-edicion-correctivo">
+        <div class="container-fluid">
+            <div>
+                <button type="button" class="btn btn-danger btn-sm" ng-click="cerrarOTEdicionCorrectivo()" data-dismiss="modal">
+						<i class="glyphicon glyphicon-remove" aria-hidden="true"></i> Cancelar
+                    </button>
+                <button type="button" class="btn btn-primary btn-sm" ng-click="GuardarOtActializado()" data-dismiss="modal">
+						<i class="glyphicon glyphicon-remove" aria-hidden="true"></i> Guardar
+					</button>
+                <h4 class='smaller'><i class='fa fa-calendar  '></i> <label>Registro/edición Orden de Trabajo</label></h4>
+
+            </div>
+            <div class="row">
+                <div class="col-md-3">
+                    <h5 class="text-uppercase">Sistema {{vehiculo.tipoMantenimiento.nombre}}
+                        <!--  <a class="green">
+                            <i class="ace-icon fa fa-pencil bigger-130"></i>
+                        </a> -->
+                    </h5>
+                    <!-- <h5 class="text-uppercase">Sistema Motor
+                        <a class="green">
+                            <i class="ace-icon fa fa-pencil bigger-130"></i>
+                        </a>
+                    </h5> -->
+                    <br>
+                    <form action="">
+                        <label class="text-uppercase text-primary">Observaciones</label><br>
+                        <textarea name="" id="" cols="30" rows="4">{{vehiculo.observacion}}</textarea>
+                        <br>
+                        <br>
+                        <label class="text-uppercase text-primary">Diagnóstico taller</label><br>
+                        <textarea name="" id="" cols="30" rows="4">{{vehiculo.diagnostico}}</textarea>
+                        <br>
+                        <br>
+                        <label class="text-uppercase text-primary">Prioridad</label>
+                        <select class="form-control" ng-model='vehiculo.id_prioridad' data-placeholder="Click para escoger" class="col-sm5" ng-options="Tipo.id as Tipo.nombre for Tipo in tiposPrioridad">                                    
+                                                <option value="">Seleccionar</option>
+                                </select>
+                        <br>
+                        <br>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label class="text-uppercase ">Aviso</label><br>
+                                <label class="text-uppercase text-primary small" for="">Fecha</label>
+                                <input required ng-update-hidden class="form-control date-timepicker" type="text" id="fechafin" ng-model="vehiculo.fecha_hora_aviso ">
+
+                            </div>
+                            <div class="col-md-12">
+                                <label class="text-uppercase ">Inicio Labores</label><br>
+                                <label class="text-uppercase text-primary small" for="">Fecha</label>
+                                <input required ng-update-hidden class="form-control date-timepicker" type="text" id="fechafin" ng-model="vehiculo.fecha_hora_inicio ">
+
+                            </div>
+                            <div class="col-md-12">
+                                <label class="text-uppercase ">Fin Labores</label><br>
+                                <label class="text-uppercase text-primary small" for="">Fecha</label>
+                                <input required ng-update-hidden class="form-control date-timepicker" type="text" id="fechafin" ng-model="vehiculo.fecha_hora_fin ">
+
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="col-md-9">
+                    <h5 class="text-uppercase">Materiales - Almacen</h5>
+                    <br>
+                    <label class="text-uppercase text-primary">Busqueda de producto </label>
+                    <a class="green" ng-click="abrirBusquedaProducto()">
+                        <i class="glyphicon glyphicon-search" aria-hidden="true"></i>
+                    </a>
+                    <a class="blue" ng-click="abrirDialogRepuestosOT()">
+                        <i class="glyphicon glyphicon-plus" aria-hidden="true"></i>
+                    </a>
+                    <br>
+                    <div class="table-header">Detalle del producto</div>
+                    <table id="dynamic-table" class="table table-striped table-bordered table-hover nowrap">
+                        <thead>
+                            <tr>
+                                <td>#</td>
+                                <td>Producto</td>
+                                <td>Codigo item</td>
+                                <td>Cantidad</td>
+                                <td>Acciones</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="material in vehiculo.materiales">
+                                <td>{{$indexx+1}}</td>
+                                <td>{{material.producto.nombre}}</td>
+                                <td>{{material.producto.codigo}}</td>
+                                <td>{{material.cantidad}}</td>
+                                <td>
+                                    <a class="red" ng-click="eliminarProductoVehiculo()">
+                                        <i class="glyphicon glyphicon-trash" aria-hidden="true"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <br>
+
+                    <br>
+                    <div class="table-header">Servicio Externo</div>
+                    <br>
+                    <div class="row flex-center">
+
+                        <div class="col-md-4">
+                            <label class="" for="">Empresa: </label>
+                            <input type="text" ng-model="servicioExterno.empresa" class="form-control">
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="text-uppercase text-primary" for="">Inicio</label>
+                            <input required ng-update-hidden format: 'dd/mm/yyyy' class="form-control date-timepicker" type="text" id="fechafin" ng-model="servicioExterno.fecha_inicio ">
+
+
+                        </div>
+                        <div class="col-md-4">
+                            <label class="text-uppercase text-primary" for="">Fin</label>
+                            <input required ng-update-hidden class="form-control date-timepicker" type="text" id="fechafin" ng-model="servicioExterno.fecha_fin ">
+
+                        </div>
+                        <div class="col-md-3">
+                            <label class="" for="">Servicio: </label>
+                            <input type="text" ng-model="servicioExterno.servicio" class="form-control">
+                        </div>
+                        <div class="col-md-2">
+                            <br>
+                            <a ng-show="!servicioExterno.edit" class="btn btn-sm btn-success" ng-click="agregarServicioExternoVehiculo(servicioExterno)">
+                                    <i class="ace-icon fa fa-plus">Agregar</i>
+                                </a>
+                            <a ng-show="servicioExterno.edit" class="btn btn-sm btn-primary" ng-click="guardarServicioExternoEditado(servicioExterno)">
+                                    <i class="ace-icon fa fa-plus">Editar</i>
+                                </a>
+                        </div>
+
+                    </div>
+                    <br>
+                    <table id="dynamic-table" class="table table-striped table-bordered table-hover nowrap">
+                        <thead>
+                            <tr>
+                                <td>#</td>
+                                <td>Empresa</td>
+                                <td>Servicio</td>
+                                <td>Fecha Inicio</td>
+                                <td>Fecha Fin</td>
+                                <td>Factura</td>
+                                <td>Acciones</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-if="!servicio.eliminado" ng-repeat="servicio in vehiculo.serviciosExternos">
+                                <td>{{$index+1}}</td>
+                                <td>{{servicio.empresa}}</td>
+                                <td>{{servicio.servicio}}</td>
+                                <td>{{servicio.fecha_inicio | date:'MM/dd/yyyy h:mm a'}}</td>
+                                <td>{{servicio.fecha_fin | date:'MM/dd/yyyy h:mm a'}}</td>
+                                <td></td>
+                                <td>
+                                    <a href="javascript:void(0)" ng-click="abrirDialogFacturaServicioExterno()" class="orange">
+                                                    <i class="ace-icon fa fa-file-text bigger-130"></i>
+                                                </a>
+                                    <a class="blue">
+                                                    <i class="ace-icon glyphicon glyphicon-print bigger-130"></i>
+                                                </a>
+                                    <a class="green" ng-click="editarServicioExterno(servicio,$index)">
+                                                    <i class="glyphicon glyphicon-pencil bigger-130" aria-hidden="true"></i>
+                                                </a>
+                                    <a class="red" ng-click="eliminarServicioExternoVehiculo($index)">
+                                                    <i class="glyphicon glyphicon-trash bigger-130" aria-hidden="true" ></i>
+                                                </a>
+
+                                </td>
+                            </tr>
+
+                        </tbody>
+                    </table>
+                    <br>
+                    <div class="table-header">
+                        <a class="btn btn-minier btn-success" href="#">
+                            <i class="ace-icon fa fa-plus"></i>
+                        </a> Hoja de ruta
+                    </div>
+                    <br>
+                    <div class="row flex-center">
+                        <div class="form-group">
+
+                            <div class="col-md-3">
+                                <label class="text-uppercase text-primary" for="">Especialidad 1:</label>
+                                <select class="form-control text-uppercase" ng-model='ordenTrabajoManoObra.especialidad' data-placeholder="Click para escoger"
+                                    class="col-sm5" ng-options="Tipo as Tipo.nombre for Tipo in tiposEspecialidad">                                    
+                                </select>
+
+                            </div>
+                            <div class="col-md-3">
+                                <label class="text-uppercase text-primary" for="">Encargado</label>
+
+                                <div class="input-group">
+
+
+                                    <input class="form-control" ng-keypress="interceptarTecla($event,'cantidad',true)" id="{{$index}}-As" name="{{$index}}-As"
+                                        required type="text" ng-model="ordenTrabajoManoObra.encargado" placeholder="Encargado..."
+                                        uib-typeahead="encargado as (encargado.nombres+'-'+encargado.apellido_paterno+'-'+encargado.apellido_materno) for encargado in buscarEncargado($viewValue)"
+                                        typeahead-wait-ms="1000" typeahead-template-url="templates/autocompletar.html" typeahead-show-hint="false"
+                                        typeahead-on-select="establecerEncargado($item, $model, $label, $event)" typeahead-min-length="3">
+                                    <span class="input-group-btn">
+                                                
+                                                <a href="#" class="btn btn-sm button-search">
+                                                    <span class="ace-icon green fa fa-search icon-on-right bigger-110"></span>
+                                    </a>
+                                    </span>
+                                </div>
+
+                            </div>
+                            <div class="col-md-3">
+                                <label class="text-uppercase text-primary" for="">Inicio</label>
+                                <input required ng-update-hidden class="form-control date-timepicker" type="text" id="fechaInicio" ng-model="ordenTrabajoManoObra.fecha_inicio ">
+
+
+                            </div>
+                            <div class="col-md-3">
+                                <label class="text-uppercase text-primary" for="">Fin</label>
+                                <input required ng-update-hidden class="form-control date-timepicker" type="text" id="fechafin" ng-model="ordenTrabajoManoObra.fecha_fin ">
+                            </div>
+
+                        </div>
+                        <div class="form-group">
+                            <div class="col-md-9">
+                                <label class="text-uppercase text-primary" for="">Diagnóstico Especialidad</label>
+                                <textarea name="" class="form-control" cols="30" rows="2" ng-model="ordenTrabajoManoObra.diagnostico" rows="1"></textarea>
+                            </div>
+                            <div ng-show="!ordenTrabajoManoObra.edit" class="col-md-3">
+                                <br>
+                                <a class="btn btn-sm btn-success" ng-click="agregarManoDeObraVehiculo(ordenTrabajoManoObra)">
+                                            <i class="ace-icon fa fa-plus">Agregar</i>
+                                        </a>
+
+                            </div>
+                            <div ng-show="ordenTrabajoManoObra.edit" class="col-md-3">
+                                <br>
+
+                                <a class="btn btn-sm btn-primary" ng-click="guardarManoObraEditadaVehiculo(ordenTrabajoManoObra)">
+                                            <i class="ace-icon fa fa-plus">Editar</i>
+                                        </a>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <br>
+                            <label class="text-uppercase text-primary">Busqueda de encargado</label>
+                            <a class="green" ng-click="abrirBusquedaEncargado()">
+                        <i class="glyphicon glyphicon-search" aria-hidden="true"></i>
+                    </a>
+                            <a class="blue" href="#">
+                        <i class="glyphicon glyphicon-plus" aria-hidden="true"></i>
+                    </a>
+
+                            <table class="table table-striped table-bordered table-hover">
+                                <thead>
+                                    <tr>
+
+                                        <td>Apellido/Nombre</td>
+                                        <td>Cargo</td>
+                                        <td>Area de operacion</td>
+                                        <td>Fecha inicio</td>
+                                        <td>Fecha fin</td>
+                                        <td>Nro. de horas</td>
+                                        <td>Diagnostico</td>
+
+                                        <td>Acciones</td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr ng-if="!manoDeObra.eliminado" ng-repeat="manoDeObra in vehiculo.manosDeObra">
+
+                                        <td>{{manoDeObra.encargado.nombre_completo}}</td>
+                                        <td>{{manoDeObra.especialidad.nombre}}</td>
+                                        <td>Taller mecanico</td>
+                                        <td>{{manoDeObra.fecha_inicio | date:'MM/dd/yyyy h:mm a'}}</td>
+                                        <td>{{manoDeObra.fecha_fin | date:'MM/dd/yyyy h:mm a'}}</td>
+                                        <td>{{manoDeObra.horas}}</td>
+                                        <td>{{manoDeObra.diagnostico}}</td>
+
+                                        <td>
+                                            <a class="green">
+                                                    <i class="glyphicon glyphicon-pencil" aria-hidden="true" ng-click="editarManoObra(manoDeObra,$index)"></i>
+                                                </a>
+                                            <a class="red">
+                                                    <i class="glyphicon glyphicon-trash" ng-click="eliminarManoDeObraVehiculo($index)" aria-hidden="true"></i>
+                                                </a>
+                                        </td>
+                                    </tr>
+                                </tbody>
+
+                            </table>
+                        </div>
+                        <br>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL MANTENIMIENTO CORRECTIVO -->
+    <div class="container container-fluid" style="display:inline-block">
+        <div class="modal" id="dialog-mantenimiento-correctivo">
+            <table id="dynamic-table" class="table table-striped table-bordered table-hover nowrap">
+                <thead>
+                    <tr>
+                        <th>Nro.</th>
+                        <th>Fecha</th>
+                        <th>Cod. Usuario</th>
+                        <th>Tipo de activo</th>
+                        <th class="text-primary">Km</th>
+                        <th>Marca</th>
+                        <th>Modelo</th>
+                        <th>Año</th>
+                        <th>Campamento</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>11/09/17</td>
+                        <td>Escalera123</td>
+                        <td>VEHICULO</td>
+                        <td class="text-primary">10000</td>
+                        <td>TOYOTA</td>
+                        <td>HILUX</td>
+                        <td>99</td>
+                        <td>REPSOL</td>
+                        <td>
+                            <div class="hidden-sm hidden-xs action-buttons">
+                                <a class="btn-ot" href="#">OT</a>
+                                <a class="green" href="#" id="id-btn-edicion-correctivo">
+                                <i class="ace-icon fa fa-pencil bigger-130"></i>
+                            </a>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>11/09/17</td>
+                        <td>Escalera123</td>
+                        <td>VEHICULO</td>
+                        <td class="text-primary">10000</td>
+                        <td>TOYOTA</td>
+                        <td>HILUX</td>
+                        <td>99</td>
+                        <td>REPSOL</td>
+                        <td>
+                            <div class="hidden-sm hidden-xs action-buttons">
+                                <a class="btn-ot" href="#">OT</a>
+                                <a class="green" href="#">
+                                <i class="ace-icon fa fa-pencil bigger-130"></i>
+                            </a>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <!-- Modal Editar historico -->
+    <div class="container container-fluid" style="display:inline-block">
+        <div class="modal" id="dialog-editar-historico" role="dialog">
+            <div class="modal-dialog fluid-dialog-xs" role="document">
+                <div class="modal-content">
+                    <div class="modal-header bg-primary">
+                        <h4 class='smaller text-white text-uppercase'><i class='glyphicon glyphicon-ok'></i> <label> &nbsp; Historial</label></h4>
+                    </div>
+                    <div class="modal-body">
+                        <form class="form-horizontal">
+                            <div class="container-fluid">
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        Desde
+                                        <input class="form-control" type="date">
+                                    </div>
+                                    <div class="col-sm-6">
+                                        Hasta
+                                        <input class="form-control" type="date">
+                                    </div>
+                                </div>
+                                <br>
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <table class="table table-striped table-bordered">
+                                            <thead>
+                                                <tr>
+                                                    <td>Fecha</td>
+                                                    <td>Acciones</td>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>10/05/18</td>
+                                                    <td>
+                                                        <a class="red" href="#">
+                                            <i class="ace-icon glyphicon glyphicon-print bigger-130"></i>
+                                        </a>
+                                                        <a class="blue" href="#">
+                                            <i class="ace-icon fa fa-search-plus bigger-130"></i>
+                                        </a>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>10/05/18</td>
+                                                    <td>
+                                                        <a class="red" href="#">
+                                            <i class="ace-icon glyphicon glyphicon-print bigger-130"></i>
+                                        </a>
+                                                        <a class="blue" href="#">
+                                            <i class="ace-icon fa fa-search-plus bigger-130"></i>
+                                        </a>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>10/05/18</td>
+                                                    <td>
+                                                        <a class="red" href="#">
+                                            <i class="ace-icon glyphicon glyphicon-print bigger-130"></i>
+                                        </a>
+                                                        <a class="blue" href="#">
+                                            <i class="ace-icon fa fa-search-plus bigger-130"></i>
+                                        </a>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>10/05/18</td>
+                                                    <td>
+                                                        <a class="red" href="#">
+                                            <i class="ace-icon glyphicon glyphicon-print bigger-130"></i>
+                                        </a>
+                                                        <a class="blue" href="#">
+                                            <i class="ace-icon fa fa-search-plus bigger-130"></i>
+                                        </a>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>10/05/18</td>
+                                                    <td>
+                                                        <a class="red" href="#">
+                                            <i class="ace-icon glyphicon glyphicon-print bigger-130"></i>
+                                        </a>
+                                                        <a class="blue" href="#">
+                                            <i class="ace-icon fa fa-search-plus bigger-130"></i>
+                                        </a>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary btn-sm">
+						<i class="glyphicon glyphicon-print" aria-hidden="true"></i> Pdf
+					</button>
+                        <button type="button" class="btn btn-danger btn-sm" ng-click="cerrarEditarHistorico()" data-dismiss="modal">
+						<i class="glyphicon glyphicon-remove" aria-hidden="true"></i> Cancelar
+					</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL NUEVO MANTINIMIENTO VEHICULO -->
+    <div class="container container-fluid" style="display:inline-block">
+        <div class="modal" id="dialog-iniciar-mantenimiento2">
+            <div class="modal-dialog fluid-dialog-sm">
+                <div class="modal-content">
+                    <div class="modal-header bg-primary">
+                        <h4 class='smaller text-white text-uppercase'><i class='glyphicon glyphicon-log-in'></i> <label> &nbsp; Mantenimiento de vehículo</label></h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row flex-center">
+                            <div class="col-md-9">
+                                <form class="form-horizontal">
+                                    <div class="form-group">
+                                        <label for="" class="col-sm-5 control-label text-primary">Nro. de placa/Nro. de serie</label>
+                                        <div class="col-sm-7">
+                                            <input type="text" class="form-control" id="">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="" class="col-sm-5 control-label text-primary">Kilometraje</label>
+                                        <div class="col-sm-7">
+                                            <input type="number" class="form-control" id="">
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="col-sm-3">
+                                <div class="logo-login">
+                                    <img src="assets/images/vehiculo.png" alt="">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-warning btn-sm" ng-click='abrirReportarIncidente()'>
+                    <i class="glyphicon glyphicon-info-sign" aria-hidden="true"></i> Reportar incidente
+                </button>
+                        <button type="button" class="btn btn-primary btn-sm" ng-click="abrirCheckListDiario()">
+                    <i class="glyphicon glyphicon-ok" aria-hidden="true"></i> Checklist diario
+                </button>
+                        <button type="button" class="btn btn-success btn-sm" ng-click="abrirCheckListMensual()">
+                    <i class="glyphicon glyphicon-ok" aria-hidden="true"></i> Checklist mensual
+                </button>
+                        <button type="button" class="btn btn-danger btn-sm" ng-click="cerrarNuevoMantenimiento()" data-dismiss="modal">
+                    <i class="glyphicon glyphicon-remove" aria-hidden="true"></i> Salir
+                </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Reportar incidente-->
+    <div class="container container-fluid" style="display:inline-block">
+        <div class="modal" id="modal-reportar-incidente" role="dialog">
+            <div class="modal-dialog fluid-dialog-sm" role="document">
+                <div class="modal-content">
+                    <div class="modal-header bg-yellow">
+                        <h4 class='smaller text-white text-uppercase'><i class='fa fa-info-circle'></i> <label> &nbsp; Reporte de incidente de vehiculo</label></h4>
+                    </div>
+                    <div class="modal-body">
+                        <form class="form-horizontal">
+                            <div class="container-fluid">
+                                <div class="row">
+                                    <div class="col-sm-4">
+                                        <h5 class="text-uppercase text-primary">Vehiculo</h5>
+                                        <h4 class="">Toyota Hilux Blanca</h4>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <h5 class="text-uppercase text-primary">Placa</h5>
+                                        <h4>1598-MNF</h4>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <img src="assets/images/auto.jpg" alt="">
+                                    </div>
+                                </div>
+                                <br>
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <h5 class="text-uppercase text-primary">Sistema Principal</h5>
+                                        <select id="sistemas-vehiculos" class="multiselect" multiple="">
+										<option>Motor</option>
+										<option>Tren Propulsor</option>
+										<option>Rines, llantas y frenos</option>
+										<option>Suspencion del auto</option>
+										<option>Direccion</option>
+										<option>Sistema electrico</option>
+										<option>Carroceria y chasis</option>
+                                    </select>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <h5 class="text-uppercase text-primary">Observaciones</h5>
+                                        <textarea name="" id="" cols="30" rows="5">RINES, LLANTAS Y FRENOS: Suena el freno &nbsp; DIRECCIÓN: la direccion no gira facil</textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary btn-sm" ng-click="abrirEditarHistorico()">
+						<i class="glyphicon glyphicon-file" aria-hidden="true"></i> Historico
+					</button>
+                        <button type="button" class="btn btn-warning btn-sm">
+						<i class="glyphicon glyphicon-info-sign" aria-hidden="true"></i> Reportar
+					</button>
+                        <button type="button" class="btn btn-danger btn-sm" ng-click="cerrarReportarIncidente()" data-dismiss="modal">
+						<i class="glyphicon glyphicon-remove" aria-hidden="true"></i> Cerrar
+					</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal Checklist diario-->
+    <div class="container container-fluid" style="display:inline-block">
+        <div class="modal" id="modal-checklist-diario" role="dialog">
+            <div class="modal-dialog fluid-dialog-sm" role="document">
+                <div class="modal-content">
+                    <div class="modal-header bg-green">
+                        <h4 class='smaller text-white text-uppercase'><i class='glyphicon glyphicon-ok'></i> <label> &nbsp; Checklist Diario</label></h4>
+                    </div>
+                    <div class="modal-body">
+                        <form class="form-horizontal">
+                            <div class="container-fluid">
+                                <div class="row">
+                                    <div class="col-sm-4">
+                                        <h5 class="text-uppercase text-primary">Vehiculo</h5>
+                                        <h4 class="">Toyota Hilux Blanca</h4>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <h5 class="text-uppercase text-primary">Placa</h5>
+                                        <h4>1598-MNF</h4>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <img src="assets/images/auto.jpg" alt="">
+                                    </div>
+                                </div>
+                                <br>
+                                <div class="row">
+                                    <div class="col-sm-4">
+                                        <h5 class="text-uppercase text-primary">Actual Km</h5>
+                                        <input type="number" placeholder="000000" class="form-control">
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <h5 class="text-uppercase text-primary">Tanque de gasolina</h5>
+                                        <div class="center">
+                                            <div class="knob-container-inline">
+                                                <span class="gauge-control-start bg-red">E</span>
+                                                <input type="text" class="input-small knob" value="41" data-min="0" data-max="100" data-width="80" data-height="80" data-thickness=".2"
+                                                    data-fgcolor="#438EB9" data-displayprevious="true" data-anglearc="135" data-angleoffset="-68">
+                                                <span class="gauge-control-end bg-primary">F</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <br>
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <h5 class="text-uppercase text-primary">
+                                            <a class="btn btn-minier btn-success" ng-click="abrirEditarCheckList()">
+                                            <i class="ace-icon fa fa-plus"></i>
+                                        </a> Vista 360
+                                        </h5>
+                                        <ul class="vista-360">
+                                            <li>
+                                                <a href="#" class="green" ng-click="abrirEditarItemList()">
+                                                <i class="ace-icon glyphicon glyphicon-pencil"></i>
+                                            </a>
+                                                <span>&nbsp; Rayas</span>
+                                                <label>
+												<input name="switch-field-1" class="ace ace-switch ace-switch-5" type="checkbox" checked="checked">
+												<span class="lbl check-espaniol"></span>
+											</label>
+                                            </li>
+                                            <li>
+                                                <a href="" class="green">
+                                                <i class="ace-icon glyphicon glyphicon-pencil"></i>
+                                            </a>
+                                                <span>&nbsp; Llantas</span>
+                                                <label>
+												<input name="switch-field-1" class="ace ace-switch ace-switch-5" type="checkbox" checked="checked">
+												<span class="lbl check-espaniol"></span>
+											</label>
+                                            </li>
+                                            <li>
+                                                <a href="" class="green">
+                                                <i class="ace-icon glyphicon glyphicon-pencil"></i>
+                                            </a>
+                                                <span>&nbsp; Bateria</span>
+                                                <label>
+												<input name="switch-field-1" class="ace ace-switch ace-switch-5" type="checkbox" checked="checked">
+												<span class="lbl check-espaniol"></span>
+											</label>
+                                            </li>
+                                            <li>
+                                                <a href="" class="green">
+                                                <i class="ace-icon glyphicon glyphicon-pencil"></i>
+                                            </a>
+                                                <span>&nbsp; Agua</span>
+                                                <label>
+												<input name="switch-field-1" class="ace ace-switch ace-switch-5" type="checkbox" checked="checked">
+												<span class="lbl check-espaniol"></span>
+											</label>
+                                            </li>
+                                            <li>
+                                                <a href="" class="green">
+                                                <i class="ace-icon glyphicon glyphicon-pencil"></i>
+                                            </a>
+                                                <span>&nbsp; Golpes</span>
+                                                <label>
+												<input name="switch-field-1" class="ace ace-switch ace-switch-5" type="checkbox" checked="checked">
+												<span class="lbl check-espaniol"></span>
+											</label>
+                                            </li>
+                                            <li>
+                                                <a href="" class="green">
+                                                <i class="ace-icon glyphicon glyphicon-pencil"></i>
+                                            </a>
+                                                <span>&nbsp; Luces</span>
+                                                <label>
+												<input name="switch-field-1" class="ace ace-switch ace-switch-5" type="checkbox" checked="checked">
+												<span class="lbl check-espaniol"></span>
+											</label>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-8">
+                                    <h5 class="text-uppercase text-primary">Observaciones</h5>
+                                    <textarea name="" id="" cols="30" rows="3">RINES, LLANTAS Y FRENOS: Suena el freno &nbsp; DIRECCIÓN: la direccion no gira facil</textarea>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="modal-footer">
+                        <a class="btn btn-primary btn-sm" ng-click="abrirEditarHistorico()">
+                        <i class="glyphicon glyphicon-file" aria-hidden="true"></i> Historico
+                    </a>
+                        <button type="button" class="btn btn-success btn-sm">
+                            <i class="glyphicon glyphicon-info-sign" aria-hidden="true"></i> Reportar
+                        </button>
+                        <button type="button" class="btn btn-danger btn-sm" ng-click="cerrarCheckListDiario()" data-dismiss="modal">
+                            <i class="glyphicon glyphicon-remove" aria-hidden="true"></i> Cerrar
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <!-- Modal Checklist mensual-->
+    <div class="container container-fluid" style="display:inline-block">
+        <div class="modal" id="modal-checklist-mensual" role="dialog">
+            <div class="modal-dialog fluid-dialog-sm" role="document">
+                <div class="modal-content">
+                    <div class="modal-header bg-green">
+                        <h4 class='smaller text-white text-uppercase'><i class='glyphicon glyphicon-ok'></i> <label> &nbsp; Checklist Mensual</label></h4>
+                    </div>
+                    <div class="modal-body">
+                        <form class="form-horizontal">
+                            <div class="container-fluid">
+                                <div class="row">
+                                    <div class="col-sm-4">
+                                        <h5 class="text-uppercase text-primary">Km actual</h5>
+                                        <input class="form-control" type="number" placeholder="000000">
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <h5 class="text-uppercase text-primary">
+                                            <a href="#" class="green" ng-click="abrirProxMantenimientoVehiculos()">
+                                            <i class="ace-icon glyphicon glyphicon-pencil"></i>
+                                        </a> Próx. mant. en km
+                                        </h5>
+                                        <input class="form-control" type="number" placeholder="000000">
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <img src="assets/images/auto.jpg" alt="">
+                                    </div>
+                                </div>
+                                <br>
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <h5 class="text-uppercase text-primary">
+                                            <a class="btn btn-minier btn-success" ng-click="abrirEditarCheckList()">
+                                            <i class="ace-icon fa fa-plus"></i>
+                                        </a> Mantenimiento</h5>
+                                        <ul class="vista-360">
+                                            <li>
+                                                <a href="#" class="green" ng-click="abrirEditarItemList()">
+                                                <i class="ace-icon glyphicon glyphicon-pencil"></i>
+                                            </a>
+                                                <span>&nbsp; Medidor de nivel de aceite</span>
+                                                <label>
+												<input name="switch-field-1" class="ace ace-switch ace-switch-5" type="checkbox" checked="checked">
+												<span class="lbl check-espaniol"></span>
+											</label>
+                                            </li>
+                                            <li>
+                                                <a href="" class="green">
+                                                <i class="ace-icon glyphicon glyphicon-pencil"></i>
+                                            </a>
+                                                <span>&nbsp; Llantas</span>
+                                                <label>
+												<input name="switch-field-1" class="ace ace-switch ace-switch-5" type="checkbox" checked="checked">
+												<span class="lbl check-espaniol"></span>
+											</label>
+                                            </li>
+                                            <li>
+                                                <a href="" class="green">
+                                                <i class="ace-icon glyphicon glyphicon-pencil"></i>
+                                            </a>
+                                                <span>&nbsp; Correa de distribución</span>
+                                                <label>
+												<input name="switch-field-1" class="ace ace-switch ace-switch-5" type="checkbox" checked="checked">
+												<span class="lbl check-espaniol"></span>
+											</label>
+                                            </li>
+                                            <li>
+                                                <a href="" class="green">
+                                                <i class="ace-icon glyphicon glyphicon-pencil"></i>
+                                            </a>
+                                                <span>&nbsp; Agua</span>
+                                                <label>
+												<input name="switch-field-1" class="ace ace-switch ace-switch-5" type="checkbox" checked="checked">
+												<span class="lbl check-espaniol"></span>
+											</label>
+                                            </li>
+                                            <li>
+                                                <a href="" class="green">
+                                                <i class="ace-icon glyphicon glyphicon-pencil"></i>
+                                            </a>
+                                                <span>&nbsp; Golpes</span>
+                                                <label>
+												<input name="switch-field-1" class="ace ace-switch ace-switch-5" type="checkbox" checked="checked">
+												<span class="lbl check-espaniol"></span>
+											</label>
+                                            </li>
+                                            <li>
+                                                <a href="" class="green">
+                                                <i class="ace-icon glyphicon glyphicon-pencil"></i>
+                                            </a>
+                                                <span>&nbsp; Luces</span>
+                                                <label>
+												<input name="switch-field-1" class="ace ace-switch ace-switch-5" type="checkbox" checked="checked">
+												<span class="lbl check-espaniol"></span>
+											</label>
+                                            </li>
+                                            <li>
+                                                <a href="" class="green">
+                                                <i class="ace-icon glyphicon glyphicon-pencil"></i>
+                                            </a>
+                                                <span>&nbsp; Caja de cambios</span>
+                                                <label>
+												<input name="switch-field-1" class="ace ace-switch ace-switch-5" type="checkbox" checked="checked">
+												<span class="lbl check-espaniol"></span>
+											</label>
+                                            </li>
+                                            <li>
+                                                <a href="" class="green">
+                                                <i class="ace-icon glyphicon glyphicon-pencil"></i>
+                                            </a>
+                                                <span>&nbsp; Llantas</span>
+                                                <label>
+												<input name="switch-field-1" class="ace ace-switch ace-switch-5" type="checkbox" checked="checked">
+												<span class="lbl check-espaniol"></span>
+											</label>
+                                            </li>
+                                            <li>
+                                                <a href="" class="green">
+                                                <i class="ace-icon glyphicon glyphicon-pencil"></i>
+                                            </a>
+                                                <span>&nbsp; Bateria</span>
+                                                <label>
+												<input name="switch-field-1" class="ace ace-switch ace-switch-5" type="checkbox" checked="checked">
+												<span class="lbl check-espaniol"></span>
+											</label>
+                                            </li>
+                                            <li>
+                                                <a href="" class="green">
+                                                <i class="ace-icon glyphicon glyphicon-pencil"></i>
+                                            </a>
+                                                <span>&nbsp; Agua</span>
+                                                <label>
+												<input name="switch-field-1" class="ace ace-switch ace-switch-5" type="checkbox" checked="checked">
+												<span class="lbl check-espaniol"></span>
+											</label>
+                                            </li>
+                                            <li>
+                                                <a href="" class="green">
+                                                <i class="ace-icon glyphicon glyphicon-pencil"></i>
+                                            </a>
+                                                <span>&nbsp; Golpes</span>
+                                                <label>
+												<input name="switch-field-1" class="ace ace-switch ace-switch-5" type="checkbox" checked="checked">
+												<span class="lbl check-espaniol"></span>
+											</label>
+                                            </li>
+                                            <li>
+                                                <a href="" class="green">
+                                                <i class="ace-icon glyphicon glyphicon-pencil"></i>
+                                            </a>
+                                                <span>&nbsp; Luces</span>
+                                                <label>
+												<input name="switch-field-1" class="ace ace-switch ace-switch-5" type="checkbox" checked="checked">
+												<span class="lbl check-espaniol"></span>
+											</label>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-8">
+                                    <h5 class="text-uppercase text-primary">Observaciones</h5>
+                                    <textarea name="" id="" cols="30" rows="3">RINES, LLANTAS Y FRENOS: Suena el freno &nbsp; DIRECCIÓN: la direccion no gira facil</textarea>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <a class="btn btn-primary btn-sm" ng-click="abrirEditarHistorico()">
+                            <!--href="assets/docs/pdf-prit.pdf" target="_blank" -->
+                            <i class="glyphicon glyphicon-file" aria-hidden="true"></i> Historico
+                        </a>
+                        <button type="button" class="btn btn-success btn-sm">
+						<i class="glyphicon glyphicon-info-sign" aria-hidden="true"></i> Reportar
+					</button>
+                        <button type="button" class="btn btn-danger btn-sm" ng-click="cerrarCheckListMensual()" data-dismiss="modal">
+						<i class="glyphicon glyphicon-remove" aria-hidden="true"></i> Cerrar
+					</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <!-- Modal Busqueda Producto -->
+    <div class="container container-fluid" style="display:inline-block">
+        <div class="modal" id="dialog-busqueda-producto" role="dialog">
+            <div class="modal-dialog fluid-dialog-sm" role="document">
+                <div class="modal-content">
+                    <div class="modal-header bg-primary">
+                        <h4 class='smaller text-white text-uppercase'><i class='glyphicon glyphicon-ok'></i> <label> &nbsp; Busqueda de producto</label></h4>
+                    </div>
+                    <div class="modal-body">
+                        <form class="form-horizontal">
+                            <div class="container-fluid">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <table class="table table-striped table-bordered">
+                                            <thead>
+                                                <tr>
+                                                    <td>Producto</td>
+                                                    <td>Codigo Item</td>
+                                                    <td>Inventario disponible</td>
+                                                    <td>Cantidad</td>
+                                                    <td>Acciones</td>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>
+                                                        <input type="search">
+                                                    </td>
+                                                    <td>1201</td>
+                                                    <td>
+                                                        <div class="radio">
+                                                            <label>
+                                                <input name="form-field-radio" type="radio" class="ace input-lg">
+                                                <span class="lbl bigger-120"> &nbsp;</span>
+                                            </label>
+                                                        </div>
+                                                    </td>
+                                                    <td>14</td>
+                                                    <td>
+                                                        <a class="green" href="#">
+                                            <i class="ace-icon glyphicon glyphicon-plus bigger-130"></i>
+                                        </a>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <input type="search">
+                                                    </td>
+                                                    <td>1201</td>
+                                                    <td>
+                                                        <div class="radio">
+                                                            <label>
+                                                <input name="form-field-radio" type="radio" class="ace input-lg">
+                                                <span class="lbl bigger-120"> &nbsp;</span>
+                                            </label>
+                                                        </div>
+                                                    </td>
+                                                    <td>14</td>
+                                                    <td>
+                                                        <a class="green" href="#">
+                                            <i class="ace-icon glyphicon glyphicon-plus bigger-130"></i>
+                                        </a>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <input type="search">
+                                                    </td>
+                                                    <td>1201</td>
+                                                    <td>
+                                                        <div class="radio">
+                                                            <label>
+                                                <input name="form-field-radio" type="radio" class="ace input-lg">
+                                                <span class="lbl bigger-120"> &nbsp;</span>
+                                            </label>
+                                                        </div>
+                                                    </td>
+                                                    <td>14</td>
+                                                    <td>
+                                                        <a class="green" href="#">
+                                            <i class="ace-icon glyphicon glyphicon-plus bigger-130"></i>
+                                        </a>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <input type="search">
+                                                    </td>
+                                                    <td>1201</td>
+                                                    <td>
+                                                        <div class="radio">
+                                                            <label>
+                                                <input name="form-field-radio" type="radio" class="ace input-lg">
+                                                <span class="lbl bigger-120"> &nbsp;</span>
+                                            </label>
+                                                        </div>
+                                                    </td>
+                                                    <td>14</td>
+                                                    <td>
+                                                        <a class="green" href="#">
+                                            <i class="ace-icon glyphicon glyphicon-plus bigger-130"></i>
+                                        </a>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <input type="search">
+                                                    </td>
+                                                    <td>1201</td>
+                                                    <td>
+                                                        <div class="radio">
+                                                            <label>
+                                                <input name="form-field-radio" type="radio" class="ace input-lg">
+                                                <span class="lbl bigger-120"> &nbsp;</span>
+                                            </label>
+                                                        </div>
+                                                    </td>
+                                                    <td>14</td>
+                                                    <td>
+                                                        <a class="green" href="#">
+                                            <i class="ace-icon glyphicon glyphicon-plus bigger-130"></i>
+                                        </a>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary btn-sm">
+						<i class="glyphicon glyphicon-print" aria-hidden="true"></i> Pdf
+					</button>
+                        <button type="button" class="btn btn-danger btn-sm" ng-click="cerrarBusquedaProducto()" data-dismiss="modal">
+						<i class="glyphicon glyphicon-remove" aria-hidden="true"></i> Cancelar
+					</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal Busqueda encargado -->
+    <div class="container container-fluid" style="display:inline-block">
+        <div class="modal" id="dialog-busqueda-encargado" role="dialog">
+            <div class="modal-dialog fluid-dialog-sm" role="document">
+                <div class="modal-content">
+                    <div class="modal-header bg-primary">
+                        <h4 class='smaller text-white text-uppercase'><i class='glyphicon glyphicon-ok'></i> <label> &nbsp; Busqueda de Encargado</label></h4>
+                    </div>
+                    <div class="modal-body">
+                        <form class="form-horizontal">
+                            <div class="container-fluid">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <table class="table table-striped table-bordered">
+                                            <thead>
+                                                <tr>
+                                                    <td>Código</td>
+                                                    <td>Apellido/Nombre</td>
+                                                    <td>Cargo</td>
+                                                    <td>Área de operación</td>
+                                                    <td>Acciones</td>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>
+                                                        <input type="search">
+                                                    </td>
+                                                    <td>Lopez Juan</td>
+                                                    <td>
+                                                        Mecánico
+                                                    </td>
+                                                    <td>Interna</td>
+                                                    <td>
+                                                        <a class="green" href="#">
+                                            <i class="glyphicon glyphicon-pencil" aria-hidden="true"></i>
+                                        </a>
+                                                        <a class="red" href="#">
+                                            <i class="glyphicon glyphicon-trash" aria-hidden="true"></i>
+                                        </a>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <input type="search">
+                                                    </td>
+                                                    <td>Lopez Juan</td>
+                                                    <td>
+                                                        Mecánico
+                                                    </td>
+                                                    <td>Interna</td>
+                                                    <td>
+                                                        <a class="green" href="#">
+                                            <i class="glyphicon glyphicon-pencil" aria-hidden="true"></i>
+                                        </a>
+                                                        <a class="red" href="#">
+                                            <i class="glyphicon glyphicon-trash" aria-hidden="true"></i>
+                                        </a>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <input type="search">
+                                                    </td>
+                                                    <td>Lopez Juan</td>
+                                                    <td>
+                                                        Mecánico
+                                                    </td>
+                                                    <td>Interna</td>
+                                                    <td>
+                                                        <a class="green" href="#">
+                                            <i class="glyphicon glyphicon-pencil" aria-hidden="true"></i>
+                                        </a>
+                                                        <a class="red" href="#">
+                                            <i class="glyphicon glyphicon-trash" aria-hidden="true"></i>
+                                        </a>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary btn-sm">
+						<i class="glyphicon glyphicon-print" aria-hidden="true"></i> Pdf
+					</button>
+                        <button type="button" class="btn btn-danger btn-sm" ng-click="cerrarBusquedaEncargado()" data-dismiss="modal">
+						<i class="glyphicon glyphicon-remove" aria-hidden="true"></i> Cancelar
+					</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- MODAL LOGIN -->
+    <div class="container container-fluid" style="display:inline-block">
+        <div id="dialog-login" class="modal">
+            <div class="modal-dialog fluid-dialog-sm">
+                <div class="modal-content">
+                    <div class="modal-header bg-primary">
+                        <h4 class='smaller text-white text-uppercase'><i class='glyphicon glyphicon-log-in'></i> <label> &nbsp; Ingresar al sistema</label></h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row flex-center">
+                            <div class="col-sm-9">
+                                <form class="form-horizontal">
+                                    <div class="form-group">
+                                        <label for="inputEmail3" class="col-sm-3 control-label text-primary">Usuario</label>
+                                        <div class="col-sm-9">
+                                            <input type="email" class="form-control" id="inputEmail3" placeholder="Usuario">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="inputPassword3" class="col-sm-3 control-label text-primary">Contraseña</label>
+                                        <div class="col-sm-9">
+                                            <input type="password" class="form-control" id="inputPassword3" placeholder="Contraseña">
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="col-sm-3">
+                                <div class="logo-login">
+                                    <img src="assets/images/maquinaria.png" alt="">
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <a ng-click="abrirNuevoMantenimientoMaquinaria()" class="btn btn-primary btn-sm">
+                        <i class="ace-icon fa fa-key align-top bigger-125"></i> &nbsp;Ej maquinaria
+                    </a>
+                        <a ng-clik="abrirNuevoMantenimiento()" class="btn btn-primary btn-sm">
+                        <i class="ace-icon fa fa-key align-top bigger-125"></i> &nbsp;Ingresar
+                    </a>
+                        <button class="btn btn-danger btn-sm" ng-click="cerrarModalLogin()" data-dismiss="modal">
+                        <i class="ace-icon fa fa-times"></i>
+                        Cancelar
+                    </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal Iniciar Mantenimiento Maquinaria-->
+    <div class="container container-fluid" style="display:inline-block">
+        <div class="modal" id="dialog-iniciar-mantenimiento-maquinaria">
+            <div class="modal-dialog fluid-dialog-sm">
+                <div class="modal-content">
+                    <div class="modal-header bg-primary">
+                        <h4 class='smaller text-white text-uppercase'><i class='glyphicon glyphicon-log-in'></i> <label> &nbsp; Mantenimiento de maquinaria</label></h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row flex-center space-md">
+                            <div class="col-md-9">
+                                <form class="form-horizontal">
+                                    <div class="form-group">
+                                        <label for="" class="col-sm-5 control-label text-primary">Nro. de serie</label>
+                                        <div class="col-sm-7">
+                                            <input type="text" class="form-control" id="">
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="col-sm-3">
+                                <div class="logo-login">
+                                    <img src="assets/images/maquinaria.png" alt="">
+                                </div>
+                            </div>
+                        </div>
+
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-warning btn-sm" ng-click="abrirReportarIncidenteMaquinaria()" data-toggle="modal">
+						<i class="glyphicon glyphicon-info-sign" aria-hidden="true"></i> Reportar incidente
+					</button>
+                        <button type="button" class="btn btn-success btn-sm" ng-click="abrirCheckListMensualMaquinaria()">
+						<i class="glyphicon glyphicon-ok" aria-hidden="true"></i> Mantenimiento
+					</button>
+                        <button type="button" class="btn btn-danger btn-sm" ng-click="cerrarNuevoMantenimientoMaquinaria()" data-dismiss="modal">
+						<i class="glyphicon glyphicon-remove" aria-hidden="true"></i> Salir
+					</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Buscar Ficha Maquinaria/Vehiculo-->
+    <div class="container container-fluid" style="display:inline-block">
+        <div class="modal" id="dialog-buscar-maquinaria">
+            <div class="modal-dialog fluid-dialog-xs">
+                <div class="modal-content">
+                    <div class="modal-header bg-primary">
+                        <h4 class='smaller text-white text-uppercase'><i class='glyphicon glyphicon-search'></i> <label> &nbsp; Buscar Vehiculo/Maquinaria</label></h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row flex-center">
+                            <div class="col-md-12">
+                                <form class="">
+                                    <div class="form-group">
+                                        <label for="" class="col-sm-12 control-label text-primary">Nro. de Serie/ Nro. de Placa</label>
+                                        <div class="col-sm-12">
+                                            <input type="text" class="form-control" id="">
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary btn-sm" ng-click="abrirFichaVehiculo()">
+						<i class="glyphicon glyphicon-search" aria-hidden="true"></i> Buscar
+					</button>
+                        <button type="button" class="btn btn-danger btn-sm" ng-click="cerrarBuscarMaquinaria()" data-dismiss="modal">
+						<i class="glyphicon glyphicon-remove" aria-hidden="true"></i> Salir
+					</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal Reportar incidente maquinaria-->
+    <div class="container container-fluid" style="display:inline-block">
+        <div class="modal" id="modal-reportar-incidente-maquinaria" role="dialog">
+            <div class="modal-dialog fluid-dialog-sm" role="document">
+                <div class="modal-content">
+                    <div class="modal-header bg-yellow">
+                        <h4 class='smaller text-white text-uppercase'><i class='fa fa-info-circle'></i> <label> &nbsp; Reporte de incidente de maquinaria</label></h4>
+                    </div>
+                    <div class="modal-body">
+                        <form class="form-horizontal">
+                            <div class="container-fluid">
+                                <div class="row">
+                                    <div class="col-sm-4">
+                                        <h5 class="text-uppercase text-primary">Vehiculo</h5>
+                                        <h4 class="">Licuadora industrial Oster</h4>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <h5 class="text-uppercase text-primary">Nro de Serie</h5>
+                                        <h4>COC1L3200</h4>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <img src="assets/images/licuadora.jpg" alt="">
+                                    </div>
+                                </div>
+                                <br>
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <h5 class="text-uppercase text-primary">Sistema Principal</h5>
+                                        <select id="sistemas-vehiculos" class="multiselect" multiple="" style="display: none;">
+										<option>Electrico</option>
+										<option>Chasis</option>
+									</select>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <h5 class="text-uppercase text-primary">Observaciones</h5>
+                                        <textarea name="" id="" cols="30" rows="5">RINES, LLANTAS Y FRENOS: Suena el freno &nbsp; DIRECCIÓN: la direccion no gira facil</textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary btn-sm" ng-click="abrirEditarHistorico()">
+						<i class="glyphicon glyphicon-file" aria-hidden="true"></i> Historico
+					</button>
+                        <button type="button" class="btn btn-warning btn-sm">
+						<i class="glyphicon glyphicon-info-sign" aria-hidden="true"></i> Reportar
+					</button>
+                        <button type="button" class="btn btn-danger btn-sm" ng-click="cerrarReportarIncidenteMaquinaria()" data-dismiss="modal">
+						<i class="glyphicon glyphicon-remove" aria-hidden="true"></i> Cerrar
+					</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal Checklist mensual maquinaria-->
+    <div class="container container-fluid" style="display:inline-block">
+        <div class="modal" id="modal-checklist-mensual-maquinaria" role="dialog">
+            <div class="modal-dialog fluid-dialog-sm" role="document">
+                <div class="modal-content">
+                    <div class="modal-header bg-green">
+                        <h4 class='smaller text-white text-uppercase'><i class='glyphicon glyphicon-ok'></i> <label> &nbsp; Mantenimiento de maquinaria</label></h4>
+                    </div>
+                    <div class="modal-body">
+                        <form class="form-horizontal">
+                            <div class="container-fluid">
+                                <div class="row">
+                                    <div class="col-sm-4">
+                                        <h5 class="text-uppercase text-primary">Vehiculo</h5>
+                                        <h4 class="">Licuadora industrial Oster</h4>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <h5 class="text-uppercase text-primary">Nro de Serie</h5>
+                                        <h4>COC1L3200</h4>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <img src="assets/images/licuadora.jpg" alt="">
+                                    </div>
+                                </div>
+                                <br>
+                                <div class="row">
+                                    <div class="col-sm-5">
+                                        <h5 class="text-uppercase text-primary">Odómetro</h5>
+                                        <input class="form-control" type="number" placeholder="000000">
+                                    </div>
+                                    <div class="col-sm-5">
+                                        <h5 class="text-uppercase text-primary">
+                                            <a href="#" class="green" ng-click="abrirEditarItemList()">
+                                            <i class="ace-icon glyphicon glyphicon-pencil"></i>
+                                        </a> Próximo mantenimiento
+                                        </h5>
+                                        <input class="form-control" type="date">
+                                    </div>
+                                </div>
+                                <br>
+                                <div class="row">
+                                    <div class="col-sm-5">
+                                        <select class="form-control">
+										<option>Electrico</option>
+										<option>Chasis</option>
+									</select>
+                                    </div>
+                                </div>
+                                <br>
+                                <div class="row">
+                                    <div class="col-sm-10">
+                                        <h5 class="text-uppercase text-primary">Observaciones</h5>
+                                        <textarea name="" id="" cols="30" rows="3">RINES, LLANTAS Y FRENOS: Suena el freno &nbsp; DIRECCIÓN: la direccion no gira facil</textarea>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <a class="btn btn-primary btn-sm" ng-click="abrirEditarHistorico()">
+                    <i class="glyphicon glyphicon-file" aria-hidden="true"></i> Historico
+                </a>
+                        <button type="button" class="btn btn-success btn-sm">
+						<i class="glyphicon glyphicon-info-sign" aria-hidden="true"></i> Reportar
+					</button>
+                        <button type="button" class="btn btn-danger btn-sm" ng-click="cerrarCheckListMensualMaquinaria()" data-dismiss="modal">
+						<i class="glyphicon glyphicon-remove" aria-hidden="true"></i> Cerrar
+					</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal Editar item list -->
+    <div class="container container-fluid" style="display:inline-block">
+        <div class="modal" id="dialog-editar-item-list" role="dialog">
+            <div class="modal-dialog fluid-dialog-sm" role="document">
+                <div class="modal-content">
+                    <div class="modal-header bg-green">
+                        <h4 class='smaller text-white text-uppercase'><i class='glyphicon glyphicon-ok'></i> <label> &nbsp; Editar</label></h4>
+                    </div>
+                    <div class="modal-body">
+                        <form class="form-horizontal">
+                            <div class="container-fluid">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <input class="form-control" type="text" placeholder="Rayas">
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-success btn-sm">
+						<i class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></i> Guardar
+					</button>
+                        <button type="button" class="btn btn-danger btn-sm" ng-click="cerrarEditarItemList()" data-dismiss="modal">
+						<i class="glyphicon glyphicon-remove" aria-hidden="true"></i> Cancelar
+					</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal prox mantenimiento maquimaria -->
+    <div class="container container-fluid" style="display:inline-block">
+        <div class="modal" id="dialog-prox-mantenimiento-maquinaria" role="dialog">
+            <div class="modal-dialog fluid-dialog-xs" role="document">
+                <div class="modal-content">
+                    <div class="modal-header bg-green">
+                        <h4 class='smaller text-white text-uppercase'><i class='glyphicon glyphicon-ok'></i> <label> &nbsp; Proximo Mantenimiento</label></h4>
+                    </div>
+                    <div class="modal-body">
+                        <form class="form-horizontal">
+                            <div class="container-fluid">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <select class="form-control">
+										<option>Cada 15 dias</option>
+										<option>Cada 30 dias</option>
+										<option>Cada 45 dias</option>
+									</select>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-success btn-sm">
+						<i class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></i> Guardar
+					</button>
+                        <button type="button" class="btn btn-danger btn-sm" ng-click="cerrarEditarItemList()" data-dismiss="modal">
+						<i class="glyphicon glyphicon-remove" aria-hidden="true"></i> Cancelar
+					</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal prox mantenimiento vehiculo -->
+    <div class="container container-fluid" style="display:inline-block">
+        <div class="modal" id="dialog-prox-mantenimiento-vehiculo" role="dialog">
+            <div class="modal-dialog fluid-dialog-xs" role="document">
+                <div class="modal-content">
+                    <div class="modal-header bg-green">
+                        <h4 class='smaller text-white text-uppercase'><i class='glyphicon glyphicon-ok'></i> <label> &nbsp; Proximo Mantenimiento en KM</label></h4>
+                    </div>
+                    <div class="modal-body">
+                        <form class="form-horizontal">
+                            <div class="container-fluid">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <select class="form-control">
+										<option>Cada 3000 km</option>
+										<option>Cada 5000 km</option>
+										<option>Cada 10000 km</option>
+									</select>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-success btn-sm">
+						<i class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></i> Guardar
+					</button>
+                        <button type="button" class="btn btn-danger btn-sm" ng-click="cerrarProxMantenimientoVehiculos()" data-dismiss="modal">
+						<i class="glyphicon glyphicon-remove" aria-hidden="true"></i> Cancelar
+					</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- =========== Agenda OT ==================== -->
+    <div class="container container-fluid" style="display:inline-block">
+        <div id="dialog-calendar" class="modal">
+            <div class="container-fluid">
+                <div class="row space-md">
+                    <div class="modal-header bg-silver">
+                        <h4 class='smaller'><i class='fa fa-calendar  '></i> <label>Agenda Orden de Trabajo</label></h4>
+                    </div>
+                    <br>
+                    <div class="col-lg-8">
+                        <form class="filtros">
+                            Filtrar:
+                            <input type="checkbox" ng-model="calendario.correctivo" name="radio_field[]" value="1" class="ace" ng-change="obtenerFechasCalendarioS(calendario)">
+                            <label class="lbl label-warning text-white" for="checkbox1">Correctivo</label>
+
+                            <input type="checkbox" ng-model="calendario.preventivo" name="radio_field[]" value="2" class="ace" ng-change="obtenerFechasCalendarioS(calendario)">
+                            <label class="lbl label-success" for="checkbox1">Preventivo</label>
+
+                            <input type="checkbox" ng-model="calendario.rutina" name="radio_field[]" value="3" class="ace" ng-change="obtenerFechasCalendarioS(calendario)">
+                            <label class="lbl label-info" for="checkbox1"> Rutina</label>
+                            <input type="checkbox" ng-model="calendario.entrega" name="radio_field[]" value="3" class="ace" ng-change="obtenerFechasCalendarioS(calendario)">
+                            <label class="lbl label-danger" for="checkbox1"> Entrega</label>
+                        </form>
+                    </div>
+                    <br>
+                    <div class="col-lg-4">
+                        <div class="pull-right">
+                            <button class="btn btn-danger btn-sm">
+                        <i class="ace-icon fa fa-print align-top bigger-125"></i>
+                            PDF
+                    </button>
+                            <button class="btn btn-success btn-sm">
+                        <i class="ace-icon fa fa-print bigger-125"></i>
+                            Excel
+                    </button>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div id="calendar"></div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                  
+                    <button type="button" class="btn btn-danger btn-sm" ng-click="cerrarOTCalendar()" data-dismiss="modal">
+						<i class="glyphicon glyphicon-remove" aria-hidden="true"></i> Cancelar
+					</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal Ficha vehiculo -->
+    <div class="container container-fluid" style="display:inline-block">
+        <div class="modal" id="dialog-ficha-vehiculo" role="dialog">
+            <div class="modal-dialog fluid-dialog-md" role="document">
+                <div class="modal-content">
+                    <div class="modal-header bg-primary">
+                        <h4 class='smaller text-white text-uppercase'><i class='icono-ficha_medica icono-font'></i> <label> &nbsp; Ficha Vehiculo</label></h4>
+                    </div>
+                    <div class="modal-body">
+                        <form class="form-horizontal">
+                            <div class="container-fluid">
+                                <div class="row">
+                                    <div class="col-sm-2">
+                                        <label class="text-primary text-uppercase" for="">Imagen</label>
+                                        <div class="image">
+                                            <img class="nav-user-photo" src="assets/images/auto.jpg" alt="Jason's Photo" width="70px">
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="text-primary text-uppercase" for="">Marca</label>
+                                        <input class="form-control" type="text" placeholder="">
+                                        <br>
+                                        <label class="text-primary text-uppercase" for="">Placa</label>
+                                        <input class="form-control" type="text" placeholder="">
+                                        <br>
+                                        <label class="text-primary text-uppercase" for="">Km Actual</label>
+                                        <input class="form-control" type="text" placeholder="">
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="text-primary text-uppercase" for="">Modelo</label>
+                                        <input class="form-control" type="text" placeholder="">
+                                        <br>
+                                        <label class="text-primary text-uppercase" for="">Campamento</label>
+                                        <input class="form-control" type="text" placeholder="">
+                                        <br>
+                                        <label class="text-primary text-uppercase" for="">
+                                        <a class="green" href="#" id="id-btn-edicion-correctivo">
+                                            <i class="ace-icon fa fa-pencil bigger-130"></i>
+                                        </a>
+                                        &nbsp; Frecuencia de mantenimiento
+                                    </label>
+                                        <select name="" id="" class="form-control">
+                                        <option value="">Cada 3000Km</option>
+                                        <option value="">Cada 5000Km</option>
+                                        <option value="">Cada 7000Km</option>
+                                    </select>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <label class="text-primary text-uppercase" for="">Año</label>
+                                        <input class="form-control" type="text" placeholder="">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="container-fluid">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <br>
+                                        <h4 class="text-primary text-uppercase">
+                                            Historial
+                                            <a class="text-danger" ng-click="abrirEditarHistorico()">
+                                            <i class="ace-icon fa fa-h-square bigger-130"></i>
+                                        </a>
+                                        </h4>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <table class="table table-striped table-bordered table-hover table-block">
+                                            <thead>
+                                                <tr>
+                                                    <td class="no-border-right"></td>
+                                                    <td>Desde</td>
+                                                    <td>Hasta</td>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td class="text-right no-border-right">Periodo</td>
+                                                    <td>
+                                                        <input class="form-control" type="date" placeholder="">
+                                                    </td>
+                                                    <td>
+                                                        <input class="form-control" type="date" placeholder="">
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-4">
+                                        <select name="" id="" multiple="single">
+                                <option value="">Orden 0001</option>
+                                <option value="">Orden 0002</option>
+                                <option value="">Orden 0003</option>
+                                <option value="">Orden 0004</option>
+                            </select>
+                                    </div>
+                                    <div class="col-lg-8">
+                                        <div class="table-header">
+                                            Orden de trabajo 0001
+                                        </div>
+                                        <table class="table">
+                                            <tbody>
+                                                <tr>
+                                                    <th>Fecha Aviso</th>
+                                                    <td>11/07/2017</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Fecha Inicio</th>
+                                                    <td>12/07/2017</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Fecha de Entrega</th>
+                                                    <td>15/07/2017</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Prioridad</th>
+                                                    <td class="text-uppercase">Alta</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Tipo Mantenimiento</th>
+                                                    <td class="text-uppercase">Correctivo</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-warning btn-sm">
+                        <i class="ace-icon fa fa-search-plus align-top bigger-125"></i>
+                            Detalles
+                    </button>
+                        <button class="btn btn-danger btn-sm">
+                        <i class="ace-icon fa fa-print align-top bigger-125"></i>
+                            PDF
+                    </button>
+                        <button class="btn btn-success btn-sm">
+                        <i class="ace-icon fa fa-print bigger-125"></i>
+                            Excel
+                    </button>
+                        <button type="button" class="btn btn-primary btn-sm">
+						<i class="fa fa-eye" aria-hidden="true"></i> Vista OT
+					</button>
+                        <button type="button" class="btn btn-danger btn-sm" ng-click="cerrarFichaVehiculo()" data-dismiss="modal">
+						<i class="glyphicon glyphicon-remove" aria-hidden="true"></i> Cancelar
+					</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal Editar Checklist -->
+    <div class="container container-fluid" style="display:inline-block">
+        <div class="modal" id="modal-editar-checklist" role="dialog">
+            <div class="modal-dialog fluid-dialog-sm" role="document">
+                <div class="modal-content">
+                    <div class="modal-header bg-green">
+                        <h4 class='smaller text-white text-uppercase'><i class='glyphicon glyphicon-ok'></i> <label> &nbsp; Checklist Mensual</label></h4>
+                    </div>
+                    <div class="modal-body">
+                        <form class="form-horizontal">
+                            <div class="container-fluid">
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <h5 class="text-uppercase text-primary">Sistema Principal
+                                            <div class="pull-right">
+                                                <a class="btn btn-minier btn-primary" ng-click="abrirEditarItemList()">
+                                            <i class="ace-icon glyphicon glyphicon-ok"></i></a >
+                                               <a class="btn btn-minier btn-success" ng-click="abrirEditarItemList()">
+                                            <i class="ace-icon fa fa-plus"></i></a >
+                                            <a class="btn btn-minier btn-danger" ng-click="abrirEditarItemList()">
+                                            <i class="ace-icon glyphicon glyphicon-remove"></i></a >
+                                        </div>
+                                    </h5>
+                                    <input class="form-control" type="text" placeholder="Motor">
+                                </div>
+                                <div class="col-sm-6">
+                                    <h5 class="text-uppercase text-primary">Partes
+                                        <div class="pull-right">
+                                            <a class="btn btn-minier btn-primary" ng-click="abrirEditarItemList()">
+                                            <i class="ace-icon glyphicon glyphicon-ok"></i></a >
+                                               <a class="btn btn-minier btn-success" ng-click="abrirEditarItemList()">
+                                            <i class="ace-icon fa fa-plus"></i></a >
+                                            <a class="btn btn-minier btn-danger" ng-click="abrirEditarItemList()">
+                                            <i class="ace-icon glyphicon glyphicon-remove"></i></a >
+                                        </div>
+                                    </h5>
+                                    <input class="form-control" type="text" placeholder="Colector de admision">
+                                </div>
+                            </div>
+                            <br>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <select multiple class="form-control">
+										<option>Motor</option>
+										<option>Tren Propulsor</option>
+										<option>Rines, llantas y frenos</option>
+										<option>Suspención del auto</option>
+										<option>Dirección</option>
+										<option>Sistema eléctrico</option>
+									</select>
+                                </div>
+                                <div class="col-sm-6">
+                                    <select multiple class="form-control">
+										<option>Colector de admisión</option>
+										<option>Árbol de levas</option>
+										<option>Empujadoras</option>
+										<option>Inyector</option>
+										<option>Válvulas</option>
+										<option>Correa de distribución</option>
+										<option>Pistón</option>
+										<option>Medidor del nivel de aceite</option>
+										<option>Cilindro</option>
+										<option>Inyección</option>
+										<option>Filtro de aceite</option>
+										<option>Cigueñal</option>
+										<option>Carter de aceite</option>
+										<option>Biela</option>
+									</select>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success btn-sm">
+						<i class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></i> Guardar
+					</button>
+                    <button type="button" class="btn btn-danger btn-sm" ng-click="cerrarEditarCheckList()" data-dismiss="modal">
+						<i class="glyphicon glyphicon-remove" aria-hidden="true"></i> Cancelar
+					</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Iniciar Mantenimiento-->
+<div class="modal" id="dialog-iniciar-mantenimiento">
+    <div class="modal-dialog fluid-dialog-sm">
+        <div class="modal-content">
+            <div class="modal-header bg-primary">
+                <h4 class='smaller text-white text-uppercase'><i class='glyphicon glyphicon-log-in'></i> <label> &nbsp; Mantenimiento de vehículo / Maquinaria</label></h4>
+            </div>
+             <form class="form-horizontal" name="formVehiculo" ng-submit="abrirDialogOTnuevo(formVehiculo.$valid)">
+            <div class="modal-body">
+                <div class="row flex-center">
+                    <div class="col-md-12">
+                       
+                            <div class="form-group">
+                                <label for="" class="col-sm-5 control-label text-primary">Nro. de placa/Nro. de serie</label>
+                                <div class="col-sm-7">
+                                    <input class="form-control" ng-keypress="interceptarTecla($event,'cantidad',true)" id="{{$index}}-As" name="{{$index}}-As" required type="text" ng-model="nuevoOt.vehiculo" placeholder="Busqueda..." uib-typeahead="vehiculo as (vehiculo.caracteristica_especial1+'-'+vehiculo.marca+'-'+vehiculo.modelo) for vehiculo in buscarVehiculos($viewValue)" 
+                                    typeahead-wait-ms="1000" typeahead-template-url="templates/autocompletar.html" typeahead-show-hint="false" typeahead-on-select="establecervehiculo($item, $model, $label, $event)" typeahead-min-length="3">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="" class="col-sm-5 control-label text-primary">Mantenimiento</label>
+                                <div class="col-sm-7">                                    
+                                    <select class="form-control" required id='id_tipo' ng-model='nuevoOt.tipo_mantenimiento' data-placeholder="Click para escoger" class="col-sm5" ng-options="Tipo.id as Tipo.nombre for Tipo in tiposMantenimiento">                                    
+                                         <option value="">Seleccionar</option>
+                                </select>
+                                </div>
+                            </div>
+                        
+                    </div>
+                    
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-primary btn-sm">
+                    <i class="glyphicon glyphicon-ok" aria-hidden="true"></i> Generar OT
+                </button>
+                
+                <button type="button" class="btn btn-danger btn-sm" ng-click="cerrarPopUpInicioMantenimiento()">
+                    <i class="glyphicon glyphicon-remove" aria-hidden="true"></i> Salir
+                </button>
+            </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Fin Modal Iniciar Mantenimiento-->
+
+<!--inicio modal evento calendario-->
+
+<div class="modal" id="dialog-evento-calendario">
+    <div class="modal-dialog fluid-dialog-sm">
+        <div class="modal-content">
+            <div class="modal-header bg-primary">
+                <h4 class='smaller text-white text-uppercase'><i class='glyphicon glyphicon-log-in'></i> <label> Nuevo evento calendario</label></h4>
+            </div>
+             <form class="form-horizontal" name="formCal" ng-submit="GuardarEventoCalendario(formCal.$valid)">
+            <div class="modal-body">
+                <div class="row flex-center">
+                    <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="" class="col-sm-5 control-label text-primary">Titulo</label>
+                                <div class="col-sm-7">
+                                    <input type="text" required  ng-model="evento.title"  class="form-control" >
+                                </div>
+                            </div> 
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-primary btn-sm">
+                    <i class="glyphicon glyphicon-ok" aria-hidden="true"></i> Guardar
+                </button>
+                <button type="button" class="btn btn-danger btn-sm" ng-click="cerrarEventoCalendario()">
+                    <i class="glyphicon glyphicon-remove" aria-hidden="true"></i> cancelar
+                </button>
+            </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!--fin modal eventos calendario-->
+
+<!--inicio modal editar evento calendario-->
+
+<div class="modal" id="dialog-editar-evento-calendario">
+    <div class="modal-dialog fluid-dialog-sm">
+        <div class="modal-content">
+            <div class="modal-header bg-primary">
+                <h4 class='smaller text-white text-uppercase'><i class='glyphicon glyphicon-log-in'></i> <label> Editar evento calendario</label></h4>
+            </div>
+             <form class="form-horizontal" name="formVehiculo" ng-submit="EditEventoCalendario()">
+            <div class="modal-body">
+                <div class="row flex-center">
+                    <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="" class="col-sm-5 control-label text-primary">Cambiar nombre evento :</label>
+                                <div class="col-sm-7">
+                                    <input type="text"  ng-model="evento.title"  class="form-control" >
+                                </div>
+                        
+                            </div> 
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                        <button type="submit" class="btn btn-success btn-sm">
+                    <i class="glyphicon glyphicon-ok" aria-hidden="true"></i> Guardar
+                </button>
+                <button type="button" class="btn btn-warning btn-sm" ng-click="DeleteEventoCalendario()">
+                    <i class="glyphicon glyphicon-trash" aria-hidden="true" ></i> Delete Event
+                </button>
+                <button type="button" class="btn btn-danger btn-sm" ng-click="cerrarEditarEventoCalendario()">
+                    <i class="glyphicon glyphicon-remove" aria-hidden="true"></i> Cancelar
+                </button>
+            </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!--fin modal  editar eventos calendario-->
+
+<!---================  Modal OT nuevo ====== -->
+<div id="dialog-ot-nuevo" class="wizard-posicion">
+    <div class="modal-">
+        <div class="modal-content">
+            <form name="form" ng-submit="saveFormNuevoOt()" novalidate>                     
+            <div id="modal-wizard-ot-nuevo-container">
+                <div class="modal-header modal-header-ficha">
+                    <div class="titulo-ficha">
+                        <h4>REGISTRO ORDEN DE TRABAJO (OT)</h4>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <h4 class="">Vehiculo: Toyota Hilux blanca</h4>
+                                
+                            </div>
+                            <div class="col-sm-6">
+                                <h4 class="">Placa: 1598 MNF</h4>
+                                
+                            </div>
+                        </div> 
+                    </div>
+                </div>
+                <div class="modal-header">
+                    <ul class="steps">
+                        <li data-step="1" class="active">
+                            <span class="step"><span class="fa fa-file-text"></span></span>
+                            <span class="title">Orden de Trabajo</span>
+                        </li>
+                        <li data-step="2">
+                            <span class="step"><span class="icono-mantenimiento"></span></span>
+                            <span class="title">Mano de Obra</span>
+                        </li>
+                        <li data-step="3">
+                            <span class="step"><span class="fa fa-gift"></span></span>
+                            <span class="title">Materiales</span>
+                        </li>
+                        <li data-step="4">
+                            <span class="step"><span class="fa fa-external-link-square"></span></span>
+                            <span class="title">Servicio Externo</span>
+                        </li>
+                          <li data-step="5">
+                            <span class="step"><span class="icono-pre4 icono-step"></span></span>
+                                    <span class="title">Finalizar</span>
+                        </li>
+                    </ul>
+                                                            
+                </div>
+
+                <div class="modal-body step-content">
+                    <div class="step-pane active" data-step="1">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    
+                                    <div class="row">
+                                        <div class="col-sm-6 form-group">
+                                            <label for="form-field-select-2">Sistema principal</label>
+                                              <!-- <select class="form-control select-sistema" id="form-field-select-2" multiple="multiple" ng-model='nuevoOt.Tipo_mantenimiento' ng-options="Tipo.id as Tipo.nombre for Tipo in tiposSistemas">                                      -->
+                                              <select class="form-control select-sistema" id="form-field-select-2" multiple="multiple" ng-model='nuevoOt.sistemas' ng-options="Tipo.id as Tipo.nombre for Tipo in tiposSistemas">
+                                              
+                                            </select>  
+                                        </div>
+                                        <div class="col-sm-6 form-group">
+                                            <label class="">Observaciones</label>
+                                            <textarea  class="form-control" ng-model="nuevoOt.observacion" cols="30" rows="4"></textarea>
+                                        </div>
+                                      
+                                    </div>
+                                   
+                                    <div class="row form-group">
+                                        <div class="col-lg-6">
+                                            <label class="text-uppercase text-primary">Diagnóstico taller</label>
+                                            <textarea  class="form-control" ng-model="nuevoOt.diagnostico" cols="30" rows="4"></textarea>
+                                            
+                                        </div>
+                                        <div class="col-lg-3">
+                                            <label class="text-uppercase text-primary">Prioridad</label>
+                                            <select class="form-control" ng-model='nuevoOt.id_prioridad' data-placeholder="Click para escoger" class="col-sm5" ng-options="Tipo.id as Tipo.nombre for Tipo in tiposPrioridad">                                    
+                                                <option value="">Seleccionar</option>
+                                </select>
+                                         
+                                        </div>
+                                        <div class="col-lg-3">
+                                            <label class="text-uppercase text-primary">Tiempo estimado</label>
+                                            <input type="text"  ng-model="nuevoOt.tiempo_estimado"  class="form-control" >
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <label class="text-uppercase ">Aviso</label><br>
+                                            <label class="text-uppercase text-primary small" for="">Fecha</label>
+                                            
+                                            <input required ng-update-hidden class="form-control date-timepicker" type="text" id="fechafin" ng-model="nuevoOt.fecha_hora_aviso" >
+                                            <!-- <label class="text-uppercase text-primary small" for="">Hora</label>
+                                            <input type="text" class="form-control timepicker1"> -->
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label class="text-uppercase ">Inicio Labores</label><br>
+                                            <label class="text-uppercase text-primary small" for="">Fecha</label>
+                                            <input required ng-update-hidden class="form-control date-timepicker" type="text" id="fechafin"  ng-model="nuevoOt.fecha_hora_inicio" >
+                                           <!--  <label class="text-uppercase text-primary small"  for="">Hora</label>
+                                            <input type="text" class="form-control timepicker1"> -->
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label class="text-uppercase ">Fin Labores</label><br>
+                                            <label class="text-uppercase text-primary small"  for="">Fecha</label>
+                                            
+                                            <input required ng-update-hidden class="form-control date-timepicker" type="text" id="fechafin" ng-model="nuevoOt.fecha_hora_fin">
+                                           <!--  <label class="text-uppercase text-primary small" for="">Hora</label>
+                                            <input type='text' class="form-control timepicker1" > -->                                               
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>                   
+                    </div>
+                    <div class="step-pane" data-step="2">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                
+                                <div class="row form-group">
+                                    <div class="col-md-3">
+                                        <label class="text-uppercase text-primary" for="">Especialidad 1:</label>
+                                        <select class="form-control text-uppercase" ng-model='ordenTrabajoManoObra.especialidad' data-placeholder="Click para escoger" class="col-sm5" ng-options="Tipo as Tipo.nombre for Tipo in tiposEspecialidad">                                    
+                                </select>
+                                        
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="text-uppercase text-primary" for="">Encargado</label>
+                                        
+                                        <div class="input-group">
+                                            
+
+                                            <input class="form-control" ng-keypress="interceptarTecla($event,'cantidad',true)" id="{{$index}}-As" name="{{$index}}-As" required type="text" ng-model="ordenTrabajoManoObra.encargado" placeholder="Encargado..." uib-typeahead="encargado as (encargado.nombres+'-'+encargado.apellido_paterno+'-'+encargado.apellido_materno) for encargado in buscarEncargado($viewValue)" 
+                                    typeahead-wait-ms="1000" typeahead-template-url="templates/autocompletar.html" typeahead-show-hint="false" typeahead-on-select="establecerEncargado($item, $model, $label, $event)" typeahead-min-length="3">
+                                            <span class="input-group-btn">
+                                                
+                                                <a href="#" class="btn btn-sm button-search">
+                                                    <span class="ace-icon green fa fa-search icon-on-right bigger-110"></span>
+                                                </a>
+                                                </span>
+                                            </div>
+
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="text-uppercase text-primary" for="">Inicio</label>
+                                        <input required ng-update-hidden class="form-control date-timepicker" type="text" id="fechaInicio" ng-model="ordenTrabajoManoObra.fecha_inicio">
+
+
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="text-uppercase text-primary" for="">Fin</label>
+                                        <input required ng-update-hidden class="form-control date-timepicker" type="text" id="fechafin" ng-model="ordenTrabajoManoObra.fecha_fin">
+                                    </div>
+
+                                </div>
+                                <div class="row form-group">
+                                    <div class="col-md-9">
+                                        <label class="text-uppercase text-primary" for="">Diagnóstico Especialidad</label>
+                                        <textarea name="" class="form-control" cols="30" ng-model="ordenTrabajoManoObra.diagnostico" rows="1"></textarea>
+                                    </div>
+                                    <div ng-show="!ordenTrabajoManoObra.edit" class="col-md-3">
+                                        <br>
+                                        <a class="btn btn-sm btn-success" ng-click="agregarManoDeObra(ordenTrabajoManoObra)">
+                                            <i class="ace-icon fa fa-plus">Agregar</i>
+                                        </a>
+
+                                    </div>
+                                    <div ng-show="ordenTrabajoManoObra.edit" class="col-md-3">
+                                        <br>
+
+                                        <a class="btn btn-sm btn-primary" ng-click="guardarManoObraEditada(ordenTrabajoManoObra)">
+                                            <i class="ace-icon fa fa-plus">Editar</i>
+                                        </a>
+                                    </div>
+                                </div>
+                                <table class="table table-striped table-bordered table-hover">
+                                    <thead>
+                                        <tr>
+                                            <td>Apellido/Nombre</td>
+                                            <td>Cargo</td>
+                                            <td>Area de operacion</td>
+                                            <td>Fecha inicio</td>
+                                            <td>Fecha fin</td>
+                                            <td>Nro. de horas</td>
+                                            <td>Diagnostico</td>
+
+                                            <td>Acciones</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr ng-if="!manoDeObra.eliminado" ng-repeat="manoDeObra in nuevoOt.ordenTrabajoManoObra">
+                                            <td>{{manoDeObra.encargado.nombre_completo}}</td>
+                                            <td>{{manoDeObra.especialidad.nombre}}</td>
+                                            <td>Taller mecanico</td>
+                                            <td>{{manoDeObra.fecha_inicio}}</td>
+                                            <td>{{manoDeObra.fecha_fin}}</td>
+                                            <td>{{manoDeObra.horas}}</td>
+                                            <td>{{manoDeObra.diagnostico}}</td>
+
+                                            <td>
+                                                <a class="green">
+                                                    <i class="glyphicon glyphicon-pencil" aria-hidden="true" ng-click="editarManoObra(manoDeObra,$index)"></i>
+                                                </a>
+                                                <a class="red">
+                                                    <i class="glyphicon glyphicon-trash" ng-click="eliminarManoDeObra($index)" aria-hidden="true"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+
+                                </table>
+                            </div>
+                    </div>
+                </div>
+                <div class="step-pane" data-step="3">
+
+                    <button type="button" ng-click="abrirDialogRepuestosOT()" class="btn btn-success btn-sm">
+                            <i class="ace-icon fa fa-plus bigger-110"></i>
+                            Repuestos e Insumos
+                        </button>
+                    <div class="space-6"></div>
+                    <table id="dynamic-table" class="table table-striped table-bordered table-hover nowrap">
+                        <thead>
+                            <tr>
+                                <td></td>
+                                <td>Producto</td>
+                                <td>Codigo item</td>
+                                <td>Cantidad</td>
+                                <td>Valuado</td>
+                                <td>Acciones</td>
+                            </tr>
+                        </thead>
+                        <tfoot>
+                            <tr>
+                                <td colspan="3"></td>
+                                <td>Total</td>
+                                <td>{{nuevoOt.totalMaterial}}</td>
+                                <td></td>
+                            </tr>
+                        </tfoot>
+                        <tbody>
+                            <tr ng-repeat="detalle in nuevoOt.materiales">
+                                <td>{{$index+1}}</td>
+                                <td>{{detalle.producto.nombre}}</td>
+                                <td>{{detalle.producto.codigo}}</td>
+                                <td>{{detalle.cantidad}}</td>
+                                <td>
+                                    <!-- {{detalleVenta.importe}} -->{{detalle.total}}</td>
+                                <td>
+                                    <a class="green">
+                                            <i class="glyphicon glyphicon-pencil" aria-hidden="true"></i>
+                                        </a>
+                                    <a class="red">
+                                            <i class="glyphicon glyphicon-trash" aria-hidden="true" ng-click="eliminarDetalleVenta(detalleVenta)"></i>
+                                        </a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="step-pane" data-step="4">
+
+                    <div class="row form-group">
+                        <div class="col-md-3">
+                            <label class="" for="">Empresa: </label>
+                            <input type="text" ng-model="servicioExterno.empresa" class="form-control">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="" for="">Servicio: </label>
+                            <input type="text" ng-model="servicioExterno.servicio" class="form-control">
+                        </div>
+                        <div class="col-md-2">
+                            <label class="text-uppercase text-primary" for="">Inicio</label>
+                            <input required ng-update-hidden class="form-control date-timepicker" type="text" id="fechafin" ng-model="servicioExterno.fecha_inicio">
+
+
+                        </div>
+                        <div class="col-md-2">
+                            <label class="text-uppercase text-primary" for="">Fin</label>
+                            <input required ng-update-hidden class="form-control date-timepicker" type="text" id="fechafin" ng-model="servicioExterno.fecha_fin">
+
+                        </div>
+                        <div class="col-md-2">
+                            <br>
+                            <a ng-show="!servicioExterno.edit" class="btn btn-sm btn-success" ng-click="agregarServicioExterno(servicioExterno)">
+                                    <i class="ace-icon fa fa-plus">Agregar</i>
+                                </a>
+                            <a ng-show="servicioExterno.edit" class="btn btn-sm btn-primary" ng-click="guardarServicioExternoEditado(servicioExterno)">
+                                    <i class="ace-icon fa fa-plus">Editar</i>
+                                </a>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <table id="dynamic-table" class="table table-striped table-bordered table-hover nowrap">
+                                <thead>
+                                    <tr>
+                                        <td>#</td>
+                                        <td>Empresa</td>
+                                        <td>Servicio</td>
+                                        <td>Fecha Inicio</td>
+                                        <td>Fecha Fin</td>
+                                        <td>Factura</td>
+                                        <td>Acciones</td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr ng-if="!servicio.eliminado" ng-repeat="servicio in nuevoOt.servicioExterno">
+                                        <td>{{$index+1}}</td>
+                                        <td>{{servicio.empresa}}</td>
+                                        <td>{{servicio.servicio}}</td>
+                                        <td>{{servicio.fecha_inicio}}</td>
+                                        <td>{{servicio.fecha_fin}}</td>
+                                        <td></td>
+                                        <td>
+                                            <a href="javascript:void(0)" ng-click="abrirDialogFacturaServicioExterno()" class="orange">
+                                                    <i class="ace-icon fa fa-file-text bigger-130"></i>
+                                                </a>
+                                            <a class="blue">
+                                                    <i class="ace-icon glyphicon glyphicon-print bigger-130"></i>
+                                                </a>
+                                            <a class="green" ng-click="editarServicioExterno(servicio,$index)">
+                                                    <i class="glyphicon glyphicon-pencil bigger-130" aria-hidden="true"></i>
+                                                </a>
+                                            <a class="red" ng-click="eliminarServicioExterno($index)">
+                                                    <i class="glyphicon glyphicon-trash bigger-130" aria-hidden="true" ></i>
+                                                </a>
+
+                                        </td>
+                                    </tr>
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="step-pane" data-step="5">
+                    <div class="row">
+                        <div class="center">
+                            <h4 class="blue">Finalización</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-footer wizard-actions">
+
+            <button type="button" class="btn btn-primary btn-sm "><i class="ace-icon fa fa-floppy-o bigger-110"></i>&nbsp; Guardar</button>
+
+            <button type="button" class="btn btn-sm btn-prev">
+                    <i class="ace-icon fa fa-arrow-left"></i>
+                    Anterior
+                </button>
+
+            <button type="submit" id="siguiente" class="btn btn-success btn-sm btn-next" data-last="Finish">
+                    Siguiente
+                    <i class="ace-icon fa fa-arrow-right icon-on-right"></i>
+                </button>
+
+            <button type="button" class="btn btn-danger btn-sm pull-left" data-dismiss="modal" ng-click="cerrarOTnuevo()">
+                    <i class="ace-icon fa fa-times"></i>
+                    Cancelar
+                </button>
+        </div>
+        </form>
+    </div>
+</div>
+</div>
+<!-- Fin dialog OT nuevo -->
+
+<!-- Modal factura servicio externo -->
+<div class="modal" id="dialog-factura-servicioExterno">
+    <div class="">
+        <div class="modal-content">
+            <div class="modal-header bg-primary">
+                <h4 class='smaller text-white text-uppercase'><i class='fa fa-file-text'></i> <label>Factura/ Empresa ...</label></h4>
+            </div>
+            <div class="modal-body">
+                <div class="row flex-center">
+                    <div class="col-md-12">
+                        <form class="form-horizontal">
+                            <div class="form-group">
+                                <label for="" class="col-sm-5 control-label text-primary">NIT</label>
+                                <div class="col-sm-7">
+                                    <input type="text" class="form-control" id="">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="" class="col-sm-5 control-label text-primary">Razon Social</label>
+                                <div class="col-sm-7">
+                                    <input type="text" class="form-control" id="">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="" class="col-sm-5 control-label text-primary">N° Factura</label>
+                                <div class="col-sm-7">
+                                    <input type="text" class="form-control" id="">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="" class="col-sm-5 control-label text-primary">N° Autorización</label>
+                                <div class="col-sm-7">
+                                    <input type="text" class="form-control" id="">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="" class="col-sm-5 control-label text-primary">Monto</label>
+                                <div class="col-sm-7">
+                                    <input type="text" class="form-control" id="">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="" class="col-sm-5 control-label text-primary">Código de Control</label>
+                                <div class="col-sm-7">
+                                    <input type="text" class="form-control" id="">
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary btn-sm" ng-click="cerrarDialogFacturaServicioExterno()">
+                    <i class="glyphicon glyphicon-print" aria-hidden="true"></i> Guardar Factura
+                </button>
+
+                <button type="button" class="btn btn-danger btn-sm" ng-click="cerrarDialogFacturaServicioExterno()">
+                    <i class="glyphicon glyphicon-remove" aria-hidden="true"></i> Salir
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Fin Modal factura servicio externo-->
+<!-- Panel repuestos OT -->
+<div class="modal" id="panel-repuestos-ot">
+    <div class="">
+        <div class="modal-content">
+            <div class="modal-header bg-primary">
+                <h4 class='smaller text-white text-uppercase'><i class='fa fa-gift'></i> <label>Solicitud de Repuestos e Insumos</label></h4>
+            </div>
+            <div class="modal-body">
+                <div class="row flex-center">
+                    <div class="col-md-12">
+                        <div>
+
+                            <label>SUCURSAL</label>
+                            <select data-validate="validate(required)" required id="sucursal" name="sucursal" ng-options="sucursal as sucursal.nombre for sucursal in sucursales track by sucursal.id"
+                                ng-model="venta.sucursal" ng-change="obtenerAlmacenesActividades(venta.sucursal.id)">
+																	<option value="" disabled selected>Selec. Sucursal</option>
+																</select><span class="red">(*)</span>
+                            <span class="invalid-message" ng-show="formularioVenta.sucursal.$dirty && formularioVenta.sucursal.$invalid">
+																	Debe seleccionar una Sucursal.
+																</span>
+
+
+                            <label>ALMACEN</label>
+                            <select data-validate="validate(required)" required id="almacen" name="almacen" ng-model="venta.almacen" ng-options="almacen as almacen.nombre for almacen in almacenes track by almacen.id"
+                                data-placeholder="Click para escoger">
+																	<option value="" disabled selected>Selec. Almacen</option>
+																</select>
+                            <span class="red">(*)</span>
+                            <span class="invalid-message" ng-show="formularioVenta.almacen.$dirty && formularioVenta.almacen.$invalid">
+																	Debe seleccionar un Almacen.
+																</span>
+
+                        </div>
+                        <div class="widget-box">
+
+                            <div class="widget-header">
+                                <h4 class="widget-title">BUSQUEDA PRODUCTO</h4>
+                            </div>
+                            <div class="widget-body">
+                                <div class="widget-main">
+                                    <table class="table table-striped table-bordered table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>
+                                                    <label>PRODUCTO</label>
+                                                </th>
+                                                <th>
+                                                    <label>CÓD. ITEM</label>
+                                                </th>
+                                                <th>
+                                                    <label>INVENTARIO DISPONIBLE</label>
+                                                </th>
+                                                <th style="width: 90px;">
+                                                    <label>CANT. (u)</label>
+                                                </th>
+                                                <th>
+                                                    <label>Valuado (Bs)</label>
+                                                </th>
+                                                <th>
+                                                    <label>ACC.</label>
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>
+                                                    <input ng-keypress="interceptarTecla($event,'cantidad',true)" id="id_producto" required ng-disabled="!venta.almacen" type="text"
+                                                        ng-model="detalleVenta.producto.nombre" placeholder="Ingrese el nombre del producto..."
+                                                        uib-typeahead="producto as (producto.codigo+'-'+producto.nombre+'-'+producto.grupo+'-'+producto.subgrupo) for producto in buscarProducto($viewValue)"
+                                                        typeahead-wait-ms="1000" typeahead-template-url="templates/autocompletar.html"
+                                                        typeahead-show-hint="false" typeahead-min-length="3" typeahead-on-select="establecerProducto($item, $model, $label, $event)">
+                                                    <div class="space-6"></div>
+                                                    <button ng-disabled="!venta.almacen" id="mostrar_inv" type="button" ng-click="abrirPopupInventario()" class="btn btn-info btn-sm">
+																		<i class="ace-icon fa fa-search-plus bigger-110"></i>
+																	</button>
+                                                    <span class="red" ng-if="!detalleVenta.producto.activar_inventario">Inventario Desactivado</span>
+                                                </td>
+                                                <td>
+                                                    {{detalleVenta.producto.codigo}}
+                                                </td>
+                                                <td>
+                                                    <div class="c100 p{{porcentaje}} small {{color}}" ng-if="detalleVenta.producto.activar_inventario">
+                                                        <span id="CantProd" style="color:black !important;">{{detalleVenta.inventario_disponible}}</span>
+                                                        <div class="slice">
+                                                            <div class="bar"></div>
+                                                            <div class="fill"></div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <input onfocus="this.select();" ng-keypress="interceptarTecla($event,'agregar_detalle_venta',false)" id="cantidad" name="cantidad"
+                                                        step="0.001" min="0.1" max="{{detalleVenta.inventario_disponible}}" required
+                                                        class="col-xs-12" ng-change="calcularImporte()" ng-model="detalleVenta.cantidad"
+                                                        type="number">
+                                                    <div ng-show="formularioBusquedaProducto.cantidad.$dirty && formularioBusquedaProducto.cantidad.$invalid">
+                                                        <span class="invalid-message">La cantidad debe estar entre 0.1 y {{detalleVenta.inventario_disponible}}.</span>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    {{detalleVenta.importe}}
+                                                </td>
+                                                <td>
+                                                    <button type="button" class="btn btn-success btn-sm" ng-click="agregarDetalleVenta(detalleVenta)">
+                                                            <i class="ace-icon fa fa-plus bigger-110"></i>
+                                                        </button>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <table id="dynamic-table" class="table table-striped table-bordered table-hover nowrap">
+                            <thead>
+                                <tr>
+                                    <td></td>
+                                    <td>Producto</td>
+                                    <td>Codigo item</td>
+                                    <td>Cantidad</td>
+                                    <td>Valuado</td>
+                                    <td>Acciones</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="detalleVenta in venta.detallesVenta">
+                                    <td>{{$index+1}}</td>
+                                    <td>{{detalleVenta.producto.nombre}}</td>
+                                    <td>{{detalleVenta.producto.codigo}}</td>
+                                    <td>{{detalleVenta.cantidad}}</td>
+                                    <td>
+                                        <!-- {{detalleVenta.importe}} -->{{detalleVenta.total}}</td>
+                                    <td>
+                                        <a class="red">
+                                            <i class="glyphicon glyphicon-trash" aria-hidden="true" ng-click="eliminarDetalleVenta(detalleVenta)"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td colspan="3"></td>
+                                    <td>Total</td>
+                                    <td>{{venta.total}}</td>
+                                    <td></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" ng-if="!editOt" class="btn btn-primary btn-sm" ng-click="GuardarDetalleMateriales(venta.detallesVenta)">
+                    <i class="glyphicon glyphicon-print" aria-hidden="true"></i> Guardar
+                </button>
+                <button type="button" ng-if="editOt" class="btn btn-primary btn-sm" ng-click="GuardarDetalleMateriales(venta.detallesVenta)">
+                    <i class="glyphicon glyphicon-print" aria-hidden="true"></i> Guardar
+                </button>
+
+                <button type="button" class="btn btn-danger btn-sm" ng-click="cerrarDialogRepuestosOT()">
+                    <i class="glyphicon glyphicon-remove" aria-hidden="true"></i> Salir
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Fin panel repuestos OT-->

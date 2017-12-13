@@ -1,0 +1,16 @@
+<div class="inline pos-rel pull-right">
+  <a data-toggle="dropdown" href="javascript:void(0)" class="dropdown-toggle white">
+    <i class="glyphicon glyphicon-list-alt"></i>
+  </a>
+
+  <ul id="field-viewer" class="dropdown-menu-right dropdown-menu dropdown-yellow dropdown-caret">
+    <li ng-repeat="fieldKey in fieldViewer.getKeys()">
+      <label>
+        <input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="fieldViewer.object.configuracion[fieldKey].show" ng-change="fieldViewer.updateObject()"/>
+        <span class="lbl check-descuento"></span>
+      </label>
+      <label class="blue">{{fieldViewer.object.configuracion[fieldKey].value}}</label>
+    </li>
+    <li class="divider"></li>
+  </ul>
+</div>

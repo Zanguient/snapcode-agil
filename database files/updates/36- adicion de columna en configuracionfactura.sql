@@ -1,0 +1,2 @@
+ALTER TABLE agil_configuracion_factura ADD tamano_papel_cotizacion int;
+ALTER TABLE agil_configuracion_factura ADD CONSTRAINT fk_conffact_cotizacion_id FOREIGN KEY (tamano_papel_cotizacion) REFERENCES gl_clase(id);

@@ -1,0 +1,1 @@
+ALTER TABLE	inv_pago_venta ADD numero_documento int;

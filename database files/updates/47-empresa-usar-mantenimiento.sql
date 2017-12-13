@@ -1,0 +1,1 @@
+ALTER TABLE agil_empresa ADD usar_mantenimiento tinyint default 0;

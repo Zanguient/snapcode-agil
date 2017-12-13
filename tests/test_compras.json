@@ -1,0 +1,21 @@
+{"usuario":"jbalderrama", "clave":"Usuario1",
+"cantidad_pruebas":3, "razon_social":"Paniagua",
+"num_factura":"801170015","num_autorizacion":"100",
+"fecha":"07/11/2017","codigo_control":"100",
+"sucursal":"Casa Matriz","tipo_pago":"credito",
+"centro_costo":"ALMACEN",
+
+"descuentos_generales":"si",
+
+"descuentos":"porcentaje", 
+
+"descuentos_porcentaje":10, "ICE_porcentaje":0,
+
+"descuentos_bs":10, "ICE_bs":0,
+
+"recargos":"Bs", 
+
+"recargos_porcentaje":5, "excentos_porcentaje":0,
+
+"recargos_Bs":5 ,"excentos_Bs":3
+}

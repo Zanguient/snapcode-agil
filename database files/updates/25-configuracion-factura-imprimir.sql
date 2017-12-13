@@ -1,0 +1,2 @@
+ALTER TABLE agil_configuracion_general_factura ADD imprimir_al_guardar tinyint default 1;
+ALTER TABLE agil_configuracion_factura ADD imprimir_al_guardar tinyint default 1;

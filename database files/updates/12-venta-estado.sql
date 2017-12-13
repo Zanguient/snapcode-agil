@@ -1,0 +1,1 @@
+ALTER TABLE inv_venta ADD activa tinyint default 1;

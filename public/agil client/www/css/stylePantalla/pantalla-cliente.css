@@ -1,0 +1,153 @@
+/*===================== para panel clientes ==============================================*/
+/*========================================================================================*/
+.cliente-form{
+	background-color:  #c11732;
+    width: 832px;
+    margin-top: -12px;
+}
+.cliente-campos{
+	padding-bottom: 10px;
+	text-align: center;
+	padding-top: 15px;
+}
+.cliente-label{
+	color: rgb(255, 255, 255) !important;
+    font-size: 20px;
+    font-weight: bold;
+}
+.cliente-input{
+	border-radius: 5px !important;
+	border: 5px solid #3ba3f2 !important;
+    height: 45px;
+    font-size: 20px !important;
+    text-align: center;
+    font-weight: bold;
+    
+}
+.cliente-cambio{
+	background-color: white;
+    text-align: center;
+    /* font-size: 25px; */
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-bottom: 5px;
+}
+.cliente-label-cambio{
+	color: #3ba3f2 !important;
+    font-size: 20px;
+    font-weight: bold;
+}
+.cliente-box{
+	padding-bottom: 10px;
+}
+.cliente-input-cambio{
+	border-radius: 5px !important;
+	border: 5px solid #c11732 !important;
+    height: 45px;
+    font-size: 20px !important;
+    text-align: center;
+    font-weight: bold;
+    
+}
+.cliente-foto{
+	max-width: 100%;
+    width: auto;
+    border: 5px solid #3ba3f2;
+    border-radius: 25px;
+    margin-left: 15px;
+    margin-top: 17px;
+}
+.cliente-table-head{
+	background-color: #3ba3f2 !important;
+}
+
+.cliente-table-head label{
+	color: white;
+	font-size: 16px;
+	font-weight: bold;
+}
+.fondo-productos{
+	background-color: #c11732;
+}
+
+.tabla-cliente{
+	font-size: 16px;
+    font-weight: bold;
+}
+.tabla-cliente>thead>tr>th{
+    border-color: #3ba3f2!important;
+}
+
+.tabla-cliente>tbody>tr>td{
+    border-color: #3ba3f2!important;
+    background-color: white;
+}
+.td-total{
+	background-color: #c11732 !important;
+    border-color: #c11732 !important;
+}
+.totales{
+	color: #c11732;
+}
+
+/*=== galeria promociones ===*/
+.titulo-promocion{
+	font-size: 25px;
+    position: absolute;
+    bottom: 20px;
+    right: 25px;
+    color: white;
+    font-weight: bold;
+}
+
+.box-promocion{
+    background: -webkit-radial-gradient(circle, #b8b7bd, #b8b7bd, #707074);
+    background: -o-radial-gradient(circle, #b8b7bd, #b8b7bd, #707074);
+    background: -moz-radial-gradient(circle, #b8b7bd, #b8b7bd, #707074);
+    background: radial-gradient(circle, #b8b7bd, #b8b7bd, #707074);
+    margin-top: -12px;
+}
+.imagenes-promocion{
+	height: 370px !important;
+}
+
+
+.outer-circle {
+    position: relative;
+    background: #c11732;
+    height: 60px;
+    width: 123px;
+}
+.inner-circle {	
+    position: absolute;
+    background: #f3cc51;
+    border-radius: 50%;
+    right: 35px;
+    left: 35px;
+    top: 4px;
+    bottom: 4px;
+    text-align: center;
+}
+.label-circle{
+	font-size: 20px;
+    padding-top: 10px;
+}
+.list-space{
+	padding-left: 0px !important;
+    padding-right: 0px !important;
+    /* margin-left: 0px; */
+    margin-right: -2px !important;
+}
+.imagenes-cliente{
+    width: 183px!important;
+    margin-right: 25px !important;
+    margin-top: 25px !important;
+    background-color: white !important;
+    color: #0086ae !important;
+    border: 3px #0086ae solid !important;
+    border-bottom: 35px #0086ae solid !important;
+}
+
+#dialog-pantalla-cliente .swiper-wrapper {
+    width: 1447px !important;
+}

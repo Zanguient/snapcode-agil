@@ -1,0 +1,366 @@
+<div class="row">
+	<div class="col-xs-12">
+		<h3 class="header smaller lighter blue">SEGUIMIENTO APP</h3>
+		
+		<form name="formularioFiltroVentas" novalidate ng-submit="filtrarRutasUsuarios(fechaInicioTexto,fechaFinTexto,filtro.ruta,filtro.usuario)">
+			<fieldset>
+				<legend>Filtro Ventas</legend>
+				<table class="table table-striped table-bordered table-hover">
+					<tbody>
+						<tr>
+							<td>
+								
+							</td>
+							<td>
+								<label>Desde</label>&nbsp
+							</td>
+							<td>
+								<label>Hasta</label>&nbsp
+							</td>
+							<td>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<label>PERIODO</label>&nbsp
+							</td>
+							<td>
+								<input required ng-update-hidden class="form-control date-picker" type="text" data-date-format="dd/mm/yyyy" id="fechainicio" ng-model="fechaInicioTexto" placeholder="Ingrese la fecha inicial" />
+							</td>
+							<td>
+								<input required ng-update-hidden class="form-control date-picker" type="text" data-date-format="dd/mm/yyyy" id="fechafin" ng-model="fechaFinTexto" placeholder="Ingrese la fecha final" />
+								&nbsp
+							</td>
+							<td>
+								<button type="submit" ng-disabled="formularioFiltroVentas.$invalid" class="btn btn-primary">
+									<i class="ace-icon fa fa-plus align-top bigger-125"></i>
+									Filtrar
+								</button>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								&nbsp
+							</td>
+							<td>
+								<label>Vendedor</label>&nbsp
+							</td>
+							<td>
+								<label>Ruta</label>&nbsp
+							</td>
+							<td>
+								<button type="button" ng-click="verComisionesVendedores(fechaInicioTexto,fechaFinTexto)" ng-disabled="formularioFiltroVentas.$invalid" class="btn btn-primary">
+									Comisiones
+								</button>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								
+							</td>
+							<td>
+								<input type="text" ng-model="filtro.usuario">
+							</td>
+							<td>
+								<select id="ruta" name="ruta" 
+										ng-model="filtro.ruta" data-placeholder="Elija una ruta">
+									<option value="0">TODOS</option>
+									<option ng-repeat="ruta in rutas track by $index" value="{{ruta.id}}">{{ruta.nombre}}</option>
+								</select>
+							</td>
+							<td>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</fieldset>
+		</form>
+		
+		<div class="clearfix">
+			<div class="pull-right tableTools-container"></div>
+		</div>
+		<div class="table-header">
+			Seguimiento App
+		</div>
+
+		<!-- div.table-responsive -->
+
+		<!-- div.dataTables_borderWrap -->
+		<div>
+			<table id="tabla-ventas" class="table table-striped table-bordered table-hover">
+				<thead>
+					<tr>
+						<th>Nº</th>
+						<th>Vendedor</th>
+						<th>Ruta</th>
+						<th>Rendimiento</th>
+						<th>Ruteo</th>
+						<th>Historico</th>
+						<th>Cierre de Caja</th>
+						<th>Comisiones Mes</th>
+					</tr>
+				</thead>
+
+				<tbody>
+					<tr ng-repeat="usuarioRuta in usuariosRutas">
+						<td>{{$index+1}}</td>
+						<td>{{usuarioRuta.usuario.persona.nombres}}</td>
+						<td>{{usuarioRuta.ruta.nombre}}</td>
+						<td></td>
+						<td>
+							<div class="hidden-sm hidden-xs action-buttons">
+								<a class="blue" href="javascript:void(0)" ng-click="abrirSeguimientoVentas(usuarioRuta.usuario.id,usuarioRuta.ruta)">
+									<i class="ace-icon fa fa-map-marker red bigger-130"></i>
+								</a>
+								<a class="blue" href="javascript:void(0)" ng-click="abrirPopupFiltroExcel(usuarioRuta.usuario,usuarioRuta.ruta)">
+									<i class="ace-icon fa fa-file-excel-o green bigger-130"></i>
+								</a>
+							</div>
+
+							<div class="hidden-md hidden-lg">
+								<div class="inline pos-rel">
+									<button class="btn btn-minier btn-yellow dropdown-toggle" data-toggle="dropdown" data-position="auto">
+										<i class="ace-icon fa fa-caret-down icon-only bigger-120"></i>
+									</button>
+
+									<ul class="dropdown-menu dropdown-only-icon dropdown-yellow dropdown-menu-right dropdown-caret dropdown-close">
+										<li>
+											<a href="javascript:void(0)" ng-click="verCompra(compra)" class="tooltip-info" data-rel="tooltip" title="View">
+												<span class="blue">
+													<i class="ace-icon fa fa-map-marker bigger-120"></i>
+												</span>
+											</a>
+										</li>
+										<li>
+											<a href="javascript:void(0)" ng-click="abrirPopupFiltroExcel(usuarioRuta.usuario,usuarioRuta.ruta)" class="tooltip-success" data-rel="tooltip" title="Edit">
+												<span class="green">
+													<i class="ace-icon fa fa-pencil-square-o bigger-120"></i>
+												</span>
+											</a>
+										</li>
+									</ul>
+								</div>
+							</div>
+						</td>
+						<td>
+							<div class="hidden-sm hidden-xs action-buttons">
+								<a class="blue" href="javascript:void(0)" ng-click="abrirPopupFiltroGraficos(usuarioRuta.usuario,usuarioRuta.ruta)">
+									<i class="ace-icon fa fa-bar-chart-o yellow bigger-130"></i>
+								</a>
+							</div>
+
+							<div class="hidden-md hidden-lg">
+								<div class="inline pos-rel">
+									<button class="btn btn-minier btn-yellow dropdown-toggle" data-toggle="dropdown" data-position="auto">
+										<i class="ace-icon fa fa-caret-down icon-only bigger-120"></i>
+									</button>
+
+									<ul class="dropdown-menu dropdown-only-icon dropdown-yellow dropdown-menu-right dropdown-caret dropdown-close">
+										<li>
+											<a href="javascript:void(0)" ng-click="verCompra(compra)" class="tooltip-info" data-rel="tooltip" title="View">
+												<span class="blue">
+													<i class="ace-icon fa fa-bar-chart-o yellow bigger-120"></i>
+												</span>
+											</a>
+										</li>
+									</ul>
+								</div>
+							</div>
+						</td>
+						<td>
+							<div class="hidden-sm hidden-xs action-buttons">
+								<a class="blue" href="javascript:void(0)" ng-click="cerrarCajaUsuarioRuta(usuarioRuta.usuario,usuarioRuta.ruta)">
+									<i class="ace-icon fa fa-lock green bigger-130"></i>
+								</a>
+							</div>
+						</td>
+						<td>580</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
+
+<div id="dialog-seguimiento-ventas" title="Seguimiento Ventas">
+	<div id="map_canvas" class="mapa_cliente" ng-if="mostrarMap">
+		<ui-gmap-google-map center="map.center" zoom="map.zoom" draggable="true" options="options" bounds="map.bounds">
+			<ui-gmap-markers fit="true" ng-if="markers" click="seleccionarMarcador" models="markers" coords="'self'" icon="'icon'" options="'options'">
+				<ui-gmap-windows show="show">
+					<div ng-non-bindable>{{title}}</div>
+				</ui-gmap-windows>
+			</ui-gmap-markers>
+			<ui-gmap-polyline ng-repeat="p in polylines" path="p.path" stroke="p.stroke" visible='p.visible'
+					  fit="true" editable="p.editable" draggable="p.draggable" icons='p.icons'></ui-gmap-polyline>
+		</ui-gmap-google-map>
+	</div>
+	<button type="button" class="btn btn-danger"  ng-click="cerrarSeguimientoVenta()">Cerrar</button>
+</div>
+
+<div id="dialog-filtro-excel" class="modal wizard-posicion">
+  <div class="row">
+		<div class="col-sm-12">
+			<div class="widget-box">
+				<div class="widget-body">
+					<div class="widget-main">
+						<form id="formularioSeg" name="formularioSeg" novalidate ng-submit="buscarDetallesVenta(reporte)">
+						<table class="table table-striped table-bordered table-hover">
+							<tbody>
+								<tr>
+									<td>
+										<label>
+											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="reporte.tipo" ng-change="recalcular()"/>
+											<span class="lbl check-seguimiento"></span>
+										</label>
+									</td>
+								</tr>
+								<tr>
+									<td ng-show="!reporte.tipo">
+										<label>Desde</label>&nbsp
+									</td>
+									<td ng-show="!reporte.tipo">
+										<input ng-update-hidden class="form-control date-picker" type="text" data-date-format="dd/mm/yyyy" id="repinicio" ng-model="reporte.fechaTextoInicio" placeholder="Ingrese la fecha inicial" />
+									</td>
+									<td ng-show="!reporte.tipo">
+										<label>Hasta</label>&nbsp
+									</td>
+									<td ng-show="!reporte.tipo">
+										<input ng-update-hidden class="form-control date-picker" type="text" data-date-format="dd/mm/yyyy" id="repfin" ng-model="reporte.fechaTextoFin" placeholder="Ingrese la fecha final" />
+									</td>
+									<td ng-show="reporte.tipo">
+										<label>Gestion</label>&nbsp
+									</td>
+									<td ng-show="reporte.tipo">
+										<select ng-model="reporte.gestion">
+											<option value="2016">2016</option>
+											<option value="2017" ng-selected="true">2017</option>
+										</select>
+									</td>
+									<td ng-show="reporte.tipo">
+										<label>Mes</label>&nbsp
+									</td>
+									<td ng-show="reporte.tipo">
+										<select ng-model="reporte.mes">
+											<option value="1" ng-selected="true">Enero</option>
+											<option value="2">Febrero</option>
+											<option value="3">Marzo</option>
+											<option value="4">Abril</option>
+											<option value="5">Mayo</option>
+											<option value="6">Junio</option>
+											<option value="7">Julio</option>
+											<option value="8">Agosto</option>
+											<option value="9">Septiembre</option>
+											<option value="10">Octubre</option>
+											<option value="11">Noviembre</option>
+											<option value="12">Diciembre</option>
+										</select>
+									</td>
+									<td>
+										<!--<input type="radio" name="tipo" ng-model="reporte.bandera" value="0"><span class="btn btn-primary"></span>-->
+										<input type="radio" name="tipo" ng-model="reporte.bandera" value="1"><span class="btn btn-danger"></span>
+										<input type="radio" name="tipo" ng-model="reporte.bandera" value="2"><span class="btn btn-yellow"></span>
+										<input type="radio" name="tipo" ng-model="reporte.bandera" value="3"><span class="btn btn-success"></span>
+									</td>
+									<td>
+										<button class="btn btn-primary" ng-disabled="formularioSeg.$invalid" type="submit">Buscar</button>
+										<button type="button" class="btn btn-danger"  ng-click="cerrarPopupFiltroExcel()">Cerrar</button>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div id="dialog-filtro-graficos" class="modal wizard-posicion">
+  <div class="row">
+		<div class="col-sm-12">
+			<div class="widget-box">
+				<div class="widget-body">
+					<div class="widget-main">
+						<form id="formularioGraf" name="formularioSeg" novalidate ng-submit="buscarGraficos(reporte)">
+						<table class="table table-striped table-bordered table-hover">
+							<tbody>
+								<tr>
+									<td>
+										<label>
+											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="reporte.tipo" ng-change="recalcular()"/>
+											<span class="lbl check-seguimiento"></span>
+										</label>
+									</td>
+								</tr>
+								<tr>
+									<td ng-show="!reporte.tipo">
+										<label>Desde</label>&nbsp
+									</td>
+									<td ng-show="!reporte.tipo">
+										<input ng-update-hidden class="form-control date-picker" type="text" data-date-format="dd/mm/yyyy" id="repinicio" ng-model="reporte.fechaTextoInicio" placeholder="Ingrese la fecha inicial" />
+									</td>
+									<td ng-show="!reporte.tipo">
+										<label>Hasta</label>&nbsp
+									</td>
+									<td ng-show="!reporte.tipo">
+										<input ng-update-hidden class="form-control date-picker" type="text" data-date-format="dd/mm/yyyy" id="repfin" ng-model="reporte.fechaTextoFin" placeholder="Ingrese la fecha final" />
+									</td>
+									<td ng-show="reporte.tipo">
+										<label>Gestion</label>&nbsp
+									</td>
+									<td ng-show="reporte.tipo">
+										<select ng-model="reporte.gestion">
+											<option value="2016">2016</option>
+											<option value="2017" ng-selected="true">2017</option>
+										</select>
+									</td>
+									<td ng-show="reporte.tipo">
+										<label>Mes</label>&nbsp
+									</td>
+									<td ng-show="reporte.tipo">
+										<select ng-model="reporte.mes">
+											<option value="1" ng-selected="true">Enero</option>
+											<option value="2">Febrero</option>
+											<option value="3">Marzo</option>
+											<option value="4">Abril</option>
+											<option value="5">Mayo</option>
+											<option value="6">Junio</option>
+											<option value="7">Julio</option>
+											<option value="8">Agosto</option>
+											<option value="9">Septiembre</option>
+											<option value="10">Octubre</option>
+											<option value="11">Noviembre</option>
+											<option value="12">Diciembre</option>
+										</select>
+									</td>
+									<td>
+										<button class="btn btn-primary" ng-disabled="formularioGraf.$invalid" type="submit">Buscar</button>
+										<button type="button" class="btn btn-danger"  ng-click="cerrarPopupFiltroGraficos()">Cerrar</button>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+						</form>
+						<canvas id="line" class="chart chart-bar" chart-data="data" chart-labels="labels" legend="true" chart-series="series"></canvas>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div id="dialog-usuario-comision" class="modal wizard-posicion">
+  <div class="row">
+		<div class="col-sm-12">
+			<div class="widget-box">
+				<div class="widget-body">
+					<div class="widget-main">
+						<button type="button" class="btn btn-danger"  ng-click="cerrarPopupUsuarioComision()">Cerrar</button>
+						<canvas id="bar" class="chart chart-bar" chart-data="data" chart-labels="labels" legend="true" chart-series="series"></canvas>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

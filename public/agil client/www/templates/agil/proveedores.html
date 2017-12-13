@@ -1,0 +1,499 @@
+<div class="row">
+	<div class="col-xs-12">
+		<h3 class="header smaller lighter blue">PROVEEDORES</h3>
+		
+		<button ng-disabled="!aplicacion.puede_crear" class="btn btn-primary" ng-click="crearNuevoProveedor()">
+			<i class="ace-icon fa fa-plus align-top bigger-125"></i>
+			Nuevo
+		</button>
+		<div class="fileUpload btn btn-primary btn-success">
+			<span class="fileUpload-button ace-icon fa fa-cloud-upload align-top bigger-125">&nbsp&nbspImportar</span>
+			<input ng-disabled="!aplicacion.puede_crear" class="upload" type="file" custom-on-file-change="subirExcelProveedores"/>&nbsp&nbsp
+		</div>
+		<a href="/recursos/EJEMPLO-DATOS-PROVEEDORES.xlsx" class="btn btn-primary btn-danger">
+			<i class="ace-icon fa fa-cloud-download align-top bigger-125"></i>
+			Ejemplo Importacion
+		</a>
+		<div class="clearfix">
+			<div class="pull-right tableTools-container"></div>
+		</div>
+		<div class="table-header">
+			Lista de Proveedores
+		</div>
+
+		<!-- div.table-responsive -->
+
+		<!-- div.dataTables_borderWrap -->
+		<div>
+			<div id="tabla-proveedores_wrapper" class="dataTables_wrapper form-inline no-footer">
+			<div class="row"><div class="col-xs-6"><div class="dataTables_length" id="tabla-proveedores_length"><label>
+				Mostrar <select ng-model="itemsPorPagina" ng-change="buscarProveedores(1,itemsPorPagina,textoBusqueda)" name="tabla-proveedores_length" aria-controls="tabla-proveedores" class="form-control input-sm">
+							<option selected value="10">10</option>
+							<option value="25">25</option>
+							<option value="50">50</option>
+							<option value="100">100</option>
+					    </select> proveedores por página</label></div></div>
+						<div class="col-xs-6">
+							<div id="tabla-proveedores_filter" class="dataTables_filter">
+								<label>Buscar:<input type="search" class="form-control input-sm" ng-model="textoBusqueda" placeholder="" aria-controls="tabla-proveedores" ng-keydown="verificarPulso($event,textoBusqueda)">
+								</label>
+							</div>
+						</div>
+			</div>
+			<table id="tabla-proveedores" class="table table-striped table-bordered table-hover">
+				<thead>
+					<tr>
+						<th class="center">
+							<label class="pos-rel">
+								<input type="checkbox" class="ace" />
+								<span class="lbl"></span>
+							</label>
+						</th>
+						<th>Código</th>
+						<th>Razón Social</th>
+						<th>Nit</th>
+						<th>
+							<i class="ace-icon fa fa-clock-o bigger-110 hidden-480"></i>
+							Dirección
+						</th>
+						<th class="hidden-480">Teléfono 1</th>
+						<th class="hidden-480">Rubro</th>
+						<th class="hidden-480">Categoría</th>
+						<th class="hidden-480">Ubicación Geográfica</th>
+						<th class="hidden-480">Fecha Importante 1</th>
+						<th class="hidden-480">Fecha Importante 2</th>
+						<th>Acciones</th>
+					</tr>
+				</thead>
+
+				<tbody>
+					<tr ng-repeat="proveedor in proveedores">
+						<td class="center">
+							<label class="pos-rel">
+								<input type="checkbox" class="ace" />
+								<span class="lbl"></span>
+							</label>
+						</td>
+						<td>
+							{{proveedor.codigo}}
+						</td>
+						<td>
+							{{proveedor.razon_social}}
+						</td>
+						<td>{{proveedor.nit}}</td>
+						<td>{{proveedor.direccion}}</td>
+
+						<td>
+							{{proveedor.telefono1}}
+						</td>
+						<td>
+							{{proveedor.rubro}}
+						</td>
+						<td>
+							{{proveedor.categoria}}
+						</td>
+						<td>
+							{{proveedor.ubicacion_geografica}}
+						</td>
+						<td>
+							{{proveedor.fecha1 | date:"dd/MM"}}
+						</td>
+						<td>
+							{{proveedor.fecha2 | date:"dd/MM"}}
+						</td>
+						<td>
+							<div class="hidden-sm hidden-xs action-buttons">
+								<a class="blue" href="javascript:void(0)" e-disabled="!aplicacion.puede_ver" ng-click="verProveedor(proveedor)">
+									<i class="ace-icon fa fa-search-plus bigger-130"></i>
+								</a>
+
+								<a class="green" href="javascript:void(0)" e-disabled="!aplicacion.puede_modificar" ng-click="modificarProveedor(proveedor)">
+									<i class="ace-icon fa fa-pencil bigger-130"></i>
+								</a>
+
+								<a class="red" href="javascript:void(0)" e-disabled="!aplicacion.puede_eliminar" ng-click="mostrarConfirmacionEliminacion(proveedor)">
+									<i class="ace-icon fa fa-trash-o bigger-130"></i>
+								</a>
+							</div>
+
+							<div class="hidden-md hidden-lg">
+								<div class="inline pos-rel">
+									<button class="btn btn-minier btn-yellow dropdown-toggle" data-toggle="dropdown" data-position="auto">
+										<i class="ace-icon fa fa-caret-down icon-only bigger-120"></i>
+									</button>
+
+									<ul class="dropdown-menu dropdown-only-icon dropdown-yellow dropdown-menu-right dropdown-caret dropdown-close">
+										<li>
+											<a href="javascript:void(0)" e-disabled="!aplicacion.puede_crear" ng-click="verProveedor(proveedor)" class="tooltip-info" data-rel="tooltip" title="View">
+												<span class="blue">
+													<i class="ace-icon fa fa-search-plus bigger-120"></i>
+												</span>
+											</a>
+										</li>
+
+										<li>
+											<a href="javascript:void(0)" e-disabled="!aplicacion.puede_modificar" ng-click="modificarProveedor(proveedor)" class="tooltip-success" data-rel="tooltip" title="Edit">
+												<span class="green">
+													<i class="ace-icon fa fa-pencil-square-o bigger-120"></i>
+												</span>
+											</a>
+										</li>
+
+										<li>
+											<a href="javascript:void(0)" e-disabled="!aplicacion.puede_eliminar" ng-click="mostrarConfirmacionEliminacion(proveedor)" class="tooltip-error" data-rel="tooltip" title="Delete">
+												<span class="red">
+													<i class="ace-icon fa fa-trash-o bigger-120"></i>
+												</span>
+											</a>
+										</li>
+									</ul>
+								</div>
+							</div>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			<div class="row">
+				<div class="col-xs-6">
+					<div class="dataTables_info" id="tabla-proveedores_info" role="status" aria-live="polite">Mostrando página {{paginaActual}} de {{paginas.length}}</div>
+				</div>
+				<div class="col-xs-6">
+					<div class="dataTables_paginate paging_simple_numbers" id="tabla-proveedores_paginate">
+						<ul class="pagination">
+							<li class="paginate_button previous" aria-controls="tabla-proveedores" tabindex="0" id="tabla-proveedores_previous"><a href="javascript:void(0)" ng-click="buscarProveedores(1,itemsPorPagina,textoBusqueda)">Primero</a></li>
+							<li class="paginate_button previous" ng-class="{disabled:paginaActual==1}" aria-controls="tabla-proveedores" tabindex="0" id="tabla-proveedores_previous"><a href="javascript:void(0)" e-disabled="paginaActual==1" ng-click="buscarProveedores(paginaActual-1,itemsPorPagina,textoBusqueda)"><<</a></li>
+							<li class="paginate_button" ng-class="{active:paginaActual==pagina}" aria-controls="tabla-proveedores" tabindex="0" ng-repeat="pagina in paginas" ng-if="abs(paginaActual-pagina)<4"><a href="javascript:void(0)" ng-click="buscarProveedores(pagina,itemsPorPagina,textoBusqueda)">{{pagina}}</a></li>
+							<li class="paginate_button" ng-class="{disabled:paginaActual==paginas.length}" aria-controls="tabla-proveedores" tabindex="0" id="tabla-proveedores_next"><a href="javascript:void(0)" e-disabled="paginaActual==paginas.length" ng-click="buscarProveedores(paginaActual+1,itemsPorPagina,textoBusqueda)">>></a></li>
+							<li class="paginate_button previous" aria-controls="tabla-proveedores" tabindex="0" id="tabla-proveedores_previous"><a href="javascript:void(0)" ng-click="buscarProveedores(paginas.length,itemsPorPagina,textoBusqueda)">Ultimo</a></li>
+						</ul>
+					</div>
+				</div>
+			</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div id="modal-wizard-proveedor" class="modal wizard-posicion">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<form ng-submit="saveForm(proveedor)">
+			<div id="modal-wizard-container-proveedor-edicion">
+				<div class="modal-header">
+					<ul class="steps">
+						<li data-step="1" class="active">
+							<span class="step">1</span>
+							<span class="title">Datos del Proveedor</span>
+						</li>
+						<li data-step="2">
+							<span class="step">2</span>
+							<span class="title">Datos Adicionales</span>
+						</li>
+						<li data-step="3">
+							<span class="step">3</span>
+							<span class="title">Finalizar</span>
+						</li>
+					</ul>
+				</div>
+
+				<div class="modal-body step-content">
+					<div class="step-pane active" data-step="1">
+						<div class="form-group">
+							<label class="col-sm-3 control-label no-padding-right" for="codigo">Código</label>
+
+							<div class="col-sm-9">
+								<input required type="text" id="codigo" ng-model="proveedor.codigo" placeholder="Código" class="col-xs-10 col-sm-5" />
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label no-padding-right" for="razon_social">Razón Social</label>
+
+							<div class="col-sm-9">
+								<input required type="text" id="razon_social" ng-model="proveedor.razon_social" placeholder="Razón Social" class="col-xs-10 col-sm-5" />
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label no-padding-right" for="nit">NIT</label>
+
+							<div class="col-sm-9">
+								<input required type="number" id="nit" ng-model="proveedor.nit" placeholder="nit" class="form-control" />
+							</div>
+						</div>
+
+						<div class="space-4"></div>
+
+						<div class="form-group">
+							<label class="col-sm-3 control-label no-padding-right" for="direccion">Dirección</label>
+
+							<div class="col-sm-9">
+								<input required type="text" id="direccion" ng-model="proveedor.direccion" placeholder="dirección" class="form-control" />
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label no-padding-right" for="telefono1">Teléfono 1</label>
+
+							<div class="col-sm-9">
+								<input type="text" id="telefono1" ng-model="proveedor.telefono1" placeholder="telefono 1" class="form-control" />
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label no-padding-right" for="telefono2">Teléfono 2</label>
+
+							<div class="col-sm-9">
+								<input type="text" id="telefono2" ng-model="proveedor.telefono2" placeholder="telefono 2" class="form-control" />
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label no-padding-right" for="telefono3">email</label>
+
+							<div class="col-sm-9">
+								<input type="text" id="telefono3" ng-model="proveedor.telefono3" placeholder="email" class="form-control" />
+							</div>
+						</div>
+					</div>
+
+					<div class="step-pane" data-step="2">
+						<div class="form-group">
+							<label class="col-sm-3 control-label no-padding-right" for="contacto">Contacto</label>
+
+							<div class="col-sm-9">
+								<input type="text" id="contacto" ng-model="proveedor.contacto" placeholder="contacto" class="form-control" />
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label no-padding-right" for="ubicacion_geografica">Ubic. Geo.</label>
+							<div class="col-sm-9">
+								<input type="text" id="ubicacion_geografica" ng-model="proveedor.ubicacion_geografica" placeholder="ubicacion geografica" class="form-control" />
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label no-padding-right" for="rubro">Rubro</label>
+
+							<div class="col-sm-9">
+								<input type="text" id="rubro" ng-model="proveedor.rubro" placeholder="rubro" class="form-control" />
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label no-padding-right" for="categoria">Categoría</label>
+
+							<div class="col-sm-9">
+								<input type="text" id="categoria" ng-model="proveedor.categoria" placeholder="categoria" class="form-control" />
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label no-padding-right" for="fecha1">Fecha Imp. 1</label>
+
+							<div class="col-sm-9">
+								<input ng-update-hidden class="form-control date-picker" type="text" data-date-format="dd/mm" id="fecha1" ng-model="proveedor.fechatexto1" placeholder="fecha 1"/>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label no-padding-right" for="fecha2">Fecha Imp. 2</label>
+
+							<div class="col-sm-9">
+								<input ng-update-hidden class="form-control date-picker" type="text" data-date-format="dd/mm" id="fecha2" ng-model="proveedor.fechatexto2" placeholder="fecha 2" />
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label no-padding-right" for="texto1">Texto 1</label>
+
+							<div class="col-sm-9">
+								<input type="text" id="texto1" ng-model="proveedor.texto1" placeholder="texto 1" class="form-control" />
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label no-padding-right" for="texto2">Texto 2</label>
+							<div class="col-sm-9">
+								<input type="text" id="texto2" ng-model="proveedor.texto2" placeholder="texto 2" class="form-control" />
+							</div>
+						</div>
+					</div>
+
+					<div class="step-pane" data-step="3">
+						<div class="center">
+							<h4 class="blue">Step 4</h4>
+						</div>
+					</div>
+				
+				</div>
+			</div>
+
+			<div class="modal-footer wizard-actions">
+				<button class="btn btn-sm btn-prev">
+					<i class="ace-icon fa fa-arrow-left"></i>
+					Anterior
+				</button>
+
+				<button type="submit" id="siguiente" class="btn btn-success btn-sm btn-next" data-last="Finish">
+					Siguiente
+					<i class="ace-icon fa fa-arrow-right icon-on-right"></i>
+				</button>
+
+				<button type="button" class="btn btn-danger btn-sm pull-left" data-dismiss="modal" ng-click="cerrarPopPupNuevoProveedor()">
+					<i class="ace-icon fa fa-times"></i>
+					Cancelar
+				</button>
+			</div>
+			</form>
+		</div>
+	</div>
+</div>
+
+<div id="modal-wizard-proveedor-vista" class="modal wizard-posicion">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div id="modal-wizard-container-proveedor-vista">
+				<div class="modal-header">
+					<ul class="steps">
+						<li data-step="1" class="active">
+							<span class="step">1</span>
+							<span class="title">Datos del Proveedor</span>
+						</li>
+						<li data-step="2">
+							<span class="step">2</span>
+							<span class="title">Datos Adicionales</span>
+						</li>
+					</ul>
+				</div>
+
+				<div class="modal-body step-content">
+					<div class="step-pane active" data-step="1">
+						<div class="form-group">
+							<label class="col-sm-3 control-label no-padding-right" for="codigo">Código</label>
+
+							<div class="col-sm-9">
+								<input disabled type="text" id="codigo" ng-model="proveedor.codigo" class="col-xs-10 col-sm-5" />
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label no-padding-right" for="razon_social">Razón Social</label>
+
+							<div class="col-sm-9">
+								<input disabled type="text" id="razon_social" ng-model="proveedor.razon_social" class="col-xs-10 col-sm-5" />
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label no-padding-right" for="nit">NIT</label>
+
+							<div class="col-sm-9">
+								<input disabled type="text" id="nit" ng-model="proveedor.nit" class="form-control" />
+							</div>
+						</div>
+
+						<div class="space-4"></div>
+
+						<div class="form-group">
+							<label class="col-sm-3 control-label no-padding-right" for="direccion">Dirección</label>
+
+							<div class="col-sm-9">
+								<input disabled type="text" id="direccion" ng-model="proveedor.direccion" class="form-control" />
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label no-padding-right" for="telefono1">Teléfono 1</label>
+
+							<div class="col-sm-9">
+								<input disabled type="text" id="telefono1" ng-model="proveedor.telefono1" class="form-control" />
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label no-padding-right" for="telefono2">Teléfono 2</label>
+
+							<div class="col-sm-9">
+								<input disabled type="text" id="telefono2" ng-model="proveedor.telefono2" class="form-control" />
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label no-padding-right" for="telefono3">email</label>
+
+							<div class="col-sm-9">
+								<input disabled type="text" id="telefono3" ng-model="proveedor.telefono3" class="form-control" />
+							</div>
+						</div>
+					</div>
+
+					<div class="step-pane" data-step="2">
+						<div class="form-group">
+							<label class="col-sm-3 control-label no-padding-right" for="contacto">Contacto</label>
+
+							<div class="col-sm-9">
+								<input disabled type="text" id="contacto" ng-model="proveedor.contacto" class="form-control" />
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label no-padding-right" for="ubicacion_geografica">Ubic. Geo.</label>
+							<div class="col-sm-9">
+								<input disabled type="text" id="ubicacion_geografica" ng-model="proveedor.ubicacion_geografica" class="form-control" />
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label no-padding-right" for="rubro">Rubro</label>
+
+							<div class="col-sm-9">
+								<input disabled type="text" id="rubro" ng-model="proveedor.rubro" class="form-control" />
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label no-padding-right" for="categoria">Categoría</label>
+
+							<div class="col-sm-9">
+								<input disabled type="text" id="categoria" ng-model="proveedor.categoria" class="form-control" />
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label no-padding-right" for="fecha1">Fecha Imp. 1</label>
+
+							<div class="col-sm-9">
+								<input disabled class="form-control date-picker" type="text" data-date-format="dd/mm/yyyy" id="fecha1" ng-model="proveedor.fechatexto1" />
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label no-padding-right" for="fecha2">Fecha Imp. 2</label>
+
+							<div class="col-sm-9">
+								<input disabled class="form-control date-picker" type="text" data-date-format="dd/mm/yyyy" id="fecha2" ng-model="proveedor.fechatexto2" />
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label no-padding-right" for="texto1">Texto 1</label>
+
+							<div class="col-sm-9">
+								<input disabled type="text" id="texto1" ng-model="proveedor.texto1" class="form-control" />
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label no-padding-right" for="texto2">Texto 2</label>
+							<div class="col-sm-9">
+								<input disabled type="text" id="texto2" ng-model="proveedor.texto2" class="form-control" />
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="modal-footer wizard-actions">
+				<button class="btn btn-sm btn-prev">
+					<i class="ace-icon fa fa-arrow-left"></i>
+					Anterior
+				</button>
+
+				<button type="submit" id="siguiente" class="btn btn-success btn-sm btn-next" data-last="Finish">
+					Siguiente
+					<i class="ace-icon fa fa-arrow-right icon-on-right"></i>
+				</button>
+
+				<button type="button" class="btn btn-danger btn-sm pull-left" data-dismiss="modal" ng-click="cerrarPopPupVista()">
+					<i class="ace-icon fa fa-times"></i>
+					Cancelar
+				</button>
+			</div>
+			</form>
+		</div>
+	</div>
+</div>
+
+<div id="dialog-eliminar-proveedor" title="¿Eliminación de Proveedor?">
+  <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>¿Esta seguro de eliminar el proveedor seleccionado?</p>
+  <button type="button" class="btn btn-danger" ng-click="eliminarProveedor(proveedor)">Si</button>
+  <button type="button" class="btn btn-success"  ng-click="cerrarConfirmacionEliminacion()">No</button>
+</div>

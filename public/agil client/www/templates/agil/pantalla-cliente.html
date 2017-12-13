@@ -1,0 +1,311 @@
+<div class="row">
+	<form id="formAl" name="formAl" novalidate>
+		<div class="col-xs-12">
+			<h3 class="header smaller lighter blue">PANTALLA CLIENTE</h3>
+			<div class="row">
+				<div class="col-xs-12">
+					<button class="btn btn-primary" type="button" ng-click="abrirPantallaCliente()">
+						<i class="ace-icon fa fa-plus align-top bigger-125"></i>
+						Abrir
+					</button>
+					<button class="btn btn-primary" type="button" ng-click="abrirAbrirModalImagenesPromociones()">
+						<i class="ace-icon fa fa-picture-o align-top bigger-125"></i>
+						Imagenes Promociones
+					</button>
+					<!--- <img src="{{imagen1}}" alt="" width="20%"> -->
+					
+				</div>
+			</div>
+		</div>
+	</form>
+
+</div>
+
+<div id="dialog-pantalla-cliente" title="Pantalla Cliente" class="modal wizard-posicion">
+  <div class="row">
+		<div class="col-sm-12">
+			<div class="widget-box">
+				<div class="widget-body">
+					<div class="widget-main">
+						<div class="row">
+							<div class="col-xs-12">
+								<div class="row">
+									<!-- =========== lista de productos ============================ -->
+									<div id="productos" class="col-xs-13" ng-show="mostrarProductos && !mostrarVideo">
+										<div class="swiper-container">
+											<div class="swiper-wrapper" >
+												<div ng-click="agregarDetalleVentaPanel(producto)" class="btn btn-success swiper-slide imagenes-cliente" ng-repeat="producto in productosProcesados">
+													<img src="{{producto.imagen}}" width="100%" style="height: 98px;max-height:98px">
+													<h3 class="text-cut">{{producto.nombre}}</h3>
+												</div>
+											</div>
+										</div>
+									</div>
+									<!-- =========== Fin ============================ -->
+									
+									<div class="row" ng-show="!mostrarProductos">
+										<!-- ============ aqui va la galeria del carusel ==============-->
+										<div class="col-xs-4 col-sm-5 col-lg-4 box-promocion">
+									
+											<div class="row">
+												<div class="col-sm-12" style="width: 100%;height: 160px;">
+													<label class="titulo-promocion">PROMO DEL DIA</label>
+												</div>
+												<div class="col-sm-12" style="width: 100%;height: 400px;">
+													<!-- main slider carousel -->
+												
+								                    <div id="myCarousel" class="carousel slide">
+								                        <!-- main slider carousel items -->
+								                        <div class="carousel-inner">
+								                            <div class="active item" data-slide-number="0">
+								                                <img src="{{imagen1}}" class="img-responsive imagenes-promocion">
+								                            </div>
+								                            <div class="item" data-slide-number="1">
+								                              <img src="{{imagen2}}" class="img-responsive imagenes-promocion">
+								                            </div>
+								                            <div class="item" data-slide-number="2">
+								                                <img src="{{imagen3}}" class="img-responsive imagenes-promocion">
+								                            </div>
+
+								                        </div>
+								                        <!-- main slider carousel nav controls -->
+								                        <!-- 
+								                        <a class="carousel-control left" href="#myCarousel" data-slide="prev">‹</a>
+
+								                        <a class="carousel-control right" href="#myCarousel" data-slide="next">›</a>
+								                        -->
+
+								                    </div>
+
+												
+												    <!--/main slider carousel-->
+
+												</div>
+												<div class="col-sm-12" style="width: 100%;height: 180px;">
+													<!-- thumb navigation carousel -->
+												    <div class="col-md-12 hidden-sm hidden-xs" id="slider-thumbs">
+												        
+												        <!-- thumb navigation carousel items -->
+												        <ul class="list-inline">
+												        	<li class="list-space"> 
+													        	<div id="carousel-selector-0" class="selected outer-circle">
+													        		<div class="inner-circle">
+															            <label class="label-circle">1</label>
+															        </div>
+													        	</div>
+													        </li>
+													        <li class="list-space"> 
+														        <div id="carousel-selector-1" class=" outer-circle">
+													        		<div class="inner-circle">
+															            <label class="label-circle">2</label>
+															        </div>
+													        	</div>
+													        </li>
+													        <li class="list-space">
+													        	<div id="carousel-selector-2" class="outer-circle">
+													        		<div class="inner-circle">
+															            <label class="label-circle">3</label>
+															        </div>
+													        	</div>
+														        <!-- <a id="carousel-selector-2">
+														        	<img src="http://placehold.it/80x60&amp;text=3" class="img-responsive">
+														        </a> -->
+													        </li>
+												        </ul>
+												        
+												    </div>
+												</div>
+
+											</div>
+
+										</div>
+										<!-- ===== fin ======================= -->
+
+										<!-- ============ aqui van los dados de los productos ==============-->
+										<div class="col-xs-8 col-sm-7 col-lg-8">
+											<!-- PAGE CONTENT BEGINS -->
+											<div class="row">
+												<div id="" class="col-xs-13 fondo-productos">
+													<!-- PAGE CONTENT BEGINS -->
+													<div class=" cliente-form">
+																		
+															<div >
+
+																<div class="row" >
+																	<div class="col-xs-7" >
+																	
+																		<div ng-repeat="detalleVenta in venta.detallesVenta">
+																		<div ng-show="$last" > 
+																			<img class="cliente-foto" style="max-width:100%;width:auto;" height="270" src="{{detalleVenta.producto.imagen}}">
+
+																		</div>
+																			
+																		</div>
+																	</div>
+																	<div class="col-xs-5" >
+																	
+																		<div class="col-xs-11 cliente-campos">
+																			<label class="cliente-label">NIT/C.I</label>
+
+																			<input type="text" class="form-control cliente-input" value="{{venta.cliente.nit}}">
+																		</div>
+																		<div class="col-xs-11 cliente-campos">
+																			<label class="cliente-label">RAZON SOCIAL CLIENTE</label>
+
+																			<input type="text" class=" form-control cliente-input" value="{{venta.cliente.razon_social}}">
+																		</div>
+																		<div class="col-xs-11 cliente-box">
+																			<div class="cliente-cambio">
+																				<label class="cliente-label-cambio">CAMBIO Bs</label>
+
+																				<input type="text" class="form-control cliente-input-cambio" value="{{venta.cambio}}" placeholder="0000">
+																			</div>
+																		</div>
+																
+																	</div>
+																</div>
+															</div>
+													</div>
+
+													<div style="overflow: scroll;overflow-x: hidden;width: 100%;height: 435px;"  class="row">
+													<div class="col-xs-12 table-responsive">
+														<table class="table  table-bordered tabla-cliente" >
+																<thead>
+																		<tr class="cliente-table-head">
+																			<th style="width: 60px;">
+																				<label>#</label>
+																			</th>
+															 				<th style="width: 60px;">
+																				<label>Cant.</label>
+																			</th>
+																			<th>
+																				<label>Producto</label>
+																			</th>
+																			<th style="width: 100px;">
+																				<label>P. U. (Bs)</label>
+																			</th>
+																			<th style="width: 100px;">
+																				<label>Imp. (Bs)</label>
+																			</th>
+																			
+																		</tr>
+																</thead>
+																<tbody>
+																	<tr ng-repeat="detalleVenta in venta.detallesVenta">
+																		<td>
+																			{{$index+1}}
+																		</td>
+																		<td>
+																			{{detalleVenta.cantidad}}
+																		</td>
+																		<td>
+																			{{detalleVenta.producto.nombre}}
+																		</td>
+																		<td>
+																			{{detalleVenta.precio_unitario}}
+																		</td>
+																		<td>
+																			{{detalleVenta.total}}
+																		</td>
+																		
+																		</tr>
+																		<tr>
+																			
+																			<td  colspan="3">
+																					
+																			</td>
+																			<td class="totales">
+																				<b>TOTALES</b>
+																			</td>
+																			<td>
+																				{{venta.total}}
+																			</td>
+																			
+																		</tr>
+																</tbody>
+														</table>
+														</div>
+													</div>
+											
+												</div>
+											</div>
+										</div>
+										<!-- ===== fin ======================= -->
+									</div>
+
+									
+										<!-- =========== Fin PRODUCTOS ============================ -->
+										<!-- <div class="row">
+											<div class="col-xs-12">
+												<img style="float:right;max-height: 150px;" src="img/agilsoft-logo-pantalla-cliente.png"  >
+											</div>
+										</div>
+										-->
+									</div>
+									<div id="pantalla-video" class="col-xs-13" ng-show="mostrarProductos && mostrarVideo">
+										<video id="video" controls> 
+											<source id="mp4"  type="video/mp4"> 
+										</video>
+										<input type="file" id="input" onchange="reproducirVideo(this)"/>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div id="dialog-pregunta-video" title="¿Ver Video?">
+  <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>¿Mostrar?</p>
+  <button type="button" class="btn btn-success" ng-click="mostrarVideoPantalla(true)">Video</button>
+  <button type="button" class="btn btn-success"  ng-click="mostrarVideoPantalla(false)">Productos</button>
+</div>
+
+<div id="dialog-imagenes-promociones"  class="modal wizard-posicion">
+
+	<div class="fluid-dialog-sm">
+            <div class="modal-content">
+            	<form ng-submit="saveForm(promocion)">
+	                <div class="modal-header bg-primary">
+	                    <h4 class='smaller text-white text-uppercase'><i class='fa fa-picture-o'></i> <label> &nbsp; Imagenes de Promociones</label></h4>
+	                </div>
+	                <div class="modal-body">
+	                    <div class="row flex-center">
+							<div class="form-group">
+								<div class=" col-xs-4">
+									<label class="control-label blue">Imagen Promocion 1:</label>
+									<img ng-if="imagen1" src="{{imagen1}}" width="70">
+									<input type="file" id="imagen-promocion1" onchange="uploadImage(this,'imagen1-promocion-oculto')"/>
+									<input id="imagen1-promocion-oculto" ng-model="promocion.imagen1" name="imagen1" type="hidden" ng-update-hidden>
+								</div>
+								<div class=" col-xs-4">
+									<label class="control-label blue">Imagen Promocion 2:</label>
+									<img ng-if="imagen2" src="{{imagen2}}" width="70">
+									<input type="file" id="imagen-promocion2" onchange="uploadImage(this,'imagen2-promocion-oculto')"/>
+									<input id="imagen2-promocion-oculto" ng-model="promocion.imagen2" name="imagen2" type="hidden" ng-update-hidden>
+								</div>
+								<div class=" col-xs-4">
+									<label class="control-label blue">Imagen Promocion 2:</label>
+									<img ng-if="imagen3" src="{{imagen3}}" width="70">
+									<input type="file" id="imagen-promocion3" onchange="uploadImage(this,'imagen3-promocion-oculto')"/>
+									<input id="imagen3-promocion-oculto" ng-model="promocion.imagen3" name="imagen3" type="hidden" ng-update-hidden>
+								</div>
+							</div>
+	                    </div>
+	                </div>
+	                <div class="modal-footer">
+	                    <button type="submit" class="btn btn-primary btn-sm">
+	                        <i class="fa fa-floppy-o" aria-hidden="true"></i> Guardar
+	                    </button>
+	                    
+	                    <button type="button" class="btn btn-danger btn-sm" ng-click="cerrarAbrirModalImagenesPromociones()">
+	                        <i class="glyphicon glyphicon-remove" aria-hidden="true"></i> Salir
+	                    </button>
+	                </div>
+	            </form>
+            </div>
+        </div>
+</div>

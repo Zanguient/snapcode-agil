@@ -1,0 +1,1 @@
+ALTER TABLE agil_sucursal ADD nota_venta_correlativo int default 1;

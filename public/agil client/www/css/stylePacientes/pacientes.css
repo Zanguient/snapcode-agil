@@ -1,0 +1,636 @@
+
+
+/*===== stylo botones tabla ====== */
+#pacientes .acciones{
+    font-size: 20px !important;
+  }
+  #pacientes .vacuna{
+    color: #ffb752;
+  }
+  #pacientes .laboratorio{
+    color: #3a6f31;
+  }
+  #pacientes .consulta{
+    color: #d15b47;
+  }
+  #pacientes .credencial-salud{
+    color: #62a8d1;
+  }
+  #pacientes .diagnostico{
+    color: red;
+  }
+  #pacientes .graficos{
+    color: #892e65;
+  }
+  
+  #pacientes .button-columna{
+      color: white;
+      margin-right: 10px;
+  }
+  #pacientes .lista-columna{
+      color: #307ecc;
+      width: 200px;
+  }
+  #pacientes .cabezera-pacientes{
+  text-align: center;
+  }
+
+  
+  /*==== stylo checkbox ====== */
+  #pacientes .check-espaniol::before{
+    content: "SI \a0\a0\a0\a0\a0\a0\a0\a0\a0\a0\a0  NO" !important;
+  }
+  
+  /*====== para panel vacunas ===== */
+  #pacientes>i,  .icono-vacuna{
+    color: #FF9800!important;
+  }
+  #pacientes #dialog-vacunas, .nombre_paciente{
+    text-align: center;
+    color: #468fcc;
+    font-weight: bold;
+  }
+  
+  #pacientes .icon-calendario{
+    font-size: 25px !important;
+    color: #428bca;
+  }
+  #pacientes #dialog-vacunas, .button-config{
+    /*margin-left: 410px;*/
+    font-size: 22px;
+  }
+  #pacientes .button-nuevo{
+    margin-left: 410px;
+  }
+  #pacientes .modal-consulta{
+        width: 80%;
+  }
+  #pacientes .icono-step{
+    font-size: 20px;
+  }
+  #pacientes .icono-step-soap{
+    font-size: 22px;
+  }
+  #pacientes .icono-general{
+    font-size: 25px;
+    color: white!important;
+  }
+ 
+  #pacientes #dialog-laboratorio, .icono-font{
+    font-size: 25px;
+  }
+  
+  #pacientes .fileUpload input.upload {
+      position: absolute;
+      top: 0;
+      right: 0;
+      margin: 0;
+      padding: 0;
+      font-size: 20px;
+      cursor: pointer;
+      opacity: 0;
+      filter: alpha(opacity=0);
+  }
+  #pacientes #modal-preRequisitos, .titulo-pre-requisito{
+    text-align: center;
+  }
+
+  #pacientes #modal-preRequisitos, .ui-dialog .ui-dialog-titlebar {
+    padding: .4em 1em !important;
+    position: relative;
+  }
+  #pacientes #modal-preRequisitos, .ui-dialog .ui-dialog-content {
+    position: relative;
+    border: 0;
+    padding: .5em !important;
+    background: 0 0;
+    /*overflow: hidden !important;*/
+  }
+  
+  
+  /*=== para mostrar historico consultas === */
+  #pacientes #modal-wizard-consulta, #accordion {width:240px;}
+  #pacientes #modal-wizard-consulta, .panel {width:100%;}
+  #pacientes #modal-wizard-consulta, .panel-group {
+    z-index: 100;
+    -webkit-backface-visibility: hidden;
+    -webkit-transform: translateX(-100%) rotate(-90deg);
+    -webkit-transform-origin: right top;
+    -moz-transform: translateX(-100%) rotate(-90deg);
+    -moz-transform-origin: right top;
+    -o-transform: translateX(-100%) rotate(-90deg);
+    -o-transform-origin: right top;
+    transform: translateX(-100%) rotate(-90deg);
+    transform-origin: right top;
+  }
+  #pacientes #modal-wizard-consulta, .panel-heading {
+    height: 100%;
+  }
+  #pacientes #modal-wizard-consulta, .panel-title {
+    height:18px
+  }
+  #pacientes #modal-wizard-consulta, .panel-title a {
+    float:right;
+    text-decoration:none;
+    padding: 10px 0px;
+    margin: -10px 0px;
+    margin-right: 100px;
+  }
+  #pacientes #modal-wizard-consulta, .panel-body {
+    height:400px;
+  }
+  #pacientes #modal-wizard-consulta, .cont {
+     width: 40%;
+    -webkit-backface-visibility: hidden;
+    -webkit-transform: translateX(0%) rotate(90deg);
+    -webkit-transform-origin: left top;
+    -moz-transform: translateX(0%) rotate(90deg);
+    -moz-transform-origin: left top;
+    -o-transform: translateX(0%) rotate(90deg);
+    -o-transform-origin: left top;
+    transform: translateX(0%) rotate(90deg);
+    transform-origin: left top;
+  }
+  #pacientes #modal-wizard-consulta, .ScrollStyle
+{ 
+    max-height: 230px;
+    width: 390px;
+    overflow-y: scroll;
+    overflow-x:hidden;
+}
+  #pacientes #modal-wizard-consulta, .cont {
+    margin-left:220px;
+    position: absolute;
+  }
+  #pacientes #modal-wizard-consulta, .historial{
+    overflow: auto;
+    width: 380px;
+    height: 230px;
+  }
+  #pacientes #modal-wizard-consulta, .fecha-historial{
+    font-size: 13px;
+    font-weight: bold;
+  }
+  #pacientes #modal-wizard-consulta, .lista{
+    list-style: none;
+  }
+  #pacientes #modal-wizard-consulta, .content{
+    height: 0px;
+  }
+  
+  div.DTFC_LeftHeadWrapper table,
+  div.DTFC_LeftFootWrapper table,
+  div.DTFC_RightHeadWrapper table,
+  div.DTFC_RightFootWrapper table,
+  table.DTFC_Cloned tr.even {
+  background-color: white;
+  }
+  
+  div.DTFC_RightHeadWrapper table ,
+  div.DTFC_LeftHeadWrapper table {
+  margin-bottom: 0 !important;
+  border-top-right-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
+  }
+  
+  div.DTFC_RightHeadWrapper table thead tr:last-child th:first-child,
+  div.DTFC_RightHeadWrapper table thead tr:last-child td:first-child,
+  div.DTFC_LeftHeadWrapper table thead tr:last-child th:first-child,
+  div.DTFC_LeftHeadWrapper table thead tr:last-child td:first-child {
+  border-bottom-left-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
+  }
+  
+  div.DTFC_RightBodyWrapper table,
+  div.DTFC_LeftBodyWrapper table {
+  border-top: none;
+  margin-bottom: 0 !important;
+  }
+  
+  div.DTFC_RightBodyWrapper tbody tr:first-child th,
+  div.DTFC_RightBodyWrapper tbody tr:first-child td,
+  div.DTFC_LeftBodyWrapper tbody tr:first-child th,
+  div.DTFC_LeftBodyWrapper tbody tr:first-child td {
+  border-top: none;
+  }
+  
+  div.DTFC_RightFootWrapper table,
+  div.DTFC_LeftFootWrapper table {
+  border-top: none;
+  }
+  
+  
+  /*===== stilo alertas ===== */
+  
+  #pacientes .zoom {
+    position: fixed;
+    bottom: 500px;
+    right: 24px;
+    height: 70px;
+  }
+  #pacientes .zoom .cantidad-alert{
+      margin-bottom: 40px;
+      margin-left: -20px;
+  }
+  
+  #pacientes .zoom-fab {
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+    line-height: 40px;
+    border-radius: 50%;
+    background-color: #d2312c;
+    vertical-align: middle;
+    text-decoration: none;
+    text-align: center;
+    transition: 0.2s ease-out;
+    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    color: #FFF;
+  }
+  
+  #pacientes .zoom-fab:hover {
+    background-color: #85b558;
+    box-shadow: 0 3px 3px 0 rgba(0, 0, 0, 0.14), 0 1px 7px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -1px rgba(0, 0, 0, 0.2);
+  }
+  
+  #pacientes .zoom-btn-large {
+    width: 60px;
+    height: 60px;
+    line-height: 60px;
+  }
+  
+  #pacientes .zoom-btn-person { background-color: #F44336; }
+  
+  #pacientes .zoom-btn-person:hover { background-color: #e57373; }
+  
+  #pacientes .zoom-btn-doc { background-color: #ffeb3b; }
+  
+  #pacientes .zoom-btn-doc:hover { background-color: #fff176; }
+  
+  #pacientes .zoom-btn-tangram { background-color: #4CAF50; }
+  
+  #pacientes .zoom-btn-tangram:hover { background-color: #81c784; }
+  
+  #pacientes .zoom-btn-report { background-color: #2196F3; }
+  
+  #pacientes .zoom-btn-report:hover { background-color: #64b5f6; }
+  
+  #pacientes .zoom-btn-feedback { background-color: #9c27b0; }
+  
+  #pacientes .zoom-btn-feedback:hover { background-color: #ba68c8; }
+  
+  #pacientes .zoom-menu {
+    position: absolute;
+    right: 70px;
+    left: auto;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 100%;
+    width: 500px;
+    list-style: none;
+    text-align: right;
+  }
+  
+  #pacientes .zoom-menu li {
+    display: inline-block;
+    margin-right: 10px;
+  }
+  
+  #pacientes .zoom-card {
+    position: absolute;
+    right: 150px;
+    bottom: 70px;
+    transition: box-shadow 0.25s;
+    padding: 24px;
+    border-radius: 2px;
+    background-color: #009688;
+    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
+    color: #FFF;
+  }
+  
+  #pacientes .zoom-card ul {
+    -webkit-padding-start: 0;
+    list-style: none;
+    text-align: left;
+  }
+  
+  #pacientes .scale-transition { transition: transform 0.3s cubic-bezier(0.53, 0.01, 0.36, 1.63) !important; }
+  
+  #pacientes .scale-transition.scale-out {
+    transform: scale(0);
+    transition: transform 0.2s !important;
+  }
+  
+  #pacientes .scale-transition.scale-in { transform: scale(1); }
+  
+  
+  #pacientes .boton-importar{
+    font-size: 25px;
+    margin-right: 15px;
+  }
+  #pacientes .header-importar{
+      background-color: #307ecc !important;
+      color: #ffffff !important;
+      border-bottom-color: #8b9aa3 !important;
+  }
+  #pacientes .importar-text{
+    color: #307ecc;
+    width: 280px;
+   /* overflow: auto;
+    height: 270px;*/
+  }
+
+  #pacientes #dialog-paciente-nuevo, .modal-dialog {
+    width: 600px;
+    margin: auto !important;
+  }
+
+  #pacientes #dialog-vacunas, table#tabla-vacunas tbody tr:first-child td{
+    vertical-align: middle;
+  }
+  #pacientes #dialog-vacunas, #tabla-vacunas{
+    font-size: 13px;
+  }
+  #pacientes #dialog-vacuna-nueva, .label-dosis{
+    margin-top: 40px;
+  }
+  #pacientes #dialog-vacuna-nueva, .boton-dosis{
+    margin-top: 35px;
+  }
+  #pacientes #dialog-vacuna-nueva, #tabla-dosis{
+    margin-top: 10px;
+  }
+
+  #pacientes #dialog-vacuna-nueva, .check-dosis::before{
+    content: "DOSIS         \a0\a0\a0\a0\a0\REFUERZO" !important;
+    width:100px !important;
+
+  }
+  
+  #pacientes #dialog-vacuna-nueva, input[type=checkbox].ace.ace-switch.ace-switch-4.dosis:checked+.check-dosis::after {
+    left: 80px;
+    background-color: #FFF;
+    color: #848484;
+  }
+
+  /* =======  para la tabla de vacunas =========== */
+
+  #pacientes #dialog-historial-vacuna, .tabla-vacunas {
+    border: none;
+    border-right: solid 1px #DDEFEF;
+    border-collapse: separate;
+    border-spacing: 0;
+    font: normal 13px Arial, sans-serif;
+  }
+
+  #pacientes #dialog-historial-vacuna, .my-wrapper {
+    position: sticky;
+  }
+  #pacientes #dialog-historial-vacuna, .my-scroller {
+    margin-left: 141px;
+    overflow-x: scroll;
+    overflow-y: visible;
+    padding-bottom: 5px;
+    width: 82%;
+  }
+  #pacientes #dialog-historial-vacuna, .tabla-vacunas .my-sticky-col {
+    border-left: solid 1px #EEE;
+    border-right: solid 1px #EEE;
+    left: 0;
+    position: absolute;
+    top: auto;
+    width: 140px;
+  }
+  #pacientes #dialog-historial-vacuna, .celda-rojo{
+    background-color: #D15B47!important;
+    color: white;
+  }
+  #pacientes #dialog-historial-vacuna, .celda-verde{
+    background-color: #85b558!important;
+    color: white;
+  }
+  #pacientes #dialog-historial-vacuna, .celda-azul{
+    background-color: #428BCA!important;
+    color: white;
+  }
+
+  #pacientes #modal-fichaMedica, .modal-ficha-medica{
+    width: 95%;
+  }
+
+  #pacientes #modal-fichaMedica, .titulo-ficha{
+    text-align: center;
+    color: white;
+  }
+
+  #pacientes #modal-fichaMedica, .modal-header-ficha{
+    background-color: #307ECC;
+  }
+  #pacientes #modal-fichaMedica, .foto-paciente{
+      margin-top: -60px;
+      margin-left: 30px;
+      width: 100px;
+  }
+  #pacientes #modal-fichaMedica, .titulo-foto{
+      font-size: 12px;
+      margin-left: -10px;
+  }
+  #pacientes #modal-fichaMedica, .foto-paciente img{
+    /* img-pac-ficha */
+    height:100px;
+    width:125px;
+  } 
+  #pacientes #modal-fichaMedica, .form-multiline .form-group {
+      margin-bottom: 15px;
+      margin-right: 30px;
+  }
+  #pacientes #modal-fichaMedica, .form-multiline label,
+  .form-multiline .form-control {
+      margin-right: 15px;
+  }
+
+  #pacientes #modal-fichaMedica, .pasos-ficha{
+      margin-left: 90px !important;
+      margin-top: -10px !important;
+      width: 90%;
+  }
+  #pacientes #modal-fichaMedica, .cabezera-ficha{
+      margin: 0 0 12px;
+      border-bottom: 1px dotted #E2E2E2;
+      padding-bottom: 0px;
+      padding-top: 7px;
+  }
+
+  /*==== credencial ======= */
+  #pacientes #dialog-credencial, .titulo-carnet{
+      text-align: center !important;
+      background-color: #428bca !important;
+      color: white !important;
+         
+  }
+  #pacientes #dialog-credencial, .titulo-texto{
+    font-weight: bold;
+  }
+  #pacientes #dialog-credencial, .detalle-carnet{
+    text-align: center;
+    color: #428bca !important;
+    margin-left: 25px;
+    margin-right: 25px;
+  }
+  #pacientes #dialog-credencial, .nombre-carnet{
+    border-bottom: 2px dashed;
+  }
+  #pacientes #dialog-credencial, .cargo-carnet{
+    font-weight: bold;
+    font-size: 14px;
+    color: #D15B47 !important;
+  }
+  #pacientes #dialog-credencial, .grupo-carnet{
+    text-align: justify;
+    font-size: 16px;
+    font-weight: bold;
+    margin-top: 33px;
+    margin-left: 50px;
+  }
+  #pacientes #dialog-credencial, .descripcion-paciente{
+      margin-top: 35px
+  }
+  #pacientes #dialog-credencial, .contenido-texto{
+    display: inline-block !important;
+  }
+  #pacientes #dialog-credencial, .logo-carnet img{
+    height:125px;
+    width:140px;
+  }
+
+  #pacientes #dialog-credencial, .foto-carnet img{
+    height:125px !important;
+    width:125px !important;
+  }
+
+  #pacientes #dialog-credencial, .logo-carnet{
+    margin-left: 20px !important;
+    width: 80% !important;
+    /* height: 20px !important; */
+  }
+  #pacientes #dialog-credencial, .foto-carnet{
+    margin-left: 20px;
+    /* margin-bottom: 10px; */
+    margin-top: 35px !important;
+    width: 80% !important;
+    /* height: 20px !important; */
+
+  }
+  #pacientes #dialog-credencial, .logo-medico{
+    width: 100% !important;
+  }
+  #pacientes #dialog-credencial, .tabla-examen {
+      border-collapse: collapse !important;
+      width: 90% !important;
+      box-shadow: 1px 1px 0px #428bca !important;
+      margin-left: 40px !important;
+      margin-bottom: 10px !important;
+
+      margin-top: 5px !important;
+  }
+
+  #pacientes #dialog-credencial, .tabla-examen td {
+      border: 1px solid #428bca !important;
+      height: 20px !important;
+  }
+  #pacientes #dialog-credencial, .tabla-examen th {
+      border: 1px solid #428bca !important;
+      height: 20px !important;
+  }
+  #pacientes #dialog-credencial, .titulo-emfermedades{
+    text-align: center !important; 
+    color: #428bca !important;
+  }
+  #pacientes #dialog-credencial, .tabla-titulo{
+    text-align: center !important;
+    color: #428bca !important;
+    font-weight: bold !important;
+  }
+
+  #pacientes #dialog-credencial, .tabla-emfermedades {
+    width: 90% !important;
+    margin-left: 40px !important;
+    margin-bottom: 10px !important;
+    margin-top: -10px !important;
+      
+  }
+  #pacientes #dialog-credencial, .tabla-emfermedades td {
+    
+      font-size: 12px !important;
+      color: #428bca !important;
+      font-weight: bold !important;
+    
+  }
+  #pacientes #dialog-credencial, .tabla-emfermedades th {
+    text-align: left !important;
+    color: #DD5A43 !important;
+    font-size: 12px !important;
+     
+  }
+  #pacientes #dialog-credencial, .titulo-gerente{
+    text-align: center !important;
+    color: #428bca !important;
+    margin-top: 12px !important;
+    margin-left: 210px;
+  }
+
+  #pacientes #dialog-credencial, .bordes-carnet{
+    border: 1px solid #428bca !important;
+    margin-left: 1px;
+    margin-right: 1px;
+    width: 530px;
+    height: 300px;
+   
+  }
+  #pacientes #dialog-credencial, .PrintCredencial{
+        background-color: white !important;
+        /*transform: scale(0.9)*/
+  }
+  
+  #pacientes #dialog-credencial, input[type=checkbox].check-disabled:disabled+.lbl::before{
+    background-color: white!important;
+    border-color: #c8c8c8!important;
+    box-shadow: none!important;
+    color: red !important;
+  }
+
+  /* === para tabla de signos vitales*/
+  #pacientes #dialog-grafico, .scrollSV {
+    margin-left: 0px;
+    overflow-x: scroll;
+    overflow-y: visible;
+    width: 900px;
+  }
+
+  #pacientes #dialog-grafico, .tabla-signoVital {
+    border: none;
+    border-right: solid 1px #DDEFEF;
+    border-collapse: separate;
+    border-spacing: 0;
+    font: normal 13px Arial, sans-serif;
+  }
+
+  #pacientes #dialog-grafico, .tabla-signoVital .my-sticky-col-sv {
+    border-left: solid 1px #EEE;
+    border-right: solid 1px #EEE;
+    left: 0;
+    position: absolute;
+    top: auto;
+    width: 140px;
+  }
+  #pacientes #dialog-grafico, .th-none{
+    border: none !important;
+  }
+
+
+  
+
+
+  

@@ -1,0 +1,153 @@
+@font-face {
+    font-family: 'icomoon';
+    src:  url('fonts/icomoon.eot?k49lor');
+    src:  url('fonts/icomoon.eot?k49lor#iefix') format('embedded-opentype'),
+      url('fonts/icomoon.ttf?k49lor') format('truetype'),
+      url('fonts/icomoon.woff?k49lor') format('woff'),
+      url('fonts/icomoon.svg?k49lor#icomoon') format('svg');
+    font-weight: normal;
+    font-style: normal;
+  }
+  
+  [class^="icono-"], [class*=" icono-"] {
+    /* use !important to prevent issues with browser extensions that change fonts */
+    font-family: 'icomoon' !important;
+    speak: none;
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
+  
+    /* Better Font Rendering =========== */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  
+  #pacientes>i>span, .icono-alarma:before {
+    content: "\e927";
+  }
+  #pacientes>i>span, .icono-patologia:before {
+    content: "\e928";
+  }
+ #pacientes>i>span, .icono-pre3:before {
+    content: "\e925";
+  }
+ #pacientes>i>span, .icono-pre4:before {
+    content: "\e924";
+  }
+ #pacientes>i>span, .icono-pre2:before {
+    content: "\e926";
+  }
+ #pacientes>i>span, .icono-pre:before {
+    content: "\e929";
+  }
+ #pacientes>i>span, .icono-lupa-calendario:before {
+    content: "\e900";
+  }
+ #pacientes>i>span, .icono-fa-user:before {
+    content: "\e901";
+  }
+ #pacientes>i>span, .icono-fa-users:before {
+    content: "\e902";
+  }
+ #pacientes>i>span, .icono-fa-calculator:before {
+    content: "\e903";
+  }
+ #pacientes>i>span, .icono-fa-home:before {
+    content: "\e904";
+  }
+ #pacientes>i>span, .icono-fa-book:before {
+    content: "\e905";
+  }
+ #pacientes>i>span, .icono-fa-tachometer:before {
+    content: "\e906";
+  }
+ #pacientes>i>span, .icono-fa-bar-chart-o:before {
+    content: "\e907";
+  }
+ #pacientes>i>span, .icono-fa-briefcase:before {
+    content: "\e908";
+  }
+ #pacientes>i>span, .icono-fa-credit-card:before {
+    content: "\e909";
+  }
+ #pacientes>i>span, .icono-fa-newspaper-o:before {
+    content: "\e90a";
+  }
+ #pacientes>i>span, .icono-fa-road:before {
+    content: "\e90b";
+  }
+ #pacientes>i>span, .icono-fa-gift:before {
+    content: "\e90c";
+  }
+ #pacientes>i>span, .icono-fa-cogs:before {
+    content: "\e90d";
+  }
+ #pacientes>i>span, .icono-graficosv:before {
+    content: "\e90e";
+  }
+ #pacientes>i>span, .icono-diagnostico:before {
+    content: "\e90f";
+  }
+ #pacientes>i>span, .icono-credencial_salud:before {
+    content: "\e910";
+  }
+ #pacientes>i>span, .icono-ficha_medica:before {
+    content: "\e911";
+  }
+ #pacientes>i>span, .icono-consulta:before {
+    content: "\e912";
+  }
+ #pacientes>i>span, .icono-fa-filter:before {
+    content: "\e913";
+  }
+ #pacientes>i>span, .icono-fa-desktop:before {
+    content: "\e914";
+  }
+ #pacientes>i>span, .icono-fa-eye:before {
+    content: "\e915";
+  }
+ #pacientes>i>span, .icono-plan-de-cuentas:before {
+    content: "\e916";
+  }
+ #pacientes>i>span, .icono-comprobantes:before {
+    content: "\e917";
+  }
+ #pacientes>i>span, .icono-libro-mayor:before {
+    content: "\e918";
+  }
+ #pacientes>i>span, .icono-reportes-contables:before {
+    content: "\e919";
+  }
+ #pacientes>i>span, .icono-caja-chica:before {
+    content: "\e91a";
+  }
+ #pacientes>i>span, .icono-presupuestos:before {
+    content: "\e91b";
+  }
+ #pacientes>i>span, .icono-activos-fijos:before {
+    content: "\e91c";
+  }
+ #pacientes>i>span, .icono-recursos-humanos:before {
+    content: "\e91d";
+  }
+ #pacientes>i>span, .icono-mantenimiento:before {
+    content: "\e91e";
+  }
+ #pacientes>i>span, .icono-produccion:before {
+    content: "\e91f";
+  }
+ #pacientes>i>span, .icono-fa-lock:before {
+    content: "\e920";
+  }
+ #pacientes>i>span,  .icono-laboratorio:before{
+    content: "\e921";
+  }
+ #pacientes>i>span, .icono-vacuna:before {
+    content: "\e922";
+  }
+ #pacientes>i>span, .icono-prerequisito:before {
+    content: "\e923";
+  }
+  

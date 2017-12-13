@@ -1,0 +1,1 @@
+ALTER TABLE agil_comprobante_contabilidad ADD importe decimal(20,4);

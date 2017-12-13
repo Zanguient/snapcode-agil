@@ -1,0 +1,6 @@
+{"usuario":"iipsandy", "clave":"Usuario1","numero_empresa":"16", 
+"cantidad_pruebas":1, "movimiento":"FACTURACIÓN","sucursal":"Casa Matriz",
+"almacen":"Central","nit":"801170015","razon_social":"Alejandro", 
+"vendedor": "perez delgado juan", "tipo_pago":"CREDITO",
+"actividad":"VENTA AL POR MENOR", "sucursal_destino": "sucursal1","almacen_origen":"Central",
+"almacen_destino":"almacen1","dias":"7" }

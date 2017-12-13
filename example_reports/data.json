@@ -1,0 +1,16 @@
+{
+	"menu_items":[{"nombre":"Noticias Mundiales","enlace":"http://www.bbc.com/mundo"},
+				  {"nombre":"Los Tiempos","enlace":"http://www.lostiempos.com/"},
+				  {"nombre":"yahoo","enlace":"https://login.yahoo.com/?.src=ym&.intl=us&.lang=en-US&.done=https%3a//mail.yahoo.com"},
+				  {"nombre":"google.com","enlace":"https://www.google.com/"},
+				  {"nombre":"facebook.com","enlace":"https://www.facebook.com/"},
+				  {"nombre":"hotmail.com","enlace":"https://login.live.com/"},
+				  {"nombre":"youtube.com","enlace":"https://www.youtube.com/?hl=es&gl=ES"}],
+	"skin":"no-skin",
+	"app_name":"AGIL",
+	"paragrahp_1":"Somos una empresa que cuenta con un amplio portafolio de Soluciones, Especializadas porque sabemos que tu negocio tiene necesidades propias, bien sean a nivel Administrativo Comercial Industrial, Educativo y de Servicios",
+	"paragrahp_2":"Contamos con un equipo multidiciplinario comprometido a generar proyectos con resultados optimos dando siempre lo mejor de cada talento",
+	"username_label":"Usuario",
+	"password_label":"Contraseña",
+	"missing_password_label":"¿Olvidaste tu contraseña?"
+}

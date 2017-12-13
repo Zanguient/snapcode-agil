@@ -1,0 +1,48 @@
+<div class="row">
+		<div class="col-xs-12">
+			<h3 class="header smaller lighter blue">PANTALLA DESPACHO</h3>
+			<div class="row">
+				<div class="col-xs-12">
+					<button class="btn btn-primary" type="button" ng-click="abrirPantallaDespacho()">
+						<i class="ace-icon fa fa-plus align-top bigger-125"></i>
+						Abrir
+					</button>
+				</div>
+			</div>
+		</div>
+</div>
+
+<div id="dialog-pantalla-despacho" title="Pantalla Despacho" class="modal wizard-posicion">
+  <div class="row">
+		<div class="col-sm-12">
+			<div class="widget-box">
+				<div class="widget-body">
+					<div class="widget-main">
+						<div class="row">
+							<div class="col-xs-12">
+								<div class="row">
+									<div id="productos" class="col-xs-13">
+										<div class="swiper-container">
+											<div class="swiper-wrapper">
+												<div class="btn btn-success swiper-slide" ng-repeat="venta in ventas">
+													<!--<div class="col-xs-{{12/venta.detallesVenta.length}}" ng-repeat="detalleVenta in venta.detallesVenta">
+														<img src="{{detalleVenta.producto.imagen}}" width="{{100/venta.detallesVenta.length}}%" style="height: 98px;max-height:98px">
+														<label class="panel-cantidad">{{detalleVenta.cantidad}}-{{detalleVenta.producto.nombre}}</label>
+													</div>-->
+													<h3>Ped.:{{venta.pedido}}</h3>
+													<span ng-click="emitirSonido(venta)"><i class="ace-icon fa fa-file-sound-o align-top bigger-125"></i></span>
+													<span ng-click="despacharVenta(venta)"><i class="ace-icon fa fa-send align-top bigger-125"></i></span>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+

@@ -1,0 +1,131 @@
+<div class="row">
+	<div class="col-xs-12">
+		<h3 class="header smaller lighter blue">VALIDADOR CODIGO DE CONTROL</h3>
+		<div class="fileUpload btn btn-primary btn-success">
+			<span class="fileUpload-button ace-icon fa fa-cloud-upload align-top bigger-125">&nbsp&nbspImportar pruebas</span>
+			<input class="upload" type="file" custom-on-file-change="subirExcelPruebasDosificaciones"/>&nbsp&nbsp
+		</div>
+		<a href="/recursos/EJEMPLO-PRUEBAS-CODIGO-CONTROL.xlsx" class="btn btn-primary btn-danger">
+			<i class="ace-icon fa fa-cloud-download align-top bigger-125"></i>
+			Ejemplo de pruebas
+		</a>
+		<a href="{{descargarPruebasExcel}}" class="btn btn-primary btn-danger">
+			<i class="ace-icon fa fa-cloud-download align-top bigger-125"></i>
+			Excel Pruebas
+		</a>
+		<div class="clearfix">
+			<div class="pull-right tableTools-container"></div>
+		</div>
+		<div class="table-header">
+			Lista de Pruebas
+		</div>
+
+		<!-- div.table-responsive -->
+
+		<!-- div.dataTables_borderWrap -->
+		<div>
+			<table id="tabla-pruebas-codigo-control" class="table table-striped table-bordered table-hover">
+				<thead>
+					<tr>
+						<th class="center">
+							<label class="pos-rel">
+								<input type="checkbox" class="ace" />
+								<span class="lbl"></span>
+							</label>
+						</th>
+						<th>Autorización</th>
+						<th>Número Factura</th>
+						<th>NIT/CI</th>
+						<th>Fecha</th>
+						<th>Monto</th>
+						<th>Llave Digital</th>
+						<th>Código de Control Esperado</th>
+						<th>Código de Control Generado</th>
+						<th>Acciones</th>
+					</tr>
+				</thead>
+
+				<tbody>
+					<tr ng-repeat="pruebaCodigoControl in pruebasCodigoControl">
+						<td class="center">
+							<label class="pos-rel">
+								<input type="checkbox" class="ace" />
+								<span class="lbl"></span>
+							</label>
+						</td>
+						<td>
+							{{pruebaCodigoControl.autorizacion}}
+						</td>
+						<td>
+							{{pruebaCodigoControl.factura}}
+						</td>
+						<td>{{pruebaCodigoControl.nit}}</td>
+						<td>{{pruebaCodigoControl.fecha}}</td>
+
+						<td>
+							{{pruebaCodigoControl.monto}}
+						</td>
+						<td>
+							{{pruebaCodigoControl.llave_digital}}
+						</td>
+						<td>
+							{{pruebaCodigoControl.codigo_control_esperado}}
+						</td>
+						<td>
+							{{pruebaCodigoControl.codigo}}
+						</td>
+						<td>
+							<div class="hidden-sm hidden-xs action-buttons">
+								<a class="blue" href="javascript:void(0)" e-disabled="!aplicacion.puede_ver" ng-click="verProveedor(proveedor)">
+									<i class="ace-icon fa fa-search-plus bigger-130"></i>
+								</a>
+
+								<a class="green" href="javascript:void(0)" e-disabled="!aplicacion.puede_modificar" ng-click="modificarProveedor(proveedor)">
+									<i class="ace-icon fa fa-pencil bigger-130"></i>
+								</a>
+
+								<a class="red" href="javascript:void(0)" e-disabled="!aplicacion.puede_eliminar" ng-click="mostrarConfirmacionEliminacion(proveedor)">
+									<i class="ace-icon fa fa-trash-o bigger-130"></i>
+								</a>
+							</div>
+
+							<div class="hidden-md hidden-lg">
+								<div class="inline pos-rel">
+									<button class="btn btn-minier btn-yellow dropdown-toggle" data-toggle="dropdown" data-position="auto">
+										<i class="ace-icon fa fa-caret-down icon-only bigger-120"></i>
+									</button>
+
+									<ul class="dropdown-menu dropdown-only-icon dropdown-yellow dropdown-menu-right dropdown-caret dropdown-close">
+										<li>
+											<a href="javascript:void(0)" e-disabled="!aplicacion.puede_crear" ng-click="verProveedor(proveedor)" class="tooltip-info" data-rel="tooltip" title="View">
+												<span class="blue">
+													<i class="ace-icon fa fa-search-plus bigger-120"></i>
+												</span>
+											</a>
+										</li>
+
+										<li>
+											<a href="javascript:void(0)" e-disabled="!aplicacion.puede_modificar" ng-click="modificarProveedor(proveedor)" class="tooltip-success" data-rel="tooltip" title="Edit">
+												<span class="green">
+													<i class="ace-icon fa fa-pencil-square-o bigger-120"></i>
+												</span>
+											</a>
+										</li>
+
+										<li>
+											<a href="javascript:void(0)" e-disabled="!aplicacion.puede_eliminar" ng-click="mostrarConfirmacionEliminacion(proveedor)" class="tooltip-error" data-rel="tooltip" title="Delete">
+												<span class="red">
+													<i class="ace-icon fa fa-trash-o bigger-120"></i>
+												</span>
+											</a>
+										</li>
+									</ul>
+								</div>
+							</div>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>

@@ -1,0 +1,11 @@
+#mantenimiento #dialog-ot-nuevo, .button-search, .button-search:focus, .button-search:hover {
+	background-color: transparent !important;
+    border-color: transparent;
+}
+#mantenimiento #dialog-ot-nuevo, .circle-progress{
+	    font-size: 50px !important;
+}
+
+#mantenimiento #dialog-ot-nuevo, .select-sistema{
+	height: 90px !important;
+}

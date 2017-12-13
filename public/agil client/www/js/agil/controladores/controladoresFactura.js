@@ -1,0 +1,165 @@
+angular.module('agil.controladores')
+
+.controller('ControladorFacturas', function($scope,$localStorage,$location,$templateCache,$route,blockUI,
+											ConfiguracionesFactura,ConfiguracionGeneralFacturaDato,ClasesTipo,
+											ConfiguracionFacturaSucursal,ConfiguracionFacturaEmpresa){
+	blockUI.start();
+	
+	$scope.idModalWizardConfiguracionEdicion='modal-wizard-configuracion-edicion';
+	$scope.idModalWizardConfiguracionGeneralEdicion='modal-wizard-configuracion-general-edicion';
+	$scope.idModalContenedorConfiguracionEdicion='modal-wizard-container-configuracion-edicion';
+    $scope.idModalContenedorConfiguracionGeneralEdicion='modal-wizard-container-configuracion-general-edicion';
+	
+	$scope.usuario=JSON.parse($localStorage.usuario);
+	
+	$scope.obtenerImpresionesFactura=function(){
+		blockUI.start();
+		var promesa=ClasesTipo("IMPFACT");
+		promesa.then(function(entidad){
+			$scope.impresionesFactura=entidad.clases;
+			blockUI.stop();
+		});
+	}
+	
+	$scope.obtenerTiposFacturacion=function(){
+		blockUI.start();
+		var promesa=ClasesTipo("TIPOFACT");
+		promesa.then(function(entidad){
+			$scope.tiposFacturacion=entidad.clases;
+			blockUI.stop();
+		});
+	}
+	
+	$scope.obtenerTamanosPapelFactura=function(){
+		blockUI.start();
+		var promesa=ClasesTipo("TAMPAPFACT");
+		promesa.then(function(entidad){
+			$scope.tamanosPapelFactura=entidad.clases;
+			blockUI.stop();
+		});
+	}
+	
+	$scope.obtenerTitulosFactura=function(){
+		blockUI.start();
+		var promesa=ClasesTipo("TITFACT");
+		promesa.then(function(entidad){
+			$scope.titulosFactura=entidad.clases;
+			blockUI.stop();
+		});
+	}
+	
+	$scope.obtenerSubtitulosFactura=function(){
+		blockUI.start();
+		var promesa=ClasesTipo("SUBTITFACT");
+		promesa.then(function(entidad){
+			$scope.subTitulosFactura=entidad.clases;
+			blockUI.stop();
+		});
+	}
+	
+	$scope.obtenerPiesFactura=function(){
+		blockUI.start();
+		var promesa=ClasesTipo("PIÉFACT");
+		promesa.then(function(entidad){
+			$scope.piesFactura=entidad.clases;
+			blockUI.stop();
+		});
+	}
+	
+	$scope.obtenerConfiguracionesFactura=function(){
+		blockUI.start();
+		var promesa=ConfiguracionesFactura($scope.usuario.id_empresa);
+		promesa.then(function(sucursales){
+			$scope.sucursales=sucursales;
+			blockUI.stop();
+		});
+	}
+	
+	$scope.obtenerConfiguracionGeneralFactura=function(){
+		blockUI.start();
+		var promesa=ConfiguracionGeneralFacturaDato($scope.usuario.id_empresa);
+		promesa.then(function(configuracion_general){
+			$scope.configuracion_general=configuracion_general;
+			//console.log($scope.configuracion_general)
+			blockUI.stop();
+		});
+	}
+	
+	$scope.$on('$routeChangeStart', function(next, current) { 
+	   $scope.eliminarPopup($scope.idModalWizardConfiguracionEdicion);
+	   $scope.eliminarPopup($scope.idModalWizardConfiguracionGeneralEdicion);
+	});
+	
+	$scope.inicio=function(){
+		$scope.obtenerConfiguracionesFactura();
+		$scope.obtenerConfiguracionGeneralFactura();
+		$scope.obtenerImpresionesFactura();
+		$scope.obtenerTiposFacturacion();
+		$scope.obtenerTamanosPapelFactura();
+		$scope.obtenerTitulosFactura();
+		$scope.obtenerSubtitulosFactura();
+		$scope.obtenerPiesFactura();
+		setTimeout(function() {
+			ejecutarScriptsTabla('tabla-configuraciones',7);
+			ejecutarScriptsTabla('tabla-configuracion-general',7);
+		},2000);
+	}
+	
+	$scope.$on('$viewContentLoaded', function(){
+		resaltarPestaña($location.path().substring(1));
+		ejecutarScriptsConfiguracionFactura($scope.idModalWizardConfiguracionEdicion,
+											$scope.idModalContenedorConfiguracionEdicion,
+											$scope.idModalWizardConfiguracionGeneralEdicion,
+											$scope.idModalContenedorConfiguracionGeneralEdicion);
+		$scope.buscarAplicacion($scope.usuario.aplicacionesUsuario,$location.path().substring(1));
+		blockUI.stop();
+	});
+	
+	$scope.cerrarPopPupEdicion=function(){
+		$scope.cerrarPopup($scope.idModalWizardConfiguracionEdicion);
+	}
+	
+	$scope.cerrarPopPupEdicionGeneral=function(){
+		$scope.cerrarPopup($scope.idModalWizardConfiguracionGeneralEdicion);
+	}
+	
+	$scope.modificarConfiguracionSucursal=function(sucursal){
+		$scope.sucursal=sucursal;
+		$scope.abrirPopup($scope.idModalWizardConfiguracionEdicion);
+	}
+	
+	$scope.modificarConfiguracionGeneralFactura=function(configuracion_general){
+		$scope.abrirPopup($scope.idModalWizardConfiguracionGeneralEdicion);
+	}
+	
+	$scope.guardarConfiguracion=function(sucursal){
+		var button=$('#siguiente').text().trim();
+		if(button!="Siguiente"){
+			blockUI.start();
+			ConfiguracionFacturaSucursal.update({ id_configuracion:sucursal.configuracionFactura.id }, sucursal.configuracionFactura,function(res){
+				blockUI.stop();
+				$scope.cerrarPopPupEdicion();
+				$scope.mostrarMensaje(res.mensaje);
+				$scope.recargarItemsTabla();
+			});
+		}
+	}
+	
+	$scope.guardarConfiguracionGeneral=function(configuracion_general){console.log($('#siguiente-g').text().trim());
+		var button=$('#siguiente-g').text().trim();
+		if(button!="Siguiente"){
+			blockUI.start();
+			ConfiguracionFacturaEmpresa.update({ id_configuracion:configuracion_general.id }, configuracion_general,function(res){
+				blockUI.stop();
+				$scope.cerrarPopPupEdicionGeneral();
+				$scope.mostrarMensaje(res.mensaje);
+				$scope.recargarItemsTabla();
+			});
+		}
+	}
+	
+	$scope.inicio();
+});
+
+
+

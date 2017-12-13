@@ -1,0 +1,1 @@
+ALTER TABLE agil_producto ADD activar_inventario tinyint default 1;

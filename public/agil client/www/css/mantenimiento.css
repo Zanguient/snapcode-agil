@@ -1,0 +1,56 @@
+.gauge-control-start, .gauge-control-end{
+    position: relative;
+    font-weight: 700;
+    /* background-color: red; */
+    top:-45px;
+    color: white;
+    padding: 0 5px;
+    border-radius: 3px;
+ }
+ .btn-ot {
+     background: #62a8d1;
+     color: white;
+     border-radius: 30px;
+     padding: 4px;
+     font-size: 10px;
+ }
+ .vista-360 {
+     list-style-type: none;
+     margin-left: 0;
+ }
+ 
+ .vista-360 li {
+     width: 48%;
+     display: inline-flex;
+     align-items: center;
+     margin-bottom: 5px;
+ }
+ 
+ .vista-360 li span {
+     width: 50%;
+     display: inline-block;
+ }
+ 
+ .vista-360 li label {
+     width: 50%;
+     display: inline-block;
+     margin-bottom: 0;
+ }
+ /* @media screen and (min-width: 768px) {
+    .fluid-dialog-xs {
+        max-width: 35%!important;
+    }
+    .fluid-dialog-sm {
+        width: 50%!important;
+    }
+    .fluid-dialog-md {
+        width: 70%!important;
+    }
+    .fluid-dialog-lg {
+        width: 90%!important;
+    }
+} */
+.modal {
+    background-color: rgba(0, 0, 0, .5);
+    z-index: 1051;
+}

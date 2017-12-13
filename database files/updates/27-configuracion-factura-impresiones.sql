@@ -1,0 +1,21 @@
+ALTER TABLE agil_configuracion_general_factura ADD tamano_papel_nota_venta int;
+ALTER TABLE agil_configuracion_general_factura ADD CONSTRAINT fk_confgralfact_notaventa_id FOREIGN KEY (tamano_papel_nota_venta) REFERENCES gl_clase(id);
+ALTER TABLE agil_configuracion_general_factura ADD tamano_papel_nota_traspaso int;
+ALTER TABLE agil_configuracion_general_factura ADD CONSTRAINT fk_confgralfact_notatraspaso_id FOREIGN KEY (tamano_papel_nota_traspaso) REFERENCES gl_clase(id);
+ALTER TABLE agil_configuracion_general_factura ADD tamano_papel_nota_baja int;
+ALTER TABLE agil_configuracion_general_factura ADD CONSTRAINT fk_confgralfact_notabaja_id FOREIGN KEY (tamano_papel_nota_baja) REFERENCES gl_clase(id);
+ALTER TABLE agil_configuracion_general_factura ADD tamano_papel_nota_pedido int;
+ALTER TABLE agil_configuracion_general_factura ADD CONSTRAINT fk_confgralfact_notapedido_id FOREIGN KEY (tamano_papel_nota_pedido) REFERENCES gl_clase(id);
+ALTER TABLE agil_configuracion_general_factura ADD tamano_papel_cierre_caja int;
+ALTER TABLE agil_configuracion_general_factura ADD CONSTRAINT fk_confgralfact_cierrecaja_id FOREIGN KEY (tamano_papel_cierre_caja) REFERENCES gl_clase(id);
+
+ALTER TABLE agil_configuracion_factura ADD tamano_papel_nota_venta int;
+ALTER TABLE agil_configuracion_factura ADD CONSTRAINT fk_conffact_notaventa_id FOREIGN KEY (tamano_papel_nota_venta) REFERENCES gl_clase(id);
+ALTER TABLE agil_configuracion_factura ADD tamano_papel_nota_traspaso int;
+ALTER TABLE agil_configuracion_factura ADD CONSTRAINT fk_conffact_notatraspaso_id FOREIGN KEY (tamano_papel_nota_traspaso) REFERENCES gl_clase(id);
+ALTER TABLE agil_configuracion_factura ADD tamano_papel_nota_baja int;
+ALTER TABLE agil_configuracion_factura ADD CONSTRAINT fk_conffact_notabaja_id FOREIGN KEY (tamano_papel_nota_baja) REFERENCES gl_clase(id);
+ALTER TABLE agil_configuracion_factura ADD tamano_papel_nota_pedido int;
+ALTER TABLE agil_configuracion_factura ADD CONSTRAINT fk_conffact_notapedido_id FOREIGN KEY (tamano_papel_nota_pedido) REFERENCES gl_clase(id);
+ALTER TABLE agil_configuracion_factura ADD tamano_papel_cierre_caja int;
+ALTER TABLE agil_configuracion_factura ADD CONSTRAINT fk_conffact_cierrecaja_id FOREIGN KEY (tamano_papel_cierre_caja) REFERENCES gl_clase(id);

@@ -1,0 +1,915 @@
+<div class="row">
+	<div class="col-xs-12">
+		<h3 class="header smaller lighter blue">MESAS</h3>
+		<div class="row">
+			<div class="col-xs-1">
+				<h3>Sucursal</h3>
+			</div>
+			<div class="col-xs-2">
+				<select required id="sucursal" name="sucursal" ng-options="sucursal as sucursal.nombre for sucursal in sucursales track by sucursal.id" ng-model="filtro.sucursal" ng-change="obtenerSalas(filtro.sucursal.id)">
+					</select>
+			</div>
+			<div class="col-xs-1" ng-if="almacenes.length>1">
+				<h3>Almacen</h3>
+			</div>
+			<div class="col-xs-2" ng-if="almacenes.length>1">
+				<select required id="almacen" name="almacen" ng-options="almacen as almacen.nombre for almacen in almacenes track by almacen.id" ng-model="filtro.almacen">
+					</select>
+			</div>
+			<div class="col-xs-3">
+				<button type="button" ng-repeat="sala in salas" ng-click="verSala(sala)" class="btn btn-app btn-yellow btn-xs">
+					<i class="ace-icon fa fa-home bigger-160"></i>
+					Sala: {{sala.posicion}}
+				</button>
+				<button ng-disabled="!usuario.empresa.usar_salas && salas.length==1" type="button" ng-if="filtro.sucursal" ng-click="crearSala(filtro.sucursal.id)" class="btn btn-white btn-info btn-bold">
+					<i class="ace-icon fa fa-plus bigger-120 blue"></i>
+				</button>
+			</div>
+			<div class="col-xs-6">
+				<button type="button" ng-repeat="garzon in garzones" ng-click="verGarzon(garzon)" class="btn btn-app btn-info btn-sm">
+					<i class="ace-icon fa fa-male bigger-200"></i>
+					Garzon: {{garzon.codigo}}
+				</button>
+				<button ng-disabled="garzones.length==10" type="button" ng-click="crearGarzon()" class="btn btn-white btn-info btn-bold">
+					<i class="ace-icon fa fa-plus bigger-120 blue"></i>
+				</button>
+			</div>
+		</div>
+		<div class="clearfix">
+			<div class="pull-right tableTools-container"></div>
+		</div>
+		<div class="table-header" ng-if="salaVista">
+			MESAS SALA : {{salaVista.nombre}} - {{salaVista.posicion}}
+			<button type="button" ng-click="crearMesa(salaVista.id)" class="align-right btn btn-success btn-info btn-bold">
+				<i class="ace-icon fa fa-plus bigger-120 blue"></i>
+				Agregar Mesa
+			</button>
+			<button type="button" ng-click="modificarSala(salaVista.id)" class="align-right btn btn-success btn-info btn-bold">
+				<i class="ace-icon fa fa-pencil bigger-120 blue"></i>
+				Modificar Sala
+			</button>
+		</div>
+		<div >
+			<div class="row">
+				<div class="col-xs-12">
+					<ul class="ace-thumbnails clearfix">
+						<li ng-repeat="mesa in mesas | orderBy:'numero'">
+							<a href="javascript:void(0)" ng-click="verPedido(mesa)" data-rel="colorbox" class="cboxElement">
+								<img width="150" height="150" alt="150x150" src="{{mesa.imagen}}">
+								<div class="text">
+									<div class="inner">{{mesa.numero}}</div>
+								</div>
+							</a>
+							<div style="display: inline-block;position: absolute;top: 0;left: 0;">
+								<span class="label-holder">
+									<span class="label label-info" style="font-size: 20px;line-height:1.55;height: 40px;">{{mesa.numero}}</span>
+								</span>
+							</div>
+							<div class="tags">
+								<span class="label-holder">
+									<span class="label label-danger" ng-if="mesa.estado.nombre_corto==diccionario.ESTADO_MESA_OCUPADO">{{mesa.estado.nombre}}</span>
+									<span class="label label-success" ng-if="mesa.estado.nombre_corto==diccionario.ESTADO_MESA_DISPONIBLE">{{mesa.estado.nombre}}</span>
+									<span class="label label-warning arrowed-in" ng-if="mesa.estado.nombre_corto==diccionario.ESTADO_MESA_RESERVADO">{{mesa.estado.nombre}}</span>
+								</span>
+							</div>
+							<div class="tools tools-right">
+								<a href="#">
+									<i class="ace-icon fa fa-venus-mars"></i>
+								</a>
+
+								<a href="javascript:void(0)" ng-click="liberarMesa(mesa)">
+									<i class="ace-icon fa fa-external-link"></i>
+								</a>
+
+								<a href="javascript:void(0)" ng-click="reservarMesa(mesa)">
+									<i class="ace-icon fa fa-calendar"></i>
+								</a>
+
+								<a href="#">
+									<i class="ace-icon fa fa-times red"></i>
+								</a>
+							</div>
+						</li>
+					</ul>
+				</div>
+			</div>		
+		</div>
+
+	</div>
+
+
+</div>
+
+
+<div id="dialog-panel-ventas" title="Panel de Pedidos" class="modal wizard-posicion">
+  <div class="row">
+		<div class="col-sm-12">
+			<div class="widget-box">
+			<form id="formularioVentaPanel" name="formularioVentaPanel" novalidate ng-submit="guardarPedidoRestaurante(formularioVentaPanel.$valid,pedidoRestaurante)">
+				<div class="widget-body">
+					<div class="widget-main red-style">
+						<div class="row">
+							<div>
+								<button type="button" ng-click="showHideFirstRow()" class="button-style btn red-style-button btn-xs pos-rel pull-left">
+									<i class="ace-icon fa fa-minus bigger-110"></i>
+								</button>
+								<div class="row">
+									<div class="col-sm-4">
+										<h3 ng-if="pedidoRestaurante.mesas" class="header smaller lighter blue">MESAS :<span  ng-repeat="mesa in pedidoRestaurante.mesas">{{mesa.numero}} -</span> </h3>
+										<h3 ng-if="!pedidoRestaurante.mesas" class="header smaller lighter blue">MESAS :<span ng-repeat="mesaPedido in pedidoRestaurante.mesasPedidoRestaurante">{{mesaPedido.mesa.numero}} -</span> </h3>
+									</div>
+									<div class="col-sm-4">
+										<h3 ng-if="pedidoRestaurante.garzones"  class="header smaller lighter blue">GARZONES : <span ng-repeat="garzon in pedidoRestaurante.garzones"><img src="{{garzon.persona.imagen}}" width="80"></span> </h3>
+										<h3 ng-if="!pedidoRestaurante.garzones" class="header smaller lighter blue">GARZONES : <span ng-repeat="garzonPedido in pedidoRestaurante.garzonesPedidoRestaurante"><img src="{{garzonPedido.garzon.persona.imagen}}" width="80"></span></h3>
+									</div>
+								</div>
+							</div>
+							<div class="col-xs-12">
+									<div class="row first-row">
+										<div class="col-xs-1">
+											<button type="submit" ng-disabled="pedidoRestaurante.detallesPedidoRestaurante.length==0 || !formularioVentaPanel.$valid" class="btn btn-primary btn-app btn-sm">
+												<i class="ace-icon fa fa-floppy-o align-top bigger-110"></i>
+												GUARDAR
+											</button>
+										</div>
+										<div class="col-xs-1">
+											<button type="button" class="btn btn-danger btn-app btn-sm" ng-click="cerrarPedido()">
+												<i class="ace-icon fa fa-times red2 align-top bigger-110"></i>
+												CERRAR
+											</button>
+										</div>
+										<div class="col-xs-1">
+											<button type="button" class="btn btn-success btn-app btn-sm" ng-disabled="pedidoRestaurante.detallesPedidoRestaurante.length==0 || !formularioVentaPanel.$valid" ng-click="generarCuenta(pedidoRestaurante)">
+												<i class="ace-icon fa fa-newspaper-o align-top bigger-110"></i>
+												CUENTA
+											</button>
+										</div>
+										<div class="col-xs-1">
+											<button type="button" class="btn btn-warning btn-app btn-sm" ng-disabled="pedidoRestaurante.detallesPedidoRestaurante.length==0 || !formularioVentaPanel.$valid" ng-click="abrirPopupDatosFacturacion(formularioVentaPanel.$valid,pedidoRestaurante)">
+												<i class="ace-icon fa fa-print align-top bigger-110"></i>
+												FACTURAR
+											</button>
+										</div>
+										<div class="col-xs-1">
+											<div class="row">
+												<div class="col-xs-6">
+													<button ng-disabled="pedidoRestaurante.detallesPedidoRestaurante.length==0" type="button" class="btn btn-xs btn-pink" ng-click="abrirPopupCambioMesa()">
+														<i class="ace-icon fa fa-exchange align-top bigger-110"></i>
+													</button>
+												</div>
+												<div class="col-xs-6">
+													<button ng-disabled="pedidoRestaurante.detallesPedidoRestaurante.length==0" type="button" class="btn btn-xs btn-pink" ng-click="abrirPopupUnionMesas()">
+														<i class="ace-icon fa fa-refresh align-top bigger-110"></i>
+													</button>
+												</div>											
+											</div>
+											<div class="row">
+												<div class="col-xs-6">
+													<button ng-disabled="pedidoRestaurante.detallesPedidoRestaurante.length==0" type="button" class="btn btn-xs btn-pink" ng-click="abrirPopupAsignacionGarzon()">
+														<i class="ace-icon fa fa-male align-top bigger-110"></i>
+													</button>
+												</div>
+												<div class="col-xs-6">
+												</div>											
+											</div>
+										</div>
+										<div class="col-xs-5">
+											<div class="row" ng-if="grupos_productos.length>0">
+												<div class="col-xs-3" ng-repeat="grupo in grupos_productos.slice(0, 4)">
+													<button type="button" ng-click="clasificarGrupo(grupo.grupo)" class="button-style btn red-style-button btn-xs">{{grupo.grupo}}
+																		</button>
+												</div>
+											</div>
+											<div class="row" ng-if="grupos_productos.length>4">
+												<div class="col-xs-3" ng-repeat="grupo in grupos_productos.slice(4, 8)"><button type="button" ng-click="clasificarGrupo(grupo.grupo)" class="button-style btn red-style-button btn-xs">{{grupo.grupo}}
+																		</button></div>
+											</div>
+											<div class="row" ng-if="grupos_productos.length>8">
+												<div class="col-xs-3" ng-repeat="grupo in grupos_productos.slice(8,12)"><button type="button" ng-click="clasificarGrupo(grupo.grupo)" class="button-style btn red-style-button btn-xs">{{grupo.grupo}}
+																		</button></div>
+											</div>
+											<div class="row" ng-if="grupos_productos.length>8">
+												<div class="col-xs-3" ng-repeat="grupo in grupos_productos.slice(12,16)"><button type="button" ng-click="clasificarGrupo(grupo.grupo)" class="button-style btn red-style-button btn-xs">{{grupo.grupo}}
+																		</button></div>
+											</div>
+											
+
+										</div>
+										<div class="col-xs-2">
+											<label>BÚSQUEDA</label>
+											<input placeholder="Buscar" type="text" ng-model="search" ng-change="filtrarProductos(search)">
+											<label>ORDENAR</label>
+											<button type="button" class="button-style btn red-style-button btn-app btn-xs" ng-click="ordenarProductos(ordenProductos)">A<- ->Z</button>
+										</div>
+									</div>
+							</div>
+						</div>	
+					
+					
+					
+						<div class="row">
+							<div class="col-xs-4">
+								<!-- PAGE CONTENT BEGINS -->
+								<div class="row">
+									<div class="col-xs-4">
+										
+													
+												
+										<div style="overflow: scroll;overflow-x: hidden;width: 450px;height: 480px;" ng-if="pedidoRestaurante.detallesPedidoRestaurante.length>0">
+											<table class="table table-striped table-bordered table-hover" >
+													<thead>
+															<tr>
+																<th>
+																	<label>#</label>
+																</th>
+												 				<th>
+																	<label>Cant.</label>
+																</th>
+																<th>
+																	<label>Producto</label>
+																</th>
+																<th>
+																	<label>P. U. (Bs)</label>
+																</th>
+																<th>
+																	<label>Imp. (Bs)</label>
+																</th>
+																<th>
+																	<label>Acciones</label>
+																</th>
+															</tr>
+													</thead>
+													<tbody>
+														<tr ng-if="!detallePedido.eliminado" ng-repeat="detallePedido in pedidoRestaurante.detallesPedidoRestaurante">
+															<td>
+																{{$index+1}}
+															</td>
+															<td>
+																{{detallePedido.cantidad}}
+															</td>
+															<td>
+																{{detallePedido.producto.nombre}}
+															</td>
+															<td>
+																{{detallePedido.precio_unitario}}
+															</td>
+															<td>
+																{{detallePedido.total}}
+															</td>
+															<td>
+																<div class="row">
+																	<div class="col-sm-12">
+																		<div class="row">
+																			<div class="col-sm-6">
+																				<button type="button" ng-click="disminuirDetallePedidoRestaurante(detallePedido)" class="button-style btn red-style-button btn-xs">
+																					<i class="ace-icon fa fa-minus bigger-110"></i>
+																				</button>
+																			</div>
+																			<div class="col-sm-6">
+																				<button type="button" ng-click="eliminarDetallePedidoRestaurante(detallePedido)" class="button-style btn red-style-button btn-xs">
+																					<i class="ace-icon fa fa-trash-o bigger-110"></i>
+																				</button>
+																			</div>
+																		</div>
+																	</div>
+																</div>
+															</td>
+															</tr>
+															<tr>
+																<td>
+																	
+																</td>
+																<td>
+																	
+																</td>
+																<td>
+																		
+																</td>
+																<td>
+																	<b>TOTALES</b>
+																</td>
+																<td>
+																	{{pedidoRestaurante.total}}
+																</td>
+																<td>
+																		
+																</td>
+															</tr>
+													</tbody>
+											</table>
+										</div>
+									</div>
+								</div>
+							</div><!-- /.col -->
+							<div class="col-xs-8">
+								<!-- PAGE CONTENT BEGINS -->
+								<div class="row">
+									<div id="productos" class="col-xs-13">
+										<div class="swiper-container">
+											<div class="swiper-wrapper">
+												<div ng-click="agregarDetallePedido(producto)" class="btn btn-success swiper-slide" ng-repeat="producto in productosProcesados">
+													<img src="{{producto.imagen}}" width="40%" style="height: 98px;max-height:98px">
+													<label class="panel-cantidad">{{producto.inventario_disponible}}</label>
+													<h3>{{producto.nombre}}</h3>
+												</div>
+											</div>
+											<!-- Add Pagination -->
+											<!--<div class="swiper-pagination"></div>-->
+										</div>
+									</div>
+								</div>
+							</div><!-- /.col -->
+						</div>
+						
+						
+						
+					</div>
+				</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div id="modal-wizard-sala-edicion" class="modal wizard-posicion">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<form ng-submit="guardarSala(sala)">
+			<div id="modal-wizard-container-sala-edicion">
+				<div class="modal-header">
+					<ul class="steps">
+						<li data-step="1" class="active">
+							<span class="step" id="sala_step_1">1</span>
+							<span class="title">Datos de la Sala</span>
+						</li>
+						<li data-step="3">
+							<span class="step">2</span>
+							<span class="title">Finalizar</span>
+						</li>
+					</ul>
+				</div>
+
+				<div class="modal-body step-content">
+					<div class="step-pane active" data-step="1">
+						<div class="form-group">
+							<label class="col-sm-3 control-label no-padding-right" for="nombre">Nombre</label>
+
+							<div class="col-sm-9">
+								<input required type="text" id="nombre" ng-model="sala.nombre" placeholder="Nombre" class="col-xs-10 col-sm-5" />
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label no-padding-right" for="descripcion">Descripcion</label>
+
+							<div class="col-sm-9">
+								<input required type="text" id="descripcion" ng-model="sala.descripcion" placeholder="Descripcion" class="col-xs-10 col-sm-5" />
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label no-padding-right" for="ubicacion">Ubicacion</label>
+
+							<div class="col-sm-9">
+								<input required type="text" id="ubicacion" ng-model="sala.ubicacion" placeholder="Ubicacion" class="col-xs-10 col-sm-5" />
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label no-padding-right" for="posicion">Posicion</label>
+
+							<div class="col-sm-9">
+								<input required type="number" id="posicion" ng-model="sala.posicion" placeholder="Posicion" class="col-xs-10 col-sm-5" />
+							</div>
+						</div>
+						
+					</div>
+
+					<div class="step-pane" data-step="2">
+						<div class="center">
+							<h4 class="blue">Finalización</h4>
+						</div>
+					</div>
+				
+				</div>
+			</div>
+
+			<div class="modal-footer wizard-actions">
+				<button class="btn btn-sm btn-prev">
+					<i class="ace-icon fa fa-arrow-left"></i>
+					Anterior
+				</button>
+
+				<button type="submit" id="siguiente" class="btn btn-success btn-sm btn-next" data-last="Finish">
+					Siguiente
+					<i class="ace-icon fa fa-arrow-right icon-on-right"></i>
+				</button>
+
+				<button type="button" class="btn btn-danger btn-sm pull-left" data-dismiss="modal" ng-click="cerrarPopPupEdicionSala()">
+					<i class="ace-icon fa fa-times"></i>
+					Cancelar
+				</button>
+			</div>
+			</form>
+		</div>
+	</div>
+</div>
+
+<div id="modal-wizard-mesa-edicion" class="modal wizard-posicion">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<form ng-submit="guardarMesa(mesa)">
+			<div id="modal-wizard-container-mesa-edicion">
+				<div class="modal-header">
+					<ul class="steps">
+						<li data-step="1" class="active">
+							<span class="step" id="mesa_step_1">1</span>
+							<span class="title">Datos de la Mesa</span>
+						</li>
+						<li data-step="2">
+							<span class="step">2</span>
+							<span class="title">Finalizar</span>
+						</li>
+					</ul>
+				</div>
+
+				<div class="modal-body step-content">
+					<div class="step-pane active" data-step="1">
+						<div class="form-group">
+							<label class="col-sm-3 control-label no-padding-right" for="numero">Número</label>
+
+							<div class="col-sm-9">
+								<input required type="number" id="numero" ng-model="mesa.numero" placeholder="Numero" class="col-xs-10 col-sm-5" />
+							</div>
+						</div>
+						
+					</div>
+
+					<div class="step-pane" data-step="2">
+						<div class="center">
+							<h4 class="blue">Finalización</h4>
+						</div>
+					</div>
+				
+				</div>
+			</div>
+
+			<div class="modal-footer wizard-actions">
+				<button class="btn btn-sm btn-prev">
+					<i class="ace-icon fa fa-arrow-left"></i>
+					Anterior
+				</button>
+
+				<button type="submit" id="siguienteMesa" class="btn btn-success btn-sm btn-next" data-last="Finish">
+					Siguiente
+					<i class="ace-icon fa fa-arrow-right icon-on-right"></i>
+				</button>
+
+				<button type="button" class="btn btn-danger btn-sm pull-left" data-dismiss="modal" ng-click="cerrarPopPupEdicionMesa()">
+					<i class="ace-icon fa fa-times"></i>
+					Cancelar
+				</button>
+			</div>
+			</form>
+		</div>
+	</div>
+</div>
+<div id="modal-wizard-garzon-edicion" class="modal wizard-posicion">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<form ng-submit="guardarGarzon(garzon)">
+			<div id="modal-wizard-container-garzon-edicion">
+				<div class="modal-header">
+					<ul class="steps">
+						<li data-step="1" class="active">
+							<span class="step" id="garzon_step_1">1</span>
+							<span class="title">Datos del Garzon</span>
+						</li>
+						<li data-step="2">
+							<span class="step">2</span>
+							<span class="title">Finalizar</span>
+						</li>
+					</ul>
+				</div>
+
+				<div class="modal-body step-content">
+					<div class="step-pane active" data-step="1">
+						<div class="form-group">
+							<label class="col-sm-3 control-label no-padding-right" for="codigo">Codigo</label>
+
+							<div class="col-sm-9">
+								<input required type="text" id="codigo" ng-model="garzon.codigo" placeholder="Codigo" class="col-xs-10 col-sm-5" />
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label no-padding-right" for="nombres">Nombres</label>
+
+							<div class="col-sm-9">
+								<input required type="text" id="nombre" ng-model="garzon.persona.nombres" placeholder="Nombre" class="col-xs-10 col-sm-5" />
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label class="col-sm-3 control-label no-padding-right" for="primer_apellido">Primer Apellido</label>
+
+							<div class="col-sm-9">
+								<input type="text" id="primer_apellido" ng-model="garzon.persona.apellido_paterno" placeholder="Primer Apellido" class="form-control" />
+							</div>
+						</div>
+
+						<div class="space-4"></div>
+
+						<div class="form-group">
+							<label class="col-sm-3 control-label no-padding-right" for="segundo_apellido">Segundo Apellido</label>
+
+							<div class="col-sm-9">
+								<input type="text" id="segundo_apellido" ng-model="garzon.persona.apellido_materno" placeholder="Segundo Apellido" class="form-control" />
+							</div>
+						</div>
+						
+						<div class="form-group">
+							<label class="control-label col-xs-12 col-sm-3 no-padding-right">Foto</label>
+							<div class="col-xs-12 col-xs-12 col-sm-9">
+								<img ng-if="garzon.id" src="{{garzon.persona.imagen}}" width="100">
+								<input type="file" id="imagen-persona" onchange="uploadImage(this,'imagen-persona-oculto')"/>
+								<input id="imagen-persona-oculto" ng-model="garzon.persona.imagen" name="imagen" type="hidden" ng-update-hidden>
+							</div>
+						</div>
+						
+					</div>
+
+					<div class="step-pane" data-step="2">
+						<div class="center">
+							<h4 class="blue">Finalización</h4>
+						</div>
+					</div>
+				
+				</div>
+			</div>
+
+			<div class="modal-footer wizard-actions">
+		
+				<button type="button" class="btn btn-danger btn-sm pull-left" data-dismiss="modal" ng-click="cerrarPopPupEdicionGarzon()">
+					<i class="ace-icon fa fa-times"></i>
+					Cancelar
+				</button>
+
+				<button class="btn btn-sm btn-prev">
+					<i class="ace-icon fa fa-arrow-left"></i>
+					Anterior
+				</button>
+
+				<button type="submit" id="siguienteGarzon" class="btn btn-success btn-sm btn-next" data-last="Finish">
+					Siguiente
+					<i class="ace-icon fa fa-arrow-right icon-on-right"></i>
+				</button>
+			</div>
+			</form>
+		</div>
+	</div>
+</div>
+
+<div id="modal-wizard-facturacion" class="modal wizard-posicion">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<form ng-submit="facturarPedidoRestaurante()">
+			<div id="modal-wizard-container-facturacion">
+				<div class="modal-header">
+					<ul class="steps">
+						<li data-step="1" class="active">
+							<span class="step" id="mesa_step_1">1</span>
+							<span class="title">Datos Facturacion</span>
+						</li>
+						<li data-step="2">
+							<span class="step">2</span>
+							<span class="title">Finalizar</span>
+						</li>
+					</ul>
+				</div>
+
+				<div class="modal-body step-content">
+					<div class="step-pane active" data-step="1">
+						<div class="form-group">
+							<label class="col-sm-3 control-label no-padding-right" for="nit">NIT</label>
+
+							<div class="col-sm-9">
+								<input ng-keypress="buscarNit($event,venta.cliente.nit)" ng-keyup="buscarNit($event,venta.cliente.nit)" data-validate="validate(required)" id="nitP" required type="number" min="0" ng-model="venta.cliente.nit" placeholder="Ingrese el NIT" class="col-xs-10 col-sm-5">
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label no-padding-right" for="razon_social">Razon Social</label>
+
+							<div class="col-sm-9">
+								<input required type="text" ng-keypress="enfocar('pagado')" ng-keyup="enfocar('pagado')" id="razon_social" ng-model="venta.cliente.razon_social" placeholder="Razon Social" class="col-xs-10 col-sm-5" />
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label no-padding-right" for="cuenta">Cuenta</label>
+
+							<div class="col-sm-9">
+								<input disabled type="number" step="0.001" id="cuenta" ng-model="pedidoRestaurante.total" class="col-xs-10 col-sm-5" />
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label no-padding-right" for="pagado">Pagado</label>
+
+							<div class="col-sm-9">
+								<input required type="number" step="0.001" id="pagado" ng-model="venta.pagado" ng-change="calcularCambio()" min="{{pagoMinimo}}" placeholder="Pagado" class="col-xs-10 col-sm-5" />
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label no-padding-right" for="cambio">Cambio</label>
+
+							<div class="col-sm-9">
+								<input disabled type="number" step="0.001" id="cambio" ng-model="venta.cambio" laceholder="Razon Social" class="col-xs-10 col-sm-5" />
+							</div>
+						</div>						
+					</div>
+					<div class="step-pane" data-step="2">
+						<div class="center">
+							<h4 class="blue">Finalización</h4>
+						</div>
+					</div>
+				
+				</div>
+			</div>
+
+			<div class="modal-footer wizard-actions">
+				<button class="btn btn-sm btn-prev">
+					<i class="ace-icon fa fa-arrow-left"></i>
+					Anterior
+				</button>
+
+				<button type="submit" id="siguienteFacturacion" class="btn btn-success btn-sm btn-next" data-last="Finish">
+					Siguiente
+					<i class="ace-icon fa fa-arrow-right icon-on-right"></i>
+				</button>
+
+				<button type="button" class="btn btn-danger btn-sm pull-left" data-dismiss="modal" ng-click="cerrarPopupFacturacion()">
+					<i class="ace-icon fa fa-times"></i>
+					Cancelar
+				</button>
+			</div>
+			</form>
+		</div>
+	</div>
+</div>
+<div id="modal-wizard-reserva" class="modal wizard-posicion">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<form ng-submit="crearReserva()">
+			<div id="modal-wizard-container-reserva">
+				<div class="modal-header">
+					{{mesa.nombre}}
+					<ul class="steps">
+						<li data-step="1" class="active">
+							<span class="step" id="mesa_step_1">1</span>
+							<span class="title">Datos Reserva</span>
+						</li>
+						<li data-step="2">
+							<span class="step">2</span>
+							<span class="title">Finalizar</span>
+						</li>
+					</ul>
+				</div>
+
+				<div class="modal-body step-content">
+					<div class="step-pane active" data-step="1">
+						<div class="form-group">
+							<label class="col-sm-3 control-label no-padding-right" for="personas">No. Personas</label>
+
+							<div class="col-sm-9">
+								<input required type="number" id="personas" ng-model="pedidoRestaurante.cantidad_personas" min="1" placeholder="Personas" class="col-xs-10 col-sm-5" />
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label no-padding-right" for="nombre">Nombre</label>
+
+							<div class="col-sm-9">
+								<input required type="text" id="nombre" ng-model="pedidoRestaurante.nombre" placeholder="Nombre" class="col-xs-10 col-sm-5" />
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label no-padding-right" for="fechahora">Fecha Hora</label>
+
+							<div class="col-sm-9">
+								<input ng-update-hidden class="form-control date-timepicker" type="text" id="fechahora" ng-model="pedidoRestaurante.fecha_reserva" class="col-xs-10 col-sm-5" />
+							</div>
+						</div>
+					</div>
+					<div class="step-pane" data-step="2">
+						<div class="center">
+							<h4 class="blue">Finalización</h4>
+						</div>
+					</div>
+				
+				</div>
+			</div>
+
+			<div class="modal-footer wizard-actions">
+				<button class="btn btn-sm btn-prev">
+					<i class="ace-icon fa fa-arrow-left"></i>
+					Anterior
+				</button>
+
+				<button type="submit" id="siguienteReserva" class="btn btn-success btn-sm btn-next" data-last="Finish">
+					Siguiente
+					<i class="ace-icon fa fa-arrow-right icon-on-right"></i>
+				</button>
+
+				<button type="button" class="btn btn-danger btn-sm pull-left" data-dismiss="modal" ng-click="cerrarPopupReserva()">
+					<i class="ace-icon fa fa-times"></i>
+					Cancelar
+				</button>
+			</div>
+			</form>
+		</div>
+	</div>
+</div>
+
+<div id="modal-wizard-cambio-mesa" class="modal wizard-posicion">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<form ng-submit="cambiarMesa(mesaAcambiar)">
+			<div id="modal-wizard-container-cambio-mesa">
+				<div class="modal-header">
+					{{mesa.nombre}}
+					<ul class="steps">
+						<li data-step="1" class="active">
+							<span class="step" id="step_1">1</span>
+							<span class="title">Mesa a Cambiar</span>
+						</li>
+						<li data-step="2">
+							<span class="step">2</span>
+							<span class="title">Finalizar</span>
+						</li>
+					</ul>
+				</div>
+
+				<div class="modal-body step-content">
+					<div class="step-pane active" data-step="1">
+						<div class="form-group">
+							<label class="col-sm-3 control-label no-padding-right" for="personas">Cambiar a Mesa Nro:</label>
+
+							<div class="col-sm-9">
+								<select required id="cambiomesa" name="cambiomesa" ng-options="mesa as mesa.numero for mesa in obtenerMesasLibres() track by mesa.id" ng-model="mesaAcambiar">
+								</select>
+							</div>
+						</div>
+					</div>
+					<div class="step-pane" data-step="2">
+						<div class="center">
+							<h4 class="blue">Finalización</h4>
+						</div>
+					</div>
+				
+				</div>
+			</div>
+
+			<div class="modal-footer wizard-actions">
+				<button type="button" class="btn btn-sm btn-prev">
+					<i class="ace-icon fa fa-arrow-left"></i>
+					Anterior
+				</button>
+
+				<button type="submit" id="siguienteCambioMesa" class="btn btn-success btn-sm btn-next" data-last="Finish">
+					Siguiente
+					<i class="ace-icon fa fa-arrow-right icon-on-right"></i>
+				</button>
+
+				<button type="button" class="btn btn-danger btn-sm pull-left" data-dismiss="modal" ng-click="cerrarPopupCambioMesa()">
+					<i class="ace-icon fa fa-times"></i>
+					Cancelar
+				</button>
+			</div>
+			</form>
+		</div>
+	</div>
+</div>
+<div id="modal-wizard-union-mesas" class="modal wizard-posicion">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<form ng-submit="unirMesas(mesas_a_unirse)">
+			<div id="modal-wizard-container-union-mesas">
+				<div class="modal-header">
+					{{mesa.nombre}}
+					<ul class="steps">
+						<li data-step="1" class="active">
+							<span class="step" id="step_1">1</span>
+							<span class="title">Mesas a Unir</span>
+						</li>
+						<li data-step="2">
+							<span class="step">2</span>
+							<span class="title">Finalizar</span>
+						</li>
+					</ul>
+				</div>
+
+				<div class="modal-body step-content">
+					<div class="step-pane active" data-step="1">
+						<div class="form-group">
+							<label class="col-sm-3 control-label no-padding-right" for="personas">Unir Mesas:</label>
+
+							<div class="col-xs-12 col-sm-9">
+								<div     
+									isteven-multi-select
+									input-model="mesas_unidas"
+									output-model="mesas_a_unirse"
+									button-label="icon name"
+									item-label="icon name maker"
+									tick-property="ticked">
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="step-pane" data-step="2">
+						<div class="center">
+							<h4 class="blue">Finalización</h4>
+						</div>
+					</div>
+				
+				</div>
+			</div>
+
+			<div class="modal-footer wizard-actions">
+				<button type="button" class="btn btn-sm btn-prev">
+					<i class="ace-icon fa fa-arrow-left"></i>
+					Anterior
+				</button>
+
+				<button type="submit" id="siguienteUnionMesas" class="btn btn-success btn-sm btn-next" data-last="Finish">
+					Siguiente
+					<i class="ace-icon fa fa-arrow-right icon-on-right"></i>
+				</button>
+
+				<button type="button" class="btn btn-danger btn-sm pull-left" data-dismiss="modal" ng-click="cerrarPopupUnionMesas()">
+					<i class="ace-icon fa fa-times"></i>
+					Cancelar
+				</button>
+			</div>
+			</form>
+		</div>
+	</div>
+</div>
+<div id="modal-wizard-asignacion-garzon" class="modal wizard-posicion">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<form ng-submit="asignarGarzones(garzonesSeleccionados)">
+			<div id="modal-wizard-container-asignacion-garzon">
+				<div class="modal-header">
+					<ul class="steps">
+						<li data-step="1" class="active">
+							<span class="step" id="step_1">1</span>
+							<span class="title">Garzones</span>
+						</li>
+						<li data-step="2">
+							<span class="step">2</span>
+							<span class="title">Finalizar</span>
+						</li>
+					</ul>
+				</div>
+
+				<div class="modal-body step-content">
+					<div class="step-pane active" data-step="1">
+						<div class="form-group">
+							<label class="col-sm-3 control-label no-padding-right" for="personas">Asignacion Garzones:</label>
+
+							<div class="col-xs-12 col-sm-9">
+								<div     
+									isteven-multi-select
+									input-model="garzonesOpciones"
+									output-model="garzonesSeleccionados"
+									button-label="icon name"
+									item-label="icon name maker"
+									tick-property="ticked">
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="step-pane" data-step="2">
+						<div class="center">
+							<h4 class="blue">Finalización</h4>
+						</div>
+					</div>
+				
+				</div>
+			</div>
+
+			<div class="modal-footer wizard-actions">
+				<button type="button" class="btn btn-sm btn-prev">
+					<i class="ace-icon fa fa-arrow-left"></i>
+					Anterior
+				</button>
+
+				<button type="submit" id="siguienteAsignacionGarzones" class="btn btn-success btn-sm btn-next" data-last="Finish">
+					Siguiente
+					<i class="ace-icon fa fa-arrow-right icon-on-right"></i>
+				</button>
+
+				<button type="button" class="btn btn-danger btn-sm pull-left" data-dismiss="modal" ng-click="cerrarPopupAsignacionGarzones()">
+					<i class="ace-icon fa fa-times"></i>
+					Cancelar
+				</button>
+			</div>
+			</form>
+		</div>
+	</div>
+</div>
+<canvas id="qr-code" style="display:none" width="100" height="100"></canvas>

@@ -1,0 +1,65 @@
+<div class="row">
+	<div class="col-xs-12">
+		<h3 class="header smaller lighter blue">REPORTES DE COMPRAS </h3>
+		
+		 <form name="formularioReporte" novalidate>
+			<fieldset>				
+				<legend class="col-xs-1 col-sm-4">RANGO DE FECHAS</legend>
+				<div class="form-group">
+							
+						
+						<label> FILTRAR SUCURSAL</label>
+							<select  id="sucursal" name="sucursal" 
+								ng-options="sucursal as sucursal.nombre for sucursal in sucursales track by sucursal.id" 
+								ng-model="reporte.sucursal" required>								
+							</select>
+
+						</div>
+				<div class="col-xs-12">
+				<table class="table table-striped table-bordered table-hover" style="width:50%">
+					<tbody>
+						<tr>
+							<td>
+								
+							</td>
+							<td>
+								<label>Desde</label>&nbsp
+							</td>
+							<td>
+								<label>Hasta</label>&nbsp
+							</td>
+							<td>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<label>PERIODO</label>&nbsp
+							</td>
+							<td>
+								<input  required ng-update-hidden class="form-control date-picker" type="text" data-date-format="dd/mm/yyyy" id="fechainicio" ng-model="reporte.fechaInicioTexto" placeholder="Ingrese la fecha inicial" />
+							</td>
+							<td>
+								<input required ng-update-hidden class="form-control date-picker" type="text" data-date-format="dd/mm/yyyy" id="fechafin" ng-model="reporte.fechaFinTexto" placeholder="Ingrese la fecha final" />
+								&nbsp
+							</td>
+							<td>
+							
+								<button ng-disabled="formularioReporte.$invalid" class="btn btn-primary" type="button" ng-click="generarPdfComprasMensuales(reporte)">
+									<i class="ace-icon fa fa-plus align-top bigger-125"></i>
+									Descargar PDF
+								</button>
+							</td>
+							<td>
+								<button ng-disabled="formularioReporte.$invalid" class="btn btn-primary" type="button" ng-click="generarExcelComprasMensuales(reporte,reporte.sucursal.id)">
+									<i class="ace-icon fa fa-plus align-top bigger-125"></i>
+									Descargar Excel
+								</button>
+							</td>
+						</tr>						
+					</tbody>
+				</table>
+				</div>
+			</fieldset>
+		</form> 		
+	</div>
+</div>

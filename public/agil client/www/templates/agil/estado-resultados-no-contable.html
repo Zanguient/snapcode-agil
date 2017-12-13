@@ -1,0 +1,54 @@
+<div class="row">
+	<div class="col-xs-12">
+		<h3 class="header smaller lighter blue">ESTADO DE RESULTADOS NO CONTABLE</h3>
+		
+		<form name="formularioEstadoResultados" novalidate ng-submit="abrirPopupGastos()">
+			<fieldset>
+				<legend>Reporte</legend>
+				<table class="table table-striped table-bordered table-hover">
+					<tbody>
+						<tr>
+							<td>
+								
+							</td>
+							<td>
+								<label>Desde</label>&nbsp
+							</td>
+							<td>
+								<label>Hasta</label>&nbsp
+							</td>
+							<td>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<label>PERIODO</label>&nbsp
+							</td>
+							<td>
+								<input required ng-update-hidden class="form-control date-picker" type="text" data-date-format="dd/mm/yyyy" id="fechainicio" ng-model="filtro.fechaInicioTexto" placeholder="Ingrese la fecha inicial" />
+							</td>
+							<td>
+								<input required ng-update-hidden class="form-control date-picker" type="text" data-date-format="dd/mm/yyyy" id="fechafin" ng-model="filtro.fechaFinTexto" placeholder="Ingrese la fecha final" />
+								&nbsp
+							</td>
+							<td>
+								<button type="submit" ng-disabled="formularioEstadoResultados.$invalid" class="btn btn-primary">
+									<i class="ace-icon fa fa-plus align-top bigger-125"></i>
+									Generar
+								</button>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</fieldset>
+		</form>
+	</div>
+</div>
+<div id="dialog-gastos" title="Registro de gastos">
+  <form name="formularioPago" novalidate ng-submit="generarEstadoResultadosNoContable(gasto,filtro.fechaInicioTexto,filtro.fechaFinTexto)">
+	  <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>¿Ingrese el gasto a registrar?</p>
+	  <input required ng-model="gasto" min="1" type="number" step="0.001">
+	  <button type="submit" class="btn btn-success" ng-disabled="formularioPago.$invalid" >Registrar</button>
+	  <button type="button" class="btn btn-danger"  ng-click="cerrarPopupGastos()">Cancelar</button>
+  </form>
+</div>

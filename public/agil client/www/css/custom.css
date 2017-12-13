@@ -1,0 +1,644 @@
+
+#menu-wraper a{
+	margin-top: 20px;
+	margin-left: 10px;
+	text-decoration: none;
+	color: white;
+	text-align-last: center;
+}
+
+#search { 
+width: 170px; /* Ancho del buscador */
+height: 50px;
+float: right;
+text-align: center;
+margin-top: 6px;
+margin-right: 65px;}
+
+#ini-contenedor{  
+	padding: 10px;
+	overflow: hidden;
+	background-color: white;
+}
+
+#login{
+	float: right;
+	margin-right: 10px;
+	height: 500px;
+}
+
+
+
+input {
+	font-size: 1em;
+	line-height: 1.5em;
+	margin: 0;
+	padding: 0;
+	-webkit-appearance: none;
+  appearance: none;
+}
+#content-img{
+float:left;
+}
+
+
+
+
+/* login */
+
+
+#login {
+	width: 275px;
+	height: 100px;
+	margin: 50px auto;
+	margin-right: 50px;
+}
+#login label {
+	position: absolute;
+	display: block;
+	width: 36px;
+	height: 48px;
+	line-height: 48px;
+	text-align: center;
+	font-family: 'FontAwesome', sans-serif;
+	color: #676767;
+	text-shadow: 0 1px 0 #fff;
+}
+#login input {
+	border: none;
+	width: 204px;
+	height: 48px;
+  padding-left: 36px;
+	border: 1px solid #000;
+	background-color: #dedede;
+  background: -webkit-linear-gradient(top, #c3c3c3 0%, #eaeaea 100%);	
+	color: #363636;
+	text-shadow: 0 1px 0 #fff;
+	outline: none;
+
+}
+#login input[type="text"] {
+	border-bottom: none;
+	-webkit-border-radius: 5px 5px 0 0;
+	-moz-border-radius: 5px 5px 0 0;
+	border-radius: 5px 5px 0 0;
+	-webkit-box-shadow:inset 0 -1px 0 rgba(0, 0, 0, .4);
+}
+#login input[type="password"] {
+	border-top:none;
+	-webkit-border-radius: 0 0 5px 5px;
+	-moz-border-radius: 0 0 5px 5px;
+	border-radius: 0 0 5px 5px;
+	margin-bottom: 20px;
+	-webkit-box-shadow:inset 0 1px 0 rgba(255, 255, 255, .3), 0 1px 1px rgba(0, 0, 0, .2);
+}
+#login input[type="submit"] {
+	margin: 0;
+	padding: 0;
+	width: 240px;
+	background-color: #e14d4d;
+	border: 1px solid #391515;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+	color: #fff;
+	text-align: center;
+	font-weight: bold;
+	line-height: 48px;
+	text-transform: uppercase;
+	/* background-image: none; */
+	background-image:-webkit-linear-gradient(top, #f15958 0%, #e14d4d 100%);
+	-webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, .3), 0 1px 1px rgba(0, 0, 0, .2) ;
+	-moz-box-shadow: hoff voff radius color;
+	box-shadow: hoff voff radius color;
+	text-shadow: 0 1px 0 #000;
+}
+#login input[type="submit"]:hover {
+	background-color: #f15958;
+	background-image:-webkit-linear-gradient(top, #e14d4d 0%, #f55b5b 100%);
+}
+/*p{
+	font-size: 12.5px;
+	font-style: arial;
+	font-family: arial;
+	width: 400px;
+	color: black;
+	text-align: justify;
+	text-align-last: right;
+	padding-right: 50px;
+	padding-left: 15px;
+	padding-top: 15px;
+	padding-bottom: 15px;
+	padding: 15px;
+	margin-left: 30px;
+	margin-right: 40px;
+
+}*/
+
+.tarjeta{
+	display: inline;
+	width:33.33%; 
+	float:left;
+	height: 150px;
+	color:white;
+}
+
+
+
+input.ng-invalid {
+    background: #eddada;
+}
+
+.invalid-message{
+	position: absolute;
+	padding: 10px;
+	background: #E95051;
+	border-radius: 10px;
+	color: black !important;
+	z-index: 999;
+}
+
+.opcion-inicio{
+width:20% !important;
+height:200px !important;
+}
+
+.wizard-posicion{
+position:none !important;
+}
+
+.fileUpload {
+    position: relative;
+    overflow: hidden;
+    margin: 0px;
+}
+.fileUpload input.upload {
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin: 0;
+    padding: 0;
+    font-size: 20px;
+    cursor: pointer;
+    opacity: 0;
+    filter: alpha(opacity=0);
+}
+
+.fileUpload-button{
+ z-index: -99 !important;
+}
+
+.check-compra::before{
+content: "%\a0\a0\a0\a0\a0\a0\a0\a0\a0\a0\a0   Bs" !important;
+}
+
+.check-descuento::before{
+content: "SI\a0\a0\a0\a0\a0\a0\a0\a0\a0\a0\a0  NO" !important;
+}
+
+.ketchup-error{
+z-index:9999 !important;
+}
+
+#map_canvas {
+    width: 100% !important;
+    height: 100% !important;
+    margin: 0 !important;
+    position: unset !important;
+}
+
+.mapa_cliente .angular-google-map-container{
+	position:unset !important;
+	top: 400px !important;
+    bottom: 0px !important;
+    right: 0px !important;
+    left: 0px !important;
+	overflow:unset !important;
+}
+
+.mapa_cliente .angular-google-map-container .gm-style{
+	height:300px !important;
+	position:unset !important;
+}
+
+.opcion-producto{
+width:17% !important;
+height:150px !important;
+}
+
+#productos .swiper-slide{
+	border-radius:20px;
+}
+
+#productos div img{
+	border-radius: 20px;
+    padding-top: 15px;
+	padding-right: 15px;
+	padding-left: 0px;
+}
+
+#productos div h3{
+    padding: 0px !important;
+	text-align:center;
+}
+
+/*#productos div:hover {
+    cursor: pointer;
+}*/
+
+.panel-cantidad{
+	color: #F7F718;
+    font-size: 30px;
+    left: 154px;
+    position: absolute;
+    top: 1px;
+    z-index: 999999;
+}
+
+.check-seguimiento::before{
+content: "Mes     \a0\a0\a0\a0\a0\a0\a0\a0\a0\a0\a0      Periodo" !important;
+width:97px !important;
+}
+
+.menu-hidden{
+display:none !important;
+}
+
+.check-descuento-opcion::before{
+content: "Fijo\a0\a0\a0\a0__Pred." !important;
+}
+.descuento-azul{
+    color: blue;
+}
+.descuento-negro{
+    color: black;
+}
+
+.kardex-box{
+width:100% !important;
+}
+
+[ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
+  display: none !important;
+}
+
+#pantalla-cliente-venta{
+  background-image: -webkit-linear-gradient(170deg, #C32A48 40%, white 60%);
+}
+
+#pantalla-cliente-venta #parte-blanca-roja{
+	padding-left: 150px;
+	padding-top: 50px;
+	height: 370px;
+}
+
+
+#pantalla-cliente-venta .nombre{
+	padding-left: 100px;
+	margin-top: 70px;
+	background: -webkit-linear-gradient(170deg, #C11732 91%, white 50%);
+	font-size: 20px;
+	font-family: arial;
+	color: white;
+  	
+}
+#pantalla-cliente-venta .nit{
+	padding-left: 100px;
+	background: -webkit-linear-gradient(170deg, #C11732 93%, white 35%);
+	font-size: 20px;
+	font-family: arial;
+	color: white;
+}
+
+#pantalla-cliente-venta #circle{
+  float: right;
+  height: 287px;
+  width: 287px;
+  display: table-cell;
+  text-align: center;
+  font-size:20px;
+  vertical-align: middle;
+  border-radius: 50%;
+  border-color: black;
+  border-left-width: 2px;
+  background-color: #C11732;
+  
+  
+}
+
+#pantalla-cliente-venta #circleGrande{
+  float: left;
+  height: 300px;
+  width: 300px;
+  display: table-cell;
+  text-align: center;
+  font-size:20px;
+  vertical-align: middle;
+  border-radius: 50%;
+  border-color: black;
+  border-left-width: 2px;
+  background-color: black;
+  
+  box-shadow: 0 0 8px white;
+}
+#pantalla-cliente-venta #amarillo{
+	color: yellow;
+	font-family: arial;
+}
+#pantalla-cliente-venta #blanco{
+	color: white;
+	font-family: arial;
+}
+
+#pantalla-cliente-venta .superior #datos{
+top:50px;
+float: left;
+width: 70%;
+}
+
+#pantalla-cliente-venta .superior #logo{
+top:50px;
+float: left;
+width: 30%;
+}
+
+#pantalla-cliente-venta .detven{
+text-align:center;
+}
+
+#dialog-panel-ventas .red-style .first-row{
+border:thin solid red !important;
+}
+
+#dialog-panel-ventas .red-style-button{
+    background-color: red !important;
+    border-color: red !important;
+    border-radius: 15px 50px;
+}
+
+#dialog-panel-ventas .red-style-button:hover{
+    background-color: red !important;
+    border-color: red !important;
+}
+
+#dialog-panel-ventas .red-style label{
+color:red !important;
+}
+
+#dialog-panel-ventas .red-style input, #dialog-panel-ventas .red-style select, #dialog-panel-ventas .red-style input[disabled]{
+color:white !important;
+background-color:red !important; 	
+}
+
+#dialog-panel-ventas .red-style .swiper-slide{
+	background-color: white !important;
+	color:red !important;
+	border: thin red solid !important;
+}
+
+#dialog-panel-ventas .red-style .nit-row label{
+	color:white !important;
+}
+
+#dialog-panel-ventas .red-style .nit-row input,#dialog-panel-ventas .nit-row select,#dialog-panel-ventas .red-style .nit-row input[disabled]{
+color:black !important;
+background-color:white !important; 
+}
+
+#dialog-panel-ventas .red-style .nit-row{
+	background-color:red !important; 
+}
+
+#dialog-panel-ventas .red-style .economico label{
+color:white !important;
+}
+
+#dialog-panel-ventas .red-style .economico input, #dialog-panel-ventas .red-style .economico select,#dialog-panel-ventas .red-style .economico input[disabled]{
+color:rgb(79, 153, 198) !important;
+background-color:white !important; 
+}
+
+#dialog-panel-ventas .red-style .economico{
+	background-color:rgb(79, 153, 198) !important; 
+}
+
+#dialog-panel-ventas .red-style .row-close{
+	background-color:rgb(255,255,255) !important; 
+}
+
+
+#dialog-panel-ventas .green-style .first-row{
+border:thin solid rgb(98, 155, 88) !important;
+}
+
+#dialog-panel-ventas .green-style-button{
+    background-color: rgb(98, 155, 88) !important;
+    border-color: rgb(98, 155, 88) !important;
+    border-radius: 50px 15px;
+}
+
+#dialog-panel-ventas .green-style-button:hover{
+    background-color: rgb(98, 155, 88) !important;
+    border-color: rgb(13, 179, 133) !important;
+}
+
+#dialog-panel-ventas .green-style label{
+color:rgb(98, 155, 88) !important;
+}
+
+#dialog-panel-ventas .green-style input, #dialog-panel-ventas .green-style select, #dialog-panel-ventas .green-style input[disabled]{
+color:white !important;
+background-color:rgb(98, 155, 88) !important; 	
+}
+
+#dialog-panel-ventas .green-style .swiper-slide{
+	background-color: white !important;
+	color:rgb(98, 155, 88) !important;
+	border: thin rgb(98, 155, 88) solid !important;
+}
+
+#dialog-panel-ventas .green-style .nit-row label{
+	color:white !important;
+}
+
+#dialog-panel-ventas .green-style .nit-row input,#dialog-panel-ventas .nit-row select,#dialog-panel-ventas .green-style .nit-row input[disabled]{
+color:black !important;
+background-color:white !important; 
+}
+
+#dialog-panel-ventas .green-style .nit-row{
+	background-color:rgb(98, 155, 88) !important; 
+}
+
+#dialog-panel-ventas .green-style .economico label{
+color:white !important;
+}
+
+#dialog-panel-ventas .green-style .economico input, #dialog-panel-ventas .green-style .economico select,#dialog-panel-ventas .green-style .economico input[disabled]{
+color:red !important;
+background-color:white !important; 
+}
+
+#dialog-panel-ventas .green-style .economico{
+	background-color:red !important; 
+}
+
+#dialog-panel-ventas .green-style .row-close{
+	background-color:rgb(255,255,255) !important; 
+}
+
+
+#dialog-panel-ventas .brown-style .first-row{
+border:thin solid rgb(170, 37, 0) !important;
+}
+
+#dialog-panel-ventas .brown-style-button{
+    background-color: rgb(170, 37, 0) !important;
+    border-color: rgb(170, 37, 0) !important;
+    border-radius: 50px 15px;
+}
+
+#dialog-panel-ventas .brown-style-button:hover{
+    background-color: rgb(170, 37, 0) !important;
+    border-color: rgb(170, 37, 0) !important;
+}
+
+#dialog-panel-ventas .brown-style label{
+color:rgb(170, 37, 0) !important;
+}
+
+#dialog-panel-ventas .brown-style input, #dialog-panel-ventas .brown-style select, #dialog-panel-ventas .brown-style input[disabled]{
+color:white !important;
+background-color:rgb(170, 37, 0) !important; 	
+}
+
+#dialog-panel-ventas .brown-style .swiper-slide{
+	background-color: white !important;
+	color:rgb(170, 37, 0) !important;
+	border: thin rgb(170, 37, 0) solid !important;
+}
+
+#dialog-panel-ventas .brown-style .nit-row label{
+	color:white !important;
+}
+
+#dialog-panel-ventas .brown-style .nit-row input,#dialog-panel-ventas .nit-row select,#dialog-panel-ventas .brown-style .nit-row input[disabled]{
+color:black !important;
+background-color:white !important; 
+}
+
+#dialog-panel-ventas .brown-style .nit-row{
+	background-color:rgb(170, 37, 0) !important; 
+}
+
+#dialog-panel-ventas .brown-style .economico label{
+color:black !important;
+}
+
+#dialog-panel-ventas .brown-style .economico input, #dialog-panel-ventas .brown-style .economico select,#dialog-panel-ventas .brown-style .economico input[disabled]{
+color:black !important;
+background-color:white !important; 
+}
+
+#dialog-panel-ventas .brown-style .economico{
+	background-color:yellow !important; 
+}
+
+#dialog-panel-ventas .brown-style .row-close{
+	background-color:rgb(255,255,255) !important; 
+}
+
+
+#dialog-panel-ventas .skyblue-style .first-row{
+border:thin solid rgb(79, 153, 198) !important;
+}
+
+#dialog-panel-ventas .skyblue-style-button{
+    background-color: rgb(79, 153, 198) !important;
+    border-color: rgb(79, 153, 198) !important;
+    border-radius: 15px 50px;
+}
+
+#dialog-panel-ventas .skyblue-style-button:hover{
+    background-color: rgb(79, 153, 198) !important;
+    border-color: rgb(79, 153, 198) !important;
+}
+
+#dialog-panel-ventas .skyblue-style label{
+color:rgb(79, 153, 198) !important;
+}
+
+#dialog-panel-ventas .skyblue-style input, #dialog-panel-ventas .skyblue-style select, #dialog-panel-ventas .skyblue-style input[disabled]{
+color:white !important;
+background-color:rgb(79, 153, 198) !important; 	
+}
+
+#dialog-panel-ventas .skyblue-style .swiper-slide{
+	background-color: white !important;
+	color:rgb(79, 153, 198) !important;
+	border: thin rgb(79, 153, 198) solid !important;
+}
+
+#dialog-panel-ventas .skyblue-style .nit-row label{
+	color:white !important;
+}
+
+#dialog-panel-ventas .skyblue-style .nit-row input,#dialog-panel-ventas .nit-row select,#dialog-panel-ventas .skyblue-style .nit-row input[disabled]{
+color:black !important;
+background-color:white !important; 
+}
+
+#dialog-panel-ventas .skyblue-style .nit-row{
+	background-color:rgb(79, 153, 198) !important; 
+}
+
+#dialog-panel-ventas .skyblue-style .economico label{
+color:white !important;
+}
+
+#dialog-panel-ventas .skyblue-style .economico input, #dialog-panel-ventas .skyblue-style .economico select,#dialog-panel-ventas .skyblue-style .economico input[disabled]{
+color:red !important;
+background-color:white !important; 
+}
+
+#dialog-panel-ventas .skyblue-style .economico{
+	background-color:red !important; 
+}
+
+#dialog-panel-ventas .skyblue-style .row-close{
+	background-color:rgb(255,255,255) !important; 
+}
+.text-red{
+	color:red;
+}
+.text-green{
+	color:green;
+}
+.text-white{
+	color:#FFFFFF;
+}
+.bg-yellow{
+	background-color: #FFB752;
+	border-bottom: 0px solid transparent;
+	color: white;
+}
+.bg-green{
+	background-color: #87B87F;
+	border-bottom: 0px solid transparent;
+	color: white;
+}
+.bg-red{
+   background-color: #D15B47;
+   color:#FFFFFF;
+}
+.bg-silver{
+	background-color: #C2C2C2;
+	border-bottom: 0px solid transparent;
+	color: #2C1796;
+}
+.canvasjs-chart-credit {
+   display: none;
+}
+.canvasjs-chart-trial {
+   display: none;
+}

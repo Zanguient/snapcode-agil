@@ -1,0 +1,377 @@
+<div class="row">
+	<div class="col-xs-12">
+		<h3 class="header smaller lighter blue">RUTAS</h3>
+		
+		<button ng-disabled="!aplicacion.puede_crear" class="btn btn-primary" ng-click="crearNuevaRuta()">
+			<i class="ace-icon fa fa-plus align-top bigger-125"></i>
+			Nuevo
+		</button>
+		<div class="fileUpload btn btn-primary btn-success">
+			<span class="fileUpload-button ace-icon fa fa-cloud-upload align-top bigger-125">&nbsp&nbspImportar</span>
+			<input ng-disabled="!aplicacion.puede_crear" class="upload" type="file" custom-on-file-change="subirExcelRutas"/>&nbsp&nbsp
+		</div>
+		<a href="/recursos/EJEMPLO-DATOS-CLIENTES-RUTAS.xlsx" class="btn btn-primary btn-danger">
+			<i class="ace-icon fa fa-cloud-download align-top bigger-125"></i>
+			Ejemplo Importacion
+		</a>
+		<div class="clearfix">
+			<div class="pull-right tableTools-container"></div>
+		</div>
+		<div class="table-header">
+			Lista de Rutas
+		</div>
+
+		<!-- div.table-responsive -->
+
+		<!-- div.dataTables_borderWrap -->
+		<div>
+			<table id="tabla-rutas" class="table table-striped table-bordered table-hover">
+				<thead>
+					<tr>
+						<th class="center">
+							<label class="pos-rel">
+								<input type="checkbox" class="ace" />
+								<span class="lbl"></span>
+							</label>
+						</th>
+						<th>Código</th>
+						<th>Nombre</th>
+						<th>Departamento</th>
+						<th class="hidden-480" ng-repeat="dia in dias">{{dia.nombre}}</th>
+						<th>Acciones</th>
+					</tr>
+				</thead>
+
+				<tbody>
+					<tr ng-repeat="ruta in rutas">
+						<td class="center">
+							<label class="pos-rel">
+								<input type="checkbox" class="ace" />
+								<span class="lbl"></span>
+							</label>
+						</td>
+						<td>
+							{{ruta.id}}
+						</td>
+						<td>
+							{{ruta.nombre}}
+						</td>
+						<td>{{ruta.departamento.nombre}}</td>
+						<td class="center" ng-repeat="dia in dias">
+							<label class="pos-rel">
+								<input disabled type="checkbox" class="ace input-lg" checklist-model="ruta.dias" checklist-value="dia.id"/>
+								<span class="lbl"></span>
+							</label>
+							<!--<span ng-if="dia">
+								<span><i class="ace-icon fa fa-check-square-o"></i></span>
+							</span>
+							<span ng-if="!dia">
+								<span><i class="ace-icon fa fa-square-o"></i></span>
+							</span>-->
+						</td>
+						<td>
+							<div class="hidden-sm hidden-xs action-buttons">
+								<a class="blue" href="javascript:void(0)" e-disabled="!aplicacion.puede_ver" ng-click="verRuta(ruta)">
+									<i class="ace-icon fa fa-search-plus bigger-130"></i>
+								</a>
+
+								<a class="green" href="javascript:void(0)" e-disabled="!aplicacion.puede_modificar" ng-click="modificarRuta(ruta)">
+									<i class="ace-icon fa fa-pencil bigger-130"></i>
+								</a>
+
+								<a class="red" href="javascript:void(0)" e-disabled="!aplicacion.puede_eliminar" ng-click="mostrarConfirmacionEliminacion(ruta)">
+									<i class="ace-icon fa fa-trash-o bigger-130"></i>
+								</a>
+							</div>
+
+							<div class="hidden-md hidden-lg">
+								<div class="inline pos-rel">
+									<button class="btn btn-minier btn-yellow dropdown-toggle" data-toggle="dropdown" data-position="auto">
+										<i class="ace-icon fa fa-caret-down icon-only bigger-120"></i>
+									</button>
+
+									<ul class="dropdown-menu dropdown-only-icon dropdown-yellow dropdown-menu-right dropdown-caret dropdown-close">
+										<li>
+											<a href="javascript:void(0)" e-disabled="!aplicacion.puede_ver" ng-click="verRuta(ruta)" class="tooltip-info" data-rel="tooltip" title="View">
+												<span class="blue">
+													<i class="ace-icon fa fa-search-plus bigger-120"></i>
+												</span>
+											</a>
+										</li>
+
+										<li>
+											<a href="javascript:void(0)" e-disabled="!aplicacion.puede_modificar" ng-click="modificarRuta(ruta)" class="tooltip-success" data-rel="tooltip" title="Edit">
+												<span class="green">
+													<i class="ace-icon fa fa-pencil-square-o bigger-120"></i>
+												</span>
+											</a>
+										</li>
+
+										<li>
+											<a href="javascript:void(0)" e-disabled="!aplicacion.puede_eliminar" ng-click="mostrarConfirmacionEliminacion(ruta)" class="tooltip-error" data-rel="tooltip" title="Delete">
+												<span class="red">
+													<i class="ace-icon fa fa-trash-o bigger-120"></i>
+												</span>
+											</a>
+										</li>
+									</ul>
+								</div>
+							</div>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
+
+<div id="modal-wizard-ruta" class="modal wizard-posicion">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<form ng-submit="saveForm(ruta)">
+			<div id="modal-wizard-container-ruta-edicion">
+				<div class="modal-header">
+					<ul class="steps">
+						<li data-step="1" class="active">
+							<span class="step">1</span>
+							<span class="title">Datos de la ruta</span>
+						</li>
+						<li data-step="2">
+							<span class="step">2</span>
+							<span class="title">Datos de los días</span>
+						</li>
+						<li data-step="3">
+							<span class="step">2</span>
+							<span class="title">Georeferenciacion</span>
+						</li>
+						<li data-step="3">
+							<span class="step">3</span>
+							<span class="title">Finalizar</span>
+						</li>
+					</ul>
+				</div>
+
+				<div class="modal-body step-content">
+					<div class="step-pane active" data-step="1">
+						<div ng-if="ruta.id" class="form-group">
+							<label class="col-sm-3 control-label no-padding-right" for="codigo">Código</label>
+
+							<div class="col-sm-9">
+								<input disabled required type="text" id="codigo" ng-model="ruta.id" placeholder="Código" class="col-xs-10 col-sm-5" />
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label no-padding-right" for="razon_social">Nombre</label>
+
+							<div class="col-sm-9">
+								<input required type="text" id="razon_social" ng-model="ruta.nombre" placeholder="Nombre" class="col-xs-10 col-sm-5" />
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="control-label col-xs-12 col-sm-3 no-padding-right">Departamento</label>
+
+							<div class="col-xs-12 col-sm-9">
+								<select id="departamento" name="departamentoM"
+								  ng-options="departamento.nombre for departamento in departamentos track by departamento.id"
+								  ng-model="ruta.departamento" ng-change="buscarMunicipios(ruta.departamento)"></select>
+							</div>
+						</div>
+						
+						<div class="form-group">
+							<label class="control-label col-xs-12 col-sm-3 no-padding-right">Municipio</label>
+
+							<div class="col-xs-12 col-sm-9">
+								<select id="municipio" name="municipioM"
+								  ng-options="municipio.nombre for municipio in municipios track by municipio.id"
+								  ng-model="ruta.municipio"></select>
+							</div>
+						</div>
+					</div>
+					<div class="step-pane" data-step="2">
+						<div class="form-group">
+							<div class="checkbox">
+								<label class="block" ng-repeat="dia in dias">
+									<input name="form-field-checkbox" type="checkbox" class="ace input-lg" checklist-model="ruta.dias" checklist-value="dia.id"/>
+									<span class="lbl bigger-120">{{dia.nombre}}</span>
+								</label>
+							</div>
+
+						</div>
+					</div>
+					<div class="step-pane" data-step="3">
+						<div class="form-group">
+							<div class="col-sm-9">
+								<button ng-click="mostrarMapa()" class="btn btn-sm">
+									<i class="ace-icon fa fa-map-marker"></i>
+								</button>
+							</div>
+							<div id="map_canvas" class="mapa_cliente" ng-if="ruta && mostrarMap">
+								<ui-gmap-google-map center="map.center" zoom="map.zoom" draggable="true" options="options" bounds="map.bounds">
+									<ui-gmap-markers click="seleccionarMarcador" fit="true" ng-if="markers" models="markers" coords="'self'" icon="'icon'" options="'options'">
+									</ui-gmap-markers>
+									<ui-gmap-polyline ng-repeat="p in polylines" path="p.path" stroke="p.stroke" visible='p.visible'
+											  fit="true" editable="p.editable" draggable="p.draggable" icons='p.icons'></ui-gmap-polyline>
+									<ui-gmap-drawing-manager events="drawingManagerEvents" options="drawingManagerOptions" control="drawingManagerControl"></ui-gmap-drawing-manager>
+									<ui-gmap-map-control>
+										<button class="btn btn-danger btn-sm" ng-click="eliminarLineas()">
+											<i class="ace-icon fa fa-trash-o bigger-130"></i>
+										</button>
+									</ui-gmap-map-control>
+								</ui-gmap-google-map>
+							</div>
+						</div>
+					</div>
+					<div class="step-pane" data-step="4">
+						<div class="center">
+							<h4 class="blue">Step 4</h4>
+						</div>
+					</div>
+				
+				</div>
+			</div>
+
+			<div class="modal-footer wizard-actions">
+				<button class="btn btn-sm btn-prev">
+					<i class="ace-icon fa fa-arrow-left"></i>
+					Anterior
+				</button>
+
+				<button type="submit" id="siguiente" class="btn btn-success btn-sm btn-next" data-last="Finish">
+					Siguiente
+					<i class="ace-icon fa fa-arrow-right icon-on-right"></i>
+				</button>
+
+				<button type="button" class="btn btn-danger btn-sm pull-left" data-dismiss="modal" ng-click="cerrarPopPupNuevaRuta()">
+					<i class="ace-icon fa fa-times"></i>
+					Cancelar
+				</button>
+			</div>
+			</form>
+		</div>
+	</div>
+</div>
+
+<div id="modal-wizard-ruta-vista" class="modal wizard-posicion">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div id="modal-wizard-container-ruta-vista">
+				<div class="modal-header">
+					<ul class="steps">
+						<li data-step="1" class="active">
+							<span class="step">1</span>
+							<span class="title">Datos de la ruta</span>
+						</li>
+						<li data-step="2">
+							<span class="step">2</span>
+							<span class="title">Datos de los días</span>
+						</li>
+						<li data-step="3">
+							<span class="step">2</span>
+							<span class="title">Georeferenciacion</span>
+						</li>
+						<li data-step="3">
+							<span class="step">3</span>
+							<span class="title">Finalizar</span>
+						</li>
+					</ul>
+				</div>
+
+				<div class="modal-body step-content">
+					<div class="step-pane active" data-step="1">
+						<div ng-if="ruta.id" class="form-group">
+							<label class="col-sm-3 control-label no-padding-right" for="codigo">Código</label>
+
+							<div class="col-sm-9">
+								<input disabled required type="text" id="codigo" ng-model="ruta.id" placeholder="Código" class="col-xs-10 col-sm-5" />
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label no-padding-right" for="razon_social">Nombre</label>
+
+							<div class="col-sm-9">
+								<input disabled required type="text" id="razon_social" ng-model="ruta.nombre" placeholder="Nombre" class="col-xs-10 col-sm-5" />
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="control-label col-xs-12 col-sm-3 no-padding-right">Departamento</label>
+
+							<div class="col-xs-12 col-sm-9">
+								<select disabled id="departamento" name="departamentoM"
+								  ng-options="departamento.nombre for departamento in departamentos track by departamento.id"
+								  ng-model="ruta.departamento" ng-change="buscarMunicipios(ruta.departamento)"></select>
+							</div>
+						</div>
+						
+						<div class="form-group">
+							<label class="control-label col-xs-12 col-sm-3 no-padding-right">Municipio</label>
+
+							<div class="col-xs-12 col-sm-9">
+								<select disabled id="municipio" name="municipioM"
+								  ng-options="municipio.nombre for municipio in municipios track by municipio.id"
+								  ng-model="ruta.municipio"></select>
+							</div>
+						</div>
+					</div>
+					<div class="step-pane" data-step="2">
+						<div class="form-group">
+							<div class="checkbox">
+								<label class="block" ng-repeat="dia in dias">
+									<input disabled name="form-field-checkbox" type="checkbox" class="ace input-lg" checklist-model="ruta.dias" checklist-value="dia.id"/>
+									<span class="lbl bigger-120">{{dia.nombre}}</span>
+								</label>
+							</div>
+
+						</div>
+					</div>
+					<div class="step-pane" data-step="3">
+						<div class="form-group">
+							<div class="col-sm-9">
+								<button ng-click="mostrarMapa()" class="btn btn-sm">
+									<i class="ace-icon fa fa-map-marker"></i>
+								</button>
+							</div>
+							<div id="map_canvas" class="mapa_cliente" ng-if="ruta && mostrarMap">
+								<ui-gmap-google-map center="map.center" zoom="map.zoom" draggable="true" options="options" bounds="map.bounds">
+									<ui-gmap-markers fit="true" ng-if="markers" models="markers" coords="'self'" icon="'icon'" options="'options'">
+									</ui-gmap-markers>
+									<ui-gmap-polyline ng-repeat="p in polylines" path="p.path" stroke="p.stroke" visible='p.visible'
+											  fit="true" editable="p.editable" draggable="p.draggable" icons='p.icons'></ui-gmap-polyline>
+								</ui-gmap-google-map>
+							</div>
+						</div>
+					</div>
+					<div class="step-pane" data-step="4">
+						<div class="center">
+							<h4 class="blue">Step 4</h4>
+						</div>
+					</div>
+				
+				</div>
+			</div>
+
+			<div class="modal-footer wizard-actions">
+				<button class="btn btn-sm btn-prev">
+					<i class="ace-icon fa fa-arrow-left"></i>
+					Anterior
+				</button>
+
+				<button type="submit" id="siguiente" class="btn btn-success btn-sm btn-next" data-last="Finish">
+					Siguiente
+					<i class="ace-icon fa fa-arrow-right icon-on-right"></i>
+				</button>
+
+				<button type="button" class="btn btn-danger btn-sm pull-left" data-dismiss="modal" ng-click="cerrarPopPupVista()">
+					<i class="ace-icon fa fa-times"></i>
+					Cancelar
+				</button>
+			</div>
+			</form>
+		</div>
+	</div>
+</div>
+
+<div id="dialog-eliminar-ruta" title="¿Eliminación de Ruta?">
+  <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>¿Esta seguro de eliminar la ruta seleccionada?</p>
+  <button type="button" class="btn btn-danger" ng-click="eliminarRuta(ruta)">Si</button>
+  <button type="button" class="btn btn-success"  ng-click="cerrarConfirmacionEliminacion()">No</button>
+</div>

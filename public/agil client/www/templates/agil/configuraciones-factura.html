@@ -1,0 +1,480 @@
+<div class="row">
+	<div class="col-xs-12">
+		<h3 class="header smaller lighter blue">CONFIGURACIÓN DE FACTURAS</h3>
+		<div class="clearfix">
+			<div class="pull-right tableTools-container"></div>
+		</div>
+		<div class="table-header">
+			Configuración General de Facturas
+		</div>
+
+		<!-- div.table-responsive -->
+
+		<!-- div.dataTables_borderWrap -->
+		<div>
+			<table id="tabla-configuracion-general" class="table table-striped table-bordered table-hover">
+				<thead>
+					<tr>
+						<th class="center">
+							<label class="pos-rel">
+								<input type="checkbox" class="ace" />
+								<span class="lbl"></span>
+							</label>
+						</th>
+						<th>#</th>
+						<th>Impresión</th>
+						<th>Tipo</th>
+						<th>Tamaño Papel</th>
+						<th>Título</th>
+						<th>Subtítulo</th>
+						<th>¿Uso General Activado?</th>
+						<th>Acciones</th>
+					</tr>
+				</thead>
+
+				<tbody>
+					<tr>
+						<td class="center">
+							<label class="pos-rel">
+								<input type="checkbox" class="ace" />
+								<span class="lbl"></span>
+							</label>
+						</td>
+						<td>{{$index+1}}</td>
+						<td>{{configuracion_general.impresionFactura.nombre}}</td>
+						<td>{{configuracion_general.tipoFacturacion.nombre}}</td>
+						<td>{{configuracion_general.tamanoPapelFactura.nombre}}</td>
+						<td>{{configuracion_general.tituloFactura.nombre}}</td>
+						<td>{{configuracion_general.subtituloFactura.nombre}}</td>
+						<td ng-if="configuracion_general.usar">
+							<span class="label label-sm label-success">Si</span>
+						</td>
+						<td ng-if="!configuracion_general.usar">
+							<span class="label label-sm label-warning">No</span>
+						</td>
+						<td>
+							<div class="hidden-sm hidden-xs action-buttons">
+								<a class="green" href="javascript:void(0)" ng-click="modificarConfiguracionGeneralFactura(configuracion_general)">
+									<i class="ace-icon fa fa-pencil bigger-130"></i>
+								</a>
+							</div>
+
+							<div class="hidden-md hidden-lg">
+								<div class="inline pos-rel">
+									<button class="btn btn-minier btn-yellow dropdown-toggle" data-toggle="dropdown" data-position="auto">
+										<i class="ace-icon fa fa-caret-down icon-only bigger-120"></i>
+									</button>
+
+									<ul class="dropdown-menu dropdown-only-icon dropdown-yellow dropdown-menu-right dropdown-caret dropdown-close">
+										<li>
+											<a href="javascript:void(0)" ng-click="modificarConfiguracionGeneralFactura(configuracion_general)" class="tooltip-success" data-rel="tooltip" title="Edit">
+												<span class="green">
+													<i class="ace-icon fa fa-pencil-square-o bigger-120"></i>
+												</span>
+											</a>
+										</li>
+									</ul>
+								</div>
+							</div>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		
+		
+		<div class="table-header">
+			Lista de Configuraciones de Facturas por Sucursal
+		</div>
+
+		<!-- div.table-responsive -->
+
+		<!-- div.dataTables_borderWrap -->
+		<div>
+			<table id="tabla-configuraciones" class="table table-striped table-bordered table-hover">
+				<thead>
+					<tr>
+						<th class="center">
+							<label class="pos-rel">
+								<input type="checkbox" class="ace" />
+								<span class="lbl"></span>
+							</label>
+						</th>
+						<th>#</th>
+						<th>Sucursal</th>
+						<th>Impresión</th>
+						<th>Tipo</th>
+						<th>Tamaño Papel</th>
+						<th>Título</th>
+						<th>Subtítulo</th>
+						<th>Acciones</th>
+					</tr>
+				</thead>
+
+				<tbody>
+					<tr ng-repeat="sucursal in sucursales">
+						<td class="center">
+							<label class="pos-rel">
+								<input type="checkbox" class="ace" />
+								<span class="lbl"></span>
+							</label>
+						</td>
+						<td>{{$index+1}}</td>
+						<td>{{sucursal.nombre}}</td>
+						<td>{{sucursal.configuracionFactura.impresionFactura.nombre}}</td>
+						<td>{{sucursal.configuracionFactura.tipoFacturacion.nombre}}</td>
+						<td>{{sucursal.configuracionFactura.tamanoPapelFactura.nombre}}</td>
+						<td>{{sucursal.configuracionFactura.tituloFactura.nombre}}</td>
+						<td>{{sucursal.configuracionFactura.subtituloFactura.nombre}}</td>
+						<td>
+							<div class="hidden-sm hidden-xs action-buttons">
+								<a class="green" href="javascript:void(0)" ng-click="modificarConfiguracionSucursal(sucursal)">
+									<i class="ace-icon fa fa-pencil bigger-130"></i>
+								</a>
+							</div>
+
+							<div class="hidden-md hidden-lg">
+								<div class="inline pos-rel">
+									<button class="btn btn-minier btn-yellow dropdown-toggle" data-toggle="dropdown" data-position="auto">
+										<i class="ace-icon fa fa-caret-down icon-only bigger-120"></i>
+									</button>
+
+									<ul class="dropdown-menu dropdown-only-icon dropdown-yellow dropdown-menu-right dropdown-caret dropdown-close">
+										<li>
+											<a href="javascript:void(0)" ng-click="modificarConfiguracionSucursal(sucursal)" class="tooltip-success" data-rel="tooltip" title="Edit">
+												<span class="green">
+													<i class="ace-icon fa fa-pencil-square-o bigger-120"></i>
+												</span>
+											</a>
+										</li>
+									</ul>
+								</div>
+							</div>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
+
+<div id="modal-wizard-configuracion-general-edicion" class="modal wizard-posicion">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<form ng-submit="guardarConfiguracionGeneral(configuracion_general)">
+			<div id="modal-wizard-container-configuracion-general-edicion">
+				<div class="modal-header">
+					<ul class="steps">
+						<li data-step="1" class="active">
+							<span class="step">1</span>
+							<span class="title">Configuración General</span>
+						</li>
+						<li data-step="2">
+							<span class="step">2</span>
+							<span class="title">Configuración General</span>
+						</li>
+						<li data-step="3">
+							<span class="step">3</span>
+							<span class="title">Finalizar</span>
+						</li>
+					</ul>
+				</div>
+
+				<div class="modal-body step-content">
+					<div class="step-pane active" data-step="1">
+						
+						<div class="form-group">
+							<label class="control-label col-xs-12 col-sm-3 no-padding-right">Impresión</label>
+
+							<div class="col-sm-9">
+								<select ng-options="impresionFactura as impresionFactura.nombre for impresionFactura in impresionesFactura track by impresionFactura.id" ng-model="configuracion_general.impresionFactura"></select>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="control-label col-xs-12 col-sm-3 no-padding-right">Tipo Facturación</label>
+
+							<div class="col-xs-12 col-sm-9">
+								<select ng-options="tipoFacturacion as tipoFacturacion.nombre for tipoFacturacion in tiposFacturacion track by tipoFacturacion.id" ng-model="configuracion_general.tipoFacturacion"></select>
+							</div>
+						</div>
+						
+						<div class="form-group">
+							<label class="control-label col-xs-12 col-sm-3 no-padding-right">Tamaño Papel</label>
+
+							<div class="col-xs-12 col-sm-9">
+								<select ng-options="tamanoPapelFactura as tamanoPapelFactura.nombre for tamanoPapelFactura in tamanosPapelFactura track by tamanoPapelFactura.id" ng-model="configuracion_general.tamanoPapelFactura"></select>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="control-label col-xs-12 col-sm-3 no-padding-right">Título</label>
+
+							<div class="col-xs-12 col-sm-9">
+								<select ng-options="tituloFactura as tituloFactura.nombre for tituloFactura in titulosFactura track by tituloFactura.id" ng-model="configuracion_general.tituloFactura"></select>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="control-label col-xs-12 col-sm-3 no-padding-right">Subtítulo</label>
+
+							<div class="col-xs-12 col-sm-9">
+								<select ng-options="subtituloFactura as subtituloFactura.nombre for subtituloFactura in subTitulosFactura track by subtituloFactura.id" ng-model="configuracion_general.subtituloFactura"></select>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="control-label col-xs-12 col-sm-3 no-padding-right">¿Usar?</label>
+
+							<div class="col-xs-3">
+								<label>
+									<input name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracion_general.usar"/>
+									<span class="lbl check-descuento"></span>
+								</label>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="control-label col-xs-12 col-sm-3 no-padding-right">¿Usar PF?</label>
+
+							<div class="col-xs-3">
+								<label>
+									<input name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracion_general.usar_pf"/>
+									<span class="lbl check-descuento"></span>
+								</label>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="control-label col-xs-12 col-sm-3 no-padding-right">¿Imprimir al guardar?</label>
+
+							<div class="col-xs-3">
+								<label>
+									<input name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracion_general.imprimir_al_guardar"/>
+									<span class="lbl check-descuento"></span>
+								</label>
+							</div>
+						</div>
+					</div>
+					<div class="step-pane" data-step="2">
+						<div class="form-group">
+							<label class="control-label col-xs-12 col-sm-6 no-padding-right">Tamaño Papel Nota Venta</label>
+
+							<div class="col-sm-6">
+								<select required ng-options="tamanoPapelFactura as tamanoPapelFactura.nombre for tamanoPapelFactura in tamanosPapelFactura track by tamanoPapelFactura.id" ng-model="configuracion_general.tamanoPapelNotaVenta"></select>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="control-label col-xs-12 col-sm-6 no-padding-right">Tamaño Papel Nota Traspaso</label>
+
+							<div class="col-xs-12 col-sm-6">
+								<select required ng-options="tamanoPapelFactura as tamanoPapelFactura.nombre for tamanoPapelFactura in tamanosPapelFactura track by tamanoPapelFactura.id" ng-model="configuracion_general.tamanoPapelNotaTraspaso"></select>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="control-label col-xs-12 col-sm-6 no-padding-right">Tamaño Papel Nota Baja</label>
+
+							<div class="col-xs-12 col-sm-6">
+								<select required ng-options="tamanoPapelFactura as tamanoPapelFactura.nombre for tamanoPapelFactura in tamanosPapelFactura track by tamanoPapelFactura.id" ng-model="configuracion_general.tamanoPapelNotaBaja"></select>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="control-label col-xs-12 col-sm-6 no-padding-right">Tamaño Papel Nota Pedido</label>
+
+							<div class="col-xs-12 col-sm-6">
+								<select required ng-options="tamanoPapelFactura as tamanoPapelFactura.nombre for tamanoPapelFactura in tamanosPapelFactura track by tamanoPapelFactura.id" ng-model="configuracion_general.tamanoPapelNotaPedido"></select>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="control-label col-xs-12 col-sm-6 no-padding-right">Tamaño Papel Cierre Caja</label>
+
+							<div class="col-xs-12 col-sm-6">
+								<select required ng-options="tamanoPapelFactura as tamanoPapelFactura.nombre for tamanoPapelFactura in tamanosPapelFactura track by tamanoPapelFactura.id" ng-model="configuracion_general.tamanoPapelCierreCaja"></select>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="control-label col-xs-12 col-sm-6 no-padding-right">Tamaño Papel Cotizacion</label>
+
+							<div class="col-xs-12 col-sm-6">
+								<select required ng-options="tamanoPapelFactura as tamanoPapelFactura.nombre for tamanoPapelFactura in tamanosPapelFactura track by tamanoPapelFactura.id" ng-model="configuracion_general.tamanoPapelCotizacion"></select>
+							</div>
+						</div>
+					</div>
+					<div class="step-pane" data-step="3">
+						<div class="center">
+							<h4 class="blue">Finalización</h4>
+						</div>
+					</div>
+				
+				</div>
+			</div>
+
+			<div class="modal-footer wizard-actions">
+				<button class="btn btn-sm btn-prev">
+					<i class="ace-icon fa fa-arrow-left"></i>
+					Anterior
+				</button>
+
+				<button type="submit" id="siguiente-g" class="btn btn-success btn-sm btn-next" data-last="Finish">
+					Siguiente
+					<i class="ace-icon fa fa-arrow-right icon-on-right"></i>
+				</button>
+
+				<button type="button" class="btn btn-danger btn-sm pull-left" data-dismiss="modal" ng-click="cerrarPopPupEdicionGeneral()">
+					<i class="ace-icon fa fa-times"></i>
+					Cancelar
+				</button>
+			</div>
+			</form>
+		</div>
+	</div>
+</div>
+
+<div id="modal-wizard-configuracion-edicion" class="modal wizard-posicion">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<form ng-submit="guardarConfiguracion(sucursal)">
+			<div id="modal-wizard-container-configuracion-edicion">
+				<div class="modal-header">
+					<ul class="steps">
+						<li data-step="1" class="active">
+							<span class="step">1</span>
+							<span class="title">Configuración Factura Sucursal {{sucursal.nombre}}</span>
+						</li>
+						<li data-step="2">
+							<span class="step">2</span>
+							<span class="title">Configuración General</span>
+						</li>
+						<li data-step="3">
+							<span class="step">3</span>
+							<span class="title">Finalizar</span>
+						</li>
+					</ul>
+				</div>
+
+				<div class="modal-body step-content">
+					<div class="step-pane active" data-step="1">
+						<div class="form-group">
+							<label class="control-label col-xs-12 col-sm-3 no-padding-right">Impresión</label>
+
+							<div class="col-sm-9">
+								<select ng-options="impresionFactura as impresionFactura.nombre for impresionFactura in impresionesFactura track by impresionFactura.id" ng-model="sucursal.configuracionFactura.impresionFactura"></select>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="control-label col-xs-12 col-sm-3 no-padding-right">Tipo Facturación</label>
+
+							<div class="col-xs-12 col-sm-9">
+								<select ng-options="tipoFacturacion as tipoFacturacion.nombre for tipoFacturacion in tiposFacturacion track by tipoFacturacion.id" ng-model="sucursal.configuracionFactura.tipoFacturacion"></select>
+							</div>
+						</div>
+						
+						<div class="form-group">
+							<label class="control-label col-xs-12 col-sm-3 no-padding-right">Tamaño Papel</label>
+
+							<div class="col-xs-12 col-sm-9">
+								<select ng-options="tamanoPapelFactura as tamanoPapelFactura.nombre for tamanoPapelFactura in tamanosPapelFactura track by tamanoPapelFactura.id" ng-model="sucursal.configuracionFactura.tamanoPapelFactura"></select>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="control-label col-xs-12 col-sm-3 no-padding-right">Título</label>
+
+							<div class="col-xs-12 col-sm-9">
+								<select ng-options="tituloFactura as tituloFactura.nombre for tituloFactura in titulosFactura track by tituloFactura.id" ng-model="sucursal.configuracionFactura.tituloFactura"></select>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="control-label col-xs-12 col-sm-3 no-padding-right">Subtítulo</label>
+
+							<div class="col-xs-12 col-sm-9">
+								<select ng-options="subtituloFactura as subtituloFactura.nombre for subtituloFactura in subTitulosFactura track by subtituloFactura.id" ng-model="sucursal.configuracionFactura.subtituloFactura"></select>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="control-label col-xs-12 col-sm-3 no-padding-right">¿Usar PF?</label>
+
+							<div class="col-xs-3">
+								<label>
+									<input name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="sucursal.configuracionFactura.usar_pf"/>
+									<span class="lbl check-descuento"></span>
+								</label>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="control-label col-xs-12 col-sm-3 no-padding-right">¿Imprimir al guardar?</label>
+
+							<div class="col-xs-3">
+								<label>
+									<input name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="sucursal.configuracionFactura.imprimir_al_guardar"/>
+									<span class="lbl check-descuento"></span>
+								</label>
+							</div>
+						</div>
+					</div>
+					<div class="step-pane" data-step="2">
+						<div class="form-group">
+							<label class="control-label col-xs-12 col-sm-6 no-padding-right">Tamaño Papel Nota Venta</label>
+
+							<div class="col-sm-6">
+								<select required ng-options="tamanoPapelFactura as tamanoPapelFactura.nombre for tamanoPapelFactura in tamanosPapelFactura track by tamanoPapelFactura.id" ng-model="sucursal.configuracionFactura.tamanoPapelNotaVenta"></select>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="control-label col-xs-12 col-sm-6 no-padding-right">Tamaño Papel Nota Traspaso</label>
+
+							<div class="col-xs-12 col-sm-6">
+								<select required ng-options="tamanoPapelFactura as tamanoPapelFactura.nombre for tamanoPapelFactura in tamanosPapelFactura track by tamanoPapelFactura.id" ng-model="sucursal.configuracionFactura.tamanoPapelNotaTraspaso"></select>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="control-label col-xs-12 col-sm-6 no-padding-right">Tamaño Papel Nota Baja</label>
+
+							<div class="col-xs-12 col-sm-6">
+								<select required ng-options="tamanoPapelFactura as tamanoPapelFactura.nombre for tamanoPapelFactura in tamanosPapelFactura track by tamanoPapelFactura.id" ng-model="sucursal.configuracionFactura.tamanoPapelNotaBaja"></select>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="control-label col-xs-12 col-sm-6 no-padding-right">Tamaño Papel Nota Pedido</label>
+
+							<div class="col-xs-12 col-sm-6">
+								<select required ng-options="tamanoPapelFactura as tamanoPapelFactura.nombre for tamanoPapelFactura in tamanosPapelFactura track by tamanoPapelFactura.id" ng-model="sucursal.configuracionFactura.tamanoPapelNotaPedido"></select>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="control-label col-xs-12 col-sm-6 no-padding-right">Tamaño Papel Cierre Caja</label>
+
+							<div class="col-xs-12 col-sm-6">
+								<select required ng-options="tamanoPapelFactura as tamanoPapelFactura.nombre for tamanoPapelFactura in tamanosPapelFactura track by tamanoPapelFactura.id" ng-model="sucursal.configuracionFactura.tamanoPapelCierreCaja"></select>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="control-label col-xs-12 col-sm-6 no-padding-right">Tamaño Papel Cotizacion</label>
+
+							<div class="col-xs-12 col-sm-6">
+								<select required ng-options="tamanoPapelFactura as tamanoPapelFactura.nombre for tamanoPapelFactura in tamanosPapelFactura track by tamanoPapelFactura.id" ng-model="sucursal.configuracionFactura.tamanoPapelCotizacion"></select>
+							</div>
+						</div>
+					</div>
+					<div class="step-pane" data-step="3">
+						<div class="center">
+							<h4 class="blue">Finalización</h4>
+						</div>
+					</div>
+				
+				</div>
+			</div>
+
+			<div class="modal-footer wizard-actions">
+				<button class="btn btn-sm btn-prev">
+					<i class="ace-icon fa fa-arrow-left"></i>
+					Anterior
+				</button>
+
+				<button type="submit" id="siguiente" class="btn btn-success btn-sm btn-next" data-last="Finish">
+					Siguiente
+					<i class="ace-icon fa fa-arrow-right icon-on-right"></i>
+				</button>
+
+				<button type="button" class="btn btn-danger btn-sm pull-left" data-dismiss="modal" ng-click="cerrarPopPupEdicion()">
+					<i class="ace-icon fa fa-times"></i>
+					Cancelar
+				</button>
+			</div>
+			</form>
+		</div>
+	</div>
+</div>

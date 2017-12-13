@@ -1,0 +1,209 @@
+@font-face {
+  font-family: 'icono';
+  src:  url('fonts/icono.eot?ifpjzk');
+  src:  url('fonts/icono.eot?ifpjzk#iefix') format('embedded-opentype'),
+    url('fonts/icono.ttf?ifpjzk') format('truetype'),
+    url('fonts/icono.woff?ifpjzk') format('woff'),
+    url('fonts/icono.svg?ifpjzk#icono') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+
+[class^="icono-"], [class*=" icono-"] {
+  /* use !important to prevent issues with browser extensions that change fonts */
+  font-family: 'icono' !important;
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icono-impuestos:before {
+  content: "\e938";
+}
+.icono-copy:before {
+  content: "\e937";
+}
+.icono-vacaciones:before {
+  content: "\e934";
+}
+.icono-ausencia:before {
+  content: "\e935";
+}
+.icono-certificado:before {
+  content: "\e936";
+}
+.icono-empleado:before {
+  content: "\e900";
+}
+.icono-veneficios:before {
+  content: "\e901";
+}
+.icono-prestamo:before {
+  content: "\e902";
+}
+.icono-datos-familiares:before {
+  content: "\e903";
+}
+.icono-capacitaciones:before {
+  content: "\e904";
+}
+.icono-logros:before {
+  content: "\e905";
+}
+.icono-formacion-academica:before {
+  content: "\e906";
+}
+.icono-hoja-vida:before {
+  content: "\e907";
+}
+.icono-auto-gps:before {
+  content: "\e92a";
+}
+.icono-alarma:before {
+  content: "\e927";
+}
+.icono-patologia:before {
+  content: "\e928";
+}
+.icono-pre3:before {
+  content: "\e925";
+}
+.icono-pre4:before {
+  content: "\e924";
+}
+.icono-pre2:before {
+  content: "\e926";
+}
+.icono-pre:before {
+  content: "\e929";
+}
+.icono-lupa-calendario:before {
+  content: "\e908";
+}
+.icono-fa-user:before {
+  content: "\e90a";
+}
+.icono-fa-users:before {
+  content: "\e90b";
+}
+.icono-fa-calculator:before {
+  content: "\e909";
+}
+.icono-fa-home:before {
+  content: "\e916";
+}
+.icono-fa-book:before {
+  content: "\e915";
+}
+.icono-fa-tachometer:before {
+  content: "\e914";
+}
+.icono-fa-bar-chart-o:before {
+  content: "\e913";
+}
+.icono-fa-briefcase:before {
+  content: "\e912";
+}
+.icono-fa-credit-card:before {
+  content: "\e911";
+}
+.icono-fa-newspaper-o:before {
+  content: "\e910";
+}
+.icono-fa-road:before {
+  content: "\e90f";
+}
+.icono-fa-gift:before {
+  content: "\e90c";
+}
+.icono-fa-cogs:before {
+  content: "\e90d";
+}
+.icono-graficosv:before {
+  content: "\e90e";
+}
+.icono-diagnostico:before {
+  content: "\e917";
+}
+.icono-credencial_salud:before {
+  content: "\e918";
+}
+.icono-ficha_medica:before {
+  content: "\e919";
+}
+.icono-consulta:before {
+  content: "\e91a";
+}
+.icono-fa-filter:before {
+  content: "\e91b";
+}
+.icono-fa-desktop:before {
+  content: "\e91c";
+}
+.icono-fa-eye:before {
+  content: "\e91d";
+}
+.icono-plan-de-cuentas:before {
+  content: "\e91e";
+}
+.icono-comprobantes:before {
+  content: "\e91f";
+}
+.icono-comprobantes2:before {
+  content: "\e933";
+}
+.icono-libro-mayor:before {
+  content: "\e920";
+}
+.icono-reportes-contables:before {
+  content: "\e932";
+}
+.icono-caja-chica:before {
+  content: "\e931";
+}
+.icono-presupuestos:before {
+  content: "\e930";
+}
+.icono-activos-fijos:before {
+  content: "\e92f";
+}
+.icono-recursos-humanos:before {
+  content: "\e92e";
+}
+.icono-mantenimiento:before {
+  content: "\e92d";
+}
+.icono-produccion:before {
+  content: "\e92c";
+}
+.icono-fa-lock:before {
+  content: "\e92b";
+}
+.icono-laboratorio:before {
+  content: "\e921";
+}
+.icono-vacuna:before {
+  content: "\e922";
+}
+.icono-prerequisito:before {
+  content: "\e923";
+}
+.icono-tr3:before {
+  content: "\e939";
+}
+.icono-file-pdf:before {
+  content: "\eadf";
+}
+.icono-file-word:before {
+  content: "\eae1";
+}
+.icono-file-excel:before {
+  content: "\eae2";
+}

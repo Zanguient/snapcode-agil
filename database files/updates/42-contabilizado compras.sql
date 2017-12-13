@@ -1,0 +1,1 @@
+ALTER TABLE inv_compra ADD contabilizado tinyint;
