@@ -32,7 +32,7 @@ app.use(bodyParser({limit: '20mb'}));
 app.use(bodyParser.json());
 app.use(cors());
 
-var database="agil",username="root",dbpass="root";
+var database="agil",username="agil",dbpass="agil2017@*#";
 
 var postgrator = new Postgrator({
   // Directory containing migration files
