@@ -133,12 +133,11 @@ var signs3=function(fileNameRequest,fileTypeRequest,callBack){
 		callBack(data,`https://${S3_BUCKET}.s3.amazonaws.com/${fileName}`);
 	});
 }
-
+postgrator.migrate().then(appliedMigrations => console.log(appliedMigrations))
+  .catch(error => console.log(error));
 io.on('connection', function(socket){console.log("fsdfs");
 	require('./app/rutas')(router,sequelize,Sequelize,jwt,md5,forEach,ensureAuthorized,ensureAuthorizedAdministrador,PDF,fs,
             excelbuilder,decodeBase64Image,signs3,io,socket,schedule);
-  postgrator.migrate().then(appliedMigrations => console.log(appliedMigrations))
-  .catch(error => console.log(error));
 });
 
 // test route to make sure everything is working (accessed at GET http://localhost:8080/api)
