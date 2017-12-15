@@ -1089,7 +1089,7 @@ angular.module('agil.servicios')
 						y = 240;
 						items = 0;
 						pagina = pagina + 1;
-						DibujarCabeceraProformaNVmedioOficio(doc, vacia, completa, venta, papel, pagina, totalPaginas)
+						DibujarCabeceraProformaNVmedioOficio(doc, vacia, completa, venta, papel, pagina, totalPaginas,usuario)
 					}
 				}
 				if (completa || vacia) {

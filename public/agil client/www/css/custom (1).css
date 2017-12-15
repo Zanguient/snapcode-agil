@@ -1,0 +1,45 @@
+.invalid-message{
+	color:#FF1616;
+}
+
+.opcion-inicio{
+width:20% !important;
+height:200px !important;
+}
+
+.wizard-posicion{
+position:none !important;
+}
+
+.fileUpload {
+    position: relative;
+    overflow: hidden;
+    margin: 0px;
+}
+.fileUpload input.upload {
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin: 0;
+    padding: 0;
+    font-size: 20px;
+    cursor: pointer;
+    opacity: 0;
+    filter: alpha(opacity=0);
+}
+
+.fileUpload-button{
+ z-index: -99 !important;
+}
+
+.check-compra::before{
+content: "%\a0\a0\a0\a0\a0\a0\a0\a0\a0\a0\a0   Bs" !important;
+}
+
+.check-descuento::before{
+content: "SI\a0\a0\a0\a0\a0\a0\a0\a0\a0\a0\a0\a0       NO" !important;
+}
+
+.ketchup-error{
+z-index:9999 !important;
+}

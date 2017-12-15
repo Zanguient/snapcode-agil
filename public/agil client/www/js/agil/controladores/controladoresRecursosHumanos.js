@@ -1,7 +1,7 @@
 angular.module('agil.controladores')
 
     .controller('ControladorRecursosHumanos', function ($scope, $localStorage, $location, $templateCache, $route, blockUI, ListaDatosGenero, NuevoRecursoHumano, RecursosHumanosPaginador, Paginator,
-        FieldViewer, PacientesEmpresa, obtenerEmpleadoRh,UsuarioRecursosHUmanosActivo,Prerequisito,ListaDatosPrerequisito,ListaPrerequisitosPaciente,ActualizarPrerequisito) {
+        FieldViewer, PacientesEmpresa, obtenerEmpleadoRh,UsuarioRecursosHUmanosActivo) {
         $scope.usuario = JSON.parse($localStorage.usuario);
         $scope.idModalPrerequisitos = 'dialog-pre-requisitos';
         $scope.idModalEmpleado = 'dialog-empleado';
@@ -78,7 +78,6 @@ angular.module('agil.controladores')
         $scope.idEliminarUsuarioRh = 'dialog-eliminar-usuarioRh';
         $scope.idModalWizardRhVista = 'dialog-rh-vista';
         $scope.idModalContenedorRhVista = 'modal-wizard-container-rh-vista';
-        $scope.idModalDialogPrerequisitoNuevo = 'dialog-pre-requisito-nuevo';
         $scope.$on('$viewContentLoaded', function () {
             // resaltarPestaña($location.path().substring(1));
             resaltarPestaña($location.path().substring(1));
@@ -100,8 +99,7 @@ angular.module('agil.controladores')
                 $scope.idModalReporteBajasMedicas, $scope.idModalReporteRolTurnos, $scope.idModalReporteTurnosDetallado,
                 $scope.idModalViajes, $scope.idModalVisita, $scope.idModalVehiculosViaje, $scope.idModalDestinos,
                 $scope.idModalHistorialViajes, $scope.idModalReporteAusencias, $scope.idModalCertificado, $scope.idModalInstitucion,
-                $scope.idModalRhNuevo, $scope.idModalWizardRhNuevo, $scope.idImagenUsuario,$scope.idEliminarUsuarioRh,$scope.idModalWizardRhVista,
-                $scope.idModalContenedorRhVista,$scope.idModalDialogPrerequisitoNuevo);
+                $scope.idModalRhNuevo, $scope.idModalWizardRhNuevo, $scope.idImagenUsuario,$scope.idEliminarUsuarioRh,$scope.idModalWizardRhVista,$scope.idModalContenedorRhVista);
                 $scope.buscarAplicacion($scope.usuario.aplicacionesUsuario, $location.path().substring(1));
                 $scope.obtenerColumnasAplicacion()
                 blockUI.stop();
@@ -109,7 +107,7 @@ angular.module('agil.controladores')
         });
 
         $scope.$on('$routeChangeStart', function (next, current) {
-            $scope.eliminarPopup($scope.idModalEmpleado, $scope.idModalExpedidoEn,
+            $scope.eliminarPopup($scope.idModalPrerequisitos, $scope.idModalEmpleado, $scope.idModalExpedidoEn,
                 $scope.idModalTipoDocumento, $scope.idModalEstadoCivil, $scope.idModalNacionalidad, $scope.idModalDepartamentoEstado,
                 $scope.idModalProvincia, $scope.idModalLocalidad, $scope.idModalTipoDiscapacidad, $scope.idModalTipoContrato,
                 $scope.idModalTipoPersonal, $scope.idModalCargaHoraria, $scope.idModalArea, $scope.idModalUbicacion, $scope.idModalHojaVida,
@@ -126,15 +124,13 @@ angular.module('agil.controladores')
                 $scope.idModalReporteRolTurnos, $scope.idModalReporteTurnosDetallado, $scope.idModalViajes, $scope.idModalVisita,
                 $scope.idModalVehiculosViaje, $scope.idModalDestinos, $scope.idModalHistorialViajes, $scope.idModalReporteAusencias,
                 $scope.idModalCertificado, $scope.idModalInstitucion);
-                $scope.eliminarPopup($scope.idModalPrerequisitos)
             $scope.eliminarPopup($scope.idModalRhNuevo)
             $scope.eliminarPopup($scope.idModalWizardRhVista)
-            $scope.eliminarPopup($scope.idModalDialogPrerequisitoNuevo)
+
         });
         $scope.inicio = function () {
             $scope.obtenerGenero();
             $scope.obtenerRecursosHumanos();
-            $scope.obtenerPrerequisito();
         }
         $scope.obtenerColumnasAplicacion = function () {
             $scope.fieldViewer = FieldViewer({
@@ -154,17 +150,6 @@ angular.module('agil.controladores')
             },$scope.aplicacion.aplicacion.id);
             $scope.fieldViewer.updateObject();
         }
-
-        $scope.abrirDialogPrerequisitoNuevo = function () {
-            $scope.nuevoP = new Prerequisito({ puede_modificar_rrhh: false });          
-            console.log($scope.nuevoP)
-            $scope.abrirPopup($scope.idModalDialogPrerequisitoNuevo);
-        }
-
-        $scope.cerrarPopupPrerequisitoNuevo = function () {
-            $scope.cerrarPopup($scope.idModalDialogPrerequisitoNuevo);
-        }
-
         $scope.abrirDialogVerEmpleado = function (elpaciente) {
             promesaPaciente = obtenerEmpleadoRh(elpaciente.id)
             promesaPaciente.then(function (paciente) {
@@ -187,15 +172,12 @@ angular.module('agil.controladores')
         $scope.cerrarDialogEliminarUsuarioRh = function () {
             $scope.cerrarPopup($scope.idEliminarUsuarioRh);
         }
-        $scope.abrirDialogEliminarUsuarioRh = function () {
-                
+        $scope.abrirDialogEliminarUsuarioRh = function (empleado) { 
+            $scope.empleado=empleado           
             $scope.abrirPopup($scope.idEliminarUsuarioRh);
         }
         
-        $scope.abrirDialogInicioPreRequisitos = function (empleado) {
-            var filtro = { inicio: 0, fin: 0 }
-            $scope.obtenerDatosPrerequisito(empleado, filtro); 
-            $scope.empleado=empleado     
+        $scope.abrirDialogInicioPreRequisitos = function () {
             $scope.abrirPopup($scope.idModalPrerequisitos);
         }
         $scope.cerrarDialogInicioPreRequisitos = function () {
@@ -1056,68 +1038,8 @@ $scope.nuevoRH.persona.fecha_nacimiento = $scope.fechaATexto($scope.nuevoRH.pers
 
         }
 
-
-        $scope.obtenerDatosPrerequisito = function (paciente, filtro) {
-            blockUI.start();
-            if (filtro.inicio != 0 && filtro.inicio != "") {
-                filtro.inicio = new Date($scope.convertirFecha(filtro.inicio));
-                filtro.fin = new Date($scope.convertirFecha(filtro.fin));
-            } else {
-                filtro.inicio = 0
-                filtro.fin = 0
-            }
-
-            var promesa = ListaPrerequisitosPaciente(paciente.id, filtro);
-            promesa.then(function (preRequisitos) {
-                $scope.datoprerequisitos = preRequisitos;
-                //console.log($scope.datoprerequisitos);
-                blockUI.stop();
-                $scope.filtro = { inicio: "", fin: "" }
-            });
-            console.log($scope.datoprerequisitos)
-        }
-        $scope.saveFormPrerequisito = function () {
-            blockUI.start();
-            console.log($scope.nuevoP)
-            $scope.nuevoP.fecha_inicio = new Date($scope.convertirFecha($scope.nuevoP.fecha_inicio));
-            $scope.nuevoP.fecha_vencimiento = new Date($scope.convertirFecha($scope.nuevoP.fechav));
-
-            $scope.nuevoP.$save({ id_paciente: $scope.empleado.id }, function (prerequisito) {
-                blockUI.stop();
-                var filtro = { inicio: 0, fin: 0 }
-                //prerequisito = new Prerequisito({});
-                $scope.obtenerDatosPrerequisito($scope.empleado, filtro);
-                $scope.cerrarPopupPrerequisitoNuevo();
-                $scope.mostrarMensaje('Guardado Exitosamente!');
-
-            }, function (error) {
-                blockUI.stop();
-                var filtro = { inicio: 0, fin: 0 }
-                $scope.obtenerDatosPrerequisito($scope.empleado, filtro);
-                $scope.cerrarPopupPrerequisitoNuevo();
-                $scope.mostrarMensaje('Ocurrio un problema al momento de guardar!');
-            });
-        }
-
-        $scope.obtenerPrerequisito = function () {
-            blockUI.start();
-            var promesa = ListaDatosPrerequisito();
-            promesa.then(function (entidad) {
-                $scope.prerequisitos = entidad;
-                blockUI.stop();
-            });
-        }
         $scope.inicio()
 
-        $scope.actualizarPrerequisito = function (prerequisitos) {
-            var promesa = ActualizarPrerequisito(prerequisitos)
-            promesa.then(function (dato) {
-                /* if (prerequisitos instanceof Array) {
-                    
-                } */
-                $scope.cerrarDialogInicioPreRequisitos()
-                $scope.mostrarMensaje(dato.message)
-            })
-        }
+
 
     });

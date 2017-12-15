@@ -326,8 +326,8 @@ module.exports = function (router, ContabilidadCuenta, ClasificacionCuenta, Tipo
 					if(clasificacion.id){
 						ClasificacionCuenta.update({
 							nombre: clasificacion.nombre,
-							id_saldo: clasificacion.saldo.id,
-							id_movimiento: clasificacion.movimiento.id
+							id_saldo: (clasificacion.saldo?clasificacion.saldo.id:null),
+							id_movimiento: (clasificacion.movimiento?clasificacion.movimiento.id:null)
 						},{
 							where:{
 								id:clasificacion.id
@@ -336,8 +336,8 @@ module.exports = function (router, ContabilidadCuenta, ClasificacionCuenta, Tipo
 					}else{
 						ClasificacionCuenta.create({
 							nombre: clasificacion.nombre,
-							id_saldo: clasificacion.saldo.id,
-							id_movimiento: clasificacion.movimiento.id
+							id_saldo: (clasificacion.saldo?clasificacion.saldo.id:null),
+							id_movimiento: (clasificacion.movimiento?clasificacion.movimiento.id:null)
 						});
 					}
 				}else{
@@ -465,19 +465,48 @@ module.exports = function (router, ContabilidadCuenta, ClasificacionCuenta, Tipo
 								transaction: t,
 								lock: t.LOCK.UPDATE
 							}).then(function (claseEncontrada) {
-								return ContabilidadCuenta.create({
-									id_empresa: req.body.id_empresa,
-									codigo: cuenta.codigo,
-									nombre: cuenta.nombre,
-									descripcion: cuenta.descripcion,
-									debe: cuenta.debe,
-									haber: cuenta.haber,
-									saldo: cuenta.saldo,
-									id_clasificacion: claficiacionEncontrada.id,
-									id_tipo_cuenta: claseEncontrada.id,
-									bimonetaria: cuenta.bimonetaria,
-									eliminado: false
-								}, { transaction: t });
+								return ContabilidadCuenta.find({ 
+									where:{
+										$or: [{codigo:cuenta.codigo}],
+										id_empresa:req.body.id_empresa
+									},
+									transaction: t
+								}).then(function(cuentaEncontrada){
+									if(cuentaEncontrada){
+										return ContabilidadCuenta.update({
+											id_empresa: req.body.id_empresa,
+											codigo: cuenta.codigo,
+											nombre: cuenta.nombre,
+											descripcion: cuenta.descripcion,
+											debe: cuenta.debe,
+											haber: cuenta.haber,
+											saldo: cuenta.saldo,
+											id_clasificacion: claficiacionEncontrada[0].id,
+											id_tipo_cuenta: claseEncontrada[0].id,
+											bimonetaria: cuenta.bimonetaria,
+											eliminado: false
+										},{
+											where:{
+												id:cuentaEncontrada.id
+											},
+											transaction: t
+										});
+									}else{
+										return ContabilidadCuenta.create({
+											id_empresa: req.body.id_empresa,
+											codigo: cuenta.codigo,
+											nombre: cuenta.nombre,
+											descripcion: cuenta.descripcion,
+											debe: cuenta.debe,
+											haber: cuenta.haber,
+											saldo: cuenta.saldo,
+											id_clasificacion: claficiacionEncontrada[0].id,
+											id_tipo_cuenta: claseEncontrada[0].id,
+											bimonetaria: cuenta.bimonetaria,
+											eliminado: false
+										}, { transaction: t });
+									}
+								});
 							})
 						});
 					})

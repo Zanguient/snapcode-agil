@@ -62,7 +62,7 @@ var Sequelize = require('sequelize');
 var sequelize = new Sequelize(database,username, dbpass, {
   host: '138.197.35.199',
   dialect: 'mysql',
-  timezone : "-04:00",
+  //timezone : "-04:00",
   pool: {
     max: 5,
     min: 0,

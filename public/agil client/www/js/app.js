@@ -169,23 +169,7 @@ angular.module('agil', ['ngRoute', 'agil.controladores',
             .when('/rrhh', {
                 controller:'ControladorRecursosHumanos',
                 templateUrl:'templates/agil/rrhh.html'
-            })
-            .when('/planilla-sueldos', {
-                controller:'ControladorPlanillaSueldos',
-                templateUrl:'templates/agil/planilla-sueldos.html'
-            })
-            .when('/incremento-salarial', {
-                controller:'ControladorIncrementoSalarial',
-                templateUrl:'templates/agil/incremento-salarial.html'
-            })
-            .when('/planilla-rc-iva', {
-                controller:'ControladoresRCIVA',
-                templateUrl:'templates/agil/planilla-rc-iva.html'
-            })
-            .when('/planilla-retroactivos', {
-                controller:'ControladoresPlanillaRetroactivos',
-                templateUrl:'templates/agil/planilla-retroactivos.html'
-            })            
+            })             
         .otherwise({
           redirectTo:'/'
         });

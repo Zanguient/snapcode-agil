@@ -123,7 +123,7 @@ module.exports = function (router, sequelize, Sequelize, jwt, md5, forEach, ensu
 	require('./rutas-roles')(router, Rol, RolAplicacion, Aplicacion);
 	require('./rutas-tipos')(router, Tipo, Clase, Venta, DetalleVenta, Cliente, Almacen, Sucursal, Compra, DetalleCompra, Proveedor,
 		Producto, Usuario, Movimiento, VentaReprogramacionPago, CompraReprogramacionPago);
-	require('./rutas-personas')(router, Persona,VendedorVenta);
+	require('./rutas-personas')(router, Persona,VendedorVenta,Venta);
 
 	//AGIL
 	require('./rutas-empresas')(router, decodeBase64Image, fs, Empresa, Sucursal, Clase, Tipo, signs3, ConfiguracionVentaVista, ConfiguracionCompraVista, sequelize);

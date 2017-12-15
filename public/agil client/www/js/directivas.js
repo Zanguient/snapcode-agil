@@ -1,36 +1,5 @@
 angular.module('agil.directivas', [])
-.directive('custPopover', function ($compile) {
-    return {
-        scope : {
-            items : '=newvar'  
-        }, 
-        restrict: 'A',
-        
-        template: '<i class="ace-icon fa fa-search-plus bigger-130"></i>',
-        link: function (scope, el, attrs) {
-            scope.label = attrs.popoverLabel;
-            var temp = ' <table id="dynamic-table" class="table table-striped table-bordered table-hover nowrap dataTable no-footer">\
-            <thead>\
-                <tr>\
-                    <th>Examenes</th>\
-                    <th>Resultado</th></tr></thead>\
-            <tbody>\
-                <tr ng-repeat="examen in items">\
-                    <td>{{examen.laboratorioExamen.examen}}</td>\
-                    <td>{{examen.resultado}}</td></tr>\
-            </tbody>\
-        </table>';
-            var contents = $compile(temp)(scope);
-            console.log(scope);
-            $(el).popover({
-                trigger: 'click',
-                html: true,
-                content:  contents,
-                placement: attrs.popoverPlacement
-            });
-        }
-    };
-})
+
 .directive('ngUpdateHidden', function ($timeout) {
     return {
         restrict: 'AE', //attribute or element

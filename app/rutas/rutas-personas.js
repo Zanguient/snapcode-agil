@@ -1,4 +1,4 @@
-module.exports = function (router,Persona,VendedorVenta) {
+module.exports = function (router,Persona,VendedorVenta,Venta) {
 
 router.route('/vendedor-venta/empresa/:id_empresa')
 	.get(function(req, res) {
@@ -54,21 +54,26 @@ router.route('/vendedor-venta/:id_vendedor')
 		VendedorVenta.find({
             where:{
                 id:req.params.id_vendedor
-            }
+            },
+            include:[{model:Venta,as:'ventas'}]
 		}).then(function(vendedor){
-            Persona.destroy({
-                where:{
-                    id:vendedor.id_persona
-                }
-            }).then(function(persona){
-                VendedorVenta.destroy({
+            if(vendedor.ventas.length==0){
+                Persona.destroy({
                     where:{
-                        id:req.params.id_vendedor
+                        id:vendedor.id_persona
                     }
                 }).then(function(persona){
-                    res.json({mensaje:"Vendedor eliminado satisfactoriamente!"});
+                    VendedorVenta.destroy({
+                        where:{
+                            id:req.params.id_vendedor
+                        }
+                    }).then(function(persona){
+                        res.json({mensaje:"Vendedor eliminado satisfactoriamente!"});
+                    });
                 });
-            });
+            }else{
+                res.json({mensaje:"No se puede eliminar al vendedor porque tiene ventas registradas!"});
+            }
         });
     });
 }

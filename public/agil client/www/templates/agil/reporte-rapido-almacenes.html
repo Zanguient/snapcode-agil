@@ -1,0 +1,55 @@
+<div class="row">
+	<div class="col-xs-12">
+		<h3 class="header smaller lighter blue">REPORTE RÁPIDO DE ALMACENES</h3>
+		
+		<form name="formularioReporte" novalidate>
+			<fieldset>
+				<legend>PERIODO</legend>
+				<table>
+					<tbody>
+						<tr>
+							<td>
+								<label>AÑO</label>&nbsp
+							</td>
+							<td>
+								<select required id="gestion" name="gestion" 
+									ng-options="gestion.nombre_corto as gestion.nombre for gestion in gestiones track by gestion.id" 
+									ng-model="reporte.gestion">
+								</select>&nbsp
+							</td>
+							<td>
+								<label>MES</label>&nbsp
+							</td>
+							<td>
+								<select required id="mes" name="mes" ng-model="reporte.mes" >
+									<option value="1-ENERO">ENERO</option>
+									<option value="2-FEBRERO">FEBRERO</option>
+									<option value="3-MARZO">MARZO</option>
+									<option value="4-ABRIL">ABRIL</option>
+									<option value="5-MAYO">MAYO</option>
+									<option value="6-JUNIO">JUNIO</option>
+									<option value="7-JULIO">JULIO</option>
+									<option value="8-AGOSTO">AGOSTO</option>
+									<option value="9-SEPTIEMBRE">SEPTIEMBRE</option>
+									<option value="10-OCTUBRE">OCTUBRE</option>
+									<option value="11-NOVIEMBRE">NOVIEMBRE</option>
+									<option value="12-DICIEMBRE">DICIEMBRE</option>
+								</select>&nbsp
+							</td>
+							<td>
+								<button ng-disabled="formularioReporte.$invalid" class="btn btn-primary" type="button" ng-click="generarPdfVentasMensuales(reporte)">
+									<i class="ace-icon fa fa-plus align-top bigger-125"></i>
+									Decargar PDF
+								</button>
+								<button ng-disabled="formularioReporte.$invalid" class="btn btn-primary" type="button" ng-click="generarExcelVentasMensuales(reporte)">
+									<i class="ace-icon fa fa-plus align-top bigger-125"></i>
+									Decargar Excel
+								</button>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</fieldset>
+		</form>
+	</div>
+</div>
