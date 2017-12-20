@@ -1,0 +1,492 @@
+<div>
+    <div class="row">
+        <div class="col-xs-12">
+            <!-- PAGE CONTENT BEGINS -->
+            <h2 class="text-primary">PLANILLAS DE INCREMENTO SALARIAL</h2>
+            <button  class="btn btn-primary"  ng-click="abrirDialogNuevoIncrementoSalarial()">
+				<i class="ace-icon fa fa-plus align-top bigger-125"></i>
+				Nueva Planilla
+			</button>
+             <button ng-disabled="!aplicacion.puede_crear" class="btn btn-danger" ng-click="crearNuevoProducto()" href="#dialog-iniciar-mantenimiento" data-toggle="modal">
+                Importar
+            </button>
+            </button>
+             <button ng-disabled="!aplicacion.puede_crear" class="btn btn-success" ng-click="crearNuevoProducto()" href="#dialog-iniciar-mantenimiento" data-toggle="modal">    
+                Ejemplo de Importación
+            </button>
+            <br>
+            <br>
+            <fieldset>
+                <legend>Filtro Planilla de Incremento Salarial</legend>
+                <table class="table table-striped table-bordered table-hover table-block" align="center">
+                    <tbody>
+                        <tr>
+                            <td class="no-border-right"></td>
+                            <td>
+                                <label>Mes</label>&nbsp;
+                            </td>
+                            <td>
+                                <label>Año</label>&nbsp;
+                            </td>
+                            <td colspan="3">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="no-border-right text-right">PERIODO</td>
+                            <td>
+                                <input type="text" ng-model="filtro.razon_social" class="ng-pristine ng-untouched ng-valid ng-empty"> 
+                            </td>
+                            <td>
+                                <input type="text" ng-model="filtro.nit" class="ng-pristine ng-untouched ng-valid ng-empty">
+                            </td>
+                            <td colspan="3">
+                                <button type="submit" ng-disabled="formularioFiltroVentas.$invalid" class="btn btn-primary">
+									<i class="ace-icon fa fa-search  align-top bigger-125"></i>
+										Filtrar
+								</button>
+                                <button class="btn btn-danger btn-md">
+									<i class="ace-icon fa fa-print align-top bigger-125"></i>
+										PDF
+								</button>
+                                <button class="btn btn-success btn-md">
+									<i class="ace-icon fa fa-print bigger-125"></i>
+										Excel
+                                </button>
+                            </td>
+                        </tr>    
+                    </tbody>
+                </table>
+            </fieldset>
+            <div class="table-header">
+                <a class="white" href="#" data-toggle="modal" data-target="#dialog-editar-historico">
+                    <i class="ace-icon fa fa-h-square bigger-130"></i>
+                </a> Lista de Planillas
+            </div>
+            <!-- div.table-responsive -->
+            <table id="dynamic-table" class="table table-striped table-bordered table-hover nowrap dataTable no-footer">
+                                        <thead>
+                                            <tr>
+                                                <th>Nro.</th>
+                                                <th>Año</th>
+                                                <th>Mes:</th>
+                                                <th>Sueldo Básico:</th>
+                                                <th>Incremento salarial:</th>
+                                                <th>Sueldo Actual</th>
+                                                <th class="">Acciones</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>1</td>
+                                                <td>2017</td>
+                                                <td>Enero</td>
+                                                <td>800000</td>
+                                                <td>400</td>
+                                                <td>5000</td>
+                                                <td class="">
+                                                    <div class="hidden-sm hidden-xs action-buttons">
+                                                        <a class="blue" href="#">
+                                                            <i class="ace-icon fa fa-search-plus bigger-130"></i>
+                                                        </a>
+                                                        <a class="red" href="#">
+                                                            <i class="ace-icon fa fa-pencil-square-o bigger-130"></i>
+                                                        </a>
+                                                         <a class="blue" href="#">
+                                                            <i class="ace-icon glyphicon glyphicon-print bigger-130"></i>
+                                                        </a>
+                                                        <a class="red" href="#">
+                                                            <i class="ace-icon fa fa-trash-o bigger-130"></i>
+                                                        </a>   
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>2</td>
+                                                <td>2017</td>
+                                                <td>Febrero</td>
+                                                 <td>800000</td>
+                                                <td>400</td>
+                                                <td>5000</td>
+                                                <td class="">
+                                                   <div class="hidden-sm hidden-xs action-buttons">
+                                                        <a class="blue" href="#">
+                                                            <i class="ace-icon fa fa-search-plus bigger-130"></i>
+                                                        </a>
+                                                        <a class="red" href="#">
+                                                            <i class="ace-icon fa fa-pencil-square-o bigger-130"></i>
+                                                        </a>
+                                                         <a class="blue" href="#">
+                                                            <i class="ace-icon glyphicon glyphicon-print bigger-130"></i>
+                                                        </a>
+                                                        <a class="red" href="#">
+                                                            <i class="ace-icon fa fa-trash-o bigger-130"></i>
+                                                        </a>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>3</td>
+                                                <td>2017</td>
+                                                <td>Marzo</td>
+                                                <td>800000</td>
+                                                <td>400</td>
+                                                <td>5000</td>
+                                                <td class="">
+                                                    <div class="hidden-sm hidden-xs action-buttons">
+                                                       <div class="hidden-sm hidden-xs action-buttons">
+                                                        <a class="blue" href="#">
+                                                            <i class="ace-icon fa fa-search-plus bigger-130"></i>
+                                                        </a>
+                                                        <a class="red" href="#">
+                                                            <i class="ace-icon fa fa-pencil-square-o bigger-130"></i>
+                                                        </a>
+                                                         <a class="blue" href="#">
+                                                            <i class="ace-icon glyphicon glyphicon-print bigger-130"></i>
+                                                        </a>
+                                                        <a class="red" href="#">
+                                                            <i class="ace-icon fa fa-trash-o bigger-130"></i>
+                                                        </a>
+                                                    </div>
+                                                </div></td>
+                                            </tr>
+                                            <tr>
+                                               <td>4</td>
+                                                <td>2017</td>
+                                                <td>Abril</td>
+                                                 <td>800000</td>
+                                                <td>400</td>
+                                                <td>5000</td>
+                                                <td class="">
+                                                    <div class="hidden-sm hidden-xs action-buttons">
+                                                       <div class="hidden-sm hidden-xs action-buttons">
+                                                        <a class="blue" href="#">
+                                                            <i class="ace-icon fa fa-search-plus bigger-130"></i>
+                                                        </a>
+                                                        <a class="red" href="#">
+                                                            <i class="ace-icon fa fa-pencil-square-o bigger-130"></i>
+                                                        </a>
+                                                         <a class="blue" href="#">
+                                                            <i class="ace-icon glyphicon glyphicon-print bigger-130"></i>
+                                                        </a>
+                                                        <a class="red" href="#">
+                                                            <i class="ace-icon fa fa-trash-o bigger-130"></i>
+                                                        </a>
+                                                    </div>
+                                                </div></td>
+                                            </tr>
+                                              <tr>
+                                               <td>TOTALES</td>
+                                                <td></td>
+                                                <td></td>
+                                                <td>800000</td>
+                                                <td>400</td>
+                                                <td>5000</td>
+                                                <td class="">
+                                                    <div class="hidden-sm hidden-xs action-buttons">
+                                                       <div class="hidden-sm hidden-xs action-buttons">
+                                                        <a class="blue" href="#">
+                                                            <i class="ace-icon fa fa-search-plus bigger-130"></i>
+                                                        </a>
+                                                        <a class="red" href="#">
+                                                            <i class="ace-icon fa fa-pencil-square-o bigger-130"></i>
+                                                        </a>
+                                                         <a class="blue" href="#">
+                                                            <i class="ace-icon glyphicon glyphicon-print bigger-130"></i>
+                                                        </a>
+                                                        <a class="red" href="#">
+                                                            <i class="ace-icon fa fa-trash-o bigger-130"></i>
+                                                        </a>
+                                                    </div>
+                                                </div></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+        </div>
+    </div>
+    <!-- Modal planilla incremento-salarial ================================00-->
+    <div class="modal" id="dialog-nueva-incremento-salarial">
+        <div class="modal-header ficha">
+            <h4 class="modal-title" id="myModalLabel"> Planilla de sueldo</h4>
+        </div>
+
+        <div class="modal-body">
+            
+            <legend>Filtro Planilla de incremento salarial</legend>
+            <table class="table table-striped table-bordered table-hover table-block" align="center">
+                <tbody>
+                    <tr>
+                        <td class="no-border-right"></td>
+                        <td>
+                            <label>Mes</label>&nbsp;
+                        </td>
+                        <td>
+                            <label>Año</label>&nbsp;
+                        </td>
+                        <td colspan="3">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="no-border-right text-right">PERIODO</td>
+                        <td>
+                            <select id="pago" name="pago" ng-model="filtro.tipo_pago" data-placeholder="Elija un tipo de pago" class="ng-pristine ng-untouched ng-valid ng-empty"><option value="? undefined:undefined ?"></option>
+                                <option value="0">ENERO</option>
+                                <!-- ngRepeat: tipoPago in tiposPago --><option ng-repeat="tipoPago in tiposPago" value="17" class="ng-binding ng-scope">FEBRERO</option><!-- end ngRepeat: tipoPago in tiposPago --><option ng-repeat="tipoPago in tiposPago" value="18" class="ng-binding ng-scope">MARZO</option><!-- end ngRepeat: tipoPago in tiposPago -->
+                            </select>
+                        </td> 
+                        <td>
+                            <select id="pago" name="pago" ng-model="filtro.tipo_pago" data-placeholder="Elija un tipo de pago" class="ng-pristine ng-untouched ng-valid ng-empty"><option value="? undefined:undefined ?"></option>
+                                <option value="0">2015</option>
+                                <!-- ngRepeat: tipoPago in tiposPago --><option ng-repeat="tipoPago in tiposPago" value="17" class="ng-binding ng-scope">2016</option><!-- end ngRepeat: tipoPago in tiposPago --><option ng-repeat="tipoPago in tiposPago" value="18" class="ng-binding ng-scope">2017</option><!-- end ngRepeat: tipoPago in tiposPago -->
+                            </select>
+                        </td>
+                        <td colspan="3">
+                             <button type="submit" ng-disabled="formularioFiltroVentas.$invalid" class="btn btn-primary">
+                               <i class="ace-icon fa fa-search  align-top bigger-125"></i>
+                                    FILTRAR
+                            </button>
+                            <button type="submit" ng-disabled="formularioFiltroVentas.$invalid" class="btn btn-success">
+                                <i class=""></i>
+                                    Generar
+                            </button>
+                            
+                            <button type="button" class="btn btn-danger" ng-click="cerrarDialogNuevaPlanillaSueldos()">
+                                <i class="glyphicon glyphicon-remove" aria-hidden="true"></i> 
+                                    Salir
+                            </button>
+                        </td> 
+                    </tr>   
+                    <tr>
+                        <td>
+                            <label></label>&nbsp;
+                        </td>
+                        <td>
+                            <label>Nombre</label>&nbsp;
+                        </td>
+                        <td>
+                            <label>Cedula identidad</label>&nbsp;
+                        </td>
+                        <td>
+                            <label>Cargo</label>&nbsp;
+                        </td>
+                        <td>
+                            <label>Campamento</label>&nbsp;
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>FILTRO</td>
+                        <td>    
+                            <input type="text" ng-model="filtro.razon_social" class="ng-pristine ng-untouched ng-valid ng-empty">
+                        </td>
+                        <td>
+                            <input type="number" ng-model="filtro.nit" class="ng-pristine ng-untouched ng-valid ng-empty">
+                        </td>
+                       <td>
+                            <select id="pago" name="pago" ng-model="filtro.tipo_pago" data-placeholder="Elija un tipo de pago" class="ng-pristine ng-untouched ng-valid ng-empty"><option value="? undefined:undefined ?"></option>
+                                <option value="0">TODOS</option>
+                                <!-- ngRepeat: tipoPago in tiposPago --><option ng-repeat="tipoPago in tiposPago" value="17" class="ng-binding ng-scope">Cocinero</option><!-- end ngRepeat: tipoPago in tiposPago --><option ng-repeat="tipoPago in tiposPago" value="18" class="ng-binding ng-scope">Copero</option><!-- end ngRepeat: tipoPago in tiposPago -->
+                            </select>
+                        </td>
+                        <td>
+                            <select id="pago" name="pago" ng-model="filtro.tipo_pago" data-placeholder="Elija un tipo de pago" class="ng-pristine ng-untouched ng-valid ng-empty"><option value="? undefined:undefined ?"></option>
+                                <option value="0">TODOS</option>
+                                <!-- ngRepeat: tipoPago in tiposPago --><option ng-repeat="tipoPago in tiposPago" value="17" class="ng-binding ng-scope">EMSSCZ</option><!-- end ngRepeat: tipoPago in tiposPago --><option ng-repeat="tipoPago in tiposPago" value="18" class="ng-binding ng-scope">BULO BULO</option><!-- end ngRepeat: tipoPago in tiposPago -->
+                            </select>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="table-header">
+                             Planilla de Incrementos Salariales
+            </div>
+            <!-- div.table-responsive -->
+            <div class="table-planilla">
+                <table id="dynamic-table" class="table table-striped table-bordered table-hover">
+                    <thead>
+                        <tr>
+                            <th>Nro.</th>
+                            <th>Empleado</th>
+                            <th>CI:</th>
+                            <th>Cargo:</th>
+                            <th>Campamento:</th>
+                            <th>Sueldo:</th>
+                            <th>Incremento:</th>
+                            <th>Ajuste %:</th>
+                            <th>Sueldo:</th>
+                            <th>Tipo de contrato:</th>
+                            <th class="">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>5</td>
+                            <td>Mario Torrejon Sejas</td>
+                            <td>4391485</td>
+                            <td>Copero</td>
+                            <td>EMSSCZ</td>
+                            <td>5000</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>Fijo</td>
+                            <td class="">
+                                    <a class="blue" href="#">
+                                        <i class="ace-icon fa fa-search-plus bigger-130"></i>
+                                    </a>
+                                    <a class="red" href="#">
+                                        <i class="ace-icon fa fa-pencil-square-o bigger-130"></i>
+                                    </a>
+                                    <a class="red" href="#">
+                                        <i class="ace-icon fa fa-trash-o bigger-130"></i>
+                                    </a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>6</td>
+                            <td>Mario Torrejon Sejas</td>
+                            <td>4391485</td>
+                            <td>Copero</td>
+                            <td>EMSSCZ</td>
+                            <td>5000</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>Fijo</td>
+                            <td class="">
+                                
+                                    <a class="blue" href="#">
+                                        <i class="ace-icon fa fa-search-plus bigger-130"></i>
+                                    </a>
+                                    <a class="red" href="#">
+                                        <i class="ace-icon fa fa-pencil-square-o bigger-130"></i>
+                                    </a>
+                                    <a class="red" href="#">
+                                        <i class="ace-icon fa fa-trash-o bigger-130"></i>
+                                    </a>
+                             
+                            </td>
+                        </tr>
+                        <tr>
+                           <td>TOTALES</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td>800000</td>
+                            <td>400</td>
+                            <td>5000</td>
+                            <td>7500</td>
+                        </tr>
+                   
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <!-- =====  fin modal  nueva planilla sueldos ====== -->
+     <!-- =====  modal  editar planilla sueldo ====== -->
+    <div id="dialog-editar-planilla-sueldo" class="modal">
+        <div class="modal-header ficha">
+            <h4 class="modal-title" id="myModalLabel">Juan Perez Ardaya</h4>
+            <h5 class="modal-title">Octubre 2017</h5>
+        </div>
+        <div class="modal-body">
+            <form>
+                <div class="form-group row">
+                    <label class="col-sm-6" for="monto">Sueldo Básico</label>
+                    <div class="col-sm-6">                    
+                        <input type="number" class="form-control" ng-model="sueldo.sueldoBasico" ng-change="calcularTotalHorasRecargos()" name="monto" placeholder="1000" >
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-6" for="interes-pactado">Horas extras</label>
+                    <div class="col-sm-6">
+                        <input type="number" class="form-control" ng-model="sueldo.horasExtras" >
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-6" for="fecha-inicial">Total Horas</label>
+                    <div class="col-sm-6">
+                        <input type="number" class="form-control" ng-model="sueldo.totalHoras">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-6" for="plazo">Recargo Nocturno</label>
+                    <div class="col-sm-6">
+                        <input type="number" class="form-control" ng-model="sueldo.recargoNocturno" name="plazo" placeholder="6">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-6" for="observaciones">Bono de Antigüedad</label>
+                    <div class="col-sm-6">
+                        <input type="number" class="form-control" id="observaciones" name="observaciones" placeholder="Desc. Planilla">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-6" for="observaciones">Bono Frontera</label>
+                    <div class="col-sm-6">
+                        <input type="number" class="form-control" id="observaciones" name="observaciones" placeholder="Desc. Planilla">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-6" for="observaciones">Otros Bonos</label>
+                    <div class="col-sm-6">
+                        <input type="number" class="form-control" id="observaciones" name="observaciones" placeholder="Desc. Planilla">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-6" for="observaciones">Total Ganado</label>
+                    <div class="col-sm-6">
+                        <input type="number" class="form-control" id="observaciones" name="observaciones" disabled="">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-6" for="observaciones">AFP</label>
+                    <div class="col-sm-6">
+                        <input type="number" class="form-control" id="observaciones" name="observaciones" disabled="">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-6" for="observaciones">RC IVA</label>
+                    <div class="col-sm-6">
+                        <input type="number" class="form-control" id="observaciones" name="observaciones" disabled="">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-6" for="observaciones">Anticipos</label>
+                    <div class="col-sm-6">
+                        <input type="number" class="form-control" id="observaciones" name="observaciones" placeholder="Desc. Planilla">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-6" for="observaciones">Prestamos</label>
+                    <div class="col-sm-6">
+                        <input type="number" class="form-control" id="observaciones" name="observaciones" placeholder="Desc. Planilla">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-6" for="observaciones">Total Descuento</label>
+                    <div class="col-sm-6">
+                        <input type="text" class="form-control" id="observaciones" name="observaciones" disabled="">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-6" for="observaciones">Líquido pagable</label>
+                    <div class="col-sm-6">
+                        <input type="text" class="form-control" id="observaciones" name="observaciones" placeholder="" disabled="">
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="row">
+            <div class="modal-footer wizard-actions">
+                <button class="btn btn-primary btn-sm" ng-click="cerrarDialogEditarPlanillaSueldo()"><i class="glyphicon glyphicon-floppy-disk"></i>Guardar
+                </button>
+                <button class="btn btn-danger btn-sm" ng-click="cerrarDialogEditarPlanillaSueldo()"><i class="ace-icon fa fa-times"></i>Cancelar
+                </button>
+            </div>
+        </div>
+    </div>
+    <!-- ===== fin modal editar planilla sueldo  ====== -->
+
+  
+</div>

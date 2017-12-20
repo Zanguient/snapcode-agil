@@ -76,16 +76,44 @@ angular.module('agil.controladores')
 		});
 	}
 
+	$scope.generarListaGruposSeleccionados=function(gruposActualizado,gruposCache){
+		var listaGruposSeleccionados=[];
+		for(var i=0;i<gruposActualizado.length;i++){
+			for(var j=0;j<gruposCache.length;j++){
+				if(gruposActualizado[i].id==gruposCache[j].id){
+					gruposActualizado[i].selected=gruposCache[j].selected;
+				}
+			}
+		}
+		return gruposActualizado;
+	}
+
 	$scope.obtenerGruposProductoEmpresa=function(){
 		var promesa=ListaGruposProductoEmpresa($scope.usuario.id_empresa);
 		promesa.then(function(grupos){
 			$scope.grupos_productos=grupos;
+			/*if ( angular.isDefined($localStorage.grupos_check) ) {
+				$scope.grupos_check=JSON.parse($localStorage.grupos_check);
+				$scope.grupos_check=$scope.generarListaGruposSeleccionados($scope.grupos_productos,$scope.grupos_check);
+			} else {
+				$scope.grupos_check=[];
+				for (var i = 0; i < $scope.grupos_productos.length; i++) {
+					$scope.grupos_productos[i].selected = true;
+					$scope.grupos_check.push($scope.grupos_productos[i]);
+					$localStorage.grupos_check=JSON.stringify($scope.grupos_check);
+				}
+			}
+
+			$scope.cambiarListaGruposCheck=function(grupo){console.log(grupo);
+				grupo.selected=!grupo.selected;
+				$localStorage.grupos_check=JSON.stringify($scope.grupos_check);
+			}*/
 
 			// ================== codigo filtro grupos checkbox ==============
 					
 			// == condicion save localstorage ====
 			if ( angular.isDefined($localStorage.grupos_productos) ) {
-			    $scope.grupos_productos = $localStorage.grupos_productos;
+				$scope.grupos_productos=$scope.generarListaGruposSeleccionados($scope.grupos_productos,$localStorage.grupos_productos);
 			} else {
 				for (var i = 0; i < grupos.length; i++) {
 					$scope.grupos_productos[i].selected = true;
@@ -100,7 +128,7 @@ angular.module('agil.controladores')
 				$scope.listChecked.splice(0, $scope.listChecked.length);
 				for (var i = 0; i < $scope.grupos_productos.length; i++) {
 					if ($scope.grupos_productos[i].selected == true) {
-						$scope.listChecked.push($scope.grupos_productos[i].grupo);
+						$scope.listChecked.push($scope.grupos_productos[i]);
 					}
 				}
 
@@ -121,6 +149,8 @@ angular.module('agil.controladores')
 			// =================== fin codigo ============================
 		});
 	}
+
+	
 	
 	$scope.obtenerTiposDePago=function(){
 		blockUI.start();

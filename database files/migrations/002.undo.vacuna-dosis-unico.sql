@@ -1,0 +1,1 @@
+ALTER TABLE agil_medico_vacuna_dosis DROP COLUMN unico;

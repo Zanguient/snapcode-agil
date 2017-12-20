@@ -306,9 +306,21 @@ router.route('/empresas/:id_empresa/configuracion-compra-vista')
 
 router.route('/grupos/empresa/:id_empresa')
 	.get(function(req, res) {
-		sequelize.query("SELECT distinct grupo FROM agil_producto where grupo is not null and empresa="+req.params.id_empresa, { type: sequelize.QueryTypes.SELECT})
+		sequelize.query("SELECT gl_clase.id, gl_clase.nombre FROM gl_clase,gl_tipo where gl_tipo.nombre_corto='GRUPOS PRODUCTOS' and gl_clase.tipo=gl_tipo.id and gl_tipo.empresa="+req.params.id_empresa, { type: sequelize.QueryTypes.SELECT})
 		  .then(function(dato) {
 			res.json(dato);;
 		  });
-	})
+
+		
+	});
+
+router.route('/subgrupos/empresa/:id_empresa')
+	.get(function(req, res) {
+		sequelize.query("SELECT gl_clase.id, gl_clase.nombre FROM gl_clase,gl_tipo where gl_tipo.nombre_corto='SUBGRUPOS PRODUCTOS' and gl_clase.tipo=gl_tipo.id and gl_tipo.empresa="+req.params.id_empresa, { type: sequelize.QueryTypes.SELECT})
+		  .then(function(dato) {
+			res.json(dato);;
+		  });
+
+		
+	});
 }

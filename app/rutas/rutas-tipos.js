@@ -23,7 +23,20 @@ router.route('/clases/:nombre_corto')
 			res.json(entidad);		  
 		});
 	});
+	router.route('/paises/:nombre_corto')
 	
+		.get(function(req, res) {
+			
+				var condicion =  { $like: "%" +req.params.nombre_corto+ "%" }
+
+			Clase.findAll({ 
+				where:{
+					nombre_corto: condicion
+				}
+			}).then(function(entidad){			
+				res.json(entidad);		  
+			});
+		});	
 router.route('/tipos')
 	.get(function(req, res) {
 		Tipo.findAll({

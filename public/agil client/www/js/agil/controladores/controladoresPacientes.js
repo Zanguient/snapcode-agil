@@ -3,7 +3,8 @@ angular.module('agil.controladores')
         CrearPrerequisito, Prerequisito, DatosPrerequisitoPaciente, ListaDatosGenero, Vacunas, ltsVacunas, PacienteVacuna, VacunasPaciente, asignacionPacienteVacuna, aplicacionPacienteVacuna, VacunasPacientedosis, CrearMedicoPacienteConsulta,
         ListaConsultasMedicoPaciente, CrearMedicoPacienteFicha, BuscarFichaPaciente, ListaDatosTiposControl, ActualizarPatologiaPaciente, ListaPrerequisitosEmpresa, ListaPrerequisitosPaciente, ActualizarPrerequisito, CrearLaboratorio, ListaLaboratorios,
         CrearLaboratorioExamen, ListaLaboratorioExamenes, CrearLaboratorioExamenResultado, LaboratorioExamenListaHistorial, CrearDiagnostico, ListaDiagnosticos, CrearDiagnosticoExamen, ListaDiagnosticoExamenes, DiagnosticoExamenListaHistorial, CrearDiagnosticoExamenResultado,
-        PacientesEmpresa, ListaVacunasEmpresa, FichasTecnicasPacientes, SignosVitalesPacientes, SOAPlistaPacientes, aplicacionVacunasPacientes, obtenerPaciente, Comentario, FieldViewer, PacienteActivo) {
+        PacientesEmpresa, ListaVacunasEmpresa, FichasTecnicasPacientes, SignosVitalesPacientes, SOAPlistaPacientes, aplicacionVacunasPacientes, obtenerPaciente, Comentario, FieldViewer, PacienteActivo, HistorialFichaMedicoPaciente, ActualizarLaboratorio, ActualizarLaboratorioExamen,
+        ActualizarDiagnostico, ActualizarDiagnosticoExamen, EliminarLaboratorio, EliminarLaboratorioExamen, EliminarDiagnosticoExamen, EliminarDiagnostico, Prerequisitos, PrerequisitoPaciente,ListaAlertasPrerequisitosPaciente) {
 
         $scope.usuario = JSON.parse($localStorage.usuario);
         $scope.idModalDialogVacunas = 'dialog-vacunas';
@@ -51,9 +52,9 @@ angular.module('agil.controladores')
         $scope.idModalContenedorPacienteVista = 'modal-wizard-container-paciente-vista';
         $scope.idModalEliminarPaciente = 'dialog-eliminar-paciente';
         $scope.IdModalDialogNuevoLaboratorio = 'dialog-nuevo-laboratorio';
-        $scope.IdModalDialogDiagnosticoExamenHistoricoResultado = 'dialog-historico-resultado-diag'
-        $scope.usuario = JSON.parse($localStorage.usuario);
-        // $scope.abrirDialogVacunaEditar = dialog-grafico dialog-nuevo-resultado
+        $scope.IdModalDialogDiagnosticoExamenHistoricoResultado = 'dialog-historico-resultado-diag';
+        $scope.idModalDialogVerResultadosHistorialLab = 'dialog-ver-resultados-Examen';
+        $scope.idModalDialogConfirmacionEntregaAdelantado = 'dialog-entrega-adelantada-prerequisito'
 
         $scope.$on('$viewContentLoaded', function () {
             resaltarPestaña($location.path().substring(1));
@@ -67,13 +68,13 @@ angular.module('agil.controladores')
                 $scope.idModalDialogExamenesDiagnostico, $scope.idModalDialogNuevoExamenDiagnostico, $scope.idModalDialogHistorialFicha, $scope.idModalDialogCredencial,
                 $scope.idModalDialogPatologias, $scope.idModalDialogComentario, $scope.idModalAlertPrerequisitos, $scope.idModalDiasActivacionPrerequisitos,
                 $scope.idModalReprogramarPrerequisitos, $scope.idModalAlertVacunas, $scope.idModalDiasActivacionVacunas, $scope.idModalReprogramarVacunas, $scope.idImagenUsuario,
-                $scope.idModalHistorialConsulta, $scope.idModalWizardPacienteVista, $scope.idModalContenedorPacienteVista, $scope.idModalEliminarPaciente, $scope.IdModalDialogNuevoLaboratorio, $scope.IdModalDialogDiagnosticoExamenHistoricoResultado);
+                $scope.idModalHistorialConsulta, $scope.idModalWizardPacienteVista, $scope.idModalContenedorPacienteVista, $scope.idModalEliminarPaciente, $scope.IdModalDialogNuevoLaboratorio, $scope.IdModalDialogDiagnosticoExamenHistoricoResultado, $scope.idModalDialogVerResultadosHistorialLab,$scope.idModalDialogConfirmacionEntregaAdelantado);
             $scope.buscarAplicacion($scope.usuario.aplicacionesUsuario, $location.path().substring(1));
-            // aplicarDatePickers();
             $scope.obtenerColumnasAplicacion();
         });
 
         $scope.$on('$routeChangeStart', function (next, current) {
+            $scope.eliminarPopup($scope.idModalEliminarPaciente);
             $scope.eliminarPopup($scope.idModalDialogVacunas);
             $scope.eliminarPopup($scope.idModalDialogConsulta);
             $scope.eliminarPopup($scope.idModalDialogVacunasConfig);
@@ -111,33 +112,77 @@ angular.module('agil.controladores')
             $scope.eliminarPopup($scope.idModalHistorialConsulta);
             $scope.eliminarPopup($scope.idModalWizardPacienteVista);
             $scope.eliminarPopup($scope.idModalEliminarPaciente);
+            $scope.eliminarPopup($scope.IdModalDialogNuevoLaboratorio)
             $scope.eliminarPopup($scope.IdModalDialogDiagnosticoExamenHistoricoResultado)
+            $scope.eliminarPopup($scope.idModalDialogVerResultadosHistorialLab)
+            $scope.eliminarPopup($scope.idModalReprogramarVacunas)
         });
 
         $scope.inicio = function () {
+            $scope.obtenerAlertas()
             blockUI.start();
+            $scope.paginator = { pages: [] }
+            $scope.obtenerPacientes();
+            $scope.obtenerVacunas()
             $scope.paciente = { vacunas: [] };
             $scope.vacunas = []
             $scope.vacuna = { vacunaDosis: [] }
-            // $scope.vacuna.vacunaDosis = []
             $scope.vacunaDosis = []
             $scope.requisitos = { preRequisitos: [] }
             $scope.ficha = {}
             $scope.dosis = { tiempo: 0, numero: 0 }
-            $scope.paginator = { pages: [] }
-            $scope.obtenerPrerequisito();
+
             $scope.obtenerGenero();
             $scope.obtenerTipoControl()
             $scope.examen = {};
-            $scope.obtenerPacientes();
-            $scope.obtenerVacunas();
-            $scope.aplicandoVacuna = false
+
+            $scope.filtroHistorialVacunas = []
+            $scope.filtroVacunas = { inicio: "", fin: "", opcion: "todas" }
             var fechaAplicacionVacuna = new Date()
             $scope.filtro.fechaAplicacionVacuna_texto = fechaAplicacionVacuna.getDate() + "/" + (fechaAplicacionVacuna.getMonth() + 1) + "/" + fechaAplicacionVacuna.getFullYear()
-            $scope.habilitarBotonAgregarDosisVacuna = false
+            // $scope.alertasPrerequisitos = $scope.obtenerAlertas()
             blockUI.stop();
-            // $scope.textoAfecha
-            // $scope.retrasada = false
+            $scope.dosisEdit = false
+            $scope.fechaResultado = $scope.fechaATexto(new Date())
+        }
+
+        $scope.imcCal = function (consulta) {
+            //Cálculo indice masa corporal
+            if (consulta.talla != undefined && consulta.peso != undefined) {
+                if (consulta.talla > 0 && consulta.peso > 0) {
+                    var rxp = (consulta.talla / 100) * (consulta.talla / 100)
+                    consulta.indice_masa = consulta.peso / rxp
+                    consulta.indice_masa = consulta.indice_masa.toFixed(2)
+                }
+                $scope.ClasificacionIMC = ""
+                $scope.ColorIMC = ""
+                if (consulta.indice_masa < 16) {
+                    $scope.ClasificacionIMC = "Infrapeso: Delgadez Severa"
+                }
+                if (consulta.indice_masa >= 16 && consulta.indice_masa < 17) {
+                    $scope.ClasificacionIMC = "Infrapeso: Delgadez moderada"
+                }
+                if (consulta.indice_masa >= 17 && consulta.indice_masa < 18.49) {
+                    $scope.ClasificacionIMC = "Infrapeso: Delgadez aceptable"
+                }
+                if (consulta.indice_masa >= 18.50 && consulta.indice_masa < 25) {
+                    $scope.ClasificacionIMC = "Peso Normal"
+                }
+                if (consulta.indice_masa >= 25 && consulta.indice_masa < 30) {
+                    $scope.ClasificacionIMC = "Sobrepeso"
+                }
+                if (consulta.indice_masa >= 30 && consulta.indice_masa < 35) {
+                    $scope.ClasificacionIMC = "Obeso: Tipo I"
+                }
+                if (consulta.indice_masa >= 35 && consulta.indice_masa < 40) {
+                    $scope.ClasificacionIMC = "Obeso: Tipo II"
+                }
+                if (consulta.indice_masa >= 40) {
+                    $scope.ClasificacionIMC = "Obeso: Tipo III"
+                }
+
+            }
+
         }
 
         $scope.obtenerColumnasAplicacion = function () {
@@ -163,128 +208,108 @@ angular.module('agil.controladores')
             fech = new Date(fecha)
             fecha = fech.getDate() + "/" + (fech.getMonth() + 1) + "/" + fech.getFullYear();
             return fecha
-            // $scope.fechaAplicacionVacuna = new Date(convertirFecha(fecha))
         }
 
-        $scope.obtenerVacunasPaciente = function (paciente) {
-            // var promesa = VacunasPaciente($scope.paciente)
-            // promesa.then(function (ltsVacunasPaciente) {
-            //     $scope.paciente.vacunas = ltsVacunasPaciente
-            // })
-        }
-
-        $scope.checkAgregar = function (dosis) {
-            if (dosis.numero > 0 && dosis.tiempo > 0) {
-                $scope.habilitarBotonAgregarDosisVacuna = true
-            } else {
-                $scope.habilitarBotonAgregarDosisVacuna = false
-            }
-        }
         $scope.agregarDosisVacuna = function (dosis) {
             blockUI.start();
-            //console.log(dosis)
-            if (dosis.numero > 0 && dosis.tiempo > 0) {
-                if (dosis.id) {
-                    //console.log('editando dosis')
-                    //console.log(dosis)
-                    indx = $scope.vacunaDosis.indexOf(dosis)
-                    $scope.vacunaDosis[indx] = dosis
-                    //console.log($scope.vacunaDosis[indx])
-                } else {
-                    //console.log('creando dosis')
-                    if (dosis.es_dosis) {
-                        //console.log(dosis)
-                        try {
-                            $scope.vacunaDosis.push(dosis)
-                        } catch (error) {
-                            indx = $scope.vacunaDosis.indexOf(dosis)
-                            $scope.vacunaDosis[indx] = dosis
-                        }
 
-                    } else {
-                        dosis.es_dosis = false
-                        try {
-                            $scope.vacunaDosis.push(dosis)
-                        } catch (error) {
-                            indx = $scope.vacunaDosis.indexOf(dosis)
-                            $scope.vacunaDosis[indx] = dosis
-                        }
-                    }
-                }
+            if (dosis.id != undefined || dosis.id != null) {
+                indx = $scope.vacunaDosis.indexOf(dosis)
+                dosis.es_dosis = (dosis.es_dosis == null || dosis.es_dosis == undefined) ? false : dosis.es_dosis
+                dosis.unico = (dosis.unico === null || dosis.unico === undefined) ? false : dosis.unico
+                dosis.numero = indx
+                $scope.vacunaDosis[indx] = dosis
+            } else {
+                dosis.es_dosis = (dosis.es_dosis == null || dosis.es_dosis == undefined) ? false : dosis.es_dosis
+                dosis.unico = (dosis.unico === null || dosis.unico === undefined) ? false : dosis.unico
+                dosis.numero = $scope.vacunaDosis.length + 1
+                $scope.vacunaDosis.push(dosis)
+                console.log('añadiendo dosis')
+                console.log(dosis)
+            }
+            if ($scope.vacunaDosis.length > 1) {
+                dosis.unico = false
             }
             $scope.dosis = {}
-            $scope.habilitarBotonAgregarDosisVacuna = false
+
             blockUI.stop();
         }
 
+        $scope.agregarDosisEditada = function (dosis) {
+            if ($scope.vacunaDosis.length > 1) {
+                dosis.unico = false
+            }
+            $scope.vacunaDosis[dosis.index] = dosis
+            $scope.dosis = {}
+            $scope.dosisEdit = false
+        }
+
         $scope.eliminarDosis = function (dosis) {
-            if(dosis.id === undefined){
+            if (dosis.id === undefined) {
                 $scope.vacunaDosis.splice($scope.vacunaDosis.indexOf(dosis), 1);
-            }else{
+            } else {
                 var indx = $scope.vacunaDosis.indexOf(dosis)
-            $scope.vacunaDosis[indx].eliminado = true
-            
+                $scope.vacunaDosis[indx].eliminado = true
+
                 $scope.vacunaDosis[indx].eliminar = true
             }
-            
+
         }
 
         $scope.editarLaDosis = function (dosis) {
-            //console.log(dosis)
             $scope.dosis = dosis
-            // $scope.dosis.tiempo = dosis.tiempo
-            // $scope.dosis.numero = dosis.numero
-            //console.log($scope.dosis)
+            $scope.dosisEdit = true
+
         }
 
         $scope.asignarVacunas = function () {
-            blockUI.start();
-            //console.log('asignanado Vacunas')
-            $scope.vacunas.forEach(function (vacuna) {
-                vacuna.asignada = (vacuna.asignada === null || vacuna.asignada === undefined) ? false : vacuna.asignada
-                //console.log(vacuna)
-                var vacunaAlreadyAsigned = false
-                var vacunaPorAsignar = {}
-                $scope.paciente.vacunas.forEach(function (vacine) {
-                    if (vacine.id_vacuna == vacuna.id) {
-                        //console.log('ya asignada')
-                        vacunaAlreadyAsigned = true
-                        vacunaPorAsignar = vacine
-                        // break;
-                    }
-                }, this);
-                if (vacunaAlreadyAsigned) {
-                    asignacionPacienteVacuna.update({ id: vacunaPorAsignar.id, asignar: vacuna.asignada }, vacunaPorAsignar, function (res) { //{paciente: $scope.paciente, vacuna: vacuna},vacuna,
-                        // $scope.mostrarMensaje('Vacuna asignada satisfactoriamente.');
-                        var promesa = VacunasPaciente($scope.paciente)
-                        promesa.then(function (ltsVacunasPaciente) {
-                            $scope.paciente.vacunas = ltsVacunasPaciente
-                        })
-                    }, function (error) {
-                        $scope.mostrarMensaje('Ocurrio un problema al momento de actualizar la asignación de la vacuna!');
-                    })
-                } else {
-                    if (vacuna.asignada) {
-                        var siguienteAplicacion = new Date();
-                        if (vacuna.vacunaDosis.length > 1){
-                            if (vacuna.vacunaDosis[1].es_dosis) {
-                                siguienteAplicacion.setTime(siguienteAplicacion.getTime() + vacuna.vacunaDosis[1].tiempo * 86400000)
-                            } else {
-                                siguienteAplicacion.setTime(siguienteAplicacion.getTime() + (vacuna.vacunaDosis[1].tiempo * 30) * 86400000)
-                            }
+            if (!$scope.paciente.activo) {
+                $scope.mostrarMensaje('No se puede asignar vacuna a un paciente inactivo!')
+            } else {
+                blockUI.start();
+                $scope.vacunas.forEach(function (vacuna) {
+                    vacuna.asignada = (vacuna.asignada === null || vacuna.asignada === undefined) ? false : vacuna.asignada
+                    var vacunaAlreadyAsigned = false
+                    var vacunaPorAsignar = {}
+                    $scope.paciente.vacunas.forEach(function (vacine) {
+                        if (vacine.id_vacuna == vacuna.id) {
+                            vacunaAlreadyAsigned = true
+                            vacunaPorAsignar = vacine
                         }
-                        var pacienteVacuna = new asignacionPacienteVacuna({ id_paciente: $scope.paciente.id, id_vacuna: vacuna.id, siguiente_aplicacion: siguienteAplicacion });
-                        pacienteVacuna.$save(function (res) {
+                    }, this);
+                    if (vacunaAlreadyAsigned) {
+                        asignacionPacienteVacuna.update({ id: vacunaPorAsignar.id, asignar: vacuna.asignada }, vacunaPorAsignar, function (res) { //{paciente: $scope.paciente, vacuna: vacuna},vacuna,
+                            // $scope.mostrarMensaje('Vacuna asignada satisfactoriamente.');
                             var promesa = VacunasPaciente($scope.paciente)
                             promesa.then(function (ltsVacunasPaciente) {
                                 $scope.paciente.vacunas = ltsVacunasPaciente
                             })
                         }, function (error) {
-                            $scope.mostrarMensaje('Ocurrio un problema al momento de asignar la vacuna!');
+                            $scope.mostrarMensaje('Ocurrio un problema al momento de actualizar la asignación de la vacuna!');
                         })
+                    } else {
+                        if (vacuna.asignada) {
+                            var siguienteAplicacion = new Date();
+                            if (vacuna.vacunaDosis.length > 1) {
+                                if (vacuna.vacunaDosis[1].es_dosis) {
+                                    siguienteAplicacion.setTime(siguienteAplicacion.getTime() + vacuna.vacunaDosis[1].tiempo * 86400000)
+                                } else {
+                                    siguienteAplicacion.setTime(siguienteAplicacion.getTime() + (vacuna.vacunaDosis[1].tiempo * 30) * 86400000)
+                                }
+                            }
+                            var pacienteVacuna = new asignacionPacienteVacuna({ id_paciente: $scope.paciente.id, id_vacuna: vacuna.id, siguiente_aplicacion: siguienteAplicacion });
+                            pacienteVacuna.$save(function (res) {
+                                var promesa = VacunasPaciente($scope.paciente)
+                                promesa.then(function (ltsVacunasPaciente) {
+                                    $scope.paciente.vacunas = ltsVacunasPaciente
+                                })
+                            }, function (error) {
+                                $scope.mostrarMensaje('Ocurrio un problema al momento de asignar la vacuna!');
+                            })
+                        }
                     }
-                }
-            }, this);
+                }, this);
+            }
             $scope.cerrarPopUpVacunasConfig()
             blockUI.stop();
         }
@@ -292,7 +317,6 @@ angular.module('agil.controladores')
         $scope.obtenerVacunas = function () {
             var promesa = ltsVacunas()
             promesa.then(function (vacunas) {
-                // //console.log(vacunas)
                 $scope.vacunas = vacunas
             })
         }
@@ -321,123 +345,192 @@ angular.module('agil.controladores')
         }
 
         $scope.evaluarFechaDosisVacuna = function (vacuna) {
+            blockUI.start();
             $scope.vacuna = vacuna
-            if($scope.vacuna.pacienteVacunaDosis[0] == undefined){
+            if ($scope.vacuna.pacienteVacunaDosis[0] == undefined) {
+                blockUI.stop();
                 return
             }
-            if ($scope.vacuna.alreadyProyected == null || $scope.vacuna.alreadyProyected == undefined) {
-                var inicial = ($scope.vacuna.pacienteVacunaDosis[0] == undefined)? new Date : new Date($scope.vacuna.pacienteVacunaDosis[0].fecha_aplicacion)
-                var num = 1
-                var orderer = []
-                $scope.vacunasProyectadas = []
-                while (num <= $scope.vacuna.pacienteVacuna.vacunaDosis.length) {
-                    $scope.vacuna.pacienteVacuna.vacunaDosis.forEach(function (dosis) {
-                        if (parseInt(dosis.numero) == num) {
-                            orderer.push(dosis)
-                            num = num + 1
-                        }
-                    }, this);
-                }
-                $scope.vacuna.pacienteVacuna.vacunaDosis = orderer
-                $scope.vacuna.pacienteVacunaDosis.sort(function (a, b) {
-                    if (a.id < b.id) {
-                        return -1
-                    } else {
-                        return 1
-                    }
-
-                })
-                var lstDosisFechas = []
-                console.log(inicial)
-                console.log('inicial')
-                $scope.vacuna.pacienteVacuna.vacunaDosis.forEach(function (dosis, index) {
-                    inicial = new Date($scope.vacuna.pacienteVacunaDosis[0].fecha_aplicacion)
-                    // if(use_createdAt){
-                    //     inicial = new Date(asignacion_inicial)
-                    // }else{
-                    //     inicial = new Date(aplicacion_inicial)
-                    // }
-                    console.log('Pronostico de fecha de aplicacion de vacuna')
-                    console.log(inicial)
-                    if (index < 1) {
-                        var aplicacionEstimada = inicial.setTime(inicial.getTime() + 0 * 86400000)
-                        lstDosisFechas.push(aplicacionEstimada)
-                    } else {
-                        var aplicacionEstimada = new Date(inicial)
-                        if (dosis.es_dosis) {
-                            aplicacionEstimada = inicial.setTime(inicial.getTime() + dosis.tiempo * 86400000)
-                            lstDosisFechas.push(aplicacionEstimada)
-                        } else {
-                            aplicacionEstimada = inicial.setTime(inicial.getTime() + (dosis.tiempo * 30) * 86400000)
-                            lstDosisFechas.push(aplicacionEstimada)
-                        }
-                        console.log(dosis)
-                    }
-                }, this);
-                console.log(lstDosisFechas)
-                var fechaIndx = 0
-
-                $scope.vacuna.pacienteVacunaDosis.forEach(function (dosisPaciente) {
-                    var fechaAplicacion = new Date(dosisPaciente.fecha_aplicacion)
-                    var fechaEstimado = new Date(lstDosisFechas[fechaIndx])
-                    fechaIndx = fechaIndx + 1
-                    dosisPaciente.fechaCorta = fechaAplicacion.getDate() + "/" + (fechaAplicacion.getMonth() + 1) + "/" + fechaAplicacion.getFullYear()
-                    if (fechaAplicacion > fechaEstimado) {
-                        dosisPaciente.retrasada = true
-                    } else {
-                        dosisPaciente.retrasada = false
-                    }
-                }, this);
-
-                while ($scope.vacuna.pacienteVacunaDosis.length < lstDosisFechas.length) {
-                    if ($scope.vacuna.pacienteVacunaDosis.length < lstDosisFechas.length) {
+            if (vacuna.pacienteVacuna.vacunaDosis.length == 1 && !vacuna.pacienteVacuna.vacunaDosis[0].unico) {
+                if ($scope.vacuna.alreadyProyected == null || $scope.vacuna.alreadyProyected == undefined) {
+                    var inicial = new Date($scope.vacuna.pacienteVacunaDosis[$scope.vacuna.pacienteVacunaDosis.length - 1].fecha_aplicacion)
+                    var proyecciones = []
+                    if (vacuna.pacienteVacuna.vacunaDosis[0].es_dosis) {
                         var proyectada = { id_paciente_vacuna: $scope.vacuna.id_paciente, fecha_aplicacion: "2017-04-15T04:00:00.000Z", eliminado: false }
-                        proyectada.fecha_aplicacion = new Date(lstDosisFechas[fechaIndx])
+                        proyectada.fecha_aplicacion = new Date(inicial.setTime(inicial.getTime() + (vacuna.pacienteVacuna.vacunaDosis[0].tiempo) * 86400000))
                         proyectada.proyectada = true
+                        proyectada.visible = true
                         proyectada.fechaCorta = proyectada.fecha_aplicacion.getDate() + "/" + (proyectada.fecha_aplicacion.getMonth() + 1) + "/" + proyectada.fecha_aplicacion.getFullYear()
                         $scope.vacuna.pacienteVacunaDosis.push(proyectada)
-                        fechaIndx = fechaIndx + 1
+                    } else {
+                        var proyectada = { id_paciente_vacuna: $scope.vacuna.id_paciente, fecha_aplicacion: "2017-04-15T04:00:00.000Z", eliminado: false }
+                        proyectada.fecha_aplicacion = new Date(inicial.setTime(inicial.getTime() + (vacuna.pacienteVacuna.vacunaDosis[0].tiempo * 30) * 86400000))
+                        proyectada.proyectada = true
+                        proyectada.visible = true
+                        proyectada.fechaCorta = proyectada.fecha_aplicacion.getDate() + "/" + (proyectada.fecha_aplicacion.getMonth() + 1) + "/" + proyectada.fecha_aplicacion.getFullYear()
+                        $scope.vacuna.pacienteVacunaDosis.push(proyectada)
                     }
+                    var toproyect = new Date($scope.vacuna.pacienteVacunaDosis[0].fecha_aplicacion)
+                    $scope.vacuna.pacienteVacunaDosis.forEach(function (dosisPac, index, array) {
+                        var theindx = (index > 0) ? index - 1 : index
+                        var evaluacion = new Date($scope.vacuna.pacienteVacunaDosis[theindx].fecha_aplicacion)
+                        var locura = new Date()
+                        if (vacuna.pacienteVacuna.vacunaDosis[0].es_dosis) {
+                            locura = new Date(evaluacion.setTime(evaluacion.getTime() + vacuna.pacienteVacuna.vacunaDosis[0].tiempo * 86400000))
+                        } else {
+                            locura = new Date(evaluacion.setTime(evaluacion.getTime() + (vacuna.pacienteVacuna.vacunaDosis[0].tiempo * 30) * 86400000))
+                        }
+                        var locuara = new Date(dosisPac.fecha_aplicacion)
+                        thisDate = new Date(dosisPac.fecha_aplicacion).getTime()
+                        if (dosisPac.proyectada == undefined) {
+                            if (locuara > locura) {
+                                dosisPac.retrasada = true
+                            } else {
+                                dosisPac.retrasada = false
+                            }
+                        }
+                        var aplicada = new Date(dosisPac.fecha_aplicacion)
+                        dosisPac.fechaCorta = aplicada.getDate() + "/" + (aplicada.getMonth() + 1) + "/" + aplicada.getFullYear()
+                        dosisPac.visible = true
+                    });
+                    $scope.vacuna.alreadyProyected = true
                 }
+            } else if (vacuna.pacienteVacuna.vacunaDosis.length == 1 && vacuna.pacienteVacuna.vacunaDosis[0].unico) {
+                $scope.vacuna.pacienteVacunaDosis.forEach(dosisPac => {
+                    dosisPac.retrasada = false
+                    dosisPac.visible = true
+                    var aplicada = new Date(dosisPac.fecha_aplicacion)
+                    dosisPac.fechaCorta = aplicada.getDate() + "/" + (aplicada.getMonth() + 1) + "/" + aplicada.getFullYear()
+                })
                 $scope.vacuna.alreadyProyected = true
-                console.log($scope.vacuna.pacienteVacunaDosis)
-            }else{
-                console.log('proyected')
+            } else {
+                if ($scope.vacuna.alreadyProyected == null || $scope.vacuna.alreadyProyected == undefined) {
+                    var inicial = ($scope.vacuna.pacienteVacunaDosis[0] == undefined) ? new Date() : new Date($scope.vacuna.pacienteVacunaDosis[0].fecha_aplicacion)
+                    var num = 1
+                    var orderer = []
+                    $scope.vacunasProyectadas = []
+                    while (num <= $scope.vacuna.pacienteVacuna.vacunaDosis.length) {
+                        $scope.vacuna.pacienteVacuna.vacunaDosis.forEach(function (dosis) {
+                            if (parseInt(dosis.numero) == num) {
+                                orderer.push(dosis)
+                                num = num + 1
+                            }
+                        }, this);
+                    }
+                    $scope.vacuna.pacienteVacuna.vacunaDosis = orderer
+                    $scope.vacuna.pacienteVacunaDosis.sort(function (a, b) {
+                        if (a.id < b.id) {
+                            return -1
+                        } else {
+                            return 1
+                        }
+                    })
+                    var lstDosisFechas = []
+                    $scope.vacuna.pacienteVacuna.vacunaDosis.forEach(function (dosis, index) {
+                        inicial = new Date($scope.vacuna.pacienteVacunaDosis[0].fecha_aplicacion)
+                        if (index < 1) {
+                            var aplicacionEstimada = inicial.setTime(inicial.getTime() + 0 * 86400000)
+                            lstDosisFechas.push(aplicacionEstimada)
+                        } else {
+                            var aplicacionEstimada = new Date(inicial)
+                            if (dosis.es_dosis) {
+                                aplicacionEstimada = inicial.setTime(inicial.getTime() + dosis.tiempo * 86400000)
+                                lstDosisFechas.push(aplicacionEstimada)
+                            } else {
+                                aplicacionEstimada = inicial.setTime(inicial.getTime() + (dosis.tiempo * 30) * 86400000)
+                                lstDosisFechas.push(aplicacionEstimada)
+                            }
+                        }
+                    }, this);
+                    var fechaIndx = 0
+                    $scope.vacuna.pacienteVacunaDosis.forEach(function (dosisPaciente) {
+                        var fechaAplicacion = new Date(dosisPaciente.fecha_aplicacion)
+                        var fechaEstimado = new Date(lstDosisFechas[fechaIndx])
+                        fechaIndx = fechaIndx + 1
+                        dosisPaciente.fechaCorta = fechaAplicacion.getDate() + "/" + (fechaAplicacion.getMonth() + 1) + "/" + fechaAplicacion.getFullYear()
+                        if (fechaAplicacion > fechaEstimado) {
+                            dosisPaciente.retrasada = true
+                        } else {
+                            dosisPaciente.retrasada = false
+                        }
+                        dosisPaciente.visible = true
+                    }, this);
+                    while ($scope.vacuna.pacienteVacunaDosis.length < lstDosisFechas.length) {
+                        if ($scope.vacuna.pacienteVacunaDosis.length < lstDosisFechas.length) {
+                            var proyectada = { id_paciente_vacuna: $scope.vacuna.id_paciente, fecha_aplicacion: "2017-04-15T04:00:00.000Z", eliminado: false }
+                            proyectada.fecha_aplicacion = new Date(lstDosisFechas[fechaIndx])
+                            proyectada.proyectada = true
+                            proyectada.visible = true
+                            proyectada.fechaCorta = proyectada.fecha_aplicacion.getDate() + "/" + (proyectada.fecha_aplicacion.getMonth() + 1) + "/" + proyectada.fecha_aplicacion.getFullYear()
+                            $scope.vacuna.pacienteVacunaDosis.push(proyectada)
+                            fechaIndx = fechaIndx + 1
+                        }
+                    }
+                    $scope.vacuna.alreadyProyected = true
+                }
+            }
+            blockUI.stop();            
+        }
+
+        $scope.validarDatosVacuna = function (vacuna) {
+            if ($scope.vacunaDosis.length > 0 && vacuna.nombre != "") {
+                return false
+            } else {
+                return true
             }
         }
 
         $scope.editarVacuna = function (valid, vacuna) {
             blockUI.start();
+            if (!valid) {
+                $scope.mostrarMensaje('Complete los campos requeridos!')
+                return
+            }
+            var che = false
             $scope.vacuna = vacuna
             $scope.vacuna.vacunaDosis = $scope.vacunaDosis
-            //console.log('valido')
-            if (!vacuna.id) {
-                //console.log('creando nueva')
+            if ($scope.vacunaDosis.length > 1) {
+                $scope.vacunaDosis.forEach(function (dosis, index, array) {
+                    if (dosis.unico) {
+                        che = true
+                        dosis.unico = false
+                    }
+                    if (index == array.length - 1) {
+                        if (che) {
+                            $scope.mostrarMensaje('No se puede guardar una dosis única en un conjunto de dosis!')
+                            return
+                        }
+                    }
+                });
+            }
+            if (!vacuna.id && !che) {
                 vacuna.$save(function (res) {
                     $scope.mostrarMensaje(res.mensaje);
+                    blockUI.stop();
                 }, function (error) {
                     $scope.mostrarMensaje('Ocurrio un problema al momento de guardar!');
+                    blockUI.stop();
                 })
-            } else {
-                //console.log('editando vacuna')
+            } else if (!che) {
                 Vacunas.update({ id: vacuna.id }, vacuna, function (res) {
                     $scope.mostrarMensaje(res.mensaje);
+                    blockUI.stop();
                 }, function (error) {
                     $scope.mostrarMensaje('Ocurrio un problema al momento de guardar!');
+                    blockUI.stop();
                 })
             }
             $scope.vacunaDosis = []
-            blockUI.stop();
             $scope.cerrarPopUpVacunaNueva()
         }
 
-        $scope.obtenerPrerequisito = function () {
+        $scope.obtenerPrerequisitos = function () {
             blockUI.start();
-            var promesa = ListaDatosPrerequisito();
-            promesa.then(function (entidad) {
-                $scope.prerequisitos = entidad;
+            var requisitos = Prerequisitos()
+            requisitos.then(function (prerequisitos) {
+                $scope.preRequisitos = prerequisitos.prerequisitos
                 blockUI.stop();
-            });
+            })
         }
 
         $scope.obtenerGenero = function () {
@@ -447,16 +540,9 @@ angular.module('agil.controladores')
             promesa.then(function (entidad) {
                 entidad.forEach(function (genero) {
                     $scope.generos.push(genero)
-                    console.log(genero)
                 }, this);
-                console.log($scope.generos)
-                // $scope.generos = entidad.generos;
                 blockUI.stop();
             });
-        }
-
-        $scope.updateFiltro = function (filtro) {
-            $scope.filtro = filtro
         }
 
         $scope.obtenerPacientes = function () {
@@ -477,25 +563,22 @@ angular.module('agil.controladores')
             promesa.then(function (dato) {
                 $scope.paginator.setPages(dato.paginas);
                 $scope.pacientes = dato.pacientes;
-                $scope.pacientes.forEach(function(pac, index, array) {
+                $scope.pacientes.forEach(function (pac, index, array) {
                     pac.activo = (pac.activo == 0) ? false : true
+                    if (index === array.length - 1) {
+                        blockUI.stop();
+                    }
                 });
-                //console.log($scope.pacientes);
                 blockUI.stop();
-                console.log($scope.pacientes)
             });
         }
 
-        // $scope.establecerFechas = function (fecha, hora) {
-        //     $scope.consulta.fecha = new Date(convertirFecha(fecha))
-        //     $scope.consulta.fecha = new Date(convertirFecha(fecha))
-        // }
         $scope.guardarFichaTecnica = function (valido, ficha) {
             if (valido) {
                 var button = $('#siguiente-f').text().trim();
                 if (button != "Siguiente") {
                     ficha.fecha_elaboracion = new Date($scope.convertirFecha(ficha.fecha_elaboracion));
-                    promesa = CrearMedicoPacienteFicha(ficha);
+                    var promesa = CrearMedicoPacienteFicha(ficha);
                     promesa.then(function (dato) {
                         $scope.cerrarPopUpIdModalFichaTecnica()
                         $scope.recargarItemsTabla()
@@ -505,67 +588,122 @@ angular.module('agil.controladores')
             }
         }
 
-        $scope.aplicarVacuna = function (vacuna) {
-            var laVacuna = null
-            var indx = $scope.paciente.vacunas.indexOf(vacuna)
-            var inicial =($scope.paciente.vacunas[indx].pacienteVacunaDosis[0] == undefined)? new Date() : new Date($scope.paciente.vacunas[indx].pacienteVacunaDosis[0].fecha_aplicacion)
-            var vaccas = []
-            $scope.paciente.vacunas[indx].pacienteVacunaDosis.forEach(function (aplicacionVacuna, index, array) {
-                
-            vaccas.push(new Date(aplicacionVacuna.fecha_aplicacion))
-                
-            });
-            var minDate=new Date(Math.min.apply(null,vaccas));
-            console.log(inicial)
-            console.log(minDate)
-            $scope.vacunas.forEach(function (vacunaT,index,array) {
-                if(vacunaT.nombre == vacuna.pacienteVacuna.nombre){
-                    laVacuna = vacunaT
-                }
-            });
-            console.log($scope.vacunas)
-            console.log(vacuna)
-            console.log(laVacuna)
-            // var vacineIndx = $scope.vacunas.indexOf(vacuna)
-            // var dosisIndx = $scope.paciente.vacunas[indx].pacienteVacunaDosis.length -1
-            // var dosis = $scope.vacunas[vacineIndx].vacunaDosis[dosisIndx]
-            // console.log(dosis)
-            $scope.paciente.vacunas[indx].fecha_ultima_aplicacion = new Date(convertirFecha(vacuna.fechaAplicacionVacuna_texto))
-            var dosisIndx = (vacuna.pacienteVacunaDosis.length > 0 && vacuna.pacienteVacunaDosis.length <= laVacuna.vacunaDosis.length-1) ? vacuna.pacienteVacunaDosis.length : laVacuna.vacunaDosis.length-1
-            $scope.paciente.vacunas[indx].fecha_siguiente_aplicacion =  new Date(minDate.setTime(inicial.getTime() + laVacuna.vacunaDosis[dosisIndx].tiempo * 86400000))
-            $scope.paciente.vacunas[indx].fecha_siguiente_aplicacion_texto = $scope.fechaATexto($scope.paciente.vacunas[indx].fecha_siguiente_aplicacion)
-            var showdate = new Date($scope.paciente.vacunas[indx].fecha_siguiente_aplicacion)
-            console.log('siguiente aplicacion')
-            console.log($scope.paciente.vacunas[indx].fecha_siguiente_aplicacion)     
-            aplicacionPacienteVacuna.update({ id: $scope.paciente.vacunas[indx].id }, $scope.paciente.vacunas[indx], function (res) {
-                var promesa = VacunasPaciente($scope.paciente)
-                promesa.then(function (ltsVacunasPaciente) {
-                    $scope.paciente.vacunas = ltsVacunasPaciente
+        $scope.guardarFichaTecnicaExistente = function (valid, ficha) {
+            if (valid) {
+                ficha.fecha_elaboracion = new Date($scope.convertirFecha(ficha.fecha_elaboracion));
+                var promesa = CrearMedicoPacienteFicha(ficha);
+                promesa.then(function (dato) {
+                    $scope.cerrarPopUpIdModalFichaTecnica()
+                    $scope.recargarItemsTabla()
+                    $scope.mostrarMensaje(dato.message)
                 })
-                $scope.mostrarMensaje('vacuna aplicada');
-            }, function (error) {
-                $scope.mostrarMensaje('Se produjo un error');
-            });
-            // var fechaAplicacionVacuna = new Date()
-            // $scope.filtro.fechaAplicacionVacuna_texto = fechaAplicacionVacuna.getDate() + "/" + (fechaAplicacionVacuna.getMonth() + 1) + "/" + fechaAplicacionVacuna.getFullYear()
+            } else {
+                $scope.mostrarMensaje('Faltan datos!')
+            }
+
         }
 
+        $scope.aplicarVacuna = function (vacuna) {
+            blockUI.start();
+            if (!$scope.paciente.activo) {
+                $scope.mostrarMensaje('No se puede aplicar vacuna a un paciente inactivo!')
+                return
+            } else {
+                var laVacuna = null
+                var indx = $scope.paciente.vacunas.indexOf(vacuna)
+                var inicial = ($scope.paciente.vacunas[indx].pacienteVacunaDosis[0] == undefined) ? new Date() : new Date($scope.paciente.vacunas[indx].pacienteVacunaDosis[0].fecha_aplicacion)
+                var vaccas = []
+                $scope.paciente.vacunas[indx].pacienteVacunaDosis.forEach(function (aplicacionVacuna, index, array) {
+                    if (aplicacionVacuna.proyectada == undefined) {
+                        vaccas.push(new Date(aplicacionVacuna.fecha_aplicacion))
+                    }
+
+                });
+                var newAplication = new Date(convertirFecha(vacuna.fechaAplicacionVacuna_texto))
+                var maxDate = new Date(Math.max.apply(null, vaccas));
+                if (newAplication < maxDate) {
+                    $scope.mostrarMensaje('No se puede aplicar a una fecha anterior a la ultima aplicación!')
+                    blockUI.stop();
+                    return
+                } else {
+                    var minDate = new Date(Math.min.apply(null, vaccas));
+                    $scope.vacunas.forEach(function (vacunaT, index, array) {
+                        if (vacunaT.nombre == vacuna.pacienteVacuna.nombre) {
+                            laVacuna = vacunaT
+                        }
+                    });
+                    if (laVacuna.vacunaDosis.length > 1) {
+                        $scope.paciente.vacunas[indx].fecha_ultima_aplicacion = new Date(convertirFecha(vacuna.fechaAplicacionVacuna_texto))
+                        var dosisIndx = (vacuna.pacienteVacunaDosis.length > 0 && vacuna.pacienteVacunaDosis.length <= laVacuna.vacunaDosis.length - 1) ? vacuna.pacienteVacunaDosis.length : laVacuna.vacunaDosis.length - 1
+                        if (laVacuna.vacunaDosis[dosisIndx].es_dosis) {
+                            $scope.paciente.vacunas[indx].fecha_siguiente_aplicacion = new Date(minDate.setTime(inicial.getTime() + laVacuna.vacunaDosis[dosisIndx].tiempo * 86400000))
+                            $scope.paciente.vacunas[indx].fecha_siguiente_aplicacion_texto = $scope.fechaATexto($scope.paciente.vacunas[indx].fecha_siguiente_aplicacion)
+                        } else {
+                            $scope.paciente.vacunas[indx].fecha_siguiente_aplicacion = new Date(minDate.setTime(inicial.getTime() + (laVacuna.vacunaDosis[dosisIndx].tiempo * 30) * 86400000))
+                            $scope.paciente.vacunas[indx].fecha_siguiente_aplicacion_texto = $scope.fechaATexto($scope.paciente.vacunas[indx].fecha_siguiente_aplicacion)
+                        }
+                        aplicacionPacienteVacuna.update({ id: $scope.paciente.vacunas[indx].id }, $scope.paciente.vacunas[indx], function (res) {
+                            var promesa = VacunasPaciente($scope.paciente)
+                            promesa.then(function (ltsVacunasPaciente) {
+                                $scope.paciente.vacunas = ltsVacunasPaciente
+                                $scope.inicializarFechaAplicacionVacuna()
+                                blockUI.stop();
+                            })
+                            $scope.mostrarMensaje(res.mensaje);
+                        }, function (error) {
+                            $scope.mostrarMensaje('Se produjo un error');
+                            blockUI.stop();
+                        });
+                    } else {
+                        $scope.paciente.vacunas[indx].fecha_ultima_aplicacion = new Date(convertirFecha(vacuna.fechaAplicacionVacuna_texto))
+                        var aplicada = new Date($scope.paciente.vacunas[indx].fecha_ultima_aplicacion)
+                        if (laVacuna.vacunaDosis[0].es_dosis) {
+                            $scope.paciente.vacunas[indx].fecha_siguiente_aplicacion = new Date(aplicada.setTime(aplicada.getTime() + laVacuna.vacunaDosis[0].tiempo * 86400000))
+                            $scope.paciente.vacunas[indx].fecha_siguiente_aplicacion_texto = $scope.fechaATexto($scope.paciente.vacunas[indx].fecha_siguiente_aplicacion)
+                        } else {
+                            $scope.paciente.vacunas[indx].fecha_siguiente_aplicacion = new Date(aplicada.setTime(aplicada.getTime() + (laVacuna.vacunaDosis[0].tiempo * 30) * 86400000))
+                            $scope.paciente.vacunas[indx].fecha_siguiente_aplicacion_texto = $scope.fechaATexto($scope.paciente.vacunas[indx].fecha_siguiente_aplicacion)
+                        }
+                        aplicacionPacienteVacuna.update({ id: $scope.paciente.vacunas[indx].id }, $scope.paciente.vacunas[indx], function (res) {
+                            var promesa = VacunasPaciente($scope.paciente)
+                            promesa.then(function (ltsVacunasPaciente) {
+                                $scope.paciente.vacunas = ltsVacunasPaciente
+                                $scope.inicializarFechaAplicacionVacuna()
+                                blockUI.stop();
+                            })
+                            $scope.mostrarMensaje(res.mensaje);
+                        }, function (error) {
+                            $scope.mostrarMensaje('Se produjo un error');
+                            blockUI.stop();
+                        });
+                    }
+                }
+            }
+        }
+        $scope.inicializarFechaAplicacionVacuna = function () {
+            $scope.paciente.vacunas.forEach(function (vacuna) {
+                var hoy = new Date()
+                vacuna.fechaAplicacionVacuna_texto = hoy.getDate() + "/" + (hoy.getMonth() + 1) + "/" + hoy.getFullYear()
+            });
+        }
         $scope.button_clicked = false;
         $scope.disableImput = function (vacuna) {
             aplicarDatePickers();
             var conteoDosis = 0
-            //console.log(vacuna)
             vacuna.pacienteVacunaDosis.forEach(function (dosisAplicada) {
                 if (!dosisAplicada.proyectada) {
                     conteoDosis += 1
                 }
             }, this);
             if (vacuna.button_clicked) {
-                // $scope.aplicarVacuna(vacuna)
-                if (conteoDosis < vacuna.pacienteVacuna.vacunaDosis.length){
+                if (vacuna.pacienteVacuna.vacunaDosis.length == 1 && !vacuna.pacienteVacuna.vacunaDosis[0].unico) {
                     $scope.aplicarVacuna(vacuna)
-                }else {
-                    $scope.mostrarMensaje('No se puede aplicar la vacuna, excede la cantidad de dosis')
+                } else {
+                    if (conteoDosis < vacuna.pacienteVacuna.vacunaDosis.length) {
+                        $scope.aplicarVacuna(vacuna)
+                    } else {
+                        $scope.mostrarMensaje('No se puede aplicar la vacuna, excede la cantidad de dosis')
+                    }
                 }
                 vacuna.button_clicked = false;
             } else {
@@ -581,7 +719,12 @@ angular.module('agil.controladores')
                 $scope.dosisText = "Mes(es)";
             }
         }
-
+        $scope.incluirFechaEnAplicacionVacuna = function () {
+            $scope.paciente.vacunas.forEach(vacuna => {
+                var hoy = new Date()
+                vacuna.fechaAplicacionVacuna_texto = hoy.getDate() + "/" + (hoy.getMonth() + 1) + "/" + hoy.getFullYear()
+            });
+        }
         $scope.imprimirCredencial = function () {
             html2canvas(document.getElementsByClassName('PrintCredencial'), {
                 allowTaint: true,
@@ -672,7 +815,7 @@ angular.module('agil.controladores')
             }
         ];
 
-        $scope.fechasLabel = ["3/1/2010", "5/1/2010", "7/1/2010", "9/1/2010", "11/1/2010", "13/1/2010", "15/1/2010", "17/1/2010", "19/1/2010", "20/1/2010"]
+        // $scope.fechasLabel = ["3/1/2010", "5/1/2010", "7/1/2010", "9/1/2010", "11/1/2010", "13/1/2010", "15/1/2010", "17/1/2010", "19/1/2010", "20/1/2010"]
 
         $scope.selection = [];
         $scope.chart = new CanvasJS.Chart("chartContainer", {
@@ -753,9 +896,18 @@ angular.module('agil.controladores')
         // ======== PARA GRAFICO FIN ==========
 
 
-        $scope.abrirIdModalDialogLaboratorioExamenesNuevoResultado = function () {
+        $scope.abrirIdModalDialogLaboratorioExamenesNuevoResultado = function (examen, vista) {
             $scope.examen = {}
+            if (examen) {
+                $scope.examen = examen
+            }
+            if (vista) {
+                $scope.examen.soloVista = true
+            } else {
+                $scope.examen.soloVista = false
+            }
             $scope.abrirPopup($scope.IdModalDialogLaboratorioExamenesNuevoResultado);
+            $scope.fechaResultado = $scope.fechaATexto(new Date())
         }
         $scope.abrirIdModalDialogLaboratorioExamenesHistoricoResultados = function () {
             filtro = { inicio: 0, fin: 0 }
@@ -767,8 +919,17 @@ angular.module('agil.controladores')
             $scope.ObtenerHistorialDiagnosticoExamenes(filtro)
             $scope.abrirPopup($scope.IdModalDialogDiagnosticoExamenHistoricoResultado);
         }
-        $scope.abrirIdModalDialogNuevoLaboratorio = function () {
+        $scope.abrirIdModalDialogNuevoLaboratorio = function (laboratorio, vista) {
             $scope.laboratorio = {}
+            if (laboratorio) {
+                $scope.laboratorio = laboratorio
+            }
+            if (vista) {
+                $scope.laboratorio.soloVista = true
+            } else {
+                $scope.laboratorio.soloVista = false
+            }
+
             $scope.abrirPopup($scope.IdModalDialogNuevoLaboratorio);
         }
         $scope.abrirIdModalDialogLaboratorioExamenesHistorico = function () {
@@ -786,29 +947,27 @@ angular.module('agil.controladores')
             $scope.abrirPopup($scope.idModalFichaTecnica);
         }
         $scope.buscarfichaPaciente = function (paciente) {
-            promesa = BuscarFichaPaciente(paciente.id)
+            blockUI.start();
+            var promesa = BuscarFichaPaciente(paciente.id)
             promesa.then(function (datos) {
-
                 if (datos.ficha) {
                     $scope.ficha = datos.ficha
                     var fechaActual = new Date();
                     var fechaNacimiento = new Date($scope.ficha.paciente.persona.fecha_nacimiento)
-                    //console.log("fechas:" + fechaActual + "/" + fechaNacimiento)
                     var fecha = new Date(datos.ficha.fecha)
-                    $scope.ficha.fecha_elaboracion = (fecha.getMonth() + 1) + "/" + fecha.getDate() + "/" + fecha.getFullYear()
+                    $scope.ficha.fecha_elaboracion = fecha.getDate() + "/" + (fecha.getMonth() + 1) + "/" + fecha.getFullYear()
                     var dato = $scope.diferenciaEntreDiasEnDias(fechaNacimiento, fechaActual)
                     $scope.ficha.edad = Math.trunc(dato / 365);
                     $scope.ficha.edad
+                    $scope.mostarGuardarFicha = true
                 } else {
-
+                    $scope.mostarGuardarFicha = false
                     $scope.ficha = { paciente: datos.paciente, pacienteReferencia: {} }
                     var fechaActual = new Date();
                     var fechaNacimiento = new Date($scope.ficha.paciente.persona.fecha_nacimiento)
                     var dato = $scope.diferenciaEntreDiasEnDias(fechaNacimiento, fechaActual)
                     $scope.ficha.edad = Math.trunc(dato / 365)
-                    //console.log($scope.ficha.edad)
                 }
-
                 blockUI.stop();
             });
 
@@ -821,10 +980,8 @@ angular.module('agil.controladores')
                 blockUI.stop();
             });
         }
-        /*     $scope.abrirIdModalDialogConsulta = function (paciente) {
-    
-                $scope.abrirPopup($scope.idModalDialogVacunas);
-            } */
+
+        
 
         $scope.diferenciaEntreDiasEnDias = function (a, b) {
             var MILISENGUNDOS_POR_DIA = 1000 * 60 * 60 * 24;
@@ -836,37 +993,70 @@ angular.module('agil.controladores')
 
         $scope.obtenerDatosPrerequisito = function (paciente, filtro) {
             blockUI.start();
-            if (filtro.inicio != 0 && filtro.inicio != "") {
-                filtro.inicio = new Date($scope.convertirFecha(filtro.inicio));
-                filtro.fin = new Date($scope.convertirFecha(filtro.fin));
-            } else {
-                filtro.inicio = 0
-                filtro.fin = 0
+            if (filtro.inicio != undefined) {
+                if (filtro.inicio != 0 && filtro.inicio !="") {
+                    $scope.filtro.inicio = (filtro.inicio instanceof Date) ? filtro.inicio : new Date($scope.convertirFecha(filtro.inicio));
+                }else{
+                    $scope.filtro.inicio = 0
+                }
+            }else{
+                $scope.filtro.inicio = 0
             }
-
-            var promesa = ListaPrerequisitosPaciente(paciente.id, filtro);
+            if(filtro.fin != undefined){
+                if(filtro.fin !=0 && filtro.fin !="") {
+                    $scope.filtro.fin = (filtro.fin instanceof Date) ? filtro.fin : new Date($scope.convertirFecha(filtro.fin));
+                }else{
+                    $scope.filtro.fin = 0
+                }
+            } else {
+                $scope.filtro.fin = 0
+            }
+            var promesa = ListaPrerequisitosPaciente(paciente.id, $scope.filtro);
             promesa.then(function (preRequisitos) {
-                $scope.datoprerequisitos = preRequisitos;
-                //console.log($scope.datoprerequisitos);
+                $scope.prerequisitosPaciente = preRequisitos.Prerequisitos;
+                $scope.prerequisitosPaciente.forEach(function (requisito) {
+                    if (requisito.fecha_entrega != null) {
+                        requisito.entregado = true
+                    }
+                })
+                console.log($scope.prerequisitosPaciente)
+                $scope.filtro.inicio = ($scope.filtro.inicio instanceof Date) ? $scope.filtro.inicio.getDate() + '/' + ($scope.filtro.inicio.getMonth() + 1) + '/' + $scope.filtro.inicio.getFullYear() : ""
+                $scope.filtro.fin = ($scope.filtro.fin instanceof Date) ? $scope.filtro.fin.getDate() + '/' + ($scope.filtro.fin.getMonth() + 1) + '/' + $scope.filtro.fin.getFullYear() : ""
                 blockUI.stop();
-                $scope.filtro = { inicio: "", fin: "" }
+            }, function (error) {
+                $scope.mostrarMensaje('Se produjo un error al obtener datos de prerequisitos')
+                blockUI.stop();
             });
-            console.log($scope.datoprerequisitos)
         }
 
+        $scope.abrirDialogVerResultadosLab = function (laboratorio) {
+            $scope.Hostorialexamenes = laboratorio.laboratorioResultados
+            $scope.abrirPopup($scope.idModalDialogVerResultadosHistorialLab);
+        }
+        $scope.cerrarDialogVerResultadosLab = function (laboratorio) {
+            $scope.cerrarPopup($scope.idModalDialogVerResultadosHistorialLab);
+        }
+        $scope.showPopover = false;
+
+        $scope.popover = {
+            title: 'Title',
+            message: 'Message'
+        };
         $scope.abrirIdModalDialogPreRequisitos = function (paciente) {
-            var filtro = { inicio: 0, fin: 0 }
-            $scope.obtenerDatosPrerequisito(paciente, filtro);
             $scope.paciente = paciente;
+            $scope.verificarAsignacionPrerequisitos()
+            // $scope.obtenerAlertas()
             $scope.abrirPopup($scope.IdModalDialogPreRequisitos);
         }
+
         $scope.abrirDialogHistorico = function (vacuna) {
             $scope.abrirPopup($scope.idModalDialogHistorico);
         }
         $scope.abrirDialogVacunaEditar = function (vacuna) {
             $scope.vacuna = vacuna
             $scope.vacunaDosis = vacuna.vacunaDosis
-            //console.log(vacuna)
+            $scope.dosis = {}
+            $scope.dosisEdit = false
             $scope.abrirPopup($scope.idModalDialogVacunaEdicion);
         }
         $scope.abriridModalDialogFechaEntrega = function () {
@@ -880,10 +1070,9 @@ angular.module('agil.controladores')
 
             $scope.fechasLabel = []
             var filtro = { inicio: 0, fin: 0 }
-
             $scope.paciente = paciente
             var yy = 0;
-            promesa = ListaConsultasMedicoPaciente($scope.paciente.id, filtro)
+            var promesa = ListaConsultasMedicoPaciente($scope.paciente.id, filtro)
             promesa.then(function (dato) {
                 for (var i = 0; i < dato.consultas.length; i++) {
                     var consulta = dato.consultas[i];
@@ -913,143 +1102,339 @@ angular.module('agil.controladores')
                     yy = yy + 20;
                 }
             })
-            //console.log($scope.DatosSV)
-            /*  paciente.consultas.forEach(function(consulta) {
-                 var fecha = new Date(consulta.fecha)
-                 var dato = { x: new Date(fecha.getFullYear(), (fecha.getMonth()+1), fecha.getDate()), y: 0 }
-                  $scope.DatosSV[0].dataPoints.push()
-             }, this); */
-
             $scope.abrirPopup($scope.IdModalDialogGraficoSV);
         }
+
         $scope.cerrarIdModalGraficoSV = function () {
             $scope.cerrarPopup($scope.IdModalDialogGraficoSV);
         }
+
         $scope.abrirDialogNuevoExamen = function () {
             $scope.abrirPopup($scope.IdModalDialogLaboratorioExamen);
         }
+
         $scope.abrirIdModalDialogLaboratorio = function (paciente) {
             $scope.paciente = paciente
             $scope.ObtenerMedicoLaboratorios(paciente)
             $scope.abrirPopup($scope.IdModalDialogLaboratorio);
         }
+
         $scope.abriridModalDialogVacunaNueva = function () {
             $scope.vacuna = new Vacunas({});
+            $scope.dosis = {}
+            $scope.dosisEdit = false
             $scope.abrirPopup($scope.idModalDialogVacunaEdicion);
         }
+
         $scope.abrirDialogVacunasConfig = function () {
             // $scope.obtenerVacunas()
-
+            $scope.limpiarAsignacionVacunas()
             $scope.verificarAsignacionVacunas()
+            $scope.obtenerAlertas()
             $scope.abrirPopup($scope.idModalDialogVacunasConfig);
         }
+
         $scope.abrirDialogVacunas = function (paciente) {
-
-            // setTimeout(function name(params) {
-            //     //console.log('aplicacndo scripts pacientes')
-            //     aplicarDatePickers();
-
-            // }, 2000)
             $scope.paciente = paciente
             $scope.paciente.vacunas = []
+            $scope.filtroHistorialVacunas = []
             var vacunas_paciente = VacunasPaciente($scope.paciente)
             vacunas_paciente.then(function (datosVacunas) {
-                //console.log(datosVacunas)
                 $scope.paciente.vacunas = datosVacunas
                 $scope.paciente.vacunas.forEach(function (vacuna) {
-                    var fecha = new Date(vacuna.fecha_siguiente_aplicacion)
-                    vacuna.fecha_siguiente_aplicacion = (fecha.getMonth() + 1) + "/" + fecha.getDate() + "/" + fecha.getFullYear()
+                    var hoy = new Date()
+                    vacuna.fechaAplicacionVacuna_texto = hoy.getDate() + "/" + (hoy.getMonth() + 1) + "/" + hoy.getFullYear()
                     vacuna.button_clicked = false
                 }, this);
             })
             $scope.limpiarAsignacionVacunas()
             $scope.verificarAsignacionVacunas()
-
+            $scope.obtenerAlertas()
             $scope.abrirPopup($scope.idModalDialogVacunas);
         }
-        $scope.abrirDialogEntregaPreRequisito = function () {
+        $scope.guardarEntregaPrerequisito = function (prerequisito) {
+            blockUI.start();
+            if (prerequisito.fecha_entrega_texto == null || prerequisito.fecha_entrega_texto == "") {
+                $scope.mostrarMensaje('Ingrese la fecha de entrega.')
+            } else {
+                prerequisito.fecha_entrega = new Date($scope.convertirFecha(prerequisito.fecha_entrega_texto))
+                prerequisito.asignado = true
+                PrerequisitoPaciente.save(prerequisito, function (res) {
+                    var filtro = { inicio: 0, fin: 0 }
+                    var promesa = ListaPrerequisitosPaciente($scope.paciente.id, filtro);
+                    promesa.then(function (preRequisitos) {
+                        $scope.prerequisitosPaciente = preRequisitos.Prerequisitos;
+                        $scope.mostrarMensaje(res.mensaje)
+                        $scope.prerequisitosPaciente.forEach(function (requisito) {
+                            if (requisito.fecha_entrega != null) {
+                                requisito.entregado = true
+                            }
+                        });
+                        $scope.cerrarPopUpEntregaPreRequisito()
+                        blockUI.stop();
+                    });
+                }, function (error) {
+                    $scope.mostrarMensaje('Ocurrio un problema al guardar la fecha de entrega  de el prerequisito')
+                })
+            }
+        }
+        $scope.verificarFechaEntregaPrerequisito = function (preRequisito,paciente) {
+            $scope.preRequisito = preRequisito
+            $scope.preRequisito.fecha_entrega_texto = $scope.fechaATexto(new Date())
+            $scope.paciente = paciente
+            console.log($scope.preRequisito)
+            var vence = new Date($scope.preRequisito.fecha_vencimiento).getTime()
+            var hoy = new Date().getTime()
+            var dif = Math.floor((hoy - vence) / 86400000)
+            if(dif >= 0){
+                $scope.abrirDialogEntregaPreRequisito($scope.preRequisito, $scope.paciente);
+            } else{
+                $scope.abrirPopup($scope.idModalDialogConfirmacionEntregaAdelantado);
+            }       
+        }
+
+        $scope.cerrarConfirmacionEntragaAdelantadaPrerequisito= function () {
+            $scope.cerrarPopup($scope.idModalDialogConfirmacionEntregaAdelantado);
+        }
+
+        $scope.abrirDialogEntregaPreRequisito = function (PreRequisito, paciente) {
+            $scope.cerrarConfirmacionEntragaAdelantadaPrerequisito()
+            $scope.preRequisito = PreRequisito
+            $scope.preRequisito.fecha_entrega_texto = $scope.fechaATexto(new Date())
+            $scope.paciente = paciente
             $scope.abrirPopup($scope.IdEntregaPrerequisito);
         }
+
         $scope.cerrarPopUpEntregaPreRequisito = function () {
+            $scope.obtenerAlertas()
             $scope.cerrarPopup($scope.IdEntregaPrerequisito);
         }
 
         $scope.abrirDialogPacienteNuevo = function () {
-            // var usuario = JSON.parse($localStorage.usuario);
             $scope.paciente = new Paciente({ persona: { imagen: "img/icon-user-default.png" }, id_empresa: $scope.usuario.id_empresa });
-
             $scope.abrirPopup($scope.idModalDialogPacienteNuevo);
         }
+
         $scope.cerrarPopupPacienteNuevo = function () {
             $scope.cerrarPopup($scope.idModalDialogPacienteNuevo);
         }
+
         $scope.abrirDialogPrerequisitoNuevo = function () {
             $scope.NuevoP = new Prerequisito({ puede_modificar_rrhh: false });
-            /* var usuario=JSON.parse($localStorage.usuario);
-            $scope.paciente=new Paciente({id_empresa:usuario.id_empresa});
-            //console.log('sdsdsdsdsdsdsdsdsd',$scope.idModalDialogPrerequisitoNuevo); */
             $scope.abrirPopup($scope.idModalDialogPrerequisitoNuevo);
         }
+        $scope.abrirDialogPrerequisitoEditar = function (prerequisito) {
+
+            $scope.NuevoP = new Prerequisito({ id: prerequisito.id, nombre: prerequisito.nombre, observacion: prerequisito.observacion, vencimiento_mes: prerequisito.vencimiento_mes, puede_modificar_rrhh: prerequisito.puede_modificar_rrhh })
+            $scope.abrirPopup($scope.idModalDialogPrerequisitoNuevo);
+        }
+
         $scope.cerrarPopupPrerequisitoNuevo = function () {
+            $scope.obtenerAlertas()
             $scope.cerrarPopup($scope.idModalDialogPrerequisitoNuevo);
         }
+
         $scope.abrirDialogHistoricoPreRequisito = function () {
+            // var filtro = { inicio: 0, fin: 0 }
+            // var promesa = ListaPrerequisitosPaciente($scope.paciente.id, filtro);
+            // promesa.then(function (preRequisitos) {
+            //     $scope.prerequisitosPaciente = preRequisitos.Prerequisitos;
+            //     blockUI.stop();
+            //     $scope.filtro.inicio = ($scope.filtro.inicio instanceof Date) ? $scope.filtro.inicio.getDate() + '/' + ($scope.filtro.inicio.getMonth() + 1) + '/' + $scope.filtro.inicio.getFullYear() : ""
+            //     $scope.filtro.fin = ($scope.filtro.fin instanceof Date) ? $scope.filtro.fin.getDate() + '/' + ($scope.filtro.fin.getMonth() + 1) + '/' + $scope.filtro.fin.getFullYear() : ""
+            // });
             $scope.abrirPopup($scope.idModalHistorialPrerequisito);
         }
+
         $scope.cerrarDialogHistoricoPreRequisito = function () {
             $scope.cerrarPopup($scope.idModalHistorialPrerequisito);
         }
 
         $scope.actualizarPrerequisito = function (prerequisito) {
+            blockUI.start();
+            console.log(prerequisito)
             var promesa = ActualizarPrerequisito(prerequisito)
             promesa.then(function (dato) {
                 if (prerequisito instanceof Array) {
                     $scope.cerrarPopUpPreRequisitos()
                 }
+                blockUI.stop();
                 $scope.mostrarMensaje(dato.message)
             })
         }
-        $scope.saveFormPrerequisito = function (nuevoPrerequisito) {
+
+        $scope.verificarAsignacionPrerequisitos = function () {
             blockUI.start();
-
-            nuevoPrerequisito.fecha_inicio = new Date($scope.convertirFecha(nuevoPrerequisito.fecha_inicio));
-            nuevoPrerequisito.fecha_vencimiento = new Date($scope.convertirFecha(nuevoPrerequisito.fechav));
-
-            nuevoPrerequisito.$save({ id_paciente: $scope.paciente.id }, function (prerequisito) {
-                blockUI.stop();
-                var filtro = { inicio: 0, fin: 0 }
-                prerequisito = new Prerequisito({});
-                $scope.obtenerDatosPrerequisito($scope.paciente, filtro);
-                $scope.cerrarPopupPrerequisitoNuevo();
-                $scope.mostrarMensaje('Guardado Exitosamente!');
-
-            }, function (error) {
-                blockUI.stop();
-                var filtro = { inicio: 0, fin: 0 }
-                $scope.obtenerDatosPrerequisito($scope.paciente, filtro);
-                $scope.cerrarPopupPrerequisitoNuevo();
-                $scope.mostrarMensaje('Ocurrio un problema al momento de guardar!');
-            });
+            var requisitos = Prerequisitos()
+            requisitos.then(function (prerequisitos) {
+                $scope.preRequisitos = prerequisitos.prerequisitos
+                filtro = { inicio: 0, fin: 0 }
+                var promesa = ListaPrerequisitosPaciente($scope.paciente.id, filtro);
+                promesa.then(function (preRequisitos) {
+                    $scope.prerequisitosPaciente = preRequisitos.Prerequisitos;
+                    $scope.preRequisitos.forEach(function (requisito, index, array) {
+                        $scope.prerequisitosPaciente.forEach(function (preRe) {
+                            if (requisito.id == preRe.id_prerequisito) {
+                                requisito.asignado = true
+                            }
+                            if (preRe.fecha_entrega != null) {
+                                preRe.entregado = true
+                            }
+                            //Re asignar la fecha de vencimiento si la fecha de inicio cambia.
+                            // var fechaContro = new Date(preRe.fecha_vencimiento)
+                            // var calculoFechaVencimiento = $scope.calcularFechaVencimientoRequisito(preRe)
+                            // fechaContro.setHours(0,0,0,0)
+                            // calculoFechaVencimiento.setHours(0,0,0,0)
+                            // var a = $scope.fechaATexto(fechaContro)
+                            // var b = $scope.fechaATexto(calculoFechaVencimiento)
+                            // if(a != b){
+                            //     preRe.asignado = true
+                            //     preRe.fecha_vencimiento = calculoFechaVencimiento
+                            //     PrerequisitoPaciente.save(preRe,function (res) {
+                            //         $scope.verificarAsignacionPrerequisitos()
+                            //     })
+                            // }
+                        });
+                        if($scope.prerequisitosPaciente.length == 0){
+                            requisito.asignado = false
+                        }
+                        if (index == array.length - 1) {
+                            blockUI.stop();
+                        }
+                    });
+                    if($scope.preRequisitos.length == 0){
+                        blockUI.stop();
+                    }
+                });
+            })
         }
 
-        /* $scope.buscarPrerequisito=function(idPrerequisito){
-            var nombre_corto=idPrerequisito.split('-')[1];
-            var promesa=Clases(nombre_corto+"M");
-            promesa.then(function(entidades){
-                $scope.municipios=entidades;
-            });
-        } */
+        $scope.asignarPrerequisito = function (prerequisito, paciente) {
+            blockUI.start();
+            prerequisito.pacientePrerequisito = { id: paciente.id }
+            prerequisito.preRequisito = { id: prerequisito.id }
+            prerequisito.fecha_inicio = new Date()
+            prerequisito.fecha_inicio_texto = $scope.fechaATexto(prerequisito.fecha_inicio)
+            prerequisito.fecha_vencimiento = $scope.calcularFechaVencimientoRequisito(prerequisito)
+            prerequisito.paraAsignar = true
+            PrerequisitoPaciente.save(prerequisito, function (res) {
+                $scope.verificarAsignacionPrerequisitos()
+                $scope.mostrarMensaje(res.mensaje)
+                blockUI.stop()
+            }, function (error) {
+                $scope.mostrarMensaje('Ocurrio un problema al asignar el prerequisito')
+                blockUI.stop()
+            })
+        }
+        $scope.diasVencidosPrerequisito = function (fechaVencimiento) {
+            var MILISENGUNDOS_POR_DIA = 1000 * 60 * 60 * 24;
+            var hoy = new Date().getTime()
+            var vencimiento = fechaVencimiento.getTime()
+            var calculo = hoy - vencimiento
+            var dias = Math.floor(calculo / MILISENGUNDOS_POR_DIA)
+            return dias
+            // if (fechaVencimiento instanceof Date){
+            //     var utc1 = Date.UTC(hoy.getFullYear(), hoy.getMonth(), hoy.getDate());
+            //     var utc2 = Date.UTC(fechaVencimiento.getFullYear(), fechaVencimiento.getMonth(), fechaVencimiento.getDate());
+            //     return Math.floor((utc2 - utc1) / MILISENGUNDOS_POR_DIA);
+            // }else{
+            //     fechaVencimiento = new Date(fechaVencimiento)
+            //     var utc1 = Date.UTC(hoy.getFullYear(), hoy.getMonth(), hoy.getDate());
+            //     var utc2 = Date.UTC(fechaVencimiento.getFullYear(), fechaVencimiento.getMonth(), fechaVencimiento.getDate());
+            //     return Math.floor((utc2 - utc1) / MILISENGUNDOS_POR_DIA);
+            // }
+            
+        }
+        $scope.calcularFechaVencimientoRequisito = function (requisito) {
+            var meses = (requisito.vencimiento_mes === undefined) ? requisito.preRequisito.vencimiento_mes : requisito.vencimiento_mes
+            var fechaControl = new Date()
+            var fecha_inicio = new Date()
+            if (requisito.fecha_inicio_texto === undefined) {
+                var otra_fecha = $scope.fechaATexto(requisito.fecha_inicio)
+            }
+            var fecha_cortada = (requisito.fecha_inicio_texto === undefined) ? otra_fecha.split('/') : requisito.fecha_inicio_texto.split('/')
+            var dia = parseInt(fecha_cortada[0])
+            var mes = parseInt(fecha_cortada[1])
+            var anio = parseInt(fecha_cortada[2])
+            fecha_inicio.setFullYear(anio, mes - 1, dia)
+            // if($scope.fechaATexto(requisito.fecha_inicio) == requisito.fecha_inicio_texto){
+            //     console.log('son iguales')
+            // }else{
+            //     console.log('no son iguales')
+            // }
+            var fecha_vencimiento = new Date(fecha_inicio.setTime(fecha_inicio.getTime() + (meses * 30) * 86400000))
+            return fecha_vencimiento
+            // requisito.fechav_texto = $scope.fechaATexto(requisito.fechav)
+        }
+
+        $scope.actualizarPreRequisitoPaciente = function (prerequisito) {
+            blockUI.start()
+            // prerequisito.fecha_inicio = new Date($scope.convertirFecha(prerequisito.fecha_inicio_texto))
+            // prerequisito.fecha_vencimiento = $scope.calcularFechaVencimientoRequisito(prerequisito)
+            prerequisito.fecha_vencimiento = new Date($scope.convertirFecha(prerequisito.fecha_vencimiento_texto))
+            prerequisito.asignado = true
+            PrerequisitoPaciente.save(prerequisito, function (res) {
+                $scope.verificarAsignacionPrerequisitos()
+                $scope.mostrarMensaje(res.mensaje)
+                $scope.cerrarDialogEditarPreRequisito()
+                blockUI.stop()
+            }, function (error) {
+                $scope.mostrarMensaje('Ocurrio un problema al asignar el prerequisito')
+                $scope.cerrarDialogEditarPreRequisito()
+                blockUI.stop()
+            })
+        }
+
+        $scope.saveFormPrerequisito = function (nuevoPrerequisito) {
+            blockUI.start();
+            // nuevoPrerequisito.fecha_inicio = new Date($scope.convertirFecha(nuevoPrerequisito.fecha_inicio))
+            // nuevoPrerequisito.fecha_inicio = nuevoPrerequisito.fecha_inicio.setFullYear(nuevoPrerequisito.fecha_inicio.getFullYear(), nuevoPrerequisito.fecha_inicio.getMonth(), nuevoPrerequisito.fecha_inicio.getDate());
+            // nuevoPrerequisito.fecha_vencimiento = nuevoPrerequisito.fechav.setFullYear(nuevoPrerequisito.fechav.getFullYear(), nuevoPrerequisito.fechav.getMonth(), nuevoPrerequisito.fechav.getDate())
+            if(nuevoPrerequisito.nombre != undefined && nuevoPrerequisito.vencimiento_mes != undefined){
+                if (nuevoPrerequisito.id != undefined) {
+                    nuevoPrerequisito.$save(nuevoPrerequisito, function (res) {
+                        $scope.verificarAsignacionPrerequisitos()
+                        $scope.mostrarMensaje(res.mensaje);
+                        $scope.cerrarPopupPrerequisitoNuevo();
+                        blockUI.stop();
+                    }, function (error) {
+                        $scope.cerrarPopupPrerequisitoNuevo();
+                        $scope.mostrarMensaje('Ocurrio un problema al momento de guardar!');
+                        blockUI.stop();
+                    });
+                } else {
+                    nuevoPrerequisito.$save({ id_paciente: $scope.paciente.id }, function (res) {
+                        $scope.verificarAsignacionPrerequisitos()
+                        $scope.mostrarMensaje(res.mensaje);
+                        $scope.cerrarPopupPrerequisitoNuevo();
+                        blockUI.stop();
+                    }, function (error) {     
+                        $scope.cerrarPopupPrerequisitoNuevo();
+                        $scope.mostrarMensaje('Ocurrio un problema al momento de guardar!');
+                        blockUI.stop();
+                    });
+                }
+            }else{
+                $scope.mostrarMensaje('Los campos Prerequisito Nombre y vencimiento mes son requeridos.')
+                blockUI.stop();
+            }
+            
+        }
+
         $scope.finVerPaciente = function () {
             var button = $('#siguiente-v').text().trim()
             if (button != "Siguiente") {
                 $scope.cerrarPopPupVista()
             }
-
         }
+
         $scope.sinFuncionalidad = function () {
             $scope.mostrarMensaje('Sin funcionalidad')
         }
-        $scope.abrirDialogEditarPreRequisito = function () {
+
+        $scope.abrirDialogEditarPreRequisito = function (prerequisito) {
+            $scope.prerequisito = prerequisito
+            $scope.prerequisito.fecha_vencimiento_texto = $scope.fechaATexto(new Date)
             $scope.abrirPopup($scope.idModalEditarPrerequisito);
         }
 
@@ -1069,14 +1454,14 @@ angular.module('agil.controladores')
         $scope.cerrarPopPupVista = function () {
             $scope.cerrarPopup($scope.idModalWizardPacienteVista);
         }
+
         $scope.modificarPaciente = function (elpaciente) {
             promesaPaciente = obtenerPaciente(elpaciente.id)
             promesaPaciente.then(function (paciente) {
                 console.log(paciente)
                 $scope.paciente = paciente
-                console.log(paciente.imagen)
                 $scope.paciente.fecha_nacimiento_texto = $scope.fechaATexto($scope.paciente.persona.fecha_nacimiento)
-                $scope.paciente.persona.imagen = (paciente.persona.imagen== null) ? "img/icon-user-default.png": paciente.persona.imagen
+                $scope.paciente.persona.imagen = (paciente.persona.imagen == null) ? "img/icon-user-default.png" : paciente.persona.imagen
                 console.log($scope.paciente.fecha_nacimiento_texto)
             })
             console.log($scope.paciente)
@@ -1084,7 +1469,7 @@ angular.module('agil.controladores')
         }
 
         $scope.mostrarConfirmacionEliminacion = function (paciente) {
-            paciente.persona = (paciente.persona == undefined) ? {imagen: (paciente.imagen == null)? "img/icon-user-default.png" : paciente.imagen }: paciente.persona.imagen
+            paciente.persona = (paciente.persona == undefined) ? { imagen: (paciente.imagen == null) ? "img/icon-user-default.png" : paciente.imagen } : paciente.persona.imagen
             paciente.eliminar = true
             $scope.paciente = paciente
             $scope.abrirPopup($scope.idModalEliminarPaciente);
@@ -1096,8 +1481,7 @@ angular.module('agil.controladores')
 
         $scope.eliminarPaciente = function (paciente) {
             blockUI.start();
-            paciente.eliminado = true;
-
+            paciente.eliminado = (paciente.eliminado == true) ? true : false;
             Paciente.update({ id_paciente: $scope.paciente.id }, $scope.paciente, function (res) {
                 blockUI.stop();
                 $scope.cerrarConfirmacionEliminacion();
@@ -1112,51 +1496,78 @@ angular.module('agil.controladores')
             })
 
         }
-        //guardar consultas paciente
+
+        $scope.cortarFecha = function (fechaTexto) {
+            var fechaArray = fechaTexto.split(' ')
+            var horaArray = fechaArray[1].split(':')
+            var lafecha = fechaArray[0].split('/')
+            var dia = parseInt(lafecha[0])
+            var mes = parseInt(lafecha[1])
+            var anio = parseInt(lafecha[2])
+            var fecha = new Date()
+            var laHora = (fechaArray[2] == "AM") ? parseInt(horaArray[0]) : (parseInt(horaArray[0]) < 12) ? parseInt(horaArray[0]) + 12 : parseInt(horaArray[0])
+            fecha.setFullYear(anio, mes - 1, dia)
+            fecha.setHours(laHora, horaArray[1])
+            return fecha
+        }
+
         $scope.guardarConsulta = function (form, consulta) {
             var button = $('#siguiente-c').text().trim();
             if (button != "Siguiente") {
                 if (form.$valid) {
+                    var cortarFecha = consulta.fecha.split(' ')
+                    consulta.fecha = (consulta.fecha instanceof Date) ? $scope.cortarFecha(consulta.fecha) : $scope.cortarFecha(consulta.fecha)
                     consulta.presion = consulta.presionAlta + "/" + consulta.presionBaja
-                    tiempoActual = new Date();
-                    consulta.fecha = new Date($scope.convertirFecha(consulta.fecha))
-                    consulta.fecha.setHours(tiempoActual.getHours());
-                    consulta.fecha.setMinutes(tiempoActual.getMinutes());
-                    promesa = CrearMedicoPacienteConsulta(consulta)
+                    var promesa = CrearMedicoPacienteConsulta(consulta)
                     promesa.then(function (params) {
                         $scope.cerrarPopUpConsulta()
                         $scope.recargarItemsTabla()
                         $scope.mostrarMensaje(params.message)
-
-
                     })
                 }
             }
         }
-        //funcion lista de consultas
-        $scope.listarConsultasPaciente = function (filtro) {
-            if (filtro.inicio != 0 && filtro.inicio != "") {
-                filtro.inicio = new Date($scope.convertirFecha(filtro.inicio))
-                filtro.fin = new Date($scope.convertirFecha(filtro.fin))
-            } else {
-                filtro.inicio = 0
-                filtro.fin = 0
+
+        $scope.guardarDatosConsulta = function (form, consulta) {
+            if (form.$valid) {
+                var cortarFecha = consulta.fecha.split(' ')
+                consulta.fecha = (consulta.fecha instanceof Date) ? $scope.cortarFecha(consulta.fecha) : $scope.cortarFecha(consulta.fecha)
+                consulta.presion = consulta.presionAlta + "/" + consulta.presionBaja
+                var promesa = CrearMedicoPacienteConsulta(consulta)
+                promesa.then(function (params) {
+                    $scope.cerrarPopUpConsulta()
+                    $scope.recargarItemsTabla()
+                    $scope.mostrarMensaje(params.message)
+                })
             }
-            promesa = ListaConsultasMedicoPaciente($scope.paciente.id, filtro)
+        }
+        $scope.listarConsultasPaciente = function (filtro) {
+            if (filtro.inicio != undefined && filtro.fin != undefined) {
+                if (filtro.inicio != 0 || filtro.inicio != "") {
+                    $scope.filtro.inicio = (filtro.inicio instanceof Date) ? filtro.inicio : new Date($scope.convertirFecha(filtro.inicio));
+                    $scope.filtro.fin = (filtro.fin instanceof Date) ? filtro.fin : new Date($scope.convertirFecha(filtro.fin));
+                } else {
+                    $scope.filtro.inicio = 0
+                    $scope.filtro.fin = 0
+                }
+            } else {
+                $scope.filtro.inicio = 0
+                $scope.filtro.fin = 0
+            }
+            var promesa = ListaConsultasMedicoPaciente($scope.paciente.id, $scope.filtro)
             promesa.then(function (dato) {
                 $scope.listaConsultas = dato.consultas
-                $scope.filtro.inicio = "";
-                $scope.filtro.fin = "";
+                $scope.filtro.inicio = ($scope.filtro.inicio instanceof Date) ? $scope.filtro.inicio.getDate() + '/' + ($scope.filtro.inicio.getMonth() + 1) + '/' + $scope.filtro.inicio.getFullYear() : ""
+                $scope.filtro.fin = ($scope.filtro.fin instanceof Date) ? $scope.filtro.fin.getDate() + '/' + ($scope.filtro.fin.getMonth() + 1) + '/' + $scope.filtro.fin.getFullYear() : ""
             })
         }
-        $scope.changeActivo=function(paciente) {
+        $scope.changeActivo = function (paciente) {
             PacienteActivo.update({ id_paciente: paciente.id }, paciente, function (res) {
                 $scope.mostrarMensaje(res.mensaje)
             });
         }
         $scope.saveForm = function (paciente) {
             $scope.paciente = paciente;
-            console.log($scope.paciente.persona.fecha_nacimiento)
             var imagenPaciente = paciente.imagen;
             var button = $('#siguiente').text().trim()
             if (button != "Siguiente") {
@@ -1189,9 +1600,7 @@ angular.module('agil.controladores')
             }
         }
 
-        // $scope.comentario = "comentar";
         $scope.saveComment = function (paciente) {
-            //console.log(paciente)
             Comentario.update({ id_paciente: paciente.id }, paciente, function (res) {
                 $scope.mostrarMensaje('Comentario actualizado Exitosamente!');
             }, function (error) {
@@ -1201,78 +1610,186 @@ angular.module('agil.controladores')
             $scope.cerrarDialogDialogComentario();
         }
 
+        $scope.filtrarHistorialVacunas = function (filtroVacunas) {
+            var fecha_inicio = (filtroVacunas.inicio === null || filtroVacunas.inicio === "") ? 0 : new Date(filtroVacunas.inicio)
+            var fecha_fin = (filtroVacunas.fin === null || filtroVacunas.fin === undefined) ? 0 : new Date(filtroVacunas.fin)
+            var tipo_opcion = (filtroVacunas.opcion === null || filtroVacunas.opcion === undefined) ? 0 : filtroVacunas.opcion
+            if (fecha_inicio != 0 && fecha_fin != 0) {
+                $scope.filtroHistorialVacunas.forEach(vacuna => {
+                    vacuna.pacienteVacunaDosis.forEach(dosis => {
+                        var myDate = new Date(dosis.fecha_aplicacion)
+                        if (fecha_inicio <= myDate && fecha_fin >= myDate) {
+                            dosis.visible = true
+                            if (tipo_opcion != 0) {
+                                if (tipo_opcion == 'enfec') {
+                                    dosis.visible = (dosis.retrasada == undefined) ? false : (dosis.retrasada && !dosis.proyectada) ? false : true
+                                }
+                                if (tipo_opcion == 'proye') {
+                                    dosis.visible = (dosis.proyectada == undefined || dosis.proyectada == null) ? false : (dosis.proyectada) ? true : false
+                                }
+                                if (tipo_opcion == 'retra') {
+                                    dosis.visible = (dosis.retrasada == undefined) ? false : (dosis.retrasada && !dosis.proyectada) ? true : false
+                                }
+                                if (tipo_opcion == 'todas') {
+                                    dosis.visible = true
+                                }
+                            }
+                        } else {
+                            dosis.visible = false
+                        }
+                    })
+                })
+            } else {
+                $scope.filtroHistorialVacunas.forEach(vacuna => {
+                    vacuna.pacienteVacunaDosis.forEach(dosis => {
+                        if (tipo_opcion != 0) {
+                            $scope.filtroHistorialVacunas.forEach(vacuna => {
+                                vacuna.pacienteVacunaDosis.forEach(dosis => {
+                                    if (tipo_opcion == 'enfec') {
+                                        dosis.visible = (dosis.retrasada == undefined) ? false : (dosis.retrasada && !dosis.proyectada) ? false : true
+                                    }
+                                    if (tipo_opcion == 'proye') {
+                                        dosis.visible = (dosis.proyectada == undefined || dosis.proyectada == null) ? false : (dosis.proyectada) ? true : false
+                                    }
+                                    if (tipo_opcion == 'retra') {
+                                        dosis.visible = (dosis.retrasada == undefined) ? false : (dosis.retrasada && !dosis.proyectada) ? true : false
+                                    }
+                                    if (tipo_opcion == 'todas') {
+                                        dosis.visible = true
+                                    }
+                                });
+                            })
+                        } else {
+                            dosis.visible = true
+                        }
+                    })
+                })
+            }
+        }
+
+        $scope.limpiarVisibilidadDosis = function () {
+            $scope.filtroHistorialVacunas.forEach(vac => {
+                vac.pacienteVacunaDosis.forEach(dosis => {
+                    dosis.visible = true
+                });
+            });
+        }
+
         $scope.abrirDialogHistorialVacuna = function (vacuna) {
-            // $scope.paciente = paciente
             var indx = $scope.paciente.vacunas.indexOf(vacuna);
             $scope.vacuna = $scope.paciente.vacunas[indx];
             $scope.evaluarFechaDosisVacuna($scope.vacuna)
-            //console.log(vacuna)
+            $scope.filtroHistorialVacunas = []
+            $scope.filtroHistorialVacunas.push($scope.vacuna)
+            $scope.limpiarVisibilidadDosis()
             $scope.abrirPopup($scope.idModalDialogHistorialVacuna);
+            $scope.filtroHistorialVacunas.forEach(vac => {
+                vac.pacienteVacunaDosis.forEach(dosis => {
+                    dosis.visible = true
+                });
+            });
         }
 
         $scope.cerrarDialogHistorialVacuna = function () {
-            // $scope.vacuna = {}
+            $scope.filtroVacunas = { inicio: "", fin: "", opcion: "todas" }
+            $scope.limpiarVisibilidadDosis()
             $scope.cerrarPopup($scope.idModalDialogHistorialVacuna);
         }
+
         $scope.abrirDialogHistorialConsulta = function () {
+            $scope.listarConsultasPaciente({ inicio: 0, fin: 0 })
             $scope.abrirPopup($scope.idModalHistorialConsulta);
         }
+
         $scope.cerrarDialogHistorialConsulta = function () {
             $scope.cerrarPopup($scope.idModalHistorialConsulta);
         }
+
         $scope.abrirDialogHistorialVacunaGeneral = function () {
-            $scope.paciente.vacunas.forEach(function (vacuna) {
+            $scope.paciente.vacunas.forEach(function (vacuna, index, array) {
                 $scope.evaluarFechaDosisVacuna(vacuna)
+                if (index === array.length - 1) {
+                    $scope.filtroHistorialVacunas = $scope.paciente.vacunas
+                    $scope.limpiarVisibilidadDosis()
+                }
             }, this);
-            //console.log($scope.paciente.vacunas)
             $scope.abrirPopup($scope.idModalDialogHistorialVacunaGeneral);
         }
+
         $scope.cerrarDialogHistorialVacunaGeneral = function () {
+            $scope.filtroVacunas = { inicio: "", fin: "", opcion: "todas" }
+            $scope.limpiarVisibilidadDosis()
+            $scope.filtroHistorialVacunas = []
             $scope.cerrarPopup($scope.idModalDialogHistorialVacunaGeneral);
         }
+
         $scope.abrirDialogDiagnosticos = function (paciente) {
             $scope.paciente = paciente
             $scope.ObtenerMedicoDiagnostico(paciente)
             $scope.abrirPopup($scope.idModalDialogDiagnosticos);
         }
+
         $scope.cerrarDialogDiagnosticos = function () {
             $scope.cerrarPopup($scope.idModalDialogDiagnosticos);
         }
-        $scope.abrirDialogDiagnosticoNuevo = function () {
+
+        $scope.abrirDialogDiagnosticoNuevo = function (diagnosticco, vista) {
             $scope.diagnostico = {}
+            if (diagnosticco) {
+                $scope.diagnostico = diagnosticco
+            }
+            if (vista) {
+                $scope.diagnostico.soloVista = true
+            } else {
+                $scope.diagnostico.soloVista = false
+            }
             $scope.abrirPopup($scope.idModalDialogDiagnosticoNuevo);
         }
+
         $scope.cerrarDialogDiagnosticoNuevo = function () {
             $scope.cerrarPopup($scope.idModalDialogDiagnosticoNuevo);
         }
+
         $scope.abrirDialogExamenesDiagnostico = function (diagnostico) {
             $scope.diagnostico = diagnostico
             $scope.ObtenerMedicoDiagnosticoExamenes(diagnostico)
             $scope.abrirPopup($scope.idModalDialogExamenesDiagnostico);
         }
+
         $scope.cerrarDialogExamenesDiagnostico = function () {
             $scope.cerrarPopup($scope.idModalDialogExamenesDiagnostico);
         }
 
-        $scope.abrirDialogNuevoExamenDiagnostico = function () {
+        $scope.abrirDialogNuevoExamenDiagnostico = function (examen, vista) {
             $scope.examen = {}
+            if (examen) {
+                $scope.examen = examen
+            }
+            if (vista) {
+                $scope.examen.soloVista = true
+            } else {
+                $scope.examen.soloVista = false
+            }
             $scope.abrirPopup($scope.idModalDialogNuevoExamenDiagnostico);
         }
+
         $scope.cerrarDialogNuevoExamenDiagnostico = function () {
             $scope.cerrarPopup($scope.idModalDialogNuevoExamenDiagnostico);
         }
-        $scope.abrirDialogHistorialFicha = function () {
+
+        $scope.abrirDialogHistorialFicha = function (ficha) {
+            var filtro = { inicio: 0, fin: 0, tipo_control: 0 }
+            $scope.ObtenerHistorialFichaMedica(filtro)
             $scope.abrirPopup($scope.idModalDialogHistorialFicha);
         }
+
         $scope.cerrarDialogHistorialFicha = function () {
             $scope.cerrarPopup($scope.idModalDialogHistorialFicha);
         }
+
         $scope.abrirDialogDialogCredencial = function (paciente) {
             $scope.paciente = paciente
-            //console.log('el paciente a verificar... V abago')
-            //console.log($scope.paciente)
-            //console.log($scope.usuario)
-            promesa = BuscarFichaPaciente(paciente.id)
+            var promesa = BuscarFichaPaciente(paciente.id)
             promesa.then(function (datos) {
                 if (datos.ficha) {
                     $scope.ficha = datos.ficha
@@ -1294,18 +1811,16 @@ angular.module('agil.controladores')
                     $scope.mostrarMensaje("primero debe crear una ficha medica del paciente para poder ver el credencial")
                 }
             })
-
         }
+
         $scope.cerrarDialogDialogCredencial = function () {
             $scope.cerrarPopup($scope.idModalDialogCredencial);
-
         }
 
         $scope.abrirDialogDialogPatologias = function (paciente) {
             $scope.paciente = paciente
-            promesa = BuscarFichaPaciente(paciente.id)
+            var promesa = BuscarFichaPaciente(paciente.id)
             promesa.then(function (datos) {
-                // //console.log(datos)
                 if (datos.ficha) {
                     $scope.ficha = datos.ficha
                     $scope.abrirPopup($scope.idModalDialogPatologias);
@@ -1313,11 +1828,10 @@ angular.module('agil.controladores')
                     $scope.mostrarMensaje("primero debe crear una ficha medica para poder ver las patogias del paciente")
                 }
             })
-
         }
 
         $scope.guardarPatoliga = function () {
-            promesa = ActualizarPatologiaPaciente($scope.paciente.id, $scope.ficha)
+            var promesa = ActualizarPatologiaPaciente($scope.paciente.id, $scope.ficha)
             promesa.then(function (datos) {
                 $scope.cerrarDialogDialogPatologias()
                 $scope.mostrarMensaje(datos.message)
@@ -1327,39 +1841,140 @@ angular.module('agil.controladores')
         $scope.cerrarDialogDialogPatologias = function () {
             $scope.cerrarPopup($scope.idModalDialogPatologias);
         }
+
         $scope.abrirDialogDialogComentario = function (paciente) {
             $scope.paciente = paciente
             $scope.abrirPopup($scope.idModalDialogComentario);
         }
+
         $scope.cerrarDialogDialogComentario = function () {
             $scope.cerrarPopup($scope.idModalDialogComentario);
         }
 
         $scope.abrirDialogDialogAlertPrerequisitos = function () {
             var filtro = { inicio: 0, fin: 0 }
-            $scope.obtenerListaEmpresaPrerequisito(filtro)
+            $scope.listaAlertasPrerequisitosPaciente(filtro)
             $scope.abrirPopup($scope.idModalAlertPrerequisitos);
         }
+
         $scope.cerrarDialogDialogAlertPrerequisitos = function () {
             $scope.cerrarPopup($scope.idModalAlertPrerequisitos);
         }
-        //lista pre requisitos
-        $scope.obtenerListaEmpresaPrerequisito = function (filtro) {
-            $scope.filtro = filtro
-            if (filtro.inicio != 0) {
-                filtro.inicio = new Date($scope.convertirFecha(filtro.inicio))
-                filtro.fin = new Date($scope.convertirFecha(filtro.fin))
-            }
-            promesa = ListaPrerequisitosEmpresa($scope.usuario.id_empresa, filtro)
-            promesa.then(function (datos) {
-                $scope.filtro.inicio = ""
-                $scope.filtro.fin = ""
-                $scope.listaPrerequisitos = datos
-                $scope.listaPrerequisitos.forEach(function (prerequisito) {
 
+        $scope.verificarAlertas = function () {
+            var conteo = 0
+
+            if ($scope.alertasPrerequisitos != undefined) {
+                conteo += $scope.alertasPrerequisitos
+            }
+
+            if ($scope.alertasVacunas != undefined) {
+                conteo += $scope.alertasVacunas
+            }
+            $scope.alertasOtros = 0
+            return conteo
+
+        }
+
+        // obtenerAlertasPrerequisitos = function (filtro) {
+        //     $scope.filtro = filtro
+        //     var promesa = ListaAlertasPrerequisitosPaciente($scope.usuario.id_empresa, filtro)
+        //     promesa.then(function (datos) {
+        //         $scope.filtro.inicio = ($scope.filtro.inicio instanceof Date) ? $scope.filtro.inicio.getDate() + '/' + ($scope.filtro.inicio.getMonth() + 1) + '/' + $scope.filtro.inicio.getFullYear() : ""
+        //         $scope.filtro.fin = ($scope.filtro.fin instanceof Date) ? $scope.filtro.fin.getDate() + '/' + ($scope.filtro.fin.getMonth() + 1) + '/' + $scope.filtro.fin.getFullYear() : ""
+        //         $scope.listaAlertPrerequisitos = datos.Prerequisitos
+        //         $scope.listaAlertPrerequisitos.forEach(function (prerequisito, index, array) {
+        //             var fechaInicio = new Date(prerequisito.fecha_inicio)
+        //             var fechaVence = new Date(prerequisito.fecha_vencimiento)
+        //             prerequisito.DiasVence = $scope.diasVencidosPrerequisito(fechaVence)
+        //             if (prerequisito.fecha_entrega != null) {
+        //                 prerequisito.entregado = true
+        //             }else{
+        //                 prerequisito.entregado = false
+        //             }
+        //             if (index == array.length - 1) {
+        //                 $scope.alertasPrerequisitos = $scope.listaAlertPrerequisitos.length
+        //             }
+        //         }, this);
+        //     })
+        // }
+
+        $scope.obtenerAlertas = function () {
+            var filtro = { inicio: 0, fin: 0 }
+            $scope.filtro = filtro
+            var promesa = ListaAlertasPrerequisitosPaciente($scope.usuario.id_empresa, filtro)
+            promesa.then(function (datos) {
+                $scope.filtro.inicio = ($scope.filtro.inicio instanceof Date) ? $scope.filtro.inicio.getDate() + '/' + ($scope.filtro.inicio.getMonth() + 1) + '/' + $scope.filtro.inicio.getFullYear() : ""
+                $scope.filtro.fin = ($scope.filtro.fin instanceof Date) ? $scope.filtro.fin.getDate() + '/' + ($scope.filtro.fin.getMonth() + 1) + '/' + $scope.filtro.fin.getFullYear() : ""
+                $scope.listaAlertPrerequisitos = datos.Prerequisitos
+                $scope.listaAlertPrerequisitos.forEach(function (prerequisito, index, array) {
                     var fechaInicio = new Date(prerequisito.fecha_inicio)
                     var fechaVence = new Date(prerequisito.fecha_vencimiento)
-                    prerequisito.DiasVence = $scope.diferenciaEntreDiasEnDias(fechaInicio, fechaVence)
+                    prerequisito.DiasVence = $scope.diasVencidosPrerequisito(fechaVence)
+                    if (prerequisito.fecha_entrega != null) {
+                        prerequisito.entregado = true
+                    }else{
+                        prerequisito.entregado = false
+                    }
+                    if (index == array.length - 1) {
+                        $scope.alertasPrerequisitos = $scope.listaAlertPrerequisitos.length
+                        var promesa = ListaVacunasEmpresa($scope.usuario.id_empresa, $scope.filtro)
+                        promesa.then(function (datos) {
+                            $scope.filtro.inicio = ($scope.filtro.inicio instanceof Date) ? $scope.filtro.inicio.getDate() + '/' + ($scope.filtro.inicio.getMonth() + 1) + '/' + $scope.filtro.inicio.getFullYear() : ""
+                            $scope.filtro.fin = ($scope.filtro.fin instanceof Date) ? $scope.filtro.fin.getDate() + '/' + ($scope.filtro.fin.getMonth() + 1) + '/' + $scope.filtro.fin.getFullYear() : ""
+                            $scope.listaAlertVacunas = datos.Vacunas
+                            $scope.listaAlertVacunas.forEach(function (vacuna, index, array) {
+                                var fechaInicio = new Date(vacuna.fecha_ultima_aplicacion)
+                                var fechaVence = new Date(vacuna.fecha_siguiente_aplicacion)
+                                vacuna.DiasVence = $scope.diasVencidosPrerequisito(fechaVence)
+                                if (index == array.length - 1) {
+                                    $scope.alertasVacunas = $scope.listaAlertVacunas.length
+                                    $scope.verificarAlertas()
+                                }
+                            }, this);
+                        })
+                    }
+                }, this);
+            })
+        }
+        $scope.listaAlertasPrerequisitosPaciente = function (filtro) {
+            $scope.filtro = filtro
+            if (filtro.inicio != undefined) {
+                if (filtro.inicio != 0 && filtro.inicio !="") {
+                    $scope.filtro.inicio = (filtro.inicio instanceof Date) ? filtro.inicio : new Date($scope.convertirFecha(filtro.inicio));
+                }else{
+                    $scope.filtro.inicio = 0
+                }
+            }else{
+                $scope.filtro.inicio = 0
+            }
+            if(filtro.fin != undefined){
+                if(filtro.fin !=0 && filtro.fin !="") {
+                    $scope.filtro.fin = (filtro.fin instanceof Date) ? filtro.fin : new Date($scope.convertirFecha(filtro.fin));
+                }else{
+                    $scope.filtro.fin = 0
+                }
+            } else {
+                $scope.filtro.fin = 0
+            }
+
+            var promesa = ListaAlertasPrerequisitosPaciente($scope.usuario.id_empresa, $scope.filtro)
+            promesa.then(function (datos) {
+                $scope.filtro.inicio = ($scope.filtro.inicio instanceof Date) ? $scope.filtro.inicio.getDate() + '/' + ($scope.filtro.inicio.getMonth() + 1) + '/' + $scope.filtro.inicio.getFullYear() : ""
+                $scope.filtro.fin = ($scope.filtro.fin instanceof Date) ? $scope.filtro.fin.getDate() + '/' + ($scope.filtro.fin.getMonth() + 1) + '/' + $scope.filtro.fin.getFullYear() : ""
+                $scope.listaAlertPrerequisitos = datos.Prerequisitos
+                $scope.listaAlertPrerequisitos.forEach(function (prerequisito, index, array) {
+                    var fechaInicio = new Date(prerequisito.fecha_inicio)
+                    var fechaVence = new Date(prerequisito.fecha_vencimiento)
+                    prerequisito.DiasVence = $scope.diasVencidosPrerequisito(fechaVence)
+                    if (prerequisito.fecha_entrega != null) {
+                        prerequisito.entregado = true
+                    }else{
+                        prerequisito.entregado = false
+                    }
+                    if (index == array.length - 1) {
+                        // $scope.alertasPrerequisitos = $scope.listaAlertPrerequisitos
+                    }
                 }, this);
 
             })
@@ -1367,63 +1982,81 @@ angular.module('agil.controladores')
 
         $scope.obtenerListaEmpresaVacunas = function (filtro) {
             $scope.filtro = filtro
-            if (filtro.inicio != 0) {
-                filtro.inicio = new Date($scope.convertirFecha(filtro.inicio))
-                filtro.fin = new Date($scope.convertirFecha(filtro.fin))
+            if (filtro.inicio != undefined && filtro.fin != undefined) {
+                if (filtro.inicio != 0 || filtro.inicio != "") {
+                    $scope.filtro.inicio = (filtro.inicio instanceof Date) ? filtro.inicio : new Date($scope.convertirFecha(filtro.inicio));
+                    $scope.filtro.fin = (filtro.fin instanceof Date) ? filtro.fin : new Date($scope.convertirFecha(filtro.fin));
+                } else {
+                    $scope.filtro.inicio = 0
+                    $scope.filtro.fin = 0
+                }
+            } else {
+                $scope.filtro.inicio = 0
+                $scope.filtro.fin = 0
             }
-
-            promesa = ListaVacunasEmpresa($scope.usuario.id_empresa, filtro)
+            var promesa = ListaVacunasEmpresa($scope.usuario.id_empresa, $scope.filtro)
             promesa.then(function (datos) {
-                $scope.filtro.inicio = ""
-                $scope.filtro.fin = ""
-                $scope.listaVacunas = datos
-                $scope.listaVacunas.forEach(function (vacuna) {
+                $scope.filtro.inicio = ($scope.filtro.inicio instanceof Date) ? $scope.filtro.inicio.getDate() + '/' + ($scope.filtro.inicio.getMonth() + 1) + '/' + $scope.filtro.inicio.getFullYear() : ""
+                $scope.filtro.fin = ($scope.filtro.fin instanceof Date) ? $scope.filtro.fin.getDate() + '/' + ($scope.filtro.fin.getMonth() + 1) + '/' + $scope.filtro.fin.getFullYear() : ""
+                $scope.listaAlertVacunas = datos.Vacunas
+                $scope.listaAlertVacunas.forEach(function (vacuna) {
                     var fechaInicio = new Date(vacuna.fecha_ultima_aplicacion)
                     var fechaVence = new Date(vacuna.fecha_siguiente_aplicacion)
                     vacuna.DiasVence = $scope.diferenciaEntreDiasEnDias(fechaInicio, fechaVence)
                 }, this);
-
             })
         }
 
         $scope.abrirDialogDialogDiasActivacionPrerequisitos = function () {
             $scope.abrirPopup($scope.idModalDiasActivacionPrerequisitos);
         }
+
         $scope.cerrarDialogDialogDiasActivacionPrerequisitos = function () {
             $scope.cerrarPopup($scope.idModalDiasActivacionPrerequisitos);
         }
+
         $scope.abrirDialogReprogramarPrerequisitos = function () {
             $scope.abrirPopup($scope.idModalReprogramarPrerequisitos);
         }
+
         $scope.cerrarDialogReprogramarPrerequisitos = function () {
             $scope.cerrarPopup($scope.idModalReprogramarPrerequisitos);
         }
+
         $scope.abrirDialogAlertVacunas = function () {
             var filtro = { inicio: 0, fin: 0 }
             $scope.obtenerListaEmpresaVacunas(filtro)
             $scope.abrirPopup($scope.idModalAlertVacunas);
         }
+
         $scope.cerrarDialogAlertVacunas = function () {
             $scope.cerrarPopup($scope.idModalAlertVacunas);
         }
+
         $scope.abrirDialogDiasActivacionVacunas = function () {
             $scope.abrirPopup($scope.idModalDiasActivacionVacunas);
         }
+
         $scope.cerrarDialogDiasActivacionVacunas = function () {
             $scope.cerrarPopup($scope.idModalDiasActivacionVacunas);
         }
+
         $scope.abrirDialogReprogramarVacunas = function () {
             $scope.abrirPopup($scope.idModalReprogramarVacunas);
         }
+
         $scope.cerrarDialogReprogramarVacunas = function () {
             $scope.cerrarPopup($scope.idModalReprogramarVacunas);
         }
+
         $scope.cerrarIdModalDialogLaboratorioExamenesHistoricoResultados = function () {
             $scope.cerrarPopup($scope.IdModalDialogLaboratorioExamenHistoricoResultado);
         }
+
         $scope.cerrarIdModalDialogDiagnosticoExamenesHistoricoResultados = function () {
             $scope.cerrarPopup($scope.IdModalDialogDiagnosticoExamenHistoricoResultado);
         }
+
         $scope.cerrarIdModalDialogNuevoLaboratorio = function () {
             $scope.cerrarPopup($scope.IdModalDialogNuevoLaboratorio);
         }
@@ -1431,15 +2064,19 @@ angular.module('agil.controladores')
         $scope.cerrarIdModalDialogLaboratorioExameneHistoricoPreview = function () {
             $scope.cerrarPopup($scope.IdModalDialogLaboratorioExamenHistoricoPreview);
         }
+
         $scope.cerrarIdModalDialogLaboratorioExamenesNuevoResultado = function () {
             $scope.cerrarPopup($scope.IdModalDialogLaboratorioExamenesNuevoResultado);
         }
+
         $scope.cerrarIdModalDialogLaboratorioExamenes = function () {
             $scope.cerrarPopup($scope.IdModalDialogLaboratorioExamenes);
         }
+
         $scope.cerrarPopUpExamenLaboratorio = function () {
             $scope.cerrarPopup($scope.IdModalDialogLaboratorioExamen);
         }
+
         $scope.cerrarPopUpVacunaNueva = function () {
             $scope.vacunaDosis = []
             setTimeout(function () {
@@ -1448,100 +2085,143 @@ angular.module('agil.controladores')
                     $scope.verificarAsignacionVacunas()
                 }, 1000);
             }, 1000);
+            $scope.dosis = {}
+            $scope.dosisEdit = false
             $scope.cerrarPopup($scope.idModalDialogVacunaEdicion);
         }
+
         $scope.cerrarPopUpVacunasConfig = function () {
             $scope.paciente.vacunas = []
             var vacunas_paciente = VacunasPaciente($scope.paciente)
             vacunas_paciente.then(function (datosVacunas) {
-                //console.log(datosVacunas)
                 $scope.paciente.vacunas = datosVacunas
                 $scope.paciente.vacunas.forEach(function (vacuna) {
-                    var fecha = new Date(vacuna.fecha_siguiente_aplicacion)
-                    vacuna.fecha_siguiente_aplicacion = (fecha.getMonth() + 1) + "/" + fecha.getDate() + "/" + fecha.getFullYear()
+                    var hoy = new Date()
+                    vacuna.fechaAplicacionVacuna_texto = hoy.getDate() + "/" + (hoy.getMonth() + 1) + "/" + hoy.getFullYear()
                     vacuna.button_clicked = false
                 }, this);
             })
-            // $scope.limpiarAsignacionVacunas()
-            // $scope.verificarAsignacionVacunas()
+            $scope.limpiarAsignacionVacunas()
+            $scope.verificarAsignacionVacunas()
+            $scope.obtenerAlertas()
             $scope.cerrarPopup($scope.idModalDialogVacunasConfig);
         }
+
         $scope.cerrarPopUpIdModalFichaTecnica = function () {
             $scope.cerrarPopup($scope.idModalFichaTecnica);
         }
+
         $scope.cerrarPopUpConsulta = function () {
             $scope.cerrarPopup($scope.idModalDialogConsulta);
+
         }
+
         $scope.cerrarPopUpPreRequisitos = function () {
+            $scope.obtenerAlertas()
             $scope.cerrarPopup($scope.IdModalDialogPreRequisitos);
         }
+
         $scope.cerrarIdModalDialogLaboratorio = function () {
             $scope.cerrarPopup($scope.IdModalDialogLaboratorio);
         }
+
         $scope.cerrarPopPupVacunas = function () {
+            $scope.filtroHistorialVacunas = []
+            $scope.obtenerAlertas()
             $scope.cerrarPopup($scope.idModalDialogVacunas);
         }
+
         $scope.cerrarPopPupVacunasConfig = function () {
+            $scope.obtenerAlertas()
             $scope.cerrarPopup($scope.idModalDialogVacunasConfig);
         }
+
         $scope.crearNuevaConsulta = function (paciente) {
-            $scope.consulta = { id_paciente: paciente.id }
+            var hoy = new Date().getDate() + '/' + (new Date().getMonth() + 1) + '/' + new Date().getFullYear()
+            $scope.horaConsulta = new Date().getHours() + ':' + new Date().getMinutes()
+            var aopm = (new Date().getHours() >= 12) ? 'PM' : 'AM'
+            $scope.consulta = { id_paciente: paciente.id, fecha: hoy + ' ' + $scope.horaConsulta + ' ' + aopm }
             $scope.paciente = paciente
             var filtro = { inicio: 0, fin: 0 }
-            promesa = ListaConsultasMedicoPaciente($scope.paciente.id, filtro)
+            var promesa = ListaConsultasMedicoPaciente($scope.paciente.id, filtro)
             promesa.then(function (dato) {
                 $scope.consultas = dato.consultas
-                $scope.filtro.inicio = "";
-                $scope.filtro.fin = "";
+                $scope.filtro.inicio = ($scope.filtro.inicio instanceof Date) ? $scope.filtro.inicio.getDate() + '/' + ($scope.filtro.inicio.getMonth() + 1) + '/' + $scope.filtro.inicio.getFullYear() : ""
+                $scope.filtro.fin = ($scope.filtro.fin instanceof Date) ? $scope.filtro.fin.getDate() + '/' + ($scope.filtro.fin.getMonth() + 1) + '/' + $scope.filtro.fin.getFullYear() : ""
             })
             $scope.abrirPopup($scope.idModalDialogConsulta);
         }
-
-        /*   $scope.obtenerPacientes = function () {
-              
-              var promesa = DatosPacientes()
-              promesa.then(function(Datos){
-                  $scope.pacientes=Datos.pacientes;
-              
-              //console.log($scope.pacientes);
-              })
-          } */
-
-        //laboratorio inicio
+        $scope.EliminarNuevoLaboratorio = function (laboratorio) {
+            var promesa = EliminarLaboratorio($scope.paciente.id_empresa, laboratorio)
+            promesa.then(function (datos) {
+                // $scope.cerrarIdModalDialogNuevoLaboratorio()
+                $scope.ObtenerMedicoLaboratorios($scope.paciente)
+                $scope.mostrarMensaje(datos.message)
+            })
+        }
         $scope.guardarNuevoLaboratorio = function (form) {
             if (form.$valid) {
-                promesa = CrearLaboratorio($scope.paciente.id_empresa, $scope.laboratorio)
-                promesa.then(function (datos) {
-                    $scope.cerrarIdModalDialogNuevoLaboratorio()
-                    $scope.ObtenerMedicoLaboratorios($scope.paciente)
-                    $scope.mostrarMensaje(datos.message)
-                })
+                if ($scope.laboratorio.id) {
+                    var promesa = ActualizarLaboratorio($scope.paciente.id_empresa, $scope.laboratorio)
+                    promesa.then(function (datos) {
+                        $scope.cerrarIdModalDialogNuevoLaboratorio()
+                        $scope.ObtenerMedicoLaboratorios($scope.paciente)
+                        $scope.mostrarMensaje(datos.message)
+                    })
+                } else {
+                    var promesa = CrearLaboratorio($scope.paciente.id_empresa, $scope.laboratorio)
+                    promesa.then(function (datos) {
+                        $scope.cerrarIdModalDialogNuevoLaboratorio()
+                        $scope.ObtenerMedicoLaboratorios($scope.paciente)
+                        $scope.mostrarMensaje(datos.message)
+                    })
+                }
             }
         }
+
         $scope.ObtenerMedicoLaboratorios = function (paciente) {
-            promesa = ListaLaboratorios(paciente.id_empresa)
+            var promesa = ListaLaboratorios(paciente.id_empresa)
             promesa.then(function (datos) {
                 $scope.listaLaboratorios = datos
             })
-
         }
+
         $scope.guardarNuevoLaboratorioExamen = function (form) {
             if (form.$valid) {
-                promesa = CrearLaboratorioExamen($scope.laboratorio.id, $scope.examen)
-                promesa.then(function (datos) {
-                    $scope.cerrarIdModalDialogLaboratorioExamenesNuevoResultado()
-                    $scope.ObtenerMedicoLaboratorioExamenes($scope.laboratorio)
-                    $scope.mostrarMensaje(datos.message)
-                })
+                if ($scope.examen.id) {
+                    var promesa = ActualizarLaboratorioExamen($scope.laboratorio.id, $scope.examen)
+                    promesa.then(function (datos) {
+                        $scope.cerrarIdModalDialogLaboratorioExamenesNuevoResultado()
+                        $scope.ObtenerMedicoLaboratorioExamenes($scope.laboratorio)
+                        $scope.mostrarMensaje(datos.message)
+                    })
+                } else {
+                    var promesa = CrearLaboratorioExamen($scope.laboratorio.id, $scope.examen)
+                    promesa.then(function (datos) {
+                        $scope.cerrarIdModalDialogLaboratorioExamenesNuevoResultado()
+                        $scope.ObtenerMedicoLaboratorioExamenes($scope.laboratorio)
+                        $scope.mostrarMensaje(datos.message)
+                    })
+                }
             }
         }
+
+        $scope.EliminarNuevoLaboratorioExamen = function (examen) {
+            var promesa = EliminarLaboratorioExamen($scope.laboratorio.id, examen)
+            promesa.then(function (datos) {
+                //$scope.cerrarIdModalDialogNuevoLaboratorio()
+                $scope.ObtenerMedicoLaboratorioExamenes($scope.laboratorio)
+                $scope.mostrarMensaje(datos.message)
+            })
+        }
+
         $scope.ObtenerMedicoLaboratorioExamenes = function (laboratorio) {
             promesa = ListaLaboratorioExamenes(laboratorio.id)
             promesa.then(function (datos) {
                 $scope.listaLaboratorioExamenes = datos
             })
-
         }
+
         $scope.guardarLaboratorioExamenResultados = function (form, fecha) {
             if (form.$valid) {
                 var fecha1 = new Date($scope.convertirFecha(fecha));
@@ -1554,57 +2234,116 @@ angular.module('agil.controladores')
                 })
             }
         }
-        $scope.ObtenerHistorialLaboratorioExamenes = function (filtro) {
-            if (filtro.inicio != 0) {
-                filtro.inicio = new Date($scope.convertirFecha(filtro.inicio));
-                filtro.fin = new Date($scope.convertirFecha(filtro.fin));
-            }
-            promesa = LaboratorioExamenListaHistorial($scope.laboratorio.id, $scope.paciente.id, filtro)
-            promesa.then(function (datos) {
-                $scope.filtro.inicio = ""
-                $scope.filtro.fin = ""
-                $scope.listaHistorialLaboratorioExamenes = datos
 
+        $scope.ObtenerHistorialLaboratorioExamenes = function (filtro) {
+            if (filtro.inicio != undefined && filtro.fin != undefined) {
+                if (filtro.inicio != 0 || filtro.inicio != "") {
+                    $scope.filtro.inicio = (filtro.inicio instanceof Date) ? filtro.inicio : new Date($scope.convertirFecha(filtro.inicio));
+                    $scope.filtro.fin = (filtro.fin instanceof Date) ? filtro.fin : new Date($scope.convertirFecha(filtro.fin));
+                } else {
+                    $scope.filtro.inicio = 0
+                    $scope.filtro.fin = 0
+                }
+            } else {
+                $scope.filtro.inicio = 0
+                $scope.filtro.fin = 0
+            }
+            promesa = LaboratorioExamenListaHistorial($scope.laboratorio.id, $scope.paciente.id, $scope.filtro)
+            promesa.then(function (datos) {
+                $scope.filtro.inicio = ($scope.filtro.inicio instanceof Date) ? $scope.filtro.inicio.getDate() + '/' + ($scope.filtro.inicio.getMonth() + 1) + '/' + $scope.filtro.inicio.getFullYear() : ""
+                $scope.filtro.fin = ($scope.filtro.fin instanceof Date) ? $scope.filtro.fin.getDate() + '/' + ($scope.filtro.fin.getMonth() + 1) + '/' + $scope.filtro.fin.getFullYear() : ""
+                $scope.listaHistorialLaboratorioExamenes = datos
             })
         }
 
-        //laboratorio fin
-
-        // diagnostico inicio
+        $scope.ObtenerHistorialFichaMedica = function (filtro) {
+            if (filtro.inicio != 0 && filtro.inicio != undefined) {
+                filtro.inicio = new Date($scope.convertirFecha(filtro.inicio));
+                filtro.fin = new Date($scope.convertirFecha(filtro.fin));
+            } else {
+                filtro.inicio = 0
+                filtro.fin = 0
+            }
+            if (filtro.tipo_control == undefined) { filtro.tipo_control = 0 }
+            promesa = HistorialFichaMedicoPaciente($scope.paciente.id, filtro)
+            promesa.then(function (datos) {
+                $scope.filtro.inicio = ($scope.filtro.inicio instanceof Date) ? $scope.filtro.inicio.getDate() + '/' + ($scope.filtro.inicio.getMonth() + 1) + '/' + $scope.filtro.inicio.getFullYear() : ""
+                $scope.filtro.fin = ($scope.filtro.fin instanceof Date) ? $scope.filtro.fin.getDate() + '/' + ($scope.filtro.fin.getMonth() + 1) + '/' + $scope.filtro.fin.getFullYear() : ""
+                $scope.listaHistorialfichaMEdica = datos
+            })
+        }
+        $scope.eliminarDiagnostico = function (diagnostico) {
+            var promesa = EliminarDiagnostico($scope.paciente.id_empresa, diagnostico)
+            promesa.then(function (datos) {
+                // $scope.cerrarIdModalDialogNuevoLaboratorio()
+                $scope.ObtenerMedicoDiagnostico($scope.paciente)
+                $scope.mostrarMensaje(datos.message)
+            })
+        }
         $scope.guardarNuevoDiagnostico = function (form) {
             if (form.$valid) {
-                promesa = CrearDiagnostico($scope.paciente.id_empresa, $scope.diagnostico)
-                promesa.then(function (datos) {
-                    $scope.cerrarDialogDiagnosticoNuevo()
-                    $scope.ObtenerMedicoLaboratorios($scope.paciente)
-                    $scope.mostrarMensaje(datos.message)
-                })
+                if ($scope.diagnostico.id) {
+                    promesa = ActualizarDiagnostico($scope.paciente.id_empresa, $scope.diagnostico)
+                    promesa.then(function (datos) {
+                        $scope.cerrarDialogDiagnosticoNuevo()
+                        $scope.ObtenerMedicoDiagnostico($scope.paciente)
+                        $scope.mostrarMensaje(datos.message)
+                    })
+                } else {
+                    promesa = CrearDiagnostico($scope.paciente.id_empresa, $scope.diagnostico)
+                    promesa.then(function (datos) {
+                        $scope.cerrarDialogDiagnosticoNuevo()
+                        $scope.ObtenerMedicoDiagnostico($scope.paciente)
+                        $scope.mostrarMensaje(datos.message)
+                    })
+                }
+
             }
         }
+
         $scope.ObtenerMedicoDiagnostico = function (paciente) {
             promesa = ListaDiagnosticos(paciente.id_empresa)
             promesa.then(function (datos) {
                 $scope.listaDiagnosticos = datos
             })
-
         }
+
         $scope.guardarNuevoDiagnosticoExamen = function (form) {
             if (form.$valid) {
-                promesa = CrearDiagnosticoExamen($scope.diagnostico.id, $scope.examen)
-                promesa.then(function (datos) {
-                    $scope.cerrarDialogNuevoExamenDiagnostico()
-                    $scope.ObtenerMedicoDiagnosticoExamenes($scope.diagnostico)
-                    $scope.mostrarMensaje(datos.message)
-                })
+                if ($scope.examen.id) {
+                    promesa = ActualizarDiagnosticoExamen($scope.diagnostico.id, $scope.examen)
+                    promesa.then(function (datos) {
+                        $scope.cerrarDialogNuevoExamenDiagnostico()
+                        $scope.ObtenerMedicoDiagnosticoExamenes($scope.diagnostico)
+                        $scope.mostrarMensaje(datos.message)
+                    })
+                } else {
+                    promesa = CrearDiagnosticoExamen($scope.diagnostico.id, $scope.examen)
+                    promesa.then(function (datos) {
+                        $scope.cerrarDialogNuevoExamenDiagnostico()
+                        $scope.ObtenerMedicoDiagnosticoExamenes($scope.diagnostico)
+                        $scope.mostrarMensaje(datos.message)
+                    })
+                }
+
             }
         }
+        $scope.eliminarNuevoDiagnosticoExamen = function (examen) {
+            var promesa = EliminarDiagnosticoExamen($scope.diagnostico.id, examen)
+            promesa.then(function (datos) {
+                //$scope.cerrarIdModalDialogNuevoLaboratorio()
+                $scope.ObtenerMedicoDiagnosticoExamenes($scope.diagnostico)
+                $scope.mostrarMensaje(datos.message)
+            })
+        }
+
         $scope.ObtenerMedicoDiagnosticoExamenes = function (diagnostico) {
             promesa = ListaDiagnosticoExamenes(diagnostico.id)
             promesa.then(function (datos) {
                 $scope.listaDiagnosticosExamenes = datos
             })
-
         }
+
         $scope.guardarDiagnosticoExamenResultados = function (form, fecha) {
             if (form.$valid) {
                 var fecha1 = new Date($scope.convertirFecha(fecha));
@@ -1617,38 +2356,44 @@ angular.module('agil.controladores')
                 })
             }
         }
-        $scope.ObtenerHistorialDiagnosticoExamenes = function (filtro) {
-            if (filtro.inicio != 0) {
-                filtro.inicio = new Date($scope.convertirFecha(filtro.inicio));
-                filtro.fin = new Date($scope.convertirFecha(filtro.fin));
-            }
-            promesa = DiagnosticoExamenListaHistorial($scope.diagnostico.id, $scope.paciente.id, filtro)
-            promesa.then(function (datos) {
-                $scope.filtro.inicio = ""
-                $scope.filtro.fin = ""
-                $scope.listaHistorialDiagnosticoExamenes = datos
 
+        $scope.ObtenerHistorialDiagnosticoExamenes = function (filtro) {
+            if (filtro.inicio != undefined && filtro.fin != undefined) {
+                if (filtro.inicio != 0 || filtro.inicio != "") {
+                    $scope.filtro.inicio = (filtro.inicio instanceof Date) ? filtro.inicio : new Date($scope.convertirFecha(filtro.inicio));
+                    $scope.filtro.fin = (filtro.fin instanceof Date) ? filtro.fin : new Date($scope.convertirFecha(filtro.fin));
+                } else {
+                    $scope.filtro.inicio = 0
+                    $scope.filtro.fin = 0
+                }
+            } else {
+                $scope.filtro.inicio = 0
+                $scope.filtro.fin = 0
+            }
+            promesa = DiagnosticoExamenListaHistorial($scope.diagnostico.id, $scope.paciente.id, $scope.filtro)
+            promesa.then(function (datos) {
+                $scope.filtro.inicio = ($scope.filtro.inicio instanceof Date) ? $scope.filtro.inicio.getDate() + '/' + ($scope.filtro.inicio.getMonth() + 1) + '/' + $scope.filtro.inicio.getFullYear() : ""
+                $scope.filtro.fin = ($scope.filtro.fin instanceof Date) ? $scope.filtro.fin.getDate() + '/' + ($scope.filtro.fin.getMonth() + 1) + '/' + $scope.filtro.fin.getFullYear() : ""
+                $scope.listaHistorialDiagnosticoExamenes = datos
             })
         }
+
         $scope.fecha_excel_angular = function (fecha_desde_excel) {
-            var fecha_minima_angular_indice_excel_1970 = 25569 - 1 //fecha minima angular. el -1 es para ajustar que el resultado da 1 anterior a la fecha real.
+            var fecha_minima_angular_indice_excel_1970 = 25569 - 1 //fecha minima angular. el -1 es para ajustar que el resultado que daba 1 anterior a la fecha real.
             var fecha_excel = new Date(1 / 1 / 1970)
             var diferencia_de_fecha = fecha_desde_excel - fecha_minima_angular_indice_excel_1970
             return fecha_excel.setTime(fecha_excel.getTime() + diferencia_de_fecha * 86400000)
         }
+
         $scope.subirExcelPacientes = function (event) {
             blockUI.start();
-            //console.log('iniciando carga de pacientes')
             var files = event.target.files;
             var i, f;
             for (i = 0, f = files[i]; i != files.length; ++i) {
-                //console.log('iniciando lectura de excel(s)')
                 var reader = new FileReader();
                 var name = f.name;
                 reader.onload = function (e) {
-                    // blockUI.start();
                     var data = e.target.result;
-
                     var workbook = XLSX.read(data, { type: 'binary' });
                     var first_sheet_name = workbook.SheetNames[0];
                     var row = 2, i = 0;
@@ -1690,38 +2435,27 @@ angular.module('agil.controladores')
                     $scope.guardarPacientes(pacientes);
                 };
                 reader.readAsBinaryString(f);
-                //console.log('pacientes obtenidos')
             }
         }
 
         $scope.guardarPacientes = function (lstpacientes) {
             var pacientesEmpresa = new PacientesEmpresa({ pacientes: lstpacientes, id_empresa: $scope.usuario.id_empresa });
             pacientesEmpresa.$save(function (res) {
-
                 $scope.mostrarMensaje(res.mensaje);
                 $scope.recargarItemsTabla();
             })
-            // , function (error) {
-
-            //     $scope.mostrarMensaje('Ocurrio un problema al momento de guardar!');
-            //     $scope.recargarItemsTabla();
-            // });
             blockUI.stop();
         }
 
         $scope.subirExcelFichasTecnicas = function (event) {
             blockUI.start();
-            //console.log('iniciando carga de fichas tecnicas pacientes')
             var files = event.target.files;
             var i, f;
             for (i = 0, f = files[i]; i != files.length; ++i) {
-                //console.log('iniciando lectura de excel(s)')
                 var reader = new FileReader();
                 var name = f.name;
                 reader.onload = function (e) {
-                    // blockUI.start();
                     var data = e.target.result;
-
                     var workbook = XLSX.read(data, { type: 'binary' });
                     var first_sheet_name = workbook.SheetNames[0];
                     var row = 2, i = 0;
@@ -1779,7 +2513,6 @@ angular.module('agil.controladores')
                     $scope.guardarfichasTecnicas(fichasTecnicas);
                 };
                 reader.readAsBinaryString(f);
-                //console.log('ficha obtenidos')
             }
         }
 
@@ -1789,7 +2522,6 @@ angular.module('agil.controladores')
                 $scope.mostrarMensaje(res.mensaje);
                 $scope.recargarItemsTabla();
             }, function (error) {
-                // $scope.mostrarMensaje(error);
                 $scope.mostrarMensaje('Ocurrio un problema al momento de guardar!');
                 $scope.recargarItemsTabla();
             });
@@ -1804,9 +2536,7 @@ angular.module('agil.controladores')
                 var reader = new FileReader();
                 var name = f.name;
                 reader.onload = function (e) {
-                    // blockUI.start();
                     var data = e.target.result;
-
                     var workbook = XLSX.read(data, { type: 'binary' });
                     var first_sheet_name = workbook.SheetNames[0];
                     var row = 2, i = 0;
@@ -1822,8 +2552,6 @@ angular.module('agil.controladores')
                         SV_Paciente.peso = worksheet['K' + row] != undefined && worksheet['K' + row] != "" ? Math.round(parseFloat(worksheet['K' + row].v.toString()), 4) : null;
                         SV_Paciente.temperatura = worksheet['L' + row] != undefined && worksheet['L' + row] != "" ? Math.round(parseFloat(worksheet['L' + row].v.toString()), 3) : null;
                         SV_Paciente.frecuencia_respiratoria = worksheet['M' + row] != undefined && worksheet['M' + row] != "" ? worksheet['M' + row].v.toString() : null;
-
-                        //console.log(SV_Paciente.fecha)
                         SV_Paciente.fecha = new Date(SV_Paciente.fecha)
                         signosVitales.push(SV_Paciente);
                         row++;
@@ -1832,18 +2560,15 @@ angular.module('agil.controladores')
                     $scope.guardarSignosVitales(signosVitales);
                 };
                 reader.readAsBinaryString(f);
-                //console.log('pacientes obtenidos')
             }
         }
 
         $scope.guardarSignosVitales = function (signosVitales) {
             var signos = new SignosVitalesPacientes({ signosVitales: signosVitales, id_empresa: $scope.usuario.id_empresa });
-            //console.log(signosVitales)
             signos.$save(function (res) {
                 $scope.mostrarMensaje(res.mensaje);
                 $scope.recargarItemsTabla();
             }, function (error) {
-
                 $scope.mostrarMensaje('Ocurrio un problema al momento de guardar!');
                 $scope.recargarItemsTabla();
             });
@@ -1853,11 +2578,9 @@ angular.module('agil.controladores')
         $scope.guardarPacientes = function (lstpacientes) {
             var pacientesEmpresa = new PacientesEmpresa({ pacientes: lstpacientes, id_empresa: $scope.usuario.id_empresa });
             pacientesEmpresa.$save(function (res) {
-
                 $scope.mostrarMensaje(res.mensaje);
                 $scope.recargarItemsTabla();
             }, function (error) {
-
                 $scope.mostrarMensaje('Ocurrio un problema al momento de guardar!');
                 $scope.recargarItemsTabla();
             });
@@ -1866,17 +2589,13 @@ angular.module('agil.controladores')
 
         $scope.subirExcelSOAP = function (event) {
             blockUI.start();
-            //console.log('iniciando carga de Signos Vitales')
             var files = event.target.files;
             var i, f;
             for (i = 0, f = files[i]; i != files.length; ++i) {
-                //console.log('iniciando lectura de excel(s)')
                 var reader = new FileReader();
                 var name = f.name;
                 reader.onload = function (e) {
-                    // blockUI.start();
                     var data = e.target.result;
-
                     var workbook = XLSX.read(data, { type: 'binary' });
                     var first_sheet_name = workbook.SheetNames[0];
                     var row = 2, i = 0;
@@ -1899,13 +2618,11 @@ angular.module('agil.controladores')
                     $scope.guardarSOAPLista(SOAPLista);
                 };
                 reader.readAsBinaryString(f);
-                //console.log('pacientes obtenidos')
             }
         }
 
         $scope.guardarSOAPLista = function (SOAPLista) {
             var soap = new SOAPlistaPacientes({ SOAPLista: SOAPLista, id_empresa: $scope.usuario.id_empresa });
-            //console.log(SOAPLista)
             soap.$save(function (res) {
                 $scope.mostrarMensaje(res.mensaje);
                 $scope.recargarItemsTabla();

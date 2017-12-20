@@ -385,16 +385,15 @@
     font: normal 13px Arial, sans-serif;
   }
 
-
   #pacientes #dialog-historial-vacuna, .my-wrapper {
-    position: relative;
+    position: sticky;
   }
   #pacientes #dialog-historial-vacuna, .my-scroller {
     margin-left: 141px;
     overflow-x: scroll;
     overflow-y: visible;
     padding-bottom: 5px;
-    width: 610px;
+    width: 82%;
   }
   #pacientes #dialog-historial-vacuna, .tabla-vacunas .my-sticky-col {
     border-left: solid 1px #EEE;
@@ -402,7 +401,7 @@
     left: 0;
     position: absolute;
     top: auto;
-    width: 137px;
+    width: 140px;
   }
   #pacientes #dialog-historial-vacuna, .celda-rojo{
     background-color: #D15B47!important;
@@ -438,6 +437,11 @@
       font-size: 12px;
       margin-left: -10px;
   }
+  #pacientes #modal-fichaMedica, .foto-paciente img{
+    /* img-pac-ficha */
+    height:100px;
+    width:125px;
+  } 
   #pacientes #modal-fichaMedica, .form-multiline .form-group {
       margin-bottom: 15px;
       margin-right: 30px;
@@ -449,7 +453,7 @@
 
   #pacientes #modal-fichaMedica, .pasos-ficha{
       margin-left: 90px !important;
-      margin-top: -80px !important;
+      margin-top: -10px !important;
       width: 90%;
   }
   #pacientes #modal-fichaMedica, .cabezera-ficha{
@@ -498,7 +502,7 @@
   }
   #pacientes #dialog-credencial, .logo-carnet img{
     height:125px;
-    width:125px;
+    width:140px;
   }
 
   #pacientes #dialog-credencial, .foto-carnet img{
@@ -581,6 +585,8 @@
     border: 1px solid #428bca !important;
     margin-left: 1px;
     margin-right: 1px;
+    width: 530px;
+    height: 300px;
    
   }
   #pacientes #dialog-credencial, .PrintCredencial{

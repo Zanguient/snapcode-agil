@@ -1,8 +1,8 @@
-module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente, Persona, Empresa, Sucursal, Clase, Diccionario, Tipo, decodeBase64Image, fs) {
+module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente, Persona, Empresa, Sucursal, Clase, Diccionario, Tipo, decodeBase64Image, fs, RrhhEmpleadoFicha, RrhhEmpleadoFichaOtrosSeguros, RrhhEmpleadoFichaFamiliar) {
     router.route('/recursos-humanos/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion/codigo/:codigo/nombres/:nombres/ci/:ci/campo/:campo/cargo/:cargo/busquedaEmpresa/:busquedaEmpresa/grupo/:grupo_sanguineo/estado/:estado')
         .get(function (req, res) {
             var condicion = ""
-            var es_eliminado = "false"
+            var es_eliminado = "true"
             if (req.params.codigo != "0") {
                 condicion += "codigo like '%" + req.params.codigo + "%'"
             }
@@ -173,7 +173,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                                     cargo: req.body.cargo,
                                     campo: req.body.campo,
                                     designacion_empresa: req.body.designacion_empresa,
-                                    eliminado: false,
+                                    eliminado: true,
                                     es_empleado: req.body.es_empleado
                                 }).then(function (medicoPacienteCreado) {
                                     res.json({ message: 'creado Satisfactoriamente' });
@@ -263,5 +263,588 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                 })
 
 
+        })//RrhhEmpleadoFichaOtrosSeguros,RrhhEmpleadoFichaFamiliar
+    router.route('/usuario-recurso-humano-ficha/empleado/:id_empleado')
+        .get(function (req, res) {
+            RrhhEmpleadoFicha.findAll({
+                limit: 1,
+                where: {
+                    id_empleado: req.params.id_empleado
+                },
+                include: [{ model: Clase, as: 'tipoContrato' },
+                { model: Clase, as: 'tipoPersonal' },
+                { model: Clase, as: 'cargaHorario' },
+                { model: Clase, as: 'area' },
+                { model: Clase, as: 'ubicacion' },
+                { model: Clase, as: 'seguroSalud' },
+                { model: Clase, as: 'lugarSeguroSalud' },
+                { model: Clase, as: 'aporteSeguroLargoPlazo' },
+                { model: Clase, as: 'lugarSeguroLargoPlazo' },
+                { model: Clase, as: 'banco' },
+                /* { model: RrhhEmpleadoFichaFamiliar, as: 'familiares' },
+                { model: RrhhEmpleadoFichaOtrosSeguros, as: 'otrosSeguros' }, */
+                {
+                    model: MedicoPaciente, as: 'empleado',
+                    include: [{ model: RrhhEmpleadoFichaFamiliar, as: 'familiares',include:[{model:Clase,as:'relacion'},{model:Persona,as:'persona',include: [{ model: Clase, as: 'genero' }]}] },
+                     { model: RrhhEmpleadoFichaOtrosSeguros, as: 'otrosSeguros', include: [{ model: Clase, as: "tipoSeguro" }] }, { model: Clase, as: 'extension' }, { model: Clase, as: 'tipoDocumento' },
+                    {
+                        model: Persona, as: 'persona',
+                        include: [{ model: Clase, as: 'genero' },
+                        { model: Clase, as: 'pais' },
+                        { model: Clase, as: 'ciudad' },
+                        { model: Clase, as: 'provincia' },
+                        { model: Clase, as: 'localidad' },
+                        { model: Clase, as: 'estadoCivil' }]
+                    }]
+                }, { model: Persona, as: 'personaReferencia' }],
+                order: [['id', 'DESC']]
+            }).then(function (fichaEncontrada) {
+                var ficha = fichaEncontrada[0]
+                if (ficha) {
+                    res.json({ ficha: ficha })
+                } else {
+                    MedicoPaciente.find({
+                        where: { id: req.params.id_empleado },
+                        include: [{ model: RrhhEmpleadoFichaFamiliar, as: 'familiares' ,include:[{model:Clase,as:'relacion'},{model:Persona,as:'persona',include: [{ model: Clase, as: 'genero' }]}]},
+                         { model: RrhhEmpleadoFichaOtrosSeguros, as: 'otrosSeguros', include: [{ model: Clase, as: "tipoSeguro" }] }, { model: Clase, as: 'extension' }, { model: Clase, as: 'tipoDocumento' }, { model: Empresa, as: 'empresa' },
+                        {
+                            model: Persona, as: 'persona',
+                            include: [{ model: Clase, as: 'genero' },
+                            { model: Clase, as: 'pais' },
+                            { model: Clase, as: 'ciudad' },
+                            { model: Clase, as: 'provincia' },
+                            { model: Clase, as: 'localidad' },
+                            { model: Clase, as: 'estadoCivil' }]
+                        }]
+                    }).then(function (pacienteEncontrado) {
+                        res.json({ empleado: pacienteEncontrado })
+                    });
+                }
+            })
+        })
+        .post(function (req, res) {
+            if (!req.body.personaReferencia.id) {
+                Persona.create({
+                    nombres: req.body.personaReferencia.nombres,
+                    telefono: req.body.personaReferencia.telefono,
+                    direccion: req.body.personaReferencia.direecion,
+                    telefono_movil: req.body.personaReferencia.telefono_movil,
+                    direccion_ciudad: req.body.personaReferencia.direccion_ciudad,
+                    direccion_zona: req.body.personaReferencia.direccion_zona,
+                    direccion_localidad: req.body.personaReferencia.direccion_localidad,
+                    direccion_numero: req.body.personaReferencia.direccion_numero
+                }).then(function (personaReferenciaCreada) {
+
+                    MedicoPaciente.update({
+                        cargo: req.body.empleado.cargo,
+                        eid_extension: req.body.empleado.extension.id,
+                        id_tipo_documento: req.body.empleado.tipoDocumento.id,
+                        fecha_vence_documento: req.body.empleado.fecha_vence_documento,
+                    }, {
+                            where: {
+                                id: req.body.empleado.id
+                            }
+                        }).then(function (medicoPacienteActualizado) {
+                            Persona.update({
+                                nombres: req.body.empleado.persona.nombres,
+                                apellido_paterno: req.body.empleado.persona.apellido_paterno,
+                                apellido_materno: req.body.empleado.persona.apellido_materno,
+                                ci: req.body.empleado.persona.ci,
+                                id_genero: req.body.empleado.persona.id_genero,
+                                nombre_completo: req.body.empleado.persona.nombres + ' ' + req.body.empleado.persona.apellido_paterno + ' ' + req.body.empleado.persona.apellido_materno,
+                                telefono: req.body.empleado.persona.telefono,
+                                telefono_movil: req.body.empleado.persona.telefono_movil,
+                                correo_electronico: req.body.empleado.persona.correo_electronico,
+                                id_estado_civil: req.body.empleado.persona.estadoCivil.id,
+                                direccion_zona: req.body.empleado.persona.direccion_zona,
+                                direccion_numero: req.body.empleado.persona.direccion_numero,
+                                id_pais_nacimiento: req.body.empleado.persona.pais.id,
+                                id_ciudad_nacimiento: req.body.empleado.persona.ciudad.id,
+                                id_provincia_nacimiento: req.body.empleado.persona.provincia.id,
+                                id_localidad_nacimiento: req.body.empleado.persona.localidad.id,
+                                apellido_casada: req.body.empleado.persona.apellido_casada,
+                                segundo_nombre: req.body.empleado.persona.segundo_nombre,
+                                fecha_nacimiento:req.body.empleado.persona.fecha_nacimiento
+                            }, {
+                                    where: {
+                                        id: req.body.empleado.persona.id
+                                    }
+                                }).then(function (EmpleadoPersonaActualizado) {
+                                    var haber = parseFloat(req.body.haber_basico)
+                                    RrhhEmpleadoFicha.create({
+                                        id_empleado: req.body.empleado.id,
+                                        fecha: req.body.fecha_elaboracion,
+                                        codigo_empleado: req.body.codigo_empleado,
+                                        id_tipo_contrato: req.body.tipoContrato.id,
+                                        fecha_inicio: req.body.fecha_inicio,
+                                        fecha_fin: req.body.fecha_fin,
+                                        id_tipo_personal: req.body.tipoPersonal.id,
+                                        id_carga_horarios: req.body.cargaHorario.id,
+                                        id_area: req.body.area.id,
+                                        id_ubicacion: req.body.ubicacion.id,
+                                        haber_basico: haber,
+                                        //contrato: req.body.alergia_quimico,
+                                        jubilacion: req.body.jubilacion,
+                                        fecha_jubilacion: req.body.fecha_jubilacion,
+                                        id_persona_referencia: personaReferenciaCreada.id,
+                                        matricula_seguro: req.body.matricula_seguro,
+                                        id_seguro_salud: req.body.seguroSalud.id,
+                                        id_lugar_seguro_salud: req.body.lugarSeguroSalud.id,
+                                        seguro_salud_carnet: req.body.seguro_salud_carnet,
+                                        nua_seguro_largo_plazo: req.body.nua_seguro_largo_plazo,
+                                        id_aporte_seguro_largo_plazo: req.body.aporteSeguroLargoPlazo.id,
+                                        id_lugar_seguro_largo_plazo: req.body.lugarSeguroLargoPlazo.id,
+                                        numero_cuenta: req.body.numero_cuenta,
+                                        id_banco: req.body.banco.id,
+                                    }).then(function (medicoPacientefichaCreado) {
+                                        req.body.empleado.otrosSeguros.forEach(function (seguroSalud, index, array) {
+                                            if (seguroSalud.id) {
+                                                RrhhEmpleadoFichaOtrosSeguros.update({
+                                                    id_empleado: req.body.empleado.id,
+                                                    id_tipo_seguro: seguroSalud.tipoSeguro.id,
+                                                    monto: seguroSalud.monto,
+                                                    observacion: seguroSalud.observacion,
+                                                }, {
+                                                        where: { id: seguroSalud.id }
+                                                    }).then(function (seguroCreado) {
+                                                        if (index === (array.length - 1)) {
+                                                            req.body.empleado.familiares.forEach(function (familiar, index, array) {
+                                                                if (familiar.persona.id) {
+                                                                    Persona.update({
+                                                                        nombres: familiar.persona.nombres,
+                                                                        apellido_paterno: familiar.persona.apellido_paterno,
+                                                                        apellido_materno: familiar.persona.apellido_materno,
+                                                                        fecha_nacimiento: familiar.persona.fecha_nacimiento,
+                                                                        genero: familiar.persona.genero.id,
+                                                                    }, {
+                                                                            where: {
+                                                                                id: familiar.persona.id
+                                                                            }
+                                                                        }).then(function (personaActualizada) {
+                                                                            if (familiar.id) {
+                                                                                RrhhEmpleadoFichaFamiliar.update({
+                                                                                    id_empleado: req.body.empleado.id,
+                                                                                    id_persona_familiar: familiar.persona.id,
+                                                                                    id_relacion: familiar.relacion.id,
+                                                                                    afiliado: familiar.persona.afiliado,
+                                                                                }, {
+                                                                                        where: { id: familiar.id }
+                                                                                    }).then(function (empleadoFamiliarActulizado) {
+                                                                                        if (index === (array.length - 1)) {
+                                                                                            res.json({ message: "Ficha empleado actualizada satisfactoriamente!" })
+                                                                                        }
+                                                                                    })
+                                                                            } else {
+                                                                                RrhhEmpleadoFichaFamiliar.create({
+                                                                                    id_empleado: req.body.empleado.id,
+                                                                                    id_persona_familiar: familiar.persona.id,
+                                                                                    id_relacion: familiar.relacion.id,
+                                                                                    afiliado: familiar.persona.afiliado,
+                                                                                }).then(function (RrhhEmpleadoFichaFamiliarCreado) {
+                                                                                    if (index === (array.length - 1)) {
+                                                                                        res.json({ message: "Ficha empleado actualizada satisfactoriamente!" })
+                                                                                    }
+                                                                                })
+                                                                            }
+                                                                        })
+                                                                } else {
+                                                                    Persona.create({
+                                                                        nombres: familiar.persona.nombres,
+                                                                        apellido_paterno: familiar.persona.apellido_paterno,
+                                                                        apellido_materno: familiar.persona.apellido_materno,
+                                                                        fecha_nacimiento: familiar.persona.fecha_nacimiento,
+                                                                        genero: familiar.persona.genero.id,
+                                                                    }).then(function (personaCreada) {
+                                                                        if (familiar.id) {
+                                                                            RrhhEmpleadoFichaFamiliar.update({
+                                                                                id_empleado: req.body.empleado.id,
+                                                                                id_persona_familiar: personaCreada.id,
+                                                                                id_relacion: familiar.relacion.id,
+                                                                                afiliado: familiar.persona.afiliado,
+                                                                            }, {
+                                                                                    where: { id: familiar.id }
+                                                                                }).then(function (empleadoFamiliarActulizado) {
+                                                                                    if (index === (array.length - 1)) {
+                                                                                        res.json({ message: "Ficha empleado actualizada satisfactoriamente!" })
+                                                                                    }
+                                                                                })
+                                                                        } else {
+                                                                            RrhhEmpleadoFichaFamiliar.create({
+                                                                                id_empleado: req.body.empleado.id,
+                                                                                id_persona_familiar: personaCreada.id,
+                                                                                id_relacion: familiar.relacion.id,
+                                                                                afiliado: familiar.persona.afiliado,
+                                                                            }).then(function (RrhhEmpleadoFichaFamiliarCreado) {
+                                                                                if (index === (array.length - 1)) {
+                                                                                    res.json({ message: "Ficha empleado actualizada satisfactoriamente!" })
+                                                                                }
+                                                                            })
+                                                                        }
+                                                                    })
+                                                                }
+
+                                                            });
+
+                                                        }
+                                                    })
+                                            } else {
+                                                RrhhEmpleadoFichaOtrosSeguros.create({
+                                                    id_empleado: req.body.empleado.id,
+                                                    id_tipo_seguro: seguroSalud.tipoSeguro.id,
+                                                    monto: seguroSalud.monto,
+                                                    observacion: seguroSalud.observacion,
+                                                }).then(function (seguroCreado) {
+                                                    if (index === (array.length - 1)) {
+                                                        req.body.empleado.familiares.forEach(function (familiar, index, array) {
+                                                            if (familiar.persona.id) {
+                                                                Persona.update({
+                                                                    nombres: familiar.persona.nombres,
+                                                                    apellido_paterno: familiar.persona.telefono,
+                                                                    apellido_materno: familiar.persona.direecion,
+                                                                    fecha_nacimiento: familiar.persona.fecha_nacimiento,
+                                                                    genero: familiar.persona.genero.id,
+                                                                }, {
+                                                                        where: {
+                                                                            id: familiar.persona.id
+                                                                        }
+                                                                    }).then(function (personaActualizada) {
+                                                                        if (familiar.id) {
+                                                                            RrhhEmpleadoFichaFamiliar.update({
+                                                                                id_empleado: req.body.empleado.id,
+                                                                                id_persona_familiar: familiar.persona.id,
+                                                                                id_relacion: familiar.relacion.id,
+                                                                                afiliado: familiar.persona.afiliado,
+                                                                            }, {
+                                                                                    where: { id: familiar.id }
+                                                                                }).then(function (empleadoFamiliarActulizado) {
+                                                                                    if (index === (array.length - 1)) {
+                                                                                        res.json({ message: "Ficha empleado actualizada satisfactoriamente!" })
+                                                                                    }
+                                                                                })
+                                                                        } else {
+                                                                            RrhhEmpleadoFichaFamiliar.create({
+                                                                                id_empleado: req.body.empleado.id,
+                                                                                id_persona_familiar: familiar.persona.id,
+                                                                                id_relacion: familiar.relacion.id,
+                                                                                afiliado: familiar.persona.afiliado,
+                                                                            }).then(function (RrhhEmpleadoFichaFamiliarCreado) {
+                                                                                if (index === (array.length - 1)) {
+                                                                                    res.json({ message: "Ficha empleado actualizada satisfactoriamente!" })
+                                                                                }
+                                                                            })
+                                                                        }
+                                                                    })
+                                                            } else {
+                                                                Persona.create({
+                                                                    nombres: familiar.persona.nombres,
+                                                                    apellido_paterno: familiar.persona.telefono,
+                                                                    apellido_materno: familiar.persona.direecion,
+                                                                    fecha_nacimiento: familiar.persona.fecha_nacimiento,
+                                                                    genero: familiar.persona.genero.id,
+                                                                }).then(function (personaCreada) {
+                                                                    if (familiar.id) {
+                                                                        RrhhEmpleadoFichaFamiliar.update({
+                                                                            id_empleado: req.body.empleado.id,
+                                                                            id_persona_familiar: personaCreada.id,
+                                                                            id_relacion: familiar.relacion.id,
+                                                                            afiliado: familiar.persona.afiliado,
+                                                                        }, {
+                                                                                where: { id: familiar.id }
+                                                                            }).then(function (empleadoFamiliarActulizado) {
+                                                                                if (index === (array.length - 1)) {
+                                                                                    res.json({ message: "Ficha empleado actualizada satisfactoriamente!" })
+                                                                                }
+                                                                            })
+                                                                    } else {
+                                                                        RrhhEmpleadoFichaFamiliar.create({
+                                                                            id_empleado: req.body.empleado.id,
+                                                                            id_persona_familiar: personaCreada.id,
+                                                                            id_relacion: familiar.relacion.id,
+                                                                            afiliado: familiar.persona.afiliado,
+                                                                        }).then(function (RrhhEmpleadoFichaFamiliarCreado) {
+                                                                            if (index === (array.length - 1)) {
+                                                                                res.json({ message: "Ficha empleado actualizada satisfactoriamente!" })
+                                                                            }
+                                                                        })
+                                                                    }
+                                                                })
+                                                            }
+
+                                                        });
+
+                                                    }
+                                                })
+                                            }
+                                        })
+
+                                    });
+                                })
+                        })
+
+                })
+            } else {
+                Persona.update({
+                    nombres: req.body.personaReferencia.nombres,
+                    telefono: req.body.personaReferencia.telefono,
+                    direccion: req.body.personaReferencia.direecion,
+                    telefono_movil: req.body.personaReferencia.telefono_movil,
+                    direccion_ciudad: req.body.personaReferencia.direccion_ciudad,
+                    direccion_zona: req.body.personaReferencia.direccion_zona,
+                    direccion_localidad: req.body.personaReferencia.direccion_localidad,
+                    direccion_numero: req.body.personaReferencia.direccion_numero
+                }, {
+                        where: {
+                            id: req.body.personaReferencia.id
+                        }
+                    }).then(function (personaReferenciaCreada) {
+
+                        MedicoPaciente.update({
+                            cargo: req.body.empleado.cargo,
+                            id_extension: req.body.empleado.extension.id,
+                            id_tipo_documento: req.body.empleado.tipoDocumento.id,
+                            fecha_vence_documento: req.body.empleado.fecha_vence_documento,
+                        }, {
+                                where: {
+                                    id: req.body.empleado.id
+                                }
+                            }).then(function (medicoPacienteActualizado) {
+                                Persona.update({
+                                    nombres: req.body.empleado.persona.nombres,
+                                    apellido_paterno: req.body.empleado.persona.apellido_paterno,
+                                    apellido_materno: req.body.empleado.persona.apellido_materno,
+                                    ci: req.body.empleado.persona.ci,
+                                    id_genero: req.body.empleado.persona.genero.id,
+                                    nombre_completo: req.body.empleado.persona.nombres + ' ' + req.body.empleado.persona.apellido_paterno + ' ' + req.body.empleado.persona.apellido_materno,
+                                    telefono: req.body.empleado.persona.telefono,
+                                    telefono_movil: req.body.empleado.persona.telefono_movil,
+                                    correo_electronico: req.body.empleado.persona.correo_electronico,
+                                    id_estado_civil: req.body.empleado.persona.estadoCivil.id,
+                                    direccion_zona: req.body.empleado.persona.direccion_zona,
+                                    direccion_numero: req.body.empleado.persona.direccion_numero,
+                                    id_pais_nacimiento: req.body.empleado.persona.pais.id,
+                                    id_ciudad_nacimiento: req.body.empleado.persona.ciudad.id,
+                                    id_provincia_nacimiento: req.body.empleado.persona.provincia.id,
+                                    id_localidad_nacimiento: req.body.empleado.persona.localidad.id,
+                                    apellido_casada: req.body.empleado.persona.apellido_casada,
+                                    segundo_nombre: req.body.empleado.persona.segundo_nombre,
+                                    fecha_nacimiento:req.body.empleado.persona.fecha_nacimiento
+                                }, {
+                                        where: {
+                                            id: req.body.empleado.persona.id
+                                        }
+                                    }).then(function (MedicoPasientePersonaActualizado) {
+                                        var haber = parseFloat(req.body.haber_basico)
+                                        RrhhEmpleadoFicha.create({
+                                            id_empleado: req.body.empleado.id,
+                                            fecha: req.body.fecha_elaboracion,
+                                            codigo_empleado: req.body.codigo_empleado,
+                                            id_tipo_contrato: req.body.tipoContrato.id,
+                                            fecha_inicio: req.body.fecha_inicio,
+                                            fecha_fin: req.body.fecha_fin,
+                                            id_tipo_personal: req.body.tipoPersonal.id,
+                                            id_carga_horarios: req.body.cargaHorario.id,
+                                            id_area: req.body.area.id,
+                                            id_ubicacion: req.body.ubicacion.id,
+                                            haber_basico: haber,
+                                            //contrato: req.body.alergia_quimico,
+                                            jubilacion: req.body.jubilacion,
+                                            fecha_jubilacion: req.body.fecha_jubilacion,
+                                            id_persona_referencia: req.body.personaReferencia.id,
+                                            matricula_seguro: req.body.matricula_seguro,
+                                            id_seguro_salud: req.body.seguroSalud.id,
+                                            id_lugar_seguro_salud: req.body.lugarSeguroSalud.id,
+                                            seguro_salud_carnet: req.body.seguro_salud_carnet,
+                                            nua_seguro_largo_plazo: req.body.nua_seguro_largo_plazo,
+                                            id_aporte_seguro_largo_plazo: req.body.aporteSeguroLargoPlazo.id,
+                                            id_lugar_seguro_largo_plazo: req.body.lugarSeguroLargoPlazo.id,
+                                            numero_cuenta: req.body.numero_cuenta,
+                                            id_banco: req.body.banco.id,
+                                        }).then(function (RrhhEmpleadoFichaCreado) {
+                                            req.body.empleado.otrosSeguros.forEach(function (seguroSalud, index, array) {
+                                                if (seguroSalud.id) {
+
+                                                    RrhhEmpleadoFichaOtrosSeguros.update({
+                                                        id_empleado: req.body.empleado.id,
+                                                        id_tipo_seguro: seguroSalud.tipoSeguro.id,
+                                                        monto: seguroSalud.monto,
+                                                        observacion: seguroSalud.observacion,
+                                                    }, {
+                                                            where: { id: seguroSalud.id }
+                                                        }).then(function (seguroCreado) {
+                                                            if (index === (array.length - 1)) {
+                                                                req.body.empleado.familiares.forEach(function (familiar, index, array) {
+                                                                    if (familiar.persona.id) {
+                                                                        Persona.update({
+                                                                            nombres: familiar.persona.nombres,
+                                                                            apellido_paterno: familiar.persona.telefono,
+                                                                            apellido_materno: familiar.persona.direecion,
+                                                                            fecha_nacimiento: familiar.persona.fecha_nacimiento,
+                                                                            id_genero: familiar.persona.genero.id,
+                                                                        }, {
+                                                                                where: {
+                                                                                    id: familiar.persona.id
+                                                                                }
+                                                                            }).then(function (personaActualizada) {
+                                                                                if (familiar.id) {
+                                                                                    RrhhEmpleadoFichaFamiliar.update({
+                                                                                        id_empleado: req.body.empleado.id,
+                                                                                        id_persona_familiar: familiar.persona.id,
+                                                                                        id_relacion: familiar.relacion.id,
+                                                                                        afiliado: familiar.persona.afiliado,
+                                                                                    }, {
+                                                                                            where: { id: familiar.id }
+                                                                                        }).then(function (empleadoFamiliarActulizado) {
+                                                                                            if (index === (array.length - 1)) {
+                                                                                                res.json({ message: "Ficha empleado actualizada satisfactoriamente!" })
+                                                                                            }
+                                                                                        })
+                                                                                } else {
+                                                                                    RrhhEmpleadoFichaFamiliar.create({
+                                                                                        id_empleado: req.body.empleado.id,
+                                                                                        id_persona_familiar: familiar.persona.id,
+                                                                                        id_relacion: familiar.relacion.id,
+                                                                                        afiliado: familiar.persona.afiliado,
+                                                                                    }).then(function (RrhhEmpleadoFichaFamiliarCreado) {
+                                                                                        if (index === (array.length - 1)) {
+                                                                                            res.json({ message: "Ficha empleado actualizada satisfactoriamente!" })
+                                                                                        }
+                                                                                    })
+                                                                                }
+                                                                            })
+                                                                    } else {
+                                                                        Persona.create({
+                                                                            nombres: familiar.persona.nombres,
+                                                                            apellido_paterno: familiar.persona.apellido_paterno,
+                                                                            apellido_materno: familiar.persona.apellido_materno,
+                                                                            fecha_nacimiento: familiar.persona.fecha_nacimiento,
+                                                                            id_genero: familiar.persona.genero.id,
+                                                                        }).then(function (personaCreada) {
+                                                                            if (familiar.id) {
+                                                                                RrhhEmpleadoFichaFamiliar.update({
+                                                                                    id_empleado: req.body.empleado.id,
+                                                                                    id_persona_familiar: personaCreada.id,
+                                                                                    id_relacion: familiar.relacion.id,
+                                                                                    afiliado: familiar.persona.afiliado,
+                                                                                }, {
+                                                                                        where: { id: familiar.id }
+                                                                                    }).then(function (empleadoFamiliarActulizado) {
+                                                                                        if (index === (array.length - 1)) {
+                                                                                            res.json({ message: "Ficha empleado actualizada satisfactoriamente!" })
+                                                                                        }
+                                                                                    })
+                                                                            } else {
+                                                                                RrhhEmpleadoFichaFamiliar.create({
+                                                                                    id_empleado: req.body.empleado.id,
+                                                                                    id_persona_familiar: personaCreada.id,
+                                                                                    id_relacion: familiar.relacion.id,
+                                                                                    afiliado: familiar.persona.afiliado,
+                                                                                }).then(function (RrhhEmpleadoFichaFamiliarCreado) {
+                                                                                    if (index === (array.length - 1)) {
+                                                                                        res.json({ message: "Ficha empleado actualizada satisfactoriamente!" })
+                                                                                    }
+                                                                                })
+                                                                            }
+                                                                        })
+                                                                    }
+
+                                                                });
+
+                                                            }
+                                                        })
+                                                } else {
+                                                    RrhhEmpleadoFichaOtrosSeguros.create({
+                                                        id_empleado: req.body.empleado.id,
+                                                        id_tipo_seguro: seguroSalud.tipoSeguro.id,
+                                                        monto: seguroSalud.monto,
+                                                        observacion: seguroSalud.observacion,
+                                                    }).then(function (seguroCreado) {
+                                                        if (index === (array.length - 1)) {
+                                                            req.body.empleado.familiares.forEach(function (familiar, index, array) {
+                                                                if (familiar.persona.id) {
+                                                                    Persona.update({
+                                                                        nombres: familiar.persona.nombres,
+                                                                        apellido_paterno: familiar.persona.apellido_paterno,
+                                                                        apellido_materno: familiar.persona.apellido_materno,
+                                                                        fecha_nacimiento: familiar.persona.fecha_nacimiento,
+                                                                        id_genero: familiar.persona.genero.id,
+                                                                    }, {
+                                                                            where: {
+                                                                                id: familiar.persona.id
+                                                                            }
+                                                                        }).then(function (personaActualizada) {
+                                                                            if (familiar.id) {
+                                                                                RrhhEmpleadoFichaFamiliar.update({
+                                                                                    id_empleado: req.body.empleado.id,
+                                                                                    id_persona_familiar: familiar.persona.id,
+                                                                                    id_relacion: familiar.relacion.id,
+                                                                                    afiliado: familiar.persona.afiliado,
+                                                                                }, {
+                                                                                        where: { id: familiar.id }
+                                                                                    }).then(function (empleadoFamiliarActulizado) {
+                                                                                        if (index === (array.length - 1)) {
+                                                                                            res.json({ message: "Ficha empleado actualizada satisfactoriamente!" })
+                                                                                        }
+                                                                                    })
+                                                                            } else {
+                                                                                RrhhEmpleadoFichaFamiliar.create({
+                                                                                    id_empleado: req.body.empleado.id,
+                                                                                    id_persona_familiar: familiar.persona.id,
+                                                                                    id_relacion: familiar.relacion.id,
+                                                                                    afiliado: familiar.persona.afiliado,
+                                                                                }).then(function (RrhhEmpleadoFichaFamiliarCreado) {
+                                                                                    if (index === (array.length - 1)) {
+                                                                                        res.json({ message: "Ficha empleado actualizada satisfactoriamente!" })
+                                                                                    }
+                                                                                })
+                                                                            }
+                                                                        })
+                                                                } else {
+                                                                    Persona.create({
+                                                                        nombres: familiar.persona.nombres,
+                                                                        apellido_paterno: familiar.persona.apellido_paterno,
+                                                                        apellido_materno: familiar.persona.apellido_materno,
+                                                                        fecha_nacimiento: familiar.persona.fecha_nacimiento,
+                                                                        id_genero: familiar.persona.genero.id,
+                                                                    }).then(function (personaCreada) {
+                                                                        if (familiar.id) {
+                                                                            RrhhEmpleadoFichaFamiliar.update({
+                                                                                id_empleado: req.body.empleado.id,
+                                                                                id_persona_familiar: personaCreada.id,
+                                                                                id_relacion: familiar.relacion.id,
+                                                                                afiliado: familiar.persona.afiliado,
+                                                                            }, {
+                                                                                    where: { id: familiar.id }
+                                                                                }).then(function (empleadoFamiliarActulizado) {
+                                                                                    if (index === (array.length - 1)) {
+                                                                                        res.json({ message: "Ficha empleado actualizada satisfactoriamente!" })
+                                                                                    }
+                                                                                })
+                                                                        } else {
+                                                                            RrhhEmpleadoFichaFamiliar.create({
+                                                                                id_empleado: req.body.empleado.id,
+                                                                                id_persona_familiar: personaCreada.id,
+                                                                                id_relacion: familiar.relacion.id,
+                                                                                afiliado: familiar.persona.afiliado,
+                                                                            }).then(function (RrhhEmpleadoFichaFamiliarCreado) {
+                                                                                if (index === (array.length - 1)) {
+                                                                                    res.json({ message: "Ficha empleado actualizada satisfactoriamente!" })
+                                                                                }
+                                                                            })
+                                                                        }
+                                                                    })
+                                                                }
+
+                                                            });
+
+                                                        }
+                                                    })
+                                                }
+                                            })
+                                        })
+                                    })
+                            })
+                    })
+
+            }
         })
 }

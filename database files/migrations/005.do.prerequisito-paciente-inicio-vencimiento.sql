@@ -1,0 +1,2 @@
+ALTER TABLE agil_medico_paciente_prerequisito ADD fecha_inicio datetime;
+ALTER TABLE agil_medico_paciente_prerequisito ADD fecha_vencimiento datetime;

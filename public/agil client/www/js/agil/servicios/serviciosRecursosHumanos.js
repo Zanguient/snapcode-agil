@@ -75,3 +75,37 @@ angular.module('agil.servicios')
     };
     return res;
 }])   
+.factory('UsuarioRhFicha', function ($resource) {
+    return $resource(restServer + "usuario-recurso-humano-ficha/empleado/:id_empleado", null,
+        {
+            'update': { method: 'PUT' }
+        });
+})
+.factory('UsuarioRecursosHumanosFicha', ['UsuarioRhFicha', '$q', function (UsuarioRhFicha, $q) {
+    var res = function (idEmpleado)//idEmpresa, xxx
+    {
+        var delay = $q.defer();
+        UsuarioRhFicha.get({
+            id_empleado: idEmpleado
+                  },function (entidades) {
+            delay.resolve(entidades);
+        }, function (error) {
+            delay.reject(error);
+        });
+        return delay.promise;
+    };
+    return res;
+}])
+
+.factory('CrearEmpleadoFicha', ['UsuarioRhFicha', '$q', function (UsuarioRhFicha, $q) {
+    var res = function (ficha) {
+        var delay = $q.defer();
+        UsuarioRhFicha.save({ id_empleado: 0 }, ficha, function (entidades) {
+            delay.resolve(entidades);
+        }, function (error) {
+            delay.reject(error);
+        });
+        return delay.promise;
+    };
+    return res;
+}])

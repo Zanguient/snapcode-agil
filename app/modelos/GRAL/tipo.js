@@ -128,6 +128,55 @@ module.exports=function(sequelize,Sequelize){
 		sequelize.query("INSERT IGNORE INTO gl_tipo SET id = 37,nombre = 'TIPO ESPECIALIDAD MANTENIMIENTO',nombre_corto='TEM',createdAt = NOW(),updatedAt = NOW();").spread(function(results, metadata) {
 			
 		});
+		sequelize.query("INSERT IGNORE INTO gl_tipo SET id = 38,nombre = 'EXPEDIDO',nombre_corto='RRHH_EXP',createdAt = NOW(),updatedAt = NOW();").spread(function(results, metadata) {
+			
+		});
+		sequelize.query("INSERT IGNORE INTO gl_tipo SET id = 39,nombre = 'TIPO EXPEDIDO',nombre_corto='RRHH_TEXP',createdAt = NOW(),updatedAt = NOW();").spread(function(results, metadata) {
+			
+		});
+		sequelize.query("INSERT IGNORE INTO gl_tipo SET id = 40,nombre = 'ESTADO CIVIL',nombre_corto='RRHH_EC',createdAt = NOW(),updatedAt = NOW();").spread(function(results, metadata) {
+			
+		});
+		sequelize.query("INSERT IGNORE INTO gl_tipo SET id = 41,nombre = 'NACIONALIDAD',nombre_corto='NAC',createdAt = NOW(),updatedAt = NOW();").spread(function(results, metadata) {
+			
+		});
+		sequelize.query("INSERT IGNORE INTO gl_tipo SET id = 42,nombre = 'l',nombre_corto='LOC',createdAt = NOW(),updatedAt = NOW();").spread(function(results, metadata) {
+			
+		});
+		sequelize.query("INSERT IGNORE INTO gl_tipo SET id = 43,nombre = 'TIPO CONTRATO',nombre_corto='RRHH_TC',createdAt = NOW(),updatedAt = NOW();").spread(function(results, metadata) {
+			
+		});
+		sequelize.query("INSERT IGNORE INTO gl_tipo SET id = 44,nombre = 'TIPO PERSONAL',nombre_corto='RRHH_TP',createdAt = NOW(),updatedAt = NOW();").spread(function(results, metadata) {
+			
+		});
+		sequelize.query("INSERT IGNORE INTO gl_tipo SET id = 45,nombre = 'CARGA HORARIOS',nombre_corto='RRHH_CH',createdAt = NOW(),updatedAt = NOW();").spread(function(results, metadata) {
+			
+		});
+		
+		sequelize.query("INSERT IGNORE INTO gl_tipo SET id = 46,nombre = 'AREA',nombre_corto='RRHH_AREA',createdAt = NOW(),updatedAt = NOW();").spread(function(results, metadata) {
+			
+		});
+		sequelize.query("INSERT IGNORE INTO gl_tipo SET id = 47,nombre = 'UBICACION',nombre_corto='RRHH_UBI',createdAt = NOW(),updatedAt = NOW();").spread(function(results, metadata) {
+			
+		});
+		sequelize.query("INSERT IGNORE INTO gl_tipo SET id = 48,nombre = 'SEGURO SOCIAL',nombre_corto='RRHH_SS',createdAt = NOW(),updatedAt = NOW();").spread(function(results, metadata) {
+			
+		});
+		sequelize.query("INSERT IGNORE INTO gl_tipo SET id = 49,nombre = 'LUGAR SEGURO SALUD',nombre_corto='RRHH_LSS',createdAt = NOW(),updatedAt = NOW();").spread(function(results, metadata) {
+			
+		});
+		sequelize.query("INSERT IGNORE INTO gl_tipo SET id = 50,nombre = 'APORTE SEGURO LARGO PLAZO',nombre_corto='RRHH_ASLP',createdAt = NOW(),updatedAt = NOW();").spread(function(results, metadata) {
+			
+		});
+		sequelize.query("INSERT IGNORE INTO gl_tipo SET id = 51,nombre = 'OTROS SEGUROS',nombre_corto='RRHH_OST',createdAt = NOW(),updatedAt = NOW();").spread(function(results, metadata) {
+			
+		});
+		sequelize.query("INSERT IGNORE INTO gl_tipo SET id = 52,nombre = 'BANCO',nombre_corto='RRHH_BAN',createdAt = NOW(),updatedAt = NOW();").spread(function(results, metadata) {
+			
+		});
+		sequelize.query("INSERT IGNORE INTO gl_tipo SET id = 52,nombre = 'RELACION',nombre_corto='RRHH_REL',createdAt = NOW(),updatedAt = NOW();").spread(function(results, metadata) {
+			
+		});
 	});
 	
 	return Tipo;

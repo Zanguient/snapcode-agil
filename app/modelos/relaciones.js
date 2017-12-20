@@ -10,7 +10,7 @@ module.exports = function (sequelize, Usuario, Persona, Rol, UsuarioRol, Tipo, C
 	DetallePedidoRestaurante, CuentaRestaurante, Mesa, Sala, Cotizacion, DetalleCotizacion, ContabilidadCuenta, ClasificacionCuenta, ComprobanteContabilidad, AsientoContabilidad,
 	ClienteCuenta, ProveedorCuenta, MedicoPrerequisito, ConfiguracionCuenta, MedicoVacuna, VacunaDosis, MedicoPacienteVacuna, MedicoPacienteVacunaDosis, VistaColumnasAplicacion,
 	MedicoPacienteConsulta, MedicoPacienteFicha, MedicoLaboratorioExamen, MedicoLaboratorio, MedicoLaboratorioPaciente, MedicoLaboratorioResultado, MedicoDiagnostico, MedicoDiagnosticoExamen, MedicoDiagnosticoPaciente, MedicoDiagnosticoResultado,
-	MantenimientoOrdenTrabajo, MantenimientoOrdenTrabajoManoObra, MantenimientoOrdenTrabajoMaterial, MantenimientoOrdenTrabajoServicioExterno, MantenimientoOrdenTrabajoSistema,VendedorVenta) {
+	MantenimientoOrdenTrabajo, MantenimientoOrdenTrabajoManoObra, MantenimientoOrdenTrabajoMaterial, MantenimientoOrdenTrabajoServicioExterno, MantenimientoOrdenTrabajoSistema,VendedorVenta,RrhhEmpleadoFicha,RrhhEmpleadoFichaOtrosSeguros,RrhhEmpleadoFichaFamiliar,MedicoPacientePreRequisito) {
 
 	Persona.hasOne(Usuario, { foreignKey: 'id_persona', as: 'usuario' });
 	Persona.belongsTo(Clase, { foreignKey: 'id_lugar_nacimiento', as: 'lugar_nacimiento' });
@@ -22,6 +22,14 @@ module.exports = function (sequelize, Usuario, Persona, Rol, UsuarioRol, Tipo, C
 	Persona.hasOne(MedicoPacienteFicha, { foreignKey: 'id_persona_referencia', as: 'personaReferencias' });
 	Persona.hasMany(MantenimientoOrdenTrabajoManoObra, { foreignKey: 'id_persona', as: 'MantenimientosManoDeObra' });
 	Persona.hasOne(VendedorVenta, { foreignKey: 'id_persona', as: 'vendedor' });
+	Persona.hasOne(RrhhEmpleadoFicha, { foreignKey: 'id_persona_referencia', as: 'referenciaPersona' });
+	Persona.belongsTo(Clase, { foreignKey: 'id_pais_nacimiento', as: 'pais' });
+	Persona.belongsTo(Clase, { foreignKey: 'id_ciudad_nacimiento', as: 'ciudad' });
+	Persona.belongsTo(Clase, { foreignKey: 'id_provincia_nacimiento', as: 'provincia' });
+	Persona.belongsTo(Clase, { foreignKey: 'id_localidad_nacimiento', as: 'localidad' });
+	Persona.belongsTo(Clase, { foreignKey: 'id_estado_civil', as: 'estadoCivil' });
+	Persona.hasOne(RrhhEmpleadoFichaFamiliar, { foreignKey: 'id_persona_familiar', as: 'personas' });
+	
 
 	Usuario.belongsTo(Persona, { foreignKey: 'id_persona', as: 'persona' });
 	Usuario.hasMany(UsuarioRol, { foreignKey: 'id_usuario', as: 'rolesUsuario' });
@@ -95,22 +103,47 @@ module.exports = function (sequelize, Usuario, Persona, Rol, UsuarioRol, Tipo, C
 	Clase.hasMany(Ruta, { foreignKey: 'id_municipio', as: 'rutasMunicipios' });
 	Clase.hasMany(Dosificacion, { foreignKey: 'id_pie_factura', as: 'piesFactura' });
 	Clase.hasMany(Producto, { foreignKey: 'id_tipo_producto', as: 'productos' });
+	Clase.hasMany(Producto, { foreignKey: 'id_grupo', as: 'productosGrupo' });
+	Clase.hasMany(Producto, { foreignKey: 'id_subgrupo', as: 'productosSubGrupo' });
 	Clase.hasMany(CierreCaja, { foreignKey: 'id_destino', as: 'cierresCajaDestino' });
 	Clase.hasMany(Banco, { foreignKey: 'id_tipo_cuenta', as: 'bancosTipoCuenta' });
 	Clase.hasMany(Banco, { foreignKey: 'id_tipo_moneda', as: 'bancosTipoMoneda' });
 	Clase.hasMany(Mesa, { foreignKey: 'id_estado', as: 'mesas' });
-	Clase.hasMany(MedicoPrerequisito, { foreignKey: 'id_prerequisito', as: 'prerequisitos' });
+	// Clase.hasMany(MedicoPrerequisito, { foreignKey: 'id_prerequisito', as: 'prerequisitos' }); /Ya no es requerido/util/relacion desde 13/12/2017
 	Clase.hasMany(MedicoPacienteFicha, { foreignKey: 'id_tipo_control', as: 'tiposControl' });
 
 	Clase.hasMany(MantenimientoOrdenTrabajo, { foreignKey: 'id_prioridad', as: 'prioridades' });
 	Clase.hasMany(MantenimientoOrdenTrabajoSistema, { foreignKey: 'id_orden_trabajo_sistema', as: 'Sistemas' });
 	Clase.hasMany(MantenimientoOrdenTrabajo, { foreignKey: 'id_tipo_mantenimiento', as: 'tiposMantenimientos' });
 	Clase.hasMany(MantenimientoOrdenTrabajoManoObra, { foreignKey: 'id_especialidad', as: 'especilidades' });
+	
+	Clase.hasMany(RrhhEmpleadoFichaFamiliar, { foreignKey: 'id_relacion', as: 'relaciones' });
+	Clase.hasMany(RrhhEmpleadoFichaOtrosSeguros, { foreignKey: 'id_tipo_seguro', as: 'tiposSeguros' });
+	
+	Clase.hasMany(RrhhEmpleadoFicha, { foreignKey: 'id_tipo_contrato', as: 'tiposContratos' });
+	Clase.hasMany(RrhhEmpleadoFicha, { foreignKey: 'id_tipo_personal', as: 'personalTipos' });
+	Clase.hasMany(RrhhEmpleadoFicha, { foreignKey: 'id_carga_horarios', as: 'cargasHorarios' });
+	Clase.hasMany(RrhhEmpleadoFicha, { foreignKey: 'id_area', as: 'areas' });
+	Clase.hasMany(RrhhEmpleadoFicha, { foreignKey: 'id_ubicacion', as: 'ubicaciones' });
+	Clase.hasMany(RrhhEmpleadoFicha, { foreignKey: 'id_seguro_salud', as: 'segurosSalud' });
+	Clase.hasMany(RrhhEmpleadoFicha, { foreignKey: 'id_lugar_seguro_salud', as: 'lugarSaludSeguros' });
+	Clase.hasMany(RrhhEmpleadoFicha, { foreignKey: 'id_aporte_seguro_largo_plazo', as: 'aporteSegurosLargoPlazo' });
+	Clase.hasMany(RrhhEmpleadoFicha, { foreignKey: 'id_lugar_seguro_largo_plazo', as: 'lugarSegurosLargoPlazo' });
+	Clase.hasMany(RrhhEmpleadoFicha, { foreignKey: 'id_banco', as: 'bancos' });
 
-
-	MedicoPrerequisito.belongsTo(Clase, { foreignKey: 'id_prerequisito', as: 'prerequisitoClase' });
-	MedicoPrerequisito.belongsTo(MedicoPaciente, { foreignKey: 'id_paciente', as: 'prerequisitoPaciente' });
-
+	Clase.hasMany(Persona, { foreignKey: 'id_pais_nacimiento', as: 'paises' });
+	Clase.hasMany(Persona, { foreignKey: 'id_ciudad_nacimiento', as: 'ciudades' });
+	Clase.hasMany(Persona, { foreignKey: 'id_provincia_nacimiento', as: 'provincias' });
+	Clase.hasMany(Persona, { foreignKey: 'id_localidad_nacimiento', as: 'localidades' });
+	Clase.hasMany(Persona, { foreignKey: 'id_estado_civil', as: 'estadosCiviles' });
+	Clase.hasMany(MedicoPaciente, { foreignKey: 'id_extension', as: 'extensiones' });
+	Clase.hasMany(MedicoPaciente, { foreignKey: 'id_tipo_documento', as: 'tiposDocumentos' });
+	// MedicoPrerequisito.belongsTo(Clase, { foreignKey: 'id_prerequisito', as: 'prerequisitoClase' });//Ya no es requerido/util/relacion desde 13/12/2017
+	// MedicoPrerequisito.belongsTo(MedicoPaciente, { foreignKey: 'id_paciente', as: 'prerequisitoPaciente' });///Ya no es requerido/util/relacion desde 13/12/2017
+	MedicoPrerequisito.hasMany(MedicoPacientePreRequisito,{foreignKey: 'id_prerequisito', as:'preRequisitos'})
+	MedicoPacientePreRequisito.belongsTo(MedicoPrerequisito,{foreignKey:'id_prerequisito',as:'preRequisito'})
+	MedicoPaciente.hasMany(MedicoPacientePreRequisito,{foreignKey:'id_paciente', as :'pacientesPrerequisitos'})
+	MedicoPacientePreRequisito.belongsTo(MedicoPaciente, {foreignKey: 'id_paciente', as :'pacientePrerequisito'})
 
 	Aplicacion.belongsTo(Aplicacion, { foreignKey: 'id_padre', as: 'padre' });
 	Aplicacion.hasMany(Aplicacion, { foreignKey: 'id_padre', as: 'subaplicaciones' });
@@ -181,6 +214,8 @@ module.exports = function (sequelize, Usuario, Persona, Rol, UsuarioRol, Tipo, C
 	Producto.hasMany(ComisionVendedorProducto, { foreignKey: 'id_producto', as: 'comisionesVendedores' });
 	Producto.hasMany(DetalleVentaNoConsolidada, { foreignKey: 'id_producto', as: 'detallesVentaNoConsolidadas' });
 	Producto.belongsTo(Clase, { foreignKey: 'id_tipo_producto', as: 'tipoProducto' });
+	Producto.belongsTo(Clase, { foreignKey: 'id_grupo', as: 'grupo' });
+	Producto.belongsTo(Clase, { foreignKey: 'id_subgrupo', as: 'subgrupo' });
 	Producto.hasMany(ProductoBase, { foreignKey: 'id_producto', as: 'productosBase' });
 	Producto.hasMany(ProductoBase, { foreignKey: 'id_producto_base', as: 'productos' });
 	Producto.belongsTo(ContabilidadCuenta, { foreignKey: 'id_cuenta', as: 'cuenta' });
@@ -368,12 +403,16 @@ module.exports = function (sequelize, Usuario, Persona, Rol, UsuarioRol, Tipo, C
 
 	MedicoPaciente.belongsTo(Persona, { foreignKey: 'id_persona', as: 'persona' });
 	MedicoPaciente.belongsTo(Empresa, { foreignKey: 'id_empresa', as: 'empresa' });
-	MedicoPaciente.hasMany(MedicoPrerequisito, { foreignKey: 'id_paciente', as: 'prerequisitos' });
+	// MedicoPaciente.hasMany(MedicoPrerequisito, { foreignKey: 'id_paciente', as: 'prerequisitos' });//Ya no es requerido/util/relacion desde 13/12/2017
 	MedicoPaciente.hasMany(MedicoPacienteConsulta, { foreignKey: 'id_paciente', as: 'consultas' });
 	MedicoPaciente.hasMany(MedicoPacienteFicha, { foreignKey: 'id_paciente', as: 'fichas' });
 	MedicoPaciente.hasMany(MedicoPacienteVacuna, { foreignKey: 'id_paciente', as: 'pacienteVacunas' })
 	MedicoPaciente.hasMany(MedicoLaboratorioPaciente, { foreignKey: 'id_paciente', as: 'pacienteLaboratorios' })
-
+	MedicoPaciente.hasMany(RrhhEmpleadoFicha, { foreignKey: 'id_empleado', as: 'empleados' });
+	MedicoPaciente.hasMany(RrhhEmpleadoFichaOtrosSeguros, { foreignKey: 'id_empleado', as: 'otrosSeguros' });
+	MedicoPaciente.hasMany(RrhhEmpleadoFichaFamiliar, { foreignKey: 'id_empleado', as: 'familiares' });
+	MedicoPaciente.belongsTo(Clase, { foreignKey: 'id_extension', as: 'extension' });
+	MedicoPaciente.belongsTo(Clase, { foreignKey: 'id_tipo_documento', as: 'tipoDocumento' });
 	MedicoPacienteVacuna.belongsTo(MedicoPaciente, { foreignKey: 'id_paciente', as: 'paciente' })
 
 	MedicoPacienteConsulta.belongsTo(MedicoPaciente, { foreignKey: 'id_paciente', as: 'pacienteConsulta' })
@@ -405,7 +444,7 @@ module.exports = function (sequelize, Usuario, Persona, Rol, UsuarioRol, Tipo, C
 
 	MedicoDiagnosticoPaciente.belongsTo(MedicoDiagnostico, { foreignKey: 'id_diagnostico', as: 'diagnostico' })
 	MedicoDiagnosticoPaciente.belongsTo(MedicoPaciente, { foreignKey: 'id_paciente', as: 'paciente' })
-	MedicoDiagnosticoPaciente.hasMany(MedicoDiagnosticoResultado, { foreignKey: 'id_diagnostico_paciente', as: 'laboratorioResultados' })
+	MedicoDiagnosticoPaciente.hasMany(MedicoDiagnosticoResultado, { foreignKey: 'id_diagnostico_paciente', as: 'diagnosticoResultados' })
 
 	MedicoDiagnosticoResultado.belongsTo(MedicoDiagnosticoPaciente, { foreignKey: 'id_diagnostico_paciente', as: 'diagnosticoResultado' })
 	MedicoDiagnosticoResultado.belongsTo(MedicoDiagnosticoExamen, { foreignKey: 'id_diagnostico_examen', as: 'diagnosticoExamen' })
@@ -511,5 +550,24 @@ module.exports = function (sequelize, Usuario, Persona, Rol, UsuarioRol, Tipo, C
 	MantenimientoOrdenTrabajoSistema.belongsTo(MantenimientoOrdenTrabajo, { foreignKey: 'id_orden_trabajo', as: 'ordenTrabajo' });
 	MantenimientoOrdenTrabajoSistema.belongsTo(Clase, { foreignKey: 'id_orden_trabajo_sistema', as: 'ordenTrabajoSistema' });
 
-	sequelize.sync();
+	
+	RrhhEmpleadoFicha.belongsTo(MedicoPaciente, { foreignKey: 'id_empleado', as: 'empleado' });
+	RrhhEmpleadoFicha.belongsTo(Persona, { foreignKey: 'id_persona_referencia', as: 'personaReferencia' });
+	RrhhEmpleadoFicha.belongsTo(Clase, { foreignKey: 'id_tipo_contrato', as: 'tipoContrato' });
+	RrhhEmpleadoFicha.belongsTo(Clase, { foreignKey: 'id_tipo_personal', as: 'tipoPersonal' });
+	RrhhEmpleadoFicha.belongsTo(Clase, { foreignKey: 'id_carga_horarios', as: 'cargaHorario' });
+	RrhhEmpleadoFicha.belongsTo(Clase, { foreignKey: 'id_area', as: 'area' });
+	RrhhEmpleadoFicha.belongsTo(Clase, { foreignKey: 'id_ubicacion', as: 'ubicacion' });
+	RrhhEmpleadoFicha.belongsTo(Clase, { foreignKey: 'id_seguro_salud', as: 'seguroSalud' });
+	RrhhEmpleadoFicha.belongsTo(Clase, { foreignKey: 'id_lugar_seguro_salud', as: 'lugarSeguroSalud' });
+	RrhhEmpleadoFicha.belongsTo(Clase, { foreignKey: 'id_aporte_seguro_largo_plazo', as: 'aporteSeguroLargoPlazo' });
+	RrhhEmpleadoFicha.belongsTo(Clase, { foreignKey: 'id_lugar_seguro_largo_plazo', as: 'lugarSeguroLargoPlazo' });
+	RrhhEmpleadoFicha.belongsTo(Clase, { foreignKey: 'id_banco', as: 'banco' });
+	
+	RrhhEmpleadoFichaOtrosSeguros.belongsTo(MedicoPaciente, { foreignKey: 'id_empleado', as: 'otroSeguro' });
+	RrhhEmpleadoFichaOtrosSeguros.belongsTo(Clase, { foreignKey: 'id_tipo_seguro', as: 'tipoSeguro' });
+
+	RrhhEmpleadoFichaFamiliar.belongsTo(MedicoPaciente, { foreignKey: 'id_empleado', as: 'empleadoFamiliar' });
+	RrhhEmpleadoFichaFamiliar.belongsTo(Clase, { foreignKey: 'id_relacion', as: 'relacion' });
+	RrhhEmpleadoFichaFamiliar.belongsTo(Persona, { foreignKey: 'id_persona_familiar', as: 'persona' });
 }

@@ -1402,7 +1402,7 @@
 												<div class="sidebar-shortcuts-large" id="sidebar-shortcuts-large">
 													<div class="row" ng-if="grupos_productos.length>0">
 														<div class="col-xs-5" ng-repeat="grupo in listChecked.slice(0, 16)">
-															<button type="button" ng-click="clasificarGrupo(grupo)" class="button-style btn-panel {{color.stylebutton}} btn-block btn-minier text-cut">{{grupo}}
+															<button type="button" ng-click="clasificarGrupo(grupo.id)" class="button-style btn-panel {{color.stylebutton}} btn-block btn-minier text-cut">{{grupo.nombre}}
 																				</button>
 														</div>
 													</div>
@@ -1427,13 +1427,13 @@
 														<ul id="campos-detalle-venta" class="dropdown-menu-right dropdown-menu dropdown-yellow dropdown-caret button-check-group">
 															
 															<input type="text" ng-model="filterText" class="imput-search">
-															<li ng-repeat="grupo in grupos_productos.slice(0, 16)">
+															<li ng-repeat="grupo in grupos_productos">
 														
 																	  
 																	<div class="checkbox">
-																		<label class="block" ng-show="grupo.grupo.toUpperCase().search(filterText.toUpperCase()) !== -1">
+																		<label class="block" ng-show="grupo.nombre.toUpperCase().search(filterText.toUpperCase()) !== -1">
 																			<input name="form-field-checkbox" type="checkbox" class="ace input-lg" ng-model="grupo.selected" ng-click="saveCheckList()">
-																			<span class="lbl bigger-120"> {{grupo.grupo}}</span>
+																			<span class="lbl bigger-120"> {{grupo.nombre}}</span>
 																		</label>
 																	</div>																
 															</li>

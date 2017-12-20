@@ -144,4 +144,28 @@ angular.module('agil.servicios')
 		{
 			'update': { method:'PUT' }
 		});
-});
+})
+
+.factory('SubGruposProductoEmpresa', function($resource) {
+	return $resource(restServer+"subgrupos/empresa/:id_empresa", null,
+	{
+		'update': { method:'PUT' }
+	});
+})
+
+.factory('ListaSubGruposProductoEmpresa', ['SubGruposProductoEmpresa','$q',function(SubGruposProductoEmpresa, $q) 
+{
+var res = function(id_empresa) 
+{
+	var delay = $q.defer();
+	SubGruposProductoEmpresa.query({id_empresa:id_empresa},function(entidades) 
+	{        
+		delay.resolve(entidades);
+	}, function(error) 
+		{
+			delay.reject(error);
+		});
+	return delay.promise;
+};
+	return res;
+}]);

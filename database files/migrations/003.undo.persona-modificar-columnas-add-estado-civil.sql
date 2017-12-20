@@ -1,0 +1,10 @@
+ALTER TABLE gl_persona DROP FOREIGN KEY fk_gl_persona_pais_nacimiento_id;
+ALTER TABLE gl_persona CHANGE COLUMN pais_nacimiento pais_nacimiento VARCHAR(255);
+ALTER TABLE gl_persona DROP FOREIGN KEY fk_gl_persona_ciudad_nacimiento_id;
+ALTER TABLE gl_persona CHANGE COLUMN ciudad_nacimiento ciudad_nacimiento VARCHAR(255);
+ALTER TABLE gl_persona DROP FOREIGN KEY fk_gl_persona_provincia_nacimiento_id;
+ALTER TABLE gl_persona CHANGE COLUMN provincia_nacimiento provincia_nacimiento VARCHAR(255);
+ALTER TABLE gl_persona DROP FOREIGN KEY fk_gl_persona_localidad_nacimiento_id;
+ALTER TABLE gl_persona CHANGE COLUMN localidad_nacimiento localidad_nacimiento VARCHAR(255);
+ALTER TABLE gl_persona DROP FOREIGN KEY fk_gl_persona_estado_civil_id;
+ALTER TABLE gl_persona DROP COLUMN estado_civil;

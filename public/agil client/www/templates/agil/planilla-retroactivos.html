@@ -1,0 +1,587 @@
+<div>
+    <div class="row">
+        <div class="col-xs-12">
+            <!-- PAGE CONTENT BEGINS -->
+            <h2 class="text-primary">PLANILLAS DE RETROACTIVOS</h2>
+            <button  class="btn btn-primary"  ng-click="abrirDialogNuevoPlanillaRetroactivo()">
+				<i class="ace-icon fa fa-plus align-top bigger-125"></i>
+				Nueva Planilla
+			</button>
+             <button ng-disabled="!aplicacion.puede_crear" class="btn btn-danger" ng-click="crearNuevoProducto()" href="#dialog-iniciar-mantenimiento" data-toggle="modal">
+                Importar
+            </button>
+            </button>
+             <button ng-disabled="!aplicacion.puede_crear" class="btn btn-success" ng-click="crearNuevoProducto()" href="#dialog-iniciar-mantenimiento" data-toggle="modal">    
+                Ejemplo de Importación
+            </button>
+            <br>
+            <br>
+            <fieldset>
+                <legend>Filtro Planilla de Retroactivos</legend>
+                <table class="table table-striped table-bordered table-hover table-block" align="center">
+                    <tbody>
+                        <tr>
+                            <td class="no-border-right"></td>
+                            <td>
+                                <label>Mes</label>&nbsp;
+                            </td>
+                            <td>
+                                <label>Año</label>&nbsp;
+                            </td>
+                            <td colspan="3">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="no-border-right text-right">PERIODO</td>
+                            <td>
+                                <input type="text" ng-model="filtro.razon_social" class="ng-pristine ng-untouched ng-valid ng-empty"> 
+                            </td>
+                            <td>
+                                <input type="text" ng-model="filtro.nit" class="ng-pristine ng-untouched ng-valid ng-empty">
+                            </td>
+                            <td colspan="3">
+                                <button type="submit" ng-disabled="formularioFiltroVentas.$invalid" class="btn btn-primary">
+									<i class="ace-icon fa fa-search  align-top bigger-125"></i>
+										Filtrar
+								</button>
+                                <button class="btn btn-danger btn-md">
+									<i class="ace-icon fa fa-print align-top bigger-125"></i>
+										PDF
+								</button>
+                                <button class="btn btn-success btn-md">
+									<i class="ace-icon fa fa-print bigger-125"></i>
+										Excel
+                                </button>
+                            </td>
+                        </tr>    
+                    </tbody>
+                </table>
+            </fieldset>
+            <div class="table-header">
+                <a class="white" href="#" data-toggle="modal" data-target="#dialog-editar-historico">
+                    <i class="ace-icon fa fa-h-square bigger-130"></i>
+                </a> Lista de Planillas
+            </div>
+            <!-- div.table-responsive -->
+            <div class="table-planillas-rc-iva">
+                <table id="dynamic-table" class="table table-striped table-bordered table-hover">
+                    <thead>
+                        <tr>
+                            <th>Nro.</th>
+                            <th>Año</th>
+                            <th>Mes:</th>
+                            <th>Sueldo Básico:</th>
+                            <th>Horas Extras:</th>
+                            <th>Total Horas Extras</th>
+                            <th>Recargo Nocturno</th>
+                            <th>Bono Antiguedad</th>
+                            <th>Bono Frontera</th>
+                            <th>Otros Bonos</th>
+                            <th>Total Ganado</th>
+                            <th>AFP</th>
+                            <th>RC IVA</th>
+                            <th>Total descuentos</th>
+                            <th>Líquido Pagable</th>
+                            <th class="table__side-rc-iva head-side-rc-iva">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>2017</td>
+                            <td>Enero</td>
+                            <td>800000</td>
+                            <td>400</td>
+                            <td>5000</td>
+                            <td>7500</td>
+                            <td>85000</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>897500</td>
+                            <td>7500</td>
+                            <td>0</td>
+                            <td>9000</td>
+                            <td>26500</td>
+                            <td class="table__side-rc-iva">
+                                <div class="hidden-sm hidden-xs action-buttons">
+                                    <a class="blue" href="#">
+                                        <i class="ace-icon fa fa-search-plus bigger-130"></i>
+                                    </a>
+                                    <a class="red" href="#">
+                                        <i class="ace-icon fa fa-pencil-square-o bigger-130"></i>
+                                    </a>
+                                     <a class="blue" href="#">
+                                        <i class="ace-icon glyphicon glyphicon-print bigger-130"></i>
+                                    </a>
+                                    <a class="red" href="#">
+                                        <i class="ace-icon fa fa-trash-o bigger-130"></i>
+                                    </a>   
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>2017</td>
+                            <td>Febrero</td>
+                            <td>800000</td>
+                            <td>400</td>
+                            <td>5000</td>
+                            <td>7500</td>
+                            <td>85000</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>897500</td>
+                            <td>7500</td>
+                            <td>0</td>
+                            <td>9000</td>
+                            <td>26500</td>
+                            <td class="table__side-rc-iva">
+                               <div class="hidden-sm hidden-xs action-buttons">
+                                    <a class="blue" href="#">
+                                        <i class="ace-icon fa fa-search-plus bigger-130"></i>
+                                    </a>
+                                    <a class="red" href="#">
+                                        <i class="ace-icon fa fa-pencil-square-o bigger-130"></i>
+                                    </a>
+                                     <a class="blue" href="#">
+                                        <i class="ace-icon glyphicon glyphicon-print bigger-130"></i>
+                                    </a>
+                                    <a class="red" href="#">
+                                        <i class="ace-icon fa fa-trash-o bigger-130"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                      
+                        <tr>
+                            <td colspan="2"></td>
+                            <td>TOTALES</td>
+                            <td>800000</td>
+                            <td>40000</td>
+                            <td>760000</td>
+                            <td>98800</td>
+                            <td>50000</td>
+                            <td>5200</td>
+                            <td>0</td>
+                            <td>10000</td>
+                            <td>5000</td>
+                            <td>100</td>
+                            <td>5100</td>
+                            <td>10200</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+    <!-- Modal  nueva planilla retroactivo ================================00-->
+    <div class="modal" id="dialog-nueva-planilla-retroactivo">
+        <div class="modal-header ficha">
+            <h4 class="modal-title" id="myModalLabel"> PLANILLA DE RETROACTIVOS</h4>
+        </div>
+
+        <div class="modal-body">
+            
+            <legend>Filtro Planilla de Retroactivos</legend>
+            <table class="table table-striped table-bordered table-hover table-block" align="center">
+                <tbody>
+                    <tr>
+                        <td class="no-border-right"></td>
+                        <td>
+                            <label>Mes</label>&nbsp;
+                        </td>
+                        <td>
+                            <label>Año</label>&nbsp;
+                        </td>
+                        <td colspan="3">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="no-border-right text-right">PERIODO</td>
+                        <td>
+                            <select id="pago" name="pago" ng-model="filtro.tipo_pago" data-placeholder="Elija un tipo de pago" class="form-control"><option value="? undefined:undefined ?"></option>
+                                <option value="0">ENERO</option>
+                                <!-- ngRepeat: tipoPago in tiposPago --><option ng-repeat="tipoPago in tiposPago" value="17" class="ng-binding ng-scope">FEBRERO</option><!-- end ngRepeat: tipoPago in tiposPago --><option ng-repeat="tipoPago in tiposPago" value="18" class="ng-binding ng-scope">MARZO</option><!-- end ngRepeat: tipoPago in tiposPago -->
+                            </select>
+                        </td> 
+                        <td>
+                            <select id="pago" name="pago" ng-model="filtro.tipo_pago" data-placeholder="Elija un tipo de pago" class="form-control"><option value="? undefined:undefined ?"></option>
+                                <option value="0">2015</option>
+                                <!-- ngRepeat: tipoPago in tiposPago --><option ng-repeat="tipoPago in tiposPago" value="17" class="ng-binding ng-scope">2016</option><!-- end ngRepeat: tipoPago in tiposPago --><option ng-repeat="tipoPago in tiposPago" value="18" class="ng-binding ng-scope">2017</option><!-- end ngRepeat: tipoPago in tiposPago -->
+                            </select>
+                        </td>
+                        <td colspan="3">
+                             <button type="submit" ng-disabled="formularioFiltroVentas.$invalid" class="btn btn-primary">
+                               <i class="ace-icon fa fa-search  align-top bigger-125"></i>
+                                    FILTRAR
+                            </button>
+                            <button type="submit" ng-disabled="formularioFiltroVentas.$invalid" class="btn btn-success">
+                                <i class=""></i>
+                                    Generar
+                            </button>
+                            <button type="submit" ng-disabled="formularioFiltroVentas.$invalid" class="btn btn-info">
+                                <i class="ace-icon fa fa-print  align-top bigger-125"></i>
+                                    C. Costo
+                            </button>
+                            <button class="btn btn-danger btn-md">
+                                <i class="ace-icon fa fa-print align-top bigger-125"></i>
+                                    PDF
+                            </button>
+                            <button class="btn btn-success btn-md">
+                                <i class="ace-icon fa fa-print bigger-125"></i>
+                                    Excel
+                            </button>
+                            
+                            <button type="button" class="btn btn-danger" ng-click="cerrarDialogNuevoPlanillaRetroactivo()">
+                                <i class="glyphicon glyphicon-remove" aria-hidden="true"></i> 
+                                    Salir
+                            </button>
+                        </td> 
+                    </tr>   
+                    <tr>
+                        <td>
+                            <label></label>&nbsp;
+                        </td>
+                        <td>
+                            <label>Nombre</label>&nbsp;
+                        </td>
+                        <td>
+                            <label>Cedula identidad</label>&nbsp;
+                        </td>
+                        <td>
+                            <label>Cargo</label>&nbsp;
+                        </td>
+                        <td>
+                            <label>Campamento</label>&nbsp;
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>FILTRO</td>
+                        <td>    
+                            <input type="text" ng-model="filtro.razon_social" class="ng-pristine ng-untouched ng-valid ng-empty">
+                        </td>
+                        <td>
+                            <input type="number" ng-model="filtro.nit" class="ng-pristine ng-untouched ng-valid ng-empty">
+                        </td>
+                       <td>
+                            <select id="pago" name="pago" ng-model="filtro.tipo_pago"  class="form-control"><option value="? undefined:undefined ?"></option>
+                                <option value="0">TODOS</option>
+                                <!-- ngRepeat: tipoPago in tiposPago --><option ng-repeat="tipoPago in tiposPago" value="17" class="ng-binding ng-scope">Cocinero</option><!-- end ngRepeat: tipoPago in tiposPago --><option ng-repeat="tipoPago in tiposPago" value="18" class="ng-binding ng-scope">Copero</option><!-- end ngRepeat: tipoPago in tiposPago -->
+                            </select>
+                        </td>
+                        <td>
+                            <select id="pago" name="pago" ng-model="filtro.tipo_pago" class="form-control"><option value="? undefined:undefined ?"></option>
+                                <option value="0">TODOS</option>
+                                <!-- ngRepeat: tipoPago in tiposPago --><option ng-repeat="tipoPago in tiposPago" value="17" class="ng-binding ng-scope">EMSSCZ</option><!-- end ngRepeat: tipoPago in tiposPago --><option ng-repeat="tipoPago in tiposPago" value="18" class="ng-binding ng-scope">BULO BULO</option><!-- end ngRepeat: tipoPago in tiposPago -->
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label></label>&nbsp;
+                        </td>
+                        <td>
+                            <label>Centro de Costo</label>&nbsp;
+                        </td>
+                        <td>
+                            <label>Matrícula</label>&nbsp;
+                        </td>
+                        <td>
+                            <label>Sueldo Basico</label>
+                        </td>
+                        <td>
+                            <label>Total Ganado</label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            
+                        </td>
+                        <td>
+                           <input type="number" ng-model="filtro.nit" class="ng-pristine ng-untouched ng-valid ng-empty">
+                        </td>
+                        <td>
+                            <input type="number" ng-model="filtro.nit" class="ng-pristine ng-untouched ng-valid ng-empty">
+                        </td>
+                        <td>
+                            <input type="number" ng-model="filtro.nit" class="ng-pristine ng-untouched ng-valid ng-empty">
+                        </td>
+                        <td>
+                            <input type="number" ng-model="filtro.nit" class="ng-pristine ng-untouched ng-valid ng-empty">
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="table-header">
+                Planilla Retroactivos
+            </div>
+            <!-- div.table-responsive -->
+            <div class="table-planillas-rc-iva">
+                <table class="table table-bordered table-hover">
+                    <thead>
+                        <tr>
+                            <th>Nro.</th>
+                            <th>Empleado</th>
+                            <th>Fecha Nacim.:</th>
+                            <th>CI:</th>
+                            <th>Cargo:</th>
+                            <th>Campamento:</th>
+                            <th>Fecha Ingreso:</th>
+                            <th>Matrícula:</th>
+                            <th>Sueldo Básico:</th>
+                            <th>Horas Extras:</th>
+                            <th>Total Horas Extras</th>
+                            <th>Recargo Nocturno</th>
+                            <th>Bono Antiguedad</th>
+                            <th>Bono Frontera</th>
+                            <th>Otros Bonos</th>
+                            <th>Total Ganado</th>
+                            <th>AFP</th>
+                            <th>RC IVA</th>
+                            <th>Total Des.</th>
+                            <th>Líquido Pagable</th>
+                            <th class="table__side-rc-iva head-side-rc-iva">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>Antonio Fernando Torrico Angulo</td>
+                            <td>31/03/1986</td>
+                            <td>4391485</td>
+                            <td>Copero</td>
+                            <td>EMSSCZ</td>
+                            <td>02/01/2017</td>
+                            <td>PPR190886</td>
+                            <td>5000</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>300</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>5300</td>
+                            <td>673.63</td>
+                            <td>0</td>
+                            <td>673.63</td>
+                            <td>4626.37</td>
+                            <td class="table__side-rc-iva">
+                                <div class="hidden-sm hidden-xs action-buttons">
+                                    <a class="blue" href="#">
+                                        <i class="ace-icon fa fa-search-plus bigger-130"></i>
+                                    </a>
+                                    <a class="red" href="#">
+                                        <i class="ace-icon fa fa-pencil-square-o bigger-130"></i>
+                                    </a>
+                                    <a class="red" href="#">
+                                        <i class="ace-icon fa fa-trash-o bigger-130"></i>
+                                    </a>   
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>Pedro Gumucio Condarco</td>
+                            <td>31/03/1986</td>
+                            <td>4391485</td>
+                            <td>Copero</td>
+                            <td>EMSSCZ</td>
+                            <td>02/01/2017</td>
+                            <td>PPR190886</td>
+                            <td>5000</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>300</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>5300</td>
+                            <td>673.63</td>
+                            <td>0</td>
+                            <td>673.63</td>
+                            <td>4626.37</td>
+                            <td class="table__side-rc-iva">
+                               <div class="hidden-sm hidden-xs action-buttons">
+                                    <a class="blue" href="#">
+                                        <i class="ace-icon fa fa-search-plus bigger-130"></i>
+                                    </a>
+                                    <a class="red" href="#">
+                                        <i class="ace-icon fa fa-pencil-square-o bigger-130"></i>
+                                    </a>
+                                    <a class="red" href="#">
+                                        <i class="ace-icon fa fa-trash-o bigger-130"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="6"></td>
+                            <td>TOTALES</td>
+                            <td>59400</td>
+                            <td>24000</td>
+                            <td>35400</td>
+                            <td>4602</td>
+                            <td>402</td>
+                            <td>3120</td>
+                            <td>1080</td>
+                            <td>0</td>
+                            <td>1020</td>
+                            <td>60</td>
+                            <td>1080</td>
+                            <td>0</td>
+                            <td>1000</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <!-- =====  fin modal  nueva planilla retroactivo ====== -->
+    <!-- =====  modal  formulario-110 ====== -->
+    <div id="dialog-formulario-110" class="modal">
+        <div class="modal-header ficha">
+            <h4 class="modal-title" id="myModalLabel"> Carga de Formulario 110</h4>
+            <h5 class="modal-title">Juan Perez Ardaya</h5>
+        </div>
+        <div class="modal-body">
+            <form>
+                <div class="row">
+                    <div class="form-group col-sm-12">
+                        <label for="sexo">Monto Declarado</label>
+                        <input type="text" class="form-control" id="nombres" name="nombres" placeholder="Desde">
+                    </div>
+                    <div class="form-group col-sm-12">
+                        <label for="sexo">IVA CF</label>
+                        <input type="text" class="form-control" id="nombres" name="nombres" placeholder="Desde">
+                    </div>
+                    <div class="form-group col-sm-12">
+                        <label for="sexo">Número de Facturas</label>
+                        <input type="text" class="form-control" id="nombres" name="nombres" placeholder="Desde">
+                    </div>
+                </div>
+            </form>
+        </div><!-- /.row -->
+        <div class="row">
+            <div class="modal-footer wizard-actions">
+                <button class="btn btn-primary btn-sm" ng-click="cerrarDialogFormulario110()"><i class="glyphicon glyphicon-floppy-disk"></i>Guardar
+                </button>
+                <button class="btn btn-danger btn-sm" ng-click="cerrarDialogFormulario110()"><i class="ace-icon fa fa-times"></i>Cancelar
+                </button>
+            </div>
+        </div>
+    </div>
+    <!--- ==== fin modal formulario-110 ================================ -->
+    <!--- ==== modal formulario-general-110  ================================ -->
+    <div id="dialog-formulario-general-110" class="modal">
+        <div class="modal-header ficha">
+            <h4 class='smaller text-white text-uppercase'><i class='icono-impuestos bigger-180'></i> <label> Carga General Del Formulario 110 </label></h4>
+        </div>
+        <div class="clearfix"></div>
+        <div class="table-responsive">
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Nombre Completo</th>
+                        <th>Monto Declarado</th>
+                        <th>IVA CF</th>
+                        <th>Número de Facturas</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th scope="row">1</th>
+                        <td>Juan Pérez</td>
+                        <td contenteditable="true" class="editable">100</td>
+                        <td contenteditable="true" class="editable">100</td>
+                        <td contenteditable="true" class="editable">200</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">2</th>
+                        <td>Juan Valdez</td>
+                        <td contenteditable="true" class="editable">400</td>
+                        <td contenteditable="true" class="editable">100</td>
+                        <td contenteditable="true" class="editable">500</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="row">
+            
+            <div class="modal-footer wizard-actions">
+                <button class="btn btn-primary btn-sm pull-left" ng-click="cerrarDialogFormularioGeneral110()">
+                    <span class="ace-icon fa fa-cloud-upload"></span>
+                    Importar
+                </button>
+                <button class="btn btn-success btn-sm pull-left" ng-click="cerrarDialogFormularioGeneral110()">
+                    <span class="ace-icon fa fa-cloud-download"></span>
+                    Ejemplo de Importacion
+                </button>
+                <button class="btn btn-primary btn-sm" ng-click="cerrarDialogFormularioGeneral110()">
+                    <span class="glyphicon glyphicon-floppy-disk"></span>
+                    Guardar
+                </button>
+                <button class="btn btn-danger btn-sm" ng-click="cerrarDialogFormularioGeneral110()"><i class="ace-icon fa fa-times"></i>Cancelar
+                </button>
+            </div>
+        </div>
+    </div>
+    <!--- ==== fin modal formulario-general-110  ================================ -->
+    <!-- =========  dialog archivos-txt ==========  -->
+    <div id="dialog-archivos-txt" class="modal">
+      
+        <div class="modal-header ficha">
+            <h4 class='smaller text-white text-uppercase'><i class='fa fa-file-text bigger-160'></i> <label> &nbsp;ARCHIVOS TXT</label></h4>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div class="form-group col-sm-1">
+                    <div class="blue buttons-align">
+                        <label for="ciudad">Periodo</label>
+                    </div>
+                </div>
+                <div class="form-group col-sm-3">
+                    <label for="nombres">Mes</label>
+                    <select name="pago" class="form-control" >
+                            <option></option>
+                            <option value="0">ENERO</option>
+                    </select>
+                </div>
+                <div class="form-group col-sm-3">
+                    <label for="nombres">Año</label>
+                    <select name="pago" class="form-control" >
+                        <option></option>
+                        <option value="2015">2015</option>
+                    </select>
+                </div>
+                <div class="form-group col-sm-4">
+                    <div class="buttons-align">
+                        <button type="button" class="btn btn-sm btn-primary">
+                            <i class="fa fa-file-text"></i>
+                            TXT
+                        </button>
+                        <button type="button" class="btn btn-danger btn-sm">
+                            <i class=" fa fa-print align-top "></i>
+                            Pdf
+                        </button>
+                        <button type="button" class="btn btn-success btn-sm">
+                            <i class=" fa fa-print align-top "></i>
+                            Excel
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="modal-footer wizard-actions">
+                <button class="btn btn-danger btn-sm" ng-click="cerrarDialogArchivosTXT()"><i class="ace-icon fa fa-times"></i>Cancelar
+                </button>
+            </div>
+        </div>
+    </div>
+    <!--- fin modal archivos-txt ======== -->
+
+  
+</div>

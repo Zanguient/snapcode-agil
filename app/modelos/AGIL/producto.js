@@ -36,12 +36,12 @@ module.exports=function(sequelize,Sequelize){
 		type: Sequelize.STRING,
 		field: 'descripcion'
 	  },
-	  grupo: {
-		type: Sequelize.STRING,
+	  id_grupo: {
+		type: Sequelize.INTEGER,
 		field: 'grupo'
 	  },
-	  subgrupo:{
-		type: Sequelize.STRING,
+	  id_subgrupo:{
+		type: Sequelize.INTEGER,
 		field: 'subgrupo'  
 	  },
 	  caracteristica_especial1:{

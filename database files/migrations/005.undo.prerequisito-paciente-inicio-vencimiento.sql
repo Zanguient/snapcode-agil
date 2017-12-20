@@ -1,0 +1,2 @@
+ALTER TABLE agil_medico_paciente_prerequisito DROP COLUMN fecha_inicio;
+ALTER TABLE agil_medico_paciente_prerequisito DROP COLUMN fecha_vencimiento;

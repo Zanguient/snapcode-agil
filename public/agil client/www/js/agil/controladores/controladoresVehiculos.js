@@ -867,7 +867,7 @@ angular.module('agil.controladores')
 			//console.log($scope.ordenTrabajoManoObra)
 		}
 		$scope.guardarServicioExternoEditado = function (dato) {
-			/* $scope.nuevoOt.servicioExterno[dato.index] = dato */
+			$scope.nuevoOt.servicioExterno[dato.index] = dato
 			$scope.servicioExterno = { edit: false }
 		}
 		//FIN FUNCIONES MODAL NUEVO OT

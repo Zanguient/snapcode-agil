@@ -1,7 +1,7 @@
 angular.module('agil.servicios')
 
     .factory('PacienteActivo', function ($resource) {
-        return $resource(restServer + "pacientes/:id_paciente/activo/:activo", { id_paciente: '@id_paciente', activo:'@activo' },
+        return $resource(restServer + "pacientes/:id_paciente/activo/:activo", { id_paciente: '@id_paciente', activo: '@activo' },
             {
                 'update': { method: 'PUT' }
             });
@@ -103,7 +103,7 @@ angular.module('agil.servicios')
     .factory('obtenerPaciente', ['Paciente', '$q', function (Paciente, $q) {
         var res = function (idPaciente) {
             var delay = $q.defer();
-            Paciente.get({ id_paciente: idPaciente}, function (entidad) {
+            Paciente.get({ id_paciente: idPaciente }, function (entidad) {
                 delay.resolve(entidad);
             }, function (error) {
                 delay.reject(error);
@@ -111,12 +111,12 @@ angular.module('agil.servicios')
             return delay.promise;
         };
         return res;
-    }])        
+    }])
 
     .factory('ListaDatosPrerequisito', ['ListaPrerequisitos', '$q', function (ListaPrerequisitos, $q) {
         var res = function () {
             var delay = $q.defer();
-            ListaPrerequisitos.query(function (entidad) {
+            ListaPrerequisitos.get(function (entidad) {
                 delay.resolve(entidad);
             }, function (error) {
                 delay.reject(error);
@@ -161,12 +161,29 @@ angular.module('agil.servicios')
         };
         return res;
     }])
-
     .factory('Prerequisito', function ($resource) {
-        return $resource(restServer + "prerequisito/paciente/:id_paciente", { id_paciente: '@id_paciente' },
+        return $resource(restServer + "prerequisitos",
             {
                 'update': { method: 'PUT' }
             });
+    })
+    .factory('Prerequisitos', ['Prerequisito', '$q', function (Prerequisito, $q) {
+        var res = function () {
+            var delay = $q.defer();
+            Prerequisito.get(function (entidades) {
+                delay.resolve(entidades);
+            }, function (error) {
+                delay.reject(error);
+            });
+            return delay.promise;
+        };
+        return res;
+    }])
+    .factory('PrerequisitoPaciente', function ($resource) {
+        return $resource(restServer + "prerequisito/paciente")
+            // {
+            //     'update': { method: 'PUT' }
+            // });
     })
 
     .factory('CrearPrerequisito', ['Prerequisito', '$q', function (Prerequisito, $q) {
@@ -202,7 +219,7 @@ angular.module('agil.servicios')
     .factory('ListaPrerequisitosEmpresa', ['listaPrarequisitos', '$q', function (listaPrarequisitos, $q) {
         var res = function (idEmpresa, filtro) {
             var delay = $q.defer();
-            listaPrarequisitos.query({ id_empresa: idEmpresa, inicio: filtro.inicio, fin: filtro.fin }, function (entidad) {
+            listaPrarequisitos.get({ id_empresa: idEmpresa, inicio: filtro.inicio, fin: filtro.fin }, function (entidad) {
                 delay.resolve(entidad);
             }, function (error) {
                 delay.reject(error);
@@ -211,7 +228,25 @@ angular.module('agil.servicios')
         };
         return res;
     }])
-    
+    .factory('listaAlertasPrarequisitosPaciente', function ($resource) {
+        return $resource(restServer + "medico-paciente-pre-requisito-alertas/empresa/:id_empresa/inicio/:inicio/fin/:fin", null,
+            {
+                'update': { method: 'PUT' }
+            });
+    })
+    .factory('ListaAlertasPrerequisitosPaciente', ['listaAlertasPrarequisitosPaciente', '$q', function (listaAlertasPrarequisitosPaciente, $q) {
+        var res = function (idEmpresa, filtro) {
+            var delay = $q.defer();
+            listaAlertasPrarequisitosPaciente.get({ id_empresa: idEmpresa, inicio: filtro.inicio, fin: filtro.fin }, function (entidad) {
+                delay.resolve(entidad);
+            }, function (error) {
+                delay.reject(error);
+            });
+            return delay.promise;
+        };
+        return res;
+    }])
+
     .factory('listaVacunas', function ($resource) {
         return $resource(restServer + "medico-paciente-vacunas/empresa/:id_empresa/inicio/:inicio/fin/:fin", null,
             {
@@ -221,7 +256,7 @@ angular.module('agil.servicios')
     .factory('ListaVacunasEmpresa', ['listaVacunas', '$q', function (listaVacunas, $q) {
         var res = function (idEmpresa, filtro) {
             var delay = $q.defer();
-            listaVacunas.query({ id_empresa: idEmpresa, inicio: filtro.inicio, fin: filtro.fin }, function (entidad) {
+            listaVacunas.get({ id_empresa: idEmpresa, inicio: filtro.inicio, fin: filtro.fin }, function (entidad) {
                 delay.resolve(entidad);
             }, function (error) {
                 delay.reject(error);
@@ -240,7 +275,7 @@ angular.module('agil.servicios')
     .factory('ListaPrerequisitosPaciente', ['listaPrarequisitosPaciente', '$q', function (listaPrarequisitosPaciente, $q) {
         var res = function (idPaciente, filtro) {
             var delay = $q.defer();
-            listaPrarequisitosPaciente.query({ id_paciente: idPaciente, inicio: filtro.inicio, fin: filtro.fin }, function (entidad) {
+            listaPrarequisitosPaciente.get({ id_paciente: idPaciente, inicio: filtro.inicio, fin: filtro.fin }, function (entidad) {
                 delay.resolve(entidad);
             }, function (error) {
                 delay.reject(error);
@@ -299,7 +334,24 @@ angular.module('agil.servicios')
         };
         return res;
     }])
-
+    .factory('FichasMedicoPaciente', function ($resource) {
+        return $resource(restServer + "historial-ficha-medico-paciente/paciente/:id_paciente/inicio/:inicio/fin/:fin/tipo-control/:tipo_control", null,
+            {
+                'update': { method: 'PUT' }
+            });
+    })
+    .factory('HistorialFichaMedicoPaciente', ['FichasMedicoPaciente', '$q', function (FichasMedicoPaciente, $q) {
+        var res = function (idPaciente, filtro) {
+            var delay = $q.defer();
+            FichasMedicoPaciente.query({ id_paciente: idPaciente, inicio: filtro.inicio, fin: filtro.fin, tipo_control: filtro.tipo_control }, function (entidades) {
+                delay.resolve(entidades);
+            }, function (error) {
+                delay.reject(error);
+            });
+            return delay.promise;
+        };
+        return res;
+    }])
     .factory('MedicoPacienteConsulta', function ($resource) {
         return $resource(restServer + "medico-paciente-consulta", {},
             {
@@ -465,7 +517,7 @@ angular.module('agil.servicios')
         return res;
     }])
 
-      // .factory('crearVacuna', ['datosVacunas', '$q', function (datosVacunas, $q) {
+    // .factory('crearVacuna', ['datosVacunas', '$q', function (datosVacunas, $q) {
     //     var res = function (paciente) {
     //         var delay = $q.defer();
     //         datosVacunas.save({ id_paciente: id_paciente }, function (entidades) {
@@ -487,9 +539,9 @@ angular.module('agil.servicios')
     })
 
     .factory('CrearLaboratorio', ['MedicoLaboratorio', '$q', function (MedicoLaboratorio, $q) {
-        var res = function (idEmpresa,laboratorio) {
+        var res = function (idEmpresa, laboratorio) {
             var delay = $q.defer();
-            MedicoLaboratorio.save({id_empresa:idEmpresa},laboratorio,function (entidades) {
+            MedicoLaboratorio.save({ id_empresa: idEmpresa }, laboratorio, function (entidades) {
                 delay.resolve(entidades);
             }, function (error) {
                 delay.reject(error);
@@ -498,10 +550,34 @@ angular.module('agil.servicios')
         };
         return res;
     }])
-        .factory('ListaLaboratorios', ['MedicoLaboratorio', '$q', function (MedicoLaboratorio, $q) {
+    .factory('ActualizarLaboratorio', ['MedicoLaboratorio', '$q', function (MedicoLaboratorio, $q) {
+        var res = function (idEmpresa, laboratorio) {
+            var delay = $q.defer();
+            MedicoLaboratorio.save({ id_empresa: idEmpresa }, laboratorio, function (entidades) {
+                delay.resolve(entidades);
+            }, function (error) {
+                delay.reject(error);
+            });
+            return delay.promise;
+        };
+        return res;
+    }])
+    .factory('EliminarLaboratorio', ['MedicoLaboratorio', '$q', function (MedicoLaboratorio, $q) {
+        var res = function (idEmpresa, laboratorio) {
+            var delay = $q.defer();
+            MedicoLaboratorio.update({ id_empresa: idEmpresa }, laboratorio, function (entidades) {
+                delay.resolve(entidades);
+            }, function (error) {
+                delay.reject(error);
+            });
+            return delay.promise;
+        };
+        return res;
+    }])
+    .factory('ListaLaboratorios', ['MedicoLaboratorio', '$q', function (MedicoLaboratorio, $q) {
         var res = function (idEmpresa) {
             var delay = $q.defer();
-            MedicoLaboratorio.query({id_empresa:idEmpresa},function (entidades) {
+            MedicoLaboratorio.query({ id_empresa: idEmpresa }, function (entidades) {
                 delay.resolve(entidades);
             }, function (error) {
                 delay.reject(error);
@@ -518,9 +594,9 @@ angular.module('agil.servicios')
     })
 
     .factory('CrearLaboratorioExamen', ['MedicoLaboratorioExamen', '$q', function (MedicoLaboratorioExamen, $q) {
-        var res = function (idLaboratorio,examen) {
+        var res = function (idLaboratorio, examen) {
             var delay = $q.defer();
-            MedicoLaboratorioExamen.save({id_laboratorio:idLaboratorio},examen,function (entidades) {
+            MedicoLaboratorioExamen.save({ id_laboratorio: idLaboratorio }, examen, function (entidades) {
                 delay.resolve(entidades);
             }, function (error) {
                 delay.reject(error);
@@ -529,10 +605,34 @@ angular.module('agil.servicios')
         };
         return res;
     }])
-        .factory('ListaLaboratorioExamenes', ['MedicoLaboratorioExamen', '$q', function (MedicoLaboratorioExamen, $q) {
+    .factory('ActualizarLaboratorioExamen', ['MedicoLaboratorioExamen', '$q', function (MedicoLaboratorioExamen, $q) {
+        var res = function (idLaboratorio, examen) {
+            var delay = $q.defer();
+            MedicoLaboratorioExamen.save({ id_laboratorio: idLaboratorio }, examen, function (entidades) {
+                delay.resolve(entidades);
+            }, function (error) {
+                delay.reject(error);
+            });
+            return delay.promise;
+        };
+        return res;
+    }])
+    .factory('EliminarLaboratorioExamen', ['MedicoLaboratorioExamen', '$q', function (MedicoLaboratorioExamen, $q) {
+        var res = function (idLaboratorio, examen) {
+            var delay = $q.defer();
+            MedicoLaboratorioExamen.update({ id_laboratorio: idLaboratorio }, examen, function (entidades) {
+                delay.resolve(entidades);
+            }, function (error) {
+                delay.reject(error);
+            });
+            return delay.promise;
+        };
+        return res;
+    }])
+    .factory('ListaLaboratorioExamenes', ['MedicoLaboratorioExamen', '$q', function (MedicoLaboratorioExamen, $q) {
         var res = function (idLaboratorio) {
             var delay = $q.defer();
-            MedicoLaboratorioExamen.query({id_laboratorio:idLaboratorio},function (entidades) {
+            MedicoLaboratorioExamen.query({ id_laboratorio: idLaboratorio }, function (entidades) {
                 delay.resolve(entidades);
             }, function (error) {
                 delay.reject(error);
@@ -542,16 +642,16 @@ angular.module('agil.servicios')
         return res;
     }])
     .factory('MedicoLaboratorioExamenResultado', function ($resource) {
-        return $resource(restServer + "nuevo-laboratorio-resultado/laboratorio/:id_laboratorio/paciente/:id_paciente", { id_laboratorio: '@id_laboratorio',id_paciente: '@id_paciente' },
+        return $resource(restServer + "nuevo-laboratorio-resultado/laboratorio/:id_laboratorio/paciente/:id_paciente", { id_laboratorio: '@id_laboratorio', id_paciente: '@id_paciente' },
             {
                 'update': { method: 'PUT' }
             });
     })
 
     .factory('CrearLaboratorioExamenResultado', ['MedicoLaboratorioExamenResultado', '$q', function (MedicoLaboratorioExamenResultado, $q) {
-        var res = function (idLaboratorio,idPaciente,datos) {
+        var res = function (idLaboratorio, idPaciente, datos) {
             var delay = $q.defer();
-            MedicoLaboratorioExamenResultado.save({id_laboratorio:idLaboratorio,id_paciente:idPaciente},datos,function (entidades) {
+            MedicoLaboratorioExamenResultado.save({ id_laboratorio: idLaboratorio, id_paciente: idPaciente }, datos, function (entidades) {
                 delay.resolve(entidades);
             }, function (error) {
                 delay.reject(error);
@@ -560,17 +660,18 @@ angular.module('agil.servicios')
         };
         return res;
     }])
-     .factory('LaboratorioExamenHistorial', function ($resource) {
-        return $resource(restServer + "laboratorio-resultado/laboratorio/:id_laboratorio/paciente/:id_paciente/inicio/:inicio/fin/:fin",null,
+
+    .factory('LaboratorioExamenHistorial', function ($resource) {
+        return $resource(restServer + "laboratorio-resultado/laboratorio/:id_laboratorio/paciente/:id_paciente/inicio/:inicio/fin/:fin", null,
             {
                 'update': { method: 'PUT' }
             });
     })
 
     .factory('LaboratorioExamenListaHistorial', ['LaboratorioExamenHistorial', '$q', function (LaboratorioExamenHistorial, $q) {
-        var res = function (idLaboratorio,idPaciente,filtro) {
+        var res = function (idLaboratorio, idPaciente, filtro) {
             var delay = $q.defer();
-            LaboratorioExamenHistorial.query({id_laboratorio:idLaboratorio,id_paciente:idPaciente,inicio:filtro.inicio,fin:filtro.fin},function (entidades) {
+            LaboratorioExamenHistorial.query({ id_laboratorio: idLaboratorio, id_paciente: idPaciente, inicio: filtro.inicio, fin: filtro.fin }, function (entidades) {
                 delay.resolve(entidades);
             }, function (error) {
                 delay.reject(error);
@@ -579,8 +680,8 @@ angular.module('agil.servicios')
         };
         return res;
     }])
-  // rutas laboratorio fin
-.factory('MedicoDiagnostico', function ($resource) {
+    // rutas laboratorio fin
+    .factory('MedicoDiagnostico', function ($resource) {
         return $resource(restServer + "nuevo-diagnostico/empresa/:id_empresa", { id_empresa: '@id_empresa' },
             {
                 'update': { method: 'PUT' }
@@ -588,9 +689,9 @@ angular.module('agil.servicios')
     })
 
     .factory('CrearDiagnostico', ['MedicoDiagnostico', '$q', function (MedicoDiagnostico, $q) {
-        var res = function (idEmpresa,diagnostico) {
+        var res = function (idEmpresa, diagnostico) {
             var delay = $q.defer();
-            MedicoDiagnostico.save({id_empresa:idEmpresa},diagnostico,function (entidades) {
+            MedicoDiagnostico.save({ id_empresa: idEmpresa }, diagnostico, function (entidades) {
                 delay.resolve(entidades);
             }, function (error) {
                 delay.reject(error);
@@ -599,10 +700,34 @@ angular.module('agil.servicios')
         };
         return res;
     }])
-        .factory('ListaDiagnosticos', ['MedicoDiagnostico', '$q', function (MedicoDiagnostico, $q) {
+    .factory('ActualizarDiagnostico', ['MedicoDiagnostico', '$q', function (MedicoDiagnostico, $q) {
+        var res = function (idEmpresa, diagnostico) {
+            var delay = $q.defer();
+            MedicoDiagnostico.save({ id_empresa: idEmpresa }, diagnostico, function (entidades) {
+                delay.resolve(entidades);
+            }, function (error) {
+                delay.reject(error);
+            });
+            return delay.promise;
+        };
+        return res;
+    }])
+    .factory('EliminarDiagnostico', ['MedicoDiagnostico', '$q', function (MedicoDiagnostico, $q) {
+        var res = function (idEmpresa, Diagnostico) {
+            var delay = $q.defer();
+            MedicoDiagnostico.update({ id_empresa: idEmpresa }, Diagnostico, function (entidades) {
+                delay.resolve(entidades);
+            }, function (error) {
+                delay.reject(error);
+            });
+            return delay.promise;
+        };
+        return res;
+    }])
+    .factory('ListaDiagnosticos', ['MedicoDiagnostico', '$q', function (MedicoDiagnostico, $q) {
         var res = function (idEmpresa) {
             var delay = $q.defer();
-            MedicoDiagnostico.query({id_empresa:idEmpresa},function (entidades) {
+            MedicoDiagnostico.query({ id_empresa: idEmpresa }, function (entidades) {
                 delay.resolve(entidades);
             }, function (error) {
                 delay.reject(error);
@@ -619,9 +744,9 @@ angular.module('agil.servicios')
     })
 
     .factory('CrearDiagnosticoExamen', ['MedicoDiagnosticoExamen', '$q', function (MedicoDiagnosticoExamen, $q) {
-        var res = function (idDiagnostico,examen) {
+        var res = function (idDiagnostico, examen) {
             var delay = $q.defer();
-            MedicoDiagnosticoExamen.save({id_diagnostico:idDiagnostico},examen,function (entidades) {
+            MedicoDiagnosticoExamen.save({ id_diagnostico: idDiagnostico }, examen, function (entidades) {
                 delay.resolve(entidades);
             }, function (error) {
                 delay.reject(error);
@@ -630,10 +755,34 @@ angular.module('agil.servicios')
         };
         return res;
     }])
-        .factory('ListaDiagnosticoExamenes', ['MedicoDiagnosticoExamen', '$q', function (MedicoDiagnosticoExamen, $q) {
+    .factory('ActualizarDiagnosticoExamen', ['MedicoDiagnosticoExamen', '$q', function (MedicoDiagnosticoExamen, $q) {
+        var res = function (idDiagnostico, examen) {
+            var delay = $q.defer();
+            MedicoDiagnosticoExamen.save({ id_diagnostico: idDiagnostico }, examen, function (entidades) {
+                delay.resolve(entidades);
+            }, function (error) {
+                delay.reject(error);
+            });
+            return delay.promise;
+        };
+        return res;
+    }])
+    .factory('EliminarDiagnosticoExamen', ['MedicoDiagnosticoExamen', '$q', function (MedicoDiagnosticoExamen, $q) {
+        var res = function (idDiagnostico, examen) {
+            var delay = $q.defer();
+            MedicoDiagnosticoExamen.update({ id_diagnostico: idDiagnostico }, examen, function (entidades) {
+                delay.resolve(entidades);
+            }, function (error) {
+                delay.reject(error);
+            });
+            return delay.promise;
+        };
+        return res;
+    }])
+    .factory('ListaDiagnosticoExamenes', ['MedicoDiagnosticoExamen', '$q', function (MedicoDiagnosticoExamen, $q) {
         var res = function (idDiagnostico) {
             var delay = $q.defer();
-            MedicoDiagnosticoExamen.query({id_diagnostico:idDiagnostico},function (entidades) {
+            MedicoDiagnosticoExamen.query({ id_diagnostico: idDiagnostico }, function (entidades) {
                 delay.resolve(entidades);
             }, function (error) {
                 delay.reject(error);
@@ -643,16 +792,16 @@ angular.module('agil.servicios')
         return res;
     }])
     .factory('MedicoDiagnosticoExamenResultado', function ($resource) {
-        return $resource(restServer + "nuevo-diagnostico-resultado/diagnostico/:id_diagnostico/paciente/:id_paciente", { id_diagnostico: '@id_diagnostico',id_paciente: '@id_paciente' },
+        return $resource(restServer + "nuevo-diagnostico-resultado/diagnostico/:id_diagnostico/paciente/:id_paciente", { id_diagnostico: '@id_diagnostico', id_paciente: '@id_paciente' },
             {
                 'update': { method: 'PUT' }
             });
     })
 
     .factory('CrearDiagnosticoExamenResultado', ['MedicoDiagnosticoExamenResultado', '$q', function (MedicoDiagnosticoExamenResultado, $q) {
-        var res = function (idDiagnostico,idPaciente,datos) {
+        var res = function (idDiagnostico, idPaciente, datos) {
             var delay = $q.defer();
-            MedicoDiagnosticoExamenResultado.save({id_diagnostico:idDiagnostico,id_paciente:idPaciente},datos,function (entidades) {
+            MedicoDiagnosticoExamenResultado.save({ id_diagnostico: idDiagnostico, id_paciente: idPaciente }, datos, function (entidades) {
                 delay.resolve(entidades);
             }, function (error) {
                 delay.reject(error);
@@ -661,17 +810,17 @@ angular.module('agil.servicios')
         };
         return res;
     }])
-     .factory('DiagnosticoExamenHistorial', function ($resource) {
-        return $resource(restServer + "diagnostico-resultado/diagnostico/:id_diagnostico/paciente/:id_paciente/inicio/:inicio/fin/:fin",null,
+    .factory('DiagnosticoExamenHistorial', function ($resource) {
+        return $resource(restServer + "diagnostico-resultado/diagnostico/:id_diagnostico/paciente/:id_paciente/inicio/:inicio/fin/:fin", null,
             {
                 'update': { method: 'PUT' }
             });
     })
 
     .factory('DiagnosticoExamenListaHistorial', ['DiagnosticoExamenHistorial', '$q', function (DiagnosticoExamenHistorial, $q) {
-        var res = function (idDiagnostico,idPaciente,filtro) {
+        var res = function (idDiagnostico, idPaciente, filtro) {
             var delay = $q.defer();
-            DiagnosticoExamenHistorial.query({id_diagnostico:idDiagnostico,id_paciente:idPaciente,inicio:filtro.inicio,fin:filtro.fin},function (entidades) {
+            DiagnosticoExamenHistorial.query({ id_diagnostico: idDiagnostico, id_paciente: idPaciente, inicio: filtro.inicio, fin: filtro.fin }, function (entidades) {
                 delay.resolve(entidades);
             }, function (error) {
                 delay.reject(error);

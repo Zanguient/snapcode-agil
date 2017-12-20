@@ -13,8 +13,8 @@ router.route('/productos')
 			utilidad_esperada:req.body.utilidad_esperada,
 			inventario_minimo:req.body.inventario_minimo,
 			descripcion:req.body.descripcion,
-			grupo:req.body.grupo,
-			subgrupo:req.body.subgrupo,
+			id_grupo:req.body.grupo.id,
+			id_subgrupo:req.body.subgrupo.id,
 			caracteristica_especial1:req.body.caracteristica_especial1,
 			caracteristica_especial2:req.body.caracteristica_especial2,
 			codigo_fabrica:req.body.codigo_fabrica,
@@ -111,70 +111,32 @@ router.route('/productos/kardex/:id_producto/almacen/:id_almacen/fecha-inicial/:
 	
 router.route('/productos/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion')
 	.get(function(req, res) {
-		var condicionProducto={id_empresa:req.params.id_empresa/*,codigo:{$not:null}*/};
+		var condicionProducto="empresa="+req.params.id_empresa
 		if(req.params.texto_busqueda!=0){
-			condicionProducto={id_empresa:req.params.id_empresa,/*codigo:{$not:null},*/
-				$or: [
-						{
-						  codigo: {
-							$like: "%"+req.params.texto_busqueda+"%"
-						  }
-						},
-						{
-						  nombre: {
-							$like: "%"+req.params.texto_busqueda+"%"
-						  }
-						},
-						{
-						  unidad_medida: {
-							$like: "%"+req.params.texto_busqueda+"%"
-						  }
-						},
-						{
-						  descripcion: {
-							$like: "%"+req.params.texto_busqueda+"%"
-						  }
-						},
-						{
-						  grupo: {
-							$like: "%"+req.params.texto_busqueda+"%"
-						  }
-						},
-						{
-						  subgrupo: {
-							$like: "%"+req.params.texto_busqueda+"%"
-						  }
-						},
-						{
-						  codigo_fabrica: {
-							$like: "%"+req.params.texto_busqueda+"%"
-						  }
-						}
-					  ]
-				};
+			condicionProducto=condicionProducto+" and (\
+				codigo LIKE '%"+req.params.texto_busqueda+"%' or \
+				producto.nombre LIKE '%"+req.params.texto_busqueda+"%' or \
+				unidad_medida LIKE '%"+req.params.texto_busqueda+"%' or \
+				descripcion LIKE '%"+req.params.texto_busqueda+"%' or \
+				grupo.nombre LIKE '%"+req.params.texto_busqueda+"%' or \
+				subgrupo.nombre LIKE '%"+req.params.texto_busqueda+"%')";
 		}
-		Producto.findAndCountAll({ 
-			where:condicionProducto,
-			include: [{model:Empresa,as: 'empresa'},
-					  {model:Clase,as: 'tipoProducto'},
-					  {model:ProductoBase,as: 'productosBase',
-					  include:[{model:Producto,as:'productoBase'}]}],
-			order:[['nombre','asc']]
-		}).then(function(data){
-			Producto.findAll({ 
-				offset:(req.params.items_pagina*(req.params.pagina-1)), limit:req.params.items_pagina,
-				where:condicionProducto,
-				include: [{model:Empresa,as: 'empresa'},
-						  {model:Clase,as: 'tipoProducto'},
-						  {model:Almacen,as: 'almacenErp',
-								include:[{model:Sucursal,as: 'sucursal'},]},
-						  {model:ContabilidadCuenta,as: 'cuenta'},
-					  	  {model:ProductoBase,as: 'productosBase',
-					   	  include:[{model:Producto,as:'productoBase'}]}],
-				order:[[req.params.columna,req.params.direccion]]
-			}).then(function(productos){			
-				res.json({productos:productos,paginas:Math.ceil(data.count/req.params.items_pagina)});		  
-			});
+
+		sequelize.query("select count(producto.id) as cantidad_productos \
+							from agil_producto as producto \
+							LEFT OUTER JOIN gl_clase AS grupo ON (producto.grupo = grupo.id) \
+							LEFT OUTER JOIN gl_clase AS subgrupo ON (producto.subgrupo = subgrupo.id) \
+							WHERE "+ condicionProducto, { type: sequelize.QueryTypes.SELECT })
+		.then(function (data) {
+			sequelize.query("select producto.id,producto.publicar_panel,producto.activar_inventario,producto.codigo,producto.nombre as nombre,producto.imagen,producto.unidad_medida,producto.precio_unitario,producto.inventario_minimo,producto.descripcion,grupo.nombre as grupo,subgrupo.nombre as subgrupo\
+					from agil_producto as producto\
+					LEFT OUTER JOIN gl_clase AS grupo ON (producto.grupo = grupo.id)\
+					LEFT OUTER JOIN gl_clase AS subgrupo ON (producto.subgrupo = subgrupo.id)\
+					WHERE "+ condicionProducto +" \
+					ORDER BY producto."+ req.params.columna + " " + req.params.direccion + " LIMIT " + (req.params.items_pagina * (req.params.pagina - 1)) + "," + req.params.items_pagina, { type: sequelize.QueryTypes.SELECT })
+				.then(function (productos) {
+					res.json({ productos: productos, paginas: Math.ceil(data[0].cantidad_productos / req.params.items_pagina) });
+				});
 		});
 	});
 	
@@ -183,67 +145,104 @@ router.route('/productos/empresa')
 		Clase.find({
 			where:{nombre_corto:'PBASE'}
 		}).then(function(clase){
-			req.body.productos.forEach(function(producto, index, array){
-				Producto.find({ 
-					where:{
-						$or: [{codigo:producto.codigo}/*, {codigo_fabrica:producto.codigo_fabrica}*/]
-					},
-				}).then(function(productoEncontrado){			
-					if(productoEncontrado){
-						Producto.update({
-							nombre:producto.nombre,
-							codigo:producto.codigo,
-							unidad_medida:producto.unidad_medida,
-							precio_unitario:producto.precio_unitario,
-							utilidad_esperada:producto.utilidad_esperada,
-							inventario_minimo:producto.inventario_minimo,
-							descripcion:producto.descripcion,
-							grupo:producto.grupo,
-							subgrupo:producto.subgrupo,
-							caracteristica_especial1:producto.caracteristica_especial1,
-							caracteristica_especial2:producto.caracteristica_especial2,
-							imagen:'./img/icon-producto-default.png',
-							codigo_fabrica:producto.codigo_fabrica,
-							comision:producto.comision,
-							alerta:producto.alerta,
-							descuento:producto.descuento,
-							descuento_fijo:producto.descuento_fijo
-						},{
-							where:{
-								id:productoEncontrado.id
+			Tipo.find({
+				where: { 
+					nombre_corto: "GRUPOS PRODUCTOS",
+					id_empresa:req.body.id_empresa }
+			}).then(function (tipoGrupoEncontrado) {
+				Tipo.find({
+					where: { 
+						nombre_corto: "SUBGRUPOS PRODUCTOS",
+						id_empresa:req.body.id_empresa }
+				}).then(function (tipoSubGrupoEncontrado) {
+					req.body.productos.forEach(function(producto, index, array){
+						sequelize.transaction(function (t) {
+							return Producto.find({ 
+								where:{
+									$or: [{codigo:producto.codigo}],
+									id_empresa:req.body.id_empresa
+								},
+								transaction: t
+							}).then(function(productoEncontrado){
+								return Clase.findOrCreate({
+									where: { nombre: producto.grupo },
+									defaults: {nombre: producto.grupo,
+												id_tipo: tipoGrupoEncontrado.id},
+									transaction: t,
+									lock: t.LOCK.UPDATE
+								}).then(function (claseGrupoEncontrado) {
+									
+									return Clase.findOrCreate({
+										where: { nombre: producto.subgrupo },
+										defaults: {nombre: producto.subgrupo,
+													id_tipo: tipoSubGrupoEncontrado.id},
+										transaction: t,
+										lock: t.LOCK.UPDATE
+									}).then(function (claseSubGrupoEncontrado) {
+										
+										if(productoEncontrado){
+											return Producto.update({
+												nombre:producto.nombre,
+												codigo:producto.codigo,
+												unidad_medida:producto.unidad_medida,
+												precio_unitario:producto.precio_unitario,
+												utilidad_esperada:producto.utilidad_esperada,
+												inventario_minimo:producto.inventario_minimo,
+												descripcion:producto.descripcion,
+												id_grupo:claseGrupoEncontrado[0].id,
+												id_subgrupo:claseSubGrupoEncontrado[0].id,
+												caracteristica_especial1:producto.caracteristica_especial1,
+												caracteristica_especial2:producto.caracteristica_especial2,
+												imagen:'./img/icon-producto-default.png',
+												codigo_fabrica:producto.codigo_fabrica,
+												comision:producto.comision,
+												alerta:producto.alerta,
+												descuento:producto.descuento,
+												descuento_fijo:producto.descuento_fijo
+											},{
+												where:{
+													id:productoEncontrado.id
+												},
+												transaction: t
+											});
+										}else{
+											return Producto.create({
+												id_empresa:req.body.id_empresa,
+												nombre:producto.nombre,
+												codigo:producto.codigo,
+												unidad_medida:producto.unidad_medida,
+												precio_unitario:producto.precio_unitario,
+												utilidad_esperada:producto.utilidad_esperada,
+												inventario_minimo:producto.inventario_minimo,
+												descripcion:producto.descripcion,
+												id_grupo:claseGrupoEncontrado[0].id,
+												id_subgrupo:claseSubGrupoEncontrado[0].id,
+												caracteristica_especial1:producto.caracteristica_especial1,
+												caracteristica_especial2:producto.caracteristica_especial2,
+												imagen:'./img/icon-producto-default.png',
+												codigo_fabrica:producto.codigo_fabrica,
+												comision:producto.comision,
+												alerta:producto.alerta,
+												descuento:producto.descuento,
+												descuento_fijo:producto.descuento_fijo,
+												id_tipo_producto:clase.id
+											}, { transaction: t });
+										}
+									})
+									
+								})
+									  
+							});
+						}).then(function (result) {
+							if (index === (array.length - 1)) {
+								res.json({ mensaje: "¡Datos de Productos actualizados satisfactoriamente!" });
 							}
-						}).then(function(productoCreado){
-							if(index===(array.length-1)){
-								res.json({mensaje:"¡Datos de Productos actualizados satisfactoriamente!"});
-							}
+						}).catch(function (err) {
+							res.json({ hasError: true, mensaje: err.stack });
 						});
-					}else{
-						Producto.create({
-							id_empresa:req.body.id_empresa,
-							nombre:producto.nombre,
-							codigo:producto.codigo,
-							unidad_medida:producto.unidad_medida,
-							precio_unitario:producto.precio_unitario,
-							utilidad_esperada:producto.utilidad_esperada,
-							inventario_minimo:producto.inventario_minimo,
-							descripcion:producto.descripcion,
-							grupo:producto.grupo,
-							subgrupo:producto.subgrupo,
-							caracteristica_especial1:producto.caracteristica_especial1,
-							caracteristica_especial2:producto.caracteristica_especial2,
-							imagen:'./img/icon-producto-default.png',
-							codigo_fabrica:producto.codigo_fabrica,
-							comision:producto.comision,
-							alerta:producto.alerta,
-							descuento:producto.descuento,
-							descuento_fijo:producto.descuento_fijo,
-							id_tipo_producto:clase.id
-						}).then(function(productoCreado){
-							if(index===(array.length-1)){
-								res.json({mensaje:"Productos creados satisfactoriamente!"});
-							}
-						});
-					}	  
+					});
+
+
 				});
 			});
 		});
@@ -260,8 +259,8 @@ router.route('/productos/:id_producto')
 			utilidad_esperada:req.body.utilidad_esperada,
 			inventario_minimo:req.body.inventario_minimo,
 			descripcion:req.body.descripcion,
-			grupo:req.body.grupo,
-			subgrupo:req.body.subgrupo,
+			id_grupo:req.body.grupo.id,
+			id_subgrupo:req.body.subgrupo.id,
 			caracteristica_especial1:req.body.caracteristica_especial1,
 			caracteristica_especial2:req.body.caracteristica_especial2,
 			//imagen:imagen,
@@ -356,6 +355,23 @@ router.route('/productos/:id_producto')
 			
 		})
 		
+	})
+	
+	.get(function(req,res){
+		Producto.find({ 
+			where:{id:req.params.id_producto},
+			include: [{model:Empresa,as: 'empresa'},
+					  {model:Clase,as: 'tipoProducto'},
+					  {model:Clase,as: 'grupo'},
+					  {model:Clase,as: 'subgrupo'},
+					  {model:Almacen,as: 'almacenErp',
+							include:[{model:Sucursal,as: 'sucursal'},]},
+					  {model:ContabilidadCuenta,as: 'cuenta'},
+						{model:ProductoBase,as: 'productosBase',
+						 include:[{model:Producto,as:'productoBase'}]}]
+		}).then(function(producto){			
+			res.json(producto);		  
+		});
 	});
 	
 function actualizarImagenProducto(productoCreado,req,res,signedRequest,imagen){

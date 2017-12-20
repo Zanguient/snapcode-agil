@@ -6,12 +6,24 @@ angular.module('agil.servicios')
 			'update': { method:'PUT' }
 		});
 })
-/*.factory('ProductoKardex', function($resource) {
-		return $resource(restServer+"productos/kardex/:id_producto",{id_producto:'@id'},
+
+.factory('DatosProducto', ['Producto','$q',function(Producto, $q) 
+{
+var res = function(idProducto) 
+{
+	var delay = $q.defer();
+	Producto.get({idProducto:idProducto},function(entidades) 
+	{        
+		delay.resolve(entidades);
+	}, function(error) 
 		{
-			'get': { method: 'GET'} 
+			delay.reject(error);
 		});
-})*/
+	return delay.promise;
+};
+	return res;
+}])
+
 .factory('ProductosKardex', function($resource) {
 		return $resource(restServer+"productos/kardex/:id_producto/almacen/:id_almacen/fecha-inicial/:fecha_inicio/fecha-final/:fecha_fin/lote/:lote");
 })

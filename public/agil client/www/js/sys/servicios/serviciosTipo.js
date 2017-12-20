@@ -41,7 +41,28 @@ angular.module('agil.servicios')
 	};
     return res;
   }])
-  
+	
+	.factory('Pais', function($resource) {
+		return $resource(restServer+"paises/:nombre_corto");
+})
+
+.factory('Paises', ['Pais','$q',function(Pais, $q) 
+  {
+	var res = function(nombre_corto) 
+	{
+		var delay = $q.defer();
+		Pais.query({nombre_corto:nombre_corto},function(entidad) 
+		{        
+			delay.resolve(entidad);
+		}, function(error) 
+			{
+				delay.reject(error);
+			});
+		return delay.promise;
+	};
+    return res;
+	}])
+	
 .factory('Tipos', function($resource) {
 		return $resource(restServer+"tipos/:id_tipo", null,
 		{

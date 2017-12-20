@@ -12,8 +12,8 @@ module.exports = function (sequelize, Sequelize) {
 			type: Sequelize.INTEGER,
 			field: 'empresa'
 		},
-		extension: {
-			type: Sequelize.STRING,
+		id_extension: {
+			type: Sequelize.INTEGER,
 			field: 'extension'
 		},
 		grupo_sanguineo: {
@@ -44,6 +44,15 @@ module.exports = function (sequelize, Sequelize) {
 			type: Sequelize.BOOLEAN,
 			field: 'es_empleado'
 		},
+		fecha_vence_documento: {
+			type: Sequelize.DATE,
+			field: 'fecha_vence_documento'
+		},
+		id_tipo_documento: {
+			type: Sequelize.INTEGER,
+			field: 'tipo_documento'
+		},
+	
 	}, {
 			freezeTableName: true
 		});

@@ -15,7 +15,11 @@ module.exports=function(sequelize,Sequelize){
 	  eliminado: {
 		type: Sequelize.BOOLEAN,
 		field: 'eliminado'
-	  },
+		},
+		unico: {
+			type: Sequelize.BOOLEAN,
+			field: 'unico'
+			},
 	  id_vacuna:{
 		type: Sequelize.INTEGER,
 		field: 'id_vacuna'  

@@ -366,7 +366,7 @@ router.route('/usuarios-rutas/:id_usuario')
 router.route('/userspassword/:user_id')
 	
 	.put(function(req, res) {
-		User.update({ 
+		Usuario.update({ 
 			password:md5(req.body.password)
 		}, 
 		{ 

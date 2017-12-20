@@ -11,11 +11,19 @@ module.exports=function(sequelize,Sequelize){
 	  apellido_materno: {
 		type: Sequelize.STRING,
 		field: 'apellido_materno' 
-	  },
+		},
+		apellido_casada: {
+			type: Sequelize.STRING,
+			field: 'apellido_casada' 
+			},
 	  nombres: {
 		type: Sequelize.STRING,
 		field: 'nombres' 
-	  },
+		},
+		segundo_nombre: {
+			type: Sequelize.STRING,
+			field: 'segundo_nombre' 
+			},
 	  direccion:{
 		type: Sequelize.STRING,
 		field: 'direccion' 
@@ -64,20 +72,20 @@ module.exports=function(sequelize,Sequelize){
 		type: Sequelize.INTEGER,
 		field: 'grado_academico'
 	  },
-	  pais_nacimiento:{
-		type: Sequelize.STRING,
+	  id_pais_nacimiento:{
+		type: Sequelize.INTEGER,
 		field: 'pais_nacimiento' 
 	  },
-	  ciudad_nacimiento:{
-		type: Sequelize.STRING,
+	  id_ciudad_nacimiento:{
+		type: Sequelize.INTEGER,
 		field: 'ciudad_nacimiento' 
 	  },
-	  provincia_nacimiento:{
-		type: Sequelize.STRING,
+	  id_provincia_nacimiento:{
+		type: Sequelize.INTEGER,
 		field: 'provincia_nacimiento' 
 	  },
-	  localidad_nacimiento:{
-		type: Sequelize.STRING,
+	  id_localidad_nacimiento:{
+		type: Sequelize.INTEGER,
 		field: 'localidad_nacimiento' 
 	  },
 	  direccion_provincia:{
@@ -107,6 +115,10 @@ module.exports=function(sequelize,Sequelize){
 	  activo:{
 		type: Sequelize.BOOLEAN,
 		field: 'activo'  
+	  },
+	  id_estado_civil:{
+		type: Sequelize.INTEGER,
+		field: 'estado_civil'  
 	  }
 	}, {
 	  freezeTableName: true 

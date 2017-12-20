@@ -1,6 +1,6 @@
 module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Sucursal, MedicoPrerequisito, Clase, Diccionario, Tipo, decodeBase64Image, fs, MedicoVacuna, VacunaDosis,
 	MedicoPacienteVacuna, MedicoPacienteVacunaDosis, MedicoPacienteConsulta, MedicoPacienteFicha, sequelize, Sequelize, MedicoLaboratorioExamen, MedicoLaboratorio, MedicoLaboratorioPaciente, MedicoLaboratorioResultado,
-	MedicoLaboratorioResultado, MedicoDiagnostico, MedicoDiagnosticoExamen, MedicoDiagnosticoPaciente, MedicoDiagnosticoResultado) {
+	MedicoLaboratorioResultado, MedicoDiagnostico, MedicoDiagnosticoExamen, MedicoDiagnosticoPaciente, MedicoDiagnosticoResultado, MedicoPacientePreRequisito) {
 
 	router.route('/paciente/:id_paciente')
 		.get(function (req, res) {
@@ -28,19 +28,13 @@ module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Su
 
 	router.route('/pacientes/:id_paciente/activo/:activo')
 		.put(function (req, res) {
-			MedicoPaciente.find({
+			MedicoPaciente.update({
+				eliminado: req.params.activo
+			}, {
 					where: {
 						id: req.params.id_paciente
-					},
-					include: [{model: Persona, as: 'persona'}]
+					}
 				}).then(function (pacienteInactivo) {
-					Persona.update({
-						activo: req.params.activo
-					}, {
-							where: {
-								id: pacienteInactivo.persona.dataValues.id
-							}
-					})
 					var mn = (req.body.activo == true) ? 'activo' : 'inactivo'
 					res.json({ mensaje: "Paciente " + mn });
 				})
@@ -61,7 +55,7 @@ module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Su
 						apellido_paterno: req.body.persona.apellido_paterno,
 						apellido_materno: req.body.persona.apellido_materno,
 						ci: req.body.persona.ci,
-						id_genero: req.body.persona.id_genero,
+						id_genero: req.body.persona.genero.id,
 						nombre_completo: req.body.persona.nombres + ' ' + req.body.persona.apellido_paterno + ' ' + req.body.persona.apellido_materno,
 						telefono: req.body.persona.telefono,
 						telefono_movil: req.body.persona.telefono_movil,
@@ -72,8 +66,8 @@ module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Su
 							imagen = req.body.persona.imagen;
 						} else {
 							var imagenPersona = decodeBase64Image(req.body.persona.imagen);
-							fs.writeFileSync('./img/persona' + req.body.persona.id + '.jpg', imagenPersona.data, 'base64', function (err) { });
-							imagen = './img/persona' + req.body.persona.id + '.jpg';
+							fs.writeFileSync('./img/persona' + personaCreada.id + '.jpg', imagenPersona.data, 'base64', function (err) { res.json({ mensaje: 'error' }) });
+							imagen = './img/persona' + personaCreada.id + '.jpg';
 						}
 						Persona.update({
 							imagen: imagen
@@ -89,7 +83,7 @@ module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Su
 									cargo: req.body.cargo,
 									campo: req.body.campo,
 									designacion_empresa: req.body.designacion_empresa,
-									eliminado: false,
+									eliminado: true,
 								}).then(function (medicoPacienteCreado) {
 									res.json({ message: 'creado Satisfactoriamente' });
 								});
@@ -103,19 +97,19 @@ module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Su
 		.put(function (req, res) {
 			if (req.body.eliminar == undefined) {
 				var imagen;
-				if (req.body.persona.imagen.indexOf('default') > -1) {
+				if (req.body.persona.imagen.indexOf('default') > -1 || req.body.persona.imagen.indexOf('persona' + req.body.persona.id) > -1) {
 					imagen = req.body.persona.imagen;
 				} else {
 					var imagenPersona = decodeBase64Image(req.body.persona.imagen);
 					fs.writeFileSync('./img/persona' + req.body.persona.id + '.jpg', imagenPersona.data, 'base64', function (err) { });
-					imagen = './img/persona' + req.body.persona.id + '.jpg';
+					imagen = './img/persona' + req.body.persona.id + '.jpg'; console.log('entro2');
 				}
 				Persona.update({
 					nombres: req.body.persona.nombres,
 					apellido_paterno: req.body.persona.apellido_paterno,
 					apellido_materno: req.body.persona.apellido_materno,
 					ci: req.body.persona.ci,
-					id_genero: req.body.persona.id_genero,
+					id_genero: req.body.persona.genero.id,
 					nombre_completo: req.body.persona.nombres + ' ' + req.body.persona.apellido_paterno + ' ' + req.body.persona.apellido_materno,
 					telefono: req.body.persona.telefono,
 					telefono_movil: req.body.persona.telefono_movil,
@@ -145,7 +139,7 @@ module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Su
 					})
 			} else {
 				MedicoPaciente.update({
-					eliminado: true
+					eliminado: false
 				}, {
 						where: {
 							id: req.params.id_paciente
@@ -180,7 +174,7 @@ module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Su
 					}).then(function (pacienteEncontrado) {
 						console.log(pacienteEncontrado)
 						MedicoPacienteFicha.findOrCreate({
-							where: { id_paciente: pacienteEncontrado.id },
+							where: { id_paciente: pacienteEncontrado.id, fecha: fichaActual.fecha },
 							defaults: {
 								id_paciente: pacienteEncontrado.id,
 								fecha: fichaActual.fecha,
@@ -243,15 +237,17 @@ module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Su
 										id_persona_referencia: personaReferencia.id
 									}, {
 											where: { id: ficha.id }
+										}).then(function (affectedRows) {
+
 										})
 								})
+							}
+							if (index === (array.length - 1)) {
+								res.json({ mensaje: "¡Datos de fichas técnicas actualizados satisfactoriamente!" });
 							}
 						})
 					})
 				})
-				if (index === (array.length - 1)) {
-					res.json({ mensaje: "¡Datos de fichas técnicas actualizados satisfactoriamente!" });
-				}
 			}, this)
 			// res.json({ mensaje: 'Creando fichas medicas...' })
 		})
@@ -302,6 +298,7 @@ module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Su
 									defaults: {
 										id_paciente_vacuna: VacunaPaciente.id,
 										fecha_aplicacion: vacuna.fecha,
+										unico: dosis.unico,
 										eliminado: false
 									},
 									transaction: t
@@ -382,11 +379,14 @@ module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Su
 										campo: pacienteActual.campamento,
 										designacion_empresa: pacienteActual.designacion_empresa,
 										eliminado: pacienteActual.eliminado,
-										es_empleado:pacienteActual.es_empleado									}, {
+										es_empleado: pacienteActual.es_empleado
+									}, {
 											where: { id: pacienteFound.id }
 
 										}).then(function (medicoPacienteActualizado) {
-											// res.json({ mensaje: "Actualizado Satisfactoriamente" });
+											if (index === (array.length - 1)) {
+												res.json({ mensaje: "¡Datos de pacientes actualizados satisfactoriamente!" });
+											}
 										})
 								})
 						} else {
@@ -428,21 +428,19 @@ module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Su
 											cargo: pacienteActual.cargo,
 											campo: pacienteActual.campamento,
 											designacion_empresa: pacienteActual.designacion_empresa,
-											eliminado: false,										
-											es_empleado:pacienteActual.es_empleado	
+											eliminado: false,
+											es_empleado: pacienteActual.es_empleado
 											//comentario: pacienteActual.comentario
 										}).then(function (medicoPacienteActualizado) {
-
+											if (index === (array.length - 1)) {
+												res.json({ mensaje: "¡Datos de pacientes actualizados satisfactoriamente!" });
+											}
 										})
 									})
-
 							})
 						}
 					})
 				})
-				if (index === (array.length - 1)) {
-					res.json({ mensaje: "¡Datos de pacientes actualizados satisfactoriamente!" });
-				}
 			});
 		})
 
@@ -485,11 +483,11 @@ module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Su
 									where: { id: soapActual.id }
 								})
 						}
+						if (index === (array.length - 1)) {
+							res.json({ mensaje: "¡Datos de SOAP pacientes actualizados satisfactoriamente!" });
+						}
 					})
 				})
-				if (index === (array.length - 1)) {
-					res.json({ mensaje: "¡Datos de SOAP pacientes actualizados satisfactoriamente!" });
-				};
 			}, this)
 		})
 	router.route('/pacientes/signos_vitales/excel/upload')
@@ -535,18 +533,18 @@ module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Su
 									where: { id: signoVitalActual.id, fecha: { $between: [fecha_inicio, fecha_fin] } }
 								})
 						}
+						if (index === (array.length - 1)) {
+							res.json({ mensaje: "¡Datos de consultas actualizados satisfactoriamente!" });
+						}
 					})
 				})
-				if (index === (array.length - 1)) {
-					res.json({ mensaje: "¡Datos de consultas actualizados satisfactoriamente!" });
-				};
 			}, this);
 		})
 
 	router.route('/pacientes/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion/codigo/:codigo/nombres/:nombres/ci/:ci/campo/:campo/cargo/:cargo/busquedaEmpresa/:busquedaEmpresa/grupo/:grupo_sanguineo/estado/:estado')
 		.get(function (req, res) {
 			var condicion = ""
-			var es_eliminado = "false"
+			var activo = "true"
 			if (req.params.codigo != "0") {
 				condicion += "codigo like '%" + req.params.codigo + "%'"
 			}
@@ -595,22 +593,22 @@ module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Su
 
 			if (req.params.estado != "0") {
 				if (req.params.estado === 'Inactivo') {
-					es_eliminado = "true"
+					activo = "false"
 				} else {
-					es_eliminado = "false"
+					activo = "true"
 				}
 			}
 			if (req.params.texto_busqueda != 0) {
 				if (condicion.length > 1) {
-					condicion += " or designacion_empresa like '%" + req.params.texto_busqueda + "%' or grupo_sanguineo like '%" + req.params.texto_busqueda + "%' or campo like '%" + req.params.texto_busqueda + "%' or cargo like '%" + req.params.texto_busqueda + "%'"
+					condicion += " or nombre_completo like '%" + req.params.texto_busqueda + "%' or codigo like '%" + req.params.texto_busqueda + "%' or ci like '%" + req.params.texto_busqueda + "%' or designacion_empresa like '%" + req.params.texto_busqueda + "%' or grupo_sanguineo like '%" + req.params.texto_busqueda + "%' or campo like '%" + req.params.texto_busqueda + "%' or cargo like '%" + req.params.texto_busqueda + "%' or extension like '%" + req.params.texto_busqueda + "%'"
 				} else {
-					condicion += "nombre_completo like '%" + req.params.texto_busqueda + "%' or codigo like '%" + req.params.texto_busqueda + "%' or ci like '%" + req.params.texto_busqueda + "%' or designacion_empresa like '%" + req.params.texto_busqueda + "%' or grupo_sanguineo like '%" + req.params.texto_busqueda + "%' or campo like '%" + req.params.texto_busqueda + "%' or cargo like '%" + req.params.texto_busqueda + "%'"
+					condicion += "nombre_completo like '%" + req.params.texto_busqueda + "%' or codigo like '%" + req.params.texto_busqueda + "%' or ci like '%" + req.params.texto_busqueda + "%' or designacion_empresa like '%" + req.params.texto_busqueda + "%' or grupo_sanguineo like '%" + req.params.texto_busqueda + "%' or campo like '%" + req.params.texto_busqueda + "%' or cargo like '%" + req.params.texto_busqueda + "%' or extension like '%" + req.params.texto_busqueda + "%'"
 				}
 			}
 			console.log(condicion)
 
 			if (condicion.length > 1) {
-				sequelize.query("select count(*) as cantidad_pacientes from agil_medico_paciente INNER JOIN gl_persona ON (agil_medico_paciente.persona = gl_persona.id) where eliminado = " + es_eliminado + " AND (" + condicion + ")", { type: sequelize.QueryTypes.SELECT })
+				sequelize.query("select count(*) as cantidad_pacientes from agil_medico_paciente INNER JOIN gl_persona ON (agil_medico_paciente.persona = gl_persona.id) where agil_medico_paciente.eliminado = " + activo + " AND (" + condicion + ")", { type: sequelize.QueryTypes.SELECT })
 					.then(function (data) {
 						var options = {
 							model: MedicoPaciente,
@@ -621,17 +619,17 @@ module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Su
 						agil_medico_paciente.empresa as 'id_empresa', agil_medico_paciente.extension as 'extension', agil_medico_paciente.grupo_sanguineo as 'grupo_sanguineo', \
 						agil_medico_paciente.cargo as 'cargo', agil_medico_paciente.campo as 'campo', agil_medico_paciente.designacion_empresa as 'designacion_empresa', agil_medico_paciente.comentario as 'comentario', \
 						gl_persona.nombre_completo as 'nombre_completo', gl_persona.apellido_paterno as 'apellido_paterno', gl_persona.apellido_materno as 'apellido_materno',\
-						gl_persona.nombres as 'nombres',gl_persona.imagen as 'imagen', gl_persona.activo as 'activo', gl_persona.ci as 'ci', gl_persona.genero as 'id_genero', \
+						gl_persona.nombres as 'nombres',gl_persona.imagen as 'imagen', agil_medico_paciente.eliminado as 'activo', gl_persona.ci as 'ci', gl_persona.genero as 'id_genero', \
 						gl_persona.telefono as 'telefono', gl_persona.telefono_movil as 'telefono_movil', gl_persona.fecha_nacimiento as 'fecha_nacimiento'\
 						from agil_medico_paciente INNER JOIN gl_persona ON (agil_medico_paciente.persona = gl_persona.id)\
-						where agil_medico_paciente.empresa = "+ req.params.id_empresa + " AND agil_medico_paciente.eliminado = " + es_eliminado + " AND (" + condicion + ") \
+						where agil_medico_paciente.empresa = "+ req.params.id_empresa + " AND agil_medico_paciente.eliminado = " + activo + " AND (" + condicion + ") \
 						GROUP BY agil_medico_paciente.id order by "+ req.params.columna + " " + req.params.direccion + " LIMIT " + (req.params.items_pagina * (req.params.pagina - 1)) + "," + req.params.items_pagina, options)
 							.then(function (pacientes) {
 								res.json({ pacientes: pacientes, paginas: Math.ceil(data[0].cantidad_pacientes / req.params.items_pagina) });
 							});
 					});
 			} else {
-				sequelize.query("select count(*) as cantidad_pacientes from agil_medico_paciente where eliminado = " + es_eliminado, { type: sequelize.QueryTypes.SELECT })
+				sequelize.query("select count(*) as cantidad_pacientes from agil_medico_paciente INNER JOIN gl_persona ON (agil_medico_paciente.persona = gl_persona.id) where  agil_medico_paciente.eliminado = " + activo, { type: sequelize.QueryTypes.SELECT })
 					.then(function (data) {
 						var options = {
 							model: MedicoPaciente,
@@ -642,10 +640,10 @@ module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Su
 						agil_medico_paciente.empresa as 'id_empresa', agil_medico_paciente.extension as 'extension', agil_medico_paciente.grupo_sanguineo as 'grupo_sanguineo', \
 						agil_medico_paciente.cargo as 'cargo', agil_medico_paciente.campo as 'campo', agil_medico_paciente.designacion_empresa as 'designacion_empresa',agil_medico_paciente.comentario as 'comentario',\
 						gl_persona.nombre_completo as 'nombre_completo', gl_persona.apellido_paterno as 'apellido_paterno', gl_persona.apellido_materno as 'apellido_materno',\
-						gl_persona.nombres as 'nombres',gl_persona.imagen as 'imagen', gl_persona.activo as 'activo', gl_persona.ci as 'ci', gl_persona.genero as 'id_genero', \
+						gl_persona.nombres as 'nombres',gl_persona.imagen as 'imagen', agil_medico_paciente.eliminado as 'activo', gl_persona.ci as 'ci', gl_persona.genero as 'id_genero', \
 						gl_persona.telefono as 'telefono', gl_persona.telefono_movil as 'telefono_movil', gl_persona.fecha_nacimiento as 'fecha_nacimiento'\
 						from agil_medico_paciente INNER JOIN gl_persona ON (agil_medico_paciente.persona = gl_persona.id)\
-						where agil_medico_paciente.empresa = "+ req.params.id_empresa + " AND agil_medico_paciente.eliminado = " + es_eliminado + " GROUP BY agil_medico_paciente.id order by " + req.params.columna + " " + req.params.direccion + " LIMIT " + (req.params.items_pagina * (req.params.pagina - 1)) + "," + req.params.items_pagina, options)
+						where agil_medico_paciente.empresa = "+ req.params.id_empresa + " AND agil_medico_paciente.eliminado = " + activo + " GROUP BY agil_medico_paciente.id order by " + req.params.columna + " " + req.params.direccion + " LIMIT " + (req.params.items_pagina * (req.params.pagina - 1)) + "," + req.params.items_pagina, options)
 							.then(function (pacientes) {
 								res.json({ pacientes: pacientes, paginas: Math.ceil(data[0].cantidad_pacientes / req.params.items_pagina) });
 							});
@@ -662,86 +660,90 @@ module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Su
 					where: { id: req.body.id }
 				}).then(function (vacunaActualizada) {
 					var memo = "Vacuna actualizada"
-					req.body.vacunaDosis.forEach(function (dosis, index, array) {					
+					req.body.vacunaDosis.forEach(function (dosis, index, array) {
 						if (dosis.id > 0 && dosis.eliminar == undefined) {
 							VacunaDosis.update({
 								es_dosis: dosis.es_dosis,
 								tiempo: dosis.tiempo,
 								numero: dosis.numero,
 								id_vacuna: dosis.id_vacuna,
+								unico: dosis.unico,
 								eliminado: dosis.eliminado
 							}, {
 									where: { id: dosis.id, id_vacuna: dosis.id_vacuna }
 								}).then(function (dosis_Creada) {
-									if(index === array.length-1){
-										res.json({mensaje: memo})
+									if (index === array.length - 1) {
+										res.json({ mensaje: memo })
 									}
 								})
-						} else  if(dosis.id == undefined && dosis.eliminar == undefined){
+						} else if (dosis.id == undefined && dosis.eliminar == undefined) {
 							VacunaDosis.create({
 								es_dosis: dosis.es_dosis,
 								tiempo: dosis.tiempo,
 								numero: dosis.numero,
 								id_vacuna: req.body.id,
+								unico: dosis.unico,
 								eliminado: false
 							}).then(function (dosis_Creada) {
-								if(index === array.length-1){
-									res.json({mensaje: memo})
+								if (index === array.length - 1) {
+									res.json({ mensaje: memo })
 								}
 							})
-						} else if(dosis.eliminar == true){
+						} else if (dosis.eliminar == true) {
 							var lmax = 0
 							MedicoPacienteVacuna.findAndCountAll({
 								where: { id_vacuna: req.body.id },
 								include: [{ model: MedicoVacuna, as: 'pacienteVacuna', include: [{ model: VacunaDosis, as: 'vacunaDosis', where: { eliminado: false }, order: [['numero', 'desc']] }] }, { model: MedicoPacienteVacunaDosis, as: 'pacienteVacunaDosis', order: [['createdAt', 'desc']] }]
 							}).then(function (vacunasPaciente) {
-								if(vacunasPaciente.count > 0) {
+								if (vacunasPaciente.count > 0) {
 									var a = vacunasPaciente.rows
-									a.forEach(function(vacun, indexb, arrayb) {
-										
+									a.forEach(function (vacun, indexb, arrayb) {
+
 										MedicoPacienteVacunaDosis.findAndCountAll({
 											where: {
-												id_paciente_vacuna : vacun.dataValues.id
+												id_paciente_vacuna: vacun.dataValues.id
 											}
 										}).then(function (dosisCount) {
 											console.log(dosisCount)
-											lmax = (lmax  <= dosisCount.count) ? dosisCount.count : lmax
-											if (indexb == arrayb.length-1){
-												if(lmax < dosis.numero){
+											lmax = (lmax <= dosisCount.count) ? dosisCount.count : lmax
+											if (indexb == arrayb.length - 1) {
+												if (lmax < dosis.numero) {
 													VacunaDosis.update({
 														es_dosis: dosis.es_dosis,
 														tiempo: dosis.tiempo,
 														numero: dosis.numero,
 														id_vacuna: dosis.id_vacuna,
+														unico: dosis.unico,
 														eliminado: true
 													}, {
 															where: { id: dosis.id, id_vacuna: dosis.id_vacuna }
 														}).then(function (dosis_Creada) {
-															if(index === array.length-1){
-																res.json({mensaje: memo})
+															if (index === array.length - 1) {
+																res.json({ mensaje: memo })
 															}
-														})	
-												}else{
+														})
+												} else {
 													memo += "\n La dosis N° " + dosis.numero + " No se puede eliminar."
-													if(index === array.length-1){
-														res.json({mensaje: memo})
+													if (index === array.length - 1) {
+														res.json({ mensaje: memo })
 													}
 												}
 											}
 										})
 									});
-								}else{
+								} else {
 									VacunaDosis.update({
 										es_dosis: dosis.es_dosis,
 										tiempo: dosis.tiempo,
 										numero: dosis.numero,
 										id_vacuna: dosis.id_vacuna,
+										unico: dosis.unico,
 										eliminado: dosis.eliminado
 									}, {
 											where: { id: dosis.id, id_vacuna: dosis.id_vacuna }
 										}).then(function (dosis_Creada) {
-											if(index === array.length-1){
-												res.json({mensaje: memo})
+											if (index === array.length - 1) {
+												res.json({ mensaje: memo })
 											}
 										})
 								}
@@ -766,13 +768,14 @@ module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Su
 						tiempo: dosis.tiempo,
 						numero: dosis.numero,
 						id_vacuna: vacuna.id,
+						unico: dosis.unico,
 						eliminado: false
 					}).then(function (dosis_Creada) {
 
 					})
 				}, this);
 			}).then(function () {
-				res.json({mensaje:'Vacuna creada'});
+				res.json({ mensaje: 'Vacuna creada' });
 			})
 		})
 		.get(function (req, res) {
@@ -786,36 +789,55 @@ module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Su
 
 	router.route('/paciente/aplicacion/vacuna/:id')
 		.put(function (req, res) {
-			MedicoPacienteVacuna.update({
-				id_paciente: req.body.id_paciente,
-				id_vacuna: req.body.id_vacuna,
-				fecha_ultima_aplicacion: req.body.fecha_ultima_aplicacion,
-				fecha_siguiente_aplicacion: req.body.fecha_siguiente_aplicacion,
-				eliminado: req.body.eliminado
-			}, {
+			MedicoPacienteVacuna.find({
+				where: { id: req.params.id }
+			}).then(function (vacunaIdentificada) {
+				var fecha_inicio = new Date(req.body.fecha_ultima_aplicacion)
+				var fecha_fin = new Date(req.body.fecha_ultima_aplicacion)
+				fecha_inicio.setMinutes(0)
+				fecha_inicio.setHours(0)
+				fecha_fin.setMinutes(59)
+				fecha_fin.setHours(23)
+				MedicoPacienteVacunaDosis.findOrCreate({
 					where: {
-						id: req.params.id
-					}
-				}).then(function (vacunaAplicada) {
-					MedicoPacienteVacunaDosis.create({
+						fecha_aplicacion: { $between: [fecha_inicio, fecha_fin] },
+						id_paciente_vacuna: req.params.id
+					},
+					defaults: {
 						id_paciente_vacuna: req.params.id,
 						fecha_aplicacion: req.body.fecha_ultima_aplicacion,
 						eliminado: false
-					}).then({
-
-					})
-					res.json('Vacuna aplicada.')
+					}
+				}).spread(function (dosisAplicada, created) {
+					if (created) {
+						MedicoPacienteVacuna.update({
+							id_paciente: req.body.id_paciente,
+							id_vacuna: req.body.id_vacuna,
+							fecha_ultima_aplicacion: req.body.fecha_ultima_aplicacion,
+							fecha_siguiente_aplicacion: req.body.fecha_siguiente_aplicacion,
+							eliminado: req.body.eliminado
+						}, {
+								where: {
+									id: req.params.id
+								}
+							}).then(function (vacunaAplicada) {
+								res.json({ mensaje: 'Dosis aplicada correctamente!.' })
+							})
+					} else {
+						res.json({ mensaje: 'No se puede aplicar en la misma fecha!.' })
+					}
 				})
-		})
+			})
 
+		})
 		.get(function (req, res) {
 			MedicoPacienteVacuna.findAll({
 				where: {
 					id: req.params.id
 				},
 				include: [{ model: MedicoPacienteVacunaDosis, as: 'pacienteVacunaDosis' }]
-			}).then(function (vacuna) {
-				res.json(vacuna)
+			}).then(function (vacunas) {
+				res.json(vacunas)
 			})
 		})
 
@@ -844,7 +866,7 @@ module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Su
 	router.route('/paciente/vacuna/:id_paciente')
 		.get(function (req, res) {
 			MedicoPacienteVacuna.findAll({
-				where: { id_paciente: req.params.id_paciente, eliminado: false },
+				where: { id_paciente: req.params.id_paciente },
 				include: [{ model: MedicoVacuna, as: 'pacienteVacuna', include: [{ model: VacunaDosis, as: 'vacunaDosis', where: { eliminado: false }, order: [['numero', 'desc']] }] }, { model: MedicoPacienteVacunaDosis, as: 'pacienteVacunaDosis', order: [['createdAt', 'desc']] }]
 			}).then(function (vacunasPaciente) {
 				res.json(vacunasPaciente);
@@ -884,14 +906,90 @@ module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Su
 				}).then(function (vacunasPaciente) {
 					res.json('vacuna paciente actualizada');
 				});
+			// MedicoPacienteVacuna.findOrCreate({
+			// 	where:{
+			// 		id_paciente: req.body.id_paciente,
+			// 		id_vacuna: req.body.id_vacuna,
+			// 	},
+			// 	defaults:{
+			// 		id_paciente: req.body.id_paciente,
+			// 		id_vacuna: req.body.id_vacuna,
+			// 		fecha_ultima_aplicacion: req.body.fecha_ultima_aplicacion,
+			// 		fecha_siguiente_aplicacion: req.body.fecha_siguiente_aplicacion,
+			// 		eliminado: eliminar
+			// 	}
+			// }).spread(function (vacuna, is_new){
+			// 	if(!is_new){
+			// 		MedicoPacienteVacuna.update({
+			// 			id_paciente: req.body.id_paciente,
+			// 			id_vacuna: req.body.id_vacuna,
+			// 			fecha_ultima_aplicacion: req.body.fecha_ultima_aplicacion,
+			// 			fecha_siguiente_aplicacion: req.body.fecha_siguiente_aplicacion,
+			// 			eliminado: eliminar
+			// 		}, {
+			// 				where: { id: vacuna.id },
+			// 			}).then(function (vacunasPaciente) {
+			// 				res.json('vacuna paciente actualizada');
+			// 			});
+			// 	}
+			// })
+
+
 		});
 
 	router.route('/prerequisitos')
+		.post(function (req, res) {
+			if (req.body.id != undefined) {
+				MedicoPrerequisito.update({
+					nombre: req.body.nombre,
+					vencimiento_mes: req.body.vencimiento_mes,
+					// fecha_inicio: req.body.fecha_inicio,
+					// fecha_vencimiento: req.body.fecha_vencimiento,
+					observacion: req.body.observacion,
+					puede_modificar_rrhh: req.body.puede_modificar_rrhh
+				}, {
+						where: {
+							id: req.body.id
+						}
+					}).then(function (prerequisitoCreado) {
+						res.json({ mensaje: "Pre-requisitos actualizado satisfactoriamente!" });
+					});
+			} else {
+				MedicoPrerequisito.create({
+					// id_paciente: req.params.id_paciente,
+					// id_prerequisito: req.body.prerequisito.id,
+					nombre: req.body.nombre,
+					vencimiento_mes: req.body.vencimiento_mes,
+					// fecha_inicio: req.body.fecha_inicio,
+					// fecha_vencimiento: req.body.fecha_vencimiento,
+					observacion: req.body.observacion,
+					puede_modificar_rrhh: req.body.puede_modificar_rrhh
+				}).then(function (prerequisitoCreado) {
+					res.json({ mensaje: "Pre-requisitos creados satisfactoriamente!" });
+				});
+			}
+		})
+		.put(function (req, res) {
+			MedicoPrerequisito.update({
+				nombre: req.body.nombre,
+				vencimiento_mes: req.body.vencimiento_mes,
+				// fecha_inicio: req.body.fecha_inicio,
+				// fecha_vencimiento: req.body.fecha_vencimiento,
+				observacion: req.body.observacion,
+				puede_modificar_rrhh: req.body.puede_modificar_rrhh
+			}, {
+					where: {
+						id: req.body.id
+					}
+				}).then(function (prerequisitoCreado) {
+					res.json({ mensaje: "Pre-requisitos actualizado satisfactoriamente!" });
+				});
+		})
 		.get(function (req, res) {
-			Clase.findAll({
-				include: [{ model: Tipo, as: 'tipo', where: { nombre_corto: Diccionario.PRE_REQUSITO } }]
+			MedicoPrerequisito.findAll({
+				// include: [{ model: Tipo, as: 'tipo', where: { nombre_corto: Diccionario.PRE_REQUSITO } }]
 			}).then(function (prerequisitos) {
-				res.json(prerequisitos);
+				res.json({ prerequisitos: prerequisitos });
 			});
 		});
 
@@ -932,109 +1030,296 @@ module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Su
 	// 	});
 	// });
 
-	router.route('/prerequisito/paciente/:id_paciente')
+	router.route('/prerequisito/paciente')
 		.post(function (req, res) {
-			Clase.find({
-
-				where: { nombre_corto: Diccionario.PRE_REQUSITO }
-			}).then(function (prerequisito) {
-				MedicoPrerequisito.find({
-					where: {
-						id_paciente: req.params.id_paciente,
-						$or: [{ id_prerequisito: req.body.id_prerequisito }]
-					},
-				}).then(function (prerequisitoEncontrado) {
-					if (prerequisitoEncontrado) {
-						MedicoPrerequisito.update({
-							vencimiento_mes: req.body.vencimiento_mes,
+			var asignar = true
+			if (req.body.asignado) {
+				asignar = false
+			}
+			MedicoPacientePreRequisito.findOrCreate({
+				where: {
+					id_paciente: req.body.pacientePrerequisito.id,
+					id_prerequisito: req.body.preRequisito.id,
+					fecha_inicio: req.body.fecha_inicio,
+					fecha_entrega: null
+				},
+				defaults: {
+					id_paciente: req.body.pacientePrerequisito.id,
+					id_prerequisito: req.body.preRequisito.id,
+					// vencimiento_mes: req.body.vencimiento_mes,
+					fecha_inicio: req.body.fecha_inicio,
+					fecha_entrega: req.body.fecha_entrega,
+					fecha_vencimiento: req.body.fecha_vencimiento,
+					observacion: req.body.observacion,
+					// puede_modificar_rrhh: req.body.puede_modificar_rrhh,
+					eliminado: asignar
+				}
+			}).spread(function (prerequisitoAsignado, is_new) {
+				if (!is_new) {
+					if (req.body.paraAsignar == undefined) {
+						MedicoPacientePreRequisito.update({
+							id_paciente: req.body.id_paciente,
+							id_prerequisito: req.body.id_prerequisito,
+							// vencimiento_mes: req.body.vencimiento_mes,
+							fecha_entrega: req.body.fecha_entrega,
 							fecha_inicio: req.body.fecha_inicio,
 							fecha_vencimiento: req.body.fecha_vencimiento,
 							observacion: req.body.observacion,
-							puede_modificar_rrhh: req.body.puede_modificar_rrhh
+							// puede_modificar_rrhh: req.body.puede_modificar_rrhh,
+							eliminado: asignar
 						}, {
 								where: {
-									id: prerequisitoEncontrado.id
+									id_paciente: req.body.id_paciente,
+									id_prerequisito: req.body.id_prerequisito
 								}
-							}).then(function (prerequisitoCreado) {
-
-								res.json({ mensaje: "¡Datos de Pre-requisito actualizados satisfactoriamente!" });
-
-							});
+							}).then(function (preRequisitoActualizado) {
+								res.json({ mensaje: "Pre-requisito actualizado satisfactoriamente!" });
+							})
 					} else {
-						MedicoPrerequisito.create({
-							id_paciente: req.params.id_paciente,
-							id_prerequisito: req.body.id_prerequisito,
-							vencimiento_mes: req.body.vencimiento_mes,
+						MedicoPacientePreRequisito.update({
+							id_paciente: req.body.pacientePrerequisito.id,
+							id_prerequisito: req.body.preRequisito.id,
+							// vencimiento_mes: req.body.vencimiento_mes,
+							fecha_entrega: req.body.fecha_entrega,
 							fecha_inicio: req.body.fecha_inicio,
 							fecha_vencimiento: req.body.fecha_vencimiento,
-							observacion: req.body.observacion,
-							puede_modificar_rrhh: req.body.puede_modificar_rrhh
-
-						}).then(function (prerequisitoCreado) {
-
-							res.json({ mensaje: "Pre-requisitos creados satisfactoriamente!" });
-
-						});
+							// observacion: req.body.observacion,
+							// puede_modificar_rrhh: req.body.puede_modificar_rrhh,
+							eliminado: asignar
+						}, {
+								where: {
+									id_paciente: req.body.pacientePrerequisito.id,
+									id_prerequisito: req.body.preRequisito.id
+								}
+							}).then(function (preRequisitoActualizado) {
+								res.json({ mensaje: "Pre-requisito actualizado satisfactoriamente!" });
+							})
 					}
-				})
 
-			})
-
+				} else {
+					if (req.body.asignado) {
+						res.json({ mensaje: "Pre-requisito asignado satisfactoriamente!" });
+					} else {
+						res.json({ mensaje: "Pre-requisito ya no esta asignado a esta persona!" });
+					}
+				}
+			});
 		})
-		.put(function (req, res) {
-			if (req.body instanceof Array) {
-				req.body.forEach(function (prerequisito, index, array) {
-					MedicoPrerequisito.update({
-						entregado: prerequisito.entregado,
-						puede_modificar_rrhh: prerequisito.puede_modificar_rrhh
-					}, {
-							where: {
-								id: prerequisito.id
-							},
-						}).then(function (prerequisitos) {
-							if (index === (array.length - 1)) {
-								res.json({ message: "pre requisito actualizado satisfactoriamente!" });
-							}
-						});
-				}, this);
+		.get(function (req, res) {
+			MedicoPacientePreRequisito.findAll({
+				where: {
+					id: req.body.id_paciente,
+					eliminado: false
+				},
+				include: [{ model: MedicoPrerequisito, as: 'preRequisito' }]
+			}).then(function (requisitos) {
+				res.json({ Requisitos: requisitos })
+			})
+		})
+	// Clase.find({
+	// 	where: { nombre_corto: Diccionario.PRE_REQUSITO }
+	// }).then(function (prerequisito) {
+	// 	MedicoPrerequisito.find({
+	// 		where: {
+	// 			id_paciente: req.params.id_paciente,
+	// 			$or: [{ id_prerequisito: req.body.id_prerequisito }]
+	// 		},
+	// 	}).then(function (prerequisitoEncontrado) {
+	// if (prerequisitoEncontrado) {
+	// 	MedicoPrerequisito.update({
+	// 		vencimiento_mes: req.body.vencimiento_mes,
+	// 		fecha_inicio: req.body.fecha_inicio,
+	// 		fecha_vencimiento: req.body.fecha_vencimiento,
+	// 		observacion: req.body.observacion,
+	// 		puede_modificar_rrhh: req.body.puede_modificar_rrhh
+	// 	}, {
+	// 			where: {
+	// 				id: prerequisitoEncontrado.id
+	// 			}
+	// 		}).then(function (prerequisitoCreado) {
 
-			} else {
-				MedicoPrerequisito.update({
-					entregado: req.body.entregado,
-					puede_modificar_rrhh: req.body.puede_modificar_rrhh
-				}, {
-						where: {
-							id: req.body.id
-						},
-					}).then(function (prerequisitos) {
-						res.json({ message: "pre requisito actualizado satisfactoriamente!" });
-					});
+	// 			res.json({ mensaje: "¡Datos de Pre-requisito actualizados satisfactoriamente!" });
+
+	// 		});
+	// } else {
+	// MedicoPrerequisito.create({
+	// 	id_paciente: req.params.id_paciente,
+	// 	id_prerequisito: req.body.prerequisito.id,
+	// 	vencimiento_mes: req.body.vencimiento_mes,
+	// 	fecha_inicio: req.body.fecha_inicio,
+	// 	fecha_vencimiento: req.body.fecha_vencimiento,
+	// 	observacion: req.body.observacion,
+	// 	puede_modificar_rrhh: req.body.puede_modificar_rrhh
+
+	// }).then(function (prerequisitoCreado) {
+
+	// 	res.json({ mensaje: "Pre-requisitos creados satisfactoriamente!" });
+
+	// });
+	// }
+	// })
+
+	// })
+	// .put(function (req, res) {
+	// 	if (req.body instanceof Array) {
+	// 		req.body.forEach(function (prerequisito, index, array) {
+	// 			MedicoPrerequisito.update({
+	// 				entregado: prerequisito.entregado,
+	// 				puede_modificar_rrhh: prerequisito.puede_modificar_rrhh
+	// 			}, {
+	// 					where: {
+	// 						id: prerequisito.id
+	// 					},
+	// 				}).then(function (prerequisitos) {
+	// 					if (index === (array.length - 1)) {
+	// 						res.json({ message: "pre requisito actualizado satisfactoriamente!" });
+	// 					}
+	// 				});
+	// 		}, this);
+
+	// 	} else {
+	// 		MedicoPrerequisito.update({
+	// 			entregado: req.body.entregado,
+	// 			puede_modificar_rrhh: req.body.puede_modificar_rrhh
+	// 		}, {
+	// 				where: {
+	// 					id: req.body.id
+	// 				},
+	// 			}).then(function (prerequisitos) {
+	// 				res.json({ message: "pre requisito actualizado satisfactoriamente!" });
+	// 			});
+	// 	}
+	// });
+	router.route('/medico-paciente-pre-requisito-alertas/empresa/:id_empresa/inicio/:inicio/fin/:fin')
+	.get(function (req, res) {
+		var condicionPreRequisito = { fecha_entrega: null,eliminado: false }
+		var desde = false
+		var hasta = false
+		if (req.params.inicio != 0) {
+			var inicio = new Date(req.params.inicio); inicio.setHours(0, 0, 0, 0, 0);
+			desde = true
+		}
+		if (req.params.fin != 0) {
+			var fin = new Date(req.params.fin); fin.setHours(23, 0, 0, 0, 0);
+			hasta = true
+		}
+		if (desde && hasta) {
+			condicionPreRequisito = {
+				// id_paciente: req.params.id_paciente,
+				eliminado: false,
+				fecha_entrega:null,
+				fecha_vencimiento: {
+					$between: [inicio, fin]
+				}
+			}
+		}else if(desde && !hasta){
+			condicionPreRequisito = {
+				// id_paciente: req.params.id_paciente,
+				fecha_entrega:null,
+				eliminado: false,
+				fecha_vencimiento: {
+					$gte: [inicio]
+				}
+			}
+		}else if(!desde && hasta){
+			condicionPreRequisito = {
+				// id_paciente: req.params.id_paciente,
+				fecha_entrega:null,
+				eliminado: false,
+				fecha_vencimiento: {
+					$lte: [fin]
+				}
+			}
+		}else if (!desde && !hasta) {
+			var hoy = new Date()
+			// hoy.setHours(0,0,0,0)
+			condicionPreRequisito = {
+				fecha_entrega:null,
+				// id_paciente: req.params.id_paciente,
+				eliminado: false,
+				// fecha_vencimiento: {
+				// 	$lte: hoy
+				// }
+			}
+		}
+		MedicoPacientePreRequisito.findAll({
+			where: condicionPreRequisito,
+			include: [{ model: MedicoPrerequisito, as: 'preRequisito' }, { model: MedicoPaciente, as: 'pacientePrerequisito',where:{id_empresa: req.params.id_empresa}, include:[{model:Persona,as:'persona'}] }
+			]
+		}).then(function (prerequisitos) {
+			var alerta = []
+			prerequisitos.forEach(function(pre, index,array) {
+				var vencimiento = new Date(pre.fecha_vencimiento).getTime()
+				var hoy = new Date().getTime();
+				var dif = hoy - vencimiento
+				var dias = Math.floor(dif / 86400000)
+				if (dias >= pre.preRequisito.dias_activacion*-1){
+					alerta.push(pre)
+				}
+
+				if (index == array.length-1) {
+					res.json({ Prerequisitos: alerta });
+				}
+			});
+			if (prerequisitos.length == 0){
+				res.json({Prerequisitos: alerta})
 			}
 		});
+	})
 	router.route('/medico-paciente-pre-requisito/paciente/:id_paciente/inicio/:inicio/fin/:fin')
 		.get(function (req, res) {
-			var condicionPreRequisito = { id_paciente: req.params.id_paciente }
+			var condicionPreRequisito = { id_paciente: req.params.id_paciente, eliminado: false }
+			var desde = false
+			var hasta = false
 			if (req.params.inicio != 0) {
 				var inicio = new Date(req.params.inicio); inicio.setHours(0, 0, 0, 0, 0);
-				var fin = new Date(req.params.fin); fin.setHours(23, 0, 0, 0, 0);
-
-				condicionPreRequisito = {
-					$or: [
-						{
-							fecha_vencimiento: {
-								$between: [inicio, fin]
-							}
-						}
-					]
-				};
-
+				desde = true
 			}
-			MedicoPrerequisito.findAll({
+			if (req.params.fin != 0) {
+				var fin = new Date(req.params.fin); fin.setHours(23, 0, 0, 0, 0);
+				hasta = true
+			}
+			if (desde && hasta) {
+				condicionPreRequisito = {
+					id_paciente: req.params.id_paciente,
+					eliminado: false,
+					fecha_vencimiento: {
+						$between: [inicio, fin]
+					}
+				}
+			}else if(desde && !hasta){
+				condicionPreRequisito = {
+					id_paciente: req.params.id_paciente,
+					eliminado: false,
+					fecha_vencimiento: {
+						$gte: [inicio]
+					}
+				}
+			}else if(!desde && hasta){
+				condicionPreRequisito = {
+					id_paciente: req.params.id_paciente,
+					eliminado: false,
+					fecha_vencimiento: {
+						$lte: [fin]
+					}
+				}
+			}else if (!desde && !hasta) {
+				var hoy = new Date()
+				// hoy.setHours(0,0,0,0)
+				condicionPreRequisito = {
+					id_paciente: req.params.id_paciente,
+					eliminado: false
+					// fecha_vencimiento: {
+					// 	$gte: hoy
+					// }
+				}
+			}
+			MedicoPacientePreRequisito.findAll({
 				where: condicionPreRequisito,
-				include: [{ model: Clase, as: 'prerequisitoClase' }, { model: MedicoPaciente, as: 'prerequisitoPaciente', include: [{ model: Persona, as: 'persona' }] }
+				include: [{ model: MedicoPrerequisito, as: 'preRequisito' }, { model: MedicoPaciente, as: 'pacientePrerequisito' }
 				]
 			}).then(function (prerequisitos) {
-				res.json(prerequisitos);
+				res.json({ Prerequisitos: prerequisitos });
 			});
 		})
 	router.route('/medico-paciente-consulta')
@@ -1158,12 +1443,12 @@ module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Su
 				var condicionPaciente = {}
 			}
 
-			MedicoPrerequisito.findAll({
+			MedicoPacientePreRequisito.findAll({
 				where: condicionPreRequisito,
-				include: [{ model: Clase, as: 'prerequisitoClase' }, { model: MedicoPaciente, as: 'prerequisitoPaciente', where: { id_empresa: req.params.id_empresa }, include: [{ model: Persona, as: 'persona' }] }
+				include: [{ model: MedicoPrerequisito, as: 'preRequisito' }, { model: MedicoPaciente, as: 'pacientePrerequisito', include: [{ model: Persona, as: 'persona' }] }
 				]
 			}).then(function (prerequisitos) {
-				res.json(prerequisitos);
+				res.json({ Prerequisitos: prerequisitos });
 			});
 		})
 	router.route('/medico-paciente-vacunas/empresa/:id_empresa/inicio/:inicio/fin/:fin')
@@ -1171,7 +1456,7 @@ module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Su
 			if (req.params.inicio != 0) {
 				var inicio = new Date(req.params.inicio); inicio.setHours(0, 0, 0, 0, 0);
 				var fin = new Date(req.params.fin); fin.setHours(23, 0, 0, 0, 0);
-				var condicionPreRequisito = {
+				var condicionPaciente = {
 					eliminado: false,
 					$or: [
 						{
@@ -1186,11 +1471,53 @@ module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Su
 			}
 
 			MedicoPacienteVacuna.findAll({
-				where: condicionPreRequisito,
+				where: condicionPaciente,
 				include: [{ model: MedicoPaciente, as: 'paciente', include: [{ model: Persona, as: 'persona' }] }, { model: MedicoVacuna, as: 'pacienteVacuna' }]
-			}).then(function (prerequisitos) {
-				res.json(prerequisitos);
+			}).then(function (vacunas) {
+				res.json({ Vacunas: vacunas });
 			});
+		})
+
+	router.route('/historial-ficha-medico-paciente/paciente/:id_paciente/inicio/:inicio/fin/:fin/tipo-control/:tipo_control')
+		.get(function (req, res) {
+			var condicionFichaPaciente = { id_paciente: req.params.id_paciente }
+			var condicionTipoControl = {}
+			if (req.params.inicio != 0) {
+				var inicio = new Date(req.params.inicio); inicio.setHours(0, 0, 0, 0, 0);
+				var fin = new Date(req.params.fin); fin.setHours(23, 0, 0, 0, 0);
+				condicionFichaPaciente = {
+					id_paciente: req.params.id_paciente,
+					$and: [
+						{
+							fecha: {
+								$between: [inicio, fin]
+							}
+						}
+					]
+				};
+			}
+			if (req.params.tipo_control != 0) {
+				condicionTipoControl = { id: req.params.tipo_control }
+				// }else{
+				// 	MedicoPacienteFicha.findAll({
+				// 		where: condicionFichaPaciente,
+				// 		include: [{ model: Clase, as: 'tipoControl'}, {
+				// 			model: MedicoPaciente, as: 'paciente', include: [{ model: Empresa, as: 'empresa' }, { model: Persona, as: 'persona', include: [{ model: Clase, as: 'genero' }] }]
+				// 		}, { model: Persona, as: 'personaReferencia' }],
+				// 		order: [['createdAt', 'DESC']]
+				// 	}).then(function (fichaEncontrada) {
+				// 		res.json(fichaEncontrada)
+				// 	})
+			}
+			MedicoPacienteFicha.findAll({
+				where: condicionFichaPaciente,
+				include: [{ model: Clase, as: 'tipoControl', where: condicionTipoControl }, {
+					model: MedicoPaciente, as: 'paciente', include: [{ model: Empresa, as: 'empresa' }, { model: Persona, as: 'persona', include: [{ model: Clase, as: 'genero' }] }]
+				}, { model: Persona, as: 'personaReferencia' }],
+				order: [['createdAt', 'DESC']]
+			}).then(function (fichaEncontrada) {
+				res.json(fichaEncontrada)
+			})
 		})
 	router.route('/medico-paciente-ficha/paciente/:id_paciente')
 		.get(function (req, res) {
@@ -1203,7 +1530,7 @@ module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Su
 				{
 					model: MedicoPaciente, as: 'paciente', include: [{ model: Empresa, as: 'empresa' }, { model: Persona, as: 'persona', include: [{ model: Clase, as: 'genero' }] }]
 				}, { model: Persona, as: 'personaReferencia' }],
-				order: [['createdAt', 'DESC']]
+				order: [['id', 'DESC']]
 			}).then(function (fichaEncontrada) {
 				var ficha = fichaEncontrada[0]
 				if (ficha) {
@@ -1484,12 +1811,45 @@ module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Su
 	//rutas laboratorio inicio
 	router.route('/nuevo-laboratorio/empresa/:id_empresa')
 		.post(function (req, res) {
-			MedicoLaboratorio.create({
-				nombre: req.body.nombre,
-				descripcion: req.body.descripcion,
-				id_empresa: req.params.id_empresa
-			}).then(function (MedicoLaboratorioCreado) {
-				res.json({ message: "laboratorio creado satisfactoriamente" })
+			if (req.body.id) {
+				MedicoLaboratorio.update({
+					nombre: req.body.nombre,
+					descripcion: req.body.descripcion,
+					id_empresa: req.params.id_empresa,
+				}, {
+						where: { id: req.body.id }
+					}).then(function (MedicoLaboratorioCreado) {
+						res.json({ message: "laboratorio actualizado satisfactoriamente!" })
+					})
+			} else {
+				MedicoLaboratorio.create({
+					nombre: req.body.nombre,
+					descripcion: req.body.descripcion,
+					id_empresa: req.params.id_empresa
+				}).then(function (MedicoLaboratorioCreado) {
+					res.json({ message: "laboratorio creado satisfactoriamente!" })
+				})
+			}
+		})
+		.put(function (req, res) {
+			MedicoLaboratorio.find({
+				where: { id_empresa: req.params.id_empresa, id: req.body.id },
+				include: [{ model: MedicoLaboratorioExamen, as: 'laboratorioExamenes' }]
+			}).then(function (MedicosLaboratorioEncontrados) {
+				if (MedicosLaboratorioEncontrados.laboratorioExamenes.length > 0) {
+
+					res.json({ message: "EL laboratorio cuenta con historial de examenes no se puede eliminar!" })
+				} else {
+					MedicoLaboratorio.destroy({
+						where: {
+							id: req.body.id
+						}
+					}).then(function (medicoLaboratorioEliminado) {
+						res.json({ message: "Eliminado Satisfactoriamente!" })
+					})
+
+				}
+
 			})
 		})
 		.get(function (req, res) {
@@ -1501,14 +1861,50 @@ module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Su
 		})
 	router.route('/nuevo-laboratorio-examen/laboratorio/:id_laboratorio')
 		.post(function (req, res) {
-			MedicoLaboratorioExamen.create({
-				nombre: req.body.nombre,
-				examen: req.body.examen,
-				unidad: req.body.unidad,
-				observacion: req.body.observacion,
-				id_laboratorio: req.params.id_laboratorio
-			}).then(function (MedicoLaboratorioCreado) {
-				res.json({ message: "laboratorio examen creado satisfactoriamente" })
+			if (req.body.id) {
+				MedicoLaboratorioExamen.update({
+					nombre: req.body.nombre,
+					examen: req.body.examen,
+					unidad: req.body.unidad,
+					observacion: req.body.observacion,
+					id_laboratorio: req.params.id_laboratorio
+				}, {
+						where: { id: req.body.id }
+					}).then(function (MedicoLaboratorioCreado) {
+						res.json({ message: "laboratorio examen actualizado satisfactoriamente!" })
+					})
+			} else {
+				MedicoLaboratorioExamen.create({
+					nombre: req.body.nombre,
+					examen: req.body.examen,
+					unidad: req.body.unidad,
+					observacion: req.body.observacion,
+					id_laboratorio: req.params.id_laboratorio
+				}).then(function (MedicoLaboratorioCreado) {
+					res.json({ message: "laboratorio examen creado satisfactoriamente1" })
+				})
+			}
+
+		})
+		.put(function (req, res) {
+			MedicoLaboratorioExamen.find({
+				where: { id: req.body.id },
+				include: [{ model: MedicoLaboratorioResultado, as: 'laboratorioPacientesExamenes' }]
+			}).then(function (MedicosLaboratorioExamenEncontrados) {
+				if (MedicosLaboratorioExamenEncontrados.laboratorioPacientesExamenes.length > 0) {
+
+					res.json({ message: "EL examen cuenta con historial de resultados no se puede eliminar!" })
+				} else {
+					MedicoLaboratorioExamen.destroy({
+						where: {
+							id: req.body.id
+						}
+					}).then(function (medicoLaboratorioEliminado) {
+						res.json({ message: "Eliminado Satisfactoriamente!" })
+					})
+
+				}
+
 			})
 		})
 		.get(function (req, res) {
@@ -1564,7 +1960,8 @@ module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Su
 			}
 			MedicoLaboratorioPaciente.findAll({
 				where: condicionLaboratorioPaciente,
-				include: [{ model: MedicoLaboratorio, as: 'laboratorio' }]
+				include: [{ model: MedicoLaboratorio, as: 'laboratorio' },
+				{ model: MedicoLaboratorioResultado, as: 'laboratorioResultados', include: [{ model: MedicoLaboratorioExamen, as: 'laboratorioExamen' }] }]
 			}).then(function (MedicoLaboratorioExamenesEncontrado) {
 				res.json(MedicoLaboratorioExamenesEncontrado)
 			})
@@ -1575,14 +1972,47 @@ module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Su
 	//rutas Diagnostico inicio
 
 	router.route('/nuevo-diagnostico/empresa/:id_empresa')
-		.post(function (req, res) {
-			MedicoDiagnostico.create({
-				nombre: req.body.nombre,
-				descripcion: req.body.descripcion,
-				id_empresa: req.params.id_empresa
-			}).then(function (MedicoLaboratorioCreado) {
-				res.json({ message: "diagnostico creado satisfactoriamente" })
+		.put(function (req, res) {
+			MedicoDiagnostico.find({
+				where: { id_empresa: req.params.id_empresa, id: req.body.id },
+				include: [{ model: MedicoDiagnosticoExamen, as: 'diagnosticoExamenes' }]
+			}).then(function (MedicosDiagnosticoEncontrados) {
+				if (MedicosDiagnosticoEncontrados.diagnosticoExamenes.length > 0) {
+
+					res.json({ message: "EL diagnostico cuenta con historial de examenes no se puede eliminar!" })
+				} else {
+					MedicoDiagnostico.destroy({
+						where: {
+							id: req.body.id
+						}
+					}).then(function (medicoDiagnosticoEliminado) {
+						res.json({ message: "Eliminado Satisfactoriamente!" })
+					})
+
+				}
+
 			})
+		})
+		.post(function (req, res) {
+			if (req.body.id) {
+				MedicoDiagnostico.update({
+					nombre: req.body.nombre,
+					descripcion: req.body.descripcion,
+					id_empresa: req.params.id_empresa,
+				}, {
+						where: { id: req.body.id }
+					}).then(function (MedicoLaboratorioCreado) {
+						res.json({ message: "diagnostico actualizado satisfactoriamente!" })
+					})
+			} else {
+				MedicoDiagnostico.create({
+					nombre: req.body.nombre,
+					descripcion: req.body.descripcion,
+					id_empresa: req.params.id_empresa
+				}).then(function (MedicoLaboratorioCreado) {
+					res.json({ message: "diagnostico creado satisfactoriamente!" })
+				})
+			}
 		})
 		.get(function (req, res) {
 			MedicoDiagnostico.findAll({
@@ -1593,16 +2023,52 @@ module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Su
 		})
 
 	router.route('/nuevo-diagnostico-examen/diagnostico/:id_diagnostico')
-		.post(function (req, res) {
-			MedicoDiagnosticoExamen.create({
-				nombre: req.body.nombre,
-				examen: req.body.examen,
-				unidad: req.body.unidad,
-				observacion: req.body.observacion,
-				id_diagnostico: req.params.id_diagnostico
-			}).then(function (MedicodiagnosticoCreado) {
-				res.json({ message: "diagnostico examen creado satisfactoriamente!" })
+		.put(function (req, res) {
+			MedicoDiagnosticoExamen.find({
+				where: { id: req.body.id },
+				include: [{ model: MedicoDiagnosticoResultado, as: 'diagnosticoPacientesExamenes' }]
+			}).then(function (MedicosDiagnosticoExamenEncontrados) {
+				if (MedicosDiagnosticoExamenEncontrados.diagnosticoPacientesExamenes.length > 0) {
+
+					res.json({ message: "EL examen cuenta con historial de resultados no se puede eliminar!" })
+				} else {
+					MedicoDiagnosticoExamen.destroy({
+						where: {
+							id: req.body.id
+						}
+					}).then(function (medicoDiagnosticoEliminado) {
+						res.json({ message: "Eliminado Satisfactoriamente!" })
+					})
+
+				}
+
 			})
+		})
+		.post(function (req, res) {
+			if (req.body.id) {
+				MedicoDiagnosticoExamen.update({
+					nombre: req.body.nombre,
+					examen: req.body.examen,
+					unidad: req.body.unidad,
+					observacion: req.body.observacion,
+					id_diagnostico: req.params.id_diagnostico
+				}, {
+						where: { id: req.body.id }
+					}).then(function (MedicodiagnosticoCreado) {
+						res.json({ message: "diagnostico examen actualizado satisfactoriamente!" })
+					})
+			} else {
+				MedicoDiagnosticoExamen.create({
+					nombre: req.body.nombre,
+					examen: req.body.examen,
+					unidad: req.body.unidad,
+					observacion: req.body.observacion,
+					id_diagnostico: req.params.id_diagnostico
+				}).then(function (MedicodiagnosticoCreado) {
+					res.json({ message: "diagnostico examen creado satisfactoriamente!" })
+				})
+			}
+
 		})
 		.get(function (req, res) {
 			MedicoDiagnosticoExamen.findAll({
@@ -1659,7 +2125,8 @@ module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Su
 			}
 			MedicoDiagnosticoPaciente.findAll({
 				where: condicionDiagnosticoPaciente,
-				include: [{ model: MedicoDiagnostico, as: 'diagnostico' }]
+				include: [{ model: MedicoDiagnostico, as: 'diagnostico' },
+				{ model: MedicoDiagnosticoResultado, as: 'diagnosticoResultados', include: [{ model: MedicoDiagnosticoExamen, as: 'diagnosticoExamen' }] }]
 			}).then(function (MedicoDiagnosticoExamenesEncontrado) {
 				res.json(MedicoDiagnosticoExamenesEncontrado)
 			})

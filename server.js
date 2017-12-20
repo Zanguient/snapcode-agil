@@ -35,6 +35,7 @@ app.use(cors());
 var database="agil",username="agil",dbpass="agil2017@*#";
 
 var postgrator = new Postgrator({
+  validateChecksums: false,
   // Directory containing migration files
   migrationDirectory: __dirname + '/database files/migrations',
   // Driver: must be pg, mysql, or mssql

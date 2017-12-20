@@ -1,25 +1,22 @@
 module.exports=function(sequelize,Sequelize){
 	var MedicoPrerequisito = sequelize.define('agil_medico_prerequisito', {
-	  id_paciente: {
-		type: Sequelize.INTEGER,
-		field: 'paciente' 
-	  },
-	  id_prerequisito: {
-		type: Sequelize.INTEGER,
-		field: 'prerequisito'
-	  },
+	  // id_paciente: {
+		// type: Sequelize.INTEGER,
+		// field: 'paciente' 
+	  // },
+	  // id_prerequisito: {
+		// type: Sequelize.INTEGER,
+		// field: 'prerequisito'
+		// },
+		nombre: {
+			type: Sequelize.STRING,
+			field: 'nombre'
+			},
 	  vencimiento_mes: {
 		type: Sequelize.INTEGER,
 		field: 'vencimiento_mes' 
 	  },
-	  fecha_inicio: {
-		type: Sequelize.DATE,
-		field: 'fecha_inicio'
-	  },
-	  fecha_vencimiento: {
-		type: Sequelize.DATE,
-		field: 'fecha_vencimiento'
-	  },
+	  
 	  observacion: {
 		type: Sequelize.STRING,
 		field: 'observacion'
@@ -28,10 +25,10 @@ module.exports=function(sequelize,Sequelize){
 		type: Sequelize.BOOLEAN,
 		field: 'puede_modificar_rrhh'
 		},
-	entregado:{
-		type: Sequelize.BOOLEAN,
-		field: 'entregado',
-		defaultValue:0
+	dias_activacion:{
+		type: Sequelize.INTEGER,
+		field: 'dias_activacion',
+		defaultValue:15
 	}
 	}, {
 	  freezeTableName: true 

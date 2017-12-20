@@ -95,7 +95,8 @@ function ejecutarScriptsPacientes(idModalDialogVacunas, idModalDialogConsulta, i
 	idModalDialogExamenesDiagnostico, idModalDialogNuevoExamenDiagnostico, idModalDialogHistorialFicha, idModalDialogCredencial,
 	idModalDialogPatologias, idModalDialogComentario, idModalAlertPrerequisitos, idModalDiasActivacionPrerequisitos,
 	idModalReprogramarPrerequisitos, idModalAlertVacunas, idModalDiasActivacionVacunas, idModalReprogramarVacunas, idImagenUsuario,idModalHistorialConsulta,
-	idModalWizardPacienteVista,idModalContenedorPacienteVista,idModalEliminarPaciente,IdModalDialogNuevoLaboratorio,IdModalDialogDiagnosticoExamenHistoricoResultado) {
+	idModalWizardPacienteVista,idModalContenedorPacienteVista,idModalEliminarPaciente,IdModalDialogNuevoLaboratorio,IdModalDialogDiagnosticoExamenHistoricoResultado,
+	idModalDialogVerResultadosHistorialLab, idModalDialogConfirmacionEntregaAdelantado) {
 	crearPopup(idModalDialogVacunas, "60%", 'auto');
 	crearPopup(idModalDialogVacunasConfig, "60%", 'auto');
 	crearPopup(idModalDialogVacunaEdicion, "70%", 'auto');
@@ -109,7 +110,7 @@ function ejecutarScriptsPacientes(idModalDialogVacunas, idModalDialogConsulta, i
 	crearPopup(idModalDialogHistorico, "100%", 800);
 	crearPopup(idModalFichaTecnica, "90%", 'auto');
 	crearPopup(IdModalDialogLaboratorioExamen, "35%", 'auto');
-	// crearPopup(IdModalDialogLaboratorioExamenHistorico, "50%", 400);
+	crearPopup(idModalDialogConfirmacionEntregaAdelantado, "35%", 'auto');
 	crearPopup(IdModalDialogLaboratorioExamenes, "50%", 'auto');
 	crearPopup(IdModalDialogLaboratorioExamenHistoricoPreview, "50%", 'auto');
 	crearPopup(IdModalDialogLaboratorioExamenesNuevoResultado, "35%", 'auto');
@@ -142,11 +143,14 @@ function ejecutarScriptsPacientes(idModalDialogVacunas, idModalDialogConsulta, i
 	aplicarWizardFormulario(idModalDialogPacienteNuevo, idModalwizardContainerPaciente);
 	aplicarWizardFormulario(idModalDialogConsulta, idModalwizardContainerConsulta);
 	aplicarWizardFormulario(idModalFichaTecnica, idModalwizardContainerFichaTecnica);
+	crearPopup(idModalDialogVerResultadosHistorialLab, "55%", 'auto');
 	// aplicarDatePickers();
 	// aplicarVisorImagenArchivo(idImagenUsuario);
 	setTimeout(function name(params) {
 		console.log('aplicacndo scripts pacientes')
 		aplicarDatePickers();
+		// aplicarHoras();
+		aplicarTiempos();
 		aplicarVisorImagenArchivo(idImagenUsuario);	
 	}, 2000)
 	
@@ -176,7 +180,8 @@ function ejecutarScriptsRecursosHumanos(idModalPrerequisitos, idModalEmpleado, i
 	idModalHistorialHorasExtras, idModalAnticipoRegular, idModalPrestamosPersonal, idModalAdvertencia, idModalPretamosNuevoTodos, 
 	idModalReporteHijos, idModalReporteVeneficios, idModalPagoPrestamo, idModalReporteVacaciones, idModalReporteBajasMedicas, 
 	idModalReporteRolTurnos, idModalReporteTurnosDetallado, idModalViajes, idModalVisita, idModalVehiculosViaje, idModalDestinos, 
-	idModalHistorialViajes, idModalReporteAusencias, idModalCertificado, idModalInstitucion,idModalRhNuevo,idModalWizardRhNuevo,idImagenUsuario,idEliminarUsuarioRh,idModalWizardRhVista,idModalContenedorRhVista) {
+	idModalHistorialViajes, idModalReporteAusencias, idModalCertificado, idModalInstitucion,idModalRhNuevo,idModalWizardRhNuevo,
+	idImagenUsuario,idEliminarUsuarioRh,idModalWizardRhVista,idModalContenedorRhVista,idModalDialogPrerequisitoNuevo) {
 	crearPopup(idModalPrerequisitos, "90%", 'auto');
 	crearPopup(idModalEmpleado, "100%", 'auto');
 	aplicarWizardFormulario(idModalEmpleado, idModalwizardContainerEmpleado);	
@@ -250,6 +255,7 @@ function ejecutarScriptsRecursosHumanos(idModalPrerequisitos, idModalEmpleado, i
 	aplicarWizardFormulario(idModalRhNuevo,idModalWizardRhNuevo)
 	crearPopup(idModalWizardRhVista, "62%", "auto");
 	aplicarWizardFormulario(idModalWizardRhVista, idModalContenedorRhVista);	
+	crearPopup(idModalDialogPrerequisitoNuevo, "50%", "auto");
 	setTimeout(function name(params) {
 	aplicarDatePickers();
 	// aplicarHoras();
@@ -257,6 +263,30 @@ function ejecutarScriptsRecursosHumanos(idModalPrerequisitos, idModalEmpleado, i
 	AplicarImputFile(idImput);
 	aplicarVisorImagenArchivo(idImagenUsuario);
 	},2000)	
+}
+
+function ejecutarScriptsPlanillaSueldos(idModalNuevaPlanillaSueldos, idModalEditarPlanillaSueldo, idModalParametros, idModalTR3, 
+	idModalHistorialTR3) {
+ 	crearPopup(idModalNuevaPlanillaSueldos, "100%", "auto");
+ 	crearPopup(idModalEditarPlanillaSueldo, "50%", "auto");
+ 	crearPopup(idModalParametros, "90%", "auto");
+ 	crearPopup(idModalTR3, "75%", "auto");
+ 	crearPopup(idModalHistorialTR3, "70%", "auto");
+}
+
+function ejecutarScriptsIncrementoSalarial(idModalNuevoIncrementoSalarial) {
+ 	crearPopup(idModalNuevoIncrementoSalarial, "100%", "auto");
+}
+
+function ejecutarScriptsPlanillaRCIVA(idModalNuevoPlanillaRCIVA, idModalFormulario110, idModalFormularioGeneral110, 
+	idModalArchivosTXT) {
+ 	crearPopup(idModalNuevoPlanillaRCIVA, "100%", "auto");
+ 	crearPopup(idModalFormulario110, "40%", "auto");
+ 	crearPopup(idModalFormularioGeneral110, "70%", "auto");
+ 	crearPopup(idModalArchivosTXT, "60%", "auto");
+}
+function ejecutarScriptsPlanillaRetroActivos(idModalNuevoPlanillaRetroactivo) {
+	crearPopup(idModalNuevoPlanillaRetroactivo, "100%", "auto");   	
 }
 
 function aplicarTab(idTab) {

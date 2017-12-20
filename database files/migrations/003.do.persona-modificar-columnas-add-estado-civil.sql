@@ -1,0 +1,10 @@
+ALTER TABLE gl_persona CHANGE COLUMN pais_nacimiento pais_nacimiento int(11);
+ALTER TABLE gl_persona ADD CONSTRAINT fk_gl_persona_pais_nacimiento_id FOREIGN KEY (pais_nacimiento) REFERENCES gl_clase(id);
+ALTER TABLE gl_persona CHANGE COLUMN ciudad_nacimiento ciudad_nacimiento int(11);
+ALTER TABLE gl_persona ADD CONSTRAINT fk_gl_persona_ciudad_nacimiento_id FOREIGN KEY (ciudad_nacimiento) REFERENCES gl_clase(id);
+ALTER TABLE gl_persona CHANGE COLUMN provincia_nacimiento provincia_nacimiento int(11);
+ALTER TABLE gl_persona ADD CONSTRAINT fk_gl_persona_provincia_nacimiento_id FOREIGN KEY (provincia_nacimiento) REFERENCES gl_clase(id);
+ALTER TABLE gl_persona CHANGE COLUMN localidad_nacimiento localidad_nacimiento int(11);
+ALTER TABLE gl_persona ADD CONSTRAINT fk_gl_persona_localidad_nacimiento_id FOREIGN KEY (localidad_nacimiento) REFERENCES gl_clase(id);
+ALTER TABLE gl_persona ADD estado_civil int(11);
+ALTER TABLE gl_persona ADD CONSTRAINT fk_gl_persona_estado_civil_id FOREIGN KEY (estado_civil) REFERENCES gl_clase(id);

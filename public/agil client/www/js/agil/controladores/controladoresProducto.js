@@ -3,7 +3,8 @@ angular.module('agil.controladores')
 .controller('ControladorProductos', function($scope,$filter,$window,$localStorage,$location,$templateCache,
 											 $route,blockUI,Producto,Productos,ProductosPaginador,ProductosEmpresa,
 											 ClasesTipo,Clases,ProductoKardex,ProductosEmpresaCreacion,DatoCodigoSiguienteProductoEmpresa,ListaProductosEmpresa,
-											Paginator,ListaCuentasComprobanteContabilidad){
+											Paginator,ListaCuentasComprobanteContabilidad,DatosProducto,
+										    ListaGruposProductoEmpresa,ListaSubGruposProductoEmpresa){
 	blockUI.start();
 	$scope.idModalWizardProductoKardex='modal-wizard-producto-kardex';
 	$scope.idModalWizardProductoEdicion='modal-wizard-producto-edicion';
@@ -17,12 +18,25 @@ angular.module('agil.controladores')
 	$scope.usuario=JSON.parse($localStorage.usuario);
 	
 	$scope.inicio=function(){
-		$scope.obtenerGrupos();
 		$scope.obtenerTipoProducto();
 		$scope.obtenerProductos();
 		$scope.obtenerSucursales();
-		
-		
+		$scope.obtenerGruposProductosEmpresa();
+		$scope.obtenerSubGruposProductosEmpresa();
+	}
+
+	$scope.obtenerGruposProductosEmpresa=function(){
+		var promesa=ListaGruposProductoEmpresa($scope.usuario.id_empresa);
+		promesa.then(function(grupos){
+			$scope.gruposProducto=grupos;
+		});
+	}
+
+	$scope.obtenerSubGruposProductosEmpresa=function(){
+		var promesa=ListaSubGruposProductoEmpresa($scope.usuario.id_empresa);
+		promesa.then(function(subgrupos){
+			$scope.subgruposProducto=subgrupos;
+		});
 	}
 	
 	$scope.$on('$viewContentLoaded', function(){
@@ -332,22 +346,29 @@ angular.module('agil.controladores')
 			doc.font('Helvetica',7);
 			doc.text("usuario : "+ $scope.usuario.nombre_usuario,475,740);
 			doc.text("fecha : "+ fechaActual.getDate()+"/"+(fechaActual.getMonth()+1)+"/"+fechaActual.getFullYear()+"  "+fechaActual.getHours()+":"+min,475,750);
-	}		
+	}
+
 	$scope.modificarProducto=function(producto){
-		$scope.producto=producto;
-		$scope.producto.totalBase=0;
-		for (var i = 0; i < $scope.producto.productosBase.length; i++) {
-			$scope.producto.totalBase =$scope.producto.totalBase+($scope.producto.productosBase[i].productoBase.precio_unitario*$scope.producto.productosBase[i].formulacion);
-			
+		var promesa=DatosProducto(producto.id);
+		promesa.then(function(datosProducto){
+			$scope.producto=datosProducto;
+			$scope.producto.publicar_panel=$scope.producto.publicar_panel==1?true:false;
+			$scope.producto.activar_inventario=$scope.producto.activar_inventario==1?true:false;
 
-		}	
-		$scope.productoBaseSeleccion={};
-
-		if($scope.producto.almacenErp){
-			$scope.producto.sucursal_erp=$scope.producto.almacenErp.sucursal;
-			$scope.obtenerAlmacenes($scope.producto.sucursal_erp.id);
-		}
-		$scope.abrirPopup($scope.idModalWizardProductoEdicion);
+			$scope.producto.totalBase=0;
+			for (var i = 0; i < $scope.producto.productosBase.length; i++) {
+				$scope.producto.totalBase =$scope.producto.totalBase+($scope.producto.productosBase[i].productoBase.precio_unitario*$scope.producto.productosBase[i].formulacion);
+				
+	
+			}	
+			$scope.productoBaseSeleccion={};
+	
+			if($scope.producto.almacenErp){
+				$scope.producto.sucursal_erp=$scope.producto.almacenErp.sucursal;
+				$scope.obtenerAlmacenes($scope.producto.sucursal_erp.id);
+			}
+			$scope.abrirPopup($scope.idModalWizardProductoEdicion);
+		});
 	}
 	
 	$scope.mostrarConfirmacionEliminacion=function(producto){
@@ -400,7 +421,16 @@ angular.module('agil.controladores')
 
 	$scope.establecerProductoBase=function(productoConsultado){
 		$scope.productoBase ={id:productoConsultado.id,nombre:productoConsultado.nombre,formulacion:0,unidad_medida:productoConsultado.unidad_medida};
- 	}
+	 }
+	 
+	$scope.actualizarProducto=function(producto){
+		var promesa=DatosProducto(producto.id);
+		promesa.then(function(datosProducto){
+			datosProducto.publicar_panel=producto.publicar_panel;
+			datosProducto.activar_inventario=producto.activar_inventario;
+			$scope.guardarProducto(datosProducto,false);
+		});
+	}
 	
 	$scope.guardarProducto=function(producto,recargarItemsTabla){
 		blockUI.start();
@@ -494,14 +524,7 @@ angular.module('agil.controladores')
 		}
 	}
 	
-	$scope.obtenerGrupos=function(){
-		blockUI.start();
-		var promesa=ClasesTipo("GRP");
-		promesa.then(function(entidad){
-			$scope.grupos=entidad.clases;
-			blockUI.stop();
-		});
-	}
+	
 	$scope.obtenerTipoProducto=function(){
 		blockUI.start();
 		var promesa=ClasesTipo("TPS");
@@ -561,6 +584,10 @@ angular.module('agil.controladores')
 		promesa.then(function(dato){
 			$scope.paginator.setPages(dato.paginas);
 			$scope.productos=dato.productos;
+			for(var i=0;i<$scope.productos.length;i++){
+				$scope.productos[i].publicar_panel=$scope.productos[i].publicar_panel==1?true:false;
+				$scope.productos[i].activar_inventario=$scope.productos[i].activar_inventario==1?true:false;
+			}
 			blockUI.stop();
 		});
 	}

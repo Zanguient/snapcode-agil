@@ -1,7 +1,8 @@
 angular.module('agil.controladores')
 
     .controller('ControladorRecursosHumanos', function ($scope, $localStorage, $location, $templateCache, $route, blockUI, ListaDatosGenero, NuevoRecursoHumano, RecursosHumanosPaginador, Paginator,
-        FieldViewer, PacientesEmpresa, obtenerEmpleadoRh,UsuarioRecursosHUmanosActivo) {
+        FieldViewer, PacientesEmpresa, obtenerEmpleadoRh, UsuarioRecursosHUmanosActivo, Prerequisito, ListaDatosPrerequisito, ListaPrerequisitosPaciente, ActualizarPrerequisito, UsuarioRecursosHumanosFicha,
+        ClasesTipo, Clases, Paises, CrearEmpleadoFicha) {
         $scope.usuario = JSON.parse($localStorage.usuario);
         $scope.idModalPrerequisitos = 'dialog-pre-requisitos';
         $scope.idModalEmpleado = 'dialog-empleado';
@@ -78,6 +79,7 @@ angular.module('agil.controladores')
         $scope.idEliminarUsuarioRh = 'dialog-eliminar-usuarioRh';
         $scope.idModalWizardRhVista = 'dialog-rh-vista';
         $scope.idModalContenedorRhVista = 'modal-wizard-container-rh-vista';
+        $scope.idModalDialogPrerequisitoNuevo = 'dialog-pre-requisito-nuevo';
         $scope.$on('$viewContentLoaded', function () {
             // resaltarPestaña($location.path().substring(1));
             resaltarPestaña($location.path().substring(1));
@@ -99,15 +101,16 @@ angular.module('agil.controladores')
                 $scope.idModalReporteBajasMedicas, $scope.idModalReporteRolTurnos, $scope.idModalReporteTurnosDetallado,
                 $scope.idModalViajes, $scope.idModalVisita, $scope.idModalVehiculosViaje, $scope.idModalDestinos,
                 $scope.idModalHistorialViajes, $scope.idModalReporteAusencias, $scope.idModalCertificado, $scope.idModalInstitucion,
-                $scope.idModalRhNuevo, $scope.idModalWizardRhNuevo, $scope.idImagenUsuario,$scope.idEliminarUsuarioRh,$scope.idModalWizardRhVista,$scope.idModalContenedorRhVista);
-                $scope.buscarAplicacion($scope.usuario.aplicacionesUsuario, $location.path().substring(1));
-                $scope.obtenerColumnasAplicacion()
-                blockUI.stop();
+                $scope.idModalRhNuevo, $scope.idModalWizardRhNuevo, $scope.idImagenUsuario, $scope.idEliminarUsuarioRh, $scope.idModalWizardRhVista,
+                $scope.idModalContenedorRhVista, $scope.idModalDialogPrerequisitoNuevo);
+            $scope.buscarAplicacion($scope.usuario.aplicacionesUsuario, $location.path().substring(1));
+            $scope.obtenerColumnasAplicacion()
+            blockUI.stop();
 
         });
 
         $scope.$on('$routeChangeStart', function (next, current) {
-            $scope.eliminarPopup($scope.idModalPrerequisitos, $scope.idModalEmpleado, $scope.idModalExpedidoEn,
+            $scope.eliminarPopup($scope.idModalEmpleado, $scope.idModalExpedidoEn,
                 $scope.idModalTipoDocumento, $scope.idModalEstadoCivil, $scope.idModalNacionalidad, $scope.idModalDepartamentoEstado,
                 $scope.idModalProvincia, $scope.idModalLocalidad, $scope.idModalTipoDiscapacidad, $scope.idModalTipoContrato,
                 $scope.idModalTipoPersonal, $scope.idModalCargaHoraria, $scope.idModalArea, $scope.idModalUbicacion, $scope.idModalHojaVida,
@@ -124,14 +127,21 @@ angular.module('agil.controladores')
                 $scope.idModalReporteRolTurnos, $scope.idModalReporteTurnosDetallado, $scope.idModalViajes, $scope.idModalVisita,
                 $scope.idModalVehiculosViaje, $scope.idModalDestinos, $scope.idModalHistorialViajes, $scope.idModalReporteAusencias,
                 $scope.idModalCertificado, $scope.idModalInstitucion);
+            $scope.eliminarPopup($scope.idModalPrerequisitos)
             $scope.eliminarPopup($scope.idModalRhNuevo)
             $scope.eliminarPopup($scope.idModalWizardRhVista)
-
+            $scope.eliminarPopup($scope.idModalDialogPrerequisitoNuevo)
         });
         $scope.inicio = function () {
             $scope.obtenerGenero();
             $scope.obtenerRecursosHumanos();
+            /*   $scope.obtenerPrerequisito(); */
+            $scope.recuperarDatosTipo()
+
+
         }
+
+
         $scope.obtenerColumnasAplicacion = function () {
             $scope.fieldViewer = FieldViewer({
                 crear: true,
@@ -147,14 +157,27 @@ angular.module('agil.controladores')
                     campo: { value: "Campo", show: true },
                     cargo: { value: "Cargo", show: true }
                 }
-            },$scope.aplicacion.aplicacion.id);
+            }, $scope.aplicacion.aplicacion.id);
             $scope.fieldViewer.updateObject();
         }
+
+        $scope.abrirDialogPrerequisitoNuevo = function () {
+            $scope.nuevoP = new Prerequisito({ puede_modificar_rrhh: false });
+            console.log($scope.nuevoP)
+            $scope.abrirPopup($scope.idModalDialogPrerequisitoNuevo);
+        }
+
+        $scope.cerrarPopupPrerequisitoNuevo = function () {
+            $scope.cerrarPopup($scope.idModalDialogPrerequisitoNuevo);
+        }
+
         $scope.abrirDialogVerEmpleado = function (elpaciente) {
             promesaPaciente = obtenerEmpleadoRh(elpaciente.id)
             promesaPaciente.then(function (paciente) {
                 $scope.paciente = paciente
                 $scope.paciente.fecha_nacimiento_texto = $scope.fechaATexto($scope.paciente.persona.fecha_nacimiento)
+
+
             })
             $scope.abrirPopup($scope.idModalWizardRhVista);
         }
@@ -172,21 +195,31 @@ angular.module('agil.controladores')
         $scope.cerrarDialogEliminarUsuarioRh = function () {
             $scope.cerrarPopup($scope.idEliminarUsuarioRh);
         }
-        $scope.abrirDialogEliminarUsuarioRh = function (empleado) { 
-            $scope.empleado=empleado           
+        $scope.abrirDialogEliminarUsuarioRh = function () {
+
             $scope.abrirPopup($scope.idEliminarUsuarioRh);
         }
-        
-        $scope.abrirDialogInicioPreRequisitos = function () {
+
+        $scope.abrirDialogInicioPreRequisitos = function (empleado) {
+            var filtro = { inicio: 0, fin: 0 }
+            $scope.obtenerDatosPrerequisito(empleado, filtro);
+            $scope.empleado = empleado
             $scope.abrirPopup($scope.idModalPrerequisitos);
         }
         $scope.cerrarDialogInicioPreRequisitos = function () {
             $scope.cerrarPopup($scope.idModalPrerequisitos);
         }
-        $scope.abrirDialogEmpleado = function () {
+        $scope.abrirDialogEmpleado = function (empleado) {
+            $scope.obtenerDatosFichaUsuario(empleado);
+            $scope.empleado = empleado
+
+
             $scope.abrirPopup($scope.idModalEmpleado);
         }
-        $scope.cerrarDialogEmpleado = function () {
+        $scope.cerrarDialogEmpleado = function (ficha) {
+            $scope.departamentos = []
+            $scope.provincias = []
+            $scope.localidades = []
             $scope.cerrarPopup($scope.idModalEmpleado);
         }
         $scope.abrirDialogExpedidoEn = function () {
@@ -263,6 +296,7 @@ angular.module('agil.controladores')
             $scope.cerrarPopup($scope.idModalArea);
         }
         $scope.cargos = [{ 'name': 'Chofer' }, { 'name': 'Ayudante de Of.' }, { 'name': 'Mecanico' }];
+        $scope.discapacidades = [{ 'name': 'Fisica' }, { 'name': 'Sensorial' }, { 'name': 'Psiquica' },{ 'name': 'Intelectual o Mental' }];
         $scope.fechacontratos = [{ 'name': '10/01/2000 - 01/01/2002' }, { 'name': '10/01/2000 - 01/01/2002' }, { 'name': '10/01/2000 - 01/01/2002' }];
         // === traductor select multiple ==========
         $scope.localLang = {
@@ -331,6 +365,10 @@ angular.module('agil.controladores')
             $scope.abrirPopup($scope.idModalNuevoFamiliar);
         }
         $scope.cerrarDialogNuevoFamiliar = function () {
+            if ($scope.familiar) {
+
+                $scope.familiar = { edit: false }
+            }
             $scope.cerrarPopup($scope.idModalNuevoFamiliar);
         }
         $scope.abrirDialogGrado = function () {
@@ -868,7 +906,7 @@ angular.module('agil.controladores')
                     NuevoRecursoHumano.update({ id_usuario: $scope.nuevoRH.id }, $scope.nuevoRH, function (res) {
                         blockUI.stop();
                         $scope.cerrarDialogRhNuevo();
-                      
+
                         $scope.mostrarMensaje('Actualizado Exitosamente!');
                         $scope.recargarItemsTabla()
                     });
@@ -877,13 +915,13 @@ angular.module('agil.controladores')
                     $scope.nuevoRH.$save({ id_usuario: 0 }, function (res) {
                         blockUI.stop();
                         $scope.cerrarDialogRhNuevo();
-                      
+
                         $scope.mostrarMensaje('Guardado Exitosamente!');
                         $scope.recargarItemsTabla()
                     }, function (error) {
                         blockUI.stop();
                         $scope.cerrarDialogRhNuevo();
-                      
+
                         $scope.mostrarMensaje('Ocurrio un problema al momento de guardar!');
                         $scope.recargarItemsTabla()
                     });
@@ -911,7 +949,7 @@ angular.module('agil.controladores')
                 $scope.paginator.setPages(dato.paginas);
                 $scope.RecursosHumanosEmpleados = dato.pacientes;
                 $scope.RecursosHumanosEmpleados.forEach(function (empleado) {
-                    empleado.activo = (empleado.activo == 0) ? false: true
+                    empleado.activo = (empleado.activo == 0) ? false : true
                 });
                 blockUI.stop();
             });
@@ -1001,7 +1039,7 @@ angular.module('agil.controladores')
             promesaPaciente.then(function (paciente) {
                 console.log(paciente)
                 $scope.nuevoRH = paciente
-$scope.nuevoRH.persona.fecha_nacimiento = $scope.fechaATexto($scope.nuevoRH.persona.fecha_nacimiento)
+                $scope.nuevoRH.persona.fecha_nacimiento = $scope.fechaATexto($scope.nuevoRH.persona.fecha_nacimiento)
             })
             console.log($scope.paciente)
             $scope.abrirPopup($scope.idModalRhNuevo);
@@ -1013,21 +1051,21 @@ $scope.nuevoRH.persona.fecha_nacimiento = $scope.fechaATexto($scope.nuevoRH.pers
             // $scope.fechaAplicacionVacuna = new Date(convertirFecha(fecha))
         }
 
-        $scope.changeActivoEmpleado=function(empleado) {
+        $scope.changeActivoEmpleado = function (empleado) {
             console.log(empleado)
-           var promesa = UsuarioRecursosHUmanosActivo(empleado)
-           promesa.then(function (dato) {
-               $scope.mostrarMensaje(dato.mensaje)
-           })
+            var promesa = UsuarioRecursosHUmanosActivo(empleado)
+            promesa.then(function (dato) {
+                $scope.mostrarMensaje(dato.mensaje)
+            })
         }
-        $scope.EliminarUsuarioRh=function(empleado) {
+        $scope.EliminarUsuarioRh = function (empleado) {
             console.log(empleado)
-            empleado.activo=false
-           var promesa = UsuarioRecursosHUmanosActivo(empleado)
-           promesa.then(function (dato) {
-               $scope.cerrarDialogEliminarUsuarioRh()
-               $scope.mostrarMensaje(dato.mensaje)
-           })
+            empleado.activo = false
+            var promesa = UsuarioRecursosHUmanosActivo(empleado)
+            promesa.then(function (dato) {
+                $scope.cerrarDialogEliminarUsuarioRh()
+                $scope.mostrarMensaje(dato.mensaje)
+            })
         }
 
         $scope.finVerEmpleado = function () {
@@ -1038,8 +1076,433 @@ $scope.nuevoRH.persona.fecha_nacimiento = $scope.fechaATexto($scope.nuevoRH.pers
 
         }
 
+        $scope.obtenerDatosFichaUsuario = function (empleado) {
+            var promesa = UsuarioRecursosHumanosFicha(empleado.id)
+            promesa.then(function (datos) {
+                if (datos.ficha) {
+                    $scope.ficha = datos.ficha
+                    $scope.empleado.otrosSeguros = datos.ficha
+
+                    $scope.buscarDepartamento(datos.ficha.empleado.persona.pais)
+                    $scope.buscarMunicipios(datos.ficha.empleado.persona.ciudad)
+                    $scope.buscarLocalidad(datos.ficha.empleado.persona.provincia)
+                   
+                    var fechaActual = new Date();
+                    var fechaNacimiento = new Date($scope.ficha.empleado.persona.fecha_nacimiento)
+                    $scope.ficha.nac_anio=fechaNacimiento.getFullYear()
+                    $scope.ficha.nac_dia=fechaNacimiento.getDate()
+                    $scope.ficha.nac_mes=(fechaNacimiento.getMonth()-1)
+                    var fecha = new Date()
+                    $scope.ficha.fecha_elaboracion = fecha.getDate() + "/" + (fecha.getMonth() + 1) + "/" + fecha.getFullYear()
+                    var dato = $scope.diferenciaEntreDiasEnDias(fechaNacimiento, fechaActual)
+                    $scope.ficha.edad = Math.trunc(dato / 365);
+                    $scope.ficha.edad
+                    $scope.ficha.empleado.familiares.forEach(function (familiar, index, array) {
+                        var fechaActual = new Date()
+                        var fechaNacimiento = new Date(familiar.persona.fecha_nacimiento)
+
+                        var dato = $scope.diferenciaEntreDiasEnDias(fechaNacimiento, fechaActual)
+                        familiar.edad = Math.trunc(dato / 365);
+
+                    });
+                } else {
+
+                    $scope.ficha = { empleado: datos.empleado, pacienteReferencia: {} }
+                    $scope.empleado.otrosSeguros = []
+                    $scope.empleado.familiares = []
+
+                    var fechaActual = new Date();
+                    $scope.ficha.fecha_elaboracion = fechaActual.getDate() + "/" + (fechaActual.getMonth() + 1) + "/" + fechaActual.getFullYear()
+                    var fechaNacimiento = new Date($scope.ficha.empleado.persona.fecha_nacimiento)
+                    var dato = $scope.diferenciaEntreDiasEnDias(fechaNacimiento, fechaActual)
+                    $scope.ficha.edad = Math.trunc(dato / 365)
+                }
+                blockUI.stop();
+            });
+
+        }
+
+        $scope.diferenciaEntreDiasEnDias = function (a, b) {
+            var MILISENGUNDOS_POR_DIA = 1000 * 60 * 60 * 24;
+            var utc1 = Date.UTC(a.getFullYear(), a.getMonth(), a.getDate());
+            var utc2 = Date.UTC(b.getFullYear(), b.getMonth(), b.getDate());
+
+            return Math.floor((utc2 - utc1) / MILISENGUNDOS_POR_DIA);
+        }
+
+        $scope.obtenerDatosPrerequisito = function (paciente, filtro) {
+            blockUI.start();
+            if (filtro.inicio != 0 && filtro.inicio != "") {
+                filtro.inicio = new Date($scope.convertirFecha(filtro.inicio));
+                filtro.fin = new Date($scope.convertirFecha(filtro.fin));
+            } else {
+                filtro.inicio = 0
+                filtro.fin = 0
+            }
+
+            var promesa = ListaPrerequisitosPaciente(paciente.id, filtro);
+            promesa.then(function (preRequisitos) {
+                $scope.datoprerequisitos = preRequisitos;
+                //console.log($scope.datoprerequisitos);
+                blockUI.stop();
+                $scope.filtro = { inicio: "", fin: "" }
+            });
+            console.log($scope.datoprerequisitos)
+        }
+        $scope.saveFormPrerequisito = function () {
+            blockUI.start();
+            console.log($scope.nuevoP)
+            $scope.nuevoP.fecha_inicio = new Date($scope.convertirFecha($scope.nuevoP.fecha_inicio));
+            $scope.nuevoP.fecha_vencimiento = new Date($scope.convertirFecha($scope.nuevoP.fechav));
+
+            $scope.nuevoP.$save({ id_paciente: $scope.empleado.id }, function (prerequisito) {
+                blockUI.stop();
+                var filtro = { inicio: 0, fin: 0 }
+                //prerequisito = new Prerequisito({});
+                $scope.obtenerDatosPrerequisito($scope.empleado, filtro);
+                $scope.cerrarPopupPrerequisitoNuevo();
+                $scope.mostrarMensaje('Guardado Exitosamente!');
+
+            }, function (error) {
+                blockUI.stop();
+                var filtro = { inicio: 0, fin: 0 }
+                $scope.obtenerDatosPrerequisito($scope.empleado, filtro);
+                $scope.cerrarPopupPrerequisitoNuevo();
+                $scope.mostrarMensaje('Ocurrio un problema al momento de guardar!');
+            });
+        }
+
+        $scope.obtenerPrerequisito = function () {
+            blockUI.start();
+            var promesa = ListaDatosPrerequisito();
+            promesa.then(function (entidad) {
+                $scope.prerequisitos = entidad;
+                blockUI.stop();
+            });
+        }
+        $scope.agregarSeguro = function (seguro) {
+            seguro.eliminado = false
+            $scope.ficha.empleado.otrosSeguros.push(seguro)
+            $scope.seguro = { edit: false }
+        }
+
+        $scope.calcularEdad = function (familiar) {
+            var fechaActual = new Date();
+
+            var anio = familiar.nac_anio
+            var mes = parseInt(familiar.nac_mes)
+            var dia = parseInt(familiar.nac_dia)
+            var fechaNacimiento = new Date()
+            fechaNacimiento.setFullYear(anio, mes, dia)
+            var dato = $scope.diferenciaEntreDiasEnDias(fechaNacimiento, fechaActual)
+            familiar.edad = Math.trunc(dato / 365);
+            $scope.familiar.edad
+        }
+        $scope.eliminarSeguro = function (dato) {
+            $scope.ficha.empleado.otrosSeguros.splice($scope.ficha.empleado.otrosSeguros.indexOf(dato), 1);
+        }
+        $scope.editarSeguro = function (dato, index) {
+            $scope.seguro = dato
+            $scope.seguro.edit = true
+            $scope.seguro.index = index
+        }
+        $scope.agregarFamiliar = function (familiar) {
+            familiar.eliminado = false
+            if (parseInt(familiar.nac_mes) < 10) {
+                familiar.nac_mes = "0" + familiar.nac_mes
+            }
+            familiar.persona.fecha_nacimiento = new Date(familiar.nac_anio, parseInt(familiar.nac_mes), parseInt(familiar.nac_dia))
+            $scope.ficha.empleado.familiares.push(familiar)
+            $scope.familiar = { edit: false }
+        }
+        $scope.eliminarFamiliar = function (dato) {
+            $scope.ficha.empleado.familiares.splice($scope.ficha.empleado.familiares.indexOf(dato), 1);
+        }
+        $scope.editarFamiliar = function (dato, index) {
+            $scope.familiar = dato
+            var fecha = new Date(dato.persona.fecha_nacimiento)
+            $scope.familiar.nac_anio = fecha.getFullYear()
+            $scope.familiar.nac_dia = fecha.getDate()
+            $scope.familiar.nac_mes = fecha.getMonth()
+            $scope.familiar.edit = true
+            $scope.familiar.index = index
+            $scope.abrirDialogNuevoFamiliar()
+        }
+        $scope.guardarSeguroEditado = function (dato) {
+            $scope.ficha.empleado.otrosSeguros[dato.index] = dato
+            $scope.seguro = { edit: false }
+        }
+
+        $scope.guardarFamiliarEditado = function (dato) {
+            $scope.ficha.empleado.familiares[dato.index].persona.fecha_nacimiento = new Date(dato.nac_anio, parseInt(dato.nac_mes), parseInt(dato.nac_dia))
+            $scope.ficha.empleado.familiares[dato.index] = dato
+            $scope.familiar = { edit: false }
+            $scope.cerrarDialogNuevoFamiliar()
+        }
+        //RECUPERAR TIPOS FICHA 
+        $scope.recuperarDatosTipo = function () {
+            $scope.obtenerExpeditos()
+            $scope.obtenerTipoExpeditos()
+            $scope.obtenerEstadoCivil()
+            $scope.obtenerNacionalidades()
+            //$scope.obtenerDepartamentos()
+            //$scope.obtenerProvicias()
+            //$scope.obtenerLocalidades()
+            $scope.obtenerTiposContratos()
+            $scope.obtenerTiposPersonales()
+            $scope.obtenerCargasHorarios()
+            $scope.obtenerAreas()
+            $scope.obtenerUbicacion()
+            $scope.obtenerSegurosSalud()
+            $scope.obtenerLugarSegurosSalud()
+            $scope.obtenerAporteSeguroLargoPlazo()
+            $scope.obtenerTipoOtrosSeguros()
+            $scope.obtenerFamiliaRelacion()
+            $scope.obtenerBancos()
+            $scope.obtenerMeses()
+            $scope.obtenerAnios()
+        }
+        $scope.obtenerExpeditos = function () {
+            blockUI.start();
+            var promesa = ClasesTipo("RRHH_EXP");
+            promesa.then(function (entidad) {
+                $scope.expeditos = entidad.clases
+                blockUI.stop();
+            });
+        }
+        $scope.obtenerTipoExpeditos = function () {
+            blockUI.start();
+            var promesa = ClasesTipo("RRHH_TEXP");
+            promesa.then(function (entidad) {
+                $scope.tiposDocumentos = entidad.clases
+                blockUI.stop();
+            });
+        }
+        $scope.obtenerEstadoCivil = function () {
+            blockUI.start();
+            var promesa = ClasesTipo("RRHH_EC");
+            promesa.then(function (entidad) {
+                $scope.estadosCiviles = entidad.clases
+                blockUI.stop();
+            });
+        }
+        $scope.obtenerNacionalidades = function () {
+            blockUI.start();
+            var promesa = ClasesTipo("NAC");
+            promesa.then(function (entidad) {
+                $scope.nacionalidades = entidad.clases
+                blockUI.stop();
+            });
+        }
+        /* $scope.obtenerDepartamentos = function () {
+			blockUI.start();
+			var promesa = ClasesTipo("DEP");
+			promesa.then(function (entidad) {
+				$scope.departamentos = entidad.clases
+				blockUI.stop();
+			});
+        } */
+        /*   $scope.obtenerProvicias = function () {
+              blockUI.start();
+              var promesa = ClasesTipo("MUN");
+              promesa.then(function (entidad) {
+                  $scope.provincias = entidad.clases
+                  blockUI.stop();
+              });
+          } */
+        $scope.buscarDepartamento = function (ciudad) {
+            if (ciudad) {
+                var nombre_corto = '-' + ciudad.nombre_corto;
+                var promesa = Paises(nombre_corto);
+                promesa.then(function (entidades) {
+                    $scope.departamentos = entidades;
+                    if (entidades.length === 0) {
+                        $scope.provincias = []
+                        $scope.localidades = []
+                    }
+                });
+            }
+        }
+        $scope.buscarMunicipios = function (departamento) {
+            if (departamento) {
+                var idDepartamento = departamento.id + '-' + departamento.nombre_corto
+                var nombre_corto = idDepartamento.split('-')[1];
+                var promesa = Paises(nombre_corto + "M");
+                promesa.then(function (entidades) {
+                    $scope.provincias = entidades;
+                    if (entidades.length === 0) {
+                        $scope.localidades = []
+                    }
+                });
+            }
+        }
+        $scope.buscarLocalidad = function (provincia) {
+            if (provincia) {
+                var nombre_corto = provincia.nombre_corto.split('-')[1];
+                var nombre_corto = '-' + nombre_corto
+                var promesa = Paises(nombre_corto + "L");
+                promesa.then(function (entidades) {
+                    $scope.localidades = entidades;
+                });
+            }
+        }
+        /*  $scope.obtenerLocalidades = function () {
+             blockUI.start();
+             var promesa = ClasesTipo("LOC");
+             promesa.then(function (entidad) {
+                 $scope.localidades = entidad.clases
+                 blockUI.stop();
+             });
+         } */
+        $scope.obtenerTiposContratos = function () {
+            blockUI.start();
+            var promesa = ClasesTipo("RRHH_TC");
+            promesa.then(function (entidad) {
+                $scope.tiposContratos = entidad.clases
+                blockUI.stop();
+            });
+        }
+        $scope.obtenerTiposPersonales = function () {
+            blockUI.start();
+            var promesa = ClasesTipo("RRHH_TP");
+            promesa.then(function (entidad) {
+                $scope.tiposPersonales = entidad.clases
+                blockUI.stop();
+            });
+        }
+        $scope.obtenerCargasHorarios = function () {
+            blockUI.start();
+            var promesa = ClasesTipo("RRHH_CH");
+            promesa.then(function (entidad) {
+                $scope.cargasHorarios = entidad.clases
+                blockUI.stop();
+            });
+        }
+        $scope.obtenerAreas = function () {
+            blockUI.start();
+            var promesa = ClasesTipo("RRHH_AREA");
+            promesa.then(function (entidad) {
+                $scope.listaAreas = entidad.clases
+                blockUI.stop();
+            });
+        }
+
+        $scope.obtenerUbicacion = function () {
+            blockUI.start();
+            var promesa = ClasesTipo("RRHH_UBI");
+            promesa.then(function (entidad) {
+                $scope.ubicaciones = entidad.clases
+                blockUI.stop();
+            });
+        }
+        $scope.obtenerSegurosSalud = function () {
+            blockUI.start();
+            var promesa = ClasesTipo("RRHH_SS");
+            promesa.then(function (entidad) {
+                $scope.segurosSalud = entidad.clases
+                blockUI.stop();
+            });
+        }
+        $scope.obtenerLugarSegurosSalud = function () {
+            blockUI.start();
+            var promesa = ClasesTipo("RRHH_LSS");
+            promesa.then(function (entidad) {
+                $scope.LugaresSegurosSalud = entidad.clases
+                blockUI.stop();
+            });
+        }
+        $scope.obtenerAporteSeguroLargoPlazo = function () {
+            blockUI.start();
+            var promesa = ClasesTipo("RRHH_ASLP");
+            promesa.then(function (entidad) {
+                $scope.aportesSeguroLargoPlazo = entidad.clases
+                blockUI.stop();
+            });
+        }
+        $scope.obtenerTipoOtrosSeguros = function () {
+            blockUI.start();
+            var promesa = ClasesTipo("RRHH_OST");
+            promesa.then(function (entidad) {
+                $scope.OtrosSegurosTipos = entidad.clases
+                blockUI.stop();
+            });
+        }
+        $scope.obtenerBancos = function () {
+            blockUI.start();
+            var promesa = ClasesTipo("RRHH_BAN");
+            promesa.then(function (entidad) {
+                $scope.bancos = entidad.clases
+                blockUI.stop();
+            });
+        }
+        $scope.obtenerFamiliaRelacion = function () {
+            blockUI.start();
+            var promesa = ClasesTipo("RRHH_REL");
+            promesa.then(function (entidad) {
+                $scope.relaciones = entidad.clases
+                blockUI.stop();
+            });
+        }
+        $scope.obtenerMeses = function () {
+            $scope.meses = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+        }
+
+        $scope.obtenerAnios = function (startYear) {
+            var currentYear = new Date().getFullYear(), years = [];
+            startYear = startYear || 1980;
+
+            while (startYear <= currentYear) {
+                years.push(startYear++);
+            }
+
+            $scope.listYears = years;
+        }
+        $scope.getDaysInMonth = function (month, year) {
+            // Here January is 1 based
+            //Day 0 is the last day in the previous month
+            var dias = new Date(year, month, 0).getDate();
+            var listaDias = []
+            for (let i = 1; i <= dias; i++) {
+                listaDias.push(i)
+                if (i == dias) {
+                    $scope.listaDias = listaDias
+                }
+            }
+            // Here January is 0 based
+            // return new Date(year, month+1, 0).getDate();
+
+        };
+        //FIN RECUPERAR TIPOS FICHA 
+
+        $scope.guardarFichaTecnica = function (valido, ficha) {
+            //if (valido) {
+            var button = $('#siguiente-f').text().trim();
+            if (button != "Siguiente") {
+                ficha.empleado.persona.fecha_nacimiento = new Date(ficha.nac_anio, parseInt(ficha.nac_mes), parseInt(ficha.nac_dia))
+                ficha.fecha_elaboracion = new Date($scope.convertirFecha(ficha.fecha_elaboracion));
+                ficha.fecha_inicio = new Date($scope.convertirFecha(ficha.fecha_inicio));
+                ficha.fecha_fin = new Date($scope.convertirFecha(ficha.fecha_fin));
+                ficha.fecha_jubilacion = new Date($scope.convertirFecha(ficha.fecha_jubilacion));
+                var promesa = CrearEmpleadoFicha(ficha);
+                promesa.then(function (dato) {
+                    $scope.cerrarDialogEmpleado()
+                    $scope.recargarItemsTabla()
+                    $scope.mostrarMensaje(dato.message)
+                })
+            }
+            // }
+        }
         $scope.inicio()
 
-
+        $scope.actualizarPrerequisito = function (prerequisitos) {
+            var promesa = ActualizarPrerequisito(prerequisitos)
+            promesa.then(function (dato) {
+                /* if (prerequisitos instanceof Array) {
+                    
+                } */
+                $scope.cerrarDialogInicioPreRequisitos()
+                $scope.mostrarMensaje(dato.message)
+            })
+        }
 
     });
