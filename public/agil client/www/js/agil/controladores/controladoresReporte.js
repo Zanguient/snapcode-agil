@@ -1299,7 +1299,7 @@ angular.module('agil.controladores')
 		var promesa=ReporteVentasMensualesDatos($scope.usuario.id_empresa,reporte.sucursal.id,inicio,fin);
 		promesa.then(function(datos){
 			var detallesVenta=datos.detallesVenta;			
-			var data = [["FECHA DE LA FACTURA","N° DE LA FACTURA","N° DE AUTORIZACION","NIT/CI CLIENTE","NOMBRE O RAZON SOCIAL",
+			var data = [["FECHA DE LA FACTURA","N° DE LA FACTURA","N° DE AUTORIZACION","NIT/CI CLIENTE","NOMBRE O RAZON SOCIAL","UBICACION CLIENTE",
 						"CODIGO","DETALLE","UNIDAD","GRUPO","CANTIDAD","PU","TOTAL","IMPORTE ICE/IEHD/TASAS","EXPORTACIONES Y OPERACIONES EXENTAS",
 						"VENTAS GRAVADAS A TASA CERO","SUBTOTAL","DESCUENTOS, BONIFICACIONES Y REBAJAS OBTENIDAS",
 						"IMPORTE BASE PARA DEBITO FISCAL","DEBITO FISCAL","SUCURSAL","USUARIO"]]
@@ -1316,6 +1316,7 @@ angular.module('agil.controladores')
 				columns.push(detallesVenta[i].venta.autorizacion);
 				columns.push(detallesVenta[i].venta.cliente.nit);
 				columns.push(detallesVenta[i].venta.cliente.razon_social);
+				columns.push(detallesVenta[i].venta.cliente.ubicacion_geografica);
 				columns.push(detallesVenta[i].producto.codigo);
 				columns.push(detallesVenta[i].producto.nombre);
 				columns.push(detallesVenta[i].producto.unidad_medida);
