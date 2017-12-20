@@ -39,7 +39,7 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 		.get(function (req, res) {
 			var condicionProducto = "empresa=" + req.params.id_empresa;
 			if (req.params.texto_busqueda != 0) {
-				condicionProducto = condicionProducto + " and (codigo like '%" + req.params.texto_busqueda + "%' or agil_producto.nombre like '%" + req.params.texto_busqueda + "%' or unidad_medida like '%" + req.params.texto_busqueda + "%' or descripcion like '%" + req.params.texto_busqueda + "%' or grupo like '%" + req.params.texto_busqueda + "%' or subgrupo like '%" + req.params.texto_busqueda + "%')";
+				condicionProducto = condicionProducto + " and (codigo like '%" + req.params.texto_busqueda + "%' or agil_producto.nombre like '%" + req.params.texto_busqueda + "%' or unidad_medida like '%" + req.params.texto_busqueda + "%' or descripcion like '%" + req.params.texto_busqueda + "%' or grupo.nombre like '%" + req.params.texto_busqueda + "%' or subgrupo.nombre like '%" + req.params.texto_busqueda + "%')";
 			}
 
 			sequelize.query("select count(*) as cantidad_productos from agil_producto where " + condicionProducto, { type: sequelize.QueryTypes.SELECT })

@@ -85,7 +85,7 @@ router.route('/reportes/empresa/:id_empresa/sucursal/:id_sucursal/almacen/:id_al
 			condicionProducto= condicionProducto+" and a.id ="+req.params.id_almacen;		
 		}
 		if(req.params.texto_busqueda!=0){
-			condicionProducto=condicionProducto+" and (p.codigo like '%"+req.params.texto_busqueda+"%' or  p.nombre like '%"+req.params.texto_busqueda+"%' or p.unidad_medida like '%"+req.params.texto_busqueda+"%' or p.descripcion like '%"+req.params.texto_busqueda+"%' or grupo like '%"+req.params.texto_busqueda+"%' or p.subgrupo like '%"+req.params.texto_busqueda+"%')";
+			condicionProducto=condicionProducto+" and (p.codigo like '%"+req.params.texto_busqueda+"%' or  p.nombre like '%"+req.params.texto_busqueda+"%' or p.unidad_medida like '%"+req.params.texto_busqueda+"%' or p.descripcion like '%"+req.params.texto_busqueda+"%' or gr.nombre like '%"+req.params.texto_busqueda+"%' or sgr.nombre like '%"+req.params.texto_busqueda+"%')";
 		}
 			condicionProducto= condicionProducto+" and i.cantidad != 0";		
 		Inventario.findAndCountAll({		
@@ -102,8 +102,8 @@ router.route('/reportes/empresa/:id_empresa/sucursal/:id_sucursal/almacen/:id_al
 							INNER JOIN agil_almacen As a ON (i.almacen = a.id)\
 							INNER JOIN agil_sucursal As s ON (a.sucursal = s.id)\
 							INNER JOIN agil_empresa As e ON (s.empresa = e.id)\
-							INNER JOIN gl_clase As gr ON (p.grupo = gr.id)\
-							INNER JOIN gl_clase As sgr ON (p.subgrupo = sgr.id)\
+							LEFT JOIN gl_clase As gr ON (p.grupo = gr.id)\
+							LEFT JOIN gl_clase As sgr ON (p.subgrupo = sgr.id)\
 							where "+condicionProducto+"\
 			                order by "+req.params.columna+" "+req.params.direccion+" LIMIT "+(req.params.items_pagina*(req.params.pagina-1))+","+req.params.items_pagina)			
 			.then(function(inventario){			
