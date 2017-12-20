@@ -50,9 +50,11 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 					};
 					Sequelize.Model.$validateIncludedElements(options);
 					//options.hasJoin = true;
-					sequelize.query("select tipoProducto.id as 'tipoProducto.id',tipoProducto.nombre as 'tipoProducto.nombre',tipoProducto.nombre_corto as 'tipoProducto.nombre_corto', agil_producto.id,agil_producto.activar_inventario,unidad_medida,descuento,descuento_fijo,precio_unitario,inventario_minimo,codigo,agil_producto.nombre,descripcion,sum(inv_inventario.cantidad) as cantidad,min(inv_inventario.fecha_vencimiento) as fecha_vencimiento,grupo,subgrupo\
+					sequelize.query("select tipoProducto.id as 'tipoProducto.id',tipoProducto.nombre as 'tipoProducto.nombre',tipoProducto.nombre_corto as 'tipoProducto.nombre_corto', agil_producto.id,agil_producto.activar_inventario,unidad_medida,descuento,descuento_fijo,precio_unitario,inventario_minimo,codigo,agil_producto.nombre,descripcion,sum(inv_inventario.cantidad) as cantidad,min(inv_inventario.fecha_vencimiento) as fecha_vencimiento,grupo.nombre as grupo,subgrupo.nombre as subgrupo\
 							from agil_producto\
 							INNER JOIN gl_clase AS tipoProducto ON (agil_producto.tipo_producto = tipoProducto.id)\
+							INNER JOIN gl_clase AS grupo ON (agil_producto.grupo = grupo.id)\
+							INNER JOIN gl_clase AS subgrupo ON (agil_producto.subgrupo = subgrupo.id)\
 							LEFT OUTER JOIN inv_inventario on agil_producto.id=inv_inventario.producto where "+ condicionProducto + " and almacen=" + req.params.id_almacen + " \
 			                 GROUP BY agil_producto.id order by "+ req.params.columna + " " + req.params.direccion + " LIMIT " + (req.params.items_pagina * (req.params.pagina - 1)) + "," + req.params.items_pagina, options)
 						.then(function (productos) {
