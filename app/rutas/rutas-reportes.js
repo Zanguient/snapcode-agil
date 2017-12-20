@@ -96,12 +96,14 @@ router.route('/reportes/empresa/:id_empresa/sucursal/:id_sucursal/almacen/:id_al
 												include: [{model:Empresa,as: 'empresa',where:{id:req.params.id_empresa}}]}]}],
 			order:[['id','asc']]		
 		}).then(function(data){		
-			sequelize.query("SELECT i.id,p.codigo,i.cantidad ,p.unidad_medida,p.precio_unitario,p.descripcion,p.inventario_minimo,p.caracteristica_especial1,p.caracteristica_especial2,p.codigo_fabrica, p.nombre,i.fecha_vencimiento,i.lote,i.costo_unitario,i.costo_total,p.grupo,p.subgrupo,a.nombre AS nombre_almacen,s.nombre AS nombre_sucursal\
+			sequelize.query("SELECT i.id,p.codigo,i.cantidad,sgr.nombre as grupo ,gr.nombre as grupo,p.unidad_medida,p.precio_unitario,p.descripcion,p.inventario_minimo,p.caracteristica_especial1,p.caracteristica_especial2,p.codigo_fabrica, p.nombre,i.fecha_vencimiento,i.lote,i.costo_unitario,i.costo_total,a.nombre AS nombre_almacen,s.nombre AS nombre_sucursal\
 							FROM inv_inventario AS i\
 							INNER JOIN agil_producto AS p ON (i.producto = p.id)\
 							INNER JOIN agil_almacen As a ON (i.almacen = a.id)\
 							INNER JOIN agil_sucursal As s ON (a.sucursal = s.id)\
 							INNER JOIN agil_empresa As e ON (s.empresa = e.id)\
+							INNER JOIN gl_clase As gr ON (p.grupo = gr.id)\
+							INNER JOIN gl_clase As sgr ON (p.subgrupo = sgr.id)\
 							where "+condicionProducto+"\
 			                order by "+req.params.columna+" "+req.params.direccion+" LIMIT "+(req.params.items_pagina*(req.params.pagina-1))+","+req.params.items_pagina)			
 			.then(function(inventario){			
