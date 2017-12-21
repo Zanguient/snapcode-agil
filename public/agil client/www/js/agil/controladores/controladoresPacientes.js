@@ -4,7 +4,7 @@ angular.module('agil.controladores')
         ListaConsultasMedicoPaciente, CrearMedicoPacienteFicha, BuscarFichaPaciente, ListaDatosTiposControl, ActualizarPatologiaPaciente, ListaPrerequisitosEmpresa, ListaPrerequisitosPaciente, ActualizarPrerequisito, CrearLaboratorio, ListaLaboratorios,
         CrearLaboratorioExamen, ListaLaboratorioExamenes, CrearLaboratorioExamenResultado, LaboratorioExamenListaHistorial, CrearDiagnostico, ListaDiagnosticos, CrearDiagnosticoExamen, ListaDiagnosticoExamenes, DiagnosticoExamenListaHistorial, CrearDiagnosticoExamenResultado,
         PacientesEmpresa, ListaVacunasEmpresa, FichasTecnicasPacientes, SignosVitalesPacientes, SOAPlistaPacientes, aplicacionVacunasPacientes, obtenerPaciente, Comentario, FieldViewer, PacienteActivo, HistorialFichaMedicoPaciente, ActualizarLaboratorio, ActualizarLaboratorioExamen,
-        ActualizarDiagnostico, ActualizarDiagnosticoExamen, EliminarLaboratorio, EliminarLaboratorioExamen, EliminarDiagnosticoExamen, EliminarDiagnostico, Prerequisitos, PrerequisitoPaciente,ListaAlertasPrerequisitosPaciente) {
+        ActualizarDiagnostico, ActualizarDiagnosticoExamen, EliminarLaboratorio, EliminarLaboratorioExamen, EliminarDiagnosticoExamen, EliminarDiagnostico, Prerequisitos, PrerequisitoPaciente, ListaAlertasPrerequisitosPaciente,PrerequisitosHistorial,ListaAlertasVacunasEmpresa) {
 
         $scope.usuario = JSON.parse($localStorage.usuario);
         $scope.idModalDialogVacunas = 'dialog-vacunas';
@@ -68,7 +68,7 @@ angular.module('agil.controladores')
                 $scope.idModalDialogExamenesDiagnostico, $scope.idModalDialogNuevoExamenDiagnostico, $scope.idModalDialogHistorialFicha, $scope.idModalDialogCredencial,
                 $scope.idModalDialogPatologias, $scope.idModalDialogComentario, $scope.idModalAlertPrerequisitos, $scope.idModalDiasActivacionPrerequisitos,
                 $scope.idModalReprogramarPrerequisitos, $scope.idModalAlertVacunas, $scope.idModalDiasActivacionVacunas, $scope.idModalReprogramarVacunas, $scope.idImagenUsuario,
-                $scope.idModalHistorialConsulta, $scope.idModalWizardPacienteVista, $scope.idModalContenedorPacienteVista, $scope.idModalEliminarPaciente, $scope.IdModalDialogNuevoLaboratorio, $scope.IdModalDialogDiagnosticoExamenHistoricoResultado, $scope.idModalDialogVerResultadosHistorialLab,$scope.idModalDialogConfirmacionEntregaAdelantado);
+                $scope.idModalHistorialConsulta, $scope.idModalWizardPacienteVista, $scope.idModalContenedorPacienteVista, $scope.idModalEliminarPaciente, $scope.IdModalDialogNuevoLaboratorio, $scope.IdModalDialogDiagnosticoExamenHistoricoResultado, $scope.idModalDialogVerResultadosHistorialLab, $scope.idModalDialogConfirmacionEntregaAdelantado);
             $scope.buscarAplicacion($scope.usuario.aplicacionesUsuario, $location.path().substring(1));
             $scope.obtenerColumnasAplicacion();
         });
@@ -116,6 +116,7 @@ angular.module('agil.controladores')
             $scope.eliminarPopup($scope.IdModalDialogDiagnosticoExamenHistoricoResultado)
             $scope.eliminarPopup($scope.idModalDialogVerResultadosHistorialLab)
             $scope.eliminarPopup($scope.idModalReprogramarVacunas)
+            $scope.eliminarPopup($scope.idModalDialogConfirmacionEntregaAdelantado);
         });
 
         $scope.inicio = function () {
@@ -469,7 +470,7 @@ angular.module('agil.controladores')
                     $scope.vacuna.alreadyProyected = true
                 }
             }
-            blockUI.stop();            
+            blockUI.stop();
         }
 
         $scope.validarDatosVacuna = function (vacuna) {
@@ -981,7 +982,7 @@ angular.module('agil.controladores')
             });
         }
 
-        
+
 
         $scope.diferenciaEntreDiasEnDias = function (a, b) {
             var MILISENGUNDOS_POR_DIA = 1000 * 60 * 60 * 24;
@@ -994,18 +995,18 @@ angular.module('agil.controladores')
         $scope.obtenerDatosPrerequisito = function (paciente, filtro) {
             blockUI.start();
             if (filtro.inicio != undefined) {
-                if (filtro.inicio != 0 && filtro.inicio !="") {
+                if (filtro.inicio != 0 && filtro.inicio != "") {
                     $scope.filtro.inicio = (filtro.inicio instanceof Date) ? filtro.inicio : new Date($scope.convertirFecha(filtro.inicio));
-                }else{
+                } else {
                     $scope.filtro.inicio = 0
                 }
-            }else{
+            } else {
                 $scope.filtro.inicio = 0
             }
-            if(filtro.fin != undefined){
-                if(filtro.fin !=0 && filtro.fin !="") {
+            if (filtro.fin != undefined) {
+                if (filtro.fin != 0 && filtro.fin != "") {
                     $scope.filtro.fin = (filtro.fin instanceof Date) ? filtro.fin : new Date($scope.convertirFecha(filtro.fin));
-                }else{
+                } else {
                     $scope.filtro.fin = 0
                 }
             } else {
@@ -1178,22 +1179,27 @@ angular.module('agil.controladores')
                 })
             }
         }
-        $scope.verificarFechaEntregaPrerequisito = function (preRequisito,paciente) {
+        $scope.verificarFechaEntregaPrerequisito = function (preRequisito, paciente) {
             $scope.preRequisito = preRequisito
             $scope.preRequisito.fecha_entrega_texto = $scope.fechaATexto(new Date())
-            $scope.paciente = paciente
+            if (paciente === undefined) {
+                $scope.paciente = preRequisito.pacientePrerequisito
+            } else {
+                $scope.paciente = paciente
+            }
             console.log($scope.preRequisito)
             var vence = new Date($scope.preRequisito.fecha_vencimiento).getTime()
             var hoy = new Date().getTime()
             var dif = Math.floor((hoy - vence) / 86400000)
-            if(dif >= 0){
+            if (dif >= 0) {
                 $scope.abrirDialogEntregaPreRequisito($scope.preRequisito, $scope.paciente);
-            } else{
+            } else {
                 $scope.abrirPopup($scope.idModalDialogConfirmacionEntregaAdelantado);
-            }       
+            }
+            $scope.obtenerAlertas()
         }
 
-        $scope.cerrarConfirmacionEntragaAdelantadaPrerequisito= function () {
+        $scope.cerrarConfirmacionEntragaAdelantadaPrerequisito = function () {
             $scope.cerrarPopup($scope.idModalDialogConfirmacionEntregaAdelantado);
         }
 
@@ -1234,16 +1240,37 @@ angular.module('agil.controladores')
             $scope.cerrarPopup($scope.idModalDialogPrerequisitoNuevo);
         }
 
-        $scope.abrirDialogHistoricoPreRequisito = function () {
-            // var filtro = { inicio: 0, fin: 0 }
-            // var promesa = ListaPrerequisitosPaciente($scope.paciente.id, filtro);
-            // promesa.then(function (preRequisitos) {
-            //     $scope.prerequisitosPaciente = preRequisitos.Prerequisitos;
-            //     blockUI.stop();
-            //     $scope.filtro.inicio = ($scope.filtro.inicio instanceof Date) ? $scope.filtro.inicio.getDate() + '/' + ($scope.filtro.inicio.getMonth() + 1) + '/' + $scope.filtro.inicio.getFullYear() : ""
-            //     $scope.filtro.fin = ($scope.filtro.fin instanceof Date) ? $scope.filtro.fin.getDate() + '/' + ($scope.filtro.fin.getMonth() + 1) + '/' + $scope.filtro.fin.getFullYear() : ""
-            // });
+        $scope.abrirDialogHistoricoPreRequisito = function (pre,pac) {
+            var filtro = { inicio: 0, fin: 0 }
+            $scope.preRequisito = pre
+            $scope.paciente = pac
+            var promesa = PrerequisitosHistorial({id_pre:$scope.preRequisito.preRequisito.id, id_pac:$scope.paciente.id,inicio:filtro.inicio,fin:filtro.fin});
+            promesa.then(function (preRequisitos) {
+                $scope.historialPrerequisitosPaciente = preRequisitos.historial;
+                blockUI.stop();
+                $scope.filtro.inicio = ($scope.filtro.inicio instanceof Date) ? $scope.filtro.inicio.getDate() + '/' + ($scope.filtro.inicio.getMonth() + 1) + '/' + $scope.filtro.inicio.getFullYear() : ""
+                $scope.filtro.fin = ($scope.filtro.fin instanceof Date) ? $scope.filtro.fin.getDate() + '/' + ($scope.filtro.fin.getMonth() + 1) + '/' + $scope.filtro.fin.getFullYear() : ""
+            });
             $scope.abrirPopup($scope.idModalHistorialPrerequisito);
+        }
+
+        $scope.filtrarHistorialPrerequisito = function(filtro){
+            if(filtro != undefined){
+                var fecha_inicio = (filtro.inicio === null || filtro.inicio === "" ||filtro.inicio === undefined) ? 0 : new Date(filtro.inicio)
+                var fecha_fin = (filtro.fin === null || filtro.fin === ""||filtro.fin === undefined) ? 0 : new Date(filtro.fin)
+                var tipo_opcion = (filtro.opcion === null || filtro.opcion === undefined) ? 0 : filtro.opcion
+                filtro = {inicio: fecha_inicio, fin: fecha_fin, opcion:tipo_opcion}
+            }else{
+                var filtro = { inicio: 0, fin: 0 }
+            }
+            
+            var promesa = PrerequisitosHistorial({id_pre:$scope.preRequisito.preRequisito.id, id_pac:$scope.paciente.id,inicio:filtro.inicio,fin:filtro.fin});
+            promesa.then(function (preRequisitos) {
+                $scope.historialPrerequisitosPaciente = preRequisitos.historial;
+                blockUI.stop();
+                filtro.inicio = ($scope.filtro.inicio instanceof Date) ? $scope.filtro.inicio.getDate() + '/' + ($scope.filtro.inicio.getMonth() + 1) + '/' + $scope.filtro.inicio.getFullYear() : ""
+                filtro.fin = ($scope.filtro.fin instanceof Date) ? $scope.filtro.fin.getDate() + '/' + ($scope.filtro.fin.getMonth() + 1) + '/' + $scope.filtro.fin.getFullYear() : ""
+            });
         }
 
         $scope.cerrarDialogHistoricoPreRequisito = function () {
@@ -1273,13 +1300,17 @@ angular.module('agil.controladores')
                 promesa.then(function (preRequisitos) {
                     $scope.prerequisitosPaciente = preRequisitos.Prerequisitos;
                     $scope.preRequisitos.forEach(function (requisito, index, array) {
+
                         $scope.prerequisitosPaciente.forEach(function (preRe) {
+                            
                             if (requisito.id == preRe.id_prerequisito) {
                                 requisito.asignado = true
                             }
+
                             if (preRe.fecha_entrega != null) {
                                 preRe.entregado = true
                             }
+
                             //Re asignar la fecha de vencimiento si la fecha de inicio cambia.
                             // var fechaContro = new Date(preRe.fecha_vencimiento)
                             // var calculoFechaVencimiento = $scope.calcularFechaVencimientoRequisito(preRe)
@@ -1294,17 +1325,37 @@ angular.module('agil.controladores')
                             //         $scope.verificarAsignacionPrerequisitos()
                             //     })
                             // }
+
                         });
-                        if($scope.prerequisitosPaciente.length == 0){
+
+                        if ($scope.prerequisitosPaciente.length == 0) {
                             requisito.asignado = false
                         }
+
                         if (index == array.length - 1) {
                             blockUI.stop();
                         }
+
+                        // var reducido = $scope.prerequisitosPaciente.reduce(function (anterior,actual,index,array) {
+                        //     if(anterior == 0) return actual
+                        //     if(anterior.id_prerequisito == actual.id_prerequisito){
+                        //         if(anterior.id < actual.id){
+                        //             return actual
+                        //         }
+                        //     }
+                        // })
+                        // console.log(reducido)
                     });
-                    if($scope.preRequisitos.length == 0){
+
+                    if ($scope.preRequisitos.length == 0) {
                         blockUI.stop();
                     }
+                    
+                    // var found = $.map(xtra, function(val) {
+                    //     if(val.id == 'C' ){
+
+                    //     }
+                    // });​
                 });
             })
         }
@@ -1326,6 +1377,7 @@ angular.module('agil.controladores')
                 blockUI.stop()
             })
         }
+
         $scope.diasVencidosPrerequisito = function (fechaVencimiento) {
             var MILISENGUNDOS_POR_DIA = 1000 * 60 * 60 * 24;
             var hoy = new Date().getTime()
@@ -1333,18 +1385,18 @@ angular.module('agil.controladores')
             var calculo = hoy - vencimiento
             var dias = Math.floor(calculo / MILISENGUNDOS_POR_DIA)
             return dias
-            // if (fechaVencimiento instanceof Date){
-            //     var utc1 = Date.UTC(hoy.getFullYear(), hoy.getMonth(), hoy.getDate());
-            //     var utc2 = Date.UTC(fechaVencimiento.getFullYear(), fechaVencimiento.getMonth(), fechaVencimiento.getDate());
-            //     return Math.floor((utc2 - utc1) / MILISENGUNDOS_POR_DIA);
-            // }else{
-            //     fechaVencimiento = new Date(fechaVencimiento)
-            //     var utc1 = Date.UTC(hoy.getFullYear(), hoy.getMonth(), hoy.getDate());
-            //     var utc2 = Date.UTC(fechaVencimiento.getFullYear(), fechaVencimiento.getMonth(), fechaVencimiento.getDate());
-            //     return Math.floor((utc2 - utc1) / MILISENGUNDOS_POR_DIA);
-            // }
-            
         }
+
+        $scope.diasVencidosVacunas = function (siguiente_aplicacion) {
+            var MILISENGUNDOS_POR_DIA = 1000 * 60 * 60 * 24;
+            var hoy = new Date().getTime()
+            var vencimiento = siguiente_aplicacion.getTime()
+            var calculo = hoy - vencimiento
+            var dias = Math.floor(calculo / MILISENGUNDOS_POR_DIA)
+            var retorno = dias
+            return retorno
+        }
+
         $scope.calcularFechaVencimientoRequisito = function (requisito) {
             var meses = (requisito.vencimiento_mes === undefined) ? requisito.preRequisito.vencimiento_mes : requisito.vencimiento_mes
             var fechaControl = new Date()
@@ -1369,14 +1421,18 @@ angular.module('agil.controladores')
 
         $scope.actualizarPreRequisitoPaciente = function (prerequisito) {
             blockUI.start()
+            var prerequisito_ = prerequisito 
             // prerequisito.fecha_inicio = new Date($scope.convertirFecha(prerequisito.fecha_inicio_texto))
             // prerequisito.fecha_vencimiento = $scope.calcularFechaVencimientoRequisito(prerequisito)
-            prerequisito.fecha_vencimiento = new Date($scope.convertirFecha(prerequisito.fecha_vencimiento_texto))
-            prerequisito.asignado = true
-            PrerequisitoPaciente.save(prerequisito, function (res) {
-                $scope.verificarAsignacionPrerequisitos()
+            prerequisito_.fecha_vencimiento = new Date($scope.convertirFecha(prerequisito_.fecha_vencimiento_texto))
+            prerequisito_.fecha_inicio = new Date()
+            prerequisito_.fecha_entrega = null
+            prerequisito_.asignado = true
+            PrerequisitoPaciente.save(prerequisito_, function (res) {
+                
                 $scope.mostrarMensaje(res.mensaje)
                 $scope.cerrarDialogEditarPreRequisito()
+                $scope.verificarAsignacionPrerequisitos()
                 blockUI.stop()
             }, function (error) {
                 $scope.mostrarMensaje('Ocurrio un problema al asignar el prerequisito')
@@ -1390,35 +1446,36 @@ angular.module('agil.controladores')
             // nuevoPrerequisito.fecha_inicio = new Date($scope.convertirFecha(nuevoPrerequisito.fecha_inicio))
             // nuevoPrerequisito.fecha_inicio = nuevoPrerequisito.fecha_inicio.setFullYear(nuevoPrerequisito.fecha_inicio.getFullYear(), nuevoPrerequisito.fecha_inicio.getMonth(), nuevoPrerequisito.fecha_inicio.getDate());
             // nuevoPrerequisito.fecha_vencimiento = nuevoPrerequisito.fechav.setFullYear(nuevoPrerequisito.fechav.getFullYear(), nuevoPrerequisito.fechav.getMonth(), nuevoPrerequisito.fechav.getDate())
-            if(nuevoPrerequisito.nombre != undefined && nuevoPrerequisito.vencimiento_mes != undefined){
+            if (nuevoPrerequisito.nombre != undefined && nuevoPrerequisito.vencimiento_mes != undefined) {
                 if (nuevoPrerequisito.id != undefined) {
                     nuevoPrerequisito.$save(nuevoPrerequisito, function (res) {
-                        $scope.verificarAsignacionPrerequisitos()
+                        
                         $scope.mostrarMensaje(res.mensaje);
                         $scope.cerrarPopupPrerequisitoNuevo();
                         blockUI.stop();
+                        $scope.verificarAsignacionPrerequisitos()
                     }, function (error) {
                         $scope.cerrarPopupPrerequisitoNuevo();
                         $scope.mostrarMensaje('Ocurrio un problema al momento de guardar!');
                         blockUI.stop();
                     });
                 } else {
-                    nuevoPrerequisito.$save({ id_paciente: $scope.paciente.id }, function (res) {
-                        $scope.verificarAsignacionPrerequisitos()
+                    nuevoPrerequisito.$save({ nuevoPrerequisito }, function (res) {
                         $scope.mostrarMensaje(res.mensaje);
                         $scope.cerrarPopupPrerequisitoNuevo();
                         blockUI.stop();
-                    }, function (error) {     
+                        $scope.verificarAsignacionPrerequisitos()
+                    }, function (error) {
                         $scope.cerrarPopupPrerequisitoNuevo();
                         $scope.mostrarMensaje('Ocurrio un problema al momento de guardar!');
                         blockUI.stop();
                     });
                 }
-            }else{
+            } else {
                 $scope.mostrarMensaje('Los campos Prerequisito Nombre y vencimiento mes son requeridos.')
                 blockUI.stop();
             }
-            
+
         }
 
         $scope.finVerPaciente = function () {
@@ -1861,7 +1918,7 @@ angular.module('agil.controladores')
             $scope.cerrarPopup($scope.idModalAlertPrerequisitos);
         }
 
-        $scope.verificarAlertas = function () {
+        $scope.verificarConteoAlertas = function () {
             var conteo = 0
 
             if ($scope.alertasPrerequisitos != undefined) {
@@ -1906,19 +1963,31 @@ angular.module('agil.controladores')
             promesa.then(function (datos) {
                 $scope.filtro.inicio = ($scope.filtro.inicio instanceof Date) ? $scope.filtro.inicio.getDate() + '/' + ($scope.filtro.inicio.getMonth() + 1) + '/' + $scope.filtro.inicio.getFullYear() : ""
                 $scope.filtro.fin = ($scope.filtro.fin instanceof Date) ? $scope.filtro.fin.getDate() + '/' + ($scope.filtro.fin.getMonth() + 1) + '/' + $scope.filtro.fin.getFullYear() : ""
-                $scope.listaAlertPrerequisitos = datos.Prerequisitos
-                $scope.listaAlertPrerequisitos.forEach(function (prerequisito, index, array) {
-                    var fechaInicio = new Date(prerequisito.fecha_inicio)
+                var listado = datos.Prerequisitos
+                $scope.listaAlertPrerequisitos = []
+                listado.forEach(function (prerequisito, index, array) {
+                    var hoy = new Date()
                     var fechaVence = new Date(prerequisito.fecha_vencimiento)
                     prerequisito.DiasVence = $scope.diasVencidosPrerequisito(fechaVence)
+                    
                     if (prerequisito.fecha_entrega != null) {
                         prerequisito.entregado = true
-                    }else{
+                    } else {
                         prerequisito.entregado = false
+                    }
+                    if(prerequisito.DiasVence < 0){
+                        var cg = prerequisito.DiasVence *-1
+                        if(cg <=prerequisito.preRequisito.dias_activacion){
+                            $scope.listaAlertPrerequisitos.push(prerequisito)
+                        }
+                    }else{
+                        if(prerequisito.DiasVence <= prerequisito.preRequisito.dias_activacion){
+                            $scope.listaAlertPrerequisitos.push(prerequisito)
+                        }
                     }
                     if (index == array.length - 1) {
                         $scope.alertasPrerequisitos = $scope.listaAlertPrerequisitos.length
-                        var promesa = ListaVacunasEmpresa($scope.usuario.id_empresa, $scope.filtro)
+                        var promesa = ListaAlertasVacunasEmpresa($scope.usuario.id_empresa, filtro)
                         promesa.then(function (datos) {
                             $scope.filtro.inicio = ($scope.filtro.inicio instanceof Date) ? $scope.filtro.inicio.getDate() + '/' + ($scope.filtro.inicio.getMonth() + 1) + '/' + $scope.filtro.inicio.getFullYear() : ""
                             $scope.filtro.fin = ($scope.filtro.fin instanceof Date) ? $scope.filtro.fin.getDate() + '/' + ($scope.filtro.fin.getMonth() + 1) + '/' + $scope.filtro.fin.getFullYear() : ""
@@ -1926,10 +1995,11 @@ angular.module('agil.controladores')
                             $scope.listaAlertVacunas.forEach(function (vacuna, index, array) {
                                 var fechaInicio = new Date(vacuna.fecha_ultima_aplicacion)
                                 var fechaVence = new Date(vacuna.fecha_siguiente_aplicacion)
-                                vacuna.DiasVence = $scope.diasVencidosPrerequisito(fechaVence)
+                                vacuna.DiasVence = $scope.diasVencidosVacunas(fechaVence)
+                                console.log(vacuna.DiasVence)
                                 if (index == array.length - 1) {
                                     $scope.alertasVacunas = $scope.listaAlertVacunas.length
-                                    $scope.verificarAlertas()
+                                    $scope.verificarConteoAlertas()
                                 }
                             }, this);
                         })
@@ -1937,21 +2007,22 @@ angular.module('agil.controladores')
                 }, this);
             })
         }
+
         $scope.listaAlertasPrerequisitosPaciente = function (filtro) {
             $scope.filtro = filtro
             if (filtro.inicio != undefined) {
-                if (filtro.inicio != 0 && filtro.inicio !="") {
+                if (filtro.inicio != 0 && filtro.inicio != "") {
                     $scope.filtro.inicio = (filtro.inicio instanceof Date) ? filtro.inicio : new Date($scope.convertirFecha(filtro.inicio));
-                }else{
+                } else {
                     $scope.filtro.inicio = 0
                 }
-            }else{
+            } else {
                 $scope.filtro.inicio = 0
             }
-            if(filtro.fin != undefined){
-                if(filtro.fin !=0 && filtro.fin !="") {
+            if (filtro.fin != undefined) {
+                if (filtro.fin != 0 && filtro.fin != "") {
                     $scope.filtro.fin = (filtro.fin instanceof Date) ? filtro.fin : new Date($scope.convertirFecha(filtro.fin));
-                }else{
+                } else {
                     $scope.filtro.fin = 0
                 }
             } else {
@@ -1962,18 +2033,29 @@ angular.module('agil.controladores')
             promesa.then(function (datos) {
                 $scope.filtro.inicio = ($scope.filtro.inicio instanceof Date) ? $scope.filtro.inicio.getDate() + '/' + ($scope.filtro.inicio.getMonth() + 1) + '/' + $scope.filtro.inicio.getFullYear() : ""
                 $scope.filtro.fin = ($scope.filtro.fin instanceof Date) ? $scope.filtro.fin.getDate() + '/' + ($scope.filtro.fin.getMonth() + 1) + '/' + $scope.filtro.fin.getFullYear() : ""
-                $scope.listaAlertPrerequisitos = datos.Prerequisitos
-                $scope.listaAlertPrerequisitos.forEach(function (prerequisito, index, array) {
+                var listado = datos.Prerequisitos
+                $scope.listaAlertPrerequisitos = []
+                listado.forEach(function (prerequisito, index, array) {
                     var fechaInicio = new Date(prerequisito.fecha_inicio)
                     var fechaVence = new Date(prerequisito.fecha_vencimiento)
                     prerequisito.DiasVence = $scope.diasVencidosPrerequisito(fechaVence)
                     if (prerequisito.fecha_entrega != null) {
                         prerequisito.entregado = true
-                    }else{
+                    } else {
                         prerequisito.entregado = false
                     }
+                    if(prerequisito.DiasVence < 0){
+                        var cg = prerequisito.DiasVence *-1
+                        if(cg <=prerequisito.preRequisito.dias_activacion){
+                            $scope.listaAlertPrerequisitos.push(prerequisito)
+                        }
+                    }else{
+                        if(prerequisito.DiasVence <= prerequisito.preRequisito.dias_activacion){
+                            $scope.listaAlertPrerequisitos.push(prerequisito)
+                        }
+                    }
                     if (index == array.length - 1) {
-                        // $scope.alertasPrerequisitos = $scope.listaAlertPrerequisitos
+                        $scope.alertasPrerequisitos = $scope.listaAlertPrerequisitos.length
                     }
                 }, this);
 
@@ -2002,7 +2084,36 @@ angular.module('agil.controladores')
                 $scope.listaAlertVacunas.forEach(function (vacuna) {
                     var fechaInicio = new Date(vacuna.fecha_ultima_aplicacion)
                     var fechaVence = new Date(vacuna.fecha_siguiente_aplicacion)
-                    vacuna.DiasVence = $scope.diferenciaEntreDiasEnDias(fechaInicio, fechaVence)
+                    vacuna.DiasVence = $scope.diasVencidosVacunas(fechaVence).
+                    console.log(vacuna.DiasVence)
+                }, this);
+            })
+        }
+
+        $scope.obtenerListaAlertasVacunas = function (filtro) {
+            $scope.filtro = filtro
+            if (filtro.inicio != undefined && filtro.fin != undefined) {
+                if (filtro.inicio != 0 || filtro.inicio != "") {
+                    $scope.filtro.inicio = (filtro.inicio instanceof Date) ? filtro.inicio : new Date($scope.convertirFecha(filtro.inicio));
+                    $scope.filtro.fin = (filtro.fin instanceof Date) ? filtro.fin : new Date($scope.convertirFecha(filtro.fin));
+                } else {
+                    $scope.filtro.inicio = 0
+                    $scope.filtro.fin = 0
+                }
+            } else {
+                $scope.filtro.inicio = 0
+                $scope.filtro.fin = 0
+            }
+            var promesa = ListaAlertasVacunasEmpresa($scope.usuario.id_empresa, $scope.filtro)
+            promesa.then(function (datos) {
+                $scope.filtro.inicio = ($scope.filtro.inicio instanceof Date) ? $scope.filtro.inicio.getDate() + '/' + ($scope.filtro.inicio.getMonth() + 1) + '/' + $scope.filtro.inicio.getFullYear() : ""
+                $scope.filtro.fin = ($scope.filtro.fin instanceof Date) ? $scope.filtro.fin.getDate() + '/' + ($scope.filtro.fin.getMonth() + 1) + '/' + $scope.filtro.fin.getFullYear() : ""
+                $scope.listaAlertVacunas = datos.Vacunas
+                $scope.listaAlertVacunas.forEach(function (vacuna) {
+                    var fechaInicio = new Date(vacuna.fecha_ultima_aplicacion)
+                    var fechaVence = new Date(vacuna.fecha_siguiente_aplicacion)
+                    vacuna.DiasVence = $scope.diasVencidosVacunas(fechaVence)
+                    console.log(vacuna.DiasVence)
                 }, this);
             })
         }
@@ -2025,7 +2136,7 @@ angular.module('agil.controladores')
 
         $scope.abrirDialogAlertVacunas = function () {
             var filtro = { inicio: 0, fin: 0 }
-            $scope.obtenerListaEmpresaVacunas(filtro)
+            $scope.obtenerListaAlertasVacunas(filtro)
             $scope.abrirPopup($scope.idModalAlertVacunas);
         }
 

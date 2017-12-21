@@ -179,6 +179,23 @@ angular.module('agil.servicios')
         };
         return res;
     }])
+    .factory('PrerequisitoHistorial', function ($resource) {
+        return $resource(restServer + "prerequisito/:id_pre/historial/:id_pac/inicio/:inicio/fin/:fin",{});
+    })
+
+    .factory('PrerequisitosHistorial', ['PrerequisitoHistorial', '$q', function (PrerequisitoHistorial, $q) {
+        var res = function (datos) {
+            var delay = $q.defer();
+            PrerequisitoHistorial.get(datos,function (entidades) {
+                delay.resolve(entidades);
+            }, function (error) {
+                delay.reject(error);
+            });
+            return delay.promise;
+        };
+        return res;
+    }])
+    
     .factory('PrerequisitoPaciente', function ($resource) {
         return $resource(restServer + "prerequisito/paciente")
             // {
@@ -247,6 +264,24 @@ angular.module('agil.servicios')
         return res;
     }])
 
+    .factory('listaAlertasVacunas', function ($resource) {
+        return $resource(restServer + "medico-paciente-vacunas-alertas/empresa/:id_empresa/inicio/:inicio/fin/:fin", null,
+            {
+                'update': { method: 'PUT' }
+            });
+    })
+    .factory('ListaAlertasVacunasEmpresa', ['listaAlertasVacunas', '$q', function (listaAlertasVacunas, $q) {
+        var res = function (idEmpresa, filtro) {
+            var delay = $q.defer();
+            listaAlertasVacunas.get({ id_empresa: idEmpresa, inicio: filtro.inicio, fin: filtro.fin }, function (entidad) {
+                delay.resolve(entidad);
+            }, function (error) {
+                delay.reject(error);
+            });
+            return delay.promise;
+        };
+        return res;
+    }])
     .factory('listaVacunas', function ($resource) {
         return $resource(restServer + "medico-paciente-vacunas/empresa/:id_empresa/inicio/:inicio/fin/:fin", null,
             {

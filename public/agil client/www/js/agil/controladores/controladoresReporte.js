@@ -1320,7 +1320,7 @@ angular.module('agil.controladores')
 				columns.push(detallesVenta[i].producto.codigo);
 				columns.push(detallesVenta[i].producto.nombre);
 				columns.push(detallesVenta[i].producto.unidad_medida);
-				columns.push(detallesVenta[i].producto.grupo);
+				columns.push(detallesVenta[i].producto.grupo.nombre);
 				columns.push(detallesVenta[i].cantidad);
 				columns.push(detallesVenta[i].precio_unitario);
 				columns.push(detallesVenta[i].importe);

@@ -127,7 +127,8 @@ router.route('/reportes/ventas-mensuales/:id_empresa/sucursal/:id_sucursal/inici
 			}
 		}).then(function(empresa){			
 			DetalleVenta.findAll({ 
-				include: [{model:Producto,as: 'producto',required:true},
+				include: [{model:Producto,as: 'producto',required:true,
+							include:[{model:Clase,as:'grupo'},{model:Clase,as:'subgrupo'}]},
 						  {model:Venta,as: 'venta',where:{fecha: {$between: [inicio,fin]},activa:true},
 							include:[{model:Cliente,as: 'cliente',required:true},
 									 {model:Usuario,as: 'usuario',required:true},

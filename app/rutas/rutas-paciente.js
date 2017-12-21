@@ -906,37 +906,69 @@ module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Su
 				}).then(function (vacunasPaciente) {
 					res.json('vacuna paciente actualizada');
 				});
-			// MedicoPacienteVacuna.findOrCreate({
-			// 	where:{
-			// 		id_paciente: req.body.id_paciente,
-			// 		id_vacuna: req.body.id_vacuna,
-			// 	},
-			// 	defaults:{
-			// 		id_paciente: req.body.id_paciente,
-			// 		id_vacuna: req.body.id_vacuna,
-			// 		fecha_ultima_aplicacion: req.body.fecha_ultima_aplicacion,
-			// 		fecha_siguiente_aplicacion: req.body.fecha_siguiente_aplicacion,
-			// 		eliminado: eliminar
-			// 	}
-			// }).spread(function (vacuna, is_new){
-			// 	if(!is_new){
-			// 		MedicoPacienteVacuna.update({
-			// 			id_paciente: req.body.id_paciente,
-			// 			id_vacuna: req.body.id_vacuna,
-			// 			fecha_ultima_aplicacion: req.body.fecha_ultima_aplicacion,
-			// 			fecha_siguiente_aplicacion: req.body.fecha_siguiente_aplicacion,
-			// 			eliminado: eliminar
-			// 		}, {
-			// 				where: { id: vacuna.id },
-			// 			}).then(function (vacunasPaciente) {
-			// 				res.json('vacuna paciente actualizada');
-			// 			});
-			// 	}
-			// })
-
 
 		});
 
+	router.route('/prerequisito/:id_pre/historial/:id_pac/inicio/:inicio/fin/:fin')
+		.get(function (req, res){
+			var condicionPreRequisito = { eliminado: false }
+			var desde = false
+			var hasta = false
+			if (req.params.inicio != 0) {
+				var inicio = new Date(req.params.inicio); inicio.setHours(0, 0, 0, 0, 0);
+				desde = true
+			}
+			if (req.params.fin != 0) {
+				var fin = new Date(req.params.fin); fin.setHours(23, 0, 0, 0, 0);
+				hasta = true
+			}
+			if (desde && hasta) {
+				condicionPreRequisito = {
+					id_prerequisito: req.params.id_pre,
+					id_paciente: req.params.id_pac,
+					eliminado: false,
+					fecha_vencimiento: {
+						$between: [inicio, fin]
+					}
+				}
+			} else if (desde && !hasta) {
+				condicionPreRequisito = {
+					id_prerequisito: req.params.id_pre,
+					id_paciente: req.params.id_pac,
+					eliminado: false,
+					fecha_vencimiento: {
+						$gte: [inicio]
+					}
+				}
+			} else if (!desde && hasta) {
+				condicionPreRequisito = {
+					id_prerequisito: req.params.id_pre,
+					id_paciente: req.params.id_pac,
+					eliminado: false,
+					fecha_vencimiento: {
+						$lte: [fin]
+					}
+				}
+			} else if (!desde && !hasta) {
+				var hoy = new Date()
+				// hoy.setHours(0,0,0,0)
+				condicionPreRequisito = {
+					// fecha_entrega: null,
+					id_prerequisito: req.params.id_pre,
+					id_paciente: req.params.id_pac,
+					eliminado: false,
+					// fecha_vencimiento: {
+					// 	$lte: hoy
+					// }
+				}
+			}
+			MedicoPacientePreRequisito.findAll({
+				where:condicionPreRequisito,
+				include: [{ model: MedicoPrerequisito, as: 'preRequisito' }]
+			}).then(function (historial) {
+				res.json({historial:historial})
+			})
+		})
 	router.route('/prerequisitos')
 		.post(function (req, res) {
 			if (req.body.id != undefined) {
@@ -954,6 +986,7 @@ module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Su
 					}).then(function (prerequisitoCreado) {
 						res.json({ mensaje: "Pre-requisitos actualizado satisfactoriamente!" });
 					});
+
 			} else {
 				MedicoPrerequisito.create({
 					// id_paciente: req.params.id_paciente,
@@ -1022,16 +1055,12 @@ module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Su
 			});
 		})
 
-	// .get(function (req, res) {
-	// 	Clase.findAll({
-	// 		include: [{ model: Tipo, as: 'tipo', where: { nombre_corto: Diccionario.GENERO } }]
-	// 	}).then(function (generos) {
-	// 		res.json(generos);
-	// 	});
-	// });
-
 	router.route('/prerequisito/paciente')
 		.post(function (req, res) {
+			var inicio = new Date(req.body.fecha_inicio)
+			inicio.setHours(0, 0, 0, 0)
+			var fin = new Date(req.body.fecha_inicio)
+			fin.setHours(23, 59, 0, 0)
 			var asignar = true
 			if (req.body.asignado) {
 				asignar = false
@@ -1040,7 +1069,7 @@ module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Su
 				where: {
 					id_paciente: req.body.pacientePrerequisito.id,
 					id_prerequisito: req.body.preRequisito.id,
-					fecha_inicio: req.body.fecha_inicio,
+					fecha_inicio: { $between: [inicio, fin] },
 					fecha_entrega: null
 				},
 				defaults: {
@@ -1116,159 +1145,10 @@ module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Su
 				res.json({ Requisitos: requisitos })
 			})
 		})
-	// Clase.find({
-	// 	where: { nombre_corto: Diccionario.PRE_REQUSITO }
-	// }).then(function (prerequisito) {
-	// 	MedicoPrerequisito.find({
-	// 		where: {
-	// 			id_paciente: req.params.id_paciente,
-	// 			$or: [{ id_prerequisito: req.body.id_prerequisito }]
-	// 		},
-	// 	}).then(function (prerequisitoEncontrado) {
-	// if (prerequisitoEncontrado) {
-	// 	MedicoPrerequisito.update({
-	// 		vencimiento_mes: req.body.vencimiento_mes,
-	// 		fecha_inicio: req.body.fecha_inicio,
-	// 		fecha_vencimiento: req.body.fecha_vencimiento,
-	// 		observacion: req.body.observacion,
-	// 		puede_modificar_rrhh: req.body.puede_modificar_rrhh
-	// 	}, {
-	// 			where: {
-	// 				id: prerequisitoEncontrado.id
-	// 			}
-	// 		}).then(function (prerequisitoCreado) {
 
-	// 			res.json({ mensaje: "¡Datos de Pre-requisito actualizados satisfactoriamente!" });
-
-	// 		});
-	// } else {
-	// MedicoPrerequisito.create({
-	// 	id_paciente: req.params.id_paciente,
-	// 	id_prerequisito: req.body.prerequisito.id,
-	// 	vencimiento_mes: req.body.vencimiento_mes,
-	// 	fecha_inicio: req.body.fecha_inicio,
-	// 	fecha_vencimiento: req.body.fecha_vencimiento,
-	// 	observacion: req.body.observacion,
-	// 	puede_modificar_rrhh: req.body.puede_modificar_rrhh
-
-	// }).then(function (prerequisitoCreado) {
-
-	// 	res.json({ mensaje: "Pre-requisitos creados satisfactoriamente!" });
-
-	// });
-	// }
-	// })
-
-	// })
-	// .put(function (req, res) {
-	// 	if (req.body instanceof Array) {
-	// 		req.body.forEach(function (prerequisito, index, array) {
-	// 			MedicoPrerequisito.update({
-	// 				entregado: prerequisito.entregado,
-	// 				puede_modificar_rrhh: prerequisito.puede_modificar_rrhh
-	// 			}, {
-	// 					where: {
-	// 						id: prerequisito.id
-	// 					},
-	// 				}).then(function (prerequisitos) {
-	// 					if (index === (array.length - 1)) {
-	// 						res.json({ message: "pre requisito actualizado satisfactoriamente!" });
-	// 					}
-	// 				});
-	// 		}, this);
-
-	// 	} else {
-	// 		MedicoPrerequisito.update({
-	// 			entregado: req.body.entregado,
-	// 			puede_modificar_rrhh: req.body.puede_modificar_rrhh
-	// 		}, {
-	// 				where: {
-	// 					id: req.body.id
-	// 				},
-	// 			}).then(function (prerequisitos) {
-	// 				res.json({ message: "pre requisito actualizado satisfactoriamente!" });
-	// 			});
-	// 	}
-	// });
 	router.route('/medico-paciente-pre-requisito-alertas/empresa/:id_empresa/inicio/:inicio/fin/:fin')
-	.get(function (req, res) {
-		var condicionPreRequisito = { fecha_entrega: null,eliminado: false }
-		var desde = false
-		var hasta = false
-		if (req.params.inicio != 0) {
-			var inicio = new Date(req.params.inicio); inicio.setHours(0, 0, 0, 0, 0);
-			desde = true
-		}
-		if (req.params.fin != 0) {
-			var fin = new Date(req.params.fin); fin.setHours(23, 0, 0, 0, 0);
-			hasta = true
-		}
-		if (desde && hasta) {
-			condicionPreRequisito = {
-				// id_paciente: req.params.id_paciente,
-				eliminado: false,
-				fecha_entrega:null,
-				fecha_vencimiento: {
-					$between: [inicio, fin]
-				}
-			}
-		}else if(desde && !hasta){
-			condicionPreRequisito = {
-				// id_paciente: req.params.id_paciente,
-				fecha_entrega:null,
-				eliminado: false,
-				fecha_vencimiento: {
-					$gte: [inicio]
-				}
-			}
-		}else if(!desde && hasta){
-			condicionPreRequisito = {
-				// id_paciente: req.params.id_paciente,
-				fecha_entrega:null,
-				eliminado: false,
-				fecha_vencimiento: {
-					$lte: [fin]
-				}
-			}
-		}else if (!desde && !hasta) {
-			var hoy = new Date()
-			// hoy.setHours(0,0,0,0)
-			condicionPreRequisito = {
-				fecha_entrega:null,
-				// id_paciente: req.params.id_paciente,
-				eliminado: false,
-				// fecha_vencimiento: {
-				// 	$lte: hoy
-				// }
-			}
-		}
-		MedicoPacientePreRequisito.findAll({
-			where: condicionPreRequisito,
-			include: [{ model: MedicoPrerequisito, as: 'preRequisito' }, { model: MedicoPaciente, as: 'pacientePrerequisito',where:{id_empresa: req.params.id_empresa}, include:[{model:Persona,as:'persona'}] }
-			]
-		}).then(function (prerequisitos) {
-			var alerta = []
-			prerequisitos.forEach(function(pre, index,array) {
-				var vencimiento = new Date(pre.fecha_vencimiento).getTime()
-				var hoy = new Date().getTime();
-				var dif = hoy - vencimiento
-				var dias = Math.floor(dif / 86400000)
-				if (dias >= pre.preRequisito.dias_activacion*-1){
-					alerta.push(pre)
-				}
-
-				if (index == array.length-1) {
-					res.json({ Prerequisitos: alerta });
-				}
-			});
-			if (prerequisitos.length == 0){
-				res.json({Prerequisitos: alerta})
-			}
-		});
-	})
-	router.route('/medico-paciente-pre-requisito/paciente/:id_paciente/inicio/:inicio/fin/:fin')
 		.get(function (req, res) {
-			var condicionPreRequisito = { id_paciente: req.params.id_paciente, eliminado: false }
+			var condicionPreRequisito = { fecha_entrega: null, eliminado: false }
 			var desde = false
 			var hasta = false
 			if (req.params.inicio != 0) {
@@ -1281,46 +1161,126 @@ module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Su
 			}
 			if (desde && hasta) {
 				condicionPreRequisito = {
-					id_paciente: req.params.id_paciente,
+					// id_paciente: req.params.id_paciente,
 					eliminado: false,
+					fecha_entrega: null,
 					fecha_vencimiento: {
 						$between: [inicio, fin]
 					}
 				}
-			}else if(desde && !hasta){
+			} else if (desde && !hasta) {
 				condicionPreRequisito = {
-					id_paciente: req.params.id_paciente,
+					// id_paciente: req.params.id_paciente,
+					fecha_entrega: null,
 					eliminado: false,
 					fecha_vencimiento: {
 						$gte: [inicio]
 					}
 				}
-			}else if(!desde && hasta){
+			} else if (!desde && hasta) {
 				condicionPreRequisito = {
-					id_paciente: req.params.id_paciente,
+					// id_paciente: req.params.id_paciente,
+					fecha_entrega: null,
 					eliminado: false,
 					fecha_vencimiento: {
 						$lte: [fin]
 					}
 				}
-			}else if (!desde && !hasta) {
+			} else if (!desde && !hasta) {
 				var hoy = new Date()
 				// hoy.setHours(0,0,0,0)
 				condicionPreRequisito = {
-					id_paciente: req.params.id_paciente,
-					eliminado: false
+					fecha_entrega: null,
+					// id_paciente: req.params.id_paciente,
+					eliminado: false,
 					// fecha_vencimiento: {
-					// 	$gte: hoy
+					// 	$lte: hoy
 					// }
 				}
 			}
 			MedicoPacientePreRequisito.findAll({
 				where: condicionPreRequisito,
-				include: [{ model: MedicoPrerequisito, as: 'preRequisito' }, { model: MedicoPaciente, as: 'pacientePrerequisito' }
+				include: [{ model: MedicoPrerequisito, as: 'preRequisito' }, { model: MedicoPaciente, as: 'pacientePrerequisito', where: { id_empresa: req.params.id_empresa }, include: [{ model: Persona, as: 'persona' }] }
 				]
 			}).then(function (prerequisitos) {
 				res.json({ Prerequisitos: prerequisitos });
 			});
+		})
+	router.route('/medico-paciente-pre-requisito/paciente/:id_paciente/inicio/:inicio/fin/:fin')
+		.get(function (req, res) {
+			var requisitosPac = []
+			MedicoPrerequisito.findAll({
+
+			}).then(function (lstRequisitos) {
+				lstRequisitos.forEach(function (requi, index, array) {
+					var condicionPreRequisito = { id_paciente: req.params.id_paciente, eliminado: false }
+					var desde = false
+					var hasta = false
+					if (req.params.inicio != 0) {
+						var inicio = new Date(req.params.inicio); inicio.setHours(0, 0, 0, 0, 0);
+						desde = true
+					}
+					if (req.params.fin != 0) {
+						var fin = new Date(req.params.fin); fin.setHours(23, 0, 0, 0, 0);
+						hasta = true
+					}
+					if (desde && hasta) {
+						condicionPreRequisito = {
+							id_paciente: req.params.id_paciente,
+							eliminado: false,
+							id_prerequisito: requi.id,
+							fecha_vencimiento: {
+								$between: [inicio, fin]
+							}
+						}
+					} else if (desde && !hasta) {
+						condicionPreRequisito = {
+							id_paciente: req.params.id_paciente,
+							eliminado: false,
+							id_prerequisito: requi.id,
+							fecha_vencimiento: {
+								$gte: [inicio]
+							}
+						}
+					} else if (!desde && hasta) {
+						condicionPreRequisito = {
+							id_paciente: req.params.id_paciente,
+							eliminado: false,
+							id_prerequisito: requi.id,
+							fecha_vencimiento: {
+								$lte: [fin]
+							}
+						}
+					} else if (!desde && !hasta) {
+						var hoy = new Date()
+						// hoy.setHours(0,0,0,0)
+						condicionPreRequisito = {
+							id_paciente: req.params.id_paciente,
+							id_prerequisito: requi.id,
+							eliminado: false
+							// fecha_vencimiento: {
+							// 	$gte: hoy
+							// }
+						}
+					}
+					MedicoPacientePreRequisito.findAll({
+						limit: 1,
+						where: condicionPreRequisito,
+						include: [{ model: MedicoPrerequisito, as: 'preRequisito' }, { model: MedicoPaciente, as: 'pacientePrerequisito' }
+						],
+						order: [['id', 'DESC']]
+					}).then(function (prerequisitos) {
+						if(prerequisitos[0] !=undefined){
+							requisitosPac.push(prerequisitos[0])
+						}
+						
+						// res.json({ Prerequisitos: prerequisitos });
+						if (index == array.length - 1) {
+							res.json({ Prerequisitos: requisitosPac });
+						}
+					});
+				});
+			})
 		})
 	router.route('/medico-paciente-consulta')
 		.post(function (req, res) {
@@ -1449,6 +1409,91 @@ module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Su
 				]
 			}).then(function (prerequisitos) {
 				res.json({ Prerequisitos: prerequisitos });
+			});
+		})
+		router.route('/medico-paciente-vacunas-alertas/empresa/:id_empresa/inicio/:inicio/fin/:fin')
+		.get(function (req, res) {
+			var condicionPaciente = {eliminado: false}
+			var desde = false
+			var hasta = false
+			if (req.params.inicio != 0) {
+				var inicio = new Date(req.params.inicio); inicio.setHours(0, 0, 0, 0, 0);
+				desde = true
+			}
+			if (req.params.fin != 0) {
+				var fin = new Date(req.params.fin); fin.setHours(23, 0, 0, 0, 0);
+				hasta = true
+			}
+			if (desde && hasta) {
+				condicionPaciente = {
+					// id_paciente: req.params.id_paciente,
+					eliminado: false,
+					// ultima_aplicacion: null,
+					ultima_aplicacion: {
+						$between: [inicio, fin]
+					}
+				}
+			} else if (desde && !hasta) {
+				condicionPaciente = {
+					// id_paciente: req.params.id_paciente,
+					// ultima_aplicacion: null,
+					eliminado: false,
+					ultima_aplicacion: {
+						$gte: [inicio]
+					}
+				}
+			} else if (!desde && hasta) {
+				condicionPaciente = {
+					// id_paciente: req.params.id_paciente,
+					// ultima_aplicacion: null,
+					eliminado: false,
+					ultima_aplicacion: {
+						$lte: [fin]
+					}
+				}
+			} else if (!desde && !hasta) {
+				var hoy = new Date()
+				// hoy.setHours(0,0,0,0)
+				condicionPaciente = {
+					// ultima_aplicacion: null,
+					// id_paciente: req.params.id_paciente,
+					eliminado: false,
+					// ultima_aplicacion: {
+					// 	$lte: hoy
+					// }
+				}
+			}
+
+			MedicoPacienteVacuna.findAll({
+				where: condicionPaciente,
+				include: [{ model: MedicoPaciente, as: 'paciente', include: [{ model: Persona, as: 'persona' }] }, { model: MedicoVacuna, as: 'pacienteVacuna', include:[{model:VacunaDosis, as:'vacunaDosis'}] },{model:MedicoPacienteVacunaDosis, as: 'pacienteVacunaDosis'}]
+			}).then(function (vacunas) {
+				var vacas = []
+				if(vacunas.length>0){
+					vacunas.forEach(function(vac, index, array){
+						var ulti_aplic = new Date(vac.fecha_ultima_aplicacion).getTime()
+						var indexSgteDosis = vac.pacienteVacunaDosis.length
+						var proyeccion = new Date(vac.fecha_siguiente_aplicacion).getTime()
+						if(vac.pacienteVacuna.vacunaDosis[indexSgteDosis]!=undefined){
+							// proyeccion = proyeccion.setTime(ulti_aplic+(vac.pacienteVacuna.vacunaDosis[indexSgteDosis].es_dosis?vac.pacienteVacuna.vacunaDosis[indexSgteDosis].tiempo * 86400000:(vac.pacienteVacuna.vacunaDosis[indexSgteDosis].tiempo*30) * 86400000).tiempo)
+							var hoy = new Date().getTime()
+							var diferencia = (hoy - proyeccion) / 86400000
+							if(diferencia < 0){
+								if(diferencia*-1<= 15){//15 = vac.pacienteVacuna.dias_activacion
+									vacas.push(vac)
+								}
+							}else{
+								vacas.push(vac)
+							}
+							if(index == array.length-1){
+								res.json({ Vacunas: vacas });
+							}
+						}
+					});
+				}else{
+					res.json({ Vacunas: [] });
+				}
+				
 			});
 		})
 	router.route('/medico-paciente-vacunas/empresa/:id_empresa/inicio/:inicio/fin/:fin')
