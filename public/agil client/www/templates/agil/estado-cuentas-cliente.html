@@ -4,6 +4,33 @@
 		<div class="clearfix">
 			<div class="pull-right tableTools-container"></div>
 		</div>
+		<form name="formularioFiltroEstadoCuentasClientes" novalidate ng-submit="paginator.getSearch(paginator.search,filtro,null)">
+			<fieldset>
+				<legend>Filtro Estado de Cuentas Clientesy</legend>
+				<table class="table table-striped table-bordered table-hover">
+					<tbody>
+						<tr>
+							<td>
+								<label>Cuentas Liquidadas
+										<input name="switch-field-1" class="ace ace-switch ace-switch-4 ng-valid ng-dirty ng-valid-parse ng-touched ng-empty" type="checkbox" ng-model="filtro.cuentas_liquidadas">
+										<span class="lbl check-descuento"></span>
+								</label>
+							</td>
+							<td>
+								<button id="Buscar" type="submit" ng-disabled="formularioFiltroCuentas.$invalid" class="btn-primary btn btn-app btn-xs">
+									<i class="ace-icon fa fa-search align-top bigger-125"></i>
+									Buscar
+								</button>
+								<button type="button" id="pdf" ng-disabled="paginator.selectedItems.length==0" class="btn btn-app btn-success btn-xs" ng-click="generarExcelEstadoCuentasClientesSeleccionados(paginator.selectedItems)">
+									<i class="ace-icon fa fa-print bigger-160"></i>
+									Excel
+								</button>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</fieldset>
+		</form>
 		<div class="table-header">
 			Lista de Clientes
 		</div>
@@ -12,121 +39,90 @@
 
 		<!-- div.dataTables_borderWrap -->
 		<div>
-		<div id="tabla-clientes_wrapper" class="dataTables_wrapper form-inline no-footer">
-			<div class="row">
-				<div class="col-xs-4">
-					<div class="dataTables_length" id="tabla-clientes_length"><label>
-				Mostrar <select ng-model="itemsPorPagina" ng-change="buscarClientes(1,itemsPorPagina,textoBusqueda,cuentasLiquidadas)" name="tabla-clientes_length" aria-controls="tabla-clientes" class="form-control input-sm">
-							<option selected value="10">10</option>
-							<option value="25">25</option>
-							<option value="50">50</option>
-							<option value="100">100</option>
-					    </select> clientes por página</label></div></div>	
-					    <div class="col-xs-4">		
-					    <label>Cuentas liquidadas
-									<input name="switch-field-1" class="ace ace-switch ace-switch-4 ng-valid ng-dirty ng-valid-parse ng-touched ng-empty" type="checkbox" ng-model="cuentasLiquidadas" ng-change="buscarClientes(1,itemsPorPagina,textoBusqueda,cuentasLiquidadas)">
-									<span class="lbl check-descuento"></span>
-							</label>		  
-						</div>  
-						<div class="col-xs-4">
-							
-							<div id="tabla-clientes_filter" class="dataTables_filter">
-								<label>Buscar:<input type="search" class="form-control input-sm" ng-model="textoBusqueda" placeholder="" aria-controls="tabla-clientes" ng-keydown="verificarPulso($event,textoBusqueda)">
+			<div id="tabla-clientes_wrapper" class="dataTables_wrapper form-inline no-footer">
+				<div class="row" ng-include src="'/templates/gral/paginator-header-1.html'">
+				</div>
+				<table id="tabla-clientes" class="table table-striped table-bordered table-hover">
+					<thead>
+						<tr>
+							<th class="center">
+								<label class="pos-rel">
+									<input type="checkbox" class="ace" ng-model="paginator.allItemsSelected" ng-change="paginator.selectAllItems(clientes)" />
+									<span class="lbl"></span>
 								</label>
-							</div>
-						</div>
-			</div>
-			<table id="tabla-clientes" class="table table-striped table-bordered table-hover">
-				<thead>
-					<tr>
-						<th class="center">
-							<label class="pos-rel">
-								<input type="checkbox" class="ace" />
-								<span class="lbl"></span>
-							</label>
-						</th>
-						<th>Código</th>
-						<th>Razón Social</th>
-						<th>Nit</th>
-						<th>
-							<i class="ace-icon fa fa-clock-o bigger-110 hidden-480"></i>
-							Dirección
-						</th>
-						<th class="hidden-480">Telefono 1</th>
-						<th class="hidden-480">Rubro</th>
-						<th class="hidden-480">Categoria</th>
-						<th class="hidden-480">Ubicación Geográfica</th>
-						<th class="hidden-480">Fecha Importante 1</th>
-						<th class="hidden-480">Fecha Importante 2</th>
-						<th>Acciones</th>
-					</tr>
-				</thead>
+							</th>
+							<th>N°</th>
+							<th>Código</th>
+							<th>Razón Social</th>
+							<th>Nit</th>
+							<th>
+								<i class="ace-icon fa fa-clock-o bigger-110 hidden-480"></i>
+								Dirección
+							</th>
+							<th class="hidden-480">Telefono 1</th>
+							<th class="hidden-480">Rubro</th>
+							<th class="hidden-480">Categoria</th>
+							<th class="hidden-480">Ubicación Geográfica</th>
+							<th class="hidden-480">Fecha Importante 1</th>
+							<th class="hidden-480">Fecha Importante 2</th>
+							<th>Acciones</th>
+						</tr>
+					</thead>
 
-				<tbody>
-					<tr ng-repeat="cliente in clientes">
-						<td class="center">
-							<label class="pos-rel">
-								<input type="checkbox" class="ace" />
-								<span class="lbl"></span>
-							</label>
-						</td>
-						<td>
-							{{cliente.codigo}}
-						</td>
-						<td>
-							{{cliente.razon_social}}
-						</td>
-						<td>{{cliente.nit}}</td>
-						<td>{{cliente.direccion}}</td>
+					<tbody>
+						<tr ng-repeat="cliente in clientes">
+							<td class="center">
+								<label class="pos-rel">
+									<input type="checkbox" class="ace" ng-model="cliente.selected" ng-checked="paginator.checkItem(cliente)" ng-change="paginator.addItemToSelected(cliente)" />
+									<span class="lbl"></span>
+								</label>
+							</td>
+							<td>
+								{{($index+1)+(paginator.itemsPerPage*(paginator.currentPage-1))}}
+							</td>
+							<td>
+								{{cliente.codigo}}
+							</td>
+							<td>
+								{{cliente.razon_social}}
+							</td>
+							<td>{{cliente.nit}}</td>
+							<td>{{cliente.direccion}}</td>
 
-						<td>
-							{{cliente.telefono1}}
-						</td>
-						<td>
-							{{cliente.rubro}}
-						</td>
-						<td>
-							{{cliente.categoria}}
-						</td>
-						<td>
-							{{cliente.ubicacion_geografica}}
-						</td>
-						<td>
-							{{cliente.fecha1 | date:"dd/MM"}}
-						</td>
-						<td>
-							{{cliente.fecha2 | date:"dd/MM"}}
-						</td>
-						<td>
-							<a class="red" href="javascript:void(0)" ng-click="generarPdfEstadoCuentasCliente(cliente,0)">
-									<i class="ace-icon fa fa-file-pdf-o bigger-130"></i>
-								</a>								
-								<a class="green" href="javascript:void(0)" ng-click="generarExcelEstadoCuentasCliente(cliente,0)">
-									<i class="ace-icon fa fa-file-excel-o bigger-130 "></i>
-								</a>	
-							<a class="blue" href="javascript:void(0)" ng-click="abrirEstadoCuentaCliente(cliente)">
-									<i class="ace-icon fa fa-filter bigger-130 "></i>
-								</a>	
-						</td>
-					</tr>
-				</tbody>
-			</table>
-			<div class="row">
-				<div class="col-xs-6">
-					<div class="dataTables_info" id="tabla-clientes_info" role="status" aria-live="polite">Mostrando página {{paginaActual}} de {{paginas.length}}</div>
+							<td>
+								{{cliente.telefono1}}
+							</td>
+							<td>
+								{{cliente.rubro}}
+							</td>
+							<td>
+								{{cliente.categoria}}
+							</td>
+							<td>
+								{{cliente.ubicacion_geografica}}
+							</td>
+							<td>
+								{{cliente.fecha1 | date:"dd/MM"}}
+							</td>
+							<td>
+								{{cliente.fecha2 | date:"dd/MM"}}
+							</td>
+							<td>
+								<a class="red" href="javascript:void(0)" ng-click="generarPdfEstadoCuentasCliente(cliente,0)">
+										<i class="ace-icon fa fa-file-pdf-o bigger-130"></i>
+									</a>								
+									<a class="green" href="javascript:void(0)" ng-click="generarExcelEstadoCuentasCliente(cliente,0)">
+										<i class="ace-icon fa fa-file-excel-o bigger-130 "></i>
+									</a>	
+								<a class="blue" href="javascript:void(0)" ng-click="abrirEstadoCuentaCliente(cliente)">
+										<i class="ace-icon fa fa-filter bigger-130 "></i>
+									</a>	
+							</td>
+						</tr>
+					</tbody>
+				</table>
+				<div class="row" ng-include src="'/templates/gral/paginator.html'">
 				</div>
-				<div class="col-xs-6">
-					<div class="dataTables_paginate paging_simple_numbers" id="tabla-clientes_paginate">
-						<ul class="pagination">
-							<li class="paginate_button previous" aria-controls="tabla-clientes" tabindex="0" id="tabla-clientes_previous"><a href="javascript:void(0)" ng-click="buscarClientes(1,itemsPorPagina,textoBusqueda)">Primero</a></li>
-							<li class="paginate_button previous" ng-class="{disabled:paginaActual==1}" aria-controls="tabla-clientes" tabindex="0" id="tabla-clientes_previous"><a href="javascript:void(0)" e-disabled="paginaActual==1" ng-click="buscarClientes(paginaActual-1,itemsPorPagina,textoBusqueda)"><<</a></li>
-							<li class="paginate_button" ng-class="{active:paginaActual==pagina}" aria-controls="tabla-clientes" tabindex="0" ng-repeat="pagina in paginas" ng-if="abs(paginaActual-pagina)<4"><a href="javascript:void(0)" ng-click="buscarClientes(pagina,itemsPorPagina,textoBusqueda)">{{pagina}}</a></li>
-							<li class="paginate_button" ng-class="{disabled:paginaActual==paginas.length}" aria-controls="tabla-clientes" tabindex="0" id="tabla-clientes_next"><a href="javascript:void(0)" e-disabled="paginaActual==paginas.length" ng-click="buscarClientes(paginaActual+1,itemsPorPagina,textoBusqueda)">>></a></li>
-							<li class="paginate_button previous" aria-controls="tabla-clientes" tabindex="0" id="tabla-clientes_previous"><a href="javascript:void(0)" ng-click="buscarClientes(paginas.length,itemsPorPagina,textoBusqueda)">Ultimo</a></li>
-						</ul>
-					</div>
-				</div>
-			</div>
 			</div>
 		</div>
 		<div id="tabla-estado-cuenta">

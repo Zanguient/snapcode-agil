@@ -1,8 +1,8 @@
 angular.module('agil.controladores')
 
-    .controller('ControladorRecursosHumanos', function ($scope, $localStorage, $location, $templateCache, $route, blockUI, ListaDatosGenero, NuevoRecursoHumano, RecursosHumanosPaginador, Paginator,
+    .controller('ControladorRecursosHumanos', function ($scope,$sce, $localStorage, $location, $templateCache, $route, blockUI, ListaDatosGenero, NuevoRecursoHumano, RecursosHumanosPaginador, Paginator,
         FieldViewer, PacientesEmpresa, obtenerEmpleadoRh, UsuarioRecursosHUmanosActivo, Prerequisito, ListaDatosPrerequisito, ListaPrerequisitosPaciente, ActualizarPrerequisito, UsuarioRecursosHumanosFicha,
-        ClasesTipo, Clases, Paises, CrearEmpleadoFicha) {
+        ClasesTipo, Clases, Paises, CrearEmpleadoFicha,EliminarOtroSeguroRh,EliminarFamiliarRh) {
         $scope.usuario = JSON.parse($localStorage.usuario);
         $scope.idModalPrerequisitos = 'dialog-pre-requisitos';
         $scope.idModalEmpleado = 'dialog-empleado';
@@ -77,6 +77,8 @@ angular.module('agil.controladores')
         $scope.idModalWizardRhNuevo = "modal-wizard-rh-container";
         $scope.idImagenUsuario = 'imagen-persona';
         $scope.idEliminarUsuarioRh = 'dialog-eliminar-usuarioRh';
+        $scope.idEliminarSeguroEmpleado = 'dialog-eliminar-seguro';
+        $scope.idEliminarFamiliarEmpleado = 'dialog-eliminar-familiar';
         $scope.idModalWizardRhVista = 'dialog-rh-vista';
         $scope.idModalContenedorRhVista = 'modal-wizard-container-rh-vista';
         $scope.idModalDialogPrerequisitoNuevo = 'dialog-pre-requisito-nuevo';
@@ -102,7 +104,7 @@ angular.module('agil.controladores')
                 $scope.idModalViajes, $scope.idModalVisita, $scope.idModalVehiculosViaje, $scope.idModalDestinos,
                 $scope.idModalHistorialViajes, $scope.idModalReporteAusencias, $scope.idModalCertificado, $scope.idModalInstitucion,
                 $scope.idModalRhNuevo, $scope.idModalWizardRhNuevo, $scope.idImagenUsuario, $scope.idEliminarUsuarioRh, $scope.idModalWizardRhVista,
-                $scope.idModalContenedorRhVista, $scope.idModalDialogPrerequisitoNuevo);
+                $scope.idModalContenedorRhVista, $scope.idModalDialogPrerequisitoNuevo, $scope.idEliminarSeguroEmpleado, $scope.idEliminarFamiliarEmpleado);
             $scope.buscarAplicacion($scope.usuario.aplicacionesUsuario, $location.path().substring(1));
             $scope.obtenerColumnasAplicacion()
             blockUI.stop();
@@ -131,6 +133,8 @@ angular.module('agil.controladores')
             $scope.eliminarPopup($scope.idModalRhNuevo)
             $scope.eliminarPopup($scope.idModalWizardRhVista)
             $scope.eliminarPopup($scope.idModalDialogPrerequisitoNuevo)
+            $scope.eliminarPopup($scope.idEliminarFamiliarEmpleado)
+            $scope.eliminarPopup($scope.idEliminarSeguroEmpleado)
         });
         $scope.inicio = function () {
             $scope.obtenerGenero();
@@ -141,7 +145,7 @@ angular.module('agil.controladores')
 
         }
 
-
+       
         $scope.obtenerColumnasAplicacion = function () {
             $scope.fieldViewer = FieldViewer({
                 crear: true,
@@ -175,8 +179,10 @@ angular.module('agil.controladores')
             promesaPaciente = obtenerEmpleadoRh(elpaciente.id)
             promesaPaciente.then(function (paciente) {
                 $scope.paciente = paciente
+                
                 $scope.paciente.fecha_nacimiento_texto = $scope.fechaATexto($scope.paciente.persona.fecha_nacimiento)
-
+                $scope.seleccionarCargos(paciente.cargos)
+                $scope.paciente.ver=true
 
             })
             $scope.abrirPopup($scope.idModalWizardRhVista);
@@ -199,6 +205,24 @@ angular.module('agil.controladores')
 
             $scope.abrirPopup($scope.idEliminarUsuarioRh);
         }
+        $scope.cerrarDialogEliminarSeguroEmpleado = function () {
+            
+            $scope.cerrarPopup($scope.idEliminarSeguroEmpleado);
+        }
+        $scope.abrirDialogEliminarSeguroEmpleado = function (dato,index) {
+            $scope.otroSeguro = dato
+            $scope.otroSeguro.index = index
+            $scope.abrirPopup($scope.idEliminarSeguroEmpleado);
+        }
+        $scope.cerrarDialogEliminarFamiliarEmpleado = function () {
+            
+            $scope.cerrarPopup($scope.idEliminarFamiliarEmpleado);
+        }
+        $scope.abrirDialogEliminarFamiliarEmpleado = function (dato,index) {
+            $scope.familiar = dato
+            $scope.familiar.index=index
+            $scope.abrirPopup($scope.idEliminarFamiliarEmpleado);
+        }
 
         $scope.abrirDialogInicioPreRequisitos = function (empleado) {
             var filtro = { inicio: 0, fin: 0 }
@@ -220,6 +244,8 @@ angular.module('agil.controladores')
             $scope.departamentos = []
             $scope.provincias = []
             $scope.localidades = []
+            $scope.obtenerCargos()
+            $scope.obtenerDiscapacidades()
             $scope.cerrarPopup($scope.idModalEmpleado);
         }
         $scope.abrirDialogExpedidoEn = function () {
@@ -295,8 +321,8 @@ angular.module('agil.controladores')
         $scope.cerrarDialogArea = function () {
             $scope.cerrarPopup($scope.idModalArea);
         }
-        $scope.cargos = [{ 'name': 'Chofer' }, { 'name': 'Ayudante de Of.' }, { 'name': 'Mecanico' }];
-        $scope.discapacidades = [{ 'name': 'Fisica' }, { 'name': 'Sensorial' }, { 'name': 'Psiquica' },{ 'name': 'Intelectual o Mental' }];
+        //$scope.cargos = [{ 'name': 'Chofer' }, { 'name': 'Ayudante de Of.' }, { 'name': 'Mecanico' }];
+        // $scope.discapacidades = [{ 'name': 'Fisica' }, { 'name': 'Sensorial' }, { 'name': 'Psiquica' }, { 'name': 'Intelectual o Mental' }];
         $scope.fechacontratos = [{ 'name': '10/01/2000 - 01/01/2002' }, { 'name': '10/01/2000 - 01/01/2002' }, { 'name': '10/01/2000 - 01/01/2002' }];
         // === traductor select multiple ==========
         $scope.localLang = {
@@ -936,6 +962,9 @@ angular.module('agil.controladores')
             $scope.paginator = Paginator();
             $scope.paginator.column = "codigo";
             $scope.paginator.direccion = "asc";
+            $scope.dynamicPopoverCargos = {           
+                templateUrl: 'myPopoverTemplate.html',            
+              };
             $scope.filtro = { empresa: $scope.usuario.id_empresa, codigo: "", nombres: "", ci: "", campo: "", cargo: "", busquedaEmpresa: "", estado: "", grupo_sanguineo: "" };
             $scope.paginator.callBack = $scope.buscarRecursosHumanos;
             $scope.paginator.getSearch("", $scope.filtro, null);
@@ -948,9 +977,11 @@ angular.module('agil.controladores')
             promesa.then(function (dato) {
                 $scope.paginator.setPages(dato.paginas);
                 $scope.RecursosHumanosEmpleados = dato.pacientes;
+
                 $scope.RecursosHumanosEmpleados.forEach(function (empleado) {
                     empleado.activo = (empleado.activo == 0) ? false : true
                 });
+                console.log($scope.RecursosHumanosEmpleados[0])
                 blockUI.stop();
             });
         }
@@ -1040,6 +1071,7 @@ angular.module('agil.controladores')
                 console.log(paciente)
                 $scope.nuevoRH = paciente
                 $scope.nuevoRH.persona.fecha_nacimiento = $scope.fechaATexto($scope.nuevoRH.persona.fecha_nacimiento)
+                $scope.seleccionarCargos($scope.nuevoRH.cargos)
             })
             console.log($scope.paciente)
             $scope.abrirPopup($scope.idModalRhNuevo);
@@ -1067,6 +1099,28 @@ angular.module('agil.controladores')
                 $scope.mostrarMensaje(dato.mensaje)
             })
         }
+        $scope.eliminarFamiliarRh = function () { 
+            var promesa = EliminarFamiliarRh($scope.familiar)
+            promesa.then(function (dato) {
+                $scope.ficha.empleado.familiares.splice($scope.familiar.index, 1);                
+                $scope.familiar=null
+                $scope.cerrarDialogEliminarFamiliarEmpleado()
+                $scope.mostrarMensaje(dato.mensaje)
+            })
+        }
+        $scope.eliminarOtroSeguroRh = function (otroSeguro) { 
+            var promesa = EliminarOtroSeguroRh(otroSeguro)
+            promesa.then(function (dato) {
+                $scope.ficha.empleado.otrosSeguros.splice(otroSeguro.index, 1);
+               
+               // $scope.ficha.empleado.otrosSeguros.splice($scope.ficha.empleado.otrosSeguros.indexOf(otroSeguro.index), 1);
+                $scope.otroSeguro=null
+               
+                $scope.cerrarDialogEliminarSeguroEmpleado()
+                $scope.mostrarMensaje(dato.mensaje)
+            })
+        }
+        
 
         $scope.finVerEmpleado = function () {
             var button = $('#siguiente-v').text().trim()
@@ -1081,22 +1135,36 @@ angular.module('agil.controladores')
             promesa.then(function (datos) {
                 if (datos.ficha) {
                     $scope.ficha = datos.ficha
+                    $scope.ficha.empleado.cargo = []
                     $scope.empleado.otrosSeguros = datos.ficha
-
+                    $scope.ficha.fecha_inicio = new Date($scope.ficha.fecha_inicio)
+                    $scope.ficha.fecha_fin = new Date($scope.ficha.fecha_fin)
+                    $scope.ficha.fecha_jubilacion = new Date($scope.ficha.fecha_jubilacion)
+                    $scope.ficha.empleado.fecha_vence_documento = new Date($scope.ficha.empleado.fecha_vence_documento)
+                    $scope.ficha.fecha_inicio = $scope.fechaATexto($scope.ficha.fecha_inicio)
+                    $scope.ficha.fecha_fin = $scope.fechaATexto($scope.ficha.fecha_fin)
+                    $scope.ficha.fecha_jubilacion = $scope.fechaATexto($scope.ficha.fecha_jubilacion)
+                    $scope.ficha.empleado.fecha_vence_documento = $scope.fechaATexto($scope.ficha.empleado.fecha_vence_documento)
                     $scope.buscarDepartamento(datos.ficha.empleado.persona.pais)
                     $scope.buscarMunicipios(datos.ficha.empleado.persona.ciudad)
                     $scope.buscarLocalidad(datos.ficha.empleado.persona.provincia)
-                   
+
                     var fechaActual = new Date();
                     var fechaNacimiento = new Date($scope.ficha.empleado.persona.fecha_nacimiento)
-                    $scope.ficha.nac_anio=fechaNacimiento.getFullYear()
-                    $scope.ficha.nac_dia=fechaNacimiento.getDate()
-                    $scope.ficha.nac_mes=(fechaNacimiento.getMonth()-1)
+                    $scope.ficha.nac_anio = fechaNacimiento.getFullYear()
+                    $scope.ficha.nac_dia = fechaNacimiento.getDate()
+                    var mesNac = fechaNacimiento.getMonth()
+                    $scope.meses.forEach(function (mes, array, index) {
+                        if (mes.id == mesNac) {
+                            $scope.ficha.nac_mes = mes
+                            $scope.getDaysInMonth($scope.ficha.nac_mes.id, $scope.ficha.nac_anio)
+                        }
+                    });
                     var fecha = new Date()
                     $scope.ficha.fecha_elaboracion = fecha.getDate() + "/" + (fecha.getMonth() + 1) + "/" + fecha.getFullYear()
                     var dato = $scope.diferenciaEntreDiasEnDias(fechaNacimiento, fechaActual)
                     $scope.ficha.edad = Math.trunc(dato / 365);
-                    $scope.ficha.edad
+
                     $scope.ficha.empleado.familiares.forEach(function (familiar, index, array) {
                         var fechaActual = new Date()
                         var fechaNacimiento = new Date(familiar.persona.fecha_nacimiento)
@@ -1105,15 +1173,31 @@ angular.module('agil.controladores')
                         familiar.edad = Math.trunc(dato / 365);
 
                     });
+             
+                    $scope.seleccionarCargos($scope.ficha.empleado.cargos)
+                    $scope.seleccionarDiscapacidades($scope.ficha.empleado.discapacidades)
+                    //llenarCargos($scope.cargos)
                 } else {
 
                     $scope.ficha = { empleado: datos.empleado, pacienteReferencia: {} }
-                    $scope.empleado.otrosSeguros = []
-                    $scope.empleado.familiares = []
-
+                    $scope.ficha.empleado.cargo = []
+                    $scope.ficha.empleado.otrosSeguros = []
+                    $scope.ficha.empleado.familiares = []
+                    $scope.ficha.empleado.persona.correo_electronico=datos.empleado.persona.correo_electronico
+                    $scope.seleccionarCargos($scope.ficha.empleado.cargos)
+                    $scope.seleccionarDiscapacidades($scope.ficha.empleado.discapacidades)
                     var fechaActual = new Date();
                     $scope.ficha.fecha_elaboracion = fechaActual.getDate() + "/" + (fechaActual.getMonth() + 1) + "/" + fechaActual.getFullYear()
                     var fechaNacimiento = new Date($scope.ficha.empleado.persona.fecha_nacimiento)
+                    $scope.ficha.nac_anio = fechaNacimiento.getFullYear()
+                    $scope.ficha.nac_dia = fechaNacimiento.getDate()
+                    var mesNac = fechaNacimiento.getMonth()
+                    $scope.meses.forEach(function (mes, array, index) {
+                        if (mes.id == mesNac) {
+                            $scope.ficha.nac_mes = mes
+                            $scope.getDaysInMonth($scope.ficha.nac_mes.id, $scope.ficha.nac_anio)
+                        }
+                    });
                     var dato = $scope.diferenciaEntreDiasEnDias(fechaNacimiento, fechaActual)
                     $scope.ficha.edad = Math.trunc(dato / 365)
                 }
@@ -1121,7 +1205,50 @@ angular.module('agil.controladores')
             });
 
         }
+        $scope.seleccionarCargos = function (cargosEmpleado) {
+            for (var i = 0; i < $scope.cargos.length; i++) {
+                for (var j = 0; j < cargosEmpleado.length; j++) {
+                    if ($scope.cargos[i].id == cargosEmpleado[j].id_cargo) {
+                        $scope.cargos[i].ticked = true;
+                    }
+                }
+            }
+        }
 
+        $scope.llenarCargos = function (cargos) {
+            $scope.cargos = [];
+            for (var i = 0; i < cargos.length; i++) {
+                var cargo = {
+                    nombre: cargos[i].nombre,
+                    maker: "",
+                    ticked: false,
+                    id: cargos[i].id
+                }
+                $scope.cargos.push(cargo);
+            }
+        }
+        $scope.seleccionarDiscapacidades = function (discapacidadesEmpleado) {
+            for (var i = 0; i < $scope.discapacidades.length; i++) {
+                for (var j = 0; j < discapacidadesEmpleado.length; j++) {
+                    if ($scope.discapacidades[i].id == discapacidadesEmpleado[j].id_discapacidad) {
+                        $scope.discapacidades[i].ticked = true;
+                    }
+                }
+            }
+        }
+
+        $scope.llenarDiscapacidades = function (discapacidades) {
+            $scope.discapacidades = [];
+            for (var i = 0; i < discapacidades.length; i++) {
+                var discapacidades = {
+                    nombre: discapacidades[i].nombre,
+                    maker: "",
+                    ticked: false,
+                    id: discapacidades[i].id
+                }
+                $scope.discapacidades.push(discapacidades);
+            }
+        }
         $scope.diferenciaEntreDiasEnDias = function (a, b) {
             var MILISENGUNDOS_POR_DIA = 1000 * 60 * 60 * 24;
             var utc1 = Date.UTC(a.getFullYear(), a.getMonth(), a.getDate());
@@ -1188,18 +1315,24 @@ angular.module('agil.controladores')
 
         $scope.calcularEdad = function (familiar) {
             var fechaActual = new Date();
+            if(familiar.nac_mes && familiar.nac_anio && familiar.nac_dia){
+                var anio = familiar.nac_anio
+                var mes = parseInt(familiar.nac_mes.id)
+                var dia = parseInt(familiar.nac_dia)
+                var fechaNacimiento = new Date()
+                fechaNacimiento.setFullYear(anio, mes, dia)
+                var dato = $scope.diferenciaEntreDiasEnDias(fechaNacimiento, fechaActual)
+                familiar.edad = Math.trunc(dato / 365);
 
-            var anio = familiar.nac_anio
-            var mes = parseInt(familiar.nac_mes)
-            var dia = parseInt(familiar.nac_dia)
-            var fechaNacimiento = new Date()
-            fechaNacimiento.setFullYear(anio, mes, dia)
-            var dato = $scope.diferenciaEntreDiasEnDias(fechaNacimiento, fechaActual)
-            familiar.edad = Math.trunc(dato / 365);
-            $scope.familiar.edad
+            }
         }
-        $scope.eliminarSeguro = function (dato) {
-            $scope.ficha.empleado.otrosSeguros.splice($scope.ficha.empleado.otrosSeguros.indexOf(dato), 1);
+        $scope.eliminarSeguro = function (seguro, index) {
+            if (seguro.id) {
+                $scope.abrirDialogEliminarSeguroEmpleado(seguro,index)
+            } else {
+                $scope.ficha.empleado.otrosSeguros.splice(index, 1);
+                console.log($scope.ficha.empleado.otrosSeguros)
+            }
         }
         $scope.editarSeguro = function (dato, index) {
             $scope.seguro = dato
@@ -1208,22 +1341,32 @@ angular.module('agil.controladores')
         }
         $scope.agregarFamiliar = function (familiar) {
             familiar.eliminado = false
-            if (parseInt(familiar.nac_mes) < 10) {
-                familiar.nac_mes = "0" + familiar.nac_mes
+            if (parseInt(familiar.nac_mes.id) < 10) {
+                familiar.nac_mes.id = "0" + familiar.nac_mes.id
             }
-            familiar.persona.fecha_nacimiento = new Date(familiar.nac_anio, parseInt(familiar.nac_mes), parseInt(familiar.nac_dia))
+            familiar.persona.fecha_nacimiento = new Date(familiar.nac_anio, parseInt(familiar.nac_mes.id), parseInt(familiar.nac_dia))
             $scope.ficha.empleado.familiares.push(familiar)
             $scope.familiar = { edit: false }
         }
-        $scope.eliminarFamiliar = function (dato) {
-            $scope.ficha.empleado.familiares.splice($scope.ficha.empleado.familiares.indexOf(dato), 1);
+        $scope.eliminarFamiliar = function (familiar, index) {
+            if (familiar.id) {
+                $scope.abrirDialogEliminarFamiliarEmpleado(familiar,index)
+            } else {
+                $scope.ficha.empleado.familiares.splice(index, 1);
+            }
         }
         $scope.editarFamiliar = function (dato, index) {
             $scope.familiar = dato
-            var fecha = new Date(dato.persona.fecha_nacimiento)
-            $scope.familiar.nac_anio = fecha.getFullYear()
-            $scope.familiar.nac_dia = fecha.getDate()
-            $scope.familiar.nac_mes = fecha.getMonth()
+            var fechaNacimiento = new Date(dato.persona.fecha_nacimiento)
+            $scope.familiar.nac_anio = fechaNacimiento.getFullYear()
+            $scope.familiar.nac_dia = fechaNacimiento.getDate()
+            var mesNac = fechaNacimiento.getMonth()
+            $scope.meses.forEach(function (mes, array, index) {
+                if (mes.id == mesNac) {
+                    $scope.familiar.nac_mes = mes
+                    //$scope.getDaysInMonth($scope.ficha.nac_mes.id,$scope.ficha.nac_anio)
+                }
+            });
             $scope.familiar.edit = true
             $scope.familiar.index = index
             $scope.abrirDialogNuevoFamiliar()
@@ -1234,7 +1377,7 @@ angular.module('agil.controladores')
         }
 
         $scope.guardarFamiliarEditado = function (dato) {
-            $scope.ficha.empleado.familiares[dato.index].persona.fecha_nacimiento = new Date(dato.nac_anio, parseInt(dato.nac_mes), parseInt(dato.nac_dia))
+            $scope.ficha.empleado.familiares[dato.index].persona.fecha_nacimiento = new Date(dato.nac_anio, parseInt(dato.nac_mes.id), parseInt(dato.nac_dia))
             $scope.ficha.empleado.familiares[dato.index] = dato
             $scope.familiar = { edit: false }
             $scope.cerrarDialogNuevoFamiliar()
@@ -1261,6 +1404,26 @@ angular.module('agil.controladores')
             $scope.obtenerBancos()
             $scope.obtenerMeses()
             $scope.obtenerAnios()
+            $scope.obtenerCargos()
+            $scope.obtenerDiscapacidades()
+        }
+        $scope.obtenerCargos = function () {
+            blockUI.start();
+            var promesa = ClasesTipo("RRHH_CARGO");
+            promesa.then(function (entidad) {
+                var cargos = entidad.clases
+                $scope.llenarCargos(cargos)
+                blockUI.stop();
+            });
+        }
+        $scope.obtenerDiscapacidades = function () {
+            blockUI.start();
+            var promesa = ClasesTipo("RRHH_DISC");
+            promesa.then(function (entidad) {
+                var discapacidades = entidad.clases
+                $scope.llenarDiscapacidades(discapacidades)
+                blockUI.stop();
+            });
         }
         $scope.obtenerExpeditos = function () {
             blockUI.start();
@@ -1444,7 +1607,8 @@ angular.module('agil.controladores')
             });
         }
         $scope.obtenerMeses = function () {
-            $scope.meses = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+            $scope.meses = [{ id: 0, nombre: "Enero" }, { id: 1, nombre: "Febrero" }, { id: 2, nombre: "Marzo" }, { id: 3, nombre: "Abril" }, { id: 4, nombre: "Mayo" }, { id: 5, nombre: "Junio" }, { id: 6, nombre: "Julio" }, { id: 7, nombre: "Agosto" },
+            { id: 8, nombre: "Septiembre" }, { id: 9, nombre: "Octubre" }, { id: 10, nombre: "Noviembre" }, { id: 11, nombre: "Diciembre" }];
         }
 
         $scope.obtenerAnios = function (startYear) {
@@ -1474,15 +1638,35 @@ angular.module('agil.controladores')
         };
         //FIN RECUPERAR TIPOS FICHA 
 
-        $scope.guardarFichaTecnica = function (valido, ficha) {
+        $scope.guardarFichaTecnica = function (valido, ficha,save) {
+            if(save){
+                if(ficha.empleado.persona.fecha_nacimiento){
+                ficha.empleado.persona.fecha_nacimiento = new Date(ficha.nac_anio, parseInt(ficha.nac_mes.id), parseInt(ficha.nac_dia))}
+                if(ficha.fecha_elaboracion){
+                ficha.fecha_elaboracion = new Date($scope.convertirFecha(ficha.fecha_elaboracion));}
+                if(ficha.fecha_inicio){
+                ficha.fecha_inicio = new Date($scope.convertirFecha(ficha.fecha_inicio));}
+                if(ficha.fecha_fin){
+                 ficha.fecha_fin = new Date($scope.convertirFecha(ficha.fecha_fin));}
+                if(ficha.fecha_jubilacion){
+                ficha.fecha_jubilacion = new Date($scope.convertirFecha(ficha.fecha_jubilacion));}
+                if(ficha.empleado.fecha_vence_documento){ficha.empleado.fecha_vence_documento = new Date($scope.convertirFecha(ficha.empleado.fecha_vence_documento));}
+                var promesa = CrearEmpleadoFicha(ficha);
+                promesa.then(function (dato) {
+                    $scope.cerrarDialogEmpleado()
+                    $scope.recargarItemsTabla()
+                    $scope.mostrarMensaje(dato.message)
+                })
+            }else{
             //if (valido) {
             var button = $('#siguiente-f').text().trim();
             if (button != "Siguiente") {
-                ficha.empleado.persona.fecha_nacimiento = new Date(ficha.nac_anio, parseInt(ficha.nac_mes), parseInt(ficha.nac_dia))
+                ficha.empleado.persona.fecha_nacimiento = new Date(ficha.nac_anio, parseInt(ficha.nac_mes.id), parseInt(ficha.nac_dia))
                 ficha.fecha_elaboracion = new Date($scope.convertirFecha(ficha.fecha_elaboracion));
                 ficha.fecha_inicio = new Date($scope.convertirFecha(ficha.fecha_inicio));
                 ficha.fecha_fin = new Date($scope.convertirFecha(ficha.fecha_fin));
                 ficha.fecha_jubilacion = new Date($scope.convertirFecha(ficha.fecha_jubilacion));
+                ficha.empleado.fecha_vence_documento = new Date($scope.convertirFecha(ficha.empleado.fecha_vence_documento));
                 var promesa = CrearEmpleadoFicha(ficha);
                 promesa.then(function (dato) {
                     $scope.cerrarDialogEmpleado()
@@ -1490,6 +1674,7 @@ angular.module('agil.controladores')
                     $scope.mostrarMensaje(dato.message)
                 })
             }
+        }
             // }
         }
         $scope.inicio()

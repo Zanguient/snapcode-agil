@@ -1,2 +1,4 @@
 ALTER TABLE agil_medico_paciente_prerequisito ADD fecha_inicio datetime;
 ALTER TABLE agil_medico_paciente_prerequisito ADD fecha_vencimiento datetime;
+ALTER TABLE agil_medico_prerequisito DROP COLUMN fecha_inicio;
+ALTER TABLE agil_medico_prerequisito DROP COLUMN fecha_vencimiento;

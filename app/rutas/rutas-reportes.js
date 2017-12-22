@@ -277,8 +277,8 @@ router.route('/reportes/estado-cuentas-clientes/:id_empresa/pagina/:pagina/items
 							include: [{model:Clase,as:'clase'}]}]}],				
 			order:[['id','asc']]
 		}).then(function(data){
-			Cliente.findAll({ 
-				offset:(req.params.items_pagina*(req.params.pagina-1)), limit:req.params.items_pagina,
+			var paginas=Math.ceil(data.count/req.params.items_pagina);
+			var datosCliente={ 
 				where:condicionCliente,
 				include:[{model:Venta,as: 'ventas',where:cuentasLiquidadas,
 					include: [{model:Clase,as:'tipoPago',where:{nombre_corto: Diccionario.TIPO_PAGO_CREDITO}},
@@ -287,8 +287,20 @@ router.route('/reportes/estado-cuentas-clientes/:id_empresa/pagina/:pagina/items
 								{model:Movimiento,as: 'movimiento',
 									include: [{model:Clase,as:'clase'}]}]}],				
 				order:[['id','asc']]
-			}).then(function(clientes){			
-				res.json({clientes:clientes,paginas:Math.ceil(data.count/req.params.items_pagina)});		  
+			}
+
+			if(req.params.items_pagina!=0){
+				datosCliente.offset=(req.params.items_pagina*(req.params.pagina-1));
+				datosCliente.limit=req.params.items_pagina;
+			}else{
+				paginas=1;
+			}
+
+
+			Cliente.findAll(
+				datosCliente
+			).then(function(clientes){			
+				res.json({clientes:clientes,paginas:paginas});		  
 			});
 		});
 	});

@@ -95,7 +95,15 @@ module.exports=function(sequelize,Sequelize){
       id_banco: {
 		type: Sequelize.INTEGER,
 		field: 'banco' 
-      }
+      },
+      detalle_discapacidades: {
+		type: Sequelize.STRING,
+		field: 'detalle_discapacidades' 
+	  },
+	  discapacidad: {
+		type: Sequelize.BOOLEAN,
+		field: 'discapacidad' 
+	  },
       
 	}, {
 	  freezeTableName: true 

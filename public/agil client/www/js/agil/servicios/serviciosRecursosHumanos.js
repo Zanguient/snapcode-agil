@@ -1,5 +1,47 @@
 angular.module('agil.servicios')
 
+.factory('UsuarioRhOtroSeguro', function ($resource) {
+    return $resource(restServer + "recursos-humanos-seguro/:id_seguro", {id_seguro:'@id_seguro'},
+        {
+            'update': { method: 'PUT' }
+        });
+})
+.factory('EliminarOtroSeguroRh', ['UsuarioRhOtroSeguro', '$q', function (UsuarioRhOtroSeguro, $q) {
+    var res = function (seguro)//idEmpresa, xxx
+    {
+        var delay = $q.defer();
+        UsuarioRhOtroSeguro.update({
+            id_seguro: seguro.id
+                  },function (entidades) {
+            delay.resolve(entidades);
+        }, function (error) {
+            delay.reject(error);
+        });
+        return delay.promise;
+    };
+    return res;
+}])
+.factory('UsuarioRhfamiliar', function ($resource) {
+    return $resource(restServer + "recursos-humanos-familiar/:id_persona/familiar-relacion/:id_familiar",{id_persona:'@id_persona',id_familiar:"@id_familiar"},
+        {
+            'update': { method: 'PUT' }
+        });
+})
+.factory('EliminarFamiliarRh', ['UsuarioRhfamiliar', '$q', function (UsuarioRhfamiliar, $q) {
+    var res = function (familiar)//idEmpresa, xxx
+    {
+        var delay = $q.defer();
+        UsuarioRhfamiliar.update({
+            id_persona: familiar.persona.id,id_familiar:familiar.id,
+                  },function (entidades) {
+            delay.resolve(entidades);
+        }, function (error) {
+            delay.reject(error);
+        });
+        return delay.promise;
+    };
+    return res;
+}])
 .factory('RecursosHumanosEmpresaPaginador', function ($resource) {
     return $resource(restServer + "recursos-humanos/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion/codigo/:codigo/nombres/:nombres/ci/:ci/campo/:campo/cargo/:cargo/busquedaEmpresa/:busquedaEmpresa/grupo/:grupo_sanguineo/estado/:estado");
 })

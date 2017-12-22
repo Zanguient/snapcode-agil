@@ -15,10 +15,15 @@ angular.module('agil.servicios')
 })
 .factory('ReporteClientesPaginador', ['ReportEstadoCuentasClientesPaginador','$q',function(ReportEstadoCuentasClientesPaginador, $q) 
   {
-	var res = function(idEmpresa,pagina,itemsPagina,texto,cuentasLiquidadas) 
+	var res = function(paginator) 
 	{
 		var delay = $q.defer();
-		ReportEstadoCuentasClientesPaginador.get({id_empresa:idEmpresa,pagina:pagina,items_pagina:itemsPagina,texto_busqueda:texto,cuentas_liquidadas:cuentasLiquidadas},function(entidades) 
+		ReportEstadoCuentasClientesPaginador.get({
+			id_empresa:paginator.filter.empresa,
+			pagina: paginator.currentPage,
+			items_pagina: paginator.itemsPerPage,
+			texto_busqueda: paginator.search,
+			cuentas_liquidadas:paginator.filter.cuentas_liquidadas},function(entidades) 
 		{        
 			delay.resolve(entidades);
 		}, function(error) 

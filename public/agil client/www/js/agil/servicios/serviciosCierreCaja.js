@@ -13,12 +13,45 @@ angular.module('agil.servicios')
 		});
 })
 
-.factory('ListaCierresCaja', ['CierreCaja','$q',function(CierreCaja, $q) 
+.factory('CierreCajaPaginador', function($resource) {
+	return $resource(restServer+"cierres-caja/empresa/:idEmpresa/:idUsuario/pagina/:pagina/items-pagina/:items_pagina/busqueda/:busqueda/columna/:columna/direccion/:direccion",{id: '@idEmpresa'},
+	{
+		'update': { method:'PUT' }
+	});
+})
+
+.factory('CierreCajaDatosItem', ['CierreCajaDatos','$q',function(CierreCajaDatos, $q) 
+{
+var res = function(id_cierre) 
+{
+	var delay = $q.defer();
+	CierreCajaDatos.get({
+		id_cierre_caja:id_cierre},function(entidades) 
+	{        
+		delay.resolve(entidades);
+	}, function(error) 
+		{
+			delay.reject(error);
+		});
+	return delay.promise;
+};
+	return res;
+}])
+
+
+.factory('ListaCierresCaja', ['CierreCajaPaginador','$q',function(CierreCajaPaginador, $q) 
   {
-	var res = function(idEmpresa,idUsuario) 
+	var res = function(paginator) 
 	{
 		var delay = $q.defer();
-		CierreCaja.query({idEmpresa:idEmpresa,idUsuario:idUsuario},function(entidades) 
+		CierreCajaPaginador.get({
+			idEmpresa:paginator.filter.empresa,
+			idUsuario:paginator.filter.usuario,
+		  pagina: paginator.currentPage,
+			items_pagina: paginator.itemsPerPage,
+			busqueda: paginator.search,
+			columna: paginator.column,
+			direccion: paginator.direction},function(entidades) 
 		{        
 			delay.resolve(entidades);
 		}, function(error) 

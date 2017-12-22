@@ -11,6 +11,8 @@ angular.module('agil.servicios')
 			search:0,
 			filter:null,
 			pages:[],
+			selectedItems:[],
+			allItemsSelected:false,
 			callBack:null,
 			setPages:function(numberOfPages){
 				this.pages=[];
@@ -19,6 +21,8 @@ angular.module('agil.servicios')
 				}
 			},
 			getSearch:function(search,filter,event){
+				this.selectedItems=[];
+				this.allItemsSelected=false;
 				if(event==null || event==undefined || event.keyCode===13){ //enter pressed
 					//search processing
 					if(search=="" || search==null){
@@ -34,6 +38,8 @@ angular.module('agil.servicios')
 							var key = keys[index];
 							if(this.filter[key] == null || this.filter[key] == undefined || this.filter[key] == ""){
 								this.filter[key]=0;
+							}else if(this.filter[key]==true){
+								this.filter[key]=1;
 							}
 						}
 					}
@@ -41,47 +47,87 @@ angular.module('agil.servicios')
 				}
 			},
 			getFirstPage:function(){
+				this.selectedItems=[];
+				this.allItemsSelected=false;
 				this.currentPage=1;
 				this.callBack();
 			},
 			getPreviousPage:function(){
+				this.selectedItems=[];
+				this.allItemsSelected=false;
 				this.currentPage=this.currentPage-1;
 				this.callBack();
 			},
 			getPage:function(page){
+				this.selectedItems=[];
+				this.allItemsSelected=false;
 				this.currentPage=page;
 				this.callBack();
 			},
 			getNextPage:function(){
+				this.selectedItems=[];
+				this.allItemsSelected=false;
 				this.currentPage=this.currentPage+1;
 				this.callBack();
 			},
 			getLastPage:function(){
+				this.selectedItems=[];
+				this.allItemsSelected=false;
 				this.currentPage=this.pages.length;
 				this.callBack();
 			},
 			sortColumn : function (column) {
+				this.selectedItems=[];
+				this.allItemsSelected=false;
+				var columnIdentifier=column.replace(".", "\\.");
+				var element=$("#" + columnIdentifier);
 				if (this.column == column) {
-					$("#" + column).removeClass("fa-sort");
+					element.removeClass("fa-sort");
 					if (this.direction == "asc") {
 						this.direction = "desc";
-						$("#" + column).removeClass("fa-caret-up");
-						$("#" + column).addClass("fa-caret-down");
+						element.removeClass("fa-caret-up");
+						element.addClass("fa-caret-down");
 					} else {
 						this.direction = "asc";
-						$("#" + column).removeClass("fa-caret-down");
-						$("#" + column).addClass("fa-caret-up");
+						element.removeClass("fa-caret-down");
+						element.addClass("fa-caret-up");
 					}
 				} else {
 					this.direction = "asc";
 					$(".sort").removeClass("fa-caret-up");
 					$(".sort").removeClass("fa-caret-down");
 					$(".sort").addClass("fa-sort");
-					$("#" + column).addClass("fa-caret-up");
-					$("#" + column).removeClass("fa-sort");
+					element.addClass("fa-caret-up");
+					element.removeClass("fa-sort");
 				}
 				this.column = column;
 				this.callBack();
+			},
+			addItemToSelected:function(item){
+				if(item.selected){
+					this.selectedItems.push(item);
+				}else{
+					this.selectedItems.splice(selectedItems.indexOf(item), 1);
+				}
+			},
+			checkItem:function(item){
+				var found=false,i=0;
+				while(!found && i<this.selectedItems.length){
+					if(this.selectedItems[i].id==item.id){
+						found=true;
+					}
+					i++;
+				}
+				return found;
+			},
+			selectAllItems:function(items){
+				this.selectedItems=[];
+				if(this.allItemsSelected){
+					for(var i=0;i<items.length;i++){
+						items[i].selected=true;
+						this.selectedItems.push(items[i]);
+					}
+				}
 			}
 		}
 		return paginator;

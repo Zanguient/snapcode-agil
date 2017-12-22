@@ -18,119 +18,125 @@
 
 		<!-- div.dataTables_borderWrap -->
 		<div>
-			<table id="tabla-cierres" class="table table-striped table-bordered table-hover">
-				<thead>
-					<tr>
-						<th class="center">
-							No
-						</th>
-						<th>Fecha-Hora</th>
-						<th>Sucursal</th>
-						<th>Usuario</th>
-						<th>Importe</th>
-						<th>Destino</th>
-						<th>Depositado / Entregado a:</th>
-						<th>Importe depositado</th>
-						<th>Numero Documento</th>
-						<th>Fecha deposito</th>
-						<th>Acciones</th>
-					</tr>
-				</thead>
+			<div id="tabla-productos_wrapper" class="dataTables_wrapper form-inline no-footer">
+					<div class="row" ng-include src="'/templates/gral/paginator-header-1.html'">
+					</div>
+				<table id="tabla-cierres" class="table table-striped table-bordered table-hover">
+					<thead>
+						<tr>
+							<th class="center">
+								No
+							</th>
+							<th><a href="javascript:void(0)" ng-click="paginator.sortColumn('fecha')">Fecha-Hora <span id="fecha" class="sort fa fa-sort icon-only"></span></a></th>
+							<th><a href="javascript:void(0)" ng-click="paginator.sortColumn('sucursal.nombre')">Sucursal <span id="sucursal.nombre" class="sort fa fa-sort icon-only"></span></a></th>
+							<th><a href="javascript:void(0)" ng-click="paginator.sortColumn('usuario_condicion.nombre_usuario')">Usuario <span id="usuario_condicion.nombre_usuario" class="sort fa fa-sort icon-only"></span></a></th>
+							<th><a href="javascript:void(0)" ng-click="paginator.sortColumn('importe')">Importe <span id="importe" class="sort fa fa-sort icon-only"></span></a></th>
+							<th><a href="javascript:void(0)" ng-click="paginator.sortColumn('destino')">Destino <span id="destino" class="sort fa fa-sort icon-only"></span></a></th>
+							<th>Depositado / Entregado a:</th>
+							<th><a href="javascript:void(0)" ng-click="paginator.sortColumn('importe_entrega')">Importe depositado <span id="importe_entrega" class="sort fa fa-sort icon-only"></span></a></th>
+							<th><a href="javascript:void(0)" ng-click="paginator.sortColumn('numero_documento')">Numero Documento <span id="numero_documento" class="sort fa fa-sort icon-only"></span></a></th>
+							<th><a href="javascript:void(0)" ng-click="paginator.sortColumn('fecha_entrega')">Fecha deposito <span id="fecha_entrega" class="sort fa fa-sort icon-only"></span></a></th>
+							<th>Acciones</th>
+						</tr>
+					</thead>
 
-				<tbody>
-					<tr ng-repeat="cierreCaja in cierresCaja">
-						<td class="center">
-							{{$index+1}}
-						</td>
+					<tbody>
+						<tr ng-repeat="cierreCaja in cierresCaja">
+							<td class="center">
+									{{($index+1)+(paginator.itemsPerPage*(paginator.currentPage-1))}}
+							</td>
 
-						<td>
-							{{cierreCaja.fecha | date:"dd/MM/yyyy - HH:mm"}}
-						</td>
-						<td>{{cierreCaja.sucursal.nombre}}</td>
-						<td>{{cierreCaja.usuario.nombre_usuario}}</td>
-						<td>{{cierreCaja.importe}}</td>
-						<td ng-if="cierreCaja.destino.nombre_corto==diccionario.DESTINO_CIERRE_SIGUIENTETURNO"><span class="label label-sm label-success">{{cierreCaja.destino.nombre}}</span>
-						</td>
-						<td ng-if="(cierreCaja.destino.nombre_corto!=diccionario.DESTINO_CIERRE_SIGUIENTETURNO) && cierreCaja.importe_entrega>0 && cierreCaja.importe_entrega!=null"><span class="label label-sm label-success">{{cierreCaja.destino.nombre}}</span>
-								<a ng-click="abrirPopupDeposito(cierreCaja)" class="red" href="javascript:void(0)" ng-if="cierreCaja.importe_entrega!=cierreCaja.importe">
-									<i class="ace-icon fa fa-question bigger-130"></i>
-								</a>
-						</td>
-						<td ng-if="(cierreCaja.destino.nombre_corto!=diccionario.DESTINO_CIERRE_SIGUIENTETURNO) && (cierreCaja.importe_entrega<=0 || cierreCaja.importe_entrega==null)"><span class="label label-sm label-warning">{{cierreCaja.destino.nombre}}</span>
-								<a ng-click="abrirPopupDeposito(cierreCaja)" class="red" href="javascript:void(0)" ng-if="cierreCaja.importe_entrega!=cierreCaja.importe">
-									<i class="ace-icon fa fa-cloud-upload bigger-130"></i>
-								</a>
-						</td>
-						<td ng-if="cierreCaja.destino.nombre_corto==diccionario.DESTINO_CIERRE_BANCO">
-							{{cierreCaja.bancoDestino.nombre}} - {{cierreCaja.bancoDestino.numero}}
-						</td>
-						<td ng-if="cierreCaja.destino.nombre_corto==diccionario.DESTINO_CIERRE_CAJA">
-							{{cierreCaja.persona_destino}}
-						</td>
-						<td ng-if="cierreCaja.destino.nombre_corto==diccionario.DESTINO_CIERRE_SIGUIENTETURNO">
-							
-						</td>
-						<td>
-							{{cierreCaja.importe_entrega}}
-						</td>
-						<td>
-							{{cierreCaja.numero_documento}}
-						</td>
-						<td>
-							{{cierreCaja.fecha_entrega | date:"dd/MM/yyyy"}}
-						</td>
-						<td>
-							<div class="hidden-sm hidden-xs action-buttons">
-								<a class="blue" href="javascript:void(0)" ng-click="mostrarDatosAdicionalesReporte(cierreCaja)">
-									<i class="ace-icon fa fa-print bigger-130"></i>
-								</a>
+							<td>
+								{{cierreCaja.fecha | date:"dd/MM/yyyy - HH:mm"}}
+							</td>
+							<td>{{cierreCaja.sucursal}}</td>
+							<td>{{cierreCaja.usuario}}</td>
+							<td>{{cierreCaja.importe}}</td>
+							<td ng-if="cierreCaja.destino_nombre_corto==diccionario.DESTINO_CIERRE_SIGUIENTETURNO"><span class="label label-sm label-success">{{cierreCaja.destino}}</span>
+							</td>
+							<td ng-if="(cierreCaja.destino_nombre_corto!=diccionario.DESTINO_CIERRE_SIGUIENTETURNO) && cierreCaja.importe_entrega>0 && cierreCaja.importe_entrega!=null"><span class="label label-sm label-success">{{cierreCaja.destino}}</span>
+									<a ng-click="abrirPopupDeposito(cierreCaja)" class="red" href="javascript:void(0)" ng-if="cierreCaja.importe_entrega!=cierreCaja.importe">
+										<i class="ace-icon fa fa-question bigger-130"></i>
+									</a>
+							</td>
+							<td ng-if="(cierreCaja.destino_nombre_corto!=diccionario.DESTINO_CIERRE_SIGUIENTETURNO) && (cierreCaja.importe_entrega<=0 || cierreCaja.importe_entrega==null)"><span class="label label-sm label-warning">{{cierreCaja.destino}}</span>
+									<a ng-click="abrirPopupDeposito(cierreCaja)" class="red" href="javascript:void(0)" ng-if="cierreCaja.importe_entrega!=cierreCaja.importe">
+										<i class="ace-icon fa fa-cloud-upload bigger-130"></i>
+									</a>
+							</td>
+							<td ng-if="cierreCaja.destino_nombre_corto==diccionario.DESTINO_CIERRE_BANCO">
+								{{cierreCaja.banco_destino}} - {{cierreCaja.banco_destino_numero}}
+							</td>
+							<td ng-if="cierreCaja.destino_nombre_corto==diccionario.DESTINO_CIERRE_CAJA">
+								{{cierreCaja.persona_destino}}
+							</td>
+							<td ng-if="cierreCaja.destino_nombre_corto==diccionario.DESTINO_CIERRE_SIGUIENTETURNO">
+								
+							</td>
+							<td>
+								{{cierreCaja.importe_entrega}}
+							</td>
+							<td>
+								{{cierreCaja.numero_documento}}
+							</td>
+							<td>
+								{{cierreCaja.fecha_entrega | date:"dd/MM/yyyy"}}
+							</td>
+							<td>
+								<div class="hidden-sm hidden-xs action-buttons">
+									<a class="blue" href="javascript:void(0)" ng-click="mostrarDatosAdicionalesReporte(cierreCaja)">
+										<i class="ace-icon fa fa-print bigger-130"></i>
+									</a>
 
-								<a class="green" href="javascript:void(0)" e-disabled="!aplicacion.puede_modificar" ng-click="modificarBanco(banco)">
-									<i class="ace-icon fa fa-pencil bigger-130"></i>
-								</a>
+									<a class="green" href="javascript:void(0)" e-disabled="!aplicacion.puede_modificar" ng-click="modificarBanco(banco)">
+										<i class="ace-icon fa fa-pencil bigger-130"></i>
+									</a>
 
-								<a class="red" href="javascript:void(0)" e-disabled="!aplicacion.puede_eliminar" ng-click="mostrarConfirmacionEliminacion(banco)">
-									<i class="ace-icon fa fa-trash-o bigger-130"></i>
-								</a>
-							</div>
-
-							<div class="hidden-md hidden-lg">
-								<div class="inline pos-rel">
-									<button class="btn btn-minier btn-yellow dropdown-toggle" data-toggle="dropdown" data-position="auto">
-										<i class="ace-icon fa fa-caret-down icon-only bigger-120"></i>
-									</button>
-
-									<ul class="dropdown-menu dropdown-only-icon dropdown-yellow dropdown-menu-right dropdown-caret dropdown-close">
-										<li>
-											<a href="javascript:void(0)" e-disabled="!aplicacion.puede_ver" ng-click="verBanco(banco)" class="tooltip-info" data-rel="tooltip" title="View">
-												<span class="blue">
-													<i class="ace-icon fa fa-search-plus bigger-120"></i>
-												</span>
-											</a>
-										</li>
-
-										<li>
-											<a href="javascript:void(0)" e-disabled="!aplicacion.puede_modificar" ng-click="modificarBanco(banco)" class="tooltip-success" data-rel="tooltip" title="Edit">
-												<span class="green">
-													<i class="ace-icon fa fa-pencil-square-o bigger-120"></i>
-												</span>
-											</a>
-										</li>
-
-										<li>
-											<a href="javascript:void(0)" e-disabled="!aplicacion.puede_eliminar" ng-click="mostrarConfirmacionEliminacion(banco)" class="tooltip-error" data-rel="tooltip" title="Delete">
-												<span class="red">
-													<i class="ace-icon fa fa-trash-o bigger-120"></i>
-												</span>
-											</a>
-										</li>
-									</ul>
+									<a class="red" href="javascript:void(0)" e-disabled="!aplicacion.puede_eliminar" ng-click="mostrarConfirmacionEliminacion(banco)">
+										<i class="ace-icon fa fa-trash-o bigger-130"></i>
+									</a>
 								</div>
-							</div>
-						</td>
-					</tr>
-				</tbody>
-			</table>
+
+								<div class="hidden-md hidden-lg">
+									<div class="inline pos-rel">
+										<button class="btn btn-minier btn-yellow dropdown-toggle" data-toggle="dropdown" data-position="auto">
+											<i class="ace-icon fa fa-caret-down icon-only bigger-120"></i>
+										</button>
+
+										<ul class="dropdown-menu dropdown-only-icon dropdown-yellow dropdown-menu-right dropdown-caret dropdown-close">
+											<li>
+												<a href="javascript:void(0)" e-disabled="!aplicacion.puede_ver" ng-click="verBanco(banco)" class="tooltip-info" data-rel="tooltip" title="View">
+													<span class="blue">
+														<i class="ace-icon fa fa-search-plus bigger-120"></i>
+													</span>
+												</a>
+											</li>
+
+											<li>
+												<a href="javascript:void(0)" e-disabled="!aplicacion.puede_modificar" ng-click="modificarBanco(banco)" class="tooltip-success" data-rel="tooltip" title="Edit">
+													<span class="green">
+														<i class="ace-icon fa fa-pencil-square-o bigger-120"></i>
+													</span>
+												</a>
+											</li>
+
+											<li>
+												<a href="javascript:void(0)" e-disabled="!aplicacion.puede_eliminar" ng-click="mostrarConfirmacionEliminacion(banco)" class="tooltip-error" data-rel="tooltip" title="Delete">
+													<span class="red">
+														<i class="ace-icon fa fa-trash-o bigger-120"></i>
+													</span>
+												</a>
+											</li>
+										</ul>
+									</div>
+								</div>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+				<div class="row" ng-include src="'/templates/gral/paginator.html'">
+				</div>
+			</div>
 		</div>
 	</div>
 </div>
@@ -418,14 +424,14 @@
 				</div>
 				<div class="modal-body step-content">
 					<div class="step-pane active">
-						<div class="form-group" ng-if="cierreCaja.destino.nombre_corto==diccionario.DESTINO_CIERRE_BANCO">
+						<div class="form-group" ng-if="cierreCaja.destino_nombre_corto==diccionario.DESTINO_CIERRE_BANCO">
 							<label class="col-sm-3 control-label no-padding-right">Banco y Cuenta</label>
 
 							<div class="col-sm-9">
 								<select required id="destino" name="destino" ng-model="cierreCaja.bancoDestino" ng-options="banco as (banco.nombre+'-'+banco.numero) for banco in bancos track by banco.id"  data-placeholder="Click para escoger"></select>
 							</div>
 						</div>
-						<div class="form-group" ng-if="cierreCaja.destino.nombre_corto==diccionario.DESTINO_CIERRE_CAJA">
+						<div class="form-group" ng-if="cierreCaja.destino_nombre_corto==diccionario.DESTINO_CIERRE_CAJA">
 							<label class="col-sm-3 control-label no-padding-right">Entregado a</label>
 
 							<div class="col-sm-9">

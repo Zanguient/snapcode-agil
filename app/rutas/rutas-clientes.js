@@ -1,11 +1,13 @@
-module.exports=function(router,forEach,decodeBase64Image,fs,Empresa,Cliente,RutaCliente,Venta,VentaReprogramacionPago){
+module.exports=function(router,forEach,decodeBase64Image,fs,Empresa,Cliente,RutaCliente,Venta,
+	VentaReprogramacionPago,sequelize){
 	
 router.route('/clientes')
 
     .post(function(req, res) {
 		Cliente.find({ 
 			where:{
-				$or: [{nit:req.body.nit}, {codigo:req.body.codigo}]
+				$or: [{nit:req.body.nit}, {codigo:req.body.codigo}],
+				id_empresa:req.body.id_empresa
 			},
 		}).then(function(cliente){			
 			if(cliente){
@@ -313,5 +315,13 @@ router.route('/clientes/empresa/:id_empresa')
 		}).then(function(usuarios){			
 			res.json(usuarios);		  
 		});
-	});	
+	});
+	
+router.route('/cliente/empresa/:id_empresa/siguiente-codigo')
+	.get(function(req, res) {
+		sequelize.query("SELECT MAX(CAST(SUBSTRING(codigo, 4, length(codigo)-3) AS UNSIGNED)) as ultimo_codigo FROM agil_cliente where empresa="+req.params.id_empresa+" and codigo like 'CLI%'", { type: sequelize.QueryTypes.SELECT})
+		  .then(function(dato) {
+			res.json(dato[0]);;
+		  });
+	});
 }

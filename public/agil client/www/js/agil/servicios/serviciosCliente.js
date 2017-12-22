@@ -72,4 +72,25 @@ angular.module('agil.servicios')
 		return delay.promise;
 	};
     return res;
+	}])
+	
+	.factory('CodigoSiguienteClienteEmpresa', function($resource) {
+		return $resource(restServer+"cliente/empresa/:id_empresa/siguiente-codigo");
+})
+
+.factory('DatoCodigoSiguienteClienteEmpresa', ['CodigoSiguienteClienteEmpresa','$q',function(CodigoSiguienteClienteEmpresa, $q) 
+  {
+	var res = function(id_empresa) 
+	{
+		var delay = $q.defer();
+		CodigoSiguienteClienteEmpresa.get({id_empresa:id_empresa},function(entities) 
+		{        
+			delay.resolve(entities);
+		}, function(error) 
+			{
+				delay.reject(error);
+			});
+		return delay.promise;
+	};
+    return res;
   }]);

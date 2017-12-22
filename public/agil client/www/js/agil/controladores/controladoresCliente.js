@@ -1,7 +1,8 @@
 angular.module('agil.controladores')
 
 .controller('ControladorClientes', function($scope,$window,$localStorage,$location,$templateCache,$route,blockUI,$timeout,
-											ClientesPaginador,Cliente,Clientes,Empresas,ClientesEmpresa,uiGmapGoogleMapApi,$cordovaGeolocation){
+											ClientesPaginador,Cliente,Clientes,Empresas,ClientesEmpresa,uiGmapGoogleMapApi,$cordovaGeolocation,
+											DatoCodigoSiguienteClienteEmpresa){
 	blockUI.start();
 	
 	$scope.usuario=JSON.parse($localStorage.usuario);
@@ -108,23 +109,28 @@ angular.module('agil.controladores')
 	}
 	
 	$scope.crearNuevoCliente=function(){
-		var usuario=JSON.parse($localStorage.usuario);
-		var cliente=new Cliente({id_empresa:usuario.id_empresa,latitud:-17.403800007775388,longitud:-66.11349012184144});
-		$scope.abrirPopupCliente(cliente);
-		/*var posOptions = {timeout: 10000, enableHighAccuracy: false};
-		  $cordovaGeolocation
-			.getCurrentPosition(posOptions)
-			.then(function (position) {
-				$timeout(function(){
-					$scope.$apply(function(){
-						$scope.cliente=new Cliente({id_empresa:usuario.id_empresa,latitud:position.coords.latitude,longitud:position.coords.longitude});
-						$scope.abrirPopup('modal-wizard-cliente');
+		var promesa=DatoCodigoSiguienteClienteEmpresa($scope.usuario.id_empresa);
+		promesa.then(function(dato){
+			$scope.ultimo_codigo=dato.ultimo_codigo?"CLI"+dato.ultimo_codigo:0;
+			var usuario=JSON.parse($localStorage.usuario);
+			var cliente=new Cliente({id_empresa:usuario.id_empresa,latitud:-17.403800007775388,longitud:-66.11349012184144});
+			cliente.codigo="CLI"+((dato.ultimo_codigo?dato.ultimo_codigo:0)+1);
+			$scope.abrirPopupCliente(cliente);
+			/*var posOptions = {timeout: 10000, enableHighAccuracy: false};
+			  $cordovaGeolocation
+				.getCurrentPosition(posOptions)
+				.then(function (position) {
+					$timeout(function(){
+						$scope.$apply(function(){
+							$scope.cliente=new Cliente({id_empresa:usuario.id_empresa,latitud:position.coords.latitude,longitud:position.coords.longitude});
+							$scope.abrirPopup('modal-wizard-cliente');
+						});
 					});
-				});
-				
-			}, function(err) {
-			  // error
-			});*/
+					
+				}, function(err) {
+				  // error
+				});*/
+		});
 	}
 	
 	$scope.verCliente=function(cliente){

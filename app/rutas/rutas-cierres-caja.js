@@ -1,6 +1,6 @@
 module.exports=function(router,ensureAuthorizedAdministrador,fs,forEach,jwt,md5,CierreCaja,Clase,Sucursal,Usuario,
 	Venta,DetalleVenta,Cliente,Almacen,Sucursal,PagoVenta,PagoCompra,Compra,Proveedor,sequelize,Banco,DetalleCompra,
-	CajaSiguienteTurno,Diccionario,Producto,Inventario){
+	CajaSiguienteTurno,Diccionario,Producto,Inventario,Sequelize){
 	
 router.route('/cierres-caja/empresa/:id_empresa/:id_usuario')
 
@@ -22,6 +22,47 @@ router.route('/cierres-caja/empresa/:id_empresa/:id_usuario')
 			res.json(entity);		  
 		});
 	});
+
+router.route('/cierres-caja/empresa/:id_empresa/:id_usuario/pagina/:pagina/items-pagina/:items_pagina/busqueda/:busqueda/columna/:columna/direccion/:direccion')
+	
+		.get(function(req, res) {
+			var condicion="sucursal.empresa="+req.params.id_empresa;
+			if(req.params.id_usuario!=0){
+				condicion=condicion+" AND usuario_condicion.id="+req.params.id_usuario;
+				//condicionUsuario={id:req.params.id_usuario}
+			}
+	
+			sequelize.query("select count(*) as cantidad_cierres \
+			from agil_cierre_caja as cierre_caja\
+			INNER JOIN agil_sucursal AS sucursal ON (cierre_caja.sucursal = sucursal.id)\
+			INNER JOIN gl_clase AS destino ON (cierre_caja.destino = destino.id)\
+			LEFT  JOIN agil_banco AS bancoDestino ON (cierre_caja.banco_destino = bancoDestino.id)\
+			INNER JOIN sys_usuario AS usuario_condicion on (cierre_caja.usuario=usuario_condicion.id) where "+ condicion, { type: sequelize.QueryTypes.SELECT })
+			.then(function (data) {
+				var options = {
+					model: CierreCaja,
+					include: [{ model: Sucursal, as: 'sucursal' }]
+				};
+				Sequelize.Model.$validateIncludedElements(options);
+
+				var paginacion="",paginas=1;
+				if(req.params.items_pagina!=0){
+					paginacion=" LIMIT " + (req.params.items_pagina * (req.params.pagina - 1)) + "," + req.params.items_pagina;
+					paginas=Math.ceil(data[0].cantidad_cierres / req.params.items_pagina);
+				}
+
+				sequelize.query("select cierre_caja.id, destino.nombre_corto as destino_nombre_corto, cierre_caja.fecha, sucursal.nombre as sucursal, usuario_condicion.nombre_usuario as usuario,usuario_condicion.id as id_usuario,cierre_caja.importe,destino.nombre as destino,bancoDestino.nombre as banco_destino,bancoDestino.numero as banco_destino_numero,cierre_caja.persona_destino, cierre_caja.importe_entrega,cierre_caja.fecha_entrega,cierre_caja.numero_documento\
+				from agil_cierre_caja as cierre_caja\
+				INNER JOIN agil_sucursal AS sucursal ON (cierre_caja.sucursal = sucursal.id)\
+				INNER JOIN gl_clase AS destino ON (cierre_caja.destino = destino.id)\
+				LEFT  JOIN agil_banco AS bancoDestino ON (cierre_caja.banco_destino = bancoDestino.id)\
+				INNER JOIN sys_usuario AS usuario_condicion on (cierre_caja.usuario=usuario_condicion.id) where "+ condicion+"\
+				order by "+ req.params.columna + " " + req.params.direccion +paginacion, options)
+					.then(function (cierresCaja) {
+						res.json({ cierresCaja: cierresCaja, paginas:paginas });
+					});
+			});
+		});
 
 router.route('/cierres-caja/empresa')
 
@@ -132,13 +173,13 @@ router.route('/cierres-caja/:id_cierre')
 			where:{
 				id:req.params.id_cierre
 			},
-			include: [{model:Sucursal,as: 'sucursal',where:{id_empresa:req.params.id_empresa}},
+			include: [{model:Sucursal,as: 'sucursal'},
 					  {model:Clase,as:'destino'},
 					  {model:Banco,as:'bancoDestino'},
-					  {model:Usuario,as:'usuario',where:condicionUsuario},
+					  {model:Usuario,as:'usuario'},
 					  {model:CajaSiguienteTurno,as:'cajasSiguienteTurnoCerradas',
-							include:[{model:CierreCaja,as:'cierreCaja'}]}],
-		    order:[['fecha']]
+							include:[{model:CierreCaja,as:'cierreCaja',
+										include:[{model:Usuario,as:'usuario'}]}]}]
 		}).then(function(entity){			
 			res.json(entity);		  
 		});

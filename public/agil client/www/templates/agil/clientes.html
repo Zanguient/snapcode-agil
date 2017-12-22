@@ -204,9 +204,9 @@
 				<div class="modal-body step-content">
 					<div class="step-pane active" data-step="1">
 						<div class="form-group">
-							<label class="col-sm-3 control-label no-padding-right" for="codigo">Código</label>
+							<label class="col-sm-6 control-label no-padding-right" for="codigo">Código <span ng-if="!cliente.id">(Último Generado: <b>{{ultimo_codigo}}</b>)</span></label>
 
-							<div class="col-sm-9">
+							<div class="col-sm-6">
 								<input required type="text" id="codigo" ng-model="cliente.codigo" placeholder="Código" class="col-xs-10 col-sm-5" />
 							</div>
 						</div>

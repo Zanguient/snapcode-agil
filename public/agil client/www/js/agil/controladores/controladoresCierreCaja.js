@@ -3,7 +3,8 @@ angular.module('agil.controladores')
 .controller('ControladorCierresCaja', function($scope,$localStorage,$location,$templateCache,$route,blockUI,
 											ClasesTipo,Clases,CierreCaja,ListaCierresCaja,CierreCajaDatos,
 											VentasContado,VentasCredito,PagosVenta,ConfiguracionImpresionEmpresaDato,
-											ListaBancos,PagosCompra,ComprasContado,ComprasCredito,CierresCajaPendiente){
+											ListaBancos,PagosCompra,ComprasContado,ComprasCredito,CierresCajaPendiente,
+											Paginator,CierreCajaDatosItem){
 	blockUI.start();
 	
 	$scope.idModalWizardCierreEdicion='modal-wizard-cierre';
@@ -33,10 +34,6 @@ angular.module('agil.controladores')
 			$scope.destinos=entidad.clases;
 			blockUI.stop();
 		});
-
-		setTimeout(function() {
-			ejecutarScriptsTabla('tabla-cierres',9);
-		},2000);
 	}
 	
 	$scope.$on('$viewContentLoaded', function(){
@@ -110,7 +107,7 @@ angular.module('agil.controladores')
 									var generado=false;
 									$scope.nuevosCierresCaja=[];
 									for(var i=0;i<$scope.usuario.sucursalesUsuario.length;i++){
-										$scope.cierreCaja=new CierreCaja({id_empresa:$scope.usuario.id_empresa,id_usuario:$scope.usuario.id,saldo_inicial:0,gastos:0});
+										$scope.cierreCaja=new CierreCaja({fecha:new Date(),id_empresa:$scope.usuario.id_empresa,id_usuario:$scope.usuario.id,saldo_inicial:0,gastos:0});
 										$scope.cierreCaja.ventasContado=$.grep(ventasContado, function(e){return e.almacen.id_sucursal == $scope.usuario.sucursalesUsuario[i].sucursal.id;});
 										$scope.cierreCaja.ventasCredito=$.grep(ventasCredito, function(e){return e.almacen.id_sucursal == $scope.usuario.sucursalesUsuario[i].sucursal.id;});
 										$scope.cierreCaja.pagosVenta=$.grep(pagos, function(e){return e.venta.almacen.id_sucursal == $scope.usuario.sucursalesUsuario[i].sucursal.id;});
@@ -240,28 +237,32 @@ angular.module('agil.controladores')
 	}
 
 	$scope.imprimirCierreCaja=function(cierreCaja){
-		$scope.cerrarPopup($scope.idModalDatosAdicionalesReporte);
-		var inicio=new Date();
-		var fin=new Date();
-		var promesa=VentasContado($scope.sucursalesUsuario,inicio,fin,cierreCaja.id_usuario,cierreCaja.id);
-		promesa.then(function(ventasContado){
-			promesa=VentasCredito($scope.sucursalesUsuario,inicio,fin,cierreCaja.id_usuario,cierreCaja.id);
-			promesa.then(function(ventasCredito){
-				promesa=PagosVenta($scope.sucursalesUsuario,inicio,fin,cierreCaja.id_usuario,cierreCaja.id);
-				promesa.then(function(pagosVenta){
-					promesa=PagosCompra($scope.sucursalesUsuario,inicio,fin,cierreCaja.id_usuario,cierreCaja.id);
-					promesa.then(function(pagosCompra){
-						promesa=ComprasContado($scope.sucursalesUsuario,inicio,fin,cierreCaja.id_usuario,cierreCaja.id);
-						promesa.then(function(comprasContado){
-							promesa=ComprasCredito($scope.sucursalesUsuario,inicio,fin,cierreCaja.id_usuario,cierreCaja.id);
-							promesa.then(function(comprasCredito){
-								$scope.generarReporteCierreCaja(cierreCaja.sucursal,cierreCaja,ventasContado,
-																ventasCredito,
-																pagosVenta,
-																pagosCompra,
-																comprasContado,
-																comprasCredito,
-																cierreCaja.cajasSiguienteTurnoCerradas);
+		var promesa=CierreCajaDatosItem(cierreCaja.id);
+		promesa.then(function(ccv){
+			cierreCaja=ccv;
+			$scope.cerrarPopup($scope.idModalDatosAdicionalesReporte);
+			var inicio=new Date();
+			var fin=new Date();
+			promesa=VentasContado($scope.sucursalesUsuario,inicio,fin,cierreCaja.id_usuario,cierreCaja.id);
+			promesa.then(function(ventasContado){
+				promesa=VentasCredito($scope.sucursalesUsuario,inicio,fin,cierreCaja.id_usuario,cierreCaja.id);
+				promesa.then(function(ventasCredito){
+					promesa=PagosVenta($scope.sucursalesUsuario,inicio,fin,cierreCaja.id_usuario,cierreCaja.id);
+					promesa.then(function(pagosVenta){
+						promesa=PagosCompra($scope.sucursalesUsuario,inicio,fin,cierreCaja.id_usuario,cierreCaja.id);
+						promesa.then(function(pagosCompra){
+							promesa=ComprasContado($scope.sucursalesUsuario,inicio,fin,cierreCaja.id_usuario,cierreCaja.id);
+							promesa.then(function(comprasContado){
+								promesa=ComprasCredito($scope.sucursalesUsuario,inicio,fin,cierreCaja.id_usuario,cierreCaja.id);
+								promesa.then(function(comprasCredito){
+									$scope.generarReporteCierreCaja(cierreCaja.sucursal,cierreCaja,ventasContado,
+																	ventasCredito,
+																	pagosVenta,
+																	pagosCompra,
+																	comprasContado,
+																	comprasCredito,
+																	cierreCaja.cajasSiguienteTurnoCerradas);
+								});
 							});
 						});
 					});
@@ -912,13 +913,22 @@ angular.module('agil.controladores')
 	}
 	
 	$scope.obtenerCierres=function(idEmpresa){
-		blockUI.start();
-		var usuario;
+		$scope.paginator = Paginator();
+		$scope.paginator.column = "fecha";
+		$scope.paginator.direction = "desc";
+		$scope.paginator.callBack = $scope.obtenerLista;
 		var roles=$.grep($scope.usuario.rolesUsuario, function(e){return e.rol.nombre == $scope.diccionario.ROL_ADMINISTRADOR;});
-		usuario=roles.length>0?0:$scope.usuario.id;
-		var promesa=ListaCierresCaja(idEmpresa,usuario);
-		promesa.then(function(cierresCaja){
-			$scope.cierresCaja=cierresCaja;
+		var usuario=roles.length>0?0:$scope.usuario.id;
+		$scope.filtro = { empresa: $scope.usuario.id_empresa, usuario:usuario };
+		$scope.paginator.getSearch("", $scope.filtro, null);
+	}
+
+	$scope.obtenerLista = function () {
+		blockUI.start();
+		var promesa = ListaCierresCaja($scope.paginator);
+		promesa.then(function (dato) {
+			$scope.paginator.setPages(dato.paginas);
+			$scope.cierresCaja = dato.cierresCaja;
 			blockUI.stop();
 		});
 	}

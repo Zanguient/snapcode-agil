@@ -219,125 +219,125 @@
 </div>
 <div class="navbar-buttons navbar-header pull-right  collapse navbar-collapse" role="navigation">
 <ul class="nav ace-nav">
-<li class="purple" ng-if="usuario.empresa.usar_vencimientos">
- <a data-toggle="dropdown" href="javascript:void(0)" class="dropdown-toggle">
-<i class="ace-icon fa fa-bell icon-animated-bell"></i>
-<span class="badge badge-important">{{vencimientoTotal}}</span>
-</a>
-<ul class="dropdown-menu-right dropdown-navbar navbar-pink dropdown-menu dropdown-caret dropdown-close">
-<li class="dropdown-header">
-<i class="ace-icon fa fa-exclamation-triangle"></i> {{vencimientoTotal}} Notificaciones
-</li>
-<li class="dropdown-content">
-<ul class="dropdown-menu dropdown-navbar navbar-pink">
-<li>
-<a href="javascript:void(0)" ng-click="abrirListaVencimientoProductos()">
-<div class="clearfix">
-<span class="pull-left">
-<i class="btn btn-xs no-hover btn-info fa fa-gift"></i>
-Vencimientos Productos
-</span>
-<span class="pull-right badge badge-info">+{{vencimientosProductos.length}}</span>
-</div>
-</a>
-</li>
-<li>
-<a href="javascript:void(0)" ng-click="abrirListaVencimientoCreditos()">
-<div class="clearfix">
-<span class="pull-left">
-<i class="btn btn-xs no-hover btn-success fa fa-money"></i>
-Vencimientos Créditos
-</span>
-<span class="pull-right badge badge-important">+{{vencimientosCreditos.length}}</span>
-</div>
-</a>
-</li>
-<li>
-<a href="javascript:void(0)" ng-click="abrirListaVencimientoDeudas()">
-<div class="clearfix">
-<span class="pull-left">
-<i class="btn btn-xs no-hover btn-success fa fa-money"></i>
-Vencimientos Deudas
-</span>
-<span class="pull-right badge badge-important">+{{vencimientosDeudas.length}}</span>
-</div>
-</a>
-</li>
-<li>
-<a href="javascript:void(0)" ng-click="abrirListaVentasPendientes()">
-<div class="clearfix">
-<span class="pull-left">
-<i class="btn btn-xs no-hover btn-success fa fa-money"></i>
-Ventas
-</span>
-<span class="pull-right badge badge-important">+{{ventasComprobantes.length}}</span>
-</div>
-</a>
-</li>
-<li>
-<a href="javascript:void(0)" ng-click="abrirModalComprasPendientes()">
-<div class="clearfix">
-<span class="pull-left">
-<i class="btn btn-xs no-hover btn-success fa fa-money"></i>
-Compras
-</span>
-<span class="pull-right badge badge-important">+{{comprasComprobantes.length}}</span>
-</div>
-</a>
-</li>
-<li>
-<a href="javascript:void(0)" ng-click="abrirModalBancosPendientes()">
-<div class="clearfix">
-<span class="pull-left">
-<i class="btn btn-xs no-hover btn-success fa fa-money"></i>
-Bancos y caja
-</span>
-<span class="pull-right badge badge-important">+{{}}</span>
-</div>
-</a>
-</li>
-<li>
-<a href="javascript:void(0)" ng-click="abrirModalOtrosPendientes()">
-<div class="clearfix">
-<span class="pull-left">
-<i class="btn btn-xs no-hover btn-success fa fa-money"></i>
-Otros
-</span>
-<span class="pull-right badge badge-important">+{{}}</span>
-</div>
-</a>
-</li>
+<li ng-if="usuario.empresa" class="purple" ng-if="usuario.empresa.usar_vencimientos">
+	<a data-toggle="dropdown" href="javascript:void(0)" class="dropdown-toggle">
+	<i class="ace-icon fa fa-bell icon-animated-bell"></i>
+	<span class="badge badge-important">{{vencimientoTotal}}</span>
+	</a>
+	<ul class="dropdown-menu-right dropdown-navbar navbar-pink dropdown-menu dropdown-caret dropdown-close">
+	<li class="dropdown-header">
+	<i class="ace-icon fa fa-exclamation-triangle"></i> {{vencimientoTotal}} Notificaciones
+	</li>
+	<li class="dropdown-content">
+	<ul class="dropdown-menu dropdown-navbar navbar-pink">
+		<li ng-if="usuario.empresa.usar_vencimientos">
+		<a href="javascript:void(0)" ng-click="abrirListaVencimientoProductos()">
+		<div class="clearfix">
+		<span class="pull-left">
+		<i class="btn btn-xs no-hover btn-info fa fa-gift"></i>
+		Vencimientos Productos
+		</span>
+		<span class="pull-right badge badge-info">+{{vencimientosProductos.length}}</span>
+		</div>
+		</a>
+		</li>
+		<li ng-if="usuario.empresa.usar_vencimientos">
+		<a href="javascript:void(0)" ng-click="abrirListaVencimientoCreditos()">
+		<div class="clearfix">
+		<span class="pull-left">
+		<i class="btn btn-xs no-hover btn-success fa fa-money"></i>
+		Vencimientos Créditos
+		</span>
+		<span class="pull-right badge badge-important">+{{vencimientosCreditos.length}}</span>
+		</div>
+		</a>
+		</li>
+		<li ng-if="usuario.empresa.usar_vencimientos">
+		<a href="javascript:void(0)" ng-click="abrirListaVencimientoDeudas()">
+		<div class="clearfix">
+		<span class="pull-left">
+		<i class="btn btn-xs no-hover btn-success fa fa-money"></i>
+		Vencimientos Deudas
+		</span>
+		<span class="pull-right badge badge-important">+{{vencimientosDeudas.length}}</span>
+		</div>
+		</a>
+		</li>
+		<li ng-if="usuario.empresa.usar_contabilidad">
+		<a href="javascript:void(0)" ng-click="abrirListaVentasPendientes()">
+		<div class="clearfix">
+		<span class="pull-left">
+		<i class="btn btn-xs no-hover btn-success fa fa-money"></i>
+		Ventas
+		</span>
+		<span class="pull-right badge badge-important">+{{ventasComprobantes.length}}</span>
+		</div>
+		</a>
+		</li>
+		<li ng-if="usuario.empresa.usar_contabilidad">
+		<a href="javascript:void(0)" ng-click="abrirModalComprasPendientes()">
+		<div class="clearfix">
+		<span class="pull-left">
+		<i class="btn btn-xs no-hover btn-success fa fa-money"></i>
+		Compras
+		</span>
+		<span class="pull-right badge badge-important">+{{comprasComprobantes.length}}</span>
+		</div>
+		</a>
+		</li>
+		<li ng-if="usuario.empresa.usar_contabilidad">
+		<a href="javascript:void(0)" ng-click="abrirModalBancosPendientes()">
+		<div class="clearfix">
+		<span class="pull-left">
+		<i class="btn btn-xs no-hover btn-success fa fa-money"></i>
+		Bancos y caja
+		</span>
+		<span class="pull-right badge badge-important">+{{}}</span>
+		</div>
+		</a>
+		</li>
+		<li ng-if="usuario.empresa.usar_contabilidad">
+		<a href="javascript:void(0)" ng-click="abrirModalOtrosPendientes()">
+		<div class="clearfix">
+		<span class="pull-left">
+		<i class="btn btn-xs no-hover btn-success fa fa-money"></i>
+		Otros
+		</span>
+		<span class="pull-right badge badge-important">+{{}}</span>
+		</div>
+		</a>
+		</li>
 
-<li>
-<a href="#">
-<div class="clearfix">
-<span class="pull-left">
-<i class="btn btn-xs no-hover btn-success fa fa-plus"></i>
-PREVENTIVO
-</span>
-<span class="pull-right badge badge-info">+1</span>
-</div>
-</a>
-</li>
-<li>
-<a ng-click="abrirMantenimientoCorrectivo()" id="id-btn-mantenimiento-correctivo">
-<i class="btn btn-xs no-hover btn-success fa fa-plus"></i> CORRECTIVO
-<span class="pull-right badge badge-warning">+25</span>
-</a>
-</li>
-<li>
-<a href="#">
-<div class="clearfix">
-<span class="pull-left">
-<i class="btn btn-xs no-hover btn-success fa fa-plus"></i>
-RUTINA
-</span>
-<span class="pull-right badge badge-warning">+26</span>
-</div>
-</a>
-</li>
+		<li ng-if="usuario.empresa.usar_mantenimiento">
+		<a href="#">
+		<div class="clearfix">
+		<span class="pull-left">
+		<i class="btn btn-xs no-hover btn-success fa fa-plus"></i>
+		PREVENTIVO
+		</span>
+		<span class="pull-right badge badge-info">+1</span>
+		</div>
+		</a>
+		</li>
+		<li ng-if="usuario.empresa.usar_mantenimiento">
+		<a ng-click="abrirMantenimientoCorrectivo()" id="id-btn-mantenimiento-correctivo">
+		<i class="btn btn-xs no-hover btn-success fa fa-plus"></i> CORRECTIVO
+		<span class="pull-right badge badge-warning">+25</span>
+		</a>
+		</li>
+		<li ng-if="usuario.empresa.usar_mantenimiento">
+		<a href="#">
+		<div class="clearfix">
+		<span class="pull-left">
+		<i class="btn btn-xs no-hover btn-success fa fa-plus"></i>
+		RUTINA
+		</span>
+		<span class="pull-right badge badge-warning">+26</span>
+		</div>
+		</a>
+		</li>
 
-</ul>
+	</ul>
 </li>
 
 </ul>

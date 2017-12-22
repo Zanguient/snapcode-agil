@@ -139,8 +139,9 @@ angular.module('agil.controladores')
 	
 	$scope.inicio();
 })
-.controller('ControladorEstadoCuentasClientes', function($scope,$window,$localStorage,$location,$templateCache,$route,blockUI,$timeout,
-														uiGmapGoogleMapApi,$cordovaGeolocation,ReportEstadoCuentasClientesDatos,InventariosCosto,ReporteClientesPaginador){
+.controller('ControladorEstadoCuentasClientes', function($scope,$window,$localStorage,$location,
+	$templateCache,$route,blockUI,$timeout,Paginator,
+	uiGmapGoogleMapApi,$cordovaGeolocation,ReportEstadoCuentasClientesDatos,InventariosCosto,ReporteClientesPaginador){
 	blockUI.start();
 	$scope.idModalTablaEstadoCuenta="tabla-estado-cuenta";
 	$scope.usuario=JSON.parse($localStorage.usuario);
@@ -167,43 +168,92 @@ angular.module('agil.controladores')
 		ejecutarScriptsCliente($scope.idModalTablaEstadoCuenta);		
 		blockUI.stop();
 	});
-	$scope.obtenerClientes=function(){
+
+	$scope.obtenerClientes = function () {
+		$scope.paginator = Paginator();
+		$scope.paginator.column = "codigo";
+		$scope.paginator.callBack = $scope.obtenerLista;
+		$scope.filtro = { empresa: $scope.usuario.id_empresa, cuentas_liquidadas:0 };
+		$scope.paginator.getSearch("", $scope.filtro, null);
+	}
+
+	$scope.obtenerLista = function () {
+		blockUI.start();
+		var promesa = ReporteClientesPaginador($scope.paginator);
+		promesa.then(function (dato) {
+			$scope.paginator.setPages(dato.paginas);
+			$scope.clientes = dato.clientes;
+			blockUI.stop();
+		})
+	}
+
+	$scope.generarExcelEstadoCuentasClientesSeleccionados=function(clientesSeleccionados){
+		var data=[];
+		for(var i=0;i<clientesSeleccionados.length;i++){
+			data=data.concat($scope.generarExcelCliente(clientesSeleccionados[i],0));
+			data.push([]);
+		}
+		var ws_name = "SheetJS";
+		var wb = new Workbook(), ws = sheet_from_array_of_arrays(data);
+		/* add worksheet to workbook */
+		wb.SheetNames.push(ws_name);
+		wb.Sheets[ws_name] = ws;
+		var wbout = XLSX.write(wb, {bookType:'xlsx', bookSST:true, type: 'binary'});
+		saveAs(new Blob([s2ab(wbout)],{type:"application/octet-stream"}), "REPORTE-ESTADO-CUENTA-CLIENTES.xlsx");
+		blockUI.stop();		
+	}
+
+	$scope.generarExcelCliente=function(cliente,tipoImprecion){
+		var data = [["","","ESTADO CUENTAS CLIENTE"],["Deudor :"+cliente.razon_social],["Fecha","N Recibo","Descripción","monto","total","total General"]]
+		var totalCosto=0;
+
+		for(var i=0;i<cliente.ventas.length;i++){
+			var columns=[];
+			
+			totalCosto= totalCosto+cliente.ventas[i].saldo;
+			cliente.ventas[i].fecha=new Date(cliente.ventas[i].fecha);
+			columns.push(cliente.ventas[i].fecha.getDate()+"/"+(cliente.ventas[i].fecha.getMonth()+1)+"/"+cliente.ventas[i].fecha.getFullYear());
+			columns.push(cliente.ventas[i].id_movimiento);
+
+			if(cliente.ventas[i].movimiento.clase.nombre_corto != "FACT"){
+				columns.push("PROFORMA :" +cliente.ventas[i].factura);
+			}else{
+				columns.push('Factura : ' +cliente.ventas[i].factura);
+			}				
+			columns.push(cliente.ventas[i].saldo);
+			columns.push(totalCosto);				
+			columns.push(totalCosto);
+			data.push(columns);
+				if(tipoImprecion!=0 &&cliente.ventas[i].pagosVenta.length!=0)
+				{
+					for (var j = 0; j < cliente.ventas[i].pagosVenta.length; j++) {
+						var columns2=[];
+						date=new Date(cliente.ventas[i].pagosVenta[j].createdAt);
+						columns2.push("");
+						columns2.push(date.getDate()+"/"+(date.getMonth()+1)+"/"+date.getFullYear());
+						columns2.push(cliente.ventas[i].pagosVenta[j].numero_documento);
+						columns2.push("Pago a/c Factura nro.  "+cliente.ventas[i].factura+"("+cliente.ventas[i].pagosVenta[j].total+" -)");
+						columns2.push(cliente.ventas[i].pagosVenta[j].total);
+						data.push(columns2);
+					}
+				}
+			
+		}
+		return data;
+	}
+	
+	/*$scope.obtenerClientes=function(){
 		$scope.abs = $window.Math.abs;
 		$scope.itemsPorPagina=10;
 		$scope.buscarClientes(1,$scope.itemsPorPagina,"",0);
-	}
+	}*/
 
 	$scope.verificarPulso=function(evento,textoBusqueda){
 		if(evento.keyCode===13){ //enter pressed
 		   $scope.buscarClientes(1,$scope.itemsPorPagina,textoBusqueda);
 	   }
 	}
-	$scope.buscarClientes=function(pagina,itemsPagina,texto,cuentasLiquidadas){
-		blockUI.start();
-		$scope.itemsPorPagina=itemsPagina;
-		console.log(cuentasLiquidadas);
-		if(cuentasLiquidadas){
-			cuentasLiquidadas=1;
-		}else{
-			cuentasLiquidadas=0;
-		}		
-		if(texto=="" || texto==null){
-			texto=0;
-		}else{
-			$scope.textoBusqueda=texto;
-		}
-		$scope.paginaActual=pagina;
-		var promesa=ReporteClientesPaginador($scope.usuario.id_empresa,pagina,itemsPagina,texto,cuentasLiquidadas);
-		promesa.then(function(dato){
-			$scope.paginas=[];
-			for(var i=1;i<=dato.paginas;i++){
-				$scope.paginas.push(i);
-			}
-			$scope.clientes=dato.clientes;
-			console.log($scope.clientes);
-			blockUI.stop();
-		});
-	}
+
 	$scope.generarPdfEstadoCuentasCliente=function(cliente,tipoImprecion){
 		blockUI.start();
 			console.log($scope.usuario.empresa)
@@ -289,42 +339,7 @@ angular.module('agil.controladores')
 	}
 	
 	$scope.generarExcelEstadoCuentasCliente=function(cliente,tipoImprecion){		
-			var data = [["","","ESTADO CUENTAS CLIENTE"],["Deudor :"+cliente.razon_social],["Fecha","N Recibo","Descripción","monto","total","total General"]]
-			var totalCosto=0;
-
-			for(var i=0;i<cliente.ventas.length;i++){
-				var columns=[];
-				
-				totalCosto= totalCosto+cliente.ventas[i].saldo;
-				cliente.ventas[i].fecha=new Date(cliente.ventas[i].fecha);
-				columns.push(cliente.ventas[i].fecha.getDate()+"/"+(cliente.ventas[i].fecha.getMonth()+1)+"/"+cliente.ventas[i].fecha.getFullYear());
-				columns.push(cliente.ventas[i].id_movimiento);
-
-				if(cliente.ventas[i].movimiento.clase.nombre_corto != "FACT"){
-					columns.push("PROFORMA :" +cliente.ventas[i].factura);
-				}else{
-					columns.push('Factura : ' +cliente.ventas[i].factura);
-				}				
-				columns.push(cliente.ventas[i].saldo);
-				columns.push(totalCosto);				
-				columns.push(totalCosto);
-				data.push(columns);
-					if(tipoImprecion!=0 &&cliente.ventas[i].pagosVenta.length!=0)
-					{
-						for (var j = 0; j < cliente.ventas[i].pagosVenta.length; j++) {
-							var columns2=[];
-							date=new Date(cliente.ventas[i].pagosVenta[j].createdAt);
-							columns2.push("");
-							columns2.push(date.getDate()+"/"+(date.getMonth()+1)+"/"+date.getFullYear());
-							columns2.push(cliente.ventas[i].pagosVenta[j].numero_documento);
-							columns2.push("Pago a/c Factura nro.  "+cliente.ventas[i].factura+"("+cliente.ventas[i].pagosVenta[j].total+" -)");
-							columns2.push(cliente.ventas[i].pagosVenta[j].total);
-							data.push(columns2);
-						}
-					}
-				
-			}
-			
+			var data=$scope.generarExcelCliente(cliente,tipoImprecion);
 			var ws_name = "SheetJS";
 			var wb = new Workbook(), ws = sheet_from_array_of_arrays(data);
 			/* add worksheet to workbook */

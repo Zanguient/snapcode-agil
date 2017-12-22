@@ -110,12 +110,11 @@ function ejecutarScriptsPacientes(idModalDialogVacunas, idModalDialogConsulta, i
 	crearPopup(idModalDialogHistorico, "100%", 800);
 	crearPopup(idModalFichaTecnica, "90%", 'auto');
 	crearPopup(IdModalDialogLaboratorioExamen, "35%", 'auto');
-	crearPopup(idModalDialogConfirmacionEntregaAdelantado, "35%", 'auto');
 	crearPopup(IdModalDialogLaboratorioExamenes, "50%", 'auto');
 	crearPopup(IdModalDialogLaboratorioExamenHistoricoPreview, "50%", 'auto');
 	crearPopup(IdModalDialogLaboratorioExamenesNuevoResultado, "35%", 'auto');
 	crearPopup(IdModalDialogLaboratorioExamenHistoricoResultado, "50%", 400);
-	crearPopup(IdEntregaPrerequisito, "40%", 'auto');
+	
 	crearPopup(idModalDialogPacienteNuevo, "50%", 'auto');
 	crearPopup(idModalDialogPrerequisitoNuevo, "50%", 'auto');
 	crearPopup(idModalHistorialPrerequisito, "50%", 'auto');
@@ -131,6 +130,7 @@ function ejecutarScriptsPacientes(idModalDialogVacunas, idModalDialogConsulta, i
 	crearPopup(idModalAlertPrerequisitos, "70%", 'auto');
 	crearPopup(idModalDiasActivacionPrerequisitos, "35%", 'auto');
 	crearPopup(idModalReprogramarPrerequisitos, "35%", 'auto');
+	crearPopup(IdEntregaPrerequisito, "40%", 'auto');
 	crearPopup(idModalAlertVacunas, "70%", 'auto');
 	crearPopup(idModalDiasActivacionVacunas, "35%", 'auto');
 	crearPopup(idModalReprogramarVacunas, "35%", 'auto');
@@ -144,6 +144,7 @@ function ejecutarScriptsPacientes(idModalDialogVacunas, idModalDialogConsulta, i
 	aplicarWizardFormulario(idModalDialogConsulta, idModalwizardContainerConsulta);
 	aplicarWizardFormulario(idModalFichaTecnica, idModalwizardContainerFichaTecnica);
 	crearPopup(idModalDialogVerResultadosHistorialLab, "55%", 'auto');
+	crearPopup(idModalDialogConfirmacionEntregaAdelantado, "35%", 'auto');
 	// aplicarDatePickers();
 	// aplicarVisorImagenArchivo(idImagenUsuario);
 	setTimeout(function name(params) {
@@ -181,11 +182,12 @@ function ejecutarScriptsRecursosHumanos(idModalPrerequisitos, idModalEmpleado, i
 	idModalReporteHijos, idModalReporteVeneficios, idModalPagoPrestamo, idModalReporteVacaciones, idModalReporteBajasMedicas, 
 	idModalReporteRolTurnos, idModalReporteTurnosDetallado, idModalViajes, idModalVisita, idModalVehiculosViaje, idModalDestinos, 
 	idModalHistorialViajes, idModalReporteAusencias, idModalCertificado, idModalInstitucion,idModalRhNuevo,idModalWizardRhNuevo,
-	idImagenUsuario,idEliminarUsuarioRh,idModalWizardRhVista,idModalContenedorRhVista,idModalDialogPrerequisitoNuevo) {
+	idImagenUsuario,idEliminarUsuarioRh,idModalWizardRhVista,idModalContenedorRhVista,idModalDialogPrerequisitoNuevo,idEliminarSeguroEmpleado,
+	idEliminarFamiliarEmpleado) {
 	crearPopup(idModalPrerequisitos, "90%", 'auto');
 	crearPopup(idModalEmpleado, "100%", 'auto');
 	aplicarWizardFormulario(idModalEmpleado, idModalwizardContainerEmpleado);	
-	crearPopup(idModalExpedidoEn, "62%", "auto");
+	
 	crearPopup(idModalTipoDocumento, "62%", "auto");
 	crearPopup(idModalEstadoCivil, "62%", "auto");
 	crearPopup(idModalNacionalidad, "62%", "auto");
@@ -207,7 +209,7 @@ function ejecutarScriptsRecursosHumanos(idModalPrerequisitos, idModalEmpleado, i
 	crearPopup(idModalTipoOtrosSeguros, "62%", "auto");
 	crearPopup(idModalBanco, "62%", "auto");
 	crearPopup(idModalNuevoHijo, "62%", "auto");
-	crearPopup(idModalNuevoFamiliar, "62%", "auto");
+	
 	crearPopup(idModalGrado, "62%", "auto");
 	crearPopup(idModalTitulo, "62%", "auto");
 	crearPopup(idModalHistorialContrato, "62%", "auto");
@@ -254,8 +256,12 @@ function ejecutarScriptsRecursosHumanos(idModalPrerequisitos, idModalEmpleado, i
 	crearPopup(idEliminarUsuarioRh ,"20%", "auto");
 	aplicarWizardFormulario(idModalRhNuevo,idModalWizardRhNuevo)
 	crearPopup(idModalWizardRhVista, "62%", "auto");
+	crearPopup(idEliminarSeguroEmpleado,"20%", "auto");
+	crearPopup(idEliminarFamiliarEmpleado,"20%", "auto");
 	aplicarWizardFormulario(idModalWizardRhVista, idModalContenedorRhVista);	
 	crearPopup(idModalDialogPrerequisitoNuevo, "50%", "auto");
+	crearPopup(idModalExpedidoEn, "62%", "auto");
+	crearPopup(idModalNuevoFamiliar, "62%", "auto");
 	setTimeout(function name(params) {
 	aplicarDatePickers();
 	// aplicarHoras();

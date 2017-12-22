@@ -655,12 +655,19 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 		$scope.cargarPagina = function () {
 			$scope.generarMenus($scope.usuario);
 			$scope.vencimientoTotal = 0;
-			$scope.verificarVencimientosProductos($scope.usuario.id_empresa);
 			$scope.obtenerMovimientoEgresoBaja();
-			$scope.verificarVencimientosCreditos($scope.usuario.id_empresa);
-			$scope.verificarVencimientosDeudas($scope.usuario.id_empresa);
-			$scope.verificarVentasComprobantes($scope.usuario.id_empresa)
-			$scope.verificarComprasComprobantes($scope.usuario.id_empresa)
+			if($scope.usuario.empresa){
+				if($scope.usuario.empresa.usar_vencimientos){
+					$scope.verificarVencimientosProductos($scope.usuario.id_empresa);
+					$scope.verificarVencimientosCreditos($scope.usuario.id_empresa);
+					$scope.verificarVencimientosDeudas($scope.usuario.id_empresa);
+				}
+				if($scope.usuario.empresa.usar_contabilidad){
+					$scope.verificarVentasComprobantes($scope.usuario.id_empresa)
+					$scope.verificarComprasComprobantes($scope.usuario.id_empresa)
+				}
+			}
+			
 			$scope.ocultarFormularioInicioSesion();
 			$scope.obtenerCambioMoneda();
 		}
@@ -719,6 +726,10 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 			}
 		}
 
+		$scope.abrirm = function () {
+			$('#modal-wizard-comprobante-edicion').modal('show');
+		}
+
 		$scope.verificarComprasComprobantes = function (idEmpresa) {
 			var promesa = ComprasComprobantesEmpresa(idEmpresa);
 			promesa.then(function (dato) {
@@ -726,9 +737,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 				$scope.vencimientoTotal = $scope.vencimientoTotal + $scope.comprasComprobantes.length;
 			});
 		}
-		$scope.abrirm = function () {
-			$('#modal-wizard-comprobante-edicion').modal('show');
-		}
+		
 		$scope.verificarVentasComprobantes = function (idEmpresa) {
 			var promesa = VentasComprobantesEmpresa(idEmpresa);
 			promesa.then(function (dato) {
