@@ -22,7 +22,8 @@ router.route('/sucursales')
 			copias_impresion_pedido:req.body.copias_impresion_pedido,
 			nota_recibo_correlativo:req.body.nota_recibo_correlativo,
 			imprimir_pedido_corto:req.body.imprimir_pedido_corto,
-			cotizacion_correlativo:req.body.cotizacion_correlativo
+			cotizacion_correlativo:req.body.cotizacion_correlativo,
+			pre_factura_correlativo:req.body.pre_factura_correlativo
 		}).then(function(sucursalCreada){
 			req.body.almacenes.forEach(function(almacen, index, array){
 				if(!almacen.eliminado){
@@ -94,7 +95,8 @@ router.route('/sucursales/:id_sucursal')
 			copias_impresion_pedido:req.body.copias_impresion_pedido,
 			nota_recibo_correlativo:req.body.nota_recibo_correlativo,
 			imprimir_pedido_corto:req.body.imprimir_pedido_corto,
-			cotizacion_correlativo:req.body.cotizacion_correlativo
+			cotizacion_correlativo:req.body.cotizacion_correlativo,
+			pre_factura_correlativo:req.body.pre_factura_correlativo
 		},{
 			where:{
 				id:req.params.id_sucursal

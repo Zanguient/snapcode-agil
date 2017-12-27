@@ -45,7 +45,8 @@ function ejecutarScriptsInventario(idModalActualizacionInventario, idModalCreaci
 
 function ejecutarScriptsInicio(idPopupTablaProductos, idPopupTablaCreditos, idPopupTablaDeudas, idPopupPago,
 	idPopupActualizarCreditoCliente, idPopupActualizarCreditoDeuda, idPopupDeuda, idModalDescuento, idModalTablaVentasPendientes,
-	idModalTablaComprasPendientes, idModalTablaBancosPendientes, idModalTablaOtrosPendientes, idModalInicioSesion, idModalWizardComprobanteEdicion, IdModalOpcionesQr, IdModalRegistrarComprobante, IdModalRevisarComprobante, IdModalLibroMayor,IdModalAsignarCuenta) {
+	idModalTablaComprasPendientes, idModalTablaBancosPendientes, idModalTablaOtrosPendientes, idModalInicioSesion, idModalWizardComprobanteEdicion, IdModalOpcionesQr, IdModalRegistrarComprobante, IdModalRevisarComprobante, IdModalLibroMayor,IdModalAsignarCuenta,
+    idModalTablaDespachos) {
 	crearPopup(idPopupTablaProductos, "100%", 550);
 	crearPopup(idPopupTablaCreditos, "60%", 550);
 	crearPopup(idPopupTablaDeudas, "60%", 550);
@@ -65,6 +66,7 @@ function ejecutarScriptsInicio(idPopupTablaProductos, idPopupTablaCreditos, idPo
 	crearPopup(IdModalRevisarComprobante, "60%", 550);
 	crearPopup(IdModalLibroMayor, "60%", 550);
 	crearPopup(IdModalAsignarCuenta, "30%", 270);	
+	crearPopup(idModalTablaDespachos, "90%", 550);	
 	$("#" + idModalInicioSesion).siblings('.ui-dialog-titlebar').remove();
 	aplicarDatePickers();
 
@@ -106,7 +108,7 @@ function ejecutarScriptsPacientes(idModalDialogVacunas, idModalDialogConsulta, i
 	crearPopup(idModalDialogFechaEntrega, "80%", 800);
 	crearPopup(IdModalDialogPreRequisitos, "90%", 'auto');
 	crearPopup(IdModalDialogLaboratorio, "80%", 'auto');
-	crearPopup(IdModalDialogGraficoSV, "100%", 700);
+	crearPopup(IdModalDialogGraficoSV, "100%", 'auto');
 	crearPopup(idModalDialogHistorico, "100%", 800);
 	crearPopup(idModalFichaTecnica, "90%", 'auto');
 	crearPopup(IdModalDialogLaboratorioExamen, "35%", 'auto');
@@ -183,7 +185,7 @@ function ejecutarScriptsRecursosHumanos(idModalPrerequisitos, idModalEmpleado, i
 	idModalReporteRolTurnos, idModalReporteTurnosDetallado, idModalViajes, idModalVisita, idModalVehiculosViaje, idModalDestinos, 
 	idModalHistorialViajes, idModalReporteAusencias, idModalCertificado, idModalInstitucion,idModalRhNuevo,idModalWizardRhNuevo,
 	idImagenUsuario,idEliminarUsuarioRh,idModalWizardRhVista,idModalContenedorRhVista,idModalDialogPrerequisitoNuevo,idEliminarSeguroEmpleado,
-	idEliminarFamiliarEmpleado) {
+	idEliminarFamiliarEmpleado,idModalHistorialPrerequisito,idModalEditarPrerequisito,idModalDialogConfirmacionEntregaAdelantado,IdEntregaPrerequisito) {
 	crearPopup(idModalPrerequisitos, "90%", 'auto');
 	crearPopup(idModalEmpleado, "100%", 'auto');
 	aplicarWizardFormulario(idModalEmpleado, idModalwizardContainerEmpleado);	
@@ -262,6 +264,10 @@ function ejecutarScriptsRecursosHumanos(idModalPrerequisitos, idModalEmpleado, i
 	crearPopup(idModalDialogPrerequisitoNuevo, "50%", "auto");
 	crearPopup(idModalExpedidoEn, "62%", "auto");
 	crearPopup(idModalNuevoFamiliar, "62%", "auto");
+	crearPopup(idModalHistorialPrerequisito, "50%", 'auto');
+	crearPopup(idModalEditarPrerequisito, "40%", 'auto');
+	crearPopup(idModalDialogConfirmacionEntregaAdelantado, "35%", 'auto');
+	crearPopup(IdEntregaPrerequisito, "40%", 'auto');
 	setTimeout(function name(params) {
 	aplicarDatePickers();
 	// aplicarHoras();

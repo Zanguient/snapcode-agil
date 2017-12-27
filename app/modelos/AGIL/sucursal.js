@@ -71,6 +71,10 @@ module.exports=function(sequelize,Sequelize){
 		cotizacion_correlativo:{
 	  	type: Sequelize.INTEGER,
 		field: 'cotizacion_correlativo'
+		},
+		pre_factura_correlativo:{
+	  	type: Sequelize.INTEGER,
+		field: 'pre_factura_correlativo'
 		}
 	}, {
 	  freezeTableName: true 

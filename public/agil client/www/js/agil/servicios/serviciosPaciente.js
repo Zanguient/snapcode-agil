@@ -265,7 +265,7 @@ angular.module('agil.servicios')
     }])
 
     .factory('listaAlertasVacunas', function ($resource) {
-        return $resource(restServer + "medico-paciente-vacunas-alertas/empresa/:id_empresa/inicio/:inicio/fin/:fin", null,
+        return $resource(restServer + "medico-paciente-vacunas-alertas/empresa/:id_empresa/inicio/:inicio/fin/:fin/opcion/:opcion", null,
             {
                 'update': { method: 'PUT' }
             });
@@ -273,7 +273,7 @@ angular.module('agil.servicios')
     .factory('ListaAlertasVacunasEmpresa', ['listaAlertasVacunas', '$q', function (listaAlertasVacunas, $q) {
         var res = function (idEmpresa, filtro) {
             var delay = $q.defer();
-            listaAlertasVacunas.get({ id_empresa: idEmpresa, inicio: filtro.inicio, fin: filtro.fin }, function (entidad) {
+            listaAlertasVacunas.get({ id_empresa: idEmpresa, inicio: filtro.inicio, fin: filtro.fin,opcion:filtro.vacuna}, function (entidad) {
                 delay.resolve(entidad);
             }, function (error) {
                 delay.reject(error);
@@ -534,6 +534,12 @@ angular.module('agil.servicios')
 
     .factory('Vacunas', function ($resource) {
         return $resource(restServer + "vacunas/:id", { id: '@id' },
+            {
+                'update': { method: 'PUT' }
+            });
+    })
+    .factory('Vacuna', function ($resource) {
+        return $resource(restServer + "vacunas", {},
             {
                 'update': { method: 'PUT' }
             });

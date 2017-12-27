@@ -1,8 +1,8 @@
 angular.module('agil.controladores')
 
-    .controller('ControladorRecursosHumanos', function ($scope,$sce, $localStorage, $location, $templateCache, $route, blockUI, ListaDatosGenero, NuevoRecursoHumano, RecursosHumanosPaginador, Paginator,
-        FieldViewer, PacientesEmpresa, obtenerEmpleadoRh, UsuarioRecursosHUmanosActivo, Prerequisito, ListaDatosPrerequisito, ListaPrerequisitosPaciente, ActualizarPrerequisito, UsuarioRecursosHumanosFicha,
-        ClasesTipo, Clases, Paises, CrearEmpleadoFicha,EliminarOtroSeguroRh,EliminarFamiliarRh) {
+    .controller('ControladorRecursosHumanos', function ($scope, $sce, $localStorage, $location, $templateCache, $route, blockUI, ListaDatosGenero, NuevoRecursoHumano, RecursosHumanosPaginador, Paginator,
+        FieldViewer, PacientesEmpresa, obtenerEmpleadoRh, UsuarioRecursosHUmanosActivo, Prerequisito, ListaDatosPrerequisito, Prerequisitos, ListaPrerequisitosPaciente, ActualizarPrerequisito, UsuarioRecursosHumanosFicha,
+        ClasesTipo, Clases, Paises, CrearEmpleadoFicha, EliminarOtroSeguroRh, EliminarFamiliarRh, PrerequisitoPaciente, PrerequisitosHistorial, UsuarioRhHistorialFicha) {
         $scope.usuario = JSON.parse($localStorage.usuario);
         $scope.idModalPrerequisitos = 'dialog-pre-requisitos';
         $scope.idModalEmpleado = 'dialog-empleado';
@@ -82,6 +82,10 @@ angular.module('agil.controladores')
         $scope.idModalWizardRhVista = 'dialog-rh-vista';
         $scope.idModalContenedorRhVista = 'modal-wizard-container-rh-vista';
         $scope.idModalDialogPrerequisitoNuevo = 'dialog-pre-requisito-nuevo';
+        $scope.idModalHistorialPrerequisito = 'dialog-historico-preRequisito';
+        $scope.idModalEditarPrerequisito = 'dialog-editar-preRequisito';
+        $scope.idModalDialogConfirmacionEntregaAdelantado = 'dialog-entrega-adelantada-prerequisito'
+        $scope.IdEntregaPrerequisito = 'dialog-entrega-preRequisito';
         $scope.$on('$viewContentLoaded', function () {
             // resaltarPestaña($location.path().substring(1));
             resaltarPestaña($location.path().substring(1));
@@ -104,7 +108,8 @@ angular.module('agil.controladores')
                 $scope.idModalViajes, $scope.idModalVisita, $scope.idModalVehiculosViaje, $scope.idModalDestinos,
                 $scope.idModalHistorialViajes, $scope.idModalReporteAusencias, $scope.idModalCertificado, $scope.idModalInstitucion,
                 $scope.idModalRhNuevo, $scope.idModalWizardRhNuevo, $scope.idImagenUsuario, $scope.idEliminarUsuarioRh, $scope.idModalWizardRhVista,
-                $scope.idModalContenedorRhVista, $scope.idModalDialogPrerequisitoNuevo, $scope.idEliminarSeguroEmpleado, $scope.idEliminarFamiliarEmpleado);
+                $scope.idModalContenedorRhVista, $scope.idModalDialogPrerequisitoNuevo, $scope.idEliminarSeguroEmpleado, $scope.idEliminarFamiliarEmpleado, $scope.idModalHistorialPrerequisito,
+                $scope.idModalEditarPrerequisito, $scope.idModalDialogConfirmacionEntregaAdelantado, $scope.IdEntregaPrerequisito);
             $scope.buscarAplicacion($scope.usuario.aplicacionesUsuario, $location.path().substring(1));
             $scope.obtenerColumnasAplicacion()
             blockUI.stop();
@@ -112,29 +117,80 @@ angular.module('agil.controladores')
         });
 
         $scope.$on('$routeChangeStart', function (next, current) {
-            $scope.eliminarPopup($scope.idModalEmpleado, $scope.idModalExpedidoEn,
-                $scope.idModalTipoDocumento, $scope.idModalEstadoCivil, $scope.idModalNacionalidad, $scope.idModalDepartamentoEstado,
-                $scope.idModalProvincia, $scope.idModalLocalidad, $scope.idModalTipoDiscapacidad, $scope.idModalTipoContrato,
-                $scope.idModalTipoPersonal, $scope.idModalCargaHoraria, $scope.idModalArea, $scope.idModalUbicacion, $scope.idModalHojaVida,
-                $scope.idModalSeguro, $scope.idModalSeguroLugar, $scope.idModalAporte, $scope.idModalAporteLugar,
-                $scope.idModalTipoOtrosSeguros, $scope.idModalBanco, $scope.idModalNuevoHijo, $scope.idModalNuevoFamiliar,
-                $scope.idModalGrado, $scope.idModalTitulo, $scope.idModalHistorialContrato, $scope.idModalBeneficiosSociales,
-                $scope.idModalMotivoRetiro, $scope.idModalDetalleVacaciones, $scope.idModalOtroIngreso, $scope.idModalDeduccion,
-                $scope.idModalAnticipoExtraordinario, $scope.idModalNuevoPrestamo, $scope.idModalAusenciasVacaciones,
-                $scope.idModalTipoBaja, $scope.idModalFeriados, $scope.idModalHitorialVacaciones, $scope.idModalCompensacion,
-                $scope.idModalHistorialAusencias, $scope.idModalHistorialAusenciaMedica, $scope.idModalTipoAusencia, $scope.idModalRolTurnos,
-                $scope.idModalHistorialTurnos, $scope.idModalHorasExtras, $scope.idModalHistorialHorasExtras, $scope.idModalAnticipoRegular,
-                $scope.idModalPrestamosPersonal, $scope.idModalAdvertencia, $scope.idModalPretamosNuevoTodos, $scope.idModalReporteHijos,
-                $scope.idModalReporteVeneficios, $scope.idModalPagoPrestamo, $scope.idModalReporteVacaciones, $scope.idModalReporteBajasMedicas,
-                $scope.idModalReporteRolTurnos, $scope.idModalReporteTurnosDetallado, $scope.idModalViajes, $scope.idModalVisita,
-                $scope.idModalVehiculosViaje, $scope.idModalDestinos, $scope.idModalHistorialViajes, $scope.idModalReporteAusencias,
-                $scope.idModalCertificado, $scope.idModalInstitucion);
+            $scope.eliminarPopup($scope.idModalEmpleado)
+            $scope.eliminarPopup($scope.idModalExpedidoEn)
+            $scope.eliminarPopup($scope.idModalTipoDocumento)
+            $scope.eliminarPopup($scope.idModalEstadoCivil)
+            $scope.eliminarPopup($scope.idModalNacionalidad)
+            $scope.eliminarPopup($scope.idModalDepartamentoEstado)
+            $scope.eliminarPopup($scope.idModalProvincia)
+            $scope.eliminarPopup($scope.idModalLocalidad)
+            $scope.eliminarPopup($scope.idModalTipoDiscapacidad)
+            $scope.eliminarPopup($scope.idModalTipoContrato)
+            $scope.eliminarPopup($scope.idModalTipoPersonal)
+            $scope.eliminarPopup($scope.idModalCargaHoraria)
+            $scope.eliminarPopup($scope.idModalArea)
+            $scope.eliminarPopup($scope.idModalUbicacion)
+            $scope.eliminarPopup($scope.idModalHojaVida)
+            $scope.eliminarPopup($scope.idModalSeguro)
+            $scope.eliminarPopup($scope.idModalSeguroLugar)
+            $scope.eliminarPopup($scope.idModalAporte)
+            $scope.eliminarPopup($scope.idModalAporteLugar)
+            $scope.eliminarPopup($scope.idModalTipoOtrosSeguros)
+            $scope.eliminarPopup($scope.idModalBanco)
+            $scope.eliminarPopup($scope.idModalNuevoHijo)
+            $scope.eliminarPopup($scope.idModalNuevoFamiliar)
+            $scope.eliminarPopup($scope.idModalGrado)
+            $scope.eliminarPopup($scope.idModalTitulo)
+            $scope.eliminarPopup($scope.idModalHistorialContrato)
+            $scope.eliminarPopup($scope.idModalBeneficiosSociales)
+            $scope.eliminarPopup($scope.idModalMotivoRetiro)
+            $scope.eliminarPopup($scope.idModalDetalleVacaciones)
+            $scope.eliminarPopup($scope.idModalOtroIngreso)
+            $scope.eliminarPopup($scope.idModalDeduccion)
+            $scope.eliminarPopup($scope.idModalAnticipoExtraordinario)
+            $scope.eliminarPopup($scope.idModalNuevoPrestamo)
+            $scope.eliminarPopup($scope.idModalAusenciasVacaciones)
+            $scope.eliminarPopup($scope.idModalTipoBaja)
+            $scope.eliminarPopup($scope.idModalFeriados)
+            $scope.eliminarPopup($scope.idModalHitorialVacaciones)
+            $scope.eliminarPopup($scope.idModalCompensacion)
+            $scope.eliminarPopup($scope.idModalHistorialAusencias)
+            $scope.eliminarPopup($scope.idModalHistorialAusenciaMedica)
+            $scope.eliminarPopup($scope.idModalTipoAusencia)
+            $scope.eliminarPopup($scope.idModalRolTurnos)
+            $scope.eliminarPopup($scope.idModalHistorialTurnos)
+            $scope.eliminarPopup($scope.idModalHorasExtras)
+            $scope.eliminarPopup($scope.idModalHistorialHorasExtras)
+            $scope.eliminarPopup($scope.idModalAnticipoRegular)
+            $scope.eliminarPopup($scope.idModalPrestamosPersonal)
+            $scope.eliminarPopup($scope.idModalAdvertencia)
+            $scope.eliminarPopup($scope.idModalPretamosNuevoTodos)
+            $scope.eliminarPopup($scope.idModalReporteHijos)
+            $scope.eliminarPopup($scope.idModalReporteVeneficios)
+            $scope.eliminarPopup($scope.idModalPagoPrestamo)
+            $scope.eliminarPopup($scope.idModalReporteVacaciones)
+            $scope.eliminarPopup($scope.idModalReporteBajasMedicas)
+            $scope.eliminarPopup($scope.idModalReporteRolTurnos)
+            $scope.eliminarPopup($scope.idModalReporteTurnosDetallado)
+            $scope.eliminarPopup($scope.idModalViajes)
+            $scope.eliminarPopup($scope.idModalVisita)
+            $scope.eliminarPopup($scope.idModalVehiculosViaje)
+            $scope.eliminarPopup($scope.idModalDestinos)
+            $scope.eliminarPopup($scope.idModalHistorialViajes)
+            $scope.eliminarPopup($scope.idModalReporteAusencias)
+            $scope.eliminarPopup($scope.idModalCertificado)
+            $scope.eliminarPopup($scope.idModalInstitucion)
             $scope.eliminarPopup($scope.idModalPrerequisitos)
             $scope.eliminarPopup($scope.idModalRhNuevo)
             $scope.eliminarPopup($scope.idModalWizardRhVista)
             $scope.eliminarPopup($scope.idModalDialogPrerequisitoNuevo)
             $scope.eliminarPopup($scope.idEliminarFamiliarEmpleado)
             $scope.eliminarPopup($scope.idEliminarSeguroEmpleado)
+            $scope.eliminarPopup($scope.idModalHistorialPrerequisito)
+            $scope.eliminarPopup($scope.idModalEditarPrerequisito)
+            $scope.eliminarPopup($scope.idModalDialogConfirmacionEntregaAdelantado)
+            $scope.eliminarPopup($scope.IdEntregaPrerequisito)
         });
         $scope.inicio = function () {
             $scope.obtenerGenero();
@@ -145,7 +201,7 @@ angular.module('agil.controladores')
 
         }
 
-       
+
         $scope.obtenerColumnasAplicacion = function () {
             $scope.fieldViewer = FieldViewer({
                 crear: true,
@@ -164,25 +220,129 @@ angular.module('agil.controladores')
             }, $scope.aplicacion.aplicacion.id);
             $scope.fieldViewer.updateObject();
         }
+        $scope.abrirDialogEditarPreRequisito = function (prerequisito) {
+            $scope.prerequisito = prerequisito
+            $scope.prerequisito.fecha_vencimiento_texto = $scope.fechaATexto(new Date)
+            $scope.abrirPopup($scope.idModalEditarPrerequisito);
+        }
 
+        $scope.cerrarDialogEditarPreRequisito = function () {
+            $scope.cerrarPopup($scope.idModalEditarPrerequisito);
+        }
         $scope.abrirDialogPrerequisitoNuevo = function () {
-            $scope.nuevoP = new Prerequisito({ puede_modificar_rrhh: false });
+            $scope.NuevoP = new Prerequisito({ puede_modificar_rrhh: false });
             console.log($scope.nuevoP)
             $scope.abrirPopup($scope.idModalDialogPrerequisitoNuevo);
         }
 
-        $scope.cerrarPopupPrerequisitoNuevo = function () {
+        $scope.cerrarDialogPrerequisitoNuevo = function () {
             $scope.cerrarPopup($scope.idModalDialogPrerequisitoNuevo);
         }
+        $scope.abrirDialogHistoricoPreRequisito = function (pre, pac) {
+            var filtro = { inicio: 0, fin: 0 }
+            $scope.preRequisito = pre
+            $scope.paciente = pac
+            var promesa = PrerequisitosHistorial({ id_pre: $scope.preRequisito.preRequisito.id, id_pac: $scope.paciente.id, inicio: filtro.inicio, fin: filtro.fin });
+            promesa.then(function (preRequisitos) {
+                $scope.historialPrerequisitosPaciente = preRequisitos.historial;
+                blockUI.stop();
+                $scope.filtro.inicio = ($scope.filtro.inicio instanceof Date) ? $scope.filtro.inicio.getDate() + '/' + ($scope.filtro.inicio.getMonth() + 1) + '/' + $scope.filtro.inicio.getFullYear() : ""
+                $scope.filtro.fin = ($scope.filtro.fin instanceof Date) ? $scope.filtro.fin.getDate() + '/' + ($scope.filtro.fin.getMonth() + 1) + '/' + $scope.filtro.fin.getFullYear() : ""
+            });
+            $scope.abrirPopup($scope.idModalHistorialPrerequisito);
+        }
+        $scope.guardarEntregaPrerequisito = function (prerequisito) {
+            blockUI.start();
+            if (prerequisito.fecha_entrega_texto == null || prerequisito.fecha_entrega_texto == "") {
+                $scope.mostrarMensaje('Ingrese la fecha de entrega.')
+            } else {
+                prerequisito.fecha_entrega = new Date($scope.convertirFecha(prerequisito.fecha_entrega_texto))
+                prerequisito.asignado = true
+                PrerequisitoPaciente.save(prerequisito, function (res) {
+                    var filtro = { inicio: 0, fin: 0 }
+                    var promesa = ListaPrerequisitosPaciente($scope.paciente.id, filtro);
+                    promesa.then(function (preRequisitos) {
+                        $scope.prerequisitosPaciente = preRequisitos.Prerequisitos;
+                        $scope.mostrarMensaje(res.mensaje)
+                        $scope.prerequisitosPaciente.forEach(function (requisito) {
+                            if (requisito.fecha_entrega != null) {
+                                requisito.entregado = true
+                            }
+                        });
+                        $scope.cerrarPopUpEntregaPreRequisito()
+                        blockUI.stop();
+                    });
+                }, function (error) {
+                    $scope.mostrarMensaje('Ocurrio un problema al guardar la fecha de entrega  de el prerequisito')
+                })
+            }
+        }
 
+        $scope.verificarFechaEntregaPrerequisito = function (preRequisito, paciente) {
+            $scope.preRequisito = preRequisito
+            $scope.preRequisito.fecha_entrega_texto = $scope.fechaATexto(new Date())
+            if (paciente === undefined) {
+                $scope.paciente = preRequisito.pacientePrerequisito
+            } else {
+                $scope.paciente = paciente
+            }
+            console.log($scope.preRequisito)
+            var vence = new Date($scope.preRequisito.fecha_vencimiento).getTime()
+            var hoy = new Date().getTime()
+            var dif = Math.floor((hoy - vence) / 86400000)
+            if (dif >= 0) {
+                $scope.abrirDialogEntregaPreRequisito($scope.preRequisito, $scope.empleado);
+            } else {
+                $scope.abrirPopup($scope.idModalDialogConfirmacionEntregaAdelantado);
+            }
+
+        }
+        $scope.abrirDialogEntregaPreRequisito = function (PreRequisito, paciente) {
+            $scope.cerrarConfirmacionEntragaAdelantadaPrerequisito()
+            $scope.preRequisito = PreRequisito
+            $scope.preRequisito.fecha_entrega_texto = $scope.fechaATexto(new Date())
+            $scope.paciente = paciente
+            $scope.abrirPopup($scope.IdEntregaPrerequisito);
+        }
+        $scope.cerrarPopUpEntregaPreRequisito = function () {
+
+            $scope.cerrarPopup($scope.IdEntregaPrerequisito);
+        }
+        $scope.cerrarConfirmacionEntragaAdelantadaPrerequisito = function () {
+            $scope.cerrarPopup($scope.idModalDialogConfirmacionEntregaAdelantado);
+        }
+        $scope.filtrarHistorialPrerequisito = function (filtro) {
+            if (filtro != undefined) {
+                var fecha_inicio = (filtro.inicio === null || filtro.inicio === "" || filtro.inicio === undefined) ? 0 : new Date(filtro.inicio)
+                var fecha_fin = (filtro.fin === null || filtro.fin === "" || filtro.fin === undefined) ? 0 : new Date(filtro.fin)
+                var tipo_opcion = (filtro.opcion === null || filtro.opcion === undefined) ? 0 : filtro.opcion
+                filtro = { inicio: fecha_inicio, fin: fecha_fin, opcion: tipo_opcion }
+            } else {
+                var filtro = { inicio: 0, fin: 0 }
+            }
+
+            var promesa = PrerequisitosHistorial({ id_pre: $scope.preRequisito.preRequisito.id, id_pac: $scope.paciente.id, inicio: filtro.inicio, fin: filtro.fin });
+            promesa.then(function (preRequisitos) {
+                $scope.historialPrerequisitosPaciente = preRequisitos.historial;
+                blockUI.stop();
+                filtro.inicio = ($scope.filtro.inicio instanceof Date) ? $scope.filtro.inicio.getDate() + '/' + ($scope.filtro.inicio.getMonth() + 1) + '/' + $scope.filtro.inicio.getFullYear() : ""
+                filtro.fin = ($scope.filtro.fin instanceof Date) ? $scope.filtro.fin.getDate() + '/' + ($scope.filtro.fin.getMonth() + 1) + '/' + $scope.filtro.fin.getFullYear() : ""
+            });
+        }
+
+        $scope.cerrarDialogHistoricoPreRequisito = function () {
+            $scope.cerrarPopup($scope.idModalHistorialPrerequisito);
+        }
         $scope.abrirDialogVerEmpleado = function (elpaciente) {
             promesaPaciente = obtenerEmpleadoRh(elpaciente.id)
-            promesaPaciente.then(function (paciente) {
-                $scope.paciente = paciente
-                
+            promesaPaciente.then(function (dato) {
+                if (dato.clase != undefined) {
+                    dato.medicoPaciente.tipo_contrato = dato.clase
+                }
+                $scope.paciente = dato.medicoPaciente
                 $scope.paciente.fecha_nacimiento_texto = $scope.fechaATexto($scope.paciente.persona.fecha_nacimiento)
                 $scope.seleccionarCargos(paciente.cargos)
-                $scope.paciente.ver=true
+                $scope.paciente.ver = true
 
             })
             $scope.abrirPopup($scope.idModalWizardRhVista);
@@ -206,37 +366,37 @@ angular.module('agil.controladores')
             $scope.abrirPopup($scope.idEliminarUsuarioRh);
         }
         $scope.cerrarDialogEliminarSeguroEmpleado = function () {
-            
+
             $scope.cerrarPopup($scope.idEliminarSeguroEmpleado);
         }
-        $scope.abrirDialogEliminarSeguroEmpleado = function (dato,index) {
+        $scope.abrirDialogEliminarSeguroEmpleado = function (dato, index) {
             $scope.otroSeguro = dato
             $scope.otroSeguro.index = index
             $scope.abrirPopup($scope.idEliminarSeguroEmpleado);
         }
         $scope.cerrarDialogEliminarFamiliarEmpleado = function () {
-            
+
             $scope.cerrarPopup($scope.idEliminarFamiliarEmpleado);
         }
-        $scope.abrirDialogEliminarFamiliarEmpleado = function (dato,index) {
+        $scope.abrirDialogEliminarFamiliarEmpleado = function (dato, index) {
             $scope.familiar = dato
-            $scope.familiar.index=index
+            $scope.familiar.index = index
             $scope.abrirPopup($scope.idEliminarFamiliarEmpleado);
         }
 
-        $scope.abrirDialogInicioPreRequisitos = function (empleado) {
-            var filtro = { inicio: 0, fin: 0 }
-            $scope.obtenerDatosPrerequisito(empleado, filtro);
-            $scope.empleado = empleado
+        $scope.abrirIdModalDialogPreRequisitos = function (empleado) {
+            $scope.empleado = empleado;
+            $scope.verificarAsignacionPrerequisitos()
+
             $scope.abrirPopup($scope.idModalPrerequisitos);
         }
-        $scope.cerrarDialogInicioPreRequisitos = function () {
+        $scope.cerrarIdModalDialogPreRequisitos = function () {
             $scope.cerrarPopup($scope.idModalPrerequisitos);
         }
         $scope.abrirDialogEmpleado = function (empleado) {
             $scope.obtenerDatosFichaUsuario(empleado);
             $scope.empleado = empleado
-
+            $scope.obtenerHistorialContratos(empleado)
 
             $scope.abrirPopup($scope.idModalEmpleado);
         }
@@ -924,6 +1084,7 @@ angular.module('agil.controladores')
             //$scope.paciente = paciente;
             console.log($scope.nuevoRH.persona.fecha_nacimiento)
             var imagenPaciente = $scope.nuevoRH.imagen;
+            $scope.nuevoRH.fechaFicha = new Date()
             var button = $('#siguiente').text().trim()
             if (button != "Siguiente") {
                 blockUI.start();
@@ -962,9 +1123,9 @@ angular.module('agil.controladores')
             $scope.paginator = Paginator();
             $scope.paginator.column = "codigo";
             $scope.paginator.direccion = "asc";
-            $scope.dynamicPopoverCargos = {           
-                templateUrl: 'myPopoverTemplate.html',            
-              };
+            $scope.dynamicPopoverCargos = {
+                templateUrl: 'myPopoverTemplate.html',
+            };
             $scope.filtro = { empresa: $scope.usuario.id_empresa, codigo: "", nombres: "", ci: "", campo: "", cargo: "", busquedaEmpresa: "", estado: "", grupo_sanguineo: "" };
             $scope.paginator.callBack = $scope.buscarRecursosHumanos;
             $scope.paginator.getSearch("", $scope.filtro, null);
@@ -973,6 +1134,7 @@ angular.module('agil.controladores')
         }
         $scope.buscarRecursosHumanos = function () {
             blockUI.start();
+
             var promesa = RecursosHumanosPaginador($scope.paginator);
             promesa.then(function (dato) {
                 $scope.paginator.setPages(dato.paginas);
@@ -1067,13 +1229,15 @@ angular.module('agil.controladores')
 
         $scope.modificarEmpleado = function (elpaciente) {
             promesaPaciente = obtenerEmpleadoRh(elpaciente.id)
-            promesaPaciente.then(function (paciente) {
-                console.log(paciente)
-                $scope.nuevoRH = paciente
+            promesaPaciente.then(function (dato) {
+
+                if (dato.clase != undefined) {
+                    dato.medicoPaciente.tipo_contrato = dato.clase
+                }
+                $scope.nuevoRH = dato.medicoPaciente
                 $scope.nuevoRH.persona.fecha_nacimiento = $scope.fechaATexto($scope.nuevoRH.persona.fecha_nacimiento)
                 $scope.seleccionarCargos($scope.nuevoRH.cargos)
             })
-            console.log($scope.paciente)
             $scope.abrirPopup($scope.idModalRhNuevo);
         }
         $scope.fechaATexto = function (fecha) {
@@ -1099,28 +1263,28 @@ angular.module('agil.controladores')
                 $scope.mostrarMensaje(dato.mensaje)
             })
         }
-        $scope.eliminarFamiliarRh = function () { 
+        $scope.eliminarFamiliarRh = function () {
             var promesa = EliminarFamiliarRh($scope.familiar)
             promesa.then(function (dato) {
-                $scope.ficha.empleado.familiares.splice($scope.familiar.index, 1);                
-                $scope.familiar=null
+                $scope.ficha.empleado.familiares.splice($scope.familiar.index, 1);
+                $scope.familiar = null
                 $scope.cerrarDialogEliminarFamiliarEmpleado()
                 $scope.mostrarMensaje(dato.mensaje)
             })
         }
-        $scope.eliminarOtroSeguroRh = function (otroSeguro) { 
+        $scope.eliminarOtroSeguroRh = function (otroSeguro) {
             var promesa = EliminarOtroSeguroRh(otroSeguro)
             promesa.then(function (dato) {
                 $scope.ficha.empleado.otrosSeguros.splice(otroSeguro.index, 1);
-               
-               // $scope.ficha.empleado.otrosSeguros.splice($scope.ficha.empleado.otrosSeguros.indexOf(otroSeguro.index), 1);
-                $scope.otroSeguro=null
-               
+
+                // $scope.ficha.empleado.otrosSeguros.splice($scope.ficha.empleado.otrosSeguros.indexOf(otroSeguro.index), 1);
+                $scope.otroSeguro = null
+
                 $scope.cerrarDialogEliminarSeguroEmpleado()
                 $scope.mostrarMensaje(dato.mensaje)
             })
         }
-        
+
 
         $scope.finVerEmpleado = function () {
             var button = $('#siguiente-v').text().trim()
@@ -1173,7 +1337,7 @@ angular.module('agil.controladores')
                         familiar.edad = Math.trunc(dato / 365);
 
                     });
-             
+
                     $scope.seleccionarCargos($scope.ficha.empleado.cargos)
                     $scope.seleccionarDiscapacidades($scope.ficha.empleado.discapacidades)
                     //llenarCargos($scope.cargos)
@@ -1183,7 +1347,7 @@ angular.module('agil.controladores')
                     $scope.ficha.empleado.cargo = []
                     $scope.ficha.empleado.otrosSeguros = []
                     $scope.ficha.empleado.familiares = []
-                    $scope.ficha.empleado.persona.correo_electronico=datos.empleado.persona.correo_electronico
+                    $scope.ficha.empleado.persona.correo_electronico = datos.empleado.persona.correo_electronico
                     $scope.seleccionarCargos($scope.ficha.empleado.cargos)
                     $scope.seleccionarDiscapacidades($scope.ficha.empleado.discapacidades)
                     var fechaActual = new Date();
@@ -1239,15 +1403,17 @@ angular.module('agil.controladores')
 
         $scope.llenarDiscapacidades = function (discapacidades) {
             $scope.discapacidades = [];
+
             for (var i = 0; i < discapacidades.length; i++) {
-                var discapacidades = {
+                var discapacidade = {
                     nombre: discapacidades[i].nombre,
                     maker: "",
                     ticked: false,
                     id: discapacidades[i].id
                 }
-                $scope.discapacidades.push(discapacidades);
+                $scope.discapacidades.push(discapacidade);
             }
+
         }
         $scope.diferenciaEntreDiasEnDias = function (a, b) {
             var MILISENGUNDOS_POR_DIA = 1000 * 60 * 60 * 24;
@@ -1259,46 +1425,214 @@ angular.module('agil.controladores')
 
         $scope.obtenerDatosPrerequisito = function (paciente, filtro) {
             blockUI.start();
-            if (filtro.inicio != 0 && filtro.inicio != "") {
-                filtro.inicio = new Date($scope.convertirFecha(filtro.inicio));
-                filtro.fin = new Date($scope.convertirFecha(filtro.fin));
+            if (filtro.inicio != undefined) {
+                if (filtro.inicio != 0 && filtro.inicio != "") {
+                    $scope.filtro.inicio = (filtro.inicio instanceof Date) ? filtro.inicio : new Date($scope.convertirFecha(filtro.inicio));
+                } else {
+                    $scope.filtro.inicio = 0
+                }
             } else {
-                filtro.inicio = 0
-                filtro.fin = 0
+                $scope.filtro.inicio = 0
+            }
+            if (filtro.fin != undefined) {
+                if (filtro.fin != 0 && filtro.fin != "") {
+                    $scope.filtro.fin = (filtro.fin instanceof Date) ? filtro.fin : new Date($scope.convertirFecha(filtro.fin));
+                } else {
+                    $scope.filtro.fin = 0
+                }
+            } else {
+                $scope.filtro.fin = 0
+            }
+            var promesa = ListaPrerequisitosPaciente(paciente.id, $scope.filtro);
+            promesa.then(function (preRequisitos) {
+                $scope.prerequisitosPaciente = preRequisitos.Prerequisitos;
+                $scope.prerequisitosPaciente.forEach(function (requisito) {
+                    if (requisito.fecha_entrega != null) {
+                        requisito.entregado = true
+                    }
+                })
+                console.log($scope.prerequisitosPaciente)
+                $scope.filtro.inicio = ($scope.filtro.inicio instanceof Date) ? $scope.filtro.inicio.getDate() + '/' + ($scope.filtro.inicio.getMonth() + 1) + '/' + $scope.filtro.inicio.getFullYear() : ""
+                $scope.filtro.fin = ($scope.filtro.fin instanceof Date) ? $scope.filtro.fin.getDate() + '/' + ($scope.filtro.fin.getMonth() + 1) + '/' + $scope.filtro.fin.getFullYear() : ""
+                blockUI.stop();
+            }, function (error) {
+                $scope.mostrarMensaje('Se produjo un error al obtener datos de prerequisitos')
+                blockUI.stop();
+            });
+        }
+        $scope.saveFormPrerequisito = function (nuevoPrerequisito) {
+            blockUI.start();
+            // nuevoPrerequisito.fecha_inicio = new Date($scope.convertirFecha(nuevoPrerequisito.fecha_inicio))
+            // nuevoPrerequisito.fecha_inicio = nuevoPrerequisito.fecha_inicio.setFullYear(nuevoPrerequisito.fecha_inicio.getFullYear(), nuevoPrerequisito.fecha_inicio.getMonth(), nuevoPrerequisito.fecha_inicio.getDate());
+            // nuevoPrerequisito.fecha_vencimiento = nuevoPrerequisito.fechav.setFullYear(nuevoPrerequisito.fechav.getFullYear(), nuevoPrerequisito.fechav.getMonth(), nuevoPrerequisito.fechav.getDate())
+            if (nuevoPrerequisito.nombre != undefined && nuevoPrerequisito.vencimiento_mes != undefined) {
+                if (nuevoPrerequisito.id != undefined) {
+                    nuevoPrerequisito.$save(nuevoPrerequisito, function (res) {
+
+                        $scope.mostrarMensaje(res.mensaje);
+                        $scope.cerrarDialogPrerequisitoNuevo();
+                        blockUI.stop();
+                        $scope.verificarAsignacionPrerequisitos()
+                    }, function (error) {
+                        $scope.cerrarDialogPrerequisitoNuevo();
+                        $scope.mostrarMensaje('Ocurrio un problema al momento de guardar!');
+                        blockUI.stop();
+                    });
+                } else {
+                    nuevoPrerequisito.$save({ nuevoPrerequisito }, function (res) {
+                        $scope.mostrarMensaje(res.mensaje);
+                        $scope.cerrarDialogPrerequisitoNuevo();
+                        blockUI.stop();
+                        $scope.verificarAsignacionPrerequisitos()
+                    }, function (error) {
+                        $scope.cerrarDialogPrerequisitoNuevo();
+                        $scope.mostrarMensaje('Ocurrio un problema al momento de guardar!');
+                        blockUI.stop();
+                    });
+                }
+            } else {
+                $scope.mostrarMensaje('Los campos Prerequisito Nombre y vencimiento mes son requeridos.')
+                blockUI.stop();
             }
 
-            var promesa = ListaPrerequisitosPaciente(paciente.id, filtro);
-            promesa.then(function (preRequisitos) {
-                $scope.datoprerequisitos = preRequisitos;
-                //console.log($scope.datoprerequisitos);
-                blockUI.stop();
-                $scope.filtro = { inicio: "", fin: "" }
-            });
-            console.log($scope.datoprerequisitos)
         }
-        $scope.saveFormPrerequisito = function () {
+        $scope.verificarAsignacionPrerequisitos = function () {
             blockUI.start();
-            console.log($scope.nuevoP)
-            $scope.nuevoP.fecha_inicio = new Date($scope.convertirFecha($scope.nuevoP.fecha_inicio));
-            $scope.nuevoP.fecha_vencimiento = new Date($scope.convertirFecha($scope.nuevoP.fechav));
+            var requisitos = Prerequisitos()
+            requisitos.then(function (prerequisitos) {
+                $scope.preRequisitos = prerequisitos.prerequisitos
+                filtro = { inicio: 0, fin: 0 }
+                var promesa = ListaPrerequisitosPaciente($scope.empleado.id, filtro);
+                promesa.then(function (preRequisitos) {
+                    $scope.prerequisitosPaciente = preRequisitos.Prerequisitos;
+                    $scope.preRequisitos.forEach(function (requisito, index, array) {
 
-            $scope.nuevoP.$save({ id_paciente: $scope.empleado.id }, function (prerequisito) {
-                blockUI.stop();
-                var filtro = { inicio: 0, fin: 0 }
-                //prerequisito = new Prerequisito({});
-                $scope.obtenerDatosPrerequisito($scope.empleado, filtro);
-                $scope.cerrarPopupPrerequisitoNuevo();
-                $scope.mostrarMensaje('Guardado Exitosamente!');
+                        $scope.prerequisitosPaciente.forEach(function (preRe) {
 
-            }, function (error) {
-                blockUI.stop();
-                var filtro = { inicio: 0, fin: 0 }
-                $scope.obtenerDatosPrerequisito($scope.empleado, filtro);
-                $scope.cerrarPopupPrerequisitoNuevo();
-                $scope.mostrarMensaje('Ocurrio un problema al momento de guardar!');
-            });
+                            if (requisito.id == preRe.id_prerequisito) {
+                                requisito.asignado = true
+                            }
+
+                            if (preRe.fecha_entrega != null) {
+                                preRe.entregado = true
+                            }
+
+                            //Re asignar la fecha de vencimiento si la fecha de inicio cambia.
+                            // var fechaContro = new Date(preRe.fecha_vencimiento)
+                            // var calculoFechaVencimiento = $scope.calcularFechaVencimientoRequisito(preRe)
+                            // fechaContro.setHours(0,0,0,0)
+                            // calculoFechaVencimiento.setHours(0,0,0,0)
+                            // var a = $scope.fechaATexto(fechaContro)
+                            // var b = $scope.fechaATexto(calculoFechaVencimiento)
+                            // if(a != b){
+                            //     preRe.asignado = true
+                            //     preRe.fecha_vencimiento = calculoFechaVencimiento
+                            //     PrerequisitoPaciente.save(preRe,function (res) {
+                            //         $scope.verificarAsignacionPrerequisitos()
+                            //     })
+                            // }
+
+                        });
+
+                        if ($scope.prerequisitosPaciente.length == 0) {
+                            requisito.asignado = false
+                        }
+
+                        if (index == array.length - 1) {
+                            blockUI.stop();
+                        }
+
+                        // var reducido = $scope.prerequisitosPaciente.reduce(function (anterior,actual,index,array) {
+                        //     if(anterior == 0) return actual
+                        //     if(anterior.id_prerequisito == actual.id_prerequisito){
+                        //         if(anterior.id < actual.id){
+                        //             return actual
+                        //         }
+                        //     }
+                        // })
+                        // console.log(reducido)
+                    });
+
+                    if ($scope.preRequisitos.length == 0) {
+                        blockUI.stop();
+                    }
+
+                    // var found = $.map(xtra, function(val) {
+                    //     if(val.id == 'C' ){
+
+                    //     }
+                    // });​
+                });
+            })
+        }
+        $scope.diasVencidosPrerequisito = function (fechaVencimiento) {
+            var MILISENGUNDOS_POR_DIA = 1000 * 60 * 60 * 24;
+            var hoy = new Date().getTime()
+            var vencimiento = fechaVencimiento.getTime()
+            var calculo = hoy - vencimiento
+            var dias = Math.floor(calculo / MILISENGUNDOS_POR_DIA)
+            return dias
+        }
+        $scope.calcularFechaVencimientoRequisito = function (requisito) {
+            var meses = (requisito.vencimiento_mes === undefined) ? requisito.preRequisito.vencimiento_mes : requisito.vencimiento_mes
+            var fechaControl = new Date()
+            var fecha_inicio = new Date()
+            if (requisito.fecha_inicio_texto === undefined) {
+                var otra_fecha = $scope.fechaATexto(requisito.fecha_inicio)
+            }
+            var fecha_cortada = (requisito.fecha_inicio_texto === undefined) ? otra_fecha.split('/') : requisito.fecha_inicio_texto.split('/')
+            var dia = parseInt(fecha_cortada[0])
+            var mes = parseInt(fecha_cortada[1])
+            var anio = parseInt(fecha_cortada[2])
+            fecha_inicio.setFullYear(anio, mes - 1, dia)
+            // if($scope.fechaATexto(requisito.fecha_inicio) == requisito.fecha_inicio_texto){
+            //     console.log('son iguales')
+            // }else{
+            //     console.log('no son iguales')
+            // }
+            var fecha_vencimiento = new Date(fecha_inicio.setTime(fecha_inicio.getTime() + (meses * 30) * 86400000))
+            return fecha_vencimiento
+            // requisito.fechav_texto = $scope.fechaATexto(requisito.fechav)
         }
 
+        $scope.actualizarPreRequisitoPaciente = function (prerequisito) {
+            blockUI.start()
+            var prerequisito_ = prerequisito
+            // prerequisito.fecha_inicio = new Date($scope.convertirFecha(prerequisito.fecha_inicio_texto))
+            // prerequisito.fecha_vencimiento = $scope.calcularFechaVencimientoRequisito(prerequisito)
+            prerequisito_.fecha_vencimiento = new Date($scope.convertirFecha(prerequisito_.fecha_vencimiento_texto))
+            prerequisito_.fecha_inicio = new Date()
+            prerequisito_.fecha_entrega = null
+            prerequisito_.asignado = true
+            PrerequisitoPaciente.save(prerequisito_, function (res) {
+
+                $scope.mostrarMensaje(res.mensaje)
+                $scope.cerrarDialogEditarPreRequisito()
+                $scope.verificarAsignacionPrerequisitos()
+                blockUI.stop()
+            }, function (error) {
+                $scope.mostrarMensaje('Ocurrio un problema al asignar el prerequisito')
+                $scope.cerrarDialogEditarPreRequisito()
+                blockUI.stop()
+            })
+        }
+        $scope.asignarPrerequisito = function (prerequisito, paciente) {
+            blockUI.start();
+            prerequisito.pacientePrerequisito = { id: paciente.id }
+            prerequisito.preRequisito = { id: prerequisito.id }
+            prerequisito.fecha_inicio = new Date()
+            prerequisito.fecha_inicio_texto = $scope.fechaATexto(prerequisito.fecha_inicio)
+            prerequisito.fecha_vencimiento = $scope.calcularFechaVencimientoRequisito(prerequisito)
+            prerequisito.paraAsignar = true
+            PrerequisitoPaciente.save(prerequisito, function (res) {
+                $scope.verificarAsignacionPrerequisitos()
+                $scope.mostrarMensaje(res.mensaje)
+                blockUI.stop()
+            }, function (error) {
+                $scope.mostrarMensaje('Ocurrio un problema al asignar el prerequisito')
+                blockUI.stop()
+            })
+        }
         $scope.obtenerPrerequisito = function () {
             blockUI.start();
             var promesa = ListaDatosPrerequisito();
@@ -1315,7 +1649,7 @@ angular.module('agil.controladores')
 
         $scope.calcularEdad = function (familiar) {
             var fechaActual = new Date();
-            if(familiar.nac_mes && familiar.nac_anio && familiar.nac_dia){
+            if (familiar.nac_mes && familiar.nac_anio && familiar.nac_dia) {
                 var anio = familiar.nac_anio
                 var mes = parseInt(familiar.nac_mes.id)
                 var dia = parseInt(familiar.nac_dia)
@@ -1328,7 +1662,7 @@ angular.module('agil.controladores')
         }
         $scope.eliminarSeguro = function (seguro, index) {
             if (seguro.id) {
-                $scope.abrirDialogEliminarSeguroEmpleado(seguro,index)
+                $scope.abrirDialogEliminarSeguroEmpleado(seguro, index)
             } else {
                 $scope.ficha.empleado.otrosSeguros.splice(index, 1);
                 console.log($scope.ficha.empleado.otrosSeguros)
@@ -1350,7 +1684,7 @@ angular.module('agil.controladores')
         }
         $scope.eliminarFamiliar = function (familiar, index) {
             if (familiar.id) {
-                $scope.abrirDialogEliminarFamiliarEmpleado(familiar,index)
+                $scope.abrirDialogEliminarFamiliarEmpleado(familiar, index)
             } else {
                 $scope.ficha.empleado.familiares.splice(index, 1);
             }
@@ -1406,7 +1740,18 @@ angular.module('agil.controladores')
             $scope.obtenerAnios()
             $scope.obtenerCargos()
             $scope.obtenerDiscapacidades()
+
         }
+        $scope.obtenerHistorialContratos = function (empleado) {
+            blockUI.start();
+            var promesa = UsuarioRhHistorialFicha(empleado.id);
+            promesa.then(function (entidad) {
+                $scope.historialFichaEmpleado = entidad
+
+                blockUI.stop();
+            });
+        }
+
         $scope.obtenerCargos = function () {
             blockUI.start();
             var promesa = ClasesTipo("RRHH_CARGO");
@@ -1458,12 +1803,12 @@ angular.module('agil.controladores')
             });
         }
         /* $scope.obtenerDepartamentos = function () {
-			blockUI.start();
-			var promesa = ClasesTipo("DEP");
-			promesa.then(function (entidad) {
-				$scope.departamentos = entidad.clases
-				blockUI.stop();
-			});
+            blockUI.start();
+            var promesa = ClasesTipo("DEP");
+            promesa.then(function (entidad) {
+                $scope.departamentos = entidad.clases
+                blockUI.stop();
+            });
         } */
         /*   $scope.obtenerProvicias = function () {
               blockUI.start();
@@ -1638,43 +1983,71 @@ angular.module('agil.controladores')
         };
         //FIN RECUPERAR TIPOS FICHA 
 
-        $scope.guardarFichaTecnica = function (valido, ficha,save) {
-            if(save){
-                if(ficha.empleado.persona.fecha_nacimiento){
-                ficha.empleado.persona.fecha_nacimiento = new Date(ficha.nac_anio, parseInt(ficha.nac_mes.id), parseInt(ficha.nac_dia))}
-                if(ficha.fecha_elaboracion){
-                ficha.fecha_elaboracion = new Date($scope.convertirFecha(ficha.fecha_elaboracion));}
-                if(ficha.fecha_inicio){
-                ficha.fecha_inicio = new Date($scope.convertirFecha(ficha.fecha_inicio));}
-                if(ficha.fecha_fin){
-                 ficha.fecha_fin = new Date($scope.convertirFecha(ficha.fecha_fin));}
-                if(ficha.fecha_jubilacion){
-                ficha.fecha_jubilacion = new Date($scope.convertirFecha(ficha.fecha_jubilacion));}
-                if(ficha.empleado.fecha_vence_documento){ficha.empleado.fecha_vence_documento = new Date($scope.convertirFecha(ficha.empleado.fecha_vence_documento));}
-                var promesa = CrearEmpleadoFicha(ficha);
-                promesa.then(function (dato) {
-                    $scope.cerrarDialogEmpleado()
-                    $scope.recargarItemsTabla()
-                    $scope.mostrarMensaje(dato.message)
-                })
-            }else{
-            //if (valido) {
-            var button = $('#siguiente-f').text().trim();
-            if (button != "Siguiente") {
-                ficha.empleado.persona.fecha_nacimiento = new Date(ficha.nac_anio, parseInt(ficha.nac_mes.id), parseInt(ficha.nac_dia))
-                ficha.fecha_elaboracion = new Date($scope.convertirFecha(ficha.fecha_elaboracion));
-                ficha.fecha_inicio = new Date($scope.convertirFecha(ficha.fecha_inicio));
-                ficha.fecha_fin = new Date($scope.convertirFecha(ficha.fecha_fin));
-                ficha.fecha_jubilacion = new Date($scope.convertirFecha(ficha.fecha_jubilacion));
-                ficha.empleado.fecha_vence_documento = new Date($scope.convertirFecha(ficha.empleado.fecha_vence_documento));
-                var promesa = CrearEmpleadoFicha(ficha);
-                promesa.then(function (dato) {
-                    $scope.cerrarDialogEmpleado()
-                    $scope.recargarItemsTabla()
-                    $scope.mostrarMensaje(dato.message)
-                })
+        $scope.guardarFichaTecnica = function (valido, ficha, save) {
+
+            if (save) {
+                if (ficha.empleado.persona.fecha_nacimiento) {
+                    ficha.empleado.persona.fecha_nacimiento = new Date(ficha.nac_anio, parseInt(ficha.nac_mes.id), parseInt(ficha.nac_dia))
+                }
+                if (ficha.fecha_elaboracion) {
+                    ficha.fecha_elaboracion = new Date($scope.convertirFecha(ficha.fecha_elaboracion));
+                }
+                if (ficha.fecha_inicio) {
+                    ficha.fecha_inicio = new Date($scope.convertirFecha(ficha.fecha_inicio));
+                }
+                if (ficha.fecha_fin) {
+                    ficha.fecha_fin = new Date($scope.convertirFecha(ficha.fecha_fin));
+                }
+                if (ficha.fecha_jubilacion) {
+                    ficha.fecha_jubilacion = new Date($scope.convertirFecha(ficha.fecha_jubilacion));
+                }
+                if (ficha.empleado.fecha_vence_documento) { ficha.empleado.fecha_vence_documento = new Date($scope.convertirFecha(ficha.empleado.fecha_vence_documento)); }
+                var f = document.getElementById('id-contrato').files[0],
+
+                    r = new FileReader();
+
+                if (f) {
+                    r.onloadend = function (e) {
+                        ficha.contrato2 = { name: "", data: null }
+                        ficha.contrato2.name = ficha.contrato[0].name
+                        ficha.contrato2.data = e.target.result;
+
+                        var promesa = CrearEmpleadoFicha(ficha);
+                        promesa.then(function (dato) {
+                            $scope.cerrarDialogEmpleado()
+                            $scope.recargarItemsTabla()
+                            $scope.mostrarMensaje(dato.message)
+                        })
+                        //send your binary data via $http or $resource or do anything else with it
+                    }
+
+                    r.readAsBinaryString(f);
+                } else {
+                    var promesa = CrearEmpleadoFicha(ficha);
+                    promesa.then(function (dato) {
+                        $scope.cerrarDialogEmpleado()
+                        $scope.recargarItemsTabla()
+                        $scope.mostrarMensaje(dato.message)
+                    })
+                }
+            } else {
+                //if (valido) {
+                var button = $('#siguiente-f').text().trim();
+                if (button != "Siguiente") {
+                    ficha.empleado.persona.fecha_nacimiento = new Date(ficha.nac_anio, parseInt(ficha.nac_mes.id), parseInt(ficha.nac_dia))
+                    ficha.fecha_elaboracion = new Date($scope.convertirFecha(ficha.fecha_elaboracion));
+                    ficha.fecha_inicio = new Date($scope.convertirFecha(ficha.fecha_inicio));
+                    ficha.fecha_fin = new Date($scope.convertirFecha(ficha.fecha_fin));
+                    ficha.fecha_jubilacion = new Date($scope.convertirFecha(ficha.fecha_jubilacion));
+                    ficha.empleado.fecha_vence_documento = new Date($scope.convertirFecha(ficha.empleado.fecha_vence_documento));
+                    var promesa = CrearEmpleadoFicha(ficha);
+                    promesa.then(function (dato) {
+                        $scope.cerrarDialogEmpleado()
+                        $scope.recargarItemsTabla()
+                        $scope.mostrarMensaje(dato.message)
+                    })
+                }
             }
-        }
             // }
         }
         $scope.inicio()

@@ -7,6 +7,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 		ConfiguracionesCuentasEmpresa, ContabilidadCambioMoneda, ObtenerCambioMoneda, AsignarCuentaCiente, AsignarCuentaProveedor) {
 
 		$scope.idModalTablaVencimientoProductos = "tabla-vencimiento-productos";
+		$scope.idModalTablaDespachos = "tabla-gtm-despachos";
 		$scope.idModalTablaVencimientoCreditos = "tabla-vencimiento-creditos";
 		$scope.idModalTablaVencimientoDeudas = "tabla-vencimiento-deudas";
 		$scope.idModalTablaVentasPendientes = "tabla-ventas-pendientes";
@@ -34,7 +35,8 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 			ejecutarScriptsInicio($scope.idModalTablaVencimientoProductos, $scope.idModalTablaVencimientoCreditos, $scope.idModalTablaVencimientoDeudas, $scope.idModalPagoP,
 				$scope.idmodalActualizarCreditoCliente, $scope.idmodalActualizarCreditoDeuda, $scope.idModalPagoDeuda, $scope.idModalDescuento, $scope.idModalTablaVentasPendientes,
 				$scope.idModalTablaComprasPendientes, $scope.idModalTablaBancosPendientes, $scope.idModalTablaOtrosPendientes, $scope.idModalInicioSesion,
-				$scope.idModalWizardComprobanteEdicion, $scope.IdModalOpcionesQr, $scope.IdModalRegistrarComprobante, $scope.IdModalRevisarComprobante, $scope.IdModalLibroMayor, $scope.IdModalAsignarCuenta);
+				$scope.idModalWizardComprobanteEdicion, $scope.IdModalOpcionesQr, $scope.IdModalRegistrarComprobante, $scope.IdModalRevisarComprobante, $scope.IdModalLibroMayor, $scope.IdModalAsignarCuenta,
+			    $scope.idModalTablaDespachos);
 
 			$scope.inicio();
 			blockUI.stop();
@@ -886,8 +888,16 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 			$scope.bajaInventario = null;
 		}
 
+		$scope.abrirListaDespachos=function(){
+			$scope.abrirPopup($scope.idModalTablaDespachos);
+		}
+
 		$scope.abrirListaVencimientoProductos = function () {
 			$scope.abrirPopup($scope.idModalTablaVencimientoProductos);
+		}
+
+		$scope.cerrarListaDespachos = function () {
+			$scope.cerrarPopup($scope.idModalTablaDespachos);
 		}
 
 		$scope.cerrarListaVencimientoProductos = function () {

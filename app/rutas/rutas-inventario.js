@@ -743,73 +743,6 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 									venta.pedido = sucursalActividadDosificacion.sucursal.pedido_correlativo;
 								}
 
-
-								/*if (venta.receptor) {
-									if (!venta.cliente.id) {
-										if (!venta.receptor.id) {
-											return Persona.create({
-												nombre_completo: venta.receptor.nombre_completo
-											}, { transaction: t }).then(function (receptorCreado) {
-												return Cliente.create({
-													id_empresa: venta.id_empresa,
-													nit: venta.cliente.nit,
-													razon_social: venta.cliente.razon_social
-												}, { transaction: t }).then(function (clienteCreado) {
-													return crearVenta(venta, res, clienteCreado.id, movimientoCreado, dosificacion, true, sucursalActividadDosificacion.sucursal, t, receptorCreado.id);
-												});
-											});
-										} else {
-											return Persona.update({
-												nombre_completo: venta.receptor.nombre_completo
-											}, {
-													where: {
-														id: venta.receptor.id
-													},
-													transaction: t
-												}).then(function (receptorCreado) {
-													return Cliente.create({
-														id_empresa: venta.id_empresa,
-														nit: venta.cliente.nit,
-														razon_social: venta.cliente.razon_social
-													}, { transaction: t }).then(function (clienteCreado) {
-														return crearVenta(venta, res, clienteCreado.id, movimientoCreado, dosificacion, true, sucursalActividadDosificacion.sucursal, t, venta.receptor.id);
-													});
-												});
-										}
-									} else {
-										if (!venta.receptor.id) {
-											return Persona.create({
-												nombre_completo: venta.receptor.nombre_completo
-											}, { transaction: t }).then(function (receptorCreado) {
-												return crearVenta(venta, res, venta.cliente.id, movimientoCreado, dosificacion, true, sucursalActividadDosificacion.sucursal, t, receptorCreado.id);
-											});
-										} else {
-											return Persona.update({
-												nombre_completo: venta.receptor.nombre_completo
-											}, {
-													where: {
-														id: venta.receptor.id
-													},
-													transaction: t
-												}).then(function (receptorCreado) {
-													return crearVenta(venta, res, venta.cliente.id, movimientoCreado, dosificacion, true, sucursalActividadDosificacion.sucursal, t, venta.receptor.id);
-												});
-										}
-									}
-								} else {
-									if (!venta.cliente.id) {
-										return Cliente.create({
-											id_empresa: venta.id_empresa,
-											nit: venta.cliente.nit,
-											razon_social: venta.cliente.razon_social
-										}, { transaction: t }).then(function (clienteCreado) {
-											return crearVenta(venta, res, clienteCreado.id, movimientoCreado, dosificacion, true, sucursalActividadDosificacion.sucursal, t, null);
-										});
-									} else {
-										return crearVenta(venta, res, venta.cliente.id, movimientoCreado, dosificacion, true, sucursalActividadDosificacion.sucursal, t, null);
-									}
-								}*/
-
 								if (!venta.cliente.id) {
 									return Cliente.create({
 										id_empresa: venta.id_empresa,
@@ -850,72 +783,35 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 								} else {
 									return crearVenta(venta, res, venta.cliente.id, movimientoCreado, null, false, sucursal,t);
 								}
+							});
+							//SI ES PREFACTURACION
+						}else if (movimiento == Diccionario.EGRE_PRE_FACTURACION) {
+							return Sucursal.find({
+								where: {
+									id: venta.sucursal.id
+								},
+								transaction: t,
+								include: [{ model: Empresa, as: 'empresa' }]
+							}).then(function (sucursal) {
+								venta.factura = sucursal.pre_facturacion_correlativo;
+								venta.numero_literal = NumeroLiteral.Convertir(parseFloat(venta.total).toFixed(2).toString());
+								venta.actividad = { id: null };
 
-								/*if (venta.receptor) {
-									if (!venta.cliente.id) {
-										if (!venta.receptor.id) {
-											return Persona.create({
-												nombre_completo: venta.receptor.nombre_completo
-											}, { transaction: t }).then(function (receptorCreado) {
-												return Cliente.create({
-													id_empresa: venta.id_empresa,
-													nit: venta.cliente.nit,
-													razon_social: venta.cliente.razon_social
-												}, { transaction: t }).then(function (clienteCreado) {
-													return crearVenta(venta, res, clienteCreado.id, movimientoCreado, null, false, sucursal, t, receptorCreado.id);
-												});
-											});
-										} else {
-											return Persona.update({
-												nombre_completo: venta.receptor.nombre_completo
-											}, {
-													where: {
-														id: venta.receptor.id
-													},
-													transaction: t
-												}).then(function (receptorCreado) {
-													return Cliente.create({
-														id_empresa: venta.id_empresa,
-														nit: venta.cliente.nit,
-														razon_social: venta.cliente.razon_social
-													}, { transaction: t }).then(function (clienteCreado) {
-														return crearVenta(venta, res, clienteCreado.id, movimientoCreado, null, false, sucursal, t, venta.receptor.id);
-													});
-												});
-										}
-									} else {
-										if (!venta.receptor.id) {
-											return Persona.create({
-												nombre_completo: venta.receptor.nombre_completo
-											}, { transaction: t }).then(function (receptorCreado) {
-												return crearVenta(venta, res, venta.cliente.id, movimientoCreado, null, false, sucursal, t, receptorCreado.id);
-											});
-										} else {
-											return Persona.update({
-												nombre_completo: venta.receptor.nombre_completo
-											}, {
-													where: {
-														id: venta.receptor.id
-													},
-													transaction: t
-												}).then(function (receptorCreado) {
-													return crearVenta(venta, res, venta.cliente.id, movimientoCreado, null, false, sucursal, t, venta.receptor.id);
-												});
-										}
-									}
+								if (sucursal.empresa.usar_pedidos) {
+									venta.pedido = sucursal.pedido_correlativo;
+								}
+
+								if (!venta.cliente.id) {
+									return Cliente.create({
+										id_empresa: venta.id_empresa,
+										nit: venta.cliente.nit,
+										razon_social: venta.cliente.razon_social
+									}, {transaction: t}).then(function (clienteCreado) {
+										return crearVenta(venta, res, clienteCreado.id, movimientoCreado, null, false, sucursal,t);
+									});
 								} else {
-									if (!venta.cliente.id) {
-										return Cliente.create({
-											id_empresa: venta.id_empresa,
-											nit: venta.cliente.nit,
-											razon_social: venta.cliente.razon_social
-										}, { transaction: t }).then(function (clienteCreado) {
-											return crearVenta(venta, res, clienteCreado.id, movimientoCreado, null, false, sucursal, t, null);
-										});
-									} else {
-										return crearVenta(venta, res, venta.cliente.id, movimientoCreado, null, false, sucursal, t, null);
-									}
-								}*/
+									return crearVenta(venta, res, venta.cliente.id, movimientoCreado, null, false, sucursal,t);
+								}
 							});
 							//SI ES BAJA
 						} else if (movimiento == Diccionario.EGRE_BAJA) {

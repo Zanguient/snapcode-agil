@@ -1,0 +1,2 @@
+ALTER TABLE agil_contabilidad_cuenta DROP FOREIGN KEY fk_agil_contabilidad_cuenta_padre_id;
+ALTER TABLE agil_contabilidad_cuenta DROP cuenta_padre;

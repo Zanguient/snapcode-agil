@@ -4,6 +4,10 @@ module.exports=function(sequelize,Sequelize){
 			type: Sequelize.INTEGER,
 			field: 'empresa'
 		},
+		id_cuenta_padre: {
+			type: Sequelize.INTEGER,
+			field: 'cuenta_padre'
+		},
 		codigo: {
 			type: Sequelize.STRING,
 			field: 'codigo'

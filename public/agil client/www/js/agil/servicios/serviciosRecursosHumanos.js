@@ -49,6 +49,10 @@ angular.module('agil.servicios')
 .factory('RecursosHumanosPaginador', ['RecursosHumanosEmpresaPaginador', '$q', function (RecursosHumanosEmpresaPaginador, $q) {
     var res = function (paginator)//idEmpresa, xxx
     {
+        
+        var grupo_sanguineo = (paginator.filter.grupo_sanguineo==undefined) ?  paginator.filter.grupo_sanguineo=0 :  paginator.filter.grupo_sanguineo
+       var cargo = (paginator.filter.cargo==undefined) ?  paginator.filter.cargo=0 :  paginator.filter.cargo
+        var estado = (paginator.filter.estado==undefined) ?  paginator.filter.estado=0 :  paginator.filter.estado
         var delay = $q.defer();
         RecursosHumanosEmpresaPaginador.get({
             id_empresa: paginator.filter.empresa,
@@ -61,10 +65,10 @@ angular.module('agil.servicios')
             nombres: paginator.filter.nombres,
             ci: paginator.filter.ci,
             campo: paginator.filter.campo,
-            cargo: paginator.filter.cargo,
+            cargo: cargo,
             busquedaEmpresa: paginator.filter.busquedaEmpresa,
-            estado: paginator.filter.estado,
-            grupo_sanguineo: paginator.filter.grupo_sanguineo
+            estado: estado,
+            grupo_sanguineo: grupo_sanguineo
 
 
         }, function (entidades) {
@@ -84,7 +88,7 @@ angular.module('agil.servicios')
         });
 })
 .factory('UsuarioRhActivo', function ($resource) {
-    return $resource(restServer + "usuario-recurso-humano/:id_persona", null,
+    return $resource(restServer + "usuario-recurso-humano/:id_empleado", null,
         {
             'update': { method: 'PUT' }
         });
@@ -94,7 +98,7 @@ angular.module('agil.servicios')
     {
         var delay = $q.defer();
         UsuarioRhActivo.update({
-            id_persona: empleado.id_persona
+            id_empleado: empleado.id
                   },empleado,function (entidades) {
             delay.resolve(entidades);
         }, function (error) {
@@ -143,6 +147,27 @@ angular.module('agil.servicios')
     var res = function (ficha) {
         var delay = $q.defer();
         UsuarioRhFicha.save({ id_empleado: 0 }, ficha, function (entidades) {
+            delay.resolve(entidades);
+        }, function (error) {
+            delay.reject(error);
+        });
+        return delay.promise;
+    };
+    return res;
+}])
+.factory('HistorialFicha', function ($resource) {
+    return $resource(restServer + "usuario-ficha/:id_empleado", null,
+        {
+            'update': { method: 'PUT' }
+        });
+})
+.factory('UsuarioRhHistorialFicha', ['HistorialFicha', '$q', function (HistorialFicha, $q) {
+    var res = function (idEmpleado)//idEmpresa, xxx
+    {
+        var delay = $q.defer();
+        HistorialFicha.query({
+            id_empleado: idEmpleado
+                  },function (entidades) {
             delay.resolve(entidades);
         }, function (error) {
             delay.reject(error);

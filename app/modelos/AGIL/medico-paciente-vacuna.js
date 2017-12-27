@@ -15,7 +15,7 @@ module.exports=function(sequelize,Sequelize){
       fecha_siguiente_aplicacion: {
 		type: Sequelize.DATE,
 		field: 'siguiente_aplicacion'
-	  },
+		},
 	  eliminado: {
 		type: Sequelize.BOOLEAN,
 		field: 'eliminado'

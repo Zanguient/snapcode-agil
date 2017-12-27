@@ -1,0 +1,1 @@
+ALTER TABLE agil_sucursal DROP pre_factura_correlativo;

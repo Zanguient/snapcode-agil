@@ -1,6 +1,7 @@
 module.exports=function(){
 	var Diccionario={
 		EGRE_FACTURACION:"FACT",
+		EGRE_PRE_FACTURACION:"PREFACT",
 		EGRE_BAJA:"BAJA",
 		EGRE_PROFORMA:"PFR",
 		EGRE_TRASPASO:"TRAS",

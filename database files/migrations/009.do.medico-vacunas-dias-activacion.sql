@@ -1,0 +1,1 @@
+ALTER TABLE agil_medico_vacuna ADD dias_activacion int(11)

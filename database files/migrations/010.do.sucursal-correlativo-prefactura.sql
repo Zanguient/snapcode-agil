@@ -1,0 +1,1 @@
+ALTER TABLE agil_sucursal ADD pre_factura_correlativo int default 1;

@@ -1,0 +1,2 @@
+ALTER TABLE agil_contabilidad_cuenta ADD cuenta_padre int;
+ALTER TABLE agil_contabilidad_cuenta ADD CONSTRAINT fk_agil_contabilidad_cuenta_padre_id FOREIGN KEY (cuenta_padre) REFERENCES agil_contabilidad_cuenta(id);
