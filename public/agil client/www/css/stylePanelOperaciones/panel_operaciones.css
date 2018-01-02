@@ -1,0 +1,416 @@
+/*==== botones de cambio de color ====== */
+#dialog-panel-operaciones .skyblue-style-button{
+    background-color: #0086ae !important;
+    border-color: #0086ae !important;
+    border-radius: 0px;
+    margin-top: 5px;
+}
+#dialog-panel-operaciones .green-style-button{
+    background-color: #007e87  !important;
+    border-color: #007e87  !important;
+    border-radius: 0px;
+    margin-top: 5px;
+}
+#dialog-panel-operaciones .red-style-button{
+    background-color: red !important;
+    border-color: red !important;
+    border-radius: 0px;
+    margin-top: 5px;
+}
+#dialog-panel-operaciones .brown-style-button {
+    background-color: #807e7e !important;
+    border-color: #807e7e !important;
+    border-radius: 0px;
+    margin-top: 5px;
+}
+
+#dialog-panel-operaciones .boton-azul{
+    background-color: #0086ae !important;
+    border-color: #0086ae !important;
+    border-radius: 0px 10px 0px 10px;
+    margin-top: 5px;
+    
+}
+#dialog-panel-operaciones .boton-verde{
+    background-color: #007e87 !important;
+    border-color: #007e87 !important;
+    border-radius: 10px 0px 10px 0px;
+    margin-top: 5px;
+    
+}
+#dialog-panel-operaciones .boton-rojo{
+    background-color: #e3403d !important;
+    border-color: #e3403d !important;
+    border-radius: 0px 10px 0px 10px;
+    margin-top: 5px;
+    
+}
+#dialog-panel-operaciones .boton-cafe {
+    background-color: #807e7e !important;
+    border-color: #807e7e !important;
+    border-radius: 10px 0px 10px 0px;
+    margin-top: 5px;
+    
+}
+.punto {
+	background-color: black;
+    height: 12px;
+    width: 12px;
+    border-radius: 50px;
+    /* padding-left: 40px; */
+    margin-left: 30px;
+    position: absolute;
+    /* margin-bottom: 0px; */
+    margin-top: -3px;
+}
+.group-color-button{
+	margin-left: -20px;
+}
+.button-circle{
+	background-color: red;
+    border-radius: 50% !important;
+    border-color: red !important;
+    border: 1px solid transparent;
+    color: white;
+}
+
+#dialog-panel-operaciones .red-style .nit-row {
+    background-color: #e3403d !important;
+}
+/*====== style imputs ======*/
+#dialog-panel-operaciones .red-style input, #dialog-panel-operaciones .red-style select, #dialog-panel-operaciones .red-style input[disabled] {
+    color: black !important;
+    background-color: white !important;
+    border: solid 1px #337ab7;
+}
+
+#dialog-panel-operaciones .skyblue-style input, #dialog-panel-operaciones .skyblue-style select, #dialog-panel-operaciones .skyblue-style input[disabled] {
+ 	color: black !important;
+    background-color: white !important;
+    border: solid 1px #0086ae;
+}
+#dialog-panel-operaciones .green-style input, #dialog-panel-operaciones .green-style select, #dialog-panel-operaciones .green-style input[disabled] {
+    color: black !important;
+    background-color: white !important;
+    border: solid 1px #007e87;
+
+}
+#dialog-panel-operaciones .brown-style input, #dialog-panel-operaciones .brown-style select, #dialog-panel-operaciones .brown-style input[disabled] {
+    color: black !important;
+    background-color: white !important;
+    border: solid 1px #807e7e;
+}
+/*==== style botones panel ==== */
+
+.btn-panel {
+    display: inline-block;
+    color: #FFF!important;
+    text-shadow: 0 -1px 0 rgba(0,0,0,.25);
+    background-image: none!important;
+    border: 5px solid #FFF;
+    border-radius: 0;
+    box-shadow: none!important;
+    -webkit-transition: background-color .15s,border-color .15s,opacity .15s;
+    -o-transition: background-color .15s,border-color .15s,opacity .15s;
+    transition: background-color .15s,border-color .15s,opacity .15s;
+    cursor: pointer;
+    vertical-align: middle;
+    margin: 0;
+    position: relative;
+}
+
+#dialog-panel-operaciones .red-button-panel {
+    background-color: #e3403d;
+    border-color: #e3403d;
+   	border-radius: 0px !important;
+    margin-top: 5px;
+}
+#dialog-panel-operaciones .red-style-button {
+    background-color: #e3403d !important;
+    border-color: #e3403d !important;
+    border-radius: 0px;
+    margin-top: 5px;
+}
+#dialog-panel-operaciones .skyblue-style .economico {
+    background-color: #e3403d !important;
+}
+#dialog-panel-operaciones .red-style .first-row {
+    border: thin solid #e3403d !important;
+}
+
+#dialog-panel-operaciones .red-button-order {
+    background-color: white !important;
+    border-color: white !important;
+    border-radius: 0px;
+    margin-top: 5px;
+
+}
+
+.btn-order {
+    display: inline-block;
+    color: red!important;
+    text-shadow: 0 -1px 0 rgba(0,0,0,.25);
+    background-image: none!important;
+    border: 5px solid #FFF;
+    border-radius: 0;
+    box-shadow: none!important;
+    -webkit-transition: background-color .15s,border-color .15s,opacity .15s;
+    -o-transition: background-color .15s,border-color .15s,opacity .15s;
+    transition: background-color .15s,border-color .15s,opacity .15s;
+    cursor: pointer;
+    vertical-align: middle;
+    margin: 0;
+    position: relative;
+}
+
+.productos-button{
+    width: 183px!important;
+    margin-right: 25px !important;
+
+    margin-top: 25px !important;
+   
+    /*border-width: 10px !important;*/
+}
+
+#dialog-panel-operaciones .red-style .swiper-slide {
+    background-color: white !important;
+    color: #e3403d !important;
+    border: 3px #e3403d solid !important; 
+    border-bottom: 35px #e3403d solid !important;
+}
+
+#dialog-panel-operaciones .skyblue-style .swiper-slide {
+    background-color: white !important;
+    color: #0086ae !important;
+    border: 3px #0086ae solid !important;
+    border-bottom: 35px #0086ae solid !important;
+}
+#dialog-panel-operaciones .skyblue-style label {
+    color: #0086ae !important;
+}
+
+#dialog-panel-operaciones .green-style .swiper-slide {
+    background-color: white !important;
+    color: #007e87 !important;
+    border: 3px #007e87 solid !important;
+    border-bottom: 35px #007e87 solid !important;
+}
+
+#dialog-panel-operaciones .brown-style .swiper-slide {
+    background-color: white !important;
+    color: #807e7e !important;
+    border: 3px #807e7e solid !important;
+    border-bottom: 35px #807e7e solid !important;
+}
+#dialog-panel-operaciones .brown-style .nit-row {
+    background-color: #807e7e !important;
+}
+#dialog-panel-operaciones .brown-style .first-row {
+    border: thin solid #807e7e !important;
+}
+#dialog-panel-operaciones .brown-style label {
+    color: #807e7e !important;
+}
+
+#dialog-panel-operaciones .skyblue-style .nit-row {
+    background-color: #0086ae !important;
+}
+#dialog-panel-operaciones .skyblue-style .first-row {
+    border: thin solid #0086ae !important;
+}
+#dialog-panel-operaciones .red-style .economico {
+    background-color: #0086ae !important;
+}
+#dialog-panel-operaciones .green-style .economico {
+    background-color: #e3403d !important;
+}
+#dialog-panel-operaciones .green-style .nit-row {
+    background-color: #007e87 !important;
+}
+#dialog-panel-operaciones .green-style .first-row {
+    border: thin solid #007e87 !important;
+}
+#dialog-panel-operaciones .green-style label {
+    color: #007e87 !important;
+}
+#dialog-panel-operaciones .brown-style .economico {
+    background-color: #0086ae !important;
+}
+#dialog-panel-operaciones .brown-style .economico label {
+    color: white !important;
+}
+.swiper-wrapper{
+	width: 1137px !important;
+}
+.no-skin .sidebar-toggle>.ace-icon {
+    border-color: #e3403d;
+    color: #fff;
+    background-color: #e3403d;
+}
+
+.panel-cantidad {
+    color: #F7F718;
+    font-size: 20px;
+    left: -1px;
+    border-radius: 20px 0px 10px;
+    position: absolute;
+    top: -2px !important;
+    z-index: 999999;
+    background-color: #e3403d;
+    width: 40px;
+}
+#dialog-panel-operaciones .red-style label.panel-cantidad{
+    background-color: #e3403d;
+    color: white!important;
+}
+
+#dialog-panel-operaciones .skyblue-style label.panel-cantidad{
+    background-color: #0086ae;
+    color: white!important;
+}
+
+#dialog-panel-operaciones .green-style label.panel-cantidad{
+    background-color: #007e87;
+    color: white!important;
+}
+
+#dialog-panel-operaciones .brown-style label.panel-cantidad{
+    background-color: #807e7e;
+    color: white!important;
+}
+#productos div h3 {
+    padding: 0px !important;
+    text-align: center;
+    margin-bottom: -30px;
+    color: white;
+    font-size: 20px;
+}
+.button-guardar{
+	opacity: 1 !important;
+}
+.button-check-group{
+	width: 200px;
+    overflow: scroll;
+    overflow-x: hidden;
+    height: 420px;
+}
+.text-cut{
+	overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.imput-search{
+	width: 90%;
+    margin-left: 10px;
+}
+.style-cliente{
+	background-color: #0086ae;
+    color: white;
+    padding-top: 15px;
+}
+.style-totales{
+	background-color: #e3403d;
+    color: white;
+    padding-top: 15px;
+    margin-top: 20px;
+}
+.style-modal-dates{
+	font-size: 25px;
+    text-align: center;
+    margin-bottom: 15px;
+    margin-top: 15px;
+}
+.style-button-align{
+	margin-top: 15px;
+}
+.text-size{
+	font-size: 12px!important;
+}
+.color-total{
+	    background-color: #0086ae!important;
+}
+
+.overlay{
+    display: none;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    position: fixed;
+    background-color: rgba(0, 0, 0, 0.6);
+}
+/*============ stilo inicio ==== */
+.square-service-block{
+	position:relative;
+	overflow:hidden;
+	margin:15px auto;
+	}
+.square-service-block a {
+  background-color: #008bb7;
+  border-radius: 12px;
+  display: block;
+  padding: 50px 20px;
+  text-align: center;
+  width: 90%;
+  opacity: .8; 
+}
+.square-service-block a:hover{
+  background-color: rgb(11, 122, 151);
+  border-radius: 12px;
+}
+
+.ssb-icon {
+  color: #fff;
+  display: inline-block;
+  font-size: 28px;
+  margin: 0 0 20px;
+}
+
+h2.ssb-title {
+  color: #fff;
+  font-size: 19px;
+  font-weight: 600;
+  margin:0;
+  padding:0;
+  text-transform: uppercase;
+}
+
+.fondo{
+	position: relative;
+  background-image: url('../img/fondo.jpg');
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-attachment: fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+
+  padding: 20px 0;
+
+
+}
+/*colores*/
+/*#807e7e === gris === */
+
+@media only screen and (min-width: 600px) {
+
+}
+
+@media (min-width: 768px) and (max-width: 1030px) {
+	.label-responsive{
+		font-size: 12px !important;
+	}
+	.label-order{
+		font-size: 9px !important;
+	}
+	.button-responsive{
+		width: 65px !important;
+    	height: 65px !important;
+    	font-size: 12.5px !important;
+	}
+}
+
+#dialog-pago {
+	z-index: 1080 !important;
+}

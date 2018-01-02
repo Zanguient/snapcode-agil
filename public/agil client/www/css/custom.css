@@ -608,6 +608,248 @@ background-color:white !important;
 #dialog-panel-ventas .skyblue-style .row-close{
 	background-color:rgb(255,255,255) !important; 
 }
+#dialog-panel-operaciones .red-style .first-row{
+	border:thin solid red !important;
+	}
+	
+	#dialog-panel-operaciones .red-style-button{
+		background-color: red !important;
+		border-color: red !important;
+		border-radius: 15px 50px;
+	}
+	
+	#dialog-panel-operaciones .red-style-button:hover{
+		background-color: red !important;
+		border-color: red !important;
+	}
+	
+	#dialog-panel-operaciones .red-style label{
+	color:red !important;
+	}
+	
+	#dialog-panel-operaciones .red-style input, #dialog-panel-operaciones .red-style select, #dialog-panel-operaciones .red-style input[disabled]{
+	color:white !important;
+	background-color:red !important; 	
+	}
+	
+	#dialog-panel-operaciones .red-style .swiper-slide{
+		background-color: white !important;
+		color:red !important;
+		border: thin red solid !important;
+	}
+	
+	#dialog-panel-operaciones .red-style .nit-row label{
+		color:white !important;
+	}
+	
+	#dialog-panel-operaciones .red-style .nit-row input,#dialog-panel-operaciones .nit-row select,#dialog-panel-operaciones .red-style .nit-row input[disabled]{
+	color:black !important;
+	background-color:white !important; 
+	}
+	
+	#dialog-panel-operaciones .red-style .nit-row{
+		background-color:red !important; 
+	}
+	
+	#dialog-panel-operaciones .red-style .economico label{
+	color:white !important;
+	}
+	
+	#dialog-panel-operaciones .red-style .economico input, #dialog-panel-operaciones .red-style .economico select,#dialog-panel-operaciones .red-style .economico input[disabled]{
+	color:rgb(79, 153, 198) !important;
+	background-color:white !important; 
+	}
+	
+	#dialog-panel-operaciones .red-style .economico{
+		background-color:rgb(79, 153, 198) !important; 
+	}
+	
+	#dialog-panel-operaciones .red-style .row-close{
+		background-color:rgb(255,255,255) !important; 
+	}
+	
+	
+	#dialog-panel-operaciones .green-style .first-row{
+	border:thin solid rgb(98, 155, 88) !important;
+	}
+	
+	#dialog-panel-operaciones .green-style-button{
+		background-color: rgb(98, 155, 88) !important;
+		border-color: rgb(98, 155, 88) !important;
+		border-radius: 50px 15px;
+	}
+	
+	#dialog-panel-operaciones .green-style-button:hover{
+		background-color: rgb(98, 155, 88) !important;
+		border-color: rgb(13, 179, 133) !important;
+	}
+	
+	#dialog-panel-operaciones .green-style label{
+	color:rgb(98, 155, 88) !important;
+	}
+	
+	#dialog-panel-operaciones .green-style input, #dialog-panel-operaciones .green-style select, #dialog-panel-operaciones .green-style input[disabled]{
+	color:white !important;
+	background-color:rgb(98, 155, 88) !important; 	
+	}
+	
+	#dialog-panel-operaciones .green-style .swiper-slide{
+		background-color: white !important;
+		color:rgb(98, 155, 88) !important;
+		border: thin rgb(98, 155, 88) solid !important;
+	}
+	
+	#dialog-panel-operaciones .green-style .nit-row label{
+		color:white !important;
+	}
+	
+	#dialog-panel-operaciones .green-style .nit-row input,#dialog-panel-operaciones .nit-row select,#dialog-panel-operaciones .green-style .nit-row input[disabled]{
+	color:black !important;
+	background-color:white !important; 
+	}
+	
+	#dialog-panel-operaciones .green-style .nit-row{
+		background-color:rgb(98, 155, 88) !important; 
+	}
+	
+	#dialog-panel-operaciones .green-style .economico label{
+	color:white !important;
+	}
+	
+	#dialog-panel-operaciones .green-style .economico input, #dialog-panel-operaciones .green-style .economico select,#dialog-panel-operaciones .green-style .economico input[disabled]{
+	color:red !important;
+	background-color:white !important; 
+	}
+	
+	#dialog-panel-operaciones .green-style .economico{
+		background-color:red !important; 
+	}
+	
+	#dialog-panel-operaciones .green-style .row-close{
+		background-color:rgb(255,255,255) !important; 
+	}
+	
+	
+	#dialog-panel-operaciones .brown-style .first-row{
+	border:thin solid rgb(170, 37, 0) !important;
+	}
+	
+	#dialog-panel-operaciones .brown-style-button{
+		background-color: rgb(170, 37, 0) !important;
+		border-color: rgb(170, 37, 0) !important;
+		border-radius: 50px 15px;
+	}
+	
+	#dialog-panel-operaciones .brown-style-button:hover{
+		background-color: rgb(170, 37, 0) !important;
+		border-color: rgb(170, 37, 0) !important;
+	}
+	
+	#dialog-panel-operaciones .brown-style label{
+	color:rgb(170, 37, 0) !important;
+	}
+	
+	#dialog-panel-operaciones .brown-style input, #dialog-panel-operaciones .brown-style select, #dialog-panel-operaciones .brown-style input[disabled]{
+	color:white !important;
+	background-color:rgb(170, 37, 0) !important; 	
+	}
+	
+	#dialog-panel-operaciones .brown-style .swiper-slide{
+		background-color: white !important;
+		color:rgb(170, 37, 0) !important;
+		border: thin rgb(170, 37, 0) solid !important;
+	}
+	
+	#dialog-panel-operaciones .brown-style .nit-row label{
+		color:white !important;
+	}
+	
+	#dialog-panel-operaciones .brown-style .nit-row input,#dialog-panel-operaciones .nit-row select,#dialog-panel-operaciones .brown-style .nit-row input[disabled]{
+	color:black !important;
+	background-color:white !important; 
+	}
+	
+	#dialog-panel-operaciones .brown-style .nit-row{
+		background-color:rgb(170, 37, 0) !important; 
+	}
+	
+	#dialog-panel-operaciones .brown-style .economico label{
+	color:black !important;
+	}
+	
+	#dialog-panel-operaciones .brown-style .economico input, #dialog-panel-operaciones .brown-style .economico select,#dialog-panel-operaciones .brown-style .economico input[disabled]{
+	color:black !important;
+	background-color:white !important; 
+	}
+	
+	#dialog-panel-operaciones .brown-style .economico{
+		background-color:yellow !important; 
+	}
+	
+	#dialog-panel-operaciones .brown-style .row-close{
+		background-color:rgb(255,255,255) !important; 
+	}
+	
+	
+	#dialog-panel-operaciones .skyblue-style .first-row{
+	border:thin solid rgb(79, 153, 198) !important;
+	}
+	
+	#dialog-panel-operaciones .skyblue-style-button{
+		background-color: rgb(79, 153, 198) !important;
+		border-color: rgb(79, 153, 198) !important;
+		border-radius: 15px 50px;
+	}
+	
+	#dialog-panel-operaciones .skyblue-style-button:hover{
+		background-color: rgb(79, 153, 198) !important;
+		border-color: rgb(79, 153, 198) !important;
+	}
+	
+	#dialog-panel-operaciones .skyblue-style label{
+	color:rgb(79, 153, 198) !important;
+	}
+	
+	#dialog-panel-operaciones .skyblue-style input, #dialog-panel-operaciones .skyblue-style select, #dialog-panel-operaciones .skyblue-style input[disabled]{
+	color:white !important;
+	background-color:rgb(79, 153, 198) !important; 	
+	}
+	
+	#dialog-panel-operaciones .skyblue-style .swiper-slide{
+		background-color: white !important;
+		color:rgb(79, 153, 198) !important;
+		border: thin rgb(79, 153, 198) solid !important;
+	}
+	
+	#dialog-panel-operaciones .skyblue-style .nit-row label{
+		color:white !important;
+	}
+	
+	#dialog-panel-operaciones .skyblue-style .nit-row input,#dialog-panel-operaciones .nit-row select,#dialog-panel-operaciones .skyblue-style .nit-row input[disabled]{
+	color:black !important;
+	background-color:white !important; 
+	}
+	
+	#dialog-panel-operaciones .skyblue-style .nit-row{
+		background-color:rgb(79, 153, 198) !important; 
+	}
+	
+	#dialog-panel-operaciones .skyblue-style .economico label{
+	color:white !important;
+	}
+	
+	#dialog-panel-operaciones .skyblue-style .economico input, #dialog-panel-operaciones .skyblue-style .economico select,#dialog-panel-operaciones .skyblue-style .economico input[disabled]{
+	color:red !important;
+	background-color:white !important; 
+	}
+	
+	#dialog-panel-operaciones .skyblue-style .economico{
+		background-color:red !important; 
+	}
+	
+	#dialog-panel-operaciones .skyblue-style .row-close{
+		background-color:rgb(255,255,255) !important; 
+	}
 .text-red{
 	color:red;
 }

@@ -375,7 +375,7 @@ module.exports = function (router, ContabilidadCuenta, ClasificacionCuenta, Tipo
 
 	router.route('/contabilidad-cuentas/empresa/:id_empresa/clasificacion/:id_clasificacion/tipo/:id_tipo/monto/:monto/pagina/:pagina/items-pagina/:items_pagina/busqueda/:busqueda/columna/:columna/direccion/:direccion')
 		.get(/*ensureAuthorized,*/function (req, res) {
-			var condicionCuenta = {}, ordenArreglo = [];
+			var condicionCuenta = {}, ordenArreglo = [],paginas;
 
 			if (req.params.columna == "clasificacion") {
 				ordenArreglo.push({ model: ClasificacionCuenta, as: 'clasificacion' });
@@ -422,8 +422,7 @@ module.exports = function (router, ContabilidadCuenta, ClasificacionCuenta, Tipo
 				include: [{ model: ClasificacionCuenta, as: 'clasificacion' }],
 
 			}).then(function (data) {
-				ContabilidadCuenta.findAll({
-					offset: (req.params.items_pagina * (req.params.pagina - 1)), limit: req.params.items_pagina,
+				var datosCuenta={ 
 					where: condicionCuenta,
 					include: [
 						{
@@ -438,8 +437,20 @@ module.exports = function (router, ContabilidadCuenta, ClasificacionCuenta, Tipo
 						}
 					],
 					order: [ordenArreglo]
-				}).then(function (cuentas) {
-					res.json({ cuentas: cuentas, paginas: Math.ceil(data.count / req.params.items_pagina) });
+				}
+
+				if(req.params.items_pagina!=0){
+					paginas=Math.ceil(data.count/req.params.items_pagina);
+					datosCuenta.offset=(req.params.items_pagina*(req.params.pagina-1));
+					datosCuenta.limit=req.params.items_pagina;
+				}else{
+					paginas=1;
+				}
+
+				ContabilidadCuenta.findAll(
+					datosCuenta
+				).then(function (cuentas) {
+					res.json({ cuentas: cuentas, paginas: paginas });
 				});
 			})
 		});

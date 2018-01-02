@@ -156,7 +156,7 @@ angular.module('agil.servicios')
     return res;
 }])
 .factory('HistorialFicha', function ($resource) {
-    return $resource(restServer + "usuario-ficha/:id_empleado", null,
+    return $resource(restServer + "usuario-ficha/:id_empleado",{ id_empleado: '@id_empleado' },
         {
             'update': { method: 'PUT' }
         });
@@ -176,3 +176,33 @@ angular.module('agil.servicios')
     };
     return res;
 }])
+.factory('UsuarioHojaVida', function ($resource) {
+    return $resource(restServer + "usuario-hoja-vida/:id_empleado",{ id_empleado: '@id_empleado' },
+        {
+            'update': { method: 'PUT' }
+        });
+})
+.factory('ObtenerEmpleadoHojaVida', ['UsuarioHojaVida', '$q', function (UsuarioHojaVida, $q) {
+    var res = function (idEmpleado) {
+        var delay = $q.defer();
+        UsuarioHojaVida.get({ id_empleado: idEmpleado}, function (entidad) {
+            delay.resolve(entidad);
+        }, function (error) {
+            delay.reject(error);
+        });
+        return delay.promise;
+    };
+    return res;
+}])   
+.factory('GuardarEmpleadoHojaVida', ['UsuarioHojaVida', '$q', function (UsuarioHojaVida, $q) {
+    var res = function (idEmpleado,hojaVida) {
+        var delay = $q.defer();
+        UsuarioHojaVida.save({ id_empleado: idEmpleado},hojaVida,function (entidad) {
+            delay.resolve(entidad);
+        }, function (error) {
+            delay.reject(error);
+        });
+        return delay.promise;
+    };
+    return res;
+}]) 

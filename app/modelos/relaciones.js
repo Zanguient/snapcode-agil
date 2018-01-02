@@ -11,8 +11,7 @@ module.exports = function (sequelize, Usuario, Persona, Rol, UsuarioRol, Tipo, C
 	ClienteCuenta, ProveedorCuenta, MedicoPrerequisito, ConfiguracionCuenta, MedicoVacuna, VacunaDosis, MedicoPacienteVacuna, MedicoPacienteVacunaDosis, VistaColumnasAplicacion,
 	MedicoPacienteConsulta, MedicoPacienteFicha, MedicoLaboratorioExamen, MedicoLaboratorio, MedicoLaboratorioPaciente, MedicoLaboratorioResultado, MedicoDiagnostico, MedicoDiagnosticoExamen, MedicoDiagnosticoPaciente, MedicoDiagnosticoResultado,
 	MantenimientoOrdenTrabajo, MantenimientoOrdenTrabajoManoObra, MantenimientoOrdenTrabajoMaterial, MantenimientoOrdenTrabajoServicioExterno, MantenimientoOrdenTrabajoSistema,VendedorVenta,RrhhEmpleadoFicha,RrhhEmpleadoFichaOtrosSeguros,RrhhEmpleadoFichaFamiliar,MedicoPacientePreRequisito,RrhhEmpleadoDiscapacidad,RrhhEmpleadoCargo,
-  ClienteRazon,GtmDestino,GtmEstibaje,GtmGrupoEstibaje,GtmTransportista) {
-
+  ClienteRazon,GtmDestino,GtmEstibaje,GtmGrupoEstibaje,GtmTransportista,RrhhEmpleadoHojaVida,RrhhEmpleadoFormacionAcademica,RrhhEmpleadoExperienciaLaboral,RrhhEmpleadoLogroInternoExterno,RrhhEmpleadoCapacidadInternaExterna,SolicitudReposicion,DetalleSolicitudProducto,DetalleSolicitudProductoBase) {
 	Persona.hasOne(Usuario, { foreignKey: 'id_persona', as: 'usuario' });
 	Persona.belongsTo(Clase, { foreignKey: 'id_lugar_nacimiento', as: 'lugar_nacimiento' });
 	Persona.belongsTo(Clase, { foreignKey: 'id_genero', as: 'genero' });
@@ -142,6 +141,12 @@ module.exports = function (sequelize, Usuario, Persona, Rol, UsuarioRol, Tipo, C
 
 	Clase.hasMany(RrhhEmpleadoCargo, { foreignKey: 'id_cargo', as: 'cargos' });
 	Clase.hasMany(RrhhEmpleadoDiscapacidad, { foreignKey: 'id_discapacidad', as: 'discapacidades' });
+	Clase.hasMany(RrhhEmpleadoFormacionAcademica,{foreignKey:'id_grado', as: 'grados'})
+	Clase.hasMany(RrhhEmpleadoFormacionAcademica,{foreignKey:'id_titulo', as: 'titulos'})
+	Clase.hasMany(RrhhEmpleadoFormacionAcademica,{foreignKey:'id_institucion', as: 'instituciones'})
+	Clase.hasMany(RrhhEmpleadoLogroInternoExterno,{foreignKey:'id_tipo_logro', as: 'logros'})
+	Clase.hasMany(RrhhEmpleadoCapacidadInternaExterna,{foreignKey:'id_tipo_capacidad', as: 'capacidades'})
+
 	// MedicoPrerequisito.belongsTo(Clase, { foreignKey: 'id_prerequisito', as: 'prerequisitoClase' });//Ya no es requerido/util/relacion desde 13/12/2017
 	// MedicoPrerequisito.belongsTo(MedicoPaciente, { foreignKey: 'id_paciente', as: 'prerequisitoPaciente' });///Ya no es requerido/util/relacion desde 13/12/2017
 	MedicoPrerequisito.hasMany(MedicoPacientePreRequisito,{foreignKey: 'id_prerequisito', as:'preRequisitos'})
@@ -243,6 +248,26 @@ module.exports = function (sequelize, Usuario, Persona, Rol, UsuarioRol, Tipo, C
 	Almacen.hasMany(Venta, { foreignKey: 'id_almacen', as: 'ventas' });
 	Almacen.hasMany(Venta, { foreignKey: 'id_almacen_traspaso', as: 'ventasTraspaso' });
 	Almacen.hasMany(Producto, { foreignKey: 'id_almacen_erp', as: 'productos' });
+	
+	//operaciones solicitud viveres
+	Almacen.hasMany(SolicitudReposicion,{foreignKey:'id_almacen',as:'almacenes'})
+	SolicitudReposicion.belongsTo(Almacen,{foreignKey:'id_almacen',as:'almacen'})
+
+	SolicitudReposicion.hasMany(DetalleSolicitudProducto,{foreignKey:'id_solicitud',as:'solicitudesProductos'})
+	DetalleSolicitudProducto.belongsTo(SolicitudReposicion,{foreignKey:'id_solicitud',as:'solicitudProducto'})
+
+	Producto.hasMany(DetalleSolicitudProducto,{foreignKey:'id_producto',as:'productosSolicitados'})
+	DetalleSolicitudProducto.belongsTo(Producto,{foreignKey:'id_producto',as:'productoSolicitado'})
+
+	DetalleSolicitudProducto.hasMany(DetalleSolicitudProductoBase,{foreignKey:'id_detalle_solicitud_producto',as:'detallesIngredientesProducto'})
+	DetalleSolicitudProductoBase.belongsTo(DetalleSolicitudProducto,{foreignKey:'id_detalle_solicitud_producto',as:'detalleIngredienteProducto'})
+	
+	Producto.hasMany(DetalleSolicitudProductoBase,{foreignKey:'id_producto_base',as:'productosSolicitudBase'})
+	DetalleSolicitudProductoBase.belongsTo(Producto,{foreignKey:'id_producto_base',as:'productoSolicitudBase'})
+	Usuario.hasMany(SolicitudReposicion,{foreignKey:'id_usuario', as:'usuarios'})
+	SolicitudReposicion.belongsTo(Usuario,{foreignKey:'id_usuario', as:'usuario'})
+	Clase.hasMany(SolicitudReposicion,{foreignKey:'id_movimiento', as:'movimientos'})
+	SolicitudReposicion.belongsTo(Clase,{foreignKey:'id_movimiento', as:'movimiento'})
 
 	Dosificacion.belongsTo(Empresa, { foreignKey: 'id_empresa', as: 'empresa' });
 	Dosificacion.hasMany(SucursalActividadDosificacion, { foreignKey: 'id_dosificacion', as: 'actividadesSucursales' });
@@ -422,6 +447,8 @@ module.exports = function (sequelize, Usuario, Persona, Rol, UsuarioRol, Tipo, C
 	MedicoPaciente.belongsTo(Clase, { foreignKey: 'id_tipo_documento', as: 'tipoDocumento' });
 	MedicoPaciente.hasMany(RrhhEmpleadoDiscapacidad, { foreignKey: 'id_empleado', as: 'discapacidades' });
 	MedicoPaciente.hasMany(RrhhEmpleadoCargo, { foreignKey: 'id_empleado', as: 'cargos' });
+	MedicoPaciente.hasOne(RrhhEmpleadoHojaVida,{foreignKey:'id_empleado', as: 'hojaVida'})
+
 
 	MedicoPacienteVacuna.belongsTo(MedicoPaciente, { foreignKey: 'id_paciente', as: 'paciente' })
 
@@ -603,7 +630,26 @@ module.exports = function (sequelize, Usuario, Persona, Rol, UsuarioRol, Tipo, C
 	GtmGrupoEstibaje.belongsTo(Empresa, { foreignKey: 'id_empresa', as: 'empresa' });
 
 
+	RrhhEmpleadoHojaVida.belongsTo(MedicoPaciente,{foreignKey:'id_empleado', as: 'empleado'})
+	RrhhEmpleadoHojaVida.hasMany(RrhhEmpleadoFormacionAcademica,{foreignKey:'id_hoja_vida', as: 'formacionesAcademicas'})
+	RrhhEmpleadoHojaVida.hasMany(RrhhEmpleadoExperienciaLaboral,{foreignKey:'id_hoja_vida', as: 'experienciasLaborales'})
+	RrhhEmpleadoHojaVida.hasMany(RrhhEmpleadoLogroInternoExterno,{foreignKey:'id_hoja_vida', as: 'logros'})
+	RrhhEmpleadoHojaVida.hasMany(RrhhEmpleadoCapacidadInternaExterna,{foreignKey:'id_hoja_vida', as: 'capacidades'})
 
+	RrhhEmpleadoFormacionAcademica.belongsTo(RrhhEmpleadoHojaVida,{foreignKey:'id_hoja_vida', as: 'formacionAcademica'})
+	RrhhEmpleadoFormacionAcademica.belongsTo(Clase,{foreignKey:'id_grado', as: 'grado'})
+	RrhhEmpleadoFormacionAcademica.belongsTo(Clase,{foreignKey:'id_titulo', as: 'titulo'})
+	RrhhEmpleadoFormacionAcademica.belongsTo(Clase,{foreignKey:'id_institucion', as: 'institucion'})	
+
+	RrhhEmpleadoExperienciaLaboral.belongsTo(RrhhEmpleadoHojaVida,{foreignKey:'id_hoja_vida', as: 'experienciaLaboral'})
+
+	RrhhEmpleadoLogroInternoExterno.belongsTo(RrhhEmpleadoHojaVida,{foreignKey:'id_hoja_vida', as: 'logro'})
+	RrhhEmpleadoLogroInternoExterno.belongsTo(Clase,{foreignKey:'id_tipo_logro', as: 'tipoLogro'})
+
+	RrhhEmpleadoCapacidadInternaExterna.belongsTo(RrhhEmpleadoHojaVida,{foreignKey:'id_hoja_vida', as: 'capacidad'})
+	RrhhEmpleadoCapacidadInternaExterna.belongsTo(Clase,{foreignKey:'id_tipo_capacidad', as: 'tipoCapacidad'})
+
+	
 
 
 

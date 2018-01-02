@@ -15,7 +15,6 @@ angular.module('agil.filtros', [])
         
     }
 })
-
 .filter('groupBy',
             function () {
                 return function (collection, key) {

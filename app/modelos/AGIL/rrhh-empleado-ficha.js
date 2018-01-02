@@ -43,6 +43,10 @@ module.exports=function(sequelize,Sequelize){
       haber_basico: {
 		type: Sequelize.DECIMAL(20,4),
 		field: 'haber_basico' 
+	  },
+	  haber_basico_literal: {
+		type: Sequelize.STRING,
+		field: 'haber_basico_literal'
       },
       contrato: {
 		type: Sequelize.STRING,

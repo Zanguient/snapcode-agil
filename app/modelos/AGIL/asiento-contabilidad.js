@@ -27,6 +27,10 @@ module.exports = function (sequelize, Sequelize) {
         eliminado: {
             type: Sequelize.BOOLEAN,
             field: 'eliminado'
+        },
+        glosa:{
+            type: Sequelize.STRING,
+            field: 'glosa'
         }
     }, {
             freezeTableName: true

@@ -1,0 +1,1 @@
+ALTER TABLE agil_rrhh_empleado_ficha ADD haber_basico_literal varchar(255);

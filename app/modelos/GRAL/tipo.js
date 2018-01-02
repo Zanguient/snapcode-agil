@@ -174,7 +174,22 @@ module.exports=function(sequelize,Sequelize){
 		sequelize.query("INSERT IGNORE INTO gl_tipo SET id = 52,nombre = 'BANCO',nombre_corto='RRHH_BAN',createdAt = NOW(),updatedAt = NOW();").spread(function(results, metadata) {
 			
 		});
-		sequelize.query("INSERT IGNORE INTO gl_tipo SET id = 52,nombre = 'RELACION',nombre_corto='RRHH_REL',createdAt = NOW(),updatedAt = NOW();").spread(function(results, metadata) {
+		sequelize.query("INSERT IGNORE INTO gl_tipo SET id = 53,nombre = 'RELACION',nombre_corto='RRHH_REL',createdAt = NOW(),updatedAt = NOW();").spread(function(results, metadata) {
+			
+		});
+		sequelize.query("INSERT IGNORE INTO gl_tipo SET id = 54,nombre = 'GRADO',nombre_corto='RRHH_GRA',createdAt = NOW(),updatedAt = NOW();").spread(function(results, metadata) {
+			
+		});
+		sequelize.query("INSERT IGNORE INTO gl_tipo SET id = 55,nombre = 'TITULO',nombre_corto='RRHH_TITL',createdAt = NOW(),updatedAt = NOW();").spread(function(results, metadata) {
+			
+		});
+		sequelize.query("INSERT IGNORE INTO gl_tipo SET id = 56,nombre = 'INSTITUCION',nombre_corto='RRHH_INST',createdAt = NOW(),updatedAt = NOW();").spread(function(results, metadata) {
+			
+		});
+		sequelize.query("INSERT IGNORE INTO gl_tipo SET id = 57,nombre = 'TIPO CAPACIDAD',nombre_corto='RRHH_TCIE',createdAt = NOW(),updatedAt = NOW();").spread(function(results, metadata) {
+			
+		});
+		sequelize.query("INSERT IGNORE INTO gl_tipo SET id = 58,nombre = 'TIPO LOGRO',nombre_corto='RRHH_TLIC',createdAt = NOW(),updatedAt = NOW();").spread(function(results, metadata) {
 			
 		});
 	});

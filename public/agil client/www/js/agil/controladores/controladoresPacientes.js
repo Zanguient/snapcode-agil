@@ -1,5 +1,5 @@
 angular.module('agil.controladores')
-    .controller('ControladorPacientes', function ($scope, blockUI, $localStorage, $window, $location, $templateCache, $route, Usuario, Paginator, DatosPacientes, Paciente, $filter, PacientesPaginador, ListaDatosPrerequisito,
+    .controller('ControladorPacientes', function ($scope, $sce, blockUI, $localStorage, $window, $location, $templateCache, $route, Usuario, Paginator, DatosPacientes, Paciente, $filter, PacientesPaginador, ListaDatosPrerequisito,
         CrearPrerequisito, Prerequisito, DatosPrerequisitoPaciente, ListaDatosGenero, Vacunas, ltsVacunas, PacienteVacuna, VacunasPaciente, asignacionPacienteVacuna, aplicacionPacienteVacuna, VacunasPacientedosis, CrearMedicoPacienteConsulta,
         ListaConsultasMedicoPaciente, CrearMedicoPacienteFicha, BuscarFichaPaciente, ListaDatosTiposControl, ActualizarPatologiaPaciente, ListaPrerequisitosEmpresa, ListaPrerequisitosPaciente, ActualizarPrerequisito, CrearLaboratorio, ListaLaboratorios,
         CrearLaboratorioExamen, ListaLaboratorioExamenes, CrearLaboratorioExamenResultado, LaboratorioExamenListaHistorial, CrearDiagnostico, ListaDiagnosticos, CrearDiagnosticoExamen, ListaDiagnosticoExamenes, DiagnosticoExamenListaHistorial, CrearDiagnosticoExamenResultado,
@@ -118,14 +118,15 @@ angular.module('agil.controladores')
             $scope.eliminarPopup($scope.idModalReprogramarVacunas)
             $scope.eliminarPopup($scope.idModalDialogConfirmacionEntregaAdelantado);
         });
-
+     
         $scope.inicio = function () {
             $scope.obtenerAlertas()
             blockUI.start();
+          
             $scope.paginator = { pages: [] }
             $scope.obtenerPacientes();
             $scope.obtenerVacunas()
-            $scope.paciente = { vacunas: [] };
+            $scope.paciente = { vacunas: [], cargos: [] };
             $scope.vacunas = []
             $scope.vacuna = { vacunaDosis: [] }
             $scope.vacunaDosis = []
@@ -137,7 +138,6 @@ angular.module('agil.controladores')
             $scope.obtenerTipoControl()
             $scope.obtenerCargos()
             $scope.examen = {};
-
             $scope.filtroHistorialVacunas = []
             $scope.filtroVacunas = { inicio: "", fin: "", opcion: "todas" }
             var fechaAplicacionVacuna = new Date()
@@ -147,6 +147,7 @@ angular.module('agil.controladores')
             $scope.dosisEdit = false
             $scope.fechaResultado = $scope.fechaATexto(new Date())
         }
+        
         $scope.obtenerExpeditos = function () {
             blockUI.start();
             var promesa = ClasesTipo("RRHH_EXP");
@@ -155,25 +156,23 @@ angular.module('agil.controladores')
                 blockUI.stop();
             });
         }
+
         $scope.obtenerCargos = function () {
             blockUI.start();
             var promesa = ClasesTipo("RRHH_CARGO");
             promesa.then(function (entidad) {
                 var cargos = entidad.clases
-                if(cargos.length >0){
-                    $scope.llenarCargos(cargos)
-                }else{
-                    $scope.mostrarMensaje('No existen datos de cargos en la base de datos.')
-                }
-                
+                $scope.llenarCargos(cargos)
                 blockUI.stop();
             });
         }
-        $scope.seleccionarCargos = function (cargosEmpleado) {
-            if (cargos.cargosEmpleado > 0) {
+
+
+        $scope.seleccionarCargos = function (cargosPaciente) {
+            if (cargosPaciente.length > 0) {
                 for (var i = 0; i < $scope.cargos.length; i++) {
-                    for (var j = 0; j < cargosEmpleado.length; j++) {
-                        if ($scope.cargos[i].id == cargosEmpleado[j].id_cargo) {
+                    for (var j = 0; j < cargosPaciente.length; j++) {
+                        if ($scope.cargos[i].id == cargosPaciente[j].id_cargo) {
                             $scope.cargos[i].ticked = true;
                         }
                     }
@@ -182,6 +181,7 @@ angular.module('agil.controladores')
         }
 
         $scope.llenarCargos = function (cargos) {
+            $scope.nuevoRH = ""
             $scope.cargos = [];
             for (var i = 0; i < cargos.length; i++) {
                 var cargo = {
@@ -1261,7 +1261,7 @@ angular.module('agil.controladores')
         }
 
         $scope.cerrarPopupPacienteNuevo = function () {
-            $scope.obtenerCargos()
+            // $scope.obtenerCargos()
             $scope.cerrarPopup($scope.idModalDialogPacienteNuevo);
         }
 
@@ -1516,6 +1516,8 @@ angular.module('agil.controladores')
             promesaPaciente.then(function (paciente) {
                 console.log(paciente)
                 $scope.paciente = paciente
+                // $scope.ficha.empleado.cargo = []
+                $scope.seleccionarCargos($scope.paciente.cargos)
                 $scope.paciente.fecha_nacimiento_texto = $scope.fechaATexto($scope.paciente.persona.fecha_nacimiento)
                 $scope.paciente.persona.imagen = (paciente.persona.imagen == null) ? "img/icon-user-default.png" : paciente.persona.imagen
                 console.log($scope.paciente.fecha_nacimiento_texto)
@@ -1649,7 +1651,7 @@ angular.module('agil.controladores')
                         blockUI.stop();
                         $scope.cerrarPopupPacienteNuevo();
                         $scope.obtenerPacientes();
-                        $scope.mostrarMensaje('Guardado Exitosamente!');
+                        $scope.mostrarMensaje(res.message);
                         $scope.recargarItemsTabla()
                     }, function (error) {
                         blockUI.stop();
@@ -1811,9 +1813,9 @@ angular.module('agil.controladores')
 
         $scope.abrirDialogHistorialConsulta = function () {
             $scope.listarConsultasPaciente({ inicio: 0, fin: 0 })
-            $scope.dynamicPopoverCargos = {           
-                templateUrl: 'consultaPopoverTemplate.html',            
-              };
+            $scope.dynamicPopoverCargos = {
+                templateUrl: 'consultaPopoverTemplate.html',
+            };
             $scope.abrirPopup($scope.idModalHistorialConsulta);
         }
 

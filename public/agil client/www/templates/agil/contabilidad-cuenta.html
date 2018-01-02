@@ -119,6 +119,7 @@
 				<table id="tabla-contabilidadCuentas" class="table table-striped table-bordered table-hover">
 					<thead>
 						<tr>
+							<th class="center">N°</th>
 							<th class="center" ng-if="fieldViewer.getConfiguration().codigo.show"><a href="javascript:void(0)" ng-click="paginator.sortColumn('codigo',obtenerLista)">Código <span id="codigo" class="sort fa fa-sort icon-only"></span></a></th>
 							<th class="center" ng-if="fieldViewer.getConfiguration().nombre.show"><a href="javascript:void(0)" ng-click="paginator.sortColumn('nombre',obtenerLista)">Nombre <span id="nombre" class="sort fa fa-sort icon-only"></span></a></th>
 							<th class="center" ng-if="fieldViewer.getConfiguration().debe.show"><a href="javascript:void(0)" ng-click="paginator.sortColumn('debe',obtenerLista)">Debe <span id="debe" class="sort fa fa-sort icon-only"></span></a></th>
@@ -148,6 +149,9 @@
 
 					<tbody>
 						<tr ng-if="!cuenta.eliminado" ng-repeat="cuenta in Cuentas">
+							<td>
+								{{($index+1)+(paginator.itemsPerPage*(paginator.currentPage-1))}}
+							</td>
 							<td ng-if="fieldViewer.getConfiguration().codigo.show">
 								{{cuenta.codigo}}
 							</td>
@@ -178,7 +182,7 @@
 							</td>
 							<td>
 								<div class="hidden-sm hidden-xs action-buttons">
-									<a class="orange" href="javascript:void(0)" ng-click="kardexCuenta(cuenta);">
+									<a class="orange" href="javascript:void(0)" ng-click="abrirModalLibrosMayores(cuenta);">
 										<i class="ace-icon fa fa-file-text bigger-130"></i>
 									</a>
 									<a class="green" href="javascript:void(0)" e-disabled="!aplicacion.puede_modificar" ng-click="modificarCuenta(cuenta)">
@@ -637,22 +641,6 @@
 									<select id="presupuestaria" name="presupuestaria" class="col-xs-10 col-sm-8">
 									</select>
 
-								</div>
-								<div class="col-sm-2">
-									<a class="blue" href="javascript:void(0)" e-disabled="!aplicacion.puede_modificar">
-										<i class="ace-icon fa fa-plus bigger-130"></i>
-									</a>
-									<a class="green" href="javascript:void(0)" e-disabled="!aplicacion.puede_modificar">
-										<i class="ace-icon fa fa-pencil bigger-130"></i>
-									</a>
-								</div>
-							</div>
-							<div class="form-group">
-								<label class="col-sm-4 control-label no-padding-right" for="costos">C. Costos</label>
-
-								<div class="col-sm-6">
-									<select id="costos" name="costos" class="col-xs-10 col-sm-8">
-									</select>
 								</div>
 								<div class="col-sm-2">
 									<a class="blue" href="javascript:void(0)" e-disabled="!aplicacion.puede_modificar">

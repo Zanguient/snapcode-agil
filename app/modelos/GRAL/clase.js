@@ -11,6 +11,10 @@ module.exports=function(sequelize,Sequelize){
 	  nombre_corto:{
 		type: Sequelize.STRING,
 		field: 'nombre_corto' 
+	  },
+	  habilitado:{
+		type: Sequelize.BOOLEAN,
+		field: 'habilitado' 
 	  }
 	}, {
 	  freezeTableName: true 

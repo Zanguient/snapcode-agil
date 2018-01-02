@@ -6,7 +6,6 @@ angular.module('agil.controladores')
 											socket,ConfiguracionVentaVistaDatos,ConfiguracionVentaVista,ListaGruposProductoEmpresa,
 											ConfiguracionImpresionEmpresaDato,ImprimirSalida,ListaVendedorVenta,VendedorVenta,VendedorVentaActualizacion){
 	blockUI.start();
-	
 	$scope.usuario=JSON.parse($localStorage.usuario);
 	convertUrlToBase64Image($scope.usuario.empresa.imagen,function(imagenEmpresa){
 		$scope.usuario.empresa.imagen=imagenEmpresa;
@@ -142,7 +141,6 @@ angular.module('agil.controladores')
 			$scope.checkedUnchecked = function() {
 				for (var i = 0; i < $scope.grupos_productos.length; i++) {
 					$scope.grupos_productos[i].selected = $scope.allChecked;
-
 				}
 				$scope.saveCheckList();
 			}

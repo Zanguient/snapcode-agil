@@ -66,6 +66,7 @@ router.route('/tipos/:id_tipo')
 						Clase.update({
 							nombre:clase.nombre,
 							nombre_corto:clase.nombre_corto,
+							habilitado:clase.habilitado
 						},{ 
 							where: { id : clase.id }
 						}).then(function(claseActualizada){
@@ -75,7 +76,8 @@ router.route('/tipos/:id_tipo')
 						Clase.create({
 							nombre:clase.nombre,
 							nombre_corto:clase.nombre_corto,
-							id_tipo:req.params.id_tipo
+							id_tipo:req.params.id_tipo,
+							habilitado:clase.habilitado
 						}).then(function(claseCreado){
 							
 						});

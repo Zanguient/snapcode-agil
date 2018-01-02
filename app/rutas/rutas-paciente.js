@@ -81,11 +81,11 @@ module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Su
 									id_extension: req.body.extension.id,
 									grupo_sanguineo: req.body.grupo_sanguineo,
 									cargo: req.body.cargo,
-									campo: req.body.campo,
+									//campo: req.body.campo,
 									designacion_empresa: req.body.designacion_empresa,
 									eliminado: true,
 								}).then(function (medicoPacienteCreado) {
-									res.json({ message: 'creado Satisfactoriamente' });
+									guardarCargo(req,res,RrhhEmpleadoCargo,medicoPacienteCreado)
 								});
 							});
 					});
@@ -127,14 +127,14 @@ module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Su
 							id_extension: req.body.extension.id,
 							grupo_sanguineo: req.body.grupo_sanguineo,
 							cargo: req.body.cargo,
-							campo: req.body.campo,
+							//campo: req.body.campo,
 							designacion_empresa: req.body.designacion_empresa,
 							eliminado: req.body.eliminado,
 						}, {
 								where: { id: req.params.id_paciente }
 
 							}).then(function (medicoPacienteActualizado) {
-								res.json({ mensaje: "Actualizado Satisfactoriamente" });
+								guardarCargo(req,res,RrhhEmpleadoCargo)
 							})
 					})
 			} else {
@@ -162,7 +162,54 @@ module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Su
 				res.json(medicoPaciente);
 			});
 		});
-
+		function guardarCargo(req, res, RrhhEmpleadoCargo,medicoPacienteCreado) {
+			var idpaciente=0
+			var mensaje = ""
+			if(medicoPacienteCreado){
+				idpaciente=medicoPacienteCreado.id
+				mensaje = "Creado Satisfactoriamente!"
+			}else{
+				idpaciente=req.body.id
+				mensaje = "Actualizado Satisfactoriamente!"
+			}
+			RrhhEmpleadoCargo.destroy({
+				where: {
+					id_empleado: idpaciente
+				}
+			}).then(function (EmpleadoCargoEliminados) {
+				if (req.body.cargos.length > 0) {	
+					req.body.cargos.forEach(function (cargo, index, array) {
+						RrhhEmpleadoCargo.findOrCreate({
+							where: { id_empleado: idpaciente, id_cargo: cargo.id },
+							defaults: {
+								id_empleado: idpaciente,
+								id_cargo: cargo.id
+							}
+						}).spread(function (ficha, created) {
+							if (!created) {
+								RrhhEmpleadoCargo.update({
+									id_empleado: idpaciente,
+									id_cargo: cargo.id
+								}, {
+										where: { id_empleado: idpaciente, id_cargo: cargo.id }
+									}).then(function (actualizado) {
+										if (index === (array.length - 1)) {
+											res.json({ message: mensaje});
+										}
+									})
+	
+							} else {
+								if (index === (array.length - 1)) {
+									res.json({ message: mensaje });
+								}
+							}
+						})
+					});
+				} else {
+					res.json({ message: mensaje });
+				}
+			})
+		}
 	router.route('/pacientes/ficha_tecnica/excel/upload')
 		.post(function (req, res) {
 			req.body.fichas.forEach(function (fichaActual, index, array) {

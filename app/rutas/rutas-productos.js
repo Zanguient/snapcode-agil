@@ -111,7 +111,7 @@ router.route('/productos/kardex/:id_producto/almacen/:id_almacen/fecha-inicial/:
 	
 router.route('/productos/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion')
 	.get(function(req, res) {
-		var condicionProducto="empresa="+req.params.id_empresa
+		var condicionProducto="empresa="+req.params.id_empresa,paginas,limit;
 		if(req.params.texto_busqueda!=0){
 			condicionProducto=condicionProducto+" and (\
 				codigo LIKE '%"+req.params.texto_busqueda+"%' or \
@@ -128,14 +128,21 @@ router.route('/productos/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_
 							LEFT OUTER JOIN gl_clase AS subgrupo ON (producto.subgrupo = subgrupo.id) \
 							WHERE "+ condicionProducto, { type: sequelize.QueryTypes.SELECT })
 		.then(function (data) {
+			if(req.params.items_pagina!=0){
+				limit=" LIMIT " + (req.params.items_pagina * (req.params.pagina - 1)) + "," + req.params.items_pagina;
+				paginas=Math.ceil(data[0].cantidad_productos / req.params.items_pagina);
+			}else{
+				limit="";
+				paginas=1;
+			}
 			sequelize.query("select producto.id,producto.publicar_panel,producto.activar_inventario,producto.codigo,producto.nombre as nombre,producto.imagen,producto.unidad_medida,producto.precio_unitario,producto.inventario_minimo,producto.descripcion,grupo.nombre as grupo,subgrupo.nombre as subgrupo\
 					from agil_producto as producto\
 					LEFT OUTER JOIN gl_clase AS grupo ON (producto.grupo = grupo.id)\
 					LEFT OUTER JOIN gl_clase AS subgrupo ON (producto.subgrupo = subgrupo.id)\
 					WHERE "+ condicionProducto +" \
-					ORDER BY producto."+ req.params.columna + " " + req.params.direccion + " LIMIT " + (req.params.items_pagina * (req.params.pagina - 1)) + "," + req.params.items_pagina, { type: sequelize.QueryTypes.SELECT })
+					ORDER BY producto."+ req.params.columna + " " + req.params.direccion + limit, { type: sequelize.QueryTypes.SELECT })
 				.then(function (productos) {
-					res.json({ productos: productos, paginas: Math.ceil(data[0].cantidad_productos / req.params.items_pagina) });
+					res.json({ productos: productos, paginas: paginas });
 				});
 		});
 	});

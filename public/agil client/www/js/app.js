@@ -185,7 +185,11 @@ angular.module('agil', ['ngRoute', 'agil.controladores',
             .when('/planilla-retroactivos', {
                 controller:'ControladoresPlanillaRetroactivos',
                 templateUrl:'templates/agil/planilla-retroactivos.html'
-            })            
+            })
+            .when('/operaciones', {
+                controller:'ControladorOperaciones',
+                templateUrl:'templates/agil/operaciones.html'
+            })          
         .otherwise({
           redirectTo:'/'
         });

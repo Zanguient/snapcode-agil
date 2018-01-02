@@ -236,7 +236,7 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 																cantidad: cantidadInventario,
 																costo_unitario: detalleCompra.costo_unitario,
 																costo_total: detalleCompra.costo_unitario * cantidadInventario,
-																fecha_vencimiento: new Date(detalleCompra.inventario.fechaVencimientoTexto.split('/')[1] + "/" + detalleCompra.inventario.fechaVencimientoTexto.split('/')[0] + "/" + detalleCompra.inventario.fechaVencimientoTexto.split('/')[2]),
+																fecha_vencimiento: (detalleCompra.inventario.fechaVencimientoTexto?new Date(detalleCompra.inventario.fechaVencimientoTexto.split('/')[1] + "/" + detalleCompra.inventario.fechaVencimientoTexto.split('/')[0] + "/" + detalleCompra.inventario.fechaVencimientoTexto.split('/')[2]):null) ,
 																lote: detalleCompra.inventario.lote
 															}, {
 																	where: {

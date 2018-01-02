@@ -42,12 +42,16 @@ function ejecutarScriptsInventario(idModalActualizacionInventario, idModalCreaci
 		aplicarDatePickers();
 	}, 200);
 }
-
+function ejecutarScriptsOperaciones(idDialogDialogPanelOperaciones,idDialogEntregaViveres) {
+	crearPopup(idDialogDialogPanelOperaciones, "100%", screen.height);
+	crearPopup(idDialogEntregaViveres, "60%", 'auto');
+}
 function ejecutarScriptsInicio(idPopupTablaProductos, idPopupTablaCreditos, idPopupTablaDeudas, idPopupPago,
 	idPopupActualizarCreditoCliente, idPopupActualizarCreditoDeuda, idPopupDeuda, idModalDescuento, idModalTablaVentasPendientes,
 	idModalTablaComprasPendientes, idModalTablaBancosPendientes, idModalTablaOtrosPendientes, idModalInicioSesion, idModalWizardComprobanteEdicion, IdModalOpcionesQr, IdModalRegistrarComprobante, IdModalRevisarComprobante, IdModalLibroMayor,IdModalAsignarCuenta,
     idModalTablaDespachos) {
 	crearPopup(idPopupTablaProductos, "100%", 550);
+	crearPopup(idModalWizardComprobanteEdicion, "100%", 900);
 	crearPopup(idPopupTablaCreditos, "60%", 550);
 	crearPopup(idPopupTablaDeudas, "60%", 550);
 	crearPopup(idPopupPago, "30%", 200);
@@ -60,7 +64,7 @@ function ejecutarScriptsInicio(idPopupTablaProductos, idPopupTablaCreditos, idPo
 	crearPopup(idModalTablaBancosPendientes, "60%", 550);
 	crearPopup(idModalTablaOtrosPendientes, "60%", 550);
 	crearPopup(idModalInicioSesion, "100%", screen.height);
-	crearPopup(idModalWizardComprobanteEdicion, "100%", 900);
+	
 	crearPopup(IdModalOpcionesQr, "30%", 250);
 	crearPopup(IdModalRegistrarComprobante, "60%", 350);
 	crearPopup(IdModalRevisarComprobante, "60%", 550);
@@ -76,7 +80,7 @@ function ejecutarScriptsInicio(idPopupTablaProductos, idPopupTablaCreditos, idPo
 }
 function ejecutarScriptsComprobante(IdModalVerificarCuenta) {
 	/* crearPopup(idModalWizardComprobanteNuevo, "100%", 800); */
-	crearPopup(IdModalVerificarCuenta, "30%", 230);
+	crearPopup(IdModalVerificarCuenta, "20%", 'auto');
 	/* crearPopup(IdModalRegistrarComprobante, "80%", 500);
 	crearPopup(IdModalRevisarComprobante, "80%", 500);
 	crearPopup(IdModalLibroMayor, "80%", 500); */
@@ -171,7 +175,7 @@ function ejecutarScriptsMantenimientos(idModalInicioMantenimiento, idModalOTNuev
 	aplicarTiempos();
 }
 
-function ejecutarScriptsRecursosHumanos(idModalPrerequisitos, idModalEmpleado, idModalwizardContainerEmpleado, idModalExpedidoEn, 
+function ejecutarScriptsRecursosHumanos(idModalPrerequisitos, idModalEmpleado, idModalwizardContainerEmpleado, idModalConceptoEdicion, 
 	idModalTipoDocumento, idModalEstadoCivil, idModalNacionalidad, idModalDepartamentoEstado, idModalProvincia, idModalLocalidad, 
 	idModalTipoDiscapacidad, idModalTipoContrato, idModalTipoPersonal, idModalCargaHoraria, idModalArea, idModalUbicacion, idImput, 
 	idModalHojaVida, idModalwizardContainerHojaVida, idModalSeguro, idModalSeguroLugar, idModalAporte, idModalAporteLugar, 
@@ -262,18 +266,19 @@ function ejecutarScriptsRecursosHumanos(idModalPrerequisitos, idModalEmpleado, i
 	crearPopup(idEliminarFamiliarEmpleado,"20%", "auto");
 	aplicarWizardFormulario(idModalWizardRhVista, idModalContenedorRhVista);	
 	crearPopup(idModalDialogPrerequisitoNuevo, "50%", "auto");
-	crearPopup(idModalExpedidoEn, "62%", "auto");
+	
 	crearPopup(idModalNuevoFamiliar, "62%", "auto");
 	crearPopup(idModalHistorialPrerequisito, "50%", 'auto');
 	crearPopup(idModalEditarPrerequisito, "40%", 'auto');
 	crearPopup(idModalDialogConfirmacionEntregaAdelantado, "35%", 'auto');
 	crearPopup(IdEntregaPrerequisito, "40%", 'auto');
-	setTimeout(function name(params) {
-	aplicarDatePickers();
-	// aplicarHoras();
-	aplicarTiempos();
-	AplicarImputFile(idImput);
-	aplicarVisorImagenArchivo(idImagenUsuario);
+	setTimeout(function () {
+		aplicarDatePickers();
+		// aplicarHoras();
+		aplicarTiempos();
+		AplicarImputFile(idImput);
+		aplicarVisorImagenArchivo(idImagenUsuario);
+		crearPopup(idModalConceptoEdicion, "62%", "auto");
 	},2000)	
 }
 

@@ -2499,7 +2499,7 @@
         <div id="dialog-paciente-nuevo" class="modal wizard-posicion">
             <div class="modal-dialog modal-paciente-nuevo">
                 <div class="modal-content">
-                    <form name="form" ng-submit="saveForm(paciente)">
+                    <form name="form" novalidate ng-submit="saveForm(paciente)">
                         <div id="modal-wizard-paciente-container">
                             <div class="modal-header">
                                 <ul class="steps">
@@ -2684,7 +2684,11 @@
                                                     <label for="cargo">Cargo</label>
                                                 </div>
                                                 <div class="col-lg-7">
-                                                    <input type="text" id="cargo" ng-model="paciente.cargo" placeholder="Cargo" class="form-control" />
+                                                    <!-- <div isteven-multi-select input-model="myArray" output-model="paciente.cargos" button-label="icon nombre" item-label="icon nombre maker"
+                                                    tick-property="ticked" translation="localLang">
+                                                </div> -->
+                                                <div isteven-multi-select input-model="cargos" output-model="paciente.cargos" button-label="icon nombre" item-label="icon nombre maker" tick-property="ticked" >
+                                                    </div>                                                  
                                                 </div>
                                             </div>
 

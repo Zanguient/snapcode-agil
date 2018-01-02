@@ -1,0 +1,1 @@
+ALTER TABLE agil_asiento_contabilidad ADD glosa varchar(255);

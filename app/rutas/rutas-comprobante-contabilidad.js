@@ -343,7 +343,7 @@ module.exports = function (router, ComprobanteContabilidad, AsientoContabilidad,
 							}
 						},
 						{
-							descripcion: {
+							codigo: {
 								$like: "%" + req.params.buscar + "%"
 							}
 						}
@@ -447,6 +447,7 @@ module.exports = function (router, ComprobanteContabilidad, AsientoContabilidad,
 							AsientoContabilidad.create({
 								id_comprobante: ComprobanteCreado.id,
 								id_cuenta: asientoContable.cuenta.id,
+								glosa:asientoContable.glosa,
 								debe_bs: parseFloat(asientoContable.debe_bs),
 								haber_bs: parseFloat(asientoContable.haber_bs),
 								debe_sus: parseFloat(asientoContable.debe_sus),

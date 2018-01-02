@@ -90,7 +90,12 @@ module.exports = function (router, sequelize, Sequelize, jwt, md5, forEach, ensu
 	var GtmEstibaje = require('../modelos/AGIL/agil-gtm-estibaje')(sequelize, Sequelize);
 	var GtmGrupoEstibaje = require('../modelos/AGIL/agil-gtm-grupo-estibaje')(sequelize, Sequelize);  
 	var GtmTransportista = require('../modelos/AGIL/agil-gtm-transportista')(sequelize, Sequelize);  
-	 
+	var RrhhEmpleadoHojaVida = require('../modelos/AGIL/rrhh_empleado_hoja_vida')(sequelize, Sequelize);
+	var RrhhEmpleadoFormacionAcademica = require('../modelos/AGIL/rrhh_empleado_formacion_academica')(sequelize, Sequelize);
+	var RrhhEmpleadoExperienciaLaboral = require('../modelos/AGIL/rrhh_empleado_experiencia_laboral')(sequelize, Sequelize);
+	var RrhhEmpleadoLogroInternoExterno = require('../modelos/AGIL/rrhh_empleado_logro_interno_externo')(sequelize, Sequelize);
+	var RrhhEmpleadoCapacidadInternaExterna =require('../modelos/AGIL/rrhh_empleado_capacidad_interna_externa')(sequelize, Sequelize); 
+	
 	//entities INV
 	var Inventario = require('../modelos/INV/inventario')(sequelize, Sequelize);
 	var Movimiento = require('../modelos/INV/movimiento')(sequelize, Sequelize);
@@ -107,6 +112,10 @@ module.exports = function (router, sequelize, Sequelize, jwt, md5, forEach, ensu
 	var Cotizacion = require('../modelos/INV/cotizacion')(sequelize, Sequelize);
 	var DetalleCotizacion = require('../modelos/INV/detalle-cotizacion')(sequelize, Sequelize);
 	var VendedorVenta = require('../modelos/INV/vendedor-venta')(sequelize, Sequelize);
+	var DetalleSolicitudProducto = require('../modelos/INV/detalle-solicitud-producto')(sequelize, Sequelize);
+	var DetalleSolicitudProductoBase = require('../modelos/INV/detalle-solicitud-producto-base')(sequelize, Sequelize);
+	var SolicitudReposicion = require('../modelos/INV/solicitud-reposicion')(sequelize, Sequelize);
+
 
 
 	//*****RELATIONS*****
@@ -123,8 +132,8 @@ module.exports = function (router, sequelize, Sequelize, jwt, md5, forEach, ensu
 		ClienteCuenta, ProveedorCuenta, MedicoPrerequisito, ConfiguracionCuenta, MedicoVacuna, VacunaDosis, MedicoPacienteVacuna, MedicoPacienteVacunaDosis, VistaColumnasAplicacion, MedicoPacienteConsulta,
 		MedicoPacienteFicha, MedicoLaboratorioExamen, MedicoLaboratorio, MedicoLaboratorioPaciente, MedicoLaboratorioResultado, MedicoDiagnostico, MedicoDiagnosticoExamen, MedicoDiagnosticoPaciente, MedicoDiagnosticoResultado,
 		MantenimientoOrdenTrabajo, MantenimientoOrdenTrabajoManoObra, MantenimientoOrdenTrabajoMaterial, MantenimientoOrdenTrabajoServicioExterno, MantenimientoOrdenTrabajoSistema,VendedorVenta,RrhhEmpleadoFicha,
-		RrhhEmpleadoFichaOtrosSeguros,RrhhEmpleadoFichaFamiliar,MedicoPacientePreRequisito,RrhhEmpleadoDiscapacidad,RrhhEmpleadoCargo,ClienteRazon,GtmDestino,GtmEstibaje,GtmGrupoEstibaje,GtmTransportista);
-
+		RrhhEmpleadoFichaOtrosSeguros,RrhhEmpleadoFichaFamiliar,MedicoPacientePreRequisito,RrhhEmpleadoDiscapacidad,RrhhEmpleadoCargo,ClienteRazon,GtmDestino,GtmEstibaje,GtmGrupoEstibaje,GtmTransportista,
+        RrhhEmpleadoHojaVida,RrhhEmpleadoFormacionAcademica,RrhhEmpleadoExperienciaLaboral,RrhhEmpleadoLogroInternoExterno,RrhhEmpleadoCapacidadInternaExterna, SolicitudReposicion,DetalleSolicitudProducto,DetalleSolicitudProductoBase);
 	//*****SOCKETS*****
 	require('../sockets/pantallas.js')(io, socket);
 
@@ -182,7 +191,11 @@ module.exports = function (router, sequelize, Sequelize, jwt, md5, forEach, ensu
 
 	//Mantenimiento Vehiculos
 	require('./rutas-maquinaria')(router,sequelize,Sequelize, Usuario, Producto, Diccionario, Clase, Sucursal, Empresa, ProductoBase, Almacen, ContabilidadCuenta,Persona,MantenimientoOrdenTrabajo, MantenimientoOrdenTrabajoManoObra, MantenimientoOrdenTrabajoMaterial, MantenimientoOrdenTrabajoServicioExterno, MantenimientoOrdenTrabajoSistema,Inventario,Clase)
-	require('./rutas-recursos-humanos')(router,sequelize,Sequelize, Usuario, MedicoPaciente, Persona, Empresa, Sucursal, Clase, Diccionario, Tipo, decodeBase64Image, fs,RrhhEmpleadoFicha,RrhhEmpleadoFichaOtrosSeguros,RrhhEmpleadoFichaFamiliar,RrhhEmpleadoDiscapacidad, RrhhEmpleadoCargo)
+	require('./rutas-recursos-humanos')(router,sequelize,Sequelize, Usuario, MedicoPaciente, Persona, Empresa, Sucursal, Clase, Diccionario, Tipo, decodeBase64Image, fs,RrhhEmpleadoFicha,RrhhEmpleadoFichaOtrosSeguros,RrhhEmpleadoFichaFamiliar,RrhhEmpleadoDiscapacidad, RrhhEmpleadoCargo,
+		RrhhEmpleadoHojaVida,RrhhEmpleadoFormacionAcademica,RrhhEmpleadoExperienciaLaboral,RrhhEmpleadoLogroInternoExterno,RrhhEmpleadoCapacidadInternaExterna,NumeroLiteral)
+
+
+	require('./rutas-operaciones')(router,sequelize,Sequelize, Usuario, Producto, Diccionario, Clase, Sucursal, Empresa, ProductoBase, Almacen, Inventario ,SolicitudReposicion,DetalleSolicitudProducto,DetalleSolicitudProductoBase,Persona)
 
 	router.route('/test')
 		.get(function (req, res) {

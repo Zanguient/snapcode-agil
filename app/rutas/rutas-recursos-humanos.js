@@ -1,5 +1,5 @@
 module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente, Persona, Empresa, Sucursal, Clase, Diccionario, Tipo, decodeBase64Image, fs, RrhhEmpleadoFicha, RrhhEmpleadoFichaOtrosSeguros, RrhhEmpleadoFichaFamiliar, RrhhEmpleadoDiscapacidad
-    , RrhhEmpleadoCargo) {
+    , RrhhEmpleadoCargo, RrhhEmpleadoHojaVida, RrhhEmpleadoFormacionAcademica, RrhhEmpleadoExperienciaLaboral, RrhhEmpleadoLogroInternoExterno, RrhhEmpleadoCapacidadInternaExterna,NumeroLiteral) {
     router.route('/recursos-humanos/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion/codigo/:codigo/nombres/:nombres/ci/:ci/campo/:campo/cargo/:cargo/busquedaEmpresa/:busquedaEmpresa/grupo/:grupo_sanguineo/estado/:estado')
         .get(function (req, res) {
             var condicion = ""
@@ -588,6 +588,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                 }
             }).then(function (EmpleadoPersonaActualizado) {
                 var haber = parseFloat(req.body.haber_basico)
+                var numero_literal = NumeroLiteral.Convertir(parseFloat(req.body.haber_basico).toFixed(2).toString());
                 RrhhEmpleadoFicha.create({
                     discapacidad: req.body.discapacidad,
                     detalle_discapacidades: req.body.detalle_discapacidades,
@@ -595,13 +596,14 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                     fecha: req.body.fecha_elaboracion,
                     codigo_empleado: req.body.codigo_empleado,
                     id_tipo_contrato: req.body.tipoContrato.id,
-                    fecha_inicio: req.body.fecha_inicio,
-                    fecha_fin: req.body.fecha_fin,
+                    fecha_inicio: req.body.fecha_inicio2,
+                    fecha_fin: req.body.fecha_fin2,
                     id_tipo_personal: req.body.tipoPersonal.id,
                     id_carga_horarios: req.body.cargaHorario.id,
                     id_area: req.body.area.id,
                     id_ubicacion: req.body.ubicacion.id,
                     haber_basico: haber,
+                    haber_basico_literal: numero_literal,
                     //contrato: req.body.alergia_quimico,
                     jubilacion: req.body.jubilacion,
                     fecha_jubilacion: req.body.fecha_jubilacion,
@@ -845,4 +847,281 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
 
             })
         })
+    router.route('/usuario-hoja-vida/:id_empleado')
+        .get(function (req, res) {
+            RrhhEmpleadoHojaVida.find({
+                where: { id_empleado: req.params.id_empleado },
+                include: [{ model: RrhhEmpleadoCapacidadInternaExterna, as: 'capacidades', include: [{ model: Clase, as: 'tipoCapacidad' }] },
+                { model: RrhhEmpleadoLogroInternoExterno, as: 'logros', include: [{ model: Clase, as: 'tipoLogro' }] },
+                { model: RrhhEmpleadoExperienciaLaboral, as: 'experienciasLaborales' },
+                {
+                    model: RrhhEmpleadoFormacionAcademica, as: 'formacionesAcademicas',
+                    include: [{ model: Clase, as: 'grado' }, { model: Clase, as: 'institucion' }, { model: Clase, as: 'titulo' }]
+                }]
+            }).then(function (HojaVida) {
+                res.json({ hojaVida: HojaVida })
+            })
+        })
+        .post(function (req, res) {
+            if (req.body.id) {
+                guardarRrhhHojaVidaFormacionAcademica(req, res, RrhhEmpleadoFormacionAcademica, RrhhEmpleadoExperienciaLaboral, RrhhEmpleadoLogroInternoExterno, RrhhEmpleadoCapacidadInternaExterna)
+            } else {
+                RrhhEmpleadoHojaVida.create({
+                    id_empleado: req.params.id_empleado
+                }).then(function (hojaVidaCreado) {
+                    guardarRrhhHojaVidaFormacionAcademica(req, res, RrhhEmpleadoFormacionAcademica, RrhhEmpleadoExperienciaLaboral, RrhhEmpleadoLogroInternoExterno, RrhhEmpleadoCapacidadInternaExterna, hojaVidaCreado)
+                })
+            }
+        })
+
+    function guardarRrhhHojaVidaFormacionAcademica(req, res, RrhhEmpleadoFormacionAcademica, RrhhEmpleadoExperienciaLaboral, RrhhEmpleadoLogroInternoExterno, RrhhEmpleadoCapacidadInternaExterna, hojaVidaCreado) {
+        var idhojaVida = 0
+        if (hojaVidaCreado) {
+            idhojaVida = hojaVidaCreado.id
+        } else {
+            idhojaVida = req.body.id
+        }
+        if (req.body.formacionesAcademicas.length > 0) {
+            req.body.formacionesAcademicas.forEach(function (formacionAcademica, index, array) {
+                var idformacion = 0
+                if (formacionAcademica.id) {
+                    idformacion = formacionAcademica.id
+                }
+                if (!formacionAcademica.eliminado) {
+                    RrhhEmpleadoFormacionAcademica.findOrCreate({
+                        where: { id: idformacion },
+                        defaults: {
+                            id_hoja_vida: idhojaVida,
+                            id_grado: formacionAcademica.grado.id,
+                            id_titulo: formacionAcademica.titulo.id,
+                            id_institucion: formacionAcademica.institucion.id,
+                            descripcion: formacionAcademica.descripcion,
+                            anio_obtencion: formacionAcademica.anio_obtencion
+                        }
+                    }).spread(function (formacion, created) {
+                        if (!created) {
+                            RrhhEmpleadoFormacionAcademica.update({
+                                id_grado: formacionAcademica.grado.id,
+                                id_titulo: formacionAcademica.titulo.id,
+                                id_institucion: formacionAcademica.institucion.id,
+                                descripcion: formacionAcademica.descripcion,
+                                anio_obtencion: formacionAcademica.anio_obtencion
+                            }, {
+                                    where: { id: formacionAcademica.id }
+                                }).then(function (actualizado) {
+                                    if (index === (array.length - 1)) {
+                                        guardarRrhhHojaVidaExperienciaLaboral(req, res,idhojaVida, RrhhEmpleadoExperienciaLaboral, RrhhEmpleadoLogroInternoExterno, RrhhEmpleadoCapacidadInternaExterna)
+                                    }
+                                })
+                        } else {
+                            if (index === (array.length - 1)) {
+                                guardarRrhhHojaVidaExperienciaLaboral(req, res,idhojaVida, RrhhEmpleadoExperienciaLaboral, RrhhEmpleadoLogroInternoExterno, RrhhEmpleadoCapacidadInternaExterna)
+                            }
+                        }
+                    })
+                } else {
+                    if (formacionAcademica.id) {
+                        RrhhEmpleadoFormacionAcademica.destroy({
+                            where: { id: formacionAcademica.id }
+                        }).then(function (formacionEliminada) {
+                            if (index === (array.length - 1)) {
+                                guardarRrhhHojaVidaExperienciaLaboral(req, res,idhojaVida, RrhhEmpleadoExperienciaLaboral, RrhhEmpleadoLogroInternoExterno, RrhhEmpleadoCapacidadInternaExterna)
+                            }
+                        })
+                    } else {
+                        if (index === (array.length - 1)) {
+                            guardarRrhhHojaVidaExperienciaLaboral(req, res,idhojaVida, RrhhEmpleadoExperienciaLaboral, RrhhEmpleadoLogroInternoExterno, RrhhEmpleadoCapacidadInternaExterna)
+                        }
+                    }
+                }
+            })
+        } else {
+            guardarRrhhHojaVidaExperienciaLaboral(req, res,idhojaVida, RrhhEmpleadoExperienciaLaboral, RrhhEmpleadoLogroInternoExterno, RrhhEmpleadoCapacidadInternaExterna)
+        }
+    }
+    function guardarRrhhHojaVidaExperienciaLaboral(req, res,idhojaVida,RrhhEmpleadoExperienciaLaboral, RrhhEmpleadoLogroInternoExterno, RrhhEmpleadoCapacidadInternaExterna) {
+        if (req.body.experienciasLaborales.length > 0) {
+            req.body.experienciasLaborales.forEach(function (experienciaLaboral, index, array) {
+                var idexperiencia = 0
+                if (experienciaLaboral.id) {
+                    idexperiencia = experienciaLaboral.id
+                }
+                if (!experienciaLaboral.eliminado) {
+                    RrhhEmpleadoExperienciaLaboral.findOrCreate({
+                        where: { id: idexperiencia },
+                        defaults: {
+                            id_hoja_vida: idhojaVida,
+                            fecha_inicio:experienciaLaboral.fecha_inicio,
+                            fecha_fin:experienciaLaboral.fecha_fin,
+                            empresa:experienciaLaboral.empresa,
+                            cargo:experienciaLaboral.cargo,
+                            motivo_retiro:experienciaLaboral.motivo_retiro,
+                            contacto:experienciaLaboral.contacto,
+                            telefono:experienciaLaboral.telefono
+                        }
+                    }).spread(function (experiencia, created) {
+                        if (!created) {
+                            RrhhEmpleadoExperienciaLaboral.update({
+                                fecha_inicio:experienciaLaboral.fecha_inicio,
+                                fecha_fin:experienciaLaboral.fecha_fin,
+                                empresa:experienciaLaboral.empresa,
+                                cargo:experienciaLaboral.cargo,
+                                motivo_retiro:experienciaLaboral.motivo_retiro,
+                                contacto:experienciaLaboral.contacto,
+                                telefono:experienciaLaboral.telefono
+                            }, {
+                                    where: { id: experienciaLaboral.id }
+                                }).then(function (actualizado) {
+                                    if (index === (array.length - 1)) {
+                                        guardarRrhhHojaVidaCapacidades(req,res,idhojaVida, RrhhEmpleadoLogroInternoExterno, RrhhEmpleadoCapacidadInternaExterna)
+                                    }
+                                })
+                        } else {
+                            if (index === (array.length - 1)) {
+                                guardarRrhhHojaVidaCapacidades(req,res,idhojaVida, RrhhEmpleadoLogroInternoExterno, RrhhEmpleadoCapacidadInternaExterna)
+                            }
+                        }
+                    })
+                } else {
+                    if (experienciaLaboral.id) {
+                        RrhhEmpleadoExperienciaLaboral.destroy({
+                            where: { id: experienciaLaboral.id }
+                        }).then(function (experienciaEliminada) {
+                            if (index === (array.length - 1)) {
+                                guardarRrhhHojaVidaCapacidades(req,res,idhojaVida,RrhhEmpleadoLogroInternoExterno, RrhhEmpleadoCapacidadInternaExterna)
+                            }
+                        })
+                    } else {
+                        if (index === (array.length - 1)) {
+                            guardarRrhhHojaVidaCapacidades(req,res,idhojaVida,RrhhEmpleadoLogroInternoExterno, RrhhEmpleadoCapacidadInternaExterna)
+                        }
+                    }
+                }
+            })
+        } else {
+            guardarRrhhHojaVidaCapacidades(req,res,idhojaVida,RrhhEmpleadoLogroInternoExterno, RrhhEmpleadoCapacidadInternaExterna)
+        }
+    }
+    function guardarRrhhHojaVidaCapacidades(req, res,idhojaVida,RrhhEmpleadoLogroInternoExterno, RrhhEmpleadoCapacidadInternaExterna) {
+        if (req.body.capacidades.length > 0) {
+            req.body.capacidades.forEach(function (capacidad, index, array) {
+                var idcapacidad = 0
+                if (capacidad.id) {
+                    idcapacidad = capacidad.id
+                }
+                if (!capacidad.eliminado) {
+                    RrhhEmpleadoCapacidadInternaExterna.findOrCreate({
+                        where: { id: idcapacidad },
+                        defaults: {
+                            id_hoja_vida: idhojaVida,
+                            id_tipo_capacidad:capacidad.tipoCapacidad.id,
+                            curso: capacidad.curso,
+                            institucion: capacidad.institucion,
+                            certificado: capacidad.certificado,
+                            fecha: capacidad.fecha,
+                        }
+                    }).spread(function (capacidadCreada, created) {
+                        if (!created) {
+                            RrhhEmpleadoCapacidadInternaExterna.update({
+                                id_tipo_capacidad:capacidad.tipoCapacidad.id,
+                                curso: capacidad.curso,
+                                institucion: capacidad.institucion,
+                                certificado: capacidad.certificado,
+                                fecha: capacidad.fecha,
+                            }, {
+                                    where: { id: capacidad.id }
+                                }).then(function (actualizado) {
+                                    if (index === (array.length - 1)) {
+                                        guardarRrhhHojaVidaLogros(req,res,idhojaVida, RrhhEmpleadoLogroInternoExterno)
+                                    }
+                                })
+                        } else {
+                            if (index === (array.length - 1)) {
+                                guardarRrhhHojaVidaLogros(req,res,idhojaVida, RrhhEmpleadoLogroInternoExterno)
+                            }
+                        }
+                    })
+                } else {
+                    if (capacidad.id) {
+                        RrhhEmpleadoCapacidadInternaExterna.destroy({
+                            where: { id: capacidad.id }
+                        }).then(function (capacidadEliminada) {
+                            if (index === (array.length - 1)) {
+                                guardarRrhhHojaVidaLogros(req,res,idhojaVida,RrhhEmpleadoLogroInternoExterno)
+                            }
+                        })
+                    } else {
+                        if (index === (array.length - 1)) {
+                            guardarRrhhHojaVidaLogros(req,res,idhojaVida,RrhhEmpleadoLogroInternoExterno)
+                        }
+                    }
+                }
+            })
+        } else {
+            guardarRrhhHojaVidaLogros(req,res,idhojaVida,RrhhEmpleadoLogroInternoExterno)
+        }
+    }
+
+    function guardarRrhhHojaVidaLogros(req, res,idhojaVida,RrhhEmpleadoLogroInternoExterno) {
+        if (req.body.logros.length > 0) {
+            req.body.logros.forEach(function (logro, index, array) {
+                var idlogro = 0
+                if (logro.id) {
+                    idlogro = logro.id
+                }
+                if (!logro.eliminado) {
+                    RrhhEmpleadoLogroInternoExterno.findOrCreate({
+                        where: { id: idlogro },
+                        defaults: {
+                            id_hoja_vida: idhojaVida,
+                            id_tipo_logro:logro.tipoLogro.id,
+                            motivo: logro.motivo,
+                            institucion: logro.institucion,
+                            observacion: logro.observacion,
+                            fecha: logro.fecha,
+                        }
+                    }).spread(function (logroCreada, created) {
+                        if (!created) {
+                            RrhhEmpleadoLogroInternoExterno.update({
+                                id_tipo_logro:logro.tipoLogro.id,
+                                motivo: logro.motivo,
+                                institucion: logro.institucion,
+                                observacion: logro.observacion,
+                                fecha: logro.fecha,
+                            }, {
+                                    where: { id: logro.id }
+                                }).then(function (actualizado) {
+                                    if (index === (array.length - 1)) {
+                                        res.json({ mensaje: "Hoja de vida guardada satisfactoriamente!" })
+                                    }
+                                })
+                        } else {
+                            if (index === (array.length - 1)) {
+                                res.json({ mensaje: "Hoja de vida guardada satisfactoriamente!" })
+                            }
+                        }
+                    })
+                } else {
+                    if (logro.id) {
+                        RrhhEmpleadoLogroInternoExterno.destroy({
+                            where: { id: logro.id }
+                        }).then(function (logroEliminada) {
+                            if (index === (array.length - 1)) {
+                                res.json({ mensaje: "Hoja de vida guardada satisfactoriamente!" })
+                            }
+                        })
+                    } else {
+                        if (index === (array.length - 1)) {
+                            res.json({ mensaje: "Hoja de vida guardada satisfactoriamente!" })
+                        }
+                    }
+                }
+            })
+        } else {
+            res.json({ mensaje: "Hoja de vida guardada satisfactoriamente!" })
+        }
+        
+    }
+    
+
 }

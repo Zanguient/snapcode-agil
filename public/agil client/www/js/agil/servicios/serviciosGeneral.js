@@ -71,9 +71,9 @@ angular.module('agil.servicios')
 		return res;
 	}])
 	//factory para nuevos comprobantes
-	.factory('NuevoComprobante', ["AsignarComprobanteFavorito", "LibroMayorCuenta", "ComprobanteRevisarPaginador", "NuevoComprobanteContabilidad", "ListaCuentasComprobanteContabilidad","ActualizarComprobanteContabilidad", function (AsignarComprobanteFavorito, LibroMayorCuenta, ComprobanteRevisarPaginador, NuevoComprobanteContabilidad, ListaCuentasComprobanteContabilidad,ActualizarComprobanteContabilidad) {
+	.factory('NuevoComprobante', ["AsignarComprobanteFavorito", "LibroMayorCuenta", "ComprobanteRevisarPaginador", "NuevoComprobanteContabilidad", "ListaCuentasComprobanteContabilidad", "ActualizarComprobanteContabilidad", "ImprimirComprobante", function (AsignarComprobanteFavorito, LibroMayorCuenta, ComprobanteRevisarPaginador, NuevoComprobanteContabilidad, ListaCuentasComprobanteContabilidad, ActualizarComprobanteContabilidad, ImprimirComprobante) {
 		var res = function (mostrarMensaje, paginator, filtro, usuario, idComprobante, datoslibroMayor, revisar, convertirFecha, cerrarModal, nuevoComprobante,
-			buscarCuentaQuery, verificarVentasComprobantes, verificarComprasComprobantes) {
+			buscarCuentaQuery, verificarVentasComprobantes, verificarComprasComprobantes, recargarItemsTabla) {
 			if (idComprobante) {
 				var promesa = AsignarComprobanteFavorito(idComprobante)
 				promesa.then(function (entidad) {
@@ -105,35 +105,37 @@ angular.module('agil.servicios')
 				return promesa;
 			}
 			if (nuevoComprobante) {
-				if (!nuevoComprobante.id) {					
-						for (var index = 0; index < nuevoComprobante.asientosContables.length; index++) {
-							var element = nuevoComprobante.asientosContables[index];
-							if (element.activo != false && element.debe_bs != "") {
-								nuevoComprobante.importe = Math.round((nuevoComprobante.importe + element.debe_bs) * 10000) / 10000
-							}
+				if (!nuevoComprobante.id) {
+					for (var index = 0; index < nuevoComprobante.asientosContables.length; index++) {
+						var element = nuevoComprobante.asientosContables[index];
+						if (element.activo != false && element.debe_bs != "") {
+							nuevoComprobante.importe = Math.round((nuevoComprobante.importe + element.debe_bs) * 10000) / 10000
 						}
-						nuevoComprobante.fecha = new Date(convertirFecha(nuevoComprobante.fecha))
-						NuevoComprobanteContabilidad.save(nuevoComprobante, function (dato) {
-							verificarVentasComprobantes(usuario.id_empresa)
-							verificarComprasComprobantes(usuario.id_empresa)
-							mostrarMensaje(dato.mensaje);
-							cerrarModal();
-						})
-					
+					}
+					nuevoComprobante.fecha = new Date(convertirFecha(nuevoComprobante.fecha))
+					NuevoComprobanteContabilidad.save(nuevoComprobante, function (dato) {
+						verificarVentasComprobantes(usuario.id_empresa)
+						verificarComprasComprobantes(usuario.id_empresa)
+						mostrarMensaje(dato.mensaje);
+						ImprimirComprobante(nuevoComprobante,false,usuario)
+						recargarItemsTabla()
+						cerrarModal();
+					})
+
 				} else {
 					for (var index = 0; index < nuevoComprobante.asientosContables.length; index++) {
-							var element = nuevoComprobante.asientosContables[index];
-							if (element.activo != false && element.debe_bs != "") {
-								nuevoComprobante.importe = Math.round((nuevoComprobante.importe + element.debe_bs) * 10000) / 10000
-							}
+						var element = nuevoComprobante.asientosContables[index];
+						if (element.activo != false && element.debe_bs != "") {
+							nuevoComprobante.importe = Math.round((nuevoComprobante.importe + element.debe_bs) * 10000) / 10000
 						}
-						nuevoComprobante.fecha = new Date(convertirFecha(nuevoComprobante.fecha))
-						ActualizarComprobanteContabilidad.update({id_comprobante:nuevoComprobante.id},nuevoComprobante, function (dato) {
-							verificarVentasComprobantes(usuario.id_empresa)
-							verificarComprasComprobantes(usuario.id_empresa)
-							mostrarMensaje(dato.mensaje);
-							cerrarModal();
-						})
+					}
+					nuevoComprobante.fecha = new Date(convertirFecha(nuevoComprobante.fecha))
+					ActualizarComprobanteContabilidad.update({ id_comprobante: nuevoComprobante.id }, nuevoComprobante, function (dato) {
+						verificarVentasComprobantes(usuario.id_empresa)
+						verificarComprasComprobantes(usuario.id_empresa)
+						mostrarMensaje(dato.mensaje);
+						cerrarModal();
+					})
 					console.log("falta agregar el put para guardar")
 				}
 			}
@@ -145,6 +147,135 @@ angular.module('agil.servicios')
 					return promesa;
 				}
 		};
+		return res;
+	}])
+	.factory('ImprimirComprobante', ['blockUI', 'DibujarCabeceraComprobante', 'Diccionario', 'DibujarCabeceraFacturaNVCartaOficio', 'DibujarCabeceraFacturaNVmedioOficio', '$timeout',
+		function (blockUI, DibujarCabeceraComprobante, Diccionario, DibujarCabeceraFacturaNVCartaOficio, DibujarCabeceraFacturaNVmedioOficio, $timeout) {
+			var res = function (comprobante, bimonetario,usuario) {
+				var doc = new PDFDocument({ size: [612, 792], margin: 10 });
+				var stream = doc.pipe(blobStream());
+				doc.font('Helvetica', 8);
+				var itemsPorPagina = 15;
+				var y = 240, items = 0, pagina = 1, totalPaginas = 1/* Math.ceil(venta.detallesVenta.length / itemsPorPagina) */;
+				if (bimonetario) {
+					DibujarCabeceraComprobante(doc, bimonetario,usuario,comprobante);
+					/* for (var i = 0; i < venta.detallesVenta.length && items <= itemsPorPagina; i++) {
+						doc.font('Helvetica', 8);
+						if (bimonetario) {
+						
+						} else {
+						
+						}
+						
+						y = y + 30;
+						items++;
+	
+						if (items > itemsPorPagina) {
+							doc.addPage({ size: [612, 792], margin: 10 });
+							y = 240;
+							items = 0;
+							pagina = pagina + 1;
+							DibujarCabeceraComprobante(doc);
+						}
+					} */
+
+
+					doc.end();
+					stream.on('finish', function () {
+						var fileURL = stream.toBlobURL('application/pdf');
+						var w = window.open(fileURL, '_blank', 'location=no');
+						$timeout(function () {
+							w.print();
+						}, 500);
+					});
+					blockUI.stop();
+				} else {
+					DibujarCabeceraComprobante(doc, bimonetario,usuario,comprobante);
+					/* for (var i = 0; i < venta.detallesVenta.length && items <= itemsPorPagina; i++) {
+						doc.font('Helvetica', 8);
+						if (bimonetario) {
+						
+						} else {
+						
+						}
+						
+						y = y + 30;
+						items++;
+	
+						if (items > itemsPorPagina) {
+							doc.addPage({ size: [612, 792], margin: 10 });
+							y = 240;
+							items = 0;
+							pagina = pagina + 1;
+							DibujarCabeceraComprobante(doc);
+						}
+					} */
+
+
+					doc.end();
+					stream.on('finish', function () {
+						var fileURL = stream.toBlobURL('application/pdf');
+						var w = window.open(fileURL, '_blank', 'location=no');
+						$timeout(function () {
+							w.print();
+						}, 500);
+					});
+					blockUI.stop();
+				}
+
+			};
+			return res;
+		}])
+	.factory('DibujarCabeceraComprobante', [function () {
+		var res = function (doc, bimonetario,usuario,comprobante) {
+			if (bimonetario) {
+				
+				doc.rect(50, 40, 520, 700).stroke();
+				doc.font('Helvetica-Bold', 8);
+				doc.text(usuario.empresa.razon_social,55,45)
+				doc.text("SISTEMA DE CONTABILIDAD.",55,55)
+				doc.text("NIT: ",55,65)
+				doc.font('Helvetica', 8);
+				doc.text(usuario.empresa.nit+".",65,65)
+				doc.font('Helvetica-Bold', 8);
+				doc.text("COMPROBANTE DE INGRESO",0,75,{align:'center'})
+				doc.rect(50, 100, 520, 0).stroke();
+				doc.rect(50, 130, 520, 0).stroke();
+				doc.rect(280, 100, 0, 30).stroke();
+				doc.rect(350, 100, 0, 30).stroke();
+				doc.rect(420, 100, 0, 30).stroke();
+				doc.rect(490, 100, 0, 30).stroke();			
+				doc.rect(50, 700, 520, 0).stroke();
+				doc.rect(200, 700, 0, 40).stroke();
+				doc.rect(320, 700, 0, 40).stroke();
+				doc.rect(420, 700, 0, 40).stroke();
+				doc.rect(50, 730, 520, 0).stroke();
+			} else {
+				doc.rect(50, 40, 520, 700).stroke();
+				doc.font('Helvetica-Bold', 8);
+				doc.text(usuario.empresa.razon_social,55,45)
+				doc.text("SISTEMA DE CONTABILIDAD.",55,55)
+				doc.text("NIT: ",55,65)
+				doc.font('Helvetica', 8);
+				doc.text(usuario.empresa.nit+".",65,65)
+				doc.font('Helvetica-Bold', 8);
+				doc.text("COMPROBANTE DE INGRESO",0,75,{align:'center'})
+				doc.rect(50, 100, 520, 0).stroke();
+				doc.rect(50, 130, 520, 0).stroke();
+				doc.rect(420, 100, 0, 30).stroke();
+				doc.rect(490, 100, 0, 30).stroke();
+				doc.rect(50, 700, 520, 0).stroke();
+				doc.rect(200, 700, 0, 40).stroke();
+				doc.rect(320, 700, 0, 40).stroke();
+				doc.rect(420, 700, 0, 40).stroke();
+				doc.rect(50, 730, 520, 0).stroke();
+				/* doc.rect(50, 710, 100, 30).stroke();
+				doc.rect(150, 710, 250, 30).stroke(); */
+
+			}
+
+
+		}
 		return res;
 	}])
 	.factory('ComprasComprobante', function ($resource) {
@@ -278,11 +409,11 @@ angular.module('agil.servicios')
 				'update': { method: 'PUT' }
 			});
 	})
-		.factory('ActualizarComprobanteContabilidad', function ($resource) {
-		return $resource(restServer + "comprobante-contabolidad/:id_comprobante",{ id_comprobante: '@id_comprobante' },
-		{
-			'update': { method:'PUT' }
-		});
+	.factory('ActualizarComprobanteContabilidad', function ($resource) {
+		return $resource(restServer + "comprobante-contabolidad/:id_comprobante", { id_comprobante: '@id_comprobante' },
+			{
+				'update': { method: 'PUT' }
+			});
 	})
 	//fin factory para nuevos comprobantes
 
@@ -1089,7 +1220,7 @@ angular.module('agil.servicios')
 						y = 240;
 						items = 0;
 						pagina = pagina + 1;
-						DibujarCabeceraProformaNVmedioOficio(doc, vacia, completa, venta, papel, pagina, totalPaginas,usuario)
+						DibujarCabeceraProformaNVmedioOficio(doc, vacia, completa, venta, papel, pagina, totalPaginas, usuario)
 					}
 				}
 				if (completa || vacia) {

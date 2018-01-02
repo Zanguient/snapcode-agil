@@ -69,6 +69,7 @@ angular.module('agil.controladores')
 	
 	$scope.verProducto=function(producto){
 		$scope.producto=producto;
+		
 		$scope.abrirPopup($scope.idModalWizardProductoVista);
 	}
 	
