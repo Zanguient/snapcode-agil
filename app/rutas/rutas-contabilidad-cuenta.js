@@ -486,34 +486,6 @@ module.exports = function (router, ContabilidadCuenta, ClasificacionCuenta, Tipo
 									transaction: t
 								}).then(function(cuentaEncontrada){
 									if(cuentaEncontrada){
-										return sequelize.query("UPDATE agil_contabilidad_cuenta set cuenta_padre="+cuentaEncontrada.id+" where LENGTH(codigo)="+(cuenta.codigo.length+2)+" AND codigo LIKE '"+cuenta.codigo+"%';", { transaction: t})
-										.then(function(act) {
-											var codigoCuentaPadre=cuenta.codigo.substring(0,cuenta.codigo.length-2);
-											return ContabilidadCuenta.find({ 
-												where:{
-													$or: [{codigo:codigoCuentaPadre}],
-													id_empresa:req.body.id_empresa
-												},
-												transaction: t
-											}).then(function(cuentaPadreEncontrada){
-												if(cuentaPadreEncontrada){
-													return ContabilidadCuenta.update({
-														id_cuenta_padre:cuentaPadreEncontrada.id
-													},{
-														where:{
-															id:cuentaEncontrada.id
-														},
-														transaction: t
-													});
-												}else{
-													return new Promise(function (fulfill, reject) {
-														fulfill({});
-													});
-												}
-											});
-										});
-
-
 										return ContabilidadCuenta.update({
 											id_empresa: req.body.id_empresa,
 											codigo: cuenta.codigo,
@@ -531,6 +503,33 @@ module.exports = function (router, ContabilidadCuenta, ClasificacionCuenta, Tipo
 												id:cuentaEncontrada.id
 											},
 											transaction: t
+										}).then(function(cuentaActualizada){
+											return sequelize.query("UPDATE agil_contabilidad_cuenta set cuenta_padre="+cuentaEncontrada.id+" where LENGTH(codigo)="+(cuenta.codigo.length+2)+" AND codigo LIKE '"+cuenta.codigo+"%';", { transaction: t})
+											.then(function(act) {
+												var codigoCuentaPadre=cuenta.codigo.substring(0,cuenta.codigo.length-2);
+												return ContabilidadCuenta.find({ 
+													where:{
+														$or: [{codigo:codigoCuentaPadre}],
+														id_empresa:req.body.id_empresa
+													},
+													transaction: t
+												}).then(function(cuentaPadreEncontrada){
+													if(cuentaPadreEncontrada){
+														return ContabilidadCuenta.update({
+															id_cuenta_padre:cuentaPadreEncontrada.id
+														},{
+															where:{
+																id:cuentaEncontrada.id
+															},
+															transaction: t
+														});
+													}else{
+														return new Promise(function (fulfill, reject) {
+															fulfill({});
+														});
+													}
+												});
+											});
 										});
 									}else{
 										return ContabilidadCuenta.create({
