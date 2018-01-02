@@ -96,26 +96,61 @@ router.route('/proveedores/empresa/:id_empresa')
 router.route('/proveedores/empresa')
 	.post(function(req, res) {
 		req.body.proveedores.forEach(function(proveedor, index, array){
-			Proveedor.create({
-				id_empresa:req.body.id_empresa,
-				razon_social:proveedor.razon_social,
-				codigo:proveedor.codigo,
-				nit:proveedor.nit,
-				direccion:proveedor.direccion,
-				telefono1:proveedor.telefono1,
-				telefono2:proveedor.telefono2,
-				telefono3:proveedor.telefono3,
-				contacto:proveedor.contacto,
-				rubro:proveedor.rubro,
-				categoria:proveedor.categoria,
-				ubicacion_geografica:proveedor.ubicacion_geografica,
-				fecha1:proveedor.fecha1,
-				fecha2:proveedor.fecha2,
-				texto1:proveedor.texto1,
-				texto2:proveedor.texto2
-			}).then(function(proveedorCreado){
-				if(index===(array.length-1)){
-					res.json({mensaje:"Proveedores creados satisfactoriamente!"});
+			Proveedor.find({
+				where: {
+					id_empresa: req.body.id_empresa,
+					$or: [{ nit: proveedor.nit }, { codigo: proveedor.codigo }]
+				},
+			}).then(function (proveedorEncontrado) {
+				if (proveedorEncontrado) {
+					Proveedor.update({
+						razon_social:proveedor.razon_social,
+						codigo:proveedor.codigo,
+						nit:proveedor.nit,
+						direccion:proveedor.direccion,
+						telefono1:proveedor.telefono1,
+						telefono2:proveedor.telefono2,
+						telefono3:proveedor.telefono3,
+						contacto:proveedor.contacto,
+						rubro:proveedor.rubro,
+						categoria:proveedor.categoria,
+						ubicacion_geografica:proveedor.ubicacion_geografica,
+						fecha1:proveedor.fecha1,
+						fecha2:proveedor.fecha2,
+						texto1:proveedor.texto1,
+						texto2:proveedor.texto2
+					}, {
+							where: {
+								id: proveedorEncontrado.id
+							}
+						}).then(function (clienteCreado) {
+							if (index === (array.length - 1)) {
+								res.json({ mensaje: "¡Datos de Proveedores actualizados satisfactoriamente!" });
+							}
+						});
+				} else {
+					Proveedor.create({
+						id_empresa:req.body.id_empresa,
+						razon_social:proveedor.razon_social,
+						codigo:proveedor.codigo,
+						nit:proveedor.nit,
+						direccion:proveedor.direccion,
+						telefono1:proveedor.telefono1,
+						telefono2:proveedor.telefono2,
+						telefono3:proveedor.telefono3,
+						contacto:proveedor.contacto,
+						rubro:proveedor.rubro,
+						categoria:proveedor.categoria,
+						ubicacion_geografica:proveedor.ubicacion_geografica,
+						fecha1:proveedor.fecha1,
+						fecha2:proveedor.fecha2,
+						texto1:proveedor.texto1,
+						texto2:proveedor.texto2
+					}).then(function(proveedorCreado){
+						if(index===(array.length-1)){
+							res.json({mensaje:"Proveedores creados satisfactoriamente!"});
+						}
+					});
 				}
 			});
 		});
