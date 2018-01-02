@@ -19,7 +19,8 @@ module.exports = function (router, ContabilidadCuenta, ClasificacionCuenta, Tipo
 		.post(function(req, res) {
 			ContabilidadCuenta.find({ 
 				where:{
-					codigo: req.body.codigo
+					codigo: req.body.codigo,
+					eliminado:false
 				}
 			}).then(function(entidad){
 				if(entidad){
@@ -479,7 +480,8 @@ module.exports = function (router, ContabilidadCuenta, ClasificacionCuenta, Tipo
 								return ContabilidadCuenta.find({ 
 									where:{
 										$or: [{codigo:cuenta.codigo}],
-										id_empresa:req.body.id_empresa
+										id_empresa:req.body.id_empresa,
+										eliminado:false
 									},
 									transaction: t
 								}).then(function(cuentaEncontrada){
