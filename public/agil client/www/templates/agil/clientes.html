@@ -53,6 +53,7 @@
 								<span class="lbl"></span>
 							</label>
 							</th>
+							<th>N°</th>
 							<th>Código</th>
 							<th>Razón Social</th>
 							<th>Nit</th>
@@ -76,6 +77,9 @@
 								<input type="checkbox" class="ace" />
 								<span class="lbl"></span>
 							</label>
+							</td>
+							<td>
+								{{($index+1)+(itemsPorPagina*(paginaActual-1))}}
 							</td>
 							<td>
 								{{cliente.codigo}}
