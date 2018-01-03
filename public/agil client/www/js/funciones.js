@@ -42,9 +42,10 @@ function ejecutarScriptsInventario(idModalActualizacionInventario, idModalCreaci
 		aplicarDatePickers();
 	}, 200);
 }
-function ejecutarScriptsOperaciones(idDialogDialogPanelOperaciones,idDialogEntregaViveres) {
+function ejecutarScriptsOperaciones(idDialogDialogPanelOperaciones,idDialogEntregaViveres,idConfirmacionCierre) {
 	crearPopup(idDialogDialogPanelOperaciones, "100%", screen.height);
 	crearPopup(idDialogEntregaViveres, "60%", 'auto');
+	crearPopup(idConfirmacionCierre, "40%", 'auto');
 }
 function ejecutarScriptsInicio(idPopupTablaProductos, idPopupTablaCreditos, idPopupTablaDeudas, idPopupPago,
 	idPopupActualizarCreditoCliente, idPopupActualizarCreditoDeuda, idPopupDeuda, idModalDescuento, idModalTablaVentasPendientes,

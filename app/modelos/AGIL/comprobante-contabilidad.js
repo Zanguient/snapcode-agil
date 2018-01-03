@@ -39,7 +39,12 @@ module.exports = function (sequelize, Sequelize) {
         favorito: {
             type: Sequelize.BOOLEAN,
             field: 'favorito'
-        }
+        },
+        id_tipo_cambio: {
+            type: Sequelize.INTEGER,
+            field: 'tipo_cambio'
+        },
+        
     }, {
             freezeTableName: true
         });

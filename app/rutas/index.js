@@ -133,7 +133,7 @@ module.exports = function (router, sequelize, Sequelize, jwt, md5, forEach, ensu
 		MedicoPacienteFicha, MedicoLaboratorioExamen, MedicoLaboratorio, MedicoLaboratorioPaciente, MedicoLaboratorioResultado, MedicoDiagnostico, MedicoDiagnosticoExamen, MedicoDiagnosticoPaciente, MedicoDiagnosticoResultado,
 		MantenimientoOrdenTrabajo, MantenimientoOrdenTrabajoManoObra, MantenimientoOrdenTrabajoMaterial, MantenimientoOrdenTrabajoServicioExterno, MantenimientoOrdenTrabajoSistema,VendedorVenta,RrhhEmpleadoFicha,
 		RrhhEmpleadoFichaOtrosSeguros,RrhhEmpleadoFichaFamiliar,MedicoPacientePreRequisito,RrhhEmpleadoDiscapacidad,RrhhEmpleadoCargo,ClienteRazon,GtmDestino,GtmEstibaje,GtmGrupoEstibaje,GtmTransportista,
-        RrhhEmpleadoHojaVida,RrhhEmpleadoFormacionAcademica,RrhhEmpleadoExperienciaLaboral,RrhhEmpleadoLogroInternoExterno,RrhhEmpleadoCapacidadInternaExterna, SolicitudReposicion,DetalleSolicitudProducto,DetalleSolicitudProductoBase);
+        RrhhEmpleadoHojaVida,RrhhEmpleadoFormacionAcademica,RrhhEmpleadoExperienciaLaboral,RrhhEmpleadoLogroInternoExterno,RrhhEmpleadoCapacidadInternaExterna, SolicitudReposicion,DetalleSolicitudProducto,DetalleSolicitudProductoBase,MonedaTipoCambio);
 	//*****SOCKETS*****
 	require('../sockets/pantallas.js')(io, socket);
 
@@ -169,7 +169,7 @@ module.exports = function (router, sequelize, Sequelize, jwt, md5, forEach, ensu
 		Venta, DetalleVenta, Cliente, Almacen, Sucursal, PagoVenta, PagoCompra, Compra, Proveedor, sequelize, Banco, DetalleCompra,
 		CajaSiguienteTurno, Diccionario, Producto, Inventario,Sequelize);
 	require('./rutas-contabilidad-cuenta')(router, ContabilidadCuenta, ClasificacionCuenta, Tipo, Clase, Usuario, Diccionario, ClienteCuenta, ProveedorCuenta, ConfiguracionCuenta, sequelize);
-	require('./rutas-comprobante-contabilidad')(router, ComprobanteContabilidad, AsientoContabilidad, ContabilidadCuenta, ClasificacionCuenta, Sucursal, Clase, Usuario, Diccionario, Empresa, Persona, Compra, Venta, MonedaTipoCambio); //MonedaTipoCambio
+	require('./rutas-comprobante-contabilidad')(router, ComprobanteContabilidad, AsientoContabilidad, ContabilidadCuenta, ClasificacionCuenta, Sucursal, Clase, Usuario, Diccionario, Empresa, Persona, Compra, Venta, MonedaTipoCambio,NumeroLiteral); //MonedaTipoCambio
 	// require('./rutas-contabilidad-clasificacion-cuenta')(router,ClasificacionCuenta,tipo,Usuario,Diccionario);
 
 	//INV

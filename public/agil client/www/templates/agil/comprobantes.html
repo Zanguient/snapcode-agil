@@ -133,7 +133,7 @@
         <!--lista de comprobanntes ng-repeat-->
         <div>
             <div id="tabla-comprobamte_wrapper" class="dataTables_wrapper form-inline no-footer">
-                <div class="row" ng-include src="'/templates/GRAL/paginator-header-1.html'">
+                <div class="row" ng-include src="'/templates/gral/paginator-header-1.html'">
                 </div>
                 <table id="tabla-comprobantes" class="table table-striped table-bordered table-hover">
                     <thead>
@@ -156,7 +156,7 @@
                                 </a>
                             </th>
                             <th ng-if="fieldViewer.getConfiguration().sucursal.show">
-                                <a href="javascript:void(0)" ng-click="paginator.sortColumn('sucursal')">Sucursal
+                                <a href="javascript:void(0)">Sucursal
                                     <span id="Sucursal" class="sort fa fa-sort icon-only"></span>
                                 </a>
                             </th>
@@ -176,7 +176,7 @@
                                 </a>
                             </th>
                             <th ng-if="fieldViewer.getConfiguration().usuario.show">
-                                <a href="javascript:void(0)" ng-click="paginator.sortColumn('usuario')">Usuario
+                                <a href="javascript:void(0)">Usuario
                                     <span id="usuario" class="sort fa fa-sort icon-only"></span>
                                 </a>
                             </th>

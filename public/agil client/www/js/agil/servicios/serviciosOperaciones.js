@@ -40,3 +40,25 @@ angular.module('agil.servicios')
     return res;
 }])
 
+
+
+
+.factory('EliminarSolicitudReposicion', function ($resource) {
+    return $resource(restServer + "operaciones/eliminar/:id_solicitud", null,
+        {
+            'update': { method: 'PUT' }
+        });
+})
+
+// .factory('EliminarSolicitudesReposicion', ['EliminarSolicitudReposicion', '$q', function (Eliminar, $q) {
+//     var res = function (idSolicitud) {
+//         var delay = $q.defer();
+//         Eliminar.get({id_solicitud:idSolicitud}, function (entidades) {
+//             delay.resolve(entidades);
+//         }, function (error) {
+//             delay.reject(error);
+//         });
+//         return delay.promise;
+//     };
+//     return res;
+// }])

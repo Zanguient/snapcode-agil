@@ -1632,7 +1632,7 @@
 					<div class="row" class="col-sm-12">
 						<div class="col-sm-2">
 							<label>TIPO COMPROBANTE:</label>
-							<select id='id_tipo' required ng-model='nuevoComprobante.tipo_comprobante' id="tipoComprobante" name="tipoComprobante" data-placeholder="Click para escoger"
+							<select id='id_tipo' required ng-model='nuevoComprobante.tipoComprobante' id="tipoComprobante" name="tipoComprobante" data-placeholder="Click para escoger"
 							 class="col-sm5" ng-options="cuentaTipo as cuentaTipo.nombre for cuentaTipo in tiposComprobantes track by cuentaTipo.id">
 
 							</select>
@@ -1656,7 +1656,7 @@
 						</div>
 						<div class="col-sm-2">
 							<label>FECHA</label>
-							<input name="fecha" required ng-update-hidden class="form-control date-picker" type="text" data-date-format="dd/mm/yyyy"
+							<input ng-change="obtenerCambioMoneda(nuevoComprobante.fecha)" name="fecha" required ng-update-hidden class="form-control date-picker" type="text" data-date-format="dd/mm/yyyy"
 							 id="fecha" ng-model="nuevoComprobante.fecha" placeholder="Ingrese la fecha" />
 							<span class="red">(*)</span>
 							<div ng-show="formNuevoComprobante.fecha.$error.required" class="invalid-message help-block" ng-messages="formNuevoComprobante.fecha.$error"
@@ -1673,11 +1673,11 @@
 						</div>
 						<div class="col-sm-2" align="right">
 							<br>
-							<label style="background-color:lightblue">UFV {{valorUfv}}</label>
+							<label style="background-color:lightblue">UFV {{moneda.ufv}}</label>
 						</div>
 						<div class="col-sm-2" align="right">
 							<br>
-							<label style="background-color: bisque">$US T/C {{valorDolar}}</label>
+							<label style="background-color: bisque">$US T/C {{moneda.dolar}}</label>
 						</div>
 						<div class="col-sm-2" align="right">
 							<br>

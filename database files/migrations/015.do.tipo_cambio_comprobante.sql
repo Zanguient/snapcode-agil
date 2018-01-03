@@ -1,0 +1,1 @@
+ALTER TABLE agil_comprobante_contabilidad ADD tipo_cambio int(11);

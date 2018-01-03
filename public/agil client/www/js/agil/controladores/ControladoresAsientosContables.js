@@ -1,7 +1,7 @@
 angular.module('agil.controladores')
 
     .controller('ControladorComprobantes', function ($scope, $localStorage, $location, $templateCache, $route, blockUI, CodigoControl, Paginator, ComprobantePaginador, ClasesTipo, ListaCuentasComprobanteContabilidad, ListaAsientosComprobanteContabilidad, NuevoComprobanteContabilidad, ClasesTipo, LibroMayorCuenta, ComprobanteRevisarPaginador,
-        AsignarComprobanteFavorito,ImprimirComprobante, ComprasComprobante, VerificarUsuarioEmpresa,FieldViewer) {
+        AsignarComprobanteFavorito,ImprimirComprobante, ComprasComprobante, VerificarUsuarioEmpresa,FieldViewer,DatosComprobante) {
 
         blockUI.start();
         $scope.asientoNuevo = false
@@ -214,7 +214,13 @@ angular.module('agil.controladores')
             }
         }
         $scope.imprimirComprobante=function (comprobante,bimonetario) {
-            ImprimirComprobante(comprobante,bimonetario)
+            blockUI.start();
+            var promesa = DatosComprobante(comprobante.id)
+            promesa.then(function (datosComprobante) {                
+                datosComprobante.comprobante.importe_literal = datosComprobante.importeLiteral
+                ImprimirComprobante(datosComprobante.comprobante, bimonetario, $scope.usuario)
+                blockUI.stop();
+            })	
             
         }
         $scope.inicio();

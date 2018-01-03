@@ -68,22 +68,21 @@
                                 FILTRO
                             </td>
                             <td>
-                                <select id="filSucursalOp" name="filSucursalOp" ng-model="filtro.sucursal">
-                                    <option value="0">TODOS</option>
-                                    <option ng-repeat="sucursal_ in [{nombre:'Sucursal 1',id:1},{nombre:'Sucursal 2',id:2}, {nombre:'Sucursal 3',id:3}]" value="{{sucursal_.id}}">{{sucursal_.nombre}}</option>
+                                <select required id="sucursal" name="sucursal" ng-options="sucursal as sucursal.nombre for sucursal in sucursales track by sucursal.id"
+                                    ng-model="filtro.sucursal" ng-change="obtenerAlmacenes(solicitud.sucursal.id)">
+                                    <option value="" disabled selected>Selec. Sucursal</option>
                                 </select>
                             </td>
                             <td>
-                                <select id="filAlmacenOp" name="filAlmacenOp" ng-model="filtro.almacen">
-                                    <option value="0">TODOS</option>
-                                    <option ng-repeat="almacen_ in [{nombre:'Almacen 1',id:1},{nombre:'Almacen 2',id:2}, {nombre:'Almacen 3',id:3}]" value="{{almacen_.id}}">{{almacen_.nombre}}</option>
+                                <select ng-change="cargarProductos()" data-validate="validate(required)" required id="almacen" name="almacen" ng-model="filtro.almacen"
+                                    ng-options="almacen as almacen.nombre for almacen in almacenes track by almacen.id" data-placeholder="Click para escoger">
+                                    <option value="" disabled selected>Selec. Almacen</option>
                                 </select>
                             </td>
                             <td>
-                                <select id="filMovimientoOp" name="filMovimientoOp" ng-model="filtro.movimiento">
-                                    <option value="0">TODOS</option>
-                                    <option ng-repeat="movimiento_ in [{nombre:'movimiento 1',id:1},{nombre:'movimiento 2',id:2}, {nombre:'movimiento 3',id:3}]"
-                                        value="{{movimiento_.id}}">{{movimiento_.nombre}}</option>
+                                <select id="filMovimientoOp" name="filMovimientoOp" ng-options="movimiento as movimiento.nombre for movimiento in movimientos track by movimiento.id"
+                                    ng-model="filtro.movimiento">
+                                    <option value="" disabled selected>Selec. Movimiento</option>
                                 </select>
                             </td>
                         </tr>
@@ -107,14 +106,14 @@
                             </td>
                             <td>
                                 <select id="filEstadoOp" name="filEstadoOp" ng-model="filtro.estado">
-                                    <option value="0">TODOS</option>
                                     <option ng-repeat="Estado_ in [{nombre:'Activo',id:1},{nombre:'Inactivo',id:2}]" value="{{Estado_.id}}">{{Estado_.nombre}}</option>
+                                    <option value="">TODOS</option>
                                 </select>
                             </td>
                             <td>
                                 <select id="filvaluadoOp" name="filvaluadoOp" ng-model="filtro.valuado">
-                                    <option value="0">TODOS</option>
                                     <option ng-repeat="valuado_ in [{nombre:'valuado 1',id:1},{nombre:'valuado 2',id:2}, {nombre:'valuado 3',id:3}]" value="{{valuado_.id}}">{{valuado_.nombre}}</option>
+                                    <option value="">TODOS</option>
                                 </select>
                             </td>
                             <td>
@@ -156,44 +155,78 @@
                         <td>{{solicitud.monto}}</td>
                         <td>{{solicitud.usuario.persona.nombre_completo}}</td>
                         <td>
-                            <label class="bg-green" ng-if="solicitud.activo">&nbsp &nbspActivo&nbsp &nbsp</label>
-                            <label class="bg-red" ng-if="!solicitud.activo">&nbsp &nbspInactivo&nbsp &nbsp</label>
+                            <label class="bg-green" ng-if="solicitud.activo">&nbsp &nbspAbierto&nbsp &nbsp</label>
+                            <label class="bg-red" ng-if="!solicitud.activo">&nbsp &nbspCerrado&nbsp &nbsp</label>
                         </td>
                         <!-- <td><label><input id="estadoSolicitud" name="estadoSolicitud" ng-updated-hidden ng-model="solicitud.activo" class="ace ace-switch ace-switch-5" type="checkbox">
                             <span class="lbl check-descuento"> <label class="bg-green" ng-if="solicitud.activo">&nbsp &nbspActivo&nbsp &nbsp</label><label class="bg-red" ng-if="!solicitud.activo">&nbsp &nbspInactivo&nbsp &nbsp</label></span></label></td>-->
                         <td>
                             <div class="hidden-sm hidden-xs action-buttons">
+
+                                <a ng-if="solicitud.activo" class="green" href="javascript:void(0)" ng-click="confirmarEntrega(solicitud)">
+                                    <i class="ace-icon fa fa-unlock bigger-130"></i>
+                                </a>
+                                <a ng-if="solicitud.activo" class="orange" href="javascript:void(0)" ng-click="editar(solicitud)">
+                                    <i class="ace-icon fa fa-pencil-square-o bigger-130"></i>
+                                </a>
+                                <a ng-if="!solicitud.activo" class="red" href="javascript:void(0)">
+                                    <i class="ace-icon fa fa-lock bigger-130"></i>
+                                </a>
                                 <a class="green" href="javascript:void(0)" ng-click="sinFuncionalidad()">
                                     <i class="ace-icon fa fa-print bigger-130"></i>
                                 </a>
-                                <a class="blue" href="javascript:void(0)" ng-click="abrirDialogEntregaViveres()">
+                                <a class="blue" href="javascript:void(0)" ng-click="ver(solicitud)">
                                     <i class="ace-icon fa fa-search-plus bigger-130"></i>
+                                </a>
+                                <a class="blue" href="javascript:void(0)" ng-click="copiar(solicitud)">
+                                    <i class="ace-icon fa fa-files-o bigger-130"></i>
+                                </a>
+                                <a class="red" ng-if="solicitud.activo" ng-click="eliminar(solicitud)">
+                                    <i class="ace-icon fa fa-trash-o bigger-130"></i>
                                 </a>
                             </div>
                             <div class="hidden-md hidden-lg">
-                                <div class="inline pos-rel">
-                                    <button class="btn btn-minier btn-yellow dropdown-toggle" data-toggle="dropdown" data-position="auto">
-                                        <i class="ace-icon fa fa-caret-down icon-only bigger-120"></i>
-                                    </button>
-
-                                    <ul class="dropdown-menu dropdown-only-icon dropdown-yellow dropdown-menu-right dropdown-caret dropdown-close">
-                                        <li>
-                                            <a href="javascript:void(0)" ng-click="sinFuncionalidad()" class="tooltip-success" data-rel="tooltip" title="Editar">
-                                                <span class="green">
-                                                    <i class="ace-icon fa fa-print bigger-120"></i>
-                                                </span>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="javascript:void(0)" e-disabled="!aplicacion.puede_ver" ng-click="sinFuncionalidad()" class="tooltip-info" data-rel="tooltip"
-                                                title="View">
-                                                <span class="blue">
-                                                    <i class="ace-icon fa fa-search-plus bigger-120"></i>
-                                                </span>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </div>
+                            <div class="inline pos-rel">
+                                <button class="btn btn-minier btn-yellow dropdown-toggle" data-toggle="dropdown" data-position="auto">
+                                    <i class="ace-icon fa fa-caret-down icon-only bigger-120"></i>
+                                </button>
+                            
+                                <ul class="dropdown-menu dropdown-only-icon dropdown-yellow dropdown-menu-right dropdown-caret dropdown-close">
+                                    <li>
+                                        <a ng-if="solicitud.activo" class="green" href="javascript:void(0)" ng-click="confirmarEntrega(solicitud)">
+                                            <i class="ace-icon fa fa-unlock bigger-130"></i>
+                                        </a>
+                                        <a ng-if="!solicitud.activo" class="red" href="javascript:void(0)">
+                                            <i class="ace-icon fa fa-lock bigger-130"></i>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a ng-if="solicitud.activo" class="orange" href="javascript:void(0)" ng-click="editar(solicitud)">
+                                            <i class="ace-icon fa fa-pencil-square-o bigger-130"></i>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="green" href="javascript:void(0)" ng-click="sinFuncionalidad()">
+                                            <i class="ace-icon fa fa-print bigger-130"></i>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="blue" href="javascript:void(0)" ng-click="ver(solicitud)">
+                                            <i class="ace-icon fa fa-search-plus bigger-130"></i>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="blue" href="javascript:void(0)" ng-click="copiar(solicitud)">
+                                            <i class="ace-icon fa fa-files-o bigger-130"></i>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="red" ng-if="solicitud.activo" ng-click="eliminar(solicitud)">
+                                            <i class="ace-icon fa fa-trash-o bigger-130"></i>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
                             </div>
                         </td>
                     </tr>
@@ -220,14 +253,14 @@
                                             <div class="col-sm-11">
                                                 <div class="col-sm-2">
                                                     <label>FECHA</label>
-                                                    <input data-validate="validate(required)" required class="form-control date-picker" type="text" data-date-format="dd/mm/yyyy"
+                                                    <input disabled data-validate="validate(required)" required class="form-control date-picker" type="text" data-date-format="dd/mm/yyyy"
                                                         id="fechaP" ng-model="solicitud.fechaTexto" value="{{getDate() | date:'dd/MM/yyyy'}}"
                                                     />
                                                 </div>
                                                 <div class="col-sm-4">
                                                     <div class="col-sm-6">
                                                         <label>SUCURSAL</label>
-                                                        <select required id="sucursal" name="sucursal" ng-options="sucursal as sucursal.nombre for sucursal in sucursales track by sucursal.id"
+                                                        <select ng-disabled="solicitud.ver!==undefined" required id="sucursal" name="sucursal" ng-options="sucursal as sucursal.nombre for sucursal in sucursales track by sucursal.id"
                                                             ng-model="solicitud.sucursal" ng-change="obtenerAlmacenes(solicitud.sucursal.id)">
                                                             <option value="" disabled selected>Selec. Sucursal</option>
                                                         </select>
@@ -236,8 +269,8 @@
                                                     </div>
                                                     <div class="col-sm-6">
                                                         <label>ALMACEN</label>
-                                                        <select ng-change="cargarProductos()" data-validate="validate(required)" required id="almacen" name="almacen" ng-model="solicitud.almacen"
-                                                            ng-options="almacen as almacen.nombre for almacen in almacenes track by almacen.id"
+                                                        <select ng-disabled="solicitud.ver!==undefined" ng-change="cargarProductos()" data-validate="validate(required)" required
+                                                            id="almacen" name="almacen" ng-model="solicitud.almacen" ng-options="almacen as almacen.nombre for almacen in almacenes track by almacen.id"
                                                             data-placeholder="Click para escoger">
                                                             <option value="" disabled selected>Selec. Almacen</option>
                                                         </select>
@@ -245,7 +278,8 @@
                                                 </div>
                                                 <div class="col-sm-2">
                                                     <div class="col-sm-6">
-                                                        <button type="submit" ng-disabled="solicitud.solicitudesProductos.length==0 || !formularioOperacionesPanel.$valid" class="btn btn-primary btn-app btn-sm button-guardar button-responsive">
+                                                        <button type="submit" ng-disabled="solicitud.solicitudesProductos.length==0 || !formularioOperacionesPanel.$valid || solicitud.ver!==undefined"
+                                                            class="btn btn-primary btn-app btn-sm button-guardar button-responsive">
                                                             <i class="ace-icon fa fa-floppy-o align-top bigger-100"></i>
                                                             GUARDAR
                                                         </button>
@@ -261,8 +295,8 @@
                                                     <div class="form-group">
                                                         <label class="control-label label-responsive" for="inputGroup"> BÚSQUEDA </label>
                                                         <div class="input-group">
-                                                            <input type="text" class="form-control" placeholder="Buscar" id="inputGroup" ng-model="search" ng-change="filtrarProductos(search)"
-                                                                class="form-control" />
+                                                            <input ng-disabled="solicitud.ver!==undefined" type="text" class="form-control" placeholder="Buscar" id="inputGroup" ng-model="search"
+                                                                ng-change="filtrarProductos(search)" class="form-control" />
                                                             <span class="input-group-addon">
                                                                 <i class="fa fa-search"></i>
                                                             </span>
@@ -336,14 +370,16 @@
                                                 <div class="row">
                                                     <div class="container-fluid">
                                                         <ul style="list-style-type: none;" ng-if="solicitud.solicitudesProductos.length>0">
-                                                            <li class="" ng-repeat="productito in solicitud.solicitudesProductos">
+                                                            <li class="" ng-if="productito.eliminado === undefined" ng-repeat="productito in solicitud.solicitudesProductos">
                                                                 <div ng-if="!productito.verFormulacion">
-                                                                    <button type="button" class="button-style btn-panel {{color.stylebutton}} btn-block btn-minier text-cut" ng-click="verFormulacion(productito)">{{productito.producto.nombre}}
+                                                                    <button type="button" class="button-style btn-panel {{color.stylebutton}} btn-block btn-minier text-cut" ng-click="verFormulacion(productito)">{{(productito.producto !==undefined)?productito.producto.nombre:(productoSeleccionado.productoSolicitado
+                                                                        !==undefined)?productito.productoSolicitado.nombre:productito.productoSolicitudBase.nombre}}
                                                                         <i class="ace-icon fa fa-plus bigger-120 pos-rel pull-right"></i>
                                                                     </button>
                                                                 </div>
                                                                 <div ng-if="productito.verFormulacion">
-                                                                    <button type="button" class="button-style btn-panel {{color.stylebutton}} btn-block btn-minier text-cut" ng-click="verFormulacion(productito)">{{productito.producto.nombre}}
+                                                                    <button type="button" class="button-style btn-panel {{color.stylebutton}} btn-block btn-minier text-cut" ng-click="verFormulacion(productito)">{{(productito.producto !==undefined)?productito.producto.nombre:(productoSeleccionado.productoSolicitado
+                                                                        !==undefined)?productito.productoSolicitado.nombre:productito.productoSolicitudBase.nombre}}
                                                                         <i class="ace-icon fa fa-minus bigger-120 pos-rel pull-right"></i>
                                                                     </button>
                                                                 </div>
@@ -353,7 +389,8 @@
                                                                         <label ng-if="productito.verFormulacion && productoSeleccionado.ingredientes.length >0"></label>
                                                                         <div class="col-xs-12" ng-if="productito.verFormulacion && productoSeleccionado.ingredientes.length >0">
                                                                             <div class="table-header">
-                                                                                ingredientes {{productoSeleccionado.producto.nombre}}
+                                                                                ingredientes {{(productoSeleccionado.producto !==undefined)?productoSeleccionado.producto.nombre:(productoSeleccionado.productoSolicitado
+                                                                                !==undefined)?productoSeleccionado.productoSolicitado.nombre:productoSeleccionado.productoSolicitudBase.nombre}}
                                                                             </div>
                                                                             <table class="table table-striped table-bordered table-hover">
                                                                                 <thead>
@@ -379,28 +416,29 @@
                                                                                     </tr>
                                                                                 </thead>
                                                                                 <tbody>
-                                                                                    <tr ng-repeat="ingrediente in productoSeleccionado.ingredientes">
+                                                                                    <tr ng-if="ingrediente.eliminado===undefined" ng-repeat="ingrediente in productoSeleccionado.ingredientes">
                                                                                         <td>
                                                                                             {{$index+1}}
                                                                                         </td>
                                                                                         <td>
-                                                                                            {{ingrediente.productoBase.nombre}}
+                                                                                            {{(ingrediente.productoBase !==undefined)? ingrediente.productoBase.nombre:ingrediente.productoSolicitudBase.nombre}}
                                                                                         </td>
                                                                                         <td>
-                                                                                            {{ingrediente.productoBase.unidad_medida}}
+                                                                                            {{(ingrediente.productoBase !==undefined)?ingrediente.productoBase.unidad_medida:ingrediente.productoSolicitudBase.unidad_medida}}
                                                                                         </td>
                                                                                         <td>
-                                                                                            {{ingrediente.formulacion}}
+                                                                                            {{(ingrediente.productoBase !==undefined)?ingrediente.formulacion:(ingrediente.cantidad_ideal!==undefined)?ingrediente.cantidad_ideal:ingrediente.productoSolicitudBase.formulacion}}
                                                                                         </td>
                                                                                         <td style="min-width: 85px">
-                                                                                            <input style="width:100%" type="number" step="0.1" value="{{ingrediente.formulacion}}" ng-model="ingrediente.cantidad_real">
+                                                                                            <input ng-disabled="solicitud.ver!==undefined" style="width:100%" type="number" step="0.1" value="{{ingrediente.formulacion}}"
+                                                                                                ng-model="ingrediente.cantidad_real">
                                                                                         </td>
                                                                                         <td>
                                                                                             <div class="col-sm-12">
                                                                                                 <!-- <button type="button" ng-click="disminuirDetalleVenta(detalleVenta)" class="button-style btn red-style-button btn-xs">
                                                                                                     <i class="ace-icon fa fa-minus bigger-100"></i>
                                                                                                 </button> -->
-                                                                                                <button type="button" ng-click="eliminarIngrediente(detalleVenta)" class="button-style btn red-style-button btn-xs">
+                                                                                                <button type="button" ng-disabled="solicitud.ver!==undefined" ng-click="eliminarIngrediente(ingrediente)" class="button-style btn red-style-button btn-xs">
                                                                                                     <i class="ace-icon fa fa-trash-o bigger-100"></i>
                                                                                                 </button>
                                                                                             </div>
@@ -442,7 +480,7 @@
                                                                         </tr>
                                                                     </thead>
                                                                     <tbody>
-                                                                        <tr ng-repeat="detalleVenta in solicitud.solicitudesProductos">
+                                                                        <tr ng-if="detalleVenta.eliminado === undefined" ng-repeat="detalleVenta in solicitud.solicitudesProductos">
                                                                             <td>
                                                                                 {{$index+1}}
                                                                             </td>
@@ -450,18 +488,18 @@
                                                                                 {{detalleVenta.cantidad}}
                                                                             </td>
                                                                             <td>
-                                                                                {{detalleVenta.producto.nombre}}
+                                                                                {{(detalleVenta.producto!==undefined)?detalleVenta.producto.nombre:detalleVenta.productoSolicitado.nombre}}
                                                                             </td>
                                                                             <td>
                                                                                 <div class="row">
                                                                                     <div class="col-sm-12">
-                                                                                        <button type="button" ng-click="disminuirDetalleVenta(detalleVenta)" class="button-style btn red-style-button btn-xs">
+                                                                                        <button ng-disabled="solicitud.ver!==undefined" type="button" ng-click="disminuirDetalleVenta(detalleVenta)" class="button-style btn red-style-button btn-xs">
                                                                                             <i class="ace-icon fa fa-minus bigger-100"></i>
                                                                                         </button>
-                                                                                        <button type="button" ng-click="verFormulacion(detalleVenta.producto)" class="button-style btn red-style-button btn-xs">
+                                                                                        <!-- <button type="button" ng-click="verFormulacion(detalleVenta.producto)" class="button-style btn red-style-button btn-xs">
                                                                                             <i class="ace-icon fa fa-search bigger-100"></i>
-                                                                                        </button>
-                                                                                        <button type="button" ng-click="eliminarDetalleVenta(detalleVenta)" class="button-style btn red-style-button btn-xs">
+                                                                                        </button> -->
+                                                                                        <button ng-disabled="solicitud.ver!==undefined" type="button" ng-click="eliminarDetalleVenta(detalleVenta)" class="button-style btn red-style-button btn-xs">
                                                                                             <i class="ace-icon fa fa-trash-o bigger-100"></i>
                                                                                         </button>
                                                                                     </div>
@@ -504,107 +542,11 @@
     </div>
 </div>
 
-<div class="modal" id="dialogEntregaViveres">
-    <div class="row">
-        <div class=" ui-dialog-titlebar ui-widget-header ui-corner-all ui-helper-clearfix ui-draggable-handle">
-            <span id="ui-id-5" class="ui-dialog-title">
-                <h4 class="smaller blue">
-                    <i class="ace-icon fa-text icono-font "></i>
-                    <label>ENTREGA DE SOLICITUD DE VIVERES</label>
-                </h4>
-            </span>
-            <button ng-click="cerrarDialogEntregaViveres()" type="button" class="ui-dialog-titlebar-close"></button>
-        </div>
-    </div>
-    <br>
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-xs-12">
-                <div class="col-sm-7">
-                    <div class="table-header">DETALLES PENDIENTES</div>
-                    <table class="table table-striped table-bordered table-hover">
-                        <thead>
-                            <tr>
-                                <th>
-                                    #
-                                </th>
-                                <th>
-                                    ítem
-                                </th>
-                                <th>
-                                    CANT.(U)
-                                </th>
-                                <th>
-                                    Acciones
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr ng-repeat="producto in [{nombre:'papa',cantidad:16,unidad:'Kgrs'},{nombre:'cebolla',cantidad:4,unidad:'@'}]">
-                                <td>{{$index+1}}</td>
-                                <td>{{producto.nombre}}</td>
-                                <td>{{producto.cantidad}} {{producto.unidad}}</td>
-                                <td>
-                                    <a href="">
-                                        <i class="ace-icon fa fa-trash-o bigger-100"></i>
-                                    </a>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <div class="row">
-                        <a href="" ng-click="sinFuncionalidad()">
-                            <i class="ace-icon fa fa-arrow-right align-top bigger-150"></i>
-                        </a>
-                    </div>
-                </div>
-                <div class="col-sm-5">
-                    <div class="table-header">DETALLES DE ENTREGADOS</div>
-                    <table class="table table-striped table-bordered table-hover">
-                        <thead>
-                            <tr>
-                                <th>
-                                    #
-                                </th>
-                                <th>
-                                    ítem
-                                </th>
-                                <th>
-                                    CANT.(U)
-                                </th>
-
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr ng-repeat="producto in [{nombre:'papa',cantidad:16,unidad:'Kgrs'},{nombre:'cebolla',cantidad:4,unidad:'@'}]">
-                                <td>{{$index+1}}</td>
-                                <td>{{producto.nombre}}</td>
-                                <td>{{producto.cantidad}} {{producto.unidad}}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <div class="row">
-                        <a href="" ng-click="sinFuncionalidad()">
-                            <i class="ace-icon fa fa-arrow-left align-top bigger-150"></i>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col-lg-12 ui-dialog-buttonpane ui-widget-content ui-helper-clearfix">
-            <div class="ui-dialog-buttonset">
-                <button ng-click="sinFuncionalidad()" type="button" class="btn btn-primary btn-sm">
-                    <i class="ace-icon fa fa-floppy-o bigger-110"></i>
-                    Guardar
-                </button>
-                <button ng-click="cerrarDialogEntregaViveres()" type="button" class="btn btn-danger btn-sm">
-                    <i class="ace-icon fa fa-times bigger-110"></i>
-                    Cancelar
-                </button>
-            </div>
-        </div>
-    </div>
+<div id="dialog-confirmacion-entrega" title="Confirmar entrega de viveres">
+    <div class="table-header"> Confirmar entrega de viveres </div>
+    <p>
+        <span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>¿Esta seguro de cerrar esta solicitud?
+    </p>
+    <button type="button" class="btn btn-danger" ng-click="cerrarSolicitud(solicitudCerrar)">Si</button>
+    <button type="button" class="btn btn-success" ng-click="cerrarDialogConfirmacionCierre()">No</button>
 </div>
