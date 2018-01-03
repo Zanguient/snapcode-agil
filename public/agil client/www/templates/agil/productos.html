@@ -52,7 +52,7 @@
 					<tbody>
 						<tr ng-repeat="producto in productos">
 							<td class="center">
-								{{$index+1}}
+								{{($index+1)+(paginator.itemsPerPage*(paginator.currentPage-1))}}
 							</td>
 							<td ng-if="usuario.empresa.usar_panel"><label>
 									<input ng-change="actualizarProducto(producto)" name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="producto.publicar_panel"/>
