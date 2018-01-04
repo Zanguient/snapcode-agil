@@ -266,8 +266,8 @@ module.exports = function (sequelize, Usuario, Persona, Rol, UsuarioRol, Tipo, C
 	DetalleSolicitudProductoBase.belongsTo(Producto,{foreignKey:'id_producto_base',as:'productoSolicitudBase'})
 	Usuario.hasMany(SolicitudReposicion,{foreignKey:'id_usuario', as:'usuarios'})
 	SolicitudReposicion.belongsTo(Usuario,{foreignKey:'id_usuario', as:'usuario'})
-	Clase.hasMany(SolicitudReposicion,{foreignKey:'id_movimiento', as:'movimientos'})
-	SolicitudReposicion.belongsTo(Clase,{foreignKey:'id_movimiento', as:'movimiento'})
+	// Clase.hasMany(SolicitudReposicion,{foreignKey:'id_movimiento', as:'movimientos'})
+	// SolicitudReposicion.belongsTo(Clase,{foreignKey:'id_movimiento', as:'movimiento'})
 
 	Dosificacion.belongsTo(Empresa, { foreignKey: 'id_empresa', as: 'empresa' });
 	Dosificacion.hasMany(SucursalActividadDosificacion, { foreignKey: 'id_dosificacion', as: 'actividadesSucursales' });

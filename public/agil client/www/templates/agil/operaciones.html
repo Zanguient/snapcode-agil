@@ -40,13 +40,13 @@
                                     <i class="ace-icon fa fa-plus align-top bigger-125"></i>
                                     Filtrar
                                 </button>
-                                <label class="pull-lefth inline">
+                                <!-- <label class="pull-lefth inline">
                                     <small class="muted smaller-90">Detalle:</small>
 
                                     <input id="id-button-detalle" ng-disabled="!ventas" ng-click="sinFuncionalidad()" name="switch-view-detail" checked="checked"
                                         type="checkbox" class="ace ace-switch ace-switch-4">
                                     <span class="lbl check-detalle"></span>
-                                </label>
+                                </label> -->
                             </td>
                         </tr>
                         <tr>
@@ -60,7 +60,8 @@
                                 <label>Almacen</label>&nbsp
                             </td>
                             <td>
-                                <label>Movimiento</label>&nbsp
+                                    &nbsp
+                                <!-- <label>Movimiento</label>&nbsp -->
                             </td>
                         </tr>
                         <tr>
@@ -69,21 +70,21 @@
                             </td>
                             <td>
                                 <select required id="sucursal" name="sucursal" ng-options="sucursal as sucursal.nombre for sucursal in sucursales track by sucursal.id"
-                                    ng-model="filtro.sucursal" ng-change="obtenerAlmacenes(solicitud.sucursal.id)">
-                                    <option value="" disabled selected>Selec. Sucursal</option>
+                                    ng-model="filtro.sucursal" ng-change="obtenerAlmacenes(filtro.sucursal.id)">
+                                    <option value="" selected>TODOS</option>
                                 </select>
                             </td>
                             <td>
-                                <select ng-change="cargarProductos()" data-validate="validate(required)" required id="almacen" name="almacen" ng-model="filtro.almacen"
+                                <select data-validate="validate(required)" required id="almacen" name="almacen" ng-model="filtro.almacen"
                                     ng-options="almacen as almacen.nombre for almacen in almacenes track by almacen.id" data-placeholder="Click para escoger">
-                                    <option value="" disabled selected>Selec. Almacen</option>
+                                    <option value="" selected>TODOS</option>
                                 </select>
                             </td>
-                            <td>
-                                <select id="filMovimientoOp" name="filMovimientoOp" ng-options="movimiento as movimiento.nombre for movimiento in movimientos track by movimiento.id"
+                            <td>&nbsp
+                                <!-- <select id="filMovimientoOp" name="filMovimientoOp" ng-options="movimiento as movimiento.nombre for movimiento in movimientos track by movimiento.id"
                                     ng-model="filtro.movimiento">
-                                    <option value="" disabled selected>Selec. Movimiento</option>
-                                </select>
+                                    <option value="" selected>TODOS</option>
+                                </select> -->
                             </td>
                         </tr>
                         <tr>
@@ -93,8 +94,8 @@
                             <td>
                                 <label>Estado</label>&nbsp
                             </td>
-                            <td>
-                                <label>Valuado</label>&nbsp
+                            <td>&nbsp
+                                <!-- <label>Valuado</label>&nbsp -->
                             </td>
                             <td>
                                 &nbsp
@@ -105,16 +106,14 @@
 
                             </td>
                             <td>
-                                <select id="filEstadoOp" name="filEstadoOp" ng-model="filtro.estado">
-                                    <option ng-repeat="Estado_ in [{nombre:'Activo',id:1},{nombre:'Inactivo',id:2}]" value="{{Estado_.id}}">{{Estado_.nombre}}</option>
-                                    <option value="">TODOS</option>
+                                <select id="filEstadoOp" name="filEstadoOp" ng-model="filtro.estado" ng-options="Estado_ as Estado_.nombre for Estado_ in [{nombre:'Abierto',id:1},{nombre:'Cerrado',id:2}] track by Estado_.id">
+                                    <option value="" selected>TODOS</option>
                                 </select>
                             </td>
-                            <td>
-                                <select id="filvaluadoOp" name="filvaluadoOp" ng-model="filtro.valuado">
-                                    <option ng-repeat="valuado_ in [{nombre:'valuado 1',id:1},{nombre:'valuado 2',id:2}, {nombre:'valuado 3',id:3}]" value="{{valuado_.id}}">{{valuado_.nombre}}</option>
+                            <td>&nbsp
+                                <!-- <select id="filvaluadoOp" name="filvaluadoOp" ng-model="filtro.valuado" ng-options="valuado_ as valuado_.nombre for valuado_ in [{nombre:'valuado 1',id:1},{nombre:'valuado 2',id:2}, {nombre:'valuado 3',id:3}] track by valuado_.id">
                                     <option value="">TODOS</option>
-                                </select>
+                                </select> -->
                             </td>
                             <td>
                                 &nbsp
@@ -130,12 +129,14 @@
         <div class="table-header">
             Lista de Solicitudes
         </div>
-        <div>
+        <div id="tabla-pacientes_wrapper" class="dataTables_wrapper form-inline no-footer">
+                <!-- <div class="row" ng-include src="'/templates/gral/paginator-header-1.html'">
+                </div> -->
             <table id="tabla-ventas" class="table table-striped table-bordered table-hover">
                 <thead>
                     <tr>
                         <th>Nº</th>
-                        <th>Movimiento</th>
+                        <!-- <th>Movimiento</th> -->
                         <th>Sucursal</th>
                         <th>Fecha</th>
                         <th>Hora - Fecha</th>
@@ -146,9 +147,9 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr ng-repeat="solicitud in solicitudesOperaciones">
+                    <tr ng-if="!solicitud.eliminado"ng-repeat="solicitud in solicitudesOperaciones">
                         <td>{{$index+1}}</td>
-                        <td>{{solicitud.movimiento.nombre}}</td>
+                        <!-- <td>SOLICITUD</td> -->
                         <td>{{solicitud.almacen.sucursal.nombre}}</td>
                         <td>{{solicitud.fecha | date:"dd/MM/yyyy"}}</td>
                         <td>{{solicitud.fecha | date:"HH:mm dd/MM/yyyy"}}</td>
@@ -162,26 +163,25 @@
                             <span class="lbl check-descuento"> <label class="bg-green" ng-if="solicitud.activo">&nbsp &nbspActivo&nbsp &nbsp</label><label class="bg-red" ng-if="!solicitud.activo">&nbsp &nbspInactivo&nbsp &nbsp</label></span></label></td>-->
                         <td>
                             <div class="hidden-sm hidden-xs action-buttons">
-
-                                <a ng-if="solicitud.activo" class="green" href="javascript:void(0)" ng-click="confirmarEntrega(solicitud)">
+                                <a ng-if="solicitud.activo" class="green" href="javascript:void(0)" ng-click="confirmarEntrega(solicitud)" data-rel="tooltip" tooltip-placement="top" uib-tooltip="Confirmar Entrega">
                                     <i class="ace-icon fa fa-unlock bigger-130"></i>
                                 </a>
                                 <a ng-if="solicitud.activo" class="orange" href="javascript:void(0)" ng-click="editar(solicitud)">
                                     <i class="ace-icon fa fa-pencil-square-o bigger-130"></i>
                                 </a>
-                                <a ng-if="!solicitud.activo" class="red" href="javascript:void(0)">
+                                <a ng-if="!solicitud.activo" class="red" href="javascript:void(0)" data-rel="tooltip" tooltip-placement="top" uib-tooltip="Entregado">
                                     <i class="ace-icon fa fa-lock bigger-130"></i>
                                 </a>
-                                <a class="green" href="javascript:void(0)" ng-click="sinFuncionalidad()">
+                                <a class="green" href="javascript:void(0)" ng-click="sinFuncionalidad()" data-rel="tooltip" tooltip-placement="top" uib-tooltip="Imprimir">
                                     <i class="ace-icon fa fa-print bigger-130"></i>
                                 </a>
-                                <a class="blue" href="javascript:void(0)" ng-click="ver(solicitud)">
+                                <a class="blue" href="javascript:void(0)" ng-click="ver(solicitud)"  data-rel="tooltip" tooltip-placement="top" uib-tooltip="Ver">
                                     <i class="ace-icon fa fa-search-plus bigger-130"></i>
                                 </a>
-                                <a class="blue" href="javascript:void(0)" ng-click="copiar(solicitud)">
+                                <a class="blue" href="javascript:void(0)" ng-click="copiar(solicitud)"  data-rel="tooltip" tooltip-placement="top" uib-tooltip="Copiar">
                                     <i class="ace-icon fa fa-files-o bigger-130"></i>
                                 </a>
-                                <a class="red" ng-if="solicitud.activo" ng-click="eliminar(solicitud)">
+                                <a class="red" ng-if="solicitud.activo" ng-click="abrirPopupConfirmacionEliminacion(eliminar,solicitud)"  data-rel="tooltip" tooltip-placement="top" uib-tooltip="Eliminar">
                                     <i class="ace-icon fa fa-trash-o bigger-130"></i>
                                 </a>
                             </div>
@@ -232,6 +232,8 @@
                     </tr>
                 </tbody>
             </table>
+            <!-- <div class="row" ng-include src="'/templates/gral/paginator.html'" ng-if="solicitudesOperaciones.length > 0">
+            </div> -->
         </div>
     </div>
 </div>
@@ -372,19 +374,20 @@
                                                         <ul style="list-style-type: none;" ng-if="solicitud.solicitudesProductos.length>0">
                                                             <li class="" ng-if="productito.eliminado === undefined" ng-repeat="productito in solicitud.solicitudesProductos">
                                                                 <div ng-if="!productito.verFormulacion">
-                                                                    <button type="button" class="button-style btn-panel {{color.stylebutton}} btn-block btn-minier text-cut" ng-click="verFormulacion(productito)">{{(productito.producto !==undefined)?productito.producto.nombre:(productoSeleccionado.productoSolicitado
-                                                                        !==undefined)?productito.productoSolicitado.nombre:productito.productoSolicitudBase.nombre}}
+                                                                    <button type="button" class="button-style btn-panel {{color.stylebutton}} btn-block btn-minier text-cut" ng-click="verFormulacion(productito)">
+                                                                        {{productito.elNombre}}
+                                                                        <!-- {{(productito.producto !==undefined)?productito.producto.nombre:(productoSeleccionado.productoSolicitado!==undefined)?productito.productoSolicitado.nombre:productito.productoSolicitudBase.nombre}} -->
                                                                         <i class="ace-icon fa fa-plus bigger-120 pos-rel pull-right"></i>
                                                                     </button>
                                                                 </div>
                                                                 <div ng-if="productito.verFormulacion">
-                                                                    <button type="button" class="button-style btn-panel {{color.stylebutton}} btn-block btn-minier text-cut" ng-click="verFormulacion(productito)">{{(productito.producto !==undefined)?productito.producto.nombre:(productoSeleccionado.productoSolicitado
-                                                                        !==undefined)?productito.productoSolicitado.nombre:productito.productoSolicitudBase.nombre}}
+                                                                    <button type="button" class="button-style btn-panel {{color.stylebutton}} btn-block btn-minier text-cut" ng-click="verFormulacion(productito)">
+                                                                        {{(productito.producto !==undefined)?productito.producto.nombre:(productoSeleccionado.productoSolicitado!==undefined)?productito.productoSolicitado.nombre:productito.productoSolicitudBase.nombre}}
                                                                         <i class="ace-icon fa fa-minus bigger-120 pos-rel pull-right"></i>
                                                                     </button>
                                                                 </div>
                                                                 <div class="container-fluid">
-                                                                    <div style="overflow: scroll;overflow-x: hidden;width: auto;height: auto;" class="row">
+                                                                    <div style="overflow: scroll;overflow-x: hidden;width: auto;height: auto; overflow-y: hidden;" class="row">
                                                                         <label class="bg-red white center" ng-if="productito.verFormulacion && productoSeleccionado.ingredientes.length==0">&nbsp &nbspProducto sin formulación&nbsp &nbsp</label>
                                                                         <label ng-if="productito.verFormulacion && productoSeleccionado.ingredientes.length >0"></label>
                                                                         <div class="col-xs-12" ng-if="productito.verFormulacion && productoSeleccionado.ingredientes.length >0">
@@ -456,7 +459,7 @@
                                                 </div>
                                                 <div class="row">
                                                     <div class="container-fluid">
-                                                        <div style="overflow: scroll;overflow-x: hidden;width: auto;height: auto;" ng-if="solicitud.solicitudesProductos.length>0"
+                                                        <div style="overflow: scroll;overflow-x: hidden;width: auto;height: auto;overflow-y: hidden;" ng-if="solicitud.solicitudesProductos.length>0"
                                                             class="row">
                                                             <div class="col-xs-12">
                                                                 <div class="table-header">
@@ -519,7 +522,7 @@
                                                         <div id="productos" class="col-xs-13">
                                                             <div class="swiper-container">
                                                                 <div class="swiper-wrapper">
-                                                                    <div ng-click="agregarDetalleVentaPanel(producto)" class="btn btn-success swiper-slide productos-button" ng-repeat="producto in productosProcesados | orderRankin | orderBy: '-rankin'">
+                                                                    <div ng-disabled="solicitud.ver!==undefined" ng-click="agregarDetalleVentaPanel(producto)" class="btn btn-success swiper-slide productos-button" ng-repeat="producto in productosProcesados | orderRankin | orderBy: '-rankin'">
                                                                         <img src="{{producto.imagen}}" width="100%" style="height: 98px;max-height:98px">
                                                                         <label class="panel-cantidad">{{producto.inventario_disponible}}</label>
                                                                         <h3 class="text-cut">{{producto.nombre}}</h3>

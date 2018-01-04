@@ -100,12 +100,12 @@
                             </td>
                             <td>
                                 <select id='id_tipo' ng-model='filtro.tipo_comprobante' data-placeholder="Click para escoger" class="col-sm5" ng-options="cuentaTipo.id as cuentaTipo.nombre for cuentaTipo in tiposComprobantes">
-
+                                    <option value="">--ninguno--</option>
                                 </select>
                             </td>
                             <td>
                                 <select id="sucursal" name="sucursal" ng-model="filtro.sucursal" data-placeholder="Elija una sucursal" ng-options="sucursalFiltro.id as sucursalFiltro.nombre for sucursalFiltro in sucursales">
-
+                                    <option value="">--ninguno--</option>
                                 </select>
                             </td>
                             <td>
@@ -202,17 +202,17 @@
                             <td ng-if="fieldViewer.getConfiguration().importe.show">{{comprobante.importe}}</td>
                             <td ng-if="fieldViewer.getConfiguration().usuario.show">{{comprobante.usuario.persona.nombres}}</td>
                             <td>
-                                <div class="hidden-sm hidden-xs action-buttons">
-                                    <a class="blue" href="javascript:void(0)">
+                                <div class="hidden-sm hidden-xs action-buttons" >
+                                    <a class="blue" href="javascript:void(0)" ng-click="verComprobante(comprobante,true)">
                                         <i class="ace-icon fa fa-search-plus bigger-130"></i>
                                     </a>
-                                    <a class="green"  ng-click="verComprobante(comprobante)">
+                                    <a class="green"  href="javascript:void(0)" ng-click="verComprobante(comprobante)">
                                         <i class="ace-icon fa fa-pencil bigger-130" ></i>
                                     </a>
-                                    <a class="red" href="javascript:void(0)">
-                                        <i class="ace-icon fa fa-trash-o bigger-130"></i>
+                                    <a class="red" href="javascript:void(0)" ng-click="abrirModalEliminarComprobante(comprobante)">
+                                        <i class="ace-icon fa fa-trash-o bigger-130" ></i>
                                     </a>
-                                    <a class="blue"  ng-click="imprimirComprobante(comprobante,opcionBimonetario2)">
+                                    <a class="blue" href="javascript:void(0)"  ng-click="imprimirComprobante(comprobante,opcionBimonetario2)">
                                         <i class="ace-icon fa fa-print bigger-130"></i>
                                     </a>
                                 </div>
@@ -238,14 +238,14 @@
                     </tfoot>
                 </table>
                 <!--fin tabla comprobantes-->
-                <div class="row" ng-include src="'/templates/GRAL/paginator.html'">
+                <div class="row" ng-include src="'/templates/gral/paginator.html'">
                 </div>
             </div>
         </div>
     </div>
 </div>
 <div id="modal-verificar-cuenta" title="Asignar Cuenta">
-    <form name="formularioAsignarCuenta" novalidate ng-submit="verificarCuentaAdmin(cuenta)">
+    <form name="formularioAsignarCuenta" novalidate ng-submit="verificarCuentaAdmin(cuenta,$index)">
         <div class="modal-header">
             <p>
                 <h3>Verificar Cuenta</h3>
@@ -273,3 +273,12 @@
         </div>
     </form>
 </div>
+<!-- ========= inicio  modal eliminar comprobante ========= -->
+<div id="dialog-eliminar-comprobante" title="¿Eliminación de Comprobante?">
+    <p>
+        <span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>¿Esta seguro de eliminar el comprobante?
+    </p>
+    <button type="button" class="btn btn-danger" ng-click="eliminarComprobante(empleado)">Si</button>
+    <button type="button" class="btn btn-success" ng-click="cerrarDialogEliminarUsuarioRh()">No</button>
+</div>
+<!-- ========= fin modal eliminar recusos humanos ========= -->

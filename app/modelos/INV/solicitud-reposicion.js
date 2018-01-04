@@ -1,9 +1,9 @@
 module.exports = function (sequelize, Sequelize) {
 	var SolicitudReposicion = sequelize.define('inv_solicitud_reposicion', {
-		id_movimiento:{
-			type: Sequelize.INTEGER,
-			field:'movimiento'
-		},
+		// id_movimiento:{
+		// 	type: Sequelize.INTEGER,
+		// 	field:'movimiento'
+		// },
 		id_almacen: {
 			type: Sequelize.INTEGER,
 			field: 'almacen'
@@ -19,6 +19,10 @@ module.exports = function (sequelize, Sequelize) {
 		activo: {
 			type: Sequelize.BOOLEAN,
 			field: 'activo'
+		},
+		monto: {
+			type: Sequelize.DECIMAL(20,4),
+			field: 'monto'
 		},
 		eliminado: {
 			type: Sequelize.BOOLEAN,

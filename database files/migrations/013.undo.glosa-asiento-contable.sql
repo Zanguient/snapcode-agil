@@ -1,2 +1,2 @@
-ALTER TABLE agil_asiento_contable DROP COLUMN glosa;
+ALTER TABLE agil_asiento_contabilidad DROP COLUMN glosa;
 

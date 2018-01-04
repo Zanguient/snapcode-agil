@@ -398,7 +398,7 @@ module.exports = function (router, ContabilidadCuenta, ClasificacionCuenta, Tipo
 							}
 						},
 						{
-							descripcion: {
+							codigo: {
 								$like: "%" + req.params.busqueda + "%"
 							}
 						}
@@ -415,7 +415,21 @@ module.exports = function (router, ContabilidadCuenta, ClasificacionCuenta, Tipo
 				condicionCuenta.id_tipo_cuenta = parseInt(req.params.id_tipo);
 			}
 			if (req.params.monto != 0) {
-				condicionCuenta.monto = parseFloat(req.params.monto);
+				condicionCuenta = 
+				{
+					$or: [
+						{
+							debe:parseFloat(req.params.monto)
+						},
+						{
+							haber:parseFloat(req.params.monto)
+						},
+						{
+							saldo:parseFloat(req.params.monto)
+						}
+					]
+				}
+				
 			}
 			condicionCuenta.eliminado = false
 			ContabilidadCuenta.findAndCountAll({

@@ -1,0 +1,1 @@
+ALTER TABLE inv_solicitud_reposicion ADD monto DECIMAL(20,4)

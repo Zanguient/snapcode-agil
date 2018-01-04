@@ -1,9 +1,9 @@
-module.exports = function (router, ComprobanteContabilidad, AsientoContabilidad, ContabilidadCuenta, ClasificacionCuenta, Sucursal, Clase, Usuario, Diccionario, Empresa, Persona, Compra, Venta, MonedaTipoCambio,NumeroLiteral) {
+module.exports = function (router, ComprobanteContabilidad, AsientoContabilidad, ContabilidadCuenta, ClasificacionCuenta, Sucursal, Clase, Usuario, Diccionario, Empresa, Persona, Compra, Venta, MonedaTipoCambio, NumeroLiteral) {
 
 	router.route('/comprobantes/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/fecha-inicio/:inicio/fecha-fin/:fin/columna/:columna/direccion/:direccion/monto/:monto/tipo-comprobante/:tipo_comprobante/sucursal/:sucursal/usuario/:usuario/numero/:numero/busqueda/:busqueda')
 		.get(function (req, res) {
 			var ordenArreglo = [];
-			var condicionComprobante={}
+			var condicionComprobante = {}
 			if (req.params.columna == "sucursal") {
 				ordenArreglo.push({ model: Sucursal, as: 'sucursal' });
 				req.params.columna = "nombre";
@@ -19,7 +19,7 @@ module.exports = function (router, ComprobanteContabilidad, AsientoContabilidad,
 			var inicio = new Date(req.params.inicio); inicio.setHours(0, 0, 0, 0, 0);
 			var fin = new Date(req.params.fin); fin.setHours(23, 0, 0, 0, 0);
 			condicionComprobante = {
-				
+				eliminado: false,
 				$or: [
 					{
 						fecha: {
@@ -31,6 +31,7 @@ module.exports = function (router, ComprobanteContabilidad, AsientoContabilidad,
 			var condicionSucursal = { id_empresa: req.params.id_empresa };
 			if (req.params.numero != 0) {
 				condicionComprobante = {
+					eliminado: false,
 					$or: [
 						{
 							numero: parseInt(req.params.numero),
@@ -43,6 +44,7 @@ module.exports = function (router, ComprobanteContabilidad, AsientoContabilidad,
 			}
 			if (req.params.busqueda != 0) {
 				condicionComprobante = {
+					eliminado: false,
 					$or: [
 						{
 							gloza: {
@@ -55,6 +57,7 @@ module.exports = function (router, ComprobanteContabilidad, AsientoContabilidad,
 			}
 			if (req.params.tipo_comprobante != 0) {
 				condicionComprobante = {
+					eliminado: false,
 					$or: [
 						{
 							id_tipo: parseInt(req.params.tipo_comprobante),
@@ -67,6 +70,7 @@ module.exports = function (router, ComprobanteContabilidad, AsientoContabilidad,
 			}
 			if (req.params.monto != 0) {
 				condicionComprobante = {
+					eliminado: false,
 					$or: [
 						{
 							importe: parseFloat(req.params.monto),
@@ -123,7 +127,7 @@ module.exports = function (router, ComprobanteContabilidad, AsientoContabilidad,
 					id_usuario: req.params.id_usuario,
 					eliminado: false
 				},
-				include: [{ model: AsientoContabilidad, as: 'comprobante', include: [{ model: ContabilidadCuenta, as: 'cuentas' }] }, { model: Clase, as: 'tipoComprobante' }, { model: Sucursal, as: 'sucursal' }, { model: Usuario, as: 'usuario' }]
+				include: [{ model: AsientoContabilidad, as: 'asientosContables', include: [{ model: ContabilidadCuenta, as: 'cuenta' }] }, { model: Clase, as: 'tipoComprobante' }, { model: Sucursal, as: 'sucursal' }, { model: Usuario, as: 'usuario' }]
 			}).then(function (contabilidadComprobante) {
 				res.json(contabilidadComprobante)
 			})
@@ -188,6 +192,7 @@ module.exports = function (router, ComprobanteContabilidad, AsientoContabilidad,
 		.put(function (req, res) {
 			ComprobanteContabilidad.find({
 				where: {
+
 					id: req.params.id_comprobante,
 				},
 			}).then(function (comprobanteEncontrado) {
@@ -435,6 +440,7 @@ module.exports = function (router, ComprobanteContabilidad, AsientoContabilidad,
 					importe: req.body.importe,
 					id_tipo_cambio: req.body.tipoCambio.id
 				}).then(function (ComprobanteCreado) {
+					var totalHaber = 0, totalDebe = 0, totalSaldo = 0;
 					req.body.asientosContables.forEach(function (asientoContable, index, array) {
 						if (asientoContable.activo != false && asientoContable.cuenta != "") {
 							if (asientoContable.debe_bs == null) {
@@ -449,6 +455,8 @@ module.exports = function (router, ComprobanteContabilidad, AsientoContabilidad,
 							if (asientoContable.haber_sus == null) {
 								asientoContable.haber_sus = "0";
 							}
+							totalHaber += parseFloat(asientoContable.haber_bs)
+							totalDebe += parseFloat(asientoContable.debe_bs)
 							AsientoContabilidad.create({
 								id_comprobante: ComprobanteCreado.id,
 								id_cuenta: asientoContable.cuenta.id,
@@ -458,48 +466,86 @@ module.exports = function (router, ComprobanteContabilidad, AsientoContabilidad,
 								debe_sus: parseFloat(asientoContable.debe_sus),
 								haber_sus: parseFloat(asientoContable.haber_sus),
 								eliminado: asientoContable.eliminado
-							});
-						}
-						if (index === (array.length - 1)) {
+							}).then(function (asientroCreado) {
+								ContabilidadCuenta.find({
+									where: { id: asientoContable.cuenta.id, }
+								}).then(function (CuentaEncontrada) {
+									CuentaEncontrada.debe=(CuentaEncontrada.debe==null) ?0:CuentaEncontrada.debe;
+									CuentaEncontrada.haber=(CuentaEncontrada.haber==null) ?0:CuentaEncontrada.haber;
+									CuentaEncontrada.debe += parseFloat(asientoContable.debe_bs)
+									CuentaEncontrada.haber += parseFloat(asientoContable.haber_bs)
+									if (CuentaEncontrada.debe > CuentaEncontrada.haber) {
+										CuentaEncontrada.saldo = CuentaEncontrada.debe - CuentaEncontrada.haber
+									} else {
+										CuentaEncontrada.saldo = CuentaEncontrada.haber - CuentaEncontrada.debe
+									}
+									ContabilidadCuenta.update({
+										debe: CuentaEncontrada.debe,
+										haber: CuentaEncontrada.haber,
+										saldo: CuentaEncontrada.saldo
+									}, {
+											where: { id: asientoContable.cuenta.id }
+										}).then(function (CuentaActualizada) {
+											if (index === (array.length - 1)) {
 
-							if (req.body.id_venta) {
-								var t = true;
-								Venta.update({
-									contabilizado: t
-								}, {
-										where: {
-											id: req.body.id_venta,
-										}
-									}).then(function (ventaActualizada) {
-										res.json({ mensaje: "¡Comprobante creado satisfactoriamente!",comprobante:ComprobanteCreado });
-									})
-							} else if (req.body.id_compra) {
-								var t = true;
-								Compra.update({
-									contabilizado: t
-								}, {
-										where: {
-											id: req.body.id_compra,
-										}
-									}).then(function (compraActualizada) {
-										res.json({ mensaje: "¡Comprobante creado satisfactoriamente!",comprobante:ComprobanteCreado });
-									})
-							} else {
-								res.json({ mensaje: "¡Comprobante creado satisfactoriamente!",comprobante:ComprobanteCreado });
+												if (req.body.id_venta) {
+													var t = true;
+													Venta.update({
+														contabilizado: t
+													}, {
+															where: {
+																id: req.body.id_venta,
+															}
+														}).then(function (ventaActualizada) {
+															res.json({ mensaje: "¡Comprobante creado satisfactoriamente!", comprobante: ComprobanteCreado });
+														})
+												} else if (req.body.id_compra) {
+													var t = true;
+													Compra.update({
+														contabilizado: t
+													}, {
+															where: {
+																id: req.body.id_compra,
+															}
+														}).then(function (compraActualizada) {
+															res.json({ mensaje: "¡Comprobante creado satisfactoriamente!", comprobante: ComprobanteCreado });
+														})
+												} else {
+													res.json({ mensaje: "¡Comprobante creado satisfactoriamente!", comprobante: ComprobanteCreado });
+												}
+
+
+
+											}
+										})
+								})
+							})
+						}else{
+							if (index === (array.length - 1)) {
+								
 							}
-
 						}
+
 					});
 				})
 			})
 		})
 	router.route('/comprobante-contabolidad/:id_comprobante')
+		.post(function (req, res) {
+			ComprobanteContabilidad.update({
+				eliminado: true
+			}, {
+					where: { id: req.params.id_comprobante }
+				}).then(function (params) {
+					res.json({ mensaje: "eliminado satisfactoriamente!" })
+				})
+		})
 		.put(function (req, res) {
 			ComprobanteContabilidad.findAll({
 				where: {
 					id: req.body.id//your where conditions, or without them if you need ANY entry
 				},
-				include: [{ model: AsientoContabilidad, as: 'comprobante', include: [{ model: ContabilidadCuenta, as: 'cuentas' }] }]
+				include: [{ model: AsientoContabilidad, as: 'asientosContables', include: [{ model: ContabilidadCuenta, as: 'cuenta' }] }]
 			}).then(function (comprobanteEncontrado) {
 				var numero = (comprobanteEncontrado[0] ? comprobanteEncontrado[0].numero + 1 : 1);
 				ComprobanteContabilidad.update({
@@ -509,7 +555,8 @@ module.exports = function (router, ComprobanteContabilidad, AsientoContabilidad,
 					gloza: req.body.gloza,
 					id_usuario: req.body.id_usuario,
 					importe: req.body.importe,
-					id_tipo_cambio: req.body.tipoCambio.id
+					id_tipo_cambio: req.body.tipoCambio.id,
+					abierto: req.body.abierto
 				}, {
 						where: {
 							id: req.body.id
@@ -574,14 +621,14 @@ module.exports = function (router, ComprobanteContabilidad, AsientoContabilidad,
 			})
 		})
 		.get(function (req, res) {
-			ComprobanteContabilidad.find({				
-				where: {id:req.params.id_comprobante},
+			ComprobanteContabilidad.find({
+				where: { id: req.params.id_comprobante },
 				include: [{ model: MonedaTipoCambio, as: 'tipoCambio' }, { model: AsientoContabilidad, as: 'asientosContables', include: [{ model: ContabilidadCuenta, as: 'cuenta' }] }, { model: Clase, as: 'tipoComprobante' },
-				{ model: Usuario, as: 'usuario', include: [{ model: Persona, as: 'persona'}] },
-				{ model: Sucursal, as: 'sucursal', include: [{ model: Empresa, as: 'empresa' }] }]				
+				{ model: Usuario, as: 'usuario', include: [{ model: Persona, as: 'persona' }] },
+				{ model: Sucursal, as: 'sucursal', include: [{ model: Empresa, as: 'empresa' }] }]
 			}).then(function (comprobante) {
-				var importeLiteral=  NumeroLiteral.Convertir(parseFloat(comprobante.importe).toFixed(2).toString());
-				res.json({ comprobante: comprobante,importeLiteral:importeLiteral});
+				var importeLiteral = NumeroLiteral.Convertir(parseFloat(comprobante.importe).toFixed(2).toString());
+				res.json({ comprobante: comprobante, importeLiteral: importeLiteral });
 			});
 		})
 }

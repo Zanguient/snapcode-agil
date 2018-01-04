@@ -130,6 +130,8 @@ angular.module('agil.servicios')
 					})
 
 				} else {
+					nuevoComprobante.importe=0;
+					nuevoComprobante.abierto=false
 					for (var index = 0; index < nuevoComprobante.asientosContables.length; index++) {
 						var element = nuevoComprobante.asientosContables[index];
 						if (element.activo != false && element.debe_bs != "") {
@@ -175,11 +177,11 @@ angular.module('agil.servicios')
 						doc.rect(420, y, 0, 30).stroke();
 						doc.rect(470, y, 0, 30).stroke();
 						doc.rect(520, y, 0, 30).stroke();
-						doc.font('Helvetica', 8);
+						doc.font('Helvetica', 7);
 						doc.text(asiento.cuenta.codigo, 58, y+5)
-						doc.font('Helvetica-Bold', 8);
+						doc.font('Helvetica-Bold', 7);
 						doc.text(asiento.cuenta.nombre, 140, y+5, { width: 165 ,underline: true})
-						doc.font('Helvetica', 8);
+						doc.font('Helvetica', 7);
 						doc.text(asiento.glosa, 145, y+13, { width: 165 })
 						doc.text("", 310, y+5)
 						doc.text("", 350, y+5)
@@ -204,7 +206,7 @@ angular.module('agil.servicios')
 							DibujarCabeceraComprobante(doc, bimonetario, usuario, comprobante,pagina,totalPaginas);
 						}
 					}
-					doc.font('Helvetica-Bold', 8);
+					doc.font('Helvetica-Bold', 7);
 					doc.text("SUMA TOTAL:", 310, y+5)
 					doc.text(sumaDebeBs.toFixed(2), 375, y+5)
 					doc.text(sumaHaberBs.toFixed(2), 425, y+5)
@@ -221,9 +223,9 @@ angular.module('agil.servicios')
 					doc.rect(470, y, 0, 20).stroke();
 					doc.rect(520, y, 0, 20).stroke();
 					doc.rect(50, 700, 520, 0).stroke();
-					doc.font('Helvetica-Bold', 8);
+					doc.font('Helvetica-Bold', 7);
 					doc.text("Preparado por:", 58, 705)					
-					doc.font('Helvetica', 8);
+					doc.font('Helvetica', 7);
 					doc.text(usuario.persona.nombre_completo, 58, 715)
 					doc.rect(200, 700, 0, 40).stroke();
 					doc.text(fecha.getDate()+"/"+(fecha.getMonth()+1)+"/"+fecha.getFullYear()+"         "+fecha.getHours()+":"+fecha.getMinutes()+":"+fecha.getSeconds(), 58, 732)
@@ -249,11 +251,11 @@ angular.module('agil.servicios')
 						var asiento = comprobante.asientosContables[i]
 						doc.rect(420, y, 0, 30).stroke();
 						doc.rect(490, y, 0, 30).stroke();
-						doc.font('Helvetica', 8);
+						doc.font('Helvetica', 7);
 						doc.text(asiento.cuenta.codigo, 70, y+5)
-						doc.font('Helvetica-Bold', 8);
+						doc.font('Helvetica-Bold', 7);
 						doc.text(asiento.cuenta.nombre, 150, y+5, { width: 180 ,underline: true})
-						doc.font('Helvetica', 8);
+						doc.font('Helvetica', 7);
 						doc.text(asiento.glosa, 155, y+13, { width: 180 })
 						doc.text("", 330, y+5)
 						doc.text("", 380, y+5)
@@ -272,24 +274,24 @@ angular.module('agil.servicios')
 							DibujarCabeceraComprobante(doc, bimonetario, usuario, comprobante,pagina,totalPaginas);
 						}
 					}
-					doc.font('Helvetica-Bold', 8);
+					doc.font('Helvetica-Bold', 7);
 					doc.text("SUMA TOTAL:", 360, y+5)
-					doc.font('Helvetica', 8);
+					doc.font('Helvetica', 7);
 					doc.text(sumaDebeBs.toFixed(2), 440, y+5)
 					doc.text(sumaHaberBs.toFixed(2), 510, y+5)
 					doc.rect(50, y, 520, 0).stroke();
 					doc.rect(50, y+20, 520, 0).stroke();
-					doc.font('Helvetica-Bold', 8);
+					doc.font('Helvetica-Bold', 7);
 					doc.text("Son:", 58, y+25)
-					doc.font('Helvetica', 8);
+					doc.font('Helvetica', 7);
 					doc.text(comprobante.importe_literal, 80, y+25)
 					doc.rect(50, y+40, 520, 0).stroke();
 					doc.rect(420, y, 0, 20).stroke();
 					doc.rect(490, y, 0, 20).stroke();
 					doc.rect(50, 700, 520, 0).stroke();
-					doc.font('Helvetica-Bold', 8);
+					doc.font('Helvetica-Bold', 7);
 					doc.text("Preparado por:", 58, 705)
-					doc.font('Helvetica', 8);
+					doc.font('Helvetica', 7);
 					doc.text(usuario.persona.nombre_completo, 58, 715)
 					doc.rect(200, 700, 0, 40).stroke();
 					doc.text(fecha.getDate()+"/"+(fecha.getMonth()+1)+"/"+fecha.getFullYear()+"         "+fecha.getHours()+":"+fecha.getMinutes()+":"+fecha.getSeconds(), 58, 732)
@@ -550,6 +552,18 @@ angular.module('agil.servicios')
 		var res = function (id_comprobante) {
 			var delay = $q.defer();
 			ActualizarComprobanteContabilidad.get({ id_comprobante: id_comprobante }, function (entidades) {
+				delay.resolve(entidades);
+			}, function (error) {
+				delay.reject(error);
+			});
+			return delay.promise;
+		};
+		return res;
+	}])
+	.factory('EliminarComprobante', ['ActualizarComprobanteContabilidad', '$q', function (ActualizarComprobanteContabilidad, $q) {
+		var res = function (id_comprobante) {
+			var delay = $q.defer();
+			ActualizarComprobanteContabilidad.save({ id_comprobante: id_comprobante }, function (entidades) {
 				delay.resolve(entidades);
 			}, function (error) {
 				delay.reject(error);

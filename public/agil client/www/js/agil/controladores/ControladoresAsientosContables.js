@@ -1,23 +1,23 @@
 angular.module('agil.controladores')
 
     .controller('ControladorComprobantes', function ($scope, $localStorage, $location, $templateCache, $route, blockUI, CodigoControl, Paginator, ComprobantePaginador, ClasesTipo, ListaCuentasComprobanteContabilidad, ListaAsientosComprobanteContabilidad, NuevoComprobanteContabilidad, ClasesTipo, LibroMayorCuenta, ComprobanteRevisarPaginador,
-        AsignarComprobanteFavorito,ImprimirComprobante, ComprasComprobante, VerificarUsuarioEmpresa,FieldViewer,DatosComprobante) {
+        AsignarComprobanteFavorito,ImprimirComprobante, ComprasComprobante, VerificarUsuarioEmpresa,FieldViewer,DatosComprobante,EliminarComprobante) {
 
         blockUI.start();
         $scope.asientoNuevo = false
         $scope.usuario = JSON.parse($localStorage.usuario);
         $scope.IdModalVerificarCuenta = 'modal-verificar-cuenta';
-       
+        $scope.IdModalEliminarComprobante = 'dialog-eliminar-comprobante'
         $scope.$on('$viewContentLoaded', function () {
             resaltarPestaña($location.path().substring(1));
-            ejecutarScriptsComprobante($scope.IdModalVerificarCuenta);
+            ejecutarScriptsComprobante($scope.IdModalVerificarCuenta,$scope.IdModalEliminarComprobante);
             $scope.buscarAplicacion($scope.usuario.aplicacionesUsuario, $location.path().substring(1));
             $scope.obtenerColumnasAplicacion();
         });
         $scope.$on('$routeChangeStart', function (next, current) {
             
                         $scope.eliminarPopup($scope.IdModalVerificarCuenta);  
-                     
+                        $scope.eliminarPopup($scope.IdModalEliminarComprobante)
             
                     });
 
@@ -86,7 +86,7 @@ angular.module('agil.controladores')
                 $scope.comprobantes.forEach(function (comprobante) {
                     $scope.totalImporte = $scope.totalImporte + comprobante.importe;
                 }, this);
-                $scope.filtro = { empresa: $scope.usuario.id_empresa, inicio: fechainico, fin: fechafin, clasificacion: "", tipo_comprobante: "", monto: "" };
+                //$scope.filtro = { empresa: $scope.usuario.id_empresa, inicio: fechainico, fin: fechafin};
                 $scope.paginator.filter.inicio = fechainico
                 $scope.paginator.filter.fin = fechafin
                 blockUI.stop();
@@ -154,12 +154,22 @@ angular.module('agil.controladores')
             }
         }
        
-        $scope.verComprobante = function (comprobante) {
+       /*  $scope.verComprobante = function (comprobante,view) {
             if (comprobante.abierto) {
                 $scope.crearNuevoComprobante(null, null, comprobante)
             }
-        }
+        } */
+        $scope.verComprobante = function (comprobante, view) {
+            if (view) {
+                $scope.crearNuevoComprobante(null, null, comprobante, true)
+            } else {
+                if (comprobante.abierto) {
+                    $scope.crearNuevoComprobante(null, null, comprobante)
+                }
 
+            }
+
+        }
         $scope.ComvertirDebeEnDolar = function (asiento) {
             asiento.debe_sus = Math.round((asiento.debe_bs / $scope.valorDolar) * 10000) / 10000;
         }
@@ -175,16 +185,18 @@ angular.module('agil.controladores')
       
         $scope.verificarCuentaAdmin = function (cuenta) {
             if (!$scope.dato.abierto) {
-                cuenta.abierto = true
+                $scope.dato.abierto=true
+              cuenta.abierto = true
             } else {
-                cuenta.abierto = false
+                $scope.dato.abierto=false
+               cuenta.abierto = false
             }
             cuenta.id_comprobante = $scope.dato.id
             VerificarUsuarioEmpresa.save({ id_empresa: $scope.usuario.id_empresa }, cuenta, function (dato) {
                 console.log(dato)
                 if (dato.type) {
                     $scope.mostrarMensaje(dato.message)
-                    $scope.dato.abierto = cuenta.abierto;
+                   /*  cuenta.abierto= cuenta.abierto; */
                     $scope.cerrarModalVerificarCuenta();
                 } else {
                     $scope.mostrarMensaje(dato.message)
@@ -204,6 +216,22 @@ angular.module('agil.controladores')
 
             $scope.cerrarPopup($scope.IdModalVerificarCuenta);
         }
+        $scope.abrirModalEliminarComprobante = function (comprobante) {
+            $scope.dato = comprobante
+            $scope.abrirPopup($scope.IdModalEliminarComprobante);
+        }
+        $scope.cerrarModalEliminarComprobante = function () {
+
+            $scope.cerrarPopup($scope.IdModalEliminarComprobante);
+        }
+       $scope.eliminarComprobante = function () {
+            var promesa = EliminarComprobante($scope.dato.id)
+            promesa.then(function (dato) {
+                $scope.recargarItemsTabla()
+                $scope.mostrarMensaje(dato.mensaje)
+                $scope.cerrarModalEliminarComprobante()
+            })
+       }
         $scope.opcionBimonetario = true;
         $scope.VerBimonetario = function () {
             console.log($scope.opcionBimonetario)

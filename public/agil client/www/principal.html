@@ -1553,20 +1553,21 @@
 
 							<ul class="nav ace-nav">
 								<li tyle="width: 10px">
-									<a style="background-color: white !important" href="javascript:void(0)" ng-click="abrirModalOpcionesQr()">
+									<a ng-disabled="verComprobante" style="background-color: white !important" href="javascript:void(0)" ng-click="abrirModalOpcionesQr()">
 										<i class="ace-icon fa fa-qrcode dark bigger-300"></i>
 									</a>
 								</li>
 								<li style="width: 70px">
 
-									<a style="background-color: white !important" href="javascript:void(0)" ng-click="abrirModalRevisarComprobante()">
+									<a ng-disabled="verComprobante" style="background-color: white !important" href="javascript:void(0)" ng-click="abrirModalRevisarComprobante()">
 										<i class="ace-icon fa fa-files-o dark bigger-300"></i>
 									</a>
 								</li>
 								<li tyle="width: 10px" ng-if="usuario.empresa" ng-if="usuario.empresa.usar_vencimientos">
-									<a style="background-color: white !important" class="blue" href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown" style="display: inline-block; border-radius: 60px; box-shadow: 0px 0px 2px #888;background-color:yellow !important; ;"
+									<a style="background-color: white !important" class="blue" href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown"
+									 style="display: inline-block; border-radius: 60px; box-shadow: 0px 0px 2px #888;background-color:yellow !important; ;"
 									 href="javascript:void(0)">
-										<i style="color:blue !important; !important" class="ace-icon fa fa-bell icon-animated-bell bigger-300"></i>
+										<i style="color:blue !important;" class="ace-icon fa fa-bell icon-animated-bell bigger-300"></i>
 										<span style="position: absolute;" class="badge badge-important">{{alertasComprobantes}}</span>
 									</a>
 									<ul class="dropdown-menu-right dropdown-navbar navbar-pink dropdown-menu dropdown-caret dropdown-close">
@@ -1575,7 +1576,7 @@
 										</li>
 										<li class="dropdown-content">
 											<ul class="dropdown-menu dropdown-navbar navbar-pink">
-												
+
 												<li ng-if="usuario.empresa.usar_contabilidad">
 													<a href="javascript:void(0)" ng-click="abrirListaVentasPendientes()">
 														<div class="clearfix">
@@ -1632,8 +1633,8 @@
 					<div class="row" class="col-sm-12">
 						<div class="col-sm-2">
 							<label>TIPO COMPROBANTE:</label>
-							<select id='id_tipo' required ng-model='nuevoComprobante.tipoComprobante' id="tipoComprobante" name="tipoComprobante" data-placeholder="Click para escoger"
-							 class="col-sm5" ng-options="cuentaTipo as cuentaTipo.nombre for cuentaTipo in tiposComprobantes track by cuentaTipo.id">
+							<select autofocus ng-disabled="verComprobante" id='id_tipo' required ng-model='nuevoComprobante.tipoComprobante' id="tipoComprobante"
+							 name="tipoComprobante" data-placeholder="Click para escoger" class="form-control" ng-options="cuentaTipo as cuentaTipo.nombre for cuentaTipo in tiposComprobantes track by cuentaTipo.id">
 
 							</select>
 							<span class="red">(*)</span>
@@ -1644,7 +1645,8 @@
 						</div>
 						<div class="col-sm-2">
 							<label>SUCURSAL:</label>
-							<select required data-validate="validate(required)" id="sucursalOrigen" name="sucursalOrigen" required ng-options="sucursal as sucursal.nombre for sucursal in sucursales track by sucursal.id"
+							<select class="form-control" ng-disabled="verComprobante" required data-validate="validate(required)" id="sucursalOrigen"
+							 name="sucursalOrigen" required ng-options="sucursal as sucursal.nombre for sucursal in sucursales track by sucursal.id"
 							 ng-model="nuevoComprobante.id_sucursal">
 
 							</select>
@@ -1656,8 +1658,9 @@
 						</div>
 						<div class="col-sm-2">
 							<label>FECHA</label>
-							<input ng-change="obtenerCambioMoneda(nuevoComprobante.fecha)" name="fecha" required ng-update-hidden class="form-control date-picker" type="text" data-date-format="dd/mm/yyyy"
-							 id="fecha" ng-model="nuevoComprobante.fecha" placeholder="Ingrese la fecha" />
+							<input ng-disabled="verComprobante" ng-change="obtenerCambioMoneda(nuevoComprobante.fecha)" name="fecha" required ng-update-hidden
+							 class="form-control date-picker" type="text" data-date-format="dd/mm/yyyy" id="fecha" ng-model="nuevoComprobante.fecha"
+							 placeholder="Ingrese la fecha" />
 							<span class="red">(*)</span>
 							<div ng-show="formNuevoComprobante.fecha.$error.required" class="invalid-message help-block" ng-messages="formNuevoComprobante.fecha.$error"
 							 ng-if="formNuevoComprobante.$submitted">
@@ -1691,7 +1694,8 @@
 						</div>
 					</div>
 					<div>
-						<textarea name="gloza" required ng-model="nuevoComprobante.gloza" rows="4" class="form-control" style="min-width: 100%">
+						<textarea ng-change="agregarPrimerAsiento(nuevoComprobante)" ng-disabled="verComprobante" name="gloza" required ng-model="nuevoComprobante.gloza"
+						 rows="4" class="form-control" style="min-width: 100%">
 						
                     
 				</textarea>
@@ -1741,7 +1745,7 @@
 											<th rowspan="2" style="text-align: center">Nº</th>
 											<th rowspan="2" style="text-align: center">
 												<div class="col-sm-12">Cuenta
-													<a id="agregar_asiento" class="blue" ng-click="agregarAsiento(formNuevoComprobante)">
+													<a id="agregar_asiento" class="blue" ng-disabled="verComprobante" ng-click="agregarAsiento(formNuevoComprobante)">
 														<i class="ace-icon fa fa-plus bigger-130"></i>
 													</a>
 													<input name="asientos" ng-hide="true" ng-model="nuevoComprobante.a" />
@@ -1798,8 +1802,8 @@
 												<a class="orange" ng-if="asiento.cuenta.id" ng-click="abrirModalLibrosMayores(asiento)">
 													<i class="ace-icon fa fa-file-text-o bigger-130"></i>
 												</a>
-												<input ng-keypress="interceptarTecla($event,'cantidad',true)" id="{{$index}}-As" name="{{$index}}-As" required type="text"
-												 ng-model="asiento.cuenta" placeholder="Busqueda..." uib-typeahead="cuenta as (cuenta.codigo+'-'+cuenta.nombre) for cuenta in buscarCuentas($viewValue)"
+												<input ng-disabled="verComprobante" ng-keypress="interceptarTecla($event,'cantidad',true)" id="{{$index}}-As" name="{{$index}}-As"
+												 required type="text" ng-model="asiento.cuenta" placeholder="Busqueda..." uib-typeahead="cuenta as (cuenta.codigo+'-'+cuenta.nombre) for cuenta in buscarCuentas($viewValue)"
 												 typeahead-wait-ms="1000" typeahead-template-url="templates/autocompletar.html" typeahead-show-hint="false" typeahead-on-select="establecerCuentaActual($item, $model, $label, $event)"
 												 typeahead-min-length="3">
 												<span class="invalid-message" ng-show="!asiento.cuenta.id">
@@ -1811,25 +1815,25 @@
 
 											</td>
 											<th>
-												<select required data-validate="validate(required)" id="sucursalOrigen" name="sucursalOrigen" required ng-options="sucursal as sucursal.nombre for sucursal in sucursales track by sucursal.id"
-												 ng-model="nuevoComprobante.id_sucursal">
+												<select ng-disabled="verComprobante" required data-validate="validate(required)" id="sucursalOrigen{{$index}}" name="sucursalOrigen"
+												 required ng-options="sucursal as sucursal.nombre for sucursal in sucursales track by sucursal.id" ng-model="nuevoComprobante.id_sucursal">
 													<option value="" disabled selected>Click para escoger</option>
 												</select>
 											</th>
 											<td>
-												<input id="{{$index}}-Bs" type="number" ng-model="asiento.debe_bs" ng-change="ComvertirDebeEnDolar(asiento,true);cal(nuevoComprobante.asientosContables)">
+												<input ng-disabled="verComprobante" id="{{$index}}-Bs" type="number" ng-model="asiento.debe_bs" ng-change="ComvertirDebeEnDolar(asiento,true);cal(nuevoComprobante.asientosContables)">
 											</td>
 											<td>
-												<input id="{{$index}}-Cs" type="number" ng-model="asiento.haber_bs" ng-change="ComvertirHaberEnDolar(asiento,true);cal(nuevoComprobante.asientosContables)">
+												<input ng-disabled="verComprobante" id="{{$index}}-Cs" type="number" ng-model="asiento.haber_bs" ng-change="ComvertirHaberEnDolar(asiento,true);cal(nuevoComprobante.asientosContables)">
 											</td>
 											<td ng-if="opcionBimonetario">
-												<input type="number" ng-model="asiento.debe_sus" ng-change="ComvertirDebeEnBolivianos(asiento);cal(nuevoComprobante.asientosContables)">
+												<input ng-disabled="verComprobante" type="number" ng-model="asiento.debe_sus" ng-change="ComvertirDebeEnBolivianos(asiento);cal(nuevoComprobante.asientosContables)">
 											</td>
 											<td ng-if="opcionBimonetario">
-												<input type="number" ng-model="asiento.haber_sus" ng-change="ComvertirHaberEnBolivianos(asiento);cal(nuevoComprobante.asientosContables)">
+												<input ng-disabled="verComprobante" type="number" ng-model="asiento.haber_sus" ng-change="ComvertirHaberEnBolivianos(asiento);cal(nuevoComprobante.asientosContables)">
 											</td>
 											<td>
-												<a class="blue" href="javascript:void(0)" ng-click="eliminarAsiento(asiento)">
+												<a ng-hide="verComprobante" class="blue" href="javascript:void(0)" ng-click="eliminarAsiento(asiento)">
 													<i class="ace-icon fa fa-trash-o bigger-130"></i>
 												</a>
 											</td>
@@ -1837,7 +1841,8 @@
 										</tr>
 										<tr ng-if="asiento.cuenta.id">
 											<td colspan="8">
-												<input class="form-control" ng-model="asiento.glosa" placeholder="Agregar glosa individial">
+												<input ng-change="agregarNuevoAsiento(asiento,$index)" ng-disabled="verComprobante" class="form-control" ng-model="asiento.glosa"
+												 placeholder="Agregar glosa individial">
 											</td>
 										</tr>
 									</tbody>
@@ -2163,17 +2168,74 @@
 
 
 	<div class="modal wizard-posicion" id="modal-libro-contable" title="Pago deuda pendiente">
-		<button type="button" class="btn btn-primary btn-danger" ng-click="cerrarModalLibrosMayores()">
-			<i class="ace-icon fa fa-times red2 align-top bigger-125"></i>
-			CERRAR
-		</button>
-		<div class="table-header">
-			LIBROS MAYORES
-		</div>
-		<label>CUENTA: CAJA MONETARIA NACIONAL</label>
-		<div>
-			<div class="col-sm-3">
-				<div class="row" style="background-color: hsl(201, 56%, 92%)">
+
+
+		<div class="modal-body">
+			<div class="table-header">
+				LIBROS MAYORES
+			</div>
+			<label>CUENTA: {{asiento.cuenta.nombre}}</label>
+			<div class="row" style="background-color: hsl(201, 56%, 92%)">
+				<div class="col-sm-1">
+					<label for="fechainicio">Periodo</label>
+					<button type="button" class="btn btn-app btn-success btn-xs" ng-click="BuscarPorFechaLibrosMayores(DatosLibroMayor,fechaInicioTexto,fechafinTexto)">
+						<i class="ace-icon fa fa-search red bigger-130"></i>
+					</button>
+				</div>
+				<div class="col-sm-2">
+					<input required="" ng-update-hidden class="form-control date-picker ng-pristine ng-untouched ng-isolate-scope ng-empty ng-invalid ng-invalid-required"
+					 type="text" data-date-format="dd/mm/yyyy" id="fechainicio" ng-model="fechaInicioTexto" placeholder="fecha inicial">
+				</div>
+				<div class="col-sm-2">
+					<input required="" ng-update-hidden class="form-control date-picker ng-pristine ng-untouched ng-isolate-scope ng-empty ng-invalid ng-invalid-required"
+					 type="text" data-date-format="dd/mm/yyyy" id="fechainicio" ng-model="fechafinTexto" placeholder="fecha final">
+				</div>
+				<!-- <div class="col-sm-1">
+					<button type="button" class="btn btn-app btn-success btn-xs" ng-click="BuscarPorFechaLibrosMayores(DatosLibroMayor,fechaInicioTexto,fechafinTexto)">
+						<i class="ace-icon fa fa-search red bigger-130"></i>
+					</button>
+				</div> -->
+				<div class="col-sm-2">
+					<div class="col-sm-12" align="center">
+						<label for="periodo">Bimonetario</label>
+					</div>
+					<div class="col-sm-12" align="center">
+						<input name="switch-field-1" ng-change="VerBimonetario()" class="ace ace-switch ace-switch-4 ng-pristine ng-untouched ng-valid ng-empty"
+						 type="checkbox" ng-model="opcionBimonetario">
+						<span class="lbl check-descuento"></span>
+					</div>
+				</div>
+				<div class="col-sm-2">
+					<div class="col-sm-12">
+						<label>Estado de cuenta</label>
+					</div>
+					<div class="col-sm-12">
+						<input name="switch-field-1" class="ace ace-switch ace-switch-4 ng-pristine ng-untouched ng-valid ng-empty" type="checkbox"
+						 ng-model="comprobante.estadoDeCuenta">
+						<span class="lbl check-descuento"></span>
+					</div>
+				</div>
+
+				<div class="col-sm-1">
+					<button id="pdf" ng-disabled="!ventas" class="btn btn-app btn-danger btn-xs" ng-click="imprimirFiltroCajaCartaOficio(ventas)"
+					 disabled="disabled">
+						<i class="ace-icon fa fa-print bigger-130"></i>
+						PDF
+					</button>
+
+				</div>
+				<div class="col-sm-1">
+
+					<button id="exel" ng-disabled="!ventas" class="btn btn-app btn-success btn-xs" ng-click="imprimirFiltroExcelCajaCartaOficio(ventas)"
+					 disabled="disabled">
+						<i class="ace-icon fa fa-print bigger-130"></i>
+						Excel
+					</button>
+				</div>
+			</div>
+			<!-- <div>
+			<div class="col-sm-3" style="background-color: hsl(201, 56%, 92%)">
+				<div class="row">
 					<div class="col-sm-8">
 						<label for="periodo">Periodo :</label>
 					</div>
@@ -2230,40 +2292,50 @@
 					</button>
 				</div>
 			</div>
-		</div>
-		<table id="tabla-libro-mayor" class="table table-striped table-bordered table-hover">
-			<thead>
-				<tr>
-					<th COLSPAN=3></th>
-					<th COLSPAN=3>BOLIVIANOS</th>
-					<th ng-if="opcionBimonetario" COLSPAN=3>DOLARES</th>
-				</tr>
-				<tr>
-					<th>FECHA</th>
-					<th>Nro.</th>
-					<th>DESCRIPCIÓN</th>
-					<th>DEBE</th>
-					<th>HABER</th>
-					<th>DEUDOR ACREEDOR</th>
-					<th ng-if="opcionBimonetario">DEBE</th>
-					<th ng-if="opcionBimonetario">HABER</th>
-					<th ng-if="opcionBimonetario">DEUDOR ACREEDOR</th>
-				</tr>
-				<thead>
-					<tbody>
-						<tr ng-repeat="asiento in DatosLibroMayor.cuenta">
-							<td>{{asiento.comprobante.fecha | date:"dd/MM/yyyy"}}</td>
-							<td>{{asiento.comprobante.numero}}</td>
-							<td>{{asiento.comprobante.gloza}}</td>
-							<td>{{asiento.debe_bs}}</td>
-							<td>{{asiento.haber_bs}}</td>
-							<td>{{}}</td>
-							<td ng-if="opcionBimonetario">{{asiento.debe_sus}}</td>
-							<td ng-if="opcionBimonetario">{{asiento.haber_sus}}</td>
-							<td ng-if="opcionBimonetario">{{}}</td>
+		</div> -->
+			<div style="overflow-y: scroll;height:400px;">
+				<table id="tabla-libro-mayor" class="table table-striped table-bordered table-hover">
+					<thead>
+						<tr>
+							<th COLSPAN=3></th>
+							<th COLSPAN=3>BOLIVIANOS</th>
+							<th ng-if="opcionBimonetario" COLSPAN=3>DOLARES</th>
 						</tr>
-					</tbody>
-		</table>
+						<tr>
+							<th>FECHA</th>
+							<th>Nro.</th>
+							<th>DESCRIPCIÓN</th>
+							<th>DEBE</th>
+							<th>HABER</th>
+							<th>DEUDOR ACREEDOR</th>
+							<th ng-if="opcionBimonetario">DEBE</th>
+							<th ng-if="opcionBimonetario">HABER</th>
+							<th ng-if="opcionBimonetario">DEUDOR ACREEDOR</th>
+						</tr>
+						<thead>
+							<tbody>
+								<tr ng-repeat="asiento in DatosLibroMayor.cuenta">
+									<td>{{asiento.comprobante.fecha | date:"dd/MM/yyyy"}}</td>
+									<td>{{asiento.comprobante.numero}}</td>
+									<td>{{asiento.comprobante.gloza}}</td>
+									<td>{{asiento.debe_bs | number:2 }}</td>
+									<td>{{asiento.haber_bs | number:2 }}</td>
+									<td>{{asiento.debe_bs+asiento.haber_bs | number:2 }}</td>
+									<td ng-if="opcionBimonetario">{{asiento.debe_sus | number:2 }}</td>
+									<td ng-if="opcionBimonetario">{{asiento.haber_sus | number:2}}</td>
+									<td ng-if="opcionBimonetario">{{asiento.debe_sus+asiento.haber_sus | number:2}}</td>
+								</tr>
+							</tbody>
+				</table>
+			</div>
+		</div>
+		<div class="modal-footer">
+			<button type="button" class="btn btn-primary btn-danger" ng-click="cerrarModalLibrosMayores()">
+				<i class="ace-icon fa fa-times red2 align-top bigger-125"></i>
+				CERRAR
+			</button>
+
+		</div>
 	</div>
 
 

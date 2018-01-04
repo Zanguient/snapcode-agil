@@ -102,10 +102,16 @@
 		<div align="right"> <a ng-click="abrirPlantillaIngreso()"><span id="codigo" class=" glyphicon glyphicon-cog fa-4x"></span></a></div>
 		<div class="table-header">
 			<div class="row">
-				<div class="col-sm-6">
-					<h4 class="widget-title">Lista de Plan de cuentas</h4>
+				<div class="col-sm-12">
+					<h4 class="col-sm-4 widget-title">Lista de Plan de cuentas</h4>
+					<div class="col-sm-8 inline pos-rel pull-right">
+						<!--   <a data-toggle="dropdown" href="javascript:void(0)" class="dropdown-toggle button-columna" aria-expanded="false">
+							<i class="glyphicon  glyphicon-list-alt"></i>
+						</a> -->
+						<div  ng-include src="'/templates/gral/fields-viewer.html'"></div>
+					</div>
 				</div>
-				<div class="col-sm-6" ng-include src="'/templates/gral/fields-viewer.html'"></div>
+				<!-- <div class="col-sm-6"  ng-include src="'/templates/gral/fields-viewer.html'"></div> -->
 			</div>
 		</div>
 

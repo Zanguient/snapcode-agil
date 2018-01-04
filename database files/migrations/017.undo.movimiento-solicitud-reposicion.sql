@@ -1,0 +1,1 @@
+ALTER TABLE inv_solicitud_reposicion ADD movimiento int(11);

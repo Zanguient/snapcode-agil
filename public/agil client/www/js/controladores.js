@@ -80,7 +80,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 				form.asientos.$error.detalleAsiento = false
 			}
 			if (!form.asientos.$error.detalleAsiento && !form.gloza.$error.required && !form.fecha.$error.required) {
-				blockUI.start();
+
 				NuevoComprobante($scope.mostrarMensaje, null, null, $scope.usuario, null, null, null, $scope.convertirFecha, $scope.cerrarNuevoComprobante, $scope.nuevoComprobante, null, $scope.verificarVentasComprobantes, $scope.verificarComprasComprobantes, $scope.recargarItemsTabla)
 			}
 
@@ -102,17 +102,18 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 				}
 			})
 		}
-		$scope.crearNuevoComprobante = function (venta, compra, comprobante) {
+		$scope.crearNuevoComprobante = function (venta, compra, comprobante, view) {
 			$scope.alertasComprobantes = $scope.ventasComprobantes.length + $scope.comprasComprobantes.length
 			var fecha = $scope.fechaATexto(new Date())
 			if ($scope.moneda.dolar) {
 				console.log($scope.ventas)
 				$scope.nuevoComprobante = { fecha: fecha, id_usuario: $scope.usuario.id, asientosContables: [], eliminado: 0, abierto: 0, importe: 0, id_venta: "", id_compra: "", id_sucursal: $scope.sucursales[0], tipoComprobante: $scope.tiposComprobantes[0], tipoCambio: $scope.moneda };
 				$scope.cuentaActual = {}
-				$scope.ObtenerPlantillaIngresoEgreso(venta, compra, comprobante);
+				$scope.ObtenerPlantillaIngresoEgreso(venta, compra, comprobante, view);
 
 				$scope.obtenerGestiones()
 				if (venta == null && compra == null && comprobante == null) {
+					$scope.verComprobante = false
 					$scope.abrirPopup($scope.idModalWizardComprobanteEdicion);
 				}
 				//$scope.abrirPopup($scope.idModalWizardComprobanteEdicion);
@@ -220,8 +221,8 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 				}
 			}, this);
 		}
-		$scope.ObtenerPlantillaIngresoEgreso = function (venta, compra, comprobante) {
-
+		$scope.ObtenerPlantillaIngresoEgreso = function (venta, compra, comprobante, view) {
+			$scope.verComprobante = false
 			var promesa = ConfiguracionesCuentasEmpresa($scope.usuario.id_empresa);
 			var a = false;
 			promesa.then(function (entidad) {
@@ -372,10 +373,23 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 					$scope.nuevoComprobante.id_sucursal = comprobante.sucursal
 					var fecha = new Date(comprobante.fecha)
 					$scope.nuevoComprobante.fecha = fecha.getDay() + "/" + (fecha.getMonth() + 1) + "/" + fecha.getFullYear()
+					$scope.totales = { debe_bs: 0, debe_sus: 0, haber_bs: 0, haber_sus: 0 }
+					$scope.nuevoComprobante.asientosContables.forEach(function (asiento, index, array) {
+						$scope.totales.debe_bs += asiento.debe_bs
+						$scope.totales.haber_bs += asiento.haber_bs
+						$scope.totales.debe_sus += asiento.debe_sus
+						$scope.totales.haber_sus += asiento.haber_sus
+						if (index === (array.length - 1)) {
+							$scope.totales.haber_bs = Math.round($scope.totales.haber_bs * 10000) / 10000
+							$scope.totales.debe_sus = Math.round($scope.totales.debe_sus * 1000) / 1000
+							$scope.totales.debe_bs = Math.round($scope.totales.debe_bs * 10000) / 10000
+							$scope.totales.haber_sus = Math.round($scope.totales.haber_sus * 1000) / 1000
 
-					/* $scope.nuevoComprobante.asientosContables.forEach(function (asiento) {
-						asiento.cuenta = asiento.cuentas
-					}, this); */
+						}
+					}, this);
+					if (view) {
+						$scope.verComprobante = true
+					}
 					$scope.abrirPopup($scope.idModalWizardComprobanteEdicion);
 					/* comprobante.comprobante.forEach(function (comprobante2) {
 						var cuenta = comprobante2.cuentas
@@ -559,6 +573,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 
 		//modal Libros mayores
 		$scope.abrirModalLibrosMayores = function (asiento) {
+			$scope.asiento=asiento
 			var asientos = asiento;
 			if (asiento.cuenta) {
 				asientos = asiento.cuenta
@@ -608,13 +623,13 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 		}
 		$scope.establecerCuentaActual = function (cuenta) {
 			var debe = 0, haber = 0;
-			if (cuenta.cuenta.length > 0) {
-				cuenta.cuenta.forEach(function (cuenta) {
-					debe += cuenta.debe_bs
-					haber += cuenta.haber_bs
-				});
-			}
-			$scope.cuentaActual = { id: cuenta.id, nombre: cuenta.nombre, debe: debe, haber: haber };
+			/* 	if (cuenta.cuenta.length > 0) {
+					cuenta.cuenta.forEach(function (cuenta) {
+						debe += cuenta.debe_bs
+						haber += cuenta.haber_bs
+					});
+				} */
+			$scope.cuentaActual = { id: cuenta.id, nombre: cuenta.nombre, debe: cuenta.debe, haber: cuenta.haber };
 
 		}
 		$scope.agregarDatosQr = function (evento, Dato) {
@@ -656,6 +671,44 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 			$scope.nuevoComprobante.asientosContables.push(asiento)
 
 		}
+		$scope.agregarPrimerAsiento = function (comprobante) {
+			if (comprobante.gloza) {
+				if (comprobante.asientosContables.length == 0) {
+					var asiento = { glosa: "", cuenta: "", debe_bs: "", haber_bs: "", debe_sus: "", haber_sus: "", eliminado: 0, activo: true }
+					$scope.nuevoComprobante.asientosContables.push(asiento)
+					console.log(comprobante.asientosContables)
+				}
+			} else {
+				if (comprobante.asientosContables.length == 1) {
+					$scope.nuevoComprobante.asientosContables.splice(0)
+					console.log(comprobante.asientosContables)
+				}
+			}
+
+		}
+		$scope.agregarNuevoAsiento = function (asiento, index) {
+			if (asiento.glosa) {
+				if (asiento.glosa.length == 1) {
+					if ($scope.nuevoComprobante.asientosContables[index + 1]) {
+
+					} else {
+						var asiento = { glosa: "", cuenta: "", debe_bs: "", haber_bs: "", debe_sus: "", haber_sus: "", eliminado: 0, activo: true }
+						$scope.nuevoComprobante.asientosContables.push(asiento)
+						console.log(comprobante.asientosContables)
+					}
+				}
+			} else {
+				if ($scope.nuevoComprobante.asientosContables[index + 1].cuenta) {
+
+				} else {
+					$scope.nuevoComprobante.asientosContables.splice(index + 1)
+					console.log(comprobante.asientosContables)
+				}
+
+			}
+
+		}
+
 		$scope.agregarNuevoItem = function () {
 			var DatosRecopiladosCodigoQr = { nit: "", factura: "", autorizacion: "", fecha: "", total: "", total2: "", codigo_control: "", cliente: "", ice: "", numero_grav: "", sujeto_cf: "", desc: "", eliminado: false, valido: null, lector: false }
 			$scope.DatosCodigoQr.push(DatosRecopiladosCodigoQr)
