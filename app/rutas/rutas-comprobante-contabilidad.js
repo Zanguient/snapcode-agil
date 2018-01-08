@@ -108,7 +108,7 @@ module.exports = function (router, ComprobanteContabilidad, AsientoContabilidad,
 				ComprobanteContabilidad.findAll({
 					offset: (req.params.items_pagina * (req.params.pagina - 1)), limit: req.params.items_pagina,
 					where: condicionComprobante,
-					include: [{ model: MonedaTipoCambio, as: 'tipoCambio' }, { model: AsientoContabilidad, as: 'asientosContables', include: [{ model: ContabilidadCuenta, as: 'cuenta' }] }, { model: Clase, as: 'tipoComprobante' },
+					include: [ { model: AsientoContabilidad, as: 'asientosContables', include: [{ model: ContabilidadCuenta, as: 'cuenta' }] }, { model: Clase, as: 'tipoComprobante' },
 					{ model: Usuario, as: 'usuario', include: [{ model: Persona, as: 'persona', where: condicionPersona }] },
 					{ model: Sucursal, as: 'sucursal', where: condicionSucursal, include: [{ model: Empresa, as: 'empresa' }] }],
 					order: [ordenArreglo]
@@ -522,7 +522,7 @@ module.exports = function (router, ComprobanteContabilidad, AsientoContabilidad,
 							})
 						}else{
 							if (index === (array.length - 1)) {
-								
+								res.json({ mensaje: "¡Comprobante creado satisfactoriamente!", comprobante: ComprobanteCreado });
 							}
 						}
 

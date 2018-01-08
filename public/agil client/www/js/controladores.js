@@ -1,14 +1,16 @@
 angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 
-	.controller('ControladorPrincipal', function ($scope, $rootScope, $route, $templateCache, $location, $window, $localStorage, Sesion,
+	.controller('ControladorPrincipal', function ($scope,$sce, $rootScope, $route, $templateCache, $location, $window, $localStorage, Sesion,
 		blockUI, UsuarioSucursalesAutenticacion, VencimientosProductosEmpresa, VencimientosCreditosEmpresa,
 		VencimientosDeudasEmpresa, VentaEmpresaDatos, ClienteVencimientoCredito, socket, $http, Tipos,
 		ProveedorVencimientoCredito, Venta, ClasesTipo, Compra, Producto, DatosVenta, DatosCompra,
 		ImprimirSalida, Diccionario, VentasComprobantesEmpresa, ComprasComprobantesEmpresa, LibroMayorCuenta, Paginator, ComprobanteRevisarPaginador, AsignarComprobanteFavorito, ListaCuentasComprobanteContabilidad, NuevoComprobanteContabilidad, NuevoComprobante, ComprasComprobante,
-		ConfiguracionesCuentasEmpresa, ContabilidadCambioMoneda, ObtenerCambioMoneda, AsignarCuentaCiente, AsignarCuentaProveedor) {
+		ConfiguracionesCuentasEmpresa, ContabilidadCambioMoneda, ObtenerCambioMoneda, AsignarCuentaCiente, AsignarCuentaProveedor,
+		GtmTransportistas, GtmEstibajes, GtmGrupoEstibajes) {
 
 		$scope.idModalTablaVencimientoProductos = "tabla-vencimiento-productos";
 		$scope.idModalTablaDespachos = "tabla-gtm-despachos";
+		$scope.idModalTablaAsignacionDespacho = "tabla-gtm-asignacion-despachos";
 		$scope.idModalTablaVencimientoCreditos = "tabla-vencimiento-creditos";
 		$scope.idModalTablaVencimientoDeudas = "tabla-vencimiento-deudas";
 		$scope.idModalTablaVentasPendientes = "tabla-ventas-pendientes";
@@ -38,7 +40,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 				$scope.idmodalActualizarCreditoCliente, $scope.idmodalActualizarCreditoDeuda, $scope.idModalPagoDeuda, $scope.idModalDescuento, $scope.idModalTablaVentasPendientes,
 				$scope.idModalTablaComprasPendientes, $scope.idModalTablaBancosPendientes, $scope.idModalTablaOtrosPendientes, $scope.idModalInicioSesion,
 				$scope.idModalWizardComprobanteEdicion, $scope.IdModalOpcionesQr, $scope.IdModalRegistrarComprobante, $scope.IdModalRevisarComprobante, $scope.IdModalLibroMayor, $scope.IdModalAsignarCuenta,
-				$scope.idModalTablaDespachos);
+				$scope.idModalTablaDespachos, $scope.idModalTablaAsignacionDespacho);
 
 			$scope.inicio();
 			blockUI.stop();
@@ -63,36 +65,45 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 
 		//modal nuevo comprobante
 
-		$scope.AgregarComprobante = function (form, nuevoComprobante) {
-			if (!nuevoComprobante.fecha) {
-				form.fecha.$error.required = true
-			} else {
-				form.fecha.$error.required = false
-			}
-			if (!nuevoComprobante.gloza) {
-				form.gloza.$error.required = true
-			} else {
-				form.gloza.$error.required = false
-			}
-			if (nuevoComprobante.asientosContables.length <= 0) {
-				form.asientos.$error.detalleAsiento = true
-			} else {
-				form.asientos.$error.detalleAsiento = false
-			}
-			if (!form.asientos.$error.detalleAsiento && !form.gloza.$error.required && !form.fecha.$error.required) {
+		$scope.AgregarComprobante = function (form, nuevoComprobante, form2) {
+			if ($scope.moneda.dolar != "--") {
+				if ($scope.totales.debe_bs == $scope.totales.haber_bs) {
 
-				NuevoComprobante($scope.mostrarMensaje, null, null, $scope.usuario, null, null, null, $scope.convertirFecha, $scope.cerrarNuevoComprobante, $scope.nuevoComprobante, null, $scope.verificarVentasComprobantes, $scope.verificarComprasComprobantes, $scope.recargarItemsTabla)
-			}
+					if (form != null) {
+						if (!nuevoComprobante.fecha) {
+							form.fecha.$error.required = true
+						} else {
+							form.fecha.$error.required = false
+						}
+						if (!nuevoComprobante.gloza) {
+							form.gloza.$error.required = true
+						} else {
+							form.gloza.$error.required = false
+						}
+						if (nuevoComprobante.asientosContables.length <= 0) {
+							form.asientos.$error.detalleAsiento = true
+						} else {
+							form.asientos.$error.detalleAsiento = false
+						}
+						if (!form.asientos.$error.detalleAsiento && !form.gloza.$error.required && !form.fecha.$error.required) {
 
+							NuevoComprobante($scope.mostrarMensaje, null, null, $scope.usuario, null, null, null, $scope.convertirFecha, $scope.cerrarNuevoComprobante, $scope.nuevoComprobante, null, $scope.verificarVentasComprobantes, $scope.verificarComprasComprobantes, $scope.recargarItemsTabla)
+						}
+					} else {
+						if (form2) {
+							NuevoComprobante($scope.mostrarMensaje, null, null, $scope.usuario, null, null, null, $scope.convertirFecha, $scope.cerrarNuevoComprobante, $scope.nuevoComprobante, null, $scope.verificarVentasComprobantes, $scope.verificarComprasComprobantes, $scope.recargarItemsTabla)
+							$scope.totales = undefined
+						}
+					}
+				} else {
+					$scope.mostrarMensaje("La suma total del DEBE y HABER deben ser iguales")
+				}
+			} else {
+				$scope.mostrarMensaje("Datos nulos en bimonetario importar cambio moneda dolar y ufv para guardar")
+			}
 		}
-		$scope.obtenerCambioMoneda = function (fechaCambio) {
-			var fecha = ""
-			if (fechaCambio) {
-				fecha = new Date($scope.convertirFecha(fechaCambio))
-			} else {
-				fecha = new Date()
-			}
-
+		$scope.obtenerCambioMoneda = function (venta, compra, comprobante, view) {
+			var fecha = new Date()
 			var promesa = ObtenerCambioMoneda(fecha)
 			promesa.then(function (dato) {
 				console.log(dato)
@@ -100,26 +111,78 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 					$scope.moneda = dato.monedaCambio;
 
 				}
+				var oForm = document.getElementById('formNuevoComprobante');
+				shortcut.add("Ctrl+G", function () {
+					if ($scope.moneda.dolar != "--") {
+						if ($scope.nuevoComprobante.asientosContables.length > 0) {
+							if ($scope.nuevoComprobante.asientosContables[0].cuenta) {
+								if ($scope.nuevoComprobante.asientosContables[0].cuenta.id) {
+									if ($scope.totales.debe_bs == $scope.totales.haber_bs) {
+										$scope.AgregarComprobante(null, $scope.nuevoComprobante, oForm)
+									} else {
+										$scope.mostrarMensaje("La suma total del DEBE y HABER deben ser iguales")
+									}
+								} else {
+									$scope.mostrarMensaje("Ingresar asientos contables al comprobante")
+								}
+							} else {
+								$scope.mostrarMensaje("Ingresar asientos contables al comprobante")
+							}
+						} else {
+							$scope.mostrarMensaje("Ingresar asientos contables al comprobante")
+						}
+					} else {
+						$scope.mostrarMensaje("Datos nulos en bimonetario importar cambio moneda dolar y ufv para guardar")
+					}
+				});
+
+				$scope.alertasComprobantes = $scope.ventasComprobantes.length + $scope.comprasComprobantes.length
+				var fecha = $scope.fechaATexto(new Date())
+				if ($scope.moneda) {
+					console.log($scope.ventas)
+					$scope.nuevoComprobante = { fecha: fecha, id_usuario: $scope.usuario.id, asientosContables: [], eliminado: 0, abierto: 0, importe: 0, id_venta: "", id_compra: "", id_sucursal: $scope.sucursales[0], tipoComprobante: $scope.tiposComprobantes[0], tipoCambio: $scope.moneda };
+					$scope.cuentaActual = {}
+					$scope.ObtenerPlantillaIngresoEgreso(venta, compra, comprobante, view);
+
+					$scope.obtenerGestiones()
+					if (venta == null && compra == null && comprobante == null) {
+						$scope.verComprobante = false
+						$scope.abrirPopup($scope.idModalWizardComprobanteEdicion);
+					}
+					//$scope.abrirPopup($scope.idModalWizardComprobanteEdicion);
+				} else {
+					$scope.mostrarMensaje("cargar cambio de ivb y dolar")
+				}
 			})
 		}
-		$scope.crearNuevoComprobante = function (venta, compra, comprobante, view) {
-			$scope.alertasComprobantes = $scope.ventasComprobantes.length + $scope.comprasComprobantes.length
-			var fecha = $scope.fechaATexto(new Date())
-			if ($scope.moneda.dolar) {
-				console.log($scope.ventas)
-				$scope.nuevoComprobante = { fecha: fecha, id_usuario: $scope.usuario.id, asientosContables: [], eliminado: 0, abierto: 0, importe: 0, id_venta: "", id_compra: "", id_sucursal: $scope.sucursales[0], tipoComprobante: $scope.tiposComprobantes[0], tipoCambio: $scope.moneda };
-				$scope.cuentaActual = {}
-				$scope.ObtenerPlantillaIngresoEgreso(venta, compra, comprobante, view);
+		$scope.obtenerCambioMoneda2 = function (fechaMoneda) {
+			
+			var fecha = new Date(convertirFecha(fechaMoneda))
+			var promesa = ObtenerCambioMoneda(fecha)
+			promesa.then(function (dato) {
+				console.log(dato)
+				if (dato.monedaCambio) {
+					$scope.moneda = dato.monedaCambio;
 
-				$scope.obtenerGestiones()
-				if (venta == null && compra == null && comprobante == null) {
-					$scope.verComprobante = false
-					$scope.abrirPopup($scope.idModalWizardComprobanteEdicion);
+				} else {
+					$scope.moneda = { ufv: "--", dolar: "--" }
 				}
-				//$scope.abrirPopup($scope.idModalWizardComprobanteEdicion);
-			} else {
-				$scope.mostrarMensaje("cargar cambio de ivb y dolar")
-			}
+				if ($scope.nuevoComprobante.asientosContables.length > 0) {
+					$scope.nuevoComprobante.asientosContables.forEach(function (asiento, index, array) {
+						$scope.ComvertirDebeEnDolar(asiento)
+						$scope.ComvertirHaberEnDolar(asiento)
+						if (index === (array.length - 1)) {
+							$scope.cal($scope.nuevoComprobante.asientosContables)
+						}
+					});
+				}
+			})
+
+		}
+		$scope.crearNuevoComprobante = function (venta, compra, comprobante, view) {
+			$scope.htmlTooltip = $sce.trustAsHtml('Acciones Rapidas<br>Ctrl-G=Guardar');
+			$scope.obtenerCambioMoneda(venta, compra, comprobante, view);
+
 		}
 
 		$scope.subirExcelUfvDolar = function (event) {
@@ -162,10 +225,20 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 				};
 				reader.readAsBinaryString(f);
 			}
+
 		}
 		$scope.guardarCambioMoneda = function (mes) {
 			ContabilidadCambioMoneda.save(mes, function (dato) {
 				$scope.mostrarMensaje(dato.message)
+				if ($scope.moneda.dolar == "--") {
+					if ($scope.nuevoComprobante.fecha) {
+						$scope.obtenerCambioMoneda2($scope.nuevoComprobante.fecha)
+					} else {
+						var fecha = new Date()
+						$scope.obtenerCambioMoneda2(fecha)
+					}
+
+				}
 			})
 		}
 		$scope.opcionBimonetario = false;
@@ -488,7 +561,11 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 			}
 		}
 		$scope.cerrarNuevoComprobante = function () {
+			shortcut.remove("Ctrl+G", function () {
+
+			});
 			$scope.cerrarPopup($scope.idModalWizardComprobanteEdicion);
+			$scope.totales=undefined
 		};
 		//modal qr
 		$scope.abrirModalOpcionesQr = function () {
@@ -573,7 +650,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 
 		//modal Libros mayores
 		$scope.abrirModalLibrosMayores = function (asiento) {
-			$scope.asiento=asiento
+			$scope.asiento = asiento
 			var asientos = asiento;
 			if (asiento.cuenta) {
 				asientos = asiento.cuenta
@@ -629,7 +706,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 						haber += cuenta.haber_bs
 					});
 				} */
-			$scope.cuentaActual = { id: cuenta.id, nombre: cuenta.nombre, debe: cuenta.debe, haber: cuenta.haber };
+			$scope.cuentaActual = { id: cuenta.id, nombre: cuenta.nombre, debe: cuenta.debe, haber: cuenta.haber,saldo:cuenta.saldo };
 
 		}
 		$scope.agregarDatosQr = function (evento, Dato) {
@@ -742,6 +819,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 					$scope.verificarVencimientosCreditos($scope.usuario.id_empresa);
 					$scope.verificarVencimientosDeudas($scope.usuario.id_empresa);
 				}
+				$scope.verificarDespachos($scope.usuario.id_empresa);
 				if ($scope.usuario.empresa.usar_contabilidad) {
 					$scope.verificarVentasComprobantes($scope.usuario.id_empresa)
 					$scope.verificarComprasComprobantes($scope.usuario.id_empresa)
@@ -749,7 +827,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 			}
 
 			$scope.ocultarFormularioInicioSesion();
-			$scope.obtenerCambioMoneda();
+
 		}
 
 		$scope.iniciarSesion = function (usuario) {
@@ -885,6 +963,41 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 				$scope.vencimientosDeudas = vencimientosDeudas;
 				//blockUI.stop();
 			});
+		}
+
+		$scope.verificarDespachos = function (idEmpresa) {
+			//blockUI.start();
+			var promesa = GtmTransportistas(idEmpresa);
+			promesa.then(function (transportistas) {
+				$scope.gtm_transportistas = transportistas;
+				promesa = GtmEstibajes(idEmpresa);
+				promesa.then(function (estibajes) {
+					$scope.gtm_estibajes = estibajes;
+					promesa = GtmGrupoEstibajes(idEmpresa);
+					promesa.then(function (grupoEstibajes) {
+						$scope.gtm_grupo_estibajes = grupoEstibajes;
+					});
+				});
+			});
+			/*var promesa = VencimientosDeudasEmpresa(idEmpresa);
+			promesa.then(function (vencimientosDeudas) {
+				for (var i = 0; i < vencimientosDeudas.length; i++) {
+					var fecha = new Date(vencimientosDeudas[i].fecha);
+					vencimientosDeudas[i].fecha_vencimiento = $scope.sumaFecha(vencimientosDeudas[i].dias_credito, fecha);
+					for (var j = 0; j < vencimientosDeudas[i].compraReprogramacionPagos.length; j++) {
+						if (vencimientosDeudas[i].compraReprogramacionPagos[j].activo) {
+							vencimientosDeudas[i].fecha_anterior = vencimientosDeudas[i].compraReprogramacionPagos[j].fecha_anterior
+						}
+					}
+				}
+				$scope.vencimientoTotal = $scope.vencimientoTotal + vencimientosDeudas.length;
+				$scope.vencimientosDeudas = vencimientosDeudas;
+				//blockUI.stop();
+			});*/
+		}
+
+		$scope.abrirAsignacionDespacho = function () {
+			$scope.abrirPopup($scope.idModalTablaAsignacionDespacho);
 		}
 
 		$scope.ActualizarFechaCreditosCliente = function (venta, fechaCredito) {

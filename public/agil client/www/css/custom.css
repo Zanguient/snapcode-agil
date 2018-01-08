@@ -6,7 +6,13 @@
 	color: white;
 	text-align-last: center;
 }
-
+/*table fixed header*/
+.table-fixed-header{
+	overflow-y: scroll;height:auto;width:auto;max-height: 300px;
+  }
+  .table-head-color{
+	background-color: rgb(238, 237, 237)
+  }
 #search { 
 width: 170px; /* Ancho del buscador */
 height: 50px;

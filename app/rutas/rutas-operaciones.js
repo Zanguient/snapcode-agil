@@ -20,18 +20,20 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Producto, Dicc
                     monto: req.body.monto
                 }).then(function (solicitudCreada) {
                     req.body.solicitudesProductos.forEach(function (producto, index, array) {
+                        // if()
                         DetalleSolicitudProducto.create({
                             id_solicitud: solicitudCreada.id,
-                            id_producto: (producto.id_producto !== undefined) ? producto.id_producto : producto.producto.id,
+                            id_producto: producto.productoSolicitado.id,
                             cantidad: producto.cantidad
                         }).then(function (detalleCreado) {
-                            if (producto.ingredientes.length > 0) {
-                                producto.ingredientes.forEach(function (ingrediente, indx, arry) {
+                            if (producto.detallesIngredientesProducto.length > 0) {
+                                producto.detallesIngredientesProducto.forEach(function (ingrediente, indx, arry) {
                                     DetalleSolicitudProductoBase.create({
                                         id_detalle_solicitud_producto: detalleCreado.id,
                                         id_producto_base: ingrediente.id_producto_base,
-                                        cantidad_ideal: (ingrediente.formulacion !== undefined) ? parseFloat(ingrediente.formulacion) : parseFloat(ingrediente.cantidad_ideal),
-                                        cantidad_real: (ingrediente.cantidad_real !== undefined) ? parseFloat(ingrediente.cantidad_real) : parseFloat(ingrediente.formulacion)
+                                        cantidad_ideal:ingrediente.cantidad_ideal,
+                                        cantidad_real: ingrediente.cantidad_real,
+                                        total: ingrediente.total
                                     }).then(function (detalleBaseCreado) {
                                         if (index === array.length - 1) {
                                             if (indx === arry.length - 1) {
@@ -151,7 +153,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Producto, Dicc
                     SolicitudReposicion.findAll({
                         // offset: (req.params.items_pagina * (req.params.pagina - 1)), limit: req.params.items_pagina,
                         where: condicion,
-                        include: [{ model: Almacen, as: 'almacen', include: [{ model: Sucursal, as: 'sucursal' }] },
+                        include: [{ model: Almacen, as: 'almacen', include: [{ model: Sucursal, as: 'sucursal' }]},
                         {
                             model: DetalleSolicitudProducto, as: 'solicitudesProductos', include: [{ model: Producto, as: 'productoSolicitado' },
                             { model: DetalleSolicitudProductoBase, as: 'detallesIngredientesProducto', include: [{ model: Producto, as: 'productoSolicitudBase' }] }]
@@ -168,7 +170,6 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Producto, Dicc
 
         })
         .put(function (req, res) {
-            var actualizacionTerminada = false
             if (req.body.activo) {
                 SolicitudReposicion.update({
                     id_almacen: req.body.almacen.id,
@@ -193,20 +194,40 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Producto, Dicc
                                             if (producto.detallesIngredientesProducto.length > 0) {
                                                 producto.detallesIngredientesProducto.forEach(function (ingrediente, indx, arry) {
                                                     if (ingrediente.eliminado === undefined) {
-                                                        DetalleSolicitudProductoBase.update({
-                                                            id_detalle_solicitud_producto: ingrediente.id_detalle_solicitud_producto,
-                                                            id_producto_base: (ingrediente.productoBase !== undefined) ? ingrediente.productoBase.id : ingrediente.id_producto_base,
-                                                            cantidad_ideal: (ingrediente.cantidad_ideal !== undefined) ? parseFloat(ingrediente.cantidad_ideal) : parseFloat(ingrediente.formulacion),
-                                                            cantidad_real: (ingrediente.cantidad_real !== undefined) ? parseFloat(ingrediente.cantidad_real) : parseFloat(ingrediente.formulacion)
-                                                        }, {
-                                                                where: { id: ingrediente.id }
-                                                            }).then(function (detalleBaseActualizado) {
+                                                        if(ingrediente.id !== undefined){
+                                                            DetalleSolicitudProductoBase.update({
+                                                                id_detalle_solicitud_producto: ingrediente.id_detalle_solicitud_producto,
+                                                                id_producto_base: (ingrediente.productoBase !== undefined) ? ingrediente.productoBase.id : ingrediente.id_producto_base,
+                                                                cantidad_ideal:ingrediente.cantidad_ideal,
+                                                                cantidad_real: ingrediente.cantidad_real,
+                                                                total: ingrediente.total
+                                                            }, {
+                                                                    where: { id: ingrediente.id }
+                                                                }).then(function (detalleBaseActualizado) {
+                                                                    if (index === array.length - 1) {
+                                                                        if (indx === arry.length - 1) {
+                                                                            res.json({ mensaje: 'Solicitud actualizada'})
+                                                                        }
+                                                                    }
+                                                                })
+                                                        }else{
+                                                            DetalleSolicitudProductoBase.create({
+                                                                id_detalle_solicitud_producto: producto.id,
+                                                                id_producto_base: ingrediente.id_producto_base,
+                                                                cantidad_ideal:ingrediente.cantidad_ideal,
+                                                                cantidad_real: ingrediente.cantidad_real,
+                                                                total: ingrediente.total
+                                                            }).then(function (detalleBaseCreado) {
                                                                 if (index === array.length - 1) {
                                                                     if (indx === arry.length - 1) {
-                                                                        res.json({ mensaje: 'Solicitud actualizada', solitudId: solicitudActualizada.id })
+                                                                        res.json({ mensaje: 'Solicitud Actualizada'})
                                                                     }
                                                                 }
-                                                            })
+                                                            }).catch(function (err) {
+                                                                res.json({ mensaje: err })
+                                                            });
+                                                        }
+                                                        
                                                     } else {
                                                         DetalleSolicitudProductoBase.destroy({
                                                             where: {
@@ -215,12 +236,11 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Producto, Dicc
                                                         }).then(function (elementoEliminado) {
                                                             if (index === array.length - 1) {
                                                                 if (indx === arry.length - 1) {
-                                                                    res.json({ mensaje: 'Solicitud actualizada', solitudId: solicitudActualizada.id })
+                                                                    res.json({ mensaje: 'Solicitud actualizada'})
                                                                 }
                                                             }
                                                         })
                                                     }
-
                                                 });
                                             } else {
                                                 if (index === array.length - 1) {
@@ -229,6 +249,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Producto, Dicc
                                             }
                                         })
                                 } else {
+                                    // if(producto.detallesIngredientesProducto!=undefined)
                                     DetalleSolicitudProducto.destroy({
                                         where: {
                                             id: producto.id
@@ -243,16 +264,17 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Producto, Dicc
                             } else {
                                 DetalleSolicitudProducto.create({
                                     id_solicitud: req.body.id,
-                                    id_producto: (producto.id_producto !== undefined) ? producto.id_producto : producto.producto.id,
+                                    id_producto: producto.productoSolicitado.id,
                                     cantidad: producto.cantidad
                                 }).then(function (detalleCreado) {
-                                    if (producto.ingredientes.length > 0) {
-                                        producto.ingredientes.forEach(function (ingrediente, indxe, arrye) {
+                                    if (producto.detallesIngredientesProducto.length > 0) {
+                                        producto.detallesIngredientesProducto.forEach(function (ingrediente, indxe, arrye) {
                                             DetalleSolicitudProductoBase.create({
                                                 id_detalle_solicitud_producto: detalleCreado.id,
                                                 id_producto_base: ingrediente.id_producto_base,
-                                                cantidad_ideal: (ingrediente.formulacion !== undefined) ? parseFloat(ingrediente.formulacion) : parseFloat(ingrediente.cantidad_ideal),
-                                                cantidad_real: (ingrediente.cantidad_real !== undefined) ? parseFloat(ingrediente.cantidad_real) : parseFloat(ingrediente.formulacion)
+                                                cantidad_ideal:ingrediente.cantidad_ideal,
+                                                cantidad_real: ingrediente.cantidad_real,
+                                                total: ingrediente.total
                                             }).then(function (detalleBaseCreado) {
                                                 if (index === array.length - 1) {
                                                     if (indxe === arrye.length - 1) {
@@ -265,7 +287,6 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Producto, Dicc
                                         if (index === array.length - 1) {
                                             res.json({ mensaje: 'Solicitud Actualizada' })
                                         }
-
                                     }
                                 })
                             }

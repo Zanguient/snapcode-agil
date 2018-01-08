@@ -189,7 +189,11 @@ angular.module('agil', ['ngRoute', 'agil.controladores',
             .when('/operaciones', {
                 controller:'ControladorOperaciones',
                 templateUrl:'templates/agil/operaciones.html'
-            })          
+            })   
+       .when('/gtm-estibaje', {
+                controller:'ControladorGtmEstibaje',
+                templateUrl:'templates/gtm/estibaje.html'
+            })  
         .otherwise({
           redirectTo:'/'
         });

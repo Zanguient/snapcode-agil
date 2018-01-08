@@ -191,14 +191,14 @@
 						<td>{{venta.factura}}</td>
 						<td>{{venta.fecha | date:"dd/MM/yyyy"}}</td>
 						<td>{{venta.createdAt | date:"HH:mm - dd/MM/yyyy"}}</td>
-						<td ng-if="venta.total>0">{{venta.total}}</td>
-						<td ng-if="venta.total<=0" style="color:red">{{venta.total}}</td>
+						<td ng-if="venta.total>0">{{venta.total | number:2}}</td>
+						<td ng-if="venta.total<=0" style="color:red">{{venta.total | number:2}}</td>
 						<td>{{venta.tipoPago.nombre}}</td>
 						<td>
 							<div ng-if="venta.tipoPago.nombre==diccionario.TIPO_PAGO_CREDITO" class="hidden-sm hidden-xs action-buttons">
 								Plazo: {{venta.dias_credito}} días&nbsp
-								A cuenta: Bs {{venta.a_cuenta}}&nbsp
-								Saldo: Bs {{venta.saldo}}&nbsp
+								A cuenta: Bs {{venta.a_cuenta | number:2}}&nbsp
+								Saldo: Bs {{venta.saldo | number:2}}&nbsp
 								
 								<a class="blue" href="javascript:void(0)" ng-if="venta.saldo>0" ng-click="abrirPopupPago(venta)">
 									<i class="ace-icon fa fa-exclamation-circle bigger-130"></i>
@@ -273,21 +273,10 @@
 							</div>
 						</td>
 					</tr>
-					<tr ng-if="ventas.length>0">
-						<td>
-							
-						</td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td>TOTAL</td>
-						<td>{{sumarMonto()}}</td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
+					<tr ng-if="ventas.length>0">						
+						<td colspan="7"></td>
+						<td><b>TOTAL</b></td>
+						<td colspan="5">{{sumarMonto()|number:2 }}</td>						
 					</tr>
 				</tbody>
 			</table>

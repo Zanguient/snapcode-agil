@@ -212,7 +212,7 @@ angular.module('agil.controladores')
                     imagen: { value: "Imagen", show: true },
                     ci: { value: "CI", show: true },
                     extension: { value: "Extension", show: true },
-                    grupo_sanguineo: { value: "Grupo Sang.", show: true },
+                    tipo_contrato: { value: "Tipo Contrato", show: true },
                     campo: { value: "Campo", show: true },
                     cargo: { value: "Cargo", show: true }
                 }

@@ -150,14 +150,14 @@ angular.module('agil.controladores')
 		}
 
 		$scope.guardarPlantillaIngreso = function (form,plantilla) {
-			if(!plantilla.ingreso.ivadf.cuenta.id){
+			if(!plantilla.ingreso.ivadf.cuenta||!plantilla.ingreso.ivadf.cuenta.id){
 				$scope.errorIvadf="sdf"
 				form.asignarCuentaIvaDf.$error.cuenta= true;
 			}else{
 				$scope.errorIvadf=null
 				form.asignarCuentaIvaDf.$error.cuenta= false;
 			}
-			if(!plantilla.ingreso.it.cuenta.id){
+			if(!plantilla.ingreso.it.cuenta||!plantilla.ingreso.it.cuenta.id){
 				$scope.errorIT="sdf"
 				form.asignarCuentaIt.$error.cuenta= true;
 			}else{
@@ -165,28 +165,28 @@ angular.module('agil.controladores')
 				form.asignarCuentaIt.$error.cuenta= false;
 			}
 			
-			if(!plantilla.ingreso.itPorPagar.cuenta.id){
+			if(!plantilla.ingreso.itPorPagar.cuenta||!plantilla.ingreso.itPorPagar.cuenta.id){
 				$scope.errorItPorPagar="sdf"
 				form.asignarCuentaItPorPagar.$error.cuenta= true;
 			}else{
 				$scope.errorItPorPagar=null
 				form.asignarCuentaItPorPagar.$error.cuenta= false;
 			}
-			if(!plantilla.ingreso.cajaBanco.cuenta.id){
+			if(!plantilla.ingreso.cajaBanco.cuenta||!plantilla.ingreso.cajaBanco.cuenta.id){
 				$scope.errorIngresoCaja="sdf"
 				form.asignarCuentaIngresoCaja.$error.cuenta= true;
 			}else{
 				$scope.errorIngresoCaja=null
 				form.asignarCuentaIngresoCaja.$error.cuenta= false;
 			}
-			if(!plantilla.egreso.ivacf.cuenta.id){
+			if(!plantilla.egreso.ivacf.cuenta || !plantilla.egreso.ivacf.cuenta.id){
 				$scope.errorIvacf="sdf"
 				form.asignarCuentaIvaCf.$error.cuenta= true;
 			}else{
 				$scope.errorIvacf=null
 				form.asignarCuentaIvaCf.$error.cuenta= false;
 			}
-			if(!plantilla.egreso.cajaBanco.cuenta.id){
+			if(!plantilla.egreso.cajaBanco.cuenta||!plantilla.egreso.cajaBanco.cuenta.id){
 				$scope.errorEgresoCaja="sdf"
 				form.asignarCuentaEgresoCaja.$error.cuenta= true;
 			}else{
@@ -578,5 +578,6 @@ angular.module('agil.controladores')
 			$scope.eliminarPopup($scope.idModalWizardClasificacionEdicion);
 			$scope.eliminarPopup($scope.idModalWizardConceptoEdicion);
 		});
+		
 		$scope.inicio();
 	});

@@ -51,7 +51,7 @@
 							</td>
 							<td>{{cierreCaja.sucursal}}</td>
 							<td>{{cierreCaja.usuario}}</td>
-							<td>{{cierreCaja.importe}}</td>
+							<td>{{cierreCaja.importe | number:2}}</td>
 							<td ng-if="cierreCaja.destino_nombre_corto==diccionario.DESTINO_CIERRE_SIGUIENTETURNO"><span class="label label-sm label-success">{{cierreCaja.destino}}</span>
 							</td>
 							<td ng-if="(cierreCaja.destino_nombre_corto!=diccionario.DESTINO_CIERRE_SIGUIENTETURNO) && cierreCaja.importe_entrega>0 && cierreCaja.importe_entrega!=null"><span class="label label-sm label-success">{{cierreCaja.destino}}</span>
@@ -74,7 +74,7 @@
 								
 							</td>
 							<td>
-								{{cierreCaja.importe_entrega}}
+								{{cierreCaja.importe_entrega | number:2}}
 							</td>
 							<td>
 								{{cierreCaja.numero_documento}}

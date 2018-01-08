@@ -168,13 +168,13 @@
 						<td>{{compra.factura}}</td>
 						<td>{{compra.fecha | date:"dd/MM/yyyy"}}</td>
 						<td>{{compra.createdAt | date:"HH:mm - dd/MM/yyyy"}}</td>
-						<td>{{compra.total}}</td>
+						<td>{{compra.total | number:2}}</td>
 						<td>{{compra.tipoPago.nombre}}</td>
 						<td>
 							<div ng-if="compra.tipoPago.nombre==diccionario.TIPO_PAGO_CREDITO" class="hidden-sm hidden-xs action-buttons">
 								Plazo: {{compra.dias_credito}} días&nbsp
-								A cuenta: Bs {{compra.a_cuenta}}&nbsp
-								Saldo: Bs {{compra.saldo}}&nbsp
+								A cuenta: Bs {{compra.a_cuenta | number:2}}&nbsp
+								Saldo: Bs {{compra.saldo | number:2}}&nbsp
 								
 								<a class="blue" href="javascript:void(0)" ng-if="compra.saldo>0" ng-click="abrirPopupPago(compra)">
 									<i class="ace-icon fa fa-exclamation-circle bigger-130"></i>
@@ -248,20 +248,11 @@
 						</td>
 						
 					</tr>
-					<tr ng-if="compras.length>0">
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td>TOTAL</td>
-						<td>{{sumarMonto(compras)}}</td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
+					<tr ng-if="compras.length>0">						
+						<td colspan="7"></td>
+						<td><b>TOTAL</b></td>
+						<td colspan="5">{{sumarMonto(compras)|number:2}}</td>
+						
 					</tr>
 				</tbody>
 			</table>

@@ -1,39 +1,87 @@
-module.exports=function(router,forEach,decodeBase64Image,fs,Empresa,Cliente,RutaCliente,Venta,
-VentaReprogramacionPago,sequelize, ClienteRazon){
+module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Cliente, RutaCliente, Venta,
+	VentaReprogramacionPago, sequelize, ClienteRazon, GtmClienteDestino,GtmDestino) {
 
-router.route('/clientes')
-    .post(function(req, res) {
-		Cliente.find({ 
-			where:{
-				$or: [{nit:req.body.nit}, {codigo:req.body.codigo}],
-				id_empresa:req.body.id_empresa
-			},
-		}).then(function(cliente){			
-			if(cliente){
-				Cliente.update({
-					razon_social:req.body.razon_social,
-					codigo:req.body.codigo,
-					nit:req.body.nit,
-					direccion:req.body.direccion,
-					telefono1:req.body.telefono1,
-					telefono2:req.body.telefono2,
-					telefono3:req.body.telefono3,
-					contacto:req.body.contacto,
-					rubro:req.body.rubro,
-					categoria:req.body.categoria,
-					ubicacion_geografica:req.body.ubicacion_geografica,
-					fecha1:req.body.fecha1,
-					fecha2:req.body.fecha2,
-					texto1:req.body.texto1,
-					texto2:req.body.texto2,
-					latitud:req.body.latitud,
-					longitud:req.body.longitud
-				},{
-					where:{
-						id:cliente.id
-					}
-				}).then(function(clienteCreado){
-					req.body.clientes_razon.forEach(function (cliente_razon, index, array) {
+	router.route('/clientes')
+		.post(function (req, res) {
+			Cliente.find({
+				where: {
+					$or: [{ nit: req.body.nit }, { codigo: req.body.codigo }],
+					id_empresa: req.body.id_empresa
+				},
+			}).then(function (cliente) {
+				if (cliente) {
+					Cliente.update({
+						destino: req.body.destino, //aumentamos esto
+						razon_social: req.body.razon_social,
+						codigo: req.body.codigo,
+						nit: req.body.nit,
+						direccion: req.body.direccion,
+						telefono1: req.body.telefono1,
+						telefono2: req.body.telefono2,
+						telefono3: req.body.telefono3,
+						contacto: req.body.contacto,
+						rubro: req.body.rubro,
+						categoria: req.body.categoria,
+						ubicacion_geografica: req.body.ubicacion_geografica,
+						fecha1: req.body.fecha1,
+						fecha2: req.body.fecha2,
+						texto1: req.body.texto1,
+						texto2: req.body.texto2,
+						latitud: req.body.latitud,
+						longitud: req.body.longitud
+					}, {
+							where: {
+								id: cliente.id
+							}
+						}).then(function (clienteCreado) {
+							req.body.clientes_razon.forEach(function (cliente_razon, index, array) {
+								if (!cliente_razon.eliminado) {
+									ClienteRazon.create({
+										id_cliente: clienteCreado.id,
+										razon_social: cliente_razon.razon_social,
+										nit: cliente_razon.nit,
+
+									}).then(function (clienteRazonCreado) {
+									});
+								}
+							});
+
+							req.body.cliente_destinos.forEach(function (clienteDestino, index, array) {
+								if (!clienteDestino.eliminado) {
+									GtmClienteDestino.create({
+										id_cliente: clienteCreado.id,
+										id_destino: clienteDestino.id_destino,
+
+									}).then(function (GtmClienteDestinoCreado) {
+									});
+								}
+							});
+
+							res.json({ mensaje: "¡Ya existia un cliente con codigo o nit iguales, por lo que se actualizo!" });
+						});
+				} else {
+					Cliente.create({
+						destino: req.body.destino, //aumentamos esto
+						id_empresa: req.body.id_empresa,
+						razon_social: req.body.razon_social,
+						codigo: req.body.codigo,
+						nit: req.body.nit,
+						direccion: req.body.direccion,
+						telefono1: req.body.telefono1,
+						telefono2: req.body.telefono2,
+						telefono3: req.body.telefono3,
+						contacto: req.body.contacto,
+						rubro: req.body.rubro,
+						categoria: req.body.categoria,
+						ubicacion_geografica: req.body.ubicacion_geografica,
+						fecha1: req.body.fecha1,
+						fecha2: req.body.fecha2,
+						texto1: req.body.texto1,
+						texto2: req.body.texto2,
+						latitud: req.body.latitud,
+						longitud: req.body.longitud
+					}).then(function (clienteCreado) {
+						req.body.clientes_razon.forEach(function (cliente_razon, index, array) {
 							if (!cliente_razon.eliminado) {
 								ClienteRazon.create({
 									id_cliente: clienteCreado.id,
@@ -41,52 +89,27 @@ router.route('/clientes')
 									nit: cliente_razon.nit,
 
 								}).then(function (clienteRazonCreado) {
-
 								});
 							}
 						});
-					res.json({mensaje:"¡Ya existia un cliente con codigo o nit iguales, por lo que se actualizo!"});		  
-				});
-			}else{
-				Cliente.create({
-					id_empresa:req.body.id_empresa,
-					razon_social:req.body.razon_social,
-					codigo:req.body.codigo,
-					nit:req.body.nit,
-					direccion:req.body.direccion,
-					telefono1:req.body.telefono1,
-					telefono2:req.body.telefono2,
-					telefono3:req.body.telefono3,
-					contacto:req.body.contacto,
-					rubro:req.body.rubro,
-					categoria:req.body.categoria,
-					ubicacion_geografica:req.body.ubicacion_geografica,
-					fecha1:req.body.fecha1,
-					fecha2:req.body.fecha2,
-					texto1:req.body.texto1,
-					texto2:req.body.texto2,
-					latitud:req.body.latitud,
-					longitud:req.body.longitud
-				}).then(function(clienteCreado){
-					req.body.clientes_razon.forEach(function (cliente_razon, index, array) {
-						if (!cliente_razon.eliminado) {
-							ClienteRazon.create({
-								id_cliente: clienteCreado.id,
-								razon_social: cliente_razon.razon_social,
-								nit: cliente_razon.nit,
 
-							}).then(function (clienteRazonCreado) {
+						req.body.cliente_destinos.forEach(function (clienteDestino, index, array) {
+							if (!clienteDestino.eliminado) {
+								GtmClienteDestino.create({
+									id_cliente: clienteCreado.id,
+									id_destino: clienteDestino.id_destino,
 
-							});
-						}
+								}).then(function (GtmClienteDestinoCreado) {
+								});
+							}
+						});
+						res.json({ mensaje: "¡Cliente creado satisfactoriamente!" });
 					});
-					res.json({mensaje:"¡Cliente creado satisfactoriamente!"});		  
-				});
-			}	  
+				}
+			});
 		});
-    });
-	
-	router.route('/clientes/empresa')
+
+router.route('/clientes/empresa')
 		.post(function (req, res) {
 			req.body.clientes.forEach(function (cliente, index, array) {
 				Cliente.find({
@@ -176,7 +199,7 @@ router.route('/clientes')
 			})
 		}
 	}
-	router.route('/cliente-vencimiento-credito/:id')
+router.route('/cliente-vencimiento-credito/:id')
 		.put(function (req, res) {
 			var inicio_fecha_anterior = new Date(req.body.fecha_anterior);
 			inicio_fecha_anterior.setHours(0, 0, 0, 0, 0);
@@ -210,7 +233,7 @@ router.route('/clientes')
 						});
 				});
 		})
-	router.route('/clientes/:id_cliente')
+router.route('/clientes/:id_cliente')
 		.put(function (req, res) {
 			Cliente.update({
 				razon_social: req.body.razon_social,
@@ -264,10 +287,28 @@ router.route('/clientes')
 							}
 						}
 					});
+				
+					//UPDATE DESTINO
 
+					req.body.cliente_destinos.forEach(function (clienteDestino, index, array) {
+						if (clienteDestino.eliminado) {
+							GtmClienteDestino.destroy({
+								where: { id: clienteDestino.id } // esta bien? 
+							}).then(function (GtmClienteDestinoEliminado) {
 
+							});
+						} else {
+							if (!clienteDestino.id) {
+								GtmClienteDestino.create({
+									id_cliente: req.params.id_cliente,
+									id_destino: clienteDestino.id_destino,
+								}).then(function (GtmClienteDestinoCreado) {
 
-					res.json({ mensaje: "¡Cliente actualizado satisfactoriamente!" });
+								});
+							} 
+						}
+					});
+					res.json({ mensaje: "¡Cliente Destino actualizado satisfactoriamente!" });
 				});
 		})
 
@@ -278,6 +319,18 @@ router.route('/clientes')
 				}
 			}).then(function (affectedRows) {
 				res.json({ message: "Eliminado Satisfactoriamente!" });
+			});
+		})
+		
+		.get(function(req,res){
+			Cliente.find({
+				where: {
+					id:req.params.id_cliente
+				},
+				include:[{model:ClienteRazon,as:'clientes_razon'},
+				         {model:GtmClienteDestino,as:'cliente_destinos',include:[{model:GtmDestino,as:'destino'}]}]
+			}).then(function (cliente) {
+				res.json(cliente);
 			});
 		});
 
@@ -356,6 +409,9 @@ router.route('/clientes')
 					include: [{ model: Empresa, as: 'empresa' },
 					{
 						model: ClienteRazon, as: 'clientes_razon'
+					},
+					{
+						model: GtmClienteDestino, as: 'cliente_destinos',include:[{model:GtmDestino, as:"destino"}]
 					}],
 					order: [['id', 'asc']]
 				}).then(function (clientes) {
@@ -364,7 +420,7 @@ router.route('/clientes')
 			});
 		});
 
-router.route('/clientes/empresa/:id_empresa')
+	router.route('/clientes/empresa/:id_empresa')
 		.get(function (req, res) {
 			Cliente.findAll({
 				where: { id_empresa: req.params.id_empresa },
@@ -373,12 +429,12 @@ router.route('/clientes/empresa/:id_empresa')
 				res.json(usuarios);
 			});
 		});
-	
-router.route('/cliente/empresa/:id_empresa/siguiente-codigo')
-	.get(function(req, res) {
-		sequelize.query("SELECT MAX(CAST(SUBSTRING(codigo, 4, length(codigo)-3) AS UNSIGNED)) as ultimo_codigo FROM agil_cliente where empresa="+req.params.id_empresa+" and codigo like 'CLI%'", { type: sequelize.QueryTypes.SELECT})
-		  .then(function(dato) {
-			res.json(dato[0]);;
-		  });
-	});
+
+	router.route('/cliente/empresa/:id_empresa/siguiente-codigo')
+		.get(function (req, res) {
+			sequelize.query("SELECT MAX(CAST(SUBSTRING(codigo, 4, length(codigo)-3) AS UNSIGNED)) as ultimo_codigo FROM agil_cliente where empresa=" + req.params.id_empresa + " and codigo like 'CLI%'", { type: sequelize.QueryTypes.SELECT })
+				.then(function (dato) {
+					res.json(dato[0]);;
+				});
+		});
 }

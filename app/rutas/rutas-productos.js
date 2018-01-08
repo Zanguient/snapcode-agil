@@ -330,7 +330,7 @@ router.route('/productos/:id_producto')
 						});
 					}
 				}else{
-					if((req.body.imagen.indexOf('default') > -1 || req.body.imagen.indexOf("persona-"+req.body.id) > -1 || req.body.imagen.indexOf(req.body.id) > -1) && req.body.imagen.length<200){
+					if((req.body.imagen.indexOf('default') > -1 || req.body.imagen.indexOf("producto-"+req.body.id) > -1 || req.body.imagen.indexOf(req.body.id) > -1) && req.body.imagen.length<200){
 						actualizarImagenProducto(req.body,req,res,null,req.body.imagen);
 					}else{
 						var imgPerson=decodeBase64Image(req.body.imagen);

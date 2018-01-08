@@ -93,4 +93,25 @@ angular.module('agil.servicios')
 		return delay.promise;
 	};
     return res;
-  }]);
+	}])
+	
+.factory('DestinoEmpresa', function($resource) {
+		return $resource(restServer+"gtm-destinos/empresa/:id_empresa");
+})
+	
+.factory('DestinosCliente', ['DestinoEmpresa','$q',function(DestinoEmpresa, $q) 
+  {
+	var res = function(idEmpresa) 
+	{
+		var delay = $q.defer();
+		DestinoEmpresa.query({id_empresa:idEmpresa},function(entidades) 
+		{        
+			delay.resolve(entidades);
+		}, function(error) 
+			{
+				delay.reject(error);
+			});
+		return delay.promise;
+	};
+    return res;
+	}]);

@@ -15,6 +15,10 @@ module.exports = function (sequelize, Sequelize) {
 		cantidad_real: {
 			type: Sequelize.DECIMAL(20, 4),
 			field: 'cantidad_real'
+		},
+		total: {
+			type: Sequelize.DECIMAL(20, 4),
+			field: 'total'
 		}
 	}, {
 			freezeTableName: true

@@ -89,7 +89,9 @@ module.exports = function (router, sequelize, Sequelize, jwt, md5, forEach, ensu
 	var GtmDestino = require('../modelos/AGIL/agil-gtm-destino')(sequelize, Sequelize);
 	var GtmEstibaje = require('../modelos/AGIL/agil-gtm-estibaje')(sequelize, Sequelize);
 	var GtmGrupoEstibaje = require('../modelos/AGIL/agil-gtm-grupo-estibaje')(sequelize, Sequelize);  
-	var GtmTransportista = require('../modelos/AGIL/agil-gtm-transportista')(sequelize, Sequelize);  
+	var GtmTransportista = require('../modelos/AGIL/agil-gtm-transportista')(sequelize, Sequelize); 
+	var GtmDespacho = require('../modelos/AGIL/agil-gtm-despacho')(sequelize, Sequelize);  
+	var GtmClienteDestino = require('../modelos/AGIL/agil-gtm-cliente-destino')(sequelize, Sequelize); 
 	var RrhhEmpleadoHojaVida = require('../modelos/AGIL/rrhh_empleado_hoja_vida')(sequelize, Sequelize);
 	var RrhhEmpleadoFormacionAcademica = require('../modelos/AGIL/rrhh_empleado_formacion_academica')(sequelize, Sequelize);
 	var RrhhEmpleadoExperienciaLaboral = require('../modelos/AGIL/rrhh_empleado_experiencia_laboral')(sequelize, Sequelize);
@@ -132,7 +134,7 @@ module.exports = function (router, sequelize, Sequelize, jwt, md5, forEach, ensu
 		ClienteCuenta, ProveedorCuenta, MedicoPrerequisito, ConfiguracionCuenta, MedicoVacuna, VacunaDosis, MedicoPacienteVacuna, MedicoPacienteVacunaDosis, VistaColumnasAplicacion, MedicoPacienteConsulta,
 		MedicoPacienteFicha, MedicoLaboratorioExamen, MedicoLaboratorio, MedicoLaboratorioPaciente, MedicoLaboratorioResultado, MedicoDiagnostico, MedicoDiagnosticoExamen, MedicoDiagnosticoPaciente, MedicoDiagnosticoResultado,
 		MantenimientoOrdenTrabajo, MantenimientoOrdenTrabajoManoObra, MantenimientoOrdenTrabajoMaterial, MantenimientoOrdenTrabajoServicioExterno, MantenimientoOrdenTrabajoSistema,VendedorVenta,RrhhEmpleadoFicha,
-		RrhhEmpleadoFichaOtrosSeguros,RrhhEmpleadoFichaFamiliar,MedicoPacientePreRequisito,RrhhEmpleadoDiscapacidad,RrhhEmpleadoCargo,ClienteRazon,GtmDestino,GtmEstibaje,GtmGrupoEstibaje,GtmTransportista,
+		RrhhEmpleadoFichaOtrosSeguros,RrhhEmpleadoFichaFamiliar,MedicoPacientePreRequisito,RrhhEmpleadoDiscapacidad,RrhhEmpleadoCargo,ClienteRazon,GtmDestino,GtmEstibaje,GtmGrupoEstibaje,GtmTransportista,GtmDespacho,GtmClienteDestino,
         RrhhEmpleadoHojaVida,RrhhEmpleadoFormacionAcademica,RrhhEmpleadoExperienciaLaboral,RrhhEmpleadoLogroInternoExterno,RrhhEmpleadoCapacidadInternaExterna, SolicitudReposicion,DetalleSolicitudProducto,DetalleSolicitudProductoBase,MonedaTipoCambio);
 	//*****SOCKETS*****
 	require('../sockets/pantallas.js')(io, socket);
@@ -149,7 +151,7 @@ module.exports = function (router, sequelize, Sequelize, jwt, md5, forEach, ensu
 
 	//AGIL
 	require('./rutas-empresas')(router, decodeBase64Image, fs, Empresa, Sucursal, Clase, Tipo, signs3, ConfiguracionVentaVista, ConfiguracionCompraVista, sequelize);
-	require('./rutas-clientes')(router, forEach, decodeBase64Image, fs, Empresa, Cliente, RutaCliente, Venta, VentaReprogramacionPago,sequelize,ClienteRazon);
+	require('./rutas-clientes')(router, forEach, decodeBase64Image, fs, Empresa, Cliente, RutaCliente, Venta, VentaReprogramacionPago,sequelize,ClienteRazon,GtmClienteDestino,GtmDestino);
 	require('./rutas-proveedores')(router, sequelize, forEach, decodeBase64Image, fs, Empresa, Proveedor, Compra, CompraReprogramacionPago);
 	require('./rutas-productos')(router, forEach, decodeBase64Image, fs, Empresa, Producto, Proveedor, Cliente, Clase, Inventario, ComisionVendedorProducto, Usuario,
 		DetalleVenta, DetalleMovimiento, Movimiento, Venta, Compra, DetalleCompra, Almacen, Sucursal, signs3, Tipo, ProductoBase, sequelize, ContabilidadCuenta);
@@ -171,6 +173,12 @@ module.exports = function (router, sequelize, Sequelize, jwt, md5, forEach, ensu
 	require('./rutas-contabilidad-cuenta')(router, ContabilidadCuenta, ClasificacionCuenta, Tipo, Clase, Usuario, Diccionario, ClienteCuenta, ProveedorCuenta, ConfiguracionCuenta, sequelize);
 	require('./rutas-comprobante-contabilidad')(router, ComprobanteContabilidad, AsientoContabilidad, ContabilidadCuenta, ClasificacionCuenta, Sucursal, Clase, Usuario, Diccionario, Empresa, Persona, Compra, Venta, MonedaTipoCambio,NumeroLiteral); //MonedaTipoCambio
 	// require('./rutas-contabilidad-clasificacion-cuenta')(router,ClasificacionCuenta,tipo,Usuario,Diccionario);
+	require('./rutas-gtm-estibajes')(router,ensureAuthorizedAdministrador,fs,forEach,jwt,md5,GtmEstibaje); //MonedaTipoCambio
+	require('./rutas-gtm-destinos')(router,ensureAuthorizedAdministrador,fs,forEach,jwt,md5,GtmDestino); 
+	require('./rutas-gtm-transportistas')(router,ensureAuthorizedAdministrador,fs,forEach,jwt,md5,GtmTransportista,Persona); 
+	require('./rutas-gtm-grupo-estibajes')(router,ensureAuthorizedAdministrador,fs,forEach,jwt,md5,GtmGrupoEstibaje); 
+
+	
 
 	//INV
 	require('./rutas-inventario')(router, ensureAuthorized, forEach, Compra, DetalleCompra, Almacen, Sucursal, Empresa, sequelize, Sequelize,

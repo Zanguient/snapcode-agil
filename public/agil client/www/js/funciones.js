@@ -1,3 +1,13 @@
+function ejecutarScriptEstibaje(idModalWizardEstibajeEdicion) {
+	crearPopup(idModalWizardEstibajeEdicion, "60%", 550);
+	setTimeout(function () {
+		aplicarTiempos();
+	}, 200);
+	//aplicarWizardFormulario(idPopupEdicionSala, idContenedorEdicionSala);
+
+}
+
+
 function ejecutarScriptsMesas(idPopupPanel, idPopupEdicionSala, idContenedorEdicionSala, idPopupEdicionMesa,
 	idContenedorEdicionMesa, idPopupGarzonEdicion, idContenedorEdicionGarzon, idPopupFacturacion, idContenedorFacturacion,
 	idPopupReserva, idContenedorReserva, idPopupCambioMesa, idContenedorCambioMesa,
@@ -24,6 +34,8 @@ function ejecutarScriptsMesas(idPopupPanel, idPopupEdicionSala, idContenedorEdic
 	}, 200);
 }
 
+
+
 function ejecutarScriptsPantallaDespacho(idModalPantallaDespacho) {
 	crearPopup(idModalPantallaDespacho, "100%", screen.height);
 }
@@ -42,24 +54,27 @@ function ejecutarScriptsInventario(idModalActualizacionInventario, idModalCreaci
 		aplicarDatePickers();
 	}, 200);
 }
-function ejecutarScriptsOperaciones(idDialogDialogPanelOperaciones,idDialogEntregaViveres,idConfirmacionCierre) {	crearPopup(idDialogDialogPanelOperaciones, "100%", screen.height);
+
+function ejecutarScriptsOperaciones(idDialogDialogPanelOperaciones,idDialogEntregaViveres,idConfirmacionCierre, idDialogTotalIngredientes) {	
+	crearPopup(idDialogDialogPanelOperaciones, "100%", screen.height);
 	crearPopup(idDialogEntregaViveres, "60%", 'auto');
 	crearPopup(idConfirmacionCierre, "40%", 'auto');
+	crearPopup(idDialogTotalIngredientes, "60%", 'auto');
 }
 function ejecutarScriptsInicio(idPopupTablaProductos, idPopupTablaCreditos, idPopupTablaDeudas, idPopupPago,
 	idPopupActualizarCreditoCliente, idPopupActualizarCreditoDeuda, idPopupDeuda, idModalDescuento, idModalTablaVentasPendientes,
 	idModalTablaComprasPendientes, idModalTablaBancosPendientes, idModalTablaOtrosPendientes, idModalInicioSesion, idModalWizardComprobanteEdicion, IdModalOpcionesQr, IdModalRegistrarComprobante, IdModalRevisarComprobante, IdModalLibroMayor, IdModalAsignarCuenta,
-	idModalTablaDespachos) {
+	idModalTablaDespachos, idModalTablaAsignacionDespacho) {
 	crearPopup(idPopupTablaProductos, "100%", 550);
-	crearPopup(idModalWizardComprobanteEdicion, "100%", 900);
-	crearPopup(idPopupTablaCreditos, "60%", 550);
-	crearPopup(idPopupTablaDeudas, "60%", 550);
-	crearPopup(idPopupPago, "30%", 200);
-	crearPopup(idPopupActualizarCreditoCliente, "30%", 200);
-	crearPopup(idPopupActualizarCreditoDeuda, "30%", 200);
-	crearPopup(idPopupDeuda, "30%", 200);
+	crearPopup(idModalWizardComprobanteEdicion, "100%", "auto");
+	crearPopup(idPopupTablaCreditos, "auto", "auto");
+	crearPopup(idPopupTablaDeudas, "auto", "auto");
+	crearPopup(idPopupPago, "auto", "auto");
+	crearPopup(idPopupActualizarCreditoCliente, "auto", "auto");
+	crearPopup(idPopupActualizarCreditoDeuda, "auto", "auto");
+	crearPopup(idPopupDeuda, "auto", "auto");
 	crearPopup(idModalDescuento, "40%", 100);
-	crearPopup(idModalTablaVentasPendientes, "60%", 550);
+	crearPopup(idModalTablaVentasPendientes, "60%", "auto");
 	crearPopup(idModalTablaComprasPendientes, "60%", 550);
 	crearPopup(idModalTablaBancosPendientes, "60%", 550);
 	crearPopup(idModalTablaOtrosPendientes, "60%", 550);
@@ -71,6 +86,7 @@ function ejecutarScriptsInicio(idPopupTablaProductos, idPopupTablaCreditos, idPo
 	crearPopup(IdModalLibroMayor, "70%", "auto");
 	crearPopup(IdModalAsignarCuenta, "30%", 270);
 	crearPopup(idModalTablaDespachos, "90%", 550);
+	crearPopup(idModalTablaAsignacionDespacho, "30%", 320);
 	$("#" + idModalInicioSesion).siblings('.ui-dialog-titlebar').remove();
 	aplicarDatePickers();
 
@@ -337,7 +353,7 @@ function ejecutarScriptsContabilidadCuentas(idModalWizardCuentaEdicion,
 	crearPopup(idModalWizardCuentaEdicion, "60%", 500);
 	crearPopup(idModalWizardClasificacionCuentaNueva, "50%", 300);
 	crearPopup(idModalWizardClasificacionVer, "60%", 550);
-	crearPopup(idModalPlantilla, "50%", 450);
+	crearPopup(idModalPlantilla, "50%", "auto");
 	crearPopup(idModalWizardTipoCuenta, "50%", 300);
 	crearPopup(idModalWizardClasificacionCuenta, "50%", 350);
 	aplicarWizardFormulario(idModalWizardCuentaVer, idModalWizardContainerCuentaVer);
@@ -1181,6 +1197,8 @@ function aplicarTiempos() {
 		$(this).prev().focus();
 	});
 }
+
+
 
 
 

@@ -1,25 +1,29 @@
 angular.module('agil.controladores')
 
-.controller('ControladorClientes', function($scope,$window,$localStorage,$location,$templateCache,$route,blockUI,$timeout,
-											ClientesPaginador,Cliente,Clientes,Empresas,ClientesEmpresa,uiGmapGoogleMapApi,$cordovaGeolocation,
-											DatoCodigoSiguienteClienteEmpresa){
-	blockUI.start();
-	
-	$scope.usuario=JSON.parse($localStorage.usuario);
-	
-	$scope.inicio=function(){
-		$scope.obtenerEmpresas();
-		$scope.obtenerClientes();
-		/*setTimeout(function() {
-			ejecutarScriptsTabla('tabla-clientes',10);
-		},2000);*/
-		uiGmapGoogleMapApi.then(function(maps) {console.log(maps);//google.maps.event.trigger(maps[0].map, 'resize');
-			$scope.map = {center: {latitude: -17.403800007775388, longitude: -66.11349012184144 }, zoom: 17,bounds: {
-				  northeast: {
-					latitude: -17.403800007775388,
-					longitude: -66.11349012184144
-				  }		  
-				} };
+	.controller('ControladorClientes', function ($scope, $window, $localStorage, $location, $templateCache, $route, blockUI, $timeout,
+		ClientesPaginador, Cliente, Clientes, Empresas, ClientesEmpresa, uiGmapGoogleMapApi, $cordovaGeolocation,
+		DatoCodigoSiguienteClienteEmpresa, DestinosCliente) {
+		blockUI.start();
+
+		$scope.usuario = JSON.parse($localStorage.usuario);
+
+		$scope.inicio = function () {
+			$scope.obtenerEmpresas();
+			$scope.obtenerClientes();
+			$scope.obtenerDestinos();
+			/*setTimeout(function() {
+				ejecutarScriptsTabla('tabla-clientes',10);
+			},2000);*/
+			uiGmapGoogleMapApi.then(function (maps) {
+				console.log(maps);//google.maps.event.trigger(maps[0].map, 'resize');
+				$scope.map = {
+					center: { latitude: -17.403800007775388, longitude: -66.11349012184144 }, zoom: 17, bounds: {
+						northeast: {
+							latitude: -17.403800007775388,
+							longitude: -66.11349012184144
+						}
+					}
+				};
 				$scope.options = {
 					scrollwheel: false,
 					mapTypeId: google.maps.MapTypeId.SATELLITE
@@ -65,102 +69,104 @@ angular.module('agil.controladores')
 			});
 		}
 
-	$scope.abrirPopupCliente=function(cliente){
-		$scope.mostrarMap=false;
-		$scope.cliente=cliente;
-		$scope.map = {center: {latitude:$scope.cliente.latitud, longitude:$scope.cliente.longitud }, zoom: 17,bounds: {
-		  northeast: {
-			latitude: $scope.cliente.latitud,
-			longitude: $scope.cliente.longitud
-		  }		  
-		}};
-		$scope.options = {scrollwheel: false,mapTypeId: google.maps.MapTypeId.SATELLITE};
-		$scope.coordsUpdates = 0;
-		$scope.dynamicMoveCtr = 0;
-		$scope.marker = {
-		  id: 0,
-		  coords: {
-			latitude:$scope.cliente.latitud,
-			longitude:$scope.cliente.longitud
-		  },
-		  options: { draggable: true },
-		  events: {
-			dragend: function (marker, eventName, args) {
-				$scope.cliente.latitud=marker.getPosition().lat();
-				$scope.cliente.longitud=marker.getPosition().lng();
-			  $scope.marker.options = {
-				draggable: true,
-				labelAnchor: "100 0",
-				labelClass: "marker-labels"
-			  };
+		$scope.abrirPopupCliente = function (cliente) {
+			$scope.mostrarMap = false;
+			$scope.cliente = cliente;
+			$scope.map = {
+				center: { latitude: $scope.cliente.latitud, longitude: $scope.cliente.longitud }, zoom: 17, bounds: {
+					northeast: {
+						latitude: $scope.cliente.latitud,
+						longitude: $scope.cliente.longitud
+					}
+				}
+			};
+			$scope.options = { scrollwheel: false, mapTypeId: google.maps.MapTypeId.SATELLITE };
+			$scope.coordsUpdates = 0;
+			$scope.dynamicMoveCtr = 0;
+			$scope.marker = {
+				id: 0,
+				coords: {
+					latitude: $scope.cliente.latitud,
+					longitude: $scope.cliente.longitud
+				},
+				options: { draggable: true },
+				events: {
+					dragend: function (marker, eventName, args) {
+						$scope.cliente.latitud = marker.getPosition().lat();
+						$scope.cliente.longitud = marker.getPosition().lng();
+						$scope.marker.options = {
+							draggable: true,
+							labelAnchor: "100 0",
+							labelClass: "marker-labels"
+						};
+					}
+				}
 			}
-		  }
+			$scope.abrirPopup('modal-wizard-cliente');
 		}
-		$scope.abrirPopup('modal-wizard-cliente');
-	}
-	
-	$scope.mostrarMapa=function(){
-		$scope.mostrarMap=true;
-		$timeout(function(){
-			$scope.$apply(function(){
-				google.maps.event.trigger($scope.map, 'resize');
-			});
-		},2000);
-	}
-	
-	$scope.crearNuevoCliente=function(){
-		var promesa=DatoCodigoSiguienteClienteEmpresa($scope.usuario.id_empresa);
-		promesa.then(function(dato){
-			$scope.ultimo_codigo=dato.ultimo_codigo?"CLI"+dato.ultimo_codigo:0;
-			var usuario=JSON.parse($localStorage.usuario);
-			var cliente=new Cliente({id_empresa:usuario.id_empresa,latitud:-17.403800007775388,longitud:-66.11349012184144, clientes_razon: []});
-			cliente.codigo="CLI"+((dato.ultimo_codigo?dato.ultimo_codigo:0)+1);
-			$scope.abrirPopupCliente(cliente);
-			/*var posOptions = {timeout: 10000, enableHighAccuracy: false};
-			  $cordovaGeolocation
-				.getCurrentPosition(posOptions)
-				.then(function (position) {
-					$timeout(function(){
-						$scope.$apply(function(){
-							$scope.cliente=new Cliente({id_empresa:usuario.id_empresa,latitud:position.coords.latitude,longitud:position.coords.longitude});
-							$scope.abrirPopup('modal-wizard-cliente');
+
+		$scope.mostrarMapa = function () {
+			$scope.mostrarMap = true;
+			$timeout(function () {
+				$scope.$apply(function () {
+					google.maps.event.trigger($scope.map, 'resize');
+				});
+			}, 2000);
+		}
+
+		$scope.crearNuevoCliente = function () {
+			var promesa = DatoCodigoSiguienteClienteEmpresa($scope.usuario.id_empresa);
+			promesa.then(function (dato) {
+				$scope.ultimo_codigo = dato.ultimo_codigo ? "CLI" + dato.ultimo_codigo : 0;
+				var usuario = JSON.parse($localStorage.usuario);
+				var cliente = new Cliente({ id_empresa: usuario.id_empresa, latitud: -17.403800007775388, longitud: -66.11349012184144, clientes_razon: [], cliente_destinos: [] });
+				cliente.codigo = "CLI" + ((dato.ultimo_codigo ? dato.ultimo_codigo : 0) + 1);
+				$scope.abrirPopupCliente(cliente);
+				/*var posOptions = {timeout: 10000, enableHighAccuracy: false};
+				  $cordovaGeolocation
+					.getCurrentPosition(posOptions)
+					.then(function (position) {
+						$timeout(function(){
+							$scope.$apply(function(){
+								$scope.cliente=new Cliente({id_empresa:usuario.id_empresa,latitud:position.coords.latitude,longitud:position.coords.longitude});
+								$scope.abrirPopup('modal-wizard-cliente');
+							});
 						});
-					});
-					
-				}, function(err) {
-				  // error
-				});*/
-		});
-	}
-	
-	$scope.verCliente=function(cliente){
-		$scope.cliente=cliente;
-		cliente.fecha1=new Date(cliente.fecha1);
-		cliente.fecha2=new Date(cliente.fecha2);
-		$scope.cliente.fechatexto1=cliente.fecha1.getDate()+"/"+(cliente.fecha1.getMonth()+1)+"/"+cliente.fecha1.getFullYear();
-		$scope.cliente.fechatexto2=cliente.fecha2.getDate()+"/"+(cliente.fecha2.getMonth()+1)+"/"+cliente.fecha2.getFullYear();
-		$scope.abrirPopup('modal-wizard-cliente-vista');
-	}
-	
-	$scope.cerrarPopPupVista=function(){
-		$scope.cerrarPopup('modal-wizard-cliente-vista');
-	}
-	
-	$scope.cerrarPopPupNuevoCliente=function(){
-		$scope.cerrarPopup('modal-wizard-cliente');
-	}
-	
-	$scope.modificarCliente=function(cliente){
-		if(cliente.fecha1){
-			cliente.fecha1=new Date(cliente.fecha1);
-			cliente.fechatexto1=cliente.fecha1.getDate()+"/"+(cliente.fecha1.getMonth()+1)+"/"+cliente.fecha1.getFullYear();
+						
+					}, function(err) {
+					  // error
+					});*/
+			});
 		}
-		if(cliente.fecha2){
-			cliente.fecha2=new Date(cliente.fecha2);
-			cliente.fechatexto2=cliente.fecha2.getDate()+"/"+(cliente.fecha2.getMonth()+1)+"/"+cliente.fecha2.getFullYear();
+
+		$scope.verCliente = function (cliente) {
+			$scope.cliente = cliente;
+			cliente.fecha1 = new Date(cliente.fecha1);
+			cliente.fecha2 = new Date(cliente.fecha2);
+			$scope.cliente.fechatexto1 = cliente.fecha1.getDate() + "/" + (cliente.fecha1.getMonth() + 1) + "/" + cliente.fecha1.getFullYear();
+			$scope.cliente.fechatexto2 = cliente.fecha2.getDate() + "/" + (cliente.fecha2.getMonth() + 1) + "/" + cliente.fecha2.getFullYear();
+			$scope.abrirPopup('modal-wizard-cliente-vista');
 		}
-		$scope.abrirPopupCliente(cliente);
-	}
+
+		$scope.cerrarPopPupVista = function () {
+			$scope.cerrarPopup('modal-wizard-cliente-vista');
+		}
+
+		$scope.cerrarPopPupNuevoCliente = function () {
+			$scope.cerrarPopup('modal-wizard-cliente');
+		}
+
+		$scope.modificarCliente = function (cliente) {
+			if (cliente.fecha1) {
+				cliente.fecha1 = new Date(cliente.fecha1);
+				cliente.fechatexto1 = cliente.fecha1.getDate() + "/" + (cliente.fecha1.getMonth() + 1) + "/" + cliente.fecha1.getFullYear();
+			}
+			if (cliente.fecha2) {
+				cliente.fecha2 = new Date(cliente.fecha2);
+				cliente.fechatexto2 = cliente.fecha2.getDate() + "/" + (cliente.fecha2.getMonth() + 1) + "/" + cliente.fecha2.getFullYear();
+			}
+			$scope.abrirPopupCliente(cliente);
+		}
 
 		$scope.verCliente = function (cliente) {
 			$scope.cliente = cliente;
@@ -279,6 +285,29 @@ angular.module('agil.controladores')
 
 		$scope.removerClienteRazon = function (clienteRazon) {
 			clienteRazon.eliminado = true;
+		}
+
+		$scope.obtenerDestinos = function () {
+			var promesa = DestinosCliente($scope.usuario.id_empresa);
+			promesa.then(function (destinos) {
+				$scope.destinos = destinos;
+			})
+		}
+
+		$scope.agregarDestino = function (destino) {
+			if (destino.id) {
+				var clienteDestino={id_destino:destino.id,destino:destino};
+				if ($scope.cliente.cliente_destinos.indexOf(clienteDestino) == -1) {
+					$scope.cliente.cliente_destinos.push(clienteDestino);
+				}
+				$scope.dato_destino = {}
+
+			}
+
+		}
+
+		$scope.removerDestino = function (destino) {
+			destino.eliminado = true;
 		}
 
 
