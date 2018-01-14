@@ -81,7 +81,7 @@ module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Su
 									id_extension: req.body.extension.id,
 									grupo_sanguineo: req.body.grupo_sanguineo,
 									cargo: req.body.cargo,
-									//campo: req.body.campo,
+									campo: req.body.campo,
 									designacion_empresa: req.body.designacion_empresa,
 									eliminado: true,
 								}).then(function (medicoPacienteCreado) {
@@ -127,7 +127,7 @@ module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Su
 							id_extension: req.body.extension.id,
 							grupo_sanguineo: req.body.grupo_sanguineo,
 							cargo: req.body.cargo,
-							//campo: req.body.campo,
+							campo: req.body.campo,
 							designacion_empresa: req.body.designacion_empresa,
 							eliminado: req.body.eliminado,
 						}, {

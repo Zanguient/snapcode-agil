@@ -1,6 +1,6 @@
 angular.module('agil.controladores')
 
-.controller('ControladorConceptos', function($scope,$location,$localStorage,$templateCache,$route,blockUI,Tipos,TiposEmpresa,ListaTiposEmpresa){
+.controller('ControladorConceptos', function($scope,$location,$localStorage,$templateCache,$route,blockUI,Tipos,TiposEmpresa,ListaTiposEmpresa,Sucursales){
 	
 	blockUI.start();
 	
@@ -11,6 +11,7 @@ angular.module('agil.controladores')
 	
 	$scope.inicio=function(){
 		$scope.obtenerTipos();
+		
 		setTimeout(function() {
 			ejecutarScriptsTabla('tabla-conceptos',2);
 		},2000);
@@ -68,6 +69,9 @@ angular.module('agil.controladores')
 		var button=$('#siguiente').text().trim();
 		if(button!="Siguiente"){
 			blockUI.start();
+			if($scope.usuario.id_empresa){
+				tipo.id_empresa=$scope.usuario.id_empresa
+			}
 			if(tipo.id){
 				Tipos.update({ id_tipo:tipo.id }, tipo,function(res){
 					blockUI.stop();
@@ -94,7 +98,30 @@ angular.module('agil.controladores')
 	$scope.$on('$routeChangeStart', function(next, current) { 
 	   $scope.eliminarPopup($scope.idModalWizardConceptoEdicion);
 	});
-	
+	$scope.importarSucursales=function (clases) {
+		var promesa = Sucursales($scope.usuario.id_empresa)
+		promesa.then(function (dato) {
+			$scope.sucursales=dato
+			/* $scope.sucursales.forEach(function(sucursal,index,array){
+				
+			}); */
+			var encontrado=false
+			for (let i = 0; i < dato.length; i++) {
+				var element = dato[i];
+				for (let j = 0; j < clases.length; j++) {
+					var element2 = clases[j];
+					if(element.nombre==element2.nombre){
+						encontrado=true;
+					}
+
+				}
+				if(!encontrado){
+					var clase={nombre:element.nombre,nombre_corto:element.nombre}
+					clases.push(clase)
+				}
+			}
+		})
+	}
 	$scope.inicio();
 });
 

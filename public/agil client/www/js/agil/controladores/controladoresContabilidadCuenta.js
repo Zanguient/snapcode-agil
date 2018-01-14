@@ -42,6 +42,7 @@ angular.module('agil.controladores')
 		$scope.inicio = function () {
 			$scope.obtenerCuentas();
 			$scope.obtenerTiposCuenta();
+			$scope.obtenerTiposCuentasAuxilires()
 			$scope.obtenerClasificacionCuenta();
 			$scope.obtenerClasificacionSaldos();
 			$scope.obtenerClasificacionMovimientos();
@@ -408,6 +409,7 @@ angular.module('agil.controladores')
 		}
 
 		$scope.cerrarPopPupEdicion = function () {
+			$scope.obtenerCuentas()
 			$scope.cerrarPopup($scope.idModalWizardCuentaEdicion);
 		}
 
@@ -459,7 +461,17 @@ angular.module('agil.controladores')
 				blockUI.stop();
 			});
 		}
-
+			
+		$scope.obtenerTiposCuentasAuxilires = function () {
+			blockUI.start();
+			var promesa = ClasesTipo("AUXCU");
+			// var promesa = lasOperacionesCalculos();
+			promesa.then(function (entidad) {
+				console.log(entidad)
+				$scope.tiposCuentasAuxiliares = entidad.clases;
+				blockUI.stop();
+			});
+		}
 		$scope.obtenerOperacionesCalculo = function () {
 			blockUI.start();
 			var promesa = ClasesTipo("OPE");
@@ -578,6 +590,6 @@ angular.module('agil.controladores')
 			$scope.eliminarPopup($scope.idModalWizardClasificacionEdicion);
 			$scope.eliminarPopup($scope.idModalWizardConceptoEdicion);
 		});
-		
+			
 		$scope.inicio();
 	});

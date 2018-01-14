@@ -304,8 +304,13 @@
 						</div>
 						<div class="form-group">
 							<div class="col-sm-9">
-								<button type="button" class="btn btn-primary" ng-click="agregarAlmacen(almacen)">
-									<i class="ace-icon fa fa-plus align-top bigger-125"></i>
+								<button ng-if="!almacen.edit" type="button" class="btn btn-primary" ng-click="agregarAlmacen(almacen)">
+									<i class="ace-icon fa fa-plus align-top bigger-125"></i>Agregar
+								</button>
+							</div>
+							<div class="col-sm-9">
+								<button ng-if="almacen.edit" type="button" class="btn btn-success" ng-click="agregarAlmacen(almacen)">
+									<i class="ace-icon fa fa-plus align-top bigger-125"></i>Editar
 								</button>
 							</div>
 						</div>

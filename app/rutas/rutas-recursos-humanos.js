@@ -1,5 +1,5 @@
 module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente, Persona, Empresa, Sucursal, Clase, Diccionario, Tipo, decodeBase64Image, fs, RrhhEmpleadoFicha, RrhhEmpleadoFichaOtrosSeguros, RrhhEmpleadoFichaFamiliar, RrhhEmpleadoDiscapacidad
-    , RrhhEmpleadoCargo, RrhhEmpleadoHojaVida, RrhhEmpleadoFormacionAcademica, RrhhEmpleadoExperienciaLaboral, RrhhEmpleadoLogroInternoExterno, RrhhEmpleadoCapacidadInternaExterna,NumeroLiteral) {
+    , RrhhEmpleadoCargo, RrhhEmpleadoHojaVida, RrhhEmpleadoFormacionAcademica, RrhhEmpleadoExperienciaLaboral, RrhhEmpleadoLogroInternoExterno, RrhhEmpleadoCapacidadInternaExterna, NumeroLiteral) {
     router.route('/recursos-humanos/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion/codigo/:codigo/nombres/:nombres/ci/:ci/campo/:campo/cargo/:cargo/busquedaEmpresa/:busquedaEmpresa/grupo/:grupo_sanguineo/estado/:estado')
         .get(function (req, res) {
             var condicion = ""
@@ -65,17 +65,21 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                 }
             }
             console.log(condicion)
-
+            var limite = " LIMIT " + (req.params.items_pagina * (req.params.pagina - 1)) + "," + req.params.items_pagina
+            if (req.params.items_pagina == "0") {
+                limite = "";
+            }
             if (condicion.length > 1) {
-                sequelize.query("select count(*) as cantidad_pacientes from agil_medico_paciente INNER JOIN (select DISTINCT agil_medico_paciente.id as 'id',agil_medico_paciente.es_empleado as 'es_empleado', agil_medico_paciente.persona as 'id_persona',agil_medico_paciente.codigo as 'codigo',\
+                sequelize.query("select DISTINCT agil_medico_paciente.id as 'id',agil_medico_paciente.es_empleado as 'es_empleado', agil_medico_paciente.persona as 'id_persona',agil_medico_paciente.codigo as 'codigo',\
                 agil_medico_paciente.empresa as 'id_empresa', gl_clase.nombre as 'extension', agil_medico_paciente.grupo_sanguineo as 'grupo_sanguineo',\
                 agil_medico_paciente.campo as 'campo', agil_medico_paciente.designacion_empresa as 'designacion_empresa', agil_medico_paciente.comentario as 'comentario', \
                 gl_persona.nombre_completo as 'nombre_completo', gl_persona.apellido_paterno as 'apellido_paterno', gl_persona.apellido_materno as 'apellido_materno',\
                 gl_persona.nombres as 'nombres',gl_persona.imagen as 'imagen', agil_medico_paciente.eliminado as 'activo', gl_persona.ci as 'ci', gl_persona.genero as 'id_genero', \
                 gl_persona.telefono as 'telefono', gl_persona.telefono_movil as 'telefono_movil', gl_persona.fecha_nacimiento as 'fecha_nacimiento'\
-                from agil_medico_paciente "+ condicionContrato + "  INNER JOIN agil_rrhh_empleado_cargo AS cargos ON agil_medico_paciente.id = cargos.empleado " + condicionCargo + " \
+                from agil_medico_paciente "+ condicionContrato + " INNER JOIN agil_rrhh_empleado_cargo AS cargos ON agil_medico_paciente.id = cargos.empleado " + condicionCargo + " \
                 LEFT OUTER JOIN gl_clase AS `cargos.cargo` ON cargos.cargo = `cargos.cargo`.id INNER JOIN gl_persona ON (agil_medico_paciente.persona = gl_persona.id) INNER JOIN gl_clase ON (agil_medico_paciente.extension = gl_clase.id)\
-                where agil_medico_paciente.empresa = "+ req.params.id_empresa + " AND agil_medico_paciente.eliminado = " + activo + " AND (" + condicion + ")) As count on (agil_medico_paciente.id = count.id)", { type: sequelize.QueryTypes.SELECT })
+                where agil_medico_paciente.empresa = "+ req.params.id_empresa + " AND agil_medico_paciente.eliminado = " + activo + " AND (" + condicion + ") \
+                GROUP BY agil_medico_paciente.id order by "+ req.params.columna + " " + req.params.direccion, { type: sequelize.QueryTypes.SELECT })
                     .then(function (data) {
                         var options = {
                             model: MedicoPaciente,
@@ -92,7 +96,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                     from agil_medico_paciente "+ condicionContrato + " INNER JOIN agil_rrhh_empleado_cargo AS cargos ON agil_medico_paciente.id = cargos.empleado " + condicionCargo + " \
                     LEFT OUTER JOIN gl_clase AS `cargos.cargo` ON cargos.cargo = `cargos.cargo`.id INNER JOIN gl_persona ON (agil_medico_paciente.persona = gl_persona.id) INNER JOIN gl_clase ON (agil_medico_paciente.extension = gl_clase.id)\
                     where agil_medico_paciente.empresa = "+ req.params.id_empresa + " AND agil_medico_paciente.eliminado = " + activo + " AND (" + condicion + ") \
-                    GROUP BY agil_medico_paciente.id order by "+ req.params.columna + " " + req.params.direccion + " LIMIT " + (req.params.items_pagina * (req.params.pagina - 1)) + "," + req.params.items_pagina, options)
+                    GROUP BY agil_medico_paciente.id order by "+ req.params.columna + " " + req.params.direccion + limite, options)
                             .then(function (pacientes) {
                                 var a = ""
                                 var arregloCargos = []
@@ -116,19 +120,19 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                                                 paciente.dataValues.ficha = fichaActual[0]
                                                 arregloCargos.push(paciente)
                                                 if (index === (array.length - 1)) {
-                                                    res.json({ pacientes: arregloCargos, paginas: Math.ceil(data[0].cantidad_pacientes / req.params.items_pagina) });
+                                                    res.json({ pacientes: arregloCargos, paginas: Math.ceil(data.length / req.params.items_pagina) });
                                                 }
                                             })
 
                                         })
                                     });
                                 } else {
-                                    res.json({ pacientes: arregloCargos, paginas: Math.ceil(data[0].cantidad_pacientes / req.params.items_pagina) });
+                                    res.json({ pacientes: arregloCargos, paginas: Math.ceil(data.length / req.params.items_pagina) });
                                 }
                             });
                     });
             } else {
-                sequelize.query("select count(*) as cantidad_pacientes from agil_medico_paciente INNER JOIN (select DISTINCT  agil_medico_paciente.id as 'id',agil_medico_paciente.es_empleado as 'es_empleado', agil_medico_paciente.persona as 'id_persona',agil_medico_paciente.codigo as 'codigo',\
+                sequelize.query("select DISTINCT agil_medico_paciente.id as 'id',agil_medico_paciente.es_empleado as 'es_empleado', agil_medico_paciente.persona as 'id_persona',agil_medico_paciente.codigo as 'codigo',\
                 agil_medico_paciente.empresa as 'id_empresa', gl_clase.nombre as 'extension', agil_medico_paciente.grupo_sanguineo as 'grupo_sanguineo',\
                 agil_medico_paciente.campo as 'campo', agil_medico_paciente.designacion_empresa as 'designacion_empresa',agil_medico_paciente.comentario as 'comentario',\
                 gl_persona.nombre_completo as 'nombre_completo', gl_persona.apellido_paterno as 'apellido_paterno', gl_persona.apellido_materno as 'apellido_materno',\
@@ -136,7 +140,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                 gl_persona.telefono as 'telefono', gl_persona.telefono_movil as 'telefono_movil', gl_persona.fecha_nacimiento as 'fecha_nacimiento'\
                 from agil_medico_paciente "+ condicionContrato + " INNER JOIN agil_rrhh_empleado_cargo AS cargos ON agil_medico_paciente.id = cargos.empleado " + condicionCargo + " \
                 LEFT OUTER JOIN gl_clase AS `cargos.cargo` ON cargos.cargo = `cargos.cargo`.id INNER JOIN gl_persona ON (agil_medico_paciente.persona = gl_persona.id) INNER JOIN gl_clase ON (agil_medico_paciente.extension = gl_clase.id)\
-                where agil_medico_paciente.empresa = "+ req.params.id_empresa + " AND agil_medico_paciente.eliminado = " + activo + ") as count on (agil_medico_paciente.id = count.id)", { type: sequelize.QueryTypes.SELECT })
+                where agil_medico_paciente.empresa = "+ req.params.id_empresa + " AND agil_medico_paciente.eliminado = " + activo + " AND agil_medico_paciente.es_empleado = true GROUP BY agil_medico_paciente.id order by " + req.params.columna + " " + req.params.direccion, { type: sequelize.QueryTypes.SELECT })
                     .then(function (data) {
                         var options = {
                             model: MedicoPaciente,
@@ -152,7 +156,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                     gl_persona.telefono as 'telefono', gl_persona.telefono_movil as 'telefono_movil', gl_persona.fecha_nacimiento as 'fecha_nacimiento'\
                     from agil_medico_paciente "+ condicionContrato + " INNER JOIN agil_rrhh_empleado_cargo AS cargos ON agil_medico_paciente.id = cargos.empleado " + condicionCargo + " \
                     LEFT OUTER JOIN gl_clase AS `cargos.cargo` ON cargos.cargo = `cargos.cargo`.id INNER JOIN gl_persona ON (agil_medico_paciente.persona = gl_persona.id) INNER JOIN gl_clase ON (agil_medico_paciente.extension = gl_clase.id)\
-                    where agil_medico_paciente.empresa = "+ req.params.id_empresa + " AND agil_medico_paciente.eliminado = " + activo + " AND agil_medico_paciente.es_empleado = true GROUP BY agil_medico_paciente.id order by " + req.params.columna + " " + req.params.direccion + " LIMIT " + (req.params.items_pagina * (req.params.pagina - 1)) + "," + req.params.items_pagina, options)
+                    where agil_medico_paciente.empresa = "+ req.params.id_empresa + " AND agil_medico_paciente.eliminado = " + activo + " AND agil_medico_paciente.es_empleado = true GROUP BY agil_medico_paciente.id order by " + req.params.columna + " " + req.params.direccion + limite, options)
                             .then(function (pacientes) {
                                 var a = ""
                                 var arregloCargos = []
@@ -175,14 +179,14 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                                                 paciente.dataValues.ficha = fichaActual[0]
                                                 arregloCargos.push(paciente)
                                                 if (index === (array.length - 1)) {
-                                                    res.json({ pacientes: arregloCargos, paginas: Math.ceil(data[0].cantidad_pacientes / req.params.items_pagina) });
+                                                    res.json({ pacientes: arregloCargos, paginas: Math.ceil(data.length / req.params.items_pagina) });
                                                 }
                                             })
 
                                         })
                                     });
                                 } else {
-                                    res.json({ pacientes: arregloCargos, paginas: Math.ceil(data[0].cantidad_pacientes / req.params.items_pagina) });
+                                    res.json({ pacientes: arregloCargos, paginas: Math.ceil(data.length / req.params.items_pagina) });
 
                                 }
                             });
@@ -206,16 +210,16 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                 });
             });
         })
-    router.route('/recursos-humanos-seguro/:id_seguro')
-        .put(function (req, res) {
-            RrhhEmpleadoFichaOtrosSeguros.destroy({
-                where: {
-                    id: req.params.id_seguro
-                },
-            }).then(function (SeguroEliminado) {
-                res.json({ mensaje: "Seguro eliminado satisfactoriamente!" });
-            });
-        })
+    /*    router.route('/recursos-humanos-seguro/:id_seguro')
+           .put(function (req, res) {
+               RrhhEmpleadoFichaOtrosSeguros.destroy({
+                   where: {
+                       id: req.params.id_seguro
+                   },
+               }).then(function (SeguroEliminado) {
+                   res.json({ mensaje: "Seguro eliminado satisfactoriamente!" });
+               });
+           }) */
     router.route('/recursos-humanos/:id_usuario')
         .get(function (req, res) {
             MedicoPaciente.find({
@@ -643,19 +647,32 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
         if (req.body.empleado.otrosSeguros.length > 0) {
             req.body.empleado.otrosSeguros.forEach(function (seguroSalud, index, array) {
                 if (seguroSalud.id) {
-                    RrhhEmpleadoFichaOtrosSeguros.update({
-                        id_empleado: req.body.empleado.id,
-                        id_tipo_seguro: seguroSalud.tipoSeguro.id,
-                        monto: seguroSalud.monto,
-                        observacion: seguroSalud.observacion,
-                    }, {
-                            where: { id: seguroSalud.id }
-                        }).then(function (seguroCreado) {
+                    if (seguroSalud.eliminado != true) {
+                        RrhhEmpleadoFichaOtrosSeguros.update({
+                            id_empleado: req.body.empleado.id,
+                            id_tipo_seguro: seguroSalud.tipoSeguro.id,
+                            monto: seguroSalud.monto,
+                            observacion: seguroSalud.observacion,
+                        }, {
+                                where: { id: seguroSalud.id }
+                            }).then(function (seguroCreado) {
+                                if (index === (array.length - 1)) {
+                                    guardarFamiliares(req, res, Persona, RrhhEmpleadoFichaFamiliar, RrhhEmpleadoDiscapacidad, RrhhEmpleadoCargo)
+
+                                }
+                            })
+                    } else {
+                        RrhhEmpleadoFichaOtrosSeguros.destroy({
+                            where: {
+                                id: seguroSalud.id
+                            },
+                        }).then(function (SeguroEliminado) {
                             if (index === (array.length - 1)) {
                                 guardarFamiliares(req, res, Persona, RrhhEmpleadoFichaFamiliar, RrhhEmpleadoDiscapacidad, RrhhEmpleadoCargo)
 
                             }
-                        })
+                        });
+                    }
                 } else {
                     RrhhEmpleadoFichaOtrosSeguros.create({
                         id_empleado: req.body.empleado.id,
@@ -677,19 +694,20 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
     function guardarFamiliares(req, res, Persona, RrhhEmpleadoFichaFamiliar, RrhhEmpleadoDiscapacidad, RrhhEmpleadoCargo) {
         if (req.body.empleado.familiares.length > 0) {
             req.body.empleado.familiares.forEach(function (familiar, index, array) {
-                if (familiar.persona.id) {
-                    Persona.update({
-                        nombres: familiar.persona.nombres,
-                        apellido_paterno: familiar.persona.apellido_paterno,
-                        apellido_materno: familiar.persona.apellido_materno,
-                        fecha_nacimiento: familiar.persona.fecha_nacimiento,
-                        id_genero: familiar.persona.genero.id,
-                    }, {
-                            where: {
-                                id: familiar.persona.id
-                            }
-                        }).then(function (personaActualizada) {
-                            if (familiar.id) {
+                if (familiar.id) {
+                    if (familiar.eliminado != true) {
+                        Persona.update({
+                            nombres: familiar.persona.nombres,
+                            apellido_paterno: familiar.persona.apellido_paterno,
+                            apellido_materno: familiar.persona.apellido_materno,
+                            fecha_nacimiento: familiar.persona.fecha_nacimiento,
+                            id_genero: familiar.persona.genero.id,
+                        }, {
+                                where: {
+                                    id: familiar.persona.id
+                                }
+                            }).then(function (personaActualizada) {
+
                                 RrhhEmpleadoFichaFamiliar.update({
                                     id_empleado: req.body.empleado.id,
                                     id_persona_familiar: familiar.persona.id,
@@ -703,19 +721,26 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
 
                                         }
                                     })
-                            } else {
-                                RrhhEmpleadoFichaFamiliar.create({
-                                    id_empleado: req.body.empleado.id,
-                                    id_persona_familiar: familiar.persona.id,
-                                    id_relacion: familiar.relacion.id,
-                                    afiliado: familiar.persona.afiliado,
-                                }).then(function (RrhhEmpleadoFichaFamiliarCreado) {
-                                    if (index === (array.length - 1)) {
-                                        guardarCargo(req, res, RrhhEmpleadoDiscapacidad, RrhhEmpleadoCargo)
-                                    }
-                                })
-                            }
-                        })
+
+                            })
+                    } else {
+                        RrhhEmpleadoFichaFamiliar.destroy({
+                            where: {
+                                id:familiar.id
+                            },
+                        }).then(function (RelacionEliminado) {
+                            Persona.destroy({
+                                where: {
+                                    id: familiar.persona.id
+                                },
+                            }).then(function (FamiliarEliminado) {
+                                if (index === (array.length - 1)) {
+                                    guardarCargo(req, res, RrhhEmpleadoDiscapacidad, RrhhEmpleadoCargo)
+
+                                }
+                            });
+                        });
+                    }
                 } else {
                     Persona.create({
                         nombres: familiar.persona.nombres,
@@ -724,34 +749,19 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                         fecha_nacimiento: familiar.persona.fecha_nacimiento,
                         id_genero: familiar.persona.genero.id,
                     }).then(function (personaCreada) {
-                        if (familiar.id) {
-                            RrhhEmpleadoFichaFamiliar.update({
-                                id_empleado: req.body.empleado.id,
-                                id_persona_familiar: personaCreada.id,
-                                id_relacion: familiar.relacion.id,
-                                afiliado: familiar.persona.afiliado,
-                            }, {
-                                    where: { id: familiar.id }
-                                }).then(function (empleadoFamiliarActulizado) {
-                                    if (index === (array.length - 1)) {
-                                        guardarCargo(req, res, RrhhEmpleadoDiscapacidad, RrhhEmpleadoCargo)
-                                    }
-                                })
-                        } else {
-                            RrhhEmpleadoFichaFamiliar.create({
-                                id_empleado: req.body.empleado.id,
-                                id_persona_familiar: personaCreada.id,
-                                id_relacion: familiar.relacion.id,
-                                afiliado: familiar.persona.afiliado,
-                            }).then(function (RrhhEmpleadoFichaFamiliarCreado) {
-                                if (index === (array.length - 1)) {
-                                    guardarCargo(req, res, RrhhEmpleadoDiscapacidad, RrhhEmpleadoCargo)
-                                }
-                            })
-                        }
-                    })
-                }
+                        RrhhEmpleadoFichaFamiliar.create({
+                            id_empleado: req.body.empleado.id,
+                            id_persona_familiar: personaCreada.id,
+                            id_relacion: familiar.relacion.id,
+                            afiliado: familiar.persona.afiliado,
+                        }).then(function (RrhhEmpleadoFichaFamiliarCreado) {
+                            if (index === (array.length - 1)) {
+                                guardarCargo(req, res, RrhhEmpleadoDiscapacidad, RrhhEmpleadoCargo)
+                            }
+                        })
 
+                    });
+                }
             });
         } else {
             guardarCargo(req, res, RrhhEmpleadoDiscapacidad, RrhhEmpleadoCargo)
@@ -910,12 +920,12 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                                     where: { id: formacionAcademica.id }
                                 }).then(function (actualizado) {
                                     if (index === (array.length - 1)) {
-                                        guardarRrhhHojaVidaExperienciaLaboral(req, res,idhojaVida, RrhhEmpleadoExperienciaLaboral, RrhhEmpleadoLogroInternoExterno, RrhhEmpleadoCapacidadInternaExterna)
+                                        guardarRrhhHojaVidaExperienciaLaboral(req, res, idhojaVida, RrhhEmpleadoExperienciaLaboral, RrhhEmpleadoLogroInternoExterno, RrhhEmpleadoCapacidadInternaExterna)
                                     }
                                 })
                         } else {
                             if (index === (array.length - 1)) {
-                                guardarRrhhHojaVidaExperienciaLaboral(req, res,idhojaVida, RrhhEmpleadoExperienciaLaboral, RrhhEmpleadoLogroInternoExterno, RrhhEmpleadoCapacidadInternaExterna)
+                                guardarRrhhHojaVidaExperienciaLaboral(req, res, idhojaVida, RrhhEmpleadoExperienciaLaboral, RrhhEmpleadoLogroInternoExterno, RrhhEmpleadoCapacidadInternaExterna)
                             }
                         }
                     })
@@ -925,21 +935,21 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                             where: { id: formacionAcademica.id }
                         }).then(function (formacionEliminada) {
                             if (index === (array.length - 1)) {
-                                guardarRrhhHojaVidaExperienciaLaboral(req, res,idhojaVida, RrhhEmpleadoExperienciaLaboral, RrhhEmpleadoLogroInternoExterno, RrhhEmpleadoCapacidadInternaExterna)
+                                guardarRrhhHojaVidaExperienciaLaboral(req, res, idhojaVida, RrhhEmpleadoExperienciaLaboral, RrhhEmpleadoLogroInternoExterno, RrhhEmpleadoCapacidadInternaExterna)
                             }
                         })
                     } else {
                         if (index === (array.length - 1)) {
-                            guardarRrhhHojaVidaExperienciaLaboral(req, res,idhojaVida, RrhhEmpleadoExperienciaLaboral, RrhhEmpleadoLogroInternoExterno, RrhhEmpleadoCapacidadInternaExterna)
+                            guardarRrhhHojaVidaExperienciaLaboral(req, res, idhojaVida, RrhhEmpleadoExperienciaLaboral, RrhhEmpleadoLogroInternoExterno, RrhhEmpleadoCapacidadInternaExterna)
                         }
                     }
                 }
             })
         } else {
-            guardarRrhhHojaVidaExperienciaLaboral(req, res,idhojaVida, RrhhEmpleadoExperienciaLaboral, RrhhEmpleadoLogroInternoExterno, RrhhEmpleadoCapacidadInternaExterna)
+            guardarRrhhHojaVidaExperienciaLaboral(req, res, idhojaVida, RrhhEmpleadoExperienciaLaboral, RrhhEmpleadoLogroInternoExterno, RrhhEmpleadoCapacidadInternaExterna)
         }
     }
-    function guardarRrhhHojaVidaExperienciaLaboral(req, res,idhojaVida,RrhhEmpleadoExperienciaLaboral, RrhhEmpleadoLogroInternoExterno, RrhhEmpleadoCapacidadInternaExterna) {
+    function guardarRrhhHojaVidaExperienciaLaboral(req, res, idhojaVida, RrhhEmpleadoExperienciaLaboral, RrhhEmpleadoLogroInternoExterno, RrhhEmpleadoCapacidadInternaExterna) {
         if (req.body.experienciasLaborales.length > 0) {
             req.body.experienciasLaborales.forEach(function (experienciaLaboral, index, array) {
                 var idexperiencia = 0
@@ -951,34 +961,34 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                         where: { id: idexperiencia },
                         defaults: {
                             id_hoja_vida: idhojaVida,
-                            fecha_inicio:experienciaLaboral.fecha_inicio,
-                            fecha_fin:experienciaLaboral.fecha_fin,
-                            empresa:experienciaLaboral.empresa,
-                            cargo:experienciaLaboral.cargo,
-                            motivo_retiro:experienciaLaboral.motivo_retiro,
-                            contacto:experienciaLaboral.contacto,
-                            telefono:experienciaLaboral.telefono
+                            fecha_inicio: experienciaLaboral.fecha_inicio,
+                            fecha_fin: experienciaLaboral.fecha_fin,
+                            empresa: experienciaLaboral.empresa,
+                            cargo: experienciaLaboral.cargo,
+                            motivo_retiro: experienciaLaboral.motivo_retiro,
+                            contacto: experienciaLaboral.contacto,
+                            telefono: experienciaLaboral.telefono
                         }
                     }).spread(function (experiencia, created) {
                         if (!created) {
                             RrhhEmpleadoExperienciaLaboral.update({
-                                fecha_inicio:experienciaLaboral.fecha_inicio,
-                                fecha_fin:experienciaLaboral.fecha_fin,
-                                empresa:experienciaLaboral.empresa,
-                                cargo:experienciaLaboral.cargo,
-                                motivo_retiro:experienciaLaboral.motivo_retiro,
-                                contacto:experienciaLaboral.contacto,
-                                telefono:experienciaLaboral.telefono
+                                fecha_inicio: experienciaLaboral.fecha_inicio,
+                                fecha_fin: experienciaLaboral.fecha_fin,
+                                empresa: experienciaLaboral.empresa,
+                                cargo: experienciaLaboral.cargo,
+                                motivo_retiro: experienciaLaboral.motivo_retiro,
+                                contacto: experienciaLaboral.contacto,
+                                telefono: experienciaLaboral.telefono
                             }, {
                                     where: { id: experienciaLaboral.id }
                                 }).then(function (actualizado) {
                                     if (index === (array.length - 1)) {
-                                        guardarRrhhHojaVidaCapacidades(req,res,idhojaVida, RrhhEmpleadoLogroInternoExterno, RrhhEmpleadoCapacidadInternaExterna)
+                                        guardarRrhhHojaVidaCapacidades(req, res, idhojaVida, RrhhEmpleadoLogroInternoExterno, RrhhEmpleadoCapacidadInternaExterna)
                                     }
                                 })
                         } else {
                             if (index === (array.length - 1)) {
-                                guardarRrhhHojaVidaCapacidades(req,res,idhojaVida, RrhhEmpleadoLogroInternoExterno, RrhhEmpleadoCapacidadInternaExterna)
+                                guardarRrhhHojaVidaCapacidades(req, res, idhojaVida, RrhhEmpleadoLogroInternoExterno, RrhhEmpleadoCapacidadInternaExterna)
                             }
                         }
                     })
@@ -988,21 +998,21 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                             where: { id: experienciaLaboral.id }
                         }).then(function (experienciaEliminada) {
                             if (index === (array.length - 1)) {
-                                guardarRrhhHojaVidaCapacidades(req,res,idhojaVida,RrhhEmpleadoLogroInternoExterno, RrhhEmpleadoCapacidadInternaExterna)
+                                guardarRrhhHojaVidaCapacidades(req, res, idhojaVida, RrhhEmpleadoLogroInternoExterno, RrhhEmpleadoCapacidadInternaExterna)
                             }
                         })
                     } else {
                         if (index === (array.length - 1)) {
-                            guardarRrhhHojaVidaCapacidades(req,res,idhojaVida,RrhhEmpleadoLogroInternoExterno, RrhhEmpleadoCapacidadInternaExterna)
+                            guardarRrhhHojaVidaCapacidades(req, res, idhojaVida, RrhhEmpleadoLogroInternoExterno, RrhhEmpleadoCapacidadInternaExterna)
                         }
                     }
                 }
             })
         } else {
-            guardarRrhhHojaVidaCapacidades(req,res,idhojaVida,RrhhEmpleadoLogroInternoExterno, RrhhEmpleadoCapacidadInternaExterna)
+            guardarRrhhHojaVidaCapacidades(req, res, idhojaVida, RrhhEmpleadoLogroInternoExterno, RrhhEmpleadoCapacidadInternaExterna)
         }
     }
-    function guardarRrhhHojaVidaCapacidades(req, res,idhojaVida,RrhhEmpleadoLogroInternoExterno, RrhhEmpleadoCapacidadInternaExterna) {
+    function guardarRrhhHojaVidaCapacidades(req, res, idhojaVida, RrhhEmpleadoLogroInternoExterno, RrhhEmpleadoCapacidadInternaExterna) {
         if (req.body.capacidades.length > 0) {
             req.body.capacidades.forEach(function (capacidad, index, array) {
                 var idcapacidad = 0
@@ -1014,7 +1024,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                         where: { id: idcapacidad },
                         defaults: {
                             id_hoja_vida: idhojaVida,
-                            id_tipo_capacidad:capacidad.tipoCapacidad.id,
+                            id_tipo_capacidad: capacidad.tipoCapacidad.id,
                             curso: capacidad.curso,
                             institucion: capacidad.institucion,
                             certificado: capacidad.certificado,
@@ -1023,7 +1033,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                     }).spread(function (capacidadCreada, created) {
                         if (!created) {
                             RrhhEmpleadoCapacidadInternaExterna.update({
-                                id_tipo_capacidad:capacidad.tipoCapacidad.id,
+                                id_tipo_capacidad: capacidad.tipoCapacidad.id,
                                 curso: capacidad.curso,
                                 institucion: capacidad.institucion,
                                 certificado: capacidad.certificado,
@@ -1032,12 +1042,12 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                                     where: { id: capacidad.id }
                                 }).then(function (actualizado) {
                                     if (index === (array.length - 1)) {
-                                        guardarRrhhHojaVidaLogros(req,res,idhojaVida, RrhhEmpleadoLogroInternoExterno)
+                                        guardarRrhhHojaVidaLogros(req, res, idhojaVida, RrhhEmpleadoLogroInternoExterno)
                                     }
                                 })
                         } else {
                             if (index === (array.length - 1)) {
-                                guardarRrhhHojaVidaLogros(req,res,idhojaVida, RrhhEmpleadoLogroInternoExterno)
+                                guardarRrhhHojaVidaLogros(req, res, idhojaVida, RrhhEmpleadoLogroInternoExterno)
                             }
                         }
                     })
@@ -1047,22 +1057,22 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                             where: { id: capacidad.id }
                         }).then(function (capacidadEliminada) {
                             if (index === (array.length - 1)) {
-                                guardarRrhhHojaVidaLogros(req,res,idhojaVida,RrhhEmpleadoLogroInternoExterno)
+                                guardarRrhhHojaVidaLogros(req, res, idhojaVida, RrhhEmpleadoLogroInternoExterno)
                             }
                         })
                     } else {
                         if (index === (array.length - 1)) {
-                            guardarRrhhHojaVidaLogros(req,res,idhojaVida,RrhhEmpleadoLogroInternoExterno)
+                            guardarRrhhHojaVidaLogros(req, res, idhojaVida, RrhhEmpleadoLogroInternoExterno)
                         }
                     }
                 }
             })
         } else {
-            guardarRrhhHojaVidaLogros(req,res,idhojaVida,RrhhEmpleadoLogroInternoExterno)
+            guardarRrhhHojaVidaLogros(req, res, idhojaVida, RrhhEmpleadoLogroInternoExterno)
         }
     }
 
-    function guardarRrhhHojaVidaLogros(req, res,idhojaVida,RrhhEmpleadoLogroInternoExterno) {
+    function guardarRrhhHojaVidaLogros(req, res, idhojaVida, RrhhEmpleadoLogroInternoExterno) {
         if (req.body.logros.length > 0) {
             req.body.logros.forEach(function (logro, index, array) {
                 var idlogro = 0
@@ -1074,7 +1084,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                         where: { id: idlogro },
                         defaults: {
                             id_hoja_vida: idhojaVida,
-                            id_tipo_logro:logro.tipoLogro.id,
+                            id_tipo_logro: logro.tipoLogro.id,
                             motivo: logro.motivo,
                             institucion: logro.institucion,
                             observacion: logro.observacion,
@@ -1083,7 +1093,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                     }).spread(function (logroCreada, created) {
                         if (!created) {
                             RrhhEmpleadoLogroInternoExterno.update({
-                                id_tipo_logro:logro.tipoLogro.id,
+                                id_tipo_logro: logro.tipoLogro.id,
                                 motivo: logro.motivo,
                                 institucion: logro.institucion,
                                 observacion: logro.observacion,
@@ -1120,8 +1130,8 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
         } else {
             res.json({ mensaje: "Hoja de vida guardada satisfactoriamente!" })
         }
-        
+
     }
-    
+
 
 }

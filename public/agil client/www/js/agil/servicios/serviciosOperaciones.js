@@ -11,9 +11,9 @@ angular.module('agil.servicios')
     // :desde/:hasta/:sucursal/:almacen/:movimimento/:estado/:valuado
     var res = function (filtro) {
         var delay = $q.defer();
-        SolicitudReposicion.get({id_empresa: filtro.empresa, id_usuario:filtro.id, rol:filtro.rol, desde:filtro.desde,
-            hasta:filtro.hasta, sucursal:filtro.sucursal, almacen:(filtro.almacen!==undefined)?(filtro.almacen.id!==undefined&&filtro.almacen.id>=0)?filtro.almacen.id:0:0, movimiento:filtro.movimiento, estado:filtro.estado,
-            valuado:filtro.valuado, pagina:filtro.pagina, items_pagina:filtro.items_pagina, busqueda:filtro.busqueda}, function (entidades) {
+        SolicitudReposicion.get({id_empresa: filtro.filter.empresa, id_usuario:filtro.filter.id, rol:filtro.filter.rol, desde:filtro.filter.desde,
+            hasta:filtro.filter.hasta, sucursal:filtro.filter.sucursal, almacen:(filtro.filter.almacen!==undefined)?(filtro.filter.almacen.id!==undefined&&filtro.filter.almacen.id>=0)?filtro.filter.almacen.id:0:0, movimiento:filtro.filter.movimiento, estado:filtro.filter.estado,
+            valuado:filtro.filter.valuado, pagina:filtro.currentPage, items_pagina:filtro.itemsPerPage, busqueda:filtro.search}, function (entidades) {
             delay.resolve(entidades);
         }, function (error) {
             delay.reject(error);
@@ -52,6 +52,26 @@ angular.module('agil.servicios')
             'update': { method: 'PUT' }
         });
 })
+
+.factory('DatosImpresion', function ($resource) {
+    return $resource(restServer + "operaciones/impresion/:id_solicitud", null,
+        {
+            'update': { method: 'PUT' }
+        });
+})
+
+.factory('ImpresionSolicitudDatos', ['DatosImpresion', '$q', function (DatosImpresion, $q) {
+    var res = function (idProducto) {
+        var delay = $q.defer();
+        DatosImpresion.get({id_producto:idProducto}, function (entidades) {
+            delay.resolve(entidades);
+        }, function (error) {
+            delay.reject(error);
+        });
+        return delay.promise;
+    };
+    return res;
+}])
 
 // .factory('EliminarSolicitudesReposicion', ['EliminarSolicitudReposicion', '$q', function (Eliminar, $q) {
 //     var res = function (idSolicitud) {

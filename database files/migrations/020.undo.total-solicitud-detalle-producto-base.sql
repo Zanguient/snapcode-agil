@@ -1,0 +1,1 @@
+ALTER TABLE inv_detalle_solicitud_producto_base DROP total;

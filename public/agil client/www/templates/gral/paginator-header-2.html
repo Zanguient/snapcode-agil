@@ -1,0 +1,19 @@
+<div class="col-sm-6">
+  <div>
+  <label>
+  Mostrar <select ng-model="paginator.itemsPerPage" ng-change="paginator.getFirstPage()" name="tabla-proveedores_length" aria-controls="tabla-proveedores" class="form-control input-sm">
+        <option value="0">Todos</option>
+        <option ng-selected="true" value="10">10</option>
+        <option value="25">25</option>
+        <option value="50">50</option>
+        <option value="100">100</option>
+      </select> Elementos</label>
+  </div>
+</div>
+<div class="col-sm-6" align="right">
+  <div>
+  <!-- <label>Buscar:
+    <input class="form-control input-sm" type="search" ng-model="textSearch" ng-keydown="paginator.getSearch(textSearch,paginator.filter,$event)">
+  </label> -->
+  </div>
+</div>

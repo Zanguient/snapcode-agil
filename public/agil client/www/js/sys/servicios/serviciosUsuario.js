@@ -89,18 +89,19 @@ angular.module('agil.servicios')
     return res;
   }])
  .factory('UsuarioEmpresaPaginador', function($resource) {
-		return $resource(restServer+"usuario/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda");
+		return $resource(restServer+"usuario/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion");
 })
   
 .factory('UsuariosEmpresaPaginador', ['UsuarioEmpresaPaginador','$q',function(UsuarioEmpresaPaginador, $q) 
   {
-	var res = function(idEmpresa,pagina,itemsPagina,texto) 
+	var res = function(paginador) 
 	{
-		if(idEmpresa==null){
-			idEmpresa=0;
+		var idEmpresa=0;
+		if(paginador.filter.empresa!=null){		
+			idEmpresa=paginador.filter.empresa;
 		}
 		var delay = $q.defer();
-		UsuarioEmpresaPaginador.get({id_empresa:idEmpresa,pagina:pagina,items_pagina:itemsPagina,texto_busqueda:texto},function(entidades) 
+		UsuarioEmpresaPaginador.get({id_empresa:idEmpresa,pagina:paginador.currentPage,items_pagina:paginador.itemsPerPage,texto_busqueda:paginador.search,columna:paginador.column,direccion:paginador.direction},function(entidades) 
 		{        
 			delay.resolve(entidades);
 		}, function(error) 

@@ -1,6 +1,6 @@
 angular.module('agil.controladores')
 
-	.controller('ControladorSucursales', function ($scope, $localStorage, $location, $templateCache, $route, blockUI, Sucursal, Sucursales, SucursalesEmpresa, ClasesTipo, Clases, DosificacionesDisponibles) {
+	.controller('ControladorSucursales', function ($scope, $localStorage, $location, $templateCache, $route, blockUI, Sucursal, Sucursales, SucursalesEmpresa, ClasesTipo, Clases, DosificacionesDisponibles,Sucursalupdate) {
 		blockUI.start();
 
 		$scope.idModalWizardSucursalCorrelativoEdicion = 'modal-wizard-sucursal-correlativo-edicion';
@@ -133,7 +133,7 @@ angular.module('agil.controladores')
 
 		$scope.guardarCorrelativos = function (sucursal) {
 			console.log(sucursal)
-			Sucursal.update({ idSucursal: sucursal.id }, sucursal, function (res) {
+			Sucursalupdate.update({ idSucursal: sucursal.id }, sucursal, function (res) {
 				blockUI.stop();
 				$scope.cerrarPopPupEdicionCorrelativo();
 				$scope.mostrarMensaje('Actualizado Exitosamente!');
@@ -151,28 +151,32 @@ angular.module('agil.controladores')
 				if (sucursal.id) {
 					Sucursal.update({ idSucursal: sucursal.id }, sucursal, function (res) {
 						blockUI.stop();
+						$scope.recargarItemsTabla();
 						$scope.cerrarPopPupEdicion();
 						$scope.mostrarMensaje('Actualizado Exitosamente!');
-						$scope.recargarItemsTabla();
+						
 					});
 				} else {
 					sucursal.$save(function (sucursal) {
 						blockUI.stop();
 						$scope.sucursal = new Sucursal({});
 						$scope.cerrarPopPupEdicion();
-						$scope.mostrarMensaje('Guardado Exitosamente!');
 						$scope.recargarItemsTabla();
+						$scope.mostrarMensaje('Guardado Exitosamente!');
+						
 					}, function (error) {
 						blockUI.stop();
 						$scope.cerrarPopPupEdicion();
-						$scope.mostrarMensaje('Ocurrio un problema al momento de guardar!');
 						$scope.recargarItemsTabla();
+						$scope.mostrarMensaje('Ocurrio un problema al momento de guardar!');
+						
 					});
 				}
 			}
 		}
 
 		$scope.agregarAlmacen = function (almacen) {
+			almacen.edit=false
 			if (almacen.nombre && almacen.numero && almacen.direccion) {
 
 				if ($scope.sucursal.almacenes.indexOf(almacen) == -1) {
@@ -184,6 +188,7 @@ angular.module('agil.controladores')
 		}
 
 		$scope.modificarAlmacen = function (almacen) {
+			almacen.edit=true
 			$scope.almacen = almacen;
 		}
 

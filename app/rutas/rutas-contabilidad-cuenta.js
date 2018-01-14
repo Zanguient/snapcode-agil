@@ -1,4 +1,4 @@
-module.exports = function (router, ContabilidadCuenta, ClasificacionCuenta, Tipo, Clase, Usuario, Diccionario, ClienteCuenta, ProveedorCuenta, ConfiguracionCuenta,sequelize) {
+module.exports = function (router, ContabilidadCuenta, ClasificacionCuenta, Tipo, Clase, Usuario, Diccionario, ClienteCuenta, ProveedorCuenta, ConfiguracionCuenta, sequelize, Cliente, Proveedor, MedicoPaciente,Persona) {
 
 	router.route('/contabilidad-cuentas/empresa/:id_empresa')
 		.get(function (req, res) {
@@ -8,27 +8,27 @@ module.exports = function (router, ContabilidadCuenta, ClasificacionCuenta, Tipo
 					eliminado: false
 				},
 				include: [{ model: Clase, as: 'tipoCuenta' }, { model: Clase, as: 'claseCalculo' }, { model: ClasificacionCuenta, as: 'clasificacion', include: [{ model: Clase, as: 'saldo' }, { model: Clase, as: 'movimiento' }] }],
-				
+
 			}).then(function (ListaCuenta) {
 				res.json(ListaCuenta)
 			})
 
 		})
-		
-		router.route('/validar-codigo')
-		.post(function(req, res) {
-			ContabilidadCuenta.find({ 
-				where:{
+
+	router.route('/validar-codigo')
+		.post(function (req, res) {
+			ContabilidadCuenta.find({
+				where: {
 					codigo: req.body.codigo,
-					eliminado:false
+					eliminado: false
 				}
-			}).then(function(entidad){
-				if(entidad){
+			}).then(function (entidad) {
+				if (entidad) {
 					res.json({
 						type: true,
 						message: "¡el codigo ya Exsiste!"
 					});
-				}else{
+				} else {
 					res.json({
 						type: false,
 						message: "Codigo Disponible"
@@ -39,20 +39,20 @@ module.exports = function (router, ContabilidadCuenta, ClasificacionCuenta, Tipo
 	router.route('/contabilidad-cuentas/asignar-cuenta-cliente')
 		.post(function (req, res) {
 			ClienteCuenta.create({
-				id_cuenta:req.body.cuenta.id,
+				id_cuenta: req.body.cuenta.id,
 				id_cliente: req.body.id_cliente
 			}).then(function (clienteCuentaActualizado) {
-				res.json({cliente:clienteCuentaActualizado,menssage:"cuenta asignada satisfactoriamente"})
+				res.json({ cliente: clienteCuentaActualizado, menssage: "cuenta asignada satisfactoriamente" })
 			})
 
 		})
 	router.route('/contabilidad-cuentas/asignar-cuenta-proveedor')
 		.post(function (req, res) {
 			ProveedorCuenta.create({
-				id_cuenta:req.body.cuenta.id,
+				id_cuenta: req.body.cuenta.id,
 				id_proveedor: req.body.id_proveedor
 			}).then(function (proveedorCuentaActualizado) {
-				res.json({proveedor:proveedorCuentaActualizado,menssage:"cuenta asignada satisfactoriamente"})
+				res.json({ proveedor: proveedorCuentaActualizado, menssage: "cuenta asignada satisfactoriamente" })
 			})
 
 		})
@@ -62,7 +62,7 @@ module.exports = function (router, ContabilidadCuenta, ClasificacionCuenta, Tipo
 				where: {
 					id_empresa: req.params.id_empresa,
 				}, include: [{ model: ContabilidadCuenta, as: 'cuenta' }, { model: Tipo, as: 'tipo' }],
-				 order: [['id', 'asc']]
+				order: [['id', 'asc']]
 			}).then(function (ListaConfiguracionCuenta) {
 				res.json({ lista: ListaConfiguracionCuenta, menssage: "plantilla actualizada satisfactoriamente!" })
 			})
@@ -128,7 +128,7 @@ module.exports = function (router, ContabilidadCuenta, ClasificacionCuenta, Tipo
 												where: {
 													id_empresa: req.params.id_empresa,
 
-												}, include: [{ model: ContabilidadCuenta, as: 'cuenta' },{ model: Tipo, as: 'tipo' }], order: [['id', 'asc']]
+												}, include: [{ model: ContabilidadCuenta, as: 'cuenta' }, { model: Tipo, as: 'tipo' }], order: [['id', 'asc']]
 											}).then(function (ListaConfiguracionCuenta) {
 												res.json({ lista: ListaConfiguracionCuenta, menssage: "plantilla actualizada satisfactoriamente!" })
 											})
@@ -234,12 +234,13 @@ module.exports = function (router, ContabilidadCuenta, ClasificacionCuenta, Tipo
 				debe: req.body.debe,
 				haber: req.body.haber,
 				saldo: req.body.saldo,
-				id_clasificacion: (req.body.clasificacion?req.body.clasificacion.id:null),
-				id_tipo_cuenta: (req.body.tipoCuenta?req.body.tipoCuenta.id:null),
+				id_clasificacion: (req.body.clasificacion ? req.body.clasificacion.id : null),
+				id_tipo_cuenta: (req.body.tipoCuenta ? req.body.tipoCuenta.id : null),
 				bimonetaria: req.body.bimonetaria,
 				aplicar_calculo: req.body.aplicar_calculo,
 				monto: req.body.monto,
-				eliminado: req.body.eliminado
+				eliminado: req.body.eliminado,
+				id_tipo_auxiliar: req.body.tipoAuxiliar.id
 			}, {
 					where: {
 						id: req.body.id
@@ -264,8 +265,9 @@ module.exports = function (router, ContabilidadCuenta, ClasificacionCuenta, Tipo
 				bimonetaria: req.body.bimonetaria,
 				aplicar_calculo: req.body.aplicar_calculo,
 				monto: req.body.monto,
-				id_calculo: (req.body.claseCalculo?req.body.claseCalculo.id:null),
-				eliminado: req.body.eliminado
+				id_calculo: (req.body.claseCalculo ? req.body.claseCalculo.id : null),
+				eliminado: req.body.eliminado,
+				id_tipo_auxiliar: req.body.tipoAuxiliar.id
 			}).then(function (cuentaCreada) {
 				if (req.body.cliente != null) {
 					ClienteCuenta.create({
@@ -274,7 +276,7 @@ module.exports = function (router, ContabilidadCuenta, ClasificacionCuenta, Tipo
 					}).then(function (CuentaClienteCreado) {
 						res.json({ mensaje: 'cuentaCreada' })
 					})
-				} else if(req.body.proveedor!=null) {
+				} else if (req.body.proveedor != null) {
 					ProveedorCuenta.create({
 						id_cuenta: cuentaCreada.id,
 						id_proveedor: req.body.proveedor.id
@@ -282,7 +284,7 @@ module.exports = function (router, ContabilidadCuenta, ClasificacionCuenta, Tipo
 						.then(function (CuentaClienteCreado) {
 							res.json({ mensaje: 'cuentaCreada' })
 						})
-				}else{
+				} else {
 					res.json({ mensaje: 'cuentaCreada' })
 				}
 
@@ -323,38 +325,38 @@ module.exports = function (router, ContabilidadCuenta, ClasificacionCuenta, Tipo
 	router.route('/contabilidad-cuentas/clasificaciones/edicion')
 		.put(function (req, res) {
 			req.body.forEach(function (clasificacion, index, array) {
-				if(!clasificacion.eliminado){
-					if(clasificacion.id){
+				if (!clasificacion.eliminado) {
+					if (clasificacion.id) {
 						ClasificacionCuenta.update({
 							nombre: clasificacion.nombre,
-							id_saldo: (clasificacion.saldo?clasificacion.saldo.id:null),
-							id_movimiento: (clasificacion.movimiento?clasificacion.movimiento.id:null)
-						},{
-							where:{
-								id:clasificacion.id
-							}
-						});
-					}else{
+							id_saldo: (clasificacion.saldo ? clasificacion.saldo.id : null),
+							id_movimiento: (clasificacion.movimiento ? clasificacion.movimiento.id : null)
+						}, {
+								where: {
+									id: clasificacion.id
+								}
+							});
+					} else {
 						ClasificacionCuenta.create({
 							nombre: clasificacion.nombre,
-							id_saldo: (clasificacion.saldo?clasificacion.saldo.id:null),
-							id_movimiento: (clasificacion.movimiento?clasificacion.movimiento.id:null)
+							id_saldo: (clasificacion.saldo ? clasificacion.saldo.id : null),
+							id_movimiento: (clasificacion.movimiento ? clasificacion.movimiento.id : null)
 						});
 					}
-				}else{
+				} else {
 					ClasificacionCuenta.destroy({
-						where:{
-							id:clasificacion.id
+						where: {
+							id: clasificacion.id
 						}
 					});
 				}
 
-				if(index==(array.length-1)){
+				if (index == (array.length - 1)) {
 					res.json({ mensaje: "Clasificaciones actualizadas satisfactoriamente!" })
 				}
 
 			});
-			
+
 		})
 
 	router.route('/contabilidad-cuentas/clasificaciones/:id')
@@ -376,7 +378,7 @@ module.exports = function (router, ContabilidadCuenta, ClasificacionCuenta, Tipo
 
 	router.route('/contabilidad-cuentas/empresa/:id_empresa/clasificacion/:id_clasificacion/tipo/:id_tipo/monto/:monto/pagina/:pagina/items-pagina/:items_pagina/busqueda/:busqueda/columna/:columna/direccion/:direccion')
 		.get(/*ensureAuthorized,*/function (req, res) {
-			var condicionCuenta = {}, ordenArreglo = [],paginas;
+			var condicionCuenta = {}, ordenArreglo = [], paginas;
 
 			if (req.params.columna == "clasificacion") {
 				ordenArreglo.push({ model: ClasificacionCuenta, as: 'clasificacion' });
@@ -389,23 +391,23 @@ module.exports = function (router, ContabilidadCuenta, ClasificacionCuenta, Tipo
 			ordenArreglo.push(req.params.direccion);
 
 			if (req.params.busqueda != 0) {
-				condicionCuenta = 
-				{
-					$or: [
-						{
-							nombre: {
-								$like: "%" + req.params.busqueda + "%"
+				condicionCuenta =
+					{
+						$or: [
+							{
+								nombre: {
+									$like: "%" + req.params.busqueda + "%"
+								}
+							},
+							{
+								codigo: {
+									$like: "%" + req.params.busqueda + "%"
+								}
 							}
-						},
-						{
-							codigo: {
-								$like: "%" + req.params.busqueda + "%"
-							}
-						}
-					]
-				}
+						]
+					}
 			}
-			
+
 			condicionCuenta.id_empresa = parseInt(req.params.id_empresa);
 
 			if (req.params.id_clasificacion != 0) {
@@ -415,21 +417,21 @@ module.exports = function (router, ContabilidadCuenta, ClasificacionCuenta, Tipo
 				condicionCuenta.id_tipo_cuenta = parseInt(req.params.id_tipo);
 			}
 			if (req.params.monto != 0) {
-				condicionCuenta = 
-				{
-					$or: [
-						{
-							debe:parseFloat(req.params.monto)
-						},
-						{
-							haber:parseFloat(req.params.monto)
-						},
-						{
-							saldo:parseFloat(req.params.monto)
-						}
-					]
-				}
-				
+				condicionCuenta =
+					{
+						$or: [
+							{
+								debe: parseFloat(req.params.monto)
+							},
+							{
+								haber: parseFloat(req.params.monto)
+							},
+							{
+								saldo: parseFloat(req.params.monto)
+							}
+						]
+					}
+
 			}
 			condicionCuenta.eliminado = false
 			ContabilidadCuenta.findAndCountAll({
@@ -437,7 +439,7 @@ module.exports = function (router, ContabilidadCuenta, ClasificacionCuenta, Tipo
 				include: [{ model: ClasificacionCuenta, as: 'clasificacion' }],
 
 			}).then(function (data) {
-				var datosCuenta={ 
+				var datosCuenta = {
 					where: condicionCuenta,
 					include: [
 						{
@@ -449,17 +451,20 @@ module.exports = function (router, ContabilidadCuenta, ClasificacionCuenta, Tipo
 						},
 						{
 							model: Clase, as: 'claseCalculo'
+						},
+						{
+							model: Clase, as: 'tipoAuxiliar'
 						}
 					],
 					order: [ordenArreglo]
 				}
 
-				if(req.params.items_pagina!=0){
-					paginas=Math.ceil(data.count/req.params.items_pagina);
-					datosCuenta.offset=(req.params.items_pagina*(req.params.pagina-1));
-					datosCuenta.limit=req.params.items_pagina;
-				}else{
-					paginas=1;
+				if (req.params.items_pagina != 0) {
+					paginas = Math.ceil(data.count / req.params.items_pagina);
+					datosCuenta.offset = (req.params.items_pagina * (req.params.pagina - 1));
+					datosCuenta.limit = req.params.items_pagina;
+				} else {
+					paginas = 1;
 				}
 
 				ContabilidadCuenta.findAll(
@@ -469,14 +474,14 @@ module.exports = function (router, ContabilidadCuenta, ClasificacionCuenta, Tipo
 				});
 			})
 		});
-	
+
 	router.route('/cuentas/empresa')
 		.post(function (req, res) {
 			req.body.cuentas.forEach(function (cuenta, index, array) {
 				sequelize.transaction(function (t) {
 					return ClasificacionCuenta.findOrCreate({
 						where: { nombre: cuenta.clasificacion.nombre },
-						defaults: {nombre: cuenta.clasificacion.nombre},
+						defaults: { nombre: cuenta.clasificacion.nombre },
 						transaction: t,
 						lock: t.LOCK.UPDATE
 					}).then(function (claficiacionEncontrada) {
@@ -486,20 +491,22 @@ module.exports = function (router, ContabilidadCuenta, ClasificacionCuenta, Tipo
 						}).then(function (TipoEncontrado) {
 							return Clase.findOrCreate({
 								where: { nombre: cuenta.tipoCuenta.nombre },
-								defaults: {nombre: cuenta.tipoCuenta.nombre,
-											id_tipo: TipoEncontrado.id},
+								defaults: {
+									nombre: cuenta.tipoCuenta.nombre,
+									id_tipo: TipoEncontrado.id
+								},
 								transaction: t,
 								lock: t.LOCK.UPDATE
 							}).then(function (claseEncontrada) {
-								return ContabilidadCuenta.find({ 
-									where:{
-										$or: [{codigo:cuenta.codigo}],
-										id_empresa:req.body.id_empresa,
-										eliminado:false
+								return ContabilidadCuenta.find({
+									where: {
+										$or: [{ codigo: cuenta.codigo }],
+										id_empresa: req.body.id_empresa,
+										eliminado: false
 									},
 									transaction: t
-								}).then(function(cuentaEncontrada){
-									if(cuentaEncontrada){
+								}).then(function (cuentaEncontrada) {
+									if (cuentaEncontrada) {
 										return ContabilidadCuenta.update({
 											id_empresa: req.body.id_empresa,
 											codigo: cuenta.codigo,
@@ -512,40 +519,40 @@ module.exports = function (router, ContabilidadCuenta, ClasificacionCuenta, Tipo
 											id_tipo_cuenta: claseEncontrada[0].id,
 											bimonetaria: cuenta.bimonetaria,
 											eliminado: false
-										},{
-											where:{
-												id:cuentaEncontrada.id
-											},
-											transaction: t
-										}).then(function(cuentaActualizada){
-											return sequelize.query("UPDATE agil_contabilidad_cuenta set cuenta_padre="+cuentaEncontrada.id+" where LENGTH(codigo)="+(cuenta.codigo.length+2)+" AND codigo LIKE '"+cuenta.codigo+"%';", { transaction: t})
-											.then(function(act) {
-												var codigoCuentaPadre=cuenta.codigo.substring(0,cuenta.codigo.length-2);
-												return ContabilidadCuenta.find({ 
-													where:{
-														$or: [{codigo:codigoCuentaPadre}],
-														id_empresa:req.body.id_empresa
-													},
-													transaction: t
-												}).then(function(cuentaPadreEncontrada){
-													if(cuentaPadreEncontrada){
-														return ContabilidadCuenta.update({
-															id_cuenta_padre:cuentaPadreEncontrada.id
-														},{
-															where:{
-																id:cuentaEncontrada.id
+										}, {
+												where: {
+													id: cuentaEncontrada.id
+												},
+												transaction: t
+											}).then(function (cuentaActualizada) {
+												return sequelize.query("UPDATE agil_contabilidad_cuenta set cuenta_padre=" + cuentaEncontrada.id + " where LENGTH(codigo)=" + (cuenta.codigo.length + 2) + " AND codigo LIKE '" + cuenta.codigo + "%';", { transaction: t })
+													.then(function (act) {
+														var codigoCuentaPadre = cuenta.codigo.substring(0, cuenta.codigo.length - 2);
+														return ContabilidadCuenta.find({
+															where: {
+																$or: [{ codigo: codigoCuentaPadre }],
+																id_empresa: req.body.id_empresa
 															},
 															transaction: t
+														}).then(function (cuentaPadreEncontrada) {
+															if (cuentaPadreEncontrada) {
+																return ContabilidadCuenta.update({
+																	id_cuenta_padre: cuentaPadreEncontrada.id
+																}, {
+																		where: {
+																			id: cuentaEncontrada.id
+																		},
+																		transaction: t
+																	});
+															} else {
+																return new Promise(function (fulfill, reject) {
+																	fulfill({});
+																});
+															}
 														});
-													}else{
-														return new Promise(function (fulfill, reject) {
-															fulfill({});
-														});
-													}
-												});
+													});
 											});
-										});
-									}else{
+									} else {
 										return ContabilidadCuenta.create({
 											id_empresa: req.body.id_empresa,
 											codigo: cuenta.codigo,
@@ -558,33 +565,33 @@ module.exports = function (router, ContabilidadCuenta, ClasificacionCuenta, Tipo
 											id_tipo_cuenta: claseEncontrada[0].id,
 											bimonetaria: cuenta.bimonetaria,
 											eliminado: false
-										}, { transaction: t }).then(function(cuentaCreada){
-											return sequelize.query("UPDATE agil_contabilidad_cuenta set cuenta_padre="+cuentaCreada.id+" where LENGTH(codigo)="+(cuentaCreada.codigo.length+2)+" AND codigo LIKE '"+cuentaCreada.codigo+"%';", { transaction: t})
-											.then(function(act) {
-												var codigoCuentaPadre=cuentaCreada.codigo.substring(0,cuentaCreada.codigo.length-2);
-												return ContabilidadCuenta.find({ 
-													where:{
-														$or: [{codigo:codigoCuentaPadre}],
-														id_empresa:req.body.id_empresa
-													},
-													transaction: t
-												}).then(function(cuentaPadreEncontrada){
-													if(cuentaPadreEncontrada){
-														return ContabilidadCuenta.update({
-															id_cuenta_padre:cuentaPadreEncontrada.id
-														},{
-															where:{
-																id:cuentaCreada.id
-															},
-															transaction: t
-														});
-													}else{
-														return new Promise(function (fulfill, reject) {
-															fulfill({});
-														});
-													}
+										}, { transaction: t }).then(function (cuentaCreada) {
+											return sequelize.query("UPDATE agil_contabilidad_cuenta set cuenta_padre=" + cuentaCreada.id + " where LENGTH(codigo)=" + (cuentaCreada.codigo.length + 2) + " AND codigo LIKE '" + cuentaCreada.codigo + "%';", { transaction: t })
+												.then(function (act) {
+													var codigoCuentaPadre = cuentaCreada.codigo.substring(0, cuentaCreada.codigo.length - 2);
+													return ContabilidadCuenta.find({
+														where: {
+															$or: [{ codigo: codigoCuentaPadre }],
+															id_empresa: req.body.id_empresa
+														},
+														transaction: t
+													}).then(function (cuentaPadreEncontrada) {
+														if (cuentaPadreEncontrada) {
+															return ContabilidadCuenta.update({
+																id_cuenta_padre: cuentaPadreEncontrada.id
+															}, {
+																	where: {
+																		id: cuentaCreada.id
+																	},
+																	transaction: t
+																});
+														} else {
+															return new Promise(function (fulfill, reject) {
+																fulfill({});
+															});
+														}
+													});
 												});
-											});
 										});
 									}
 								});
@@ -600,5 +607,39 @@ module.exports = function (router, ContabilidadCuenta, ClasificacionCuenta, Tipo
 				});
 			});
 		});
+
+	router.route('/cuentas-auxiliares/empresa/:id_empresa/tipo/:tipo')
+		.get(function (req, res) {
+			if (req.params.tipo == Diccionario.CUENTA_AUXILIAR_CLIENTE) {
+				Cliente.findAll({
+					where: {
+						id_empresa: req.params.id_empresa
+					}
+					
+				}).then(function (clientes) {
+					res.json(clientes)
+				});
+			}
+			if (req.params.tipo == Diccionario.CUENTA_AUXILIAR_PROVEEDOR) {
+				Proveedor.findAll({
+					where: {
+						id_empresa: req.params.id_empresa
+					}
+				}).then(function (proveedores) {
+					res.json(proveedores)
+				});
+			}
+			if (req.params.tipo == Diccionario.CUENTA_AUXILIAR_EMPLEADO) {
+				MedicoPaciente.findAll({
+					where: {
+						id_empresa: req.params.id_empresa,
+						es_empleado:true
+					},
+					include:[{model:Persona,as:'persona'}]
+				}).then(function (empleados) {
+					res.json(empleados)
+				});
+			}
+		})
 
 }

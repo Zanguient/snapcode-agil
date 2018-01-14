@@ -1,4 +1,4 @@
-module.exports=function(sequelize,Sequelize){
+module.exports = function (sequelize, Sequelize) {
 	var ContabilidadCuenta = sequelize.define('agil_contabilidad_cuenta', {
 		id_empresa: {
 			type: Sequelize.INTEGER,
@@ -11,7 +11,7 @@ module.exports=function(sequelize,Sequelize){
 		codigo: {
 			type: Sequelize.STRING,
 			field: 'codigo'
-		},	
+		},
 		nombre: {
 			type: Sequelize.STRING,
 			field: 'nombre'
@@ -21,15 +21,15 @@ module.exports=function(sequelize,Sequelize){
 			field: 'descripcion'
 		},
 		debe: {
-			type: Sequelize.DECIMAL(20,4),
+			type: Sequelize.DECIMAL(20, 4),
 			field: 'debe'
 		},
 		haber: {
-			type: Sequelize.DECIMAL(20,4),
+			type: Sequelize.DECIMAL(20, 4),
 			field: 'haber'
 		},
 		saldo: {
-			type: Sequelize.DECIMAL(20,4),
+			type: Sequelize.DECIMAL(20, 4),
 			field: 'saldo'
 		},
 		id_clasificacion: {
@@ -43,7 +43,7 @@ module.exports=function(sequelize,Sequelize){
 		bimonetaria: {
 			type: Sequelize.BOOLEAN,
 			field: 'bimonetaria'
-		},		
+		},
 		aplicar_calculo: {
 			type: Sequelize.BOOLEAN,
 			field: 'aplicar_calculo'
@@ -53,18 +53,22 @@ module.exports=function(sequelize,Sequelize){
 			field: 'calculo'
 		},
 		monto: {
-			type: Sequelize.DECIMAL(20,4),
+			type: Sequelize.DECIMAL(20, 4),
 			field: 'monto'
 		},
 		eliminado: {
 			type: Sequelize.BOOLEAN,
 			field: 'eliminado'
+		},
+		id_tipo_auxiliar: {
+			type: Sequelize.INTEGER,
+			field: 'id_tipo_auxiliar'
 		}
 	}, {
-		freezeTableName: true 
+			freezeTableName: true
 		});
-	
+
 	ContabilidadCuenta.sync();
-	
+
 	return ContabilidadCuenta;
 }

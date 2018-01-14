@@ -1329,7 +1329,7 @@ angular.module('agil.controladores')
                 if (datos.ficha) {
                     $scope.ficha = datos.ficha
                     $scope.ficha.empleado.cargo = []
-                    $scope.empleado.otrosSeguros = datos.ficha
+                    /* $scope.empleado.otrosSeguros = datos.ficha */
                     $scope.ficha.fecha_jubilacion = new Date($scope.ficha.fecha_jubilacion)
                     $scope.ficha.empleado.fecha_vence_documento = new Date($scope.ficha.empleado.fecha_vence_documento)
                     $scope.ficha.fecha_jubilacion = $scope.fechaATexto($scope.ficha.fecha_jubilacion)
@@ -1360,9 +1360,11 @@ angular.module('agil.controladores')
 
                         var dato = $scope.diferenciaEntreDiasEnDias(fechaNacimiento, fechaActual)
                         familiar.edad = Math.trunc(dato / 365);
-
+                        familiar.eliminado=false
                     });
-
+                    $scope.ficha.empleado.otrosSeguros.forEach(function (otroSeguro, index, array) {
+                        otroSeguro.eliminado = false
+                    })
                     $scope.seleccionarCargos($scope.ficha.empleado.cargos)
                     $scope.seleccionarDiscapacidades($scope.ficha.empleado.discapacidades)
                     //llenarCargos($scope.cargos)
@@ -1687,7 +1689,7 @@ angular.module('agil.controladores')
         }
         $scope.eliminarSeguro = function (seguro, index) {
             if (seguro.id) {
-                $scope.abrirDialogEliminarSeguroEmpleado(seguro, index)
+                seguro.eliminado = true
             } else {
                 $scope.ficha.empleado.otrosSeguros.splice(index, 1);
                 console.log($scope.ficha.empleado.otrosSeguros)
@@ -1709,7 +1711,7 @@ angular.module('agil.controladores')
         }
         $scope.eliminarFamiliar = function (familiar, index) {
             if (familiar.id) {
-                $scope.abrirDialogEliminarFamiliarEmpleado(familiar, index)
+                familiar.eliminado=true
             } else {
                 $scope.ficha.empleado.familiares.splice(index, 1);
             }
@@ -1828,6 +1830,7 @@ angular.module('agil.controladores')
             var promesa = ClasesTipo("RRHH_CARGO");
             promesa.then(function (entidad) {
                 var cargos = entidad.clases
+                $scope.listaCargos=entidad
                 $scope.llenarCargos(cargos)
                 blockUI.stop();
             });
@@ -2131,41 +2134,41 @@ angular.module('agil.controladores')
                 $scope.mostrarMensaje(dato.message)
             })
         }
-        $scope.completarCamposLaboral=function (ficha) {
-            if(ficha.tipoContrato.nombre=="OBRA"){
-                $scope.tiposPersonales.clases.forEach(function(tipo) {
-                    if(tipo.nombre=="CAMPO"){
-                        ficha.tipoPersonal=tipo
+        $scope.completarCamposLaboral = function (ficha) {
+            if (ficha.tipoContrato.nombre == "OBRA") {
+                $scope.tiposPersonales.clases.forEach(function (tipo) {
+                    if (tipo.nombre == "CAMPO") {
+                        ficha.tipoPersonal = tipo
                     }
-                    
-                });                
-                        ficha.area={}                              
-                        ficha.ubicacion={}
-                
+
+                });
+                ficha.area = {}
+                ficha.ubicacion = {}
+
             }
-            if(ficha.tipoContrato.nombre=="INDEFINIDO"){
-                $scope.tiposPersonales.clases.forEach(function(tipo) {
-                    if(tipo.nombre=="OFICINA"){
-                        ficha.tipoPersonal=tipo
+            if (ficha.tipoContrato.nombre == "INDEFINIDO") {
+                $scope.tiposPersonales.clases.forEach(function (tipo) {
+                    if (tipo.nombre == "OFICINA") {
+                        ficha.tipoPersonal = tipo
                     }
-                    
+
                 });
-                $scope.listaAreas.clases.forEach(function(tipo) {
-                    if(tipo.nombre=="ESS-SCZ"){
-                        ficha.area=tipo
+                $scope.listaAreas.clases.forEach(function (tipo) {
+                    if (tipo.nombre == "ESS-SCZ") {
+                        ficha.area = tipo
                     }
-                    
+
                 });
-                $scope.ubicaciones.clases.forEach(function(tipo) {
-                    if(tipo.nombre=="ESS-SCZ"){
-                        ficha.ubicacion=tipo
+                $scope.ubicaciones.clases.forEach(function (tipo) {
+                    if (tipo.nombre == "ESS-SCZ") {
+                        ficha.ubicacion = tipo
                     }
-                    
+
                 });
             }
-            
+
         }
-//find ficha
+        //find ficha
         //logica hoja de vida
         //FORMACION ACADEMICA
         $scope.agregarFormacionAcademica = function (formacion) {
@@ -2372,7 +2375,7 @@ angular.module('agil.controladores')
                 var textoFecha = element.split("-")
                 var ini = textoFecha[0].split("/")
                 var fin = textoFecha[1].split("/")
-               
+
                 fechaIni = new Date(ini[0], ini[1], ini[2])
                 var fechaFin = new Date(fin[0], fin[1], fin[2])
                 var mesIni = fechaIni.getMonth()
@@ -2386,11 +2389,11 @@ angular.module('agil.controladores')
                     if (mes.id == mesFin) {
                         mesFin = mes.nombre
                     }
-                    if(textoFecha[1]==""){
-                        mesFin=""
+                    if (textoFecha[1] == "") {
+                        mesFin = ""
                     }
                 });
-               
+
                 if (textoFechas == "") {
                     if (mesFin != "") {
                         textoFechas = "el " + fechaIni.getDate() + " de " + mesIni + " de " + fechaIni.getFullYear() + " al " + fechaFin.getDate() + " de " + mesFin + " de " + fechaFin.getFullYear()
@@ -2405,8 +2408,8 @@ angular.module('agil.controladores')
                     }
                 }
                 /*  texto"Desde el " + textoFecha[0] + " al " + textoFecha[1] */
-                if(i===(certificado.historialContratos.length-1)){
-                    textoFechas=textoFechas+". Percibiendo un sueldo aproximado mensual de Bs."+ $scope.ficha.haber_basico+".- ("+$scope.ficha.haber_basico_literal+")"
+                if (i === (certificado.historialContratos.length - 1)) {
+                    textoFechas = textoFechas + ". Percibiendo un sueldo aproximado mensual de Bs." + $scope.ficha.haber_basico + ".- (" + $scope.ficha.haber_basico_literal + ")"
                 }
             }
             doc.font('Times-Roman', 12);
@@ -2422,15 +2425,15 @@ angular.module('agil.controladores')
                 align: 'justify',
                 indent: 0,
                 columns: 1,
-                lineGap:10,
-                wordSpacing:1,               
+                lineGap: 10,
+                wordSpacing: 1,
                 height: 300,
                 ellipsis: true,
-                
+
             })
-            
-          doc.moveDown(2)
-            
+
+            doc.moveDown(2)
+
             doc.text("Es cuanto certifico para los fines que convengan al interesado.", { align: "left" });
             doc.text("Lic. Rosangela Velasques S.", 100, 695);
             doc.text("JEFA DE RECURSOS HUMANOS", 100, 715);

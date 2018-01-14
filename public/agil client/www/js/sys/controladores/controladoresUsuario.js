@@ -1,7 +1,7 @@
 angular.module('agil.controladores')
 
 .controller('ControladorUsuarios', function($scope,$location,$window,$localStorage,$templateCache,$route,blockUI,Usuario,Empresas,Roles,$timeout,
-											UsuariosEmpresa,Rutas,UsuarioRutas,UsuarioComision,UsuarioComisiones,Sucursales,UsuariosEmpresaPaginador,validarUsuario){
+											UsuariosEmpresa,Rutas,UsuarioRutas,UsuarioComision,UsuarioComisiones,Sucursales,UsuariosEmpresaPaginador,validarUsuario,Paginator){
 	
 	$scope.idModalWizardUsuarioEdicion='modal-wizard-usuario';
 	$scope.idModalWizardUsuarioVista='modal-wizard-usuario-vista';
@@ -17,6 +17,7 @@ angular.module('agil.controladores')
 	$scope.usuarioSesion=JSON.parse($localStorage.usuario);
 	
 	$scope.inicio=function(){
+		
 		$scope.obtenerEmpresas();
 		$scope.obtenerRoles();
 		$scope.obtenerUsuarios();
@@ -25,9 +26,9 @@ angular.module('agil.controladores')
 		}
 		var sucursales=($scope.usuarioSesion.empresa)?$scope.usuarioSesion.empresa.sucursales:[];
 		$scope.llenarSucursales(sucursales);
-		setTimeout(function() {
+		/* setTimeout(function() {
 			ejecutarScriptsTabla('tabla-usuarios',9);
-		},2000);
+		},2000); */
 	}
 	
 	$scope.$on('$viewContentLoaded', function(){
@@ -344,7 +345,30 @@ angular.module('agil.controladores')
 			blockUI.stop();
 		});
 	}*/
-	$scope.obtenerUsuarios=function(){
+
+	$scope.obtenerUsuarios = function () {
+		blockUI.start();
+		$scope.paginator = Paginator();
+		$scope.paginator.column = "id";
+		$scope.paginator.direccion = "asc";
+		$scope.filtro = { empresa: $scope.usuarioSesion.id_empresa};
+		$scope.paginator.callBack = $scope.buscarUsuarios;
+		$scope.paginator.getSearch("", $scope.filtro, null);
+		blockUI.stop();
+
+	}
+
+	$scope.buscarUsuarios = function () {
+		blockUI.start();
+		var promesa = UsuariosEmpresaPaginador($scope.paginator);
+		promesa.then(function (dato) {
+			$scope.usuarios=dato.usuarios;
+			console.log(dato.usuarios)
+			$scope.paginator.setPages(dato.paginas);
+			blockUI.stop();
+		});
+	}
+	/* $scope.obtenerUsuarios=function(){
 		blockUI.start();
 		var promesa=UsuariosEmpresa($scope.usuarioSesion.id_empresa);
 		promesa.then(function(usuarios){
@@ -352,7 +376,7 @@ angular.module('agil.controladores')
 			blockUI.stop();
 		});
 	}
-	
+	 */
 	$scope.obtenerRutas=function(){
 		blockUI.start();
 		var promesa=Rutas($scope.usuarioSesion.id_empresa);

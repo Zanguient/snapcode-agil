@@ -224,7 +224,7 @@
                                     <a ng-if="comprobante.abierto" class="green tooltip-info"  href="javascript:void(0)" uib-tooltip="Editar Datos" ng-click="verComprobante(comprobante)">
                                         <i class="ace-icon fa fa-pencil bigger-130" ></i>
                                     </a>
-                                    <a class="red tooltip-info" href="javascript:void(0)" uib-tooltip="Eliminar" ng-click="abrirModalEliminarComprobante(comprobante)">
+                                    <a ng-if="comprobante.abierto" class="red tooltip-info" href="javascript:void(0)" uib-tooltip="Eliminar" ng-click="abrirModalEliminarComprobante(comprobante)">
                                         <i class="ace-icon fa fa-trash-o bigger-130" ></i>
                                     </a>
                                     <a class="blue tooltip-info" href="javascript:void(0)" uib-tooltip="Imprimir"  ng-click="imprimirComprobante(comprobante,opcionBimonetario2)">
@@ -240,13 +240,16 @@
                             <td>
 
                             </td>
+                            <td>
+
+                            </td>
                             <td ng-if="fieldViewer.getConfiguration().comprobante.show"></td>
                             <td ng-if="fieldViewer.getConfiguration().numero.show"></td>
                             <td ng-if="fieldViewer.getConfiguration().fecha.show"></td>
                             <td ng-if="fieldViewer.getConfiguration().sucursal.show"></td>
                             <td ng-if="fieldViewer.getConfiguration().gloza.show"></td>
                             <td ng-if="fieldViewer.getConfiguration().hora_fecha.show">Toltal</td>
-                            <td ng-if="fieldViewer.getConfiguration().importe.show">{{totalImporte}}</td>
+                            <td ng-if="fieldViewer.getConfiguration().importe.show">{{totalImporte|number:2}}</td>
                             <td ng-if="fieldViewer.getConfiguration().usuario.show"></td>
                             <td></td>
                         </tr>

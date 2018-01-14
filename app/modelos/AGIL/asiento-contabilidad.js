@@ -31,6 +31,10 @@ module.exports = function (sequelize, Sequelize) {
         glosa:{
             type: Sequelize.STRING,
             field: 'glosa'
+        },
+        id_centro_costo:{
+            type: Sequelize.INTEGER,
+            field: 'centro_costo'
         }
     }, {
             freezeTableName: true

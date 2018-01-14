@@ -111,7 +111,6 @@ angular.module('agil.controladores')
             $scope.eliminarPopup($scope.idModalDiasActivacionVacunas);
             $scope.eliminarPopup($scope.idModalHistorialConsulta);
             $scope.eliminarPopup($scope.idModalWizardPacienteVista);
-            $scope.eliminarPopup($scope.idModalEliminarPaciente);
             $scope.eliminarPopup($scope.IdModalDialogNuevoLaboratorio)
             $scope.eliminarPopup($scope.IdModalDialogDiagnosticoExamenHistoricoResultado)
             $scope.eliminarPopup($scope.idModalDialogVerResultadosHistorialLab)

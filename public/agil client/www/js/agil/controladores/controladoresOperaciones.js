@@ -1,7 +1,7 @@
 angular.module('agil.controladores')
 	.controller('ControladorOperaciones', function ($scope, $filter, $rootScope, $route, $templateCache, $location, $window, $localStorage,
 		blockUI, ConfiguracionVentaVistaDatos, ClasesTipo, ListaGruposProductoEmpresa, ProductosPanel, socket, ListaGruposProductoEmpresa, SolicitudesReposicion,
-		SolicitudesFormulacionProducto, SolicitudReposicion, EliminarSolicitudReposicion, Paginator) {
+		SolicitudesFormulacionProducto, SolicitudReposicion, EliminarSolicitudReposicion, Paginator, ImpresionSolicitudDatos, ListaInventariosProducto) {
 
 		$scope.usuario = JSON.parse($localStorage.usuario);
 		convertUrlToBase64Image($scope.usuario.empresa.imagen, function (imagenEmpresa) {
@@ -18,7 +18,6 @@ angular.module('agil.controladores')
 			resaltarPestaña($location.path().substring(1));
 			ejecutarScriptsOperaciones($scope.idDialogDialogPanelOperaciones, $scope.idDialogEntregaViveres, $scope.idConfirmacionCierre, $scope.idDialogTotalIngredientes);
 			$scope.buscarAplicacion($scope.usuario.aplicacionesUsuario, $location.path().substring(1));
-			// $scope.obtenerColumnasAplicacion();
 		});
 
 		$scope.$on('$routeChangeStart', function (next, current) {
@@ -31,20 +30,15 @@ angular.module('agil.controladores')
 		$scope.inicio = function () {
 			$scope.ordenProductos = true;
 			$scope.esContado = true;
-			//$scope.obtenerClientes();
-			// $scope.obtenerTiposDePago();
 			$scope.obtenerConfiguracionVentaVista();
 			$scope.alreadyCalculated = false
-			// $scope.obtenerMovimientosOperaciones()
 			$scope.sucursalesUsuario = "";
-
 			for (var i = 0; i < $scope.usuario.sucursalesUsuario.length; i++) {
 				$scope.sucursalesUsuario = $scope.sucursalesUsuario + $scope.usuario.sucursalesUsuario[i].sucursal.id;
 				if (i + 1 != $scope.usuario.sucursalesUsuario.length) {
 					$scope.sucursalesUsuario = $scope.sucursalesUsuario + ',';
 				}
 			}
-
 			$scope.detalleVenta = { producto: {}, centroCosto: {}, cantidad: 1, descuento: 0, recargo: 0, ice: 0, excento: 0, tipo_descuento: false, tipo_recargo: false }
 			$scope.solicitud = { solicitudesProductos: [] }
 			$scope.obtenerPaginador()
@@ -68,7 +62,8 @@ angular.module('agil.controladores')
 			$scope.filtro.hasta = ($scope.filtro.fechaFinTexto !== undefined) ? ($scope.filtro.fechaFinTexto !== "") ? $scope.convertirFecha($scope.filtro.fechaFinTexto) : 0 : 0
 			$scope.filtro.movimiento = 0// ($scope.filtro.movimiento !== null)?($scope.filtro.movimiento.id !==undefined)?$scope.filtro.movimiento.id:0:0
 			$scope.filtro.estado = ($scope.filtro.estado !== null) ? ($scope.filtro.estado.id !== undefined) ? $scope.filtro.estado.id : 0 : 0
-			var promesa = SolicitudesReposicion($scope.filtro)
+			$scope.paginator.filter = $scope.filtro
+			var promesa = SolicitudesReposicion($scope.paginator)
 			promesa.then(function (solicitudes) {
 				$scope.paginator.setPages(solicitudes.paginas);
 				$scope.solicitudesOperaciones = solicitudes.solicitudes
@@ -87,27 +82,41 @@ angular.module('agil.controladores')
 				return sucursales;
 			}
 			$scope.obtenerAlmacenes = function (idSucursal) {
-				var comp = idSucursal * 1
-				if (comp !== NaN) {
+				if (idSucursal === undefined) {
+					$scope.filtro.sucursal = undefined
+					$scope.almacenes = []
+				}
+				if (idSucursal !== undefined) {
 					$scope.almacenes = [];
 					var sucursal = $.grep($scope.sucursales, function (e) { return e.id == idSucursal; })[0];
 					$scope.almacenes = sucursal.almacenes;
-					// $scope.solicitud.almacen=$scope.almacenes.length==1?$scope.almacenes[0]:null;
 					if ($scope.solicitud.almacen) {
 						$scope.cargarProductos();
-
 					}
 				}
 			}
 			$scope.eliminar = function (solicitud) {
-				$scope.cerrarConfirmacionEliminacion();
-				EliminarSolicitudReposicion.save({ id_solicitud: solicitud.id }, {}, function (res) {
-					$scope.mostrarMensaje(res.mensaje)
-					$scope.obtenerSolicitudes()
-				}, function (error) {
-					$scope.mostrarMensaje(error.data)
-					blockUI.stop()
+				$scope.solicitud = solicitud
+				$scope.solicitud.solicitudesProductos.map(function (prod) {
+					var promesa = ListaInventariosProducto(prod.productoSolicitado.id, $scope.solicitud.almacen.id);
+					promesa.then(function (inventarios) {
+						prod.inventarios = inventarios
+						prod.inventario_disponible_utilizado = prod.cantidad
+						if($scope.solicitud.solicitudesProductos.indexOf(prod) ==$scope.solicitud.solicitudesProductos.length-1 ){
+							EliminarSolicitudReposicion.save({ id_solicitud: solicitud.id }, solicitud, function (res) {
+								$scope.mostrarMensaje(res.mensaje)
+								$scope.obtenerSolicitudes()
+								$scope.solicitud = undefined
+							}, function (error) {
+								$scope.solicitud = undefined
+								$scope.mostrarMensaje(error.data)
+								blockUI.stop()
+							})
+						}
+					})
 				})
+				$scope.cerrarConfirmacionEliminacion();
+				
 			}
 
 			$scope.ver = function (solicitud) {
@@ -123,15 +132,24 @@ angular.module('agil.controladores')
 				$scope.abrirDialogPanelOperaciones()
 			}
 		}
-		$scope.calcularTotalViveres = function () {
+		$scope.calcularTotalViveres = function (solicitud) {
 			// if(!$scope.alreadyCalculated){
 			$scope.totalViveresSolicitados = []
+			if (solicitud !== undefined) {
+				$scope.solicitud = solicitud
+				$scope.totalViveresSolicitados.usuario = solicitud.usuario
+				$scope.totalViveresSolicitados.fecha = solicitud.fecha
+				$scope.totalViveresSolicitados.sucursal = solicitud.almacen.sucursal
+				$scope.totalViveresSolicitados.identificador = solicitud.id
+			}
+
+
 			// $scope.totalViveresSolicitados.push.apply()
 			// indx = 0
 			var xArr = []
 			$scope.solicitud.solicitudesProductos.map(function (producto) {
 				if (producto.eliminado === false || producto.eliminado === undefined) {
-					if(producto.detallesIngredientesProducto.length > 0){
+					if (producto.detallesIngredientesProducto.length > 0) {
 						producto.detallesIngredientesProducto.map(function (ingrediente) {
 							if (ingrediente.eliminado === undefined || ingrediente.eliminado === false) {
 								var obj = {
@@ -146,7 +164,7 @@ angular.module('agil.controladores')
 								xArr.push(obj)
 							}
 						})
-					}else{
+					} else {
 						var obj = {
 							cantidad_ideal: 1,
 							cantidad_real: producto.cantidad,
@@ -206,6 +224,7 @@ angular.module('agil.controladores')
 							producto.cantidad_ideal += ingr.cantidad_ideal
 							producto.cantidad_real += ingr.cantidad_real
 							producto.totalMostrar += ingr.total
+							producto.total += ingr.total
 							producto.totalSumar = ingr.total
 							producto.totalbs = producto.totalSumar * ingr.productoSolicitudBase.precio_unitario
 							$scope.solicitadoTotalFinalBs += producto.totalbs
@@ -216,15 +235,20 @@ angular.module('agil.controladores')
 						producto.cantidad_real = item.cantidad
 						producto.totalMostrar = item.cantidad
 						producto.totalSumar = item.cantidad
+						producto.total = item.cantidad
 						producto.totalbs = producto.totalSumar * item.productoSolicitado.precio_unitario
 						$scope.solicitadoTotalFinalBs += producto.totalbs
 					}
 				})
 			})
 			$scope.alreadyCalculated = true
-
-			$scope.abrirDialogTotalIngredientes()
+			if (solicitud == undefined) {
+				$scope.abrirDialogTotalIngredientes()
+			} else {
+				$scope.solicitud = undefined
+			}
 		}
+
 		if (angular.isDefined($localStorage.color)) {
 			$scope.color = $localStorage.color;
 		} else {
@@ -254,7 +278,12 @@ angular.module('agil.controladores')
 			$scope.productoSeleccionado = producto
 		}
 
-		$scope.eliminarDetalleVenta = function (detalleVenta) {
+		$scope.eliminarDetalleVenta = function (detalleVenta, disminuido) {
+			$scope.productosProcesados.map(function (prod) {
+				if (prod.id == detalleVenta.productoSolicitado.id && !disminuido) {
+					prod.inventario_disponible += detalleVenta.cantidad
+				}
+			})
 			if (detalleVenta.id === undefined) {
 				$scope.solicitud.solicitudesProductos.splice($scope.solicitud.solicitudesProductos.indexOf(detalleVenta), 1);
 			} else {
@@ -273,7 +302,7 @@ angular.module('agil.controladores')
 				detalleVenta.eliminado = true
 			}
 			if ($scope.productoSeleccionado.detallesIngredientesProducto.length == 0) {
-				$scope.eliminarDetalleVenta($scope.productoSeleccionado);
+				$scope.eliminarDetalleVenta($scope.productoSeleccionado,true);
 			} else {
 				var count = 0
 				$scope.productoSeleccionado.detallesIngredientesProducto.map(function (ingr) {
@@ -286,13 +315,31 @@ angular.module('agil.controladores')
 		}
 
 		$scope.disminuirDetalleVenta = function (detalleVenta) {
+			$scope.productosProcesados.map(function (prod) {
+				if (prod.id == detalleVenta.productoSolicitado.id) {
+					prod.inventario_disponible +=1
+				}
+			})
 			if (detalleVenta.cantidad == 1) {
-				$scope.eliminarDetalleVenta(detalleVenta);
+				$scope.eliminarDetalleVenta(detalleVenta,true);
 			} else {
 				detalleVenta.cantidad = detalleVenta.cantidad - 1;
+				detalleVenta.detallesIngredientesProducto.map(function (prod) {
+					prod.total = detalleVenta.cantidad * prod.cantidad_ideal
+				})
+
 			}
 		}
-
+		$scope.actualizarTotalReal= function (prod) {
+			prod.detallesIngredientesProducto.map(function (ing) {
+				ing.total = prod.cantidad*ing.cantidad_ideal
+			})
+			// $scope.productosProcesados.map(function (prodProc) {
+			// 	if (prodProc.id == prod.productoSolicitado.id) {
+			// 		prodProc.inventario_disponible =prodProc.inventario_disponible - (prod.cantidad - prod.inventario_disponible_utilizado)
+			// 	}
+			// })
+		}
 		$scope.obtenerConfiguracionVentaVista = function () {
 			blockUI.start();
 			var promise = ConfiguracionVentaVistaDatos($scope.usuario.id_empresa);
@@ -345,7 +392,7 @@ angular.module('agil.controladores')
 							if (produc.eliminado === undefined || produc.eliminado === false) {
 								produc.detallesIngredientesProducto.map(function (ingrediente) {
 									if (ingrediente.eliminado === undefined || ingrediente.eliminado === false) {
-										ingrediente.total = ingrediente.cantidad_real * produc.cantidad
+										// ingrediente.total = ingrediente.cantidad_real * produc.cantidad
 										prodMonto += ingrediente.total * ingrediente.productoSolicitudBase.precio_unitario
 									}
 								})
@@ -387,34 +434,60 @@ angular.module('agil.controladores')
 				$scope.mostrarMensaje('Complete los campos requeridos')
 			}
 		}
-		// $scope.obtenerInventarioTotal = function (producto) {
-		// 	var cantidadTotal = 0;
-		// 	if (producto.activar_inventario) {
-		// 		for (var i = 0; i < producto.inventarios.length; i++) {
-		// 			cantidadTotal += (producto.inventarios[i].cantidad);
-		// 		}
-		// 		for (var j = 0; j < $scope.solicitud.solicitudesProductos.length; j++) {
-		// 			if ($scope.solicitud.solicitudesProductos[j].producto.id == producto.id) {
-		// 				cantidadTotal = cantidadTotal - $scope.solicitud.solicitudesProductos[j].cantidad;
-		// 			}
-		// 		}
-		// 	} else {
-		// 		cantidadTotal = 500000;
-		// 	}
-		// 	return cantidadTotal;
-		// }
 
+		$scope.obtenerInventariosProdSolicitud = function () {
+			$scope.solicitud.solicitudesProductos.map(function (prod) {
+				var promesa = ListaInventariosProducto(prod.productoSolicitado.id, $scope.solicitud.almacen.id);
+				promesa.then(function (inventarios) {
+					prod.inventarios = inventarios
+					prod.inventario_disponible_utilizado = prod.cantidad
+					// prod.inventarios.map(function (inv) {
+					// 	prod.inventario_disponible =
+					// })
+				})
+			})
+		}
+
+		$scope.obtenerInventarioTotal = function (producto) {
+			var cantidadTotal = 0;
+			var promesa = ListaInventariosProducto(producto.id, $scope.solicitud.almacen.id);
+			promesa.then(function (inventarios) {
+				producto.inventarios = inventarios;
+				for (var i = 0; i < producto.inventarios.length; i++) {
+					producto.inventarios[i].fecha_vencimiento = (producto.inventarios[i].fecha_vencimiento ? new Date(producto.inventarios[i].fecha_vencimiento) : null);
+					producto.inventarios[i].fechaVencimientoTexto = (producto.inventarios[i].fecha_vencimiento ? producto.inventarios[i].fecha_vencimiento.getDate() + "/" + (producto.inventarios[i].fecha_vencimiento.getMonth() + 1) + "/" + producto.inventarios[i].fecha_vencimiento.getFullYear() : "");
+					producto.inventarios[i].detallesMovimiento[0].movimiento.fecha = new Date(producto.inventarios[i].detallesMovimiento[0].movimiento.fecha);
+					producto.inventarios[i].detallesMovimiento[0].movimiento.fechaTexto = producto.inventarios[i].detallesMovimiento[0].movimiento.fecha.getDate() + "/" + (producto.inventarios[i].detallesMovimiento[0].movimiento.fecha.getMonth() + 1) + "/" + producto.inventarios[i].detallesMovimiento[0].movimiento.fecha.getFullYear();
+				}
+			})
+			if (producto.activar_inventario) {
+				for (var i = 0; i < producto.inventarios.length; i++) {
+					cantidadTotal += (producto.inventarios[i].cantidad);
+				}
+				if($scope.solicitud.solicitudesProductos!==undefined && $scope.solicitud.copia){
+					for (var j = 0; j < $scope.solicitud.solicitudesProductos.length; j++) {
+						if ($scope.solicitud.solicitudesProductos[j].productoSolicitado.id == producto.id) {
+							cantidadTotal = cantidadTotal - $scope.solicitud.solicitudesProductos[j].cantidad;
+						}
+					}
+				}	
+			} else {
+				cantidadTotal = 500000;
+			}
+			return cantidadTotal;
+		}
 		$scope.cargarProductos = function () {
 			var promesa = ProductosPanel($scope.usuario.id_empresa, $scope.solicitud.almacen.id);
 			promesa.then(function (productos) {
-				// for (var i = 0; i < productos.length; i++) {
-				// 	if (productos[i].activar_inventario) {
-				// 		productos[i].inventario_disponible = $scope.obtenerInventarioTotal(productos[i]);
-				// 	}
-				// }
+				for (var i = 0; i < productos.length; i++) {
+					if (productos[i].activar_inventario) {
+						productos[i].inventario_disponible = $scope.obtenerInventarioTotal(productos[i]);
+					}
+				}
 				$scope.productos = productos;
 				// ======= save localstorage ====
 				if (angular.isDefined($localStorage.productosProcesados)) {
+
 					// ===== conbinar array productos con storage ====
 					$scope.productosProcesados = productos;
 
@@ -429,82 +502,101 @@ angular.module('agil.controladores')
 					$scope.productosProcesados = productos;
 				}
 				// ===== Fin save localstorage ====
+
 				setTimeout(function () {
 					aplicarSwiper(4, 3, true, 2);
 				}, 1000);
 			});
 		}
+
 		$scope.agregarDetalleVentaPanel = function (producto) {
 			var monto = 0
 			var detalleVenta;
-			$scope.cantidadInventario = 10;
+			$scope.cantidadInventario =0;
 			if (producto.activar_inventario) {
-				for (var i = 0; i < producto.inventarios.length; i++) {
-					$scope.cantidadInventario = $scope.cantidadInventario + producto.inventarios[i].cantidad;
-				}
+				$scope.cantidadInventario=producto.inventario_disponible
+				// for (var i = 0; i < producto.inventarios.length; i++) {
+				// 	$scope.cantidadInventario = $scope.cantidadInventario + producto.inventarios[i].cantidad;
+				// }
 			}
 			var j = 0, encontrado = false;
 			if ($scope.solicitud.solicitudesProductos === undefined) {
 				$scope.solicitud.solicitudesProductos = []
 			}
-			while (j < $scope.solicitud.solicitudesProductos.length && !encontrado) {
-				if ($scope.solicitud.solicitudesProductos[j].eliminado === undefined) {
-					if ($scope.solicitud.solicitudesProductos[j].productoSolicitado.id == producto.id) {
-						$scope.solicitud.solicitudesProductos[j].cantidad = $scope.solicitud.solicitudesProductos[j].cantidad + 1;
-						$scope.solicitud.solicitudesProductos[j].eliminado = undefined
-						encontrado = true;
-
-						detalleVenta = $scope.solicitud.solicitudesProductos[j];
-					}
-				}
-				j++;
-			}
-			if (!encontrado) {
-				var formulacion = SolicitudesFormulacionProducto((producto.producto !== undefined) ? producto.producto.id : (producto.id !== undefined) ? producto.id : undefined)
-				var ingredientes = []
-				formulacion.then(function (formula) {
-					formula.productosBase.forEach(element => {
-						ingrediente = {
-							cantidad_ideal: parseFloat(element.formulacion),
-							cantidad_real: parseFloat(element.formulacion),
-							id_producto_base: element.productoBase.id,
-							productoSolicitudBase: element.productoBase
+			if (1 <= $scope.cantidadInventario) {
+				while (j < $scope.solicitud.solicitudesProductos.length && !encontrado) {
+					if ($scope.solicitud.solicitudesProductos[j].eliminado === undefined) {
+						if ($scope.solicitud.solicitudesProductos[j].productoSolicitado.id == producto.id) {
+							$scope.solicitud.solicitudesProductos[j].cantidad = $scope.solicitud.solicitudesProductos[j].cantidad + 1;
+							$scope.solicitud.solicitudesProductos[j].eliminado = undefined
+							$scope.solicitud.solicitudesProductos[j].detallesIngredientesProducto.map(function (ingre) {
+								ingre.total = ingre.cantidad_ideal * $scope.solicitud.solicitudesProductos[j].cantidad
+							})
+							encontrado = true;
+							detalleVenta = $scope.solicitud.solicitudesProductos[j];
+							producto.inventario_disponible -= 1
+							// var indx = $scope.productosProcesados.indexOf(producto)
+							// $scope.productosProcesados[indx].inventarios[0].cantidad -=1
+							// producto.inventarios[i].cantidad -=1
 						}
-						ingredientes.push(ingrediente)
-					});
-				})
-				if (producto.activar_inventario) {
-					if (1 <= $scope.cantidadInventario) {
+					}
+					j++;
+				}
+				if (!encontrado) {
+					var formulacion = SolicitudesFormulacionProducto((producto.producto !== undefined) ? producto.producto.id : (producto.id !== undefined) ? producto.id : undefined)
+					var ingredientes = []
+					formulacion.then(function (formula) {
+						formula.productosBase.forEach(element => {
+							ingrediente = {
+								cantidad_ideal: parseFloat(element.formulacion),
+								cantidad_real: parseFloat(element.formulacion),
+								total: parseFloat(element.formulacion),
+								id_producto_base: element.productoBase.id,
+								productoSolicitudBase: element.productoBase
+							}
+							ingredientes.push(ingrediente)
+						});
+					})
+					if (producto.activar_inventario) {
+						if (1 <= $scope.cantidadInventario) {
+							detalleVenta = {
+								productoSolicitado: producto, precio_unitario: producto.precio_unitario,
+								inventario_disponible: $scope.cantidadInventario,
+								inventarios: producto.inventarios,
+								cantidad: 1,
+								detallesIngredientesProducto: ingredientes
+							};
+							producto.inventario_disponible -= 1
+							$scope.solicitud.solicitudesProductos.push(detalleVenta);
+						} else {
+							$scope.mostrarMensaje('¡Cantidad de inventario insuficiente, inventario disponible: ' + $scope.cantidadInventario + '!');
+						}
+					} else {
 						detalleVenta = {
 							productoSolicitado: producto, precio_unitario: producto.precio_unitario,
 							inventario_disponible: $scope.cantidadInventario,
+							inventarios: producto.inventarios,
 							cantidad: 1,
 							detallesIngredientesProducto: ingredientes
 						};
+						producto.inventario_disponible -= 1
 						$scope.solicitud.solicitudesProductos.push(detalleVenta);
-					} else {
-						$scope.mostrarMensaje('¡Cantidad de inventario insuficiente, inventario disponible: ' + $scope.cantidadInventario + '!');
 					}
 				} else {
-					detalleVenta = {
-						productoSolicitado: producto, precio_unitario: producto.precio_unitario,
-						inventario_disponible: $scope.cantidadInventario,
-						cantidad: 1,
-						detallesIngredientesProducto: ingredientes
-					};
-					$scope.solicitud.solicitudesProductos.push(detalleVenta);
+					producto.eliminado = undefined
 				}
 			} else {
-				producto.eliminado = undefined
+				$scope.mostrarMensaje('¡Cantidad de inventario insuficiente, inventario disponible: ' + $scope.cantidadInventario + '!');
 			}
+			
 			producto.rankin += 1;
 
 			var indice = $scope.productosProcesados.indexOf(producto);
 			$scope.productosProcesados[indice] = producto;
 
-			setTimeout(function () {
-				aplicarSwiper(4, 3, true, 2);
-			}, 5);
+			// setTimeout(function () {
+			// 	aplicarSwiper(4, 3, true, 2);
+			// }, 5);
 			$localStorage.productosProcesados = $scope.productosProcesados;
 
 			// ===== fin rankin ============================//
@@ -553,6 +645,7 @@ angular.module('agil.controladores')
 			$scope.solicitud.sucursal = $scope.solicitud.almacen.sucursal
 			$scope.obtenerAlmacenes($scope.solicitud.sucursal.id)
 			$scope.solicitud.almacen = $scope.solicitud.almacen
+			$scope.obtenerInventariosProdSolicitud()
 			$scope.abrirDialogPanelOperaciones()
 		}
 
@@ -715,6 +808,12 @@ angular.module('agil.controladores')
 		}
 
 		$scope.filtrarSolicitudesOperaciones = function (filtro) {
+			for (var key in filtro) {
+				if (filtro[key] === undefined) {
+					filtro[key] = 0
+				}
+			}
+
 			$scope.obtenerSolicitudes()
 		}
 
@@ -738,6 +837,7 @@ angular.module('agil.controladores')
 			$scope.solicitud.sucursal = $scope.solicitud.almacen.sucursal
 			$scope.obtenerAlmacenes($scope.solicitud.sucursal.id)
 			$scope.solicitud.almacen = $scope.solicitud.almacen
+			$scope.obtenerInventariosProdSolicitud()
 			$scope.abrirDialogPanelOperaciones()
 		}
 
@@ -757,6 +857,7 @@ angular.module('agil.controladores')
 				} else {
 					if ($scope.solicitud.copia === undefined) {
 						$scope.solicitud.fechaTexto = $scope.fechaATexto(new Date($scope.solicitud.fecha))
+						$scope.solicitud.nueva = true
 					} else {
 						$scope.solicitud.id = undefined
 						$scope.solicitud.fechaTexto = $scope.fechaATexto(new Date())
@@ -813,6 +914,105 @@ angular.module('agil.controladores')
 			// $scope.totalViveresSolicitados = []
 			$scope.alreadyCalculated = false
 			$scope.cerrarPopup($scope.idDialogTotalIngredientes);
+		}
+
+		$scope.generarPdfSolicitud = function (solicitud) {
+
+			blockUI.start();
+			$scope.calcularTotalViveres(solicitud)
+
+			var doc = new PDFDocument({ size: [612, 792], margin: 10 });
+			var stream = doc.pipe(blobStream());
+			var fechaActual = new Date();
+			var min = fechaActual.getMinutes();
+			if (min < 10) {
+				min = "0" + min;
+			}
+			doc.font('Helvetica', 8);
+			var y = 115, itemsPorPagina = 29, items = 0, pagina = 1, totalPaginas = Math.ceil($scope.totalViveresSolicitados.length / itemsPorPagina);
+			$scope.dibujarCabeceraPDFSolicitud(doc, pagina, totalPaginas);
+
+			for (var i = 0; i < $scope.totalViveresSolicitados.length && items <= itemsPorPagina; i++) {
+				// doc.rect(40, y - 10, 540, 40).stroke();
+
+				doc.font('Helvetica', 8);
+				doc.text(i + 1, 65, y);
+				doc.text($scope.totalViveresSolicitados[i].productoSolicitudBase.codigo, 100, y);
+				doc.text($scope.totalViveresSolicitados[i].productoSolicitudBase.nombre, 220, y);
+				doc.text($scope.totalViveresSolicitados[i].productoSolicitudBase.unidad_medida, 400, y);
+				doc.text($scope.totalViveresSolicitados[i].totalMostrar.toFixed(2), 500, y);
+				y = y + 20;
+				items++;
+
+				if (items > itemsPorPagina) {
+					doc.rect(40, 105, 540, y - 115).stroke();
+					doc.text(pagina + "/" + totalPaginas, 570, y + 15);
+					doc.font('Helvetica', 6);
+					doc.text("RESPONSABLE: " + $scope.usuario.nombre_usuario, 45, y + 10);
+					doc.text("SOLICITANTE: " + $scope.totalViveresSolicitados.usuario.persona.nombre_completo, 345, y + 10);
+					doc.text("IMPRESION : " + fechaActual.getDate() + "/" + (fechaActual.getMonth() + 1) + "/" + fechaActual.getFullYear() + " Hr. " + fechaActual.getHours() + ":" + min, 175, y + 10);
+					doc.addPage({ size: [612, 792], margin: 10 });
+					y = 115;
+					items = 0;
+					pagina = pagina + 1;
+					$scope.dibujarCabeceraPDFSolicitud(doc, pagina, totalPaginas);
+				}
+			}
+			doc.rect(40, 105, 540, y - 115).stroke();
+			var fechaActual = new Date();
+			var min = fechaActual.getMinutes();
+			if (min < 10) {
+				min = "0" + min;
+			}
+			doc.text(pagina + "/" + totalPaginas, 570, y + 15);
+			doc.font('Helvetica', 6);
+			doc.text("RESPONSABLE: " + $scope.usuario.nombre_usuario, 45, y + 5);
+			doc.text("SOLICITANTE: " + $scope.totalViveresSolicitados.usuario.persona.nombre_completo, 345, y + 5);
+			doc.text("IMPRESION : " + fechaActual.getDate() + "/" + (fechaActual.getMonth() + 1) + "/" + fechaActual.getFullYear() + " Hr. " + fechaActual.getHours() + ":" + min, 175, y + 5);
+			doc.end();
+			stream.on('finish', function () {
+				var fileURL = stream.toBlobURL('application/pdf');
+				window.open(fileURL, '_blank', 'location=no');
+			});
+			blockUI.stop();
+
+		}
+		$scope.dibujarCabeceraPDFSolicitud = function (doc, pagina, totalPaginas) {
+			doc.font('Helvetica-Bold', 12);
+			doc.text("CONSUMOS", 0, 25, { align: "center" });
+			// doc.font('Helvetica', 8);
+			//doc.text("Desde  "+reporte.fechaInicioTexto,-70,40,{align:"center"});
+			//doc.text("Hasta "+reporte.fechaFinTexto,70,40,{align:"center"});
+			//doc.text("FOLIO "+pagina,550,25);
+			// doc.rect(40, 60, 540, 40).stroke();
+			doc.font('Helvetica-Bold', 8);
+			doc.text("SUCURSAL : ", -40, 50, { align: "center" });
+			doc.font('Helvetica', 8);
+			doc.text($scope.totalViveresSolicitados.sucursal.nombre, 60, 50, { align: "center" });
+			doc.font('Helvetica-Bold', 8);
+			doc.text("FECHA : ", 40, 60, { width: 40 });
+			doc.font('Helvetica', 8);
+			doc.text($scope.fechaATexto($scope.totalViveresSolicitados.fecha), 75, 60, { width: 40 });
+			doc.font('Helvetica-Bold', 14);
+			doc.text("N°", 380, 40, { align: "center" });
+			doc.text($scope.totalViveresSolicitados.identificador, 440, 40, { align: "center" });
+			// doc.text("NIT : ", 440, 75);
+			// doc.font('Helvetica', 8);
+			//doc.text(datos.empresa.razon_social,195,75);
+			//doc.text(datos.empresa.nit,460,75);		
+			doc.rect(40, 80, 540, 25).stroke();
+			doc.font('Helvetica-Bold', 8);
+
+			doc.text("Nº", 65, 90);
+			doc.text("Código Ítem", 100, 90);
+			doc.text("Producto", 220, 90);
+			doc.text("Unidad medida", 380, 90);
+			doc.text("Cantidad solicitada", 480, 90);
+			// doc.text("Lote", 405, 110, { width: 35 });
+			// doc.text("Descuento", 440, 110);
+			// doc.text("Recargo", 490, 110);
+			// doc.text("Total", 535, 110);
+			// doc.font('Helvetica', 8);
 		}
 		$scope.inicio()
 	})

@@ -91,6 +91,10 @@ module.exports=function(sequelize,Sequelize){
 		usar_mantenimiento:{
 		type: Sequelize.BOOLEAN,
 		field: 'usar_mantenimiento'  
+	  },
+		usar_cuentas_auxiliares:{
+		type: Sequelize.BOOLEAN,
+		field: 'usar_cuentas_auxiliares'  
 	  }
 	}, {
 	  freezeTableName: true 

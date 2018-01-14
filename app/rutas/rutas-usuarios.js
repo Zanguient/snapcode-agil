@@ -142,7 +142,7 @@ router.route('/usuarios/empresa/:id_empresa')
 			}
 		});
 	});
-router.route('/usuario/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda')
+router.route('/usuario/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion')
 	.get(function(req, res) {
 		var condicionUsuario={id_empresa:req.params.id_empresa};
 		
@@ -159,8 +159,24 @@ router.route('/usuario/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pa
 					  ]
 				};
 				
+				
 		}
-		
+		var ordenArreglo = [];
+			if (req.params.columna == "nombres") {
+				ordenArreglo.push({ model: Persona, as: 'persona' });
+				req.params.columna = "nombres";
+			} else if (req.params.columna == "empresa") {
+				ordenArreglo.push({ model: Empresa, as: 'empresa' });
+				req.params.columna = "razon_social";
+			} else if (req.params.columna == "apellido_paterno") {
+				ordenArreglo.push({ model: Persona, as: 'persona' });
+				req.params.columna = "apellido_paterno";
+			} else if (req.params.columna == "apellido_materno") {
+				ordenArreglo.push({ model: Persona, as: 'persona' });
+				req.params.columna = "apellido_paterno";
+			}
+			ordenArreglo.push(req.params.columna);
+			ordenArreglo.push(req.params.direccion);
 		Usuario.findAndCountAll({
 		  
 			where:condicionUsuario,
@@ -170,7 +186,7 @@ router.route('/usuario/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pa
 					  {model:UsuarioSucursal,as: 'sucursalesUsuario',include: [{model:Sucursal,as: 'sucursal'}]},
 					  {model:UsuarioAplicacion,as: 'aplicacionesUsuario',include: [{model:Aplicacion,as: 'aplicacion'}]},
 					  {model:UsuarioRuta,as:'rutas',include:[{model:Ruta,as:'ruta'}]}],
-			order:[['id','asc']]
+					  order: [ordenArreglo]
 		}).then(function(data){
 			Usuario.findAll({ 
 				offset:(req.params.items_pagina*(req.params.pagina-1)), limit:req.params.items_pagina,
@@ -181,7 +197,7 @@ router.route('/usuario/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pa
 					  {model:UsuarioSucursal,as: 'sucursalesUsuario',include: [{model:Sucursal,as: 'sucursal'}]},
 					  {model:UsuarioAplicacion,as: 'aplicacionesUsuario',include: [{model:Aplicacion,as: 'aplicacion'}]},
 					  {model:UsuarioRuta,as:'rutas',include:[{model:Ruta,as:'ruta'}]}],
-				order:[['id','asc']]
+					  order: [ordenArreglo]
 			}).then(function(usuarios){			
 				res.json({usuarios:usuarios,paginas:Math.ceil(data.count/req.params.items_pagina)});		  
 			});

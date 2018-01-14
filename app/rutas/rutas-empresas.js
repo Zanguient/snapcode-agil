@@ -26,7 +26,8 @@ router.route('/empresas')
 			usar_salas:req.body.usar_salas,
 			usar_contabilidad:req.body.usar_contabilidad,
 			usar_medico:req.body.usar_medico,
-			usar_mantenimiento:req.body.usar_mantenimiento
+			usar_mantenimiento:req.body.usar_mantenimiento,
+			usar_cuentas_auxiliares:req.body.usar_cuentas_auxiliares
 		}).then(function(empresaCreada){
 			Sucursal.create({
 				id_empresa:empresaCreada.id,
@@ -170,7 +171,8 @@ router.route('/empresas/:id_empresa')
 			usar_salas:req.body.usar_salas,
 			usar_contabilidad:req.body.usar_contabilidad,
 			usar_medico:req.body.usar_medico,
-			usar_mantenimiento:req.body.usar_mantenimiento
+			usar_mantenimiento:req.body.usar_mantenimiento,
+			usar_cuentas_auxiliares:req.body.usar_cuentas_auxiliares
 		},{
 			where:{
 				id:req.params.id_empresa

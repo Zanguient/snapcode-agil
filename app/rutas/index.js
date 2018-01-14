@@ -97,7 +97,7 @@ module.exports = function (router, sequelize, Sequelize, jwt, md5, forEach, ensu
 	var RrhhEmpleadoExperienciaLaboral = require('../modelos/AGIL/rrhh_empleado_experiencia_laboral')(sequelize, Sequelize);
 	var RrhhEmpleadoLogroInternoExterno = require('../modelos/AGIL/rrhh_empleado_logro_interno_externo')(sequelize, Sequelize);
 	var RrhhEmpleadoCapacidadInternaExterna =require('../modelos/AGIL/rrhh_empleado_capacidad_interna_externa')(sequelize, Sequelize); 
-	
+	var ContabilidadCuentaAuxiliar =require('../modelos/AGIL/contabilidad-cuenta-auxiliar')(sequelize, Sequelize);
 	//entities INV
 	var Inventario = require('../modelos/INV/inventario')(sequelize, Sequelize);
 	var Movimiento = require('../modelos/INV/movimiento')(sequelize, Sequelize);
@@ -135,7 +135,7 @@ module.exports = function (router, sequelize, Sequelize, jwt, md5, forEach, ensu
 		MedicoPacienteFicha, MedicoLaboratorioExamen, MedicoLaboratorio, MedicoLaboratorioPaciente, MedicoLaboratorioResultado, MedicoDiagnostico, MedicoDiagnosticoExamen, MedicoDiagnosticoPaciente, MedicoDiagnosticoResultado,
 		MantenimientoOrdenTrabajo, MantenimientoOrdenTrabajoManoObra, MantenimientoOrdenTrabajoMaterial, MantenimientoOrdenTrabajoServicioExterno, MantenimientoOrdenTrabajoSistema,VendedorVenta,RrhhEmpleadoFicha,
 		RrhhEmpleadoFichaOtrosSeguros,RrhhEmpleadoFichaFamiliar,MedicoPacientePreRequisito,RrhhEmpleadoDiscapacidad,RrhhEmpleadoCargo,ClienteRazon,GtmDestino,GtmEstibaje,GtmGrupoEstibaje,GtmTransportista,GtmDespacho,GtmClienteDestino,
-        RrhhEmpleadoHojaVida,RrhhEmpleadoFormacionAcademica,RrhhEmpleadoExperienciaLaboral,RrhhEmpleadoLogroInternoExterno,RrhhEmpleadoCapacidadInternaExterna, SolicitudReposicion,DetalleSolicitudProducto,DetalleSolicitudProductoBase,MonedaTipoCambio);
+        RrhhEmpleadoHojaVida,RrhhEmpleadoFormacionAcademica,RrhhEmpleadoExperienciaLaboral,RrhhEmpleadoLogroInternoExterno,RrhhEmpleadoCapacidadInternaExterna, SolicitudReposicion,DetalleSolicitudProducto,DetalleSolicitudProductoBase,MonedaTipoCambio,ContabilidadCuentaAuxiliar);
 	//*****SOCKETS*****
 	require('../sockets/pantallas.js')(io, socket);
 
@@ -170,8 +170,8 @@ module.exports = function (router, sequelize, Sequelize, jwt, md5, forEach, ensu
 	require('./rutas-cierres-caja')(router, ensureAuthorizedAdministrador, fs, forEach, jwt, md5, CierreCaja, Clase, Sucursal, Usuario,
 		Venta, DetalleVenta, Cliente, Almacen, Sucursal, PagoVenta, PagoCompra, Compra, Proveedor, sequelize, Banco, DetalleCompra,
 		CajaSiguienteTurno, Diccionario, Producto, Inventario,Sequelize);
-	require('./rutas-contabilidad-cuenta')(router, ContabilidadCuenta, ClasificacionCuenta, Tipo, Clase, Usuario, Diccionario, ClienteCuenta, ProveedorCuenta, ConfiguracionCuenta, sequelize);
-	require('./rutas-comprobante-contabilidad')(router, ComprobanteContabilidad, AsientoContabilidad, ContabilidadCuenta, ClasificacionCuenta, Sucursal, Clase, Usuario, Diccionario, Empresa, Persona, Compra, Venta, MonedaTipoCambio,NumeroLiteral); //MonedaTipoCambio
+	require('./rutas-contabilidad-cuenta')(router, ContabilidadCuenta, ClasificacionCuenta, Tipo, Clase, Usuario, Diccionario, ClienteCuenta, ProveedorCuenta, ConfiguracionCuenta, sequelize,Cliente,Proveedor,MedicoPaciente,Persona);
+	require('./rutas-comprobante-contabilidad')(router, ComprobanteContabilidad, AsientoContabilidad, ContabilidadCuenta, ClasificacionCuenta, Sucursal, Clase, Usuario, Diccionario, Empresa, Persona, Compra, Venta, MonedaTipoCambio,NumeroLiteral,ContabilidadCuentaAuxiliar); //MonedaTipoCambio
 	// require('./rutas-contabilidad-clasificacion-cuenta')(router,ClasificacionCuenta,tipo,Usuario,Diccionario);
 	require('./rutas-gtm-estibajes')(router,ensureAuthorizedAdministrador,fs,forEach,jwt,md5,GtmEstibaje); //MonedaTipoCambio
 	require('./rutas-gtm-destinos')(router,ensureAuthorizedAdministrador,fs,forEach,jwt,md5,GtmDestino); 

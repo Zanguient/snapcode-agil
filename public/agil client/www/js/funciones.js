@@ -55,8 +55,8 @@ function ejecutarScriptsInventario(idModalActualizacionInventario, idModalCreaci
 	}, 200);
 }
 
-function ejecutarScriptsOperaciones(idDialogDialogPanelOperaciones,idDialogEntregaViveres,idConfirmacionCierre, idDialogTotalIngredientes) {	
-	crearPopup(idDialogDialogPanelOperaciones, "100%", screen.height);
+function ejecutarScriptsOperaciones(idDialogDialogPanelOperaciones, idDialogEntregaViveres, idConfirmacionCierre, idDialogTotalIngredientes) {
+	crearPopup(idDialogDialogPanelOperaciones, "100%", 'auto');
 	crearPopup(idDialogEntregaViveres, "60%", 'auto');
 	crearPopup(idConfirmacionCierre, "40%", 'auto');
 	crearPopup(idDialogTotalIngredientes, "60%", 'auto');
@@ -64,8 +64,8 @@ function ejecutarScriptsOperaciones(idDialogDialogPanelOperaciones,idDialogEntre
 function ejecutarScriptsInicio(idPopupTablaProductos, idPopupTablaCreditos, idPopupTablaDeudas, idPopupPago,
 	idPopupActualizarCreditoCliente, idPopupActualizarCreditoDeuda, idPopupDeuda, idModalDescuento, idModalTablaVentasPendientes,
 	idModalTablaComprasPendientes, idModalTablaBancosPendientes, idModalTablaOtrosPendientes, idModalInicioSesion, idModalWizardComprobanteEdicion, IdModalOpcionesQr, IdModalRegistrarComprobante, IdModalRevisarComprobante, IdModalLibroMayor, IdModalAsignarCuenta,
-	idModalTablaDespachos, idModalTablaAsignacionDespacho) {
-	crearPopup(idPopupTablaProductos, "100%", 550);
+	idModalTablaDespachos, idModalTablaAsignacionDespacho,IdModalEliminarProductoVencido) {
+	crearPopup(idPopupTablaProductos, "70%", 550);
 	crearPopup(idModalWizardComprobanteEdicion, "100%", "auto");
 	crearPopup(idPopupTablaCreditos, "auto", "auto");
 	crearPopup(idPopupTablaDeudas, "auto", "auto");
@@ -82,11 +82,12 @@ function ejecutarScriptsInicio(idPopupTablaProductos, idPopupTablaCreditos, idPo
 
 	crearPopup(IdModalOpcionesQr, "30%", 250);
 	crearPopup(IdModalRegistrarComprobante, "60%", 350);
-	crearPopup(IdModalRevisarComprobante, "60%", 550);
+	crearPopup(IdModalRevisarComprobante, "60%", "auto");
 	crearPopup(IdModalLibroMayor, "70%", "auto");
 	crearPopup(IdModalAsignarCuenta, "30%", 270);
 	crearPopup(idModalTablaDespachos, "90%", 550);
 	crearPopup(idModalTablaAsignacionDespacho, "30%", 320);
+	crearPopup(IdModalEliminarProductoVencido,"60%",550)
 	$("#" + idModalInicioSesion).siblings('.ui-dialog-titlebar').remove();
 	aplicarDatePickers();
 
@@ -462,7 +463,7 @@ function ejecutarScriptsSucursal(idPopupEdicion, idPopupVista, idPopupEliminacio
 }
 
 function ejecutarScriptsConcepto(idPopupEdicion, idContenedorEdicion) {
-	crearPopup(idPopupEdicion, "80%", 710);
+	crearPopup(idPopupEdicion, "auto", "auto");
 	aplicarWizardFormulario(idPopupEdicion, idContenedorEdicion);
 }
 
@@ -1153,7 +1154,28 @@ function convertirFecha(fecha) {
 	}
 	return mes + '/' + dia + '/' + año;
 }
+function number_format(amount, decimals) {
 
+	amount += ''; // por si pasan un numero en vez de un string
+	amount = parseFloat(amount.replace(/[^0-9\.]/g, '')); // elimino cualquier cosa que no sea numero o punto
+
+	decimals = decimals || 0; // por si la variable no fue fue pasada
+
+	// si no es un numero o es igual a cero retorno el mismo cero
+	if (isNaN(amount) || amount === 0)
+		return parseFloat(0).toFixed(decimals);
+
+	// si es mayor o menor que cero retorno el valor formateado como numero
+	amount = '' + amount.toFixed(decimals);
+
+	var amount_parts = amount.split('.'),
+		regexp = /(\d+)(\d{3})/;
+
+	while (regexp.test(amount_parts[0]))
+		amount_parts[0] = amount_parts[0].replace(regexp, '$1' + ',' + '$2');
+
+	return amount_parts.join('.');
+}
 function sumaFecha(d, fecha) {
 
 	var Fecha = new Date(fecha);
@@ -1196,6 +1218,7 @@ function aplicarTiempos() {
 	}).next().on(ace.click_event, function () {
 		$(this).prev().focus();
 	});
+
 }
 
 

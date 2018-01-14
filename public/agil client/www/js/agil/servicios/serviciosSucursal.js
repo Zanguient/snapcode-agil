@@ -6,7 +6,18 @@ angular.module('agil.servicios')
 			'update': { method:'PUT' }
 		});
 })
-
+.factory('Sucursalupdate', function($resource) {
+	return $resource(restServer+"configuracion/factura/sucursal/:idSucursal", { idSucursal: '@id' },
+	{
+		'update': { method:'PUT' }
+	});
+})
+.factory('ConfiguracionFacturaSucursal', function($resource) {
+	return $resource(restServer+"sucursal/:idSucursal", { idSucursal: '@id' },
+	{
+		'update': { method:'PUT' }
+	});
+})
 .factory('SucursalesEmpresa', function($resource) {
 		return $resource(restServer+"sucursales/empresa/:idEmpresa");
 })

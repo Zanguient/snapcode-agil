@@ -109,7 +109,8 @@ router.route('/tipos/empresa')
 	.post(function(req, res) {
 		Tipo.create({
 			nombre:req.body.nombre,
-			nombre_corto:req.body.nombre_corto
+			nombre_corto:req.body.nombre_corto,
+			id_empresa:req.body.id_empresa
 		}).then(function(tipoCreado){			
 			req.body.clases.forEach(function(clase, index, array){
 				if(!clase.eliminado){
