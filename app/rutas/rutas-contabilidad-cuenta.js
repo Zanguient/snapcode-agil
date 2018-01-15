@@ -226,6 +226,10 @@ module.exports = function (router, ContabilidadCuenta, ClasificacionCuenta, Tipo
 		})
 	router.route('/contabilidad-cuenta/:id')
 		.put(function (req, res) {
+			var idTipoAux = null
+			if(req.body.tipoAuxiliar){
+				idTipoAux=req.body.tipoAuxiliar.id
+			}
 			ContabilidadCuenta.update({
 				id_empresa: req.body.id_empresa,
 				codigo: req.body.codigo,
@@ -240,7 +244,7 @@ module.exports = function (router, ContabilidadCuenta, ClasificacionCuenta, Tipo
 				aplicar_calculo: req.body.aplicar_calculo,
 				monto: req.body.monto,
 				eliminado: req.body.eliminado,
-				id_tipo_auxiliar: req.body.tipoAuxiliar.id
+				id_tipo_auxiliar: idTipoAux
 			}, {
 					where: {
 						id: req.body.id
@@ -267,7 +271,7 @@ module.exports = function (router, ContabilidadCuenta, ClasificacionCuenta, Tipo
 				monto: req.body.monto,
 				id_calculo: (req.body.claseCalculo ? req.body.claseCalculo.id : null),
 				eliminado: req.body.eliminado,
-				id_tipo_auxiliar: req.body.tipoAuxiliar.id
+				id_tipo_auxiliar: idTipoAux
 			}).then(function (cuentaCreada) {
 				if (req.body.cliente != null) {
 					ClienteCuenta.create({

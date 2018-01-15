@@ -92,6 +92,7 @@ module.exports = function (router, sequelize, Sequelize, jwt, md5, forEach, ensu
 	var GtmTransportista = require('../modelos/AGIL/agil-gtm-transportista')(sequelize, Sequelize); 
 	var GtmDespacho = require('../modelos/AGIL/agil-gtm-despacho')(sequelize, Sequelize);  
 	var GtmClienteDestino = require('../modelos/AGIL/agil-gtm-cliente-destino')(sequelize, Sequelize); 
+	var GtmDespachoDetalle= require('../modelos/AGIL/agil-gtm-despacho-detalle')(sequelize, Sequelize); 
 	var RrhhEmpleadoHojaVida = require('../modelos/AGIL/rrhh_empleado_hoja_vida')(sequelize, Sequelize);
 	var RrhhEmpleadoFormacionAcademica = require('../modelos/AGIL/rrhh_empleado_formacion_academica')(sequelize, Sequelize);
 	var RrhhEmpleadoExperienciaLaboral = require('../modelos/AGIL/rrhh_empleado_experiencia_laboral')(sequelize, Sequelize);
@@ -177,6 +178,7 @@ module.exports = function (router, sequelize, Sequelize, jwt, md5, forEach, ensu
 	require('./rutas-gtm-destinos')(router,ensureAuthorizedAdministrador,fs,forEach,jwt,md5,GtmDestino); 
 	require('./rutas-gtm-transportistas')(router,ensureAuthorizedAdministrador,fs,forEach,jwt,md5,GtmTransportista,Persona); 
 	require('./rutas-gtm-grupo-estibajes')(router,ensureAuthorizedAdministrador,fs,forEach,jwt,md5,GtmGrupoEstibaje); 
+	require('./rutas-gtm-despacho')(router,ensureAuthorizedAdministrador,fs,forEach,jwt,md5,GtmDespacho,GtmDespachoDetalle); 
 
 	
 
