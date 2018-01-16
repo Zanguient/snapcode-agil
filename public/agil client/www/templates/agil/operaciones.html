@@ -1,7 +1,7 @@
 <div class="row">
     <div class="col-xs-12">
         <h3 class="header smaller lighter blue">SOLICITUD DE VIVERES</h3>
-        <button id="nuevo"  class="btn btn-primary" ng-click="abrirDialogPanelOperaciones()">
+        <button id="nuevo" class="btn btn-primary" ng-click="abrirDialogPanelOperaciones()">
             <i class="ace-icon fa fa-plus align-top bigger-125"></i>
             Nuevo
         </button>
@@ -163,11 +163,11 @@
                             <span class="lbl check-descuento"> <label class="bg-green" ng-if="solicitud.activo">&nbsp &nbspActivo&nbsp &nbsp</label><label class="bg-red" ng-if="!solicitud.activo">&nbsp &nbspInactivo&nbsp &nbsp</label></span></label></td>-->
                         <td>
                             <div class="hidden-sm hidden-xs action-buttons">
-                                <a  ng-disabled="!aplicacion.puede_crear" ng-if="solicitud.activo" class="green" href="javascript:void(0)" ng-click="confirmarEntrega(solicitud)" data-rel="tooltip"
+                                <a  ng-if="solicitud.activo" class="green" href="javascript:void(0)" ng-click="confirmarEntrega(solicitud)" data-rel="tooltip"
                                     tooltip-placement="top" uib-tooltip="Confirmar Entrega">
                                     <i class="ace-icon fa fa-unlock bigger-130"></i>
                                 </a>
-                                <a  ng-disabled="!aplicacion.puede_modificar" ng-if="solicitud.activo" class="orange" href="javascript:void(0)" ng-click="editar(solicitud)">
+                                <a  ng-if="solicitud.activo" class="orange" href="javascript:void(0)" ng-click="editar(solicitud)">
                                     <i class="ace-icon fa fa-pencil-square-o bigger-130"></i>
                                 </a>
                                 <a ng-if="!solicitud.activo" class="red" href="javascript:void(0)" data-rel="tooltip" tooltip-placement="top" uib-tooltip="Entregado">
@@ -177,13 +177,13 @@
                                     uib-tooltip="Imprimir">
                                     <i class="ace-icon fa fa-print bigger-130"></i>
                                 </a>
-                                <a  ng-disabled="!aplicacion.puede_ver" class="blue" href="javascript:void(0)" ng-click="ver(solicitud)" data-rel="tooltip" tooltip-placement="top" uib-tooltip="Ver">
+                                <a   class="blue" href="javascript:void(0)" ng-click="ver(solicitud)" data-rel="tooltip" tooltip-placement="top" uib-tooltip="Ver">
                                     <i class="ace-icon fa fa-search-plus bigger-130"></i>
                                 </a>
-                                <a  ng-disabled="!aplicacion.puede_crear" class="blue" href="javascript:void(0)" ng-click="copiar(solicitud)" data-rel="tooltip" tooltip-placement="top" uib-tooltip="Copiar">
+                                <a  class="blue" href="javascript:void(0)" ng-click="copiar(solicitud)" data-rel="tooltip" tooltip-placement="top" uib-tooltip="Copiar">
                                     <i class="ace-icon fa fa-files-o bigger-130"></i>
                                 </a>
-                                <a  ng-disabled="!aplicacion.puede_eliminar" class="red" ng-if="solicitud.activo" ng-click="abrirPopupConfirmacionEliminacion(eliminar,solicitud)" data-rel="tooltip"
+                                <a  class="red" ng-if="solicitud.activo" ng-click="abrirPopupConfirmacionEliminacion(eliminar,solicitud)" data-rel="tooltip"
                                     tooltip-placement="top" uib-tooltip="Eliminar">
                                     <i class="ace-icon fa fa-trash-o bigger-130"></i>
                                 </a>
@@ -196,7 +196,7 @@
 
                                     <ul class="dropdown-menu dropdown-only-icon dropdown-yellow dropdown-menu-right dropdown-caret dropdown-close">
                                         <li>
-                                            <a  ng-disabled="!aplicacion.puede_crear" ng-if="solicitud.activo" class="green" href="javascript:void(0)" ng-click="confirmarEntrega(solicitud)">
+                                            <a  ng-if="solicitud.activo" class="green" href="javascript:void(0)" ng-click="confirmarEntrega(solicitud)">
                                                 <i class="ace-icon fa fa-unlock bigger-130"></i>
                                             </a>
                                             <a ng-if="!solicitud.activo" class="red" href="javascript:void(0)">
@@ -204,7 +204,7 @@
                                             </a>
                                         </li>
                                         <li>
-                                            <a  ng-disabled="!aplicacion.puede_modificar" ng-if="solicitud.activo" class="orange" href="javascript:void(0)" ng-click="editar(solicitud)">
+                                            <a  ng-if="solicitud.activo" class="orange" href="javascript:void(0)" ng-click="editar(solicitud)">
                                                 <i class="ace-icon fa fa-pencil-square-o bigger-130"></i>
                                             </a>
                                         </li>
@@ -214,17 +214,17 @@
                                             </a>
                                         </li>
                                         <li>
-                                            <a  ng-disabled="!aplicacion.puede_ver" class="blue" href="javascript:void(0)" ng-click="ver(solicitud)">
+                                            <a   class="blue" href="javascript:void(0)" ng-click="ver(solicitud)">
                                                 <i class="ace-icon fa fa-search-plus bigger-130"></i>
                                             </a>
                                         </li>
                                         <li>
-                                            <a  ng-disabled="!aplicacion.puede_crear" class="blue" href="javascript:void(0)" ng-click="copiar(solicitud)">
+                                            <a  class="blue" href="javascript:void(0)" ng-click="copiar(solicitud)">
                                                 <i class="ace-icon fa fa-files-o bigger-130"></i>
                                             </a>
                                         </li>
                                         <li>
-                                            <a  ng-disabled="!aplicacion.puede_eliminar" class="red" ng-if="solicitud.activo" ng-click="eliminar(solicitud)">
+                                            <a  class="red" ng-if="solicitud.activo" ng-click="eliminar(solicitud)">
                                                 <i class="ace-icon fa fa-trash-o bigger-130"></i>
                                             </a>
                                         </li>
