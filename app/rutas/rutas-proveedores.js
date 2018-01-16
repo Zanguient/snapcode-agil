@@ -60,7 +60,8 @@ router.route('/proveedores')
 					res.json(proveedorCreado);
 				});
 			}
-    });
+		});
+	});
 router.route('/proveedor/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda')
 	.get(function(req, res) {
 		var condicionProveedor={id_empresa:req.params.id_empresa,};	
