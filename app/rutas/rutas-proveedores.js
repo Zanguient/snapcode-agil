@@ -3,26 +3,63 @@ module.exports=function(router,sequelize,forEach,decodeBase64Image,fs,Empresa,Pr
 router.route('/proveedores')
 
     .post(function(req, res) {
-		Proveedor.create({
-			id_empresa:req.body.id_empresa,
-			razon_social:req.body.razon_social,
-			codigo:req.body.codigo,
-			nit:req.body.nit,
-			direccion:req.body.direccion,
-			telefono1:req.body.telefono1,
-			telefono2:req.body.telefono2,
-			telefono3:req.body.telefono3,
-			contacto:req.body.contacto,
-			rubro:req.body.rubro,
-			categoria:req.body.categoria,
-			ubicacion_geografica:req.body.ubicacion_geografica,
-			fecha1:req.body.fecha1,
-			fecha2:req.body.fecha2,
-			texto1:req.body.texto1,
-			texto2:req.body.texto2
-		}).then(function(proveedorCreado){
-			res.json(proveedorCreado);
-		});
+		Proveedor.find({
+			where: {
+				$or: [{ nit: req.body.nit }, { codigo: req.body.codigo }],
+				id_empresa: req.body.id_empresa
+			},
+		}).then(function (proveedor) {
+			if (proveedor) {
+				
+				Proveedor.update({
+					id_empresa:req.body.id_empresa,
+					razon_social:req.body.razon_social,
+					codigo:req.body.codigo,
+					nit:req.body.nit,
+					direccion:req.body.direccion,
+					telefono1:req.body.telefono1,
+					telefono2:req.body.telefono2,
+					telefono3:req.body.telefono3,
+					contacto:req.body.contacto,
+					rubro:req.body.rubro,
+					categoria:req.body.categoria,
+					ubicacion_geografica:req.body.ubicacion_geografica,
+					fecha1:req.body.fecha1,
+					fecha2:req.body.fecha2,
+					texto1:req.body.texto1,
+					texto2:req.body.texto2
+				}, {
+						where: {
+							id: proveedor.id
+						}
+						
+					}).then(function (clienteCreado) {
+						res.json(proveedor);
+					});
+
+
+			}else{
+				Proveedor.create({
+					id_empresa:req.body.id_empresa,
+					razon_social:req.body.razon_social,
+					codigo:req.body.codigo,
+					nit:req.body.nit,
+					direccion:req.body.direccion,
+					telefono1:req.body.telefono1,
+					telefono2:req.body.telefono2,
+					telefono3:req.body.telefono3,
+					contacto:req.body.contacto,
+					rubro:req.body.rubro,
+					categoria:req.body.categoria,
+					ubicacion_geografica:req.body.ubicacion_geografica,
+					fecha1:req.body.fecha1,
+					fecha2:req.body.fecha2,
+					texto1:req.body.texto1,
+					texto2:req.body.texto2
+				}).then(function(proveedorCreado){
+					res.json(proveedorCreado);
+				});
+			}
     });
 router.route('/proveedor/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda')
 	.get(function(req, res) {
