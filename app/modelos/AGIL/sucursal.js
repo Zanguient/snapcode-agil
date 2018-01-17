@@ -75,6 +75,40 @@ module.exports=function(sequelize,Sequelize){
 		pre_factura_correlativo:{
 	  	type: Sequelize.INTEGER,
 		field: 'pre_factura_correlativo'
+		},
+		comprobante_ingreso_correlativo:{
+	  	type: Sequelize.INTEGER,
+		field: 'comprobante_ingreso_correlativo'
+		},
+		comprobante_egreso_correlativo:{
+	  	type: Sequelize.INTEGER,
+		field: 'comprobante_egreso_correlativo'
+		},
+		comprobante_traspaso_correlativo:{
+	  	type: Sequelize.INTEGER,
+		field: 'comprobante_traspaso_correlativo'
+		}
+		,
+		comprobante_caja_chica_correlativo:{
+	  	type: Sequelize.INTEGER,
+		field: 'comprobante_caja_chica_correlativo'
+		},
+		reiniciar_comprobante_ingreso_correlativo:{
+	  	type: Sequelize.BOOLEAN,
+		field: 'reiniciar_comprobante_ingreso_correlativo'
+		},
+		reiniciar_comprobante_egreso_correlativo:{
+	  	type: Sequelize.BOOLEAN,
+		field: 'reiniciar_comprobante_egreso_correlativo'
+		},
+		reiniciar_comprobante_traspaso_correlativo:{
+	  	type: Sequelize.BOOLEAN,
+		field: 'reiniciar_comprobante_traspaso_correlativo'
+		}
+		,
+		reiniciar_comprobante_caja_chica_correlativo:{
+	  	type: Sequelize.BOOLEAN,
+		field: 'reiniciar_comprobante_caja_chica_correlativo'
 		}
 	}, {
 	  freezeTableName: true 

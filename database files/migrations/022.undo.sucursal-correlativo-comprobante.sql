@@ -1,0 +1,8 @@
+ALTER TABLE agil_sucursal DROP comprobante_ingreso_correlativo;
+ALTER TABLE agil_sucursal DROP comprobante_egreso_correlativo;
+ALTER TABLE agil_sucursal DROP comprobante_traspaso_correlativo;
+ALTER TABLE agil_sucursal DROP comprobante_caja_chica_correlativo;
+ALTER TABLE agil_sucursal DROP reiniciar_comprobante_ingreso_correlativo;
+ALTER TABLE agil_sucursal DROP reiniciar_comprobante_egreso_correlativo;
+ALTER TABLE agil_sucursal DROP reiniciar_comprobante_traspaso_correlativo;
+ALTER TABLE agil_sucursal DROP reiniciar_comprobante_caja_chica_correlativo;

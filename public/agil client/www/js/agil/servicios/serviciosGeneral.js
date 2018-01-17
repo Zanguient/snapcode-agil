@@ -330,6 +330,7 @@ angular.module('agil.servicios')
 	.factory('DibujarCabeceraComprobante', [function () {
 		var res = function (doc, bimonetario, usuario, comprobante, pagina, totalPaginas) {
 			var fecha = new Date()
+			console.log(usuario)
 			if (bimonetario) {
 				doc.rect(20, 30, 571, 732).stroke();
 				doc.font('Helvetica-Bold', 8);
@@ -344,7 +345,10 @@ angular.module('agil.servicios')
 				doc.text(pagina + ' de: ' + totalPaginas, 545, 35)
 				doc.font('Helvetica-Bold', 8);
 				doc.text("Gestión: " + fecha.getFullYear(), 515, 50)
-				doc.text("N°: " + comprobante.numero, 535, 65)
+				if(comprobante.tipoComprobante.nombre=="INGRESO")doc.text("N°: " + comprobante.sucursal.comprobante_ingreso_correlativo, 535, 65)
+				if(comprobante.tipoComprobante.nombre=="EGRESO")doc.text("N°: " + comprobante.sucursal.comprobante_egreso_correlativo, 535, 65)
+				if(comprobante.tipoComprobante.nombre=="TRASPASO")doc.text("N°: " + comprobante.sucursal.comprobante_traspaso_correlativo, 535, 65)
+				if(comprobante.tipoComprobante.nombre=="CAJA CHICA")doc.text("N°: " + comprobante.sucursal.comprobante_caja_chica_correlativo, 535, 65)
 				doc.rect(20, 90, 571, 0).stroke();
 				doc.font('Helvetica', 8);
 				doc.text(comprobante.gloza, 68, 105)
@@ -395,7 +399,7 @@ angular.module('agil.servicios')
 				doc.font('Helvetica', 8);
 				doc.text(pagina + ' de: ' + totalPaginas, 545, 35)
 				doc.font('Helvetica-Bold', 8);
-				doc.text("Gestión: " + fecha.getFullYear(), 515, 50)
+				doc.text("Gestión: " + fecha.getFullYear(), 515, 50)							
 				doc.text("N°: " + comprobante.numero, 535, 65)
 				doc.rect(20, 90, 571, 0).stroke();
 				doc.font('Helvetica', 8);

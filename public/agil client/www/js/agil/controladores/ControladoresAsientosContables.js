@@ -19,7 +19,7 @@ angular.module('agil.controladores')
 
             $scope.eliminarPopup($scope.IdModalVerificarCuenta);
             $scope.eliminarPopup($scope.IdModalEliminarComprobante)
-
+            $scope.eliminarPopup($scope.IdModalCambioMoneda)
         });
 
         $scope.inicio = function () {

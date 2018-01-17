@@ -474,14 +474,16 @@ module.exports = function (router, ComprobanteContabilidad, AsientoContabilidad,
 	// })
 	router.route('/comprobante-contabolidad')
 		.post(function (req, res) {
-			ComprobanteContabilidad.findAll({
-				limit: 1,
+			Sucursal.find({			
 				where: {
-					id_sucursal: req.body.id_sucursal.id//your where conditions, or without them if you need ANY entry
-				},
-				order: [['createdAt', 'DESC']]
-			}).then(function (comprobanteEncontrado) {
-				var numero = (comprobanteEncontrado[0] ? comprobanteEncontrado[0].numero + 1 : 1);
+					id:req.body.id_sucursal.id,//your where conditions, or without them if you need ANY entry
+				}				
+			}).then(function (SucursalEncontrada) {
+				var numero = 0;
+				if (req.body.tipoComprobante.nombre == "INGRESO") { numero = SucursalEncontrada.comprobante_ingreso_correlativo }
+				if (req.body.tipoComprobante.nombre == "EGRESO") { numero = SucursalEncontrada.comprobante_egreso_correlativo }
+				if (req.body.tipoComprobante.nombre == "TRASPASO") { numero = SucursalEncontrada.comprobante_traspaso_correlativo }
+				if (req.body.tipoComprobante.nombre == "CAJA CHICA") { numero = SucursalEncontrada.comprobante_caja_chica_correlativo }
 				ComprobanteContabilidad.create({
 					id_tipo: req.body.tipoComprobante.id,
 					abierto: req.body.abierto,
@@ -493,7 +495,21 @@ module.exports = function (router, ComprobanteContabilidad, AsientoContabilidad,
 					eliminado: req.body.eliminado,
 					importe: req.body.importe,
 					id_tipo_cambio: req.body.tipoCambio.id
-				}).then(function (ComprobanteCreado) {
+				}).then(function (ComprobanteCreado) {					
+				if (req.body.tipoComprobante.nombre == "INGRESO") { SucursalEncontrada.comprobante_ingreso_correlativo = SucursalEncontrada.comprobante_ingreso_correlativo+1 }
+				if (req.body.tipoComprobante.nombre == "EGRESO") { SucursalEncontrada.comprobante_egreso_correlativo = SucursalEncontrada.comprobante_egreso_correlativo+1 }
+				if (req.body.tipoComprobante.nombre == "TRASPASO") { SucursalEncontrada.comprobante_traspaso_correlativo = SucursalEncontrada.comprobante_traspaso_correlativo+1 }
+				if (req.body.tipoComprobante.nombre == "CAJA CHICA") { SucursalEncontrada.comprobante_caja_chica_correlativo = SucursalEncontrada.comprobante_caja_chica_correlativo+1 }
+					Sucursal.update({
+						comprobante_ingreso_correlativo:SucursalEncontrada.comprobante_ingreso_correlativo,
+						comprobante_egreso_correlativo:SucursalEncontrada.comprobante_egreso_correlativo,
+						comprobante_traspaso_correlativo:SucursalEncontrada.comprobante_traspaso_correlativo,
+						comprobante_caja_chica_correlativo:SucursalEncontrada.comprobante_caja_chica_correlativo,},{
+							where:{
+								id:req.body.id_sucursal.id,
+							}
+						
+					})
 					var totalHaber = 0, totalDebe = 0, totalSaldo = 0;
 					req.body.asientosContables.forEach(function (asientoContable, index, array) {
 						if (asientoContable.activo != false && asientoContable.cuenta != "") {
@@ -610,13 +626,13 @@ module.exports = function (router, ComprobanteContabilidad, AsientoContabilidad,
 				})
 		})
 		.put(function (req, res) {
-			ComprobanteContabilidad.findAll({
+			/* ComprobanteContabilidad.findAll({
 				where: {
 					id: req.body.id//your where conditions, or without them if you need ANY entry
 				},
 				include: [{ model: AsientoContabilidad, as: 'asientosContables', include: [{ model: ContabilidadCuenta, as: 'cuenta' }] }]
 			}).then(function (comprobanteEncontrado) {
-				var numero = (comprobanteEncontrado[0] ? comprobanteEncontrado[0].numero + 1 : 1);
+				var numero = (comprobanteEncontrado[0] ? comprobanteEncontrado[0].numero + 1 : 1); */
 				ComprobanteContabilidad.update({
 					id_tipo: req.body.tipoComprobante.id,
 					fecha: req.body.fecha,
@@ -699,7 +715,7 @@ module.exports = function (router, ComprobanteContabilidad, AsientoContabilidad,
 							}
 
 						});
-					})
+					/* }) */
 			})
 		})
 		.get(function (req, res) {

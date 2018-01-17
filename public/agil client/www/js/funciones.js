@@ -468,7 +468,7 @@ function ejecutarScriptsDosificacion(idPopupEdicion, idPopupVista, idPopupElimin
 function ejecutarScriptsSucursal(idPopupEdicion, idPopupVista, idPopupEliminacion, idContenedorEdicion, idContenedorVista, idPopupCorrelativoEdicion) {
 	crearPopup(idPopupEdicion, "60%", 550);
 	crearPopup(idPopupVista, "60%", 550);
-	crearPopup(idPopupCorrelativoEdicion, "60%", 450);
+	crearPopup(idPopupCorrelativoEdicion, "60%", "auto");
 	aplicarWizardFormulario(idPopupEdicion, idContenedorEdicion);
 	aplicarWizardFormulario(idPopupVista, idContenedorVista);
 	crearPopup(idPopupEliminacion, "30%", 170);

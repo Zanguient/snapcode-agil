@@ -99,7 +99,15 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Sucu
 				nota_recibo_correlativo: req.body.nota_recibo_correlativo,
 				imprimir_pedido_corto: req.body.imprimir_pedido_corto,
 				cotizacion_correlativo: req.body.cotizacion_correlativo,
-				pre_factura_correlativo: req.body.pre_factura_correlativo
+				pre_factura_correlativo: req.body.pre_factura_correlativo,
+				comprobante_ingreso_correlativo: req.body.comprobante_ingreso_correlativo,
+				comprobante_egreso_correlativo: req.body.comprobante_egreso_correlativo,
+				comprobante_traspaso_correlativo: req.body.comprobante_traspaso_correlativo,
+				comprobante_caja_chica_correlativo: req.body.comprobante_caja_chica_correlativo,
+				reiniciar_comprobante_ingreso_correlativo: req.body.reiniciar_comprobante_ingreso_correlativo,
+				reiniciar_comprobante_egreso_correlativo: req.body.reiniciar_comprobante_egreso_correlativo,
+				reiniciar_comprobante_traspaso_correlativo: req.body.reiniciar_comprobante_traspaso_correlativo,
+				reiniciar_comprobante_caja_chica_correlativo: req.body.reiniciar_comprobante_caja_chica_correlativo,
 			}, {
 					where: {
 						id: req.params.id_sucursal
@@ -115,7 +123,7 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Sucu
 						id_tamano_papel_nota_traspaso: req.body.configuracionFactura.tamanoPapelNotaTraspaso.id,
 
 					}, {
-						where: { id_sucursal: req.params.id_sucursal }
+							where: { id_sucursal: req.params.id_sucursal }
 						}).then(function (actividadDosificacionCreado) {
 							res.json({ message: "Actualizado satisfactoriamente!" });
 						});
@@ -154,7 +162,7 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Sucu
 							Almacen.destroy({
 								where: { id: almacen.id }
 							}).then(function (almacenEliminado) {
-								if(index===(array.length-1)){
+								if (index === (array.length - 1)) {
 									res.json({ message: "Actualizado satisfactoriamente!" });
 								}
 							});
@@ -168,7 +176,7 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Sucu
 								}, {
 										where: { id: almacen.id }
 									}).then(function (almacenActualizado) {
-										if(index===(array.length-1)){
+										if (index === (array.length - 1)) {
 											res.json({ message: "Actualizado satisfactoriamente!" });
 										}
 									});
@@ -180,7 +188,7 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Sucu
 									direccion: almacen.direccion,
 									telefono: almacen.telefono
 								}).then(function (almacenCreado) {
-									if(index===(array.length-1)){
+									if (index === (array.length - 1)) {
 										res.json({ message: "Actualizado satisfactoriamente!" });
 									}
 								});
@@ -193,7 +201,7 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Sucu
 							SucursalActividadDosificacion.destroy({
 								where: { id: actividadDosificacion.id }
 							}).then(function (actividadDosificacionEliminado) {
-								if(index===(array.length-1)){
+								if (index === (array.length - 1)) {
 									res.json({ message: "Actualizado satisfactoriamente!" });
 								}
 							});
@@ -205,7 +213,7 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Sucu
 								}, {
 										where: { id: actividadDosificacion.id }
 									}).then(function (actividadDosificacionActualizado) {
-										if(index===(array.length-1)){
+										if (index === (array.length - 1)) {
 											res.json({ message: "Actualizado satisfactoriamente!" });
 										}
 									});
@@ -215,7 +223,7 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Sucu
 									id_actividad: actividadDosificacion.id_actividad,
 									id_dosificacion: actividadDosificacion.id_dosificacion
 								}).then(function (actividadDosificacionCreado) {
-									if(index===(array.length-1)){
+									if (index === (array.length - 1)) {
 										res.json({ message: "Actualizado satisfactoriamente!" });
 									}
 								});
