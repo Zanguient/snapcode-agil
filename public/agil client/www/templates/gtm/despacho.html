@@ -1,0 +1,122 @@
+<div class="row">
+	<div class="col-xs-12">
+		<h3 class="header smaller lighter blue">Despachos</h3>
+
+		<button class="btn btn-primary" ng-click="imprimir()">
+			<i class="ace-icon fa fa-plus align-top bigger-125"></i>
+			Nuevo
+		</button>
+		<div class="clearfix">
+			<div class="pull-right tableTools-container"></div>
+		</div>
+		<!--<div class="fileUpload btn btn-primary btn-success">
+			<span class="fileUpload-button ace-icon fa fa-cloud-upload align-top bigger-125">&nbsp&nbspImportar</span>
+			<input ng-disabled="!aplicacion.puede_crear" class="upload" type="file" custom-on-file-change="subirExcelClientes" />&nbsp&nbsp
+		</div>
+		<a href="/recursos/EJEMPLO-DATOS-CLIENTES.xlsx" class="btn btn-primary btn-danger">
+			<i class="ace-icon fa fa-cloud-download align-top bigger-125"></i>
+			Ejemplo Importacion
+		</a>
+		<div class="clearfix">
+			<div class="pull-right tableTools-container"></div>
+		</div>-->
+		<div class="table-header">
+			Lista de Despachos
+		</div>
+
+		<!-- div.table-responsive -->
+
+		<!-- div.dataTables_borderWrap -->
+		<div>
+			<div id="tabla-clientes_wrapper" class="dataTables_wrapper form-inline no-footer">
+				
+				<table id="tabla-destinos" class="table table-striped table-bordered table-hover">
+					<thead>
+						<tr>
+							<th class="center">
+								N°
+							</th>
+							<th>Fecha</th>
+							<th>Transportista</th>
+							<th>Costo Transporte</th>
+							<th>Grupo Estibaje</th>
+							<th>Tipo Estibaje</th>
+							<th>Costo Estibaje</th>
+							<th>Factura</th>
+							<th>Acciones</th>
+						</tr>
+					</thead>
+
+					<tbody>
+						<tr ng-repeat="gtm_detalle_despacho in despachos">
+							<td class="center">
+								{{$index+1}}
+							</td>
+							<td>{{gtm_detalle_despacho.despacho.fecha | date:"dd/MM/yyyy"}}</td>
+							<td>{{gtm_detalle_despacho.transportista.persona.nombre_completo}}</td>
+							<td>{{gtm_detalle_despacho.transportista.costo_transporte}}</td>
+							<td>{{gtm_detalle_despacho.grupo_estibaje.nombre}}</td>
+							
+							<td>{{gtm_detalle_despacho.estibaje.nombre}}</td>
+							<td>{{gtm_detalle_despacho.estibaje.costo}}</td>
+							
+							<td>
+							<td>
+								<div class="hidden-sm hidden-xs action-buttons">
+									<a class="blue" href="javascript:void(0)" e-disabled="!aplicacion.puede_ver" ng-click="verCliente(cliente)">
+									<i class="ace-icon fa fa-search-plus bigger-130"></i>
+								</a>
+
+									<a class="green" href="javascript:void(0)" ng-click="modificarDestino(destino)">
+									<i class="ace-icon fa fa-pencil bigger-130"></i>
+								</a>
+
+									<a class="red" href="javascript:void(0)" ng-click="abrirPopupConfirmacionEliminacion(removerDestino,destino)">
+									<i class="ace-icon fa fa-trash-o bigger-130"></i>
+								</a>
+								</div>
+
+								<div class="hidden-md hidden-lg">
+									<div class="inline pos-rel">
+										<button class="btn btn-minier btn-yellow dropdown-toggle" data-toggle="dropdown" data-position="auto">
+										<i class="ace-icon fa fa-caret-down icon-only bigger-120"></i>
+									</button>
+
+										<ul class="dropdown-menu dropdown-only-icon dropdown-yellow dropdown-menu-right dropdown-caret dropdown-close">
+											<li>
+												<a href="javascript:void(0)" e-disabled="!aplicacion.puede_ver" ng-click="verCliente(cliente)" class="tooltip-info" data-rel="tooltip"
+												 title="View">
+												<span class="blue">
+													<i class="ace-icon fa fa-search-plus bigger-120"></i>
+												</span>
+											</a>
+											</li>
+
+											<li>
+												<a href="javascript:void(0)" ng-click="modificarEstibaje(estibaje)" class="tooltip-success"
+												 data-rel="tooltip" title="Edit">
+												<span class="green">
+													<i class="ace-icon fa fa-pencil-square-o bigger-120"></i>
+												</span>
+											</a>
+											</li>
+
+											<li>
+												<a href="javascript:void(0)" e-disabled="!aplicacion.puede_eliminar" ng-click="mostrarConfirmacionEliminacion(cliente)" class="tooltip-error"
+												 data-rel="tooltip" title="Delete">
+												<span class="red">
+													<i class="ace-icon fa fa-trash-o bigger-120"></i>
+												</span>
+											</a>
+											</li>
+										</ul>
+									</div>
+								</div>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>

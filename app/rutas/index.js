@@ -136,7 +136,9 @@ module.exports = function (router, sequelize, Sequelize, jwt, md5, forEach, ensu
 		MedicoPacienteFicha, MedicoLaboratorioExamen, MedicoLaboratorio, MedicoLaboratorioPaciente, MedicoLaboratorioResultado, MedicoDiagnostico, MedicoDiagnosticoExamen, MedicoDiagnosticoPaciente, MedicoDiagnosticoResultado,
 		MantenimientoOrdenTrabajo, MantenimientoOrdenTrabajoManoObra, MantenimientoOrdenTrabajoMaterial, MantenimientoOrdenTrabajoServicioExterno, MantenimientoOrdenTrabajoSistema,VendedorVenta,RrhhEmpleadoFicha,
 		RrhhEmpleadoFichaOtrosSeguros,RrhhEmpleadoFichaFamiliar,MedicoPacientePreRequisito,RrhhEmpleadoDiscapacidad,RrhhEmpleadoCargo,ClienteRazon,GtmDestino,GtmEstibaje,GtmGrupoEstibaje,GtmTransportista,GtmDespacho,GtmClienteDestino,
-        RrhhEmpleadoHojaVida,RrhhEmpleadoFormacionAcademica,RrhhEmpleadoExperienciaLaboral,RrhhEmpleadoLogroInternoExterno,RrhhEmpleadoCapacidadInternaExterna, SolicitudReposicion,DetalleSolicitudProducto,DetalleSolicitudProductoBase,MonedaTipoCambio,ContabilidadCuentaAuxiliar);
+		RrhhEmpleadoHojaVida,RrhhEmpleadoFormacionAcademica,RrhhEmpleadoExperienciaLaboral,RrhhEmpleadoLogroInternoExterno,
+		RrhhEmpleadoCapacidadInternaExterna, SolicitudReposicion,DetalleSolicitudProducto,DetalleSolicitudProductoBase,
+		MonedaTipoCambio,ContabilidadCuentaAuxiliar,GtmDespachoDetalle);
 	//*****SOCKETS*****
 	require('../sockets/pantallas.js')(io, socket);
 
@@ -178,7 +180,8 @@ module.exports = function (router, sequelize, Sequelize, jwt, md5, forEach, ensu
 	require('./rutas-gtm-destinos')(router,ensureAuthorizedAdministrador,fs,forEach,jwt,md5,GtmDestino); 
 	require('./rutas-gtm-transportistas')(router,ensureAuthorizedAdministrador,fs,forEach,jwt,md5,GtmTransportista,Persona); 
 	require('./rutas-gtm-grupo-estibajes')(router,ensureAuthorizedAdministrador,fs,forEach,jwt,md5,GtmGrupoEstibaje); 
-	require('./rutas-gtm-despacho')(router,ensureAuthorizedAdministrador,fs,forEach,jwt,md5,GtmDespacho,GtmDespachoDetalle); 
+	require('./rutas-gtm-despacho')(router,ensureAuthorizedAdministrador,fs,forEach,jwt,md5,GtmDespacho,GtmDespachoDetalle,Cliente,Usuario,GtmDestino,Producto
+		,GtmTransportista,GtmEstibaje,GtmGrupoEstibaje,Persona); 
 
 	
 

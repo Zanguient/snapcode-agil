@@ -168,6 +168,10 @@
 	<script src="js/agil/controladores/ControladoresPlanillaRetroactivos.js"></script>
 	<script src="js/agil/controladores/controladoresOperaciones.js"></script>
 	<script src="js/gtm/controladores/ControladorGtmEstibaje.js"></script>
+	<script src="js/gtm/controladores/ControladorGtmTransportista.js"></script>
+	<script src="js/gtm/controladores/ControladorGtmGrupoEstibaje.js"></script>
+	<script src="js/gtm/controladores/ControladorGtmDestino.js"></script>
+	<script src="js/gtm/controladores/ControladorGtmDespacho.js"></script>
 
 	<script src="js/agil/servicios/serviciosComprobanteContabilidad.js"></script>
 	<script src="js/agil/servicios/serviciosContabilidadCuentas.js"></script>
@@ -280,7 +284,7 @@
 													<i class="btn btn-xs no-hover btn-success fa fa-external-link"></i>
 													Despachos
 												</span>
-												<span class="pull-right badge badge-important">+{{despachos.length}}</span>
+												<span class="pull-right badge badge-important">+{{gtm_detalles_despacho.length}}</span>
 											</div>
 										</a>
 									</li>
@@ -1673,7 +1677,7 @@
 				<div class="col-sm-12">
 					<div class="row">
 						<div class="col-sm-9">
-							<button tabindex="-1" id="guardarV" type="submit" ng-disabled="nuevoComprobante.$invalid" class="btn btn-primary">
+							<button ng-hide="verComprobante" tabindex="-1" id="guardarV" type="submit" ng-disabled="nuevoComprobante.$invalid" class="btn btn-primary">
 								<i class="ace-icon fa fa-floppy-o align-top bigger-125"></i>
 								GUARDAR
 							</button>
@@ -1841,8 +1845,16 @@
 				<div class="col-sm-12">
 					<div class="widget-box">
 						<div class="widget-header row">
-							<div class="col-sm-8">
+							<div class="col-sm-4">
 								<h4 class="widget-title">TRANSACCIONES</h4>
+							</div>
+							<div class="col-sm-3" align="right">
+								<h4 class="widget-title">COPIAR GLOSA</h4>
+							</div>
+							<div class="col-sm-1">
+								<input tabindex="-1" name="switch-field-1" ng-change="ActivarDesactivarCopiaGlosa(nuevoComprobante)" class="ace ace-switch ace-switch-4 ng-pristine ng-untouched ng-valid ng-empty"
+								 type="checkbox" ng-model="nuevoComprobante.copia_glosa">
+								<span class="lbl check-descuento"></span>
 							</div>
 							<div class="col-sm-3" align="right">
 								<h4 class="widget-title">BIMONETARIO</h4>
@@ -1966,37 +1978,37 @@
 													<div class="form-group">														
 													<!-- <label>Buscar:</label>	 --><br>												
 													&nbsp&nbsp&nbsp<span class="input-icon">
-															<input type="text" id="form-field-icon-1" ng-model="filtro.razon_social" class="center">
+															<input type="text" id="form-field-icon-1" ng-model="filtro" class="center">
 															<i class="ace-icon fa fa-search blue"></i>
 														</span>
 													</div>
 														<div>
-													<select size="8" class="form-control" ng-change="selecionarCuentaAxiliar(asiento)" required ng-options="cuenta.razon_social as cuenta.razon_social for cuenta in listaCuentasAuxiliares|filter: {razon_social:filtro.razon_social} track by cuenta.id" ng-model="asiento.cuenta.cuentaAux.nombre"> 
+													<select size="8" class="form-control" ng-change="selecionarCuentaAxiliar(asiento)" ng-disabled="verComprobante" required ng-options="cuenta.razon_social as cuenta.razon_social for cuenta in listaCuentasAuxiliares|filter: filtro track by cuenta.id" ng-model="asiento.cuenta.cuentaAux.nombre"> 
 														  </select>
 														</div>
 												</script>
 											</td>
 											<th>
-												<select ng-focus="establecerCuentaActual(asiento.cuenta)" ng-disabled="verComprobante" required id="sucursalOrigen{{$index}}"
+												<select ng-focus="establecerCuentaActual(asiento.cuenta)" ng-disabled="asiento.cuenta.id==undefined || verComprobante" required id="sucursalOrigen{{$index}}"
 												 name="centroDeCostos" ng-options="centroCosto as centroCosto.nombre for centroCosto in centrosDeCostos track by centroCosto.id"
 												 ng-model="asiento.centroCosto">
 													<option value="">--Ninguno--</option>
 												</select>
 											</th>
 											<td>
-												<input ng-focus="establecerCuentaActual(asiento.cuenta)" ng-disabled="verComprobante" id="{{$index}}-Bs" type="number" ng-model="asiento.debe_bs"
+												<input ng-focus="establecerCuentaActual(asiento.cuenta)" ng-disabled="asiento.cuenta.id==undefined || verComprobante" id="{{$index}}-Bs" type="number" ng-model="asiento.debe_bs"
 												 ng-change="ComvertirDebeEnDolar(asiento,true);cal(nuevoComprobante.asientosContables)">
 											</td>
 											<td>
-												<input ng-focus="establecerCuentaActual(asiento.cuenta)" ng-disabled="verComprobante" id="{{$index}}-Cs" type="number" ng-model="asiento.haber_bs"
+												<input ng-focus="establecerCuentaActual(asiento.cuenta)" ng-disabled="asiento.cuenta.id==undefined || verComprobante" id="{{$index}}-Cs" type="number" ng-model="asiento.haber_bs"
 												 ng-change="ComvertirHaberEnDolar(asiento,true);cal(nuevoComprobante.asientosContables)">
 											</td>
 											<td ng-if="opcionBimonetario">
-												<input ng-focus="establecerCuentaActual(asiento.cuenta)" ng-disabled="verComprobante" type="number" ng-model="asiento.debe_sus"
+												<input ng-focus="establecerCuentaActual(asiento.cuenta)" ng-disabled="asiento.cuenta.id==undefined || verComprobante" type="number" ng-model="asiento.debe_sus"
 												 ng-change="ComvertirDebeEnBolivianos(asiento);cal(nuevoComprobante.asientosContables)">
 											</td>
-											<td ng-if="opcionBimonetario">
-												<input ng-focus="establecerCuentaActual(asiento.cuenta)" ng-disabled="verComprobante" type="number" ng-model="asiento.haber_sus"
+								z			<td ng-if="opcionBimonetario">
+												<input ng-focus="establecerCuentaActual(asiento.cuenta)" ng-disabled="asiento.cuenta.id==undefined || verComprobante" type="number" ng-model="asiento.haber_sus"
 												 ng-change="ComvertirHaberEnBolivianos(asiento);cal(nuevoComprobante.asientosContables)">
 											</td>
 											<td>

@@ -19,6 +19,10 @@ module.exports = function (sequelize, Sequelize) {
 		costo: {
 			type: Sequelize.DECIMAL(20, 4),
 			field: 'costo'
+		},
+		eliminado: {
+			type: Sequelize.BOOLEAN,
+			field: 'eliminado'
 		}
 	}, {
 			freezeTableName: true

@@ -1,8 +1,8 @@
 <div class="row">
 	<div class="col-xs-12">
-		<h3 class="header smaller lighter blue">Estibaje</h3>
+		<h3 class="header smaller lighter blue">Transportista</h3>
 
-		<button class="btn btn-primary" ng-click="crearNuevoEstibaje()">
+		<button class="btn btn-primary" ng-click="crearNuevoTransportista()">
 			<i class="ace-icon fa fa-plus align-top bigger-125"></i>
 			Nuevo
 		</button>
@@ -21,7 +21,7 @@
 			<div class="pull-right tableTools-container"></div>
 		</div>-->
 		<div class="table-header">
-			Lista de Estibajes
+			Lista de Transportistas
 		</div>
 
 		<!-- div.table-responsive -->
@@ -37,39 +37,47 @@
 								N°
 							</th>
 							<th>Código</th>
-							<th>Nombre del Estibaje</th>
-							<th>Características</th>
+							<th>Transportista</th>
+							<th>Vehiculo</th>
 
-							<th>Costos</th>
+							<th>Capacidad</th>
+							<th>Direccion</th>
+							<th>Telefono</th>
+							<th>Observacion</th>
+							<th>Nit</th>
 							<th>Acciones</th>
 						</tr>
 					</thead>
 
 					<tbody>
-						<tr ng-repeat="estibaje in estibajes">
+						<tr ng-repeat="transportista in transportistas">
 							<td class="center">
 								{{$index+1}}
 							</td>
 						<!-- Falta modificar-->
 							<td>
-								{{estibaje.codigo}}
+								{{transportista.codigo}}
 							</td>
 							<td>
-								{{estibaje.nombre}}
+								{{transportista.persona.nombre_completo}}
 							</td>
-							<td>{{estibaje.descripcion}}</td>
-							<td>{{estibaje.costo}}</td>
+							<td>{{transportista.vehiculo}}</td>
+							<td>{{transportista.capacidad}}</td>
+							<td>{{transportista.persona.direccion}}</td>
+							<td>{{transportista.persona.telefono}}</td>
+							<td>{{transportista.observacion}}</td>
+							<td>{{transportista.nit}}</td>
 							<td>
 								<div class="hidden-sm hidden-xs action-buttons">
 									<a class="blue" href="javascript:void(0)" e-disabled="!aplicacion.puede_ver" ng-click="verCliente(cliente)">
 									<i class="ace-icon fa fa-search-plus bigger-130"></i>
 								</a>
 
-									<a class="green" href="javascript:void(0)" ng-click="modificarEstibaje(estibaje)">
+									<a class="green" href="javascript:void(0)" ng-click="modificarTransportista(transportista)">
 									<i class="ace-icon fa fa-pencil bigger-130"></i>
 								</a>
 
-									<a class="red" href="javascript:void(0)" ng-click="abrirPopupConfirmacionEliminacion(removerEstibaje,estibaje)">
+									<a class="red" href="javascript:void(0)" ng-click="abrirPopupConfirmacionEliminacion(removerTransportista,transportista)">
 									<i class="ace-icon fa fa-trash-o bigger-130"></i>
 								</a>
 								</div>
@@ -120,19 +128,19 @@
 </div>
 
 <!-- Aun falta modificar todos estos-->
-<div id="modal-wizard-estibaje-edicion" class="modal wizard-posicion">
+<div id="modal-wizard-transportista-edicion" class="modal wizard-posicion">
 	<div class="modal-dialog">
 		<div class="modal-content">
-			<form ng-submit="guardarEstibaje(estibaje)">
-				<div id="modal-wizard-container-estibaje-edicion">
+			<form ng-submit="guardarTransportista(transportista)">
+				<div id="modal-wizard-container-transportista-edicion">
 					<div class="modal-header">
 						<ul class="steps">
 							<li data-step="1" class="active">
 								<span class="step">1</span>
-								<span class="title">Datos del Estibaje</span>
+								<span class="title">Transportista</span>
 							</li>
-							<li data-step="10">
-								<span class="step">10</span>
+							<li data-step="2">
+								<span class="step">2</span>
 								<span class="title">Finalizar</span>
 							</li>
 						</ul>
@@ -144,30 +152,65 @@
 								<label class="col-sm-3 control-label no-padding-right" for="codigo">Código</label>
 
 								<div class="col-sm-9">
-									<input required type="text" id="codigo" ng-model="estibaje.codigo" placeholder="Código" class="col-xs-10 col-sm-5" />
+									<input required type="text" id="codigo" ng-model="transportista.codigo" placeholder="Código" class="col-xs-10 col-sm-5" />
 								</div>
 							</div>
 							<div class="form-group">
-								<label class="col-sm-3 control-label no-padding-right" for="nombre">Nombre</label>
+								<label class="col-sm-3 control-label no-padding-right" for="costo">Costo Transporte</label>
 
 								<div class="col-sm-9">
-									<input required type="text" id="nombre" ng-model="estibaje.nombre" placeholder="Nombre" class="col-xs-10 col-sm-5" />
+									<input required type="number" step="0.001" id="nombre" ng-model="transportista.costo_transporte" placeholder="Costo" class="col-xs-10 col-sm-5" />
 								</div>
 							</div>
 							<div class="form-group">
-								<label class="col-sm-3 control-label no-padding-right" for="caracteristicas">Características</label>
+								<label class="col-sm-3 control-label no-padding-right" for="transportista">Transportista</label>
 
 								<div class="col-sm-9">
-									<input required type="text" id="caracteristicas" ng-model="estibaje.descripcion" placeholder="Características" class="form-control"
+									<input required type="text" id="transportista" ng-model="transportista.persona.nombre_completo" placeholder="Características" class="form-control"
 									/>
 								</div>
 							</div>
 
 							<div class="form-group">
-								<label class="col-sm-3 control-label no-padding-right" for="valor">Valor</label>
+								<label class="col-sm-3 control-label no-padding-right" for="codigo">Vehiculo</label>
 
 								<div class="col-sm-9">
-									<input required type="number" step="0.001" id="valor" ng-model="estibaje.costo" placeholder="valor" class="form-control" />
+									<input required type="text" id="vehiculo" ng-model="transportista.vehiculo" placeholder="vehiculo" class="col-xs-10 col-sm-5" />
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-3 control-label no-padding-right" for="capacidad">Capacidad</label>
+
+								<div class="col-sm-9">
+									<input required type="number" step="0.001" id="capacidad" ng-model="transportista.capacidad" placeholder="capacidad" class="col-xs-10 col-sm-5" />
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-3 control-label no-padding-right" for="codigo">Direccion</label>
+
+								<div class="col-sm-9">
+									<input required type="text" id="direccion" ng-model="transportista.persona.direccion" placeholder="direccion" class="col-xs-10 col-sm-5" />
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-3 control-label no-padding-right" for="codigo">Telefono</label>
+
+								<div class="col-sm-9">
+									<input required type="text" id="telefono" ng-model="transportista.persona.telefono" placeholder="telefono" class="col-xs-10 col-sm-5" />
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-3 control-label no-padding-right" for="codigo">Observaciones</label>
+
+								<div class="col-sm-9">
+									<input required type="text" id="observacion" ng-model="transportista.observacion" placeholder="observacion" class="col-xs-10 col-sm-5" />
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-3 control-label no-padding-right" for="codigo">NIT</label>
+
+								<div class="col-sm-9">
+									<input required type="number" id="nit" ng-model="transportista.nit" placeholder="nit" class="col-xs-10 col-sm-5" />
 								</div>
 							</div>
 						</div>
@@ -348,12 +391,4 @@
 			</form>
 		</div>
 	</div>
-</div>
-
-<div id="dialog-eliminar-estibaje" title="¿Eliminación de Cliente?">
-	<p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>¿Esta seguro de eliminar el cliente
-		seleccionado?
-	</p>
-	<button type="button" class="btn btn-danger" ng-click="eliminarCliente(cliente)">Si</button>
-	<button type="button" class="btn btn-success" ng-click="cerrarConfirmacionEliminacion()">No</button>
 </div>

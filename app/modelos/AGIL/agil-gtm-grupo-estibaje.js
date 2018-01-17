@@ -15,7 +15,11 @@ module.exports = function (sequelize, Sequelize) {
          descripcion: {
             type: Sequelize.STRING,
             field: 'descripcion'
-        }
+        },
+		eliminado: {
+			type: Sequelize.BOOLEAN,
+			field: 'eliminado'
+		}
     }, {
             freezeTableName: true
         });

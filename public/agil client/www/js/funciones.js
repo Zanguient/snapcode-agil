@@ -1,10 +1,21 @@
-function ejecutarScriptEstibaje(idModalWizardEstibajeEdicion) {
+function ejecutarScriptEstibaje(idModalWizardEstibajeEdicion,idContenedorEdicionEstibaje) {
 	crearPopup(idModalWizardEstibajeEdicion, "60%", 550);
-	setTimeout(function () {
-		aplicarTiempos();
-	}, 200);
-	//aplicarWizardFormulario(idPopupEdicionSala, idContenedorEdicionSala);
+	aplicarWizardFormulario(idModalWizardEstibajeEdicion, idContenedorEdicionEstibaje);
+}
 
+function ejecutarScriptDestino(idModalWizardDestinoEdicion,idContenedorEdicionDestino) {
+	crearPopup(idModalWizardDestinoEdicion, "60%", 550);
+	aplicarWizardFormulario(idModalWizardDestinoEdicion, idContenedorEdicionDestino);
+}
+
+function ejecutarScriptTransportista(idModalWizardTransportistajeEdicion,idContenedorEdicionTransportista){
+	crearPopup(idModalWizardTransportistajeEdicion, "60%", 550);
+	aplicarWizardFormulario(idModalWizardTransportistajeEdicion, idContenedorEdicionTransportista);
+}
+
+function ejecutarScriptGrupoEstibaje(idModalWizardGrupoEstibajeEdicion,idContenedorEdicionGrupoEstibaje){
+	crearPopup(idModalWizardGrupoEstibajeEdicion, "60%", 550);
+	aplicarWizardFormulario(idModalWizardGrupoEstibajeEdicion, idContenedorEdicionGrupoEstibaje);
 }
 
 
@@ -65,7 +76,7 @@ function ejecutarScriptsInicio(idPopupTablaProductos, idPopupTablaCreditos, idPo
 	idPopupActualizarCreditoCliente, idPopupActualizarCreditoDeuda, idPopupDeuda, idModalDescuento, idModalTablaVentasPendientes,
 	idModalTablaComprasPendientes, idModalTablaBancosPendientes, idModalTablaOtrosPendientes, idModalInicioSesion, idModalWizardComprobanteEdicion, IdModalOpcionesQr, IdModalRegistrarComprobante, IdModalRevisarComprobante, IdModalLibroMayor, IdModalAsignarCuenta,
 	idModalTablaDespachos, idModalTablaAsignacionDespacho,IdModalEliminarProductoVencido) {
-	crearPopup(idPopupTablaProductos, "70%", 550);
+	crearPopup(idPopupTablaProductos, "70%", "auto");
 	crearPopup(idModalWizardComprobanteEdicion, "100%", "auto");
 	crearPopup(idPopupTablaCreditos, "auto", "auto");
 	crearPopup(idPopupTablaDeudas, "auto", "auto");
@@ -95,10 +106,11 @@ function ejecutarScriptsInicio(idPopupTablaProductos, idPopupTablaCreditos, idPo
 		e.stopPropagation();
 	});
 }
-function ejecutarScriptsComprobante(IdModalVerificarCuenta, IdModalEliminarComprobante) {
+function ejecutarScriptsComprobante(IdModalVerificarCuenta, IdModalEliminarComprobante,IdModalCambioMoneda) {
 	/* crearPopup(idModalWizardComprobanteNuevo, "100%", 800); */
 	crearPopup(IdModalVerificarCuenta, "20%", 'auto');
 	crearPopup(IdModalEliminarComprobante, "20%", 'auto');
+	crearPopup(IdModalCambioMoneda, "40%", 'auto');	
 	/*crearPopup(IdModalRevisarComprobante, "80%", 500);
 	crearPopup(IdModalLibroMayor, "80%", 500); */
 
@@ -1200,7 +1212,34 @@ function aplicarSwiper(slidesPerView, slidesPerColumn, paginationClickable, spac
 		spaceBetween: spaceBetween
 	});
 }
-
+function editar_fecha(fecha, intervalo, dma, simbolo) {
+ 
+	var simbolo = simbolo || "-";
+	var arrayFecha = fecha.split(simbolo);
+	var dia = arrayFecha[0];
+	var mes = arrayFecha[1];
+	var anio = arrayFecha[2]; 
+	
+	var fechaInicial = new Date(anio, mes - 1, dia);
+	var fechaFinal = fechaInicial;
+	if(dma=="m" || dma=="M"){
+	  fechaFinal.setMonth(fechaInicial.getMonth()+parseInt(intervalo));
+	}else if(dma=="y" || dma=="Y"){
+	  fechaFinal.setFullYear(fechaInicial.getFullYear()+parseInt(intervalo));
+	}else if(dma=="d" || dma=="D"){
+	  fechaFinal.setDate(fechaInicial.getDate()+parseInt(intervalo));
+	}else{
+	  return fecha;
+	}
+	dia = fechaFinal.getDate();
+	mes = fechaFinal.getMonth() + 1;
+	anio = fechaFinal.getFullYear();
+   
+	dia = (dia.toString().length == 1) ? "0" + dia.toString() : dia;
+	mes = (mes.toString().length == 1) ? "0" + mes.toString() : mes;
+   
+	return dia + simbolo + mes + simbolo + anio;
+}
 function aplicarTiempos() {
 	$('.date-timepicker').datetimepicker({
 		//format: 'MM/DD/YYYY h:mm:ss A',//use this option to display seconds

@@ -11,7 +11,9 @@ module.exports = function (sequelize, Usuario, Persona, Rol, UsuarioRol, Tipo, C
 	ClienteCuenta, ProveedorCuenta, MedicoPrerequisito, ConfiguracionCuenta, MedicoVacuna, VacunaDosis, MedicoPacienteVacuna, MedicoPacienteVacunaDosis, VistaColumnasAplicacion,
 	MedicoPacienteConsulta, MedicoPacienteFicha, MedicoLaboratorioExamen, MedicoLaboratorio, MedicoLaboratorioPaciente, MedicoLaboratorioResultado, MedicoDiagnostico, MedicoDiagnosticoExamen, MedicoDiagnosticoPaciente, MedicoDiagnosticoResultado,
 	MantenimientoOrdenTrabajo, MantenimientoOrdenTrabajoManoObra, MantenimientoOrdenTrabajoMaterial, MantenimientoOrdenTrabajoServicioExterno, MantenimientoOrdenTrabajoSistema,VendedorVenta,RrhhEmpleadoFicha,RrhhEmpleadoFichaOtrosSeguros,RrhhEmpleadoFichaFamiliar,MedicoPacientePreRequisito,RrhhEmpleadoDiscapacidad,RrhhEmpleadoCargo,
-  ClienteRazon,GtmDestino,GtmEstibaje,GtmGrupoEstibaje,GtmTransportista,GtmDespacho,GtmClienteDestino,RrhhEmpleadoHojaVida,RrhhEmpleadoFormacionAcademica,RrhhEmpleadoExperienciaLaboral,RrhhEmpleadoLogroInternoExterno,RrhhEmpleadoCapacidadInternaExterna,SolicitudReposicion,DetalleSolicitudProducto,DetalleSolicitudProductoBase,MonedaTipoCambio,ContabilidadCuentaAuxiliar) {
+  ClienteRazon,GtmDestino,GtmEstibaje,GtmGrupoEstibaje,GtmTransportista,GtmDespacho,GtmClienteDestino,RrhhEmpleadoHojaVida,
+  RrhhEmpleadoFormacionAcademica,RrhhEmpleadoExperienciaLaboral,RrhhEmpleadoLogroInternoExterno,RrhhEmpleadoCapacidadInternaExterna,
+  SolicitudReposicion,DetalleSolicitudProducto,DetalleSolicitudProductoBase,MonedaTipoCambio,ContabilidadCuentaAuxiliar,GtmDespachoDetalle) {
 	  
 	Persona.hasOne(Usuario, { foreignKey: 'id_persona', as: 'usuario' });
 	Persona.belongsTo(Clase, { foreignKey: 'id_lugar_nacimiento', as: 'lugar_nacimiento' });
@@ -654,14 +656,20 @@ module.exports = function (sequelize, Usuario, Persona, Rol, UsuarioRol, Tipo, C
 	Cliente.hasMany(GtmDespacho, { foreignKey: 'id_cliente', as: 'despacho' });
 	GtmDespacho.belongsTo(Cliente, { foreignKey: 'id_cliente', as: 'cliente' });
 	//-- Transportista --
-	GtmTransportista.hasMany(GtmDespacho, { foreignKey: 'id_transportista', as: 'despacho' });
-	GtmDespacho.belongsTo(GtmTransportista, { foreignKey: 'id_transportista', as: 'transportista' });
+	GtmTransportista.hasMany(GtmDespachoDetalle, { foreignKey: 'id_transportista', as: 'detalle_despacho' });
+	GtmDespachoDetalle.belongsTo(GtmTransportista, { foreignKey: 'id_transportista', as: 'transportista' });
 	//-- Estibaje --
-	GtmEstibaje.hasMany(GtmDespacho, { foreignKey: 'id_estibaje', as: 'despacho' });
-	GtmDespacho.belongsTo(GtmEstibaje, { foreignKey: 'id_estibaje', as: 'estibaje' });
+	GtmEstibaje.hasMany(GtmDespachoDetalle, { foreignKey: 'id_estibaje', as: 'detalle_despacho' });
+	GtmDespachoDetalle.belongsTo(GtmEstibaje, { foreignKey: 'id_estibaje', as: 'estibaje' });
 	//-- Grupo Estibaje --
-	GtmGrupoEstibaje.hasMany(GtmDespacho, { foreignKey: 'id_grupo_estibaje', as: 'despacho' });
-	GtmDespacho.belongsTo(GtmGrupoEstibaje, { foreignKey: 'id_grupo_estibaje', as: 'grupo_estibaje' });
+	GtmGrupoEstibaje.hasMany(GtmDespachoDetalle, { foreignKey: 'id_grupo_estibaje', as: 'detalle_despacho' });
+	GtmDespachoDetalle.belongsTo(GtmGrupoEstibaje, { foreignKey: 'id_grupo_estibaje', as: 'grupo_estibaje' });
+
+	GtmDespacho.hasMany(GtmDespachoDetalle, { foreignKey: 'id_despacho', as: 'detalles_despacho' });
+	GtmDespachoDetalle.belongsTo(GtmDespacho, { foreignKey: 'id_despacho', as: 'despacho' });
+
+	Producto.hasMany(GtmDespachoDetalle, { foreignKey: 'id_producto', as: 'detalles_despacho' });
+	GtmDespachoDetalle.belongsTo(Producto, { foreignKey: 'id_producto', as: 'producto' });
 
 	Cliente.hasMany(GtmClienteDestino, { foreignKey: 'id_cliente', as: 'cliente_destinos' });
 	GtmClienteDestino.belongsTo(Cliente, { foreignKey: 'id_cliente', as: 'cliente' });

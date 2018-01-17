@@ -37,7 +37,7 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Clie
 							req.body.clientes_razon.forEach(function (cliente_razon, index, array) {
 								if (!cliente_razon.eliminado) {
 									ClienteRazon.create({
-										id_cliente: clienteCreado.id,
+										id_cliente: cliente.id,
 										razon_social: cliente_razon.razon_social,
 										nit: cliente_razon.nit,
 
@@ -49,7 +49,7 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Clie
 							req.body.cliente_destinos.forEach(function (clienteDestino, index, array) {
 								if (!clienteDestino.eliminado) {
 									GtmClienteDestino.create({
-										id_cliente: clienteCreado.id,
+										id_cliente: cliente.id,
 										id_destino: clienteDestino.id_destino,
 
 									}).then(function (GtmClienteDestinoCreado) {

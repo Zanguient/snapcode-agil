@@ -3,11 +3,12 @@
       <label>Definir Despacho General</label>
   </h4>
 </div>
+<form name="asig" ng-submit="establecerDespacho(asignacion)">
 <div class="row">
   <div class="col-sm-12">
       <div class="form-group">
           <label for="ciudad">Transportista</label>
-          <select ng-model="test" ng-options="gtm_transportista as gtm_transportista.persona.nombre_completo for gtm_transportista in gtm_transportistas"></select>
+          <select required ng-model="asignacion.id_transportista" ng-options="gtm_transportista.id as gtm_transportista.persona.nombre_completo for gtm_transportista in gtm_transportistas"></select>
       </div>
   </div>
 </div>
@@ -15,7 +16,7 @@
   <div class="col-sm-12">
       <div class="form-group">
           <label for="ciudad">Estibaje</label>
-			<select ng-model="test1" ng-options="gtm_estibaje as gtm_estibaje.nombre for gtm_estibaje in gtm_estibajes"></select>
+			<select required ng-model="asignacion.id_estibaje" ng-options="gtm_estibaje.id as gtm_estibaje.nombre for gtm_estibaje in gtm_estibajes"></select>
       </div>
   </div>
 </div>
@@ -23,19 +24,20 @@
   <div class="col-sm-12">
       <div class="form-group">
 		  <label for="ciudad">Grupo Estibaje</label>
-			<select ng-model="test2" ng-options="gtm_grupo_estibaje as gtm_grupo_estibaje.nombre for gtm_grupo_estibaje in gtm_grupo_estibajes"></select>
+			<select required ng-model="asignacion.id_grupo_estibaje" ng-options="gtm_grupo_estibaje.id as gtm_grupo_estibaje.nombre for gtm_grupo_estibaje in gtm_grupo_estibajes"></select>
       </div>
   </div>
 </div>
 <div class="row">
 	<div class="col-sm-12">
 		<div class="modal-footer wizard-actions">
-			<button class="btn btn-primary btn-sm" ng-click="guardarConceptoEdicion(tipo_edicion)">
+			<button ng-disabled="asig.$invalid" type="submit" class="btn btn-primary btn-sm">
 				<i class="glyphicon glyphicon-floppy-disk"></i>Asignar
 			</button>
-			<button class="btn btn-danger btn-sm" ng-click="cerrarDialogConceptoEdicion()">
+			<button type="button" class="btn btn-danger btn-sm" ng-click="cerrarAsignacionDespacho()">
 				<i class="ace-icon fa fa-times"></i>Cancelar
 			</button>
 		</div>
 	</div>
 </div>
+</form>

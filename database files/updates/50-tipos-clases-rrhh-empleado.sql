@@ -1,23 +1,23 @@
-/* tipos recursos humanos */
-INSERT INTO gl_tipo(nombre,nombre_corto,createdAt,updatedAt) VALUES ('EXPEDIDO', 'RRHH_EXP', '2017-12-13 12:07:06', '2017-12-13 12:10:46') 
-INSERT INTO gl_tipo(nombre,nombre_corto,createdAt,updatedAt) VALUES ('TIPO EXPEDIDO', 'RRHH_TEXP', '2017-12-13 12:12:58', '2017-12-13 12:12:58')
-INSERT INTO gl_tipo(nombre,nombre_corto,createdAt,updatedAt) VALUES ('ESTADO CIVIL', 'RRHH_EC', '2017-12-13 12:15:01', '2017-12-13 12:15:01') 
-INSERT INTO gl_tipo(nombre,nombre_corto,createdAt,updatedAt) VALUES ('TIPO CONTRATO', 'RRHH_TC', '2017-12-13 12:26:28', '2017-12-13 12:27:10')
-INSERT INTO gl_tipo(nombre,nombre_corto,createdAt,updatedAt) VALUES ('TIPO PERSONAL', 'RRHH_TP', '2017-12-13 12:27:48', '2017-12-13 12:27:48')
-INSERT INTO gl_tipo(nombre,nombre_corto,createdAt,updatedAt) VALUES ('CARGA HORARIOS', 'RRHH_CH', '2017-12-13 12:31:24', '2017-12-13 12:31:24')
-INSERT INTO gl_tipo(nombre,nombre_corto,createdAt,updatedAt) VALUES ('AREA', 'RRHH_AREA', '2017-12-13 12:32:07', '2017-12-13 12:32:07') 
-INSERT INTO gl_tipo(nombre,nombre_corto,createdAt,updatedAt) VALUES ('UBICACION', 'RRHH_UBI', '2017-12-13 12:32:41', '2017-12-13 12:32:41')
-INSERT INTO gl_tipo(nombre,nombre_corto,createdAt,updatedAt) VALUES ('SEGURO SOCIAL', 'RRHH_SS', '2017-12-13 14:15:36', '2017-12-13 14:15:36') 
-INSERT INTO gl_tipo(nombre,nombre_corto,createdAt,updatedAt) VALUES ('LUGAR SEGURO SALUD', 'RRHH_LSS', '2017-12-13 14:17:38', '2017-12-13 14:17:38') 
-INSERT INTO gl_tipo(nombre,nombre_corto,createdAt,updatedAt) VALUES ('APORTE SEGURO LARGO PLAZO', 'RRHH_ASLP', '2017-12-13 14:27:00', '2017-12-13 14:27:00')
-INSERT INTO gl_tipo(nombre,nombre_corto,createdAt,updatedAt) VALUES ('OTROS SEGUROS', 'RRHH_OST', '2017-12-13 14:35:46', '2017-12-13 14:35:46')
-INSERT INTO gl_tipo(nombre,nombre_corto,createdAt,updatedAt) VALUES ('BANCO', 'RRHH_BAN', '2017-12-13 14:37:13', '2017-12-13 14:37:13') 
-INSERT INTO gl_tipo(nombre,nombre_corto,createdAt,updatedAt) VALUES ('RELACION', 'RRHH_REL', '2017-12-13 15:10:17', '2017-12-13 15:10:17')
-INSERT INTO gl_tipo(nombre,nombre_corto,createdAt,updatedAt) VALUES ('CARGO', 'RRHH_CARGO', '2017-12-18 17:39:19', '2017-12-18 17:39:19') 
-INSERT INTO gl_tipo(nombre,nombre_corto,createdAt,updatedAt) VALUES ('NACIONALIDAD', 'NAC', '2017-12-19 11:04:51', '2017-12-19 11:04:51') 
-INSERT INTO gl_tipo(nombre,nombre_corto,createdAt,updatedAt) VALUES ('LOCALIDAD', 'LOC', '2017-12-19 11:04:51', '2017-12-19 11:04:51')
-INSERT INTO gl_tipo(nombre,nombre_corto,createdAt,updatedAt) VALUES ('DISCAPACIDAD', 'RRHH_DISC', '2017-12-19 11:04:51', '2017-12-19 11:04:51')
-/* clases de los tipos */
+
+INSERT INTO gl_tipo(nombre,nombre_corto,createdAt,updatedAt) VALUES ('EXPEDIDO', 'RRHH_EXP', '2017-12-13 12:07:06', '2017-12-13 12:10:46');
+INSERT INTO gl_tipo(nombre,nombre_corto,createdAt,updatedAt) VALUES ('TIPO EXPEDIDO', 'RRHH_TEXP', '2017-12-13 12:12:58', '2017-12-13 12:12:58');
+INSERT INTO gl_tipo(nombre,nombre_corto,createdAt,updatedAt) VALUES ('ESTADO CIVIL', 'RRHH_EC', '2017-12-13 12:15:01', '2017-12-13 12:15:01') ;
+INSERT INTO gl_tipo(nombre,nombre_corto,createdAt,updatedAt) VALUES ('TIPO CONTRATO', 'RRHH_TC', '2017-12-13 12:26:28', '2017-12-13 12:27:10');
+INSERT INTO gl_tipo(nombre,nombre_corto,createdAt,updatedAt) VALUES ('TIPO PERSONAL', 'RRHH_TP', '2017-12-13 12:27:48', '2017-12-13 12:27:48');
+INSERT INTO gl_tipo(nombre,nombre_corto,createdAt,updatedAt) VALUES ('CARGA HORARIOS', 'RRHH_CH', '2017-12-13 12:31:24', '2017-12-13 12:31:24');
+INSERT INTO gl_tipo(nombre,nombre_corto,createdAt,updatedAt) VALUES ('AREA', 'RRHH_AREA', '2017-12-13 12:32:07', '2017-12-13 12:32:07') ;
+INSERT INTO gl_tipo(nombre,nombre_corto,createdAt,updatedAt) VALUES ('UBICACION', 'RRHH_UBI', '2017-12-13 12:32:41', '2017-12-13 12:32:41');
+INSERT INTO gl_tipo(nombre,nombre_corto,createdAt,updatedAt) VALUES ('SEGURO SOCIAL', 'RRHH_SS', '2017-12-13 14:15:36', '2017-12-13 14:15:36') ;
+INSERT INTO gl_tipo(nombre,nombre_corto,createdAt,updatedAt) VALUES ('LUGAR SEGURO SALUD', 'RRHH_LSS', '2017-12-13 14:17:38', '2017-12-13 14:17:38') ;
+INSERT INTO gl_tipo(nombre,nombre_corto,createdAt,updatedAt) VALUES ('APORTE SEGURO LARGO PLAZO', 'RRHH_ASLP', '2017-12-13 14:27:00', '2017-12-13 14:27:00');
+INSERT INTO gl_tipo(nombre,nombre_corto,createdAt,updatedAt) VALUES ('OTROS SEGUROS', 'RRHH_OST', '2017-12-13 14:35:46', '2017-12-13 14:35:46');
+INSERT INTO gl_tipo(nombre,nombre_corto,createdAt,updatedAt) VALUES ('BANCO', 'RRHH_BAN', '2017-12-13 14:37:13', '2017-12-13 14:37:13') ;
+INSERT INTO gl_tipo(nombre,nombre_corto,createdAt,updatedAt) VALUES ('RELACION', 'RRHH_REL', '2017-12-13 15:10:17', '2017-12-13 15:10:17');
+INSERT INTO gl_tipo(nombre,nombre_corto,createdAt,updatedAt) VALUES ('CARGO', 'RRHH_CARGO', '2017-12-18 17:39:19', '2017-12-18 17:39:19') ;
+INSERT INTO gl_tipo(nombre,nombre_corto,createdAt,updatedAt) VALUES ('NACIONALIDAD', 'NAC', '2017-12-19 11:04:51', '2017-12-19 11:04:51') ;
+INSERT INTO gl_tipo(nombre,nombre_corto,createdAt,updatedAt) VALUES ('LOCALIDAD', 'LOC', '2017-12-19 11:04:51', '2017-12-19 11:04:51');
+INSERT INTO gl_tipo(nombre,nombre_corto,createdAt,updatedAt) VALUES ('DISCAPACIDAD', 'RRHH_DISC', '2017-12-19 11:04:51', '2017-12-19 11:04:51');
+
 INSERT INTO gl_clase(tipo,nombre,nombre_corto,createdAt,updatedAt) VALUES ((SELECT gl_tipo.id from gl_tipo where nombre_corto = 'RRHH_EXP'), 'COCHABAMBA', 'CB', '2017-12-13 12:07:06', '2017-12-13 12:10:46');
 INSERT INTO gl_clase(tipo,nombre,nombre_corto,createdAt,updatedAt) VALUES ((SELECT gl_tipo.id from gl_tipo where nombre_corto = 'RRHH_EXP'), 'LA PAZ', 'LA', '2017-12-13 12:07:06', '2017-12-13 12:10:46');
 INSERT INTO gl_clase(tipo,nombre,nombre_corto,createdAt,updatedAt) VALUES ((SELECT gl_tipo.id from gl_tipo where nombre_corto = 'RRHH_EXP'), 'SANTA CRUZ', 'SC', '2017-12-13 12:07:06', '2017-12-13 12:10:46');

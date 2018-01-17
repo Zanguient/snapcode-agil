@@ -1,16 +1,17 @@
 angular.module('agil.controladores')
 
     .controller('ControladorComprobantes', function ($scope, $localStorage, $location, $templateCache, $route, blockUI, CodigoControl, Paginator, ComprobantePaginador, ClasesTipo, ListaCuentasComprobanteContabilidad, ListaAsientosComprobanteContabilidad, NuevoComprobanteContabilidad, ClasesTipo, LibroMayorCuenta, ComprobanteRevisarPaginador,
-        AsignarComprobanteFavorito, ImprimirComprobante, ComprasComprobante, VerificarUsuarioEmpresa, FieldViewer, DatosComprobante, EliminarComprobante) {
+        AsignarComprobanteFavorito, ImprimirComprobante, ComprasComprobante, VerificarUsuarioEmpresa, FieldViewer, DatosComprobante, EliminarComprobante,ListaCambioMoneda,ActualizarCambioMoneda) {
 
         blockUI.start();
         $scope.asientoNuevo = false
         $scope.usuario = JSON.parse($localStorage.usuario);
         $scope.IdModalVerificarCuenta = 'modal-verificar-cuenta';
-        $scope.IdModalEliminarComprobante = 'dialog-eliminar-comprobante'
+        $scope.IdModalEliminarComprobante = 'dialog-eliminar-comprobante';
+        $scope.IdModalCambioMoneda = 'dialog-cambio-moneda';
         $scope.$on('$viewContentLoaded', function () {
             resaltarPestaña($location.path().substring(1));
-            ejecutarScriptsComprobante($scope.IdModalVerificarCuenta, $scope.IdModalEliminarComprobante);
+            ejecutarScriptsComprobante($scope.IdModalVerificarCuenta, $scope.IdModalEliminarComprobante,$scope.IdModalCambioMoneda);
             $scope.buscarAplicacion($scope.usuario.aplicacionesUsuario, $location.path().substring(1));
             $scope.obtenerColumnasAplicacion();
         });
@@ -29,9 +30,10 @@ angular.module('agil.controladores')
             $scope.cuenta = {}
             $scope.comprobante = { asientos: [] }
             $scope.sucursales = $scope.obtenerSucursales();
-
+            $scope.obtenerMeses()
             $scope.ObtenerComprobantes();
             $scope.obtenerGestiones();
+            $scope.obtenerAnios("2016")
         }
 
         $scope.obtenerColumnasAplicacion = function () {
@@ -251,6 +253,50 @@ angular.module('agil.controladores')
                 blockUI.stop();
             })
 
+        }
+        $scope.buscarCambioMoneda = function name(filtro) {
+            var promesa = ListaCambioMoneda(filtro)
+            promesa.then(function (datos) {
+                $scope.cambiosMoneda=datos
+            })
+        }
+        $scope.abrirCambioMoneda = function () {            
+            $scope.filtroMoneda={mes:"a",anio:2018}
+            var promesa = ListaCambioMoneda($scope.filtroMoneda)
+            promesa.then(function (datos) {
+                $scope.cambiosMoneda=datos
+                $scope.abrirPopup($scope.IdModalCambioMoneda);
+            })
+			
+		}
+		$scope.cerrarCambioMoneda = function () {
+			$scope.cerrarPopup($scope.IdModalCambioMoneda);
+		}
+        $scope.obtenerAnios = function (startYear) {
+            var currentYear = new Date().getFullYear(), years = [];
+            startYear = startYear || 1980;
+
+            while (startYear <= currentYear) {
+                years.push(startYear++);
+            }
+
+            $scope.listYears = years;
+        }
+        $scope.EditarCambioMoneda = function (moneda) {
+            moneda.edit=true
+        }
+        $scope.CancelarModificarMoneda=function(){
+            var promesa = ListaCambioMoneda($scope.filtroMoneda)
+            promesa.then(function (datos) {
+                $scope.cambiosMoneda=datos
+            })
+        }
+        $scope.GuardarCambio=function (moneda) {
+            var promesa = ActualizarCambioMoneda(moneda)
+            promesa.then(function (datos) {
+                $scope.mostrarMensaje(datos.mensaje)
+                moneda.edit=false
+            })
         }
         $scope.inicio();
 

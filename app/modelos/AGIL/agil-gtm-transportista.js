@@ -28,6 +28,14 @@ module.exports = function (sequelize, Sequelize) {
 			type: Sequelize.INTEGER,
 			field: 'empresa'
 		},
+		observacion: {
+			type: Sequelize.STRING,
+			field: 'observacion'
+		},
+		eliminado: {
+			type: Sequelize.BOOLEAN,
+			field: 'eliminado'
+		}
 	}, {
 			freezeTableName: true
 		});

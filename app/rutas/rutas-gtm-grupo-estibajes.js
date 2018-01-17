@@ -5,7 +5,8 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, forEach, j
 		.get(function (req, res) {
 			GtmGrupoEstibaje.findAll({
 				where: {
-					id_empresa: req.params.id_empresa
+					id_empresa: req.params.id_empresa,
+					eliminado:false
 				}
 			}).then(function (entity) {
 				res.json(entity);
@@ -32,6 +33,7 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, forEach, j
 				codigo: req.body.codigo,
 				nombre: req.body.nombre,
 				descripcion: req.body.descripcion,
+				eliminado:req.body.eliminado
 			},
 				{
 					where: {

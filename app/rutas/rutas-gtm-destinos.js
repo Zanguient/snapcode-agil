@@ -5,7 +5,8 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, forEach, j
 		.get(function (req, res) {
 			GtmDestino.findAll({
 				where: {
-					id_empresa: req.params.id_empresa
+					id_empresa: req.params.id_empresa,
+					eliminado:false
 				}
 			}).then(function (entity) {
 				res.json(entity);
@@ -18,7 +19,9 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, forEach, j
 			GtmDestino.create({
 				id_empresa: req.body.id_empresa,
 				destino: req.body.destino,
-				direccion: req.body.direccion
+				direccion: req.body.direccion,
+				eliminado:false,
+				codigo:req.body.codigo
 			}).then(function (destinoCreado) {
 				res.json(destinoCreado);
 			});
@@ -29,7 +32,9 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, forEach, j
 		.put(function (req, res) {
 			GtmDestino.update({
 				destino: req.body.destino,
-				direccion: req.body.direccion
+				direccion: req.body.direccion,
+				eliminado:req.body.eliminado,
+				codigo:req.body.codigo
 			},
 				{
 					where: {

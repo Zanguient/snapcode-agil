@@ -105,28 +105,28 @@ module.exports = function (router, ComprobanteContabilidad, AsientoContabilidad,
 				include: [{ model: AsientoContabilidad, as: 'asientosContables' }, { model: Clase, as: 'tipoComprobante' }, { model: Usuario, as: 'usuario', include: [{ model: Persona, as: 'persona', where: condicionPersona }] },
 				{ model: Sucursal, as: 'sucursal', where: condicionSucursal, include: [{ model: Empresa, as: 'empresa' }] }],
 			}).then(function (data) {
-				if(req.params.items_pagina=="0"){
-					ComprobanteContabilidad.findAll({						
+				if (req.params.items_pagina == "0") {
+					ComprobanteContabilidad.findAll({
 						where: condicionComprobante,
 						include: [{ model: MonedaTipoCambio, as: 'tipoCambio' }, { model: AsientoContabilidad, as: 'asientosContables', include: [{ model: Clase, as: 'centroCosto' }, { model: ContabilidadCuenta, as: 'cuenta', include: [{ model: ContabilidadCuentaAuxiliar, as: 'cuentaAux' }, { model: Clase, as: 'tipoAuxiliar' }] }] }, { model: Clase, as: 'tipoComprobante' },
 						{ model: Usuario, as: 'usuario', include: [{ model: Persona, as: 'persona', where: condicionPersona }] },
 						{ model: Sucursal, as: 'sucursal', where: condicionSucursal, include: [{ model: Empresa, as: 'empresa' }] }],
 						order: [ordenArreglo]
 					}).then(function (comprobantes) {
-						res.json({ comprobantes: comprobantes});
+						res.json({ comprobantes: comprobantes });
 					});
-				}else{
-				ComprobanteContabilidad.findAll({
-					offset: (req.params.items_pagina * (req.params.pagina - 1)), limit: req.params.items_pagina,
-					where: condicionComprobante,
-					include: [{ model: MonedaTipoCambio, as: 'tipoCambio' }, { model: AsientoContabilidad, as: 'asientosContables', include: [{ model: Clase, as: 'centroCosto' }, { model: ContabilidadCuenta, as: 'cuenta', include: [{ model: ContabilidadCuentaAuxiliar, as: 'cuentaAux' }, { model: Clase, as: 'tipoAuxiliar' }] }] }, { model: Clase, as: 'tipoComprobante' },
-					{ model: Usuario, as: 'usuario', include: [{ model: Persona, as: 'persona', where: condicionPersona }] },
-					{ model: Sucursal, as: 'sucursal', where: condicionSucursal, include: [{ model: Empresa, as: 'empresa' }] }],
-					order: [ordenArreglo]
-				}).then(function (comprobantes) {
-					res.json({ comprobantes: comprobantes, paginas: Math.ceil(data.count / req.params.items_pagina) });
-				});
-			}
+				} else {
+					ComprobanteContabilidad.findAll({
+						offset: (req.params.items_pagina * (req.params.pagina - 1)), limit: req.params.items_pagina,
+						where: condicionComprobante,
+						include: [{ model: MonedaTipoCambio, as: 'tipoCambio' }, { model: AsientoContabilidad, as: 'asientosContables', include: [{ model: Clase, as: 'centroCosto' }, { model: ContabilidadCuenta, as: 'cuenta', include: [{ model: ContabilidadCuentaAuxiliar, as: 'cuentaAux' }, { model: Clase, as: 'tipoAuxiliar' }] }] }, { model: Clase, as: 'tipoComprobante' },
+						{ model: Usuario, as: 'usuario', include: [{ model: Persona, as: 'persona', where: condicionPersona }] },
+						{ model: Sucursal, as: 'sucursal', where: condicionSucursal, include: [{ model: Empresa, as: 'empresa' }] }],
+						order: [ordenArreglo]
+					}).then(function (comprobantes) {
+						res.json({ comprobantes: comprobantes, paginas: Math.ceil(data.count / req.params.items_pagina) });
+					});
+				}
 			});
 		});
 
@@ -200,6 +200,48 @@ module.exports = function (router, ComprobanteContabilidad, AsientoContabilidad,
 				res.json({ monedaCambio: MonedaCambio })
 			})
 		})
+	router.route('/comprobante-contabilidad/monedaCambio/mes/:mes/anio/:anio')
+		.get(function (req, res) {
+			var condicion = {}
+			if (req.params.mes != "a") {
+				var inicio = new Date(req.params.anio, req.params.mes, 1); inicio.setHours(0, 0, 0, 0, 0);
+				var fin = new Date(req.params.anio, (parseInt(req.params.mes) + 1), 0); fin.setHours(23, 0, 0, 0, 0);
+				condicion = {
+					fecha: {
+						$between: [inicio, fin]
+					}
+				}
+			} else {
+				req.params.mes = 0
+				var inicio = new Date(req.params.anio, req.params.mes, 1); inicio.setHours(0, 0, 0, 0, 0);
+				var fin = new Date(req.params.anio, (parseInt(req.params.mes) + 12), 0); fin.setHours(23, 0, 0, 0, 0);
+				condicion = {
+					fecha: {
+						$between: [inicio, fin]
+					}
+				}
+			}
+			MonedaTipoCambio.findAll({
+				where: condicion
+			}).then(function (MonedasCambio) {
+				res.json(MonedasCambio)
+			})
+		})
+	router.route('/comprobante-contabilidad/monedaCambio/:id_moneda')
+		.put(function (req, res) {
+			MonedaTipoCambio.update({
+				fecha: req.body.fecha,
+				ufv: parseFloat(req.body.ufv),
+				dolar: parseFloat(req.body.dolar)
+			}, {
+					where: {
+						id: req.params.id_moneda
+					}
+				}).then(function (monedaActualizada) {
+					res.json({ mensaje: "cambio moneda actualizado satisfactoriamente!" })
+				})
+		})
+
 	router.route('/comprobante-contabilidad/favorito/:id_comprobante')
 		.put(function (req, res) {
 			ComprobanteContabilidad.find({

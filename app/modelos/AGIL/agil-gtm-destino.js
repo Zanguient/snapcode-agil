@@ -4,6 +4,10 @@ module.exports = function (sequelize, Sequelize) {
             type: Sequelize.INTEGER,
             field: 'empresa'
         },
+        codigo: {
+            type: Sequelize.STRING,
+            field: 'codigo'
+        },
         destino: {
             type: Sequelize.STRING,
             field: 'destino'
@@ -11,7 +15,11 @@ module.exports = function (sequelize, Sequelize) {
         direccion: {
             type: Sequelize.STRING,
             field: 'direccion'
-        }
+        },
+		eliminado: {
+			type: Sequelize.BOOLEAN,
+			field: 'eliminado'
+		}
     }, {
             freezeTableName: true
         });

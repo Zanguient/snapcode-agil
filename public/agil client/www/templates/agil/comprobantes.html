@@ -17,17 +17,23 @@
             </div>
         </div> -->
         <button id="nuevo" ng-disabled="!aplicacion.puede_crear" class="btn btn-primary" ng-click="crearNuevoComprobante()">
-                <i class="ace-icon fa fa-plus align-top bigger-125"></i>
-                Nuevo
-            </button>
-            <div class="fileUpload btn btn-primary btn-success" uib-tooltip="Importación Cambio Moneda">
-                <span class="fileUpload-button ace-icon fa fa-cloud-upload align-top bigger-125">&nbsp&nbspImportar</span>
-                <input ng-disabled="!aplicacion.puede_crear" class="upload" type="file" custom-on-file-change="subirExcelUfvDolar" />&nbsp&nbsp
-            </div>
-            <a href="/recursos/EJEMPLO-TIPO-CAMBIO-MONEDA.xlsx" uib-tooltip="Ejemplo Importación Cambio Moneda" class="btn btn-primary btn-danger">
-                <i class="ace-icon fa fa-cloud-download align-top bigger-125"></i>
-                Ejemplo Importación
-            </a>
+            <i class="ace-icon fa fa-plus align-top bigger-125"></i>
+            Nuevo
+        </button>
+        <div class="fileUpload btn btn-primary btn-success" uib-tooltip="Importación Cambio Moneda">
+            <span class="fileUpload-button ace-icon fa fa-cloud-upload align-top bigger-125">&nbsp&nbspImportar</span>
+            <input ng-disabled="!aplicacion.puede_crear" class="upload" type="file" custom-on-file-change="subirExcelUfvDolar" />&nbsp&nbsp
+        </div>
+        <a href="/recursos/EJEMPLO-TIPO-CAMBIO-MONEDA.xlsx" uib-tooltip="Ejemplo Importación Cambio Moneda" class="btn btn-primary btn-danger">
+            <i class="ace-icon fa fa-cloud-download align-top bigger-125"></i>
+            Ejemplo Importación
+        </a>
+        <a id="cambioMoneda" href="javascript:void(0)" ng-click="abrirCambioMoneda()" class="tooltip-success" data-rel="tooltip"
+            title="Edit">
+            <span class="blue">
+                <i class="ace-icon fa fa-file-text-o align-top bigger-300"></i>
+            </span>
+        </a>
     </div>
     <div class="col-xs-12">
         <form name="formularioFiltroVentas" novalidate ng-submit="paginator.getSearch(paginator.search,filtro,null)">
@@ -50,7 +56,7 @@
                             <td>
                             </td>
                             <td>
-                                </td>
+                            </td>
                         </tr>
                         <tr>
                             <td>
@@ -77,13 +83,14 @@
                                     <i class="ace-icon fa fa-print bigger-160"></i>
                                     Excel
                                 </button>
-                                
+
                             </td>
                             <td>
-                                    <div >Bimonetario
-                                            <input name="switch-field-1" class="ace ace-switch ace-switch-4 ng-valid ng-dirty ng-valid-parse ng-not-empty ng-touched" type="checkbox" ng-model="opcionBimonetario2">
-                                            <span class="lbl check-descuento"></span>
-                                        </div>
+                                <div>Bimonetario
+                                    <input name="switch-field-1" class="ace ace-switch ace-switch-4 ng-valid ng-dirty ng-valid-parse ng-not-empty ng-touched"
+                                        type="checkbox" ng-model="opcionBimonetario2">
+                                    <span class="lbl check-descuento"></span>
+                                </div>
                             </td>
                         </tr>
                         <tr>
@@ -217,17 +224,17 @@
                             <td ng-if="fieldViewer.getConfiguration().importe.show">{{comprobante.importe | number:2}}</td>
                             <td ng-if="fieldViewer.getConfiguration().usuario.show">{{comprobante.usuario.persona.nombres}}</td>
                             <td>
-                                <div class="hidden-sm hidden-xs action-buttons" >
+                                <div class="hidden-sm hidden-xs action-buttons">
                                     <a class="blue tooltip-info" href="javascript:void(0)" uib-tooltip="Ver Datos" ng-click="verComprobante(comprobante,true)">
                                         <i class="ace-icon fa fa-search-plus bigger-130"></i>
                                     </a>
-                                    <a ng-if="comprobante.abierto" class="green tooltip-info"  href="javascript:void(0)" uib-tooltip="Editar Datos" ng-click="verComprobante(comprobante)">
-                                        <i class="ace-icon fa fa-pencil bigger-130" ></i>
+                                    <a ng-if="comprobante.abierto" class="green tooltip-info" href="javascript:void(0)" uib-tooltip="Editar Datos" ng-click="verComprobante(comprobante)">
+                                        <i class="ace-icon fa fa-pencil bigger-130"></i>
                                     </a>
                                     <a ng-if="comprobante.abierto" class="red tooltip-info" href="javascript:void(0)" uib-tooltip="Eliminar" ng-click="abrirModalEliminarComprobante(comprobante)">
-                                        <i class="ace-icon fa fa-trash-o bigger-130" ></i>
+                                        <i class="ace-icon fa fa-trash-o bigger-130"></i>
                                     </a>
-                                    <a class="blue tooltip-info" href="javascript:void(0)" uib-tooltip="Imprimir"  ng-click="imprimirComprobante(comprobante,opcionBimonetario2)">
+                                    <a class="blue tooltip-info" href="javascript:void(0)" uib-tooltip="Imprimir" ng-click="imprimirComprobante(comprobante,opcionBimonetario2)">
                                         <i class="ace-icon fa fa-print bigger-130"></i>
                                     </a>
                                 </div>
@@ -298,5 +305,102 @@
     </p>
     <button type="button" class="btn btn-danger" ng-click="eliminarComprobante(empleado)">Si</button>
     <button type="button" class="btn btn-success" ng-click="cerrarDialogEliminarUsuarioRh()">No</button>
+</div>
+<!-- ========= fin modal eliminar recusos humanos ========= -->
+
+<!-- ========= inicio  modal eliminar comprobante ========= -->
+<div class="modal" id="dialog-cambio-moneda">
+    <div class="modal-content">
+        <div class="modal-header bg-primary">
+            <button type="button" ng-click="cerrarCambioMoneda()" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            <h4 class="modal-title" id="advertenciaPrestamoPersonal">Cambio Moneda</h4>
+        </div>
+        <div class="modal-body">
+            <table class="table table-striped table-bordered table-hover">
+                <thead>
+                    <tr>
+                        <th>
+                            <strong>FILTRAR</strong>
+                        </th>
+                        <th>Mes</th>
+                        <th>Año</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>PERIODO</td>
+                        <td>
+                            <select ng-change="buscarCambioMoneda(filtroMoneda)" class="form-control" id="valMonth" ng-options="mes.id as mes.nombre for mes in meses track by mes.id" ng-change="getDaysInMonth(ficha.nac_mes.id,ficha.nac_anio)"
+                             ng-model="filtroMoneda.mes">       <option value="a">Todos</option>                         
+                            </select>
+                        </td>
+                        <td>
+                                <select ng-change="buscarCambioMoneda(filtroMoneda)" class="form-control" id="valYear" ng-update-hidden ng-options="year  as year for (idx, year)  in listYears track by year"
+                                 ng-model="filtroMoneda.anio">
+
+                            </select>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="table-header">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <h4 class="widget-title">Lista de Tipo de Cambio</h4>
+                    </div>
+                </div>
+            </div>
+            <div class="table-fixed-header">
+                    <table class="table table-striped table-bordered table-hover ">
+                        <thead fix-head class="table-head-color">
+                    <tr>
+                        <th>N°</th>
+                        <th>Fecha</th>
+                        <th>UFV</th>
+                        <th>Dolar</th>
+                        <th style="width:5px">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="moneda in cambiosMoneda">
+                        <td>{{$index+1}}</td>
+                        <td>
+                            {{moneda.fecha| date:"dd/MM/yyyy"}}
+                        </td>
+                        <td ng-if="!moneda.edit">
+                            {{moneda.ufv}}
+                        </td>
+                        <td ng-if="moneda.edit">
+                            <input type="text" class="form-control" ng-model="moneda.ufv">
+                        </td>
+                        <td ng-if="!moneda.edit">
+                                {{moneda.dolar}}
+                        </td>
+                        <td ng-if="moneda.edit">
+                            <input type="text" class="form-control" ng-model="moneda.dolar">
+                        </td>
+                        <td>
+                            <a ng-if="!moneda.edit" class="blue tooltip-info" href="javascript:void(0)" uib-tooltip="Editar" ng-click="EditarCambioMoneda(moneda)">
+                                <i class="ace-icon fa fa-pencil bigger-130"></i>
+                            </a>
+                            <a ng-if="moneda.edit" class="green tooltip-info" href="javascript:void(0)" uib-tooltip="Guardar" ng-click="GuardarCambio(moneda)">
+                                    <i class="ace-icon fa fa-floppy-o bigger-130"></i>
+                                </a>
+                                <a ng-if="moneda.edit" class="red tooltip-info" href="javascript:void(0)" uib-tooltip="Guardar" ng-click="CancelarModificarMoneda()">
+                                        <i class="ace-icon fa fa-times-circle bigger-130"></i>
+                                    </a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-danger" ng-click="cerrarCambioMoneda()">Cerrar</button>
+        </div>
+    </div>
+</div>
 </div>
 <!-- ========= fin modal eliminar recusos humanos ========= -->

@@ -5,7 +5,8 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, forEach, j
 		.get(function (req, res) {
 			GtmEstibaje.findAll({
 				where: {
-					id_empresa: req.params.id_empresa
+					id_empresa: req.params.id_empresa,
+					eliminado:false
 				}
 			}).then(function (entity) {
 				res.json(entity);
@@ -20,7 +21,8 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, forEach, j
 				id_empresa: req.body.id_empresa,
 				nombre: req.body.nombre,
 				descripcion: req.body.descripcion,
-				costo: req.body.costo
+				costo: req.body.costo,
+				eliminado:false
 			}).then(function (estibajeCreado) {
 				res.json(estibajeCreado);
 			});
@@ -33,19 +35,22 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, forEach, j
 				codigo: req.body.codigo,
 				nombre: req.body.nombre,
 				descripcion: req.body.descripcion,
-				costo: req.body.costo
+				costo: req.body.costo,
+				eliminado:req.body.eliminado
 			},
 				{
 					where: {
 						id: req.params.id_estibaje
 					}
 				}).then(function (entity) {
-					res.json({ mensaje: "actualizado satisfactoriamente" });
+					res.json({ mensaje: "Estibaje actualizado satisfactoriamente!" });
 				});
 		})
 
 		.delete(function (req, res) {
-			GtmEstibaje.destroy(
+			GtmEstibaje.update({
+				eliminado:true
+			},
 				{
 					where: {
 						id: req.params.id_estibaje

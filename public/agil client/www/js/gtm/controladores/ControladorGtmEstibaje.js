@@ -1,35 +1,38 @@
 angular.module('agil.controladores')
 
-    .controller('ControladorGtmEstibaje', function ($scope, $localStorage, $location, $templateCache, $route, blockUI, Paginator, FieldViewer) {
+    .controller('ControladorGtmEstibaje', function ($scope, $localStorage, $location, $templateCache, $route, blockUI, Paginator, FieldViewer,
+        GtmEstibaje,GtmEstibajes,GtmEstibajeItem) {
 
         blockUI.start();
 
         $scope.usuario = JSON.parse($localStorage.usuario);
         $scope.idModalWizardEstibajeEdicion = 'modal-wizard-estibaje-edicion';
+        $scope.idModalContenedorWizard="modal-wizard-container-estibaje-edicion";
         $scope.idModalEliminarEstibaje = 'dialog-eliminar-estibaje';
         $scope.idModalWizardEstibajeVista = 'modal-wizard-estibaje-vista';
 
+        $scope.usuario = JSON.parse($localStorage.usuario);
 
-        $scope.IdModalVerificarCuenta = 'modal-verificar-cuenta';
-        /* $scope.idModalWizardComprobanteEdicion='modal-wizard-comprobante-edicion';
-        $scope.idPopupQr='modal-wizard-comprobante-edicions';  
-        $scope.IdModalOpcionesQr='modal-opciones-qr';
-        $scope.IdModalRegistrarComprobante='modal-registrar';
-        $scope.IdModalRevisarComprobante='modal-revisar';
-        $scope.IdModalLibroMayor='modal-libro-contable'; */
         $scope.$on('$viewContentLoaded', function () {
             resaltarPestaña($location.path().substring(1));
-            ejecutarScriptEstibaje($scope.idModalWizardEstibajeEdicion, $scope.idModalEliminarEstibaje, $scope.idModalWizardEstibajeVista);
+            ejecutarScriptEstibaje($scope.idModalWizardEstibajeEdicion,$scope.idModalContenedorWizard, $scope.idModalEliminarEstibaje, $scope.idModalWizardEstibajeVista);
             $scope.buscarAplicacion($scope.usuario.aplicacionesUsuario, $location.path().substring(1));
-            //$scope.obtenerColumnasAplicacion();
         });
 
 
         $scope.inicio = function () {
-
+            $scope.obtenerEstibajes();
         }
+
+        $scope.obtenerEstibajes=function(){
+            var promesa=GtmEstibajes($scope.usuario.id_empresa);
+            promesa.then(function(estibajes){
+                $scope.estibajes=estibajes;
+            });
+        }
+
         $scope.crearNuevoEstibaje = function () {
-            // $scope.sucursal = new Sucursal({ id_empresa: usuario.id_empresa, almacenes: [], actividadesDosificaciones: [] });
+            $scope.estibaje=new GtmEstibaje({id_empresa:$scope.usuario.id_empresa});
             $scope.abrirPopup($scope.idModalWizardEstibajeEdicion);
         }
 
@@ -39,7 +42,54 @@ angular.module('agil.controladores')
 
 		$scope.cerrarPopPupVista = function () {
 			$scope.cerrarPopup($scope.idModalWizardEstibajeVista);
-		}
+        }
+
+        $scope.modificarEstibaje=function(estibaje){
+            $scope.estibaje=estibaje;
+            $scope.abrirPopup($scope.idModalWizardEstibajeEdicion);
+        }
+
+        $scope.removerEstibaje=function(estibaje){
+            estibaje.eliminado=true;
+            GtmEstibajeItem.update({ id_estibaje: estibaje.id }, estibaje, function (res) {
+                $scope.obtenerEstibajes();
+                blockUI.stop();
+                $scope.mostrarMensaje(res.mensaje);
+            });
+        }
+        
+        $scope.guardarEstibaje=function(estibaje){
+            var button = $('#siguiente').text().trim();
+			if (button != "Siguiente") {
+				blockUI.start();
+				if (estibaje.id) {
+					GtmEstibajeItem.update({ id_estibaje: estibaje.id }, estibaje, function (res) {
+                        $scope.obtenerEstibajes();
+                        blockUI.stop();
+						$scope.cerrarPopPupEdicion();
+                        $scope.mostrarMensaje(res.mensaje);
+                        $scope.recargarItemsTabla();
+					});
+				} else {
+					estibaje.$save(function (res) {
+                        $scope.obtenerEstibajes();
+						blockUI.stop();
+						$scope.cerrarPopPupEdicion();
+                        $scope.mostrarMensaje("Estibaje creado satisfactoriamente!");
+                        $scope.recargarItemsTabla();
+					}, function (error) {
+						blockUI.stop();
+						$scope.cerrarPopPupEdicion();
+						$scope.mostrarMensaje('Ocurrio un problema al momento de guardar!');
+					});
+				}
+			}
+        }
+
+        $scope.$on('$routeChangeStart', function (next, current) {
+			$scope.eliminarPopup($scope.idModalWizardEstibajeEdicion);
+		});
+
 
         $scope.inicio();
     });

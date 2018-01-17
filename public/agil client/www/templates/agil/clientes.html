@@ -173,10 +173,10 @@
 								<li class="paginate_button previous" aria-controls="tabla-clientes" tabindex="0" id="tabla-clientes_previous"><a href="javascript:void(0)" ng-click="buscarClientes(1,itemsPorPagina,textoBusqueda)">Primero</a></li>
 								<li class="paginate_button previous" ng-class="{disabled:paginaActual==1}" aria-controls="tabla-clientes" tabindex="0" id="tabla-clientes_previous">
 									<a href="javascript:void(0)" e-disabled="paginaActual==1" ng-click="buscarClientes(paginaActual-1,itemsPorPagina,textoBusqueda)">
-										</a>
+										<<</a>
 								</li>
 								<li class="paginate_button" ng-class="{active:paginaActual==pagina}" aria-controls="tabla-clientes" tabindex="0" ng-repeat="pagina in paginas"
-								 ng-if="abs(paginaActual-pagina) 4"><a href="javascript:void(0)" ng-click="buscarClientes(pagina,itemsPorPagina,textoBusqueda)">{{pagina}}</a></li>
+								 ng-if="abs(paginaActual-pagina)<4"><a href="javascript:void(0)" ng-click="buscarClientes(pagina,itemsPorPagina,textoBusqueda)">{{pagina}}</a></li>
 								<li class="paginate_button" ng-class="{disabled:paginaActual==paginas.length}" aria-controls="tabla-clientes" tabindex="0"
 								 id="tabla-clientes_next"><a href="javascript:void(0)" e-disabled="paginaActual==paginas.length" ng-click="buscarClientes(paginaActual+1,itemsPorPagina,textoBusqueda)">>></a></li>
 								<li class="paginate_button previous" aria-controls="tabla-clientes" tabindex="0" id="tabla-clientes_previous"><a href="javascript:void(0)" ng-click="buscarClientes(paginas.length,itemsPorPagina,textoBusqueda)">Ultimo</a></li>

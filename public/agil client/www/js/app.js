@@ -190,9 +190,25 @@ angular.module('agil', ['ngRoute', 'agil.controladores',
                 controller:'ControladorOperaciones',
                 templateUrl:'templates/agil/operaciones.html'
             })   
-       .when('/gtm-estibaje', {
+            .when('/gtm-estibaje', {
                 controller:'ControladorGtmEstibaje',
                 templateUrl:'templates/gtm/estibaje.html'
+            }) 
+            .when('/gtm-transportista', {
+                controller:'ControladorGtmTransportista',
+                templateUrl:'templates/gtm/transportista.html'
+            }) 
+            .when('/gtm-grupo-estibaje', {
+                controller:'ControladorGtmGrupoEstibaje',
+                templateUrl:'templates/gtm/grupo-estibaje.html'
+            })  
+            .when('/gtm-destino', {
+                controller:'ControladorGtmDestino',
+                templateUrl:'templates/gtm/destino.html'
+            })  
+            .when('/gtm-despachos', {
+                controller:'ControladorGtmDespacho',
+                templateUrl:'templates/gtm/despacho.html'
             })  
         .otherwise({
           redirectTo:'/'

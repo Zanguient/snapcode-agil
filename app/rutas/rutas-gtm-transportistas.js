@@ -6,7 +6,8 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, forEach, j
 			GtmTransportista.findAll({
 				include:[{model:Persona,as:'persona'}],
 				where: {
-					id_empresa: req.params.id_empresa
+					id_empresa: req.params.id_empresa,
+					eliminado:false
 				}
 			}).then(function (entity) {
 				res.json(entity);
@@ -16,41 +17,61 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, forEach, j
 	router.route('/gtm-transportistas/empresa')
 
 		.post(function (req, res) {
-			GtmTransportista.create({
-				id_persona: req.body.id_persona,
-				vehiculo: req.body.vehiculo,
-				codigo: req.body.codigo,
-				capacidad: req.body.capacidad,
-				nit: req.body.nit,
-				costo_transporte: req.body.costo_transporte,
-				id_empresa: req.body.id_empresa
-			}).then(function (transportistaCreado) {
-				res.json(transportistaCreado);
+			Persona.create({
+				nombre_completo:req.body.persona.nombre_completo,
+				direccion:req.body.persona.direccion,
+				telefono:req.body.persona.telefono
+			}).then(function(personaCreada){
+				GtmTransportista.create({
+					id_persona: personaCreada.id,
+					vehiculo: req.body.vehiculo,
+					codigo: req.body.codigo,
+					capacidad: req.body.capacidad,
+					nit: req.body.nit,
+					costo_transporte: req.body.costo_transporte,
+					id_empresa: req.body.id_empresa,
+					observacion: req.body.observacion
+				}).then(function (transportistaCreado) {
+					res.json(transportistaCreado);
+				});
 			});
 		});
 
 	router.route('/gtm-transportistas/:id_transportista')
 
 		.put(function (req, res) {
-			GtmTransportista.update({
-				id_persona: req.body.id_persona,
-				vehiculo: req.body.vehiculo,
-				codigo: req.body.codigo,
-				capacidad: req.body.capacidad,
-				nit: req.body.nit,
-				costo_transporte: req.body.costo_transporte,
-			},
-				{
-					where: {
-						id: req.params.id_transportista
-					}
-				}).then(function (entity) {
-					res.json({ mensaje: "actualizado satisfactoriamente" });
-				});
+			Persona.update({
+				nombre_completo:req.body.persona.nombre_completo,
+				direccion:req.body.persona.direccion,
+				telefono:req.body.persona.telefono
+			},{
+				where:{
+					id:req.body.id_persona
+				}
+			}).then(function(personaActualizada){
+				GtmTransportista.update({
+					vehiculo: req.body.vehiculo,
+					codigo: req.body.codigo,
+					capacidad: req.body.capacidad,
+					nit: req.body.nit,
+					costo_transporte: req.body.costo_transporte,
+					eliminado:req.body.eliminado,
+					observacion:req.body.observacion
+				},
+					{
+						where: {
+							id: req.params.id_transportista
+						}
+					}).then(function (entity) {
+						res.json({ mensaje: "actualizado satisfactoriamente" });
+					});
+			});
 		})
 
 		.delete(function (req, res) {
-			GtmTransportista.destroy(
+			GtmTransportista.update({
+				eliminado:true
+			},
 				{
 					where: {
 						id: req.params.id_transportista

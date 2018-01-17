@@ -6,7 +6,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 		ProveedorVencimientoCredito, Venta, ClasesTipo, Compra, Producto, DatosVenta, DatosCompra,
 		ImprimirSalida, Diccionario, VentasComprobantesEmpresa, ComprasComprobantesEmpresa, LibroMayorCuenta, Paginator, ComprobanteRevisarPaginador, AsignarComprobanteFavorito, ListaCuentasComprobanteContabilidad, NuevoComprobanteContabilidad, NuevoComprobante, ComprasComprobante,
 		ConfiguracionesCuentasEmpresa, ContabilidadCambioMoneda, ObtenerCambioMoneda, AsignarCuentaCiente, AsignarCuentaProveedor,
-		GtmTransportistas, GtmEstibajes, GtmGrupoEstibajes, ListasCuentasAuxiliares) {
+		GtmTransportistas, GtmEstibajes, GtmGrupoEstibajes, ListasCuentasAuxiliares,GtmDetallesDespachoAlerta,GtmDetalleDespachoAlerta) {
 
 		$scope.idModalTablaVencimientoProductos = "tabla-vencimiento-productos";
 		$scope.idModalTablaDespachos = "tabla-gtm-despachos";
@@ -32,8 +32,9 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 		$scope.IdModalRevisarComprobante = 'modal-revisar';
 		$scope.IdModalLibroMayor = 'modal-libro-contable';
 		$scope.IdModalAsignarCuenta = 'dialog-asignar-cuenta';
+		
 		//fin nuevo comprobante
-		$scope.IdModalEliminarProductoVencido="eliminar-producto-vencido"
+		$scope.IdModalEliminarProductoVencido = "eliminar-producto-vencido"
 		$scope.diccionario = Diccionario;
 
 		$scope.$on('$viewContentLoaded', function () {
@@ -41,7 +42,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 				$scope.idmodalActualizarCreditoCliente, $scope.idmodalActualizarCreditoDeuda, $scope.idModalPagoDeuda, $scope.idModalDescuento, $scope.idModalTablaVentasPendientes,
 				$scope.idModalTablaComprasPendientes, $scope.idModalTablaBancosPendientes, $scope.idModalTablaOtrosPendientes, $scope.idModalInicioSesion,
 				$scope.idModalWizardComprobanteEdicion, $scope.IdModalOpcionesQr, $scope.IdModalRegistrarComprobante, $scope.IdModalRevisarComprobante, $scope.IdModalLibroMayor, $scope.IdModalAsignarCuenta,
-				$scope.idModalTablaDespachos, $scope.idModalTablaAsignacionDespacho,$scope.IdModalEliminarProductoVencido);
+				$scope.idModalTablaDespachos, $scope.idModalTablaAsignacionDespacho, $scope.IdModalEliminarProductoVencido);
 
 			$scope.inicio();
 			blockUI.stop();
@@ -103,6 +104,13 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 				$scope.mostrarMensaje("Datos nulos en bimonetario importar cambio moneda dolar y ufv para guardar")
 			}
 		}
+		$scope.ActivarDesactivarCopiaGlosa=function (comprobante) {
+			if(comprobante.copia_glosa==true){
+				comprobante.copia_glosa==false
+			}else{
+				comprobante.copia_glosa==true
+			}
+		}
 		$scope.obtenerCambioMoneda = function (venta, compra, comprobante, view) {
 			var fecha = new Date()
 			var promesa = ObtenerCambioMoneda(fecha)
@@ -141,7 +149,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 				var fecha = $scope.fechaATexto(new Date())
 				if ($scope.moneda) {
 					console.log($scope.ventas)
-					$scope.nuevoComprobante = { fecha: fecha, id_usuario: $scope.usuario.id, asientosContables: [], eliminado: 0, abierto: 0, importe: 0, id_venta: "", id_compra: "", id_sucursal: $scope.sucursales[0], tipoComprobante: $scope.tiposComprobantes[0], tipoCambio: $scope.moneda };
+					$scope.nuevoComprobante = { copia_glosa:false ,fecha: fecha, id_usuario: $scope.usuario.id, asientosContables: [], eliminado: 0, abierto: 0, importe: 0, id_venta: "", id_compra: "", id_sucursal: $scope.sucursales[0], tipoComprobante: $scope.tiposComprobantes[0], tipoCambio: $scope.moneda };
 					$scope.cuentaActual = {}
 					$scope.ObtenerPlantillaIngresoEgreso(venta, compra, comprobante, view);
 
@@ -157,7 +165,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 			})
 		}
 		$scope.obtenerCambioMoneda2 = function (fechaMoneda) {
-
+			if(fechaMoneda.length==10){
 			var fecha = new Date(convertirFecha(fechaMoneda))
 			var promesa = ObtenerCambioMoneda(fecha)
 			promesa.then(function (dato) {
@@ -178,7 +186,9 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 					});
 				}
 			})
-
+		}else{
+			console.log("faltan datos")
+		}
 		}
 		$scope.crearNuevoComprobante = function (venta, compra, comprobante, view) {
 			$scope.htmlTooltip = $sce.trustAsHtml('Acciones Rapidas<br>Ctrl-G=Guardar');
@@ -625,6 +635,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 			$scope.cuenta = ""
 			$scope.cerrarPopup($scope.IdModalAsignarCuenta);
 		}
+		
 		//modal registrar
 		$scope.abrirModalRegistrarComprobante = function () {
 			$scope.abrirPopup($scope.IdModalRegistrarComprobante)
@@ -773,6 +784,10 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 				} else {
 					asiento.isOpen = false;
 				}
+				if($scope.nuevoComprobante.copia_glosa){
+					asiento.glosa=$scope.nuevoComprobante.gloza
+					$scope.agregarAsiento()
+				}
 			} else {
 				asiento.isOpen = false;
 			}
@@ -807,24 +822,30 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 			/* 	for (var index = 0; index < datos.asientosContables.length; index++) {
 					var asiento = { cuenta: datos.asientosContables[index].cuentas, debe_bs: datos.asientosContables[index].debe_bs, haber_bs: datos.asientosContables[index].haber_bs, debe_sus: datos.asientosContables[index].debe_sus, haber_sus: datos.asientosContables[index].haber_sus, eliminado: 0, activo: true } */
 			//$scope.nuevoComprobante.asientosContables = datos.asientosContables
-			datos.asientosContables.forEach(function name(asiento,index,array) {
+			datos.asientosContables.forEach(function name(asiento, index, array) {
 				$scope.nuevoComprobante.asientosContables.push(asiento)
-				if(index===(array.length-1)){
+				if (index === (array.length - 1)) {
 					$scope.cal($scope.nuevoComprobante.asientosContables)
 				}
 			});
 			$scope.nuevoComprobante.tipoComprobante = datos.tipoComprobante
 			$scope.mostrarMensaje("datos copiados correctamente")
 			/* if (index === datos.comprobante.length - 1) { */
-			
+
 			/* } */
 
 			/* } */
 		}
 		$scope.agregarAsiento = function () {
-			var asiento = { glosa: "", cuenta: "", debe_bs: "", haber_bs: "", debe_sus: "", haber_sus: "", eliminado: 0, activo: true, isOpen: false }
-			$scope.nuevoComprobante.asientosContables.push(asiento)
-
+			if ($scope.nuevoComprobante.asientosContables.length == 0) {
+				var asiento = { glosa: "", cuenta: "", debe_bs: "", haber_bs: "", debe_sus: "", haber_sus: "", eliminado: 0, activo: true, isOpen: false }
+				$scope.nuevoComprobante.asientosContables.push(asiento)
+			} else {
+				if ($scope.nuevoComprobante.asientosContables[($scope.nuevoComprobante.asientosContables.length-1)].cuenta && $scope.nuevoComprobante.asientosContables[($scope.nuevoComprobante.asientosContables.length-1)].cuenta.id != undefined) {
+					var asiento = { glosa: "", cuenta: "", debe_bs: "", haber_bs: "", debe_sus: "", haber_sus: "", eliminado: 0, activo: true, isOpen: false }
+					$scope.nuevoComprobante.asientosContables.push(asiento)
+				}
+			}
 		}
 		$scope.agregarPrimerAsiento = function (comprobante) {
 			if (comprobante.gloza) {
@@ -1055,6 +1076,11 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 					promesa = GtmGrupoEstibajes(idEmpresa);
 					promesa.then(function (grupoEstibajes) {
 						$scope.gtm_grupo_estibajes = grupoEstibajes;
+						promesa = GtmDetallesDespachoAlerta(idEmpresa);
+						promesa.then(function (detallesDespacho) {
+							$scope.gtm_detalles_despacho = detallesDespacho;
+							$scope.vencimientoTotal = $scope.vencimientoTotal + detallesDespacho.length;
+						});
 					});
 				});
 			});
@@ -1075,8 +1101,58 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 			});*/
 		}
 
+		$scope.cambiarSeleccionDetallesDespacho=function(seleccion){
+			$scope.gtm_detalles_despacho_seleccionados=[];
+			for(var i=0;i<$scope.gtm_detalles_despacho.length;i++){
+				$scope.gtm_detalles_despacho[i].seleccionado=seleccion;
+				if($scope.gtm_detalles_despacho[i].seleccionado){
+					$scope.gtm_detalles_despacho_seleccionados.push($scope.gtm_detalles_despacho[i]);
+				}
+			}
+		}
+
+		$scope.cambiarSeleccionDetalleDespacho=function(gtm_detalle_despacho){
+			if(gtm_detalle_despacho.seleccionado){
+				$scope.gtm_detalles_despacho_seleccionados.push(gtm_detalle_despacho);
+				if($scope.gtm_detalles_despacho_seleccionados.length==$scope.gtm_detalles_despacho.length){
+					$scope.detalles_despacho_seleccionados=true;
+				}
+			}else{
+				$scope.gtm_detalles_despacho_seleccionados.splice($scope.gtm_detalles_despacho_seleccionados.indexOf(gtm_detalle_despacho),1);
+				$scope.detalles_despacho_seleccionados=false;
+			}
+		}
+
+		$scope.guardarDespachos=function(){
+			blockUI.start();
+			GtmDetalleDespachoAlerta.update({ id_empresa: $scope.usuario.id_empresa }, $scope.gtm_detalles_despacho_seleccionados, function (res) {
+				$scope.vencimientoTotal = $scope.vencimientoTotal -$scope.gtm_detalles_despacho_seleccionados.length;
+				$scope.verificarDespachos($scope.usuario.id_empresa );
+				blockUI.stop();
+				$scope.cerrarListaDespachos();
+				$scope.mostrarMensaje(res.mensaje);
+			});
+		}
+
+		$scope.calcularSaldoDespacho=function(gtm_detalle_despacho){
+			gtm_detalle_despacho.saldo=gtm_detalle_despacho.cantidad-gtm_detalle_despacho.cantidad_despacho;
+		}
+
+		$scope.establecerDespacho=function(asignacion){
+			for(var i=0;i<$scope.gtm_detalles_despacho_seleccionados.length;i++){
+				$scope.gtm_detalles_despacho_seleccionados[i].id_estibaje=asignacion.id_estibaje;
+				$scope.gtm_detalles_despacho_seleccionados[i].id_grupo_estibaje=asignacion.id_grupo_estibaje;
+				$scope.gtm_detalles_despacho_seleccionados[i].id_transportista=asignacion.id_transportista;
+			}
+			$scope.cerrarAsignacionDespacho();
+		}
+
 		$scope.abrirAsignacionDespacho = function () {
 			$scope.abrirPopup($scope.idModalTablaAsignacionDespacho);
+		}
+
+		$scope.cerrarAsignacionDespacho=function(){
+			$scope.cerrarPopup($scope.idModalTablaAsignacionDespacho);
 		}
 		$scope.abrirEliminarProductoVencido = function () {
 			$scope.abrirPopup($scope.IdModalEliminarProductoVencido);
@@ -1084,7 +1160,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 		$scope.cerrarEliminarProductoVencido = function () {
 			$scope.cerrarPopup($scope.IdModalEliminarProductoVencido);
 		}
-		
+
 		$scope.ActualizarFechaCreditosCliente = function (venta, fechaCredito) {
 
 			venta.fecha = new Date(venta.fecha)
@@ -1773,6 +1849,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 
 		$scope.accionarEliminacion = function () {
 			$scope.funcionEliminacion($scope.dataParam);
+			$scope.cerrarConfirmacionEliminacion();
 		}
 
 		$scope.cerrarSesion = function () {
@@ -2056,7 +2133,10 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 				blockUI.stop();
 			});
 		}
-
+		$scope.obtenerMeses = function () {
+            $scope.meses = [{ id: 0, nombre: "Enero" }, { id: 1, nombre: "Febrero" }, { id: 2, nombre: "Marzo" }, { id: 3, nombre: "Abril" }, { id: 4, nombre: "Mayo" }, { id: 5, nombre: "Junio" }, { id: 6, nombre: "Julio" }, { id: 7, nombre: "Agosto" },
+            { id: 8, nombre: "Septiembre" }, { id: 9, nombre: "Octubre" }, { id: 10, nombre: "Noviembre" }, { id: 11, nombre: "Diciembre" }];
+        }
 		$scope.inicio = function () {
 			$scope.loadData();
 			$rootScope.abs = $window.Math.abs;
@@ -2068,11 +2148,16 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 			} else {
 				$scope.abrirPopup($scope.idModalInicioSesion);
 			}
+			$scope.gtm_detalles_despacho_seleccionados=[];
 		}
 
 		$scope.fechaATexto = function (fecha) {
 			fech = new Date(fecha)
-			fecha = fech.getDate() + "/" + (fech.getMonth() + 1) + "/" + fech.getFullYear();
+			var valor = (fech.getMonth() + 1)
+			if (valor < 10) {
+				valor = "0" + valor
+			}
+			fecha = fech.getDate() + "/" + valor + "/" + fech.getFullYear();
 			return fecha
 			// $scope.fechaAplicacionVacuna = new Date(convertirFecha(fecha))
 		}

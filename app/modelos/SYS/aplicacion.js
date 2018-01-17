@@ -138,6 +138,24 @@ module.exports=function(sequelize,Sequelize){
 		sequelize.query("INSERT IGNORE INTO sys_aplicacion SET id = 40,titulo = 'SOLICITUD DE VÍVERES',atributo_clase='fa-lemon-o',url='operaciones',createdAt = NOW(),updatedAt = NOW();").spread(function(results, metadata) {
 		  console.log(metadata+" rows affected in sys_application");
 		});
+		sequelize.query("INSERT IGNORE INTO sys_aplicacion SET id = 41,titulo = 'DESPACHOS',atributo_clase='fa-bookmark',url='despachos',createdAt = NOW(),updatedAt = NOW();").spread(function(results, metadata) {
+		  console.log(metadata+" rows affected in sys_application");
+		});
+		sequelize.query("INSERT IGNORE INTO sys_aplicacion SET id = 42,titulo = 'DESPACHO',atributo_clase='fa-bookmark',url='gtm-despachos',padre=41,createdAt = NOW(),updatedAt = NOW();").spread(function(results, metadata) {
+		  console.log(metadata+" rows affected in sys_application");
+		});
+		sequelize.query("INSERT IGNORE INTO sys_aplicacion SET id = 43,titulo = 'TRANSPORTISTA',atributo_clase='fa-bookmark',url='gtm-transportista',padre=41,createdAt = NOW(),updatedAt = NOW();").spread(function(results, metadata) {
+		  console.log(metadata+" rows affected in sys_application");
+		});
+		sequelize.query("INSERT IGNORE INTO sys_aplicacion SET id = 44,titulo = 'TIPO ESTIBAJE',atributo_clase='fa-bookmark',url='gtm-estibaje',padre=41,createdAt = NOW(),updatedAt = NOW();").spread(function(results, metadata) {
+		  console.log(metadata+" rows affected in sys_application");
+		});
+		sequelize.query("INSERT IGNORE INTO sys_aplicacion SET id = 45,titulo = 'GRUPO ESTIBAJE',atributo_clase='fa-bookmark',url='gtm-grupo-estibaje',padre=41,createdAt = NOW(),updatedAt = NOW();").spread(function(results, metadata) {
+		  console.log(metadata+" rows affected in sys_application");
+		});
+		sequelize.query("INSERT IGNORE INTO sys_aplicacion SET id = 46,titulo = 'DESTINOS',atributo_clase='fa-bookmark',url='gtm-destino',padre=41,createdAt = NOW(),updatedAt = NOW();").spread(function(results, metadata) {
+		  console.log(metadata+" rows affected in sys_application");
+		});
 	});
 	
 	return Aplicacion;
