@@ -68,13 +68,20 @@ angular.module('agil.controladores')
         $scope.ObtenerComprobantes = function () {
             $scope.paginator = Paginator();
             $scope.paginator.column = "numero";
+            $scope.paginator.direction = "desc";
             $scope.paginator.callBack = $scope.obtenerLista;
-            $scope.filtro = { empresa: $scope.usuario.id_empresa, clasificacion: "", tipo_comprobante: "", monto: "" };
+            var date = new Date()
+            var fechafin=$scope.fechaATexto(date)
+            var fechaInicio = $scope.fechaATexto(sumarDias(date,-10))
+                        $scope.filtro = { inicio:fechaInicio,fin:fechafin,empresa: $scope.usuario.id_empresa, clasificacion: "", tipo_comprobante: "", monto: "" };
             if ($scope.filtro.inicio != null) {
                 $scope.paginator.getSearch("", $scope.filtro);
             }
         }
-
+        function sumarDias(fecha, dias){
+            fecha.setDate(fecha.getDate() + dias);
+            return fecha;
+          }
         $scope.obtenerLista = function () {
 
             blockUI.start();

@@ -494,7 +494,8 @@ module.exports = function (router, ComprobanteContabilidad, AsientoContabilidad,
 					id_usuario: req.body.id_usuario,
 					eliminado: req.body.eliminado,
 					importe: req.body.importe,
-					id_tipo_cambio: req.body.tipoCambio.id
+					id_tipo_cambio: req.body.tipoCambio.id,
+					fecha_creacion:req.body.fechaActual
 				}).then(function (ComprobanteCreado) {					
 				if (req.body.tipoComprobante.nombre == "INGRESO") { SucursalEncontrada.comprobante_ingreso_correlativo = SucursalEncontrada.comprobante_ingreso_correlativo+1 }
 				if (req.body.tipoComprobante.nombre == "EGRESO") { SucursalEncontrada.comprobante_egreso_correlativo = SucursalEncontrada.comprobante_egreso_correlativo+1 }
@@ -721,9 +722,10 @@ module.exports = function (router, ComprobanteContabilidad, AsientoContabilidad,
 		.get(function (req, res) {
 			ComprobanteContabilidad.find({
 				where: { id: req.params.id_comprobante },
-				include: [{ model: MonedaTipoCambio, as: 'tipoCambio' }, { model: AsientoContabilidad, as: 'asientosContables', include: [{ model: Clase, as: 'centroCosto' }, { model: ContabilidadCuenta, as: 'cuenta', include: [{ model: ContabilidadCuentaAuxiliar, as: 'cuentaAux' }, { model: Clase, as: 'tipoAuxiliar' }] }] }, { model: Clase, as: 'tipoComprobante' },
+				include: [{ model: MonedaTipoCambio, as: 'tipoCambio' }, { model: AsientoContabilidad, as: 'asientosContables',order: [['debe_bs', 'ASC']] , include: [{ model: Clase, as: 'centroCosto' }, { model: ContabilidadCuenta, as: 'cuenta', include: [{ model: ContabilidadCuentaAuxiliar, as: 'cuentaAux' }, { model: Clase, as: 'tipoAuxiliar' }] }] }, { model: Clase, as: 'tipoComprobante' },
 				{ model: Usuario, as: 'usuario', include: [{ model: Persona, as: 'persona' }] },
-				{ model: Sucursal, as: 'sucursal', include: [{ model: Empresa, as: 'empresa' }] }]
+				{ model: Sucursal, as: 'sucursal', include: [{ model: Empresa, as: 'empresa' }] }],
+				
 			}).then(function (comprobante) {
 				var importeLiteral = NumeroLiteral.Convertir(parseFloat(comprobante.importe).toFixed(2).toString());
 				res.json({ comprobante: comprobante, importeLiteral: importeLiteral });

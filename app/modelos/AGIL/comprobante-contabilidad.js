@@ -44,7 +44,10 @@ module.exports = function (sequelize, Sequelize) {
             type: Sequelize.INTEGER,
             field: 'tipo_cambio'
         },
-        
+        fecha_creacion:{
+            type: Sequelize.DATE,
+            field: 'fecha_creacion'
+        }
     }, {
             freezeTableName: true
         });

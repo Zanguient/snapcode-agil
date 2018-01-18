@@ -206,7 +206,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr ng-repeat="comprobante in comprobantes">
+                        <tr ng-repeat="comprobante in comprobantes track by $index">
                             <td>{{$index+1}}</td>
                             <td ng-if="fieldViewer.getConfiguration().abierto.show">
                                 <span ng-if="comprobante.abierto" class="label label-sm label-success">Si</span>
@@ -373,15 +373,16 @@
                             {{moneda.ufv}}
                         </td>
                         <td ng-if="moneda.edit">
-                            <input type="text" class="form-control" ng-model="moneda.ufv">
+                            <input type="number" class="form-control" ng-model="moneda.ufv">
                         </td>
                         <td ng-if="!moneda.edit">
                                 {{moneda.dolar}}
                         </td>
                         <td ng-if="moneda.edit">
-                            <input type="text" class="form-control" ng-model="moneda.dolar">
+                            <input type="number" class="form-control" ng-model="moneda.dolar">
                         </td>
                         <td>
+                           
                             <a ng-if="!moneda.edit" class="blue tooltip-info" href="javascript:void(0)" uib-tooltip="Editar" ng-click="EditarCambioMoneda(moneda)">
                                 <i class="ace-icon fa fa-pencil bigger-130"></i>
                             </a>

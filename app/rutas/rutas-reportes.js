@@ -160,7 +160,7 @@ router.route('/reportes/compras-mensuales/:id_empresa/sucursal/:id_sucursal/inic
 		}).then(function(empresa){			
 			DetalleCompra.findAll({ 
 			include: [{model:Inventario,as: 'inventario'},
-					  {model:Producto,as: 'producto'},
+					  {model:Producto,as: 'producto',include:[{model:Clase,as: 'grupo'}]},
 					  {model:Compra,as: 'compra',where:{fecha: {$between: [inicio,fin]}},
 							include: [{model:Proveedor,as: 'proveedor'},
 										{model:Almacen,as: 'almacen',

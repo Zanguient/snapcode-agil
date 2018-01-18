@@ -201,6 +201,10 @@ angular.module('agil', ['ngRoute', 'agil.controladores',
             .when('/gtm-grupo-estibaje', {
                 controller:'ControladorGtmGrupoEstibaje',
                 templateUrl:'templates/gtm/grupo-estibaje.html'
+            })
+            .when('/proformas', {
+                controller:'controladorProformas',
+                templateUrl:'templates/agil/proformas.html'
             })  
             .when('/gtm-destino', {
                 controller:'ControladorGtmDestino',

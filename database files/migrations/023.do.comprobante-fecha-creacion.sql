@@ -1,0 +1,1 @@
+ALTER TABLE agil_comprobante_contabilidad ADD fecha_creacion datetime;

@@ -74,7 +74,7 @@ angular.module('agil.servicios')
 	.factory('NuevoComprobante', ["blockUI", "AsignarComprobanteFavorito", "LibroMayorCuenta", "ComprobanteRevisarPaginador", "NuevoComprobanteContabilidad", "ListaCuentasComprobanteContabilidad", "ActualizarComprobanteContabilidad", "ImprimirComprobante", "DatosComprobante",
 		function (blockUI, AsignarComprobanteFavorito, LibroMayorCuenta, ComprobanteRevisarPaginador, NuevoComprobanteContabilidad, ListaCuentasComprobanteContabilidad, ActualizarComprobanteContabilidad, ImprimirComprobante, DatosComprobante) {
 			var res = function (mostrarMensaje, paginator, filtro, usuario, idComprobante, datoslibroMayor, revisar, convertirFecha, cerrarModal, nuevoComprobante,
-				buscarCuentaQuery, verificarVentasComprobantes, verificarComprasComprobantes, recargarItemsTabla,number_formata) {
+				buscarCuentaQuery, verificarVentasComprobantes, verificarComprasComprobantes, recargarItemsTabla, number_formata) {
 				if (idComprobante) {
 					var promesa = AsignarComprobanteFavorito(idComprobante)
 					promesa.then(function (entidad) {
@@ -106,6 +106,7 @@ angular.module('agil.servicios')
 					return promesa;
 				}
 				if (nuevoComprobante) {
+
 					if (!nuevoComprobante.id) {
 						for (var index = 0; index < nuevoComprobante.asientosContables.length; index++) {
 							var element = nuevoComprobante.asientosContables[index];
@@ -123,7 +124,7 @@ angular.module('agil.servicios')
 							var promesa = DatosComprobante(dato.comprobante.id)
 							promesa.then(function (datosComprobante) {
 								datosComprobante.comprobante.importe_literal = datosComprobante.importeLiteral
-								ImprimirComprobante(datosComprobante.comprobante, false, usuario,number_format)
+								ImprimirComprobante(datosComprobante.comprobante, false, usuario, number_format)
 							})
 							recargarItemsTabla()
 							cerrarModal();
@@ -160,176 +161,230 @@ angular.module('agil.servicios')
 		}])
 	.factory('ImprimirComprobante', ['blockUI', 'DibujarCabeceraComprobante', 'Diccionario', 'DibujarCabeceraFacturaNVCartaOficio', 'DibujarCabeceraFacturaNVmedioOficio', '$timeout',
 		function (blockUI, DibujarCabeceraComprobante, Diccionario, DibujarCabeceraFacturaNVCartaOficio, DibujarCabeceraFacturaNVmedioOficio, $timeout) {
-			var res = function (comprobante, bimonetario, usuario,number_format) {
-				var doc = new PDFDocument({ size: [612, 792], margin: 10 });
-				var stream = doc.pipe(blobStream());
-				doc.font('Helvetica', 8);
-				var itemsPorPagina = 19;
-				var y = 160, items = 0, pagina = 1, totalPaginas = Math.ceil(comprobante.asientosContables.length / itemsPorPagina);
-				var sumaDebeBs = 0, sumaHaberBs = 0, sumaDebeSus = 0, sumaHaberSus = 0;
-				var fecha = new Date()
-				if (bimonetario) {
-					DibujarCabeceraComprobante(doc, bimonetario, usuario, comprobante, pagina, totalPaginas);
-					for (var i = 0; i < comprobante.asientosContables.length && items <= itemsPorPagina; i++) {
-						var asiento = comprobante.asientosContables[i]
-						doc.rect(390, y, 0, 30).stroke();
-						doc.rect(440, y, 0, 30).stroke();
-						doc.rect(490, y, 0, 30).stroke();
-						doc.rect(540, y, 0, 30).stroke();
-						doc.font('Helvetica', 7);
-						doc.text(asiento.cuenta.codigo, 28, y + 5)
-						doc.font('Helvetica-Bold', 7);
-						if (asiento.cuenta.tipoAuxiliar) doc.text(asiento.cuenta.cuentaAux.nombre, 28, y + 13, { width: 80 })
-						doc.font('Helvetica-Bold', 7);
-						doc.text(asiento.cuenta.nombre, 120, y + 5, { width: 190, underline: true })
-						doc.font('Helvetica', 7);
-						doc.text(asiento.glosa, 125, y + 13, { width: 190 })
-						if (asiento.centroCosto) doc.text(asiento.centroCosto.nombre, 310, y + 5)
-						doc.text("", 350, y + 5)
-						var debe_bs=number_format(asiento.debe_bs,2)
-						var haber_bs=number_format(asiento.haber_bs,2)
-						doc.text(debe_bs, 395, y + 5)
-						doc.text(haber_bs, 445, y + 5)
-						var debe_sus=number_format(asiento.debe_sus,2)
-						var haber_sus=number_format(asiento.haber_sus,2)
-						doc.text(debe_sus, 500, y + 5)
-						doc.text(haber_sus, 545, y + 5)
-						sumaDebeBs += 0 + asiento.debe_bs
-						sumaHaberBs += 0 + asiento.haber_bs
-						sumaDebeSus += 0 + asiento.debe_sus
-						sumaHaberSus += 0 + asiento.haber_sus
-						y = y + 30;
-						items++;
-						if (items > itemsPorPagina) {
-							doc.addPage({ size: [612, 792], margin: 10 });
-							y = 160;
-							items = 0;
-							pagina = pagina + 1;
-							DibujarCabeceraComprobante(doc, bimonetario, usuario, comprobante, pagina, totalPaginas);
-						}
+			var res = function (comprobante, bimonetario, usuario, number_format) {
+				var arregloDebe = [], arregloHaber = [];
+				comprobante.asientosContables.forEach(function (asiento, index, array) {
+					if (asiento.debe_bs != 0) {
+						arregloDebe.push(asiento)
+					} else {
+						arregloHaber.push(asiento)
 					}
-					doc.font('Helvetica-Bold', 7);
-					doc.text("SUMA TOTAL:", 330, y + 5)
-					sumaDebeBs=number_format(sumaDebeBs,2)
-					sumaHaberBs =number_format(sumaHaberBs,2)
-					doc.text(sumaDebeBs, 395, y + 5)
-					doc.text(sumaHaberBs, 445, y + 5)
-					sumaHaberSus =number_format(sumaHaberSus,2)
-					sumaDebeSus =number_format(sumaDebeSus,2)
-					doc.text(sumaDebeSus, 500, y + 5)
-					doc.text(sumaHaberSus, 545, y + 5)
-					doc.rect(20, y, 571, 0).stroke();
-					doc.rect(20, y + 20, 571, 0).stroke();
-					doc.text("Son:", 38, y + 25)
-					doc.text(comprobante.importe_literal, 60, y + 25)
-					doc.rect(20, y + 40, 571, 0).stroke();
-					doc.rect(390, y, 0, 20).stroke();
-					doc.rect(440, y, 0, 20).stroke();
-					doc.rect(490, y, 0, 20).stroke();
-					doc.rect(540, y, 0, 20).stroke();
-					doc.rect(20, 720, 571, 0).stroke();
-					doc.font('Helvetica-Bold', 7);
-					doc.text("Preparado por:", 38, 725)
-					doc.font('Helvetica', 7);
-					doc.text(usuario.persona.nombre_completo, 38, 735)
-					doc.rect(200, 720, 0, 42).stroke();
-					doc.text(fecha.getDate() + "/" + (fecha.getMonth() + 1) + "/" + fecha.getFullYear() + "         " + fecha.getHours() + ":" + fecha.getMinutes() + ":" + fecha.getSeconds(), 58, 752)
-					doc.text("Revisado", 240, 752)
-					doc.text("Autorizado", 350, 752)
-					doc.text("Recibio conforme:", 425, 740)
-					doc.text("CI:", 425, 752)
-					doc.rect(310, 720, 0, 42).stroke();
-					doc.rect(420, 720, 0, 42).stroke();
-					doc.rect(20, 750, 571, 0).stroke();
-					doc.end();
-					stream.on('finish', function () {
-						var fileURL = stream.toBlobURL('application/pdf');
-						var w = window.open(fileURL, '_blank', 'location=no');
-						$timeout(function () {
-							w.print();
-						}, 500);
-					});
-					blockUI.stop();
-				} else {
-					DibujarCabeceraComprobante(doc, bimonetario, usuario, comprobante, pagina, totalPaginas);
-					for (var i = 0; i < comprobante.asientosContables.length && items <= itemsPorPagina; i++) {
-						var asiento = comprobante.asientosContables[i]
-						doc.rect(450, y, 0, 30).stroke();
-						doc.rect(520, y, 0, 30).stroke();
-						doc.font('Helvetica', 7);
-						doc.text(asiento.cuenta.codigo, 38, y + 5)
-						doc.font('Helvetica-Bold', 7);
-						if (asiento.cuenta.tipoAuxiliar) doc.text(asiento.cuenta.cuentaAux.nombre, 38, y + 13, { width: 80 })
-						doc.font('Helvetica-Bold', 7);
-						doc.text(asiento.cuenta.nombre, 130, y + 5, { width: 190, underline: true })
-						doc.font('Helvetica', 7);
-						doc.text(asiento.glosa, 135, y + 13, { width: 190 })
-						if (asiento.centroCosto) doc.text(asiento.centroCosto.nombre, 340, y + 5)
-						doc.text("", 380, y + 5)
-						var debe_bs =number_format(asiento.debe_bs,2)
-						var haber_bs =number_format(asiento.haber_bs,2)
-						doc.text(debe_bs, 470, y + 5)
-						doc.text(haber_bs, 540, y + 5)
-						sumaDebeBs += 0 + asiento.debe_bs
-						sumaHaberBs += 0 + asiento.haber_bs
-						y = y + 30;
-						items++;
-						if (items > itemsPorPagina) {
-							doc.rect(450, y, 0, 2).stroke();
-							doc.rect(520, y, 0, 2).stroke();
-							doc.addPage({ size: [612, 792], margin: 10 });
-							y = 160;
-							items = 0;
-							pagina = pagina + 1;
+					if (index === (array.length - 1)) {
+						
+						var asientosContables = arregloDebe.concat(arregloHaber);
+						var doc = new PDFDocument({ size: [612, 792], margin: 10 });
+						var stream = doc.pipe(blobStream());
+						doc.font('Helvetica', 8);
+						var itemsPorPagina = 19;
+						var y = 160, items = 0, pagina = 1, totalPaginas = Math.ceil(asientosContables.length / itemsPorPagina);
+						var sumaDebeBs = 0, sumaHaberBs = 0, sumaDebeSus = 0, sumaHaberSus = 0;
+						var fecha = new Date()
+						if (bimonetario) {
 							DibujarCabeceraComprobante(doc, bimonetario, usuario, comprobante, pagina, totalPaginas);
+							for (var i = 0; i < asientosContables.length && items <= itemsPorPagina; i++) {
+								var asiento = asientosContables[i]
+								doc.rect(390, y, 0, 30).stroke();
+								doc.rect(440, y, 0, 30).stroke();
+								doc.rect(490, y, 0, 30).stroke();
+								doc.rect(540, y, 0, 30).stroke();
+								doc.font('Helvetica', 7);
+								doc.text(asiento.cuenta.codigo, 28, y + 5)
+								doc.font('Helvetica-Bold', 7);
+								if (asiento.cuenta.tipoAuxiliar) doc.text(asiento.cuenta.cuentaAux.nombre, 28, y + 13, { width: 80 })
+								doc.font('Helvetica-Bold', 7);
+								doc.text(asiento.cuenta.nombre, 120, y + 5, { width: 190, underline: true })
+								doc.font('Helvetica', 7);
+								doc.text(asiento.glosa, 125, y + 13, { width: 190 })
+								if (asiento.centroCosto) doc.text(asiento.centroCosto.nombre, 310, y + 5)
+								doc.text("", 350, y + 5)
+								var debe_bs = number_format(asiento.debe_bs, 2)
+								var haber_bs = number_format(asiento.haber_bs, 2)
+								if(debe_bs!="0.00")doc.text(debe_bs, 395, y + 5)
+								if(haber_bs!="0.00")doc.text(haber_bs, 445, y + 5)
+								var debe_sus = number_format(asiento.debe_sus, 2)
+								var haber_sus = number_format(asiento.haber_sus, 2)
+								if(debe_sus!="0.00")doc.text(debe_sus, 500, y + 5)
+								if(haber_bs!="0.00")doc.text(haber_sus, 545, y + 5)
+								sumaDebeBs += 0 + asiento.debe_bs
+								sumaHaberBs += 0 + asiento.haber_bs
+								sumaDebeSus += 0 + asiento.debe_sus
+								sumaHaberSus += 0 + asiento.haber_sus
+								y = y + 30;
+								items++;
+								if (items > itemsPorPagina) {
+									doc.addPage({ size: [612, 792], margin: 10 });
+									y = 160;
+									items = 0;
+									pagina = pagina + 1;
+									DibujarCabeceraComprobante(doc, bimonetario, usuario, comprobante, pagina, totalPaginas);
+								}
+							}
+							doc.font('Helvetica-Bold', 7);
+							doc.text("SUMA TOTAL:", 330, y + 5)
+							sumaDebeBs = number_format(sumaDebeBs, 2)
+							sumaHaberBs = number_format(sumaHaberBs, 2)
+							doc.text(sumaDebeBs, 395, y + 5)
+							doc.text(sumaHaberBs, 445, y + 5)
+							sumaHaberSus = number_format(sumaHaberSus, 2)
+							sumaDebeSus = number_format(sumaDebeSus, 2)
+							doc.text(sumaDebeSus, 500, y + 5)
+							doc.text(sumaHaberSus, 545, y + 5)
+							doc.rect(20, y, 571, 0).stroke();
+							doc.rect(20, y + 20, 571, 0).stroke();
+							doc.rect(390, y, 0, 20).stroke();
+							doc.rect(440, y, 0, 20).stroke();
+							doc.rect(490, y, 0, 20).stroke();
+							doc.rect(540, y, 0, 20).stroke();
+						} else {
+							DibujarCabeceraComprobante(doc, bimonetario, usuario, comprobante, pagina, totalPaginas);
+							for (var i = 0; i < asientosContables.length && items <= itemsPorPagina; i++) {
+								var asiento = asientosContables[i]
+								doc.rect(450, y, 0, 30).stroke();
+								doc.rect(520, y, 0, 30).stroke();
+								doc.font('Helvetica', 7);
+								doc.text(asiento.cuenta.codigo, 38, y + 5)
+								doc.font('Helvetica-Bold', 7);
+								if (asiento.cuenta.tipoAuxiliar) doc.text(asiento.cuenta.cuentaAux.nombre, 38, y + 13, { width: 80 })
+								doc.font('Helvetica-Bold', 7);
+								doc.text(asiento.cuenta.nombre, 130, y + 5, { width: 190, underline: true })
+								doc.font('Helvetica', 7);
+								doc.text(asiento.glosa, 135, y + 13, { width: 190 })
+								if (asiento.centroCosto) doc.text(asiento.centroCosto.nombre, 340, y + 5)
+								doc.text("", 380, y + 5)
+								var debe_bs = number_format(asiento.debe_bs, 2)
+								var haber_bs = number_format(asiento.haber_bs, 2)
+								if(debe_bs!="0.00")doc.text(debe_bs, 470, y + 5)
+								if(haber_bs!="0.00")doc.text(haber_bs, 540, y + 5)
+								sumaDebeBs += 0 + asiento.debe_bs
+								sumaHaberBs += 0 + asiento.haber_bs
+								y = y + 30;
+								items++;
+								if (items > itemsPorPagina) {
+									doc.rect(450, y, 0, 2).stroke();
+									doc.rect(520, y, 0, 2).stroke();
+									doc.addPage({ size: [612, 792], margin: 10 });
+									y = 160;
+									items = 0;
+									pagina = pagina + 1;
+									DibujarCabeceraComprobante(doc, bimonetario, usuario, comprobante, pagina, totalPaginas);
+								}
+							}
+							doc.font('Helvetica-Bold', 7);
+							doc.text("SUMA TOTAL:", 390, y + 5)
+							doc.font('Helvetica', 7);
+							sumaDebeBs = number_format(sumaDebeBs, 2)
+							sumaHaberBs = number_format(sumaHaberBs, 2)
+							doc.text(sumaDebeBs, 470, y + 5)
+							doc.text(sumaHaberBs, 540, y + 5)
+							doc.rect(20, y, 571, 0).stroke();
+							doc.rect(20, y + 20, 571, 0).stroke();
+							doc.font('Helvetica-Bold', 7);
+							doc.rect(450, y, 0, 20).stroke();
+							doc.rect(520, y, 0, 20).stroke();
 						}
+						doc.text("Son:", 38, y + 25)
+						doc.font('Helvetica', 7);
+						doc.text(comprobante.importe_literal, 60, y + 25)
+						
+						doc.rect(20, y + 40, 571, 0).stroke();
+						if(comprobante.tipoComprobante.nombre=="TRASPASO"){
+						doc.rect(20, 720, 571, 0).stroke();
+						doc.font('Helvetica-Bold', 7);
+						doc.text("Preparado por:", 38, 725)
+						doc.font('Helvetica', 7);
+						doc.text(usuario.persona.nombre_completo, 38, 735)
+						doc.rect(200, 720, 0, 42).stroke();
+						var fechaActual = new Date(comprobante.fecha_creacion)
+						var mont = fechaActual.getMonth() + 1
+						var min = fechaActual.getMinutes()
+						if (fechaActual.getMinutes() < 10) { min = "0" + fechaActual.getMinutes() }
+						var hora = fechaActual.getHours()
+						if (fechaActual.getHours() < 10) { hora = "0" + fechaActual.getMinutes() }
+						var sec = fechaActual.getSeconds()
+						if (fechaActual.getSeconds() < 10) { sec = "0" + fechaActual.getMinutes() }
+						if (mont < 10) {
+							doc.text(+fechaActual.getDate() + "/0" + mont + "/" + fechaActual.getFullYear() + "         " + hora + ":" + min + ":" + sec, 58, 752)
+						} else {
+							doc.text(+fechaActual.getDate() + "/" + mont + "/" + fechaActual.getFullYear() + "         " + hora + ":" + min + ":" + sec, 58, 752)
+						}
+						var mont2 = fecha.getMonth() + 1
+						var min2 = fecha.getMinutes()
+						if (fecha.getMinutes() < 10) { min2 = "0" + fecha.getMinutes() }
+						var hora2 = fecha.getHours()
+						if (fecha.getHours() < 10) { hora2 = "0" + fecha.getMinutes() }
+						var sec2 = fecha.getSeconds()
+						if (fecha.getSeconds() < 10) { sec2 = "0" + fecha.getMinutes() }
+						if (mont2 < 10) {
+							doc.text("IMP.:" + fecha.getDate() + "/0" + mont2 + "/" + fecha.getFullYear() + "         " + hora2 + ":" + min2 + ":" + sec2, 38, 765)
+						} else {
+							doc.text("IMP.:" + fecha.getDate() + "/" + mont2 + "/" + fecha.getFullYear() + "         " + hora2 + ":" + min2 + ":" + sec2, 38, 765)
+						}
+						doc.text("Revisado", 290, 752)
+						doc.text("Autorizado", 480, 752)					
+						
+						doc.rect(410, 720, 0, 42).stroke();
+						doc.rect(20, 750, 571, 0).stroke();
+					}else{
+						doc.rect(20, 720, 571, 0).stroke();
+						doc.font('Helvetica-Bold', 7);
+						doc.text("Preparado por:", 38, 725)
+						doc.font('Helvetica', 7);
+						doc.text(usuario.persona.nombre_completo, 38, 735)
+						doc.rect(200, 720, 0, 42).stroke();
+						var fechaActual = new Date(comprobante.fecha_creacion)
+						var mont = fechaActual.getMonth() + 1
+						var min = fechaActual.getMinutes()
+						if (fechaActual.getMinutes() < 10) { min = "0" + fechaActual.getMinutes() }
+						var hora = fechaActual.getHours()
+						if (fechaActual.getHours() < 10) { hora = "0" + fechaActual.getMinutes() }
+						var sec = fechaActual.getSeconds()
+						if (fechaActual.getSeconds() < 10) { sec = "0" + fechaActual.getMinutes() }
+						if (mont < 10) {
+							doc.text(+fechaActual.getDate() + "/0" + mont + "/" + fechaActual.getFullYear() + "         " + hora + ":" + min + ":" + sec, 58, 752)
+						} else {
+							doc.text(+fechaActual.getDate() + "/" + mont + "/" + fechaActual.getFullYear() + "         " + hora + ":" + min + ":" + sec, 58, 752)
+						}
+						var mont2 = fecha.getMonth() + 1
+						var min2 = fecha.getMinutes()
+						if (fecha.getMinutes() < 10) { min2 = "0" + fecha.getMinutes() }
+						var hora2 = fecha.getHours()
+						if (fecha.getHours() < 10) { hora2 = "0" + fecha.getMinutes() }
+						var sec2 = fecha.getSeconds()
+						if (fecha.getSeconds() < 10) { sec2 = "0" + fecha.getMinutes() }
+						if (mont2 < 10) {
+							doc.text("IMP.:" + fecha.getDate() + "/0" + mont2 + "/" + fecha.getFullYear() + "         " + hora2 + ":" + min2 + ":" + sec2, 38, 765)
+						} else {
+							doc.text("IMP.:" + fecha.getDate() + "/" + mont2 + "/" + fecha.getFullYear() + "         " + hora2 + ":" + min2 + ":" + sec2, 38, 765)
+						}
+						doc.text("Revisado", 240, 752)
+						doc.text("Autorizado", 350, 752)
+						doc.text("Recibio conforme:", 425, 740)
+						doc.text("CI:", 425, 752)
+						doc.rect(310, 720, 0, 42).stroke();
+						doc.rect(420, 720, 0, 42).stroke();
+						doc.rect(20, 750, 571, 0).stroke();
 					}
-					doc.font('Helvetica-Bold', 7);
-					doc.text("SUMA TOTAL:", 390, y + 5)
-					doc.font('Helvetica', 7);
-					sumaDebeBs =number_format(sumaDebeBs,2)
-					sumaHaberBs =number_format(sumaHaberBs,2)
-					doc.text(sumaDebeBs, 470, y + 5)
-					doc.text(sumaHaberBs, 540, y + 5)
-					doc.rect(20, y, 571, 0).stroke();
-					doc.rect(20, y + 20, 571, 0).stroke();
-					doc.font('Helvetica-Bold', 7);
-					doc.text("Son:", 38, y + 25)
-					doc.font('Helvetica', 7);
-					doc.text(comprobante.importe_literal, 60, y + 25)
-					doc.rect(20, y + 40, 571, 0).stroke();
-					doc.rect(450, y, 0, 20).stroke();
-					doc.rect(520, y, 0, 20).stroke();
-					doc.rect(20, 720, 571, 0).stroke();
-					doc.font('Helvetica-Bold', 7);
-					doc.text("Preparado por:", 38, 725)
-					doc.font('Helvetica', 7);
-					doc.text(usuario.persona.nombre_completo, 38, 735)
-					doc.rect(200, 720, 0, 42).stroke();
-					doc.text(fecha.getDate() + "/" + (fecha.getMonth() + 1) + "/" + fecha.getFullYear() + "         " + fecha.getHours() + ":" + fecha.getMinutes() + ":" + fecha.getSeconds(), 58, 752)
-					doc.text("Revisado", 240, 752)
-					doc.text("Autorizado", 350, 752)
-					doc.text("Recibio conforme:", 425, 740)
-					doc.text("CI:", 425, 752)
-					doc.rect(310, 720, 0, 42).stroke();
-					doc.rect(420, 720, 0, 42).stroke();
-					doc.rect(20, 750, 571, 0).stroke();
-					doc.end();
-					stream.on('finish', function () {
-						var fileURL = stream.toBlobURL('application/pdf');
-						var w = window.open(fileURL, '_blank', 'location=no');
-						$timeout(function () {
-							w.print();
-						}, 500);
-					});
-					blockUI.stop();				}
+						doc.end();
+						stream.on('finish', function () {
+							var fileURL = stream.toBlobURL('application/pdf');
+							var w = window.open(fileURL, '_blank', 'location=no');
+							$timeout(function () {
+								w.print();
+							}, 500);
+						});
+						blockUI.stop();
+					}
+
+				});
+
+
 
 			};
 			return res;
 		}])
 	.factory('DibujarCabeceraComprobante', [function () {
 		var res = function (doc, bimonetario, usuario, comprobante, pagina, totalPaginas) {
-			var fecha = new Date()
+			var fecha = new Date(comprobante.fecha)
 			console.log(usuario)
 			if (bimonetario) {
 				doc.rect(20, 30, 571, 732).stroke();
@@ -345,19 +400,19 @@ angular.module('agil.servicios')
 				doc.text(pagina + ' de: ' + totalPaginas, 545, 35)
 				doc.font('Helvetica-Bold', 8);
 				doc.text("Gestión: " + fecha.getFullYear(), 515, 50)
-				if(comprobante.tipoComprobante.nombre=="INGRESO")doc.text("N°: " + comprobante.sucursal.comprobante_ingreso_correlativo, 535, 65)
-				if(comprobante.tipoComprobante.nombre=="EGRESO")doc.text("N°: " + comprobante.sucursal.comprobante_egreso_correlativo, 535, 65)
-				if(comprobante.tipoComprobante.nombre=="TRASPASO")doc.text("N°: " + comprobante.sucursal.comprobante_traspaso_correlativo, 535, 65)
-				if(comprobante.tipoComprobante.nombre=="CAJA CHICA")doc.text("N°: " + comprobante.sucursal.comprobante_caja_chica_correlativo, 535, 65)
+				if (comprobante.tipoComprobante.nombre == "INGRESO") doc.text("N°: " + comprobante.sucursal.comprobante_ingreso_correlativo, 535, 65)
+				if (comprobante.tipoComprobante.nombre == "EGRESO") doc.text("N°: " + comprobante.sucursal.comprobante_egreso_correlativo, 535, 65)
+				if (comprobante.tipoComprobante.nombre == "TRASPASO") doc.text("N°: " + comprobante.sucursal.comprobante_traspaso_correlativo, 535, 65)
+				if (comprobante.tipoComprobante.nombre == "CAJA CHICA") doc.text("N°: " + comprobante.sucursal.comprobante_caja_chica_correlativo, 535, 65)
 				doc.rect(20, 90, 571, 0).stroke();
 				doc.font('Helvetica', 8);
 				doc.text(comprobante.gloza, 68, 105)
 				doc.font('Helvetica-Bold', 8);
 				var mont = fecha.getMonth() + 1
 				if (mont < 10) {
-					doc.text("Fecha: " + fecha.getDate() + "/0" +mont+ "/" + fecha.getFullYear(), 500, 95)
+					doc.text("Fecha: " + fecha.getDate() + "/0" + mont + "/" + fecha.getFullYear(), 500, 95)
 				} else {
-					doc.text("Fecha: " + fecha.getDate() + "/" +mont+ "/" + fecha.getFullYear(), 500, 95)
+					doc.text("Fecha: " + fecha.getDate() + "/" + mont + "/" + fecha.getFullYear(), 500, 95)
 				}
 				doc.text("T. Cambio: ", 500, 105)
 				doc.font('Helvetica', 8);
@@ -399,13 +454,18 @@ angular.module('agil.servicios')
 				doc.font('Helvetica', 8);
 				doc.text(pagina + ' de: ' + totalPaginas, 545, 35)
 				doc.font('Helvetica-Bold', 8);
-				doc.text("Gestión: " + fecha.getFullYear(), 515, 50)							
+				doc.text("Gestión: " + fecha.getFullYear(), 515, 50)
 				doc.text("N°: " + comprobante.numero, 535, 65)
 				doc.rect(20, 90, 571, 0).stroke();
 				doc.font('Helvetica', 8);
 				doc.text(comprobante.gloza, 38, 105)
 				doc.font('Helvetica-Bold', 8);
-				doc.text("Fecha: " + fecha.getDate() + "/" + (fecha.getMonth()) + "/" + fecha.getFullYear(), 500, 95)
+				var mont = fecha.getMonth() + 1
+				if (mont < 10) {
+					doc.text("Fecha: " + fecha.getDate() + "/0" + mont + "/" + fecha.getFullYear(), 500, 95)
+				} else {
+					doc.text("Fecha: " + fecha.getDate() + "/" + mont + "/" + fecha.getFullYear(), 500, 95)
+				}
 				doc.text("T. Cambio: ", 500, 105)
 				doc.font('Helvetica', 8);
 				doc.text(comprobante.tipoCambio.dolar, 545, 105)
@@ -429,12 +489,12 @@ angular.module('agil.servicios')
 				doc.rect(50, 730, 520, 0).stroke(); */
 			}
 		}
-		
-			
+
+
 		return res;
 	}])
 
-	
+
 	.factory('ComprasComprobante', function ($resource) {
 		return $resource(restServer + "comprasComprobante");
 	})

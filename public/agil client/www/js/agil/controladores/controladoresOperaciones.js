@@ -73,6 +73,7 @@ angular.module('agil.controladores')
 				$scope.mostrarMensaje(error.data)
 				blockUI.stop()
 			})
+		}
 
 			$scope.obtenerSucursales = function () {
 				var sucursales = [];
@@ -131,7 +132,7 @@ angular.module('agil.controladores')
 				// })
 				$scope.abrirDialogPanelOperaciones()
 			}
-		}
+		
 		$scope.calcularTotalViveres = function (solicitud) {
 			// if(!$scope.alreadyCalculated){
 			$scope.totalViveresSolicitados = []
@@ -213,6 +214,7 @@ angular.module('agil.controladores')
 					$scope.totalViveresSolicitados.push(obj)
 				}
 			})
+			
 			$scope.solicitadoTotalFinalBs = 0
 			var alreadyCount = []
 			$scope.totalViveresSolicitados.map(function (producto) {
@@ -374,7 +376,11 @@ angular.module('agil.controladores')
 		}
 
 		$scope.getFecha = function () {
-			return new Date()
+			if($scope.solicitud !== undefined){
+				return new Date($scope.solicitud.fecha)
+			}else{
+				return new Date()
+			}
 		}
 
 		$scope.guardarOperacionPanel = function (formValid, solicitud) {

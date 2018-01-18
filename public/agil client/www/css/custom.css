@@ -13,6 +13,16 @@
   .table-head-color{
 	background-color: rgb(238, 237, 237)
   }
+
+  /* fin fixed header */
+  /* input number sin flechas */
+ #formNuevoComprobante input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button { 
+  -webkit-appearance: none; 
+  margin: 0; 
+}
+
+#formNuevoComprobante input[type=number] { -moz-appearance:textfield; }
 #search { 
 width: 170px; /* Ancho del buscador */
 height: 50px;

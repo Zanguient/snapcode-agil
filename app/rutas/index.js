@@ -118,8 +118,10 @@ module.exports = function (router, sequelize, Sequelize, jwt, md5, forEach, ensu
 	var DetalleSolicitudProducto = require('../modelos/INV/detalle-solicitud-producto')(sequelize, Sequelize);
 	var DetalleSolicitudProductoBase = require('../modelos/INV/detalle-solicitud-producto-base')(sequelize, Sequelize);
 	var SolicitudReposicion = require('../modelos/INV/solicitud-reposicion')(sequelize, Sequelize);
-
-
+	var Proforma = require('../modelos/AGIL/proforma')(sequelize, Sequelize);
+	var DetallesProformas = require('../modelos/AGIL/detalles-proformas')(sequelize, Sequelize);
+	var Servicios = require('../modelos/AGIL/servicios')(sequelize, Sequelize);
+	var ActividadEconomica= require('../modelos/AGIL/actividad-economica')(sequelize, Sequelize);
 
 	//*****RELATIONS*****
 	require('../modelos/relaciones.js')(sequelize, Usuario, Persona, Rol, UsuarioRol, Tipo, Clase, Aplicacion, RolAplicacion,
@@ -136,10 +138,9 @@ module.exports = function (router, sequelize, Sequelize, jwt, md5, forEach, ensu
 		MedicoPacienteFicha, MedicoLaboratorioExamen, MedicoLaboratorio, MedicoLaboratorioPaciente, MedicoLaboratorioResultado, MedicoDiagnostico, MedicoDiagnosticoExamen, MedicoDiagnosticoPaciente, MedicoDiagnosticoResultado,
 		MantenimientoOrdenTrabajo, MantenimientoOrdenTrabajoManoObra, MantenimientoOrdenTrabajoMaterial, MantenimientoOrdenTrabajoServicioExterno, MantenimientoOrdenTrabajoSistema,VendedorVenta,RrhhEmpleadoFicha,
 		RrhhEmpleadoFichaOtrosSeguros,RrhhEmpleadoFichaFamiliar,MedicoPacientePreRequisito,RrhhEmpleadoDiscapacidad,RrhhEmpleadoCargo,ClienteRazon,GtmDestino,GtmEstibaje,GtmGrupoEstibaje,GtmTransportista,GtmDespacho,GtmClienteDestino,
-		RrhhEmpleadoHojaVida,RrhhEmpleadoFormacionAcademica,RrhhEmpleadoExperienciaLaboral,RrhhEmpleadoLogroInternoExterno,
-		RrhhEmpleadoCapacidadInternaExterna, SolicitudReposicion,DetalleSolicitudProducto,DetalleSolicitudProductoBase,
-		MonedaTipoCambio,ContabilidadCuentaAuxiliar,GtmDespachoDetalle);
-	//*****SOCKETS*****
+		RrhhEmpleadoCapacidadInternaExterna, SolicitudReposicion,DetalleSolicitudProducto,DetalleSolicitudProductoBase, MonedaTipoCambio,ContabilidadCuentaAuxiliar,GtmDespachoDetalle,Proforma ,DetallesProformas,ActividadEconomica,Servicios,RrhhEmpleadoFormacionAcademica,RrhhEmpleadoLogroInternoExterno,RrhhEmpleadoHojaVida,RrhhEmpleadoExperienciaLaboral);	
+		
+		//*****SOCKETS*****
 	require('../sockets/pantallas.js')(io, socket);
 
 	//*****ROUTES*****
@@ -209,6 +210,7 @@ module.exports = function (router, sequelize, Sequelize, jwt, md5, forEach, ensu
 
 
 	require('./rutas-operaciones')(router,sequelize,Sequelize, Usuario, Producto, Diccionario, Clase, Sucursal, Empresa, ProductoBase, Almacen, Inventario ,SolicitudReposicion,DetalleSolicitudProducto,DetalleSolicitudProductoBase,Persona)
+	require('./rutas-proformas')(router,sequelize,Sequelize, Usuario, Cliente, Proforma,DetallesProformas,ActividadEconomica,Servicios)
 
 	router.route('/test')
 		.get(function (req, res) {

@@ -173,6 +173,9 @@
 	<script src="js/gtm/controladores/ControladorGtmDestino.js"></script>
 	<script src="js/gtm/controladores/ControladorGtmDespacho.js"></script>
 
+	<script src="js/agil/controladores/controladoresProformas.js"></script>
+
+	<script src="js/agil/servicios/serviciosProformas.js"></script>
 	<script src="js/agil/servicios/serviciosComprobanteContabilidad.js"></script>
 	<script src="js/agil/servicios/serviciosContabilidadCuentas.js"></script>
 	<script src="js/sys/servicios/serviciosUsuario.js"></script>
@@ -1772,7 +1775,7 @@
 					<div class="row" class="col-sm-12">
 						<div class="col-sm-2">
 							<label>TIPO COMPROBANTE:</label>
-							<select autofocus ng-disabled="verComprobante" id='id_tipo' required ng-model='nuevoComprobante.tipoComprobante' id="tipoComprobante"
+							<select enter autofocus ng-disabled="verComprobante" id='id_tipo' required ng-model='nuevoComprobante.tipoComprobante' id="tipoComprobante"
 							 name="tipoComprobante" data-placeholder="Click para escoger" class="form-control" ng-options="cuentaTipo as cuentaTipo.nombre for cuentaTipo in tiposComprobantes track by cuentaTipo.id">
 
 							</select>
@@ -1784,7 +1787,7 @@
 						</div>
 						<div class="col-sm-2">
 							<label>SUCURSAL:</label>
-							<select class="form-control" ng-disabled="verComprobante" required data-validate="validate(required)" id="sucursalOrigen"
+							<select enter class="form-control" ng-disabled="verComprobante" required data-validate="validate(required)" id="sucursalOrigen"
 							 name="sucursalOrigen" required ng-options="sucursal as sucursal.nombre for sucursal in sucursales track by sucursal.id"
 							 ng-model="nuevoComprobante.id_sucursal">
 
@@ -1799,7 +1802,7 @@
 							<label>FECHA</label>
 							<input ng-disabled="verComprobante" ng-change="obtenerCambioMoneda2(nuevoComprobante.fecha)" name="fecha" required ng-update-hidden
 							 class="form-control date-picker" type="text" data-date-format="dd/mm/yyyy" id="fechaCmp" ng-model="nuevoComprobante.fecha"
-							 placeholder="Ingrese la fecha" />
+							 placeholder="Ingrese la fecha" enter/>
 							<span class="red">(*)</span>
 							<div ng-show="formNuevoComprobante.fecha.$error.required" class="invalid-message help-block" ng-messages="formNuevoComprobante.fecha.$error"
 							 ng-if="formNuevoComprobante.$submitted">
@@ -1954,10 +1957,10 @@
 												<a class="orange" uib-tooltip="Libros Mayores" ng-if="asiento.cuenta.id" ng-click="abrirModalLibrosMayores(asiento)">
 													<i class="ace-icon fa fa-file-text-o bigger-130"></i>
 												</a>
-												<input autocomplete="off" ng-focus="establecerCuentaActual2(asiento)" ng-disabled="verComprobante" ng-keypress="interceptarTecla($event,'cantidad',true)"
+												<input enter autocomplete="off" ng-focus="establecerCuentaActual2(asiento)" ng-disabled="verComprobante" ng-keypress="interceptarTecla($event,'cantidad',true)"
 												 id="{{$index}}-As" name="{{$index}}-As" required type="text" ng-model="asiento.cuenta" placeholder="Busqueda..."
 												 uib-typeahead="cuenta as (cuenta.codigo+'-'+cuenta.nombre) for cuenta in buscarCuentas($viewValue)" typeahead-wait-ms="1000"
-												 typeahead-template-url="templates/autocompletar.html" typeahead-show-hint="false" typeahead-on-select="establecerCuentaActual(asiento)"
+												 typeahead-template-url="templates/autocompletar.html" typeahead-show-hint="false" typeahead-on-select="establecerCuentaActual(asiento,$index)"
 												 typeahead-min-length="1">
 												<span class="invalid-message" ng-show="!asiento.cuenta.id">
 													Seleccionar cuenta
@@ -1989,27 +1992,32 @@
 												</script>
 											</td>
 											<th>
-												<select ng-focus="establecerCuentaActual(asiento.cuenta)" ng-disabled="asiento.cuenta.id==undefined || verComprobante" required id="sucursalOrigen{{$index}}"
-												 name="centroDeCostos" ng-options="centroCosto as centroCosto.nombre for centroCosto in centrosDeCostos track by centroCosto.id"
-												 ng-model="asiento.centroCosto">
+												<select ng-focus="establecerCuentaActual(asiento.cuenta)" ng-disabled="asiento.cuenta.id==undefined || verComprobante" required
+												 id="sucursalOrigen{{$index}}" name="centroDeCostos" ng-options="centroCosto as centroCosto.nombre for centroCosto in centrosDeCostos track by centroCosto.id"
+												 ng-model="asiento.centroCosto" enter>
 													<option value="">--Ninguno--</option>
 												</select>
 											</th>
+										
 											<td>
-												<input ng-focus="establecerCuentaActual(asiento.cuenta)" ng-disabled="asiento.cuenta.id==undefined || verComprobante" id="{{$index}}-Bs" type="number" ng-model="asiento.debe_bs"
-												 ng-change="ComvertirDebeEnDolar(asiento,true);cal(nuevoComprobante.asientosContables)">
+												<input class="input-fix-mousewheel1" ng-focus="establecerCuentaActual(asiento.cuenta);quitarScroll();" ng-disabled="asiento.cuenta.id==undefined || verComprobante"
+												 id="{{$index}}-Bs" type="number" ng-model="asiento.debe_bs" ng-change="ComvertirDebeEnDolar(asiento,true);cal(nuevoComprobante.asientosContables)"
+												 enter>
 											</td>
 											<td>
-												<input ng-focus="establecerCuentaActual(asiento.cuenta)" ng-disabled="asiento.cuenta.id==undefined || verComprobante" id="{{$index}}-Cs" type="number" ng-model="asiento.haber_bs"
-												 ng-change="ComvertirHaberEnDolar(asiento,true);cal(nuevoComprobante.asientosContables)">
+												<input class="input-fix-mousewheel1" ng-focus="establecerCuentaActual(asiento.cuenta);quitarScroll();" ng-disabled="asiento.cuenta.id==undefined || verComprobante" id="{{$index}}-Cs"
+												 type="number" ng-model="asiento.haber_bs" ng-change="ComvertirHaberEnDolar(asiento,true);cal(nuevoComprobante.asientosContables)"
+												 enter>
 											</td>
 											<td ng-if="opcionBimonetario">
-												<input ng-focus="establecerCuentaActual(asiento.cuenta)" ng-disabled="asiento.cuenta.id==undefined || verComprobante" type="number" ng-model="asiento.debe_sus"
-												 ng-change="ComvertirDebeEnBolivianos(asiento);cal(nuevoComprobante.asientosContables)">
+												<input class="input-fix-mousewheel1" ng-focus="establecerCuentaActual(asiento.cuenta);quitarScroll();" ng-disabled="asiento.cuenta.id==undefined || verComprobante" type="number"
+												 ng-model="asiento.debe_sus" ng-change="ComvertirDebeEnBolivianos(asiento);cal(nuevoComprobante.asientosContables)"
+												 enter>
 											</td>
-								z			<td ng-if="opcionBimonetario">
-												<input ng-focus="establecerCuentaActual(asiento.cuenta)" ng-disabled="asiento.cuenta.id==undefined || verComprobante" type="number" ng-model="asiento.haber_sus"
-												 ng-change="ComvertirHaberEnBolivianos(asiento);cal(nuevoComprobante.asientosContables)">
+											<td ng-if="opcionBimonetario">
+												<input class="input-fix-mousewheel1" ng-focus="establecerCuentaActual(asiento.cuenta);quitarScroll();" ng-disabled="asiento.cuenta.id==undefined || verComprobante" type="number"
+												 ng-model="asiento.haber_sus" ng-change="ComvertirHaberEnBolivianos(asiento);cal(nuevoComprobante.asientosContables)"
+												 enter>
 											</td>
 											<td>
 												<a ng-hide="verComprobante" tabindex="-1" class="blue" href="javascript:void(0)" ng-click="eliminarAsiento(asiento)">
@@ -2021,7 +2029,7 @@
 										<tr ng-if="asiento.cuenta.id">
 											<td colspan="8">
 												<input ng-change="agregarNuevoAsiento(asiento,$index)" ng-disabled="verComprobante" class="form-control" ng-model="asiento.glosa"
-												 placeholder="Agregar glosa individial">
+												 placeholder="Agregar glosa individial" enter>
 											</td>
 										</tr>
 									</tbody>

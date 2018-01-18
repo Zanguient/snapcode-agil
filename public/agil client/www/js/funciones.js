@@ -1,3 +1,7 @@
+function ejecutarScriptDespacho(idModalAsignacionFactura){
+	crearPopup(idModalAsignacionFactura, "20%", 200);
+}
+
 function ejecutarScriptEstibaje(idModalWizardEstibajeEdicion,idContenedorEdicionEstibaje) {
 	crearPopup(idModalWizardEstibajeEdicion, "60%", 550);
 	aplicarWizardFormulario(idModalWizardEstibajeEdicion, idContenedorEdicionEstibaje);
@@ -8,6 +12,14 @@ function ejecutarScriptDestino(idModalWizardDestinoEdicion,idContenedorEdicionDe
 	aplicarWizardFormulario(idModalWizardDestinoEdicion, idContenedorEdicionDestino);
 }
 
+function ejecutarScriptsProformas(modalConfiguracionActividadesServicios, wizardConfiguracionActividadesServicios, dialogProformaEdicion, dialogClientesProforma,modalConfiguracionActividades,wizardConfiguracionActividades) {
+	crearPopup(modalConfiguracionActividadesServicios, 'auto', 'auto');
+	crearPopup(modalConfiguracionActividades, 'auto', 'auto');
+	crearPopup(dialogProformaEdicion, 'auto', 'auto');
+	crearPopup(dialogClientesProforma, 'auto', 'auto');
+	aplicarWizardFormulario(wizardConfiguracionActividadesServicios);
+	aplicarWizardFormulario(wizardConfiguracionActividades);
+}
 function ejecutarScriptTransportista(idModalWizardTransportistajeEdicion,idContenedorEdicionTransportista){
 	crearPopup(idModalWizardTransportistajeEdicion, "60%", 550);
 	aplicarWizardFormulario(idModalWizardTransportistajeEdicion, idContenedorEdicionTransportista);

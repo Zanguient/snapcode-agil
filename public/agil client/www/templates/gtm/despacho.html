@@ -60,15 +60,15 @@
 							<td>{{gtm_detalle_despacho.estibaje.nombre}}</td>
 							<td>{{gtm_detalle_despacho.estibaje.costo}}</td>
 							
-							<td>
+							<td>{{gtm_detalle_despacho.factura}}</td>
 							<td>
 								<div class="hidden-sm hidden-xs action-buttons">
 									<a class="blue" href="javascript:void(0)" e-disabled="!aplicacion.puede_ver" ng-click="verCliente(cliente)">
 									<i class="ace-icon fa fa-search-plus bigger-130"></i>
 								</a>
 
-									<a class="green" href="javascript:void(0)" ng-click="modificarDestino(destino)">
-									<i class="ace-icon fa fa-pencil bigger-130"></i>
+									<a class="green" href="javascript:void(0)" ng-click="abrirModalAsignacionFactura(gtm_detalle_despacho)">
+									<i class="ace-icon fa fa-unlock bigger-130"></i>
 								</a>
 
 									<a class="red" href="javascript:void(0)" ng-click="abrirPopupConfirmacionEliminacion(removerDestino,destino)">
@@ -93,10 +93,10 @@
 											</li>
 
 											<li>
-												<a href="javascript:void(0)" ng-click="modificarEstibaje(estibaje)" class="tooltip-success"
+												<a href="javascript:void(0)" ng-click="abrirModalAsignacionFactura(gtm_detalle_despacho)" class="tooltip-success"
 												 data-rel="tooltip" title="Edit">
 												<span class="green">
-													<i class="ace-icon fa fa-pencil-square-o bigger-120"></i>
+													<i class="ace-icon fa fa-unlock bigger-120"></i>
 												</span>
 											</a>
 											</li>
@@ -119,4 +119,34 @@
 			</div>
 		</div>
 	</div>
+</div>
+
+<div id="modal-asignacion-factura">
+<div class="modal-header bg-primary">
+	<h4 class='smaller text-white text-uppercase'>
+		<label>Asignacion Factura</label>
+	</h4>
+  </div>
+  <form name="asig" ng-submit="establecerFactura(detalle_despacho)">
+  <div class="row">
+	<div class="col-sm-12">
+		<div class="form-group">
+			<label for="ciudad">N° Factura</label>
+			  <input type="number" required ng-model="detalle_despacho.factura">
+		</div>
+	</div>
+  </div>
+  <div class="row">
+	  <div class="col-sm-12">
+		  <div class="modal-footer wizard-actions">
+			  <button ng-disabled="asig.$invalid" type="submit" class="btn btn-primary btn-sm">
+				  <i class="glyphicon glyphicon-floppy-disk"></i>Asignar
+			  </button>
+			  <button type="button" class="btn btn-danger btn-sm" ng-click="cerrarAsignacionFactura()">
+				  <i class="ace-icon fa fa-times"></i>Cancelar
+			  </button>
+		  </div>
+	  </div>
+  </div>
+  </form>
 </div>

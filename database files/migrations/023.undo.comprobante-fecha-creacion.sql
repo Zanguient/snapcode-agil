@@ -1,0 +1,1 @@
+ALTER TABLE agil_comprobante_contabilidad DROP fecha_creacion;
