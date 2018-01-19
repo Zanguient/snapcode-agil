@@ -113,9 +113,19 @@ function ejecutarScriptsInicio(idPopupTablaProductos, idPopupTablaCreditos, idPo
 	crearPopup(IdModalEliminarProductoVencido,"60%",550)
 	$("#" + idModalInicioSesion).siblings('.ui-dialog-titlebar').remove();
 	aplicarDatePickers();
-
+quitarScrollInputNumber()
 	$(document).on('click', '#field-viewer', function (e) {
 		e.stopPropagation();
+	});
+	
+}
+function quitarScrollInputNumber() {
+	$('.input-fix-mousewheel1').on('focus', function (e) {
+		$(this).on('mousewheel.disableScroll', function (e) {
+			e.preventDefault();
+		})
+	}).on('blur', function (e) {
+		$(this).off('mousewheel.disableScroll')
 	});
 }
 function ejecutarScriptsComprobante(IdModalVerificarCuenta, IdModalEliminarComprobante,IdModalCambioMoneda) {

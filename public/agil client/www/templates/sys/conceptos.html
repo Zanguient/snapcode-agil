@@ -169,8 +169,11 @@
 
 								<div class="col-sm-12">
 									<div class="col-sm-6">
-									<button type="button" class="btn btn-primary pull-right" ng-click="agregarClase(clase)">
+									<button type="button" ng-if="!clase.edit" class="btn btn-primary pull-right" ng-click="agregarClase(clase)">
 										<i class="ace-icon fa fa-plus align-top bigger-125"></i>Guardar
+									</button>
+									<button type="button" ng-if="clase.edit" class="btn btn-success pull-right" ng-click="editarClase(clase)">
+										<i class="ace-icon fa fa-plus align-top bigger-125"></i>Editar
 									</button>
 								</div>
 								<div class="col-sm-6">

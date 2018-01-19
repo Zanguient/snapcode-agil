@@ -297,11 +297,11 @@ angular.module('agil.servicios')
 						var fechaActual = new Date(comprobante.fecha_creacion)
 						var mont = fechaActual.getMonth() + 1
 						var min = fechaActual.getMinutes()
-						if (fechaActual.getMinutes() < 10) { min = "0" + fechaActual.getMinutes() }
+						if (min < 10) { min = "0" + fechaActual.getMinutes() }
 						var hora = fechaActual.getHours()
-						if (fechaActual.getHours() < 10) { hora = "0" + fechaActual.getMinutes() }
+						if (hora < 10) { hora = "0" + fechaActual.getHours() }
 						var sec = fechaActual.getSeconds()
-						if (fechaActual.getSeconds() < 10) { sec = "0" + fechaActual.getMinutes() }
+						if (sec < 10) { sec = "0" + fechaActual.getSeconds() }
 						if (mont < 10) {
 							doc.text(+fechaActual.getDate() + "/0" + mont + "/" + fechaActual.getFullYear() + "         " + hora + ":" + min + ":" + sec, 58, 752)
 						} else {
@@ -309,11 +309,11 @@ angular.module('agil.servicios')
 						}
 						var mont2 = fecha.getMonth() + 1
 						var min2 = fecha.getMinutes()
-						if (fecha.getMinutes() < 10) { min2 = "0" + fecha.getMinutes() }
+						if (min2 < 10) { min2 = "0" + fecha.getMinutes() }
 						var hora2 = fecha.getHours()
-						if (fecha.getHours() < 10) { hora2 = "0" + fecha.getMinutes() }
+						if (hora2 < 10) { hora2 = "0" + fecha.getHours() }
 						var sec2 = fecha.getSeconds()
-						if (fecha.getSeconds() < 10) { sec2 = "0" + fecha.getMinutes() }
+						if (sec2 < 10) { sec2 = "0" + fecha.getSeconds() }
 						if (mont2 < 10) {
 							doc.text("IMP.:" + fecha.getDate() + "/0" + mont2 + "/" + fecha.getFullYear() + "         " + hora2 + ":" + min2 + ":" + sec2, 38, 765)
 						} else {
@@ -332,13 +332,13 @@ angular.module('agil.servicios')
 						doc.text(usuario.persona.nombre_completo, 38, 735)
 						doc.rect(200, 720, 0, 42).stroke();
 						var fechaActual = new Date(comprobante.fecha_creacion)
-						var mont = fechaActual.getMonth() + 1
+						var mont = fechaActual.getMonth()+1
 						var min = fechaActual.getMinutes()
-						if (fechaActual.getMinutes() < 10) { min = "0" + fechaActual.getMinutes() }
+						if (min < 10) { min = "0" + fechaActual.getMinutes() }
 						var hora = fechaActual.getHours()
-						if (fechaActual.getHours() < 10) { hora = "0" + fechaActual.getMinutes() }
+						if (hora < 10) { hora = "0" + fechaActual.getHours() }
 						var sec = fechaActual.getSeconds()
-						if (fechaActual.getSeconds() < 10) { sec = "0" + fechaActual.getMinutes() }
+						if (sec < 10) { sec = "0" + fechaActual.getSeconds() }
 						if (mont < 10) {
 							doc.text(+fechaActual.getDate() + "/0" + mont + "/" + fechaActual.getFullYear() + "         " + hora + ":" + min + ":" + sec, 58, 752)
 						} else {
@@ -346,11 +346,11 @@ angular.module('agil.servicios')
 						}
 						var mont2 = fecha.getMonth() + 1
 						var min2 = fecha.getMinutes()
-						if (fecha.getMinutes() < 10) { min2 = "0" + fecha.getMinutes() }
+						if (min2 < 10) { min2 = "0" + fecha.getMinutes() }
 						var hora2 = fecha.getHours()
-						if (fecha.getHours() < 10) { hora2 = "0" + fecha.getMinutes() }
+						if (hora2 < 10) { hora2 = "0" + fecha.getHours() }
 						var sec2 = fecha.getSeconds()
-						if (fecha.getSeconds() < 10) { sec2 = "0" + fecha.getMinutes() }
+						if (sec2 < 10) { sec2 = "0" + fecha.getSeconds() }
 						if (mont2 < 10) {
 							doc.text("IMP.:" + fecha.getDate() + "/0" + mont2 + "/" + fecha.getFullYear() + "         " + hora2 + ":" + min2 + ":" + sec2, 38, 765)
 						} else {
@@ -400,10 +400,30 @@ angular.module('agil.servicios')
 				doc.text(pagina + ' de: ' + totalPaginas, 545, 35)
 				doc.font('Helvetica-Bold', 8);
 				doc.text("Gestión: " + fecha.getFullYear(), 515, 50)
-				if (comprobante.tipoComprobante.nombre == "INGRESO") doc.text("N°: " + comprobante.sucursal.comprobante_ingreso_correlativo, 535, 65)
-				if (comprobante.tipoComprobante.nombre == "EGRESO") doc.text("N°: " + comprobante.sucursal.comprobante_egreso_correlativo, 535, 65)
-				if (comprobante.tipoComprobante.nombre == "TRASPASO") doc.text("N°: " + comprobante.sucursal.comprobante_traspaso_correlativo, 535, 65)
-				if (comprobante.tipoComprobante.nombre == "CAJA CHICA") doc.text("N°: " + comprobante.sucursal.comprobante_caja_chica_correlativo, 535, 65)
+				if (comprobante.tipoComprobante.nombre == "INGRESO") {
+					doc.font('Helvetica-Bold', 12);
+					doc.text("N°: ",535, 65)
+					doc.font('Helvetica', 12);
+					doc.text(comprobante.sucursal.comprobante_ingreso_correlativo, 555, 65)
+				}				
+				if (comprobante.tipoComprobante.nombre == "EGRESO") {
+					doc.font('Helvetica-Bold', 12);
+					doc.text("N°: " , 535, 65)
+					doc.font('Helvetica', 12);
+					doc.text(comprobante.sucursal.comprobante_egreso_correlativo, 555, 65)
+				}				
+				if (comprobante.tipoComprobante.nombre == "TRASPASO") {
+					doc.font('Helvetica-Bold', 12);
+					doc.text("N°: ", 535, 65)
+					doc.font('Helvetica', 12);
+					doc.text(comprobante.sucursal.comprobante_traspaso_correlativo, 555, 65)
+				}				
+				if (comprobante.tipoComprobante.nombre == "CAJA CHICA"){
+					doc.font('Helvetica-Bold', 12);
+					doc.text("N°: ", 535, 65)
+					doc.font('Helvetica', 12);
+					doc.text(comprobante.sucursal.comprobante_caja_chica_correlativo, 555, 65)
+				}				 
 				doc.rect(20, 90, 571, 0).stroke();
 				doc.font('Helvetica', 8);
 				doc.text(comprobante.gloza, 68, 105)
@@ -455,7 +475,30 @@ angular.module('agil.servicios')
 				doc.text(pagina + ' de: ' + totalPaginas, 545, 35)
 				doc.font('Helvetica-Bold', 8);
 				doc.text("Gestión: " + fecha.getFullYear(), 515, 50)
-				doc.text("N°: " + comprobante.numero, 535, 65)
+				if (comprobante.tipoComprobante.nombre == "INGRESO") {
+					doc.font('Helvetica-Bold', 12);
+					doc.text("N°: ",535, 65)
+					doc.font('Helvetica', 12);
+					doc.text(comprobante.sucursal.comprobante_ingreso_correlativo, 555, 65)
+				}				
+				if (comprobante.tipoComprobante.nombre == "EGRESO") {
+					doc.font('Helvetica-Bold', 12);
+					doc.text("N°: " , 535, 65)
+					doc.font('Helvetica', 12);
+					doc.text(comprobante.sucursal.comprobante_egreso_correlativo, 555, 65)
+				}				
+				if (comprobante.tipoComprobante.nombre == "TRASPASO") {
+					doc.font('Helvetica-Bold', 12);
+					doc.text("N°: ", 535, 65)
+					doc.font('Helvetica', 12);
+					doc.text(comprobante.sucursal.comprobante_traspaso_correlativo, 555, 65)
+				}				
+				if (comprobante.tipoComprobante.nombre == "CAJA CHICA"){
+					doc.font('Helvetica-Bold', 12);
+					doc.text("N°: ", 535, 65)
+					doc.font('Helvetica', 12);
+					doc.text(comprobante.sucursal.comprobante_caja_chica_correlativo, 555, 65)
+				}		
 				doc.rect(20, 90, 571, 0).stroke();
 				doc.font('Helvetica', 8);
 				doc.text(comprobante.gloza, 38, 105)

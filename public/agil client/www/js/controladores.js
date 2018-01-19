@@ -6,8 +6,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 		ProveedorVencimientoCredito, Venta, ClasesTipo, Compra, Producto, DatosVenta, DatosCompra,
 		ImprimirSalida, Diccionario, VentasComprobantesEmpresa, ComprasComprobantesEmpresa, LibroMayorCuenta, Paginator, ComprobanteRevisarPaginador, AsignarComprobanteFavorito, ListaCuentasComprobanteContabilidad, NuevoComprobanteContabilidad, NuevoComprobante, ComprasComprobante,
 		ConfiguracionesCuentasEmpresa, ContabilidadCambioMoneda, ObtenerCambioMoneda, AsignarCuentaCiente, AsignarCuentaProveedor,
-		GtmTransportistas, GtmEstibajes, GtmGrupoEstibajes, ListasCuentasAuxiliares,GtmDetallesDespachoAlerta,GtmDetalleDespachoAlerta) {
-
+		GtmTransportistas, GtmEstibajes, GtmGrupoEstibajes, ListasCuentasAuxiliares,GtmDetallesDespachoAlerta, $interval) {
 		$scope.idModalTablaVencimientoProductos = "tabla-vencimiento-productos";
 		$scope.idModalTablaDespachos = "tabla-gtm-despachos";
 		$scope.idModalTablaAsignacionDespacho = "tabla-gtm-asignacion-despachos";
@@ -72,7 +71,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 				if (nuevoComprobante.fecha) {
 					if ($scope.totales.debe_bs == $scope.totales.haber_bs && $scope.totales.debe_bs > 0 && $scope.totales.haber_bs > 0) {
 						if (nuevoComprobante.asientosContables.length >= 2) {
-							
+
 							if (form != null) {
 								if (!nuevoComprobante.fecha) {
 									form.fecha.$error.required = true
@@ -90,11 +89,12 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 									form.asientos.$error.detalleAsiento = false
 								}
 								if (!form.asientos.$error.detalleAsiento && !form.gloza.$error.required && !form.fecha.$error.required) {
-
+									$scope.stopGuardadoAutomaticoComprobante()
 									NuevoComprobante($scope.mostrarMensaje, null, null, $scope.usuario, null, null, null, $scope.convertirFecha, $scope.cerrarNuevoComprobante, $scope.nuevoComprobante, null, $scope.verificarVentasComprobantes, $scope.verificarComprasComprobantes, $scope.recargarItemsTabla, $scope.number_format)
 								}
 							} else {
 								if (form2) {
+									$scope.stopGuardadoAutomaticoComprobante()
 									NuevoComprobante($scope.mostrarMensaje, null, null, $scope.usuario, null, null, null, $scope.convertirFecha, $scope.cerrarNuevoComprobante, $scope.nuevoComprobante, null, $scope.verificarVentasComprobantes, $scope.verificarComprasComprobantes, $scope.recargarItemsTabla, $scope.number_format)
 									$scope.totales = undefined
 								}
@@ -114,19 +114,13 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 		}
 		$scope.$watch('nuevoComprobante.fecha', function () {
 			var date = new Date()
-			if (!$scope.nuevoComprobante.fecha) {
-				$scope.nuevoComprobante.fecha = $scope.fechaATexto(date)
+			if ($scope.nuevoComprobante) {
+				if (!$scope.nuevoComprobante.fecha) {
+					$scope.nuevoComprobante.fecha = $scope.fechaATexto(date)
+				}
 			}
 		}, true);
-		$scope.quitarScroll = function () {
-			$('.input-fix-mousewheel1').on('focus', function (e) {
-				$(this).on('mousewheel.disableScroll', function (e) {
-					e.preventDefault();
-				})
-			}).on('blur', function (e) {
-				$(this).off('mousewheel.disableScroll')
-			});
-		}
+
 		$scope.ActivarDesactivarCopiaGlosa = function (comprobante) {
 			if (comprobante.copia_glosa == true) {
 				comprobante.copia_glosa == false
@@ -144,13 +138,21 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 
 				}
 				var oForm = document.getElementById('formNuevoComprobante');
+				shortcut.add("Ctrl+shift+G", function () {
+					if ($scope.nuevoComprobante.asientosContables.length >= 2) {
+					$localStorage.nuevoComprobante = $scope.nuevoComprobante
+					$scope.ComprobanteGuardado = $localStorage.nuevoComprobante
+					$scope.mostrarMensaje("comproban guardado en almacenamiento local Satisfactoriamente")
+					}
+				})
 				shortcut.add("Ctrl+G", function () {
 					if ($scope.moneda.dolar != "--") {
-						if ($scope.nuevoComprobante.asientosContables.length > 0) {
+						if ($scope.nuevoComprobante.asientosContables.length >= 2) {
 							if ($scope.nuevoComprobante.asientosContables[0].cuenta) {
 								if ($scope.nuevoComprobante.asientosContables[0].cuenta.id) {
 									if ($scope.totales.debe_bs == $scope.totales.haber_bs) {
 										$scope.AgregarComprobante(null, $scope.nuevoComprobante, oForm)
+
 									} else {
 										$scope.mostrarMensaje("La suma total del DEBE y HABER deben ser iguales")
 									}
@@ -161,7 +163,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 								$scope.mostrarMensaje("Ingresar asientos contables al comprobante")
 							}
 						} else {
-							$scope.mostrarMensaje("Ingresar asientos contables al comprobante")
+							$scope.mostrarMensaje("Ingresar minimo 2 asientos contables al comprobante")
 						}
 					} else {
 						$scope.mostrarMensaje("Datos nulos en bimonetario importar cambio moneda dolar y ufv para guardar")
@@ -172,8 +174,13 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 				var fecha = $scope.fechaATexto(new Date())
 				if ($scope.moneda) {
 					console.log($scope.ventas)
-					var datee=new Date()
-					$scope.nuevoComprobante = {fechaActual:datee, copia_glosa: false, fecha: fecha, id_usuario: $scope.usuario.id, asientosContables: [], eliminado: 0, abierto: 0, importe: 0, id_venta: "", id_compra: "", id_sucursal: $scope.sucursales[0], tipoComprobante: $scope.tiposComprobantes[0], tipoCambio: $scope.moneda };
+					var datee = new Date()
+					$scope.nuevoComprobante = { fechaActual: datee, copia_glosa: false, fecha: fecha, id_usuario: $scope.usuario.id, asientosContables: [], eliminado: 0, abierto: 0, importe: 0, id_venta: "", id_compra: "", id_sucursal: $scope.sucursales[0], tipoComprobante: $scope.tiposComprobantes[0], tipoCambio: $scope.moneda };
+					if (view) {
+						$scope.pararAutoGuardado()
+					} else {
+						$scope.guardadoAutomaticoComprobante()
+					}
 					$scope.cuentaActual = {}
 					$scope.ObtenerPlantillaIngresoEgreso(venta, compra, comprobante, view);
 
@@ -188,6 +195,32 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 				}
 			})
 		}
+
+		$scope.guardadoAutomaticoComprobante = function () {
+			$scope.GuardadoAutomaticoComprobante;
+			// Don't start a new fight if we are already fighting
+			$scope.GuardadoAutomaticoComprobante = $interval(function () {
+				if ($scope.nuevoComprobante.asientosContables.length > 2) {
+					$localStorage.nuevoComprobante = $scope.nuevoComprobante
+					$scope.ComprobanteGuardado = $localStorage.nuevoComprobante
+					console.log($localStorage.nuevoComprobante)
+				}
+			}, 300000);
+		};
+		$scope.pararAutoGuardado = function () {
+			$interval.cancel($scope.GuardadoAutomaticoComprobante);
+		}
+		$scope.stopGuardadoAutomaticoComprobante = function () {
+			$interval.cancel($scope.GuardadoAutomaticoComprobante);
+			$window.localStorage.removeItem('ngStorage-nuevoComprobante');
+			/* $localStorage.$reset({
+				usuario: local.usuario,
+				token: local.token
+			}); */
+			$localStorage.nuevoComprobante = undefined
+			$scope.GuardadoAutomaticoComprobante = undefined;		
+			$scope.ComprobanteGuardado = undefined
+		};
 		$scope.obtenerCambioMoneda2 = function (fechaMoneda) {
 			if (fechaMoneda.length == 10) {
 				var fecha = new Date(convertirFecha(fechaMoneda))
@@ -215,7 +248,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 			}
 		}
 		$scope.crearNuevoComprobante = function (venta, compra, comprobante, view) {
-			$scope.htmlTooltip = $sce.trustAsHtml('Acciones Rapidas<br>Ctrl-G=Guardar');
+			$scope.htmlTooltip = $sce.trustAsHtml('Acciones Rapidas<br>Ctrl+G=Guardar<br>Ctrl+shift+G=GuardadoRapido');
 			$scope.obtenerCambioMoneda(venta, compra, comprobante, view);
 
 		}
@@ -478,9 +511,16 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 				}
 				if (comprobante != null) {
 					$scope.nuevoComprobante = comprobante;
-					$scope.nuevoComprobante.id_sucursal = comprobante.sucursal
-					var fecha = new Date(comprobante.fecha)
-					$scope.nuevoComprobante.fecha = $scope.fechaATexto(fecha)
+					if (comprobante.sucursal) {
+						$scope.nuevoComprobante.id_sucursal = comprobante.sucursal
+					}
+					if (comprobante.fecha.length == 10) {
+						var fecha = comprobante.fecha
+						$scope.nuevoComprobante.fecha = fecha
+					} else {
+						var fecha = new Date(comprobante.fecha)
+						$scope.nuevoComprobante.fecha = $scope.fechaATexto(fecha)
+					}
 					$scope.totales = { debe_bs: 0, debe_sus: 0, haber_bs: 0, haber_sus: 0 }
 					$scope.nuevoComprobante.asientosContables.forEach(function (asiento, index, array) {
 						$scope.totales.debe_bs += asiento.debe_bs
@@ -636,6 +676,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 			shortcut.remove("Ctrl+G", function () {
 
 			});
+			$scope.pararAutoGuardado()
 			$scope.cerrarPopup($scope.idModalWizardComprobanteEdicion);
 			$scope.totales = undefined
 		};
@@ -790,6 +831,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 
 		}
 		$scope.establecerCuentaActual = function (asiento, index) {
+			quitarScrollInputNumber()
 			/* var cuenta = asiento.cuenta
 			var debe = 0, haber = 0;
 			$scope.cuentaActual = { id: cuenta.id, nombre: cuenta.nombre, debe: cuenta.debe, haber: cuenta.haber, saldo: cuenta.saldo }; */
@@ -880,12 +922,12 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 				if (comprobante.asientosContables.length == 0) {
 					var asiento = { glosa: "", cuenta: "", debe_bs: "", haber_bs: "", debe_sus: "", haber_sus: "", eliminado: 0, activo: true, isOpen: false }
 					$scope.nuevoComprobante.asientosContables.push(asiento)
-					console.log(comprobante.asientosContables)
+
 				}
 			} else {
 				if (comprobante.asientosContables.length == 1) {
 					$scope.nuevoComprobante.asientosContables.splice(0)
-					console.log(comprobante.asientosContables)
+
 				}
 			}
 
@@ -2170,6 +2212,8 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 			$rootScope.abs = $window.Math.abs;
 			if ($localStorage.usuario) {
 				$scope.usuario = JSON.parse($localStorage.usuario);
+				$scope.ComprobanteGuardado = $localStorage.nuevoComprobante
+				console.log($scope.ComprobanteGuardado)
 				if (!$scope.aplicaciones) {
 					$scope.cargarPagina();
 				}

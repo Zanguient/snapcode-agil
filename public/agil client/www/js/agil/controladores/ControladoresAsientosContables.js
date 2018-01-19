@@ -177,6 +177,10 @@ angular.module('agil.controladores')
             } else {
                 if (comprobante.abierto) {
                     $scope.crearNuevoComprobante(null, null, comprobante)
+                }else{
+                    if(!comprobante.id){
+                        $scope.crearNuevoComprobante(null, null, comprobante)
+                    }
                 }
 
             }

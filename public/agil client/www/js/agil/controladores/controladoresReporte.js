@@ -1708,9 +1708,9 @@ angular.module('agil.controladores')
 			promesa.then(function (datos) {
 				var detallesCompra = datos.detallesCompra;
 				var data = [["FECHA DE LA FACTURA", "N° DE LA FACTURA", "N° DE AUTORIZACION", "NIT/CI CLIENTE", "NOMBRE O RAZON SOCIAL",
-					"CODIGO", "DETALLE", "CANTIDAD", "PU", "TOTAL", "IMPORTE ICE/IEHD/TASAS", "EXENTOS",
+					"CODIGO", "DETALLE","UNIDAD", "GRUPO", "CANTIDAD", "PU", "TOTAL", "IMPORTE ICE/IEHD/TASAS", "EXENTOS",
 					"SUBTOTAL", "DESCUENTOS, BONIFICACIONES Y REBAJAS OBTENIDAS",
-					"IMPORTE BASE PARA DEBITO FISCAL", "CREDITO FISCAL", "FECHA DE VENCIMIENTO", "LOTE", "SUCURSAL", "USUARIO", "CENTRO DE COSTOS", "GRUPO"]]
+					"IMPORTE BASE PARA DEBITO FISCAL", "CREDITO FISCAL", "FECHA DE VENCIMIENTO", "LOTE", "SUCURSAL", "USUARIO", "CENTRO DE COSTOS"]]
 				for (var i = 0; i < detallesCompra.length; i++) {
 					var columns = [];
 					detallesCompra[i].compra.fecha = new Date(detallesCompra[i].compra.fecha);
@@ -1721,7 +1721,15 @@ angular.module('agil.controladores')
 					columns.push(detallesCompra[i].compra.proveedor.razon_social);
 					columns.push(detallesCompra[i].producto.codigo);
 					columns.push(detallesCompra[i].producto.nombre);
-					columns.push(detallesCompra[i].cantidad);
+					
+					columns.push(detallesCompra[i].producto.unidad_medida);
+					if (detallesCompra[i].producto.grupo) {
+						columns.push(detallesCompra[i].producto.grupo.nombre);						
+					} else {
+						columns.push("");
+
+					}
+					columns.push(detallesCompra[i].cantidad);				
 					columns.push(detallesCompra[i].costo_unitario);
 					columns.push(detallesCompra[i].importe);
 					columns.push(detallesCompra[i].ice);
@@ -1745,13 +1753,7 @@ angular.module('agil.controladores')
 					columns.push(detallesCompra[i].compra.almacen.sucursal.nombre);
 					columns.push($scope.usuario.nombre_usuario);
 					columns.push(detallesCompra[i].centroCosto.nombre_corto);
-					if (detallesCompra[i].producto.grupo) {
-						columns.push(detallesCompra[i].producto.grupo.nombre);
-
-					} else {
-						columns.push("");
-
-					}
+					
 					data.push(columns);
 				}
 

@@ -16,6 +16,9 @@
                 <input class="upload" type="file" custom-on-file-change="subirExcelUfvDolar" />Importar Cambio Moneda&nbsp&nbsp
             </div>
         </div> -->
+        <button  tooltip-popup-delay='10' tooltip-is-open="true" uib-tooltip='Comprobante Recuperado' ng-if="ComprobanteGuardado" d="nuevo" ng-disabled="!aplicacion.puede_crear" class="btn btn-app btn-danger btn-xs" ng-click="verComprobante(ComprobanteGuardado)">
+                <i class="ace-icon fa fa-exclamation-triangle  align-top bigger-165"></i>                
+            </button>
         <button id="nuevo" ng-disabled="!aplicacion.puede_crear" class="btn btn-primary" ng-click="crearNuevoComprobante()">
             <i class="ace-icon fa fa-plus align-top bigger-125"></i>
             Nuevo
@@ -34,6 +37,7 @@
                 <i class="ace-icon fa fa-file-text-o align-top bigger-300"></i>
             </span>
         </a>
+      
     </div>
     <div class="col-xs-12">
         <form name="formularioFiltroVentas" novalidate ng-submit="paginator.getSearch(paginator.search,filtro,null)">

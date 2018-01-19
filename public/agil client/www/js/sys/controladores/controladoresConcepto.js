@@ -51,9 +51,13 @@ angular.module('agil.controladores')
 			$scope.clase={}
 		}
 	}
-	
+	$scope.editarClase=function (clase) {
+		clase.edit=false
+		$scope.clase={}
+	}
 	$scope.modificarClase=function(clase){
 		$scope.clase=clase;
+		$scope.clase.edit=true
 	}
 	
 	$scope.removerClase=function(clase){

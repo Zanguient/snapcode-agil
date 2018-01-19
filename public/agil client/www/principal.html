@@ -1992,7 +1992,7 @@
 												</script>
 											</td>
 											<th>
-												<select ng-focus="establecerCuentaActual(asiento.cuenta)" ng-disabled="asiento.cuenta.id==undefined || verComprobante" required
+												<select ng-focus="establecerCuentaActual2(asiento)" ng-disabled="asiento.cuenta.id==undefined || verComprobante" required
 												 id="sucursalOrigen{{$index}}" name="centroDeCostos" ng-options="centroCosto as centroCosto.nombre for centroCosto in centrosDeCostos track by centroCosto.id"
 												 ng-model="asiento.centroCosto" enter>
 													<option value="">--Ninguno--</option>
@@ -2000,22 +2000,22 @@
 											</th>
 										
 											<td>
-												<input class="input-fix-mousewheel1" ng-focus="establecerCuentaActual(asiento.cuenta);quitarScroll();" ng-disabled="asiento.cuenta.id==undefined || verComprobante"
+												<input class="input-fix-mousewheel1" ng-focus="establecerCuentaActual2(asiento)" ng-disabled="asiento.cuenta.id==undefined || verComprobante"
 												 id="{{$index}}-Bs" type="number" ng-model="asiento.debe_bs" ng-change="ComvertirDebeEnDolar(asiento,true);cal(nuevoComprobante.asientosContables)"
 												 enter>
 											</td>
 											<td>
-												<input class="input-fix-mousewheel1" ng-focus="establecerCuentaActual(asiento.cuenta);quitarScroll();" ng-disabled="asiento.cuenta.id==undefined || verComprobante" id="{{$index}}-Cs"
+												<input class="input-fix-mousewheel1" ng-focus="establecerCuentaActual2(asiento)" ng-disabled="asiento.cuenta.id==undefined || verComprobante" id="{{$index}}-Cs"
 												 type="number" ng-model="asiento.haber_bs" ng-change="ComvertirHaberEnDolar(asiento,true);cal(nuevoComprobante.asientosContables)"
 												 enter>
 											</td>
 											<td ng-if="opcionBimonetario">
-												<input class="input-fix-mousewheel1" ng-focus="establecerCuentaActual(asiento.cuenta);quitarScroll();" ng-disabled="asiento.cuenta.id==undefined || verComprobante" type="number"
+												<input class="input-fix-mousewheel1" ng-focus="establecerCuentaActual2(asiento)" ng-disabled="asiento.cuenta.id==undefined || verComprobante" type="number"
 												 ng-model="asiento.debe_sus" ng-change="ComvertirDebeEnBolivianos(asiento);cal(nuevoComprobante.asientosContables)"
 												 enter>
 											</td>
 											<td ng-if="opcionBimonetario">
-												<input class="input-fix-mousewheel1" ng-focus="establecerCuentaActual(asiento.cuenta);quitarScroll();" ng-disabled="asiento.cuenta.id==undefined || verComprobante" type="number"
+												<input class="input-fix-mousewheel1" ng-focus="establecerCuentaActual2(asiento)" ng-disabled="asiento.cuenta.id==undefined || verComprobante" type="number"
 												 ng-model="asiento.haber_sus" ng-change="ComvertirHaberEnBolivianos(asiento);cal(nuevoComprobante.asientosContables)"
 												 enter>
 											</td>
@@ -2609,6 +2609,7 @@
 	<script src="assets/js/ace.min.js"></script>
 
 	<script type="text/javascript">
+	
 		jQuery(function ($) {
 			/*inicio prevenir ir atras con la tecla backspace*/
 			var regx = /INPUT|SELECT|TEXTAREA/i;
