@@ -423,8 +423,9 @@ router.route('/clientes/:id_cliente')
 	router.route('/clientes/empresa/:id_empresa')
 		.get(function (req, res) {
 			Cliente.findAll({
+				attributes:['id','razon_social','nit','latitud','longitud'],
 				where: { id_empresa: req.params.id_empresa },
-				include: [{ model: Empresa, as: 'empresa' }]
+				//include: [{ model: Empresa, as: 'empresa' }]
 			}).then(function (usuarios) {
 				res.json(usuarios);
 			});
