@@ -63,6 +63,30 @@ module.exports = function (sequelize, Sequelize) {
 		id_tipo_auxiliar: {
 			type: Sequelize.INTEGER,
 			field: 'id_tipo_auxiliar'
+		},
+		especifica: {
+			type: Sequelize.BOOLEAN,
+			field: 'especifica'
+		},
+		id_especifica_texto1: {
+			type: Sequelize.INTEGER,
+			field: 'especifica_texto1'
+		},
+		id_especifica_texto2: {
+			type: Sequelize.INTEGER,
+			field: 'especifica_texto2'
+		},
+		id_especifica_texto3: {
+			type: Sequelize.INTEGER,
+			field: 'especifica_texto3'
+		},
+		tipo_especifica: {
+			type: Sequelize.BOOLEAN,
+			field: 'tipo_especifica'
+		},
+		vincular_cuenta:{
+			type: Sequelize.BOOLEAN,
+			field: 'vincular_cuenta'
 		}
 	}, {
 			freezeTableName: true

@@ -41,9 +41,17 @@ module.exports = function (sequelize, Sequelize) {
            field: 'grupo_estibaje'
        },
        despachado: {
-         type: Sequelize.BOOLEAN,
-         field: 'despachado'
-     }
+            type: Sequelize.BOOLEAN,
+            field: 'despachado'
+        },
+        eliminado: {
+            type: Sequelize.BOOLEAN,
+            field: 'eliminado'
+        },
+        factura: {
+            type: Sequelize.INTEGER,
+            field: 'factura'
+        }
     }, {
             freezeTableName: true
         });
