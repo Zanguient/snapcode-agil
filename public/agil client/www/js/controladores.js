@@ -1188,8 +1188,10 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 
 		$scope.calcularTotalCantidad=function(){
 			var totalCantidadDespacho=0;
-			for(var i=0;i<$scope.gtm_detalles_despacho_seleccionados.length;i++){
-				totalCantidadDespacho=totalCantidadDespacho+$scope.gtm_detalles_despacho_seleccionados[i].cantidad;
+			if($scope.gtm_detalles_despacho_seleccionados!=undefined){
+				for(var i=0;i<$scope.gtm_detalles_despacho_seleccionados.length;i++){
+					totalCantidadDespacho=totalCantidadDespacho+$scope.gtm_detalles_despacho_seleccionados[i].cantidad;
+				}
 			}
 			return totalCantidadDespacho;
 		}
