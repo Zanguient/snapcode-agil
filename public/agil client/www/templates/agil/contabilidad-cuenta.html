@@ -383,30 +383,30 @@
 								<label>IVA DF</label>
 							</th>
 							<th>
-									<input class="form-control" required type="number" min="0" max="100"  ng-model="plantilla.ingreso.ivadf.porsentaje">
-							<th>
+								<input class="form-control" required type="number" min="0" max="100" ng-model="plantilla.ingreso.ivadf.porsentaje">
+								<th>
 
-								<input class="form-control" name="asignarCuentaIvaDf" required ng-keypress="interceptarTecla($event,'cantidad',true)" id="asignarCuentaIvaDf"
-								 type="text" ng-model="plantilla.ingreso.ivadf.cuenta" placeholder="Busqueda..." uib-typeahead="cuenta as (cuenta.codigo+'-'+cuenta.nombre+'-'+cuenta.descripcion+'-'+cuenta.tipoCuenta.nombre) for cuenta in buscarCuentas($viewValue)"
-								 typeahead-wait-ms="1000" typeahead-template-url="templates/autocompletar.html" typeahead-show-hint="false" typeahead-min-length="3">
+									<input class="form-control" name="asignarCuentaIvaDf" required ng-keypress="interceptarTecla($event,'cantidad',true)" id="asignarCuentaIvaDf"
+									 type="text" ng-model="plantilla.ingreso.ivadf.cuenta" placeholder="Busqueda..." uib-typeahead="cuenta as (cuenta.codigo+'-'+cuenta.nombre+'-'+cuenta.descripcion+'-'+cuenta.tipoCuenta.nombre) for cuenta in buscarCuentas($viewValue)"
+									 typeahead-wait-ms="1000" typeahead-template-url="templates/autocompletar.html" typeahead-show-hint="false" typeahead-min-length="3">
 
-								<div ng-show="errorIvadf" class="invalid-message help-block" ng-messages="formularioPlantillaCuenta.asignarCuentaIvaDf.$error"
-								 ng-if="formularioPlantillaCuenta.asignarCuentaIvaDf.$touched || (formularioPlantillaCuenta.$submitted && formularioPlantillaCuenta.asignarCuentaIvaDf.$invalid)">
-									<div ng-messages-include="/templates/GRAL/messages.html"></div>
-								</div>
+									<div ng-show="errorIvadf" class="invalid-message help-block" ng-messages="formularioPlantillaCuenta.asignarCuentaIvaDf.$error"
+									 ng-if="formularioPlantillaCuenta.asignarCuentaIvaDf.$touched || (formularioPlantillaCuenta.$submitted && formularioPlantillaCuenta.asignarCuentaIvaDf.$invalid)">
+										<div ng-messages-include="/templates/GRAL/messages.html"></div>
+									</div>
 
-							</th>
+								</th>
 						</tr>
 						<tr>
 							<th>
 								<label>IT</label>
 							</th>
 							<th>
-								<input class="form-control" required type="number" min="0" max="100"  ng-model="plantilla.ingreso.it.porsentaje">
+								<input class="form-control" required type="number" min="0" max="100" ng-model="plantilla.ingreso.it.porsentaje">
 								<th>
 
-									<input  class="form-control" name="asignarCuentaIt" required ng-keypress="interceptarTecla($event,'cantidad',true)" id="asignarCuentaIt" type="text"
-									 ng-model="plantilla.ingreso.it.cuenta" placeholder="Busqueda..." uib-typeahead="cuenta as (cuenta.codigo+'-'+cuenta.nombre+'-'+cuenta.descripcion+'-'+cuenta.tipoCuenta.nombre) for cuenta in buscarCuentas($viewValue)"
+									<input class="form-control" name="asignarCuentaIt" required ng-keypress="interceptarTecla($event,'cantidad',true)" id="asignarCuentaIt"
+									 type="text" ng-model="plantilla.ingreso.it.cuenta" placeholder="Busqueda..." uib-typeahead="cuenta as (cuenta.codigo+'-'+cuenta.nombre+'-'+cuenta.descripcion+'-'+cuenta.tipoCuenta.nombre) for cuenta in buscarCuentas($viewValue)"
 									 typeahead-wait-ms="1000" typeahead-template-url="templates/autocompletar.html" typeahead-show-hint="false" typeahead-min-length="3">
 
 									<div ng-show="errorIT" class="invalid-message help-block" ng-messages="formularioPlantillaCuenta.asignarCuentaIt.$error"
@@ -421,11 +421,11 @@
 								<label>IT POR PAGAR</label>
 							</th>
 							<th>
-								<input class="form-control" required type="number" min="0" max="100"  ng-model="plantilla.ingreso.itPorPagar.porsentaje">
+								<input class="form-control" required type="number" min="0" max="100" ng-model="plantilla.ingreso.itPorPagar.porsentaje">
 								<th>
 
-									<input class="form-control"  name="asignarCuentaItPorPagar" required ng-keypress="interceptarTecla($event,'cantidad',true)" id="cuenta" type="text"
-									 ng-model="plantilla.ingreso.itPorPagar.cuenta" placeholder="Busqueda..." uib-typeahead="cuenta as (cuenta.codigo+'-'+cuenta.nombre+'-'+cuenta.descripcion+'-'+cuenta.tipoCuenta.nombre) for cuenta in buscarCuentas($viewValue)"
+									<input class="form-control" name="asignarCuentaItPorPagar" required ng-keypress="interceptarTecla($event,'cantidad',true)"
+									 id="cuenta" type="text" ng-model="plantilla.ingreso.itPorPagar.cuenta" placeholder="Busqueda..." uib-typeahead="cuenta as (cuenta.codigo+'-'+cuenta.nombre+'-'+cuenta.descripcion+'-'+cuenta.tipoCuenta.nombre) for cuenta in buscarCuentas($viewValue)"
 									 typeahead-wait-ms="1000" typeahead-template-url="templates/autocompletar.html" typeahead-show-hint="false" typeahead-min-length="3">
 
 									<div ng-show="errorItPorPagar" class="invalid-message help-block" ng-messages="formularioPlantillaCuenta.asignarCuentaItPorPagar.$error"
@@ -440,12 +440,13 @@
 								<label>CAJA/BANCOS</label>
 							</th>
 							<th>
-								<input class="form-control" required type="number" min="0" max="100"  ng-model="plantilla.ingreso.cajaBanco.porsentaje">
+								<input class="form-control" required type="number" min="0" max="100" ng-model="plantilla.ingreso.cajaBanco.porsentaje">
 							</th>
 							<th>
 
-								<input class="form-control" name="asignarCuentaIngresoCaja" required ng-keypress="interceptarTecla($event,'cantidad',true)" id="asignarCuentaIngresoCaja"
-								 type="text" ng-model="plantilla.ingreso.cajaBanco.cuenta" placeholder="Busqueda..." uib-typeahead="cuenta as (cuenta.codigo+'-'+cuenta.nombre+'-'+cuenta.descripcion+'-'+cuenta.tipoCuenta.nombre) for cuenta in buscarCuentas($viewValue)"
+								<input class="form-control" name="asignarCuentaIngresoCaja" required ng-keypress="interceptarTecla($event,'cantidad',true)"
+								 id="asignarCuentaIngresoCaja" type="text" ng-model="plantilla.ingreso.cajaBanco.cuenta" placeholder="Busqueda..."
+								 uib-typeahead="cuenta as (cuenta.codigo+'-'+cuenta.nombre+'-'+cuenta.descripcion+'-'+cuenta.tipoCuenta.nombre) for cuenta in buscarCuentas($viewValue)"
 								 typeahead-wait-ms="1000" typeahead-template-url="templates/autocompletar.html" typeahead-show-hint="false" typeahead-min-length="3">
 
 								<div ng-show="errorIngresoCaja" class="invalid-message help-block" ng-messages="formularioPlantillaCuenta.asignarCuentaIngresoCaja.$error"
@@ -484,12 +485,12 @@
 								<label>IVA CF</label>
 							</th>
 							<th>
-								<input class="form-control" required type="number" min="0" max="100"  ng-model="plantilla.egreso.ivacf.porsentaje"> </th>
+								<input class="form-control" required type="number" min="0" max="100" ng-model="plantilla.egreso.ivacf.porsentaje"> </th>
 							<th>
 								<input class="form-control" required name="asignarCuentaIvaCf" ng-keypress="interceptarTecla($event,'cantidad',true)" id="asignarCuentaIvaCf"
 								 type="text" ng-model="plantilla.egreso.ivacf.cuenta" placeholder="Busqueda..." uib-typeahead="cuenta as (cuenta.codigo+'-'+cuenta.nombre+'-'+cuenta.descripcion+'-'+cuenta.tipoCuenta.nombre) for cuenta in buscarCuentas($viewValue)"
 								 typeahead-wait-ms="1000" typeahead-template-url="templates/autocompletar.html" typeahead-show-hint="false" typeahead-min-length="3">
-								<div  ng-show="errorIvacf" class="invalid-message help-block" ng-messages="formularioPlantillaCuenta.asignarCuentaIvaCf.$error"
+								<div ng-show="errorIvacf" class="invalid-message help-block" ng-messages="formularioPlantillaCuenta.asignarCuentaIvaCf.$error"
 								 ng-if="formularioPlantillaCuenta.asignarCuentaIvaCf.$touched || (formularioPlantillaCuenta.$submitted && formularioPlantillaCuenta.asignarCuentaIvaCf.$invalid)">
 									<div ng-messages-include="/templates/GRAL/messages.html"></div>
 								</div>
@@ -500,26 +501,27 @@
 								<label>CAJA/BANCOS</label>
 							</th>
 							<th>
-								<input class="form-control" required type="number" min="0" max="100"  ng-model="plantilla.egreso.cajaBanco.porsentaje">
+								<input class="form-control" required type="number" min="0" max="100" ng-model="plantilla.egreso.cajaBanco.porsentaje">
 							</th>
 							<th>
 								<div>
-									<input class="form-control" required name="asignarCuentaEgresoCaja" ng-keypress="interceptarTecla($event,'cantidad',true)" id="asignarCuentaEgresoCaja"
-									 type="text" ng-model="plantilla.egreso.cajaBanco.cuenta" placeholder="Busqueda..." uib-typeahead="cuenta as (cuenta.codigo+'-'+cuenta.nombre+'-'+cuenta.descripcion+'-'+cuenta.tipoCuenta.nombre) for cuenta in buscarCuentas($viewValue)"
+									<input class="form-control" required name="asignarCuentaEgresoCaja" ng-keypress="interceptarTecla($event,'cantidad',true)"
+									 id="asignarCuentaEgresoCaja" type="text" ng-model="plantilla.egreso.cajaBanco.cuenta" placeholder="Busqueda..."
+									 uib-typeahead="cuenta as (cuenta.codigo+'-'+cuenta.nombre+'-'+cuenta.descripcion+'-'+cuenta.tipoCuenta.nombre) for cuenta in buscarCuentas($viewValue)"
 									 typeahead-wait-ms="1000" typeahead-template-url="templates/autocompletar.html" typeahead-show-hint="false" typeahead-min-length="3">
 								</div>
 
-								<div  ng-show="errorEgresoCaja" class="invalid-message help-block" ng-messages="formularioPlantillaCuenta.asignarCuentaEgresoCaja.$error"
+								<div ng-show="errorEgresoCaja" class="invalid-message help-block" ng-messages="formularioPlantillaCuenta.asignarCuentaEgresoCaja.$error"
 								 ng-if="formularioPlantillaCuenta.asignarCuentaEgresoCaja.$touched || (formularioPlantillaCuenta.$submitted && formularioPlantillaCuenta.asignarCuentaEgresoCaja.$invalid)">
 									<div ng-messages-include="/templates/GRAL/messages.html"></div>
 								</div>
 							</th>
 						</tr>
 					</tbody>
-				</table>				
+				</table>
 			</div>
 		</div>
-		
+
 		<div class="modal-footer">
 			<div>&nbsp&nbsp</div>
 			<button type="submit" id="siguiente" class="btn btn-success btn-sm btn-next" data-last="Finish">
@@ -587,113 +589,116 @@
 
 <!-- EDICION, CREACION DE CUENTA -->
 <div id="modal-wizard-cuenta-edicion" class="modal wizard-posicion">
-	<div class="modal-dialog">
-		<div class="modal-content">
-			<form ng-submit="guardarCuenta(formularioCuenta.$valid,cuenta)" id="formularioCuenta" name="formularioCuenta" novalidate>
-				<div id="modal-wizard-container-cuenta-edicion">
-					<div class="modal-header steps-container">
-						<ul class="steps">
-							<li data-step="1" class="active">
-								<span class="step">1</span>
-								<span class="title">Datos de la Cuenta</span>
-							</li>
-							<li data-step="2">
-								<span class="step">2</span>
-								<span class="title">Configuraciones</span>
-							</li>
-							<li data-step="3">
-								<span class="step">3</span>
-								<span class="title">cálculos</span>
-							</li>
-							<li data-step="4">
-								<span class="step">4</span>
-								<span class="title">Finalizar</span>
-							</li>
-						</ul>
-					</div>
-					<!-- inicio paso 1 -->
-					<div class="modal-body step-content">
-						<div class="step-pane active" data-step="1">
-							<div class="form-group">
-								<label class="col-sm-4 control-label no-padding-right" for="codigo">Código
-									<span hidden ng-if="!cuenta.id"></span>
-								</label>
 
-								<div class="col-sm-6">
-									<input required type="text" id="codigo_cuenta" ng-model="cuenta.codigo" placeholder="Nombre de usuario" class="col-xs-10 col-sm-5"
-									 ng-change="validarCodigoCuenta(cuenta.codigo)" />
-									<br>
-									<p ng-class="{'text-red':data.type,'text-green':!data.type}"> {{data.message}}</p>
-								</div>
-							</div>
-							<div class="form-group">
-								<label class="col-sm-4 control-label no-padding-right" for="nombre">Nombre</label>
+	<div class="modal-content">
+		<form ng-submit="guardarCuenta(formularioCuenta.$valid,cuenta)" id="formularioCuenta" name="formularioCuenta" novalidate>
+			<div id="modal-wizard-container-cuenta-edicion">
+				<div class="modal-header steps-container">
+					<ul class="steps">
+						<li data-step="1" class="active">
+							<span class="step">1</span>
+							<span class="title">Datos de la Cuenta</span>
+						</li>
+						<li data-step="2">
+							<span class="step">2</span>
+							<span class="title">Configuraciones</span>
+						</li>
+						<li data-step="3">
+							<span class="step">3</span>
+							<span class="title">cálculos</span>
+						</li>
+						<li data-step="4">
+							<span class="step">4</span>
+							<span class="title">Finalizar</span>
+						</li>
+					</ul>
+				</div>
+				<!-- inicio paso 1 -->
+				<div class="modal-body step-content">
+					<div class="step-pane active" data-step="1">
+						<div class="form-group">
+							<label class="col-sm-4 control-label no-padding-right" for="codigo">Código
+								<span hidden ng-if="!cuenta.id"></span>
+							</label>
 
-								<div class="col-sm-6">
-									<!-- <input ng-if="!cuenta.id" required type="text" id="nombre" ng-model="cuenta.nombre" placeholder="Nombre" class="col-xs-10 col-sm-8"
-									/> -->
-									<input type="text" id="Nombre" ng-model="cuenta.nombre" placeholder="{{cuenta.nombre}}" class="col-xs-10 col-sm-8" />
-								</div>
-							</div>
-							<div class="form-group">
-								<label class="col-sm-4 control-label no-padding-right" for="descripcion">Descripción</label>
-
-								<div class="col-sm-6">
-									<!-- <input ng-if="!cuenta.id" required type="text" id="descripcion" ng-model="cuenta.descripcion" placeholder="Descripción" class="col-xs-10 col-sm-8"
-									/> -->
-									<input type="text" id="descripcion" ng-model="cuenta.descripcion" placeholder="{{cuenta.descripcion}}" class="col-xs-10 col-sm-8"
-									/>
-								</div>
-							</div>
-							<div class="form-group">
-								<label class="col-sm-4 control-label no-padding-right" for="clasificacion">Clasificación</label>
-
-								<div class="col-sm-6">
-									<select required id="clasificacionC" name="clasificacion" ng-model="cuenta.clasificacion" ng-options="clasificacionCuenta as clasificacionCuenta.nombre for clasificacionCuenta in cuentaClasificaciones track by clasificacionCuenta.id"
-									 class="col-xs-10 col-sm-8">
-									</select>
-								</div>
-								<div class="col-sm-2">
-									<a class="blue" href="javascript:void(0)" e-disabled="!aplicacion.puede_modificar" ng-click="agregarClasificacionCuenta()">
-										<i class="ace-icon fa fa-plus bigger-130"></i>
-									</a>
-									<a class="green" href="javascript:void(0)" e-disabled="!aplicacion.puede_modificar" ng-click="modificarClasificacionesCuenta()">
-										<i class="ace-icon fa fa-pencil bigger-130"></i>
-									</a>
-								</div>
-							</div>
-
-							<div class="space-4"></div>
-
-							<div class="form-group">
-								<label class="col-sm-4 control-label no-padding-right" for="tipoCuenta">Tipo cta.</label>
-
-								<div class="col-sm-6">
-									<select required name="tipoCuenta" id="tipoCuentaC" ng-model="cuenta.tipoCuenta" ng-options="cuentaTipo as cuentaTipo.nombre for cuentaTipo in cuentaTipos track by cuentaTipo.id"
-									 class="col-xs-10 col-sm-8">
-									</select>
-								</div>
-								<div class="col-sm-2">
-									<a class="blue" href="javascript:void(0)" e-disabled="!aplicacion.puede_modificar" ng-click="agregarTipoCuenta()">
-										<i class="ace-icon fa fa-plus bigger-130"></i>
-									</a>
-									<a class="green" href="javascript:void(0)" e-disabled="!aplicacion.puede_modificar" ng-click="agregarTipoCuenta()">
-										<i class="ace-icon fa fa-pencil bigger-130"></i>
-									</a>
-								</div>
+							<div class="col-sm-6">
+								<input required type="text" id="codigo_cuenta" ng-model="cuenta.codigo" placeholder="Nombre de usuario" class="col-xs-10 col-sm-5"
+								 ng-change="validarCodigoCuenta(cuenta.codigo)" />
+								<br>
+								<p ng-class="{'text-red':data.type,'text-green':!data.type}"> {{data.message}}</p>
 							</div>
 						</div>
-						<!-- fin de paso 1 -->
-						<!-- inicio paso 2 -->
-						<div class="step-pane" data-step="2">
-							<div class="form-group">
+						<div class="form-group">
+							<label class="col-sm-4 control-label no-padding-right" for="nombre">Nombre</label>
+
+							<div class="col-sm-6">
+								<!-- <input ng-if="!cuenta.id" required type="text" id="nombre" ng-model="cuenta.nombre" placeholder="Nombre" class="col-xs-10 col-sm-8"
+									/> -->
+								<input type="text" id="Nombre" ng-model="cuenta.nombre" placeholder="{{cuenta.nombre}}" class="col-xs-10 col-sm-8" />
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-4 control-label no-padding-right" for="descripcion">Descripción</label>
+
+							<div class="col-sm-6">
+								<!-- <input ng-if="!cuenta.id" required type="text" id="descripcion" ng-model="cuenta.descripcion" placeholder="Descripción" class="col-xs-10 col-sm-8"
+									/> -->
+								<input type="text" id="descripcion" ng-model="cuenta.descripcion" placeholder="{{cuenta.descripcion}}" class="col-xs-10 col-sm-8"
+								/>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-4 control-label no-padding-right" for="clasificacion">Clasificación</label>
+
+							<div class="col-sm-6">
+								<select required id="clasificacionC" name="clasificacion" ng-model="cuenta.clasificacion" ng-options="clasificacionCuenta as clasificacionCuenta.nombre for clasificacionCuenta in cuentaClasificaciones track by clasificacionCuenta.id"
+								 class="col-xs-10 col-sm-8">
+								</select>
+							</div>
+							<div class="col-sm-2">
+								<a class="blue" href="javascript:void(0)" e-disabled="!aplicacion.puede_modificar" ng-click="agregarClasificacionCuenta()">
+									<i class="ace-icon fa fa-plus bigger-130"></i>
+								</a>
+								<a class="green" href="javascript:void(0)" e-disabled="!aplicacion.puede_modificar" ng-click="modificarClasificacionesCuenta()">
+									<i class="ace-icon fa fa-pencil bigger-130"></i>
+								</a>
+							</div>
+						</div>
+
+						<div class="space-4"></div>
+
+						<div class="form-group">
+							<label class="col-sm-4 control-label no-padding-right" for="tipoCuenta">Tipo cta.</label>
+
+							<div class="col-sm-6">
+								<select required name="tipoCuenta" id="tipoCuentaC" ng-model="cuenta.tipoCuenta" ng-options="cuentaTipo as cuentaTipo.nombre for cuentaTipo in cuentaTipos track by cuentaTipo.id"
+								 class="col-xs-10 col-sm-8">
+								</select>
+							</div>
+							<div class="col-sm-2">
+								<a class="blue" href="javascript:void(0)" e-disabled="!aplicacion.puede_modificar" ng-click="agregarTipoCuenta()">
+									<i class="ace-icon fa fa-plus bigger-130"></i>
+								</a>
+								<a class="green" href="javascript:void(0)" e-disabled="!aplicacion.puede_modificar" ng-click="agregarTipoCuenta()">
+									<i class="ace-icon fa fa-pencil bigger-130"></i>
+								</a>
+							</div>
+						</div>
+					</div>
+					<!-- fin de paso 1 -->
+					<!-- inicio paso 2 -->
+					<div class="step-pane" data-step="2">
+						<div class="form-group">
+							<div class="row">
 								<label class="col-sm-3 control-label no-padding-right" for="debe">Debe</label>
 
 								<div class="col-sm-9">
 									<input type="number" step="0.01" id="debeC" ng-model="cuenta.debe" placeholder="Debe" class="col-xs-10 col-sm-8" />
 								</div>
 							</div>
-							<div class="form-group">
+						</div>
+						<div class="form-group">
+							<div class="row">
 								<label class="col-sm-3 control-label no-padding-right" for="haber">Haber</label>
 
 								<div class="col-sm-9">
@@ -701,7 +706,9 @@
 									/>
 								</div>
 							</div>
-							<div class="form-group">
+						</div>
+						<div class="form-group">
+							<div class="row">
 								<label class="col-sm-3 control-label no-padding-right" for="saldo">Saldo</label>
 
 								<div class="col-sm-9">
@@ -709,10 +716,12 @@
 									/>
 								</div>
 							</div>
+						</div>
 
-							<div class="form-group">
-								<label class="control-label col-xs-6 no-padding-right" for="bimonetaria">¿Bimonetaria?</label>
-								<div class="col-xs-6">
+						<div class="form-group">
+							<div class="row">
+								<label class="control-label col-xs-4 no-padding-right" for="bimonetaria">¿Bimonetaria?</label>
+								<div class="col-xs-8">
 									<label>
 										<input id="bimonetariaC" name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="cuenta.bimonetaria"
 										 value="0" />
@@ -720,7 +729,9 @@
 									</label>
 								</div>
 							</div>
-							<div class="form-group">
+						</div>
+						<div class="form-group">
+							<div class="row">
 								<label class="col-sm-4 control-label no-padding-right" for="presupuestaria">P. Presupuestaria</label>
 
 								<div class="col-sm-6">
@@ -737,111 +748,159 @@
 									</a>
 								</div>
 							</div>
-							<div class="form-group">
-								<label class="col-sm-3 control-label no-padding-right" for="vincularCuenta">vincular Cuenta : </label>
-
+						</div>
+					 	<div class="form-group">
+							 <div class="row">
+								<label class="control-label col-sm-2">Cuenta especifica <small>(solo para CF y DF)</small></label>
+								<div class="col-sm-1">
+									<label>
+										<input id="cuenta-especifica" ng-change="optenerCfDf(cuenta.tipo_especifica,cuenta.especifica)" name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="cuenta.especifica"
+										 value="0" />
+										<span id=check_cuenta-especifica class="lbl check-descuento" class="col-xs-10 col-sm-8"></span>
+									</label>
+									<label>
+										<input ng-disabled="!cuenta.especifica" id="cuenta-especifica" name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="cuenta.tipo_especifica" ng-change="optenerCfDf(cuenta.tipo_especifica,cuenta.especifica)"
+										 value="0" />
+										<span id=check_cuenta-especifica class="lbl check-cuenta-especifica" class="col-xs-10 col-sm-8"></span>
+									</label>
+								</div>
+								<label class="control-label col-sm-1">Texto</label>
+								<div ng-disable="" class="col-sm-2">
+									<input  ng-disabled="!cuenta.especifica" type="text" class="form-control" ng-model="cuenta.especifica_texto1.nombre_corto" >
+								</div>
+								<div class="col-sm-2" >
+									<input ng-disabled="!cuenta.especifica" type="text"class="form-control" ng-model="cuenta.especifica_texto2.nombre_corto">
+								</div>
+								<div class="col-sm-2" >
+									<input  ng-disabled="!cuenta.especifica" type="text" class="form-control"ng-model="cuenta.especifica_texto3.nombre_corto">
+								</div>
+							</div>
+						</div>
+						<div class="form-group">
+							<div class="row">
+								<div class="col-sm-3">
+									<label class="control-label no-padding-right" for="vincularCuenta">vincular Cuenta : </label>
+								</div>
 								<div class="col-sm-9">
 									<label>Cliente
-										<input id="calculo" name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="cuenta.tipoViculacion"
+										<input id="calculo" name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="cuenta.vincular_cuenta"
 										 value="0" />
 										<span id="check_vincular_cuenta" class="lbl check-descuento" class="col-xs-10 col-sm-8"></span>
 										Provedor</label>
 
 								</div>
-								<br>
-								<div ng-if="!cuenta.tipoViculacion">
-									<label>Razón social cliente :</label>
+							</div>
+							<br>
+						</div>
+
+						<div class="form-group" ng-if="!cuenta.vincular_cuenta">
+							<div class="row">
+								<label class="col-sm-4 control-label no-padding-right" for="presupuestaria">Razón social cliente :</label>
+
+								<div class="col-sm-6">
 									<input ng-keypress="interceptarTecla($event,'id_producto',true)" autocomplete="off" data-validate="validate(required)" id="razon_socialC"
-									 name="razon_social" type="text" ng-model="cuenta.cliente.razon_social" placeholder="Ingrese la Razon Social" uib-typeahead="cliente as cliente.razon_social for cliente in buscarCliente($viewValue)"
+									 name="razon_social" type="text" ng-model="cuenta.cuentaC.cliente" placeholder="Ingrese la Razon Social" uib-typeahead="cliente as cliente.razon_social for cliente in buscarCliente($viewValue)"
 									 typeahead-wait-ms="2000" typeahead-template-url="templates/autocompletar.html" typeahead-show-hint="false" typeahead-min-length="0"
 									 typeahead-on-select="establecerCliente($item, $model, $label, $event)">
 									<span class="red">(*)</span>
 									<span class="invalid-message" ng-show="formularioVenta.razon_social.$dirty && formularioVenta.razon_social.$invalid">
 										Dato requerido.
 									</span>
+
 								</div>
-								<div ng-if="cuenta.tipoViculacion">
-									<label>Razón social proveedor :</label>
+							</div>
+						</div>
+
+						<div class="form-group" ng-if="cuenta.vincular_cuenta">
+							<div class="row">
+								<label class="col-sm-4 control-label no-padding-right" for="presupuestaria">Razón social proveedor :</label>
+
+								<div class="col-sm-6">
 									<input id="razon_social" ng-keypress="interceptarTecla($event,'factura',true)" data-validate="validate(required)" type="text"
-									 ng-model="cuenta.proveedor.razon_social" placeholder="Ingrese la Razon Social" uib-typeahead="proveedor as proveedor.razon_social for proveedor in buscarProveedor($viewValue)"
+									 ng-model="cuenta.cuentaP.proveedor" placeholder="Ingrese la Razon Social" uib-typeahead="proveedor as proveedor.razon_social for proveedor in buscarProveedor($viewValue)"
 									 typeahead-wait-ms="2000" typeahead-template-url="templates/autocompletar.html" typeahead-show-hint="false" typeahead-min-length="0"
 									 typeahead-on-select="establecerProveedor($item, $model, $label, $event)">
 									<span class="red">(*)</span>
+
 								</div>
 							</div>
-							<div class="form-group">
+						</div>
+						<div class="form-group">
+							<div class="row">
 								<label class="col-sm-4 control-label no-padding-right" for="presupuestaria">Usar Cuentas Auxiliares</label>
 
 								<div class="col-sm-6">
-									<select id="cuentaaux" name="cuentaaux" class="col-xs-10 col-sm-8" ng-options="tipoAuxiliar as tipoAuxiliar.nombre for tipoAuxiliar in tiposCuentasAuxiliares track by tipoAuxiliar.id" ng-model="cuenta.tipoAuxiliar">
+									<select id="cuentaaux" name="cuentaaux" class="col-xs-10 col-sm-8" ng-options="tipoAuxiliar as tipoAuxiliar.nombre for tipoAuxiliar in tiposCuentasAuxiliares track by tipoAuxiliar.id"
+									 ng-model="cuenta.tipoAuxiliar"><option value="">--ninguno--</option>
 									</select>
 
 								</div>
-							</div>
-						</div>
-						<!-- fin paso 2 -->
-
-						<!-- inicio paso 3 -->
-						<div class="step-pane" data-step="3">
-							<div class="form-group">
-								<label class="control-label col-xs-6 no-padding-right" for="aplicar_calculo">Aplicar cálculo a la cuenta</label>
-								<div class="col-xs-6">
-									<label>
-										<input id="calculoc" name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="cuenta.aplicar_calculo"
-										 value="0" />
-										<span id="check_calculo" class="lbl check-descuento" class="col-xs-10 col-sm-8"></span>
-									</label>
-								</div>
-							</div>
-							<div class="form-group" ng-if="cuenta.aplicar_calculo">
-								<label class="col-sm-3 control-label no-padding-right" for="claseCalculo">Operación</label>
-
-								<div class="col-sm-9">
-									<select id="claseCalculo" name="claseCalculo" ng-model="cuenta.claseCalculo" ng-options="operacionCuenta as operacionCuenta.nombre for operacionCuenta in operacionesCalculo track by operacionCuenta.id"
-									 class="col-xs-10 col-sm-8">
-									</select>
-								</div>
-							</div>
-							<div class="form-group" ng-if="cuenta.aplicar_calculo">
-								<label class="col-sm-3 control-label no-padding-right" for="monto">Monto</label>
-
-								<div class="col-sm-9">
-									<input required type="number" step="0.01" id="montoC" ng-model="cuenta.monto" placeholder="Monto" class="col-xs-10 col-sm-8"
-									/>
-								</div>
-							</div>
-
-						</div>
-						<!-- fin paso 3 -->
-						<!-- FIN -->
-						<div class="step-pane" data-step="4">
-							<div class="center">
-								<h4 class="blue">Step 4</h4>
 							</div>
 						</div>
 					</div>
-				</div>
-				<!-- botones -->
-				<div class="modal-footer wizard-actions">
-					<button class="btn btn-sm btn-prev">
-						<i class="ace-icon fa fa-arrow-left"></i>
-						Anterior
-					</button>
+					<!-- fin paso 2 -->
 
-					<button type="submit" ng-disabled="data.message=='¡el codigo ya Exsiste!'" id="siguiente" class="btn btn-success btn-sm btn-next"
-					 data-last="Finish">
-						Siguiente
-						<i class="ace-icon fa fa-arrow-right icon-on-right"></i>
-					</button>
+					<!-- inicio paso 3 -->
+					<div class="step-pane" data-step="3">
+						<div class="form-group">
+							<label class="control-label col-xs-6 no-padding-right" for="aplicar_calculo">Aplicar cálculo a la cuenta</label>
+							<div class="col-xs-6">
+								<label>
+									<input id="calculoc" name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="cuenta.aplicar_calculo"
+									 value="0" />
+									<span id="check_calculo" class="lbl check-descuento" class="col-xs-10 col-sm-8"></span>
+								</label>
+							</div>
+						</div>
+						<div class="form-group" ng-if="cuenta.aplicar_calculo">
+							<label class="col-sm-3 control-label no-padding-right" for="claseCalculo">Operación</label>
 
-					<button type="button" class="btn btn-danger btn-sm pull-left" data-dismiss="modal" ng-click="cerrarPopPupEdicion()">
-						<i class="ace-icon fa fa-times"></i>
-						Cancelar
-					</button>
+							<div class="col-sm-9">
+								<select id="claseCalculo" name="claseCalculo" ng-model="cuenta.claseCalculo" ng-options="operacionCuenta as operacionCuenta.nombre for operacionCuenta in operacionesCalculo track by operacionCuenta.id"
+								 class="col-xs-10 col-sm-8">
+								</select>
+							</div>
+						</div>
+						<div class="form-group" ng-if="cuenta.aplicar_calculo">
+							<label class="col-sm-3 control-label no-padding-right" for="monto">Monto</label>
+
+							<div class="col-sm-9">
+								<input required type="number" step="0.01" id="montoC" ng-model="cuenta.monto" placeholder="Monto" class="col-xs-10 col-sm-8"
+								/>
+							</div>
+						</div>
+
+					</div>
+					<!-- fin paso 3 -->
+					<!-- FIN -->
+					<div class="step-pane" data-step="4">
+						<div class="center">
+							<h4 class="blue">Step 4</h4>
+						</div>
+					</div>
 				</div>
-			</form>
-		</div>
+			</div>
+			<!-- botones -->
+			<div class="modal-footer wizard-actions">
+				<button class="btn btn-sm btn-prev">
+					<i class="ace-icon fa fa-arrow-left"></i>
+					Anterior
+				</button>
+
+				<button type="submit" ng-disabled="data.message=='¡el codigo ya Exsiste!'" id="siguiente" class="btn btn-success btn-sm btn-next"
+				 data-last="Finish">
+					Siguiente
+					<i class="ace-icon fa fa-arrow-right icon-on-right"></i>
+				</button>
+
+				<button type="button" class="btn btn-danger btn-sm pull-left" data-dismiss="modal" ng-click="cerrarPopPupEdicion()">
+					<i class="ace-icon fa fa-times"></i>
+					Cancelar
+				</button>
+			</div>
+		</form>
 	</div>
+
 </div>
 
 <div id="modal-wizard-concepto-edicion" class="modal wizard-posicion">

@@ -2,10 +2,6 @@
 	<div class="col-xs-12">
 		<h3 class="header smaller lighter blue">Despachos</h3>
 
-		<button class="btn btn-primary" ng-click="imprimir()">
-			<i class="ace-icon fa fa-plus align-top bigger-125"></i>
-			Nuevo
-		</button>
 		<div class="clearfix">
 			<div class="pull-right tableTools-container"></div>
 		</div>
@@ -63,15 +59,15 @@
 							<td>{{gtm_detalle_despacho.factura}}</td>
 							<td>
 								<div class="hidden-sm hidden-xs action-buttons">
-									<a class="blue" href="javascript:void(0)" e-disabled="!aplicacion.puede_ver" ng-click="verCliente(cliente)">
-									<i class="ace-icon fa fa-search-plus bigger-130"></i>
+									<a class="blue" href="javascript:void(0)" ng-click="imprimir(gtm_detalle_despacho)">
+									<i class="ace-icon fa fa-print bigger-130"></i>
 								</a>
 
 									<a class="green" href="javascript:void(0)" ng-click="abrirModalAsignacionFactura(gtm_detalle_despacho)">
 									<i class="ace-icon fa fa-unlock bigger-130"></i>
 								</a>
 
-									<a class="red" href="javascript:void(0)" ng-click="abrirPopupConfirmacionEliminacion(removerDestino,destino)">
+									<a class="red" href="javascript:void(0)" ng-click="abrirPopupConfirmacionEliminacion(removerDetalleDespacho,gtm_detalle_despacho)">
 									<i class="ace-icon fa fa-trash-o bigger-130"></i>
 								</a>
 								</div>
@@ -84,10 +80,10 @@
 
 										<ul class="dropdown-menu dropdown-only-icon dropdown-yellow dropdown-menu-right dropdown-caret dropdown-close">
 											<li>
-												<a href="javascript:void(0)" e-disabled="!aplicacion.puede_ver" ng-click="verCliente(cliente)" class="tooltip-info" data-rel="tooltip"
+												<a href="javascript:void(0)" ng-click="imprimir(gtm_detalle_despacho)" class="tooltip-info" data-rel="tooltip"
 												 title="View">
 												<span class="blue">
-													<i class="ace-icon fa fa-search-plus bigger-120"></i>
+													<i class="ace-icon fa fa-printer bigger-120"></i>
 												</span>
 											</a>
 											</li>

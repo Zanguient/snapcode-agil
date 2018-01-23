@@ -162,12 +162,32 @@ angular.module('agil.servicios')
 	.factory('ImprimirComprobante', ['blockUI', 'DibujarCabeceraComprobante', 'Diccionario', 'DibujarCabeceraFacturaNVCartaOficio', 'DibujarCabeceraFacturaNVmedioOficio', '$timeout',
 		function (blockUI, DibujarCabeceraComprobante, Diccionario, DibujarCabeceraFacturaNVCartaOficio, DibujarCabeceraFacturaNVmedioOficio, $timeout) {
 			var res = function (comprobante, bimonetario, usuario, number_format) {
-				var arregloDebe = [], arregloHaber = [];
+				var arregloDebe = [], arregloHaber = [],datosDF={calculo:0,monto:0,texto1:"",texto2:"",texto3:"",cant:0},datosCF={calculo:0,monto:0,texto1:"",texto2:"",texto3:"",cant:0};
 				comprobante.asientosContables.forEach(function (asiento, index, array) {
 					if (asiento.debe_bs != 0) {
 						arregloDebe.push(asiento)
 					} else {
 						arregloHaber.push(asiento)
+					}
+					if(asiento.cuenta.especifica){
+						if(asiento.cuenta.tipo_especifica){
+							datosCF.monto+=asiento.debe_bs
+							datosCF.texto1=asiento.cuenta.especificaTexto1.nombre_corto
+							datosCF.texto2=asiento.cuenta.especificaTexto2.nombre_corto
+							datosCF.texto3=asiento.cuenta.especificaTexto3.nombre_corto
+							datosCF.cant++
+							datosCF.calculo=(datosCF.monto*100)/13
+							datosCF.calculo=number_format(datosCF.calculo, 2)
+						}else{
+							datosDF.monto+=asiento.haber_bs
+							datosDF.texto1=asiento.cuenta.especificaTexto1.nombre_corto
+							datosDF.texto2=asiento.cuenta.especificaTexto2.nombre_corto
+							datosDF.texto3=asiento.cuenta.especificaTexto3.nombre_corto
+							datosDF.cant++
+							datosDF.calculo=(datosDF.monto*100)/13
+							datosDF.calculo=number_format(datosDF.calculo, 2)
+						}
+						
 					}
 					if (index === (array.length - 1)) {
 						
@@ -180,7 +200,7 @@ angular.module('agil.servicios')
 						var sumaDebeBs = 0, sumaHaberBs = 0, sumaDebeSus = 0, sumaHaberSus = 0;
 						var fecha = new Date()
 						if (bimonetario) {
-							DibujarCabeceraComprobante(doc, bimonetario, usuario, comprobante, pagina, totalPaginas);
+							DibujarCabeceraComprobante(doc, bimonetario, usuario, comprobante, pagina, totalPaginas,datosCF,datosDF);
 							for (var i = 0; i < asientosContables.length && items <= itemsPorPagina; i++) {
 								var asiento = asientosContables[i]
 								doc.rect(390, y, 0, 30).stroke();
@@ -216,7 +236,7 @@ angular.module('agil.servicios')
 									y = 160;
 									items = 0;
 									pagina = pagina + 1;
-									DibujarCabeceraComprobante(doc, bimonetario, usuario, comprobante, pagina, totalPaginas);
+									DibujarCabeceraComprobante(doc, bimonetario, usuario, comprobante, pagina, totalPaginas,datosCF,datosDF);
 								}
 							}
 							doc.font('Helvetica-Bold', 7);
@@ -236,7 +256,7 @@ angular.module('agil.servicios')
 							doc.rect(490, y, 0, 20).stroke();
 							doc.rect(540, y, 0, 20).stroke();
 						} else {
-							DibujarCabeceraComprobante(doc, bimonetario, usuario, comprobante, pagina, totalPaginas);
+							DibujarCabeceraComprobante(doc, bimonetario, usuario, comprobante, pagina, totalPaginas,datosCF,datosDF);
 							for (var i = 0; i < asientosContables.length && items <= itemsPorPagina; i++) {
 								var asiento = asientosContables[i]
 								doc.rect(450, y, 0, 30).stroke();
@@ -266,7 +286,7 @@ angular.module('agil.servicios')
 									y = 160;
 									items = 0;
 									pagina = pagina + 1;
-									DibujarCabeceraComprobante(doc, bimonetario, usuario, comprobante, pagina, totalPaginas);
+									DibujarCabeceraComprobante(doc, bimonetario, usuario, comprobante, pagina, totalPaginas,datosCF,datosDF);
 								}
 							}
 							doc.font('Helvetica-Bold', 7);
@@ -383,7 +403,7 @@ angular.module('agil.servicios')
 			return res;
 		}])
 	.factory('DibujarCabeceraComprobante', [function () {
-		var res = function (doc, bimonetario, usuario, comprobante, pagina, totalPaginas) {
+		var res = function (doc, bimonetario, usuario, comprobante, pagina, totalPaginas,datosCF,datosDF) {
 			var fecha = new Date(comprobante.fecha)
 			console.log(usuario)
 			if (bimonetario) {
@@ -434,9 +454,12 @@ angular.module('agil.servicios')
 				} else {
 					doc.text("Fecha: " + fecha.getDate() + "/" + mont + "/" + fecha.getFullYear(), 500, 95)
 				}
-				doc.text("T. Cambio: ", 500, 105)
+				doc.text("T. Cambio: ", 500, 105)				
 				doc.font('Helvetica', 8);
 				doc.text(comprobante.tipoCambio.dolar, 545, 105)
+				if(datosCF.cant>0 && datosDF.cant==0)doc.text(datosCF.texto1+" "+datosCF.monto+"    "+datosCF.texto2+" "+datosCF.monto+"    "+datosCF.texto3+" "+datosCF.cant, 400, 120)				
+				if(datosDF.cant>0 && datosCF.cant==0)doc.text(datosDF.texto1+" "+datosDF.monto+"    "+datosDF.texto2+" "+datosDF.monto+"    "+datosDF.texto3+" "+datosDF.cant, 400, 120)	
+				if(datosDF.cant>0 && datosCF.cant>0)doc.text(datosDF.texto1+" "+datosDF.monto+"    "+datosDF.texto2+" "+datosDF.monto+"    "+datosDF.texto3+" "+datosDF.cant+"     "+datosCF.texto1+" "+datosCF.monto+"    "+datosCF.texto2+" "+datosCF.monto+"    "+datosCF.texto3+" "+datosCF.cant, 350, 120)							
 				doc.font('Helvetica-Bold', 8);
 				doc.rect(20, 130, 571, 0).stroke();
 				doc.font('Helvetica-Bold', 8);
@@ -512,6 +535,9 @@ angular.module('agil.servicios')
 				doc.text("T. Cambio: ", 500, 105)
 				doc.font('Helvetica', 8);
 				doc.text(comprobante.tipoCambio.dolar, 545, 105)
+				if(datosCF.cant>0 && datosDF.cant==0)doc.text(datosCF.texto1+" "+datosCF.monto+"    "+datosCF.texto2+" "+datosCF.monto+"    "+datosCF.texto3+" "+datosCF.cant, 400, 120)				
+				if(datosDF.cant>0 && datosCF.cant==0)doc.text(datosDF.texto1+" "+datosDF.monto+"    "+datosDF.texto2+" "+datosDF.monto+"    "+datosDF.texto3+" "+datosDF.cant, 400, 120)	
+				if(datosDF.cant>0 && datosCF.cant>0)doc.text(datosDF.texto1+" "+datosDF.monto+"    "+datosDF.texto2+" "+datosDF.monto+"    "+datosDF.texto3+" "+datosDF.cant+"     "+datosCF.texto1+" "+datosCF.monto+"    "+datosCF.texto2+" "+datosCF.monto+"    "+datosCF.texto3+" "+datosCF.cant, 350, 120)							
 				doc.font('Helvetica-Bold', 8);
 				doc.rect(20, 130, 571, 0).stroke();
 				doc.text("Cuenta", 50, 145)

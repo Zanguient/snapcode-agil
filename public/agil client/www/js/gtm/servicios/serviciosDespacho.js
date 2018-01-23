@@ -157,4 +157,11 @@ angular.module('agil.servicios')
 	  return delay.promise;
   };
   return res;
-}]);
+}])
+
+.factory('GtmDetalleDespacho', function($resource) {
+	return $resource(restServer+"gtm-detalle-despacho/:id_detalle_despacho", { id_detalle_despacho: '@id' },
+	{
+		'update': { method:'PUT' }
+	});
+});

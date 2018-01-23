@@ -19,6 +19,26 @@ angular.module('agil.servicios')
 		return delay.promise;
 	};
     return res;
+	}])
+	.factory('ClaseNombre', function($resource) {
+		return $resource(restServer+"clase/:nombre");
+})
+
+.factory('ClaseTexto', ['ClaseNombre','$q',function(ClaseNombre, $q) 
+  {
+	var res = function(nombre) 
+	{
+		var delay = $q.defer();
+		ClaseNombre.get({nombre:nombre},function(entidad) 
+		{        
+			delay.resolve(entidad);
+		}, function(error) 
+			{
+				delay.reject(error);
+			});
+		return delay.promise;
+	};
+    return res;
   }])
   
 .factory('Clase', function($resource) {

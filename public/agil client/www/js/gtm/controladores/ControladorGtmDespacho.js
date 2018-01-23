@@ -1,7 +1,7 @@
 angular.module('agil.controladores')
 
     .controller('ControladorGtmDespacho', function ($scope, $localStorage, $location, $templateCache, $route, blockUI, Paginator, FieldViewer,
-        GtmDespachos) {
+        GtmDespachos,GtmDetalleDespacho) {
 
         blockUI.start();
 
@@ -194,12 +194,22 @@ angular.module('agil.controladores')
         }
 
         $scope.establecerFactura=function(detalle_despacho){
-            
-            $scope.cerrarAsignacionFactura();
+            GtmDetalleDespacho.update({id_detalle_despacho:detalle_despacho.id},detalle_despacho,function(res){
+                $scope.cerrarAsignacionFactura();
+                $scope.mostrarMensaje(res.mensaje);
+            });
+        }
+
+        $scope.removerDetalleDespacho=function(detalle_despacho){
+            detalle_despacho=new GtmDetalleDespacho(detalle_despacho);
+            detalle_despacho.$delete(function(res){
+                $scope.obtenerDespachados();
+                $scope.mostrarMensaje(res.mensaje);
+            });
         }
 
         $scope.$on('$routeChangeStart', function (next, current) {
-			$scope.eliminarPopup($scope.idModalWizardEstibajeEdicion);
+			$scope.eliminarPopup($scope.idModalAsignacionFactura);
 		});
         $scope.inicio();
     });

@@ -6,7 +6,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 		ProveedorVencimientoCredito, Venta, ClasesTipo, Compra, Producto, DatosVenta, DatosCompra,
 		ImprimirSalida, Diccionario, VentasComprobantesEmpresa, ComprasComprobantesEmpresa, LibroMayorCuenta, Paginator, ComprobanteRevisarPaginador, AsignarComprobanteFavorito, ListaCuentasComprobanteContabilidad, NuevoComprobanteContabilidad, NuevoComprobante, ComprasComprobante,
 		ConfiguracionesCuentasEmpresa, ContabilidadCambioMoneda, ObtenerCambioMoneda, AsignarCuentaCiente, AsignarCuentaProveedor,
-		GtmTransportistas, GtmEstibajes, GtmGrupoEstibajes, ListasCuentasAuxiliares,GtmDetallesDespachoAlerta, $interval) {
+		GtmTransportistas, GtmEstibajes, GtmGrupoEstibajes, ListasCuentasAuxiliares,GtmDetallesDespachoAlerta, $interval,GtmDetalleDespachoAlerta,GtmDetalleDespacho) {
 		$scope.idModalTablaVencimientoProductos = "tabla-vencimiento-productos";
 		$scope.idModalTablaDespachos = "tabla-gtm-despachos";
 		$scope.idModalTablaAsignacionDespacho = "tabla-gtm-asignacion-despachos";
@@ -1150,25 +1150,30 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 						promesa.then(function (detallesDespacho) {
 							$scope.gtm_detalles_despacho = detallesDespacho;
 							$scope.vencimientoTotal = $scope.vencimientoTotal + detallesDespacho.length;
+							$scope.gtm_detalles_despacho_seleccionados=[];
 						});
 					});
 				});
 			});
-			/*var promesa = VencimientosDeudasEmpresa(idEmpresa);
-			promesa.then(function (vencimientosDeudas) {
-				for (var i = 0; i < vencimientosDeudas.length; i++) {
-					var fecha = new Date(vencimientosDeudas[i].fecha);
-					vencimientosDeudas[i].fecha_vencimiento = $scope.sumaFecha(vencimientosDeudas[i].dias_credito, fecha);
-					for (var j = 0; j < vencimientosDeudas[i].compraReprogramacionPagos.length; j++) {
-						if (vencimientosDeudas[i].compraReprogramacionPagos[j].activo) {
-							vencimientosDeudas[i].fecha_anterior = vencimientosDeudas[i].compraReprogramacionPagos[j].fecha_anterior
-						}
-					}
+		}
+
+		$scope.removerDetalleDespachoAlerta=function(detalle_despacho){
+            detalle_despacho=new GtmDetalleDespacho(detalle_despacho);
+            detalle_despacho.$delete(function(res){
+				$scope.vencimientoTotal = $scope.vencimientoTotal -$scope.gtm_detalles_despacho_seleccionados.length;
+                $scope.verificarDespachos($scope.usuario.id_empresa);
+                $scope.mostrarMensaje(res.mensaje);
+            });
+        }
+
+		$scope.calcularTotalCarga=function(transportista){
+			var totalCantidadCarga=0;
+			for(var i=0;i<$scope.gtm_detalles_despacho_seleccionados.length;i++){
+				if($scope.gtm_detalles_despacho_seleccionados[i].id_transportista==transportista.id){
+					totalCantidadCarga=totalCantidadCarga+$scope.gtm_detalles_despacho_seleccionados[i].cantidad;
 				}
-				$scope.vencimientoTotal = $scope.vencimientoTotal + vencimientosDeudas.length;
-				$scope.vencimientosDeudas = vencimientosDeudas;
-				//blockUI.stop();
-			});*/
+			}
+			return totalCantidadCarga;
 		}
 
 		$scope.cambiarSeleccionDetallesDespacho=function(seleccion){
@@ -1179,6 +1184,14 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 					$scope.gtm_detalles_despacho_seleccionados.push($scope.gtm_detalles_despacho[i]);
 				}
 			}
+		}
+
+		$scope.calcularTotalCantidad=function(){
+			var totalCantidadDespacho=0;
+			for(var i=0;i<$scope.gtm_detalles_despacho_seleccionados.length;i++){
+				totalCantidadDespacho=totalCantidadDespacho+$scope.gtm_detalles_despacho_seleccionados[i].cantidad;
+			}
+			return totalCantidadDespacho;
 		}
 
 		$scope.cambiarSeleccionDetalleDespacho=function(gtm_detalle_despacho){

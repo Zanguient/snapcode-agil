@@ -1,11 +1,11 @@
 angular.module('agil.controladores')
-.controller('ControladorContabilidadCuenta', function ($scope, blockUI, $localStorage, 
-		$location, $templateCache, $window, CuentasPaginador, ContabilidadCuenta, 
-		CuentasClasificaciones, ClasesTipo, lasClasificaciones, losSaldos, losMovimientos, 
-		losTiposDeCuentas, lasOperacionesCalculos, CuentaContabilidad,Paginator,CuentasEmpresaCreacion,
-		ClientesNit,ProveedoresNit,$timeout,Tipos,ConfiguracionCuentaEmpresa,ListaContabilidadCuentas,ListaCuentasComprobanteContabilidad,ConfiguracionCuentas,
-	CuentasClasificacionesEdicion, Diccionario,VistaColumnasAplicacion,FieldViewer,ValidarCodigoCuenta) {
-	
+	.controller('ControladorContabilidadCuenta', function ($scope, blockUI, $localStorage,
+		$location, $templateCache, $window, CuentasPaginador, ContabilidadCuenta,
+		CuentasClasificaciones, ClasesTipo, lasClasificaciones, losSaldos, losMovimientos,
+		losTiposDeCuentas, lasOperacionesCalculos, CuentaContabilidad, Paginator, CuentasEmpresaCreacion,
+		ClientesNit, ProveedoresNit, $timeout, Tipos, ConfiguracionCuentaEmpresa, ListaContabilidadCuentas, ListaCuentasComprobanteContabilidad, ConfiguracionCuentas,
+		CuentasClasificacionesEdicion, Diccionario, VistaColumnasAplicacion, FieldViewer, ValidarCodigoCuenta, ClaseTexto) {
+
 
 		$scope.usuario = JSON.parse($localStorage.usuario);
 		$scope.idModalWizardCuentaEdicion = "modal-wizard-cuenta-edicion"
@@ -56,9 +56,9 @@ angular.module('agil.controladores')
 			}
 		}
 
-		
 
-		$scope.agregarTipoCuenta=function(){
+
+		$scope.agregarTipoCuenta = function () {
 
 			blockUI.start();
 			var promesa = ClasesTipo("TCC");
@@ -69,18 +69,20 @@ angular.module('agil.controladores')
 			$scope.abrirPopup($scope.idModalWizardConceptoEdicion);
 		}
 
-		$scope.obtenerColumnasAplicacion=function(){
-			$scope.fieldViewer=FieldViewer({
-				crear:true,
-				id_empresa:$scope.usuario.id_empresa,
-				configuracion:{codigo:{value:"Codigo",show:true},
-							   nombre:{value:"Nombre",show:true},
-							   debe:{value:"Debe",show:true},
-							   haber:{value:"Haber",show:true},
-							   saldo:{value:"Saldo",show:true},
-							   clasificacion:{value:"Clasificacion",show:true},
-						       tipo_cuenta:{value:"Tipo Cuenta",show:true}}
-			},$scope.aplicacion.aplicacion.id);
+		$scope.obtenerColumnasAplicacion = function () {
+			$scope.fieldViewer = FieldViewer({
+				crear: true,
+				id_empresa: $scope.usuario.id_empresa,
+				configuracion: {
+					codigo: { value: "Codigo", show: true },
+					nombre: { value: "Nombre", show: true },
+					debe: { value: "Debe", show: true },
+					haber: { value: "Haber", show: true },
+					saldo: { value: "Saldo", show: true },
+					clasificacion: { value: "Clasificacion", show: true },
+					tipo_cuenta: { value: "Tipo Cuenta", show: true }
+				}
+			}, $scope.aplicacion.aplicacion.id);
 			$scope.fieldViewer.updateObject();
 		}
 
@@ -150,52 +152,52 @@ angular.module('agil.controladores')
 			$scope.cerrarPopup($scope.idModalWizardClasificacionEdicion);
 		}
 
-		$scope.guardarPlantillaIngreso = function (form,plantilla) {
-			if(!plantilla.ingreso.ivadf.cuenta||!plantilla.ingreso.ivadf.cuenta.id){
-				$scope.errorIvadf="sdf"
-				form.asignarCuentaIvaDf.$error.cuenta= true;
-			}else{
-				$scope.errorIvadf=null
-				form.asignarCuentaIvaDf.$error.cuenta= false;
+		$scope.guardarPlantillaIngreso = function (form, plantilla) {
+			if (!plantilla.ingreso.ivadf.cuenta || !plantilla.ingreso.ivadf.cuenta.id) {
+				$scope.errorIvadf = "sdf"
+				form.asignarCuentaIvaDf.$error.cuenta = true;
+			} else {
+				$scope.errorIvadf = null
+				form.asignarCuentaIvaDf.$error.cuenta = false;
 			}
-			if(!plantilla.ingreso.it.cuenta||!plantilla.ingreso.it.cuenta.id){
-				$scope.errorIT="sdf"
-				form.asignarCuentaIt.$error.cuenta= true;
-			}else{
-				$scope.errorIT=null
-				form.asignarCuentaIt.$error.cuenta= false;
+			if (!plantilla.ingreso.it.cuenta || !plantilla.ingreso.it.cuenta.id) {
+				$scope.errorIT = "sdf"
+				form.asignarCuentaIt.$error.cuenta = true;
+			} else {
+				$scope.errorIT = null
+				form.asignarCuentaIt.$error.cuenta = false;
 			}
-			
-			if(!plantilla.ingreso.itPorPagar.cuenta||!plantilla.ingreso.itPorPagar.cuenta.id){
-				$scope.errorItPorPagar="sdf"
-				form.asignarCuentaItPorPagar.$error.cuenta= true;
-			}else{
-				$scope.errorItPorPagar=null
-				form.asignarCuentaItPorPagar.$error.cuenta= false;
+
+			if (!plantilla.ingreso.itPorPagar.cuenta || !plantilla.ingreso.itPorPagar.cuenta.id) {
+				$scope.errorItPorPagar = "sdf"
+				form.asignarCuentaItPorPagar.$error.cuenta = true;
+			} else {
+				$scope.errorItPorPagar = null
+				form.asignarCuentaItPorPagar.$error.cuenta = false;
 			}
-			if(!plantilla.ingreso.cajaBanco.cuenta||!plantilla.ingreso.cajaBanco.cuenta.id){
-				$scope.errorIngresoCaja="sdf"
-				form.asignarCuentaIngresoCaja.$error.cuenta= true;
-			}else{
-				$scope.errorIngresoCaja=null
-				form.asignarCuentaIngresoCaja.$error.cuenta= false;
+			if (!plantilla.ingreso.cajaBanco.cuenta || !plantilla.ingreso.cajaBanco.cuenta.id) {
+				$scope.errorIngresoCaja = "sdf"
+				form.asignarCuentaIngresoCaja.$error.cuenta = true;
+			} else {
+				$scope.errorIngresoCaja = null
+				form.asignarCuentaIngresoCaja.$error.cuenta = false;
 			}
-			if(!plantilla.egreso.ivacf.cuenta || !plantilla.egreso.ivacf.cuenta.id){
-				$scope.errorIvacf="sdf"
-				form.asignarCuentaIvaCf.$error.cuenta= true;
-			}else{
-				$scope.errorIvacf=null
-				form.asignarCuentaIvaCf.$error.cuenta= false;
+			if (!plantilla.egreso.ivacf.cuenta || !plantilla.egreso.ivacf.cuenta.id) {
+				$scope.errorIvacf = "sdf"
+				form.asignarCuentaIvaCf.$error.cuenta = true;
+			} else {
+				$scope.errorIvacf = null
+				form.asignarCuentaIvaCf.$error.cuenta = false;
 			}
-			if(!plantilla.egreso.cajaBanco.cuenta||!plantilla.egreso.cajaBanco.cuenta.id){
-				$scope.errorEgresoCaja="sdf"
-				form.asignarCuentaEgresoCaja.$error.cuenta= true;
-			}else{
-				$scope.errorEgresoCaja=null
-				form.asignarCuentaEgresoCaja.$error.cuenta= false;
+			if (!plantilla.egreso.cajaBanco.cuenta || !plantilla.egreso.cajaBanco.cuenta.id) {
+				$scope.errorEgresoCaja = "sdf"
+				form.asignarCuentaEgresoCaja.$error.cuenta = true;
+			} else {
+				$scope.errorEgresoCaja = null
+				form.asignarCuentaEgresoCaja.$error.cuenta = false;
 			}
-			if($scope.errorIvacf==null&& $scope.errorEgresoCaja==null&&$scope.errorIvadf==null && $scope.errorIT==null && $scope.errorItPorPagar==null){
-				ConfiguracionCuentas.update({ id_empresa: $scope.usuario.id_empresa }, plantilla, function (dato) {				
+			if ($scope.errorIvacf == null && $scope.errorEgresoCaja == null && $scope.errorIvadf == null && $scope.errorIT == null && $scope.errorItPorPagar == null) {
+				ConfiguracionCuentas.update({ id_empresa: $scope.usuario.id_empresa }, plantilla, function (dato) {
 					$scope.mostrarMensaje(dato.menssage)
 					$scope.cerrarPlantillaIngreso()
 				})
@@ -332,14 +334,62 @@ angular.module('agil.controladores')
 		$scope.crearNuevaCuenta = function () {
 			$scope.cuenta = new ContabilidadCuenta({
 				id_empresa: $scope.usuario.id_empresa, id_usuario: $scope.usuario.id, tipoCuenta: {}, clasificacion: {}, eliminado: false, bimonetaria: false
+				, especifica_texto1: "", especifica_texto2: "", especifica_texto3: ""
 			});
+
 			var fechaActual = new Date();
 			$scope.cuenta.fechaTexto = fechaActual.getDate() + "/" + (fechaActual.getMonth() + 1) + "/" + fechaActual.getFullYear();
 			$scope.abrirPopup($scope.idModalWizardCuentaEdicion);
 		}
+		$scope.optenerCfDf = function (tipo, activo) {
+			
+			if (activo) {
+				if (tipo) {
+					var promesa = ClaseTexto("CF_TEXTO_1")
+					promesa.then(function (dato) {
+						$scope.cuenta.especifica_texto1 = dato.clase
 
+					})
+
+					var promesa = ClaseTexto("CF_TEXTO_2")
+					promesa.then(function (dato) {
+						$scope.cuenta.especifica_texto2 = dato.clase
+
+					})
+					var promesa = ClaseTexto("CF_TEXTO_3")
+					promesa.then(function (dato) {
+						$scope.cuenta.especifica_texto3 = dato.clase
+
+					})
+				} else {
+					var promesa = ClaseTexto("DF_TEXTO_1")
+					promesa.then(function (dato) {
+						$scope.cuenta.especifica_texto1 = dato.clase
+
+					})
+					var promesa = ClaseTexto("DF_TEXTO_2")
+					promesa.then(function (dato) {
+						$scope.cuenta.especifica_texto2 = dato.clase
+
+					})
+					var promesa = ClaseTexto("DF_TEXTO_3")
+					promesa.then(function (dato) {
+						$scope.cuenta.especifica_texto3 = dato.clase
+
+					})
+				}
+			} else {
+				$scope.cuenta.tipo_especifica = false
+				$scope.cuenta.especifica_texto1 = ""
+				$scope.cuenta.especifica_texto2 = ""
+				$scope.cuenta.especifica_texto3 = ""
+			}
+		}
 		$scope.modificarCuenta = function (cuenta) {
 			$scope.cuenta = cuenta
+			if(cuenta.especifica){
+				$scope.optenerCfDf(cuenta.tipo_especifica,cuenta.especifica)
+			}
 			$scope.abrirPopup($scope.idModalWizardCuentaEdicion);
 		}
 
@@ -351,19 +401,19 @@ angular.module('agil.controladores')
 			$scope.cuenta = cuenta
 			$scope.abrirPopup($scope.idModalWizardCuentaVer);
 		}
-		$scope.validarCodigoCuenta = function(CodigoCuenta) {
-			var codigo= CodigoCuenta;
-			if(codigo!=''){
-				$timeout(function(){
-				$scope.validar = new ValidarCodigoCuenta();
-			
-				$scope.validar.codigo=CodigoCuenta;
-			
-				$scope.validar.$save(function(data){
-				$scope.data=data;
-				})
-			},1500);
-			}		
+		$scope.validarCodigoCuenta = function (CodigoCuenta) {
+			var codigo = CodigoCuenta;
+			if (codigo != '') {
+				$timeout(function () {
+					$scope.validar = new ValidarCodigoCuenta();
+
+					$scope.validar.codigo = CodigoCuenta;
+
+					$scope.validar.$save(function (data) {
+						$scope.data = data;
+					})
+				}, 1500);
+			}
 		};
 		$scope.guardarCuenta = function (valido, cuenta) {
 			// console.log(cuenta)
@@ -426,8 +476,8 @@ angular.module('agil.controladores')
 			// var promesa = ClasesTipo("SCC");
 			var promesa = lasClasificaciones();
 			promesa.then(function (entidad) {
-				$scope.cuentaClasificaciones=[{id:0,nombre:"TODOS"}]
-				$scope.cuentaClasificaciones = $scope.cuentaClasificaciones.concat(entidad.clasificaciones);
+				//$scope.cuentaClasificaciones=[{id:0,nombre:"TODOS"}]
+				$scope.cuentaClasificaciones = entidad.clasificaciones;
 				blockUI.stop();
 			});
 		}
@@ -456,12 +506,12 @@ angular.module('agil.controladores')
 			blockUI.start();
 			var promesa = ClasesTipo("TCC");
 			promesa.then(function (entidad) {
-				$scope.cuentaTipos=[{id:0,nombre:"TODOS"}]
+				$scope.cuentaTipos = [{ id: 0, nombre: "TODOS" }]
 				$scope.cuentaTipos = $scope.cuentaTipos.concat(entidad.clases);
 				blockUI.stop();
 			});
 		}
-			
+
 		$scope.obtenerTiposCuentasAuxilires = function () {
 			blockUI.start();
 			var promesa = ClasesTipo("AUXCU");
@@ -590,6 +640,6 @@ angular.module('agil.controladores')
 			$scope.eliminarPopup($scope.idModalWizardClasificacionEdicion);
 			$scope.eliminarPopup($scope.idModalWizardConceptoEdicion);
 		});
-			
+
 		$scope.inicio();
 	});

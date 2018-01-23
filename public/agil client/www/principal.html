@@ -1675,9 +1675,9 @@
 
 
 	<div id="modal-wizard-comprobante-edicion" class="modal wizard-posicion">
-		<div>
+		<div class="modal-content">
 			<form id="formNuevoComprobante" name="formNuevoComprobante" novalidate ng-submit="AgregarComprobante(formNuevoComprobante,nuevoComprobante)">
-				<div class="col-sm-12">
+				<div class="modal-header">
 					<div class="row">
 						<div class="col-sm-9">
 							<button ng-hide="verComprobante" tabindex="-1" id="guardarV" type="submit" ng-disabled="nuevoComprobante.$invalid" class="btn btn-primary">
@@ -1845,7 +1845,7 @@
 						</div>
 					</div>
 				</div>
-				<div class="col-sm-12">
+				<div class="modal-body">
 					<div class="widget-box">
 						<div class="widget-header row">
 							<div class="col-sm-4">

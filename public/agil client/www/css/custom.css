@@ -23,6 +23,7 @@ input[type=number]::-webkit-outer-spin-button {
 }
 
 #formNuevoComprobante input[type=number] { -moz-appearance:textfield; }
+
 #search { 
 width: 170px; /* Ancho del buscador */
 height: 50px;
@@ -212,7 +213,9 @@ content: "%\a0\a0\a0\a0\a0\a0\a0\a0\a0\a0\a0   Bs" !important;
 .check-descuento::before{
 content: "SI\a0\a0\a0\a0\a0\a0\a0\a0\a0\a0\a0  NO" !important;
 }
-
+.check-cuenta-especifica::before{
+	content: "C.F\a0\a0\a0\a0\a0\a0\a0\a0\a0\a0\a0  D.F" !important;
+	}
 .ketchup-error{
 z-index:9999 !important;
 }

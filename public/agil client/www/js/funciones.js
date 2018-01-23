@@ -385,7 +385,7 @@ function ejecutarScriptsContabilidadCuentas(idModalWizardCuentaEdicion,
 	idModalWizardClasificacionCuenta) {
 	crearPopup(idModalEliminarCuenta, "20%", 250);
 	crearPopup(idModalWizardCuentaVer, "55%", 500);
-	crearPopup(idModalWizardCuentaEdicion, "60%", 500);
+	crearPopup(idModalWizardCuentaEdicion, "60%", "auto");
 	crearPopup(idModalWizardClasificacionCuentaNueva, "50%", 300);
 	crearPopup(idModalWizardClasificacionVer, "60%", 550);
 	crearPopup(idModalPlantilla, "50%", "auto");

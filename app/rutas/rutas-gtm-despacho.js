@@ -34,7 +34,8 @@ router.route('/gtm-detalle-despacho/empresa/:id_empresa')
 	.get(function (req, res) {
 		GtmDespachoDetalle.findAll({
 			where:{
-				despachado:false
+				despachado:false,
+				eliminado:false
 			},
 			include:[{model:GtmDespacho,as:'despacho',
 					where:{id_empresa:req.params.id_empresa},
@@ -72,7 +73,8 @@ router.route('/gtm-detalle-despacho-despachado/empresa/:id_empresa')
 	.get(function (req, res) {
 		GtmDespachoDetalle.findAll({
 			where:{
-				despachado:true
+				despachado:true,
+				eliminado:false
 			},
 			include:[{model:GtmDespacho,as:'despacho',
 					where:{id_empresa:req.params.id_empresa},
@@ -86,6 +88,31 @@ router.route('/gtm-detalle-despacho-despachado/empresa/:id_empresa')
 				    {model:GtmEstibaje,as:'estibaje'}]
 		}).then(function(detallesDespacho){
 			res.json(detallesDespacho);
+		});
+	});
+
+router.route('/gtm-detalle-despacho/:id_detalle_despacho')
+	.put(function (req, res) {
+		GtmDespachoDetalle.update({
+			factura:req.body.factura
+		},{
+			where:{
+				id:req.params.id_detalle_despacho
+			}
+		}).then(function(detallesDespacho){
+			res.json({mensaje:"Actualizado satisfactoriamente!"});
+		});
+	})
+	
+	.delete(function (req, res) {
+		GtmDespachoDetalle.update({
+			eliminado:true
+		},{
+			where:{
+				id:req.params.id_detalle_despacho
+			}
+		}).then(function(detallesDespacho){
+			res.json({mensaje:"Eliminado satisfactoriamente!"});
 		});
 	});
 	
