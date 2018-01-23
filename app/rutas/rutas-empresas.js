@@ -43,79 +43,91 @@ router.route('/empresas')
 			}).then(function(sucursalCreada){
 				Tipo.create({
 					id_empresa:empresaCreada.id,
-					nombre:"VENCIMIENTOS",
-					nombre_corto:"VENCIMIENTOS"
-				}).then(function(venCreado){
-					Clase.create({
-						id_tipo:venCreado.id,
-						nombre:"VENCIMIENTO DE PRODUCTOS",
-						nombre_corto:"10"
-					}).then(function(venPROCreado){
-						Clase.create({
-							id_tipo:venCreado.id,
-							nombre:"VENCIMIENTO DE CRÉDITOS",
-							nombre_corto:"10"
-						}).then(function(venCRECreado){
+					nombre:"GRUPOS PRODUCTOS",
+					nombre_corto:"GRUPOS PRODUCTOS"
+				}).then(function(grupoProd){
+					Tipo.create({
+						id_empresa:empresaCreada.id,
+						nombre:"SUBGRUPOS PRODUCTOS",
+						nombre_corto:"SUBGRUPOS PRODUCTOS"
+					}).then(function(subGrupoProd){
+						Tipo.create({
+							id_empresa:empresaCreada.id,
+							nombre:"VENCIMIENTOS",
+							nombre_corto:"VENCIMIENTOS"
+						}).then(function(venCreado){
 							Clase.create({
 								id_tipo:venCreado.id,
-								nombre:"VENCIMIENTO DE DEUDAS",
+								nombre:"VENCIMIENTO DE PRODUCTOS",
 								nombre_corto:"10"
-							}).then(function(venDECreado){
-								ConfiguracionVentaVista.create({
-									mostrar_producto:true,
-									mostrar_precio_unitario:true,
-									mostrar_cantidad:true,
-									mostrar_importe:true,
-									mostrar_descuento:false,
-									mostrar_recargo:false,
-									mostrar_ice:false,
-									mostrar_excento:false,
-									mostrar_total:true,
-									mostrar_fecha_vencimiento:false,
-									mostrar_lote:false,
-									mostrar_codigo_producto:true,
-									mostrar_unidad_producto:true,
-									id_empresa:empresaCreada.id
-								}).then(function(configuracionVentaVistaCreada){
-									ConfiguracionCompraVista.create({
-										mostrar_producto:true,
-										mostrar_costo_unitario:true,
-										mostrar_cantidad:true,
-										mostrar_importe:true,
-										mostrar_descuento:false,
-										mostrar_recargo:false,
-										mostrar_ice:false,
-										mostrar_excento:false,
-										mostrar_total:true,
-										mostrar_fecha_vencimiento:false,
-										mostrar_lote:false,
-										mostrar_codigo_producto:true,
-										mostrar_unidad_producto:true,
-										id_empresa:empresaCreada.id
-									}).then(function(configuracionCompraVistaCreada){
-										Clase.find({
-											where:{nombre_corto:'OAL'}
-										}).then(function(clase){
-											if(clase.nombre=="ONLINE"){
-												var imagen;
-												if(req.body.imagen.indexOf('default') > -1){
-													actualizarImagenEmpresa(empresaCreada,req,res,null,req.body.imagen);
-												}else{
-													signs3('agil_imagenes/empresa-'+empresaCreada.id+'.jpg','image/jpeg',function(signedRequest,url){
-														actualizarImagenEmpresa(empresaCreada,req,res,signedRequest,url);
-													});
-												}
-											}else{
-												var imagen;
-												if(req.body.imagen.indexOf('default') > -1){
-													imagen=req.body.imagen;
-												}else{
-													var imagenEmpresa=decodeBase64Image(req.body.imagen);
-													fs.writeFileSync('./img/empresa-'+empresaCreada.id+'.jpg', imagenEmpresa.data, 'base64', function(err) { });
-													imagen='img/empresa-'+empresaCreada.id+'.jpg';
-												}
-												actualizarImagenEmpresa(empresaCreada,req,res,null,imagen);
-											}
+							}).then(function(venPROCreado){
+								Clase.create({
+									id_tipo:venCreado.id,
+									nombre:"VENCIMIENTO DE CRÉDITOS",
+									nombre_corto:"10"
+								}).then(function(venCRECreado){
+									Clase.create({
+										id_tipo:venCreado.id,
+										nombre:"VENCIMIENTO DE DEUDAS",
+										nombre_corto:"10"
+									}).then(function(venDECreado){
+										ConfiguracionVentaVista.create({
+											mostrar_producto:true,
+											mostrar_precio_unitario:true,
+											mostrar_cantidad:true,
+											mostrar_importe:true,
+											mostrar_descuento:false,
+											mostrar_recargo:false,
+											mostrar_ice:false,
+											mostrar_excento:false,
+											mostrar_total:true,
+											mostrar_fecha_vencimiento:false,
+											mostrar_lote:false,
+											mostrar_codigo_producto:true,
+											mostrar_unidad_producto:true,
+											id_empresa:empresaCreada.id
+										}).then(function(configuracionVentaVistaCreada){
+											ConfiguracionCompraVista.create({
+												mostrar_producto:true,
+												mostrar_costo_unitario:true,
+												mostrar_cantidad:true,
+												mostrar_importe:true,
+												mostrar_descuento:false,
+												mostrar_recargo:false,
+												mostrar_ice:false,
+												mostrar_excento:false,
+												mostrar_total:true,
+												mostrar_fecha_vencimiento:false,
+												mostrar_lote:false,
+												mostrar_codigo_producto:true,
+												mostrar_unidad_producto:true,
+												id_empresa:empresaCreada.id
+											}).then(function(configuracionCompraVistaCreada){
+												Clase.find({
+													where:{nombre_corto:'OAL'}
+												}).then(function(clase){
+													if(clase.nombre=="ONLINE"){
+														var imagen;
+														if(req.body.imagen.indexOf('default') > -1){
+															actualizarImagenEmpresa(empresaCreada,req,res,null,req.body.imagen);
+														}else{
+															signs3('agil_imagenes/empresa-'+empresaCreada.id+'.jpg','image/jpeg',function(signedRequest,url){
+																actualizarImagenEmpresa(empresaCreada,req,res,signedRequest,url);
+															});
+														}
+													}else{
+														var imagen;
+														if(req.body.imagen.indexOf('default') > -1){
+															imagen=req.body.imagen;
+														}else{
+															var imagenEmpresa=decodeBase64Image(req.body.imagen);
+															fs.writeFileSync('./img/empresa-'+empresaCreada.id+'.jpg', imagenEmpresa.data, 'base64', function(err) { });
+															imagen='img/empresa-'+empresaCreada.id+'.jpg';
+														}
+														actualizarImagenEmpresa(empresaCreada,req,res,null,imagen);
+													}
+												});
+											});
 										});
 									});
 								});

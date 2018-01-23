@@ -172,7 +172,8 @@ router.route('/productos/empresa')
 								transaction: t
 							}).then(function(productoEncontrado){
 								return Clase.findOrCreate({
-									where: { nombre: producto.grupo },
+									where: { nombre: producto.grupo,
+										     id_tipo: tipoGrupoEncontrado.id},
 									defaults: {nombre: producto.grupo,
 												id_tipo: tipoGrupoEncontrado.id},
 									transaction: t,
@@ -180,7 +181,8 @@ router.route('/productos/empresa')
 								}).then(function (claseGrupoEncontrado) {
 									
 									return Clase.findOrCreate({
-										where: { nombre: producto.subgrupo },
+										where: { nombre: producto.subgrupo,
+											     id_tipo: tipoSubGrupoEncontrado.id },
 										defaults: {nombre: producto.subgrupo,
 													id_tipo: tipoSubGrupoEncontrado.id},
 										transaction: t,
