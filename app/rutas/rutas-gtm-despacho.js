@@ -20,7 +20,8 @@ module.exports = function (router,ensureAuthorizedAdministrador,fs,forEach,jwt,m
 						precio_unitario:parseFloat(detalle_despacho.precio_unitario),
 						importe:parseFloat(detalle_despacho.total),
 						saldo:0,
-						despachado:false
+						despachado:false,
+						eliminado:false
 					}).then(function(detalleDespachoCreado){
 						if (index === (array.length - 1)) {
 							res.json(despachoCreado);
