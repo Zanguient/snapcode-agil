@@ -524,12 +524,77 @@ angular.module('agil.controladores')
 				// for (var i = 0; i < producto.inventarios.length; i++) {
 				// 	$scope.cantidadInventario = $scope.cantidadInventario + producto.inventarios[i].cantidad;
 				// }
-			}
-			var j = 0, encontrado = false;
-			if ($scope.solicitud.solicitudesProductos === undefined) {
-				$scope.solicitud.solicitudesProductos = []
-			}
-			if (1 <= $scope.cantidadInventario) {
+				var j = 0, encontrado = false;
+				if ($scope.solicitud.solicitudesProductos === undefined) {
+					$scope.solicitud.solicitudesProductos = []
+				}
+				if (1 <= $scope.cantidadInventario) {
+					while (j < $scope.solicitud.solicitudesProductos.length && !encontrado) {
+						if ($scope.solicitud.solicitudesProductos[j].eliminado === undefined) {
+							if ($scope.solicitud.solicitudesProductos[j].productoSolicitado.id == producto.id) {
+								$scope.solicitud.solicitudesProductos[j].cantidad = $scope.solicitud.solicitudesProductos[j].cantidad + 1;
+								$scope.solicitud.solicitudesProductos[j].eliminado = undefined
+								$scope.solicitud.solicitudesProductos[j].detallesIngredientesProducto.map(function (ingre) {
+									ingre.total = ingre.cantidad_ideal * $scope.solicitud.solicitudesProductos[j].cantidad
+								})
+								encontrado = true;
+								detalleVenta = $scope.solicitud.solicitudesProductos[j];
+								producto.inventario_disponible -= 1
+								// var indx = $scope.productosProcesados.indexOf(producto)
+								// $scope.productosProcesados[indx].inventarios[0].cantidad -=1
+								// producto.inventarios[i].cantidad -=1
+							}
+						}
+						j++;
+					}
+					if (!encontrado) {
+						var formulacion = SolicitudesFormulacionProducto((producto.producto !== undefined) ? producto.producto.id : (producto.id !== undefined) ? producto.id : undefined)
+						var ingredientes = []
+						formulacion.then(function (formula) {
+							formula.productosBase.forEach(element => {
+								ingrediente = {
+									cantidad_ideal: parseFloat(element.formulacion),
+									cantidad_real: parseFloat(element.formulacion),
+									total: parseFloat(element.formulacion),
+									id_producto_base: element.productoBase.id,
+									productoSolicitudBase: element.productoBase
+								}
+								ingredientes.push(ingrediente)
+							});
+						})
+						if (producto.activar_inventario) {
+							if (1 <= $scope.cantidadInventario) {
+								detalleVenta = {
+									productoSolicitado: producto, precio_unitario: producto.precio_unitario,
+									inventario_disponible: $scope.cantidadInventario,
+									inventarios: producto.inventarios,
+									cantidad: 1,
+									detallesIngredientesProducto: ingredientes
+								};
+								producto.inventario_disponible -= 1
+								$scope.solicitud.solicitudesProductos.push(detalleVenta);
+							} else {
+								$scope.mostrarMensaje('¡Cantidad de inventario insuficiente, inventario disponible: ' + $scope.cantidadInventario + '!');
+							}
+						} else {
+							detalleVenta = {
+								productoSolicitado: producto, precio_unitario: producto.precio_unitario,
+								inventario_disponible: $scope.cantidadInventario,
+								inventarios: producto.inventarios,
+								cantidad: 1,
+								detallesIngredientesProducto: ingredientes
+							};
+							producto.inventario_disponible -= 1
+							$scope.solicitud.solicitudesProductos.push(detalleVenta);
+						}
+					} else {
+						producto.eliminado = undefined
+					}
+				} else {
+					$scope.mostrarMensaje('¡Cantidad de inventario insuficiente, inventario disponible: ' + $scope.cantidadInventario + '!');
+				}
+			}else{
+				var j = 0, encontrado = false
 				while (j < $scope.solicitud.solicitudesProductos.length && !encontrado) {
 					if ($scope.solicitud.solicitudesProductos[j].eliminado === undefined) {
 						if ($scope.solicitud.solicitudesProductos[j].productoSolicitado.id == producto.id) {
@@ -540,7 +605,7 @@ angular.module('agil.controladores')
 							})
 							encontrado = true;
 							detalleVenta = $scope.solicitud.solicitudesProductos[j];
-							producto.inventario_disponible -= 1
+							// producto.inventario_disponible -= 1
 							// var indx = $scope.productosProcesados.indexOf(producto)
 							// $scope.productosProcesados[indx].inventarios[0].cantidad -=1
 							// producto.inventarios[i].cantidad -=1
@@ -563,61 +628,24 @@ angular.module('agil.controladores')
 							ingredientes.push(ingrediente)
 						});
 					})
-					if (producto.activar_inventario) {
-						if (1 <= $scope.cantidadInventario) {
-							detalleVenta = {
-								productoSolicitado: producto, precio_unitario: producto.precio_unitario,
-								inventario_disponible: $scope.cantidadInventario,
-								inventarios: producto.inventarios,
-								cantidad: 1,
-								detallesIngredientesProducto: ingredientes
-							};
-							producto.inventario_disponible -= 1
-							$scope.solicitud.solicitudesProductos.push(detalleVenta);
-						} else {
-							$scope.mostrarMensaje('¡Cantidad de inventario insuficiente, inventario disponible: ' + $scope.cantidadInventario + '!');
-						}
-					} else {
-						detalleVenta = {
-							productoSolicitado: producto, precio_unitario: producto.precio_unitario,
-							inventario_disponible: $scope.cantidadInventario,
-							inventarios: producto.inventarios,
-							cantidad: 1,
-							detallesIngredientesProducto: ingredientes
-						};
-						producto.inventario_disponible -= 1
-						$scope.solicitud.solicitudesProductos.push(detalleVenta);
-					}
+					detalleVenta = {
+						productoSolicitado: producto, precio_unitario: producto.precio_unitario,
+						inventario_disponible: $scope.cantidadInventario,
+						inventarios: producto.inventarios,
+						cantidad: 1,
+						detallesIngredientesProducto: ingredientes
+					};
+					$scope.solicitud.solicitudesProductos.push(detalleVenta);
 				} else {
 					producto.eliminado = undefined
 				}
-			} else {
-				$scope.mostrarMensaje('¡Cantidad de inventario insuficiente, inventario disponible: ' + $scope.cantidadInventario + '!');
 			}
 			
 			producto.rankin += 1;
 
 			var indice = $scope.productosProcesados.indexOf(producto);
 			$scope.productosProcesados[indice] = producto;
-
-			// setTimeout(function () {
-			// 	aplicarSwiper(4, 3, true, 2);
-			// }, 5);
 			$localStorage.productosProcesados = $scope.productosProcesados;
-
-			// ===== fin rankin ============================//
-			// $scope.checkVentaDetalleProducto(producto)
-
-			// if ($scope.productoSeleccionado !== undefined) {
-			// 	var prod = (producto.producto !== undefined) ? producto.prod.id : (producto.id != undefined) ? producto.id : undefined
-			// 	var prodSel = ($scope.productoSeleccionado.producto !== undefined) ? $scope.productoSeleccionado.producto.id : ($scope.productoSeleccionado.id != undefined) ? $scope.productoSeleccionado.id : undefined
-			// 	if (prod != prodSel) {
-			// 		var indice = $scope.solicitud.solicitudesProductos.indexOf(producto);
-			// 		if (indice > -1)
-			// 			$scope.solicitud.solicitudesProductos[indice].verFormulacion = undefined;
-			// 		$scope.productoSeleccionado.verFormulacion = undefined
-			// 	}
-			// }
 		}
 
 		$scope.filtrarProductos = function (busqueda) {

@@ -164,4 +164,40 @@ angular.module('agil.servicios')
 	{
 		'update': { method:'PUT' }
 	});
-});
+})
+
+.factory('GtmDestinosEmpresa', ['GtmDestino','$q',function(GtmDestino, $q) 
+  {
+	var res = function(id_empresa,destinos) 
+	{
+		var delay = $q.defer();
+		GtmDestino.save({id_empresa:id_empresa},destinos,function(entidad) 
+		{        
+			delay.resolve(entidad);
+		}, function(error) 
+			{
+				delay.reject(error);
+			});
+		return delay.promise;
+	};
+    return res;
+	}])
+
+	
+	.factory('GtmTransportistasEmpresa', ['GtmTransportista','$q',function(GtmTransportista, $q) 
+	  {
+		var res = function(id_empresa,transportistas) 
+		{
+			var delay = $q.defer();
+			GtmTransportista.save({id_empresa:id_empresa},transportistas,function(entidad) 
+			{        
+				delay.resolve(entidad);
+			}, function(error) 
+				{
+					delay.reject(error);
+				});
+			return delay.promise;
+		};
+		return res;
+		}])
+	

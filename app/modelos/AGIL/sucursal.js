@@ -109,6 +109,10 @@ module.exports=function(sequelize,Sequelize){
 		reiniciar_comprobante_caja_chica_correlativo:{
 	  	type: Sequelize.BOOLEAN,
 		field: 'reiniciar_comprobante_caja_chica_correlativo'
+		},
+		fecha_reinicio_correlativo:{
+			type: Sequelize.DATE,
+		field: 'fecha_reinicio_correlativo'
 		}
 	}, {
 	  freezeTableName: true 

@@ -120,6 +120,7 @@ router.route('/usuarios/empresa/:id_empresa')
 							include: [{model:Rol,as:'rol',where:{nombre:Diccionario.ROL_ADMINISTRADOR}}]}]
 		}).then(function(entidad){
 			if(entidad){
+				if(req.body.id_comprobante){
 				ComprobanteContabilidad.update({
 					abierto:req.body.abierto
 				},{
@@ -133,6 +134,11 @@ router.route('/usuarios/empresa/:id_empresa')
 					message: "login correcto"
 				});					
 				})
+			}else{
+				res.json({
+					type: true,
+					message: "login correcto"});				
+			}
 				
 			}else{
 				res.json({

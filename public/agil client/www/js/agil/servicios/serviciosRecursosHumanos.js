@@ -206,3 +206,112 @@ angular.module('agil.servicios')
     };
     return res;
 }]) 
+.factory('Prestamo', function ($resource) {
+    return $resource(restServer + "recursos-humanos/prestamo/empleado/:id_empleado",{ id_empleado: '@id_empleado' },
+        {
+            'update': { method: 'PUT' }
+        });
+})
+.factory('CrearPrestamo', ['Prestamo', '$q', function (Prestamo, $q) {
+    var res = function (idEmpleado,prestamo) {
+       
+        var delay = $q.defer();
+        Prestamo.save({ id_empleado: idEmpleado},prestamo, function (entidad) {
+            delay.resolve(entidad);
+        }, function (error) {
+            delay.reject(error);
+        });
+        return delay.promise;
+    };
+    return res;
+}]) 
+.factory('HistorialPrestamos', function ($resource) {
+    return $resource(restServer + "recursos-humanos/prestamos/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion/plazo/:plazo/inicio/:inicio/fin/:fin/nombre/:nombre",
+        {
+            'update': { method: 'PUT' }
+        });
+})
+.factory('ObtenerListaPrestamo', ['HistorialPrestamos', '$q', function (HistorialPrestamos, $q) {
+    var res = function (paginator) {
+        var delay = $q.defer();
+        HistorialPrestamos.get({ id_empresa: paginator.filter.empresa,pagina:paginator.currentPage,items_pagina:paginator.itemsPerPage,texto_busqueda:paginator.search,columna:paginator.column,direccion:paginator.direction,plazo:paginator.filter.plazo,inicio:paginator.filter.inicio,fin:paginator.filter.fin,nombre:paginator.filter.nombre}, function (entidad) {
+            delay.resolve(entidad);
+        }, function (error) {
+            delay.reject(error);
+        });
+        return delay.promise;
+    };
+    return res;
+}])
+.factory('RolTurno', function ($resource) {
+    return $resource(restServer + "recursos-humanos/rolTurno/empleado/:id_empleado",{ id_empleado: '@id_empleado' },
+        {
+            'update': { method: 'PUT' }
+        });
+})
+.factory('CrearRolTurno', ['RolTurno', '$q', function (RolTurno, $q) {
+    var res = function (idEmpleado,rolTurno) {
+        var delay = $q.defer();
+        RolTurno.save({ id_empleado: idEmpleado},rolTurno, function (entidad) {
+            delay.resolve(entidad);
+        }, function (error) {
+            delay.reject(error);
+        });
+        return delay.promise;
+    };
+    return res;
+}])
+.factory('PagoPrestamo', function ($resource) {
+    return $resource(restServer + "recursos-humanos/pago-prestamo/:id_prestamo/usuario/:id_usuario",{ id_prestamo: '@id_prestamo',id_usuario:'@id_usuario' },
+        {
+            'update': { method: 'PUT' }
+        });
+})
+.factory('CrearPagoPrestamo', ['PagoPrestamo', '$q', function (PagoPrestamo, $q) {
+    var res = function (idUsuario,idPrestamo,pago) {
+        var delay = $q.defer();
+        PagoPrestamo.save({ id_prestamo: idPrestamo,id_usuario:idUsuario},pago, function (entidad) {
+            delay.resolve(entidad);
+        }, function (error) {
+            delay.reject(error);
+        });
+        return delay.promise;
+    };
+    return res;
+}]) 
+.factory('EditPrestamo', function ($resource) {
+    return $resource(restServer + "recursos-humanos/prestamo/:id_prestamo",{ id_prestamo: '@id_prestamo'},
+        {
+            'update': { method: 'PUT' }
+        });
+})
+.factory('EditarPrestamo', ['EditPrestamo', '$q', function (EditPrestamo, $q) {
+    var res = function (prestamo) {
+        var delay = $q.defer();
+        EditPrestamo.update({ id_prestamo: prestamo.id},prestamo, function (entidad) {
+            delay.resolve(entidad);
+        }, function (error) {
+            delay.reject(error);
+        });
+        return delay.promise;
+    };
+    return res;
+}]) 
+.factory('ListEmpleados', function ($resource) {
+    return $resource(restServer + "recursos-humanos/empleados/:id_empresa",{ id_empresa: '@id_empresa'},
+        {
+            'update': { method: 'PUT' }
+        });
+})
+.factory('ListaEmpleadosRrhh', ['ListEmpleados', '$q', function (ListEmpleados, $q) {
+    var res = function (idEmpresa) {
+        var delay = $q.defer();
+        ListEmpleados.get({ id_empresa: idEmpresa}, function (entidad) {
+            delay.resolve(entidad);
+        }, function (error) {
+            delay.reject(error);
+        });
+        return delay.promise;
+    };
+    return res;
+}]) 

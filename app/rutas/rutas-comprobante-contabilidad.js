@@ -722,7 +722,16 @@ module.exports = function (router, ComprobanteContabilidad, AsientoContabilidad,
 		.get(function (req, res) {
 			ComprobanteContabilidad.find({
 				where: { id: req.params.id_comprobante },
-				include: [{ model: MonedaTipoCambio, as: 'tipoCambio' }, { model: AsientoContabilidad, as: 'asientosContables',order: [['debe_bs', 'ASC']] , include: [{ model: Clase, as: 'centroCosto' }, { model: ContabilidadCuenta, as: 'cuenta', include: [{ model: ContabilidadCuentaAuxiliar, as: 'cuentaAux' }, { model: Clase, as: 'tipoAuxiliar' }] }] }, { model: Clase, as: 'tipoComprobante' },
+				include: [{ model: MonedaTipoCambio, as: 'tipoCambio' }, { model: AsientoContabilidad, as: 'asientosContables', include: [{ model: Clase, as: 'centroCosto' }, { model: ContabilidadCuenta, as: 'cuenta', include: [{ model: ContabilidadCuentaAuxiliar, as: 'cuentaAux' }, { model: Clase, as: 'tipoAuxiliar' },
+				{
+					model: Clase, as: 'especificaTexto1'
+				},
+				{
+					model: Clase, as: 'especificaTexto2'
+				},
+				{
+					model: Clase, as: 'especificaTexto3'
+				}] }] }, { model: Clase, as: 'tipoComprobante' },
 				{ model: Usuario, as: 'usuario', include: [{ model: Persona, as: 'persona' }] },
 				{ model: Sucursal, as: 'sucursal', include: [{ model: Empresa, as: 'empresa' }] }],
 				

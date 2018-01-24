@@ -1,7 +1,7 @@
 angular.module('agil.controladores')
 
     .controller('ControladorGtmDestino', function ($scope, $localStorage, $location, $templateCache, $route, blockUI, Paginator, FieldViewer,
-        GtmDestino,GtmDestinos,GtmDestinoItem) {
+        GtmDestino,GtmDestinos,GtmDestinoItem,GtmDestinosEmpresa) {
 
         blockUI.start();
 
@@ -84,7 +84,46 @@ angular.module('agil.controladores')
 			$scope.eliminarPopup($scope.idModalWizardDestinoEdicion);
 		});
 
+        $scope.subirExcelDestinos =function (event) {
+            var files = event.target.files;
+			var i, f;
+			for (i = 0, f = files[i]; i != files.length; ++i) {
+				var reader = new FileReader();
+				var name = f.name;
+				reader.onload = function (e) {
+					blockUI.start();
+					var data = e.target.result;
 
+					var workbook = XLSX.read(data, { type: 'binary' });
+					var first_sheet_name = workbook.SheetNames[0];
+					var row = 2, i = 0;
+					var worksheet = workbook.Sheets[first_sheet_name];
+					var destinos = [];
+					do {
+						var destino = {};
+						destino.codigo = worksheet['A' + row] != undefined && worksheet['A' + row] != "" ? worksheet['A' + row].v.toString() : null;
+						destino.destino = worksheet['B' + row] != undefined && worksheet['B' + row] != "" ? worksheet['B' + row].v.toString() : null;
+						destino.direccion = worksheet['C' + row] != undefined && worksheet['C' + row] != "" ? worksheet['C' + row].v.toString() : null;						
+						destinos.push(destino);
+						row++;
+						i++;
+					} while (worksheet['A' + row] != undefined);
+                    $scope.guardarDestinos(destinos);
+                   
+					blockUI.stop();
+				};
+				reader.readAsBinaryString(f);
+			}
+        }
+        $scope.guardarDestinos = function (destinos) {
+			var promesa = GtmDestinosEmpresa($scope.usuario.id_empresa,destinos );
+			promesa.then(function (res) {
+				blockUI.stop();
+				$scope.mostrarMensaje(res.mensaje);
+				$scope.recargarItemsTabla();            
+			});
+		}
+       
         $scope.inicio();
     });
 

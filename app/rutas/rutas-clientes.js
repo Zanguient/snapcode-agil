@@ -438,4 +438,32 @@ router.route('/clientes/:id_cliente')
 					res.json(dato[0]);;
 				});
 		});
+
+	router.route('/clientes-razon/:id_cliente')
+		.post(function (req, res) {
+			ClienteRazon.create({
+				id_cliente: req.params.id_cliente,
+				razon_social: req.body.razon_social,
+				nit: req.body.nit,
+			}).then(function (clienteRazonCreado) {
+				res.json(clienteRazonCreado);
+			});
+		});
+
+	router.route('/clientes-destino/:id_cliente')
+		.post(function (req, res) {
+			GtmDestino.create({
+				id_empresa: req.body.id_empresa,
+				destino: req.body.destino,
+				direccion: req.body.direccion,
+				eliminado:false
+			}).then(function(destinoCreado){
+				GtmClienteDestino.create({
+					id_cliente: req.params.id_cliente,
+					id_destino: destinoCreado.id,
+				}).then(function (clienteDestinoCreado) {
+					res.json(clienteDestinoCreado);
+				});
+			});
+		});
 }

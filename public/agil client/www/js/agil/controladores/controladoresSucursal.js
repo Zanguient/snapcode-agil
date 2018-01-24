@@ -157,6 +157,8 @@ angular.module('agil.controladores')
 						
 					});
 				} else {
+					sucursal.fecha_reinicio_correlativo=new Date()
+					sucursal.fecha_reinicio_correlativo.setDate(1)
 					sucursal.$save(function (sucursal) {
 						blockUI.stop();
 						$scope.sucursal = new Sucursal({});

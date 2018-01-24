@@ -457,9 +457,9 @@ angular.module('agil.servicios')
 				doc.text("T. Cambio: ", 500, 105)				
 				doc.font('Helvetica', 8);
 				doc.text(comprobante.tipoCambio.dolar, 545, 105)
-				if(datosCF.cant>0 && datosDF.cant==0)doc.text(datosCF.texto1+" "+datosCF.monto+"    "+datosCF.texto2+" "+datosCF.monto+"    "+datosCF.texto3+" "+datosCF.cant, 400, 120)				
-				if(datosDF.cant>0 && datosCF.cant==0)doc.text(datosDF.texto1+" "+datosDF.monto+"    "+datosDF.texto2+" "+datosDF.monto+"    "+datosDF.texto3+" "+datosDF.cant, 400, 120)	
-				if(datosDF.cant>0 && datosCF.cant>0)doc.text(datosDF.texto1+" "+datosDF.monto+"    "+datosDF.texto2+" "+datosDF.monto+"    "+datosDF.texto3+" "+datosDF.cant+"     "+datosCF.texto1+" "+datosCF.monto+"    "+datosCF.texto2+" "+datosCF.monto+"    "+datosCF.texto3+" "+datosCF.cant, 350, 120)							
+				if(datosCF.cant>0 && datosDF.cant==0)doc.text(datosCF.texto1+" "+datosCF.monto+"    "+datosCF.texto2+" "+datosCF.calculo+"    "+datosCF.texto3+" "+datosCF.cant, 400, 120)				
+				if(datosDF.cant>0 && datosCF.cant==0)doc.text(datosDF.texto1+" "+datosDF.monto+"    "+datosDF.texto2+" "+datosDF.calculo+"    "+datosDF.texto3+" "+datosDF.cant, 400, 120)	
+				if(datosDF.cant>0 && datosCF.cant>0)doc.text(datosDF.texto1+" "+datosDF.monto+"    "+datosDF.texto2+" "+datosDF.calculo+"    "+datosDF.texto3+" "+datosDF.cant+"     "+datosCF.texto1+" "+datosCF.monto+"    "+datosCF.texto2+" "+datosCF.calculo+"    "+datosCF.texto3+" "+datosCF.cant, 350, 120)							
 				doc.font('Helvetica-Bold', 8);
 				doc.rect(20, 130, 571, 0).stroke();
 				doc.font('Helvetica-Bold', 8);
@@ -535,9 +535,9 @@ angular.module('agil.servicios')
 				doc.text("T. Cambio: ", 500, 105)
 				doc.font('Helvetica', 8);
 				doc.text(comprobante.tipoCambio.dolar, 545, 105)
-				if(datosCF.cant>0 && datosDF.cant==0)doc.text(datosCF.texto1+" "+datosCF.monto+"    "+datosCF.texto2+" "+datosCF.monto+"    "+datosCF.texto3+" "+datosCF.cant, 400, 120)				
-				if(datosDF.cant>0 && datosCF.cant==0)doc.text(datosDF.texto1+" "+datosDF.monto+"    "+datosDF.texto2+" "+datosDF.monto+"    "+datosDF.texto3+" "+datosDF.cant, 400, 120)	
-				if(datosDF.cant>0 && datosCF.cant>0)doc.text(datosDF.texto1+" "+datosDF.monto+"    "+datosDF.texto2+" "+datosDF.monto+"    "+datosDF.texto3+" "+datosDF.cant+"     "+datosCF.texto1+" "+datosCF.monto+"    "+datosCF.texto2+" "+datosCF.monto+"    "+datosCF.texto3+" "+datosCF.cant, 350, 120)							
+				if(datosCF.cant>0 && datosDF.cant==0)doc.text(datosCF.texto1+" "+datosCF.monto+"    "+datosCF.texto2+" "+datosCF.calculo+"    "+datosCF.texto3+" "+datosCF.cant, 400, 120)				
+				if(datosDF.cant>0 && datosCF.cant==0)doc.text(datosDF.texto1+" "+datosDF.monto+"    "+datosDF.texto2+" "+datosDF.calculo+"    "+datosDF.texto3+" "+datosDF.cant, 400, 120)	
+				if(datosDF.cant>0 && datosCF.cant>0)doc.text(datosDF.texto1+" "+datosDF.monto+"    "+datosDF.texto2+" "+datosDF.calculo+"    "+datosDF.texto3+" "+datosDF.cant+"     "+datosCF.texto1+" "+datosCF.monto+"    "+datosCF.texto2+" "+datosCF.calculo+"    "+datosCF.texto3+" "+datosCF.cant, 350, 120)							
 				doc.font('Helvetica-Bold', 8);
 				doc.rect(20, 130, 571, 0).stroke();
 				doc.text("Cuenta", 50, 145)

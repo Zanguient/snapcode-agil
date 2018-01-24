@@ -1,4 +1,4 @@
-module.exports = function (router, ContabilidadCuenta, ClasificacionCuenta, Tipo, Clase, Usuario, Diccionario, ClienteCuenta, ProveedorCuenta, ConfiguracionCuenta, sequelize, Cliente, Proveedor, MedicoPaciente,Persona) {
+module.exports = function (router, ContabilidadCuenta, ClasificacionCuenta, Tipo, Clase, Usuario, Diccionario, ClienteCuenta, ProveedorCuenta, ConfiguracionCuenta, sequelize, Cliente, Proveedor, MedicoPaciente, Persona) {
 
 	router.route('/contabilidad-cuentas/empresa/:id_empresa')
 		.get(function (req, res) {
@@ -226,9 +226,18 @@ module.exports = function (router, ContabilidadCuenta, ClasificacionCuenta, Tipo
 		})
 	router.route('/contabilidad-cuenta/:id')
 		.put(function (req, res) {
-			var idTipoAux = null
-			if(req.body.tipoAuxiliar){
-				idTipoAux=req.body.tipoAuxiliar.id
+			var idTipoAux = null,id_texto1=null,id_texto2=null,id_texto3=null
+			if (req.body.tipoAuxiliar) {
+				idTipoAux = req.body.tipoAuxiliar.id
+			}
+			if(req.body.especifica_texto1){
+				id_texto1=req.body.especifica_texto1.id
+			}
+			if(req.body.especifica_texto2){
+				id_texto2=req.body.especifica_texto2.id
+			}
+			if(req.body.especifica_texto3){
+				id_texto3=req.body.especifica_texto3.id
 			}
 			ContabilidadCuenta.update({
 				id_empresa: req.body.id_empresa,
@@ -244,18 +253,79 @@ module.exports = function (router, ContabilidadCuenta, ClasificacionCuenta, Tipo
 				aplicar_calculo: req.body.aplicar_calculo,
 				monto: req.body.monto,
 				eliminado: req.body.eliminado,
-				id_tipo_auxiliar: idTipoAux
+				id_tipo_auxiliar: idTipoAux,
+				especifica: req.body.especifica,
+				id_especifica_texto1: id_texto1,
+				id_especifica_texto2: id_texto2,
+				id_especifica_texto3: id_texto3,
+				tipo_especifica:req.body.tipo_especifica,
+				vincular_cuenta:req.body.vincular_cuenta
 			}, {
 					where: {
 						id: req.body.id
 					}
 				}).then(function (ContabilidadCuentaActualizada) {
-					res.json({ mensaje: 'Creado' })
+					if (req.body.cuentaC.cliente != null) {
+						ClienteCuenta.findOrCreate({
+							where: { id_cuenta: req.body.id },
+							defaults: {			
+								id_cuenta:  req.body.id,
+								id_cliente: req.body.cuentaC.cliente.id
+							}
+						}).spread(function (ficha, created) {
+							if (!created) {
+								ClienteCuenta.update({
+									id_cliente: req.body.cuentaC.cliente.id
+								}, {
+									where: { id_cuenta: req.body.id },
+									}).then(function (actualizado) {
+										guardarCuentaespecificas(req, res, Clase)
+									})	
+							} else {
+								guardarCuentaespecificas(req, res, Clase)
+							}
+						})
+					} else if (req.body.cuentaP.proveedor != null) {
+						ProveedorCuenta.findOrCreate({
+							where: { id_cuenta: req.body.id },
+							defaults: {			
+								id_cuenta:  req.body.id,
+								id_proveedor: req.body.cuentaP.proveedor.id
+							}
+						}).spread(function (ficha, created) {
+							if (!created) {
+								ProveedorCuenta.update({
+									id_proveedor: req.body.proveedor.id
+								}, {
+									where: { id_cuenta: req.body.id },
+									}).then(function (actualizado) {
+										guardarCuentaespecificas(req, res, Clase)
+									})	
+							} else {
+								guardarCuentaespecificas(req, res, Clase)
+							}
+						})
+					} else {
+						guardarCuentaespecificas(req, res, Clase)
+					}
 				});
 		})
 
 	router.route('/contabilidad-cuenta')
 		.post(function (req, res) {
+			var idTipoAux = null,id_texto1=null,id_texto2=null,id_texto3=null
+			if (req.body.tipoAuxiliar) {
+				idTipoAux = req.body.tipoAuxiliar.id
+			}
+			if(req.body.especifica_texto1){
+				id_texto1=req.body.especifica_texto1.id
+			}
+			if(req.body.especifica_texto2){
+				id_texto2=req.body.especifica_texto2.id
+			}
+			if(req.body.especifica_texto3){
+				id_texto3=req.body.especifica_texto3.id
+			}
 			ContabilidadCuenta.create({
 				id_empresa: req.body.id_empresa,
 				codigo: req.body.codigo,
@@ -271,31 +341,62 @@ module.exports = function (router, ContabilidadCuenta, ClasificacionCuenta, Tipo
 				monto: req.body.monto,
 				id_calculo: (req.body.claseCalculo ? req.body.claseCalculo.id : null),
 				eliminado: req.body.eliminado,
-				id_tipo_auxiliar: idTipoAux
+				id_tipo_auxiliar: idTipoAux,
+				especifica: req.body.especifica,
+				id_especifica_texto1: id_texto1,
+				id_especifica_texto2: id_texto2,
+				id_especifica_texto3: id_texto3,
+				tipo_especifica:req.body.tipo_especifica,
+				vincular_cuenta:req.body.vincular_cuenta
 			}).then(function (cuentaCreada) {
 				if (req.body.cliente != null) {
 					ClienteCuenta.create({
 						id_cuenta: cuentaCreada.id,
-						id_cliente: req.body.cliente.id
+						id_cliente: req.body.cuentaC.cliente.id
 					}).then(function (CuentaClienteCreado) {
-						res.json({ mensaje: 'cuentaCreada' })
+						guardarCuentaespecificas(req, res, Clase)
 					})
 				} else if (req.body.proveedor != null) {
 					ProveedorCuenta.create({
 						id_cuenta: cuentaCreada.id,
-						id_proveedor: req.body.proveedor.id
+						id_proveedor: req.body.cuentaP.proveedor.id
 					})
 						.then(function (CuentaClienteCreado) {
-							res.json({ mensaje: 'cuentaCreada' })
+							guardarCuentaespecificas(req, res, Clase)
 						})
 				} else {
-					res.json({ mensaje: 'cuentaCreada' })
+					guardarCuentaespecificas(req, res, Clase)
 				}
 
 			})
 
 		})
-
+	function guardarCuentaespecificas(req, res, Clase) {
+		if (req.body.especifica) {
+			var a = 1
+			Clase.update({ 
+				nombre_corto: req.body.especifica_texto1.nombre_corto
+			 },{
+				where: { id: req.body.especifica_texto1.id }
+			})
+			Clase.update({ 
+				nombre_corto: req.body.especifica_texto2.nombre_corto
+			 },{
+				where: { id: req.body.especifica_texto2.id }
+			})
+			Clase.update({ 
+				nombre_corto: req.body.especifica_texto3.nombre_corto
+			 },{
+				where: { id: req.body.especifica_texto3.id }
+			}).then(function (params) {
+				res.json({mensaje:"guardado Sadisfactoriamente"})
+			})
+			
+		}else{
+			res.json({mensaje:"guardado Sadisfactoriamente"})
+			
+		}
+	}
 	router.route('/contabilidad-cuentas/clasificaciones')
 		.get(function (req, res) {
 			ClasificacionCuenta.findAll({
@@ -445,7 +546,7 @@ module.exports = function (router, ContabilidadCuenta, ClasificacionCuenta, Tipo
 			}).then(function (data) {
 				var datosCuenta = {
 					where: condicionCuenta,
-					include: [
+					include: [{model:ProveedorCuenta,as:'cuentaP',include: [{ model: Proveedor, as: 'proveedor' }]},{model:ClienteCuenta,as:'cuentaC',include: [{ model: Cliente, as: 'cliente' }]},
 						{
 							model: ClasificacionCuenta, as: "clasificacion",
 							include: [{ model: Clase, as: 'saldo' }, { model: Clase, as: 'movimiento' }]
@@ -459,6 +560,7 @@ module.exports = function (router, ContabilidadCuenta, ClasificacionCuenta, Tipo
 						{
 							model: Clase, as: 'tipoAuxiliar'
 						}
+												
 					],
 					order: [ordenArreglo]
 				}
@@ -619,7 +721,7 @@ module.exports = function (router, ContabilidadCuenta, ClasificacionCuenta, Tipo
 					where: {
 						id_empresa: req.params.id_empresa
 					}
-					
+
 				}).then(function (clientes) {
 					res.json(clientes)
 				});
@@ -637,9 +739,9 @@ module.exports = function (router, ContabilidadCuenta, ClasificacionCuenta, Tipo
 				MedicoPaciente.findAll({
 					where: {
 						id_empresa: req.params.id_empresa,
-						es_empleado:true
+						es_empleado: true
 					},
-					include:[{model:Persona,as:'persona'}]
+					include: [{ model: Persona, as: 'persona' }]
 				}).then(function (empleados) {
 					res.json(empleados)
 				});

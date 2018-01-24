@@ -6,13 +6,28 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, forEach, j
 			GtmDestino.findAll({
 				where: {
 					id_empresa: req.params.id_empresa,
-					eliminado:false
+					eliminado: false
 				}
 			}).then(function (entity) {
 				res.json(entity);
 			});
-		});
+		})
+		.post(function (req, res) {
+			req.body.forEach(function (destino, index, array) {
+				GtmDestino.create({
+					id_empresa: req.params.id_empresa,
+					destino: destino.destino,
+					direccion: destino.direccion,
+					eliminado: false,
+					codigo: destino.codigo
+				}).then(function (destinoCreado) {
+					if (index === (array.length - 1)) {
+						res.json({mensaje:"Datos importados Satisfactoriamente!"});
+					}
+				});
+			});
 
+		});
 	router.route('/gtm-destinos/empresa')
 
 		.post(function (req, res) {
@@ -20,8 +35,8 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, forEach, j
 				id_empresa: req.body.id_empresa,
 				destino: req.body.destino,
 				direccion: req.body.direccion,
-				eliminado:false,
-				codigo:req.body.codigo
+				eliminado: false,
+				codigo: req.body.codigo
 			}).then(function (destinoCreado) {
 				res.json(destinoCreado);
 			});
@@ -33,8 +48,8 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, forEach, j
 			GtmDestino.update({
 				destino: req.body.destino,
 				direccion: req.body.direccion,
-				eliminado:req.body.eliminado,
-				codigo:req.body.codigo
+				eliminado: req.body.eliminado,
+				codigo: req.body.codigo
 			},
 				{
 					where: {

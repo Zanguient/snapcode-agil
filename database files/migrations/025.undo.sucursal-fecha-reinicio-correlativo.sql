@@ -1,0 +1,1 @@
+ALTER TABLE agil_sucursal drop fecha_reinicio_correlativo;

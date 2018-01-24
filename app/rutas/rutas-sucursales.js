@@ -23,7 +23,8 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Sucu
 				nota_recibo_correlativo: req.body.nota_recibo_correlativo,
 				imprimir_pedido_corto: req.body.imprimir_pedido_corto,
 				cotizacion_correlativo: req.body.cotizacion_correlativo,
-				pre_factura_correlativo: req.body.pre_factura_correlativo
+				pre_factura_correlativo: req.body.pre_factura_correlativo,
+				fecha_reinicio_correlativo: req.body.fecha_reinicio_correlativo
 			}).then(function (sucursalCreada) {
 				req.body.almacenes.forEach(function (almacen, index, array) {
 					if (!almacen.eliminado) {
@@ -78,6 +79,38 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Sucu
 				res.json(sucursales);
 			});
 		});
+
+	router.route('/configuracion/factura/sucursales/empresa/:id_empresa')
+		.get(function (req, res) {
+			Sucursal.findAll({
+				where: { id_empresa: req.params.id_empresa },
+			}).then(function (sucursales) {
+				res.json(sucursales);
+			});
+		})
+	router.route('/reiniciar-correlativo/sucursales')
+		.put(function (req, res) {
+			req.body.sucursales.forEach(function (sucursal, array, index) {
+				var comprobante_ingreso_correlativo=(sucursal.reiniciar_comprobante_caja_chica_correlativo)? 1: sucursal.comprobante_ingreso_correlativo;
+				var comprobante_egreso_correlativo=(sucursal.reiniciar_comprobante_egreso_correlativo)? 1: sucursal.comprobante_egreso_correlativo;
+				var comprobante_traspaso_correlativo=(sucursal.reiniciar_comprobante_traspaso_correlativo)? 1: sucursal.comprobante_traspaso_correlativo;
+				var comprobante_caja_chica_correlativo=(sucursal.reiniciar_comprobante_caja_chica_correlativo)? 1: sucursal.comprobante_caja_chica_correlativo;
+				Sucursal.update({
+					comprobante_ingreso_correlativo:comprobante_ingreso_correlativo,
+					comprobante_egreso_correlativo: comprobante_egreso_correlativo,
+					comprobante_traspaso_correlativo: comprobante_traspaso_correlativo,
+					comprobante_caja_chica_correlativo: comprobante_caja_chica_correlativo,
+					fecha_reinicio_correlativo: req.body.fecha
+				}, {
+						where: {
+							id: sucursal.id
+						}
+					}).then(function (sucursalesActualizadas) {
+						res.json({ message: "Numero Correlativos Reiniciados satisfactoriamente!" });
+					});
+			});
+
+		})
 	router.route('/configuracion/factura/sucursal/:id_sucursal')
 		.put(function (req, res) {
 			Sucursal.update({

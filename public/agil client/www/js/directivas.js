@@ -256,7 +256,11 @@ angular.module('agil.directivas', [])
         var fields=$(this).parents('form:eq(0),body').find('input, textarea, select');
         var index=fields.index(this);
         if(index> -1&&(index+1)<fields.length)
+        if(fields[index+1].className!="upload"){
           fields.eq(index+1).focus();
+        }else{
+          fields.eq(index+2).focus();
+        }
       }
     });
   };

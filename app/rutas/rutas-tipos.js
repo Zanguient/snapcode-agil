@@ -23,8 +23,18 @@ router.route('/clases/:nombre_corto')
 			res.json(entidad);		  
 		});
 	});
+	router.route('/clase/:nombre')
+	.get(function(req, res) {
+		Clase.find({ 
+			where:{
+				nombre: req.params.nombre
+			}
+		}).then(function(entidad){			
+			res.json({clase:entidad});		  
+		});
+	});
 	router.route('/paises/:nombre_corto')
-	
+
 		.get(function(req, res) {
 			
 				var condicion =  { $like: "%" +req.params.nombre_corto+ "%" }

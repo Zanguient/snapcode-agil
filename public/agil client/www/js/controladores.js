@@ -6,7 +6,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 		ProveedorVencimientoCredito, Venta, ClasesTipo, Compra, Producto, DatosVenta, DatosCompra,
 		ImprimirSalida, Diccionario, VentasComprobantesEmpresa, ComprasComprobantesEmpresa, LibroMayorCuenta, Paginator, ComprobanteRevisarPaginador, AsignarComprobanteFavorito, ListaCuentasComprobanteContabilidad, NuevoComprobanteContabilidad, NuevoComprobante, ComprasComprobante,
 		ConfiguracionesCuentasEmpresa, ContabilidadCambioMoneda, ObtenerCambioMoneda, AsignarCuentaCiente, AsignarCuentaProveedor,
-		GtmTransportistas, GtmEstibajes, GtmGrupoEstibajes, ListasCuentasAuxiliares,GtmDetallesDespachoAlerta, $interval,GtmDetalleDespachoAlerta,GtmDetalleDespacho) {
+		GtmTransportistas, GtmEstibajes, GtmGrupoEstibajes, ListasCuentasAuxiliares, GtmDetallesDespachoAlerta, $interval, GtmDetalleDespachoAlerta, GtmDetalleDespacho, VerificarCorrelativosSucursale,ReiniciarCorrelativoSucursales) {
 		$scope.idModalTablaVencimientoProductos = "tabla-vencimiento-productos";
 		$scope.idModalTablaDespachos = "tabla-gtm-despachos";
 		$scope.idModalTablaAsignacionDespacho = "tabla-gtm-asignacion-despachos";
@@ -140,9 +140,9 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 				var oForm = document.getElementById('formNuevoComprobante');
 				shortcut.add("Ctrl+shift+G", function () {
 					if ($scope.nuevoComprobante.asientosContables.length >= 2) {
-					$localStorage.nuevoComprobante = $scope.nuevoComprobante
-					$scope.ComprobanteGuardado = $localStorage.nuevoComprobante
-					$scope.mostrarMensaje("comproban guardado en almacenamiento local Satisfactoriamente")
+						$localStorage.nuevoComprobante = $scope.nuevoComprobante
+						$scope.ComprobanteGuardado = $localStorage.nuevoComprobante
+						$scope.mostrarMensaje("comproban guardado en almacenamiento local Satisfactoriamente")
 					}
 				})
 				shortcut.add("Ctrl+G", function () {
@@ -218,7 +218,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 				token: local.token
 			}); */
 			$localStorage.nuevoComprobante = undefined
-			$scope.GuardadoAutomaticoComprobante = undefined;		
+			$scope.GuardadoAutomaticoComprobante = undefined;
 			$scope.ComprobanteGuardado = undefined
 		};
 		$scope.obtenerCambioMoneda2 = function (fechaMoneda) {
@@ -572,6 +572,47 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 
 				blockUI.stop();
 			});
+		}
+
+		$scope.reiniciarCorrelativoComprobantes = function () {
+			var fechaActual = new Date()
+			var sucursalesParaActualizar=[]
+			var promesa = VerificarCorrelativosSucursale($scope.usuario.id_empresa)
+			promesa.then(function (sucursales) {
+				sucursales.forEach(function (sucursal, index, array) {
+					if (sucursal.fecha_reinicio_correlativo) {
+						var fechaAnterior = new Date(sucursal.fecha_reinicio_correlativo)
+						var fechaAnteriorMes = fechaAnterior.getMonth()
+						var fechaActualMes = fechaActual.getMonth()
+						if (fechaAnteriorMes != fechaActualMes || fechaAnteriorMes < fechaActualMes) {
+							
+							sucursalesParaActualizar.push(sucursal)
+							if(index===(array.length-1)){
+								var fecha_reinicio_correlativo=new Date()
+								fecha_reinicio_correlativo.setDate(1)
+								var datos={sucursales:sucursalesParaActualizar,fecha:fecha_reinicio_correlativo}
+								var promesa = ReiniciarCorrelativoSucursales(datos)
+								promesa.then(function (dato) {
+									$scope.mostrarMensaje(dato.message)
+								})
+								
+							}
+						} else if (fechaAnteriorMes == 11 && fechaActualMes == 0) {							
+							sucursalesParaActualizar.push(sucursal)
+							if(index===(array.length-1)){
+								var fecha_reinicio_correlativo=new Date()
+								fecha_reinicio_correlativo.setDate(1)
+								var datos={sucursales:sucursalesParaActualizar,fecha:fecha_reinicio_correlativo}
+								var promesa = ReiniciarCorrelativoSucursales(datos)
+								promesa.then(function (dato) {
+									$scope.mostrarMensaje(dato.message)
+								})
+							}
+						}
+					}
+				});
+			})
+
 		}
 
 		$scope.ComvertirDebeEnDolar = function (asiento, dato) {
@@ -982,6 +1023,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 			$scope.obtenerCentroCostos()
 			$scope.obtenerMovimientoEgresoBaja();
 			$scope.obtenerTiposComprobante();
+			$scope.reiniciarCorrelativoComprobantes()
 			$scope.sucursales = $scope.obtenerSucursales();
 			if ($scope.usuario.empresa) {
 				if ($scope.usuario.empresa.usar_vencimientos) {
@@ -1150,84 +1192,84 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 						promesa.then(function (detallesDespacho) {
 							$scope.gtm_detalles_despacho = detallesDespacho;
 							$scope.vencimientoTotal = $scope.vencimientoTotal + detallesDespacho.length;
-							$scope.gtm_detalles_despacho_seleccionados=[];
+							$scope.gtm_detalles_despacho_seleccionados = [];
 						});
 					});
 				});
 			});
 		}
 
-		$scope.removerDetalleDespachoAlerta=function(detalle_despacho){
-            detalle_despacho=new GtmDetalleDespacho(detalle_despacho);
-            detalle_despacho.$delete(function(res){
-				$scope.vencimientoTotal = $scope.vencimientoTotal -$scope.gtm_detalles_despacho_seleccionados.length;
-                $scope.verificarDespachos($scope.usuario.id_empresa);
-                $scope.mostrarMensaje(res.mensaje);
-            });
-        }
-
-		$scope.calcularTotalCarga=function(transportista){
-			var totalCantidadCarga=0;
-			for(var i=0;i<$scope.gtm_detalles_despacho_seleccionados.length;i++){
-				if($scope.gtm_detalles_despacho_seleccionados[i].id_transportista==transportista.id){
-					totalCantidadCarga=totalCantidadCarga+$scope.gtm_detalles_despacho_seleccionados[i].cantidad;
-				}
-			}
-			return totalCantidadCarga;
+		$scope.removerDetalleDespachoAlerta = function (detalle_despacho) {
+			detalle_despacho = new GtmDetalleDespacho(detalle_despacho);
+			detalle_despacho.$delete(function (res) {
+				$scope.vencimientoTotal = $scope.vencimientoTotal - $scope.gtm_detalles_despacho_seleccionados.length;
+				$scope.verificarDespachos($scope.usuario.id_empresa);
+				$scope.mostrarMensaje(res.mensaje);
+			});
 		}
 
-		$scope.cambiarSeleccionDetallesDespacho=function(seleccion){
-			$scope.gtm_detalles_despacho_seleccionados=[];
-			for(var i=0;i<$scope.gtm_detalles_despacho.length;i++){
-				$scope.gtm_detalles_despacho[i].seleccionado=seleccion;
-				if($scope.gtm_detalles_despacho[i].seleccionado){
+		/* 	$scope.calcularTotalCarga=function(transportista){
+				var totalCantidadCarga=0;
+				for(var i=0;i<$scope.gtm_detalles_despacho_seleccionados.length;i++){
+					if($scope.gtm_detalles_despacho_seleccionados[i].id_transportista==transportista.id){
+						totalCantidadCarga=totalCantidadCarga+$scope.gtm_detalles_despacho_seleccionados[i].cantidad;
+					}
+				}
+				return totalCantidadCarga;
+			}
+	 */
+		$scope.cambiarSeleccionDetallesDespacho = function (seleccion) {
+			$scope.gtm_detalles_despacho_seleccionados = [];
+			for (var i = 0; i < $scope.gtm_detalles_despacho.length; i++) {
+				$scope.gtm_detalles_despacho[i].seleccionado = seleccion;
+				if ($scope.gtm_detalles_despacho[i].seleccionado) {
 					$scope.gtm_detalles_despacho_seleccionados.push($scope.gtm_detalles_despacho[i]);
 				}
 			}
 		}
 
-		$scope.calcularTotalCantidad=function(){
-			var totalCantidadDespacho=0;
-			if($scope.gtm_detalles_despacho_seleccionados!=undefined){
-				for(var i=0;i<$scope.gtm_detalles_despacho_seleccionados.length;i++){
-					totalCantidadDespacho=totalCantidadDespacho+$scope.gtm_detalles_despacho_seleccionados[i].cantidad;
+		$scope.calcularTotalCantidad = function () {
+			var totalCantidadDespacho = 0;
+			if ($scope.gtm_detalles_despacho_seleccionados != undefined) {
+				for (var i = 0; i < $scope.gtm_detalles_despacho_seleccionados.length; i++) {
+					totalCantidadDespacho = totalCantidadDespacho + $scope.gtm_detalles_despacho_seleccionados[i].cantidad;
 				}
 			}
 			return totalCantidadDespacho;
 		}
 
-		$scope.cambiarSeleccionDetalleDespacho=function(gtm_detalle_despacho){
-			if(gtm_detalle_despacho.seleccionado){
+		$scope.cambiarSeleccionDetalleDespacho = function (gtm_detalle_despacho) {
+			if (gtm_detalle_despacho.seleccionado) {
 				$scope.gtm_detalles_despacho_seleccionados.push(gtm_detalle_despacho);
-				if($scope.gtm_detalles_despacho_seleccionados.length==$scope.gtm_detalles_despacho.length){
-					$scope.detalles_despacho_seleccionados=true;
+				if ($scope.gtm_detalles_despacho_seleccionados.length == $scope.gtm_detalles_despacho.length) {
+					$scope.detalles_despacho_seleccionados = true;
 				}
-			}else{
-				$scope.gtm_detalles_despacho_seleccionados.splice($scope.gtm_detalles_despacho_seleccionados.indexOf(gtm_detalle_despacho),1);
-				$scope.detalles_despacho_seleccionados=false;
+			} else {
+				$scope.gtm_detalles_despacho_seleccionados.splice($scope.gtm_detalles_despacho_seleccionados.indexOf(gtm_detalle_despacho), 1);
+				$scope.detalles_despacho_seleccionados = false;
 			}
 		}
 
-		$scope.guardarDespachos=function(){
+		$scope.guardarDespachos = function () {
 			blockUI.start();
 			GtmDetalleDespachoAlerta.update({ id_empresa: $scope.usuario.id_empresa }, $scope.gtm_detalles_despacho_seleccionados, function (res) {
-				$scope.vencimientoTotal = $scope.vencimientoTotal -$scope.gtm_detalles_despacho_seleccionados.length;
-				$scope.verificarDespachos($scope.usuario.id_empresa );
+				$scope.vencimientoTotal = $scope.vencimientoTotal - $scope.gtm_detalles_despacho_seleccionados.length;
+				$scope.verificarDespachos($scope.usuario.id_empresa);
 				blockUI.stop();
 				$scope.cerrarListaDespachos();
 				$scope.mostrarMensaje(res.mensaje);
 			});
 		}
 
-		$scope.calcularSaldoDespacho=function(gtm_detalle_despacho){
-			gtm_detalle_despacho.saldo=gtm_detalle_despacho.cantidad-gtm_detalle_despacho.cantidad_despacho;
+		$scope.calcularSaldoDespacho = function (gtm_detalle_despacho) {
+			gtm_detalle_despacho.saldo = gtm_detalle_despacho.cantidad - gtm_detalle_despacho.cantidad_despacho;
 		}
 
-		$scope.establecerDespacho=function(asignacion){
-			for(var i=0;i<$scope.gtm_detalles_despacho_seleccionados.length;i++){
-				$scope.gtm_detalles_despacho_seleccionados[i].id_estibaje=asignacion.id_estibaje;
-				$scope.gtm_detalles_despacho_seleccionados[i].id_grupo_estibaje=asignacion.id_grupo_estibaje;
-				$scope.gtm_detalles_despacho_seleccionados[i].id_transportista=asignacion.id_transportista;
+		$scope.establecerDespacho = function (asignacion) {
+			for (var i = 0; i < $scope.gtm_detalles_despacho_seleccionados.length; i++) {
+				$scope.gtm_detalles_despacho_seleccionados[i].id_estibaje = asignacion.id_estibaje;
+				$scope.gtm_detalles_despacho_seleccionados[i].id_grupo_estibaje = asignacion.id_grupo_estibaje;
+				$scope.gtm_detalles_despacho_seleccionados[i].id_transportista = asignacion.id_transportista;
 			}
 			$scope.cerrarAsignacionDespacho();
 		}
@@ -1236,7 +1278,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 			$scope.abrirPopup($scope.idModalTablaAsignacionDespacho);
 		}
 
-		$scope.cerrarAsignacionDespacho=function(){
+		$scope.cerrarAsignacionDespacho = function () {
 			$scope.cerrarPopup($scope.idModalTablaAsignacionDespacho);
 		}
 		$scope.abrirEliminarProductoVencido = function () {
@@ -2229,6 +2271,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 				$scope.usuario = JSON.parse($localStorage.usuario);
 				$scope.ComprobanteGuardado = $localStorage.nuevoComprobante
 				console.log($scope.ComprobanteGuardado)
+				console.log($scope.usuario)
 				if (!$scope.aplicaciones) {
 					$scope.cargarPagina();
 				}

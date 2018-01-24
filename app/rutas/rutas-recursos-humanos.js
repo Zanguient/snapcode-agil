@@ -1,5 +1,5 @@
 module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente, Persona, Empresa, Sucursal, Clase, Diccionario, Tipo, decodeBase64Image, fs, RrhhEmpleadoFicha, RrhhEmpleadoFichaOtrosSeguros, RrhhEmpleadoFichaFamiliar, RrhhEmpleadoDiscapacidad
-    , RrhhEmpleadoCargo, RrhhEmpleadoHojaVida, RrhhEmpleadoFormacionAcademica, RrhhEmpleadoExperienciaLaboral, RrhhEmpleadoLogroInternoExterno, RrhhEmpleadoCapacidadInternaExterna, NumeroLiteral) {
+    , RrhhEmpleadoCargo, RrhhEmpleadoHojaVida, RrhhEmpleadoFormacionAcademica, RrhhEmpleadoExperienciaLaboral, RrhhEmpleadoLogroInternoExterno, RrhhEmpleadoCapacidadInternaExterna, NumeroLiteral, RrhhEmpleadoPrestamo, RrhhEmpleadoPrestamoPago) {
     router.route('/recursos-humanos/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion/codigo/:codigo/nombres/:nombres/ci/:ci/campo/:campo/cargo/:cargo/busquedaEmpresa/:busquedaEmpresa/grupo/:grupo_sanguineo/estado/:estado')
         .get(function (req, res) {
             var condicion = ""
@@ -726,7 +726,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                     } else {
                         RrhhEmpleadoFichaFamiliar.destroy({
                             where: {
-                                id:familiar.id
+                                id: familiar.id
                             },
                         }).then(function (RelacionEliminado) {
                             Persona.destroy({
@@ -1132,6 +1132,172 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
         }
 
     }
+    router.route('/recursos-humanos/prestamo/empleado/:id_empleado')
+        .post(function (req, res) {
+            if (req.params.id_empleado == "0") {
+                req.body.empleados.forEach(function (empleado, index, array) {
+                    RrhhEmpleadoPrestamo.create({
+                        id_empleado: empleado.id,
+                        fecha_inicial: req.body.fecha_inicial,
+                        monto: req.body.monto,
+                        interes_pactado: req.body.interes_pactado,
+                        plazo: req.body.plazo,
+                        observacion: req.body.observacion,
+                        id_usuario: req.body.id_usuario,
+                        total: req.body.total
+                    }).then(function (empleadoPrestamoCreado) {
+                        if (index === (array.length - 1)) {
+                            res.json({ mensaje: "Prestamos guardados satisfactoriamente!" })
+                        }
+                    })
+                });
+            } else {
+                RrhhEmpleadoPrestamo.create({
+                    id_empleado: req.params.id_empleado,
+                    fecha_inicial: req.body.fecha_inicial,
+                    monto: req.body.monto,
+                    interes_pactado: req.body.interes_pactado,
+                    plazo: req.body.plazo,
+                    observacion: req.body.observacion,
+                    id_usuario: req.body.id_usuario,
+                    total: req.body.total
+                }).then(function (empleadoPrestamoCreado) {
+                    res.json({ mensaje: "Guardado satisfactoriamente!" })
+
+                })
+            }
+        })
+    router.route('/recursos-humanos/prestamo/:id_prestamo')
+        .put(function (req, res) {
+            RrhhEmpleadoPrestamo.update({
+                monto: req.body.monto,
+                interes_pactado: req.body.interes_pactado,
+                plazo: req.body.plazo,
+                observacion: req.body.observacion,
+                total: req.body.total
+            }, {
+                    where: { id: req.params.id_prestamo }
+                }).then(function (empleadoPrestamoCreado) {
+                    req.body.prestamoPagos.forEach(function (pago, index, array) {
+                        RrhhEmpleadoPrestamoPago.update({
+                            saldo_anterior: pago.saldo_anterior
+                        }, {
+                                where: { id: pago.id }
+                            }).then(function (params) {
+                                res.json({ mensaje: "Guardado satisfactoriamente!" })
+                            })
+                    });
 
 
+                })
+        })
+
+    router.route('/recursos-humanos/prestamos/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion/plazo/:plazo/inicio/:inicio/fin/:fin/nombre/:nombre')
+        .get(function (req, res) {
+
+            var ordenArreglo = [], condicionPrestamo = {};
+            var condicionPersona = {};
+            ordenArreglo.push(req.params.columna);
+            ordenArreglo.push(req.params.direccion);
+            /*   if (req.params.texto_busqueda != 0 || req.params.plazo != 0 || req.params.inicio != 0 || req.params.fin != 0 || req.params.texto_busqueda != 0) { */
+            if (req.params.texto_busqueda != 0) {
+                condicionPrestamo = {
+                    $or: [
+                        {
+                            monto:
+                                parseFloat(req.params.texto_busqueda)
+
+                        },
+                        {
+                            total:
+                                parseFloat(req.params.texto_busqueda)
+
+                        }
+                    ]
+                };
+            }
+            if (req.params.plazo != 0) {
+                condicionPrestamo = {
+                    $or: [
+                        {
+                            plazo: req.params.plazo
+                        }
+                    ]
+
+                };
+            }
+            if (req.params.inicio != 0 && req.params.fin != 0) {
+                var fechaInicial = req.params.inicio == 0 ? new Date(2016, 0, 1, 0, 0, 0) : new Date(req.params.inicio);
+                var fechaFinal = req.params.fin == 0 ? new Date() : new Date(req.params.fin);
+                condicionPrestamo = {
+                    $or: [
+                        {
+                            fecha_inicial: { $between: [fechaInicial, fechaFinal] }
+                        }
+                    ]
+                };
+            }
+            if (req.params.nombre != 0) {
+                condicionPersona = {
+                    $or: [
+                        {
+                            nombres: {
+                                $like: "%" + req.params.nombre + "%"
+                            }
+                        }
+                    ]
+                };
+            }
+            RrhhEmpleadoPrestamo.findAndCountAll({
+                where: condicionPrestamo,
+                include: [{ model: RrhhEmpleadoPrestamoPago, as: "prestamoPagos" }, { model: MedicoPaciente, as: "empleado", where: { id_empresa: req.params.id_empresa }, include: [{ model: Persona, as: "persona", where: condicionPersona }] }],
+                order: [ordenArreglo]
+            }).then(function (data) {
+                RrhhEmpleadoPrestamo.findAll({
+                    where: condicionPrestamo,
+                    offset: (req.params.items_pagina * (req.params.pagina - 1)), limit: req.params.items_pagina,
+                    include: [{ model: RrhhEmpleadoPrestamoPago, as: "prestamoPagos" }, { model: MedicoPaciente, as: "empleado", where: { id_empresa: req.params.id_empresa }, include: [{ model: Persona, as: "persona", where: condicionPersona }] }],
+                    order: [ordenArreglo]
+                }).then(function (prestamos) {
+                    res.json({ prestamos: prestamos, paginas: Math.ceil(data.count / req.params.items_pagina) });
+                });
+            })
+
+        })
+
+    router.route('/recursos-humanos/pago-prestamo/:id_prestamo/usuario/:id_usuario')
+        .post(function (req, res) {
+            var monto_pagado = 0
+            var saldo_anterior = 0
+            var a_cuenta_anterior = 0
+            if (req.body.prestamoPagos.length > 0) {
+                saldo_anterior = req.body.prestamoPagos[(req.body.prestamoPagos.length - 1)].saldo_anterior - req.body.monto_pagado
+                a_cuenta_anterior = req.body.prestamoPagos[(req.body.prestamoPagos.length - 1)].a_cuenta_anterior + req.body.monto_pagado
+            } else {
+                saldo_anterior = req.body.total - req.body.monto_pagado
+                a_cuenta_anterior = req.body.monto_pagado
+            }
+            RrhhEmpleadoPrestamoPago.create({
+                id_usuario: req.params.id_usuario,
+                id_prestamo: req.params.id_prestamo,
+                fecha: req.body.fecha,
+                monto_pagado: req.body.monto_pagado,
+                saldo_anterior: saldo_anterior,
+                a_cuenta_anterior: a_cuenta_anterior
+            }).then(function (empleadoPrestamoCreado) {
+                res.json({ mensaje: "Guardado satisfactoriamente!" })
+
+            })
+        })
+    router.route('/recursos-humanos/empleados/:id_empresa')
+        .get(function (req, res) {
+
+            MedicoPaciente.findAll({
+                where: { id_empresa: req.params.id_empresa, es_empleado: true },
+                include: [{ model: Persona, as: 'persona' }]
+            }).then(function (empleados) {
+                res.json({ empleados: empleados })
+
+            })
+        })
 }
