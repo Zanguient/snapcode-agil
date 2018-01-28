@@ -213,6 +213,10 @@ angular.module('agil', ['ngRoute', 'agil.controladores',
             .when('/gtm-despachos', {
                 controller:'ControladorGtmDespacho',
                 templateUrl:'templates/gtm/despacho.html'
+            })
+            .when('/farmacia', {
+                controller:'ControladoresFarmacia',
+                templateUrl:'templates/agil/farmacia.html'
             })  
         .otherwise({
           redirectTo:'/'

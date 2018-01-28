@@ -6,7 +6,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 		ProveedorVencimientoCredito, Venta, ClasesTipo, Compra, Producto, DatosVenta, DatosCompra,
 		ImprimirSalida, Diccionario, VentasComprobantesEmpresa, ComprasComprobantesEmpresa, LibroMayorCuenta, Paginator, ComprobanteRevisarPaginador, AsignarComprobanteFavorito, ListaCuentasComprobanteContabilidad, NuevoComprobanteContabilidad, NuevoComprobante, ComprasComprobante,
 		ConfiguracionesCuentasEmpresa, ContabilidadCambioMoneda, ObtenerCambioMoneda, AsignarCuentaCiente, AsignarCuentaProveedor,
-		GtmTransportistas, GtmEstibajes, GtmGrupoEstibajes, ListasCuentasAuxiliares, GtmDetallesDespachoAlerta, $interval, GtmDetalleDespachoAlerta, GtmDetalleDespacho, VerificarCorrelativosSucursale,ReiniciarCorrelativoSucursales) {
+		GtmTransportistas, GtmEstibajes, GtmGrupoEstibajes, ListasCuentasAuxiliares, GtmDetallesDespachoAlerta, $interval, GtmDetalleDespachoAlerta, GtmDetalleDespacho, VerificarCorrelativosSucursale, ReiniciarCorrelativoSucursales, ClasesTipoEmpresa) {
 		$scope.idModalTablaVencimientoProductos = "tabla-vencimiento-productos";
 		$scope.idModalTablaDespachos = "tabla-gtm-despachos";
 		$scope.idModalTablaAsignacionDespacho = "tabla-gtm-asignacion-despachos";
@@ -576,7 +576,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 
 		$scope.reiniciarCorrelativoComprobantes = function () {
 			var fechaActual = new Date()
-			var sucursalesParaActualizar=[]
+			var sucursalesParaActualizar = []
 			var promesa = VerificarCorrelativosSucursale($scope.usuario.id_empresa)
 			promesa.then(function (sucursales) {
 				sucursales.forEach(function (sucursal, index, array) {
@@ -585,24 +585,24 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 						var fechaAnteriorMes = fechaAnterior.getMonth()
 						var fechaActualMes = fechaActual.getMonth()
 						if (fechaAnteriorMes != fechaActualMes || fechaAnteriorMes < fechaActualMes) {
-							
+
 							sucursalesParaActualizar.push(sucursal)
-							if(index===(array.length-1)){
-								var fecha_reinicio_correlativo=new Date()
+							if (index === (array.length - 1)) {
+								var fecha_reinicio_correlativo = new Date()
 								fecha_reinicio_correlativo.setDate(1)
-								var datos={sucursales:sucursalesParaActualizar,fecha:fecha_reinicio_correlativo}
+								var datos = { sucursales: sucursalesParaActualizar, fecha: fecha_reinicio_correlativo }
 								var promesa = ReiniciarCorrelativoSucursales(datos)
 								promesa.then(function (dato) {
 									$scope.mostrarMensaje(dato.message)
 								})
-								
+
 							}
-						} else if (fechaAnteriorMes == 11 && fechaActualMes == 0) {							
+						} else if (fechaAnteriorMes == 11 && fechaActualMes == 0) {
 							sucursalesParaActualizar.push(sucursal)
-							if(index===(array.length-1)){
-								var fecha_reinicio_correlativo=new Date()
+							if (index === (array.length - 1)) {
+								var fecha_reinicio_correlativo = new Date()
 								fecha_reinicio_correlativo.setDate(1)
-								var datos={sucursales:sucursalesParaActualizar,fecha:fecha_reinicio_correlativo}
+								var datos = { sucursales: sucursalesParaActualizar, fecha: fecha_reinicio_correlativo }
 								var promesa = ReiniciarCorrelativoSucursales(datos)
 								promesa.then(function (dato) {
 									$scope.mostrarMensaje(dato.message)
@@ -1193,6 +1193,9 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 							$scope.gtm_detalles_despacho = detallesDespacho;
 							$scope.vencimientoTotal = $scope.vencimientoTotal + detallesDespacho.length;
 							$scope.gtm_detalles_despacho_seleccionados = [];
+							$scope.gtm_detalles_despacho.forEach(function(despacho,index,array) {
+								despacho.saldo2=despacho.saldo
+							});
 						});
 					});
 				});
@@ -1260,9 +1263,11 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 				$scope.mostrarMensaje(res.mensaje);
 			});
 		}
-
+		
 		$scope.calcularSaldoDespacho = function (gtm_detalle_despacho) {
-			gtm_detalle_despacho.saldo = gtm_detalle_despacho.cantidad - gtm_detalle_despacho.cantidad_despacho;
+			
+				gtm_detalle_despacho.saldo2 = gtm_detalle_despacho.cantidad - (gtm_detalle_despacho.cantidad_despacho + gtm_detalle_despacho.cantidad_despacho2);
+			
 		}
 
 		$scope.establecerDespacho = function (asignacion) {
@@ -2254,11 +2259,13 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 		};
 		$scope.obtenerCentroCostos = function () {
 			blockUI.start();
-			var promesa = ClasesTipo("CENCOS");
-			promesa.then(function (entidad) {
-				$scope.centrosDeCostos = entidad.clases
-				blockUI.stop();
-			});
+			if ($scope.usuario) {
+				var promesa = ClasesTipoEmpresa("CENCOS", $scope.usuario.id_empresa);
+				promesa.then(function (entidad) {
+					$scope.centrosDeCostos = entidad.clases
+					blockUI.stop();
+				});
+			}
 		}
 		$scope.obtenerMeses = function () {
 			$scope.meses = [{ id: 0, nombre: "Enero" }, { id: 1, nombre: "Febrero" }, { id: 2, nombre: "Marzo" }, { id: 3, nombre: "Abril" }, { id: 4, nombre: "Mayo" }, { id: 5, nombre: "Junio" }, { id: 6, nombre: "Julio" }, { id: 7, nombre: "Agosto" },

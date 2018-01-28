@@ -74,7 +74,7 @@ angular.module('agil.servicios')
 	.factory('NuevoComprobante', ["blockUI", "AsignarComprobanteFavorito", "LibroMayorCuenta", "ComprobanteRevisarPaginador", "NuevoComprobanteContabilidad", "ListaCuentasComprobanteContabilidad", "ActualizarComprobanteContabilidad", "ImprimirComprobante", "DatosComprobante",
 		function (blockUI, AsignarComprobanteFavorito, LibroMayorCuenta, ComprobanteRevisarPaginador, NuevoComprobanteContabilidad, ListaCuentasComprobanteContabilidad, ActualizarComprobanteContabilidad, ImprimirComprobante, DatosComprobante) {
 			var res = function (mostrarMensaje, paginator, filtro, usuario, idComprobante, datoslibroMayor, revisar, convertirFecha, cerrarModal, nuevoComprobante,
-				buscarCuentaQuery, verificarVentasComprobantes, verificarComprasComprobantes, recargarItemsTabla, number_formata) {
+				buscarCuentaQuery, verificarVentasComprobantes, verificarComprasComprobantes, recargarItemsTabla,number_format) {
 				if (idComprobante) {
 					var promesa = AsignarComprobanteFavorito(idComprobante)
 					promesa.then(function (entidad) {

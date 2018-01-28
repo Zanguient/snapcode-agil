@@ -153,7 +153,7 @@
                     <ul class="dropdown-menu-right dropdown-navbar navbar-orange dropdown-menu dropdown-caret dropdown-close importar-text">
                         <li class="dropdown-header header-importar">
                             <i class="ace-icon fa fa-wrench white"></i>
-                            Impotaciones
+                            Importaciones
                         </li>
                         <li class="dropdown-content">
                             <ul class="dropdown-menu dropdown-navbar navbar-pink">
@@ -163,7 +163,7 @@
                                             Empleados
                                         </span>
 
-                                        <a href="/recursos/EJEMPLO-DATOS-EMPLEADOS.xlsx" class="boton-importar pull-right">
+                                        <a href="/recursos/EJEMPLO-DATOS-RRHH-EMPLEADOS.xlsx" class="boton-importar pull-right">
                                             <i class="fa  fa-cloud-download green"></i>
                                         </a>
 
@@ -200,8 +200,8 @@
                     <thead>
                         <tr>
                             <th class="center">
-                                <label class="pos-rel">
-                                    <input type="checkbox" class="ace" />
+                                <label>
+                                    <input type="checkbox" class="ace" ng-model="selectTodos" ng-change="selecionarEmpleados(null,true,selectTodos)" />
                                     <span class="lbl"></span>
                                 </label>
                             </th>
@@ -257,10 +257,11 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr ng-repeat="empleado in RecursosHumanosEmpleados">
+                        <tr ng-repeat="empleado in RecursosHumanosEmpleados track by $index">
                             <td class="center">
                                 <label class="pos-rel">
-                                    <input name="switch-field-1" type="checkbox" class="ace" />
+                                    <input name="switch-field-1" type="checkbox" class="ace" ng-model="empleado.select" ng-change="selecionarEmpleados(empleado,false,selectTodos)"
+                                    />
                                     <span class="lbl"></span>
                                 </label>
                             </td>
@@ -340,8 +341,8 @@
                                     data-placement="top" uib-tooltip="Rol de Turnos">
                                     <span class="fa fa-clock-o fa-2x"></span>
                                 </a>
-                                <a href="javascript:void(0)" ng-click="abrirDialogHorasExtras()" role="button" class="tooltip-info" data-rel="tooltip" data-placement="top"
-                                    uib-tooltip="Horas Extras">
+                                <a href="javascript:void(0)" ng-click="abrirDialogHorasExtras(empleado)" role="button" class="tooltip-info" data-rel="tooltip"
+                                    data-placement="top" uib-tooltip="Horas Extras">
                                     <span class="fa fa-moon-o fa-2x"></span>
                                 </a>
                                 <a class="tooltip-info" data-rel="tooltip" data-placement="top" uib-tooltip="Hoja de vida" type="button" class="btn btn-info btn-xs btn-link pull-left"
@@ -5452,14 +5453,16 @@
     <div id="dialog-horas-extras" class="modal">
         <div class="modal-header ficha">
             <h4 class="modal-title" id="myModalLabel"> Horas Extras</h4>
-            <h5 class="modal-title">Juan Perez Ardaya</h5>
+            <h5 class="modal-title">{{empleado.nombre_completo}}</h5>
         </div>
-        <div class="modal-body">
-            <form>
+        <form ng-submit="guardarHorasExtra(horaExtra)">
+            <div class="modal-body">
+
                 <div class="row">
                     <div class="form-group col-sm-6">
                         <label for="sexo">Fecha</label>
-                        <input type="text" class="form-control date-picker" id="nombres" name="nombres" placeholder="Desde">
+                        <input type="text" ng-update-hidden class="form-control date-picker" data-date-format="dd/mm/yyyy" ng-model="horaExtra.fecha"
+                            id="nombres" name="nombres" placeholder="Desde" required>
                     </div>
                     <div class="form-group col-sm-6">
                         <label for="">Historial</label>
@@ -5473,36 +5476,38 @@
                 <div class="row">
                     <div class="form-group col-sm-5">
                         <label for="nombres">Hora Inicio</label>
-                        <input type="time" class="form-control" id="nombres" name="nombres" placeholder="Desde">
+                        <input type="time" autofocus name="time" ng-change="calcularTiempoHorasExtra(horaExtra)" class="form-control" id="nombres"
+                            name="nombres" placeholder="Desde" ng-model="horaExtra.hora_inicio" required>
                     </div>
                     <div class="form-group col-sm-5">
                         <label for="ap-paterno">Hora Fin</label>
-                        <input type="time" class="form-control" id="ap-paterno" name="ap-paterno" placeholder="Hasta">
+                        <input type="time" ng-change="calcularTiempoHorasExtra(horaExtra)" class="form-control" id="ap-paterno" name="ap-paterno"
+                            placeholder="Hasta" ng-model="horaExtra.hora_fin" required>
                     </div>
                     <div class="form-group col-sm-2">
                         <label for="ap-paterno">Horas</label>
-                        <input type="time" class="form-control" id="ap-paterno" name="ap-paterno" placeholder="Hasta">
+                        <input disabled type="text" class="form-control" step="0" id="ap-paterno" name="ap-paterno" placeholder="Hasta" ng-model="horaExtra.tiempo"
+                            required>
                     </div>
                 </div>
-                <div class="row">
-                    <div class="form-group col-sm-12">
+                <div>
+                    <div class="form-group">
                         <label for="nombres">Observaciónes</label>
-                        <textarea class="form-control" id="form-field-8" placeholder="Observación"></textarea>
+                        <textarea class="form-control" id="form-field-8" placeholder="Observación" ng-model="horaExtra.observacion" required></textarea>
                     </div>
                 </div>
-            </form>
-        </div>
-        <!-- /.row -->
-        <div class="row">
+
+            </div>
             <div class="modal-footer wizard-actions">
-                <button class="btn btn-primary btn-sm" ng-click="cerrarDialogHorasExtras()">
+                <button class="btn btn-primary btn-sm" type="submit">
                     <i class="glyphicon glyphicon-floppy-disk"></i>Guardar
                 </button>
-                <button class="btn btn-danger btn-sm" ng-click="cerrarDialogHorasExtras()">
+                <button type="button" class="btn btn-danger btn-sm" ng-click="cerrarDialogHorasExtras()">
                     <i class="ace-icon fa fa-times"></i>Cancelar
                 </button>
+
             </div>
-        </div>
+        </form>
     </div>
     <!--- ==== fin modal horas extras ================================ -->
     <!--- ==== modal historial horas extras ================================ -->
@@ -5513,73 +5518,75 @@
                 <label> &nbsp;Historico Horas Extras </label>
             </h4>
         </div>
-        <div class="row">
-            <div class="form-group col-sm-3">
-                <label for="nombres">Desde</label>
-                <input type="text" class="form-control date-picker" id="nombres" name="nombres" placeholder="Desde">
-            </div>
-            <div class="form-group col-sm-3">
-                <label for="ap-paterno">Hasta</label>
-                <input type="text" class="form-control date-picker" id="ap-paterno" name="ap-paterno" placeholder="Hasta">
-            </div>
-            <div class="form-group col-sm-2">
-                <div class="buttons-align">
-                    <label for="">Total: 2.30</label>
+        <div class="modal.body">
+            <div>
+                <div class="form-group col-sm-3">
+                    <label for="nombres">Desde</label>
+                    <input type="text" ng-update-hidden data-date-format="dd/mm/yyyy" ng-model="filtroHorasExtra.inicio" class="form-control date-picker" id="nombres" name="nombres" placeholder="Desde">
+                </div>
+                <div class="form-group col-sm-3">
+                    <label for="ap-paterno">Hasta</label>
+                    <input type="text" ng-update-hidden data-date-format="dd/mm/yyyy" ng-model="filtroHorasExtra.fin" class="form-control date-picker" id="ap-paterno" name="ap-paterno" placeholder="Hasta">
+                </div>
+                <div class="form-group col-sm-2">
+                    <div class="buttons-align">
+                        <label for="">Total: 2.30</label>
+                    </div>
+                </div>
+                <div class="form-group col-sm-4">
+                    <div class="buttons-align">
+                        <button type="button" class="btn btn-primary btn-sm" ng-click="obtenerHistorialHorasExtra(filtroHorasExtra)">
+                            <i class=" fa fa-search-plus align-top "></i>
+                            Filtrar
+                        </button>
+                        <button type="button" class="btn btn-danger btn-sm">
+                            <i class=" fa fa-print align-top "></i>
+                            Pdf
+                        </button>
+                        <button type="button" class="btn btn-success btn-sm">
+                            <i class=" fa fa-print align-top "></i>
+                            Excel
+                        </button>
+                    </div>
                 </div>
             </div>
-            <div class="form-group col-sm-4">
-                <div class="buttons-align">
-                    <button type="button" class="btn btn-primary btn-sm">
-                        <i class=" fa fa-search-plus align-top "></i>
-                        Filtrar
-                    </button>
-                    <button type="button" class="btn btn-danger btn-sm">
-                        <i class=" fa fa-print align-top "></i>
-                        Pdf
-                    </button>
-                    <button type="button" class="btn btn-success btn-sm">
-                        <i class=" fa fa-print align-top "></i>
-                        Excel
-                    </button>
-                </div>
-            </div>
-        </div>
-        <table class="table table-striped table-hover">
-            <thead>
-                <tr>
-                    <th>Fecha</th>
-                    <th>Hora Ini.</th>
-                    <th>Hora Final</th>
-                    <th>T.Horas</th>
-                    <th>Obs.</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>11/03/2017</td>
-                    <td>17:00</td>
-                    <td>18:30</td>
-                    <td>2:30</td>
-                    <td>ninguna</td>
-                    <td>
-                        <a class="blue">
-                            <span class="fa fa-search-plus bigger-130" aria-hidden="true"></span>
-                        </a>
-                        <a class="green">
-                            <i class="ace-icon fa fa-print bigger-130"></i>
-                        </a>
-                    </td>
-                </tr>
+            <div class="table-fixed-header">
+                <table class="table table-striped table-bordered table-hover ">
+                    <thead fix-head class="table-head-color">
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Hora Ini.</th>
+                        <th>Hora Final</th>
+                        <th>T.Horas</th>
+                        <th>Obs.</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="horasExtra in ListaHorasExtraEmpleado track by $index">
+                        <td>{{horasExtra.fecha | date: "dd/MM/yyyy"}}</td>
+                        <td>{{horasExtra.hora_inicio}}</td>
+                        <td>{{horasExtra.hora_fin}}</td>
+                        <td>{{horasExtra.tiempo}}</td>
+                        <td>{{horasExtra.observacion}}</td>
+                        <td>
+                            <a class="blue">
+                                <span class="fa fa-search-plus bigger-130" aria-hidden="true"></span>
+                            </a>
+                            <a class="green">
+                                <i class="ace-icon fa fa-print bigger-130"></i>
+                            </a>
+                        </td>
+                    </tr>
 
-            </tbody>
-        </table>
-        <div class="row">
-            <div class="modal-footer wizard-actions">
-                <button class="btn btn-danger btn-sm" ng-click="cerrarDialogHistorialHorasExtras()">
-                    <i class="ace-icon fa fa-times"></i>Cancelar
-                </button>
-            </div>
+                </tbody>
+            </table>
+        </div>
+        </div>
+        <div class="modal-footer wizard-actions">
+            <button class="btn btn-danger btn-sm" ng-click="cerrarDialogHistorialHorasExtras()">
+                <i class="ace-icon fa fa-times"></i>Cancelar
+            </button>
         </div>
     </div>
     <!--- ==== fin modal historial horas extras  ================================ -->
@@ -5693,13 +5700,13 @@
                 Nuevo
             </button>
             <button class="btn btn-success btn-sm" ng-click="cerrarDialogPrestamosPersonal()">
-                    <span class="ace-icon fa fa-print"></span>
-                    EXCEL
-                </button>
-                <button class="btn btn-danger btn-sm" ng-click="cerrarDialogPrestamosPersonal()">
-                    <span class="ace-icon fa fa-print"></span>
-                    PDF
-                </button>
+                <span class="ace-icon fa fa-print"></span>
+                EXCEL
+            </button>
+            <button class="btn btn-danger btn-sm" ng-click="cerrarDialogPrestamosPersonal()">
+                <span class="ace-icon fa fa-print"></span>
+                PDF
+            </button>
             <div class="space-6"></div>
             <form>
                 <div>
@@ -5767,6 +5774,7 @@
                                 <th>Venc.</th>
                                 <th>Pagos a/c</th>
                                 <th>Saldo</th>
+                                <th>Cuota mes</th>
                                 <th>Observaciones</th>
                                 <th>Acciones</th>
                             </tr>
@@ -5777,7 +5785,7 @@
                                 <td>{{prestamo.fecha_inicial | date:"dd/MM/yyyy"}}</td>
                                 <td>{{prestamo.empleado.persona.nombre_completo}}</td>
                                 <td ng-if="!prestamo.montoEdit">{{prestamo.monto |number:2}}</td>
-                                <td  ng-if="prestamo.montoEdit">
+                                <td ng-if="prestamo.montoEdit">
                                     <input style="max-width: 100px" type="number" class="form-control" ng-model="prestamo.monto">
 
                                 </td>
@@ -5796,13 +5804,14 @@
                                 <td ng-if="prestamo.prestamoPagos.length>0">{{prestamo.prestamoPagos[(prestamo.prestamoPagos.length-1)].a_cuenta_anterior}}</td>
                                 <td ng-if="prestamo.prestamoPagos.length>0">{{prestamo.prestamoPagos[(prestamo.prestamoPagos.length-1)].saldo_anterior}}</td>
                                 <td ng-if="prestamo.prestamoPagos.length==0">{{prestamo.total |number:2}}</td>
+                                <td>{{prestamo.cuota |number:2}}</td>
                                 <td>{{prestamo.observacion}}</td>
                                 <td>
                                     <div class="action-buttons">
                                         <a ng-if="!prestamo.montoEdit" class="blue" uib-tooltip="Permitir Edición" href="javascript:void(0)" ng-click="abrirModalVerificarCuenta(prestamo)">
                                             <i class="ace-icon fa fa-pencil bigger-130"></i>
                                         </a>
-                                        <a ng-if="!prestamo.montoEdit" class="green" href="javascript:void(0)" ng-click="abrirDialogPagoPrestamo(prestamo)">
+                                        <a ng-hide="prestamo.pagadoTotal" ng-if="!prestamo.montoEdit" class="green" href="javascript:void(0)" ng-click="abrirDialogPagoPrestamo(prestamo)">
                                             <i class="ace-icon fa fa-money bigger-130"></i>
                                         </a>
                                         <a ng-if="!prestamo.montoEdit" class="orange">
@@ -5826,7 +5835,7 @@
                 </div>
             </div>
         </div>
-        <div class="modal-footer wizard-actions">           
+        <div class="modal-footer wizard-actions">
             <button class="btn btn-danger btn-sm pull-left" ng-click="cerrarDialogPrestamosPersonal()">
                 <i class="ace-icon fa fa-times"></i>Cancelar
             </button>
@@ -5856,81 +5865,84 @@
     <!-- ======= Fin Modal modal avertencia =========== -->
     <!-- ======= Modal modal prestamos nuevo todos =========== -->
     <div id="dialog-nuevo-prestamo-todos" class="modal">
-       
-            <form ng-submit="GuardarMultiplesPrestamos(prestamo)">
 
-                <div class="modal-header bg-primary">
-                    <h4 class='smaller text-white text-uppercase'>
-                        <i class='icono-prestamo icono-font'></i>
-                        <label> &nbsp;Nuevo préstamo empleados seleccionados </label>
-                    </h4>
-                </div>
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-sm-12 form-group">
-                            <div isteven-multi-select input-model="todosLosEmpleados" output-model="prestamo.empleados" button-label="icon nombre" item-label="icon nombre maker"
-                                tick-property="ticked" translation="localLang">
+        <form ng-submit="GuardarMultiplesPrestamos(prestamo)">
+
+            <div class="modal-header bg-primary">
+                <h4 class='smaller text-white text-uppercase'>
+                    <i class='icono-prestamo icono-font'></i>
+                    <label> &nbsp;Nuevo préstamo empleados seleccionados </label>
+                </h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <label>Seleccionar Empleado</label>
+                    <div class="col-sm-12 form-group">
+                        <div isteven-multi-select input-model="todosLosEmpleados" output-model="prestamo.empleados" button-label="icon nombre" item-label="icon nombre maker"
+                            tick-property="ticked" translation="localLang">
+                        </div>
+                    </div>
+                    <div class="col-sm-12">
+                        <div class="form-group">
+                            <label class="col-sm-6" for="monto">Monto</label>
+                            <div class="input-group col-sm-6">
+                                <input ng-change="calcularCuota(prestamo)" type="number" class="form-control" id="monto" name="monto" placeholder="1000"
+                                    ng-model="prestamo.monto" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
+                                    required>
+                                <span class="input-group-addon">Bs</span>
                             </div>
                         </div>
-                        <div class="col-sm-12">
-                            <div class="form-group">
-                                <label class="col-sm-6" for="monto">Monto</label>
-                                <div class="input-group col-sm-6">
-                                    <input ng-change="calcularCuota(prestamo)" type="number" class="form-control" id="monto" name="monto" placeholder="1000"
-                                    ng-model="prestamo.monto"  oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" required>
-                                    <span class="input-group-addon">Bs</span>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="col-sm-6" for="interes-pactado">Interes Pactado</label>
-                                <div class="input-group col-sm-6">
-                                    <input required  ng-change="calcularCuota(prestamo)" type="number" class="form-control" id="interes-pactado" ng-model="prestamo.interes_pactado"
+                        <div class="form-group">
+                            <label class="col-sm-6" for="interes-pactado">Interes Pactado</label>
+                            <div class="input-group col-sm-6">
+                                <input required ng-change="calcularCuota(prestamo)" type="number" class="form-control" id="interes-pactado" ng-model="prestamo.interes_pactado"
                                     name="interes-pactado" value="0" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');">
-                                    <span class="input-group-addon">%</span>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="col-sm-6" for="fecha-inicial">Fecha Inicial</label>
-                                <div class="input-group col-sm-6">
-                                        <input type="text" required data-date-format="dd/mm/yyyy" class="form-control date-picker" id="fecha-inicial" ng-update-hidden ng-model="prestamo.fecha_inicial"
-                                        name="fecha-inicial">
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="col-sm-6" for="plazo">Plazo</label>
-                                <div class="input-group col-sm-6">
-                                        <input required ng-change="calcularCuota(prestamo)" type="number" class="form-control" id="plazoP" name="plazo" ng-model="prestamo.plazo"
-                                        placeholder="6" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');">
-                                    <span class="input-group-addon">Meses</span>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="col-sm-6" for="observacionesP">Observaciones</label>
-                                <div class="input-group col-sm-6">
-                                        <input required type="text" class="form-control" id="observaciones" name="observaciones" ng-model="prestamo.observacion" placeholder="Desc. Planilla">
-                                </div>
+                                <span class="input-group-addon">%</span>
                             </div>
                         </div>
-
-                        <div ng-if="prestamo.cuota">
-                                <p class="text-center">Se pagará en
-                                    <strong>{{prestamo.tiempo_plazo_literal}}</strong>, la cuota será de Bs
-                                    <strong>{{prestamo.cuota}}</strong>
-                                </p>
+                        <div class="form-group">
+                            <label class="col-sm-6" for="fecha-inicial">Fecha Inicial</label>
+                            <div class="input-group col-sm-6">
+                                <input type="text" required data-date-format="dd/mm/yyyy" class="form-control date-picker" id="fecha-inicial" ng-update-hidden
+                                    ng-model="prestamo.fecha_inicial" name="fecha-inicial">
                             </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-6" for="plazo">Plazo</label>
+                            <div class="input-group col-sm-6">
+                                <input required ng-change="calcularCuota(prestamo)" type="number" class="form-control" id="plazoP" name="plazo" ng-model="prestamo.plazo"
+                                    placeholder="6" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');">
+                                <span class="input-group-addon">Meses</span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-6" for="observacionesP">Observaciones</label>
+                            <div class="input-group col-sm-6">
+                                <input required type="text" class="form-control" id="observaciones" name="observaciones" ng-model="prestamo.observacion"
+                                    placeholder="Desc. Planilla">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div ng-if="prestamo.cuota">
+                        <p class="text-center">Se pagará en
+                            <strong>{{prestamo.tiempo_plazo_literal}}</strong>, la cuota será de Bs
+                            <strong>{{prestamo.cuota}}</strong>
+                        </p>
                     </div>
                 </div>
-                <div class="modal-footer wizard-actions">
-                    <button type="submit" class="btn btn-primary btn-sm">
-                        <span class="glyphicon glyphicon-floppy-disk"></span>
-                        Guardar
-                    </button>
-                    <button type="button" class="btn btn-danger btn-sm" ng-click="cerrarDialogPretamosNuevoTodos()">
-                        <i class="ace-icon fa fa-times"></i>Cancelar
-                    </button>
-                </div>
-            </form>
-        
+            </div>
+            <div class="modal-footer wizard-actions">
+                <button type="submit" class="btn btn-primary btn-sm">
+                    <span class="glyphicon glyphicon-floppy-disk"></span>
+                    Guardar
+                </button>
+                <button type="button" class="btn btn-danger btn-sm" ng-click="cerrarDialogPretamosNuevoTodos()">
+                    <i class="ace-icon fa fa-times"></i>Cancelar
+                </button>
+            </div>
+        </form>
+
     </div>
     <!-- ======= Fin Modal modal prestamos nuevo todos =========== -->
     <!-- ======= Modal modal reporte de hijos =========== -->
@@ -6124,7 +6136,7 @@
                 <div class="form-group">
                     <label for="monto-pagar">Monto a Pagar</label>
                     <div class="input-group">
-                        <input type="number" ng-model="prestamo.monto_pagado" class="form-control" id="monto-pagar" name="monto-pagar" placeholder="1000">
+                        <input type="number" min="1" ng-model="prestamo.monto_pagado" class="form-control" id="monto-pagar" name="monto-pagar" placeholder="1000">
                         <span class="input-group-addon">Bs</span>
                     </div>
                 </div>

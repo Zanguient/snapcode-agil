@@ -336,12 +336,13 @@ function ejecutarScriptsRecursosHumanos(idModalPrerequisitos, idModalEmpleado, i
 }
 
 function ejecutarScriptsPlanillaSueldos(idModalNuevaPlanillaSueldos, idModalEditarPlanillaSueldo, idModalParametros, idModalTR3,
-	idModalHistorialTR3) {
+	idModalHistorialTR3, idEliminarSueldoEmpleado) {
 	crearPopup(idModalNuevaPlanillaSueldos, "100%", "auto");
 	crearPopup(idModalEditarPlanillaSueldo, "50%", "auto");
 	crearPopup(idModalParametros, "90%", "auto");
 	crearPopup(idModalTR3, "75%", "auto");
 	crearPopup(idModalHistorialTR3, "70%", "auto");
+	crearPopup(idEliminarSueldoEmpleado, "30%", "auto");
 }
 
 function ejecutarScriptsIncrementoSalarial(idModalNuevoIncrementoSalarial) {
@@ -357,6 +358,11 @@ function ejecutarScriptsPlanillaRCIVA(idModalNuevoPlanillaRCIVA, idModalFormular
 }
 function ejecutarScriptsPlanillaRetroActivos(idModalNuevoPlanillaRetroactivo) {
 	crearPopup(idModalNuevoPlanillaRetroactivo, "100%", "auto");
+}
+
+function ejecutarScriptsFarmacia(idModalWizardFarmaciaEdicion, idModalInventario) {
+	crearPopup(idModalWizardFarmaciaEdicion, "100%", 600);
+	crearPopup(idModalInventario, "85%", 550);
 }
 
 function aplicarTab(idTab) {

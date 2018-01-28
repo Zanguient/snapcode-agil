@@ -211,4 +211,26 @@ angular.module('agil.servicios')
 		return delay.promise;
 	};
     return res;
-  }]);
+	}])
+	
+
+.factory('TipoEmpresa', function($resource) {
+	return $resource(restServer+"tipos/:nombre_corto/empresa/:id_empresa");
+})
+
+.factory('ClasesTipoEmpresa', ['TipoEmpresa','$q',function(TipoEmpresa, $q) 
+{
+var res = function(nombre_corto,idEmpresa) 
+{
+	var delay = $q.defer();
+	TipoEmpresa.get({nombre_corto:nombre_corto,id_empresa:idEmpresa},function(entidad) 
+	{        
+		delay.resolve(entidad);
+	}, function(error) 
+		{
+			delay.reject(error);
+		});
+	return delay.promise;
+};
+	return res;
+}])

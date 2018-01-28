@@ -1,0 +1,1 @@
+ALTER TABLE agil_rrhh_empleado_prestamo ADD cuota DECIMAL(20,4);

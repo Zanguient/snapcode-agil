@@ -16,7 +16,7 @@
 				</button>
 			</div>
 			<div class="col-xs-2 col-sm-2">
-				<button class="btn btn-primary" ng-disabled="desp.$invalid || gtm_detalles_despacho_seleccionados.length==0" type="submit">
+				<button class="btn btn-primary" ng-disabled="gtm_detalles_despacho_seleccionados.length==0" type="submit">
 				<i class="ace-icon fa fa-floppy-o align-top bigger-125"></i>
 				</button>
 			</div>
@@ -48,6 +48,7 @@
 				<th>Producto</th>
 				<th>Cantidad</th>
 				<th>Despacho</th>
+				<th>Despachar</th>
 				<th>Saldo</th>
 				<th>Transportista</th>
 				<th>Estibaje</th>
@@ -70,8 +71,10 @@
 			<td>{{gtm_detalle_despacho.despacho.cliente.telefono1}}</td>
 			<td>{{gtm_detalle_despacho.producto.nombre}}</td>
 			<td>{{gtm_detalle_despacho.cantidad}}</td>
-			<td><input ng-max="gtm_detalle_despacho.cantidad" ng-change="calcularSaldoDespacho(gtm_detalle_despacho)" ng-required="gtm_detalle_despacho.seleccionado" type="number" step="0.001" ng-model="gtm_detalle_despacho.cantidad_despacho"></td>
-			<td>{{gtm_detalle_despacho.saldo}}</td>
+			<td>{{gtm_detalle_despacho.cantidad_despacho}}</td>
+			<td><input required max="{{gtm_detalle_despacho.saldo}}" ng-change="calcularSaldoDespacho(gtm_detalle_despacho)" ng-required="gtm_detalle_despacho.seleccionado" type="number" step="0.001" ng-model="gtm_detalle_despacho.cantidad_despacho2"></td>
+			<td>{{gtm_detalle_despacho.saldo2}}</td>
+			<!-- <td ng-hide="gtm_detalle_despacho.saldo2">{{gtm_detalle_despacho.saldo}}</td> -->
 			<td><select ng-required="gtm_detalle_despacho.seleccionado" ng-model="gtm_detalle_despacho.id_transportista" ng-options="gtm_transportista.id as gtm_transportista.persona.nombre_completo for gtm_transportista in gtm_transportistas"></select></td>
 			<td><select ng-required="gtm_detalle_despacho.seleccionado" ng-model="gtm_detalle_despacho.id_estibaje" ng-options="gtm_estibaje.id as gtm_estibaje.nombre for gtm_estibaje in gtm_estibajes"></select></td>
 			<td><select ng-required="gtm_detalle_despacho.seleccionado" ng-model="gtm_detalle_despacho.id_grupo_estibaje" ng-options="gtm_grupo_estibaje.id as gtm_grupo_estibaje.nombre for gtm_grupo_estibaje in gtm_grupo_estibajes"></select></td>

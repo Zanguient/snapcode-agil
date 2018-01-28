@@ -1,6 +1,6 @@
 module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Sucursal, MedicoPrerequisito, Clase, Diccionario, Tipo, decodeBase64Image, fs, MedicoVacuna, VacunaDosis,
 	MedicoPacienteVacuna, MedicoPacienteVacunaDosis, MedicoPacienteConsulta, MedicoPacienteFicha, sequelize, Sequelize, MedicoLaboratorioExamen, MedicoLaboratorio, MedicoLaboratorioPaciente, MedicoLaboratorioResultado,
-	MedicoLaboratorioResultado, MedicoDiagnostico, MedicoDiagnosticoExamen, MedicoDiagnosticoPaciente, MedicoDiagnosticoResultado, MedicoPacientePreRequisito,RrhhEmpleadoCargo) {
+	MedicoLaboratorioResultado, MedicoDiagnostico, MedicoDiagnosticoExamen, MedicoDiagnosticoPaciente, MedicoDiagnosticoResultado, MedicoPacientePreRequisito, RrhhEmpleadoCargo) {
 
 	router.route('/paciente/:id_paciente')
 		.get(function (req, res) {
@@ -85,7 +85,7 @@ module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Su
 									designacion_empresa: req.body.designacion_empresa,
 									eliminado: true,
 								}).then(function (medicoPacienteCreado) {
-									guardarCargo(req,res,RrhhEmpleadoCargo,medicoPacienteCreado)
+									guardarCargo(req, res, RrhhEmpleadoCargo, medicoPacienteCreado)
 								});
 							});
 					});
@@ -134,7 +134,7 @@ module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Su
 								where: { id: req.params.id_paciente }
 
 							}).then(function (medicoPacienteActualizado) {
-								guardarCargo(req,res,RrhhEmpleadoCargo)
+								guardarCargo(req, res, RrhhEmpleadoCargo)
 							})
 					})
 			} else {
@@ -155,61 +155,61 @@ module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Su
 				where: {
 					id: req.params.id_paciente
 				},
-				include: [{ model: RrhhEmpleadoCargo, as: 'cargos', include: [{ model: Clase, as: "cargo" }]},{ model: Clase, as: 'extension' },{ model: Persona, as: 'persona', include: [{ model: Clase, as: 'genero' }] }
+				include: [{ model: RrhhEmpleadoCargo, as: 'cargos', include: [{ model: Clase, as: "cargo" }] }, { model: Clase, as: 'extension' }, { model: Persona, as: 'persona', include: [{ model: Clase, as: 'genero' }] }
 					// { model: Empresa, as: 'empresa'},{model:MedicoPrerequisito, as: 'prerequisitos',include: [{ model: Clase, as: 'prerequisitoClase' }]}
 				]
 			}).then(function (medicoPaciente) {
 				res.json(medicoPaciente);
 			});
 		});
-		function guardarCargo(req, res, RrhhEmpleadoCargo,medicoPacienteCreado) {
-			var idpaciente=0
-			var mensaje = ""
-			if(medicoPacienteCreado){
-				idpaciente=medicoPacienteCreado.id
-				mensaje = "Creado Satisfactoriamente!"
-			}else{
-				idpaciente=req.body.id
-				mensaje = "Actualizado Satisfactoriamente!"
+	function guardarCargo(req, res, RrhhEmpleadoCargo, medicoPacienteCreado) {
+		var idpaciente = 0
+		var mensaje = ""
+		if (medicoPacienteCreado) {
+			idpaciente = medicoPacienteCreado.id
+			mensaje = "Creado Satisfactoriamente!"
+		} else {
+			idpaciente = req.body.id
+			mensaje = "Actualizado Satisfactoriamente!"
+		}
+		RrhhEmpleadoCargo.destroy({
+			where: {
+				id_empleado: idpaciente
 			}
-			RrhhEmpleadoCargo.destroy({
-				where: {
-					id_empleado: idpaciente
-				}
-			}).then(function (EmpleadoCargoEliminados) {
-				if (req.body.cargos.length > 0) {	
-					req.body.cargos.forEach(function (cargo, index, array) {
-						RrhhEmpleadoCargo.findOrCreate({
-							where: { id_empleado: idpaciente, id_cargo: cargo.id },
-							defaults: {
+		}).then(function (EmpleadoCargoEliminados) {
+			if (req.body.cargos.length > 0) {
+				req.body.cargos.forEach(function (cargo, index, array) {
+					RrhhEmpleadoCargo.findOrCreate({
+						where: { id_empleado: idpaciente, id_cargo: cargo.id },
+						defaults: {
+							id_empleado: idpaciente,
+							id_cargo: cargo.id
+						}
+					}).spread(function (ficha, created) {
+						if (!created) {
+							RrhhEmpleadoCargo.update({
 								id_empleado: idpaciente,
 								id_cargo: cargo.id
+							}, {
+									where: { id_empleado: idpaciente, id_cargo: cargo.id }
+								}).then(function (actualizado) {
+									if (index === (array.length - 1)) {
+										res.json({ message: mensaje });
+									}
+								})
+
+						} else {
+							if (index === (array.length - 1)) {
+								res.json({ message: mensaje });
 							}
-						}).spread(function (ficha, created) {
-							if (!created) {
-								RrhhEmpleadoCargo.update({
-									id_empleado: idpaciente,
-									id_cargo: cargo.id
-								}, {
-										where: { id_empleado: idpaciente, id_cargo: cargo.id }
-									}).then(function (actualizado) {
-										if (index === (array.length - 1)) {
-											res.json({ message: mensaje});
-										}
-									})
-	
-							} else {
-								if (index === (array.length - 1)) {
-									res.json({ message: mensaje });
-								}
-							}
-						})
-					});
-				} else {
-					res.json({ message: mensaje });
-				}
-			})
-		}
+						}
+					})
+				});
+			} else {
+				res.json({ message: mensaje });
+			}
+		})
+	}
 	router.route('/pacientes/ficha_tecnica/excel/upload')
 		.post(function (req, res) {
 			req.body.fichas.forEach(function (fichaActual, index, array) {
@@ -374,7 +374,7 @@ module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Su
 						res.json({ mensaje: "¡Datos de vacunas aplicadas actualizadas satisfactoriamente!" });
 					}
 				}).catch(function (err) {
-					res.json({ hasError: true, mensaje: 'Se produjo un error! intente realizar la operación nuevamente.\n'+ err });
+					res.json({ hasError: true, mensaje: 'Se produjo un error! intente realizar la operación nuevamente.\n' + err });
 				});
 			});
 			// res.json({ mensaje: 'Aplicando Vacunas... Por favor espere.' })
@@ -416,25 +416,77 @@ module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Su
 										id: pacienteFound.id_persona
 									}
 								}).then(function (personaActualizada) {
-									MedicoPaciente.update({
-										id_persona: personaActualizada.id,
-										id_empresa: req.body.id_empresa,
-										codigo: pacienteActual.codigo,
-										id_extension: pacienteActual.extension.id,
-										grupo_sanguineo: pacienteActual.grupo_sanguineo,
-										cargo: pacienteActual.cargo,
-										campo: pacienteActual.campamento,
-										designacion_empresa: pacienteActual.designacion_empresa,
-										eliminado: pacienteActual.eliminado,
-										es_empleado: pacienteActual.es_empleado
-									}, {
-											where: { id: pacienteFound.id }
-
-										}).then(function (medicoPacienteActualizado) {
-											if (index === (array.length - 1)) {
-												res.json({ mensaje: "¡Datos de pacientes actualizados satisfactoriamente!" });
+									Tipo.find({
+										where: { nombre_corto: 'RRHH_EXP' }
+									}).then(function (tipoExp) {
+										var nombre_corto2 = pacienteActual.extension.substr(0, 3);
+										Clase.findOrCreate({
+											where: {
+												nombre: pacienteActual.extension,
+												id_tipo: tipoExp.dataValues.id,
+											},
+											defaults: {
+												id_tipo: tipoExp.dataValues.id,
+												nombre: pacienteActual.extension,
+												nombre_corto: nombre_corto2
 											}
+										}).spread(function (expClase, created) {
+											MedicoPaciente.update({
+												id_persona: personaActualizada.id,
+												id_empresa: req.body.id_empresa,
+												codigo: pacienteActual.codigo,
+												id_extension: expClase.id,
+												grupo_sanguineo: pacienteActual.grupo_sanguineo,
+												cargo: pacienteActual.cargo,
+												campo: pacienteActual.campamento,
+												designacion_empresa: pacienteActual.designacion_empresa,
+												eliminado: pacienteActual.eliminado,
+												es_empleado: pacienteActual.es_empleado
+											}, {
+													where: { id: pacienteFound.id }
+
+												}).then(function (medicoPacienteActualizado) {
+													RrhhEmpleadoCargo.findAll({
+														where: {
+															id_empleado: pacienteFound.id,
+														},
+														include: [{ model: Clase, as: 'cargo', include: [{ model: Tipo, as: 'tipo' }] }]
+													}).then(function (EmpleadoCargos) {
+														var dato = 0;
+														EmpleadoCargos.forEach(function (cargo, index, array) {														
+																	var nombre_corto = pacienteActual.cargo.substr(0, 3);
+																	Clase.findOrCreate({
+																		where: {
+																			nombre: pacienteActual.cargo,
+																			id_tipo: cargo.dataValues.cargo.dataValues.tipo.dataValues.id,
+																		},
+																		defaults: {
+																			id_tipo: cargo.dataValues.cargo.dataValues.tipo.dataValues.id,
+																			nombre: pacienteActual.cargo,
+																			nombre_corto: nombre_corto
+																		}
+																	}).spread(function (cargoClase, created) {
+																		RrhhEmpleadoCargo.findOrCreate({
+																			where: {
+																			id_empleado: pacienteFound.id,
+																			id_cargo: cargoClase.id,
+																		},
+																		defaults: {
+																			id_empleado: pacienteFound.id,
+																			id_cargo: cargoClase.id,
+																		}
+																		}).spread(function (cargoAc, created) {
+																			if (index === (array.length - 1)) {
+																				res.json({ mensaje: "¡Datos de pacientes actualizados satisfactoriamente!" });
+																			}
+																		})
+																	})
+															
+														});
+													})
+												})
 										})
+									})
 								})
 						} else {
 							console.log('paciente nuevo')
@@ -466,31 +518,75 @@ module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Su
 											id: personaCreada.id
 										}
 									}).then(function (imagenAct) {
-										MedicoPaciente.create({
-											id_persona: personaCreada.id,
-											id_empresa: req.body.id_empresa,
-											codigo: pacienteActual.codigo,
-											id_extension: pacienteActual.extension.id,
-											grupo_sanguineo: pacienteActual.grupo_sanguineo,
-											cargo: pacienteActual.cargo,
-											campo: pacienteActual.campamento,
-											designacion_empresa: pacienteActual.designacion_empresa,
-											eliminado: false,
-											es_empleado: pacienteActual.es_empleado
-											//comentario: pacienteActual.comentario
-										}).then(function (medicoPacienteActualizado) {
-											if (index === (array.length - 1)) {
-												res.json({ mensaje: "¡Datos de pacientes actualizados satisfactoriamente!" });
-											}
+										Tipo.find({
+											where: { nombre_corto: 'RRHH_EXP' }
+										}).then(function (tipoExp) {
+											var nombre_corto2 = pacienteActual.extension.substr(0, 3);
+											Clase.findOrCreate({
+												where: {
+													nombre: pacienteActual.extension,
+													id_tipo: tipoExp.dataValues.id,
+												},
+												defaults: {
+													id_tipo: tipoExp.dataValues.id,
+													nombre: pacienteActual.extension,
+													nombre_corto: nombre_corto2
+												}
+											}).spread(function (expClase, created) {
+												MedicoPaciente.create({
+													id_persona: personaCreada.id,
+													id_empresa: req.body.id_empresa,
+													codigo: pacienteActual.codigo,
+													grupo_sanguineo: pacienteActual.grupo_sanguineo,
+													cargo: pacienteActual.cargo,
+													id_extension: expClase.id,
+													campo: pacienteActual.campamento,
+													designacion_empresa: pacienteActual.designacion_empresa,
+													eliminado: false,
+													es_empleado: pacienteActual.es_empleado
+													//comentario: pacienteActual.comentario
+												}).then(function (medicoPacienteActualizado) {
+													Tipo.find({
+														where: { nombre_corto: 'RRHH_CARGO' }
+													}).then(function (tipoCargo) {
+														var nombre_corto = pacienteActual.cargo.substr(0, 3);
+														Clase.findOrCreate({
+															where: {
+																nombre: pacienteActual.cargo,
+																id_tipo: tipoCargo.dataValues.id,
+															},
+															defaults: {
+																id_tipo: tipoCargo.dataValues.id,
+																nombre: pacienteActual.cargo,
+																nombre_corto: nombre_corto
+															}
+														}).spread(function (cargoClase, created) {
+															RrhhEmpleadoCargo.create({
+																id_empleado: medicoPacienteActualizado.id,
+																id_cargo: cargoClase.id
+															}).then(function (params) {
+
+
+																if (index === (array.length - 1)) {
+																	res.json({ mensaje: "¡Datos de pacientes actualizados satisfactoriamente!" });
+																}
+
+
+															})
+
+														})
+													})
+												})
+
+											})
 										})
 									})
 							})
 						}
 					})
-				})
-			});
+				});
+			})
 		})
-
 	router.route('/pacientes/SOAP/excel/upload')
 		.post(function (req, res) {
 			req.body.SOAPLista.forEach(function (soap, index, array) {
@@ -588,10 +684,33 @@ module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Su
 			}, this);
 		})
 
+	// ========= ruta para obtener pacientes x su nit ==============
+	router.route('/pacientes/empresa/:id_empresa/texto/:texto')
+		.get(function(req, res) {
+			console.log('llegooooooooooo aqui =====?=');
+			var orCondition=[];console.log(req.params.texto);
+			if(req.params.texto==0){
+				orCondition.push({ci:req.params.texto});
+			}else if(req.params.texto){
+				orCondition.push({ci:req.params.texto});
+			}
+			orCondition.push({nombre_completo: {$like: "%"+req.params.texto+"%"}});
+			MedicoPaciente.findAll({
+				where: {
+					empresa: req.params.id_empresa
+				},
+				include: [{ model: RrhhEmpleadoCargo, as: 'cargos', include: [{ model: Clase, as: "cargo" }]},{ model: Clase, as: 'extension' },{ model: Persona, as: 'persona', where: {$or:orCondition}, include: [{ model: Clase, as: 'genero' }] }
+					// { model: Empresa, as: 'empresa'},{model:MedicoPrerequisito, as: 'prerequisitos',include: [{ model: Clase, as: 'prerequisitoClase' }]}
+				]
+			}).then(function(pacientes){
+				res.json(pacientes);		  
+			});
+	})
+
 	router.route('/pacientes/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion/codigo/:codigo/nombres/:nombres/ci/:ci/campo/:campo/cargo/:cargo/busquedaEmpresa/:busquedaEmpresa/grupo/:grupo_sanguineo/estado/:estado')
 		.get(function (req, res) {
 			var condicion = ""
-			var activo = "true"
+			var activo = "false"
 			if (req.params.codigo != "0") {
 				condicion += "codigo like '%" + req.params.codigo + "%'"
 			}
@@ -834,35 +953,35 @@ module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Su
 			});
 		})
 		.put(function (req, res) {
-			if(req.body.id != undefined){
+			if (req.body.id != undefined) {
 				MedicoVacuna.update({
 					dias_activacion: req.body.dias_activacion
-				},{
-					where:{
-						id:req.body.id
-					}
-				}).then(function (alertaDiasActualizados) {
-					res.json({mensaje:'Días de alerta de vacuna actualizada!'})
-				})
-			}else{
-				if(req.body.setDiasTodos !=undefined){
+				}, {
+						where: {
+							id: req.body.id
+						}
+					}).then(function (alertaDiasActualizados) {
+						res.json({ mensaje: 'Días de alerta de vacuna actualizada!' })
+					})
+			} else {
+				if (req.body.setDiasTodos != undefined) {
 					MedicoVacuna.findAll({
-						where:{
-							eliminado:false
+						where: {
+							eliminado: false
 						}
 					}).then(function (vacunas) {
-						vacunas.forEach(function(vac,index,array) {
+						vacunas.forEach(function (vac, index, array) {
 							MedicoVacuna.update({
 								dias_activacion: req.body.dias_activacion
-							},{
-								where:{
-									id:vac.id
-								}
-							}).then(function (alertaDiasActualizados) {
-								if(index === array.length-1){
-									res.json({mensaje:'Días de alerta de vacunas actualizados!'})
-								}
-							})
+							}, {
+									where: {
+										id: vac.id
+									}
+								}).then(function (alertaDiasActualizados) {
+									if (index === array.length - 1) {
+										res.json({ mensaje: 'Días de alerta de vacunas actualizados!' })
+									}
+								})
 						});
 					})
 				}
@@ -1181,12 +1300,12 @@ module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Su
 									id: repac.id
 								}
 							})
-							if(index === array.length-1){
-								res.json({mensaje:'Todos los prerequisitos se reprogramaron correctamente!'})
-							}
+						if (index === array.length - 1) {
+							res.json({ mensaje: 'Todos los prerequisitos se reprogramaron correctamente!' })
+						}
 					});
 				})
-			}else{
+			} else {
 				MedicoPacientePreRequisito.findOrCreate({
 					where: {
 						id_paciente: req.body.pacientePrerequisito.id,
@@ -1246,7 +1365,7 @@ module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Su
 							// 		res.json({ mensaje: "Pre-requisito actualizado satisfactoriamente!" });
 							// 	})
 						}
-	
+
 					} else {
 						if (req.body.asignado) {
 							res.json({ mensaje: "Pre-requisito asignado satisfactoriamente!" });
@@ -1437,9 +1556,9 @@ module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Su
 		})
 	router.route('/medico-paciente-consulta/paciente/:id_paciente/inicio/:inicio/fin/:fin')
 		.get(function (req, res) {
-			var desde =false
+			var desde = false
 			var hasta = false
-			var condicionPaciente = {id_paciente: req.params.id_paciente }
+			var condicionPaciente = { id_paciente: req.params.id_paciente }
 			if (req.params.inicio != 0) {
 				var inicio = new Date(req.params.inicio); inicio.setHours(0, 0, 0, 0, 0);
 				desde = true
@@ -1589,14 +1708,14 @@ module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Su
 				if (desde && hasta) {
 					condicionPaciente = {
 						eliminado: false,
-						id_vacuna:req.params.opcion,
+						id_vacuna: req.params.opcion,
 						fecha_siguiente_aplicacion: {
 							$between: [inicio, fin]
 						}
 					}
 				} else if (desde && !hasta) {
 					condicionPaciente = {
-						id_vacuna:req.params.opcion,
+						id_vacuna: req.params.opcion,
 						eliminado: false,
 						fecha_siguiente_aplicacion: {
 							$gte: [inicio]
@@ -1604,7 +1723,7 @@ module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Su
 					}
 				} else if (!desde && hasta) {
 					condicionPaciente = {
-						id_vacuna:req.params.opcion,
+						id_vacuna: req.params.opcion,
 						eliminado: false,
 						fecha_siguiente_aplicacion: {
 							$lte: [fin]
@@ -1613,11 +1732,11 @@ module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Su
 				} else if (!desde && !hasta) {
 					var hoy = new Date()
 					condicionPaciente = {
-						id_vacuna:req.params.opcion,
+						id_vacuna: req.params.opcion,
 						eliminado: false,
 					}
 				}
-			}else{
+			} else {
 				if (req.params.inicio != 0) {
 					var inicio = new Date(req.params.inicio); inicio.setHours(0, 0, 0, 0, 0);
 					desde = true
@@ -1656,7 +1775,7 @@ module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Su
 			}
 			MedicoPacienteVacuna.findAll({
 				where: condicionPaciente,
-				
+
 				include: [{ model: MedicoPaciente, as: 'paciente', include: [{ model: Persona, as: 'persona' }] }, { model: MedicoVacuna, as: 'pacienteVacuna', include: [{ model: VacunaDosis, as: 'vacunaDosis', where: { eliminado: false }, order: [['numero', 'desc']] }] }, { model: MedicoPacienteVacunaDosis, as: 'pacienteVacunaDosis' }]
 			}).then(function (vacunas) {
 				var vacas = []
@@ -1670,7 +1789,7 @@ module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Su
 							// proyeccion = proyeccion.setTime(ulti_aplic+(vac.pacienteVacuna.vacunaDosis[indexSgteDosis].es_dosis?vac.pacienteVacuna.vacunaDosis[indexSgteDosis].tiempo * 86400000:(vac.pacienteVacuna.vacunaDosis[indexSgteDosis].tiempo*30) * 86400000).tiempo)
 							var hoy = new Date().getTime()
 							var diferencia = Math.floor(hoy - proyeccion) / 86400000
-							if (diferencia < vac.pacienteVacuna.dias_activacion && diferencia > vac.pacienteVacuna.dias_activacion*-1) {
+							if (diferencia < vac.pacienteVacuna.dias_activacion && diferencia > vac.pacienteVacuna.dias_activacion * -1) {
 								//15 = vac.pacienteVacuna.dias_activacion
 								vacas.push(vac)
 							}
@@ -1679,7 +1798,7 @@ module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Su
 								console.log(vacas.length)
 								res.json({ Vacunas: vacas });
 							}
-						}else{
+						} else {
 							if (index == array.length - 1) {
 								console.log(vacas.length)
 								res.json({ Vacunas: vacas });
@@ -1724,9 +1843,9 @@ module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Su
 		.get(function (req, res) {
 			// var condicionFichaPaciente = { id_paciente: req.params.id_paciente }
 			var condicionTipoControl = {}
-			var desde =false
+			var desde = false
 			var hasta = false
-			var condicionFichaPaciente = {id_paciente: req.params.id_paciente }
+			var condicionFichaPaciente = { id_paciente: req.params.id_paciente }
 			if (req.params.inicio != 0) {
 				var inicio = new Date(req.params.inicio); inicio.setHours(0, 0, 0, 0, 0);
 				desde = true
@@ -1808,7 +1927,7 @@ module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Su
 				},
 				include: [{ model: Clase, as: 'tipoControl' },
 				{
-					model: MedicoPaciente, as: 'paciente', include: [{ model: Clase, as: 'extension' },{ model: Empresa, as: 'empresa' }, { model: Persona, as: 'persona', include: [{ model: Clase, as: 'genero' }] }]
+					model: MedicoPaciente, as: 'paciente', include: [{ model: Clase, as: 'extension' }, { model: Empresa, as: 'empresa' }, { model: Persona, as: 'persona', include: [{ model: Clase, as: 'genero' }] }]
 				}, { model: Persona, as: 'personaReferencia' }],
 				order: [['id', 'DESC']]
 			}).then(function (fichaEncontrada) {
@@ -2223,7 +2342,7 @@ module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Su
 		})
 	router.route('/laboratorio-resultado/laboratorio/:id_laboratorio/paciente/:id_paciente/inicio/:inicio/fin/:fin')
 		.get(function (req, res) {
-			var desde =false
+			var desde = false
 			var hasta = false
 			var condicionLaboratorioPaciente = { id_laboratorio: req.params.id_laboratorio, id_paciente: req.params.id_paciente }
 			if (req.params.inicio != 0) {
@@ -2236,7 +2355,7 @@ module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Su
 			}
 			if (desde && hasta) {
 				condicionLaboratorioPaciente = {
-					id_laboratorio: req.params.id_laboratorio, 
+					id_laboratorio: req.params.id_laboratorio,
 					id_paciente: req.params.id_paciente,
 					fecha: {
 						$between: [inicio, fin]
@@ -2244,7 +2363,7 @@ module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Su
 				}
 			} else if (desde && !hasta) {
 				condicionLaboratorioPaciente = {
-					id_laboratorio: req.params.id_laboratorio, 
+					id_laboratorio: req.params.id_laboratorio,
 					id_paciente: req.params.id_paciente,
 					fecha: {
 						$gte: [inicio]
@@ -2252,7 +2371,7 @@ module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Su
 				}
 			} else if (!desde && hasta) {
 				condicionLaboratorioPaciente = {
-					id_laboratorio: req.params.id_laboratorio, 
+					id_laboratorio: req.params.id_laboratorio,
 					id_paciente: req.params.id_paciente,
 					fecha: {
 						$lte: [fin]
@@ -2261,7 +2380,7 @@ module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Su
 			} else if (!desde && !hasta) {
 				var hoy = new Date()
 				condicionLaboratorioPaciente = {
-					id_laboratorio: req.params.id_laboratorio, 
+					id_laboratorio: req.params.id_laboratorio,
 					id_paciente: req.params.id_paciente
 				}
 			}
@@ -2429,7 +2548,7 @@ module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Su
 
 	router.route('/diagnostico-resultado/diagnostico/:id_diagnostico/paciente/:id_paciente/inicio/:inicio/fin/:fin')
 		.get(function (req, res) {
-			var desde =false
+			var desde = false
 			var hasta = false
 			var condicionDiagnosticoPaciente = { id_diagnostico: req.params.id_diagnostico, id_paciente: req.params.id_paciente }
 			if (req.params.inicio != 0) {
@@ -2442,7 +2561,7 @@ module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Su
 			}
 			if (desde && hasta) {
 				condicionDiagnosticoPaciente = {
-					id_diagnostico: req.params.id_diagnostico, 
+					id_diagnostico: req.params.id_diagnostico,
 					id_paciente: req.params.id_paciente,
 					fecha: {
 						$between: [inicio, fin]
@@ -2450,7 +2569,7 @@ module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Su
 				}
 			} else if (desde && !hasta) {
 				condicionDiagnosticoPaciente = {
-					id_diagnostico: req.params.id_diagnostico, 
+					id_diagnostico: req.params.id_diagnostico,
 					id_paciente: req.params.id_paciente,
 					fecha: {
 						$gte: [inicio]
@@ -2458,7 +2577,7 @@ module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Su
 				}
 			} else if (!desde && hasta) {
 				condicionDiagnosticoPaciente = {
-					id_diagnostico: req.params.id_diagnostico, 
+					id_diagnostico: req.params.id_diagnostico,
 					id_paciente: req.params.id_paciente,
 					fecha: {
 						$lte: [fin]
@@ -2467,7 +2586,7 @@ module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Su
 			} else if (!desde && !hasta) {
 				var hoy = new Date()
 				condicionDiagnosticoPaciente = {
-					id_diagnostico: req.params.id_diagnostico, 
+					id_diagnostico: req.params.id_diagnostico,
 					id_paciente: req.params.id_paciente
 				}
 			}

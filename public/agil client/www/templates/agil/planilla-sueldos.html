@@ -191,15 +191,28 @@
                     <tr>
                         <td class="no-border-right text-right">PERIODO</td>
                         <td>
-                            <select id="pago" name="pago" ng-model="filtro.tipo_pago" data-placeholder="Elija un tipo de pago" class="ng-pristine ng-untouched ng-valid ng-empty"><option value="? undefined:undefined ?"></option>
-                                <option value="0">ENERO</option>
-                                <!-- ngRepeat: tipoPago in tiposPago --><option ng-repeat="tipoPago in tiposPago" value="17" class="ng-binding ng-scope">FEBRERO</option><!-- end ngRepeat: tipoPago in tiposPago --><option ng-repeat="tipoPago in tiposPago" value="18" class="ng-binding ng-scope">MARZO</option><!-- end ngRepeat: tipoPago in tiposPago -->
+                            <select id="pago" name="pago" ng-model="planilla.mes" >
+                                <option value="" ng-show="false"></option>
+                                <option value="1-ENERO">ENERO</option>
+                                <option value="2-FEBRERO">FEBRERO</option>
+                                <option value="3-MARZO">MARZO</option>
+                                <option value="4-ABRIL">ABRIL</option>
+                                <option value="5-MAYO">MAYO</option>
+                                <option value="6-JUNIO">JUNIO</option>
+                                <option value="7-JULIO">JULIO</option>
+                                <option value="8-AGOSTO">AGOSTO</option>
+                                <option value="9-SEPTIEMBRE">SEPTIEMBRE</option>
+                                <option value="10-OCTUBRE">OCTUBRE</option>
+                                <option value="11-NOVIEMBRE">NOVIEMBRE</option>
+                                <option value="12-DICIEMBRE">DICIEMBRE</option>
                             </select>
                         </td> 
                         <td>
-                            <select id="pago" name="pago" ng-model="filtro.tipo_pago" data-placeholder="Elija un tipo de pago" class="ng-pristine ng-untouched ng-valid ng-empty"><option value="? undefined:undefined ?"></option>
-                                <option value="0">2015</option>
-                                <!-- ngRepeat: tipoPago in tiposPago --><option ng-repeat="tipoPago in tiposPago" value="17" class="ng-binding ng-scope">2016</option><!-- end ngRepeat: tipoPago in tiposPago --><option ng-repeat="tipoPago in tiposPago" value="18" class="ng-binding ng-scope">2017</option><!-- end ngRepeat: tipoPago in tiposPago -->
+
+                            <select required id="gestion" name="gestion"  
+                                    ng-options="gestion.nombre_corto as gestion.nombre for gestion in gestiones | orderBy:'-nombre' track by gestion.id" 
+                                    ng-model="planilla.gestion">
+                                    <option value="" ng-show="false"></option>
                             </select>
                         </td>
                         <td colspan="3">
@@ -330,77 +343,43 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>1</td>
-                            <td>Antonio Fernando Torrico Angulo</td>
-                            <td>31/03/1986</td>
-                            <td>4391485</td>
-                            <td>Copero</td>
-                            <td>EMSSCZ</td>
-                            <td>02/01/2017</td>
+                        <tr ng-repeat="empleado in RecursosHumanosEmpleados">
+                            <td>{{$index+1}}</td>
+                            <td>{{empleado.persona.nombre_completo}}</td>
+                            <td>{{empleado.persona.fecha_nacimiento | date:'dd/MM/yyyy'}}</td>
+                            <td>{{empleado.persona.ci}}</td>
+                            <td>
+                                <label ng-repeat="cargo in empleado.cargos">{{cargo.cargo.nombre}}</label>
+                            </td>
+                            <td>{{empleado.campo}}</td>
+                            <td>{{empleado.empleadosFichas[0].fecha_inicio | date:'dd/MM/yyyy'}}</td>
                             <td>PPR190886</td>
-                            <td>5000</td>
-                            <td>0</td>
-                            <td>0</td>
-                            <td>0</td>
-                            <td>300</td>
-                            <td>0</td>
-                            <td>0</td>
-                            <td>5300</td>
-                            <td>673.63</td>
-                            <td>0</td>
-                            <td>0</td>
-                            <td>0</td>
-                            <td>673.63</td>
-                            <td>4626.37</td>
+                            <td>{{empleado.sueldoBasico}}</td>
+                            <td>{{empleado.horasExtras}}</td>
+                            <td>{{empleado.totalHorasExtras}}</td>
+                            <td>{{empleado.recargoNocturno}}</td>
+                            <td>{{empleado.bonoAntiguedad}}</td>
+                            <td>{{empleado.bonoFrontera}}</td>
+                            <td>{{empleado.otrosBonos}}</td>
+                            <td>{{empleado.totalGanado}}</td>
+                            <td>{{empleado.afp}}</td>
+                            <td>{{empleado.rc_iva}}</td>
+                            <td>{{empleado.anticipos}}</td>
+                            <td>{{empleado.prestamos}}</td>
+                            <td>{{empleado.totalDescuento}}</td>
+                            <td>{{empleado.liquidoPagable}}</td>
                             <td class="table__side">
                                 <a class="blue" href="javascript:void(0)">
                                     <i class="ace-icon fa fa-search-plus bigger-130"></i>
                                 </a>
-                                <a class="green" href="javascript:void(0)" ng-click="abrirDialogEditarPlanillaSueldo()">
+                                <a class="green" href="javascript:void(0)" ng-click="abrirDialogEditarPlanillaSueldo(empleado)">
                                     <i class="ace-icon fa fa-pencil-square-o bigger-130"></i>
                                 </a>
-                                <a class="red" href="javascript:void(0)">
-                                    <i class="ace-icon fa fa-trash-o bigger-130"></i>
-                                </a>   
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>2</td>
-                            <td>Pedro Gumucio Condarco</td>
-                            <td>31/03/1986</td>
-                            <td>4391485</td>
-                            <td>Copero</td>
-                            <td>EMSSCZ</td>
-                            <td>02/01/2017</td>
-                            <td>PPR190886</td>
-                            <td>5000</td>
-                            <td>0</td>
-                            <td>0</td>
-                            <td>0</td>
-                            <td>300</td>
-                            <td>0</td>
-                            <td>0</td>
-                            <td>5300</td>
-                            <td>673.63</td>
-                            <td>0</td>
-                            <td>0</td>
-                            <td>0</td>
-                            <td>673.63</td>
-                            <td>4626.37</td>
-                            <td class="table__side">
-                                <a class="blue" href="javascript:void(0)">
-                                    <i class="ace-icon fa fa-search-plus bigger-130"></i>
-                                </a>
-                                <a class="green" href="javascript:void(0)" ng-click="abrirDialogEditarPlanillaSueldo()">
-                                    <i class="ace-icon fa fa-pencil-square-o bigger-130"></i>
-                                </a>
-                                <a class="red" href="javascript:void(0)">
+                                <a class="red" href="javascript:void(0)" ng-click="abrirDialogEliminarSueldoEmpleado($index, empleado)">
                                     <i class="ace-icon fa fa-trash-o bigger-130"></i>
                                 </a>
                             </td>
                         </tr>
-
                         <tr>
                             <td></td>
                             <td></td>
@@ -410,20 +389,20 @@
                             <td></td>
                             <td></td>
                             <td>TOTALES</td>
-                            <td>800000</td>
-                            <td>400</td>
-                            <td>5000</td>
-                            <td>7500</td>
-                            <td>85000</td>
-                            <td>0</td>
-                            <td>0</td>
-                            <td>897500</td>
-                            <td>7500</td>
-                            <td>0</td>
-                            <td>9000</td>
-                            <td>26500</td>
-                            <td>10000</td>
-                            <td>881000</td>
+                            <td>{{totalSueldoBasico}}</td>
+                            <td>{{sumaHorasExtras}}</td>
+                            <td>{{sumaTotalHorasExtras}}</td>
+                            <td>{{sumaRecargoNocturno}}</td>
+                            <td>{{sumaBonoAntiguedad}}</td>
+                            <td>{{sumaBonoFrontera}}</td>
+                            <td>{{sumaOtrosBonos}}</td>
+                            <td>{{sumaTotalGanado}}</td>
+                            <td>{{sumaAFP}}</td>
+                            <td>{{sumaRCIVA}}</td>
+                            <td>{{sumaAniticipos}}</td>
+                            <td>{{sumaPrestamos}}</td>
+                            <td>{{sumaTotalDescuento}}</td>
+                            <td>{{sumaLiquidoPagable}}</td>
                             <td ></td>
                         </tr>
                     </tbody>
@@ -435,7 +414,7 @@
      <!-- =====  modal  editar planilla sueldo ====== -->
     <div id="dialog-editar-planilla-sueldo" class="modal">
         <div class="modal-header ficha">
-            <h4 class="modal-title" id="myModalLabel">Juan Perez Ardaya</h4>
+            <h4 class="modal-title" id="myModalLabel">{{sueldo.persona.nombre_completo}}</h4>
             <h5 class="modal-title">Octubre 2017</h5>
         </div>
         <div class="modal-body">
@@ -443,92 +422,92 @@
                 <div class="form-group row">
                     <label class="col-sm-6" for="monto">Sueldo Básico</label>
                     <div class="col-sm-6">                    
-                        <input type="number" class="form-control" ng-model="sueldo.sueldoBasico" ng-change="calcularTotalHorasRecargos()" name="monto" placeholder="1000" >
+                        <input type="number" class="form-control" ng-model="sueldo.sueldoBasico" ng-change="calcularTotalEditados()" name="monto" placeholder="1000" >
                     </div>
                 </div>
                 <div class="form-group row">
                     <label class="col-sm-6" for="interes-pactado">Horas extras</label>
                     <div class="col-sm-6">
-                        <input type="number" class="form-control" ng-model="sueldo.horasExtras" >
+                        <input type="number" class="form-control" ng-model="sueldo.horasExtras" disabled="">
                     </div>
                 </div>
                 <div class="form-group row">
                     <label class="col-sm-6" for="fecha-inicial">Total Horas</label>
                     <div class="col-sm-6">
-                        <input type="number" class="form-control" ng-model="sueldo.totalHoras">
+                        <input type="number" class="form-control" ng-model="sueldo.totalHorasExtras" disabled="">
                     </div>
                 </div>
                 <div class="form-group row">
                     <label class="col-sm-6" for="plazo">Recargo Nocturno</label>
                     <div class="col-sm-6">
-                        <input type="number" class="form-control" ng-model="sueldo.recargoNocturno" name="plazo" placeholder="6">
+                        <input type="number" class="form-control" ng-model="sueldo.recargoNocturno" name="plazo" disabled="">
                     </div>
                 </div>
                 <div class="form-group row">
                     <label class="col-sm-6" for="observaciones">Bono de Antigüedad</label>
                     <div class="col-sm-6">
-                        <input type="number" class="form-control" id="observaciones" name="observaciones" placeholder="Desc. Planilla">
+                        <input type="number" class="form-control" ng-model="sueldo.bonoAntiguedad" name="bonoAntiguedad" disabled="">
                     </div>
                 </div>
                 <div class="form-group row">
                     <label class="col-sm-6" for="observaciones">Bono Frontera</label>
                     <div class="col-sm-6">
-                        <input type="number" class="form-control" id="observaciones" name="observaciones" placeholder="Desc. Planilla">
+                        <input type="number" class="form-control" ng-model="sueldo.bonoFrontera" name="bonoFrontera" ng-change="calcularTotalEditados()">
                     </div>
                 </div>
                 <div class="form-group row">
                     <label class="col-sm-6" for="observaciones">Otros Bonos</label>
                     <div class="col-sm-6">
-                        <input type="number" class="form-control" id="observaciones" name="observaciones" placeholder="Desc. Planilla">
+                        <input type="number" class="form-control" ng-model="sueldo.otrosBonos" name="otrosBonos" ng-change="calcularTotalEditados()">
                     </div>
                 </div>
                 <div class="form-group row">
                     <label class="col-sm-6" for="observaciones">Total Ganado</label>
                     <div class="col-sm-6">
-                        <input type="number" class="form-control" id="observaciones" name="observaciones" disabled="">
+                        <input type="number" class="form-control" ng-model="sueldo.totalGanado" name="totalGanado" disabled="">
                     </div>
                 </div>
                 <div class="form-group row">
                     <label class="col-sm-6" for="observaciones">AFP</label>
                     <div class="col-sm-6">
-                        <input type="number" class="form-control" id="observaciones" name="observaciones" disabled="">
+                        <input type="number" class="form-control" ng-model="sueldo.afp" name="afp" disabled="">
                     </div>
                 </div>
                 <div class="form-group row">
                     <label class="col-sm-6" for="observaciones">RC IVA</label>
                     <div class="col-sm-6">
-                        <input type="number" class="form-control" id="observaciones" name="observaciones" disabled="">
+                        <input type="number" class="form-control" ng-model="sueldo.rc_iva" name="rciva" disabled="">
                     </div>
                 </div>
                 <div class="form-group row">
                     <label class="col-sm-6" for="observaciones">Anticipos</label>
                     <div class="col-sm-6">
-                        <input type="number" class="form-control" id="observaciones" name="observaciones" placeholder="Desc. Planilla">
+                        <input type="number" class="form-control" ng-model="sueldo.anticipos" name="anticipos">
                     </div>
                 </div>
                 <div class="form-group row">
                     <label class="col-sm-6" for="observaciones">Prestamos</label>
                     <div class="col-sm-6">
-                        <input type="number" class="form-control" id="observaciones" name="observaciones" placeholder="Desc. Planilla">
+                        <input type="number" class="form-control" ng-model="sueldo.prestamos" name="pretsamos">
                     </div>
                 </div>
                 <div class="form-group row">
                     <label class="col-sm-6" for="observaciones">Total Descuento</label>
                     <div class="col-sm-6">
-                        <input type="text" class="form-control" id="observaciones" name="observaciones" disabled="">
+                        <input type="text" class="form-control" ng-model="sueldo.totalDescuento" name="totaldescuentos" disabled="">
                     </div>
                 </div>
                 <div class="form-group row">
                     <label class="col-sm-6" for="observaciones">Líquido pagable</label>
                     <div class="col-sm-6">
-                        <input type="text" class="form-control" id="observaciones" name="observaciones" placeholder="" disabled="">
+                        <input type="text" class="form-control" ng-model="sueldo.liquidoPagable" name="liquidopagable" disabled="">
                     </div>
                 </div>
             </form>
         </div>
         <div class="row">
             <div class="modal-footer wizard-actions">
-                <button class="btn btn-primary btn-sm" ng-click="cerrarDialogEditarPlanillaSueldo()"><i class="glyphicon glyphicon-floppy-disk"></i>Guardar
+                <button class="btn btn-primary btn-sm" ng-click="modificarSueldo(sueldo)"><i class="glyphicon glyphicon-floppy-disk"></i>Guardar
                 </button>
                 <button class="btn btn-danger btn-sm" ng-click="cerrarDialogEditarPlanillaSueldo()"><i class="ace-icon fa fa-times"></i>Cancelar
                 </button>
@@ -541,39 +520,39 @@
         <div class="modal-header ficha">
             <h4 class="modal-title" id="myModalLabel"> Parametros</h4>
         </div>
+        <form ng-submit="editarParametros(parametros)" novalidate>
         <div class="modal-body">
-            <form>
 
                 <div class="row">
                     <div class="form-group col-sm-3">
                         <label for="nombres">Salario Mínimo Nacional</label>
-                        <input type="text" class="form-control" id="nombres" name="nombres" >
+                        <input type="number" class="form-control" ng-model="parametros.salario_minimo" >
                     </div>
                     <div class="form-group col-sm-3">
                         <label for="ap-paterno">Decreto Supremo</label>
-                        <input type="text" class="form-control " id="ap-paterno" name="ap-paterno" >
+                        <input type="text" class="form-control " ng-model="parametros.decreto_supremo" >
                     </div>
                     <div class="form-group col-sm-3">
                         <label for="ap-paterno">Salarios para RC-IVA</label>
-                        <input type="text" class="form-control " id="ap-paterno" name="ap-paterno" >
+                        <input type="number" class="form-control " ng-model="parametros.salario_rciva" >
                     </div>
                     <div class="form-group col-sm-3">
                         <label for="nombres">Porcentaje IVA</label>
-                        <input type="text" class="form-control " id="nombres" name="nombres">
+                        <input type="number" class="form-control " ng-model="parametros.porcentage_iva">
                     </div>
                 </div>
                 <div class="row">
                     <div class="form-group col-sm-3">
                         <label for="ap-paterno">Seguro de Salud</label>
-                        <input type="text" class="form-control " id="ap-paterno" name="ap-paterno" >
+                        <input type="text" class="form-control " ng-model="parametros.seguro_salud" >
                     </div>
                     <div class="form-group col-sm-3">
                         <label for="ap-paterno">Aporte seguro de Salud</label>
-                        <input type="text" class="form-control " id="ap-paterno" name="ap-paterno" >
+                        <input type="number" class="form-control " ng-model="parametros.aporte_serguro_salud" >
                     </div>
                     <div class="form-group col-sm-3">
                         <label for="nombres">Número patronal</label>
-                        <input type="text" class="form-control " id="nombres" name="nombres" >
+                        <input type="text" class="form-control " ng-model="parametros.numero_patronal" >
                     </div>
                 </div>
                 <div class="cabezera-ficha">
@@ -584,19 +563,19 @@
                 <div class="row">
                     <div class="form-group col-sm-3">
                         <label for="ap-paterno">Pensión Vejez</label>
-                        <input type="text" class="form-control" id="ap-paterno" name="ap-paterno">
+                        <input type="number" class="form-control" ng-model="parametros.pension_vejez">
                     </div>
                     <div class="form-group col-sm-3">
                         <label for="ap-paterno">Riesgo Común</label>
-                        <input type="text" class="form-control" id="ap-paterno" name="ap-paterno">
+                        <input type="number" class="form-control" ng-model="parametros.riesgo_comun">
                     </div>
                     <div class="form-group col-sm-3">
                         <label for="ap-paterno">Comisión</label>
-                        <input type="text" class="form-control" id="ap-paterno" name="ap-paterno">
+                        <input type="number" class="form-control" ng-model="parametros.comision">
                     </div>
                     <div class="form-group col-sm-3">
                         <label for="ap-paterno">Aporte Solidario</label>
-                        <input type="text" class="form-control" id="ap-paterno" name="ap-paterno">
+                        <input type="number" class="form-control" ng-model="parametros.aporte_solidario_laboral">
                     </div>
                 </div>
                 <div class="cabezera-ficha">
@@ -607,11 +586,11 @@
                 <div class="row">
                     <div class="form-group col-sm-6">
                         <label for="nombres">Riesgo Profesional</label>
-                        <input type="text" class="form-control" id="nombres" name="nombres">
+                        <input type="number" class="form-control" ng-model="parametros.riesgo_profesional">
                     </div>
                     <div class="form-group col-sm-6">
                         <label for="ap-paterno">Aporte Solidario</label>
-                        <input type="text" class="form-control" id="ap-paterno" name="ap-paterno">
+                        <input type="number" class="form-control" ng-model="parametros.aporte_solidario_patronal">
                     </div>
                 </div>
                 <div class="cabezera-ficha">
@@ -626,10 +605,10 @@
                                 <label for="document">Rango 1</label>
                             </div>
                             <div class="col-md-8 col-sm-4 col-day">
-                                <input type="text" class="form-control" >
+                                <input type="number" class="form-control" ng-model="parametros.rango_primero_inicio_solidario">
                             </div>
                             <div class="col-md-4 col-sm-4 col-month">
-                                <input type="text" class="form-control" >
+                                <input type="number" class="form-control" ng-model="parametros.rango_primero_fin_solidario">
                             </div>
                         </div>
                     </div>
@@ -639,10 +618,10 @@
                                 <label for="document">Rango 2</label>
                             </div>
                             <div class="col-md-8 col-sm-4 col-day">
-                                <input type="text" class="form-control" >
+                                <input type="number" class="form-control" ng-model="parametros.rango_segundo_inicio_solidario">
                             </div>
                             <div class="col-md-4 col-sm-4 col-month">
-                                <input type="text" class="form-control" >
+                                <input type="number" class="form-control" ng-model="parametros.rango_segundo_fin_solidario">
                             </div>
                         </div>
                     </div>
@@ -652,10 +631,10 @@
                                 <label for="document">Rango 3</label>
                             </div>
                             <div class="col-md-8 col-sm-4 col-day">
-                                <input type="text" class="form-control" >
+                                <input type="number" class="form-control" ng-model="parametros.rango_tercero_inicio_solidario">
                             </div>
                             <div class="col-md-4 col-sm-4 col-month">
-                                <input type="text" class="form-control" >
+                                <input type="number" class="form-control" ng-model="parametros.rango_tercero_fin_solidario">
                             </div>
                         </div>
                     </div>
@@ -668,58 +647,59 @@
                 <div class="row">
                     <div class="form-group col-sm-6">
                         <label for="ap-materno">Salarios Base</label>
-                        <input type="text" class="form-control" id="ap-paterno" name="ap-paterno">
+                        <input type="number" class="form-control" ng-model="parametros.salario_base_antiguedad">
                     </div>
                 </div>
                 <div class="row">
                     <div class="form-group col-sm-3">
                         <label for="ap-materno">De 0 a 2 años</label>
-                        <input type="text" class="form-control" id="ap-paterno" name="ap-paterno">
+                        <input type="number" class="form-control" ng-model="parametros.antiguedad_cero_dos">
                     </div>
                     <div class="form-group col-sm-3">
                         <label for="ap-materno">De 2 a 5 años</label>
-                        <input type="text" class="form-control" id="ap-paterno" name="ap-paterno">
+                        <input type="number" class="form-control" ng-model="parametros.antiguedad_dos_cinco">
                     </div>
                     <div class="form-group col-sm-3">
                         <label for="ap-materno">De 5 a 8 años</label>
-                        <input type="text" class="form-control" id="ap-paterno" name="ap-paterno">
+                        <input type="number" class="form-control" ng-model="parametros.antiguedad_cinco_ocho">
                     </div>
                     <div class="form-group col-sm-3">
                         <label for="ap-materno">De 8 a 11 años</label>
-                        <input type="text" class="form-control" id="ap-paterno" name="ap-paterno">
+                        <input type="number" class="form-control" ng-model="parametros.antiguedad_ocho_once">
                     </div>
                 </div>
                 <div class="row">
                     <div class="form-group col-sm-3">
                         <label for="ap-materno">De 11 a 15 años</label>
-                        <input type="text" class="form-control" id="ap-paterno" name="ap-paterno">
+                        <input type="number" class="form-control" ng-model="parametros.antiguedad_once_quince">
                     </div>
                     <div class="form-group col-sm-3">
                         <label for="ap-materno">De 15 a 20 años</label>
-                        <input type="text" class="form-control" id="ap-paterno" name="ap-paterno">
+                        <input type="number" class="form-control" ng-model="parametros.antiguedad_quice_veinte">
                     </div>
                     <div class="form-group col-sm-3">
                         <label for="ap-materno">De 20 a 25 años</label>
-                        <input type="text" class="form-control" id="ap-paterno" name="ap-paterno">
+                        <input type="number" class="form-control" ng-model="parametros.antiguedad_veinte_veinticinco">
                     </div>
                     <div class="form-group col-sm-3">
                         <label for="ap-materno">Más de 25 años</label>
-                        <input type="text" class="form-control" id="ap-paterno" name="ap-paterno">
+                        <input type="number" class="form-control" ng-model="parametros.antiguedad_mas_veinticinco">
                     </div>
                 </div>
              
 
-            </form>
+            
         </div><!-- /.row -->
         <div class="row">
             <div class="modal-footer wizard-actions">
                 
-                <button class="btn btn-primary btn-sm" ng-click="cerrarDialogParametros()"><i class="glyphicon glyphicon-floppy-disk"></i>Guardar
+                <button class="btn btn-primary btn-sm" type="submit"><i class="glyphicon glyphicon-floppy-disk"></i>Guardar
                 </button>
-                <button class="btn btn-danger btn-sm" ng-click="cerrarDialogParametros()"><i class="ace-icon fa fa-times"></i>Cancelar
+                <button class="btn btn-danger btn-sm" type="button" ng-click="cerrarDialogParametros()"><i class="ace-icon fa fa-times"></i>Cancelar
                 </button>
             </div>
         </div>
+        </form>
     </div>
     <!--- ==== fin modal parametros  ================================ -->
      <!-- =========  dialog TR3 ==========  -->
@@ -848,4 +828,14 @@
         </div>
     </div>
     <!--- ==== fin modal historial TR3  ================================ -->
+
+    <div id="dialog-eliminar-salario-empleado" title="¿Eliminación de sueldo?">
+        <p>
+            <span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>¿Esta seguro de eliminar el sueldo seleccionado de
+            <b>{{empleado.persona.nombre_completo}}</b>?
+            
+        </p>
+        <button type="button" class="btn btn-danger" ng-click="eliminarSueldoEmpleado(index, empleado)">Si</button>
+        <button type="button" class="btn btn-success" ng-click="cerrarDialogEliminarSueldoEmpleado()">No</button>
+    </div>
 </div>

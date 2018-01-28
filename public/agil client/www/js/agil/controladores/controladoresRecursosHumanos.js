@@ -1,8 +1,9 @@
 angular.module('agil.controladores')
 
     .controller('ControladorRecursosHumanos', function ($scope, $sce, $localStorage, $location, $templateCache, $route, blockUI, ListaDatosGenero, NuevoRecursoHumano, RecursosHumanosPaginador, Paginator,
-        FieldViewer, PacientesEmpresa, obtenerEmpleadoRh, UsuarioRecursosHUmanosActivo, Prerequisito, ListaDatosPrerequisito, Prerequisitos, ListaPrerequisitosPaciente, ActualizarPrerequisito, UsuarioRecursosHumanosFicha,
-        ClasesTipo, Clases, Paises, CrearEmpleadoFicha, EliminarOtroSeguroRh, EliminarFamiliarRh, PrerequisitoPaciente, PrerequisitosHistorial, UsuarioRhHistorialFicha, ObtenerEmpleadoHojaVida, GuardarEmpleadoHojaVida, CrearPrestamo, ObtenerListaPrestamo, CrearRolTurno, CrearPagoPrestamo,VerificarUsuarioEmpresa,EditarPrestamo,ListaEmpleadosRrhh) {
+        FieldViewer, EmpleadoEmpresa, obtenerEmpleadoRh, UsuarioRecursosHUmanosActivo, Prerequisito, ListaDatosPrerequisito, Prerequisitos, ListaPrerequisitosPaciente, ActualizarPrerequisito, UsuarioRecursosHumanosFicha,
+        ClasesTipo, Clases, Paises, CrearEmpleadoFicha, EliminarOtroSeguroRh, EliminarFamiliarRh, PrerequisitoPaciente, PrerequisitosHistorial, UsuarioRhHistorialFicha, ObtenerEmpleadoHojaVida, GuardarEmpleadoHojaVida, CrearPrestamo,
+        ObtenerListaPrestamo, CrearRolTurno, CrearPagoPrestamo, VerificarUsuarioEmpresa, EditarPrestamo, ListaEmpleadosRrhh, CrearHorasExtra,HistorialHorasExtra) {
         $scope.usuario = JSON.parse($localStorage.usuario);
         $scope.idModalPrerequisitos = 'dialog-pre-requisitos';
         $scope.idModalEmpleado = 'dialog-empleado';
@@ -109,7 +110,7 @@ angular.module('agil.controladores')
                 $scope.idModalHistorialViajes, $scope.idModalReporteAusencias, $scope.idModalCertificado, $scope.idModalInstitucion,
                 $scope.idModalRhNuevo, $scope.idModalWizardRhNuevo, $scope.idImagenUsuario, $scope.idEliminarUsuarioRh, $scope.idModalWizardRhVista,
                 $scope.idModalContenedorRhVista, $scope.idModalDialogPrerequisitoNuevo, $scope.idEliminarSeguroEmpleado, $scope.idEliminarFamiliarEmpleado, $scope.idModalHistorialPrerequisito,
-                $scope.idModalEditarPrerequisito, $scope.idModalDialogConfirmacionEntregaAdelantado, $scope.IdEntregaPrerequisito,$scope.IdModalVerificarCuenta);
+                $scope.idModalEditarPrerequisito, $scope.idModalDialogConfirmacionEntregaAdelantado, $scope.IdEntregaPrerequisito, $scope.IdModalVerificarCuenta);
             $scope.buscarAplicacion($scope.usuario.aplicacionesUsuario, $location.path().substring(1));
             $scope.obtenerColumnasAplicacion()
             blockUI.stop();
@@ -192,7 +193,7 @@ angular.module('agil.controladores')
             $scope.eliminarPopup($scope.idModalDialogConfirmacionEntregaAdelantado)
             $scope.eliminarPopup($scope.IdEntregaPrerequisito)
             $scope.eliminarPopup($scope.IdModalVerificarCuenta)
-            
+
         });
         $scope.inicio = function () {
 
@@ -201,7 +202,7 @@ angular.module('agil.controladores')
             /*   $scope.obtenerPrerequisito(); */
             $scope.recuperarDatosTipo()
             $scope.obtenerCentroCostos()
-
+            $scope.empleadosSeleccionados = []
         }
 
 
@@ -364,8 +365,8 @@ angular.module('agil.controladores')
         $scope.cerrarDialogEliminarUsuarioRh = function () {
             $scope.cerrarPopup($scope.idEliminarUsuarioRh);
         }
-        $scope.abrirDialogEliminarUsuarioRh = function () {
-
+        $scope.abrirDialogEliminarUsuarioRh = function (empleado) {
+            $scope.empleado = empleado
             $scope.abrirPopup($scope.idEliminarUsuarioRh);
         }
         $scope.cerrarDialogEliminarSeguroEmpleado = function () {
@@ -646,7 +647,7 @@ angular.module('agil.controladores')
         }
         $scope.abrirDialogNuevoPrestamo = function (empleado) {
             $scope.empleado = empleado
-            if (empleado.ficha) {
+            if (empleado.ficha.haber_basico) {
                 $scope.abrirPopup($scope.idModalNuevoPrestamo);
             } else {
                 $scope.mostrarMensaje("No cuenta con haber basico actualizar ficha empleado!")
@@ -966,13 +967,18 @@ angular.module('agil.controladores')
         $scope.cerrarDialogHistorialTurnos = function () {
             $scope.cerrarPopup($scope.idModalHistorialTurnos);
         }
-        $scope.abrirDialogHorasExtras = function () {
+        $scope.abrirDialogHorasExtras = function (empleado) {
+            $scope.empleado = empleado
+            var fecha = new Date()
+            $scope.horaExtra={fecha:$scope.fechaATexto(fecha)}
             $scope.abrirPopup($scope.idModalHorasExtras);
         }
         $scope.cerrarDialogHorasExtras = function () {
             $scope.cerrarPopup($scope.idModalHorasExtras);
         }
         $scope.abrirDialogHistorialHorasExtras = function () {
+            var filtroHorasExtra={inicio:"",fin:""}
+            $scope.obtenerHistorialHorasExtra(filtroHorasExtra)
             $scope.abrirPopup($scope.idModalHistorialHorasExtras);
         }
         $scope.cerrarDialogHistorialHorasExtras = function () {
@@ -998,9 +1004,21 @@ angular.module('agil.controladores')
                     prestamo.saldo = prestamo.monto
                     prestamo.pago = 0
                     if (index === (array.length - 1)) {
-                        $scope.listaPrestamos = datos.prestamos
+
+                        datos.prestamos.forEach((prestamo, index, array) => {
+                            if (prestamo.prestamoPagos.length > 0) {
+                                if (prestamo.prestamoPagos[(prestamo.prestamoPagos.length - 1)].saldo_anterior == 0) {
+                                    prestamo.pagadoTotal = true
+                                }
+                            } else {
+                                prestamo.pagadoTotal = false
+                            }
+                            if (index === (array.length - 1)) {
+                                $scope.listaPrestamos = datos.prestamos
+                            }
+                        });
                     }
-                    prestamo.montoEdit=false
+                    prestamo.montoEdit = false
                 });
             })
         }
@@ -1008,18 +1026,18 @@ angular.module('agil.controladores')
             blockUI.start();
             $scope.paginator = Paginator();
             $scope.paginator.column = "fecha_inicial";
-            $scope.paginator.direccion = "asc";           
-            $scope.filtro = { empresa: $scope.usuario.id_empresa, plazo: "", inicio: "", fin: "", nombre: ""};
+            $scope.paginator.direccion = "asc";
+            $scope.filtro = { empresa: $scope.usuario.id_empresa, plazo: "", inicio: "", fin: "", nombre: "" };
             $scope.paginator.callBack = $scope.optenerListaPrestamos;
             $scope.paginator.getSearch("", $scope.filtro, null);
             blockUI.stop();
 
-       }
-       $scope.borrarFechas=function (filtro) {
-           filtro.fin=""
-           filtro.inicio=""
-           $scope.paginator.getSearch("", $scope.filtro, null);
-       }
+        }
+        $scope.borrarFechas = function (filtro) {
+            filtro.fin = ""
+            filtro.inicio = ""
+            $scope.paginator.getSearch("", $scope.filtro, null);
+        }
         $scope.cerrarDialogPrestamosPersonal = function () {
             $scope.cerrarPopup($scope.idModalPrestamosPersonal);
         }
@@ -1206,7 +1224,7 @@ angular.module('agil.controladores')
             blockUI.stop();
 
         }
-        $scope.buscarRecursosHumanos = function () {
+        $scope.buscarRecursosHumanos = function (seleccionar, empleado, todos, model) {
             blockUI.start();
 
             var promesa = RecursosHumanosPaginador($scope.paginator);
@@ -1216,7 +1234,24 @@ angular.module('agil.controladores')
 
                 $scope.RecursosHumanosEmpleados.forEach(function (empleado) {
                     empleado.activo = (empleado.activo == 0) ? false : true
+
                 });
+                if (seleccionar) {
+                    if (todos) {
+                        $scope.RecursosHumanosEmpleados.forEach(function (empleado, index, array) {
+                            if (model == false) {
+                                empleado.select = false
+                                $scope.empleadosSeleccionados = []
+                            } else {
+
+                                empleado.select = true
+                                $scope.empleadosSeleccionados.push(empleado)
+                                console.log($scope.empleadosSeleccionados)
+
+                            }
+                        });
+                    }
+                }
                 console.log($scope.RecursosHumanosEmpleados[0])
                 blockUI.stop();
             });
@@ -1247,7 +1282,7 @@ angular.module('agil.controladores')
                         paciente.nombres = worksheet['D' + row] != undefined && worksheet['D' + row] != "" ? worksheet['D' + row].v.toString() : null;
                         paciente.ci = worksheet['E' + row] != undefined && worksheet['E' + row] != "" ? worksheet['E' + row].v.toString() : null;
                         paciente.extension = worksheet['F' + row] != undefined && worksheet['F' + row] != "" ? worksheet['F' + row].v.toString() : null;
-                        paciente.grupo_sanguineo = worksheet['G' + row] != undefined && worksheet['G' + row] != "" ? worksheet['G' + row].v.toString() : null;
+                        paciente.contrato = worksheet['G' + row] != undefined && worksheet['G' + row] != "" ? worksheet['G' + row].v.toString() : null;
                         paciente.fecha_nacimiento = worksheet['H' + row] != undefined && worksheet['H' + row] != "" ? $scope.fecha_excel_angular(worksheet['H' + row].v.toString()) : null;
                         paciente.genero = worksheet['I' + row] != undefined && worksheet['I' + row] != "" ? worksheet['I' + row].v.toString() : null;
                         paciente.telefono = worksheet['J' + row] != undefined && worksheet['J' + row] != "" ? worksheet['J' + row].v.toString() : null;
@@ -1281,9 +1316,8 @@ angular.module('agil.controladores')
             }
         }
         $scope.GuardarEmpleadosRh = function (lstpacientes) {
-            var pacientesEmpresa = new PacientesEmpresa({ pacientes: lstpacientes, id_empresa: $scope.usuario.id_empresa });
-            pacientesEmpresa.$save(function (res) {
-
+            var empleadoEmpresa = new EmpleadoEmpresa({ pacientes: lstpacientes, id_empresa: $scope.usuario.id_empresa });
+            empleadoEmpresa.$save(function (res) {
                 $scope.mostrarMensaje(res.mensaje);
                 $scope.recargarItemsTabla();
             })
@@ -1325,10 +1359,11 @@ angular.module('agil.controladores')
         }
         $scope.EliminarUsuarioRh = function (empleado) {
             console.log(empleado)
-            empleado.activo = false
+            empleado.activo = (empleado.activo == true) ? false : true
             var promesa = UsuarioRecursosHUmanosActivo(empleado)
             promesa.then(function (dato) {
                 $scope.cerrarDialogEliminarUsuarioRh()
+                $scope.recargarItemsTabla()
                 $scope.mostrarMensaje(dato.mensaje)
             })
         }
@@ -2145,12 +2180,25 @@ angular.module('agil.controladores')
 
                 var button = $('#siguiente-f').text().trim();
                 if (button != "Siguiente") {
-                    ficha.empleado.persona.fecha_nacimiento = new Date(ficha.nac_anio, parseInt(ficha.nac_mes.id), parseInt(ficha.nac_dia))
-                    ficha.fecha_elaboracion = new Date($scope.convertirFecha(ficha.fecha_elaboracion));
-                    ficha.fecha_inicio2 = new Date($scope.convertirFecha(ficha.fecha_inicio2));
-                    ficha.fecha_fin2 = new Date($scope.convertirFecha(ficha.fecha_fin2));
-                    ficha.fecha_jubilacion = new Date($scope.convertirFecha(ficha.fecha_jubilacion));
-                    ficha.empleado.fecha_vence_documento = new Date($scope.convertirFecha(ficha.empleado.fecha_vence_documento));
+                    if (ficha.empleado.persona.fecha_nacimiento) {
+                        ficha.empleado.persona.fecha_nacimiento = new Date(ficha.nac_anio, parseInt(ficha.nac_mes.id), parseInt(ficha.nac_dia))
+                    }
+                    if (ficha.fecha_elaboracion) {
+                        ficha.fecha_elaboracion = new Date($scope.convertirFecha(ficha.fecha_elaboracion));
+                    }
+                    if (ficha.fecha_inicio2) {
+                        ficha.fecha_inicio2 = new Date($scope.convertirFecha(ficha.fecha_inicio2));
+                    }
+                    if (ficha.fecha_fin2) {
+                        ficha.fecha_fin2 = new Date($scope.convertirFecha(ficha.fecha_fin2));
+                    }
+                    if (ficha.fecha_jubilacion) {
+                        ficha.fecha_jubilacion = new Date($scope.convertirFecha(ficha.fecha_jubilacion));
+                    }
+                    if (ficha.empleado.fecha_vence_documento) {
+                        ficha.empleado.fecha_vence_documento = new Date($scope.convertirFecha(ficha.empleado.fecha_vence_documento));
+                    }
+
                     var promesa = CrearEmpleadoFicha(ficha);
                     promesa.then(function (dato) {
                         $scope.cerrarDialogEmpleado()
@@ -2483,8 +2531,6 @@ angular.module('agil.controladores')
         $scope.calcularCuota = function (prestamo) {
             var cuotaSinInteres = prestamo.monto / prestamo.plazo
             var interes = (cuotaSinInteres * prestamo.interes_pactado) / 100
-            console.log(interes)
-            console.log(cuotaSinInteres)
             prestamo.cuota = cuotaSinInteres + interes
             var años = 0;
             var meses = 0;
@@ -2505,26 +2551,29 @@ angular.module('agil.controladores')
         }
         $scope.GuardarPrestamo = function (prestamo) {
             prestamo.id_usuario = $scope.usuario.id
-            prestamo.fecha_inicial = $scope.convertirFecha(prestamo.fecha_inicial)
+            prestamo.fecha_inicial = new Date($scope.convertirFecha(prestamo.fecha_inicial))
             prestamo.total = ((prestamo.monto * prestamo.interes_pactado) / 100) + prestamo.monto
             var promesa = CrearPrestamo($scope.empleado.id, prestamo)
             promesa.then(function (datos) {
                 $scope.imprimirPrestamo(prestamo)
                 $scope.cerrarDialogNuevoPrestamo()
+               prestamo={}
                 $scope.mostrarMensaje(datos.mensaje)
             })
 
         }
         $scope.GuardarMultiplesPrestamos = function (prestamo) {
-            var idEmpleado=0
+            var idEmpleado = 0
             prestamo.id_usuario = $scope.usuario.id
             prestamo.fecha_inicial = $scope.convertirFecha(prestamo.fecha_inicial)
-            prestamo.total = ((prestamo.monto * prestamo.interes_pactado) / 100) + prestamo.monto           
+            prestamo.total = ((prestamo.monto * prestamo.interes_pactado) / 100) + prestamo.monto
             var promesa = CrearPrestamo(idEmpleado, prestamo)
-            promesa.then(function (datos) {   
+            promesa.then(function (datos) {
                 $scope.cerrarDialogPretamosNuevoTodos()
                 $scope.optenerListaPrestamos()
+                prestamo={}
                 $scope.mostrarMensaje(datos.mensaje)
+                $scope.prestamo = {}
             })
 
         }
@@ -2574,53 +2623,83 @@ angular.module('agil.controladores')
             });
         }
         $scope.GuardarPagoPrestamo = function (pago) {
-            var promesa = CrearPagoPrestamo($scope.usuario.id, $scope.prestamo.id, pago)
-            promesa.then(function (datos) {
-                //$scope.imprimirPrestamo(prestamo)
-                $scope.cerrarDialogPagoPrestamo()
-                $scope.optenerListaPrestamos()
-                $scope.mostrarMensaje(datos.mensaje)
-            })
+            if ($scope.prestamo.prestamoPagos.length > 0) {
+                var saldoAnterior = $scope.prestamo.prestamoPagos[($scope.prestamo.prestamoPagos.length - 1)].saldo_anterior
+                if (pago.monto_pagado <= saldoAnterior) {
+                    var promesa = CrearPagoPrestamo($scope.usuario.id, $scope.prestamo.id, pago)
+                    promesa.then(function (datos) {
+                        //$scope.imprimirPrestamo(prestamo)
+                        $scope.cerrarDialogPagoPrestamo()
+                        $scope.optenerListaPrestamos()
+                        
+                        $scope.mostrarMensaje(datos.mensaje)
+                    })
+                } else {
+                    $scope.mostrarMensaje("el monto no puede ser mayor al saldo")
+                }
+            } else {
+                if (pago.monto_pagado <= $scope.prestamo.total) {
+                    var promesa = CrearPagoPrestamo($scope.usuario.id, $scope.prestamo.id, pago)
+                    promesa.then(function (datos) {
+                        //$scope.imprimirPrestamo(prestamo)
+                        $scope.cerrarDialogPagoPrestamo()
+                        $scope.optenerListaPrestamos()
+                        $scope.mostrarMensaje(datos.mensaje)
+                    })
+                } else {
+                    $scope.mostrarMensaje("el monto no puede ser mayor al saldo")
+                }
+            }
         }
 
         $scope.abrirModalVerificarCuenta = function (prestamo) {
             $scope.dato = prestamo
             $scope.abrirPopup($scope.IdModalVerificarCuenta);
         }
-        $scope.cerrarModalVerificarCuenta = function () {           
+        $scope.cerrarModalVerificarCuenta = function () {
             $scope.cerrarPopup($scope.IdModalVerificarCuenta);
         }
-        $scope.EditarMontoPrestamo=function (prestamo) {
-            prestamo.montoEdit=false
+        $scope.EditarMontoPrestamo = function (prestamo) {
+            prestamo.montoEdit = false
             prestamo.total = ((prestamo.monto * prestamo.interes_pactado) / 100) + prestamo.monto
-            prestamo.prestamoPagos.forEach(function(pago,index,array) {
-                pago.saldo_anterior=prestamo.total-pago.a_cuenta_anterior
-                if(index===(array.length-1)){
-                    var promesa = EditarPrestamo(prestamo)
-                    promesa.then(function (dato) {
-                        $scope.mostrarMensaje(dato.mensaje)
-                    })
-                }                
-            });
+            var cuotaSinInteres = prestamo.monto / prestamo.plazo
+            var interes = (cuotaSinInteres * prestamo.interes_pactado) / 100
+            prestamo.cuota = cuotaSinInteres + interes
+            if (prestamo.prestamoPagos.length > 0) {
+                prestamo.prestamoPagos.forEach(function (pago, index, array) {
+                    pago.saldo_anterior = prestamo.total - pago.a_cuenta_anterior
+                    if (index === (array.length - 1)) {
+                        var promesa = EditarPrestamo(prestamo)
+                        promesa.then(function (dato) {
+                            $scope.mostrarMensaje(dato.mensaje)
+                        })
+                    }
+                });
+            } else {
+                var promesa = EditarPrestamo(prestamo)
+                promesa.then(function (dato) {
+                    $scope.mostrarMensaje(dato.mensaje)
+                })
+            }
         }
-        $scope.CancelarEditMontoPrestamo=function (prestamo) {
+        $scope.CancelarEditMontoPrestamo = function (prestamo) {
             $scope.optenerListaPrestamos()
         }
-      
-        $scope.verificarCuentaAdmin = function (cuenta) {            
+
+        $scope.verificarCuentaAdmin = function (cuenta) {
             VerificarUsuarioEmpresa.save({ id_empresa: $scope.usuario.id_empresa }, cuenta, function (dato) {
                 console.log(dato)
                 if (dato.type) {
                     $scope.mostrarMensaje(dato.message)
-                    /*  cuenta.abierto= cuenta.abierto; */                   
-                   if (!$scope.dato.montoEdit) {
-                        $scope.dato.montoEdit=true                     
-                     } else {
-                        $scope.dato.montoEdit=false                      
+                    /*  cuenta.abierto= cuenta.abierto; */
+                    if (!$scope.dato.montoEdit) {
+                        $scope.dato.montoEdit = true
+                    } else {
+                        $scope.dato.montoEdit = false
                     }
                     $scope.cerrarModalVerificarCuenta();
-                } else {                                        
-                    $scope.mostrarMensaje(dato.message)    
+                } else {
+                    $scope.mostrarMensaje(dato.message)
                 }
             })
 
@@ -2628,11 +2707,11 @@ angular.module('agil.controladores')
 
 
         }
-        $scope.obtenerListaEmpleados=function () {
+        $scope.obtenerListaEmpleados = function () {
             var promesa = ListaEmpleadosRrhh($scope.usuario.id_empresa)
             promesa.then(function (dato) {
                 $scope.llenarEmpleados(dato.empleados)
-                
+
             })
         }
         $scope.llenarEmpleados = function (empleados) {
@@ -2645,6 +2724,18 @@ angular.module('agil.controladores')
                     id: empleados[i].id
                 }
                 $scope.todosLosEmpleados.push(empleado);
+                if (i === (empleados.length - 1)) {
+                    $scope.seleccionarEmpleados($scope.empleadosSeleccionados)
+                }
+            }
+        }
+        $scope.seleccionarEmpleados = function (empleados) {
+            for (var i = 0; i < $scope.todosLosEmpleados.length; i++) {
+                for (var j = 0; j < empleados.length; j++) {
+                    if (empleados[i].select) {
+                        $scope.todosLosEmpleados[i].ticked = true;
+                    }
+                }
             }
         }
         //fin prestamos
@@ -2655,11 +2746,98 @@ angular.module('agil.controladores')
             var promesa = CrearRolTurno($scope.empleado.id, rolTurno)
             promesa.then(function (datos) {
                 //$scope.imprimirPrestamo(prestamo)
+                rolTurno={}
                 $scope.cerrarDialogRolTurnos()
                 $scope.mostrarMensaje(datos.mensaje)
             })
         }
         //fin rol turno
+
+        //inicio horas extra
+        $scope.guardarHorasExtra = function (horasExtra) {
+            horasExtra.fecha=new Date($scope.convertirFecha(horasExtra.fecha))
+            horasExtra.hora_inicio2 = $scope.fechaATiempo(horasExtra.hora_inicio)
+            horasExtra.hora_fin2=$scope.fechaATiempo(horasExtra.hora_fin)
+            var promesa = CrearHorasExtra($scope.empleado.id,horasExtra)
+            promesa.then(function (datos) {
+                $scope.cerrarDialogHorasExtras()
+                $scope.horaExtra={}
+                $scope.mostrarMensaje(datos.mensaje)
+            })
+        }
+        $scope.calcularTiempoHorasExtra = function (horasExtra) {
+            console.log(horasExtra)
+            if(horasExtra.hora_inicio instanceof Date && horasExtra.hora_fin instanceof Date){
+            var horaInicio = horasExtra.hora_inicio.getHours()
+            var horafin = horasExtra.hora_fin.getHours()
+            if (horaInicio < horafin) {
+                var fechaInicioTexto = moment(horasExtra.hora_inicio).format('YYYY-MM-DD HH:mm:ss');
+                var fechaFinTexto = moment(horasExtra.hora_fin).format('YYYY-MM-DD HH:mm:ss');
+                var fecha1 = moment(fechaInicioTexto, "YYYY-MM-DD HH:mm:ss");
+                var fecha2 = moment(fechaFinTexto, "YYYY-MM-DD HH:mm:ss");
+                var diff = fecha2.diff(fecha1, 's');
+                horasExtra.tiempo = $scope.caluclarDiferencia(diff)
+            }
+        }
+        }
+
+        $scope.fechaATiempo= function (fecha) {
+            var hours = fecha.getHours();
+            var minutes =  fecha.getMinutes();
+            var seconds =  fecha.getSeconds();
+            hours = hours < 10 ? '0' + hours : hours;
+            minutes = minutes < 10 ? '0' + minutes : minutes;
+            //Anteponiendo un 0 a los segundos si son menos de 10 
+            seconds = seconds < 10 ? '0' + seconds : seconds;           
+            return hours + ":" + minutes + ":" + seconds;  // 2:41:30
+        }
+        $scope.caluclarDiferencia = function (time) {
+            var hours = Math.floor(time / 3600);
+            var minutes = Math.floor((time % 3600) / 60);
+            var seconds = time % 60
+            //Anteponiendo un 0 a los minutos si son menos de 10 
+            minutes = minutes < 10 ? '0' + minutes : minutes;
+            //Anteponiendo un 0 a los segundos si son menos de 10 
+            seconds = seconds < 10 ? '0' + seconds : seconds;           
+            return hours + ":" + minutes + ":" + seconds;  // 2:41:30
+        }
+
+        $scope.obtenerHistorialHorasExtra= function (filtroHorasExtra) {
+            var filtro={}
+            filtro.inicio=(filtroHorasExtra.inicio.length==10)? new Date($scope.convertirFecha(filtroHorasExtra.inicio)):0
+            filtro.fin=(filtroHorasExtra.fin.length==10)? new Date($scope.convertirFecha(filtroHorasExtra.fin)):0    
+            var promesa = HistorialHorasExtra($scope.empleado.id,filtro)
+            promesa.then(function (dato) {
+                $scope.ListaHorasExtraEmpleado=dato
+            })
+        }
+        //fin horas extra
+
+        //selecionar empleados
+
+        $scope.selecionarEmpleados = function (empleado, todos, model) {
+            if (model) {
+                $scope.paginator.itemsPerPage = "0";
+                $scope.empleadosSeleccionados = []
+            } else {
+                $scope.paginator.itemsPerPage = "10";
+            }
+            if (todos) {
+                $scope.buscarRecursosHumanos(true, empleado, todos, model)
+            } else {
+                if (empleado.select == false) {
+                    empleado.select = false
+                    $scope.empleadosSeleccionados.splice($scope.empleadosSeleccionados.indexOf(empleado))
+                } else {
+                    empleado.select = true
+                    $scope.empleadosSeleccionados.push(empleado)
+                    console.log($scope.empleadosSeleccionados)
+                }
+
+            }
+        }
+
+        //fin seleccion empleados
 
         $scope.inicio()
 

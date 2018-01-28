@@ -1,5 +1,5 @@
 module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente, Persona, Empresa, Sucursal, Clase, Diccionario, Tipo, decodeBase64Image, fs, RrhhEmpleadoFicha, RrhhEmpleadoFichaOtrosSeguros, RrhhEmpleadoFichaFamiliar, RrhhEmpleadoDiscapacidad
-    , RrhhEmpleadoCargo, RrhhEmpleadoHojaVida, RrhhEmpleadoFormacionAcademica, RrhhEmpleadoExperienciaLaboral, RrhhEmpleadoLogroInternoExterno, RrhhEmpleadoCapacidadInternaExterna, NumeroLiteral, RrhhEmpleadoPrestamo, RrhhEmpleadoPrestamoPago) {
+    , RrhhEmpleadoCargo, RrhhEmpleadoHojaVida, RrhhEmpleadoFormacionAcademica, RrhhEmpleadoExperienciaLaboral, RrhhEmpleadoLogroInternoExterno, RrhhEmpleadoCapacidadInternaExterna, NumeroLiteral, RrhhEmpleadoPrestamo, RrhhEmpleadoPrestamoPago, RrhhEmpleadoRolTurno, RrhhEmpleadoHorasExtra) {
     router.route('/recursos-humanos/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion/codigo/:codigo/nombres/:nombres/ci/:ci/campo/:campo/cargo/:cargo/busquedaEmpresa/:busquedaEmpresa/grupo/:grupo_sanguineo/estado/:estado')
         .get(function (req, res) {
             var condicion = ""
@@ -51,11 +51,13 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
             if (req.params.estado != "0") {
                 if (req.params.estado === 'Inactivo') {
 
-                    activo = "false"
+                    activo = " AND agil_medico_paciente.eliminado = false"
 
                 } else {
-                    activo = "true"
+                    activo = " AND agil_medico_paciente.eliminado = true"
                 }
+            } else {
+                activo = ""
             }
             if (req.params.texto_busqueda != "0") {
                 if (condicion.length > 1) {
@@ -78,7 +80,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                 gl_persona.telefono as 'telefono', gl_persona.telefono_movil as 'telefono_movil', gl_persona.fecha_nacimiento as 'fecha_nacimiento'\
                 from agil_medico_paciente "+ condicionContrato + " INNER JOIN agil_rrhh_empleado_cargo AS cargos ON agil_medico_paciente.id = cargos.empleado " + condicionCargo + " \
                 LEFT OUTER JOIN gl_clase AS `cargos.cargo` ON cargos.cargo = `cargos.cargo`.id INNER JOIN gl_persona ON (agil_medico_paciente.persona = gl_persona.id) INNER JOIN gl_clase ON (agil_medico_paciente.extension = gl_clase.id)\
-                where agil_medico_paciente.empresa = "+ req.params.id_empresa + " AND agil_medico_paciente.eliminado = " + activo + " AND (" + condicion + ") \
+                where agil_medico_paciente.empresa = "+ req.params.id_empresa + activo + " AND (" + condicion + ") \
                 GROUP BY agil_medico_paciente.id order by "+ req.params.columna + " " + req.params.direccion, { type: sequelize.QueryTypes.SELECT })
                     .then(function (data) {
                         var options = {
@@ -95,7 +97,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                     gl_persona.telefono as 'telefono', gl_persona.telefono_movil as 'telefono_movil', gl_persona.fecha_nacimiento as 'fecha_nacimiento'\
                     from agil_medico_paciente "+ condicionContrato + " INNER JOIN agil_rrhh_empleado_cargo AS cargos ON agil_medico_paciente.id = cargos.empleado " + condicionCargo + " \
                     LEFT OUTER JOIN gl_clase AS `cargos.cargo` ON cargos.cargo = `cargos.cargo`.id INNER JOIN gl_persona ON (agil_medico_paciente.persona = gl_persona.id) INNER JOIN gl_clase ON (agil_medico_paciente.extension = gl_clase.id)\
-                    where agil_medico_paciente.empresa = "+ req.params.id_empresa + " AND agil_medico_paciente.eliminado = " + activo + " AND (" + condicion + ") \
+                    where agil_medico_paciente.empresa = "+ req.params.id_empresa + activo + " AND (" + condicion + ") \
                     GROUP BY agil_medico_paciente.id order by "+ req.params.columna + " " + req.params.direccion + limite, options)
                             .then(function (pacientes) {
                                 var a = ""
@@ -140,7 +142,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                 gl_persona.telefono as 'telefono', gl_persona.telefono_movil as 'telefono_movil', gl_persona.fecha_nacimiento as 'fecha_nacimiento'\
                 from agil_medico_paciente "+ condicionContrato + " INNER JOIN agil_rrhh_empleado_cargo AS cargos ON agil_medico_paciente.id = cargos.empleado " + condicionCargo + " \
                 LEFT OUTER JOIN gl_clase AS `cargos.cargo` ON cargos.cargo = `cargos.cargo`.id INNER JOIN gl_persona ON (agil_medico_paciente.persona = gl_persona.id) INNER JOIN gl_clase ON (agil_medico_paciente.extension = gl_clase.id)\
-                where agil_medico_paciente.empresa = "+ req.params.id_empresa + " AND agil_medico_paciente.eliminado = " + activo + " AND agil_medico_paciente.es_empleado = true GROUP BY agil_medico_paciente.id order by " + req.params.columna + " " + req.params.direccion, { type: sequelize.QueryTypes.SELECT })
+                where agil_medico_paciente.empresa = "+ req.params.id_empresa + activo + " AND agil_medico_paciente.es_empleado = true GROUP BY agil_medico_paciente.id order by " + req.params.columna + " " + req.params.direccion, { type: sequelize.QueryTypes.SELECT })
                     .then(function (data) {
                         var options = {
                             model: MedicoPaciente,
@@ -156,7 +158,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                     gl_persona.telefono as 'telefono', gl_persona.telefono_movil as 'telefono_movil', gl_persona.fecha_nacimiento as 'fecha_nacimiento'\
                     from agil_medico_paciente "+ condicionContrato + " INNER JOIN agil_rrhh_empleado_cargo AS cargos ON agil_medico_paciente.id = cargos.empleado " + condicionCargo + " \
                     LEFT OUTER JOIN gl_clase AS `cargos.cargo` ON cargos.cargo = `cargos.cargo`.id INNER JOIN gl_persona ON (agil_medico_paciente.persona = gl_persona.id) INNER JOIN gl_clase ON (agil_medico_paciente.extension = gl_clase.id)\
-                    where agil_medico_paciente.empresa = "+ req.params.id_empresa + " AND agil_medico_paciente.eliminado = " + activo + " AND agil_medico_paciente.es_empleado = true GROUP BY agil_medico_paciente.id order by " + req.params.columna + " " + req.params.direccion + limite, options)
+                    where agil_medico_paciente.empresa = "+ req.params.id_empresa + activo + " AND agil_medico_paciente.es_empleado = true GROUP BY agil_medico_paciente.id order by " + req.params.columna + " " + req.params.direccion + limite, options)
                             .then(function (pacientes) {
                                 var a = ""
                                 var arregloCargos = []
@@ -297,7 +299,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                                         id_empleado: medicoPacienteCreado.id,
                                         id_tipo_contrato: req.body.tipo_contrato.id,
                                     }).then(function (Creado) {
-                                        if (req.body.cargos.length > 0) {
+                                        if (req.body.cargos) {
                                             req.body.cargos.forEach(function (cargo, index, array) {
                                                 RrhhEmpleadoCargo.create({
                                                     id_empleado: medicoPacienteCreado.id,
@@ -436,7 +438,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                 eliminado: req.body.activo
             }, {
                     where: {
-                        id: mn
+                        id: req.body.id
                     }
                 }).then(function (personaActualizada) {
                     var mn = (req.body.activo == true) ? 'activo' : 'inactivo'
@@ -1144,7 +1146,8 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                         plazo: req.body.plazo,
                         observacion: req.body.observacion,
                         id_usuario: req.body.id_usuario,
-                        total: req.body.total
+                        total: req.body.total,
+                        cuota: req.body.cuota
                     }).then(function (empleadoPrestamoCreado) {
                         if (index === (array.length - 1)) {
                             res.json({ mensaje: "Prestamos guardados satisfactoriamente!" })
@@ -1160,7 +1163,8 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                     plazo: req.body.plazo,
                     observacion: req.body.observacion,
                     id_usuario: req.body.id_usuario,
-                    total: req.body.total
+                    total: req.body.total,
+                    cuota: req.body.cuota,
                 }).then(function (empleadoPrestamoCreado) {
                     res.json({ mensaje: "Guardado satisfactoriamente!" })
 
@@ -1174,20 +1178,24 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                 interes_pactado: req.body.interes_pactado,
                 plazo: req.body.plazo,
                 observacion: req.body.observacion,
-                total: req.body.total
+                total: req.body.total,
+                cuota: req.body.cuota
             }, {
                     where: { id: req.params.id_prestamo }
                 }).then(function (empleadoPrestamoCreado) {
-                    req.body.prestamoPagos.forEach(function (pago, index, array) {
-                        RrhhEmpleadoPrestamoPago.update({
-                            saldo_anterior: pago.saldo_anterior
-                        }, {
-                                where: { id: pago.id }
-                            }).then(function (params) {
-                                res.json({ mensaje: "Guardado satisfactoriamente!" })
-                            })
-                    });
-
+                    if (req.body.prestamoPagos.length > 0) {
+                        req.body.prestamoPagos.forEach(function (pago, index, array) {
+                            RrhhEmpleadoPrestamoPago.update({
+                                saldo_anterior: pago.saldo_anterior
+                            }, {
+                                    where: { id: pago.id }
+                                }).then(function (params) {
+                                    res.json({ mensaje: "Actualizado satisfactoriamente!" })
+                                })
+                        });
+                    } else {
+                        res.json({ mensaje: "Actualizado satisfactoriamente!" })
+                    }
 
                 })
         })
@@ -1291,13 +1299,284 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
         })
     router.route('/recursos-humanos/empleados/:id_empresa')
         .get(function (req, res) {
-
             MedicoPaciente.findAll({
-                where: { id_empresa: req.params.id_empresa, es_empleado: true },
+                where: { id_empresa: req.params.id_empresa, es_empleado: true, eliminado: false },
                 include: [{ model: Persona, as: 'persona' }]
             }).then(function (empleados) {
                 res.json({ empleados: empleados })
 
+            })
+        })
+    router.route('/recursos-humanos/rolTurno/empleado/:id_empleado')
+        .post(function (req, res) {
+            RrhhEmpleadoRolTurno.create({
+                id_empleado: req.params.id_empleado,
+                id_campo: req.body.campo.id,
+                fecha_inicio: req.body.fecha_inicio,
+                fecha_fin: req.body.fecha_fin,
+                tipo: req.body.tipo,
+                dias_trabajado: req.body.dias_trabajado,
+                dias_descanso: req.body.dias_descanso,
+                grupo: req.body.grupo,
+                eliminado: false
+            }).then(function (empleadoRolTurnoCreado) {
+                res.json({ mensaje: "Guardado satisfactoriamente!" })
+
+            })
+        })
+
+    router.route('/recursos-humanos/horas-extra/empleado/:id_empleado')
+        .post(function (req, res) {
+            RrhhEmpleadoHorasExtra.create({
+                id_empleado: req.params.id_empleado,
+                fecha: req.body.fecha,
+                hora_inicio: req.body.hora_inicio2,
+                hora_fin: req.body.hora_fin2,
+                tiempo: req.body.tiempo,
+                observacion: req.body.observacion,
+                eliminado: false
+            }).then(function (empleadohorasExtraCreado) {
+                res.json({ mensaje: "Guardado satisfactoriamente!" })
+            })
+        })
+    router.route('/recursos-humanos/horas-extra/empleado/:id_empleado/inicio/:inicio/fin/:fin')
+        .get(function (req, res) {
+            var condicionHorasExtra={id_empleado: req.params.id_empleado, eliminado: false };
+            if(req.params.inicio!=0){
+                var inicio= new Date(req.params.inicio);inicio.setHours(0,0,0,0,0);
+                var fin= new Date(req.params.fin);fin.setHours(23,0,0,0,0);
+                var condicionHorasExtra={id_empleado: req.params.id_empleado, eliminado: false,fecha: {$between: [inicio,fin]} };
+            }           
+            RrhhEmpleadoHorasExtra.findAll({
+                where: condicionHorasExtra,
+                include: [{ model: MedicoPaciente, as: 'empleado' }]
+            }).then(function (horasExtra) {
+                res.json(horasExtra)
+
+            })
+        })
+    router.route('/empleados/empresa/excel/upload')
+        .post(function (req, res) {
+            req.body.pacientes.forEach(function (pacienteActual, index, array) {
+                Clase.find({
+                    where: { nombre_corto: pacienteActual.genero }
+                }).then(function (generoEncontrado) {
+                    MedicoPaciente.find({
+                        where: { codigo: pacienteActual.codigo }
+                    }).then(function (pacienteFound) {
+                        // console.log(pacienteFound)
+                        if (pacienteFound != null) {
+                            var imagen;
+                            if (pacienteActual.imagen.indexOf('default') > -1) {
+                                imagen = pacienteActual.imagen;
+                            } else {
+                                var imagenPersona = decodeBase64Image(pacienteActual.imagen);
+                                fs.writeFileSync('./img/persona' + pacienteFound.id_persona + '.jpg', imagenPersona.data, 'base64', function (err) { });
+                                imagen = './img/persona' + pacienteFound.id_persona + '.jpg';
+                            }
+                            Persona.update({
+                                nombres: pacienteActual.nombres,
+                                apellido_paterno: pacienteActual.apellido_paterno,
+                                apellido_materno: pacienteActual.apellido_materno,
+                                ci: pacienteActual.ci,
+                                imagen: imagen,
+                                id_genero: generoEncontrado.id,
+                                nombre_completo: pacienteActual.nombres + ' ' + pacienteActual.apellido_paterno + ' ' + pacienteActual.apellido_materno,
+                                telefono: pacienteActual.telefono,
+                                telefono_movil: pacienteActual.telefono_movil,
+                                fecha_nacimiento: pacienteActual.fecha_nacimiento,
+                                activo: true,
+                            }, {
+                                    where: {
+                                        id: pacienteFound.id_persona
+                                    }
+                                }).then(function (personaActualizada) {
+                                    Tipo.find({
+                                        where: { nombre_corto: 'RRHH_EXP' }
+                                    }).then(function (tipoExp) {
+                                        var nombre_corto2 = pacienteActual.extension.substr(0, 3);
+                                        Clase.findOrCreate({
+                                            where: {
+                                                nombre: pacienteActual.extension,
+                                                id_tipo: tipoExp.dataValues.id,
+                                            },
+                                            defaults: {
+                                                id_tipo: tipoExp.dataValues.id,
+                                                nombre: pacienteActual.extension,
+                                                nombre_corto: nombre_corto2
+                                            }
+                                        }).spread(function (expClase, created) {
+                                            MedicoPaciente.update({
+                                                id_persona: personaActualizada.id,
+                                                id_empresa: req.body.id_empresa,
+                                                codigo: pacienteActual.codigo,
+                                                id_extension: expClase.id,
+                                                id_: pacienteActual.grupo_sanguineo,
+                                                cargo: pacienteActual.cargo,
+                                                campo: pacienteActual.campamento,
+                                                designacion_empresa: pacienteActual.designacion_empresa,
+                                                eliminado: pacienteActual.eliminado,
+                                                es_empleado: pacienteActual.es_empleado
+                                            }, {
+                                                    where: { id: pacienteFound.id }
+
+                                                }).then(function (medicoPacienteActualizado) {
+                                                    RrhhEmpleadoCargo.findAll({
+                                                        where: {
+                                                            id_empleado: pacienteFound.id,
+                                                        },
+                                                        include: [{ model: Clase, as: 'cargo', include: [{ model: Tipo, as: 'tipo' }] }]
+                                                    }).then(function (EmpleadoCargos) {
+                                                        var dato = 0;
+                                                        EmpleadoCargos.forEach(function (cargo, index, array) {
+                                                            var nombre_corto = pacienteActual.cargo.substr(0, 3);
+                                                            Clase.findOrCreate({
+                                                                where: {
+                                                                    nombre: pacienteActual.cargo,
+                                                                    id_tipo: cargo.dataValues.cargo.dataValues.tipo.dataValues.id,
+                                                                },
+                                                                defaults: {
+                                                                    id_tipo: cargo.dataValues.cargo.dataValues.tipo.dataValues.id,
+                                                                    nombre: pacienteActual.cargo,
+                                                                    nombre_corto: nombre_corto
+                                                                }
+                                                            }).spread(function (cargoClase, created) {
+                                                                RrhhEmpleadoCargo.findOrCreate({
+                                                                    where: {
+                                                                        id_empleado: pacienteFound.id,
+                                                                        id_cargo: cargoClase.id,
+                                                                    },
+                                                                    defaults: {
+                                                                        id_empleado: pacienteFound.id,
+                                                                        id_cargo: cargoClase.id,
+                                                                    }
+                                                                }).spread(function (cargoAc, created) {
+                                                                    if (index === (array.length - 1)) {
+                                                                        res.json({ mensaje: "¡Datos de pacientes actualizados satisfactoriamente!" });
+                                                                    }
+                                                                })
+                                                            })
+
+                                                        });
+                                                    })
+                                                })
+                                        })
+                                    })
+                                })
+                        } else {
+                            console.log('paciente nuevo')
+                            Persona.create({
+                                nombres: pacienteActual.nombres,
+                                apellido_paterno: pacienteActual.apellido_paterno,
+                                apellido_materno: pacienteActual.apellido_materno,
+                                ci: pacienteActual.ci,
+                                id_genero: generoEncontrado.id,
+                                nombre_completo: pacienteActual.nombres + ' ' + pacienteActual.apellido_paterno + ' ' + pacienteActual.apellido_materno,
+                                telefono: pacienteActual.telefono,
+                                telefono_movil: pacienteActual.telefono_movil,
+                                fecha_nacimiento: pacienteActual.fecha_nacimiento,
+                                activo: true,
+                            }).then(function (personaCreada) {
+                                var imagen;
+                                if (pacienteActual.imagen.indexOf('default') > -1) {
+                                    imagen = pacienteActual.imagen;
+                                } else {
+                                    var imagenPersona = decodeBase64Image(pacienteActual.imagen);
+                                    fs.writeFileSync('./img/persona' + personaCreada.id + '.jpg', imagenPersona.data, 'base64', function (err) { });
+                                    imagen = './img/persona' + personaCreada.id + '.jpg';
+
+                                }
+                                Persona.update({
+                                    imagen: imagen
+                                }, {
+                                        where: {
+                                            id: personaCreada.id
+                                        }
+                                    }).then(function (imagenAct) {
+                                        Tipo.find({
+                                            where: { nombre_corto: 'RRHH_EXP' }
+                                        }).then(function (tipoExp) {
+                                            var nombre_corto2 = pacienteActual.extension.substr(0, 3);
+                                            Clase.findOrCreate({
+                                                where: {
+                                                    nombre: pacienteActual.extension,
+                                                    id_tipo: tipoExp.dataValues.id,
+                                                },
+                                                defaults: {
+                                                    id_tipo: tipoExp.dataValues.id,
+                                                    nombre: pacienteActual.extension,
+                                                    nombre_corto: nombre_corto2
+                                                }
+                                            }).spread(function (expClase, created) {
+                                                MedicoPaciente.create({
+                                                    id_persona: personaCreada.id,
+                                                    id_empresa: req.body.id_empresa,
+                                                    codigo: pacienteActual.codigo,
+                                                    cargo: pacienteActual.cargo,
+                                                    id_extension: expClase.id,
+                                                    campo: pacienteActual.campamento,
+                                                    designacion_empresa: pacienteActual.designacion_empresa,
+                                                    eliminado: false,
+                                                    es_empleado: pacienteActual.es_empleado
+                                                    //comentario: pacienteActual.comentario
+                                                }).then(function (medicoPacienteActualizado) {
+                                                    Tipo.find({
+                                                        where: { nombre_corto: 'RRHH_TC' }
+                                                    }).then(function (tipoContrato) {
+                                                        var nombre_corto3 = pacienteActual.contrato.substr(0, 3);
+                                                        Clase.findOrCreate({
+                                                            where: {
+                                                                nombre: pacienteActual.contrato,
+                                                                id_tipo: tipoContrato.dataValues.id,
+                                                            },
+                                                            defaults: {
+                                                                id_tipo: tipoContrato.dataValues.id,
+                                                                nombre: pacienteActual.contrato,
+                                                                nombre_corto: nombre_corto3
+                                                            }
+                                                        }).spread(function (contratoClase, created) {
+                                                            var fecha = new Date()
+                                                            RrhhEmpleadoFicha.create({
+                                                                fecha: medicoPacienteActualizado.dataValues.createdAt,
+                                                                id_empleado: medicoPacienteActualizado.dataValues.id,
+                                                                id_tipo_contrato: contratoClase.dataValues.id,
+                                                            }).then(function (Creado) {
+                                                                Tipo.find({
+                                                                    where: { nombre_corto: 'RRHH_CARGO' }
+                                                                }).then(function (tipoCargo) {
+                                                                    var nombre_corto = pacienteActual.cargo.substr(0, 3);
+                                                                    Clase.findOrCreate({
+                                                                        where: {
+                                                                            nombre: pacienteActual.cargo,
+                                                                            id_tipo: tipoCargo.dataValues.id,
+                                                                        },
+                                                                        defaults: {
+                                                                            id_tipo: tipoCargo.dataValues.id,
+                                                                            nombre: pacienteActual.cargo,
+                                                                            nombre_corto: nombre_corto
+                                                                        }
+                                                                    }).spread(function (cargoClase, created) {
+                                                                        RrhhEmpleadoCargo.create({
+                                                                            id_empleado: medicoPacienteActualizado.id,
+                                                                            id_cargo: cargoClase.id
+                                                                        }).then(function (params) {
+                                                                            if (index === (array.length - 1)) {
+                                                                                res.json({ mensaje: "¡Datos de pacientes actualizados satisfactoriamente!" });
+                                                                            }
+                                                                        })
+                                                                    })
+                                                                })
+                                                            })
+                                                        })
+                                                    })
+                                                })
+                                            })
+                                        })
+                                    })
+                            })
+                        }
+                    })
+                });
             })
         })
 }

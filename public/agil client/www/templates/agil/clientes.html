@@ -420,7 +420,7 @@
 								<div class="form-group">
 									<label class="col-sm-3 control-label no-padding-right">Destino</label>
 									<div class="col-sm-9">
-										<select required name="destinocliente" id="destino_cliente" ng-model="dato_destino" ng-options="destino as destino.direccion for destino in destinos track by destino.id">
+										<select required name="destinocliente" id="destino_cliente" ng-model="dato_destino" ng-options="destino as (destino.destino+' - ' + destino.direccion) for destino in destinos track by destino.id">
 								</select>
 									</div>
 								</div>

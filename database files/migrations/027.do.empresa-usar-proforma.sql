@@ -1,0 +1,1 @@
+ALTER TABLE agil_empresa ADD usar_proforma tinyint default 0;

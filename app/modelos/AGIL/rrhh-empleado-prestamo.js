@@ -31,7 +31,11 @@ module.exports=function(sequelize,Sequelize){
 		total: {
  type: Sequelize.DECIMAL(20,4),
  field: 'total'
-	 }
+	 },
+	 cuota: {
+type: Sequelize.DECIMAL(20,4),
+field: 'cuota'
+	}
 	}, {
 	  freezeTableName: true 
 	});

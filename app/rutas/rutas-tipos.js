@@ -12,7 +12,18 @@ router.route('/tipos/:nombre_corto')
 			res.json(entidad);		  
 		});
 	});
-	
+	router.route('/tipos/:nombre_corto/empresa/:id_empresa')
+	.get(function(req, res) {
+		Tipo.find({ 
+			where:{
+				nombre_corto: req.params.nombre_corto,
+				id_empresa:req.params.id_empresa
+			},
+			include: [{model:Clase,as: 'clases'}]
+		}).then(function(entidad){			
+			res.json(entidad);		  
+		});
+	});	
 router.route('/clases/:nombre_corto')
 	.get(function(req, res) {
 		Clase.findAll({ 

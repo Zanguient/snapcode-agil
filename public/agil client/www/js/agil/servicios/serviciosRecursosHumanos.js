@@ -315,3 +315,43 @@ angular.module('agil.servicios')
     };
     return res;
 }]) 
+.factory('EmpleadoEmpresa', function ($resource) {
+    return $resource(restServer + "empleados/empresa/excel/upload")
+})
+
+.factory('HorasExtra', function ($resource) {
+    return $resource(restServer + "recursos-humanos/horas-extra/empleado/:id_empleado",{ id_empleado: '@id_empleado' },
+        {
+            'update': { method: 'PUT' }
+        });
+})
+.factory('CrearHorasExtra', ['HorasExtra', '$q', function (HorasExtra, $q) {
+    var res = function (idEmpleado,horasExtra) {
+        var delay = $q.defer();
+        HorasExtra.save({ id_empleado: idEmpleado},horasExtra, function (entidad) {
+            delay.resolve(entidad);
+        }, function (error) {
+            delay.reject(error);
+        });
+        return delay.promise;
+    };
+    return res;
+}])
+.factory('EmpleadoHorasExtra', function ($resource) {
+    return $resource(restServer + "recursos-humanos/horas-extra/empleado/:id_empleado/inicio/:inicio/fin/:fin",null,
+        {
+            'update': { method: 'PUT' }
+        });
+})
+.factory('HistorialHorasExtra', ['EmpleadoHorasExtra', '$q', function (EmpleadoHorasExtra, $q) {
+    var res = function (idEmpleado,filtro) {
+        var delay = $q.defer();
+        EmpleadoHorasExtra.query({id_empleado: idEmpleado,inicio:filtro.inicio,fin:filtro.fin}, function (entidad) {
+            delay.resolve(entidad);
+        }, function (error) {
+            delay.reject(error);
+        });
+        return delay.promise;
+    };
+    return res;
+}])

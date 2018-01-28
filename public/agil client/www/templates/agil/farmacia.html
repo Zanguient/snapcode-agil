@@ -1,0 +1,1065 @@
+<div class="row">
+	<div class="col-xs-12">
+		<h3 class="header smaller lighter blue">FARMACIA</h3>
+		
+		<button id="nuevo" class="btn btn-primary" ng-click="crearNuevaVenta()">
+			<i class="ace-icon fa fa-plus align-top bigger-125"></i>
+			Nuevo
+		</button>
+		
+		<form name="formularioFiltroVentas" novalidate ng-submit="filtrarVentas(sucursalesUsuario,fechaInicioTexto,fechaFinTexto,filtro.razon_social,filtro.nit,filtro.monto,filtro.tipo_pago,filtro.sucursal,filtro.transaccion,filtro.usuario)">
+			<fieldset>
+				<legend>Filtro Pacientes</legend>
+				<table class="table table-striped table-bordered table-hover">
+					<tbody>
+						<tr>
+							<td>
+								
+							</td>
+							<td>
+								<label>Desde</label>&nbsp
+							</td>
+							<td>
+								<label>Hasta</label>&nbsp
+							</td>
+							<td>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<label>PERIODO</label>&nbsp
+							</td>
+							<td>
+								<input required ng-update-hidden class="form-control date-picker" type="text" data-date-format="dd/mm/yyyy" id="fechainicio" ng-model="fechaInicioTexto" placeholder="Ingrese la fecha inicial" />
+							</td>
+							<td>
+								<input required ng-update-hidden class="form-control date-picker" type="text" data-date-format="dd/mm/yyyy" id="fechafin" ng-model="fechaFinTexto" placeholder="Ingrese la fecha final" />
+								&nbsp
+							</td>
+							<td>
+								<button type="submit" ng-disabled="formularioFiltroVentas.$invalid" class="btn btn-primary">
+									<i class="ace-icon fa fa-plus align-top bigger-125"></i>
+									Filtrar
+								</button>
+								<button id="pdf" ng-disabled="!ventas" class="btn btn-danger" ng-click="imprimirFiltroCajaCartaOficio(ventas,fechaInicioTexto,fechaFinTexto)">
+									<i class="ace-icon fa fa-print bigger-125"></i>
+									PDF
+								</button>
+								<button id="pdf"  ng-disabled="!ventas" class="btn btn-success" ng-click="imprimirFiltroExcelCajaCartaOficio(ventas)">
+									<i class="ace-icon fa fa-print bigger-125"></i>
+									Excel
+								</button>
+								<label class="pull-lefth inline">
+									<small class="muted smaller-90">Detalle:</small>
+
+									<input id="id-button-detalle" ng-disabled="!ventas" ng-click="verDetalle()" name="switch-view-detail" checked="checked" type="checkbox" class="ace ace-switch ace-switch-4">
+									<span class="lbl check-detalle"></span>
+								</label>
+
+
+			
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<label>Código</label>&nbsp
+							</td>
+							<td>
+								<label>Nombre y Apellidos</label>&nbsp
+							</td>
+							<td>
+								<label>Cedula de Identidad</label>&nbsp
+							</td>
+							<td>
+								<label>Campo</label>&nbsp
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<input type="text" ng-model="filtro.razon_social">
+							</td>
+							<td>
+								<input type="number" ng-model="filtro.nit">
+							</td>
+							<td>
+								<input type="number" step="0.01" ng-model="filtro.monto">
+							</td>
+							<td>
+								<select id="pago" name="pago" 
+										ng-model="filtro.tipo_pago" data-placeholder="Elija un tipo de pago">
+									<option value="0">TODOS</option>
+									<option ng-repeat="tipoPago in tiposPago" value="{{tipoPago.id}}">{{tipoPago.nombre}}</option>
+								</select>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<label>Cargo</label>&nbsp
+							</td>
+							<td>
+								<label>Empresa</label>&nbsp
+							</td>
+							<td>
+								<label>Nro. Receta</label>&nbsp
+							</td>
+							<td>
+								&nbsp
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<select id="sucursal" name="sucursal" 
+										ng-model="filtro.sucursal" data-placeholder="Elija una sucursal">
+									<option value="0">TODOS</option>
+									<option ng-repeat="sucursalFiltro in sucursales track by $index" value="{{sucursalFiltro.id}}">{{sucursalFiltro.nombre}}</option>
+								</select>
+							</td>
+							<td>
+								<select id="transaccion" name="transaccion" 
+										ng-model="filtro.transaccion" data-placeholder="Elija un tipo de transaccion">
+									<option value="0">TODOS</option>
+									<option ng-repeat="transaccion in movimientosEgreso" value="{{transaccion.id}}">{{transaccion.nombre}}</option>
+								</select>
+							</td>
+							<td>
+								<input type="text" ng-model="filtro.usuario">
+							</td>
+							<td>
+								&nbsp
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</fieldset>
+		</form>
+		
+		<div class="clearfix">
+			<div class="pull-right tableTools-container"></div>
+		</div>
+		<div class="table-header" style="text-align:center;">
+			RECETA/PACIENTES
+		</div>
+
+		<!-- div.table-responsive -->
+
+		<!-- div.dataTables_borderWrap -->
+		<div>
+			<table id="tabla-ventas" class="table table-striped table-bordered table-hover">
+				<thead>
+					<tr>
+						<th>Nº</th>
+						<th>Fecha</th>
+						<th>Receta</th>
+						<th>Nombre Completo</th>
+						<th>Empresa</th>
+						<th>Código</th>
+						<th>Campo</th>
+						<th>Monto</th>
+						<th>Cargo</th>
+						<th>Acciones</th>
+					</tr>
+				</thead>
+
+				<tbody>
+					<tr ng-repeat="venta in ventas">
+						<td>{{$index+1}}</td>
+						<td>{{venta.movimiento.clase.nombre}}</td>
+						<td>{{venta.almacen.sucursal.nombre}}</td>
+						<td>{{venta.cliente.razon_social}}</td>
+						<td>{{venta.cliente.nit}}</td>
+						<td>{{venta.factura}}</td>
+						<td>{{venta.fecha | date:"dd/MM/yyyy"}}</td>
+						<td>{{venta.createdAt | date:"HH:mm - dd/MM/yyyy"}}</td>
+						<td ng-if="venta.total>0">{{venta.total}}</td>
+						<td ng-if="venta.total<=0" style="color:red">{{venta.total}}</td>
+						<td>{{venta.tipoPago.nombre}}</td>
+						<td>
+							<div ng-if="venta.tipoPago.nombre==diccionario.TIPO_PAGO_CREDITO" class="hidden-sm hidden-xs action-buttons">
+								Plazo: {{venta.dias_credito}} días&nbsp
+								A cuenta: Bs {{venta.a_cuenta}}&nbsp
+								Saldo: Bs {{venta.saldo}}&nbsp
+								
+								<a class="blue" href="javascript:void(0)" ng-if="venta.saldo>0" ng-click="abrirPopupPago(venta)">
+									<i class="ace-icon fa fa-exclamation-circle bigger-130"></i>
+								</a>
+							</div>
+							<div ng-if="venta.tipoPago.nombre==diccionario.TIPO_PAGO_CREDITO" class="hidden-md hidden-lg">
+								<div class="inline pos-rel">
+									<button class="btn btn-minier btn-yellow dropdown-toggle" data-toggle="dropdown" data-position="auto">
+										<i class="ace-icon fa fa-caret-down icon-only bigger-120"></i>
+									</button>
+									Plazo: {{venta.dias_credito}} días&nbsp
+								A cuenta: Bs {{venta.a_cuenta}}&nbsp
+								Saldo: Bs {{venta.saldo}}&nbsp
+									<ul class="dropdown-menu dropdown-only-icon dropdown-yellow dropdown-menu-right dropdown-caret dropdown-close">
+										<li>
+											<a href="javascript:void(0)" ng-if="venta.saldo>0" ng-click="abrirPopupPago(venta)" class="tooltip-info" data-rel="tooltip" title="View">
+												<span class="blue">
+													<i class="ace-icon fa fa-exclamation-circle bigger-120"></i>
+												</span>
+											</a>
+										</li>
+									</ul>
+								</div>
+							</div>
+						</td>
+						<td>{{venta.usuario.nombre_usuario}}</td>
+						<td ng-if="venta.activa"><span class="label label-sm label-success">Activo</span></td>
+						<td ng-if="!venta.activa"><span class="label label-sm label-warning">Anulado</span></td>
+						<td>
+							<div class="hidden-sm hidden-xs action-buttons">
+								<a class="green" href="javascript:void(0)" ng-click="imprimirVenta(venta)">
+									<i class="ace-icon fa fa-print bigger-130"></i>
+								</a>
+								<a class="blue" href="javascript:void(0)" ng-click="verVenta(venta)">
+									<i class="ace-icon fa fa-search-plus bigger-130"></i>
+								</a>
+								<a ng-if="venta.activa && (venta.movimiento.clase.nombre_corto==diccionario.EGRE_FACTURACION || venta.movimiento.clase.nombre_corto==diccionario.EGRE_PROFORMA)" class="red" href="javascript:void(0)" e-disabled="!aplicacion.puede_eliminar" ng-click="mostrarConfirmacionEliminacionVenta(venta)">
+									<i class="ace-icon fa fa-trash-o bigger-130"></i>
+								</a>
+							</div>
+
+							<div class="hidden-md hidden-lg">
+								<div class="inline pos-rel">
+									<button class="btn btn-minier btn-yellow dropdown-toggle" data-toggle="dropdown" data-position="auto">
+										<i class="ace-icon fa fa-caret-down icon-only bigger-120"></i>
+									</button>
+
+									<ul class="dropdown-menu dropdown-only-icon dropdown-yellow dropdown-menu-right dropdown-caret dropdown-close">
+										<li>
+											<a href="javascript:void(0)" ng-click="imprimirVenta(venta)" class="tooltip-success" data-rel="tooltip" title="Edit">
+												<span class="green">
+													<i class="ace-icon fa fa-print bigger-120"></i>
+												</span>
+											</a>
+										</li>
+										<li>
+											<a href="javascript:void(0)" e-disabled="!aplicacion.puede_ver" ng-click="verVenta(venta)" class="tooltip-info" data-rel="tooltip" title="View">
+												<span class="blue">
+													<i class="ace-icon fa fa-search-plus bigger-120"></i>
+												</span>
+											</a>
+										</li>
+										<li>
+											<a ng-if="venta.movimiento.clase.nombre_corto==diccionario.EGRE_FACTURACION || venta.movimiento.clase.nombre_corto==diccionario.EGRE_PROFORMA" href="javascript:void(0)" e-disabled="!aplicacion.puede_eliminar" ng-click="mostrarConfirmacionEliminacionVenta(venta)" class="tooltip-error" data-rel="tooltip" title="Delete">
+												<span class="red">
+													<i class="ace-icon fa fa-trash-o bigger-120"></i>
+												</span>
+											</a>
+										</li>
+									</ul>
+								</div>
+							</div>
+						</td>
+					</tr>
+					<tr ng-if="ventas.length>0">
+						<td>
+							
+						</td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td>TOTAL</td>
+						<td>{{sumarMonto()}}</td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
+
+<canvas id="qr-code" style="display:none" width="100" height="100"></canvas>
+
+<div id="modal-wizard-farmacia-edicion" class="modal wizard-posicion">
+	<div class="row">
+		<div class="col-sm-4">
+			<div class="widget-box">
+			<form id="formularioVenta" name="formularioVenta" novalidate ng-submit="guardarVenta(formularioVenta.$valid,venta)">
+				<div class="widget-header">
+					<h4 class="widget-title">DATOS</h4>
+					 &nbsp;
+					<button  id="guardarV" type="submit" ng-disabled="venta.detallesVenta.length==0" class="btn btn-primary">
+						<i class="ace-icon fa fa-floppy-o align-top bigger-125"></i>
+						GUARDAR
+					</button>
+					<button id="cerrarV" type="button" class="btn btn-primary btn-danger" ng-click="cerrarPopupFarmaciaEdicion()">
+						<i class="ace-icon fa fa-times red2 align-top bigger-125"></i>
+						CERRAR
+					</button>
+				</div>
+
+				<div class="widget-body">
+					<div class="widget-main">
+							<table class="table table-striped table-bordered table-hover">
+								<tr>
+									<td>
+										<label>MOVIMIENTO</label>
+										<select data-validate="validate(required)" required id="movimiento" name="movimiento" 
+												ng-model="venta.movimiento" data-placeholder="Click para escoger" 
+												ng-change="obtenerTipoEgreso(venta.movimiento)"
+												ng-options="movimiento as movimiento.nombre for movimiento in movimientosEgreso track by movimiento.id">
+												<option value="Facturacion">Facturacion</option>
+											<!--<option ng-disabled="movimiento.nombre_corto==diccionario.EGRE_AJUSTE" ng-repeat="movimiento in movimientosEgreso" value="{{movimiento.id}}-{{movimiento.nombre_corto}}">{{movimiento.nombre}}</option>-->
+										</select><span class="red">(*)</span>
+									</td>
+									<td ng-if="tipoEgreso==diccionario.EGRE_FACTURACION || tipoEgreso==diccionario.EGRE_PROFORMA || tipoEgreso==diccionario.EGRE_PRE_FACTURACION">
+										<label >PAGADO (Bs): </label>
+										<input id="pagado" name="pagado" data-validate="validate(required)" required type="number" step="0.01" min="{{pagoMinimo}}" ng-model="venta.pagado" ng-change="calcularCambio()"/>
+										<span class="red">(*)</span>
+										<span class="invalid-message" ng-show="formularioVenta.pagado.$dirty && formularioVenta.pagado.$invalid">
+											El pago debe ser superior a {{pagoMinimo}}.
+										</span>
+										<label >CAMBIO (Bs): </label>
+										<input disabled type="number" step="0.01" ng-model="venta.cambio"/>
+									</td>
+								</tr>
+								<tr ng-if="tipoEgreso==diccionario.EGRE_TRASPASO">
+									<td>
+										<label>SUCURSAL ORIGEN</label>
+										<select data-validate="validate(required)" id="sucursalOrigen" name="sucursalOrigen" required
+											ng-options="sucursal as sucursal.nombre for sucursal in sucursales track by sucursal.id" 
+											ng-model="venta.sucursal"
+											ng-change="obtenerAlmacenesSucursalesDiferente(venta.sucursal.id)">
+										</select><span class="red">(*)</span>
+									</td>
+									<td ng-if="tipoEgreso==diccionario.EGRE_TRASPASO">
+										<label>SUCURSAL DESTINO</label>
+										<select data-validate="validate(required)" id="sucursalDestino" name="sucursalDestino" required
+											ng-options="sucursalDiferente as sucursalDiferente.nombre for sucursalDiferente in sucursalesDiferente track by sucursalDiferente.id" 
+											ng-model="venta.sucursalDestino"
+											ng-change="obtenerAlmacenesDiferente(venta.sucursalDestino.id)">
+										</select><span class="red">(*)</span>
+									</td>
+								</tr>
+								<tr ng-if="tipoEgreso==diccionario.EGRE_TRASPASO">
+									<td>
+										<label>ALMACEN ORIGEN</label>
+										<select data-validate="validate(required)" required id="almacen" name="almacen" ng-model="venta.almacen" ng-options="almacen as almacen.nombre for almacen in almacenes track by almacen.id"  data-placeholder="Click para escoger"></select>
+										<span class="red">(*)</span>
+									</td>
+									<td>
+										<label>ALMACEN DESTINO</label>
+										<select data-validate="validate(required)" required id="almacenDiferente" name="almacenDiferente" 
+												ng-model="venta.almacenDestino" ng-options="almacenDiferente as almacenDiferente.nombre for almacenDiferente in almacenesDiferente track by almacenDiferente.id"  data-placeholder="Click para escoger"></select>
+										<span class="red">(*)</span>
+									</td>
+								</tr>
+								<tr ng-if="tipoEgreso!=diccionario.EGRE_TRASPASO">
+									<td>
+										<label>SUCURSAL</label>
+										<select data-validate="validate(required)" required id="sucursal" name="sucursal" 
+											ng-options="sucursal as sucursal.nombre for sucursal in sucursales track by sucursal.id" 
+											ng-model="venta.sucursal"
+											ng-change="obtenerAlmacenesActividades(venta.sucursal.id)">
+											<option value="" disabled selected>Selec. Sucursal</option>
+										</select><span class="red">(*)</span>
+										<span class="invalid-message" ng-show="formularioVenta.sucursal.$dirty && formularioVenta.sucursal.$invalid">
+											Debe seleccionar una Sucursal.
+										</span>
+									</td>
+									<td ng-if="tipoEgreso!=diccionario.EGRE_TRASPASO">
+										<label>ALMACEN</label>
+										<select data-validate="validate(required)" required id="almacen" name="almacen" ng-model="venta.almacen" ng-options="almacen as almacen.nombre for almacen in almacenes track by almacen.id"  data-placeholder="Click para escoger">
+											<option value="" disabled selected>Selec. Almacen</option>
+										</select>
+										<span class="red">(*)</span>
+										<span class="invalid-message" ng-show="formularioVenta.almacen.$dirty && formularioVenta.almacen.$invalid">
+											Debe seleccionar un Almacen.
+										</span>
+									</td>
+								</tr>
+								<tr ng-if="tipoEgreso!=diccionario.EGRE_TRASPASO">
+									<td ng-if="tipoEgreso==diccionario.EGRE_FACTURACION">
+										<label>ACTIVIDAD</label>
+									</td>
+									<td ng-if="tipoEgreso==diccionario.EGRE_FACTURACION">
+										<select style="width:150px;" data-validate="validate(required)" required id="actividad" name="actividad" ng-model="venta.actividad" ng-options="actividad as actividad.nombre for actividad in actividades track by actividad.id"  data-placeholder="Click para escoger">
+											<option value="" disabled selected>Selec. Actividad</option>
+										</select>
+										<span class="red">(*)</span>
+										<div class="invalid-message help-block" ng-messages="formularioVenta.actividad.$error" ng-if=" (formularioVenta.$submitted && formularioVenta.actividad.$invalid)">
+											<div ng-messages-include="/templates/GRAL/messages.html"></div>
+										</div>
+									</td>
+								</tr>
+								<tr>
+									<td ng-if="tipoEgreso==diccionario.EGRE_FACTURACION || tipoEgreso==diccionario.EGRE_PROFORMA || tipoEgreso==diccionario.EGRE_PRE_FACTURACION">
+										<label>C.I. PACIENTE</label>
+										<input ng-keypress="interceptarTecla($event,'razon_social',true)"  id="nit" name="nit" required type="number" min="0" ng-model="venta.cliente.nit" placeholder="Ingrese el NIT"
+										uib-typeahead="paciente as paciente.persona.ci for paciente in buscarCliente($viewValue)" typeahead-wait-ms="2000" 
+										typeahead-template-url="templates/autocompletar.html" typeahead-show-hint="true" 
+										typeahead-min-length="0" typeahead-on-select="establecerCliente($item, $model, $label, $event)">
+										<span class="red">(*)</span>
+										
+										<p class="help-block"  ng-show="formularioVenta.nit.$invalid && !formularioVenta.nit.$pristine" class="help-block">You name is required.</p>
+									</td>
+									<td ng-if="tipoEgreso==diccionario.EGRE_FACTURACION || tipoEgreso==diccionario.EGRE_PROFORMA || tipoEgreso==diccionario.EGRE_PRE_FACTURACION">
+										<label>NOMBRE PACIENTE</label>
+										<input ng-keypress="interceptarTecla($event,'id_producto',true)" autocomplete="off" data-validate="validate(required)" id="razon_social" name="razon_social" required type="text" ng-model="venta.cliente.razon_social" placeholder="Ingrese la Razon Social"
+										uib-typeahead="paciente as paciente.persona.nombre_completo for paciente in buscarCliente($viewValue)" typeahead-wait-ms="2000" 
+										typeahead-template-url="templates/autocompletar.html" typeahead-show-hint="true" 
+										typeahead-min-length="0" typeahead-on-select="establecerCliente($item, $model, $label, $event)">
+										<span class="red">(*)</span>
+										<span class="invalid-message" ng-show="formularioVenta.razon_social.$dirty && formularioVenta.razon_social.$invalid">
+											Dato requerido.
+										</span>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<label>FECHA</label>
+										<input name="fecha" required ng-update-hidden class="form-control date-picker" type="text" data-date-format="dd/mm/yyyy" id="fecha" ng-model="venta.fechaTexto" placeholder="Ingrese la fecha" />
+										<span class="red">(*)</span>
+										<span class="invalid-message" ng-show="formularioVenta.fecha.$dirty && formularioVenta.fecha.$invalid">
+											Dato requerido.
+										</span>
+									</td>
+									<td ng-if="tipoEgreso==diccionario.EGRE_FACTURACION || tipoEgreso==diccionario.EGRE_PROFORMA || tipoEgreso==diccionario.EGRE_PRE_FACTURACION">
+										<label>TIPO DE PAGO</label>
+										<select data-validate="validate(required)" required id="pago" name="pago" 
+												ng-model="venta.tipoPago" data-placeholder="Elija un tipo de pago" 
+												ng-change="cambiarTipoPago(venta.tipoPago)"
+												ng-options="tipoPago as tipoPago.nombre for tipoPago in tiposPago track by tipoPago.id">
+										</select>
+										<span class="red">(*)</span>
+									</td>
+								</tr>
+								<tr ng-if="tipoEgreso==diccionario.EGRE_FACTURACION || tipoEgreso==diccionario.EGRE_PROFORMA || tipoEgreso==diccionario.EGRE_PRE_FACTURACION">
+									<td ng-if="!esContado">
+										<label >DIAS</label>
+										<input required type="number" min="1" name="dias" ng-model="venta.dias_credito" />
+										<span class="red">(*)</span>
+										<span class="invalid-message" ng-show="formularioVenta.dias.$dirty && formularioVenta.dias.$invalid">
+											Debe especificar un valor numérico mayor a 0.
+										</span>
+									</td>
+									<td ng-if="!esContado">
+										<label >SUJETO A CF</label>
+										<input disabled type="number" step="0.001" ng-model="venta.total" />
+									</td>
+								</tr>
+								<tr ng-if="tipoEgreso==diccionario.EGRE_FACTURACION || tipoEgreso==diccionario.EGRE_PROFORMA || tipoEgreso==diccionario.EGRE_PRE_FACTURACION">
+									<td ng-if="!esContado">
+										<label >A CUENTA (Bs)</label>
+										<input min="0" name="acuenta" required type="number" step="0.001" ng-model="venta.a_cuenta" value="0.0" ng-change="calcularSaldo()"/>
+										<span class="red">(*)</span>
+										<span class="invalid-message" ng-show="formularioVenta.acuenta.$dirty && formularioVenta.acuenta.$invalid">
+											Debe especificar un valor numérico mayor o igual a 0.
+										</span>
+									</td>
+									<td ng-if="!esContado">
+										<label >SALDO</label>
+										<input disabled type="number" step="0.001" ng-model="venta.saldo"/>
+									</td>
+								</tr>
+								<tr>
+									<td colspan="2">
+										<label >DIAGNOSTICO</label>
+										<textarea ng-model="venta.diagnostico" class="form-control limited" id="form-field-9" maxlength="100" style=" height: 50px;"></textarea>
+									</td>
+								</tr>
+								<tr>
+									<td colspan="2">
+										<label >OBSERVACIONES</label>
+										<textarea ng-model="venta.observaciones" class="form-control limited" id="form-field-9" maxlength="100" style=" height: 50px;"></textarea>
+									</td>
+								</tr>
+								
+							</table>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+		<div class="col-sm-8">
+			<div class="widget-box">
+				<div class="widget-header">
+					<h4 class="widget-title">BUSQUEDA PRODUCTO</h4>
+				</div>
+				<div class="widget-body">
+					<div class="widget-main">
+						<form id="formularioBusquedaProducto" name="formularioBusquedaProducto" novalidate>
+							<table class="table table-striped table-bordered table-hover">
+								<thead>
+									<tr>
+										<th>
+											<label>PRODUCTO</label>
+										</th>
+										<th>
+											<label>CÓD. ITEM</label>
+										</th>
+										<th>
+											<label>UNID. MED.</label>
+										</th>
+										<th ng-if="usuario.empresa.usar_vencimientos">
+											<label>VENCIMIENTO</label>
+										</th>
+										<th ng-if="usuario.empresa.usar_vencimientos">
+											<label>LOTE</label>
+										</th>
+										<th>
+											<label>INVENTARIO DISPONIBLE</label>
+										</th>
+										<th>
+											<label>P.U. (Bs/u)</label>
+										</th>
+										<th>
+											<label>CANT. (u)</label>
+										</th>
+										<th>
+											<label>IMP. (Bs)</label>
+										</th>
+										
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td>
+											<input ng-keypress="interceptarTecla($event,'cantidad',true)" id="id_producto" required ng-disabled="!venta.almacen" type="text" ng-model="detalleVenta.producto.nombre" placeholder="Ingrese el nombre del producto..." 
+											uib-typeahead="producto as (producto.codigo+'-'+producto.nombre+'-'+producto.grupo+'-'+producto.subgrupo) for producto in buscarProducto($viewValue)" typeahead-wait-ms="1000" 
+											typeahead-template-url="templates/autocompletar.html" typeahead-show-hint="false" 
+											typeahead-min-length="3" typeahead-on-select="establecerProducto($item, $model, $label, $event)">
+											<div class="space-6"></div>
+											<button ng-disabled="!venta.almacen" id="mostrar_inv" type="button" ng-click="abrirPopupInventario()" class="btn btn-info btn-sm">
+												<i class="ace-icon fa fa-search-plus bigger-110"></i>
+											</button>
+											<span class="red" ng-if="!detalleVenta.producto.activar_inventario">Inventario Desactivado</span>
+										</td>
+										<td>
+											{{detalleVenta.producto.codigo}}
+										</td>
+										<td>
+											{{detalleVenta.producto.unidad_medida}}
+										</td>
+										<td ng-if="usuario.empresa.usar_vencimientos">
+											<select style="width:95px;" id="fechaVencimiento" name="fechaVencimiento" ng-if="detalleVenta.producto.activar_inventario"
+													ng-model="detalleVenta.inventarioProducto" data-placeholder="Elija la fecha de vencimiento" 
+													ng-change="actualizarInventarioDisponibleFechaVencimiento(detalleVenta)"
+													ng-options="inventario as ('FV:'+inventario.fechaVencimientoTexto+'-'+'F:'+inventario.detallesMovimiento[0].movimiento.fechaTexto+'-'+inventario.detallesMovimiento[0].movimiento.clase.nombre) for inventario in inventariosDisponibleProducto track by inventario.id">
+											</select>
+										</td>
+										<td ng-if="usuario.empresa.usar_vencimientos">
+											{{detalleVenta.lote}}
+										</td>
+										<td>
+											<div class="c100 p{{porcentaje}} small {{color}}" ng-if="detalleVenta.producto.activar_inventario">
+												<span id="CantProd" style="color:black !important;">{{detalleVenta.inventario_disponible}}</span>
+												<div class="slice">
+													<div class="bar"></div>
+													<div class="fill"></div>
+												</div>
+											</div>
+										</td>
+										<td ng-if="!editar_precio">
+											<div clas="row">
+												<div id="Precio" class="col-sm-12">
+													{{detalleVenta.precio_unitario}}
+												</div>
+											</div>
+											<div clas="row">
+												<div class="col-sm-12">
+													<a class="green" href="javascript:void(0)" ng-click="modificarPrecio()">
+														<i class="ace-icon fa fa-pencil-square-o bigger-130"></i>
+													</a>
+												</div>
+											</div>
+										</td>
+										<td ng-if="editar_precio">
+											<div class="row">
+												<div class="col-sm-12">
+													<input name="precio_unitario" step="0.001" min="0.1" required class="col-xs-12" ng-change="calcularImporte()" ng-model="detalleVenta.precio_unitario" type="number" />
+												</div>
+											</div>
+											<div class="row">
+												<div class="col-sm-12">
+													<a class="blue" href="javascript:void(0)" ng-click="establecerPrecio()">
+														<i class="ace-icon fa fa-check-square-o bigger-130"></i>
+													</a>
+												</div>
+											</div>
+										</td>
+										<td>
+											<input onfocus="this.select();" ng-keypress="interceptarTecla($event,'indicaciones',true)" id="cantidad" name="cantidad" step="0.001" min="0.1" max="{{detalleVenta.inventario_disponible}}" required class="col-xs-12" ng-change="calcularImporte()" ng-model="detalleVenta.cantidad" type="number" />
+											<div ng-show="formularioBusquedaProducto.cantidad.$dirty && formularioBusquedaProducto.cantidad.$invalid">
+												<span class="invalid-message">La cantidad debe estar entre 0.1 y {{detalleVenta.inventario_disponible}}.</span>
+											</div>
+										</td>
+										<td>
+											{{detalleVenta.importe}}
+										</td>
+										
+									</tr>
+									<tr>
+										<th>
+											<label>INDICACIONES</label>
+										</th>
+										<th>
+											<label>ACC.</label>
+										</th>
+									</tr>
+									<tr>
+										<td >
+											<textarea id="indicaciones" onfocus="this.select();" ng-keypress="interceptarTecla($event,'agregar_detalle_venta',false)" required ng-model="detalleVenta.observaciones" class="form-control limited" id="form-field-9" maxlength="100" style=" height: 50px;"></textarea>
+										</td>
+										<td>
+											<button id="agregar_detalle_venta" type="button" ng-disabled="formularioBusquedaProducto.$invalid" ng-click="agregarDetalleVenta(detalleVenta)" class="btn btn-success btn-sm">
+												<i class="ace-icon fa fa-plus bigger-110"></i>
+											</button>
+											<div class="space-6"></div>
+											<button id="mostrar_desc" type="button" ng-click="mostrarDescuentos()" class="btn btn-info btn-sm">
+												<i class="ace-icon fa fa-exchange bigger-110"></i>
+											</button>
+										</td>
+									</tr>
+									<tr class="des-datos" style="display:none;">
+										<th>
+											<label>DESCUENTOS (-)</label>
+											<label>
+												<input ng-disabled="detalleVenta.producto.descuento_fijo" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="detalleVenta.tipo_descuento" ng-change="recalcular()"/>
+												<span class="lbl check-compra"></span>
+											</label>
+										</th>
+										<th>
+											<label>RECARGOS (+)</label>
+											<label>
+												<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="detalleVenta.tipo_recargo" ng-change="recalcular()"/>
+												<span class="lbl check-compra"></span>
+											</label>
+										</th>
+										<th>
+											<label>ICE (-)</label>
+										</th>
+										<th>
+											<label>EXCENTOS (-)</label>
+										</th>
+										<th>
+											<label>SUJETO A DF</label>
+										</th>
+									</tr>
+									<tr class="des-datos" style="display:none;">
+										<td >
+											<input ng-disabled="detalleVenta.producto.descuento_fijo" required ng-change="calcularImporte()" ng-model="detalleVenta.descuento" ng-value="detalleVenta.producto.descuento" step="0.001" class="col-xs-12" type="number" value="0"/>
+										</td>
+										<td>
+											<input required ng-change="calcularImporte()" ng-model="detalleVenta.recargo" step="0.001" class="col-xs-12" type="number" value="0"/>
+										</td>
+										<td>
+											<input required ng-change="calcularImporte()" ng-model="detalleVenta.ice" step="0.001" class="col-xs-12" type="number" value="0"/>
+										</td>
+										<td>
+											<input required ng-change="calcularImporte()" ng-model="detalleVenta.excento" step="0.001" class="col-xs-12" type="number" value="0"/>
+										</td>
+										<td>
+											{{detalleVenta.total}}
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</form>
+					</div>
+				</div>
+			</div>
+			<div class="widget-box">
+				<div class="widget-header" ng-if="venta.detallesVenta.length>0">
+					<div class="row">
+						<div class="col-sm-6">
+							<h4 class="widget-title">DETALLE DE VENTA</h4>
+						</div>
+						<div class="col-sm-6">
+							<div class="inline pos-rel pull-right">
+								<a data-toggle="dropdown" href="javascript:void(0)" class="dropdown-toggle">
+									<i class="glyphicon  glyphicon-list-alt"></i>
+								</a>
+
+								<ul id="campos-detalle-venta" class="dropdown-menu-right dropdown-menu dropdown-yellow dropdown-caret">
+									<li>
+										<label>
+											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionVentaVista.mostrar_producto" ng-change="guardarConfiguracionVentaVista()"/>
+											<span class="lbl check-descuento"></span>
+										</label>
+										<label>NOMBRE</label>
+									</li>
+									<li>
+										<label>
+											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionVentaVista.mostrar_codigo_producto" ng-change="guardarConfiguracionVentaVista()"/>
+											<span class="lbl check-descuento"></span>
+										</label>
+										<label>CÓD. ITEM</label>
+									</li>
+									<li>
+										<label>
+											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionVentaVista.mostrar_unidad_producto" ng-change="guardarConfiguracionVentaVista()"/>
+											<span class="lbl check-descuento"></span>
+										</label>
+										<label>UNID. MED.</label>
+									</li>
+									<li>
+										<label>
+											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionVentaVista.mostrar_precio_unitario" ng-change="guardarConfiguracionVentaVista()"/>
+											<span class="lbl check-descuento"></span>
+										</label>
+										<label>P.U. (Bs/u)</label>
+									</li>
+									<li>
+										<label>
+											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionVentaVista.mostrar_cantidad" ng-change="guardarConfiguracionVentaVista()"/>
+											<span class="lbl check-descuento"></span>
+										</label>
+										<label>CANT. (u)</label>
+									</li>
+									<li ng-if="usuario.empresa.usar_vencimientos">
+										<label>
+											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionVentaVista.mostrar_fecha_vencimiento" ng-change="guardarConfiguracionVentaVista()"/>
+											<span class="lbl check-descuento"></span>
+										</label>
+										<label>VENC.</label>
+									</li>
+									<li ng-if="usuario.empresa.usar_vencimientos">
+										<label>
+											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionVentaVista.mostrar_lote" ng-change="guardarConfiguracionVentaVista()"/>
+											<span class="lbl check-descuento"></span>
+										</label>
+										<label>LOTE</label>
+									</li>
+									<li>
+										<label>
+											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionVentaVista.mostrar_importe" ng-change="guardarConfiguracionVentaVista()"/>
+											<span class="lbl check-descuento"></span>
+										</label>
+										<label>IMP. (Bs)</label>
+									</li>
+									<li>
+										<label>
+											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionVentaVista.mostrar_descuento" ng-change="guardarConfiguracionVentaVista()"/>
+											<span class="lbl check-descuento"></span>
+										</label>
+										<label>DESC. (-)</label>
+									</li>
+									<li>
+										<label>
+											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionVentaVista.mostrar_recargo" ng-change="guardarConfiguracionVentaVista()"/>
+											<span class="lbl check-descuento"></span>
+										</label>
+										<label>REC. (+)</label>
+									</li>
+									<li>
+										<label>
+											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionVentaVista.mostrar_ice" ng-change="guardarConfiguracionVentaVista()"/>
+											<span class="lbl check-descuento"></span>
+										</label>
+										<label>ICE (-)</label>
+									</li>
+									<li>
+										<label>
+											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionVentaVista.mostrar_excento" ng-change="guardarConfiguracionVentaVista()"/>
+											<span class="lbl check-descuento"></span>
+										</label>
+										<label>EXC. (-)</label>
+									</li>
+									<li>
+										<label>
+											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionVentaVista.mostrar_total" ng-change="guardarConfiguracionVentaVista()"/>
+											<span class="lbl check-descuento"></span>
+										</label>
+										<label>SUJETO A DF</label>
+									</li>
+									<li class="divider"></li>
+								</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="widget-body" ng-if="venta.detallesVenta.length>0">
+					<div class="widget-main">
+							<table class="table table-striped table-bordered table-hover">
+								<thead>
+									<tr>
+										<th>
+											<label>#</label>
+										</th>
+										<th ng-if="configuracionVentaVista.mostrar_producto">
+											<label>NOMBRE</label>
+										</th>
+										<th ng-if="configuracionVentaVista.mostrar_codigo_producto">
+											<label>CÓD. ITEM</label>
+										</th>
+										<th ng-if="configuracionVentaVista.mostrar_unidad_producto">
+											<label>UNID. MED.</label>
+										</th>
+										<th ng-if="configuracionVentaVista.mostrar_precio_unitario">
+											<label>P.U. (Bs/u)</label>
+										</th>
+										<th ng-if="configuracionVentaVista.mostrar_cantidad">
+											<label>CANT. (u)</label>
+										</th>
+										<th ng-if="configuracionVentaVista.mostrar_fecha_vencimiento && usuario.empresa.usar_vencimientos">
+											<label>VENC.</label>
+										</th>
+										<th ng-if="configuracionVentaVista.mostrar_lote && usuario.empresa.usar_vencimientos">
+											<label>LOTE</label>
+										</th>
+										<th ng-if="configuracionVentaVista.mostrar_importe">
+											<label>IMP. (Bs)</label>
+										</th>
+										<th ng-if="configuracionVentaVista.mostrar_descuento">
+											<label>DESC. (-)</label>
+										</th>
+										<th ng-if="configuracionVentaVista.mostrar_recargo">
+											<label>REC. (+)</label>
+										</th>
+										<th ng-if="configuracionVentaVista.mostrar_ice">
+											<label>ICE (-)</label>
+										</th>
+										<th ng-if="configuracionVentaVista.mostrar_excento">
+											<label>EXC. (-)</label>
+										</th>
+										<th ng-if="configuracionVentaVista.mostrar_total">
+											<label>SUJETO A DF</label>
+										</th>
+										<th>
+											<label>ACCIONES</label>
+										</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr ng-repeat="detalleVenta in venta.detallesVenta">
+										<td>
+											{{$index+1}}
+										</td>
+										<td ng-if="configuracionVentaVista.mostrar_producto">
+											{{detalleVenta.producto.nombre}}
+										</td>
+										<td ng-if="configuracionVentaVista.mostrar_codigo_producto">
+											{{detalleVenta.producto.codigo}}
+										</td>
+										<td ng-if="configuracionVentaVista.mostrar_unidad_producto">
+											{{detalleVenta.producto.unidad_medida}}
+										</td>
+										<td ng-if="configuracionVentaVista.mostrar_precio_unitario">
+											{{detalleVenta.precio_unitario}}
+										</td>
+										<td ng-if="configuracionVentaVista.mostrar_cantidad">
+											{{detalleVenta.cantidad}}
+										</td>
+										<td ng-if="configuracionVentaVista.mostrar_fecha_vencimiento && usuario.empresa.usar_vencimientos">
+											{{detalleVenta.fecha_vencimiento | date:"dd/MM/yyyy"}}
+										</td>
+										<td ng-if="configuracionVentaVista.mostrar_lote && usuario.empresa.usar_vencimientos">
+											{{detalleVenta.lote}}
+										</td>
+										<td ng-if="configuracionVentaVista.mostrar_importe">
+											{{detalleVenta.importe}}
+										</td>
+										<td ng-if="configuracionVentaVista.mostrar_descuento">
+											{{detalleVenta.descuento}}
+										</td>
+										<td ng-if="configuracionVentaVista.mostrar_recargo">
+											{{detalleVenta.recargo}}
+										</td>
+										<td ng-if="configuracionVentaVista.mostrar_ice">
+											{{detalleVenta.ice}}
+										</td>
+										<td ng-if="configuracionVentaVista.mostrar_excento">
+											{{detalleVenta.excento}}
+										</td>
+										<td ng-if="configuracionVentaVista.mostrar_total">
+											{{detalleVenta.total}}
+										</td>
+										<td>
+											<a class="red" href="javascript:void(0)" ng-click="eliminarDetalleVenta(detalleVenta)">
+												<i class="ace-icon fa fa-trash-o bigger-130"></i>
+											</a>
+										</td>
+									</tr>
+									<tr>
+										<td>
+											
+										</td>
+										<td ng-if="configuracionVentaVista.mostrar_producto">
+											<b>TOTALES</b>
+										</td>
+										<td ng-if="configuracionVentaVista.mostrar_codigo_producto">
+											
+										</td>
+										<td ng-if="configuracionVentaVista.mostrar_unidad_producto">
+											
+										</td>
+										<td ng-if="configuracionVentaVista.mostrar_precio_unitario">
+											
+										</td>
+										<td ng-if="configuracionVentaVista.mostrar_cantidad">
+											
+										</td>
+										<td ng-if="configuracionVentaVista.mostrar_fecha_vencimiento && usuario.empresa.usar_vencimientos">
+											
+										</td>
+										<td ng-if="configuracionVentaVista.mostrar_lote && usuario.empresa.usar_vencimientos">
+											
+										</td>
+										<td ng-if="configuracionVentaVista.mostrar_importe">
+											{{venta.importe}}
+										</td>
+										<td ng-if="configuracionVentaVista.mostrar_descuento">
+											
+										</td>
+										<td ng-if="configuracionVentaVista.mostrar_recargo">
+											
+										</td>
+										<td ng-if="configuracionVentaVista.mostrar_ice">
+											
+										</td>
+										<td ng-if="configuracionVentaVista.mostrar_excento">
+										</td>
+										<td ng-if="configuracionVentaVista.mostrar_total">
+											{{venta.total}}
+										</td>
+										<td>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div><!-- PAGE CONTENT ENDS -->
+
+<div id="dialog-productos-venta">
+	<div class="row">
+		<form name="formularioBusquedaInventario" novalidate>
+			<div class="col-xs-6"><div class="dataTables_length" id="tabla-productos_length"><label>
+			Mostrar <select ng-model="itemsPorPagina" ng-change="buscarInventarios(almacenBusqueda.id,1,itemsPorPagina,textoBusqueda,columna,direccion)" name="tabla-proveedores_length" aria-controls="tabla-productos" class="form-control input-sm">
+						<option selected value="10">10</option>
+						<option value="25">25</option>
+						<option value="50">50</option>
+						<option value="100">100</option>
+					</select> productos por página</label></div>
+			</div>
+			<div class="col-xs-4">
+				<div id="tabla-productos_filter" class="dataTables_filter">
+					<label>Búsqueda:<input type="search" class="form-control input-sm" ng-model="textoBusqueda" placeholder="" aria-controls="tabla-productos" ng-keydown="verificarPulso($event,textoBusqueda)">
+					</label>
+				</div>
+			</div>
+			<div class="col-xs-2">
+				<button ng-disabled="formularioBusquedaInventario.$invalid" type="button" ng-click="cerrarPopup(idModalInventario)" class="btn btn-danger">
+					<i class="ace-icon fa fa-close align-top bigger-125"></i>
+				</button>
+			</div>
+		</form>
+	</div>
+	<div class="row">
+		<table id="tabla-inventarios" class="table table-striped table-bordered table-hover">
+			<thead>
+				<tr>
+					<th class="center">
+						#
+					</th>
+					<th><a href="javascript:void(0)" ng-click="clasificarColumna('codigo')">Código <span id="codigop" class="sort ace-icon fa fa-sort icon-only"></span></a></th>
+					<th><a href="javascript:void(0)" ng-click="clasificarColumna('nombre')">Producto <span id="nombrep" class="sort ace-icon fa fa-sort icon-only"></span></a></th>
+					<th><a href="javascript:void(0)" ng-click="clasificarColumna('descripcion')">Descripcion <span id="descripcionp" class="sort ace-icon fa fa-sort icon-only"></span></a></th>
+					<th><a href="javascript:void(0)" ng-click="clasificarColumna('cantidad')">Cantidad Total <span id="cantidadp" class="sort ace-icon fa fa-sort icon-only"></span></a></th>
+					<th><a href="javascript:void(0)" ng-click="clasificarColumna('precio_unitario')">Precio Unitario <span id="precio_unitariop" class="sort ace-icon fa fa-sort icon-only"></span></a></th>
+					<th><a href="javascript:void(0)" ng-click="clasificarColumna('fecha_vencimiento')">Fecha Venc. Próximo <span id="fecha_vencimientop" class="sort ace-icon fa fa-sort icon-only"></span></a></th>
+					<th><a href="javascript:void(0)" ng-click="clasificarColumna('grupo')">Grupo <span id="grupop" class="sort ace-icon fa fa-sort icon-only"></span></a></th>
+					<th><a href="javascript:void(0)" ng-click="clasificarColumna('subgrupo')">Sub Grupo <span id="subgrupop" class="sort ace-icon fa fa-sort icon-only"></span></a></th>
+					<th>Acciones</th>
+				</tr>
+			</thead>
+
+			<tbody>
+				<tr ng-repeat="producto in productos">
+					<td class="center">
+						{{$index+1}}
+					</td>
+					<td>{{producto.codigo}}</td>
+					<td>{{producto.nombre}}
+					</td>
+					<td>{{producto.descripcion}}
+					</td>
+					<td>
+						<b>{{producto.cantidad_total}}</b>
+					</td>
+					<td>{{producto.precio_unitario}}</td>
+					<td>{{producto.fecha_vencimiento | date:'dd/MM/yyyy'}}</td>
+					<td>{{producto.grupo}}</td>
+					<td>{{producto.subgrupo}}</td>
+					<td>
+						<button type="button" ng-click="establecerProducto(producto)" class="btn btn-success btn-sm">
+							<i class="ace-icon fa fa-check icon-only"></i>
+						</button>
+						<!--<button type="button" ng-click="verDetalleInventario(producto)" class="btn btn-info btn-sm">
+							<i class="ace-icon fa fa-search-plus icon-only"></i>
+						</button>-->
+						<table id="{{producto.id}}" style="display:none;" class="table table-striped table-bordered table-hover">
+							<thead>
+								<tr>
+									<th>#</th>
+									<th>Cantidad</th>
+									<th>Fecha Venc.</th>
+									<th>Lote</th>
+									<th>Costo Unitario</th>
+									<th>Costo Total</th>
+									<th>Acciones</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr ng-repeat="inventario in producto.inventarios">
+									<td>{{$index+1}}</td>
+									<td>{{inventario.cantidad}}</td>
+									<td>{{inventario.fecha_vencimiento | date:"dd/MM/yyyy	"}}</td>
+									<td>{{inventario.lote}}</td>
+									<td>{{inventario.costo_unitario}}</td>
+									<td>{{inventario.costo_total}}</td>
+									<td><a href="javascript:void(0)" e-disabled="!aplicacion.puede_modificar" ng-click="abrirPopupActualizacionInventario(inventario)" class="tooltip-success" data-rel="tooltip" title="Edit">
+											<span class="green">
+												<i class="ace-icon fa fa-pencil-square-o bigger-120"></i>
+											</span>
+										</a>
+									</td>
+								</tr>
+								<tr>
+									<td><b>Total Almacen</b></td>
+									<td>{{sumarCantidadAlmacen(producto.inventarios,sucursal,almacen)}}</td>
+									<td></td>
+									<td></td>
+									<td></td>
+									<td>{{sumarCostoTotalAlmacen(producto.inventarios,sucursal,almacen)}}</td>
+									<td>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	<div class="row">
+		<div class="col-xs-6">
+			<div class="dataTables_info" id="tabla-productos_info" role="status" aria-live="polite">Mostrando página {{paginaActual}} de {{paginas.length}}</div>
+		</div>
+		<div class="col-xs-6">
+			<div class="dataTables_paginate paging_simple_numbers" id="tabla-productos_paginate">
+				<ul class="pagination">
+					<li class="paginate_button previous" aria-controls="tabla-productos" tabindex="0" id="tabla-productos_previous"><a href="javascript:void(0)" ng-click="buscarInventarios(almacenBusqueda.id,1,itemsPorPagina,textoBusqueda,columna,direccion)">Primero</a></li>
+					<li class="paginate_button previous" ng-class="{disabled:paginaActual==1}" aria-controls="tabla-productos" tabindex="0" id="tabla-productos_previous"><a href="javascript:void(0)" e-disabled="paginaActual==1" ng-click="buscarInventarios(almacenBusqueda.id,paginaActual-1,itemsPorPagina,textoBusqueda,columna,direccion)"><<</a></li>
+					<li class="paginate_button" ng-class="{active:paginaActual==pagina}" aria-controls="tabla-productos" tabindex="0" ng-repeat="pagina in paginas" ng-if="abs(paginaActual-pagina)<4"><a href="javascript:void(0)" ng-click="buscarInventarios(almacenBusqueda.id,pagina,itemsPorPagina,textoBusqueda,columna,direccion)">{{pagina}}</a></li>
+					<li class="paginate_button" ng-class="{disabled:paginaActual==paginas.length}" aria-controls="tabla-productos" tabindex="0" id="tabla-productos_next"><a href="javascript:void(0)" e-disabled="paginaActual==paginas.length" ng-click="buscarInventarios(almacenBusqueda.id,paginaActual+1,itemsPorPagina,textoBusqueda,columna,direccion)">>></a></li>
+					<li class="paginate_button previous" aria-controls="tabla-productos" tabindex="0" id="tabla-productos_previous"><a href="javascript:void(0)" ng-click="buscarInventarios(almacenBusqueda.id,paginas.length,itemsPorPagina,textoBusqueda,columna,direccion)">Ultimo</a></li>
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+

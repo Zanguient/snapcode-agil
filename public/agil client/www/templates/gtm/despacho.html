@@ -24,7 +24,9 @@
 
 		<!-- div.dataTables_borderWrap -->
 		<div>
-			<div id="tabla-clientes_wrapper" class="dataTables_wrapper form-inline no-footer">
+			<div class="dataTables_wrapper form-inline no-footer">
+                <div class="row" ng-include src="'/templates/gral/paginator-header-1.html'">
+                </div>
 				
 				<table id="tabla-destinos" class="table table-striped table-bordered table-hover">
 					<thead>
@@ -112,6 +114,8 @@
 						</tr>
 					</tbody>
 				</table>
+				<div class="row" ng-include src="'/templates/gral/paginator.html'" ng-if="despachos.length > 0">
+                </div>
 			</div>
 		</div>
 	</div>
