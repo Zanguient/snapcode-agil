@@ -738,7 +738,24 @@ module.exports = function (sequelize, Usuario, Persona, Rol, UsuarioRol, Tipo, C
 	ActividadEconomica.hasOne(Servicios, { foreignKey: 'id_actividad', as: 'actividades' })
 	Servicios.belongsTo(ActividadEconomica, { foreignKey: 'id_actividad', as: 'actividad' })
 
-
+	// Proforma.hasMany(DetallesProformas, { foreignKey: 'id_proforma', as: 'detallesProformas' })
+	// DetallesProformas.belongsTo(Proforma, { foreignKey: 'id_proforma', as: 'detallesProforma' })
+	// Servicios.hasMany(DetallesProformas, { foreignKey: 'id_servicio', as: 'servicios' })
+	// DetallesProformas.belongsTo(Servicios, { foreignKey: 'id_servicio', as: 'servicio' })
+	// Proforma.belongsTo(ActividadEconomica, { foreignKey: 'id_actividad', as: 'actividadEconomica' })
+	// ActividadEconomica.hasMany(Proforma, { foreignKey: 'id_actividad', as: 'actividadesEconomicas' })
+	// ActividadEconomica.hasOne(Servicios, { foreignKey: 'id_actividad', as: 'actividades' })
+	// Servicios.belongsTo(ActividadEconomica, { foreignKey: 'id_actividad', as: 'actividad' })
+	Clase.hasMany(ActividadEconomica, { foreignKey: 'id_clase_actividad', as: 'clasesActividades' })
+	ActividadEconomica.belongsTo(Clase, { foreignKey: 'id_clase_actividad', as: 'claseActividad' })
+	Sucursal.hasMany(Proforma, { foreignKey: 'id_sucursal', as: 'sucursales' })
+	Proforma.belongsTo(Sucursal, { foreignKey: 'id_sucursal', as: 'sucursalProforma' })
+	Cliente.hasMany(Proforma, { foreignKey: 'id_cliente', as: 'clientes' })
+	Proforma.belongsTo(Cliente, { foreignKey: 'id_cliente', as: 'clienteProforma' })
+	Usuario.hasMany(Proforma, { foreignKey: 'id_usuario', as: 'usuarios' })
+	Proforma.belongsTo(Usuario, { foreignKey: 'id_usuario', as: 'usuarioProforma' })
+	Clase.hasMany(DetallesProformas,{foreignKey:'id_centro_costo',as: 'centrosCostos'})
+	DetallesProformas.belongsTo(Clase, {foreignKey:'id_centro_costo',as:'centroCosto'})
 
 
 

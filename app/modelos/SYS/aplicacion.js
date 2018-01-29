@@ -156,6 +156,9 @@ module.exports=function(sequelize,Sequelize){
 		sequelize.query("INSERT IGNORE INTO sys_aplicacion SET id = 46,titulo = 'DESTINOS',atributo_clase='fa-bookmark',url='gtm-destino',padre=41,createdAt = NOW(),updatedAt = NOW();").spread(function(results, metadata) {
 		  console.log(metadata+" rows affected in sys_application");
 		});
+		sequelize.query("INSERT IGNORE INTO sys_aplicacion SET id = 47,titulo = 'PROFORMAS',atributo_clase='fa-product-hunt',url='proformas',createdAt = NOW(),updatedAt = NOW();").spread(function(results, metadata) {
+		  console.log(metadata+" rows affected in sys_application");
+		});
 	});
 	
 	return Aplicacion;

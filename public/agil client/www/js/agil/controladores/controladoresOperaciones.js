@@ -656,7 +656,6 @@ angular.module('agil.controladores')
 		}
 
 		$scope.confirmarEntrega = function (solicitud) {
-			//abrir dialog de confirmacion
 			$scope.solicitudCerrar = solicitud
 			$scope.abrirDialogConfirmacionCierre()
 

@@ -44,9 +44,17 @@ module.exports=function(sequelize,Sequelize){
         type: Sequelize.INTEGER,
         field:'usuario'
     },
+    detalle:{
+        type: Sequelize.STRING,
+        field:'detalle'
+    },
     totalImporteBs:{
         type: Sequelize.DECIMAL(20,4),
         field:'monto'
+    },
+    id_empresa:{
+        type: Sequelize.INTEGER,
+        field:'empresa'
     },
     eliminado: {
         type: Sequelize.BOOLEAN,

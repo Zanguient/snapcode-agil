@@ -217,7 +217,7 @@ module.exports = function (router, sequelize, Sequelize, jwt, md5, forEach, ensu
 
 
 	require('./rutas-operaciones')(router,sequelize,Sequelize, Usuario, Producto, Diccionario, Clase, Sucursal, Empresa, ProductoBase, Almacen, Inventario ,SolicitudReposicion,DetalleSolicitudProducto,DetalleSolicitudProductoBase,Persona)
-	require('./rutas-proformas')(router,sequelize,Sequelize, Usuario, Cliente, Proforma,DetallesProformas,ActividadEconomica,Servicios)
+	require('./rutas-proformas')(router, sequelize, Sequelize, Usuario, Cliente, Proforma, DetallesProformas, ActividadEconomica, Servicios, Clase,Sucursal)
 
 	router.route('/test')
 		.get(function (req, res) {

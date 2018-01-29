@@ -16,7 +16,7 @@ module.exports = function (sequelize, Sequelize) {
 			type: Sequelize.INTEGER,
 			field: 'cantidad'
 		},
-		importe: {
+		importeBs: {
 			type: Sequelize.INTEGER,
 			field: 'importe'
 		},

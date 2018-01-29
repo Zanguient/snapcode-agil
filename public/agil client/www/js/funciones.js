@@ -12,11 +12,12 @@ function ejecutarScriptDestino(idModalWizardDestinoEdicion,idContenedorEdicionDe
 	aplicarWizardFormulario(idModalWizardDestinoEdicion, idContenedorEdicionDestino);
 }
 
-function ejecutarScriptsProformas(modalConfiguracionActividadesServicios, wizardConfiguracionActividadesServicios, dialogProformaEdicion, dialogClientesProforma,modalConfiguracionActividades,wizardConfiguracionActividades) {
+function ejecutarScriptsProformas(modalConfiguracionActividadesServicios, wizardConfiguracionActividadesServicios, dialogProformaEdicion, dialogClientesProforma,modalConfiguracionActividades,wizardConfiguracionActividades,dialogmodalFechas) {
 	crearPopup(modalConfiguracionActividadesServicios, 'auto', 'auto');
 	crearPopup(modalConfiguracionActividades, 'auto', 'auto');
 	crearPopup(dialogProformaEdicion, 'auto', 'auto');
 	crearPopup(dialogClientesProforma, 'auto', 'auto');
+	crearPopup(dialogmodalFechas, 'auto', 'auto');
 	aplicarWizardFormulario(wizardConfiguracionActividadesServicios);
 	aplicarWizardFormulario(wizardConfiguracionActividades);
 }

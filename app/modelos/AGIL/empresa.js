@@ -95,7 +95,11 @@ module.exports=function(sequelize,Sequelize){
 		usar_cuentas_auxiliares:{
 		type: Sequelize.BOOLEAN,
 		field: 'usar_cuentas_auxiliares'  
-	  }
+		},
+		usar_proformas:{
+			type: Sequelize.BOOLEAN,
+			field: 'usar_proforma'  
+			}
 	}, {
 	  freezeTableName: true 
 	});

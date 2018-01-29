@@ -182,14 +182,16 @@ angular.module('agil.controladores')
         $scope.llenarCargos = function (cargos) {
             $scope.nuevoRH = ""
             $scope.cargos = [];
-            for (var i = 0; i < cargos.length; i++) {
-                var cargo = {
-                    nombre: cargos[i].nombre,
-                    maker: "",
-                    ticked: false,
-                    id: cargos[i].id
+            if (cargo !=undefined) {
+                for (var i = 0; i < cargos.length; i++) {
+                    var cargo = {
+                        nombre: cargos[i].nombre,
+                        maker: "",
+                        ticked: false,
+                        id: cargos[i].id
+                    }
+                    $scope.cargos.push(cargo);
                 }
-                $scope.cargos.push(cargo);
             }
         }
 
@@ -1270,7 +1272,7 @@ angular.module('agil.controladores')
         }
         $scope.abrirDialogPrerequisitoEditar = function (prerequisito) {
 
-            $scope.NuevoP = new Prerequisito({ id: prerequisito.id, nombre: prerequisito.nombre, observacion: prerequisito.observacion, vencimiento_mes: prerequisito.vencimiento_mes, puede_modificar_rrhh: prerequisito.puede_modificar_rrhh })
+            $scope.NuevoP = new Prerequisito({ id: prerequisito.id, nombre: prerequisito.nombre, observacion: prerequisito.observacion, vencimiento_mes: prerequisito.vencimiento_mes,dias_activacion:prerequisito.dias_activacion, puede_modificar_rrhh: prerequisito.puede_modificar_rrhh })
             $scope.abrirPopup($scope.idModalDialogPrerequisitoNuevo);
         }
 
@@ -1339,9 +1341,10 @@ angular.module('agil.controladores')
                 promesa.then(function (preRequisitos) {
                     $scope.prerequisitosPaciente = preRequisitos.Prerequisitos;
                     $scope.preRequisitos.forEach(function (requisito, index, array) {
+                        
 
                         $scope.prerequisitosPaciente.forEach(function (preRe) {
-
+                            preRe.fecha_vencimiento = $scope.calcularFechaVencimientoRequisito(preRe)
                             if (requisito.id == preRe.id_prerequisito) {
                                 requisito.asignado = true
                             }

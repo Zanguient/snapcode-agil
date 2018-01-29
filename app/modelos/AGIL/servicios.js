@@ -14,7 +14,7 @@ module.exports=function(sequelize,Sequelize){
 		field: 'codigo'
       },
       nombre: {
-		type: Sequelize.INTEGER,
+		type: Sequelize.STRING,
 		field: 'nombre'
       },
       precio: {
