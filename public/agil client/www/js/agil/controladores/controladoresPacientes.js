@@ -181,8 +181,7 @@ angular.module('agil.controladores')
 
         $scope.llenarCargos = function (cargos) {
             $scope.nuevoRH = ""
-            $scope.cargos = [];
-            if (cargo !=undefined) {
+            $scope.cargos = [];          
                 for (var i = 0; i < cargos.length; i++) {
                     var cargo = {
                         nombre: cargos[i].nombre,
@@ -191,8 +190,7 @@ angular.module('agil.controladores')
                         id: cargos[i].id
                     }
                     $scope.cargos.push(cargo);
-                }
-            }
+                }           
         }
 
         $scope.imcCal = function (consulta) {
@@ -583,6 +581,9 @@ angular.module('agil.controladores')
             promesa.then(function (dato) {
                 $scope.paginator.setPages(dato.paginas);
                 $scope.pacientes = dato.pacientes;
+                $scope.dynamicPopoverCargos = {
+                    templateUrl: 'myPopoverTemplate.html',
+                };
                 $scope.pacientes.forEach(function (pac, index, array) {
                     pac.activo = (pac.activo == 0) ? false : true
                     if (index === array.length - 1) {

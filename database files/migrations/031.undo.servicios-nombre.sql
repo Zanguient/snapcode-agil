@@ -1,0 +1,1 @@
+ALTER TABLE agil_servicio CHANGE nombre nombre int(11);

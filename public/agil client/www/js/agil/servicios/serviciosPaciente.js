@@ -32,7 +32,7 @@ angular.module('agil.servicios')
     }])
 
     .factory('PacientesEmpresaPaginador', function ($resource) {
-        return $resource(restServer + "pacientes/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion/codigo/:codigo/nombres/:nombres/ci/:ci/campo/:campo/cargo/:cargo/busquedaEmpresa/:busquedaEmpresa/grupo/:grupo_sanguineo/estado/:estado");
+        return $resource(restServer + "pacientes/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion/codigo/:codigo/nombres/:nombres/ci/:ci/campo/:campo/cargo/:cargo/busquedaEmpresa/:busquedaEmpresa/grupo/:grupo_sanguineo/estado/:estado/apellido/:apellido");
     })
 
     .factory('PacientesPaginador', ['PacientesEmpresaPaginador', '$q', function (PacientesEmpresaPaginador, $q) {
@@ -53,8 +53,8 @@ angular.module('agil.servicios')
                 cargo: paginator.filter.cargo,
                 busquedaEmpresa: paginator.filter.busquedaEmpresa,
                 estado: paginator.filter.estado,
-                grupo_sanguineo: paginator.filter.grupo_sanguineo
-
+                grupo_sanguineo: paginator.filter.grupo_sanguineo,
+                apellido:0
 
             }, function (entidades) {
                 delay.resolve(entidades);

@@ -88,7 +88,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                 from agil_medico_paciente "+ condicionContrato + " INNER JOIN agil_rrhh_empleado_cargo AS cargos ON agil_medico_paciente.id = cargos.empleado " + condicionCargo + " \
                 LEFT OUTER JOIN gl_clase AS `cargos.cargo` ON cargos.cargo = `cargos.cargo`.id INNER JOIN gl_persona ON (agil_medico_paciente.persona = gl_persona.id) INNER JOIN gl_clase ON (agil_medico_paciente.extension = gl_clase.id)\
                 where agil_medico_paciente.empresa = "+ req.params.id_empresa + activo + " AND (" + condicion + ") \
-                GROUP BY agil_medico_paciente.id order by "+ req.params.columna + " " + req.params.direccion, { type: sequelize.QueryTypes.SELECT })
+                AND agil_medico_paciente.es_empleado = true GROUP BY agil_medico_paciente.id order by "+ req.params.columna + " " + req.params.direccion, { type: sequelize.QueryTypes.SELECT })
                     .then(function (data) {
                         var options = {
                             model: MedicoPaciente,
@@ -105,7 +105,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                     from agil_medico_paciente "+ condicionContrato + " INNER JOIN agil_rrhh_empleado_cargo AS cargos ON agil_medico_paciente.id = cargos.empleado " + condicionCargo + " \
                     LEFT OUTER JOIN gl_clase AS `cargos.cargo` ON cargos.cargo = `cargos.cargo`.id INNER JOIN gl_persona ON (agil_medico_paciente.persona = gl_persona.id) INNER JOIN gl_clase ON (agil_medico_paciente.extension = gl_clase.id)\
                     where agil_medico_paciente.empresa = "+ req.params.id_empresa + activo + " AND (" + condicion + ") \
-                    GROUP BY agil_medico_paciente.id order by "+ req.params.columna + " " + req.params.direccion + limite, options)
+                    AND agil_medico_paciente.es_empleado = true GROUP BY agil_medico_paciente.id order by "+ req.params.columna + " " + req.params.direccion + limite, options)
                             .then(function (pacientes) {
                                 var a = ""
                                 var arregloCargos = []
@@ -524,7 +524,6 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                     direccion_localidad: req.body.personaReferencia.direccion_localidad,
                     direccion_numero: req.body.personaReferencia.direccion_numero
                 }).then(function (personaReferenciaCreada) {
-
                     MedicoPaciente.update({
                         codigo:req.body.empleado.codigo,
                         id_extension: req.body.empleado.extension.id,

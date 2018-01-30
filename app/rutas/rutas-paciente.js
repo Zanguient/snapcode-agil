@@ -177,36 +177,41 @@ module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Su
 				id_empleado: idpaciente
 			}
 		}).then(function (EmpleadoCargoEliminados) {
-			if (req.body.cargos.length > 0) {
-				req.body.cargos.forEach(function (cargo, index, array) {
-					RrhhEmpleadoCargo.findOrCreate({
-						where: { id_empleado: idpaciente, id_cargo: cargo.id },
-						defaults: {
-							id_empleado: idpaciente,
-							id_cargo: cargo.id
-						}
-					}).spread(function (ficha, created) {
-						if (!created) {
-							RrhhEmpleadoCargo.update({
+			if (req.body.cargos) {
+				if (req.body.cargos.length > 0) {
+					req.body.cargos.forEach(function (cargo, index, array) {
+						RrhhEmpleadoCargo.findOrCreate({
+							where: { id_empleado: idpaciente, id_cargo: cargo.id },
+							defaults: {
 								id_empleado: idpaciente,
 								id_cargo: cargo.id
-							}, {
-									where: { id_empleado: idpaciente, id_cargo: cargo.id }
-								}).then(function (actualizado) {
-									if (index === (array.length - 1)) {
-										res.json({ message: mensaje });
-									}
-								})
-
-						} else {
-							if (index === (array.length - 1)) {
-								res.json({ message: mensaje });
 							}
-						}
-					})
-				});
+						}).spread(function (ficha, created) {
+							if (!created) {
+								RrhhEmpleadoCargo.update({
+									id_empleado: idpaciente,
+									id_cargo: cargo.id
+								}, {
+										where: { id_empleado: idpaciente, id_cargo: cargo.id }
+									}).then(function (actualizado) {
+										if (index === (array.length - 1)) {
+											res.json({ message: mensaje });
+										}
+									})
+
+							} else {
+								if (index === (array.length - 1)) {
+									res.json({ message: mensaje });
+								}
+							}
+						})
+					});
+				} else {
+					res.json({ message: mensaje });
+				}
 			} else {
 				res.json({ message: mensaje });
+
 			}
 		})
 	}
@@ -453,35 +458,35 @@ module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Su
 														include: [{ model: Clase, as: 'cargo', include: [{ model: Tipo, as: 'tipo' }] }]
 													}).then(function (EmpleadoCargos) {
 														var dato = 0;
-														EmpleadoCargos.forEach(function (cargo, index, array) {														
-																	var nombre_corto = pacienteActual.cargo.substr(0, 3);
-																	Clase.findOrCreate({
-																		where: {
-																			nombre: pacienteActual.cargo,
-																			id_tipo: cargo.dataValues.cargo.dataValues.tipo.dataValues.id,
-																		},
-																		defaults: {
-																			id_tipo: cargo.dataValues.cargo.dataValues.tipo.dataValues.id,
-																			nombre: pacienteActual.cargo,
-																			nombre_corto: nombre_corto
-																		}
-																	}).spread(function (cargoClase, created) {
-																		RrhhEmpleadoCargo.findOrCreate({
-																			where: {
-																			id_empleado: pacienteFound.id,
-																			id_cargo: cargoClase.id,
-																		},
-																		defaults: {
-																			id_empleado: pacienteFound.id,
-																			id_cargo: cargoClase.id,
-																		}
-																		}).spread(function (cargoAc, created) {
-																			if (index === (array.length - 1)) {
-																				res.json({ mensaje: "¡Datos de pacientes actualizados satisfactoriamente!" });
-																			}
-																		})
-																	})
-															
+														EmpleadoCargos.forEach(function (cargo, index, array) {
+															var nombre_corto = pacienteActual.cargo.substr(0, 3);
+															Clase.findOrCreate({
+																where: {
+																	nombre: pacienteActual.cargo,
+																	id_tipo: cargo.dataValues.cargo.dataValues.tipo.dataValues.id,
+																},
+																defaults: {
+																	id_tipo: cargo.dataValues.cargo.dataValues.tipo.dataValues.id,
+																	nombre: pacienteActual.cargo,
+																	nombre_corto: nombre_corto
+																}
+															}).spread(function (cargoClase, created) {
+																RrhhEmpleadoCargo.findOrCreate({
+																	where: {
+																		id_empleado: pacienteFound.id,
+																		id_cargo: cargoClase.id,
+																	},
+																	defaults: {
+																		id_empleado: pacienteFound.id,
+																		id_cargo: cargoClase.id,
+																	}
+																}).spread(function (cargoAc, created) {
+																	if (index === (array.length - 1)) {
+																		res.json({ mensaje: "¡Datos de pacientes actualizados satisfactoriamente!" });
+																	}
+																})
+															})
+
 														});
 													})
 												})
@@ -686,28 +691,28 @@ module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Su
 
 	// ========= ruta para obtener pacientes x su nit ==============
 	router.route('/pacientes/empresa/:id_empresa/texto/:texto')
-		.get(function(req, res) {
+		.get(function (req, res) {
 			console.log('llegooooooooooo aqui =====?=');
-			var orCondition=[];console.log(req.params.texto);
-			if(req.params.texto==0){
-				orCondition.push({ci:req.params.texto});
-			}else if(req.params.texto){
-				orCondition.push({ci:req.params.texto});
+			var orCondition = []; console.log(req.params.texto);
+			if (req.params.texto == 0) {
+				orCondition.push({ ci: req.params.texto });
+			} else if (req.params.texto) {
+				orCondition.push({ ci: req.params.texto });
 			}
-			orCondition.push({nombre_completo: {$like: "%"+req.params.texto+"%"}});
+			orCondition.push({ nombre_completo: { $like: "%" + req.params.texto + "%" } });
 			MedicoPaciente.findAll({
 				where: {
 					empresa: req.params.id_empresa
 				},
-				include: [{ model: RrhhEmpleadoCargo, as: 'cargos', include: [{ model: Clase, as: "cargo" }]},{ model: Clase, as: 'extension' },{ model: Persona, as: 'persona', where: {$or:orCondition}, include: [{ model: Clase, as: 'genero' }] }
+				include: [{ model: RrhhEmpleadoCargo, as: 'cargos', include: [{ model: Clase, as: "cargo" }] }, { model: Clase, as: 'extension' }, { model: Persona, as: 'persona', where: { $or: orCondition }, include: [{ model: Clase, as: 'genero' }] }
 					// { model: Empresa, as: 'empresa'},{model:MedicoPrerequisito, as: 'prerequisitos',include: [{ model: Clase, as: 'prerequisitoClase' }]}
 				]
-			}).then(function(pacientes){
-				res.json(pacientes);		  
+			}).then(function (pacientes) {
+				res.json(pacientes);
 			});
-	})
+		})
 
-	router.route('/pacientes/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion/codigo/:codigo/nombres/:nombres/ci/:ci/campo/:campo/cargo/:cargo/busquedaEmpresa/:busquedaEmpresa/grupo/:grupo_sanguineo/estado/:estado')
+	/* router.route('/pacientes/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion/codigo/:codigo/nombres/:nombres/ci/:ci/campo/:campo/cargo/:cargo/busquedaEmpresa/:busquedaEmpresa/grupo/:grupo_sanguineo/estado/:estado')
 		.get(function (req, res) {
 			var condicion = ""
 			var activo = "false"
@@ -756,7 +761,7 @@ module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Su
 					condicion += "grupo_sanguineo like '%" + req.params.grupo_sanguineo + "%'"
 				}
 			}
-
+	
 			if (req.params.estado != "0") {
 				if (req.params.estado === 'Inactivo') {
 					activo = "false"
@@ -772,7 +777,7 @@ module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Su
 				}
 			}
 			console.log(condicion)
-
+	
 			if (condicion.length > 1) {
 				sequelize.query("select count(*) as cantidad_pacientes from agil_medico_paciente INNER JOIN gl_persona ON (agil_medico_paciente.persona = gl_persona.id) where agil_medico_paciente.eliminado = " + activo + " AND (" + condicion + ")", { type: sequelize.QueryTypes.SELECT })
 					.then(function (data) {
@@ -816,7 +821,193 @@ module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Su
 					});
 			}
 		});
+	*/
+	router.route('/pacientes/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion/codigo/:codigo/nombres/:nombres/ci/:ci/campo/:campo/cargo/:cargo/busquedaEmpresa/:busquedaEmpresa/grupo/:grupo_sanguineo/estado/:estado/apellido/:apellido')
+		.get(function (req, res) {
+			var condicion = ""
+			var condicionCargo = ""
+			var activo = "true"
+			var condicionContrato = ""
+			if (req.params.codigo != "0") {
+				condicion += "codigo like '%" + req.params.codigo + "%'"
+			}
+			if (req.params.nombres != "0") {
+				if (condicion.length > 1) {
+					condicion += " or nombre_completo like '%" + req.params.nombres + "%'"
+				} else {
+					condicion += "nombre_completo like '%" + req.params.nombres + "%'"
+				}
+			}
+			if (req.params.apellido != "0") {
+				if (condicion.length > 1) {
+					condicion += " or nombre_completo like '%" + req.params.apellido + "%'"
+				} else {
+					condicion += "nombre_completo like '%" + req.params.apellido + "%'"
+				}
+			}
+			if (req.params.ci != "0") {
+				if (condicion.length > 1) {
+					condicion += " or ci like '%" + req.params.ci + "%'"
+				} else {
+					condicion += "ci like '%" + req.params.ci + "%'"
+				}
+			}
+			if (req.params.campo != "0") {
+				if (condicion.length > 1) {
+					condicion += " or campo like '%" + req.params.campo + "%'"
+				} else {
+					condicion += "campo like '%" + req.params.campo + "%'"
+				}
+			}
+			if (req.params.cargo != "0") {
+				condicionCargo = "AND cargos.cargo = " + req.params.cargo
+			} else {
+				condicionCargo = ""
+			}
+			if (req.params.busquedaEmpresa != "0") {
+				if (condicion.length > 1) {
+					condicion += " or designacion_empresa like '%" + req.params.busquedaEmpresa + "%'"
+				} else {
+					condicion += "designacion_empresa like '%" + req.params.busquedaEmpresa + "%'"
+				}
+			}
+			if (req.params.grupo_sanguineo != "0") {
+				if (condicion.length > 1) {
+					condicion += " or grupo_sanguineo like '%" + req.params.grupo_sanguineo + "%'"
+				} else {
+					condicion += "grupo_sanguineo like '%" + req.params.grupo_sanguineo + "%'"
+				}
+			}
 
+			if (req.params.estado != "0") {
+				if (req.params.estado === 'Inactivo') {
+
+					activo = " AND agil_medico_paciente.eliminado = false"
+
+				} else {
+					activo = " AND agil_medico_paciente.eliminado = true"
+				}
+			} else {
+				activo = ""
+			}
+			if (req.params.texto_busqueda != "0") {
+				if (condicion.length > 1) {
+					condicion += " or nombre_completo like '%" + req.params.texto_busqueda + "%' or grupo_sanguineo like '%" + req.params.texto_busqueda + "%' or campo like '%" + req.params.texto_busqueda + "%'"
+				} else {
+					condicion += "nombre_completo like '%" + req.params.texto_busqueda + "%' or ci like '%" + req.params.texto_busqueda + "%' or designacion_empresa like '%" + req.params.texto_busqueda + "%' or grupo_sanguineo like '%" + req.params.texto_busqueda + "%' or campo like '%" + req.params.texto_busqueda + "%'"
+				}
+			}
+			console.log(condicion)
+			var limite = " LIMIT " + (req.params.items_pagina * (req.params.pagina - 1)) + "," + req.params.items_pagina
+			if (req.params.items_pagina == "0") {
+				limite = "";
+			}
+			if (condicion.length > 1) {
+				sequelize.query("select DISTINCT agil_medico_paciente.id as 'id',agil_medico_paciente.es_empleado as 'es_empleado', agil_medico_paciente.persona as 'id_persona',agil_medico_paciente.codigo as 'codigo',\
+                agil_medico_paciente.empresa as 'id_empresa', gl_clase.nombre as 'extension', agil_medico_paciente.grupo_sanguineo as 'grupo_sanguineo',\
+                agil_medico_paciente.campo as 'campo', agil_medico_paciente.designacion_empresa as 'designacion_empresa', agil_medico_paciente.comentario as 'comentario', \
+                gl_persona.nombre_completo as 'nombre_completo', gl_persona.apellido_paterno as 'apellido_paterno', gl_persona.apellido_materno as 'apellido_materno',\
+                gl_persona.nombres as 'nombres',gl_persona.imagen as 'imagen', agil_medico_paciente.eliminado as 'activo', gl_persona.ci as 'ci', gl_persona.genero as 'id_genero', \
+                gl_persona.telefono as 'telefono', gl_persona.telefono_movil as 'telefono_movil', gl_persona.fecha_nacimiento as 'fecha_nacimiento'\
+                from agil_medico_paciente "+ condicionContrato + " INNER JOIN agil_rrhh_empleado_cargo AS cargos ON agil_medico_paciente.id = cargos.empleado " + condicionCargo + " \
+                LEFT OUTER JOIN gl_clase AS `cargos.cargo` ON cargos.cargo = `cargos.cargo`.id INNER JOIN gl_persona ON (agil_medico_paciente.persona = gl_persona.id) INNER JOIN gl_clase ON (agil_medico_paciente.extension = gl_clase.id)\
+                where agil_medico_paciente.empresa = "+ req.params.id_empresa + activo + " AND (" + condicion + ") \
+                GROUP BY agil_medico_paciente.id order by "+ req.params.columna + " " + req.params.direccion, { type: sequelize.QueryTypes.SELECT })
+					.then(function (data) {
+						var options = {
+							model: MedicoPaciente,
+							include: [{ model: Persona, as: 'persona' },
+							{ model: Clase, as: 'extension' }]
+						};
+						Sequelize.Model.$validateIncludedElements(options);
+						sequelize.query("select DISTINCT agil_medico_paciente.id as 'id',agil_medico_paciente.es_empleado as 'es_empleado', agil_medico_paciente.persona as 'id_persona',agil_medico_paciente.codigo as 'codigo',\
+                    agil_medico_paciente.empresa as 'id_empresa', gl_clase.nombre as 'extension', agil_medico_paciente.grupo_sanguineo as 'grupo_sanguineo',\
+                    agil_medico_paciente.campo as 'campo', agil_medico_paciente.designacion_empresa as 'designacion_empresa', agil_medico_paciente.comentario as 'comentario', \
+                    gl_persona.nombre_completo as 'nombre_completo', gl_persona.apellido_paterno as 'apellido_paterno', gl_persona.apellido_materno as 'apellido_materno',\
+                    gl_persona.nombres as 'nombres',gl_persona.imagen as 'imagen', agil_medico_paciente.eliminado as 'activo', gl_persona.ci as 'ci', gl_persona.genero as 'id_genero', \
+                    gl_persona.telefono as 'telefono', gl_persona.telefono_movil as 'telefono_movil', gl_persona.fecha_nacimiento as 'fecha_nacimiento'\
+                    from agil_medico_paciente "+ condicionContrato + " INNER JOIN agil_rrhh_empleado_cargo AS cargos ON agil_medico_paciente.id = cargos.empleado " + condicionCargo + " \
+                    LEFT OUTER JOIN gl_clase AS `cargos.cargo` ON cargos.cargo = `cargos.cargo`.id INNER JOIN gl_persona ON (agil_medico_paciente.persona = gl_persona.id) INNER JOIN gl_clase ON (agil_medico_paciente.extension = gl_clase.id)\
+                    where agil_medico_paciente.empresa = "+ req.params.id_empresa + activo + " AND (" + condicion + ") \
+                    GROUP BY agil_medico_paciente.id order by "+ req.params.columna + " " + req.params.direccion + limite, options)
+							.then(function (pacientes) {
+								var a = ""
+								var arregloCargos = []
+								if (pacientes.length > 0) {
+
+									pacientes.forEach(function (paciente, index, array) {
+										RrhhEmpleadoCargo.findAll({
+											where: {
+												id_empleado: paciente.id
+											},
+											include: [{ model: Clase, as: 'cargo' }]
+										}).then(function (cargosEmpleado) {
+											paciente.dataValues.cargos = cargosEmpleado
+											arregloCargos.push(paciente)
+											if (index === (array.length - 1)) {
+												res.json({ pacientes: arregloCargos, paginas: Math.ceil(data.length / req.params.items_pagina) });
+											}
+
+										})
+									});
+								} else {
+									res.json({ pacientes: arregloCargos, paginas: Math.ceil(data.length / req.params.items_pagina) });
+								}
+							});
+					});
+			} else {
+				sequelize.query("select DISTINCT agil_medico_paciente.id as 'id',agil_medico_paciente.es_empleado as 'es_empleado', agil_medico_paciente.persona as 'id_persona',agil_medico_paciente.codigo as 'codigo',\
+                agil_medico_paciente.empresa as 'id_empresa', gl_clase.nombre as 'extension', agil_medico_paciente.grupo_sanguineo as 'grupo_sanguineo',\
+                agil_medico_paciente.campo as 'campo', agil_medico_paciente.designacion_empresa as 'designacion_empresa',agil_medico_paciente.comentario as 'comentario',\
+                gl_persona.nombre_completo as 'nombre_completo', gl_persona.apellido_paterno as 'apellido_paterno', gl_persona.apellido_materno as 'apellido_materno',\
+                gl_persona.nombres as 'nombres',gl_persona.imagen as 'imagen', agil_medico_paciente.eliminado as 'activo', gl_persona.ci as 'ci', gl_persona.genero as 'id_genero', \
+                gl_persona.telefono as 'telefono', gl_persona.telefono_movil as 'telefono_movil', gl_persona.fecha_nacimiento as 'fecha_nacimiento'\
+                from agil_medico_paciente "+ condicionContrato + " INNER JOIN agil_rrhh_empleado_cargo AS cargos ON agil_medico_paciente.id = cargos.empleado " + condicionCargo + " \
+                LEFT OUTER JOIN gl_clase AS `cargos.cargo` ON cargos.cargo = `cargos.cargo`.id INNER JOIN gl_persona ON (agil_medico_paciente.persona = gl_persona.id) INNER JOIN gl_clase ON (agil_medico_paciente.extension = gl_clase.id)\
+                where agil_medico_paciente.empresa = "+ req.params.id_empresa + activo + " GROUP BY agil_medico_paciente.id order by " + req.params.columna + " " + req.params.direccion, { type: sequelize.QueryTypes.SELECT })
+					.then(function (data) {
+						var options = {
+							model: MedicoPaciente,
+							include: [{ model: Persona, as: 'persona' },
+							{ model: Clase, as: 'extension' }]
+						};
+						Sequelize.Model.$validateIncludedElements(options);
+						sequelize.query("select DISTINCT agil_medico_paciente.id as 'id',agil_medico_paciente.es_empleado as 'es_empleado', agil_medico_paciente.persona as 'id_persona',agil_medico_paciente.codigo as 'codigo',\
+                    agil_medico_paciente.empresa as 'id_empresa', gl_clase.nombre as 'extension', agil_medico_paciente.grupo_sanguineo as 'grupo_sanguineo',\
+                    agil_medico_paciente.campo as 'campo', agil_medico_paciente.designacion_empresa as 'designacion_empresa',agil_medico_paciente.comentario as 'comentario',\
+                    gl_persona.nombre_completo as 'nombre_completo', gl_persona.apellido_paterno as 'apellido_paterno', gl_persona.apellido_materno as 'apellido_materno',\
+                    gl_persona.nombres as 'nombres',gl_persona.imagen as 'imagen', agil_medico_paciente.eliminado as 'activo', gl_persona.ci as 'ci', gl_persona.genero as 'id_genero', \
+                    gl_persona.telefono as 'telefono', gl_persona.telefono_movil as 'telefono_movil', gl_persona.fecha_nacimiento as 'fecha_nacimiento'\
+                    from agil_medico_paciente "+ condicionContrato + " INNER JOIN agil_rrhh_empleado_cargo AS cargos ON agil_medico_paciente.id = cargos.empleado " + condicionCargo + " \
+                    LEFT OUTER JOIN gl_clase AS `cargos.cargo` ON cargos.cargo = `cargos.cargo`.id INNER JOIN gl_persona ON (agil_medico_paciente.persona = gl_persona.id) INNER JOIN gl_clase ON (agil_medico_paciente.extension = gl_clase.id)\
+                    where agil_medico_paciente.empresa = "+ req.params.id_empresa + activo + " GROUP BY agil_medico_paciente.id order by " + req.params.columna + " " + req.params.direccion + limite, options)
+							.then(function (pacientes) {
+								var a = ""
+								var arregloCargos = []
+								if (pacientes.length > 0) {
+									pacientes.forEach(function (paciente, index, array) {
+										RrhhEmpleadoCargo.findAll({
+											where: {
+												id_empleado: paciente.id
+											},
+											include: [{ model: Clase, as: 'cargo' }]
+										}).then(function (cargosEmpleado) {
+											paciente.dataValues.cargos = cargosEmpleado
+											arregloCargos.push(paciente)
+											if (index === (array.length - 1)) {
+												res.json({ pacientes: arregloCargos, paginas: Math.ceil(data.length / req.params.items_pagina) });
+											}
+
+										})
+									});
+								} else {
+									res.json({ pacientes: arregloCargos, paginas: Math.ceil(data.length / req.params.items_pagina) });
+
+								}
+							});
+					});
+			}
+		})
 	router.route('/vacunas/:id')
 		.put(function (req, res) {
 			MedicoVacuna.update({
