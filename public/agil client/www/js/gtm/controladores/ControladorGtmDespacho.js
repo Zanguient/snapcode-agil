@@ -33,7 +33,12 @@ angular.module('agil.controladores')
             $scope.paginator = Paginator();
             $scope.paginator.column = "id";
             $scope.paginator.direccion = "asc";
-            $scope.filtro = { id_empresa: $scope.usuario.id_empresa }
+            $scope.filtro = { id_empresa: $scope.usuario.id_empresa,inicio:"",
+                fin:"",
+                transportista:"",
+                tipo:"",
+                grupo:"",
+                estado:"" }
             $scope.paginator.callBack = $scope.buscarDespachados;
             $scope.paginator.getSearch("", $scope.filtro, null);
             blockUI.stop();
@@ -107,7 +112,6 @@ angular.module('agil.controladores')
             doc.font('Helvetica', 8);
             doc.text((gtm_despacho.saldo), x + 300, y + 20)
             doc.text((gtm_despacho.cantidad - gtm_despacho.saldo), x + 300, y + 40)
-
             doc.end();
             stream.on('finish', function () {
                 var fileURL = stream.toBlobURL('application/pdf');
@@ -119,12 +123,8 @@ angular.module('agil.controladores')
         $scope.dibujarCabeceraPDFImpresion = function (doc, gtm_despacho) {
             var yCabecera = 80;
             var yEspacio = 10;
-            var fecha = new Date().getDate() + '/' + (new Date().getMonth() + 1) + '/' + new Date().getFullYear()
-            // if ($scope.usuario.empresa.imagen.length > 100) {
-            // 	doc.image($scope.usuario.empresa.imagen, 20, yCuerpo - yCabecera, { width: 50, height: 50 });
-            // } else {
-            // 	doc.image($scope.usuario.empresa.imagen, 20, yCuerpo - yCabecera);
-            // }
+            var fecha = new Date()
+            var fecha = $scope.fechaATexto(fecha)
             doc.rect(40, 80 + 80, 540, 25).fillAndStroke("silver", "#000");
             doc.font('Helvetica-Bold', 12)
                 .fill('black')
@@ -133,14 +133,14 @@ angular.module('agil.controladores')
             // doc.text("SUCURSAL : ", -40, 50, { align: "center" });
             doc.font('Helvetica', 8);
             doc.font('Helvetica-Bold', 8);
-            doc.text("FECHA: ", 510, 60, { width: 40 });
+            doc.text("FECHA: ", 505, 60, { width: 40 });
             doc.text("Cod. Interno: ", 465, 80);
             doc.text("Zona:", 465, 90);
             doc.text("Cod. SAP: ", 465, 100);
             doc.text("Cod. Vend: ", 465, 110);
 
             doc.font('Helvetica', 8);
-            doc.text(fecha, 545, 60, { width: 40 });
+            doc.text(fecha, 540, 60, { width: 45 });
             doc.text("Codigo interno", 530, 80);
             doc.text("", 490, 90);
             doc.text("", 510, 100);

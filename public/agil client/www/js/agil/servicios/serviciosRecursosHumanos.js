@@ -43,7 +43,7 @@ angular.module('agil.servicios')
     return res;
 }])
 .factory('RecursosHumanosEmpresaPaginador', function ($resource) {
-    return $resource(restServer + "recursos-humanos/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion/codigo/:codigo/nombres/:nombres/ci/:ci/campo/:campo/cargo/:cargo/busquedaEmpresa/:busquedaEmpresa/grupo/:grupo_sanguineo/estado/:estado");
+    return $resource(restServer + "recursos-humanos/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion/codigo/:codigo/nombres/:nombres/ci/:ci/campo/:campo/cargo/:cargo/busquedaEmpresa/:busquedaEmpresa/grupo/:grupo_sanguineo/estado/:estado/apellido/:apellido");
 })
 
 .factory('RecursosHumanosPaginador', ['RecursosHumanosEmpresaPaginador', '$q', function (RecursosHumanosEmpresaPaginador, $q) {
@@ -53,6 +53,7 @@ angular.module('agil.servicios')
         var grupo_sanguineo = (paginator.filter.grupo_sanguineo==undefined) ?  paginator.filter.grupo_sanguineo=0 :  paginator.filter.grupo_sanguineo
        var cargo = (paginator.filter.cargo==undefined) ?  paginator.filter.cargo=0 :  paginator.filter.cargo
         var estado = (paginator.filter.estado==undefined) ?  paginator.filter.estado=0 :  paginator.filter.estado
+        var apellido = (paginator.filter.apellido==undefined) ?  paginator.filter.apellido=0 :  paginator.filter.apellido
         var delay = $q.defer();
         RecursosHumanosEmpresaPaginador.get({
             id_empresa: paginator.filter.empresa,
@@ -68,8 +69,8 @@ angular.module('agil.servicios')
             cargo: cargo,
             busquedaEmpresa: paginator.filter.busquedaEmpresa,
             estado: estado,
-            grupo_sanguineo: grupo_sanguineo
-
+            grupo_sanguineo: grupo_sanguineo,
+            apellido:apellido
 
         }, function (entidades) {
             delay.resolve(entidades);
@@ -355,3 +356,21 @@ angular.module('agil.servicios')
     };
     return res;
 }])
+.factory('ListRolTurnoEmpleados', function ($resource) {
+    return $resource(restServer + "recursos-humanos/empresa/:id_empresa/rolTurno/empleado/:id_empleado",null,
+        {
+            'update': { method: 'PUT' }
+        });
+})
+.factory('ListaRolTurnos', ['ListRolTurnoEmpleados', '$q', function (ListRolTurnoEmpleados, $q) {
+    var res = function (idEmpresa,idEmpleado) {
+        var delay = $q.defer();
+        ListRolTurnoEmpleados.get({ id_empresa: idEmpresa,id_empleado:idEmpleado}, function (entidad) {
+            delay.resolve(entidad);
+        }, function (error) {
+            delay.reject(error);
+        });
+        return delay.promise;
+    };
+    return res;
+}]) 

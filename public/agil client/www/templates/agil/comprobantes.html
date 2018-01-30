@@ -1,21 +1,7 @@
 <div class="row">
     <div class="col-xs-12">
         <h3 class="header smaller lighter blue">COMPROBANTES</h3>
-        <!-- <div class="col-xs-2">
-            <button id="nuevo" class="btn btn-primary" ng-click="crearNuevoComprobante()">
-                <i class="ace-icon fa fa-plus align-top bigger-125"></i>
-                Nuevo
-            </button>
-        </div>
-        <div class="col-xs-10">
-                <button tabindex="-1" id="ejemploImportar" uib-tooltip="Ejemplo Importación" href="/recursos/EJEMPLO-TIPO-CAMBIO-MONEDA.xlsx" class="btn btn-app btn-danger btn-xs">
-                    <i class="ace-icon fa fa-cloud-download bigger-140"></i>								   
-                </button>
-            <div class="fileUpload btn btn-primary btn-success">
-                <span class="fileUpload-button ace-icon fa fa-file-excel-o align-top bigger-125"></span>
-                <input class="upload" type="file" custom-on-file-change="subirExcelUfvDolar" />Importar Cambio Moneda&nbsp&nbsp
-            </div>
-        </div> -->
+       
         <button  tooltip-popup-delay='10' tooltip-is-open="true" uib-tooltip='Comprobante Recuperado' ng-if="ComprobanteGuardado" d="nuevo" ng-disabled="!aplicacion.puede_crear" class="btn btn-app btn-danger btn-xs" ng-click="verComprobante(ComprobanteGuardado)">
                 <i class="ace-icon fa fa-exclamation-triangle  align-top bigger-165"></i>                
             </button>

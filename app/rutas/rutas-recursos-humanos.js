@@ -1,6 +1,6 @@
 module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente, Persona, Empresa, Sucursal, Clase, Diccionario, Tipo, decodeBase64Image, fs, RrhhEmpleadoFicha, RrhhEmpleadoFichaOtrosSeguros, RrhhEmpleadoFichaFamiliar, RrhhEmpleadoDiscapacidad
     , RrhhEmpleadoCargo, RrhhEmpleadoHojaVida, RrhhEmpleadoFormacionAcademica, RrhhEmpleadoExperienciaLaboral, RrhhEmpleadoLogroInternoExterno, RrhhEmpleadoCapacidadInternaExterna, NumeroLiteral, RrhhEmpleadoPrestamo, RrhhEmpleadoPrestamoPago, RrhhEmpleadoRolTurno, RrhhEmpleadoHorasExtra) {
-    router.route('/recursos-humanos/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion/codigo/:codigo/nombres/:nombres/ci/:ci/campo/:campo/cargo/:cargo/busquedaEmpresa/:busquedaEmpresa/grupo/:grupo_sanguineo/estado/:estado')
+    router.route('/recursos-humanos/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion/codigo/:codigo/nombres/:nombres/ci/:ci/campo/:campo/cargo/:cargo/busquedaEmpresa/:busquedaEmpresa/grupo/:grupo_sanguineo/estado/:estado/apellido/:apellido')
         .get(function (req, res) {
             var condicion = ""
             var condicionCargo = ""
@@ -14,6 +14,13 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                     condicion += " or nombre_completo like '%" + req.params.nombres + "%'"
                 } else {
                     condicion += "nombre_completo like '%" + req.params.nombres + "%'"
+                }
+            }
+            if (req.params.apellido != "0") {
+                if (condicion.length > 1) {
+                    condicion += " or nombre_completo like '%" + req.params.apellido + "%'"
+                } else {
+                    condicion += "nombre_completo like '%" + req.params.apellido + "%'"
                 }
             }
             if (req.params.ci != "0") {
@@ -519,7 +526,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                 }).then(function (personaReferenciaCreada) {
 
                     MedicoPaciente.update({
-
+                        codigo:req.body.empleado.codigo,
                         id_extension: req.body.empleado.extension.id,
                         id_tipo_documento: req.body.empleado.tipoDocumento.id,
                         fecha_vence_documento: req.body.empleado.fecha_vence_documento,
@@ -600,7 +607,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                     detalle_discapacidades: req.body.detalle_discapacidades,
                     id_empleado: req.body.empleado.id,
                     fecha: req.body.fecha_elaboracion,
-                    codigo_empleado: req.body.codigo_empleado,
+                    //codigo_empleado: req.body.codigo_empleado,
                     id_tipo_contrato: req.body.tipoContrato.id,
                     fecha_inicio: req.body.fecha_inicio2,
                     fecha_fin: req.body.fecha_fin2,
@@ -1288,12 +1295,24 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
             RrhhEmpleadoPrestamoPago.create({
                 id_usuario: req.params.id_usuario,
                 id_prestamo: req.params.id_prestamo,
-                fecha: req.body.fecha,
+                fecha: req.body.pagoFecha,
                 monto_pagado: req.body.monto_pagado,
                 saldo_anterior: saldo_anterior,
                 a_cuenta_anterior: a_cuenta_anterior
             }).then(function (empleadoPrestamoCreado) {
-                res.json({ mensaje: "Guardado satisfactoriamente!" })
+                if (req.body.monto_pagado != req.body.cuota) {
+                    RrhhEmpleadoPrestamo.update({
+                        cuota: req.body.cuota2
+                    }, {
+                            where: { id: req.body.id }
+                        }).then(function (params) {
+                            res.json({ mensaje: "Pago efectuado satisfactoriamente!" })
+                        })
+
+                } else {
+                    res.json({ mensaje: "Pago efectuado satisfactoriamente!" })
+                }
+
 
             })
         })
@@ -1315,7 +1334,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                 fecha_inicio: req.body.fecha_inicio,
                 fecha_fin: req.body.fecha_fin,
                 tipo: req.body.tipo,
-                dias_trabajado: req.body.dias_trabajado,
+                dias_trabajado: req.body.dias_trabajo,
                 dias_descanso: req.body.dias_descanso,
                 grupo: req.body.grupo,
                 eliminado: false
@@ -1323,6 +1342,24 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                 res.json({ mensaje: "Guardado satisfactoriamente!" })
 
             })
+        })
+    router.route('/recursos-humanos/empresa/:id_empresa/rolTurno/empleado/:id_empleado')
+        .get(function (req, res) {
+            if (req.params.id_empleado != 0) {
+                RrhhEmpleadoRolTurno.findAll({
+                    where: { id_empleado: req.params.id_empleado },
+                    include: [{ model: Clase, as: 'campo'},{ model: MedicoPaciente, as: 'empleado', where: { id_empresa: req.params.id_empresa } }]
+                }).then(function (empleadoRolesTurno) {
+                    res.json({rolesTurno:empleadoRolesTurno})
+
+                })
+            } else {
+                RrhhEmpleadoRolTurno.findAll({
+                    include: [{ model: Clase, as: 'campo'},{ model: MedicoPaciente, as: 'empleado', where: { id_empresa: req.params.id_empresa },include:[{model:Persona,as:'persona'}]}]
+                }).then(function (empleadoRolesTurno) {
+                    res.json({rolesTurno:empleadoRolesTurno})
+                })
+            }
         })
 
     router.route('/recursos-humanos/horas-extra/empleado/:id_empleado')
@@ -1341,12 +1378,12 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
         })
     router.route('/recursos-humanos/horas-extra/empleado/:id_empleado/inicio/:inicio/fin/:fin')
         .get(function (req, res) {
-            var condicionHorasExtra={id_empleado: req.params.id_empleado, eliminado: false };
-            if(req.params.inicio!=0){
-                var inicio= new Date(req.params.inicio);inicio.setHours(0,0,0,0,0);
-                var fin= new Date(req.params.fin);fin.setHours(23,0,0,0,0);
-                var condicionHorasExtra={id_empleado: req.params.id_empleado, eliminado: false,fecha: {$between: [inicio,fin]} };
-            }           
+            var condicionHorasExtra = { id_empleado: req.params.id_empleado, eliminado: false };
+            if (req.params.inicio != 0) {
+                var inicio = new Date(req.params.inicio); inicio.setHours(0, 0, 0, 0, 0);
+                var fin = new Date(req.params.fin); fin.setHours(23, 0, 0, 0, 0);
+                var condicionHorasExtra = { id_empleado: req.params.id_empleado, eliminado: false, fecha: { $between: [inicio, fin] } };
+            }
             RrhhEmpleadoHorasExtra.findAll({
                 where: condicionHorasExtra,
                 include: [{ model: MedicoPaciente, as: 'empleado' }]
@@ -1416,7 +1453,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                                                 campo: pacienteActual.campamento,
                                                 designacion_empresa: pacienteActual.designacion_empresa,
                                                 eliminado: pacienteActual.eliminado,
-                                                es_empleado: pacienteActual.es_empleado
+                                                es_empleado: true
                                             }, {
                                                     where: { id: pacienteFound.id }
 

@@ -1036,12 +1036,21 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 					$scope.verificarVentasComprobantes($scope.usuario.id_empresa)
 					$scope.verificarComprasComprobantes($scope.usuario.id_empresa)
 				}
+				$scope.verificarNotificaciones()
 			}
 
 			$scope.ocultarFormularioInicioSesion();
 
 		}
-
+		$scope.verificarNotificaciones=function(){
+			$scope.verificarNotifiacion = $interval(function () {
+				$scope.verificarDespachos($scope.usuario.id_empresa);
+				console.log("cargando notificaciones")
+			}, 100000);
+		}
+		$scope.pararverificarNotificaciones = function () {
+			$interval.cancel($scope.verificarNotifiacion);
+		}
 		$scope.iniciarSesion = function (usuario) {
 			blockUI.start();
 			/*var captchResponse = $('#g-recaptcha-response').val();
@@ -2271,6 +2280,19 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 			$scope.meses = [{ id: 0, nombre: "Enero" }, { id: 1, nombre: "Febrero" }, { id: 2, nombre: "Marzo" }, { id: 3, nombre: "Abril" }, { id: 4, nombre: "Mayo" }, { id: 5, nombre: "Junio" }, { id: 6, nombre: "Julio" }, { id: 7, nombre: "Agosto" },
 			{ id: 8, nombre: "Septiembre" }, { id: 9, nombre: "Octubre" }, { id: 10, nombre: "Noviembre" }, { id: 11, nombre: "Diciembre" }];
 		}
+		$scope.fechaATexto = function (fecha) {
+			fech = new Date(fecha)
+			var valor = (fech.getMonth() + 1)
+			if (valor < 10) {
+				valor = "0" + valor
+			}
+			fecha = fech.getDate() + "/" + valor + "/" + fech.getFullYear();
+			return fecha
+			// $scope.fechaAplicacionVacuna = new Date(convertirFecha(fecha))
+		}
+$scope.SumarDiasMesesAñosfecha=function (fecha, intervalo, dma, simbolo) {
+	return editar_fecha(fecha, intervalo, dma, simbolo)
+}
 		$scope.inicio = function () {
 			$scope.loadData();
 			$rootScope.abs = $window.Math.abs;
@@ -2287,16 +2309,6 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 			}
 		}
 
-		$scope.fechaATexto = function (fecha) {
-			fech = new Date(fecha)
-			var valor = (fech.getMonth() + 1)
-			if (valor < 10) {
-				valor = "0" + valor
-			}
-			fecha = fech.getDate() + "/" + valor + "/" + fech.getFullYear();
-			return fecha
-			// $scope.fechaAplicacionVacuna = new Date(convertirFecha(fecha))
-		}
-
+		
 
 	});

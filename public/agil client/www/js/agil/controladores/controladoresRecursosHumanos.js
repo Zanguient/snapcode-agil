@@ -3,7 +3,7 @@ angular.module('agil.controladores')
     .controller('ControladorRecursosHumanos', function ($scope, $sce, $localStorage, $location, $templateCache, $route, blockUI, ListaDatosGenero, NuevoRecursoHumano, RecursosHumanosPaginador, Paginator,
         FieldViewer, EmpleadoEmpresa, obtenerEmpleadoRh, UsuarioRecursosHUmanosActivo, Prerequisito, ListaDatosPrerequisito, Prerequisitos, ListaPrerequisitosPaciente, ActualizarPrerequisito, UsuarioRecursosHumanosFicha,
         ClasesTipo, Clases, Paises, CrearEmpleadoFicha, EliminarOtroSeguroRh, EliminarFamiliarRh, PrerequisitoPaciente, PrerequisitosHistorial, UsuarioRhHistorialFicha, ObtenerEmpleadoHojaVida, GuardarEmpleadoHojaVida, CrearPrestamo,
-        ObtenerListaPrestamo, CrearRolTurno, CrearPagoPrestamo, VerificarUsuarioEmpresa, EditarPrestamo, ListaEmpleadosRrhh, CrearHorasExtra,HistorialHorasExtra) {
+        ObtenerListaPrestamo, CrearRolTurno, CrearPagoPrestamo, VerificarUsuarioEmpresa, EditarPrestamo, ListaEmpleadosRrhh, CrearHorasExtra, HistorialHorasExtra,ListaRolTurnos) {
         $scope.usuario = JSON.parse($localStorage.usuario);
         $scope.idModalPrerequisitos = 'dialog-pre-requisitos';
         $scope.idModalEmpleado = 'dialog-empleado';
@@ -201,7 +201,6 @@ angular.module('agil.controladores')
             $scope.obtenerRecursosHumanos();
             /*   $scope.obtenerPrerequisito(); */
             $scope.recuperarDatosTipo()
-            $scope.obtenerCentroCostos()
             $scope.empleadosSeleccionados = []
         }
 
@@ -956,12 +955,14 @@ angular.module('agil.controladores')
         }
         $scope.abrirDialogRolTurnos = function (empleado) {
             $scope.empleado = empleado
+            $scope.rolTurno = { tipo: false, fecha_fin: "", dias_trabajo: null, dias_descanso: null, grupo: "" }
             $scope.abrirPopup($scope.idModalRolTurnos);
         }
         $scope.cerrarDialogRolTurnos = function () {
             $scope.cerrarPopup($scope.idModalRolTurnos);
         }
-        $scope.abrirDialogHistorialTurnos = function () {
+        $scope.abrirDialogHistorialTurnos = function (empleado) {
+            $scope.obtenerlistaRolTurno(empleado.id)
             $scope.abrirPopup($scope.idModalHistorialTurnos);
         }
         $scope.cerrarDialogHistorialTurnos = function () {
@@ -970,14 +971,14 @@ angular.module('agil.controladores')
         $scope.abrirDialogHorasExtras = function (empleado) {
             $scope.empleado = empleado
             var fecha = new Date()
-            $scope.horaExtra={fecha:$scope.fechaATexto(fecha)}
+            $scope.horaExtra = { fecha: $scope.fechaATexto(fecha) }
             $scope.abrirPopup($scope.idModalHorasExtras);
         }
         $scope.cerrarDialogHorasExtras = function () {
             $scope.cerrarPopup($scope.idModalHorasExtras);
         }
         $scope.abrirDialogHistorialHorasExtras = function () {
-            var filtroHorasExtra={inicio:"",fin:""}
+            var filtroHorasExtra = { inicio: "", fin: "" }
             $scope.obtenerHistorialHorasExtra(filtroHorasExtra)
             $scope.abrirPopup($scope.idModalHistorialHorasExtras);
         }
@@ -1027,7 +1028,7 @@ angular.module('agil.controladores')
             $scope.paginator = Paginator();
             $scope.paginator.column = "fecha_inicial";
             $scope.paginator.direccion = "asc";
-            $scope.filtro = { empresa: $scope.usuario.id_empresa, plazo: "", inicio: "", fin: "", nombre: "" };
+            $scope.filtro = { empresa: $scope.usuario.id_empresa, plazo: "", inicio: "", fin: "", nombre: "",apellido: "" };
             $scope.paginator.callBack = $scope.optenerListaPrestamos;
             $scope.paginator.getSearch("", $scope.filtro, null);
             blockUI.stop();
@@ -1069,6 +1070,16 @@ angular.module('agil.controladores')
         }
         $scope.abrirDialogPagoPrestamo = function (prestamo) {
             $scope.prestamo = prestamo
+            var fechaActual = new Date()
+            if ($scope.prestamo.prestamoPagos.length > 0) {
+                prestamo.total = $scope.prestamo.prestamoPagos[(prestamo.prestamoPagos.length - 1)].saldo_anterior
+            }
+            var fechaVence = new Date($scope.convertirFecha(prestamo.fecha_vence))
+            var fechaInicioTexto = moment(fechaActual).format('YYYY-MM-DD HH:mm:ss');
+            var fechaFinTexto = moment(fechaVence).format('YYYY-MM-DD HH:mm:ss');
+            var fecha1 = moment(fechaInicioTexto, "YYYY-MM-DD HH:mm:ss");
+            var fecha2 = moment(fechaFinTexto, "YYYY-MM-DD HH:mm:ss");
+            $scope.prestamo.plazo_restante = Math.round(fecha2.diff(fecha1, 'months', true))
             $scope.abrirPopup($scope.idModalPagoPrestamo);
         }
         $scope.cerrarDialogPagoPrestamo = function () {
@@ -1087,6 +1098,7 @@ angular.module('agil.controladores')
             $scope.cerrarPopup($scope.idModalReporteBajasMedicas);
         }
         $scope.abrirDialogReporteRolTurnos = function () {
+            $scope.obtenerlistaRolTurno(0)
             $scope.abrirPopup($scope.idModalReporteRolTurnos);
         }
         $scope.cerrarDialogReporteRolTurnos = function () {
@@ -2557,7 +2569,7 @@ angular.module('agil.controladores')
             promesa.then(function (datos) {
                 $scope.imprimirPrestamo(prestamo)
                 $scope.cerrarDialogNuevoPrestamo()
-               prestamo={}
+                prestamo = {}
                 $scope.mostrarMensaje(datos.mensaje)
             })
 
@@ -2571,7 +2583,7 @@ angular.module('agil.controladores')
             promesa.then(function (datos) {
                 $scope.cerrarDialogPretamosNuevoTodos()
                 $scope.optenerListaPrestamos()
-                prestamo={}
+                prestamo = {}
                 $scope.mostrarMensaje(datos.mensaje)
                 $scope.prestamo = {}
             })
@@ -2622,34 +2634,20 @@ angular.module('agil.controladores')
                 window.open(fileURL, '_blank', 'location=no');
             });
         }
-        $scope.GuardarPagoPrestamo = function (pago) {
-            if ($scope.prestamo.prestamoPagos.length > 0) {
-                var saldoAnterior = $scope.prestamo.prestamoPagos[($scope.prestamo.prestamoPagos.length - 1)].saldo_anterior
-                if (pago.monto_pagado <= saldoAnterior) {
-                    var promesa = CrearPagoPrestamo($scope.usuario.id, $scope.prestamo.id, pago)
-                    promesa.then(function (datos) {
-                        //$scope.imprimirPrestamo(prestamo)
-                        $scope.cerrarDialogPagoPrestamo()
-                        $scope.optenerListaPrestamos()
-                        
-                        $scope.mostrarMensaje(datos.mensaje)
-                    })
-                } else {
-                    $scope.mostrarMensaje("el monto no puede ser mayor al saldo")
-                }
-            } else {
-                if (pago.monto_pagado <= $scope.prestamo.total) {
-                    var promesa = CrearPagoPrestamo($scope.usuario.id, $scope.prestamo.id, pago)
-                    promesa.then(function (datos) {
-                        //$scope.imprimirPrestamo(prestamo)
-                        $scope.cerrarDialogPagoPrestamo()
-                        $scope.optenerListaPrestamos()
-                        $scope.mostrarMensaje(datos.mensaje)
-                    })
-                } else {
-                    $scope.mostrarMensaje("el monto no puede ser mayor al saldo")
-                }
+        $scope.GuardarPagoPrestamo = function (prestamo) {
+            if (prestamo.monto_pagado != prestamo.cuota) {
+                var cuotaSinInteres = prestamo.monto / prestamo.plazo_restante
+                var interes = (cuotaSinInteres * prestamo.interes_pactado) / 100
+                prestamo.cuota2 = cuotaSinInteres + interes
             }
+            prestamo.pagoFecha = new Date()
+            var promesa = CrearPagoPrestamo($scope.usuario.id, $scope.prestamo.id, prestamo)
+            promesa.then(function (datos) {
+                //$scope.imprimirPrestamo(prestamo)
+                $scope.cerrarDialogPagoPrestamo()
+                $scope.optenerListaPrestamos()
+                $scope.mostrarMensaje(datos.mensaje)
+            })
         }
 
         $scope.abrirModalVerificarCuenta = function (prestamo) {
@@ -2742,53 +2740,88 @@ angular.module('agil.controladores')
 
         //inicio rol turno
         $scope.GuardarRolTurno = function (rolTurno) {
-
+            rolTurno.fecha_inicio = new Date($scope.convertirFecha(rolTurno.fecha_inicio))
+            rolTurno.fecha_fin = new Date($scope.convertirFecha(rolTurno.fecha_fin))
             var promesa = CrearRolTurno($scope.empleado.id, rolTurno)
             promesa.then(function (datos) {
                 //$scope.imprimirPrestamo(prestamo)
-                rolTurno={}
+                rolTurno = {}
                 $scope.cerrarDialogRolTurnos()
                 $scope.mostrarMensaje(datos.mensaje)
             })
         }
+        $scope.calcularDatosRolTurno = function (rolTurno) {
+            if (rolTurno.fecha_inicio && rolTurno.fecha_inicio.length == 10) {
+                if (rolTurno.tipo) {
+                    rolTurno.fecha_fin = $scope.SumarDiasMesesAñosfecha(rolTurno.fecha_inicio, 35, "d", "/")
+                    rolTurno.dias_trabajo = 15;
+                    rolTurno.dias_descanso = 20;
+                } else {
+                    rolTurno.fecha_fin = $scope.SumarDiasMesesAñosfecha(rolTurno.fecha_inicio, 22, "d", "/")
+                    rolTurno.dias_trabajo = 7;
+                    rolTurno.dias_descanso = 15;
+                }
+            }else{
+                $scope.rolTurno = { tipo: false, fecha_fin: "", dias_trabajo: null, dias_descanso: null, grupo: "" }
+            }
+        }
+        $scope.obtenerlistaRolTurno=function(idEmpledo) {
+            var promesa = ListaRolTurnos($scope.usuario.id_empresa,idEmpledo)
+            promesa.then(function (datos) {
+                $scope.listaRolTurno = datos.rolesTurno
+                console.log($scope.listaRolTurno)
+            })
+        }
+        ListaRolTurnos
         //fin rol turno
 
         //inicio horas extra
         $scope.guardarHorasExtra = function (horasExtra) {
-            horasExtra.fecha=new Date($scope.convertirFecha(horasExtra.fecha))
+            horasExtra.fecha = new Date($scope.convertirFecha(horasExtra.fecha))
             horasExtra.hora_inicio2 = $scope.fechaATiempo(horasExtra.hora_inicio)
-            horasExtra.hora_fin2=$scope.fechaATiempo(horasExtra.hora_fin)
-            var promesa = CrearHorasExtra($scope.empleado.id,horasExtra)
+            horasExtra.hora_fin2 = $scope.fechaATiempo(horasExtra.hora_fin)
+            var promesa = CrearHorasExtra($scope.empleado.id, horasExtra)
             promesa.then(function (datos) {
                 $scope.cerrarDialogHorasExtras()
-                $scope.horaExtra={}
+                $scope.horaExtra = {}
                 $scope.mostrarMensaje(datos.mensaje)
             })
         }
         $scope.calcularTiempoHorasExtra = function (horasExtra) {
             console.log(horasExtra)
-            if(horasExtra.hora_inicio instanceof Date && horasExtra.hora_fin instanceof Date){
-            var horaInicio = horasExtra.hora_inicio.getHours()
-            var horafin = horasExtra.hora_fin.getHours()
-            if (horaInicio < horafin) {
-                var fechaInicioTexto = moment(horasExtra.hora_inicio).format('YYYY-MM-DD HH:mm:ss');
-                var fechaFinTexto = moment(horasExtra.hora_fin).format('YYYY-MM-DD HH:mm:ss');
-                var fecha1 = moment(fechaInicioTexto, "YYYY-MM-DD HH:mm:ss");
-                var fecha2 = moment(fechaFinTexto, "YYYY-MM-DD HH:mm:ss");
-                var diff = fecha2.diff(fecha1, 's');
-                horasExtra.tiempo = $scope.caluclarDiferencia(diff)
+            if (horasExtra.hora_inicio instanceof Date && horasExtra.hora_fin instanceof Date) {
+                var horaInicio = horasExtra.hora_inicio.getHours()
+                var horafin = horasExtra.hora_fin.getHours()
+                var minInicio = horasExtra.hora_inicio.getMinutes()
+                var minFin = horasExtra.hora_fin.getMinutes()
+                if (horaInicio < horafin) {
+                    var fechaInicioTexto = moment(horasExtra.hora_inicio).format('YYYY-MM-DD HH:mm:ss');
+                    var fechaFinTexto = moment(horasExtra.hora_fin).format('YYYY-MM-DD HH:mm:ss');
+                    var fecha1 = moment(fechaInicioTexto, "YYYY-MM-DD HH:mm:ss");
+                    var fecha2 = moment(fechaFinTexto, "YYYY-MM-DD HH:mm:ss");
+                    var diff = fecha2.diff(fecha1, 's');
+                    horasExtra.tiempo = $scope.caluclarDiferencia(diff)
+                }else if(horaInicio == horafin && minInicio<minFin){
+                    var fechaInicioTexto = moment(horasExtra.hora_inicio).format('YYYY-MM-DD HH:mm:ss');
+                    var fechaFinTexto = moment(horasExtra.hora_fin).format('YYYY-MM-DD HH:mm:ss');
+                    var fecha1 = moment(fechaInicioTexto, "YYYY-MM-DD HH:mm:ss");
+                    var fecha2 = moment(fechaFinTexto, "YYYY-MM-DD HH:mm:ss");
+                    var diff = fecha2.diff(fecha1, 's');
+                    horasExtra.tiempo = $scope.caluclarDiferencia(diff)
+                }else{
+                    horasExtra.tiempo=""
+                }
             }
         }
-        }
 
-        $scope.fechaATiempo= function (fecha) {
+        $scope.fechaATiempo = function (fecha) {
             var hours = fecha.getHours();
-            var minutes =  fecha.getMinutes();
-            var seconds =  fecha.getSeconds();
+            var minutes = fecha.getMinutes();
+            var seconds = fecha.getSeconds();
             hours = hours < 10 ? '0' + hours : hours;
             minutes = minutes < 10 ? '0' + minutes : minutes;
             //Anteponiendo un 0 a los segundos si son menos de 10 
-            seconds = seconds < 10 ? '0' + seconds : seconds;           
+            seconds = seconds < 10 ? '0' + seconds : seconds;
             return hours + ":" + minutes + ":" + seconds;  // 2:41:30
         }
         $scope.caluclarDiferencia = function (time) {
@@ -2798,18 +2831,43 @@ angular.module('agil.controladores')
             //Anteponiendo un 0 a los minutos si son menos de 10 
             minutes = minutes < 10 ? '0' + minutes : minutes;
             //Anteponiendo un 0 a los segundos si son menos de 10 
-            seconds = seconds < 10 ? '0' + seconds : seconds;           
+            seconds = seconds < 10 ? '0' + seconds : seconds;
             return hours + ":" + minutes + ":" + seconds;  // 2:41:30
         }
 
-        $scope.obtenerHistorialHorasExtra= function (filtroHorasExtra) {
-            var filtro={}
-            filtro.inicio=(filtroHorasExtra.inicio.length==10)? new Date($scope.convertirFecha(filtroHorasExtra.inicio)):0
-            filtro.fin=(filtroHorasExtra.fin.length==10)? new Date($scope.convertirFecha(filtroHorasExtra.fin)):0    
-            var promesa = HistorialHorasExtra($scope.empleado.id,filtro)
+        $scope.obtenerHistorialHorasExtra = function (filtroHorasExtra) {
+            var filtro = {}
+            filtro.inicio = (filtroHorasExtra.inicio.length == 10) ? new Date($scope.convertirFecha(filtroHorasExtra.inicio)) : 0
+            filtro.fin = (filtroHorasExtra.fin.length == 10) ? new Date($scope.convertirFecha(filtroHorasExtra.fin)) : 0
+            var promesa = HistorialHorasExtra($scope.empleado.id, filtro)
             promesa.then(function (dato) {
-                $scope.ListaHorasExtraEmpleado=dato
+                $scope.ListaHorasExtraEmpleado = dato
+                if ($scope.ListaHorasExtraEmpleado.length > 0) {
+                    $scope.sumarTotalHorasExtra()
+                } else {
+                    $scope.SumaTotalHorasExtra = "00:00";
+                }
+
             })
+        }
+
+        $scope.sumarTotalHorasExtra = function () {
+            var totalHoras = "";
+            var timeHoras = 0;
+            var timeMinutos = 0;
+            for (var i = 0; i < $scope.ListaHorasExtraEmpleado.length; i++) {
+                var minutos = $scope.ListaHorasExtraEmpleado[i].tiempo.split(':')[1];
+                var horas = $scope.ListaHorasExtraEmpleado[i].tiempo.split(':')[0];
+
+                timeHoras = timeHoras + parseInt(horas);
+                timeMinutos = timeMinutos + parseInt(minutos);
+                if (timeMinutos >= 60) {
+                    timeMinutos = timeMinutos - 60;
+                    timeHoras = timeHoras + 1;
+                }
+                totalHoras = String("0" + timeHoras).slice(-3) + ':' + String("0" + timeMinutos).slice(-2);
+            }
+            $scope.SumaTotalHorasExtra = totalHoras;
         }
         //fin horas extra
 

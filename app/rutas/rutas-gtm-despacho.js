@@ -36,7 +36,8 @@ router.route('/gtm-detalle-despacho/empresa/:id_empresa')
 		GtmDespachoDetalle.findAll({
 			where:{
 				despachado:false,
-				eliminado:false
+				eliminado:false,
+				id_padre:null
 			},
 			include:[{model:GtmDespacho,as:'despacho',
 					where:{id_empresa:req.params.id_empresa},
@@ -49,7 +50,7 @@ router.route('/gtm-detalle-despacho/empresa/:id_empresa')
 		});
 	})
 	
-	.put(function (req, res) {
+	/* .put(function (req, res) {
 		req.body.forEach(function(detalle_despacho, index, array){
 			var despachado=false
 			if(detalle_despacho.saldo2==0){
@@ -72,42 +73,93 @@ router.route('/gtm-detalle-despacho/empresa/:id_empresa')
 					res.json({mensaje:"Despachos asignados satisfactoriamente!"});
 				}
 			});
+			
+		}); */
+		.put(function (req, res) {
+			req.body.forEach(function (detalle_despacho, index, array) {
+				var despachado = false
+				if (detalle_despacho.saldo2 == 0) {
+					despachado = true
+				}
+				detalle_despacho.cantidad_despacho = detalle_despacho.cantidad_despacho + detalle_despacho.cantidad_despacho2
+				GtmDespachoDetalle.update({
+					cantidad_despacho:detalle_despacho.cantidad_despacho,
+					saldo:detalle_despacho.saldo2,
+					id_transportista:detalle_despacho.id_transportista,
+					id_estibaje:detalle_despacho.id_estibaje,
+					id_grupo_estibaje:detalle_despacho.id_grupo_estibaje,
+					despachado:despachado
+				},{
+					where:{
+						id:detalle_despacho.id
+					}
+				}).then(function(desact){
+				GtmDespachoDetalle.create({
+					cantidad_despacho: detalle_despacho.cantidad_despacho,
+					saldo: detalle_despacho.saldo2,
+					id_transportista: detalle_despacho.id_transportista,
+					id_estibaje: detalle_despacho.id_estibaje,
+					id_grupo_estibaje: detalle_despacho.id_grupo_estibaje,
+					despachado: despachado,
+					id_despacho: detalle_despacho.id_despacho,
+					id_producto: detalle_despacho.id_producto,
+					cantidad: detalle_despacho.cantidad,
+					precio_unitario: detalle_despacho.precio_unitario,
+					importe: detalle_despacho.impirte,
+					eliminado: false,
+					id_padre: detalle_despacho.id
+				}, {
+						where: {
+							id: detalle_despacho.id
+						}
+					}).then(function (desact) {
+						if (index === (array.length - 1)) {
+							res.json({ mensaje: "Despachos asignados satisfactoriamente!" });
+						}
+					});
+			});
 		});
 	});
 
-router.route('/gtm-detalle-despacho-despachado/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion')
+router.route('/gtm-detalle-despacho-despachado/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion/inicio/:inicio/fin/:fin/transportista/:transportista/tipo/:tipo/grupo/:grupo/estado/:estado')
 	.get(function (req, res) {
-		var condicionDespacho={despachado:true,	eliminado:false}
-		/* GtmDespachoDetalle.findAll({
-			where:{
-				despachado:true,
-				eliminado:false
-			},
-			include:[{model:GtmDespacho,as:'despacho',
-					where:{id_empresa:req.params.id_empresa},
-					include:[{model:Usuario,as:'usuario'},
-							 {model:Cliente,as:'cliente'},
-							 {model:GtmDestino,as:'destino'}]},
-					{model:Producto,as:'producto'},
-					{model:GtmTransportista,as:'transportista',
-							include:[{model:Persona,as:'persona'}]},
-				    {model:GtmGrupoEstibaje,as:'grupo_estibaje'},
-				    {model:GtmEstibaje,as:'estibaje'}]
-		}).then(function(detallesDespacho){
-			res.json(detallesDespacho);
-		}); */
+		var condicionDespacho={id_padre:{$ne:null},	eliminado:false}
+		var condicionEstibaje={}
+		var condicionGrupoEstibaje={}
+		var condicionTrabajador={}
+		var condicionCliente={}
+		if (req.params.inicio != 0) {
+			var inicio = new Date(req.params.inicio); inicio.setHours(0, 0, 0, 0, 0);
+			var fin = new Date(req.params.fin); fin.setHours(23, 0, 0, 0, 0);
+			condicionDespacho={id_padre:{$ne:null}, eliminado: false, fecha: { $between: [inicio, fin] } };
+		}
+		if (req.params.transportista != 0) {
+			condicionTrabajador={nombre:req.params.transportista}
+		}
+		if (req.params.tipo != 0) {
+			condicionEstibaje={nombre:req.params.tipo}
+		}
+		if (req.params.grupo != 0) {
+			condicionGrupoEstibaje={nombre:req.params.grupo}
+		}
+		if (req.params.estado != 0) {
+			
+		}
+		if (req.params.texto_busqueda != 0) {
+			condicionCliente={razon_social:req.params.texto_busqueda}
+		}
 		GtmDespachoDetalle.findAndCountAll({
 			where: condicionDespacho,
 			include:[{model:GtmDespacho,as:'despacho',
 					where:{id_empresa:req.params.id_empresa},
 					include:[{model:Usuario,as:'usuario'},
-							 {model:Cliente,as:'cliente'},
+							 {model:Cliente,as:'cliente',where:condicionCliente},
 							 {model:GtmDestino,as:'destino'}]},
 					{model:Producto,as:'producto'},
 					{model:GtmTransportista,as:'transportista',
-							include:[{model:Persona,as:'persona'}]},
-				    {model:GtmGrupoEstibaje,as:'grupo_estibaje'},
-				    {model:GtmEstibaje,as:'estibaje'}],
+							include:[{model:Persona,as:'persona',where:condicionTrabajador}]},
+				    {model:GtmGrupoEstibaje,as:'grupo_estibaje',where:condicionGrupoEstibaje},
+				    {model:GtmEstibaje,as:'estibaje',	where:condicionEstibaje}],
 			order: [['id', 'asc']]
 		}).then(function (data) {
 			GtmDespachoDetalle.findAll({
@@ -116,13 +168,13 @@ router.route('/gtm-detalle-despacho-despachado/empresa/:id_empresa/pagina/:pagin
 				include:[{model:GtmDespacho,as:'despacho',
 					where:{id_empresa:req.params.id_empresa},
 					include:[{model:Usuario,as:'usuario'},
-							 {model:Cliente,as:'cliente'},
+							 {model:Cliente,as:'cliente',where:condicionCliente},
 							 {model:GtmDestino,as:'destino'}]},
 					{model:Producto,as:'producto'},
 					{model:GtmTransportista,as:'transportista',
-							include:[{model:Persona,as:'persona'}]},
-				    {model:GtmGrupoEstibaje,as:'grupo_estibaje'},
-				    {model:GtmEstibaje,as:'estibaje'}],		
+							include:[{model:Persona,as:'persona',where:condicionTrabajador}]},
+				    {model:GtmGrupoEstibaje,as:'grupo_estibaje',where:condicionGrupoEstibaje},
+				    {model:GtmEstibaje,as:'estibaje',where:condicionEstibaje}],		
 				order: [['id', 'asc']]
 			}).then(function (detallesDespacho) {
 				res.json({ detallesDespacho: detallesDespacho, paginas: Math.ceil(data.count / req.params.items_pagina) });

@@ -702,6 +702,9 @@ module.exports = function (sequelize, Usuario, Persona, Rol, UsuarioRol, Tipo, C
 	Producto.hasMany(GtmDespachoDetalle, { foreignKey: 'id_producto', as: 'detalles_despacho' });
 	GtmDespachoDetalle.belongsTo(Producto, { foreignKey: 'id_producto', as: 'producto' });
 
+	GtmDespachoDetalle.hasMany(GtmDespachoDetalle, { foreignKey: 'id_padre', as: 'hijosDetalle' });
+	GtmDespachoDetalle.belongsTo(GtmDespachoDetalle, { foreignKey: 'id_padre', as: 'padre' });
+	
 	Cliente.hasMany(GtmClienteDestino, { foreignKey: 'id_cliente', as: 'cliente_destinos' });
 	GtmClienteDestino.belongsTo(Cliente, { foreignKey: 'id_cliente', as: 'cliente' });
 

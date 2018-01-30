@@ -51,6 +51,10 @@ module.exports = function (sequelize, Sequelize) {
         factura: {
             type: Sequelize.INTEGER,
             field: 'factura'
+        },
+        id_padre: {
+            type: Sequelize.INTEGER,
+            field: 'padre'
         }
     }, {
             freezeTableName: true

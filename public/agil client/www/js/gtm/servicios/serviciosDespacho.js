@@ -17,8 +17,8 @@ angular.module('agil.servicios')
 			GtmTransportista.query({ id_empresa: id_empresa }, function (entidad) {
 				delay.resolve(entidad);
 			}, function (error) {
-					delay.reject(error);
-				});
+				delay.reject(error);
+			});
 			return delay.promise;
 		};
 		return res;
@@ -41,8 +41,8 @@ angular.module('agil.servicios')
 			GtmEstibaje.query({ id_empresa: id_empresa }, function (entidad) {
 				delay.resolve(entidad);
 			}, function (error) {
-					delay.reject(error);
-				});
+				delay.reject(error);
+			});
 			return delay.promise;
 		};
 		return res;
@@ -65,8 +65,8 @@ angular.module('agil.servicios')
 			GtmGrupoEstibaje.query({ id_empresa: id_empresa }, function (entidad) {
 				delay.resolve(entidad);
 			}, function (error) {
-					delay.reject(error);
-				});
+				delay.reject(error);
+			});
 			return delay.promise;
 		};
 		return res;
@@ -89,8 +89,8 @@ angular.module('agil.servicios')
 			GtmDestino.query({ id_empresa: id_empresa }, function (entidad) {
 				delay.resolve(entidad);
 			}, function (error) {
-					delay.reject(error);
-				});
+				delay.reject(error);
+			});
 			return delay.promise;
 		};
 		return res;
@@ -108,15 +108,15 @@ angular.module('agil.servicios')
 			GtmDetalleDespachoAlerta.query({ id_empresa: id_empresa }, function (entidad) {
 				delay.resolve(entidad);
 			}, function (error) {
-					delay.reject(error);
-				});
+				delay.reject(error);
+			});
 			return delay.promise;
 		};
 		return res;
 	}])
 
 	.factory('GtmDespacho', function ($resource) {
-		return $resource(restServer + "gtm-detalle-despacho-despachado/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion", null,
+		return $resource(restServer + "gtm-detalle-despacho-despachado/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion/inicio/:inicio/fin/:fin/transportista/:transportista/tipo/:tipo/grupo/:grupo/estado/:estado", null,
 			{
 				'update': { method: 'PUT' }
 			});
@@ -131,12 +131,18 @@ angular.module('agil.servicios')
 				items_pagina: paginator.itemsPerPage,
 				texto_busqueda: paginator.search,
 				columna: paginator.column,
-				direccion: paginator.direction
+				direccion: paginator.direction,
+				inicio: paginator.filter.inicio,
+				fin: paginator.filter.fin,
+				transportista: paginator.filter.transportista,
+				tipo: paginator.filter.tipo,
+				grupo: paginator.filter.grupo,
+				estado: paginator.filter.estado,
 			}, function (entidad) {
-					delay.resolve(entidad);
-				}, function (error) {
-					delay.reject(error);
-				});
+				delay.resolve(entidad);
+			}, function (error) {
+				delay.reject(error);
+			});
 			return delay.promise;
 		};
 		return res;
@@ -155,8 +161,8 @@ angular.module('agil.servicios')
 			GtmDestino.save({ id_empresa: id_empresa }, destinos, function (entidad) {
 				delay.resolve(entidad);
 			}, function (error) {
-					delay.reject(error);
-				});
+				delay.reject(error);
+			});
 			return delay.promise;
 		};
 		return res;
@@ -169,8 +175,8 @@ angular.module('agil.servicios')
 			GtmTransportista.save({ id_empresa: id_empresa }, transportistas, function (entidad) {
 				delay.resolve(entidad);
 			}, function (error) {
-					delay.reject(error);
-				});
+				delay.reject(error);
+			});
 			return delay.promise;
 		};
 		return res;
