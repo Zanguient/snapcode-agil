@@ -2265,6 +2265,7 @@ angular.module('agil.controladores')
             }
 
         }
+        
         //find ficha
         //logica hoja de vida
         //FORMACION ACADEMICA
@@ -2897,6 +2898,83 @@ angular.module('agil.controladores')
 
         //fin seleccion empleados
 
+
+        //expirtar en exel y pdf empleados
+        $scope.generarExcelEmpleados = function (empleados,configuracion) {					
+            if(configuracion.campo.show){
+
+            }
+            if(configuracion.cargo.show){
+                
+            }
+            if(configuracion.ci.show){
+                
+            }
+            if(configuracion.codigo.show){
+                
+            }
+				
+				var data = [["FECHA DE LA FACTURA", "N° DE LA FACTURA", "N° DE AUTORIZACION", "NIT/CI CLIENTE", "NOMBRE O RAZON SOCIAL",
+					"CODIGO", "DETALLE","UNIDAD", "GRUPO", "CANTIDAD", "PU", "TOTAL", "IMPORTE ICE/IEHD/TASAS", "EXENTOS",
+					"SUBTOTAL", "DESCUENTOS, BONIFICACIONES Y REBAJAS OBTENIDAS",
+					"IMPORTE BASE PARA DEBITO FISCAL", "CREDITO FISCAL", "FECHA DE VENCIMIENTO", "LOTE", "SUCURSAL", "USUARIO", "CENTRO DE COSTOS"]]
+				for (var i = 0; i < empleados.length; i++) {
+					var columns = [];
+					detallesCompra[i].compra.fecha = new Date(detallesCompra[i].compra.fecha);
+					columns.push(detallesCompra[i].compra.fecha.getDate() + "/" + (detallesCompra[i].compra.fecha.getMonth() + 1) + "/" + detallesCompra[i].compra.fecha.getFullYear());
+					columns.push(detallesCompra[i].compra.factura);
+					columns.push(detallesCompra[i].compra.autorizacion);
+					columns.push(detallesCompra[i].compra.proveedor.nit);
+					columns.push(detallesCompra[i].compra.proveedor.razon_social);
+					columns.push(detallesCompra[i].producto.codigo);
+					columns.push(detallesCompra[i].producto.nombre);
+					
+					columns.push(detallesCompra[i].producto.unidad_medida);
+					if (detallesCompra[i].producto.grupo) {
+						columns.push(detallesCompra[i].producto.grupo.nombre);						
+					} else {
+						columns.push("");
+
+					}
+					columns.push(detallesCompra[i].cantidad);				
+					columns.push(detallesCompra[i].costo_unitario);
+					columns.push(detallesCompra[i].importe);
+					columns.push(detallesCompra[i].ice);
+					columns.push(detallesCompra[i].excento);
+					columns.push(detallesCompra[i].importe - detallesCompra[i].ice);
+					var descuento = detallesCompra[i].importe - detallesCompra[i].ice - detallesCompra[i].excento + detallesCompra[i].recargo;
+					columns.push(descuento);
+					columns.push(detallesCompra[i].total);
+					columns.push(Math.round((detallesCompra[i].total * 0.13) * 100) / 100);
+
+					if (detallesCompra[i].inventario) {
+						columns.push(detallesCompra[i].inventario.fecha_vencimiento);
+						columns.push(detallesCompra[i].inventario.lote);
+					} else {
+						columns.push("");
+						columns.push("");
+					}
+
+					//columns.push(0);
+					//columns.push(0);
+					columns.push(detallesCompra[i].compra.almacen.sucursal.nombre);
+					columns.push($scope.usuario.nombre_usuario);
+					columns.push(detallesCompra[i].centroCosto.nombre_corto);
+					
+					data.push(columns);
+				}
+
+				var ws_name = "SheetJS";
+				var wb = new Workbook(), ws = sheet_from_array_of_arrays(data);
+				/* add worksheet to workbook */
+				wb.SheetNames.push(ws_name);
+				wb.Sheets[ws_name] = ws;
+				var wbout = XLSX.write(wb, { bookType: 'xlsx', bookSST: true, type: 'binary' });
+				saveAs(new Blob([s2ab(wbout)], { type: "application/octet-stream" }), "COMPRAS-MENSUALES.xlsx");
+				blockUI.stop();
+			
+		}
+        //fin exportar en exel y pdf
         $scope.inicio()
 
 

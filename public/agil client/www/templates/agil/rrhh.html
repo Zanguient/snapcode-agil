@@ -93,7 +93,7 @@
                                 <i class="ace-icon fa fa-print bigger-160"></i>
                                 PDF
                             </button>
-                            <button class="btn btn-app btn-success btn-xs">
+                            <button class="btn btn-app btn-success btn-xs" ng-click="generarExcelEmpleados(RecursosHumanosEmpleados,fieldViewer.getConfiguration())">
                                 <i class="ace-icon fa fa-print bigger-160"></i>
                                 EXCEL
                             </button>
@@ -433,7 +433,7 @@
                             type="text" data-date-format="dd/mm/yyyy" id="fechafin" ng-model="filtro.fin" placeholder="Fecha fin">
                     </td>
                     <td>
-                        <button ng-disabled="!empleado.activo" ng-click="abrirDialogPrerequisitoNuevo()" type="submit" class="btn btn-sm btn-primary">
+                        <button  ng-click="abrirDialogPrerequisitoNuevo()" type="submit" class="btn btn-sm btn-primary">
                             <i class="ace-icon fa fa-plus align-top bigger-125"></i>
                             NUEVO
                         </button>

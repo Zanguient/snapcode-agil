@@ -385,7 +385,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                                         }).then(function (EmpleadoCargosActualizada) {
                                             RrhhEmpleadoFicha.create({
                                                 fecha: req.body.fechaFicha,
-                                                id_empleado: medicoPacienteCreado.id,
+                                                id_empleado: req.body.id,
                                                 id_tipo_contrato: req.body.tipo_contrato.id,
                                             }).then(function (Creado) {
                                                 if (req.body.cargos.length > 0) {
@@ -573,7 +573,9 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
         })
 
     function guardarDatosFicha(req, res, personaReferenciaCreada, Persona, RrhhEmpleadoFicha, RrhhEmpleadoFichaOtrosSeguros, RrhhEmpleadoFichaFamiliar, RrhhEmpleadoCargo, RrhhEmpleadoDiscapacidad) {
-
+        var provincia = (req.body.empleado.persona.provincia)? req.body.empleado.persona.provincia.id:null
+        var localidad = (req.body.empleado.persona.localidad)? req.body.empleado.persona.localidad.id:null
+      var ciudad = (req.body.empleado.persona.ciudad)? req.body.empleado.persona.ciudad.id:null
         Persona.update({
             nombres: req.body.empleado.persona.nombres,
             apellido_paterno: req.body.empleado.persona.apellido_paterno,
@@ -588,9 +590,9 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
             direccion_zona: req.body.empleado.persona.direccion_zona,
             direccion_numero: req.body.empleado.persona.direccion_numero,
             id_pais_nacimiento: req.body.empleado.persona.pais.id,
-            id_ciudad_nacimiento: req.body.empleado.persona.ciudad.id,
-            id_provincia_nacimiento: req.body.empleado.persona.provincia.id,
-            id_localidad_nacimiento: req.body.empleado.persona.localidad.id,
+            id_ciudad_nacimiento: ciudad,
+            id_provincia_nacimiento: provincia,
+            id_localidad_nacimiento: localidad,
             apellido_casada: req.body.empleado.persona.apellido_casada,
             segundo_nombre: req.body.empleado.persona.segundo_nombre,
             fecha_nacimiento: req.body.empleado.persona.fecha_nacimiento

@@ -1509,7 +1509,7 @@ module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Su
 						id_prerequisito: req.body.preRequisito.id,
 						// vencimiento_mes: req.body.vencimiento_mes,
 						fecha_inicio: req.body.fecha_inicio,
-						fecha_entrega: req.body.fecha_entrega,
+						//fecha_entrega: req.body.fecha_entrega,
 						fecha_vencimiento: req.body.fecha_vencimiento,
 						observacion: req.body.observacion,
 						// puede_modificar_rrhh: req.body.puede_modificar_rrhh,
@@ -1537,24 +1537,24 @@ module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Su
 									res.json({ mensaje: "Pre-requisito actualizado satisfactoriamente!" });
 								})
 						} else {
-							// MedicoPacientePreRequisito.update({
-							// 	id_paciente: req.body.pacientePrerequisito.id,
-							// 	id_prerequisito: req.body.preRequisito.id,
-							// 	// vencimiento_mes: req.body.vencimiento_mes,
-							// 	fecha_entrega: req.body.fecha_entrega,
-							// 	fecha_inicio: req.body.fecha_inicio,
-							// 	fecha_vencimiento: req.body.fecha_vencimiento,
-							// 	// observacion: req.body.observacion,
-							// 	// puede_modificar_rrhh: req.body.puede_modificar_rrhh,
-							// 	eliminado: asignar
-							// }, {
-							// 		where: {
-							// 			id_paciente: req.body.pacientePrerequisito.id,
-							// 			id_prerequisito: req.body.preRequisito.id
-							// 		}
-							// 	}).then(function (preRequisitoActualizado) {
-							// 		res.json({ mensaje: "Pre-requisito actualizado satisfactoriamente!" });
-							// 	})
+							MedicoPacientePreRequisito.update({
+								id_paciente: req.body.pacientePrerequisito.id,
+								id_prerequisito: req.body.preRequisito.id,
+								// vencimiento_mes: req.body.vencimiento_mes,
+								fecha_entrega: req.body.fecha_entrega,
+								fecha_inicio: req.body.fecha_inicio,
+								fecha_vencimiento: req.body.fecha_vencimiento,
+								// observacion: req.body.observacion,
+								// puede_modificar_rrhh: req.body.puede_modificar_rrhh,
+								eliminado: asignar
+							}, {
+									where: {
+										id_paciente: req.body.pacientePrerequisito.id,
+										id_prerequisito: req.body.preRequisito.id
+									}
+								}).then(function (preRequisitoActualizado) {
+									res.json({ mensaje: "Pre-requisito actualizado satisfactoriamente!" });
+								})
 						}
 
 					} else {
