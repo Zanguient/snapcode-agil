@@ -13,6 +13,7 @@ angular.module('agil.controladores')
         $scope.dialogProformaEdicion = 'proforma-edicion'
         $scope.dialogClientesProforma = 'dialog-cliente-proforma'
         $scope.dialogmodalFechas = 'modalFechas'
+        
         $scope.$on('$viewContentLoaded', function () {
             ejecutarScriptsProformas($scope.modalConfiguracionActividadesServicios, $scope.wizardConfiguracionActividadesServicios, $scope.dialogProformaEdicion,
                 $scope.dialogClientesProforma, $scope.modalConfiguracionActividades, $scope.wizardConfiguracionActividades, $scope.dialogmodalFechas);
@@ -124,7 +125,6 @@ angular.module('agil.controladores')
                     filtro[key] = 0
                 }
             }
-
             
             if(_===undefined){
                 $scope.obtenerProformas()
@@ -143,7 +143,7 @@ angular.module('agil.controladores')
             $scope.detallesProformas = []
             $scope.obtenerClientes()
             $scope.obtenerActividadesEmpresa($scope.usuario.empresa.id)
-            $scope.filtro = { empresa: $scope.usuario.empresa.id, mes: 0, anio: 0, sucursal: 0, actividadEconomica: 0, servicio: 0, monto: 0, razon: 0, usuario: "", pagina: 1, items_pagina: 10, busqueda: 0 }
+            $scope.filtro = { empresa: $scope.usuario.empresa.id, mes: 0, anio: 0, sucursal: 0, actividadEconomica: 0, servicio: 0, monto: 0, razon: 0, usuario: "", pagina: 1, items_pagina: 10, busqueda: 0, numero: 0 }
             $scope.meses = [{ id: 1, nombre: "Enero" }, { id: 2, nombre: "Febrero" }, { id: 3, nombre: "Marzo" }, { id: 4, nombre: "Abril" }, { id: 5, nombre: "Mayo" }, { id: 6, nombre: "Junio" }, { id: 7, nombre: "Julio" }, { id: 8, nombre: "Agosto" },
             { id: 9, nombre: "Septiembre" }, { id: 10, nombre: "Octubre" }, { id: 11, nombre: "Noviembre" }, { id: 12, nombre: "Diciembre" }];
 
@@ -182,21 +182,20 @@ angular.module('agil.controladores')
                     blockUI.stop()
                 })
             }
-
         }
 
-        $scope.fechaCobroPop = {
-            templateUrl: 'fechaCobro.html',
-            title: 'Cuentas Axiliares',
-            isOpen: false
-        };
+        // $scope.fechaCobroPop = {
+        //     templateUrl: 'fechaCobro.html',
+        //     title: 'Cuentas Axiliares',
+        //     isOpen: false
+        // };
 
-        $scope.modificarFechaCobro = function (proforma) {
-            proforma.fecha_cobro = new Date()
-        }
+        // $scope.modificarFechaCobro = function (proforma) {
+        //     proforma.fecha_cobro = new Date()
+        // }
 
         $scope.sinFuncionalidad = function (proforma) {
-            proforma.fecha_recepcion = new Date()
+            // proforma.fecha_recepcion = new Date()
             $scope.mostrarMensaje('Sin funcionalidad')
         }
 
@@ -515,10 +514,11 @@ angular.module('agil.controladores')
             var prom = FiltroProformas($scope.paginator)
             prom.then(function (res) {
                 $scope.proformas = res.proformas
+                $scope.paginator.setPages(res.count)
                 if (res.mensaje !== undefined) {
                     $scope.mostrarMensaje(res.mensaje)
                 }
-                $scope.filtro = { empresa: $scope.usuario.empresa.id, mes: "", anio: "", sucursal: "", actividad: "", servicio: "", monto: "", razon: "", usuario: "" }
+                $scope.filtro = { empresa: $scope.usuario.empresa.id, mes: "", anio: "", sucursal: "", actividad: "", servicio: "", monto: "", razon: "", usuario: "", numero:""}
             }, function (err) {
                 $scope.mostrarMensaje(err.data)
             })
@@ -526,7 +526,7 @@ angular.module('agil.controladores')
         }
         $scope.guardarProforma = function (valid, proforma) {
             blockUI.start()
-            var filtro = { id_empresa: $scope.usuario.empresa.id, mes: 0, anio: 0, sucursal: 0, actividad: 0, servicio: 0, monto: 0, razon: 0, usuario: $scope.usuario.id, pagina: 1, items_pagina: 10, busqueda: 0 }
+            var filtro = { id_empresa: $scope.usuario.empresa.id, mes: 0, anio: 0, sucursal: 0, actividad: 0, servicio: 0, monto: 0, razon: 0, usuario: $scope.usuario.id, pagina: 1, items_pagina: 10, busqueda: 0, numero:0 }
             if (valid) {
                 if (proforma.id !== undefined) {
                     proforma.detallesProformas = $scope.detallesProformas

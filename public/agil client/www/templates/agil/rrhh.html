@@ -882,6 +882,11 @@
                                     <div class="col-sm-6 col-md-2">
                                         <input type="text" autofocus class="form-control" id="codigo-empleado" ng-model="ficha.empleado.codigo">
                                     </div>
+                                    <div class="col-sm-6 col-md-2">
+                                        <label for="codigo-empleado"> <h4><strong>Edad {{ficha.edad}} años</h4></strong></h3></label>
+                                    </div>
+                                   
+                                  
                                 </div>
                                 <div class="page-header">
                                     <h4 class="blue">
@@ -983,7 +988,6 @@
 
                                             </select>
                                         </div>
-
                                         <div class="col-md-2 col-sm-2 col-month">
                                             <select class="form-control" id="valMonth" ng-options="mes  as mes.nombre for mes in meses track by mes.id" ng-change="getDaysInMonth(ficha.nac_mes.id,ficha.nac_anio)"
                                                 ng-model="ficha.nac_mes">

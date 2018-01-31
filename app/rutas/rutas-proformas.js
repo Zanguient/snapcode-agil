@@ -38,7 +38,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
             if (req.params.numero != "0") {
                 condicion.id = req.params.numero
             }
-            Proforma.findAll(
+            Proforma.findAndCountAll(
                 {
                     where: condicion,
                     include: [
@@ -49,7 +49,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
                         { model: Sucursal, as: 'sucursalProforma' }
                     ]
                 }).then(function (proformas) {
-                    res.json({ proformas: proformas })
+                    res.json({ proformas: proformas.rows, count: Math.ceil(proformas.count / req.params.items_pagina) })
                 }).catch(function (err) {
                     res.json({ proformas: [], mensaje: err.message === undefined ? err.data : err.message, hasErr: true })
                 });
@@ -406,5 +406,46 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
                 }).catch(function (err) {
                     res.json({ mensaje: err.message === undefined ? err.data : err.message, hasErr: true })
                 });
+        })
+
+    router.route('/alertas/proformas/:id_empresa')
+        .get(function (req, res) {
+            Proforma.findAll({
+                where: {
+                    id_empresa: req.params.id_empresa,
+                    eliminado: false,
+                    fecha_proforma_ok: null
+                },
+                include: [
+                    { model: ActividadEconomica, as: 'actividadEconomica', include: [{ model: Clase, as: 'claseActividad' }] },
+                    // { model: DetallesProformas, as: 'detallesProformas', include: [{ model: Servicios, as: 'servicio' }, { model: Clase, as: 'centroCosto' }] },
+                    // { model: Usuario, as: 'usuarioProforma' },
+                    { model: Cliente, as: 'clienteProforma' },
+                    // { model: Sucursal, as: 'sucursalProforma' }
+
+                ]
+            }).then(function (proformasAlertas) {
+                var proformasVencimiento = []
+                if (proformasAlertas.length > 0) {
+                    proformasAlertas.map(function (proforma, i) {
+                        var fecPro = new Date(proforma.fecha_proforma).getTime()
+                        
+                        var hoy = new Date().getTime()
+                        var dif = Math.floor((hoy - fecPro) / 86400000)
+                        if (dif > 0 && dif < 8) {
+                            proformasVencimiento.push(proforma)
+                        }
+                        if (i === proformasAlertas.length -1) {
+                            res.json({ proformas: proformasVencimiento })
+                        }
+                    })
+                } else {
+                    res.json({ proformas: [] })
+                }
+
+                
+            }).catch(function (err) {
+                res.json({ mensaje: err.message === undefined ? err.data : err.message, hasErr: true })
+            });
         })
 }

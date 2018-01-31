@@ -2116,7 +2116,7 @@ angular.module('agil.controladores')
 
         $scope.obtenerAnios = function (startYear) {
             var currentYear = new Date().getFullYear(), years = [];
-            startYear = startYear || 1980;
+            startYear = startYear || 1930;
 
             while (startYear <= currentYear) {
                 years.push(startYear++);

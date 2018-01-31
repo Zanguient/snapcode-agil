@@ -246,7 +246,7 @@
 			<div class="navbar-buttons navbar-header pull-right  collapse navbar-collapse" role="navigation">
 				<ul class="nav ace-nav">
 					<li ng-if="usuario.empresa" class="purple" ng-if="usuario.empresa.usar_vencimientos">
-						<a data-toggle="dropdown" href="javascript:void(0)" class="dropdown-toggle">
+						<a data-toggle="dropdown" href="javascript:void(0)" class="dropdown-toggle" ng-click="verificarNotificaciones()">
 							<i class="ace-icon fa fa-bell icon-animated-bell"></i>
 							<span class="badge badge-important">{{vencimientoTotal}}</span>
 						</a>
@@ -319,6 +319,17 @@
 													Compras
 												</span>
 												<span class="pull-right badge badge-important">+{{comprasComprobantes.length}}</span>
+											</div>
+										</a>
+									</li>
+									<li ng-if="usuario.empresa.usar_proformas">
+										<a href="javascript:void(0)" ng-click="abrirListaVencimientoProformas()">
+											<div class="clearfix">
+												<span class="pull-left">
+													<i class="btn btn-xs no-hover btn-info fa fa-gift"></i>
+													Proformas
+												</span>
+												<span class="pull-right badge badge-info">+{{alertasProformas.length}}</span>
 											</div>
 										</a>
 									</li>
@@ -2540,6 +2551,66 @@
 				CERRAR
 			</button>
 
+		</div>
+	</div>
+
+	<div id="dialog-alertas-proforma">
+		<div>
+			<div class="table-header" align="center">
+				Proformas
+			</div>
+		</div>
+		<div class="modal-body">
+			<div class="table-fixed-header">
+				<table class="table table-striped table-bordered table-hover ">
+					<thead fix-head class="table-head-color">
+						<tr>
+							<th>Nº Prof.</th>
+							<th>NIT</th>
+							<th>Nombre</th>
+							<th>Act. Eco.</th>
+							<th>Periodo</th>
+							<th>Fecha Proforma</th>
+							<th>Fecha Proforma ok</th>
+							<th>Total Bs.</th>
+							<th>Total $sus.</th>
+							<th>Seleccionar</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr ng-repeat="proforma in alertasProformas">
+							<td>{{proforma.id}}</td>
+							<td>{{proforma.clienteProforma.nit}}</td>
+							<td>{{proforma.clienteProforma.razon_social}}</td>
+							<td>{{proforma.actividadEconomica.claseActividad.nombre}}</td>
+							<td>{{meses[proforma.periodo_mes-1].nombre}}/{{proforma.periodo_anio}}</td>
+							<td>
+								{{proforma.fecha_proforma | date:"dd/MM/yyyy"}}
+							</td>
+							<td>
+								{{proforma.fecha_proforma_ok | date:"dd/MM/yyyy"}}
+							</td>
+							<td>{{proforma.totalImporteBs | number:2}}</td>
+							<td>{{proforma.totalSus | number:2}}</td>
+							<td class="center">
+								<label>
+                                    <input type="checkbox" class="ace" ng-model="proforma.seleccionada" />
+                                    <span class="lbl"></span>
+                                </label>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+		<div class="modal-footer">
+			<button class="btn btn-primary" type="button" ng-click="verificarSeleccionProformas()">
+				<i class="ace-icon fa fa-print align-top bigger-125"></i>Imprimir
+			</button>
+	
+			<button class="btn btn-danger" type="button" ng-click="cerrarListaVencimientoProformas()">
+				<i class="ace-icon fa fa-times red2 align-top bigger-125"></i>Cancelar
+			</button>
 		</div>
 	</div>
 

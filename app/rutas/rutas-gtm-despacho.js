@@ -88,7 +88,7 @@ router.route('/gtm-detalle-despacho/empresa/:id_empresa')
 					id_transportista:detalle_despacho.id_transportista,
 					id_estibaje:detalle_despacho.id_estibaje,
 					id_grupo_estibaje:detalle_despacho.id_grupo_estibaje,
-					despachado:despachado
+					despachado:despachado				
 				},{
 					where:{
 						id:detalle_despacho.id
@@ -105,7 +105,7 @@ router.route('/gtm-detalle-despacho/empresa/:id_empresa')
 					id_producto: detalle_despacho.id_producto,
 					cantidad: detalle_despacho.cantidad,
 					precio_unitario: detalle_despacho.precio_unitario,
-					importe: detalle_despacho.impirte,
+					importe: detalle_despacho.importe,
 					eliminado: false,
 					id_padre: detalle_despacho.id
 				}, {

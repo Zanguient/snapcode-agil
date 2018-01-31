@@ -508,7 +508,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                         }]
                     }).then(function (pacienteEncontrado) {
                         res.json({ empleado: pacienteEncontrado })
-                    });
+                    })
                 }
             })
         })
@@ -535,7 +535,9 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                             }
                         }).then(function (medicoPacienteActualizado) {
                             guardarDatosFicha(req, res, personaReferenciaCreada, Persona, RrhhEmpleadoFicha, RrhhEmpleadoFichaOtrosSeguros, RrhhEmpleadoFichaFamiliar, RrhhEmpleadoCargo, RrhhEmpleadoDiscapacidad)
-                        })
+                        }).catch(function (err) {
+                            res.json({ mensaje: err.message === undefined ? err.data : err.message, hasErr: true })
+                        });
 
                 })
             } else {
@@ -566,8 +568,12 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                             }).then(function (medicoPacienteActualizado) {
                                 var personaReferencia = req.body.personaReferencia
                                 guardarDatosFicha(req, res, personaReferencia, Persona, RrhhEmpleadoFicha, RrhhEmpleadoFichaOtrosSeguros, RrhhEmpleadoFichaFamiliar, RrhhEmpleadoCargo, RrhhEmpleadoDiscapacidad)
-                            })
-                    })
+                            }).catch(function (err) {
+                                res.json({ mensaje: err.message === undefined ? err.data : err.message, hasErr: true })
+                            });
+                    }).catch(function (err) {
+                        res.json({ mensaje: err.message === undefined ? err.data : err.message, hasErr: true })
+                    });
 
             }
         })
@@ -650,8 +656,12 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                     } else {
                         guardarOtrosSeguros(req, res, Persona, RrhhEmpleadoFichaOtrosSeguros, RrhhEmpleadoFichaFamiliar, RrhhEmpleadoDiscapacidad, RrhhEmpleadoCargo)
                     }
+                }).catch(function (err) {
+                    res.json({ mensaje: err.message === undefined ? err.data : err.message, hasErr: true })
                 });
-            })
+            }).catch(function (err) {
+                res.json({ mensaje: err.message === undefined ? err.data : err.message, hasErr: true })
+            });
     }
     function guardarOtrosSeguros(req, res, Persona, RrhhEmpleadoFichaOtrosSeguros, RrhhEmpleadoFichaFamiliar, RrhhEmpleadoDiscapacidad, RrhhEmpleadoCargo) {
         if (req.body.empleado.otrosSeguros.length > 0) {
@@ -670,7 +680,9 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                                     guardarFamiliares(req, res, Persona, RrhhEmpleadoFichaFamiliar, RrhhEmpleadoDiscapacidad, RrhhEmpleadoCargo)
 
                                 }
-                            })
+                            }).catch(function (err) {
+                                res.json({ mensaje: err.message === undefined ? err.data : err.message, hasErr: true })
+                            });
                     } else {
                         RrhhEmpleadoFichaOtrosSeguros.destroy({
                             where: {
@@ -681,6 +693,8 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                                 guardarFamiliares(req, res, Persona, RrhhEmpleadoFichaFamiliar, RrhhEmpleadoDiscapacidad, RrhhEmpleadoCargo)
 
                             }
+                        }).catch(function (err) {
+                            res.json({ mensaje: err.message === undefined ? err.data : err.message, hasErr: true })
                         });
                     }
                 } else {
@@ -694,7 +708,9 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                             guardarFamiliares(req, res, Persona, RrhhEmpleadoFichaFamiliar, RrhhEmpleadoDiscapacidad, RrhhEmpleadoCargo)
 
                         }
-                    })
+                    }).catch(function (err) {
+                        res.json({ mensaje: err.message === undefined ? err.data : err.message, hasErr: true })
+                    });
                 }
             })
         } else {
@@ -730,9 +746,13 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                                             guardarCargo(req, res, RrhhEmpleadoDiscapacidad, RrhhEmpleadoCargo)
 
                                         }
-                                    })
+                                    }).catch(function (err) {
+                                        res.json({ mensaje: err.message === undefined ? err.data : err.message, hasErr: true })
+                                    });
 
-                            })
+                            }).catch(function (err) {
+                                res.json({ mensaje: err.message === undefined ? err.data : err.message, hasErr: true })
+                            });
                     } else {
                         RrhhEmpleadoFichaFamiliar.destroy({
                             where: {
@@ -748,7 +768,11 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                                     guardarCargo(req, res, RrhhEmpleadoDiscapacidad, RrhhEmpleadoCargo)
 
                                 }
+                            }).catch(function (err) {
+                                res.json({ mensaje: err.message === undefined ? err.data : err.message, hasErr: true })
                             });
+                        }).catch(function (err) {
+                            res.json({ mensaje: err.message === undefined ? err.data : err.message, hasErr: true })
                         });
                     }
                 } else {
@@ -768,8 +792,12 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                             if (index === (array.length - 1)) {
                                 guardarCargo(req, res, RrhhEmpleadoDiscapacidad, RrhhEmpleadoCargo)
                             }
-                        })
+                        }).catch(function (err) {
+                            res.json({ mensaje: err.message === undefined ? err.data : err.message, hasErr: true })
+                        });
 
+                    }).catch(function (err) {
+                        res.json({ mensaje: err.message === undefined ? err.data : err.message, hasErr: true })
                     });
                 }
             });
@@ -803,14 +831,18 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                                     if (index === (array.length - 1)) {
                                         guardarSeguros(RrhhEmpleadoDiscapacidad, req.body.empleado.discapacidades, req.body.empleado, res)
                                     }
-                                })
+                                }).catch(function (err) {
+                                    res.json({ mensaje: err.message === undefined ? err.data : err.message, hasErr: true })
+                                });
 
                         } else {
                             if (index === (array.length - 1)) {
                                 guardarSeguros(RrhhEmpleadoDiscapacidad, req.body.empleado.discapacidades, req.body.empleado, res)
                             }
                         }
-                    })
+                    }).catch(function (err) {
+                        res.json({ mensaje: err.message === undefined ? err.data : err.message, hasErr: true })
+                    });
                 });
             } else {
                 guardarSeguros(RrhhEmpleadoDiscapacidad, req.body.empleado.discapacidades, req.body.empleado, res)
@@ -842,14 +874,18 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                                     if (index === (array.length - 1)) {
                                         res.json({ message: "Ficha empleado actualizada satisfactoriamente!" })
                                     }
-                                })
+                                }).catch(function (err) {
+                                    res.json({ mensaje: err.message === undefined ? err.data : err.message, hasErr: true })
+                                });
 
                         } else {
                             if (index === (array.length - 1)) {
                                 res.json({ message: "Ficha empleado actualizada satisfactoriamente!" })
                             }
                         }
-                    })
+                    }).catch(function (err) {
+                        res.json({ mensaje: err.message === undefined ? err.data : err.message, hasErr: true })
+                    });
 
                 })
             } else {

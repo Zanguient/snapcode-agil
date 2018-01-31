@@ -98,3 +98,23 @@ angular.module('agil.servicios')
             'update': { method: 'PUT' }
         });
 })
+
+.factory('alertas', function ($resource) {
+    return $resource(restServer + "alertas/proformas/:id_empresa", {},
+        {
+            'update': { method: 'PUT' }
+        });
+})
+
+.factory('alertasProformasLista', ['alertas', '$q', function (alertas, $q) {
+    var res = function (idEmpresa) {
+        var delay = $q.defer();
+        alertas.get({id_empresa: idEmpresa}, function (entidades) {
+            delay.resolve(entidades);
+        }, function (error) {
+            delay.reject(error);
+        });
+        return delay.promise;
+    };
+    return res;
+}])

@@ -585,7 +585,7 @@ angular.module('agil.controladores')
                     templateUrl: 'myPopoverTemplate.html',
                 };
                 $scope.pacientes.forEach(function (pac, index, array) {
-                    pac.activo = (pac.activo == 0) ? false : true
+                    pac.activo = (pac.activo == 0) ? true : false
                     if (index === array.length - 1) {
                         blockUI.stop();
                     }
@@ -1542,7 +1542,7 @@ angular.module('agil.controladores')
 
         $scope.eliminarPaciente = function (paciente) {
             blockUI.start();
-            paciente.eliminado = (paciente.eliminado == true) ? true : false;
+            $scope.paciente.eliminado = (paciente.eliminado == false) ? true : false;
             Paciente.update({ id_paciente: $scope.paciente.id }, $scope.paciente, function (res) {
                 blockUI.stop();
                 $scope.cerrarConfirmacionEliminacion();

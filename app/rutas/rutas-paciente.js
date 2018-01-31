@@ -83,7 +83,7 @@ module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Su
 									cargo: req.body.cargo,
 									campo: req.body.campo,
 									designacion_empresa: req.body.designacion_empresa,
-									eliminado: true,
+									eliminado: false,
 								}).then(function (medicoPacienteCreado) {
 									guardarCargo(req, res, RrhhEmpleadoCargo, medicoPacienteCreado)
 								});
@@ -139,7 +139,7 @@ module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Su
 					})
 			} else {
 				MedicoPaciente.update({
-					eliminado: false
+					eliminado: true
 				}, {
 						where: {
 							id: req.params.id_paciente
@@ -445,8 +445,8 @@ module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Su
 												cargo: pacienteActual.cargo,
 												campo: pacienteActual.campamento,
 												designacion_empresa: pacienteActual.designacion_empresa,
-												eliminado: pacienteActual.eliminado,
-												es_empleado: pacienteActual.es_empleado
+												eliminado: false,
+												es_empleado: false
 											}, {
 													where: { id: pacienteFound.id }
 
@@ -548,7 +548,7 @@ module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Su
 													campo: pacienteActual.campamento,
 													designacion_empresa: pacienteActual.designacion_empresa,
 													eliminado: false,
-													es_empleado: pacienteActual.es_empleado
+													es_empleado: false
 													//comentario: pacienteActual.comentario
 												}).then(function (medicoPacienteActualizado) {
 													Tipo.find({
