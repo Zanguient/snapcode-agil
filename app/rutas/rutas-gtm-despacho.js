@@ -15,6 +15,7 @@ module.exports = function (router,ensureAuthorizedAdministrador,fs,forEach,jwt,m
 				req.body.detalles_despacho.forEach(function(detalle_despacho, index, array){
 					GtmDespachoDetalle.create({
 						id_despacho:despachoCreado.id,
+						cantidad_despacho:0,
 						id_producto:detalle_despacho.id_producto,
 						cantidad:parseFloat(detalle_despacho.cantidad),
 						precio_unitario:parseFloat(detalle_despacho.precio_unitario),

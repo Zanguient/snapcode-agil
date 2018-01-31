@@ -1184,6 +1184,17 @@ angular.module('agil.controladores')
                 blockUI.stop();
             });
         }
+        $scope.abrirDialogPrerequisitoEditar = function (prerequisito) {
+
+            $scope.NuevoP = new Prerequisito({ id: prerequisito.id, nombre: prerequisito.nombre, observacion: prerequisito.observacion, vencimiento_mes: prerequisito.vencimiento_mes,dias_activacion:prerequisito.dias_activacion, puede_modificar_rrhh: prerequisito.puede_modificar_rrhh })
+            $scope.abrirPopup($scope.idModalDialogPrerequisitoNuevo);
+        }
+
+        $scope.cerrarPopupPrerequisitoNuevo = function () {
+            $scope.obtenerAlertas()
+            $scope.cerrarPopup($scope.idModalDialogPrerequisitoNuevo);
+        }
+        
         $scope.saveForm = function () {
             //$scope.paciente = paciente;
             console.log($scope.nuevoRH.persona.fecha_nacimiento)

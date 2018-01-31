@@ -122,8 +122,9 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                                                 limit: 1,
                                                 where: {
                                                     id_empleado: paciente.id
-                                                },
-                                                include: [{ model: Clase, as: 'tipoContrato' }]
+                                                },                                                
+                                                include: [{ model: Clase, as: 'tipoContrato' }],
+                                                order: [['id', 'DESC']]
                                             }).then(function (fichaActual) {
                                                 paciente.dataValues.cargos = cargosEmpleado
                                                 paciente.dataValues.ficha = fichaActual[0]
@@ -182,7 +183,8 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                                                 where: {
                                                     id_empleado: paciente.id
                                                 },
-                                                include: [{ model: Clase, as: 'tipoContrato' }]
+                                                include: [{ model: Clase, as: 'tipoContrato' }],
+                                                order: [['id', 'DESC']],
                                             }).then(function (fichaActual) {
                                                 paciente.dataValues.cargos = cargosEmpleado
                                                 paciente.dataValues.ficha = fichaActual[0]
@@ -239,8 +241,8 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                     // { model: Empresa, as: 'empresa'},{model:MedicoPrerequisito, as: 'prerequisitos',include: [{ model: Clase, as: 'prerequisitoClase' }]}
                 ]
             }).then(function (medicoPaciente) {
-                if (medicoPaciente.empleadosFichas[0] != undefined) {
-                    if (medicoPaciente.empleadosFichas[0].length > 0) {
+                if (medicoPaciente.empleadosFichas != undefined) {
+                    if (medicoPaciente.empleadosFichas.length > 0) {
                         Clase.find({
                             where: {
                                 id: medicoPaciente.empleadosFichas[0].id_tipo_contrato
