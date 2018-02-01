@@ -198,11 +198,11 @@
 
                     <thead>
                         <tr>
-                                <th class="center">
-                                        <label>
-                                            Nro.
-                                        </label>
-                                    </th>
+                            <th class="center">
+                                <label>
+                                    Nro.
+                                </label>
+                            </th>
                             <th class="center">
                                 <label>
                                     <input type="checkbox" class="ace" ng-model="selectTodos" ng-change="selecionarEmpleados(null,true,selectTodos)" />
@@ -262,9 +262,9 @@
                     </thead>
                     <tbody>
                         <tr ng-repeat="empleado in RecursosHumanosEmpleados track by $index">
-                                <td class="center">
-                                    {{$index+1}}
-                                </td>
+                            <td class="center">
+                                {{$index+1}}
+                            </td>
                             <td class="center">
                                 <label class="pos-rel">
                                     <input name="switch-field-1" type="checkbox" class="ace" ng-model="empleado.select" ng-change="selecionarEmpleados(empleado,false,selectTodos)"
@@ -433,7 +433,7 @@
                             type="text" data-date-format="dd/mm/yyyy" id="fechafin" ng-model="filtro.fin" placeholder="Fecha fin">
                     </td>
                     <td>
-                        <button  ng-click="abrirDialogPrerequisitoNuevo()" type="submit" class="btn btn-sm btn-primary">
+                        <button ng-click="abrirDialogPrerequisitoNuevo()" type="submit" class="btn btn-sm btn-primary">
                             <i class="ace-icon fa fa-plus align-top bigger-125"></i>
                             NUEVO
                         </button>
@@ -883,10 +883,15 @@
                                         <input type="text" autofocus class="form-control" id="codigo-empleado" ng-model="ficha.empleado.codigo">
                                     </div>
                                     <div class="col-sm-6 col-md-2">
-                                        <label for="codigo-empleado"> <h4><strong>Edad {{ficha.edad}} años</h4></strong></h3></label>
+                                        <label for="codigo-empleado">
+                                            <h4>
+                                                <strong>Edad {{ficha.edad}} años</h4>
+                                            </strong>
+                                            </h3>
+                                        </label>
                                     </div>
-                                   
-                                  
+
+
                                 </div>
                                 <div class="page-header">
                                     <h4 class="blue">
@@ -7425,14 +7430,25 @@
                             <div class="step-pane" data-step="2">
                                 <div class="row">
                                     <div class="col-lg-12">
-                                        <div class="row form-group">
+                                        <div class="form-group">
+                                            <label class="col-sm-5 control-label no-padding-right" for="codigo">Código                                                
+                                            </label>
+
+                                            <div class="col-sm-7">
+                                                <input required type="text" id="codigo_cuenta" ng-model="nuevoRH.codigo" placeholder="Codigo" class="col-xs-10 col-sm-5"
+                                                    ng-change="validarCodigoCuentaEmpleado(nuevoRH.codigo)" />
+                                                <br>
+                                                <p ng-class="{'text-red':data.type,'text-green':!data.type}"> {{data.message}}</p>
+                                            </div>
+                                        </div>
+                                        <!-- <div class="row form-group">
                                             <div class="col-lg-5">
                                                 <label for="codigo">Codigo</label>
                                             </div>
                                             <div class="col-lg-7">
                                                 <input type="text" id="codigo" ng-model="nuevoRH.codigo" placeholder="Codigo" class="form-control" />
                                             </div>
-                                        </div>
+                                        </div> -->
                                         <div class="row form-group">
                                             <div class="col-lg-5">
                                                 <label for="sanguineo">Tipo de contrato</label>
@@ -7534,7 +7550,7 @@
                             Anterior
                         </button>
 
-                        <button type="submit" id="siguiente" class="btn btn-success btn-sm btn-next" data-last="Finish">
+                        <button type="submit" id="siguiente" ng-disabled="data.message=='¡el codigo ya Exsiste!'" class="btn btn-success btn-sm btn-next" data-last="Finish">
                             Siguiente
                             <i class="ace-icon fa fa-arrow-right icon-on-right"></i>
                         </button>

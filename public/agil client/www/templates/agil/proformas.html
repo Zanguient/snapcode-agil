@@ -373,7 +373,7 @@
                                             <label for="materno">Servicio</label>
                                         </div>
                                         <div class="col-lg-7">
-                                            <input required ng-model="nActividad.servicio.nombre" type="text">
+                                            <input ng-disable="checkServiceDisable()"required ng-model="nActividad.servicio.nombre" type="text">
                                         </div>
                                     </div>
                                     <div class="row form-group">
@@ -1071,7 +1071,7 @@
 
                                 </div>
                                 <div class="col-md-8">
-                                    <input autocomplete="off" ng-update-hidden type="text" data-date-format="dd/mm/yyyy" class="form-control date-picker" id="fecha-proformaOk"
+                                    <input autocomplete="off" ng-disabled="verificarFechaRecepcion(proforma.fecha_recepcion)" ng-change="compararFechasProformas(proforma.fecha_recepcion,proforma.fecha_proforma_ok)" ng-update-hidden type="text" data-date-format="dd/mm/yyyy" class="form-control date-picker" id="fecha-proformaOk"
                                         ng-model="proforma.fecha_proforma_ok" name="fecha-proformaOk">
                                 </div>
 
@@ -1081,7 +1081,7 @@
                                     <label for="">Factura</label>
                                 </div>
                                 <div class="col-md-8">
-                                    <input autocomplete="off" ng-update-hidden type="text" data-date-format="dd/mm/yyyy" class="form-control date-picker" id="fecha-factura"
+                                    <input autocomplete="off" ng-disabled="verificarFechaProformaOk(proforma.fecha_proforma_ok)" ng-change="compararFechasProformas(proforma.fecha_proforma_ok,proforma.fecha_factura)" ng-update-hidden type="text" data-date-format="dd/mm/yyyy" class="form-control date-picker" id="fecha-factura"
                                         ng-model="proforma.fecha_factura" name="fecha-factura">
                                 </div>
 
@@ -1092,7 +1092,7 @@
                                     <label for="">Cobro</label>
                                 </div>
                                 <div class="col-md-8">
-                                    <input autocomplete="off" ng-update-hidden type="text" data-date-format="dd/mm/yyyy" class="form-control date-picker" id="fecha-cobro"
+                                    <input autocomplete="off" ng-disabled="verificarFechaFactura(proforma.fecha_factura)" ng-change="compararFechasProformas(proforma.fecha_factura,proforma.fecha_cobro)" ng-update-hidden type="text" data-date-format="dd/mm/yyyy" class="form-control date-picker" id="fecha-cobro"
                                         ng-model="proforma.fecha_cobro" name="fecha-cobro">
                                 </div>
                             </div>

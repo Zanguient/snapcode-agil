@@ -1440,10 +1440,33 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 
 		$scope.generarFacturaciondeProformas = function (listaProformas) {
 			var men = ''
-			listaProformas.map(function (pro) {
-				men +=pro.id+', '
-			})
-			$scope.mostrarMensaje('GENERAR FACTURA '+ men)
+			var actividadComparar = {}
+			var noMismaActividad = []
+			if (listaProformas.length > 0) {
+				actividadComparar = listaProformas[0].actividadEconomica.claseActividad.id
+				listaProformas.map(function (pro) {
+					if (actividadComparar == pro.actividadEconomica.claseActividad.id) {
+						men +=pro.id+', '
+					}else{
+						noMismaActividad.push(pro)
+					}
+					
+				})
+				if (noMismaActividad.length > 0) {
+					var text = "La(s) actividad(es) "
+					noMismaActividad.map(function (act,i) {
+						if (i===noMismaActividad.length-1) {
+							text += act.actividadEconomica.claseActividad.nombre
+						}else{
+							text += act.actividadEconomica.claseActividad.nombre + ", "
+						}
+					})
+					text += " no son pertenecen a la misma actividad de "+listaProformas[0].actividadEconomica.claseActividad.nombre
+					$scope.mostrarMensaje(text)
+				}else{
+					$scope.mostrarMensaje('GENERAR FACTURA '+ men)
+				}
+			}			
 		}
 
 		$scope.abrirListaVencimientoProformas = function () {

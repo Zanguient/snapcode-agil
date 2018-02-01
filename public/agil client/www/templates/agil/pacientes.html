@@ -2615,14 +2615,25 @@
                                 <div class="step-pane" data-step="2">
                                     <div class="row">
                                         <div class="col-lg-12">
-                                            <div class="row form-group">
+                                                <div class="form-group">
+                                                        <label class="col-sm-5 control-label no-padding-right" for="codigo">Código                                                
+                                                        </label>
+            
+                                                        <div class="col-sm-7">
+                                                            <input required type="text" id="codigo_cuenta" ng-model="paciente.codigo" placeholder="Codigo" class="col-xs-10 col-sm-5"
+                                                                ng-change="validarCodigoCuentaEmpleado(paciente.codigo)" />
+                                                            <br>
+                                                            <p ng-class="{'text-red':data.type,'text-green':!data.type}"> {{data.message}}</p>
+                                                        </div>
+                                                    </div>
+                                           <!--  <div class="row form-group">
                                                 <div class="col-lg-5">
                                                     <label for="codigo">Codigo</label>
                                                 </div>
                                                 <div class="col-lg-7">
                                                     <input required type="text" id="codigo" ng-model="paciente.codigo" placeholder="Codigo" class="form-control" />
                                                 </div>
-                                            </div>
+                                            </div> -->
                                             <div class="row form-group">
                                                 <div class="col-lg-5">
                                                     <label for="sanguineo">Grupo Sanguíneo</label>
@@ -2725,7 +2736,7 @@
                                 Anterior
                             </button>
 
-                            <button type="submit" id="siguiente" class="btn btn-success btn-sm btn-next" data-last="Finish">
+                            <button type="submit" ng-disabled="data.message=='¡el codigo ya Exsiste!'" id="siguiente" class="btn btn-success btn-sm btn-next" data-last="Finish">
                                 Siguiente
                                 <i class="ace-icon fa fa-arrow-right icon-on-right"></i>
                             </button>

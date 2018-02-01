@@ -374,3 +374,9 @@ angular.module('agil.servicios')
     };
     return res;
 }]) 
+.factory('ValidarCodigoCuentaEmpleado', function($resource) {
+	return $resource(restServer+"/validar-codigo-empleado",
+	{
+		'update': { method:'PUT' }
+	});
+})

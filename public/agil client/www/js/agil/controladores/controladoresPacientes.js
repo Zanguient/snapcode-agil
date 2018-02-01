@@ -4,7 +4,7 @@ angular.module('agil.controladores')
         ListaConsultasMedicoPaciente, CrearMedicoPacienteFicha, BuscarFichaPaciente, ListaDatosTiposControl, ActualizarPatologiaPaciente, ListaPrerequisitosEmpresa, ListaPrerequisitosPaciente, ActualizarPrerequisito, CrearLaboratorio, ListaLaboratorios,
         CrearLaboratorioExamen, ListaLaboratorioExamenes, CrearLaboratorioExamenResultado, LaboratorioExamenListaHistorial, CrearDiagnostico, ListaDiagnosticos, CrearDiagnosticoExamen, ListaDiagnosticoExamenes, DiagnosticoExamenListaHistorial, CrearDiagnosticoExamenResultado,
         PacientesEmpresa, ListaVacunasEmpresa, FichasTecnicasPacientes, SignosVitalesPacientes, SOAPlistaPacientes, aplicacionVacunasPacientes, obtenerPaciente, Comentario, FieldViewer, PacienteActivo, HistorialFichaMedicoPaciente, ActualizarLaboratorio, ActualizarLaboratorioExamen,
-        ActualizarDiagnostico, ActualizarDiagnosticoExamen, EliminarLaboratorio, EliminarLaboratorioExamen, EliminarDiagnosticoExamen, EliminarDiagnostico, Prerequisitos, PrerequisitoPaciente, ListaAlertasPrerequisitosPaciente, PrerequisitosHistorial, ListaAlertasVacunasEmpresa, Vacuna, ClasesTipo) {
+        ActualizarDiagnostico, ActualizarDiagnosticoExamen, EliminarLaboratorio, EliminarLaboratorioExamen, EliminarDiagnosticoExamen, EliminarDiagnostico, Prerequisitos, PrerequisitoPaciente, ListaAlertasPrerequisitosPaciente, PrerequisitosHistorial, ListaAlertasVacunasEmpresa, Vacuna, ClasesTipo,ValidarCodigoCuentaEmpleado,$timeout) {
 
         $scope.usuario = JSON.parse($localStorage.usuario);
         $scope.idModalDialogVacunas = 'dialog-vacunas';
@@ -1281,7 +1281,20 @@ angular.module('agil.controladores')
             $scope.obtenerAlertas()
             $scope.cerrarPopup($scope.idModalDialogPrerequisitoNuevo);
         }
+        $scope.validarCodigoCuentaEmpleado = function (CodigoCuenta) {
+			var codigo = CodigoCuenta;
+			if (codigo != '') {
+				$timeout(function () {
+					$scope.validar = new ValidarCodigoCuentaEmpleado();
 
+					$scope.validar.codigo = CodigoCuenta;
+
+					$scope.validar.$save(function (data) {
+						$scope.data = data;
+					})
+				}, 1500);
+			}
+		};
         $scope.abrirDialogHistoricoPreRequisito = function (pre, pac) {
             var filtro = { inicio: 0, fin: 0 }
             $scope.preRequisito = pre

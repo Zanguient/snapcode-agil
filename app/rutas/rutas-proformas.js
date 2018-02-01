@@ -1,4 +1,5 @@
-module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Proforma, DetallesProformas, ActividadEconomica, Servicios, Clase, Sucursal) {
+module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Proforma, DetallesProformas, ActividadEconomica, Servicios, Clase, Sucursal, SucursalActividadDosificacion, CodigoControl,
+    CodigoControl, NumeroLiteral) {
     router.route('/proformas/empresa/:id_empresa/mes/:mes/anio/:anio/suc/:sucursal/act/:actividad/ser/:servicio/monto/:monto/razon/:razon/usuario/:usuario/pagina/:pagina/items-pagina/:items_pagina/busqueda/:busqueda/num/:numero')
         .get(function (req, res) {
             var condicion = {}
@@ -95,7 +96,16 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
         })
     router.route('/fechas/proforma/:id')
         .post(function (req, res) {
+            // if (req.body.fecha_recepcion !== null) {
+            //     req.body.fecha_recepcion = new Date(req.body.fecha_recepcion)
+            //     if (req.body.fecha_proforma_ok!==null) {
 
+            //     }
+
+
+            // }else{
+            //     res.json({mensaje:'No se puede guardar sin la fecha de recepcion!'})
+            // }
             Proforma.update({
                 // fecha_recepcion: (req.body.fecha_recepcion instanceof Date) ? req.body.fecha_recepcion : null,
                 // fecha_proforma_ok: (req.body.fecha_proforma_ok instanceof Date) ? req.body.fecha_proforma_ok : null,
@@ -429,13 +439,13 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
                 if (proformasAlertas.length > 0) {
                     proformasAlertas.map(function (proforma, i) {
                         var fecPro = new Date(proforma.fecha_proforma).getTime()
-                        
+
                         var hoy = new Date().getTime()
                         var dif = Math.floor((hoy - fecPro) / 86400000)
                         if (dif > 0 && dif < 8) {
                             proformasVencimiento.push(proforma)
                         }
-                        if (i === proformasAlertas.length -1) {
+                        if (i === proformasAlertas.length - 1) {
                             res.json({ proformas: proformasVencimiento })
                         }
                     })
@@ -443,7 +453,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
                     res.json({ proformas: [] })
                 }
 
-                
+
             }).catch(function (err) {
                 res.json({ mensaje: err.message === undefined ? err.data : err.message, hasErr: true })
             });

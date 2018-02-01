@@ -3,7 +3,7 @@ angular.module('agil.controladores')
     .controller('ControladorRecursosHumanos', function ($scope, $sce, $localStorage, $location, $templateCache, $route, blockUI, ListaDatosGenero, NuevoRecursoHumano, RecursosHumanosPaginador, Paginator,
         FieldViewer, EmpleadoEmpresa, obtenerEmpleadoRh, UsuarioRecursosHUmanosActivo, Prerequisito, ListaDatosPrerequisito, Prerequisitos, ListaPrerequisitosPaciente, ActualizarPrerequisito, UsuarioRecursosHumanosFicha,
         ClasesTipo, Clases, Paises, CrearEmpleadoFicha, EliminarOtroSeguroRh, EliminarFamiliarRh, PrerequisitoPaciente, PrerequisitosHistorial, UsuarioRhHistorialFicha, ObtenerEmpleadoHojaVida, GuardarEmpleadoHojaVida, CrearPrestamo,
-        ObtenerListaPrestamo, CrearRolTurno, CrearPagoPrestamo, VerificarUsuarioEmpresa, EditarPrestamo, ListaEmpleadosRrhh, CrearHorasExtra, HistorialHorasExtra,ListaRolTurnos) {
+        ObtenerListaPrestamo, CrearRolTurno, CrearPagoPrestamo, VerificarUsuarioEmpresa, EditarPrestamo, ListaEmpleadosRrhh, CrearHorasExtra, HistorialHorasExtra, ListaRolTurnos,ValidarCodigoCuentaEmpleado,$timeout) {
         $scope.usuario = JSON.parse($localStorage.usuario);
         $scope.idModalPrerequisitos = 'dialog-pre-requisitos';
         $scope.idModalEmpleado = 'dialog-empleado';
@@ -1028,7 +1028,7 @@ angular.module('agil.controladores')
             $scope.paginator = Paginator();
             $scope.paginator.column = "fecha_inicial";
             $scope.paginator.direccion = "asc";
-            $scope.filtro = { empresa: $scope.usuario.id_empresa, plazo: "", inicio: "", fin: "", nombre: "",apellido: "" };
+            $scope.filtro = { empresa: $scope.usuario.id_empresa, plazo: "", inicio: "", fin: "", nombre: "", apellido: "" };
             $scope.paginator.callBack = $scope.optenerListaPrestamos;
             $scope.paginator.getSearch("", $scope.filtro, null);
             blockUI.stop();
@@ -1186,7 +1186,7 @@ angular.module('agil.controladores')
         }
         $scope.abrirDialogPrerequisitoEditar = function (prerequisito) {
 
-            $scope.NuevoP = new Prerequisito({ id: prerequisito.id, nombre: prerequisito.nombre, observacion: prerequisito.observacion, vencimiento_mes: prerequisito.vencimiento_mes,dias_activacion:prerequisito.dias_activacion, puede_modificar_rrhh: prerequisito.puede_modificar_rrhh })
+            $scope.NuevoP = new Prerequisito({ id: prerequisito.id, nombre: prerequisito.nombre, observacion: prerequisito.observacion, vencimiento_mes: prerequisito.vencimiento_mes, dias_activacion: prerequisito.dias_activacion, puede_modificar_rrhh: prerequisito.puede_modificar_rrhh })
             $scope.abrirPopup($scope.idModalDialogPrerequisitoNuevo);
         }
 
@@ -1194,7 +1194,7 @@ angular.module('agil.controladores')
             $scope.obtenerAlertas()
             $scope.cerrarPopup($scope.idModalDialogPrerequisitoNuevo);
         }
-        
+
         $scope.saveForm = function () {
             //$scope.paciente = paciente;
             console.log($scope.nuevoRH.persona.fecha_nacimiento)
@@ -1303,27 +1303,28 @@ angular.module('agil.controladores')
                         paciente.apellido_paterno = worksheet['B' + row] != undefined && worksheet['B' + row] != "" ? worksheet['B' + row].v.toString() : null;
                         paciente.apellido_materno = worksheet['C' + row] != undefined && worksheet['C' + row] != "" ? worksheet['C' + row].v.toString() : null;
                         paciente.nombres = worksheet['D' + row] != undefined && worksheet['D' + row] != "" ? worksheet['D' + row].v.toString() : null;
-                        paciente.ci = worksheet['E' + row] != undefined && worksheet['E' + row] != "" ? worksheet['E' + row].v.toString() : null;
-                        paciente.extension = worksheet['F' + row] != undefined && worksheet['F' + row] != "" ? worksheet['F' + row].v.toString() : null;
-                        paciente.contrato = worksheet['G' + row] != undefined && worksheet['G' + row] != "" ? worksheet['G' + row].v.toString() : null;
-                        paciente.fecha_nacimiento = worksheet['H' + row] != undefined && worksheet['H' + row] != "" ? $scope.fecha_excel_angular(worksheet['H' + row].v.toString()) : null;
-                        paciente.genero = worksheet['I' + row] != undefined && worksheet['I' + row] != "" ? worksheet['I' + row].v.toString() : null;
-                        paciente.telefono = worksheet['J' + row] != undefined && worksheet['J' + row] != "" ? worksheet['J' + row].v.toString() : null;
-                        paciente.telefono2 = worksheet['K' + row] != undefined && worksheet['K' + row] != "" ? worksheet['K' + row].v.toString() : null;
-                        paciente.telefono_movil = worksheet['L' + row] != undefined && worksheet['L' + row] != "" ? worksheet['L' + row].v.toString() : null;
-                        paciente.estilo_de_vida = worksheet['M' + row] != undefined && worksheet['M' + row] != "" ? worksheet['M' + row].v.toString() : null;
-                        paciente.cargo = worksheet['N' + row] != undefined && worksheet['N' + row] != "" ? worksheet['N' + row].v.toString() : null;
-                        paciente.designacion_empresa = worksheet['O' + row] != undefined && worksheet['O' + row] != "" ? worksheet['O' + row].v.toString() : null;
-                        paciente.telefono_empresa = worksheet['P' + row] != undefined && worksheet['P' + row] != "" ? worksheet['P' + row].v.toString() : null;
-                        paciente.campamento = worksheet['Q' + row] != undefined && worksheet['Q' + row] != "" ? worksheet['Q' + row].v.toString() : null;
-                        paciente.riesgos_procesos_trabajo = worksheet['R' + row] != undefined && worksheet['R' + row] != "" ? worksheet['R' + row].v.toString() : null;
-                        paciente.ciudad_referencia = worksheet['S' + row] != undefined && worksheet['S' + row] != "" ? worksheet['S' + row].v.toString() : null;
-                        paciente.zona_referencia = worksheet['T' + row] != undefined && worksheet['T' + row] != "" ? worksheet['T' + row].v.toString() : null;
-                        paciente.calle_av_referencia = worksheet['U' + row] != undefined && worksheet['U' + row] != "" ? worksheet['U' + row].v.toString() : null;
-                        paciente.nro_referencia = worksheet['V' + row] != undefined && worksheet['V' + row] != "" ? worksheet['V' + row].v.toString() : null;
-                        paciente.telefonos_referencia = worksheet['W' + row] != undefined && worksheet['W' + row] != "" ? worksheet['W' + row].v.toString() : null;
-                        paciente.celular_referencia = worksheet['X' + row] != undefined && worksheet['X' + row] != "" ? worksheet['X' + row].v.toString() : null;
-                        paciente.nombre_referencia = worksheet['Y' + row] != undefined && worksheet['Y' + row] != "" ? worksheet['Y' + row].v.toString() : null;
+                        paciente.segundo_nombre = worksheet['E' + row] != undefined && worksheet['E' + row] != "" ? worksheet['E' + row].v.toString() : null;
+                        paciente.ci = worksheet['F' + row] != undefined && worksheet['F' + row] != "" ? worksheet['F' + row].v.toString() : null;
+                        paciente.extension = worksheet['G' + row] != undefined && worksheet['G' + row] != "" ? worksheet['G' + row].v.toString() : null;
+                        paciente.contrato = worksheet['H' + row] != undefined && worksheet['H' + row] != "" ? worksheet['H' + row].v.toString() : null;
+                        paciente.fecha_nacimiento = worksheet['I' + row] != undefined && worksheet['I' + row] != "" ? $scope.fecha_excel_angular(worksheet['I' + row].v.toString()) : null;
+                        paciente.genero = worksheet['J' + row] != undefined && worksheet['J' + row] != "" ? worksheet['J' + row].v.toString() : null;
+                        paciente.telefono = worksheet['K' + row] != undefined && worksheet['K' + row] != "" ? worksheet['K' + row].v.toString() : null;
+                        paciente.telefono2 = worksheet['L' + row] != undefined && worksheet['L' + row] != "" ? worksheet['L' + row].v.toString() : null;
+                        paciente.telefono_movil = worksheet['M' + row] != undefined && worksheet['M' + row] != "" ? worksheet['M' + row].v.toString() : null;
+                        paciente.estilo_de_vida = worksheet['N' + row] != undefined && worksheet['N' + row] != "" ? worksheet['N' + row].v.toString() : null;
+                        paciente.cargo = worksheet['O' + row] != undefined && worksheet['O' + row] != "" ? worksheet['O' + row].v.toString() : null;
+                        paciente.designacion_empresa = worksheet['P' + row] != undefined && worksheet['P' + row] != "" ? worksheet['P' + row].v.toString() : null;
+                        paciente.telefono_empresa = worksheet['Q' + row] != undefined && worksheet['Q' + row] != "" ? worksheet['Q' + row].v.toString() : null;
+                        paciente.campamento = worksheet['R' + row] != undefined && worksheet['R' + row] != "" ? worksheet['R' + row].v.toString() : null;
+                        paciente.riesgos_procesos_trabajo = worksheet['S' + row] != undefined && worksheet['S' + row] != "" ? worksheet['S' + row].v.toString() : null;
+                        paciente.ciudad_referencia = worksheet['T' + row] != undefined && worksheet['T' + row] != "" ? worksheet['T' + row].v.toString() : null;
+                        paciente.zona_referencia = worksheet['U' + row] != undefined && worksheet['U' + row] != "" ? worksheet['U' + row].v.toString() : null;
+                        paciente.calle_av_referencia = worksheet['V' + row] != undefined && worksheet['V' + row] != "" ? worksheet['V' + row].v.toString() : null;
+                        paciente.nro_referencia = worksheet['W' + row] != undefined && worksheet['W' + row] != "" ? worksheet['W' + row].v.toString() : null;
+                        paciente.telefonos_referencia = worksheet['X' + row] != undefined && worksheet['X' + row] != "" ? worksheet['X' + row].v.toString() : null;
+                        paciente.celular_referencia = worksheet['Y' + row] != undefined && worksheet['Y' + row] != "" ? worksheet['Y' + row].v.toString() : null;
+                        paciente.nombre_referencia = worksheet['Z' + row] != undefined && worksheet['Z' + row] != "" ? worksheet['Z' + row].v.toString() : null;
                         paciente.imagen = "img/icon-user-default.png"
                         paciente.es_empleado = true
                         pacientes.push(paciente);
@@ -1372,7 +1373,20 @@ angular.module('agil.controladores')
             $scope.abrirPopup($scope.idModalRhNuevo);
         }
 
+        $scope.validarCodigoCuentaEmpleado = function (CodigoCuenta) {
+			var codigo = CodigoCuenta;
+			if (codigo != '') {
+				$timeout(function () {
+					$scope.validar = new ValidarCodigoCuentaEmpleado();
 
+					$scope.validar.codigo = CodigoCuenta;
+
+					$scope.validar.$save(function (data) {
+						$scope.data = data;
+					})
+				}, 1500);
+			}
+		};
         $scope.changeActivoEmpleado = function (empleado) {
             console.log(empleado)
             var promesa = UsuarioRecursosHUmanosActivo(empleado)
@@ -2276,7 +2290,7 @@ angular.module('agil.controladores')
             }
 
         }
-        
+
         //find ficha
         //logica hoja de vida
         //FORMACION ACADEMICA
@@ -2773,12 +2787,12 @@ angular.module('agil.controladores')
                     rolTurno.dias_trabajo = 7;
                     rolTurno.dias_descanso = 15;
                 }
-            }else{
+            } else {
                 $scope.rolTurno = { tipo: false, fecha_fin: "", dias_trabajo: null, dias_descanso: null, grupo: "" }
             }
         }
-        $scope.obtenerlistaRolTurno=function(idEmpledo) {
-            var promesa = ListaRolTurnos($scope.usuario.id_empresa,idEmpledo)
+        $scope.obtenerlistaRolTurno = function (idEmpledo) {
+            var promesa = ListaRolTurnos($scope.usuario.id_empresa, idEmpledo)
             promesa.then(function (datos) {
                 $scope.listaRolTurno = datos.rolesTurno
                 console.log($scope.listaRolTurno)
@@ -2813,15 +2827,15 @@ angular.module('agil.controladores')
                     var fecha2 = moment(fechaFinTexto, "YYYY-MM-DD HH:mm:ss");
                     var diff = fecha2.diff(fecha1, 's');
                     horasExtra.tiempo = $scope.caluclarDiferencia(diff)
-                }else if(horaInicio == horafin && minInicio<minFin){
+                } else if (horaInicio == horafin && minInicio < minFin) {
                     var fechaInicioTexto = moment(horasExtra.hora_inicio).format('YYYY-MM-DD HH:mm:ss');
                     var fechaFinTexto = moment(horasExtra.hora_fin).format('YYYY-MM-DD HH:mm:ss');
                     var fecha1 = moment(fechaInicioTexto, "YYYY-MM-DD HH:mm:ss");
                     var fecha2 = moment(fechaFinTexto, "YYYY-MM-DD HH:mm:ss");
                     var diff = fecha2.diff(fecha1, 's');
                     horasExtra.tiempo = $scope.caluclarDiferencia(diff)
-                }else{
-                    horasExtra.tiempo=""
+                } else {
+                    horasExtra.tiempo = ""
                 }
             }
         }
@@ -2910,81 +2924,47 @@ angular.module('agil.controladores')
         //fin seleccion empleados
 
 
-        //expirtar en exel y pdf empleados
-        $scope.generarExcelEmpleados = function (empleados,configuracion) {					
-            if(configuracion.campo.show){
+        //exportar en exel y pdf empleados
+        $scope.generarExcelEmpleados = function (empleados, configuracion) {
 
+            var data = [["N°", "ACTIVO", "CODIGO", "NOMBRE COMPLETO", "EMPLEADO",
+                "CI", "EXTENCÓN", "TIPO CONTRATO", "CAMPO", "CARGO"]]
+                var iu =[]
+            for (var i = 0; i < empleados.length; i++) {
+                var columns = [];
+                columns.push((i + 1));
+                columns.push(empleados[i].eliminado);
+                columns.push(empleados[i].codigo);
+                columns.push(empleados[i].nombre_completo);
+                columns.push(empleados[i].designacion_empresa);
+                columns.push(empleados[i].ci);
+                columns.push(empleados[i].extension);
+                columns.push(empleados[i].ficha.tipoContrato.nombre);
+                columns.push(empleados[i].campo);
+                var cargostexto =  empleados[i].cargos[0].cargo.nombre
+                iu.push(i)
+                empleados[i].cargos.forEach(function(cargo,index,array) {
+                    if (cargostexto == "") {
+                        cargostexto = cargo
+                    } else {
+                        cargostexto = cargostexto + "-" + cargo.cargo.nombre
+                    }
+               });              
+               
+                columns.push(cargostexto);
+                data.push(columns);
             }
-            if(configuracion.cargo.show){
-                
-            }
-            if(configuracion.ci.show){
-                
-            }
-            if(configuracion.codigo.show){
-                
-            }
-				
-				var data = [["FECHA DE LA FACTURA", "N° DE LA FACTURA", "N° DE AUTORIZACION", "NIT/CI CLIENTE", "NOMBRE O RAZON SOCIAL",
-					"CODIGO", "DETALLE","UNIDAD", "GRUPO", "CANTIDAD", "PU", "TOTAL", "IMPORTE ICE/IEHD/TASAS", "EXENTOS",
-					"SUBTOTAL", "DESCUENTOS, BONIFICACIONES Y REBAJAS OBTENIDAS",
-					"IMPORTE BASE PARA DEBITO FISCAL", "CREDITO FISCAL", "FECHA DE VENCIMIENTO", "LOTE", "SUCURSAL", "USUARIO", "CENTRO DE COSTOS"]]
-				for (var i = 0; i < empleados.length; i++) {
-					var columns = [];
-					detallesCompra[i].compra.fecha = new Date(detallesCompra[i].compra.fecha);
-					columns.push(detallesCompra[i].compra.fecha.getDate() + "/" + (detallesCompra[i].compra.fecha.getMonth() + 1) + "/" + detallesCompra[i].compra.fecha.getFullYear());
-					columns.push(detallesCompra[i].compra.factura);
-					columns.push(detallesCompra[i].compra.autorizacion);
-					columns.push(detallesCompra[i].compra.proveedor.nit);
-					columns.push(detallesCompra[i].compra.proveedor.razon_social);
-					columns.push(detallesCompra[i].producto.codigo);
-					columns.push(detallesCompra[i].producto.nombre);
-					
-					columns.push(detallesCompra[i].producto.unidad_medida);
-					if (detallesCompra[i].producto.grupo) {
-						columns.push(detallesCompra[i].producto.grupo.nombre);						
-					} else {
-						columns.push("");
 
-					}
-					columns.push(detallesCompra[i].cantidad);				
-					columns.push(detallesCompra[i].costo_unitario);
-					columns.push(detallesCompra[i].importe);
-					columns.push(detallesCompra[i].ice);
-					columns.push(detallesCompra[i].excento);
-					columns.push(detallesCompra[i].importe - detallesCompra[i].ice);
-					var descuento = detallesCompra[i].importe - detallesCompra[i].ice - detallesCompra[i].excento + detallesCompra[i].recargo;
-					columns.push(descuento);
-					columns.push(detallesCompra[i].total);
-					columns.push(Math.round((detallesCompra[i].total * 0.13) * 100) / 100);
+            var ws_name = "SheetJS";
+            var wb = new Workbook(), ws = sheet_from_array_of_arrays(data);
+            /* add worksheet to workbook */
+            wb.SheetNames.push(ws_name);
+            wb.Sheets[ws_name] = ws;
+            var wbout = XLSX.write(wb, { bookType: 'xlsx', bookSST: true, type: 'binary' });
+            saveAs(new Blob([s2ab(wbout)], { type: "application/octet-stream" }), "EMPLEADO RRHH.xlsx");
+            blockUI.stop();
 
-					if (detallesCompra[i].inventario) {
-						columns.push(detallesCompra[i].inventario.fecha_vencimiento);
-						columns.push(detallesCompra[i].inventario.lote);
-					} else {
-						columns.push("");
-						columns.push("");
-					}
-
-					//columns.push(0);
-					//columns.push(0);
-					columns.push(detallesCompra[i].compra.almacen.sucursal.nombre);
-					columns.push($scope.usuario.nombre_usuario);
-					columns.push(detallesCompra[i].centroCosto.nombre_corto);
-					
-					data.push(columns);
-				}
-
-				var ws_name = "SheetJS";
-				var wb = new Workbook(), ws = sheet_from_array_of_arrays(data);
-				/* add worksheet to workbook */
-				wb.SheetNames.push(ws_name);
-				wb.Sheets[ws_name] = ws;
-				var wbout = XLSX.write(wb, { bookType: 'xlsx', bookSST: true, type: 'binary' });
-				saveAs(new Blob([s2ab(wbout)], { type: "application/octet-stream" }), "COMPRAS-MENSUALES.xlsx");
-				blockUI.stop();
-			
-		}
+        }
         //fin exportar en exel y pdf
         $scope.inicio()
 

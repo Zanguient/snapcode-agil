@@ -1452,12 +1452,13 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                             }
                             Persona.update({
                                 nombres: pacienteActual.nombres,
+                                segundo_nombre:pacienteActual.segundo_nombre,
                                 apellido_paterno: pacienteActual.apellido_paterno,
                                 apellido_materno: pacienteActual.apellido_materno,
                                 ci: pacienteActual.ci,
                                 imagen: imagen,
                                 id_genero: generoEncontrado.id,
-                                nombre_completo: pacienteActual.nombres + ' ' + pacienteActual.apellido_paterno + ' ' + pacienteActual.apellido_materno,
+                                nombre_completo: pacienteActual.nombres + ' '+pacienteActual.segundo_nombre+' '+ pacienteActual.apellido_paterno + ' ' + pacienteActual.apellido_materno,
                                 telefono: pacienteActual.telefono,
                                 telefono_movil: pacienteActual.telefono_movil,
                                 fecha_nacimiento: pacienteActual.fecha_nacimiento,
@@ -1543,11 +1544,12 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                             console.log('paciente nuevo')
                             Persona.create({
                                 nombres: pacienteActual.nombres,
+                                segundo_nombre:pacienteActual.segundo_nombre,
                                 apellido_paterno: pacienteActual.apellido_paterno,
                                 apellido_materno: pacienteActual.apellido_materno,
                                 ci: pacienteActual.ci,
                                 id_genero: generoEncontrado.id,
-                                nombre_completo: pacienteActual.nombres + ' ' + pacienteActual.apellido_paterno + ' ' + pacienteActual.apellido_materno,
+                                nombre_completo: pacienteActual.nombres + ' '+pacienteActual.segundo_nombre+" "+ pacienteActual.apellido_paterno + ' ' + pacienteActual.apellido_materno,
                                 telefono: pacienteActual.telefono,
                                 telefono_movil: pacienteActual.telefono_movil,
                                 fecha_nacimiento: pacienteActual.fecha_nacimiento,
@@ -1655,4 +1657,25 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                 });
             })
         })
+        router.route('/validar-codigo-empleado')
+		.post(function (req, res) {
+			MedicoPaciente.find({
+				where: {
+					codigo: req.body.codigo,
+					eliminado: false
+				}
+			}).then(function (entidad) {
+				if (entidad) {
+					res.json({
+						type: true,
+						message: "¡el codigo ya Exsiste!"
+					});
+				} else {
+					res.json({
+						type: false,
+						message: "Codigo Disponible"
+					});
+				}
+			});
+		});
 }
