@@ -63,7 +63,27 @@ module.exports=function(sequelize,Sequelize){
 	  texto2:{
 		type: Sequelize.STRING,
 		field: 'texto2'  
-	  }
+		},
+		documento_nit: {
+			type: Sequelize.STRING,
+			field: 'documento_nit'
+		},
+		documento_funda_empresa: {
+			type: Sequelize.STRING,
+			field: 'documento_funda_empresa'
+		},
+		documento_ci: {
+			type: Sequelize.STRING,
+			field: 'documento_ci'
+		},
+		documento_licencia_funcionamiento: {
+			type: Sequelize.STRING,
+			field: 'documento_licencia_funcionamiento'
+		},
+		documento_seguro_social: {
+			type: Sequelize.STRING,
+			field: 'documento_seguro_social'
+		},
 	}, {
 	  freezeTableName: true 
 	});

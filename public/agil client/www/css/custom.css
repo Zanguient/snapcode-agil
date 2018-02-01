@@ -24,6 +24,7 @@ input[type=number]::-webkit-outer-spin-button {
 
 #formNuevoComprobante input[type=number] { -moz-appearance:textfield; }
 
+
 #search { 
 width: 170px; /* Ancho del buscador */
 height: 50px;

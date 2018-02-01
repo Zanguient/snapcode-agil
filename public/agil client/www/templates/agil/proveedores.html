@@ -195,6 +195,10 @@
 						</li>
 						<li data-step="3">
 							<span class="step">3</span>
+							<span class="title">Doc. legales</span>
+						</li>
+						<li data-step="4">
+							<span class="step">4</span>
 							<span class="title">Finalizar</span>
 						</li>
 					</ul>
@@ -312,8 +316,45 @@
 							</div>
 						</div>
 					</div>
-
 					<div class="step-pane" data-step="3">
+						<div class="left row">
+							<div class="col-sm-5">
+								<p>
+									<label for="nit">NIT</label>
+								</p>
+								<p>
+									<label for="licencia">LICENCIA DE FUNCIONAMIENTO</label>
+								</p>
+								<p>
+									<label for="fundaempresa">FUNDAEMPRESA</label>
+								</p>
+								<p>
+									<label for="ci">CI</label>
+								</p>
+								<p>
+									<label for="seguro-social">SEGURO SOCIAL</label>
+								</p>
+							</div>
+							<div class="col-sm-7">
+								<p>	
+										<input type="file" files-input ng-model="proveedor.documento_nit"  multiple id="doc-nit"/>																							
+								</p>
+								<p>
+										<input type="file" files-input ng-model="proveedor.documento_licencia_funcionamiento"  multiple id="doc-licencia"/>
+								</p>
+								<p>
+										<input type="file" files-input ng-model="proveedor.documento_funda_empresa" multiple  id="doc-funda"/>
+								</p>
+								<p>
+										<input type="file" files-input ng-model="proveedor.documento_ci" multiple id="doc-ci"/>
+								</p>
+								<p>
+										<input type="file" files-input ng-model="proveedor.documento_seguro_social"  multiple id="doc-seguro-social"/>
+								</p>
+							</div>
+						</div>
+					</div>
+					<div class="step-pane" data-step="4">
 						<div class="center">
 							<h4 class="blue">Step 4</h4>
 						</div>

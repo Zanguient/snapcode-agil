@@ -6,7 +6,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 		ProveedorVencimientoCredito, Venta, ClasesTipo, Compra, Producto, DatosVenta, DatosCompra,
 		ImprimirSalida, Diccionario, VentasComprobantesEmpresa, ComprasComprobantesEmpresa, LibroMayorCuenta, Paginator, ComprobanteRevisarPaginador, AsignarComprobanteFavorito, ListaCuentasComprobanteContabilidad, NuevoComprobanteContabilidad, NuevoComprobante, ComprasComprobante,
 		ConfiguracionesCuentasEmpresa, ContabilidadCambioMoneda, ObtenerCambioMoneda, AsignarCuentaCiente, AsignarCuentaProveedor,
-		GtmTransportistas, GtmEstibajes, GtmGrupoEstibajes, ListasCuentasAuxiliares, GtmDetallesDespachoAlerta, $interval, GtmDetalleDespachoAlerta, GtmDetalleDespacho, VerificarCorrelativosSucursale, ReiniciarCorrelativoSucursales, ClasesTipoEmpresa,alertasProformasLista) {
+		GtmTransportistas, GtmEstibajes, GtmGrupoEstibajes, ListasCuentasAuxiliares, GtmDetallesDespachoAlerta, $interval, GtmDetalleDespachoAlerta, GtmDetalleDespacho, VerificarCorrelativosSucursale, ReiniciarCorrelativoSucursales, ClasesTipoEmpresa,alertasProformasLista,UltimaFechaTipoComprobante) {
 		$scope.idModalTablaVencimientoProductos = "tabla-vencimiento-productos";
 		$scope.idModalTablaDespachos = "tabla-gtm-despachos";
 		$scope.idModalTablaAsignacionDespacho = "tabla-gtm-asignacion-despachos";
@@ -178,6 +178,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 					console.log($scope.ventas)
 					var datee = new Date()
 					$scope.nuevoComprobante = { fechaActual: datee, copia_glosa: false, fecha: fecha, id_usuario: $scope.usuario.id, asientosContables: [], eliminado: 0, abierto: 0, importe: 0, id_venta: "", id_compra: "", id_sucursal: $scope.sucursales[0], tipoComprobante: $scope.tiposComprobantes[0], tipoCambio: $scope.moneda };
+					$scope.ultimaFechaTipoComprobante($scope.nuevoComprobante)
 					if (view) {
 						$scope.pararAutoGuardado()
 					} else {
@@ -970,10 +971,18 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 			} else {
 				if (comprobante.asientosContables.length == 1) {
 					$scope.nuevoComprobante.asientosContables.splice(0)
-
+					
 				}
 			}
 
+		}
+		$scope.ultimaFechaTipoComprobante=function (comprobante) {
+			var promesa = UltimaFechaTipoComprobante($scope.usuario.id_empresa,comprobante.tipoComprobante.id)
+			promesa.then(function (data) {
+				var fecha =$scope.fechaATexto(new Date(data.comprobante.fecha))
+				comprobante.fecha=fecha
+				console.log(data)
+			})
 		}
 		$scope.agregarNuevoAsiento = function (asiento, index) {
 			if (asiento.glosa) {

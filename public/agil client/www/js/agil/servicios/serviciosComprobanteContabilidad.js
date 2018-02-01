@@ -59,5 +59,25 @@ angular.module('agil.servicios')
 		};
 		return res;
 	}])
+	.factory('UltimaFechaTipoComp', function ($resource) {
+		return $resource(restServer + "ultima-fecha-comprobante/empresa/:id_empresa/tipo/:id_tipo", { id_moneda: "@id_moneda" },
+		{
+			'update': { method: 'PUT' }
+		});
+	})
 
+	.factory('UltimaFechaTipoComprobante', ['UltimaFechaTipoComp', '$q', function (UltimaFechaTipoComp, $q) {
+		var res = function (idEmpresa,idTipo) {
+			var delay = $q.defer();
+			var delay = $q.defer();
+			UltimaFechaTipoComp.get({ id_empresa: idEmpresa,id_tipo:idTipo }, function (entidades) {
+				delay.resolve(entidades);
+			}, function (error) {
+				delay.reject(error);
+			});
+			return delay.promise;
+		};
+		return res;
+	}])
 
+	

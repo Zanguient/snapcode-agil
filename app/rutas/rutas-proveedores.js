@@ -34,6 +34,7 @@ router.route('/proveedores')
 						}
 						
 					}).then(function (clienteCreado) {
+						guardarContratosProvedor(req,res,proveedor)
 						res.json(proveedor);
 					});
 
@@ -57,11 +58,91 @@ router.route('/proveedores')
 					texto1:req.body.texto1,
 					texto2:req.body.texto2
 				}).then(function(proveedorCreado){
+					guardarContratosProvedor(req,res,proveedorCreado)
 					res.json(proveedorCreado);
 				});
 			}
 		});
 	});
+
+	function guardarContratosProvedor(req,res,proveedor) {
+		if (req.body.documento_nit) {
+			fs.writeFileSync('./documentos/proveedores/documento-nit-' + proveedor.id + "-" + req.body.documento_nit[0].nombre, req.body.documento_nit[0].data, 'binary', function (err) {
+				if (err)
+					console.log(err);
+				else
+					console.log("The file was saved!");
+			});
+	
+			Proveedor.update({
+				documento_nit: req.body.documento_nit[0].nombre
+			}, {
+					where: { id: proveedor.id }
+				}).then(function (affecteedRows) {									
+				});
+		}
+		if (req.body.documento_funda_empresa) {
+			fs.writeFileSync('./documentos/proveedores/documento-fundaempresa-' + proveedor.id + "-" + req.body.documento_funda_empresa[0].nombre, req.body.documento_funda_empresa[0].data, 'binary', function (err) {
+				if (err)
+					console.log(err);
+				else
+					console.log("The file was saved!");
+			});
+	
+			Proveedor.update({
+				documento_funda_empresa: req.body.documento_funda_empresa[0].nombre
+			}, {
+					where: { id: proveedor.id }
+				}).then(function (affecteedRows) {									
+				});
+		}
+		if (req.body.documento_ci) {
+			fs.writeFileSync('./documentos/proveedores/documento-ci-' + proveedor.id + "-" + req.body.documento_ci[0].nombre, req.body.documento_ci[0].data, 'binary', function (err) {
+				if (err)
+					console.log(err);
+				else
+					console.log("The file was saved!");
+			});
+	
+			Proveedor.update({
+				documento_ci: req.body.documento_ci[0].nombre
+			}, {
+					where: { id: proveedor.id }
+				}).then(function (affecteedRows) {									
+				});
+		}
+		if (req.body.documento_licencia_funcionamiento) {
+			fs.writeFileSync('./documentos/proveedores/documento-licencia-funcionamiento-' + proveedor.id + "-" + req.body.documento_licencia_funcionamiento[0].nombre, req.body.documento_licencia_funcionamiento[0].data, 'binary', function (err) {
+				if (err)
+					console.log(err);
+				else
+					console.log("The file was saved!");
+			});
+	
+			Proveedor.update({
+				documento_licencia_funcionamiento: req.body.documento_licencia_funcionamiento[0].nombre
+			}, {
+					where: { id: proveedor.id }
+				}).then(function (affecteedRows) {									
+				});
+		}	
+		if (req.body.documento_seguro_social) {
+			fs.writeFileSync('./documentos/proveedores/documento-seguro-social-' + proveedor.id + "-" + req.body.documento_seguro_social[0].nombre, req.body.documento_seguro_social[0].data, 'binary', function (err) {
+				if (err)
+					console.log(err);
+				else
+					console.log("The file was saved!");
+			});
+	
+			Proveedor.update({
+				documento_seguro_social: req.body.documento_seguro_social[0].nombre
+			}, {
+					where: { id: proveedor.id }
+				}).then(function (affecteedRows) {									
+				});
+		}			
+		
+	}
 router.route('/proveedor/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda')
 	.get(function(req, res) {
 		var condicionProveedor={id_empresa:req.params.id_empresa,};	

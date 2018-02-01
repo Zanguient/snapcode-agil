@@ -219,35 +219,124 @@ angular.module('agil.controladores')
 			var button = $('#siguiente').text().trim();
 			if (button != "Siguiente") {
 				blockUI.start();
-				cliente.fecha1 = null;
-				if (cliente.fechatexto1) {
-					cliente.fecha1 = new Date($scope.convertirFecha(cliente.fechatexto1));
-				}
-				cliente.fecha2 = null;
-				if (cliente.fechatexto2) {
-					cliente.fecha2 = new Date($scope.convertirFecha(cliente.fechatexto2));
-				}
-				if (cliente.id) {
-					Cliente.update({ idCliente: cliente.id }, cliente, function (res) {
-						blockUI.stop();
-						$scope.cerrarPopPupNuevoCliente();
-						$scope.mostrarMensaje(res.mensaje);
-						$scope.recargarItemsTabla();
-					});
-				} else {
-					cliente.$save(function (res) {
-						blockUI.stop();
-						$scope.cliente = new Cliente({});
-						$scope.cerrarPopPupNuevoCliente();
-						$scope.mostrarMensaje(res.mensaje);
-						$scope.recargarItemsTabla();
-					}, function (error) {
-						blockUI.stop();
-						$scope.cerrarPopPupNuevoCliente();
-						$scope.mostrarMensaje('Ocurrio un problema al momento de guardar!');
-						$scope.recargarItemsTabla();
-					});
-				}
+				var f = document.getElementById('doc-nit').files[0]
+				var f1 = document.getElementById('doc-funda').files[0]
+				var f2 = document.getElementById('doc-licencia').files[0]
+				var f3 = document.getElementById('doc-ci').files[0]
+				var f4 = document.getElementById('doc-seguro-social').files[0]
+				var documentos = [f, f1, f2, f3, f4]
+				var documentosFinal = []
+				documentos.forEach(function (documento2, index, array) {
+					if (documento2) {
+						documentosFinal.push(documento2)
+					}
+					if (index == array.length - 1) {
+						documentosFinal.forEach(function (documento, index, array) {
+							r = new FileReader();
+							if (documento) {
+								r.onloadend = function (e) {
+									if (index == 0) {
+										if (cliente.documento_nit) {
+											cliente.documento_nit[0].nombre = cliente.documento_nit[0].name
+											cliente.documento_nit[0].data = e.target.result;
+										}
+									}
+									if (index == 1) {
+										if (cliente.documento_funda_empresa) {
+											cliente.documento_funda_empresa[0].nombre = cliente.documento_funda_empresa[0].name
+											cliente.documento_funda_empresa[0].data = e.target.result;
+										}
+									}
+									if (index == 2) {
+										if (cliente.documento_licencia_funcionamiento) {
+
+											cliente.documento_licencia_funcionamiento[0].nombre = cliente.documento_licencia_funcionamiento[0].name
+											cliente.documento_licencia_funcionamiento[0].data = e.target.result;
+										}
+									}
+									if (index == 3) {
+										if (cliente.documento_ci) {
+											cliente.documento_ci[0].nombre = cliente.documento_ci[0].name
+											cliente.documento_ci[0].data = e.target.result;
+										}
+									}
+									if (index == 4) {
+										if (cliente.documento_seguro_social) {
+											cliente.documento_seguro_social[0].nombre = cliente.documento_seguro_social[0].name
+											cliente.documento_seguro_social[0].data = e.target.result;
+										}
+									}
+									//send your binary data via $http or $resource or do anything else with it
+									if (index === array.length - 1) {
+										cliente.fecha1 = null;
+										if (cliente.fechatexto1) {
+											cliente.fecha1 = new Date($scope.convertirFecha(cliente.fechatexto1));
+										}
+										cliente.fecha2 = null;
+										if (cliente.fechatexto2) {
+											cliente.fecha2 = new Date($scope.convertirFecha(cliente.fechatexto2));
+										}
+										if (cliente.id) {
+											Cliente.update({ idCliente: cliente.id }, cliente, function (res) {
+												blockUI.stop();
+												$scope.cerrarPopPupNuevoCliente();
+												$scope.mostrarMensaje(res.mensaje);
+												$scope.recargarItemsTabla();
+											});
+										} else {
+											cliente.$save(function (res) {
+												blockUI.stop();
+												$scope.cliente = new Cliente({});
+												$scope.cerrarPopPupNuevoCliente();
+												$scope.mostrarMensaje(res.mensaje);
+												$scope.recargarItemsTabla();
+											}, function (error) {
+												blockUI.stop();
+												$scope.cerrarPopPupNuevoCliente();
+												$scope.mostrarMensaje('Ocurrio un problema al momento de guardar!');
+												$scope.recargarItemsTabla();
+											});
+										}
+									}
+								}
+								r.readAsBinaryString(documento);
+
+							} else {
+								if (index === array.length - 1) {
+									cliente.fecha1 = null;
+									if (cliente.fechatexto1) {
+										cliente.fecha1 = new Date($scope.convertirFecha(cliente.fechatexto1));
+									}
+									cliente.fecha2 = null;
+									if (cliente.fechatexto2) {
+										cliente.fecha2 = new Date($scope.convertirFecha(cliente.fechatexto2));
+									}
+									if (cliente.id) {
+										Cliente.update({ idCliente: cliente.id }, cliente, function (res) {
+											blockUI.stop();
+											$scope.cerrarPopPupNuevoCliente();
+											$scope.mostrarMensaje(res.mensaje);
+											$scope.recargarItemsTabla();
+										});
+									} else {
+										cliente.$save(function (res) {
+											blockUI.stop();
+											$scope.cliente = new Cliente({});
+											$scope.cerrarPopPupNuevoCliente();
+											$scope.mostrarMensaje(res.mensaje);
+											$scope.recargarItemsTabla();
+										}, function (error) {
+											blockUI.stop();
+											$scope.cerrarPopPupNuevoCliente();
+											$scope.mostrarMensaje('Ocurrio un problema al momento de guardar!');
+											$scope.recargarItemsTabla();
+										});
+									}
+								}
+							}
+						});
+					}
+				});
 			}
 		}
 
@@ -296,7 +385,7 @@ angular.module('agil.controladores')
 
 		$scope.agregarDestino = function (destino) {
 			if (destino.id) {
-				var clienteDestino={id_destino:destino.id,destino:destino};
+				var clienteDestino = { id_destino: destino.id, destino: destino };
 				if ($scope.cliente.cliente_destinos.indexOf(clienteDestino) == -1) {
 					$scope.cliente.cliente_destinos.push(clienteDestino);
 				}

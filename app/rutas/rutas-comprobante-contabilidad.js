@@ -200,6 +200,21 @@ module.exports = function (router, ComprobanteContabilidad, AsientoContabilidad,
 				res.json({ monedaCambio: MonedaCambio })
 			})
 		})
+		
+		router.route('/ultima-fecha-comprobante/empresa/:id_empresa/tipo/:id_tipo')
+		.get(function (req, res) {
+			var condicionSucursal={id_empresa:req.params.id_empresa}
+			ComprobanteContabilidad.findAll({
+				limit:1,
+				where: {
+					id_tipo:req.params.id_tipo,
+				},
+				include:[{ model: Sucursal, as: 'sucursal', where: condicionSucursal}],
+				order: [['id', 'DESC']]
+			}).then(function (Comprobante) {
+				res.json({ comprobante: Comprobante[0] })
+			})
+		})
 	router.route('/comprobante-contabilidad/monedaCambio/mes/:mes/anio/:anio')
 		.get(function (req, res) {
 			var condicion = {}

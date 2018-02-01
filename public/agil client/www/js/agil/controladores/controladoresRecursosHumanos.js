@@ -2186,7 +2186,6 @@ angular.module('agil.controladores')
                 }
                 if (ficha.empleado.fecha_vence_documento) { ficha.empleado.fecha_vence_documento = new Date($scope.convertirFecha(ficha.empleado.fecha_vence_documento)); }
                 var f = document.getElementById('id-contrato').files[0],
-
                     r = new FileReader();
 
                 if (f) {
@@ -2570,6 +2569,7 @@ angular.module('agil.controladores')
             var cuotaSinInteres = prestamo.monto / prestamo.plazo
             var interes = (cuotaSinInteres * prestamo.interes_pactado) / 100
             prestamo.cuota = cuotaSinInteres + interes
+            prestamo.cuota2 =$scope.number_format(prestamo.cuota,2)
             var años = 0;
             var meses = 0;
             var tiempo = prestamo.plazo
@@ -2641,14 +2641,14 @@ angular.module('agil.controladores')
             doc.text("Sueldo Básico ", 55, 350)
             doc.font('Helvetica', 14);
             doc.text($scope.empleado.nombre_completo, 220, 175)
-            doc.text(prestamo.monto, 220, 200)
+            doc.text($scope.number_format(prestamo.monto,2), 220, 200)
             doc.text(prestamo.interes_pactado + "%", 220, 225)
             var fecha = $scope.fechaATexto(prestamo.fecha_inicial)
             doc.text(fecha, 220, 250)
             doc.text(prestamo.plazo, 220, 275)
-            doc.text(prestamo.cuota, 220, 300)
+            doc.text(prestamo.cuota2, 220, 300)
             doc.text(prestamo.observacion, 220, 325)
-            doc.text($scope.empleado.ficha.haber_basico, 220, 350)
+            doc.text($scope.number_format($scope.empleado.ficha.haber_basico,2), 220, 350)
             doc.font('Helvetica-Bold', 14);
             doc.text("Recibí Conforme ", 55, 500)
             doc.text("Responsable de Área ", 225, 500)

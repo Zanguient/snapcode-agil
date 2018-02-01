@@ -1795,7 +1795,7 @@
 					<div class="row" class="col-sm-12">
 						<div class="col-sm-2">
 							<label>TIPO COMPROBANTE:</label>
-							<select enter autofocus ng-disabled="verComprobante" id='id_tipo' required ng-model='nuevoComprobante.tipoComprobante' id="tipoComprobante"
+							<select enter autofocus ng-change="ultimaFechaTipoComprobante(nuevoComprobante)"ng-disabled="verComprobante" id='id_tipo' required ng-model='nuevoComprobante.tipoComprobante' id="tipoComprobante"
 							 name="tipoComprobante" data-placeholder="Click para escoger" class="form-control" ng-options="cuentaTipo as cuentaTipo.nombre for cuentaTipo in tiposComprobantes track by cuentaTipo.id">
 
 							</select>

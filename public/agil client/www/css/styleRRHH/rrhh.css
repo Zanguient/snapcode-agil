@@ -204,7 +204,7 @@
     font-weight: 400;
 }
 
-..multiSelect .checkboxLayer {
+.multiSelect .checkboxLayer {
     position: fixed !important;
     top: auto !important;
     left: auto !important;
