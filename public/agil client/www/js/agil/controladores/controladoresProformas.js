@@ -108,6 +108,13 @@ angular.module('agil.controladores')
             }
         }
 
+        $scope.editarServicio = function(servicio){
+            servicio.editado = true
+            $scope.nActividad.actividadEconomica = servicio.actividad
+            $scope.nActividad.servicio = servicio
+            
+        }
+
         $scope.actualizarPeriodo = function (date) {
             var fecha = new Date($scope.convertirFecha(date))
             $scope.obtenerCambioMonedaProforma(fecha)
@@ -119,7 +126,7 @@ angular.module('agil.controladores')
                 var promesa = ClientesNit($scope.usuario.id_empresa, query);
                 return promesa;
             }
-        };
+        }
         $scope.establecerCliente = function (cliente) {
             $scope.proforma.clienteProforma = cliente;
             /*   $scope.enfocar('razon_social');
@@ -333,7 +340,7 @@ angular.module('agil.controladores')
                 $scope.nActividad = {}
                 var toDrop = []
                 var nuevosServicios = actividadServicios.map(function (_, i) {
-                    if (_.id === undefined || _.eliminado) {
+                    if (_.id === undefined || _.eliminado || _.editado !== undefined) {
                         return _
                     } else {
                         toDrop.push(i)
@@ -416,26 +423,34 @@ angular.module('agil.controladores')
                     }
                 }
                 if (!err) {
+
                     var check = $scope.buscarservicio(actividadServicio.servicio.nombre)
                     if (check !== undefined) {
                         if (check.length < 1) {
                             var service = { id: actividadServicio.id, actividad: actividadServicio.actividadEconomica, codigo: actividadServicio.servicio.codigo, nombre: actividadServicio.servicio.nombre, precio: actividadServicio.servicio.precio }
                             $scope.configuracionActividadServicio.push(service)
                         } else {
-                            var encontrado = false
-                            check.map(function (ser) {
-                                if (ser.nombre === actividadServicio.servicio.nombre) {
-                                    encontrado = true
-                                    $scope.mostrarMensaje('El servicio ya fue asignado a esta actividad')
+                            if (actividadServicio.servicio.id ===undefined) {
+                                var encontrado = false
+                                check.map(function (ser) {
+                                    if (ser.nombre === actividadServicio.servicio.nombre) {
+                                        encontrado = true
+                                        $scope.mostrarMensaje('El servicio ya fue asignado a esta actividad')
+                                    }
+                                    if (ser.codigo === actividadServicio.servicio.codigo) {
+                                        encontrado = true
+                                        $scope.mostrarMensaje('El codigo del servicio ya esta en uso')
+                                    }
+                                })
+                                if (!encontrado) {
+                                    var service = { id: actividadServicio.id, actividad: actividadServicio.actividadEconomica, codigo: actividadServicio.servicio.codigo, nombre: actividadServicio.servicio.nombre, precio: actividadServicio.servicio.precio }
+                                    $scope.configuracionActividadServicio.push(service)
                                 }
-                                if (ser.codigo === actividadServicio.servicio.codigo) {
-                                    encontrado = true
-                                    $scope.mostrarMensaje('El codigo del servicio ya esta en uso')
-                                }
-                            })
-                            if (!encontrado) {
-                                var service = { id: actividadServicio.id, actividad: actividadServicio.actividadEconomica, codigo: actividadServicio.servicio.codigo, nombre: actividadServicio.servicio.nombre, precio: actividadServicio.servicio.precio }
-                                $scope.configuracionActividadServicio.push(service)
+                            }else{
+                                // var end = []
+
+                                $scope.nActividad.servicio = undefined
+                                // $scope.nActividad.actividadEconomica = actividadServicio.actividadEconomica
                             }
                         }
                     } else {

@@ -321,6 +321,8 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
                                 nombre: servicio.nombre,
                                 precio: parseFloat(servicio.precio),
                                 eliminado: false
+                            },{
+                                where:{id:servicio.id}
                             }).then(function (servicioActualizado) {
                                 if (i === req.body.length - 1) {
                                     res.json({ mensaje: 'Servicios actualizados satisfactoriamente!' })

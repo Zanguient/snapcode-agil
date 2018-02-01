@@ -373,7 +373,7 @@
                                             <label for="materno">Servicio</label>
                                         </div>
                                         <div class="col-lg-7">
-                                            <input ng-disable="checkServiceDisable()"required ng-model="nActividad.servicio.nombre" type="text">
+                                            <input required ng-model="nActividad.servicio.nombre" type="text">
                                         </div>
                                     </div>
                                     <div class="row form-group">
@@ -400,7 +400,7 @@
                                                 </thead>
                                                 <tbody ng-if="!servicio.eliminado" ng-repeat="servicio in configuracionActividadServicio">
                                                     <td>
-                                                        {{servicio.actividad.claseActividad.nombre}}
+                                                        {{servicio.codigo}}
                                                     </td>
                                                     <td>
                                                         {{servicio.nombre}}
@@ -413,6 +413,10 @@
                                                             data-rel="tooltip" tooltip-placement="top" uib-tooltip="Eliminar">
                                                             <i class="ace-icon fa fa-trash-o bigger-130"></i>
                                                         </a>
+                                                        <a ng-disabled="!aplicacion.puede_eliminar" class="blue" ng-click="editarServicio(servicio)"
+                                                        data-rel="tooltip" tooltip-placement="top" uib-tooltip="Eliminar">
+                                                        <i class="ace-icon fa fa-pencil-square-o bigger-130"></i>
+                                                    </a>
                                                     </td>
                                                 </tbody>
                                             </table>
@@ -635,7 +639,7 @@
                                                     <label>ACTIVIDAD</label>
                                                 </div>
                                                 <div class="">
-                                                    <select ng-disabled="proforma.ver !== undefined" style="width:150px;" data-validate="validate(required)" ng-change="obtenerServiciosActividadEmpresa(proforma.actividadEconomica)"
+                                                    <select ng-disable="checkServiceDisable() || proforma.ver !== undefined" style="width:150px;" data-validate="validate(required)" ng-change="obtenerServiciosActividadEmpresa(proforma.actividadEconomica)"
                                                         required id="actividad" name="actividad" ng-model="proforma.actividadEconomica"
                                                         ng-options="actividad as actividad.claseActividad.nombre for actividad in actividadesEmpresa track by actividad.claseActividad.id"
                                                         data-placeholder="Click para escoger">
