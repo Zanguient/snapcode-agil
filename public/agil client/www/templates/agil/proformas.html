@@ -393,7 +393,7 @@
                                         <div class="container-fluid">
                                             <table class="table table-striped table-bordered table-hover">
                                                 <thead>
-                                                    <th>Actividades</th>
+                                                    <th>Código</th>
                                                     <th>Servicios</th>
                                                     <th>Precio</th>
                                                     <th>Acciones</th>
@@ -808,9 +808,16 @@
                                         </td>
                                         <td>
                                             {{detalleProforma.precio_unitario | number:2}}
+                                            <a ng-disabled="proforma.ver !== undefined" class="green" href="javascript:void(0)" ng-click="modificarProformaPrecioUnitarioServicio(detalleProforma)">
+                                                <i class="ace-icon fa fa-pencil-square-o bigger-130"></i>
+                                            </a>
+                                            <input ng-disabled="proforma.ver !== undefined" onfocus="this.select();" ng-keypress="interceptarTecla($event,'agregar_detalle_venta',false)"
+                                            id="cantidad" name="cantidad" step="1" min="1" required class="col-xs-12" ng-change="calcularImporte()"
+                                            ng-model="detalleProforma.precio_unitario" type="number" />
                                         </td>
                                         <td>
                                             {{detalleProforma.precioSus | number:2}}
+                                            
                                         </td>
                                         <td>
                                             {{detalleProforma.importeBs | number:2}}
