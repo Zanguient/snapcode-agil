@@ -90,6 +90,7 @@ angular.module('agil.controladores')
 						documentosFinal.push(documento2)
 					}
 					if (index == array.length - 1) {
+						if(documentosFinal.length>0){
 						documentosFinal.forEach(function (documento, index, array) {
 							r = new FileReader();
 							if (documento) {
@@ -194,6 +195,37 @@ angular.module('agil.controladores')
 							}
 
 						})
+					}else{
+						proveedor.fecha1 = null;
+									if (proveedor.fechatexto1) {
+										proveedor.fecha1 = new Date($scope.convertirFecha(proveedor.fechatexto1));
+									}
+									proveedor.fecha2 = null;
+									if (proveedor.fechatexto2) {
+										proveedor.fecha2 = new Date($scope.convertirFecha(proveedor.fechatexto2));
+									}
+									if (proveedor.id) {
+										Proveedor.update({ idProveedor: proveedor.id }, proveedor, function (res) {
+											blockUI.stop();
+											$scope.cerrarPopPupNuevoProveedor();
+											$scope.mostrarMensaje('Actualizado Exitosamente!');
+											$scope.recargarItemsTabla();
+										});
+									} else {
+										proveedor.$save(function (proveedor) {
+											blockUI.stop();
+											$scope.proveedor = new Proveedor({});
+											$scope.cerrarPopPupNuevoProveedor();
+											$scope.mostrarMensaje('Guardado Exitosamente!');
+											$scope.recargarItemsTabla();
+										}, function (error) {
+											blockUI.stop();
+											$scope.cerrarPopPupNuevoProveedor();
+											$scope.mostrarMensaje('Ocurrio un problema al momento de guardar!');
+											$scope.recargarItemsTabla();
+										});
+									}
+					}
 					}
 
 				})

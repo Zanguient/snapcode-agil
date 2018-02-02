@@ -20,7 +20,7 @@ module.exports = function (router,ensureAuthorizedAdministrador,fs,forEach,jwt,m
 						cantidad:parseFloat(detalle_despacho.cantidad),
 						precio_unitario:parseFloat(detalle_despacho.precio_unitario),
 						importe:parseFloat(detalle_despacho.total),
-						saldo:0,
+						saldo:parseFloat(detalle_despacho.cantidad),
 						despachado:false,
 						eliminado:false
 					}).then(function(detalleDespachoCreado){

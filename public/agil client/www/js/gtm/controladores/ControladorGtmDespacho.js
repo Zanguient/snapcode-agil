@@ -101,6 +101,8 @@ angular.module('agil.controladores')
             doc.text('HORA DESP.: ', 60, y + 110, { align: "left" })
             var hora = new Date().getHours()
             var min = new Date().getMinutes()
+            min=(min<10)? min="0"+min:min;
+            hora=(hora<10)? hora="0"+hora:hora;
             doc.text('HORA DESP.: ' + hora + ':' + min, 60, y + 110, { align: "left" })
             doc.rect(255, y + 85, 90, 0, { align: "center" }).stroke();
             doc.text('FIRMA CONDUCTOR', -10, y + 90, { align: "center" })
@@ -143,7 +145,7 @@ angular.module('agil.controladores')
             doc.text(fecha, 540, 60, { width: 45 });
             doc.text("Codigo interno", 530, 80);
             doc.text("", 490, 90);
-            doc.text("", 510, 100);
+            doc.text(gtm_despacho.factura, 510, 100);
             doc.text("Cod. Vend X ", 510, 110);
 
             doc.font('Helvetica-Bold', 14);
@@ -175,7 +177,7 @@ angular.module('agil.controladores')
             doc.text(" ", 120, 100);
             doc.text(gtm_despacho.despacho.cliente.razon_social, 100, 110);
             doc.text(gtm_despacho.despacho.cliente.nit, 80, 120);
-            doc.text(gtm_despacho.despacho.cliente.telefono1, 240, 120);
+           if(gtm_despacho.despacho.cliente.telefono1) doc.text(gtm_despacho.despacho.cliente.telefono1, 240, 120);
             doc.text(gtm_despacho.despacho.cliente.direccion, 80, 130);
         }
 

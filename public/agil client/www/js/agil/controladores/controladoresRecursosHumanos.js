@@ -646,7 +646,7 @@ angular.module('agil.controladores')
         }
         $scope.abrirDialogNuevoPrestamo = function (empleado) {
             $scope.empleado = empleado
-            $scope.prestamo={}
+            $scope.prestamo = {}
             if (empleado.ficha.haber_basico) {
                 $scope.abrirPopup($scope.idModalNuevoPrestamo);
             } else {
@@ -1005,19 +1005,29 @@ angular.module('agil.controladores')
                     prestamo.fecha_vence = editar_fecha(fecha, prestamo.plazo, "m", "/")
                     prestamo.saldo = prestamo.monto
                     prestamo.pago = 0
+                    $scope.prestamos = { total_montos: 0, pagos_acuenta: 0, saldo: 0 }
                     if (index === (array.length - 1)) {
 
                         datos.prestamos.forEach((prestamo, index, array) => {
                             if (prestamo.prestamoPagos.length > 0) {
-                                if (prestamo.prestamoPagos[(prestamo.prestamoPagos.length - 1)].saldo_anterior == 0) {
+                                if (prestamo.prestamoPagos[(prestamo.prestamoPagos.length - 1)].saldo_anterior == prestamo.total) {
                                     prestamo.pagadoTotal = true
+                                    
                                 }
+                                prestamo.pagadoTotal = false
+                                $scope.prestamos.total_montos += prestamo.monto
+                                $scope.prestamos.pagos_acuenta += prestamo.prestamoPagos[(prestamo.prestamoPagos.length-1)].a_cuenta_anterior
+                                $scope.prestamos.saldo += (prestamo.total-prestamo.prestamoPagos[(prestamo.prestamoPagos.length-1)].a_cuenta_anterior)
                             } else {
                                 prestamo.pagadoTotal = false
+                                $scope.prestamos.total_montos += prestamo.monto
+                                $scope.prestamos.pagos_acuenta += 0
+                                $scope.prestamos.saldo += prestamo.total
                             }
                             if (index === (array.length - 1)) {
                                 $scope.listaPrestamos = datos.prestamos
                             }
+
                         });
                     }
                     prestamo.montoEdit = false
@@ -1030,7 +1040,7 @@ angular.module('agil.controladores')
             $scope.paginator = Paginator();
             $scope.paginator.column = "fecha_inicial";
             $scope.paginator.direccion = "asc";
-            $scope.filtro = { empresa: $scope.usuario.id_empresa, plazo: "", inicio: "", fin: "", nombre: "", apellido: "",cuentas_liquidas:false };
+            $scope.filtro = { empresa: $scope.usuario.id_empresa, plazo: "", inicio: "", fin: "", nombre: "", apellido: "", cuentas_liquidas: false };
             $scope.paginator.callBack = $scope.optenerListaPrestamos;
             $scope.paginator.getSearch("", $scope.filtro, null);
             blockUI.stop();
@@ -2612,7 +2622,7 @@ angular.module('agil.controladores')
             promesa.then(function (datos) {
                 $scope.cerrarDialogPretamosNuevoTodos()
                 $scope.optenerListaPrestamos()
-                
+
                 $scope.mostrarMensaje(datos.mensaje)
                 $scope.prestamo = {}
             })
@@ -2665,26 +2675,26 @@ angular.module('agil.controladores')
         }
         $scope.GuardarPagoPrestamo = function (prestamo) {
             /* if (prestamo.monto_pagado != prestamo.cuota) { */
-                if (prestamo.prestamoPagos.length > 0) {
-                    var montopaga = prestamo.monto_pagado + prestamo.prestamoPagos[(prestamo.prestamoPagos.length - 1)].a_cuenta_anterior
-                    var cuotaSinInteres = (prestamo.total - montopaga) / prestamo.plazo_restante
-                    prestamo.cuota2 = cuotaSinInteres
-                } else {
-                    var cuotaSinInteres = (prestamo.total - prestamo.monto_pagado) / prestamo.plazo_restante
-                    prestamo.cuota2 = cuotaSinInteres                
-                }
+            if (prestamo.prestamoPagos.length > 0) {
+                var montopaga = prestamo.monto_pagado + prestamo.prestamoPagos[(prestamo.prestamoPagos.length - 1)].a_cuenta_anterior
+                var cuotaSinInteres = (prestamo.total - montopaga) / prestamo.plazo_restante
+                prestamo.cuota2 = cuotaSinInteres
+            } else {
+                var cuotaSinInteres = (prestamo.total - prestamo.monto_pagado) / prestamo.plazo_restante
+                prestamo.cuota2 = cuotaSinInteres
+            }
 
             /* } */
-          /*   if (prestamo.monto_pagado == prestamo.total) {
-                prestamo.cuota2 = 0
-            } */
+            /*   if (prestamo.monto_pagado == prestamo.total) {
+                  prestamo.cuota2 = 0
+              } */
             prestamo.pagoFecha = new Date()
             var promesa = CrearPagoPrestamo($scope.usuario.id, $scope.prestamo.id, prestamo)
             promesa.then(function (datos) {
                 //$scope.imprimirPrestamo(prestamo)
                 $scope.cerrarDialogPagoPrestamo()
                 $scope.optenerListaPrestamos()
-                $scope.prestamo={}
+                $scope.prestamo = {}
                 $scope.mostrarMensaje(datos.mensaje)
             })
         }

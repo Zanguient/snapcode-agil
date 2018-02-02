@@ -122,7 +122,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                                                 limit: 1,
                                                 where: {
                                                     id_empleado: paciente.id
-                                                },                                                
+                                                },
                                                 include: [{ model: Clase, as: 'tipoContrato' }],
                                                 order: [['id', 'DESC']]
                                             }).then(function (fichaActual) {
@@ -527,7 +527,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                     direccion_numero: req.body.personaReferencia.direccion_numero
                 }).then(function (personaReferenciaCreada) {
                     MedicoPaciente.update({
-                        codigo:req.body.empleado.codigo,
+                        codigo: req.body.empleado.codigo,
                         id_extension: req.body.empleado.extension.id,
                         id_tipo_documento: req.body.empleado.tipoDocumento.id,
                         fecha_vence_documento: req.body.empleado.fecha_vence_documento,
@@ -581,9 +581,9 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
         })
 
     function guardarDatosFicha(req, res, personaReferenciaCreada, Persona, RrhhEmpleadoFicha, RrhhEmpleadoFichaOtrosSeguros, RrhhEmpleadoFichaFamiliar, RrhhEmpleadoCargo, RrhhEmpleadoDiscapacidad) {
-        var provincia = (req.body.empleado.persona.provincia)? req.body.empleado.persona.provincia.id:null
-        var localidad = (req.body.empleado.persona.localidad)? req.body.empleado.persona.localidad.id:null
-      var ciudad = (req.body.empleado.persona.ciudad)? req.body.empleado.persona.ciudad.id:null
+        var provincia = (req.body.empleado.persona.provincia) ? req.body.empleado.persona.provincia.id : null
+        var localidad = (req.body.empleado.persona.localidad) ? req.body.empleado.persona.localidad.id : null
+        var ciudad = (req.body.empleado.persona.ciudad) ? req.body.empleado.persona.ciudad.id : null
         Persona.update({
             nombres: req.body.empleado.persona.nombres,
             apellido_paterno: req.body.empleado.persona.apellido_paterno,
@@ -1280,6 +1280,23 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
 
                 };
             }
+            if (req.params.cuentas_liquidas != 0) {
+                condicionPrestamo = {
+                    $or: [
+                        {
+                            cuota: { $eq: 0.00 }
+                        }
+                    ]
+                };
+            } else {
+                condicionPrestamo = {
+                    $or: [
+                        {
+                            cuota: { $ne: 0.00 }
+                        }
+                    ]
+                };
+            }
             if (req.params.inicio != 0 && req.params.fin != 0) {
                 var fechaInicial = req.params.inicio == 0 ? new Date(2016, 0, 1, 0, 0, 0) : new Date(req.params.inicio);
                 var fechaFinal = req.params.fin == 0 ? new Date() : new Date(req.params.fin);
@@ -1304,7 +1321,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
             }
             RrhhEmpleadoPrestamo.findAndCountAll({
                 where: condicionPrestamo,
-                include: [{ model: RrhhEmpleadoPrestamoPago, as: "prestamoPagos"}, { model: MedicoPaciente, as: "empleado", where: { id_empresa: req.params.id_empresa }, include: [{ model: Persona, as: "persona", where: condicionPersona }]}],
+                include: [{ model: RrhhEmpleadoPrestamoPago, as: "prestamoPagos" }, { model: MedicoPaciente, as: "empleado", where: { id_empresa: req.params.id_empresa }, include: [{ model: Persona, as: "persona", where: condicionPersona }] }],
                 order: [ordenArreglo]
             }).then(function (data) {
                 RrhhEmpleadoPrestamo.findAll({
@@ -1325,7 +1342,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
             var saldo_anterior = 0
             var a_cuenta_anterior = 0
             if (req.body.prestamoPagos.length > 0) {
-                saldo_anterior = req.body.prestamoPagos[(req.body.prestamoPagos.length - 1)].saldo_anterior-req.body.prestamoPagos[(req.body.prestamoPagos.length - 1)].a_cuenta_anterior /* - req.body.monto_pagado */
+                saldo_anterior = req.body.prestamoPagos[(req.body.prestamoPagos.length - 1)].saldo_anterior - req.body.prestamoPagos[(req.body.prestamoPagos.length - 1)].a_cuenta_anterior /* - req.body.monto_pagado */
                 a_cuenta_anterior = req.body.prestamoPagos[(req.body.prestamoPagos.length - 1)].a_cuenta_anterior + req.body.monto_pagado
             } else {
                 saldo_anterior = req.body.total /* - req.body.monto_pagado */
@@ -1338,14 +1355,14 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                 monto_pagado: req.body.monto_pagado,
                 saldo_anterior: saldo_anterior,
                 a_cuenta_anterior: a_cuenta_anterior
-            }).then(function (empleadoPrestamoCreado) {              
-                    RrhhEmpleadoPrestamo.update({
-                        cuota: req.body.cuota2
-                    }, {
-                            where: { id: req.params.id_prestamo }
-                        }).then(function (params) {
-                            res.json({ mensaje: "Pago efectuado satisfactoriamente!" })
-                        })
+            }).then(function (empleadoPrestamoCreado) {
+                RrhhEmpleadoPrestamo.update({
+                    cuota: req.body.cuota2
+                }, {
+                        where: { id: req.params.id_prestamo }
+                    }).then(function (params) {
+                        res.json({ mensaje: "Pago efectuado satisfactoriamente!" })
+                    })
             })
         })
     router.route('/recursos-humanos/empleados/:id_empresa')
@@ -1380,16 +1397,16 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
             if (req.params.id_empleado != 0) {
                 RrhhEmpleadoRolTurno.findAll({
                     where: { id_empleado: req.params.id_empleado },
-                    include: [{ model: Clase, as: 'campo'},{ model: MedicoPaciente, as: 'empleado', where: { id_empresa: req.params.id_empresa } }]
+                    include: [{ model: Clase, as: 'campo' }, { model: MedicoPaciente, as: 'empleado', where: { id_empresa: req.params.id_empresa } }]
                 }).then(function (empleadoRolesTurno) {
-                    res.json({rolesTurno:empleadoRolesTurno})
+                    res.json({ rolesTurno: empleadoRolesTurno })
 
                 })
             } else {
                 RrhhEmpleadoRolTurno.findAll({
-                    include: [{ model: Clase, as: 'campo'},{ model: MedicoPaciente, as: 'empleado', where: { id_empresa: req.params.id_empresa },include:[{model:Persona,as:'persona'}]}]
+                    include: [{ model: Clase, as: 'campo' }, { model: MedicoPaciente, as: 'empleado', where: { id_empresa: req.params.id_empresa }, include: [{ model: Persona, as: 'persona' }] }]
                 }).then(function (empleadoRolesTurno) {
-                    res.json({rolesTurno:empleadoRolesTurno})
+                    res.json({ rolesTurno: empleadoRolesTurno })
                 })
             }
         })
@@ -1445,13 +1462,13 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                             }
                             Persona.update({
                                 nombres: pacienteActual.nombres,
-                                segundo_nombre:pacienteActual.segundo_nombre,
+                                segundo_nombre: pacienteActual.segundo_nombre,
                                 apellido_paterno: pacienteActual.apellido_paterno,
                                 apellido_materno: pacienteActual.apellido_materno,
                                 ci: pacienteActual.ci,
                                 imagen: imagen,
                                 id_genero: generoEncontrado.id,
-                                nombre_completo: pacienteActual.nombres + ' '+pacienteActual.segundo_nombre+' '+ pacienteActual.apellido_paterno + ' ' + pacienteActual.apellido_materno,
+                                nombre_completo: pacienteActual.nombres + ' ' + pacienteActual.segundo_nombre + ' ' + pacienteActual.apellido_paterno + ' ' + pacienteActual.apellido_materno,
                                 telefono: pacienteActual.telefono,
                                 telefono_movil: pacienteActual.telefono_movil,
                                 fecha_nacimiento: pacienteActual.fecha_nacimiento,
@@ -1537,12 +1554,12 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                             console.log('paciente nuevo')
                             Persona.create({
                                 nombres: pacienteActual.nombres,
-                                segundo_nombre:pacienteActual.segundo_nombre,
+                                segundo_nombre: pacienteActual.segundo_nombre,
                                 apellido_paterno: pacienteActual.apellido_paterno,
                                 apellido_materno: pacienteActual.apellido_materno,
                                 ci: pacienteActual.ci,
                                 id_genero: generoEncontrado.id,
-                                nombre_completo: pacienteActual.nombres + ' '+pacienteActual.segundo_nombre+" "+ pacienteActual.apellido_paterno + ' ' + pacienteActual.apellido_materno,
+                                nombre_completo: pacienteActual.nombres + ' ' + pacienteActual.segundo_nombre + " " + pacienteActual.apellido_paterno + ' ' + pacienteActual.apellido_materno,
                                 telefono: pacienteActual.telefono,
                                 telefono_movil: pacienteActual.telefono_movil,
                                 fecha_nacimiento: pacienteActual.fecha_nacimiento,
@@ -1650,25 +1667,25 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                 });
             })
         })
-        router.route('/validar-codigo-empleado')
-		.post(function (req, res) {
-			MedicoPaciente.find({
-				where: {
-					codigo: req.body.codigo,
-					eliminado: false
-				}
-			}).then(function (entidad) {
-				if (entidad) {
-					res.json({
-						type: true,
-						message: "¡el codigo ya Exsiste!"
-					});
-				} else {
-					res.json({
-						type: false,
-						message: "Codigo Disponible"
-					});
-				}
-			});
-		});
+    router.route('/validar-codigo-empleado')
+        .post(function (req, res) {
+            MedicoPaciente.find({
+                where: {
+                    codigo: req.body.codigo,
+                    eliminado: false
+                }
+            }).then(function (entidad) {
+                if (entidad) {
+                    res.json({
+                        type: true,
+                        message: "¡el codigo ya Exsiste!"
+                    });
+                } else {
+                    res.json({
+                        type: false,
+                        message: "Codigo Disponible"
+                    });
+                }
+            });
+        });
 }
