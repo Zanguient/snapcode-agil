@@ -227,7 +227,7 @@ angular.module('agil.servicios')
     return res;
 }]) 
 .factory('HistorialPrestamos', function ($resource) {
-    return $resource(restServer + "recursos-humanos/prestamos/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion/plazo/:plazo/inicio/:inicio/fin/:fin/nombre/:nombre",
+    return $resource(restServer + "recursos-humanos/prestamos/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion/plazo/:plazo/inicio/:inicio/fin/:fin/nombre/:nombre/cuenta-liquida/:cuentas_liquidas",
         {
             'update': { method: 'PUT' }
         });
@@ -235,7 +235,7 @@ angular.module('agil.servicios')
 .factory('ObtenerListaPrestamo', ['HistorialPrestamos', '$q', function (HistorialPrestamos, $q) {
     var res = function (paginator) {
         var delay = $q.defer();
-        HistorialPrestamos.get({ id_empresa: paginator.filter.empresa,pagina:paginator.currentPage,items_pagina:paginator.itemsPerPage,texto_busqueda:paginator.search,columna:paginator.column,direccion:paginator.direction,plazo:paginator.filter.plazo,inicio:paginator.filter.inicio,fin:paginator.filter.fin,nombre:paginator.filter.nombre}, function (entidad) {
+        HistorialPrestamos.get({ id_empresa: paginator.filter.empresa,pagina:paginator.currentPage,items_pagina:paginator.itemsPerPage,texto_busqueda:paginator.search,columna:paginator.column,direccion:paginator.direction,plazo:paginator.filter.plazo,inicio:paginator.filter.inicio,fin:paginator.filter.fin,nombre:paginator.filter.nombre,cuentas_liquidas:paginator.filter.cuentas_liquidas}, function (entidad) {
             delay.resolve(entidad);
         }, function (error) {
             delay.reject(error);

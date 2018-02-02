@@ -111,8 +111,8 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Clie
 			});
 		});
 function guardarContratosCliente(req,res,cliente) {
-	if (req.body.documento_nit) {
-		fs.writeFileSync('./documentos/clientes/documento-nit-' + cliente.id + "-" + req.body.documento_nit[0].nombre, req.body.documento_nit[0].data, 'binary', function (err) {
+	if (req.body.documento_nit1) {
+		fs.writeFileSync('./documentos/clientes/documento-nit-' + cliente.id + "-" + req.body.documento_nit1[0].nombre, req.body.documento_nit1[0].data, 'binary', function (err) {
 			if (err)
 				console.log(err);
 			else
@@ -120,14 +120,14 @@ function guardarContratosCliente(req,res,cliente) {
 		});
 
 		Cliente.update({
-			documento_nit: req.body.documento_nit[0].nombre
+			documento_nit: req.body.documento_nit1[0].nombre
 		}, {
 				where: { id: cliente.id }
 			}).then(function (affecteedRows) {									
 			});
 	}
-	if (req.body.documento_funda_empresa) {
-		fs.writeFileSync('./documentos/clientes/documento-fundaempresa-' + cliente.id + "-" + req.body.documento_funda_empresa[0].nombre, req.body.documento_funda_empresa[0].data, 'binary', function (err) {
+	if (req.body.documento_funda_empresa1) {
+		fs.writeFileSync('./documentos/clientes/documento-fundaempresa-' + cliente.id + "-" + req.body.documento_funda_empresa1[0].nombre, req.body.documento_funda_empresa1[0].data, 'binary', function (err) {
 			if (err)
 				console.log(err);
 			else
@@ -135,14 +135,14 @@ function guardarContratosCliente(req,res,cliente) {
 		});
 
 		Cliente.update({
-			documento_funda_empresa: req.body.documento_funda_empresa[0].nombre
+			documento_funda_empresa: req.body.documento_funda_empresa1[0].nombre
 		}, {
 				where: { id: cliente.id }
 			}).then(function (affecteedRows) {									
 			});
 	}
-	if (req.body.documento_ci) {
-		fs.writeFileSync('./documentos/clientes/documento-ci-' + cliente.id + "-" + req.body.documento_ci[0].nombre, req.body.documento_ci[0].data, 'binary', function (err) {
+	if (req.body.documento_ci1) {
+		fs.writeFileSync('./documentos/clientes/documento-ci-' + cliente.id + "-" + req.body.documento_ci1[0].nombre, req.body.documento_ci1[0].data, 'binary', function (err) {
 			if (err)
 				console.log(err);
 			else
@@ -150,14 +150,14 @@ function guardarContratosCliente(req,res,cliente) {
 		});
 
 		Cliente.update({
-			documento_ci: req.body.documento_ci[0].nombre
+			documento_ci: req.body.documento_ci1[0].nombre
 		}, {
 				where: { id: cliente.id }
 			}).then(function (affecteedRows) {									
 			});
 	}
-	if (req.body.documento_licencia_funcionamiento) {
-		fs.writeFileSync('./documentos/clientes/documento-licencia-funcionamiento-' + cliente.id + "-" + req.body.documento_licencia_funcionamiento[0].nombre, req.body.documento_licencia_funcionamiento[0].data, 'binary', function (err) {
+	if (req.body.documento_licencia_funcionamiento1) {
+		fs.writeFileSync('./documentos/clientes/documento-licencia-funcionamiento-' + cliente.id + "-" + req.body.documento_licencia_funcionamiento1[0].nombre, req.body.documento_licencia_funcionamiento1[0].data, 'binary', function (err) {
 			if (err)
 				console.log(err);
 			else
@@ -165,14 +165,14 @@ function guardarContratosCliente(req,res,cliente) {
 		});
 
 		Cliente.update({
-			documento_licencia_funcionamiento: req.body.documento_licencia_funcionamiento[0].nombre
+			documento_licencia_funcionamiento: req.body.documento_licencia_funcionamiento1[0].nombre
 		}, {
 				where: { id: cliente.id }
 			}).then(function (affecteedRows) {									
 			});
 	}	
-	if (req.body.documento_seguro_social) {
-		fs.writeFileSync('./documentos/clientes/documento-seguro-social-' + cliente.id + "-" + req.body.documento_seguro_social[0].nombre, req.body.documento_seguro_social[0].data, 'binary', function (err) {
+	if (req.body.documento_seguro_social1) {
+		fs.writeFileSync('./documentos/clientes/documento-seguro-social-' + cliente.id + "-" + req.body.documento_seguro_social1[0].nombre, req.body.documento_seguro_social1[0].data, 'binary', function (err) {
 			if (err)
 				console.log(err);
 			else
@@ -180,7 +180,7 @@ function guardarContratosCliente(req,res,cliente) {
 		});
 
 		Cliente.update({
-			documento_seguro_social: req.body.documento_seguro_social[0].nombre
+			documento_seguro_social: req.body.documento_seguro_social1[0].nombre
 		}, {
 				where: { id: cliente.id }
 			}).then(function (affecteedRows) {									

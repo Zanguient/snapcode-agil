@@ -6,8 +6,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 		ProveedorVencimientoCredito, Venta, ClasesTipo, Compra, Producto, DatosVenta, DatosCompra,
 		ImprimirSalida, Diccionario, VentasComprobantesEmpresa, ComprasComprobantesEmpresa, LibroMayorCuenta, Paginator, ComprobanteRevisarPaginador, AsignarComprobanteFavorito, ListaCuentasComprobanteContabilidad, NuevoComprobanteContabilidad, NuevoComprobante, ComprasComprobante,
 		ConfiguracionesCuentasEmpresa, ContabilidadCambioMoneda, ObtenerCambioMoneda, AsignarCuentaCiente, AsignarCuentaProveedor,
-		GtmTransportistas, GtmEstibajes, GtmGrupoEstibajes, ListasCuentasAuxiliares, GtmDetallesDespachoAlerta, $interval, GtmDetalleDespachoAlerta, GtmDetalleDespacho, VerificarCorrelativosSucursale, ReiniciarCorrelativoSucursales, ClasesTipoEmpresa,alertasProformasLista,UltimaFechaTipoComprobante) {
-		$scope.idModalTablaVencimientoProductos = "tabla-vencimiento-productos";
+		GtmTransportistas, GtmEstibajes, GtmGrupoEstibajes, ListasCuentasAuxiliares, GtmDetallesDespachoAlerta, $interval, GtmDetalleDespachoAlerta, GtmDetalleDespacho, VerificarCorrelativosSucursale, ReiniciarCorrelativoSucursales, ClasesTipoEmpresa,alertasProformasLista,UltimaFechaTipoComprobante,FacturaProforma,ListaDetallesProformasAFacturar) {		$scope.idModalTablaVencimientoProductos = "tabla-vencimiento-productos";
 		$scope.idModalTablaDespachos = "tabla-gtm-despachos";
 		$scope.idModalTablaAsignacionDespacho = "tabla-gtm-asignacion-despachos";
 		$scope.idModalTablaVencimientoCreditos = "tabla-vencimiento-creditos";
@@ -31,19 +30,19 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 		$scope.IdModalRevisarComprobante = 'modal-revisar';
 		$scope.IdModalLibroMayor = 'modal-libro-contable';
 		$scope.IdModalAsignarCuenta = 'dialog-asignar-cuenta';
-		
 		//fin nuevo comprobante
 		$scope.IdModalEliminarProductoVencido = "eliminar-producto-vencido"
 		$scope.diccionario = Diccionario;
-		
+		//proformas facturacion
 		$scope.dialogAlertasProformas = 'dialog-alertas-proforma'
+		$scope.facturarProformas ='proforma-facturacion'
 
 		$scope.$on('$viewContentLoaded', function () {
 			ejecutarScriptsInicio($scope.idModalTablaVencimientoProductos, $scope.idModalTablaVencimientoCreditos, $scope.idModalTablaVencimientoDeudas, $scope.idModalPagoP,
 				$scope.idmodalActualizarCreditoCliente, $scope.idmodalActualizarCreditoDeuda, $scope.idModalPagoDeuda, $scope.idModalDescuento, $scope.idModalTablaVentasPendientes,
 				$scope.idModalTablaComprasPendientes, $scope.idModalTablaBancosPendientes, $scope.idModalTablaOtrosPendientes, $scope.idModalInicioSesion,
 				$scope.idModalWizardComprobanteEdicion, $scope.IdModalOpcionesQr, $scope.IdModalRegistrarComprobante, $scope.IdModalRevisarComprobante, $scope.IdModalLibroMayor, $scope.IdModalAsignarCuenta,
-				$scope.idModalTablaDespachos, $scope.idModalTablaAsignacionDespacho, $scope.IdModalEliminarProductoVencido,$scope.dialogAlertasProformas);
+				$scope.idModalTablaDespachos, $scope.idModalTablaAsignacionDespacho, $scope.IdModalEliminarProductoVencido,$scope.dialogAlertasProformas,$scope.facturarProformas);
 
 			$scope.inicio();
 			blockUI.stop();
@@ -1450,16 +1449,32 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 		$scope.generarFacturaciondeProformas = function (listaProformas) {
 			var men = ''
 			var actividadComparar = {}
+			var clienteComparar = {}
 			var noMismaActividad = []
+			var noMismoCliente = []
+			var textCli = ''
+			var paraFacturar = []
+			var proformaNoOk = []
 			if (listaProformas.length > 0) {
 				actividadComparar = listaProformas[0].actividadEconomica.claseActividad.id
+				clienteComparar = listaProformas[0].clienteProforma.id
 				listaProformas.map(function (pro) {
-					if (actividadComparar == pro.actividadEconomica.claseActividad.id) {
-						men +=pro.id+', '
-					}else{
+					if (actividadComparar == pro.actividadEconomica.claseActividad.id && clienteComparar == pro.clienteProforma.id) {
+						// var checkDate = new Date(pro.fecha_proforma_ok)
+						if (pro.fecha_proforma_ok !== null) {
+							men +=pro.id+', '
+							paraFacturar.push(pro)
+						}else{
+							proformaNoOk.push(pro)
+						}
+					} else {
 						noMismaActividad.push(pro)
 					}
-					
+					if (clienteComparar == pro.clienteProforma.id) {
+						
+					} else {
+						noMismoCliente.push(pro)
+					}
 				})
 				if (noMismaActividad.length > 0) {
 					var text = "La(s) actividad(es) "
@@ -1470,14 +1485,86 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 							text += act.actividadEconomica.claseActividad.nombre + ", "
 						}
 					})
-					text += " no son pertenecen a la misma actividad de "+listaProformas[0].actividadEconomica.claseActividad.nombre
-					$scope.mostrarMensaje(text)
+					if (noMismoCliente.length > 0) {
+						textCli = ' ¬|'
+						textCli += " La(s) razón(es) social(es) "
+						noMismoCliente.map(function(cli,i){
+							if (i===noMismoCliente.length-1) {
+								textCli += cli.clienteProforma.razon_social
+							}else{
+								textCli += cli.clienteProforma.razon_social + ", "
+							}
+						})
+						textCli += " no pertenecen al mismo cliente " + listaProformas[0].clienteProforma.razon_social +"  "
+					}
+					
+					text += " no pertenecen a la misma actividad de " + listaProformas[0].actividadEconomica.claseActividad.nombre+ "  "
+					$scope.mostrarMensaje(text+textCli)
 				}else{
-					$scope.mostrarMensaje('GENERAR FACTURA '+ men)
+					if (paraFacturar.length > 0) {
+						$scope.abrirFacturaProformas(paraFacturar)
+						$scope.cerrarListaVencimientoProformas()
+						// $scope.facturaProformas = {}
+						// var totalFacturaBs = 0
+						// var totalFacturaSus = 0
+						// $scope.detallesFacturaProformas = []
+						// $scope.facturaProformas.proformas = paraFacturar
+						// $scope.facturaProformas.cliente = paraFacturar[0].clienteProforma
+						// $scope.facturaProformas.actividad = paraFacturar[0].actividadEconomica
+
+						// paraFacturar.map(function (pro) {
+						// 	pro.detallesProformas.map(function (det) {
+						// 		console.log(det.precio_unitario)
+						// 	})
+						// })
+
+
+						// $scope.mostrarMensaje('Factura generada por favor espere... de 10 a 20 min xD mentira... pero espere no se cuanto tiempo especialmente si esta usando Google Chrome!... Sí no quiere esperar intente usando Firefox.')
+					}else{
+						$scope.mostrarMensaje('Una o mas proformas seleccionada(s) no tiene la fecha de proforma OK. total:'+ proformaNoOk.length)
+					}
 				}
-			}			
+			}else{
+				$scope.mostrarMensaje('Seleccione como mínimo 1 proforma a facturar, seleccionadas: '+listaProformas.length)
+			}		
 		}
 
+		$scope.generarFacturaProformas = function(factura){
+			var factura = factura
+			var prom = FacturaProforma($scope.usuario.empresa.id,factura)
+			prom.then(function (res){
+				$scope.mostrarMensaje(res.mensaje)
+			})
+		}
+
+		$scope.abrirFacturaProformas = function (paraFacturar) {
+			$scope.facturaProformas = {}
+			$scope.facturaProformas.cliente = paraFacturar[0].clienteProforma
+			$scope.facturaProformas.actividad = paraFacturar[0].actividadEconomica.claseActividad
+			$scope.facturaProformas.detalles = []
+			var ids = paraFacturar.map(function (pro) {
+				return pro.id
+			})
+			var prom = ListaDetallesProformasAFacturar($scope.usuario.empresa.id,ids)
+			prom.then(function (res) {
+				$scope.facturaProformas.detalles = res.detalles.map(function (det) {
+					return det
+				})
+			})
+			$scope.abrirPopup($scope.facturarProformas)
+		}
+		$scope.imprimirVenta = function (venta) {
+			var promesa = DatosVenta(venta.id, $scope.usuario.id_empresa);
+			promesa.then(function (datos) {
+				var ventaConsultada = datos.venta;
+				ventaConsultada.configuracion = datos.configuracion;
+				ventaConsultada.sucursal = datos.sucursal;
+				ventaConsultada.numero_literal = datos.numero_literal;
+				var fecha = new Date(ventaConsultada.fecha);
+				ventaConsultada.fechaTexto = fecha.getDate() + "/" + (fecha.getMonth() + 1) + "/" + fecha.getFullYear();
+				ImprimirSalida(ventaConsultada.movimiento.clase.nombre_corto, ventaConsultada, false, $scope.usuario);
+			});
+		}
 		$scope.abrirListaVencimientoProformas = function () {
 			var prom = alertasProformasLista($scope.usuario.empresa.id)
 			prom.then(function (proformas) {

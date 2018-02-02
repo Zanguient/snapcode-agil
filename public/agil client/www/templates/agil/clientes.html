@@ -504,19 +504,44 @@
 								</div>
 								<div class="col-sm-7">
 									<p>	
-											<input type="file" files-input ng-model="cliente.documento_nit"  multiple id="doc-nit"/>																							
+											<input type="file" files-input ng-model="cliente.documento_nit1"  multiple id="doc-nit"/>																							
+											<label ng-if="cliente.documento_nit">
+													<a href="/documentos/clientes/documento-nit-{{cliente.id}}-{{cliente.documento_nit}}">
+														<i class="ace-icon fa fa-cloud-download align-top bigger-125"></i>
+													</a>{{cliente.documento_nit}}
+											</label>
 									</p>
 									<p>
-											<input type="file" files-input ng-model="cliente.documento_licencia_funcionamiento"  multiple id="doc-licencia"/>
+											<input type="file" files-input ng-model="cliente.documento_licencia_funcionamiento1"  multiple id="doc-licencia"/>
+											<label ng-if="cliente.documento_licencia_funcionamiento">
+													<a href="/documentos/clientes/documento-licencia-funcionamiento-{{cliente.id}}-{{cliente.documento_licencia_funcionamiento}}">
+														<i class="ace-icon fa fa-cloud-download align-top bigger-125"></i>
+													</a>{{cliente.documento_licencia_funcionamiento}}
+											</label>
 									</p>
 									<p>
-											<input type="file" files-input ng-model="cliente.documento_funda_empresa" multiple  id="doc-funda"/>
+											<input type="file" files-input ng-model="cliente.documento_funda_empresa1" multiple  id="doc-funda"/>
+											<label ng-if="cliente.documento_funda_empresa">
+													<a href="/documentos/clientes/documento-fundaempresa-{{cliente.id}}-{{cliente.documento_funda_empresa}}">
+														<i class="ace-icon fa fa-cloud-download align-top bigger-125"></i>
+													</a>{{cliente.documento_funda_empresa}}
+											</label>
 									</p>
 									<p>
-											<input type="file" files-input ng-model="cliente.documento_ci" multiple id="doc-ci"/>
+											<input type="file" files-input ng-model="cliente.documento_ci1" multiple id="doc-ci"/>
+											<label ng-if="cliente.documento_ci">
+												<a href="/documentos/clientes/documento-ci-{{cliente.id}}-{{cliente.documento_ci}}">
+												<i class="ace-icon fa fa-cloud-download align-top bigger-125"></i>
+											</a>{{cliente.documento_ci}}
+										</label>
 									</p>
 									<p>
-											<input type="file" files-input ng-model="cliente.documento_seguro_social"  multiple id="doc-seguro-social"/>
+											<input type="file" files-input ng-model="cliente.documento_seguro_social1"  multiple id="doc-seguro-social"/>
+											<label ng-if="cliente.documento_seguro_social">
+													<a href="/documentos/clientes/documento-seguro-social-{{cliente.id}}-{{cliente.documento_seguro_social}}">
+														<i class="ace-icon fa fa-cloud-download align-top bigger-125"></i>
+													</a>{{cliente.documento_seguro_social}}
+												</label>
 									</p>
 								</div>
 							</div>

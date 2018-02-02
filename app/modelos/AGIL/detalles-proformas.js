@@ -9,7 +9,7 @@ module.exports = function (sequelize, Sequelize) {
 			field: 'servicio'
 		},
 		precio_unitario: {
-			type: Sequelize.INTEGER,
+			type: Sequelize.DECIMAL(20,4),
 			field: 'precio_unitario'
 		},
 		cantidad: {
@@ -17,7 +17,7 @@ module.exports = function (sequelize, Sequelize) {
 			field: 'cantidad'
 		},
 		importeBs: {
-			type: Sequelize.INTEGER,
+			type: Sequelize.DECIMAL(20,4),
 			field: 'importe'
 		},
 		id_centro_costo: {

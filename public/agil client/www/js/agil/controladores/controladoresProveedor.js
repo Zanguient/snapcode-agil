@@ -95,22 +95,22 @@ angular.module('agil.controladores')
 							if (documento) {
 								r.onloadend = function (e) {
 									if (index == 0) {
-										if (proveedor.documento_nit) {
-											proveedor.documento_nit[0].nombre = proveedor.documento_nit[0].name
-											proveedor.documento_nit[0].data = e.target.result;
+										if (proveedor.documento_nit1) {
+											proveedor.documento_nit1[0].nombre = proveedor.documento_nit1[0].name
+											proveedor.documento_nit1[0].data = e.target.result;
 										}
 									}
 									if (index == 1) {
-										if (proveedor.documento_funda_empresa) {
-											proveedor.documento_funda_empresa[0].nombre = proveedor.documento_funda_empresa[0].name
-											proveedor.documento_funda_empresa[0].data = e.target.result;
+										if (proveedor.documento_funda_empresa1) {
+											proveedor.documento_funda_empresa1[0].nombre = proveedor.documento_funda_empresa1[0].name
+											proveedor.documento_funda_empresa1[0].data = e.target.result;
 										}
 									}
 									if (index == 2) {
-										if (proveedor.documento_licencia_funcionamiento) {
+										if (proveedor.documento_licencia_funcionamiento1) {
 
-											proveedor.documento_licencia_funcionamiento[0].nombre = proveedor.documento_licencia_funcionamiento[0].name
-											proveedor.documento_licencia_funcionamiento[0].data = e.target.result;
+											proveedor.documento_licencia_funcionamiento1[0].nombre = proveedor.documento_licencia_funcionamiento1[0].name
+											proveedor.documento_licencia_funcionamiento1[0].data = e.target.result;
 										}
 									}
 									if (index == 3) {
@@ -120,9 +120,9 @@ angular.module('agil.controladores')
 										}
 									}
 									if (index == 4) {
-										if (proveedor.documento_seguro_social) {
-											proveedor.documento_seguro_social[0].nombre = proveedor.documento_seguro_social[0].name
-											proveedor.documento_seguro_social[0].data = e.target.result;
+										if (proveedor.documento_seguro_social1) {
+											proveedor.documento_seguro_social1[0].nombre = proveedor.documento_seguro_social1[0].name
+											proveedor.documento_seguro_social1[0].data = e.target.result;
 										}
 									}
 									//send your binary data via $http or $resource or do anything else with it

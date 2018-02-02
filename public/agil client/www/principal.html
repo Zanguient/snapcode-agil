@@ -118,7 +118,7 @@
 	<script src="lib/ng-cordova.js"></script>
 	<!-- shortcut libreria -->
 	<script src="lib/shortcut.js"></script>
-	
+
 	<!-- número literal libreria -->
 	<script src="lib/numero-literal.js"></script>
 
@@ -215,7 +215,7 @@
 	<script src="js/gtm/servicios/serviciosDespacho.js"></script>
 	<script src="js/agil/servicios/serviciosFarmacia.js"></script>
 	<script src="js/agil/servicios/serviciosPlanillas.js"></script>
-	
+
 
 </head>
 
@@ -1845,8 +1845,7 @@
 							<label style="background-color: bisque">$US T/C {{moneda.dolar}}</label>
 						</div>
 						<div class="col-sm-2" align="right">
-							<button tabindex="-1"  uib-tooltip="Ejemplo Importación Cambio Moneda" href="/recursos/EJEMPLO-TIPO-CAMBIO-MONEDA.xlsx"
-							 class="btn btn-app btn-danger btn-xs">
+							<button tabindex="-1" uib-tooltip="Ejemplo Importación Cambio Moneda" href="/recursos/EJEMPLO-TIPO-CAMBIO-MONEDA.xlsx" class="btn btn-app btn-danger btn-xs">
 								<i class="ace-icon fa fa-cloud-download bigger-140"></i>
 							</button>
 							<div tabindex="-1" class="fileUpload btn btn-app btn-success btn-xs" uib-tooltip="Importar Cambio Moneda">
@@ -2018,25 +2017,25 @@
 													<option value="">--Ninguno--</option>
 												</select>
 											</th>
-										
+
 											<td>
 												<input class="input-fix-mousewheel1" ng-focus="establecerCuentaActual2(asiento)" ng-disabled="asiento.cuenta.id==undefined || verComprobante"
 												 id="{{$index}}-Bs" type="number" ng-model="asiento.debe_bs" ng-change="ComvertirDebeEnDolar(asiento,true);cal(nuevoComprobante.asientosContables)"
 												 enter>
 											</td>
 											<td>
-												<input class="input-fix-mousewheel1" ng-focus="establecerCuentaActual2(asiento)" ng-disabled="asiento.cuenta.id==undefined || verComprobante" id="{{$index}}-Cs"
-												 type="number" ng-model="asiento.haber_bs" ng-change="ComvertirHaberEnDolar(asiento,true);cal(nuevoComprobante.asientosContables)"
+												<input class="input-fix-mousewheel1" ng-focus="establecerCuentaActual2(asiento)" ng-disabled="asiento.cuenta.id==undefined || verComprobante"
+												 id="{{$index}}-Cs" type="number" ng-model="asiento.haber_bs" ng-change="ComvertirHaberEnDolar(asiento,true);cal(nuevoComprobante.asientosContables)"
 												 enter>
 											</td>
 											<td ng-if="opcionBimonetario">
-												<input class="input-fix-mousewheel1" ng-focus="establecerCuentaActual2(asiento)" ng-disabled="asiento.cuenta.id==undefined || verComprobante" type="number"
-												 ng-model="asiento.debe_sus" ng-change="ComvertirDebeEnBolivianos(asiento);cal(nuevoComprobante.asientosContables)"
+												<input class="input-fix-mousewheel1" ng-focus="establecerCuentaActual2(asiento)" ng-disabled="asiento.cuenta.id==undefined || verComprobante"
+												 type="number" ng-model="asiento.debe_sus" ng-change="ComvertirDebeEnBolivianos(asiento);cal(nuevoComprobante.asientosContables)"
 												 enter>
 											</td>
 											<td ng-if="opcionBimonetario">
-												<input class="input-fix-mousewheel1" ng-focus="establecerCuentaActual2(asiento)" ng-disabled="asiento.cuenta.id==undefined || verComprobante" type="number"
-												 ng-model="asiento.haber_sus" ng-change="ComvertirHaberEnBolivianos(asiento);cal(nuevoComprobante.asientosContables)"
+												<input class="input-fix-mousewheel1" ng-focus="establecerCuentaActual2(asiento)" ng-disabled="asiento.cuenta.id==undefined || verComprobante"
+												 type="number" ng-model="asiento.haber_sus" ng-change="ComvertirHaberEnBolivianos(asiento);cal(nuevoComprobante.asientosContables)"
 												 enter>
 											</td>
 											<td>
@@ -2594,9 +2593,9 @@
 							<td>{{proforma.totalSus | number:2}}</td>
 							<td class="center">
 								<label>
-                                    <input type="checkbox" class="ace" ng-model="proforma.seleccionada" />
-                                    <span class="lbl"></span>
-                                </label>
+									<input type="checkbox" class="ace" ng-model="proforma.seleccionada" />
+									<span class="lbl"></span>
+								</label>
 							</td>
 						</tr>
 					</tbody>
@@ -2607,13 +2606,430 @@
 			<button class="btn btn-primary" type="button" ng-click="verificarSeleccionProformas()">
 				<i class="ace-icon fa fa-print align-top bigger-125"></i>Generar Factura
 			</button>
-	
+
 			<button class="btn btn-danger" type="button" ng-click="cerrarListaVencimientoProformas()">
 				<i class="ace-icon fa fa-times red2 align-top bigger-125"></i>Cancelar
 			</button>
 		</div>
 	</div>
 
+
+	<!-- Factura facturar proforma -->
+	<div id="proforma-facturacion" style="overflow-x:hidden !important" class="modal wizard-posicion">
+		<div class="row">
+			<div class="col-sm-4">
+				<div class="widget-box">
+					<form id="formularioFacturarProforma" name="formularioFacturarProforma" novalidate ng-submit="guardarFacturaProformas(formularioFacturarProforma.$valid,facturaProformas)">
+						<div class="widget-header">
+							<h4 class="widget-title">DATOS DE FACTURA</h4>
+							&nbsp;
+							<button ng-disabled="facturaProformas.ver !== undefined" id="guardarV" type="submit" ng-disabled="detallesFacturaProformas.length==0" class="btn btn-primary">
+								<i class="ace-icon fa fa-floppy-o align-top bigger-125"></i>
+								GUARDAR
+							</button>
+							<button id="cerrarV" type="button" class="btn btn-primary btn-danger" ng-click="cerrardialogProformaEdicion()">
+								<i class="ace-icon fa fa-times red2 align-top bigger-125"></i>
+								CERRAR
+							</button>
+						</div>
+						<div class="widget-body">
+							<div class="widget-main">
+								<table class="table table-striped table-bordered table-hover">
+									<tr>
+										<td colspan="2">
+											<div class="container-fluid">
+
+												<label class="row">DETALLE</label>
+
+
+												<textarea ng-disabled="facturaProformas.ver !== undefined" class="form-control" row="3" required name="detalle" id="proformaDetalle"
+												 ng-model="facturaProformas.detalle"></textarea>
+												<span class="red">(*)</span>
+												<span class="invalid-message" ng-show="formularioFacturarProforma.detalle.$dirty && formularioFacturarProforma.detalle.$invalid">
+													Detalle es un dato requerido.
+												</span>
+											</div>
+										</td>
+										<div class="col-md-4">
+											<label for="">Tipo de cambio.</label>
+											<label for="">{{moneda.dolar}}</label>
+										</div>
+									</tr>
+									<tr>
+										<td>
+											<div class="row">
+												<div class="container-fluid">
+													<label>SUCURSAL</label>
+													<select ng-disabled="facturaProformas.ver !== undefined" data-validate="validate(required)" required id="sucursal" name="sucursal"
+													 ng-options="sucursal as sucursal.nombre for sucursal in sucursales track by sucursal.id" ng-model="facturaProformas.sucursal">
+														<option value="" disabled selected>Selec. Sucursal</option>
+													</select>
+													<span class="red">(*)</span>
+													<span class="invalid-message" ng-show="formularioFacturarProforma.sucursal.$dirty && formularioFacturarProforma.sucursal.$invalid">
+														Debe seleccionar una Sucursal.
+													</span>
+												</div>
+											</div>
+											<!-- <label>SUCURSAL</label>
+												<select data-validate="validate(required)" required id="sucursal" name="sucursal" ng-options="sucursal as sucursal.nombre for sucursal in sucursales track by sucursal.id"
+													ng-model="facturaProformas.sucursal" ng-change="obtenerActividadesSucursal(facturaProformas.sucursal.id)">
+													<option value="" disabled selected>Selec. Sucursal</option>
+												</select>
+												<span class="red">(*)</span>
+												<span class="invalid-message" ng-show="formularioFacturarProforma.sucursal.$dirty && formularioFacturarProforma.sucursal.$invalid">
+													Debe seleccionar una Sucursal.
+												</span> -->
+										</td>
+										<td>
+											<div class="row">
+												<div class="container-fluid">
+													<div class="">
+														<label>ACTIVIDAD</label>
+													</div>
+													<div class="">
+														<select ng-disable="detallesFacturacionProformas.length >0" style="width:150px;" data-validate="validate(required)" ng-change="obtenerServiciosActividadEmpresa(facturaProformas.actividadEconomica)"
+														 required id="actividadFacturacionProformas" name="actividadFacturacionProformas" ng-model="facturaProformas.actividadEconomica" ng-options="actividad as actividad.claseActividad.nombre for actividad in actividadesEmpresa track by actividad.claseActividad.id"
+														 data-placeholder="Click para escoger">
+															<option value="" disabled selected>Selec. Actividad</option>
+														</select>
+														<span class="red">(*)</span>
+													</div>
+												</div>
+											</div>
+
+											<div class="invalid-message help-block" ng-messages="formularioFacturarProforma.actividad.$error" ng-if=" (formularioFacturarProforma.$submitted && formularioFacturarProforma.actividad.$invalid)">
+												<div ng-messages-include="/templates/gral/messages.html"></div>
+											</div>
+										</td>
+									</tr>
+									<tr>
+										<td>
+											<label>NIT CLIENTE</label>
+											<input ng-disabled="facturaProformas.ver !== undefined" ng-keypress="interceptarTecla($event,'razon_social',true)" data-validate="validate(required)"
+											 id="nit" name="nit" required type="number" min="0" ng-model="facturaProformas.clienteProforma.nit" placeholder="Ingrese el NIT"
+											 uib-typeahead="cliente as cliente.nit for cliente in buscarCliente($viewValue)" typeahead-wait-ms="2000" typeahead-template-url="templates/autocompletar.html"
+											 typeahead-show-hint="false" typeahead-min-length="0" typeahead-on-select="establecerCliente($item, $model, $label, $event)">
+											<span class="red">(*)</span>
+											<span class="invalid-message" ng-show="formularioFacturarProforma.nit.$dirty && formularioFacturarProforma.nit.$invalid">
+												Debe ingresar un número mayor o igual a 0.
+											</span>
+
+										</td>
+										<td>
+											<label>RAZÓN SOCIAL CLIENTE</label>
+											<input ng-disabled="facturaProformas.ver !== undefined" ng-keypress="interceptarTecla($event,'id_servicio',true)" autocomplete="off"
+											 data-validate="validate(required)" id="razon_social" name="razon_social" required type="text" ng-model="facturaProformas.clienteProforma.razon_social"
+											 placeholder="Ingrese la Razon Social" uib-typeahead="cliente as cliente.razon_social for cliente in buscarCliente($viewValue)"
+											 typeahead-wait-ms="2000" typeahead-template-url="templates/autocompletar.html" typeahead-show-hint="false" typeahead-min-length="0"
+											 typeahead-on-select="establecerCliente($item, $model, $label, $event)">
+											<span class="red">(*)</span>
+											<button ng-disabled="facturaProformas.ver !== undefined" id="mostrar_inv" type="button" ng-click="abrirdialogClientesProforma()"
+											 class="btn btn-info btn-sm">
+												<i class="ace-icon fa fa-search-plus bigger-110"></i>
+											</button>
+											<span class="invalid-message" ng-show="formularioFacturarProforma.razon_social.$dirty && formularioFacturarProforma.razon_social.$invalid">
+												Dato requerido.
+											</span>
+										</td>
+									</tr>
+									<tr>
+										<td>
+											<label>FECHA</label>
+											<!--  <input name="fecha" required class="form-control" type="date" id="fecha" ng-model="facturaProformas.fecha" ng-change="actualizarPeriodo(facturaProformas.fecha)"
+												/> -->
+											<input ng-disabled="facturaProformas.ver !== undefined" ng-update-hidden ng-change="actualizarPeriodo(facturaProformas.fecha_proforma)" type="text"
+											 data-date-format="dd/mm/yyyy" class="form-control date-picker" id="fecha-inicial" ng-update-hidden ng-model="facturaProformas.fecha_proforma"
+											 name="fecha-inicial">
+											<span class="red">(*)</span>
+											<span class="invalid-message" ng-show="formularioFacturarProforma.fecha.$dirty && formularioFacturarProforma.fecha.$invalid">
+												Dato requerido.
+											</span>
+										</td>
+										<td>
+											<div class="container-fluid">
+												<div class="row">
+													<label>PERIODO</label>
+													<div class="row">
+														<div class="col-md-6">
+															<select ng-disabled="facturaProformas.ver !== undefined" required id="mes" name="mes" ng-options="mes as mes.nombre for mes in meses track by mes.id"
+															 ng-model="facturaProformas.periodo_mes">
+																<option disabled value="" selected>Mes</option>
+															</select>
+
+														</div>
+														<div class="col-md-6">
+															<select ng-disabled="facturaProformas.ver !== undefined" required id="anio" name="anio" ng-options="anio as anio.nombre for anio in anios track by anio.id"
+															 ng-model="facturaProformas.periodo_anio">
+																<option disabled value="" selected>Año</option>
+															</select>
+														</div>
+													</div>
+												</div>
+												<div class="row">
+													<span class="red">(*)</span>
+												</div>
+											</div>
+										</td>
+									</tr>
+									<tr>
+										<!-- <td> -->
+										<!-- <div class="col-md-6">
+														<label>Detalle</label>
+												</div>
+												<div class="col-md-6">
+												<textarea row="3" name="detalle" id="proformaDetalle" ng-model="facturaProformas.detalle"></textarea><span class="red">(*)</span>                                        
+												</div> -->
+
+
+										<!-- </td> -->
+										<!-- <td>
+												<label>SUJETO A CF</label>
+												<input disabled type="number" step="0.001" ng-model="facturaProformas.total" />
+											</td> -->
+									</tr>
+								</table>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+			<div class="col-sm-8">
+				<div class="widget-box">
+					<div class="widget-header">
+						<h4 class="widget-title">BUSQUEDA SERVICIO</h4>
+					</div>
+					<div class="widget-body">
+						<div class="widget-main">
+							<form id="formularioBusquedaServicio" name="formularioBusquedaServicio" novalidate>
+								<table class="table table-striped table-bordered table-hover">
+									<thead>
+										<tr>
+											<th>
+												<label>SERVICIO</label>
+											</th>
+											<th>
+												<label>CÓD. ITEM</label>
+											</th>
+											<th>
+												<label>CANT. (u)</label>
+											</th>
+											<th>
+												<label>P.U. (Bs/u)</label>
+											</th>
+											<th>
+												<label>P.U. ($us/u)</label>
+											</th>
+											<th>
+												<label>IMP. (Bs)</label>
+											</th>
+											<th>
+												<label>IMP. ($us)</label>
+											</th>
+											<th>
+												<label>Centro Costos</label>
+											</th>
+											<th>
+												<label>ACC.</label>
+											</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
+											<td>
+												<input ng-disabled="facturaProformas.ver !== undefined" autocomplete="off" ng-keypress="interceptarTecla($event,'cantidad',true)"
+												 id="id_servicio" required type="text" ng-model="detalleProforma.servicio.nombre" placeholder="Ingrese el nombre del servicio..."
+												 uib-typeahead="servicio as (servicio.codigo+' - '+servicio.nombre) for servicio in buscarservicio($viewValue)"
+												 typeahead-wait-ms="1000" typeahead-template-url="templates/autocompletar.html" typeahead-show-hint="false" typeahead-min-length="1"
+												 typeahead-on-select="establecerservicio($item, $model, $label, $event)">
+												<div class="space-6"></div>
+												<button ng-disabled="facturaProformas.ver !== undefined" id="mostrar_inv" type="button" ng-click="abrirBusquedaServicioProforma()"
+												class="btn btn-info btn-sm">
+												   <i class="ace-icon fa fa-search-plus bigger-110"></i>
+											   </button>
+											</td>
+											<td>
+												{{detalleProforma.servicio.codigo}}
+											</td>
+											<td>
+												<input ng-disabled="facturaProformas.ver !== undefined" onfocus="this.select();" ng-keypress="interceptarTecla($event,'agregar_detalle_venta',false)"
+												 id="cantidad" name="cantidad" step="1" min="1" required class="col-xs-12" ng-change="calcularImporte()" ng-model="detalleProforma.cantidad"
+												 type="number" />
+											</td>
+											<td ng-if="detalleProforma.editarPrecio === undefined">
+												{{detalleProforma.precio_unitario | number:2}}
+												<a ng-if="detalleProforma.precio_unitario >=0" ng-disabled="facturaProformas.ver !== undefined" class="green" href="javascript:void(0)"
+												 ng-click="modificarProformaPrecioUnitarioServicio(detalleProforma)">
+													<i class="ace-icon fa fa-pencil-square-o bigger-130"></i>
+												</a>
+
+											</td>
+											<td ng-if="detalleProforma.editarPrecio !== undefined">
+												<input ng-disabled="facturaProformas.ver !== undefined" onfocus="this.select();" id="edicion" name="cantidad" step="0.01" min="0.01"
+												 required class="col-xs-12" ng-change="calcularImporte()" ng-model="detalleProforma.precio_unitario" type="number"
+												/>
+											</td>
+											<td ng-if="detalleProforma.editarPrecio === undefined">
+												{{detalleProforma.precioSus | number:2}}
+												<a ng-if="detalleProforma.precioSus >=0" ng-disabled="facturaProformas.ver !== undefined" class="green" href="javascript:void(0)"
+												 ng-click="modificarProformaPrecioUnitarioServicio(detalleProforma)">
+													<i class="ace-icon fa fa-pencil-square-o bigger-130"></i>
+												</a>
+											</td>
+											<td ng-if="detalleProforma.editarPrecio !== undefined">
+												<input ng-disabled="facturaProformas.ver !== undefined" onfocus="this.select();" id="edicion" name="cantidad" step="0.01" min="0.01"
+												 required class="col-xs-12" ng-change="calcularImporte(true)" ng-model="detalleProforma.precioSus" type="number"
+												/>
+											</td>
+											<td>
+												{{detalleProforma.importeBs | number:2}}
+											</td>
+											<td>
+												{{detalleProforma.importeSus | number:2}}
+											</td>
+											<td>
+												<select ng-disabled="facturaProformas.ver !== undefined" required id="centroCosto" name="centroCosto" ng-options="centroCosto as centroCosto.nombre for centroCosto in centroCostos track by centroCosto.id"
+												 ng-model="detalleProforma.centroCosto">
+												</select>
+											</td>
+											<td>
+												<button ng-disabled="facturaProformas.ver !== undefined" id="agregar_detalle_venta" type="button" ng-disabled="formularioBusquedaservicio.$invalid"
+												 ng-click="agregardetalleProforma(detalleProforma)" class="btn btn-success btn-sm">
+													<i class="ace-icon fa fa-plus bigger-110"></i>
+												</button>
+												<!-- <div class="space-6"></div>
+													<button id="mostrar_desc" type="button" ng-click="mostrarDescuentos()" class="btn btn-info btn-sm">
+														<i class="ace-icon fa fa-exchange bigger-110"></i>
+													</button> -->
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</form>
+						</div>
+					</div>
+				</div>
+				<div class="widget-box">
+					<div class="widget-header" ng-if="detallesFacturaProformas.length>0">
+						<div class="row">
+							<div class="col-sm-6">
+								<h4 class="widget-title">DETALLE DE PROFORMA</h4>
+							</div>
+						</div>
+						<div class="row">
+							<div class="container-fluid">
+								<b>Total Bs: {{facturaProformas.totalImporteBs | number:2}} &nbsp &nbsp Total $us: {{facturaProformas.totalImporteSus | number:2}}&nbsp
+									&nbsp &nbsp Son:&nbsp&nbsp{{facturaProformas.importeLiteral}} </b>
+							</div>
+						</div>
+					</div>
+					<div class="widget-body" ng-if="detallesFacturaProformas.length>0">
+						<div class="widget-main">
+							<table class="table table-striped table-bordered table-hover">
+								<thead>
+									<tr>
+										<th>
+											<label>#</label>
+										</th>
+										<th>
+											<label>NOMBRE</label>
+										</th>
+										<th>
+											<label>CÓD. ITEM</label>
+										</th>
+										<th>
+											<label>P.U. (Bs/u)</label>
+										</th>
+										<th>
+											<label>P.U. ($us/u)</label>
+										</th>
+										<th>
+											<label>CANT. (u)</label>
+										</th>
+										<th>
+											<label>IMP. (Bs)</label>
+										</th>
+										<th>
+											<label>IMP. ($us)</label>
+										</th>
+										<th>
+											<label>Centro Costos</label>
+										</th>
+										<th>
+											<label>ACCIONES</label>
+										</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr ng-repeat="detalle in detallesFacturaProformas">
+										<td>
+											{{$index+1}}
+										</td>
+										<td>
+											{{detalle.servicio.nombre}}
+										</td>
+										<td>
+											{{detalle.servicio.codigo}}
+										</td>
+										<td>
+											{{detalle.precio_unitario | number:2}}
+										</td>
+										<td>
+											{{detalle.precioSus | number:2}}
+										</td>
+										<td>
+											{{detalle.cantidad}}
+										</td>
+										<td>
+											{{detalle.importeBs| number:2}}
+										</td>
+										<td>
+											{{detalle.importeSus | number:2}}
+										</td>
+										<td>
+											{{detalle.centroCosto.nombre}}
+										</td>
+
+										<td>
+											<a ng-disabled="facturaProformas.ver !== undefined" class="red" href="javascript:void(0)" ng-click="eliminardetalle(detalle)">
+												<i class="ace-icon fa fa-trash-o bigger-130"></i>
+											</a>
+										</td>
+									</tr>
+									<tr>
+										<td>
+
+										</td>
+										<td>
+											<b>TOTALES</b>
+										</td>
+										<td>
+
+										</td>
+										<td>
+
+										</td>
+										<td>
+
+										</td>
+										<td>
+
+										</td>
+										<td>
+											<b>{{facturaProformas.totalImporteBs | number:2}}</b>
+										</td>
+										<td>
+											<b>{{facturaProformas.totalImporteSus | number:2}}</b>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- Factura facturar proforma fin-->
 
 
 	<!--[if !IE]> -->
@@ -2689,7 +3105,7 @@
 	<script src="assets/js/ace.min.js"></script>
 
 	<script type="text/javascript">
-	
+
 		jQuery(function ($) {
 			/*inicio prevenir ir atras con la tecla backspace*/
 			var regx = /INPUT|SELECT|TEXTAREA/i;

@@ -5766,7 +5766,7 @@
                     <div class="form-group col-sm-3">
                         <label for="cuentas-liquidadas">Cuentas Liquidadas</label>
                         <label>
-                            <input id="cuentas-liquidadas" ng-model="filter.cuentaLiguida" ng-change="paginator.getSearch(paginator.search,filtro,null)"
+                            <input id="cuentas-liquidadas" ng-model="filter.cuentasLiguidas" ng-change="paginator.getSearch(paginator.search,filtro,null)"
                                 name="cuentas-liquidadas" class="ace ace-switch ace-switch-5" type="checkbox">
                             <span class="lbl check-espaniol"></span>
                         </label>
@@ -5826,7 +5826,7 @@
                                 <td>{{prestamo.fecha_vence| date:"dd/MM/yyyy"}}</td>
                                 <td ng-if="prestamo.prestamoPagos.length==0">0</td>
                                 <td ng-if="prestamo.prestamoPagos.length>0">{{prestamo.prestamoPagos[(prestamo.prestamoPagos.length-1)].a_cuenta_anterior}}</td>
-                                <td ng-if="prestamo.prestamoPagos.length>0">{{prestamo.prestamoPagos[(prestamo.prestamoPagos.length-1)].saldo_anterior}}</td>
+                                <td ng-if="prestamo.prestamoPagos.length>0">{{prestamo.total-prestamo.prestamoPagos[(prestamo.prestamoPagos.length-1)].a_cuenta_anterior}}</td>
                                 <td ng-if="prestamo.prestamoPagos.length==0">{{prestamo.total |number:2}}</td>
                                 <td>{{prestamo.cuota |number:2}}</td>
                                 <td>{{prestamo.observacion}}</td>
@@ -6159,16 +6159,18 @@
                         <dt>a/c Bs</dt>
                         <dd ng-if="prestamo.prestamoPagos.length==0">0</dd>
                         <dd ng-if="prestamo.prestamoPagos.length>0">{{prestamo.prestamoPagos[(prestamo.prestamoPagos.length-1)].a_cuenta_anterior |number:2}}</dd>
-                        <dt>Saldo Bs</dt>
-                        <dd>{{prestamo.total|number:2}}</dd>
-
+                        <dt>Saldo Bs</dt>                        
+                        <dd ng-if="prestamo.prestamoPagos.length>0">{{prestamo.total-prestamo.prestamoPagos[(prestamo.prestamoPagos.length-1)].a_cuenta_anterior}}</dd>
+                        <dd ng-if="prestamo.prestamoPagos.length==0">{{prestamo.total |number:2}}</dd>
                     </dl>
                 </div>
 
                 <div class="form-group">
                     <label for="monto-pagar">Monto a Pagar</label>
                     <div class="input-group">
-                        <input required type="number" min="1" max="{{prestamo.total}}" ng-model="prestamo.monto_pagado" class="form-control" id="monto-pagar"
+                        <input ng-if="prestamo.prestamoPagos.length==0"  required type="number" min="1" step="0.01"  max="{{prestamo.total}}" ng-model="prestamo.monto_pagado" class="form-control" id="monto-pagar"
+                            name="monto-pagar" placeholder="1000">
+                            <input ng-if="prestamo.prestamoPagos.length>0"  required type="number" min="1" step="0.01"  max="{{prestamo.total-prestamo.prestamoPagos[(prestamo.prestamoPagos.length-1)].a_cuenta_anterior}}" ng-model="prestamo.monto_pagado" class="form-control" id="monto-pagar"
                             name="monto-pagar" placeholder="1000">
                         <span class="input-group-addon">Bs</span>
                     </div>

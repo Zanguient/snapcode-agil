@@ -1,4 +1,4 @@
-module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Proforma, DetallesProformas, ActividadEconomica, Servicios, Clase, Sucursal, SucursalActividadDosificacion, CodigoControl,
+module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Proforma, DetallesProformas, ActividadEconomica, Servicios, Clase, Sucursal, SucursalActividadDosificacion, Dosificacion,
     CodigoControl, NumeroLiteral) {
     router.route('/proformas/empresa/:id_empresa/mes/:mes/anio/:anio/suc/:sucursal/act/:actividad/ser/:servicio/monto/:monto/razon/:razon/usuario/:usuario/pagina/:pagina/items-pagina/:items_pagina/busqueda/:busqueda/num/:numero')
         .get(function (req, res) {
@@ -44,7 +44,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
                     where: condicion,
                     include: [
                         { model: ActividadEconomica, as: 'actividadEconomica', include: [{ model: Clase, as: 'claseActividad' }] },
-                        { model: DetallesProformas, as: 'detallesProformas', include: [{ model: Servicios, as: 'servicio', where: condicionServicio }] },
+                        { model: DetallesProformas, as: 'detallesProformas',where:{eliminado:false}, include: [{ model: Servicios, as: 'servicio', where: condicionServicio }] },
                         { model: Usuario, as: 'usuarioProforma', where: condicionUsuario },
                         { model: Cliente, as: 'clienteProforma', where: condicionCliente },
                         { model: Sucursal, as: 'sucursalProforma' }
@@ -132,7 +132,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
                     where: { id: req.params.id },
                     include: [
                         { model: ActividadEconomica, as: 'actividadEconomica', include: [{ model: Clase, as: 'claseActividad' }] },
-                        { model: DetallesProformas, as: 'detallesProformas', include: [{ model: Servicios, as: 'servicio' }, { model: Clase, as: 'centroCosto' }] },
+                        { model: DetallesProformas, as: 'detallesProformas', where:{eliminado:false}, include: [{ model: Servicios, as: 'servicio' }, { model: Clase, as: 'centroCosto' }] },
                         { model: Usuario, as: 'usuarioProforma' },
                         { model: Cliente, as: 'clienteProforma' },
                         { model: Sucursal, as: 'sucursalProforma' }
@@ -321,15 +321,15 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
                                 nombre: servicio.nombre,
                                 precio: parseFloat(servicio.precio),
                                 eliminado: false
-                            },{
-                                where:{id:servicio.id}
-                            }).then(function (servicioActualizado) {
-                                if (i === req.body.length - 1) {
-                                    res.json({ mensaje: 'Servicios actualizados satisfactoriamente!' })
-                                }
-                            }).catch(function (err) {
-                                res.json({ mensaje: err.message === undefined ? err.data : err.message, hasErr: true })
-                            });
+                            }, {
+                                    where: { id: servicio.id }
+                                }).then(function (servicioActualizado) {
+                                    if (i === req.body.length - 1) {
+                                        res.json({ mensaje: 'Servicios actualizados satisfactoriamente!' })
+                                    }
+                                }).catch(function (err) {
+                                    res.json({ mensaje: err.message === undefined ? err.data : err.message, hasErr: true })
+                                });
                         }
                     } else {
                         if (servicio.actividad.id === undefined) {
@@ -426,14 +426,11 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
                 where: {
                     id_empresa: req.params.id_empresa,
                     eliminado: false,
-                    fecha_proforma_ok: null
+                    fecha_factura: null
                 },
                 include: [
                     { model: ActividadEconomica, as: 'actividadEconomica', include: [{ model: Clase, as: 'claseActividad' }] },
-                    // { model: DetallesProformas, as: 'detallesProformas', include: [{ model: Servicios, as: 'servicio' }, { model: Clase, as: 'centroCosto' }] },
-                    // { model: Usuario, as: 'usuarioProforma' },
                     { model: Cliente, as: 'clienteProforma' },
-                    // { model: Sucursal, as: 'sucursalProforma' }
 
                 ]
             }).then(function (proformasAlertas) {
@@ -444,7 +441,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
 
                         var hoy = new Date().getTime()
                         var dif = Math.floor((hoy - fecPro) / 86400000)
-                        if (dif > 0 && dif < 8) {
+                        if (dif >= 0 && dif < 8) {
                             proformasVencimiento.push(proforma)
                         }
                         if (i === proformasAlertas.length - 1) {
@@ -454,10 +451,92 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
                 } else {
                     res.json({ proformas: [] })
                 }
+            }).catch(function (err) {
+                res.json({ mensaje: err.message === undefined ? err.data : err.message, hasErr: true })
+            });
+        })
 
+    router.route('/proforma/facturar/:id_empresa')
+        .post(function (req, res) {
+            var proformas = req.body;
+            var facturaProformas = {}
+            var totalFacturaBs = 0
+            var totalFacturaSus = 0
+            var detallesFacturaProformas = []
+            facturaProformas.cliente = req.body[0].clienteProforma
+            facturaProformas.actividad = req.body[0].actividadEconomica
+
+            proformas.map(function (pro) {
+                var proformaEncontrada = {}
+                Proforma.find(
+                    {
+                        where: { id: req.params.id },
+                        include: [
+                            { model: ActividadEconomica, as: 'actividadEconomica', include: [{ model: Clase, as: 'claseActividad' }] },
+                            { model: DetallesProformas, as: 'detallesProformas',where:{eliminado:false}, include: [{ model: Servicios, as: 'servicio' }, { model: Clase, as: 'centroCosto' }] },
+                            { model: Usuario, as: 'usuarioProforma' },
+                            { model: Cliente, as: 'clienteProforma' },
+                            { model: Sucursal, as: 'sucursalProforma' }
+
+                        ]
+                    }).then(function (proforma) {
+                        proformaEncontrada = proforma
+                        // res.json({ proforma: proforma })
+
+
+                    }).catch(function (err) {
+                        res.json({ proforma: {}, mensaje: err.message === undefined ? err.data : err.message, hasErr: true })
+                    });
+                pro.detallesProformas.map(function (det) {
+
+                })
+            })
+
+            var factura = {};
+            factura.venta = venta;
+
+            SucursalActividadDosificacion.find({
+                where: {
+                    id_actividad: req.body.actividadEconomica.claseActividad.id,
+                    id_sucursal: req.body.sucursalProforma.id
+                },
+                include: [{ model: Dosificacion, as: 'dosificacion', include: [{ model: Clase, as: 'pieFactura' }] },
+                { model: Sucursal, as: 'sucursal', include: [{ model: Empresa, as: 'empresa' }] }]
+            }).then(function (sucursalActividadDosificacion) {
+                var dosificacion = sucursalActividadDosificacion.dosificacion;
+                venta.factura = dosificacion.correlativo;
+                venta.pieFactura = dosificacion.pieFactura;
+                venta.codigo_control = CodigoControl.obtenerCodigoControl(dosificacion.autorizacion.toString(),
+                    dosificacion.correlativo.toString(),
+                    venta.cliente.nit.toString(),
+                    formatearFecha(venta.fechaTexto).toString(),
+                    parseFloat(venta.total).toFixed(2),
+                    dosificacion.llave_digital.toString());
+                venta.autorizacion = dosificacion.autorizacion.toString();
+                venta.fecha_limite_emision = dosificacion.fecha_limite_emision;
+                venta.numero_literal = NumeroLiteral.Convertir(parseFloat(venta.total).toFixed(2).toString());
 
             }).catch(function (err) {
                 res.json({ mensaje: err.message === undefined ? err.data : err.message, hasErr: true })
             });
+        })
+
+    router.route('/detalles/proforma/facturar/:id_empresa')
+        .get(function (req, res) {
+            var detalles = []
+            req.body.map(function (ids, i) {
+                DetallesProformas.findAll({
+                    where: { id_proforma: ids },
+                    include: [{ model: Servicios, as: 'servicio' }, { model: Clase, as: 'centroCosto' }]
+                }).then(function (Detalles) {
+                    Detalles.map(function (_) {
+                        detalles.push(_)
+                    })
+                    if (i=== req.body.length-1) {
+                        res.json({detalles:detalles})
+                    }
+                })
+            })
+
         })
 }

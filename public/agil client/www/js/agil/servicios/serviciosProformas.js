@@ -118,3 +118,43 @@ angular.module('agil.servicios')
     };
     return res;
 }])
+
+.factory('FacturarProformas', function ($resource) {
+    return $resource(restServer + "proforma/facturar/:id_empresa", {},
+        {
+            'update': { method: 'PUT' }
+        });
+})
+
+.factory('FacturaProforma', ['FacturarProformas', '$q', function (FacturarProformas, $q) {
+    var res = function (idEmpresa,proformas) {
+        var delay = $q.defer();
+        FacturarProformas.save({id_empresa: idEmpresa},proformas, function (entidades) {
+            delay.resolve(entidades);
+        }, function (error) {
+            delay.reject(error);
+        });
+        return delay.promise;
+    };
+    return res;
+}])
+
+.factory('DetallesProformasAFacturar', function ($resource) {
+    return $resource(restServer + "detalles/proforma/facturar/:id_empresa", {},
+        {
+            'update': { method: 'PUT' }
+        });
+})
+
+.factory('ListaDetallesProformasAFacturar', ['DetallesProformasAFacturar', '$q', function (DetallesProformasAFacturar, $q) {
+    var res = function (idEmpresa,idproformas) {
+        var delay = $q.defer();
+        DetallesProformasAFacturar.get({id_empresa: idEmpresa}, idproformas, function (entidades) {
+            delay.resolve(entidades);
+        }, function (error) {
+            delay.reject(error);
+        });
+        return delay.promise;
+    };
+    return res;
+}])

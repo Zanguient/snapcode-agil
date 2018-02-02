@@ -413,10 +413,10 @@
                                                             data-rel="tooltip" tooltip-placement="top" uib-tooltip="Eliminar">
                                                             <i class="ace-icon fa fa-trash-o bigger-130"></i>
                                                         </a>
-                                                        <a ng-disabled="!aplicacion.puede_eliminar" class="blue" ng-click="editarServicio(servicio)"
-                                                        data-rel="tooltip" tooltip-placement="top" uib-tooltip="Eliminar">
-                                                        <i class="ace-icon fa fa-pencil-square-o bigger-130"></i>
-                                                    </a>
+                                                        <a ng-disabled="!aplicacion.puede_eliminar" class="blue" ng-click="editarServicio(servicio)" data-rel="tooltip" tooltip-placement="top"
+                                                            uib-tooltip="Eliminar">
+                                                            <i class="ace-icon fa fa-pencil-square-o bigger-130"></i>
+                                                        </a>
                                                     </td>
                                                 </tbody>
                                             </table>
@@ -585,26 +585,7 @@
                     <div class="widget-body">
                         <div class="widget-main">
                             <table class="table table-striped table-bordered table-hover">
-                                <tr>
-                                    <td colspan="2">
-                                        <div class="container-fluid">
-
-                                            <label class="row">DETALLE</label>
-
-
-                                            <textarea ng-disabled="proforma.ver !== undefined" class="form-control" row="3" required name="detalle" id="proformaDetalle"
-                                                ng-model="proforma.detalle"></textarea>
-                                            <span class="red">(*)</span>
-                                            <span class="invalid-message" ng-show="formularioProforma.detalle.$dirty && formularioProforma.detalle.$invalid">
-                                                Detalle es un dato requerido.
-                                            </span>
-                                        </div>
-                                    </td>
-                                    <div class="col-md-4">
-                                        <label for="">Tipo de cambio.</label>
-                                        <label for="">{{moneda.dolar}}</label>
-                                    </div>
-                                </tr>
+                                
                                 <tr>
 
                                     <td>
@@ -639,7 +620,8 @@
                                                     <label>ACTIVIDAD</label>
                                                 </div>
                                                 <div class="">
-                                                    <select ng-disable="checkServiceDisable() || proforma.ver !== undefined" style="width:150px;" data-validate="validate(required)" ng-change="obtenerServiciosActividadEmpresa(proforma.actividadEconomica)"
+                                                    <select autofocus ng-disable="detallesProformas.length > 0 || proforma.ver !== undefined" style="width:150px;" data-validate="validate(required)"
+                                                        ng-change="obtenerServiciosActividadEmpresa(proforma.actividadEconomica)"
                                                         required id="actividad" name="actividad" ng-model="proforma.actividadEconomica"
                                                         ng-options="actividad as actividad.claseActividad.nombre for actividad in actividadesEmpresa track by actividad.claseActividad.id"
                                                         data-placeholder="Click para escoger">
@@ -687,6 +669,26 @@
                                         </span>
                                     </td>
                                 </tr>
+                                <tr>
+                                        <td colspan="2">
+                                            <div class="container-fluid">
+    
+                                                <label class="row">DETALLE</label>
+    
+    
+                                                <textarea ng-disabled="proforma.ver !== undefined" class="form-control" row="3" required name="detalle" id="proformaDetalle"
+                                                    ng-model="proforma.detalle"></textarea>
+                                                <span class="red">(*)</span>
+                                                <span class="invalid-message" ng-show="formularioProforma.detalle.$dirty && formularioProforma.detalle.$invalid">
+                                                    Detalle es un dato requerido.
+                                                </span>
+                                            </div>
+                                        </td>
+                                        <div class="col-md-4">
+                                            <label for="">Tipo de cambio.</label>
+                                            <label for="">{{moneda.dolar}}</label>
+                                        </div>
+                                    </tr>
                                 <tr>
                                     <td>
                                         <label>FECHA</label>
@@ -792,11 +794,15 @@
                                     <tr>
                                         <td>
                                             <input ng-disabled="proforma.ver !== undefined" autocomplete="off" ng-keypress="interceptarTecla($event,'cantidad',true)"
-                                                id="id_servicio" required type="text" ng-model="detalleProforma.servicio.nombre"
+                                                id="id_servicioProforma" required type="text" ng-model="detalleProforma.servicio.nombre"
                                                 placeholder="Ingrese el nombre del servicio..." uib-typeahead="servicio as (servicio.codigo+' - '+servicio.nombre) for servicio in buscarservicio($viewValue)"
                                                 typeahead-wait-ms="1000" typeahead-template-url="templates/autocompletar.html"
                                                 typeahead-show-hint="false" typeahead-min-length="1" typeahead-on-select="establecerservicio($item, $model, $label, $event)">
                                             <div class="space-6"></div>
+                                            <button ng-disabled="facturaProformas.ver !== undefined || proforma.actividadEconomica === undefined" id="mostrar_inv" type="button" ng-click="abrirBusquedaServiciosProforma(proforma.actividadEconomica)"
+                                            class="btn btn-info btn-sm">
+                                               <i class="ace-icon fa fa-search-plus bigger-110"></i>
+                                           </button>
                                         </td>
                                         <td>
                                             {{detalleProforma.servicio.codigo}}
@@ -806,18 +812,30 @@
                                                 id="cantidad" name="cantidad" step="1" min="1" required class="col-xs-12" ng-change="calcularImporte()"
                                                 ng-model="detalleProforma.cantidad" type="number" />
                                         </td>
-                                        <td>
+                                        <td ng-if="detalleProforma.editarPrecio === undefined">
                                             {{detalleProforma.precio_unitario | number:2}}
-                                            <a ng-disabled="proforma.ver !== undefined" class="green" href="javascript:void(0)" ng-click="modificarProformaPrecioUnitarioServicio(detalleProforma)">
+                                            <a ng-if="detalleProforma.precio_unitario >=0" ng-disabled="proforma.ver !== undefined" class="green" href="javascript:void(0)"
+                                                ng-click="modificarProformaPrecioUnitarioServicio(detalleProforma)">
                                                 <i class="ace-icon fa fa-pencil-square-o bigger-130"></i>
                                             </a>
-                                            <input ng-disabled="proforma.ver !== undefined" onfocus="this.select();" ng-keypress="interceptarTecla($event,'agregar_detalle_venta',false)"
-                                            id="cantidad" name="cantidad" step="1" min="1" required class="col-xs-12" ng-change="calcularImporte()"
-                                            ng-model="detalleProforma.precio_unitario" type="number" />
+
                                         </td>
-                                        <td>
+                                        <td ng-if="detalleProforma.editarPrecio !== undefined">
+                                            <input ng-disabled="proforma.ver !== undefined" onfocus="this.select();" id="edicion" name="cantidad" step="0.01" min="0.01"
+                                                required class="col-xs-12" ng-change="calcularImporte()" ng-model="detalleProforma.precio_unitario"
+                                                type="number" />
+                                        </td>
+                                        <td ng-if="detalleProforma.editarPrecio === undefined">
                                             {{detalleProforma.precioSus | number:2}}
-                                            
+                                            <a ng-if="detalleProforma.precioSus >=0" ng-disabled="proforma.ver !== undefined" class="green" href="javascript:void(0)"
+                                                ng-click="modificarProformaPrecioUnitarioServicio(detalleProforma)">
+                                                <i class="ace-icon fa fa-pencil-square-o bigger-130"></i>
+                                            </a>
+                                        </td>
+                                        <td ng-if="detalleProforma.editarPrecio !== undefined">
+                                            <input ng-disabled="proforma.ver !== undefined" onfocus="this.select();" id="edicion" name="cantidad" step="0.01" min="0.01"
+                                                required class="col-xs-12" ng-change="calcularImporte(true)" ng-model="detalleProforma.precioSus"
+                                                type="number" />
                                         </td>
                                         <td>
                                             {{detalleProforma.importeBs | number:2}}
@@ -899,7 +917,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr ng-repeat="detalle in detallesProformas">
+                                <tr ng-if="!detalle.eliminado" ng-repeat="detalle in detallesProformas">
                                     <td>
                                         {{$index+1}}
                                     </td>
@@ -929,7 +947,7 @@
                                     </td>
 
                                     <td>
-                                        <a ng-disabled="proforma.ver !== undefined" class="red" href="javascript:void(0)" ng-click="eliminardetalle(detalle)">
+                                        <a ng-disabled="proforma.ver !== undefined" class="red" href="javascript:void(0)" ng-click="abrirPopupConfirmacionEliminacion(eliminarDetalleProforma,detalle)">
                                             <i class="ace-icon fa fa-trash-o bigger-130"></i>
                                         </a>
                                     </td>
@@ -968,6 +986,81 @@
         </div>
     </div>
 </div>
+
+<div id="dialog-Busqueda-servicio-proforma" style="overflow-x:hidden;">
+        <div class="row">
+            <div class="widget-header">
+                <div class="container-fluid">
+                    <div class="col-md-8">
+                        <label>Búsqueda:
+                            <input type="search" class="form-control input-sm" ng-model="textoBusquedaServicio" ng-change="filtrarServicios(textoBusquedaServicio)">
+                        </label>
+                    </div>
+                    <div class="col-md-4">
+                        <button type="button" ng-click="cerrarBusquedaServiciosProforma()" class="btn btn-danger">
+                            <i class="ace-icon fa fa-close align-top bigger-125"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="container-fluid">
+                <div class="widget-box">
+                    <div class="widget-body">
+                        <div class="widget-main">
+                            <div class="table-fixed-header">
+                                <table class="table table-striped table-bordered table-hover ">
+                                    <thead fix-head class="table-head-color">
+                                        <tr>
+                                            <th>
+                                                <label for="">N°</label>
+                                            </th>
+                                            <th>
+                                                <label for="">
+                                                   Código
+                                                </label>
+                                            </th>
+                                            <th>
+                                                Nombre
+                                            </th>
+                                            <th>
+                                                Precio
+                                            </th>
+                                            <th>
+                                                Acciones
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr ng-repeat="servicio in serviciosProcesados">
+                                            <td>
+                                                {{$index+1}}
+                                            </td>
+                                            <td>
+                                                {{servicio.codigo}}
+                                            </td>
+                                            <td>
+                                                {{servicio.nombre}}
+                                            </td>
+                                            <td>
+                                                    {{servicio.precio_unitario}}
+                                                </td>
+                                            <td>
+                                                <a ng-click="establecerservicio(servicio,true)">SELECCIONAR</a>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+    
+                </div>
+            </div>
+        </div>
+    </div>
+    
 
 <div id="dialog-cliente-proforma" style="overflow-x:hidden;">
     <div class="row">
@@ -1082,8 +1175,9 @@
 
                                 </div>
                                 <div class="col-md-8">
-                                    <input autocomplete="off" ng-disabled="verificarFechaRecepcion(proforma.fecha_recepcion)" ng-change="compararFechasProformas(proforma.fecha_recepcion,proforma.fecha_proforma_ok)" ng-update-hidden type="text" data-date-format="dd/mm/yyyy" class="form-control date-picker" id="fecha-proformaOk"
-                                        ng-model="proforma.fecha_proforma_ok" name="fecha-proformaOk">
+                                    <input autocomplete="off" ng-disabled="verificarFechaRecepcion(proforma.fecha_recepcion)" ng-change="compararFechasProformas(proforma.fecha_recepcion,proforma.fecha_proforma_ok)"
+                                        ng-update-hidden type="text" data-date-format="dd/mm/yyyy" class="form-control date-picker"
+                                        id="fecha-proformaOk" ng-model="proforma.fecha_proforma_ok" name="fecha-proformaOk">
                                 </div>
 
                             </div>
@@ -1092,8 +1186,9 @@
                                     <label for="">Factura</label>
                                 </div>
                                 <div class="col-md-8">
-                                    <input autocomplete="off" ng-disabled="verificarFechaProformaOk(proforma.fecha_proforma_ok)" ng-change="compararFechasProformas(proforma.fecha_proforma_ok,proforma.fecha_factura)" ng-update-hidden type="text" data-date-format="dd/mm/yyyy" class="form-control date-picker" id="fecha-factura"
-                                        ng-model="proforma.fecha_factura" name="fecha-factura">
+                                    <input autocomplete="off" ng-disabled="verificarFechaProformaOk(proforma.fecha_proforma_ok)" ng-change="compararFechasProformas(proforma.fecha_proforma_ok,proforma.fecha_factura)"
+                                        ng-update-hidden type="text" data-date-format="dd/mm/yyyy" class="form-control date-picker"
+                                        id="fecha-factura" ng-model="proforma.fecha_factura" name="fecha-factura">
                                 </div>
 
                             </div>
@@ -1103,8 +1198,9 @@
                                     <label for="">Cobro</label>
                                 </div>
                                 <div class="col-md-8">
-                                    <input autocomplete="off" ng-disabled="verificarFechaFactura(proforma.fecha_factura)" ng-change="compararFechasProformas(proforma.fecha_factura,proforma.fecha_cobro)" ng-update-hidden type="text" data-date-format="dd/mm/yyyy" class="form-control date-picker" id="fecha-cobro"
-                                        ng-model="proforma.fecha_cobro" name="fecha-cobro">
+                                    <input autocomplete="off" ng-disabled="verificarFechaFactura(proforma.fecha_factura)" ng-change="compararFechasProformas(proforma.fecha_factura,proforma.fecha_cobro)"
+                                        ng-update-hidden type="text" data-date-format="dd/mm/yyyy" class="form-control date-picker"
+                                        id="fecha-cobro" ng-model="proforma.fecha_cobro" name="fecha-cobro">
                                 </div>
                             </div>
                         </div>

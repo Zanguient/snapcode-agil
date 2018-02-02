@@ -13,10 +13,11 @@ angular.module('agil.controladores')
         $scope.dialogProformaEdicion = 'proforma-edicion'
         $scope.dialogClientesProforma = 'dialog-cliente-proforma'
         $scope.dialogmodalFechas = 'modalFechas'
+        $scope.dialogBusquedaServicio = 'dialog-Busqueda-servicio-proforma'
 
         $scope.$on('$viewContentLoaded', function () {
             ejecutarScriptsProformas($scope.modalConfiguracionActividadesServicios, $scope.wizardConfiguracionActividadesServicios, $scope.dialogProformaEdicion,
-                $scope.dialogClientesProforma, $scope.modalConfiguracionActividades, $scope.wizardConfiguracionActividades, $scope.dialogmodalFechas);
+                $scope.dialogClientesProforma, $scope.modalConfiguracionActividades, $scope.wizardConfiguracionActividades, $scope.dialogmodalFechas,$scope.dialogBusquedaServicio);
 
         });
 
@@ -25,6 +26,7 @@ angular.module('agil.controladores')
             $scope.eliminarPopup($scope.dialogProformaEdicion);
             $scope.eliminarPopup($scope.dialogClientesProforma);
             $scope.eliminarPopup($scope.dialogmodalFechas);
+            $scope.eliminarPopup($scope.dialogBusquedaServicio)
         })
         $scope.eliminar = function (proforma) {
             blockUI.start()
@@ -114,7 +116,13 @@ angular.module('agil.controladores')
             $scope.nActividad.servicio = servicio
             
         }
-
+        $scope.modificarProformaPrecioUnitarioServicio = function(detalle){
+            if (detalle.editarPrecio === undefined) {
+                detalle.editarPrecio = true
+            }else{
+                detalle.editarPrecio = undefined
+            }
+        }
         $scope.actualizarPeriodo = function (date) {
             var fecha = new Date($scope.convertirFecha(date))
             $scope.obtenerCambioMonedaProforma(fecha)
@@ -160,7 +168,6 @@ angular.module('agil.controladores')
             $scope.servicios = []
             $scope.detalleProforma = {}
             $scope.detallesProformas = []
-            $scope.servicioDisable = false
             $scope.obtenerClientes()
             $scope.obtenerActividadesEmpresa($scope.usuario.empresa.id)
             $scope.filtro = { empresa: $scope.usuario.empresa.id, mes: 0, anio: 0, sucursal: 0, actividadEconomica: 0, servicio: 0, monto: 0, razon: 0, usuario: "", pagina: 1, items_pagina: 10, busqueda: 0, numero: 0 }
@@ -184,9 +191,6 @@ angular.module('agil.controladores')
             $scope.obtenerPaginador()
             $scope.obtenerCentroCosto()
         }   
-        $scope.checkServiceDisable = function () {
-            return $scope.servicioDisable
-        }
         $scope.compararFechasProformas = function(f1, f2){
             // if (f1) {
                 
@@ -265,6 +269,7 @@ angular.module('agil.controladores')
                 $scope.proforma.totalImporteSus += proforma.importeSus
             });
             $scope.proforma.importeLiteral = ConvertirALiteral($scope.proforma.totalImporteBs.toFixed(2));
+            $scope.modificarProformaPrecioUnitarioServicio(detalleProforma)
             if ($scope.detalleProforma.length > 0) {
 
             }
@@ -383,7 +388,7 @@ angular.module('agil.controladores')
             }
         }
 
-        $scope.establecerservicio = function (servico) {
+        $scope.establecerservicio = function (servico,modal) {
             $scope.detalleProforma = { id_servicio: servico.id, cantidad: 1, servicio: servico, precio_unitario: servico.precio, actividad_id: servico.actividad.id, actividad: servico.actividad }
             $scope.detalleProforma.importeBs = $scope.detalleProforma.precio_unitario * $scope.detalleProforma.cantidad
             if ($scope.moneda !== undefined) {
@@ -394,15 +399,27 @@ angular.module('agil.controladores')
                 }
             }
             $scope.enfocar('cantidad');
+            if (modal !==undefined) {
+                $scope.cerrarBusquedaServiciosProforma()
+            }
         }
 
-        $scope.calcularImporte = function () {
-            $scope.detalleProforma.importeBs = $scope.detalleProforma.precio_unitario * $scope.detalleProforma.cantidad
-            if ($scope.moneda !== undefined) {
-                if ($scope.moneda.dolar !== null && $scope.moneda.dolar !== "--") {
-                    $scope.detalleProforma.precioSus = $scope.detalleProforma.precio_unitario / $scope.moneda.dolar
-
-                    $scope.detalleProforma.importeSus = $scope.detalleProforma.precio_unitario / $scope.moneda.dolar * $scope.detalleProforma.cantidad
+        $scope.calcularImporte = function (sus) {
+            if (sus === undefined) {
+                $scope.detalleProforma.importeBs = $scope.detalleProforma.precio_unitario * $scope.detalleProforma.cantidad
+                if ($scope.moneda !== undefined) {
+                    if ($scope.moneda.dolar !== null && $scope.moneda.dolar !== "--") {
+                        $scope.detalleProforma.precioSus = $scope.detalleProforma.precio_unitario / $scope.moneda.dolar
+                        $scope.detalleProforma.importeSus = $scope.detalleProforma.precio_unitario / $scope.moneda.dolar * $scope.detalleProforma.cantidad
+                    }
+                }
+            }else{
+                $scope.detalleProforma.importeSus = $scope.detalleProforma.precioSus * $scope.detalleProforma.cantidad
+                if ($scope.moneda !== undefined) {
+                    if ($scope.moneda.dolar !== null && $scope.moneda.dolar !== "--") {
+                        $scope.detalleProforma.precio_unitario = $scope.detalleProforma.precioSus * $scope.moneda.dolar
+                        $scope.detalleProforma.importeBs = $scope.detalleProforma.precioSus * $scope.moneda.dolar * $scope.detalleProforma.cantidad
+                    }
                 }
             }
         }
@@ -448,7 +465,6 @@ angular.module('agil.controladores')
                                 }
                             }else{
                                 // var end = []
-
                                 $scope.nActividad.servicio = undefined
                                 // $scope.nActividad.actividadEconomica = actividadServicio.actividadEconomica
                             }
@@ -462,12 +478,22 @@ angular.module('agil.controladores')
                 }
             }
         }
+
         $scope.filtrarClientes = function (query) {
             $scope.clientesProcesados = $filter('filter')($scope.clientes, query);
             // setTimeout(function () {
             // 	aplicarSwiper(4, 3, true, 2);
             // }, 5);
         }
+
+        $scope.filtrarServicios = function (query) {
+            if ($scope.filser) {
+                $scope.serviciosProcesados = $filter('filter')($scope.filser, query);
+            }else{
+                $scope.serviciosProcesados = $filter('filter')($scope.configuracionActividadServicio, query);
+            }
+        }
+
         $scope.guardarConfiguracionActividadEconomicas = function () {
             blockUI.start()
             if ($scope.actividadesEmpresa.length > 0) {
@@ -521,14 +547,16 @@ angular.module('agil.controladores')
                 prom.then(function (services) {
                     if (op !== undefined) {
                         $scope.filser = services.servicios
+                        $scope.serviciosProcesados = services.servicios
                     } else {
                         $scope.configuracionActividadServicio = services.servicios
+                        $scope.serviciosProcesados = services.servicios
                     }
                     if (services.mensaje !== undefined) {
                         $scope.mostrarMensaje(services.mensaje)
                     }
                 }, function (err) {
-                    $scope.mostrarMensaje(err.data)
+                    $scope.mostrarMensaje(err.message)
                 })
             }
         }
@@ -541,6 +569,36 @@ angular.module('agil.controladores')
 
         }
 
+        $scope.abrirBusquedaServiciosProforma = function (){
+            // $scope.obtenerServiciosActividadEmpresa(actividad)
+            $scope.abrirPopup($scope.dialogBusquedaServicio)
+        }
+
+        $scope.cerrarBusquedaServiciosProforma = function (){
+            $scope.cerrarPopup($scope.dialogBusquedaServicio)
+        }
+
+        $scope.eliminarDetalleProforma = function (detalle) {
+            if (detalle.id !== undefined) {
+                detalle.eliminado = true
+            }else{
+                $scope.detallesProformas.splice($scope.detallesProformas.indexOf(detalle),1)
+            }
+            $scope.recalcularImportesProforma()
+        }
+        $scope.recalcularImportesProforma = function () {
+            var importBs = 0
+            $scope.detallesProformas.map(function (detalle) {
+                if (!detalle.eliminado) {
+                    importBs += detalle.precio_unitario * detalle.cantidad
+                    detalle.importeBs = detalle.precio_unitario * detalle.cantidad
+                }
+                console.log($scope.proforma)
+            })
+            $scope.proforma.totalImporteBs = importBs
+            $scope.proforma.importeLiteral = ConvertirALiteral($scope.proforma.totalImporteBs.toFixed(2));
+            
+        }
         $scope.eliminarDetalleConfiguracion = function (servicio) {
             if (servicio.id !== undefined) {
                 servicio.eliminado = true
@@ -558,6 +616,7 @@ angular.module('agil.controladores')
         }
         $scope.seleccionarClienteProforma = function (client) {
             $scope.proforma.clienteProforma = client
+            $scope.cerrardialogClientesProforma()
         }
         $scope.obtenerClientes = function () {
             var prom = Clientes($scope.usuario.id_empresa);
@@ -639,11 +698,10 @@ angular.module('agil.controladores')
             fecha = fech.getDate() + "/" + (fech.getMonth() + 1) + "/" + fech.getFullYear();
             return fecha
         }
-
+        
         $scope.abrirdialogProformaEdicion = function (proforma) {
             if (proforma !== undefined) {
                 $scope.detalleProforma = undefined
-                $scope.servicioDisable = false
             } else {
                 $scope.proforma = { sucursalProforma: $scope.sucursales[0], fecha_proforma: new Date(), periodo_mes: { id: new Date().getMonth() + 1 }, periodo_anio: { id: new Date().getFullYear() } }
                 $scope.proforma.fecha_proforma = new Date().toLocaleDateString()
@@ -787,7 +845,7 @@ angular.module('agil.controladores')
             var importeTotal = 0
             var cantidadTotal = 0
             $scope.proforma = proforma
-            var doc = new PDFDocument({ size: [612, 792], margin: 10 });
+            var doc = new PDFDocument({ size: 'letter', margin: 10 });
             var img = convertUrlToBase64Image($scope.usuario.empresa.imagen, function (imagenEmpresa) {
                 return imagenEmpresa;
             });
@@ -813,7 +871,8 @@ angular.module('agil.controladores')
                 doc.font('Helvetica', 8);
                 if (i == 0) {
                     doc.text(($scope.proforma.detalle), 150, y - 2, { width: 260 });
-                    extraDetalle = Math.ceil($scope.proforma.detalle.length / 260) * 20
+                    var divisor = $scope.proforma.detalle !== null ? $scope.proforma.detalle.length : 0
+                    extraDetalle = Math.ceil( divisor/ 260) * 20
                 } else {
                     doc.text($scope.proforma.detallesProformas[i - 1].cantidad, 70, y - 2);
                     doc.text($scope.proforma.detallesProformas[i - 1].servicio.nombre, 150, y - 2, { width: 260 });
@@ -855,6 +914,7 @@ angular.module('agil.controladores')
             $scope.proforma.importeLiteral = ConvertirALiteral($scope.proforma.totalImporteBs.toFixed(2));
             doc.text('Son : ' + ($scope.proforma.importeLiteral), 58, y + 20);
             doc.text($scope.number_format($scope.proforma.totalImporteBs, 2), 510, y + 20);
+            doc.text("Nota: La aprobación de la proforma deberá realizarse dentro de los próximos 7 días a partir de la fecha de recepción",0, y + 40,{ align: "center" })
             doc.end();
             stream.on('finish', function () {
                 var fileURL = stream.toBlobURL('application/pdf');
@@ -936,6 +996,7 @@ angular.module('agil.controladores')
             $scope.proforma.importeLiteral = ConvertirALiteral($scope.proforma.totalImporteBs.toFixed(2));
             doc.text('Son : ' + ($scope.proforma.importeLiteral), 58, y + 20);
             doc.text($scope.number_format($scope.proforma.totalImporteBs, 2), 510, y + 20);
+            doc.text("Nota: La aprobación de la proforma deberá realizarse dentro de los próximos 7 días a partir de la fecha de recepción",0, y + 40,{ align: "center" })
             doc.end();
             stream.on('finish', function () {
                 var fileURL = stream.toBlobURL('application/pdf');
@@ -949,7 +1010,7 @@ angular.module('agil.controladores')
             var importeTotal = 0
             var cantidadTotal = 0
             $scope.proforma = proforma
-            var doc = new PDFDocument({ size: [612, 792], margin: 10 });
+            var doc = new PDFDocument({ size: 'letter' , margin: 10 });//[612, 792]
             var img = convertUrlToBase64Image($scope.usuario.empresa.imagen, function (imagenEmpresa) {
                 return imagenEmpresa;
             });
@@ -991,6 +1052,7 @@ angular.module('agil.controladores')
             $scope.proforma.importeLiteral = ConvertirALiteral($scope.proforma.totalImporteBs.toFixed(2));
             doc.text('Son : ' + ($scope.proforma.importeLiteral), 58, y + 20);
             doc.text($scope.number_format($scope.proforma.totalImporteBs, 2), 510, y + 20);
+            doc.text("Nota: La aprobación de la proforma deberá realizarse dentro de los próximos 7 días a partir de la fecha de recepción",0, y + 40,{ align: "center" })
             doc.end();
             stream.on('finish', function () {
                 var fileURL = stream.toBlobURL('application/pdf');

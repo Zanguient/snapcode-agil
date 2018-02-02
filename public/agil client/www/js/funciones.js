@@ -12,12 +12,14 @@ function ejecutarScriptDestino(idModalWizardDestinoEdicion,idContenedorEdicionDe
 	aplicarWizardFormulario(idModalWizardDestinoEdicion, idContenedorEdicionDestino);
 }
 
-function ejecutarScriptsProformas(modalConfiguracionActividadesServicios, wizardConfiguracionActividadesServicios, dialogProformaEdicion, dialogClientesProforma,modalConfiguracionActividades,wizardConfiguracionActividades,dialogmodalFechas) {
+function ejecutarScriptsProformas(modalConfiguracionActividadesServicios, wizardConfiguracionActividadesServicios, dialogProformaEdicion, dialogClientesProforma,modalConfiguracionActividades,wizardConfiguracionActividades,
+	dialogmodalFechas, dialogBusquedaServicio) {
 	crearPopup(modalConfiguracionActividadesServicios, 'auto', 'auto');
 	crearPopup(modalConfiguracionActividades, 'auto', 'auto');
 	crearPopup(dialogProformaEdicion, 'auto', 'auto');
 	crearPopup(dialogClientesProforma, 'auto', 'auto');
 	crearPopup(dialogmodalFechas, 'auto', 'auto');
+	crearPopup(dialogBusquedaServicio, 'auto', 'auto');
 	aplicarWizardFormulario(wizardConfiguracionActividadesServicios);
 	aplicarWizardFormulario(wizardConfiguracionActividades);
 }
@@ -88,7 +90,7 @@ function ejecutarScriptsOperaciones(idDialogDialogPanelOperaciones, idDialogEntr
 function ejecutarScriptsInicio(idPopupTablaProductos, idPopupTablaCreditos, idPopupTablaDeudas, idPopupPago,
 	idPopupActualizarCreditoCliente, idPopupActualizarCreditoDeuda, idPopupDeuda, idModalDescuento, idModalTablaVentasPendientes,
 	idModalTablaComprasPendientes, idModalTablaBancosPendientes, idModalTablaOtrosPendientes, idModalInicioSesion, idModalWizardComprobanteEdicion, IdModalOpcionesQr, IdModalRegistrarComprobante, IdModalRevisarComprobante, IdModalLibroMayor, IdModalAsignarCuenta,
-	idModalTablaDespachos, idModalTablaAsignacionDespacho,IdModalEliminarProductoVencido,dialogAlertasProformas) {
+	idModalTablaDespachos, idModalTablaAsignacionDespacho,IdModalEliminarProductoVencido,dialogAlertasProformas,facturarProformas) {
 	crearPopup(idPopupTablaProductos, "70%", "auto");
 	crearPopup(idModalWizardComprobanteEdicion, "100%", "auto");
 	crearPopup(idPopupTablaCreditos, "auto", "auto");
@@ -104,6 +106,8 @@ function ejecutarScriptsInicio(idPopupTablaProductos, idPopupTablaCreditos, idPo
 	crearPopup(idModalTablaOtrosPendientes, "60%", 550);
 	crearPopup(dialogAlertasProformas, "80%", 'auto');
 	crearPopup(idModalInicioSesion, "100%", screen.height);
+
+	crearPopup(facturarProformas, "80%", 'auto');
 
 	crearPopup(IdModalOpcionesQr, "30%", 250);
 	crearPopup(IdModalRegistrarComprobante, "60%", 350);

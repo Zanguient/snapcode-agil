@@ -1246,7 +1246,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                 })
         })
 
-    router.route('/recursos-humanos/prestamos/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion/plazo/:plazo/inicio/:inicio/fin/:fin/nombre/:nombre')
+    router.route('/recursos-humanos/prestamos/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion/plazo/:plazo/inicio/:inicio/fin/:fin/nombre/:nombre/cuenta-liquida/:cuentas_liquidas')
         .get(function (req, res) {
 
             var ordenArreglo = [], condicionPrestamo = {};
@@ -1304,7 +1304,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
             }
             RrhhEmpleadoPrestamo.findAndCountAll({
                 where: condicionPrestamo,
-                include: [{ model: RrhhEmpleadoPrestamoPago, as: "prestamoPagos" }, { model: MedicoPaciente, as: "empleado", where: { id_empresa: req.params.id_empresa }, include: [{ model: Persona, as: "persona", where: condicionPersona }] }],
+                include: [{ model: RrhhEmpleadoPrestamoPago, as: "prestamoPagos"}, { model: MedicoPaciente, as: "empleado", where: { id_empresa: req.params.id_empresa }, include: [{ model: Persona, as: "persona", where: condicionPersona }]}],
                 order: [ordenArreglo]
             }).then(function (data) {
                 RrhhEmpleadoPrestamo.findAll({
@@ -1325,10 +1325,10 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
             var saldo_anterior = 0
             var a_cuenta_anterior = 0
             if (req.body.prestamoPagos.length > 0) {
-                saldo_anterior = req.body.prestamoPagos[(req.body.prestamoPagos.length - 1)].saldo_anterior - req.body.monto_pagado
+                saldo_anterior = req.body.prestamoPagos[(req.body.prestamoPagos.length - 1)].saldo_anterior-req.body.prestamoPagos[(req.body.prestamoPagos.length - 1)].a_cuenta_anterior /* - req.body.monto_pagado */
                 a_cuenta_anterior = req.body.prestamoPagos[(req.body.prestamoPagos.length - 1)].a_cuenta_anterior + req.body.monto_pagado
             } else {
-                saldo_anterior = req.body.total - req.body.monto_pagado
+                saldo_anterior = req.body.total /* - req.body.monto_pagado */
                 a_cuenta_anterior = req.body.monto_pagado
             }
             RrhhEmpleadoPrestamoPago.create({
@@ -1338,21 +1338,14 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                 monto_pagado: req.body.monto_pagado,
                 saldo_anterior: saldo_anterior,
                 a_cuenta_anterior: a_cuenta_anterior
-            }).then(function (empleadoPrestamoCreado) {
-                if (req.body.monto_pagado != req.body.cuota) {
+            }).then(function (empleadoPrestamoCreado) {              
                     RrhhEmpleadoPrestamo.update({
                         cuota: req.body.cuota2
                     }, {
-                            where: { id: req.body.id }
+                            where: { id: req.params.id_prestamo }
                         }).then(function (params) {
                             res.json({ mensaje: "Pago efectuado satisfactoriamente!" })
                         })
-
-                } else {
-                    res.json({ mensaje: "Pago efectuado satisfactoriamente!" })
-                }
-
-
             })
         })
     router.route('/recursos-humanos/empleados/:id_empresa')

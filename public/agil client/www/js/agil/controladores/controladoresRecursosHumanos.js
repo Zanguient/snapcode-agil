@@ -3,7 +3,7 @@ angular.module('agil.controladores')
     .controller('ControladorRecursosHumanos', function ($scope, $sce, $localStorage, $location, $templateCache, $route, blockUI, ListaDatosGenero, NuevoRecursoHumano, RecursosHumanosPaginador, Paginator,
         FieldViewer, EmpleadoEmpresa, obtenerEmpleadoRh, UsuarioRecursosHUmanosActivo, Prerequisito, ListaDatosPrerequisito, Prerequisitos, ListaPrerequisitosPaciente, ActualizarPrerequisito, UsuarioRecursosHumanosFicha,
         ClasesTipo, Clases, Paises, CrearEmpleadoFicha, EliminarOtroSeguroRh, EliminarFamiliarRh, PrerequisitoPaciente, PrerequisitosHistorial, UsuarioRhHistorialFicha, ObtenerEmpleadoHojaVida, GuardarEmpleadoHojaVida, CrearPrestamo,
-        ObtenerListaPrestamo, CrearRolTurno, CrearPagoPrestamo, VerificarUsuarioEmpresa, EditarPrestamo, ListaEmpleadosRrhh, CrearHorasExtra, HistorialHorasExtra, ListaRolTurnos,ValidarCodigoCuentaEmpleado,$timeout) {
+        ObtenerListaPrestamo, CrearRolTurno, CrearPagoPrestamo, VerificarUsuarioEmpresa, EditarPrestamo, ListaEmpleadosRrhh, CrearHorasExtra, HistorialHorasExtra, ListaRolTurnos, ValidarCodigoCuentaEmpleado, $timeout) {
         $scope.usuario = JSON.parse($localStorage.usuario);
         $scope.idModalPrerequisitos = 'dialog-pre-requisitos';
         $scope.idModalEmpleado = 'dialog-empleado';
@@ -646,6 +646,7 @@ angular.module('agil.controladores')
         }
         $scope.abrirDialogNuevoPrestamo = function (empleado) {
             $scope.empleado = empleado
+            $scope.prestamo={}
             if (empleado.ficha.haber_basico) {
                 $scope.abrirPopup($scope.idModalNuevoPrestamo);
             } else {
@@ -1023,12 +1024,13 @@ angular.module('agil.controladores')
                 });
             })
         }
+
         $scope.obtenerPrestamos = function () {
             blockUI.start();
             $scope.paginator = Paginator();
             $scope.paginator.column = "fecha_inicial";
             $scope.paginator.direccion = "asc";
-            $scope.filtro = { empresa: $scope.usuario.id_empresa, plazo: "", inicio: "", fin: "", nombre: "", apellido: "" };
+            $scope.filtro = { empresa: $scope.usuario.id_empresa, plazo: "", inicio: "", fin: "", nombre: "", apellido: "",cuentas_liquidas:false };
             $scope.paginator.callBack = $scope.optenerListaPrestamos;
             $scope.paginator.getSearch("", $scope.filtro, null);
             blockUI.stop();
@@ -1072,7 +1074,8 @@ angular.module('agil.controladores')
             $scope.prestamo = prestamo
             var fechaActual = new Date()
             if ($scope.prestamo.prestamoPagos.length > 0) {
-                prestamo.total = $scope.prestamo.prestamoPagos[(prestamo.prestamoPagos.length - 1)].saldo_anterior
+                prestamo.saldo = $scope.prestamo.prestamoPagos[(prestamo.prestamoPagos.length - 1)].saldo_anterior
+                prestamo.total = ((prestamo.monto * prestamo.interes_pactado) / 100) + prestamo.monto
             }
             var fechaVence = new Date($scope.convertirFecha(prestamo.fecha_vence))
             var fechaInicioTexto = moment(fechaActual).format('YYYY-MM-DD HH:mm:ss');
@@ -1374,19 +1377,19 @@ angular.module('agil.controladores')
         }
 
         $scope.validarCodigoCuentaEmpleado = function (CodigoCuenta) {
-			var codigo = CodigoCuenta;
-			if (codigo != '') {
-				$timeout(function () {
-					$scope.validar = new ValidarCodigoCuentaEmpleado();
+            var codigo = CodigoCuenta;
+            if (codigo != '') {
+                $timeout(function () {
+                    $scope.validar = new ValidarCodigoCuentaEmpleado();
 
-					$scope.validar.codigo = CodigoCuenta;
+                    $scope.validar.codigo = CodigoCuenta;
 
-					$scope.validar.$save(function (data) {
-						$scope.data = data;
-					})
-				}, 1500);
-			}
-		};
+                    $scope.validar.$save(function (data) {
+                        $scope.data = data;
+                    })
+                }, 1500);
+            }
+        };
         $scope.changeActivoEmpleado = function (empleado) {
             console.log(empleado)
             var promesa = UsuarioRecursosHUmanosActivo(empleado)
@@ -2569,7 +2572,7 @@ angular.module('agil.controladores')
             var cuotaSinInteres = prestamo.monto / prestamo.plazo
             var interes = (cuotaSinInteres * prestamo.interes_pactado) / 100
             prestamo.cuota = cuotaSinInteres + interes
-            prestamo.cuota2 =$scope.number_format(prestamo.cuota,2)
+            prestamo.cuota2 = $scope.number_format(prestamo.cuota, 2)
             var años = 0;
             var meses = 0;
             var tiempo = prestamo.plazo
@@ -2595,7 +2598,7 @@ angular.module('agil.controladores')
             promesa.then(function (datos) {
                 $scope.imprimirPrestamo(prestamo)
                 $scope.cerrarDialogNuevoPrestamo()
-                prestamo = {}
+                $scope.prestamo = {}
                 $scope.mostrarMensaje(datos.mensaje)
             })
 
@@ -2609,7 +2612,7 @@ angular.module('agil.controladores')
             promesa.then(function (datos) {
                 $scope.cerrarDialogPretamosNuevoTodos()
                 $scope.optenerListaPrestamos()
-                prestamo = {}
+                
                 $scope.mostrarMensaje(datos.mensaje)
                 $scope.prestamo = {}
             })
@@ -2641,14 +2644,14 @@ angular.module('agil.controladores')
             doc.text("Sueldo Básico ", 55, 350)
             doc.font('Helvetica', 14);
             doc.text($scope.empleado.nombre_completo, 220, 175)
-            doc.text($scope.number_format(prestamo.monto,2), 220, 200)
+            doc.text($scope.number_format(prestamo.monto, 2), 220, 200)
             doc.text(prestamo.interes_pactado + "%", 220, 225)
             var fecha = $scope.fechaATexto(prestamo.fecha_inicial)
             doc.text(fecha, 220, 250)
             doc.text(prestamo.plazo, 220, 275)
             doc.text(prestamo.cuota2, 220, 300)
             doc.text(prestamo.observacion, 220, 325)
-            doc.text($scope.number_format($scope.empleado.ficha.haber_basico,2), 220, 350)
+            doc.text($scope.number_format($scope.empleado.ficha.haber_basico, 2), 220, 350)
             doc.font('Helvetica-Bold', 14);
             doc.text("Recibí Conforme ", 55, 500)
             doc.text("Responsable de Área ", 225, 500)
@@ -2661,17 +2664,27 @@ angular.module('agil.controladores')
             });
         }
         $scope.GuardarPagoPrestamo = function (prestamo) {
-            if (prestamo.monto_pagado != prestamo.cuota) {
-                var cuotaSinInteres = prestamo.monto / prestamo.plazo_restante
-                var interes = (cuotaSinInteres * prestamo.interes_pactado) / 100
-                prestamo.cuota2 = cuotaSinInteres + interes
-            }
+            /* if (prestamo.monto_pagado != prestamo.cuota) { */
+                if (prestamo.prestamoPagos.length > 0) {
+                    var montopaga = prestamo.monto_pagado + prestamo.prestamoPagos[(prestamo.prestamoPagos.length - 1)].a_cuenta_anterior
+                    var cuotaSinInteres = (prestamo.total - montopaga) / prestamo.plazo_restante
+                    prestamo.cuota2 = cuotaSinInteres
+                } else {
+                    var cuotaSinInteres = (prestamo.total - prestamo.monto_pagado) / prestamo.plazo_restante
+                    prestamo.cuota2 = cuotaSinInteres                
+                }
+
+            /* } */
+          /*   if (prestamo.monto_pagado == prestamo.total) {
+                prestamo.cuota2 = 0
+            } */
             prestamo.pagoFecha = new Date()
             var promesa = CrearPagoPrestamo($scope.usuario.id, $scope.prestamo.id, prestamo)
             promesa.then(function (datos) {
                 //$scope.imprimirPrestamo(prestamo)
                 $scope.cerrarDialogPagoPrestamo()
                 $scope.optenerListaPrestamos()
+                $scope.prestamo={}
                 $scope.mostrarMensaje(datos.mensaje)
             })
         }
@@ -2929,7 +2942,7 @@ angular.module('agil.controladores')
 
             var data = [["N°", "ACTIVO", "CODIGO", "NOMBRE COMPLETO", "EMPLEADO",
                 "CI", "EXTENCÓN", "TIPO CONTRATO", "CAMPO", "CARGO"]]
-                var iu =[]
+            var iu = []
             for (var i = 0; i < empleados.length; i++) {
                 var columns = [];
                 columns.push((i + 1));
@@ -2941,16 +2954,16 @@ angular.module('agil.controladores')
                 columns.push(empleados[i].extension);
                 columns.push(empleados[i].ficha.tipoContrato.nombre);
                 columns.push(empleados[i].campo);
-                var cargostexto =  empleados[i].cargos[0].cargo.nombre
+                var cargostexto = empleados[i].cargos[0].cargo.nombre
                 iu.push(i)
-                empleados[i].cargos.forEach(function(cargo,index,array) {
+                empleados[i].cargos.forEach(function (cargo, index, array) {
                     if (cargostexto == "") {
                         cargostexto = cargo
                     } else {
                         cargostexto = cargostexto + "-" + cargo.cargo.nombre
                     }
-               });              
-               
+                });
+
                 columns.push(cargostexto);
                 data.push(columns);
             }
