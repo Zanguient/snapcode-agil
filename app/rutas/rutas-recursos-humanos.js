@@ -1341,9 +1341,11 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
             var monto_pagado = 0
             var saldo_anterior = 0
             var a_cuenta_anterior = 0
+            var prestamoAnterior= req.body.prestamoPagos[(req.body.prestamoPagos.length - 1)]
             if (req.body.prestamoPagos.length > 0) {
-                saldo_anterior = req.body.prestamoPagos[(req.body.prestamoPagos.length - 1)].saldo_anterior - req.body.prestamoPagos[(req.body.prestamoPagos.length - 1)].a_cuenta_anterior /* - req.body.monto_pagado */
-                a_cuenta_anterior = req.body.prestamoPagos[(req.body.prestamoPagos.length - 1)].a_cuenta_anterior + req.body.monto_pagado
+                saldo_anterior = prestamoAnterior.saldo_anterior - prestamoAnterior.monto_pagado /* - req.body.monto_pagado */
+                a_cuenta_anterior = prestamoAnterior.a_cuenta_anterior + req.body.monto_pagado
+                //req.body.total
             } else {
                 saldo_anterior = req.body.total /* - req.body.monto_pagado */
                 a_cuenta_anterior = req.body.monto_pagado

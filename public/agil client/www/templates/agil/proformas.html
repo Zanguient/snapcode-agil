@@ -619,8 +619,8 @@
                                                 <div class="">
                                                     <label>ACTIVIDAD</label>
                                                 </div>
-                                                <div class="">
-                                                    <select autofocus ng-disable="detallesProformas.length > 0 || proforma.ver !== undefined" style="width:150px;" data-validate="validate(required)"
+                                                <div ng-if ="!verificarBloqueoServicios()" >
+                                                    <select autofocus style="width:150px;" data-validate="validate(required)"
                                                         ng-change="obtenerServiciosActividadEmpresa(proforma.actividadEconomica)"
                                                         required id="actividad" name="actividad" ng-model="proforma.actividadEconomica"
                                                         ng-options="actividad as actividad.claseActividad.nombre for actividad in actividadesEmpresa track by actividad.claseActividad.id"
@@ -629,6 +629,16 @@
                                                     </select>
                                                     <span class="red">(*)</span>
                                                 </div>
+                                                <div ng-if ="verificarBloqueoServicios()" >
+                                                        <select disabled style="width:150px;" data-validate="validate(required)"
+                                                            ng-change="obtenerServiciosActividadEmpresa(proforma.actividadEconomica)"
+                                                            required id="actividad" name="actividad" ng-model="proforma.actividadEconomica"
+                                                            ng-options="actividad as actividad.claseActividad.nombre for actividad in actividadesEmpresa track by actividad.claseActividad.id"
+                                                            data-placeholder="Click para escoger">
+                                                            <option value="" disabled selected>Selec. Actividad</option>
+                                                        </select>
+                                                        <span class="red">(*)</span>
+                                                    </div>
                                             </div>
                                         </div>
 

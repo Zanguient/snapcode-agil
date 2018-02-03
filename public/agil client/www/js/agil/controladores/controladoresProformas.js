@@ -28,11 +28,19 @@ angular.module('agil.controladores')
             $scope.eliminarPopup($scope.dialogmodalFechas);
             $scope.eliminarPopup($scope.dialogBusquedaServicio)
         })
+        $scope.verificarBloqueoServicios = function () {
+            if (($scope.detallesProformas.length > 0 || $scope.proforma.ver !== undefined)) {
+                return true
+            } else {
+                return false
+            }
+        }
         $scope.eliminar = function (proforma) {
             blockUI.start()
             proforma.eliminado = true
             eliminarProforma.save({ id: proforma.id }, proforma, function (res) {
                 $scope.mostrarMensaje(res.mensaje)
+                $scope.proformas.splice($scope.proformas.indexOf(proforma), 1)
                 blockUI.stop()
             }, function (err) {
                 $scope.mostrarMensaje(err.message === undefined ? err.data : err.message)
@@ -822,19 +830,33 @@ angular.module('agil.controladores')
                 } else {
                     $scope.proforma.fecha_proforma = $scope.fechaATexto(new Date($scope.proforma.fecha_proforma))
                     var dat = new Date($scope.convertirFecha($scope.proforma.fecha_proforma))
-                    $scope.obtenerCambioMonedaProforma(dat)
-
+                    var promesa = ObtenerCambioMoneda(dat)
+                    promesa.then(function (dato) {
+                        if (dato.monedaCambio) {
+                            $scope.moneda = dato.monedaCambio;
+                            if ($scope.detalleProforma !== undefined) {
+                                $scope.calcularImporte()
+                            }
+                        } else {
+                            $scope.moneda = { ufv: "--", dolar: "--" }
+                            $scope.mostrarMensaje('La fecha ' + $scope.proforma.fecha_proforma + ' no tiene datos del tipo de cambio de dolar. El tipo de cambio de dolar no afecta la información de la proforma y puede continuar sin problema.')
+                        }
+                        if (opcionImpresion == 0) {
+                            $scope.imprimirSinDetalle($scope.proforma)
+                        }
+                        if (opcionImpresion == 1) {
+                            $scope.imprimirConDetalle($scope.proforma)
+                        }
+                        if (opcionImpresion == 2) {
+                            $scope.imprimirMixto($scope.proforma)
+                        }
+                        blockUI.stop()
+        
+                    }, function (err) {
+                        $scope.mostrarMensaje(err.message === undefined ? err.data : err.message)
+                        blockUI.stop()
+                    })
                 }
-                if (opcionImpresion == 0) {
-                    $scope.imprimirSinDetalle($scope.proforma)
-                }
-                if (opcionImpresion == 1) {
-                    $scope.imprimirConDetalle($scope.proforma)
-                }
-                if (opcionImpresion == 2) {
-                    $scope.imprimirMixto($scope.proforma)
-                }
-                blockUI.stop()
             }, function (err) {
                 $scope.mostrarMensaje(err.message === undefined ? err.data : err.message)
                 blockUI.stop()
@@ -849,16 +871,7 @@ angular.module('agil.controladores')
             var img = convertUrlToBase64Image($scope.usuario.empresa.imagen, function (imagenEmpresa) {
                 return imagenEmpresa;
             });
-
-            // if ($scope.usuario.empresa.imagen.length > 100) {
-            //     doc.image(img, 60, 60, { width: 50, height: 50 });
-            // } else {
-            //     doc.image(img, 60, 60);  ///{ width: 40 }
-            // }
             var separacionExtra = 50
-
-
-
             var stream = doc.pipe(blobStream());
             var fechaActual = new Date();
             var x = 80
@@ -867,7 +880,7 @@ angular.module('agil.controladores')
             $scope.dibujarCabeceraPDFImpresion(doc, pagina, totalPaginas, $scope.proforma);
             var extraDetalle = 0
             var extraServ = 0
-            for (var i = 0; i <= $scope.proforma.detallesProformas.length && items <= itemsPorPagina; i++) {
+            for (var i = 0; i < $scope.proforma.detallesProformas.length && items <= itemsPorPagina; i++) {
                 doc.font('Helvetica', 8);
                 if (i == 0) {
                     doc.text(($scope.proforma.detalle), 150, y - 2, { width: 260 });
@@ -878,7 +891,6 @@ angular.module('agil.controladores')
                     doc.text($scope.proforma.detallesProformas[i - 1].servicio.nombre, 150, y - 2, { width: 260 });
                     doc.text($scope.number_format($scope.proforma.detallesProformas[i - 1].precio_unitario, 2), 440, y - 2);
                     doc.text($scope.number_format($scope.proforma.detallesProformas[i - 1].importeBs, 2), 510, y - 2);
-                    // doc.rect(40, y + 10, 540, 0).stroke();
                 }
 
                 y = y + 20 + extraDetalle;
@@ -887,16 +899,7 @@ angular.module('agil.controladores')
                 items++;
                 extraDetalle = 0
                 extraServ = 0
-                if (items > itemsPorPagina || y > 730) {
-                    // doc.rect(40, 105 + 80, 540, y - 115 - 80).stroke();
-                    // doc.rect(40, 105 + 80, 540, y - 115 - 70).stroke();
-                    // doc.rect(x + 40, x+separacionExtra + 80, 0, y - 90 - 70).stroke();
-                    // doc.rect(x + 350, x + 80, 0, y - 90 - 70).stroke();
-                    // doc.rect(x + 410, x + 80, 0, y - 90 - 70).stroke();
-                    doc.rect(40, 105 + 80 + separacionExtra, 540, y - 160 - separacionExtra - 25).stroke();//|_|
-                    doc.rect(x + 40, x + 80 + separacionExtra, 0, y - 160 - separacionExtra).stroke(); //cant | det
-                    doc.rect(x + 350, x + 80 + separacionExtra, 0, y - 160 - separacionExtra).stroke();// det| punit
-                    doc.rect(x + 410, x + 80 + separacionExtra, 0, y - 160 - separacionExtra).stroke(); // punit | import
+                if (items > itemsPorPagina || (y > 700 )) {
                     doc.addPage({ size: [612, 792], margin: 10 });
                     y = 115 + 80 + separacionExtra;
                     items = 0;
@@ -904,17 +907,13 @@ angular.module('agil.controladores')
                     $scope.dibujarCabeceraPDFImpresion(doc, pagina, totalPaginas, $scope.proforma);
                 }
             }
-
-            doc.rect(40, 105 + 80 + separacionExtra, 540, y - 160 - separacionExtra - 25).stroke();//|_|
-            doc.rect(x + 40, x + 80 + separacionExtra, 0, y - 160 - separacionExtra).stroke(); //cant | det
-            doc.rect(x + 350, x + 80 + separacionExtra, 0, y - 160 - separacionExtra).stroke();// det| punit
-            doc.rect(x + 410, x + 80 + separacionExtra, 0, y - 160 - separacionExtra).stroke(); // punit | import
-
-            doc.rect(x - 40, y + 10, 540, 25).stroke(); // cuadro literal
+            doc.rect(40, 705, 540, 15).stroke(); // cuadro literal bolivianos
+            doc.rect(40, 725, 540, 15).stroke(); // cuadro total dolares
             $scope.proforma.importeLiteral = ConvertirALiteral($scope.proforma.totalImporteBs.toFixed(2));
-            doc.text('Son : ' + ($scope.proforma.importeLiteral), 58, y + 20);
-            doc.text($scope.number_format($scope.proforma.totalImporteBs, 2), 510, y + 20);
-            doc.text("Nota: La aprobación de la proforma deberá realizarse dentro de los próximos 7 días a partir de la fecha de recepción",0, y + 40,{ align: "center" })
+            doc.text('Son : ' + ($scope.proforma.importeLiteral), 58, 710);
+            doc.text($scope.number_format($scope.proforma.totalImporteBs, 2), 510,710);
+            doc.text('Son : ' + $scope.number_format($scope.proforma.totalImporteBs / $scope.moneda.dolar, 2) + '  Dólares x ' + $scope.moneda.dolar, 58, 730);
+            // doc.text("Nota: La aprobación de la proforma deberá realizarse dentro de los próximos 7 días a partir de la fecha de recepción",0, 750,{ align: "center" })
             doc.end();
             stream.on('finish', function () {
                 var fileURL = stream.toBlobURL('application/pdf');
@@ -928,20 +927,11 @@ angular.module('agil.controladores')
             var importeTotal = 0
             var cantidadTotal = 0
             $scope.proforma = proforma
-            var doc = new PDFDocument({ size: [612, 792], margin: 10 });
+            var doc = new PDFDocument({ size: 'letter', margin: 10 });
             var img = convertUrlToBase64Image($scope.usuario.empresa.imagen, function (imagenEmpresa) {
                 return imagenEmpresa;
             });
             var separacionExtra = 50
-
-            // if ($scope.usuario.empresa.imagen.length > 100) {
-            //     doc.image(img, 60, 60, { width: 50, height: 50 });
-            // } else {
-            //     doc.image(img, 60, 60);  ///{ width: 40 }
-            // }
-
-
-
             var stream = doc.pipe(blobStream());
             var fechaActual = new Date();
             var x = 80
@@ -951,16 +941,12 @@ angular.module('agil.controladores')
             var extraServ = 0
             for (var i = 0; i < $scope.proforma.detallesProformas.length && items <= itemsPorPagina; i++) {
                 doc.font('Helvetica', 8);
-                // if (i ==0) {
-                //     doc.text(($scope.proforma.detalle), 150, y-2, { width: 260 });
-                // }else{
 
                 doc.text($scope.proforma.detallesProformas[i].cantidad, 70, y - 2);
                 doc.text($scope.proforma.detallesProformas[i].servicio.nombre, 150, y - 2, { width: 260 });
                 doc.text($scope.number_format($scope.proforma.detallesProformas[i].precio_unitario, 2), 440, y - 2);
                 doc.text($scope.number_format($scope.proforma.detallesProformas[i].importeBs, 2), 510, y - 2);
-                // doc.rect(40, y + 10, 540, 0).stroke();
-                // }
+
                 if ($scope.proforma.detallesProformas[i].servicio.nombre.length > 260) {
                     extraServ = Math.ceil($scope.proforma.detallesProformas[i].servicio.nombre.length / 260) * 10
                 }
@@ -971,15 +957,6 @@ angular.module('agil.controladores')
                 items++;
                 extraServ = 0
                 if (items > itemsPorPagina || y > 700) {
-                    // doc.rect(40, 105 + 80, 540, y - 115 - 80).stroke();
-                    // doc.rect(40, 105 + 80, 540, y - 115 - 70).stroke();
-                    // doc.rect(x + 40, x + 80, 0, y - 90 - 70).stroke();
-                    // doc.rect(x + 350, x + 80, 0, y - 90 - 70).stroke();
-                    // doc.rect(x + 410, x + 80, 0, y - 90 - 70).stroke();
-                    doc.rect(40, 105 + 80 + separacionExtra, 540, y - 160 - separacionExtra - 25).stroke();
-                    doc.rect(x + 40, x + 80 + separacionExtra, 0, y - 160 - separacionExtra).stroke(); //cant | det
-                    doc.rect(x + 350, x + 80 + separacionExtra, 0, y - 160 - separacionExtra).stroke();// det| punit
-                    doc.rect(x + 410, x + 80 + separacionExtra, 0, y - 160 - separacionExtra).stroke();
                     doc.addPage({ size: [612, 792], margin: 10 });
                     y = 115 + 80 + separacionExtra;
                     items = 0;
@@ -987,16 +964,13 @@ angular.module('agil.controladores')
                     $scope.dibujarCabeceraPDFImpresion(doc, pagina, totalPaginas, $scope.proforma);
                 }
             }
-
-            doc.rect(40, 105 + 80 + separacionExtra, 540, y - 160 - separacionExtra - 25).stroke();
-            doc.rect(x + 40, x + 80 + separacionExtra, 0, y - 160 - separacionExtra).stroke(); //cant | det
-            doc.rect(x + 350, x + 80 + separacionExtra, 0, y - 160 - separacionExtra).stroke();// det| punit
-            doc.rect(x + 410, x + 80 + separacionExtra, 0, y - 160 - separacionExtra).stroke(); // punit | import
-            doc.rect(x - 40, y + 10, 540, 25).stroke(); // cuadro literal
+            doc.rect(40, 705, 540, 15).stroke(); // cuadro literal bolivianos
+            doc.rect(40, 725, 540, 15).stroke(); // cuadro total dolares
             $scope.proforma.importeLiteral = ConvertirALiteral($scope.proforma.totalImporteBs.toFixed(2));
-            doc.text('Son : ' + ($scope.proforma.importeLiteral), 58, y + 20);
-            doc.text($scope.number_format($scope.proforma.totalImporteBs, 2), 510, y + 20);
-            doc.text("Nota: La aprobación de la proforma deberá realizarse dentro de los próximos 7 días a partir de la fecha de recepción",0, y + 40,{ align: "center" })
+            doc.text('Son : ' + ($scope.proforma.importeLiteral), 58, 710);
+            doc.text($scope.number_format($scope.proforma.totalImporteBs, 2), 510,710);
+            doc.text('Son : ' + $scope.number_format($scope.proforma.totalImporteBs / $scope.moneda.dolar, 2) + '  Dólares x ' + $scope.moneda.dolar, 58, 730);
+            // doc.text("Nota: La aprobación de la proforma deberá realizarse dentro de los próximos 7 días a partir de la fecha de recepción",0, 750,{ align: "center" })
             doc.end();
             stream.on('finish', function () {
                 var fileURL = stream.toBlobURL('application/pdf');
@@ -1014,14 +988,6 @@ angular.module('agil.controladores')
             var img = convertUrlToBase64Image($scope.usuario.empresa.imagen, function (imagenEmpresa) {
                 return imagenEmpresa;
             });
-
-            // if ($scope.usuario.empresa.imagen.length > 100) {
-            //     doc.image(img, 60, 60, { width: 50, height: 50 });
-            // } else {
-            //     doc.image(img, 60, 60);  ///{ width: 40 }
-            // }
-
-
             var separacionExtra = 50
             var stream = doc.pipe(blobStream());
             var fechaActual = new Date();
@@ -1036,30 +1002,25 @@ angular.module('agil.controladores')
             $scope.proforma.detallesProformas.map(function (_) {
                 cant += _.cantidad
             })
-            doc.text(cant, 70, y - 2);
+            doc.text(1, 70, y - 2);
             doc.text(($scope.proforma.detalle), 150, y - 2, { width: 260 });
             extraDetalle = Math.ceil($scope.proforma.detalle.length / 260) * 20
-            doc.text($scope.number_format($scope.proforma.detallesProformas[0].precio_unitario, 2), 440, y - 2);
-            doc.text($scope.number_format($scope.proforma.detallesProformas[0].importeBs * cant, 2), 510, y - 2)
-            // doc.rect(40, y + 20, 540, 0).stroke();
+            doc.text($scope.number_format($scope.proforma.totalImporteBs, 2), 440, y - 2);
+            doc.text($scope.number_format($scope.proforma.totalImporteBs, 2), 510, y - 2)
             y = y + 20 + extraDetalle;
-
-            doc.rect(40, 105 + 80 + separacionExtra, 540, y - 160 - separacionExtra - 25).stroke();
-            doc.rect(x + 40, x + 80 + separacionExtra, 0, y - 160 - separacionExtra).stroke(); //cant | det
-            doc.rect(x + 350, x + 80 + separacionExtra, 0, y - 160 - separacionExtra).stroke();// det| punit
-            doc.rect(x + 410, x + 80 + separacionExtra, 0, y - 160 - separacionExtra).stroke(); // punit | import
-            doc.rect(x - 40, y + 10, 540, 25).stroke(); // cuadro literal
             $scope.proforma.importeLiteral = ConvertirALiteral($scope.proforma.totalImporteBs.toFixed(2));
-            doc.text('Son : ' + ($scope.proforma.importeLiteral), 58, y + 20);
-            doc.text($scope.number_format($scope.proforma.totalImporteBs, 2), 510, y + 20);
-            doc.text("Nota: La aprobación de la proforma deberá realizarse dentro de los próximos 7 días a partir de la fecha de recepción",0, y + 40,{ align: "center" })
+            doc.rect(40, 705, 540, 15).stroke(); // cuadro literal bolivianos
+            doc.rect(40, 725, 540, 15).stroke(); // cuadro total dolares
+            doc.text('Son : ' + ($scope.proforma.importeLiteral), 58, 710);
+            doc.text($scope.number_format($scope.proforma.totalImporteBs, 2), 510,710);
+            doc.text('Son : ' + $scope.number_format($scope.proforma.totalImporteBs / $scope.moneda.dolar, 2) + '  Dólares x ' + $scope.moneda.dolar, 58, 730);
+            
             doc.end();
             stream.on('finish', function () {
                 var fileURL = stream.toBlobURL('application/pdf');
                 window.open(fileURL, '_blank', 'location=no');
             });
             blockUI.stop();
-
         }
 
         $scope.dibujarCabeceraPDFImpresion = function (doc, pagina, totalPaginas, proforma) {
@@ -1077,8 +1038,6 @@ angular.module('agil.controladores')
             doc.font('Helvetica', 8);
             doc.text($scope.usuario.empresa.telefono1, 80, 60 + separacionExtra);
             doc.text($scope.usuario.empresa.direccion + ' Santa Cruz', 40, 70 + separacionExtra, { width: 90 });
-            // doc.text(, 40, 80 + separacionExtra,{ width: 90 });
-
             doc.text('Santa Cruz,     ', 65, 115 + separacionExtra, { lineBreak: false }).font('Helvetica-Bold', 10).text(fecha.split('/')[0], { lineBreak: false }).font('Helvetica', 10).text('   de   ', { lineBreak: false }).font('Helvetica-Bold', 10).text($scope.meses[new Date($scope.convertirFecha(fecha)).getMonth()].nombre, { lineBreak: false }).font('Helvetica', 10).text('   de   ', { lineBreak: false }).font('Helvetica-Bold', 10).text(fecha.split('/')[2])
             doc.font('Helvetica-Bold', 8);
             doc.font('Helvetica', 8);
@@ -1099,13 +1058,15 @@ angular.module('agil.controladores')
             doc.text("Teléfono:", 40, 60 + separacionExtra);
             doc.font('Helvetica', 8);
             doc.text(proforma.clienteProforma.razon_social, 100, 143 + separacionExtra);
-            // doc.text(" ", 120, 100);
-            // doc.text(proforma.clienteProforma.razon_social, 100, 110);
+
             doc.text(proforma.clienteProforma.nit, 500, 145 + separacionExtra);
-            // doc.text(proforma.clienteProforma.telefono1, 240, 120);
-            // doc.text(proforma.clienteProforma.direccion, 80, 130);
             doc.rect(40, 110 + separacionExtra, 540, 20).stroke();
             doc.rect(40, 135 + separacionExtra, 540, 20).stroke();
+            doc.rect(40, 210, 540, 490).stroke(); //235
+            doc.rect(120,210, 0, 490).stroke(); //cant | det
+            doc.rect(430,210, 0, 490).stroke();// det| punit
+            doc.rect(490,210, 0, 490).stroke(); // punit | import
+            doc.text("Nota: La aprobación de la proforma deberá realizarse dentro de los próximos 7 días a partir de la fecha de recepción",0, 750,{ align: "center" })
         }
         $scope.inicio()
     })

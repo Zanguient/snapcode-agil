@@ -136,7 +136,6 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
                         { model: Usuario, as: 'usuarioProforma' },
                         { model: Cliente, as: 'clienteProforma' },
                         { model: Sucursal, as: 'sucursalProforma' }
-
                     ]
                 }).then(function (proforma) {
                     res.json({ proforma: proforma })

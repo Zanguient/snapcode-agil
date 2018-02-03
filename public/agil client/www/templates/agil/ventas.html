@@ -551,7 +551,7 @@
 															<tr>
 																<td>
 																	<input ng-keypress="interceptarTecla($event,'cantidad',true)" id="id_producto" required ng-disabled="!venta.almacen" type="text" ng-model="detalleVenta.producto.nombre" placeholder="Ingrese el nombre del producto..." 
-																	uib-typeahead="producto as (producto.codigo+'-'+producto.nombre+'-'+producto.grupo+'-'+producto.subgrupo) for producto in buscarProducto($viewValue)" typeahead-wait-ms="1000" 
+																	uib-typeahead="producto as (producto.codigo+'-'+producto.nombre+'-'+producto.grupo+'-'+producto.subgrupo) for producto in buscarProducto($viewValue)" typeahead-wait-ms="100" 
 																	typeahead-template-url="templates/autocompletar.html" typeahead-show-hint="false" 
 																	typeahead-min-length="3" typeahead-on-select="establecerProducto($item, $model, $label, $event)">
 																	<div class="space-6"></div>

@@ -337,7 +337,7 @@ router.route('/clientes/:id_cliente')
 						id: req.params.id_cliente
 					}
 				}).then(function (clienteActualizado) {
-
+					guardarContratosCliente(req,res, req.body)		
 					req.body.clientes_razon.forEach(function (cliente_razon, index, array) {
 						if (cliente_razon.eliminado) {
 							ClienteRazon.destroy({

@@ -87,6 +87,7 @@ angular.module('agil.controladores')
         $scope.idModalDialogConfirmacionEntregaAdelantado = 'dialog-entrega-adelantada-prerequisito'
         $scope.IdEntregaPrerequisito = 'dialog-entrega-preRequisito';
         $scope.IdModalVerificarCuenta = 'modal-verificar-cuenta';
+        $scope.idModalImpresionHojaVida = 'dialog-impresion-hoja-vida';
         $scope.$on('$viewContentLoaded', function () {
             // resaltarPestaña($location.path().substring(1));
             resaltarPestaña($location.path().substring(1));
@@ -110,7 +111,7 @@ angular.module('agil.controladores')
                 $scope.idModalHistorialViajes, $scope.idModalReporteAusencias, $scope.idModalCertificado, $scope.idModalInstitucion,
                 $scope.idModalRhNuevo, $scope.idModalWizardRhNuevo, $scope.idImagenUsuario, $scope.idEliminarUsuarioRh, $scope.idModalWizardRhVista,
                 $scope.idModalContenedorRhVista, $scope.idModalDialogPrerequisitoNuevo, $scope.idEliminarSeguroEmpleado, $scope.idEliminarFamiliarEmpleado, $scope.idModalHistorialPrerequisito,
-                $scope.idModalEditarPrerequisito, $scope.idModalDialogConfirmacionEntregaAdelantado, $scope.IdEntregaPrerequisito, $scope.IdModalVerificarCuenta);
+                $scope.idModalEditarPrerequisito, $scope.idModalDialogConfirmacionEntregaAdelantado, $scope.IdEntregaPrerequisito, $scope.IdModalVerificarCuenta,$scope.idModalImpresionHojaVida);
             $scope.buscarAplicacion($scope.usuario.aplicacionesUsuario, $location.path().substring(1));
             $scope.obtenerColumnasAplicacion()
             blockUI.stop();
@@ -193,7 +194,7 @@ angular.module('agil.controladores')
             $scope.eliminarPopup($scope.idModalDialogConfirmacionEntregaAdelantado)
             $scope.eliminarPopup($scope.IdEntregaPrerequisito)
             $scope.eliminarPopup($scope.IdModalVerificarCuenta)
-
+            $scope.eliminarPopup($scope.idModalImpresionHojaVida)
         });
         $scope.inicio = function () {
 
@@ -223,6 +224,14 @@ angular.module('agil.controladores')
             }, $scope.aplicacion.aplicacion.id);
             $scope.fieldViewer.updateObject();
         }
+
+$scope.abrirModalImprimirHojaVida=function () {
+    $scope.abrirPopup($scope.idModalImpresionHojaVida)
+}
+$scope.cerrarModalImprimirHojaVida=function () {
+    $scope.cerrarPopup($scope.idModalImpresionHojaVida)
+}
+
         $scope.abrirDialogEditarPreRequisito = function (prerequisito) {
             $scope.prerequisito = prerequisito
             $scope.prerequisito.fecha_vencimiento_texto = $scope.fechaATexto(new Date)
@@ -355,7 +364,7 @@ angular.module('agil.controladores')
             $scope.cerrarPopup($scope.idModalWizardRhVista);
         }
         $scope.abrirDialogRhNuevo = function () {
-            $scope.nuevoRH = new NuevoRecursoHumano({ persona: { imagen: "img/icon-user-default.png" }, id_empresa: $scope.usuario.id_empresa, es_empleado: true });
+            $scope.nuevoRH = new NuevoRecursoHumano({ persona: { imagen: "img/icon-user-default.png" }, id_empresa: $scope.usuario.id_empresa, es_empleado: true ,activoCopiaCodigo:true});
             $scope.abrirPopup($scope.idModalRhNuevo);
         }
         $scope.cerrarDialogRhNuevo = function () {
@@ -1000,6 +1009,7 @@ angular.module('agil.controladores')
             var promesa = ObtenerListaPrestamo($scope.paginator)
             promesa.then(function (datos) {
                 $scope.paginator.setPages(datos.paginas);
+                if(datos.prestamos.length>0){
                 datos.prestamos.forEach(function (prestamo, index, array) {
                     var fecha = $scope.fechaATexto(prestamo.fecha_inicial)
                     prestamo.fecha_vence = editar_fecha(fecha, prestamo.plazo, "m", "/")
@@ -1032,13 +1042,23 @@ angular.module('agil.controladores')
                     }
                     prestamo.montoEdit = false
                 });
+            }else{
+                $scope.listaPrestamos={}
+                $scope.prestamos={}
+            }
             })
         }
 
+        $scope.copiarCodigodeCi=function (empleado) {
+            if(empleado.activoCopiaCodigo){
+                empleado.codigo=empleado.persona.ci
+            }
+            
+        }
         $scope.obtenerPrestamos = function () {
             blockUI.start();
             $scope.paginator = Paginator();
-            $scope.paginator.column = "fecha_inicial";
+            $scope.paginator.column = "id";
             $scope.paginator.direccion = "asc";
             $scope.filtro = { empresa: $scope.usuario.id_empresa, plazo: "", inicio: "", fin: "", nombre: "", apellido: "", cuentas_liquidas: false };
             $scope.paginator.callBack = $scope.optenerListaPrestamos;

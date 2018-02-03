@@ -3066,6 +3066,8 @@
                         </div>
                     </div>
                     <div class="modal-footer-hoja wizard-actions">
+                        <button type="button" type="button" ng-click="abrirModalImprimirHojaVida()" class="btn btn-success btn-sm ">
+                            <i class="ace-icon fa fa-print bigger-110"></i>&nbsp; Imprimir</button>
                         <button type="button" type="button" ng-click="GuardarHojaDeVidaDirecto()" class="btn btn-primary btn-sm ">
                             <i class="ace-icon fa fa-floppy-o bigger-110"></i>&nbsp; Guardar</button>
                         <button class="btn btn-sm btn-prev">
@@ -3843,7 +3845,15 @@
             <div class="">
                 <div class="form-group col-sm-6">
                     <label for="relacion">Relación</label>
-                    <select style="width:250px" name="genero_nuevoRH" id="relacionF" ng-model="familiar.relacion" ng-options="relacion as relacion.nombre for relacion in relaciones.clases track by relacion.id"></select>
+                    <div class="row">
+                        <div class="col-sm-8">
+                            <select style="width:250px" name="genero_nuevoRH" id="relacionF" ng-model="familiar.relacion" ng-options="relacion as relacion.nombre for relacion in relaciones.clases | filter:{habilitado:true} track by relacion.id"></select>
+                        </div>
+                        <div class="col-sm-4">
+                            <span class="input-group-addon glyphicon glyphicon-pencil point-edit green" aria-hidden="true" ng-click="abrirDialogConceptoEdicion(relaciones)"></span>
+                        </div>
+                    </div>
+
 
                 </div>
                 <div class="form-group col-sm-6">
@@ -3853,11 +3863,11 @@
             </div>
             <div class="">
                 <div class="form-group">
-                    <div class="col-sm-3">
-                        <label for="edad">Edad</label>
-                    </div>
-                    <div class="col-sm-3">
-                        <input type="number" class="form-control" id="edad" ng-model="familiar.edad" disabled>
+                    <div class="col-sm-6">
+                        <label for="edad">Edad
+
+                            <input type="number" class="form-control" id="edad" ng-model="familiar.edad" disabled>
+                        </label>
                     </div>
                 </div>
             </div>
@@ -4027,7 +4037,10 @@
                         <td>{{historial.fecha_fin | date: "dd/MM/yyyy"}}</td>
                         <td>
                             <a>
-                                <span class="fa fa-paperclip bigger-130" aria-hidden="true"></span>
+                                <a href="/contratos/contrato-{{historial.id}}-{{historial.contrato}}">
+                                    <i class="ace-icon fa fa-paperclip bigger-130"></i>
+                                </a>
+                                <!--   <span class="fa fa-paperclip bigger-130" aria-hidden="true"></span> -->
                             </a>
                         </td>
                     </tr>
@@ -5858,22 +5871,35 @@
                         <tfoot style="background-color: rgb(215, 228, 240)">
                             <tr>
                                 <td colspan="3">
-                                    <label class="pull-right blue"><b> Total</b></label>
+                                    <label class="pull-right blue">
+                                        <b> Total</b>
+                                    </label>
                                 </td>
                                 <td>
-                                        <label class="pull-left blue"><b>{{prestamos.total_montos}}</b></label>
+                                    <label class="pull-left blue">
+                                        <b>{{prestamos.total_montos}}</b>
+                                    </label>
                                 </td>
                                 <td colspan="3">
-                                        <label class="pull-right blue"><b> Pagos a/c</b></label>
+                                    <label class="pull-right blue">
+                                        <b> Pagos a/c</b>
+                                    </label>
                                 </td>
                                 <td>
-                                        <label class="pull-left blue"><strong><b> {{prestamos.pagos_acuenta}}</b></label>
+                                    <label class="pull-left blue">
+                                        <strong>
+                                            <b> {{prestamos.pagos_acuenta}}</b>
+                                    </label>
                                 </td>
                                 <td>
-                                        <label class="pull-right blue"><b> Saldo</b></label>
+                                    <label class="pull-right blue">
+                                        <b> Saldo</b>
+                                    </label>
                                 </td>
                                 <td colspan="3">
-                                   <label class="pull-left blue"><b>  {{prestamos.saldo}}</b></label>
+                                    <label class="pull-left blue">
+                                        <b> {{prestamos.saldo}}</b>
+                                    </label>
                                 </td>
                             </tr>
                         </tfoot>
@@ -6193,9 +6219,9 @@
                 <div class="form-group">
                     <label for="monto-pagar">Monto a Pagar</label>
                     <div class="input-group">
-                        <input ng-if="prestamo.prestamoPagos.length==0" required type="number" min="1" step="0.01" max="{{prestamo.total}}" ng-model="prestamo.monto_pagado"
+                        <input ng-if="prestamo.prestamoPagos.length==0" required type="number" min="0.01" step="0.01" max="{{prestamo.total}}" ng-model="prestamo.monto_pagado"
                             class="form-control" id="monto-pagar" name="monto-pagar" placeholder="1000">
-                        <input ng-if="prestamo.prestamoPagos.length>0" required type="number" min="1" step="0.01" max="{{prestamo.total-prestamo.prestamoPagos[(prestamo.prestamoPagos.length-1)].a_cuenta_anterior}}"
+                        <input ng-if="prestamo.prestamoPagos.length>0" required type="number" min="0.01" step="0.01" max="{{prestamo.total-prestamo.prestamoPagos[(prestamo.prestamoPagos.length-1)].a_cuenta_anterior}}"
                             ng-model="prestamo.monto_pagado" class="form-control" id="monto-pagar" name="monto-pagar" placeholder="1000">
                         <span class="input-group-addon">Bs</span>
                     </div>
@@ -7431,10 +7457,21 @@
                                             <div class="col-lg-5">
                                                 <label for="ci">C.I.</label>
                                             </div>
-                                            <div class="col-lg-7">
-
-                                                <input type="text" id="ci" ng-model="nuevoRH.persona.ci" placeholder="C.I" class="form-control" />
+                                            <div class="col-lg-4">
+                                                <input type="text" ng-change="copiarCodigodeCi(nuevoRH)" id="ci" ng-model="nuevoRH.persona.ci" placeholder="C.I" class="form-control"
+                                                />
                                             </div>
+                                            <div class="col-lg-1">
+                                                <p>Copiar a codigo</p>
+                                            </div>
+                                            <div class="col-lg-2">
+                                                <label>
+                                                    <input name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="nuevoRH.activoCopiaCodigo" />
+                                                    <span class="lbl check-descuento"></span>
+
+                                                </label>
+                                            </div>
+
                                         </div>
                                         <div class="row form-group">
                                             <div class="col-lg-5">
@@ -7643,6 +7680,33 @@
         </div>
     </div>
     <!-- ===== fin panel ============================= -->
+    <!-- ========= inicio configuracion impresion hoja de vida ========= -->
+    <div id="dialog-impresion-hoja-vida" title="configuracion impresion hoja vida">
+        <div class="modal-content">
+            <div class="modal-header bg-success">
+                IMPRESIÓN HOJA DE VIDA
+            </div>
+            <div class="modal-body">
+                <p>Incluir capacidades internas</p>
+                <div class="row">
+                    <div class="col-md-6">
+                        <label for="desde">Desde</label>
+                        <input type="text" class="form-control date-picker">
+
+                    </div>
+                    <div class="col-md-6">
+                        <label for="desde">Hasta </label>
+                        <input type="text" class="form-control date-picker">
+
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success">Imprimir</button>
+                <button type="button" class="btn btn-danger" ng-click="cerrarModalImprimirHojaVida()">Cancelar</button>
+            </div>
+        </div>
+    </div>
     <!-- ========= inicio  entrega adelantada prerequisito ========= -->
     <div id="dialog-entrega-adelantada-prerequisito" title="¿Entrega Adelantada de prerequisito?">
         <p>
