@@ -2,7 +2,7 @@ angular.module('agil.controladores')
 
 	.controller('ControladorClientes', function ($scope, $window, $localStorage, $location, $templateCache, $route, blockUI, $timeout,
 		ClientesPaginador, Cliente, Clientes, Empresas, ClientesEmpresa, uiGmapGoogleMapApi, $cordovaGeolocation,
-		DatoCodigoSiguienteClienteEmpresa, DestinosCliente) {
+		DatoCodigoSiguienteClienteEmpresa, DestinosCliente,RazonesSocialesCliente) {
 		blockUI.start();
 
 		$scope.usuario = JSON.parse($localStorage.usuario);
@@ -474,7 +474,45 @@ angular.module('agil.controladores')
 				reader.readAsBinaryString(f);
 			}
 		}
+		$scope.subirExcelRazonesSocialesCliente = function (event) {
+			var files = event.target.files;
+			var i, f;
+			for (i = 0, f = files[i]; i != files.length; ++i) {
+				var reader = new FileReader();
+				var name = f.name;
+				reader.onload = function (e) {
+					blockUI.start();
+					var data = e.target.result;
 
+					var workbook = XLSX.read(data, { type: 'binary' });
+					var first_sheet_name = workbook.SheetNames[0];
+					var row = 2, i = 0;
+					var worksheet = workbook.Sheets[first_sheet_name];
+					var clientes = [];
+					do {
+						var cliente = {};
+						cliente.codigo = worksheet['A' + row] != undefined && worksheet['A' + row] != "" ? worksheet['A' + row].v.toString() : null;
+						cliente.razon_social = worksheet['B' + row] != undefined && worksheet['B' + row] != "" ? worksheet['B' + row].v.toString() : null;
+						cliente.nit = worksheet['C' + row] != undefined && worksheet['C' + row] != "" ? worksheet['C' + row].v.toString() : null;
+						cliente.codigo_sap = worksheet['D' + row] != undefined && worksheet['D' + row] != "" ? worksheet['D' + row].v.toString() : null;					
+						clientes.push(cliente);
+						row++;
+						i++;
+					} while (worksheet['A' + row] != undefined);
+					$scope.guardarRazonesSocialesClientes(clientes);
+					blockUI.stop();
+				};
+				reader.readAsBinaryString(f);
+			}
+		}
+		$scope.guardarRazonesSocialesClientes = function (clientes) {
+			var promesa = RazonesSocialesCliente(clientes,$scope.usuario.id_empresa);
+			promesa.then(function (res) {
+				blockUI.stop();
+				$scope.mostrarMensaje(res.mensaje);
+				$scope.recargarItemsTabla()
+			})
+		}
 		$scope.guardarClientes = function (clientes) {
 			var clientesEmpresa = new ClientesEmpresa({ clientes: clientes, id_empresa: $scope.usuario.id_empresa });
 			clientesEmpresa.$save(function (res) {

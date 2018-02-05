@@ -51,7 +51,30 @@ angular.module('agil.servicios')
 		return delay.promise;
 	};
     return res;
-  }])
+	}])
+	.factory('RazonSocialClientesEmpresa', function($resource) {
+		return $resource(restServer+"clientes-upload-razonsocial/empresa/:idEmpresa", {},
+		{
+			'update': { method: 'PUT' }
+		});
+})
+.factory('RazonesSocialesCliente', ['RazonSocialClientesEmpresa','$q',function(RazonSocialClientesEmpresa, $q) 
+  {
+	var res = function(clientes,idEmpresa) 
+	{
+		var delay = $q.defer();
+		RazonSocialClientesEmpresa.save({idEmpresa:idEmpresa},clientes,function(entidades) 
+		{        
+			delay.resolve(entidades);
+		}, function(error) 
+			{
+				delay.reject(error);
+			});
+		return delay.promise;
+	};
+    return res;
+	}])
+
   
 .factory('BusquedaClientesNit', function($resource) {
 		return $resource(restServer+"clientes/empresa/:idEmpresa/texto/:texto");

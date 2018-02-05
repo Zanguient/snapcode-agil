@@ -19,6 +19,51 @@
 		</div>
 		<div class="table-header">
 			Lista de Clientes
+			<div class="pos-rel pull-right">
+                    <a data-toggle="dropdown" class="btn btn-primary btn-xs dropdown-toggle" id="zoomBtn">
+                        <i class="ace-icon fa fa-wrench  bigger-110 icon-only "></i>
+                    </a>
+                    <ul class="dropdown-menu-right dropdown-navbar navbar-orange dropdown-menu dropdown-caret dropdown-close importar-text">
+                        <li class="dropdown-header header-importar">
+                            <i class="ace-icon fa fa-wrench white"></i>
+                            Importaciones
+                        </li>
+                        <li class="dropdown-content">
+                            <ul class="dropdown-menu dropdown-navbar navbar-pink">
+                                <li>
+                                    <div class="clearfix">
+                                        <span class="pull-left" style="color:rgb(85, 128, 163) !important">
+                                            Razones sociales Clientes
+                                        </span>
+
+                                        <a href="/recursos/EJEMPLO-RAZONES-SOCIALES-CLIENTES.xlsx" class="boton-importar pull-right">
+                                            <i class="fa  fa-cloud-download green"></i>
+                                        </a>
+
+                                        <div class="fileUpload boton-importar pull-right">
+                                            <span class="fileUpload-button ace-icon fa fa-cloud-upload blue"></span>
+                                            <input class="upload" type="file" custom-on-file-change="subirExcelRazonesSocialesCliente" />
+                                        </div>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="clearfix">
+                                        <span class="pull-left">
+                                            Importación 2
+                                        </span>
+                                        <a class="boton-importar pull-right">
+                                            <i class="fa  fa-cloud-download green"></i>
+                                        </a>
+                                        <a class="boton-importar pull-right">
+                                            <i class="fa fa-cloud-upload blue"></i>
+                                        </a>
+                                    </div>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="dropdown-footer"></li>
+                    </ul>
+                </div>
 		</div>
 
 		<!-- div.table-responsive -->
@@ -394,6 +439,13 @@
 									<input type="number" id="nit" ng-model="cliente_razon.nit" placeholder="NIT" class="form-control" />
 								</div>
 							</div>
+							<div class="form-group">
+									<label class="col-sm-3 control-label no-padding-right" for="codigo_sap">Código SAP</label>
+	
+									<div class="col-sm-9">
+										<input type="number" id="codigo_sap" ng-model="cliente_razon.codigo_sap" placeholder="Código SAP" class="form-control" />
+									</div>
+								</div>
 
 							<!--Crear agregar almacen -->
 							<div class="form-group">
@@ -408,6 +460,7 @@
 									<tr>
 										<th>Razon Social</th>
 										<th>NIT</th>
+										<th>Código SAP</th>
 										<th>Acciones</th>
 
 									</tr>
@@ -418,6 +471,7 @@
 
 										<td>{{cliente_razon.razon_social}}</td>
 										<td>{{cliente_razon.nit}}</td>
+										<td>{{cliente_razon.codigo_sap}}</td>
 										<td>
 											<div class="hidden-sm hidden-xs action-buttons">
 												<a class="green" href="javascript:void(0)" ng-click="modificarClienteRazon(cliente_razon)">

@@ -7687,23 +7687,29 @@
                 IMPRESIÓN HOJA DE VIDA
             </div>
             <div class="modal-body">
-                <p>Incluir capacidades internas</p>
+                <p>Incluir capacidades internas  <br><label>
+                        <input name="switch-field-1"  ng-model="capacidades.capacidadInterna" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="nuevoRH.activoCopiaCodigo" />
+                        <span class="lbl check-descuento"></span>
+
+                    </label></p>
                 <div class="row">
-                    <div class="col-md-6">
+                    <div ng-hide="!capacidades.capacidadInterna" class="col-md-6">
                         <label for="desde">Desde</label>
-                        <input type="text" class="form-control date-picker">
+                        <input size="15" ng-update-hidden class="form-control date-picker"
+                            type="text" data-date-format="dd/mm/yyyy" id="fechainicio" ng-model="capacidades.inicio" placeholder="Fecha inicial">
 
                     </div>
-                    <div class="col-md-6">
+                    <div  ng-hide="!capacidades.capacidadInterna" class="col-md-6">
                         <label for="desde">Hasta </label>
-                        <input type="text" class="form-control date-picker">
+                        <input size="15" ng-update-hidden class="form-control date-picker"
+                            type="text" data-date-format="dd/mm/yyyy" id="fechainicio" ng-model="capacidades.fin" placeholder="Fecha inicial">
 
                     </div>
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-success">Imprimir</button>
-                <button type="button" class="btn btn-danger" ng-click="cerrarModalImprimirHojaVida()">Cancelar</button>
+                <button type="button" class="btn btn-success" ng-click="imprimirHojaVida()"><i class="ace-icon fa fa-print"></i>Imprimir</button>
+                <button type="button" class="btn btn-danger" ng-click="cerrarModalImprimirHojaVida()"><i class="ace-icon fa fa-times"></i> Cancelar</button>
             </div>
         </div>
     </div>

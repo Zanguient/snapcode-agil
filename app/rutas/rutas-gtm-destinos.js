@@ -1,7 +1,6 @@
-module.exports = function (router, ensureAuthorizedAdministrador, fs, forEach, jwt, md5, GtmDestino) {
+module.exports = function (router, ensureAuthorizedAdministrador, fs, forEach, jwt, md5, GtmDestino, Cliente, GtmClienteDestino) {
 
 	router.route('/gtm-destinos/empresa/:id_empresa')
-
 		.get(function (req, res) {
 			GtmDestino.findAll({
 				where: {
@@ -14,17 +13,56 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, forEach, j
 		})
 		.post(function (req, res) {
 			req.body.forEach(function (destino, index, array) {
-				GtmDestino.create({
-					id_empresa: req.params.id_empresa,
-					destino: destino.destino,
-					direccion: destino.direccion,
-					eliminado: false,
-					codigo: destino.codigo
-				}).then(function (destinoCreado) {
-					if (index === (array.length - 1)) {
-						res.json({mensaje:"Datos importados Satisfactoriamente!"});
-					}
-				});
+				if (destino.cliente_codigo) {
+					Cliente.find({
+						where: { codigo: destino.cliente_codigo }
+					}).then(function (clienteEncontrado) {
+						if (clienteEncontrado) {
+							GtmDestino.create({
+								id_empresa: req.params.id_empresa,
+								destino: destino.destino,
+								direccion: destino.direccion,
+								eliminado: false,
+								codigo: destino.codigo
+							}).then(function (destinoCreado) {
+								GtmClienteDestino.create({
+									id_cliente: clienteEncontrado.id,
+									id_destino: destinoCreado.id
+								}).then(function (datosCreado) {
+									if (index === (array.length - 1)) {
+										res.json({ mensaje: "Datos importados Satisfactoriamente!" });
+									}
+								})
+
+							});
+						} else {
+							GtmDestino.create({
+								id_empresa: req.params.id_empresa,
+								destino: destino.destino,
+								direccion: destino.direccion,
+								eliminado: false,
+								codigo: destino.codigo
+							}).then(function (destinoCreado) {
+								if (index === (array.length - 1)) {
+									res.json({ mensaje: "Datos importados Satisfactoriamente!" });
+								}
+							});
+						}
+					})
+
+				} else {
+					GtmDestino.create({
+						id_empresa: req.params.id_empresa,
+						destino: destino.destino,
+						direccion: destino.direccion,
+						eliminado: false,
+						codigo: destino.codigo
+					}).then(function (destinoCreado) {
+						if (index === (array.length - 1)) {
+							res.json({ mensaje: "Datos importados Satisfactoriamente!" });
+						}
+					});
+				}
 			});
 
 		});

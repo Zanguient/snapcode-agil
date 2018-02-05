@@ -1,5 +1,5 @@
 module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Cliente, RutaCliente, Venta,
-	VentaReprogramacionPago, sequelize, ClienteRazon, GtmClienteDestino,GtmDestino) {
+	VentaReprogramacionPago, sequelize, ClienteRazon, GtmClienteDestino, GtmDestino) {
 
 	router.route('/clientes')
 		.post(function (req, res) {
@@ -34,14 +34,14 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Clie
 								id: cliente.id
 							}
 						}).then(function (clienteCreado) {
-							guardarContratosCliente(req,res,cliente)		
+							guardarContratosCliente(req, res, cliente)
 							req.body.clientes_razon.forEach(function (cliente_razon, index, array) {
 								if (!cliente_razon.eliminado) {
 									ClienteRazon.create({
 										id_cliente: cliente.id,
 										razon_social: cliente_razon.razon_social,
 										nit: cliente_razon.nit,
-
+										codigo_sap: cliente_razon.codigo_sap,
 									}).then(function (clienteRazonCreado) {
 									});
 								}
@@ -81,14 +81,15 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Clie
 						texto2: req.body.texto2,
 						latitud: req.body.latitud,
 						longitud: req.body.longitud
-					}).then(function (clienteCreado) {	
-						guardarContratosCliente(req,res,clienteCreado)		
+					}).then(function (clienteCreado) {
+						guardarContratosCliente(req, res, clienteCreado)
 						req.body.clientes_razon.forEach(function (cliente_razon, index, array) {
 							if (!cliente_razon.eliminado) {
 								ClienteRazon.create({
 									id_cliente: clienteCreado.id,
 									razon_social: cliente_razon.razon_social,
 									nit: cliente_razon.nit,
+									codigo_sap: cliente_razon.codigo_sap,
 
 								}).then(function (clienteRazonCreado) {
 								});
@@ -110,85 +111,85 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Clie
 				}
 			});
 		});
-function guardarContratosCliente(req,res,cliente) {
-	if (req.body.documento_nit1) {
-		fs.writeFileSync('./documentos/clientes/documento-nit-' + cliente.id + "-" + req.body.documento_nit1[0].nombre, req.body.documento_nit1[0].data, 'binary', function (err) {
-			if (err)
-				console.log(err);
-			else
-				console.log("The file was saved!");
-		});
-
-		Cliente.update({
-			documento_nit: req.body.documento_nit1[0].nombre
-		}, {
-				where: { id: cliente.id }
-			}).then(function (affecteedRows) {									
+	function guardarContratosCliente(req, res, cliente) {
+		if (req.body.documento_nit1) {
+			fs.writeFileSync('./documentos/clientes/documento-nit-' + cliente.id + "-" + req.body.documento_nit1[0].nombre, req.body.documento_nit1[0].data, 'binary', function (err) {
+				if (err)
+					console.log(err);
+				else
+					console.log("The file was saved!");
 			});
+
+			Cliente.update({
+				documento_nit: req.body.documento_nit1[0].nombre
+			}, {
+					where: { id: cliente.id }
+				}).then(function (affecteedRows) {
+				});
+		}
+		if (req.body.documento_funda_empresa1) {
+			fs.writeFileSync('./documentos/clientes/documento-fundaempresa-' + cliente.id + "-" + req.body.documento_funda_empresa1[0].nombre, req.body.documento_funda_empresa1[0].data, 'binary', function (err) {
+				if (err)
+					console.log(err);
+				else
+					console.log("The file was saved!");
+			});
+
+			Cliente.update({
+				documento_funda_empresa: req.body.documento_funda_empresa1[0].nombre
+			}, {
+					where: { id: cliente.id }
+				}).then(function (affecteedRows) {
+				});
+		}
+		if (req.body.documento_ci1) {
+			fs.writeFileSync('./documentos/clientes/documento-ci-' + cliente.id + "-" + req.body.documento_ci1[0].nombre, req.body.documento_ci1[0].data, 'binary', function (err) {
+				if (err)
+					console.log(err);
+				else
+					console.log("The file was saved!");
+			});
+
+			Cliente.update({
+				documento_ci: req.body.documento_ci1[0].nombre
+			}, {
+					where: { id: cliente.id }
+				}).then(function (affecteedRows) {
+				});
+		}
+		if (req.body.documento_licencia_funcionamiento1) {
+			fs.writeFileSync('./documentos/clientes/documento-licencia-funcionamiento-' + cliente.id + "-" + req.body.documento_licencia_funcionamiento1[0].nombre, req.body.documento_licencia_funcionamiento1[0].data, 'binary', function (err) {
+				if (err)
+					console.log(err);
+				else
+					console.log("The file was saved!");
+			});
+
+			Cliente.update({
+				documento_licencia_funcionamiento: req.body.documento_licencia_funcionamiento1[0].nombre
+			}, {
+					where: { id: cliente.id }
+				}).then(function (affecteedRows) {
+				});
+		}
+		if (req.body.documento_seguro_social1) {
+			fs.writeFileSync('./documentos/clientes/documento-seguro-social-' + cliente.id + "-" + req.body.documento_seguro_social1[0].nombre, req.body.documento_seguro_social1[0].data, 'binary', function (err) {
+				if (err)
+					console.log(err);
+				else
+					console.log("The file was saved!");
+			});
+
+			Cliente.update({
+				documento_seguro_social: req.body.documento_seguro_social1[0].nombre
+			}, {
+					where: { id: cliente.id }
+				}).then(function (affecteedRows) {
+				});
+		}
+
 	}
-	if (req.body.documento_funda_empresa1) {
-		fs.writeFileSync('./documentos/clientes/documento-fundaempresa-' + cliente.id + "-" + req.body.documento_funda_empresa1[0].nombre, req.body.documento_funda_empresa1[0].data, 'binary', function (err) {
-			if (err)
-				console.log(err);
-			else
-				console.log("The file was saved!");
-		});
-
-		Cliente.update({
-			documento_funda_empresa: req.body.documento_funda_empresa1[0].nombre
-		}, {
-				where: { id: cliente.id }
-			}).then(function (affecteedRows) {									
-			});
-	}
-	if (req.body.documento_ci1) {
-		fs.writeFileSync('./documentos/clientes/documento-ci-' + cliente.id + "-" + req.body.documento_ci1[0].nombre, req.body.documento_ci1[0].data, 'binary', function (err) {
-			if (err)
-				console.log(err);
-			else
-				console.log("The file was saved!");
-		});
-
-		Cliente.update({
-			documento_ci: req.body.documento_ci1[0].nombre
-		}, {
-				where: { id: cliente.id }
-			}).then(function (affecteedRows) {									
-			});
-	}
-	if (req.body.documento_licencia_funcionamiento1) {
-		fs.writeFileSync('./documentos/clientes/documento-licencia-funcionamiento-' + cliente.id + "-" + req.body.documento_licencia_funcionamiento1[0].nombre, req.body.documento_licencia_funcionamiento1[0].data, 'binary', function (err) {
-			if (err)
-				console.log(err);
-			else
-				console.log("The file was saved!");
-		});
-
-		Cliente.update({
-			documento_licencia_funcionamiento: req.body.documento_licencia_funcionamiento1[0].nombre
-		}, {
-				where: { id: cliente.id }
-			}).then(function (affecteedRows) {									
-			});
-	}	
-	if (req.body.documento_seguro_social1) {
-		fs.writeFileSync('./documentos/clientes/documento-seguro-social-' + cliente.id + "-" + req.body.documento_seguro_social1[0].nombre, req.body.documento_seguro_social1[0].data, 'binary', function (err) {
-			if (err)
-				console.log(err);
-			else
-				console.log("The file was saved!");
-		});
-
-		Cliente.update({
-			documento_seguro_social: req.body.documento_seguro_social1[0].nombre
-		}, {
-				where: { id: cliente.id }
-			}).then(function (affecteedRows) {									
-			});
-	}			
-	
-}
-router.route('/clientes/empresa')
+	router.route('/clientes/empresa')
 		.post(function (req, res) {
 			req.body.clientes.forEach(function (cliente, index, array) {
 				Cliente.find({
@@ -278,7 +279,52 @@ router.route('/clientes/empresa')
 			})
 		}
 	}
-router.route('/cliente-vencimiento-credito/:id')
+
+	router.route('/clientes-upload-razonsocial/empresa/:idEmpresa')
+		.post(function (req, res) {
+			req.body.forEach(function (cliente_razon, index, array) {
+				if (cliente_razon.codigo) {
+					Cliente.find({
+						where: { codigo: cliente_razon.codigo }
+					}).then(function (clienteEncontrado) {
+						if (clienteEncontrado) {
+							ClienteRazon.create({
+								id_cliente: clienteEncontrado.id,
+								razon_social: cliente_razon.razon_social,
+								nit: cliente_razon.nit,
+								codigo_sap: cliente_razon.codigo_sap,
+							}).then(function (clienteRazonCreado) {
+								if (index == array.length - 1) {
+									res.json({ mensaje: "guardados satisfactoriamente!" })
+								}
+							});
+						} else {
+							ClienteRazon.create({
+								razon_social: cliente_razon.razon_social,
+								nit: cliente_razon.nit,
+								codigo_sap: cliente_razon.codigo_sap,
+							}).then(function (clienteRazonActualizado) {
+								if (index == array.length - 1) {
+									res.json({ mensaje: "guardados satisfactoriamente!" })
+								}
+							});
+						}
+					})
+				} else {
+					ClienteRazon.create({
+						razon_social: cliente_razon.razon_social,
+						nit: cliente_razon.nit,
+						codigo_sap: cliente_razon.codigo_sap,
+					}).then(function (clienteRazonActualizado) {
+						if (index == array.length - 1) {
+							res.json({ mensaje: "guardados satisfactoriamente!" })
+						}
+					});
+				}
+
+			})
+		})
+	router.route('/cliente-vencimiento-credito/:id')
 		.put(function (req, res) {
 			var inicio_fecha_anterior = new Date(req.body.fecha_anterior);
 			inicio_fecha_anterior.setHours(0, 0, 0, 0, 0);
@@ -312,7 +358,7 @@ router.route('/cliente-vencimiento-credito/:id')
 						});
 				});
 		})
-router.route('/clientes/:id_cliente')
+	router.route('/clientes/:id_cliente')
 		.put(function (req, res) {
 			Cliente.update({
 				razon_social: req.body.razon_social,
@@ -337,7 +383,7 @@ router.route('/clientes/:id_cliente')
 						id: req.params.id_cliente
 					}
 				}).then(function (clienteActualizado) {
-					guardarContratosCliente(req,res, req.body)		
+					guardarContratosCliente(req, res, req.body)
 					req.body.clientes_razon.forEach(function (cliente_razon, index, array) {
 						if (cliente_razon.eliminado) {
 							ClienteRazon.destroy({
@@ -350,6 +396,7 @@ router.route('/clientes/:id_cliente')
 								ClienteRazon.update({
 									razon_social: cliente_razon.razon_social,
 									nit: cliente_razon.nit,
+									codigo_sap: cliente_razon.codigo_sap,
 								}, {
 										where: { id: cliente_razon.id }
 									}).then(function (clienteRazonActualizado) {
@@ -360,13 +407,14 @@ router.route('/clientes/:id_cliente')
 									id_cliente: req.params.id_cliente,
 									razon_social: cliente_razon.razon_social,
 									nit: cliente_razon.nit,
+									codigo_sap: cliente_razon.codigo_sap,
 								}).then(function (clienteRazonCreado) {
 
 								});
 							}
 						}
 					});
-				
+
 					//UPDATE DESTINO
 
 					req.body.cliente_destinos.forEach(function (clienteDestino, index, array) {
@@ -384,7 +432,7 @@ router.route('/clientes/:id_cliente')
 								}).then(function (GtmClienteDestinoCreado) {
 
 								});
-							} 
+							}
 						}
 					});
 					res.json({ mensaje: "¡Cliente Destino actualizado satisfactoriamente!" });
@@ -400,14 +448,14 @@ router.route('/clientes/:id_cliente')
 				res.json({ message: "Eliminado Satisfactoriamente!" });
 			});
 		})
-		
-		.get(function(req,res){
+
+		.get(function (req, res) {
 			Cliente.find({
 				where: {
-					id:req.params.id_cliente
+					id: req.params.id_cliente
 				},
-				include:[{model:ClienteRazon,as:'clientes_razon'},
-				         {model:GtmClienteDestino,as:'cliente_destinos',include:[{model:GtmDestino,as:'destino'}]}]
+				include: [{ model: ClienteRazon, as: 'clientes_razon' },
+				{ model: GtmClienteDestino, as: 'cliente_destinos', include: [{ model: GtmDestino, as: 'destino' }] }]
 			}).then(function (cliente) {
 				res.json(cliente);
 			});
@@ -490,7 +538,7 @@ router.route('/clientes/:id_cliente')
 						model: ClienteRazon, as: 'clientes_razon'
 					},
 					{
-						model: GtmClienteDestino, as: 'cliente_destinos',include:[{model:GtmDestino, as:"destino"}]
+						model: GtmClienteDestino, as: 'cliente_destinos', include: [{ model: GtmDestino, as: "destino" }]
 					}],
 					order: [['id', 'asc']]
 				}).then(function (clientes) {
@@ -502,7 +550,7 @@ router.route('/clientes/:id_cliente')
 	router.route('/clientes/empresa/:id_empresa')
 		.get(function (req, res) {
 			Cliente.findAll({
-				attributes:['id','razon_social','nit','latitud','longitud'],
+				attributes: ['id', 'razon_social', 'nit', 'latitud', 'longitud'],
 				where: { id_empresa: req.params.id_empresa },
 				//include: [{ model: Empresa, as: 'empresa' }]
 			}).then(function (usuarios) {
@@ -535,8 +583,8 @@ router.route('/clientes/:id_cliente')
 				id_empresa: req.body.id_empresa,
 				destino: req.body.destino,
 				direccion: req.body.direccion,
-				eliminado:false
-			}).then(function(destinoCreado){
+				eliminado: false
+			}).then(function (destinoCreado) {
 				GtmClienteDestino.create({
 					id_cliente: req.params.id_cliente,
 					id_destino: destinoCreado.id,
