@@ -61,9 +61,11 @@ angular.module('agil.servicios')
 	.factory('VerificarDescuentos', [function () {
 		var res = function (detalles) {
 			var existe = false;
-			for (var i = 0; i < detalles.length; i++) {
-				if (detalles[i].descuento > 0 || detalles[i].recargo > 0 || detalles[i].ice > 0 || detalles[i].excento > 0) {
-					existe = true;
+			if (detalles !== undefined) {
+				for (var i = 0; i < detalles.length; i++) {
+					if (detalles[i].descuento > 0 || detalles[i].recargo > 0 || detalles[i].ice > 0 || detalles[i].excento > 0) {
+						existe = true;
+					}
 				}
 			}
 			return existe;
@@ -916,6 +918,7 @@ angular.module('agil.servicios')
 					} else if (venta.configuracion.tamanoPapelFactura.nombre_corto == Diccionario.FACT_PAPEL_MEDIOOFICIO) {
 						itemsPorPagina = 3;
 					}
+					var detalles = venta.detallesVenta !== undefined ? venta.detallesVenta : venta.detallesProformas
 					var y = 240, items = 0, pagina = 1, totalPaginas = Math.ceil(venta.detallesVenta.length / itemsPorPagina);
 					DibujarCabeceraFacturaNVmedioOficio(doc, vacia, completa, venta, papel, pagina, totalPaginas, usuario);
 					for (var i = 0; i < venta.detallesVenta.length && items <= itemsPorPagina; i++) {

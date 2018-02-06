@@ -3,7 +3,7 @@ angular.module('agil.controladores')
     .controller('ControladorRecursosHumanos', function ($scope, $sce, $localStorage, $location, $templateCache, $route, blockUI, ListaDatosGenero, NuevoRecursoHumano, RecursosHumanosPaginador, Paginator,
         FieldViewer, EmpleadoEmpresa, obtenerEmpleadoRh, UsuarioRecursosHUmanosActivo, Prerequisito, ListaDatosPrerequisito, Prerequisitos, ListaPrerequisitosPaciente, ActualizarPrerequisito, UsuarioRecursosHumanosFicha,
         ClasesTipo, Clases, Paises, CrearEmpleadoFicha, EliminarOtroSeguroRh, EliminarFamiliarRh, PrerequisitoPaciente, PrerequisitosHistorial, UsuarioRhHistorialFicha, ObtenerEmpleadoHojaVida, GuardarEmpleadoHojaVida, CrearPrestamo,
-        ObtenerListaPrestamo, CrearRolTurno, CrearPagoPrestamo, VerificarUsuarioEmpresa, EditarPrestamo, ListaEmpleadosRrhh, CrearHorasExtra, HistorialHorasExtra, ListaRolTurnos, ValidarCodigoCuentaEmpleado, $timeout) {
+        ObtenerListaPrestamo, CrearRolTurno, CrearPagoPrestamo, VerificarUsuarioEmpresa, EditarPrestamo, ListaEmpleadosRrhh, CrearHorasExtra, HistorialHorasExtra, ListaRolTurnos, ValidarCodigoCuentaEmpleado, $timeout, DatosCapacidadesImpresion) {
         $scope.usuario = JSON.parse($localStorage.usuario);
         $scope.idModalPrerequisitos = 'dialog-pre-requisitos';
         $scope.idModalEmpleado = 'dialog-empleado';
@@ -111,7 +111,7 @@ angular.module('agil.controladores')
                 $scope.idModalHistorialViajes, $scope.idModalReporteAusencias, $scope.idModalCertificado, $scope.idModalInstitucion,
                 $scope.idModalRhNuevo, $scope.idModalWizardRhNuevo, $scope.idImagenUsuario, $scope.idEliminarUsuarioRh, $scope.idModalWizardRhVista,
                 $scope.idModalContenedorRhVista, $scope.idModalDialogPrerequisitoNuevo, $scope.idEliminarSeguroEmpleado, $scope.idEliminarFamiliarEmpleado, $scope.idModalHistorialPrerequisito,
-                $scope.idModalEditarPrerequisito, $scope.idModalDialogConfirmacionEntregaAdelantado, $scope.IdEntregaPrerequisito, $scope.IdModalVerificarCuenta,$scope.idModalImpresionHojaVida);
+                $scope.idModalEditarPrerequisito, $scope.idModalDialogConfirmacionEntregaAdelantado, $scope.IdEntregaPrerequisito, $scope.IdModalVerificarCuenta, $scope.idModalImpresionHojaVida);
             $scope.buscarAplicacion($scope.usuario.aplicacionesUsuario, $location.path().substring(1));
             $scope.obtenerColumnasAplicacion()
             blockUI.stop();
@@ -225,12 +225,13 @@ angular.module('agil.controladores')
             $scope.fieldViewer.updateObject();
         }
 
-$scope.abrirModalImprimirHojaVida=function () {
-    $scope.abrirPopup($scope.idModalImpresionHojaVida)
-}
-$scope.cerrarModalImprimirHojaVida=function () {
-    $scope.cerrarPopup($scope.idModalImpresionHojaVida)
-}
+        $scope.abrirModalImprimirHojaVida = function () {
+            $scope.filtroCap = { inicio: "", fin: "", capacidadInterna: "" }
+            $scope.abrirPopup($scope.idModalImpresionHojaVida)
+        }
+        $scope.cerrarModalImprimirHojaVida = function () {
+            $scope.cerrarPopup($scope.idModalImpresionHojaVida)
+        }
 
         $scope.abrirDialogEditarPreRequisito = function (prerequisito) {
             $scope.prerequisito = prerequisito
@@ -364,7 +365,7 @@ $scope.cerrarModalImprimirHojaVida=function () {
             $scope.cerrarPopup($scope.idModalWizardRhVista);
         }
         $scope.abrirDialogRhNuevo = function () {
-            $scope.nuevoRH = new NuevoRecursoHumano({ persona: { imagen: "img/icon-user-default.png" }, id_empresa: $scope.usuario.id_empresa, es_empleado: true ,activoCopiaCodigo:true});
+            $scope.nuevoRH = new NuevoRecursoHumano({ persona: { imagen: "img/icon-user-default.png" }, id_empresa: $scope.usuario.id_empresa, es_empleado: true, activoCopiaCodigo: true });
             $scope.abrirPopup($scope.idModalRhNuevo);
         }
         $scope.cerrarDialogRhNuevo = function () {
@@ -1009,51 +1010,51 @@ $scope.cerrarModalImprimirHojaVida=function () {
             var promesa = ObtenerListaPrestamo($scope.paginator)
             promesa.then(function (datos) {
                 $scope.paginator.setPages(datos.paginas);
-                if(datos.prestamos.length>0){
-                datos.prestamos.forEach(function (prestamo, index, array) {
-                    var fecha = $scope.fechaATexto(prestamo.fecha_inicial)
-                    prestamo.fecha_vence = editar_fecha(fecha, prestamo.plazo, "m", "/")
-                    prestamo.saldo = prestamo.monto
-                    prestamo.pago = 0
-                    $scope.prestamos = { total_montos: 0, pagos_acuenta: 0, saldo: 0 }
-                    if (index === (array.length - 1)) {
+                if (datos.prestamos.length > 0) {
+                    datos.prestamos.forEach(function (prestamo, index, array) {
+                        var fecha = $scope.fechaATexto(prestamo.fecha_inicial)
+                        prestamo.fecha_vence = editar_fecha(fecha, prestamo.plazo, "m", "/")
+                        prestamo.saldo = prestamo.monto
+                        prestamo.pago = 0
+                        $scope.prestamos = { total_montos: 0, pagos_acuenta: 0, saldo: 0 }
+                        if (index === (array.length - 1)) {
 
-                        datos.prestamos.forEach((prestamo, index, array) => {
-                            if (prestamo.prestamoPagos.length > 0) {
-                                if (prestamo.prestamoPagos[(prestamo.prestamoPagos.length - 1)].saldo_anterior == prestamo.total) {
-                                    prestamo.pagadoTotal = true
-                                    
+                            datos.prestamos.forEach((prestamo, index, array) => {
+                                if (prestamo.prestamoPagos.length > 0) {
+                                    if (prestamo.prestamoPagos[(prestamo.prestamoPagos.length - 1)].saldo_anterior == prestamo.total) {
+                                        prestamo.pagadoTotal = true
+
+                                    }
+                                    prestamo.pagadoTotal = false
+                                    $scope.prestamos.total_montos += prestamo.monto
+                                    $scope.prestamos.pagos_acuenta += prestamo.prestamoPagos[(prestamo.prestamoPagos.length - 1)].a_cuenta_anterior
+                                    $scope.prestamos.saldo += (prestamo.total - prestamo.prestamoPagos[(prestamo.prestamoPagos.length - 1)].a_cuenta_anterior)
+                                } else {
+                                    prestamo.pagadoTotal = false
+                                    $scope.prestamos.total_montos += prestamo.monto
+                                    $scope.prestamos.pagos_acuenta += 0
+                                    $scope.prestamos.saldo += prestamo.total
                                 }
-                                prestamo.pagadoTotal = false
-                                $scope.prestamos.total_montos += prestamo.monto
-                                $scope.prestamos.pagos_acuenta += prestamo.prestamoPagos[(prestamo.prestamoPagos.length-1)].a_cuenta_anterior
-                                $scope.prestamos.saldo += (prestamo.total-prestamo.prestamoPagos[(prestamo.prestamoPagos.length-1)].a_cuenta_anterior)
-                            } else {
-                                prestamo.pagadoTotal = false
-                                $scope.prestamos.total_montos += prestamo.monto
-                                $scope.prestamos.pagos_acuenta += 0
-                                $scope.prestamos.saldo += prestamo.total
-                            }
-                            if (index === (array.length - 1)) {
-                                $scope.listaPrestamos = datos.prestamos
-                            }
+                                if (index === (array.length - 1)) {
+                                    $scope.listaPrestamos = datos.prestamos
+                                }
 
-                        });
-                    }
-                    prestamo.montoEdit = false
-                });
-            }else{
-                $scope.listaPrestamos={}
-                $scope.prestamos={}
-            }
+                            });
+                        }
+                        prestamo.montoEdit = false
+                    });
+                } else {
+                    $scope.listaPrestamos = {}
+                    $scope.prestamos = {}
+                }
             })
         }
 
-        $scope.copiarCodigodeCi=function (empleado) {
-            if(empleado.activoCopiaCodigo){
-                empleado.codigo=empleado.persona.ci
+        $scope.copiarCodigodeCi = function (empleado) {
+            if (empleado.activoCopiaCodigo) {
+                empleado.codigo = empleado.persona.ci
             }
-            
+
         }
         $scope.obtenerPrestamos = function () {
             blockUI.start();
@@ -2430,6 +2431,273 @@ $scope.cerrarModalImprimirHojaVida=function () {
                 $scope.recargarItemsTabla()
             })
         }
+        //impresion hoja de vida
+
+        $scope.imprimirHojaVida = function (filtro) {
+            if (filtro.capacidadInterna) {
+                var promesa = DatosCapacidadesImpresion(filtro, $scope.hojaVida.id)
+                promesa.then(function (dato) {
+                    $scope.capacidades = dato.capacidades
+                    convertUrlToBase64Image($scope.empleado.imagen, function (imagenEmpresa) {
+                        var imagen = imagenEmpresa;
+                        $scope.generarPdfHojaVida(imagen)
+                    });
+
+                })
+            } else {
+                convertUrlToBase64Image($scope.empleado.imagen, function (imagenEmpresa) {
+                    var imagen = imagenEmpresa;
+                    $scope.generarPdfHojaVida(imagen)
+                });
+
+            }
+        }
+
+        $scope.generarPdfHojaVida = function (imagen) {
+
+            blockUI.start();
+            if ($scope.filtroCap.capacidadInterna) {
+                totalpaginastamaño = $scope.hojaVida.experienciasLaborales.length + $scope.hojaVida.formacionesAcademicas.length + $scope.capacidades.length
+            } else {
+                totalpaginastamaño = $scope.hojaVida.experienciasLaborales.length + $scope.hojaVida.formacionesAcademicas.length
+            }
+            promesaPaciente = obtenerEmpleadoRh($scope.empleado.id)
+            promesaPaciente.then(function (dato) {
+                if (dato.clase != undefined) {
+                    dato.medicoPaciente.tipo_contrato = dato.clase
+                }
+                $scope.empleado2 = dato.medicoPaciente
+
+                //	var inventarios = $scope.inventarios;
+                var doc = new PDFDocument({ size: [612, 792], margin: 10 });
+                var stream = doc.pipe(blobStream());
+                // draw some text
+                var totalCosto = 0;
+                var y = 205, itemsPorPagina = 20, items = 0, pagina = 1, totalPaginas = Math.ceil(totalpaginastamaño / itemsPorPagina);
+                $scope.dibujarCabeceraPDFHojaVida(doc, 1, totalPaginas, imagen);
+                doc.font('Helvetica', 7);
+                for (var i = 0; i < $scope.hojaVida.formacionesAcademicas.length; i++) {
+                    formacion = $scope.hojaVida.formacionesAcademicas[i]
+                    doc.text(formacion.anio_obtencion, 80, y);
+                    doc.text(formacion.institucion.nombre, 170, y, { width: 100 });
+                    doc.text(formacion.grado.nombre, 305, y, { width: 100 });
+                    doc.text(formacion.titulo.nombre, 405, y, { width: 100 });
+                    if (formacion.institucion.nombre.length > 20 || formacion.grado.length > 20 || formacion.titulo.length > 20) {
+                        rowinstituto = formacion.institucion.length / 20
+                        rowgrado = formacion.grado.length /20
+                        rowtitulo = formacion.titulo.length / 20
+                        arregloTamaño = [Math.floor(rowinstituto), Math.floor(rowgrado),Math.floor(rowtitulo)]
+                        var rows  = Math.max.apply(null,arregloTamaño);
+                        var tamaño = rows * 10
+                        y = y + tamaño
+                    } 
+                    y = y + 20;
+                    items++;
+                    //totalCosto = totalCosto + inventarios[i].costo_total;
+                    if (y >= 725) {
+                        doc.addPage({ margin: 0, bufferPages: true });
+
+                        y = 90;
+                        items = 0;
+                        doc.rect(25, y - 20, 550, 15).fill("silver", "#000");
+                        doc.font('Helvetica-Bold', 8).fill('black')
+                        doc.text("GRADO DE INSTRUCCIONES", 35, y);
+                        doc.font('Helvetica-Bold', 8);
+                        doc.text("AÑO DE OBTENCIÓN", 45, y);
+                        doc.text("INSTITUCIÓN", 170, y);
+                        doc.text("GRADO", 305, y);
+                        doc.text("CARRERA", 405, y);
+                        pagina = pagina + 1;
+                        doc.text("PÁGINA " + pagina + " DE " + totalPaginas, 0, 750, { align: "center" });
+                        doc.font('Helvetica', 7);
+                    }
+                }
+                /*     for (var j = 0; j < $scope.hojaVida.logros.length; j++) {
+    
+                       
+                        doc.text("FECHA2", 80, y);
+                        doc.text("INSTITUCIÓN2", 185, y);
+                        doc.text("GRADO2", 305, y);
+                        doc.text("CARRERA2", 405, y);
+                        y = y + 10;
+    
+    
+                        items++;
+                        //totalCosto = totalCosto + inventarios[i].costo_total;
+                        if (y >=785) {
+                            doc.addPage({ margin: 0, bufferPages: true });
+                            y = 90;
+                            items = 0;
+                            pagina = pagina + 1;
+                            $scope.dibujarCabeceraPDFHojaVida(doc, pagina, totalPaginas);
+                            doc.font('Helvetica', 7);
+                        }
+                    } */
+                if ($scope.filtroCap.capacidadInterna) {
+                    for (var j = 0; j < $scope.capacidades.length; j++) {
+                        var capacidad= $scope.capacidades[j]
+                        if (j == 0) {
+                            y += 15
+
+                            doc.rect(25, y - 20, 550, 15).fill("silver", "#000");
+                            doc.font('Helvetica-Bold', 8).fill('black')
+                            doc.text("CURSO,CAPACIDADES Y SEMINARIOS", 35, y - 15);
+                            doc.font('Helvetica-Bold', 8);
+                            doc.text("FECHA", 45, y);
+                            doc.text("INSTITUCIÓN", 170, y);
+                            doc.text("GRADO", 305, y);
+                            doc.text("CARRERA", 405, y);
+                            y = y + 20;
+                        }
+                        doc.font('Helvetica', 8);
+                        capacidad.fechaTexto = $scope.fechaATexto(capacidad.fecha)
+                        doc.text(capacidad.fechaTexto, 40, y, { width: 100 });
+                        doc.text(capacidad.curso, 170, y, { width: 100 });
+                        doc.text(capacidad.institucion, 305, y, { width: 80 });
+                        doc.text(capacidad.certificado, 405, y, { width: 100 });
+                        if (capacidad.curso.length > 20 || capacidad.institucion.length > 17 || capacidad.certificado.length > 20) {
+                            rowcurso = capacidad.curso.length / 20
+                            rowinstituto = capacidad.institucion.length /17
+                            rowcertificado = capacidad.certificado.length / 20
+                            arregloTamaño = [Math.floor(rowcurso), Math.floor(rowinstituto),Math.floor(rowcertificado)]
+                            var rows  = Math.max.apply(null,arregloTamaño);
+                            var tamaño = rows * 10
+                            y = y + tamaño
+                        } 
+                        y = y + 20;
+
+
+                        items++;
+                        //totalCosto = totalCosto + inventarios[i].costo_total;
+                        if (y >= 725) {
+                            doc.addPage({ margin: 0, bufferPages: true });
+                            y = 90;
+
+                            items = 0;
+                            doc.rect(25, y - 20, 550, 15).fill("silver", "#000");
+                            doc.font('Helvetica-Bold', 8).fill('black')
+                            doc.text("CURSO,CAPACIDADES Y SEMINARIOS", 35, y - 15);
+                            doc.font('Helvetica-Bold', 8);
+                            doc.text("FECHA", 45, y);
+                            doc.text("INSTITUCIÓN", 170, y);
+                            doc.text("GRADO", 305, y);
+                            doc.text("CARRERA", 405, y);
+                            y += 20;
+                            pagina = pagina + 1;
+                            doc.text("PÁGINA " + pagina + " DE " + totalPaginas, 0, 750, { align: "center" });
+                            doc.font('Helvetica', 7);
+                        }
+                    }
+                }
+                for (var h = 0; h < $scope.hojaVida.experienciasLaborales.length; h++) {
+                    var experienciaLaboral = $scope.hojaVida.experienciasLaborales[h]
+                    if (h == 0) {
+                        y += 15
+                        doc.rect(25, y - 20, 550, 15).fill("silver", "#000");
+                        doc.font('Helvetica-Bold', 8).fill('black')
+                        doc.text("EXPERIENCIA LABORAL", 35, y - 15);
+                        doc.font('Helvetica-Bold', 8);
+                        doc.text("DESDE", 45, y);
+                        doc.text("HASTA", 120, y);
+                        doc.text("EMPRESA", 205, y);
+                        doc.text("CARGO", 305, y);
+                        doc.text("REFERENCIA", 385, y);
+                        doc.text("TELEFONO", 485, y);
+                        y = y + 20;
+                    }
+                    doc.font('Helvetica', 8);
+                    doc.text(experienciaLaboral.fecha_inicioTexto, 40, y, { width: 100 });
+                    doc.text(experienciaLaboral.fecha_finTexto, 115, y, { width: 100 });
+
+                    doc.text(experienciaLaboral.empresa, 205, y, { width: 80 });
+                    doc.text(experienciaLaboral.cargo, 305, y, { width: 60 });
+                    doc.text(experienciaLaboral.contacto, 385, y, { width: 100 });
+                    doc.text(experienciaLaboral.telefono, 485, y, { width: 100 });
+                    if (experienciaLaboral.empresa.length > 17 || experienciaLaboral.cargo.length > 13 || experienciaLaboral.contacto.length > 20) {
+                        rowempresa = experienciaLaboral.empresa.length / 17
+                        rowcargo = experienciaLaboral.cargo.length /13
+                        rowcontacto = experienciaLaboral.contacto.length / 20
+                        arregloTamaño = [Math.floor(rowempresa), Math.floor(rowcargo),Math.floor(rowcontacto)]
+                        var rows  = Math.max.apply(null,arregloTamaño);
+                        var tamaño = rows * 10
+                        y = y + tamaño
+                    } 
+                    y = y + 20;
+                    items++;
+                    //totalCosto = totalCosto + inventarios[i].costo_total;
+                    if (y >= 725) {
+
+                        y = y + 20;
+                        doc.addPage({ margin: 0, bufferPages: true });
+
+                        y = 90;
+                        items = 0;
+                        doc.rect(25, y - 20, 550, 15).fill("silver", "#000");
+                        doc.font('Helvetica-Bold', 8).fill('black')
+                        doc.text("EXPERIENCIA LABORAL", 35, y - 15);
+                        doc.font('Helvetica-Bold', 8);
+                        doc.text("DESDE", 45, y);
+                        doc.text("HASTA", 120, y);
+                        doc.text("EMPRESA", 205, y);
+                        doc.text("CARGO", 305, y);
+                        doc.text("REFERENCIA", 385, y);
+                        doc.text("TELEFONO", 485, y);
+                        y += 20;
+                        pagina = pagina + 1;
+                        doc.text("PÁGINA " + pagina + " DE " + totalPaginas, 0, 750, { align: "center" });
+                        doc.font('Helvetica', 7);
+                    }
+                }
+                doc.end();
+                stream.on('finish', function () {
+                    var fileURL = stream.toBlobURL('application/pdf');
+                    window.open(fileURL, '_blank', 'location=no');
+                });
+                blockUI.stop();
+            })
+        }
+        $scope.dibujarCabeceraPDFHojaVida = function (doc, pagina, totalPaginas, imagen) {
+            doc.font('Helvetica-Bold', 12);
+            doc.rect(25, 30, 550, 20).fill("silver", "#000");
+            doc.font('Helvetica-Bold', 12).fill('black')
+            doc.text("HOJA DE VIDA", 0, 35, { align: "center" });
+            doc.image(imagen, 400, 70, { width: 80, height: 80 });
+            doc.font('Helvetica-Bold', 10);
+            //doc.text("SUCURSAL:" + $scope.reporte.sucursal.nombre + " - ALMACEN:" + $scope.reporte.almacen.nombre, 0, 38, { align: "center" });
+            doc.font('Helvetica-Bold', 8);
+            doc.text("PÁGINA " + pagina + " DE " + totalPaginas, 0, 750, { align: "center" });
+            doc.font('Helvetica-Bold', 8);
+            doc.text("NOMBRE Y APELLIDO:", 45, 60);
+            doc.text("NACIONALIDAD:", 45, 70);
+            doc.text("LUGAR DE NACIMIENTOS:", 45, 80);
+            doc.text("RESIDENCIA ACTUAL:", 45, 90);
+            doc.text("DIRECCION:", 45, 100);
+            doc.text("CI:", 45, 110);
+            doc.text("ESTADO CIVIL:", 45, 120);
+            doc.text("TELEFONO:", 45, 130);
+            doc.text("CELULAR:", 45, 140);
+            doc.text("E-MAIL:", 45, 150);
+            doc.font('Helvetica', 8);
+            doc.text($scope.empleado2.persona.nombre_completo, 170, 60);
+            doc.text($scope.empleado2.persona.pais_nacimiento, 170, 70);
+            doc.text($scope.empleado2.persona.ciudad_nacimiento + " / " + $scope.empleado2.persona.provincia_nacimiento + " / " + $scope.empleado2.persona.localidad_nacimiento, 170, 80);
+            doc.text("", 170, 90);
+            doc.text($scope.empleado2.persona.direccion_zona, 170, 100);
+            doc.text($scope.empleado2.persona.ci, 170, 110);
+            doc.text($scope.empleado2.persona.estado_civil, 170, 120);
+            doc.text($scope.empleado2.persona.telefono, 170, 130);
+            doc.text($scope.empleado2.persona.telefono_movil, 170, 140);
+            doc.text($scope.empleado2.persona.correo_electronico, 170, 150);
+            doc.rect(25, 165, 550, 15).fill("silver", "#000");
+            doc.font('Helvetica-Bold', 8).fill('black')
+            doc.text("GRADO DE INSTRUCCIONES", 35, 170);
+            doc.font('Helvetica-Bold', 8);
+            doc.text("AÑO DE OBTENCIÓN", 45, 185);
+            doc.text("INSTITUCIÓN", 170, 185);
+            doc.text("GRADO", 305, 185);
+            doc.text("CARRERA", 405, 185);
+        }
+
         //fin hoja de vida
         //certificado ficha
         $scope.llenarHistoricoCertificado = function (historialContratos) {

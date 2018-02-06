@@ -134,7 +134,7 @@ angular.module('agil.controladores')
         $scope.actualizarPeriodo = function (date) {
             var fecha = new Date($scope.convertirFecha(date))
             $scope.obtenerCambioMonedaProforma(fecha)
-            $scope.proforma.periodo_mes.id = fecha.getMonth() + 1
+            $scope.proforma.periodo_mes.id = fecha.getMonth()
             $scope.proforma.periodo_anio.id = fecha.getFullYear()
         }
         $scope.buscarCliente = function (query) {
@@ -179,15 +179,16 @@ angular.module('agil.controladores')
             $scope.obtenerClientes()
             $scope.obtenerActividadesEmpresa($scope.usuario.empresa.id)
             $scope.filtro = { empresa: $scope.usuario.empresa.id, mes: 0, anio: 0, sucursal: 0, actividadEconomica: 0, servicio: 0, monto: 0, razon: 0, usuario: "", pagina: 1, items_pagina: 10, busqueda: 0, numero: 0 }
-            $scope.meses = [{ id: 1, nombre: "Enero" }, { id: 2, nombre: "Febrero" }, { id: 3, nombre: "Marzo" }, { id: 4, nombre: "Abril" }, { id: 5, nombre: "Mayo" }, { id: 6, nombre: "Junio" }, { id: 7, nombre: "Julio" }, { id: 8, nombre: "Agosto" },
+            $scope.meses = [{ id: 0, nombre: "Enero" }, { id: 1, nombre: "Febrero" }, { id: 2, nombre: "Marzo" }, { id: 3, nombre: "Abril" }, { id: 4, nombre: "Mayo" }, { id: 5, nombre: "Junio" }, { id: 6, nombre: "Julio" }, { id: 7, nombre: "Agosto" },
+            { id: 8, nombre: "Septiembre" }, { id: 9, nombre: "Octubre" }, { id: 10, nombre: "Noviembre" }, { id: 11, nombre: "Diciembre" }];
+            $scope.mesesFiltro = [{ id: 1, nombre: "Enero" }, { id: 2, nombre: "Febrero" }, { id: 3, nombre: "Marzo" }, { id: 4, nombre: "Abril" }, { id: 5, nombre: "Mayo" }, { id: 6, nombre: "Junio" }, { id: 7, nombre: "Julio" }, { id: 8, nombre: "Agosto" },
             { id: 9, nombre: "Septiembre" }, { id: 10, nombre: "Octubre" }, { id: 11, nombre: "Noviembre" }, { id: 12, nombre: "Diciembre" }];
-
-            var actual_year_diference = (new Date().getFullYear() - 1980)
-            $scope.anios = Array.apply(null, Array(actual_year_diference + 1)).map(function (_, i) {
-                var start_year = 1980
-                var year = { id: start_year + i, nombre: start_year + i }
-                return year
-            })
+            // 
+            // $scope.anios = Array.apply(null, Array(actual_year_diference + 1)).map(function (_, i) {
+            //     var start_year = 1980
+            //     var year = { id: start_year + i, nombre: start_year + i }
+            //     return year
+            // })
             $scope.proformas = []
             $scope.sucursalesUsuario = "";
             for (var i = 0; i < $scope.usuario.sucursalesUsuario.length; i++) {
@@ -267,19 +268,18 @@ angular.module('agil.controladores')
         }
 
         $scope.agregardetalleProforma = function (detalleProforma) {
-            $scope.proforma.totalImporteBs = 0
-            $scope.proforma.totalImporteSus = 0
-            var ser = { servicio: detalleProforma }
-            $scope.detallesProformas.push(detalleProforma)
-            $scope.detalleProforma = {}
-            $scope.detallesProformas.forEach(function (proforma) {
-                $scope.proforma.totalImporteBs += proforma.importeBs
-                $scope.proforma.totalImporteSus += proforma.importeSus
-            });
-            $scope.proforma.importeLiteral = ConvertirALiteral($scope.proforma.totalImporteBs.toFixed(2));
-            $scope.modificarProformaPrecioUnitarioServicio(detalleProforma)
-            if ($scope.detalleProforma.length > 0) {
-
+            if (detalleProforma.id_servicio !== undefined) {
+                $scope.proforma.totalImporteBs = 0
+                $scope.proforma.totalImporteSus = 0
+                var ser = { servicio: detalleProforma }
+                $scope.detallesProformas.push(detalleProforma)
+                $scope.detalleProforma = {}
+                $scope.detallesProformas.forEach(function (proforma) {
+                    $scope.proforma.totalImporteBs += proforma.importeBs
+                    $scope.proforma.totalImporteSus += proforma.importeSus
+                });
+                $scope.proforma.importeLiteral = ConvertirALiteral($scope.proforma.totalImporteBs.toFixed(2));
+                $scope.modificarProformaPrecioUnitarioServicio(detalleProforma)
             }
         }
 
@@ -295,7 +295,6 @@ angular.module('agil.controladores')
                     $scope.moneda = { ufv: "--", dolar: "--" }
                     $scope.mostrarMensaje('La fecha ' + $scope.proforma.fecha_proforma + ' no tiene datos del tipo de cambio de dolar. El tipo de cambio de dolar no afecta la información de la proforma y puede continuar sin problema.')
                 }
-
             })
         }
 
@@ -322,7 +321,7 @@ angular.module('agil.controladores')
             $scope.actividades = [];
             var promesa = ClasesTipo('ACTCOM')
             promesa.then(function (actividades) {
-                $scope.actividades = actividades.clases
+                // $scope.actividades = actividades.clases
             })
             // var sucursal=$.grep($scope.sucursales, function(e){return e.id == idSucursal;})[0];
             // $scope.actividadesDosificaciones=sucursal.actividadesDosificaciones;
@@ -549,7 +548,13 @@ angular.module('agil.controladores')
             }
         }
 
-        $scope.obtenerServiciosActividadEmpresa = function (actividad, op) {
+        $scope.obtenerServiciosActividadEmpresaPrincipal = function (actividad, op) {
+            // if (op !== undefined) {
+            //     $scope.filser, $scope.serviciosProcesados = $scope.obtenerServiciosActividadEmpresa(actividad)
+            // }else{
+            //     $scope.configuracionActividadServicio, $scope.serviciosProcesados = $scope.obtenerServiciosActividadEmpresa(actividad)
+            // }
+            
             if (actividad.id !== undefined) {
                 var prom = ServiciosEmpresa($scope.usuario.empresa.id, actividad.id)
                 prom.then(function (services) {
@@ -657,7 +662,7 @@ angular.module('agil.controladores')
         $scope.guardarProforma = function (valid, proforma) {
             blockUI.start()
             var filtro = { id_empresa: $scope.usuario.empresa.id, mes: 0, anio: 0, sucursal: 0, actividad: 0, servicio: 0, monto: 0, razon: 0, usuario: $scope.usuario.id, pagina: 1, items_pagina: 10, busqueda: 0, numero: 0 }
-            if (valid) {
+            if (valid && $scope.detallesProformas.length > 0) {
                 if (proforma.id !== undefined) {
                     proforma.detallesProformas = $scope.detallesProformas
                     proforma.usuarioProforma = $scope.usuario
@@ -708,10 +713,11 @@ angular.module('agil.controladores')
         }
         
         $scope.abrirdialogProformaEdicion = function (proforma) {
+            $scope.ocultarMensajesValidacion();
             if (proforma !== undefined) {
                 $scope.detalleProforma = undefined
             } else {
-                $scope.proforma = { sucursalProforma: $scope.sucursales[0], fecha_proforma: new Date(), periodo_mes: { id: new Date().getMonth() + 1 }, periodo_anio: { id: new Date().getFullYear() } }
+                $scope.proforma = { sucursalProforma: $scope.sucursales[0], fecha_proforma: new Date(), periodo_mes: { id: new Date().getMonth() }, periodo_anio: { id: new Date().getFullYear() } }
                 $scope.proforma.fecha_proforma = new Date().toLocaleDateString()
                 $scope.obtenerCambioMonedaProforma(new Date())
                 $scope.detalleProforma = undefined
@@ -880,7 +886,7 @@ angular.module('agil.controladores')
             $scope.dibujarCabeceraPDFImpresion(doc, pagina, totalPaginas, $scope.proforma);
             var extraDetalle = 0
             var extraServ = 0
-            for (var i = 0; i < $scope.proforma.detallesProformas.length && items <= itemsPorPagina; i++) {
+            for (var i = 0; i <= $scope.proforma.detallesProformas.length && items <= itemsPorPagina; i++) {
                 doc.font('Helvetica', 8);
                 if (i == 0) {
                     doc.text(($scope.proforma.detalle), 150, y - 2, { width: 260 });

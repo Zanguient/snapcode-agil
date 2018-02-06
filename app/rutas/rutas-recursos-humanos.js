@@ -1689,5 +1689,18 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                     });
                 }
             });
+        })
+        router.route('/recurso-humanos/capacidades/hoja-vida/:id_hoja_vida/inicio/:inicio/fin/:fin')
+        .get(function (req, res) {
+            if (req.params.inicio != 0) {
+                var inicio = new Date(req.params.inicio); inicio.setHours(0, 0, 0, 0, 0);
+                var fin = new Date(req.params.fin); fin.setHours(23, 59, 0, 0, 0);
+                var condicionCapacidades = { id_hoja_vida: req.params.id_hoja_vida,fecha: { $between: [inicio, fin] } };
+            }
+            RrhhEmpleadoCapacidadInternaExterna.findAll({
+                where: condicionCapacidades
+            }).then(function (entidad) {
+                res.json({capacidades:entidad})
+            });
         });
 }

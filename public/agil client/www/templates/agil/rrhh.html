@@ -2743,7 +2743,7 @@
                                             </thead>
                                             <tbody>
                                                 <tr ng-if="!formacionAcademica.eliminado" ng-repeat="formacionAcademica in hojaVida.formacionesAcademicas">
-                                                    <th scope="row">{{$index}}</th>
+                                                    <th scope="row">{{$index+1}}</th>
                                                     <td>{{formacionAcademica.grado.nombre}}</td>
                                                     <td>{{formacionAcademica.titulo.nombre}}</td>
                                                     <td>{{formacionAcademica.anio_obtencion}}</td>
@@ -2845,7 +2845,7 @@
                                             </thead>
                                             <tbody>
                                                 <tr ng-if="!experienciaLaboral.eliminado" ng-repeat="experienciaLaboral in hojaVida.experienciasLaborales">
-                                                    <th scope="row">{{$index}}</th>
+                                                    <th scope="row">{{$index+1}}</th>
                                                     <td>{{experienciaLaboral.fecha_inicioTexto}}</td>
                                                     <td>{{experienciaLaboral.fecha_finTexto}}</td>
                                                     <td>{{experienciaLaboral.empresa}}</td>
@@ -2939,7 +2939,7 @@
                                             </thead>
                                             <tbody>
                                                 <tr ng-if="!capacidad.eliminado" ng-repeat="capacidad in hojaVida.capacidades">
-                                                    <th scope="row">{{$index}}</th>
+                                                    <th scope="row">{{$index+1}}</th>
                                                     <td>{{capacidad.fechaTexto}}</td>
                                                     <td>{{capacidad.tipoCapacidad.nombre}}</td>
                                                     <td>{{capacidad.curso}}</td>
@@ -3030,7 +3030,7 @@
                                             </thead>
                                             <tbody>
                                                 <tr ng-if="!logro.eliminado" ng-repeat="logro in hojaVida.logros">
-                                                    <th scope="row">{{$index}}</th>
+                                                    <th scope="row">{{$index+1}}</th>
                                                     <td>{{logro.fechaTexto}}</td>
                                                     <td>{{logro.motivo}}</td>
                                                     <td>{{logro.institucion}}</td>
@@ -7688,27 +7688,27 @@
             </div>
             <div class="modal-body">
                 <p>Incluir capacidades internas  <br><label>
-                        <input name="switch-field-1"  ng-model="capacidades.capacidadInterna" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="nuevoRH.activoCopiaCodigo" />
+                        <input name="switch-field-1"  ng-model="filtroCap.capacidadInterna" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="nuevoRH.activoCopiaCodigo" />
                         <span class="lbl check-descuento"></span>
 
                     </label></p>
                 <div class="row">
-                    <div ng-hide="!capacidades.capacidadInterna" class="col-md-6">
+                    <div ng-hide="!filtroCap.capacidadInterna" class="col-md-6">
                         <label for="desde">Desde</label>
                         <input size="15" ng-update-hidden class="form-control date-picker"
-                            type="text" data-date-format="dd/mm/yyyy" id="fechainicio" ng-model="capacidades.inicio" placeholder="Fecha inicial">
+                            type="text" data-date-format="dd/mm/yyyy" id="fechainicio" ng-model="filtroCap.inicio" placeholder="Fecha inicial">
 
                     </div>
-                    <div  ng-hide="!capacidades.capacidadInterna" class="col-md-6">
+                    <div  ng-hide="!filtroCap.capacidadInterna" class="col-md-6">
                         <label for="desde">Hasta </label>
                         <input size="15" ng-update-hidden class="form-control date-picker"
-                            type="text" data-date-format="dd/mm/yyyy" id="fechainicio" ng-model="capacidades.fin" placeholder="Fecha inicial">
+                            type="text" data-date-format="dd/mm/yyyy" id="fechainicio" ng-model="filtroCap.fin" placeholder="Fecha inicial">
 
                     </div>
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-success" ng-click="imprimirHojaVida()"><i class="ace-icon fa fa-print"></i>Imprimir</button>
+                <button type="button" class="btn btn-success" ng-click="imprimirHojaVida(filtroCap)"><i class="ace-icon fa fa-print"></i>Imprimir</button>
                 <button type="button" class="btn btn-danger" ng-click="cerrarModalImprimirHojaVida()"><i class="ace-icon fa fa-times"></i> Cancelar</button>
             </div>
         </div>

@@ -265,7 +265,7 @@ module.exports = function (router, ContabilidadCuenta, ClasificacionCuenta, Tipo
 						id: req.body.id
 					}
 				}).then(function (ContabilidadCuentaActualizada) {
-					if (req.body.cuentaC.cliente != null) {
+					if (req.body.cuentaC != null) {
 						ClienteCuenta.findOrCreate({
 							where: { id_cuenta: req.body.id },
 							defaults: {			
@@ -285,7 +285,7 @@ module.exports = function (router, ContabilidadCuenta, ClasificacionCuenta, Tipo
 								guardarCuentaespecificas(req, res, Clase)
 							}
 						})
-					} else if (req.body.cuentaP.proveedor != null) {
+					} else if (req.body.cuentaP != null) {
 						ProveedorCuenta.findOrCreate({
 							where: { id_cuenta: req.body.id },
 							defaults: {			

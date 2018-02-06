@@ -129,7 +129,7 @@ angular.module('agil.servicios')
 .factory('FacturaProforma', ['FacturarProformas', '$q', function (FacturarProformas, $q) {
     var res = function (idEmpresa,proformas) {
         var delay = $q.defer();
-        FacturarProformas.save({id_empresa: idEmpresa},proformas, function (entidades) {
+        FacturarProformas.save({id_empresa: idEmpresa}, proformas, function (entidades) {
             delay.resolve(entidades);
         }, function (error) {
             delay.reject(error);

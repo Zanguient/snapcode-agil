@@ -1,6 +1,6 @@
 module.exports = function (router,ensureAuthorizedAdministrador,fs,forEach,jwt,md5,GtmDespacho,
 	GtmDespachoDetalle,Cliente,Usuario,GtmDestino,Producto,GtmTransportista,GtmEstibaje,GtmGrupoEstibaje,
-	Persona) {
+	Persona,ClienteRazon) {
 
 	router.route('/gtm-despacho/empresa/:id_empresa')
 		.post(function (req, res) {
@@ -154,7 +154,7 @@ router.route('/gtm-detalle-despacho-despachado/empresa/:id_empresa/pagina/:pagin
 			include:[{model:GtmDespacho,as:'despacho',
 					where:{id_empresa:req.params.id_empresa},
 					include:[{model:Usuario,as:'usuario'},
-							 {model:Cliente,as:'cliente',where:condicionCliente},
+							 {model:Cliente,as:'cliente',include:[{model: ClienteRazon, as: 'clientes_razon'}],where:condicionCliente},
 							 {model:GtmDestino,as:'destino'}]},
 					{model:Producto,as:'producto'},
 					{model:GtmTransportista,as:'transportista',
@@ -169,7 +169,7 @@ router.route('/gtm-detalle-despacho-despachado/empresa/:id_empresa/pagina/:pagin
 				include:[{model:GtmDespacho,as:'despacho',
 					where:{id_empresa:req.params.id_empresa},
 					include:[{model:Usuario,as:'usuario'},
-							 {model:Cliente,as:'cliente',where:condicionCliente},
+							 {model:Cliente,as:'cliente',include:[{model: ClienteRazon, as: 'clientes_razon'}],where:condicionCliente},
 							 {model:GtmDestino,as:'destino'}]},
 					{model:Producto,as:'producto'},
 					{model:GtmTransportista,as:'transportista',
