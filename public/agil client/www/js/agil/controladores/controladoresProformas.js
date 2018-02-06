@@ -3,7 +3,7 @@ angular.module('agil.controladores')
         blockUI, ClasesTipo, socket, ObtenerCambioMoneda, ClientesNit, Proformas, FiltroProformas, ActividadEmpresa, ActividadServicio, ActividadesEmpresa,
         ServiciosEmpresa, Proforma, ProformaInfo, Clientes, fechasProforma, eliminarProforma) {
 
-        $scope.usuario = JSON.parse($localStorage.usuario);
+          $scope.usuario = JSON.parse($localStorage.usuario);
 
 
         $scope.modalConfiguracionActividadesServicios = 'modalConfiguracionActividadesServicios'
@@ -16,9 +16,10 @@ angular.module('agil.controladores')
         $scope.dialogBusquedaServicio = 'dialog-Busqueda-servicio-proforma'
 
         $scope.$on('$viewContentLoaded', function () {
+            resaltarPestaña($location.path().substring(1));
             ejecutarScriptsProformas($scope.modalConfiguracionActividadesServicios, $scope.wizardConfiguracionActividadesServicios, $scope.dialogProformaEdicion,
                 $scope.dialogClientesProforma, $scope.modalConfiguracionActividades, $scope.wizardConfiguracionActividades, $scope.dialogmodalFechas,$scope.dialogBusquedaServicio);
-
+                $scope.buscarAplicacion($scope.usuario.aplicacionesUsuario, $location.path().substring(1));
         });
 
         $scope.$on('$routeChangeStart', function (next, current) {

@@ -2556,7 +2556,10 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 			{ id: 8, nombre: "Septiembre" }, { id: 9, nombre: "Octubre" }, { id: 10, nombre: "Noviembre" }, { id: 11, nombre: "Diciembre" }];
 		
 		
+
 		var actual_year_diference = (new Date().getFullYear() - 1980)
+		
+		$scope.anios = Array.apply(null, Array(actual_year_diference + 1)).map(function(_, i){
 			var start_year = 1980
 			var year = { id: start_year + i, nombre: start_year + i }
 			return year
