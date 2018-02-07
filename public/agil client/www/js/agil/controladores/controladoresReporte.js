@@ -1044,22 +1044,30 @@ angular.module('agil.controladores')
 
 		$scope.inicio = function () {
 			$scope.sucursales = $scope.obtenerSucursales();
-			$scope.reporte = { almacen: { id: 0, nombre: "TODOS" }, sucursal: { id: 0, nombre: "TODOS" } };
-			$scope.almacenes = [];
-			$scope.almacenes.push({ id: 0, nombre: "TODOS" });
+			$scope.reporte = {};
+			
+			$scope.reporte.sucursal = ($scope.sucursales.length ==1) ? $scope.sucursales[0] : null;
+			if($scope.sucursales.length==1){
+				$scope.obtenerAlmacenes($scope.sucursales[0].id)
+				$scope.reporte.almacen = ($scope.almacenes.length ==2) ? $scope.almacenes[1] : null;
+				
+			}
 			$scope.obtenerInventarios();
 		}
 
 		$scope.obtenerAlmacenes = function (idSucursal) {
 			$scope.almacenes = [];
-			$scope.almacenes.push({ id: 0, nombre: "TODOS" });
+			$scope.almacenes.push({ id: 0, nombre: "TODOS" });			
 			var sucursal = $.grep($scope.sucursales, function (e) { return e.id == idSucursal; })[0];
 			$scope.almacenes = $scope.almacenes.concat(sucursal.almacenes);
 		}
 
 		$scope.obtenerSucursales = function () {
 			var sucursales = [];
-			sucursales.push({ id: 0, nombre: "TODOS" });
+			if ($scope.usuario.sucursalesUsuario.length > 1) {
+				sucursales.push({ id: 0, nombre: "TODOS" });
+			
+			}
 			for (var i = 0; i < $scope.usuario.sucursalesUsuario.length; i++) {
 				sucursales.push($scope.usuario.sucursalesUsuario[i].sucursal);
 			}
@@ -1284,10 +1292,11 @@ angular.module('agil.controladores')
 		$scope.usuario = JSON.parse($localStorage.usuario);
 
 		$scope.inicio = function () {
+			
 			$scope.obtenerGestiones();
-			$scope.sucursales = $scope.obtenerSucursales();
-			$scope.reporte = {};
-			$scope.reporte.sucursal = $scope.sucursales.length == 1 ? $scope.sucursales[0] : null;
+			$scope.sucursales = $scope.obtenerSucursales();		
+			$scope.reporte={}
+			$scope.reporte.sucursal = ($scope.sucursales.length ==1) ? $scope.sucursales[0] : null;
 			ejecutarScriptsVentasMensuales();
 		}
 
@@ -1681,11 +1690,16 @@ angular.module('agil.controladores')
 		$scope.inicio = function () {
 			$scope.obtenerGestiones();
 			$scope.sucursales = $scope.obtenerSucursales();
+			$scope.reporte={}
+			$scope.reporte.sucursal = ($scope.sucursales.length ==1) ? $scope.sucursales[0] : null;
 			ejecutarScriptsVentasMensuales();
 		}
 		$scope.obtenerSucursales = function () {
 			var sucursales = [];
-			sucursales.push({ id: 0, nombre: "TODOS" });
+			
+			if ($scope.usuario.sucursalesUsuario.length > 1) {
+				sucursales.push({ id: 0, nombre: "TODOS" });
+			}
 			for (var i = 0; i < $scope.usuario.sucursalesUsuario.length; i++) {
 				sucursales.push($scope.usuario.sucursalesUsuario[i].sucursal);
 			}
