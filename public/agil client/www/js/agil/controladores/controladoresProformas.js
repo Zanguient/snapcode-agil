@@ -701,10 +701,9 @@ angular.module('agil.controladores')
                     })
                 }
             } else {
-                $scope.mostrarMensaje('Falta rellenar algún campo requerido.')
+                $scope.mostrarMensaje('Falta algún campo requerido.')
                 blockUI.stop()
             }
-
         }
         $scope.fechaATexto = function (fecha) {
             fech = new Date(fecha)
@@ -847,15 +846,21 @@ angular.module('agil.controladores')
                             $scope.moneda = { ufv: "--", dolar: "--" }
                             $scope.mostrarMensaje('La fecha ' + $scope.proforma.fecha_proforma + ' no tiene datos del tipo de cambio de dolar. El tipo de cambio de dolar no afecta la información de la proforma y puede continuar sin problema.')
                         }
-                        if (opcionImpresion == 0) {
-                            $scope.imprimirSinDetalle($scope.proforma)
-                        }
-                        if (opcionImpresion == 1) {
-                            $scope.imprimirConDetalle($scope.proforma)
-                        }
-                        if (opcionImpresion == 2) {
-                            $scope.imprimirMixto($scope.proforma)
-                        }
+                        console.log($scope.usuario.empresa.imagen)
+                        convertUrlToBase64Image($scope.usuario.empresa.imagen, function (imagenEmpresa) {
+                            
+                            var imagen = imagenEmpresa;
+                            if (opcionImpresion == 0) {
+                                $scope.imprimirSinDetalle($scope.proforma, imagen)
+                            }
+                            if (opcionImpresion == 1) {
+                                $scope.imprimirConDetalle($scope.proforma, imagen)
+                            }
+                            if (opcionImpresion == 2) {
+                                $scope.imprimirMixto($scope.proforma, imagen)
+                            }
+                        });
+                        
                         blockUI.stop()
         
                     }, function (err) {
@@ -868,22 +873,20 @@ angular.module('agil.controladores')
                 blockUI.stop()
             })
         }
-        $scope.imprimirMixto = function (proforma) {
+        $scope.imprimirMixto = function (proforma, imagen) {
 
             var importeTotal = 0
             var cantidadTotal = 0
             $scope.proforma = proforma
-            var doc = new PDFDocument({ size: 'letter', margin: 10 });
-            var img = convertUrlToBase64Image($scope.usuario.empresa.imagen, function (imagenEmpresa) {
-                return imagenEmpresa;
-            });
+            var doc = new PDFDocument({ size: 'letter', margin: 10, compress: false }); //{compress: false},
+           
             var separacionExtra = 50
             var stream = doc.pipe(blobStream());
             var fechaActual = new Date();
             var x = 80
             doc.font('Helvetica', 8);
             var y = 115 + 80 + separacionExtra, itemsPorPagina = 29, items = 0, pagina = 1, totalPaginas = Math.ceil(1 / itemsPorPagina);
-            $scope.dibujarCabeceraPDFImpresion(doc, pagina, totalPaginas, $scope.proforma);
+            $scope.dibujarCabeceraPDFImpresion(doc, pagina, totalPaginas, $scope.proforma,imagen);
             var extraDetalle = 0
             var extraServ = 0
             for (var i = 0; i <= $scope.proforma.detallesProformas.length && items <= itemsPorPagina; i++) {
@@ -910,7 +913,7 @@ angular.module('agil.controladores')
                     y = 115 + 80 + separacionExtra;
                     items = 0;
                     pagina = pagina + 1;
-                    $scope.dibujarCabeceraPDFImpresion(doc, pagina, totalPaginas, $scope.proforma);
+                    $scope.dibujarCabeceraPDFImpresion(doc, pagina, totalPaginas, $scope.proforma,imagen);
                 }
             }
             doc.rect(40, 705, 540, 15).stroke(); // cuadro literal bolivianos
@@ -918,6 +921,8 @@ angular.module('agil.controladores')
             $scope.proforma.importeLiteral = ConvertirALiteral($scope.proforma.totalImporteBs.toFixed(2));
             doc.text('Son : ' + ($scope.proforma.importeLiteral), 58, 710);
             doc.text($scope.number_format($scope.proforma.totalImporteBs, 2), 510,710);
+            doc.rect(41, 725, 538, 14).fill("silver", "#000")
+            .fill('black')
             doc.text('Son : ' + $scope.number_format($scope.proforma.totalImporteBs / $scope.moneda.dolar, 2) + '  Dólares x ' + $scope.moneda.dolar, 58, 730);
             // doc.text("Nota: La aprobación de la proforma deberá realizarse dentro de los próximos 7 días a partir de la fecha de recepción",0, 750,{ align: "center" })
             doc.end();
@@ -928,22 +933,19 @@ angular.module('agil.controladores')
             blockUI.stop();
 
         }
-        $scope.imprimirConDetalle = function (proforma) {
+        $scope.imprimirConDetalle = function (proforma, imagen) {
 
             var importeTotal = 0
             var cantidadTotal = 0
             $scope.proforma = proforma
-            var doc = new PDFDocument({ size: 'letter', margin: 10 });
-            var img = convertUrlToBase64Image($scope.usuario.empresa.imagen, function (imagenEmpresa) {
-                return imagenEmpresa;
-            });
+            var doc = new PDFDocument({ size: 'letter', margin: 10,compress: false }); //{compress: false},
             var separacionExtra = 50
             var stream = doc.pipe(blobStream());
             var fechaActual = new Date();
             var x = 80
             doc.font('Helvetica', 8);
             var y = 115 + 80 + separacionExtra, itemsPorPagina = 29, items = 0, pagina = 1, totalPaginas = Math.ceil(1 / itemsPorPagina);
-            $scope.dibujarCabeceraPDFImpresion(doc, pagina, totalPaginas, $scope.proforma);
+            $scope.dibujarCabeceraPDFImpresion(doc, pagina, totalPaginas, $scope.proforma,imagen);
             var extraServ = 0
             for (var i = 0; i < $scope.proforma.detallesProformas.length && items <= itemsPorPagina; i++) {
                 doc.font('Helvetica', 8);
@@ -967,7 +969,7 @@ angular.module('agil.controladores')
                     y = 115 + 80 + separacionExtra;
                     items = 0;
                     pagina = pagina + 1;
-                    $scope.dibujarCabeceraPDFImpresion(doc, pagina, totalPaginas, $scope.proforma);
+                    $scope.dibujarCabeceraPDFImpresion(doc, pagina, totalPaginas, $scope.proforma,imagen);
                 }
             }
             doc.rect(40, 705, 540, 15).stroke(); // cuadro literal bolivianos
@@ -975,6 +977,8 @@ angular.module('agil.controladores')
             $scope.proforma.importeLiteral = ConvertirALiteral($scope.proforma.totalImporteBs.toFixed(2));
             doc.text('Son : ' + ($scope.proforma.importeLiteral), 58, 710);
             doc.text($scope.number_format($scope.proforma.totalImporteBs, 2), 510,710);
+            doc.rect(41, 725, 538, 14).fill("silver", "#000")
+            .fill('black')
             doc.text('Son : ' + $scope.number_format($scope.proforma.totalImporteBs / $scope.moneda.dolar, 2) + '  Dólares x ' + $scope.moneda.dolar, 58, 730);
             // doc.text("Nota: La aprobación de la proforma deberá realizarse dentro de los próximos 7 días a partir de la fecha de recepción",0, 750,{ align: "center" })
             doc.end();
@@ -985,22 +989,19 @@ angular.module('agil.controladores')
             blockUI.stop();
 
         }
-        $scope.imprimirSinDetalle = function (proforma) {
+        $scope.imprimirSinDetalle = function (proforma, imagen) {
 
             var importeTotal = 0
             var cantidadTotal = 0
             $scope.proforma = proforma
-            var doc = new PDFDocument({ size: 'letter' , margin: 10 });//[612, 792]
-            var img = convertUrlToBase64Image($scope.usuario.empresa.imagen, function (imagenEmpresa) {
-                return imagenEmpresa;
-            });
+            var doc = new PDFDocument({ size: 'letter' , margin: 10,compress: false });//[612, 792] {compress: false},
             var separacionExtra = 50
             var stream = doc.pipe(blobStream());
             var fechaActual = new Date();
             var x = 80
             doc.font('Helvetica', 8);
             var y = 195 + separacionExtra, itemsPorPagina = 29, items = 0, pagina = 1, totalPaginas = Math.ceil(1 / itemsPorPagina);
-            $scope.dibujarCabeceraPDFImpresion(doc, pagina, totalPaginas, $scope.proforma);
+            $scope.dibujarCabeceraPDFImpresion(doc, pagina, totalPaginas, $scope.proforma,imagen);
 
             // for (var i = 0; i < $scope.proforma.detallesProformas.length - 1 && items <= itemsPorPagina; i++) {
             doc.font('Helvetica', 8);
@@ -1019,6 +1020,8 @@ angular.module('agil.controladores')
             doc.rect(40, 725, 540, 15).stroke(); // cuadro total dolares
             doc.text('Son : ' + ($scope.proforma.importeLiteral), 58, 710);
             doc.text($scope.number_format($scope.proforma.totalImporteBs, 2), 510,710);
+            doc.rect(41, 725, 538, 14).fill("silver", "#000")
+            .fill('black')
             doc.text('Son : ' + $scope.number_format($scope.proforma.totalImporteBs / $scope.moneda.dolar, 2) + '  Dólares x ' + $scope.moneda.dolar, 58, 730);
             
             doc.end();
@@ -1029,7 +1032,7 @@ angular.module('agil.controladores')
             blockUI.stop();
         }
 
-        $scope.dibujarCabeceraPDFImpresion = function (doc, pagina, totalPaginas, proforma) {
+        $scope.dibujarCabeceraPDFImpresion = function (doc, pagina, totalPaginas, proforma,imagen) {
             var yCabecera = 80;
             var yEspacio = 10;
             var separacionExtra = 50
@@ -1042,6 +1045,7 @@ angular.module('agil.controladores')
             doc.font('Helvetica', 8);
             doc.font('Helvetica-Bold', 8);
             doc.font('Helvetica', 8);
+            doc.image(imagen, 40, 40, { width: 60, height: 60 });
             doc.text($scope.usuario.empresa.telefono1, 80, 60 + separacionExtra);
             doc.text($scope.usuario.empresa.direccion + ' Santa Cruz', 40, 70 + separacionExtra, { width: 90 });
             doc.text('Santa Cruz,     ', 65, 115 + separacionExtra, { lineBreak: false }).font('Helvetica-Bold', 10).text(fecha.split('/')[0], { lineBreak: false }).font('Helvetica', 10).text('   de   ', { lineBreak: false }).font('Helvetica-Bold', 10).text($scope.meses[new Date($scope.convertirFecha(fecha)).getMonth()].nombre, { lineBreak: false }).font('Helvetica', 10).text('   de   ', { lineBreak: false }).font('Helvetica-Bold', 10).text(fecha.split('/')[2])

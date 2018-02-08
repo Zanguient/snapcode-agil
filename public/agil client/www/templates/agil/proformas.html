@@ -602,9 +602,9 @@
                                                     <option value="" disabled selected>Selec. Sucursal</option>
                                                 </select>
                                                 <span class="red">(*)</span>
-                                                <span class="invalid-message" ng-show="formularioProforma.sucursal.$dirty && formularioProforma.sucursal.$invalid">
+                                                <!-- <span class="invalid-message" ng-show="formularioProforma.sucursal.$dirty && formularioProforma.sucursal.$invalid">
                                                     Debe seleccionar una Sucursal.
-                                                </span>
+                                                </span> -->
                                             </div>
                                         </div>
                                         <!-- <label>SUCURSAL</label>
@@ -658,9 +658,9 @@
                                             typeahead-wait-ms="2000" typeahead-template-url="templates/autocompletar.html" typeahead-show-hint="false"
                                             typeahead-min-length="0" typeahead-on-select="establecerCliente($item, $model, $label, $event)">
                                         <span class="red">(*)</span>
-                                        <span class="invalid-message" ng-show="formularioProforma.nit.$dirty && formularioProforma.nit.$invalid">
+                                        <!-- <span class="invalid-message" ng-show="formularioProforma.nit.$dirty && formularioProforma.nit.$invalid">
                                             Debe ingresar un número mayor o igual a 0.
-                                        </span>
+                                        </span> -->
 
                                     </td>
                                     <td>
@@ -676,9 +676,9 @@
                                             class="btn btn-info btn-sm">
                                             <i class="ace-icon fa fa-search-plus bigger-110"></i>
                                         </button>
-                                        <span class="invalid-message" ng-show="formularioProforma.razon_social.$dirty && formularioProforma.razon_social.$invalid">
+                                        <!-- <span class="invalid-message" ng-show="formularioProforma.razon_social.$dirty && formularioProforma.razon_social.$invalid">
                                             Dato requerido.
-                                        </span>
+                                        </span> -->
                                     </td>
                                 </tr>
                                 <tr>
@@ -691,9 +691,9 @@
                                             <textarea ng-disabled="proforma.ver !== undefined" class="form-control" row="3" required name="detalle" id="proformaDetalle"
                                                 ng-model="proforma.detalle"></textarea>
                                             <span class="red">(*)</span>
-                                            <span class="invalid-message" ng-show="formularioProforma.detalle.$dirty && formularioProforma.detalle.$invalid">
+                                            <!-- <span class="invalid-message" ng-show="formularioProforma.detalle.$dirty && formularioProforma.detalle.$invalid">
                                                 Detalle es un dato requerido.
-                                            </span>
+                                            </span> -->
                                         </div>
                                     </td>
                                     <div class="col-md-4">
@@ -710,9 +710,9 @@
                                             data-date-format="dd/mm/yyyy" class="form-control date-picker" id="fecha-inicial"
                                             ng-update-hidden ng-model="proforma.fecha_proforma" name="fecha-inicial">
                                         <span class="red">(*)</span>
-                                        <span class="invalid-message" ng-show="formularioProforma.fecha.$dirty && formularioProforma.fecha.$invalid">
+                                        <!-- <span class="invalid-message" ng-show="formularioProforma.fecha.$dirty && formularioProforma.fecha.$invalid">
                                             Dato requerido.
-                                        </span>
+                                        </span> -->
                                     </td>
                                     <td>
                                         <div class="container-fluid">
@@ -1231,7 +1231,7 @@
                         </button>
                     </div>
                 </div>
+            </form>
         </div>
-        </form>
     </div>
 </div>
