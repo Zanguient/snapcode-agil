@@ -23,6 +23,7 @@ angular.module('agil.controladores')
 		$scope.idModalInventario = "dialog-productos-venta";
 		$scope.idModalPanelVentasCobro = 'dialog-panel-cobro';
 		$scope.idModalEdicionVendedor = 'dialog-edicion-vendedor';
+		$scope.idModalImpresionVencimiento='dialog-imprimir-con-fecha-vencimiento';
 
 		$scope.$on('$viewContentLoaded', function () {
 			resaltarPestaña($location.path().substring(1));
@@ -31,7 +32,7 @@ angular.module('agil.controladores')
 				$scope.idModalContenedorVentaVista, $scope.idInputCompletar, $scope.url, $scope.idModalPago,
 				$scope.idModalCierre,
 				$scope.idModalPanelVentas, $scope.idModalConfirmacionEliminacionVenta, $scope.idModalInventario, $scope.idModalPanelVentasCobro,
-				$scope.idModalEdicionVendedor);
+				$scope.idModalEdicionVendedor,$scope.idModalImpresionVencimiento);
 			$scope.buscarAplicacion($scope.usuario.aplicacionesUsuario, $location.path().substring(1));
 			blockUI.stop();
 		});
@@ -1331,7 +1332,14 @@ angular.module('agil.controladores')
 							blockUI.stop();
 							$scope.cerrarPopPupEdicion();
 							if($scope.usuario.empresa.usar_vencimientos){
-								ImprimirSalida(movimiento, res, true, $scope.usuario);
+								$scope.impresion={
+									movimiento:movimiento,
+									res:res,
+									al_guardar:true,
+									usuario: $scope.usuario
+								}
+								$scope.abrirPopup($scope.idModalImpresionVencimiento);
+								//ImprimirSalida(movimiento, res, true, $scope.usuario);
 							}else{
 								ImprimirSalida(movimiento, res, true, $scope.usuario);
 							}
@@ -1346,6 +1354,34 @@ angular.module('agil.controladores')
 					});
 				}
 			}
+		}
+
+		$scope.imprimirConVencimiento=function(){
+			$scope.impresion.res.con_vencimiento=true;
+			ImprimirSalida($scope.impresion.movimiento, $scope.impresion.res, $scope.impresion.al_guardar, $scope.impresion.usuario);
+			$scope.cerrarPopup($scope.idModalImpresionVencimiento);
+		}
+
+		$scope.imprimirSinVencimiento=function(){
+			$scope.impresion.res.con_vencimiento=false;
+			ImprimirSalida($scope.impresion.movimiento, $scope.impresion.res, $scope.impresion.al_guardar, $scope.impresion.usuario);
+			$scope.cerrarPopup($scope.idModalImpresionVencimiento);
+		}
+
+		$scope.imprimirVentaConVencimiento = function (venta) {
+			var promesa = DatosVenta(venta.id, $scope.usuario.id_empresa);
+			promesa.then(function (datos) {
+				var ventaConsultada = datos.venta;
+				ventaConsultada.con_vencimiento=true;
+				ventaConsultada.configuracion = datos.configuracion;
+				ventaConsultada.sucursal = datos.sucursal;
+				ventaConsultada.numero_literal = datos.numero_literal;
+				ventaConsultada.pieFactura = datos.pieFactura;
+				ventaConsultada.sucursalDestino = datos.sucursalDestino;
+				var fecha = new Date(ventaConsultada.fecha);
+				ventaConsultada.fechaTexto = fecha.getDate() + "/" + (fecha.getMonth() + 1) + "/" + fecha.getFullYear();
+				ImprimirSalida(ventaConsultada.movimiento.clase.nombre_corto, ventaConsultada, false, $scope.usuario);
+			});
 		}
 
 		$scope.cerrarPopPupEdicion = function () {

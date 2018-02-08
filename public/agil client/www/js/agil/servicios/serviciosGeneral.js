@@ -862,8 +862,12 @@ angular.module('agil.servicios')
 						var longitudCaracteres = venta.detallesVenta[i].producto.nombre.length;
 						var yDesc = (longitudCaracteres <= 24) ? y : ((longitudCaracteres > 24 && longitudCaracteres <= 60) ? y - 4 : y - 11);
 						doc.text(venta.detallesVenta[i].producto.nombre, 198, yDesc, { width: 130 });
-						doc.text(fechaVencimientoTexto, 340, y);
-						doc.text(venta.detallesVenta[i].lote, 380, y);
+						
+						if(venta.con_vencimiento){
+							doc.text(fechaVencimientoTexto, 340, y);
+							doc.text(venta.detallesVenta[i].lote, 380, y);
+						}
+						
 						doc.text(venta.detallesVenta[i].precio_unitario.toFixed(2), 410, y);
 						doc.text(venta.detallesVenta[i].importe.toFixed(2), 450, y);
 						doc.text(venta.detallesVenta[i].descuento.toFixed(2), 490, y);
@@ -1050,8 +1054,12 @@ angular.module('agil.servicios')
 				doc.text("CANT.", 125, 210);
 				doc.text("UNID.", 160, 210, { width: 43 });
 				doc.text("DETALLE", 198, 210);
-				doc.text("VENC.", 340, 210);
-				doc.text("LOTE", 380, 210);
+				
+				if(venta.con_vencimiento){
+					doc.text("VENC.", 340, 210);
+					doc.text("LOTE", 380, 210);
+				}
+				
 				doc.text("P.UNIT.", 410, 210);
 				doc.text("IMP.", 450, 210);
 				doc.text("DESC.", 490, 210);

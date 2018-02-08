@@ -460,7 +460,7 @@ function ejecutarScriptsVentasMensuales() {
 function ejecutarScriptsVenta(idPopupEdicion, idPopupVista, idPopupEliminacion,
 	idContenedorEdicion, idContenedorVista, idInput, url,
 	idPopupPago, idPopupCierre, idPopupPanel, idPopupEliminacion, idModalInventario, idModalPanelCobro,
-	idModalVendedor) {
+	idModalVendedor,idModalImpresionVencimiento) {
 	crearPopup(idPopupEdicion, "100%", 600);
 	crearPopup(idPopupVista, "100%", 600);
 	crearPopup(idModalInventario, "85%", 550);
@@ -474,6 +474,7 @@ function ejecutarScriptsVenta(idPopupEdicion, idPopupVista, idPopupEliminacion,
 	crearPopup(idPopupPanel, "100%", screen.height);
 	crearPopup(idModalPanelCobro, "40%", 500);
 	crearPopup(idPopupEliminacion, "30%", 350);
+	crearPopup(idModalImpresionVencimiento, "30%", 150);
 	crearPopup(idModalVendedor, "50%", 250);
 
 	$(document).on('click', '#campos-detalle-venta', function (e) {

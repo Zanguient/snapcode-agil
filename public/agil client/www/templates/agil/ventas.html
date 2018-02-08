@@ -238,6 +238,9 @@
 								<a ng-if="venta.activa && (venta.movimiento.clase.nombre_corto==diccionario.EGRE_FACTURACION || venta.movimiento.clase.nombre_corto==diccionario.EGRE_PROFORMA)" class="red" href="javascript:void(0)" e-disabled="!aplicacion.puede_eliminar" ng-click="mostrarConfirmacionEliminacionVenta(venta)">
 									<i class="ace-icon fa fa-trash-o bigger-130"></i>
 								</a>
+								<a class="red" href="javascript:void(0)" ng-if="usuario.empresa.usar_vencimientos" ng-click="imprimirVentaConVencimiento(venta)">
+									<i class="ace-icon fa fa-print bigger-130"></i>
+								</a>
 							</div>
 
 							<div class="hidden-md hidden-lg">
@@ -1815,4 +1818,10 @@
 	</div>>
 	
 	</form>
+  </div>
+
+  <div id="dialog-imprimir-con-fecha-vencimiento" title="¿Impresion con Vencimiento?">
+	<p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>¿Imprimir con vencimiento?</p>
+	<button type="button" class="btn btn-danger" ng-click="imprimirConVencimiento()">Si</button>
+	<button type="button" class="btn btn-success"  ng-click="imprimirSinVencimiento()">No</button>
   </div>
