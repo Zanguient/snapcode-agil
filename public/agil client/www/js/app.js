@@ -217,7 +217,11 @@ angular.module('agil', ['ngRoute', 'agil.controladores',
             .when('/farmacia', {
                 controller:'ControladoresFarmacia',
                 templateUrl:'templates/agil/farmacia.html'
-            })  
+            })
+            .when('/polifuncionalidad', {
+                controller:'controladorPolifuncionalidad',
+                templateUrl:'templates/agil/polifuncionalidad.html'
+            }) 
         .otherwise({
           redirectTo:'/'
         });

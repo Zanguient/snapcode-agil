@@ -212,6 +212,12 @@ module.exports = function (sequelize, Sequelize) {
 		sequelize.query("INSERT IGNORE INTO sys_rol_aplicacion SET id=66,rol=3,aplicacion=47,puede_ver=1,puede_crear=1,puede_modificar=1,puede_eliminar=1,createdAt = NOW(),updatedAt = NOW();").spread(function (results, metadata) {
 			
 		});
+		sequelize.query("INSERT IGNORE INTO sys_rol_aplicacion SET id=68,rol=2,aplicacion=48,puede_ver=1,puede_crear=1,puede_modificar=1,puede_eliminar=1,createdAt = NOW(),updatedAt = NOW();").spread(function (results, metadata) {
+			
+		});
+		sequelize.query("INSERT IGNORE INTO sys_rol_aplicacion SET id=69,rol=3,aplicacion=48,puede_ver=1,puede_crear=1,puede_modificar=1,puede_eliminar=1,createdAt = NOW(),updatedAt = NOW();").spread(function (results, metadata) {
+			
+		});
 	});
 
 	return RolAplicacion;

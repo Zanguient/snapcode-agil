@@ -114,7 +114,13 @@ angular.module('agil.servicios')
 		};
 		return res;
 	}])
-
+	.factory('GuardarGtmDetalleDespachoAlerta', function ($resource) {
+		return $resource(restServer + "gtm-detalle-despacho/empresa/:id_empresa/fecha/:fecha", { id_empresa: '@id',fecha:'@fecha' },
+			{
+				'update': { method: 'PUT' }
+			});
+	})
+	
 	.factory('GtmDespacho', function ($resource) {
 		return $resource(restServer + "gtm-detalle-despacho-despachado/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion/inicio/:inicio/fin/:fin/transportista/:transportista/tipo/:tipo/grupo/:grupo/estado/:estado", null,
 			{

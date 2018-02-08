@@ -55,7 +55,11 @@ module.exports = function (sequelize, Sequelize) {
         id_padre: {
             type: Sequelize.INTEGER,
             field: 'padre'
-        }
+        },
+        fecha: {
+           type: Sequelize.DATE,
+           field: 'fecha'
+       }
     }, {
             freezeTableName: true
         });

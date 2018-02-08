@@ -20,9 +20,10 @@ module.exports = function (router,ensureAuthorizedAdministrador,fs,forEach,jwt,m
 						cantidad:parseFloat(detalle_despacho.cantidad),
 						precio_unitario:parseFloat(detalle_despacho.precio_unitario),
 						importe:parseFloat(detalle_despacho.total),
-						saldo:parseFloat(detalle_despacho.cantidad),
+						saldo:parseFloat(detalle_despacho.cantidad),						
 						despachado:false,
-						eliminado:false
+						eliminado:false,
+						fecha:new Date(req.body.fecha.split("/")[2],req.body.fecha.split("/")[1]-1,req.body.fecha.split("/")[0]),
 					}).then(function(detalleDespachoCreado){
 						if (index === (array.length - 1)) {
 							res.json(despachoCreado);
@@ -76,6 +77,7 @@ router.route('/gtm-detalle-despacho/empresa/:id_empresa')
 			});
 			
 		}); */
+		router.route('/gtm-detalle-despacho/empresa/:id_empresa/fecha/:fecha')
 		.put(function (req, res) {
 			req.body.forEach(function (detalle_despacho, index, array) {
 				var despachado = false
@@ -108,7 +110,8 @@ router.route('/gtm-detalle-despacho/empresa/:id_empresa')
 					precio_unitario: detalle_despacho.precio_unitario,
 					importe: detalle_despacho.importe,
 					eliminado: false,
-					id_padre: detalle_despacho.id
+					id_padre: detalle_despacho.id,
+					fecha:req.params.fecha
 				}, {
 						where: {
 							id: detalle_despacho.id
@@ -131,11 +134,11 @@ router.route('/gtm-detalle-despacho-despachado/empresa/:id_empresa/pagina/:pagin
 		var condicionCliente={}
 		if (req.params.inicio != 0) {
 			var inicio = new Date(req.params.inicio); inicio.setHours(0, 0, 0, 0, 0);
-			var fin = new Date(req.params.fin); fin.setHours(23, 0, 0, 0, 0);
+			var fin = new Date(req.params.fin); fin.setHours(23, 59, 59, 0, 0);
 			condicionDespacho={id_padre:{$ne:null}, eliminado: false, fecha: { $between: [inicio, fin] } };
 		}
 		if (req.params.transportista != 0) {
-			condicionTrabajador={nombre:req.params.transportista}
+			condicionTrabajador={nombre_completo:{$like: "%" + req.params.transportista + "%"}}
 		}
 		if (req.params.tipo != 0) {
 			condicionEstibaje={nombre:req.params.tipo}

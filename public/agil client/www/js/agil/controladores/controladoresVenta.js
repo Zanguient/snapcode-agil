@@ -1330,7 +1330,11 @@ angular.module('agil.controladores')
 						} else {
 							blockUI.stop();
 							$scope.cerrarPopPupEdicion();
-							ImprimirSalida(movimiento, res, true, $scope.usuario);
+							if($scope.usuario.empresa.usar_vencimientos){
+								ImprimirSalida(movimiento, res, true, $scope.usuario);
+							}else{
+								ImprimirSalida(movimiento, res, true, $scope.usuario);
+							}
 							$scope.crearNuevaVenta();
 							$scope.mostrarMensaje('Venta registrada exitosamente!');
 						}

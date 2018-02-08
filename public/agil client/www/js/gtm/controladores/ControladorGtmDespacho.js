@@ -47,6 +47,10 @@ angular.module('agil.controladores')
 
         }
         $scope.buscarDespachados = function () {
+            if($scope.paginator.filter.inicio!=0){
+                $scope.paginator.filter.inicio= new Date($scope.convertirFecha($scope.paginator.filter.inicio))
+                $scope.paginator.filter.fin= new Date($scope.convertirFecha($scope.paginator.filter.fin))
+            }
             blockUI.start();
             var promesa = GtmDespachos($scope.paginator);
             promesa.then(function (dato) {

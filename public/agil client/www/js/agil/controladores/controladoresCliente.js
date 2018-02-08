@@ -236,37 +236,9 @@ angular.module('agil.controladores')
 								r = new FileReader();
 								if (documento) {
 									r.onloadend = function (e) {
-										if (index == 0) {
-											if (cliente.documento_nit1) {
-												cliente.documento_nit1[0].nombre = cliente.documento_nit1[0].name
-												cliente.documento_nit1[0].data = e.target.result;
-											}
-										}
-										if (index == 1) {
-											if (cliente.ddocumento_funda_empresa1) {
-												cliente.ddocumento_funda_empresa1[0].nombre = cliente.ddocumento_funda_empresa1[0].name
-												cliente.ddocumento_funda_empresa1[0].data = e.target.result;
-											}
-										}
-										if (index == 2) {
-											if (cliente.documento_licencia_funcionamiento1) {
-
-												cliente.documento_licencia_funcionamiento1[0].nombre = cliente.documento_licencia_funcionamiento1[0].name
-												cliente.documento_licencia_funcionamiento1[0].data = e.target.result;
-											}
-										}
-										if (index == 3) {
-											if (cliente.documento_ci1) {
-												cliente.documento_ci1[0].nombre = cliente.documento_ci1[0].name
-												cliente.documento_ci1[0].data = e.target.result;
-											}
-										}
-										if (index == 4) {
-											if (cliente.documento_seguro_social1) {
-												cliente.documento_seguro_social1[0].nombre = cliente.documento_seguro_social1[0].name
-												cliente.documento_seguro_social1[0].data = e.target.result;
-											}
-										}
+										documento.nombre=documento.name
+										documento.data=e.target.result
+									
 										//send your binary data via $http or $resource or do anything else with it
 										if (index === array.length - 1) {
 											cliente.fecha1 = null;

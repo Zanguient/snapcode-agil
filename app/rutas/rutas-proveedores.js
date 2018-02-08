@@ -58,6 +58,7 @@ router.route('/proveedores')
 					texto1:req.body.texto1,
 					texto2:req.body.texto2
 				}).then(function(proveedorCreado){
+					
 					guardarContratosProvedor(req,res,proveedorCreado)
 					res.json(proveedorCreado);
 				});
@@ -331,6 +332,7 @@ router.route('/proveedores/:id_proveedor')
 				id:req.params.id_proveedor
 			}
 		}).then(function(proveedorCreado){
+			guardarContratosProvedor(req,res,req.body)
 			res.json(req.body);		  
 		});
 	})

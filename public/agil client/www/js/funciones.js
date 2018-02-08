@@ -12,6 +12,13 @@ function ejecutarScriptDestino(idModalWizardDestinoEdicion,idContenedorEdicionDe
 	aplicarWizardFormulario(idModalWizardDestinoEdicion, idContenedorEdicionDestino);
 }
 
+function ejecutarScriptsPolifuncionalidad() {
+
+	// crearPopup(dialogmodalFechas, 'auto', 'auto');
+
+	// aplicarWizardFormulario(wizardConfiguracionActividades);
+}
+
 function ejecutarScriptsProformas(modalConfiguracionActividadesServicios, wizardConfiguracionActividadesServicios, dialogProformaEdicion, dialogClientesProforma,modalConfiguracionActividades,wizardConfiguracionActividades,
 	dialogmodalFechas, dialogBusquedaServicio) {
 	crearPopup(modalConfiguracionActividadesServicios, 'auto', 'auto');
