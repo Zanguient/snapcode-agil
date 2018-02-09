@@ -1903,7 +1903,6 @@ angular.module('agil.controladores')
 			$scope.eliminarPopup($scope.idModalInventario);
 			$scope.eliminarPopup($scope.idModalPanelVentasCobro);
 			$scope.eliminarPopup($scope.idModalEdicionVendedor);
-			$scope.eliminarPopup($scope.idModalImpresionVencimiento);
 		});
 
 		$scope.inicio();
