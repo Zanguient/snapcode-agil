@@ -1,0 +1,1 @@
+ALTER TABLE agil_sucursal DROP nota_venta_farmacia_correlativo;

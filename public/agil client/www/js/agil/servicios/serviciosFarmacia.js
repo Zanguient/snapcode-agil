@@ -102,9 +102,9 @@ angular.module('agil.servicios')
 				doc.text("Indicaciones", { align: 'center' });
 				doc.font('Helvetica', 12);
 				doc.moveDown(0.4);
-				doc.text("Paciente : " + venta.cliente.razon_social, { align: 'left' });
+				doc.text("Paciente : " + venta.farmacia.paciente.persona.nombre_completo, { align: 'left' });
 				doc.moveDown(0.4);
-				doc.text("Empresa : " + venta.cliente.designacion_empresa, { align: 'left' });
+				doc.text("Empresa : " + venta.farmacia.paciente.designacion_empresa, { align: 'left' });
 				doc.moveDown(0.4);
 
 				doc.moveDown(0.2);
@@ -149,7 +149,6 @@ angular.module('agil.servicios')
 	function (Diccionario, ImprimirIndicacionesFarmacia, ImprimirProformaRolloFarmacia, $timeout) {
 		var res = function (venta, esAccionGuardar, usuario) {
 			var papel, doc, stream;
-			
 			if (venta.configuracion.tamanoPapelNotaVenta.nombre_corto == Diccionario.FACT_PAPEL_ROLLO) {
 				var alto;
 				if (venta.detallesVenta.length <= 2) {
@@ -167,7 +166,7 @@ angular.module('agil.servicios')
 						ImprimirIndicacionesFarmacia(venta, esAccionGuardar, doc, stream, sizeY, usuario);
 					}
 				} else {
-					doc = new PDFDocument({ size: papel, margins: { top: 0, bottom: 0, left: 20, right: 20 } });
+					doc = new PDFDocument({compress: false, size: papel, margins: { top: 0, bottom: 0, left: 20, right: 20 } });
 					stream = doc.pipe(blobStream());
 					ImprimirProformaRolloFarmacia(venta, papel, doc, stream, usuario);
 					if (usuario.empresa.usar_pedidos) {
@@ -208,7 +207,7 @@ angular.module('agil.servicios')
 			doc.text('ATENCIÓN MÉDICA', 70, 30, { align: 'center' });
 			doc.moveDown(0.4);
 			doc.font('Helvetica', 7);
-			doc.text("Nº "+ venta.factura, 70, 40, { align: 'center' });
+			doc.text("Nº "+ venta.farmacia.numero_receta, 70, 40, { align: 'center' });
 			doc.moveDown(0.4);
 			doc.text(venta.fechaTexto, 70, 50, { align: 'center' });
 	
@@ -216,30 +215,29 @@ angular.module('agil.servicios')
 			
 			
 			doc.moveDown(0.4);
-			doc.text("Paciente : " + venta.cliente.razon_social, 20, 70, { align: 'left' });
+			doc.text("Paciente : " + venta.farmacia.paciente.persona.nombre_completo, 20, 70, { align: 'left' });
 			doc.moveDown(0.4);
-			doc.text("Empresa : " + venta.cliente.designacion_empresa);
+			doc.text("Empresa : " + venta.farmacia.paciente.designacion_empresa);
 			doc.moveDown(0.4);
-			doc.text("Campamento : " + venta.cliente.campo);
+			doc.text("Campamento : " + venta.farmacia.paciente.campo);
 			doc.moveDown(0.4);
 			var cargos = [];
 
-			for (var i = 0; i < venta.cliente.cargos.length; i++) {
-				cargos.push(venta.cliente.cargos[i].cargo.nombre);
+			for (var j = 0; j < venta.farmacia.paciente.cargos.length; j++) {
+				cargos.push(venta.farmacia.paciente.cargos[j].cargo.nombre);
 			}
-			console.log("los carfgos============= ", cargos.toString());
 
 			doc.text("Cargos : "  + cargos.toString());
 			doc.moveDown(0.4);
-			if (venta.diagnostico === undefined) {
-				venta.diagnostico = "";
+			if (venta.farmacia.diagnostico === null || venta.farmacia.diagnostico === undefined) {
+				venta.farmacia.diagnostico = "";
 			}
-			if (venta.observaciones === undefined) {
-				venta.observaciones = "";
+			if (venta.farmacia.observaciones === null || venta.farmacia.observaciones === undefined) {
+				venta.farmacia.observaciones = "";
 			}
-			doc.text("Diagnostico : "  + venta.diagnostico);
+			doc.text("Diagnostico : "  + venta.farmacia.diagnostico);
 			doc.moveDown(0.4);
-			doc.text("Observación : "  + venta.observaciones);
+			doc.text("Observación : "  + venta.farmacia.observaciones);
 			doc.moveDown(0.4);
 
 			doc.text("--------------------------------------------------------------------------------", { align: 'center' });
@@ -310,7 +308,61 @@ angular.module('agil.servicios')
 				min = "0" + min;
 			}
 			doc.text("  Usuario : " + usuario.nombre_usuario + " -- Fecha : " + fechaActual.getDate() + "/" + (fechaActual.getMonth() + 1) + "/" + fechaActual.getFullYear() + "  " + fechaActual.getHours() + ":" + min + "  ", { align: 'center' });
-			blockUI.stop();
+			// blockUI.stop();
 		}
 		return res;
+	}])
+.factory('VentaFarmaciaFiltro', function($resource) {
+		return $resource(restServer+"ventas-farmacia/:idsSucursales/inicio/:inicio/fin/:fin/codigo/:codigo/nombreCompleto/:nombreCompleto/ci/:ci/tipo-venta/:tipo_venta/campo/:campo/cargo/:cargo/empresa/:empresa/numero_receta/:numero_receta", null,
+		{
+			'update': { method:'PUT' }
+		});
+})
+
+.factory('VentasFarmacia', ['VentaFarmaciaFiltro','$q',function(VentaFiltro, $q) 
+  {
+	var res = function(sucursales,inicio,fin,codigo,nombreCompleto,ci,tipo_pago,campo,cargo,empresa,numero_receta) 
+	{
+		var delay = $q.defer();
+		VentaFiltro.query({idsSucursales:sucursales,inicio:inicio,fin:fin,codigo:codigo,nombreCompleto:nombreCompleto,ci:ci,tipo_venta:tipo_pago,campo:campo,cargo:cargo,empresa:empresa,numero_receta:numero_receta},function(entidades) 
+		{        
+			delay.resolve(entidades);
+		}, function(error) 
+			{
+				delay.reject(error);
+			});
+		return delay.promise;
+	};
+    return res;
+  }])
+
+.factory('VentaFarmacia', function($resource) {
+		return $resource(restServer+"ventas-farmacia/:id",  { id: '@id' },
+		{
+			'update': { method:'PUT' }
+		});
+})
+
+.factory('VentaEmpresaDatosFarmacia', function($resource) {
+		return $resource(restServer+"ventas-farmacia/:id/empresa/:id_empresa", null,
+		{
+			'update': { method:'PUT' }
+		});
+})
+
+.factory('DatosVentaFarmacia', ['VentaEmpresaDatosFarmacia','$q',function(VentaEmpresaDatosFarmacia, $q) 
+	{
+	var res = function(id_venta,id_empresa) 
+	{
+		var delay = $q.defer();
+		VentaEmpresaDatosFarmacia.get({id:id_venta,id_empresa:id_empresa},function(entidad) 
+		{        
+			delay.resolve(entidad);
+		}, function(error) 
+			{
+				delay.reject(error);
+			});
+		return delay.promise;
+	};
+	return res;
 	}]);

@@ -376,9 +376,11 @@ function ejecutarScriptsPlanillaRetroActivos(idModalNuevoPlanillaRetroactivo) {
 	crearPopup(idModalNuevoPlanillaRetroactivo, "100%", "auto");
 }
 
-function ejecutarScriptsFarmacia(idModalWizardFarmaciaEdicion, idModalInventario) {
+function ejecutarScriptsFarmacia(idModalWizardFarmaciaEdicion, idModalInventario, idPopupVista, idPopupPago) {
 	crearPopup(idModalWizardFarmaciaEdicion, "100%", 600);
 	crearPopup(idModalInventario, "85%", 550);
+	crearPopup(idPopupVista, "100%", 600);
+	crearPopup(idPopupPago, "30%", 200);
 }
 
 function aplicarTab(idTab) {

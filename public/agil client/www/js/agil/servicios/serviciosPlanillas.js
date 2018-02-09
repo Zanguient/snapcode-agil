@@ -25,14 +25,14 @@ angular.module('agil.servicios')
   }])
 
 .factory('RecursosHumanosFichasEmpleados', function ($resource) {
-    return $resource(restServer + "recursos-humanos-fichas/empleados");
+    return $resource(restServer + "recursos-humanos-fichas/empleados/:idEmpresa", { idEmpresa: '@id' });
 })
 
 .factory('RecursosHumanosEmpleados', ['RecursosHumanosFichasEmpleados', '$q', function (RecursosHumanosFichasEmpleados, $q) {
     var res = function(idEmpresa) 
 	{
 		var delay = $q.defer();
-		RecursosHumanosFichasEmpleados.get({},function(parametros) 
+		RecursosHumanosFichasEmpleados.get({idEmpresa:idEmpresa},function(parametros) 
 		{        
 			delay.resolve(parametros);
 		}, function(error) 
@@ -44,4 +44,28 @@ angular.module('agil.servicios')
     return res;
 }])
 
- 
+.factory('RecursosHumanosHorasEmpleados', function ($resource) {
+    return $resource(restServer + "recursos-humanos/horas-extra/empleado-sueldo/:id_empleado/gestion/:gestion/mes/:mes");
+})
+
+.factory('RecursosHumanosEmpleadosHorasExtras', ['RecursosHumanosHorasEmpleados', '$q', function (RecursosHumanosHorasEmpleados, $q) {
+    var res = function(idEmpleado, gestion, mes) 
+	{
+		var delay = $q.defer();
+		RecursosHumanosHorasEmpleados.get({id_empleado:idEmpleado, gestion:gestion, mes:mes},function(parametros) 
+		{        
+			delay.resolve(parametros);
+		}, function(error) 
+			{
+				delay.reject(error);
+			});
+		return delay.promise;
+	};
+    return res;
+}])
+
+.factory('RecursosHumanosPlanillaSueldos', function($resource) {
+		return $resource(restServer+"rrhh-planilla-sueldos/:id_empresa", { id_empresa: '@id_empresa' },{
+			'update': { method:'PUT' }
+		});
+})

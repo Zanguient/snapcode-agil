@@ -655,7 +655,7 @@ angular.module('agil.controladores')
 			var promesa = ReporteLibroVentasDatos($scope.usuario.id_empresa, reporte.gestion, reporte.mes.split("-")[0]);
 			promesa.then(function (datos) {
 				var ventas = datos.ventas;
-				var doc = new PDFDocument({ margin: 10, layout: 'landscape' });
+				var doc = new PDFDocument({compress: false, margin: 10, layout: 'landscape' });
 				var stream = doc.pipe(blobStream());
 				// draw some text
 				$scope.dibujarCabeceraPDFLibroVentas(doc, datos, reporte, 1);
@@ -1403,7 +1403,7 @@ angular.module('agil.controladores')
 
 				var detallesVenta = datos.detallesVenta;
 				console.log(detallesVenta)
-				var doc = new PDFDocument({ margin: 10 });
+				var doc = new PDFDocument({compress: false, margin: 10 });
 				var stream = doc.pipe(blobStream());
 				// draw some text
 

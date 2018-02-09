@@ -59,6 +59,10 @@ module.exports=function(sequelize,Sequelize){
 	  id_inventario: {
 		type: Sequelize.INTEGER,
 		field: 'inventario'
+	  },
+	  observaciones: {
+		type: Sequelize.STRING,
+		field: 'observaciones'
 	  }
 	}, {
 	  freezeTableName: true 

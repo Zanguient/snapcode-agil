@@ -16,9 +16,9 @@ module.exports=function(sequelize,Sequelize){
 		type: Sequelize.INTEGER,
 		field: 'numero_receta' 
 	  },
-	  id_consulta: {
+	  id_paciente: {
 		type: Sequelize.INTEGER,
-		field: 'id_consulta'
+		field: 'id_paciente'
 	  }
 	 }, {
 	  freezeTableName: true 

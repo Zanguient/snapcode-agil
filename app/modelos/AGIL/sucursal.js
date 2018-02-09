@@ -113,7 +113,11 @@ module.exports=function(sequelize,Sequelize){
 		fecha_reinicio_correlativo:{
 			type: Sequelize.DATE,
 		field: 'fecha_reinicio_correlativo'
-		}
+		},
+		nota_venta_farmacia_correlativo:{
+		type: Sequelize.INTEGER,
+		field: 'nota_venta_farmacia_correlativo'  
+	  	}
 	}, {
 	  freezeTableName: true 
 	});
