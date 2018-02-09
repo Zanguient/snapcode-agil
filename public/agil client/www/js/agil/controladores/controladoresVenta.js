@@ -1368,11 +1368,11 @@ angular.module('agil.controladores')
 			$scope.cerrarPopup($scope.idModalImpresionVencimiento);
 		}
 
-		$scope.imprimirVentaConVencimiento = function (venta) {
+		$scope.imprimirVentaSinVencimiento = function (venta) {
 			var promesa = DatosVenta(venta.id, $scope.usuario.id_empresa);
 			promesa.then(function (datos) {
 				var ventaConsultada = datos.venta;
-				ventaConsultada.con_vencimiento=true;
+				ventaConsultada.con_vencimiento=false;
 				ventaConsultada.configuracion = datos.configuracion;
 				ventaConsultada.sucursal = datos.sucursal;
 				ventaConsultada.numero_literal = datos.numero_literal;

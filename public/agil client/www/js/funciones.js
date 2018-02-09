@@ -1,25 +1,28 @@
-function ejecutarScriptDespacho(idModalAsignacionFactura){
+function ejecutarScriptDespacho(idModalAsignacionFactura) {
 	crearPopup(idModalAsignacionFactura, "20%", 200);
 }
 
-function ejecutarScriptEstibaje(idModalWizardEstibajeEdicion,idContenedorEdicionEstibaje) {
+function ejecutarScriptEstibaje(idModalWizardEstibajeEdicion, idContenedorEdicionEstibaje) {
 	crearPopup(idModalWizardEstibajeEdicion, "60%", 550);
 	aplicarWizardFormulario(idModalWizardEstibajeEdicion, idContenedorEdicionEstibaje);
 }
 
-function ejecutarScriptDestino(idModalWizardDestinoEdicion,idContenedorEdicionDestino) {
+function ejecutarScriptDestino(idModalWizardDestinoEdicion, idContenedorEdicionDestino) {
 	crearPopup(idModalWizardDestinoEdicion, "60%", 550);
 	aplicarWizardFormulario(idModalWizardDestinoEdicion, idContenedorEdicionDestino);
 }
 
-function ejecutarScriptsPolifuncionalidad() {
-
-	// crearPopup(dialogmodalFechas, 'auto', 'auto');
-
-	// aplicarWizardFormulario(wizardConfiguracionActividades);
+function ejecutarScriptsPolifuncionalidad(modalNuevaEvaluacion, modalNuevaEvaluacionWizard, modalBusquedaPersonal, modalParametrosPolifuncionalidad, 
+	modalParametrosPolifuncionalidadWizard, idModalReportes) {
+	crearPopup(modalNuevaEvaluacion, 'auto', 'auto');
+	crearPopup(modalBusquedaPersonal, 'auto', 'auto');
+	crearPopup(modalParametrosPolifuncionalidad, 'auto', 'auto');
+	crearPopup(idModalReportes, 'auto', 'auto');
+	aplicarWizardFormulario(modalNuevaEvaluacion, modalNuevaEvaluacionWizard);
+	aplicarWizardFormulario(modalParametrosPolifuncionalidad, modalParametrosPolifuncionalidadWizard);
 }
 
-function ejecutarScriptsProformas(modalConfiguracionActividadesServicios, wizardConfiguracionActividadesServicios, dialogProformaEdicion, dialogClientesProforma,modalConfiguracionActividades,wizardConfiguracionActividades,
+function ejecutarScriptsProformas(modalConfiguracionActividadesServicios, wizardConfiguracionActividadesServicios, dialogProformaEdicion, dialogClientesProforma, modalConfiguracionActividades, wizardConfiguracionActividades,
 	dialogmodalFechas, dialogBusquedaServicio) {
 	crearPopup(modalConfiguracionActividadesServicios, 'auto', 'auto');
 	crearPopup(modalConfiguracionActividades, 'auto', 'auto');
@@ -30,12 +33,12 @@ function ejecutarScriptsProformas(modalConfiguracionActividadesServicios, wizard
 	aplicarWizardFormulario(wizardConfiguracionActividadesServicios);
 	aplicarWizardFormulario(wizardConfiguracionActividades);
 }
-function ejecutarScriptTransportista(idModalWizardTransportistajeEdicion,idContenedorEdicionTransportista){
+function ejecutarScriptTransportista(idModalWizardTransportistajeEdicion, idContenedorEdicionTransportista) {
 	crearPopup(idModalWizardTransportistajeEdicion, "60%", 550);
 	aplicarWizardFormulario(idModalWizardTransportistajeEdicion, idContenedorEdicionTransportista);
 }
 
-function ejecutarScriptGrupoEstibaje(idModalWizardGrupoEstibajeEdicion,idContenedorEdicionGrupoEstibaje){
+function ejecutarScriptGrupoEstibaje(idModalWizardGrupoEstibajeEdicion, idContenedorEdicionGrupoEstibaje) {
 	crearPopup(idModalWizardGrupoEstibajeEdicion, "60%", 550);
 	aplicarWizardFormulario(idModalWizardGrupoEstibajeEdicion, idContenedorEdicionGrupoEstibaje);
 }
@@ -97,7 +100,7 @@ function ejecutarScriptsOperaciones(idDialogDialogPanelOperaciones, idDialogEntr
 function ejecutarScriptsInicio(idPopupTablaProductos, idPopupTablaCreditos, idPopupTablaDeudas, idPopupPago,
 	idPopupActualizarCreditoCliente, idPopupActualizarCreditoDeuda, idPopupDeuda, idModalDescuento, idModalTablaVentasPendientes,
 	idModalTablaComprasPendientes, idModalTablaBancosPendientes, idModalTablaOtrosPendientes, idModalInicioSesion, idModalWizardComprobanteEdicion, IdModalOpcionesQr, IdModalRegistrarComprobante, IdModalRevisarComprobante, IdModalLibroMayor, IdModalAsignarCuenta,
-	idModalTablaDespachos, idModalTablaAsignacionDespacho,IdModalEliminarProductoVencido,dialogAlertasProformas,facturarProformas) {
+	idModalTablaDespachos, idModalTablaAsignacionDespacho, IdModalEliminarProductoVencido, dialogAlertasProformas, facturarProformas) {
 	crearPopup(idPopupTablaProductos, "70%", "auto");
 	crearPopup(idModalWizardComprobanteEdicion, "100%", "auto");
 	crearPopup(idPopupTablaCreditos, "auto", "auto");
@@ -123,14 +126,14 @@ function ejecutarScriptsInicio(idPopupTablaProductos, idPopupTablaCreditos, idPo
 	crearPopup(IdModalAsignarCuenta, "30%", 270);
 	crearPopup(idModalTablaDespachos, "90%", 550);
 	crearPopup(idModalTablaAsignacionDespacho, "30%", 320);
-	crearPopup(IdModalEliminarProductoVencido,"60%",550)
+	crearPopup(IdModalEliminarProductoVencido, "60%", 550)
 	$("#" + idModalInicioSesion).siblings('.ui-dialog-titlebar').remove();
 	aplicarDatePickers();
-quitarScrollInputNumber()
+	quitarScrollInputNumber()
 	$(document).on('click', '#field-viewer', function (e) {
 		e.stopPropagation();
 	});
-	
+
 }
 function quitarScrollInputNumber() {
 	$('.input-fix-mousewheel1').on('focus', function (e) {
@@ -141,11 +144,11 @@ function quitarScrollInputNumber() {
 		$(this).off('mousewheel.disableScroll')
 	});
 }
-function ejecutarScriptsComprobante(IdModalVerificarCuenta, IdModalEliminarComprobante,IdModalCambioMoneda) {
+function ejecutarScriptsComprobante(IdModalVerificarCuenta, IdModalEliminarComprobante, IdModalCambioMoneda) {
 	/* crearPopup(idModalWizardComprobanteNuevo, "100%", 800); */
 	crearPopup(IdModalVerificarCuenta, "20%", 'auto');
 	crearPopup(IdModalEliminarComprobante, "20%", 'auto');
-	crearPopup(IdModalCambioMoneda, "40%", 'auto');	
+	crearPopup(IdModalCambioMoneda, "40%", 'auto');
 	/*crearPopup(IdModalRevisarComprobante, "80%", 500);
 	crearPopup(IdModalLibroMayor, "80%", 500); */
 
@@ -253,7 +256,7 @@ function ejecutarScriptsRecursosHumanos(idModalPrerequisitos, idModalEmpleado, i
 	idModalReporteRolTurnos, idModalReporteTurnosDetallado, idModalViajes, idModalVisita, idModalVehiculosViaje, idModalDestinos,
 	idModalHistorialViajes, idModalReporteAusencias, idModalCertificado, idModalInstitucion, idModalRhNuevo, idModalWizardRhNuevo,
 	idImagenUsuario, idEliminarUsuarioRh, idModalWizardRhVista, idModalContenedorRhVista, idModalDialogPrerequisitoNuevo, idEliminarSeguroEmpleado,
-	idEliminarFamiliarEmpleado, idModalHistorialPrerequisito, idModalEditarPrerequisito, idModalDialogConfirmacionEntregaAdelantado, IdEntregaPrerequisito,IdModalVerificarCuenta,idModalImpresionHojaVida) {
+	idEliminarFamiliarEmpleado, idModalHistorialPrerequisito, idModalEditarPrerequisito, idModalDialogConfirmacionEntregaAdelantado, IdEntregaPrerequisito, IdModalVerificarCuenta, idModalImpresionHojaVida) {
 	crearPopup(idModalPrerequisitos, "90%", 'auto');
 	crearPopup(idModalEmpleado, "100%", 'auto');
 	aplicarWizardFormulario(idModalEmpleado, idModalwizardContainerEmpleado);
@@ -914,7 +917,9 @@ function aplicarWizardFormulario(idPopup, idContenedor) {
 	$('[data-rel=tooltip]').tooltip();
 	var $validation = false;
 	$('#' + idContenedor).ace_wizard();
+	console.log(idContenedor + ' ace wizard')
 	$('#' + idPopup + ' .wizard-actions .btn[data-dismiss=modal]').removeAttr('disabled');
+	console.log(idPopup)
 	$(document).one('ajaxloadstart.page', function (e) {
 		//in ajax mode, remove remaining elements before leaving page
 		$('[class*=select2]').remove();
@@ -1257,31 +1262,31 @@ function aplicarSwiper(slidesPerView, slidesPerColumn, paginationClickable, spac
 	});
 }
 function editar_fecha(fecha, intervalo, dma, simbolo) {
- 
+
 	var simbolo = simbolo || "-";
 	var arrayFecha = fecha.split(simbolo);
 	var dia = arrayFecha[0];
 	var mes = arrayFecha[1];
-	var anio = arrayFecha[2]; 
-	
+	var anio = arrayFecha[2];
+
 	var fechaInicial = new Date(anio, mes - 1, dia);
 	var fechaFinal = fechaInicial;
-	if(dma=="m" || dma=="M"){
-	  fechaFinal.setMonth(fechaInicial.getMonth()+parseInt(intervalo));
-	}else if(dma=="y" || dma=="Y"){
-	  fechaFinal.setFullYear(fechaInicial.getFullYear()+parseInt(intervalo));
-	}else if(dma=="d" || dma=="D"){
-	  fechaFinal.setDate(fechaInicial.getDate()+parseInt(intervalo));
-	}else{
-	  return fecha;
+	if (dma == "m" || dma == "M") {
+		fechaFinal.setMonth(fechaInicial.getMonth() + parseInt(intervalo));
+	} else if (dma == "y" || dma == "Y") {
+		fechaFinal.setFullYear(fechaInicial.getFullYear() + parseInt(intervalo));
+	} else if (dma == "d" || dma == "D") {
+		fechaFinal.setDate(fechaInicial.getDate() + parseInt(intervalo));
+	} else {
+		return fecha;
 	}
 	dia = fechaFinal.getDate();
 	mes = fechaFinal.getMonth() + 1;
 	anio = fechaFinal.getFullYear();
-   
+
 	dia = (dia.toString().length == 1) ? "0" + dia.toString() : dia;
 	mes = (mes.toString().length == 1) ? "0" + mes.toString() : mes;
-   
+
 	return dia + simbolo + mes + simbolo + anio;
 }
 function aplicarTiempos() {
