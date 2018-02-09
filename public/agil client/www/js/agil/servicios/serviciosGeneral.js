@@ -1523,8 +1523,10 @@ angular.module('agil.servicios')
 						doc.text(venta.detallesVenta[i].producto.unidad_medida, 120, y, { width: 40 });
 						doc.text(venta.detallesVenta[i].producto.nombre, 160, y - 9, { width: 80 });
 						if (usuario.empresa.usar_vencimientos) {
-							doc.text(venta.detallesVenta[i].fecha_vencimiento.getDate() + "/" + (venta.detallesVenta[i].fecha_vencimiento.getMonth() + 1) + "/" + venta.detallesVenta[i].fecha_vencimiento.getFullYear(), 245, y);
-							doc.text(venta.detallesVenta[i].lote, 285, y);
+							if(venta.con_vencimiento){
+								doc.text(venta.detallesVenta[i].fecha_vencimiento.getDate() + "/" + (venta.detallesVenta[i].fecha_vencimiento.getMonth() + 1) + "/" + venta.detallesVenta[i].fecha_vencimiento.getFullYear(), 245, y);
+								doc.text(venta.detallesVenta[i].lote, 285, y);
+							}
 						}
 						doc.text(venta.detallesVenta[i].precio_unitario.toFixed(2), 310, y);
 						doc.text(venta.detallesVenta[i].importe.toFixed(2), 345, y);
@@ -1539,8 +1541,10 @@ angular.module('agil.servicios')
 						doc.text(venta.detallesVenta[i].producto.unidad_medida, 160, y);
 						doc.text(venta.detallesVenta[i].producto.nombre, 200, y - 9, { width: 150 });
 						if (usuario.empresa.usar_vencimientos) {
-							doc.text(venta.detallesVenta[i].fecha_vencimiento.getDate() + "/" + (venta.detallesVenta[i].fecha_vencimiento.getMonth() + 1) + "/" + venta.detallesVenta[i].fecha_vencimiento.getFullYear(), 360, y);
-							doc.text(venta.detallesVenta[i].lote, 415, y);
+							if(venta.con_vencimiento){
+								doc.text(venta.detallesVenta[i].fecha_vencimiento.getDate() + "/" + (venta.detallesVenta[i].fecha_vencimiento.getMonth() + 1) + "/" + venta.detallesVenta[i].fecha_vencimiento.getFullYear(), 360, y);
+								doc.text(venta.detallesVenta[i].lote, 415, y);
+							}
 						}
 						doc.text(venta.detallesVenta[i].precio_unitario.toFixed(2), 460, y);
 						doc.text(venta.detallesVenta[i].total.toFixed(2), 520, y);
@@ -1639,8 +1643,10 @@ angular.module('agil.servicios')
 						doc.text("UNID.", 130, 210);
 						doc.text("DETALLE", 160, 210);
 						if (usuario.empresa.usar_vencimientos) {
-							doc.text("VENC.", 245, 210)
-							doc.text("LOTE.", 280, 210)
+							if(venta.con_vencimiento){
+								doc.text("VENC.", 245, 210)
+								doc.text("LOTE.", 280, 210)
+							}
 						}
 						doc.text("P. UNIT.", 310, 210);
 						doc.text("IMPORTE", 345, 210);
@@ -1655,8 +1661,10 @@ angular.module('agil.servicios')
 						doc.text("UNIDAD", 165, 210);
 						doc.text("DETALLE", 200, 210);
 						if (usuario.empresa.usar_vencimientos) {
-							doc.text("VENC.", 360, 210)
-							doc.text("LOTE.", 415, 210)
+							if(venta.con_vencimiento){
+								doc.text("VENC.", 360, 210)
+								doc.text("LOTE.", 415, 210)
+							}
 						}
 						doc.text("P.UNIT.", 460, 210);
 						doc.text("TOTAL", 520, 210);

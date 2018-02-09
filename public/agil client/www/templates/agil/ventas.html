@@ -238,7 +238,7 @@
 								<a ng-if="venta.activa && (venta.movimiento.clase.nombre_corto==diccionario.EGRE_FACTURACION || venta.movimiento.clase.nombre_corto==diccionario.EGRE_PROFORMA)" class="red" href="javascript:void(0)" e-disabled="!aplicacion.puede_eliminar" ng-click="mostrarConfirmacionEliminacionVenta(venta)">
 									<i class="ace-icon fa fa-trash-o bigger-130"></i>
 								</a>
-								<a class="red" href="javascript:void(0)" ng-if="usuario.empresa.usar_vencimientos" ng-click="imprimirVentaSinVencimiento(venta)">
+								<a class="red" href="javascript:void(0)" ng-if="usuario.empresa.usar_vencimientos" ng-click="imprimirVentaConVencimiento(venta)">
 									<i class="ace-icon fa fa-print bigger-130"></i>
 								</a>
 							</div>
