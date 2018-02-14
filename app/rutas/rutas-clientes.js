@@ -288,16 +288,36 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Clie
 						where: { codigo: cliente_razon.codigo }
 					}).then(function (clienteEncontrado) {
 						if (clienteEncontrado) {
-							ClienteRazon.create({
-								id_cliente: clienteEncontrado.id,
-								razon_social: cliente_razon.razon_social,
-								nit: cliente_razon.nit,
-								codigo_sap: cliente_razon.codigo_sap,
-							}).then(function (clienteRazonCreado) {
-								if (index == array.length - 1) {
-									res.json({ mensaje: "guardados satisfactoriamente!" })
+							ClienteRazon.findOrCreate({
+								where: {
+									nit: cliente_razon.nit,
+								},
+								defaults: {
+									id_cliente: clienteEncontrado.id,
+									razon_social: cliente_razon.razon_social,
+									nit: cliente_razon.nit,
+									codigo_sap: cliente_razon.codigo_sap,
 								}
-							});
+							}).spread(function (cargoClase, created) {
+								if (!created) {
+									ClienteRazon.update({
+										id_cliente: clienteEncontrado.id,
+										razon_social: cliente_razon.razon_social,
+										nit: cliente_razon.nit,
+										codigo_sap: cliente_razon.codigo_sap,
+									}, {
+										where: { nit: cliente_razon.nit }
+										}).then(function (clienteRazonCreado) {
+											if (index == array.length - 1) {
+												res.json({ mensaje: "guardados satisfactoriamente!" })
+											}
+										})
+								} else {
+									if (index == array.length - 1) {
+										res.json({ mensaje: "guardados satisfactoriamente!" })
+									}
+								}
+							})
 						} else {
 							ClienteRazon.create({
 								razon_social: cliente_razon.razon_social,
@@ -311,15 +331,10 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Clie
 						}
 					})
 				} else {
-					ClienteRazon.create({
-						razon_social: cliente_razon.razon_social,
-						nit: cliente_razon.nit,
-						codigo_sap: cliente_razon.codigo_sap,
-					}).then(function (clienteRazonActualizado) {
-						if (index == array.length - 1) {
-							res.json({ mensaje: "guardados satisfactoriamente!" })
-						}
-					});
+					if (index == array.length - 1) {
+						res.json({ mensaje: "guardados satisfactoriamente!" })
+					}
+
 				}
 
 			})

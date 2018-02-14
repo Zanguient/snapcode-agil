@@ -4,7 +4,7 @@ angular.module('agil.controladores')
 		Venta, Ventas, Clientes, ClientesNit, ProductosNombre, ClasesTipo, VentasContado, VentasCredito,
 		PagosVenta, DatosVenta, VentaEmpresaDatos, ProductosPanel, ListaProductosEmpresa, ListaInventariosProducto,
 		socket, ConfiguracionVentaVistaDatos, ConfiguracionVentaVista, ListaGruposProductoEmpresa,
-		ConfiguracionImpresionEmpresaDato, ImprimirSalida, ListaVendedorVenta, VendedorVenta, VendedorVentaActualizacion) {
+		ConfiguracionImpresionEmpresaDato, ImprimirSalida, ListaVendedorVenta, VendedorVenta, VendedorVentaActualizacion,GuardarUsuarLectorDeBarra) {
 		blockUI.start();
 		$scope.usuario = JSON.parse($localStorage.usuario);
 		convertUrlToBase64Image($scope.usuario.empresa.imagen, function (imagenEmpresa) {
@@ -38,11 +38,13 @@ angular.module('agil.controladores')
 		});
 
 		$scope.inicio = function () {
+			
 			$scope.ordenProductos = true;
 			$scope.esContado = true;
 			//$scope.obtenerClientes();
 			$scope.obtenerTiposDePago();
 			$scope.obtenerConfiguracionVentaVista();
+			
 			$scope.sucursales = $scope.obtenerSucursales();
 
 			$scope.sucursalesUsuario = "";
@@ -1904,6 +1906,19 @@ angular.module('agil.controladores')
 			$scope.eliminarPopup($scope.idModalPanelVentasCobro);
 			$scope.eliminarPopup($scope.idModalEdicionVendedor);
 		});
+
+		$scope.UsarLectorDeBarra=function () {
+			if($scope.usuario.usar_lector_de_barra==true){
+				$scope.usuario.usar_lector_de_barra=true
+				$localStorage.usuario=JSON.stringify($scope.usuario);
+				var promesa =GuardarUsuarLectorDeBarra($scope.usuario)
+			}else{
+				$scope.usuario.usar_lector_de_barra=false
+				localStorage.usuario=JSON.stringify($scope.usuario);
+				var promesa =GuardarUsuarLectorDeBarra($scope.usuario)
+			}
+			console.log($scope.usuario.usar_lector_de_barra)
+		}
 
 		$scope.inicio();
 	});

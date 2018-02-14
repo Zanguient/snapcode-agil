@@ -1,5 +1,5 @@
 module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente, Persona, Empresa, Sucursal, Clase, Diccionario, Tipo, decodeBase64Image, fs, RrhhEmpleadoFicha, RrhhEmpleadoFichaOtrosSeguros, RrhhEmpleadoFichaFamiliar, RrhhEmpleadoDiscapacidad
-    , RrhhEmpleadoCargo, RrhhEmpleadoHojaVida, RrhhEmpleadoFormacionAcademica, RrhhEmpleadoExperienciaLaboral, RrhhEmpleadoLogroInternoExterno, RrhhEmpleadoCapacidadInternaExterna, NumeroLiteral, RrhhEmpleadoPrestamo, RrhhEmpleadoPrestamoPago, RrhhEmpleadoRolTurno, RrhhEmpleadoHorasExtra) {
+    , RrhhEmpleadoCargo, RrhhEmpleadoHojaVida, RrhhEmpleadoFormacionAcademica, RrhhEmpleadoExperienciaLaboral, RrhhEmpleadoLogroInternoExterno, RrhhEmpleadoCapacidadInternaExterna, NumeroLiteral, RrhhEmpleadoPrestamo, RrhhEmpleadoPrestamoPago, RrhhEmpleadoRolTurno, RrhhEmpleadoHorasExtra, RrhhAnticipo) {
     router.route('/recursos-humanos/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion/codigo/:codigo/nombres/:nombres/ci/:ci/campo/:campo/cargo/:cargo/busquedaEmpresa/:busquedaEmpresa/grupo/:grupo_sanguineo/estado/:estado/apellido/:apellido')
         .get(function (req, res) {
             var condicion = ""
@@ -1341,7 +1341,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
             var monto_pagado = 0
             var saldo_anterior = 0
             var a_cuenta_anterior = 0
-            var prestamoAnterior= req.body.prestamoPagos[(req.body.prestamoPagos.length - 1)]
+            var prestamoAnterior = req.body.prestamoPagos[(req.body.prestamoPagos.length - 1)]
             if (req.body.prestamoPagos.length > 0) {
                 saldo_anterior = prestamoAnterior.saldo_anterior - prestamoAnterior.monto_pagado /* - req.body.monto_pagado */
                 a_cuenta_anterior = prestamoAnterior.a_cuenta_anterior + req.body.monto_pagado
@@ -1373,8 +1373,28 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                 where: { id_empresa: req.params.id_empresa, es_empleado: true, eliminado: false },
                 include: [{ model: Persona, as: 'persona' }]
             }).then(function (empleados) {
-                res.json({ empleados: empleados })
+                if (empleados.length > 0) {
+                    empleados.forEach(function (empleado, index, array) {
+                        RrhhEmpleadoFicha.findAll({
+                            limit: 1,
+                            where: {
+                                id_empleado: empleado.id
+                            },
+                            order: [['id', 'DESC']]
+                        }).then(function (fichaActual) {
+                            empleado.dataValues.ficha = fichaActual[0]
+                            if (index === (array.length - 1)) {
+                                res.json({ empleados: empleados })
+                            }
+                        })
+                    })
 
+                } else {
+
+                    res.json({ empleados: empleados })
+
+                }
+               
             })
         })
     router.route('/recursos-humanos/rolTurno/empleado/:id_empleado')
@@ -1690,17 +1710,76 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                 }
             });
         })
-        router.route('/recurso-humanos/capacidades/hoja-vida/:id_hoja_vida/inicio/:inicio/fin/:fin')
+    router.route('/recurso-humanos/capacidades/hoja-vida/:id_hoja_vida/inicio/:inicio/fin/:fin')
         .get(function (req, res) {
             if (req.params.inicio != 0) {
                 var inicio = new Date(req.params.inicio); inicio.setHours(0, 0, 0, 0, 0);
                 var fin = new Date(req.params.fin); fin.setHours(23, 59, 0, 0, 0);
-                var condicionCapacidades = { id_hoja_vida: req.params.id_hoja_vida,fecha: { $between: [inicio, fin] } };
+                var condicionCapacidades = { id_hoja_vida: req.params.id_hoja_vida, fecha: { $between: [inicio, fin] } };
             }
             RrhhEmpleadoCapacidadInternaExterna.findAll({
                 where: condicionCapacidades
             }).then(function (entidad) {
-                res.json({capacidades:entidad})
+                res.json({ capacidades: entidad })
             });
         });
+
+    router.route('/recursos-humanos/anticipos/empleado/:id_empleado')
+        .post(function (req, res) {
+            Clase.find({
+                where:{nombre_corto:req.body.textoClase}
+            }).then(function (clase) {
+                RrhhAnticipo.create({
+                    id_empleado: req.params.id_empleado,
+                    fecha: req.body.fecha,
+                    monto: req.body.monto,
+                    id_tipo: clase.id,
+                    total: req.body.total,
+                    eliminado: false
+                }).then(function (empleadoaAnticipo) {
+                    res.json({ mensaje: "Guardado satisfactoriamente!" })
+    
+                })
+            })
+           
+        })
+    router.route('/recursos-humanos/anticipos/empleado/:id_empleado/inicio/:inicio/fin/:fin/empresa/:id_empresa')
+        .get(function (req, res) {
+            var condicionAnticipo = {}
+            var condicionEmpleado = {}
+            var inicio = new Date(req.params.inicio); inicio.setHours(0, 0, 0, 0, 0);
+            var fin = new Date(req.params.fin); fin.setHours(23, 59, 59, 0, 0);
+            if (req.params.id_empleado != "0") {
+                var condicionAnticipo = { id_empleado: req.params.id_empleado, eliminado: false, fecha: { $between: [inicio, fin] } };
+            } else {
+                condicionAnticipo = { eliminado: false, fecha: { $between: [inicio, fin] } };
+                condicionEmpleado = { id_empresa: req.params.id_empresa }
+            }
+            RrhhAnticipo.findAll({
+                where: condicionAnticipo,
+                include: [{ model: MedicoPaciente, as: 'empleado', where: condicionEmpleado, include: [{ model: Persona, as: 'persona' }] }, { model: Clase, as: 'tipoAnticipo' }]
+            }).then(function (empleadoaAnticipo) {
+                if (empleadoaAnticipo.length > 0) {
+                    empleadoaAnticipo.forEach(function (anticipo, index, array) {
+                        RrhhEmpleadoFicha.findAll({
+                            limit: 1,
+                            where: {
+                                id_empleado: anticipo.empleado.id
+                            },
+                            order: [['id', 'DESC']]
+                        }).then(function (fichaActual) {
+                            anticipo.dataValues.empleado.dataValues.ficha = fichaActual[0]
+                            if (index === (array.length - 1)) {
+                                res.json({ anticipos: empleadoaAnticipo })
+                            }
+                        })
+                    })
+
+                } else {
+
+                    res.json({ anticipos: empleadoaAnticipo })
+                }
+            })
+        })
 }
+

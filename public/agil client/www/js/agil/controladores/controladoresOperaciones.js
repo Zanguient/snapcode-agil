@@ -251,12 +251,7 @@ angular.module('agil.controladores')
 			}
 		}
 
-		if (angular.isDefined($localStorage.color)) {
-			$scope.color = $localStorage.color;
-		} else {
-			$localStorage.color = { 'style': 'red-style', 'stylebutton': 'red-style-button' };
-			$scope.color = { 'style': 'red-style', 'stylebutton': 'red-style-button' };
-		}
+		
 		$scope.clasificarGrupo = function (grupo) {
 			$scope.productosProcesados = $filter('filter')($scope.productos, grupo);
 			setTimeout(function () {

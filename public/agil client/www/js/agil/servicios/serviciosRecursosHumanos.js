@@ -398,3 +398,41 @@ angular.module('agil.servicios')
     };
     return res;
 }]) 
+
+.factory('EmpleadoAnticipo', function ($resource) {
+    return $resource(restServer + "recursos-humanos/anticipos/empleado/:id_empleado",null,
+        {
+            'update': { method: 'PUT' }
+        });
+})
+.factory('NuevoAnticipoEmpleado', ['EmpleadoAnticipo', '$q', function (EmpleadoAnticipo, $q) {
+    var res = function (idEmpleado,datos) {
+        var delay = $q.defer();
+        EmpleadoAnticipo.save({id_empleado:idEmpleado},datos, function (entidad) {
+            delay.resolve(entidad);
+        }, function (error) {
+            delay.reject(error);
+        });
+        return delay.promise;
+    };
+    return res;
+}])
+
+.factory('EmpleadosAnticipos', function ($resource) {
+    return $resource(restServer + "recursos-humanos/anticipos/empleado/:id_empleado/inicio/:inicio/fin/:fin/empresa/:id_empresa",null,
+        {
+            'update': { method: 'PUT' }
+        });
+})
+.factory('ListaAnticiposEmpleado', ['EmpleadosAnticipos', '$q', function (EmpleadosAnticipos, $q) {
+    var res = function (filtro,idEmpleado) {
+        var delay = $q.defer();
+        EmpleadosAnticipos.get({id_empleado:idEmpleado,inicio:filtro.inicio,fin:filtro.fin,id_empresa:filtro.id_empresa}, function (entidad) {
+            delay.resolve(entidad);
+        }, function (error) {
+            delay.reject(error);
+        });
+        return delay.promise;
+    };
+    return res;
+}])

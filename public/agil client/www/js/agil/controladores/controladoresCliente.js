@@ -2,7 +2,7 @@ angular.module('agil.controladores')
 
 	.controller('ControladorClientes', function ($scope, $window, $localStorage, $location, $templateCache, $route, blockUI, $timeout,
 		ClientesPaginador, Cliente, Clientes, Empresas, ClientesEmpresa, uiGmapGoogleMapApi, $cordovaGeolocation,
-		DatoCodigoSiguienteClienteEmpresa, DestinosCliente,RazonesSocialesCliente) {
+		DatoCodigoSiguienteClienteEmpresa, DestinosCliente, RazonesSocialesCliente) {
 		blockUI.start();
 
 		$scope.usuario = JSON.parse($localStorage.usuario);
@@ -236,9 +236,9 @@ angular.module('agil.controladores')
 								r = new FileReader();
 								if (documento) {
 									r.onloadend = function (e) {
-										documento.nombre=documento.name
-										documento.data=e.target.result
-									
+										documento.nombre = documento.name
+										documento.data = e.target.result
+
 										//send your binary data via $http or $resource or do anything else with it
 										if (index === array.length - 1) {
 											cliente.fecha1 = null;
@@ -403,6 +403,90 @@ angular.module('agil.controladores')
 			destino.eliminado = true;
 		}
 
+		$scope.generarExcelComprobacionDatosClientes = function (clientes, configuracion) {
+			$scope.obtenerClientes()
+			var data = [["N°", "CODIGO", "CLIENTE", "NIT PRINCIPAL", "RAZÓN SOCIAL PRINCIPAL", "RAZONES CLIENTE", "NIT -RAZON", "CODIGO SAP", "DESTINOS", "DIRECCION DESTINO"]]
+			var iu = []
+			for (var i = 0; i < $scope.clientes.length; i++) {
+				var columns = [];
+
+				if ($scope.clientes[i].clientes_razon.length > 0) {
+					$scope.clientes[i].clientes_razon.map(function (razon, dex) {
+						if ($scope.clientes[i].cliente_destinos.length > 0) {
+							$scope.clientes[i].cliente_destinos.map(function (destino) {
+								columns = [];
+								columns.push((i + 1));
+								columns.push($scope.clientes[i].codigo);
+								columns.push($scope.clientes[i].contacto);
+								columns.push($scope.clientes[i].nit);
+								columns.push($scope.clientes[i].razon_social);
+								columns.push(razon.razon_social);
+								columns.push(razon.nit);
+								columns.push(razon.codigo_sap);
+								columns.push(destino.destino.destino);
+								columns.push(destino.destino.direccion);
+								data.push(columns);
+							})
+						} else {
+							columns = [];
+							columns.push((i + 1));
+							columns.push($scope.clientes[i].codigo);
+							columns.push($scope.clientes[i].contacto);
+							columns.push($scope.clientes[i].nit);
+							columns.push($scope.clientes[i].razon_social);
+							columns.push(razon.razon_social);
+							columns.push(razon.nit);
+							columns.push(razon.codigo_sap);
+							columns.push("sin dato");
+							columns.push("sin dato");
+							data.push(columns);
+						}
+					})
+				} else {
+
+					if ($scope.clientes[i].cliente_destinos.length > 0) {
+						$scope.clientes[i].cliente_destinos.map(function (destino) {
+							columns = [];
+							columns.push((i + 1));
+							columns.push($scope.clientes[i].codigo);
+							columns.push($scope.clientes[i].contacto);
+							columns.push($scope.clientes[i].nit);
+							columns.push($scope.clientes[i].razon_social);
+							columns.push("sin dato");
+							columns.push("sin dato");
+							columns.push("sin dato");
+							columns.push(destino.destino.destino);
+							columns.push(destino.destino.direccion);
+							data.push(columns);
+						})
+					} else {
+						columns = [];
+						columns.push((i + 1));
+						columns.push($scope.clientes[i].codigo);
+						columns.push($scope.clientes[i].contacto);
+						columns.push($scope.clientes[i].nit);
+						columns.push($scope.clientes[i].razon_social);
+						columns.push("sin dato");
+						columns.push("sin dato");
+						columns.push("sin dato");
+						columns.push("sin dato");
+						columns.push("sin dato");
+						data.push(columns);
+					}
+				}
+				// data.push(columns);
+			}
+
+			var ws_name = "SheetJS";
+			var wb = new Workbook(), ws = sheet_from_array_of_arrays(data);
+			/* add worksheet to workbook */
+			wb.SheetNames.push(ws_name);
+			wb.Sheets[ws_name] = ws;
+			var wbout = XLSX.write(wb, { bookType: 'xlsx', bookSST: true, type: 'binary' });
+			saveAs(new Blob([s2ab(wbout)], { type: "application/octet-stream" }), "COMPROBACION DATOS CLIENTES RAZONES DESTINOS.xlsx");
+			blockUI.stop();
+
+		}
 
 		$scope.subirExcelClientes = function (event) {
 			var files = event.target.files;
@@ -466,7 +550,7 @@ angular.module('agil.controladores')
 						cliente.codigo = worksheet['A' + row] != undefined && worksheet['A' + row] != "" ? worksheet['A' + row].v.toString() : null;
 						cliente.razon_social = worksheet['B' + row] != undefined && worksheet['B' + row] != "" ? worksheet['B' + row].v.toString() : null;
 						cliente.nit = worksheet['C' + row] != undefined && worksheet['C' + row] != "" ? worksheet['C' + row].v.toString() : null;
-						cliente.codigo_sap = worksheet['D' + row] != undefined && worksheet['D' + row] != "" ? worksheet['D' + row].v.toString() : null;					
+						cliente.codigo_sap = worksheet['D' + row] != undefined && worksheet['D' + row] != "" ? worksheet['D' + row].v.toString() : null;
 						clientes.push(cliente);
 						row++;
 						i++;
@@ -478,7 +562,7 @@ angular.module('agil.controladores')
 			}
 		}
 		$scope.guardarRazonesSocialesClientes = function (clientes) {
-			var promesa = RazonesSocialesCliente(clientes,$scope.usuario.id_empresa);
+			var promesa = RazonesSocialesCliente(clientes, $scope.usuario.id_empresa);
 			promesa.then(function (res) {
 				blockUI.stop();
 				$scope.mostrarMensaje(res.mensaje);

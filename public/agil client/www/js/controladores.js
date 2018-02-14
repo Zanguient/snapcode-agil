@@ -178,7 +178,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 				if ($scope.moneda) {
 					console.log($scope.ventas)
 					var datee = new Date()
-					$scope.nuevoComprobante = { fechaActual: datee, copia_glosa: false, fecha: fecha, id_usuario: $scope.usuario.id, asientosContables: [], eliminado: 0, abierto: 0, importe: 0, id_venta: "", id_compra: "", id_sucursal: $scope.sucursales[0], tipoComprobante: $scope.tiposComprobantes[0], tipoCambio: $scope.moneda };
+					$scope.nuevoComprobante = { fechaActual: datee, copia_glosa: true, fecha: fecha, id_usuario: $scope.usuario.id, asientosContables: [], eliminado: 0, abierto: 0, importe: 0, id_venta: "", id_compra: "", id_sucursal: $scope.sucursales[0], tipoComprobante: $scope.tiposComprobantes[0], tipoCambio: $scope.moneda };
 					$scope.ultimaFechaTipoComprobante($scope.nuevoComprobante)
 					if (view) {
 						$scope.pararAutoGuardado()

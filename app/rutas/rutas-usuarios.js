@@ -513,5 +513,15 @@ router.route('/columnnas-aplicacion/aplicacion/:id_aplicacion')
 			});
 		}
 	});
-
+	router.route('/usar-lector-de-barra/usuario')
+	.put(function(req, res) {
+		Usuario.update({ 
+			usar_lector_de_barra:req.body.usar_lector_de_barra,},{
+			where:{
+				id: req.body.id
+			}
+		}).then(function(entidad){		
+				res.json({mensaje:"actualizado Satisfactoriamente!"	});			
+		});
+	});
 }

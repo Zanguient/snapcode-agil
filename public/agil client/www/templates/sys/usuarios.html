@@ -403,7 +403,7 @@
 					Anterior
 				</button>
 
-				<button type="submit" id="siguiente" class="btn btn-success btn-sm btn-next" data-last="Finish">
+				<button ng-disabled="data.message=='¡Usuario ya Exsiste!'" type="submit" id="siguiente" class="btn btn-success btn-sm btn-next" data-last="Finish">
 					Siguiente
 					<i class="ace-icon fa fa-arrow-right icon-on-right"></i>
 				</button>

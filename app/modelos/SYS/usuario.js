@@ -31,6 +31,10 @@ module.exports=function(sequelize,Sequelize){
 	  comision_activa:{
 		type: Sequelize.BOOLEAN,
 		field: 'comision_activa'  
+	  },
+	  usar_lector_de_barra:{
+		type: Sequelize.BOOLEAN,
+		field: 'usar_lector_de_barra'  
 	  }
 	}, {
 	  freezeTableName: true 

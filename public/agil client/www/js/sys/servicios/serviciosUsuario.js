@@ -329,3 +329,26 @@ angular.module('agil.servicios')
     return res;
   }])
    */
+	.factory('UsarLectorDeBarra', function($resource) {
+		return $resource(restServer+"usar-lector-de-barra/usuario",null,
+		{
+			'update': { method:'PUT' }
+		});
+})
+	.factory('GuardarUsuarLectorDeBarra', ['UsarLectorDeBarra','$q',function(UsarLectorDeBarra, $q) 
+  {
+	var res = function(usuario) 
+	{	
+		var delay = $q.defer();
+		UsarLectorDeBarra.update(usuario,function(entidades) 
+		{        
+			delay.resolve(entidades);
+		}, function(error) 
+			{
+				delay.reject(error);
+			});
+		return delay.promise;
+	};
+    return res;
+  }])
+	

@@ -3,7 +3,8 @@ angular.module('agil.controladores')
     .controller('ControladorRecursosHumanos', function ($scope, $sce, $localStorage, $location, $templateCache, $route, blockUI, ListaDatosGenero, NuevoRecursoHumano, RecursosHumanosPaginador, Paginator,
         FieldViewer, EmpleadoEmpresa, obtenerEmpleadoRh, UsuarioRecursosHUmanosActivo, Prerequisito, ListaDatosPrerequisito, Prerequisitos, ListaPrerequisitosPaciente, ActualizarPrerequisito, UsuarioRecursosHumanosFicha,
         ClasesTipo, Clases, Paises, CrearEmpleadoFicha, EliminarOtroSeguroRh, EliminarFamiliarRh, PrerequisitoPaciente, PrerequisitosHistorial, UsuarioRhHistorialFicha, ObtenerEmpleadoHojaVida, GuardarEmpleadoHojaVida, CrearPrestamo,
-        ObtenerListaPrestamo, CrearRolTurno, CrearPagoPrestamo, VerificarUsuarioEmpresa, EditarPrestamo, ListaEmpleadosRrhh, CrearHorasExtra, HistorialHorasExtra, ListaRolTurnos, ValidarCodigoCuentaEmpleado, $timeout, DatosCapacidadesImpresion) {
+        ObtenerListaPrestamo, CrearRolTurno, CrearPagoPrestamo, VerificarUsuarioEmpresa, EditarPrestamo, ListaEmpleadosRrhh, CrearHorasExtra, HistorialHorasExtra, ListaRolTurnos, ValidarCodigoCuentaEmpleado, $timeout, DatosCapacidadesImpresion, NuevoAnticipoEmpleado,
+        ListaAnticiposEmpleado) {
         $scope.usuario = JSON.parse($localStorage.usuario);
         $scope.idModalPrerequisitos = 'dialog-pre-requisitos';
         $scope.idModalEmpleado = 'dialog-empleado';
@@ -88,6 +89,8 @@ angular.module('agil.controladores')
         $scope.IdEntregaPrerequisito = 'dialog-entrega-preRequisito';
         $scope.IdModalVerificarCuenta = 'modal-verificar-cuenta';
         $scope.idModalImpresionHojaVida = 'dialog-impresion-hoja-vida';
+        $scope.idModalNuevoAnticipoRegularTodos = 'dialog-nuevo-anticipo-regular-todos';
+
         $scope.$on('$viewContentLoaded', function () {
             // resaltarPestaña($location.path().substring(1));
             resaltarPestaña($location.path().substring(1));
@@ -111,7 +114,7 @@ angular.module('agil.controladores')
                 $scope.idModalHistorialViajes, $scope.idModalReporteAusencias, $scope.idModalCertificado, $scope.idModalInstitucion,
                 $scope.idModalRhNuevo, $scope.idModalWizardRhNuevo, $scope.idImagenUsuario, $scope.idEliminarUsuarioRh, $scope.idModalWizardRhVista,
                 $scope.idModalContenedorRhVista, $scope.idModalDialogPrerequisitoNuevo, $scope.idEliminarSeguroEmpleado, $scope.idEliminarFamiliarEmpleado, $scope.idModalHistorialPrerequisito,
-                $scope.idModalEditarPrerequisito, $scope.idModalDialogConfirmacionEntregaAdelantado, $scope.IdEntregaPrerequisito, $scope.IdModalVerificarCuenta, $scope.idModalImpresionHojaVida);
+                $scope.idModalEditarPrerequisito, $scope.idModalDialogConfirmacionEntregaAdelantado, $scope.IdEntregaPrerequisito, $scope.IdModalVerificarCuenta, $scope.idModalImpresionHojaVida, $scope.idModalNuevoAnticipoRegularTodos);
             $scope.buscarAplicacion($scope.usuario.aplicacionesUsuario, $location.path().substring(1));
             $scope.obtenerColumnasAplicacion()
             blockUI.stop();
@@ -195,9 +198,10 @@ angular.module('agil.controladores')
             $scope.eliminarPopup($scope.IdEntregaPrerequisito)
             $scope.eliminarPopup($scope.IdModalVerificarCuenta)
             $scope.eliminarPopup($scope.idModalImpresionHojaVida)
+            $scope.eliminarPopup($scope.idModalNuevoAnticipoRegularTodos)
         });
         $scope.inicio = function () {
-
+            $scope.listYearsAnticipo = $scope.obtenerAnios(2017)
             $scope.obtenerGenero();
             $scope.obtenerRecursosHumanos();
             /*   $scope.obtenerPrerequisito(); */
@@ -648,7 +652,20 @@ angular.module('agil.controladores')
         $scope.cerrarDialogDeduccion = function () {
             $scope.cerrarPopup($scope.idModalDeduccion);
         }
-        $scope.abrirDialogAnticipoExtraordinario = function () {
+        $scope.abrirDialogAnticipoExtraordinario = function (empleado) {
+            $scope.empleado = empleado
+            var mes = new Date().getMonth()
+            var gestion = String(new Date().getFullYear())
+            var ultimodia = new Date()
+            $scope.listaAnticipos = []
+            $scope.filtroAnticipo = { mes: { id: mes }, gestion: gestion }
+            var date = new Date();
+            var primerDia = new Date(date.getFullYear(), date.getMonth(), 1);
+            var ultimoDia = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+            var filtro = { inicio: primerDia, fin: ultimoDia, nombre: 'ORDI', id_empresa: 0 }
+            $scope.anticipo_ordinaroOextra = 0;
+            $scope.obtenerListaAnticipos(filtro, empleado.id)
+
             $scope.abrirPopup($scope.idModalAnticipoExtraordinario);
         }
         $scope.cerrarDialogAnticipoExtraordinario = function () {
@@ -997,6 +1014,17 @@ angular.module('agil.controladores')
             $scope.cerrarPopup($scope.idModalHistorialHorasExtras);
         }
         $scope.abrirDialogAnticipoRegular = function () {
+            var mes = new Date().getMonth()
+            var gestion = String(new Date().getFullYear())
+            var ultimodia = new Date()
+            $scope.listaAnticipos = []
+            $scope.filtroAnticipo = { mes: { id: mes }, gestion: gestion }
+            var date = new Date();
+            var primerDia = new Date(date.getFullYear(), date.getMonth(), 1);
+            var ultimoDia = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+            var filtro = { inicio: primerDia, fin: ultimoDia, nombre: 'EXTRAORDI', id_empresa: $scope.usuario.id_empresa }
+            $scope.anticipo_extraordinaro = 0;
+            $scope.listaAnticipos = $scope.obtenerListaAnticiposOrdi(filtro, 0)
             $scope.abrirPopup($scope.idModalAnticipoRegular);
         }
         $scope.cerrarDialogAnticipoRegular = function () {
@@ -1053,6 +1081,8 @@ angular.module('agil.controladores')
         $scope.copiarCodigodeCi = function (empleado) {
             if (empleado.activoCopiaCodigo) {
                 empleado.codigo = empleado.persona.ci
+            } else {
+                empleado.codigo = ""
             }
 
         }
@@ -1075,8 +1105,34 @@ angular.module('agil.controladores')
         $scope.cerrarDialogPrestamosPersonal = function () {
             $scope.cerrarPopup($scope.idModalPrestamosPersonal);
         }
-        $scope.abrirDialogAdvertencia = function () {
+        $scope.abrirDialogNuevoAnticipoRegularTodos = function () {
+            $scope.listaAnticipos2 = []
+            $scope.cerrarDialogAdvertencia();
+            $scope.obtenerListaEmpleados()
+            $scope.abrirPopup($scope.idModalNuevoAnticipoRegularTodos);
+        }
+        $scope.cerrarDialogNuevoAnticipoRegularTodos = function () {
+            $scope.cerrarPopup($scope.idModalNuevoAnticipoRegularTodos);
+        }
+
+        $scope.abrirDialogAdvertencia = function (modal) {
+            $scope.abrirModalAdvertencia = modal
             $scope.abrirPopup($scope.idModalAdvertencia);
+        }
+
+        $scope.abrirDialogAdvertenciaPrestamo = function () {
+            $scope.mensajeAdvertencia = {
+                texto1: 'Los prestamos y las condiciones se realizarán para todos los trabajadores seleccionados.',
+                texto2: 'Para prestamos personalizados use la opción directamente en la fila del empleado.'
+            }
+            $scope.abrirDialogAdvertencia($scope.abrirDialogPretamosNuevoTodos)
+        }
+        $scope.abrirDialogAdvertenciaAnticipo = function () {
+            $scope.mensajeAdvertencia = {
+                texto1: 'Los anticipos y las condiciones se realizarán para todos los trabajadores seleccionados.',
+                texto2: 'Para anticipos personalizados use la opción directamente en la fila del empleado.'
+            }
+            $scope.abrirDialogAdvertencia($scope.abrirDialogNuevoAnticipoRegularTodos)
         }
         $scope.cerrarDialogAdvertencia = function () {
             $scope.cerrarPopup($scope.idModalAdvertencia);
@@ -1910,7 +1966,8 @@ angular.module('agil.controladores')
             $scope.obtenerFamiliaRelacion()
             $scope.obtenerBancos()
             $scope.obtenerMeses()
-            $scope.obtenerAnios()
+            $scope.listYears = $scope.obtenerAnios(1930)
+
             $scope.obtenerCargos()
             $scope.obtenerDiscapacidades()
             $scope.obtenerGrados()
@@ -2181,7 +2238,7 @@ angular.module('agil.controladores')
                 years.push(startYear++);
             }
 
-            $scope.listYears = years;
+            return years;
         }
         $scope.getDaysInMonth = function (month, year) {
             // Here January is 1 based
@@ -2484,13 +2541,13 @@ angular.module('agil.controladores')
                     doc.text(formacion.titulo.nombre, 405, y, { width: 100 });
                     if (formacion.institucion.nombre.length > 20 || formacion.grado.length > 20 || formacion.titulo.length > 20) {
                         rowinstituto = formacion.institucion.length / 20
-                        rowgrado = formacion.grado.length /20
+                        rowgrado = formacion.grado.length / 20
                         rowtitulo = formacion.titulo.length / 20
-                        arregloTamaño = [Math.floor(rowinstituto), Math.floor(rowgrado),Math.floor(rowtitulo)]
-                        var rows  = Math.max.apply(null,arregloTamaño);
+                        arregloTamaño = [Math.floor(rowinstituto), Math.floor(rowgrado), Math.floor(rowtitulo)]
+                        var rows = Math.max.apply(null, arregloTamaño);
                         var tamaño = rows * 10
                         y = y + tamaño
-                    } 
+                    }
                     y = y + 20;
                     items++;
                     //totalCosto = totalCosto + inventarios[i].costo_total;
@@ -2535,7 +2592,7 @@ angular.module('agil.controladores')
                     } */
                 if ($scope.filtroCap.capacidadInterna) {
                     for (var j = 0; j < $scope.capacidades.length; j++) {
-                        var capacidad= $scope.capacidades[j]
+                        var capacidad = $scope.capacidades[j]
                         if (j == 0) {
                             y += 15
 
@@ -2557,13 +2614,13 @@ angular.module('agil.controladores')
                         doc.text(capacidad.certificado, 405, y, { width: 100 });
                         if (capacidad.curso.length > 20 || capacidad.institucion.length > 17 || capacidad.certificado.length > 20) {
                             rowcurso = capacidad.curso.length / 20
-                            rowinstituto = capacidad.institucion.length /17
+                            rowinstituto = capacidad.institucion.length / 17
                             rowcertificado = capacidad.certificado.length / 20
-                            arregloTamaño = [Math.floor(rowcurso), Math.floor(rowinstituto),Math.floor(rowcertificado)]
-                            var rows  = Math.max.apply(null,arregloTamaño);
+                            arregloTamaño = [Math.floor(rowcurso), Math.floor(rowinstituto), Math.floor(rowcertificado)]
+                            var rows = Math.max.apply(null, arregloTamaño);
                             var tamaño = rows * 10
                             y = y + tamaño
-                        } 
+                        }
                         y = y + 20;
 
 
@@ -2615,13 +2672,13 @@ angular.module('agil.controladores')
                     doc.text(experienciaLaboral.telefono, 485, y, { width: 100 });
                     if (experienciaLaboral.empresa.length > 17 || experienciaLaboral.cargo.length > 13 || experienciaLaboral.contacto.length > 20) {
                         rowempresa = experienciaLaboral.empresa.length / 17
-                        rowcargo = experienciaLaboral.cargo.length /13
+                        rowcargo = experienciaLaboral.cargo.length / 13
                         rowcontacto = experienciaLaboral.contacto.length / 20
-                        arregloTamaño = [Math.floor(rowempresa), Math.floor(rowcargo),Math.floor(rowcontacto)]
-                        var rows  = Math.max.apply(null,arregloTamaño);
+                        arregloTamaño = [Math.floor(rowempresa), Math.floor(rowcargo), Math.floor(rowcontacto)]
+                        var rows = Math.max.apply(null, arregloTamaño);
                         var tamaño = rows * 10
                         y = y + tamaño
-                    } 
+                    }
                     y = y + 20;
                     items++;
                     //totalCosto = totalCosto + inventarios[i].costo_total;
@@ -2987,8 +3044,8 @@ angular.module('agil.controladores')
             })
         }
 
-        $scope.abrirModalVerificarCuenta = function (prestamo) {
-            $scope.dato = prestamo
+        $scope.abrirModalVerificarCuenta = function (dato) {
+            $scope.dato = dato
             $scope.abrirPopup($scope.IdModalVerificarCuenta);
         }
         $scope.cerrarModalVerificarCuenta = function () {
@@ -3054,6 +3111,8 @@ angular.module('agil.controladores')
             for (var i = 0; i < empleados.length; i++) {
                 var empleado = {
                     nombre: empleados[i].persona.nombre_completo,
+                    persona: empleados[i].persona,
+                    ficha: empleados[i].ficha,
                     maker: "",
                     ticked: false,
                     id: empleados[i].id
@@ -3208,6 +3267,237 @@ angular.module('agil.controladores')
         }
         //fin horas extra
 
+        //inicio anticipos        
+        $scope.GuardarAnticipos = function (anticipos) {
+            var anticipo = anticipos.slice(-1).pop()
+            anticipo.textoClase = "EXTRAORDI"
+            anticipo.fecha = new Date().getTime()
+            var promesa = NuevoAnticipoEmpleado($scope.empleado.id, anticipo)
+            promesa.then(function (datos) {
+                anticipo = {}
+                $scope.cerrarDialogAnticipoExtraordinario()
+                $scope.mostrarMensaje(datos.mensaje)
+            })
+        }
+        $scope.buscarAnticiposExtraoridnario = function (datosFiltro) {
+            $scope.anticipo_extraordinaro = 0;
+            var date = new Date(datosFiltro.gestion, datosFiltro.mes.id, 1);
+            var primerDia = new Date(date.getFullYear(), date.getMonth(), 1);
+            var ultimoDia = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+            var filtro = { inicio: primerDia, fin: ultimoDia, nombre: "ORDI", id_empresa: 0 }
+            $scope.listaAnticipos = $scope.obtenerListaAnticipos(filtro, $scope.empleado.id)
+
+        }
+        $scope.buscarAnticiposOridnario = function (datosFiltro) {
+            if (datosFiltro.gestion != undefined) {
+                $scope.anticipo_extraordinaro = 0;
+                var date = new Date(datosFiltro.gestion, datosFiltro.mes.id, 1);
+                var primerDia = new Date(date.getFullYear(), date.getMonth(), 1);
+                var ultimoDia = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+                var filtro = { inicio: primerDia, fin: ultimoDia, nombre: "EXTRAORDI", id_empresa: $scope.usuario.id_empresa }
+                $scope.listaAnticipos = $scope.obtenerListaAnticipos(filtro, 0)
+            }
+        }
+        $scope.obtenerListaAnticipos = function (filtro, idEmpleado) {
+            $scope.anticipo_ordinaroOextra = 0
+            var promesa = ListaAnticiposEmpleado(filtro, idEmpleado)
+            $scope.arregloid = []
+            promesa.then(function (datos) {
+
+                if (datos.anticipos.length > 0) {
+                    datos.anticipos.ordinarios = []
+                    datos.anticipos.extraordinarios = []
+                    datos.anticipos.forEach(function (anticipo, index, array) {
+                        if (anticipo.tipoAnticipo.nombre_corto != filtro.nombre) {
+
+                            datos.anticipos.ordinarios.push(anticipo)
+                        } else {
+                            $scope.anticipo_ordinaroOextra += anticipo.monto
+                            datos.anticipos.extraordinarios.push(anticipo)
+                        }
+                        if (index === (array.length - 1)) {
+                            for (let i = 0; i < datos.anticipos.ordinarios.length; i++) {
+                                var ordi = datos.anticipos.ordinarios[i];
+                                for (let j = 0; j < datos.anticipos.extraordinarios.length; j++) {
+                                    const anticipo = datos.anticipos.extraordinarios[j];
+                                    if (anticipo.id_empleado == ordi.id_empleado) {
+                                        if (ordi.anticipo_ordinaro) {
+                                            ordi.anticipo_ordinaro += anticipo.monto
+                                        } else {
+                                            ordi.anticipo_ordinaro = anticipo.monto
+                                        }
+                                        ordi.salario_basico = $scope.empleado.ficha.haber_basico
+
+                                        ordi.saldo_salario = ordi.empleado.ficha.haber_basico - ordi.total
+
+                                        ordi.montoEdit = false
+
+                                    } else {
+                                        ordi.anticipo_ordinaro = 0
+                                        ordi.salario_basico = $scope.empleado.ficha.haber_basico
+
+                                        ordi.saldo_salario = ordi.empleado.ficha.haber_basico - ordi.total
+                                    }
+
+                                }
+                                if (i === (datos.anticipos.ordinarios.length - 1)) {
+
+                                    $scope.listaAnticipos = datos.anticipos.ordinarios;
+                                }
+
+                            }
+                        }
+                        /* datos.anticipos.forEach(function (anticipo, index, array) {
+                            if (anticipo.tipoAnticipo.nombre_corto == filtro.nombre) {
+                                $scope.anticipo_ordinaroOextra += anticipo.monto
+                                $scope.arregloid.push(anticipo)
+                            }
+                            if (index === array.length - 1) {
+                                $scope.listaAnticipos = datos.anticipos
+                                $scope.arregloid.forEach(function (anticipo, index, array) {
+                                    $scope.listaAnticipos.splice($scope.listaAnticipos.indexOf(anticipo), 1)
+                                    if (index === (array.length - 1)) {
+                                        $scope.listaAnticipos.forEach(function (anticipo, index, array) {
+                                            if(index==0){
+                                            anticipo.anticipo_ordinaro = $scope.anticipo_ordinaroOextra
+                                            anticipo.salario_basico = $scope.empleado.ficha.haber_basico
+                                            anticipo.saldo_salario = anticipo.salario_basico - anticipo.total
+                                            anticipo.montoEdit = false
+                                          
+                                            } else{
+                                                anticipo.anticipo_ordinaro = $scope.anticipo_ordinaroOextra
+                                                anticipo.salario_basico = $scope.empleado.ficha.haber_basico
+                                                anticipo.saldo_salario = anticipo.salario_basico - anticipo.total
+                                                anticipo.montoEdit = false 
+                                            }                                      
+                                        })
+                                    }
+                                });
+    
+                            }*/
+                    });
+                }
+
+            })
+        }
+        $scope.obtenerListaAnticiposOrdi = function (filtro, idEmpleado) {
+            $scope.anticipo_ordinaroOextra = 0
+            var promesa = ListaAnticiposEmpleado(filtro, idEmpleado)
+            $scope.arregloid = []
+            promesa.then(function (datos) {
+                datos.anticipos.ordinarios = []
+                datos.anticipos.extraordinarios = []
+                datos.anticipos.forEach(function (anticipo, index, array) {
+                    if (anticipo.tipoAnticipo.nombre_corto != filtro.nombre) {
+                        datos.anticipos.ordinarios.push(anticipo)
+                    } else {
+                        datos.anticipos.extraordinarios.push(anticipo)
+                    }
+                    if (index === (array.length - 1)) {
+                        for (let i = 0; i < datos.anticipos.ordinarios.length; i++) {
+                            var ordi = datos.anticipos.ordinarios[i];
+                            for (let j = 0; j < datos.anticipos.extraordinarios.length; j++) {
+                                const anticipo = datos.anticipos.extraordinarios[j];
+                                if (anticipo.id_empleado == ordi.id_empleado) {
+                                    if (ordi.anticipo_extraordinaro) {
+                                        ordi.anticipo_extraordinaro += anticipo.monto
+                                    } else {
+                                        ordi.anticipo_extraordinaro = anticipo.monto
+                                    }
+                                    /*  ordi.total = ordi.anticipo_extraordinaro + ordi.monto */
+                                    ordi.saldo_salario = ordi.empleado.ficha.haber_basico - ordi.total
+
+                                    ordi.montoEdit = false
+
+                                } else {        
+                                    if (ordi.anticipo_ordinaro) {
+                                        ordi.anticipo_ordinaro += anticipo.monto
+                                    } else {
+                                        ordi.anticipo_ordinaro = anticipo.monto
+                                    }                            
+                                    ordi.anticipo_extraordinaro = 0
+                                    /*  ordi.total = ordi.anticipo_extraordinaro + ordi.monto */
+                                    ordi.saldo_salario = ordi.empleado.ficha.haber_basico - ordi.total
+                                }
+
+                            }
+                            if (i === (datos.anticipos.ordinarios.length - 1)) {
+                                
+                                        $scope.listaAnticipos = datos.anticipos.ordinarios;
+                            }
+
+                        }
+
+                    }
+                })
+
+            })
+        }
+        $scope.AgregarAnticipoOrdinario = function (anticipo) {
+            var monto = anticipo.monto
+            var tope = anticipo.tope
+            anticipo.empleados.forEach(function (empleado, index, array) {
+                if ($scope.listaAnticipos2.length == 0) {
+                    var anticipo = { fecha: new Date(), empleado: empleado, monto: monto, anticipo_extraordinaro: null, total: null, salario_basico: empleado.ficha.haber_basico, saldo_salario: empleado.ficha.haber_basico, tope: tope }
+
+                } else {
+
+                    var anticipo = { fecha: new Date(), empleado: empleado, monto: monto, anticipo_extraordinaro: null, total: null, salario_basico: empleado.ficha.haber_basico, saldo_salario: null, tope: tope }
+                    anticipo.saldo_salario = anticipo.salario_basico - anticipo.total
+                }
+                for (let i = 0; i < $scope.listaAnticipos.length; i++) {
+                    var EmpleadoAnticipo = $scope.listaAnticipos[i]
+                    if (empleado.id == EmpleadoAnticipo.empleado.id)
+                        anticipo.anticipo_extraordinaro = EmpleadoAnticipo.anticipo_extraordinaro
+                        anticipo.anticipo_ordinaro = EmpleadoAnticipo.anticipo_ordinaro
+                    anticipo.total = anticipo.anticipo_extraordinaro + anticipo.monto
+                    anticipo.total2 = anticipo.anticipo_extraordinaro + anticipo.monto
+                    anticipo.saldo_salario = anticipo.salario_basico - anticipo.total
+                }
+                $scope.listaAnticipos2.push(anticipo)
+                if (index === (array.length - 1)) {
+                    $scope.cerrarDialogNuevoAnticipoRegularTodos()
+                    $scope.anticipo = {}
+
+                }
+
+            });
+
+        }
+        $scope.AgregarAnticipoExtraordinario = function () {
+            if ($scope.listaAnticipos.length == 0) {
+                var anticipo = { fecha: new Date(), monto: null, total2: $scope.anticipo_ordinaroOextra, anticipo_ordinaro: $scope.anticipo_ordinaroOextra, total: $scope.anticipo_ordinaroOextra, salario_basico: $scope.empleado.ficha.haber_basico, saldo_salario: $scope.empleado.ficha.haber_basico }
+                $scope.listaAnticipos.push(anticipo)
+            } else {
+                if ($scope.listaAnticipos[$scope.listaAnticipos.length - 1].id) {
+
+
+                    var anticipo = { fecha: new Date(), monto: null, anticipo_ordinaro: $scope.anticipo_ordinaroOextra, total: $scope.listaAnticipos[$scope.listaAnticipos.length - 1].total, salario_basico: $scope.empleado.ficha.haber_basico, saldo_salario: null }
+
+                    anticipo.saldo_salario = anticipo.salario_basico - anticipo.total
+
+                    $scope.listaAnticipos.push(anticipo)
+                } else {
+                    $scope.mostrarMensaje("cuenta con 1 anticipo sin guardar!")
+                }
+
+            }
+        }
+        $scope.sumarMontoPrestamoNuevo = function (anticipo) {
+            if ($scope.listaAnticipos.length > 1) {
+                anticipo.total = $scope.listaAnticipos[$scope.listaAnticipos.length - 2].total + anticipo.monto
+            } else {
+                anticipo.total = anticipo.total2 + anticipo.monto
+            }
+            anticipo.saldo_salario = anticipo.salario_basico - anticipo.total
+        }
+        $scope.sumarMontoPrestamoNuevo2 = function (anticipo) {
+
+            anticipo.total = anticipo.anticipo_extraordinaro + anticipo.monto
+            anticipo.saldo_salario = anticipo.salario_basico - anticipo.total
+        }
+
+        //fin anticipos
         //selecionar empleados
 
         $scope.selecionarEmpleados = function (empleado, todos, model) {
@@ -3277,6 +3567,16 @@ angular.module('agil.controladores')
 
         }
         //fin exportar en exel y pdf
+        $scope.obtenerGestiones = function () {
+            blockUI.start();
+            var promesa = ClasesTipo("GTN");
+            promesa.then(function (entidad) {
+                $scope.gestiones = entidad.clases;
+                blockUI.stop();
+            });
+        }
+
+
         $scope.inicio()
 
 

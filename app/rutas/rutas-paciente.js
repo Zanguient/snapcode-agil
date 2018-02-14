@@ -1972,28 +1972,32 @@ module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Su
 				var vacas = []
 				if (vacunas.length > 0) {
 					vacunas.forEach(function (vac, index, array) {
-						vac.paciente.activo = vac.paciente.eliminado
-						var ulti_aplic = new Date(vac.fecha_ultima_aplicacion).getTime()
-						var indexSgteDosis = vac.pacienteVacunaDosis.length
-						var proyeccion = new Date(vac.fecha_siguiente_aplicacion).getTime()
-						if (vac.pacienteVacuna.vacunaDosis[indexSgteDosis] != undefined) {
-							// proyeccion = proyeccion.setTime(ulti_aplic+(vac.pacienteVacuna.vacunaDosis[indexSgteDosis].es_dosis?vac.pacienteVacuna.vacunaDosis[indexSgteDosis].tiempo * 86400000:(vac.pacienteVacuna.vacunaDosis[indexSgteDosis].tiempo*30) * 86400000).tiempo)
-							var hoy = new Date().getTime()
-							var diferencia = Math.floor(hoy - proyeccion) / 86400000
-							if (diferencia < vac.pacienteVacuna.dias_activacion && diferencia > vac.pacienteVacuna.dias_activacion * -1) {
-								//15 = vac.pacienteVacuna.dias_activacion
-								vacas.push(vac)
-							}
+						if (vac.paciente !== null && vac.paciente !== undefined) {
+							vac.paciente.activo = vac.paciente.eliminado
+							var ulti_aplic = new Date(vac.fecha_ultima_aplicacion).getTime()
+							var indexSgteDosis = vac.pacienteVacunaDosis.length
+							var proyeccion = new Date(vac.fecha_siguiente_aplicacion).getTime()
+							if (vac.pacienteVacuna.vacunaDosis[indexSgteDosis] != undefined) {
+								// proyeccion = proyeccion.setTime(ulti_aplic+(vac.pacienteVacuna.vacunaDosis[indexSgteDosis].es_dosis?vac.pacienteVacuna.vacunaDosis[indexSgteDosis].tiempo * 86400000:(vac.pacienteVacuna.vacunaDosis[indexSgteDosis].tiempo*30) * 86400000).tiempo)
+								var hoy = new Date().getTime()
+								var diferencia = Math.floor(hoy - proyeccion) / 86400000
+								if (diferencia < vac.pacienteVacuna.dias_activacion && diferencia > vac.pacienteVacuna.dias_activacion * -1) {
+									//15 = vac.pacienteVacuna.dias_activacion
+									vacas.push(vac)
+								}
 
-							if (index == array.length - 1) {
-								console.log(vacas.length)
-								res.json({ Vacunas: vacas });
+								if (index == array.length - 1) {
+									console.log(vacas.length)
+									res.json({ Vacunas: vacas });
+								}
+							} else {
+								if (index == array.length - 1) {
+									res.json({ Vacunas: vacas });
+								}
 							}
-						} else {
-							if (index == array.length - 1) {
-								console.log(vacas.length)
-								res.json({ Vacunas: vacas });
-							}
+						}
+						if (index == array.length - 1) {
+							res.json({ Vacunas: vacas });
 						}
 					});
 				} else {

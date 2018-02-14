@@ -92,7 +92,7 @@
 /* the main checkboxes and helper layer */
 .multiSelect .checkboxLayer {
     background-color: #fff;
-    position: absolute;
+    position: static !important;
     z-index: 999;
     border: 1px solid rgba(0, 0, 0, 0.15);
     border-radius: 4px;
