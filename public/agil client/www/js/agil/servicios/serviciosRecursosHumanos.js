@@ -417,7 +417,24 @@ angular.module('agil.servicios')
     };
     return res;
 }])
-
+.factory('CrearEmpleadosAnticipos', function ($resource) {
+    return $resource(restServer + "recursos-humanoss/anticipos/empleados",null,
+        {
+            'update': { method: 'PUT' }
+        });
+})
+.factory('CrearNuevosAnticiposEmpleados', ['CrearEmpleadosAnticipos', '$q', function (CrearEmpleadosAnticipos, $q) {
+    var res = function (datos) {
+        var delay = $q.defer();
+        CrearEmpleadosAnticipos.save(null,datos, function (entidad) {
+            delay.resolve(entidad);
+        }, function (error) {
+            delay.reject(error);
+        });
+        return delay.promise;
+    };
+    return res;
+}])
 .factory('EmpleadosAnticipos', function ($resource) {
     return $resource(restServer + "recursos-humanos/anticipos/empleado/:id_empleado/inicio/:inicio/fin/:fin/empresa/:id_empresa",null,
         {

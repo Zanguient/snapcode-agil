@@ -1,5 +1,5 @@
-module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Proforma, DetallesProformas, ActividadEconomica, Servicios, Clase, Sucursal, SucursalActividadDosificacion, Dosificacion,
-    CodigoControl, NumeroLiteral, Empresa,ConfiguracionGeneralFactura) {
+module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Proforma, DetallesProformas, Servicios, Clase, Sucursal, SucursalActividadDosificacion, Dosificacion,
+    CodigoControl, NumeroLiteral, Empresa, ConfiguracionGeneralFactura, Tipo, UsuarioSucursal) {
     router.route('/proformas/empresa/:id_empresa/mes/:mes/anio/:anio/suc/:sucursal/act/:actividad/ser/:servicio/monto/:monto/razon/:razon/usuario/:usuario/pagina/:pagina/items-pagina/:items_pagina/busqueda/:busqueda/num/:numero')
         .get(function (req, res) {
             var condicion = {}
@@ -9,7 +9,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
             condicion.id_empresa = req.params.id_empresa
             condicion.eliminado = false
             if (req.params.mes != "0") {
-                condicion.periodo_mes = parseInt(req.params.mes)-1
+                condicion.periodo_mes = parseInt(req.params.mes) - 1
             }
             if (req.params.anio != "0") {
                 condicion.periodo_anio = parseInt(req.params.anio)
@@ -44,7 +44,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
                     offset: (req.params.items_pagina * (req.params.pagina - 1)), limit: req.params.items_pagina,
                     where: condicion,
                     include: [
-                        { model: ActividadEconomica, as: 'actividadEconomica', include: [{ model: Clase, as: 'claseActividad' }] },
+                        { model: Clase, as: 'actividadEconomica' },
                         { model: DetallesProformas, as: 'detallesProformas', where: { eliminado: false }, include: [{ model: Servicios, as: 'servicio', where: condicionServicio }] },
                         { model: Usuario, as: 'usuarioProforma', where: condicionUsuario },
                         { model: Cliente, as: 'clienteProforma', where: condicionCliente },
@@ -67,8 +67,8 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
                 detalle: req.body.detalle,
                 periodo_mes: req.body.periodo_mes.id,
                 periodo_anio: req.body.periodo_anio.id,
-                id_sucursal: req.body.sucursalProforma.id,
-                id_actividad: req.body.actividadEconomica.id,
+                id_sucursal: req.body.sucursal.id,
+                id_actividad: req.body.actividadEconomica.actividad.id,
                 id_cliente: req.body.clienteProforma.id,
                 id_usuario: req.body.usuarioProforma.id,
                 totalImporteBs: req.body.totalImporteBs,
@@ -95,6 +95,43 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
                 res.json({ mensaje: err.message === undefined ? err.data : err.message, hasErr: true })
             });
         })
+
+    router.route('/proforma-sucursales/:id_usuario')
+        .get(function (req, res) {
+            UsuarioSucursal.findAll({
+                where: {
+                    id_usuario: req.params.id_usuario
+                },
+                include: [{
+                    model: Sucursal, as: 'sucursal',
+                    include: [
+                        {
+                            model: SucursalActividadDosificacion, as: 'actividadesDosificaciones',
+                            include: [{ model: Dosificacion, as: 'dosificacion' },
+                            { model: Clase, as: 'actividad' }]
+                        }]
+                }]
+            }).then(function (entidades) {
+                res.json({ sucursales: entidades });
+            }).catch(function (err) {
+                res.json({ mensaje: err.message === undefined ? err.data : err.message, hasErr: true })
+            });
+        });
+
+
+    // router.route('/sucursales/proforma/:id_empresa/id:usuario')
+    //     .get(function (req, res) {
+    //         Sucursales.findAll({
+    //             where: {
+    //                 id_empresa: req.params.id_empresa
+    //             },
+    //             include: [{ model: clase }]
+    //         }).then(function (sucursales) {
+    //             res.json({ sucursales: sucursales })
+    //         }).catch(function (err) {
+    //             res.json({ mensaje: err.message === undefined ? err.data : err.message, hasErr: true })
+    //         });
+    //     })
     router.route('/fechas/proforma/:id')
         .post(function (req, res) {
             // if (req.body.fecha_recepcion !== null) {
@@ -132,7 +169,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
                 {
                     where: { id: req.params.id },
                     include: [
-                        { model: ActividadEconomica, as: 'actividadEconomica', include: [{ model: Clase, as: 'claseActividad' }] },
+                        { model: Clase, as: 'actividadEconomica' },
                         { model: DetallesProformas, as: 'detallesProformas', where: { eliminado: false }, include: [{ model: Servicios, as: 'servicio' }, { model: Clase, as: 'centroCosto' }] },
                         { model: Usuario, as: 'usuarioProforma' },
                         { model: Cliente, as: 'clienteProforma' },
@@ -201,6 +238,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
                 res.json({ mensaje: err.message === undefined ? err.data : err.message, hasErr: true })
             });
         })
+
     router.route('/actividades/empresa/:id_empresa')
         .post(function (req, res) {
             var mensajeExtra = ""
@@ -218,15 +256,17 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
                                 }
                             }
                             if (!enUso) {
-                                ActividadEconomica.destroy({
-                                    where: { id: actividad.id }
-                                }).then(function (actividadEliminada) {
-                                    if (i === req.body.length - 1) {
-                                        res.json({ mensaje: 'Actividades actualizadas satisfactoriamente!' + mensajeExtra })
-                                    }
-                                }).catch(function (err) {
-                                    res.json({ mensaje: err.message === undefined ? err.data : err.message, hasErr: true })
-                                });
+                                SucursalActividadDosificacion.update({
+                                    eliminado: true
+                                }, {
+                                        where: { id: actividad.id }
+                                    }).then(function (actividadEliminada) {
+                                        if (i === req.body.length - 1) {
+                                            res.json({ mensaje: 'Actividades actualizadas satisfactoriamente!' + mensajeExtra })
+                                        }
+                                    }).catch(function (err) {
+                                        res.json({ mensaje: err.message === undefined ? err.data : err.message, hasErr: true })
+                                    });
                             } else {
                                 if (i === req.body.length - 1) {
                                     res.json({ mensaje: 'Actividades actualizadas satisfactoriamente!' + mensajeExtra })
@@ -237,15 +277,25 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
                         });
 
                     } else {
-                        if (i === req.body.length - 1) {
-                            res.json({ mensaje: 'Actividades actualizadas satisfactoriamente!' + mensajeExtra })
-                        }
+                        SucursalActividadDosificacion.update({
+                            id_sucursal: actividad.id_sucursal,
+                            id_actividad: actividad.actividad.id,
+                            id_dosificacion: (actividad.dosificacion !== undefined && actividad.dosificacion !== null) ? actividad.dosificacion.id : null
+                        }, {
+                                where: { id: actividad.id }
+                            }).then(function (actividadEmpresaCreada) {
+                                if (i === req.body.length - 1) {
+                                    res.json({ mensaje: 'Actividades actualizadas satisfactoriamente!' })
+                                }
+                            }).catch(function (err) {
+                                res.json({ mensaje: err.message === undefined ? err.data : err.message, hasErr: true })
+                            });
                     }
                 } else {
-                    ActividadEconomica.create({
-                        id_clase_actividad: actividad.claseActividad.id,
-                        id_empresa: actividad.id_empresa,
-                        eliminado: false
+                    SucursalActividadDosificacion.create({
+                        id_sucursal: actividad.sucursal.id,
+                        id_actividad: actividad.actividad.id,
+                        id_dosificacion: actividad.dosificacion !== undefined ? actividad.dosificacion.id : null
                     }).then(function (actividadEmpresaCreada) {
                         if (i === req.body.length - 1) {
                             res.json({ mensaje: 'Actividades actualizadas satisfactoriamente!' })
@@ -257,25 +307,25 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
             })
         })
         .get(function (req, res) {
-            ActividadEconomica.findAll({
-                where: { id_empresa: req.params.id_empresa, eliminado: false },
-                include: [{ model: Clase, as: 'claseActividad' }]
+            Clase.findAll({
+                where: { habilitado: true },
+                include: [{ model: Tipo, as: 'tipo', where: { id_empresa: req.params.id_empresa } }]
             }).then(function (actividades) {
                 res.json({ actividades: actividades })
             }).catch(function (err) {
                 res.json({ actividades: [], mensaje: err.message === undefined ? err.data : err.message, hasErr: true })
             });
         })
-        .put(function (req, res) {
-            ActividadEconomica.update({
+    // .put(function (req, res) {
+    //     ActividadEconomica.update({
 
-                where: { id: req.body.id }
-            }).then(function (actividadActualizada) {
-                res.json({ mensaje: 'Actividad Actualizada' })
-            }).catch(function (err) {
-                res.json({ actividades: [], mensaje: err.message === undefined ? err.data : err.message, hasErr: true })
-            });
-        })
+    //         where: { id: req.body.id }
+    //     }).then(function (actividadActualizada) {
+    //         res.json({ mensaje: 'Actividad Actualizada' })
+    //     }).catch(function (err) {
+    //         res.json({ actividades: [], mensaje: err.message === undefined ? err.data : err.message, hasErr: true })
+    //     });
+    // })
 
     router.route('/actividades/servicios/empresa/:id_empresa/:id_actividad')
         .post(function (req, res) {
@@ -315,7 +365,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
                             });
                         } else {
                             Servicios.update({
-                                id_actividad: servicio.actividad.id,
+                                id_actividad: servicio.actividad.actividad.id,
                                 centro_costo: null,
                                 codigo: servicio.codigo,
                                 nombre: servicio.nombre,
@@ -332,45 +382,22 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
                                 });
                         }
                     } else {
-                        if (servicio.actividad.id === undefined) {
-                            ActividadEconomica.find({
-                                where: { id_clase_actividad: servicio.actividad.claseActividad.id },
-                                include: [{ model: Clase, as: 'claseActividad' }]
-                            }).then(function (actividad) {
-                                servicio.actividad = actividad
-                                Servicios.create({
-                                    id_actividad: servicio.actividad.id,
-                                    centro_costo: null,
-                                    codigo: servicio.codigo,
-                                    nombre: servicio.nombre,
-                                    precio: parseFloat(servicio.precio),
-                                    eliminado: false
-                                }).then(function (servicioCreado) {
-                                    if (i == req.body.length - 1) {
-                                        res.json({ mensaje: 'Servicio creado satisfactoriamente!' })
-                                    }
-                                }).catch(function (err) {
-                                    res.json({ mensaje: err.message === undefined ? err.data : err.message, hasErr: true })
-                                });
-                            }).catch(function (err) {
-                                res.json({ mensaje: err.message === undefined ? err.data : err.message, hasErr: true })
-                            });
-                        } else {
-                            Servicios.create({
-                                id_actividad: servicio.actividad.id,
-                                centro_costo: null,
-                                codigo: servicio.codigo,
-                                nombre: servicio.nombre,
-                                precio: parseFloat(servicio.precio),
-                                eliminado: false
-                            }).then(function (servicioCreado) {
-                                if (i == req.body.length - 1) {
-                                    res.json({ mensaje: 'Servicio creado satisfactoriamente!' })
-                                }
-                            }).catch(function (err) {
-                                res.json({ mensaje: err.message === undefined ? err.data : err.message, hasErr: true })
-                            });
-                        }
+
+                        Servicios.create({
+                            id_actividad: servicio.actividad.actividad.id,
+                            centro_costo: null,
+                            codigo: servicio.codigo,
+                            nombre: servicio.nombre,
+                            precio: parseFloat(servicio.precio),
+                            eliminado: false
+                        }).then(function (servicioCreado) {
+                            if (i == req.body.length - 1) {
+                                res.json({ mensaje: 'Servicio creado satisfactoriamente!' })
+                            }
+                        }).catch(function (err) {
+                            res.json({ mensaje: err.message === undefined ? err.data : err.message, hasErr: true })
+                        });
+
 
                     }
                 })
@@ -383,7 +410,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
                 where: {
                     id_actividad: req.params.id_actividad
                 },
-                include: [{ model: ActividadEconomica, as: 'actividad', include: [{ model: Clase, as: 'claseActividad' }] }]
+                include: [{ model: Clase, as: 'actividad' }]
             }).then(function (servicios) {
                 if (servicios !== null) {
                     res.json({ servicios: servicios })
@@ -427,10 +454,10 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
                     id_empresa: req.params.id_empresa,
                     eliminado: false,
                     fecha_factura: null,
-                    fecha_proforma_ok: {$not:null}
+                    fecha_proforma_ok: { $not: null }
                 },
                 include: [
-                    { model: ActividadEconomica, as: 'actividadEconomica', include: [{ model: Clase, as: 'claseActividad' }] },
+                    { model: Clase, as: 'actividadEconomica' },
                     { model: Cliente, as: 'clienteProforma' },
                 ]
 
@@ -461,6 +488,22 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
         var dia = fecha.split('/')[0];
         return fecha.split('/')[2] + mes + dia;
     }
+    router.route('/actividades/servicios/:id_empresa')
+        .get(function (req, res) {
+            var factura = req.body;
+            SucursalActividadDosificacion.findAll({
+                // where: {
+                //     id_actividad: req.body.actividadEconomica.id,
+                //     id_sucursal: req.body.sucursal.id
+                // },
+                include: [{ model: Dosificacion, as: 'dosificacion', include: [{ model: Clase, as: 'pieFactura' }] },
+                { model: Sucursal, as: 'sucursal', where: { id_empresa: req.params.id_empresa }, include: [{ model: Empresa, as: 'empresa' }] },
+                { model: Clase, as: 'actividad' }]
+            }).then(function (actividades) {
+                res.json({ actividades: actividades })
+            })
+        })
+
     router.route('/proforma/facturar/:id_empresa')
         .post(function (req, res) {
             var factura = req.body;
@@ -523,8 +566,8 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
                                         }).then(function (configuracionGeneralFactura) {
                                             factura.configuracion = configuracionGeneralFactura
                                             var total = 0
-                                            factura.detallesVenta = factura.detallesProformas.map(function (det,i) {
-                                                var producto = {codigo: det.servicio.codigo , nombre: det.servicio.nombre, unidad_medida: "" }
+                                            factura.detallesVenta = factura.detallesProformas.map(function (det, i) {
+                                                var producto = { codigo: det.servicio.codigo, nombre: det.servicio.nombre, unidad_medida: "" }
                                                 total += det.importeBs
                                                 det.total = det.importeBs * det.cantidad
                                                 det.producto = producto
@@ -532,21 +575,21 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
                                             })
                                             factura.total = total
                                             factura.cliente = factura.clienteProforma
-                                            res.json({ mensaje: 'Espere la impresión...', factura: req.body})
-                                            
+                                            res.json({ mensaje: 'Espere la impresión...', factura: req.body })
+
                                         }).catch(function (err) {
-                                            res.json({ mensaje: err.message === undefined ? err.data : err.message, hasErr: true, factura: req.body})
+                                            res.json({ mensaje: err.message === undefined ? err.data : err.message, hasErr: true, factura: req.body })
                                         });
                                     }).catch(function (err) {
-                                        res.json({ mensaje: err.message === undefined ? err.data : err.message, hasErr: true, factura: req.body})
+                                        res.json({ mensaje: err.message === undefined ? err.data : err.message, hasErr: true, factura: req.body })
                                     });
                             }
                         }).catch(function (err) {
-                            res.json({ mensaje: err.message === undefined ? err.data : err.message, hasErr: true, factura: req.body})
+                            res.json({ mensaje: err.message === undefined ? err.data : err.message, hasErr: true, factura: req.body })
                         });
                 })
             }).catch(function (err) {
-                res.json({ mensaje: err.message === undefined ? err.data : err.message, hasErr: true, factura: req.body})
+                res.json({ mensaje: err.message === undefined ? err.data : err.message, hasErr: true, factura: req.body })
             });
         })
 

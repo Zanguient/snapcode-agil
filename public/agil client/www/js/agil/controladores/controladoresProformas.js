@@ -1,9 +1,9 @@
 angular.module('agil.controladores')
     .controller('controladorProformas', function ($scope, $filter, $rootScope, $route, $templateCache, $location, $window, $localStorage, Paginator, $timeout,
         blockUI, ClasesTipo, socket, ObtenerCambioMoneda, ClientesNit, Proformas, FiltroProformas, ActividadEmpresa, ActividadServicio, ActividadesEmpresa,
-        ServiciosEmpresa, Proforma, ProformaInfo, Clientes, fechasProforma, eliminarProforma) {
+        ServiciosEmpresa, Proforma, ProformaInfo, Clientes, fechasProforma, eliminarProforma, ListaSucursalesActividadesDosificacionEmpresa, DosificacionesDisponibles, Sucursales, ListaSucursalesUsuario) {
 
-          $scope.usuario = JSON.parse($localStorage.usuario);
+        $scope.usuario = JSON.parse($localStorage.usuario);
 
 
         $scope.modalConfiguracionActividadesServicios = 'modalConfiguracionActividadesServicios'
@@ -14,20 +14,24 @@ angular.module('agil.controladores')
         $scope.dialogClientesProforma = 'dialog-cliente-proforma'
         $scope.dialogmodalFechas = 'modalFechas'
         $scope.dialogBusquedaServicio = 'dialog-Busqueda-servicio-proforma'
+        $scope.dialogDosificacionesDisponibles = 'dialog-dosificaciones-disponibles'
 
         $scope.$on('$viewContentLoaded', function () {
             resaltarPestaña($location.path().substring(1));
             ejecutarScriptsProformas($scope.modalConfiguracionActividadesServicios, $scope.wizardConfiguracionActividadesServicios, $scope.dialogProformaEdicion,
-                $scope.dialogClientesProforma, $scope.modalConfiguracionActividades, $scope.wizardConfiguracionActividades, $scope.dialogmodalFechas,$scope.dialogBusquedaServicio);
-                $scope.buscarAplicacion($scope.usuario.aplicacionesUsuario, $location.path().substring(1));
+                $scope.dialogClientesProforma, $scope.modalConfiguracionActividades, $scope.wizardConfiguracionActividades, $scope.dialogmodalFechas,
+                $scope.dialogBusquedaServicio, $scope.dialogDosificacionesDisponibles);
+            $scope.buscarAplicacion($scope.usuario.aplicacionesUsuario, $location.path().substring(1));
         });
 
         $scope.$on('$routeChangeStart', function (next, current) {
             $scope.eliminarPopup($scope.modalConfiguracionActividadesServicios);
             $scope.eliminarPopup($scope.dialogProformaEdicion);
+            $scope.eliminarPopup($scope.modalConfiguracionActividades);
             $scope.eliminarPopup($scope.dialogClientesProforma);
             $scope.eliminarPopup($scope.dialogmodalFechas);
             $scope.eliminarPopup($scope.dialogBusquedaServicio)
+            $scope.eliminarPopup($scope.dialogDosificacionesDisponibles)
         })
         $scope.verificarBloqueoServicios = function () {
             if (($scope.detallesProformas.length > 0 || $scope.proforma.ver !== undefined)) {
@@ -55,6 +59,9 @@ angular.module('agil.controladores')
             var prom = ProformaInfo(proforma.id)
             prom.then(function (proformaE) {
                 $scope.proforma = proformaE.proforma
+                $scope.proforma.sucursal = proformaE.proforma.sucursalProforma
+                $scope.proforma.actividadEconomica.actividad = proformaE.proforma.actividadEconomica
+                $scope.obtenerServiciosActividadEmpresaPrincipal($scope.proforma.actividadEconomica)
                 if (ver !== undefined) {
                     $scope.proforma.ver = true
                 }
@@ -75,7 +82,7 @@ angular.module('agil.controladores')
                         $scope.detalleProforma = undefined
                     })
                     $scope.proforma.importeLiteral = ConvertirALiteral($scope.proforma.totalImporteBs.toFixed(2));
-                    $scope.obtenerServiciosActividadEmpresa($scope.proforma.actividadEconomica)
+                    // $scope.obtenerServiciosActividadEmpresaPrincipal($scope.proforma.actividadEconomica)
                 }
                 blockUI.stop()
             }, function (err) {
@@ -88,29 +95,18 @@ angular.module('agil.controladores')
         $scope.ver = function (proforma) {
             $scope.proforma = proforma
             $scope.proforma.ver = true
-            
-            // for (let i = 0; i < 5; i++) {
-            //     var text = ""
-            //     for (let j = 0; j < 10; j++) {
-            //         text += "i "+ i + " |j "+j +" | "
-            //         // const element = array[index];
-            //     }
-            //     console.log(text)
-            //     // const element = array[index];
-            // }
-            
             $scope.editar($scope.proforma, true)
-            // $scope.abrirdialogProformaEdic/ion($scope.proforma)S
         }
 
         $scope.eliminarDetalleActividadEmpresa = function (actividad) {
             if (actividad.id !== undefined) {
                 actividad.eliminado = true
             } else {
-                $scope.actividadesEmpresa.splice($scope.actividadesEmpresa.indexOf(actividad), 1)
+                $scope.actividadesSucursal.splice($scope.actividadesSucursal.indexOf(actividad), 1)
             }
             $scope.cerrarConfirmacionEliminacion();
         }
+
         $scope.getFecha = function () {
             if ($scope.proforma !== undefined) {
                 return new Date($scope.proforma.fecha)
@@ -119,16 +115,16 @@ angular.module('agil.controladores')
             }
         }
 
-        $scope.editarServicio = function(servicio){
+        $scope.editarServicio = function (servicio) {
             servicio.editado = true
-            $scope.nActividad.actividadEconomica = servicio.actividad
+            $scope.nActividad.actividadEconomica.actividad.actividad = servicio.actividad
             $scope.nActividad.servicio = servicio
-            
+
         }
-        $scope.modificarProformaPrecioUnitarioServicio = function(detalle){
+        $scope.modificarProformaPrecioUnitarioServicio = function (detalle) {
             if (detalle.editarPrecio === undefined) {
                 detalle.editarPrecio = true
-            }else{
+            } else {
                 detalle.editarPrecio = undefined
             }
         }
@@ -144,33 +140,32 @@ angular.module('agil.controladores')
                 return promesa;
             }
         }
+
         $scope.establecerCliente = function (cliente) {
             $scope.proforma.clienteProforma = cliente;
-            /*   $scope.enfocar('razon_social');
-              $scope.capturarInteraccion(); */
         }
+
         $scope.enfocar = function (elemento) {
             $timeout(function () {
                 $("#" + elemento).focus();
             }, 0);
         }
+
         $scope.filtrarProformasOperaciones = function (filtro, _) {
             for (var key in filtro) {
                 if (filtro[key] === "" || filtro[key] === null) {
                     filtro[key] = 0
                 }
             }
-
             if (_ === undefined) {
                 $scope.obtenerProformas()
             } else {
                 return filtro
             }
-
         }
-        
+
         $scope.inicio = function () {
-            $scope.actividadesEmpresa = []
+            $scope.actividadesSucursal = []
             $scope.nActividad = {}
             $scope.proforma = {}
             $scope.configuracionActividadServicio = []
@@ -182,13 +177,6 @@ angular.module('agil.controladores')
             $scope.filtro = { empresa: $scope.usuario.empresa.id, mes: 0, anio: 0, sucursal: 0, actividadEconomica: 0, servicio: 0, monto: 0, razon: 0, usuario: "", pagina: 1, items_pagina: 10, busqueda: 0, numero: 0 }
             $scope.meses = [{ id: 0, nombre: "Enero" }, { id: 1, nombre: "Febrero" }, { id: 2, nombre: "Marzo" }, { id: 3, nombre: "Abril" }, { id: 4, nombre: "Mayo" }, { id: 5, nombre: "Junio" }, { id: 6, nombre: "Julio" }, { id: 7, nombre: "Agosto" },
             { id: 8, nombre: "Septiembre" }, { id: 9, nombre: "Octubre" }, { id: 10, nombre: "Noviembre" }, { id: 11, nombre: "Diciembre" }];
-            
-            // 
-            // $scope.anios = Array.apply(null, Array(actual_year_diference + 1)).map(function (_, i) {
-            //     var start_year = 1980
-            //     var year = { id: start_year + i, nombre: start_year + i }
-            //     return year
-            // })
             $scope.proformas = []
             $scope.sucursalesUsuario = "";
             for (var i = 0; i < $scope.usuario.sucursalesUsuario.length; i++) {
@@ -199,11 +187,6 @@ angular.module('agil.controladores')
             }
             $scope.obtenerPaginador()
             $scope.obtenerCentroCosto()
-        }   
-        $scope.compararFechasProformas = function(f1, f2){
-            // if (f1) {
-                
-            // }
         }
 
         $scope.verificarFechaRecepcion = function (fecha_recepcion) {
@@ -213,6 +196,7 @@ angular.module('agil.controladores')
                 return true
             }
         }
+
         $scope.verificarFechaProformaOk = function (fecha_proforma_ok) {
             if (fecha_proforma_ok !== null && fecha_proforma_ok !== undefined) {
                 return false
@@ -220,6 +204,7 @@ angular.module('agil.controladores')
                 return true
             }
         }
+
         $scope.verificarFechaFactura = function (fecha_factura) {
             if (fecha_factura !== null && fecha_factura !== undefined) {
                 return false
@@ -227,13 +212,7 @@ angular.module('agil.controladores')
                 return true
             }
         }
-        // $scope.verificarFechaCobro = function (fecha_cobro) {
-        //     if (fecha_cobro !== null&&fecha_cobro!==undefined) {
-        //         return false
-        //     } else {
-        //         return true
-        //     }
-        // }
+
         $scope.actualizarFechas = function (proforma) {
             blockUI.start()
             if (proforma !== undefined) {
@@ -252,18 +231,7 @@ angular.module('agil.controladores')
             }
         }
 
-        // $scope.fechaCobroPop = {
-        //     templateUrl: 'fechaCobro.html',
-        //     title: 'Cuentas Axiliares',
-        //     isOpen: false
-        // };
-
-        // $scope.modificarFechaCobro = function (proforma) {
-        //     proforma.fecha_cobro = new Date()
-        // }
-
-        $scope.sinFuncionalidad = function (proforma) {
-            // proforma.fecha_recepcion = new Date()
+        $scope.sinFuncionalidad = function () {
             $scope.mostrarMensaje('Sin funcionalidad')
         }
 
@@ -305,31 +273,20 @@ angular.module('agil.controladores')
             })
         }
 
+
         $scope.obtenerActividadesSucursal = function (idSucursal) {
-            $scope.actividadesSucursal = [];
-            // var promesa = ClasesTipo('ACTCOM')
             var sucursal = $.grep($scope.sucursales, function (e) { return e.id == idSucursal; })[0];
             $scope.actividadesDosificaciones = sucursal.actividadesDosificaciones;
-            // $scope.actividades=[];
-            for (var i = 0; i < $scope.actividadesDosificaciones.length; i++) {
-                $scope.actividadesSucursal.push($scope.actividadesDosificaciones[i].actividad);
-            }
-            // $scope.filtro.actividad = $scope.actividades.length == 1 ? $scope.actividades[0] : null;
+            $scope.actividadesSucursal = [];
+            $scope.actividadesSucursal = $scope.actividadesDosificaciones
         }
 
-        $scope.obtenerActividades = function () {
+        $scope.obtenerActividadesGral = function () {
             $scope.actividades = [];
             var promesa = ClasesTipo('ACTCOM')
             promesa.then(function (actividades) {
-                // $scope.actividades = actividades.clases
+                $scope.actividades = actividades.clases
             })
-            // var sucursal=$.grep($scope.sucursales, function(e){return e.id == idSucursal;})[0];
-            // $scope.actividadesDosificaciones=sucursal.actividadesDosificaciones;
-            // $scope.actividades=[];
-            // for(var i=0;i<$scope.actividadesDosificaciones.length;i++){
-            //     $scope.actividades.push($scope.actividadesDosificaciones[i].actividad);
-            // }
-            // $scope.filtro.actividad=$scope.actividades.length==1?$scope.actividades[0]:null;
         }
 
         $scope.obtenerPaginador = function () {
@@ -365,12 +322,12 @@ angular.module('agil.controladores')
                 if (nuevosServicios.length > 0) {
                     ActividadServicio.save({ id_empresa: $scope.usuario.empresa.id, id_actividad: 0 }, nuevosServicios, function (res) {
                         $scope.mostrarMensaje(res.mensaje)
+                        $scope.obtenerSucursales();
                         blockUI.stop()
                         $scope.cerrarConfiguracionActividadesServicios()
                     }, function (err) {
                         $scope.mostrarMensaje(err.data)
                         blockUI.stop()
-                        $scope.cerrarConfiguracionActividadesServicios()
                     })
                 } else {
                     blockUI.stop()
@@ -383,19 +340,18 @@ angular.module('agil.controladores')
             if (query != "" && query != undefined) {
                 if ($scope.configuracionActividadServicio.length > 0) {
                     var promesa = $filter('filter')($scope.configuracionActividadServicio, query);
-                    console.log(promesa)
                     return promesa;
                 } else {
                     if ($scope.proforma !== undefined) {
                         if ($scope.proforma.actividadEconomica !== undefined) {
-                            $scope.mostrarMensaje('No hay servicios en la actividad seleccionada: "' + $scope.proforma.actividadEconomica.claseActividad.nombre + '"')
+                            $scope.mostrarMensaje('No hay servicios en la actividad seleccionada: "' + $scope.proforma.actividadEconomica.nombre + '"')
                         }
                     }
                 }
             }
         }
 
-        $scope.establecerservicio = function (servico,modal) {
+        $scope.establecerservicio = function (servico, modal) {
             $scope.detalleProforma = { id_servicio: servico.id, cantidad: 1, servicio: servico, precio_unitario: servico.precio, actividad_id: servico.actividad.id, actividad: servico.actividad }
             $scope.detalleProforma.importeBs = $scope.detalleProforma.precio_unitario * $scope.detalleProforma.cantidad
             if ($scope.moneda !== undefined) {
@@ -406,7 +362,7 @@ angular.module('agil.controladores')
                 }
             }
             $scope.enfocar('cantidad');
-            if (modal !==undefined) {
+            if (modal !== undefined) {
                 $scope.cerrarBusquedaServiciosProforma()
             }
         }
@@ -420,7 +376,7 @@ angular.module('agil.controladores')
                         $scope.detalleProforma.importeSus = $scope.detalleProforma.precio_unitario / $scope.moneda.dolar * $scope.detalleProforma.cantidad
                     }
                 }
-            }else{
+            } else {
                 $scope.detalleProforma.importeSus = $scope.detalleProforma.precioSus * $scope.detalleProforma.cantidad
                 if ($scope.moneda !== undefined) {
                     if ($scope.moneda.dolar !== null && $scope.moneda.dolar !== "--") {
@@ -451,10 +407,15 @@ angular.module('agil.controladores')
                     var check = $scope.buscarservicio(actividadServicio.servicio.nombre)
                     if (check !== undefined) {
                         if (check.length < 1) {
-                            var service = { id: actividadServicio.id, actividad: actividadServicio.actividadEconomica, codigo: actividadServicio.servicio.codigo, nombre: actividadServicio.servicio.nombre, precio: actividadServicio.servicio.precio }
-                            $scope.configuracionActividadServicio.push(service)
+                            if ((actividadServicio.actividadEconomica.actividad.dosificacion !== undefined && actividadServicio.actividadEconomica.actividad.dosificacion !== null)) {
+                                var service = { id: actividadServicio.id, actividad: actividadServicio.actividadEconomica.actividad, codigo: actividadServicio.servicio.codigo, nombre: actividadServicio.servicio.nombre, precio: actividadServicio.servicio.precio }
+                                $scope.configuracionActividadServicio.push(service)
+                                $scope.nActividad.servicio = undefined
+                            } else {
+                                $scope.mostrarMensaje('La actividad seleccionada no tiene dosificación activa, por favor asigne una dosificación para poder continuar.')
+                            }
                         } else {
-                            if (actividadServicio.servicio.id ===undefined) {
+                            if (actividadServicio.servicio.id === undefined) {
                                 var encontrado = false
                                 check.map(function (ser) {
                                     if (ser.nombre === actividadServicio.servicio.nombre) {
@@ -463,22 +424,30 @@ angular.module('agil.controladores')
                                     }
                                     if (ser.codigo === actividadServicio.servicio.codigo) {
                                         encontrado = true
-                                        $scope.mostrarMensaje('El codigo del servicio ya esta en uso')
+                                        $scope.mostrarMensaje('El codigo del servicio ya esta en uso o listo para ser asignado.')
                                     }
                                 })
                                 if (!encontrado) {
-                                    var service = { id: actividadServicio.id, actividad: actividadServicio.actividadEconomica, codigo: actividadServicio.servicio.codigo, nombre: actividadServicio.servicio.nombre, precio: actividadServicio.servicio.precio }
-                                    $scope.configuracionActividadServicio.push(service)
+                                    if ((actividadServicio.actividadEconomica.actividad.dosificacion !== undefined && actividadServicio.actividadEconomica.actividad.dosificacion !== null)) {
+                                        var service = { id: actividadServicio.id, actividad: actividadServicio.actividadEconomica.actividad, codigo: actividadServicio.servicio.codigo, nombre: actividadServicio.servicio.nombre, precio: actividadServicio.servicio.precio }
+                                        $scope.configuracionActividadServicio.push(service)
+                                        $scope.nActividad.servicio = undefined
+                                    } else {
+                                        $scope.mostrarMensaje('La actividad seleccionada no tiene dosificación activa, por favor asigne una dosificación para poder continuar.')
+                                    }
                                 }
-                            }else{
-                                // var end = []
+                            } else {
                                 $scope.nActividad.servicio = undefined
-                                // $scope.nActividad.actividadEconomica = actividadServicio.actividadEconomica
                             }
                         }
                     } else {
-                        var service = { id: actividadServicio.id, actividad: actividadServicio.actividadEconomica, codigo: actividadServicio.servicio.codigo, nombre: actividadServicio.servicio.nombre, precio: actividadServicio.servicio.precio }
-                        $scope.configuracionActividadServicio.push(service)
+                        if ((actividadServicio.actividadEconomica.actividad.dosificacion !== undefined && actividadServicio.actividadEconomica.actividad.dosificacion !== null)) {
+                            var service = { id: actividadServicio.id, actividad: actividadServicio.actividadEconomica.actividad, codigo: actividadServicio.servicio.codigo, nombre: actividadServicio.servicio.nombre, precio: actividadServicio.servicio.precio }
+                            $scope.configuracionActividadServicio.push(service)
+                            $scope.nActividad.servicio = undefined
+                        } else {
+                            $scope.mostrarMensaje('La actividad seleccionada no tiene dosificación activa, por favor asigne una dosificación para poder continuar.')
+                        }
                     }
                 } else {
                     $scope.mostrarMensaje('Revise los datos e intente de nuevo.')
@@ -488,25 +457,22 @@ angular.module('agil.controladores')
 
         $scope.filtrarClientes = function (query) {
             $scope.clientesProcesados = $filter('filter')($scope.clientes, query);
-            // setTimeout(function () {
-            // 	aplicarSwiper(4, 3, true, 2);
-            // }, 5);
         }
 
         $scope.filtrarServicios = function (query) {
             if ($scope.filser) {
                 $scope.serviciosProcesados = $filter('filter')($scope.filser, query);
-            }else{
+            } else {
                 $scope.serviciosProcesados = $filter('filter')($scope.configuracionActividadServicio, query);
             }
         }
 
         $scope.guardarConfiguracionActividadEconomicas = function () {
             blockUI.start()
-            if ($scope.actividadesEmpresa.length > 0) {
+            if ($scope.actividadesSucursal.length > 0) {
                 var toDrop = []
-                var nuevasActividades = $scope.actividadesEmpresa.map(function (_, i) {
-                    if (_.id === undefined || _.eliminado) {
+                var nuevasActividades = $scope.actividadesSucursal.map(function (_, i) {
+                    if (_.id === undefined || _.eliminado || (_.id_dosificacion == null && _.dosificacion !== undefined && _.dosificacion !== null)) {
                         return _
                     } else {
                         toDrop.push(i)
@@ -517,25 +483,30 @@ angular.module('agil.controladores')
                 });
                 if (nuevasActividades.length > 0) {
                     ActividadEmpresa.save({ id_empresa: $scope.usuario.empresa.id }, nuevasActividades, function (res) {
-                        $scope.mostrarMensaje(res.mensaje)
-                        $scope.actividadesEmpresa = undefined
-                        var prom = ActividadesEmpresa($scope.usuario.empresa.id)
-                        prom.then(function (activities) {
-                            $scope.actividadesEmpresa = activities.actividades
-                            console.log($scope.actividadesEmpresa)
-                            if (activities.mensaje !== undefined) {
-                                $scope.mostrarMensaje(activities.mensaje)
-                            }
+                        if (res.hasErr === undefined) {
+                            $scope.obtenerSucursales()
+                            $scope.mostrarMensaje(res.mensaje)
+                            $scope.actividadesSucursal = []
+                            var prom = ActividadesEmpresa($scope.usuario.empresa.id)
+                            prom.then(function (activities) {
+                                $scope.actividadesEmpresa = activities.actividades
+                                if (activities.mensaje !== undefined) {
+                                    $scope.mostrarMensaje(activities.mensaje)
+                                }
+                                blockUI.stop()
+                                $scope.cerrarConfiguracionActividades()
+                            }).catch(function (err) {
+                                $scope.mostrarMensaje(err.message === undefined ? err.data : err.message)
+                                blockUI.stop()
+                                $scope.cerrarConfiguracionActividades()
+                            })
+                        } else {
+                            $scope.mostrarMensaje(res.mensaje)
                             blockUI.stop()
-                            $scope.cerrarConfiguracionActividades()
-                        }).catch(function (err) {
-                            $scope.mostrarMensaje(err.message === undefined ? err.data : err.message)
-                            blockUI.stop()
-                            $scope.cerrarConfiguracionActividades()
-                        })
+                        }
                     }, function (err) {
                         blockUI.stop()
-                        $scope.mostrarMensaje(err.data)
+                        $scope.mostrarMensaje(err.message === undefined ? err.data : err.message)
                         $scope.cerrarConfiguracionActividades()
                     })
                 } else {
@@ -549,14 +520,8 @@ angular.module('agil.controladores')
         }
 
         $scope.obtenerServiciosActividadEmpresaPrincipal = function (actividad, op) {
-            // if (op !== undefined) {
-            //     $scope.filser, $scope.serviciosProcesados = $scope.obtenerServiciosActividadEmpresa(actividad)
-            // }else{
-            //     $scope.configuracionActividadServicio, $scope.serviciosProcesados = $scope.obtenerServiciosActividadEmpresa(actividad)
-            // }
-            
             if (actividad.id !== undefined) {
-                var prom = ServiciosEmpresa($scope.usuario.empresa.id, actividad.id)
+                var prom = ServiciosEmpresa($scope.usuario.empresa.id, actividad.actividad.id)
                 prom.then(function (services) {
                     if (op !== undefined) {
                         $scope.filser = services.servicios
@@ -574,31 +539,114 @@ angular.module('agil.controladores')
             }
         }
 
-        $scope.agregarDetalleActividadEmpresa = function (actividad) {
-            if (actividad.id !== undefined) {
-                var act = { claseActividad: actividad, id_empresa: $scope.usuario.empresa.id }
-                $scope.actividadesEmpresa.push(act)
-            }
-
+        $scope.obtenerSucursales = function () {
+            blockUI.start();
+            var promesa = ListaSucursalesUsuario($scope.usuario.id);
+            promesa.then(function (sucursales) {
+                $scope.sucursales = sucursales.sucursales.map(function (_) {
+                    return _.sucursal
+                })
+                blockUI.stop();
+            });
         }
 
-        $scope.abrirBusquedaServiciosProforma = function (){
-            // $scope.obtenerServiciosActividadEmpresa(actividad)
+        $scope.dosificarSucursalActividad = function (dosificacion, actividadSucursal) {
+            if ($scope.actividadesDosificaciones.length > 0) {
+
+                var encontrado = false
+                var salir = false
+                var indx = 0
+                while (salir == false) {
+                    if ($scope.actividadesDosificaciones[indx].dosificacion !== undefined) {
+                        if ($scope.actividadesDosificaciones[indx].dosificacion !== null) {
+                            if ($scope.actividadesDosificaciones[indx].dosificacion.id == dosificacion.id) {
+                                encontrado = true
+                                salir = true
+                            }
+                        }
+                    }
+                    if (indx < $scope.actividadesDosificaciones.length - 1) {
+                        indx += 1
+                    } else {
+                        salir = true
+                    }
+                }
+                if (!encontrado) {
+                    $scope.actividadesDosificaciones[$scope.actividadesDosificaciones.indexOf($scope.actividadADosificar)].dosificacion = dosificacion
+                    $scope.actividadADosificar = undefined
+                    $scope.cerrardialogDosificacionesDisponibles()
+                } else {
+                    $scope.mostrarMensaje('Hubo un problema, la dosificacion esta en lista para ser asiganda!')
+                }
+            }
+        }
+
+        $scope.agregarDetalleActividadEmpresa = function (sucursal, actividad) {
+            if (actividad.id !== undefined) {
+                if ($scope.actividadesSucursal.length > 0) {
+                    var encontrado = false
+                    var salir = false
+                    var indx = 0
+                    while (salir == false) {
+                        if ($scope.actividadesSucursal[indx].actividad.nombre === actividad.nombre) {
+                            encontrado = true
+                            salir = true
+                        } else {
+                            if (indx >= $scope.actividadesSucursal.length - 1) {
+                                salir = true
+                            } else {
+                                indx += 1
+                            }
+                        }
+                    }
+                    if (!encontrado) {
+                        var act = { actividad: actividad, sucursal: sucursal }
+                        $scope.actividadesSucursal.push(act)
+                    } else {
+                        $scope.mostrarMensaje('La actividad "' + actividad.nombre + '" ya esta en la lista de esta sucursal "' + sucursal.nombre + '".')
+                    }
+                } else {
+                    var act = { actividad: actividad, sucursal: sucursal }
+                    $scope.actividadesSucursal.push(act)
+                }
+            }
+        }
+
+        $scope.obtenerDosificaciones = function () {
+            var promesa = DosificacionesDisponibles($scope.usuario.id_empresa);
+            promesa.then(function (dosificaciones) {
+                $scope.dosificaciones = dosificaciones;
+            });
+        }
+
+        $scope.abrirBusquedaServiciosProforma = function () {
             $scope.abrirPopup($scope.dialogBusquedaServicio)
         }
 
-        $scope.cerrarBusquedaServiciosProforma = function (){
+        $scope.cerrarBusquedaServiciosProforma = function () {
             $scope.cerrarPopup($scope.dialogBusquedaServicio)
+        }
+
+        $scope.abrirdialogDosificacionesDisponibles = function (actividad) {
+            $scope.obtenerDosificaciones()
+            $scope.actividadADosificar = actividad
+            $scope.abrirPopup($scope.dialogDosificacionesDisponibles)
+        }
+
+        $scope.cerrardialogDosificacionesDisponibles = function () {
+            $scope.dosificaciones = undefined
+            $scope.cerrarPopup($scope.dialogDosificacionesDisponibles)
         }
 
         $scope.eliminarDetalleProforma = function (detalle) {
             if (detalle.id !== undefined) {
                 detalle.eliminado = true
-            }else{
-                $scope.detallesProformas.splice($scope.detallesProformas.indexOf(detalle),1)
+            } else {
+                $scope.detallesProformas.splice($scope.detallesProformas.indexOf(detalle), 1)
             }
             $scope.recalcularImportesProforma()
         }
+
         $scope.recalcularImportesProforma = function () {
             var importBs = 0
             $scope.detallesProformas.map(function (detalle) {
@@ -606,12 +654,11 @@ angular.module('agil.controladores')
                     importBs += detalle.precio_unitario * detalle.cantidad
                     detalle.importeBs = detalle.precio_unitario * detalle.cantidad
                 }
-                console.log($scope.proforma)
             })
             $scope.proforma.totalImporteBs = importBs
             $scope.proforma.importeLiteral = ConvertirALiteral($scope.proforma.totalImporteBs.toFixed(2));
-            
         }
+
         $scope.eliminarDetalleConfiguracion = function (servicio) {
             if (servicio.id !== undefined) {
                 servicio.eliminado = true
@@ -627,10 +674,12 @@ angular.module('agil.controladores')
                 return promesa;
             }
         }
+
         $scope.seleccionarClienteProforma = function (client) {
             $scope.proforma.clienteProforma = client
             $scope.cerrardialogClientesProforma()
         }
+
         $scope.obtenerClientes = function () {
             var prom = Clientes($scope.usuario.id_empresa);
             prom.then(function (cls) {
@@ -639,9 +688,8 @@ angular.module('agil.controladores')
             }, function (err) {
                 $scope.mostrarMensaje(err.message)
             })
-
-            // $scope.clientesProcesados = $scope.clientes
         }
+
         $scope.obtenerProformas = function () {
             blockUI.start()
             $scope.filtro = $scope.filtrarProformasOperaciones($scope.filtro, true)
@@ -659,6 +707,7 @@ angular.module('agil.controladores')
             })
             blockUI.stop()
         }
+
         $scope.guardarProforma = function (valid, proforma) {
             blockUI.start()
             var filtro = { id_empresa: $scope.usuario.empresa.id, mes: 0, anio: 0, sucursal: 0, actividad: 0, servicio: 0, monto: 0, razon: 0, usuario: $scope.usuario.id, pagina: 1, items_pagina: 10, busqueda: 0, numero: 0 }
@@ -674,7 +723,7 @@ angular.module('agil.controladores')
                         if (res.hasErr === undefined) {
                             $scope.cerrardialogProformaEdicion()
                         } else {
-                            proforma.fecha_proforma = $scope.fechaATexto(proforma.fecha_proforma)
+                            proforma.fecha_proforma = new Date($scope.convertirFecha(proforma.fecha_proforma))
                         }
 
                         blockUI.stop()
@@ -705,40 +754,47 @@ angular.module('agil.controladores')
                 blockUI.stop()
             }
         }
+
         $scope.fechaATexto = function (fecha) {
             fech = new Date(fecha)
             fecha = fech.getDate() + "/" + (fech.getMonth() + 1) + "/" + fech.getFullYear();
             return fecha
         }
-        
+
         $scope.abrirdialogProformaEdicion = function (proforma) {
-            $scope.ocultarMensajesValidacion();
+            // $scope.obtenerSucursales()
+            // $scope.ocultarMensajesValidacion();
             if (proforma !== undefined) {
                 $scope.detalleProforma = undefined
+                
             } else {
-                $scope.proforma = { sucursalProforma: $scope.sucursales[0], fecha_proforma: new Date(), periodo_mes: { id: new Date().getMonth() }, periodo_anio: { id: new Date().getFullYear() } }
+                $scope.proforma.sucursal = $scope.sucursales[0]
+                // $scope.proforma = { sucursal: $scope.sucursales[0], fecha_proforma: new Date(), periodo_mes: { id: new Date().getMonth() }, periodo_anio: { id: new Date().getFullYear() } }
                 $scope.proforma.fecha_proforma = new Date().toLocaleDateString()
+                $scope.proforma.periodo_mes = { id: new Date().getMonth() }
+                $scope.proforma.periodo_anio = { id: new Date().getFullYear() }
                 $scope.obtenerCambioMonedaProforma(new Date())
                 $scope.detalleProforma = undefined
+                $scope.obtenerActividadesSucursal($scope.proforma.sucursal.id)
             }
             $scope.detalleProforma = {}
-            $scope.obtenerActividadesEmpresa($scope.usuario.empresa.id)
             $scope.abrirPopup($scope.dialogProformaEdicion);
         }
 
         $scope.cerrardialogProformaEdicion = function () {
-            // $scope.nActividad = {}
-            // $scope.configuracionActividadServicio = []
             $scope.proforma.ver = undefined
             $scope.filtrarProformasOperaciones($scope.filtro)
             $scope.detallesProformas = []
             $scope.proforma = {}
+            $scope.configuracionActividadServicio = []
+            $scope.actividadesSucursal = []
             $scope.obtenerProformas()
 
             $scope.cerrarPopup($scope.dialogProformaEdicion);
         }
 
         $scope.abrirConfiguracionActividadesServicios = function () {
+            $scope.obtenerSucursales()
             $scope.obtenerActividadesEmpresa($scope.usuario.empresa.id)
             $scope.abrirPopup($scope.modalConfiguracionActividadesServicios);
         }
@@ -749,43 +805,57 @@ angular.module('agil.controladores')
         }
 
         $scope.cerrardialogClientesProforma = function () {
-            // $scope.nActividad = {}
-            // $scope.configuracionActividadServicio = []
             $scope.cerrarPopup($scope.dialogClientesProforma);
         }
 
         $scope.obtenerActividadesEmpresa = function (idEmpresa) {
-            var prom = ActividadesEmpresa(idEmpresa)
+
+            var prom = ListaSucursalesActividadesDosificacionEmpresa(idEmpresa)
             var toDrop = []
             prom.then(function (actividades) {
+                $scope.actividadesEmpresaSinRepeticion = []
                 $scope.actividadesEmpresa = actividades.actividades
-                if ($scope.actividades !== undefined) {
-                    $scope.actividades.map(function (act, i) {
-                        $scope.actividadesEmpresa.map(function (_) {
-                            if (act.id == _.claseActividad.id) {
-                                toDrop.push(i)
-                            }
-                        })
-                        toDrop.forEach(function (_, i) {
-                            $scope.actividades.splice(i, 1)
-                        });
-                    })
-                }
+                $scope.actividadesEmpresa.map(function (act) {
+                    var encontrado = false
+                    if ($scope.actividadesEmpresaSinRepeticion.length == 0) {
+                        $scope.actividadesEmpresaSinRepeticion.push(act)
+                    }
+                    if ($scope.actividadesEmpresaSinRepeticion.some(function (activi, i) { return activi.actividad.id === act.actividad.id })) {
+                        // $scope.actividadesEmpresaSinRepeticion.push(act)
+                    } else {
+                        $scope.actividadesEmpresaSinRepeticion.push(act)
+                    }
+                })
             }, function (err) {
-                $scope.mostrarMensaje(err.data)
+                $scope.mostrarMensaje(err.data !== undefined ? err.data : err.message)
+            })
+        }
+
+        $scope.obtenerActividadesDosificadasEmpresa = function (idEmpresa) {
+            var prom = ListaSucursalesActividadesDosificacionEmpresa(idEmpresa)
+            var toDrop = []
+            prom.then(function (actividades) {
+                $scope.actividadesDosificadosEmpresa = actividades.actividades
+            }, function (err) {
+                $scope.mostrarMensaje(err.data !== undefined ? err.data : err.message)
             })
         }
 
         $scope.abrirConfiguracionActividades = function () {
-            $scope.obtenerActividades()
+            $scope.obtenerSucursales()
+            $scope.obtenerActividadesGral()
             $scope.obtenerActividadesEmpresa($scope.usuario.empresa.id)
             $scope.abrirPopup($scope.modalConfiguracionActividades);
         }
 
         $scope.cerrarConfiguracionActividades = function () {
+            $scope.sucursalActividades = undefined
+            $scope.actividadEconomicaEmpresa = undefined
+            $scope.actividadesSucursal = []
             $scope.obtenerActividadesEmpresa($scope.usuario.empresa.id)
             $scope.cerrarPopup($scope.modalConfiguracionActividades);
         }
+
         $scope.abrirdialogmodalFechas = function (proforma, opcion) {
             $scope.proforma = proforma
             $scope.abrirPopup($scope.dialogmodalFechas);
@@ -804,27 +874,30 @@ angular.module('agil.controladores')
             if ($scope.proforma.fecha_cobro !== null) {
                 $scope.proforma.fecha_cobro = (fec === 'Invalid Date') ? new Date($scope.convertirFecha($scope.proforma.fecha_cobro)).toLocaleDateString() : fec
             }
-
         }
 
         $scope.cerrardialogmodalFechas = function () {
             $scope.cerrarPopup($scope.dialogmodalFechas);
         }
+
         $scope.cerrarConfiguracionActividadesServicios = function () {
             $scope.nActividad = {}
             $scope.configuracionActividadServicio = []
             $scope.cerrarPopup($scope.modalConfiguracionActividadesServicios);
         }
+
         $scope.PopoverConfiguracionActividad = {
             templateUrl: 'PopoverConfiguracionActividad.html',
             title: 'Cuentas Axiliares',
             isOpen: false
         };
+
         $scope.impresiones = {
             templateUrl: 'impresiones.html',
             title: 'Cuentas Axiliares',
             isOpen: false
         };
+
         $scope.imprimir = function (proforma, opcionImpresion) {
             blockUI.start();
             var prom = ProformaInfo(proforma.id)
@@ -846,9 +919,8 @@ angular.module('agil.controladores')
                             $scope.moneda = { ufv: "--", dolar: "--" }
                             $scope.mostrarMensaje('La fecha ' + $scope.proforma.fecha_proforma + ' no tiene datos del tipo de cambio de dolar. El tipo de cambio de dolar no afecta la información de la proforma y puede continuar sin problema.')
                         }
-                        console.log($scope.usuario.empresa.imagen)
                         convertUrlToBase64Image($scope.usuario.empresa.imagen, function (imagenEmpresa) {
-                            
+
                             var imagen = imagenEmpresa;
                             if (opcionImpresion == 0) {
                                 $scope.imprimirSinDetalle($scope.proforma, imagen)
@@ -860,9 +932,9 @@ angular.module('agil.controladores')
                                 $scope.imprimirMixto($scope.proforma, imagen)
                             }
                         });
-                        
+
                         blockUI.stop()
-        
+
                     }, function (err) {
                         $scope.mostrarMensaje(err.message === undefined ? err.data : err.message)
                         blockUI.stop()
@@ -873,20 +945,21 @@ angular.module('agil.controladores')
                 blockUI.stop()
             })
         }
+
         $scope.imprimirMixto = function (proforma, imagen) {
 
             var importeTotal = 0
             var cantidadTotal = 0
             $scope.proforma = proforma
             var doc = new PDFDocument({ size: 'letter', margin: 10, compress: false }); //{compress: false},
-           
+
             var separacionExtra = 50
             var stream = doc.pipe(blobStream());
             var fechaActual = new Date();
             var x = 80
             doc.font('Helvetica', 8);
             var y = 115 + 80 + separacionExtra, itemsPorPagina = 29, items = 0, pagina = 1, totalPaginas = Math.ceil(1 / itemsPorPagina);
-            $scope.dibujarCabeceraPDFImpresion(doc, pagina, totalPaginas, $scope.proforma,imagen);
+            $scope.dibujarCabeceraPDFImpresion(doc, pagina, totalPaginas, $scope.proforma, imagen);
             var extraDetalle = 0
             var extraServ = 0
             for (var i = 0; i <= $scope.proforma.detallesProformas.length && items <= itemsPorPagina; i++) {
@@ -894,7 +967,7 @@ angular.module('agil.controladores')
                 if (i == 0) {
                     doc.text(($scope.proforma.detalle), 150, y - 2, { width: 260 });
                     var divisor = $scope.proforma.detalle !== null ? $scope.proforma.detalle.length : 0
-                    extraDetalle = Math.ceil( divisor/ 260) * 20
+                    extraDetalle = Math.ceil(divisor / 260) * 20
                 } else {
                     doc.text($scope.proforma.detallesProformas[i - 1].cantidad, 70, y - 2);
                     doc.text($scope.proforma.detallesProformas[i - 1].servicio.nombre, 150, y - 2, { width: 260 });
@@ -908,21 +981,21 @@ angular.module('agil.controladores')
                 items++;
                 extraDetalle = 0
                 extraServ = 0
-                if (items > itemsPorPagina || (y > 700 )) {
+                if (items > itemsPorPagina || (y > 700)) {
                     doc.addPage({ size: [612, 792], margin: 10 });
                     y = 115 + 80 + separacionExtra;
                     items = 0;
                     pagina = pagina + 1;
-                    $scope.dibujarCabeceraPDFImpresion(doc, pagina, totalPaginas, $scope.proforma,imagen);
+                    $scope.dibujarCabeceraPDFImpresion(doc, pagina, totalPaginas, $scope.proforma, imagen);
                 }
             }
             doc.rect(40, 705, 540, 15).stroke(); // cuadro literal bolivianos
             doc.rect(40, 725, 540, 15).stroke(); // cuadro total dolares
             $scope.proforma.importeLiteral = ConvertirALiteral($scope.proforma.totalImporteBs.toFixed(2));
             doc.text('Son : ' + ($scope.proforma.importeLiteral), 58, 710);
-            doc.text($scope.number_format($scope.proforma.totalImporteBs, 2), 510,710);
+            doc.text($scope.number_format($scope.proforma.totalImporteBs, 2), 510, 710);
             doc.rect(41, 725, 538, 14).fill("silver", "#000")
-            .fill('black')
+                .fill('black')
             doc.text('Son : ' + $scope.number_format($scope.proforma.totalImporteBs / $scope.moneda.dolar, 2) + '  Dólares x ' + $scope.moneda.dolar, 58, 730);
             // doc.text("Nota: La aprobación de la proforma deberá realizarse dentro de los próximos 7 días a partir de la fecha de recepción",0, 750,{ align: "center" })
             doc.end();
@@ -931,21 +1004,21 @@ angular.module('agil.controladores')
                 window.open(fileURL, '_blank', 'location=no');
             });
             blockUI.stop();
-
         }
+
         $scope.imprimirConDetalle = function (proforma, imagen) {
 
             var importeTotal = 0
             var cantidadTotal = 0
             $scope.proforma = proforma
-            var doc = new PDFDocument({ size: 'letter', margin: 10,compress: false }); //{compress: false},
+            var doc = new PDFDocument({ size: 'letter', margin: 10, compress: false }); //{compress: false},
             var separacionExtra = 50
             var stream = doc.pipe(blobStream());
             var fechaActual = new Date();
             var x = 80
             doc.font('Helvetica', 8);
             var y = 115 + 80 + separacionExtra, itemsPorPagina = 29, items = 0, pagina = 1, totalPaginas = Math.ceil(1 / itemsPorPagina);
-            $scope.dibujarCabeceraPDFImpresion(doc, pagina, totalPaginas, $scope.proforma,imagen);
+            $scope.dibujarCabeceraPDFImpresion(doc, pagina, totalPaginas, $scope.proforma, imagen);
             var extraServ = 0
             for (var i = 0; i < $scope.proforma.detallesProformas.length && items <= itemsPorPagina; i++) {
                 doc.font('Helvetica', 8);
@@ -969,16 +1042,16 @@ angular.module('agil.controladores')
                     y = 115 + 80 + separacionExtra;
                     items = 0;
                     pagina = pagina + 1;
-                    $scope.dibujarCabeceraPDFImpresion(doc, pagina, totalPaginas, $scope.proforma,imagen);
+                    $scope.dibujarCabeceraPDFImpresion(doc, pagina, totalPaginas, $scope.proforma, imagen);
                 }
             }
             doc.rect(40, 705, 540, 15).stroke(); // cuadro literal bolivianos
             doc.rect(40, 725, 540, 15).stroke(); // cuadro total dolares
             $scope.proforma.importeLiteral = ConvertirALiteral($scope.proforma.totalImporteBs.toFixed(2));
             doc.text('Son : ' + ($scope.proforma.importeLiteral), 58, 710);
-            doc.text($scope.number_format($scope.proforma.totalImporteBs, 2), 510,710);
+            doc.text($scope.number_format($scope.proforma.totalImporteBs, 2), 510, 710);
             doc.rect(41, 725, 538, 14).fill("silver", "#000")
-            .fill('black')
+                .fill('black')
             doc.text('Son : ' + $scope.number_format($scope.proforma.totalImporteBs / $scope.moneda.dolar, 2) + '  Dólares x ' + $scope.moneda.dolar, 58, 730);
             // doc.text("Nota: La aprobación de la proforma deberá realizarse dentro de los próximos 7 días a partir de la fecha de recepción",0, 750,{ align: "center" })
             doc.end();
@@ -987,23 +1060,21 @@ angular.module('agil.controladores')
                 window.open(fileURL, '_blank', 'location=no');
             });
             blockUI.stop();
-
         }
+
         $scope.imprimirSinDetalle = function (proforma, imagen) {
 
             var importeTotal = 0
             var cantidadTotal = 0
             $scope.proforma = proforma
-            var doc = new PDFDocument({ size: 'letter' , margin: 10,compress: false });//[612, 792] {compress: false},
+            var doc = new PDFDocument({ size: 'letter', margin: 10, compress: false });//[612, 792] {compress: false},
             var separacionExtra = 50
             var stream = doc.pipe(blobStream());
             var fechaActual = new Date();
             var x = 80
             doc.font('Helvetica', 8);
             var y = 195 + separacionExtra, itemsPorPagina = 29, items = 0, pagina = 1, totalPaginas = Math.ceil(1 / itemsPorPagina);
-            $scope.dibujarCabeceraPDFImpresion(doc, pagina, totalPaginas, $scope.proforma,imagen);
-
-            // for (var i = 0; i < $scope.proforma.detallesProformas.length - 1 && items <= itemsPorPagina; i++) {
+            $scope.dibujarCabeceraPDFImpresion(doc, pagina, totalPaginas, $scope.proforma, imagen);
             doc.font('Helvetica', 8);
             var cant = 0
             $scope.proforma.detallesProformas.map(function (_) {
@@ -1019,11 +1090,11 @@ angular.module('agil.controladores')
             doc.rect(40, 705, 540, 15).stroke(); // cuadro literal bolivianos
             doc.rect(40, 725, 540, 15).stroke(); // cuadro total dolares
             doc.text('Son : ' + ($scope.proforma.importeLiteral), 58, 710);
-            doc.text($scope.number_format($scope.proforma.totalImporteBs, 2), 510,710);
+            doc.text($scope.number_format($scope.proforma.totalImporteBs, 2), 510, 710);
             doc.rect(41, 725, 538, 14).fill("silver", "#000")
-            .fill('black')
+                .fill('black')
             doc.text('Son : ' + $scope.number_format($scope.proforma.totalImporteBs / $scope.moneda.dolar, 2) + '  Dólares x ' + $scope.moneda.dolar, 58, 730);
-            
+
             doc.end();
             stream.on('finish', function () {
                 var fileURL = stream.toBlobURL('application/pdf');
@@ -1032,7 +1103,7 @@ angular.module('agil.controladores')
             blockUI.stop();
         }
 
-        $scope.dibujarCabeceraPDFImpresion = function (doc, pagina, totalPaginas, proforma,imagen) {
+        $scope.dibujarCabeceraPDFImpresion = function (doc, pagina, totalPaginas, proforma, imagen) {
             var yCabecera = 80;
             var yEspacio = 10;
             var separacionExtra = 50
@@ -1073,10 +1144,10 @@ angular.module('agil.controladores')
             doc.rect(40, 110 + separacionExtra, 540, 20).stroke();
             doc.rect(40, 135 + separacionExtra, 540, 20).stroke();
             doc.rect(40, 210, 540, 490).stroke(); //235
-            doc.rect(120,210, 0, 490).stroke(); //cant | det
-            doc.rect(430,210, 0, 490).stroke();// det| punit
-            doc.rect(490,210, 0, 490).stroke(); // punit | import
-            doc.text("Nota: La aprobación de la proforma deberá realizarse dentro de los próximos 7 días a partir de la fecha de recepción",0, 750,{ align: "center" })
+            doc.rect(120, 210, 0, 490).stroke(); //cant | det
+            doc.rect(430, 210, 0, 490).stroke();// det| punit
+            doc.rect(490, 210, 0, 490).stroke(); // punit | import
+            doc.text("Nota: La aprobación de la proforma deberá realizarse dentro de los próximos 7 días a partir de la fecha de recepción", 0, 750, { align: "center" })
         }
         $scope.inicio()
     })

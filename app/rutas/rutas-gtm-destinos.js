@@ -18,23 +18,33 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, forEach, j
 						where: { codigo: destino.cliente_codigo }
 					}).then(function (clienteEncontrado) {
 						if (clienteEncontrado) {
-							GtmDestino.create({
-								id_empresa: req.params.id_empresa,
-								destino: destino.destino,
-								direccion: destino.direccion,
-								eliminado: false,
-								codigo: destino.codigo
-							}).then(function (destinoCreado) {
-								GtmClienteDestino.create({
-									id_cliente: clienteEncontrado.id,
-									id_destino: destinoCreado.id
-								}).then(function (datosCreado) {
-									if (index === (array.length - 1)) {
-										res.json({ mensaje: "Datos importados Satisfactoriamente!" });
-									}
-								})
+							GtmDestino.findOrCreate({
+								where: {
+									codigo: destino.codigo,
+								},
+								defaults: {
+									id_empresa: req.params.id_empresa,
+									destino: destino.destino,
+									direccion: destino.direccion,
+									eliminado: false,
+								}
+							}).spread(function (destinosEncontrado, created) {								
+									GtmClienteDestino.findOrCreate({
+										where: {
+											id_cliente: clienteEncontrado.id,
+											id_destino: destinosEncontrado.id
+										},
+										defaults: {
+											id_cliente: clienteEncontrado.id,
+											id_destino: destinosEncontrado.id
+										}
 
-							});
+									}).spread(function (destinosCliente, created) {
+										if (index === (array.length - 1)) {
+											res.json({ mensaje: "Datos importados Satisfactoriamente!" });
+										}
+									})								
+							})
 						} else {
 							GtmDestino.create({
 								id_empresa: req.params.id_empresa,

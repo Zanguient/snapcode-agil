@@ -4561,7 +4561,7 @@
                     <i class="glyphicon glyphicon-floppy-disk"></i>Guardar
                 </button>
               
-                <button class="btn btn-danger btn-sm" type="button" ng-click="cerrarDialogAnticipoExtraordinario()">
+                <button type="button" class="btn btn-danger btn-sm"  ng-click="cerrarDialogAnticipoExtraordinario()">
                     <i class="ace-icon fa fa-times"></i>Cancelar
                 </button>
             </div>
@@ -5667,7 +5667,7 @@
                 <label> &nbsp;Anticipos Regulares </label>
             </h4>
         </div>
-        <form ng-submit="GuardarAnticipos()">
+        <form ng-submit="GuardarAnticiposEmpleados(listaAnticipos2)">
             <div class="modal-body">
                 <div class="form-group col-sm-4">
                     <label for="mes">Mes</label>
@@ -5723,7 +5723,7 @@
                                 <th>{{anticipo.tope}}</th>
                                 <td>{{anticipo.anticipo_extraordinaro|number:2}}</td>
                                 <td>{{anticipo.total|number:2}} </td>
-                                <td>{{anticipo.empleado.ficha.haber_basico|number:2}}</td>
+                                <td>{{anticipo.salario_basico|number:2}}</td>
                                 <td>{{anticipo.saldo_salario|number:2}}</td>
                                 <td>
                                     <div class="action-buttons">
@@ -5766,7 +5766,7 @@
                                     <td>{{anticipo.fecha | date: "dd/MM/yyyy"}}</td>
                                     <td>{{anticipo.empleado.persona.nombre_completo}}</td>
                                     <td ng-if="!anticipo.id || anticipo.montoEdit">
-                                        <input class="form-control" type="number" ng-model="anticipo.monto" ng-change="sumarMontoPrestamoNuevo2(anticipo)" min="1" max="{{anticipo.tope}}">
+                                        <input class="form-control"  max="{{anticipo.tope}}" min="0" type="number" ng-model="anticipo.monto" ng-change="sumarMontoPrestamoNuevo2(anticipo)" min="1" >
                                     </td>
                                     <td ng-if="anticipo.id" ng-hide="anticipo.montoEdit">{{anticipo.monto|number:2}}</td>
                                     <th>{{anticipo.tope}}</th>
@@ -5790,19 +5790,19 @@
                     </div>
             </div>
             <div class="modal-footer wizard-actions">
-                <button class="btn btn-primary btn-sm" type="submit">
+                <button ng-show="listaAnticipos2.length>0" class="btn btn-primary btn-sm" type="submit">
                     <span class="glyphicon glyphicon-floppy-disk"></span>
                     Guardar
                 </button>
-                <button class="btn btn-warning btn-sm" ng-click="cerrarDialogAnticipoRegular()">
+                <button  ng-hide="listaAnticipos2.length>0" type="button" class="btn btn-warning btn-sm" ng-click="cerrarDialogAnticipoRegular()">
                     <span class="ace-icon fa fa-print"></span>
                     Generar TR3
                 </button>
-                <button class="btn btn-danger btn-sm" ng-click="cerrarDialogAnticipoRegular()">
+                <button ng-hide="listaAnticipos2.length>0" type="button" class="btn btn-danger btn-sm" ng-click="cerrarDialogAnticipoRegular()">
                     <span class="ace-icon fa fa-print"></span>
                     PDF
                 </button>
-                <button class="btn btn-danger btn-sm pull-left" ng-click="cerrarDialogAnticipoRegular()">
+                <button type="button" class="btn btn-danger btn-sm pull-left" ng-click="cerrarDialogAnticipoRegular()">
                     <i class="ace-icon fa fa-times"></i>Cancelar
                 </button>
             </div>

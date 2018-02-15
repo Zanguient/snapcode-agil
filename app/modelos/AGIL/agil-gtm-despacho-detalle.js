@@ -59,7 +59,11 @@ module.exports = function (sequelize, Sequelize) {
         fecha: {
            type: Sequelize.DATE,
            field: 'fecha'
-       }
+       },
+       servicio_transporte: {
+          type: Sequelize.DECIMAL(20,4),
+          field: 'servicio_transporte'
+      }
     }, {
             freezeTableName: true
         });

@@ -1735,6 +1735,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                     monto: req.body.monto,
                     id_tipo: clase.id,
                     total: req.body.total,
+                    salario_basico:req.body.salario_basico,
                     eliminado: false
                 }).then(function (empleadoaAnticipo) {
                     res.json({ mensaje: "Guardado satisfactoriamente!" })
@@ -1743,6 +1744,30 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
             })
            
         })
+        router.route('/recursos-humanoss/anticipos/empleados')
+        .post(function (req, res) {
+            req.body.anticipos.forEach(function(anticipo,index,array) {
+                Clase.find({
+                    where:{nombre_corto:req.body.textoClase}
+                }).then(function (clase) {
+                    RrhhAnticipo.create({                        
+                        id_empleado: anticipo.empleado.id,
+                        fecha: anticipo.fecha,
+                        monto: anticipo.monto,
+                        id_tipo: clase.id,
+                        total: anticipo.total,
+                        eliminado: false,
+                        salario_basico: anticipo.salario_basico,
+                        tope:anticipo.tope
+                    }).then(function (empleadoaAnticipo) {
+                        res.json({ mensaje: "Guardado satisfactoriamente!" })
+        
+                    })
+                })
+            });
+           
+        })
+        
     router.route('/recursos-humanos/anticipos/empleado/:id_empleado/inicio/:inicio/fin/:fin/empresa/:id_empresa')
         .get(function (req, res) {
             var condicionAnticipo = {}
@@ -1757,9 +1782,9 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
             }
             RrhhAnticipo.findAll({
                 where: condicionAnticipo,
-                include: [{ model: MedicoPaciente, as: 'empleado', where: condicionEmpleado, include: [{ model: Persona, as: 'persona' }] }, { model: Clase, as: 'tipoAnticipo' }]
+                include: [{ model: MedicoPaciente, as: 'empleado', where: condicionEmpleado, include: [{ model: Persona, as: 'persona' },{model:RrhhEmpleadoFicha,as:'empleadosFichas'}] }, { model: Clase, as: 'tipoAnticipo' }]
             }).then(function (empleadoaAnticipo) {
-                if (empleadoaAnticipo.length > 0) {
+      /*           if (empleadoaAnticipo.length > 0) {
                     empleadoaAnticipo.forEach(function (anticipo, index, array) {
                         RrhhEmpleadoFicha.findAll({
                             limit: 1,
@@ -1775,10 +1800,10 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                         })
                     })
 
-                } else {
+                } else { */
 
                     res.json({ anticipos: empleadoaAnticipo })
-                }
+                /* } */
             })
         })
 }

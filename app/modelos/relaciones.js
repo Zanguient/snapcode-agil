@@ -12,8 +12,8 @@ module.exports = function (sequelize, Usuario, Persona, Rol, UsuarioRol, Tipo, C
 	MedicoPacienteFicha, MedicoLaboratorioExamen, MedicoLaboratorio, MedicoLaboratorioPaciente, MedicoLaboratorioResultado, MedicoDiagnostico, MedicoDiagnosticoExamen, MedicoDiagnosticoPaciente, MedicoDiagnosticoResultado,
 	MantenimientoOrdenTrabajo, MantenimientoOrdenTrabajoManoObra, MantenimientoOrdenTrabajoMaterial, MantenimientoOrdenTrabajoServicioExterno, MantenimientoOrdenTrabajoSistema, VendedorVenta, RrhhEmpleadoFicha,
 	RrhhEmpleadoFichaOtrosSeguros, RrhhEmpleadoFichaFamiliar, MedicoPacientePreRequisito, RrhhEmpleadoDiscapacidad, RrhhEmpleadoCargo, ClienteRazon, GtmDestino, GtmEstibaje, GtmGrupoEstibaje, GtmTransportista, GtmDespacho, GtmClienteDestino,
-	RrhhEmpleadoHojaVida, RrhhEmpleadoFormacionAcademica, RrhhEmpleadoExperienciaLaboral, RrhhEmpleadoLogroInternoExterno, RrhhEmpleadoCapacidadInternaExterna, SolicitudReposicion, DetalleSolicitudProducto, DetalleSolicitudProductoBase, MonedaTipoCambio, ContabilidadCuentaAuxiliar, GtmDespachoDetalle, RrhhEmpleadoPrestamo, RrhhEmpleadoPrestamoPago, Proforma, DetallesProformas, ActividadEconomica, Servicios,Farmacia, RRHHParametros,RrhhEmpleadoRolTurno,RrhhEmpleadoHorasExtra,RRHHPlanillaSueldos,RRHHDetallePlanillaSueldos,RrhhAnticipo) {	
-	Persona.hasOne(Usuario, { foreignKey: 'id_persona', as: 'usuario' });
+	RrhhEmpleadoHojaVida, RrhhEmpleadoFormacionAcademica, RrhhEmpleadoExperienciaLaboral, RrhhEmpleadoLogroInternoExterno, RrhhEmpleadoCapacidadInternaExterna, SolicitudReposicion, DetalleSolicitudProducto, DetalleSolicitudProductoBase, MonedaTipoCambio, ContabilidadCuentaAuxiliar, GtmDespachoDetalle, RrhhEmpleadoPrestamo, RrhhEmpleadoPrestamoPago, Proforma, DetallesProformas, Servicios,Farmacia, RRHHParametros,RrhhEmpleadoRolTurno,RrhhEmpleadoHorasExtra,RRHHPlanillaSueldos,RRHHDetallePlanillaSueldos,RrhhAnticipo) {
+		Persona.hasOne(Usuario, { foreignKey: 'id_persona', as: 'usuario' });
 	Persona.belongsTo(Clase, { foreignKey: 'id_lugar_nacimiento', as: 'lugar_nacimiento' });
 	Persona.belongsTo(Clase, { foreignKey: 'id_genero', as: 'genero' });
 	Persona.belongsTo(Clase, { foreignKey: 'id_lenguaje', as: 'lenguaje' });
@@ -745,10 +745,10 @@ module.exports = function (sequelize, Usuario, Persona, Rol, UsuarioRol, Tipo, C
 	DetallesProformas.belongsTo(Proforma, { foreignKey: 'id_proforma', as: 'detallesProforma' })
 	Servicios.hasMany(DetallesProformas, { foreignKey: 'id_servicio', as: 'servicios' })
 	DetallesProformas.belongsTo(Servicios, { foreignKey: 'id_servicio', as: 'servicio' })
-	Proforma.belongsTo(ActividadEconomica, { foreignKey: 'id_actividad', as: 'actividadEconomica' })
-	ActividadEconomica.hasMany(Proforma, { foreignKey: 'id_actividad', as: 'actividadesEconomicas' })
-	ActividadEconomica.hasOne(Servicios, { foreignKey: 'id_actividad', as: 'actividades' })
-	Servicios.belongsTo(ActividadEconomica, { foreignKey: 'id_actividad', as: 'actividad' })
+	Proforma.belongsTo(Clase, { foreignKey: 'id_actividad', as: 'actividadEconomica' })
+	Clase.hasMany(Proforma, { foreignKey: 'id_actividad', as: 'actividadesEconomicas' })
+	Clase.hasOne(Servicios, { foreignKey: 'id_actividad', as: 'actividades' })
+	Servicios.belongsTo(Clase, { foreignKey: 'id_actividad', as: 'actividad' })
 
 	// Proforma.hasMany(DetallesProformas, { foreignKey: 'id_proforma', as: 'detallesProformas' })
 	// DetallesProformas.belongsTo(Proforma, { foreignKey: 'id_proforma', as: 'detallesProforma' })
@@ -758,8 +758,8 @@ module.exports = function (sequelize, Usuario, Persona, Rol, UsuarioRol, Tipo, C
 	// ActividadEconomica.hasMany(Proforma, { foreignKey: 'id_actividad', as: 'actividadesEconomicas' })
 	// ActividadEconomica.hasOne(Servicios, { foreignKey: 'id_actividad', as: 'actividades' })
 	// Servicios.belongsTo(ActividadEconomica, { foreignKey: 'id_actividad', as: 'actividad' })
-	Clase.hasMany(ActividadEconomica, { foreignKey: 'id_clase_actividad', as: 'clasesActividades' })
-	ActividadEconomica.belongsTo(Clase, { foreignKey: 'id_clase_actividad', as: 'claseActividad' })
+	// Clase.hasMany(ActividadEconomica, { foreignKey: 'id_clase_actividad', as: 'clasesActividades' })
+	// ActividadEconomica.belongsTo(Clase, { foreignKey: 'id_clase_actividad', as: 'claseActividad' })
 	Sucursal.hasMany(Proforma, { foreignKey: 'id_sucursal', as: 'sucursales' })
 	Proforma.belongsTo(Sucursal, { foreignKey: 'id_sucursal', as: 'sucursalProforma' })
 	Cliente.hasMany(Proforma, { foreignKey: 'id_cliente', as: 'clientes' })

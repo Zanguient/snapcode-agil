@@ -805,7 +805,7 @@ angular.module('agil.servicios')
 					if (esAccionGuardar && !salida.configuracion.imprimir_al_guardar) {
 						if (usuario.empresa.usar_pedidos) {
 							var sizeY = 230 + (20 * salida.detallesVenta.length);
-							doc = new PDFDocument({ size: [227, sizeY], margins: { top: 10, bottom: 10, left: 20, right: 20 } });
+							doc = new PDFDocument({ compress: false, size: [227, sizeY], margins: { top: 10, bottom: 10, left: 20, right: 20 } });
 							stream = doc.pipe(blobStream());
 							ImprimirPedido(salida, esAccionGuardar, doc, stream, sizeY);
 						}
@@ -992,7 +992,7 @@ angular.module('agil.servicios')
 					var qrImage = canvas.toDataURL('image/png');
 					doc.image(qrImage, 470, y + 20, { width: 70, height: 70 });
 					if (completa || vacia) {
-						doc.text(venta.pieFactura.nombre, 50, papel[1] - 60);
+						doc.text(venta.pieFactura !==undefined ? venta.pieFactura.nombre:"", 50, papel[1] - 60);
 						doc.text("\"ESTA FACTURA CONTRIBUYE AL DESARROLLO DEL PAIS. EL USO ILICITO DE ESTA SERA SANCIONADO DE ACUERDO A LEY\"", 50, papel[1] - 40);
 					}
 				}
@@ -1523,10 +1523,8 @@ angular.module('agil.servicios')
 						doc.text(venta.detallesVenta[i].producto.unidad_medida, 120, y, { width: 40 });
 						doc.text(venta.detallesVenta[i].producto.nombre, 160, y - 9, { width: 80 });
 						if (usuario.empresa.usar_vencimientos) {
-							if(venta.con_vencimiento){
-								doc.text(venta.detallesVenta[i].fecha_vencimiento.getDate() + "/" + (venta.detallesVenta[i].fecha_vencimiento.getMonth() + 1) + "/" + venta.detallesVenta[i].fecha_vencimiento.getFullYear(), 245, y);
-								doc.text(venta.detallesVenta[i].lote, 285, y);
-							}
+							doc.text(venta.detallesVenta[i].fecha_vencimiento.getDate() + "/" + (venta.detallesVenta[i].fecha_vencimiento.getMonth() + 1) + "/" + venta.detallesVenta[i].fecha_vencimiento.getFullYear(), 245, y);
+							doc.text(venta.detallesVenta[i].lote, 285, y);
 						}
 						doc.text(venta.detallesVenta[i].precio_unitario.toFixed(2), 310, y);
 						doc.text(venta.detallesVenta[i].importe.toFixed(2), 345, y);
@@ -1541,10 +1539,8 @@ angular.module('agil.servicios')
 						doc.text(venta.detallesVenta[i].producto.unidad_medida, 160, y);
 						doc.text(venta.detallesVenta[i].producto.nombre, 200, y - 9, { width: 150 });
 						if (usuario.empresa.usar_vencimientos) {
-							if(venta.con_vencimiento){
-								doc.text(venta.detallesVenta[i].fecha_vencimiento.getDate() + "/" + (venta.detallesVenta[i].fecha_vencimiento.getMonth() + 1) + "/" + venta.detallesVenta[i].fecha_vencimiento.getFullYear(), 360, y);
-								doc.text(venta.detallesVenta[i].lote, 415, y);
-							}
+							doc.text(venta.detallesVenta[i].fecha_vencimiento.getDate() + "/" + (venta.detallesVenta[i].fecha_vencimiento.getMonth() + 1) + "/" + venta.detallesVenta[i].fecha_vencimiento.getFullYear(), 360, y);
+							doc.text(venta.detallesVenta[i].lote, 415, y);
 						}
 						doc.text(venta.detallesVenta[i].precio_unitario.toFixed(2), 460, y);
 						doc.text(venta.detallesVenta[i].total.toFixed(2), 520, y);
@@ -1643,10 +1639,8 @@ angular.module('agil.servicios')
 						doc.text("UNID.", 130, 210);
 						doc.text("DETALLE", 160, 210);
 						if (usuario.empresa.usar_vencimientos) {
-							if(venta.con_vencimiento){
-								doc.text("VENC.", 245, 210)
-								doc.text("LOTE.", 280, 210)
-							}
+							doc.text("VENC.", 245, 210)
+							doc.text("LOTE.", 280, 210)
 						}
 						doc.text("P. UNIT.", 310, 210);
 						doc.text("IMPORTE", 345, 210);
@@ -1661,10 +1655,8 @@ angular.module('agil.servicios')
 						doc.text("UNIDAD", 165, 210);
 						doc.text("DETALLE", 200, 210);
 						if (usuario.empresa.usar_vencimientos) {
-							if(venta.con_vencimiento){
-								doc.text("VENC.", 360, 210)
-								doc.text("LOTE.", 415, 210)
-							}
+							doc.text("VENC.", 360, 210)
+							doc.text("LOTE.", 415, 210)
 						}
 						doc.text("P.UNIT.", 460, 210);
 						doc.text("TOTAL", 520, 210);

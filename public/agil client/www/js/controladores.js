@@ -1491,10 +1491,10 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 			var paraFacturar = []
 			var proformaNoOk = []
 			if (listaProformas.length > 0) {
-				actividadComparar = listaProformas[0].actividadEconomica.claseActividad.id
+				actividadComparar = listaProformas[0].actividadEconomica.id
 				clienteComparar = listaProformas[0].clienteProforma.id
 				listaProformas.map(function (pro) {
-					if (actividadComparar == pro.actividadEconomica.claseActividad.id && clienteComparar == pro.clienteProforma.id) {
+					if (actividadComparar == pro.actividadEconomica.id && clienteComparar == pro.clienteProforma.id) {
 						// var checkDate = new Date(pro.fecha_proforma_ok)
 						if (pro.fecha_proforma_ok !== null) {
 							men += pro.id + ', '
@@ -1515,9 +1515,9 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 					var text = "La(s) actividad(es) "
 					noMismaActividad.map(function (act, i) {
 						if (i === noMismaActividad.length - 1) {
-							text += act.actividadEconomica.claseActividad.nombre
+							text += act.actividadEconomica.nombre
 						} else {
-							text += act.actividadEconomica.claseActividad.nombre + ", "
+							text += act.actividadEconomica.nombre + ", "
 						}
 					})
 					if (noMismoCliente.length > 0) {
@@ -1533,7 +1533,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 						textCli += " no pertenecen al mismo cliente " + listaProformas[0].clienteProforma.razon_social + "  "
 					}
 
-					text += " no pertenecen a la misma actividad de " + listaProformas[0].actividadEconomica.claseActividad.nombre + "  "
+					text += " no pertenecen a la misma actividad de " + listaProformas[0].actividadEconomica.nombre + "  "
 					$scope.mostrarMensaje(text + textCli)
 				} else {
 					if (paraFacturar.length > 0) {
@@ -1608,8 +1608,8 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 							$scope.facturaProformas = {}
 							$scope.facturaProformas.movimiento = movimiento
 							$scope.facturaProformas.clienteProforma = datosProformas[0].clienteProforma
-							$scope.facturaProformas.actividadEconomica = datosProformas[0].actividadEconomica.claseActividad
-							$scope.facturaProformas.actividad = datosProformas[0].actividadEconomica.claseActividad
+							$scope.facturaProformas.actividadEconomica = datosProformas[0].actividadEconomica
+							$scope.facturaProformas.actividad = datosProformas[0].actividadEconomica
 							$scope.facturaProformas.sucursal = datosProformas[0].sucursalProforma
 							$scope.facturaProformas.detallesProformas = []
 							$scope.facturaProformas.detalle = ""

@@ -31,7 +31,7 @@ router.route('/dosificaciones/empresa/:id_empresa')
 	
 router.route('/dosificaciones-disponibles/empresa/:id_empresa')
 	.get(function(req, res) {
-		sequelize.query("select * from agil_dosificacion where id not in (select dosificacion from agil_sucursal_actividad_dosificacion) and empresa="+req.params.id_empresa, { type: sequelize.QueryTypes.SELECT})
+		sequelize.query("select * from agil_dosificacion where id not in (select dosificacion from agil_sucursal_actividad_dosificacion where dosificacion is not NULL) and empresa="+req.params.id_empresa, { type: sequelize.QueryTypes.SELECT})
 		.then(function(dosificaciones){
 			res.json(dosificaciones);
 		});

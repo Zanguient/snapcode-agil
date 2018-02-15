@@ -23,13 +23,14 @@ function ejecutarScriptsPolifuncionalidad(modalNuevaEvaluacion, modalNuevaEvalua
 }
 
 function ejecutarScriptsProformas(modalConfiguracionActividadesServicios, wizardConfiguracionActividadesServicios, dialogProformaEdicion, dialogClientesProforma, modalConfiguracionActividades, wizardConfiguracionActividades,
-	dialogmodalFechas, dialogBusquedaServicio) {
+	dialogmodalFechas, dialogBusquedaServicio, dialogDosificacionesDisponibles) {
 	crearPopup(modalConfiguracionActividadesServicios, 'auto', 'auto');
 	crearPopup(modalConfiguracionActividades, 'auto', 'auto');
 	crearPopup(dialogProformaEdicion, 'auto', 'auto');
 	crearPopup(dialogClientesProforma, 'auto', 'auto');
 	crearPopup(dialogmodalFechas, 'auto', 'auto');
 	crearPopup(dialogBusquedaServicio, 'auto', 'auto');
+	crearPopup(dialogDosificacionesDisponibles, 'auto', 'auto');
 	aplicarWizardFormulario(wizardConfiguracionActividadesServicios);
 	aplicarWizardFormulario(wizardConfiguracionActividades);
 }
@@ -125,7 +126,7 @@ function ejecutarScriptsInicio(idPopupTablaProductos, idPopupTablaCreditos, idPo
 	crearPopup(IdModalLibroMayor, "70%", "auto");
 	crearPopup(IdModalAsignarCuenta, "30%", 270);
 	setTimeout(function name(params) {
-		crearPopup(idModalTablaDespachos, "90%", 550);
+		crearPopup(idModalTablaDespachos, "90%", "auto");
 		crearPopup(idModalTablaAsignacionDespacho, "30%", 320);
 	}, 2000)
 	crearPopup(IdModalEliminarProductoVencido, "60%", 550)
@@ -1314,9 +1315,7 @@ function aplicarTiempos() {
 
 }
 
-
-
-
-
-
-
+function parseDate(input) {
+	var parts = input.split('-');
+	return new Date(parts[2], parts[1]-1, parts[0]); 
+  }

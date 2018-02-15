@@ -139,6 +139,7 @@
 						</th>
 						<th>Fecha</th>
 						<th>Cliente</th>
+						<th>S. Transporte</th>
 						<th>Transportista</th>
 						<th>Costo Transporte</th>
 						<th>Grupo Estibaje</th>
@@ -156,12 +157,13 @@
 						</td>
 						<td>{{gtm_detalle_despacho.fecha | date:"dd/MM/yyyy"}}</td>
 						<td>{{gtm_detalle_despacho.despacho.cliente.razon_social}}</td>
+						<td>{{gtm_detalle_despacho.servicio_transporte}}</td>
 						<td>{{gtm_detalle_despacho.transportista.persona.nombre_completo}}</td>
-						<td>{{gtm_detalle_despacho.transportista.costo_transporte}}</td>
+						<td>{{gtm_detalle_despacho.transportista.costo_transporte*gtm_detalle_despacho.cantidad}}</td>
 						<td>{{gtm_detalle_despacho.grupo_estibaje.nombre}}</td>
 
 						<td>{{gtm_detalle_despacho.estibaje.nombre}}</td>
-						<td>{{gtm_detalle_despacho.estibaje.costo}}</td>
+						<td>{{gtm_detalle_despacho.estibaje.costo*gtm_detalle_despacho.cantidad}}</td>
 
 						<td>{{gtm_detalle_despacho.factura}}</td>
 						<td>

@@ -122,7 +122,7 @@ module.exports = function (router, sequelize, Sequelize, jwt, md5, forEach, ensu
 	var Proforma = require('../modelos/AGIL/proforma')(sequelize, Sequelize);
 	var DetallesProformas = require('../modelos/AGIL/detalles-proformas')(sequelize, Sequelize);
 	var Servicios = require('../modelos/AGIL/servicios')(sequelize, Sequelize);
-	var ActividadEconomica = require('../modelos/AGIL/actividad-economica')(sequelize, Sequelize);
+
 	var Farmacia = require('../modelos/INV/farmacia')(sequelize, Sequelize);
 
 
@@ -147,8 +147,8 @@ var RrhhAnticipo = require('../modelos/AGIL/rrhh-empleado-anticipo')(sequelize, 
 		MedicoPacienteFicha, MedicoLaboratorioExamen, MedicoLaboratorio, MedicoLaboratorioPaciente, MedicoLaboratorioResultado, MedicoDiagnostico, MedicoDiagnosticoExamen, MedicoDiagnosticoPaciente, MedicoDiagnosticoResultado,
 		MantenimientoOrdenTrabajo, MantenimientoOrdenTrabajoManoObra, MantenimientoOrdenTrabajoMaterial, MantenimientoOrdenTrabajoServicioExterno, MantenimientoOrdenTrabajoSistema, VendedorVenta, RrhhEmpleadoFicha,
 		RrhhEmpleadoFichaOtrosSeguros, RrhhEmpleadoFichaFamiliar, MedicoPacientePreRequisito, RrhhEmpleadoDiscapacidad, RrhhEmpleadoCargo, ClienteRazon, GtmDestino, GtmEstibaje, GtmGrupoEstibaje, GtmTransportista, GtmDespacho, GtmClienteDestino,
-		RrhhEmpleadoHojaVida, RrhhEmpleadoFormacionAcademica, RrhhEmpleadoExperienciaLaboral, RrhhEmpleadoLogroInternoExterno, RrhhEmpleadoCapacidadInternaExterna, SolicitudReposicion, DetalleSolicitudProducto, DetalleSolicitudProductoBase, MonedaTipoCambio, ContabilidadCuentaAuxiliar, GtmDespachoDetalle, RrhhEmpleadoPrestamo, RrhhEmpleadoPrestamoPago, Proforma, DetallesProformas, ActividadEconomica, Servicios, Farmacia, RRHHParametros, RrhhEmpleadoRolTurno, RrhhEmpleadoHorasExtra,RRHHPlanillaSueldos,RRHHDetallePlanillaSueldos,RrhhAnticipo);	require('../sockets/pantallas.js')(io, socket);
-
+		RrhhEmpleadoHojaVida, RrhhEmpleadoFormacionAcademica, RrhhEmpleadoExperienciaLaboral, RrhhEmpleadoLogroInternoExterno, RrhhEmpleadoCapacidadInternaExterna, SolicitudReposicion, DetalleSolicitudProducto, DetalleSolicitudProductoBase, MonedaTipoCambio, ContabilidadCuentaAuxiliar, GtmDespachoDetalle, RrhhEmpleadoPrestamo, RrhhEmpleadoPrestamoPago, Proforma, DetallesProformas, Servicios, Farmacia, RRHHParametros, RrhhEmpleadoRolTurno, RrhhEmpleadoHorasExtra,RRHHPlanillaSueldos,RRHHDetallePlanillaSueldos,RrhhAnticipo);
+	require('../sockets/pantallas.js')(io, socket);
 	//*****ROUTES*****
 	//SYS
 	require('./rutas-usuarios')(router, ensureAuthorizedAdministrador, fs, decodeBase64Image, forEach, jwt, md5, Usuario, Persona, UsuarioRol, Rol, Tipo, Clase,
@@ -184,11 +184,11 @@ var RrhhAnticipo = require('../modelos/AGIL/rrhh-empleado-anticipo')(sequelize, 
 	require('./rutas-comprobante-contabilidad')(router, ComprobanteContabilidad, AsientoContabilidad, ContabilidadCuenta, ClasificacionCuenta, Sucursal, Clase, Usuario, Diccionario, Empresa, Persona, Compra, Venta, MonedaTipoCambio, NumeroLiteral, ContabilidadCuentaAuxiliar); //MonedaTipoCambio
 	// require('./rutas-contabilidad-clasificacion-cuenta')(router,ClasificacionCuenta,tipo,Usuario,Diccionario);
 	require('./rutas-gtm-estibajes')(router, ensureAuthorizedAdministrador, fs, forEach, jwt, md5, GtmEstibaje); //MonedaTipoCambio
-	require('./rutas-gtm-destinos')(router, ensureAuthorizedAdministrador, fs, forEach, jwt, md5, GtmDestino,Cliente,GtmClienteDestino);
+	require('./rutas-gtm-destinos')(router, ensureAuthorizedAdministrador, fs, forEach, jwt, md5, GtmDestino, Cliente, GtmClienteDestino);
 	require('./rutas-gtm-transportistas')(router, ensureAuthorizedAdministrador, fs, forEach, jwt, md5, GtmTransportista, Persona);
 	require('./rutas-gtm-grupo-estibajes')(router, ensureAuthorizedAdministrador, fs, forEach, jwt, md5, GtmGrupoEstibaje);
 	require('./rutas-gtm-despacho')(router, ensureAuthorizedAdministrador, fs, forEach, jwt, md5, GtmDespacho, GtmDespachoDetalle, Cliente, Usuario, GtmDestino, Producto
-		, GtmTransportista, GtmEstibaje, GtmGrupoEstibaje, Persona,ClienteRazon);
+		, GtmTransportista, GtmEstibaje, GtmGrupoEstibaje, Persona, ClienteRazon);
 
 
 
@@ -218,14 +218,13 @@ var RrhhAnticipo = require('../modelos/AGIL/rrhh-empleado-anticipo')(sequelize, 
 
 
 	require('./rutas-operaciones')(router, sequelize, Sequelize, Usuario, Producto, Diccionario, Clase, Sucursal, Empresa, ProductoBase, Almacen, Inventario, SolicitudReposicion, DetalleSolicitudProducto, DetalleSolicitudProductoBase, Persona)
-	require('./rutas-proformas')(router, sequelize, Sequelize, Usuario, Cliente, Proforma, DetallesProformas, ActividadEconomica, Servicios, Clase, Sucursal, SucursalActividadDosificacion, Dosificacion, CodigoControl, NumeroLiteral, Empresa, ConfiguracionGeneralFactura)
+	require('./rutas-proformas')(router, sequelize, Sequelize, Usuario, Cliente, Proforma, DetallesProformas, Servicios, Clase, Sucursal, SucursalActividadDosificacion, Dosificacion, CodigoControl, NumeroLiteral, Empresa, ConfiguracionGeneralFactura, Tipo, UsuarioSucursal)
 
 	router.route('/test')
 		.get(function (req, res) {
 			var rest;
 			for (var i = 5000.36; i <= 6532; i++) {
 				rest = NumeroLiteral.prueba(parseFloat(i).toString());
-
 			}
 			res.json({ rest: rest });
 		});

@@ -187,3 +187,23 @@ angular.module('agil.servicios')
 		};
 		return res;
 	}])
+	.factory('GtmDetalleDespachoHijos', function ($resource) {
+		return $resource(restServer + "gtm-detalle-despacho/:id_detalle_despacho/padre/:id_padre", { id_detalle_despacho: '@id' },
+			{
+				'update': { method: 'PUT' }
+			});
+	})
+
+	.factory('GetGtmDetalleDespachoHijos', ['GtmDetalleDespachoHijos', '$q', function (GtmDetalleDespachoHijos, $q) {
+		var res = function (DetalleDespacho) {
+			var delay = $q.defer();
+			GtmDetalleDespachoHijos.get({id_detalle_despacho:DetalleDespacho.id, id_padre: DetalleDespacho.id_padre }, function (entidad) {
+				delay.resolve(entidad);
+			}, function (error) {
+				delay.reject(error);
+			});
+			return delay.promise;
+		};
+		return res;
+	}])
+
