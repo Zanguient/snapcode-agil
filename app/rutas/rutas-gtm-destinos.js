@@ -15,7 +15,8 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, forEach, j
 			req.body.forEach(function (destino, index, array) {
 				if (destino.cliente_codigo) {
 					Cliente.find({
-						where: { codigo: destino.cliente_codigo }
+						where: { id_empresa:req.params.id_empresa,
+							codigo: destino.cliente_codigo }
 					}).then(function (clienteEncontrado) {
 						if (clienteEncontrado) {
 							GtmDestino.findOrCreate({

@@ -34,19 +34,38 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, forEach, j
 			});
 		});
 
-	router.route('/gtm-detalle-despacho/empresa/:id_empresa')
+	router.route('/gtm-detalle-despacho/empresa/:id_empresa/inicio/:inicio/fin/:fin/empleado/:empleado/cliente/:cliente')
 		.get(function (req, res) {
-			GtmDespachoDetalle.findAll({
-				where: {
+			var condicionDetalleDespacho={
 					despachado: false,
 					eliminado: false,
 					id_padre: null
-				},
+				}
+			var condicionCliente={}
+			var condicionEmpleado={}
+			var condicionDespacho={id_empresa: req.params.id_empresa}
+			if (req.params.inicio != 0 && req.params.fin != 0) {
+				var inicio = new Date(req.params.inicio); inicio.setHours(0, 0, 0, 0, 0);
+				var fin = new Date(req.params.fin); fin.setHours(23, 59, 59, 0, 0);
+				condicionDespacho = { id_empresa: req.params.id_empresa, fecha: { $between: [inicio, fin] } };
+			}
+			if(req.params.empleado !=0){
+				condicionEmpleado={
+					nombre_completo:{ $like: "%" + req.params.empleado + "%" }
+				}
+			}
+			if(req.params.cliente !=0){
+				condicionCliente={
+					razon_social:{ $like: "%" + req.params.cliente + "%" }
+				}
+			}
+			GtmDespachoDetalle.findAll({
+				where: condicionDetalleDespacho,
 				include: [{
 					model: GtmDespacho, as: 'despacho',
-					where: { id_empresa: req.params.id_empresa },
-					include: [{ model: Usuario, as: 'usuario' },
-					{ model: Cliente, as: 'cliente' },
+					where: condicionDespacho,
+					include: [{ model: Usuario, as: 'usuario',include:[{model:Persona,as: 'persona', where:condicionEmpleado }]},
+					{ model: Cliente, as: 'cliente',where:condicionCliente },
 					{ model: GtmDestino, as: 'destino' }]
 				},
 				{ model: Producto, as: 'producto' }]
@@ -238,4 +257,6 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, forEach, j
 				res.json({ detallesDespacho: detallesDespacho });
 			});
 		})
+		
+		
 }
