@@ -55,6 +55,10 @@ angular.module('agil.servicios')
 			IT: "IT",
 			IT_POR_PAGAR: "IT POR PAGAR",
 			CAJA_BANCOS: "CAJA/BANCOS",
+			COMPROBANTE_INGRESO: "INGRESO",
+			COMPROBANTE_EGRESO: "EGRESO",
+			COMPROBANTE_TRASPASO: "TRASPASO",
+			COMPROBANTE_CAJA_CHICA: "CAJA CHICA"
 		}
 	}])
 
@@ -76,7 +80,7 @@ angular.module('agil.servicios')
 	.factory('NuevoComprobante', ["blockUI", "AsignarComprobanteFavorito", "LibroMayorCuenta", "ComprobanteRevisarPaginador", "NuevoComprobanteContabilidad", "ListaCuentasComprobanteContabilidad", "ActualizarComprobanteContabilidad", "ImprimirComprobante", "DatosComprobante",
 		function (blockUI, AsignarComprobanteFavorito, LibroMayorCuenta, ComprobanteRevisarPaginador, NuevoComprobanteContabilidad, ListaCuentasComprobanteContabilidad, ActualizarComprobanteContabilidad, ImprimirComprobante, DatosComprobante) {
 			var res = function (mostrarMensaje, paginator, filtro, usuario, idComprobante, datoslibroMayor, revisar, convertirFecha, cerrarModal, nuevoComprobante,
-				buscarCuentaQuery, verificarVentasComprobantes, verificarComprasComprobantes, recargarItemsTabla,number_format) {
+				buscarCuentaQuery, verificarVentasComprobantes, verificarComprasComprobantes, recargarItemsTabla, number_format) {
 				if (idComprobante) {
 					var promesa = AsignarComprobanteFavorito(idComprobante)
 					promesa.then(function (entidad) {
@@ -108,7 +112,7 @@ angular.module('agil.servicios')
 					return promesa;
 				}
 				if (nuevoComprobante) {
-
+					nuevoComprobante.fechaActual = new Date()
 					if (!nuevoComprobante.id) {
 						for (var index = 0; index < nuevoComprobante.asientosContables.length; index++) {
 							var element = nuevoComprobante.asientosContables[index];
@@ -164,37 +168,37 @@ angular.module('agil.servicios')
 	.factory('ImprimirComprobante', ['blockUI', 'DibujarCabeceraComprobante', 'Diccionario', 'DibujarCabeceraFacturaNVCartaOficio', 'DibujarCabeceraFacturaNVmedioOficio', '$timeout',
 		function (blockUI, DibujarCabeceraComprobante, Diccionario, DibujarCabeceraFacturaNVCartaOficio, DibujarCabeceraFacturaNVmedioOficio, $timeout) {
 			var res = function (comprobante, bimonetario, usuario, number_format) {
-				var arregloDebe = [], arregloHaber = [],datosDF={calculo:0,monto:0,texto1:"",texto2:"",texto3:"",cant:0},datosCF={calculo:0,monto:0,texto1:"",texto2:"",texto3:"",cant:0};
+				var arregloDebe = [], arregloHaber = [], datosDF = { calculo: 0, monto: 0, texto1: "", texto2: "", texto3: "", cant: 0 }, datosCF = { calculo: 0, monto: 0, texto1: "", texto2: "", texto3: "", cant: 0 };
 				comprobante.asientosContables.forEach(function (asiento, index, array) {
 					if (asiento.debe_bs != 0) {
 						arregloDebe.push(asiento)
 					} else {
 						arregloHaber.push(asiento)
 					}
-					if(asiento.cuenta.especifica){
-						if(asiento.cuenta.tipo_especifica){
-							datosCF.monto+=asiento.debe_bs
-							datosCF.texto1=asiento.cuenta.especificaTexto1.nombre_corto
-							datosCF.texto2=asiento.cuenta.especificaTexto2.nombre_corto
-							datosCF.texto3=asiento.cuenta.especificaTexto3.nombre_corto
+					if (asiento.cuenta.especifica) {
+						if (asiento.cuenta.tipo_especifica) {
+							datosCF.monto += asiento.debe_bs
+							datosCF.texto1 = asiento.cuenta.especificaTexto1.nombre_corto
+							datosCF.texto2 = asiento.cuenta.especificaTexto2.nombre_corto
+							datosCF.texto3 = asiento.cuenta.especificaTexto3.nombre_corto
 							datosCF.cant++
-							datosCF.calculo=(datosCF.monto*100)/13
-							datosCF.calculo=number_format(datosCF.calculo, 2)
-						}else{
-							datosDF.monto+=asiento.haber_bs
-							datosDF.texto1=asiento.cuenta.especificaTexto1.nombre_corto
-							datosDF.texto2=asiento.cuenta.especificaTexto2.nombre_corto
-							datosDF.texto3=asiento.cuenta.especificaTexto3.nombre_corto
+							datosCF.calculo = (datosCF.monto * 100) / 13
+							datosCF.calculo = number_format(datosCF.calculo, 2)
+						} else {
+							datosDF.monto += asiento.haber_bs
+							datosDF.texto1 = asiento.cuenta.especificaTexto1.nombre_corto
+							datosDF.texto2 = asiento.cuenta.especificaTexto2.nombre_corto
+							datosDF.texto3 = asiento.cuenta.especificaTexto3.nombre_corto
 							datosDF.cant++
-							datosDF.calculo=(datosDF.monto*100)/13
-							datosDF.calculo=number_format(datosDF.calculo, 2)
+							datosDF.calculo = (datosDF.monto * 100) / 13
+							datosDF.calculo = number_format(datosDF.calculo, 2)
 						}
-						
+
 					}
 					if (index === (array.length - 1)) {
-						
+
 						var asientosContables = arregloDebe.concat(arregloHaber);
-						var doc = new PDFDocument({ size: [612, 792], margin: 10 });
+						var doc = new PDFDocument({compress:false, size: [612, 792], margin: 10 });
 						var stream = doc.pipe(blobStream());
 						doc.font('Helvetica', 8);
 						var itemsPorPagina = 19;
@@ -202,7 +206,7 @@ angular.module('agil.servicios')
 						var sumaDebeBs = 0, sumaHaberBs = 0, sumaDebeSus = 0, sumaHaberSus = 0;
 						var fecha = new Date()
 						if (bimonetario) {
-							DibujarCabeceraComprobante(doc, bimonetario, usuario, comprobante, pagina, totalPaginas,datosCF,datosDF);
+							DibujarCabeceraComprobante(doc, bimonetario, usuario, comprobante, pagina, totalPaginas, datosCF, datosDF);
 							for (var i = 0; i < asientosContables.length && items <= itemsPorPagina; i++) {
 								var asiento = asientosContables[i]
 								doc.rect(390, y, 0, 30).stroke();
@@ -221,12 +225,12 @@ angular.module('agil.servicios')
 								doc.text("", 350, y + 5)
 								var debe_bs = number_format(asiento.debe_bs, 2)
 								var haber_bs = number_format(asiento.haber_bs, 2)
-								if(debe_bs!="0.00")doc.text(debe_bs, 395, y + 5)
-								if(haber_bs!="0.00")doc.text(haber_bs, 445, y + 5)
+								if (debe_bs != "0.00") doc.text(debe_bs, 395, y + 5)
+								if (haber_bs != "0.00") doc.text(haber_bs, 445, y + 5)
 								var debe_sus = number_format(asiento.debe_sus, 2)
 								var haber_sus = number_format(asiento.haber_sus, 2)
-								if(debe_sus!="0.00")doc.text(debe_sus, 500, y + 5)
-								if(haber_bs!="0.00")doc.text(haber_sus, 545, y + 5)
+								if (debe_sus != "0.00") doc.text(debe_sus, 500, y + 5)
+								if (haber_bs != "0.00") doc.text(haber_sus, 545, y + 5)
 								sumaDebeBs += 0 + asiento.debe_bs
 								sumaHaberBs += 0 + asiento.haber_bs
 								sumaDebeSus += 0 + asiento.debe_sus
@@ -238,7 +242,7 @@ angular.module('agil.servicios')
 									y = 160;
 									items = 0;
 									pagina = pagina + 1;
-									DibujarCabeceraComprobante(doc, bimonetario, usuario, comprobante, pagina, totalPaginas,datosCF,datosDF);
+									DibujarCabeceraComprobante(doc, bimonetario, usuario, comprobante, pagina, totalPaginas, datosCF, datosDF);
 								}
 							}
 							doc.font('Helvetica-Bold', 7);
@@ -258,7 +262,7 @@ angular.module('agil.servicios')
 							doc.rect(490, y, 0, 20).stroke();
 							doc.rect(540, y, 0, 20).stroke();
 						} else {
-							DibujarCabeceraComprobante(doc, bimonetario, usuario, comprobante, pagina, totalPaginas,datosCF,datosDF);
+							DibujarCabeceraComprobante(doc, bimonetario, usuario, comprobante, pagina, totalPaginas, datosCF, datosDF);
 							for (var i = 0; i < asientosContables.length && items <= itemsPorPagina; i++) {
 								var asiento = asientosContables[i]
 								doc.rect(450, y, 0, 30).stroke();
@@ -275,8 +279,8 @@ angular.module('agil.servicios')
 								doc.text("", 380, y + 5)
 								var debe_bs = number_format(asiento.debe_bs, 2)
 								var haber_bs = number_format(asiento.haber_bs, 2)
-								if(debe_bs!="0.00")doc.text(debe_bs, 470, y + 5)
-								if(haber_bs!="0.00")doc.text(haber_bs, 540, y + 5)
+								if (debe_bs != "0.00") doc.text(debe_bs, 470, y + 5)
+								if (haber_bs != "0.00") doc.text(haber_bs, 540, y + 5)
 								sumaDebeBs += 0 + asiento.debe_bs
 								sumaHaberBs += 0 + asiento.haber_bs
 								y = y + 30;
@@ -288,7 +292,7 @@ angular.module('agil.servicios')
 									y = 160;
 									items = 0;
 									pagina = pagina + 1;
-									DibujarCabeceraComprobante(doc, bimonetario, usuario, comprobante, pagina, totalPaginas,datosCF,datosDF);
+									DibujarCabeceraComprobante(doc, bimonetario, usuario, comprobante, pagina, totalPaginas, datosCF, datosDF);
 								}
 							}
 							doc.font('Helvetica-Bold', 7);
@@ -307,85 +311,85 @@ angular.module('agil.servicios')
 						doc.text("Son:", 38, y + 25)
 						doc.font('Helvetica', 7);
 						doc.text(comprobante.importe_literal, 60, y + 25)
-						
+
 						doc.rect(20, y + 40, 571, 0).stroke();
-						if(comprobante.tipoComprobante.nombre=="TRASPASO"){
-						doc.rect(20, 720, 571, 0).stroke();
-						doc.font('Helvetica-Bold', 7);
-						doc.text("Preparado por:", 38, 725)
-						doc.font('Helvetica', 7);
-						doc.text(usuario.persona.nombre_completo, 38, 735)
-						doc.rect(200, 720, 0, 42).stroke();
-						var fechaActual = new Date(comprobante.fecha_creacion)
-						var mont = fechaActual.getMonth() + 1
-						var min = fechaActual.getMinutes()
-						if (min < 10) { min = "0" + fechaActual.getMinutes() }
-						var hora = fechaActual.getHours()
-						if (hora < 10) { hora = "0" + fechaActual.getHours() }
-						var sec = fechaActual.getSeconds()
-						if (sec < 10) { sec = "0" + fechaActual.getSeconds() }
-						if (mont < 10) {
-							doc.text(+fechaActual.getDate() + "/0" + mont + "/" + fechaActual.getFullYear() + "         " + hora + ":" + min + ":" + sec, 58, 752)
+						if (comprobante.tipoComprobante.nombre == "TRASPASO") {
+							doc.rect(20, 720, 571, 0).stroke();
+							doc.font('Helvetica-Bold', 7);
+							doc.text("Preparado por:", 38, 725)
+							doc.font('Helvetica', 7);
+							doc.text(usuario.persona.nombre_completo, 38, 735)
+							doc.rect(200, 720, 0, 42).stroke();
+							var fechaActual = new Date(comprobante.fecha_creacion)
+							var mont = fechaActual.getMonth() + 1
+							var min = fechaActual.getMinutes()
+							if (min < 10) { min = "0" + fechaActual.getMinutes() }
+							var hora = fechaActual.getHours()
+							if (hora < 10) { hora = "0" + fechaActual.getHours() }
+							var sec = fechaActual.getSeconds()
+							if (sec < 10) { sec = "0" + fechaActual.getSeconds() }
+							if (mont < 10) {
+								doc.text(+fechaActual.getDate() + "/0" + mont + "/" + fechaActual.getFullYear() + "         " + hora + ":" + min + ":" + sec, 58, 752)
+							} else {
+								doc.text(+fechaActual.getDate() + "/" + mont + "/" + fechaActual.getFullYear() + "         " + hora + ":" + min + ":" + sec, 58, 752)
+							}
+							var mont2 = fecha.getMonth() + 1
+							var min2 = fecha.getMinutes()
+							if (min2 < 10) { min2 = "0" + fecha.getMinutes() }
+							var hora2 = fecha.getHours()
+							if (hora2 < 10) { hora2 = "0" + fecha.getHours() }
+							var sec2 = fecha.getSeconds()
+							if (sec2 < 10) { sec2 = "0" + fecha.getSeconds() }
+							if (mont2 < 10) {
+								doc.text("IMP.:" + fecha.getDate() + "/0" + mont2 + "/" + fecha.getFullYear() + "         " + hora2 + ":" + min2 + ":" + sec2, 38, 765)
+							} else {
+								doc.text("IMP.:" + fecha.getDate() + "/" + mont2 + "/" + fecha.getFullYear() + "         " + hora2 + ":" + min2 + ":" + sec2, 38, 765)
+							}
+							doc.text("Revisado", 290, 752)
+							doc.text("Autorizado", 480, 752)
+
+							doc.rect(410, 720, 0, 42).stroke();
+							doc.rect(20, 750, 571, 0).stroke();
 						} else {
-							doc.text(+fechaActual.getDate() + "/" + mont + "/" + fechaActual.getFullYear() + "         " + hora + ":" + min + ":" + sec, 58, 752)
+							doc.rect(20, 720, 571, 0).stroke();
+							doc.font('Helvetica-Bold', 7);
+							doc.text("Preparado por:", 38, 725)
+							doc.font('Helvetica', 7);
+							doc.text(usuario.persona.nombre_completo, 38, 735)
+							doc.rect(200, 720, 0, 42).stroke();
+							var fechaActual = new Date(comprobante.fecha_creacion)
+							var mont = fechaActual.getMonth() + 1
+							var min = fechaActual.getMinutes()
+							if (min < 10) { min = "0" + fechaActual.getMinutes() }
+							var hora = fechaActual.getHours()
+							if (hora < 10) { hora = "0" + fechaActual.getHours() }
+							var sec = fechaActual.getSeconds()
+							if (sec < 10) { sec = "0" + fechaActual.getSeconds() }
+							if (mont < 10) {
+								doc.text(+fechaActual.getDate() + "/0" + mont + "/" + fechaActual.getFullYear() + "         " + hora + ":" + min + ":" + sec, 58, 752)
+							} else {
+								doc.text(+fechaActual.getDate() + "/" + mont + "/" + fechaActual.getFullYear() + "         " + hora + ":" + min + ":" + sec, 58, 752)
+							}
+							var mont2 = fecha.getMonth() + 1
+							var min2 = fecha.getMinutes()
+							if (min2 < 10) { min2 = "0" + fecha.getMinutes() }
+							var hora2 = fecha.getHours()
+							if (hora2 < 10) { hora2 = "0" + fecha.getHours() }
+							var sec2 = fecha.getSeconds()
+							if (sec2 < 10) { sec2 = "0" + fecha.getSeconds() }
+							if (mont2 < 10) {
+								doc.text("IMP.:" + fecha.getDate() + "/0" + mont2 + "/" + fecha.getFullYear() + "         " + hora2 + ":" + min2 + ":" + sec2, 38, 765)
+							} else {
+								doc.text("IMP.:" + fecha.getDate() + "/" + mont2 + "/" + fecha.getFullYear() + "         " + hora2 + ":" + min2 + ":" + sec2, 38, 765)
+							}
+							doc.text("Revisado", 240, 752)
+							doc.text("Autorizado", 350, 752)
+							doc.text("Recibio conforme:", 425, 740)
+							doc.text("CI:", 425, 752)
+							doc.rect(310, 720, 0, 42).stroke();
+							doc.rect(420, 720, 0, 42).stroke();
+							doc.rect(20, 750, 571, 0).stroke();
 						}
-						var mont2 = fecha.getMonth() + 1
-						var min2 = fecha.getMinutes()
-						if (min2 < 10) { min2 = "0" + fecha.getMinutes() }
-						var hora2 = fecha.getHours()
-						if (hora2 < 10) { hora2 = "0" + fecha.getHours() }
-						var sec2 = fecha.getSeconds()
-						if (sec2 < 10) { sec2 = "0" + fecha.getSeconds() }
-						if (mont2 < 10) {
-							doc.text("IMP.:" + fecha.getDate() + "/0" + mont2 + "/" + fecha.getFullYear() + "         " + hora2 + ":" + min2 + ":" + sec2, 38, 765)
-						} else {
-							doc.text("IMP.:" + fecha.getDate() + "/" + mont2 + "/" + fecha.getFullYear() + "         " + hora2 + ":" + min2 + ":" + sec2, 38, 765)
-						}
-						doc.text("Revisado", 290, 752)
-						doc.text("Autorizado", 480, 752)					
-						
-						doc.rect(410, 720, 0, 42).stroke();
-						doc.rect(20, 750, 571, 0).stroke();
-					}else{
-						doc.rect(20, 720, 571, 0).stroke();
-						doc.font('Helvetica-Bold', 7);
-						doc.text("Preparado por:", 38, 725)
-						doc.font('Helvetica', 7);
-						doc.text(usuario.persona.nombre_completo, 38, 735)
-						doc.rect(200, 720, 0, 42).stroke();
-						var fechaActual = new Date(comprobante.fecha_creacion)
-						var mont = fechaActual.getMonth()+1
-						var min = fechaActual.getMinutes()
-						if (min < 10) { min = "0" + fechaActual.getMinutes() }
-						var hora = fechaActual.getHours()
-						if (hora < 10) { hora = "0" + fechaActual.getHours() }
-						var sec = fechaActual.getSeconds()
-						if (sec < 10) { sec = "0" + fechaActual.getSeconds() }
-						if (mont < 10) {
-							doc.text(+fechaActual.getDate() + "/0" + mont + "/" + fechaActual.getFullYear() + "         " + hora + ":" + min + ":" + sec, 58, 752)
-						} else {
-							doc.text(+fechaActual.getDate() + "/" + mont + "/" + fechaActual.getFullYear() + "         " + hora + ":" + min + ":" + sec, 58, 752)
-						}
-						var mont2 = fecha.getMonth() + 1
-						var min2 = fecha.getMinutes()
-						if (min2 < 10) { min2 = "0" + fecha.getMinutes() }
-						var hora2 = fecha.getHours()
-						if (hora2 < 10) { hora2 = "0" + fecha.getHours() }
-						var sec2 = fecha.getSeconds()
-						if (sec2 < 10) { sec2 = "0" + fecha.getSeconds() }
-						if (mont2 < 10) {
-							doc.text("IMP.:" + fecha.getDate() + "/0" + mont2 + "/" + fecha.getFullYear() + "         " + hora2 + ":" + min2 + ":" + sec2, 38, 765)
-						} else {
-							doc.text("IMP.:" + fecha.getDate() + "/" + mont2 + "/" + fecha.getFullYear() + "         " + hora2 + ":" + min2 + ":" + sec2, 38, 765)
-						}
-						doc.text("Revisado", 240, 752)
-						doc.text("Autorizado", 350, 752)
-						doc.text("Recibio conforme:", 425, 740)
-						doc.text("CI:", 425, 752)
-						doc.rect(310, 720, 0, 42).stroke();
-						doc.rect(420, 720, 0, 42).stroke();
-						doc.rect(20, 750, 571, 0).stroke();
-					}
 						doc.end();
 						stream.on('finish', function () {
 							var fileURL = stream.toBlobURL('application/pdf');
@@ -405,7 +409,7 @@ angular.module('agil.servicios')
 			return res;
 		}])
 	.factory('DibujarCabeceraComprobante', [function () {
-		var res = function (doc, bimonetario, usuario, comprobante, pagina, totalPaginas,datosCF,datosDF) {
+		var res = function (doc, bimonetario, usuario, comprobante, pagina, totalPaginas, datosCF, datosDF) {
 			var fecha = new Date(comprobante.fecha)
 			console.log(usuario)
 			if (bimonetario) {
@@ -422,7 +426,7 @@ angular.module('agil.servicios')
 				doc.text(pagina + ' de: ' + totalPaginas, 545, 35)
 				doc.font('Helvetica-Bold', 8);
 				doc.text("Gestión: " + fecha.getFullYear(), 515, 50)
-				if (comprobante.tipoComprobante.nombre == "INGRESO") {
+				/* if (comprobante.tipoComprobante.nombre == "INGRESO") {
 					doc.font('Helvetica-Bold', 12);
 					doc.text("N°: ",535, 65)
 					doc.font('Helvetica', 12);
@@ -445,7 +449,11 @@ angular.module('agil.servicios')
 					doc.text("N°: ", 535, 65)
 					doc.font('Helvetica', 12);
 					doc.text(comprobante.sucursal.comprobante_caja_chica_correlativo, 555, 65)
-				}				 
+				}	 */
+				doc.font('Helvetica-Bold', 12);
+				doc.text("N°: ", 535, 65)
+				doc.font('Helvetica', 12);
+				doc.text(comprobante.numero, 555, 65)
 				doc.rect(20, 90, 571, 0).stroke();
 				doc.font('Helvetica', 8);
 				doc.text(comprobante.gloza, 68, 105)
@@ -456,12 +464,12 @@ angular.module('agil.servicios')
 				} else {
 					doc.text("Fecha: " + fecha.getDate() + "/" + mont + "/" + fecha.getFullYear(), 500, 95)
 				}
-				doc.text("T. Cambio: ", 500, 105)				
+				doc.text("T. Cambio: ", 500, 105)
 				doc.font('Helvetica', 8);
 				doc.text(comprobante.tipoCambio.dolar, 545, 105)
-				if(datosCF.cant>0 && datosDF.cant==0)doc.text(datosCF.texto1+" "+datosCF.monto+"    "+datosCF.texto2+" "+datosCF.calculo+"    "+datosCF.texto3+" "+datosCF.cant, 400, 120)				
-				if(datosDF.cant>0 && datosCF.cant==0)doc.text(datosDF.texto1+" "+datosDF.monto+"    "+datosDF.texto2+" "+datosDF.calculo+"    "+datosDF.texto3+" "+datosDF.cant, 400, 120)	
-				if(datosDF.cant>0 && datosCF.cant>0)doc.text(datosDF.texto1+" "+datosDF.monto+"    "+datosDF.texto2+" "+datosDF.calculo+"    "+datosDF.texto3+" "+datosDF.cant+"     "+datosCF.texto1+" "+datosCF.monto+"    "+datosCF.texto2+" "+datosCF.calculo+"    "+datosCF.texto3+" "+datosCF.cant, 350, 120)							
+				if (datosCF.cant > 0 && datosDF.cant == 0) doc.text(datosCF.texto1 + " " + datosCF.monto + "    " + datosCF.texto2 + " " + datosCF.calculo + "    " + datosCF.texto3 + " " + datosCF.cant, 400, 120)
+				if (datosDF.cant > 0 && datosCF.cant == 0) doc.text(datosDF.texto1 + " " + datosDF.monto + "    " + datosDF.texto2 + " " + datosDF.calculo + "    " + datosDF.texto3 + " " + datosDF.cant, 400, 120)
+				if (datosDF.cant > 0 && datosCF.cant > 0) doc.text(datosDF.texto1 + " " + datosDF.monto + "    " + datosDF.texto2 + " " + datosDF.calculo + "    " + datosDF.texto3 + " " + datosDF.cant + "     " + datosCF.texto1 + " " + datosCF.monto + "    " + datosCF.texto2 + " " + datosCF.calculo + "    " + datosCF.texto3 + " " + datosCF.cant, 350, 120)
 				doc.font('Helvetica-Bold', 8);
 				doc.rect(20, 130, 571, 0).stroke();
 				doc.font('Helvetica-Bold', 8);
@@ -500,30 +508,34 @@ angular.module('agil.servicios')
 				doc.text(pagina + ' de: ' + totalPaginas, 545, 35)
 				doc.font('Helvetica-Bold', 8);
 				doc.text("Gestión: " + fecha.getFullYear(), 515, 50)
-				if (comprobante.tipoComprobante.nombre == "INGRESO") {
+				/* if (comprobante.tipoComprobante.nombre == "INGRESO") {
 					doc.font('Helvetica-Bold', 12);
-					doc.text("N°: ",535, 65)
+					doc.text("N°: ", 535, 65)
 					doc.font('Helvetica', 12);
 					doc.text(comprobante.sucursal.comprobante_ingreso_correlativo, 555, 65)
-				}				
+				}
 				if (comprobante.tipoComprobante.nombre == "EGRESO") {
 					doc.font('Helvetica-Bold', 12);
-					doc.text("N°: " , 535, 65)
+					doc.text("N°: ", 535, 65)
 					doc.font('Helvetica', 12);
 					doc.text(comprobante.sucursal.comprobante_egreso_correlativo, 555, 65)
-				}				
+				}
 				if (comprobante.tipoComprobante.nombre == "TRASPASO") {
 					doc.font('Helvetica-Bold', 12);
 					doc.text("N°: ", 535, 65)
 					doc.font('Helvetica', 12);
 					doc.text(comprobante.sucursal.comprobante_traspaso_correlativo, 555, 65)
-				}				
-				if (comprobante.tipoComprobante.nombre == "CAJA CHICA"){
+				}
+				if (comprobante.tipoComprobante.nombre == "CAJA CHICA") {
 					doc.font('Helvetica-Bold', 12);
 					doc.text("N°: ", 535, 65)
 					doc.font('Helvetica', 12);
 					doc.text(comprobante.sucursal.comprobante_caja_chica_correlativo, 555, 65)
-				}		
+				} */
+				doc.font('Helvetica-Bold', 12);
+					doc.text("N°: ", 535, 65)
+					doc.font('Helvetica', 12);
+					doc.text(comprobante.numero, 555, 65)
 				doc.rect(20, 90, 571, 0).stroke();
 				doc.font('Helvetica', 8);
 				doc.text(comprobante.gloza, 38, 105)
@@ -537,9 +549,9 @@ angular.module('agil.servicios')
 				doc.text("T. Cambio: ", 500, 105)
 				doc.font('Helvetica', 8);
 				doc.text(comprobante.tipoCambio.dolar, 545, 105)
-				if(datosCF.cant>0 && datosDF.cant==0)doc.text(datosCF.texto1+" "+datosCF.monto+"    "+datosCF.texto2+" "+datosCF.calculo+"    "+datosCF.texto3+" "+datosCF.cant, 400, 120)				
-				if(datosDF.cant>0 && datosCF.cant==0)doc.text(datosDF.texto1+" "+datosDF.monto+"    "+datosDF.texto2+" "+datosDF.calculo+"    "+datosDF.texto3+" "+datosDF.cant, 400, 120)	
-				if(datosDF.cant>0 && datosCF.cant>0)doc.text(datosDF.texto1+" "+datosDF.monto+"    "+datosDF.texto2+" "+datosDF.calculo+"    "+datosDF.texto3+" "+datosDF.cant+"     "+datosCF.texto1+" "+datosCF.monto+"    "+datosCF.texto2+" "+datosCF.calculo+"    "+datosCF.texto3+" "+datosCF.cant, 350, 120)							
+				if (datosCF.cant > 0 && datosDF.cant == 0) doc.text(datosCF.texto1 + " " + datosCF.monto + "    " + datosCF.texto2 + " " + datosCF.calculo + "    " + datosCF.texto3 + " " + datosCF.cant, 400, 120)
+				if (datosDF.cant > 0 && datosCF.cant == 0) doc.text(datosDF.texto1 + " " + datosDF.monto + "    " + datosDF.texto2 + " " + datosDF.calculo + "    " + datosDF.texto3 + " " + datosDF.cant, 400, 120)
+				if (datosDF.cant > 0 && datosCF.cant > 0) doc.text(datosDF.texto1 + " " + datosDF.monto + "    " + datosDF.texto2 + " " + datosDF.calculo + "    " + datosDF.texto3 + " " + datosDF.cant + "     " + datosCF.texto1 + " " + datosCF.monto + "    " + datosCF.texto2 + " " + datosCF.calculo + "    " + datosCF.texto3 + " " + datosCF.cant, 350, 120)
 				doc.font('Helvetica-Bold', 8);
 				doc.rect(20, 130, 571, 0).stroke();
 				doc.text("Cuenta", 50, 145)
@@ -862,12 +874,12 @@ angular.module('agil.servicios')
 						var longitudCaracteres = venta.detallesVenta[i].producto.nombre.length;
 						var yDesc = (longitudCaracteres <= 24) ? y : ((longitudCaracteres > 24 && longitudCaracteres <= 60) ? y - 4 : y - 11);
 						doc.text(venta.detallesVenta[i].producto.nombre, 198, yDesc, { width: 130 });
-						
-						if(venta.con_vencimiento){
+
+						if (venta.con_vencimiento) {
 							doc.text(fechaVencimientoTexto, 340, y);
 							doc.text(venta.detallesVenta[i].lote, 380, y);
 						}
-						
+
 						doc.text(venta.detallesVenta[i].precio_unitario.toFixed(2), 410, y);
 						doc.text(venta.detallesVenta[i].importe.toFixed(2), 450, y);
 						doc.text(venta.detallesVenta[i].descuento.toFixed(2), 490, y);
@@ -992,7 +1004,7 @@ angular.module('agil.servicios')
 					var qrImage = canvas.toDataURL('image/png');
 					doc.image(qrImage, 470, y + 20, { width: 70, height: 70 });
 					if (completa || vacia) {
-						doc.text(venta.pieFactura !==undefined ? venta.pieFactura.nombre:"", 50, papel[1] - 60);
+						doc.text(venta.pieFactura !== undefined ? venta.pieFactura.nombre : "", 50, papel[1] - 60);
 						doc.text("\"ESTA FACTURA CONTRIBUYE AL DESARROLLO DEL PAIS. EL USO ILICITO DE ESTA SERA SANCIONADO DE ACUERDO A LEY\"", 50, papel[1] - 40);
 					}
 				}
@@ -1054,12 +1066,12 @@ angular.module('agil.servicios')
 				doc.text("CANT.", 125, 210);
 				doc.text("UNID.", 160, 210, { width: 43 });
 				doc.text("DETALLE", 198, 210);
-				
-				if(venta.con_vencimiento){
+
+				if (venta.con_vencimiento) {
 					doc.text("VENC.", 340, 210);
 					doc.text("LOTE", 380, 210);
 				}
-				
+
 				doc.text("P.UNIT.", 410, 210);
 				doc.text("IMP.", 450, 210);
 				doc.text("DESC.", 490, 210);
@@ -2287,5 +2299,110 @@ angular.module('agil.servicios')
 				blockUI.stop();
 			}
 			return res;
-		}]);
+		}])
 
+	.factory('ImprimirPdfAlertaDespacho', ['blockUI', 'DibujarCabeceraPDFAlertaDespacho',
+		function (blockUI, DespacDibujarCabeceraPDFAlertaDespacho) {
+			var res = function (despachos) {
+				blockUI.start();
+				var doc = new PDFDocument({ size: 'letter', margin: 10 });
+				var stream = doc.pipe(blobStream());
+				// draw some text
+				var totalCosto = 0;
+				var y = 120, itemsPorPagina = 33, items = 0, pagina = 1, totalPaginas = Math.ceil(despachos.compras.length / itemsPorPagina);
+				$scope.DibujarCabeceraPDFAlertaDespacho(doc, 1, totalPaginas, despachos);
+				doc.font('Helvetica', 8);
+				for (var i = 0; i < despachos.length && items <= itemsPorPagina; i++) {
+
+					doc.rect(30, y - 10, 555, 20).stroke();
+					/* despachos.compras[i].fecha = new Date(despachos.compras[i].fecha);
+					doc.text(despachos.compras[i].fecha.getDate() + "/" + (despachos.compras[i].fecha.getMonth() + 1) + "/" + despachos.compras[i].fecha.getFullYear(), 45, y);
+					doc.text(despachos.compras[i].id_movimiento, 170, y, { width: 45, align: "right" });
+	
+					if (despachos.compras[i].factura == null) {
+						doc.text('PROFORMA', 240, y);
+					} else {
+						doc.text('Factura nro. ' + despachos.compras[i].factura, 240, y);
+					}
+					doc.text(despachos.compras[i].saldo, 445, y, { width: 50, align: "right" });
+					totalCosto = totalCosto + despachos.compras[i].saldo;
+					doc.text(totalCosto, 500, y, { width: 50, align: "right" }); */
+					y = y + 20;
+					items++;
+
+					if (items == itemsPorPagina) {
+						doc.addPage({ margin: 0, bufferPages: true });
+						y = 120;
+						items = 0;
+						pagina = pagina + 1;
+						$scope.DibujarCabeceraPDFAlertaDespacho(doc, pagina, totalPaginas, despachos);
+						doc.font('Helvetica', 8);
+					}
+				}
+				doc.rect(30, y - 10, 555, 20).stroke();
+				doc.font('Helvetica-Bold', 8);
+				doc.text("Total General", 350, y);
+				// doc.text(totalCosto, 446, y, { width: 50, align: "right" });
+				doc.end();
+				stream.on('finish', function () {
+					var fileURL = stream.toBlobURL('application/pdf');
+					window.open(fileURL, '_blank', 'location=no');
+				});
+				blockUI.stop();
+
+			}
+			return res;
+		}])
+	/* $scope.generarExcelEstadoCuentasProveedor = function (proveedor) {
+		var data = [["", "", "ESTADO CUENTAS PROVEEDOR"], ["Deudor :" + proveedor.razon_social], ["Fecha", "N Recibo", "Descripción", "monto", "total", "total General"]]
+		var totalCosto = 0;
+		for (var i = 0; i < proveedor.compras.length; i++) {
+			var columns = [];
+			totalCosto = totalCosto + proveedor.compras[i].saldo;
+			proveedor.compras[i].fecha = new Date(proveedor.compras[i].fecha);
+			columns.push(proveedor.compras[i].fecha.getDate() + "/" + (proveedor.compras[i].fecha.getMonth() + 1) + "/" + proveedor.compras[i].fecha.getFullYear());
+			columns.push(proveedor.compras[i].id_movimiento);
+			if (proveedor.compras[i].factura == null) {
+				columns.push('PROFORMA');
+			} else {
+				columns.push('factura : ' + proveedor.compras[i].factura);
+			}
+			columns.push(proveedor.compras[i].saldo);
+			columns.push(totalCosto);
+			columns.push(totalCosto);
+			data.push(columns);
+		}
+
+		var ws_name = "SheetJS";
+		var wb = new Workbook(), ws = sheet_from_array_of_arrays(data);
+		
+		wb.SheetNames.push(ws_name);
+		wb.Sheets[ws_name] = ws;
+		var wbout = XLSX.write(wb, { bookType: 'xlsx', bookSST: true, type: 'binary' });
+		saveAs(new Blob([s2ab(wbout)], { type: "application/octet-stream" }), "REPORTE-ESTADO-CUENTA-PROVEEDOR.xlsx");
+		blockUI.stop();
+
+	} */
+
+	.factory('DibujarCabeceraPDFTraspaso', [function () {
+		res = function (doc, pagina, totalPaginas, despachos) {
+			doc.font('Helvetica-Bold', 12);
+			doc.text("ESTADO DE CUENTAS", 0, 25, { align: "center" });
+			doc.font('Helvetica-Bold', 8);
+			doc.text("PÁGINA " + pagina + " DE " + totalPaginas, 0, 740, { align: "center" });
+			doc.rect(30, 50, 555, 30).stroke();
+			doc.font('Helvetica-Bold', 8);
+			doc.text("Acreedor : ", 45, 60);
+			doc.font('Helvetica', 8);
+			//doc.text(despachos.razon_social, 140, 60);
+			doc.rect(30, 80, 555, 30).stroke();
+			doc.font('Helvetica-Bold', 8);
+			doc.text("Fecha", 45, 90);
+			doc.text("Nro. Recibo", 170, 90, { width: 50 });
+			doc.text("Descripción", 240, 90, { width: 60 });
+			doc.text("Monto", 470, 90, { width: 50 });
+			doc.text("Total", 530, 90, { width: 50 });
+			doc.font('Helvetica', 8);
+		}
+		return res;
+	}])

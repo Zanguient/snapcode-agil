@@ -1,7 +1,7 @@
 angular.module('agil.controladores')
 
     .controller('ControladorComprobantes', function ($scope, $localStorage, $location, $templateCache, $route, blockUI, CodigoControl, Paginator, ComprobantePaginador, ClasesTipo, ListaCuentasComprobanteContabilidad, ListaAsientosComprobanteContabilidad, NuevoComprobanteContabilidad, ClasesTipo, LibroMayorCuenta, ComprobanteRevisarPaginador,
-        AsignarComprobanteFavorito, ImprimirComprobante, ComprasComprobante, VerificarUsuarioEmpresa, FieldViewer, DatosComprobante, EliminarComprobante,ListaCambioMoneda,ActualizarCambioMoneda) {
+        AsignarComprobanteFavorito,Diccionario, ImprimirComprobante, ComprasComprobante, VerificarUsuarioEmpresa, FieldViewer, DatosComprobante, EliminarComprobante,ListaCambioMoneda,ActualizarCambioMoneda) {
 
         blockUI.start();
         $scope.asientoNuevo = false
@@ -28,6 +28,8 @@ angular.module('agil.controladores')
             $scope.obtenerTiposComprobante();
             $scope.asientos = []
             $scope.cuenta = {}
+            $scope.diccionario = Diccionario
+            console.log($scope.diccionario)
             $scope.comprobante = { asientos: [] }
             $scope.sucursales = $scope.obtenerSucursales();
             $scope.obtenerMeses()

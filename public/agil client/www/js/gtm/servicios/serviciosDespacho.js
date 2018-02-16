@@ -97,15 +97,26 @@ angular.module('agil.servicios')
 	}])
 
 	.factory('GtmDetalleDespachoAlerta', function ($resource) {
-		return $resource(restServer + "gtm-detalle-despacho/empresa/:id_empresa", { id_empresa: '@id' },
+		return $resource(restServer + "gtm-detalle-despacho/empresa/:id_empresa/inicio/:inicio/fin/:fin/empleado/:empleado/cliente/:cliente", { id_empresa: '@id' },
 			{
 				'update': { method: 'PUT' }
 			});
 	})
 	.factory('GtmDetallesDespachoAlerta', ['GtmDetalleDespachoAlerta', '$q', function (GtmDetalleDespachoAlerta, $q) {
-		var res = function (id_empresa) {
+		var res = function (id_empresa,filtro) {
+			var filtro2={}
+			filtro2.inicio2=(filtro.inicio2=="")?0:filtro.inicio2
+			filtro2.fin2=(filtro.fin2=="")?0:filtro.fin2
+			filtro2.empleado=(filtro.empleado=="")?0:filtro.empleado
+			filtro2.razon_social=(filtro.razon_social=="")?0:filtro.razon_social
 			var delay = $q.defer();
-			GtmDetalleDespachoAlerta.query({ id_empresa: id_empresa }, function (entidad) {
+			GtmDetalleDespachoAlerta.query({
+				id_empresa: id_empresa,
+				inicio:filtro2.inicio2,
+				fin:filtro2.fin2,
+				empleado:filtro2.empleado,
+				cliente:filtro2.razon_social
+			}, function (entidad) {
 				delay.resolve(entidad);
 			}, function (error) {
 				delay.reject(error);

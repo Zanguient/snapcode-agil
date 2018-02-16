@@ -543,7 +543,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 					if (view) {
 						$scope.verComprobante = true
 					}
-					
+
 					$scope.abrirPopup($scope.idModalWizardComprobanteEdicion);
 					/* comprobante.comprobante.forEach(function (comprobante2) {
 						var cuenta = comprobante2.cuentas
@@ -861,15 +861,15 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 		}
 		$scope.abrirCuentasAxiliares = function (asiento) {
 			asiento.activo = true
-			if( asiento.cuenta.tipoAuxiliar.nombre== "CLIENTE")	{			
-				$scope.listaCuentasAuxiliares = $scope.listaCuentasAuxiliaresClientes;			
-			}	
-			if( asiento.cuenta.tipoAuxiliar.nombre== "EMPLEADO")	{			
-				$scope.listaCuentasAuxiliares = $scope.listaCuentasAuxiliaresEmpleado;			
-			}	
-			if( asiento.cuenta.tipoAuxiliar.nombre== "PROVEEDOR")	{			
-				$scope.listaCuentasAuxiliares = $scope.listaCuentasAuxiliaresProveedor;			
-			}	
+			if (asiento.cuenta.tipoAuxiliar.nombre == "CLIENTE") {
+				$scope.listaCuentasAuxiliares = $scope.listaCuentasAuxiliaresClientes;
+			}
+			if (asiento.cuenta.tipoAuxiliar.nombre == "EMPLEADO") {
+				$scope.listaCuentasAuxiliares = $scope.listaCuentasAuxiliaresEmpleado;
+			}
+			if (asiento.cuenta.tipoAuxiliar.nombre == "PROVEEDOR") {
+				$scope.listaCuentasAuxiliares = $scope.listaCuentasAuxiliaresProveedor;
+			}
 		}
 		$scope.establecerCuentaActual2 = function (asiento) {
 			var cuenta = asiento.cuenta
@@ -916,20 +916,20 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 				$scope.nuevoComprobante.asientosContables[index].haber_bs = 0
 				$scope.nuevoComprobante.asientosContables[index].debe_sus = 0
 				$scope.nuevoComprobante.asientosContables[index].haber_sus = 0
-				$scope.listaCuentasAuxiliares={}
+				$scope.listaCuentasAuxiliares = {}
 				if (asiento.cuenta.tipoAuxiliar) {
 					asiento.isOpen = true;
-					if( asiento.cuenta.tipoAuxiliar.nombre== "CLIENTE")	{			
-						$scope.listaCuentasAuxiliares = $scope.listaCuentasAuxiliaresClientes;			
-					}	
-					if( asiento.cuenta.tipoAuxiliar.nombre== "EMPLEADO")	{			
-						$scope.listaCuentasAuxiliares = $scope.listaCuentasAuxiliaresEmpleado;			
-					}	
-					if( asiento.cuenta.tipoAuxiliar.nombre== "PROVEEDOR")	{			
-						$scope.listaCuentasAuxiliares = $scope.listaCuentasAuxiliaresProveedor;			
-					}			
-					
-					
+					if (asiento.cuenta.tipoAuxiliar.nombre == "CLIENTE") {
+						$scope.listaCuentasAuxiliares = $scope.listaCuentasAuxiliaresClientes;
+					}
+					if (asiento.cuenta.tipoAuxiliar.nombre == "EMPLEADO") {
+						$scope.listaCuentasAuxiliares = $scope.listaCuentasAuxiliaresEmpleado;
+					}
+					if (asiento.cuenta.tipoAuxiliar.nombre == "PROVEEDOR") {
+						$scope.listaCuentasAuxiliares = $scope.listaCuentasAuxiliaresProveedor;
+					}
+
+
 				} else {
 					asiento.isOpen = false;
 				}
@@ -1266,6 +1266,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 
 		$scope.verificarDespachos = function (idEmpresa) {
 			//blockUI.start();
+			var filtro = { inicio: 0, fin: 0, razon_social: 0, empleado: 0, inicio2: 0, fin2: 0 }
 			var promesa = GtmTransportistas(idEmpresa);
 			promesa.then(function (transportistas) {
 				$scope.gtm_transportistas = transportistas;
@@ -1275,7 +1276,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 					promesa = GtmGrupoEstibajes(idEmpresa);
 					promesa.then(function (grupoEstibajes) {
 						$scope.gtm_grupo_estibajes = grupoEstibajes;
-						promesa = GtmDetallesDespachoAlerta(idEmpresa);
+						promesa = GtmDetallesDespachoAlerta(idEmpresa, filtro);
 						promesa.then(function (detallesDespacho) {
 							$scope.gtm_detalles_despacho = detallesDespacho;
 							$scope.vencimientoTotal = $scope.vencimientoTotal + detallesDespacho.length;
@@ -1343,7 +1344,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 		$scope.guardarDespachos = function () {
 			blockUI.start();
 			var fecha = new Date()
-			GuardarGtmDetalleDespachoAlerta.update({ id_empresa: $scope.usuario.id_empresa,fecha:fecha }, $scope.gtm_detalles_despacho_seleccionados, function (res) {
+			GuardarGtmDetalleDespachoAlerta.update({ id_empresa: $scope.usuario.id_empresa, fecha: fecha }, $scope.gtm_detalles_despacho_seleccionados, function (res) {
 				$scope.vencimientoTotal = $scope.vencimientoTotal - $scope.gtm_detalles_despacho_seleccionados.length;
 				$scope.verificarDespachos($scope.usuario.id_empresa);
 				blockUI.stop();
@@ -1463,9 +1464,26 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 		}
 
 		$scope.abrirListaDespachos = function () {
+			$scope.filtroDes = { inicio: "", fin: "", inicio2: "", fin2: "", razon_social: "", empleado: "" }
 			$scope.abrirPopup($scope.idModalTablaDespachos);
 		}
-
+		$scope.filtrarDetalleDespachos = function (filtro) {			
+				if (filtro.inicio) {
+					filtro.inicio2 = new Date($scope.convertirFecha(filtro.inicio))
+				}
+				if (filtro.fin) {
+					filtro.fin2 = new Date($scope.convertirFecha(filtro.fin))
+				}
+				promesa = GtmDetallesDespachoAlerta($scope.usuario.id_empresa, filtro);
+				promesa.then(function (detallesDespacho) {
+					$scope.gtm_detalles_despacho = detallesDespacho;
+					$scope.gtm_detalles_despacho_seleccionados = [];
+					$scope.gtm_detalles_despacho.forEach(function (despacho, index, array) {
+						despacho.saldo2 = despacho.saldo
+					});
+				});
+			
+		}
 		$scope.verificarSeleccionProformas = function () {
 			var paraFacturar = []
 			if ($scope.alertasProformas.length > 0) {

@@ -28,7 +28,10 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Clie
 						texto1: req.body.texto1,
 						texto2: req.body.texto2,
 						latitud: req.body.latitud,
-						longitud: req.body.longitud
+						longitud: req.body.longitud,
+						linea_credito: req.body.linea_credito,
+						plazo_credito: req.body.plazo_credito,
+						usar_limite_credito: req.body.usar_limite_credito
 					}, {
 							where: {
 								id: cliente.id
@@ -80,7 +83,10 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Clie
 						texto1: req.body.texto1,
 						texto2: req.body.texto2,
 						latitud: req.body.latitud,
-						longitud: req.body.longitud
+						longitud: req.body.longitud,
+						linea_credito: req.body.linea_credito,
+						plazo_credito: req.body.plazo_credito,
+						usar_limite_credito: req.body.usar_limite_credito
 					}).then(function (clienteCreado) {
 						guardarContratosCliente(req, res, clienteCreado)
 						req.body.clientes_razon.forEach(function (cliente_razon, index, array) {
@@ -285,12 +291,16 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Clie
 			req.body.forEach(function (cliente_razon, index, array) {
 				if (cliente_razon.codigo) {
 					Cliente.find({
-						where: { codigo: cliente_razon.codigo }
+						where: {
+							id_empresa: req.params.idEmpresa,
+							codigo: cliente_razon.codigo
+						}
 					}).then(function (clienteEncontrado) {
 						if (clienteEncontrado) {
 							ClienteRazon.findOrCreate({
 								where: {
 									nit: cliente_razon.nit,
+									id_cliente: clienteEncontrado.id,
 								},
 								defaults: {
 									id_cliente: clienteEncontrado.id,
@@ -299,35 +309,29 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Clie
 									codigo_sap: cliente_razon.codigo_sap,
 								}
 							}).spread(function (cargoClase, created) {
-								if (!created) {
+							/* 	if (created) {
 									ClienteRazon.update({
 										id_cliente: clienteEncontrado.id,
 										razon_social: cliente_razon.razon_social,
 										nit: cliente_razon.nit,
 										codigo_sap: cliente_razon.codigo_sap,
 									}, {
-										where: { nit: cliente_razon.nit }
+											where: { nit: cliente_razon.nit }
 										}).then(function (clienteRazonCreado) {
 											if (index == array.length - 1) {
 												res.json({ mensaje: "guardados satisfactoriamente!" })
 											}
 										})
-								} else {
+								} else { */
 									if (index == array.length - 1) {
 										res.json({ mensaje: "guardados satisfactoriamente!" })
 									}
-								}
+								/* } */
 							})
 						} else {
-							ClienteRazon.create({
-								razon_social: cliente_razon.razon_social,
-								nit: cliente_razon.nit,
-								codigo_sap: cliente_razon.codigo_sap,
-							}).then(function (clienteRazonActualizado) {
-								if (index == array.length - 1) {
-									res.json({ mensaje: "guardados satisfactoriamente!" })
-								}
-							});
+							if (index == array.length - 1) {
+								res.json({ mensaje: "guardados satisfactoriamente!" })
+							}
 						}
 					})
 				} else {
@@ -392,7 +396,10 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Clie
 				texto1: req.body.texto1,
 				texto2: req.body.texto2,
 				latitud: req.body.latitud,
-				longitud: req.body.longitud
+				longitud: req.body.longitud,
+				linea_credito: req.body.linea_credito,
+				plazo_credito: req.body.plazo_credito,
+				usar_limite_credito: req.body.usar_limite_credito
 			}, {
 					where: {
 						id: req.params.id_cliente
@@ -608,4 +615,5 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Clie
 				});
 			});
 		});
+
 }

@@ -301,7 +301,7 @@
 											<h4 class="widget-title">DATOS DE VENTA</h4>
 											 &nbsp;
 											 <p>
-											<button  id="guardarV" type="submit" ng-disabled="venta.detallesVenta.length==0" class="btn btn-primary">
+											<button  id="guardarV" type="submit" ng-disabled="venta.detallesVenta.length==0 && blockerVenta==true" class="btn btn-primary">
 												<i class="ace-icon fa fa-floppy-o align-top bigger-125"></i>
 												GUARDAR
 											</button>
@@ -443,7 +443,7 @@
 																<label>TIPO DE PAGO</label>
 																<select data-validate="validate(required)" required id="pago" name="pago" 
 																		ng-model="venta.tipoPago" data-placeholder="Elija un tipo de pago" 
-																		ng-change="cambiarTipoPago(venta.tipoPago)"
+																		ng-change="cambiarTipoPago(venta)"
 																		ng-options="tipoPago as tipoPago.nombre for tipoPago in tiposPago track by tipoPago.id">
 																</select>
 																<span class="red">(*)</span>

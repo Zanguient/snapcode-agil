@@ -19,7 +19,8 @@ angular.module('agil.servicios')
 	};
     return res;
   }])
-.factory('Diccionario', [function () {
+  
+/* .factory('Diccionario', [function () {
 		return {
 			MOV_ING: "MOVING",
 			MOV_EGR: "MOVEGR",
@@ -76,7 +77,7 @@ angular.module('agil.servicios')
 			IT_POR_PAGAR: "IT POR PAGAR",
 			CAJA_BANCOS: "CAJA/BANCOS"
 		}
-	}])
+	}]) */
 
 .factory('ImprimirSalidaFarmacia', ['Diccionario', 'ImprimirProformaFarmacia',
 	function (Diccionario, ImprimirProformaFarmacia) {

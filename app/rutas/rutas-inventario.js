@@ -1813,4 +1813,15 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 						});
 				});
 		});
+		router.route('/cliente/verificar-credito/:id_cliente/tipo/:id_tipo')
+		.get(function (req, res) {
+			Venta.findAll({
+			where:{id_cliente:req.params.id_cliente,
+			saldo:{$ne:0},
+			id_tipo_pago:req.params.id_tipo}		
+			}).then(function (Ventas) {
+					res.json({ventas:Ventas});
+				
+			});
+		});
 }

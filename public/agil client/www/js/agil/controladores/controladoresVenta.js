@@ -4,7 +4,7 @@ angular.module('agil.controladores')
 		Venta, Ventas, Clientes, ClientesNit, ProductosNombre, ClasesTipo, VentasContado, VentasCredito,
 		PagosVenta, DatosVenta, VentaEmpresaDatos, ProductosPanel, ListaProductosEmpresa, ListaInventariosProducto,
 		socket, ConfiguracionVentaVistaDatos, ConfiguracionVentaVista, ListaGruposProductoEmpresa,
-		ConfiguracionImpresionEmpresaDato, ImprimirSalida, ListaVendedorVenta, VendedorVenta, VendedorVentaActualizacion,GuardarUsuarLectorDeBarra) {
+		ConfiguracionImpresionEmpresaDato, ImprimirSalida, ListaVendedorVenta, VendedorVenta, VendedorVentaActualizacion, GuardarUsuarLectorDeBarra, VerificarLimiteCredito) {
 		blockUI.start();
 		$scope.usuario = JSON.parse($localStorage.usuario);
 		convertUrlToBase64Image($scope.usuario.empresa.imagen, function (imagenEmpresa) {
@@ -23,7 +23,7 @@ angular.module('agil.controladores')
 		$scope.idModalInventario = "dialog-productos-venta";
 		$scope.idModalPanelVentasCobro = 'dialog-panel-cobro';
 		$scope.idModalEdicionVendedor = 'dialog-edicion-vendedor';
-		$scope.idModalImpresionVencimiento='dialog-imprimir-con-fecha-vencimiento';
+		$scope.idModalImpresionVencimiento = 'dialog-imprimir-con-fecha-vencimiento';
 
 		$scope.$on('$viewContentLoaded', function () {
 			resaltarPestaña($location.path().substring(1));
@@ -32,19 +32,19 @@ angular.module('agil.controladores')
 				$scope.idModalContenedorVentaVista, $scope.idInputCompletar, $scope.url, $scope.idModalPago,
 				$scope.idModalCierre,
 				$scope.idModalPanelVentas, $scope.idModalConfirmacionEliminacionVenta, $scope.idModalInventario, $scope.idModalPanelVentasCobro,
-				$scope.idModalEdicionVendedor,$scope.idModalImpresionVencimiento);
+				$scope.idModalEdicionVendedor, $scope.idModalImpresionVencimiento);
 			$scope.buscarAplicacion($scope.usuario.aplicacionesUsuario, $location.path().substring(1));
 			blockUI.stop();
 		});
 
 		$scope.inicio = function () {
-			
+
 			$scope.ordenProductos = true;
 			$scope.esContado = true;
 			//$scope.obtenerClientes();
 			$scope.obtenerTiposDePago();
 			$scope.obtenerConfiguracionVentaVista();
-			
+
 			$scope.sucursales = $scope.obtenerSucursales();
 
 			$scope.sucursalesUsuario = "";
@@ -88,6 +88,58 @@ angular.module('agil.controladores')
 				}
 			}
 			return gruposActualizado;
+		}
+		$scope.verificarLimiteCredito = function (ventaActual) {
+			if (ventaActual.cliente && ventaActual.tipoPago.nombre == $scope.diccionario.TIPO_PAGO_CREDITO) {
+				var promesa = VerificarLimiteCredito(ventaActual)
+
+				promesa.then(function (dato) {
+					var PrimeraVenta = dato.ventas.slice(0)
+					var FechaActual = new Date()
+					var totalsaldo = 0
+					var mensaje = { uno: "", dos: "" }
+					
+					dato.ventas.forEach(function (venta, index, array) {
+						totalsaldo += venta.saldo
+						console.log(totalsaldo)
+						if (totalsaldo >= ventaActual.cliente.linea_credito) {
+							mensaje.uno = "exedio el limite de la linea de credito"
+							
+						}
+						if (index == (array.length - 1)) {
+							var fechaVenta = new Date(PrimeraVenta.fecha)
+							var dato = $scope.diferenciaEntreDiasEnDias(fechaVenta, FechaActual)
+							if (dato > ventaActual.cliente.plazo_credito) {
+								mensaje.dos = "exedio el limide de dias de credito"
+								
+								if(ventaActual.cliente.usar_limite_credito==true){
+									$scope.mostrarMensaje(mensaje.uno+" "+mensaje.dos+" no puede realizar mas compras")
+								}else{
+									$scope.mostrarMensaje(mensaje.uno+" "+mensaje.dos+", pero puede seguir consumiendo")
+								}	
+								$scope.blockerVenta=true	
+							}else{
+								if(ventaActual.cliente.usar_limite_credito==true){
+									$scope.mostrarMensaje(mensaje.uno+" "+mensaje.dos+" no puede realizar mas compras")
+								}else{
+									$scope.mostrarMensaje(mensaje.uno+" "+mensaje.dos+", pero puede seguir consumiendo")
+								}	
+								$scope.blockerVenta=false							
+							}
+						}
+					});
+				})
+			}else{
+				$scope.blockerVenta=false
+			}
+
+		}
+		$scope.diferenciaEntreDiasEnDias = function (a, b) {
+			var MILISENGUNDOS_POR_DIA = 1000 * 60 * 60 * 24;
+			var utc1 = Date.UTC(a.getFullYear(), a.getMonth(), a.getDate());
+			var utc2 = Date.UTC(b.getFullYear(), b.getMonth(), b.getDate());
+
+			return Math.floor((utc2 - utc1) / MILISENGUNDOS_POR_DIA);
 		}
 
 		$scope.obtenerGruposProductoEmpresa = function () {
@@ -231,16 +283,16 @@ angular.module('agil.controladores')
 			if (query != "" && query != undefined) {
 				var promesa = ListaProductosEmpresa($scope.usuario.id_empresa, query);
 				promesa.then(function (datos) {
-					if (datos.length > 1) {					
-					} else {					
+					if (datos.length > 1) {
+					} else {
 						$scope.establecerProducto(datos[0])
 					}
 					blockUI.stop()
-				},function(err) {
+				}, function (err) {
 					$scope.mostrarMensaje(err.message)
 					blockUI.stop()
 				})
-				return promesa;		
+				return promesa;
 			}
 
 		}
@@ -444,10 +496,12 @@ angular.module('agil.controladores')
 			$scope.capturarInteraccion();
 		}
 
-		$scope.cambiarTipoPago = function (tipoPagoO) {
+		$scope.cambiarTipoPago = function (venta) {
+			var tipoPagoO = venta.tipoPago
 			var tipoPago = $.grep($scope.tiposPago, function (e) { return e.id == tipoPagoO.id; })[0];
 			$scope.esContado = tipoPago.nombre_corto == 'CONT' ? true : false;
 			$scope.calcularCambio();
+			$scope.verificarLimiteCredito(venta)
 		}
 
 		$scope.recalcular = function () {
@@ -1230,6 +1284,7 @@ angular.module('agil.controladores')
 		}
 
 		$scope.crearNuevaVenta = function () {
+			$scope.blockerVenta=false
 			$scope.venta = new Venta({
 				id_empresa: $scope.usuario.id_empresa, id_usuario: $scope.usuario.id, cliente: {},
 				detallesVenta: [], detallesVentaNoConsolidadas: [], pagado: 0, cambio: 0, despachado: false, vendedor: null
@@ -1243,7 +1298,7 @@ angular.module('agil.controladores')
 			var fechaActual = new Date();
 			$scope.venta.fechaTexto = fechaActual.getDate() + "/" + (fechaActual.getMonth() + 1) + "/" + fechaActual.getFullYear();
 			$scope.venta.tipoPago = $scope.tiposPago[0];
-			$scope.cambiarTipoPago($scope.venta.tipoPago);
+			$scope.cambiarTipoPago($scope.venta);
 			$scope.editar_precio = false;
 			$scope.detalleVenta = { producto: { activar_inventario: true }, cantidad: 1, descuento: 0, recargo: 0, ice: 0, excento: 0, tipo_descuento: false, tipo_recargo: false }
 			$scope.abrirPopup($scope.idModalWizardCompraEdicion);
@@ -1333,16 +1388,16 @@ angular.module('agil.controladores')
 						} else {
 							blockUI.stop();
 							$scope.cerrarPopPupEdicion();
-							if($scope.usuario.empresa.usar_vencimientos){
-								$scope.impresion={
-									movimiento:movimiento,
-									res:res,
-									al_guardar:true,
+							if ($scope.usuario.empresa.usar_vencimientos) {
+								$scope.impresion = {
+									movimiento: movimiento,
+									res: res,
+									al_guardar: true,
 									usuario: $scope.usuario
 								}
 								$scope.abrirPopup($scope.idModalImpresionVencimiento);
 								//ImprimirSalida(movimiento, res, true, $scope.usuario);
-							}else{
+							} else {
 								ImprimirSalida(movimiento, res, true, $scope.usuario);
 							}
 							$scope.crearNuevaVenta();
@@ -1358,14 +1413,14 @@ angular.module('agil.controladores')
 			}
 		}
 
-		$scope.imprimirConVencimiento=function(){
-			$scope.impresion.res.con_vencimiento=true;
+		$scope.imprimirConVencimiento = function () {
+			$scope.impresion.res.con_vencimiento = true;
 			ImprimirSalida($scope.impresion.movimiento, $scope.impresion.res, $scope.impresion.al_guardar, $scope.impresion.usuario);
 			$scope.cerrarPopup($scope.idModalImpresionVencimiento);
 		}
 
-		$scope.imprimirSinVencimiento=function(){
-			$scope.impresion.res.con_vencimiento=false;
+		$scope.imprimirSinVencimiento = function () {
+			$scope.impresion.res.con_vencimiento = false;
 			ImprimirSalida($scope.impresion.movimiento, $scope.impresion.res, $scope.impresion.al_guardar, $scope.impresion.usuario);
 			$scope.cerrarPopup($scope.idModalImpresionVencimiento);
 		}
@@ -1374,7 +1429,7 @@ angular.module('agil.controladores')
 			var promesa = DatosVenta(venta.id, $scope.usuario.id_empresa);
 			promesa.then(function (datos) {
 				var ventaConsultada = datos.venta;
-				ventaConsultada.con_vencimiento=true;
+				ventaConsultada.con_vencimiento = true;
 				ventaConsultada.configuracion = datos.configuracion;
 				ventaConsultada.sucursal = datos.sucursal;
 				ventaConsultada.numero_literal = datos.numero_literal;
@@ -1434,7 +1489,7 @@ angular.module('agil.controladores')
 			if (!tipoPago) {
 				$scope.venta.tipoPago = $scope.tiposPago[0];
 			}
-			$scope.cambiarTipoPago($scope.venta.tipoPago);
+			$scope.cambiarTipoPago($scope.venta);
 			var fechaActual = new Date();
 			$scope.venta.fechaTexto = fechaActual.getDate() + "/" + (fechaActual.getMonth() + 1) + "/" + fechaActual.getFullYear();
 			$scope.abrirPopup($scope.idModalPanelVentas);
@@ -1648,7 +1703,7 @@ angular.module('agil.controladores')
 					venta.movimiento = $.grep($scope.movimientosEgreso, function (e) { return e.nombre_corto == $scope.diccionario.EGRE_PROFORMA; })[0];
 					venta.tipoPago = $.grep($scope.tiposPago, function (e) { return e.nombre == $scope.diccionario.TIPO_PAGO_CONTADO; })[0];
 					$scope.obtenerTipoEgreso(venta.movimiento);
-					$scope.cambiarTipoPago(venta.tipoPago);
+					$scope.cambiarTipoPago(venta);
 					var fechaActual = new Date();
 					venta.fechaTexto = fechaActual.getDate() + "/" + (fechaActual.getMonth() + 1) + "/" + fechaActual.getFullYear();
 					fecha = fechaActual;
@@ -1908,15 +1963,15 @@ angular.module('agil.controladores')
 			$scope.eliminarPopup($scope.idModalImpresionVencimiento);
 		});
 
-		$scope.UsarLectorDeBarra=function () {
-			if($scope.usuario.usar_lector_de_barra==true){
-				$scope.usuario.usar_lector_de_barra=true
-				$localStorage.usuario=JSON.stringify($scope.usuario);
-				var promesa =GuardarUsuarLectorDeBarra($scope.usuario)
-			}else{
-				$scope.usuario.usar_lector_de_barra=false
-				localStorage.usuario=JSON.stringify($scope.usuario);
-				var promesa =GuardarUsuarLectorDeBarra($scope.usuario)
+		$scope.UsarLectorDeBarra = function () {
+			if ($scope.usuario.usar_lector_de_barra == true) {
+				$scope.usuario.usar_lector_de_barra = true
+				$localStorage.usuario = JSON.stringify($scope.usuario);
+				var promesa = GuardarUsuarLectorDeBarra($scope.usuario)
+			} else {
+				$scope.usuario.usar_lector_de_barra = false
+				localStorage.usuario = JSON.stringify($scope.usuario);
+				var promesa = GuardarUsuarLectorDeBarra($scope.usuario)
 			}
 			console.log($scope.usuario.usar_lector_de_barra)
 		}

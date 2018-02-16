@@ -128,6 +128,7 @@ function ejecutarScriptsInicio(idPopupTablaProductos, idPopupTablaCreditos, idPo
 	setTimeout(function name(params) {
 		crearPopup(idModalTablaDespachos, "90%", "auto");
 		crearPopup(idModalTablaAsignacionDespacho, "30%", 320);
+		aplicarDatePickers();
 	}, 2000)
 	crearPopup(IdModalEliminarProductoVencido, "60%", 550)
 	$("#" + idModalInicioSesion).siblings('.ui-dialog-titlebar').remove();

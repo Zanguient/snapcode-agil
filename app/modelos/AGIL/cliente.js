@@ -92,6 +92,19 @@ module.exports = function (sequelize, Sequelize) {
 			type: Sequelize.STRING,
 			field: 'documento_seguro_social'
 		},
+		linea_credito: {
+			type: Sequelize.DECIMAL(30, 20),
+			field: 'linea_credito'
+		},
+		plazo_credito: {
+			type: Sequelize.INTEGER,
+			field: 'plazo_credito'
+		},
+		usar_limite_credito: {
+			type: Sequelize.BOOLEAN,
+			field: 'usar_limite_credito'
+		},
+
 	}, {
 			freezeTableName: true
 		});

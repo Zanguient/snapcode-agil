@@ -412,4 +412,29 @@ angular.module('agil.servicios')
 		return delay.promise;
 	};
     return res;
+	}])
+	
+	.factory('VerificarExesoCredito', function($resource) {
+		return $resource(restServer+"cliente/verificar-credito/:id_cliente/tipo/:id_tipo", null,
+		{
+			'update': { method:'PUT' }
+		});
+})
+
+.factory('VerificarLimiteCredito', ['VerificarExesoCredito','$q',function(VerificarExesoCredito, $q) 
+  {
+	var res = function(venta) 
+	{
+		var delay = $q.defer();
+		VerificarExesoCredito.get({id_cliente:venta.cliente.id,id_tipo:venta.tipoPago.id},function(entidades) 
+		{        
+			delay.resolve(entidades);
+		}, function(error) 
+			{
+				delay.reject(error);
+			});
+		return delay.promise;
+	};
+    return res;
   }]);
+	

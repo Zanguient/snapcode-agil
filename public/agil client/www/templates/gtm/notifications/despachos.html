@@ -45,41 +45,43 @@
 			<fieldset>
 				<legend>Filtro Despachos</legend>
 				<div>
-					<form novalidate>
+					
 						<div class="form-row col-sm-6 col-md-6 col-lg-6">
 							<div class="form-group col-sm-4">
 								<label for="codigo">desde</label>
-								<input ng-update-hidden type="text" id="filtroCodigo" ng-model="filtro.codigo" placeholder="" />
+								<input ng-update-hidden class="form-control date-picker" data-date-format="dd/mm/yyyy" type="text" id="filtroCodigo" ng-model="filtroDes.inicio" placeholder="" ng-change="filtrarDetalleDespachos(filtroDes)"/>
 							</div>
 							<div class="form-group col-sm-4">
 								<label for="nombre">hasta</label>
-								<input ng-update-hidden type="text" id="filtroNombre" ng-model="filtro.nombres" placeholder="" />
+								<input ng-update-hidden class="form-control date-picker" data-date-format="dd/mm/yyyy" type="text" id="filtroNombre" ng-model="filtroDes.fin" placeholder="" ng-change="filtrarDetalleDespachos(filtroDes)"/>
 							</div>
 							<div class="form-group col-sm-4">
-								<button type="submit" class="btn-primary btn btn-app btn-xs">
+								<button ng-click="filtrarDetalleDespachos(filtroDes)" type="button" class="btn-primary btn btn-app btn-xs" >
 									<i class="ace-icon fa fa-search align-top bigger-125"></i>
 									BUSCAR
 								</button>								
 							</div>
 							<div class="form-group col-sm-4">
 								<label for="codigo">Vendedor</label>
-								<input ng-update-hidden type="text" id="filtroCodigo" ng-model="filtro.codigo" placeholder="" />
+								<input ng-enter="filtrarDetalleDespachos(filtroDes)" type="text" id="filtroVendedorD" ng-model="filtroDes.empleado" placeholder="" />
+								
 							</div>
 							<div class="form-group col-sm-4">
 								<label for="nombre">Cliente</label>
-								<input ng-update-hidden type="text" id="filtroNombre" ng-model="filtro.nombres" placeholder="" />
+								<input ng-enter="filtrarDetalleDespachos(filtroDes)" type="text" id="filtroNombreD" ng-model="filtroDes.razon_social" placeholder="" />
 							</div>
 							<div class="form-group col-sm-4">									
-									<button class="btn btn-app btn-danger btn-xs">
+									<button type="button" class="btn btn-app btn-danger btn-xs">
 										<i class="ace-icon fa fa-print bigger-160"></i>
 										PDF
 									</button>
-									<button class="btn btn-app btn-success btn-xs" ng-click="generarExcelEmpleados(RecursosHumanosEmpleados,fieldViewer.getConfiguration())">
+									<button type="button" class="btn btn-app btn-success btn-xs" ng-click="generarExcelEmpleados(RecursosHumanosEmpleados,fieldViewer.getConfiguration())">
 										<i class="ace-icon fa fa-print bigger-160"></i>
 										EXCEL
 									</button>
 								</div>
 						</div>
+					
 						<div class="col-sm-6 col-md-6 col-lg-6">
 							<!-- Trasportistas -->
 							<div style="height: 150px ;max-height:150px ;overflow-y: scroll;overflow-x: hidden;border:1px solid gray;" id="style-7">
@@ -94,11 +96,11 @@
 								</div>
 							</div>
 						</div>
-					</form>
+					
 				</div>
 		</div>
 		<div class="table-fixed-header">
-			<table class="table table-striped table-bordered table-hover ">
+			<table class=" table table-striped table-bordered table-hover">
 				<thead fix-head class="table-head-color">
 					<tr>
 						<th class="center">
@@ -117,7 +119,7 @@
 						<th>Producto</th>
 						<th>Cantidad</th>
 						<th>Despacho</th>
-						<th>S. Transp.</th>
+						<th>Servicio Transp.</th>
 						<th>Despachar</th>
 						<th>Saldo</th>
 						<th>Transportista</th>
@@ -136,7 +138,7 @@
 							</label>
 						</td>
 						<td>{{$index+1}}</td>
-						<td>{{gtm_detalle_despacho.despacho.usuario.nombre_usuario}}</td>
+						<td>{{gtm_detalle_despacho.despacho.usuario.persona.nombre_completo}}</td>
 						<td>{{gtm_detalle_despacho.despacho.cliente.razon_social}}</td>
 						<td>{{gtm_detalle_despacho.despacho.destino.destino}}</td>
 						<td>{{gtm_detalle_despacho.despacho.fecha | date:"dd/MM/yyyy"}}</td>
@@ -146,7 +148,7 @@
 						<td>{{gtm_detalle_despacho.cantidad_despacho}}</td>
 						<td>{{gtm_detalle_despacho.servicio_transporte}}</td>
 						<td>
-							<input value="{{gtm_detalle_despacho.saldo2}}" required max="{{gtm_detalle_despacho.saldo}}" ng-change="calcularSaldoDespacho(gtm_detalle_despacho)"
+							<input style="width: 80px" value="{{gtm_detalle_despacho.saldo2}}" required max="{{gtm_detalle_despacho.saldo}}" ng-change="calcularSaldoDespacho(gtm_detalle_despacho)"
 							 ng-required="gtm_detalle_despacho.seleccionado" type="number" step="0.001" ng-model="gtm_detalle_despacho.cantidad_despacho2">
 						</td>
 						<td>{{gtm_detalle_despacho.saldo2}}</td>
