@@ -898,7 +898,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
     router.route('/usuario-ficha/:id_empleado')
         .get(function (req, res) {
             RrhhEmpleadoFicha.findAll({
-                where: { id_empleado: req.params.id_empleado },
+                where: { id_empleado: req.params.id_empleado,contrato:{$ne:null} },
 
             }).then(function (empleado) {
                 res.json(empleado)

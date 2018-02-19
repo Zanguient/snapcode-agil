@@ -35,13 +35,19 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 
 		});
 
-	router.route('/inventarios/empresa/:id_empresa/almacen/:id_almacen/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion')
+	router.route('/inventarios/empresa/:id_empresa/almacen/:id_almacen/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion/cantidad/:cantidad')
 		.get(function (req, res) {
 			var condicionProducto = "empresa=" + req.params.id_empresa;
 			if (req.params.texto_busqueda != 0) {
 				condicionProducto = condicionProducto + " and (codigo like '%" + req.params.texto_busqueda + "%' or agil_producto.nombre like '%" + req.params.texto_busqueda + "%' or unidad_medida like '%" + req.params.texto_busqueda + "%' or descripcion like '%" + req.params.texto_busqueda + "%' or gr.nombre like '%" + req.params.texto_busqueda + "%' or sgr.nombre like '%" + req.params.texto_busqueda + "%')";
 			}
-
+			if (req.params.cantidad != 0) {
+				if (req.params.cantidad == 1) {
+					condicionProducto = condicionProducto + " and cantidad > 0"
+				} else {
+					condicionProducto = condicionProducto + " and cantidad = 0"
+				}
+			}
 			sequelize.query("select count(*) as cantidad_productos \
 			from agil_producto\
 			INNER JOIN gl_clase AS tipoProducto ON (agil_producto.tipo_producto = tipoProducto.id)\
@@ -236,7 +242,7 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 																cantidad: cantidadInventario,
 																costo_unitario: detalleCompra.costo_unitario,
 																costo_total: detalleCompra.costo_unitario * cantidadInventario,
-																fecha_vencimiento: (detalleCompra.inventario.fechaVencimientoTexto?new Date(detalleCompra.inventario.fechaVencimientoTexto.split('/')[1] + "/" + detalleCompra.inventario.fechaVencimientoTexto.split('/')[0] + "/" + detalleCompra.inventario.fechaVencimientoTexto.split('/')[2]):null) ,
+																fecha_vencimiento: (detalleCompra.inventario.fechaVencimientoTexto ? new Date(detalleCompra.inventario.fechaVencimientoTexto.split('/')[1] + "/" + detalleCompra.inventario.fechaVencimientoTexto.split('/')[0] + "/" + detalleCompra.inventario.fechaVencimientoTexto.split('/')[2]) : null),
 																lote: detalleCompra.inventario.lote
 															}, {
 																	where: {
@@ -748,11 +754,11 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 										id_empresa: venta.id_empresa,
 										nit: venta.cliente.nit,
 										razon_social: venta.cliente.razon_social
-									}, {transaction: t}).then(function (clienteCreado) {
-										return crearVenta(venta, res, clienteCreado.id, movimientoCreado, dosificacion, true, sucursalActividadDosificacion.sucursal,t);
+									}, { transaction: t }).then(function (clienteCreado) {
+										return crearVenta(venta, res, clienteCreado.id, movimientoCreado, dosificacion, true, sucursalActividadDosificacion.sucursal, t);
 									});
 								} else {
-									return crearVenta(venta, res, venta.cliente.id, movimientoCreado, dosificacion, true, sucursalActividadDosificacion.sucursal,t);
+									return crearVenta(venta, res, venta.cliente.id, movimientoCreado, dosificacion, true, sucursalActividadDosificacion.sucursal, t);
 								}
 							});
 							//SI ES PROFORMA
@@ -777,15 +783,15 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 										id_empresa: venta.id_empresa,
 										nit: venta.cliente.nit,
 										razon_social: venta.cliente.razon_social
-									}, {transaction: t}).then(function (clienteCreado) {
-										return crearVenta(venta, res, clienteCreado.id, movimientoCreado, null, false, sucursal,t);
+									}, { transaction: t }).then(function (clienteCreado) {
+										return crearVenta(venta, res, clienteCreado.id, movimientoCreado, null, false, sucursal, t);
 									});
 								} else {
-									return crearVenta(venta, res, venta.cliente.id, movimientoCreado, null, false, sucursal,t);
+									return crearVenta(venta, res, venta.cliente.id, movimientoCreado, null, false, sucursal, t);
 								}
 							});
 							//SI ES PREFACTURACION
-						}else if (movimiento == Diccionario.EGRE_PRE_FACTURACION) {
+						} else if (movimiento == Diccionario.EGRE_PRE_FACTURACION) {
 							return Sucursal.find({
 								where: {
 									id: venta.sucursal.id
@@ -806,11 +812,11 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 										id_empresa: venta.id_empresa,
 										nit: venta.cliente.nit,
 										razon_social: venta.cliente.razon_social
-									}, {transaction: t}).then(function (clienteCreado) {
-										return crearVenta(venta, res, clienteCreado.id, movimientoCreado, null, false, sucursal,t);
+									}, { transaction: t }).then(function (clienteCreado) {
+										return crearVenta(venta, res, clienteCreado.id, movimientoCreado, null, false, sucursal, t);
 									});
 								} else {
-									return crearVenta(venta, res, venta.cliente.id, movimientoCreado, null, false, sucursal,t);
+									return crearVenta(venta, res, venta.cliente.id, movimientoCreado, null, false, sucursal, t);
 								}
 							});
 							//SI ES BAJA
@@ -1024,7 +1030,7 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 			cambio: venta.cambio,
 			pedido: venta.pedido,
 			despachado: venta.despachado,
-			id_vendedor: (venta.vendedor?venta.vendedor.id:null)
+			id_vendedor: (venta.vendedor ? venta.vendedor.id : null)
 		}, { transaction: t }).then(function (ventaCreada) {
 			var promisesVenta = [];
 			if (esFactura) {
@@ -1813,15 +1819,17 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 						});
 				});
 		});
-		router.route('/cliente/verificar-credito/:id_cliente/tipo/:id_tipo')
+	router.route('/cliente/verificar-credito/:id_cliente/tipo/:id_tipo')
 		.get(function (req, res) {
 			Venta.findAll({
-			where:{id_cliente:req.params.id_cliente,
-			saldo:{$ne:0},
-			id_tipo_pago:req.params.id_tipo}		
+				where: {
+					id_cliente: req.params.id_cliente,
+					saldo: { $ne: 0 },
+					id_tipo_pago: req.params.id_tipo
+				}
 			}).then(function (Ventas) {
-					res.json({ventas:Ventas});
-				
+				res.json({ ventas: Ventas });
+
 			});
 		});
 }

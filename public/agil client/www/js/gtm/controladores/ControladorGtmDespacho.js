@@ -1,7 +1,7 @@
 angular.module('agil.controladores')
 
     .controller('ControladorGtmDespacho', function ($scope, $localStorage, $location, $templateCache, $route, blockUI, Paginator, FieldViewer,
-        GtmDespachos, GtmDetalleDespacho, GetGtmDetalleDespachoHijos,ImprimirPdfDespachos) {
+        GtmDespachos, GtmDetalleDespacho, GetGtmDetalleDespachoHijos,ImprimirPdfDespachos,ExportarExelDespachos) {
 
         blockUI.start();
 
@@ -62,7 +62,10 @@ angular.module('agil.controladores')
         }
         $scope.imprimirPdfDespachos=function () {
 			ImprimirPdfDespachos($scope.despachos,$scope.paginator.filter,$scope.usuario)
-		}
+        }
+        $scope.imprimirExelDespachos=function () {
+        ExportarExelDespachos($scope.despachos,$scope.paginator.filter,$scope.usuario)
+        }
         $scope.imprimir = function (gtm_despacho) {
 
             blockUI.start();

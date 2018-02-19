@@ -31,7 +31,8 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Clie
 						longitud: req.body.longitud,
 						linea_credito: req.body.linea_credito,
 						plazo_credito: req.body.plazo_credito,
-						usar_limite_credito: req.body.usar_limite_credito
+						usar_limite_credito: req.body.usar_limite_credito,
+						bloquear_limite_credito:req.body.bloquear_limite_credito
 					}, {
 							where: {
 								id: cliente.id
@@ -86,7 +87,8 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Clie
 						longitud: req.body.longitud,
 						linea_credito: req.body.linea_credito,
 						plazo_credito: req.body.plazo_credito,
-						usar_limite_credito: req.body.usar_limite_credito
+						usar_limite_credito: req.body.usar_limite_credito,
+						bloquear_limite_credito:req.body.bloquear_limite_credito
 					}).then(function (clienteCreado) {
 						guardarContratosCliente(req, res, clienteCreado)
 						req.body.clientes_razon.forEach(function (cliente_razon, index, array) {
@@ -399,7 +401,9 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Clie
 				longitud: req.body.longitud,
 				linea_credito: req.body.linea_credito,
 				plazo_credito: req.body.plazo_credito,
-				usar_limite_credito: req.body.usar_limite_credito
+				usar_limite_credito: req.body.usar_limite_credito,
+				bloquear_limite_credito:req.body.bloquear_limite_credito
+				
 			}, {
 					where: {
 						id: req.params.id_cliente

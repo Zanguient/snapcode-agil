@@ -104,7 +104,10 @@ module.exports = function (sequelize, Sequelize) {
 			type: Sequelize.BOOLEAN,
 			field: 'usar_limite_credito'
 		},
-
+		bloquear_limite_credito: {
+			type: Sequelize.BOOLEAN,
+			field: 'bloquear_limite_credito'
+		},
 	}, {
 			freezeTableName: true
 		});

@@ -2443,6 +2443,59 @@ angular.module('agil.servicios')
 			}
 			return res;
 		}])
+		.factory('ExportarExelDespachos', ['blockUI',
+		function (blockUI) {
+			res = function (despachos, filtro, usuario) {
+				var vendedor = "Todos"
+			var cliente = "Todos"
+			/* if (filtro.empleado != "") {
+				vendedor = despachos[0].despacho.usuario.persona.nombre_completo
+			}
+			if (filtro.razon_social != "") {
+				cliente = despachos[0].despacho.cliente.razon_social
+			} */
+				var data = [["", "", "REPORTE DE DESPACHOS "]/*,  ["Vendedor :" +vendedor], ["Cliente :" + cliente] */, ["Nro","Fecha","Cliente","Razón social","NIT","Destino","Direccion","Cantidad","P/U","Total","Transportista","Costo", "Grupo de Estibaje", "Tipo de Estibaje", "Costo Estibaje","Factura SAP"]]
+				var totalCosto = 0;
+				for (var i = 0; i < despachos.length; i++) {
+					var detalle_despacho= despachos[i]
+					detalle_despacho.despacho.usuario.persona.nombre_completo
+					var columns = [];
+					columns.push(i+1)
+					var fecha = new Date(detalle_despacho.despacho.fecha)
+					var dia=((fecha.getDate())>=10)? fecha.getDate() :"0"+ fecha.getDate()
+					var mes=((fecha.getMonth())>=10)? fecha.getMonth() :"0"+ fecha.getMonth()
+					columns.push(dia+"/"+mes+"/"+fecha.getFullYear())
+					columns.push(detalle_despacho.despacho.cliente.razon_social)					
+					columns.push(detalle_despacho.despacho.cliente_razon.razon_social)					
+					columns.push(detalle_despacho.despacho.cliente.nit)		
+					columns.push(detalle_despacho.despacho.destino.destino)
+					columns.push(detalle_despacho.despacho.destino.direccion)				
+					columns.push(detalle_despacho.cantidad_despacho)
+					columns.push(detalle_despacho.producto.precio_unitario)				
+					var total=detalle_despacho.producto.precio_unitario*detalle_despacho.cantidad
+					columns.push(total)					
+					columns.push(detalle_despacho.transportista.persona.nombre_completo)
+					var costo=detalle_despacho.transportista.costo_transporte*detalle_despacho.cantidad_despacho
+					columns.push(costo)
+					columns.push(detalle_despacho.grupo_estibaje.nombre)
+					columns.push(detalle_despacho.estibaje.nombre)
+					var costoEstibaje = detalle_despacho.estibaje.costo*detalle_despacho.cantidad_despacho
+					columns.push(costoEstibaje)
+					columns.push(detalle_despacho.despacho.cliente_razon.codigo_sap)
+					data.push(columns);
+				}						
+				var ws_name = "SheetJS";
+				var wb = new Workbook(), ws = sheet_from_array_of_arrays(data);
+
+				wb.SheetNames.push(ws_name);
+				wb.Sheets[ws_name] = ws;
+				var wbout = XLSX.write(wb, { bookType: 'xlsx', bookSST: true, type: 'binary' });
+				saveAs(new Blob([s2ab(wbout)], { type: "application/octet-stream" }), "REPORTE-DESPACHOS.xlsx");
+				blockUI.stop();
+
+			}
+			return res;
+		}])
 	.factory('DibujarCabeceraPDFAlertaDespacho', [function () {
 		res = function (doc, pagina, totalPaginas, despachos, filtro, usuario) {
 			doc.font('Helvetica-Bold', 12);

@@ -510,7 +510,7 @@ module.exports = function (router, ComprobanteContabilidad, AsientoContabilidad,
 				}).then(function (ComprobanteEncontrado) {
 					var fechaComprobante = new Date(ComprobanteEncontrado[0].dataValues.fecha)
 					var diaComprobante = fechaComprobante.getDate()
-					if (diaGuardado > diaComprobante) {
+					if (diaGuardado >= diaComprobante) {
 						var numero = 1 + ComprobanteEncontrado[0].dataValues.numero
 						ComprobanteContabilidad.create({
 							id_tipo: req.body.tipoComprobante.id,

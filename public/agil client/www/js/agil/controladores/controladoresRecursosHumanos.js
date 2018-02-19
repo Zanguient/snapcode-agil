@@ -413,7 +413,7 @@ angular.module('agil.controladores')
         $scope.abrirDialogEmpleado = function (empleado) {
             $scope.obtenerDatosFichaUsuario(empleado);
             $scope.empleado = empleado
-            $scope.obtenerHistorialContratos(empleado)
+            
 
             $scope.abrirPopup($scope.idModalEmpleado);
         }
@@ -617,6 +617,7 @@ angular.module('agil.controladores')
             $scope.cerrarPopup($scope.idModalTitulo);
         }
         $scope.abrirDialogHistorialContrato = function () {
+            $scope.obtenerHistorialContratos($scope.empleado)
             $scope.abrirPopup($scope.idModalHistorialContrato);
         }
         $scope.cerrarDialogHistorialContrato = function () {

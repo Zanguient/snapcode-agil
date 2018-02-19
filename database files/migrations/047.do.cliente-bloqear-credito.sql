@@ -1,0 +1,1 @@
+ALTER TABLE agil_cliente add bloquear_limite_credito tinyint default 0;

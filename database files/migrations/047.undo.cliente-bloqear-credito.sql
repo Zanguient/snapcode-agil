@@ -1,0 +1,1 @@
+ALTER TABLE agil_cliente drop bloquear_limite_credito;

@@ -66,6 +66,7 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, forEach, j
 					where: condicionDespacho,
 					include: [{ model: Usuario, as: 'usuario',include:[{model:Persona,as: 'persona', where:condicionEmpleado }]},
 					{ model: Cliente, as: 'cliente',where:condicionCliente },
+					{ model: ClienteRazon, as: 'cliente_razon' },
 					{ model: GtmDestino, as: 'destino' }]
 				},
 				{ model: Producto, as: 'producto' }]
@@ -183,7 +184,7 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, forEach, j
 				include: [{
 					model: GtmDespacho, as: 'despacho',
 					where: { id_empresa: req.params.id_empresa },
-					include: [{ model: Usuario, as: 'usuario' },
+					include: [{ model: Usuario, as: 'usuario',include: [{ model: Persona, as: 'persona'}] },
 					{ model: ClienteRazon, as: 'cliente_razon' },
 					{ model: Cliente, as: 'cliente', where: condicionCliente },
 					{ model: GtmDestino, as: 'destino' }]
@@ -203,7 +204,7 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, forEach, j
 					include: [{
 						model: GtmDespacho, as: 'despacho',
 						where: { id_empresa: req.params.id_empresa },
-						include: [{ model: Usuario, as: 'usuario' },
+						include: [{ model: Usuario, as: 'usuario' ,include: [{ model: Persona, as: 'persona'}]},
 						{ model: ClienteRazon, as: 'cliente_razon' },
 						{ model: Cliente, as: 'cliente', where: condicionCliente },
 						{ model: GtmDestino, as: 'destino' }]

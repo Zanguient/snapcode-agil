@@ -85,7 +85,7 @@
 									</select> productos por página</label>
 							</div>
 						</div>
-						<div class="col-xs-3">
+						<div class="col-xs-6">
 							<table>
 								<tbody>
 									<tr ng-if="tipoEgreso!=diccionario.EGRE_TRASPASO">
@@ -104,21 +104,20 @@
 											<select required id="almacenBusqueda" name="almacen" ng-model="almacenBusqueda" ng-options="almacen as almacen.nombre for almacen in almacenes track by almacen.id"
 											 data-placeholder="Click para escoger" ng-change="establecerAlmacenBusqueda(almacenBusqueda)"></select>&nbsp
 										</td>
+										<td>
+												<label>Cantidades</label>&nbsp
+											</td>
+											<td>
+													<select required id="CantidadesAlmacen" name="cantidades-alma" ng-model="cantidadInventario" data-placeholder="Click para escoger">
+															<option value="0">Todos</option>
+															<option value="1">Con Saldo</option>
+															<option value="2">Sin Saldo</option></select>&nbsp
+											</td>
 									</tr>
 								</tbody>
 							</table>
 						</div>
-						<div class="col-xs-3">
-							<div id="tabla-productos_filter" class="dataTables_filter">
-								<label>Cantidades:
-									<select required id="CantidadesAlmacen" name="cantidades-alma" ng-model="cantidadInventario" data-placeholder="Click para escoger">
-									<option value="0">Todos</option>
-									<option value="1">Con Saldo</option>
-									<option value="2">Sin Saldo</option>
-								</select>
-								</label>
-							</div>
-						</div>
+					
 						<div class="col-xs-2">
 							<div id="tabla-productos_filter" class="dataTables_filter">
 								<label>Búscar:
