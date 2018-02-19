@@ -45,10 +45,10 @@
 										</button>
 										<a id="IngPorPagos" href="javascript:void(0)" ng-click="abrirPopupIngresosPorInventario(inventario)" class="tooltip-success"
 										 data-rel="tooltip" title="Edit">
-									<span class="blue">
-										<i class="ace-icon fa fa-file-text-o align-top bigger-300"></i>
-									</span>
-								</a>
+											<span class="blue">
+												<i class="ace-icon fa fa-file-text-o align-top bigger-300"></i>
+											</span>
+										</a>
 									</td>
 								</tr>
 							</tbody>
@@ -73,15 +73,19 @@
 				<div class="row">
 					<form name="formularioBusquedaInventario" novalidate>
 						<div class="col-xs-3">
-							<div class="dataTables_length" id="tabla-productos_length"><label>
-					Mostrar <select ng-model="itemsPorPagina" ng-change="buscarInventarios(almacenBusqueda.id,1,itemsPorPagina,textoBusqueda,columna,direccion)" name="tabla-proveedores_length" aria-controls="tabla-productos" class="form-control input-sm">
-								<option selected value="10">10</option>
-								<option value="25">25</option>
-								<option value="50">50</option>
-								<option value="100">100</option>
-							</select> productos por página</label></div>
+							<div class="dataTables_length" id="tabla-productos_length">
+								<label>
+									Mostrar
+									<select ng-model="itemsPorPagina" ng-change="buscarInventarios(almacenBusqueda.id,1,itemsPorPagina,textoBusqueda,columna,direccion,cantidadInventario)"
+									 name="tabla-proveedores_length" aria-controls="tabla-productos" class="form-control input-sm">
+										<option selected value="10">10</option>
+										<option value="25">25</option>
+										<option value="50">50</option>
+										<option value="100">100</option>
+									</select> productos por página</label>
+							</div>
 						</div>
-						<div class="col-xs-4">
+						<div class="col-xs-3">
 							<table>
 								<tbody>
 									<tr ng-if="tipoEgreso!=diccionario.EGRE_TRASPASO">
@@ -91,7 +95,7 @@
 										<td>
 											<select required id="sucursalBusqueda" name="sucursal" ng-options="sucursal as sucursal.nombre for sucursal in sucursales track by sucursal.id"
 											 ng-model="sucursalBusqueda" ng-change="obtenerAlmacenes(sucursalBusqueda.id)">
-										</select>&nbsp
+											</select>&nbsp
 										</td>
 										<td>
 											<label>ALMACEN</label>&nbsp
@@ -106,15 +110,28 @@
 						</div>
 						<div class="col-xs-3">
 							<div id="tabla-productos_filter" class="dataTables_filter">
-								<label>Búscar:<input type="search" class="form-control input-sm" ng-model="textoBusqueda" placeholder="" aria-controls="tabla-productos" ng-keydown="verificarPulso($event,textoBusqueda)">
-							</label>
+								<label>Cantidades:
+									<select required id="CantidadesAlmacen" name="cantidades-alma" ng-model="cantidadInventario" data-placeholder="Click para escoger">
+									<option value="0">Todos</option>
+									<option value="1">Con Saldo</option>
+									<option value="2">Sin Saldo</option>
+								</select>
+								</label>
 							</div>
 						</div>
 						<div class="col-xs-2">
-							<button ng-disabled="formularioBusquedaInventario.$invalid" type="button" ng-click="buscarInventarios(almacenBusqueda.id,paginaActual,itemsPorPagina,textoBusqueda,columna,direccion)"
+							<div id="tabla-productos_filter" class="dataTables_filter">
+								<label>Búscar:
+									<input type="search" class="form-control input-sm" ng-model="textoBusqueda" placeholder="" aria-controls="tabla-productos"
+									 ng-keydown="verificarPulso($event,textoBusqueda)">
+								</label>
+							</div>
+						</div>
+						<div class="col-xs-1">
+							<button ng-disabled="formularioBusquedaInventario.$invalid" type="button" ng-click="buscarInventarios(almacenBusqueda.id,paginaActual,itemsPorPagina,textoBusqueda,columna,direccion,cantidadInventario)"
 							 class="btn btn-primary">
-							<i class="ace-icon fa fa-search-plus align-top bigger-125"></i>
-						</button>
+								<i class="ace-icon fa fa-search-plus align-top bigger-125"></i>
+							</button>
 						</div>
 					</form>
 				</div>
@@ -126,16 +143,24 @@
 					<div class="col-xs-6">
 						<div class="dataTables_paginate paging_simple_numbers" id="tabla-productos_paginate">
 							<ul class="pagination">
-								<li class="paginate_button previous" aria-controls="tabla-productos" tabindex="0" id="tabla-productos_previous"><a href="javascript:void(0)" ng-click="buscarInventarios(almacenBusqueda.id,1,itemsPorPagina,textoBusqueda,columna,direccion)">Primero</a></li>
+								<li class="paginate_button previous" aria-controls="tabla-productos" tabindex="0" id="tabla-productos_previous">
+									<a href="javascript:void(0)" ng-click="buscarInventarios(almacenBusqueda.id,1,itemsPorPagina,textoBusqueda,columna,direccion,cantidadInventario)">Primero</a>
+								</li>
 								<li class="paginate_button previous" ng-class="{disabled:paginaActual==1}" aria-controls="tabla-productos" tabindex="0" id="tabla-productos_previous">
-									<a href="javascript:void(0)" e-disabled="paginaActual==1" ng-click="buscarInventarios(almacenBusqueda.id,paginaActual-1,itemsPorPagina,textoBusqueda,columna,direccion)">
+									<a href="javascript:void(0)" e-disabled="paginaActual==1" ng-click="buscarInventarios(almacenBusqueda.id,paginaActual-1,itemsPorPagina,textoBusqueda,columna,direccion,cantidadInventario)">
 										<<</a>
 								</li>
 								<li class="paginate_button" ng-class="{active:paginaActual==pagina}" aria-controls="tabla-productos" tabindex="0" ng-repeat="pagina in paginas"
-								 ng-if="abs(paginaActual-pagina)<4"><a href="javascript:void(0)" ng-click="buscarInventarios(almacenBusqueda.id,pagina,itemsPorPagina,textoBusqueda,columna,direccion)">{{pagina}}</a></li>
+								 ng-if="abs(paginaActual-pagina)<4">
+									<a href="javascript:void(0)" ng-click="buscarInventarios(almacenBusqueda.id,pagina,itemsPorPagina,textoBusqueda,columna,direccion,cantidadInventario)">{{pagina}}</a>
+								</li>
 								<li class="paginate_button" ng-class="{disabled:paginaActual==paginas.length}" aria-controls="tabla-productos" tabindex="0"
-								 id="tabla-productos_next"><a href="javascript:void(0)" e-disabled="paginaActual==paginas.length" ng-click="buscarInventarios(almacenBusqueda.id,paginaActual+1,itemsPorPagina,textoBusqueda,columna,direccion)">>></a></li>
-								<li class="paginate_button previous" aria-controls="tabla-productos" tabindex="0" id="tabla-productos_previous"><a href="javascript:void(0)" ng-click="buscarInventarios(almacenBusqueda.id,paginas.length,itemsPorPagina,textoBusqueda,columna,direccion)">Ultimo</a></li>
+								 id="tabla-productos_next">
+									<a href="javascript:void(0)" e-disabled="paginaActual==paginas.length" ng-click="buscarInventarios(almacenBusqueda.id,paginaActual+1,itemsPorPagina,textoBusqueda,columna,direccion,cantidadInventario)">>></a>
+								</li>
+								<li class="paginate_button previous" aria-controls="tabla-productos" tabindex="0" id="tabla-productos_previous">
+									<a href="javascript:void(0)" ng-click="buscarInventarios(almacenBusqueda.id,paginas.length,itemsPorPagina,textoBusqueda,columna,direccion,cantidadInventario)">Ultimo</a>
+								</li>
 							</ul>
 						</div>
 					</div>
@@ -146,7 +171,8 @@
 
 	<div id="dialog-actualizacion-inventario" title="Actualización Inventario">
 		<form name="formularioActInventario" novalidate ng-submit="modificarCantidadInventario(inventario)">
-			<p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>¿Ingrese la nueva cantidad?</p>
+			<p>
+				<span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>¿Ingrese la nueva cantidad?</p>
 			<input required ng-model="inventario.cantidad" min="0" type="number" step="0.001">
 			<button type="submit" class="btn btn-success" ng-disabled="formularioActInventario.$invalid">Guardar</button>
 			<button type="button" class="btn btn-danger" ng-click="cerrarPopupActualizacionInventario()">Cancelar</button>
@@ -203,7 +229,7 @@
 											<td>
 												<select required id="sucursalPro" name="sucursalPro" ng-options="sucursal as sucursal.nombre for sucursal in sucursales track by sucursal.id"
 												 ng-model="imppro.sucursal" ng-change="obtenerAlmacenes(imppro.sucursal.id)">
-											</select>&nbsp
+												</select>&nbsp
 											</td>
 											<td>
 												<select required id="almacenPro" name="almacenPro" ng-model="id_almacen" ng-options="almacen.id as almacen.nombre for almacen in almacenes track by almacen.id"
@@ -241,11 +267,11 @@
 											</td>
 											<td>
 												<button type="button" ng-disabled="formularioBusquedaProducto.$invalid" ng-click="guardarInventarioInicial(producto)" class="btn btn-info btn-sm">
-												<i class="ace-icon fa fa-floppy-o bigger-110"></i>
-											</button>
+													<i class="ace-icon fa fa-floppy-o bigger-110"></i>
+												</button>
 												<button type="button" class="btn btn-sm btn-danger" ng-click="cerrarPopupInvInicial()">
-												<i class="ace-icon fa fa-times red2 align-top bigger-125"></i>
-											</button>
+													<i class="ace-icon fa fa-times red2 align-top bigger-125"></i>
+												</button>
 											</td>
 										</tr>
 									</tbody>
@@ -277,9 +303,9 @@
 							<tr>
 								<th class="center">
 									<label class="pos-rel">
-								<input type="checkbox" class="ace" />
-								<span class="lbl"></span>
-							</label>
+										<input type="checkbox" class="ace" />
+										<span class="lbl"></span>
+									</label>
 								</th>
 								<th>Nº</th>
 								<th>Razón Social Proveedor</th>
@@ -292,9 +318,9 @@
 							<tr ng-repeat="compra in ingPorInventario">
 								<td class="center">
 									<label class="pos-rel">
-								<input type="checkbox" class="ace" />
-								<span class="lbl"></span>
-							</label>
+										<input type="checkbox" class="ace" />
+										<span class="lbl"></span>
+									</label>
 								</td>
 								<td>{{$index+1}}</td>
 								<td>{{compra.clase.nombre}}</td>
@@ -319,35 +345,55 @@
 												<th>Cantidad</th>
 												<th>Unidad</th>
 												<th>Detalle</th>
-												<th  class="col-md-3"ng-if="usuario.empresa.usar_vencimientos">Lote</th>
+												<th class="col-md-3" ng-if="usuario.empresa.usar_vencimientos">Lote</th>
 												<th class="col-md-4" ng-if="usuario.empresa.usar_vencimientos">Vencimiento. </th>
-												<th  class="col-md-3">P. Unit</th>
+												<th class="col-md-3">P. Unit</th>
 												<th>Total</th>
 											</tr>
 										</thead>
 										<tbody>
 											<tr ng-repeat="detallesMovimiento in compra.detallesMovimiento">
-												
-													
+
+
 												<td>{{detallesMovimiento.producto.codigo}}</td>
-												<td><span ng-hide="editing" ng-dblclick="editItem(detallesMovimiento)">{{detallesMovimiento.cantidad}}</span>
-        											<input class="col-sm-12" type="number" ng-change="editMovientoDetalle(detallesMovimiento)" ng-show="editing" ng-model="detallesMovimiento.cantidad" ng-blur="doneEditing(detallesMovimiento)" autofocus />
-													<a class="green"><i ng-if="animate" class="ace-icon fa fa-floppy-o bigger--130"></i></a></td>
+												<td>
+													<span ng-hide="editing" ng-dblclick="editItem(detallesMovimiento)">{{detallesMovimiento.cantidad}}</span>
+													<input class="col-sm-12" type="number" ng-change="editMovientoDetalle(detallesMovimiento)" ng-show="editing" ng-model="detallesMovimiento.cantidad"
+													 ng-blur="doneEditing(detallesMovimiento)" autofocus />
+													<a class="green">
+														<i ng-if="animate" class="ace-icon fa fa-floppy-o bigger--130"></i>
+													</a>
+												</td>
 												<td>{{detallesMovimiento.producto.unidad_medida}}</td>
 												<td>{{detallesMovimiento.producto.nombre}}</td>
-												<td ng-if="usuario.empresa.usar_vencimientos"><span ng-hide="editing" ng-dblclick="editItem(detallesMovimiento)">{{detallesMovimiento.inventario.lote}}</span>
-        											<input  class="col-sm-12" ng-change="editMovientoDetalle(detallesMovimiento)" ng-show="editing" ng-model="detallesMovimiento.inventario.lote" ng-blur="doneEditing(detallesMovimiento)" autofocus />
-													<a class="green"><i ng-if="animate" class="ace-icon fa fa-floppy-o bigger--130"></i></a></td>
-												<td ng-if="usuario.empresa.usar_vencimientos"><span ng-hide="editing" ng-dblclick="editItem(detallesMovimiento)">{{detallesMovimiento.inventario.fecha_vencimientoTexto}}</span>
-        											<input class="col-sm-12" ng-change="editMovientoDetalle(detallesMovimiento)" ng-show="editing" ng-model="detallesMovimiento.inventario.fecha_vencimientoTexto" ng-blur="doneEditing(detallesMovimiento)" autofocus />
-													<a class="green"><i ng-if="animate" class="ace-icon fa fa-floppy-o bigger--130"></i></a></td>
-												<td><span ng-hide="editing" ng-dblclick="editItem(detallesMovimiento)">{{detallesMovimiento.producto.precio_unitario | number:2}}</span>
-        											<input class="col-sm-12" type="number" ng-change="editMovientoDetalle(detallesMovimiento)" ng-show="editing" ng-model="detallesMovimiento.producto.precio_unitario" ng-blur="doneEditing(detallesMovimiento)" autofocus />
-													<a class="green"><i ng-if="animate" class="ace-icon fa fa-floppy-o bigger--130"></i></a></td>
+												<td ng-if="usuario.empresa.usar_vencimientos">
+													<span ng-hide="editing" ng-dblclick="editItem(detallesMovimiento)">{{detallesMovimiento.inventario.lote}}</span>
+													<input class="col-sm-12" ng-change="editMovientoDetalle(detallesMovimiento)" ng-show="editing" ng-model="detallesMovimiento.inventario.lote"
+													 ng-blur="doneEditing(detallesMovimiento)" autofocus />
+													<a class="green">
+														<i ng-if="animate" class="ace-icon fa fa-floppy-o bigger--130"></i>
+													</a>
+												</td>
+												<td ng-if="usuario.empresa.usar_vencimientos">
+													<span ng-hide="editing" ng-dblclick="editItem(detallesMovimiento)">{{detallesMovimiento.inventario.fecha_vencimientoTexto}}</span>
+													<input class="col-sm-12" ng-change="editMovientoDetalle(detallesMovimiento)" ng-show="editing" ng-model="detallesMovimiento.inventario.fecha_vencimientoTexto"
+													 ng-blur="doneEditing(detallesMovimiento)" autofocus />
+													<a class="green">
+														<i ng-if="animate" class="ace-icon fa fa-floppy-o bigger--130"></i>
+													</a>
+												</td>
+												<td>
+													<span ng-hide="editing" ng-dblclick="editItem(detallesMovimiento)">{{detallesMovimiento.producto.precio_unitario | number:2}}</span>
+													<input class="col-sm-12" type="number" ng-change="editMovientoDetalle(detallesMovimiento)" ng-show="editing" ng-model="detallesMovimiento.producto.precio_unitario"
+													 ng-blur="doneEditing(detallesMovimiento)" autofocus />
+													<a class="green">
+														<i ng-if="animate" class="ace-icon fa fa-floppy-o bigger--130"></i>
+													</a>
+												</td>
 												<td>{{detallesMovimiento.total | number:2}}</td>
-												
+
 											</tr>
-											
+
 										</tbody>
 									</table>
 								</td>
@@ -356,9 +402,9 @@
 					</table>
 				</div>
 				<button id="cerrarPopUp" type="button" class="btn btn-primary btn-danger" ng-click="cerrarPopupIngresosPorInventario()">
-				<i class="ace-icon fa fa-times red2 align-top bigger-125"></i>
-				CERRAR
-			</button>
+					<i class="ace-icon fa fa-times red2 align-top bigger-125"></i>
+					CERRAR
+				</button>
 			</div>
 		</form>
 	</div>

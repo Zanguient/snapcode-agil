@@ -429,6 +429,13 @@
 						</div>
 						<div class="step-pane" data-step="4">
 							<div class="form-group">
+								<label class="col-sm-6 control-label no-padding-right" for="Bloqueado">Usar línea de Crédito</label>
+								<div class="col-sm-6">
+									<input ng-model="cliente.usar_limite_credito" checked="checked" type="checkbox" class="ace ace-switch ace-switch-5">
+									<span class="lbl" data-lbl="Si&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;No"></span>
+								</div>
+							</div>
+							<div class="form-group">
 								<label class="col-sm-3 control-label no-padding-right" for="linea_credito">Línea de crédito</label>
 								<div class="col-sm-9">
 									<input type="number" min="0" id="linea_credito" ng-model="cliente.linea_credito" placeholder="Línea de crédito" class="form-control"
@@ -444,8 +451,8 @@
 							<div class="form-group">
 								<label class="col-sm-3 control-label no-padding-right" for="Bloqueado">Bloqueado</label>
 								<div class="col-sm-9">
-										<input  ng-model="cliente.usar_limite_credito"  checked="checked" type="checkbox" class="ace ace-switch ace-switch-5">
-										<span class="lbl" data-lbl="Si&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;No"></span>
+									<input ng-model="cliente.bloquear_limite_credito" checked="checked" type="checkbox" class="ace ace-switch ace-switch-5">
+									<span class="lbl" data-lbl="Si&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;No"></span>
 								</div>
 							</div>
 						</div>

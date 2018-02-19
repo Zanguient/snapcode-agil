@@ -90,6 +90,7 @@ angular.module('agil.controladores')
 			return gruposActualizado;
 		}
 		$scope.verificarLimiteCredito = function (ventaActual) {
+
 			if (ventaActual.cliente && ventaActual.tipoPago.nombre == $scope.diccionario.TIPO_PAGO_CREDITO) {
 				var promesa = VerificarLimiteCredito(ventaActual)
 
@@ -98,39 +99,43 @@ angular.module('agil.controladores')
 					var FechaActual = new Date()
 					var totalsaldo = 0
 					var mensaje = { uno: "", dos: "" }
-					
+
 					dato.ventas.forEach(function (venta, index, array) {
 						totalsaldo += venta.saldo
 						console.log(totalsaldo)
 						if (totalsaldo >= ventaActual.cliente.linea_credito) {
 							mensaje.uno = "exedio el limite de la linea de credito"
-							
+
 						}
 						if (index == (array.length - 1)) {
 							var fechaVenta = new Date(PrimeraVenta.fecha)
 							var dato = $scope.diferenciaEntreDiasEnDias(fechaVenta, FechaActual)
 							if (dato > ventaActual.cliente.plazo_credito) {
 								mensaje.dos = "exedio el limide de dias de credito"
+
+								if (ventaActual.cliente.bloquear_limite_credito == true) {
+									$scope.mostrarMensaje(mensaje.uno + " " + mensaje.dos + " no puede realizar mas compras")
+									$scope.blockerVenta = false
+								} else {
+									$scope.mostrarMensaje(mensaje.uno + " " + mensaje.dos + ", pero puede seguir consumiendo")
+									$scope.blockerVenta = true
+								}
 								
-								if(ventaActual.cliente.usar_limite_credito==true){
-									$scope.mostrarMensaje(mensaje.uno+" "+mensaje.dos+" no puede realizar mas compras")
-								}else{
-									$scope.mostrarMensaje(mensaje.uno+" "+mensaje.dos+", pero puede seguir consumiendo")
-								}	
-								$scope.blockerVenta=true	
-							}else{
-								if(ventaActual.cliente.usar_limite_credito==true){
-									$scope.mostrarMensaje(mensaje.uno+" "+mensaje.dos+" no puede realizar mas compras")
-								}else{
-									$scope.mostrarMensaje(mensaje.uno+" "+mensaje.dos+", pero puede seguir consumiendo")
-								}	
-								$scope.blockerVenta=false							
+							} else {
+								if (ventaActual.cliente.bloquear_limite_credito == true) {
+									$scope.mostrarMensaje(mensaje.uno + " " + mensaje.dos + " no puede realizar mas compras")
+									$scope.blockerVenta = false
+								} else {
+									$scope.mostrarMensaje(mensaje.uno + " " + mensaje.dos + ", pero puede seguir consumiendo")
+									$scope.blockerVenta = true
+								}
+								
 							}
 						}
 					});
 				})
-			}else{
-				$scope.blockerVenta=false
+			} else {
+				$scope.blockerVenta = true
 			}
 
 		}
@@ -501,7 +506,9 @@ angular.module('agil.controladores')
 			var tipoPago = $.grep($scope.tiposPago, function (e) { return e.id == tipoPagoO.id; })[0];
 			$scope.esContado = tipoPago.nombre_corto == 'CONT' ? true : false;
 			$scope.calcularCambio();
-			$scope.verificarLimiteCredito(venta)
+			if (venta.cliente.usar_limite_credito == true) {
+				$scope.verificarLimiteCredito(venta)
+			}
 		}
 
 		$scope.recalcular = function () {
@@ -1284,7 +1291,7 @@ angular.module('agil.controladores')
 		}
 
 		$scope.crearNuevaVenta = function () {
-			$scope.blockerVenta=false
+			$scope.blockerVenta = true
 			$scope.venta = new Venta({
 				id_empresa: $scope.usuario.id_empresa, id_usuario: $scope.usuario.id, cliente: {},
 				detallesVenta: [], detallesVentaNoConsolidadas: [], pagado: 0, cambio: 0, despachado: false, vendedor: null
@@ -1960,7 +1967,6 @@ angular.module('agil.controladores')
 			$scope.eliminarPopup($scope.idModalInventario);
 			$scope.eliminarPopup($scope.idModalPanelVentasCobro);
 			$scope.eliminarPopup($scope.idModalEdicionVendedor);
-			$scope.eliminarPopup($scope.idModalImpresionVencimiento);
 		});
 
 		$scope.UsarLectorDeBarra = function () {

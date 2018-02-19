@@ -198,7 +198,7 @@ angular.module('agil.servicios')
 					if (index === (array.length - 1)) {
 
 						var asientosContables = arregloDebe.concat(arregloHaber);
-						var doc = new PDFDocument({compress:false, size: [612, 792], margin: 10 });
+						var doc = new PDFDocument({ compress: false, size: [612, 792], margin: 10 });
 						var stream = doc.pipe(blobStream());
 						doc.font('Helvetica', 8);
 						var itemsPorPagina = 19;
@@ -533,9 +533,9 @@ angular.module('agil.servicios')
 					doc.text(comprobante.sucursal.comprobante_caja_chica_correlativo, 555, 65)
 				} */
 				doc.font('Helvetica-Bold', 12);
-					doc.text("N°: ", 535, 65)
-					doc.font('Helvetica', 12);
-					doc.text(comprobante.numero, 555, 65)
+				doc.text("N°: ", 535, 65)
+				doc.font('Helvetica', 12);
+				doc.text(comprobante.numero, 555, 65)
 				doc.rect(20, 90, 571, 0).stroke();
 				doc.font('Helvetica', 8);
 				doc.text(comprobante.gloza, 38, 105)
@@ -1535,8 +1535,10 @@ angular.module('agil.servicios')
 						doc.text(venta.detallesVenta[i].producto.unidad_medida, 120, y, { width: 40 });
 						doc.text(venta.detallesVenta[i].producto.nombre, 160, y - 9, { width: 80 });
 						if (usuario.empresa.usar_vencimientos) {
-							doc.text(venta.detallesVenta[i].fecha_vencimiento.getDate() + "/" + (venta.detallesVenta[i].fecha_vencimiento.getMonth() + 1) + "/" + venta.detallesVenta[i].fecha_vencimiento.getFullYear(), 245, y);
-							doc.text(venta.detallesVenta[i].lote, 285, y);
+							if(venta.con_vencimiento){
+								doc.text(venta.detallesVenta[i].fecha_vencimiento.getDate() + "/" + (venta.detallesVenta[i].fecha_vencimiento.getMonth() + 1) + "/" + venta.detallesVenta[i].fecha_vencimiento.getFullYear(), 245, y);
+								doc.text(venta.detallesVenta[i].lote, 285, y);
+							}
 						}
 						doc.text(venta.detallesVenta[i].precio_unitario.toFixed(2), 310, y);
 						doc.text(venta.detallesVenta[i].importe.toFixed(2), 345, y);
@@ -1551,8 +1553,10 @@ angular.module('agil.servicios')
 						doc.text(venta.detallesVenta[i].producto.unidad_medida, 160, y);
 						doc.text(venta.detallesVenta[i].producto.nombre, 200, y - 9, { width: 150 });
 						if (usuario.empresa.usar_vencimientos) {
-							doc.text(venta.detallesVenta[i].fecha_vencimiento.getDate() + "/" + (venta.detallesVenta[i].fecha_vencimiento.getMonth() + 1) + "/" + venta.detallesVenta[i].fecha_vencimiento.getFullYear(), 360, y);
-							doc.text(venta.detallesVenta[i].lote, 415, y);
+							if(venta.con_vencimiento){
+								doc.text(venta.detallesVenta[i].fecha_vencimiento.getDate() + "/" + (venta.detallesVenta[i].fecha_vencimiento.getMonth() + 1) + "/" + venta.detallesVenta[i].fecha_vencimiento.getFullYear(), 360, y);
+								doc.text(venta.detallesVenta[i].lote, 415, y);
+							}
 						}
 						doc.text(venta.detallesVenta[i].precio_unitario.toFixed(2), 460, y);
 						doc.text(venta.detallesVenta[i].total.toFixed(2), 520, y);
@@ -1651,8 +1655,10 @@ angular.module('agil.servicios')
 						doc.text("UNID.", 130, 210);
 						doc.text("DETALLE", 160, 210);
 						if (usuario.empresa.usar_vencimientos) {
-							doc.text("VENC.", 245, 210)
-							doc.text("LOTE.", 280, 210)
+							if(venta.con_vencimiento){
+								doc.text("VENC.", 245, 210)
+								doc.text("LOTE.", 280, 210)
+							}
 						}
 						doc.text("P. UNIT.", 310, 210);
 						doc.text("IMPORTE", 345, 210);
@@ -1667,8 +1673,10 @@ angular.module('agil.servicios')
 						doc.text("UNIDAD", 165, 210);
 						doc.text("DETALLE", 200, 210);
 						if (usuario.empresa.usar_vencimientos) {
-							doc.text("VENC.", 360, 210)
-							doc.text("LOTE.", 415, 210)
+							if(venta.con_vencimiento){
+								doc.text("VENC.", 360, 210)
+								doc.text("LOTE.", 415, 210)
+							}
 						}
 						doc.text("P.UNIT.", 460, 210);
 						doc.text("TOTAL", 520, 210);
@@ -2302,32 +2310,28 @@ angular.module('agil.servicios')
 		}])
 
 	.factory('ImprimirPdfAlertaDespacho', ['blockUI', 'DibujarCabeceraPDFAlertaDespacho',
-		function (blockUI, DespacDibujarCabeceraPDFAlertaDespacho) {
-			var res = function (despachos) {
+		function (blockUI, DibujarCabeceraPDFAlertaDespacho) {
+			var res = function (despachos, filtro, usuario) {
 				blockUI.start();
-				var doc = new PDFDocument({ size: 'letter', margin: 10 });
+				var doc = new PDFDocument({ compress: false, size: 'letter', margin: 10 });
 				var stream = doc.pipe(blobStream());
 				// draw some text
 				var totalCosto = 0;
-				var y = 120, itemsPorPagina = 33, items = 0, pagina = 1, totalPaginas = Math.ceil(despachos.compras.length / itemsPorPagina);
-				$scope.DibujarCabeceraPDFAlertaDespacho(doc, 1, totalPaginas, despachos);
+				var y = 140, itemsPorPagina = 33, items = 0, pagina = 1, totalPaginas = Math.ceil(despachos.length / itemsPorPagina);
+				DibujarCabeceraPDFAlertaDespacho(doc, 1, totalPaginas, despachos, filtro, usuario);
 				doc.font('Helvetica', 8);
 				for (var i = 0; i < despachos.length && items <= itemsPorPagina; i++) {
-
-					doc.rect(30, y - 10, 555, 20).stroke();
-					/* despachos.compras[i].fecha = new Date(despachos.compras[i].fecha);
-					doc.text(despachos.compras[i].fecha.getDate() + "/" + (despachos.compras[i].fecha.getMonth() + 1) + "/" + despachos.compras[i].fecha.getFullYear(), 45, y);
-					doc.text(despachos.compras[i].id_movimiento, 170, y, { width: 45, align: "right" });
-	
-					if (despachos.compras[i].factura == null) {
-						doc.text('PROFORMA', 240, y);
-					} else {
-						doc.text('Factura nro. ' + despachos.compras[i].factura, 240, y);
-					}
-					doc.text(despachos.compras[i].saldo, 445, y, { width: 50, align: "right" });
-					totalCosto = totalCosto + despachos.compras[i].saldo;
-					doc.text(totalCosto, 500, y, { width: 50, align: "right" }); */
-					y = y + 20;
+					var detalle_despacho = despachos[i]
+					/* doc.rect(30, y - 10, 555, 20).stroke(); */
+					doc.text(i + 1, 45, y);
+					doc.text(detalle_despacho.despacho.usuario.persona.nombre_completo, 70, y, { width: 100 });
+					doc.text(detalle_despacho.despacho.cliente.razon_social, 190, y, { width: 100 });
+					doc.text(detalle_despacho.producto.nombre, 300, y, { width: 50 });
+					doc.text(detalle_despacho.cantidad, 390, y, { width: 50 });
+					doc.text(detalle_despacho.cantidad_despacho, 440, y, { width: 50 });
+					doc.text(detalle_despacho.cantidad - detalle_despacho.cantidad_despacho, 490, y, { width: 50 });
+					doc.text("Bs. " + detalle_despacho.servicio_transporte + ".-", 545, y, { width: 80 });
+					y = y + 25;
 					items++;
 
 					if (items == itemsPorPagina) {
@@ -2335,14 +2339,10 @@ angular.module('agil.servicios')
 						y = 120;
 						items = 0;
 						pagina = pagina + 1;
-						$scope.DibujarCabeceraPDFAlertaDespacho(doc, pagina, totalPaginas, despachos);
+						DibujarCabeceraPDFAlertaDespacho(doc, pagina, totalPaginas, despachos, filtro, usuario);
 						doc.font('Helvetica', 8);
 					}
 				}
-				doc.rect(30, y - 10, 555, 20).stroke();
-				doc.font('Helvetica-Bold', 8);
-				doc.text("Total General", 350, y);
-				// doc.text(totalCosto, 446, y, { width: 50, align: "right" });
 				doc.end();
 				stream.on('finish', function () {
 					var fileURL = stream.toBlobURL('application/pdf');
@@ -2353,56 +2353,169 @@ angular.module('agil.servicios')
 			}
 			return res;
 		}])
-	/* $scope.generarExcelEstadoCuentasProveedor = function (proveedor) {
-		var data = [["", "", "ESTADO CUENTAS PROVEEDOR"], ["Deudor :" + proveedor.razon_social], ["Fecha", "N Recibo", "Descripción", "monto", "total", "total General"]]
-		var totalCosto = 0;
-		for (var i = 0; i < proveedor.compras.length; i++) {
-			var columns = [];
-			totalCosto = totalCosto + proveedor.compras[i].saldo;
-			proveedor.compras[i].fecha = new Date(proveedor.compras[i].fecha);
-			columns.push(proveedor.compras[i].fecha.getDate() + "/" + (proveedor.compras[i].fecha.getMonth() + 1) + "/" + proveedor.compras[i].fecha.getFullYear());
-			columns.push(proveedor.compras[i].id_movimiento);
-			if (proveedor.compras[i].factura == null) {
-				columns.push('PROFORMA');
-			} else {
-				columns.push('factura : ' + proveedor.compras[i].factura);
+	.factory('ImprimirPdfDespachos', ['blockUI', 'DibujarCabeceraPDFDespacho',
+		function (blockUI, DibujarCabeceraPDFAlertaDespacho) {
+			var res = function (despachos, filtro, usuario) {
+				blockUI.start();
+				var doc = new PDFDocument({ compress: false, size: 'letter', margin: 10 });
+				var stream = doc.pipe(blobStream());
+				// draw some text
+				var totalCosto = 0;
+				var y = 140, itemsPorPagina = 33, items = 0, pagina = 1, totalPaginas = Math.ceil(despachos.length / itemsPorPagina);
+				DibujarCabeceraPDFAlertaDespacho(doc, 1, totalPaginas, despachos, filtro, usuario);
+				doc.font('Helvetica', 8);
+				for (var i = 0; i < despachos.length && items <= itemsPorPagina; i++) {
+					var detalle_despacho = despachos[i]
+					/* doc.rect(30, y - 10, 555, 20).stroke(); */
+					doc.text(i + 1, 45, y);
+					doc.text(detalle_despacho.despacho.usuario.persona.nombre_completo, 70, y, { width: 100 });
+					doc.text(detalle_despacho.despacho.cliente.razon_social, 190, y, { width: 100 });
+					doc.text(detalle_despacho.producto.nombre, 320, y, { width: 50 });
+					doc.text(detalle_despacho.cantidad, 420, y, { width: 50 });
+					doc.text("Bs. " + detalle_despacho.servicio_transporte + ".-", 500, y, { width: 80 });
+					y = y + 25;
+					items++;
+
+					if (items == itemsPorPagina) {
+						doc.addPage({ margin: 0, bufferPages: true });
+						y = 120;
+						items = 0;
+						pagina = pagina + 1;
+						DibujarCabeceraPDFAlertaDespacho(doc, pagina, totalPaginas, despachos, filtro, usuario);
+						doc.font('Helvetica', 8);
+					}
+				}
+				doc.end();
+				stream.on('finish', function () {
+					var fileURL = stream.toBlobURL('application/pdf');
+					window.open(fileURL, '_blank', 'location=no');
+				});
+				blockUI.stop();
+
 			}
-			columns.push(proveedor.compras[i].saldo);
-			columns.push(totalCosto);
-			columns.push(totalCosto);
-			data.push(columns);
-		}
+			return res;
+		}])
 
-		var ws_name = "SheetJS";
-		var wb = new Workbook(), ws = sheet_from_array_of_arrays(data);
-		
-		wb.SheetNames.push(ws_name);
-		wb.Sheets[ws_name] = ws;
-		var wbout = XLSX.write(wb, { bookType: 'xlsx', bookSST: true, type: 'binary' });
-		saveAs(new Blob([s2ab(wbout)], { type: "application/octet-stream" }), "REPORTE-ESTADO-CUENTA-PROVEEDOR.xlsx");
-		blockUI.stop();
+	.factory('ExportarExelAlarmasDespachos', ['blockUI',
+		function (blockUI) {
+			res = function (despachos, filtro, usuario) {
+				var vendedor = "Todos"
+			var cliente = "Todos"
+			if (filtro.empleado != "") {
+				vendedor = despachos[0].despacho.usuario.persona.nombre_completo
+			}
+			if (filtro.razon_social != "") {
+				cliente = despachos[0].despacho.cliente.razon_social
+			}
+				var data = [["", "", "REPORTE DE DESPACHOS "], ["Vendedor :" +vendedor], ["Cliente :" + cliente], ["Nro", "Vendedor", "Cliente","Direccion","Razón social","Fecha", "Producto", "Cant.", "Desp.","Saldo","S. Transp."]]
+				var totalCosto = 0;
+				for (var i = 0; i < despachos.length; i++) {
+					var detalle_despacho= despachos[i]
+					detalle_despacho.despacho.usuario.persona.nombre_completo
+					var columns = [];
+					columns.push(i+1)
+					columns.push(detalle_despacho.despacho.usuario.persona.nombre_completo)
+					columns.push(detalle_despacho.despacho.cliente.razon_social)
+					columns.push(detalle_despacho.despacho.destino.direccion)
+					columns.push(detalle_despacho.despacho.cliente_razon.razon_social)
+					var fecha = new Date(detalle_despacho.despacho.fecha)
+					var dia=((fecha.getDate())>=10)? fecha.getDate() :"0"+ fecha.getDate()
+					var mes=((fecha.getMonth())>=10)? fecha.getMonth() :"0"+ fecha.getMonth()
+					columns.push(dia+"/"+mes+"/"+fecha.getFullYear())
+					columns.push(detalle_despacho.producto.nombre)
+					columns.push(detalle_despacho.cantidad)
+					columns.push(detalle_despacho.cantidad_despacho)
+					var desp=detalle_despacho.cantidad - detalle_despacho.cantidad_despacho
+					columns.push(desp)
+					columns.push(detalle_despacho.servicio_transporte)
+					data.push(columns);
+				}
 
-	} */
+				var ws_name = "SheetJS";
+				var wb = new Workbook(), ws = sheet_from_array_of_arrays(data);
 
-	.factory('DibujarCabeceraPDFTraspaso', [function () {
-		res = function (doc, pagina, totalPaginas, despachos) {
+				wb.SheetNames.push(ws_name);
+				wb.Sheets[ws_name] = ws;
+				var wbout = XLSX.write(wb, { bookType: 'xlsx', bookSST: true, type: 'binary' });
+				saveAs(new Blob([s2ab(wbout)], { type: "application/octet-stream" }), "REPORTE-DESPACHOS.xlsx");
+				blockUI.stop();
+
+			}
+			return res;
+		}])
+	.factory('DibujarCabeceraPDFAlertaDespacho', [function () {
+		res = function (doc, pagina, totalPaginas, despachos, filtro, usuario) {
 			doc.font('Helvetica-Bold', 12);
-			doc.text("ESTADO DE CUENTAS", 0, 25, { align: "center" });
+			doc.text("REPORTE DE PEDIDOS", 0, 25, { align: "center" });
+			doc.font('Helvetica', 12);
+			if (filtro.inicio && filtro.fin) doc.text(filtro.inicio + " AL " + filtro.fin, 0, 45, { align: "center" });
 			doc.font('Helvetica-Bold', 8);
 			doc.text("PÁGINA " + pagina + " DE " + totalPaginas, 0, 740, { align: "center" });
-			doc.rect(30, 50, 555, 30).stroke();
+			/* doc.rect(30, 70, 555, 30).stroke(); */
+			var vendedor = "Todos"
+			var cliente = "Todos"
+			if (filtro.empleado != "") {
+				vendedor = despachos[0].despacho.usuario.persona.nombre_completo
+			}
+			if (filtro.razon_social != "") {
+				cliente = despachos[0].despacho.cliente.razon_social
+			}
 			doc.font('Helvetica-Bold', 8);
-			doc.text("Acreedor : ", 45, 60);
+			doc.text("Vendedor : " + vendedor, 45, 80);
+			doc.text("Cliente : " + cliente, 245, 80);
 			doc.font('Helvetica', 8);
 			//doc.text(despachos.razon_social, 140, 60);
-			doc.rect(30, 80, 555, 30).stroke();
+			/* doc.rect(30, 100, 555, 30).stroke(); */
 			doc.font('Helvetica-Bold', 8);
-			doc.text("Fecha", 45, 90);
-			doc.text("Nro. Recibo", 170, 90, { width: 50 });
-			doc.text("Descripción", 240, 90, { width: 60 });
-			doc.text("Monto", 470, 90, { width: 50 });
-			doc.text("Total", 530, 90, { width: 50 });
+			doc.text("Nro.", 45, 110);
+			doc.text("Vendedor", 80, 110, { width: 50 });
+			doc.text("Cliente", 200, 110, { width: 60 });
+			doc.text("Producto", 300, 110, { width: 50 });
+			doc.text("Cant.", 390, 110, { width: 50 });
+			doc.text("desp.", 440, 110, { width: 50 });
+			doc.text("saldo", 490, 110, { width: 50 });
+			doc.text("S. Transp.", 535, 110, { width: 80 });
 			doc.font('Helvetica', 8);
+			var currentDate = new Date();
+			doc.text("USUARIO: " + usuario.persona.nombre_completo + " fecha " + currentDate.getDate() + "/" + (currentDate.getMonth() + 1) + "/" + currentDate.getFullYear() + "Hrs." + currentDate.getHours() + ":" + currentDate.getMinutes(), 15, 765);
+
+		}
+		return res;
+	}])
+	.factory('DibujarCabeceraPDFDespacho', [function () {
+		res = function (doc, pagina, totalPaginas, despachos, filtro, usuario) {
+			doc.font('Helvetica-Bold', 12);
+			doc.text("REPORTE DE PEDIDOS", 0, 25, { align: "center" });
+			doc.font('Helvetica', 12);
+			if (filtro.inicio && filtro.fin) doc.text(filtro.inicio + " AL " + filtro.fin, 0, 45, { align: "center" });
+			doc.font('Helvetica-Bold', 8);
+			doc.text("PÁGINA " + pagina + " DE " + totalPaginas, 0, 740, { align: "center" });
+			/* doc.rect(30, 70, 555, 30).stroke(); */
+			var vendedor = "Todos"
+			var cliente = "Todos"
+			/* 	if (filtro.empleado != "") {
+					vendedor = despachos[0].despacho.usuario.persona.nombre_completo
+				}
+				if (filtro.razon_social != "") {
+					cliente = despachos[0].despacho.cliente.razon_social
+				} */
+			doc.font('Helvetica-Bold', 8);
+			doc.text("Vendedor : " + vendedor, 45, 80);
+			doc.text("Cliente : " + cliente, 245, 80);
+			doc.font('Helvetica', 8);
+			//doc.text(despachos.razon_social, 140, 60);
+			/* doc.rect(30, 100, 555, 30).stroke(); */
+			doc.font('Helvetica-Bold', 8);
+			doc.text("Nro.", 45, 110);
+			doc.text("Vendedor", 80, 110, { width: 50 });
+			doc.text("Cliente", 200, 110, { width: 60 });
+			doc.text("Producto", 320, 110, { width: 50 });
+			doc.text("Cant.", 420, 110, { width: 50 });
+			doc.text("S. Transp.", 500, 110, { width: 80 });
+			doc.font('Helvetica', 8);
+			var currentDate = new Date();
+			doc.text("USUARIO: " + usuario.persona.nombre_completo + " fecha " + currentDate.getDate() + "/" + (currentDate.getMonth() + 1) + "/" + currentDate.getFullYear() + "Hrs." + currentDate.getHours() + ":" + currentDate.getMinutes(), 15, 765);
+
 		}
 		return res;
 	}])

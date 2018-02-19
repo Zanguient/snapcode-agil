@@ -7,7 +7,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 		ImprimirSalida, Diccionario, VentasComprobantesEmpresa, ComprasComprobantesEmpresa, LibroMayorCuenta, Paginator, ComprobanteRevisarPaginador, AsignarComprobanteFavorito, ListaCuentasComprobanteContabilidad, NuevoComprobanteContabilidad, NuevoComprobante, ComprasComprobante,
 		ConfiguracionesCuentasEmpresa, ContabilidadCambioMoneda, ObtenerCambioMoneda, AsignarCuentaCiente, AsignarCuentaProveedor,
 		GtmTransportistas, GtmEstibajes, GtmGrupoEstibajes, ListasCuentasAuxiliares, GtmDetallesDespachoAlerta, $interval, GuardarGtmDetalleDespachoAlerta, GtmDetalleDespacho, VerificarCorrelativosSucursale, ReiniciarCorrelativoSucursales, ClasesTipoEmpresa, alertasProformasLista, UltimaFechaTipoComprobante,
-		FacturaProforma, ListaDetallesProformasAFacturar, ProformaInfo, FacturarProformas) {
+		FacturaProforma, ListaDetallesProformasAFacturar, ProformaInfo, FacturarProformas,ImprimirPdfAlertaDespacho,ExportarExelAlarmasDespachos) {
 		$scope.idModalTablaVencimientoProductos = "tabla-vencimiento-productos";
 		$scope.idModalTablaDespachos = "tabla-gtm-despachos";
 		$scope.idModalTablaAsignacionDespacho = "tabla-gtm-asignacion-despachos";
@@ -38,13 +38,13 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 		//proformas facturacion
 		$scope.dialogAlertasProformas = 'dialog-alertas-proforma'
 		$scope.facturarProformas = 'proforma-facturacion'
-
+		$scope.mensajeConfirmacionComprobante = 'comprobante-mensaje-confirmacion'
 		$scope.$on('$viewContentLoaded', function () {
 			ejecutarScriptsInicio($scope.idModalTablaVencimientoProductos, $scope.idModalTablaVencimientoCreditos, $scope.idModalTablaVencimientoDeudas, $scope.idModalPagoP,
 				$scope.idmodalActualizarCreditoCliente, $scope.idmodalActualizarCreditoDeuda, $scope.idModalPagoDeuda, $scope.idModalDescuento, $scope.idModalTablaVentasPendientes,
 				$scope.idModalTablaComprasPendientes, $scope.idModalTablaBancosPendientes, $scope.idModalTablaOtrosPendientes, $scope.idModalInicioSesion,
 				$scope.idModalWizardComprobanteEdicion, $scope.IdModalOpcionesQr, $scope.IdModalRegistrarComprobante, $scope.IdModalRevisarComprobante, $scope.IdModalLibroMayor, $scope.IdModalAsignarCuenta,
-				$scope.idModalTablaDespachos, $scope.idModalTablaAsignacionDespacho, $scope.IdModalEliminarProductoVencido, $scope.dialogAlertasProformas, $scope.facturarProformas);
+				$scope.idModalTablaDespachos, $scope.idModalTablaAsignacionDespacho, $scope.IdModalEliminarProductoVencido, $scope.dialogAlertasProformas, $scope.facturarProformas, $scope.mensajeConfirmacionComprobante);
 
 			$scope.inicio();
 			blockUI.stop();
@@ -68,7 +68,57 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 		}
 
 		//modal nuevo comprobante
+		$scope.validarGuardadoDeComprobante = function (form, nuevoComprobante, form2) {
+			var mensaje = "cuenta "
+			var CuentasSinGuardar = false
+			var cont = 0
+			nuevoComprobante.asientosContables.forEach(function (asiento, index, array) {
+				if (asiento.debe_bs == 0 && asiento.haber_bs == 0) {
+					if (index != (array.length - 1)) {
+						mensaje += asiento.cuenta.codigo + '-' + asiento.cuenta.nombre + ". "
+						CuentasSinGuardar = true
+						cont++
+					}
+				}
+				if (index == (array.length - 1)) {
+					if (CuentasSinGuardar == false) {
+						$scope.AgregarComprobante(form, nuevoComprobante, form2)
+					} else {
+						if (cont == 1) {
 
+							var mensaje2 = "la " + mensaje + " es un asiento sin monto en el debe o el haber si continua se eliminara"
+							$scope.AbrirMensajeConfirmacionComprobante(mensaje2, form, form2)
+						} else {
+							var mensaje2 = "las " + mensaje + " son asiento sin monto en el debe o el haber si continua se eliminaran"
+							$scope.AbrirMensajeConfirmacionComprobante(mensaje2, form, form2)
+						}
+					}
+				}
+			})
+		}
+		$scope.AbrirMensajeConfirmacionComprobante = function (mensaje, form, form2) {
+			$scope.mensajeConfirmacion = mensaje
+			$scope.formUno = form
+			$scope.formDos = form2
+			$scope.abrirPopup($scope.mensajeConfirmacionComprobante)
+		}
+		$scope.cerrarMensajeConfirmacionComprobante = function () {
+			$scope.cerrarPopup($scope.mensajeConfirmacionComprobante)
+		}
+		$scope.ConfirmarGuardarComprobante = function (form, nuevoComprobante, form2) {
+		 var tamaño= nuevoComprobante.asientosContables.length-1
+			for (let i = tamaño; i >= 0; i--) {
+				var asiento= nuevoComprobante.asientosContables[i]
+				if(asiento.debe_bs==0 && asiento.haber_bs==0){
+					$scope.nuevoComprobante.asientosContables.splice(i,1)
+				}
+				if(i==0){
+					$scope.cerrarMensajeConfirmacionComprobante()
+					$scope.AgregarComprobante(form, nuevoComprobante, form2)
+				}
+				
+			}
+		}
 		$scope.AgregarComprobante = function (form, nuevoComprobante, form2) {
 			if ($scope.moneda.dolar != "--") {
 				if (nuevoComprobante.fecha) {
@@ -1281,8 +1331,9 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 							$scope.gtm_detalles_despacho = detallesDespacho;
 							$scope.vencimientoTotal = $scope.vencimientoTotal + detallesDespacho.length;
 							$scope.gtm_detalles_despacho_seleccionados = [];
-							$scope.gtm_detalles_despacho.forEach(function (despacho, index, array) {
-								despacho.saldo2 = despacho.saldo
+							$scope.gtm_detalles_despacho.forEach(function (despacho, index, array) {								
+								despacho.cantidad_despacho2=despacho.saldo
+								despacho.saldo2=0								
 							});
 						});
 					});
@@ -1467,23 +1518,31 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 			$scope.filtroDes = { inicio: "", fin: "", inicio2: "", fin2: "", razon_social: "", empleado: "" }
 			$scope.abrirPopup($scope.idModalTablaDespachos);
 		}
-		$scope.filtrarDetalleDespachos = function (filtro) {			
-				if (filtro.inicio) {
-					filtro.inicio2 = new Date($scope.convertirFecha(filtro.inicio))
-				}
-				if (filtro.fin) {
-					filtro.fin2 = new Date($scope.convertirFecha(filtro.fin))
-				}
-				promesa = GtmDetallesDespachoAlerta($scope.usuario.id_empresa, filtro);
-				promesa.then(function (detallesDespacho) {
-					$scope.gtm_detalles_despacho = detallesDespacho;
-					$scope.gtm_detalles_despacho_seleccionados = [];
-					$scope.gtm_detalles_despacho.forEach(function (despacho, index, array) {
-						despacho.saldo2 = despacho.saldo
-					});
+		$scope.filtrarDetalleDespachos = function (filtro) {
+			if (filtro.inicio) {
+				filtro.inicio2 = new Date($scope.convertirFecha(filtro.inicio))
+			}
+			if (filtro.fin) {
+				filtro.fin2 = new Date($scope.convertirFecha(filtro.fin))
+			}
+			promesa = GtmDetallesDespachoAlerta($scope.usuario.id_empresa, filtro);
+			promesa.then(function (detallesDespacho) {
+				$scope.gtm_detalles_despacho = detallesDespacho;
+				$scope.gtm_detalles_despacho_seleccionados = [];
+				
+				$scope.gtm_detalles_despacho.forEach(function (despacho, index, array) {
+					despacho.cantidad_despacho2=despacho.saldo
+								despacho.saldo2=0	
 				});
-			
+			});
+
 		}
+		$scope.imprimirPdfDespachosALerta=function () {
+			ImprimirPdfAlertaDespacho($scope.gtm_detalles_despacho_seleccionados,$scope.filtroDes,$scope.usuario)
+		}
+		$scope.imprimirExelDespachosALerta=function () {
+		ExportarExelAlarmasDespachos($scope.gtm_detalles_despacho_seleccionados,$scope.filtroDes,$scope.usuario)
+	}
 		$scope.verificarSeleccionProformas = function () {
 			var paraFacturar = []
 			if ($scope.alertasProformas.length > 0) {

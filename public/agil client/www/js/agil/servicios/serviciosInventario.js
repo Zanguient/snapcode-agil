@@ -87,15 +87,15 @@ angular.module('agil.servicios')
   }])
  
  .factory('InventarioEmpresaPaginador', function($resource) {
-		return $resource(restServer+"inventarios/empresa/:id_empresa/almacen/:id_almacen/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion");
+		return $resource(restServer+"inventarios/empresa/:id_empresa/almacen/:id_almacen/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion/cantidad/:cantidad");
 })
 
 .factory('InventarioPaginador', ['InventarioEmpresaPaginador','$q',function(InventarioEmpresaPaginador, $q) 
   {
-	var res = function(idEmpresa,idAlmacen,pagina,itemsPagina,texto,columna,direccion) 
+	var res = function(idEmpresa,idAlmacen,pagina,itemsPagina,texto,columna,direccion,cantidad) 
 	{
 		var delay = $q.defer();
-		InventarioEmpresaPaginador.get({id_empresa:idEmpresa,id_almacen:idAlmacen,pagina:pagina,items_pagina:itemsPagina,texto_busqueda:texto,columna:columna,direccion:direccion},function(entidades) 
+		InventarioEmpresaPaginador.get({id_empresa:idEmpresa,id_almacen:idAlmacen,pagina:pagina,items_pagina:itemsPagina,texto_busqueda:texto,columna:columna,direccion:direccion,cantidad:cantidad},function(entidades) 
 		{        
 			delay.resolve(entidades);
 		}, function(error) 

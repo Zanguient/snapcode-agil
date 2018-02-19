@@ -7,6 +7,7 @@
 			<th><a href="javascript:void(0)" ng-click="clasificarColumna('codigo')">Código <span id="codigo" class="sort ace-icon fa fa-sort icon-only"></span></a></th>
 			<th><a href="javascript:void(0)" ng-click="clasificarColumna('nombre')">Producto <span id="nombre" class="sort ace-icon fa fa-sort icon-only"></span></a></th>
 			<th><a href="javascript:void(0)" ng-click="clasificarColumna('descripcion')">Descripción <span id="descripcion" class="sort ace-icon fa fa-sort icon-only"></span></a></th>
+			<th><a href="javascript:void(0)" ng-click="clasificarColumna('unidad_medida')">Unidad de Medida<span id="cantidad" class="sort ace-icon fa fa-sort icon-only"></span></a></th>
 			<th><a href="javascript:void(0)" ng-click="clasificarColumna('cantidad')">Cantidad Total <span id="cantidad" class="sort ace-icon fa fa-sort icon-only"></span></a></th>
 			<th><a href="javascript:void(0)" ng-click="clasificarColumna('precio_unitario')">Precio Unitario <span id="precio_unitario" class="sort ace-icon fa fa-sort icon-only"></span></a></th>
 			<th><a href="javascript:void(0)" ng-click="clasificarColumna('fecha_vencimiento')">Fecha Venc. Próximo <span id="fecha_vencimiento" class="sort ace-icon fa fa-sort icon-only"></span></a></th>
@@ -26,6 +27,8 @@
 			</td>
 			<td>{{producto.descripcion}}
 			</td>
+			<td>{{producto.unidad_medida}}
+				</td>
 			<td>
 				<div class="c100 p{{producto.porcentaje}} small {{producto.color}}">
 					<span style="color:black !important;">{{producto.cantidad_total}}</span>

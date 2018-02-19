@@ -71,11 +71,11 @@
 								<input ng-enter="filtrarDetalleDespachos(filtroDes)" type="text" id="filtroNombreD" ng-model="filtroDes.razon_social" placeholder="" />
 							</div>
 							<div class="form-group col-sm-4">									
-									<button type="button" class="btn btn-app btn-danger btn-xs">
+									<button type="button" class="btn btn-app btn-danger btn-xs" ng-click="imprimirPdfDespachosALerta()">
 										<i class="ace-icon fa fa-print bigger-160"></i>
 										PDF
 									</button>
-									<button type="button" class="btn btn-app btn-success btn-xs" ng-click="generarExcelEmpleados(RecursosHumanosEmpleados,fieldViewer.getConfiguration())">
+									<button type="button" class="btn btn-app btn-success btn-xs" ng-click="imprimirExelDespachosALerta()">
 										<i class="ace-icon fa fa-print bigger-160"></i>
 										EXCEL
 									</button>
@@ -148,7 +148,7 @@
 						<td>{{gtm_detalle_despacho.cantidad_despacho}}</td>
 						<td>{{gtm_detalle_despacho.servicio_transporte}}</td>
 						<td>
-							<input style="width: 80px" value="{{gtm_detalle_despacho.saldo2}}" required max="{{gtm_detalle_despacho.saldo}}" ng-change="calcularSaldoDespacho(gtm_detalle_despacho)"
+							<input style="width: 80px"  required max="{{gtm_detalle_despacho.saldo}}" ng-change="calcularSaldoDespacho(gtm_detalle_despacho)"
 							 ng-required="gtm_detalle_despacho.seleccionado" type="number" step="0.001" ng-model="gtm_detalle_despacho.cantidad_despacho2">
 						</td>
 						<td>{{gtm_detalle_despacho.saldo2}}</td>

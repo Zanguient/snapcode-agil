@@ -223,7 +223,7 @@
 </head>
 
 <body class="{{skin}}" ng-controller="ControladorPrincipal" ng-cloak>
-		
+
 	<div id="navbar" class="navbar navbar-default    navbar-collapse">
 		<script type="text/javascript">
 			try { ace.settings.check('navbar', 'fixed') } catch (e) { }
@@ -778,7 +778,7 @@
 		<button type="button" class="btn btn-success" ng-click="cerrarConfirmacionEliminacion()">No</button>
 	</div>
 
-	
+
 	<div id="tabla-vencimiento-productos">
 		<div>
 			<div>
@@ -985,7 +985,7 @@
 			</div> -->
 		</div>
 	</div>
-	
+
 	<div id="eliminar-producto-vencido" class="modal">
 		<form id="formularioBaja" name="formularioBaja" novalidate ng-submit="guardarBaja(bajaInventario)">
 			<div class="modal-header">
@@ -1695,11 +1695,42 @@
 			<button type="button" class="btn btn-danger" ng-click="cerrarVentanaDescuento()">Cancelar</button>
 		</form>
 	</div>
-
+	<!-- ========= inicio  modal verificar asiento vacios ========= -->
+	<div id="comprobante-mensaje-confirmacion" class="modal">
+			<form name="formularioAsignarCuenta" novalidate ng-submit="verificarCuentaAdmin(cuenta,$index)">
+					<div class="modal-header">
+						<p>
+							<h3>Verificar Cuenta</h3>
+						</p>
+					</div>
+					<div class="modal-body">
+							<span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>{{mensajeConfirmacion}}
+					</div>
+					<div class="modal-footer">
+							<button type="button" class="btn btn-danger" ng-click="ConfirmarGuardarComprobante(formUno,nuevoComprobante,formDos)">Continuar</button>
+							<button type="button" class="btn btn-success" ng-click="cerrarMensajeConfirmacionComprobante()">Cancelar</button>
+					</div>
+				</form>
+		<!-- <div class="modal-dialog"> -->
+			<!-- <div class="modal-content"> -->
+				<!-- <div clase="modal-header">
+					Mensaje de Confirmacion
+				</div>
+				<div clase="modal-body">
+					<span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>{{mensajeConfirmacion}}
+				</div>
+				<div clase="modal-footer">
+					<button type="button" class="btn btn-danger" ng-click="ConfirmarGuardarComprobante(formUno,nuevoComprobante,formDos)">Continuar</button>
+					<button type="button" class="btn btn-success" ng-click="cerrarMensajeConfirmacionComprobante()">Cancelar</button>
+				</div> -->
+			<!-- </div> -->
+		<!-- </div> -->
+	</div>
+	<!-- ========= fin modal verificar asiento vacios ========= -->
 
 	<div id="modal-wizard-comprobante-edicion" class="modal wizard-posicion">
 		<div class="modal-content">
-			<form id="formNuevoComprobante" name="formNuevoComprobante" novalidate ng-submit="AgregarComprobante(formNuevoComprobante,nuevoComprobante)">
+			<form id="formNuevoComprobante" name="formNuevoComprobante" novalidate ng-submit="validarGuardadoDeComprobante(formNuevoComprobante,nuevoComprobante)">
 				<div class="modal-header">
 					<div class="row">
 						<div class="col-sm-9">

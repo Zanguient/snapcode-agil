@@ -42,11 +42,11 @@
 								<i class="ace-icon fa fa-plus align-top bigger-125"></i>
 								Filtrar
 							</button>
-							<button id="pdf" ng-disabled="!ventas" class="btn btn-app btn-danger btn-xs" ng-click="imprimirFiltroCajaCartaOficio(ventas)">
+							<button id="pdf"  class="btn btn-app btn-danger btn-xs" ng-click="imprimirPdfDespachos()">
 								<i class="ace-icon fa fa-print bigger-160"></i>
 								PDF
 							</button>
-							<button id="pdf" ng-disabled="!ventas" class="btn btn-app btn-success btn-xs" ng-click="imprimirFiltroExcelCajaCartaOficio(ventas)">
+							<button id="exel" class="btn btn-app btn-success btn-xs" >
 								<i class="ace-icon fa fa-print bigger-160"></i>
 								Excel
 							</button>
@@ -159,11 +159,11 @@
 						<td>{{gtm_detalle_despacho.despacho.cliente.razon_social}}</td>
 						<td>{{gtm_detalle_despacho.servicio_transporte}}</td>
 						<td>{{gtm_detalle_despacho.transportista.persona.nombre_completo}}</td>
-						<td>{{gtm_detalle_despacho.transportista.costo_transporte*gtm_detalle_despacho.cantidad}}</td>
+						<td>{{gtm_detalle_despacho.transportista.costo_transporte*gtm_detalle_despacho.cantidad_despacho}}</td>
 						<td>{{gtm_detalle_despacho.grupo_estibaje.nombre}}</td>
 
 						<td>{{gtm_detalle_despacho.estibaje.nombre}}</td>
-						<td>{{gtm_detalle_despacho.estibaje.costo*gtm_detalle_despacho.cantidad}}</td>
+						<td>{{gtm_detalle_despacho.estibaje.costo*gtm_detalle_despacho.cantidad_despacho}}</td>
 
 						<td>{{gtm_detalle_despacho.factura}}</td>
 						<td>
