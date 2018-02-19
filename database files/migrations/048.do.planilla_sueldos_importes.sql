@@ -1,0 +1,15 @@
+ALTER TABLE agil_rrhh_planilla_sueldos ADD importe_sueldo_basico DECIMAL(20,4);
+ALTER TABLE agil_rrhh_planilla_sueldos ADD total_horas_extras int(11);
+ALTER TABLE agil_rrhh_planilla_sueldos ADD importe_horas_extras DECIMAL(20,4);
+ALTER TABLE agil_rrhh_planilla_sueldos ADD importe_recargo_nocturno DECIMAL(20,4);
+ALTER TABLE agil_rrhh_planilla_sueldos ADD importe_bono_antiguedad DECIMAL(20,4);
+ALTER TABLE agil_rrhh_planilla_sueldos ADD importe_bono_frontera DECIMAL(20,4);
+ALTER TABLE agil_rrhh_planilla_sueldos ADD importe_otros_bonos DECIMAL(20,4);
+ALTER TABLE agil_rrhh_planilla_sueldos ADD importe_total_ganado DECIMAL(20,4);
+ALTER TABLE agil_rrhh_planilla_sueldos ADD importe_afp DECIMAL(20,4);
+ALTER TABLE agil_rrhh_planilla_sueldos ADD importe_rc_iva DECIMAL(20,4);
+ALTER TABLE agil_rrhh_planilla_sueldos ADD importe_anticipos DECIMAL(20,4);
+ALTER TABLE agil_rrhh_planilla_sueldos ADD importe_prestamos DECIMAL(20,4);
+ALTER TABLE agil_rrhh_planilla_sueldos ADD importe_total_descuento DECIMAL(20,4);
+ALTER TABLE agil_rrhh_planilla_sueldos ADD importe_liquido_pagable DECIMAL(20,4);
+ALTER TABLE agil_rrhh_detalle_planilla_sueldos ADD importe_sueldo_basico DECIMAL(20,4);

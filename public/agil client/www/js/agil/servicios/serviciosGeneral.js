@@ -6,6 +6,7 @@ angular.module('agil.servicios')
 			MOV_EGR: "MOVEGR",
 			ING_INV_INICIAL: "III",
 			EGRE_FACTURACION: "FACT",
+			EGRE_PRE_FACTURACION: "PREFACT",
 			EGRE_BAJA: "BAJA",
 			EGRE_PROFORMA: "PFR",
 			EGRE_TRASPASO: "TRAS",

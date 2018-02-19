@@ -1,6 +1,6 @@
 angular.module('agil.controladores')
 
-.controller('ControladorPlanillaSueldos', function($scope,$localStorage,$location,$templateCache,$route,blockUI, Parametro, Parametros, RecursosHumanosEmpleados, ClasesTipo, RecursosHumanosEmpleadosHorasExtras, RecursosHumanosPlanillaSueldos){
+.controller('ControladorPlanillaSueldos', function($scope,$localStorage,$location,$templateCache,$route,blockUI, Parametro, Parametros, RecursosHumanosEmpleados, ClasesTipo, RecursosHumanosEmpleadosHorasExtras, RecursosHumanosPlanillaSueldos, RRHHlistaPlanillaSueldos){
     $scope.$on('$viewContentLoaded', function () {
         // resaltarPestaña($location.path().substring(1));
         $scope.idModalNuevaPlanillaSueldos = 'dialog-nueva-planilla-sueldos';
@@ -46,10 +46,13 @@ angular.module('agil.controladores')
     // $scope.planilla={};
     // $scope.planilla.gestion = 2018;
 
-    
+    $scope.nuevaPlanillaSueldos = function () {
+        $scope.planilla=new RecursosHumanosPlanillaSueldos({id_empresa:$scope.usuario.id_empresa});
+        $scope.sumarTotales($scope.planilla);
+    }
 
     $scope.abrirDialogNuevaPlanillaSueldos= function () {
-        $scope.planilla=new RecursosHumanosPlanillaSueldos({id_empresa:$scope.usuario.id_empresa});
+        $scope.nuevaPlanillaSueldos();
         $scope.abrirPopup($scope.idModalNuevaPlanillaSueldos);
     }
 
@@ -68,31 +71,33 @@ angular.module('agil.controladores')
                 $scope.antiguedad = calcAge(empleado.empleadosFichas[0].fecha_inicio); // == sacar años de antiguedad ==================
                 $scope.bonoFrontera = 0; // == sacar bono frontera ==================
                 $scope.otrosBonos = 0; // == sacar otros bonos ==================
+                console.log('los ides de empleados ==== ', empleado.id);
                 promesa = RecursosHumanosEmpleadosHorasExtras(empleado.id, planilla.gestion, planilla.mes.split("-")[0]);
                 promesa.then(function (dato) {
-                    console.log('los datos del horas :  ', dato.horasExtra);
-                    $scope.horasExtras = 10;
-                    var totalHoras = "";
-                    var timeHoras = 0;
-                    var timeMinutos = 0;
-                    if (dato.horasExtra.length > 0) {
-                        for (var i = 0; i < dato.horasExtra.length; i++) {
-                            var minutos = dato.horasExtra[i].tiempo.split(':')[1];
-                            var horas = dato.horasExtra[i].tiempo.split(':')[0];
+                    // console.log('los datos del horas :  ', dato.horasExtra);
+                    // $scope.horasExtras = 10;
+                    // var totalHoras = "";
+                    // var timeHoras = 0;
+                    // var timeMinutos = 0;
+                    // if (dato.horasExtra.length > 0) {
+                    //     for (var i = 0; i < dato.horasExtra.length; i++) {
+                    //         var minutos = dato.horasExtra[i].tiempo.split(':')[1];
+                    //         var horas = dato.horasExtra[i].tiempo.split(':')[0];
 
-                            timeHoras = timeHoras + parseInt(horas);
-                            timeMinutos = timeMinutos + parseInt(minutos);
-                            if (timeMinutos >= 60) {
-                                timeMinutos = timeMinutos - 60;
-                                timeHoras = timeHoras + 1;
-                            }
-                            // totalHoras = String("0" + timeHoras).slice(-2) + ':' + String("0" + timeMinutos).slice(-2);
-                            totalHoras = timeHoras;
-                        }
-                    }else{
-                        totalHoras = 0;
-                    }
-                    empleado.horasExtras = totalHoras;
+                    //         timeHoras = timeHoras + parseInt(horas);
+                    //         timeMinutos = timeMinutos + parseInt(minutos);
+                    //         if (timeMinutos >= 60) {
+                    //             timeMinutos = timeMinutos - 60;
+                    //             timeHoras = timeHoras + 1;
+                    //         }
+                    //         // totalHoras = String("0" + timeHoras).slice(-2) + ':' + String("0" + timeMinutos).slice(-2);
+                    //         totalHoras = timeHoras;
+                    //     }
+                    // }else{
+                    //     totalHoras = 0;
+                    // }
+                    
+                    empleado.horasExtras = dato.totalHoras;
                     empleado.totalHorasExtras = round((empleado.sueldoBasico/30/8*empleado.horasExtras)*2, 2);
                     empleado.recargoNocturno= round((empleado.sueldoBasico/30/8*empleado.horasExtras)*1.5, 2);
                     empleado.bonoAntiguedad = $scope.calcularBonoAntiguedad($scope.antiguedad);
@@ -102,8 +107,8 @@ angular.module('agil.controladores')
                     empleado.afp = round(empleado.totalGanado * 12.71/100, 2);
                     empleado.rc_iva = 0; // sacar de planilla rc-iva
                     empleado.anticipos = 0; // sacar de planilla anticipos 
-                    empleado.prestamos = 0; // sacar de recursos humanos 
-                    empleado.totalDescuento = empleado.afp+empleado.rc_iva+empleado.anticipos+empleado.prestamos;
+                    empleado.prestamos = round(dato.totalCuotas, 2); // sacar de recursos humanos 
+                    empleado.totalDescuento = round(empleado.afp+empleado.rc_iva+empleado.anticipos+empleado.prestamos, 2);
                     empleado.liquidoPagable = round(empleado.totalGanado - empleado.totalDescuento, 2);
                     $scope.sumarTotales(planilla);
 
@@ -120,11 +125,11 @@ angular.module('agil.controladores')
 
     $scope.generar=function(planilla){
         planilla.$save(function(dato){
-            
+            $scope.nuevaPlanillaSueldos();
             blockUI.stop();
-            console.log('llego ', dato);
+            // console.log('llego ', dato);
             // $scope.cerrarPopPupEdicion();
-            // $scope.mostrarMensaje('Compra registrada exitosamente!');
+            $scope.mostrarMensaje('Planilla registrada exitosamente!');
             // $scope.recargarItemsTabla();
             // $scope.imprimirCompra(compra);
         },function(error) {
@@ -177,22 +182,41 @@ angular.module('agil.controladores')
         $scope.sumaPrestamos=0;
         $scope.sumaTotalDescuento=0;
         $scope.sumaLiquidoPagable=0;
-        for(var i=0;i<planilla.RecursosHumanosEmpleados.length;i++){
-            $scope.totalSueldoBasico=$scope.totalSueldoBasico+planilla.RecursosHumanosEmpleados[i].sueldoBasico;
-            $scope.sumaHorasExtras=$scope.sumaHorasExtras+planilla.RecursosHumanosEmpleados[i].horasExtras;
-            $scope.sumaTotalHorasExtras=$scope.sumaTotalHorasExtras+planilla.RecursosHumanosEmpleados[i].totalHorasExtras;
-            $scope.sumaRecargoNocturno=$scope.sumaRecargoNocturno+planilla.RecursosHumanosEmpleados[i].recargoNocturno;
-            $scope.sumaBonoAntiguedad=$scope.sumaBonoAntiguedad+planilla.RecursosHumanosEmpleados[i].bonoAntiguedad;
-            $scope.sumaBonoFrontera=$scope.sumaBonoFrontera+planilla.RecursosHumanosEmpleados[i].bonoFrontera;
-            $scope.sumaOtrosBonos=$scope.sumaOtrosBonos+planilla.RecursosHumanosEmpleados[i].otrosBonos;
-            $scope.sumaTotalGanado=round($scope.sumaTotalGanado+planilla.RecursosHumanosEmpleados[i].totalGanado, 2);
-            $scope.sumaAFP=round($scope.sumaAFP+planilla.RecursosHumanosEmpleados[i].afp, 2);
-            $scope.sumaRCIVA=round($scope.sumaRCIVA+planilla.RecursosHumanosEmpleados[i].rc_iva, 2);
-            $scope.sumaAniticipos=round($scope.sumaAniticipos+planilla.RecursosHumanosEmpleados[i].anticipos, 2);
-            $scope.sumaPrestamos=round($scope.sumaPrestamos+planilla.RecursosHumanosEmpleados[i].prestamos, 2);
-            $scope.sumaTotalDescuento=round($scope.sumaTotalDescuento+planilla.RecursosHumanosEmpleados[i].totalDescuento, 2);
-            $scope.sumaLiquidoPagable=round($scope.sumaLiquidoPagable+planilla.RecursosHumanosEmpleados[i].liquidoPagable, 2);
-        }       
+        var totalEmpleados = 0;
+        if (planilla.RecursosHumanosEmpleados != undefined) {
+            for(var i=0;i<planilla.RecursosHumanosEmpleados.length;i++){
+                totalEmpleados = totalEmpleados + 1;
+                $scope.totalSueldoBasico=$scope.totalSueldoBasico+planilla.RecursosHumanosEmpleados[i].sueldoBasico;
+                $scope.sumaHorasExtras=$scope.sumaHorasExtras+planilla.RecursosHumanosEmpleados[i].horasExtras;
+                $scope.sumaTotalHorasExtras=$scope.sumaTotalHorasExtras+planilla.RecursosHumanosEmpleados[i].totalHorasExtras;
+                $scope.sumaRecargoNocturno=$scope.sumaRecargoNocturno+planilla.RecursosHumanosEmpleados[i].recargoNocturno;
+                $scope.sumaBonoAntiguedad=$scope.sumaBonoAntiguedad+planilla.RecursosHumanosEmpleados[i].bonoAntiguedad;
+                $scope.sumaBonoFrontera=$scope.sumaBonoFrontera+planilla.RecursosHumanosEmpleados[i].bonoFrontera;
+                $scope.sumaOtrosBonos=$scope.sumaOtrosBonos+planilla.RecursosHumanosEmpleados[i].otrosBonos;
+                $scope.sumaTotalGanado=round($scope.sumaTotalGanado+planilla.RecursosHumanosEmpleados[i].totalGanado, 2);
+                $scope.sumaAFP=round($scope.sumaAFP+planilla.RecursosHumanosEmpleados[i].afp, 2);
+                $scope.sumaRCIVA=round($scope.sumaRCIVA+planilla.RecursosHumanosEmpleados[i].rc_iva, 2);
+                $scope.sumaAniticipos=round($scope.sumaAniticipos+planilla.RecursosHumanosEmpleados[i].anticipos, 2);
+                $scope.sumaPrestamos=round($scope.sumaPrestamos+planilla.RecursosHumanosEmpleados[i].prestamos, 2);
+                $scope.sumaTotalDescuento=round($scope.sumaTotalDescuento+planilla.RecursosHumanosEmpleados[i].totalDescuento, 2);
+                $scope.sumaLiquidoPagable=round($scope.sumaLiquidoPagable+planilla.RecursosHumanosEmpleados[i].liquidoPagable, 2);
+            }
+        }   
+        planilla.totalEmpleados = totalEmpleados;
+        planilla.importeSueldoBasico = $scope.totalSueldoBasico;
+        planilla.totalHorasExtras = $scope.sumaHorasExtras;
+        planilla.importeHorasExtras = $scope.sumaTotalHorasExtras;
+        planilla.importeRecargoNocturno = $scope.sumaRecargoNocturno;
+        planilla.importeBonoAntiguedad = $scope.sumaBonoAntiguedad;
+        planilla.importeBonoFrontera = $scope.sumaBonoFrontera;
+        planilla.importeOtrosBonos = $scope.sumaOtrosBonos;
+        planilla.importeAFP = $scope.sumaAFP;
+        planilla.importeRCIVA = $scope.sumaRCIVA; 
+        planilla.importeAniticipos = $scope.sumaAniticipos;
+        planilla.importePrestamos = $scope.sumaPrestamos;
+        planilla.importeTotalDescuento = $scope.sumaTotalDescuento;
+        planilla.importeTotalGanado = $scope.sumaTotalGanado;    
+        planilla.importeLiquidoPagable = $scope.sumaLiquidoPagable;
         
     }
 
@@ -256,7 +280,7 @@ angular.module('agil.controladores')
 
     $scope.modificarSueldo= function (sueldo) {
        $scope.empleado = angular.extend($scope.empleado, sueldo);
-       $scope.sumarTotales();
+       $scope.sumarTotales($scope.planilla);
        $scope.cerrarDialogEditarPlanillaSueldo();
     }
 
@@ -276,8 +300,8 @@ angular.module('agil.controladores')
 
     // ========= solucionar eliminar sueldo no sta eliminando correctamente ==================
     $scope.eliminarSueldoEmpleado = function (index, empleado) {
-        $scope.RecursosHumanosEmpleados.splice(index, 1);
-        $scope.sumarTotales();
+        $scope.planilla.RecursosHumanosEmpleados.splice(index, 1);
+        $scope.sumarTotales($scope.planilla);
         $scope.empleado = null;
         $scope.cerrarDialogEliminarSueldoEmpleado();
         $scope.mostrarMensaje("el sueldo se elimino");
@@ -291,6 +315,19 @@ angular.module('agil.controladores')
         $scope.sueldo.totalDescuento = $scope.sueldo.afp+$scope.sueldo.rc_iva+$scope.sueldo.anticipos+$scope.sueldo.prestamos;
         $scope.sueldo.liquidoPagable = round($scope.sueldo.totalGanado - $scope.sueldo.totalDescuento, 2);    
     }
+
+    $scope.filtrarListaPlanillaSueldos=function(planilla){
+        console.log('cabezera generalllllll ', planilla);
+        // $scope.usuario.id_empresa, reporte.gestion, reporte.mes.split("-")[0]
+        var promesa = RRHHlistaPlanillaSueldos($scope.usuario.id_empresa, planilla.gestion, planilla.mes.split("-")[0]);
+        promesa.then(function (dato) {
+            console.log('empleadossssstt ', dato);
+            planilla.planillas = dato.planillas;
+            
+            blockUI.stop();
+        });
+    }
+
 
     $scope.abrirDialogParametros= function () {
         $scope.abrirPopup($scope.idModalParametros);

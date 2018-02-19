@@ -4,7 +4,7 @@ angular.module('agil.controladores')
         FieldViewer, EmpleadoEmpresa, obtenerEmpleadoRh, UsuarioRecursosHUmanosActivo, Prerequisito, ListaDatosPrerequisito, Prerequisitos, ListaPrerequisitosPaciente, ActualizarPrerequisito, UsuarioRecursosHumanosFicha,
         ClasesTipo, Clases, Paises, CrearEmpleadoFicha, EliminarOtroSeguroRh, EliminarFamiliarRh, PrerequisitoPaciente, PrerequisitosHistorial, UsuarioRhHistorialFicha, ObtenerEmpleadoHojaVida, GuardarEmpleadoHojaVida, CrearPrestamo,
         ObtenerListaPrestamo, CrearRolTurno, CrearPagoPrestamo, VerificarUsuarioEmpresa, EditarPrestamo, ListaEmpleadosRrhh, CrearHorasExtra, HistorialHorasExtra, ListaRolTurnos, ValidarCodigoCuentaEmpleado, $timeout, DatosCapacidadesImpresion, NuevoAnticipoEmpleado,
-        ListaAnticiposEmpleado, CrearNuevosAnticiposEmpleados) {
+        ListaAnticiposEmpleado, CrearNuevosAnticiposEmpleados, ActualizarAnticipoEmpleado) {
         $scope.usuario = JSON.parse($localStorage.usuario);
         $scope.idModalPrerequisitos = 'dialog-pre-requisitos';
         $scope.idModalEmpleado = 'dialog-empleado';
@@ -413,7 +413,7 @@ angular.module('agil.controladores')
         $scope.abrirDialogEmpleado = function (empleado) {
             $scope.obtenerDatosFichaUsuario(empleado);
             $scope.empleado = empleado
-            
+
 
             $scope.abrirPopup($scope.idModalEmpleado);
         }
@@ -655,6 +655,11 @@ angular.module('agil.controladores')
         }
         $scope.abrirDialogAnticipoExtraordinario = function (empleado) {
             $scope.empleado = empleado
+            $scope.obtenerAnticiposExtra(empleado)
+
+            $scope.abrirPopup($scope.idModalAnticipoExtraordinario);
+        }
+        $scope.obtenerAnticiposExtra = function (empleado) {
             var mes = new Date().getMonth()
             var gestion = String(new Date().getFullYear())
             var ultimodia = new Date()
@@ -666,8 +671,6 @@ angular.module('agil.controladores')
             var filtro = { inicio: primerDia, fin: ultimoDia, nombre: 'ORDI', id_empresa: 0 }
             $scope.anticipo_ordinaroOextra = 0;
             $scope.obtenerListaAnticipos(filtro, empleado.id)
-
-            $scope.abrirPopup($scope.idModalAnticipoExtraordinario);
         }
         $scope.cerrarDialogAnticipoExtraordinario = function () {
             $scope.cerrarPopup($scope.idModalAnticipoExtraordinario);
@@ -1043,6 +1046,8 @@ angular.module('agil.controladores')
                     datos.prestamos.forEach(function (prestamo, index, array) {
                         var fecha = $scope.fechaATexto(prestamo.fecha_inicial)
                         prestamo.fecha_vence = editar_fecha(fecha, prestamo.plazo, "m", "/")
+                        console.log("prestamo.fecha_vence dfdfdfdfdff", prestamo.fecha_vence);
+
                         prestamo.saldo = prestamo.monto
                         prestamo.pago = 0
                         $scope.prestamos = { total_montos: 0, pagos_acuenta: 0, saldo: 0 }
@@ -3271,6 +3276,7 @@ angular.module('agil.controladores')
         //inicio anticipos        
         $scope.GuardarAnticipos = function (anticipos) {
             var anticipo = anticipos.slice(-1).pop()
+            anticipo.montoExtraoridnario=anticipo.total-anticipo.anticipo_ordinaro
             anticipo.textoClase = "EXTRAORDI"
             anticipo.fecha = new Date().getTime()
             var promesa = NuevoAnticipoEmpleado($scope.empleado.id, anticipo)
@@ -3287,8 +3293,8 @@ angular.module('agil.controladores')
             datos.fecha = new Date().getTime()
             var promesa = CrearNuevosAnticiposEmpleados(datos)
             promesa.then(function (datos) {
-                anticipo = {}                
-                $scope.listaAnticipos2=[]
+                anticipo = {}
+                $scope.listaAnticipos2 = []
                 $scope.cerrarDialogAnticipoRegular()
                 $scope.mostrarMensaje(datos.mensaje)
             })
@@ -3321,6 +3327,7 @@ angular.module('agil.controladores')
                     datos.anticipos.ordinarios = []
                     datos.anticipos.extraordinarios = []
                     datos.anticipos.forEach(function (anticipo, index, array) {
+                        anticipo.total2 = 0
                         if (anticipo.tipoAnticipo.nombre_corto != filtro.nombre) {
 
                             datos.anticipos.ordinarios.push(anticipo)
@@ -3340,6 +3347,7 @@ angular.module('agil.controladores')
                                             } else {
                                                 ordi.anticipo_ordinaro = anticipo.monto
                                             }
+                                            //ordi.total += ordi.anticipo_ordinaro
                                             ordi.saldo_salario = ordi.salario_basico - ordi.total
                                             ordi.montoEdit = false
                                         } else {
@@ -3373,7 +3381,11 @@ angular.module('agil.controladores')
                 datos.anticipos.ordinarios = []
                 datos.anticipos.extraordinarios = []
                 datos.anticipos.forEach(function (anticipo, index, array) {
+                    anticipo.total2 = 0
+                    anticipo.anticipo_extraordinaro = 0
+                    anticipo.saldo_salario = anticipo.salario_basico - anticipo.total
                     if (anticipo.tipoAnticipo.nombre_corto != filtro.nombre) {
+
                         datos.anticipos.ordinarios.push(anticipo)
 
                     } else {
@@ -3391,6 +3403,8 @@ angular.module('agil.controladores')
                                     } else {
                                         ordi.anticipo_extraordinaro = anticipo.monto
                                     }
+                                    /*   ordi.total += ordi.anticipo_extraordinaro */
+
                                     ordi.saldo_salario = ordi.salario_basico - ordi.total
                                     ordi.montoEdit = false
                                 } else {
@@ -3405,9 +3419,11 @@ angular.module('agil.controladores')
                                 }
 
                             }
+
                             if (i === (datos.anticipos.ordinarios.length - 1)) {
 
                                 $scope.listaAnticipos = datos.anticipos.ordinarios;
+
                             }
 
                         }
@@ -3431,27 +3447,32 @@ angular.module('agil.controladores')
                 }
                 anticipo.anticipo_extraordinaro = 0
                 anticipo.anticipo_ordinaro = 0
-
-                if ($scope.anticiposDatos.ordinarios.length > 0) {
-                    for (let i = 0; i < $scope.anticiposDatos.ordinarios.length; i++) {
-                        const ordi = $scope.anticiposDatos.ordinarios[i];
-                        if (anticipo.empleado.id == ordi.id_empleado) {
-                            anticipo.anticipo_ordinaro += ordi.monto
+                if ($scope.anticiposDatos) {
+                    if ($scope.anticiposDatos.ordinarios.length > 0) {
+                        for (let i = 0; i < $scope.anticiposDatos.ordinarios.length; i++) {
+                            const ordi = $scope.anticiposDatos.ordinarios[i];
+                            if (anticipo.empleado.id == ordi.id_empleado) {
+                                anticipo.anticipo_ordinaro += ordi.monto
+                            }
                         }
+
                     }
 
-                 }
-                 
-                if ($scope.anticiposDatos.extraordinarios.length > 0) {
-                    for (let i = 0; i < $scope.anticiposDatos.extraordinarios.length; i++) {
-                        const ordi = $scope.anticiposDatos.extraordinarios[i];
-                        if (anticipo.empleado.id == ordi.id_empleado) {
-                            anticipo.anticipo_extraordinaro += ordi.monto
+
+                    if ($scope.anticiposDatos.extraordinarios.length > 0) {
+                        for (let i = 0; i < $scope.anticiposDatos.extraordinarios.length; i++) {
+                            const ordi = $scope.anticiposDatos.extraordinarios[i];
+                            if (anticipo.empleado.id == ordi.id_empleado) {
+                                anticipo.anticipo_extraordinaro += ordi.monto
+                            }
                         }
                     }
+                } else {
+                    anticipo.anticipo_ordinaro = 0
+                    anticipo.anticipo_extraordinaro = 0
                 }
-                anticipo.total = anticipo.anticipo_extraordinaro+anticipo.anticipo_ordinaro + anticipo.monto
-                anticipo.total2 = anticipo.anticipo_extraordinaro+anticipo.anticipo_ordinaro + anticipo.monto
+                anticipo.total = anticipo.anticipo_extraordinaro + anticipo.anticipo_ordinaro + anticipo.monto
+                anticipo.total2 = anticipo.anticipo_extraordinaro + anticipo.anticipo_ordinaro + anticipo.monto
                 anticipo.saldo_salario = anticipo.salario_basico - anticipo.total
                 anticipo.saldo_salario2 = anticipo.salario_basico - anticipo.total
                 $scope.listaAnticipos2.push(anticipo)
@@ -3483,11 +3504,31 @@ angular.module('agil.controladores')
             }
         }
         $scope.sumarMontoPrestamoNuevo = function (anticipo) {
-            if ($scope.listaAnticipos.length > 1) {
-                anticipo.total = $scope.listaAnticipos[$scope.listaAnticipos.length - 2].total + anticipo.monto
-            } else {
-                anticipo.total = anticipo.total2 + anticipo.monto
-            }
+           /*  if (anticipo.id == undefined) { */
+                if ($scope.listaAnticipos.length > 1) {
+                    if (anticipo.monto) {
+                        anticipo.total = $scope.listaAnticipos[$scope.listaAnticipos.length - 2].total + anticipo.monto
+                    } else {
+                        if (anticipo.anticipo_ordinaro) {
+                            anticipo.total = anticipo.anticipo_ordinaro
+                        } else {
+                            anticipo.total = anticipo.anticipo_extraordinaro
+                        }
+                    }
+                    
+                } else {
+                    anticipo.total2 = anticipo.anticipo_ordinaro
+                    if (anticipo.monto) {
+                        anticipo.total = anticipo.total2 + anticipo.monto
+                    } else {
+                        if (anticipo.anticipo_ordinaro) {
+                            anticipo.total = anticipo.anticipo_ordinaro
+                        } else {
+                            anticipo.total = anticipo.anticipo_extraordinaro
+                        }
+                    }
+                }
+             
             anticipo.saldo_salario = anticipo.salario_basico - anticipo.total
         }
         $scope.sumarMontoPrestamoNuevo2 = function (anticipo) {
@@ -3496,6 +3537,18 @@ angular.module('agil.controladores')
             anticipo.saldo_salario = anticipo.salario_basico - anticipo.total
         }
 
+        $scope.ActualizarAnticipo = function (anticipo) {
+            anticipo.montoExtraoridnario=anticipo.total-anticipo.anticipo_ordinaro
+            var promesa = ActualizarAnticipoEmpleado(anticipo.id_empleado, anticipo)
+            promesa.then(function (datos) {
+                anticipo.montoEdit = false
+                $scope.cerrarDialogAnticipoExtraordinario()
+                $scope.mostrarMensaje(datos.mensaje)
+            })
+        }
+        $scope.cancelarEdicionAnticipo = function (anticipo) {
+            $scope.obtenerAnticiposExtra($scope.empleado)
+        }
         //fin anticipos
         //selecionar empleados
 

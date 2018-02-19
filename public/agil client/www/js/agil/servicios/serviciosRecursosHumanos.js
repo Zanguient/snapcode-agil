@@ -417,6 +417,18 @@ angular.module('agil.servicios')
     };
     return res;
 }])
+.factory('ActualizarAnticipoEmpleado', ['EmpleadoAnticipo', '$q', function (EmpleadoAnticipo, $q) {
+    var res = function (idEmpleado,datos) {
+        var delay = $q.defer();
+        EmpleadoAnticipo.update({id_empleado:idEmpleado},datos, function (entidad) {
+            delay.resolve(entidad);
+        }, function (error) {
+            delay.reject(error);
+        });
+        return delay.promise;
+    };
+    return res;
+}])
 .factory('CrearEmpleadosAnticipos', function ($resource) {
     return $resource(restServer + "recursos-humanoss/anticipos/empleados",null,
         {

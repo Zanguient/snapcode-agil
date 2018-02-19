@@ -69,3 +69,23 @@ angular.module('agil.servicios')
 			'update': { method:'PUT' }
 		});
 })
+
+.factory('RRHHPlanillaSueldos', function($resource) {
+		return $resource(restServer+"rrhh-planilla-sueldos/:id_empresa/gestion/:gestion/mes/:mes");
+})
+
+.factory('RRHHlistaPlanillaSueldos', ['RRHHPlanillaSueldos', '$q', function (RRHHPlanillaSueldos, $q) {
+    var res = function(id_empresa, gestion, mes) 
+	{
+		var delay = $q.defer();
+		RRHHPlanillaSueldos.get({id_empresa:id_empresa, gestion:gestion, mes:mes},function(planillas) 
+		{        
+			delay.resolve(planillas);
+		}, function(error) 
+			{
+				delay.reject(error);
+			});
+		return delay.promise;
+	};
+    return res;
+}])

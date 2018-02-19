@@ -8,6 +8,10 @@ module.exports=function(sequelize,Sequelize){
 			type: Sequelize.INTEGER,
 			field: 'empleado'
 		},
+		importe_sueldo_basico:{
+	        type: Sequelize.DECIMAL(20,4),
+			field: 'importe_sueldo_basico'
+	    },
 		horas_extras: {
 			type: Sequelize.INTEGER,
 			field: 'horas_extras'

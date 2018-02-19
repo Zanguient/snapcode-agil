@@ -41,10 +41,28 @@
                         <tr>
                             <td class="no-border-right text-right">PERIODO</td>
                             <td>
-                                <input type="text" ng-model="filtro.razon_social" class="ng-pristine ng-untouched ng-valid ng-empty"> 
+                                <select id="pago" name="pago" required ng-model="planilla.mes" >
+                                    <option value="" ng-show="false"></option>
+                                    <option value="1-ENERO">ENERO</option>
+                                    <option value="2-FEBRERO">FEBRERO</option>
+                                    <option value="3-MARZO">MARZO</option>
+                                    <option value="4-ABRIL">ABRIL</option>
+                                    <option value="5-MAYO">MAYO</option>
+                                    <option value="6-JUNIO">JUNIO</option>
+                                    <option value="7-JULIO">JULIO</option>
+                                    <option value="8-AGOSTO">AGOSTO</option>
+                                    <option value="9-SEPTIEMBRE">SEPTIEMBRE</option>
+                                    <option value="10-OCTUBRE">OCTUBRE</option>
+                                    <option value="11-NOVIEMBRE">NOVIEMBRE</option>
+                                    <option value="12-DICIEMBRE">DICIEMBRE</option>
+                                </select> 
                             </td>
                             <td>
-                                <input type="text" ng-model="filtro.nit" class="ng-pristine ng-untouched ng-valid ng-empty">
+                               <select required id="gestion" name="gestion"  
+                                    ng-options="gestion.nombre_corto as gestion.nombre for gestion in gestiones | orderBy:'-nombre' track by gestion.id" 
+                                    ng-model="planilla.gestion">
+                                    <option value="" ng-show="false"></option>
+                                </select>
                             </td>
                             <td>
                                 <select class="form-control" id="mes" name="mes">
@@ -55,7 +73,7 @@
                                 </select>
                             </td>
                             <td colspan="3">
-                                <button type="submit" ng-disabled="formularioFiltroVentas.$invalid" class="btn btn-primary">
+                                <button type="button" ng-click="filtrarListaPlanillaSueldos(planilla)" ng-disabled="formularioFiltroVentas.$invalid" class="btn btn-primary">
                                     <i class="ace-icon fa fa-search  align-top bigger-125"></i>
                                         Filtrar
                                 </button>
@@ -103,25 +121,25 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>1</td>
-                        <td>2017</td>
-                        <td>Enero</td>
+                    <tr ng-repeat="p in planilla.planillas">
+                        <td>{{$index + 1}}</td>
+                        <td>{{p.anio}}</td>
+                        <td>{{p.mes.split('-')[1]}}</td>
                         <td>Indefinido</td>
-                        <td>800000</td>
-                        <td>400</td>
-                        <td>5000</td>
-                        <td>7500</td>
-                        <td>85000</td>
-                        <td>0</td>
-                        <td>0</td>
-                        <td>897500</td>
-                        <td>7500</td>
-                        <td>0</td>
-                        <td>9000</td>
-                        <td>26500</td>
-                        <td>10000</td>
-                        <td>881000</td>
+                        <td>{{p.importe_sueldo_basico}}</td>
+                        <td>{{p.total_horas_extras}}</td>
+                        <td>{{p.importe_horas_extras}}</td>
+                        <td>{{p.importe_recargo_nocturno}}</td>
+                        <td>{{p.importe_bono_antiguedad}}</td>
+                        <td>{{p.importe_bono_frontera}}</td>
+                        <td>{{p.importe_otros_bonos}}</td>
+                        <td>{{p.importe_total_ganado}}</td>
+                        <td>{{p.importe_afp}}</td>
+                        <td>{{p.importe_rc_iva}}</td>
+                        <td>{{p.importe_anticipos}}</td>
+                        <td>{{p.importe_prestamos}}</td>
+                        <td>{{p.importe_total_descuento}}</td>
+                        <td>{{p.importe_liquido_pagable}}</td>
                         <td class="">
                             <div class="hidden-sm hidden-xs action-buttons">
                                 <a class="blue" href="#">
@@ -138,6 +156,7 @@
                                 </a>   
                             </div>
                         </td>
+                        
                     </tr>
                     <tr>
                         <td></td>
@@ -220,7 +239,7 @@
                                <i class="ace-icon fa fa-search  align-top bigger-125"></i>
                                     FILTRAR
                             </button>
-                            <button type="submit"  class="btn btn-success">
+                            <button ng-disabled="!planilla.RecursosHumanosEmpleados" type="submit"  class="btn btn-success">
                                 <i class=""></i>
                                     Generar
                             </button>

@@ -4520,12 +4520,14 @@
                                 <th scope="row">{{$index+1}}</th>
                                 <td>{{anticipo.fecha | date: "dd/MM/yyyy"}}</td>
                                 <td ng-if="!anticipo.id || anticipo.montoEdit">
-                                    <input  required class="form-control" type="number" ng-model="anticipo.monto" ng-change="sumarMontoPrestamoNuevo(anticipo)" min="1"
+                                    <input  ng-if="!anticipo.montoEdit" required class="form-control" type="number" ng-model="anticipo.monto" ng-change="sumarMontoPrestamoNuevo(anticipo)" min="1"
                                         max="{{listaAnticipos[listaAnticipos.length-2].saldo_salario}}">
+                                        <input  ng-if="anticipo.montoEdit" required class="form-control" type="number" ng-model="anticipo.monto" ng-change="sumarMontoPrestamoNuevo(anticipo)" min="1"
+                                        >
                                 </td>
                                 <td ng-if="anticipo.id" ng-hide="anticipo.montoEdit">{{anticipo.monto|number:2}}</td>
                                 <td>{{anticipo.anticipo_ordinaro|number:2}}</td>
-                                <td>{{anticipo.total|number:2}}</td>
+                                <td >{{anticipo.total|number:2}}</td>
                                 <td>{{anticipo.salario_basico|number:2}}</td>
                                 <td>{{anticipo.saldo_salario|number:2}}</td>
                                 <td>
@@ -4538,10 +4540,10 @@
                                         ng-click="abrirModalVerificarCuenta(anticipo)">
                                         <i class="ace-icon fa fa-trash bigger-130"></i>
                                     </a>
-                                        <a ng-if="anticipo.montoEdit" class="green" uib-tooltip="Guardar" href="javascript:void(0)" ng-click="EditarMontoPrestamo(prestamo)">
+                                        <a ng-if="anticipo.montoEdit" class="green" uib-tooltip="Guardar" href="javascript:void(0)" ng-click="ActualizarAnticipo(anticipo)">
                                             <i class="ace-icon fa fa-floppy-o bigger-200"></i>
                                         </a>
-                                        <a ng-if="anticipo.montoEdit" class="red" uib-tooltip="Cancelar" href="javascript:void(0)" ng-click="CancelarEditMontoPrestamo(prestamo)">
+                                        <a ng-if="anticipo.montoEdit" class="red" uib-tooltip="Cancelar" href="javascript:void(0)" ng-click="cancelarEdicionAnticipo()">
                                             <i class="ace-icon fa fa-times-circle bigger-200"></i>
                                         </a>
                                     </div>
@@ -4557,7 +4559,7 @@
                     <span class="ace-icon fa fa-print"></span>
                     PDF
                 </button>
-                <button class="btn btn-primary btn-sm" type="submit">
+                <button class="btn btn-primary btn-sm" type="submit" ng-if="listaAnticipos.length>0 && !listaAnticipos[listaAnticipos.length-1].id">
                     <i class="glyphicon glyphicon-floppy-disk"></i>Guardar
                 </button>
               

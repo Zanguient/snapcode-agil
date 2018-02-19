@@ -898,7 +898,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
     router.route('/usuario-ficha/:id_empleado')
         .get(function (req, res) {
             RrhhEmpleadoFicha.findAll({
-                where: { id_empleado: req.params.id_empleado,contrato:{$ne:null} },
+                where: { id_empleado: req.params.id_empleado, contrato: { $ne: null } },
 
             }).then(function (empleado) {
                 res.json(empleado)
@@ -1394,7 +1394,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                     res.json({ empleados: empleados })
 
                 }
-               
+
             })
         })
     router.route('/recursos-humanos/rolTurno/empleado/:id_empleado')
@@ -1727,7 +1727,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
     router.route('/recursos-humanos/anticipos/empleado/:id_empleado')
         .post(function (req, res) {
             Clase.find({
-                where:{nombre_corto:req.body.textoClase}
+                where: { nombre_corto: req.body.textoClase }
             }).then(function (clase) {
                 RrhhAnticipo.create({
                     id_empleado: req.params.id_empleado,
@@ -1735,22 +1735,70 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                     monto: req.body.monto,
                     id_tipo: clase.id,
                     total: req.body.total,
-                    salario_basico:req.body.salario_basico,
+                    salario_basico: req.body.salario_basico,
                     eliminado: false
                 }).then(function (empleadoaAnticipo) {
-                    res.json({ mensaje: "Guardado satisfactoriamente!" })
-    
+                    RrhhAnticipo.findAll({
+                        where: { id_empleado: req.params.id_empleado, id_tipo: { $ne: clase.id } }
+                    }).then(function (anticipos) {
+                        if (anticipos.length > 0) {
+                            anticipos.forEach(function (anticipo, index, array) {
+                                var total = req.body.montoExtraoridnario + anticipo.monto
+                                RrhhAnticipo.update({
+                                    total: total,
+                                }, {
+                                        where: { id: anticipo.id }
+                                    }).then(function (empleadoaAnticipo) {
+                                        if (index === (array.length - 1)) {
+                                            res.json({ mensaje: "Guardado satisfactoriamente!" })
+                                        }
+                                    })
+                            });
+                        } else {                            
+                                res.json({ mensaje: "Guardado satisfactoriamente!" })                            
+                        }
+
+                    })
+
+
                 })
             })
-           
+
         })
-        router.route('/recursos-humanoss/anticipos/empleados')
+        .put(function (req, res) {
+            RrhhAnticipo.update({
+                monto: req.body.monto,
+                total: req.body.total,
+            }, {
+                    where: { id: req.body.id }
+                }).then(function (empleadoaAnticipo) {
+                    RrhhAnticipo.findAll({
+                        where: { id_empleado: req.params.id_empleado, id_tipo: { $ne: req.body.id_tipo } }
+                    }).then(function (anticipos) {
+                        anticipos.forEach(function (anticipo, index, array) {
+                            var total = req.body.montoExtraoridnario + anticipo.monto
+                            RrhhAnticipo.update({
+                                total: total,
+                            }, {
+                                    where: { id: anticipo.id }
+                                }).then(function (empleadoaAnticipo) {
+                                    if (index === (array.length - 1)) {
+                                        res.json({ mensaje: "Guardado satisfactoriamente!" })
+                                    }
+                                })
+                        });
+
+                    })
+
+                })
+        })
+    router.route('/recursos-humanoss/anticipos/empleados')
         .post(function (req, res) {
-            req.body.anticipos.forEach(function(anticipo,index,array) {
+            req.body.anticipos.forEach(function (anticipo, index, array) {
                 Clase.find({
-                    where:{nombre_corto:req.body.textoClase}
+                    where: { nombre_corto: req.body.textoClase }
                 }).then(function (clase) {
-                    RrhhAnticipo.create({                        
+                    RrhhAnticipo.create({
                         id_empleado: anticipo.empleado.id,
                         fecha: anticipo.fecha,
                         monto: anticipo.monto,
@@ -1758,16 +1806,16 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                         total: anticipo.total,
                         eliminado: false,
                         salario_basico: anticipo.salario_basico,
-                        tope:anticipo.tope
+                        tope: anticipo.tope
                     }).then(function (empleadoaAnticipo) {
                         res.json({ mensaje: "Guardado satisfactoriamente!" })
-        
+
                     })
                 })
             });
-           
+
         })
-        
+
     router.route('/recursos-humanos/anticipos/empleado/:id_empleado/inicio/:inicio/fin/:fin/empresa/:id_empresa')
         .get(function (req, res) {
             var condicionAnticipo = {}
@@ -1782,27 +1830,27 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
             }
             RrhhAnticipo.findAll({
                 where: condicionAnticipo,
-                include: [{ model: MedicoPaciente, as: 'empleado', where: condicionEmpleado, include: [{ model: Persona, as: 'persona' },{model:RrhhEmpleadoFicha,as:'empleadosFichas'}] }, { model: Clase, as: 'tipoAnticipo' }]
+                include: [{ model: MedicoPaciente, as: 'empleado', where: condicionEmpleado, include: [{ model: Persona, as: 'persona' }, { model: RrhhEmpleadoFicha, as: 'empleadosFichas' }] }, { model: Clase, as: 'tipoAnticipo' }]
             }).then(function (empleadoaAnticipo) {
-      /*           if (empleadoaAnticipo.length > 0) {
-                    empleadoaAnticipo.forEach(function (anticipo, index, array) {
-                        RrhhEmpleadoFicha.findAll({
-                            limit: 1,
-                            where: {
-                                id_empleado: anticipo.empleado.id
-                            },
-                            order: [['id', 'DESC']]
-                        }).then(function (fichaActual) {
-                            anticipo.dataValues.empleado.dataValues.ficha = fichaActual[0]
-                            if (index === (array.length - 1)) {
-                                res.json({ anticipos: empleadoaAnticipo })
-                            }
-                        })
-                    })
+                /*           if (empleadoaAnticipo.length > 0) {
+                              empleadoaAnticipo.forEach(function (anticipo, index, array) {
+                                  RrhhEmpleadoFicha.findAll({
+                                      limit: 1,
+                                      where: {
+                                          id_empleado: anticipo.empleado.id
+                                      },
+                                      order: [['id', 'DESC']]
+                                  }).then(function (fichaActual) {
+                                      anticipo.dataValues.empleado.dataValues.ficha = fichaActual[0]
+                                      if (index === (array.length - 1)) {
+                                          res.json({ anticipos: empleadoaAnticipo })
+                                      }
+                                  })
+                              })
+          
+                          } else { */
 
-                } else { */
-
-                    res.json({ anticipos: empleadoaAnticipo })
+                res.json({ anticipos: empleadoaAnticipo })
                 /* } */
             })
         })

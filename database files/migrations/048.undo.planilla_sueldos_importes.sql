@@ -1,0 +1,15 @@
+ALTER TABLE agil_rrhh_planilla_sueldos DROP importe_sueldo_basico;
+ALTER TABLE agil_rrhh_planilla_sueldos DROP total_horas_extras;
+ALTER TABLE agil_rrhh_planilla_sueldos DROP importe_horas_extras;
+ALTER TABLE agil_rrhh_planilla_sueldos DROP importe_recargo_nocturno;
+ALTER TABLE agil_rrhh_planilla_sueldos DROP importe_bono_antiguedad;
+ALTER TABLE agil_rrhh_planilla_sueldos DROP importe_bono_frontera;
+ALTER TABLE agil_rrhh_planilla_sueldos DROP importe_otros_bonos;
+ALTER TABLE agil_rrhh_planilla_sueldos DROP importe_total_ganado;
+ALTER TABLE agil_rrhh_planilla_sueldos DROP importe_afp;
+ALTER TABLE agil_rrhh_planilla_sueldos DROP importe_rc_iva;
+ALTER TABLE agil_rrhh_planilla_sueldos DROP importe_anticipos;
+ALTER TABLE agil_rrhh_planilla_sueldos DROP importe_prestamos;
+ALTER TABLE agil_rrhh_planilla_sueldos DROP importe_total_descuento;
+ALTER TABLE agil_rrhh_planilla_sueldos DROP importe_liquido_pagable;
+ALTER TABLE agil_rrhh_detalle_planilla_sueldos DROP importe_sueldo_basico;
