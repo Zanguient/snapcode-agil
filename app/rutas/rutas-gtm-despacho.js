@@ -24,7 +24,7 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, forEach, j
 						despachado: false,
 						eliminado: false,
 						fecha: new Date(req.body.fecha.split("/")[2], req.body.fecha.split("/")[1] - 1, req.body.fecha.split("/")[0]),
-						servicio_transporte: detalle_despacho.servicio_transporte
+						servicio_transporte: Double.parse(detalle_despacho.servicio_transporte)
 					}).then(function (detalleDespachoCreado) {
 						if (index === (array.length - 1)) {
 							res.json(despachoCreado);
