@@ -1678,7 +1678,7 @@
 		</div>
 		<form name="formularioBusquedaInventario" novalidate>
 			<div class="col-xs-6"><div class="dataTables_length" id="tabla-productos_length"><label>
-			Mostrar <select ng-model="itemsPorPagina" ng-change="buscarInventarios(almacenBusqueda.id,1,itemsPorPagina,textoBusqueda,columna,direccion)" name="tabla-proveedores_length" aria-controls="tabla-productos" class="form-control input-sm">
+			Mostrar <select ng-model="itemsPorPagina" ng-change="buscarInventarios(almacenBusqueda.id,1,itemsPorPagina,textoBusqueda,columna,direccion,cantidadInv)" name="tabla-proveedores_length" aria-controls="tabla-productos" class="form-control input-sm">
 						<option selected value="10">10</option>
 						<option value="25">25</option>
 						<option value="50">50</option>
@@ -1792,11 +1792,11 @@
 		<div class="col-xs-6">
 			<div class="dataTables_paginate paging_simple_numbers" id="tabla-productos_paginate">
 				<ul class="pagination">
-					<li class="paginate_button previous" aria-controls="tabla-productos" tabindex="0" id="tabla-productos_previous"><a href="javascript:void(0)" ng-click="buscarInventarios(almacenBusqueda.id,1,itemsPorPagina,textoBusqueda,columna,direccion)">Primero</a></li>
-					<li class="paginate_button previous" ng-class="{disabled:paginaActual==1}" aria-controls="tabla-productos" tabindex="0" id="tabla-productos_previous"><a href="javascript:void(0)" e-disabled="paginaActual==1" ng-click="buscarInventarios(almacenBusqueda.id,paginaActual-1,itemsPorPagina,textoBusqueda,columna,direccion)"><<</a></li>
-					<li class="paginate_button" ng-class="{active:paginaActual==pagina}" aria-controls="tabla-productos" tabindex="0" ng-repeat="pagina in paginas" ng-if="abs(paginaActual-pagina)<4"><a href="javascript:void(0)" ng-click="buscarInventarios(almacenBusqueda.id,pagina,itemsPorPagina,textoBusqueda,columna,direccion)">{{pagina}}</a></li>
-					<li class="paginate_button" ng-class="{disabled:paginaActual==paginas.length}" aria-controls="tabla-productos" tabindex="0" id="tabla-productos_next"><a href="javascript:void(0)" e-disabled="paginaActual==paginas.length" ng-click="buscarInventarios(almacenBusqueda.id,paginaActual+1,itemsPorPagina,textoBusqueda,columna,direccion)">>></a></li>
-					<li class="paginate_button previous" aria-controls="tabla-productos" tabindex="0" id="tabla-productos_previous"><a href="javascript:void(0)" ng-click="buscarInventarios(almacenBusqueda.id,paginas.length,itemsPorPagina,textoBusqueda,columna,direccion)">Ultimo</a></li>
+					<li class="paginate_button previous" aria-controls="tabla-productos" tabindex="0" id="tabla-productos_previous"><a href="javascript:void(0)" ng-click="buscarInventarios(almacenBusqueda.id,1,itemsPorPagina,textoBusqueda,columna,direccion,cantidadInv)">Primero</a></li>
+					<li class="paginate_button previous" ng-class="{disabled:paginaActual==1}" aria-controls="tabla-productos" tabindex="0" id="tabla-productos_previous"><a href="javascript:void(0)" e-disabled="paginaActual==1" ng-click="buscarInventarios(almacenBusqueda.id,paginaActual-1,itemsPorPagina,textoBusqueda,columna,direccion,cantidadInv)"><<</a></li>
+					<li class="paginate_button" ng-class="{active:paginaActual==pagina}" aria-controls="tabla-productos" tabindex="0" ng-repeat="pagina in paginas" ng-if="abs(paginaActual-pagina)<4"><a href="javascript:void(0)" ng-click="buscarInventarios(almacenBusqueda.id,pagina,itemsPorPagina,textoBusqueda,columna,direccion,cantidadInv)">{{pagina}}</a></li>
+					<li class="paginate_button" ng-class="{disabled:paginaActual==paginas.length}" aria-controls="tabla-productos" tabindex="0" id="tabla-productos_next"><a href="javascript:void(0)" e-disabled="paginaActual==paginas.length" ng-click="buscarInventarios(almacenBusqueda.id,paginaActual+1,itemsPorPagina,textoBusqueda,columna,direccion,cantidadInv)">>></a></li>
+					<li class="paginate_button previous" aria-controls="tabla-productos" tabindex="0" id="tabla-productos_previous"><a href="javascript:void(0)" ng-click="buscarInventarios(almacenBusqueda.id,paginas.length,itemsPorPagina,textoBusqueda,columna,direccion,cantidadInv)">Ultimo</a></li>
 				</ul>
 			</div>
 		</div>

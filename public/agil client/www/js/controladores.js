@@ -1541,7 +1541,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 			ImprimirPdfAlertaDespacho($scope.gtm_detalles_despacho_seleccionados,$scope.filtroDes,$scope.usuario)
 		}
 		$scope.imprimirExelDespachosALerta=function () {
-		ExportarExelDespachos($scope.gtm_detalles_despacho_seleccionados,$scope.filtroDes,$scope.usuario)
+			ExportarExelAlarmasDespachos($scope.gtm_detalles_despacho_seleccionados,$scope.filtroDes,$scope.usuario)
 	}
 		$scope.verificarSeleccionProformas = function () {
 			var paraFacturar = []
