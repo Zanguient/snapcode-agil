@@ -255,19 +255,31 @@
                     <tr>
                         <td class="no-border-right text-right">PERIODO</td>
                         <td>
-                            <select id="pago" name="pago" ng-model="filtro.tipo_pago" data-placeholder="Elija un tipo de pago" class="form-control"><option value="? undefined:undefined ?"></option>
-                                <option value="0">ENERO</option>
-                                <!-- ngRepeat: tipoPago in tiposPago --><option ng-repeat="tipoPago in tiposPago" value="17" class="ng-binding ng-scope">FEBRERO</option><!-- end ngRepeat: tipoPago in tiposPago --><option ng-repeat="tipoPago in tiposPago" value="18" class="ng-binding ng-scope">MARZO</option><!-- end ngRepeat: tipoPago in tiposPago -->
+                            <select id="pago" name="pago" required ng-model="planilla.mes" >
+                                <option value="" ng-show="false"></option>
+                                <option value="1-ENERO">ENERO</option>
+                                <option value="2-FEBRERO">FEBRERO</option>
+                                <option value="3-MARZO">MARZO</option>
+                                <option value="4-ABRIL">ABRIL</option>
+                                <option value="5-MAYO">MAYO</option>
+                                <option value="6-JUNIO">JUNIO</option>
+                                <option value="7-JULIO">JULIO</option>
+                                <option value="8-AGOSTO">AGOSTO</option>
+                                <option value="9-SEPTIEMBRE">SEPTIEMBRE</option>
+                                <option value="10-OCTUBRE">OCTUBRE</option>
+                                <option value="11-NOVIEMBRE">NOVIEMBRE</option>
+                                <option value="12-DICIEMBRE">DICIEMBRE</option>
                             </select>
                         </td> 
                         <td>
-                            <select id="pago" name="pago" ng-model="filtro.tipo_pago" data-placeholder="Elija un tipo de pago" class="form-control"><option value="? undefined:undefined ?"></option>
-                                <option value="0">2015</option>
-                                <!-- ngRepeat: tipoPago in tiposPago --><option ng-repeat="tipoPago in tiposPago" value="17" class="ng-binding ng-scope">2016</option><!-- end ngRepeat: tipoPago in tiposPago --><option ng-repeat="tipoPago in tiposPago" value="18" class="ng-binding ng-scope">2017</option><!-- end ngRepeat: tipoPago in tiposPago -->
+                            <select required id="gestion" name="gestion"  
+                                ng-options="gestion.nombre_corto as gestion.nombre for gestion in gestiones | orderBy:'-nombre' track by gestion.id" 
+                                ng-model="planilla.gestion">
+                                <option value="" ng-show="false"></option>
                             </select>
                         </td>
                         <td colspan="3">
-                             <button type="submit" ng-disabled="formularioFiltroVentas.$invalid" class="btn btn-primary">
+                             <button type="button" ng-click="filtrarSueldos(planilla)"  ng-disabled="formularioFiltroVentas.$invalid" class="btn btn-primary">
                                <i class="ace-icon fa fa-search  align-top bigger-125"></i>
                                     FILTRAR
                             </button>
@@ -398,28 +410,30 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
+                        <tr ng-repeat="empleado in planilla.RecursosHumanosEmpleados">
                             <td class="center">
                                 <label class="pos-rel">
                                     <input name="switch-field-1" type="checkbox" class="ace">
                                     <span class="lbl"></span>
                                 </label>
                             </td>
-                            <td>1</td>
-                            <td>Antonio Fernando Torrico Angulo</td>
-                            <td>4391485</td>
-                            <td>Copero</td>
-                            <td>EMSSCZ</td>
-                            <td>PPR190886</td>
-                            <td>9900</td>
-                            <td>4000434343434</td>
-                            <td>5900</td>
-                            <td>767</td>
-                            <td>67</td>
-                            <td>520</td>
-                            <td>180</td>
-                            <td>0</td>
-                            <td>170</td>
+                            <td>{{$index+1}}</td>
+                            <td>{{empleado.persona.nombre_completo}}</td>
+                            <td>{{empleado.persona.ci}}</td>
+                            <td>
+                                <label ng-repeat="cargo in empleado.cargos">{{cargo.cargo.nombre}}</label>
+                            </td>
+                            <td>{{empleado.campo}}</td>
+                            <td>{{empleado.empleadosFichas[0].matricula_seguro}}</td>
+                            <td>{{empleado.netoImponible}}</td>
+                            <td>{{empleado.dos_SMN}}</td>
+                            <td>{{empleado.diferencia}}</td>
+                            <td>{{empleado.rcIva13}}</td>
+                            <td>{{empleado.dos_SMN13}}</td>
+                            <td>{{empleado.f110}}</td>
+                            <td>{{empleado.rcIvaFisico}}</td>
+                            <td>{{empleado.saldoDependiente}}</td>
+                            <td>{{empleado.saldoAnterior}}</td>
                             <td>10</td>
                             <td>180</td>
                             <td>0</td>
@@ -438,51 +452,6 @@
                                         <i class="ace-icon fa fa-trash-o bigger-130"></i>
                                     </a>   
                                      <a class="Blue" href="javascript:void(0)" ng-click="abrirDialogFormulario110()">
-                                        <i class="ace-icon icono-impuestos bigger-150"></i>
-                                    </a>
-                                </div>   
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="center">
-                                <label class="pos-rel">
-                                    <input name="switch-field-1" type="checkbox" class="ace">
-                                    <span class="lbl"></span>
-                                </label>
-                            </td>
-                            <td>2</td>
-                            <td>Pedro Gumucio Condarco</td>
-                            <td>4391485</td>
-                            <td>Copero</td>
-                            <td>EMSSCZ</td>
-                            <td>PPR190886</td>
-                            <td>9900</td>
-                            <td>4000</td>
-                            <td>5900</td>
-                            <td>767</td>
-                            <td>67</td>
-                            <td>520</td>
-                            <td>180</td>
-                            <td>0</td>
-                            <td>170</td>
-                            <td>10</td>
-                            <td>180</td>
-                            <td>0</td>
-                            <td>180</td>
-                            <td>0</td>
-                            <td>0</td>
-                            <td class="table__side-rc-iva">
-                                <div class="hidden-sm hidden-xs action-buttons">
-                                    <a class="blue" href="javascript:void(0)">
-                                        <i class="ace-icon fa fa-search-plus bigger-130"></i>
-                                    </a>
-                                    <a class="red" href="javascript:void(0)">
-                                        <i class="ace-icon fa fa-pencil-square-o bigger-130"></i>
-                                    </a>
-                                    <a class="red" href="javascript:void(0)">
-                                        <i class="ace-icon fa fa-trash-o bigger-130"></i>
-                                    </a>
-                                      <a class="Blue" href="javascript:void(0)" ng-click="abrirDialogFormulario110()">
                                         <i class="ace-icon icono-impuestos bigger-150"></i>
                                     </a>
                                 </div>   

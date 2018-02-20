@@ -557,13 +557,13 @@ module.exports = function (router, ComprobanteContabilidad, AsientoContabilidad,
 										eliminado: asientoContable.eliminado,
 										id_centro_costo: idCentroCosto
 									}).then(function (asientroCreado) {
-										if (asientoContable.cuenta.cuentaAux) {
+										if (asientoContable.cuentaAux) {
 											ContabilidadCuentaAuxiliar.create({
-												debe: asientoContable.cuenta.cuentaAux.debe,
-												haber: asientoContable.cuenta.cuentaAux.haber,
-												saldo: asientoContable.cuenta.cuentaAux.saldo,
-												descripcion: asientoContable.cuenta.cuentaAux.nombre,
-												nombre: asientoContable.cuenta.cuentaAux.nombre,
+												debe: asientoContable.cuentaAux.debe,
+												haber: asientoContable.cuentaAux.haber,
+												saldo: asientoContable.cuentaAux.saldo,
+												descripcion: asientoContable.cuentaAux.nombre,
+												nombre: asientoContable.cuentaAux.nombre,
 												id_cuenta: asientoContable.cuenta.id,
 												id_asiento: asientroCreado.id
 											})
@@ -707,13 +707,13 @@ module.exports = function (router, ComprobanteContabilidad, AsientoContabilidad,
 									eliminado: asientoContable.eliminado,
 									id_centro_costo: idCentroCosto
 								}).then(function (asientroCreado) {
-									if (asientoContable.cuenta.cuentaAux) {
+									if (asientoContable.cuentaAux) {
 										ContabilidadCuentaAuxiliar.create({
-											debe: asientoContable.cuenta.cuentaAux.debe,
-											haber: asientoContable.cuenta.cuentaAux.haber,
-											saldo: asientoContable.cuenta.cuentaAux.saldo,
-											descripcion: asientoContable.cuenta.cuentaAux.nombre,
-											nombre: asientoContable.cuenta.cuentaAux.nombre,
+											debe: asientoContable.cuentaAux.debe,
+											haber: asientoContable.cuentaAux.haber,
+											saldo: asientoContable.cuentaAux.saldo,
+											descripcion: asientoContable.cuentaAux.nombre,
+											nombre: asientoContable.cuentaAux.nombre,
 											id_cuenta: asientoContable.cuenta.id,
 											id_asiento: asientroCreado.id
 										})
@@ -847,7 +847,7 @@ module.exports = function (router, ComprobanteContabilidad, AsientoContabilidad,
 											id: asientoContable.id
 										}
 									}).then(function (asientoActualizado) {
-										if (asientoContable.cuenta.cuentaAux) {
+										if (asientoContable.cuentaAux) {
 											crearCuentaAuxiliar(asientoContable, res, index, array)
 										}
 										if (index === (array.length - 1)) {
@@ -866,7 +866,7 @@ module.exports = function (router, ComprobanteContabilidad, AsientoContabilidad,
 									eliminado: asientoContable.eliminado,
 									id_centro_costo: idCentroCosto
 								}).then(function (asientoCreado) {
-									if (asientoContable.cuenta.cuentaAux) {
+									if (asientoContable.cuentaAux) {
 										crearCuentaAuxiliar(asientoContable, res, index, array)
 									}
 									if (index === (array.length - 1)) {
@@ -920,25 +920,25 @@ module.exports = function (router, ComprobanteContabilidad, AsientoContabilidad,
 		})
 
 	function crearCuentaAuxiliar(asientoContable, ContabilidadCuentaAuxiliarres, index, array) {
-		if (asientoContable.cuenta.cuentaAux.id) {
+		if (asientoContable.cuentaAux.id) {
 			ContabilidadCuentaAuxiliar.update({
-				debe: asientoContable.cuenta.cuentaAux.debe,
-				haber: asientoContable.cuenta.cuentaAux.haber,
-				saldo: asientoContable.cuenta.cuentaAux.saldo,
-				descripcion: asientoContable.cuenta.cuentaAux.nombre,
-				nombre: asientoContable.cuenta.cuentaAux.nombre,
+				debe: asientoContable.cuentaAux.debe,
+				haber: asientoContable.cuentaAux.haber,
+				saldo: asientoContable.cuentaAux.saldo,
+				descripcion: asientoContable.cuentaAux.nombre,
+				nombre: asientoContable.cuentaAux.nombre,
 				id_cuenta: asientoContable.cuenta.id,
 				id_asiento: asientoContable.id
 			}, {
-					where: { id: asientoContable.cuenta.cuentaAux.id }
+					where: { id: asientoContable.cuentaAux.id }
 				})
 		} else {
 			ContabilidadCuentaAuxiliar.create({
-				debe: asientoContable.cuenta.cuentaAux.debe,
-				haber: asientoContable.cuenta.cuentaAux.haber,
-				saldo: asientoContable.cuenta.cuentaAux.saldo,
-				descripcion: asientoContable.cuenta.cuentaAux.nombre,
-				nombre: asientoContable.cuenta.cuentaAux.nombre,
+				debe: asientoContable.cuentaAux.debe,
+				haber: asientoContable.cuentaAux.haber,
+				saldo: asientoContable.cuentaAux.saldo,
+				descripcion: asientoContable.cuentaAux.nombre,
+				nombre: asientoContable.cuentaAux.nombre,
 				id_cuenta: asientoContable.cuenta.id,
 				id_asiento: asientoContable.id
 			}).then(function (cuentaAuxCreate) {

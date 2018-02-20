@@ -1,6 +1,6 @@
 angular.module('agil.controladores')
 
-.controller('ControladoresRCIVA', function($scope,$localStorage,$location,$templateCache,$route,blockUI, RecursosHumanosEmpleados, RecursosHumanosEmpleadosHorasExtras){
+.controller('ControladoresRCIVA', function($scope,$localStorage,$location,$templateCache,$route,blockUI, RecursosHumanosEmpleados, RecursosHumanosEmpleadosHorasExtras, ClasesTipo, Parametros, ObtenerCambioMoneda){
 	$scope.$on('$viewContentLoaded', function () {
         
         $scope.idModalNuevoPlanillaRCIVA = 'dialog-nueva-planilla-rc-iva';
@@ -16,6 +16,25 @@ angular.module('agil.controladores')
         $scope.eliminarPopup($scope.idModalNuevoPlanillaRCIVA, $scope.idModalFormulario110,$scope.idModalFormularioGeneral110, 
             $scope.idModalArchivosTXT);
     });
+
+    $scope.usuario=JSON.parse($localStorage.usuario);
+
+    $scope.fechaATexto = function (fecha) {
+        fech = new Date(fecha)
+        fecha = fech.getDate() + "/" + (fech.getMonth() + 1) + "/" + fech.getFullYear();
+        return fecha
+    }
+
+    $scope.obtenerGestiones=function(){
+        blockUI.start();
+        var promesa=ClasesTipo("GTN");
+        promesa.then(function(entidad){
+            $scope.gestiones=entidad.clases;
+            blockUI.stop();
+        });
+    }
+
+    $scope.obtenerGestiones();
 
     $scope.abrirDialogNuevoPlanillaRCIVA= function () {
         $scope.abrirPopup($scope.idModalNuevoPlanillaRCIVA);
@@ -73,6 +92,33 @@ angular.module('agil.controladores')
                     empleado.otrosBonos = $scope.otrosBonos;
                     empleado.totalGanado = empleado.sueldoBasico+empleado.totalHorasExtras+empleado.recargoNocturno+empleado.bonoAntiguedad+empleado.bonoFrontera+empleado.otrosBonos;
                     empleado.afp = round(empleado.totalGanado * 12.71/100, 2);
+                    empleado.netoImponible = empleado.totalGanado - empleado.afp;
+                    empleado.dos_SMN = $scope.parametros.salario_minimo * 2;
+
+                    empleado.diferencia = 0;
+                    if (empleado.netoImponible > empleado.dos_SMN) {
+                        empleado.diferencia = round(empleado.netoImponible - empleado.dos_SMN, 2);
+                    }
+
+                    empleado.rcIva13 = round(empleado.diferencia * 0.13, 2);
+                    empleado.dos_SMN13 = ($scope.parametros.salario_minimo * 2)*0.13;
+                    empleado.f110 = 0;
+                    var calculo = empleado.rcIva13 - empleado.dos_SMN13;
+                    var calculo2 = calculo-empleado.f110;
+
+                    empleado.rcIvaFisico = 0;
+                    if (calculo2>=0) {
+                        empleado.rcIvaFisico = round(calculo2, 2);
+                    }
+
+                    if (calculo2>=0) {
+                        empleado.saldoDependiente = 0;
+                    }else{
+                        empleado.saldoDependiente = empleado.f110-calculo;
+                    }
+                    // ==== obtener de la casilla nuevo saldo del mes anterior)
+                    empleado.saldoAnterior = 0;
+                    
                     empleado.rc_iva = 0; // sacar de planilla rc-iva
                     empleado.anticipos = 0; // sacar de planilla anticipos 
                     empleado.prestamos = round(dato.totalCuotas, 2); // sacar de recursos humanos 
@@ -155,6 +201,54 @@ angular.module('agil.controladores')
         
     }
 
+    $scope.obtenerParametros=function(idEmpresa){
+        blockUI.start();
+        if(idEmpresa==null){
+            idEmpresa=0;
+        }
+        var promesa=Parametros(idEmpresa);
+        promesa.then(function(parametros){
+            $scope.parametros=parametros;
+            blockUI.stop();
+        });
+    }
+
+    $scope.calcularBonoAntiguedad=function(antiguedad){
+        if (antiguedad >= 0 && antiguedad <= 2) {
+            // "es de 0 a 2"
+            return 3 * $scope.parametros.salario_base_antiguedad * $scope.parametros.antiguedad_cero_dos/100;
+        }
+        if (antiguedad > 2 && antiguedad <= 5) {
+            // "es de 2 a 5"
+            return 3 * $scope.parametros.salario_base_antiguedad * $scope.parametros.antiguedad_dos_cinco/100;
+        }
+        if (antiguedad > 5 && antiguedad <= 8) {
+            // "es de 5 a 8"
+            return 3 * $scope.parametros.salario_base_antiguedad * $scope.parametros.antiguedad_cinco_ocho/100;
+        }
+        if (antiguedad > 8 && antiguedad <= 11) {
+            // "es de 8 a 11"
+            return 3 * $scope.parametros.salario_base_antiguedad * $scope.parametros.antiguedad_ocho_once/100;
+        }
+        if (antiguedad > 11 && antiguedad <= 15) {
+            // "es de 11 a 15"
+            return 3 * $scope.parametros.salario_base_antiguedad * $scope.parametros.antiguedad_once_quince/100;
+        }
+        if (antiguedad > 15 && antiguedad <= 20) {
+            // "es de 15 a 20"
+            return 3 * $scope.parametros.salario_base_antiguedad * $scope.parametros.antiguedad_quice_veinte/100;
+        }
+        if (antiguedad > 20 && antiguedad <= 25) {
+            // "es de 20 a 25"
+            return 3 * $scope.parametros.salario_base_antiguedad * $scope.parametros.antiguedad_veinte_veinticinco/100;
+        }
+        if (antiguedad > 25) {
+            // "es de mayor a 25"
+            return 3 * $scope.parametros.salario_base_antiguedad * $scope.parametros.antiguedad_mas_veinticinco/100;
+        }
+    }
+
+
 
     $scope.abrirDialogFormulario110= function () {
         $scope.abrirPopup($scope.idModalFormulario110);
@@ -174,6 +268,7 @@ angular.module('agil.controladores')
     $scope.cerrarDialogArchivosTXT=function () {
         $scope.cerrarPopup($scope.idModalArchivosTXT); 
     }
+    $scope.obtenerParametros($scope.usuario.id_empresa);
     
 
 });

@@ -147,7 +147,7 @@ angular.module('agil.controladores')
         $scope.venta.actividad=$scope.actividades.length==1?$scope.actividades[0]:null;
     }
 
-    $scope.buscarInventarios=function(idAlmacen,pagina,itemsPagina,texto,columna,direccion){
+    $scope.buscarInventarios=function(idAlmacen,pagina,itemsPagina,texto,columna,direccion, cantidad){
         blockUI.start();
         $scope.itemsPorPagina=itemsPagina;
         if(texto=="" || texto==null){
@@ -156,7 +156,7 @@ angular.module('agil.controladores')
             $scope.textoBusqueda=texto;
         }
         $scope.paginaActual=pagina;
-        var promesa=InventarioPaginador($scope.usuario.id_empresa,idAlmacen,pagina,itemsPagina,texto,columna,direccion);
+        var promesa=InventarioPaginador($scope.usuario.id_empresa,idAlmacen,pagina,itemsPagina,texto,columna,direccion,cantidad);
         promesa.then(function(dato){
             var productos = dato.productos;
             //var mproductos=[];
@@ -478,10 +478,11 @@ angular.module('agil.controladores')
         $scope.paginaActual=1;
         $scope.columna="nombre";
         $scope.direccion="asc";
+        $scope.cantidadInv = "0";
         $scope.textoBusqueda="";
         if($scope.venta.almacen){
             $scope.almacenBusqueda=$scope.venta.almacen;
-            $scope.buscarInventarios($scope.almacenBusqueda.id,$scope.paginaActual,$scope.itemsPorPagina,$scope.textoBusqueda,$scope.columna,$scope.direccion);
+            $scope.buscarInventarios($scope.almacenBusqueda.id,$scope.paginaActual,$scope.itemsPorPagina,$scope.textoBusqueda,$scope.columna,$scope.direccion,$scope.cantidadInv);
         }
         $scope.abrirPopup($scope.idModalInventario);
     }

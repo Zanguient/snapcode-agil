@@ -2025,7 +2025,7 @@
 												 class="blue">
 													<i class="fa fa-external-link"></i>
 												</a>&nbsp
-												<span class="red">{{asiento.cuenta.cuentaAux.nombre}}</span>
+												<span class="red">{{asiento.cuentaAux.nombre}}</span>
 												<script type="text/ng-template" id="PopoverCuentasAxiliares.html">													
 													<div class="modal-header">
 															<button type="button" class="close" ng-click="asiento.isOpen=false">&times;</button>
@@ -2040,7 +2040,7 @@
 														</span>
 													</div>
 														<div>
-													<select size="8" class="form-control" ng-change="selecionarCuentaAxiliar(asiento)" ng-disabled="verComprobante" required ng-options="cuenta.razon_social as cuenta.razon_social for cuenta in listaCuentasAuxiliares|filter: filtro track by cuenta.id" ng-model="asiento.cuenta.cuentaAux.nombre"> 
+													<select size="8" class="form-control" ng-change="selecionarCuentaAxiliar(asiento)" ng-disabled="verComprobante" required ng-options="cuenta.razon_social as cuenta.razon_social for cuenta in listaCuentasAuxiliares|filter: filtro track by cuenta.id" ng-model="asiento.cuentaAux.nombre"> 
 														  </select>
 														</div>
 												</script>

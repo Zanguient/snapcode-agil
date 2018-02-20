@@ -123,38 +123,48 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 			if ($scope.moneda.dolar != "--") {
 				if (nuevoComprobante.fecha) {
 					if ($scope.totales.debe_bs == $scope.totales.haber_bs && $scope.totales.debe_bs > 0 && $scope.totales.haber_bs > 0) {
-						if (nuevoComprobante.asientosContables.length >= 2) {
+						var listaAsientosComprobante = []
+						nuevoComprobante.asientosContables.forEach(function (asiento, index, array) {
+							if (asiento.eliminado == false) {
+								listaAsientosComprobante.push(asiento)
+							}
+							if (index === (array.length - 1)) {
+								if (listaAsientosComprobante.length >= 2) {
 
-							if (form != null) {
-								if (!nuevoComprobante.fecha) {
-									form.fecha.$error.required = true
+									if (form != null) {
+										if (!nuevoComprobante.fecha) {
+											form.fecha.$error.required = true
+										} else {
+											form.fecha.$error.required = false
+										}
+										if (!nuevoComprobante.gloza) {
+											form.gloza.$error.required = true
+										} else {
+											form.gloza.$error.required = false
+										}
+										if (nuevoComprobante.asientosContables.length <= 0) {
+											form.asientos.$error.detalleAsiento = true
+										} else {
+											form.asientos.$error.detalleAsiento = false
+										}
+										if (!form.asientos.$error.detalleAsiento && !form.gloza.$error.required && !form.fecha.$error.required) {
+											$scope.stopGuardadoAutomaticoComprobante()
+											NuevoComprobante($scope.mostrarMensaje, null, null, $scope.usuario, null, null, null, $scope.convertirFecha, $scope.cerrarNuevoComprobante, $scope.nuevoComprobante, null, $scope.verificarVentasComprobantes, $scope.verificarComprasComprobantes, $scope.recargarItemsTabla, $scope.number_format)
+										}
+									} else {
+										if (form2) {
+											$scope.stopGuardadoAutomaticoComprobante()
+											NuevoComprobante($scope.mostrarMensaje, null, null, $scope.usuario, null, null, null, $scope.convertirFecha, $scope.cerrarNuevoComprobante, $scope.nuevoComprobante, null, $scope.verificarVentasComprobantes, $scope.verificarComprasComprobantes, $scope.recargarItemsTabla, $scope.number_format)
+											$scope.totales = undefined
+										}
+									}
 								} else {
-									form.fecha.$error.required = false
-								}
-								if (!nuevoComprobante.gloza) {
-									form.gloza.$error.required = true
-								} else {
-									form.gloza.$error.required = false
-								}
-								if (nuevoComprobante.asientosContables.length <= 0) {
-									form.asientos.$error.detalleAsiento = true
-								} else {
-									form.asientos.$error.detalleAsiento = false
-								}
-								if (!form.asientos.$error.detalleAsiento && !form.gloza.$error.required && !form.fecha.$error.required) {
-									$scope.stopGuardadoAutomaticoComprobante()
-									NuevoComprobante($scope.mostrarMensaje, null, null, $scope.usuario, null, null, null, $scope.convertirFecha, $scope.cerrarNuevoComprobante, $scope.nuevoComprobante, null, $scope.verificarVentasComprobantes, $scope.verificarComprasComprobantes, $scope.recargarItemsTabla, $scope.number_format)
-								}
-							} else {
-								if (form2) {
-									$scope.stopGuardadoAutomaticoComprobante()
-									NuevoComprobante($scope.mostrarMensaje, null, null, $scope.usuario, null, null, null, $scope.convertirFecha, $scope.cerrarNuevoComprobante, $scope.nuevoComprobante, null, $scope.verificarVentasComprobantes, $scope.verificarComprasComprobantes, $scope.recargarItemsTabla, $scope.number_format)
-									$scope.totales = undefined
+									$scope.mostrarMensaje("El comprobante debe tener mas de 2 cuentas para guardar")
 								}
 							}
-						} else {
-							$scope.mostrarMensaje("El comprobante debe tener mas de 2 cuentas para guardar")
-						}
+						});
+
+
 					} else {
 						$scope.mostrarMensaje("La suma total del DEBE y HABER deben ser iguales y mayores a 0")
 					}
@@ -580,7 +590,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 						$scope.nuevoComprobante.fecha = $scope.fechaATexto(fecha)
 					}
 					$scope.totales = { debe_bs: 0, debe_sus: 0, haber_bs: 0, haber_sus: 0 }
-					$scope.cal($scope.nuevoComprobante.asientosContables) 
+					$scope.cal($scope.nuevoComprobante.asientosContables)
 					/* $scope.nuevoComprobante.asientosContables.forEach(function (asiento, index, array) {
 						$scope.totales.debe_bs += asiento.debe_bs
 						$scope.totales.haber_bs += asiento.haber_bs
