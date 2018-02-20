@@ -13,10 +13,12 @@ angular.module('agil.controladores')
 		$scope.inicio = function () {
 			$scope.obtenerSucursales();
 			$scope.obtenerInventarios();
-			$scope.compraIngresosPorInventario();
+			$scope.compraIngresosPorInventario();			
 			//$scope.aplicarTabla('tabla-inventarios',4);
 		}
-
+		$scope.establecerCantidad=function(model){
+			$scope.cantidadInventario=model
+		}
 		$scope.obtenerSucursales = function () {
 			var sucursales = [];
 			for (var i = 0; i < $scope.usuario.sucursalesUsuario.length; i++) {
@@ -47,13 +49,14 @@ angular.module('agil.controladores')
 			$scope.columna = "nombre";
 			$scope.direccion = "asc";
 			$scope.textoBusqueda = "";
-			$scope.cantidadInventario = "0";
+			$scope.cantidadInventario ="0"
+			/* $scope.cantidadInventario = "0"; */
 			if ($scope.sucursales.length == 1) {
 				$scope.sucursalBusqueda = $scope.sucursales[0];
 				$scope.almacenes = $scope.sucursalBusqueda.almacenes;
 				if ($scope.almacenes.length == 1) {
 					$scope.almacenBusqueda = $scope.sucursalBusqueda.almacenes[0];
-					$scope.buscarInventarios($scope.almacenBusqueda.id, $scope.paginaActual, $scope.itemsPorPagina, $scope.textoBusqueda, $scope.columna, $scope.direccion,$scope.cantidadInventario);
+					$scope.buscarInventarios($scope.almacenBusqueda.id, $scope.paginaActual, $scope.itemsPorPagina, $scope.textoBusqueda, $scope.columna, $scope.direccion,0);
 				}
 			}
 		}

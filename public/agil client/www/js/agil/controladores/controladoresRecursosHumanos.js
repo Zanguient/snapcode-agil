@@ -3291,13 +3291,19 @@ angular.module('agil.controladores')
             datos.anticipos = anticipos
             datos.textoClase = "ORDI"
             datos.fecha = new Date().getTime()
-            var promesa = CrearNuevosAnticiposEmpleados(datos)
-            promesa.then(function (datos) {
-                anticipo = {}
-                $scope.listaAnticipos2 = []
-                $scope.cerrarDialogAnticipoRegular()
-                $scope.mostrarMensaje(datos.mensaje)
-            })
+            datos.anticipos.forEach(function(anticipo,index,array) {
+                anticipo.montoordinario=anticipo.monto+anticipo.anticipo_ordinaro
+                if(index===(array.length-1)){
+                    var promesa = CrearNuevosAnticiposEmpleados(datos)
+                    promesa.then(function (datos) {
+                        anticipo = {}
+                        $scope.listaAnticipos2 = []
+                        $scope.cerrarDialogAnticipoRegular()
+                        $scope.mostrarMensaje(datos.mensaje)
+                    })
+                }
+            });
+           
         }
         $scope.buscarAnticiposExtraoridnario = function (datosFiltro) {
             $scope.anticipo_extraordinaro = 0;

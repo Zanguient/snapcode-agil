@@ -1,7 +1,7 @@
 angular.module('agil.controladores')
 
     .controller('ControladorGtmDespacho', function ($scope, $localStorage, $location, $templateCache, $route, blockUI, Paginator, FieldViewer,
-        GtmDespachos, GtmDetalleDespacho, GetGtmDetalleDespachoHijos,ImprimirPdfDespachos,ExportarExelDespachos) {
+        GtmDespachos, GtmDetalleDespacho, GetGtmDetalleDespachoHijos, ImprimirPdfDespachos, ExportarExelDespachos) {
 
         blockUI.start();
 
@@ -60,11 +60,11 @@ angular.module('agil.controladores')
                 blockUI.stop();
             });
         }
-        $scope.imprimirPdfDespachos=function () {
-			ImprimirPdfDespachos($scope.despachos,$scope.paginator.filter,$scope.usuario)
+        $scope.imprimirPdfDespachos = function () {
+            ImprimirPdfDespachos($scope.despachos, $scope.paginator.filter, $scope.usuario)
         }
-        $scope.imprimirExelDespachos=function () {
-        ExportarExelDespachos($scope.despachos,$scope.paginator.filter,$scope.usuario)
+        $scope.imprimirExelDespachos = function () {
+            ExportarExelDespachos($scope.despachos, $scope.paginator.filter, $scope.usuario)
         }
         $scope.imprimir = function (gtm_despacho) {
 
@@ -72,153 +72,153 @@ angular.module('agil.controladores')
             var sumaDespachados = 0
             var promesa = GetGtmDetalleDespachoHijos(gtm_despacho)
             promesa.then(function (dato) {
-                if(dato.detallesDespacho.length>0){
-                dato.detallesDespacho.forEach(function (detalle, index, array) {
-                    sumaDespachados += detalle.cantidad_despacho
-                    if (index == (array.length - 1)) {
-                        var importeTotal = 0
-                        var cantidadTotal = 0
-                        var doc = new PDFDocument({ compress: false, size: [612, 792], margin: 10 });
-                        var stream = doc.pipe(blobStream());
+                if (dato.detallesDespacho.length > 0) {
+                    dato.detallesDespacho.forEach(function (detalle, index, array) {
+                        sumaDespachados += detalle.cantidad_despacho
+                        if (index == (array.length - 1)) {
+                            var importeTotal = 0
+                            var cantidadTotal = 0
+                            var doc = new PDFDocument({ compress: false, size: [612, 792], margin: 10 });
+                            var stream = doc.pipe(blobStream());
 
-                        var fechaActual = new Date();
-                        var x = 80
-                        doc.font('Helvetica', 8);
-                        var y = 115 + 80
-                        $scope.dibujarCabeceraPDFImpresion(doc, gtm_despacho);
-                        doc.font('Helvetica', 8);
-                        doc.text(1, 55, y);
-                        doc.text(gtm_despacho.producto.codigo, 100, y);
-                        doc.text(gtm_despacho.producto.nombre.toUpperCase(), 180, y);
-                        doc.text(gtm_despacho.cantidad, 380, y);
-                        doc.text(gtm_despacho.precio_unitario, 450, y);
-                        doc.text(gtm_despacho.importe, 520, y);
-                        /*  doc.rect(40, x + 80 ,540, y - 70).stroke();*/
-                        doc.rect(40, y + 10, 540, 0).stroke();
-                        doc.rect(40, y - 10, 0, 40).stroke();
-                        doc.rect(580, y - 10, 0, 60).stroke();
-                        doc.rect(80, y - 35, 0, 65).stroke();
-                        doc.rect(160, y - 35, 0, 85).stroke();
-                        doc.rect(425, y - 35, 0, 65).stroke();
-                        doc.rect(370, y - 35, 0, 125).stroke();
-                        doc.rect(425, y + 50, 0, 40).stroke();
-                        /*  doc.rect(425, y - 35, 0, 105).stroke(); */
-                        doc.rect(495, y - 35, 0, 85).stroke();
-                        doc.rect(160, y + 50, 420, 0).stroke();
-                        doc.rect(370, y + 70, 55, 0).stroke();
-                        doc.rect(370, y + 90, 55, 0).stroke();
-                        y = y + 20;
-                        // doc.text(2, 55, y);
-                        doc.text(gtm_despacho.producto.codigo, 100, y);
-                        doc.text(gtm_despacho.producto.nombre.toUpperCase() + ' (DESPACHADO)', 180, y);
-                        doc.text(gtm_despacho.cantidad_despacho, 380, y);
-                        //doc.rect(40, x + 80 ,540, y - 70).stroke();
-                        doc.text('SERVICIO DE TRANSPORTE', 180, y + 20);
-                        doc.text(gtm_despacho.servicio_transporte, 380, y + 20);
-                        doc.rect(40, y + 10, 540, 0).stroke();
-                        doc.font('Helvetica-Bold', 8);
-                        doc.text('Total', x + 250, y + 40)
-                        doc.text('Saldo', x + 250, y + 60)
-                        doc.rect(60, y + 105, 90, 0, { align: "left" }).stroke();
-                        doc.text('DESPACHO', 60, y + 110, { align: "left" })
-                        doc.text($scope.usuario.persona.nombre_completo, 60, y + 120, { align: "left" })
-                        /* doc.text('HORA DESP.: ', 60, y + 130, { align: "left" }) */
-                        var hora = new Date().getHours()
-                        var min = new Date().getMinutes()
-                        min = (min < 10) ? min = "0" + min : min;
-                        hora = (hora < 10) ? hora = "0" + hora : hora;
-                        doc.text('HORA DESP.: ' + hora + ':' + min, 60, y + 130, { align: "left" })
-                        doc.rect(255, y + 105, 90, 0, { align: "center" }).stroke();
-                        doc.text('FIRMA CONDUCTOR', -10, y + 110, { align: "center" })
-                        doc.text('NOMBRE: ', -50, y + 120, { align: "center" })
-                        doc.rect(440, y + 105, 90, 0, { align: "right" }).stroke();
-                        doc.text('FIRMA CLIENTE', 350, y + 110, { align: "center" })
-                        doc.text('NOMBRE: ', 330, y + 120, { align: "center" })
-                        doc.text('HORA RECEP.: ', 350, y + 130, { align: "center" })
-                        doc.font('Helvetica', 8);
-                        doc.text((sumaDespachados), x + 300, y + 40)
-                        doc.text((gtm_despacho.cantidad - sumaDespachados), x + 300, y + 60)
-                        doc.end();
-                        stream.on('finish', function () {
-                            var fileURL = stream.toBlobURL('application/pdf');
-                            window.open(fileURL, '_blank', 'location=no');
-                        });
-                        blockUI.stop();
-                    }
-                });
-            }else{
-                sumaDespachados = gtm_despacho.cantidad_despacho
-                    
-                        var importeTotal = 0
-                        var cantidadTotal = 0
-                        var doc = new PDFDocument({ compress: false, size: [612, 792], margin: 10 });
-                        var stream = doc.pipe(blobStream());
+                            var fechaActual = new Date();
+                            var x = 80
+                            doc.font('Helvetica', 8);
+                            var y = 115 + 80
+                            $scope.dibujarCabeceraPDFImpresion(doc, gtm_despacho);
+                            doc.font('Helvetica', 8);
+                            doc.text(1, 55, y);
+                            doc.text(gtm_despacho.producto.codigo, 100, y);
+                            doc.text(gtm_despacho.producto.nombre.toUpperCase(), 180, y);
+                            doc.text(gtm_despacho.cantidad, 380, y);
+                            doc.text(gtm_despacho.precio_unitario, 450, y);
+                            doc.text(gtm_despacho.importe, 520, y);
+                            /*  doc.rect(40, x + 80 ,540, y - 70).stroke();*/
+                            doc.rect(40, y + 10, 540, 0).stroke();
+                            doc.rect(40, y - 10, 0, 40).stroke();
+                            doc.rect(580, y - 10, 0, 60).stroke();
+                            doc.rect(80, y - 35, 0, 65).stroke();
+                            doc.rect(160, y - 35, 0, 85).stroke();
+                            doc.rect(425, y - 35, 0, 65).stroke();
+                            doc.rect(370, y - 35, 0, 125).stroke();
+                            doc.rect(425, y + 50, 0, 40).stroke();
+                            /*  doc.rect(425, y - 35, 0, 105).stroke(); */
+                            doc.rect(495, y - 35, 0, 85).stroke();
+                            doc.rect(160, y + 50, 420, 0).stroke();
+                            doc.rect(370, y + 70, 55, 0).stroke();
+                            doc.rect(370, y + 90, 55, 0).stroke();
+                            y = y + 20;
+                            // doc.text(2, 55, y);
+                            doc.text(gtm_despacho.producto.codigo, 100, y);
+                            doc.text(gtm_despacho.producto.nombre.toUpperCase() + ' (DESPACHADO)', 180, y);
+                            doc.text(gtm_despacho.cantidad_despacho, 380, y);
+                            //doc.rect(40, x + 80 ,540, y - 70).stroke();
+                            doc.text('SERVICIO DE TRANSPORTE', 180, y + 20);
+                            doc.text(gtm_despacho.servicio_transporte, 380, y + 20);
+                            doc.rect(40, y + 10, 540, 0).stroke();
+                            doc.font('Helvetica-Bold', 8);
+                            doc.text('Total', x + 250, y + 40)
+                            doc.text('Saldo', x + 250, y + 60)
+                            doc.rect(60, y + 105, 90, 0, { align: "left" }).stroke();
+                            doc.text('DESPACHO', 60, y + 110, { align: "left" })
+                            doc.text($scope.usuario.persona.nombre_completo, 60, y + 120, { align: "left" })
+                            /* doc.text('HORA DESP.: ', 60, y + 130, { align: "left" }) */
+                            var hora = new Date().getHours()
+                            var min = new Date().getMinutes()
+                            min = (min < 10) ? min = "0" + min : min;
+                            hora = (hora < 10) ? hora = "0" + hora : hora;
+                            doc.text('HORA DESP.: ' + hora + ':' + min, 60, y + 130, { align: "left" })
+                            doc.rect(255, y + 105, 90, 0, { align: "center" }).stroke();
+                            doc.text('FIRMA CONDUCTOR', -10, y + 110, { align: "center" })
+                            doc.text('NOMBRE: ', -50, y + 120, { align: "center" })
+                            doc.rect(440, y + 105, 90, 0, { align: "right" }).stroke();
+                            doc.text('FIRMA CLIENTE', 350, y + 110, { align: "center" })
+                            doc.text('NOMBRE: ', 330, y + 120, { align: "center" })
+                            doc.text('HORA RECEP.: ', 350, y + 130, { align: "center" })
+                            doc.font('Helvetica', 8);
+                            doc.text((sumaDespachados), x + 300, y + 40)
+                            doc.text((gtm_despacho.cantidad - sumaDespachados), x + 300, y + 60)
+                            doc.end();
+                            stream.on('finish', function () {
+                                var fileURL = stream.toBlobURL('application/pdf');
+                                window.open(fileURL, '_blank', 'location=no');
+                            });
+                            blockUI.stop();
+                        }
+                    });
+                } else {
+                    sumaDespachados = gtm_despacho.cantidad_despacho
 
-                        var fechaActual = new Date();
-                        var x = 80
-                        doc.font('Helvetica', 8);
-                        var y = 115 + 80
-                        $scope.dibujarCabeceraPDFImpresion(doc, gtm_despacho);
-                        doc.font('Helvetica', 8);
-                        doc.text(1, 55, y);
-                        doc.text(gtm_despacho.producto.codigo, 100, y);
-                        doc.text(gtm_despacho.producto.nombre.toUpperCase(), 180, y);
-                        doc.text(gtm_despacho.cantidad, 380, y);
-                        doc.text(gtm_despacho.precio_unitario, 450, y);
-                        doc.text(gtm_despacho.importe, 520, y);
-                        /*  doc.rect(40, x + 80 ,540, y - 70).stroke();*/
-                        doc.rect(40, y + 10, 540, 0).stroke();
-                        doc.rect(40, y - 10, 0, 40).stroke();
-                        doc.rect(580, y - 10, 0, 60).stroke();
-                        doc.rect(80, y - 35, 0, 65).stroke();
-                        doc.rect(160, y - 35, 0, 85).stroke();
-                        doc.rect(425, y - 35, 0, 65).stroke();
-                        doc.rect(370, y - 35, 0, 125).stroke();
-                        doc.rect(425, y + 50, 0, 40).stroke();
-                        /*  doc.rect(425, y - 35, 0, 105).stroke(); */
-                        doc.rect(495, y - 35, 0, 85).stroke();
-                        doc.rect(160, y + 50, 420, 0).stroke();
-                        doc.rect(370, y + 70, 55, 0).stroke();
-                        doc.rect(370, y + 90, 55, 0).stroke();
-                        y = y + 20;
-                        // doc.text(2, 55, y);
-                        doc.text(gtm_despacho.producto.codigo, 100, y);
-                        doc.text(gtm_despacho.producto.nombre.toUpperCase() + ' (DESPACHADO)', 180, y);
-                        doc.text(gtm_despacho.cantidad_despacho, 380, y);
-                        //doc.rect(40, x + 80 ,540, y - 70).stroke();
-                        doc.text('SERVICIO DE TRANSPORTE', 180, y + 20);
-                        doc.text(gtm_despacho.servicio_transporte, 380, y + 20);
-                        doc.rect(40, y + 10, 540, 0).stroke();
-                        doc.font('Helvetica-Bold', 8);
-                        doc.text('Total', x + 250, y + 40)
-                        doc.text('Saldo', x + 250, y + 60)
-                        doc.rect(60, y + 105, 90, 0, { align: "left" }).stroke();
-                        doc.text('DESPACHO', 60, y + 110, { align: "left" })
-                        doc.text($scope.usuario.persona.nombre_completo, 60, y + 120, { align: "left" })
-                        /* doc.text('HORA DESP.: ', 60, y + 130, { align: "left" }) */
-                        var hora = new Date().getHours()
-                        var min = new Date().getMinutes()
-                        min = (min < 10) ? min = "0" + min : min;
-                        hora = (hora < 10) ? hora = "0" + hora : hora;
-                        doc.text('HORA DESP.: ' + hora + ':' + min, 60, y + 130, { align: "left" })
-                        doc.rect(255, y + 105, 90, 0, { align: "center" }).stroke();
-                        doc.text('FIRMA CONDUCTOR', -10, y + 110, { align: "center" })
-                        doc.text('NOMBRE: ', -50, y + 120, { align: "center" })
-                        doc.rect(440, y + 105, 90, 0, { align: "right" }).stroke();
-                        doc.text('FIRMA CLIENTE', 350, y + 110, { align: "center" })
-                        doc.text('NOMBRE: ', 330, y + 120, { align: "center" })
-                        doc.text('HORA RECEP.: ', 350, y + 130, { align: "center" })
-                        doc.font('Helvetica', 8);
-                        doc.text((sumaDespachados), x + 300, y + 40)
-                        doc.text((gtm_despacho.cantidad - sumaDespachados), x + 300, y + 60)
-                        doc.end();
-                        stream.on('finish', function () {
-                            var fileURL = stream.toBlobURL('application/pdf');
-                            window.open(fileURL, '_blank', 'location=no');
-                        });
-                        blockUI.stop();
-                   
-            }
+                    var importeTotal = 0
+                    var cantidadTotal = 0
+                    var doc = new PDFDocument({ compress: false, size: [612, 792], margin: 10 });
+                    var stream = doc.pipe(blobStream());
+
+                    var fechaActual = new Date();
+                    var x = 80
+                    doc.font('Helvetica', 8);
+                    var y = 115 + 80
+                    $scope.dibujarCabeceraPDFImpresion(doc, gtm_despacho);
+                    doc.font('Helvetica', 8);
+                    doc.text(1, 55, y);
+                    doc.text(gtm_despacho.producto.codigo, 100, y);
+                    doc.text(gtm_despacho.producto.nombre.toUpperCase(), 180, y);
+                    doc.text(gtm_despacho.cantidad, 380, y);
+                    doc.text(gtm_despacho.precio_unitario, 450, y);
+                    doc.text(gtm_despacho.importe, 520, y);
+                    /*  doc.rect(40, x + 80 ,540, y - 70).stroke();*/
+                    doc.rect(40, y + 10, 540, 0).stroke();
+                    doc.rect(40, y - 10, 0, 40).stroke();
+                    doc.rect(580, y - 10, 0, 60).stroke();
+                    doc.rect(80, y - 35, 0, 65).stroke();
+                    doc.rect(160, y - 35, 0, 85).stroke();
+                    doc.rect(425, y - 35, 0, 65).stroke();
+                    doc.rect(370, y - 35, 0, 125).stroke();
+                    doc.rect(425, y + 50, 0, 40).stroke();
+                    /*  doc.rect(425, y - 35, 0, 105).stroke(); */
+                    doc.rect(495, y - 35, 0, 85).stroke();
+                    doc.rect(160, y + 50, 420, 0).stroke();
+                    doc.rect(370, y + 70, 55, 0).stroke();
+                    doc.rect(370, y + 90, 55, 0).stroke();
+                    y = y + 20;
+                    // doc.text(2, 55, y);
+                    doc.text(gtm_despacho.producto.codigo, 100, y);
+                    doc.text(gtm_despacho.producto.nombre.toUpperCase() + ' (DESPACHADO)', 180, y);
+                    doc.text(gtm_despacho.cantidad_despacho, 380, y);
+                    //doc.rect(40, x + 80 ,540, y - 70).stroke();
+                    doc.text('SERVICIO DE TRANSPORTE', 180, y + 20);
+                    doc.text(gtm_despacho.servicio_transporte, 380, y + 20);
+                    doc.rect(40, y + 10, 540, 0).stroke();
+                    doc.font('Helvetica-Bold', 8);
+                    doc.text('Total', x + 250, y + 40)
+                    doc.text('Saldo', x + 250, y + 60)
+                    doc.rect(60, y + 105, 90, 0, { align: "left" }).stroke();
+                    doc.text('DESPACHO', 60, y + 110, { align: "left" })
+                    doc.text($scope.usuario.persona.nombre_completo, 60, y + 120, { align: "left" })
+                    /* doc.text('HORA DESP.: ', 60, y + 130, { align: "left" }) */
+                    var hora = new Date().getHours()
+                    var min = new Date().getMinutes()
+                    min = (min < 10) ? min = "0" + min : min;
+                    hora = (hora < 10) ? hora = "0" + hora : hora;
+                    doc.text('HORA DESP.: ' + hora + ':' + min, 60, y + 130, { align: "left" })
+                    doc.rect(255, y + 105, 90, 0, { align: "center" }).stroke();
+                    doc.text('FIRMA CONDUCTOR', -10, y + 110, { align: "center" })
+                    doc.text('NOMBRE: ', -50, y + 120, { align: "center" })
+                    doc.rect(440, y + 105, 90, 0, { align: "right" }).stroke();
+                    doc.text('FIRMA CLIENTE', 350, y + 110, { align: "center" })
+                    doc.text('NOMBRE: ', 330, y + 120, { align: "center" })
+                    doc.text('HORA RECEP.: ', 350, y + 130, { align: "center" })
+                    doc.font('Helvetica', 8);
+                    doc.text((sumaDespachados), x + 300, y + 40)
+                    doc.text((gtm_despacho.cantidad - sumaDespachados), x + 300, y + 60)
+                    doc.end();
+                    stream.on('finish', function () {
+                        var fileURL = stream.toBlobURL('application/pdf');
+                        window.open(fileURL, '_blank', 'location=no');
+                    });
+                    blockUI.stop();
+
+                }
             })
         }
 
@@ -241,11 +241,13 @@ angular.module('agil.controladores')
             doc.font('Helvetica', 8);
             doc.text(fecha, 540, 60, { width: 45 });
             doc.text(gtm_despacho.despacho.cliente.codigo, 510, 80);
-            var textoSap = gtm_despacho.despacho.cliente_razon.codigo_sap
-
+            var textoSap = ""
+            doc.text(gtm_despacho.despacho.cliente.razon_social, 80, 90);
+            if (gtm_despacho.despacho.cliente_razon !== null && gtm_despacho.despacho.cliente_razon !== undefined) {
+                var textoSap = gtm_despacho.despacho.cliente_razon.codigo_sap
+                doc.text(gtm_despacho.despacho.cliente_razon.razon_social, 100, 110);
+            } 
             doc.text(textoSap, 510, 90, { width: 80 })
-
-
             var ydesc = 90;
             if (textoSap.length > 17) {
                 rowSap = Math.floor(textoSap.length / 17)
@@ -282,12 +284,15 @@ angular.module('agil.controladores')
             doc.text("Dirección:", 40, 130);
 
             doc.font('Helvetica', 8);
-            doc.text(gtm_despacho.despacho.cliente.razon_social, 80, 90);
-            doc.text(gtm_despacho.despacho.destino.direccion + " " + gtm_despacho.despacho.destino.destino, 120, 100);
-            doc.text(gtm_despacho.despacho.cliente_razon.razon_social, 100, 110);
             doc.text(gtm_despacho.despacho.cliente.nit, 80, 120);
             if (gtm_despacho.despacho.cliente.telefono1) doc.text(gtm_despacho.despacho.cliente.telefono1, 240, 120);
             doc.text(gtm_despacho.despacho.cliente.direccion, 80, 130);
+
+            if (gtm_despacho.despacho.destino !== null && gtm_despacho.despacho.destino !== undefined) {
+                doc.text(gtm_despacho.despacho.destino.direccion + " " + gtm_despacho.despacho.destino.destino, 120, 100);
+            } else {
+                doc.text("" + " " + "", 120, 100);
+            }
         }
 
         $scope.abrirModalAsignacionFactura = function (detalle_despacho) {

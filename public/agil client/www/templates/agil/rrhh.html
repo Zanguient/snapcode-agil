@@ -4532,11 +4532,11 @@
                                 <td>{{anticipo.saldo_salario|number:2}}</td>
                                 <td>
                                     <div class="action-buttons">
-                                        <a  ng-if="!anticipo.montoEdit" class="blue" uib-tooltip="Permitir Edición" href="javascript:void(0)"
+                                        <a  ng-if="!anticipo.entregado && !anticipo.montoEdit" class="blue" uib-tooltip="Permitir Edición" href="javascript:void(0)"
                                             ng-click="abrirModalVerificarCuenta(anticipo)">
                                             <i class="ace-icon fa fa-pencil bigger-130"></i>
                                         </a>
-                                        <a  ng-if="!anticipo.montoEdit" class="red" uib-tooltip="Eliminar" href="javascript:void(0)"
+                                        <a  ng-if="!anticipo.entregado && !anticipo.montoEdit" class="red" uib-tooltip="Eliminar" href="javascript:void(0)"
                                         ng-click="abrirModalVerificarCuenta(anticipo)">
                                         <i class="ace-icon fa fa-trash bigger-130"></i>
                                     </a>

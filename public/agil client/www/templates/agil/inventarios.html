@@ -108,7 +108,7 @@
 												<label>Cantidades</label>&nbsp
 											</td>
 											<td>
-													<select required id="CantidadesAlmacen" name="cantidades-alma" ng-model="cantidadInventario" data-placeholder="Click para escoger">
+													<select required id="CantidadesAlmacen" name="cantidades-alma" ng-model="cantidadInventario"  ng-change="establecerCantidad(cantidadInventario)"data-placeholder="Click para escoger">
 															<option value="0">Todos</option>
 															<option value="1">Con Saldo</option>
 															<option value="2">Sin Saldo</option></select>&nbsp

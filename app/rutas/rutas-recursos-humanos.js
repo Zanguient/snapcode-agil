@@ -1736,14 +1736,22 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                     id_tipo: clase.id,
                     total: req.body.total,
                     salario_basico: req.body.salario_basico,
-                    eliminado: false
+                    eliminado: false,
+                    entregado: false
                 }).then(function (empleadoaAnticipo) {
                     RrhhAnticipo.findAll({
                         where: { id_empleado: req.params.id_empleado, id_tipo: { $ne: clase.id } }
                     }).then(function (anticipos) {
+                        var  anteriorMonto=0
                         if (anticipos.length > 0) {
                             anticipos.forEach(function (anticipo, index, array) {
-                                var total = req.body.montoExtraoridnario + anticipo.monto
+                              /*   var total = req.body.montoExtraoridnario + anticipo.monto */
+                                if (index == 0) {
+                                    var total = req.body.montoExtraoridnario + anticipo.monto
+                                } else {
+                                    var total = anticipo.monto + anteriorMonto
+                                }
+                                anteriorMonto = total
                                 RrhhAnticipo.update({
                                     total: total,
                                 }, {
@@ -1754,8 +1762,8 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                                         }
                                     })
                             });
-                        } else {                            
-                                res.json({ mensaje: "Guardado satisfactoriamente!" })                            
+                        } else {
+                            res.json({ mensaje: "Guardado satisfactoriamente!" })
                         }
 
                     })
@@ -1775,26 +1783,31 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                     RrhhAnticipo.findAll({
                         where: { id_empleado: req.params.id_empleado, id_tipo: { $ne: req.body.id_tipo } }
                     }).then(function (anticipos) {
-                        anticipos.forEach(function (anticipo, index, array) {
-                            var total = req.body.montoExtraoridnario + anticipo.monto
-                            RrhhAnticipo.update({
-                                total: total,
-                            }, {
-                                    where: { id: anticipo.id }
-                                }).then(function (empleadoaAnticipo) {
-                                    if (index === (array.length - 1)) {
-                                        res.json({ mensaje: "Guardado satisfactoriamente!" })
-                                    }
-                                })
-                        });
-
+                        if (anticipos.length > 0) {
+                            anticipos.forEach(function (anticipo, index, array) {
+                                var total = req.body.montoExtraoridnario + anticipo.monto
+                                RrhhAnticipo.update({
+                                    total: total,
+                                }, {
+                                        where: { id: anticipo.id }
+                                    }).then(function (empleadoaAnticipo) {
+                                        if (index === (array.length - 1)) {
+                                            res.json({ mensaje: "Guardado satisfactoriamente!" })
+                                        }
+                                    })
+                            });
+                        } else {
+                            res.json({ mensaje: "Guardado satisfactoriamente!" })
+                        }
                     })
 
                 })
         })
     router.route('/recursos-humanoss/anticipos/empleados')
         .post(function (req, res) {
-            req.body.anticipos.forEach(function (anticipo, index, array) {
+
+            for (let i = 0; i < req.body.anticipos.length; i++) {
+                const anticipo = req.body.anticipos[i];
                 Clase.find({
                     where: { nombre_corto: req.body.textoClase }
                 }).then(function (clase) {
@@ -1808,11 +1821,81 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                         salario_basico: anticipo.salario_basico,
                         tope: anticipo.tope
                     }).then(function (empleadoaAnticipo) {
-                        res.json({ mensaje: "Guardado satisfactoriamente!" })
+                        RrhhAnticipo.findAll({
+                            where: { id_empleado: empleadoaAnticipo.id_empleado, id_tipo: { $ne: clase.id } }
+                        }).then(function (anticipos) {
+                            if (anticipos.length > 0) {
+                                var anteriorMonto = 0
+                                anticipos.forEach(function (anticipo2, index, array) {
+                                    if (index == 0) {
+                                        var total = anticipo.montoordinario + anticipo2.monto
+                                    } else {
+                                        var total = anticipo2.monto + anteriorMonto
+                                    }
+                                    anteriorMonto = total
+                                    RrhhAnticipo.update({
+                                        total: total,
+                                    }, {
+                                            where: { id: anticipo2.id }
+                                        }).then(function (empleadoaAnticipo) {
+                                            if (index === (array.length - 1)) {
+                                                res.json({ mensaje: "Guardado satisfactoriamente!" })
+                                            }
+                                        })
+                                })
+                            } else {
+                                res.json({ mensaje: "Guardado satisfactoriamente!" })
+                            }
+                        })
+                    })
+
+                })
+            }
+            /* req.body.anticipos.forEach(function (anticipo, index, array) {
+                
+                Clase.find({
+                    where: { nombre_corto: req.body.textoClase }
+                }).then(function (clase) {
+                    RrhhAnticipo.create({
+                        id_empleado: anticipo.empleado.id,
+                        fecha: anticipo.fecha,
+                        monto: anticipo.monto,
+                        id_tipo: clase.id,
+                        total: anticipo.total,
+                        eliminado: false,
+                        salario_basico: anticipo.salario_basico,
+                        tope: anticipo.tope
+                    }).then(function (empleadoaAnticipo) {
+                        RrhhAnticipo.findAll({
+                            where: { id_empleado: empleadoaAnticipo.id_empleado, id_tipo: { $ne: clase.id } }
+                        }).then(function (anticipos) {
+                            if (anticipos.length > 0) {
+                                var anteriorMonto = 0
+                                anticipos.forEach(function (anticipo2, index, array) {
+                                    if (index == 0) {
+                                        var total = anticipo.montoordinario + anticipo2.monto
+                                    }else{
+                                        var total = anticipo.montoordinario + anticipo2.monto+anteriorMonto
+                                    }
+                                    anteriorMonto=anticipo2.monto
+                                    RrhhAnticipo.update({
+                                        total: total,
+                                    }, {
+                                            where: { id: anticipo2.id }
+                                        }).then(function (empleadoaAnticipo) {
+                                            if (index === (array.length - 1)) {
+                                                res.json({ mensaje: "Guardado satisfactoriamente!" })
+                                            }
+                                        })
+                                })
+                            } else { 
+                                res.json({ mensaje: "Guardado satisfactoriamente!" })
+                             }
+
 
                     })
                 })
-            });
+            }); */
 
         })
 

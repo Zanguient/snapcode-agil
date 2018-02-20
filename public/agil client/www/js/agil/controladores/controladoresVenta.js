@@ -283,7 +283,7 @@ angular.module('agil.controladores')
 			});
 		}
 
-		$scope.buscarProducto = function (query) {
+		$scope.buscarProductoLectorBarra = function (query) {
 			blockUI.start()
 			if (query != "" && query != undefined) {
 				var promesa = ListaProductosEmpresa($scope.usuario.id_empresa, query);
@@ -297,11 +297,31 @@ angular.module('agil.controladores')
 					$scope.mostrarMensaje(err.message)
 					blockUI.stop()
 				})
+				blockUI.stop()
 				return promesa;
 			}
 
 		}
+		
+		$scope.buscarProducto = function (query) {
+			blockUI.start()
+			if (query != "" && query != undefined) {
+				var promesa = ListaProductosEmpresa($scope.usuario.id_empresa, query);
+				/*  promesa.then(function (datos) {
+					if (datos.length > 1) {
+					} else {
+						$scope.establecerProducto(datos[0])
+					}
+					blockUI.stop()
+				}, function (err) {
+					$scope.mostrarMensaje(err.message)
+					blockUI.stop()
+				})	 */
+				blockUI.stop()			
+				return promesa;
+			}
 
+		}
 		$scope.establecerProducto = function (producto) {
 			producto.tipoProducto = producto['tipoProducto'] == null ? { id: producto['tipoProducto.id'], nombre: producto['tipoProducto.nombre'], nombre_corto: producto['tipoProducto.nombre_corto'] } : producto.tipoProducto;
 			$scope.editar_precio = false;
@@ -1946,14 +1966,14 @@ angular.module('agil.controladores')
 				$("#" + columna + "p").removeClass("fa-sort");
 			}
 			$scope.columna = columna;
-			$scope.buscarInventarios($scope.almacenBusqueda.id, $scope.paginaActual, $scope.itemsPorPagina, $scope.textoBusqueda, $scope.columna, $scope.direccion);
+			$scope.buscarInventarios($scope.almacenBusqueda.id, $scope.paginaActual, $scope.itemsPorPagina, $scope.textoBusqueda, $scope.columna, $scope.direccion,$scope.cantidadInv);
 		}
 
 		$scope.verificarPulso = function (evento, textoBusqueda) {
 			if (evento.keyCode === 13) { //enter pressed
 				$scope.textoBusqueda = textoBusqueda;
 				if ($scope.almacenBusqueda) {
-					$scope.buscarInventarios($scope.almacenBusqueda.id, 1, $scope.itemsPorPagina, $scope.textoBusqueda, $scope.columna, $scope.direccion);
+					$scope.buscarInventarios($scope.almacenBusqueda.id, 1, $scope.itemsPorPagina, $scope.textoBusqueda, $scope.columna, $scope.direccion,$scope.cantidadInv);
 				}
 			}
 		}
