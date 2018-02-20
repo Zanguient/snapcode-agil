@@ -23,7 +23,11 @@ module.exports=function(sequelize,Sequelize){
 		saldo: {
 			type: Sequelize.DECIMAL(20,4),
 			field: 'saldo'
-		}		
+		},
+		id_asiento: {
+			type: Sequelize.INTEGER,
+			field: 'asiento'
+		},		
 	}, {
 		freezeTableName: true 
 		});

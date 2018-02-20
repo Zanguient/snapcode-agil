@@ -1783,9 +1783,16 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                     RrhhAnticipo.findAll({
                         where: { id_empleado: req.params.id_empleado, id_tipo: { $ne: req.body.id_tipo } }
                     }).then(function (anticipos) {
+                        var  anteriorMonto=0
                         if (anticipos.length > 0) {
                             anticipos.forEach(function (anticipo, index, array) {
-                                var total = req.body.montoExtraoridnario + anticipo.monto
+                              /*   var total = req.body.montoExtraoridnario + anticipo.monto */
+                                if (index == 0) {
+                                    var total = req.body.montoExtraoridnario + anticipo.monto
+                                } else {
+                                    var total = anticipo.monto + anteriorMonto
+                                }
+                                anteriorMonto = total
                                 RrhhAnticipo.update({
                                     total: total,
                                 }, {

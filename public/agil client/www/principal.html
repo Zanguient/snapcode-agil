@@ -2001,7 +2001,7 @@
 										</tr>
 									</thead>
 
-									<tbody ng-if="asiento.activo!=false" ng-repeat="asiento in nuevoComprobante.asientosContables track by $index">
+									<tbody ng-if="!asiento.eliminado" ng-repeat="asiento in nuevoComprobante.asientosContables track by $index">
 										<tr scope="row">
 											<td>
 												{{$index +1}}
@@ -2074,7 +2074,7 @@
 												 enter>
 											</td>
 											<td>
-												<a ng-hide="verComprobante" tabindex="-1" class="blue" href="javascript:void(0)" ng-click="eliminarAsiento(asiento)">
+												<a ng-hide="verComprobante" tabindex="-1" class="blue" href="javascript:void(0)" ng-click="eliminarAsiento(asiento,index)">
 													<i class="ace-icon fa fa-trash-o bigger-130"></i>
 												</a>
 											</td>

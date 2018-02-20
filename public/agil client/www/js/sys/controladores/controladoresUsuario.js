@@ -24,8 +24,9 @@ angular.module('agil.controladores')
 		if($scope.usuarioSesion.empresa){
 			$scope.obtenerRutas();
 		}
-		var sucursales=($scope.usuarioSesion.empresa)?$scope.usuarioSesion.empresa.sucursales:[];
-		$scope.llenarSucursales(sucursales);
+		/* var sucursales=($scope.usuarioSesion.empresa)?$scope.usuarioSesion.empresa.sucursales:[];
+		$scope.llenarSucursales(sucursales); */
+		$scope.buscarSucursales($scope.usuarioSesion.id_empresa)
 		/* setTimeout(function() {
 			ejecutarScriptsTabla('tabla-usuarios',9);
 		},2000); */
@@ -170,8 +171,8 @@ angular.module('agil.controladores')
 	}
 	
 	$scope.buscarSucursales=function(idEmpresa){
-		var empresas=$.grep($scope.empresas, function(e){return e.id == idEmpresa;});
-		$scope.sucursales=empresas[0].sucursales;
+		/* var empresas=$.grep($scope.empresas, function(e){return e.id == idEmpresa;}); */
+	/* 	$scope.sucursales=empresas[0].sucursales; */
 		var promesa=Sucursales(idEmpresa);
 		promesa.then(function(datos){
 			sucursales=datos;

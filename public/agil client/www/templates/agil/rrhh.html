@@ -4493,7 +4493,7 @@
                         </select>
                     </div>
                     <div class="form-group col-sm-4">
-                        <a ng-click="AgregarAnticipoExtraordinario()" class="btn btn-primary">
+                        <a ng-if="filtroAnticipo.mes.id==mesActual" ng-click="AgregarAnticipoExtraordinario()" class="btn btn-primary">
                             <i class="ace-icon fa fa-plus align-top bigger-125"></i>
                             Nuevo
                         </a>
@@ -4543,7 +4543,7 @@
                                         <a ng-if="anticipo.montoEdit" class="green" uib-tooltip="Guardar" href="javascript:void(0)" ng-click="ActualizarAnticipo(anticipo)">
                                             <i class="ace-icon fa fa-floppy-o bigger-200"></i>
                                         </a>
-                                        <a ng-if="anticipo.montoEdit" class="red" uib-tooltip="Cancelar" href="javascript:void(0)" ng-click="cancelarEdicionAnticipo()">
+                                        <a ng-if="anticipo.montoEdit" class="red" uib-tooltip="Cancelar" href="javascript:void(0)" ng-click="cancelarEdicionAnticipo(ordi)">
                                             <i class="ace-icon fa fa-times-circle bigger-200"></i>
                                         </a>
                                     </div>
@@ -5733,10 +5733,10 @@
                                             ng-click="abrirModalVerificarCuenta(anticipo)">
                                             <i class="ace-icon fa fa-pencil bigger-130"></i>
                                         </a>
-                                        <a ng-if="anticipo.montoEdit" class="green" uib-tooltip="Guardar" href="javascript:void(0)" ng-click="EditarMontoPrestamo(prestamo)">
+                                        <a ng-if="anticipo.montoEdit" class="green" uib-tooltip="Guardar" href="javascript:void(0)" ng-click="ActualizarAnticipoOrdi(anticipo)">
                                             <i class="ace-icon fa fa-floppy-o bigger-200"></i>
                                         </a>
-                                        <a ng-if="anticipo.montoEdit" class="red" uib-tooltip="Cancelar" href="javascript:void(0)" ng-click="CancelarEditMontoPrestamo(prestamo)">
+                                        <a ng-if="anticipo.montoEdit" class="red" uib-tooltip="Cancelar" href="javascript:void(0)" ng-click="cancelarEdicionAnticipo()">
                                             <i class="ace-icon fa fa-times-circle bigger-200"></i>
                                         </a>
                                     </div>

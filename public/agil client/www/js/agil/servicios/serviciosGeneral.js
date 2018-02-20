@@ -217,7 +217,7 @@ angular.module('agil.servicios')
 								doc.font('Helvetica', 7);
 								doc.text(asiento.cuenta.codigo, 28, y + 5)
 								doc.font('Helvetica-Bold', 7);
-								if (asiento.cuenta.tipoAuxiliar) doc.text(asiento.cuenta.cuentaAux.nombre, 28, y + 13, { width: 80 })
+								if (asiento.cuenta.tipoAuxiliar) doc.text(asiento.cuentaAux.nombre, 28, y + 13, { width: 80 })
 								doc.font('Helvetica-Bold', 7);
 								doc.text(asiento.cuenta.nombre, 120, y + 5, { width: 190, underline: true })
 								doc.font('Helvetica', 7);
@@ -271,7 +271,7 @@ angular.module('agil.servicios')
 								doc.font('Helvetica', 7);
 								doc.text(asiento.cuenta.codigo, 38, y + 5)
 								doc.font('Helvetica-Bold', 7);
-								if (asiento.cuenta.tipoAuxiliar) doc.text(asiento.cuenta.cuentaAux.nombre, 38, y + 13, { width: 80 })
+								if (asiento.cuenta.tipoAuxiliar){if(asiento.cuentaAux)doc.text(asiento.cuentaAux.nombre, 38, y + 13, { width: 80 })}
 								doc.font('Helvetica-Bold', 7);
 								doc.text(asiento.cuenta.nombre, 130, y + 5, { width: 190, underline: true })
 								doc.font('Helvetica', 7);

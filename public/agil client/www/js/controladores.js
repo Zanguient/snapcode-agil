@@ -7,7 +7,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 		ImprimirSalida, Diccionario, VentasComprobantesEmpresa, ComprasComprobantesEmpresa, LibroMayorCuenta, Paginator, ComprobanteRevisarPaginador, AsignarComprobanteFavorito, ListaCuentasComprobanteContabilidad, NuevoComprobanteContabilidad, NuevoComprobante, ComprasComprobante,
 		ConfiguracionesCuentasEmpresa, ContabilidadCambioMoneda, ObtenerCambioMoneda, AsignarCuentaCiente, AsignarCuentaProveedor,
 		GtmTransportistas, GtmEstibajes, GtmGrupoEstibajes, ListasCuentasAuxiliares, GtmDetallesDespachoAlerta, $interval, GuardarGtmDetalleDespachoAlerta, GtmDetalleDespacho, VerificarCorrelativosSucursale, ReiniciarCorrelativoSucursales, ClasesTipoEmpresa, alertasProformasLista, UltimaFechaTipoComprobante,
-		FacturaProforma, ListaDetallesProformasAFacturar, ProformaInfo, FacturarProformas,ImprimirPdfAlertaDespacho,ExportarExelAlarmasDespachos) {
+		FacturaProforma, ListaDetallesProformasAFacturar, ProformaInfo, FacturarProformas, ImprimirPdfAlertaDespacho, ExportarExelAlarmasDespachos) {
 		$scope.idModalTablaVencimientoProductos = "tabla-vencimiento-productos";
 		$scope.idModalTablaDespachos = "tabla-gtm-despachos";
 		$scope.idModalTablaAsignacionDespacho = "tabla-gtm-asignacion-despachos";
@@ -106,17 +106,17 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 			$scope.cerrarPopup($scope.mensajeConfirmacionComprobante)
 		}
 		$scope.ConfirmarGuardarComprobante = function (form, nuevoComprobante, form2) {
-		 var tamaño= nuevoComprobante.asientosContables.length-1
+			var tamaño = nuevoComprobante.asientosContables.length - 1
 			for (let i = tamaño; i >= 0; i--) {
-				var asiento= nuevoComprobante.asientosContables[i]
-				if(asiento.debe_bs==0 && asiento.haber_bs==0){
-					$scope.nuevoComprobante.asientosContables.splice(i,1)
+				var asiento = nuevoComprobante.asientosContables[i]
+				if (asiento.debe_bs == 0 && asiento.haber_bs == 0) {
+					$scope.nuevoComprobante.asientosContables.splice(i, 1)
 				}
-				if(i==0){
+				if (i == 0) {
 					$scope.cerrarMensajeConfirmacionComprobante()
 					$scope.AgregarComprobante(form, nuevoComprobante, form2)
 				}
-				
+
 			}
 		}
 		$scope.AgregarComprobante = function (form, nuevoComprobante, form2) {
@@ -385,29 +385,31 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 		$scope.cal = function (asientos) {
 			$scope.totales = { debe_bs: 0, debe_sus: 0, haber_bs: 0, haber_sus: 0 }
 			asientos.forEach(function (asiento, index, array) {
-				if (asiento.debe_bs != "") {
-					$scope.totales.debe_bs = $scope.totales.debe_bs + asiento.debe_bs
-				} else {
-					asiento.debe_bs = 0;
-					$scope.totales.debe_bs = $scope.totales.debe_bs + asiento.debe_bs
-				}
-				if (asiento.debe_sus != "") {
-					$scope.totales.debe_sus = $scope.totales.debe_sus + asiento.debe_sus
-				} else {
-					asiento.debe_sus = 0;
-					$scope.totales.debe_sus = $scope.totales.debe_sus + asiento.debe_sus
-				}
-				if (asiento.haber_bs != "") {
-					$scope.totales.haber_bs = $scope.totales.haber_bs + asiento.haber_bs
-				} else {
-					asiento.haber_bs = 0
-					$scope.totales.haber_bs = $scope.totales.haber_bs + asiento.haber_bs
-				}
-				if (asiento.haber_sus != "") {
-					$scope.totales.haber_sus = $scope.totales.haber_sus + asiento.haber_sus
-				} else {
-					asiento.haber_sus = 0
-					$scope.totales.haber_sus = $scope.totales.haber_sus + asiento.haber_sus
+				if (asiento.eliminado != true) {
+					if (asiento.debe_bs != "") {
+						$scope.totales.debe_bs = $scope.totales.debe_bs + asiento.debe_bs
+					} else {
+						asiento.debe_bs = 0;
+						$scope.totales.debe_bs = $scope.totales.debe_bs + asiento.debe_bs
+					}
+					if (asiento.debe_sus != "") {
+						$scope.totales.debe_sus = $scope.totales.debe_sus + asiento.debe_sus
+					} else {
+						asiento.debe_sus = 0;
+						$scope.totales.debe_sus = $scope.totales.debe_sus + asiento.debe_sus
+					}
+					if (asiento.haber_bs != "") {
+						$scope.totales.haber_bs = $scope.totales.haber_bs + asiento.haber_bs
+					} else {
+						asiento.haber_bs = 0
+						$scope.totales.haber_bs = $scope.totales.haber_bs + asiento.haber_bs
+					}
+					if (asiento.haber_sus != "") {
+						$scope.totales.haber_sus = $scope.totales.haber_sus + asiento.haber_sus
+					} else {
+						asiento.haber_sus = 0
+						$scope.totales.haber_sus = $scope.totales.haber_sus + asiento.haber_sus
+					}
 				}
 				if (index === array.length - 1) {
 					$scope.totales.haber_bs = Math.round($scope.totales.haber_bs * 10000) / 10000
@@ -415,6 +417,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 					$scope.totales.debe_bs = Math.round($scope.totales.debe_bs * 10000) / 10000
 					$scope.totales.haber_sus = Math.round($scope.totales.haber_sus * 1000) / 1000
 				}
+
 			}, this);
 		}
 		$scope.ObtenerPlantillaIngresoEgreso = function (venta, compra, comprobante, view) {
@@ -435,14 +438,14 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 								$scope.ListaConfiguaracionCuenta.forEach(function (configuracionCuenta) {
 									if (configuracionCuenta.tipo.nombre_corto == Diccionario.MOV_ING) {
 										if (configuracionCuenta.nombre == "IT" || configuracionCuenta.nombre == "CAJA/BANCOS") {
-											var asiento = { cuenta: configuracionCuenta.cuenta, debe_bs: venta2.total * configuracionCuenta.valor / 100, haber_bs: "", debe_sus: Math.round(((venta2.total * configuracionCuenta.valor / 100) / $scope.moneda.dolar) * 10000) / 10000, haber_sus: "", eliminado: 0, activo: true, isOpen: false }
+											var asiento = { cuenta: configuracionCuenta.cuenta, debe_bs: venta2.total * configuracionCuenta.valor / 100, haber_bs: "", debe_sus: Math.round(((venta2.total * configuracionCuenta.valor / 100) / $scope.moneda.dolar) * 10000) / 10000, haber_sus: "", eliminado: false, activo: true, isOpen: false }
 											$scope.nuevoComprobante.asientosContables.push(asiento);
 										} else {
-											var asiento = { cuenta: configuracionCuenta.cuenta, debe_bs: "", haber_bs: venta2.total * configuracionCuenta.valor / 100, debe_sus: "", haber_sus: Math.round(((venta2.total * configuracionCuenta.valor / 100) / $scope.moneda.dolar) * 10000) / 10000, eliminado: 0, activo: true, isOpen: false }
+											var asiento = { cuenta: configuracionCuenta.cuenta, debe_bs: "", haber_bs: venta2.total * configuracionCuenta.valor / 100, debe_sus: "", haber_sus: Math.round(((venta2.total * configuracionCuenta.valor / 100) / $scope.moneda.dolar) * 10000) / 10000, eliminado: false, activo: true, isOpen: false }
 											$scope.nuevoComprobante.asientosContables.push(asiento);
 										}
 										if ($scope.nuevoComprobante.asientosContables.length == 2) {
-											var asiento = { cuenta: cuenta, debe_bs: "", haber_bs: venta2.total * (87 / 100), debe_sus: "", haber_sus: Math.round(((venta2.total * 87 / 100) / $scope.moneda.dolar) * 10000) / 10000, eliminado: 0, activo: true, isOpen: false }
+											var asiento = { cuenta: cuenta, debe_bs: "", haber_bs: venta2.total * (87 / 100), debe_sus: "", haber_sus: Math.round(((venta2.total * 87 / 100) / $scope.moneda.dolar) * 10000) / 10000, eliminado: false, activo: true, isOpen: false }
 											$scope.nuevoComprobante.asientosContables.push(asiento);
 										}
 									}
@@ -473,14 +476,14 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 						$scope.ListaConfiguaracionCuenta.forEach(function (configuracionCuenta, index, array) {
 							if (configuracionCuenta.tipo.nombre_corto == Diccionario.MOV_ING) {
 								if (configuracionCuenta.nombre == "IT" || configuracionCuenta.nombre == "CAJA/BANCOS") {
-									var asiento = { cuenta: configuracionCuenta.cuenta, debe_bs: venta.total * configuracionCuenta.valor / 100, haber_bs: "", debe_sus: Math.round(((venta.total * configuracionCuenta.valor / 100) / $scope.moneda.dolar) * 10000) / 10000, haber_sus: "", eliminado: 0, activo: true }
+									var asiento = { cuenta: configuracionCuenta.cuenta, debe_bs: venta.total * configuracionCuenta.valor / 100, haber_bs: "", debe_sus: Math.round(((venta.total * configuracionCuenta.valor / 100) / $scope.moneda.dolar) * 10000) / 10000, haber_sus: "", eliminado: false, activo: true }
 									$scope.nuevoComprobante.asientosContables.push(asiento);
 								} else {
-									var asiento = { cuenta: configuracionCuenta.cuenta, debe_bs: "", haber_bs: venta.total * configuracionCuenta.valor / 100, debe_sus: "", haber_sus: Math.round(((venta.total * configuracionCuenta.valor / 100) / $scope.moneda.dolar) * 10000) / 10000, eliminado: 0, activo: true }
+									var asiento = { cuenta: configuracionCuenta.cuenta, debe_bs: "", haber_bs: venta.total * configuracionCuenta.valor / 100, debe_sus: "", haber_sus: Math.round(((venta.total * configuracionCuenta.valor / 100) / $scope.moneda.dolar) * 10000) / 10000, eliminado: false, activo: true }
 									$scope.nuevoComprobante.asientosContables.push(asiento);
 								}
 								if ($scope.nuevoComprobante.asientosContables.length == 2) {
-									var asiento = { cuenta: cuenta, debe_bs: "", haber_bs: venta.total * (87 / 100), debe_sus: "", haber_sus: Math.round(((venta.total * 87 / 100) / $scope.moneda.dolar) * 10000) / 10000, eliminado: 0, activo: true }
+									var asiento = { cuenta: cuenta, debe_bs: "", haber_bs: venta.total * (87 / 100), debe_sus: "", haber_sus: Math.round(((venta.total * 87 / 100) / $scope.moneda.dolar) * 10000) / 10000, eliminado: false, activo: true }
 									$scope.nuevoComprobante.asientosContables.push(asiento);
 								}
 							}
@@ -503,15 +506,15 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 							$scope.nuevoComprobante.id_compra = compra2.id
 							if (compra2.proveedor.proveedorCuenta != null) {
 								var cuenta = compra2.proveedor.proveedorCuenta.cuenta
-								var asiento = { cuenta: cuenta, debe_bs: compra2.total * (87 / 100), haber_bs: "", debe_sus: Math.round(((compra2.total * (87 / 100)) / $scope.moneda.dolar) * 10000) / 10000, haber_sus: "", eliminado: 0, activo: true, isOpen: false }
+								var asiento = { cuenta: cuenta, debe_bs: compra2.total * (87 / 100), haber_bs: "", debe_sus: Math.round(((compra2.total * (87 / 100)) / $scope.moneda.dolar) * 10000) / 10000, haber_sus: "", eliminado: false, activo: true, isOpen: false }
 								var asiento2 = {}
 								$scope.nuevoComprobante.asientosContables.push(asiento);
 								$scope.ListaConfiguaracionCuenta.forEach(function (configuracionCuenta) {
 									if (configuracionCuenta.tipo.nombre_corto == Diccionario.MOV_EGR) {
 										if (configuracionCuenta.nombre == "CAJA/BANCOS") {
-											asiento2 = { cuenta: configuracionCuenta.cuenta, debe_bs: "", haber_bs: compra2.total * configuracionCuenta.valor / 100, debe_sus: "", haber_sus: Math.round(((compra2.total * configuracionCuenta.valor / 100) / $scope.moneda.dolar) * 10000) / 10000, eliminado: 0, activo: true, isOpen: false }
+											asiento2 = { cuenta: configuracionCuenta.cuenta, debe_bs: "", haber_bs: compra2.total * configuracionCuenta.valor / 100, debe_sus: "", haber_sus: Math.round(((compra2.total * configuracionCuenta.valor / 100) / $scope.moneda.dolar) * 10000) / 10000, eliminado: false, activo: true, isOpen: false }
 										} else {
-											var asiento = { cuenta: configuracionCuenta.cuenta, debe_bs: compra2.total * configuracionCuenta.valor / 100, haber_bs: "", debe_sus: Math.round(((compra2.total * configuracionCuenta.valor / 100) / $scope.moneda.dolar) * 10000) / 10000, haber_sus: "", eliminado: 0, activo: true, isOpen: false }
+											var asiento = { cuenta: configuracionCuenta.cuenta, debe_bs: compra2.total * configuracionCuenta.valor / 100, haber_bs: "", debe_sus: Math.round(((compra2.total * configuracionCuenta.valor / 100) / $scope.moneda.dolar) * 10000) / 10000, haber_sus: "", eliminado: false, activo: true, isOpen: false }
 											$scope.nuevoComprobante.asientosContables.push(asiento);
 										}
 										if ($scope.nuevoComprobante.asientosContables.length == 2) { $scope.nuevoComprobante.asientosContables.push(asiento2); }
@@ -540,15 +543,15 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 					if (compra.proveedor.proveedorCuenta != null) {
 						$scope.nuevoComprobante.id_compra = compra.id
 						var cuenta = compra.proveedor.proveedorCuenta.cuenta
-						var asiento = { cuenta: cuenta, debe_bs: compra.total * (87 / 100), haber_bs: "", debe_sus: Math.round(((compra.total * (87 / 100)) / $scope.moneda.dolar) * 10000) / 10000, haber_sus: "", eliminado: 0, activo: true, isOpen: false }
+						var asiento = { cuenta: cuenta, debe_bs: compra.total * (87 / 100), haber_bs: "", debe_sus: Math.round(((compra.total * (87 / 100)) / $scope.moneda.dolar) * 10000) / 10000, haber_sus: "", eliminado: false, activo: true, isOpen: false }
 						var asiento2 = {}
 						$scope.nuevoComprobante.asientosContables.push(asiento);
 						$scope.ListaConfiguaracionCuenta.forEach(function (configuracionCuenta, index, array) {
 							if (configuracionCuenta.tipo.nombre_corto == Diccionario.MOV_EGR) {
 								if (configuracionCuenta.nombre == "CAJA/BANCOS") {
-									asiento2 = { cuenta: configuracionCuenta.cuenta, debe_bs: "", haber_bs: compra.total * configuracionCuenta.valor / 100, debe_sus: "", haber_sus: Math.round(((compra.total * configuracionCuenta.valor / 100) / $scope.moneda.dolar) * 10000) / 10000, eliminado: 0, activo: true, isOpen: false }
+									asiento2 = { cuenta: configuracionCuenta.cuenta, debe_bs: "", haber_bs: compra.total * configuracionCuenta.valor / 100, debe_sus: "", haber_sus: Math.round(((compra.total * configuracionCuenta.valor / 100) / $scope.moneda.dolar) * 10000) / 10000, eliminado: false, activo: true, isOpen: false }
 								} else {
-									var asiento = { cuenta: configuracionCuenta.cuenta, debe_bs: compra.total * configuracionCuenta.valor / 100, haber_bs: "", debe_sus: Math.round(((compra.total * configuracionCuenta.valor / 100) / $scope.moneda.dolar) * 10000) / 10000, haber_sus: "", eliminado: 0, activo: true, isOpen: false }
+									var asiento = { cuenta: configuracionCuenta.cuenta, debe_bs: compra.total * configuracionCuenta.valor / 100, haber_bs: "", debe_sus: Math.round(((compra.total * configuracionCuenta.valor / 100) / $scope.moneda.dolar) * 10000) / 10000, haber_sus: "", eliminado: false, activo: true, isOpen: false }
 									$scope.nuevoComprobante.asientosContables.push(asiento);
 								}
 								if ($scope.nuevoComprobante.asientosContables.length == 2) { $scope.nuevoComprobante.asientosContables.push(asiento2); }
@@ -577,7 +580,8 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 						$scope.nuevoComprobante.fecha = $scope.fechaATexto(fecha)
 					}
 					$scope.totales = { debe_bs: 0, debe_sus: 0, haber_bs: 0, haber_sus: 0 }
-					$scope.nuevoComprobante.asientosContables.forEach(function (asiento, index, array) {
+					$scope.cal($scope.nuevoComprobante.asientosContables) 
+					/* $scope.nuevoComprobante.asientosContables.forEach(function (asiento, index, array) {
 						$scope.totales.debe_bs += asiento.debe_bs
 						$scope.totales.haber_bs += asiento.haber_bs
 						$scope.totales.debe_sus += asiento.debe_sus
@@ -589,7 +593,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 							$scope.totales.haber_sus = Math.round($scope.totales.haber_sus * 1000) / 1000
 
 						}
-					}, this);
+					}, this); */
 					if (view) {
 						$scope.verComprobante = true
 					}
@@ -906,8 +910,15 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 			}
 			$scope.DatosCodigoQr[index].valido = valido;
 		}
-		$scope.eliminarAsiento = function (asiento) {
-			asiento.activo = false
+		$scope.eliminarAsiento = function (asiento, index) {
+			if (asiento.id) {
+				asiento.eliminado = true
+				$scope.cal($scope.nuevoComprobante.asientosContables)
+			} else {
+				$scope.nuevoComprobante.asientosContables.splice(index, 1)
+				$scope.cal($scope.nuevoComprobante.asientosContables)
+			}
+
 		}
 		$scope.abrirCuentasAxiliares = function (asiento) {
 			asiento.activo = true
@@ -1037,11 +1048,11 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 		}
 		$scope.agregarAsiento = function () {
 			if ($scope.nuevoComprobante.asientosContables.length == 0) {
-				var asiento = { glosa: "", cuenta: "", debe_bs: "", haber_bs: "", debe_sus: "", haber_sus: "", eliminado: 0, activo: true, isOpen: false }
+				var asiento = { glosa: "", cuenta: "", debe_bs: "", haber_bs: "", debe_sus: "", haber_sus: "", eliminado: false, activo: true, isOpen: false }
 				$scope.nuevoComprobante.asientosContables.push(asiento)
 			} else {
 				if ($scope.nuevoComprobante.asientosContables[($scope.nuevoComprobante.asientosContables.length - 1)].cuenta && $scope.nuevoComprobante.asientosContables[($scope.nuevoComprobante.asientosContables.length - 1)].cuenta.id != undefined) {
-					var asiento = { glosa: "", cuenta: "", debe_bs: "", haber_bs: "", debe_sus: "", haber_sus: "", eliminado: 0, activo: true, isOpen: false }
+					var asiento = { glosa: "", cuenta: "", debe_bs: "", haber_bs: "", debe_sus: "", haber_sus: "", eliminado: false, activo: true, isOpen: false }
 					$scope.nuevoComprobante.asientosContables.push(asiento)
 				}
 			}
@@ -1049,7 +1060,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 		$scope.agregarPrimerAsiento = function (comprobante) {
 			if (comprobante.gloza) {
 				if (comprobante.asientosContables.length == 0) {
-					var asiento = { glosa: "", cuenta: "", debe_bs: "", haber_bs: "", debe_sus: "", haber_sus: "", eliminado: 0, activo: true, isOpen: false }
+					var asiento = { glosa: "", cuenta: "", debe_bs: "", haber_bs: "", debe_sus: "", haber_sus: "", eliminado: false, activo: true, isOpen: false }
 					$scope.nuevoComprobante.asientosContables.push(asiento)
 
 				}
@@ -1075,7 +1086,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 					if ($scope.nuevoComprobante.asientosContables[index + 1]) {
 
 					} else {
-						var asiento = { glosa: "", cuenta: "", debe_bs: "", haber_bs: "", debe_sus: "", haber_sus: "", eliminado: 0, activo: true, isOpen: false }
+						var asiento = { glosa: "", cuenta: "", debe_bs: "", haber_bs: "", debe_sus: "", haber_sus: "", eliminado: false, activo: true, isOpen: false }
 						$scope.nuevoComprobante.asientosContables.push(asiento)
 						console.log(comprobante.asientosContables)
 					}
@@ -1331,9 +1342,9 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 							$scope.gtm_detalles_despacho = detallesDespacho;
 							$scope.vencimientoTotal = $scope.vencimientoTotal + detallesDespacho.length;
 							$scope.gtm_detalles_despacho_seleccionados = [];
-							$scope.gtm_detalles_despacho.forEach(function (despacho, index, array) {								
-								despacho.cantidad_despacho2=despacho.saldo
-								despacho.saldo2=0								
+							$scope.gtm_detalles_despacho.forEach(function (despacho, index, array) {
+								despacho.cantidad_despacho2 = despacho.saldo
+								despacho.saldo2 = 0
 							});
 						});
 					});
@@ -1529,20 +1540,20 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 			promesa.then(function (detallesDespacho) {
 				$scope.gtm_detalles_despacho = detallesDespacho;
 				$scope.gtm_detalles_despacho_seleccionados = [];
-				
+
 				$scope.gtm_detalles_despacho.forEach(function (despacho, index, array) {
-					despacho.cantidad_despacho2=despacho.saldo
-								despacho.saldo2=0	
+					despacho.cantidad_despacho2 = despacho.saldo
+					despacho.saldo2 = 0
 				});
 			});
 
 		}
-		$scope.imprimirPdfDespachosALerta=function () {
-			ImprimirPdfAlertaDespacho($scope.gtm_detalles_despacho_seleccionados,$scope.filtroDes,$scope.usuario)
+		$scope.imprimirPdfDespachosALerta = function () {
+			ImprimirPdfAlertaDespacho($scope.gtm_detalles_despacho_seleccionados, $scope.filtroDes, $scope.usuario)
 		}
-		$scope.imprimirExelDespachosALerta=function () {
-			ExportarExelAlarmasDespachos($scope.gtm_detalles_despacho_seleccionados,$scope.filtroDes,$scope.usuario)
-	}
+		$scope.imprimirExelDespachosALerta = function () {
+			ExportarExelAlarmasDespachos($scope.gtm_detalles_despacho_seleccionados, $scope.filtroDes, $scope.usuario)
+		}
 		$scope.verificarSeleccionProformas = function () {
 			var paraFacturar = []
 			if ($scope.alertasProformas.length > 0) {

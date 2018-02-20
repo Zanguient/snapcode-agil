@@ -102,13 +102,13 @@ module.exports = function (router, ComprobanteContabilidad, AsientoContabilidad,
 			}
 			ComprobanteContabilidad.findAndCountAll({
 				where: condicionComprobante,
-				include: [{ model: AsientoContabilidad, as: 'asientosContables' }, { model: Clase, as: 'tipoComprobante' }, { model: Usuario, as: 'usuario', include: [{ model: Persona, as: 'persona', where: condicionPersona }] },
+				include: [{ model: AsientoContabilidad, as: 'asientosContables', where: { eliminado: false } }, { model: Clase, as: 'tipoComprobante' }, { model: Usuario, as: 'usuario', include: [{ model: Persona, as: 'persona', where: condicionPersona }] },
 				{ model: Sucursal, as: 'sucursal', where: condicionSucursal, include: [{ model: Empresa, as: 'empresa' }] }],
 			}).then(function (data) {
 				if (req.params.items_pagina == "0") {
 					ComprobanteContabilidad.findAll({
 						where: condicionComprobante,
-						include: [{ model: MonedaTipoCambio, as: 'tipoCambio' }, { model: AsientoContabilidad, as: 'asientosContables', include: [{ model: Clase, as: 'centroCosto' }, { model: ContabilidadCuenta, as: 'cuenta', include: [{ model: ContabilidadCuentaAuxiliar, as: 'cuentaAux' }, { model: Clase, as: 'tipoAuxiliar' }] }] }, { model: Clase, as: 'tipoComprobante' },
+						include: [{ model: MonedaTipoCambio, as: 'tipoCambio' }, { model: AsientoContabilidad, as: 'asientosContables', where: { eliminado: false }, include: [{ model: ContabilidadCuentaAuxiliar, as: 'cuentaAux' },{ model: Clase, as: 'centroCosto' }, { model: ContabilidadCuenta, as: 'cuenta', include: [{ model: ContabilidadCuentaAuxiliar, as: 'cuentaAux' }, { model: Clase, as: 'tipoAuxiliar' }] }] }, { model: Clase, as: 'tipoComprobante' },
 						{ model: Usuario, as: 'usuario', include: [{ model: Persona, as: 'persona', where: condicionPersona }] },
 						{ model: Sucursal, as: 'sucursal', where: condicionSucursal, include: [{ model: Empresa, as: 'empresa' }] }],
 						order: [ordenArreglo]
@@ -119,7 +119,7 @@ module.exports = function (router, ComprobanteContabilidad, AsientoContabilidad,
 					ComprobanteContabilidad.findAll({
 						offset: (req.params.items_pagina * (req.params.pagina - 1)), limit: req.params.items_pagina,
 						where: condicionComprobante,
-						include: [{ model: MonedaTipoCambio, as: 'tipoCambio' }, { model: AsientoContabilidad, as: 'asientosContables', include: [{ model: Clase, as: 'centroCosto' }, { model: ContabilidadCuenta, as: 'cuenta', include: [{ model: ContabilidadCuentaAuxiliar, as: 'cuentaAux' }, { model: Clase, as: 'tipoAuxiliar' }] }] }, { model: Clase, as: 'tipoComprobante' },
+						include: [{ model: MonedaTipoCambio, as: 'tipoCambio' }, { model: AsientoContabilidad, as: 'asientosContables', where: { eliminado: false }, include: [{ model: ContabilidadCuentaAuxiliar, as: 'cuentaAux' },{ model: Clase, as: 'centroCosto' }, { model: ContabilidadCuenta, as: 'cuenta', include: [{ model: ContabilidadCuentaAuxiliar, as: 'cuentaAux' }, { model: Clase, as: 'tipoAuxiliar' }] }] }, { model: Clase, as: 'tipoComprobante' },
 						{ model: Usuario, as: 'usuario', include: [{ model: Persona, as: 'persona', where: condicionPersona }] },
 						{ model: Sucursal, as: 'sucursal', where: condicionSucursal, include: [{ model: Empresa, as: 'empresa' }] }],
 						order: [ordenArreglo]
@@ -139,7 +139,7 @@ module.exports = function (router, ComprobanteContabilidad, AsientoContabilidad,
 					id_usuario: req.params.id_usuario,
 					eliminado: false
 				},
-				include: [{ model: AsientoContabilidad, as: 'asientosContables', include: [{ model: ContabilidadCuenta, as: 'cuenta' }] }, { model: Clase, as: 'tipoComprobante' }, { model: Sucursal, as: 'sucursal' }, { model: Usuario, as: 'usuario' }]
+				include: [{ model: AsientoContabilidad, as: 'asientosContables', where: { eliminado: false }, include: [{ model: ContabilidadCuenta, as: 'cuenta' }] }, { model: Clase, as: 'tipoComprobante' }, { model: Sucursal, as: 'sucursal' }, { model: Usuario, as: 'usuario' }]
 			}).then(function (contabilidadComprobante) {
 				res.json(contabilidadComprobante)
 			})
@@ -391,14 +391,14 @@ module.exports = function (router, ComprobanteContabilidad, AsientoContabilidad,
 
 			ComprobanteContabilidad.findAndCountAll({
 				where: condicionComprobante,
-				include: [{ model: AsientoContabilidad, as: 'asientosContables', include: [{ model: ContabilidadCuenta, as: 'cuenta' }] }, { model: Clase, as: 'tipoComprobante' }, { model: Usuario, as: 'usuario', include: [{ model: Persona, as: 'persona' }] },
+				include: [{ model: AsientoContabilidad, as: 'asientosContables', where: { eliminado: false }, include: [{ model: ContabilidadCuentaAuxiliar, as: 'cuentaAux' },{ model: ContabilidadCuenta, as: 'cuenta' }] }, { model: Clase, as: 'tipoComprobante' }, { model: Usuario, as: 'usuario', include: [{ model: Persona, as: 'persona' }] },
 				{ model: Sucursal, as: 'sucursal', where: condicionSucursal, include: [{ model: Empresa, as: 'empresa' }] }],
 
 			}).then(function (data) {
 				ComprobanteContabilidad.findAll({
 					offset: (req.params.items_pagina * (req.params.pagina - 1)), limit: req.params.items_pagina,
 					where: condicionComprobante,
-					include: [{ model: AsientoContabilidad, as: 'asientosContables', include: [{ model: Clase, as: 'centroCosto' }, { model: ContabilidadCuenta, as: 'cuenta', include: [{ model: ContabilidadCuentaAuxiliar, as: 'cuentaAux' }, { model: Clase, as: 'tipoAuxiliar' }] }] }, { model: Clase, as: 'tipoComprobante' },
+					include: [{ model: AsientoContabilidad, as: 'asientosContables', where: { eliminado: false }, include: [{ model: ContabilidadCuentaAuxiliar, as: 'cuentaAux' },{ model: Clase, as: 'centroCosto' }, { model: ContabilidadCuenta, as: 'cuenta', include: [{ model: ContabilidadCuentaAuxiliar, as: 'cuentaAux' }, { model: Clase, as: 'tipoAuxiliar' }] }] }, { model: Clase, as: 'tipoComprobante' },
 					{ model: Usuario, as: 'usuario', include: [{ model: Persona, as: 'persona' }] },
 					{ model: Sucursal, as: 'sucursal', where: condicionSucursal, include: [{ model: Empresa, as: 'empresa' }] }],
 					order: [ordenArreglo]
@@ -527,7 +527,7 @@ module.exports = function (router, ComprobanteContabilidad, AsientoContabilidad,
 						}).then(function (ComprobanteCreado) {
 							var totalHaber = 0, totalDebe = 0, totalSaldo = 0;
 							req.body.asientosContables.forEach(function (asientoContable, index, array) {
-								if (asientoContable.activo != false && asientoContable.cuenta != "") {
+								if (asientoContable.eliminado != true && asientoContable.cuenta != "") {
 									if (asientoContable.debe_bs == null) {
 										asientoContable.debe_bs = "0";
 									}
@@ -564,7 +564,8 @@ module.exports = function (router, ComprobanteContabilidad, AsientoContabilidad,
 												saldo: asientoContable.cuenta.cuentaAux.saldo,
 												descripcion: asientoContable.cuenta.cuentaAux.nombre,
 												nombre: asientoContable.cuenta.cuentaAux.nombre,
-												id_cuenta: asientoContable.cuenta.id
+												id_cuenta: asientoContable.cuenta.id,
+												id_asiento: asientroCreado.id
 											})
 										}
 										ContabilidadCuenta.find({
@@ -676,7 +677,7 @@ module.exports = function (router, ComprobanteContabilidad, AsientoContabilidad,
 							})
 						var totalHaber = 0, totalDebe = 0, totalSaldo = 0;
 						req.body.asientosContables.forEach(function (asientoContable, index, array) {
-							if (asientoContable.activo != false && asientoContable.cuenta != "") {
+							if (asientoContable.eliminado != true && asientoContable.cuenta != "") {
 								if (asientoContable.debe_bs == null) {
 									asientoContable.debe_bs = "0";
 								}
@@ -713,7 +714,8 @@ module.exports = function (router, ComprobanteContabilidad, AsientoContabilidad,
 											saldo: asientoContable.cuenta.cuentaAux.saldo,
 											descripcion: asientoContable.cuenta.cuentaAux.nombre,
 											nombre: asientoContable.cuenta.cuentaAux.nombre,
-											id_cuenta: asientoContable.cuenta.id
+											id_cuenta: asientoContable.cuenta.id,
+											id_asiento: asientroCreado.id
 										})
 									}
 									ContabilidadCuenta.find({
@@ -813,7 +815,7 @@ module.exports = function (router, ComprobanteContabilidad, AsientoContabilidad,
 					}
 				}).then(function (ComprobanteCreado) {
 					req.body.asientosContables.forEach(function (asientoContable, index, array) {
-						if (asientoContable.activo != false && asientoContable.cuenta != "") {
+						if (asientoContable.eliminado != true && asientoContable.cuenta != "") {
 							if (asientoContable.debe_bs == null) {
 								asientoContable.debe_bs = "0";
 							}
@@ -874,9 +876,17 @@ module.exports = function (router, ComprobanteContabilidad, AsientoContabilidad,
 								})
 							}
 						} else {
-							if (index === (array.length - 1)) {
-								res.json({ mensaje: "¡Comprobante actualizado satisfactoriamente!" });
-							}
+							AsientoContabilidad.update({
+								eliminado: asientoContable.eliminado,
+							}, {
+									where: {
+										id: asientoContable.id
+									}
+								}).then(function (asientoActualizado) {
+									if (index === (array.length - 1)) {
+										res.json({ mensaje: "¡Comprobante actualizado satisfactoriamente!" });
+									}
+								})
 						}
 
 					});
@@ -887,7 +897,7 @@ module.exports = function (router, ComprobanteContabilidad, AsientoContabilidad,
 			ComprobanteContabilidad.find({
 				where: { id: req.params.id_comprobante },
 				include: [{ model: MonedaTipoCambio, as: 'tipoCambio' }, {
-					model: AsientoContabilidad, as: 'asientosContables', include: [{ model: Clase, as: 'centroCosto' }, {
+					model: AsientoContabilidad, as: 'asientosContables', where: { eliminado: false }, include: [{ model: ContabilidadCuentaAuxiliar, as: 'cuentaAux' },{ model: Clase, as: 'centroCosto' }, {
 						model: ContabilidadCuenta, as: 'cuenta', include: [{ model: ContabilidadCuentaAuxiliar, as: 'cuentaAux' }, { model: Clase, as: 'tipoAuxiliar' },
 						{
 							model: Clase, as: 'especificaTexto1'
@@ -909,7 +919,7 @@ module.exports = function (router, ComprobanteContabilidad, AsientoContabilidad,
 			});
 		})
 
-	function crearCuentaAuxiliar(asientoContable, res, index, array) {
+	function crearCuentaAuxiliar(asientoContable, ContabilidadCuentaAuxiliarres, index, array) {
 		if (asientoContable.cuenta.cuentaAux.id) {
 			ContabilidadCuentaAuxiliar.update({
 				debe: asientoContable.cuenta.cuentaAux.debe,
@@ -917,7 +927,8 @@ module.exports = function (router, ComprobanteContabilidad, AsientoContabilidad,
 				saldo: asientoContable.cuenta.cuentaAux.saldo,
 				descripcion: asientoContable.cuenta.cuentaAux.nombre,
 				nombre: asientoContable.cuenta.cuentaAux.nombre,
-				id_cuenta: asientoContable.cuenta.id
+				id_cuenta: asientoContable.cuenta.id,
+				id_asiento: asientoContable.id
 			}, {
 					where: { id: asientoContable.cuenta.cuentaAux.id }
 				})
@@ -928,7 +939,8 @@ module.exports = function (router, ComprobanteContabilidad, AsientoContabilidad,
 				saldo: asientoContable.cuenta.cuentaAux.saldo,
 				descripcion: asientoContable.cuenta.cuentaAux.nombre,
 				nombre: asientoContable.cuenta.cuentaAux.nombre,
-				id_cuenta: asientoContable.cuenta.id
+				id_cuenta: asientoContable.cuenta.id,
+				id_asiento: asientoContable.id
 			}).then(function (cuentaAuxCreate) {
 				if (index === (array.length - 1)) {
 					res.json({ mensaje: "¡Comprobante actualizado satisfactoriamente!" });

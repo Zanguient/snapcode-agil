@@ -292,6 +292,23 @@
 							</td>
 						</tr>
 					</tbody>
+					<tfoot>
+						<tr>
+							<td></td>							
+							<td ng-if="fieldViewer.getConfiguration().codigo.show"></td>							
+							<td ng-if="fieldViewer.getConfiguration().nombre.show">Total</td>		
+							<td ng-if="!fieldViewer.getConfiguration().nombre.show">Total</td>					
+							<td ng-if="fieldViewer.getConfiguration().debe.show">0</td>
+							
+							<td ng-if="fieldViewer.getConfiguration().haber.show">0</td>
+							<td ng-if="fieldViewer.getConfiguration().saldo.show">0</td>
+							<td ng-if="fieldViewer.getConfiguration().clasificacion.show"></td>
+							<td ng-if="fieldViewer.getConfiguration().tipo_cuenta.show"></td>
+							<td></td>
+							<td></td>
+							<td></td>
+						</tr>
+					</tfoot>
 				</table>
 				<div class="row" ng-include src="'/templates/gral/paginator.html'">
 				</div>
@@ -749,30 +766,33 @@
 								</div>
 							</div>
 						</div>
-					 	<div class="form-group">
-							 <div class="row">
-								<label class="control-label col-sm-2">Cuenta especifica <small>(solo para CF y DF)</small></label>
+						<div class="form-group">
+							<div class="row">
+								<label class="control-label col-sm-2">Cuenta especifica
+									<small>(solo para CF y DF)</small>
+								</label>
 								<div class="col-sm-1">
 									<label>
-										<input id="cuenta-especifica" ng-change="optenerCfDf(cuenta.tipo_especifica,cuenta.especifica)" name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="cuenta.especifica"
-										 value="0" />
+										<input id="cuenta-especifica" ng-change="optenerCfDf(cuenta.tipo_especifica,cuenta.especifica)" name="switch-field-1" class="ace ace-switch ace-switch-4"
+										 type="checkbox" ng-model="cuenta.especifica" value="0" />
 										<span id=check_cuenta-especifica class="lbl check-descuento" class="col-xs-10 col-sm-8"></span>
 									</label>
 									<label>
-										<input ng-disabled="!cuenta.especifica" id="cuenta-especifica" name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="cuenta.tipo_especifica" ng-change="optenerCfDf(cuenta.tipo_especifica,cuenta.especifica)"
+										<input ng-disabled="!cuenta.especifica" id="cuenta-especifica" name="switch-field-1" class="ace ace-switch ace-switch-4"
+										 type="checkbox" ng-model="cuenta.tipo_especifica" ng-change="optenerCfDf(cuenta.tipo_especifica,cuenta.especifica)"
 										 value="0" />
 										<span id=check_cuenta-especifica class="lbl check-cuenta-especifica" class="col-xs-10 col-sm-8"></span>
 									</label>
 								</div>
 								<label class="control-label col-sm-1">Texto</label>
 								<div ng-disable="" class="col-sm-2">
-									<input  ng-disabled="!cuenta.especifica" type="text" class="form-control" ng-model="cuenta.especifica_texto1.nombre_corto" >
+									<input ng-disabled="!cuenta.especifica" type="text" class="form-control" ng-model="cuenta.especifica_texto1.nombre_corto">
 								</div>
-								<div class="col-sm-2" >
-									<input ng-disabled="!cuenta.especifica" type="text"class="form-control" ng-model="cuenta.especifica_texto2.nombre_corto">
+								<div class="col-sm-2">
+									<input ng-disabled="!cuenta.especifica" type="text" class="form-control" ng-model="cuenta.especifica_texto2.nombre_corto">
 								</div>
-								<div class="col-sm-2" >
-									<input  ng-disabled="!cuenta.especifica" type="text" class="form-control"ng-model="cuenta.especifica_texto3.nombre_corto">
+								<div class="col-sm-2">
+									<input ng-disabled="!cuenta.especifica" type="text" class="form-control" ng-model="cuenta.especifica_texto3.nombre_corto">
 								</div>
 							</div>
 						</div>
@@ -831,7 +851,8 @@
 
 								<div class="col-sm-6">
 									<select id="cuentaaux" name="cuentaaux" class="col-xs-10 col-sm-8" ng-options="tipoAuxiliar as tipoAuxiliar.nombre for tipoAuxiliar in tiposCuentasAuxiliares track by tipoAuxiliar.id"
-									 ng-model="cuenta.tipoAuxiliar"><option value="">--ninguno--</option>
+									 ng-model="cuenta.tipoAuxiliar">
+										<option value="">--ninguno--</option>
 									</select>
 
 								</div>

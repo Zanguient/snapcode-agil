@@ -174,6 +174,7 @@ angular.module('agil.controladores')
              }
          } */
         $scope.verComprobante = function (comprobante, view) {
+            console.log(comprobante)
             if (view) {
                 $scope.crearNuevoComprobante(null, null, comprobante, true)
             } else {

@@ -585,7 +585,10 @@ module.exports = function (sequelize, Usuario, Persona, Rol, UsuarioRol, Tipo, C
 	ContabilidadCuenta.belongsTo(Clase, { foreignKey: 'id_especifica_texto2', as: 'especificaTexto2' });
 	ContabilidadCuenta.belongsTo(Clase, { foreignKey: 'id_especifica_texto3', as: 'especificaTexto3' });
 
+	AsientoContabilidad.hasOne(ContabilidadCuentaAuxiliar, { foreignKey: 'id_asiento', as: 'cuentaAux' });
+
 	ContabilidadCuentaAuxiliar.belongsTo(ContabilidadCuenta, { foreignKey: 'id_cuenta', as: 'cuentaAuxs' });
+	ContabilidadCuentaAuxiliar.belongsTo(AsientoContabilidad, { foreignKey: 'id_asiento', as: 'cuentaAuxs' });
 
 	ClasificacionCuenta.belongsTo(Clase, { foreignKey: 'id_saldo', as: 'saldo' });
 	ClasificacionCuenta.belongsTo(Clase, { foreignKey: 'id_movimiento', as: 'movimiento' });
