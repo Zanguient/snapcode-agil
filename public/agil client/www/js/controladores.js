@@ -298,14 +298,16 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 					} else {
 						$scope.moneda = { ufv: "--", dolar: "--" }
 					}
-					if ($scope.nuevoComprobante.asientosContables.length > 0) {
-						$scope.nuevoComprobante.asientosContables.forEach(function (asiento, index, array) {
-							$scope.ComvertirDebeEnDolar(asiento)
-							$scope.ComvertirHaberEnDolar(asiento)
-							if (index === (array.length - 1)) {
-								$scope.cal($scope.nuevoComprobante.asientosContables)
-							}
-						});
+					if ($scope.nuevoComprobante) {
+						if ($scope.nuevoComprobante.asientosContables.length > 0) {
+							$scope.nuevoComprobante.asientosContables.forEach(function (asiento, index, array) {
+								$scope.ComvertirDebeEnDolar(asiento)
+								$scope.ComvertirHaberEnDolar(asiento)
+								if (index === (array.length - 1)) {
+									$scope.cal($scope.nuevoComprobante.asientosContables)
+								}
+							});
+						}
 					}
 				})
 			} else {
@@ -579,6 +581,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 				}
 				if (comprobante != null) {
 					$scope.nuevoComprobante = comprobante;
+
 					if (comprobante.sucursal) {
 						$scope.nuevoComprobante.id_sucursal = comprobante.sucursal
 					}

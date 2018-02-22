@@ -113,7 +113,9 @@ angular.module('agil.servicios')
 					return promesa;
 				}
 				if (nuevoComprobante) {
+					var fecha = new Date()
 					nuevoComprobante.fechaActual = new Date()
+					
 					if (!nuevoComprobante.id) {
 						for (var index = 0; index < nuevoComprobante.asientosContables.length; index++) {
 							var element = nuevoComprobante.asientosContables[index];
@@ -123,6 +125,8 @@ angular.module('agil.servicios')
 						}
 
 						nuevoComprobante.fecha = new Date(convertirFecha(nuevoComprobante.fecha))
+						nuevoComprobante.fecha.setHours(fecha.getHours())
+						nuevoComprobante.fecha.setMinutes(fecha.getMinutes())
 						NuevoComprobanteContabilidad.save(nuevoComprobante, function (dato) {
 							verificarVentasComprobantes(usuario.id_empresa)
 							verificarComprasComprobantes(usuario.id_empresa)
@@ -147,6 +151,8 @@ angular.module('agil.servicios')
 							}
 						}
 						nuevoComprobante.fecha = new Date(convertirFecha(nuevoComprobante.fecha))
+						nuevoComprobante.fecha.setHours(fecha.getHours())
+						nuevoComprobante.fecha.setMinutes(fecha.getMinutes())
 						ActualizarComprobanteContabilidad.update({ id_comprobante: nuevoComprobante.id }, nuevoComprobante, function (dato) {
 							verificarVentasComprobantes(usuario.id_empresa)
 							verificarComprasComprobantes(usuario.id_empresa)

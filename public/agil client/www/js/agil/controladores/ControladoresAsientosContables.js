@@ -175,10 +175,13 @@ angular.module('agil.controladores')
          } */
         $scope.verComprobante = function (comprobante, view) {
             console.log(comprobante)
+           
             if (view) {
                 $scope.crearNuevoComprobante(null, null, comprobante, true)
             } else {
+                
                 if (comprobante.abierto) {
+                    $scope.obtenerCambioMoneda2($scope.fechaATexto(comprobante.fecha))
                     $scope.crearNuevoComprobante(null, null, comprobante)
                 }else{
                     if(!comprobante.id){

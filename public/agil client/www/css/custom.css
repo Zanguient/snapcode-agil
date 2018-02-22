@@ -24,13 +24,13 @@ input[type=number]::-webkit-outer-spin-button {
 
 #formNuevoComprobante input[type=number] { -moz-appearance:textfield; }
 
-/* #formNuevoComprobante .dropdown-menu {
-	position: static !important;
+#formNuevoComprobante .dropdown-menu {
+	/* position: static !important;
 	top: auto !important;
-	left: auto !important;	
-	z-index: 8000000 !important;
+	left: auto !important;	 */
+	z-index:9999;
   }
- */
+
  
 #style-7::-webkit-scrollbar-track
 {
@@ -95,7 +95,9 @@ margin-right: 65px;}
 	overflow: hidden;
 	background-color: white;
 }
-
+.dropdown-menu {
+       z-index:9999;
+   }
 #login{
 	float: right;
 	margin-right: 10px;

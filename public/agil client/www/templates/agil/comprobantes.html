@@ -210,7 +210,7 @@
                             <td ng-if="fieldViewer.getConfiguration().fecha.show">{{comprobante.fecha | date:"dd/MM/yyyy"}}</td>
                             <td ng-if="fieldViewer.getConfiguration().sucursal.show">{{comprobante.sucursal.nombre}}</td>
                             <td ng-if="fieldViewer.getConfiguration().gloza.show">{{comprobante.gloza}}</td>
-                            <td ng-if="fieldViewer.getConfiguration().hora_fecha.show">{{comprobante.createdAt | date :"h:mm"}} - {{comprobante.createdAt | date:"dd/MM/yyyy"}}</td>
+                            <td ng-if="fieldViewer.getConfiguration().hora_fecha.show">{{comprobante.fecha | date :"h:mm"}} - {{comprobante.fecha | date:"dd/MM/yyyy"}}</td>
                             <td ng-if="fieldViewer.getConfiguration().importe.show">{{comprobante.importe | number:2}}</td>
                             <td ng-if="fieldViewer.getConfiguration().usuario.show">{{comprobante.usuario.persona.nombres}}</td>
                             <td>
