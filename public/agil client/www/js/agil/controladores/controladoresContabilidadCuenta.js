@@ -47,6 +47,7 @@ angular.module('agil.controladores')
 			$scope.obtenerClasificacionSaldos();
 			$scope.obtenerClasificacionMovimientos();
 			$scope.obtenerOperacionesCalculo();
+			$scope.obtenerTotalesGeneral()
 			$scope.sucursalesUsuario = "";
 			for (var i = 0; i < $scope.usuario.sucursalesUsuario.length; i++) {
 				$scope.sucursalesUsuario = $scope.sucursalesUsuario + $scope.usuario.sucursalesUsuario[i].sucursal.id;
@@ -342,7 +343,7 @@ angular.module('agil.controladores')
 			$scope.abrirPopup($scope.idModalWizardCuentaEdicion);
 		}
 		$scope.optenerCfDf = function (tipo, activo) {
-			
+
 			if (activo) {
 				if (tipo) {
 					var promesa = ClaseTexto("CF_TEXTO_1")
@@ -387,8 +388,8 @@ angular.module('agil.controladores')
 		}
 		$scope.modificarCuenta = function (cuenta) {
 			$scope.cuenta = cuenta
-			if(cuenta.especifica){
-				$scope.optenerCfDf(cuenta.tipo_especifica,cuenta.especifica)
+			if (cuenta.especifica) {
+				$scope.optenerCfDf(cuenta.tipo_especifica, cuenta.especifica)
 			}
 			$scope.abrirPopup($scope.idModalWizardCuentaEdicion);
 		}
@@ -535,14 +536,47 @@ angular.module('agil.controladores')
 
 		$scope.obtenerLista = function () {
 			blockUI.start();
+			$scope.sumaTotales = { debe: 0, haber: 0, saldo: 0 }
 			var promesa = CuentaContabilidad($scope.paginator);
 			promesa.then(function (dato) {
 				$scope.paginator.setPages(dato.paginas);
+				dato.cuentas.forEach(function (cuenta, index, array) {
+					$scope.sumaTotales.debe += cuenta.debe
+					$scope.sumaTotales.haber += cuenta.haber
+					$scope.sumaTotales.saldo += cuenta.saldo
+					blockUI.stop();
+				});
 				$scope.Cuentas = dato.cuentas;
-				blockUI.stop();
+
+			})
+
+		}
+		$scope.obtenerTotalesGeneral = function () {
+			$scope.sumaTotalesGenerales = { debe: 0, haber: 0, saldo: 0 }
+			var paginator = {
+				filter: {
+					empresa: $scope.usuario.id_empresa,
+					clasificacion: 0,
+					tipo_cuenta: 0,
+					monto: 0,
+				},
+				currentPage: 1,
+				itemsPerPage: 0,
+				search: 0,
+				column: "codigo",
+				direction: "asc"
+			}
+			var promesa2 = CuentaContabilidad(paginator);
+			promesa2.then(function (dato) {
+				dato.cuentas.forEach(function (cuenta, index, array) {
+					$scope.sumaTotalesGenerales.debe += cuenta.debe
+					$scope.sumaTotalesGenerales.haber += cuenta.haber
+					$scope.sumaTotalesGenerales.saldo += cuenta.saldo
+					blockUI.stop();
+				});
+
 			})
 		}
-
 		$scope.subirExcelCuentas = function (event) {
 			var files = event.target.files;
 			var i, f;

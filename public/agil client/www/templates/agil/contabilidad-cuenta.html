@@ -294,14 +294,42 @@
 					</tbody>
 					<tfoot>
 						<tr>
-							<td></td>							
-							<td ng-if="fieldViewer.getConfiguration().codigo.show"></td>							
-							<td ng-if="fieldViewer.getConfiguration().nombre.show">Total</td>		
-							<td ng-if="!fieldViewer.getConfiguration().nombre.show">Total</td>					
-							<td ng-if="fieldViewer.getConfiguration().debe.show">0</td>
-							
-							<td ng-if="fieldViewer.getConfiguration().haber.show">0</td>
-							<td ng-if="fieldViewer.getConfiguration().saldo.show">0</td>
+							<td ng-if="fieldViewer.getConfiguration().nombre.show"></td>
+							<td ng-if="fieldViewer.getConfiguration().codigo.show"></td>
+							<td ng-if="fieldViewer.getConfiguration().nombre.show">
+								<b>Total</b>
+							</td>
+							<td ng-if="!fieldViewer.getConfiguration().nombre.show">
+								<b>Total</b>
+							</td>
+							<td ng-if="fieldViewer.getConfiguration().debe.show"><b>{{sumaTotales.debe|number:2}}</b></td>
+
+							<td ng-if="fieldViewer.getConfiguration().haber.show"><b>{{sumaTotales.haber|number:2}}</b></td>
+							<td ng-if="fieldViewer.getConfiguration().saldo.show"><b>{{sumaTotales.saldo|number:2}}</b></td>
+							<td ng-if="fieldViewer.getConfiguration().clasificacion.show"></td>
+							<td ng-if="fieldViewer.getConfiguration().tipo_cuenta.show"></td>
+							<td></td>
+							<td></td>
+							<td></td>
+						</tr>
+						<tr>
+							<td ng-if="fieldViewer.getConfiguration().nombre.show"></td>
+							<td ng-if="fieldViewer.getConfiguration().codigo.show"></td>
+							<td ng-if="fieldViewer.getConfiguration().nombre.show">
+								<b>Total General</b>
+							</td>
+							<td ng-if="!fieldViewer.getConfiguration().nombre.show">
+								<b>Total General</b>
+							</td>
+							<td ng-if="fieldViewer.getConfiguration().debe.show">
+								<b>{{sumaTotalesGenerales.debe|number:2}}</b>
+							</td>
+							<td ng-if="fieldViewer.getConfiguration().haber.show">
+								<b>{{sumaTotalesGenerales.haber|number:2}}</b>
+							</td>
+							<td ng-if="fieldViewer.getConfiguration().saldo.show">
+								<b>{{sumaTotalesGenerales.saldo|number:2}}</b>
+							</td>
 							<td ng-if="fieldViewer.getConfiguration().clasificacion.show"></td>
 							<td ng-if="fieldViewer.getConfiguration().tipo_cuenta.show"></td>
 							<td></td>

@@ -1,0 +1,1 @@
+ALTER TABLE agil_contabilidad_cuenta_auxiliar drop asiento
