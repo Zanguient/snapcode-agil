@@ -15,9 +15,9 @@ function ejecutarScriptDestino(idModalWizardDestinoEdicion, idContenedorEdicionD
 function ejecutarScriptsPolifuncionalidad(modalNuevaEvaluacion, modalNuevaEvaluacionWizard, modalBusquedaPersonal, modalParametrosPolifuncionalidad, 
 	modalParametrosPolifuncionalidadWizard, idModalReportes) {
 	crearPopup(modalNuevaEvaluacion, 'auto', 'auto');
-	crearPopup(modalBusquedaPersonal, 'auto', 'auto');
 	crearPopup(modalParametrosPolifuncionalidad, 'auto', 'auto');
 	crearPopup(idModalReportes, 'auto', 'auto');
+	crearPopup(modalBusquedaPersonal, 'auto', 'auto');
 	aplicarWizardFormulario(modalNuevaEvaluacion, modalNuevaEvaluacionWizard);
 	aplicarWizardFormulario(modalParametrosPolifuncionalidad, modalParametrosPolifuncionalidadWizard);
 }

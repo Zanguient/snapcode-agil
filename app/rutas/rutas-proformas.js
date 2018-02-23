@@ -501,7 +501,9 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
                 { model: Clase, as: 'actividad' }]
             }).then(function (actividades) {
                 res.json({ actividades: actividades })
-            })
+            }).catch(function (err) {
+                res.json({ mensaje: err.message === undefined ? err.data : err.message, hasErr: true })
+            });
         })
 
     router.route('/proforma/facturar/:id_empresa')
@@ -607,7 +609,9 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
                     if (i === req.body.length - 1) {
                         res.json({ detalles: detalles })
                     }
-                })
+                }).catch(function (err) {
+                    res.json({ mensaje: err.message === undefined ? err.data : err.message, hasErr: true, factura: req.body })
+                });
             })
 
         })

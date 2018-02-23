@@ -158,6 +158,7 @@ angular.module('agil.servicios')
 							verificarComprasComprobantes(usuario.id_empresa)
 							mostrarMensaje(dato.mensaje);
 							cerrarModal();
+							recargarItemsTabla()
 						})
 						console.log("falta agregar el put para guardar")
 					}

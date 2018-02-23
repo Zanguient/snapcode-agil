@@ -1,5 +1,5 @@
 module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente, Persona, Empresa, Sucursal, Clase, Diccionario, Tipo, decodeBase64Image, fs, RrhhEmpleadoFicha, RrhhEmpleadoFichaOtrosSeguros, RrhhEmpleadoFichaFamiliar, RrhhEmpleadoDiscapacidad
-    , RrhhEmpleadoCargo, RrhhEmpleadoHojaVida, RrhhEmpleadoFormacionAcademica, RrhhEmpleadoExperienciaLaboral, RrhhEmpleadoLogroInternoExterno, RrhhEmpleadoCapacidadInternaExterna, NumeroLiteral, RrhhEmpleadoPrestamo, RrhhEmpleadoPrestamoPago, RrhhEmpleadoRolTurno, RrhhEmpleadoHorasExtra, RrhhAnticipo) {
+    , RrhhEmpleadoCargo, RrhhEmpleadoHojaVida, RrhhEmpleadoFormacionAcademica, RrhhEmpleadoExperienciaLaboral, RrhhEmpleadoLogroInternoExterno, RrhhEmpleadoCapacidadInternaExterna, NumeroLiteral, RrhhEmpleadoPrestamo, RrhhEmpleadoPrestamoPago, RrhhEmpleadoRolTurno, RrhhEmpleadoHorasExtra, RrhhAnticipo, EvaluacionPolifuncional, ConfiguracionCalificacionEvaluacionPolifuncional, ConfiguracionDesempenioEvaluacionPolifuncional) {
     router.route('/recursos-humanos/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion/codigo/:codigo/nombres/:nombres/ci/:ci/campo/:campo/cargo/:cargo/busquedaEmpresa/:busquedaEmpresa/grupo/:grupo_sanguineo/estado/:estado/apellido/:apellido')
         .get(function (req, res) {
             var condicion = ""
@@ -198,12 +198,12 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                                     });
                                 } else {
                                     res.json({ pacientes: arregloCargos, paginas: Math.ceil(data.length / req.params.items_pagina) });
-
                                 }
                             });
                     });
             }
         })
+
     router.route('/recursos-humanos-familiar/:id_persona/familiar-relacion/:id_familiar')
         .put(function (req, res) {
 
@@ -1767,8 +1767,6 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                         }
 
                     })
-
-
                 })
             })
 
@@ -1944,5 +1942,218 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                 /* } */
             })
         })
+
+
+    /////////////////////////////////////////////////////// RUTAS PARA POLIFUNCIONAL ///////////////////////////////////////////////////
+
+    ///////////////////////////////////// FILTRO POLIFUNCIONAL
+
+    router.route('/personal/filtro/:id_empresa/:mes/:anio/:desempenio/:mas_campo/:campo/:cargo/:estado/:codigo/:nombre/:apellido/:pagina/:items_pagina/:columna/:direccion/fiu')
+        .get(function (req, res) {
+            var condicion_evaluacion = {}
+            var condicion_cargos = {}
+            var condicion_persona = {}
+            var condicion_empleado = {}
+
+            if (req.params.mes !== "0") {
+                condicion_evaluacion.mes = req.params.mes
+            }
+            if (req.params.anio !== "0") {
+                condicion_evaluacion.anio = req.params.mes
+            }
+            if (req.params.desempenio !== "0") {
+                condicion_evaluacion.desempenio = req.params.mes
+            }
+            if (req.params.mas_campo !== "0") {
+
+            }
+            if (req.params.campo !== "0") {
+                condicion_empleado.campo = req.params.campo
+            }
+            if (req.params.cargo !== "0") {
+                condicion_cargos.cargo = req.params.cargo
+            }
+            if (req.params.estado !== "0") {
+                condicion_evaluacion.eliminado = req.params.estado
+            }
+            if (req.params.codigo !== "0") {
+                condicion_empleado.codigo = { $like: req.params.codigo }
+            }
+            if (req.params.nombre !== "0") {
+                condicion_persona.nombre = { $like: req.params.nombre }
+            }
+            if (req.params.apellido !== "0") {
+                condicion_persona.apellido = { $like: req.params.apellido }
+            }
+            condicion_empleado.es_empleado = true
+            EvaluacionPolifuncional.findAndCountAll({
+                offset: (req.params.items_pagina * (req.params.pagina - 1)), limit: req.params.items_pagina,
+                where: condicion_evaluacion,
+                include: [{
+                    model: MedicoPaciente, as: 'empleado',
+                    where: condicion_empleado,
+                    include: [{
+                        model: RrhhEmpleadoCargo, as: 'cargos',
+                        where: { $or: condicion_cargos },
+                        include: [{ model: Clase, as: 'cargo' }]
+                    }, { model: Persona, as: 'persona', where: condicion_persona }]
+                }]
+            }).then(function (evaluaciones) {
+                res.json({ evaluaciones: evaluaciones, paginas: Math.ceil(evaluaciones.count / req.params.items_pagina) })
+            }).catch(function (err) {
+                res.json({ personal: [], mensaje: err.message === undefined ? err.data : err.message, hasErr: true })
+            });
+        })
+
+    /////////////////////////////////////// Lista de trabajadores
+
+    router.route('/todo/personal/:id_empresa')
+        .get(function (req, res) {
+            MedicoPaciente.findAll({
+                where: {
+                    es_empleado: true
+                }, include: [{ model: RrhhEmpleadoCargo, as: 'cargos', include: [{ model: Clase, as: 'cargo' }] }, { model: Persona, as: 'persona' }]
+            }).then(function (personal) {
+                res.json({ personal: personal })
+            }).catch(function (err) {
+                res.json({ personal: [], mensaje: err.message === undefined ? err.data : err.message, hasErr: true })
+            });
+        })
+
+    /////////////////////////////////////////// Guardar evaluaciones       
+
+    router.route('/evaluacion/personal/:id_empresa')
+        .post(function (req, res) {
+            EvaluacionPolifuncional.create({
+                id_empleado: req.body.personal.id,
+                anio: req.body.anio.id,
+                mes: req.body.mes.id,
+                fecha: req.body.fecha,
+                asistencia_capacitacion: req.body.asistencia_capacitacion,
+                documentos_actualizados: req.body.documentos_actualizados,
+                trabajo_equipo: req.body.trabajo_equipo,
+                funciones_puntualidad: req.body.funciones_puntualidad,
+                higiene_personal: req.body.higiene_personal,
+                asistencia_reunion: req.body.asistencia_reunion,
+                ingreso_campo: req.body.ingreso_campo,
+                llenado_formularios: req.body.llenado_formularios,
+                nota_total: req.body.nota_total,
+                id_desempenio: req.body.id_desempenio,
+                eliminado: false
+            }).then(function (evaluacionCreada) {
+                res.json({ mensaje: 'Evaluación registrada correctamente!' })
+            }).catch(function (err) {
+                res.json({ mensaje: err.message === undefined ? err.data : err.message, hasErr: true })
+            });
+        })
+
+    /////////////////////////////////////////// Guardar configuraciones
+
+    //ConfiguracionCalificacionEvaluacionPolifuncional, ConfiguracionDesempenioEvaluacionPolifuncional
+    router.route('/evaluacion/configuracion/:id_empresa')
+        .post(function (req, res) {
+            req.body.map(function (configuracion) {
+                ConfiguracionCalificacionEvaluacionPolifuncional.create({
+                    para_empleados: configuracion.empleados.para_empleados,
+                    para_encargados: configuracion.encargados.para_encargados,
+                    variable: configuracion.fg,
+                    // asistencia_capacitacion: req.body.asistencia_capacitacion,
+                    // documentos_actualizados: req.body.documentos_actualizados,
+                    // trabajo_equipo: req.body.trabajo_equipo,
+                    // funciones_puntualidad: req.body.funciones_puntualidad,
+                    // higiene_personal: req.body.higiene_personal,
+                    // asistencia_reunion: req.body.asistencia_reunion,
+                    // ingreso_campo: req.body.ingreso_campo,
+                    // llenado_formularios: req.body.llenado_formularios,
+                    nota_total: req.body.nota_total,
+                    // id_desempenio: req.body.id_desempenio,
+                    activo: configuracion.parametros,
+                    eliminado: false
+                }).then(function (evaluacionCreada) {
+                    res.json({ mensaje: 'Evaluacion registrada correctamente!' })
+                }).catch(function (err) {
+                    res.json({ mensaje: err.message === undefined ? err.data : err.message, hasErr: true })
+                });
+            })
+        })
+
+    ///////////////////////////////////////////////Reporte por meses
+
+    router.route('/reportes/:desde_mes/:desde_anio/:hasta_mes/:hasta_anio')
+        .get(function (req, res) {
+            var desde = new Date(req.params.desde_anio, req.params.desde_mes, 1, 0, 0, 0)
+            var hasta = new Date(req.params.hasta_anio, req.params.hasta_mes + 1, 0, 23, 59, 0)
+            var condicion = { fecha: { $between: [desde, hasta] } }
+            MedicoPaciente.findAll({
+                where: {
+                    es_empleado: true
+                }, include: [
+                    { model: RrhhEmpleadoCargo, as: 'cargos', include: [{ model: Clase, as: 'cargo' }] },
+                    { model: Persona, as: 'persona' },
+                    { model: EvaluacionPolifuncional, as: 'evaluaciones' }
+                ],
+                order: [[{ model: EvaluacionPolifuncional, as: 'evaluaciones' }, 'fecha', 'asc']]
+            }).then(function (reporteEvaluaciones) {
+                var evaluaciones = []
+                meses = [{ id: 0, nombre: "Enero" }, { id: 1, nombre: "Febrero" }, { id: 2, nombre: "Marzo" }, { id: 3, nombre: "Abril" }, { id: 4, nombre: "Mayo" }, { id: 5, nombre: "Junio" }, { id: 6, nombre: "Julio" }, { id: 7, nombre: "Agosto" },
+                { id: 8, nombre: "Septiembre" }, { id: 9, nombre: "Octubre" }, { id: 10, nombre: "Noviembre" }, { id: 11, nombre: "Diciembre" }];
+                // var startDate = new Date()
+                var mesesReporte = []
+                // var endDate = new Date()
+                reporteEvaluaciones.map(function (_) {
+                    if (_.evaluaciones.length > 0) {
+                        _.evaluaciones.map(function (evaluacion) {
+                            var fechaCabecera = meses[evaluacion.mes].nombre.substring(0, 3) + '-' + (evaluacion.anio).toString().substring(4, 2)
+                            var encontrado = mesesReporte.indexOf(fechaCabecera)
+                            if (encontrado < 0) {
+                                mesesReporte.push(fechaCabecera)
+                            }
+                        })
+                        evaluaciones.push(_)
+                    }
+                })
+                res.json({ reporte: evaluaciones, mesesReporte: mesesReporte })
+            }).catch(function (err) {
+                res.json({ reporte: [], mensaje: err.message === undefined ? err.data : err.message, hasErr: true })
+            });
+        })
+
+    ////////////////////////////////////////////////////// Promedios anuales por campo
+
+    router.route('/reportes/anual/:anio/campos')
+        .get(function (req, res) {
+            EvaluacionPolifuncional.findAndCountAll({
+                where: condicion,
+                include: [{
+                    model: MedicoPaciente, as: 'empleado'
+                }],
+                order: [[{ model: MedicoPaciente, as: 'empleado' }, 'campo', 'asc']]
+            }).then(function (evaluaciones) {
+                var reportesCampos = []
+                evaluaciones.map(function (evaluacion) {
+                    var reporte = {
+                        campo: evaluacion.empleado.campo,
+                        asistencia_capacitacion: evaluacion.asistencia_capacitacion,
+                        documentos_actualizados: evaluacion.documentos_actualizados,
+                        trabajo_equipo: evaluacion.trabajo_equipo,
+                        funciones_puntualidad: evaluacion.funciones_puntualidad,
+                        higiene_personal: evaluacion.higiene_personal,
+                        asistencia_reunion: evaluacion.asistencia_reunion,
+                        ingreso_campo: evaluacion.ingreso_campo,
+                        llenado_formularios: evaluacion.llenado_formularios
+                    }
+                    reportesCampos.push(reporte)
+                })
+                // while (reportesCampos.length > 0) {
+                //     var campo = reportesCampos.pop()
+                // }
+
+                res.json({ reporte: reportesCamposs })
+            }).catch(function (err) {
+                res.json({ reporte: [], mensaje: err.message === undefined ? err.data : err.message, hasErr: true })
+            });
+        })
+
+    ///////////////////////////////////////////////////// FIN RUTAS POLIFUNCIONAL /////////////////////////////////////////////////////
 }
 

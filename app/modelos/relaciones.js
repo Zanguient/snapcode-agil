@@ -12,8 +12,11 @@ module.exports = function (sequelize, Usuario, Persona, Rol, UsuarioRol, Tipo, C
 	MedicoPacienteFicha, MedicoLaboratorioExamen, MedicoLaboratorio, MedicoLaboratorioPaciente, MedicoLaboratorioResultado, MedicoDiagnostico, MedicoDiagnosticoExamen, MedicoDiagnosticoPaciente, MedicoDiagnosticoResultado,
 	MantenimientoOrdenTrabajo, MantenimientoOrdenTrabajoManoObra, MantenimientoOrdenTrabajoMaterial, MantenimientoOrdenTrabajoServicioExterno, MantenimientoOrdenTrabajoSistema, VendedorVenta, RrhhEmpleadoFicha,
 	RrhhEmpleadoFichaOtrosSeguros, RrhhEmpleadoFichaFamiliar, MedicoPacientePreRequisito, RrhhEmpleadoDiscapacidad, RrhhEmpleadoCargo, ClienteRazon, GtmDestino, GtmEstibaje, GtmGrupoEstibaje, GtmTransportista, GtmDespacho, GtmClienteDestino,
-	RrhhEmpleadoHojaVida, RrhhEmpleadoFormacionAcademica, RrhhEmpleadoExperienciaLaboral, RrhhEmpleadoLogroInternoExterno, RrhhEmpleadoCapacidadInternaExterna, SolicitudReposicion, DetalleSolicitudProducto, DetalleSolicitudProductoBase, MonedaTipoCambio, ContabilidadCuentaAuxiliar, GtmDespachoDetalle, RrhhEmpleadoPrestamo, RrhhEmpleadoPrestamoPago, Proforma, DetallesProformas, Servicios,Farmacia, RRHHParametros,RrhhEmpleadoRolTurno,RrhhEmpleadoHorasExtra,RRHHPlanillaSueldos,RRHHDetallePlanillaSueldos,RrhhAnticipo) {
-		Persona.hasOne(Usuario, { foreignKey: 'id_persona', as: 'usuario' });
+	RrhhEmpleadoHojaVida, RrhhEmpleadoFormacionAcademica, RrhhEmpleadoExperienciaLaboral, RrhhEmpleadoLogroInternoExterno, RrhhEmpleadoCapacidadInternaExterna,
+	SolicitudReposicion, DetalleSolicitudProducto, DetalleSolicitudProductoBase, MonedaTipoCambio, ContabilidadCuentaAuxiliar, GtmDespachoDetalle, RrhhEmpleadoPrestamo,
+	RrhhEmpleadoPrestamoPago, Proforma, DetallesProformas, Servicios, Farmacia, RRHHParametros, RrhhEmpleadoRolTurno, RrhhEmpleadoHorasExtra, RRHHPlanillaSueldos, 
+	RRHHDetallePlanillaSueldos, RrhhAnticipo, EvaluacionPolifuncional) {
+	Persona.hasOne(Usuario, { foreignKey: 'id_persona', as: 'usuario' });
 	Persona.belongsTo(Clase, { foreignKey: 'id_lugar_nacimiento', as: 'lugar_nacimiento' });
 	Persona.belongsTo(Clase, { foreignKey: 'id_genero', as: 'genero' });
 	Persona.belongsTo(Clase, { foreignKey: 'id_lenguaje', as: 'lenguaje' });
@@ -164,6 +167,11 @@ module.exports = function (sequelize, Usuario, Persona, Rol, UsuarioRol, Tipo, C
 	MedicoPacientePreRequisito.belongsTo(MedicoPrerequisito, { foreignKey: 'id_prerequisito', as: 'preRequisito' })
 	MedicoPaciente.hasMany(MedicoPacientePreRequisito, { foreignKey: 'id_paciente', as: 'pacientesPrerequisitos' })
 	MedicoPacientePreRequisito.belongsTo(MedicoPaciente, { foreignKey: 'id_paciente', as: 'pacientePrerequisito' })
+
+	MedicoPaciente.hasMany(EvaluacionPolifuncional, {foreignKey:'id_empleado', as: 'evaluaciones'})
+	EvaluacionPolifuncional.belongsTo(MedicoPaciente, {foreignKey:'id_empleado', as: 'empleado'})
+	Clase.hasMany(EvaluacionPolifuncional, {foreignKey:'id_desempenio', as: 'desempenios'})
+	EvaluacionPolifuncional.belongsTo(Clase, {foreignKey:'id_desempenio', as: 'desempenio'})
 
 	Aplicacion.belongsTo(Aplicacion, { foreignKey: 'id_padre', as: 'padre' });
 	Aplicacion.hasMany(Aplicacion, { foreignKey: 'id_padre', as: 'subaplicaciones' });
@@ -475,10 +483,10 @@ module.exports = function (sequelize, Usuario, Persona, Rol, UsuarioRol, Tipo, C
 	MedicoPaciente.hasOne(RrhhEmpleadoHojaVida, { foreignKey: 'id_empleado', as: 'hojaVida' })
 	MedicoPaciente.hasMany(RrhhEmpleadoPrestamo, { foreignKey: 'id_empleado', as: 'Prestamos' });
 	MedicoPaciente.hasMany(RrhhEmpleadoRolTurno, { foreignKey: 'id_empleado', as: 'rolesTurno' });
-	MedicoPaciente.hasMany(RrhhEmpleadoHorasExtra, { foreignKey: 'id_empleado', as: 'horasExtra' });	
+	MedicoPaciente.hasMany(RrhhEmpleadoHorasExtra, { foreignKey: 'id_empleado', as: 'horasExtra' });
 	MedicoPaciente.hasOne(RRHHDetallePlanillaSueldos, { foreignKey: 'empleado', as: 'rrhhDetalleSueldos' });
 	MedicoPaciente.hasOne(Farmacia, { foreignKey: 'id_paciente', as: 'farmaciaPaciente' });
-	MedicoPaciente.hasMany(RrhhAnticipo, { foreignKey: 'id_empleado', as: 'anticipos' });	
+	MedicoPaciente.hasMany(RrhhAnticipo, { foreignKey: 'id_empleado', as: 'anticipos' });
 	RrhhEmpleadoHorasExtra.belongsTo(MedicoPaciente, { foreignKey: 'id_empleado', as: 'empleado' });
 
 	RrhhEmpleadoRolTurno.belongsTo(MedicoPaciente, { foreignKey: 'id_empleado', as: 'empleado' });
@@ -716,7 +724,7 @@ module.exports = function (sequelize, Usuario, Persona, Rol, UsuarioRol, Tipo, C
 
 	GtmDespachoDetalle.hasMany(GtmDespachoDetalle, { foreignKey: 'id_padre', as: 'hijosDetalle' });
 	GtmDespachoDetalle.belongsTo(GtmDespachoDetalle, { foreignKey: 'id_padre', as: 'padre' });
-	
+
 	Cliente.hasMany(GtmClienteDestino, { foreignKey: 'id_cliente', as: 'cliente_destinos' });
 	GtmClienteDestino.belongsTo(Cliente, { foreignKey: 'id_cliente', as: 'cliente' });
 
@@ -743,7 +751,7 @@ module.exports = function (sequelize, Usuario, Persona, Rol, UsuarioRol, Tipo, C
 	RrhhEmpleadoCapacidadInternaExterna.belongsTo(Clase, { foreignKey: 'id_tipo_capacidad', as: 'tipoCapacidad' })
 
 	MonedaTipoCambio.hasMany(ComprobanteContabilidad, { foreignKey: 'id_tipo_cambio', as: 'tipoCambio' })
-	
+
 	Proforma.hasMany(DetallesProformas, { foreignKey: 'id_proforma', as: 'detallesProformas' })
 	DetallesProformas.belongsTo(Proforma, { foreignKey: 'id_proforma', as: 'detallesProforma' })
 	Servicios.hasMany(DetallesProformas, { foreignKey: 'id_servicio', as: 'servicios' })
@@ -769,8 +777,8 @@ module.exports = function (sequelize, Usuario, Persona, Rol, UsuarioRol, Tipo, C
 	Proforma.belongsTo(Cliente, { foreignKey: 'id_cliente', as: 'clienteProforma' })
 	Usuario.hasMany(Proforma, { foreignKey: 'id_usuario', as: 'usuarios' })
 	Proforma.belongsTo(Usuario, { foreignKey: 'id_usuario', as: 'usuarioProforma' })
-	Clase.hasMany(DetallesProformas,{foreignKey:'id_centro_costo',as: 'centrosCostos'})
-	DetallesProformas.belongsTo(Clase, {foreignKey:'id_centro_costo',as:'centroCosto'})
+	Clase.hasMany(DetallesProformas, { foreignKey: 'id_centro_costo', as: 'centrosCostos' })
+	DetallesProformas.belongsTo(Clase, { foreignKey: 'id_centro_costo', as: 'centroCosto' })
 
 
 
