@@ -18,7 +18,10 @@
 				</button>
 			</div>
 			<div class="col-xs-2 col-sm-2">
-				
+				Sucursal:
+				<select ng-change="obtenerAlmacenes(id_sucursal_despacho)" required ng-model="id_sucursal_despacho" ng-options="sucursal.id as sucursal.nombre for sucursal in sucursales"></select>
+				Almacen
+				<select required ng-model="id_almacen_despacho" ng-options="almacen.id as almacen.nombre for almacen in almacenes"></select>
 				<button class="btn btn-primary" ng-disabled="gtm_detalles_despacho_seleccionados.length==0" type="submit">
 					<i class="ace-icon fa fa-floppy-o align-top bigger-125"></i>
 					Guardar</button>
