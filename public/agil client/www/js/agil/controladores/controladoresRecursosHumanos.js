@@ -4,7 +4,7 @@ angular.module('agil.controladores')
         FieldViewer, EmpleadoEmpresa, obtenerEmpleadoRh, UsuarioRecursosHUmanosActivo, Prerequisito, ListaDatosPrerequisito, Prerequisitos, ListaPrerequisitosPaciente, ActualizarPrerequisito, UsuarioRecursosHumanosFicha,
         ClasesTipo, Clases, Paises, CrearEmpleadoFicha, EliminarOtroSeguroRh, EliminarFamiliarRh, PrerequisitoPaciente, PrerequisitosHistorial, UsuarioRhHistorialFicha, ObtenerEmpleadoHojaVida, GuardarEmpleadoHojaVida, CrearPrestamo,
         ObtenerListaPrestamo, CrearRolTurno, CrearPagoPrestamo, VerificarUsuarioEmpresa, EditarPrestamo, ListaEmpleadosRrhh, CrearHorasExtra, HistorialHorasExtra, ListaRolTurnos, ValidarCodigoCuentaEmpleado, $timeout, DatosCapacidadesImpresion, NuevoAnticipoEmpleado,
-        ListaAnticiposEmpleado, CrearNuevosAnticiposEmpleados, ActualizarAnticipoEmpleado) {
+        ListaAnticiposEmpleado, CrearNuevosAnticiposEmpleados, ActualizarAnticipoEmpleado, NuevaAusenciaEmpleado, HistorialEmpleadoAusencias, HistorialEmpresaEmpleadosAusencias, NuevaVacacionEmpleado, HistorialEmpleadoVacaciones, HistorialEmpresaVacaciones, NuevoFeriado, ListaFeriados) {
         $scope.usuario = JSON.parse($localStorage.usuario);
         $scope.idModalPrerequisitos = 'dialog-pre-requisitos';
         $scope.idModalEmpleado = 'dialog-empleado';
@@ -688,13 +688,24 @@ angular.module('agil.controladores')
         $scope.cerrarDialogNuevoPrestamo = function () {
             $scope.cerrarPopup($scope.idModalNuevoPrestamo);
         }
-        $scope.abrirDialogAusenciasVacaciones = function () {
+        $scope.abrirDialogAusenciasVacaciones = function (empleado) {
+            $scope.empleado = empleado
+            $scope.ausencia = { primera_baja: false }
+            $scope.otraAusencia = {}
+            $scope.vacacion = {
+                sabado: false,
+                inicio_tipo: false,
+                fin_tipo: false
+            }
+            $scope.feriados = []
+            $scope.listaFeriado()
             $scope.abrirPopup($scope.idModalAusenciasVacaciones);
         }
         $scope.cerrarDialogAusenciasVacaciones = function () {
             $scope.cerrarPopup($scope.idModalAusenciasVacaciones);
         }
-        $scope.abrirDialogTipoBaja = function () {
+        $scope.abrirDialogTipoBaja = function (tiposAusenciasMedicas) {
+            $scope.tiposAusencia = tiposAusenciasMedicas.ausencias
             $scope.abrirPopup($scope.idModalTipoBaja);
         }
         $scope.cerrarDialogTipoBaja = function () {
@@ -703,12 +714,91 @@ angular.module('agil.controladores')
 
         /* initialize the full calendar
         -----------------------------------------------------------------*/
+        $scope.GuardarFeriadosCalendario = function () {
+            var datos = $scope.calendar.fullCalendar('clientEvents');
+            var feriados = []
+            if (datos.length > 0) {
+                datos.forEach(function (feriado, index, array) {
+                    if (feriado.id == undefined) {
+                        var feriado = {
+                            start: feriado.start._d,
+                            end: feriado.end._d
+                        }
+                        feriados.push(feriado)
+                    }
+
+                    if (index === (array.length - 1)) {
+                        var promesa = NuevoFeriado($scope.usuario.id_empresa, feriados, $scope.feriadosEliminados)
+                        promesa.then(function (dato) {
+                            $scope.listaFeriado()
+                            $scope.feriadosEliminados = []
+                            $scope.cerrarDialogFeriados()
+                            $scope.mostrarMensaje(dato.mensaje)
+                        })
+                    }
+                });
+            } else {
+                var promesa = NuevoFeriado($scope.usuario.id_empresa, feriados, $scope.feriadosEliminados)
+                promesa.then(function (dato) {
+                    $scope.listaFeriado()
+                    $scope.feriadosEliminados = []
+                    $scope.cerrarDialogFeriados()
+                    $scope.mostrarMensaje(dato.mensaje)
+                })
+            }
+            console.log(datos)
+        }
+        $scope.agregarFeriado = function (start, end, allDay) {
+            $scope.calendar.fullCalendar('renderEvent',
+                {
+                    /* identificador: 0, */
+                    title: 'Feriado',
+                    start: start,
+                    end: end,
+                    allDay: allDay,
+                    className: 'label-info'
+                },
+                true // make the event "stick"
+            );
+            $scope.calendar.fullCalendar('unselect');
+        }
+
+        $scope.obtenerFechasCalendarioFeriado = function () {
+            $('#calendar').fullCalendar('removeEvents');
+            var datos = []
+            $scope.FeriadosCalendario.forEach(function (element, index, array) {
+                var a = { id: element.id, title: 'Feriado', start: element.fecha_inicio, end: element.fecha_fin, className: 'label-info' }
+                datos.push(a)
+                if (index === (array.length - 1)) {
+                    $scope.addEvents(datos);
+                }
+            }, this);
+        }
+
+        $scope.listaFeriado = function () {
+            $scope.ListaDiasFeriado = []
+            promesa = ListaFeriados($scope.usuario.id_empresa)
+
+            promesa.then(function (dato) {
+                dato.forEach(function (feriado, index, array) {
+                    var rango = getDates(new Date(feriado.fecha_inicio), new Date(feriado.fecha_fin));
+                    /*          $scope.ListaDiasFeriado.concat(rango) */
+                    $scope.ListaDiasFeriado.push.apply($scope.ListaDiasFeriado, rango)
+                    console.log($scope.ListaDiasFeriado)
+
+                });
+                $scope.FeriadosCalendario = dato;
+            })
+        }
+        $scope.addEvents = function (datos) {
+            $scope.calendar.fullCalendar('addEventSource', datos)
+        }
         var date = new Date();
         var d = date.getDate();
         var m = date.getMonth();
         var y = date.getFullYear();
 
-        var calendar = $('#calendar').fullCalendar({
+        $scope.calendar = $('#calendar').fullCalendar({
             buttonHtml: {
                 prev: '<i class="ace-icon fa fa-chevron-left"></i>',
                 next: '<i class="ace-icon fa fa-chevron-right"></i>'
@@ -720,11 +810,11 @@ angular.module('agil.controladores')
                 right: 'month,agendaWeek, agendaDay'
             },
             events: [
-                {
-                    title: 'Feriado',
-                    start: new Date(y, m, 1),
-                    className: 'label-important'
-                }
+                /*  {
+                     title: 'Feriado',
+                     start: new Date(y, m, 1),
+                     className: 'label-important'
+                 } */
 
             ],
             monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
@@ -740,69 +830,58 @@ angular.module('agil.controladores')
             },
             editable: true,
             selectable: true,
+
             select: function (start, end, allDay) {
-                calendar.fullCalendar('renderEvent',
-                    {
-                        title: 'Feriado',
-                        start: start,
-                        end: end,
-                        allDay: allDay,
-                        className: 'label-info'
-                    },
-                    true // make the event "stick"
-                );
-                calendar.fullCalendar('unselect');
+                var datos = $scope.calendar.fullCalendar('clientEvents');
+                var bandera = true
+                if (datos.length > 0) {
+                    datos.forEach(function (feriado, index, array) {
+                        var inicio = $scope.fechaATexto(feriado.start._d)
+                        var inicio2 = $scope.fechaATexto(start._d)
+                        if (inicio == inicio2) {
+                            bandera = false
+                        }
+                        if (index === (array.length - 1)) {
+                            if (bandera) {
+                                $scope.agregarFeriado(start, end, allDay)
+                            }
+                        }
+                    });
+                } else {
+                    $scope.agregarFeriado(start, end, allDay)
+                }
             },
             eventClick: function (calEvent, jsEvent, view) {
-                //display a modal
-                var modal =
-                    '<div class="modal fade modal-delete">\
-			  <div class="modal-dialog">\
-			   <div class="modal-content">\
-				 <div class="modal-body">\
-				   <button type="button" class="close" data-dismiss="modal" style="margin-top:-10px;">&times;</button>\
-				   <form class="no-margin">\
-					  <label> Eliminar ' + calEvent.title + ' &nbsp;</label>\
-				   </form>\
-				 </div>\
-				 <div class="modal-footer">\
-					<button type="button" class="btn btn-sm btn-danger" data-action="delete"><i class="ace-icon fa fa-trash-o"></i>Eliminar</button>\
-					<button type="button" class="btn btn-sm" data-dismiss="modal"><i class="ace-icon fa fa-times"></i> Cancel</button>\
-				 </div>\
-			  </div>\
-			 </div>\
-			</div>';
+                if (calEvent.id != undefined) {
+                    var feriado = {
+                        id: calEvent.id
 
-                var modal = $(modal).appendTo('body');
-                modal.find('form').on('submit', function (ev) {
-                    ev.preventDefault();
-
-                    calEvent.title = $(this).find("input[type=text]").val();
-                    calendar.fullCalendar('updateEvent', calEvent);
-                    modal.modal("hide");
-                });
-                modal.find('button[data-action=delete]').on('click', function () {
-                    calendar.fullCalendar('removeEvents', function (ev) {
+                    }
+                    $scope.feriadosEliminados.push(feriado)
+                    $scope.calendar.fullCalendar('removeEvents', function (ev) {
                         return (ev._id == calEvent._id);
                     })
-                    modal.modal("hide");
-                });
-
-                modal.modal('show').on('hidden', function () {
-                    modal.remove();
-                });
-
+                    console.log($scope.feriadosEliminados)
+                } else {
+                    $scope.calendar.fullCalendar('removeEvents', function (ev) {
+                        return (ev._id == calEvent._id);
+                    })
+                }
             }
         });
 
         $scope.abrirDialogFeriados = function () {
             $scope.abrirPopup($scope.idModalFeriados);
+            $scope.feriadosEliminados = []
             $('#calendar').fullCalendar('render');
+            $scope.obtenerFechasCalendarioFeriado()
         }
         $scope.cerrarDialogFeriados = function () {
             $scope.cerrarPopup($scope.idModalFeriados);
         }
         $scope.abrirDialogHitorialVacaciones = function () {
+            var filtro = {}
+            $scope.obtenerHistorialEmpleadVacacion(filtro)
             $scope.abrirPopup($scope.idModalHitorialVacaciones);
         }
         $scope.cerrarDialogHitorialVacaciones = function () {
@@ -969,18 +1048,25 @@ angular.module('agil.controladores')
             $scope.cerrarPopup($scope.idModalCompensacion);
         }
         $scope.abrirDialogHistorialAusencias = function () {
+            var filtroAusencias = { inicio: 0, fin: 0, tipo_ausencia: 0 }
+            $scope.filtroOtrasAusencias = {}
+            $scope.obtenerHistorialEmpleadoOtrasAusencias(filtroAusencias)
             $scope.abrirPopup($scope.idModalHistorialAusencias);
         }
         $scope.cerrarDialogHistorialAusencias = function () {
             $scope.cerrarPopup($scope.idModalHistorialAusencias);
         }
         $scope.abrirDialogHistorialAusenciaMedica = function () {
+            var filtroAusencias = { inicio: 0, fin: 0, tipo_ausencia: 0 }
+            $scope.filtroAusencias = {}
+            $scope.obtenerHistorialEmpleadoAusenciasMedicas(filtroAusencias)
             $scope.abrirPopup($scope.idModalHistorialAusenciaMedica);
         }
         $scope.cerrarDialogHistorialAusenciaMedica = function () {
             $scope.cerrarPopup($scope.idModalHistorialAusenciaMedica);
         }
-        $scope.abrirDialogTipoAusencia = function () {
+        $scope.abrirDialogTipoAusencia = function (tiposOtrasAusencias) {
+            $scope.tiposOtras = tiposOtrasAusencias.ausencias
             $scope.abrirPopup($scope.idModalTipoAusencia);
         }
         $scope.cerrarDialogTipoAusencia = function () {
@@ -1022,7 +1108,7 @@ angular.module('agil.controladores')
             $scope.obteneranticiposOrdi()
             $scope.abrirPopup($scope.idModalAnticipoRegular);
         }
-        $scope.obteneranticiposOrdi=function () {
+        $scope.obteneranticiposOrdi = function () {
             var mes = new Date().getMonth()
             var gestion = String(new Date().getFullYear())
             var ultimodia = new Date()
@@ -1186,12 +1272,17 @@ angular.module('agil.controladores')
             $scope.cerrarPopup($scope.idModalPagoPrestamo);
         }
         $scope.abrirDialogReporteVacaciones = function () {
+            $scope.filtroVacacion = {}
+            $scope.obtenerHistorialEmpresaVacacion($scope.filtroVacacion)
             $scope.abrirPopup($scope.idModalReporteVacaciones);
         }
         $scope.cerrarDialogReporteVacaciones = function () {
             $scope.cerrarPopup($scope.idModalReporteVacaciones);
         }
         $scope.abrirDialogReporteBajasMedicas = function () {
+            var filtroAusencias = { inicio: 0, fin: 0, tipo_ausencia: 0 }
+            $scope.filtroAusencias = {}
+            $scope.obtenerHistorialEmpresaAusenciasMedicas(filtroAusencias)
             $scope.abrirPopup($scope.idModalReporteBajasMedicas);
         }
         $scope.cerrarDialogReporteBajasMedicas = function () {
@@ -1241,6 +1332,9 @@ angular.module('agil.controladores')
             $scope.cerrarPopup($scope.idModalHistorialViajes);
         }
         $scope.abrirDialogReporteAusencias = function () {
+            var filtroAusencias = { inicio: 0, fin: 0, tipo_ausencia: 0 }
+            $scope.filtroOtrasAusencias = {}
+            $scope.obtenerHistorialEmpresaOtrasAusencias(filtroAusencias)
             $scope.abrirPopup($scope.idModalReporteAusencias);
         }
         $scope.cerrarDialogReporteAusencias = function () {
@@ -1985,7 +2079,8 @@ angular.module('agil.controladores')
             $scope.obtenerInstituciones()
             $scope.obtenerCapacidadesIE()
             $scope.obtenerLogrosIE()
-
+            $scope.obtenertiposAusenciaMedica()
+            $scope.obtenerTiposOtrasAusencias()
         }
         $scope.obtenerGrados = function () {
             blockUI.start();
@@ -2503,8 +2598,8 @@ angular.module('agil.controladores')
         $scope.imprimirHojaVida = function (filtro) {
             if (filtro.capacidadInterna) {
                 var a = filtro
-                a.inicio=new Date(convertirFecha(a.inicio))
-                a.fin= new Date(convertirFecha(a.fin))
+                a.inicio = new Date(convertirFecha(a.inicio))
+                a.fin = new Date(convertirFecha(a.fin))
                 var promesa = DatosCapacidadesImpresion(a, $scope.hojaVida.id)
                 promesa.then(function (dato) {
                     $scope.capacidades = dato.capacidades
@@ -3393,11 +3488,11 @@ angular.module('agil.controladores')
             var promesa = ListaAnticiposEmpleado(filtro, idEmpleado)
             $scope.arregloid = []
             promesa.then(function (datos) {
-                if (datos.anticipos.length>0) {
+                if (datos.anticipos.length > 0) {
                     datos.anticipos.ordinarios = []
                     datos.anticipos.extraordinarios = []
                     datos.anticipos.forEach(function (anticipo, index, array) {
-                        
+
                         anticipo.total2 = 0
                         anticipo.anticipo_extraordinaro = 0
                         anticipo.saldo_salario = anticipo.salario_basico - anticipo.total
@@ -3410,7 +3505,7 @@ angular.module('agil.controladores')
                         }
                         if (index === (array.length - 1)) {
                             $scope.anticiposDatos = { ordinarios: datos.anticipos.ordinarios, extraordinarios: datos.anticipos.extraordinarios }
-                    
+
                             for (let i = 0; i < datos.anticipos.ordinarios.length; i++) {
                                 var ordi = datos.anticipos.ordinarios[i];
                                 for (let j = 0; j < datos.anticipos.extraordinarios.length; j++) {
@@ -3569,12 +3664,12 @@ angular.module('agil.controladores')
             })
         }
         $scope.ActualizarAnticipoOrdi = function (anticipo) {
-            anticipo.anticipo_ordinaro=0
+            anticipo.anticipo_ordinaro = 0
             if ($scope.anticiposDatos) {
                 if ($scope.anticiposDatos.ordinarios.length > 0) {
                     for (let i = 0; i < $scope.anticiposDatos.ordinarios.length; i++) {
                         const ordi = $scope.anticiposDatos.ordinarios[i];
-                        if (anticipo.empleado.id == ordi.id_empleado && anticipo.id !=ordi.id) {
+                        if (anticipo.empleado.id == ordi.id_empleado && anticipo.id != ordi.id) {
                             anticipo.anticipo_ordinaro += ordi.monto
                         }
                     }
@@ -3595,8 +3690,264 @@ angular.module('agil.controladores')
         $scope.cancelarEdicionAnticipo = function () {
             $scope.obteneranticiposOrdi()
         }
-       
         //fin anticipos
+
+        //inicio ausencias
+        $scope.obtenertiposAusenciaMedica = function () {
+            blockUI.start();
+            var promesa = ClasesTipo("RRHH_AUSMED");
+            promesa.then(function (entidad) {
+                $scope.tiposAusenciasMedicas = entidad
+                console.log($scope.tiposAusenciasMedicas)
+                blockUI.stop();
+            });
+        }
+        $scope.obtenerTiposOtrasAusencias = function () {
+            blockUI.start();
+            var promesa = ClasesTipo("RRHH_OTRAUS");
+            promesa.then(function (entidad) {
+                $scope.tiposOtrasAusencias = entidad
+                blockUI.stop();
+            });
+        }
+        $scope.CalcularDiferenciaDias = function (ausencia, otro) {
+            if (otro) {
+                /*    if (ausencia.fecha_inicio && ausencia.fecha_fin) {
+                       var fechaInicio = new Date($scope.convertirFecha(ausencia.fecha_inicio));
+                       var fechaFin = new Date($scope.convertirFecha(ausencia.fecha_fin));
+                       var dato = $scope.diferenciaEntreDiasEnDias(fechaInicio, fechaFin)
+                       if (dato == 0) {
+                           dato = 1
+                       }
+                   } */
+                if (ausencia.fecha_inicio && ausencia.fecha_fin) {
+                    var fechaInicio = new Date($scope.convertirFecha(ausencia.fecha_inicio));
+                    var fechaFin = new Date($scope.convertirFecha(ausencia.fecha_fin));
+                    fechaInicio.setMinutes(ausencia.fecha_inicio_hora.getMinutes()); fechaInicio.setHours(ausencia.fecha_inicio_hora.getHours());
+                    fechaFin.setMinutes(ausencia.fecha_fin_hora.getMinutes()); fechaFin.setHours(ausencia.fecha_fin_hora.getHours());
+                    var fecha1 = moment('"'+fechaInicio.getFullYear()+'-'+fechaInicio.getMonth()+'-'+fechaInicio.getDate()+" "+ fechaInicio.getHours()+":"+ fechaInicio.getMinutes()+":00", "YYYY-MM-DD HH:mm:ss");
+                    var fecha2 = moment('"'+fechaFin.getFullYear()+'-'+fechaFin.getMonth()+'-'+fechaFin.getDate()+" "+ fechaFin.getHours()+":"+ fechaFin.getMinutes()+":00", "YYYY-MM-DD HH:mm:ss");
+
+                    var diff = fecha2.diff(fecha1, 'd'); // Diff in days
+                    console.log(diff);
+
+                   ausencia.horas = convertirSegundosATiempo(fecha2.diff(fecha1, 's')); // Diff in hours
+
+                    console.log(diff);
+                }
+            } else {
+                if (ausencia.fecha_inicio && ausencia.fecha_fin) {
+                    var fechaInicio = new Date($scope.convertirFecha(ausencia.fecha_inicio));
+                    var fechaFin = new Date($scope.convertirFecha(ausencia.fecha_fin));
+                    var dato = $scope.diferenciaEntreDiasEnDias(fechaInicio, fechaFin)
+                    if (dato == 0) {
+                        dato = 1
+                    }
+                }
+            }
+            if (ausencia.primera_baja) {
+                ausencia.dias = dato - ausencia.tipo.dias_descuento
+                ausencia.dias_reales = dato
+            } else {
+                ausencia.dias = dato
+            }
+        }
+        
+        $scope.crearNuevaAusencia = function (datos, otro) {
+
+            if (otro == true) {
+                datos.fecha_inicio = new Date($scope.convertirFecha(datos.fecha_inicio));
+                datos.fecha_fin = new Date($scope.convertirFecha(datos.fecha_fin));
+                datos.fecha_inicio.setMinutes(datos.fecha_inicio_hora.getMinutes()); datos.fecha_inicio.setHours(datos.fecha_inicio_hora.getHours());
+                datos.fecha_fin.setMinutes(datos.fecha_fin_hora.getMinutes()); datos.fecha_fin.setHours(datos.fecha_fin_hora.getHours());
+            } else {
+                datos.fecha_inicio = new Date($scope.convertirFecha(datos.fecha_inicio));
+                datos.fecha_fin = new Date($scope.convertirFecha(datos.fecha_fin));
+            }
+            var promesa = NuevaAusenciaEmpleado($scope.empleado.id, datos)
+            promesa.then(function (dato) {
+                $scope.ausencia = {}
+                $scope.cerrarDialogAusenciasVacaciones()
+                $scope.mostrarMensaje(dato.mensaje)
+            })
+        }
+        $scope.obtenerHistorialEmpleadoAusenciasMedicas = function (filtro) {
+            $scope.historialEmpleadoAusencias=[]
+            if (filtro.tipo_ausencia == null || filtro.tipo_ausencia == undefined) {
+                filtro.tipo_ausencia = 0
+            }
+            var filtroAusencias = { inicio: 0, fin: 0, tipo_ausencia: filtro.tipo_ausencia }
+            if (filtro.inicio) {
+                filtroAusencias.inicio = new Date($scope.convertirFecha(filtro.inicio))
+                filtroAusencias.fin = new Date($scope.convertirFecha(filtro.fin))
+            }
+            var promesa = HistorialEmpleadoAusencias($scope.empleado.id, filtroAusencias, 'RRHH_AUSMED')
+            promesa.then(function (datos) {
+                datos.forEach(function (dato, index, array) {
+                    if (dato.primera_baja) {
+                        dato.baja = "Si"
+                    } else {
+                        dato.baja = "No"
+                    }
+                    if (index === (array.length - 1)) {
+                        $scope.historialEmpleadoAusencias = datos
+                    }
+                })
+            })
+        }
+        $scope.obtenerHistorialEmpleadoOtrasAusencias = function (filtro) {
+            if (filtro.tipo_ausencia == null || filtro.tipo_ausencia == undefined) {
+                filtro.tipo_ausencia = 0
+            }
+            var filtroAusencias = { inicio: 0, fin: 0, tipo_ausencia: filtro.tipo_ausencia }
+            if (filtro.inicio) {
+                filtroAusencias.inicio = new Date($scope.convertirFecha(filtro.inicio))
+                filtroAusencias.fin = new Date($scope.convertirFecha(filtro.fin))
+            }
+            var promesa = HistorialEmpleadoAusencias($scope.empleado.id, filtroAusencias, 'RRHH_OTRAUS')
+            promesa.then(function (datos) {
+
+                $scope.historialEmpleadoOtrasAusencias = datos
+
+            })
+        }
+
+        //ausencias empresa
+        $scope.obtenerHistorialEmpresaAusenciasMedicas = function (filtro) {
+            if (filtro.tipo_ausencia == null || filtro.tipo_ausencia == undefined) {
+                filtro.tipo_ausencia = 0
+            }
+            var filtroAusencias = { inicio: 0, fin: 0, tipo_ausencia: filtro.tipo_ausencia }
+            if (filtro.inicio) {
+                filtroAusencias.inicio = new Date($scope.convertirFecha(filtro.inicio))
+                filtroAusencias.fin = new Date($scope.convertirFecha(filtro.fin))
+            }
+            var promesa = HistorialEmpresaEmpleadosAusencias($scope.usuario.id_empresa, filtroAusencias, 'RRHH_AUSMED')
+            promesa.then(function (datos) {
+                $scope.historialEmpresaAusencias = datos
+            })
+        }
+        $scope.obtenerHistorialEmpresaOtrasAusencias = function (filtro) {
+            if (filtro.tipo_ausencia == null || filtro.tipo_ausencia == undefined) {
+                filtro.tipo_ausencia = 0
+            }
+            var filtroAusencias = { inicio: 0, fin: 0, tipo_ausencia: filtro.tipo_ausencia }
+            if (filtro.inicio) {
+                filtroAusencias.inicio = new Date($scope.convertirFecha(filtro.inicio))
+                filtroAusencias.fin = new Date($scope.convertirFecha(filtro.fin))
+            }
+            var promesa = HistorialEmpresaEmpleadosAusencias($scope.usuario.id_empresa, filtroAusencias, 'RRHH_OTRAUS')
+            promesa.then(function (datos) {
+                $scope.historialEmpresaOtrasAusencias = datos
+            })
+        }
+        //fin ausencias
+        //inicio vacaciones
+        $scope.CalcularDiferenciaDiasVacacion = function (vacacion) {
+            vacacion.dias = 0
+            vacacion.dias_descuento = 0
+            vacacion.domingos = 0
+            vacacion.sabados = 0
+            if ($scope.ListaDiasFeriado.length > 0) {
+                var a = vacacion.fecha_inicio
+                var b = vacacion.fecha_fin
+                a = new Date($scope.convertirFecha(a))
+                b = new Date($scope.convertirFecha(b))
+                if (vacacion.fecha_inicio.length >= 9 && vacacion.fecha_fin.length >= 9)
+                    var rango = getDates(a, b);
+                /*          $scope.ListaDiasFeriado.concat(rango) */
+                rango.forEach(function (fecha, index, array) {
+                    if (vacacion.sabado) {
+                        var d = new Date(fecha);
+                        if ((d.getDay() == 0)) {
+                            vacacion.domingos += 1
+                        }
+                        var a = $scope.ListaDiasFeriado.indexOf(fecha)
+                        if (a != -1) {
+                            vacacion.dias_descuento += 1
+                        }
+                        if (index === (array.length - 1)) {
+                            $scope.CalcularDiferenciaDiasV(vacacion)
+                        }
+                    } else {
+                        var d = new Date(fecha);
+                        if ((d.getDay() == 0)) {
+                            vacacion.domingos += 1
+                        }
+                        if ((d.getDay() == 6)) {
+                            vacacion.sabados += 1
+                        }
+                        var a = $scope.ListaDiasFeriado.indexOf(fecha)
+                        if (a != -1) {
+                            vacacion.dias_descuento += 1
+                        }
+                        if (index === (array.length - 1)) {
+                            $scope.CalcularDiferenciaDiasV(vacacion)
+                        }
+                    }
+                });
+
+
+            } else {
+                $scope.CalcularDiferenciaDiasV(vacacion)
+            }
+        }
+        $scope.CalcularDiferenciaDiasV = function (vacacion) {
+            if (vacacion.fecha_inicio && vacacion.fecha_fin) {
+                var fechaInicio = new Date($scope.convertirFecha(vacacion.fecha_inicio));
+                var fechaFin = new Date($scope.convertirFecha(vacacion.fecha_fin));
+                var dato = $scope.diferenciaEntreDiasEnDias(fechaInicio, fechaFin)
+                if (dato == 0) {
+                    dato = 1
+                }
+                vacacion.dias = dato - (vacacion.dias_descuento + vacacion.domingos + vacacion.sabados)
+                if (!vacacion.inicio_tipo && !vacacion.fin_tipo) {
+                    vacacion.dias = vacacion.dias - 1
+                } else if (vacacion.inicio_tipo && !vacacion.fin_tipo) {
+                    vacacion.dias = vacacion.dias - 0.5
+                } else if (!vacacion.inicio_tipo && vacacion.fin_tipo) {
+                    vacacion.dias = vacacion.dias - 0.5
+                } else if (vacacion.inicio_tipo && vacacion.fin_tipo) {
+                    vacacion.dias = vacacion.dias
+                }
+                vacacion.dias_reales = dato
+            }
+        }
+        $scope.crearNuevaVacacion = function (datos) {
+            datos.fecha_inicio = new Date($scope.convertirFecha(datos.fecha_inicio));
+            datos.fecha_fin = new Date($scope.convertirFecha(datos.fecha_fin));
+            var promesa = NuevaVacacionEmpleado($scope.empleado.id, datos)
+            promesa.then(function (dato) {
+                $scope.cerrarDialogAusenciasVacaciones()
+                $scope.mostrarMensaje(dato.mensaje)
+            })
+        }
+        $scope.obtenerHistorialEmpleadVacacion = function (filtro) {
+            var filtroVacaciones = { inicio: 0, fin: 0 }
+            if (filtro.inicio) {
+                filtroVacaciones.inicio = new Date($scope.convertirFecha(filtro.inicio))
+                filtroVacaciones.fin = new Date($scope.convertirFecha(filtro.fin))
+
+            }
+            var promesa = HistorialEmpleadoVacaciones($scope.empleado.id, filtroVacaciones)
+            promesa.then(function (datos) {
+                $scope.historialEmpleadoVacaciones = datos
+            })
+        }
+
+        $scope.obtenerHistorialEmpresaVacacion = function (filtro) {
+            var filtroVacaciones = { inicio: 0, fin: 0 }
+            if (filtro.inicio) {
+                filtroVacaciones.inicio = new Date($scope.convertirFecha(filtro.inicio))
+                filtroVacaciones.fin = new Date($scope.convertirFecha(filtro.fin))
+
+            }
+            var promesa = HistorialEmpresaVacaciones($scope.usuario.id_empresa, filtroVacaciones)
+            promesa.then(function (datos) {
+                $scope.historialEmpresaVacaciones = datos
+            })
+        }
+        //fin vacaciones
         //selecionar empleados
 
         $scope.selecionarEmpleados = function (empleado, todos, model) {

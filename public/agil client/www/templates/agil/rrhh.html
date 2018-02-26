@@ -340,7 +340,7 @@
                                     data-placement="top" uib-tooltip="Prestamo">
                                     <span class="icono-prestamo icono-font"></span>
                                 </a>
-                                <a href="javascript:void(0)" ng-click="abrirDialogAusenciasVacaciones()" role="button" class="tooltip-info" data-rel="tooltip"
+                                <a href="javascript:void(0)" ng-click="abrirDialogAusenciasVacaciones(empleado)" role="button" class="tooltip-info" data-rel="tooltip"
                                     data-placement="top" uib-tooltip="Ausencias y Vacaciones">
                                     <span class="icono-lupa-calendario icono-font"></span>
                                 </a>
@@ -4520,26 +4520,25 @@
                                 <th scope="row">{{$index+1}}</th>
                                 <td>{{anticipo.fecha | date: "dd/MM/yyyy"}}</td>
                                 <td ng-if="!anticipo.id || anticipo.montoEdit">
-                                    <input  ng-if="!anticipo.montoEdit" required class="form-control" type="number" ng-model="anticipo.monto" ng-change="sumarMontoPrestamoNuevo(anticipo)" min="1"
-                                        max="{{listaAnticipos[listaAnticipos.length-2].saldo_salario}}">
-                                        <input  ng-if="anticipo.montoEdit" required class="form-control" type="number" ng-model="anticipo.monto" ng-change="sumarMontoPrestamoNuevo(anticipo)" min="1"
-                                        >
+                                    <input ng-if="!anticipo.montoEdit" required class="form-control" type="number" ng-model="anticipo.monto" ng-change="sumarMontoPrestamoNuevo(anticipo)"
+                                        min="1" max="{{listaAnticipos[listaAnticipos.length-2].saldo_salario}}">
+                                    <input ng-if="anticipo.montoEdit" required class="form-control" type="number" ng-model="anticipo.monto" ng-change="sumarMontoPrestamoNuevo(anticipo)"
+                                        min="1">
                                 </td>
                                 <td ng-if="anticipo.id" ng-hide="anticipo.montoEdit">{{anticipo.monto|number:2}}</td>
                                 <td>{{anticipo.anticipo_ordinaro|number:2}}</td>
-                                <td >{{anticipo.total|number:2}}</td>
+                                <td>{{anticipo.total|number:2}}</td>
                                 <td>{{anticipo.salario_basico|number:2}}</td>
                                 <td>{{anticipo.saldo_salario|number:2}}</td>
                                 <td>
                                     <div class="action-buttons">
-                                        <a  ng-if="!anticipo.entregado && !anticipo.montoEdit" class="blue" uib-tooltip="Permitir Edición" href="javascript:void(0)"
+                                        <a ng-if="!anticipo.entregado && !anticipo.montoEdit" class="blue" uib-tooltip="Permitir Edición" href="javascript:void(0)"
                                             ng-click="abrirModalVerificarCuenta(anticipo)">
                                             <i class="ace-icon fa fa-pencil bigger-130"></i>
                                         </a>
-                                        <a  ng-if="!anticipo.entregado && !anticipo.montoEdit" class="red" uib-tooltip="Eliminar" href="javascript:void(0)"
-                                        ng-click="abrirModalVerificarCuenta(anticipo)">
-                                        <i class="ace-icon fa fa-trash bigger-130"></i>
-                                    </a>
+                                        <a ng-if="!anticipo.entregado && !anticipo.montoEdit" class="red" uib-tooltip="Eliminar" href="javascript:void(0)" ng-click="abrirModalVerificarCuenta(anticipo)">
+                                            <i class="ace-icon fa fa-trash bigger-130"></i>
+                                        </a>
                                         <a ng-if="anticipo.montoEdit" class="green" uib-tooltip="Guardar" href="javascript:void(0)" ng-click="ActualizarAnticipo(anticipo)">
                                             <i class="ace-icon fa fa-floppy-o bigger-200"></i>
                                         </a>
@@ -4562,8 +4561,8 @@
                 <button class="btn btn-primary btn-sm" type="submit" ng-if="listaAnticipos.length>0 && !listaAnticipos[listaAnticipos.length-1].id">
                     <i class="glyphicon glyphicon-floppy-disk"></i>Guardar
                 </button>
-              
-                <button type="button" class="btn btn-danger btn-sm"  ng-click="cerrarDialogAnticipoExtraordinario()">
+
+                <button type="button" class="btn btn-danger btn-sm" ng-click="cerrarDialogAnticipoExtraordinario()">
                     <i class="ace-icon fa fa-times"></i>Cancelar
                 </button>
             </div>
@@ -4648,10 +4647,10 @@
     <div id="dialog-ausencias-vacaciones" class="modal">
         <div class="modal-header ficha">
             <h4 class="modal-title" id="myModalLabel"> Ausencias y Vacaciones</h4>
-            <h5 class="modal-title">Juan Perez Ardaya</h5>
+            <h5 class="modal-title">{{empleado.nombre_completo}}</h5>
         </div>
-        <div class="row">
-            <div class="col-sm-12">
+        <div class="modal-body">
+            <div>
                 <div id="tab-ausencias-vacaciones">
                     <ul class="inbox-tabs nav nav-tabs  tab-size-bigger tab-space-1">
                         <li>
@@ -4675,23 +4674,22 @@
                     </ul>
 
                     <div id="tabs-1">
-                        <form>
+                        <form ng-submit="crearNuevaAusencia(ausencia)">
                             <div class="row">
                                 <div class="form-group col-sm-6">
                                     <label for="sexo">Tipo de baja</label>
                                     <div class="input-group">
-                                        <select class="form-control">
-                                            <option value="CB">Enfermedad</option>
-                                            <option value="LP">maternidad</option>
-                                            <option value="SC">Accidente de trabajo</option>
+                                        <select required ng-model="ausencia.tipo" class="form-control" ng-change="CalcularDiferenciaDias(ausencia)" ng-options="ausencia as ausencia.nombre for ausencia in tiposAusenciasMedicas.ausencias track by ausencia.id">
+                                            <option value="">--Ninguno--</option>
                                         </select>
-                                        <span class="input-group-addon glyphicon glyphicon-pencil point-edit green" aria-hidden="true" ng-click="abrirDialogTipoBaja()"></span>
+                                        <span class="input-group-addon glyphicon glyphicon-pencil point-edit green" ng-click="abrirDialogTipoBaja(tiposAusenciasMedicas)"></span>
                                     </div>
                                 </div>
                                 <div class="form-group col-sm-3">
                                     <label for="afiliado">1era Baja</label>
                                     <label class="checkbox-align">
-                                        <input id="afiliado" name="afiliado" class="ace ace-switch ace-switch-5" type="checkbox">
+                                        <input id="afiliado" name="afiliado" ng-model="ausencia.primera_baja" ng-change="CalcularDiferenciaDias(ausencia)" class="ace ace-switch ace-switch-5"
+                                            type="checkbox">
                                         <span class="lbl check-espaniol"></span>
                                     </label>
                                 </div>
@@ -4707,30 +4705,38 @@
                             <div class="row">
                                 <div class="form-group col-sm-5">
                                     <label for="nombres">Desde</label>
-                                    <input type="text" class="form-control date-picker" data-date-format="dd/mm/yyyy" id="nombres" name="nombres" placeholder="Desde">
+                                    <input required type="text" class="form-control date-picker" ng-update-hidden ng-model="ausencia.fecha_inicio" data-date-format="dd/mm/yyyy"
+                                        id="inicio-a" name="nombres" placeholder="Desde" ng-change="CalcularDiferenciaDias(ausencia)">
                                 </div>
                                 <div class="form-group col-sm-5">
                                     <label for="ap-paterno">Hasta</label>
-                                    <input type="text" class="form-control date-picker" data-date-format="dd/mm/yyyy" id="ap-paterno" name="ap-paterno" placeholder="Hasta">
+                                    <input required type="text" class="form-control date-picker" ng-update-hidden ng-model="ausencia.fecha_fin" data-date-format="dd/mm/yyyy"
+                                        id="fin-a" name="ap-paterno" placeholder="Hasta" ng-change="CalcularDiferenciaDias(ausencia)">
                                 </div>
                                 <div class="form-group col-sm-2">
-                                    <label for="ap-paterno">Dias</label>
-                                    <input type="text" class="form-control" id="ap-paterno" name="ap-paterno" placeholder="Dias">
+                                    <div>
+                                        <label for="ap-paterno">Dias</label>
+                                        <input required disabled min="1" type="number" class="form-control" id="dias-a" name="ap-paterno" ng-model="ausencia.dias"
+                                            placeholder="Dias">
+                                    </div>
+                                    <div ng-if="ausencia.primera_baja">
+                                        <label>dias reales : <b>{{ausencia.dias_reales}}</b></label>
+                                    </div>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="form-group col-sm-12">
                                     <label for="ap-materno">Diagnostico</label>
-                                    <textarea class="form-control" id="form-field-8" placeholder="Diagnostico"></textarea>
+                                    <textarea class="form-control" id="form-field-8-d" ng-model="ausencia.diagnostico" placeholder="Diagnostico"></textarea>
                                 </div>
                                 <div class="form-group col-sm-12">
                                     <label for="ap-materno">Observación</label>
-                                    <textarea class="form-control" id="form-field-8" placeholder="Observación"></textarea>
+                                    <textarea class="form-control" id="form-field-8-o" ng-model="ausencia.observacion" placeholder="Observación"></textarea>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-sm-12 wizard-actions">
-                                    <button class="btn btn-primary btn-sm" ng-click="cerrarDialogAusenciasVacaciones()">
+                                    <button class="btn btn-primary btn-sm" type="submit">
                                         <i class="glyphicon glyphicon-floppy-disk"></i>Guardar
                                     </button>
 
@@ -4740,7 +4746,7 @@
                     </div>
 
                     <div id="tabs-2">
-                        <form>
+                        <form ng-submit="crearNuevaVacacion(vacacion)">
                             <div class="row">
 
                                 <div class="form-group col-sm-2">
@@ -4752,19 +4758,19 @@
                                 <div class="form-group col-sm-4">
                                     <label for="afiliado">Sábado</label>
                                     <label class="checkbox-align">
-                                        <input id="afiliado" name="afiliado" class="ace ace-switch ace-switch-5" type="checkbox">
+                                        <input id="afiliado" name="afiliado" ng-model="vacacion.sabado" class="ace ace-switch ace-switch-5" type="checkbox">
                                         <span class="lbl check-espaniol"></span>
                                     </label>
                                 </div>
                                 <div class="form-group col-sm-6">
                                     <label for="">Historial</label>
                                     <div class="checkbox-align">
-                                        <a href="javascript:void(0)" ng-click="abrirDialogHitorialVacaciones()" class="margin-icons red" data-rel="tooltip" data-placement="top"
-                                            uib-tooltip="Historial">
+                                        <a href="javascript:void(0)" type="button" ng-click="abrirDialogHitorialVacaciones()" class="margin-icons red" data-rel="tooltip"
+                                            data-placement="top" uib-tooltip="Historial">
                                             <span class="fa fa-h-square bigger-250"></span>
                                         </a>
-                                        <a href="javascript:void(0)" ng-click="abrirDialogDetalleVacaciones()" class="margin-icons red" data-rel="tooltip" data-placement="top"
-                                            uib-tooltip="Historial por Gestion">
+                                        <a href="javascript:void(0)" type="button" ng-click="abrirDialogDetalleVacaciones()" class="margin-icons red" data-rel="tooltip"
+                                            data-placement="top" uib-tooltip="Historial por Gestion">
                                             <span class="fa fa-print bigger-250"></span>
                                         </a>
                                     </div>
@@ -4772,36 +4778,52 @@
                             </div>
                             <div class="row">
                                 <div class="form-group col-sm-5">
-                                    <label for="nombres">Fecha Inicio</label>
-                                    <input type="text" class="form-control date-picker" data-date-format="dd/mm/yyyy" id="nombres" name="nombres" placeholder="Desde">
-                                    <label class="checkbox-align">
-                                        <input name="" class="ace ace-switch ace-switch-5 big-switch" type="checkbox">
-                                        <span class="lbl" data-lbl="DÍA&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1/2 DÍA"></span>
-                                    </label>
+                                    <div>
+                                        <label for="nombres">Fecha Inicio</label>
+                                        <input required ng-change="CalcularDiferenciaDiasVacacion(vacacion)" type="text" class="form-control date-picker" ng-update-hidden
+                                            ng-model="vacacion.fecha_inicio" data-date-format="dd/mm/yyyy" id="nombres" name="nombres"
+                                            placeholder="Desde">
+                                    </div>
+                                    <div>
+                                        <label class="checkbox-align">
+                                            <input class="ace ace-switch ace-switch-5 big-switch" ng-change="CalcularDiferenciaDiasVacacion(vacacion)" ng-model="vacacion.inicio_tipo"
+                                                type="checkbox">
+                                            <span class="lbl" data-lbl="DÍA&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1/2 DÍA"></span>
+                                        </label>
+                                    </div>
                                 </div>
                                 <div class="form-group col-sm-5">
-                                    <label for="ap-paterno">Fecha Final</label>
-                                    <input type="text" class="form-control date-picker" data-date-format="dd/mm/yyyy" id="ap-paterno" name="ap-paterno" placeholder="Hasta">
-                                    <label class="checkbox-align">
-                                        <input name="" class="ace ace-switch ace-switch-5 big-switch" type="checkbox">
-                                        <span class="lbl" data-lbl="DÍA&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1/2 DÍA"></span>
-                                    </label>
+                                    <div>
+                                        <label for="ap-paterno">Fecha Final</label>
+                                        <input required ng-change="CalcularDiferenciaDiasVacacion(vacacion)" type="text" class="form-control date-picker" ng-update-hidden
+                                            ng-model="vacacion.fecha_fin" data-date-format="dd/mm/yyyy" id="ap-paterno" name="ap-paterno"
+                                            placeholder="Hasta">
+                                    </div>
+                                    <div>
+                                        <label class="checkbox-align">
+                                            <input class="ace ace-switch ace-switch-5 big-switch" ng-change="CalcularDiferenciaDiasVacacion(vacacion)" ng-model="vacacion.fin_tipo"
+                                                type="checkbox">
+                                            <span class="lbl" data-lbl="DÍA&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1/2 DÍA"></span>
+                                        </label>
+                                    </div>
                                 </div>
                                 <div class="form-group col-sm-2">
-                                    <label for="ap-paterno">Dias</label>
-                                    <input type="text" class="form-control" id="ap-paterno" name="ap-paterno" placeholder="Dias">
+                                    <div>
+                                        <label for="ap-paterno">Dias</label>
+                                        <input type="text" required disabled class="form-control" ng-model="vacacion.dias" id="ap-paterno" name="ap-paterno" placeholder="Dias">
+                                    </div>                                    
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="form-group col-sm-12">
                                     <label for="ap-materno">Observación </label>
                                     <label for="" class="pull-right text-muted">Retorno el 10/07/2017</label>
-                                    <textarea class="form-control" id="form-field-8" placeholder="Observación"></textarea>
+                                    <textarea class="form-control" required ng-model="vacacion.observacion" id="form-field-8" placeholder="Observación"></textarea>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-sm-12 wizard-actions">
-                                    <button class="btn btn-primary btn-sm" ng-click="cerrarDialogAusenciasVacaciones()">
+                                    <button class="btn btn-primary btn-sm" type="submit">
                                         <i class="glyphicon glyphicon-floppy-disk"></i>Guardar
                                     </button>
 
@@ -4811,19 +4833,18 @@
                     </div>
 
                     <div id="tabs-3">
-                        <form>
+                        <form ng-submit="crearNuevaAusencia(otraAusencia,true)">
                             <div class="row">
                                 <div class="form-group col-sm-6">
                                     <label for="sexo">Tipo</label>
                                     <div class="input-group">
-                                        <select class="form-control">
-                                            <option value="CB">Capacitación</option>
-                                            <option value="LP">Compensación</option>
+                                        <select required ng-model="otraAusencia.tipo" class="form-control" ng-options="ausencia as ausencia.nombre for ausencia in tiposOtrasAusencias.ausencias track by ausencia.id">
+                                            <option value="">--Ninguno--</option>
                                         </select>
-                                        <span class="input-group-addon glyphicon glyphicon-pencil point-edit green" aria-hidden="true" ng-click="abrirDialogTipoAusencia()"></span>
+                                        <span class="input-group-addon glyphicon glyphicon-pencil point-edit green" ng-click="abrirDialogTipoAusencia(tiposOtrasAusencias)"></span>
                                     </div>
                                 </div>
-                                <div class="form-group col-sm-6">
+                                <div class="form-group col-sm-2">
                                     <label for="">Historial</label>
                                     <div class="checkbox-align">
                                         <a href="javascript:void(0)" ng-click="abrirDialogHistorialAusencias()" class="margin-icons red">
@@ -4831,27 +4852,41 @@
                                         </a>
                                     </div>
                                 </div>
+                                <div class="form-group col-sm-4">
+                                        <label for="afiliado">Planilla</label>
+                                        <label class="checkbox-align">
+                                            <input id="afiliado" name="afiliado" ng-model="otraAusencia.planilla" class="ace ace-switch ace-switch-5"
+                                                type="checkbox">
+                                            <span class="lbl check-espaniol"></span>
+                                        </label>
+                                    </div>
                             </div>
                             <div class="row">
                                 <div class="form-group col-sm-3">
                                     <label for="nombres">Desde</label>
-                                    <input type="text" class="form-control date-picker" data-date-format="dd/mm/yyyy" id="nombres" name="nombres" placeholder="Desde">
+                                    <input required type="text" ng-update-hidden class="form-control date-picker" data-date-format="dd/mm/yyyy" id="nombres"
+                                        name="nombres" placeholder="Desde" ng-model="otraAusencia.fecha_inicio" ng-change="CalcularDiferenciaDias(otraAusencia,true)">
                                 </div>
                                 <div class="form-group col-sm-2">
                                     <label for="nombres">Hrs</label>
-                                    <input type="time" class="form-control" id="nombres" name="nombres" placeholder="Desde">
+                                    <input required type="time" class="form-control" id="nombres" name="nombres" placeholder="Desde" ng-model="otraAusencia.fecha_inicio_hora" ng-change="CalcularDiferenciaDias(otraAusencia,true)">
+                                    <!--  <input required ng-update-hidden class="form-control date-timepicker" data-date-format="DD/MM/YYYY HH:mm" type="text" id="fechafin" ng-model="otraAusencia.fecha_inicio" ng-change="CalcularDiferenciaDias(otraAusencia,true)"> -->
                                 </div>
                                 <div class="form-group col-sm-3">
+
                                     <label for="ap-paterno">Hasta</label>
-                                    <input type="text" class="form-control date-picker" data-date-format="dd/mm/yyyy" id="ap-paterno" name="ap-paterno" placeholder="Hasta">
+                                    <!-- <input required ng-update-hidden class="form-control date-timepicker" data-date-format="DD/MM/YYYY HH:mm" type="text" id="fechafin" ng-model="otraAusencia.fecha_fin " ng-change="CalcularDiferenciaDias(otraAusencia,true)"> -->
+                                    <input required type="text" ng-update-hidden class="form-control date-picker" data-date-format="dd/mm/yyyy" id="ap-paterno"
+                                        name="ap-paterno" placeholder="Hasta" ng-model="otraAusencia.fecha_fin" ng-change="CalcularDiferenciaDias(otraAusencia,true)">
                                 </div>
                                 <div class="form-group col-sm-2">
                                     <label for="nombres">Hrs</label>
-                                    <input type="time" class="form-control" id="nombres" name="nombres" placeholder="Desde">
+                                    <input required type="time" class="form-control" id="nombres" name="nombres" placeholder="Desde" ng-change="CalcularDiferenciaDias(otraAusencia,true)" ng-model="otraAusencia.fecha_fin_hora">
                                 </div>
                                 <div class="form-group col-sm-2">
-                                    <label for="ap-paterno">Dias</label>
-                                    <input type="text" class="form-control" id="ap-paterno" name="ap-paterno" placeholder="Dias">
+                                    <label for="ap-paterno">Hrs</label>
+                                    <input required disabled type="text" class="form-control" id="ap-paterno" name="ap-paterno" ng-model="otraAusencia.horas"
+                                        required placeholder="Dias">
                                 </div>
                             </div>
                             <div class="row">
@@ -4863,12 +4898,12 @@
                                 </div>
                                 <div class="form-group col-sm-12">
                                     <label for="ap-materno">Observación</label>
-                                    <textarea class="form-control" id="form-field-8" placeholder="Observación"></textarea>
+                                    <textarea class="form-control" id="form-field-8" placeholder="Observación" required ng-model="otraAusencia.observacion"></textarea>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-sm-12 wizard-actions">
-                                    <button class="btn btn-primary btn-sm" ng-click="cerrarDialogAusenciasVacaciones()">
+                                    <button class="btn btn-primary btn-sm" type="submit">
                                         <i class="glyphicon glyphicon-floppy-disk"></i>Guardar
                                     </button>
 
@@ -4883,14 +4918,14 @@
             <div class="vspace-6-sm"></div>
         </div>
         <!-- /.row -->
-        <div class="row">
-            <div class="modal-footer wizard-actions">
 
-                <button class="btn btn-danger btn-sm pull-left" ng-click="cerrarDialogAusenciasVacaciones()">
-                    <i class="ace-icon fa fa-times"></i>Cancelar
-                </button>
-            </div>
+        <div class="modal-footer">
+
+            <button class="btn btn-danger btn-sm pull-left" ng-click="cerrarDialogAusenciasVacaciones()">
+                <i class="ace-icon fa fa-times"></i>Cancelar
+            </button>
         </div>
+
     </div>
     <!--- ==== fin modal ausencias y vacaciones  ================================ -->
     <!--- ==== modal tipo baja  ================================ -->
@@ -4940,13 +4975,13 @@
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td>Enfermedad</td>
-                    <td>75%</td>
-                    <td>3</td>
+                <tr ng-repeat="clase in tiposAusencia track by $index">
+                    <td>{{clase.nombre}}</td>
+                    <td>{{clase.porcentaje}}</td>
+                    <td>{{clase.dias_descuento}}</td>
                     <td>
                         <label>
-                            <input name="switch-field-1" class="ace ace-switch ace-switch-5" type="checkbox">
+                            <input name="switch-field-1" ng-model="clase.eliminado" class="ace ace-switch ace-switch-5" type="checkbox">
                             <span class="lbl check-espaniol"></span>
                         </label>
                     </td>
@@ -4986,7 +5021,7 @@
 
         <div class="row">
             <div class="modal-footer wizard-actions">
-                <button class="btn btn-primary btn-sm" ng-click="cerrarDialogFeriados()">
+                <button class="btn btn-primary btn-sm" ng-click="GuardarFeriadosCalendario()">
                     <i class="glyphicon glyphicon-floppy-disk"></i>Guardar
                 </button>
                 <button class="btn btn-danger btn-sm" ng-click="cerrarDialogFeriados()">
@@ -5004,65 +5039,71 @@
                 <label> &nbsp;Historico Vacaciones </label>
             </h4>
         </div>
-        <div class="row">
-            <div class="form-group col-sm-3">
-                <label for="nombres">Desde</label>
-                <input type="text" class="form-control date-picker" data-date-format="dd/mm/yyyy" id="nombres" name="nombres" placeholder="Desde">
-            </div>
-            <div class="form-group col-sm-3">
-                <label for="ap-paterno">Hasta</label>
-                <input type="text" class="form-control date-picker" data-date-format="dd/mm/yyyy" id="ap-paterno" name="ap-paterno" placeholder="Hasta">
-            </div>
-            <div class="form-group col-sm-6">
-                <div class="buttons-align">
-                    <button type="button" class="btn btn-primary btn-sm">
-                        <i class=" fa fa-search-plus align-top "></i>
-                        Filtrar
-                    </button>
-                    <button type="button" class="btn btn-danger btn-sm">
-                        <i class=" fa fa-print align-top "></i>
-                        Pdf
-                    </button>
-                    <button type="button" class="btn btn-success btn-sm">
-                        <i class=" fa fa-print align-top "></i>
-                        Excel
-                    </button>
+        <div class="modal-body">
+            <form ng-submit="obtenerHistorialEmpleadVacacion(filtroVacacion)">
+                <div class="row">
+                    <div class="form-group col-sm-3">
+                        <label for="nombres">Desde</label>
+                        <input type="text" class="form-control date-picker" ng-update-hidden ng-model="filtroVacacion.inicio" data-date-format="dd/mm/yyyy"
+                            id="nombres" name="nombres" placeholder="Desde">
+                    </div>
+                    <div class="form-group col-sm-3">
+                        <label for="ap-paterno">Hasta</label>
+                        <input type="text" class="form-control date-picker" ng-update-hidden ng-model="filtroVacacion.fin" data-date-format="dd/mm/yyyy"
+                            id="ap-paterno" name="ap-paterno" placeholder="Hasta">
+                    </div>
+                    <div class="form-group col-sm-6">
+                        <div class="buttons-align">
+                            <button type="submit" class="btn btn-primary btn-sm">
+                                <i class=" fa fa-search-plus align-top "></i>
+                                Filtrar
+                            </button>
+                            <button type="button" class="btn btn-danger btn-sm">
+                                <i class=" fa fa-print align-top "></i>
+                                Pdf
+                            </button>
+                            <button type="button" class="btn btn-success btn-sm">
+                                <i class=" fa fa-print align-top "></i>
+                                Excel
+                            </button>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </div>
-        <table class="table table-striped table-hover">
-            <thead>
-                <tr>
-                    <th>Fecha</th>
-                    <th>Días</th>
-                    <th>Observación</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>11/03/2017</td>
-                    <td>11</td>
-                    <td>ninguna</td>
-                    <td>
-                        <a class="blue">
-                            <span class="fa fa-search-plus bigger-130" aria-hidden="true"></span>
-                        </a>
-                        <a class="green">
-                            <i class="ace-icon fa fa-print bigger-130"></i>
-                        </a>
-                    </td>
-                </tr>
+            </form>
 
-            </tbody>
-        </table>
-        <div class="row">
-            <div class="modal-footer wizard-actions">
-                <button class="btn btn-danger btn-sm" ng-click="cerrarDialogHitorialVacaciones()">
-                    <i class="ace-icon fa fa-times"></i>Cancelar
-                </button>
-            </div>
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Días</th>
+                        <th>Observación</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="vacacion in historialEmpleadoVacaciones track by $index">
+                        <td>{{vacacion.fecha_inicio |date:'dd/MM/yyyy'}}</td>
+                        <td>{{vacacion.dias}}</td>
+                        <td>{{vacacion.observacion}}</td>
+                        <td>
+                            <a class="blue">
+                                <span class="fa fa-search-plus bigger-130" aria-hidden="true"></span>
+                            </a>
+                            <a class="green">
+                                <i class="ace-icon fa fa-print bigger-130"></i>
+                            </a>
+                        </td>
+                    </tr>
+
+                </tbody>
+            </table>
         </div>
+        <div class="modal-footer wizard-actions">
+            <button class="btn btn-danger btn-sm" ng-click="cerrarDialogHitorialVacaciones()">
+                <i class="ace-icon fa fa-times"></i>Cancelar
+            </button>
+        </div>
+
     </div>
     <!--- ==== fin modal historial vacaciones  ================================ -->
     <!--- ==== modal dias compensacion  ================================ -->
@@ -5126,80 +5167,83 @@
                 <label> &nbsp;Historico Ausencias </label>
             </h4>
         </div>
-        <div class="row">
-            <div class="form-group col-sm-3">
-                <label for="nombres">Desde</label>
-                <input type="text" class="form-control date-picker" data-date-format="dd/mm/yyyy" id="nombres" name="nombres" placeholder="Desde">
-            </div>
-            <div class="form-group col-sm-3">
-                <label for="ap-paterno">Hasta</label>
-                <input type="text" class="form-control date-picker" data-date-format="dd/mm/yyyy" id="ap-paterno" name="ap-paterno" placeholder="Hasta">
-            </div>
-            <div class="form-group col-sm-2">
-                <label for="sexo">Tipo</label>
-                <div class="input-group">
-                    <select class="form-control">
-                        <option value="CB">Capacitación</option>
-                        <option value="LP">Compensación</option>
-                    </select>
+        <div class="modal-body">
+            <form ng-submit="obtenerHistorialEmpleadoOtrasAusencias(filtroOtrasAusencias)">
+                <div class="row">
+                    <div class="form-group col-sm-3">
+                        <label for="nombres">Desde</label>
+                        <input type="text" class="form-control date-picker" ng-update-hidden ng-model="filtroOtrasAusencias.inicio" data-date-format="dd/mm/yyyy"
+                            id="nombres" name="nombres" placeholder="Desde">
+                    </div>
+                    <div class="form-group col-sm-3">
+                        <label for="ap-paterno">Hasta</label>
+                        <input type="text" class="form-control date-picker" ng-update-hidden ng-model="filtroOtrasAusencias.fin" data-date-format="dd/mm/yyyy"
+                            id="ap-paterno" name="ap-paterno" placeholder="Hasta">
+                    </div>
+                    <div class="form-group col-sm-2">
+                        <label for="sexo">Tipo</label>
+                        <div class="input-group">
+                            <select ng-model="filtroOtrasAusencias.tipo_ausencia" class="form-control" ng-options="ausencia.id as ausencia.nombre for ausencia in tiposOtrasAusencias.ausencias  track by ausencia.id">
+                                <option value="">--Ninguno--</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group col-sm-4">
+                        <div class="buttons-align">
+                            <button type="submit" class="btn btn-primary btn-sm">
+                                <i class=" fa fa-search-plus align-top "></i>
+                                Filtrar
+                            </button>
+                            <button type="button" class="btn btn-danger btn-sm">
+                                <i class=" fa fa-print align-top "></i>
+                                Pdf
+                            </button>
+                            <button type="button" class="btn btn-success btn-sm">
+                                <i class=" fa fa-print align-top "></i>
+                                Excel
+                            </button>
+                        </div>
+                    </div>
                 </div>
-            </div>
-            <div class="form-group col-sm-4">
-                <div class="buttons-align">
-                    <button type="button" class="btn btn-primary btn-sm">
-                        <i class=" fa fa-search-plus align-top "></i>
-                        Filtrar
-                    </button>
-                    <button type="button" class="btn btn-danger btn-sm">
-                        <i class=" fa fa-print align-top "></i>
-                        Pdf
-                    </button>
-                    <button type="button" class="btn btn-success btn-sm">
-                        <i class=" fa fa-print align-top "></i>
-                        Excel
-                    </button>
-                </div>
-            </div>
-        </div>
-        <table class="table table-striped table-hover">
-            <thead>
-                <tr>
-                    <th>Fecha I.</th>
-                    <th>Fecha F.</th>
-                    <th>Días</th>
-                    <th>T.Ausenc.</th>
-                    <th>Observación</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>11/03/2017</td>
-                    <td>11/03/2017</td>
-                    <td>11</td>
-                    <td>Capacitación</td>
-                    <td>ninguna</td>
-                    <td>
-                        <a class="blue">
-                            <span class="fa fa-search-plus bigger-130" aria-hidden="true"></span>
-                        </a>
-                        <a class="green">
-                            <i class="ace-icon fa fa-print bigger-130"></i>
-                        </a>
-                        <a class="green">
-                            <i class="ace-icon fa fa-pencil bigger-130"></i>
-                        </a>
-                    </td>
-                </tr>
+            </form>
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th>Fecha I.</th>
+                        <th>Fecha F.</th>
+                        <th>Tiempo</th>
+                        <th>T.Ausenc.</th>
+                        <th>Observación</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="ausencia in historialEmpleadoOtrasAusencias track by $index">
+                        <td>{{ausencia.fecha_inicio | date:'dd/MM/yyyy'}} - {{ausencia.fecha_inicio | date:'HH:mm'}}</td>
+                        <td>{{ausencia.fecha_fin | date:'dd/MM/yyyy'}} - {{ausencia.fecha_fin | date:'HH:mm'}}</td>
+                        <td>{{ausencia.horas}}</td>
+                        <td>{{ausencia.tipoAusencia.nombre}}</td>
+                        <td>{{ausencia.observacion}}</td>
+                        <td>
+                            <a class="blue">
+                                <span class="fa fa-search-plus bigger-130" aria-hidden="true"></span>
+                            </a>
+                            <a class="green">
+                                <i class="ace-icon fa fa-print bigger-130"></i>
+                            </a>
+                            <a class="green">
+                                <i class="ace-icon fa fa-pencil bigger-130"></i>
+                            </a>
+                        </td>
+                    </tr>
 
-            </tbody>
-        </table>
-        <div class="row">
-            <div class="modal-footer wizard-actions">
-                <button class="btn btn-danger btn-sm" ng-click="cerrarDialogHistorialAusencias()">
-                    <i class="ace-icon fa fa-times"></i>Cancelar
-                </button>
-            </div>
+                </tbody>
+            </table>
+        </div>
+        <div class="modal-footer wizard-actions">
+            <button class="btn btn-danger btn-sm" ng-click="cerrarDialogHistorialAusencias()">
+                <i class="ace-icon fa fa-times"></i>Cancelar
+            </button>
         </div>
     </div>
     <!--- ==== fin modal historial ausencias  ================================ -->
@@ -5211,78 +5255,81 @@
                 <label> &nbsp;Historico Ausencias Medicas </label>
             </h4>
         </div>
-        <div class="row">
-            <div class="form-group col-sm-3">
-                <label for="nombres">Desde</label>
-                <input type="text" class="form-control date-picker" data-date-format="dd/mm/yyyy" id="nombres" name="nombres" placeholder="Desde">
-            </div>
-            <div class="form-group col-sm-3">
-                <label for="ap-paterno">Hasta</label>
-                <input type="text" class="form-control date-picker" data-date-format="dd/mm/yyyy" id="ap-paterno" name="ap-paterno" placeholder="Hasta">
-            </div>
-            <div class="form-group col-sm-2">
-                <label for="sexo">Tipo de Baja</label>
-                <div class="input-group">
-                    <select class="form-control">
-                        <option value="CB">Enfermedad</option>
-                        <option value="LP">maternidad</option>
-                        <option value="SC">Accidente de trabajo</option>
-                        <option value="SC">Todos</option>
-                    </select>
+        <div class="modal-body">
+            <form ng-submit="obtenerHistorialEmpleadoAusenciasMedicas(filtroAusencias)">
+                <div class="row">
+                    <div class="form-group col-sm-3">
+                        <label for="nombres">Desde</label>
+                        <input type="text" ng-update-hidden class="form-control date-picker" data-date-format="dd/mm/yyyy" id="nombres" name="nombres"
+                            placeholder="Desde" ng-model="filtroAusencias.inicio">
+                    </div>
+                    <div class="form-group col-sm-3">
+                        <label for="ap-paterno">Hasta</label>
+                        <input type="text" ng-update-hidden class="form-control date-picker" data-date-format="dd/mm/yyyy" id="ap-paterno" name="ap-paterno"
+                            placeholder="Hasta" ng-model="filtroAusencias.fin">
+                    </div>
+                    <div class="form-group col-sm-2">
+                        <label for="sexo">Tipo de Baja</label>
+                        <div class="input-group">
+                            <select ng-model="filtroAusencias.tipo_ausencia" class="form-control" ng-options="ausencia.id as ausencia.nombre for ausencia in tiposAusenciasMedicas.ausencias  track by ausencia.id">
+                                <option value="">--Ninguno--</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group col-sm-4">
+                        <div class="buttons-align">
+                            <button type="submit" class="btn btn-primary btn-sm">
+                                <i class=" fa fa-search-plus align-top "></i>
+                                Filtrar
+                            </button>
+                            <button type="button" class="btn btn-danger btn-sm">
+                                <i class=" fa fa-print align-top "></i>
+                                Pdf
+                            </button>
+                            <button type="button" class="btn btn-success btn-sm">
+                                <i class=" fa fa-print align-top "></i>
+                                Excel
+                            </button>
+                        </div>
+                    </div>
                 </div>
-            </div>
-            <div class="form-group col-sm-4">
-                <div class="buttons-align">
-                    <button type="button" class="btn btn-primary btn-sm">
-                        <i class=" fa fa-search-plus align-top "></i>
-                        Filtrar
-                    </button>
-                    <button type="button" class="btn btn-danger btn-sm">
-                        <i class=" fa fa-print align-top "></i>
-                        Pdf
-                    </button>
-                    <button type="button" class="btn btn-success btn-sm">
-                        <i class=" fa fa-print align-top "></i>
-                        Excel
-                    </button>
-                </div>
-            </div>
+            </form>
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Primera baja</th>
+                        <th>Días</th>
+                        <th>Tipo de baja</th>
+                        <th>Observación</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="ausencia in historialEmpleadoAusencias track by $index">
+                        <td>{{ausencia.fecha_inicio | date:'dd/MM/yyyy'}}</td>
+                        <td>{{ausencia.baja}}</td>
+                        <td>{{ausencia.dias}}</td>
+                        <td>{{ausencia.tipoAusencia.nombre}}</td>
+                        <td>{{ausencia.observacion}}</td>
+                        <td>
+                            <a class="blue">
+                                <span class="fa fa-search-plus bigger-130" aria-hidden="true"></span>
+                            </a>
+                            <a class="green">
+                                <i class="ace-icon fa fa-print bigger-130"></i>
+                            </a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
-        <table class="table table-striped table-hover">
-            <thead>
-                <tr>
-                    <th>Fecha</th>
-                    <th>Días</th>
-                    <th>Tipo de baja</th>
-                    <th>Observación</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>11/03/2017</td>
-                    <td>11</td>
-                    <td>Enfermedad</td>
-                    <td>ninguna</td>
-                    <td>
-                        <a class="blue">
-                            <span class="fa fa-search-plus bigger-130" aria-hidden="true"></span>
-                        </a>
-                        <a class="green">
-                            <i class="ace-icon fa fa-print bigger-130"></i>
-                        </a>
-                    </td>
-                </tr>
+        <div class="modal-footer wizard-actions">
+            <button class="btn btn-danger btn-sm" ng-click="cerrarDialogHistorialAusenciaMedica()">
+                <i class="ace-icon fa fa-times"></i>Cancelar
+            </button>
+        </div>
 
-            </tbody>
-        </table>
-        <div class="row">
-            <div class="modal-footer wizard-actions">
-                <button class="btn btn-danger btn-sm" ng-click="cerrarDialogHistorialAusenciaMedica()">
-                    <i class="ace-icon fa fa-times"></i>Cancelar
-                </button>
-            </div>
-        </div>
     </div>
     <!--- ==== fin modal historial ausencia medica  ================================ -->
     <!--- ==== modal tipo ausencia  ================================ -->
@@ -5325,12 +5372,12 @@
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td>Capacitación</td>
-                    <td>75%</td>
+                <tr ng-repeat="clase in tiposOtras track by $index">
+                    <td>{{clase.nombre}}</td>
+                    <td>{{clase.porcentaje}}</td>
                     <td>
                         <label>
-                            <input name="switch-field-1" class="ace ace-switch ace-switch-5" type="checkbox">
+                            <input name="switch-field-1" ng-model="clase.eliminado" class="ace ace-switch ace-switch-5" type="checkbox">
                             <span class="lbl check-espaniol"></span>
                         </label>
                     </td>
@@ -5746,57 +5793,57 @@
                     </table>
                 </div>
                 <div ng-show="listaAnticipos2.length>0" class="table-responsive">
-                        <table class="table table-striped table-hover">
-                            <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>Fecha</th>
-                                    <th>Nombre Completo</th>
-                                    <th>Monto</th>
-                                    <th>Tope Monto</th>
-                                    <th>Anticipo Extra</th>
-                                    <th>Anticipo ordidinario</th>
-                                    <th>Total Anticipo</th>
-                                    <th>Salario Básico</th>
-                                    <th>Saldo Salario</th>
-                                    <th>Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr ng-repeat="anticipo in listaAnticipos2 track by $index">
-                                    <th scope="row">{{$index+1}}</th>
-                                    <td>{{anticipo.fecha | date: "dd/MM/yyyy"}}</td>
-                                    <td>{{anticipo.empleado.persona.nombre_completo}}</td>
-                                    <td ng-if="!anticipo.id || anticipo.montoEdit">
-                                        <input class="form-control"  max="{{anticipo.tope}}" min="0" type="number" ng-model="anticipo.monto" ng-change="sumarMontoPrestamoNuevo2(anticipo)" min="1" >
-                                    </td>
-                                    <td ng-if="anticipo.id" ng-hide="anticipo.montoEdit">{{anticipo.monto|number:2}}</td>
-                                    <th>{{anticipo.tope}}</th>
-                                    <td>{{anticipo.anticipo_extraordinaro|number:2}}</td>
-                                    <td>{{anticipo.anticipo_ordinaro|number:2}}</td>
-                                    <td>{{anticipo.total|number:2}}</td>
-                                    <td>{{anticipo.salario_basico|number:2}}</td>
-                                    <td>{{anticipo.saldo_salario|number:2}}</td>
-                                    <td>
-                                        <div class="action-buttons">
-                                            <a class="red" uib-tooltip="Eliminar" href="javascript:void(0)"
-                                            ng-click="EliminarAnticipo(anticipo)">
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Fecha</th>
+                                <th>Nombre Completo</th>
+                                <th>Monto</th>
+                                <th>Tope Monto</th>
+                                <th>Anticipo Extra</th>
+                                <th>Anticipo ordidinario</th>
+                                <th>Total Anticipo</th>
+                                <th>Salario Básico</th>
+                                <th>Saldo Salario</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="anticipo in listaAnticipos2 track by $index">
+                                <th scope="row">{{$index+1}}</th>
+                                <td>{{anticipo.fecha | date: "dd/MM/yyyy"}}</td>
+                                <td>{{anticipo.empleado.persona.nombre_completo}}</td>
+                                <td ng-if="!anticipo.id || anticipo.montoEdit">
+                                    <input class="form-control" max="{{anticipo.tope}}" min="0" type="number" ng-model="anticipo.monto" ng-change="sumarMontoPrestamoNuevo2(anticipo)"
+                                        min="1">
+                                </td>
+                                <td ng-if="anticipo.id" ng-hide="anticipo.montoEdit">{{anticipo.monto|number:2}}</td>
+                                <th>{{anticipo.tope}}</th>
+                                <td>{{anticipo.anticipo_extraordinaro|number:2}}</td>
+                                <td>{{anticipo.anticipo_ordinaro|number:2}}</td>
+                                <td>{{anticipo.total|number:2}}</td>
+                                <td>{{anticipo.salario_basico|number:2}}</td>
+                                <td>{{anticipo.saldo_salario|number:2}}</td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <a class="red" uib-tooltip="Eliminar" href="javascript:void(0)" ng-click="EliminarAnticipo(anticipo)">
                                             <i class="ace-icon fa fa-trash bigger-130"></i>
-                                        </a>     
-                                          
-                                        </div>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
+                                        </a>
+
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
             <div class="modal-footer wizard-actions">
                 <button ng-show="listaAnticipos2.length>0" class="btn btn-primary btn-sm" type="submit">
                     <span class="glyphicon glyphicon-floppy-disk"></span>
                     Guardar
                 </button>
-                <button  ng-hide="listaAnticipos2.length>0" type="button" class="btn btn-warning btn-sm" ng-click="cerrarDialogAnticipoRegular()">
+                <button ng-hide="listaAnticipos2.length>0" type="button" class="btn btn-warning btn-sm" ng-click="cerrarDialogAnticipoRegular()">
                     <span class="ace-icon fa fa-print"></span>
                     Generar TR3
                 </button>
@@ -6148,7 +6195,7 @@
                         <div class="form-group">
                             <label class="col-sm-6" for="monto">Monto</label>
                             <div class="input-group col-sm-6">
-                                <input type="number" class="form-control"  placeholder="1000" ng-model="anticipo.monto" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
+                                <input type="number" class="form-control" placeholder="1000" ng-model="anticipo.monto" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
                                     required>
                                 <span ng-if="!anticipo.tipo" class="input-group-addon">bs</span>
                                 <span ng-if="anticipo.tipo" class="input-group-addon">%</span>
@@ -6156,7 +6203,7 @@
                         </div>
 
                     </div>
-                   
+
 
                 </div>
             </div>
@@ -6400,32 +6447,36 @@
             <h5 class="modal-title">Campo:Margarita, Cargo:chofer, Empresa:YPFB</h5>
         </div>
         <div class="modal-body">
-            <div class="row">
-                <div class="form-group col-sm-3">
-                    <label for="nombres">Desde</label>
-                    <input type="text" class="form-control date-picker" id="nombres" name="nombres" placeholder="Desde">
-                </div>
-                <div class="form-group col-sm-3">
-                    <label for="ap-paterno">Hasta</label>
-                    <input type="text" class="form-control date-picker" id="ap-paterno" name="ap-paterno" placeholder="Hasta">
-                </div>
-                <div class="form-group col-sm-6">
-                    <div class="buttons-align">
-                        <button type="button" class="btn btn-primary btn-sm">
-                            <i class=" fa fa-search-plus align-top "></i>
-                            Filtrar
-                        </button>
-                        <button type="button" class="btn btn-danger btn-sm">
-                            <i class=" fa fa-print align-top "></i>
-                            Pdf
-                        </button>
-                        <button type="button" class="btn btn-success btn-sm">
-                            <i class=" fa fa-print align-top "></i>
-                            Excel
-                        </button>
+            <form ng-submit="obtenerHistorialEmpresaVacacion(filtroVacacion)">
+                <div class="row">
+                    <div class="form-group col-sm-3">
+                        <label for="nombres">Desde</label>
+                        <input type="text" class="form-control date-picker" ng-update-hidden ng-model="filtroVacacion.inicio" data-date-format="dd/mm/yyyy"
+                            id="nombres" name="nombres" placeholder="Desde">
+                    </div>
+                    <div class="form-group col-sm-3">
+                        <label for="ap-paterno">Hasta</label>
+                        <input type="text" class="form-control date-picker" ng-update-hidden ng-model="filtroVacacion.fin" data-date-format="dd/mm/yyyy"
+                            id="ap-paterno" name="ap-paterno" placeholder="Hasta">
+                    </div>
+                    <div class="form-group col-sm-6">
+                        <div class="buttons-align">
+                            <button type="submit" class="btn btn-primary btn-sm">
+                                <i class=" fa fa-search-plus align-top "></i>
+                                Filtrar
+                            </button>
+                            <button type="button" class="btn btn-danger btn-sm">
+                                <i class=" fa fa-print align-top "></i>
+                                Pdf
+                            </button>
+                            <button type="button" class="btn btn-success btn-sm">
+                                <i class=" fa fa-print align-top "></i>
+                                Excel
+                            </button>
+                        </div>
                     </div>
                 </div>
-            </div>
+            </form>
             <table class="table table-striped table-hover">
                 <thead>
                     <tr>
@@ -6438,12 +6489,12 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>Juan Perez</td>
-                        <td>11/03/2017</td>
-                        <td>11/03/2017</td>
-                        <td>11</td>
-                        <td>ninguna</td>
+                    <tr ng-repeat="vacacion in historialEmpresaVacaciones track by $index">
+                        <td>{{vacacion.empleado.persona.nombre_completo}}</td>
+                        <td>{{vacacion.fecha_inicio| date:'dd/MM/yyyy'}}</td>
+                        <td>{{vacacion.fecha_fin|date:'dd/MM/yyyy'}}</td>
+                        <td>{{vacacion.dias}}</td>
+                        <td>{{vacacion.observacion}}</td>
                         <td>
                             <a class="blue">
                                 <span class="fa fa-search-plus bigger-130" aria-hidden="true"></span>
@@ -6457,13 +6508,13 @@
                 </tbody>
             </table>
         </div>
-        <div class="row">
-            <div class="modal-footer wizard-actions">
-                <button class="btn btn-danger btn-sm" ng-click="cerrarDialogReporteVacaciones()">
-                    <i class="ace-icon fa fa-times"></i>Cancelar
-                </button>
-            </div>
+
+        <div class="modal-footer wizard-actions">
+            <button class="btn btn-danger btn-sm" ng-click="cerrarDialogReporteVacaciones()">
+                <i class="ace-icon fa fa-times"></i>Cancelar
+            </button>
         </div>
+
     </div>
     <!--- ==== fin modal reporte vacaciones  ================================ -->
     <!--- ==== modal reporte bajas medicas ================================ -->
@@ -6472,82 +6523,86 @@
             <h4 class="modal-title" id="myModalLabel"> REPORTE DE BAJAS MÉDICAS</h4>
             <h5 class="modal-title">Campo:Margarita, Cargo:chofer, Empresa:YPFB</h5>
         </div>
-        <div class="row">
-            <div class="form-group col-sm-3">
-                <label for="nombres">Desde</label>
-                <input type="text" class="form-control date-picker" id="nombres" name="nombres" placeholder="Desde">
-            </div>
-            <div class="form-group col-sm-3">
-                <label for="ap-paterno">Hasta</label>
-                <input type="text" class="form-control date-picker" id="ap-paterno" name="ap-paterno" placeholder="Hasta">
-            </div>
-            <div class="form-group col-sm-2">
-                <label for="sexo">Tipo de Baja</label>
-                <div class="input-group">
-                    <select class="form-control">
-                        <option value="CB">Enfermedad</option>
-                        <option value="LP">maternidad</option>
-                        <option value="SC">Accidente de trabajo</option>
-                    </select>
+        <div class="modal-body">
+            <form ng-submit="obtenerHistorialEmpresaAusenciasMedicas(filtroAusencias)">
+                <div class="row">
+                    <div class="form-group col-sm-3">
+                        <label for="nombres">Desde</label>
+                        <input type="text" ng-update-hidden class="form-control date-picker" data-date-format="dd/mm/yyyy" id="nombres" name="nombres"
+                            placeholder="Desde" ng-model="filtroAusencias.inicio">
+                    </div>
+                    <div class="form-group col-sm-3">
+                        <label for="ap-paterno">Hasta</label>
+                        <input type="text" ng-update-hidden class="form-control date-picker" data-date-format="dd/mm/yyyy" id="ap-paterno" name="ap-paterno"
+                            placeholder="Hasta" ng-model="filtroAusencias.fin">
+                    </div>
+                    <div class="form-group col-sm-2">
+                        <label for="sexo">Tipo de Baja</label>
+                        <div class="input-group">
+                            <select ng-model="filtroAusencias.tipo_ausencia" class="form-control" ng-options="ausencia.id as ausencia.nombre for ausencia in tiposAusenciasMedicas.ausencias track by ausencia.id">
+                                <option value="">--Ninguno--</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group col-sm-4">
+                        <div class="buttons-align">
+                            <button type="submit" class="btn btn-primary btn-sm">
+                                <i class=" fa fa-search-plus align-top "></i>
+                                Filtrar
+                            </button>
+                            <button type="button" class="btn btn-danger btn-sm">
+                                <i class=" fa fa-print align-top "></i>
+                                Pdf
+                            </button>
+                            <button type="button" class="btn btn-success btn-sm">
+                                <i class=" fa fa-print align-top "></i>
+                                Excel
+                            </button>
+                        </div>
+                    </div>
                 </div>
-            </div>
-            <div class="form-group col-sm-4">
-                <div class="buttons-align">
-                    <button type="button" class="btn btn-primary btn-sm">
-                        <i class=" fa fa-search-plus align-top "></i>
-                        Filtrar
-                    </button>
-                    <button type="button" class="btn btn-danger btn-sm">
-                        <i class=" fa fa-print align-top "></i>
-                        Pdf
-                    </button>
-                    <button type="button" class="btn btn-success btn-sm">
-                        <i class=" fa fa-print align-top "></i>
-                        Excel
-                    </button>
-                </div>
-            </div>
-        </div>
-        <table class="table table-striped table-hover">
-            <thead>
-                <tr>
-                    <th>Nombre</th>
-                    <th>Desde</th>
-                    <th>Hasta</th>
-                    <th>Días</th>
-                    <th>Tipo de baja</th>
-                    <th>Observación</th>
-                    <th>Deducibles</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>Juan Perez</td>
-                    <td>11/03/2017</td>
-                    <td>11/03/2017</td>
-                    <td>11</td>
-                    <td>Enfermedad</td>
-                    <td>ninguna</td>
-                    <td>50</td>
-                    <td>
-                        <a class="blue">
-                            <span class="fa fa-search-plus bigger-130" aria-hidden="true"></span>
-                        </a>
-                        <a class="green">
-                            <i class="ace-icon fa fa-print bigger-130"></i>
-                        </a>
-                    </td>
-                </tr>
+            </form>
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Desde</th>
+                        <th>Hasta</th>
+                        <th>Primera Baja</th>
+                        <th>Días</th>
+                        <th>Tipo de baja</th>
+                        <th>Observación</th>
+                        <th>Deducibles</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="ausencia in historialEmpresaAusencias track by $index">
+                        <td>{{ausencia.empleado.persona.nombre_completo}}</td>
+                        <td>{{ausencia.fecha_inicio|date:'dd/MM/yyyy'}}</td>
+                        <td>{{ausencia.fecha_fin|date:'dd/MM/yyyy'}}</td>
+                        <td>{{ausencia.baja}}</td>
+                        <td>{{ausencia.dias}}</td>
+                        <td>{{ausencia.tipoAusencia.nombre}}</td>
+                        <td>{{ausencia.observacion}}</td>
+                        <td>falta informacion</td>
+                        <td>
+                            <a class="blue">
+                                <span class="fa fa-search-plus bigger-130" aria-hidden="true"></span>
+                            </a>
+                            <a class="green">
+                                <i class="ace-icon fa fa-print bigger-130"></i>
+                            </a>
+                        </td>
+                    </tr>
 
-            </tbody>
-        </table>
-        <div class="row">
-            <div class="modal-footer wizard-actions">
-                <button class="btn btn-danger btn-sm" ng-click="cerrarDialogReporteBajasMedicas()">
-                    <i class="ace-icon fa fa-times"></i>Cancelar
-                </button>
-            </div>
+                </tbody>
+            </table>
+        </div>
+        <div class="modal-footer wizard-actions">
+            <button class="btn btn-danger btn-sm" ng-click="cerrarDialogReporteBajasMedicas()">
+                <i class="ace-icon fa fa-times"></i>Cancelar
+            </button>
         </div>
     </div>
     <!--- ==== fin modal reporte bajas medicas ================================ -->
@@ -7329,85 +7384,89 @@
             <h4 class="modal-title" id="myModalLabel"> REPORTE DE AUSENCIAS</h4>
             <h5 class="modal-title">Campo:Margarita, Cargo:chofer, Empresa:YPFB</h5>
         </div>
-        <div class="row">
-            <div class="form-group col-sm-3">
-                <label for="nombres">Desde</label>
-                <input type="text" class="form-control date-picker" id="nombres" name="nombres" placeholder="Desde">
-            </div>
-            <div class="form-group col-sm-3">
-                <label for="ap-paterno">Hasta</label>
-                <input type="text" class="form-control date-picker" id="ap-paterno" name="ap-paterno" placeholder="Hasta">
-            </div>
-            <div class="form-group col-sm-2">
-                <label for="sexo">Tipo de Aus.</label>
-                <div class="input-group">
-                    <select class="form-control">
-                        <option value="CB">Revisíon Medica</option>
-                    </select>
+        <div class="modal-body">
+            <form ng-submit="obtenerHistorialEmpresaOtrasAusencias(filtroOtrasAusencias)">
+                <div class="row">
+                    <div class="form-group col-sm-3">
+                        <label for="nombres">Desde</label>
+                        <input type="text" class="form-control date-picker" ng-update-hidden ng-model="filtroOtrasAusencias.inicio" data-date-format="dd/mm/yyyy"
+                            id="nombres" name="nombres" placeholder="Desde">
+                    </div>
+                    <div class="form-group col-sm-3">
+                        <label for="ap-paterno">Hasta</label>
+                        <input type="text" class="form-control date-picker" ng-update-hidden ng-model="filtroOtrasAusencias.fin" data-date-format="dd/mm/yyyy"
+                            id="ap-paterno" name="ap-paterno" placeholder="Hasta">
+                    </div>
+                    <div class="form-group col-sm-2">
+                        <label for="sexo">Tipo</label>
+                        <div class="input-group">
+                            <select ng-model="filtroOtrasAusencias.tipo_ausencia" class="form-control" ng-options="ausencia.id as ausencia.nombre for ausencia in tiposOtrasAusencias.ausencias  track by ausencia.id">
+                                <option value="">--Ninguno--</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group col-sm-4">
+                        <div class="buttons-align">
+                            <button type="submit" class="btn btn-primary btn-sm">
+                                <i class=" fa fa-search-plus align-top "></i>
+                                Filtrar
+                            </button>
+                            <button type="button" class="btn btn-danger btn-sm">
+                                <i class=" fa fa-print align-top "></i>
+                                Pdf
+                            </button>
+                            <button type="button" class="btn btn-success btn-sm">
+                                <i class=" fa fa-print align-top "></i>
+                                Excel
+                            </button>
+                        </div>
+                    </div>
                 </div>
-            </div>
-            <div class="form-group col-sm-4">
-                <div class="buttons-align">
-                    <button type="button" class="btn btn-primary btn-sm">
-                        <i class=" fa fa-search-plus align-top "></i>
-                        Filtrar
-                    </button>
-                    <button type="button" class="btn btn-danger btn-sm">
-                        <i class=" fa fa-print align-top "></i>
-                        Pdf
-                    </button>
-                    <button type="button" class="btn btn-success btn-sm">
-                        <i class=" fa fa-print align-top "></i>
-                        Excel
-                    </button>
-                </div>
-            </div>
-        </div>
-        <table class="table table-striped table-hover">
-            <thead>
-                <tr>
-                    <th>Nombre</th>
-                    <th>Desde</th>
-                    <th>Hasta</th>
-                    <th>Días</th>
-                    <th>T. Ausencia</th>
-                    <th>Observación</th>
-                    <th>Deducibles</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>Juan Perez</td>
-                    <td>11/03/2017</td>
-                    <td>11/03/2017</td>
-                    <td>11</td>
-                    <td>Revisión médica</td>
-                    <td>ninguna</td>
-                    <td>0</td>
-                    <td>
-                        <a class="blue">
-                            <span class="fa fa-search-plus bigger-130" aria-hidden="true"></span>
-                        </a>
-                        <a class="green">
-                            <i class="ace-icon fa fa-print bigger-130"></i>
-                        </a>
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="5"></td>
-                    <td>Total</td>
-                    <td>0</td>
-                </tr>
+            </form>
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Desde</th>
+                        <th>Hasta</th>
+                        <th>Días</th>
+                        <th>T. Ausencia</th>
+                        <th>Observación</th>
+                        <th>Deducibles</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="ausencia in historialEmpresaOtrasAusencias track by $index">
+                        <td>{{ausencia.empleado.persona.nombre_completo}}</td>
+                        <td>{{ausencia.fecha_inicio|date:'dd/MM/yyyy'}}</td>
+                        <td>{{ausencia.fecha_fin|date:'dd/MM/yyyy'}}</td>
+                        <td>{{ausencia.dias}}</td>
+                        <td>{{ausencia.tipoAusencia.nombre}}</td>
+                        <td>{{ausencia.observacion}}</td>
+                        <td>falta informacion</td>
+                        <td>
+                            <a class="blue">
+                                <span class="fa fa-search-plus bigger-130" aria-hidden="true"></span>
+                            </a>
+                            <a class="green">
+                                <i class="ace-icon fa fa-print bigger-130"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    <tr ng-if="historialEmpresaOtrasAusencias.length>0">
+                        <td colspan="5"></td>
+                        <td>Total</td>
+                        <td>0</td>
+                    </tr>
 
-            </tbody>
-        </table>
-        <div class="row">
-            <div class="modal-footer wizard-actions">
-                <button class="btn btn-danger btn-sm" ng-click="cerrarDialogReporteAusencias()">
-                    <i class="ace-icon fa fa-times"></i>Cancelar
-                </button>
-            </div>
+                </tbody>
+            </table>
+        </div>
+        <div class="modal-footer wizard-actions">
+            <button class="btn btn-danger btn-sm" ng-click="cerrarDialogReporteAusencias()">
+                <i class="ace-icon fa fa-times"></i>Cancelar
+            </button>
         </div>
     </div>
     <!--- ==== fin modal reporte ausencias ================================ -->

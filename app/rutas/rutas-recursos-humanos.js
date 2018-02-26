@@ -1,5 +1,6 @@
 module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente, Persona, Empresa, Sucursal, Clase, Diccionario, Tipo, decodeBase64Image, fs, RrhhEmpleadoFicha, RrhhEmpleadoFichaOtrosSeguros, RrhhEmpleadoFichaFamiliar, RrhhEmpleadoDiscapacidad
-    , RrhhEmpleadoCargo, RrhhEmpleadoHojaVida, RrhhEmpleadoFormacionAcademica, RrhhEmpleadoExperienciaLaboral, RrhhEmpleadoLogroInternoExterno, RrhhEmpleadoCapacidadInternaExterna, NumeroLiteral, RrhhEmpleadoPrestamo, RrhhEmpleadoPrestamoPago, RrhhEmpleadoRolTurno, RrhhEmpleadoHorasExtra, RrhhAnticipo, EvaluacionPolifuncional, ConfiguracionCalificacionEvaluacionPolifuncional, ConfiguracionDesempenioEvaluacionPolifuncional) {
+    , RrhhEmpleadoCargo, RrhhEmpleadoHojaVida, RrhhEmpleadoFormacionAcademica, RrhhEmpleadoExperienciaLaboral, RrhhEmpleadoLogroInternoExterno, RrhhEmpleadoCapacidadInternaExterna, NumeroLiteral, RrhhEmpleadoPrestamo, RrhhEmpleadoPrestamoPago, RrhhEmpleadoRolTurno, RrhhEmpleadoHorasExtra, RrhhAnticipo,
+    EvaluacionPolifuncional, ConfiguracionCalificacionEvaluacionPolifuncional, ConfiguracionDesempenioEvaluacionPolifuncional, RrhhEmpleadoAusencia, RrhhEmpleadoVacaciones, RrhhEmpleadoCompensacionAusencia, RrhhFeriado, RrhhClaseAsuencia) {
     router.route('/recursos-humanos/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion/codigo/:codigo/nombres/:nombres/ci/:ci/campo/:campo/cargo/:cargo/busquedaEmpresa/:busquedaEmpresa/grupo/:grupo_sanguineo/estado/:estado/apellido/:apellido')
         .get(function (req, res) {
             var condicion = ""
@@ -1742,10 +1743,10 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                     RrhhAnticipo.findAll({
                         where: { id_empleado: req.params.id_empleado, id_tipo: { $ne: clase.id } }
                     }).then(function (anticipos) {
-                        var  anteriorMonto=0
+                        var anteriorMonto = 0
                         if (anticipos.length > 0) {
                             anticipos.forEach(function (anticipo, index, array) {
-                              /*   var total = req.body.montoExtraoridnario + anticipo.monto */
+                                /*   var total = req.body.montoExtraoridnario + anticipo.monto */
                                 if (index == 0) {
                                     var total = req.body.montoExtraoridnario + anticipo.monto
                                 } else {
@@ -1781,10 +1782,10 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                     RrhhAnticipo.findAll({
                         where: { id_empleado: req.params.id_empleado, id_tipo: { $ne: req.body.id_tipo } }
                     }).then(function (anticipos) {
-                        var  anteriorMonto=0
+                        var anteriorMonto = 0
                         if (anticipos.length > 0) {
                             anticipos.forEach(function (anticipo, index, array) {
-                              /*   var total = req.body.montoExtraoridnario + anticipo.monto */
+                                /*   var total = req.body.montoExtraoridnario + anticipo.monto */
                                 if (index == 0) {
                                     var total = req.body.montoExtraoridnario + anticipo.monto
                                 } else {
@@ -1942,7 +1943,173 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                 /* } */
             })
         })
+    //rutas ausencias
+    router.route('/recursos-humanos/ausencia/empleado/:id_empleado')
+        .post(function (req, res) {
+            RrhhEmpleadoAusencia.create({
+                id_empleado: req.params.id_empleado,
+                id_tipo: req.body.tipo.id,
+                fecha_inicio: req.body.fecha_inicio,
+                fecha_fin: req.body.fecha_fin,
+                diagnostico: req.body.diagnostico,
+                observacion: req.body.observacion,
+                dias: req.body.dias,
+                horas: req.body.horas,
+                eliminado: false,
+                primera_baja:req.body.primera_baja,
+                planilla:req.body.planilla
+            }).then(function (empleadoAusenciaCreado) {
+                res.json({ mensaje: "Guardado satisfactoriamente!" })
+            })
+        })
+    router.route('/recursos-humanos/ausencias/empleado/:id_empleado/inicio/:inicio/fin/:fin/tipo-ausencia/:tipo_ausencia/tipo/:tipo')
+        .get(function (req, res) {
+            var condicionAusencias = { id_empleado: req.params.id_empleado, eliminado: false };
+            if (req.params.inicio != 0) {
+                var inicio = new Date(req.params.inicio); inicio.setHours(0, 0, 0, 0, 0);
+                var fin = new Date(req.params.fin); fin.setHours(23, 0, 0, 0, 0);
+                condicionAusencias = { id_empleado: req.params.id_empleado, eliminado: false, fecha_inicio: { $between: [inicio, fin] } };
+                if (req.params.tipo_ausencia != 0) {
+                    condicionAusencias = { id_empleado: req.params.id_empleado, eliminado: false, tipo: req.params.tipo_ausencia, fecha_inicio: { $between: [inicio, fin] } };
+                }
+            } else if (req.params.tipo_ausencia != 0) {
+                condicionAusencias = { id_empleado: req.params.id_empleado, eliminado: false, tipo: req.params.tipo_ausencia };
+            }
+            RrhhEmpleadoAusencia.findAll({
+                where: condicionAusencias,
+                include: [{ model: MedicoPaciente, as: 'empleado' }, { model: RrhhClaseAsuencia, as: 'tipoAusencia', include: [{ model: Tipo, as: 'tipo', where: { nombre_corto: req.params.tipo } }] }]
+            }).then(function (ausencias) {
+                res.json(ausencias)
+            })
 
+        })
+    router.route('/recursos-humanos/ausencias/empresa/:id_empresa/inicio/:inicio/fin/:fin/tipo-ausencia/:tipo_ausencia/tipo/:tipo')
+        .get(function (req, res) {
+            var condicionAusencias = { eliminado: false };
+            if (req.params.inicio != 0) {
+                var inicio = new Date(req.params.inicio); inicio.setHours(0, 0, 0, 0, 0);
+                var fin = new Date(req.params.fin); fin.setHours(23, 0, 0, 0, 0);
+                condicionAusencias = { eliminado: false, fecha_inicio: { $between: [inicio, fin] } };
+                if (req.params.tipo_ausencia != 0) {
+                    condicionAusencias = { eliminado: false, tipo: req.params.tipo_ausencia, fecha_inicio: { $between: [inicio, fin] } };
+                }
+            } else if (req.params.tipo_ausencia != 0) {
+                condicionAusencias = { eliminado: false, tipo: req.params.tipo_ausencia };
+            }
+            RrhhEmpleadoAusencia.findAll({
+                where: condicionAusencias,
+                include: [{ model: MedicoPaciente, as: 'empleado', where: { id_empresa: req.params.id_empresa }, include: [{ model: Persona, as: 'persona' }] }, { model: RrhhClaseAsuencia, as: 'tipoAusencia', include: [{ model: Tipo, as: 'tipo', where: { nombre_corto: req.params.tipo } }] }]
+            }).then(function (ausencias) {
+                res.json(ausencias)
+            })
+
+        })
+    //fin rutas ausencias
+    //rutas vacaciones
+    router.route('/recursos-humanos/vacacion/empleado/:id_empleado')
+        .post(function (req, res) {
+            RrhhEmpleadoVacaciones.create({
+                id_empleado: req.params.id_empleado,
+                fecha_inicio: req.body.fecha_inicio,
+                fecha_fin: req.body.fecha_fin,
+                observacion: req.body.observacion,
+                dias: String(req.body.dias),
+                sabado: req.body.sabado,
+                inicio_tipo: req.body.inicio_tipo,
+                fin_tipo: req.body.fin_tipo,
+                eliminado: false
+            }).then(function (empleadoVacacionCreado) {
+                res.json({ mensaje: "Guardado satisfactoriamente!" })
+            })
+        })
+    router.route('/recursos-humanos/vacacion/empleado/:id_empleado/inicio/:inicio/fin/:fin')
+        .get(function (req, res) {
+            var condicionVacaciones = { id_empleado: req.params.id_empleado, eliminado: false };
+            if (req.params.inicio != 0) {
+                var inicio = new Date(req.params.inicio); inicio.setHours(0, 0, 0, 0, 0);
+                var fin = new Date(req.params.fin); fin.setHours(23, 0, 0, 0, 0);
+                condicionVacaciones = { id_empleado: req.params.id_empleado, eliminado: false, fecha_inicio: { $between: [inicio, fin] } };
+            }
+            RrhhEmpleadoVacaciones.findAll({
+                where: condicionVacaciones,
+                include: [{ model: MedicoPaciente, as: 'empleado', include: [{ model: Persona, as: 'persona' }] }]
+            }).then(function (vacaciones) {
+                res.json(vacaciones)
+            })
+        })
+    router.route('/recursos-humanos/vacacion/empresa/:id_empresa/inicio/:inicio/fin/:fin')
+        .get(function (req, res) {
+            var condicionVacaciones = { eliminado: false };
+            if (req.params.inicio != 0) {
+                var inicio = new Date(req.params.inicio); inicio.setHours(0, 0, 0, 0, 0);
+                var fin = new Date(req.params.fin); fin.setHours(23, 0, 0, 0, 0);
+                condicionVacaciones = { eliminado: false, fecha_inicio: { $between: [inicio, fin] } };
+            }
+            RrhhEmpleadoVacaciones.findAll({
+                where: condicionVacaciones,
+                include: [{ model: MedicoPaciente, as: 'empleado', where: { id_empresa: req.params.id_empresa }, include: [{ model: Persona, as: 'persona' }] }]
+            }).then(function (vacaciones) {
+                res.json(vacaciones)
+            })
+        })
+    router.route('/recursos-humanos/vacacion/feriados/empresa/:id_empresa')
+        .post(function (req, res) {
+            if (req.body.feriados.length > 0) {
+                req.body.feriados.forEach(function (feriado, index, array) {
+                    if (feriado.id == undefined) {
+                        feriado.start = new Date(feriado.start)
+                        feriado.end = new Date(feriado.end)
+                        feriado.start.setHours(0, 0, 0, 0, 0);
+                        feriado.end.setHours(23, 59, 0, 0, 0);
+                        RrhhFeriado.create({
+                            fecha_inicio: feriado.start,
+                            fecha_fin: feriado.end,
+                            id_empresa: req.params.id_empresa
+                        }).then(function (feriadoCreado) {
+                            if (index === (array.length - 1)) {
+                                if (req.body.feriadosEliminados.length > 0) {
+                                    guardarEliminados(req, res)
+                                } else {
+                                    res.json({ mensaje: "Guardado satisfactoriamente!" })
+                                }
+                            }
+
+                        })
+                    } else {
+                        if (index === (array.length - 1)) {
+                            if (req.body.feriadosEliminados.length > 0) {
+                                guardarEliminados(req, res)
+                            } else {
+                                res.json({ mensaje: "Guardado satisfactoriamente!" })
+                            }
+                        }
+
+                    }
+                });
+            } else {
+                guardarEliminados(req, res)
+            }
+        })
+        .get(function (req, res) {
+            RrhhFeriado.findAll({
+                where: { id_empresa: req.params.id_empresa }
+            }).then(function (dato) {
+                res.json(dato)
+            })
+        })
+
+    guardarEliminados = function (req, res) {
+        req.body.feriadosEliminados.forEach(function (feriado, index, array) {
+            RrhhFeriado.destroy({
+                where: { id: feriado.id }
+            }).then(function (feriadoCreado) {
+                if (index === (array.length - 1)) {
+                    res.json({ mensaje: "Guardado satisfactoriamente!" })
+                }
+            })
+        })
+    }
+    //fin rutas vacaciones
 
     /////////////////////////////////////////////////////// RUTAS PARA POLIFUNCIONAL ///////////////////////////////////////////////////
 

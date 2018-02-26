@@ -988,24 +988,7 @@ angular.module('agil.controladores')
 				eventClick: function (calEvent, jsEvent, view) {
 					$scope.evento = calEvent
 					$scope.abrirEditarEventoCalendario()
-					/*var modal = $(modal).appendTo('body');
-					modal.find('form').on('submit', function (ev) {
-						ev.preventDefault();
-		
-						calEvent.title = $(this).find("input[type=text]").val();
-						calendar.fullCalendar('updateEvent', calEvent);
-						modal.modal("hide");
-					});
-					modal.find('button[data-action=delete]').on('click', function () {
-						calendar.fullCalendar('removeEvents', function (ev) {
-							return (ev._id == calEvent._id);
-						})
-						modal.modal("hide");
-					});
-		
-					modal.modal('show').on('hidden', function () {
-						modal.remove();
-					}); */
+					
 				}
 			});
 		}

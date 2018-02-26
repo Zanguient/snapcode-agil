@@ -1,5 +1,5 @@
 module.exports=function(router,Tipo,Clase,Venta,DetalleVenta,Cliente,Almacen,Sucursal,Compra,DetalleCompra,Proveedor,
-						Producto,Usuario,Movimiento,VentaReprogramacionPago,CompraReprogramacionPago){
+						Producto,Usuario,Movimiento,VentaReprogramacionPago,CompraReprogramacionPago,RrhhClaseAsuencia){
 
 router.route('/tipos/:nombre_corto')
 	.get(function(req, res) {
@@ -7,7 +7,7 @@ router.route('/tipos/:nombre_corto')
 			where:{
 				nombre_corto: req.params.nombre_corto
 			},
-			include: [{model:Clase,as: 'clases'}]
+			include: [{model:Clase,as: 'clases'},{model:RrhhClaseAsuencia,as:'ausencias'}]
 		}).then(function(entidad){			
 			res.json(entidad);		  
 		});

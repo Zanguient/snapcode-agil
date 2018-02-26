@@ -2325,7 +2325,7 @@ angular.module('agil.servicios')
 				var stream = doc.pipe(blobStream());
 				// draw some text
 				var totalCosto = 0;
-				var y = 140, itemsPorPagina = 33, items = 0, pagina = 1, totalPaginas = Math.ceil(despachos.length / itemsPorPagina);
+				var y = 140, itemsPorPagina = 24, items = 0, pagina = 1, totalPaginas = Math.ceil(despachos.length / itemsPorPagina);
 				DibujarCabeceraPDFAlertaDespacho(doc, 1, totalPaginas, despachos, filtro, usuario);
 				doc.font('Helvetica', 8);
 				for (var i = 0; i < despachos.length && items <= itemsPorPagina; i++) {
@@ -2334,7 +2334,7 @@ angular.module('agil.servicios')
 					doc.text(i + 1, 45, y);
 					doc.text(detalle_despacho.despacho.usuario.persona.nombre_completo, 70, y, { width: 100 });
 					doc.text(detalle_despacho.despacho.cliente.razon_social, 190, y, { width: 100 });
-					doc.text(detalle_despacho.producto.nombre, 300, y, { width: 50 });
+					doc.text(detalle_despacho.producto.nombre, 300, y, { width: 85 });
 					doc.text(detalle_despacho.cantidad, 390, y, { width: 50 });
 					doc.text(detalle_despacho.cantidad_despacho, 440, y, { width: 50 });
 					doc.text(detalle_despacho.cantidad - detalle_despacho.cantidad_despacho, 490, y, { width: 50 });
@@ -2362,15 +2362,15 @@ angular.module('agil.servicios')
 			return res;
 		}])
 	.factory('ImprimirPdfDespachos', ['blockUI', 'DibujarCabeceraPDFDespacho',
-		function (blockUI, DibujarCabeceraPDFAlertaDespacho) {
+		function (blockUI, DibujarCabeceraPDFDespacho) {
 			var res = function (despachos, filtro, usuario) {
 				blockUI.start();
 				var doc = new PDFDocument({ compress: false, size: 'letter', margin: 10 });
 				var stream = doc.pipe(blobStream());
 				// draw some text
 				var totalCosto = 0;
-				var y = 140, itemsPorPagina = 33, items = 0, pagina = 1, totalPaginas = Math.ceil(despachos.length / itemsPorPagina);
-				DibujarCabeceraPDFAlertaDespacho(doc, 1, totalPaginas, despachos, filtro, usuario);
+				var y = 140, itemsPorPagina = 24, items = 0, pagina = 1, totalPaginas = Math.ceil(despachos.length / itemsPorPagina);
+				DibujarCabeceraPDFDespacho(doc, 1, totalPaginas, despachos, filtro, usuario);
 				doc.font('Helvetica', 8);
 				for (var i = 0; i < despachos.length && items <= itemsPorPagina; i++) {
 					var detalle_despacho = despachos[i]
@@ -2378,7 +2378,7 @@ angular.module('agil.servicios')
 					doc.text(i + 1, 45, y);
 					doc.text(detalle_despacho.despacho.usuario.persona.nombre_completo, 70, y, { width: 100 });
 					doc.text(detalle_despacho.despacho.cliente.razon_social, 190, y, { width: 100 });
-					doc.text(detalle_despacho.producto.nombre, 320, y, { width: 50 });
+					doc.text(detalle_despacho.producto.nombre, 320, y, { width: 85 });
 					doc.text(detalle_despacho.cantidad, 420, y, { width: 50 });
 					doc.text("Bs. " + detalle_despacho.servicio_transporte + ".-", 500, y, { width: 80 });
 					y = y + 25;
@@ -2389,7 +2389,7 @@ angular.module('agil.servicios')
 						y = 120;
 						items = 0;
 						pagina = pagina + 1;
-						DibujarCabeceraPDFAlertaDespacho(doc, pagina, totalPaginas, despachos, filtro, usuario);
+						DibujarCabeceraPDFDespacho(doc, pagina, totalPaginas, despachos, filtro, usuario);
 						doc.font('Helvetica', 8);
 					}
 				}
@@ -2508,8 +2508,15 @@ angular.module('agil.servicios')
 		res = function (doc, pagina, totalPaginas, despachos, filtro, usuario) {
 			doc.font('Helvetica-Bold', 12);
 			doc.text("REPORTE DE PEDIDOS", 0, 25, { align: "center" });
-			doc.font('Helvetica', 12);
-			if (filtro.inicio && filtro.fin) doc.text(filtro.inicio + " AL " + filtro.fin, 0, 45, { align: "center" });
+			doc.font('Helvetica', 12);			
+			if (filtro.inicio && filtro.fin){
+				var mes =((filtro.inicio.getMonth()+1)<10)?"0"+(filtro.inicio.getMonth()+1):(filtro.inicio.getMonth()+1);
+				var dia =((filtro.inicio.getDate())<10)?"0"+filtro.inicio.getDate():filtro.inicio.getDate();
+				var mes2 =((filtro.fin.getMonth()+1)<10)?"0"+(filtro.fin.getMonth()+1):(filtro.fin.getMonth()+1);
+				var dia2 =((filtro.fin.getDate())<10)?"0"+filtro.fin.getDate():filtro.fin.getDate();
+				doc.text(dia+"/"+mes+"/"+filtro.inicio.getFullYear()+ " AL " + dia2+"/"+mes2+"/"+filtro.fin.getFullYear(), 0, 45, { align: "center" });
+			}
+			
 			doc.font('Helvetica-Bold', 8);
 			doc.text("PÁGINA " + pagina + " DE " + totalPaginas, 0, 740, { align: "center" });
 			/* doc.rect(30, 70, 555, 30).stroke(); */
@@ -2548,7 +2555,14 @@ angular.module('agil.servicios')
 			doc.font('Helvetica-Bold', 12);
 			doc.text("REPORTE DE PEDIDOS", 0, 25, { align: "center" });
 			doc.font('Helvetica', 12);
-			if (filtro.inicio && filtro.fin) doc.text(filtro.inicio + " AL " + filtro.fin, 0, 45, { align: "center" });
+			if (filtro.inicio && filtro.fin){
+				var mes =((filtro.inicio.getMonth()+1)<10)?"0"+(filtro.inicio.getMonth()+1):(filtro.inicio.getMonth()+1);
+				var dia =((filtro.inicio.getDate())<10)?"0"+filtro.inicio.getDate():filtro.inicio.getDate();
+				var mes2 =((filtro.fin.getMonth()+1)<10)?"0"+(filtro.fin.getMonth()+1):(filtro.fin.getMonth()+1);
+				var dia2 =((filtro.fin.getDate())<10)?"0"+filtro.fin.getDate():filtro.fin.getDate();
+
+				doc.text(dia+"/"+mes+"/"+filtro.inicio.getFullYear()+ " AL " + dia2+"/"+mes2+"/"+filtro.fin.getFullYear(), 0, 45, { align: "center" });
+			}
 			doc.font('Helvetica-Bold', 8);
 			doc.text("PÁGINA " + pagina + " DE " + totalPaginas, 0, 740, { align: "center" });
 			/* doc.rect(30, 70, 555, 30).stroke(); */

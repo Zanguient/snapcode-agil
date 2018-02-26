@@ -465,3 +465,146 @@ angular.module('agil.servicios')
     };
     return res;
 }])
+.factory('EmpleadoAusencia', function ($resource) {
+    return $resource(restServer + "recursos-humanos/ausencia/empleado/:id_empleado",null,
+        {
+            'update': { method: 'PUT' }
+        });
+})
+.factory('NuevaAusenciaEmpleado', ['EmpleadoAusencia', '$q', function (EmpleadoAusencia, $q) {
+    var res = function (idEmpleado,datos) {
+        var delay = $q.defer();
+        EmpleadoAusencia.save({id_empleado:idEmpleado},datos, function (entidad) {
+            delay.resolve(entidad);
+        }, function (error) {
+            delay.reject(error);
+        });
+        return delay.promise;
+    };
+    return res;
+}])
+
+.factory('EmpleadoListaAusencias', function ($resource) {
+    return $resource(restServer + "recursos-humanos/ausencias/empleado/:id_empleado/inicio/:inicio/fin/:fin/tipo-ausencia/:tipo_ausencia/tipo/:tipo",null,
+        {
+            'update': { method: 'PUT' }
+        });
+})
+.factory('HistorialEmpleadoAusencias', ['EmpleadoListaAusencias', '$q', function (EmpleadoListaAusencias, $q) {
+    var res = function (idEmpleado,filtro,tipo) {
+        var delay = $q.defer();
+        EmpleadoListaAusencias.query({id_empleado: idEmpleado,inicio:filtro.inicio,fin:filtro.fin,tipo_ausencia:filtro.tipo_ausencia,tipo:tipo}, function (entidad) {
+            delay.resolve(entidad);
+        }, function (error) {
+            delay.reject(error);
+        });
+        return delay.promise;
+    };
+    return res;
+}])
+.factory('EmpresaListaAusencias', function ($resource) {
+    return $resource(restServer + "recursos-humanos/ausencias/empresa/:id_empresa/inicio/:inicio/fin/:fin/tipo-ausencia/:tipo_ausencia/tipo/:tipo",null,
+        {
+            'update': { method: 'PUT' }
+        });
+})
+.factory('HistorialEmpresaEmpleadosAusencias', ['EmpresaListaAusencias', '$q', function (EmpresaListaAusencias, $q) {
+    var res = function (idEmpresa,filtro,tipo) {
+        var delay = $q.defer();
+        EmpresaListaAusencias.query({id_empresa: idEmpresa,inicio:filtro.inicio,fin:filtro.fin,tipo_ausencia:filtro.tipo_ausencia,tipo:tipo}, function (entidad) {
+            delay.resolve(entidad);
+        }, function (error) {
+            delay.reject(error);
+        });
+        return delay.promise;
+    };
+    return res;
+}])
+//vacaciones
+
+.factory('EmpleadoVacacion', function ($resource) {
+    return $resource(restServer + "recursos-humanos/vacacion/empleado/:id_empleado",null,
+        {
+            'update': { method: 'PUT' }
+        });
+})
+.factory('NuevaVacacionEmpleado', ['EmpleadoVacacion', '$q', function (EmpleadoVacacion, $q) {
+    var res = function (idEmpleado,datos) {
+        var delay = $q.defer();
+        EmpleadoVacacion.save({id_empleado:idEmpleado},datos, function (entidad) {
+            delay.resolve(entidad);
+        }, function (error) {
+            delay.reject(error);
+        });
+        return delay.promise;
+    };
+    return res;
+}])
+.factory('EmpleadoListaVacaciones', function ($resource) {
+    return $resource(restServer + "recursos-humanos/vacacion/empleado/:id_empleado/inicio/:inicio/fin/:fin",null,
+        {
+            'update': { method: 'PUT' }
+        });
+})
+.factory('HistorialEmpleadoVacaciones', ['EmpleadoListaVacaciones', '$q', function (EmpleadoListaVacaciones, $q) {
+    var res = function (idEmpleado,filtro) {
+        var delay = $q.defer();
+        EmpleadoListaVacaciones.query({id_empleado: idEmpleado,inicio:filtro.inicio,fin:filtro.fin}, function (entidad) {
+            delay.resolve(entidad);
+        }, function (error) {
+            delay.reject(error);
+        });
+        return delay.promise;
+    };
+    return res;
+}])
+.factory('EmpresaListaVacaciones', function ($resource) {
+    return $resource(restServer + "recursos-humanos/vacacion/empresa/:id_empresa/inicio/:inicio/fin/:fin",null,
+        {
+            'update': { method: 'PUT' }
+        });
+})
+.factory('HistorialEmpresaVacaciones', ['EmpresaListaVacaciones', '$q', function (EmpresaListaVacaciones, $q) {
+    var res = function (idEmpresa,filtro) {
+        var delay = $q.defer();
+        EmpresaListaVacaciones.query({id_empresa: idEmpresa,inicio:filtro.inicio,fin:filtro.fin}, function (entidad) {
+            delay.resolve(entidad);
+        }, function (error) {
+            delay.reject(error);
+        });
+        return delay.promise;
+    };
+    return res;
+}])
+
+.factory('EmpresaFeriados', function ($resource) {
+    return $resource(restServer + "recursos-humanos/vacacion/feriados/empresa/:id_empresa",null,
+        {
+            'update': { method: 'PUT' }
+        });
+})
+.factory('NuevoFeriado', ['EmpresaFeriados', '$q', function (EmpresaFeriados, $q) {
+    var res = function (idEmpresa,datos,feriadosEliminados) {
+        var delay = $q.defer();
+        EmpresaFeriados.save({id_empresa:idEmpresa},{feriados:datos,feriadosEliminados:feriadosEliminados}, function (entidad) {
+            delay.resolve(entidad);
+        }, function (error) {
+            delay.reject(error);
+        });
+        return delay.promise;
+    };
+    return res;
+}])
+
+.factory('ListaFeriados', ['EmpresaFeriados', '$q', function (EmpresaFeriados, $q) {
+    var res = function (idEmpresa) {
+        var delay = $q.defer();
+        EmpresaFeriados.query({id_empresa:idEmpresa},function (entidad) {
+            delay.resolve(entidad);
+        }, function (error) {
+            delay.reject(error);
+        });
+        return delay.promise;
+    };
+    return res;
+}])

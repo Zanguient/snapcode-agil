@@ -86,10 +86,10 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 					} else {
 						if (cont == 1) {
 
-							var mensaje2 = "la " + mensaje + " es un asiento sin monto en el debe o el haber si continua se eliminara"
+							var mensaje2 = "la " + mensaje + " es un cuenta sin monto en el debe o el haber si continua se eliminara"
 							$scope.AbrirMensajeConfirmacionComprobante(mensaje2, form, form2)
 						} else {
-							var mensaje2 = "las " + mensaje + " son asiento sin monto en el debe o el haber si continua se eliminaran"
+							var mensaje2 = "las " + mensaje + " son cuentas sin monto en el debe o el haber si continua se eliminaran"
 							$scope.AbrirMensajeConfirmacionComprobante(mensaje2, form, form2)
 						}
 					}
@@ -2713,7 +2713,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 			var valor = (fech.getMonth() + 1)
 			if (valor < 10) {
 				valor = "0" + valor
-			}
+			}		
 			fecha = fech.getDate() + "/" + valor + "/" + fech.getFullYear();
 			return fecha
 			// $scope.fechaAplicacionVacuna = new Date(convertirFecha(fecha))

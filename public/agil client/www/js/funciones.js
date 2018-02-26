@@ -12,7 +12,7 @@ function ejecutarScriptDestino(idModalWizardDestinoEdicion, idContenedorEdicionD
 	aplicarWizardFormulario(idModalWizardDestinoEdicion, idContenedorEdicionDestino);
 }
 
-function ejecutarScriptsPolifuncionalidad(modalNuevaEvaluacion, modalNuevaEvaluacionWizard, modalBusquedaPersonal, modalParametrosPolifuncionalidad, 
+function ejecutarScriptsPolifuncionalidad(modalNuevaEvaluacion, modalNuevaEvaluacionWizard, modalBusquedaPersonal, modalParametrosPolifuncionalidad,
 	modalParametrosPolifuncionalidadWizard, idModalReportes) {
 	crearPopup(modalNuevaEvaluacion, 'auto', 'auto');
 	crearPopup(modalParametrosPolifuncionalidad, 'auto', 'auto');
@@ -101,7 +101,7 @@ function ejecutarScriptsOperaciones(idDialogDialogPanelOperaciones, idDialogEntr
 function ejecutarScriptsInicio(idPopupTablaProductos, idPopupTablaCreditos, idPopupTablaDeudas, idPopupPago,
 	idPopupActualizarCreditoCliente, idPopupActualizarCreditoDeuda, idPopupDeuda, idModalDescuento, idModalTablaVentasPendientes,
 	idModalTablaComprasPendientes, idModalTablaBancosPendientes, idModalTablaOtrosPendientes, idModalInicioSesion, idModalWizardComprobanteEdicion, IdModalOpcionesQr, IdModalRegistrarComprobante, IdModalRevisarComprobante, IdModalLibroMayor, IdModalAsignarCuenta,
-	idModalTablaDespachos, idModalTablaAsignacionDespacho, IdModalEliminarProductoVencido, dialogAlertasProformas, facturarProformas,mensajeConfirmacionComprobante) {
+	idModalTablaDespachos, idModalTablaAsignacionDespacho, IdModalEliminarProductoVencido, dialogAlertasProformas, facturarProformas, mensajeConfirmacionComprobante) {
 	crearPopup(idPopupTablaProductos, "70%", "auto");
 	crearPopup(idModalWizardComprobanteEdicion, "100%", "auto");
 	crearPopup(idPopupTablaCreditos, "auto", "auto");
@@ -117,7 +117,7 @@ function ejecutarScriptsInicio(idPopupTablaProductos, idPopupTablaCreditos, idPo
 	crearPopup(idModalTablaOtrosPendientes, "60%", 550);
 	crearPopup(dialogAlertasProformas, "80%", 'auto');
 	crearPopup(idModalInicioSesion, "100%", screen.height);
-	crearPopup(mensajeConfirmacionComprobante,"40%", "auto");
+	crearPopup(mensajeConfirmacionComprobante, "40%", "auto");
 	crearPopup(facturarProformas, "80%", 'auto');
 
 	crearPopup(IdModalOpcionesQr, "30%", 250);
@@ -470,7 +470,7 @@ function ejecutarScriptsVentasMensuales() {
 function ejecutarScriptsVenta(idPopupEdicion, idPopupVista, idPopupEliminacion,
 	idContenedorEdicion, idContenedorVista, idInput, url,
 	idPopupPago, idPopupCierre, idPopupPanel, idPopupEliminacion, idModalInventario, idModalPanelCobro,
-	idModalVendedor,idModalImpresionVencimiento) {
+	idModalVendedor, idModalImpresionVencimiento) {
 	crearPopup(idPopupEdicion, "100%", 600);
 	crearPopup(idPopupVista, "100%", 600);
 	crearPopup(idModalInventario, "85%", 550);
@@ -1318,5 +1318,48 @@ function aplicarTiempos() {
 
 function parseDate(input) {
 	var parts = input.split('-');
-	return new Date(parts[2], parts[1]-1, parts[0]); 
-  }
+	return new Date(parts[2], parts[1] - 1, parts[0]);
+}
+
+
+function getDates(startDate, endDate) {
+	var mes2 = (startDate.getMonth()+1)
+		var dia2 = startDate.getDate()
+		mes2=(mes2<10)?"0"+mes2:mes2
+		dia2=(dia2<10)?"0"+dia2:dia2
+		var mes3 = (endDate.getMonth()+1)
+		var dia3 = endDate.getDate()
+		mes3=(mes3<10)?"0"+mes3:mes3
+		dia3=(dia3<10)?"0"+dia3:dia3
+	startDate = startDate.getFullYear() + "/" + mes2 + "/" + dia2
+	endDate = endDate.getFullYear() + "/" + mes3 + "/" +dia3
+	var listDate = [];
+	var dateMove = new Date(startDate);
+	var strDate = startDate;
+	while (strDate <= endDate) {
+		//var strDate = dateMove.toISOString().slice(0, 10);
+		listDate.push(strDate);
+		dateMove.setDate(dateMove.getDate() + 1);
+		var mes = (dateMove.getMonth()+1)
+		var dia = (dateMove.getDate())
+		mes=(mes<10)?"0"+mes:mes
+		dia=(dia<10)?"0"+dia:dia
+		strDate=dateMove.getFullYear() + "/" + mes + "/" + dia
+	};
+	return listDate;
+};
+function convertirSegundosATiempo(time){
+	var hours = Math.floor( time / 3600 );  
+	var minutes = Math.floor( (time % 3600) / 60 );
+	var seconds = time % 60;
+	 
+	//Anteponiendo un 0 a los minutos si son menos de 10 
+	minutes = minutes < 10 ? '0' + minutes : minutes;
+	 
+	//Anteponiendo un 0 a los segundos si son menos de 10 
+	seconds = seconds < 10 ? '0' + seconds : seconds;
+	 
+	var result = hours + ":" + minutes + ":" + seconds;
+	console.log(result)
+	return result;
+}

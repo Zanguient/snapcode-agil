@@ -134,7 +134,14 @@ module.exports = function (router, sequelize, Sequelize, jwt, md5, forEach, ensu
 	var RrhhEmpleadoHorasExtra = require('../modelos/AGIL/rrhh-empleado-horas-extra')(sequelize, Sequelize);
 	var RRHHPlanillaSueldos = require('../modelos/AGIL/rrhh-planilla-sueldos')(sequelize, Sequelize);
 	var RRHHDetallePlanillaSueldos = require('../modelos/AGIL/rrhh-detalle-planilla-sueldos')(sequelize, Sequelize);
-	var RrhhAnticipo = require('../modelos/AGIL/rrhh-empleado-anticipo')(sequelize, Sequelize);	//*****RELATIONS*****
+	var RrhhAnticipo = require('../modelos/AGIL/rrhh-empleado-anticipo')(sequelize, Sequelize);
+	var RrhhEmpleadoAusencia = require('../modelos/AGIL/rrhh-empleado-ausencia')(sequelize, Sequelize);
+	var RrhhEmpleadoVacaciones = require('../modelos/AGIL/rrhh-empleado-vacaciones')(sequelize, Sequelize);
+	var RrhhEmpleadoCompensacionAusencia = require('../modelos/AGIL/rrhh-empleado-compensacion-ausencias')(sequelize, Sequelize);
+	var RrhhFeriado = require('../modelos/AGIL/rrhh-feriados')(sequelize, Sequelize);
+	var RrhhClaseAsuencia = require('../modelos/AGIL/rrhh-empleado-clase-ausencia')(sequelize, Sequelize);
+
+	//*****RELATIONS*****
 	require('../modelos/relaciones.js')(sequelize, Usuario, Persona, Rol, UsuarioRol, Tipo, Clase, Aplicacion, RolAplicacion,
 		Empresa, Sucursal, UsuarioSucursal, Cliente, Proveedor, Producto, UsuarioAplicacion,
 		Almacen, Dosificacion, SucursalActividadDosificacion, Inventario, Movimiento,
@@ -149,9 +156,9 @@ module.exports = function (router, sequelize, Sequelize, jwt, md5, forEach, ensu
 		MedicoPacienteFicha, MedicoLaboratorioExamen, MedicoLaboratorio, MedicoLaboratorioPaciente, MedicoLaboratorioResultado, MedicoDiagnostico, MedicoDiagnosticoExamen, MedicoDiagnosticoPaciente, MedicoDiagnosticoResultado,
 		MantenimientoOrdenTrabajo, MantenimientoOrdenTrabajoManoObra, MantenimientoOrdenTrabajoMaterial, MantenimientoOrdenTrabajoServicioExterno, MantenimientoOrdenTrabajoSistema, VendedorVenta, RrhhEmpleadoFicha,
 		RrhhEmpleadoFichaOtrosSeguros, RrhhEmpleadoFichaFamiliar, MedicoPacientePreRequisito, RrhhEmpleadoDiscapacidad, RrhhEmpleadoCargo, ClienteRazon, GtmDestino, GtmEstibaje, GtmGrupoEstibaje, GtmTransportista, GtmDespacho, GtmClienteDestino,
-		RrhhEmpleadoHojaVida, RrhhEmpleadoFormacionAcademica, RrhhEmpleadoExperienciaLaboral, RrhhEmpleadoLogroInternoExterno, RrhhEmpleadoCapacidadInternaExterna, SolicitudReposicion, DetalleSolicitudProducto, DetalleSolicitudProductoBase,
-		MonedaTipoCambio, ContabilidadCuentaAuxiliar, GtmDespachoDetalle, RrhhEmpleadoPrestamo, RrhhEmpleadoPrestamoPago, Proforma, DetallesProformas, Servicios, Farmacia,
-		RRHHParametros, RrhhEmpleadoRolTurno, RrhhEmpleadoHorasExtra, RRHHPlanillaSueldos, RRHHDetallePlanillaSueldos, RrhhAnticipo, EvaluacionPolifuncional);
+		RrhhEmpleadoHojaVida, RrhhEmpleadoFormacionAcademica, RrhhEmpleadoExperienciaLaboral, RrhhEmpleadoLogroInternoExterno, RrhhEmpleadoCapacidadInternaExterna, SolicitudReposicion, DetalleSolicitudProducto, DetalleSolicitudProductoBase, MonedaTipoCambio, ContabilidadCuentaAuxiliar, GtmDespachoDetalle, RrhhEmpleadoPrestamo, RrhhEmpleadoPrestamoPago, Proforma, DetallesProformas, Servicios, Farmacia, RRHHParametros, RrhhEmpleadoRolTurno, RrhhEmpleadoHorasExtra, RRHHPlanillaSueldos, RRHHDetallePlanillaSueldos, RrhhAnticipo, EvaluacionPolifuncional,
+		RrhhEmpleadoAusencia, RrhhEmpleadoVacaciones, RrhhEmpleadoCompensacionAusencia,RrhhClaseAsuencia);
+
 	require('../sockets/pantallas.js')(io, socket);
 	//*****ROUTES*****
 	//SYS
@@ -160,7 +167,7 @@ module.exports = function (router, sequelize, Sequelize, jwt, md5, forEach, ensu
 		SucursalActividadDosificacion, Dosificacion, UsuarioRuta, Ruta, VistaColumnasAplicacion, Diccionario, ComprobanteContabilidad);
 	require('./rutas-roles')(router, Rol, RolAplicacion, Aplicacion);
 	require('./rutas-tipos')(router, Tipo, Clase, Venta, DetalleVenta, Cliente, Almacen, Sucursal, Compra, DetalleCompra, Proveedor,
-		Producto, Usuario, Movimiento, VentaReprogramacionPago, CompraReprogramacionPago);
+		Producto, Usuario, Movimiento, VentaReprogramacionPago, CompraReprogramacionPago,RrhhClaseAsuencia);
 	require('./rutas-personas')(router, Persona, VendedorVenta, Venta);
 
 	//AGIL
@@ -217,7 +224,9 @@ module.exports = function (router, sequelize, Sequelize, jwt, md5, forEach, ensu
 	//Mantenimiento Vehiculos
 	require('./rutas-maquinaria')(router, sequelize, Sequelize, Usuario, Producto, Diccionario, Clase, Sucursal, Empresa, ProductoBase, Almacen, ContabilidadCuenta, Persona, MantenimientoOrdenTrabajo, MantenimientoOrdenTrabajoManoObra, MantenimientoOrdenTrabajoMaterial, MantenimientoOrdenTrabajoServicioExterno, MantenimientoOrdenTrabajoSistema, Inventario, Clase)
 	require('./rutas-recursos-humanos')(router, sequelize, Sequelize, Usuario, MedicoPaciente, Persona, Empresa, Sucursal, Clase, Diccionario, Tipo, decodeBase64Image, fs, RrhhEmpleadoFicha, RrhhEmpleadoFichaOtrosSeguros, RrhhEmpleadoFichaFamiliar, RrhhEmpleadoDiscapacidad, RrhhEmpleadoCargo,
-		RrhhEmpleadoHojaVida, RrhhEmpleadoFormacionAcademica, RrhhEmpleadoExperienciaLaboral, RrhhEmpleadoLogroInternoExterno, RrhhEmpleadoCapacidadInternaExterna, NumeroLiteral, RrhhEmpleadoPrestamo, RrhhEmpleadoPrestamoPago, RrhhEmpleadoRolTurno, RrhhEmpleadoHorasExtra, RrhhAnticipo, EvaluacionPolifuncional, ConfiguracionCalificacionEvaluacionPolifuncional, ConfiguracionDesempenioEvaluacionPolifuncional)
+		RrhhEmpleadoHojaVida, RrhhEmpleadoFormacionAcademica, RrhhEmpleadoExperienciaLaboral, RrhhEmpleadoLogroInternoExterno, RrhhEmpleadoCapacidadInternaExterna, NumeroLiteral, RrhhEmpleadoPrestamo, RrhhEmpleadoPrestamoPago, RrhhEmpleadoRolTurno, RrhhEmpleadoHorasExtra, RrhhAnticipo, EvaluacionPolifuncional, ConfiguracionCalificacionEvaluacionPolifuncional, ConfiguracionDesempenioEvaluacionPolifuncional, RrhhEmpleadoAusencia, RrhhEmpleadoVacaciones, RrhhEmpleadoCompensacionAusencia,
+		RrhhFeriado,RrhhClaseAsuencia)
+
 	require('./rutas-planillas')(router, sequelize, Sequelize, Usuario, RRHHParametros, Persona, Empresa, Sucursal, Clase, Diccionario, Tipo, RrhhEmpleadoFicha, RrhhEmpleadoCargo, MedicoPaciente, RrhhEmpleadoDiscapacidad, RrhhEmpleadoFichaOtrosSeguros, RrhhEmpleadoFichaFamiliar, RrhhEmpleadoHorasExtra, RRHHPlanillaSueldos, RRHHDetallePlanillaSueldos, RrhhEmpleadoPrestamo, decodeBase64Image, fs)
 
 
