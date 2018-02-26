@@ -1956,8 +1956,8 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                 dias: req.body.dias,
                 horas: req.body.horas,
                 eliminado: false,
-                primera_baja:req.body.primera_baja,
-                planilla:req.body.planilla
+                primera_baja: req.body.primera_baja,
+                planilla: req.body.planilla
             }).then(function (empleadoAusenciaCreado) {
                 res.json({ mensaje: "Guardado satisfactoriamente!" })
             })
@@ -2110,7 +2110,36 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
         })
     }
     //fin rutas vacaciones
+    // TIPOS AUSENCIA
+    router.route('/recursos-humanos/ausencia/clases/tipo/:tipo')
+        .post(function (req, res) {
+            req.body.forEach(function (clase, index, array) {
+                if (clase.id) {
+                    RrhhClaseAsuencia.update({
+                        nombre: clase.nombre,
+                        id_tipo: req.params.tipo,
+                        porcentaje: clase.porcentaje,
+                        dias_descuento: clase.dias_descuento,
+                        habilitado: true,
+                    },{where:{id:clase.id}
+                    }).then(function (claseCreada) {
+                        res.json({mensaje:"Guardado satisfactoriamente!"})
+                    })
+                } else {
+                    RrhhClaseAsuencia.create({
+                        nombre: clase.nombre,
+                        id_tipo:  req.params.tipo,
+                        porcentaje: clase.porcentaje,
+                        dias_descuento: clase.dias_descuento,
+                        habilitado: true
+                    }).then(function (claseCreada) {
+                        res.json({mensaje:"Guardado satisfactoriamente!"})
+                    })
+                }
+            });
+        })
 
+    //FIN
     /////////////////////////////////////////////////////// RUTAS PARA POLIFUNCIONAL ///////////////////////////////////////////////////
 
     ///////////////////////////////////// FILTRO POLIFUNCIONAL

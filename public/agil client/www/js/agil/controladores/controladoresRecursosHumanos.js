@@ -4,7 +4,7 @@ angular.module('agil.controladores')
         FieldViewer, EmpleadoEmpresa, obtenerEmpleadoRh, UsuarioRecursosHUmanosActivo, Prerequisito, ListaDatosPrerequisito, Prerequisitos, ListaPrerequisitosPaciente, ActualizarPrerequisito, UsuarioRecursosHumanosFicha,
         ClasesTipo, Clases, Paises, CrearEmpleadoFicha, EliminarOtroSeguroRh, EliminarFamiliarRh, PrerequisitoPaciente, PrerequisitosHistorial, UsuarioRhHistorialFicha, ObtenerEmpleadoHojaVida, GuardarEmpleadoHojaVida, CrearPrestamo,
         ObtenerListaPrestamo, CrearRolTurno, CrearPagoPrestamo, VerificarUsuarioEmpresa, EditarPrestamo, ListaEmpleadosRrhh, CrearHorasExtra, HistorialHorasExtra, ListaRolTurnos, ValidarCodigoCuentaEmpleado, $timeout, DatosCapacidadesImpresion, NuevoAnticipoEmpleado,
-        ListaAnticiposEmpleado, CrearNuevosAnticiposEmpleados, ActualizarAnticipoEmpleado, NuevaAusenciaEmpleado, HistorialEmpleadoAusencias, HistorialEmpresaEmpleadosAusencias, NuevaVacacionEmpleado, HistorialEmpleadoVacaciones, HistorialEmpresaVacaciones, NuevoFeriado, ListaFeriados) {
+        ListaAnticiposEmpleado, CrearNuevosAnticiposEmpleados, ActualizarAnticipoEmpleado, NuevaAusenciaEmpleado, HistorialEmpleadoAusencias, HistorialEmpresaEmpleadosAusencias, NuevaVacacionEmpleado, HistorialEmpleadoVacaciones, HistorialEmpresaVacaciones, NuevoFeriado, ListaFeriados, GuardarClasesAusencias) {
         $scope.usuario = JSON.parse($localStorage.usuario);
         $scope.idModalPrerequisitos = 'dialog-pre-requisitos';
         $scope.idModalEmpleado = 'dialog-empleado';
@@ -705,6 +705,7 @@ angular.module('agil.controladores')
             $scope.cerrarPopup($scope.idModalAusenciasVacaciones);
         }
         $scope.abrirDialogTipoBaja = function (tiposAusenciasMedicas) {
+            $scope.clase = {}
             $scope.tiposAusencia = tiposAusenciasMedicas.ausencias
             $scope.abrirPopup($scope.idModalTipoBaja);
         }
@@ -1067,6 +1068,7 @@ angular.module('agil.controladores')
         }
         $scope.abrirDialogTipoAusencia = function (tiposOtrasAusencias) {
             $scope.tiposOtras = tiposOtrasAusencias.ausencias
+            $scope.clase = {}
             $scope.abrirPopup($scope.idModalTipoAusencia);
         }
         $scope.cerrarDialogTipoAusencia = function () {
@@ -3694,6 +3696,7 @@ angular.module('agil.controladores')
 
         //inicio ausencias
         $scope.obtenertiposAusenciaMedica = function () {
+            $scope.tiposAusenciasMedicas=[]
             blockUI.start();
             var promesa = ClasesTipo("RRHH_AUSMED");
             promesa.then(function (entidad) {
@@ -3703,6 +3706,7 @@ angular.module('agil.controladores')
             });
         }
         $scope.obtenerTiposOtrasAusencias = function () {
+            $scope.tiposOtrasAusencias =[]
             blockUI.start();
             var promesa = ClasesTipo("RRHH_OTRAUS");
             promesa.then(function (entidad) {
@@ -3725,13 +3729,13 @@ angular.module('agil.controladores')
                     var fechaFin = new Date($scope.convertirFecha(ausencia.fecha_fin));
                     fechaInicio.setMinutes(ausencia.fecha_inicio_hora.getMinutes()); fechaInicio.setHours(ausencia.fecha_inicio_hora.getHours());
                     fechaFin.setMinutes(ausencia.fecha_fin_hora.getMinutes()); fechaFin.setHours(ausencia.fecha_fin_hora.getHours());
-                    var fecha1 = moment('"'+fechaInicio.getFullYear()+'-'+fechaInicio.getMonth()+'-'+fechaInicio.getDate()+" "+ fechaInicio.getHours()+":"+ fechaInicio.getMinutes()+":00", "YYYY-MM-DD HH:mm:ss");
-                    var fecha2 = moment('"'+fechaFin.getFullYear()+'-'+fechaFin.getMonth()+'-'+fechaFin.getDate()+" "+ fechaFin.getHours()+":"+ fechaFin.getMinutes()+":00", "YYYY-MM-DD HH:mm:ss");
+                    var fecha1 = moment('"' + fechaInicio.getFullYear() + '-' + fechaInicio.getMonth() + '-' + fechaInicio.getDate() + " " + fechaInicio.getHours() + ":" + fechaInicio.getMinutes() + ":00", "YYYY-MM-DD HH:mm:ss");
+                    var fecha2 = moment('"' + fechaFin.getFullYear() + '-' + fechaFin.getMonth() + '-' + fechaFin.getDate() + " " + fechaFin.getHours() + ":" + fechaFin.getMinutes() + ":00", "YYYY-MM-DD HH:mm:ss");
 
                     var diff = fecha2.diff(fecha1, 'd'); // Diff in days
                     console.log(diff);
 
-                   ausencia.horas = convertirSegundosATiempo(fecha2.diff(fecha1, 's')); // Diff in hours
+                    ausencia.horas = convertirSegundosATiempo(fecha2.diff(fecha1, 's')); // Diff in hours
 
                     console.log(diff);
                 }
@@ -3752,7 +3756,7 @@ angular.module('agil.controladores')
                 ausencia.dias = dato
             }
         }
-        
+
         $scope.crearNuevaAusencia = function (datos, otro) {
 
             if (otro == true) {
@@ -3772,7 +3776,7 @@ angular.module('agil.controladores')
             })
         }
         $scope.obtenerHistorialEmpleadoAusenciasMedicas = function (filtro) {
-            $scope.historialEmpleadoAusencias=[]
+            $scope.historialEmpleadoAusencias = []
             if (filtro.tipo_ausencia == null || filtro.tipo_ausencia == undefined) {
                 filtro.tipo_ausencia = 0
             }
@@ -3839,6 +3843,34 @@ angular.module('agil.controladores')
             var promesa = HistorialEmpresaEmpleadosAusencias($scope.usuario.id_empresa, filtroAusencias, 'RRHH_OTRAUS')
             promesa.then(function (datos) {
                 $scope.historialEmpresaOtrasAusencias = datos
+            })
+        }
+
+        $scope.agregarTipoAusencia = function (clase, array) {
+            if (clase.edit == true) {
+                $scope.guardarModificado(clase)
+            } else {
+                array.push(clase)
+            }
+        }
+        $scope.ModificarTipoAusencia = function (clase) {
+            $scope.clase = {}
+            clase.edit = true
+            $scope.clase = clase
+        }
+        $scope.guardarModificado = function (clase) {
+            clase.edit = false
+            $scope.clase = {}
+        }
+        $scope.guardarClasesAusencias = function (array, tipo) {
+            var promesa = GuardarClasesAusencias(array, tipo)
+            promesa.then(function (dato) {
+                $scope.cerrarDialogTipoBaja()
+                $scope.cerrarDialogTipoAusencia()
+                $scope.obtenertiposAusenciaMedica()
+                $scope.obtenerTiposOtrasAusencias()
+                $scope.mostrarMensaje(dato.mensaje)
+
             })
         }
         //fin ausencias

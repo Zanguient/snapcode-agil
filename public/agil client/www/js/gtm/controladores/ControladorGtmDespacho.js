@@ -244,16 +244,12 @@ angular.module('agil.controladores')
             var textoSap = ""
             doc.text(gtm_despacho.despacho.cliente.razon_social, 80, 90);
             if (gtm_despacho.despacho.cliente_razon !== null && gtm_despacho.despacho.cliente_razon !== undefined) {
-                var textoSap = gtm_despacho.despacho.cliente_razon.codigo_sap
+                textoSap = gtm_despacho.despacho.cliente_razon.codigo_sap
                 doc.text(gtm_despacho.despacho.cliente_razon.razon_social, 100, 110);
             } 
             doc.text(textoSap, 510, 90, { width: 80 })
             var ydesc = 90;
-            if (textoSap.length > 17) {
-                rowSap = Math.floor(textoSap.length / 17)
-                var tamaño = rowSap * 10
-                ydesc = ydesc + tamaño
-            }
+           
             doc.font('Helvetica-Bold', 8);
             doc.text("Cod. Vend: ", 465, ydesc + 10);
             doc.font('Helvetica', 8);

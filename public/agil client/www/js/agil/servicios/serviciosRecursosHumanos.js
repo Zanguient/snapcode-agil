@@ -608,3 +608,21 @@ angular.module('agil.servicios')
     };
     return res;
 }])
+.factory('ClasesAusencias', function ($resource) {
+    return $resource(restServer + "recursos-humanos/ausencia/clases/tipo/:tipo",null,
+        {
+            'update': { method: 'PUT' }
+        });
+})
+.factory('GuardarClasesAusencias', ['ClasesAusencias', '$q', function (ClasesAusencias, $q) {
+    var res = function (datos,tipo) {
+        var delay = $q.defer();
+        ClasesAusencias.save({tipo:tipo},datos, function (entidad) {
+            delay.resolve(entidad);
+        }, function (error) {
+            delay.reject(error);
+        });
+        return delay.promise;
+    };
+    return res;
+}])
