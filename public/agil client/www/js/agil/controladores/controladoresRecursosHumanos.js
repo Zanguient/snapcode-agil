@@ -794,11 +794,7 @@ angular.module('agil.controladores')
         $scope.addEvents = function (datos) {
             $scope.calendar.fullCalendar('addEventSource', datos)
         }
-        var date = new Date();
-        var d = date.getDate();
-        var m = date.getMonth();
-        var y = date.getFullYear();
-
+       
         $scope.calendar = $('#calendar').fullCalendar({
             buttonHtml: {
                 prev: '<i class="ace-icon fa fa-chevron-left"></i>',
@@ -888,10 +884,14 @@ angular.module('agil.controladores')
         $scope.cerrarDialogHitorialVacaciones = function () {
             $scope.cerrarPopup($scope.idModalHitorialVacaciones);
         }
-
+        var date = new Date();
+        var d = date.getDate();
+        var m = date.getMonth();
+        var y = date.getFullYear();
         $scope.selectionday = [];
         $scope.totalHoras = moment("00:00", "HH:mm");
 
+       
         $scope.calendarCompensacion = $('#calendar-compensacion').fullCalendar({
             buttonHtml: {
                 prev: '<i class="ace-icon fa fa-chevron-left"></i>',
@@ -930,7 +930,7 @@ angular.module('agil.controladores')
             // slotLabelInterval: 15,
             // slotDuration: '00:15:00',
             select: function (start, end) {
-                $scope.horas = moment.utc(moment(end, "DD/MM/YYYY HH:mm:ss").diff(moment(start, "DD/MM/YYYY HH:mm:ss"))).format("HH:mm");
+                $scope.horas = moment.utc(moment(end, "DD/MM/YYYY HH:mm:ss").diff(moment(start, "DD/MM/YYYY HH:mm:ss"))).format("HH:mm:ss");
                 $scope.Event = $scope.calendarCompensacion.fullCalendar('renderEvent',
                     {
                         start: start,
@@ -940,7 +940,7 @@ angular.module('agil.controladores')
                     true // make the event "stick"
                 );
 
-                $scope.selectionday.push({ '_id': $scope.Event[0]._id, 'fecha': start.format("DD-MM-YYYY"), 'hora_inicio': start.format("HH:mm"), 'hora_fin': end.format("HH:mm"), 'total': $scope.horas });
+                $scope.selectionday.push({ '_id': $scope.Event[0]._id,'fecha_real': start, 'fecha': start.format("DD-MM-YYYY"), 'hora_inicio': start.format("HH:mm:ss"), 'hora_fin': end.format("HH:mm:ss"), 'total': $scope.horas });
                 $scope.sumarTotalHoras();
                 $scope.$apply();
                 $scope.calendarCompensacion.fullCalendar('unselect');
@@ -1036,7 +1036,7 @@ angular.module('agil.controladores')
                     timeMinutos = timeMinutos - 60;
                     timeHoras = timeHoras + 1;
                 }
-                totalHoras = String("0" + timeHoras).slice(-2) + ':' + String("0" + timeMinutos).slice(-2);
+                totalHoras = String("0" + timeHoras).slice(-2) + ':' + String("0" + timeMinutos).slice(-2)+":00";
             }
             $scope.SumaTotalHoras = totalHoras;
         }
@@ -3758,21 +3758,52 @@ angular.module('agil.controladores')
         }
 
         $scope.crearNuevaAusencia = function (datos, otro) {
-
-            if (otro == true) {
-                datos.fecha_inicio = new Date($scope.convertirFecha(datos.fecha_inicio));
-                datos.fecha_fin = new Date($scope.convertirFecha(datos.fecha_fin));
-                datos.fecha_inicio.setMinutes(datos.fecha_inicio_hora.getMinutes()); datos.fecha_inicio.setHours(datos.fecha_inicio_hora.getHours());
-                datos.fecha_fin.setMinutes(datos.fecha_fin_hora.getMinutes()); datos.fecha_fin.setHours(datos.fecha_fin_hora.getHours());
+        
+            if (otro == true) {               
+                var minutos = parseInt($scope.SumaTotalHoras.split(':')[1])
+                var horas = parseInt($scope.SumaTotalHoras.split(':')[0])
+                var minutosDatos = parseInt(datos.horas.split(':')[1])
+                var horasDatos = parseInt(datos.horas.split(':')[0])
+                if(horas<horasDatos){
+                    datos.fecha_inicio = new Date($scope.convertirFecha(datos.fecha_inicio));
+                    datos.fecha_fin = new Date($scope.convertirFecha(datos.fecha_fin));
+                    datos.fecha_inicio.setMinutes(datos.fecha_inicio_hora.getMinutes()); datos.fecha_inicio.setHours(datos.fecha_inicio_hora.getHours());
+                    datos.fecha_fin.setMinutes(datos.fecha_fin_hora.getMinutes()); datos.fecha_fin.setHours(datos.fecha_fin_hora.getHours());
+                    datos.compensaciones=$scope.selectionday 
+                    $scope.guardarAusencia($scope.empleado.id,datos)
+                }else if(horas==horasDatos){
+                    if(minutos<=minutosDatos){
+                        datos.fecha_inicio = new Date($scope.convertirFecha(datos.fecha_inicio));
+                        datos.fecha_fin = new Date($scope.convertirFecha(datos.fecha_fin));
+                        datos.fecha_inicio.setMinutes(datos.fecha_inicio_hora.getMinutes()); datos.fecha_inicio.setHours(datos.fecha_inicio_hora.getHours());
+                        datos.fecha_fin.setMinutes(datos.fecha_fin_hora.getMinutes()); datos.fecha_fin.setHours(datos.fecha_fin_hora.getHours());
+                        datos.compensaciones=$scope.selectionday 
+                        $scope.guardarAusencia($scope.empleado.id,datos) 
+                    }else{
+                        $scope.mostrarMensaje("La suma del total de horas compensacion es mayor al total de horas de la ausencia!")
+                    }
+                }else{
+                    $scope.mostrarMensaje("La suma del total de horas compensacion es mayor al total de horas de la ausencia!")
+                }
+               
             } else {
                 datos.fecha_inicio = new Date($scope.convertirFecha(datos.fecha_inicio));
                 datos.fecha_fin = new Date($scope.convertirFecha(datos.fecha_fin));
+                $scope.guardarAusencia($scope.empleado.id,datos)
             }
-            var promesa = NuevaAusenciaEmpleado($scope.empleado.id, datos)
+            
+        }
+
+        $scope.guardarAusencia=function (id,datos) {
+            var promesa = NuevaAusenciaEmpleado(id, datos)
             promesa.then(function (dato) {
                 $scope.ausencia = {}
                 $scope.cerrarDialogAusenciasVacaciones()
+                $scope.selectionday=[]
+                $scope.SumaTotalHoras="";
+                $scope.calendarCompensacion.fullCalendar('removeEvents');
                 $scope.mostrarMensaje(dato.mensaje)
+
             })
         }
         $scope.obtenerHistorialEmpleadoAusenciasMedicas = function (filtro) {

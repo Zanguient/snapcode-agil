@@ -10,15 +10,15 @@ module.exports = function (sequelize, Sequelize) {
             field: 'fecha'
         },
         hora_inicio: {
-            type: Sequelize.DATE,
+            type: Sequelize.TIME,
             field: 'hora_inicio'
         },       
         hora_fin: {
-            type: Sequelize.DATE,
+            type: Sequelize.TIME,
             field: 'hora_fin'
         },
         tiempo: {
-            type: Sequelize.INTEGER,
+            type: Sequelize.TIME,
             field: 'tiempo'
         },
         eliminado:{

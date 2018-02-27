@@ -1959,7 +1959,25 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                 primera_baja: req.body.primera_baja,
                 planilla: req.body.planilla
             }).then(function (empleadoAusenciaCreado) {
-                res.json({ mensaje: "Guardado satisfactoriamente!" })
+                if (req.body.compensaciones.length>0) {
+                    req.body.compensaciones.forEach(function (compensacion, index, array) {
+                        RrhhEmpleadoCompensacionAusencia.create({
+                            id_ausencia:empleadoAusenciaCreado.id,
+                            fecha:compensacion.fecha_real,
+                            hora_inicio:compensacion.hora_inicio,
+                            hora_fin:compensacion.hora_fin,
+                            tiempo:compensacion.total,
+                            eliminado:false
+                        }).then(function (compensacionCreada) {
+                            if (index === (array.length - 1)) {
+                                res.json({ mensaje: "Guardado satisfactoriamente!" })
+                            }
+                        })
+                    })
+
+                } else {
+                    res.json({ mensaje: "Guardado satisfactoriamente!" })
+                }
             })
         })
     router.route('/recursos-humanos/ausencias/empleado/:id_empleado/inicio/:inicio/fin/:fin/tipo-ausencia/:tipo_ausencia/tipo/:tipo')
@@ -2120,20 +2138,21 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                         id_tipo: req.params.tipo,
                         porcentaje: clase.porcentaje,
                         dias_descuento: clase.dias_descuento,
-                        habilitado: true,
-                    },{where:{id:clase.id}
-                    }).then(function (claseCreada) {
-                        res.json({mensaje:"Guardado satisfactoriamente!"})
-                    })
+                        habilitado: req.body.habilitado,
+                    }, {
+                        where: { id: clase.id }
+                        }).then(function (claseCreada) {
+                            res.json({ mensaje: "Guardado satisfactoriamente!" })
+                        })
                 } else {
                     RrhhClaseAsuencia.create({
                         nombre: clase.nombre,
-                        id_tipo:  req.params.tipo,
+                        id_tipo: req.params.tipo,
                         porcentaje: clase.porcentaje,
                         dias_descuento: clase.dias_descuento,
                         habilitado: true
                     }).then(function (claseCreada) {
-                        res.json({mensaje:"Guardado satisfactoriamente!"})
+                        res.json({ mensaje: "Guardado satisfactoriamente!" })
                     })
                 }
             });

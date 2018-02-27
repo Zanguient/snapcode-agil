@@ -2415,7 +2415,7 @@ angular.module('agil.servicios')
 			if (filtro.razon_social != "") {
 				cliente = despachos[0].despacho.cliente.razon_social
 			}
-				var data = [["", "", "REPORTE DE DESPACHOS "], ["Vendedor :" +vendedor], ["Cliente :" + cliente], ["Nro", "Vendedor", "Cliente","Direccion","Razón social","Fecha", "Producto", "Cant.", "Desp.","Saldo","S. Transp."]]
+				var data = [["", "", "REPORTE DE PEDIDOS "], ["Vendedor :" +vendedor], ["Cliente :" + cliente], ["Nro", "Vendedor", "Cliente","Direccion","Razón social","Fecha", "Producto", "Cant.", "Desp.","Saldo","S. Transp."]]
 				var totalCosto = 0;
 				for (var i = 0; i < despachos.length; i++) {
 					var detalle_despacho= despachos[i]
@@ -2445,7 +2445,7 @@ angular.module('agil.servicios')
 				wb.SheetNames.push(ws_name);
 				wb.Sheets[ws_name] = ws;
 				var wbout = XLSX.write(wb, { bookType: 'xlsx', bookSST: true, type: 'binary' });
-				saveAs(new Blob([s2ab(wbout)], { type: "application/octet-stream" }), "REPORTE-DESPACHOS.xlsx");
+				saveAs(new Blob([s2ab(wbout)], { type: "application/octet-stream" }), "REPORTE-PEDIDOS.xlsx");
 				blockUI.stop();
 
 			}
@@ -2462,22 +2462,25 @@ angular.module('agil.servicios')
 			if (filtro.razon_social != "") {
 				cliente = despachos[0].despacho.cliente.razon_social
 			} */
-				var data = [["", "", "REPORTE DE DESPACHOS "]/*,  ["Vendedor :" +vendedor], ["Cliente :" + cliente] */, ["Nro","Fecha","Cliente","Razón social","NIT","Destino","Direccion","Cantidad","P/U","Total","Transportista","Costo", "Grupo de Estibaje", "Tipo de Estibaje", "Costo Estibaje","Factura SAP"]]
+				var data = [["", "", "REPORTE DE DESPACHOS "]/*,  ["Vendedor :" +vendedor], ["Cliente :" + cliente] */, ["Nro","Nro. pedido","Vendedor","Fecha","Cod Cliente","Cliente","Razón social","NIT","Destino","Direccion","Producto","Cantidad","P/U","Total","Transportista","Costo", "Grupo de Estibaje", "Tipo de Estibaje", "Costo Estibaje","C.S. transporte","Total Pedido","F. Pedido","Factura SAP"]]
 				var totalCosto = 0;
 				for (var i = 0; i < despachos.length; i++) {
-					var detalle_despacho= despachos[i]
-					detalle_despacho.despacho.usuario.persona.nombre_completo
+					var detalle_despacho= despachos[i]					
 					var columns = [];
 					columns.push(i+1)
-					var fecha = new Date(detalle_despacho.despacho.fecha)
+					columns.push("")
+					columns.push(detalle_despacho.despacho.usuario.persona.nombre_completo)
+					var fecha = new Date(detalle_despacho.despacho.fecha)					
 					var dia=((fecha.getDate())>=10)? fecha.getDate() :"0"+ fecha.getDate()
 					var mes=((fecha.getMonth())>=10)? fecha.getMonth() :"0"+ fecha.getMonth()
 					columns.push(dia+"/"+mes+"/"+fecha.getFullYear())
+					columns.push(detalle_despacho.despacho.cliente.codigo)
 					columns.push(detalle_despacho.despacho.cliente.razon_social)					
 					columns.push(detalle_despacho.despacho.cliente_razon.razon_social)					
 					columns.push(detalle_despacho.despacho.cliente.nit)		
 					columns.push(detalle_despacho.despacho.destino.destino)
-					columns.push(detalle_despacho.despacho.destino.direccion)				
+					columns.push(detalle_despacho.despacho.destino.direccion)	
+					columns.push(detalle_despacho.producto.nombre)				
 					columns.push(detalle_despacho.cantidad_despacho)
 					columns.push(detalle_despacho.producto.precio_unitario)				
 					var total=detalle_despacho.producto.precio_unitario*detalle_despacho.cantidad
@@ -2489,6 +2492,13 @@ angular.module('agil.servicios')
 					columns.push(detalle_despacho.estibaje.nombre)
 					var costoEstibaje = detalle_despacho.estibaje.costo*detalle_despacho.cantidad_despacho
 					columns.push(costoEstibaje)
+					columns.push(detalle_despacho.servicio_transporte)
+					var TotalPedido = detalle_despacho.servicio_transporte+total
+					columns.push(TotalPedido)
+					var fechaPedido= new Date(detalle_despacho.fecha)					
+					var dia2=((fechaPedido.getDate())>=10)? fechaPedido.getDate() :"0"+ fechaPedido.getDate()
+					var mes2=((fechaPedido.getMonth()+1)>=10)? (fechaPedido.getMonth()+1):"0"+ (fechaPedido.getMonth()+1)
+					columns.push(dia2+"/"+mes2+"/"+fechaPedido.getFullYear())
 					columns.push(detalle_despacho.despacho.cliente_razon.codigo_sap)
 					data.push(columns);
 				}						

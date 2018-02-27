@@ -4760,7 +4760,7 @@
                                 <div class="form-group col-sm-4">
                                     <label for="afiliado">Sábado</label>
                                     <label class="checkbox-align">
-                                        <input id="afiliado" name="afiliado" ng-model="vacacion.sabado" class="ace ace-switch ace-switch-5" type="checkbox">
+                                        <input id="afiliado" name="afiliado" ng-change="CalcularDiferenciaDiasVacacion(vacacion)" ng-model="vacacion.sabado" class="ace ace-switch ace-switch-5" type="checkbox">
                                         <span class="lbl check-espaniol"></span>
                                     </label>
                                 </div>
@@ -5162,7 +5162,7 @@
 
         <div class="row">
             <div class="modal-footer wizard-actions">
-                <button class="btn btn-primary btn-sm" ng-click="cerrarDialogCompensacion()">
+                <button ng-if="otraAusencia.id" class="btn btn-primary btn-sm" ng-click="GuardarFeriadosCalendario()">
                     <i class="glyphicon glyphicon-floppy-disk"></i>Guardar
                 </button>
                 <button class="btn btn-danger btn-sm" ng-click="cerrarDialogCompensacion()">
@@ -5446,7 +5446,7 @@
                     <div class="form-group col-sm-3">
                         <label for="afiliado"></label>
                         <label class="checkbox-align">
-                            <input name="" ng-click="calcularDatosRolTurno(rolTurno)" ng-model="rolTurno.tipo" class="ace ace-switch ace-switch-5 big-switch"
+                            <input ng-click="calcularDatosRolTurno(rolTurno)" ng-model="rolTurno.tipo" class="ace ace-switch ace-switch-5 big-switch"
                                 type="checkbox">
                             <span class="lbl" data-lbl="Fijo&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Temporal"></span>
                         </label>
