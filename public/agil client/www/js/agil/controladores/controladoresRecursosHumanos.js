@@ -199,6 +199,7 @@ angular.module('agil.controladores')
             $scope.eliminarPopup($scope.IdModalVerificarCuenta)
             $scope.eliminarPopup($scope.idModalImpresionHojaVida)
             $scope.eliminarPopup($scope.idModalNuevoAnticipoRegularTodos)
+            $scope.eliminarPopup($scope.idEliminarUsuarioRh)
         });
         $scope.inicio = function () {
             $scope.listYearsAnticipo = $scope.obtenerAnios(2017)
@@ -1452,7 +1453,7 @@ angular.module('agil.controladores')
                 $scope.RecursosHumanosEmpleados = dato.pacientes;
 
                 $scope.RecursosHumanosEmpleados.forEach(function (empleado) {
-                    empleado.activo = (empleado.activo == 0) ? false : true
+                    empleado.activo = (empleado.activo == 0) ? true : false
 
                 });
                 if (seleccionar) {
@@ -1585,14 +1586,17 @@ angular.module('agil.controladores')
         };
         $scope.changeActivoEmpleado = function (empleado) {
             console.log(empleado)
+            empleado.activo=(empleado.activo==false)?true:false
             var promesa = UsuarioRecursosHUmanosActivo(empleado)
             promesa.then(function (dato) {
+                empleado.activo=(empleado.activo==true)?false:true
+               /*  $scope.recargarItemsTabla() */
                 $scope.mostrarMensaje(dato.mensaje)
             })
         }
         $scope.EliminarUsuarioRh = function (empleado) {
             console.log(empleado)
-            empleado.activo = (empleado.activo == true) ? false : true
+            empleado.eliminado = true
             var promesa = UsuarioRecursosHUmanosActivo(empleado)
             promesa.then(function (dato) {
                 $scope.cerrarDialogEliminarUsuarioRh()

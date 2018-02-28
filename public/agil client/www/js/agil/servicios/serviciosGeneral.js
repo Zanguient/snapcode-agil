@@ -2368,7 +2368,7 @@ angular.module('agil.servicios')
 				var doc = new PDFDocument({ compress: false, size: 'letter', margin: 10 });
 				var stream = doc.pipe(blobStream());
 				// draw some text
-				var totalCosto = 0;
+				var totalCosto = 0,totalTransporte=0;
 				var y = 140, itemsPorPagina = 24, items = 0, pagina = 1, totalPaginas = Math.ceil(despachos.length / itemsPorPagina);
 				DibujarCabeceraPDFDespacho(doc, 1, totalPaginas, despachos, filtro, usuario);
 				doc.font('Helvetica', 8);
@@ -2392,7 +2392,13 @@ angular.module('agil.servicios')
 						DibujarCabeceraPDFDespacho(doc, pagina, totalPaginas, despachos, filtro, usuario);
 						doc.font('Helvetica', 8);
 					}
+					totalCosto+=detalle_despacho.cantidad
+					totalTransporte+=detalle_despacho.servicio_transporte
 				}
+				doc.font('Helvetica-Bold', 8);
+				doc.text("TOTALES:", 300, y, { width: 80 });
+				doc.text(totalCosto, 420, y, { width: 80 });
+				doc.text("Bs. " +totalTransporte + ".-", 500, y, { width: 80 });
 				doc.end();
 				stream.on('finish', function () {
 					var fileURL = stream.toBlobURL('application/pdf');

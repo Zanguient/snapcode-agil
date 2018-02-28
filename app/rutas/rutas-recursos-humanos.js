@@ -443,15 +443,20 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
         })
     router.route('/usuario-recurso-humano/:id_empleado')
         .put(function (req, res) {
-            var mn = (req.body.activo == true) ? false : true
+            var activo
+           if(req.body.eliminado){
+               activo = req.body.eliminado
+           }else{
+            activo = req.body.activo
+           }
             MedicoPaciente.update({
-                eliminado: req.body.activo
+                eliminado: activo
             }, {
                     where: {
                         id: req.body.id
                     }
                 }).then(function (personaActualizada) {
-                    var mn = (req.body.activo == true) ? 'activo' : 'inactivo'
+                   /*  var mn = (req.body.activo == true) ? 'activo' : 'inactivo' */
                     res.json({ mensaje: "Usuario actualizado satisfactoriamente!" });
                 })
 

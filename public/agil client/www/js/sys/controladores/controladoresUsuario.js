@@ -26,7 +26,7 @@ angular.module('agil.controladores')
 		}
 		/* var sucursales=($scope.usuarioSesion.empresa)?$scope.usuarioSesion.empresa.sucursales:[];
 		$scope.llenarSucursales(sucursales); */
-		$scope.buscarSucursales($scope.usuarioSesion.id_empresa)
+	/* 	$scope.buscarSucursales($scope.usuarioSesion.id_empresa) */
 		/* setTimeout(function() {
 			ejecutarScriptsTabla('tabla-usuarios',9);
 		},2000); */
@@ -84,7 +84,7 @@ angular.module('agil.controladores')
 		var sucursales;
 		if($scope.usuarioSesion.empresa){
 			sucursales=$scope.usuarioSesion.empresa.sucursales;
-			$scope.llenarSucursales(sucursales);
+			/* $scope.llenarSucursales(sucursales); */
 			$scope.seleccionarSucursales($scope.usuario.sucursales);
 			$scope.abrirPopup($scope.idModalWizardUsuarioEdicion);
 		}else{
