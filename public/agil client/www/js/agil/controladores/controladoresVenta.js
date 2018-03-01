@@ -120,7 +120,7 @@ angular.module('agil.controladores')
 									$scope.mostrarMensaje(mensaje.uno + " " + mensaje.dos + ", pero puede seguir consumiendo")
 									$scope.blockerVenta = true
 								}
-								
+
 							} else {
 								if (ventaActual.cliente.bloquear_limite_credito == true) {
 									$scope.mostrarMensaje(mensaje.uno + " " + mensaje.dos + " no puede realizar mas compras")
@@ -129,7 +129,7 @@ angular.module('agil.controladores')
 									$scope.mostrarMensaje(mensaje.uno + " " + mensaje.dos + ", pero puede seguir consumiendo")
 									$scope.blockerVenta = true
 								}
-								
+
 							}
 						}
 					});
@@ -288,8 +288,7 @@ angular.module('agil.controladores')
 			if (query != "" && query != undefined) {
 				var promesa = ListaProductosEmpresa($scope.usuario.id_empresa, query);
 				promesa.then(function (datos) {
-					if (datos.length > 1) {
-					} else {
+					if (datos.length == 1) {
 						$scope.establecerProducto(datos[0])
 					}
 					blockUI.stop()
@@ -302,7 +301,7 @@ angular.module('agil.controladores')
 			}
 
 		}
-		
+
 		$scope.buscarProducto = function (query) {
 			blockUI.start()
 			if (query != "" && query != undefined) {
@@ -317,7 +316,7 @@ angular.module('agil.controladores')
 					$scope.mostrarMensaje(err.message)
 					blockUI.stop()
 				})	 */
-				blockUI.stop()			
+				blockUI.stop()
 				return promesa;
 			}
 
@@ -565,6 +564,7 @@ angular.module('agil.controladores')
 				sumaTotal = sumaTotal + $scope.venta.detallesVenta[i].total;
 			}
 			$scope.venta.total = Math.round((sumaTotal) * 1000) / 1000;
+			$scope.venta.pagado = $scope.venta.total;
 		}
 
 		$scope.calcularSaldo = function () {
@@ -689,7 +689,7 @@ angular.module('agil.controladores')
 
 		$scope.imprimirRecibo = function (data, venta, pago) {
 			blockUI.start();
-			var doc = new PDFDocument({ size: [227, 353], margin: 10 });
+			var doc = new PDFDocument({compress: false, size: [227, 353], margin: 10 });
 			var stream = doc.pipe(blobStream());
 			doc.moveDown(2);
 			doc.font('Helvetica-Bold', 8);
@@ -848,7 +848,7 @@ angular.module('agil.controladores')
 
 		}
 		$scope.imprimirFiltroCajaCartaOficio = function (ventas, fechaInicio, fechaFin) {
-			var doc = new PDFDocument({ size: [612, 792], margin: 0 });
+			var doc = new PDFDocument({compress: false, size: [612, 792], margin: 0 });
 			var stream = doc.pipe(blobStream());
 			var itemsPorPagina = 20;
 			if ($scope.trueDetalle) {
@@ -1124,7 +1124,7 @@ angular.module('agil.controladores')
 
 
 		$scope.imprimirReporteCierreCajaCartaOficio = function (papel, cierre, ventas, ventasCredito, pagos) {
-			var doc = new PDFDocument({ size: papel, margin: 0 });
+			var doc = new PDFDocument({compress: false, size: papel, margin: 0 });
 			var stream = doc.pipe(blobStream());
 			doc.font('Helvetica-Bold', 15);
 			doc.text("CIERRE DE CAJA", 55, 50);
@@ -1201,7 +1201,7 @@ angular.module('agil.controladores')
 		}
 
 		$scope.imprimirReporteCierreCajaRollo = function (papel, cierre, ventas, ventasCredito, pagos) {
-			var doc = new PDFDocument({ size: papel, margins: { top: 10, bottom: 10, left: 10, right: 20 } });
+			var doc = new PDFDocument({compress: false, size: papel, margins: { top: 10, bottom: 10, left: 10, right: 20 } });
 			var stream = doc.pipe(blobStream());
 			doc.moveDown(2);
 			doc.font('Helvetica-Bold', 8);
@@ -1329,7 +1329,43 @@ angular.module('agil.controladores')
 			$scope.editar_precio = false;
 			$scope.detalleVenta = { producto: { activar_inventario: true }, cantidad: 1, descuento: 0, recargo: 0, ice: 0, excento: 0, tipo_descuento: false, tipo_recargo: false }
 			$scope.abrirPopup($scope.idModalWizardCompraEdicion);
+			angular.element($window).unbind("keydown");
+			angular.element($window).bind("keydown", function (e) {
+				if (e.keyCode == 115) {
+					$scope.venderProformaDirectoNormal($scope.venta);
+				}
+			});
 			$scope.enfocar('nit');
+		}
+
+
+		$scope.venderProformaDirectoNormal = function (venta) {
+			if (venta.detallesVenta.length > 0) {
+				var promesa = ClientesNit($scope.usuario.id_empresa, 0);
+				promesa.then(function (results) {
+					if (results.length == 1 || results.length > 1) {
+						$scope.establecerCliente(results[0]);
+					} else {
+						$scope.venta.cliente.razon_social = null;
+					}
+					venta.movimiento = $.grep($scope.movimientosEgreso, function (e) { return e.nombre_corto == $scope.diccionario.EGRE_PROFORMA; })[0];
+					venta.tipoPago = $.grep($scope.tiposPago, function (e) { return e.nombre == $scope.diccionario.TIPO_PAGO_CONTADO; })[0];
+					$scope.obtenerTipoEgreso(venta.movimiento);
+					$scope.cambiarTipoPago(venta);
+					var fechaActual = new Date();
+					venta.fechaTexto = fechaActual.getDate() + "/" + (fechaActual.getMonth() + 1) + "/" + fechaActual.getFullYear();
+					fecha = fechaActual;
+					venta.pagado = venta.total;
+					venta.cambio = 0;
+					$scope.usuario.empresa.usar_vencimientos = false;
+					$scope.guardarVenta(true, venta);
+				});
+			} else {
+				$scope.$apply(function () {
+                    $scope.message = "¡Debe agregar al menos un producto para realizar la transacción!";
+                    $scope.mostrarMensaje($scope.message);
+                });
+			}
 		}
 
 		$scope.verVenta = function (venta) {
@@ -1507,7 +1543,9 @@ angular.module('agil.controladores')
 				$scope.venta.sucursal =/*$scope.sucursales.length==1?*/$scope.sucursales[0]/*:null*/;
 			}
 			if ($scope.venta.sucursal) {
-				$scope.obtenerAlmacenesActividades($scope.venta.sucursal.id);
+				if ($scope.venta.almacen ==null) {
+					$scope.obtenerAlmacenesActividades($scope.venta.sucursal.id);
+				}
 			}
 			if (!movimiento) {
 				$scope.venta.movimiento = $scope.movimientosEgreso[0];
@@ -1908,12 +1946,12 @@ angular.module('agil.controladores')
 			$scope.textoBusqueda = "";
 			if ($scope.venta.almacen) {
 				$scope.almacenBusqueda = $scope.venta.almacen;
-				$scope.buscarInventarios($scope.almacenBusqueda.id, $scope.paginaActual, $scope.itemsPorPagina, $scope.textoBusqueda, $scope.columna, $scope.direccion,$scope.cantidadInv);
+				$scope.buscarInventarios($scope.almacenBusqueda.id, $scope.paginaActual, $scope.itemsPorPagina, $scope.textoBusqueda, $scope.columna, $scope.direccion, $scope.cantidadInv);
 			}
 			$scope.abrirPopup($scope.idModalInventario);
 		}
 
-		$scope.buscarInventarios = function (idAlmacen, pagina, itemsPagina, texto, columna, direccion,cantidad) {
+		$scope.buscarInventarios = function (idAlmacen, pagina, itemsPagina, texto, columna, direccion, cantidad) {
 			blockUI.start();
 			$scope.itemsPorPagina = itemsPagina;
 			if (texto == "" || texto == null) {
@@ -1922,7 +1960,7 @@ angular.module('agil.controladores')
 				$scope.textoBusqueda = texto;
 			}
 			$scope.paginaActual = pagina;
-			var promesa = InventarioPaginador($scope.usuario.id_empresa, idAlmacen, pagina, itemsPagina, texto, columna, direccion,cantidad);
+			var promesa = InventarioPaginador($scope.usuario.id_empresa, idAlmacen, pagina, itemsPagina, texto, columna, direccion, cantidad);
 			promesa.then(function (dato) {
 				var productos = dato.productos;
 				//var mproductos=[];
@@ -1966,14 +2004,14 @@ angular.module('agil.controladores')
 				$("#" + columna + "p").removeClass("fa-sort");
 			}
 			$scope.columna = columna;
-			$scope.buscarInventarios($scope.almacenBusqueda.id, $scope.paginaActual, $scope.itemsPorPagina, $scope.textoBusqueda, $scope.columna, $scope.direccion,$scope.cantidadInv);
+			$scope.buscarInventarios($scope.almacenBusqueda.id, $scope.paginaActual, $scope.itemsPorPagina, $scope.textoBusqueda, $scope.columna, $scope.direccion, $scope.cantidadInv);
 		}
 
 		$scope.verificarPulso = function (evento, textoBusqueda) {
 			if (evento.keyCode === 13) { //enter pressed
 				$scope.textoBusqueda = textoBusqueda;
 				if ($scope.almacenBusqueda) {
-					$scope.buscarInventarios($scope.almacenBusqueda.id, 1, $scope.itemsPorPagina, $scope.textoBusqueda, $scope.columna, $scope.direccion,$scope.cantidadInv);
+					$scope.buscarInventarios($scope.almacenBusqueda.id, 1, $scope.itemsPorPagina, $scope.textoBusqueda, $scope.columna, $scope.direccion, $scope.cantidadInv);
 				}
 			}
 		}
@@ -1988,6 +2026,7 @@ angular.module('agil.controladores')
 			$scope.eliminarPopup($scope.idModalInventario);
 			$scope.eliminarPopup($scope.idModalPanelVentasCobro);
 			$scope.eliminarPopup($scope.idModalEdicionVendedor);
+			$scope.eliminarPopup($scope.idModalImpresionVencimiento);
 		});
 
 		$scope.UsarLectorDeBarra = function () {

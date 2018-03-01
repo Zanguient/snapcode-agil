@@ -222,8 +222,8 @@
 								<label class="control-label col-xs-12 col-sm-3 no-padding-right">Municipio</label>
 
 								<div class="col-xs-12 col-sm-9">
-									<select required id="municipio" name="municipioM" ng-model="sucursal.id_municipio" data-placeholder="Click para escoger">
-										<option ng-selected="municipio.id==sucursal.id_municipio" ng-repeat="municipio in municipios" value="{{municipio.id}}">{{municipio.nombre}}</option>
+									<select required id="municipio" name="municipioM"  ng-options="municipio as municipio.nombre for municipio in municipios track by municipio.id" ng-model="sucursal.municipio">
+										<!-- <option ng-selected="municipio.id==sucursal.id_municipio" ng-repeat="municipio in municipios" value="{{municipio.id}}">{{municipio.nombre}}</option> -->
 									</select>
 								</div>
 							</div>

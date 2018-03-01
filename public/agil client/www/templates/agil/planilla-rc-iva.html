@@ -376,12 +376,12 @@
             </div>
             <!-- div.table-responsive -->
             <div class="table-planillas-rc-iva">
-                <table class="table table-bordered table-hover">
+                <table class="table table-bordered">
                     <thead>
                         <tr>
                             <th class="center">
                                 <label class="pos-rel">
-                                    <input type="checkbox" class="ace">
+                                    <input type="checkbox" ng-model="selectAll" ng-change="checkAll(planilla.RecursosHumanosEmpleados, selectAll)" class="ace">
                                     <span class="lbl"></span>
                                 </label>
                             </th>
@@ -410,11 +410,11 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr ng-repeat="empleado in planilla.RecursosHumanosEmpleados">
+                        <tr  ng-class="{ 'selectedRow' : empleado.checked }" ng-repeat="empleado in planilla.RecursosHumanosEmpleados">
                             <td class="center">
-                                <label class="pos-rel">
-                                    <input name="switch-field-1" type="checkbox" class="ace">
-                                    <span class="lbl"></span>
+                                <label class="pos-rel" >
+                                    <input name="switch-field-1" ng-model="empleado.checked" type="checkbox" class="ace" ng-change="checkEmpleado($index, empleado, empleado.checked)">
+                                    <span class="lbl" ></span>
                                 </label>
                             </td>
                             <td>{{$index+1}}</td>
@@ -431,16 +431,16 @@
                             <td>{{empleado.rcIva13}}</td>
                             <td>{{empleado.dos_SMN13}}</td>
                             <td>{{empleado.f110}}</td>
-                            <td>{{empleado.rcIvaFisico}}</td>
+                            <td>{{empleado.rcIvaFisco}}</td>
                             <td>{{empleado.saldoDependiente}}</td>
                             <td>{{empleado.saldoAnterior}}</td>
-                            <td>10</td>
-                            <td>180</td>
-                            <td>0</td>
-                            <td>180</td>
-                            <td>0</td>
-                            <td>0</td>
-                            <td class="table__side-rc-iva">
+                            <td>{{empleado.actualizacion}}</td>
+                            <td>{{empleado.saldoActualizado}}</td>
+                            <td>{{empleado.saldoTotal}}</td>
+                            <td>{{empleado.saldoUtilizado}}</td>
+                            <td>{{empleado.rcIvaMes}}</td>
+                            <td>{{empleado.saldoNuevo}}</td>
+                            <td ng-class="{ 'selectedRow' : empleado.checked }" class="table__side-rc-iva">
                                 <div class="hidden-sm hidden-xs action-buttons">
                                     <a class="blue" href="javascript:void(0)">
                                         <i class="ace-icon fa fa-search-plus bigger-130"></i>
@@ -451,35 +451,30 @@
                                     <a class="red" href="javascript:void(0)">
                                         <i class="ace-icon fa fa-trash-o bigger-130"></i>
                                     </a>   
-                                     <a class="Blue" href="javascript:void(0)" ng-click="abrirDialogFormulario110()">
+                                     <a class="Blue" href="javascript:void(0)" ng-click="abrirDialogFormulario110(empleado)">
                                         <i class="ace-icon icono-impuestos bigger-150"></i>
                                     </a>
                                 </div>   
                             </td>
                         </tr>
                         <tr>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
+                            <td colspan="6"></td>
                             <td>TOTALES</td>
-                            <td>59400</td>
-                            <td>24000</td>
-                            <td>35400</td>
-                            <td>4602</td>
-                            <td>402</td>
-                            <td>3120/td&gt;
-                            </td><td>1080</td>
-                            <td>0</td>
-                            <td>1020</td>
-                            <td>60</td>
-                            <td>1080</td>
-                            <td>0</td>
-                            <td>1080</td>
-                            <td>0</td>
-                            <td>0</td>
-                            <td>0</td>
+                            <td>{{netoImponible}}</td>
+                            <td>{{sumaDos_SMN}}</td>
+                            <td>{{sumaDiferencia}}</td>
+                            <td>{{sumarcIva13}}</td>
+                            <td>{{sumaDos_SMN13}}</td>
+                            <td>{{sumaF110}}</td>
+                            <td>{{sumaRcIvaFisco}}</td>
+                            <td>{{sumaSaldoDependiente}}</td>
+                            <td>{{sumaSaldoAnterior}}</td>
+                            <td>{{sumaActualizacion}}</td>
+                            <td>{{sumaSaldoActualizado}}</td>
+                            <td>{{sumaSaldoTotal}}</td>
+                            <td>{{sumaSaldoUtilizado}}</td>
+                            <td>{{sumaRcIvaMes}}</td>
+                            <td>{{sumaSaldoNuevo}}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -491,28 +486,30 @@
     <div id="dialog-formulario-110" class="modal">
         <div class="modal-header ficha">
             <h4 class="modal-title" id="myModalLabel"> Carga de Formulario 110</h4>
-            <h5 class="modal-title">Juan Perez Ardaya</h5>
+            <h5 class="modal-title">{{sueldo.persona.nombre_completo}}</h5>
         </div>
         <div class="modal-body">
             <form>
                 <div class="row">
                     <div class="form-group col-sm-12">
                         <label for="sexo">Monto Declarado</label>
-                        <input type="text" class="form-control" id="nombres" name="nombres" placeholder="Desde">
+                        <input type="number" class="form-control" id="nombres" name="nombres" placeholder="Monto Declarado" ng-model="sueldo.montoDeclarado">
                     </div>
-                    <div class="form-group col-sm-12">
-                        <label for="sexo">IVA CF</label>
-                        <input type="text" class="form-control" id="nombres" name="nombres" placeholder="Desde">
+                    <div class="form-group col-sm-12" ng-class="{ 'has-error' : valido }">
+                        <label>IVA CF</label>
+                        <input type="number" ng-change="calcularRCIVA(sueldo)" class="form-control" id="nombres" name="nombres" placeholder="IVA CF" ng-model="sueldo.ivaCF">
+                        <p ng-show="valido" class="help-block">{{mensage}}</p>
                     </div>
+
                     <div class="form-group col-sm-12">
                         <label for="sexo">Número de Facturas</label>
-                        <input type="text" class="form-control" id="nombres" name="nombres" placeholder="Desde">
+                        <input type="number" class="form-control" id="nombres" name="nombres" placeholder="Número de Facturas" ng-model="sueldo.muneroFacturas">
                     </div>
                 </div>
             </form>
         </div><!-- /.row -->
         <div class="modal-footer wizard-actions">
-            <button class="btn btn-primary btn-sm" ng-click="cerrarDialogFormulario110()"><i class="glyphicon glyphicon-floppy-disk"></i>Guardar
+            <button class="btn btn-primary btn-sm" ng-click="modificarFormulario110(sueldo)"><i class="glyphicon glyphicon-floppy-disk"></i>Guardar
             </button>
             <button class="btn btn-danger btn-sm" ng-click="cerrarDialogFormulario110()"><i class="ace-icon fa fa-times"></i>Cancelar
             </button>
@@ -537,19 +534,14 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <th scope="row">1</th>
-                        <td>Juan Pérez</td>
-                        <td contenteditable="true" class="editable">100</td>
-                        <td contenteditable="true" class="editable">100</td>
-                        <td contenteditable="true" class="editable">200</td>
-                    </tr>
-                    <tr>
-                        <th scope="row">2</th>
-                        <td>Juan Valdez</td>
-                        <td contenteditable="true" class="editable">400</td>
-                        <td contenteditable="true" class="editable">100</td>
-                        <td contenteditable="true" class="editable">500</td>
+                    <tr ng-repeat="empleado in EmpleadosSeleccionados">
+                        <th scope="row">{{$index+1}}</th>
+                        <td>{{empleado.persona.nombre_completo}}</td>
+                        <td>
+                            <input type="number" enter ng-model="empleado.montoDeclarado">
+                        </td>
+                        <td><input type="number" enter ng-model="empleado.ivaCF"></td>
+                        <td ><input type="number" enter ng-model="empleado.muneroFacturas"></td>
                     </tr>
                 </tbody>
             </table>
@@ -563,7 +555,7 @@
                 <span class="ace-icon fa fa-cloud-download"></span>
                 Ejemplo de Importacion
             </button>
-            <button class="btn btn-primary btn-sm" ng-click="cerrarDialogFormularioGeneral110()">
+            <button class="btn btn-primary btn-sm" ng-click="modificarFormularioGeneral110(EmpleadosSeleccionados)">
                 <span class="glyphicon glyphicon-floppy-disk"></span>
                 Guardar
             </button>

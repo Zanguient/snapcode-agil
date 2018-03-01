@@ -600,6 +600,7 @@ angular.module('agil.controladores')
             }else{
                 var movimiento=venta.movimiento.nombre_corto;
                 venta.$save(function(res){
+                    console.log("res ==================", res);
                     if(res.hasError){
                         blockUI.stop();
                         $scope.crearNuevaVenta();

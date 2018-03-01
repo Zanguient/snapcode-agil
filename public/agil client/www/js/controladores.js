@@ -1422,10 +1422,10 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 			}
 		}
 
-		$scope.guardarDespachos = function () {
+		$scope.guardarDespachos = function (id_almacen_despacho) {
 			blockUI.start();
 			var fecha = new Date()
-			GuardarGtmDetalleDespachoAlerta.update({ id_empresa: $scope.usuario.id_empresa, fecha: fecha }, $scope.gtm_detalles_despacho_seleccionados, function (res) {
+			GuardarGtmDetalleDespachoAlerta.update({ id_empresa: $scope.usuario.id_empresa, fecha: fecha }, {detalles_despacho:$scope.gtm_detalles_despacho_seleccionados,id_almacen:id_almacen_despacho}, function (res) {
 				$scope.vencimientoTotal = $scope.vencimientoTotal - $scope.gtm_detalles_despacho_seleccionados.length;
 				$scope.verificarDespachos($scope.usuario.id_empresa);
 				blockUI.stop();

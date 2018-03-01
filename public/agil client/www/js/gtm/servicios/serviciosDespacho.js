@@ -133,7 +133,7 @@ angular.module('agil.servicios')
 	})
 	
 	.factory('GtmDespacho', function ($resource) {
-		return $resource(restServer + "gtm-detalle-despacho-despachado/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion/inicio/:inicio/fin/:fin/transportista/:transportista/tipo/:tipo/grupo/:grupo/estado/:estado", null,
+		return $resource(restServer + "gtm-detalle-despacho-despachado/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion/inicio/:inicio/fin/:fin/transportista/:transportista/tipo/:tipo/grupo/:grupo/estado/:estado/vendedor/:vendedor", null,
 			{
 				'update': { method: 'PUT' }
 			});
@@ -155,6 +155,7 @@ angular.module('agil.servicios')
 				tipo: paginator.filter.tipo,
 				grupo: paginator.filter.grupo,
 				estado: paginator.filter.estado,
+				vendedor: paginator.filter.vendedor,
 			}, function (entidad) {
 				delay.resolve(entidad);
 			}, function (error) {

@@ -277,7 +277,7 @@
                                     <input name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="empleado.activo" ng-change="changeActivoEmpleado(empleado)"
                                     />
                                     <span class="lbl check-descuento"></span>
-                                    
+
                                 </label>
                                 <!-- {{empleado.activo}} -->
                             </td>
@@ -4761,7 +4761,8 @@
                                 <div class="form-group col-sm-4">
                                     <label for="afiliado">Sábado</label>
                                     <label class="checkbox-align">
-                                        <input id="afiliado" name="afiliado" ng-change="CalcularDiferenciaDiasVacacion(vacacion)" ng-model="vacacion.sabado" class="ace ace-switch ace-switch-5" type="checkbox">
+                                        <input id="afiliado" name="afiliado" ng-change="CalcularDiferenciaDiasVacacion(vacacion)" ng-model="vacacion.sabado" class="ace ace-switch ace-switch-5"
+                                            type="checkbox">
                                         <span class="lbl check-espaniol"></span>
                                     </label>
                                 </div>
@@ -4946,19 +4947,22 @@
                     <div class="col-sm-4">
                         <div class="form-group">
                             <label for="ciudad">Tipo de baja</label>
-                            <input type="text"  required class="form-control" ng-model-options="{updateOn: 'submit'}" ng-model="clase.nombre" id="ciudad" name="ciudad" placeholder="tipo de baja" capitalize>
+                            <input type="text" required class="form-control" ng-model-options="{updateOn: 'submit'}" ng-model="clase.nombre" id="ciudad"
+                                name="ciudad" placeholder="tipo de baja" capitalize>
                         </div>
                     </div>
                     <div class="col-sm-3">
                         <div class="form-group">
                             <label for="ciudad">Porcentaje</label>
-                            <input type="number" required class="form-control" ng-model-options="{updateOn: 'submit'}" ng-model="clase.porcentaje" id="ciudad" name="ciudad" placeholder="Porcentaje">
+                            <input type="number" required class="form-control" ng-model-options="{updateOn: 'submit'}" ng-model="clase.porcentaje" id="ciudad"
+                                name="ciudad" placeholder="Porcentaje">
                         </div>
                     </div>
                     <div class="col-sm-3">
                         <div class="form-group">
                             <label for="dias">Dias desc.</label>
-                            <input type="number" required class="form-control" ng-model-options="{updateOn: 'submit'}" ng-model="clase.dias_descuento" id="ciudad" name="dias" placeholder="Dias">
+                            <input type="number" required class="form-control" ng-model-options="{updateOn: 'submit'}" ng-model="clase.dias_descuento"
+                                id="ciudad" name="dias" placeholder="Dias">
                         </div>
                     </div>
                     <div class="col-sm-2">
@@ -5360,14 +5364,14 @@
                     <div class="col-sm-5">
                         <div class="form-group">
                             <label for="ciudad">Tipo</label>
-                            <input type="text"  ng-model-options="{updateOn: 'submit'}" class="form-control" ng-model="clase.nombre" id="ciudad" name="ciudad"
+                            <input type="text" ng-model-options="{updateOn: 'submit'}" class="form-control" ng-model="clase.nombre" id="ciudad" name="ciudad"
                                 placeholder="tipo de ausencia" capitalize>
                         </div>
                     </div>
                     <div class="col-sm-5">
                         <div class="form-group">
                             <label for="ciudad">Descontar %</label>
-                            <input type="number"  ng-model-options="{updateOn: 'submit'}" class="form-control" ng-model="clase.porcentaje" id="ciudad"
+                            <input type="number" ng-model-options="{updateOn: 'submit'}" class="form-control" ng-model="clase.porcentaje" id="ciudad"
                                 name="ciudad" placeholder="Porcentaje">
                         </div>
                     </div>
@@ -7658,7 +7662,7 @@
                                                 <label class="ace-file-input ace-file-multiple">
                                                     <img ng-if="nuevoRH.id" src="{{nuevoRH.persona.imagen}}" width="100" heigth=>
                                                     <input type="file" id="imagen-persona" onchange="uploadImage(this,'imagen-persona-oculto')" />
-                                                    <input id="imagen-persona-oculto" ng-model="nuevoRH.persona.imagen" name="imagen" type="hidden" ng-update-hidden>
+                                                    <input id="imagen-persona-oculto" ng-model="nuevoRH.persona.imagen" name="imagen" type="hidden" ng-update-hidden form="datosPersonalesForm">
 
                                                 </label>
                                             </div>
@@ -7669,7 +7673,7 @@
                                             </div>
                                             <div class="col-lg-7">
                                                 <input type="text" id="apellido_paterno" ng-model="nuevoRH.persona.apellido_paterno" placeholder="Apellido Paterno" class="form-control"
-                                                />
+                                                form="datosPersonalesForm"/>
                                             </div>
                                         </div>
                                         <div class="row form-group">
@@ -7678,7 +7682,7 @@
                                             </div>
                                             <div class="col-lg-7">
                                                 <input type="text" id="apellido_materno" ng-model="nuevoRH.persona.apellido_materno" placeholder="Apellido Materno" class="form-control"
-                                                />
+                                                form="datosPersonalesForm"/>
                                             </div>
 
                                         </div>
@@ -7687,7 +7691,7 @@
                                                 <label for="nombres">Nombres</label>
                                             </div>
                                             <div class="col-lg-7">
-                                                <input type="text" id="nombres" ng-model="nuevoRH.persona.nombres" placeholder="Nombres" class="form-control" />
+                                                <input type="text" id="nombres" ng-model="nuevoRH.persona.nombres" placeholder="Nombres" class="form-control" form="datosPersonalesForm"/>
                                             </div>
                                         </div>
                                         <div class="row form-group">
@@ -7695,7 +7699,7 @@
                                                 <label for="ci">C.I.</label>
                                             </div>
                                             <div class="col-lg-4">
-                                                <input type="text" ng-change="copiarCodigodeCi(nuevoRH)" id="ci" ng-model="nuevoRH.persona.ci" placeholder="C.I" class="form-control"
+                                                <input type="text" ng-change="copiarCodigodeCi(nuevoRH)" id="ci" ng-model="nuevoRH.persona.ci" placeholder="C.I" class="form-control" form="datosPersonalesForm"
                                                 />
                                             </div>
                                             <div class="col-lg-1">
@@ -7704,9 +7708,8 @@
                                             <div class="col-lg-2">
                                                 <label>
                                                     <input name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="nuevoRH.activoCopiaCodigo" ng-change="copiarCodigodeCi(nuevoRH)"
-                                                    />
+                                                    form="datosPersonalesForm"/>
                                                     <span class="lbl check-descuento"></span>
-
                                                 </label>
                                             </div>
 
@@ -7848,7 +7851,7 @@
 
                     <div class="modal-footer wizard-actions">
 
-                        <button class="btn btn-sm btn-prev">
+                        <button type="button" class="btn btn-sm btn-prev">
                             <i class="ace-icon fa fa-arrow-left"></i>
                             Anterior
                         </button>
@@ -7859,7 +7862,7 @@
                             <i class="ace-icon fa fa-arrow-right icon-on-right"></i>
                         </button>
 
-                        <button class="btn btn-danger btn-sm pull-left" data-dismiss="modal" ng-click="cerrarDialogRhNuevo()">
+                        <button type="button" class="btn btn-danger btn-sm pull-left" data-dismiss="modal" ng-click="cerrarDialogRhNuevo()">
                             <i class="ace-icon fa fa-times"></i>
                             Cancelar
                         </button>

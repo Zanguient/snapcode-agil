@@ -76,6 +76,9 @@
 						<td>
 							<label>Estado</label>&nbsp
 						</td>
+						<td>
+								<label>Vendedor</label>&nbsp
+							</td>
 					</tr>
 					<tr>
 						<td>
@@ -98,7 +101,10 @@
 						</td>
 						<td>
 							<input type="text" ng-model="filtro.estado">
-						</td>						
+						</td>	
+						<td>
+								<input type="text" ng-model="filtro.vendedor">
+							</td>					
 					</tr>
 				</tbody>
 			</table>
@@ -138,6 +144,7 @@
 							N°
 						</th>
 						<th>Fecha</th>
+						<th>Vendedor</th>
 						<th>Cliente</th>
 						<th>S. Transporte</th>
 						<th>Transportista</th>
@@ -156,6 +163,7 @@
 							{{$index+1}}
 						</td>
 						<td>{{gtm_detalle_despacho.fecha | date:"dd/MM/yyyy"}}</td>
+						<td>{{gtm_detalle_despacho.despacho.usuario.persona.nombre_completo}}</td>
 						<td>{{gtm_detalle_despacho.despacho.cliente.razon_social}}</td>
 						<td>{{gtm_detalle_despacho.servicio_transporte}}</td>
 						<td>{{gtm_detalle_despacho.transportista.persona.nombre_completo}}</td>

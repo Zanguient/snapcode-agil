@@ -207,3 +207,7 @@
 .icono-file-excel:before {
   content: "\eae2";
 }
+
+.selectedRow{
+    background-color: #dff0d8;
+}

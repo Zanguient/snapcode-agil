@@ -192,6 +192,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Farmacia, Pers
 								include: [{ model: Clase, as: 'impresionFactura' },
 								{ model: Clase, as: 'tipoFacturacion' },
 								{ model: Clase, as: 'tamanoPapelFactura' },
+								{ model: Clase, as: 'tamanoPapelNotaVenta' },
 								{ model: Clase, as: 'tituloFactura' },
 								{ model: Clase, as: 'subtituloFactura' }]
 							}).then(function (configuracionFactura) {
@@ -497,7 +498,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Farmacia, Pers
 					});
 				});
 			}).then(function (result) {
-				console.log(result);
+			
 				var resV = (result.length ? (result[0].length ? (result[0][0].length ? (result[0][0][0].length ? result[0][0][0][0] : result[0][0][0]) : result[0][0]) : result[0]) : result);
 				res.json(resV);
 			}).catch(function (err) {

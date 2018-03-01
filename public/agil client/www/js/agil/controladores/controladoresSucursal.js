@@ -1,6 +1,6 @@
 angular.module('agil.controladores')
 
-	.controller('ControladorSucursales', function ($scope, $localStorage, $location, $templateCache, $route, blockUI, Sucursal, Sucursales, SucursalesEmpresa, ClasesTipo, Clases, DosificacionesDisponibles,Sucursalupdate) {
+	.controller('ControladorSucursales', function ($scope, $localStorage, $location, $templateCache, $route, blockUI, Sucursal, Sucursales, SucursalesEmpresa, ClasesTipo, Clases, DosificacionesDisponibles, Sucursalupdate) {
 		blockUI.start();
 
 		$scope.idModalWizardSucursalCorrelativoEdicion = 'modal-wizard-sucursal-correlativo-edicion';
@@ -86,7 +86,9 @@ angular.module('agil.controladores')
 
 		$scope.verSucursal = function (sucursal) {
 			$scope.sucursal = sucursal;
-			$scope.buscarMunicipios(sucursal.id_departamento + '-' + sucursal.departamento.nombre_corto);
+			if (sucursal.departamento) {
+				$scope.buscarMunicipios(sucursal.id_departamento + '-' + sucursal.departamento.nombre_corto);
+			}
 			$scope.abrirPopup($scope.idModalWizardSucursalVista);
 		}
 
@@ -104,7 +106,10 @@ angular.module('agil.controladores')
 
 		$scope.modificarSucursal = function (sucursal) {
 			$scope.sucursal = sucursal;
-			$scope.buscarMunicipios(sucursal.id_departamento + '-' + sucursal.departamento.nombre_corto);
+			console.log(sucursal)
+			if (sucursal.departamento) {
+				$scope.buscarMunicipios(sucursal.id_departamento + '-' + sucursal.departamento.nombre_corto);
+			}
 			$scope.abrirPopup($scope.idModalWizardSucursalEdicion);
 		}
 
@@ -149,36 +154,42 @@ angular.module('agil.controladores')
 					sucursal.id_departamento = sucursal.id_departamento.split('-')[0];
 				}
 				if (sucursal.id) {
+					if (sucursal.municipio) {
+						sucursal.id_municipio = sucursal.municipio.id
+					}
 					Sucursal.update({ idSucursal: sucursal.id }, sucursal, function (res) {
 						blockUI.stop();
 						$scope.recargarItemsTabla();
 						$scope.cerrarPopPupEdicion();
 						$scope.mostrarMensaje('Actualizado Exitosamente!');
-						
+
 					});
 				} else {
-					sucursal.fecha_reinicio_correlativo=new Date()
+					sucursal.fecha_reinicio_correlativo = new Date()
 					sucursal.fecha_reinicio_correlativo.setDate(1)
+					if (sucursal.municipio) {
+						sucursal.id_municipio = sucursal.municipio.id
+					}
 					sucursal.$save(function (sucursal) {
 						blockUI.stop();
 						$scope.sucursal = new Sucursal({});
 						$scope.cerrarPopPupEdicion();
 						$scope.recargarItemsTabla();
 						$scope.mostrarMensaje('Guardado Exitosamente!');
-						
+
 					}, function (error) {
 						blockUI.stop();
 						$scope.cerrarPopPupEdicion();
 						$scope.recargarItemsTabla();
 						$scope.mostrarMensaje('Ocurrio un problema al momento de guardar!');
-						
+
 					});
 				}
 			}
 		}
 
 		$scope.agregarAlmacen = function (almacen) {
-			almacen.edit=false
+			almacen.edit = false
 			if (almacen.nombre && almacen.numero && almacen.direccion) {
 
 				if ($scope.sucursal.almacenes.indexOf(almacen) == -1) {
@@ -190,7 +201,7 @@ angular.module('agil.controladores')
 		}
 
 		$scope.modificarAlmacen = function (almacen) {
-			almacen.edit=true
+			almacen.edit = true
 			$scope.almacen = almacen;
 		}
 
@@ -199,13 +210,34 @@ angular.module('agil.controladores')
 		}
 
 		$scope.agregarActividadDosificacion = function (actividadDosificacion) {
-			if (actividadDosificacion.actividad && actividadDosificacion.dosificacion) {
-				if (!actividadDosificacion.id) {
-					actividadDosificacion.id_actividad = actividadDosificacion.actividad.id;
-					actividadDosificacion.id_dosificacion = actividadDosificacion.dosificacion.id;
-					$scope.sucursal.actividadesDosificaciones.push(actividadDosificacion);
+			var bandera = false
+			if ($scope.sucursal.actividadesDosificaciones.length > 0) {
+				$scope.sucursal.actividadesDosificaciones.forEach(function (dosificacion, index, array) {
+					if (dosificacion.id_dosificacion == actividadDosificacion.dosificacion.id || dosificacion.id_actividad == actividadDosificacion.actividad.id) {
+						bandera = true
+					}
+					if (index === (array.length - 1)) {
+						if (bandera == false) {
+							if (actividadDosificacion.actividad && actividadDosificacion.dosificacion) {
+								if (!actividadDosificacion.id) {
+									actividadDosificacion.id_actividad = actividadDosificacion.actividad.id;
+									actividadDosificacion.id_dosificacion = actividadDosificacion.dosificacion.id;
+									$scope.sucursal.actividadesDosificaciones.push(actividadDosificacion);
+								}
+								$scope.actividadDosificacion = {}
+							}
+						}
+					}
+				});
+			} else {
+				if (actividadDosificacion.actividad && actividadDosificacion.dosificacion) {
+					if (!actividadDosificacion.id) {
+						actividadDosificacion.id_actividad = actividadDosificacion.actividad.id;
+						actividadDosificacion.id_dosificacion = actividadDosificacion.dosificacion.id;
+						$scope.sucursal.actividadesDosificaciones.push(actividadDosificacion);
+					}
+					$scope.actividadDosificacion = {}
 				}
-				$scope.actividadDosificacion = {}
 			}
 		}
 

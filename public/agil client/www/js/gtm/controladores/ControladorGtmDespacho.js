@@ -39,7 +39,8 @@ angular.module('agil.controladores')
                 transportista: "",
                 tipo: "",
                 grupo: "",
-                estado: ""
+                estado: "",
+                vendedor: ""
             }
             $scope.paginator.callBack = $scope.buscarDespachados;
             $scope.paginator.getSearch("", $scope.filtro, null);

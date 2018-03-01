@@ -66,14 +66,18 @@ angular.module('agil.controladores')
             // $scope.RecursosHumanosEmpleados.fecha_nacimiento_texto = $scope.fechaATexto($scope.RecursosHumanosEmpleados.persona.fecha_nacimiento);
 
             planilla.RecursosHumanosEmpleados.forEach(function (empleado) {
-                empleado.sueldoBasico = empleado.empleadosFichas[0].haber_basico;
-                $scope.horasExtras = 8; // == sacar horas extras ==================
-                $scope.antiguedad = calcAge(empleado.empleadosFichas[0].fecha_inicio); // == sacar años de antiguedad ==================
-                $scope.bonoFrontera = 0; // == sacar bono frontera ==================
-                $scope.otrosBonos = 0; // == sacar otros bonos ==================
+                
                 console.log('los ides de empleados ==== ', empleado.id);
                 promesa = RecursosHumanosEmpleadosHorasExtras(empleado.id, planilla.gestion, planilla.mes.split("-")[0]);
                 promesa.then(function (dato) {
+                    empleado.sueldoBasico = empleado.empleadosFichas[0].haber_basico;
+                    $scope.horasExtras = 8; // == sacar horas extras ==================
+                    console.log('ficha fecha inicio ==== ', empleado.empleadosFichas[0].fecha_inicio);
+                    $scope.antiguedad = calcAge(empleado.empleadosFichas[0].fecha_inicio); // == sacar años de antiguedad ==================
+                    console.log("$scope.antiguedad", $scope.antiguedad);
+                    
+                    $scope.bonoFrontera = 0; // == sacar bono frontera ==================
+                    $scope.otrosBonos = 0; // == sacar otros bonos ==================
                     // console.log('los datos del horas :  ', dato.horasExtra);
                     // $scope.horasExtras = 10;
                     // var totalHoras = "";
@@ -96,6 +100,7 @@ angular.module('agil.controladores')
                     // }else{
                     //     totalHoras = 0;
                     // }
+                    
                     
                     empleado.horasExtras = dato.totalHoras;
                     empleado.totalHorasExtras = round((empleado.sueldoBasico/30/8*empleado.horasExtras)*2, 2);

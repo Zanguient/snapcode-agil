@@ -262,9 +262,9 @@ angular.module('agil.directivas', [])
         var index=fields.index(this);
         if(index> -1&&(index+1)<fields.length)
         if(fields[index+1].className!="upload"){
-          fields.eq(index+1).focus();
+          fields.eq(index+1).focus().select();
         }else{
-          fields.eq(index+2).focus();
+          fields.eq(index+2).focus().select();
         }
       }
     });

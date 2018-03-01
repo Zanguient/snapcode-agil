@@ -830,7 +830,7 @@ angular.module('agil.servicios')
 							ImprimirPedido(salida, esAccionGuardar, doc, stream, sizeY);
 						}
 					} else {
-						doc = new PDFDocument({ size: papel, margins: { top: 0, bottom: 0, left: 20, right: 20 } });
+						doc = new PDFDocument({compress: false, size: papel, margins: { top: 0, bottom: 0, left: 20, right: 20 } });
 						stream = doc.pipe(blobStream());
 						ImprimirFacturaRollo(salida, papel, doc, stream, usuario);
 						if (usuario.empresa.usar_pedidos) {
@@ -858,7 +858,7 @@ angular.module('agil.servicios')
 	.factory('ImprimirFacturaCartaOficio', ['blockUI', 'VerificarDescuentos', 'Diccionario', 'DibujarCabeceraFacturaNVCartaOficio', 'DibujarCabeceraFacturaNVmedioOficio', '$timeout',
 		function (blockUI, VerificarDescuentos, Diccionario, DibujarCabeceraFacturaNVCartaOficio, DibujarCabeceraFacturaNVmedioOficio, $timeout) {
 			var res = function (venta, papel, vacia, completa, semicompleta, usuario) {
-				var doc = new PDFDocument({ size: papel, margin: 10 });
+				var doc = new PDFDocument({compress: false, size: papel, margin: 10 });
 				var stream = doc.pipe(blobStream());
 
 				if (venta.configuracion.usar_pf) {
@@ -1483,12 +1483,12 @@ angular.module('agil.servicios')
 					if (esAccionGuardar && !venta.configuracion.imprimir_al_guardar) {
 						if (usuario.empresa.usar_pedidos) {
 							var sizeY = 230 + (20 * venta.detallesVenta.length);
-							doc = new PDFDocument({ size: [227, sizeY], margins: { top: 10, bottom: 10, left: 20, right: 20 } });
+							doc = new PDFDocument({compress: false, size: [227, sizeY], margins: { top: 10, bottom: 10, left: 20, right: 20 } });
 							stream = doc.pipe(blobStream());
 							ImprimirPedido(venta, esAccionGuardar, doc, stream, sizeY);
 						}
 					} else {
-						doc = new PDFDocument({ size: papel, margins: { top: 0, bottom: 0, left: 20, right: 20 } });
+						doc = new PDFDocument({compress: false, size: papel, margins: { top: 0, bottom: 0, left: 20, right: 20 } });
 						stream = doc.pipe(blobStream());
 						ImprimirProformaRollo(venta, papel, doc, stream, usuario);
 						if (usuario.empresa.usar_pedidos) {
@@ -1516,7 +1516,7 @@ angular.module('agil.servicios')
 	.factory('ImprimirProformaCartaOficio', ['Diccionario', '$timeout', 'blockUI', 'VerificarDescuentos', 'DibujarCabeceraProformaNVmedioOficio',
 		function (Diccionario, $timeout, blockUI, VerificarDescuentos, DibujarCabeceraProformaNVmedioOficio) {
 			var res = function (venta, papel, vacia, completa, semicompleta, usuario) {
-				var doc = new PDFDocument({ size: papel, margin: 10 });
+				var doc = new PDFDocument({compress: false, size: papel, margin: 10 });
 				var stream = doc.pipe(blobStream());
 				//var canvas=document.getElementById('qr-code');
 				// draw some text
@@ -1831,7 +1831,7 @@ angular.module('agil.servicios')
 		function (blockUI, VerificarDescuentos, DibujarCabeceraPDFBaja) {
 			var res = function (baja, papel, itemsPorPagina, usuario) {
 
-				var doc = new PDFDocument({ size: papel, margin: 0 });
+				var doc = new PDFDocument({compress: false, size: papel, margin: 0 });
 				var stream = doc.pipe(blobStream());
 				var existenDescuentos = VerificarDescuentos(baja.detallesVenta);
 				doc.font('Helvetica', 7);
@@ -1982,7 +1982,7 @@ angular.module('agil.servicios')
 	.factory('ImprimirNotaBajaRollo', ['blockUI', 'VerificarDescuentos',
 		function (blockUI, VerificarDescuentos) {
 			var res = function (baja, papel, usuario) {
-				var doc = new PDFDocument({ size: papel, margins: { top: 10, bottom: 10, left: 10, right: 20 } });
+				var doc = new PDFDocument({compress: false, size: papel, margins: { top: 10, bottom: 10, left: 10, right: 20 } });
 				var stream = doc.pipe(blobStream());
 				var existenDescuentos = VerificarDescuentos(baja.detallesVenta);
 				doc.moveDown(2);
@@ -2085,7 +2085,7 @@ angular.module('agil.servicios')
 	.factory('ImprimirNotaTraspasoCartaOficio', ['blockUI', 'VerificarDescuentos', 'DibujarCabeceraPDFTraspaso',
 		function (blockUI, VerificarDescuentos, DibujarCabeceraPDFTraspaso) {
 			var res = function (traspaso, papel, itemsPorPagina, usuario) {
-				var doc = new PDFDocument({ size: papel, margin: 0 });
+				var doc = new PDFDocument({compress: false, size: papel, margin: 0 });
 				var stream = doc.pipe(blobStream());
 				var existenDescuentos = VerificarDescuentos(traspaso.detallesVenta);
 				doc.font('Helvetica', 8);
@@ -2243,7 +2243,7 @@ angular.module('agil.servicios')
 	.factory('ImprimirNotaTraspasoRollo', ['blockUI', 'VerificarDescuentos',
 		function (blockUI, VerificarDescuentos) {
 			var res = function (traspaso, papel, usuario) {
-				var doc = new PDFDocument({ size: papel, margins: { top: 10, bottom: 10, left: 10, right: 20 } });
+				var doc = new PDFDocument({compress: false, size: papel, margins: { top: 10, bottom: 10, left: 10, right: 20 } });
 				var stream = doc.pipe(blobStream());
 				var existenDescuentos = VerificarDescuentos(traspaso.detallesVenta);
 				doc.moveDown(2);
@@ -2325,7 +2325,7 @@ angular.module('agil.servicios')
 				var stream = doc.pipe(blobStream());
 				// draw some text
 				var totalCosto = 0;
-				var y = 140, itemsPorPagina = 24, items = 0, pagina = 1, totalPaginas = Math.ceil(despachos.length / itemsPorPagina);
+				var y = 130, itemsPorPagina = 24, items = 0, pagina = 1, totalPaginas = Math.ceil(despachos.length / itemsPorPagina);
 				DibujarCabeceraPDFAlertaDespacho(doc, 1, totalPaginas, despachos, filtro, usuario);
 				doc.font('Helvetica', 8);
 				for (var i = 0; i < despachos.length && items <= itemsPorPagina; i++) {
@@ -2334,17 +2334,17 @@ angular.module('agil.servicios')
 					doc.text(i + 1, 45, y);
 					doc.text(detalle_despacho.despacho.usuario.persona.nombre_completo, 70, y, { width: 100 });
 					doc.text(detalle_despacho.despacho.cliente.razon_social, 190, y, { width: 100 });
-					doc.text(detalle_despacho.producto.nombre, 300, y, { width: 85 });
-					doc.text(detalle_despacho.cantidad, 390, y, { width: 50 });
-					doc.text(detalle_despacho.cantidad_despacho, 440, y, { width: 50 });
-					doc.text(detalle_despacho.cantidad - detalle_despacho.cantidad_despacho, 490, y, { width: 50 });
+					doc.text(detalle_despacho.producto.nombre, 300, y, { width: 110 });
+					doc.text(detalle_despacho.cantidad, 420, y, { width: 50 });
+					doc.text(detalle_despacho.cantidad_despacho, 460, y, { width: 50 });
+					doc.text(detalle_despacho.cantidad - detalle_despacho.cantidad_despacho, 500, y, { width: 50 });
 					doc.text("Bs. " + detalle_despacho.servicio_transporte + ".-", 545, y, { width: 80 });
 					y = y + 25;
 					items++;
 
 					if (items == itemsPorPagina) {
 						doc.addPage({ margin: 0, bufferPages: true });
-						y = 120;
+						y = 130;
 						items = 0;
 						pagina = pagina + 1;
 						DibujarCabeceraPDFAlertaDespacho(doc, pagina, totalPaginas, despachos, filtro, usuario);
@@ -2369,7 +2369,7 @@ angular.module('agil.servicios')
 				var stream = doc.pipe(blobStream());
 				// draw some text
 				var totalCosto = 0,totalTransporte=0;
-				var y = 140, itemsPorPagina = 24, items = 0, pagina = 1, totalPaginas = Math.ceil(despachos.length / itemsPorPagina);
+				var y = 130, itemsPorPagina = 24, items = 0, pagina = 1, totalPaginas = Math.ceil(despachos.length / itemsPorPagina);
 				DibujarCabeceraPDFDespacho(doc, 1, totalPaginas, despachos, filtro, usuario);
 				doc.font('Helvetica', 8);
 				for (var i = 0; i < despachos.length && items <= itemsPorPagina; i++) {
@@ -2378,15 +2378,15 @@ angular.module('agil.servicios')
 					doc.text(i + 1, 45, y);
 					doc.text(detalle_despacho.despacho.usuario.persona.nombre_completo, 70, y, { width: 100 });
 					doc.text(detalle_despacho.despacho.cliente.razon_social, 190, y, { width: 100 });
-					doc.text(detalle_despacho.producto.nombre, 320, y, { width: 85 });
-					doc.text(detalle_despacho.cantidad, 420, y, { width: 50 });
+					doc.text(detalle_despacho.producto.nombre, 320, y, { width: 110 });
+					doc.text(detalle_despacho.cantidad, 440, y, { width: 50 });
 					doc.text("Bs. " + detalle_despacho.servicio_transporte + ".-", 500, y, { width: 80 });
 					y = y + 25;
 					items++;
 
 					if (items == itemsPorPagina) {
 						doc.addPage({ margin: 0, bufferPages: true });
-						y = 120;
+						y = 130;
 						items = 0;
 						pagina = pagina + 1;
 						DibujarCabeceraPDFDespacho(doc, pagina, totalPaginas, despachos, filtro, usuario);
@@ -2396,8 +2396,8 @@ angular.module('agil.servicios')
 					totalTransporte+=detalle_despacho.servicio_transporte
 				}
 				doc.font('Helvetica-Bold', 8);
-				doc.text("TOTALES:", 300, y, { width: 80 });
-				doc.text(totalCosto, 420, y, { width: 80 });
+				doc.text("TOTALES:", 350, y, { width: 80 });
+				doc.text(totalCosto, 440, y, { width: 80 });
 				doc.text("Bs. " +totalTransporte + ".-", 500, y, { width: 80 });
 				doc.end();
 				stream.on('finish', function () {
@@ -2555,10 +2555,10 @@ angular.module('agil.servicios')
 			doc.text("Vendedor", 80, 110, { width: 50 });
 			doc.text("Cliente", 200, 110, { width: 60 });
 			doc.text("Producto", 300, 110, { width: 50 });
-			doc.text("Cant.", 390, 110, { width: 50 });
-			doc.text("desp.", 440, 110, { width: 50 });
-			doc.text("saldo", 490, 110, { width: 50 });
-			doc.text("S. Transp.", 535, 110, { width: 80 });
+			doc.text("Cant.", 420, 110, { width: 50 });
+			doc.text("desp.", 460, 110, { width: 50 });
+			doc.text("saldo", 500, 110, { width: 50 });
+			doc.text("S. Transp.", 545, 110, { width: 80 });
 			doc.font('Helvetica', 8);
 			var currentDate = new Date();
 			doc.text("USUARIO: " + usuario.persona.nombre_completo + " fecha " + currentDate.getDate() + "/" + (currentDate.getMonth() + 1) + "/" + currentDate.getFullYear() + "Hrs." + currentDate.getHours() + ":" + currentDate.getMinutes(), 15, 765);
@@ -2601,7 +2601,7 @@ angular.module('agil.servicios')
 			doc.text("Vendedor", 80, 110, { width: 50 });
 			doc.text("Cliente", 200, 110, { width: 60 });
 			doc.text("Producto", 320, 110, { width: 50 });
-			doc.text("Cant.", 420, 110, { width: 50 });
+			doc.text("Cant.", 440, 110, { width: 50 });
 			doc.text("S. Transp.", 500, 110, { width: 80 });
 			doc.font('Helvetica', 8);
 			var currentDate = new Date();
