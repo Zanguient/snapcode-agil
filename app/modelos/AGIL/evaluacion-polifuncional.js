@@ -56,9 +56,15 @@ module.exports = function (sequelize, Sequelize) {
 			type: Sequelize.DATE,
 			field: 'fecha'
 		  },
+		  encargado: {
+			type: Sequelize.BOOLEAN,
+			field: 'encargado',
+			default: false
+			},
 		eliminado: {
 			type: Sequelize.BOOLEAN,
-			field: 'eliminado'
+			field: 'eliminado',
+			default: false
 			}
 	}, {
 			freezeTableName: true

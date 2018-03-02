@@ -59,7 +59,9 @@ angular.module('agil.servicios')
 			COMPROBANTE_INGRESO: "INGRESO",
 			COMPROBANTE_EGRESO: "EGRESO",
 			COMPROBANTE_TRASPASO: "TRASPASO",
-			COMPROBANTE_CAJA_CHICA: "CAJA CHICA"
+			COMPROBANTE_CAJA_CHICA: "CAJA CHICA",
+			MENU_VEHICULOS: "VEHICULOS",
+			MENU_PROFORMAS: "PROFORMAS"
 		}
 	}])
 
@@ -2474,7 +2476,7 @@ angular.module('agil.servicios')
 					var detalle_despacho= despachos[i]					
 					var columns = [];
 					columns.push(i+1)
-					columns.push("")
+					columns.push(detalle_despacho.numero_correlativo)
 					columns.push(detalle_despacho.despacho.usuario.persona.nombre_completo)
 					var fecha = new Date(detalle_despacho.despacho.fecha)					
 					var dia=((fecha.getDate())>=10)? fecha.getDate() :"0"+ fecha.getDate()
@@ -2482,10 +2484,10 @@ angular.module('agil.servicios')
 					columns.push(dia+"/"+mes+"/"+fecha.getFullYear())
 					columns.push(detalle_despacho.despacho.cliente.codigo)
 					columns.push(detalle_despacho.despacho.cliente.razon_social)					
-					columns.push(detalle_despacho.despacho.cliente_razon.razon_social)					
+					columns.push(detalle_despacho.despacho.cliente_razon != undefined ? detalle_despacho.despacho.cliente_razon.razon_social : "")					
 					columns.push(detalle_despacho.despacho.cliente.nit)		
-					columns.push(detalle_despacho.despacho.destino.destino)
-					columns.push(detalle_despacho.despacho.destino.direccion)	
+					columns.push(detalle_despacho.despacho.destino != undefined ? detalle_despacho.despacho.destino.destino : "Sin destino")
+					columns.push(detalle_despacho.despacho.destino != undefined ? detalle_despacho.despacho.destino.direccion : "Sin direccion")	
 					columns.push(detalle_despacho.producto.nombre)				
 					columns.push(detalle_despacho.cantidad_despacho)
 					columns.push(detalle_despacho.producto.precio_unitario)				
@@ -2505,7 +2507,7 @@ angular.module('agil.servicios')
 					var dia2=((fechaPedido.getDate())>=10)? fechaPedido.getDate() :"0"+ fechaPedido.getDate()
 					var mes2=((fechaPedido.getMonth()+1)>=10)? (fechaPedido.getMonth()+1):"0"+ (fechaPedido.getMonth()+1)
 					columns.push(dia2+"/"+mes2+"/"+fechaPedido.getFullYear())
-					columns.push(detalle_despacho.despacho.cliente_razon.codigo_sap)
+					columns.push(detalle_despacho.despacho.cliente_razon != undefined ? detalle_despacho.despacho.cliente_razon.codigo_sap : "")
 					data.push(columns);
 				}						
 				var ws_name = "SheetJS";

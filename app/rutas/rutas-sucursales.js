@@ -133,6 +133,7 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Sucu
 				imprimir_pedido_corto: req.body.imprimir_pedido_corto,
 				cotizacion_correlativo: req.body.cotizacion_correlativo,
 				pre_factura_correlativo: req.body.pre_factura_correlativo,
+				despacho_correlativo:req.body.despacho_correlativo,
 				comprobante_ingreso_correlativo: req.body.comprobante_ingreso_correlativo,
 				comprobante_egreso_correlativo: req.body.comprobante_egreso_correlativo,
 				comprobante_traspaso_correlativo: req.body.comprobante_traspaso_correlativo,
@@ -159,8 +160,7 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Sucu
 							where: { id_sucursal: req.params.id_sucursal }
 						}).then(function (actividadDosificacionCreado) {
 							res.json({ message: "Actualizado satisfactoriamente!" });
-						});
-
+						})
 				});
 		})
 	router.route('/sucursales/:id_sucursal')

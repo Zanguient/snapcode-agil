@@ -420,6 +420,50 @@ angular.module('agil.controladores')
         console.log("$scope.sueldo ==== ", $scope.sueldo);
         $scope.abrirPopup($scope.idModalFormulario110);
     }
+
+    $scope.subirExcelFormulario110 = function (event) {
+        var files = event.target.files;
+        var i, f;
+        for (i = 0, f = files[i]; i != files.length; ++i) {
+            var reader = new FileReader();
+            var name = f.name;
+            reader.onload = function (e) {
+                blockUI.start();
+                var data = e.target.result;
+
+                var workbook = XLSX.read(data, { type: 'binary' });
+                var first_sheet_name = workbook.SheetNames[0];
+                var row = 2, i = 0;
+                var worksheet = workbook.Sheets[first_sheet_name];
+                var clientes = [];
+                // do {
+                //     var cliente = {};
+                //     cliente.codigo = worksheet['A' + row] != undefined && worksheet['A' + row] != "" ? worksheet['A' + row].v.toString() : null;
+                //     cliente.razon_social = worksheet['B' + row] != undefined && worksheet['B' + row] != "" ? worksheet['B' + row].v.toString() : null;
+                //     cliente.nit = worksheet['C' + row] != undefined && worksheet['C' + row] != "" ? worksheet['C' + row].v.toString() : null;
+                //     cliente.direccion = worksheet['D' + row] != undefined && worksheet['D' + row] != "" ? worksheet['D' + row].v.toString() : null;
+                //     cliente.telefono1 = worksheet['E' + row] != undefined && worksheet['E' + row] != "" ? worksheet['E' + row].v.toString() : null;
+                //     cliente.telefono2 = worksheet['F' + row] != undefined && worksheet['F' + row] != "" ? worksheet['F' + row].v.toString() : null;
+                //     cliente.telefono3 = worksheet['G' + row] != undefined && worksheet['G' + row] != "" ? worksheet['G' + row].v.toString() : null;
+                //     cliente.contacto = worksheet['H' + row] != undefined && worksheet['H' + row] != "" ? worksheet['H' + row].v.toString() : null;
+                //     cliente.ubicacion_geografica = worksheet['I' + row] != undefined && worksheet['I' + row] != "" ? worksheet['I' + row].v.toString() : null;
+                //     cliente.rubro = worksheet['J' + row] != undefined && worksheet['J' + row] != "" ? worksheet['J' + row].v.toString() : null;
+                //     cliente.categoria = worksheet['K' + row] != undefined && worksheet['K' + row] != "" ? worksheet['K' + row].v.toString() : null;
+                //     cliente.fecha1 = worksheet['L' + row] != undefined && worksheet['L' + row] != "" ? new Date($scope.convertirFecha(worksheet['L' + row].v.toString())) : null;
+                //     cliente.fecha2 = worksheet['M' + row] != undefined && worksheet['M' + row] != "" ? new Date($scope.convertirFecha(worksheet['M' + row].v.toString())) : null;
+                //     cliente.texto1 = worksheet['N' + row] != undefined && worksheet['N' + row] != "" ? worksheet['N' + row].v.toString() : null;
+                //     cliente.texto2 = worksheet['O' + row] != undefined && worksheet['O' + row] != "" ? worksheet['O' + row].v.toString() : null;
+                //     clientes.push(cliente);
+                //     row++;
+                //     i++;
+                // } while (worksheet['A' + row] != undefined);
+                // $scope.guardarClientes(clientes);
+                blockUI.stop();
+            };
+            reader.readAsBinaryString(f);
+        }
+    }
+
     $scope.cerrarDialogFormulario110=function () {
         $scope.cerrarPopup($scope.idModalFormulario110); 
     }

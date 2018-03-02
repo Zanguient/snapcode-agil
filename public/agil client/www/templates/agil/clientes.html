@@ -14,8 +14,8 @@
 			<i class="ace-icon fa fa-cloud-download align-top bigger-125"></i>
 			Ejemplo Importacion
 		</a>
-		<button class="btn btn-primary" type="button" ng-click="generarExcelComprobacionDatosClientes()">
-			<i class="ace-icon fa fa-plus align-top bigger-125"></i>
+		<button class="btn btn-info " type="button" ng-click="generarExcelComprobacionDatosClientes()">
+			<i class="ace-icon fa fa-print align-top bigger-125 "></i>
 			Descargar Excel Clientes
 		</button>
 		<div class="clearfix">
@@ -82,10 +82,12 @@
 								Mostrar
 								<select ng-model="itemsPorPagina" ng-change="buscarClientes(1,itemsPorPagina,textoBusqueda)" name="tabla-clientes_length"
 								 aria-controls="tabla-clientes" class="form-control input-sm">
+									<option value="0">todos</option>
 									<option selected value="10">10</option>
 									<option value="25">25</option>
 									<option value="50">50</option>
 									<option value="100">100</option>
+
 								</select> clientes por página</label>
 						</div>
 					</div>

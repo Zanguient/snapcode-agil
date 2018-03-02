@@ -7,7 +7,28 @@
 		<!-- PAGE CONTENT BEGINS -->
 		<div class="row">
 			<div class="col-xs-12">
-				<a href="#/{{aplicacion.url}}" class="btn btn-app btn-success opcion-inicio" ng-repeat="aplicacion in aplicaciones">
+				<a href="#/{{aplicacion.url}}" class="btn btn-app btn-success opcion-inicio" ng-repeat="aplicacion in aplicaciones" ng-class="{'menu-hidden':((aplicacion.titulo==diccionario.MENU_RUTAS || 
+						aplicacion.titulo==diccionario.MENU_SEGUIMIENTOAPP) && 
+						usuario.empresa && 
+						!usuario.empresa.usar_georeferenciacion || 
+						((aplicacion.titulo==diccionario.MENU_MESAS) && 
+						usuario.empresa && 
+						!usuario.empresa.usar_mesas) || 
+						((aplicacion.titulo==diccionario.MENU_PLAN_CUENTAS) && 
+						usuario.empresa && 
+						!usuario.empresa.usar_contabilidad) || 
+						((aplicacion.titulo==diccionario.MENU_COMPROBANTES) && 
+						usuario.empresa && 
+						!usuario.empresa.usar_contabilidad) || 
+						((aplicacion.titulo==diccionario.MENU_MEDICO) && 
+						usuario.empresa && 
+						!usuario.empresa.usar_medico)|| 
+						((aplicacion.titulo==diccionario.MENU_VEHICULOS) && 
+						usuario.empresa && 
+						!usuario.empresa.usar_mantenimiento)|| 
+						((aplicacion.titulo==diccionario.MENU_PROFORMAS) && 
+						usuario.empresa && 
+						!usuario.empresa.usar_proformas))}">
 					<i class="ace-icon fa {{aplicacion.atributo_clase}} bigger-230"></i>
 					{{aplicacion.titulo}}
 				</a>

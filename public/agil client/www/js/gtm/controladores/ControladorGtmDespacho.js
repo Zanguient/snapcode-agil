@@ -370,7 +370,7 @@ angular.module('agil.controladores')
 
             doc.font('Helvetica-Bold', 14);
             doc.text("N°", 380, y+25, { align: "center" });
-            doc.text(gtm_despacho.id, 510, y+25);
+            doc.text(gtm_despacho.numero_correlativo, 510, y+25);
 
             doc.rect(40, y+80 + 80, 540, 25).stroke()
                 .fill('silver')

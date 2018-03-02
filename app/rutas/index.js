@@ -199,7 +199,7 @@ module.exports = function (router, sequelize, Sequelize, jwt, md5, forEach, ensu
 	require('./rutas-gtm-transportistas')(router, ensureAuthorizedAdministrador, fs, forEach, jwt, md5, GtmTransportista, Persona);
 	require('./rutas-gtm-grupo-estibajes')(router, ensureAuthorizedAdministrador, fs, forEach, jwt, md5, GtmGrupoEstibaje);
 	require('./rutas-gtm-despacho')(router, ensureAuthorizedAdministrador, fs, forEach, jwt, md5, GtmDespacho, GtmDespachoDetalle, Cliente, Usuario, GtmDestino, Producto
-		, GtmTransportista, GtmEstibaje, GtmGrupoEstibaje, Persona, ClienteRazon,sequelize,Inventario,Movimiento,DetalleMovimiento,Tipo,Clase,Diccionario,Sequelize);
+		, GtmTransportista, GtmEstibaje, GtmGrupoEstibaje, Persona, ClienteRazon,sequelize,Inventario,Movimiento,DetalleMovimiento,Tipo,Clase,Diccionario,Sequelize,Sucursal);
 
 
 

@@ -2640,7 +2640,7 @@ angular.module('agil.controladores')
                 $scope.empleado2 = dato.medicoPaciente
 
                 //	var inventarios = $scope.inventarios;
-                var doc = new PDFDocument({ size: [612, 792], margin: 10 });
+                var doc = new PDFDocument({compress:false, size: [612, 792], margin: 10 });
                 var stream = doc.pipe(blobStream());
                 // draw some text
                 var totalCosto = 0;
@@ -2653,10 +2653,10 @@ angular.module('agil.controladores')
                     doc.text(formacion.institucion.nombre, 170, y, { width: 100 });
                     doc.text(formacion.grado.nombre, 305, y, { width: 100 });
                     doc.text(formacion.titulo.nombre, 405, y, { width: 100 });
-                    if (formacion.institucion.nombre.length > 20 || formacion.grado.length > 20 || formacion.titulo.length > 20) {
-                        rowinstituto = formacion.institucion.length / 20
-                        rowgrado = formacion.grado.length / 20
-                        rowtitulo = formacion.titulo.length / 20
+                    if (formacion.institucion.nombre.length > 20 || formacion.grado.nombre.length > 20 || formacion.titulo.nombre.length > 20) {
+                        rowinstituto = formacion.institucion.nombre.length / 20
+                        rowgrado = formacion.grado.nombre.length / 20
+                        rowtitulo = formacion.titulo.nombre.length / 20
                         arregloTamaño = [Math.floor(rowinstituto), Math.floor(rowgrado), Math.floor(rowtitulo)]
                         var rows = Math.max.apply(null, arregloTamaño);
                         var tamaño = rows * 10

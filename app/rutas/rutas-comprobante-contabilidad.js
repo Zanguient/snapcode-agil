@@ -417,12 +417,12 @@ module.exports = function (router, ComprobanteContabilidad, AsientoContabilidad,
 					$or: [
 						{
 							nombre: {
-								$like: "%" + req.params.buscar + "%"
+								$like:  req.params.buscar + "%"
 							}
 						},
 						{
 							codigo: {
-								$like: "%" + req.params.buscar + "%"
+								$like:  req.params.buscar + "%"
 							}
 						}
 					]

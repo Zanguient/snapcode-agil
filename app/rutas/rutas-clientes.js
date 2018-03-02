@@ -32,7 +32,7 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Clie
 						linea_credito: req.body.linea_credito,
 						plazo_credito: req.body.plazo_credito,
 						usar_limite_credito: req.body.usar_limite_credito,
-						bloquear_limite_credito:req.body.bloquear_limite_credito
+						bloquear_limite_credito: req.body.bloquear_limite_credito
 					}, {
 							where: {
 								id: cliente.id
@@ -88,7 +88,7 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Clie
 						linea_credito: req.body.linea_credito,
 						plazo_credito: req.body.plazo_credito,
 						usar_limite_credito: req.body.usar_limite_credito,
-						bloquear_limite_credito:req.body.bloquear_limite_credito
+						bloquear_limite_credito: req.body.bloquear_limite_credito
 					}).then(function (clienteCreado) {
 						guardarContratosCliente(req, res, clienteCreado)
 						req.body.clientes_razon.forEach(function (cliente_razon, index, array) {
@@ -311,23 +311,23 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Clie
 									codigo_sap: cliente_razon.codigo_sap,
 								}
 							}).spread(function (cargoClase, created) {
-							/* 	if (created) {
-									ClienteRazon.update({
-										id_cliente: clienteEncontrado.id,
-										razon_social: cliente_razon.razon_social,
-										nit: cliente_razon.nit,
-										codigo_sap: cliente_razon.codigo_sap,
-									}, {
-											where: { nit: cliente_razon.nit }
-										}).then(function (clienteRazonCreado) {
-											if (index == array.length - 1) {
-												res.json({ mensaje: "guardados satisfactoriamente!" })
-											}
-										})
-								} else { */
-									if (index == array.length - 1) {
-										res.json({ mensaje: "guardados satisfactoriamente!" })
-									}
+								/* 	if (created) {
+										ClienteRazon.update({
+											id_cliente: clienteEncontrado.id,
+											razon_social: cliente_razon.razon_social,
+											nit: cliente_razon.nit,
+											codigo_sap: cliente_razon.codigo_sap,
+										}, {
+												where: { nit: cliente_razon.nit }
+											}).then(function (clienteRazonCreado) {
+												if (index == array.length - 1) {
+													res.json({ mensaje: "guardados satisfactoriamente!" })
+												}
+											})
+									} else { */
+								if (index == array.length - 1) {
+									res.json({ mensaje: "guardados satisfactoriamente!" })
+								}
 								/* } */
 							})
 						} else {
@@ -402,8 +402,8 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Clie
 				linea_credito: req.body.linea_credito,
 				plazo_credito: req.body.plazo_credito,
 				usar_limite_credito: req.body.usar_limite_credito,
-				bloquear_limite_credito:req.body.bloquear_limite_credito
-				
+				bloquear_limite_credito: req.body.bloquear_limite_credito
+
 			}, {
 					where: {
 						id: req.params.id_cliente
@@ -549,29 +549,52 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Clie
 					]
 				};
 			}
+			if (req.params.items_pagina != 0) {
+				Cliente.findAndCountAll({
 
-			Cliente.findAndCountAll({
-
-				where: condicionCliente,
-				include: [{ model: Empresa, as: 'empresa' }],
-				order: [['id', 'asc']]
-			}).then(function (data) {
-				Cliente.findAll({
-					offset: (req.params.items_pagina * (req.params.pagina - 1)), limit: req.params.items_pagina,
 					where: condicionCliente,
-					include: [{ model: Empresa, as: 'empresa' },
-					{
-						model: ClienteRazon, as: 'clientes_razon'
-					},
-					{
-						model: GtmClienteDestino, as: 'cliente_destinos', include: [{ model: GtmDestino, as: "destino" }]
-					}],
+					include: [{ model: Empresa, as: 'empresa' }],
 					order: [['id', 'asc']]
-				}).then(function (clientes) {
-					res.json({ clientes: clientes, paginas: Math.ceil(data.count / req.params.items_pagina) });
+				}).then(function (data) {
+					Cliente.findAll({
+						offset: (req.params.items_pagina * (req.params.pagina - 1)), limit: req.params.items_pagina,
+						where: condicionCliente,
+						include: [{ model: Empresa, as: 'empresa' },
+						{
+							model: ClienteRazon, as: 'clientes_razon'
+						},
+						{
+							model: GtmClienteDestino, as: 'cliente_destinos', include: [{ model: GtmDestino, as: "destino" }]
+						}],
+						order: [['id', 'asc']]
+					}).then(function (clientes) {
+						res.json({ clientes: clientes, paginas: Math.ceil(data.count / req.params.items_pagina) });
+					});
 				});
-			});
+			}else{
+				Cliente.findAndCountAll({
+
+					where: condicionCliente,
+					include: [{ model: Empresa, as: 'empresa' }],
+					order: [['id', 'asc']]
+				}).then(function (data) {
+					Cliente.findAll({						
+						where: condicionCliente,
+						include: [{ model: Empresa, as: 'empresa' },
+						{
+							model: ClienteRazon, as: 'clientes_razon'
+						},
+						{
+							model: GtmClienteDestino, as: 'cliente_destinos', include: [{ model: GtmDestino, as: "destino" }]
+						}],
+						order: [['id', 'asc']]
+					}).then(function (clientes) {
+						res.json({ clientes: clientes, paginas:1});
+					});
+				});
+			}
 		});
+
 
 	router.route('/clientes/empresa/:id_empresa')
 		.get(function (req, res) {

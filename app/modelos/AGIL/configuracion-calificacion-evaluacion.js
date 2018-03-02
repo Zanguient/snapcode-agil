@@ -1,61 +1,59 @@
 module.exports = function (sequelize, Sequelize) {
 	var ConfiguracionCalificacionEvaluacionPolifuncional = sequelize.define('agil_configuracion_calificacion_evaluacion', {
-		// asistencia_capacitacion: {
-		// 	type: Sequelize.DECIMAL(20, 4),
-		// 	field: 'capacitacion'
-		// },
-		// documentos_actualizados: {
-		// 	type: Sequelize.DECIMAL(20, 4),
-		// 	field: 'documentos'
-		// },
-		// trabajo_equipo: {
-		// 	type: Sequelize.DECIMAL(20, 4),
-		// 	field: 'equipo'
-		// },
-		// funciones_puntualidad: {
-		// 	type: Sequelize.DECIMAL(20, 4),
-		// 	field: 'puntualidad'
-		// },
-		// higiene_personal: {
-		// 	type: Sequelize.DECIMAL(20, 4),
-		// 	field: 'higiene'
-		// },
-		// asistencia_reunion: {
-		// 	type: Sequelize.DECIMAL(20, 4),
-		// 	field: 'reunion'
-		// },
-		// ingreso_campo: {
-		// 	type: Sequelize.DECIMAL(20, 4),
-		// 	field: 'ingreso'
-		// },
-		// llenado_formularios: {
-		// 	type: Sequelize.DECIMAL(20, 4),
-		// 	field: 'formularioss'
-		// },
-		encargados: {
-			type: Sequelize.DECIMAL(20, 4),
-			field: 'encargados'
+		asistencia_capacitacion: {
+			type: Sequelize.DECIMAL(20,4),
+			field: 'capacitacion'
 		},
-		empleados: {
-			type: Sequelize.DECIMAL(20, 4),
-			field: 'empleados'
+		documentos_actualizados: {
+			type: Sequelize.DECIMAL(20,4),
+			field: 'documentos'
 		},
-		variable: {
-			type: Sequelize.STRING,
-			field: 'variable'
+		trabajo_equipo: {
+			type: Sequelize.DECIMAL(20,4),
+			field: 'equipo'
+        },
+        funciones_puntualidad: {
+			type: Sequelize.DECIMAL(20,4),
+			field: 'puntualidad'
+        },
+        higiene_personal: {
+			type: Sequelize.DECIMAL(20,4),
+			field: 'higiene'
+        },
+        asistencia_reunion: {
+			type: Sequelize.DECIMAL(20,4),
+			field: 'reunion'
 		},
-		nota_total: {
-			type: Sequelize.DECIMAL(20, 4),
+        ingreso_campo: {
+			type: Sequelize.DECIMAL(20,4),
+			field: 'ingreso'
+        },
+        llenado_formularios: {
+			type: Sequelize.DECIMAL(20,4),
+			field: 'formularios'
+        },
+        nota_total: {
+			type: Sequelize.DECIMAL(20,4),
 			field: 'total'
+        },
+        id_desempenio: {
+			type: Sequelize.INTEGER,
+			field: 'desempenio'
 		},
-		activo: {
+		fecha: {
+			type: Sequelize.DATE,
+			field: 'fecha'
+		  },
+		  encargado: {
 			type: Sequelize.BOOLEAN,
-			field: 'activo'
-		},
+			field: 'encargado',
+			default: false
+			},
 		eliminado: {
 			type: Sequelize.BOOLEAN,
-			field: 'eliminado'
-		}
+			field: 'eliminado',
+			default: false
+			}
 	}, {
 			freezeTableName: true
 		});

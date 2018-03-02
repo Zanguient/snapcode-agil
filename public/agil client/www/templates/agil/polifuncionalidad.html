@@ -152,18 +152,21 @@
             <div class="pull-right tableTools-container"></div>
         </div>
         <div class="table-header">
+            <label class="pull-left">&nbsp&nbsp</label>
             <label class="center">Lista de Trabajadores</label>
-
-            <label class="pull-left">
+            <label class="pull-left">&nbsp&nbsp</label>
+            <label class="pull-left" data-rel="tooltip" tooltip-placement="top" uib-tooltip="Configuración">
                 <a class="blue" ng-click="abrirmodalParametrosPolifuncionalidad()">
                     <i class="ace-icon fa fa-cogs text-white bigger-130"></i>
                 </a>
             </label>
-            <label class="pull-left">
+            <label class="pull-left">&nbsp&nbsp</label>
+            <label class="pull-left" data-rel="tooltip" tooltip-placement="top" uib-tooltip="Reportes">
                 <a class="blue" ng-click="abriridModalReportes()">
-                    <i class="ace-icon fa fa-cogs text-white bigger-130"></i>
+                    <i class="ace-icon fa fa-print text-white bigger-130"></i>
                 </a>
             </label>
+            <label class="pull-left">&nbsp&nbsp</label>
             <style type="text/css" scoped>
                 .dropdown-menu {
                     min-width: 400px !important;
@@ -497,7 +500,7 @@
                                         <div class="center">
                                             <label for="">Encargado</label>
                                             <label>
-                                                <input name="switch-field-1" ng-model="evaluacion.encargado" class="ace ace-switch ace-switch-4 ng-pristine ng-untouched ng-valid ng-empty"
+                                                <input name="switch-field-1" tabindex="-1" ng-model="evaluacion.encargado" class="ace ace-switch ace-switch-4 ng-pristine ng-untouched ng-valid ng-empty"
                                                     type="checkbox">
                                                 <span class="lbl check-descuento"></span>
                                             </label>
@@ -513,6 +516,11 @@
                                         <div class="col-md-4">
                                             <input required autofocus type="number" step="1" min="0" class="form-control" ng-model="evaluacion.asistencia_capacitacion"
                                                 ng-change="calcularTotalEvaluacion(evaluacion)">
+                                            <label>
+                                                <input name="switch-field-1" tabindex="-1" ng-model="parametros.usar_capacitacion" class="ace ace-switch ace-switch-4 ng-pristine ng-untouched ng-valid ng-empty"
+                                                    type="checkbox">
+                                                <span class="lbl check-descuento"></span>
+                                            </label>
                                         </div>
                                     </div>
                                     <div class="row form-group">
@@ -524,6 +532,11 @@
                                         </div>
                                         <div class="col-md-4">
                                             <input required type="number" step="1" min="0" class="form-control" ng-model="evaluacion.documentos_actualizados" ng-change="calcularTotalEvaluacion(evaluacion)">
+                                            <label>
+                                                <input name="switch-field-1" tabindex="-1" ng-model="parametros.usar_documentos_actualizados" class="ace ace-switch ace-switch-4 ng-pristine ng-untouched ng-valid ng-empty"
+                                                    type="checkbox">
+                                                <span class="lbl check-descuento"></span>
+                                            </label>
                                         </div>
                                     </div>
                                     <div class="row form-group">
@@ -535,6 +548,11 @@
                                         </div>
                                         <div class="col-md-4">
                                             <input required type="number" step="1" min="0" class="form-control" ng-model="evaluacion.trabajo_equipo" ng-change="calcularTotalEvaluacion(evaluacion)">
+                                            <label>
+                                                <input name="switch-field-1" tabindex="-1" ng-model="parametros.usar_trabajo_equipo" class="ace ace-switch ace-switch-4 ng-pristine ng-untouched ng-valid ng-empty"
+                                                    type="checkbox">
+                                                <span class="lbl check-descuento"></span>
+                                            </label>
                                         </div>
                                     </div>
                                     <div class="row form-group">
@@ -546,6 +564,11 @@
                                         </div>
                                         <div class="col-md-4">
                                             <input required type="number" step="1" min="0" class="form-control" ng-model="evaluacion.funciones_puntualidad" ng-change="calcularTotalEvaluacion(evaluacion)">
+                                            <label>
+                                                <input name="switch-field-1" tabindex="-1" ng-model="parametros.usar_funciones_puntualidad" class="ace ace-switch ace-switch-4 ng-pristine ng-untouched ng-valid ng-empty"
+                                                    type="checkbox">
+                                                <span class="lbl check-descuento"></span>
+                                            </label>
                                         </div>
                                     </div>
                                     <div class="row form-group">
@@ -557,6 +580,11 @@
                                         </div>
                                         <div class="col-md-4">
                                             <input required type="number" step="1" min="0" class="form-control" ng-model="evaluacion.higiene_personal" ng-change="calcularTotalEvaluacion(evaluacion)">
+                                            <label>
+                                                <input name="switch-field-1" tabindex="-1" ng-model="parametros.usar_higiene_personal" class="ace ace-switch ace-switch-4 ng-pristine ng-untouched ng-valid ng-empty"
+                                                    type="checkbox">
+                                                <span class="lbl check-descuento"></span>
+                                            </label>
                                         </div>
                                     </div>
                                     <div class="row form-group">
@@ -568,6 +596,11 @@
                                         </div>
                                         <div class="col-md-4">
                                             <input required type="number" step="1" min="0" class="form-control" ng-model="evaluacion.asistencia_reunion" ng-change="calcularTotalEvaluacion(evaluacion)">
+                                            <label>
+                                                <input name="switch-field-1" tabindex="-1" ng-model="parametros.usar_asistencia_reunion" class="ace ace-switch ace-switch-4 ng-pristine ng-untouched ng-valid ng-empty"
+                                                    type="checkbox">
+                                                <span class="lbl check-descuento"></span>
+                                            </label>
                                         </div>
                                     </div>
                                     <div class="row form-group">
@@ -579,6 +612,11 @@
                                         </div>
                                         <div class="col-md-4">
                                             <input required type="number" step="1" min="0" class="form-control" ng-model="evaluacion.ingreso_campo" ng-change="calcularTotalEvaluacion(evaluacion)">
+                                            <label>
+                                                <input name="switch-field-1" tabindex="-1" ng-model="parametros.usar_ingreso_campo" class="ace ace-switch ace-switch-4 ng-pristine ng-untouched ng-valid ng-empty"
+                                                    type="checkbox">
+                                                <span class="lbl check-descuento"></span>
+                                            </label>
                                         </div>
                                     </div>
                                     <div class="row form-group">
@@ -590,6 +628,11 @@
                                         </div>
                                         <div class="col-md-4">
                                             <input required type="number" step="1" min="0" class="form-control" ng-model="evaluacion.llenado_formularios" ng-change="calcularTotalEvaluacion(evaluacion)">
+                                            <label>
+                                                <input name="switch-field-1" tabindex="-1" ng-model="parametros.usar_llenado_formularios" class="ace ace-switch ace-switch-4 ng-pristine ng-untouched ng-valid ng-empty"
+                                                    type="checkbox">
+                                                <span class="lbl check-descuento"></span>
+                                            </label>
                                         </div>
                                     </div>
                                     <div class="row form-group">
@@ -617,7 +660,7 @@
                 </div>
 
                 <div class="modal-footer wizard-actions">
-                    <button class="btn btn-sm btn-prev">
+                    <button tabindex="-1" class="btn btn-sm btn-prev">
                         <i class="ace-icon fa fa-arrow-left"></i>
                         Anterior
                     </button>
@@ -628,7 +671,7 @@
                         <i class="ace-icon fa fa-arrow-right icon-on-right"></i>
                     </button>
 
-                    <button type="button" class="btn btn-danger btn-sm pull-left" data-dismiss="modal" ng-click="cerrarPopPupNuevoPolifuncional()">
+                    <button tabindex="-1" type="button" class="btn btn-danger btn-sm pull-left" data-dismiss="modal" ng-click="cerrarPopPupNuevoPolifuncional()">
                         <i class="ace-icon fa fa-times"></i>
                         Cancelar
                     </button>
@@ -702,7 +745,7 @@
                                             </div>
                                             <div class="col-md-4">
                                                 <label>
-                                                    <input name="switch-field-1" ng-model="parametros.usar_capacitacion" class="ace ace-switch ace-switch-4 ng-pristine ng-untouched ng-valid ng-empty"
+                                                    <input name="switch-field-1" tabindex="-1" ng-model="parametros.usar_capacitacion" class="ace ace-switch ace-switch-4 ng-pristine ng-untouched ng-valid ng-empty"
                                                         type="checkbox">
                                                     <span class="lbl check-descuento"></span>
                                                 </label>
@@ -728,7 +771,7 @@
                                             </div>
                                             <div class="col-md-4">
                                                 <label>
-                                                    <input name="switch-field-1" ng-model="parametros.usar_documentos" class="ace ace-switch ace-switch-4 ng-pristine ng-untouched ng-valid ng-empty"
+                                                    <input name="switch-field-1" tabindex="-1" ng-model="parametros.usar_documentos" class="ace ace-switch ace-switch-4 ng-pristine ng-untouched ng-valid ng-empty"
                                                         type="checkbox">
                                                     <span class="lbl check-descuento"></span>
                                                 </label>
@@ -755,7 +798,7 @@
                                             </div>
                                             <div class="col-md-4">
                                                 <label>
-                                                    <input name="switch-field-1" ng-model="parametros.usar_equipo" class="ace ace-switch ace-switch-4 ng-pristine ng-untouched ng-valid ng-empty"
+                                                    <input name="switch-field-1" tabindex="-1" ng-model="parametros.usar_equipo" class="ace ace-switch ace-switch-4 ng-pristine ng-untouched ng-valid ng-empty"
                                                         type="checkbox">
                                                     <span class="lbl check-descuento"></span>
                                                 </label>
@@ -783,7 +826,7 @@
                                             </div>
                                             <div class="col-md-4">
                                                 <label>
-                                                    <input name="switch-field-1" ng-model="parametros.usar_funciones" class="ace ace-switch ace-switch-4 ng-pristine ng-untouched ng-valid ng-empty"
+                                                    <input name="switch-field-1" tabindex="-1" ng-model="parametros.usar_funciones" class="ace ace-switch ace-switch-4 ng-pristine ng-untouched ng-valid ng-empty"
                                                         type="checkbox">
                                                     <span class="lbl check-descuento"></span>
                                                 </label>
@@ -810,7 +853,7 @@
                                             </div>
                                             <div class="col-md-4">
                                                 <label>
-                                                    <input name="switch-field-1" ng-model="parametros.usar_higiene" class="ace ace-switch ace-switch-4 ng-pristine ng-untouched ng-valid ng-empty"
+                                                    <input name="switch-field-1" tabindex="-1" ng-model="parametros.usar_higiene" class="ace ace-switch ace-switch-4 ng-pristine ng-untouched ng-valid ng-empty"
                                                         type="checkbox">
                                                     <span class="lbl check-descuento"></span>
                                                 </label>
@@ -836,7 +879,7 @@
                                             </div>
                                             <div class="col-md-4">
                                                 <label>
-                                                    <input name="switch-field-1" ng-model="parametros.usar_reunion" class="ace ace-switch ace-switch-4 ng-pristine ng-untouched ng-valid ng-empty"
+                                                    <input name="switch-field-1" tabindex="-1" ng-model="parametros.usar_reunion" class="ace ace-switch ace-switch-4 ng-pristine ng-untouched ng-valid ng-empty"
                                                         type="checkbox">
                                                     <span class="lbl check-descuento"></span>
                                                 </label>
@@ -862,7 +905,7 @@
                                             </div>
                                             <div class="col-md-4">
                                                 <label>
-                                                    <input name="switch-field-1" ng-model="parametros.usar_ingreso" class="ace ace-switch ace-switch-4 ng-pristine ng-untouched ng-valid ng-empty"
+                                                    <input name="switch-field-1" tabindex="-1" ng-model="parametros.usar_ingreso" class="ace ace-switch ace-switch-4 ng-pristine ng-untouched ng-valid ng-empty"
                                                         type="checkbox">
                                                     <span class="lbl check-descuento"></span>
                                                 </label>
@@ -889,7 +932,7 @@
                                             </div>
                                             <div class="col-md-4">
                                                 <label>
-                                                    <input name="switch-field-1" ng-model="parametros.usar_formularios" class="ace ace-switch ace-switch-4 ng-pristine ng-untouched ng-valid ng-empty"
+                                                    <input name="switch-field-1" tabindex="-1" ng-model="parametros.usar_formularios" class="ace ace-switch ace-switch-4 ng-pristine ng-untouched ng-valid ng-empty"
                                                         type="checkbox">
                                                     <span class="lbl check-descuento"></span>
                                                 </label>
@@ -912,7 +955,7 @@
                                             </div>
                                             <div class="col-md-4">
                                                 <!-- <label>
-                                                <input name="switch-field-1" ng-model="vacuna.asignada" class="ace ace-switch ace-switch-4 ng-pristine ng-untouched ng-valid ng-empty"
+                                                <input name="switch-field-1" tabindex="-1" ng-model="vacuna.asignada" class="ace ace-switch ace-switch-4 ng-pristine ng-untouched ng-valid ng-empty"
                                                     type="checkbox">
                                                 <span class="lbl check-descuento"></span>
                                             </label>
@@ -965,7 +1008,7 @@
                                             </div>
                                             <div class="col-md-4">
                                                 <label>
-                                                    <input name="switch-field-1" ng-model="parametros.usar_capacitacion" class="ace ace-switch ace-switch-4 ng-pristine ng-untouched ng-valid ng-empty"
+                                                    <input name="switch-field-1" tabindex="-1" ng-model="parametros.usar_capacitacion" class="ace ace-switch ace-switch-4 ng-pristine ng-untouched ng-valid ng-empty"
                                                         type="checkbox">
                                                     <span class="lbl check-descuento"></span>
                                                 </label>
@@ -989,7 +1032,7 @@
                                             </div>
                                             <div class="col-md-4">
                                                 <label>
-                                                    <input name="switch-field-1" ng-model="parametros.usar_capacitacion" class="ace ace-switch ace-switch-4 ng-pristine ng-untouched ng-valid ng-empty"
+                                                    <input name="switch-field-1" tabindex="-1" ng-model="parametros.usar_capacitacion" class="ace ace-switch ace-switch-4 ng-pristine ng-untouched ng-valid ng-empty"
                                                         type="checkbox">
                                                     <span class="lbl check-descuento"></span>
                                                 </label>
@@ -1013,7 +1056,7 @@
                                             </div>
                                             <div class="col-md-4">
                                                 <label>
-                                                    <input name="switch-field-1" ng-model="parametros.usar_capacitacion" class="ace ace-switch ace-switch-4 ng-pristine ng-untouched ng-valid ng-empty"
+                                                    <input name="switch-field-1" tabindex="-1" ng-model="parametros.usar_capacitacion" class="ace ace-switch ace-switch-4 ng-pristine ng-untouched ng-valid ng-empty"
                                                         type="checkbox">
                                                     <span class="lbl check-descuento"></span>
                                                 </label>
@@ -1037,7 +1080,7 @@
                                             </div>
                                             <div class="col-md-4">
                                                 <label>
-                                                    <input name="switch-field-1" ng-model="parametros.usar_capacitacion" class="ace ace-switch ace-switch-4 ng-pristine ng-untouched ng-valid ng-empty"
+                                                    <input name="switch-field-1" tabindex="-1" ng-model="parametros.usar_capacitacion" class="ace ace-switch ace-switch-4 ng-pristine ng-untouched ng-valid ng-empty"
                                                         type="checkbox">
                                                     <span class="lbl check-descuento"></span>
                                                 </label>
@@ -1050,7 +1093,8 @@
 
                         <div class="step-pane" data-step="3">
                             <div class="center">
-                                <h4 class="blue">Todos los campos son requeridos, por favor vuelva atras y revise que todos los campos esten con valores númericos </h4>
+                                <h4 class="blue">Todos los campos son requeridos, por favor vuelva atras y revise que todos los campos esten
+                                    con valores númericos </h4>
                             </div>
                         </div>
 
@@ -1172,14 +1216,14 @@
                                 </div>
                                 <div class="col-md-5">
                                     <p class="btn-group btn-corner">
-                                        <button type="button" class="btn  btn-primary btn-sm">
+                                        <button type="button" class="btn  btn-primary btn-sm" ng-click="reportePorMeses(reporte.mesXmesesDesde,reporte.anioXmesesDesde, reporte.mesXmesesHasta, reporte.anioXmesesHasta, true, true)">
                                             <i class="ace-icon fa fa-bar-chart-o align-top bigger-100"></i>
                                         </button>
-                                        <button type="button" class="btn  btn-success btn-sm" ng-click="reportePorMesExcel(reporte.mesXmesesDesde,reporte.anioXmesesDesde, reporte.mesXmesesHasta, reporte.anioXmesesHasta )">
+                                        <button type="button" class="btn  btn-success btn-sm" ng-click="reportePorMeses(reporte.mesXmesesDesde,reporte.anioXmesesDesde, reporte.mesXmesesHasta, reporte.anioXmesesHasta)">
                                             <i class="ace-icon fa fa-print align-top bigger-100"></i>
                                             Excel
                                         </button>
-                                        <button type="button" class="btn  btn-danger btn-sm">
+                                        <button type="button" class="btn  btn-danger btn-sm" ng-click="reportePorMeses(reporte.mesXmesesDesde,reporte.anioXmesesDesde, reporte.mesXmesesHasta, reporte.anioXmesesHasta, true)">
                                             <i class="ace-icon fa fa-print align-top bigger-100"></i>
                                             pdf
                                         </button>
@@ -1196,7 +1240,7 @@
                                 <div class="col-md-7">
                                     <div class="col-md-6">
                                         <select required id="anioXaniosReportePolifuncionalidad" name="anioReportePolifuncionalidad" ng-options="anio as anio.nombre for anio in anios track by anio.id"
-                                            ng-model="reporte.anioXanio">
+                                            ng-model="reporte.anioXcampo">
                                             <option disabled value="" selected>Año</option>
                                         </select>
                                     </div>
@@ -1205,22 +1249,23 @@
                                             ng-model="filtro.centroCosto">
                                             <option value="" selected>TODOS</option>
                                         </select> -->
-                                        <select required id="reportesCamposPolifuncionalidad" name="reportesCamposPolifuncionalidad" ng-options="centroCosto as centroCosto.nombre for centroCosto in centrosCostos track by centroCosto.id"
+                                        <!-- <select required id="reportesCamposPolifuncionalidad" name="reportesCamposPolifuncionalidad" ng-options="centroCosto as centroCosto.nombre for centroCosto in centrosCostos track by centroCosto.id"
                                             ng-model="reporte.campoXanio">
                                             <option disabled value="" selected>Campo</option>
-                                        </select>
+                                        </select> -->
+                                        <input class="form-control" type="text" ng-model="reporte.campoXanio">
                                     </div>
                                 </div>
                                 <div class="col-md-5">
                                     <p class="btn-group btn-corner">
-                                        <button type="button" class="btn  btn-primary btn-sm">
+                                        <button type="button" class="btn  btn-primary btn-sm" ng-click="reportePromediosGeneralExcel(reporte.anioXcampo, reporte.campoXanio, true, true)">
                                             <i class="ace-icon fa fa-bar-chart-o align-top bigger-100"></i>
                                         </button>
-                                        <button type="button" class="btn  btn-success btn-sm">
+                                        <button type="button" class="btn  btn-success btn-sm" ng-click="reportePromediosGeneralExcel(reporte.anioXcampo, reporte.campoXanio)">
                                             <i class="ace-icon fa fa-print align-top bigger-100"></i>
                                             Excel
                                         </button>
-                                        <button type="button" class="btn  btn-danger btn-sm">
+                                        <button type="button" class="btn  btn-danger btn-sm" ng-click="reportePromediosGeneralExcel(reporte.anioXcampo, reporte.campoXanio, true)">
                                             <i class="ace-icon fa fa-print align-top bigger-100"></i>
                                             pdf
                                         </button>
@@ -1245,14 +1290,14 @@
                                 </div>
                                 <div class="col-md-5">
                                     <p class="btn-group btn-corner">
-                                        <button type="button" class="btn  btn-primary btn-sm">
+                                        <button type="button" class="btn  btn-primary btn-sm" ng-click="reportePromediosCampoExcel(reporte.anioXanio, true, true)">
                                             <i class="ace-icon fa fa-bar-chart-o align-top bigger-100"></i>
                                         </button>
-                                        <button type="button" class="btn  btn-success btn-sm">
+                                        <button type="button" class="btn  btn-success btn-sm" ng-click="reportePromediosCampoExcel(reporte.anioXanio)">
                                             <i class="ace-icon fa fa-print align-top bigger-100"></i>
                                             Excel
                                         </button>
-                                        <button type="button" class="btn  btn-danger btn-sm">
+                                        <button type="button" class="btn  btn-danger btn-sm" ng-click="reportePromediosCampoExcel(reporte.anioXanio, true)">
                                             <i class="ace-icon fa fa-print align-top bigger-100"></i>
                                             Pdf
                                         </button>
@@ -1261,6 +1306,29 @@
                             </div>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="reporte-grafico-polifuncional" style="overflow-x:hidden;">
+    <div class="row">
+        <div class="modal-header">
+            <div class="container-fluid">
+                    <button type="button" ng-click="cerraridModalReportesGrafico()" class="pull-right">
+                            <i class="ace-icon fa fa-close align-top bigger-125"></i>
+                        </button>
+                <h2 align="center" class="blue">REPORTE GRAFÍCO</h2>
+                
+            </div>
+        </div>
+    </div>
+    <div class="modal-body">
+        <div class="container-fluid">
+            <div class="container-fluid">
+                <div id="chartContainer" style="height: 800; width: 100%;">
+
                 </div>
             </div>
         </div>

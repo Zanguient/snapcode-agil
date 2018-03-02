@@ -1,7 +1,8 @@
 module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente, Persona, Empresa, Sucursal, Clase, Diccionario, Tipo, decodeBase64Image, fs, RrhhEmpleadoFicha, RrhhEmpleadoFichaOtrosSeguros, RrhhEmpleadoFichaFamiliar, RrhhEmpleadoDiscapacidad
     , RrhhEmpleadoCargo, RrhhEmpleadoHojaVida, RrhhEmpleadoFormacionAcademica, RrhhEmpleadoExperienciaLaboral, RrhhEmpleadoLogroInternoExterno, RrhhEmpleadoCapacidadInternaExterna, NumeroLiteral, RrhhEmpleadoPrestamo, RrhhEmpleadoPrestamoPago, RrhhEmpleadoRolTurno, RrhhEmpleadoHorasExtra, RrhhAnticipo,
-    EvaluacionPolifuncional, ConfiguracionCalificacionEvaluacionPolifuncional, ConfiguracionDesempenioEvaluacionPolifuncional, RrhhEmpleadoAusencia, RrhhEmpleadoVacaciones, RrhhEmpleadoCompensacionAusencia, RrhhFeriado, RrhhClaseAsuencia) {
-    router.route('/recursos-humanos/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion/codigo/:codigo/nombres/:nombres/ci/:ci/campo/:campo/cargo/:cargo/busquedaEmpresa/:busquedaEmpresa/grupo/:grupo_sanguineo/estado/:estado/apellido/:apellido')
+EvaluacionPolifuncional, ConfiguracionCalificacionEvaluacionPolifuncional, ConfiguracionDesempenioEvaluacionPolifuncional,RrhhEmpleadoAusencia,RrhhEmpleadoVacaciones,RrhhEmpleadoCompensacionAusencia, RrhhFeriado, RrhhClaseAsuencia) {    
+
+router.route('/recursos-humanos/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion/codigo/:codigo/nombres/:nombres/ci/:ci/campo/:campo/cargo/:cargo/busquedaEmpresa/:busquedaEmpresa/grupo/:grupo_sanguineo/estado/:estado/apellido/:apellido')
         .get(function (req, res) {
             var condicion = ""
             var condicionCargo = ""
@@ -2025,7 +2026,6 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
             }).then(function (ausencias) {
                 res.json(ausencias)
             })
-
         })
     //fin rutas ausencias
     //rutas vacaciones
@@ -2166,6 +2166,15 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
     //FIN
     /////////////////////////////////////////////////////// RUTAS PARA POLIFUNCIONAL ///////////////////////////////////////////////////
 
+    var meses = [{ id: 0, nombre: "Enero" }, { id: 1, nombre: "Febrero" }, { id: 2, nombre: "Marzo" }, { id: 3, nombre: "Abril" },
+    { id: 4, nombre: "Mayo" }, { id: 5, nombre: "Junio" }, { id: 6, nombre: "Julio" }, { id: 7, nombre: "Agosto" },
+    { id: 8, nombre: "Septiembre" }, { id: 9, nombre: "Octubre" }, { id: 10, nombre: "Noviembre" }, { id: 11, nombre: "Diciembre" }];
+    var actual_year_diference = (new Date().getFullYear() - 1980)
+    var anios = Array.apply(null, Array(actual_year_diference + 1)).map(function (_, i) {
+        var start_year = 1980
+        var year = { id: start_year + i, nombre: start_year + i }
+        return year
+    })
     ///////////////////////////////////// FILTRO POLIFUNCIONAL
 
     router.route('/personal/filtro/:id_empresa/:mes/:anio/:desempenio/:mas_campo/:campo/:cargo/:estado/:codigo/:nombre/:apellido/:pagina/:items_pagina/:columna/:direccion/fiu')
@@ -2244,7 +2253,51 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
 
     router.route('/evaluacion/personal/:id_empresa')
         .post(function (req, res) {
-            EvaluacionPolifuncional.create({
+            EvaluacionPolifuncional.findOrCreate({
+                where: {
+                    id_empleado: req.body.personal.id,
+                    anio: req.body.anio.id,
+                    mes: req.body.mes.id
+                    // fecha: req.body.fecha
+                },
+                include: [{
+                    model: MedicoPaciente, as: 'empleado',
+                    include: [{
+                        model: RrhhEmpleadoCargo, as: 'cargos',
+                        include: [{ model: Clase, as: 'cargo' }]
+                    }, { model: Persona, as: 'persona'}]
+                }],
+                defaults: {
+                    id_empleado: req.body.personal.id,
+                    anio: req.body.anio.id,
+                    mes: req.body.mes.id,
+                    fecha: req.body.fecha,
+                    asistencia_capacitacion: req.body.asistencia_capacitacion,
+                    documentos_actualizados: req.body.documentos_actualizados,
+                    trabajo_equipo: req.body.trabajo_equipo,
+                    funciones_puntualidad: req.body.funciones_puntualidad,
+                    higiene_personal: req.body.higiene_personal,
+                    asistencia_reunion: req.body.asistencia_reunion,
+                    ingreso_campo: req.body.ingreso_campo,
+                    llenado_formularios: req.body.llenado_formularios,
+                    nota_total: req.body.nota_total,
+                    id_desempenio: req.body.id_desempenio,
+                    encargado: req.body.encargado,
+                    eliminado: req.body.eliminado
+                }
+            }).spread(function (evaluacion, nueva) {
+                if (!nueva) {
+                    res.json({mensaje: 'Ya existe una evaluación de fecha ' + meses[evaluacion.mes].nombre + '-' + evaluacion.anio + ' para el empleado ' + evaluacion.empleado.persona.nombre_completo})
+                }else{
+                    res.json({ mensaje: 'Evaluación Creada satisfactoriamente!' })
+                }
+                
+            }).catch(function (err) {
+                res.json({ mensaje: err.message === undefined ? err.stack : err.message, hasErr: true })
+            });
+        })
+        .put(function (req, res) {
+            EvaluacionPolifuncional.update({
                 id_empleado: req.body.personal.id,
                 anio: req.body.anio.id,
                 mes: req.body.mes.id,
@@ -2259,13 +2312,17 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                 llenado_formularios: req.body.llenado_formularios,
                 nota_total: req.body.nota_total,
                 id_desempenio: req.body.id_desempenio,
-                eliminado: false
-            }).then(function (evaluacionCreada) {
-                res.json({ mensaje: 'Evaluación registrada correctamente!' })
-            }).catch(function (err) {
-                res.json({ mensaje: err.message === undefined ? err.data : err.message, hasErr: true })
-            });
+                encargado: req.body.encargado,
+                eliminado: req.body.eliminado
+            }, {
+                    where: { id: req.body.id }
+                }).then(function (evaluacionCreada) {
+                    res.json({ mensaje: 'Evaluación modificada correctamente!' })
+                }).catch(function (err) {
+                    res.json({ mensaje: err.message === undefined ? err.data : err.message, hasErr: true })
+                });
         })
+
 
     /////////////////////////////////////////// Guardar configuraciones
 
@@ -2301,8 +2358,8 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
 
     router.route('/reportes/:desde_mes/:desde_anio/:hasta_mes/:hasta_anio')
         .get(function (req, res) {
-            var desde = new Date(req.params.desde_anio, req.params.desde_mes, 1, 0, 0, 0)
-            var hasta = new Date(req.params.hasta_anio, req.params.hasta_mes + 1, 0, 23, 59, 0)
+            var desde = new Date(parseInt(req.params.desde_anio), parseInt(req.params.desde_mes), 1, 0, 0, 0)
+            var hasta = new Date(parseInt(req.params.hasta_anio), parseInt(req.params.hasta_mes) + 1, 0, 23, 59, 0)
             var condicion = { fecha: { $between: [desde, hasta] } }
             MedicoPaciente.findAll({
                 where: {
@@ -2310,46 +2367,57 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                 }, include: [
                     { model: RrhhEmpleadoCargo, as: 'cargos', include: [{ model: Clase, as: 'cargo' }] },
                     { model: Persona, as: 'persona' },
-                    { model: EvaluacionPolifuncional, as: 'evaluaciones' }
+                    { model: EvaluacionPolifuncional, as: 'evaluaciones', where: condicion, order: [['fecha', 'asc']], required: true }
                 ],
                 order: [[{ model: EvaluacionPolifuncional, as: 'evaluaciones' }, 'fecha', 'asc']]
             }).then(function (reporteEvaluaciones) {
                 var evaluaciones = []
-                meses = [{ id: 0, nombre: "Enero" }, { id: 1, nombre: "Febrero" }, { id: 2, nombre: "Marzo" }, { id: 3, nombre: "Abril" }, { id: 4, nombre: "Mayo" }, { id: 5, nombre: "Junio" }, { id: 6, nombre: "Julio" }, { id: 7, nombre: "Agosto" },
-                { id: 8, nombre: "Septiembre" }, { id: 9, nombre: "Octubre" }, { id: 10, nombre: "Noviembre" }, { id: 11, nombre: "Diciembre" }];
-                // var startDate = new Date()
                 var mesesReporte = []
-                // var endDate = new Date()
-                reporteEvaluaciones.map(function (_) {
-                    if (_.evaluaciones.length > 0) {
-                        _.evaluaciones.map(function (evaluacion) {
-                            var fechaCabecera = meses[evaluacion.mes].nombre.substring(0, 3) + '-' + (evaluacion.anio).toString().substring(4, 2)
-                            var encontrado = mesesReporte.indexOf(fechaCabecera)
-                            if (encontrado < 0) {
-                                mesesReporte.push(fechaCabecera)
-                            }
-                        })
-                        evaluaciones.push(_)
+                reporteEvaluaciones.map(function (trabajador) {
+                    trabajador.evaluaciones.map(function (evaluacion) {
+                        var fechatexto = meses[evaluacion.mes].nombre.substring(0, 3) + '-' + (evaluacion.anio).toString().substring(4, 2)
+                        var mesAnio = {texto: fechatexto, fecha: evaluacion.fecha}
+                        var existe = mesesReporte.indexOf(mesAnio)
+                        if (existe <0) {
+                            mesesReporte.push(mesAnio)
+                        }
+                    })
+                })
+                mesesReporte.sort(function compare(a,b) {
+                    var aDate = new Date(a.fecha)
+                    var bDate = new Date(b.fecha)
+                    return aDate - bDate; 
+                })
+                var mesesAnio = mesesReporte.map(function (fecha) {
+                    return fecha.texto
+                })
+                var mesesEnviar = []
+                mesesAnio.map(function (fecha) {
+                    var esta = mesesEnviar.indexOf(fecha)
+                    if (esta <0) {
+                        mesesEnviar.push(fecha)
                     }
                 })
-                res.json({ reporte: evaluaciones, mesesReporte: mesesReporte })
+                res.json({ reporte: reporteEvaluaciones, mesesReporte: mesesEnviar })
             }).catch(function (err) {
                 res.json({ reporte: [], mensaje: err.message === undefined ? err.data : err.message, hasErr: true })
             });
         })
 
-    ////////////////////////////////////////////////////// Promedios anuales por campo
+    ////////////////////////////////////////////////////// Promedios anuales de campos
 
     router.route('/reportes/anual/:anio/campos')
         .get(function (req, res) {
-            EvaluacionPolifuncional.findAndCountAll({
-                where: condicion,
+            var condicionCampo = {}
+            EvaluacionPolifuncional.findAll({
+                where: { anio: req.params.anio },
                 include: [{
-                    model: MedicoPaciente, as: 'empleado'
+                    model: MedicoPaciente, as: 'empleado', where: condicionCampo
                 }],
                 order: [[{ model: MedicoPaciente, as: 'empleado' }, 'campo', 'asc']]
             }).then(function (evaluaciones) {
                 var reportesCampos = []
+                var reporteAnual = []
                 evaluaciones.map(function (evaluacion) {
                     var reporte = {
                         campo: evaluacion.empleado.campo,
@@ -2360,15 +2428,119 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                         higiene_personal: evaluacion.higiene_personal,
                         asistencia_reunion: evaluacion.asistencia_reunion,
                         ingreso_campo: evaluacion.ingreso_campo,
-                        llenado_formularios: evaluacion.llenado_formularios
+                        llenado_formularios: evaluacion.llenado_formularios,
+                        count: 1
                     }
                     reportesCampos.push(reporte)
                 })
-                // while (reportesCampos.length > 0) {
-                //     var campo = reportesCampos.pop()
-                // }
+                while (reportesCampos.length > 0) {
+                    if (reporteAnual.length == 0) {
+                        reporteAnual.push(reportesCampos.pop())
+                    } else {
+                        var reporteCampo = reportesCampos.pop()
+                        var indx = -1
+                        var existe = reporteAnual.some(function (reporte, i) {
+                            indx = i
+                            return reporte.campo == reporteCampo.campo
+                        })
+                        if (existe) {
+                            reporteAnual[indx].asistencia_capacitacion += reporteCampo.asistencia_capacitacion
+                            reporteAnual[indx].documentos_actualizados += reporteCampo.documentos_actualizados
+                            reporteAnual[indx].trabajo_equipo += reporteCampo.trabajo_equipo
+                            reporteAnual[indx].funciones_puntualidad += reporteCampo.funciones_puntualidad
+                            reporteAnual[indx].higiene_personal += reporteCampo.higiene_personal
+                            reporteAnual[indx].asistencia_reunion += reporteCampo.asistencia_reunion
+                            reporteAnual[indx].ingreso_campo += reporteCampo.ingreso_campo
+                            reporteAnual[indx].llenado_formularios += reporteCampo.llenado_formularios
+                            reporteAnual[indx].count += 1
+                        } else {
+                            reporteAnual.push(reporteCampo)
+                        }
+                    }
+                }
+                reporteAnual.map(function (campo) {
+                    campo.asistencia_capacitacion = campo.asistencia_capacitacion / campo.count
+                    campo.documentos_actualizados = campo.documentos_actualizados / campo.count
+                    campo.trabajo_equipo = campo.trabajo_equipo / campo.count
+                    campo.funciones_puntualidad = campo.funciones_puntualidad / campo.count
+                    campo.higiene_personal = campo.higiene_personal / campo.count
+                    campo.asistencia_reunion = campo.asistencia_reunion / campo.count
+                    campo.ingreso_campo = campo.ingreso_campo / campo.count
+                    campo.llenado_formularios = campo.llenado_formularios / campo.count
+                    campo.total = campo.asistencia_capacitacion + campo.documentos_actualizados + campo.trabajo_equipo + campo.funciones_puntualidad + campo.higiene_personal + campo.asistencia_reunion + campo.ingreso_campo + campo.llenado_formularios
+                })
+                res.json({ reporte: reporteAnual })
+            }).catch(function (err) {
+                res.json({ reporte: [], mensaje: err.message === undefined ? err.data : err.message, hasErr: true })
+            });
+        })
 
-                res.json({ reporte: reportesCamposs })
+    ////////////////////////////////////////////////////////////////Reporte Anual de campo
+
+    router.route('/reportes/anual/:anio/:campo')
+        .get(function (req, res) {
+            var condicionCampo = {}
+            EvaluacionPolifuncional.findAll({
+                where: { anio: req.params.anio },
+                include: [{
+                    model: MedicoPaciente, as: 'empleado', where: { campo: req.params.campo }
+                }],
+                order: [['mes', 'DESC']]
+            }).then(function (evaluaciones) {
+                var reportesCampo = []
+                var reporteAnual = []
+                evaluaciones.map(function (evaluacion) {
+                    var reporte = {
+                        mes: evaluacion.mes,
+                        asistencia_capacitacion: evaluacion.asistencia_capacitacion,
+                        documentos_actualizados: evaluacion.documentos_actualizados,
+                        trabajo_equipo: evaluacion.trabajo_equipo,
+                        funciones_puntualidad: evaluacion.funciones_puntualidad,
+                        higiene_personal: evaluacion.higiene_personal,
+                        asistencia_reunion: evaluacion.asistencia_reunion,
+                        ingreso_campo: evaluacion.ingreso_campo,
+                        llenado_formularios: evaluacion.llenado_formularios,
+                        count: 1
+                    }
+                    reportesCampo.push(reporte)
+                })
+                while (reportesCampo.length > 0) {
+                    if (reporteAnual.length == 0) {
+                        reporteAnual.push(reportesCampo.pop())
+                    } else {
+                        var reporteCampo = reportesCampo.pop()
+                        var indx = -1
+                        var existe = reporteAnual.some(function (reporte, i) {
+                            indx = i
+                            return reporte.mes == reporteCampo.mes
+                        })
+                        if (existe) {
+                            reporteAnual[indx].asistencia_capacitacion += reporteCampo.asistencia_capacitacion
+                            reporteAnual[indx].documentos_actualizados += reporteCampo.documentos_actualizados
+                            reporteAnual[indx].trabajo_equipo += reporteCampo.trabajo_equipo
+                            reporteAnual[indx].funciones_puntualidad += reporteCampo.funciones_puntualidad
+                            reporteAnual[indx].higiene_personal += reporteCampo.higiene_personal
+                            reporteAnual[indx].asistencia_reunion += reporteCampo.asistencia_reunion
+                            reporteAnual[indx].ingreso_campo += reporteCampo.ingreso_campo
+                            reporteAnual[indx].llenado_formularios += reporteCampo.llenado_formularios
+                            reporteAnual[indx].count += 1
+                        } else {
+                            reporteAnual.push(reporteCampo)
+                        }
+                    }
+                }
+                reporteAnual.map(function (campo) {
+                    campo.asistencia_capacitacion = campo.asistencia_capacitacion / campo.count
+                    campo.documentos_actualizados = campo.documentos_actualizados / campo.count
+                    campo.trabajo_equipo = campo.trabajo_equipo / campo.count
+                    campo.funciones_puntualidad = campo.funciones_puntualidad / campo.count
+                    campo.higiene_personal = campo.higiene_personal / campo.count
+                    campo.asistencia_reunion = campo.asistencia_reunion / campo.count
+                    campo.ingreso_campo = campo.ingreso_campo / campo.count
+                    campo.llenado_formularios = campo.llenado_formularios / campo.count
+                    campo.total = campo.asistencia_capacitacion + campo.documentos_actualizados + campo.trabajo_equipo + campo.funciones_puntualidad + campo.higiene_personal + campo.asistencia_reunion + campo.ingreso_campo + campo.llenado_formularios
+                })
+                res.json({ reporte: reporteAnual })
             }).catch(function (err) {
                 res.json({ reporte: [], mensaje: err.message === undefined ? err.data : err.message, hasErr: true })
             });

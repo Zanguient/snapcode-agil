@@ -133,3 +133,23 @@ angular.module('agil.servicios')
         };
         return res;
     }])
+
+    .factory('ReporteAnualCampo', function ($resource) {
+        return $resource(restServer + "reportes/anual/:anio/:campo", {},
+            {
+                'update': { method: 'PUT' }
+            });
+    })
+
+    .factory('ObtenerReporteGeneralPorAnio', ['ReporteAnualCampo', '$q', function (ReporteAnualCampo, $q) {
+        var res = function (year, campo) {
+            var delay = $q.defer();
+            ReporteAnualCampo.get({ anio: year, campo:campo}, function (entidades) {
+                delay.resolve(entidades);
+            }, function (error) {
+                delay.reject(error);
+            });
+            return delay.promise;
+        };
+        return res;
+    }])

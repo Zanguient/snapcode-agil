@@ -465,7 +465,13 @@
 													!usuario.empresa.usar_contabilidad) || 
 													((aplicacion.titulo==diccionario.MENU_MEDICO) && 
 													usuario.empresa && 
-													!usuario.empresa.usar_medico)}">
+													!usuario.empresa.usar_medico)|| 
+													((aplicacion.titulo==diccionario.MENU_VEHICULOS) && 
+													usuario.empresa && 
+													!usuario.empresa.usar_mantenimiento)|| 
+													((aplicacion.titulo==diccionario.MENU_PROFORMAS) && 
+													usuario.empresa && 
+													!usuario.empresa.usar_proformas)}">
 					<a href="#/{{aplicacion.url}}" ng-class="{'dropdown-toggle':aplicacion.subaplicaciones.length>0}">
 						<i class="menu-icon fa {{aplicacion.atributo_clase}}"></i>
 						<span class="menu-text">{{aplicacion.titulo}}</span>
@@ -527,7 +533,13 @@
 																!usuario.empresa.usar_contabilidad) || 
 																((aplicacion.titulo==diccionario.MENU_MEDICO) && 
 																usuario.empresa && 
-																!usuario.empresa.usar_medico))}">
+																!usuario.empresa.usar_medico)|| 
+																((aplicacion.titulo==diccionario.MENU_VEHICULOS) && 
+																usuario.empresa && 
+																!usuario.empresa.usar_mantenimiento)|| 
+																((aplicacion.titulo==diccionario.MENU_PROFORMAS) && 
+																usuario.empresa && 
+																!usuario.empresa.usar_proformas))}">
 									<a href="#/{{aplicacion.url}}">
 										<i class="menu-icon fa {{aplicacion.atributo_clase}}"></i>
 										<span class="menu-text">{{aplicacion.titulo}}</span>

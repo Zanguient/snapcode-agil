@@ -1310,17 +1310,28 @@ angular.module('agil.controladores')
 			return Math.round(suma * 100) / 100;
 		}
 
-		$scope.crearNuevaVenta = function () {
+		$scope.crearNuevaVenta = function (venta) {
+			console.log("venta ressss =========== ", venta);
+
 			$scope.blockerVenta = true
 			$scope.venta = new Venta({
 				id_empresa: $scope.usuario.id_empresa, id_usuario: $scope.usuario.id, cliente: {},
 				detallesVenta: [], detallesVentaNoConsolidadas: [], pagado: 0, cambio: 0, despachado: false, vendedor: null
 			});
-			$scope.venta.sucursal = $scope.sucursales.length == 1 ? $scope.sucursales[0] : null;
+			var al = 0;
+			if (venta == undefined) {
+				$scope.venta.sucursal = $scope.sucursales.length == 1 ? $scope.sucursales[0] : null;
+			}else {
+				$scope.venta.sucursal = venta.sucursal;
+				al = venta.almacen;
+			}
+
 			if ($scope.venta.sucursal) {
 				$scope.obtenerAlmacenesActividades($scope.venta.sucursal.id);
+				$scope.venta.almacen = al;
 			}
 			$scope.venta.movimiento = $scope.movimientosEgreso[0];
+			// $scope.venta.sucursal =  $scope.sucursales[0];
 			$scope.obtenerTipoEgreso($scope.venta.movimiento);
 			var fechaActual = new Date();
 			$scope.venta.fechaTexto = fechaActual.getDate() + "/" + (fechaActual.getMonth() + 1) + "/" + fechaActual.getFullYear();
@@ -1340,6 +1351,7 @@ angular.module('agil.controladores')
 
 
 		$scope.venderProformaDirectoNormal = function (venta) {
+			console.log("venta.sucursal.id ==", venta.sucursal.id);
 			if (venta.detallesVenta.length > 0) {
 				var promesa = ClientesNit($scope.usuario.id_empresa, 0);
 				promesa.then(function (results) {
@@ -1358,14 +1370,20 @@ angular.module('agil.controladores')
 					venta.pagado = venta.total;
 					venta.cambio = 0;
 					$scope.usuario.empresa.usar_vencimientos = false;
+					console.log("la ventaaa directo ======== ", venta);
 					$scope.guardarVenta(true, venta);
+					$scope.venta.sucursal = venta.sucursal;
 				});
+
 			} else {
 				$scope.$apply(function () {
                     $scope.message = "¡Debe agregar al menos un producto para realizar la transacción!";
                     $scope.mostrarMensaje($scope.message);
                 });
 			}
+
+			// $scope.venta.sucursal = venta.sucursal.id;
+			
 		}
 
 		$scope.verVenta = function (venta) {
@@ -1446,7 +1464,7 @@ angular.module('agil.controladores')
 					venta.$save(function (res) {
 						if (res.hasError) {
 							blockUI.stop();
-							$scope.crearNuevaVenta();
+							$scope.crearNuevaVenta(res);
 							$scope.mostrarMensaje(res.message);
 						} else {
 							blockUI.stop();
@@ -1463,7 +1481,7 @@ angular.module('agil.controladores')
 							} else {
 								ImprimirSalida(movimiento, res, true, $scope.usuario);
 							}
-							$scope.crearNuevaVenta();
+							$scope.crearNuevaVenta(res);
 							$scope.mostrarMensaje('Venta registrada exitosamente!');
 						}
 					}, function (error) {
@@ -1950,6 +1968,19 @@ angular.module('agil.controladores')
 			}
 			$scope.abrirPopup($scope.idModalInventario);
 		}
+
+		$scope.barcodeScanned = function(barcode) {
+			// document.getElementById("inputGroup").focus();
+			$scope.search = barcode;
+
+			// $scope.cargarProductos();       
+	        $scope.filtrarProductos(barcode);   
+	    };
+
+	    $scope.limpiarBusqueda = function() {
+	    	$scope.search = "";
+	    	$scope.filtrarProductos();     
+	    }
 
 		$scope.buscarInventarios = function (idAlmacen, pagina, itemsPagina, texto, columna, direccion, cantidad) {
 			blockUI.start();

@@ -63,6 +63,10 @@ module.exports = function (sequelize, Sequelize) {
        servicio_transporte: {
           type: Sequelize.DECIMAL(20,4),
           field: 'servicio_transporte'
+      },
+      numero_correlativo: {
+          type: Sequelize.INTEGER,
+          field: 'numero_correlativo'
       }
     }, {
             freezeTableName: true

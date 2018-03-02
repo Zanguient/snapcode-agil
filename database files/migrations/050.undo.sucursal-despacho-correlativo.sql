@@ -1,0 +1,2 @@
+ALTER TABLE agil_sucursal drop despacho_correlativo;
+ALTER TABLE agil_gtm_despacho_detalle drop numero_correlativo;
