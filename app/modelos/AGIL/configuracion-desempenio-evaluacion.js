@@ -1,48 +1,24 @@
 module.exports = function (sequelize, Sequelize) {
 	var ConfiguracionDesempenioEvaluacionPolifuncional = sequelize.define('agil_configuracion_desempenio_evaluacion', {
-		asistencia_capacitacion: {
-			type: Sequelize.DECIMAL(20, 4),
-			field: 'capacitacion'
+		id_empresa:{
+			type: Sequelize.INTEGER,
+			field: 'empresa'
 		},
-		documentos_actualizados: {
-			type: Sequelize.DECIMAL(20, 4),
-			field: 'documentos'
+		nombre:{
+			type: Sequelize.STRING,
+			field: 'nombre'
 		},
-		trabajo_equipo: {
-			type: Sequelize.DECIMAL(20, 4),
-			field: 'equipo'
+		desde:{
+			type: Sequelize.DECIMAL(20,4),
+			field: 'desde'
 		},
-		funciones_puntualidad: {
-			type: Sequelize.DECIMAL(20, 4),
-			field: 'puntualidad'
+		hasta:{
+			type: Sequelize.DECIMAL(20,4),
+			field: 'hasta'
 		},
-		higiene_personal: {
-			type: Sequelize.DECIMAL(20, 4),
-			field: 'higiene'
-		},
-		asistencia_reunion: {
-			type: Sequelize.DECIMAL(20, 4),
-			field: 'reunion'
-		},
-		ingreso_campo: {
-			type: Sequelize.DECIMAL(20, 4),
-			field: 'ingreso'
-		},
-		llenado_formularios: {
-			type: Sequelize.DECIMAL(20, 4),
-			field: 'formularioss'
-		},
-		nota_total: {
-			type: Sequelize.DECIMAL(20, 4),
-			field: 'total'
-		},
-		para_empleados: {
-			type: Sequelize.BOOLEAN,
-			field: 'para_empleados'
-		},
-		para_encargados: {
-			type: Sequelize.BOOLEAN,
-			field: 'para_encargados'
+		color:{
+			type: Sequelize.STRING,
+			field: 'color'
 		},
 		activo: {
 			type: Sequelize.BOOLEAN,

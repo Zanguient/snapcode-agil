@@ -153,3 +153,70 @@ angular.module('agil.servicios')
         };
         return res;
     }])
+
+
+    .factory('configuracionCalificacion', function ($resource) {
+        return $resource(restServer + "evaluacion/configuracion/:id_empresa", {},
+            {
+                'update': { method: 'PUT' }
+            });
+    })
+
+    .factory('GuardarConfiguracionCalificacion', ['configuracionCalificacion', '$q', function (configuracionCalificacion, $q) {
+        var res = function (idEmpresa, configuracion) {
+            var delay = $q.defer();
+            configuracionCalificacion.save({id_empresa: idEmpresa}, configuracion, function (entidades) {
+                delay.resolve(entidades);
+            }, function (error) {
+                delay.reject(error);
+            });
+            return delay.promise;
+        };
+        return res;
+    }])
+
+    .factory('ObtenerConfiguracionCalificacion', ['configuracionCalificacion', '$q', function (configuracionCalificacion, $q) {
+        var res = function (idEmpresa, configuracion) {
+            var delay = $q.defer();
+            configuracionCalificacion.get({id_empresa: idEmpresa}, function (entidades) {
+                delay.resolve(entidades);
+            }, function (error) {
+                delay.reject(error);
+            });
+            return delay.promise;
+        };
+        return res;
+    }])
+
+    .factory('configuracionDesempenio', function ($resource) {
+        return $resource(restServer + "desempenio/configuracion/:id_empresa", {},
+            {
+                'update': { method: 'PUT' }
+            });
+    })
+
+    .factory('GuardarConfiguracionDesempenio', ['configuracionDesempenio', '$q', function (configuracionDesempenio, $q) {
+        var res = function (idEmpresa, configuracion) {
+            var delay = $q.defer();
+            configuracionDesempenio.save({id_empresa: idEmpresa}, configuracion, function (entidades) {
+                delay.resolve(entidades);
+            }, function (error) {
+                delay.reject(error);
+            });
+            return delay.promise;
+        };
+        return res;
+    }])
+
+    .factory('ObtenerConfiguracionDesempenio', ['configuracionDesempenio', '$q', function (configuracionDesempenio, $q) {
+        var res = function (idEmpresa, configuracion) {
+            var delay = $q.defer();
+            configuracionDesempenio.get({id_empresa: idEmpresa}, function (entidades) {
+                delay.resolve(entidades);
+            }, function (error) {
+                delay.reject(error);
+            });
+            return delay.promise;
+        };
+        return res;
+    }])

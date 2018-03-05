@@ -795,7 +795,7 @@ angular.module('agil.controladores')
         $scope.addEvents = function (datos) {
             $scope.calendar.fullCalendar('addEventSource', datos)
         }
-       
+
         $scope.calendar = $('#calendar').fullCalendar({
             buttonHtml: {
                 prev: '<i class="ace-icon fa fa-chevron-left"></i>',
@@ -892,7 +892,7 @@ angular.module('agil.controladores')
         $scope.selectionday = [];
         $scope.totalHoras = moment("00:00", "HH:mm");
 
-       
+
         $scope.calendarCompensacion = $('#calendar-compensacion').fullCalendar({
             buttonHtml: {
                 prev: '<i class="ace-icon fa fa-chevron-left"></i>',
@@ -941,7 +941,7 @@ angular.module('agil.controladores')
                     true // make the event "stick"
                 );
 
-                $scope.selectionday.push({ '_id': $scope.Event[0]._id,'fecha_real': start, 'fecha': start.format("DD-MM-YYYY"), 'hora_inicio': start.format("HH:mm:ss"), 'hora_fin': end.format("HH:mm:ss"), 'total': $scope.horas });
+                $scope.selectionday.push({ '_id': $scope.Event[0]._id, 'fecha_real': start, 'fecha': start.format("DD-MM-YYYY"), 'hora_inicio': start.format("HH:mm:ss"), 'hora_fin': end.format("HH:mm:ss"), 'total': $scope.horas });
                 $scope.sumarTotalHoras();
                 $scope.$apply();
                 $scope.calendarCompensacion.fullCalendar('unselect');
@@ -1037,7 +1037,7 @@ angular.module('agil.controladores')
                     timeMinutos = timeMinutos - 60;
                     timeHoras = timeHoras + 1;
                 }
-                totalHoras = String("0" + timeHoras).slice(-2) + ':' + String("0" + timeMinutos).slice(-2)+":00";
+                totalHoras = String("0" + timeHoras).slice(-2) + ':' + String("0" + timeMinutos).slice(-2) + ":00";
             }
             $scope.SumaTotalHoras = totalHoras;
         }
@@ -1116,13 +1116,21 @@ angular.module('agil.controladores')
             var gestion = String(new Date().getFullYear())
             var ultimodia = new Date()
             $scope.listaAnticipos = []
-            $scope.filtroAnticipo = { mes: { id: mes }, gestion: gestion }
-            var date = new Date();
-            var primerDia = new Date(date.getFullYear(), date.getMonth(), 1);
-            var ultimoDia = new Date(date.getFullYear(), date.getMonth() + 1, 0);
-            var filtro = { inicio: primerDia, fin: ultimoDia, nombre: 'EXTRAORDI', id_empresa: $scope.usuario.id_empresa }
-            $scope.anticipo_extraordinaro = 0;
-            $scope.obtenerListaAnticiposOrdi(filtro, 0)
+            $scope.meses.forEach(function (mese, index, array) {
+                if (mese.id == mes) {
+                    mes = mese
+                }
+                if (index === (array.length - 1)) {
+                    $scope.filtroAnticipo = { mes: mes, gestion: gestion }
+                    var date = new Date();
+                    var primerDia = new Date(date.getFullYear(), date.getMonth(), 1);
+                    var ultimoDia = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+                    var filtro = { inicio: primerDia, fin: ultimoDia, nombre: 'EXTRAORDI', id_empresa: $scope.usuario.id_empresa }
+                    $scope.anticipo_extraordinaro = 0;
+                    $scope.obtenerListaAnticiposOrdi(filtro, 0)
+                }
+            });
+
         }
         $scope.cerrarDialogAnticipoRegular = function () {
             $scope.cerrarPopup($scope.idModalAnticipoRegular);
@@ -1227,6 +1235,7 @@ angular.module('agil.controladores')
             $scope.abrirDialogAdvertencia($scope.abrirDialogPretamosNuevoTodos)
         }
         $scope.abrirDialogAdvertenciaAnticipo = function () {
+            $scope.anticipo = { tipo: false, tope: null, monto: null }
             $scope.mensajeAdvertencia = {
                 texto1: 'Los anticipos y las condiciones se realizarán para todos los trabajadores seleccionados.',
                 texto2: 'Para anticipos personalizados use la opción directamente en la fila del empleado.'
@@ -1586,11 +1595,11 @@ angular.module('agil.controladores')
         };
         $scope.changeActivoEmpleado = function (empleado) {
             console.log(empleado)
-            empleado.activo=(empleado.activo==false)?true:false
+            empleado.activo = (empleado.activo == false) ? true : false
             var promesa = UsuarioRecursosHUmanosActivo(empleado)
             promesa.then(function (dato) {
-                empleado.activo=(empleado.activo==true)?false:true
-               /*  $scope.recargarItemsTabla() */
+                empleado.activo = (empleado.activo == true) ? false : true
+                /*  $scope.recargarItemsTabla() */
                 $scope.mostrarMensaje(dato.mensaje)
             })
         }
@@ -2640,7 +2649,7 @@ angular.module('agil.controladores')
                 $scope.empleado2 = dato.medicoPaciente
 
                 //	var inventarios = $scope.inventarios;
-                var doc = new PDFDocument({compress:false, size: [612, 792], margin: 10 });
+                var doc = new PDFDocument({ compress: false, size: [612, 792], margin: 10 });
                 var stream = doc.pipe(blobStream());
                 // draw some text
                 var totalCosto = 0;
@@ -3555,16 +3564,26 @@ angular.module('agil.controladores')
 
             })
         }
-        $scope.AgregarAnticipoOrdinario = function (anticipo) {
-            var monto = anticipo.monto
-            var tope = anticipo.tope
-            anticipo.empleados.forEach(function (empleado, index, array) {
+        $scope.AgregarAnticipoOrdinario = function (datos) {
+            var monto = datos.monto
+            var tope = 0
+            var porcentaje = null
+            if (datos.tope) {
+                tope = datos.tope
+            } else {
+                tope = null
+            }
+            datos.empleados.forEach(function (empleado, index, array) {
+                if (datos.tipo) {
+                    monto = (empleado.ficha.haber_basico * datos.monto) / 100;
+                    porcentaje = datos.monto
+                }
                 if ($scope.listaAnticipos2.length == 0) {
-                    var anticipo = { fecha: new Date(), empleado: empleado, monto: monto, anticipo_extraordinaro: null, total: null, salario_basico: empleado.ficha.haber_basico, saldo_salario: empleado.ficha.haber_basico, tope: tope }
+                    var anticipo = { fecha: new Date(), empleado: empleado, monto: monto, anticipo_extraordinaro: null, total: null, salario_basico: empleado.ficha.haber_basico, saldo_salario: empleado.ficha.haber_basico, tope: tope, tipo_porcentual: datos.tipo, porcentaje: porcentaje }
 
                 } else {
 
-                    var anticipo = { fecha: new Date(), empleado: empleado, monto: monto, anticipo_extraordinaro: null, total: null, salario_basico: empleado.ficha.haber_basico, saldo_salario: null, tope: tope }
+                    var anticipo = { fecha: new Date(), empleado: empleado, monto: monto, anticipo_extraordinaro: null, total: null, salario_basico: empleado.ficha.haber_basico, saldo_salario: null, tope: tope, tipo_porcentual: datos.tipo, porcentaje: porcentaje }
                     anticipo.saldo_salario = anticipo.salario_basico - anticipo.total
                 }
                 anticipo.anticipo_extraordinaro = 0
@@ -3696,11 +3715,131 @@ angular.module('agil.controladores')
         $scope.cancelarEdicionAnticipo = function () {
             $scope.obteneranticiposOrdi()
         }
+        $scope.imprimirAnticipoRegular = function (datos, filtro) {
+            var doc = new PDFDocument({ compress: false, size: 'letter', margin: 10 });
+            var stream = doc.pipe(blobStream());
+            var totalCosto = 0, totalTransporte = 0;
+            var y = 205, itemsPorPagina = 18, items = 0, pagina = 1, totalPaginas = Math.ceil(datos.length / itemsPorPagina);
+            $scope.DibujarCabeceraPDFAnticipoRegular(doc, pagina, totalPaginas, datos, filtro);
+            doc.font('Helvetica', 10);
+            for (var i = 0; i < datos.length && items <= itemsPorPagina; i++) {
+                anticipo = datos[i]
+                doc.text(i + 1, 45, y);
+                doc.text(anticipo.empleado.codigo, 80, y, { width: 70 });
+                doc.text(anticipo.empleado.persona.nombre_completo, 200, y, { width: 100 });
+                doc.text(anticipo.monto, 320, y, { width: 100 });
+                doc.text(anticipo.empleado.ficha.banco.nombre, 400, y, { width: 100 });
+                doc.text(".......... ", 500, y + 2, { width: 100 });
+                y += 30
+                items++
+                if (items == itemsPorPagina) {
+                    doc.addPage({ margin: 0, bufferPages: true });
+                    y = 205;
+                    items = 0;
+                    pagina = pagina + 1;
+                    $scope.DibujarCabeceraPDFAnticipoRegular(doc, pagina, totalPaginas, datos, filtro);
+                    doc.font('Helvetica', 10);
+                }
+            }
+            doc.end();
+            stream.on('finish', function () {
+                var fileURL = stream.toBlobURL('application/pdf');
+                window.open(fileURL, '_blank', 'location=no');
+            });
+            blockUI.stop();
+
+        }
+
+        $scope.DibujarCabeceraPDFAnticipoRegular = function (doc, pagina, totalPaginas, anticipos, filtro) {
+
+            var comparadorTope = 0,
+                comparadorTipo = 0,
+                bandera = false,
+                tope = 0,
+                bandera2 = false,
+                bandera3 = false,
+                tipo = 0,
+                Datoporcentaje = 0,
+                datofecha = "",
+                fecha = ""
+            anticipos.forEach(function (anticipo, index, array) {
+                if (index == 0) {
+                    comparadorTope = anticipo.tope
+                    comparadorTipo = anticipo.tipo_porcentual
+                    Datoporcentaje = anticipo.porcentaje
+                    datofecha = $scope.fechaATexto(anticipo.fecha)
+                } else {
+                    if (anticipo.tope != comparadorTope) {
+                        bandera = true
+                    }
+                    if (anticipo.tipo_porcentual != comparadorTipo) {
+                        bandera2 = true
+                    }
+                    if ($scope.fechaATexto(anticipo.fecha) != datofecha) {
+                        bandera3 = true
+                    }
+                }
+                if (index === (array.length - 1)) {
+                    tope = (bandera) ? "Diferentes Topes" : comparadorTope
+                    tipo = (bandera2) ? "Diferentes tipos" : comparadorTipo = (comparadorTipo) ? "Porcentual " + Datoporcentaje + "%" : "Monto"
+                    fecha = (bandera3) ? "Diferentes fechas" : datofecha
+                    tope = (tope == null) ? "Sin restricción" : tope
+                    doc.font('Helvetica-Bold', 14);
+                    doc.text("LISTA DE ANTICIPOS", 0, 45, { align: "center" });
+                    doc.font('Helvetica-Bold', 12);
+                    doc.text("PERIODO : ", 45, 100);
+                    doc.text("FECHA DE CREACIÓN : ", 45, 120);
+                    doc.text("USUARIO : ", 45, 140);
+                    doc.text("TIPO DE ANTICIPO : ", 45, 160);
+                    doc.text("TOPE: ", 345, 160);
+                    doc.font('Helvetica', 12);
+                    if (fecha instanceof Date) { fecha = $scope.fechaATexto(fecha) }
+                    doc.fillColor('blue')
+                    doc.text(fecha, 185, 120);
+                    doc.text($scope.usuario.persona.nombre_completo, 115, 140);
+                    doc.text(filtro.mes.nombre + " " + filtro.gestion, 115, 100);
+                    doc.text(tipo, 175, 160);
+                    doc.text(tope, 385, 160);
+                    doc.fillColor('black')
+                    doc.font('Helvetica-Bold', 12);
+                    doc.text("Nro.", 45, 180);
+                    width = doc.widthOfString('Nro.')
+                    height = doc.currentLineHeight()
+                    doc.underline(45, 181, width, height)
+                    doc.text("Cod. Emp.", 80, 180);
+                    width = doc.widthOfString('Cod. Emp.')
+                    height = doc.currentLineHeight()
+                    doc.underline(80, 181, width, height)
+                    doc.text("Nombre", 200, 180);
+                    width = doc.widthOfString('Nombre')
+                    height = doc.currentLineHeight()
+                    doc.underline(200, 181, width, height)
+                    doc.text("Monto", 320, 180);
+                    width = doc.widthOfString('Monto')
+                    height = doc.currentLineHeight()
+                    doc.underline(320, 181, width, height)
+                    doc.text("Mod. ", 400, 180);
+                    width = doc.widthOfString('Mod')
+                    height = doc.currentLineHeight()
+                    doc.underline(400, 181, width, height)
+                    doc.text("Firma. ", 500, 180);
+                    width = doc.widthOfString('Firma')
+                    height = doc.currentLineHeight()
+                    doc.underline(500, 181, width, height)
+                    doc.font('Helvetica', 8);
+                    var currentDate = new Date();
+                    doc.text("USUARIO: " + $scope.usuario.persona.nombre_completo + " fecha " + currentDate.getDate() + "/" + (currentDate.getMonth() + 1) + "/" + currentDate.getFullYear() + "Hrs." + currentDate.getHours() + ":" + currentDate.getMinutes(), 15, 765);
+                    doc.text("PÁGINA " + pagina + " DE " + totalPaginas, 0, 740, { align: "center" });
+                }
+            });
+
+
+        }
         //fin anticipos
 
         //inicio ausencias
         $scope.obtenertiposAusenciaMedica = function () {
-            $scope.tiposAusenciasMedicas=[]
+            $scope.tiposAusenciasMedicas = []
             blockUI.start();
             var promesa = ClasesTipo("RRHH_AUSMED");
             promesa.then(function (entidad) {
@@ -3710,7 +3849,7 @@ angular.module('agil.controladores')
             });
         }
         $scope.obtenerTiposOtrasAusencias = function () {
-            $scope.tiposOtrasAusencias =[]
+            $scope.tiposOtrasAusencias = []
             blockUI.start();
             var promesa = ClasesTipo("RRHH_OTRAUS");
             promesa.then(function (entidad) {
@@ -3762,49 +3901,49 @@ angular.module('agil.controladores')
         }
 
         $scope.crearNuevaAusencia = function (datos, otro) {
-        
-            if (otro == true) {               
+
+            if (otro == true) {
                 var minutos = parseInt($scope.SumaTotalHoras.split(':')[1])
                 var horas = parseInt($scope.SumaTotalHoras.split(':')[0])
                 var minutosDatos = parseInt(datos.horas.split(':')[1])
                 var horasDatos = parseInt(datos.horas.split(':')[0])
-                if(horas<horasDatos){
+                if (horas < horasDatos) {
                     datos.fecha_inicio = new Date($scope.convertirFecha(datos.fecha_inicio));
                     datos.fecha_fin = new Date($scope.convertirFecha(datos.fecha_fin));
                     datos.fecha_inicio.setMinutes(datos.fecha_inicio_hora.getMinutes()); datos.fecha_inicio.setHours(datos.fecha_inicio_hora.getHours());
                     datos.fecha_fin.setMinutes(datos.fecha_fin_hora.getMinutes()); datos.fecha_fin.setHours(datos.fecha_fin_hora.getHours());
-                    datos.compensaciones=$scope.selectionday 
-                    $scope.guardarAusencia($scope.empleado.id,datos)
-                }else if(horas==horasDatos){
-                    if(minutos<=minutosDatos){
+                    datos.compensaciones = $scope.selectionday
+                    $scope.guardarAusencia($scope.empleado.id, datos)
+                } else if (horas == horasDatos) {
+                    if (minutos <= minutosDatos) {
                         datos.fecha_inicio = new Date($scope.convertirFecha(datos.fecha_inicio));
                         datos.fecha_fin = new Date($scope.convertirFecha(datos.fecha_fin));
                         datos.fecha_inicio.setMinutes(datos.fecha_inicio_hora.getMinutes()); datos.fecha_inicio.setHours(datos.fecha_inicio_hora.getHours());
                         datos.fecha_fin.setMinutes(datos.fecha_fin_hora.getMinutes()); datos.fecha_fin.setHours(datos.fecha_fin_hora.getHours());
-                        datos.compensaciones=$scope.selectionday 
-                        $scope.guardarAusencia($scope.empleado.id,datos) 
-                    }else{
+                        datos.compensaciones = $scope.selectionday
+                        $scope.guardarAusencia($scope.empleado.id, datos)
+                    } else {
                         $scope.mostrarMensaje("La suma del total de horas compensacion es mayor al total de horas de la ausencia!")
                     }
-                }else{
+                } else {
                     $scope.mostrarMensaje("La suma del total de horas compensacion es mayor al total de horas de la ausencia!")
                 }
-               
+
             } else {
                 datos.fecha_inicio = new Date($scope.convertirFecha(datos.fecha_inicio));
                 datos.fecha_fin = new Date($scope.convertirFecha(datos.fecha_fin));
-                $scope.guardarAusencia($scope.empleado.id,datos)
+                $scope.guardarAusencia($scope.empleado.id, datos)
             }
-            
+
         }
 
-        $scope.guardarAusencia=function (id,datos) {
+        $scope.guardarAusencia = function (id, datos) {
             var promesa = NuevaAusenciaEmpleado(id, datos)
             promesa.then(function (dato) {
                 $scope.ausencia = {}
                 $scope.cerrarDialogAusenciasVacaciones()
-                $scope.selectionday=[]
-                $scope.SumaTotalHoras="";
+                $scope.selectionday = []
+                $scope.SumaTotalHoras = "";
                 $scope.calendarCompensacion.fullCalendar('removeEvents');
                 $scope.mostrarMensaje(dato.mensaje)
 

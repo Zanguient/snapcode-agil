@@ -37,7 +37,14 @@ module.exports = function (sequelize, Sequelize) {
 			type: Sequelize.DECIMAL(20, 4),
 			field: 'salario_basico'
 		},
-		
+		tipo_porcentual: {
+			type: Sequelize.BOOLEAN,
+			field: 'tipo_porcentual'
+		},
+		porcentaje: {
+			type: Sequelize.DECIMAL(20, 4),
+			field: 'porcentaje'
+		},
 	}, {
 			freezeTableName: true
 		});

@@ -1,6 +1,7 @@
 angular.module('agil.controladores')
     .controller('controladorPolifuncionalidad', function ($scope, $location, $localStorage, $templateCache, $route, blockUI, Paginator, FieldViewer,
-        $filter, ClasesTipo, ObtenerTodoPersonal, ObtenerEvaluaciones, GuardarEvaluacionPersonal, ObtenerReportePorMeses, ObtenerReportePorAnio, ObtenerReporteGeneralPorAnio) {
+        $filter, ClasesTipo, ObtenerTodoPersonal, ObtenerEvaluaciones, GuardarEvaluacionPersonal, ObtenerReportePorMeses, ObtenerReportePorAnio, ObtenerReporteGeneralPorAnio, GuardarConfiguracionCalificacion,
+        ObtenerConfiguracionCalificacion, GuardarConfiguracionDesempenio, ObtenerConfiguracionDesempenio) {
 
         $scope.usuarioSesion = JSON.parse($localStorage.usuario);
         $scope.idModalWizardPolifuncionalEdicion = 'modal-wizard-polifuncional-edicion';
@@ -26,14 +27,31 @@ angular.module('agil.controladores')
             $scope.eliminarPopup($scope.idModalReportes);
             $scope.eliminarPopup($scope.modalBusquedaPersonal);
             $scope.eliminarPopup($scope.reporteGraficoPolifuncional);
-
         });
 
         $scope.inicio = function () {
             $scope.obtenerCargos()
             $scope.obtenerCentroCosto()
+            $scope.actualizarListaDesempenio()
+            $scope.obtenerConfiguracionnotas()
             var filtro = { id_empresa: $scope.usuarioSesion.empresa.id, mes: 0, anio: 0, desempenio: 0, mas_campo: 0, campo: 0, cargo: 0, estado: 0, codigo: 0, nombre: 0, apellido: 0, pagina: 1, items_pagina: 10, columna: 0, direccion: 0 }
             $scope.obtenerPaginador()
+
+        }
+
+        $scope.obtenerConfiguracionnotas = function () {
+            var prom = ObtenerConfiguracionCalificacion($scope.usuarioSesion.id_empresa)
+            prom.then(function (res) {
+                for (const key in res.configuracion) {
+                    if (res.configuracion[key].encargados) {
+                        $scope.encargados = res.configuracion[key];
+                    } else {
+                        $scope.empleados = res.configuracion[key];
+                    }
+                }
+            }).catch(function (err) {
+                $scope.mostrarMensaje(err.stack ? err.stack : err.message)
+            })
         }
 
         $scope.obtenerPaginador = function () {
@@ -50,16 +68,33 @@ angular.module('agil.controladores')
         }
 
         $scope.determinarColor = function (desempenio) {
-            return listaDesempenio[desempenio - 1].color
+            return $scope.listaDesempenio[desempenio - 1].color
         }
 
-        var listaDesempenio = [
+        $scope.listaDesempenio = [
             { id: 1, nombre: 'Deficiente', desde: 1, hasta: 25, color: "bg-red" },
             { id: 2, nombre: 'Insatisfactorio', desde: 26, hasta: 50, color: "bg-yellow" },
             { id: 3, nombre: 'Satisfactorio', desde: 51, hasta: 75, color: "bg-orange-green" },
             { id: 4, nombre: 'Competente', desde: 76, hasta: 100, color: "bg-blue" },
             { id: 5, nombre: 'ERROR', desde: 101, hasta: 99999, color: "bg-red" },
             { id: 6, nombre: 'ERROR', desde: -99999, hasta: 0, color: "bg-red" }]
+
+        $scope.actualizarListaDesempenio = function () {
+            var prom = ObtenerConfiguracionDesempenio($scope.usuarioSesion.id_empresa)
+            prom.then(function (res) {
+                while (res.parametros.length > 0) {
+                    var dato = res.parametros.pop()
+                    $scope.listaDesempenio.map(function (configuracion) {
+                        if (configuracion.nombre == dato.nombre) {
+                            configuracion.desde = dato.desde
+                            configuracion.hasta = dato.hasta
+                        }
+                    })
+                }
+            }).catch(function (err) {
+                $scope.mostrarMensaje(err.stack ? err.stack : err.message)
+            })
+        }
 
         var listaEstados = [
             { id: 1, nombre: 'Activo' },
@@ -74,7 +109,7 @@ angular.module('agil.controladores')
         }
 
         $scope.determinarDesempenio = function (desempenio) {
-            return listaDesempenio[desempenio - 1].nombre
+            return $scope.listaDesempenio[desempenio - 1].nombre
         }
 
         var vars = ['asistencia_capacitacion',
@@ -138,7 +173,7 @@ angular.module('agil.controladores')
             var button = $('#siguiente').text().trim();
             if (button != "Siguiente") {
                 blockUI.start()
-                listaDesempenio.map(function (desempenio) {
+                $scope.listaDesempenio.map(function (desempenio) {
                     if (evaluacion.nota_total >= desempenio.desde && evaluacion.nota_total <= desempenio.hasta) {
                         evaluacion.id_desempenio = desempenio.id
                     }
@@ -166,7 +201,7 @@ angular.module('agil.controladores')
                     var datosCampo = []
                     row.map(function (dat, j) {
                         if (j > 5 && j <= row.length - 2) {
-                            var col = { x: x, y: dat, label: row.length-2 != j ? mesesReporte[j - 6] : 'TOTAL' }
+                            var col = { x: x, y: dat, label: row.length - 2 != j ? mesesReporte[j - 6] : 'TOTAL' }
                             datosCampo.push(col)
                             x += 10
                         }
@@ -183,7 +218,7 @@ angular.module('agil.controladores')
             var chart = new CanvasJS.Chart("chartContainer",
                 {
                     title: {
-                        text: ("Reporte polifuncional desde " + mesesReporte[0] + " hasta " + mesesReporte[mesesReporte.length-1]).toUpperCase(),
+                        text: ("Reporte polifuncional desde " + mesesReporte[0] + " hasta " + mesesReporte[mesesReporte.length - 1]).toUpperCase(),
                         fontSize: 32
                     },
                     legend: {
@@ -270,7 +305,7 @@ angular.module('agil.controladores')
                     })
                     promedio = promedio / res.reporte[i].evaluaciones.length
                     columns.push((Math.round(promedio)))
-                    listaDesempenio.map(function (desempenio) {
+                    $scope.listaDesempenio.map(function (desempenio) {
                         if (Math.round(promedio) >= desempenio.desde && Math.round(promedio) <= desempenio.hasta) {
                             columns.push($scope.determinarDesempenio(desempenio.id))
                         }
@@ -415,14 +450,14 @@ angular.module('agil.controladores')
                         y = 120
                     }
                 }
-                
+
                 doc.end();
                 stream.on('finish', function () {
                     var fileURL = stream.toBlobURL('application/pdf');
                     window.open(fileURL, '_blank', 'location=no');
-                    
+
                 });
-                
+
             });
         }
 
@@ -502,7 +537,7 @@ angular.module('agil.controladores')
                     columns.push(res.reporte[i].ingreso_campo);
                     columns.push(res.reporte[i].llenado_formularios);
                     columns.push(res.reporte[i].total);
-                    listaDesempenio.map(function (desempenio) {
+                    $scope.listaDesempenio.map(function (desempenio) {
                         if (res.reporte[i].total >= desempenio.desde && res.reporte[i].total <= desempenio.hasta) {
                             columns.push($scope.determinarDesempenio(desempenio.id))
                         }
@@ -511,7 +546,7 @@ angular.module('agil.controladores')
                 }
                 if (pdf) {
                     if (grafico) {
-                        
+
                         $scope.reportePromediosGeneralGrafico(data, year, campo)
                     } else {
                         blockUI.stop();
@@ -615,7 +650,7 @@ angular.module('agil.controladores')
                     var fileURL = stream.toBlobURL('application/pdf');
                     window.open(fileURL, '_blank', 'location=no');
                 });
-                
+
             });
         }
 
@@ -697,7 +732,7 @@ angular.module('agil.controladores')
                     columns.push(reportes.reporte[i].ingreso_campo);
                     columns.push(reportes.reporte[i].llenado_formularios);
                     columns.push(reportes.reporte[i].total);
-                    listaDesempenio.map(function (desempenio) {
+                    $scope.listaDesempenio.map(function (desempenio) {
                         if (reportes.reporte[i].total >= desempenio.desde && reportes.reporte[i].total <= desempenio.hasta) {
                             columns.push($scope.determinarDesempenio(desempenio.id))
                         }
@@ -777,12 +812,12 @@ angular.module('agil.controladores')
                             } else {
                                 doc.font('Helvetica', 8);
                                 if (j >= reporte[i].length - 2) {
-                                    if (j == reporte[i].length -2) {
+                                    if (j == reporte[i].length - 2) {
                                         doc.text(reporte[i][j].toFixed(2), x - taa, y, { width: limiteChar, align: "center" });
-                                    }else{
-                                        if (j == reporte[i].length-1) {
+                                    } else {
+                                        if (j == reporte[i].length - 1) {
                                             doc.text(reporte[i][j], x - taa, y, { width: limiteChar, align: "center" });
-                                        }else{
+                                        } else {
                                             doc.text(reporte[i][j].toFixed(2), x - taa, y, { width: limiteChar, align: "center" });
                                         }
                                     }
@@ -982,13 +1017,21 @@ angular.module('agil.controladores')
             $scope.cerrarPopup($scope.modalBusquedaPersonal);
         }
 
-        $scope.guardarConfiguracionEvaluacion = function (parametros) {
-            var button = $('#siguiente').text().trim();
+        $scope.guardarConfiguracionEvaluacion = function (parametros, empleados, encargados) {
+            var button = $('#siguiente-conf').text().trim();
             if (button != "Siguiente") {
-                var paraEmpleados = {}
-                var paraEncargados = {}
-                var paraDesempeño = {}
-                var configuracionPolifuncional = {}
+                empleados.encagados = false
+                encargados.encagados = true
+                var conf = { empledos: empleados, encagados, encagados }
+                var prom = GuardarConfiguracionCalificacion(conf)
+                prom.then(function (res) {
+                    if (res.hasErr) {
+                        $scope.mostrarMensaje('Hubo un error. ' + res.mensaje)
+                    } else {
+                        $scope.mostrarMensaje(res.mensaje)
+                        $scope.cerrarmodalParametrosPolifuncionalidad()
+                    }
+                })
             }
         }
         $scope.inicio();

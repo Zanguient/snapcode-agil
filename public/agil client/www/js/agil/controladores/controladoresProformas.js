@@ -472,7 +472,7 @@ angular.module('agil.controladores')
             if ($scope.actividadesSucursal.length > 0) {
                 var toDrop = []
                 var nuevasActividades = $scope.actividadesSucursal.map(function (_, i) {
-                    if (_.id === undefined || _.eliminado || (_.id_dosificacion == null && _.dosificacion !== undefined && _.dosificacion !== null)) {
+                    if (_.id === undefined || _.eliminado || (_.id_dosificacion == null && _.dosificacion !== undefined || _.dosificacion !== null) || _.editar) {
                         return _
                     } else {
                         toDrop.push(i)
@@ -552,7 +552,6 @@ angular.module('agil.controladores')
 
         $scope.dosificarSucursalActividad = function (dosificacion, actividadSucursal) {
             if ($scope.actividadesDosificaciones.length > 0) {
-
                 var encontrado = false
                 var salir = false
                 var indx = 0
@@ -573,10 +572,11 @@ angular.module('agil.controladores')
                 }
                 if (!encontrado) {
                     $scope.actividadesDosificaciones[$scope.actividadesDosificaciones.indexOf($scope.actividadADosificar)].dosificacion = dosificacion
+                    $scope.actividadADosificar.editar = true
                     $scope.actividadADosificar = undefined
                     $scope.cerrardialogDosificacionesDisponibles()
                 } else {
-                    $scope.mostrarMensaje('Hubo un problema, la dosificacion esta en lista para ser asiganda!')
+                    $scope.mostrarMensaje('Hubo un problema, la dosificacion esta en lista para ser asignada!')
                 }
             }
         }

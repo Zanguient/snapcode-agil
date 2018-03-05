@@ -1,8 +1,8 @@
 module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente, Persona, Empresa, Sucursal, Clase, Diccionario, Tipo, decodeBase64Image, fs, RrhhEmpleadoFicha, RrhhEmpleadoFichaOtrosSeguros, RrhhEmpleadoFichaFamiliar, RrhhEmpleadoDiscapacidad
     , RrhhEmpleadoCargo, RrhhEmpleadoHojaVida, RrhhEmpleadoFormacionAcademica, RrhhEmpleadoExperienciaLaboral, RrhhEmpleadoLogroInternoExterno, RrhhEmpleadoCapacidadInternaExterna, NumeroLiteral, RrhhEmpleadoPrestamo, RrhhEmpleadoPrestamoPago, RrhhEmpleadoRolTurno, RrhhEmpleadoHorasExtra, RrhhAnticipo,
-EvaluacionPolifuncional, ConfiguracionCalificacionEvaluacionPolifuncional, ConfiguracionDesempenioEvaluacionPolifuncional,RrhhEmpleadoAusencia,RrhhEmpleadoVacaciones,RrhhEmpleadoCompensacionAusencia, RrhhFeriado, RrhhClaseAsuencia) {    
+    EvaluacionPolifuncional, ConfiguracionCalificacionEvaluacionPolifuncional, ConfiguracionDesempenioEvaluacionPolifuncional, RrhhEmpleadoAusencia, RrhhEmpleadoVacaciones, RrhhEmpleadoCompensacionAusencia, RrhhFeriado, RrhhClaseAsuencia) {
 
-router.route('/recursos-humanos/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion/codigo/:codigo/nombres/:nombres/ci/:ci/campo/:campo/cargo/:cargo/busquedaEmpresa/:busquedaEmpresa/grupo/:grupo_sanguineo/estado/:estado/apellido/:apellido')
+    router.route('/recursos-humanos/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion/codigo/:codigo/nombres/:nombres/ci/:ci/campo/:campo/cargo/:cargo/busquedaEmpresa/:busquedaEmpresa/grupo/:grupo_sanguineo/estado/:estado/apellido/:apellido')
         .get(function (req, res) {
             var condicion = ""
             var condicionCargo = ""
@@ -445,11 +445,11 @@ router.route('/recursos-humanos/empresa/:id_empresa/pagina/:pagina/items-pagina/
     router.route('/usuario-recurso-humano/:id_empleado')
         .put(function (req, res) {
             var activo
-           if(req.body.eliminado){
-               activo = req.body.eliminado
-           }else{
-            activo = req.body.activo
-           }
+            if (req.body.eliminado) {
+                activo = req.body.eliminado
+            } else {
+                activo = req.body.activo
+            }
             MedicoPaciente.update({
                 eliminado: activo
             }, {
@@ -457,7 +457,7 @@ router.route('/recursos-humanos/empresa/:id_empresa/pagina/:pagina/items-pagina/
                         id: req.body.id
                     }
                 }).then(function (personaActualizada) {
-                   /*  var mn = (req.body.activo == true) ? 'activo' : 'inactivo' */
+                    /*  var mn = (req.body.activo == true) ? 'activo' : 'inactivo' */
                     res.json({ mensaje: "Usuario actualizado satisfactoriamente!" });
                 })
 
@@ -545,7 +545,7 @@ router.route('/recursos-humanos/empresa/:id_empresa/pagina/:pagina/items-pagina/
                         }).then(function (medicoPacienteActualizado) {
                             guardarDatosFicha(req, res, personaReferenciaCreada, Persona, RrhhEmpleadoFicha, RrhhEmpleadoFichaOtrosSeguros, RrhhEmpleadoFichaFamiliar, RrhhEmpleadoCargo, RrhhEmpleadoDiscapacidad)
                         }).catch(function (err) {
-                            res.json({ mensaje: err.message === undefined ? err.data : err.message, hasErr: true })
+                            res.json({ mensaje: err.message === undefined ? err.stack : err.message, hasErr: true })
                         });
 
                 })
@@ -578,10 +578,10 @@ router.route('/recursos-humanos/empresa/:id_empresa/pagina/:pagina/items-pagina/
                                 var personaReferencia = req.body.personaReferencia
                                 guardarDatosFicha(req, res, personaReferencia, Persona, RrhhEmpleadoFicha, RrhhEmpleadoFichaOtrosSeguros, RrhhEmpleadoFichaFamiliar, RrhhEmpleadoCargo, RrhhEmpleadoDiscapacidad)
                             }).catch(function (err) {
-                                res.json({ mensaje: err.message === undefined ? err.data : err.message, hasErr: true })
+                                res.json({ mensaje: err.message === undefined ? err.stack : err.message, hasErr: true })
                             });
                     }).catch(function (err) {
-                        res.json({ mensaje: err.message === undefined ? err.data : err.message, hasErr: true })
+                        res.json({ mensaje: err.message === undefined ? err.stack : err.message, hasErr: true })
                     });
 
             }
@@ -666,10 +666,10 @@ router.route('/recursos-humanos/empresa/:id_empresa/pagina/:pagina/items-pagina/
                         guardarOtrosSeguros(req, res, Persona, RrhhEmpleadoFichaOtrosSeguros, RrhhEmpleadoFichaFamiliar, RrhhEmpleadoDiscapacidad, RrhhEmpleadoCargo)
                     }
                 }).catch(function (err) {
-                    res.json({ mensaje: err.message === undefined ? err.data : err.message, hasErr: true })
+                    res.json({ mensaje: err.message === undefined ? err.stack : err.message, hasErr: true })
                 });
             }).catch(function (err) {
-                res.json({ mensaje: err.message === undefined ? err.data : err.message, hasErr: true })
+                res.json({ mensaje: err.message === undefined ? err.stack : err.message, hasErr: true })
             });
     }
     function guardarOtrosSeguros(req, res, Persona, RrhhEmpleadoFichaOtrosSeguros, RrhhEmpleadoFichaFamiliar, RrhhEmpleadoDiscapacidad, RrhhEmpleadoCargo) {
@@ -690,7 +690,7 @@ router.route('/recursos-humanos/empresa/:id_empresa/pagina/:pagina/items-pagina/
 
                                 }
                             }).catch(function (err) {
-                                res.json({ mensaje: err.message === undefined ? err.data : err.message, hasErr: true })
+                                res.json({ mensaje: err.message === undefined ? err.stack : err.message, hasErr: true })
                             });
                     } else {
                         RrhhEmpleadoFichaOtrosSeguros.destroy({
@@ -703,7 +703,7 @@ router.route('/recursos-humanos/empresa/:id_empresa/pagina/:pagina/items-pagina/
 
                             }
                         }).catch(function (err) {
-                            res.json({ mensaje: err.message === undefined ? err.data : err.message, hasErr: true })
+                            res.json({ mensaje: err.message === undefined ? err.stack : err.message, hasErr: true })
                         });
                     }
                 } else {
@@ -718,7 +718,7 @@ router.route('/recursos-humanos/empresa/:id_empresa/pagina/:pagina/items-pagina/
 
                         }
                     }).catch(function (err) {
-                        res.json({ mensaje: err.message === undefined ? err.data : err.message, hasErr: true })
+                        res.json({ mensaje: err.message === undefined ? err.stack : err.message, hasErr: true })
                     });
                 }
             })
@@ -756,11 +756,11 @@ router.route('/recursos-humanos/empresa/:id_empresa/pagina/:pagina/items-pagina/
 
                                         }
                                     }).catch(function (err) {
-                                        res.json({ mensaje: err.message === undefined ? err.data : err.message, hasErr: true })
+                                        res.json({ mensaje: err.message === undefined ? err.stack : err.message, hasErr: true })
                                     });
 
                             }).catch(function (err) {
-                                res.json({ mensaje: err.message === undefined ? err.data : err.message, hasErr: true })
+                                res.json({ mensaje: err.message === undefined ? err.stack : err.message, hasErr: true })
                             });
                     } else {
                         RrhhEmpleadoFichaFamiliar.destroy({
@@ -778,10 +778,10 @@ router.route('/recursos-humanos/empresa/:id_empresa/pagina/:pagina/items-pagina/
 
                                 }
                             }).catch(function (err) {
-                                res.json({ mensaje: err.message === undefined ? err.data : err.message, hasErr: true })
+                                res.json({ mensaje: err.message === undefined ? err.stack : err.message, hasErr: true })
                             });
                         }).catch(function (err) {
-                            res.json({ mensaje: err.message === undefined ? err.data : err.message, hasErr: true })
+                            res.json({ mensaje: err.message === undefined ? err.stack : err.message, hasErr: true })
                         });
                     }
                 } else {
@@ -802,11 +802,11 @@ router.route('/recursos-humanos/empresa/:id_empresa/pagina/:pagina/items-pagina/
                                 guardarCargo(req, res, RrhhEmpleadoDiscapacidad, RrhhEmpleadoCargo)
                             }
                         }).catch(function (err) {
-                            res.json({ mensaje: err.message === undefined ? err.data : err.message, hasErr: true })
+                            res.json({ mensaje: err.message === undefined ? err.stack : err.message, hasErr: true })
                         });
 
                     }).catch(function (err) {
-                        res.json({ mensaje: err.message === undefined ? err.data : err.message, hasErr: true })
+                        res.json({ mensaje: err.message === undefined ? err.stack : err.message, hasErr: true })
                     });
                 }
             });
@@ -841,7 +841,7 @@ router.route('/recursos-humanos/empresa/:id_empresa/pagina/:pagina/items-pagina/
                                         guardarSeguros(RrhhEmpleadoDiscapacidad, req.body.empleado.discapacidades, req.body.empleado, res)
                                     }
                                 }).catch(function (err) {
-                                    res.json({ mensaje: err.message === undefined ? err.data : err.message, hasErr: true })
+                                    res.json({ mensaje: err.message === undefined ? err.stack : err.message, hasErr: true })
                                 });
 
                         } else {
@@ -850,7 +850,7 @@ router.route('/recursos-humanos/empresa/:id_empresa/pagina/:pagina/items-pagina/
                             }
                         }
                     }).catch(function (err) {
-                        res.json({ mensaje: err.message === undefined ? err.data : err.message, hasErr: true })
+                        res.json({ mensaje: err.message === undefined ? err.stack : err.message, hasErr: true })
                     });
                 });
             } else {
@@ -884,7 +884,7 @@ router.route('/recursos-humanos/empresa/:id_empresa/pagina/:pagina/items-pagina/
                                         res.json({ message: "Ficha empleado actualizada satisfactoriamente!" })
                                     }
                                 }).catch(function (err) {
-                                    res.json({ mensaje: err.message === undefined ? err.data : err.message, hasErr: true })
+                                    res.json({ mensaje: err.message === undefined ? err.stack : err.message, hasErr: true })
                                 });
 
                         } else {
@@ -893,7 +893,7 @@ router.route('/recursos-humanos/empresa/:id_empresa/pagina/:pagina/items-pagina/
                             }
                         }
                     }).catch(function (err) {
-                        res.json({ mensaje: err.message === undefined ? err.data : err.message, hasErr: true })
+                        res.json({ mensaje: err.message === undefined ? err.stack : err.message, hasErr: true })
                     });
 
                 })
@@ -1744,7 +1744,7 @@ router.route('/recursos-humanos/empresa/:id_empresa/pagina/:pagina/items-pagina/
                     total: req.body.total,
                     salario_basico: req.body.salario_basico,
                     eliminado: false,
-                    entregado: false
+                    entregado: false,
                 }).then(function (empleadoaAnticipo) {
                     RrhhAnticipo.findAll({
                         where: { id_empleado: req.params.id_empleado, id_tipo: { $ne: clase.id } }
@@ -1831,7 +1831,9 @@ router.route('/recursos-humanos/empresa/:id_empresa/pagina/:pagina/items-pagina/
                         total: anticipo.total,
                         eliminado: false,
                         salario_basico: anticipo.salario_basico,
-                        tope: anticipo.tope
+                        tope: anticipo.tope,
+                        tipo_porcentual: anticipo.tipo_porcentual,
+                        porcentaje: anticipo.porcentaje
                     }).then(function (empleadoaAnticipo) {
                         RrhhAnticipo.findAll({
                             where: { id_empleado: empleadoaAnticipo.id_empleado, id_tipo: { $ne: clase.id } }
@@ -1925,15 +1927,16 @@ router.route('/recursos-humanos/empresa/:id_empresa/pagina/:pagina/items-pagina/
             }
             RrhhAnticipo.findAll({
                 where: condicionAnticipo,
-                include: [{ model: MedicoPaciente, as: 'empleado', where: condicionEmpleado, include: [{ model: Persona, as: 'persona' }, { model: RrhhEmpleadoFicha, as: 'empleadosFichas' }] }, { model: Clase, as: 'tipoAnticipo' }]
+                include: [{ model: MedicoPaciente, as: 'empleado', where: condicionEmpleado, include: [{ model: Persona, as: 'persona' }] }, { model: Clase, as: 'tipoAnticipo' }]
             }).then(function (empleadoaAnticipo) {
-                /*           if (empleadoaAnticipo.length > 0) {
+                          if (empleadoaAnticipo.length > 0) {
                               empleadoaAnticipo.forEach(function (anticipo, index, array) {
                                   RrhhEmpleadoFicha.findAll({
                                       limit: 1,
                                       where: {
                                           id_empleado: anticipo.empleado.id
                                       },
+                                      include:[{model:Clase,as:'banco'}],
                                       order: [['id', 'DESC']]
                                   }).then(function (fichaActual) {
                                       anticipo.dataValues.empleado.dataValues.ficha = fichaActual[0]
@@ -1943,10 +1946,10 @@ router.route('/recursos-humanos/empresa/:id_empresa/pagina/:pagina/items-pagina/
                                   })
                               })
           
-                          } else { */
+                          } else {
 
                 res.json({ anticipos: empleadoaAnticipo })
-                /* } */
+                }
             })
         })
     //rutas ausencias
@@ -1965,15 +1968,15 @@ router.route('/recursos-humanos/empresa/:id_empresa/pagina/:pagina/items-pagina/
                 primera_baja: req.body.primera_baja,
                 planilla: req.body.planilla
             }).then(function (empleadoAusenciaCreado) {
-                if (req.body.compensaciones.length>0) {
+                if (req.body.compensaciones.length > 0) {
                     req.body.compensaciones.forEach(function (compensacion, index, array) {
                         RrhhEmpleadoCompensacionAusencia.create({
-                            id_ausencia:empleadoAusenciaCreado.id,
-                            fecha:compensacion.fecha_real,
-                            hora_inicio:compensacion.hora_inicio,
-                            hora_fin:compensacion.hora_fin,
-                            tiempo:compensacion.total,
-                            eliminado:false
+                            id_ausencia: empleadoAusenciaCreado.id,
+                            fecha: compensacion.fecha_real,
+                            hora_inicio: compensacion.hora_inicio,
+                            hora_fin: compensacion.hora_fin,
+                            tiempo: compensacion.total,
+                            eliminado: false
                         }).then(function (compensacionCreada) {
                             if (index === (array.length - 1)) {
                                 res.json({ mensaje: "Guardado satisfactoriamente!" })
@@ -2145,7 +2148,7 @@ router.route('/recursos-humanos/empresa/:id_empresa/pagina/:pagina/items-pagina/
                         dias_descuento: clase.dias_descuento,
                         habilitado: req.body.habilitado,
                     }, {
-                        where: { id: clase.id }
+                            where: { id: clase.id }
                         }).then(function (claseCreada) {
                             res.json({ mensaje: "Guardado satisfactoriamente!" })
                         })
@@ -2230,7 +2233,7 @@ router.route('/recursos-humanos/empresa/:id_empresa/pagina/:pagina/items-pagina/
             }).then(function (evaluaciones) {
                 res.json({ evaluaciones: evaluaciones, paginas: Math.ceil(evaluaciones.count / req.params.items_pagina) })
             }).catch(function (err) {
-                res.json({ personal: [], mensaje: err.message === undefined ? err.data : err.message, hasErr: true })
+                res.json({ personal: [], mensaje: err.message === undefined ? err.stack : err.message, hasErr: true })
             });
         })
 
@@ -2245,7 +2248,7 @@ router.route('/recursos-humanos/empresa/:id_empresa/pagina/:pagina/items-pagina/
             }).then(function (personal) {
                 res.json({ personal: personal })
             }).catch(function (err) {
-                res.json({ personal: [], mensaje: err.message === undefined ? err.data : err.message, hasErr: true })
+                res.json({ personal: [], mensaje: err.message === undefined ? err.stack : err.message, hasErr: true })
             });
         })
 
@@ -2265,7 +2268,7 @@ router.route('/recursos-humanos/empresa/:id_empresa/pagina/:pagina/items-pagina/
                     include: [{
                         model: RrhhEmpleadoCargo, as: 'cargos',
                         include: [{ model: Clase, as: 'cargo' }]
-                    }, { model: Persona, as: 'persona'}]
+                    }, { model: Persona, as: 'persona' }]
                 }],
                 defaults: {
                     id_empleado: req.body.personal.id,
@@ -2287,11 +2290,11 @@ router.route('/recursos-humanos/empresa/:id_empresa/pagina/:pagina/items-pagina/
                 }
             }).spread(function (evaluacion, nueva) {
                 if (!nueva) {
-                    res.json({mensaje: 'Ya existe una evaluación de fecha ' + meses[evaluacion.mes].nombre + '-' + evaluacion.anio + ' para el empleado ' + evaluacion.empleado.persona.nombre_completo})
-                }else{
+                    res.json({ mensaje: 'Ya existe una evaluación de fecha ' + meses[evaluacion.mes].nombre + '-' + evaluacion.anio + ' para el empleado ' + evaluacion.empleado.persona.nombre_completo })
+                } else {
                     res.json({ mensaje: 'Evaluación Creada satisfactoriamente!' })
                 }
-                
+
             }).catch(function (err) {
                 res.json({ mensaje: err.message === undefined ? err.stack : err.message, hasErr: true })
             });
@@ -2319,38 +2322,137 @@ router.route('/recursos-humanos/empresa/:id_empresa/pagina/:pagina/items-pagina/
                 }).then(function (evaluacionCreada) {
                     res.json({ mensaje: 'Evaluación modificada correctamente!' })
                 }).catch(function (err) {
-                    res.json({ mensaje: err.message === undefined ? err.data : err.message, hasErr: true })
+                    res.json({ mensaje: err.message === undefined ? err.stack : err.message, hasErr: true })
                 });
         })
 
 
-    /////////////////////////////////////////// Guardar configuraciones
+    /////////////////////////////////////////// configuraciones
 
-    //ConfiguracionCalificacionEvaluacionPolifuncional, ConfiguracionDesempenioEvaluacionPolifuncional
+    //////Configuracion Desempeño
+    router.route('/desempenio/configuracion/:id_empresa')
+        .post(function (req, res) {
+            for (const key in req.body) {
+                ConfiguracionDesempenioEvaluacionPolifuncional.findOrCreate({
+                    where: {
+                        id_empresa: req.params.id_empresa,
+                        id: req.body[key].id,
+                        nombre: key
+                    },
+                    defaults: {
+                        id_empresa: req.params.id_empresa,
+                        nombre: key,
+                        desde: req.body[key].desde,
+                        hasta: req.body[key].hasta,
+                        activo: req.body[key].activo
+                    }
+                }).spread(function (configuracion, created) {
+                    if (created) {
+                        ConfiguracionDesempenioEvaluacionPolifuncional.update({
+                            id_empresa: req.params.id_empresa,
+                            nombre: key,
+                            desde: req.body[key].desde,
+                            hasta: req.body[key].hasta,
+                            activo: req.body[key].activo
+                        }, {
+                                where: {
+                                    id_empresa: req.params.id_empresa,
+                                    id: req.body[key].id,
+                                    nombre: key
+                                }
+                            }).then(function (configuracionActializada) {
+                                if (req.body.length - 1 == req.body.indexOf(req.body[key])) {
+                                    res.json({ mensaje: 'Configuracion Actualizada...' })
+                                }
+                            })
+                    }
+                }).catch(function (err) {
+                    res.json({ mensaje: err.message === undefined ? err.stack : err.message, hasErr: true })
+                });
+            }
+        })
+        .get(function (req, res) {
+            ConfiguracionDesempenioEvaluacionPolifuncional.findAll({
+                where:{
+                    id_empresa: req.params.id_empresa
+                }
+            }).then(function (configuracion) {
+                res.json({parametros: configuracion})
+            }).catch(function (err) {
+                res.json({ mensaje: err.message === undefined ? err.stack : err.message, hasErr: true })
+            });
+        })
+
+    ///////Configuracion evaluacion
     router.route('/evaluacion/configuracion/:id_empresa')
         .post(function (req, res) {
-            req.body.map(function (configuracion) {
-                ConfiguracionCalificacionEvaluacionPolifuncional.create({
-                    para_empleados: configuracion.empleados.para_empleados,
-                    para_encargados: configuracion.encargados.para_encargados,
-                    variable: configuracion.fg,
-                    // asistencia_capacitacion: req.body.asistencia_capacitacion,
-                    // documentos_actualizados: req.body.documentos_actualizados,
-                    // trabajo_equipo: req.body.trabajo_equipo,
-                    // funciones_puntualidad: req.body.funciones_puntualidad,
-                    // higiene_personal: req.body.higiene_personal,
-                    // asistencia_reunion: req.body.asistencia_reunion,
-                    // ingreso_campo: req.body.ingreso_campo,
-                    // llenado_formularios: req.body.llenado_formularios,
-                    nota_total: req.body.nota_total,
-                    // id_desempenio: req.body.id_desempenio,
-                    activo: configuracion.parametros,
-                    eliminado: false
-                }).then(function (evaluacionCreada) {
-                    res.json({ mensaje: 'Evaluacion registrada correctamente!' })
+            req.body.map(function (configuracion, i) {
+                ConfiguracionCalificacionEvaluacionPolifuncional.findOrCreate({
+                    where: {
+                        id: req.body.id,
+                        encargados: req.body.encargados,
+                        id_empresa: req.params.id_empresa
+                    },
+                    defaults: {
+                        asistencia_capacitacion: req.body.asistencia_capacitacion,
+                        documentos_actualizados: req.body.documentos_actualizados,
+                        trabajo_equipo: req.body.trabajo_equipo,
+                        funciones_puntualidad: req.body.funciones_puntualidad,
+                        higiene_personal: req.body.higiene_personal,
+                        asistencia_reunion: req.body.asistencia_reunion,
+                        ingreso_campo: req.body.ingreso_campo,
+                        llenado_formularios: req.body.llenado_formularios,
+                        encargados: req.body.encargados,
+                        nota_total: req.body.nota_total,
+                        eliminado: configuracion.parametros
+                    }
+                }).spread(function (configuracion, created) {
+                    if (created) {
+                        if (i == req.body.length - 1) {
+                            res.json({ mensaje: 'Configuración registrada correctamente!' })
+                        }
+                    } else {
+                        ConfiguracionCalificacionEvaluacionPolifuncional.update({
+                            asistencia_capacitacion: req.body.asistencia_capacitacion,
+                            documentos_actualizados: req.body.documentos_actualizados,
+                            trabajo_equipo: req.body.trabajo_equipo,
+                            funciones_puntualidad: req.body.funciones_puntualidad,
+                            higiene_personal: req.body.higiene_personal,
+                            asistencia_reunion: req.body.asistencia_reunion,
+                            ingreso_campo: req.body.ingreso_campo,
+                            llenado_formularios: req.body.llenado_formularios,
+                            encargados: req.body.encargados,
+                            nota_total: req.body.nota_total,
+                            eliminado: configuracion.parametros
+                        }, {
+                                where: {
+                                    id: req.body.id,
+                                    encargados: req.body.encargados
+                                }
+                            }).then(function (configuracionActializada) {
+                                if (i == req.body.length - 1) {
+                                    res.json({ mensaje: 'Actualizada registrada correctamente!' })
+                                }
+                            })
+                    }
                 }).catch(function (err) {
-                    res.json({ mensaje: err.message === undefined ? err.data : err.message, hasErr: true })
+                    res.json({ mensaje: err.message === undefined ? err.stack : err.message, hasErr: true })
                 });
+            })
+        })
+        .get(function (req, res) {
+            ConfiguracionCalificacionEvaluacionPolifuncional.findAll({
+                where: { id_empresa: req.params.id_empresa }
+            }).then(function (configuracion) {
+                var configuraciones = {}
+                for (const key in configuracion) {
+                    if (configuracion[key].encargados) {
+                        configuraciones.encargados = configuracion[key];
+                    } else {
+                        configuraciones.empleados = configuracion[key]
+                    }
+                }
+                res.json({ configuracion: configuraciones })
             })
         })
 
@@ -2376,17 +2478,17 @@ router.route('/recursos-humanos/empresa/:id_empresa/pagina/:pagina/items-pagina/
                 reporteEvaluaciones.map(function (trabajador) {
                     trabajador.evaluaciones.map(function (evaluacion) {
                         var fechatexto = meses[evaluacion.mes].nombre.substring(0, 3) + '-' + (evaluacion.anio).toString().substring(4, 2)
-                        var mesAnio = {texto: fechatexto, fecha: evaluacion.fecha}
+                        var mesAnio = { texto: fechatexto, fecha: evaluacion.fecha }
                         var existe = mesesReporte.indexOf(mesAnio)
-                        if (existe <0) {
+                        if (existe < 0) {
                             mesesReporte.push(mesAnio)
                         }
                     })
                 })
-                mesesReporte.sort(function compare(a,b) {
+                mesesReporte.sort(function compare(a, b) {
                     var aDate = new Date(a.fecha)
                     var bDate = new Date(b.fecha)
-                    return aDate - bDate; 
+                    return aDate - bDate;
                 })
                 var mesesAnio = mesesReporte.map(function (fecha) {
                     return fecha.texto
@@ -2394,13 +2496,13 @@ router.route('/recursos-humanos/empresa/:id_empresa/pagina/:pagina/items-pagina/
                 var mesesEnviar = []
                 mesesAnio.map(function (fecha) {
                     var esta = mesesEnviar.indexOf(fecha)
-                    if (esta <0) {
+                    if (esta < 0) {
                         mesesEnviar.push(fecha)
                     }
                 })
                 res.json({ reporte: reporteEvaluaciones, mesesReporte: mesesEnviar })
             }).catch(function (err) {
-                res.json({ reporte: [], mensaje: err.message === undefined ? err.data : err.message, hasErr: true })
+                res.json({ reporte: [], mensaje: err.message === undefined ? err.stack : err.message, hasErr: true })
             });
         })
 
@@ -2471,7 +2573,7 @@ router.route('/recursos-humanos/empresa/:id_empresa/pagina/:pagina/items-pagina/
                 })
                 res.json({ reporte: reporteAnual })
             }).catch(function (err) {
-                res.json({ reporte: [], mensaje: err.message === undefined ? err.data : err.message, hasErr: true })
+                res.json({ reporte: [], mensaje: err.message === undefined ? err.stack : err.message, hasErr: true })
             });
         })
 
@@ -2542,7 +2644,7 @@ router.route('/recursos-humanos/empresa/:id_empresa/pagina/:pagina/items-pagina/
                 })
                 res.json({ reporte: reporteAnual })
             }).catch(function (err) {
-                res.json({ reporte: [], mensaje: err.message === undefined ? err.data : err.message, hasErr: true })
+                res.json({ reporte: [], mensaje: err.message === undefined ? err.stack : err.message, hasErr: true })
             });
         })
 
