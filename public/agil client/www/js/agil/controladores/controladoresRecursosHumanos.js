@@ -4,7 +4,7 @@ angular.module('agil.controladores')
         FieldViewer, EmpleadoEmpresa, obtenerEmpleadoRh, UsuarioRecursosHUmanosActivo, Prerequisito, ListaDatosPrerequisito, Prerequisitos, ListaPrerequisitosPaciente, ActualizarPrerequisito, UsuarioRecursosHumanosFicha,
         ClasesTipo, Clases, Paises, CrearEmpleadoFicha, EliminarOtroSeguroRh, EliminarFamiliarRh, PrerequisitoPaciente, PrerequisitosHistorial, UsuarioRhHistorialFicha, ObtenerEmpleadoHojaVida, GuardarEmpleadoHojaVida, CrearPrestamo,
         ObtenerListaPrestamo, CrearRolTurno, CrearPagoPrestamo, VerificarUsuarioEmpresa, EditarPrestamo, ListaEmpleadosRrhh, CrearHorasExtra, HistorialHorasExtra, ListaRolTurnos, ValidarCodigoCuentaEmpleado, $timeout, DatosCapacidadesImpresion, NuevoAnticipoEmpleado,
-        ListaAnticiposEmpleado, CrearNuevosAnticiposEmpleados, ActualizarAnticipoEmpleado, NuevaAusenciaEmpleado, HistorialEmpleadoAusencias, HistorialEmpresaEmpleadosAusencias, NuevaVacacionEmpleado, HistorialEmpleadoVacaciones, HistorialEmpresaVacaciones, NuevoFeriado, ListaFeriados, GuardarClasesAusencias) {
+        ListaAnticiposEmpleado, CrearNuevosAnticiposEmpleados, ActualizarAnticipoEmpleado, NuevaAusenciaEmpleado, HistorialEmpleadoAusencias, HistorialEmpresaEmpleadosAusencias, NuevaVacacionEmpleado, HistorialEmpleadoVacaciones, HistorialEmpresaVacaciones, NuevoFeriado, ListaFeriados, GuardarClasesAusencias, Tipos) {
         $scope.usuario = JSON.parse($localStorage.usuario);
         $scope.idModalPrerequisitos = 'dialog-pre-requisitos';
         $scope.idModalEmpleado = 'dialog-empleado';
@@ -447,19 +447,39 @@ angular.module('agil.controladores')
             $scope.cerrarPopup($scope.idModalNacionalidad);
         }
         $scope.abrirDialogDepartamentoEstado = function () {
-            $scope.abrirPopup($scope.idModalDepartamentoEstado);
+            $scope.clase = { pais: $scope.ficha.empleado.persona.pais }
+            var promesa = ClasesTipo("DEP");
+            promesa.then(function (entidad) {
+                $scope.tipo_edicion = entidad
+                $scope.abrirPopup($scope.idModalDepartamentoEstado);
+            })
+
         }
         $scope.cerrarDialogDepartamentoEstado = function () {
             $scope.cerrarPopup($scope.idModalDepartamentoEstado);
         }
         $scope.abrirDialogProvincia = function () {
-            $scope.abrirPopup($scope.idModalProvincia);
+            $scope.clase = { departamento: $scope.ficha.empleado.persona.ciudad }
+
+            var promesa = ClasesTipo("MUN");
+            promesa.then(function (entidad) {
+                $scope.tipo_edicion = entidad
+                $scope.abrirPopup($scope.idModalProvincia);
+            })
+
         }
         $scope.cerrarDialogProvincia = function () {
             $scope.cerrarPopup($scope.idModalProvincia);
         }
         $scope.abrirDialogLocalidad = function () {
-            $scope.abrirPopup($scope.idModalLocalidad);
+            $scope.clase = { provincia: $scope.ficha.empleado.persona.provincia }
+
+            var promesa = ClasesTipo("LOC");
+            promesa.then(function (entidad) {
+                $scope.tipo_edicion = entidad
+                $scope.abrirPopup($scope.idModalLocalidad);
+            })
+
         }
         $scope.cerrarDialogLocalidad = function () {
             $scope.cerrarPopup($scope.idModalLocalidad);
@@ -2250,6 +2270,192 @@ angular.module('agil.controladores')
                     $scope.localidades = entidades;
                 });
             }
+        }
+
+        $scope.AgregarDepartamento = function (datos) {
+            if (datos.edit) {
+                var bandera = true
+                $scope.clase = { pais: datos.pais }
+                $scope.departamentos.forEach(function (departamento, index, array) {
+                    var nombre_corto = departamento.nombre_corto.split("-")[0]
+                    if (departamento.id != datos.id) {
+                        if (nombre_corto == datos.nombre_corto2) {
+                            bandera = false
+                        }
+                    }
+                    if (index === (array.length - 1)) {
+                        if (bandera) {
+                            datos.nombre_corto = datos.nombre_corto2 + "-" + datos.pais.nombre_corto
+                            $scope.clase = { pais: datos.pais }
+                        } else {
+                            $scope.mostrarMensaje("El nombre corto tiene que ser unico por departamento")
+                        }
+                    }
+                });
+            } else {
+                var bandera = true
+                if ($scope.departamentos.length > 0) {
+                    $scope.departamentos.forEach(function (departamento, index, array) {
+                        var nombre_corto = departamento.nombre_corto.split("-")[0]
+                        if (nombre_corto == datos.nombre_corto2) {
+                            bandera = false
+                        }
+                        if (index === (array.length - 1)) {
+                            if (bandera) {
+                                datos.nombre_corto = datos.nombre_corto2 + "-" + datos.pais.nombre_corto
+                                $scope.departamentos.push(datos)
+                                $scope.clase = { pais: datos.pais }
+                            } else {
+                                $scope.mostrarMensaje("El nombre corto tiene que ser unico por departamento")
+                            }
+                        }
+                    });
+                } else {
+                    datos.nombre_corto = datos.nombre_corto2 + "-" + datos.pais.nombre_corto
+                    $scope.departamentos.push(datos)
+                    $scope.clase = { pais: datos.pais }
+                }
+            }
+
+        }
+
+        $scope.AgregarProvincia = function (datos) {
+            if (datos.edit) {
+                var bandera = true
+                $scope.provincias.forEach(function (provincia, index, array) {
+                    var nombre_corto = provincia.nombre_corto.split("-")[1]
+                    if (provincia.id != datos.id) {
+                        if (nombre_corto == datos.nombre_corto2) {
+                            bandera = false
+                        }
+                    }
+                    if (index === (array.length - 1)) {
+                        if (bandera) {
+                            var nombreCorto = datos.departamento.nombre_corto.split("-")[0]
+                            datos.nombre_corto = nombreCorto + "M-" + datos.nombre_corto2
+                        } else {
+                            $scope.mostrarMensaje("El nombre corto tiene que ser unico por provincia")
+                        }
+                    }
+                });
+                $scope.clase = { departamento: datos.departamento }
+
+            } else {
+                var bandera = true
+                if ($scope.provincias.length > 0) {
+                    $scope.provincias.forEach(function (provincia, index, array) {
+                        var nombre_corto = provincia.nombre_corto.split("-")[1]
+                        if (nombre_corto == datos.nombre_corto2) {
+                            bandera = false
+                        }
+                        if (index === (array.length - 1)) {
+                            if (bandera) {
+                                var nombreCorto = datos.departamento.nombre_corto.split("-")[0]
+                                datos.nombre_corto = nombreCorto + "M-" + datos.nombre_corto2
+                                $scope.provincias.push(datos)
+                                $scope.clase = { departamento: datos.departamento }
+                            } else {
+                                $scope.mostrarMensaje("El nombre corto tiene que ser unico por provincia")
+                            }
+                        }
+                    });
+                } else {
+                    var nombreCorto = datos.departamento.nombre_corto.split("-")[0]
+                    datos.nombre_corto = nombreCorto + "M-" + datos.nombre_corto2
+                    $scope.provincias.push(datos)
+                    $scope.clase = { departamento: datos.departamento }
+                }
+            }
+        }
+        $scope.AgregarLocalidad = function (datos) {
+            if (datos.edit) {
+                var bandera = true
+                $scope.localidades.forEach(function (localidad, index, array) {
+                    var nombre_corto = localidad.nombre_corto.split("-")[0]
+                    var nombre_corto2 = datos.nombre_corto2
+                    if (localidad.id != datos.id) {
+                        if (nombre_corto == nombre_corto2) {
+                            bandera = false
+                        }
+                    }
+                    if (index === (array.length - 1)) {
+                        if (bandera) {
+                            var nombreCorto = datos.provincia.nombre_corto.split("-")[1]
+                            datos.nombre_corto = datos.nombre_corto2 + "-" + nombreCorto + "L"
+                        } else {
+                            $scope.mostrarMensaje("El nombre corto tiene que ser unico por localidad")
+                        }
+                    }
+                })
+                $scope.clase = { provincia: datos.provincia }
+            } else {
+                var bandera = true
+                if ($scope.localidades.length > 0) {
+                    $scope.localidades.forEach(function (localidad, index, array) {
+                        var nombre_corto = localidad.nombre_corto.split("-")[0]
+                        var nombre_corto2 = datos.nombre_corto2
+                        if (nombre_corto == nombre_corto2) {
+                            bandera = false
+                        }
+                        if (index === (array.length - 1)) {
+                            if (bandera) {
+                                var nombreCorto = datos.provincia.nombre_corto.split("-")[1]
+                                datos.nombre_corto = datos.nombre_corto2 + "-" + nombreCorto + "L"
+                                $scope.localidades.push(datos)
+                                $scope.clase = { provincia: datos.provincia }
+                            } else {
+                                $scope.mostrarMensaje("El nombre corto tiene que ser unico por localidad")
+                            }
+                        }
+                    });
+                } else {
+                    var nombreCorto = datos.provincia.nombre_corto.split("-")[1]
+                    datos.nombre_corto = datos.nombre_corto2 + "-" + nombreCorto + "L"
+                    $scope.localidades.push(datos)
+                    $scope.clase = { provincia: datos.provincia }
+                }
+            }
+        }
+        $scope.guardarConceptoEdicionRrhh = function (datos) {
+            blockUI.start();
+            $scope.tipo_edicion.clases = datos
+            var tipo = $scope.tipo_edicion
+            Tipos.update({ id_tipo: tipo.id }, tipo, function (res) {
+                var promesa = ClasesTipo(tipo.nombre_corto);
+                promesa.then(function (entidad) {
+                    tipo = entidad
+                    blockUI.stop();
+                    $scope.cerrarDialogConceptoEdicion();
+                    $scope.mostrarMensaje('Guardado Exitosamente!');
+                });
+            });
+        }
+        $scope.editarLocalidad = function (loc, clase) {
+            var a = clase.provincia
+            var nombre_corto = loc.nombre_corto.split("-")[0]
+            $scope.clase = loc; $scope.clase.provincia = a; $scope.clase.nombre_corto2 = nombre_corto
+            $scope.clase.edit = true
+        }
+        $scope.editarProvincia = function (pro, clase) {
+            var a = clase.departamento
+            var nombre_corto = pro.nombre_corto.split("-")[1]
+            $scope.clase = pro; $scope.clase.departamento = a; $scope.clase.nombre_corto2 = nombre_corto
+            $scope.clase.edit = true
+        }
+        $scope.editarDepartamento = function (pro, clase) {
+            var a = clase.pais
+            var nombre_corto = pro.nombre_corto.split("-")[0]
+            $scope.clase = pro; $scope.clase.pais = a; $scope.clase.nombre_corto2 = nombre_corto
+            $scope.clase.edit = true
+        }
+        $scope.cancelarEdicionLocalidad = function (clase) {
+            $scope.clase = { provincia: clase.provincia }
+        }
+        $scope.cancelarEdicionProvincia = function (clase) {
+            $scope.clase = { departamento: clase.departamento }
+        }
+        $scope.cancelarEdicionDepartamento = function (clase) {
+            $scope.clase = { pais: clase.pais }
         }
         /*  $scope.obtenerLocalidades = function () {
              blockUI.start();

@@ -438,7 +438,7 @@ router.route('/productos-panel/empresa/:id_empresa/almacen/:id_almacen')
 	.get(function(req, res) {
 		Producto.findAll({ 
 			where: {id_empresa:req.params.id_empresa,publicar_panel:true},
-			include:[{model:Inventario,as:'inventarios',where:{id_almacen:req.params.id_almacen,cantidad:{$gt: 0}},required:false},
+			include:[{model:Inventario,as:'inventarios',where:{id_almacen:req.params.id_almacen,cantidad:{$gte: 0}},required:true},
 				     {model:Clase,as:'tipoProducto'},
 					 {model:ProductoBase,as:'productosBase',
 						include:[{model:Producto,as:'productoBase',

@@ -54,6 +54,7 @@ router.route('/clases/:nombre_corto')
 				where:{
 					nombre_corto: condicion
 				}
+				,include:[{model:Tipo,as:'tipo'}]
 			}).then(function(entidad){			
 				res.json(entidad);		  
 			});

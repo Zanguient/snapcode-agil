@@ -512,6 +512,9 @@ angular.module('agil.controladores')
 		}
 
 		$scope.eliminarDetalleVenta = function (detalleVenta) {
+			var indice = $scope.productosProcesados.indexOf(detalleVenta.producto);
+			$scope.productosProcesados[indice].inventario_disponible = $scope.productosProcesados[indice].inventario_disponible + detalleVenta.cantidad;
+
 			$scope.venta.detallesVenta.splice($scope.venta.detallesVenta.indexOf(detalleVenta), 1);
 			$scope.sumarTotal();
 			$scope.sumarTotalImporte();
@@ -1551,12 +1554,13 @@ angular.module('agil.controladores')
 		}
 
 		$scope.abrirPopupPanel = function (sucursal, almacen, actividad, tipoPago, movimiento) {
-			$scope.obtenerGruposProductoEmpresa();
+			
 			$scope.venta = new Venta({
 				id_empresa: $scope.usuario.id_empresa, id_usuario: $scope.usuario.id, cliente: {},
 				detallesVenta: [], detallesVentaNoConsolidadas: [], despachado: false,
 				sucursal: sucursal, almacen: almacen, actividad: actividad, tipoPago: tipoPago, movimiento: movimiento, vendedor: null
 			});
+			$scope.obtenerGruposProductoEmpresa();
 			if (!sucursal) {
 				$scope.venta.sucursal =/*$scope.sucursales.length==1?*/$scope.sucursales[0]/*:null*/;
 			}
@@ -1816,6 +1820,8 @@ angular.module('agil.controladores')
 		}
 
 		$scope.agregarDetalleVentaPanel = function (producto) {
+			console.log("producto sssssssssss ", producto);
+
 			var detalleVenta;
 			$scope.cantidadInventario = 0;
 			if (producto.activar_inventario) {
@@ -1865,6 +1871,9 @@ angular.module('agil.controladores')
 			} else {
 				$scope.calcularImporteDetalleVenta(detalleVenta);
 			}
+			// para disminuir en panel de los productos ========
+			producto.inventario_disponible = $scope.cantidadInventario-detalleVenta.cantidad;
+
 			$scope.sumarTotal();
 			$scope.sumarTotalImporte();
 			$scope.calcularSaldo();
@@ -1884,10 +1893,14 @@ angular.module('agil.controladores')
 		}
 
 		$scope.disminuirDetalleVenta = function (detalleVenta) {
+			var indice = $scope.productosProcesados.indexOf(detalleVenta.producto);
+
 			if (detalleVenta.cantidad == 1) {
 				$scope.eliminarDetalleVenta(detalleVenta);
+				// $scope.productosProcesados[indice].inventario_disponible = $scope.productosProcesados[indice].inventario_disponible + 1;
 			} else {
 				detalleVenta.cantidad = detalleVenta.cantidad - 1;
+				$scope.productosProcesados[indice].inventario_disponible = $scope.productosProcesados[indice].inventario_disponible + 1;
 				$scope.calcularImporteDetalleVenta(detalleVenta);
 				$scope.sumarTotal();
 				$scope.sumarTotalImporte();
@@ -1921,10 +1934,13 @@ angular.module('agil.controladores')
 						if (res.hasError) {
 							blockUI.stop();
 							$scope.mostrarMensaje(res.message);
+							$scope.venta.almacen.id = venta.almacen.id;
 							$scope.abrirPopupPanel(venta.sucursal, venta.almacen, venta.actividad, venta.tipoPago, venta.movimiento);
+
 						} else {
 							ImprimirSalida(movimiento, res, true, $scope.usuario);
 							$scope.mostrarMensaje('Venta registrada exitosamente!');
+							$scope.cargarProductos();
 							$scope.abrirPopupPanel(venta.sucursal, venta.almacen, venta.actividad, venta.tipoPago, venta.movimiento);
 							$scope.enfocar('nitP');
 						}

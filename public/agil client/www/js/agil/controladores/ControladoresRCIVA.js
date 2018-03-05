@@ -433,6 +433,7 @@ angular.module('agil.controladores')
 
                 var workbook = XLSX.read(data, { type: 'binary' });
                 var first_sheet_name = workbook.SheetNames[0];
+                console.log("first_sheet_name ============ ", first_sheet_name);
                 var row = 2, i = 0;
                 var worksheet = workbook.Sheets[first_sheet_name];
                 var clientes = [];

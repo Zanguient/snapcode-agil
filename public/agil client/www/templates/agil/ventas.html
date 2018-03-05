@@ -1303,7 +1303,7 @@
 											<label>TIPO DE PAGO</label>
 											<select data-validate="validate(required)" required id="pago" name="pago" 
 													ng-model="venta.tipoPago" data-placeholder="Elija un tipo de pago" 
-													ng-change="cambiarTipoPago(venta.tipoPago)"
+													ng-change="cambiarTipoPago(venta)"
 													ng-options="tipoPago as tipoPago.nombre for tipoPago in tiposPago track by tipoPago.id">
 											</select>
 										</div>
