@@ -32,13 +32,13 @@ angular.module('agil.servicios')
             var delay = $q.defer();
             var params = {
                 id_empresa: paginador.filter.id_empresa,
-                mes: paginador.filter.mes,
-                anio: paginador.filter.anio,
-                desempenio: paginador.filter.desempenio,
+                mes: paginador.filter.mes.id !== undefined ? paginador.filter.mes.id :paginador.filter.mes,
+                anio: paginador.filter.anio.id !== undefined ? paginador.filter.anio.id : paginador.filter.anio,
+                desempenio: paginador.filter.desempenio.id !== undefined ? paginador.filter.desempenio.id : 0,
                 mas_campo: paginador.filter.mas_campo,
                 campo: paginador.filter.campo,
-                cargo: paginador.filter.cargo,
-                estado: paginador.filter.estado,
+                cargo: paginador.filter.cargo.id !== undefined ? paginador.filter.cargo.id : 0,
+                estado: paginador.filter.estado.id !== undefined ? paginador.filter.estado.id : 0,
                 codigo: paginador.filter.codigo,
                 nombre: paginador.filter.nombre,
                 apellido: paginador.filter.apellido,
@@ -67,24 +67,20 @@ angular.module('agil.servicios')
     .factory('GuardarEvaluacionPersonal', ['EvaluacionPersonal', '$q', function (EvaluacionPersonal, $q) {
         var res = function (id_empresa, evaluacion) {
             var delay = $q.defer();
-            // var params = {
-            //     id_empresa: paginador.filter.id_empresa, 
-            //     mes:paginador.filter.mes, 
-            //     anio: paginador.filter.anio, 
-            //     desempenio: paginador.filter.desempenio, 
-            //     mas_campo: paginador.filter.mas_campo,
-            //     campo: paginador.filter.campo,
-            //     cargo: paginador.filter.cargo,
-            //     estado: paginador.filter.estado,
-            //     codigo: paginador.filter.codigo,
-            //     nombre: paginador.filter.nombre,
-            //     apellido: paginador.filter.apellido,
-            //     pagina: paginador.currentPage,
-            //     items_pagina: paginador.itemsPerPage,
-            //     columna: paginador.column,
-            //     direccion: paginador.direction
-            // }
             EvaluacionPersonal.save({ id_empresa: id_empresa }, evaluacion, function (entidades) {
+                delay.resolve(entidades);
+            }, function (error) {
+                delay.reject(error);
+            });
+            return delay.promise;
+        };
+        return res;
+    }])
+
+    .factory('ActializarEvaluacionPersonal', ['EvaluacionPersonal', '$q', function (EvaluacionPersonal, $q) {
+        var res = function (id_empresa, evaluacion) {
+            var delay = $q.defer();
+            EvaluacionPersonal.update({ id_empresa: id_empresa }, evaluacion, function (entidades) {
                 delay.resolve(entidades);
             }, function (error) {
                 delay.reject(error);
@@ -189,7 +185,7 @@ angular.module('agil.servicios')
     }])
 
     .factory('configuracionDesempenio', function ($resource) {
-        return $resource(restServer + "desempenio/configuracion/:id_empresa", {},
+        return $resource(restServer + "desempenio/configuracion/:id_empresa/sufra", {},
             {
                 'update': { method: 'PUT' }
             });

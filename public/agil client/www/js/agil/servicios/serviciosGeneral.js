@@ -1014,7 +1014,7 @@ angular.module('agil.servicios')
 					var qrImage = canvas.toDataURL('image/png');
 					doc.image(qrImage, 470, y + 20, { width: 70, height: 70 });
 					if (completa || vacia) {
-						doc.text(venta.pieFactura !== undefined ? venta.pieFactura.nombre : "", 50, papel[1] - 60);
+						doc.text(venta.pieFactura !== undefined && venta.pieFactura !== null ? venta.pieFactura.nombre : "", 50, papel[1] - 60);
 						doc.text("\"ESTA FACTURA CONTRIBUYE AL DESARROLLO DEL PAIS. EL USO ILICITO DE ESTA SERA SANCIONADO DE ACUERDO A LEY\"", 50, papel[1] - 40);
 					}
 				}

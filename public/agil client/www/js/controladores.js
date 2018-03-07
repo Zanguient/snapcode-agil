@@ -1684,12 +1684,13 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 						ImprimirSalida(res.factura.movimiento.nombre_corto, res.factura, false, $scope.usuario)
 						$scope.mostrarMensaje(res.mensaje)
 						$scope.cerrarFacturaProformas()
+						$scope.recargarItemsTabla()
 					} else {
 						$scope.mostrarMensaje(res.mensaje)
 					}
 					blockUI.stop()
 				}, function (err) {
-					$scope.mostrarMensaje(err.message)
+					$scope.mostrarMensaje('No hubo respuesta del servidor y se perdio la conexión.')
 					blockUI.stop()
 				})
 			}

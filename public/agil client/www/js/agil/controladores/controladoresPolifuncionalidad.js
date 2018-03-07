@@ -1,7 +1,7 @@
 angular.module('agil.controladores')
     .controller('controladorPolifuncionalidad', function ($scope, $location, $localStorage, $templateCache, $route, blockUI, Paginator, FieldViewer,
         $filter, ClasesTipo, ObtenerTodoPersonal, ObtenerEvaluaciones, GuardarEvaluacionPersonal, ObtenerReportePorMeses, ObtenerReportePorAnio, ObtenerReporteGeneralPorAnio, GuardarConfiguracionCalificacion,
-        ObtenerConfiguracionCalificacion, GuardarConfiguracionDesempenio, ObtenerConfiguracionDesempenio) {
+        ObtenerConfiguracionCalificacion, GuardarConfiguracionDesempenio, ObtenerConfiguracionDesempenio, ActializarEvaluacionPersonal) {
 
         $scope.usuarioSesion = JSON.parse($localStorage.usuario);
         $scope.idModalWizardPolifuncionalEdicion = 'modal-wizard-polifuncional-edicion';
@@ -38,7 +38,21 @@ angular.module('agil.controladores')
             $scope.obtenerPaginador()
 
         }
-
+        $scope.eliminar = function (evaluacion) {
+            evaluacion.eliminado = true
+            evaluacion.eliminar = true
+            var prom = GuardarEvaluacionPersonal($scope.usuarioSesion.id_empresa, evaluacion)
+            prom.then(function (res) {
+                if (res.hasErr) {
+                    $scope.mostrarMensaje("Hubo un error no se pudo eliminar: " + res.mensaje)
+                } else {
+                    $scope.mostrarMensaje(res.mensaje)
+                    $scope.recargarItemsTabla()
+                }
+            }, function (err) {
+                $scope.mostrarMensaje("No hay respuesta del servidor, se perdió la conexión: " + res.mensaje)
+            })
+        }
         $scope.obtenerConfiguracionnotas = function () {
             var prom = ObtenerConfiguracionCalificacion($scope.usuarioSesion.id_empresa)
             prom.then(function (res) {
@@ -49,9 +63,76 @@ angular.module('agil.controladores')
                         $scope.empleados = res.configuracion[key];
                     }
                 }
+                var otraProm = ObtenerConfiguracionDesempenio($scope.usuarioSesion.id_empresa)
+                otraProm.then(function (res) {
+                    $scope.parametros = res.parametros
+                    while (res.parametros.length > 0) {
+                        var dato = res.parametros.pop()
+                        $scope.listaDesempenio.map(function (configuracion) {
+                            if (configuracion.nombre == dato.nombre) {
+                                configuracion.desde = dato.desde
+                                configuracion.hasta = dato.hasta
+                            }
+                        })
+                    }
+                })
             }).catch(function (err) {
                 $scope.mostrarMensaje(err.stack ? err.stack : err.message)
             })
+        }
+
+        $scope.editar = function (evaluacion, editar, nuevo, ver) {
+            $scope.abrirNuevoEvaluacionPolifuncional()
+            if (ver) {
+                $scope.evaluacion = {
+                    encargado: evaluacion.encargado,
+                    anio: { id: evaluacion.anio },
+                    mes: { id: evaluacion.mes },
+                    asistencia_capacitacion: evaluacion.asistencia_capacitacion,
+                    asistencia_reunion: evaluacion.asistencia_reunion,
+                    documentos_actualizados: evaluacion.documentos_actualizados,
+                    funciones_puntualidad: evaluacion.funciones_puntualidad,
+                    higiene_personal: evaluacion.higiene_personal,
+                    ingreso_campo: evaluacion.ingreso_campo,
+                    llenado_formularios: evaluacion.llenado_formularios,
+                    trabajo_equipo: evaluacion.trabajo_equipo,
+                    nota_total: evaluacion.nota_total,
+                    id: evaluacion.id,
+                    id_desempenio: evaluacion.id_desempenio,
+                    id_empleado: evaluacion.id_empleado,
+                    personal: { id: evaluacion.empleado.id, persona: { nombre_completo: evaluacion.empleado.persona.nombre_completo } }
+                }
+                $scope.evaluacion.ver = true
+            }
+            if (editar) {
+                $scope.evaluacion = {
+                    encargado: evaluacion.encargado,
+                    anio: { id: evaluacion.anio },
+                    mes: { id: evaluacion.mes },
+                    asistencia_capacitacion: evaluacion.asistencia_capacitacion,
+                    asistencia_reunion: evaluacion.asistencia_reunion,
+                    documentos_actualizados: evaluacion.documentos_actualizados,
+                    funciones_puntualidad: evaluacion.funciones_puntualidad,
+                    higiene_personal: evaluacion.higiene_personal,
+                    ingreso_campo: evaluacion.ingreso_campo,
+                    llenado_formularios: evaluacion.llenado_formularios,
+                    trabajo_equipo: evaluacion.trabajo_equipo,
+                    nota_total: evaluacion.nota_total,
+                    id: evaluacion.id,
+                    id_desempenio: evaluacion.id_desempenio,
+                    id_empleado: evaluacion.id_empleado,
+                    personal: { id: evaluacion.empleado.id, persona: { nombre_completo: evaluacion.empleado.persona.nombre_completo } }
+                }
+                $scope.evaluacion.editar = true
+            }
+            if (nuevo) {
+                $scope.evaluacion.encargado = evaluacion.encargado
+                $scope.evaluacion.id_desempenio = evaluacion.id_desempenio
+                $scope.evaluacion.id_empleado = evaluacion.id_empleado
+                $scope.evaluacion.personal = { id: evaluacion.empleado.id, persona: { nombre_completo: evaluacion.empleado.persona.nombre_completo } }
+                $scope.evaluacion.nuevo = true
+                var button = $('#siguiente').trigger("click");
+            }
         }
 
         $scope.obtenerPaginador = function () {
@@ -66,24 +147,39 @@ angular.module('agil.controladores')
             $scope.resetFiltro()
             blockUI.stop();
         }
-
-        $scope.determinarColor = function (desempenio) {
-            return $scope.listaDesempenio[desempenio - 1].color
-        }
+        var errorDesempenio = { nombre: 'ERROR', color: "bg-red" }
 
         $scope.listaDesempenio = [
-            { id: 1, nombre: 'Deficiente', desde: 1, hasta: 25, color: "bg-red" },
-            { id: 2, nombre: 'Insatisfactorio', desde: 26, hasta: 50, color: "bg-yellow" },
-            { id: 3, nombre: 'Satisfactorio', desde: 51, hasta: 75, color: "bg-orange-green" },
-            { id: 4, nombre: 'Competente', desde: 76, hasta: 100, color: "bg-blue" },
-            { id: 5, nombre: 'ERROR', desde: 101, hasta: 99999, color: "bg-red" },
-            { id: 6, nombre: 'ERROR', desde: -99999, hasta: 0, color: "bg-red" }]
+            { nombre: 'Deficiente', desde: 1, hasta: 25, color: "bg-red" },
+            { nombre: 'Insatisfactorio', desde: 26, hasta: 50, color: "bg-yellow" },
+            { nombre: 'Satisfactorio', desde: 51, hasta: 75, color: "bg-orange-green" },
+            { nombre: 'Competente', desde: 76, hasta: 100, color: "bg-blue" }
+        ]
 
-        $scope.actualizarListaDesempenio = function () {
-            var prom = ObtenerConfiguracionDesempenio($scope.usuarioSesion.id_empresa)
-            prom.then(function (res) {
-                while (res.parametros.length > 0) {
-                    var dato = res.parametros.pop()
+        $scope.actualizarListaDesempenio = function (lista) {
+            if (lista == null || lista == undefined) {
+                var prom = ObtenerConfiguracionDesempenio($scope.usuarioSesion.id_empresa)
+                prom.then(function (res) {
+                    while (res.parametros.length > 0) {
+                        var dato = res.parametros.pop()
+                        $scope.listaDesempenio.map(function (configuracion) {
+                            if (configuracion.nombre == dato.nombre) {
+                                configuracion.desde = dato.desde
+                                configuracion.hasta = dato.hasta
+                                configuracion.id = dato.id
+                                configuracion.activo = dato.activo
+                            }
+                        })
+                    }
+                }).catch(function (err) {
+                    $scope.mostrarMensaje(err.stack ? err.stack : err.message)
+                })
+            } else {
+                var listado = lista.map(function (_) {
+                    return _
+                })
+                while (listado.length > 0) {
+                    var dato = listado.pop()
                     $scope.listaDesempenio.map(function (configuracion) {
                         if (configuracion.nombre == dato.nombre) {
                             configuracion.desde = dato.desde
@@ -91,25 +187,52 @@ angular.module('agil.controladores')
                         }
                     })
                 }
-            }).catch(function (err) {
-                $scope.mostrarMensaje(err.stack ? err.stack : err.message)
-            })
+            }
         }
 
-        var listaEstados = [
+        $scope.listaEstados = [
             { id: 1, nombre: 'Activo' },
             { id: 2, nombre: 'Inactivo' }]
 
         $scope.determinarEstado = function (estado) {
             if (estado == true) {
-                return listaEstados[1].nombre
+                return $scope.listaEstados[1].nombre
             } else {
-                return listaEstados[0].nombre
+                return $scope.listaEstados[0].nombre
             }
         }
 
         $scope.determinarDesempenio = function (desempenio) {
-            return $scope.listaDesempenio[desempenio - 1].nombre
+            var indx = NaN
+            if (desempenio == null || desempenio == undefined) {
+                return "bg-red"
+            } else {
+                $scope.listaDesempenio.map(function (_, i) {
+                    if (_.id == desempenio) {
+                        indx = i
+                    }
+                })
+                var retornoNombre = (indx !== NaN) ? $scope.listaDesempenio[indx].nombre : errorDesempenio.nombre
+                var ss = 0
+                return retornoNombre
+            }
+
+        }
+
+        $scope.determinarColor = function (desempenio) {
+            var indx = NaN
+            if (desempenio == null || desempenio == undefined) {
+                return "bg-red"
+            } else {
+                $scope.listaDesempenio.map(function (_, i) {
+                    if (_.id == desempenio) {
+                        indx = i
+                    }
+                })
+                var retornoColor = (indx !== NaN) ? $scope.listaDesempenio[indx].color : errorDesempenio.color
+                var ss = 0
+                return retornoColor
+            }
         }
 
         var vars = ['asistencia_capacitacion',
@@ -125,46 +248,112 @@ angular.module('agil.controladores')
             var total = 0
             vars.map(function (key) {
                 if (evaluacion[key] !== null && evaluacion[key] !== undefined && evaluacion[key] >= 0) {
-                    total += evaluacion[key]
+                    if ($scope.opcion[key]) {
+                        total += evaluacion[key]
+                    } else {
+                        if (evaluacion.encargado) {
+                            total += $scope.encargados[key]
+                        } else {
+                            total += $scope.empleados[key]
+                        }
+                    }
                     evaluacion.nota_total = total
+                } else {
+                    if ($scope.opcion[key]) {
+                        total += evaluacion[key]
+                    } else {
+                        if (evaluacion.encargado) {
+                            total += encargados[key]
+                        } else {
+                            total += empleados[key]
+                        }
+                    }
                 }
             })
         }
 
+        $scope.filtrarPolifuncionalidad = function (filtro, _) {
+            for (var key in filtro) {
+                if (filtro[key] === "" || filtro[key] === null) {
+                    filtro[key] = 0
+                }
+            }
+            if (_ === undefined) {
+                $scope.obtenerProformas()
+                // $scope.recargarItemsTabla()
+            } else {
+                return filtro
+            }
+        }
+
+        $scope.calcularNotaTotalConfiguracion = function (empleados, encargados) {
+            var notaEmpleados = 0
+            var notaEncargados = 0
+            if (empleados) {
+                empleados.nota_total = 0
+            }
+            if (encargados) {
+                encargados.nota_total = 0
+            }
+
+            for (const key in empleados) {
+                if (key !== "createdAt" && key !== "updatedAt" && key !== "id_empresa" && key !== "id" && key !== "activo" && key !== "encargados") {
+                    notaEmpleados += empleados[key]
+                }
+
+            }
+            for (const key in encargados) {
+                if (key !== "createdAt" && key !== "updatedAt" && key !== "id_empresa" && key !== "id" && key !== "activo" && key !== "encargados") {
+                    notaEncargados += encargados[key]
+                }
+            }
+            empleados.nota_total = notaEmpleados
+            encargados.nota_total = notaEncargados
+        }
+
         var validarPrimerStep = false
         var validarSteps = 0
+        var stepOneComplete = false
+        var stepTwoComplete = false
         $scope.validarDatosEvaluacion = function (evaluacion) {
 
-            if (evaluacion === undefined || evaluacion === null) {
-                return true
-            }
-            if (evaluacion.personal === undefined || evaluacion.personal == null) {
-                return true
-            }
-            var count = 0
-
-            for (const key in evaluacion) {
-                if (evaluacion.hasOwnProperty(key)) {
-                    count += 1;
+            if (!stepOneComplete) {
+                if (evaluacion === undefined || evaluacion === null) {
+                    return true
                 }
-            }
-            if (count == vars.length || count == 3) {
-                if (!validarPrimerStep) {
-                    validarPrimerStep = true
-                    return false
-                } else {
-                    if (validarSteps < 1) {
-                        validarSteps += 1
-                        return false
-                    } else {
-                        return true
-                    }
-                }
-            } else {
-                if (count < vars.length + 4) {
+                if (evaluacion.personal === undefined || evaluacion.personal == null) {
                     return true
                 } else {
+                    stepOneComplete = true
+                    validarSteps += 1
                     return false
+                }
+            } else {
+
+                var count = 0
+                for (const key in evaluacion) {
+                    if (evaluacion.hasOwnProperty(key)) {
+                        count += 1;
+                    }
+                }
+                if (count == vars.length || count == 4 || (count == 7 && evaluacion.nuevo)) {
+                    if (!validarPrimerStep) {
+                        validarPrimerStep = true
+                        return false
+                    } else {
+                        if (validarSteps < 1) {
+                            validarSteps += 1
+                            return false
+                        } else {
+                            return true
+                        }
+                    }
+                } else {
+                    if (count < vars.length + 4) {
+                        return true
+                    } else {
+                        return false
+                    }
                 }
             }
         }
@@ -178,17 +367,27 @@ angular.module('agil.controladores')
                         evaluacion.id_desempenio = desempenio.id
                     }
                 })
-                evaluacion.fecha = new Date(evaluacion.anio.id, evaluacion.mes.id, 15, 12, 0, 0)
-                var prom = GuardarEvaluacionPersonal($scope.usuarioSesion.empresa.id, evaluacion)
-                prom.then(function (res) {
-                    $scope.mostrarMensaje(res.mensaje)
+                if (evaluacion.ver) {
                     $scope.cerrarPopPupNuevoPolifuncional()
-                    $scope.recargarItemsTabla()
                     blockUI.stop()
-                }, function (err) {
-                    $scope.mostrarMensaje(err.data !== undefined ? err.data : err.message)
-                    blockUI.stop()
-                })
+                } else {
+                    evaluacion.fecha = new Date(evaluacion.anio.id, evaluacion.mes.id, 15, 12, 0, 0)
+                    if (evaluacion.editar) {
+                        var prom = ActializarEvaluacionPersonal($scope.usuarioSesion.empresa.id, evaluacion)
+                    } else {
+                        var prom = GuardarEvaluacionPersonal($scope.usuarioSesion.empresa.id, evaluacion)
+                    }
+                    prom.then(function (res) {
+                        $scope.mostrarMensaje(res.mensaje)
+                        $scope.cerrarPopPupNuevoPolifuncional()
+                        $scope.recargarItemsTabla()
+                        blockUI.stop()
+                    }, function (err) {
+                        var meno = err.stack !== undefined ? err.stack : err.message
+                        $scope.mostrarMensaje("Se perdió la conexión." + meno)
+                        blockUI.stop()
+                    })
+                }
             }
         }
 
@@ -860,9 +1059,9 @@ angular.module('agil.controladores')
                     $scope.mostrarMensaje(res.mensaje)
                 }
                 $scope.resetFiltro()
-                $scope.cerrarPopPupNuevoPolifuncional()
+                /*  $scope.cerrarPopPupNuevoPolifuncional() */
             }, function (err) {
-                $scope.mostrarMensaje(err.data !== undefined ? err.data : err.message)
+                $scope.mostrarMensaje("Se perdió la conexión.")
             })
             blockUI.stop()
         }
@@ -919,7 +1118,7 @@ angular.module('agil.controladores')
                 $scope.cargos = entidad.clases
                 blockUI.stop();
             }, function (err) {
-                $scope.mostrarMensaje('Se produjo un error : ' + err.message !== undefined ? err.message : err.data)
+                $scope.mostrarMensaje("Se perdió la conexión.")
                 blockUI.stop();
             })
         }
@@ -931,7 +1130,7 @@ angular.module('agil.controladores')
                 $scope.centrosCostos = dato.clases
                 blockUI.stop();
             }, function (err) {
-                $scope.mostrarMensaje('Se produjo un error : ' + err.message !== undefined ? err.message : err.data)
+                $scope.mostrarMensaje("Se perdió la conexión.")
                 blockUI.stop();
             })
         }
@@ -955,7 +1154,7 @@ angular.module('agil.controladores')
                         $scope.mostrarMensaje(personal.mensaje)
                     }
                 }, function (err) {
-                    $scope.mostrarMensaje(err.message !== undefined ? err.message : err.data)
+                    $scope.mostrarMensaje("Se perdió la conexión.")
                 })
             }
         }
@@ -989,22 +1188,40 @@ angular.module('agil.controladores')
         }
 
         $scope.abrirNuevoEvaluacionPolifuncional = function () {
-            $scope.evaluacion = {}
-            $scope.evaluacion.mes = { id: new Date().getMonth() }
-            $scope.evaluacion.anio = { id: new Date().getFullYear() }
+            if ($scope.evaluacion == undefined) {
+                $scope.evaluacion = {}
+                $scope.evaluacion.mes = { id: new Date().getMonth() }
+                $scope.evaluacion.anio = { id: new Date().getFullYear() }
+                $scope.evaluacion.encargado = false
+                if ($scope.opcion == undefined) {
+                    $scope.opcion = {}
+                    vars.forEach(function (variable) {
+                        $scope.opcion[variable] = true
+                    })
+                }
+                vars.forEach(function (variable) {
+                    $scope.evaluacion[variable] = 0
+                })
+                $scope.evaluacion.nota_total = 0
+            }
+
             $scope.abrirPopup($scope.idModalWizardPolifuncionalEdicion);
         }
 
         $scope.cerrarPopPupNuevoPolifuncional = function () {
+            $scope.evaluacion = {}
             $scope.evaluacion = undefined
+            $scope.recargarItemsTabla()
             $scope.cerrarPopup($scope.idModalWizardPolifuncionalEdicion);
         }
 
         $scope.abrirmodalParametrosPolifuncionalidad = function () {
+
             $scope.abrirPopup($scope.idModalWizardConceptoEdicion2);
         }
 
         $scope.cerrarmodalParametrosPolifuncionalidad = function () {
+
             $scope.cerrarPopup($scope.idModalWizardConceptoEdicion2);
         }
 
@@ -1017,21 +1234,63 @@ angular.module('agil.controladores')
             $scope.cerrarPopup($scope.modalBusquedaPersonal);
         }
 
-        $scope.guardarConfiguracionEvaluacion = function (parametros, empleados, encargados) {
+        $scope.comprobarConfiguracion = function () {
+            if ($scope.empleados) {
+                var countempleado = 0
+                for (const key in $scope.empleados) {
+                    if ($scope.empleados.hasOwnProperty(key)) {
+                        countempleado += 1
+                    }
+                }
+            }
+            if ($scope.encargados) {
+                var countencargado = 0
+                for (const key in $scope.encargados) {
+                    if ($scope.encargados.hasOwnProperty(key)) {
+                        countencargado += 1
+                    }
+                }
+            }
+
+            if (countempleado > 7 && countencargado > 7) {
+                return false
+            } else {
+                return true
+            }
+        }
+
+        $scope.guardarConfiguracionEvaluacion = function (parametros, encargados, empleados) {
+
             var button = $('#siguiente-conf').text().trim();
             if (button != "Siguiente") {
-                empleados.encagados = false
-                encargados.encagados = true
-                var conf = { empledos: empleados, encagados, encagados }
-                var prom = GuardarConfiguracionCalificacion(conf)
+                blockUI.start()
+                empleados.encargados = false
+                encargados.encargados = true
+                var errores = false
+                var conf = [empleados, encargados]
+                var prom = GuardarConfiguracionCalificacion($scope.usuarioSesion.id_empresa, conf)
                 prom.then(function (res) {
                     if (res.hasErr) {
+                        var rrores = res.mensaje
+                        // errores = true
                         $scope.mostrarMensaje('Hubo un error. ' + res.mensaje)
-                    } else {
-                        $scope.mostrarMensaje(res.mensaje)
-                        $scope.cerrarmodalParametrosPolifuncionalidad()
                     }
+                }, function (err) {
+                    $scope.mostrarMensaje("No hubo respuesta del servidor, se perdió la conexión.")
+                    // blockUI.stop()
                 })
+                // $scope.actualizarListaDesempenio($scope.listaDesempenio)
+                var otraProm = GuardarConfiguracionDesempenio($scope.usuarioSesion.id_empresa, $scope.listaDesempenio)
+                otraProm.then(function (resp) {
+                    if (resp.hasErr) {
+                        $scope.mostrarMensaje('Hubo uno o mas errores. ' + rrores + " " + resp.mensaje)
+                    } else {
+                        $scope.mostrarMensaje(resp.mensaje)
+                    }
+                    blockUI.stop()
+                    $scope.recargarItemsTabla()
+                })
+                $scope.cerrarmodalParametrosPolifuncionalidad()
             }
         }
         $scope.inicio();

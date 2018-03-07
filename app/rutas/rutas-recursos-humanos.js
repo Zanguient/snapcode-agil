@@ -1933,26 +1933,26 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                 where: condicionAnticipo,
                 include: [{ model: MedicoPaciente, as: 'empleado', where: condicionEmpleado, include: [{ model: Persona, as: 'persona' }] }, { model: Clase, as: 'tipoAnticipo' }]
             }).then(function (empleadoaAnticipo) {
-                          if (empleadoaAnticipo.length > 0) {
-                              empleadoaAnticipo.forEach(function (anticipo, index, array) {
-                                  RrhhEmpleadoFicha.findAll({
-                                      limit: 1,
-                                      where: {
-                                          id_empleado: anticipo.empleado.id
-                                      },
-                                      include:[{model:Clase,as:'banco'}],
-                                      order: [['id', 'DESC']]
-                                  }).then(function (fichaActual) {
-                                      anticipo.dataValues.empleado.dataValues.ficha = fichaActual[0]
-                                      if (index === (array.length - 1)) {
-                                          res.json({ anticipos: empleadoaAnticipo })
-                                      }
-                                  })
-                              })
-          
-                          } else {
+                if (empleadoaAnticipo.length > 0) {
+                    empleadoaAnticipo.forEach(function (anticipo, index, array) {
+                        RrhhEmpleadoFicha.findAll({
+                            limit: 1,
+                            where: {
+                                id_empleado: anticipo.empleado.id
+                            },
+                            include: [{ model: Clase, as: 'banco' }],
+                            order: [['id', 'DESC']]
+                        }).then(function (fichaActual) {
+                            anticipo.dataValues.empleado.dataValues.ficha = fichaActual[0]
+                            if (index === (array.length - 1)) {
+                                res.json({ anticipos: empleadoaAnticipo })
+                            }
+                        })
+                    })
 
-                res.json({ anticipos: empleadoaAnticipo })
+                } else {
+
+                    res.json({ anticipos: empleadoaAnticipo })
                 }
             })
         })
@@ -2192,13 +2192,13 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
             var condicion_empleado = {}
 
             if (req.params.mes !== "0") {
-                condicion_evaluacion.mes = req.params.mes
+                condicion_evaluacion.mes = parseInt(req.params.mes) -1
             }
             if (req.params.anio !== "0") {
-                condicion_evaluacion.anio = req.params.mes
+                condicion_evaluacion.anio = req.params.anio
             }
             if (req.params.desempenio !== "0") {
-                condicion_evaluacion.desempenio = req.params.mes
+                condicion_evaluacion.desempenio = req.params.desempenio
             }
             if (req.params.mas_campo !== "0") {
 
@@ -2210,16 +2210,18 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                 condicion_cargos.cargo = req.params.cargo
             }
             if (req.params.estado !== "0") {
-                condicion_evaluacion.eliminado = req.params.estado
+                condicion_empleado.eliminado = req.params.estado == "1" ? false : true
+            }else{
+                // condicion_empleado.eliminado = false
             }
             if (req.params.codigo !== "0") {
-                condicion_empleado.codigo = { $like: req.params.codigo }
+                condicion_empleado.codigo = { $like: req.params.codigo + '%' }
             }
             if (req.params.nombre !== "0") {
-                condicion_persona.nombre = { $like: req.params.nombre }
+                condicion_persona.nombre_completo = { $like: '%'+req.params.nombre+'%' }
             }
             if (req.params.apellido !== "0") {
-                condicion_persona.apellido = { $like: req.params.apellido }
+                condicion_persona.nombre_completo = { $like: '%'+req.params.apellido+'%' }
             }
             condicion_empleado.es_empleado = true
             EvaluacionPolifuncional.findAndCountAll({
@@ -2260,48 +2262,61 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
 
     router.route('/evaluacion/personal/:id_empresa')
         .post(function (req, res) {
-            EvaluacionPolifuncional.findOrCreate({
-                where: {
-                    id_empleado: req.body.personal.id,
-                    anio: req.body.anio.id,
-                    mes: req.body.mes.id
-                    // fecha: req.body.fecha
-                },
-                include: [{
-                    model: MedicoPaciente, as: 'empleado',
-                    include: [{
-                        model: RrhhEmpleadoCargo, as: 'cargos',
-                        include: [{ model: Clase, as: 'cargo' }]
-                    }, { model: Persona, as: 'persona' }]
-                }],
-                defaults: {
-                    id_empleado: req.body.personal.id,
-                    anio: req.body.anio.id,
-                    mes: req.body.mes.id,
-                    fecha: req.body.fecha,
-                    asistencia_capacitacion: req.body.asistencia_capacitacion,
-                    documentos_actualizados: req.body.documentos_actualizados,
-                    trabajo_equipo: req.body.trabajo_equipo,
-                    funciones_puntualidad: req.body.funciones_puntualidad,
-                    higiene_personal: req.body.higiene_personal,
-                    asistencia_reunion: req.body.asistencia_reunion,
-                    ingreso_campo: req.body.ingreso_campo,
-                    llenado_formularios: req.body.llenado_formularios,
-                    nota_total: req.body.nota_total,
-                    id_desempenio: req.body.id_desempenio,
-                    encargado: req.body.encargado,
+            if (req.body.eliminar) {
+                EvaluacionPolifuncional.update({
                     eliminado: req.body.eliminado
-                }
-            }).spread(function (evaluacion, nueva) {
-                if (!nueva) {
-                    res.json({ mensaje: 'Ya existe una evaluación de fecha ' + meses[evaluacion.mes].nombre + '-' + evaluacion.anio + ' para el empleado ' + evaluacion.empleado.persona.nombre_completo })
-                } else {
-                    res.json({ mensaje: 'Evaluación Creada satisfactoriamente!' })
-                }
+                }, {
+                        where: { id: req.body.id }
+                    }).then(function (evaluacionCreada) {
+                        res.json({ mensaje: 'Evaluación eliminada correctamente!' })
+                    }).catch(function (err) {
+                        res.json({ mensaje: err.message === undefined ? err.stack : err.message, hasErr: true })
+                    });
+            } else {
+                EvaluacionPolifuncional.findOrCreate({
+                    where: {
+                        id_empleado: req.body.personal.id,
+                        anio: req.body.anio.id,
+                        mes: req.body.mes.id
+                        // fecha: req.body.fecha
+                    },
+                    include: [{
+                        model: MedicoPaciente, as: 'empleado',
+                        include: [{
+                            model: RrhhEmpleadoCargo, as: 'cargos',
+                            include: [{ model: Clase, as: 'cargo' }]
+                        }, { model: Persona, as: 'persona' }]
+                    }],
+                    defaults: {
+                        id_empleado: req.body.personal.id,
+                        anio: req.body.anio.id,
+                        mes: req.body.mes.id,
+                        fecha: req.body.fecha,
+                        asistencia_capacitacion: req.body.asistencia_capacitacion,
+                        documentos_actualizados: req.body.documentos_actualizados,
+                        trabajo_equipo: req.body.trabajo_equipo,
+                        funciones_puntualidad: req.body.funciones_puntualidad,
+                        higiene_personal: req.body.higiene_personal,
+                        asistencia_reunion: req.body.asistencia_reunion,
+                        ingreso_campo: req.body.ingreso_campo,
+                        llenado_formularios: req.body.llenado_formularios,
+                        nota_total: req.body.nota_total,
+                        id_desempenio: req.body.id_desempenio,
+                        encargado: req.body.encargado,
+                        eliminado: req.body.eliminado
+                    }
+                }).spread(function (evaluacion, nueva) {
+                    if (!nueva) {
+                        res.json({ mensaje: 'Ya existe una evaluación de fecha ' + meses[evaluacion.mes].nombre + '-' + evaluacion.anio + ' para el empleado ' + evaluacion.empleado.persona.nombre_completo })
+                    } else {
+                        res.json({ mensaje: 'Evaluación Creada satisfactoriamente!' })
+                    }
 
-            }).catch(function (err) {
-                res.json({ mensaje: err.message === undefined ? err.stack : err.message, hasErr: true })
-            });
+                }).catch(function (err) {
+                    res.json({ mensaje: err.message === undefined ? err.stack : err.message, hasErr: true })
+                });
+            }
+
         })
         .put(function (req, res) {
             EvaluacionPolifuncional.update({
@@ -2334,108 +2349,45 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
     /////////////////////////////////////////// configuraciones
 
     //////Configuracion Desempeño
-    router.route('/desempenio/configuracion/:id_empresa')
+    router.route('/desempenio/configuracion/:id_empresa/sufra')
         .post(function (req, res) {
-            for (const key in req.body) {
+            var i = 0
+            req.body.forEach(function (dato, i) {
                 ConfiguracionDesempenioEvaluacionPolifuncional.findOrCreate({
                     where: {
                         id_empresa: req.params.id_empresa,
-                        id: req.body[key].id,
-                        nombre: key
+                        id: dato.id,
+                        nombre: dato.nombre
                     },
                     defaults: {
                         id_empresa: req.params.id_empresa,
-                        nombre: key,
-                        desde: req.body[key].desde,
-                        hasta: req.body[key].hasta,
-                        activo: req.body[key].activo
-                    }
-                }).spread(function (configuracion, created) {
-                    if (created) {
-                        ConfiguracionDesempenioEvaluacionPolifuncional.update({
-                            id_empresa: req.params.id_empresa,
-                            nombre: key,
-                            desde: req.body[key].desde,
-                            hasta: req.body[key].hasta,
-                            activo: req.body[key].activo
-                        }, {
-                                where: {
-                                    id_empresa: req.params.id_empresa,
-                                    id: req.body[key].id,
-                                    nombre: key
-                                }
-                            }).then(function (configuracionActializada) {
-                                if (req.body.length - 1 == req.body.indexOf(req.body[key])) {
-                                    res.json({ mensaje: 'Configuracion Actualizada...' })
-                                }
-                            })
-                    }
-                }).catch(function (err) {
-                    res.json({ mensaje: err.message === undefined ? err.stack : err.message, hasErr: true })
-                });
-            }
-        })
-        .get(function (req, res) {
-            ConfiguracionDesempenioEvaluacionPolifuncional.findAll({
-                where:{
-                    id_empresa: req.params.id_empresa
-                }
-            }).then(function (configuracion) {
-                res.json({parametros: configuracion})
-            }).catch(function (err) {
-                res.json({ mensaje: err.message === undefined ? err.stack : err.message, hasErr: true })
-            });
-        })
-
-    ///////Configuracion evaluacion
-    router.route('/evaluacion/configuracion/:id_empresa')
-        .post(function (req, res) {
-            req.body.map(function (configuracion, i) {
-                ConfiguracionCalificacionEvaluacionPolifuncional.findOrCreate({
-                    where: {
-                        id: req.body.id,
-                        encargados: req.body.encargados,
-                        id_empresa: req.params.id_empresa
-                    },
-                    defaults: {
-                        asistencia_capacitacion: req.body.asistencia_capacitacion,
-                        documentos_actualizados: req.body.documentos_actualizados,
-                        trabajo_equipo: req.body.trabajo_equipo,
-                        funciones_puntualidad: req.body.funciones_puntualidad,
-                        higiene_personal: req.body.higiene_personal,
-                        asistencia_reunion: req.body.asistencia_reunion,
-                        ingreso_campo: req.body.ingreso_campo,
-                        llenado_formularios: req.body.llenado_formularios,
-                        encargados: req.body.encargados,
-                        nota_total: req.body.nota_total,
-                        eliminado: configuracion.parametros
+                        nombre: dato.nombre,
+                        desde: dato.desde,
+                        hasta: dato.hasta,
+                        color: dato.color,
+                        activo: dato.activo !== undefined && dato.activo !== null ? dato.activo : false
                     }
                 }).spread(function (configuracion, created) {
                     if (created) {
                         if (i == req.body.length - 1) {
-                            res.json({ mensaje: 'Configuración registrada correctamente!' })
+                            res.json({ mensaje: 'Configuración guardada correctamente!' })
                         }
                     } else {
-                        ConfiguracionCalificacionEvaluacionPolifuncional.update({
-                            asistencia_capacitacion: req.body.asistencia_capacitacion,
-                            documentos_actualizados: req.body.documentos_actualizados,
-                            trabajo_equipo: req.body.trabajo_equipo,
-                            funciones_puntualidad: req.body.funciones_puntualidad,
-                            higiene_personal: req.body.higiene_personal,
-                            asistencia_reunion: req.body.asistencia_reunion,
-                            ingreso_campo: req.body.ingreso_campo,
-                            llenado_formularios: req.body.llenado_formularios,
-                            encargados: req.body.encargados,
-                            nota_total: req.body.nota_total,
-                            eliminado: configuracion.parametros
+                        ConfiguracionDesempenioEvaluacionPolifuncional.update({
+                            id_empresa: req.params.id_empresa,
+                            nombre: dato.nombre,
+                            desde: dato.desde,
+                            hasta: dato.hasta,
+                            activo: dato.activo
                         }, {
                                 where: {
-                                    id: req.body.id,
-                                    encargados: req.body.encargados
+                                    id_empresa: req.params.id_empresa,
+                                    id: dato.id,
+                                    nombre: dato.nombre
                                 }
                             }).then(function (configuracionActializada) {
                                 if (i == req.body.length - 1) {
-                                    res.json({ mensaje: 'Actualizada registrada correctamente!' })
+                                    res.json({ mensaje: 'Configuracion Actualizada...' })
                                 }
                             })
                     }
@@ -2445,11 +2397,139 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
             })
         })
         .get(function (req, res) {
+            ConfiguracionDesempenioEvaluacionPolifuncional.findAll({
+                where: {
+                    id_empresa: req.params.id_empresa
+                }
+            }).then(function (configuracion) {
+                res.json({ parametros: configuracion })
+            }).catch(function (err) {
+                res.json({ mensaje: err.message === undefined ? err.stack : err.message, hasErr: true })
+            });
+        })
+
+    ///////Configuracion evaluacion
+    router.route('/evaluacion/configuracion/:id_empresa')
+        .post(function (req, res) {
+            req.body.forEach(function (obj, i) {
+                ConfiguracionCalificacionEvaluacionPolifuncional.findOrCreate({
+                    where: {
+                        id: obj.id,
+                        encargados: obj.encargados,
+                        id_empresa: req.params.id_empresa
+                    },
+                    defaults: {
+                        asistencia_capacitacion: obj.asistencia_capacitacion,
+                        documentos_actualizados: obj.documentos_actualizados,
+                        trabajo_equipo: obj.trabajo_equipo,
+                        funciones_puntualidad: obj.funciones_puntualidad,
+                        higiene_personal: obj.higiene_personal,
+                        asistencia_reunion: obj.asistencia_reunion,
+                        ingreso_campo: obj.ingreso_campo,
+                        llenado_formularios: obj.llenado_formularios,
+                        encargados: obj.encargados,
+                        nota_total: obj.nota_total,
+                        eliminado: obj.parametros !== undefined && obj.parametros !== null ? obj.parametros : false
+                    }
+                }).spread(function (configuracion, created) {
+                    if (created) {
+                        if (i == req.body.length - 1) {
+                            res.json({ mensaje: 'Configuración registrada correctamente!' })
+                        }
+                    } else {
+                        ConfiguracionCalificacionEvaluacionPolifuncional.update({
+                            asistencia_capacitacion: obj.asistencia_capacitacion,
+                            documentos_actualizados: obj.documentos_actualizados,
+                            trabajo_equipo: obj.trabajo_equipo,
+                            funciones_puntualidad: obj.funciones_puntualidad,
+                            higiene_personal: obj.higiene_personal,
+                            asistencia_reunion: obj.asistencia_reunion,
+                            ingreso_campo: obj.ingreso_campo,
+                            llenado_formularios: obj.llenado_formularios,
+                            encargados: obj.encargados,
+                            nota_total: obj.nota_total,
+                            eliminado: obj.parametros !== undefined && obj.parametros !== null ? obj.parametros : false
+                        }, {
+                                where: {
+                                    id: obj.id,
+                                    encargados: obj.encargados,
+                                    id_empresa: req.params.id_empresa
+                                }
+                            }).then(function (configuracionActializada) {
+                                if (i == req.body.length - 1) {
+                                    res.json({ mensaje: 'Actualizada registrada correctamente!' })
+                                }
+                            })
+                    }
+                    // i += 1
+                }).catch(function (err) {
+                    res.json({ mensaje: err.message === undefined ? err.stack : err.message, hasErr: true })
+                });
+            })
+            // var i = 0
+            // for (var key in req.body) {
+            //     ConfiguracionCalificacionEvaluacionPolifuncional.findOrCreate({
+            //         where: {
+            //             id: req.body[key].id,
+            //             encargados: req.body[key].encargados,
+            //             id_empresa: req.params.id_empresa
+            //         },
+            //         defaults: {
+            //             asistencia_capacitacion: req.body[key].asistencia_capacitacion,
+            //             documentos_actualizados: req.body[key].documentos_actualizados,
+            //             trabajo_equipo: req.body[key].trabajo_equipo,
+            //             funciones_puntualidad: req.body[key].funciones_puntualidad,
+            //             higiene_personal: req.body[key].higiene_personal,
+            //             asistencia_reunion: req.body[key].asistencia_reunion,
+            //             ingreso_campo: req.body[key].ingreso_campo,
+            //             llenado_formularios: req.body[key].llenado_formularios,
+            //             encargados: req.body[key].encargados,
+            //             nota_total: req.body[key].nota_total,
+            //             eliminado: req.body[key].parametros !== undefined && req.body[key].parametros !== null ? req.body[key].parametros : false
+            //         }
+            //     }).spread(function (configuracion, created) {
+            //         if (created) {
+            //             if (i >= 1) {
+            //                 res.json({ mensaje: 'Configuración registrada correctamente!' })
+            //             }
+            //         } else {
+            //             ConfiguracionCalificacionEvaluacionPolifuncional.update({
+            //                 asistencia_capacitacion: req.body[key].asistencia_capacitacion,
+            //                 documentos_actualizados: req.body[key].documentos_actualizados,
+            //                 trabajo_equipo: req.body[key].trabajo_equipo,
+            //                 funciones_puntualidad: req.body[key].funciones_puntualidad,
+            //                 higiene_personal: req.body[key].higiene_personal,
+            //                 asistencia_reunion: req.body[key].asistencia_reunion,
+            //                 ingreso_campo: req.body[key].ingreso_campo,
+            //                 llenado_formularios: req.body[key].llenado_formularios,
+            //                 encargados: req.body[key].encargados,
+            //                 nota_total: req.body[key].nota_total,
+            //                 eliminado: req.body[key].parametros !== undefined && req.body[key].parametros !== null ? req.body[key].parametros : false
+            //             }, {
+            //                     where: {
+            //                         id: req.body[key].id,
+            //                         encargados: req.body[key].encargados,
+            //                         id_empresa: req.params.id_empresa
+            //                     }
+            //                 }).then(function (configuracionActializada) {
+            //                     if (i >= 1) {
+            //                         res.json({ mensaje: 'Actualizada registrada correctamente!' })
+            //                     }
+            //                 })
+            //         }
+            //         i += 1
+            //     }).catch(function (err) {
+            //         res.json({ mensaje: err.message === undefined ? err.stack : err.message, hasErr: true })
+            //     });
+            // }
+
+        })
+        .get(function (req, res) {
             ConfiguracionCalificacionEvaluacionPolifuncional.findAll({
                 where: { id_empresa: req.params.id_empresa }
             }).then(function (configuracion) {
                 var configuraciones = {}
-                for (const key in configuracion) {
+                for (var key in configuracion) {
                     if (configuracion[key].encargados) {
                         configuraciones.encargados = configuracion[key];
                     } else {

@@ -1,12 +1,12 @@
 <div class="row">
     <div class="col-xs-12">
         <h3 class="header lighter blue">POLIFUNCIONALIDAD TRABAJADORES</h3>
-        <button class="btn btn-primary" ng-click="abrirNuevoEvaluacionPolifuncional()">
+        <button ng-disabled="comprobarConfiguracion()" class="btn btn-primary" ng-click="abrirNuevoEvaluacionPolifuncional()">
             <i class="ace-icon fa fa-plus align-top bigger-125"></i>
             Nuevo
         </button>
         <br>
-        <form name="formularioFiltroPolifuncionalidad" novalidate ng-submit="filtrarPpolifuncionalidad(filtro)">
+        <form name="formularioFiltroPolifuncionalidad" novalidate ng-submit="filtrarFiltroPolifuncionalidad(filtro)">
             <fieldset>
                 <br>
                 <legend>Filtro Trabajadores Polifuncionalidad</legend>
@@ -134,7 +134,7 @@
                         <tr>
                             <td></td>
                             <td>
-                                <input type="text" name="nombrePoli" id="nombrePoli">
+                                <input type="text" name="nombrePoli" id="nombrePoli" ng-model="filtro.codigo">
                             </td>
                             <td>
                                 <input ng-model="filtro.nombre" type="text">
@@ -279,31 +279,36 @@
                         </td>
                         <td>
                             <div class="hidden-sm hidden-xs action-buttons">
-                                <a ng-disabled="!aplicacion.puede_modificar" class="orange" href="javascript:void(0)" ng-click="editar(proforma)">
+                                    <a ng-disabled="!aplicacion.puede_crear" class="green" ng-click="editar(evaluacion, false, true)" data-rel="tooltip"
+                                    tooltip-placement="top" uib-tooltip="Nuevo">
+                                            <i class="ace-icon fa fa-plus bigger-130"></i>
+                                        </a>
+                                <a ng-disabled="!aplicacion.puede_modificar" class="orange" ng-click="editar(evaluacion, true)" data-rel="tooltip"
+                                tooltip-placement="top" uib-tooltip="Editar">
                                     <i class="ace-icon fa fa-pencil-square-o bigger-130"></i>
                                 </a>
-                                <a popover-trigger="outsideClick : outsideClick" uib-popover-template="impresiones.templateUrl" popover-placement="left"
+                                <!-- <a popover-trigger="outsideClick : outsideClick" uib-popover-template="impresiones.templateUrl" popover-placement="left"
                                     class="green" href="javascript:void(0)" data-rel="tooltip" tooltip-placement="top" uib-tooltip="Imprimir">
                                     <i class="ace-icon fa fa-print bigger-130"></i>
                                 </a>
                                 <script type="text/ng-template" id="impresiones.html">													
                                             
                                          <div class="form-control">                            
-                                                    <a  class="blue" ng-click="imprimir(proforma,0)">Sin detalle</a>
+                                                    <a  class="blue" ng-click="imprimir(evaluacion,0)">Sin detalle</a>
                                                 </div>
                                                 <div class="form-control">   
-                                                    <a  class="blue" ng-click="imprimir(proforma,1)">Con detalle</a>
+                                                    <a  class="blue" ng-click="imprimir(evaluacion,1)">Con detalle</a>
                                                 </div>
                                                 <div class="form-control">   
-                                                        <a  class="blue" ng-click="imprimir(proforma,2)">Mixta</a>
+                                                        <a  class="blue" ng-click="imprimir(evaluacion,2)">Mixta</a>
                                                     </div>
                                            
-                                        </script>
-                                <a ng-disabled="!aplicacion.puede_ver" class="blue" href="javascript:void(0)" ng-click="ver(proforma)" data-rel="tooltip"
+                                        </script> -->
+                                <a ng-disabled="!aplicacion.puede_ver" class="blue" href="javascript:void(0)" ng-click="editar(evaluacion,false,false,true)" data-rel="tooltip"
                                     tooltip-placement="top" uib-tooltip="Ver">
                                     <i class="ace-icon fa fa-search-plus bigger-130"></i>
                                 </a>
-                                <a ng-disabled="!aplicacion.puede_eliminar" class="red" ng-click="abrirPopupConfirmacionEliminacion(eliminar,proforma)" data-rel="tooltip"
+                                <a ng-disabled="!aplicacion.puede_eliminar" class="red" ng-click="abrirPopupConfirmacionEliminacion(eliminar,evaluacion)" data-rel="tooltip"
                                     tooltip-placement="top" uib-tooltip="Eliminar">
                                     <i class="ace-icon fa fa-trash-o bigger-130"></i>
                                 </a>
@@ -315,11 +320,11 @@
                                     </button>
                                     <ul class="dropdown-menu dropdown-only-icon dropdown-yellow dropdown-menu-right dropdown-caret dropdown-close">
                                         <li>
-                                            <a ng-disabled="!aplicacion.puede_modificar" class="orange" href="javascript:void(0)" ng-click="editar(proforma)">
+                                            <a ng-disabled="!aplicacion.puede_modificar" class="orange" href="javascript:void(0)" ng-click="editar(evaluacion)">
                                                 <i class="ace-icon fa fa-pencil-square-o bigger-130"></i>
                                             </a>
                                         </li>
-                                        <li>
+                                        <!-- <li>
                                             <a popover-trigger="outsideClick : outsideClick" uib-popover-template="impresiones.templateUrl" popover-placement="left"
                                                 class="green" href="javascript:void(0)" data-rel="tooltip" tooltip-placement="top"
                                                 uib-tooltip="Imprimir">
@@ -328,24 +333,24 @@
                                             <script type="text/ng-template" id="impresiones.html">													
                                                         
                                                      <div class="form-control">                            
-                                                                <a  class="blue" ng-click="imprimir(proforma,0)">Sin detalle</a>
+                                                                <a  class="blue" ng-click="imprimir(evaluacion,0)">Sin detalle</a>
                                                             </div>
                                                             <div class="form-control">   
-                                                                <a  class="blue" ng-click="imprimir(proforma,1)">Con detalle</a>
+                                                                <a  class="blue" ng-click="imprimir(evaluacion,1)">Con detalle</a>
                                                             </div>
                                                             <div class="form-control">   
-                                                                    <a  class="blue" ng-click="imprimir(proforma,2)">Mixta</a>
+                                                                    <a  class="blue" ng-click="imprimir(evaluacion,2)">Mixta</a>
                                                                 </div>
                                                        
                                                     </script>
-                                        </li>
+                                        </li> -->
                                         <li>
-                                            <a ng-disabled="!aplicacion.puede_ver" class="blue" href="javascript:void(0)" ng-click="ver(proforma)">
+                                            <a ng-disabled="!aplicacion.puede_ver" class="blue" href="javascript:void(0)" ng-click="ver(evaluacion)">
                                                 <i class="ace-icon fa fa-search-plus bigger-130"></i>
                                             </a>
                                         </li>
                                         <li>
-                                            <a ng-disabled="!aplicacion.puede_eliminar" class="red" ng-if="solicitud.activo" ng-click="abrirPopupConfirmacionEliminacion(eliminar,proforma)">
+                                            <a ng-disabled="!aplicacion.puede_eliminar" class="red" ng-if="solicitud.activo" ng-click="abrirPopupConfirmacionEliminacion(eliminar,evaluacion)">
                                                 <i class="ace-icon fa fa-trash-o bigger-130"></i>
                                             </a>
                                         </li>
@@ -464,12 +469,12 @@
                                             <label for="">Personal a evaluar</label>
                                         </div>
                                         <div class="col-md-6">
-                                            <input ng-keypress="interceptarTecla($event,'id_servicio',true)" autocomplete="off" required type="text" ng-model="evaluacion.personal.persona.nombre_completo"
+                                            <input ng-disabled="evaluacion.ver != undefined" ng-keypress="interceptarTecla($event,'id_servicio',true)" autocomplete="off" required type="text" ng-model="evaluacion.personal.persona.nombre_completo"
                                                 placeholder="Busqueda de personal..." uib-typeahead="personal as personal.persona.nombre_completo for personal in buscarPersonal($viewValue)"
                                                 typeahead-wait-ms="2000" typeahead-template-url="templates/autocompletar.html"
                                                 typeahead-show-hint="false" typeahead-min-length="1" typeahead-on-select="establecerPersonal($item, $model, $label, $event)">
                                             <!-- <input type="text" class="form-control" ng-model="evaluacion.personal.persona.nombre_completo"> -->
-                                            <button type="button" ng-click="abrirmodalBusquedaPersonal()" class="btn btn-info btn-sm">
+                                            <button ng-disabled="evaluacion.ver != undefined" type="button" ng-click="abrirmodalBusquedaPersonal()" class="btn btn-info btn-sm">
                                                 <i class="ace-icon fa fa-search-plus bigger-110"></i>
                                             </button>
                                         </div>
@@ -488,10 +493,10 @@
                                     </div>
                                     <div class="row form-group">
                                         <div class="center">
-                                            <select required id="mesEvaluacion" name="mes" ng-options="mes as mes.nombre for mes in meses track by mes.id" ng-model="evaluacion.mes">
+                                            <select ng-disabled="evaluacion.ver != undefined" required id="mesEvaluacion" name="mes" ng-options="mes as mes.nombre for mes in meses track by mes.id" ng-model="evaluacion.mes">
                                                 <option value="" selected>Mes</option>
                                             </select>
-                                            <select required id="anioEvaluacion" name="anio" ng-options="anio as anio.nombre for anio in anios track by anio.id" ng-model="evaluacion.anio">
+                                            <select ng-disabled="evaluacion.ver != undefined" required id="anioEvaluacion" name="anio" ng-options="anio as anio.nombre for anio in anios track by anio.id" ng-model="evaluacion.anio">
                                                 <option value="" selected>Año</option>
                                             </select>
                                         </div>
@@ -499,11 +504,11 @@
                                     <div class="row form-group">
                                         <div class="center">
                                             <label for="">Encargado</label>
-                                            <!-- <label>
-                                                <input name="switch-field-1" tabindex="-1" ng-model="evaluacion.encargado" class="ace ace-switch ace-switch-4 ng-pristine ng-untouched ng-valid ng-empty"
-                                                    type="checkbox">
+                                            <label>
+                                                <input ng-disabled="evaluacion.ver != undefined" name="switch-field-1" tabindex="-1" ng-model="evaluacion.encargado" class="ace ace-switch ace-switch-4 ng-pristine ng-untouched ng-valid ng-empty"
+                                                    type="checkbox" ng-change="calcularTotalEvaluacion(evaluacion)">
                                                 <span class="lbl check-descuento"></span>
-                                            </label> -->
+                                            </label>
                                         </div>
                                     </div>
                                     <div class="row form-group">
@@ -515,19 +520,19 @@
                                         </div>
                                         <div class="col-md-4">
                                             <div ng-if="!evaluacion.encargado">
-                                                <input required autofocus type="number" step="1" min="0" max="{{empleados.asistencia_capacitacion}}" class="form-control"
+                                                <input ng-disabled="evaluacion.ver != undefined" required autofocus type="number" step="1" min="0" max="{{empleados.asistencia_capacitacion}}" class="form-control"
                                                     ng-model="evaluacion.asistencia_capacitacion" ng-change="calcularTotalEvaluacion(evaluacion)">
                                             </div>
                                             <div ng-if="evaluacion.encargado">
-                                                <input required autofocus type="number" step="1" min="0" max="{{encargados.asistencia_capacitacion}}" class="form-control"
+                                                <input ng-disabled="evaluacion.ver != undefined" required autofocus type="number" step="1" min="0" max="{{encargados.asistencia_capacitacion}}" class="form-control"
                                                     ng-model="evaluacion.asistencia_capacitacion" ng-change="calcularTotalEvaluacion(evaluacion)">
                                             </div>
 
-                                            <!-- <label>
-                                                <input name="switch-field-1" tabindex="-1" ng-model="parametros.usar_capacitacion" class="ace ace-switch ace-switch-4 ng-pristine ng-untouched ng-valid ng-empty"
-                                                    type="checkbox">
+                                            <label>
+                                                <input ng-disabled="evaluacion.ver != undefined" name="switch-field-1" tabindex="-1" ng-model="opcion.asistencia_capacitacion" class="ace ace-switch ace-switch-4 ng-pristine ng-untouched ng-valid ng-empty"
+                                                    type="checkbox" ng-change="calcularTotalEvaluacion(evaluacion)">
                                                 <span class="lbl check-descuento"></span>
-                                            </label> -->
+                                            </label>
                                         </div>
                                     </div>
                                     <div class="row form-group">
@@ -539,18 +544,18 @@
                                         </div>
                                         <div class="col-md-4">
                                             <div ng-if="!evaluacion.encargado">
-                                                <input required autofocus type="number" step="1" min="0" max="{{empleados.documentos_actualizados}}" class="form-control"
+                                                <input ng-disabled="evaluacion.ver != undefined" required autofocus type="number" step="1" min="0" max="{{empleados.documentos_actualizados}}" class="form-control"
                                                     ng-model="evaluacion.documentos_actualizados" ng-change="calcularTotalEvaluacion(evaluacion)">
                                             </div>
                                             <div ng-if="evaluacion.encargado">
-                                                <input required type="number" step="1" min="0" max="{{encargados.documentos_actualizados}}" class="form-control" ng-model="evaluacion.documentos_actualizados"
+                                                <input ng-disabled="evaluacion.ver != undefined" required type="number" step="1" min="0" max="{{encargados.documentos_actualizados}}" class="form-control" ng-model="evaluacion.documentos_actualizados"
                                                     ng-change="calcularTotalEvaluacion(evaluacion)">
                                             </div>
-                                            <!-- <label>
-                                                <input name="switch-field-1" tabindex="-1" ng-model="parametros.usar_documentos_actualizados" class="ace ace-switch ace-switch-4 ng-pristine ng-untouched ng-valid ng-empty"
-                                                    type="checkbox">
+                                            <label>
+                                                <input ng-disabled="evaluacion.ver != undefined" name="switch-field-1" tabindex="-1" ng-model="opcion.documentos_actualizados" class="ace ace-switch ace-switch-4 ng-pristine ng-untouched ng-valid ng-empty"
+                                                    type="checkbox" ng-change="calcularTotalEvaluacion(evaluacion)">
                                                 <span class="lbl check-descuento"></span>
-                                            </label> -->
+                                            </label>
                                         </div>
                                     </div>
                                     <div class="row form-group">
@@ -562,20 +567,18 @@
                                         </div>
                                         <div class="col-md-4">
                                             <div ng-if="!evaluacion.encargado">
-                                                <input required autofocus type="number" step="1" min="0" max="{{empleados.trabajo_equipo}}" class="form-control" ng-model="evaluacion.trabajo_equipo"
+                                                <input ng-disabled="evaluacion.ver != undefined" required autofocus type="number" step="1" min="0" max="{{empleados.trabajo_equipo}}" class="form-control" ng-model="evaluacion.trabajo_equipo"
                                                     ng-change="calcularTotalEvaluacion(evaluacion)">
                                             </div>
                                             <div ng-if="evaluacion.encargado">
-                                                <input required type="number" step="1" min="0" max="{{encargados.trabajo_equipo}}" class="form-control" ng-model="evaluacion.trabajo_equipo"
+                                                <input ng-disabled="evaluacion.ver != undefined" required type="number" step="1" min="0" max="{{encargados.trabajo_equipo}}" class="form-control" ng-model="evaluacion.trabajo_equipo"
                                                     ng-change="calcularTotalEvaluacion(evaluacion)">
                                             </div>
-
-                                            <!-- <input required type="number" step="1" min="0" class="form-control" ng-model="evaluacion.trabajo_equipo" ng-change="calcularTotalEvaluacion(evaluacion)"> -->
-                                            <!-- <label>
-                                                <input name="switch-field-1" tabindex="-1" ng-model="parametros.usar_trabajo_equipo" class="ace ace-switch ace-switch-4 ng-pristine ng-untouched ng-valid ng-empty"
-                                                    type="checkbox">
+                                             <label>
+                                                <input ng-disabled="evaluacion.ver != undefined" name="switch-field-1" tabindex="-1" ng-model="opcion.trabajo_equipo" class="ace ace-switch ace-switch-4 ng-pristine ng-untouched ng-valid ng-empty"
+                                                    type="checkbox" ng-change="calcularTotalEvaluacion(evaluacion)">
                                                 <span class="lbl check-descuento"></span>
-                                            </label> -->
+                                            </label>
                                         </div>
                                     </div>
                                     <div class="row form-group">
@@ -587,19 +590,18 @@
                                         </div>
                                         <div class="col-md-4">
                                             <div ng-if="!evaluacion.encargado">
-                                                <input required autofocus type="number" step="1" min="0" max="{{empleados.funciones_puntualidad}}" class="form-control" ng-model="evaluacion.funciones_puntualidad"
+                                                <input ng-disabled="evaluacion.ver != undefined" required autofocus type="number" step="1" min="0" max="{{empleados.funciones_puntualidad}}" class="form-control" ng-model="evaluacion.funciones_puntualidad"
                                                     ng-change="calcularTotalEvaluacion(evaluacion)">
                                             </div>
                                             <div ng-if="evaluacion.encargado">
-                                                <input required type="number" step="1" min="0" max="{{encargados.funciones_puntualidad}}" class="form-control" ng-model="evaluacion.funciones_puntualidad"
+                                                <input ng-disabled="evaluacion.ver != undefined" required type="number" step="1" min="0" max="{{encargados.funciones_puntualidad}}" class="form-control" ng-model="evaluacion.funciones_puntualidad"
                                                     ng-change="calcularTotalEvaluacion(evaluacion)">
                                             </div>
-                                            <!-- <input required type="number" step="1" min="0" class="form-control" ng-model="evaluacion.funciones_puntualidad" ng-change="calcularTotalEvaluacion(evaluacion)"> -->
-                                            <!-- <label>
-                                                <input name="switch-field-1" tabindex="-1" ng-model="parametros.usar_funciones_puntualidad" class="ace ace-switch ace-switch-4 ng-pristine ng-untouched ng-valid ng-empty"
-                                                    type="checkbox">
+                                            <label>
+                                                <input ng-disabled="evaluacion.ver != undefined" name="switch-field-1" tabindex="-1" ng-model="opcion.funciones_puntualidad" class="ace ace-switch ace-switch-4 ng-pristine ng-untouched ng-valid ng-empty"
+                                                    type="checkbox" ng-change="calcularTotalEvaluacion(evaluacion)">
                                                 <span class="lbl check-descuento"></span>
-                                            </label> -->
+                                            </label>
                                         </div>
                                     </div>
                                     <div class="row form-group">
@@ -611,19 +613,18 @@
                                         </div>
                                         <div class="col-md-4">
                                             <div ng-if="!evaluacion.encargado">
-                                                <input required autofocus type="number" step="1" min="0" max="{{empleados.higiene_personal}}" class="form-control" ng-model="evaluacion.higiene_personal"
+                                                <input ng-disabled="evaluacion.ver != undefined" required autofocus type="number" step="1" min="0" max="{{empleados.higiene_personal}}" class="form-control" ng-model="evaluacion.higiene_personal"
                                                     ng-change="calcularTotalEvaluacion(evaluacion)">
                                             </div>
                                             <div ng-if="evaluacion.encargado">
-                                                <input required type="number" step="1" min="0" max="{{encargados.higiene_personal}}" class="form-control" ng-model="evaluacion.higiene_personal"
+                                                <input ng-disabled="evaluacion.ver != undefined" required type="number" step="1" min="0" max="{{encargados.higiene_personal}}" class="form-control" ng-model="evaluacion.higiene_personal"
                                                     ng-change="calcularTotalEvaluacion(evaluacion)">
                                             </div>
-                                            <!-- <input required type="number" step="1" min="0" class="form-control" ng-model="evaluacion.higiene_personal" ng-change="calcularTotalEvaluacion(evaluacion)"> -->
-                                            <!-- <label>
-                                                <input name="switch-field-1" tabindex="-1" ng-model="parametros.usar_higiene_personal" class="ace ace-switch ace-switch-4 ng-pristine ng-untouched ng-valid ng-empty"
-                                                    type="checkbox">
+                                            <label>
+                                                <input ng-disabled="evaluacion.ver != undefined" name="switch-field-1" tabindex="-1" ng-model="opcion.higiene_personal" class="ace ace-switch ace-switch-4 ng-pristine ng-untouched ng-valid ng-empty"
+                                                    type="checkbox" ng-change="calcularTotalEvaluacion(evaluacion)">
                                                 <span class="lbl check-descuento"></span>
-                                            </label> -->
+                                            </label>
                                         </div>
                                     </div>
                                     <div class="row form-group">
@@ -635,19 +636,19 @@
                                         </div>
                                         <div class="col-md-4">
                                             <div ng-if="!evaluacion.encargado">
-                                                <input required autofocus type="number" step="1" min="0" max="{{empleados.asistencia_reunion}}" class="form-control" ng-model="evaluacion.asistencia_reunion"
+                                                <input ng-disabled="evaluacion.ver != undefined" required autofocus type="number" step="1" min="0" max="{{empleados.asistencia_reunion}}" class="form-control" ng-model="evaluacion.asistencia_reunion"
                                                     ng-change="calcularTotalEvaluacion(evaluacion)">
                                             </div>
                                             <div ng-if="evaluacion.encargado">
-                                                <input required type="number" step="1" min="0" max="{{encargados.asistencia_reunion}}" class="form-control" ng-model="evaluacion.asistencia_reunion"
+                                                <input ng-disabled="evaluacion.ver != undefined" required type="number" step="1" min="0" max="{{encargados.asistencia_reunion}}" class="form-control" ng-model="evaluacion.asistencia_reunion"
                                                     ng-change="calcularTotalEvaluacion(evaluacion)">
                                             </div>
-                                            <!-- <input required type="number" step="1" min="0" class="form-control" ng-model="evaluacion.asistencia_reunion" ng-change="calcularTotalEvaluacion(evaluacion)"> -->
-                                            <!-- <label>
-                                                <input name="switch-field-1" tabindex="-1" ng-model="parametros.usar_asistencia_reunion" class="ace ace-switch ace-switch-4 ng-pristine ng-untouched ng-valid ng-empty"
-                                                    type="checkbox">
+                                           
+                                            <label>
+                                                <input ng-disabled="evaluacion.ver != undefined" name="switch-field-1" tabindex="-1" ng-model="opcion.asistencia_reunion" class="ace ace-switch ace-switch-4 ng-pristine ng-untouched ng-valid ng-empty"
+                                                    type="checkbox" ng-change="calcularTotalEvaluacion(evaluacion)">
                                                 <span class="lbl check-descuento"></span>
-                                            </label> -->
+                                            </label>
                                         </div>
                                     </div>
                                     <div class="row form-group">
@@ -659,19 +660,19 @@
                                         </div>
                                         <div class="col-md-4">
                                             <div ng-if="!evaluacion.encargado">
-                                                <input required autofocus type="number" step="1" min="0" max="{{empleados.ingreso_campo}}" class="form-control" ng-model="evaluacion.ingreso_campo"
+                                                <input ng-disabled="evaluacion.ver != undefined" required autofocus type="number" step="1" min="0" max="{{empleados.ingreso_campo}}" class="form-control" ng-model="evaluacion.ingreso_campo"
                                                     ng-change="calcularTotalEvaluacion(evaluacion)">
                                             </div>
                                             <div ng-if="evaluacion.encargado">
-                                                <input required type="number" step="1" min="0" max="{{encargados.ingreso_campo}}" class="form-control" ng-model="evaluacion.ingreso_campo"
+                                                <input ng-disabled="evaluacion.ver != undefined" required type="number" step="1" min="0" max="{{encargados.ingreso_campo}}" class="form-control" ng-model="evaluacion.ingreso_campo"
                                                     ng-change="calcularTotalEvaluacion(evaluacion)">
                                             </div>
                                             <!-- <input required type="number" step="1" min="0" class="form-control" ng-model="evaluacion.ingreso_campo" ng-change="calcularTotalEvaluacion(evaluacion)"> -->
-                                            <!-- <label>
-                                                <input name="switch-field-1" tabindex="-1" ng-model="parametros.usar_ingreso_campo" class="ace ace-switch ace-switch-4 ng-pristine ng-untouched ng-valid ng-empty"
-                                                    type="checkbox">
+                                            <label>
+                                                <input ng-disabled="evaluacion.ver != undefined" name="switch-field-1" tabindex="-1" ng-model="opcion.ingreso_campo" class="ace ace-switch ace-switch-4 ng-pristine ng-untouched ng-valid ng-empty"
+                                                    type="checkbox" ng-change="calcularTotalEvaluacion(evaluacion)">
                                                 <span class="lbl check-descuento"></span>
-                                            </label> -->
+                                            </label>
                                         </div>
                                     </div>
                                     <div class="row form-group">
@@ -683,19 +684,19 @@
                                         </div>
                                         <div class="col-md-4">
                                             <div ng-if="!evaluacion.encargado">
-                                                <input required autofocus type="number" step="1" min="0" max="{{empleados.llenado_formularios}}" class="form-control" ng-model="evaluacion.llenado_formularios"
+                                                <input ng-disabled="evaluacion.ver != undefined" required autofocus type="number" step="1" min="0" max="{{empleados.llenado_formularios}}" class="form-control" ng-model="evaluacion.llenado_formularios"
                                                     ng-change="calcularTotalEvaluacion(evaluacion)">
                                             </div>
                                             <div ng-if="evaluacion.encargado">
-                                                <input required type="number" step="1" min="0" max="{{encargados.llenado_formularios}}" class="form-control" ng-model="evaluacion.llenado_formularios"
+                                                <input ng-disabled="evaluacion.ver != undefined" required type="number" step="1" min="0" max="{{encargados.llenado_formularios}}" class="form-control" ng-model="evaluacion.llenado_formularios"
                                                     ng-change="calcularTotalEvaluacion(evaluacion)">
                                             </div>
                                             <!-- <input required type="number" step="1" min="0" class="form-control" ng-model="evaluacion.llenado_formularios" ng-change="calcularTotalEvaluacion(evaluacion)"> -->
-                                            <!-- <label>
-                                                <input name="switch-field-1" tabindex="-1" ng-model="parametros.usar_llenado_formularios" class="ace ace-switch ace-switch-4 ng-pristine ng-untouched ng-valid ng-empty"
-                                                    type="checkbox">
+                                            <label>
+                                                <input ng-disabled="evaluacion.ver != undefined" name="switch-field-1" tabindex="-1" ng-model="opcion.llenado_formularios" class="ace ace-switch ace-switch-4 ng-pristine ng-untouched ng-valid ng-empty"
+                                                    type="checkbox" ng-change="calcularTotalEvaluacion(evaluacion)">
                                                 <span class="lbl check-descuento"></span>
-                                            </label> -->
+                                            </label>
                                         </div>
                                     </div>
                                     <div class="row form-group">
@@ -716,7 +717,8 @@
 
                         <div class="step-pane" data-step="3">
                             <div class="center">
-                                <h4 class="blue">Finalización</h4>
+                                <h4 class="blue">Por favor vuelva atras y verifique los datos, faltan datos o el valor no es correcto.
+                                </h4>
                             </div>
                         </div>
                     </div>
@@ -728,7 +730,7 @@
                         Anterior
                     </button>
 
-                    <button ng-disabled="validarDatosEvaluacion(evaluacion)" type="submit" id="siguiente" class="btn btn-success btn-sm btn-next"
+                    <button type="submit" id="siguiente" class="btn btn-success btn-sm btn-next"
                         data-last="Finish">
                         Siguiente
                         <i class="ace-icon fa fa-arrow-right icon-on-right"></i>
@@ -747,7 +749,7 @@
 <div id="modal-wizard-polifuncional-ac-edicion" class="modal wizard-posicion">
     <div class="modal-dialog">
         <div class="modal-content">
-            <form id="formConfiguracionEvaluacion" name="formConfiguracionEvaluacion" ng-submit="guardarConfiguracionEvaluacion(parametros, encargados, empleados)">
+            <form id="formConfiguracionEvaluacion" name="formConfiguracionEvaluacion" ng-submit="guardarConfiguracionEvaluacion(parametro, encargados, empleados)">
                 <div id="modal-wizard-container-polifuncional-ac-edicion">
                     <div class="modal-header">
                         <ul class="steps">
@@ -795,23 +797,18 @@
                                         <div class="col-md-5">
                                             <label for="">Asistencia Capacitación
                                                 <a>
-                                                    <!-- <i class="ace-icon fa fa-pencil bigger-130"></i> -->
+
                                                 </a>
                                             </label>
                                         </div>
                                         <div class="col-md-7">
                                             <div class="col-md-4">
-                                                <input required autofocus type="number" step="1" min="0" class="form-control" ng-model="encargados.asistencia_capacitacion">
+                                                <input required autofocus type="number" step="1" min="0" class="form-control" ng-change="calcularNotaTotalConfiguracion(empleados, encargados)" ng-model="encargados.asistencia_capacitacion">
                                             </div>
                                             <div class="col-md-4">
-                                                <input required type="number" step="1" min="0" class="form-control" ng-model="empleados.asistencia_capacitacion">
+                                                <input required type="number" step="1" min="0" class="form-control" ng-change="calcularNotaTotalConfiguracion(empleados, encargados)" ng-model="empleados.asistencia_capacitacion">
                                             </div>
                                             <div class="col-md-4">
-                                                <!-- <label>
-                                                    <input name="switch-field-1" tabindex="-1" ng-model="parametros.usar_capacitacion" class="ace ace-switch ace-switch-4 ng-pristine ng-untouched ng-valid ng-empty"
-                                                        type="checkbox">
-                                                    <span class="lbl check-descuento"></span>
-                                                </label> -->
                                             </div>
                                         </div>
                                     </div>
@@ -819,25 +816,20 @@
                                         <div class="col-md-5">
                                             <label for="">Documentos Actualizados
                                                 <a>
-                                                    <!-- <i class="ace-icon fa fa-pencil bigger-130"></i> -->
+
                                                 </a>
                                             </label>
                                         </div>
                                         <div class="col-md-7">
                                             <div class="col-md-4">
-                                                <input required type="number" step="1" min="0" class="form-control" ng-model="encargados.documentos_actualizados">
+                                                <input required type="number" step="1" min="0" class="form-control" ng-change="calcularNotaTotalConfiguracion(empleados, encargados)" ng-model="encargados.documentos_actualizados">
 
                                             </div>
                                             <div class="col-md-4">
-                                                <input required type="number" step="1" min="0" class="form-control" ng-model="empleados.documentos_actualizados">
+                                                <input required type="number" step="1" min="0" class="form-control" ng-change="calcularNotaTotalConfiguracion(empleados, encargados)" ng-model="empleados.documentos_actualizados">
 
                                             </div>
                                             <div class="col-md-4">
-                                                <!-- <label>
-                                                    <input name="switch-field-1" tabindex="-1" ng-model="parametros.usar_documentos" class="ace ace-switch ace-switch-4 ng-pristine ng-untouched ng-valid ng-empty"
-                                                        type="checkbox">
-                                                    <span class="lbl check-descuento"></span>
-                                                </label> -->
 
                                             </div>
                                         </div>
@@ -846,17 +838,17 @@
                                         <div class="col-md-5">
                                             <label for="">Trabajo en equipo
                                                 <a>
-                                                    <!-- <i class="ace-icon fa fa-pencil bigger-130"></i> -->
+
                                                 </a>
                                             </label>
                                         </div>
                                         <div class="col-md-7">
                                             <div class="col-md-4">
-                                                <input required type="number" step="1" min="0" class="form-control" ng-model="encargados.trabajo_equipo">
+                                                <input required type="number" step="1" min="0" class="form-control" ng-change="calcularNotaTotalConfiguracion(empleados, encargados)" ng-model="encargados.trabajo_equipo">
 
                                             </div>
                                             <div class="col-md-4">
-                                                <input required type="number" step="1" min="0" class="form-control" ng-model="empleados.trabajo_equipo">
+                                                <input required type="number" step="1" min="0" class="form-control" ng-change="calcularNotaTotalConfiguracion(empleados, encargados)" ng-model="empleados.trabajo_equipo">
 
                                             </div>
                                             <div class="col-md-4">
@@ -874,17 +866,17 @@
                                         <div class="col-md-5">
                                             <label for="">Cumplimiento de las funciones asignadas y puntualidad en el horario de trabajo
                                                 <a>
-                                                    <!-- <i class="ace-icon fa fa-pencil bigger-130"></i> -->
+
                                                 </a>
                                             </label>
                                         </div>
                                         <div class="col-md-7">
                                             <div class="col-md-4">
-                                                <input required type="number" step="1" min="0" class="form-control" ng-model="encargados.funciones_puntualidad">
+                                                <input required type="number" step="1" min="0" class="form-control" ng-change="calcularNotaTotalConfiguracion(empleados, encargados)" ng-model="encargados.funciones_puntualidad">
 
                                             </div>
                                             <div class="col-md-4">
-                                                <input required type="number" step="1" min="0" class="form-control" ng-model="empleados.funciones_puntualidad">
+                                                <input required type="number" step="1" min="0" class="form-control" ng-change="calcularNotaTotalConfiguracion(empleados, encargados)" ng-model="empleados.funciones_puntualidad">
 
                                             </div>
                                             <div class="col-md-4">
@@ -901,17 +893,17 @@
                                         <div class="col-md-5">
                                             <label for="">Higiene personal
                                                 <a>
-                                                    <!-- <i class="ace-icon fa fa-pencil bigger-130"></i> -->
+
                                                 </a>
                                             </label>
                                         </div>
                                         <div class="col-md-7">
                                             <div class="col-md-4">
-                                                <input required type="number" step="1" min="0" class="form-control" ng-model="encargados.higiene_personal">
+                                                <input required type="number" step="1" min="0" class="form-control" ng-change="calcularNotaTotalConfiguracion(empleados, encargados)" ng-model="encargados.higiene_personal">
 
                                             </div>
                                             <div class="col-md-4">
-                                                <input required type="number" step="1" min="0" class="form-control" ng-model="empleados.higiene_personal">
+                                                <input required type="number" step="1" min="0" class="form-control" ng-change="calcularNotaTotalConfiguracion(empleados, encargados)" ng-model="empleados.higiene_personal">
 
                                             </div>
                                             <div class="col-md-4">
@@ -927,17 +919,17 @@
                                         <div class="col-md-5">
                                             <label for="">Puntualidad a la asistencia de reunión de 5 minutos en campo
                                                 <a>
-                                                    <!-- <i class="ace-icon fa fa-pencil bigger-130"></i> -->
+
                                                 </a>
                                             </label>
                                         </div>
                                         <div class="col-md-7">
                                             <div class="col-md-4">
-                                                <input required type="number" step="1" min="0" class="form-control" ng-model="encargados.asistencia_reunion">
+                                                <input required type="number" step="1" min="0" class="form-control" ng-change="calcularNotaTotalConfiguracion(empleados, encargados)" ng-model="encargados.asistencia_reunion">
 
                                             </div>
                                             <div class="col-md-4">
-                                                <input required type="number" step="1" min="0" class="form-control" ng-model="empleados.asistencia_reunion">
+                                                <input required type="number" step="1" min="0" class="form-control" ng-change="calcularNotaTotalConfiguracion(empleados, encargados)" ng-model="empleados.asistencia_reunion">
 
                                             </div>
                                             <div class="col-md-4">
@@ -953,17 +945,17 @@
                                         <div class="col-md-5">
                                             <label for="">Cumplimiento de ingreso a campo
                                                 <a>
-                                                    <!-- <i class="ace-icon fa fa-pencil bigger-130"></i> -->
+
                                                 </a>
                                             </label>
                                         </div>
                                         <div class="col-md-7">
                                             <div class="col-md-4">
-                                                <input required type="number" step="1" min="0" class="form-control" ng-model="encargados.ingreso_campo">
+                                                <input required type="number" step="1" min="0" class="form-control" ng-change="calcularNotaTotalConfiguracion(empleados, encargados)" ng-model="encargados.ingreso_campo">
 
                                             </div>
                                             <div class="col-md-4">
-                                                <input required type="number" step="1" min="0" class="form-control" ng-model="empleados.ingreso_campo">
+                                                <input required type="number" step="1" min="0" class="form-control" ng-change="calcularNotaTotalConfiguracion(empleados, encargados)" ng-model="empleados.ingreso_campo">
 
                                             </div>
                                             <div class="col-md-4">
@@ -980,17 +972,17 @@
                                         <div class="col-md-5">
                                             <label for="">Aplicación y llenado correcto de los formularios del SIG
                                                 <a>
-                                                    <!-- <i class="ace-icon fa fa-pencil bigger-130"></i> -->
+
                                                 </a>
                                             </label>
                                         </div>
                                         <div class="col-md-7">
                                             <div class="col-md-4">
-                                                <input required type="number" step="1" min="0" class="form-control" ng-model="encargados.llenado_formularios">
+                                                <input required type="number" step="1" min="0" class="form-control" ng-change="calcularNotaTotalConfiguracion(empleados, encargados)" ng-model="encargados.llenado_formularios">
 
                                             </div>
                                             <div class="col-md-4">
-                                                <input required type="number" step="1" min="0" class="form-control" ng-model="empleados.llenado_formularios">
+                                                <input required type="number" step="1" min="0" class="form-control" ng-change="calcularNotaTotalConfiguracion(empleados, encargados)" ng-model="empleados.llenado_formularios">
 
                                             </div>
                                             <div class="col-md-4">
@@ -1009,10 +1001,12 @@
                                         </div>
                                         <div class="col-md-7">
                                             <div class="col-md-4">
+                                                <!-- {{encargados.nota_total}} -->
                                                 <input required disabled type="number" step="1" min="0" class="form-control" ng-model="encargados.nota_total">
 
                                             </div>
                                             <div class="col-md-4">
+                                                <!-- {{empleados.nota_total}} -->
                                                 <input required disabled type="number" step="1" min="0" class="form-control" ng-model="empleados.nota_total">
 
                                             </div>
@@ -1052,35 +1046,35 @@
                                         </div>
                                     </div>
                                     <br>
-                                    <div class="row form-group">
+                                    <div ng-repeat="parametro in listaDesempenio track by $index" class="row form-group">
                                         <div class="col-md-5">
-                                            <label for="">Deficiente
+                                            <label for="">{{parametro.nombre}}
                                                 <a>
-                                                    <!-- <i class="ace-icon fa fa-pencil bigger-130"></i> -->
+
                                                 </a>
                                             </label>
                                         </div>
                                         <div class="col-md-7">
                                             <div class="col-md-4">
-                                                <input required autofocus type="number" step="1" min="0" class="form-control" ng-model="parametros.deficiente.desde">
+                                                <input required autofocus type="number" step="1" min="0" class="form-control" ng-model="parametro.desde">
                                             </div>
                                             <div class="col-md-4">
-                                                <input required type="number" step="1" min="0" class="form-control" ng-model="parametros.deficiente.hasta">
+                                                <input required type="number" step="1" min="0" class="form-control" ng-model="parametro.hasta">
                                             </div>
                                             <div class="col-md-4">
                                                 <label>
-                                                    <input name="switch-field-1" tabindex="-1" ng-model="parametros.deficiente.usar" class="ace ace-switch ace-switch-4 ng-pristine ng-untouched ng-valid ng-empty"
+                                                    <input name="switch-field-1" tabindex="-1" ng-model="parametro.activo" class="ace ace-switch ace-switch-4 ng-pristine ng-untouched ng-valid ng-empty"
                                                         type="checkbox">
                                                     <span class="lbl check-descuento"></span>
                                                 </label>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="row form-group">
+                                    <!-- <div class="row form-group">
                                         <div class="col-md-5">
                                             <label for="">Insatisfactorio
                                                 <a>
-                                                    <!-- <i class="ace-icon fa fa-pencil bigger-130"></i> -->
+
                                                 </a>
                                             </label>
                                         </div>
@@ -1104,7 +1098,7 @@
                                         <div class="col-md-5">
                                             <label for="">Satisfactorio
                                                 <a>
-                                                    <!-- <i class="ace-icon fa fa-pencil bigger-130"></i> -->
+
                                                 </a>
                                             </label>
                                         </div>
@@ -1128,7 +1122,7 @@
                                         <div class="col-md-5">
                                             <label for="">Competente
                                                 <a>
-                                                    <!-- <i class="ace-icon fa fa-pencil bigger-130"></i> -->
+
                                                 </a>
                                             </label>
                                         </div>
@@ -1147,7 +1141,7 @@
                                                 </label>
                                             </div>
                                         </div>
-                                    </div>
+                                    </div> -->
                                 </div>
                             </div>
                         </div>
