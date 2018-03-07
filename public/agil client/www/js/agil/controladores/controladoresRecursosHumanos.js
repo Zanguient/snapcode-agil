@@ -4,7 +4,7 @@ angular.module('agil.controladores')
         FieldViewer, EmpleadoEmpresa, obtenerEmpleadoRh, UsuarioRecursosHUmanosActivo, Prerequisito, ListaDatosPrerequisito, Prerequisitos, ListaPrerequisitosPaciente, ActualizarPrerequisito, UsuarioRecursosHumanosFicha,
         ClasesTipo, Clases, Paises, CrearEmpleadoFicha, EliminarOtroSeguroRh, EliminarFamiliarRh, PrerequisitoPaciente, PrerequisitosHistorial, UsuarioRhHistorialFicha, ObtenerEmpleadoHojaVida, GuardarEmpleadoHojaVida, CrearPrestamo,
         ObtenerListaPrestamo, CrearRolTurno, CrearPagoPrestamo, VerificarUsuarioEmpresa, EditarPrestamo, ListaEmpleadosRrhh, CrearHorasExtra, HistorialHorasExtra, ListaRolTurnos, ValidarCodigoCuentaEmpleado, $timeout, DatosCapacidadesImpresion, NuevoAnticipoEmpleado,
-        ListaAnticiposEmpleado, CrearNuevosAnticiposEmpleados, ActualizarAnticipoEmpleado, NuevaAusenciaEmpleado, HistorialEmpleadoAusencias, HistorialEmpresaEmpleadosAusencias, NuevaVacacionEmpleado, HistorialEmpleadoVacaciones, HistorialEmpresaVacaciones, NuevoFeriado, ListaFeriados, GuardarClasesAusencias, Tipos, ListaBancos) {
+        ListaAnticiposEmpleado, CrearNuevosAnticiposEmpleados, ActualizarAnticipoEmpleado, NuevaAusenciaEmpleado, HistorialEmpleadoAusencias, HistorialEmpresaEmpleadosAusencias, NuevaVacacionEmpleado, HistorialEmpleadoVacaciones, HistorialEmpresaVacaciones, NuevoFeriado, ListaFeriados, GuardarClasesAusencias, Tipos, ListaBancos, ConfiguracionesVacacion, HistorialGestionesVacacion) {
         $scope.usuario = JSON.parse($localStorage.usuario);
         $scope.idModalPrerequisitos = 'dialog-pre-requisitos';
         $scope.idModalEmpleado = 'dialog-empleado';
@@ -213,6 +213,7 @@ angular.module('agil.controladores')
             $scope.recuperarDatosTipo()
             $scope.empleadosSeleccionados = []
             $scope.listaBancos()
+            $scope.obtenerConfiguracionVacaciones()
         }
 
 
@@ -246,11 +247,12 @@ angular.module('agil.controladores')
         $scope.cerrarModalTr3BancoUnion = function () {
             $scope.cerrarPopup($scope.idModalTr3BancoUnion)
         }
-        $scope.abrirModalbanco = function (nombre) {
-            if (nombre == "Banco Mercantil Santa Cruz") {
+        $scope.abrirModalbanco = function (banco) {
+            $scope.datosBanco = banco
+            if (banco.nombre == "Banco Mercantil Santa Cruz") {
                 $scope.abrirModalTr3BancoMsc()
             }
-            if (nombre == "Banco Unión") {
+            if (banco.nombre == "Banco Unión") {
                 $scope.abrirModalTr3BancoUnion()
             }
         }
@@ -273,7 +275,7 @@ angular.module('agil.controladores')
         }
         $scope.abrirDialogPrerequisitoNuevo = function () {
             $scope.NuevoP = new Prerequisito({ puede_modificar_rrhh: false });
-            console.log($scope.nuevoP)
+
             $scope.abrirPopup($scope.idModalDialogPrerequisitoNuevo);
         }
 
@@ -328,7 +330,7 @@ angular.module('agil.controladores')
             } else {
                 $scope.paciente = paciente
             }
-            console.log($scope.preRequisito)
+
             var vence = new Date($scope.preRequisito.fecha_vencimiento).getTime()
             var hoy = new Date().getTime()
             var dif = Math.floor((hoy - vence) / 86400000)
@@ -740,11 +742,14 @@ angular.module('agil.controladores')
             $scope.vacacion = {
                 sabado: false,
                 inicio_tipo: false,
-                fin_tipo: false
+                fin_tipo: false,
+                aniosDisponibles:0,
+                historial:null
             }
             $scope.feriados = []
             $scope.listaFeriado()
-            $scope.abrirPopup($scope.idModalAusenciasVacaciones);
+            $scope.obtenerHistorialGestionesVacacion(empleado)
+
         }
         $scope.cerrarDialogAusenciasVacaciones = function () {
             $scope.cerrarPopup($scope.idModalAusenciasVacaciones);
@@ -792,7 +797,7 @@ angular.module('agil.controladores')
                     $scope.mostrarMensaje(dato.mensaje)
                 })
             }
-            console.log(datos)
+
         }
         $scope.agregarFeriado = function (start, end, allDay) {
             $scope.calendar.fullCalendar('renderEvent',
@@ -830,7 +835,7 @@ angular.module('agil.controladores')
                     var rango = getDates(new Date(feriado.fecha_inicio), new Date(feriado.fecha_fin));
                     /*          $scope.ListaDiasFeriado.concat(rango) */
                     $scope.ListaDiasFeriado.push.apply($scope.ListaDiasFeriado, rango)
-                    console.log($scope.ListaDiasFeriado)
+
 
                 });
                 $scope.FeriadosCalendario = dato;
@@ -903,7 +908,7 @@ angular.module('agil.controladores')
                     $scope.calendar.fullCalendar('removeEvents', function (ev) {
                         return (ev._id == calEvent._id);
                     })
-                    console.log($scope.feriadosEliminados)
+
                 } else {
                     $scope.calendar.fullCalendar('removeEvents', function (ev) {
                         return (ev._id == calEvent._id);
@@ -1009,7 +1014,7 @@ angular.module('agil.controladores')
                 $scope.$apply();
             },
             eventDrop: function (event, delta, revertFunc) {
-                console.log('el evento dropp ', event.start.format());
+
                 var start = event.start;
                 var end = event.end;
                 $scope.horas = moment.utc(moment(end, "DD/MM/YYYY HH:mm:ss").diff(moment(start, "DD/MM/YYYY HH:mm:ss"))).format("HH:mm");
@@ -1195,7 +1200,7 @@ angular.module('agil.controladores')
                     datos.prestamos.forEach(function (prestamo, index, array) {
                         var fecha = $scope.fechaATexto(prestamo.fecha_inicial)
                         prestamo.fecha_vence = editar_fecha(fecha, prestamo.plazo, "m", "/")
-                        console.log("prestamo.fecha_vence dfdfdfdfdff", prestamo.fecha_vence);
+
 
                         prestamo.saldo = prestamo.monto
                         prestamo.pago = 0
@@ -1418,7 +1423,7 @@ angular.module('agil.controladores')
         $scope.disableImput = function ($event) {
             if ($event) {
                 $scope.button_clicked = false;
-                console.log('llegoo check');
+
             } else {
                 $scope.button_clicked = true;
             }
@@ -1431,9 +1436,9 @@ angular.module('agil.controladores')
             promesa.then(function (entidad) {
                 entidad.forEach(function (genero) {
                     $scope.generos.push(genero)
-                    console.log(genero)
+
                 }, this);
-                console.log($scope.generos)
+
                 // $scope.generos = entidad.generos;
                 blockUI.stop();
             });
@@ -1451,7 +1456,7 @@ angular.module('agil.controladores')
 
         $scope.saveForm = function () {
             //$scope.paciente = paciente;
-            console.log($scope.nuevoRH.persona.fecha_nacimiento)
+
             var imagenPaciente = $scope.nuevoRH.imagen;
             $scope.nuevoRH.fechaFicha = new Date()
             var button = $('#siguiente').text().trim()
@@ -1523,13 +1528,13 @@ angular.module('agil.controladores')
 
                                 empleado.select = true
                                 $scope.empleadosSeleccionados.push(empleado)
-                                console.log($scope.empleadosSeleccionados)
+
 
                             }
                         });
                     }
                 }
-                console.log($scope.RecursosHumanosEmpleados[0])
+
                 blockUI.stop();
             });
         }
@@ -1585,7 +1590,7 @@ angular.module('agil.controladores')
 
                         row++;
                         i++;
-                        console.log
+
                     } while (worksheet['A' + row] != undefined);
                     $scope.GuardarEmpleadosRh(pacientes);
                 };
@@ -1642,7 +1647,7 @@ angular.module('agil.controladores')
             }
         };
         $scope.changeActivoEmpleado = function (empleado) {
-            console.log(empleado)
+
             empleado.activo = (empleado.activo == false) ? true : false
             var promesa = UsuarioRecursosHUmanosActivo(empleado)
             promesa.then(function (dato) {
@@ -1652,7 +1657,7 @@ angular.module('agil.controladores')
             })
         }
         $scope.EliminarUsuarioRh = function (empleado) {
-            console.log(empleado)
+
             empleado.eliminado = true
             var promesa = UsuarioRecursosHUmanosActivo(empleado)
             promesa.then(function (dato) {
@@ -1697,6 +1702,14 @@ angular.module('agil.controladores')
             promesa.then(function (datos) {
                 if (datos.ficha) {
                     $scope.ficha = datos.ficha
+                    if ($scope.ficha.fecha_inicio) {
+                        $scope.ficha.fecha_inicio2 = $scope.fechaATexto($scope.ficha.fecha_inicio)
+                    } else {
+                        $scope.ficha.fecha_inicio2 = $scope.fechaATexto(new Date())
+                    }
+                    if ($scope.ficha.fecha_fin) {
+                        $scope.ficha.fecha_fin2 = $scope.fechaATexto($scope.ficha.fecha_fin)
+                    }
                     $scope.ficha.empleado.cargo = []
                     /* $scope.empleado.otrosSeguros = datos.ficha */
                     $scope.ficha.fecha_jubilacion = new Date($scope.ficha.fecha_jubilacion)
@@ -1847,7 +1860,7 @@ angular.module('agil.controladores')
                         requisito.entregado = true
                     }
                 })
-                console.log($scope.prerequisitosPaciente)
+
                 $scope.filtro.inicio = ($scope.filtro.inicio instanceof Date) ? $scope.filtro.inicio.getDate() + '/' + ($scope.filtro.inicio.getMonth() + 1) + '/' + $scope.filtro.inicio.getFullYear() : ""
                 $scope.filtro.fin = ($scope.filtro.fin instanceof Date) ? $scope.filtro.fin.getDate() + '/' + ($scope.filtro.fin.getMonth() + 1) + '/' + $scope.filtro.fin.getFullYear() : ""
                 blockUI.stop();
@@ -2061,7 +2074,7 @@ angular.module('agil.controladores')
                 seguro.eliminado = true
             } else {
                 $scope.ficha.empleado.otrosSeguros.splice(index, 1);
-                console.log($scope.ficha.empleado.otrosSeguros)
+
             }
         }
         $scope.editarSeguro = function (dato, index) {
@@ -2573,7 +2586,7 @@ angular.module('agil.controladores')
             blockUI.start();
             var promesa = ClasesTipo("RRHH_BAN");
             promesa.then(function (entidad) {
-                $scope.bancos = entidad
+                $scope.bancosHdv = entidad
                 blockUI.stop();
             });
         }
@@ -2615,7 +2628,17 @@ angular.module('agil.controladores')
         //FIN RECUPERAR TIPOS FICHA 
 
         $scope.guardarFichaTecnica = function (valido, ficha, save) {
-
+            var s = $scope.fechaATexto(ficha.fecha_inicio)
+            if (s != ficha.fecha_inicio2) {
+                var a = ficha.fecha_inicio2
+                var b = new Date($scope.convertirFecha(a)).getFullYear()
+                ficha.historialVacacion = {
+                    gestion: b,
+                    anio: 1,
+                    aplicadas: $scope.configuracionesVacacion[0].dias,
+                    tomadas: 0
+                }
+            }
             if (save) {
                 if (ficha.empleado.persona.fecha_nacimiento) {
                     ficha.empleado.persona.fecha_nacimiento = new Date(ficha.nac_anio, parseInt(ficha.nac_mes.id), parseInt(ficha.nac_dia))
@@ -3172,7 +3195,7 @@ angular.module('agil.controladores')
         }
 
         $scope.dibujarPdfCertificadoHojaVida = function (doc, certificado) {
-            console.log($scope.usuario)
+
             var fecha = new Date()
             var textomes = ""
             var textocargos = ""
@@ -3211,7 +3234,7 @@ angular.module('agil.controladores')
         }
 
         $scope.dibujarPdfCertificadoPrestamo = function (doc, certificado) {
-            console.log($scope.usuario)
+
             var fecha = new Date()
             var textomes = ""
             var textocargos = ""
@@ -3459,7 +3482,7 @@ angular.module('agil.controladores')
 
         $scope.verificarCuentaAdmin = function (cuenta) {
             VerificarUsuarioEmpresa.save({ id_empresa: $scope.usuario.id_empresa }, cuenta, function (dato) {
-                console.log(dato)
+
                 if (dato.type) {
                     $scope.mostrarMensaje(dato.message)
                     /*  cuenta.abierto= cuenta.abierto; */
@@ -3544,7 +3567,7 @@ angular.module('agil.controladores')
             var promesa = ListaRolTurnos($scope.usuario.id_empresa, idEmpledo)
             promesa.then(function (datos) {
                 $scope.listaRolTurno = datos.rolesTurno
-                console.log($scope.listaRolTurno)
+
             })
         }
         ListaRolTurnos
@@ -3563,7 +3586,7 @@ angular.module('agil.controladores')
             })
         }
         $scope.calcularTiempoHorasExtra = function (horasExtra) {
-            console.log(horasExtra)
+
             if (horasExtra.hora_inicio instanceof Date && horasExtra.hora_fin instanceof Date) {
                 var horaInicio = horasExtra.hora_inicio.getHours()
                 var horafin = horasExtra.hora_fin.getHours()
@@ -4102,20 +4125,7 @@ angular.module('agil.controladores')
                 $scope.bancos = []
 
                 dato.forEach(function (banco, index, array) {
-                    /*  if (banco.nombre == 'Banco Unión') {
-                         if ($scope.arregloBancosUnion == "") {
-                             $scope.arregloBancosUnion = banco
-                             $scope.arregloBancosUnion.arregloCuentaBanco=[]
-                         }
-                         $scope.arregloBancosUnion.arregloCuentaBanco.push(banco)
-                     }
-                     if (banco.nombre == 'Banco Mercantil Santa Cruz') {
-                         if ($scope.arregloBancosMsc == "") {
-                             $scope.arregloBancosMsc = banco
-                             $scope.arregloBancosMsc.arregloCuentaBanco=[]
-                         }
-                         $scope.arregloBancosMsc.arregloCuentaBanco.push(banco)                      
-                     } */
+
                     banco.cuentas = []
                     if (index == 1) {
                         $scope.bancos.push(banco)
@@ -4140,7 +4150,7 @@ angular.module('agil.controladores')
                                 if (banco2.nombre == banco.nombre) {
                                     bandera = true
                                     banco2.cuentas.push(banco)
-                                    console.log(banco2)
+
                                     i = $scope.bancos.length
                                 }
                             }
@@ -4158,7 +4168,7 @@ angular.module('agil.controladores')
             var promesa = ClasesTipo("RRHH_AUSMED");
             promesa.then(function (entidad) {
                 $scope.tiposAusenciasMedicas = entidad
-                console.log($scope.tiposAusenciasMedicas)
+
                 blockUI.stop();
             });
         }
@@ -4190,11 +4200,11 @@ angular.module('agil.controladores')
                     var fecha2 = moment('"' + fechaFin.getFullYear() + '-' + fechaFin.getMonth() + '-' + fechaFin.getDate() + " " + fechaFin.getHours() + ":" + fechaFin.getMinutes() + ":00", "YYYY-MM-DD HH:mm:ss");
 
                     var diff = fecha2.diff(fecha1, 'd'); // Diff in days
-                    console.log(diff);
+
 
                     ausencia.horas = convertirSegundosATiempo(fecha2.diff(fecha1, 's')); // Diff in hours
 
-                    console.log(diff);
+
                 }
             } else {
                 if (ausencia.fecha_inicio && ausencia.fecha_fin) {
@@ -4363,6 +4373,49 @@ angular.module('agil.controladores')
         }
         //fin ausencias
         //inicio vacaciones
+        $scope.obtenerConfiguracionVacaciones = function () {
+            var promesa = ConfiguracionesVacacion()
+            promesa.then(function (dato) {
+                $scope.configuracionesVacacion = dato
+            })
+        }
+        $scope.obtenerHistorialGestionesVacacion = function (empleado) {
+            var promesa = HistorialGestionesVacacion(empleado.id)
+            promesa.then(function (dato) {
+                $scope.historialGestionesVacacion = dato
+                var fechaActual = new Date()
+                var fechaAnterior = new Date(empleado.ficha.fecha_inicio)
+                var datow = $scope.diferenciaEntreDiasEnDias(fechaAnterior, fechaActual)
+                var años=Math.round(datow/365)
+                $scope.vacacion.aniosDisponibles=años
+                $scope.vacacion.historial= $scope.historialGestionesVacacion;
+                $scope.diasDisponibles=0
+                $scope.historialGestionesVacacion.forEach(function(historial,index,array) {
+                    if(historial.anio<=años){
+                        $scope.diasDisponibles+=(historial.aplicadas-historial.tomadas)
+                    }
+                });
+                if (datow > 365) {
+                    $scope.usarVacacion = true
+                    $scope.abrirPopup($scope.idModalAusenciasVacaciones);
+                } else {
+                    $scope.usarVacacion = false
+                    $scope.abrirPopup($scope.idModalAusenciasVacaciones);
+                    /*   $scope.$apply(function () {
+                          $scope.mostrarMensaje("no cuenta con la antiguedad para usar vacaciones")
+                      }) */
+                    setTimeout(function () {
+                        $scope.$apply(function () {
+                            var m = "El empleado no cuenta con la antiguedad para asignar vacaciones"
+                            $scope.mostrarMensaje(m)
+                        });
+                    }, 2000)
+
+
+                }
+            })
+        }
+
         $scope.CalcularDiferenciaDiasVacacion = function (vacacion) {
             vacacion.dias = 0
             vacacion.dias_descuento = 0
@@ -4434,6 +4487,7 @@ angular.module('agil.controladores')
             }
         }
         $scope.crearNuevaVacacion = function (datos) {
+            if(datos.dias<=$scope.diasDisponibles){
             datos.fecha_inicio = new Date($scope.convertirFecha(datos.fecha_inicio));
             datos.fecha_fin = new Date($scope.convertirFecha(datos.fecha_fin));
             var promesa = NuevaVacacionEmpleado($scope.empleado.id, datos)
@@ -4441,6 +4495,9 @@ angular.module('agil.controladores')
                 $scope.cerrarDialogAusenciasVacaciones()
                 $scope.mostrarMensaje(dato.mensaje)
             })
+        }else{
+            $scope.mostrarMensaje("El empleado solo cuenta con "+$scope.diasDisponibles+" dias disponbles para asignar vacaciones")
+        }
         }
         $scope.obtenerHistorialEmpleadVacacion = function (filtro) {
             var filtroVacaciones = { inicio: 0, fin: 0 }

@@ -1,6 +1,6 @@
 module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente, Persona, Empresa, Sucursal, Clase, Diccionario, Tipo, decodeBase64Image, fs, RrhhEmpleadoFicha, RrhhEmpleadoFichaOtrosSeguros, RrhhEmpleadoFichaFamiliar, RrhhEmpleadoDiscapacidad
     , RrhhEmpleadoCargo, RrhhEmpleadoHojaVida, RrhhEmpleadoFormacionAcademica, RrhhEmpleadoExperienciaLaboral, RrhhEmpleadoLogroInternoExterno, RrhhEmpleadoCapacidadInternaExterna, NumeroLiteral, RrhhEmpleadoPrestamo, RrhhEmpleadoPrestamoPago, RrhhEmpleadoRolTurno, RrhhEmpleadoHorasExtra, RrhhAnticipo,
-    EvaluacionPolifuncional, ConfiguracionCalificacionEvaluacionPolifuncional, ConfiguracionDesempenioEvaluacionPolifuncional, RrhhEmpleadoAusencia, RrhhEmpleadoVacaciones, RrhhEmpleadoCompensacionAusencia, RrhhFeriado, RrhhClaseAsuencia,RrhhEmpleadoConfiguracionVacacion,RrhhEmpleadoHistorialVacacion) {
+    EvaluacionPolifuncional, ConfiguracionCalificacionEvaluacionPolifuncional, ConfiguracionDesempenioEvaluacionPolifuncional, RrhhEmpleadoAusencia, RrhhEmpleadoVacaciones, RrhhEmpleadoCompensacionAusencia, RrhhFeriado, RrhhClaseAsuencia, RrhhEmpleadoConfiguracionVacacion, RrhhEmpleadoHistorialVacacion) {
 
     router.route('/recursos-humanos/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion/codigo/:codigo/nombres/:nombres/ci/:ci/campo/:campo/cargo/:cargo/busquedaEmpresa/:busquedaEmpresa/grupo/:grupo_sanguineo/estado/:estado/apellido/:apellido')
         .get(function (req, res) {
@@ -838,7 +838,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                                     where: { id_empleado: req.body.empleado.id, id_cargo: cargo.id }
                                 }).then(function (actualizado) {
                                     if (index === (array.length - 1)) {
-                                        guardarSeguros(RrhhEmpleadoDiscapacidad, req.body.empleado.discapacidades, req.body.empleado, res)
+                                        guardarSeguros(RrhhEmpleadoDiscapacidad, req, req.body.empleado, res)
                                     }
                                 }).catch(function (err) {
                                     res.json({ mensaje: err.message === undefined ? err.stack : err.message, hasErr: true })
@@ -846,7 +846,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
 
                         } else {
                             if (index === (array.length - 1)) {
-                                guardarSeguros(RrhhEmpleadoDiscapacidad, req.body.empleado.discapacidades, req.body.empleado, res)
+                                guardarSeguros(RrhhEmpleadoDiscapacidad, req, req.body.empleado, res)
                             }
                         }
                     }).catch(function (err) {
@@ -854,11 +854,12 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                     });
                 });
             } else {
-                guardarSeguros(RrhhEmpleadoDiscapacidad, req.body.empleado.discapacidades, req.body.empleado, res)
+                guardarSeguros(RrhhEmpleadoDiscapacidad, req, req.body.empleado, res)
             }
         })
     }
-    function guardarSeguros(RrhhEmpleadoDiscapacidad, discapacidades, empleado, res) {
+    function guardarSeguros(RrhhEmpleadoDiscapacidad, req, empleado, res) {
+        discapacidades = req.body.empleado.discapacidades
         RrhhEmpleadoDiscapacidad.destroy({
             where: {
                 id_empleado: empleado.id,
@@ -881,6 +882,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                                     where: { id_empleado: empleado.id, id_discapacidad: discapacidad.id }
                                 }).then(function (actualizado) {
                                     if (index === (array.length - 1)) {
+                                        guardarHistorialVacacion(RrhhEmpleadoHistorialVacacion, req, res, empleado)
                                         res.json({ message: "Ficha empleado actualizada satisfactoriamente!" })
                                     }
                                 }).catch(function (err) {
@@ -889,7 +891,8 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
 
                         } else {
                             if (index === (array.length - 1)) {
-                                res.json({ message: "Ficha empleado actualizada satisfactoriamente!" })
+                                guardarHistorialVacacion(RrhhEmpleadoHistorialVacacion, req, res, empleado)
+
                             }
                         }
                     }).catch(function (err) {
@@ -898,9 +901,32 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
 
                 })
             } else {
-                res.json({ message: "Ficha empleado actualizada satisfactoriamente!" })
+                guardarHistorialVacacion(RrhhEmpleadoHistorialVacacion, req, res, empleado)
+
             }
         })
+    }
+    function guardarHistorialVacacion(RrhhEmpleadoHistorialVacacion, req, res, empleado) {
+        if (req.body.historialVacacion) {
+            RrhhEmpleadoHistorialVacacion.update({
+                eliminado: true,
+            }, {
+                    where: { id_empleado: empleado.id }
+                }).then(function (historialActualizado) {
+                    RrhhEmpleadoHistorialVacacion.create({
+                        aplicadas: req.body.historialVacacion.aplicadas,
+                        tomadas: req.body.historialVacacion.tomadas,
+                        anio: req.body.historialVacacion.anio,
+                        gestion: req.body.historialVacacion.gestion,
+                        id_empleado: empleado.id,
+                        eliminado: false
+                    }).then(function (historialCreado) {
+                        res.json({ message: "Ficha empleado actualizada satisfactoriamente!" })
+                    })
+                })
+        } else {
+            res.json({ message: "Ficha empleado actualizada satisfactoriamente!" })
+        }
     }
     router.route('/usuario-ficha/:id_empleado')
         .get(function (req, res) {
@@ -1719,17 +1745,17 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
         })
     router.route('/recurso-humanos/capacidades/hoja-vida/:id_hoja_vida/inicio/:inicio/fin/:fin/tipo/:tipo')
         .get(function (req, res) {
-            var condicionCapacidades ={}
+            var condicionCapacidades = {}
             if (req.params.inicio != 0) {
                 var inicio = new Date(req.params.inicio); inicio.setHours(0, 0, 0, 0, 0);
                 var fin = new Date(req.params.fin); fin.setHours(23, 59, 0, 0, 0);
-                 condicionCapacidades = { id_hoja_vida: req.params.id_hoja_vida, fecha: { $between: [inicio, fin] } };
-            }else{
-                condicionCapacidades = { id_hoja_vida: req.params.id_hoja_vida};
+                condicionCapacidades = { id_hoja_vida: req.params.id_hoja_vida, fecha: { $between: [inicio, fin] } };
+            } else {
+                condicionCapacidades = { id_hoja_vida: req.params.id_hoja_vida };
             }
             RrhhEmpleadoCapacidadInternaExterna.findAll({
                 where: condicionCapacidades,
-                include:[{model:Clase,as:'tipoCapacidad',where:{nombre_corto:req.params.tipo}}]
+                include: [{ model: Clase, as: 'tipoCapacidad', where: { nombre_corto: req.params.tipo } }]
             }).then(function (entidad) {
                 res.json({ capacidades: entidad })
             });
@@ -2048,8 +2074,40 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                 inicio_tipo: req.body.inicio_tipo,
                 fin_tipo: req.body.fin_tipo,
                 eliminado: false
-            }).then(function (empleadoVacacionCreado) {
-                res.json({ mensaje: "Guardado satisfactoriamente!" })
+            }).then(function (empleadoVacacionCreado) {//dias=12
+                req.body.historial.forEach(function (historial, index, array) {
+                    if (historial.anio <= req.body.aniosDisponibles) {
+                        var restante = historial.aplicadas - historial.tomadas
+                        if (restante != 0) {
+                            var tomadas = 0
+                            if (req.body.dias >= restante) {
+                                req.body.dias = req.body.dias - restante
+                                tomadas = restante + historial.tomadas
+                            } else {
+                                tomadas = req.body.dias + historial.tomadas
+                            }
+
+                            RrhhEmpleadoHistorialVacacion.update({
+                                tomadas: tomadas
+                            }, {
+                                    where: { id: historial.id }
+                                }).then(function (historialVacacionActualizado) {
+                                    if (index === (array.length - 1)) {
+                                        res.json({ mensaje: "Guardado satisfactoriamente!" })
+                                    }
+                                })
+
+                        } else {
+                            if (index === (array.length - 1)) {
+                                res.json({ mensaje: "Guardado satisfactoriamente!" })
+                            }
+                        }
+                    } else {
+                        if (index === (array.length - 1)) {
+                            res.json({ mensaje: "Guardado satisfactoriamente!" })
+                        }
+                    }
+                });
             })
         })
     router.route('/recursos-humanos/vacacion/empleado/:id_empleado/inicio/:inicio/fin/:fin')
@@ -2169,7 +2227,22 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                 }
             });
         })
+    router.route('/recursos-humanos/configuracion/vacacion')
+        .get(function (req, res) {
+            RrhhEmpleadoConfiguracionVacacion.findAll({
 
+            }).then(function (params) {
+                res.json(params)
+            })
+        })
+    router.route('/recursos-humanos/historial/gestion/vacacion/empleado/:id')
+        .get(function (req, res) {
+            RrhhEmpleadoHistorialVacacion.findAll({
+                where: { id_empleado: req.params.id, eliminado: false }
+            }).then(function (params) {
+                res.json(params)
+            })
+        })
     //FIN
     /////////////////////////////////////////////////////// RUTAS PARA POLIFUNCIONAL ///////////////////////////////////////////////////
 

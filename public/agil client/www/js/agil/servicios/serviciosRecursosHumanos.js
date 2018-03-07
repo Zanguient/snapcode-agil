@@ -398,6 +398,41 @@ angular.module('agil.servicios')
     };
     return res;
 }]) 
+.factory('ConfiguracionVacaciones', function ($resource) {
+    return $resource(restServer + "recursos-humanos/configuracion/vacacion",null,
+        {
+            'update': { method: 'PUT' }
+        });
+})
+.factory('ConfiguracionesVacacion', ['ConfiguracionVacaciones', '$q', function (ConfiguracionVacaciones, $q) {
+    var res = function () {
+        var delay = $q.defer();
+        ConfiguracionVacaciones.query( function (entidad) {
+            delay.resolve(entidad);
+        }, function (error) {
+            delay.reject(error);
+        });
+        return delay.promise;
+    };
+    return res;
+}]).factory('HistorialGestionVacacion', function ($resource) {
+    return $resource(restServer + "recursos-humanos/historial/gestion/vacacion/empleado/:id",null,
+        {
+            'update': { method: 'PUT' }
+        });
+})
+.factory('HistorialGestionesVacacion', ['HistorialGestionVacacion', '$q', function (HistorialGestionVacacion, $q) {
+    var res = function (idEmpleado) {
+        var delay = $q.defer();
+        HistorialGestionVacacion.query({id:idEmpleado}, function (entidad) {
+            delay.resolve(entidad);
+        }, function (error) {
+            delay.reject(error);
+        });
+        return delay.promise;
+    };
+    return res;
+}])
 
 .factory('EmpleadoAnticipo', function ($resource) {
     return $resource(restServer + "recursos-humanos/anticipos/empleado/:id_empleado",null,

@@ -86,6 +86,7 @@ angular.module('agil.controladores')
                             var x = 80
                             doc.font('Helvetica', 8);
                             var y = 115 + 80
+                            var a=0
                             $scope.dibujarCabeceraPDFImpresion(doc, gtm_despacho, 0);
                             doc.font('Helvetica', 8);
                             doc.text(1, 55, y);
@@ -114,7 +115,11 @@ angular.module('agil.controladores')
                             y = y + 20;
                             // doc.text(2, 55, y);
                             doc.text(gtm_despacho.producto.codigo, 100, y);
-                            doc.text(gtm_despacho.producto.nombre.toUpperCase() + ' (DESPACHADO)', 180, y);
+                            var texto = gtm_despacho.producto.nombre.toUpperCase() + ' (DESPACHADO)'
+                            if (texto.length > 37) {
+                                a = -6;
+                            }
+                            doc.text(texto, 180, y+a, { width: 180 });                        
                             doc.text(gtm_despacho.cantidad_despacho, 380, y);
                             //doc.rect(40, x + 80 ,540, y - 70).stroke();
                             doc.text('SERVICIO DE TRANSPORTE', 180, y + 20);
@@ -325,7 +330,11 @@ angular.module('agil.controladores')
                     y = y + 20;
                     // doc.text(2, 55, y);
                     doc.text(gtm_despacho.producto.codigo, 100, y);
-                    doc.text(gtm_despacho.producto.nombre.toUpperCase() + ' (DESPACHADO)', 180, y);
+                    var texto = gtm_despacho.producto.nombre.toUpperCase() + ' (DESPACHADO)'
+                    if (texto.length > 37) {
+                        a = -6;
+                    }
+                    doc.text(texto, 180, y + a, { width: 180 });
                     doc.text(gtm_despacho.cantidad_despacho, 380, y);
                     //doc.rect(40, x + 80 ,540, y - 70).stroke();
                     doc.text('SERVICIO DE TRANSPORTE', 180, y + 20);
@@ -417,18 +426,23 @@ angular.module('agil.controladores')
             doc.text("Importe", 520, 90 + yCabecera);
             doc.text("Clientes:", 40, y + 90);
             doc.text("Destino Mercaderia:", 40, y + 100);
-            doc.text("Nombre Fact:", 40, y + 110);
-            doc.text("CI/NIT:", 40, y + 120);
-            doc.text("Teléfono:", 200, y + 120);
-            doc.text("Dirección:", 40, y + 130);
+            var texto=gtm_despacho.despacho.destino.direccion + " " + gtm_despacho.despacho.destino.destino+"222222222222222222222222222222"
+            var a =0;
+            if(texto.length>73){
+                a=10;
+            }
+            doc.text("Nombre Fact:", 40, y + 110+a);
+            doc.text("CI/NIT:", 40, y + 120+a);
+            doc.text("Teléfono:", 200, y + 120+a);
+            doc.text("Dirección:", 40, y + 130+a);
 
             doc.font('Helvetica', 8);
-            doc.text(gtm_despacho.despacho.cliente.nit, 80, y + 120);
-            if (gtm_despacho.despacho.cliente.telefono1) doc.text(gtm_despacho.despacho.cliente.telefono1, 240, y + 120);
-            doc.text(gtm_despacho.despacho.cliente.direccion, 80, y + 130);
+            doc.text(gtm_despacho.despacho.cliente.nit, 80, y + 120+a);
+            if (gtm_despacho.despacho.cliente.telefono1) doc.text(gtm_despacho.despacho.cliente.telefono1, 240, y + 120+a);
+            doc.text(gtm_despacho.despacho.cliente.direccion, 80, y + 130+a);
 
             if (gtm_despacho.despacho.destino !== null && gtm_despacho.despacho.destino !== undefined) {
-                doc.text(gtm_despacho.despacho.destino.direccion + " " + gtm_despacho.despacho.destino.destino, 120, y + 100);
+                doc.text(texto, 120, y + 100,{width:320});
             } else {
                 doc.text("" + " " + "", 120, y + 100);
             }

@@ -1513,7 +1513,7 @@
                                         <div class="col-sm-3 col-lg-2">
                                             <div class="input-group">
                                                 <span class="input-group-addon glyphicon glyphicon-pencil point-edit green" ng-click="abrirDialogConceptoEdicion(bancos)"></span>
-                                                <select class="form-control" style="width:150px" ng-options="banco as banco.nombre for banco in bancos.clases | filter:{habilitado:true} track by banco.id"
+                                                <select class="form-control" style="width:150px" ng-options="banco as banco.nombre for banco in bancosHdv.clases | filter:{habilitado:true} track by banco.id"
                                                     ng-model="ficha.banco"></select>
                                             </div>
                                         </div>
@@ -1597,7 +1597,7 @@
                     <div class="modal-footer wizard-actions">
                         <button ng-show="ficha.id" type="submit" class="btn btn-primary btn-sm " ng-click="truevalue=true">
                             <i class="ace-icon fa fa-floppy-o bigger-110"></i>&nbsp; Guardar</button>
-                        <button class="btn btn-sm btn-prev">
+                        <button type="button" class="btn btn-sm btn-prev">
                             <i class="ace-icon fa fa-arrow-left"></i>
                             Anterior
                         </button>
@@ -1605,14 +1605,14 @@
                             Siguiente
                             <i class="ace-icon fa fa-arrow-right icon-on-right"></i>
                         </button>
-                        <button class="btn btn-danger btn-sm pull-left" ng-click="cerrarDialogEmpleado(ficha)">
+                        <button type="button" class="btn btn-danger btn-sm pull-left" ng-click="cerrarDialogEmpleado(ficha)">
                             <i class="ace-icon fa fa-times"></i>
                             Cancelar
                         </button>
-                        <button class="btn btn-link pull-left" uib-tooltip="CERTIFICADO" ng-click="abrirDialogCertificado()">
+                        <button type="button" class="btn btn-link pull-left" uib-tooltip="CERTIFICADO" ng-click="abrirDialogCertificado()">
                             <i class="ace-icon icono-certificado bigger-260"></i>
                         </button>
-                        <button uib-tooltip="HOJA DE VIDA" type="button" class="btn btn-info btn-xs btn-link pull-left" ng-click="abrirDialogHojaVida(ficha.empleado)">
+                        <button type="button" uib-tooltip="HOJA DE VIDA" type="button" class="btn btn-info btn-xs btn-link pull-left" ng-click="abrirDialogHojaVida(ficha.empleado)">
                             <span class="ace-icon icono-hoja-vida bigger-260" aria-hidden="true"></span>
                         </button>
                     </div>
@@ -4397,18 +4397,18 @@
                 </tr>
             </thead>
             <tbody>
-                <tr>
+                <tr ng-repeat="historial in historialGestionesVacacion track by $index">
                     <td>
-                        2010-2011
+                        {{historial.gestion}}-{{historial.gestion+1}}
                     </td>
                     <td>
-                        1er año
+                        {{historial.anio}}
                     </td>
                     <td>
-                        15 dias
+                        {{historial.aplicadas}}
                     </td>
-                    <td>8 dias</td>
-                    <td>7 dias</td>
+                    <td>{{historial.tomadas}}</td>
+                    <td>{{historial.aplicadas-historial.tomadas}}</td>
                 </tr>
 
             </tbody>
@@ -4854,7 +4854,7 @@
                             </div>
                             <div class="row">
                                 <div class="col-sm-12 wizard-actions">
-                                    <button class="btn btn-primary btn-sm" type="submit">
+                                    <button  ng-disabled="!usarVacacion" class="btn btn-primary btn-sm" type="submit">
                                         <i class="glyphicon glyphicon-floppy-disk"></i>Guardar
                                     </button>
 
@@ -5909,7 +5909,7 @@
                 </button>
                 <script type="text/ng-template" id="myPopoverTr3.html">                                           
                         <div class="form-group">                                              
-                            <a ng-repeat="banco in bancos track by $index" ng-click="abrirModalbanco(banco.nombre)"><p>{{banco.nombre}}</p></a>
+                            <a ng-repeat="banco in bancos track by $index" ng-click="abrirModalbanco(banco)"><p>{{banco.nombre}}</p></a>
            <!--                    <a ng-click="abrirModalTr3BancoUnion()"><p>{{arregloBancosUnion.nombre}}</p></a>
                               <a ng-click="abrirModalTr3BancoMsc()"><p>{{arregloBancosMsc.nombre}}</p></a> -->
                         </div>                                           
@@ -8301,7 +8301,7 @@
     <!-- fin confirmar usuario -->
     <!-- inicio modal tr3 banco MSC-->
     <div id="modal-tr3-banco-msc">
-        <form name="formularioTr3" >
+        <form name="formularioTr3">
             <div class="modal-content">
                 <div class="modal-header bg-success" align="center">
 
@@ -8314,15 +8314,15 @@
                     <div class="row">
                         <label class="col-md-5"> Cuenta Bancaria</label>
                         <div class="col-md-4">
-                                <select  required ng-model="tr3.cuenta" class="form-control" ng-options="cuenta as cuenta.numero for cuenta in arregloBancosMsc.arregloCuentaBanco">
-                                        <option value="">--Ninguno--</option>
-                                    </select>
+                            <select required ng-model="tr3.cuenta" class="form-control" ng-options="cuenta as cuenta.numero for cuenta in datosBanco.cuentas">
+                                <option value="">--Ninguno--</option>
+                            </select>
                         </div>
                         <div class="col-md-3">
-                                <select  required ng-model="tr3.cuenta" class="form-control" ng-options="departamento as departamento.nombre for departamento in departamentosBanco">
-                                        <option value="">--Ninguno--</option>
-                                    </select>
-                           
+                            <select required ng-model="tr3.cuenta" class="form-control" ng-options="departamento as departamento.nombre for departamento in departamentosBanco">
+                                <option value="">--Ninguno--</option>
+                            </select>
+
                         </div>
                     </div>
                     <div class="row">
@@ -8363,18 +8363,27 @@
                     </div>
                     <div class="row">
                         <label class="col-md-5">firma 1</label>
-                        <div class="col-md-7">
+                        <div class="col-md-4">
                             <input class="form-control" type="text" ng-model="tr3.firma_uno" required>
+                        </div>
+                        <div class="col-md-3">
+                            <input class="form-control" type="text" ng-model="tr3.firma_uno2" required>
                         </div>
                     </div>
                     <div class="row">
                         <label class="col-md-5">firma 2</label>
-                        <div class="col-md-7">
+                        <div class="col-md-4">
                             <input class="form-control" type="text" ng-model="tr3.firma_dos" required>
+                        </div>
+                        <div class="col-md-3">
+                            <input class="form-control" type="text" ng-model="tr3.firma_dos2" required>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
+                    <button type="button" uib-tooltip="HISTORIAL" class="btn btn-danger btn-xs pull-left" ng-click="abrirDialogHistorialContrato()">
+                        <span class="glyphicon glyphicon-header" aria-hidden="true"></span>
+                    </button>
                     <button type="submit" class="btn btn-success">Guardar</button>
                     <button type="button" class="btn btn-danger" ng-click="cerrarModalTr3BancoMsc()">Cancelar</button>
                 </div>
@@ -8386,72 +8395,74 @@
 
     <!-- inicio modal tr3 banco union -->
     <div id="modal-tr3-banco-union">
-            <form name="formularioTr3">
-                <div class="modal-content">
-                    <div class="modal-header bg-warning" align="center">
-    
-                        <h3 class="modal-title">Generación TXT</h3>
-    
-                        <h3 class="modal-title">Banco Unión S.A.</h3>
-    
-                    </div>
-                    <div class="modal-body">
-                        <div class="row">
-                            <label class="col-md-5"> Cuenta Bancaria</label>
-                            <div class="col-md-7">
-                                <input class="form-control" type="text" ng-model="tr3.cuenta" required>
-                            </div>                          
-                        </div>
-                        <div class="row">
-                            <label class="col-md-5">Planilla</label>
-                            <div class="col-md-7">
-                                <input class="form-control" type="password" ng-model="tr3.planilla" required>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <label class="col-md-5"> Dirigido a:</label>
-                            <div class="col-md-7">
-                                <input class="form-control" type="password" ng-model="tr3.dirigido_a" required>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <label class="col-md-5">Cargo:</label>
-                            <div class="col-md-7">
-                                <input class="form-control" type="password" ng-model="tr3.cargo" required>
-                            </div>
-                        </div>                        
-                        <div class="row">
-                            <label class="col-md-5">Origen de los fondos</label>
-                            <div class="col-md-7">
-                                <input class="form-control" type="password" ng-model="tr3.origen_fondos" required>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <label class="col-md-5">Destino de los fondos</label>
-                            <div class="col-md-7">
-                                <input class="form-control" type="password" ng-model="tr3.destino_fondos" required>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <label class="col-md-5">firma 1</label>
-                            <div class="col-md-7">
-                                <input class="form-control" type="password" ng-model="tr3.firma_uno" required>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <label class="col-md-5">firma 2</label>
-                            <div class="col-md-7">
-                                <input class="form-control" type="password" ng-model="tr3.firma_dos" required>
-                            </div>
+        <form name="formularioTr3">
+            <div class="modal-content">
+                <div class="modal-header bg-warning" align="center">
+
+                    <h3 class="modal-title">Generación TXT</h3>
+
+                    <h3 class="modal-title">Banco Unión S.A.</h3>
+
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <label class="col-md-5"> Cuenta Bancaria</label>
+                        <div class="col-md-7">
+                            <select required ng-model="tr3.cuenta" class="form-control" ng-options="cuenta as cuenta.numero for cuenta in datosBanco.cuentas">
+                                <option value="">--Ninguno--</option>
+                            </select>
                         </div>
                     </div>
-                    <div class="modal-footer">
-                        <button type="submit" class="btn btn-success">Guardar</button>
-                        <button type="button" class="btn btn-danger" ng-click="cerrarModalTr3BancoUnion()">Cancelar</button>
+                    <div class="row">
+                        <label class="col-md-5">Planilla</label>
+                        <div class="col-md-7">
+                            <input class="form-control" type="password" ng-model="tr3.planilla" required>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label class="col-md-5"> Dirigido a:</label>
+                        <div class="col-md-7">
+                            <input class="form-control" type="password" ng-model="tr3.dirigido_a" required>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label class="col-md-5">Cargo:</label>
+                        <div class="col-md-7">
+                            <input class="form-control" type="password" ng-model="tr3.cargo" required>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label class="col-md-5">Origen de los fondos</label>
+                        <div class="col-md-7">
+                            <input class="form-control" type="password" ng-model="tr3.origen_fondos" required>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label class="col-md-5">Destino de los fondos</label>
+                        <div class="col-md-7">
+                            <input class="form-control" type="password" ng-model="tr3.destino_fondos" required>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label class="col-md-5">firma 1</label>
+                        <div class="col-md-7">
+                            <input class="form-control" type="password" ng-model="tr3.firma_uno" required>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label class="col-md-5">firma 2</label>
+                        <div class="col-md-7">
+                            <input class="form-control" type="password" ng-model="tr3.firma_dos" required>
+                        </div>
                     </div>
                 </div>
-            </form>
-        </div>
-    
-        <!-- fin tr3 banco union -->
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-success">Guardar</button>
+                    <button type="button" class="btn btn-danger" ng-click="cerrarModalTr3BancoUnion()">Cancelar</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- fin tr3 banco union -->
 </div>
