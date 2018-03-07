@@ -1,6 +1,6 @@
 module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente, Persona, Empresa, Sucursal, Clase, Diccionario, Tipo, decodeBase64Image, fs, RrhhEmpleadoFicha, RrhhEmpleadoFichaOtrosSeguros, RrhhEmpleadoFichaFamiliar, RrhhEmpleadoDiscapacidad
     , RrhhEmpleadoCargo, RrhhEmpleadoHojaVida, RrhhEmpleadoFormacionAcademica, RrhhEmpleadoExperienciaLaboral, RrhhEmpleadoLogroInternoExterno, RrhhEmpleadoCapacidadInternaExterna, NumeroLiteral, RrhhEmpleadoPrestamo, RrhhEmpleadoPrestamoPago, RrhhEmpleadoRolTurno, RrhhEmpleadoHorasExtra, RrhhAnticipo,
-    EvaluacionPolifuncional, ConfiguracionCalificacionEvaluacionPolifuncional, ConfiguracionDesempenioEvaluacionPolifuncional, RrhhEmpleadoAusencia, RrhhEmpleadoVacaciones, RrhhEmpleadoCompensacionAusencia, RrhhFeriado, RrhhClaseAsuencia) {
+    EvaluacionPolifuncional, ConfiguracionCalificacionEvaluacionPolifuncional, ConfiguracionDesempenioEvaluacionPolifuncional, RrhhEmpleadoAusencia, RrhhEmpleadoVacaciones, RrhhEmpleadoCompensacionAusencia, RrhhFeriado, RrhhClaseAsuencia,RrhhEmpleadoConfiguracionVacacion,RrhhEmpleadoHistorialVacacion) {
 
     router.route('/recursos-humanos/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion/codigo/:codigo/nombres/:nombres/ci/:ci/campo/:campo/cargo/:cargo/busquedaEmpresa/:busquedaEmpresa/grupo/:grupo_sanguineo/estado/:estado/apellido/:apellido')
         .get(function (req, res) {
@@ -1717,15 +1717,19 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                 }
             });
         })
-    router.route('/recurso-humanos/capacidades/hoja-vida/:id_hoja_vida/inicio/:inicio/fin/:fin')
+    router.route('/recurso-humanos/capacidades/hoja-vida/:id_hoja_vida/inicio/:inicio/fin/:fin/tipo/:tipo')
         .get(function (req, res) {
+            var condicionCapacidades ={}
             if (req.params.inicio != 0) {
                 var inicio = new Date(req.params.inicio); inicio.setHours(0, 0, 0, 0, 0);
                 var fin = new Date(req.params.fin); fin.setHours(23, 59, 0, 0, 0);
-                var condicionCapacidades = { id_hoja_vida: req.params.id_hoja_vida, fecha: { $between: [inicio, fin] } };
+                 condicionCapacidades = { id_hoja_vida: req.params.id_hoja_vida, fecha: { $between: [inicio, fin] } };
+            }else{
+                condicionCapacidades = { id_hoja_vida: req.params.id_hoja_vida};
             }
             RrhhEmpleadoCapacidadInternaExterna.findAll({
-                where: condicionCapacidades
+                where: condicionCapacidades,
+                include:[{model:Clase,as:'tipoCapacidad',where:{nombre_corto:req.params.tipo}}]
             }).then(function (entidad) {
                 res.json({ capacidades: entidad })
             });

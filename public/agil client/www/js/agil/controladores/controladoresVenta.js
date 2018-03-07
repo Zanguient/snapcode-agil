@@ -512,6 +512,15 @@ angular.module('agil.controladores')
 		}
 
 		$scope.eliminarDetalleVenta = function (detalleVenta) {
+			$scope.venta.detallesVenta.splice($scope.venta.detallesVenta.indexOf(detalleVenta), 1);
+			$scope.sumarTotal();
+			$scope.sumarTotalImporte();
+			$scope.calcularSaldo();
+			$scope.calcularCambio();
+			$scope.capturarInteraccion();
+		}
+
+		$scope.eliminarDetalleVentaPanel = function (detalleVenta) {
 			var indice = $scope.productosProcesados.indexOf(detalleVenta.producto);
 			$scope.productosProcesados[indice].inventario_disponible = $scope.productosProcesados[indice].inventario_disponible + detalleVenta.cantidad;
 
@@ -1896,7 +1905,7 @@ angular.module('agil.controladores')
 			var indice = $scope.productosProcesados.indexOf(detalleVenta.producto);
 
 			if (detalleVenta.cantidad == 1) {
-				$scope.eliminarDetalleVenta(detalleVenta);
+				$scope.eliminarDetalleVentaPanel(detalleVenta);
 				// $scope.productosProcesados[indice].inventario_disponible = $scope.productosProcesados[indice].inventario_disponible + 1;
 			} else {
 				detalleVenta.cantidad = detalleVenta.cantidad - 1;

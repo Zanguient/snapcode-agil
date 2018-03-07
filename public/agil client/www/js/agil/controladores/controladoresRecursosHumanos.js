@@ -4,7 +4,7 @@ angular.module('agil.controladores')
         FieldViewer, EmpleadoEmpresa, obtenerEmpleadoRh, UsuarioRecursosHUmanosActivo, Prerequisito, ListaDatosPrerequisito, Prerequisitos, ListaPrerequisitosPaciente, ActualizarPrerequisito, UsuarioRecursosHumanosFicha,
         ClasesTipo, Clases, Paises, CrearEmpleadoFicha, EliminarOtroSeguroRh, EliminarFamiliarRh, PrerequisitoPaciente, PrerequisitosHistorial, UsuarioRhHistorialFicha, ObtenerEmpleadoHojaVida, GuardarEmpleadoHojaVida, CrearPrestamo,
         ObtenerListaPrestamo, CrearRolTurno, CrearPagoPrestamo, VerificarUsuarioEmpresa, EditarPrestamo, ListaEmpleadosRrhh, CrearHorasExtra, HistorialHorasExtra, ListaRolTurnos, ValidarCodigoCuentaEmpleado, $timeout, DatosCapacidadesImpresion, NuevoAnticipoEmpleado,
-        ListaAnticiposEmpleado, CrearNuevosAnticiposEmpleados, ActualizarAnticipoEmpleado, NuevaAusenciaEmpleado, HistorialEmpleadoAusencias, HistorialEmpresaEmpleadosAusencias, NuevaVacacionEmpleado, HistorialEmpleadoVacaciones, HistorialEmpresaVacaciones, NuevoFeriado, ListaFeriados, GuardarClasesAusencias, Tipos) {
+        ListaAnticiposEmpleado, CrearNuevosAnticiposEmpleados, ActualizarAnticipoEmpleado, NuevaAusenciaEmpleado, HistorialEmpleadoAusencias, HistorialEmpresaEmpleadosAusencias, NuevaVacacionEmpleado, HistorialEmpleadoVacaciones, HistorialEmpresaVacaciones, NuevoFeriado, ListaFeriados, GuardarClasesAusencias, Tipos, ListaBancos) {
         $scope.usuario = JSON.parse($localStorage.usuario);
         $scope.idModalPrerequisitos = 'dialog-pre-requisitos';
         $scope.idModalEmpleado = 'dialog-empleado';
@@ -90,7 +90,8 @@ angular.module('agil.controladores')
         $scope.IdModalVerificarCuenta = 'modal-verificar-cuenta';
         $scope.idModalImpresionHojaVida = 'dialog-impresion-hoja-vida';
         $scope.idModalNuevoAnticipoRegularTodos = 'dialog-nuevo-anticipo-regular-todos';
-
+        $scope.idModalTr3BancoMsc = 'modal-tr3-banco-msc'
+        $scope.idModalTr3BancoUnion = 'modal-tr3-banco-union'
         $scope.$on('$viewContentLoaded', function () {
             // resaltarPestaña($location.path().substring(1));
             resaltarPestaña($location.path().substring(1));
@@ -114,7 +115,8 @@ angular.module('agil.controladores')
                 $scope.idModalHistorialViajes, $scope.idModalReporteAusencias, $scope.idModalCertificado, $scope.idModalInstitucion,
                 $scope.idModalRhNuevo, $scope.idModalWizardRhNuevo, $scope.idImagenUsuario, $scope.idEliminarUsuarioRh, $scope.idModalWizardRhVista,
                 $scope.idModalContenedorRhVista, $scope.idModalDialogPrerequisitoNuevo, $scope.idEliminarSeguroEmpleado, $scope.idEliminarFamiliarEmpleado, $scope.idModalHistorialPrerequisito,
-                $scope.idModalEditarPrerequisito, $scope.idModalDialogConfirmacionEntregaAdelantado, $scope.IdEntregaPrerequisito, $scope.IdModalVerificarCuenta, $scope.idModalImpresionHojaVida, $scope.idModalNuevoAnticipoRegularTodos);
+                $scope.idModalEditarPrerequisito, $scope.idModalDialogConfirmacionEntregaAdelantado, $scope.IdEntregaPrerequisito, $scope.IdModalVerificarCuenta, $scope.idModalImpresionHojaVida, $scope.idModalNuevoAnticipoRegularTodos,
+                $scope.idModalTr3BancoMsc, $scope.idModalTr3BancoUnion);
             $scope.buscarAplicacion($scope.usuario.aplicacionesUsuario, $location.path().substring(1));
             $scope.obtenerColumnasAplicacion()
             blockUI.stop();
@@ -200,6 +202,8 @@ angular.module('agil.controladores')
             $scope.eliminarPopup($scope.idModalImpresionHojaVida)
             $scope.eliminarPopup($scope.idModalNuevoAnticipoRegularTodos)
             $scope.eliminarPopup($scope.idEliminarUsuarioRh)
+            $scope.eliminarPopup($scope.idModalTr3BancoMsc)
+            $scope.eliminarPopup($scope.idModalTr3BancoUnion)
         });
         $scope.inicio = function () {
             $scope.listYearsAnticipo = $scope.obtenerAnios(2017)
@@ -208,6 +212,7 @@ angular.module('agil.controladores')
             /*   $scope.obtenerPrerequisito(); */
             $scope.recuperarDatosTipo()
             $scope.empleadosSeleccionados = []
+            $scope.listaBancos()
         }
 
 
@@ -229,7 +234,26 @@ angular.module('agil.controladores')
             }, $scope.aplicacion.aplicacion.id);
             $scope.fieldViewer.updateObject();
         }
-
+        $scope.abrirModalTr3BancoMsc = function () {
+            $scope.abrirPopup($scope.idModalTr3BancoMsc)
+        }
+        $scope.cerrarModalTr3BancoMsc = function () {
+            $scope.cerrarPopup($scope.idModalTr3BancoMsc)
+        }
+        $scope.abrirModalTr3BancoUnion = function () {
+            $scope.abrirPopup($scope.idModalTr3BancoUnion)
+        }
+        $scope.cerrarModalTr3BancoUnion = function () {
+            $scope.cerrarPopup($scope.idModalTr3BancoUnion)
+        }
+        $scope.abrirModalbanco = function (nombre) {
+            if (nombre == "Banco Mercantil Santa Cruz") {
+                $scope.abrirModalTr3BancoMsc()
+            }
+            if (nombre == "Banco Unión") {
+                $scope.abrirModalTr3BancoUnion()
+            }
+        }
         $scope.abrirModalImprimirHojaVida = function () {
             $scope.filtroCap = { inicio: "", fin: "", capacidadInterna: "" }
             $scope.abrirPopup($scope.idModalImpresionHojaVida)
@@ -1129,6 +1153,10 @@ angular.module('agil.controladores')
         }
         $scope.abrirDialogAnticipoRegular = function () {
             $scope.obteneranticiposOrdi()
+            $scope.dynamicPopovertr3 = {
+                templateUrl: 'myPopoverTr3.html',
+            };
+            $scope.obtenerDepartamentos()
             $scope.abrirPopup($scope.idModalAnticipoRegular);
         }
         $scope.obteneranticiposOrdi = function () {
@@ -2219,14 +2247,17 @@ angular.module('agil.controladores')
                 blockUI.stop();
             });
         }
-        /* $scope.obtenerDepartamentos = function () {
+        $scope.obtenerDepartamentos = function () {
             blockUI.start();
-            var promesa = ClasesTipo("DEP");
-            promesa.then(function (entidad) {
-                $scope.departamentos = entidad.clases
+            var nombre_corto = '-BOL';
+            var promesa = Paises(nombre_corto);
+            promesa.then(function (entidades) {
+                $scope.departamentosBanco = entidades;
+
                 blockUI.stop();
             });
-        } */
+
+        }
         /*   $scope.obtenerProvicias = function () {
               blockUI.start();
               var promesa = ClasesTipo("MUN");
@@ -2819,22 +2850,41 @@ angular.module('agil.controladores')
         $scope.imprimirHojaVida = function (filtro) {
             if (filtro.capacidadInterna) {
                 var a = filtro
-                a.inicio = new Date(convertirFecha(a.inicio))
-                a.fin = new Date(convertirFecha(a.fin))
+                a.tipo = "INTER"
+                if (a.inicio && a.fin) {
+                    a.inicio = new Date(convertirFecha(a.inicio))
+                    a.fin = new Date(convertirFecha(a.fin))
+                } else {
+                    a.inicio = 0
+                    a.fin = 0
+                }
                 var promesa = DatosCapacidadesImpresion(a, $scope.hojaVida.id)
                 promesa.then(function (dato) {
                     $scope.capacidades = dato.capacidades
                     convertUrlToBase64Image($scope.empleado.imagen, function (imagenEmpresa) {
                         var imagen = imagenEmpresa;
                         $scope.generarPdfHojaVida(imagen)
+                        a.inicio = ""
+                        a.fin = ""
                     });
 
                 })
             } else {
-                convertUrlToBase64Image($scope.empleado.imagen, function (imagenEmpresa) {
-                    var imagen = imagenEmpresa;
-                    $scope.generarPdfHojaVida(imagen)
-                });
+                var a = filtro
+                a.tipo = "EXT"
+                a.inicio = 0
+                a.fin = 0
+                var promesa = DatosCapacidadesImpresion(a, $scope.hojaVida.id)
+                promesa.then(function (dato) {
+                    $scope.capacidades = dato.capacidades
+                    convertUrlToBase64Image($scope.empleado.imagen, function (imagenEmpresa) {
+                        var imagen = imagenEmpresa;
+                        $scope.generarPdfHojaVida(imagen)
+                        a.inicio = ""
+                        a.fin = ""
+                    });
+
+                })
 
             }
         }
@@ -2842,11 +2892,11 @@ angular.module('agil.controladores')
         $scope.generarPdfHojaVida = function (imagen) {
 
             blockUI.start();
-            if ($scope.filtroCap.capacidadInterna) {
-                totalpaginastamaño = $scope.hojaVida.experienciasLaborales.length + $scope.hojaVida.formacionesAcademicas.length + $scope.capacidades.length
-            } else {
-                totalpaginastamaño = $scope.hojaVida.experienciasLaborales.length + $scope.hojaVida.formacionesAcademicas.length
-            }
+            /*  if ($scope.filtroCap.capacidadInterna) { */
+            totalpaginastamaño = $scope.hojaVida.experienciasLaborales.length + $scope.hojaVida.formacionesAcademicas.length + $scope.capacidades.length
+            /*   } else {
+                  totalpaginastamaño = $scope.hojaVida.experienciasLaborales.length + $scope.hojaVida.formacionesAcademicas.length
+              } */
             promesaPaciente = obtenerEmpleadoRh($scope.empleado.id)
             promesaPaciente.then(function (dato) {
                 if (dato.clase != undefined) {
@@ -2919,62 +2969,62 @@ angular.module('agil.controladores')
                             doc.font('Helvetica', 7);
                         }
                     } */
-                if ($scope.filtroCap.capacidadInterna) {
-                    for (var j = 0; j < $scope.capacidades.length; j++) {
-                        var capacidad = $scope.capacidades[j]
-                        if (j == 0) {
-                            y += 15
+                /*  if ($scope.filtroCap.capacidadInterna) { */
+                for (var j = 0; j < $scope.capacidades.length; j++) {
+                    var capacidad = $scope.capacidades[j]
+                    if (j == 0) {
+                        y += 15
 
-                            doc.rect(25, y - 20, 550, 15).fill("silver", "#000");
-                            doc.font('Helvetica-Bold', 8).fill('black')
-                            doc.text("CURSO,CAPACIDADES Y SEMINARIOS", 35, y - 15);
-                            doc.font('Helvetica-Bold', 8);
-                            doc.text("FECHA", 45, y);
-                            doc.text("INSTITUCIÓN", 170, y);
-                            doc.text("GRADO", 305, y);
-                            doc.text("CARRERA", 405, y);
-                            y = y + 20;
-                        }
-                        doc.font('Helvetica', 8);
-                        capacidad.fechaTexto = $scope.fechaATexto(capacidad.fecha)
-                        doc.text(capacidad.fechaTexto, 40, y, { width: 100 });
-                        doc.text(capacidad.curso, 170, y, { width: 100 });
-                        doc.text(capacidad.institucion, 305, y, { width: 80 });
-                        doc.text(capacidad.certificado, 405, y, { width: 100 });
-                        if (capacidad.curso.length > 20 || capacidad.institucion.length > 17 || capacidad.certificado.length > 20) {
-                            rowcurso = capacidad.curso.length / 20
-                            rowinstituto = capacidad.institucion.length / 17
-                            rowcertificado = capacidad.certificado.length / 20
-                            arregloTamaño = [Math.floor(rowcurso), Math.floor(rowinstituto), Math.floor(rowcertificado)]
-                            var rows = Math.max.apply(null, arregloTamaño);
-                            var tamaño = rows * 10
-                            y = y + tamaño
-                        }
+                        doc.rect(25, y - 20, 550, 15).fill("silver", "#000");
+                        doc.font('Helvetica-Bold', 8).fill('black')
+                        doc.text("CURSO,CAPACIDADES Y SEMINARIOS", 35, y - 15);
+                        doc.font('Helvetica-Bold', 8);
+                        doc.text("FECHA", 45, y);
+                        doc.text("INSTITUCIÓN", 170, y);
+                        doc.text("GRADO", 305, y);
+                        doc.text("CARRERA", 405, y);
                         y = y + 20;
+                    }
+                    doc.font('Helvetica', 8);
+                    capacidad.fechaTexto = $scope.fechaATexto(capacidad.fecha)
+                    doc.text(capacidad.fechaTexto, 40, y, { width: 100 });
+                    doc.text(capacidad.curso, 170, y, { width: 100 });
+                    doc.text(capacidad.institucion, 305, y, { width: 80 });
+                    doc.text(capacidad.certificado, 405, y, { width: 100 });
+                    if (capacidad.curso.length > 20 || capacidad.institucion.length > 17 || capacidad.certificado.length > 20) {
+                        rowcurso = capacidad.curso.length / 20
+                        rowinstituto = capacidad.institucion.length / 17
+                        rowcertificado = capacidad.certificado.length / 20
+                        arregloTamaño = [Math.floor(rowcurso), Math.floor(rowinstituto), Math.floor(rowcertificado)]
+                        var rows = Math.max.apply(null, arregloTamaño);
+                        var tamaño = rows * 10
+                        y = y + tamaño
+                    }
+                    y = y + 20;
 
 
-                        items++;
-                        //totalCosto = totalCosto + inventarios[i].costo_total;
-                        if (y >= 725) {
-                            doc.addPage({ margin: 0, bufferPages: true });
-                            y = 90;
+                    items++;
+                    //totalCosto = totalCosto + inventarios[i].costo_total;
+                    if (y >= 725) {
+                        doc.addPage({ margin: 0, bufferPages: true });
+                        y = 90;
 
-                            items = 0;
-                            doc.rect(25, y - 20, 550, 15).fill("silver", "#000");
-                            doc.font('Helvetica-Bold', 8).fill('black')
-                            doc.text("CURSO,CAPACIDADES Y SEMINARIOS", 35, y - 15);
-                            doc.font('Helvetica-Bold', 8);
-                            doc.text("FECHA", 45, y);
-                            doc.text("INSTITUCIÓN", 170, y);
-                            doc.text("GRADO", 305, y);
-                            doc.text("CARRERA", 405, y);
-                            y += 20;
-                            pagina = pagina + 1;
-                            doc.text("PÁGINA " + pagina + " DE " + totalPaginas, 0, 750, { align: "center" });
-                            doc.font('Helvetica', 7);
-                        }
+                        items = 0;
+                        doc.rect(25, y - 20, 550, 15).fill("silver", "#000");
+                        doc.font('Helvetica-Bold', 8).fill('black')
+                        doc.text("CURSO,CAPACIDADES Y SEMINARIOS", 35, y - 15);
+                        doc.font('Helvetica-Bold', 8);
+                        doc.text("FECHA", 45, y);
+                        doc.text("INSTITUCIÓN", 170, y);
+                        doc.text("GRADO", 305, y);
+                        doc.text("CARRERA", 405, y);
+                        y += 20;
+                        pagina = pagina + 1;
+                        doc.text("PÁGINA " + pagina + " DE " + totalPaginas, 0, 750, { align: "center" });
+                        doc.font('Helvetica', 7);
                     }
                 }
+                /* } */
                 for (var h = 0; h < $scope.hojaVida.experienciasLaborales.length; h++) {
                     var experienciaLaboral = $scope.hojaVida.experienciasLaborales[h]
                     if (h == 0) {
@@ -4040,6 +4090,64 @@ angular.module('agil.controladores')
             });
 
 
+        }
+        $scope.listaBancos = function () {
+            var promesa = ListaBancos($scope.usuario.id_empresa)
+            $scope.arregloBancosUnion = ""
+            $scope.arregloBancosMsc = ""
+
+            var arregloCuentaBanco = []
+            promesa.then(function (dato) {
+                $scope.datosBancos = dato
+                $scope.bancos = []
+
+                dato.forEach(function (banco, index, array) {
+                    /*  if (banco.nombre == 'Banco Unión') {
+                         if ($scope.arregloBancosUnion == "") {
+                             $scope.arregloBancosUnion = banco
+                             $scope.arregloBancosUnion.arregloCuentaBanco=[]
+                         }
+                         $scope.arregloBancosUnion.arregloCuentaBanco.push(banco)
+                     }
+                     if (banco.nombre == 'Banco Mercantil Santa Cruz') {
+                         if ($scope.arregloBancosMsc == "") {
+                             $scope.arregloBancosMsc = banco
+                             $scope.arregloBancosMsc.arregloCuentaBanco=[]
+                         }
+                         $scope.arregloBancosMsc.arregloCuentaBanco.push(banco)                      
+                     } */
+                    banco.cuentas = []
+                    if (index == 1) {
+                        $scope.bancos.push(banco)
+                    }
+                    var bandera = false
+                    for (let i = 0; i < $scope.bancos.length; i++) {
+                        var banco2 = $scope.bancos[i]
+                        if (banco2.nombre == banco.nombre) {
+                            bandera = true
+                        }
+                        if (i === ($scope.bancos.length - 1)) {
+                            if (bandera == false) {
+                                $scope.bancos.push(banco)
+
+                            }
+                        }
+                    }
+                    if (index === (array.length - 1)) {
+                        dato.forEach(function (banco, index, array) {
+                            for (let i = 0; i < $scope.bancos.length; i++) {
+                                var banco2 = $scope.bancos[i]
+                                if (banco2.nombre == banco.nombre) {
+                                    bandera = true
+                                    banco2.cuentas.push(banco)
+                                    console.log(banco2)
+                                    i = $scope.bancos.length
+                                }
+                            }
+                        })
+                    }
+                });
+            })
         }
         //fin anticipos
 

@@ -1343,7 +1343,11 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 			var sucursal = $.grep($scope.sucursales, function (e) { return e.id == idSucursal; })[0];
 			$scope.almacenes = sucursal.almacenes;
 		}
-
+		$scope.despachoSortColumn=function(propertyName,tipo){
+			$scope.reverse = ($scope.propertyName === propertyName) ? !$scope.reverse : false;
+			$scope.propertyName = propertyName;
+			$scope.propertyNameTipo = tipo;
+		}
 		$scope.verificarDespachos = function (idEmpresa) {
 			//blockUI.start();
 			var filtro = { inicio: 0, fin: 0, razon_social: 0, empleado: 0, inicio2: 0, fin2: 0 }

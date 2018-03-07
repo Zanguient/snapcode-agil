@@ -174,6 +174,7 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, forEach, j
 		.put(function (req, res) {
 			sequelize.transaction(function (t) {
 				var promises = [];
+				var a=0
 				req.body.detalles_despacho.forEach(function (detalle_despacho, index, array) {
 					promises.push(Producto.find({
 						include: [{
@@ -228,7 +229,8 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, forEach, j
 												}
 											}, { transaction: t }).then(function (SucursalEncontrada) {
 												var numero = 0;
-												numero = SucursalEncontrada.despacho_correlativo
+												numero = SucursalEncontrada.despacho_correlativo+a
+												a++
 												return GtmDespachoDetalle.create({
 													cantidad_despacho: detalle_despacho.cantidad_despacho2,
 													saldo: detalle_despacho.saldo2,
@@ -247,7 +249,7 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, forEach, j
 													servicio_transporte: detalle_despacho.servicio_transporte,
 													numero_correlativo: numero
 												}, { transaction: t }).then(function (detalleDespachoCreado) {
-													SucursalEncontrada.despacho_correlativo = SucursalEncontrada.despacho_correlativo + 1
+													SucursalEncontrada.despacho_correlativo = SucursalEncontrada.despacho_correlativo +a
 													return Sucursal.update({
 														despacho_correlativo: SucursalEncontrada.despacho_correlativo
 													}, {

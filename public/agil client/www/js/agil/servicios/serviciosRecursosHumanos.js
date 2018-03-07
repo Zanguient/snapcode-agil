@@ -381,7 +381,7 @@ angular.module('agil.servicios')
 	});
 })
 .factory('CapacidadesEmpleado', function ($resource) {
-    return $resource(restServer + "recurso-humanos/capacidades/hoja-vida/:id_hoja_vida/inicio/:inicio/fin/:fin",null,
+    return $resource(restServer + "recurso-humanos/capacidades/hoja-vida/:id_hoja_vida/inicio/:inicio/fin/:fin/tipo/:tipo",null,
         {
             'update': { method: 'PUT' }
         });
@@ -389,7 +389,7 @@ angular.module('agil.servicios')
 .factory('DatosCapacidadesImpresion', ['CapacidadesEmpleado', '$q', function (CapacidadesEmpleado, $q) {
     var res = function (filtro,idhojaVida) {
         var delay = $q.defer();
-        CapacidadesEmpleado.get({id_hoja_vida:idhojaVida,inicio:filtro.inicio,fin:filtro.fin}, function (entidad) {
+        CapacidadesEmpleado.get({id_hoja_vida:idhojaVida,inicio:filtro.inicio,fin:filtro.fin,tipo:filtro.tipo}, function (entidad) {
             delay.resolve(entidad);
         }, function (error) {
             delay.reject(error);

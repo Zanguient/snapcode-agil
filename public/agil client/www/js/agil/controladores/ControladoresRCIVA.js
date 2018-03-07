@@ -421,6 +421,41 @@ angular.module('agil.controladores')
         $scope.abrirPopup($scope.idModalFormulario110);
     }
 
+    $scope.generarExcelFormulario110 = function (planillas) {
+        var data = [["CODIGO", "NOMBRE COMPLETO", "MONTO DECLARADO", "IVA CF", "NUMERO DE FACTURAS"]];
+        if (planillas) {
+            for (var i = 0; i < planillas.RecursosHumanosEmpleados.length; i++) {
+                var columns = [];
+                columns.push(planillas.RecursosHumanosEmpleados[i].codigo);
+                columns.push(planillas.RecursosHumanosEmpleados[i].persona.nombre_completo);
+                columns.push(0);
+                columns.push(0);
+                columns.push(0);
+                data.push(columns);
+            }
+        }
+
+        var ws_name = "SheetJS";
+        var wb = new Workbook(), ws = sheet_from_array_of_arrays(data);
+        // ancho de las columnas
+        var wscols = [
+            {wch:12},
+            {wch:25},
+            {wch:17},
+            {wch:10},
+            {wch:20}
+        ];
+
+        ws['!cols'] = wscols;
+        /* add worksheet to workbook */
+        wb.SheetNames.push(ws_name);
+        wb.Sheets[ws_name] = ws;
+        var wbout = XLSX.write(wb, { bookType: 'xlsx', bookSST: true, type: 'binary' });
+        saveAs(new Blob([s2ab(wbout)], { type: "application/octet-stream" }), "datos_formulario11o.xlsx");
+        blockUI.stop();
+
+    }
+
     $scope.subirExcelFormulario110 = function (event) {
         var files = event.target.files;
         var i, f;
@@ -433,32 +468,43 @@ angular.module('agil.controladores')
 
                 var workbook = XLSX.read(data, { type: 'binary' });
                 var first_sheet_name = workbook.SheetNames[0];
-                console.log("first_sheet_name ============ ", first_sheet_name);
                 var row = 2, i = 0;
                 var worksheet = workbook.Sheets[first_sheet_name];
-                var clientes = [];
-                // do {
-                //     var cliente = {};
-                //     cliente.codigo = worksheet['A' + row] != undefined && worksheet['A' + row] != "" ? worksheet['A' + row].v.toString() : null;
-                //     cliente.razon_social = worksheet['B' + row] != undefined && worksheet['B' + row] != "" ? worksheet['B' + row].v.toString() : null;
-                //     cliente.nit = worksheet['C' + row] != undefined && worksheet['C' + row] != "" ? worksheet['C' + row].v.toString() : null;
-                //     cliente.direccion = worksheet['D' + row] != undefined && worksheet['D' + row] != "" ? worksheet['D' + row].v.toString() : null;
-                //     cliente.telefono1 = worksheet['E' + row] != undefined && worksheet['E' + row] != "" ? worksheet['E' + row].v.toString() : null;
-                //     cliente.telefono2 = worksheet['F' + row] != undefined && worksheet['F' + row] != "" ? worksheet['F' + row].v.toString() : null;
-                //     cliente.telefono3 = worksheet['G' + row] != undefined && worksheet['G' + row] != "" ? worksheet['G' + row].v.toString() : null;
-                //     cliente.contacto = worksheet['H' + row] != undefined && worksheet['H' + row] != "" ? worksheet['H' + row].v.toString() : null;
-                //     cliente.ubicacion_geografica = worksheet['I' + row] != undefined && worksheet['I' + row] != "" ? worksheet['I' + row].v.toString() : null;
-                //     cliente.rubro = worksheet['J' + row] != undefined && worksheet['J' + row] != "" ? worksheet['J' + row].v.toString() : null;
-                //     cliente.categoria = worksheet['K' + row] != undefined && worksheet['K' + row] != "" ? worksheet['K' + row].v.toString() : null;
-                //     cliente.fecha1 = worksheet['L' + row] != undefined && worksheet['L' + row] != "" ? new Date($scope.convertirFecha(worksheet['L' + row].v.toString())) : null;
-                //     cliente.fecha2 = worksheet['M' + row] != undefined && worksheet['M' + row] != "" ? new Date($scope.convertirFecha(worksheet['M' + row].v.toString())) : null;
-                //     cliente.texto1 = worksheet['N' + row] != undefined && worksheet['N' + row] != "" ? worksheet['N' + row].v.toString() : null;
-                //     cliente.texto2 = worksheet['O' + row] != undefined && worksheet['O' + row] != "" ? worksheet['O' + row].v.toString() : null;
-                //     clientes.push(cliente);
-                //     row++;
-                //     i++;
-                // } while (worksheet['A' + row] != undefined);
-                // $scope.guardarClientes(clientes);
+
+                function getSelectedIndex(codigo){
+                    for(var i=0; i<$scope.planilla.RecursosHumanosEmpleados.length; i++)
+                        if($scope.planilla.RecursosHumanosEmpleados[i].codigo==codigo)
+                            return i;
+                        return -1;  
+                };
+
+                $scope.selectEdit = function(empleado){
+                    var index = getSelectedIndex(empleado.codigo);
+                    $scope.planilla.RecursosHumanosEmpleados[index].ivaCF = empleado.ivaCF;
+                    $scope.planilla.RecursosHumanosEmpleados[index].montoDeclarado = empleado.montoDeclarado;
+                    $scope.planilla.RecursosHumanosEmpleados[index].muneroFacturas = empleado.muneroFacturas;
+                    // $scope.planilla.RecursosHumanosEmpleados[index].f110 = empleado.ivaCF;
+
+                    $scope.calcularRCIVA2($scope.planilla.RecursosHumanosEmpleados[index], empleado);
+                };
+                
+                // para modificar las columnas de los empleados en su planilla ================
+                do {
+                    var empleado = {};
+                    empleado.codigo = worksheet['A' + row] != undefined && worksheet['A' + row] != "" ? worksheet['A' + row].v.toString() : null;
+                    empleado.nombre_completo = worksheet['B' + row] != undefined && worksheet['B' + row] != "" ? worksheet['B' + row].v.toString() : null;
+                    empleado.montoDeclarado = worksheet['C' + row] != undefined && worksheet['C' + row] != "" ? Number(worksheet['C' + row].v) : null;
+                    empleado.ivaCF = worksheet['D' + row] != undefined && worksheet['D' + row] != "" ? Number(worksheet['D' + row].v) : null;
+                    empleado.muneroFacturas = worksheet['E' + row] != undefined && worksheet['E' + row] != "" ? Number(worksheet['E' + row].v) : null;
+       
+                    $scope.selectEdit(empleado);
+
+                    row++;
+                    i++;
+                } while (worksheet['A' + row] != undefined);
+                
+                $scope.sumarTotales($scope.planilla);
+                $scope.cerrarDialogFormularioGeneral110();
                 blockUI.stop();
             };
             reader.readAsBinaryString(f);

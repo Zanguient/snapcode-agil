@@ -49,58 +49,62 @@
 			<fieldset>
 				<legend>Filtro Pedidos</legend>
 				<div>
-					
-						<div class="form-row col-sm-6 col-md-6 col-lg-6">
-							<div class="form-group col-sm-4">
-								<label for="codigo">desde</label>
-								<input ng-update-hidden class="form-control date-picker" data-date-format="dd/mm/yyyy" type="text" id="filtroCodigo" ng-model="filtroDes.inicio" placeholder="" ng-change="filtrarDetalleDespachos(filtroDes)"/>
-							</div>
-							<div class="form-group col-sm-4">
-								<label for="nombre">hasta</label>
-								<input ng-update-hidden class="form-control date-picker" data-date-format="dd/mm/yyyy" type="text" id="filtroNombre" ng-model="filtroDes.fin" placeholder="" ng-change="filtrarDetalleDespachos(filtroDes)"/>
-							</div>
-							<div class="form-group col-sm-4">
-								<button ng-click="filtrarDetalleDespachos(filtroDes)" type="button" class="btn-primary btn btn-app btn-xs" >
-									<i class="ace-icon fa fa-search align-top bigger-125"></i>
-									BUSCAR
-								</button>								
-							</div>
-							<div class="form-group col-sm-4">
-								<label for="codigo">Vendedor</label>
-								<input ng-enter="filtrarDetalleDespachos(filtroDes)" type="text" id="filtroVendedorD" ng-model="filtroDes.empleado" placeholder="" />
-								
-							</div>
-							<div class="form-group col-sm-4">
-								<label for="nombre">Cliente</label>
-								<input ng-enter="filtrarDetalleDespachos(filtroDes)" type="text" id="filtroNombreD" ng-model="filtroDes.razon_social" placeholder="" />
-							</div>
-							<div class="form-group col-sm-4">									
-									<button type="button" class="btn btn-app btn-danger btn-xs" ng-click="imprimirPdfDespachosALerta()">
-										<i class="ace-icon fa fa-print bigger-160"></i>
-										PDF
-									</button>
-									<button type="button" class="btn btn-app btn-success btn-xs" ng-click="imprimirExelDespachosALerta()">
-										<i class="ace-icon fa fa-print bigger-160"></i>
-										EXCEL
-									</button>
-								</div>
+
+					<div class="form-row col-sm-6 col-md-6 col-lg-6">
+						<div class="form-group col-sm-4">
+							<label for="codigo">desde</label>
+							<input ng-update-hidden class="form-control date-picker" data-date-format="dd/mm/yyyy" type="text" id="filtroCodigo" ng-model="filtroDes.inicio"
+							 placeholder="" ng-change="filtrarDetalleDespachos(filtroDes)" />
 						</div>
-					
-						<div class="col-sm-6 col-md-6 col-lg-6">
-							<!-- Trasportistas -->
-							<div style="height: 150px ;max-height:150px ;overflow-y: scroll;overflow-x: hidden;border:1px solid gray;" id="style-7">
-								<div class="row" ng-repeat="transportista in gtm_transportistas" style="padding-left:30px">
-									<span>{{transportista.persona.nombre_completo}}</span>
-									<span>
-										<b>Capacidad:</b> {{transportista.capacidad}}</span>
-									<span>
-										<b>Total Carga:</b> {{calcularTotalCarga(transportista)}}</span>
-									<span style="color:red">
-										<b>Faltante:</b> {{transportista.capacidad-calcularTotalCarga(transportista)}}</span>
-								</div>
+						<div class="form-group col-sm-4">
+							<label for="nombre">hasta</label>
+							<input ng-update-hidden class="form-control date-picker" data-date-format="dd/mm/yyyy" type="text" id="filtroNombre" ng-model="filtroDes.fin"
+							 placeholder="" ng-change="filtrarDetalleDespachos(filtroDes)" />
+						</div>
+						<div class="form-group col-sm-4">
+							<button ng-click="filtrarDetalleDespachos(filtroDes)" type="button" class="btn-primary btn btn-app btn-xs">
+								<i class="ace-icon fa fa-search align-top bigger-125"></i>
+								BUSCAR
+							</button>
+						</div>
+						<div class="form-group col-sm-4">
+							<label for="codigo">Vendedor</label>
+							<input ng-enter="filtrarDetalleDespachos(filtroDes)" type="text" id="filtroVendedorD" ng-model="filtroDes.empleado" placeholder=""
+							/>
+
+						</div>
+						<div class="form-group col-sm-4">
+							<label for="nombre">Cliente</label>
+							<input ng-enter="filtrarDetalleDespachos(filtroDes)" type="text" id="filtroNombreD" ng-model="filtroDes.razon_social" placeholder=""
+							/>
+						</div>
+						<div class="form-group col-sm-4">
+							<button type="button" class="btn btn-app btn-danger btn-xs" ng-click="imprimirPdfDespachosALerta()">
+								<i class="ace-icon fa fa-print bigger-160"></i>
+								PDF
+							</button>
+							<button type="button" class="btn btn-app btn-success btn-xs" ng-click="imprimirExelDespachosALerta()">
+								<i class="ace-icon fa fa-print bigger-160"></i>
+								EXCEL
+							</button>
+						</div>
+					</div>
+
+					<div class="col-sm-6 col-md-6 col-lg-6">
+						<!-- Trasportistas -->
+						<div style="height: 150px ;max-height:150px ;overflow-y: scroll;overflow-x: hidden;border:1px solid gray;" id="style-7">
+							<div class="row" ng-repeat="transportista in gtm_transportistas" style="padding-left:30px">
+								<span>{{transportista.persona.nombre_completo}}</span>
+								<span>
+									<b>Capacidad:</b> {{transportista.capacidad}}</span>
+								<span>
+									<b>Total Carga:</b> {{calcularTotalCarga(transportista)}}</span>
+								<span style="color:red">
+									<b>Faltante:</b> {{transportista.capacidad-calcularTotalCarga(transportista)}}</span>
 							</div>
 						</div>
-					
+					</div>
+
 				</div>
 		</div>
 		<div class="table-fixed-header">
@@ -115,9 +119,23 @@
 							</label>
 						</th>
 						<th>Nº</th>
-						<th>Vendedor</th>
-						<th>Cliente</th>
-						<th>Direccion</th>
+						<th>
+							<a href="javascript:void(0)" ng-click="despachoSortColumn('nombre_completo','vendedor')">Vendedor
+								<span id="Extención" class="sort fa fa-sort icon-only"></span>
+							</a>
+						</th>
+						<th>
+							<a href="javascript:void(0)" ng-click="despachoSortColumn('razon_social','cliente')">Cliente
+								<span id="Extención" class="sort fa fa-sort icon-only"></span>
+							</a>
+						</th>
+						<th>
+							<a href="javascript:void(0)" ng-click="despachoSortColumn('direccion','destino')">Direccion
+								<span id="Extención" class="sort fa fa-sort icon-only"></span>
+							</a>
+
+						</th>
+						<th>Destino</th>
 						<th>Fecha</th>
 						<th>Telefono</th>
 						<th>Producto</th>
@@ -133,7 +151,7 @@
 					</tr>
 				</thead>
 				<tbody>
-					<tr ng-repeat="gtm_detalle_despacho in gtm_detalles_despacho">
+					<tr ng-repeat="gtm_detalle_despacho in gtm_detalles_despacho | orderObjectBy:propertyName:reverse:propertyNameTipo">
 						<td class="center">
 							<label class="pos-rel">
 								<input type="checkbox" class="ace" ng-change="cambiarSeleccionDetalleDespacho(gtm_detalle_despacho)" ng-model="gtm_detalle_despacho.seleccionado"
@@ -145,6 +163,7 @@
 						<td>{{gtm_detalle_despacho.despacho.usuario.persona.nombre_completo}}</td>
 						<td>{{gtm_detalle_despacho.despacho.cliente.razon_social}}</td>
 						<td>{{gtm_detalle_despacho.despacho.destino.direccion}}</td>
+						<td>{{gtm_detalle_despacho.despacho.destino.destino}}</td>
 						<td>{{gtm_detalle_despacho.despacho.fecha | date:"dd/MM/yyyy"}}</td>
 						<td>{{gtm_detalle_despacho.despacho.cliente.telefono1}}</td>
 						<td>{{gtm_detalle_despacho.producto.nombre}}</td>
@@ -152,7 +171,7 @@
 						<td>{{gtm_detalle_despacho.cantidad_despacho}}</td>
 						<td>{{gtm_detalle_despacho.servicio_transporte}}</td>
 						<td>
-							<input style="width: 80px"  required max="{{gtm_detalle_despacho.saldo}}" ng-change="calcularSaldoDespacho(gtm_detalle_despacho)"
+							<input style="width: 80px" required max="{{gtm_detalle_despacho.saldo}}" ng-change="calcularSaldoDespacho(gtm_detalle_despacho)"
 							 ng-required="gtm_detalle_despacho.seleccionado" type="number" step="0.001" ng-model="gtm_detalle_despacho.cantidad_despacho2">
 						</td>
 						<td>{{gtm_detalle_despacho.saldo2}}</td>

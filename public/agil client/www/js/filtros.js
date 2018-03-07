@@ -44,6 +44,34 @@ angular.module('agil.filtros', [])
             }
         };
     })
+    .filter('orderObjectBy', function() {
+        return function(items, field,reverse,tipo) {
+          var filtered = [];
+          angular.forEach(items, function(item) {
+            filtered.push(item);
+          });
+          filtered.sort(function /* (a, b) { */
+            (a, b) {
+                if(tipo=="cliente"){
+                    return (reverse)?(a.despacho.cliente[field] > b.despacho.cliente[field])? 1:(a.despacho.cliente[field] < b.despacho.cliente[field])?-1 :0:(a.despacho.cliente[field] > b.despacho.cliente[field])? -1:(a.despacho.cliente[field] < b.despacho.cliente[field])?1 :0
+                }else if(tipo=="vendedor"){
+                    return (reverse)?(a.despacho.usuario.persona[field] > b.despacho.usuario.persona[field])? 1:(a.despacho.usuario.persona[field] < b.despacho.usuario.persona[field])?-1 :0:(a.despacho.usuario.persona[field] > b.despacho.usuario.persona[field])? -1:(a.despacho.usuario.persona[field] < b.despacho.usuario.persona[field])?1 :0
+                }else if(tipo=="destino"){
+                    return (reverse)?(a.despacho.destino[field] > b.despacho.destino[field])? 1:(a.despacho.destino[field] < b.despacho.destino[field])?-1 :0:(a.despacho.destino[field] > b.despacho.destino[field])? -1:(a.despacho.destino[field] < b.despacho.destino[field])?1 :0
+                }else{
+                    return 0;
+                }
+              
+              /* } */
+           /*  return (a[field] > b[field] ? -1 : 1); */
+          });
+          /* items.sort(function (a, b) {
+            return a.localeCompare(b);
+          }); */
+          //if(reverse) filtered.reverse();
+          return filtered;
+        };
+      });
 var uniqueItems = function (data, key) {
     var result = [];
     for (var i = 0; i < data.length; i++) {
@@ -54,3 +82,5 @@ var uniqueItems = function (data, key) {
     }
     return result;
 }
+
+  
