@@ -1830,7 +1830,7 @@ angular.module('agil.controladores')
 
 		$scope.agregarDetalleVentaPanel = function (producto) {
 			console.log("producto sssssssssss ", producto);
-			if (producto.activar_inventario) {
+			//if (producto.activar_inventario) {
 				var detalleVenta;
 				$scope.cantidadInventario = 0;
 				if (producto.activar_inventario) {
@@ -1881,7 +1881,7 @@ angular.module('agil.controladores')
 					$scope.calcularImporteDetalleVenta(detalleVenta);
 				}
 				// para disminuir en panel de los productos ========
-				producto.inventario_disponible = $scope.cantidadInventario-detalleVenta.cantidad;
+				
 
 				$scope.sumarTotal();
 				$scope.sumarTotalImporte();
@@ -1897,9 +1897,12 @@ angular.module('agil.controladores')
 				// 	aplicarSwiper(4,3,true,2);
 				// },5);
 				$localStorage.productosProcesados = $scope.productosProcesados;
-			}else{
-				$scope.mostrarMensaje('¡No esta activado el inventario para este producto!');
+			//}else{
+				//$scope.mostrarMensaje('¡No esta activado el inventario para este producto!');
 
+			//}
+			if (producto.activar_inventario) {
+				producto.inventario_disponible = $scope.cantidadInventario-detalleVenta.cantidad;
 			}
 
 			// ===== fin rankin ============================//
