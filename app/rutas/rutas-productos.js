@@ -472,7 +472,7 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 		.get(function (req, res) {
 			Producto.findAll({
 				where: { id_empresa: req.params.id_empresa, publicar_panel: true },
-				include: [{ model: Inventario, as: 'inventarios', where: { id_almacen: req.params.id_almacen, cantidad: { $gte: 0 } }, required: true },
+				include: [{ model: Inventario, as: 'inventarios', where: { id_almacen: req.params.id_almacen, cantidad: { $gte: 0 } }, required: false },
 				{ model: Clase, as: 'tipoProducto' },
 				{
 					model: ProductoBase, as: 'productosBase',

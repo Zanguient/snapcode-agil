@@ -1830,34 +1830,45 @@ angular.module('agil.controladores')
 
 		$scope.agregarDetalleVentaPanel = function (producto) {
 			console.log("producto sssssssssss ", producto);
-
-			var detalleVenta;
-			$scope.cantidadInventario = 0;
 			if (producto.activar_inventario) {
-				for (var i = 0; i < producto.inventarios.length; i++) {
-					$scope.cantidadInventario = $scope.cantidadInventario + producto.inventarios[i].cantidad;
+				var detalleVenta;
+				$scope.cantidadInventario = 0;
+				if (producto.activar_inventario) {
+					for (var i = 0; i < producto.inventarios.length; i++) {
+						$scope.cantidadInventario = $scope.cantidadInventario + producto.inventarios[i].cantidad;
+					}
 				}
-			}
-			var j = 0, encontrado = false;
-			while (j < $scope.venta.detallesVenta.length && !encontrado) {
-				if (($scope.venta.detallesVenta[j].producto.id == producto.id)) {
-					if (producto.activar_inventario) {
-						if (($scope.venta.detallesVenta[j].cantidad + 1) <= $scope.cantidadInventario) {
+				var j = 0, encontrado = false;
+				while (j < $scope.venta.detallesVenta.length && !encontrado) {
+					if (($scope.venta.detallesVenta[j].producto.id == producto.id)) {
+						if (producto.activar_inventario) {
+							if (($scope.venta.detallesVenta[j].cantidad + 1) <= $scope.cantidadInventario) {
+								$scope.venta.detallesVenta[j].cantidad = $scope.venta.detallesVenta[j].cantidad + 1;
+							} else {
+								$scope.mostrarMensaje('¡Cantidad de inventario insuficiente, inventario disponible: ' + $scope.cantidadInventario + '!');
+							}
+						} else {
 							$scope.venta.detallesVenta[j].cantidad = $scope.venta.detallesVenta[j].cantidad + 1;
+						}
+						encontrado = true;
+						detalleVenta = $scope.venta.detallesVenta[j];
+					}
+					j++;
+				}
+				if (!encontrado) {
+					if (producto.activar_inventario) {
+						if (1 <= $scope.cantidadInventario) {
+							detalleVenta = {
+								producto: producto, precio_unitario: producto.precio_unitario,
+								inventario_disponible: $scope.cantidadInventario, costos: producto.inventarios,
+								cantidad: 1, descuento: producto.descuento, tipo_descuento: (producto.descuento > 0 ? true : false), recargo: 0, ice: 0, excento: 0, tipo_recargo: false
+							};
+							$scope.venta.detallesVenta.push(detalleVenta);
+							$scope.calcularImporteDetalleVenta(detalleVenta);
 						} else {
 							$scope.mostrarMensaje('¡Cantidad de inventario insuficiente, inventario disponible: ' + $scope.cantidadInventario + '!');
 						}
 					} else {
-						$scope.venta.detallesVenta[j].cantidad = $scope.venta.detallesVenta[j].cantidad + 1;
-					}
-					encontrado = true;
-					detalleVenta = $scope.venta.detallesVenta[j];
-				}
-				j++;
-			}
-			if (!encontrado) {
-				if (producto.activar_inventario) {
-					if (1 <= $scope.cantidadInventario) {
 						detalleVenta = {
 							producto: producto, precio_unitario: producto.precio_unitario,
 							inventario_disponible: $scope.cantidadInventario, costos: producto.inventarios,
@@ -1865,38 +1876,31 @@ angular.module('agil.controladores')
 						};
 						$scope.venta.detallesVenta.push(detalleVenta);
 						$scope.calcularImporteDetalleVenta(detalleVenta);
-					} else {
-						$scope.mostrarMensaje('¡Cantidad de inventario insuficiente, inventario disponible: ' + $scope.cantidadInventario + '!');
 					}
 				} else {
-					detalleVenta = {
-						producto: producto, precio_unitario: producto.precio_unitario,
-						inventario_disponible: $scope.cantidadInventario, costos: producto.inventarios,
-						cantidad: 1, descuento: producto.descuento, tipo_descuento: (producto.descuento > 0 ? true : false), recargo: 0, ice: 0, excento: 0, tipo_recargo: false
-					};
-					$scope.venta.detallesVenta.push(detalleVenta);
 					$scope.calcularImporteDetalleVenta(detalleVenta);
 				}
-			} else {
-				$scope.calcularImporteDetalleVenta(detalleVenta);
+				// para disminuir en panel de los productos ========
+				producto.inventario_disponible = $scope.cantidadInventario-detalleVenta.cantidad;
+
+				$scope.sumarTotal();
+				$scope.sumarTotalImporte();
+				$scope.calcularSaldo();
+				$scope.capturarInteraccion();
+				// ========= para rankin de vendidos =====================//
+				producto.rankin += 1;
+
+				var indice = $scope.productosProcesados.indexOf(producto);
+				$scope.productosProcesados[indice] = producto;
+
+				// setTimeout(function(){
+				// 	aplicarSwiper(4,3,true,2);
+				// },5);
+				$localStorage.productosProcesados = $scope.productosProcesados;
+			}else{
+				$scope.mostrarMensaje('¡No esta activado el inventario para este producto!');
+
 			}
-			// para disminuir en panel de los productos ========
-			producto.inventario_disponible = $scope.cantidadInventario-detalleVenta.cantidad;
-
-			$scope.sumarTotal();
-			$scope.sumarTotalImporte();
-			$scope.calcularSaldo();
-			$scope.capturarInteraccion();
-			// ========= para rankin de vendidos =====================//
-			producto.rankin += 1;
-
-			var indice = $scope.productosProcesados.indexOf(producto);
-			$scope.productosProcesados[indice] = producto;
-
-			// setTimeout(function(){
-			// 	aplicarSwiper(4,3,true,2);
-			// },5);
-			$localStorage.productosProcesados = $scope.productosProcesados;
 
 			// ===== fin rankin ============================//
 		}
