@@ -395,11 +395,7 @@ angular.module('agil.controladores')
             doc.text(gtm_despacho.despacho.cliente.codigo, 510, y + 80);
             var textoSap = ""
             doc.text(gtm_despacho.despacho.cliente.razon_social, 80, y + 90);
-            if (gtm_despacho.despacho.cliente_razon !== null && gtm_despacho.despacho.cliente_razon !== undefined) {
-                textoSap = gtm_despacho.despacho.cliente_razon.codigo_sap
-                doc.text(gtm_despacho.despacho.cliente_razon.razon_social, 100, y + 110);
-            }
-            doc.text(textoSap, 510, y + 90, { width: 80 })
+          
             var ydesc = y + 90;
 
             doc.font('Helvetica-Bold', 8);
@@ -426,12 +422,19 @@ angular.module('agil.controladores')
             doc.text("Importe", 520, 90 + yCabecera);
             doc.text("Clientes:", 40, y + 90);
             doc.text("Destino Mercaderia:", 40, y + 100);
-            var texto=gtm_despacho.despacho.destino.direccion + " " + gtm_despacho.despacho.destino.destino+"222222222222222222222222222222"
+            var texto=gtm_despacho.despacho.destino.direccion + " " + gtm_despacho.despacho.destino.destino
             var a =0;
             if(texto.length>73){
                 a=10;
             }
             doc.text("Nombre Fact:", 40, y + 110+a);
+            doc.font('Helvetica', 8);
+            if (gtm_despacho.despacho.cliente_razon !== null && gtm_despacho.despacho.cliente_razon !== undefined) {
+                textoSap = gtm_despacho.despacho.cliente_razon.codigo_sap
+                doc.text(gtm_despacho.despacho.cliente_razon.razon_social, 100, y + 110+a);
+            }
+            doc.text(textoSap, 510, y+90, { width: 80 })
+            doc.font('Helvetica-Bold', 8);
             doc.text("CI/NIT:", 40, y + 120+a);
             doc.text("Teléfono:", 200, y + 120+a);
             doc.text("Dirección:", 40, y + 130+a);

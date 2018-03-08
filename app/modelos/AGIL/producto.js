@@ -103,7 +103,15 @@ module.exports=function(sequelize,Sequelize){
 	  anio:{
 		type: Sequelize.STRING,
 		field: 'anio'  
-	  }
+		},
+		rango_positivo: {
+			type: Sequelize.DECIMAL(20,4),
+			field: 'rango_positivo'
+			},
+			rango_negativo: {
+			type: Sequelize.DECIMAL(20,4),
+			field: 'rango_negativo'
+			},
 	}, {
 	  freezeTableName: true 
 	});

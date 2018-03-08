@@ -585,7 +585,7 @@ function ejecutarScriptsUsuario(idPopupEdicion, idImagen, idContenedorEdicion, i
 }
 
 function ejecutarScriptsEmpresa(idPopupEdicion, idImagen, idContenedorEdicion, idPopupVista, idContenedorVista, idPopupEliminacion) {
-	crearPopup(idPopupEdicion, "60%", 710);
+	crearPopup(idPopupEdicion, "60%", "auto");
 	crearPopup(idPopupVista, "60%", 710);
 	aplicarWizardFormulario(idPopupEdicion, idContenedorEdicion);
 	aplicarWizardFormulario(idPopupVista, idContenedorVista);

@@ -34,17 +34,57 @@
 							<th class="center">
 								Nº
 							</th>
-							<th ng-if="usuario.empresa.usar_panel" class="center"><a href="javascript:void(0)" ng-click="paginator.sortColumn('publicar_panel')">¿Publicado Panel? <span id="publicar_panel" class="sort fa fa-sort icon-only"></span></a></th>
-							<th class="center"><a href="javascript:void(0)" ng-click="paginator.sortColumn('activar_inventario')">¿Inventario Activado? <span id="activar_inventario" class="sort fa fa-sort icon-only"></span></a></th>
-							<th class="center"><a href="javascript:void(0)" ng-click="paginator.sortColumn('codigo')">Código <span id="codigo" class="sort fa fa-sort icon-only"></span></a></th>
-							<th class="center"><a href="javascript:void(0)" ng-click="paginator.sortColumn('nombre')">Nombre <span id="nombre" class="sort fa fa-sort icon-only"></span></a></th>
+							<th ng-if="usuario.empresa.usar_panel" class="center">
+								<a href="javascript:void(0)" ng-click="paginator.sortColumn('publicar_panel')">¿Publicado Panel?
+									<span id="publicar_panel" class="sort fa fa-sort icon-only"></span>
+								</a>
+							</th>
+							<th class="center">
+								<a href="javascript:void(0)" ng-click="paginator.sortColumn('activar_inventario')">¿Inventario Activado?
+									<span id="activar_inventario" class="sort fa fa-sort icon-only"></span>
+								</a>
+							</th>
+							<th class="center">
+								<a href="javascript:void(0)" ng-click="paginator.sortColumn('codigo')">Código
+									<span id="codigo" class="sort fa fa-sort icon-only"></span>
+								</a>
+							</th>
+							<th class="center">
+								<a href="javascript:void(0)" ng-click="paginator.sortColumn('nombre')">Nombre
+									<span id="nombre" class="sort fa fa-sort icon-only"></span>
+								</a>
+							</th>
 							<th>Imagen</th>
-							<th class="center"><a href="javascript:void(0)" ng-click="paginator.sortColumn('unidad_medida')">Unidad de Medida <span id="unidad_medida" class="sort fa fa-sort icon-only"></span></a></th>
-							<th class="center"><a href="javascript:void(0)" ng-click="paginator.sortColumn('precio_unitario')">Precio Unitario <span id="precio_unitario" class="sort fa fa-sort icon-only"></span></a></th>
-							<th class="center"><a href="javascript:void(0)" ng-click="paginator.sortColumn('inventario_minimo')">Inventario Mínimo <span id="inventario_minimo" class="sort fa fa-sort icon-only"></span></a></th>
-							<th class="center"><a href="javascript:void(0)" ng-click="paginator.sortColumn('descripcion')">Descripcion <span id="descripcion" class="sort fa fa-sort icon-only"></span></a></th>
-							<th class="center"><a href="javascript:void(0)" ng-click="paginator.sortColumn('grupo')">Grupo <span id="grupo" class="sort fa fa-sort icon-only"></span></a></th>
-							<th class="center"><a href="javascript:void(0)" ng-click="paginator.sortColumn('subgrupo')">Subgrupo <span id="subgrupo" class="sort fa fa-sort icon-only"></span></a></th>
+							<th class="center">
+								<a href="javascript:void(0)" ng-click="paginator.sortColumn('unidad_medida')">Unidad de Medida
+									<span id="unidad_medida" class="sort fa fa-sort icon-only"></span>
+								</a>
+							</th>
+							<th class="center">
+								<a href="javascript:void(0)" ng-click="paginator.sortColumn('precio_unitario')">Precio Unitario
+									<span id="precio_unitario" class="sort fa fa-sort icon-only"></span>
+								</a>
+							</th>
+							<th class="center">
+								<a href="javascript:void(0)" ng-click="paginator.sortColumn('inventario_minimo')">Inventario Mínimo
+									<span id="inventario_minimo" class="sort fa fa-sort icon-only"></span>
+								</a>
+							</th>
+							<th class="center">
+								<a href="javascript:void(0)" ng-click="paginator.sortColumn('descripcion')">Descripcion
+									<span id="descripcion" class="sort fa fa-sort icon-only"></span>
+								</a>
+							</th>
+							<th class="center">
+								<a href="javascript:void(0)" ng-click="paginator.sortColumn('grupo')">Grupo
+									<span id="grupo" class="sort fa fa-sort icon-only"></span>
+								</a>
+							</th>
+							<th class="center">
+								<a href="javascript:void(0)" ng-click="paginator.sortColumn('subgrupo')">Subgrupo
+									<span id="subgrupo" class="sort fa fa-sort icon-only"></span>
+								</a>
+							</th>
 							<th>Acciones</th>
 						</tr>
 					</thead>
@@ -54,13 +94,17 @@
 							<td class="center">
 								{{($index+1)+(paginator.itemsPerPage*(paginator.currentPage-1))}}
 							</td>
-							<td ng-if="usuario.empresa.usar_panel"><label>
-									<input ng-change="actualizarProducto(producto)" name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="producto.publicar_panel"/>
+							<td ng-if="usuario.empresa.usar_panel">
+								<label>
+									<input ng-change="actualizarProducto(producto)" name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox"
+									 ng-model="producto.publicar_panel" />
 									<span class="lbl check-descuento"></span>
 								</label>
 							</td>
-							<td><label>
-									<input ng-change="actualizarProducto(producto)" name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="producto.activar_inventario"/>
+							<td>
+								<label>
+									<input ng-change="actualizarProducto(producto)" name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox"
+									 ng-model="producto.activar_inventario" />
 									<span class="lbl check-descuento"></span>
 								</label>
 							</td>
@@ -70,7 +114,9 @@
 							<td>
 								{{producto.nombre}}
 							</td>
-							<td><img src="{{producto.imagen}}" width="50"></td>
+							<td>
+								<img src="{{producto.imagen}}" width="50">
+							</td>
 							<td>{{producto.unidad_medida}}</td>
 							<td>{{producto.precio_unitario | number:2}}</td>
 
@@ -89,60 +135,60 @@
 							<td>
 								<div class="hidden-sm hidden-xs action-buttons">
 									<a class="blue" href="javascript:void(0)" e-disabled="!aplicacion.puede_ver" ng-click="verProducto(producto)">
-									<i class="ace-icon fa fa-search-plus bigger-130"></i>
-								</a>
+										<i class="ace-icon fa fa-search-plus bigger-130"></i>
+									</a>
 
 									<a class="green" href="javascript:void(0)" e-disabled="!aplicacion.puede_modificar" ng-click="modificarProducto(producto)">
-									<i class="ace-icon fa fa-pencil bigger-130"></i>
-								</a>
+										<i class="ace-icon fa fa-pencil bigger-130"></i>
+									</a>
 
 									<a class="red" href="javascript:void(0)" e-disabled="!aplicacion.puede_eliminar" ng-click="mostrarConfirmacionEliminacion(producto)">
-									<i class="ace-icon fa fa-trash-o bigger-130"></i>
-								</a>
+										<i class="ace-icon fa fa-trash-o bigger-130"></i>
+									</a>
 									<a class="orange" href="javascript:void(0)" ng-click="kardexProducto(producto);">
-									<i class="ace-icon fa fa-file-text bigger-130"></i>
-								</a>
+										<i class="ace-icon fa fa-file-text bigger-130"></i>
+									</a>
 								</div>
 
 								<div class="hidden-md hidden-lg">
 									<div class="inline pos-rel">
 										<button class="btn btn-minier btn-yellow dropdown-toggle" data-toggle="dropdown" data-position="auto">
-										<i class="ace-icon fa fa-caret-down icon-only bigger-120"></i>
-									</button>
+											<i class="ace-icon fa fa-caret-down icon-only bigger-120"></i>
+										</button>
 
 										<ul class="dropdown-menu dropdown-only-icon dropdown-yellow dropdown-menu-right dropdown-caret dropdown-close">
 											<li>
 												<a href="javascript:void(0)" e-disabled="!aplicacion.puede_ver" ng-click="verProducto(producto)" class="tooltip-info" data-rel="tooltip"
 												 title="View">
-												<span class="blue">
-													<i class="ace-icon fa fa-search-plus bigger-120"></i>
-												</span>
-											</a>
+													<span class="blue">
+														<i class="ace-icon fa fa-search-plus bigger-120"></i>
+													</span>
+												</a>
 											</li>
 
 											<li>
 												<a href="javascript:void(0)" e-disabled="!aplicacion.puede_modificar" ng-click="modificarProducto(producto)" class="tooltip-success"
 												 data-rel="tooltip" title="Edit">
-												<span class="green">
-													<i class="ace-icon fa fa-pencil-square-o bigger-120"></i>
-												</span>
-											</a>
+													<span class="green">
+														<i class="ace-icon fa fa-pencil-square-o bigger-120"></i>
+													</span>
+												</a>
 											</li>
 
 											<li>
 												<a href="javascript:void(0)" e-disabled="!aplicacion.puede_eliminar" ng-click="mostrarConfirmacionEliminacion(producto)"
 												 class="tooltip-error" data-rel="tooltip" title="Delete">
-												<span class="red">
-													<i class="ace-icon fa fa-trash-o bigger-120"></i>
-												</span>
-											</a>
+													<span class="red">
+														<i class="ace-icon fa fa-trash-o bigger-120"></i>
+													</span>
+												</a>
 											</li>
 											<li>
 												<a href="javascript:void(0)" ng-click="kardexProducto(producto)" class="tooltip-info" data-rel="tooltip" title="View">
-												<span class="orange">
-													<i class="ace-icon fa fa-file-text bigger-120"></i>
-												</span>
-											</a>
+													<span class="orange">
+														<i class="ace-icon fa fa-file-text bigger-120"></i>
+													</span>
+												</a>
 											</li>
 										</ul>
 									</div>
@@ -152,7 +198,7 @@
 					</tbody>
 				</table>
 				<div class="row" ng-include src="'/templates/gral/paginator.html'">
-                </div>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -191,7 +237,10 @@
 					<div class="modal-body step-content">
 						<div class="step-pane active" data-step="1">
 							<div class="form-group">
-								<label class="col-sm-6 control-label no-padding-right" for="codigo">Código <span ng-if="!producto.id">(Último Generado: <b>{{ultimo_codigo}}</b>)</span></label>
+								<label class="col-sm-6 control-label no-padding-right" for="codigo">Código
+									<span ng-if="!producto.id">(Último Generado:
+										<b>{{ultimo_codigo}}</b>)</span>
+								</label>
 
 								<div class="col-sm-6">
 									<input required type="text" id="codigo" ng-model="producto.codigo" placeholder="Código" class="col-xs-10 col-sm-5" />
@@ -214,12 +263,25 @@
 							</div>
 
 							<div class="space-4"></div>
-
+							<div class="form-group">
+									<div class="col-sm-3"></div>	
+									<div class="col-sm-5"></div>	
+									<div class="col-sm-2">Rango +</div>	
+									<div class="col-sm-2">Rango -</div>	
+								</div>	
 							<div class="form-group">
 								<label class="col-sm-3 control-label no-padding-right" for="precio_unitario">Precio de Venta</label>
 
-								<div class="col-sm-9">
+								<div class="col-sm-5">
 									<input required type="number" step="0.01" id="precio_unitario" ng-model="producto.precio_unitario" placeholder="Precio de Venta"
+									 class="form-control" />
+								</div>
+								<div class="col-sm-2">
+									<input required type="number" step="0.01" id="precio_unitario" ng-model="producto.rango_positivo" placeholder="Rango +"
+									 class="form-control" />
+								</div>
+								<div class="col-sm-2">
+									<input required type="number" step="0.01" id="precio_unitario" ng-model="producto.rango_negativo" placeholder="Rango -"
 									 class="form-control" />
 								</div>
 							</div>
@@ -245,18 +307,19 @@
 								<label class="control-label col-xs-6 no-padding-right" for="panel">¿Publicar Panel?</label>
 								<div class="col-xs-6">
 									<label>
-									<input id="panel" name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="producto.publicar_panel"/>
-									<span class="lbl check-descuento"></span>
-								</label>
+										<input id="panel" name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="producto.publicar_panel"
+										/>
+										<span class="lbl check-descuento"></span>
+									</label>
 								</div>
 							</div>
 							<div class="form-group">
 								<label class="control-label col-xs-6 no-padding-right">¿Activar Inventario?</label>
 								<div class="col-xs-6">
 									<label>
-									<input name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="producto.activar_inventario"/>
-									<span class="lbl check-descuento"></span>
-								</label>
+										<input name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="producto.activar_inventario" />
+										<span class="lbl check-descuento"></span>
+									</label>
 								</div>
 							</div>
 							<div class="form-group">
@@ -270,17 +333,15 @@
 							<div class="form-group">
 								<label class="col-sm-3 control-label no-padding-right">Grupo</label>
 								<div class="col-sm-9">
-									<select required name="grupo_producto" id="grupo_producto" ng-model="producto.grupo"
-									 ng-options="grupoProducto as grupoProducto.nombre for grupoProducto in gruposProducto track by grupoProducto.id">
-								</select>
+									<select required name="grupo_producto" id="grupo_producto" ng-model="producto.grupo" ng-options="grupoProducto as grupoProducto.nombre for grupoProducto in gruposProducto track by grupoProducto.id">
+									</select>
 								</div>
 							</div>
 							<div class="form-group">
 								<label class="col-sm-3 control-label no-padding-right">Sub-Grupo</label>
 								<div class="col-sm-9">
-									<select required name="subgrupo_producto" id="subgrupo_producto" ng-model="producto.subgrupo"
-									 ng-options="subgrupoProducto as subgrupoProducto.nombre for subgrupoProducto in subgruposProducto track by subgrupoProducto.id">
-								</select>
+									<select required name="subgrupo_producto" id="subgrupo_producto" ng-model="producto.subgrupo" ng-options="subgrupoProducto as subgrupoProducto.nombre for subgrupoProducto in subgruposProducto track by subgrupoProducto.id">
+									</select>
 								</div>
 							</div>
 							<div class="form-group">
@@ -301,8 +362,7 @@
 							<div class="form-group">
 								<label class="col-sm-3 control-label no-padding-right" for="caresp2">Marca</label>
 								<div class="col-sm-9">
-									<input type="text" id="marca" ng-model="producto.marca" placeholder="Marca" class="form-control"
-									/>
+									<input type="text" id="marca" ng-model="producto.marca" placeholder="Marca" class="form-control" />
 								</div>
 							</div>
 							<div class="form-group">
@@ -338,9 +398,9 @@
 								</div>
 								<div class="col-sm-2">
 									<label>
-									<input name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="producto.descuento_fijo"/>
-									<span class="lbl check-descuento-opcion"></span>
-								</label>
+										<input name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="producto.descuento_fijo" />
+										<span class="lbl check-descuento-opcion"></span>
+									</label>
 								</div>
 							</div>
 						</div>
@@ -350,7 +410,7 @@
 								<div class="col-xs-8 col-sm-4">
 									<select ng-disabled="!usuario.empresa.usar_consumos" required name="tipo_producto" id="tipo_producto" ng-model="producto.tipoProducto"
 									 ng-options="tipoProducto as tipoProducto.nombre for tipoProducto in tipoProductos track by tipoProducto.id">
-								</select>
+									</select>
 								</div>
 							</div>
 							<div class="form-group" ng-if="producto.tipoProducto.nombre_corto!=diccionario.TIPO_PRODUCTO_BASE">
@@ -390,8 +450,8 @@
 											<td>
 												<button ng-disabled="formularioProducto.id_producto.$invalid" id="agregar_detalle_producto" type="submit" ng-click="agregarDetalleProductosBase(productoBase,productoBaseSeleccion.producto)"
 												 class="btn btn-success btn-sm">
-											<i class="ace-icon fa fa-plus bigger-110"></i>
-											</button>
+													<i class="ace-icon fa fa-plus bigger-110"></i>
+												</button>
 											</td>
 
 										</tr>
@@ -445,8 +505,8 @@
 														</td>
 														<td>
 															<a class="red" href="javascript:void(0)" ng-click="eliminarDetalleProductosBase(productoBase)">
-														<i class="ace-icon fa fa-trash-o bigger-130"></i>
-														</a>
+																<i class="ace-icon fa fa-trash-o bigger-130"></i>
+															</a>
 														</td>
 													</tr>
 
@@ -476,7 +536,7 @@
 								<label class="control-label col-xs-6 col-sm-6 no-padding-right">Sucursal</label>
 								<div class="col-xs-6 col-sm-6">
 									<select ng-disabled="!usuario.empresa.usar_mantenimiento" name="sucursal_erp" id="sucursal_erp" ng-model="producto.sucursal_erp"
-										ng-options="sucursal as sucursal.nombre for sucursal in sucursales track by sucursal.id" ng-change="obtenerAlmacenes(producto.sucursal_erp.id)">
+									 ng-options="sucursal as sucursal.nombre for sucursal in sucursales track by sucursal.id" ng-change="obtenerAlmacenes(producto.sucursal_erp.id)">
 									</select>
 								</div>
 							</div>
@@ -484,14 +544,17 @@
 								<label class="control-label col-xs-6 col-sm-6 no-padding-right">Almacen</label>
 								<div class="col-xs-6 col-sm-6">
 									<select ng-disabled="!usuario.empresa.usar_mantenimiento" name="almacen_erp" id="almacen_erp" ng-model="producto.almacenErp"
-										ng-options="almacen as almacen.nombre for almacen in almacenes track by almacen.id">
+									 ng-options="almacen as almacen.nombre for almacen in almacenes track by almacen.id">
 									</select>
 								</div>
 							</div>
 							<div class="form-group">
 								<label class="control-label col-xs-6 col-sm-6 no-padding-right">Cuenta</label>
 								<div class="col-xs-6 col-sm-6">
-									<input ng-disabled="!usuario.empresa.usar_mantenimiento" name="asignarCuenta" ng-keypress="interceptarTecla($event,'cantidad',true)" id="asignarCuenta" type="text" ng-model="producto.cuenta" placeholder="Busqueda..." uib-typeahead="cuenta as (cuenta.codigo+'-'+cuenta.nombre+'-'+cuenta.descripcion+'-'+cuenta.tipoCuenta.nombre) for cuenta in buscarCuentas($viewValue)" typeahead-wait-ms="1000" typeahead-template-url="templates/autocompletar.html" typeahead-show-hint="false" typeahead-min-length="3" typeahead-on-select="establecerCuenta(producto.cuenta)">
+									<input ng-disabled="!usuario.empresa.usar_mantenimiento" name="asignarCuenta" ng-keypress="interceptarTecla($event,'cantidad',true)"
+									 id="asignarCuenta" type="text" ng-model="producto.cuenta" placeholder="Busqueda..." uib-typeahead="cuenta as (cuenta.codigo+'-'+cuenta.nombre+'-'+cuenta.descripcion+'-'+cuenta.tipoCuenta.nombre) for cuenta in buscarCuentas($viewValue)"
+									 typeahead-wait-ms="1000" typeahead-template-url="templates/autocompletar.html" typeahead-show-hint="false" typeahead-min-length="3"
+									 typeahead-on-select="establecerCuenta(producto.cuenta)">
 								</div>
 							</div>
 						</div>
@@ -499,25 +562,25 @@
 							<div class="center">
 								<h4 class="blue">Step 5</h4>
 							</div>
-						</div>		
+						</div>
 					</div>
 				</div>
 
 				<div class="modal-footer wizard-actions">
 					<button class="btn btn-sm btn-prev">
-					<i class="ace-icon fa fa-arrow-left"></i>
-					Anterior
-				</button>
+						<i class="ace-icon fa fa-arrow-left"></i>
+						Anterior
+					</button>
 
 					<button type="submit" id="siguiente" class="btn btn-success btn-sm btn-next" data-last="Finish">
-					Siguiente
-					<i class="ace-icon fa fa-arrow-right icon-on-right"></i>
-				</button>
+						Siguiente
+						<i class="ace-icon fa fa-arrow-right icon-on-right"></i>
+					</button>
 
 					<button type="button" class="btn btn-danger btn-sm pull-left" data-dismiss="modal" ng-click="cerrarPopPupEdicion()">
-					<i class="ace-icon fa fa-times"></i>
-					Cancelar
-				</button>
+						<i class="ace-icon fa fa-times"></i>
+						Cancelar
+					</button>
 				</div>
 			</form>
 		</div>
@@ -560,13 +623,15 @@
 											<label>DESDE</label>&nbsp
 										</td>
 										<td>
-											<input ng-update-hidden class="form-control date-picker" type="text" data-date-format="dd/mm/yyyy" id="fechainicioKadex" ng-model="filtro.fechaInicioTexto" placeholder="Ingrese la fecha inicial" />
+											<input ng-update-hidden class="form-control date-picker" type="text" data-date-format="dd/mm/yyyy" id="fechainicioKadex"
+											 ng-model="filtro.fechaInicioTexto" placeholder="Ingrese la fecha inicial" />
 										</td>
 										<td>
 											<label>HASTA</label>&nbsp
 										</td>
 										<td>
-											<input ng-update-hidden class="form-control date-picker" type="text" data-date-format="dd/mm/yyyy" id="fechafinKadex" ng-model="filtro.fechaFinTexto" placeholder="Ingrese la fecha final" />
+											<input ng-update-hidden class="form-control date-picker" type="text" data-date-format="dd/mm/yyyy" id="fechafinKadex" ng-model="filtro.fechaFinTexto"
+											 placeholder="Ingrese la fecha final" />
 										</td>
 										<td>
 											<label>LOTE</label>&nbsp
@@ -670,8 +735,11 @@
 					<i class="ace-icon fa fa-times"></i>
 					Cancelar
 				</button>
-				<div ALIGN=center><a class="blue" href="javascript:void(0)" ng-click="generarPdfKardexProducto(kardexproduto)"><i class="fa fa-print bigger-280"></i>
-				</a></div>
+				<div ALIGN=center>
+					<a class="blue" href="javascript:void(0)" ng-click="generarPdfKardexProducto(kardexproduto)">
+						<i class="fa fa-print bigger-280"></i>
+					</a>
+				</div>
 			</div>
 
 			</form>
@@ -811,7 +879,8 @@
 
 							<div class="col-sm-9">
 								<label>
-									<input disabled name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="producto.publicar_panel"/>
+									<input disabled name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="producto.publicar_panel"
+									/>
 									<span class="lbl check-descuento"></span>
 								</label>
 							</div>
@@ -842,8 +911,9 @@
 </div>
 
 <div id="dialog-eliminar-producto" title="¿Eliminación de Producto?">
-	<p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>¿Esta seguro de eliminar el producto
-		seleccionado?</p>
+	<p>
+		<span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>¿Esta seguro de eliminar el producto seleccionado?
+	</p>
 	<button type="button" class="btn btn-danger" ng-click="eliminarProducto(producto)">Si</button>
 	<button type="button" class="btn btn-success" ng-click="cerrarConfirmacionEliminacion()">No</button>
 </div>
