@@ -661,3 +661,39 @@ angular.module('agil.servicios')
     };
     return res;
 }])
+.factory('Tr3', function ($resource) {
+    return $resource(restServer + "recursos-humanos/tr3/empresa/:id_empresa",null,
+        {
+            'update': { method: 'PUT' }
+        });
+})
+.factory('GuardarTr3', ['Tr3', '$q', function (Tr3, $q) {
+    var res = function (datos,id_empresa) {
+        var delay = $q.defer();
+        Tr3.save({id_empresa:id_empresa},datos, function (entidad) {
+            delay.resolve(entidad);
+        }, function (error) {
+            delay.reject(error);
+        });
+        return delay.promise;
+    };
+    return res;
+}])
+.factory('ListaTr3', function ($resource) {
+    return $resource(restServer + "recursos-humanos/tr3/empresa/:id_empresa/banco/:nombre",null,
+        {
+            'update': { method: 'PUT' }
+        });
+})
+.factory('ListaTr3Empresa', ['ListaTr3', '$q', function (ListaTr3, $q) {
+    var res = function (id_empresa,nombre) {
+        var delay = $q.defer();
+        ListaTr3.query({id_empresa:id_empresa,nombre:nombre},function (entidad) {
+            delay.resolve(entidad);
+        }, function (error) {
+            delay.reject(error);
+        });
+        return delay.promise;
+    };
+    return res;
+}])

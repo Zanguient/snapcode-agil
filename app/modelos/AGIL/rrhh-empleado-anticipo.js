@@ -27,7 +27,8 @@ module.exports = function (sequelize, Sequelize) {
 		},
 		entregado: {
 			type: Sequelize.BOOLEAN,
-			field: 'entregado'
+			field: 'entregado',
+			defaultValue: false
 		},
 		tope: {
 			type: Sequelize.DECIMAL(20, 4),

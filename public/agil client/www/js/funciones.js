@@ -263,7 +263,7 @@ function ejecutarScriptsRecursosHumanos(idModalPrerequisitos, idModalEmpleado, i
 	idModalHistorialViajes, idModalReporteAusencias, idModalCertificado, idModalInstitucion, idModalRhNuevo, idModalWizardRhNuevo,
 	idImagenUsuario, idEliminarUsuarioRh, idModalWizardRhVista, idModalContenedorRhVista, idModalDialogPrerequisitoNuevo, idEliminarSeguroEmpleado,
 	idEliminarFamiliarEmpleado, idModalHistorialPrerequisito, idModalEditarPrerequisito, idModalDialogConfirmacionEntregaAdelantado, IdEntregaPrerequisito, IdModalVerificarCuenta, idModalImpresionHojaVida, idModalNuevoAnticipoRegularTodos,
-	idModalTr3BancoMsc,idModalTr3BancoUnion) {
+	idModalTr3BancoMsc,idModalTr3BancoUnion,idModalHistorialTr3) {
 	crearPopup(idModalPrerequisitos, "90%", 'auto');
 	crearPopup(idModalEmpleado, "100%", 'auto');
 	aplicarWizardFormulario(idModalEmpleado, idModalwizardContainerEmpleado);
@@ -351,6 +351,7 @@ function ejecutarScriptsRecursosHumanos(idModalPrerequisitos, idModalEmpleado, i
 	crearPopup(idModalNuevoAnticipoRegularTodos, "62%", "auto")
 	crearPopup(idModalTr3BancoMsc, "auto", 'auto');
 	crearPopup(idModalTr3BancoUnion, "auto", 'auto');
+	crearPopup(idModalHistorialTr3, "auto", 'auto');
 	setTimeout(function () {
 		aplicarDatePickers();
 		// aplicarHoras();

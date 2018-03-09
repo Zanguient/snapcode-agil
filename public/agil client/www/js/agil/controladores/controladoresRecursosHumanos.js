@@ -4,7 +4,8 @@ angular.module('agil.controladores')
         FieldViewer, EmpleadoEmpresa, obtenerEmpleadoRh, UsuarioRecursosHUmanosActivo, Prerequisito, ListaDatosPrerequisito, Prerequisitos, ListaPrerequisitosPaciente, ActualizarPrerequisito, UsuarioRecursosHumanosFicha,
         ClasesTipo, Clases, Paises, CrearEmpleadoFicha, EliminarOtroSeguroRh, EliminarFamiliarRh, PrerequisitoPaciente, PrerequisitosHistorial, UsuarioRhHistorialFicha, ObtenerEmpleadoHojaVida, GuardarEmpleadoHojaVida, CrearPrestamo,
         ObtenerListaPrestamo, CrearRolTurno, CrearPagoPrestamo, VerificarUsuarioEmpresa, EditarPrestamo, ListaEmpleadosRrhh, CrearHorasExtra, HistorialHorasExtra, ListaRolTurnos, ValidarCodigoCuentaEmpleado, $timeout, DatosCapacidadesImpresion, NuevoAnticipoEmpleado,
-        ListaAnticiposEmpleado, CrearNuevosAnticiposEmpleados, ActualizarAnticipoEmpleado, NuevaAusenciaEmpleado, HistorialEmpleadoAusencias, HistorialEmpresaEmpleadosAusencias, NuevaVacacionEmpleado, HistorialEmpleadoVacaciones, HistorialEmpresaVacaciones, NuevoFeriado, ListaFeriados, GuardarClasesAusencias, Tipos, ListaBancos, ConfiguracionesVacacion, HistorialGestionesVacacion) {
+        ListaAnticiposEmpleado, CrearNuevosAnticiposEmpleados, ActualizarAnticipoEmpleado, NuevaAusenciaEmpleado, HistorialEmpleadoAusencias, HistorialEmpresaEmpleadosAusencias, NuevaVacacionEmpleado, HistorialEmpleadoVacaciones, HistorialEmpresaVacaciones, NuevoFeriado,
+        ListaFeriados, GuardarClasesAusencias, Tipos, ListaBancos, ConfiguracionesVacacion, HistorialGestionesVacacion, GuardarTr3, ListaTr3Empresa) {
         $scope.usuario = JSON.parse($localStorage.usuario);
         $scope.idModalPrerequisitos = 'dialog-pre-requisitos';
         $scope.idModalEmpleado = 'dialog-empleado';
@@ -92,6 +93,7 @@ angular.module('agil.controladores')
         $scope.idModalNuevoAnticipoRegularTodos = 'dialog-nuevo-anticipo-regular-todos';
         $scope.idModalTr3BancoMsc = 'modal-tr3-banco-msc'
         $scope.idModalTr3BancoUnion = 'modal-tr3-banco-union'
+        $scope.idModalHistorialTr3 = 'modal-historial-tr3'
         $scope.$on('$viewContentLoaded', function () {
             // resaltarPestaña($location.path().substring(1));
             resaltarPestaña($location.path().substring(1));
@@ -116,7 +118,7 @@ angular.module('agil.controladores')
                 $scope.idModalRhNuevo, $scope.idModalWizardRhNuevo, $scope.idImagenUsuario, $scope.idEliminarUsuarioRh, $scope.idModalWizardRhVista,
                 $scope.idModalContenedorRhVista, $scope.idModalDialogPrerequisitoNuevo, $scope.idEliminarSeguroEmpleado, $scope.idEliminarFamiliarEmpleado, $scope.idModalHistorialPrerequisito,
                 $scope.idModalEditarPrerequisito, $scope.idModalDialogConfirmacionEntregaAdelantado, $scope.IdEntregaPrerequisito, $scope.IdModalVerificarCuenta, $scope.idModalImpresionHojaVida, $scope.idModalNuevoAnticipoRegularTodos,
-                $scope.idModalTr3BancoMsc, $scope.idModalTr3BancoUnion);
+                $scope.idModalTr3BancoMsc, $scope.idModalTr3BancoUnion, $scope.idModalHistorialTr3);
             $scope.buscarAplicacion($scope.usuario.aplicacionesUsuario, $location.path().substring(1));
             $scope.obtenerColumnasAplicacion()
             blockUI.stop();
@@ -204,6 +206,7 @@ angular.module('agil.controladores')
             $scope.eliminarPopup($scope.idEliminarUsuarioRh)
             $scope.eliminarPopup($scope.idModalTr3BancoMsc)
             $scope.eliminarPopup($scope.idModalTr3BancoUnion)
+            $scope.eliminarPopup($scope.idModalHistorialTr3)
         });
         $scope.inicio = function () {
             $scope.listYearsAnticipo = $scope.obtenerAnios(2017)
@@ -235,6 +238,18 @@ angular.module('agil.controladores')
             }, $scope.aplicacion.aplicacion.id);
             $scope.fieldViewer.updateObject();
         }
+        $scope.abrirModalHistorialTr3 = function (banco, tipo) {
+            $scope.tipoBanco = tipo
+            var promesa = ListaTr3Empresa($scope.usuario.id_empresa, banco.nombre)
+            promesa.then(function (dato) {
+                $scope.historialTr3 = dato
+                $scope.abrirPopup($scope.idModalHistorialTr3)
+            })
+
+        }
+        $scope.cerrarModalHistorialTr3 = function () {
+            $scope.cerrarPopup($scope.idModalHistorialTr3)
+        }
         $scope.abrirModalTr3BancoMsc = function () {
             $scope.abrirPopup($scope.idModalTr3BancoMsc)
         }
@@ -248,11 +263,14 @@ angular.module('agil.controladores')
             $scope.cerrarPopup($scope.idModalTr3BancoUnion)
         }
         $scope.abrirModalbanco = function (banco) {
+            $scope.tr3 = { anticipos: $scope.anticiposTr3, tipo: "" }
             $scope.datosBanco = banco
             if (banco.nombre == "Banco Mercantil Santa Cruz") {
+                $scope.tr3.tipo = "MSC"
                 $scope.abrirModalTr3BancoMsc()
             }
             if (banco.nombre == "Banco Unión") {
+                $scope.tr3.tipo = "BU"
                 $scope.abrirModalTr3BancoUnion()
             }
         }
@@ -476,7 +494,7 @@ angular.module('agil.controladores')
             $scope.clase = { pais: $scope.ficha.empleado.persona.pais }
             var promesa = ClasesTipo("DEP");
             promesa.then(function (entidad) {
-                $scope.tipo_edicion = entidad
+                $scope.tipo_edicion2 = entidad
                 $scope.abrirPopup($scope.idModalDepartamentoEstado);
             })
 
@@ -489,7 +507,7 @@ angular.module('agil.controladores')
 
             var promesa = ClasesTipo("MUN");
             promesa.then(function (entidad) {
-                $scope.tipo_edicion = entidad
+                $scope.tipo_edicion2 = entidad
                 $scope.abrirPopup($scope.idModalProvincia);
             })
 
@@ -502,7 +520,7 @@ angular.module('agil.controladores')
 
             var promesa = ClasesTipo("LOC");
             promesa.then(function (entidad) {
-                $scope.tipo_edicion = entidad
+                $scope.tipo_edicion2 = entidad
                 $scope.abrirPopup($scope.idModalLocalidad);
             })
 
@@ -743,8 +761,8 @@ angular.module('agil.controladores')
                 sabado: false,
                 inicio_tipo: false,
                 fin_tipo: false,
-                aniosDisponibles:0,
-                historial:null
+                aniosDisponibles: 0,
+                historial: null
             }
             $scope.feriados = []
             $scope.listaFeriado()
@@ -2462,14 +2480,17 @@ angular.module('agil.controladores')
         }
         $scope.guardarConceptoEdicionRrhh = function (datos) {
             blockUI.start();
-            $scope.tipo_edicion.clases = datos
-            var tipo = $scope.tipo_edicion
+            $scope.tipo_edicion2.clases = datos
+            var tipo = $scope.tipo_edicion2
             Tipos.update({ id_tipo: tipo.id }, tipo, function (res) {
                 var promesa = ClasesTipo(tipo.nombre_corto);
                 promesa.then(function (entidad) {
                     tipo = entidad
+                    $scope.tipo_edicion2 = {}
                     blockUI.stop();
-                    $scope.cerrarDialogConceptoEdicion();
+                    $scope.cerrarDialogDepartamentoEstado();
+                    $scope.cerrarDialogProvincia();
+                    $scope.cerrarDialogLocalidad();
                     $scope.mostrarMensaje('Guardado Exitosamente!');
                 });
             });
@@ -2629,15 +2650,30 @@ angular.module('agil.controladores')
 
         $scope.guardarFichaTecnica = function (valido, ficha, save) {
             var s = $scope.fechaATexto(ficha.fecha_inicio)
+            ficha.historialVacacion = []
             if (s != ficha.fecha_inicio2) {
                 var a = ficha.fecha_inicio2
                 var b = new Date($scope.convertirFecha(a)).getFullYear()
-                ficha.historialVacacion = {
-                    gestion: b,
-                    anio: 1,
-                    aplicadas: $scope.configuracionesVacacion[0].dias,
-                    tomadas: 0
-                }
+                var anos = $scope.obtenerAnios(b)
+                anos.forEach(function (_, index, array) {
+                    var anioConfiguracion = index + 1
+                    var config = null
+                    if (anioConfiguracion < 5) {
+                        config = $scope.configuracionesVacacion[0].dias
+                    } else if (anioConfiguracion < 10) {
+                        config = $scope.configuracionesVacacion[1].dias
+                    } else if (anioConfiguracion >= 10) {
+                        config = $scope.configuracionesVacacion[2].dias
+                    }
+                    var historialVacacion = {
+                        gestion: _,
+                        anio: index + 1,
+                        aplicadas: config,
+                        tomadas: 0
+                    }
+                    ficha.historialVacacion.push(historialVacacion)
+                });
+
             }
             if (save) {
                 if (ficha.empleado.persona.fecha_nacimiento) {
@@ -4115,6 +4151,8 @@ angular.module('agil.controladores')
 
         }
         $scope.listaBancos = function () {
+            $scope.anticiposSeleccionados = []
+            $scope.anticiposTr3 = []
             var promesa = ListaBancos($scope.usuario.id_empresa)
             $scope.arregloBancosUnion = ""
             $scope.arregloBancosMsc = ""
@@ -4158,6 +4196,302 @@ angular.module('agil.controladores')
                     }
                 });
             })
+        }
+        $scope.imprimirTr3 = function (tr3, tipo) {
+            var fecha = new Date(tr3.fecha)
+            var mes = fecha.getMonth()
+            var dia = fecha.getDate()
+            var mesActual = ""
+            for (let i = 0; i < $scope.meses.length; i++) {
+                const element = $scope.meses[i];
+                if (mes == element.id) {
+                    mesActual = element.nombre
+                }
+            }
+            mes = (mes < 10) ? "0" + mes : mes
+            dia = (dia < 10) ? "0" + dia : dia
+            anio = fecha.getFullYear()
+            var anticiposTr3 = []
+            var total = 0
+            tr3.historialtr3.forEach(function (tr3H, index, array) {
+                total = tr3H.anticipo.monto
+                anticiposTr3.push(tr3H.anticipo)
+                if (index === (array.length - 1)) {
+                    var dato = { anticipos: anticiposTr3, tipo: tipo, tr3Encontrado: tr3, total: total }
+                    if (tipo == "MSC") {
+                        var nombreArchivo = dato.tr3Encontrado.planilla + "" + dia + "" + mes + "" + anio + "" + dato.tr3Encontrado.numero_planilla + ".txt"
+                    } else {
+                        var nombreArchivo = dato.tr3Encontrado.planilla + "" + dia + "" + mes + "" + anio + "" + dato.tr3Encontrado.numero_planilla + ".txt"
+                    }
+                    $scope.descargarArchivo($scope.generarTexto(dato), nombreArchivo);
+                }
+            });
+
+        }
+        $scope.imprimirCartaTr3 = function (tr3, tipo) {
+            var anticiposTr3 = []
+            var total = 0
+            var fecha = new Date(tr3.fecha)
+            var mes = fecha.getMonth()
+            var dia = fecha.getDate()
+            var mesActual = ""
+            for (let i = 0; i < $scope.meses.length; i++) {
+                const element = $scope.meses[i];
+                if (mes == element.id) {
+                    mesActual = element.nombre
+                }
+            }
+            mes = (mes < 10) ? "0" + mes : mes
+            dia = (dia < 10) ? "0" + dia : dia
+            anio = fecha.getFullYear()
+            tr3.historialtr3.forEach(function (tr3H, index, array) {
+                total = tr3H.anticipo.monto
+                anticiposTr3.push(tr3H.anticipo)
+                if (index === (array.length - 1)) {
+                    var dato = { anticipos: anticiposTr3, tipo: tipo, tr3Encontrado: tr3, total: total }
+                    if (tipo == "MSC") {
+                        var nombreArchivo = dato.tr3Encontrado.planilla + "" + dia + "" + mes + "" + anio + "" + dato.tr3Encontrado.numero_planilla + ".txt"
+                    } else {
+                        var nombreArchivo = dato.tr3Encontrado.planilla + "" + dia + "" + mes + "" + anio + "" + dato.tr3Encontrado.numero_planilla + ".txt"
+                    }
+                    $scope.descargarArchivo($scope.generarTextoCarta(dato), nombreArchivo);
+                }
+            });
+
+        }
+        $scope.guardarTr3Empleado = function (datos) {
+            datos.fecha = new Date()
+            if (datos.anticipos.length > 0) {
+                var promesa = GuardarTr3(datos, $scope.usuario.id_empresa)
+                promesa.then(function (dato) {
+                    var fecha = new Date(dato.tr3Encontrado.fecha)
+                    var mes = fecha.getMonth()
+                    var dia = fecha.getDate()
+                    var mesActual = ""
+                    for (let i = 0; i < $scope.meses.length; i++) {
+                        const element = $scope.meses[i];
+                        if (mes == element.id) {
+                            mesActual = element.nombre
+                        }
+                    }
+                    mes = (mes < 10) ? "0" + mes : mes
+                    dia = (dia < 10) ? "0" + dia : dia
+                    anio = fecha.getFullYear()
+                    $scope.cerrarModalTr3BancoMsc()
+                    $scope.cerrarModalTr3BancoUnion()
+                    $scope.buscarAnticiposOridnario($scope.filtroAnticipo)
+                    if (datos.tipo == "MSC") {
+                        var nombreArchivo = dato.tr3Encontrado.planilla + "" + dia + "" + mes + "" + anio + "" + dato.tr3Encontrado.numero_planilla + ".txt"
+                    } else {
+                        var nombreArchivo = dato.tr3Encontrado.planilla + "" + dia + "" + mes + "" + anio + "" + dato.tr3Encontrado.numero_planilla + ".txt"
+                    }
+                    $scope.descargarArchivo($scope.generarTexto(dato), nombreArchivo);
+                    $scope.descargarArchivo($scope.generarTextoCarta(dato), nombreArchivo);
+                    $scope.mostrarMensaje(dato.mensaje)
+                })
+            }
+        }
+        $scope.descargarArchivo = function (contenidoEnBlob, nombreArchivo) {
+            var reader = new FileReader();
+            reader.onload = function (event) {
+                var save = document.createElement('a');
+                save.href = event.target.result;
+                save.target = '_blank';
+                save.download = nombreArchivo || 'archivo.dat';
+                var clicEvent = new MouseEvent('click', {
+                    'view': window,
+                    'bubbles': true,
+                    'cancelable': true
+                });
+                save.dispatchEvent(clicEvent);
+                (window.URL || window.webkitURL).revokeObjectURL(save.href);
+            };
+            reader.readAsDataURL(contenidoEnBlob);
+        };
+        $scope.generarTextoCarta = function (datos) {
+            var fecha = new Date(datos.tr3Encontrado.fecha)
+            var mes = fecha.getMonth()
+            var dia = fecha.getDate()
+            var mesActual = ""
+            for (let i = 0; i < $scope.meses.length; i++) {
+                const element = $scope.meses[i];
+                if (mes == element.id) {
+                    mesActual = element.nombre
+                }
+            }
+            mes = (mes < 10) ? "0" + mes : mes
+            dia = (dia < 10) ? "0" + dia : dia
+            anio = fecha.getFullYear()
+            var totalLiteral = ConvertirALiteral(datos.total.toFixed(2));
+            var texto = [];
+            if (datos.tipo == "MSC") {
+                var cabezera = "\r\n\r\n" + datos.tr3Encontrado.departamento.nombre + " " + dia + " de " + mesActual + " del " + anio + "\r\n" +
+                    "Nro Cite: ESS-P-29/18\r\n\r\n\r\n" +
+                    "Señores \r\n" +
+                    datos.tr3Encontrado.cuenta.nombre + "\r\n" +
+                    "Ciudad\r\n\r\n" +
+                    "Ref.: Orden de Pago\r\n\r\n" +
+                    "De nuestra consideración:\r\n\r\n" +
+                    "Mediante la presente y según contrato suscrito con el Banco Mercantil Santa Cruz S.A.,\r\n" +
+                    "autorizamos a ustedes realizar el débito por el valor total de Bs. " + datos.total + "\r\n(" + totalLiteral + ")\r\n" +
+                    "(son: Un millon doscientos noventa y seis mil cuarenta y un    30/100   Bolivianos)\r\n" +
+                    "correspondiente a la cancelación de la planilla de pago(s), de acuerdo al siguiente detalle:\r\n\r\n" +
+
+                    "* Cuenta de débito Nro:                 " + datos.tr3Encontrado.cuenta.numero + "\r\n" +
+                    "* Cuenta Pago de Planilla:              " + datos.tr3Encontrado.planilla + "\r\n" +
+                    "* Nombre del archivo:                   " + datos.tr3Encontrado.planilla + "" + dia + "" + mes + "" + anio + "" + datos.tr3Encontrado.numero_planilla + ".tr3\r\n" +
+                    "* Código de control:                     87fd35e019787f9612a4ffb9fc2cb415\r\n" +
+                    "* Nombre / Número de planilla:  " + datos.tr3Encontrado.numero_planilla + "\r\n" +
+                    "* Monto total de débito:                 Bs " + datos.total + "\r\n\r\n" +
+
+                    "Los datos apuntados anteriormente y el detalle de pagos, se encuentran en el archivo \r\n" +
+                    datos.tr3Encontrado.planilla + "" + dia + "" + mes + "" + anio + "" + datos.tr3Encontrado.numero_planilla + ".tr3, adjunto a la presente carta.\r\n\r\n " +
+
+                    "Si, a los efectos de la presente, fuera necesario realizar compra venta de moneda nacional\r\n" +
+                    "o extranjera,  también  autorizamos e instruimos  realizar las operaciones  necesarias  para\r\n" +
+                    "cumplir  con  lo  instruido,  de  tal  manera  que se realicen  los abonos  en  la moneda  que\r\n" +
+                    "corresponda a cada cuenta beneficiaria.\r\n" +
+                    "de Enero de Debo informar lo siguiente:\r\n" +
+                    "El origen de los fondos corresponde al" + datos.tr3Encontrado.origen_fondos + ".\r\n" +
+                    "El Destino de los Fondos, " + datos.tr3Encontrado.origen_fondos + ".\r\n\r\n" +
+
+                    "Agradecemos su gentil atención a esta solicitud.\r\n\r\n" +
+
+                    "Atentamente\r\n\r\n\r\n\r\n" +
+
+
+
+
+                    datos.tr3Encontrado.firma_uno + " " + datos.tr3Encontrado.firma_dos + "                          " + datos.tr3Encontrado.firma_tres + " " + datos.tr3Encontrado.firma_cuatro + "\r\n" +
+                    "GERENTE GENERAL                                               AUDITOR FINANCIERO\r\n\r\n\r\n" +
+
+
+
+                    "Adj. Lo citado"
+                texto.push(cabezera)
+                return new Blob(texto, {
+                    type: 'text/plain'
+                });
+            } else if (datos.tipo == "BU") {
+
+                var cabezera = "\r\n\r\nSanta Cruz"+ " " + dia + " de " + mesActual + " de " + anio + "\r\n" +
+                    "ESS-P-30/18\r\n" +
+                    "Señores:\r\n" +
+                    "BANCO UNION  S.A.\r\n" +
+                    "Atn.:" + datos.tr3Encontrado.dirigido_para + "\r\n" +
+                    datos.tr3Encontrado.cargo + "\r\n" +
+                    "Presente.-\r\n\r\n" +
+                    "\t\t\t\tRef.: Autorización para Abono de  Sueldos " + mesActual + " " + anio + "\r\n\r\n" +
+                    "Mediante la presente solicitamos debiten de nuestra cuenta corriente No." + datos.tr3Encontrado.cuenta.numero + "\r\n" + "el importe total de Bs." + datos.total + "(" + totalLiteral + ")\r\n" + ", y el concepto de comisiones debitar de nuestra cuenta." + "\r\n\r\n" +
+                    "Se ha realizado la verificación de nuestro extracto de cuenta  No." + datos.tr3Encontrado.cuenta.numero + ", tenemos saldo suficiente lo cual cubre el importe requerido.\r\n\r\n" +
+                    "Enviamos planilla detallada adjunta.\r\n\r\n" +
+                    "de Enero de Debo informar lo siguiente:\r\n\r\n" +
+                    datos.tr3Encontrado.origen_fondos + "\r\n" +
+                    datos.tr3Encontrado.destino_fondos + ".\r\n\r\n" +
+                    "Agradeciendo de antemano su pronta respuesta vía mail, saludo a Usted cordialmente.\r\n\r\n" +
+                    "Atentamente,\r\n\r\n\r\n\r\n\r\n\r\n" +
+                    "\t\t" + datos.tr3Encontrado.firma_uno + "\t\t\t\t" + datos.tr3Encontrado.firma_dos + "\r\n" +
+                    "\tGERENTE GENERAL\t\t\t\t" + "\t\tAUDITOR FINANCIERO\r\n"
+                texto.push(cabezera)
+                return new Blob(texto, {
+                    type: 'text/plain'
+                });
+            }
+        }
+        $scope.generarTexto = function (datos) {
+            var texto = [];
+            var cuerpo = ""
+            if (datos.tipo == "MSC") {
+                var nombreArchivoTr3 = datos.tr3Encontrado.planilla + "" + dia + "" + mes + "" + anio + "" + datos.numero_planilla
+                var fecha = $scope.fechaATexto(datos.tr3Encontrado.fecha)
+                var cabezera = datos.tr3Encontrado.planilla + "|" + datos.tr3Encontrado.cuenta.numero + "|0|" + datos.tr3Encontrado.numero_planilla + "|" + nombreArchivoTr3 + "|" + fecha + "|" + fecha + "|" + datos.total + "|1\r\n"
+
+                datos.anticipos.forEach(function (anticipo, index, array) {
+                    if (anticipo.empleado.empleadosFichas) {
+                        anticipo.empleado.ficha = anticipo.empleado.empleadosFichas[0]
+                    }
+                    fecha = $scope.fechaATexto(anticipo.fecha)
+                    cabezera += (index + 1) + "|" + anticipo.empleado.ficha.numero_cuenta + "|" + fecha + "|" + datos.tr3Encontrado.numero_planilla + "|" + anticipo.monto + "|||" + datos.tr3Encontrado.nombre_planilla + "\r\n"
+                    if (index === (array.length - 1)) {
+                        texto.push(cabezera)
+                    }
+                })
+                return new Blob(texto, {
+                    type: 'text/plain'
+                });
+            } else if (datos.tipo == "BU") {
+                var fecha = new Date(datos.tr3Encontrado.fecha)
+                var mes = fecha.getMonth()
+                var dia = fecha.getDate()
+                var mesActual = ""
+                for (let i = 0; i < $scope.meses.length; i++) {
+                    const element = $scope.meses[i];
+                    if (mes == element.id) {
+                        mesActual = element.nombre
+                    }
+                }
+                mes = (mes < 10) ? "0" + mes : mes
+                dia = (dia < 10) ? "0" + dia : dia
+                var cabezera = "SUELDOS  " + mesActual + "  " + fecha.getFullYear() + "      " + datos.tr3Encontrado.numero_planilla + "" + dia + "" + mes + "" + fecha.getFullYear() + "\r\n"
+                cabezera += datos.tr3Encontrado.cuenta.numero + "" + datos.total + "\r\n"
+                datos.anticipos.forEach(function (anticipo, index, array) {
+                    if (anticipo.empleado.empleadosFichas) {
+                        anticipo.empleado.ficha = anticipo.empleado.empleadosFichas[0]
+                    }
+                    fecha = $scope.fechaATexto(anticipo.fecha)
+                    cabezera += anticipo.empleado.ficha.numero_cuenta + "" + anticipo.monto + "\r\n"
+                    if (index === (array.length - 1)) {
+                        texto.push(cabezera)
+                    }
+                })
+                return new Blob(texto, {
+                    type: 'text/plain'
+                });
+            }
+            //El contructor de Blob requiere un Array en el primer parámetro
+            //así que no es necesario usar toString. el segundo parámetro
+            //es el tipo MIME del archivo
+
+        };
+        $scope.selecionarAnticipos = function (anticipo, anticipos, todos) {
+
+            if (anticipo) {
+                if (anticipo.select == false) {
+                    /*  anticipos.select = false */
+                    $scope.anticiposSeleccionados.splice($scope.anticiposSeleccionados.indexOf(anticipo))
+                    if (anticipo.entregado == false) {
+                        $scope.anticiposTr3.splice($scope.anticiposTr3.indexOf(anticipo))
+                    }
+                } else {
+                    /*  anticipos.select = true */
+                    $scope.anticiposSeleccionados.push(anticipo)
+                    if (anticipo.entregado == false) {
+                        $scope.anticiposTr3.push(anticipo)
+                    }
+
+                    console.log($scope.empleadosSeleccionados)
+                }
+            }
+            if (todos == true) {
+                $scope.anticiposSeleccionados = []
+                if (anticipos) {
+                    anticipos.forEach(function (anticipo, index, array) {
+                        anticipo.select = true
+                        $scope.anticiposSeleccionados.push(anticipo)
+                        if (anticipo.entregado == false) {
+                            $scope.anticiposTr3.push(anticipo)
+                        }
+                    });
+                }
+            } else if (todos == false) {
+                anticipos.forEach(function (anticipo, index, array) {
+                    anticipo.select = false
+
+                });
+                $scope.anticiposSeleccionados = []
+                $scope.anticiposTr3 = []
+            }
+            /*   } */
         }
         //fin anticipos
 
@@ -4386,13 +4720,13 @@ angular.module('agil.controladores')
                 var fechaActual = new Date()
                 var fechaAnterior = new Date(empleado.ficha.fecha_inicio)
                 var datow = $scope.diferenciaEntreDiasEnDias(fechaAnterior, fechaActual)
-                var años=Math.round(datow/365)
-                $scope.vacacion.aniosDisponibles=años
-                $scope.vacacion.historial= $scope.historialGestionesVacacion;
-                $scope.diasDisponibles=0
-                $scope.historialGestionesVacacion.forEach(function(historial,index,array) {
-                    if(historial.anio<=años){
-                        $scope.diasDisponibles+=(historial.aplicadas-historial.tomadas)
+                var años = Math.round(datow / 365)
+                $scope.vacacion.aniosDisponibles = años
+                $scope.vacacion.historial = $scope.historialGestionesVacacion;
+                $scope.diasDisponibles = 0
+                $scope.historialGestionesVacacion.forEach(function (historial, index, array) {
+                    if (historial.anio <= años) {
+                        $scope.diasDisponibles += (historial.aplicadas - historial.tomadas)
                     }
                 });
                 if (datow > 365) {
@@ -4487,17 +4821,17 @@ angular.module('agil.controladores')
             }
         }
         $scope.crearNuevaVacacion = function (datos) {
-            if(datos.dias<=$scope.diasDisponibles){
-            datos.fecha_inicio = new Date($scope.convertirFecha(datos.fecha_inicio));
-            datos.fecha_fin = new Date($scope.convertirFecha(datos.fecha_fin));
-            var promesa = NuevaVacacionEmpleado($scope.empleado.id, datos)
-            promesa.then(function (dato) {
-                $scope.cerrarDialogAusenciasVacaciones()
-                $scope.mostrarMensaje(dato.mensaje)
-            })
-        }else{
-            $scope.mostrarMensaje("El empleado solo cuenta con "+$scope.diasDisponibles+" dias disponbles para asignar vacaciones")
-        }
+            if (datos.dias <= $scope.diasDisponibles) {
+                datos.fecha_inicio = new Date($scope.convertirFecha(datos.fecha_inicio));
+                datos.fecha_fin = new Date($scope.convertirFecha(datos.fecha_fin));
+                var promesa = NuevaVacacionEmpleado($scope.empleado.id, datos)
+                promesa.then(function (dato) {
+                    $scope.cerrarDialogAusenciasVacaciones()
+                    $scope.mostrarMensaje(dato.mensaje)
+                })
+            } else {
+                $scope.mostrarMensaje("El empleado solo cuenta con " + $scope.diasDisponibles + " dias disponbles para asignar vacaciones")
+            }
         }
         $scope.obtenerHistorialEmpleadVacacion = function (filtro) {
             var filtroVacaciones = { inicio: 0, fin: 0 }

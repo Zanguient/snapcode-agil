@@ -1,6 +1,6 @@
 module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente, Persona, Empresa, Sucursal, Clase, Diccionario, Tipo, decodeBase64Image, fs, RrhhEmpleadoFicha, RrhhEmpleadoFichaOtrosSeguros, RrhhEmpleadoFichaFamiliar, RrhhEmpleadoDiscapacidad
     , RrhhEmpleadoCargo, RrhhEmpleadoHojaVida, RrhhEmpleadoFormacionAcademica, RrhhEmpleadoExperienciaLaboral, RrhhEmpleadoLogroInternoExterno, RrhhEmpleadoCapacidadInternaExterna, NumeroLiteral, RrhhEmpleadoPrestamo, RrhhEmpleadoPrestamoPago, RrhhEmpleadoRolTurno, RrhhEmpleadoHorasExtra, RrhhAnticipo,
-    EvaluacionPolifuncional, ConfiguracionCalificacionEvaluacionPolifuncional, ConfiguracionDesempenioEvaluacionPolifuncional, RrhhEmpleadoAusencia, RrhhEmpleadoVacaciones, RrhhEmpleadoCompensacionAusencia, RrhhFeriado, RrhhClaseAsuencia, RrhhEmpleadoConfiguracionVacacion, RrhhEmpleadoHistorialVacacion) {
+    EvaluacionPolifuncional, ConfiguracionCalificacionEvaluacionPolifuncional, ConfiguracionDesempenioEvaluacionPolifuncional, RrhhEmpleadoAusencia, RrhhEmpleadoVacaciones, RrhhEmpleadoCompensacionAusencia, RrhhFeriado, RrhhClaseAsuencia, RrhhEmpleadoConfiguracionVacacion, RrhhEmpleadoHistorialVacacion, RrhhEmpleadoTr3, RrhhEmpleadoAnticipoTr3, Banco) {
 
     router.route('/recursos-humanos/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion/codigo/:codigo/nombres/:nombres/ci/:ci/campo/:campo/cargo/:cargo/busquedaEmpresa/:busquedaEmpresa/grupo/:grupo_sanguineo/estado/:estado/apellido/:apellido')
         .get(function (req, res) {
@@ -913,17 +913,29 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
             }, {
                     where: { id_empleado: empleado.id }
                 }).then(function (historialActualizado) {
-                    RrhhEmpleadoHistorialVacacion.create({
-                        aplicadas: req.body.historialVacacion.aplicadas,
-                        tomadas: req.body.historialVacacion.tomadas,
-                        anio: req.body.historialVacacion.anio,
-                        gestion: req.body.historialVacacion.gestion,
-                        id_empleado: empleado.id,
-                        eliminado: false
-                    }).then(function (historialCreado) {
-                        res.json({ message: "Ficha empleado actualizada satisfactoriamente!" })
-                    })
-                })
+                    /* req.body.historialVacacion.forEach(function (historial, index, array) { */
+                        var contador=0
+                    for (var i = 0; i < req.body.historialVacacion.length; i++) {
+                        var historial = req.body.historialVacacion[i];
+                        RrhhEmpleadoHistorialVacacion.create({
+                            aplicadas: historial.aplicadas,
+                            tomadas: historial.tomadas,
+                            anio: historial.anio,
+                            gestion: historial.gestion,
+                            id_empleado: empleado.id,
+                            eliminado: false
+                        }).then(function (historialCreado) {
+                            contador++
+                            if (contador == (req.body.historialVacacion.length - 1)) {
+                                res.json({ message: "Ficha empleado actualizada satisfactoriamente!" })
+                            }
+
+                        })
+                    }
+
+                    /* }) */
+                });
+
         } else {
             res.json({ message: "Ficha empleado actualizada satisfactoriamente!" })
         }
@@ -2243,6 +2255,87 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                 res.json(params)
             })
         })
+    router.route('/recursos-humanos/tr3/empresa/:id_empresa')
+        .post(function (req, res) {
+            RrhhEmpleadoTr3.create({
+                id_empresa: req.params.id_empresa,
+                id_cuenta: req.body.id_cuenta,
+                fecha: req.body.fecha,
+                planilla: req.body.planilla,
+                id_departamento: req.body.id_departamento,
+                nombre_archivo: req.body.nombre_archivo,
+                nombre_planilla: req.body.nombre_planilla,
+                numero_planilla: req.body.numero_planilla,
+                origen_fondos: req.body.origen_fondos,
+                destino_fondos: req.body.destino_fondos,
+                dirigido_para: req.body.dirigido_para,
+                cargo: req.body.cargo,
+                firma_uno: req.body.firma_uno,
+                firma_dos: req.body.firma_dos,
+                firma_tres: req.body.firma_tres,
+                firma_cuatro: req.body.firma_cuatro,
+            }).then(function (tr3Creado) {
+                RrhhEmpleadoTr3.find({
+                    where: { id: tr3Creado.id },
+                    include: [{ model: Banco, as: 'cuenta' }, { model: Clase, as: 'departamento' }]
+                }).then(function (tr3Encontrado) {
+                    var total = 0
+                    req.body.anticipos.forEach(function (anticipo, index, array) {
+                        total += anticipo.monto
+                        RrhhAnticipo.update({
+                            entregado: true
+                        }, {
+                                where: { id: anticipo.id }
+                            })
+                        RrhhEmpleadoAnticipoTr3.create({
+                            id_anticipo: anticipo.id,
+                            id_tr3: tr3Encontrado.id
+                        }).then(function (historialCreado) {
+                            if (index === (array.length - 1)) {
+                                res.json({ mensaje: "Tr3 creado satisfactoriamente!", anticipos: req.body.anticipos, tipo: req.body.tipo, tr3Encontrado: tr3Encontrado, total: total })
+                            }
+                        })
+                    })
+
+                })
+            })
+        })
+    router.route('/recursos-humanos/tr3/empresa/:id_empresa/banco/:nombre')
+        .get(function (req, res) {
+            RrhhEmpleadoTr3.findAll({
+                where: { id_empresa: req.params.id_empresa },
+                include: [{
+                    model: RrhhEmpleadoAnticipoTr3, as: 'historialtr3',
+                    include: [{
+                        model: RrhhAnticipo, as: 'anticipo',
+                        include: [{
+                            model: MedicoPaciente, as: 'empleado',
+                            include: [{ model: RrhhEmpleadoFicha, as: 'empleadosFichas', limit: 1, order: [["id", "desc"]] }]
+                        }]
+                    }]
+                },
+                { model: Banco, as: 'cuenta', where: { nombre: req.params.nombre } },
+                { model: Clase, as: 'departamento' }]
+            }).then(function (params) {
+                res.json(params)
+            })
+        })
+
+
+    function fechaATexto(fecha) {
+        fech = new Date(fecha)
+        var valor = (fech.getMonth() + 1)
+        if (valor < 10) {
+            valor = "0" + valor
+        }
+        var valor2 = fech.getDate()
+        if (valor2 < 10) {
+            valor2 = "0" + valor2
+        }
+        fecha = valor2 + "/" + valor + "/" + fech.getFullYear();
+        return fecha
+        // $scope.fechaAplicacionVacuna = new Date(convertirFecha(fecha))
+    }
     //FIN
     /////////////////////////////////////////////////////// RUTAS PARA POLIFUNCIONAL ///////////////////////////////////////////////////
 
@@ -2265,7 +2358,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
             var condicion_empleado = {}
 
             if (req.params.mes !== "0") {
-                condicion_evaluacion.mes = parseInt(req.params.mes) -1
+                condicion_evaluacion.mes = parseInt(req.params.mes) - 1
             }
             if (req.params.anio !== "0") {
                 condicion_evaluacion.anio = req.params.anio
@@ -2284,17 +2377,17 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
             }
             if (req.params.estado !== "0") {
                 condicion_empleado.eliminado = req.params.estado == "1" ? false : true
-            }else{
+            } else {
                 // condicion_empleado.eliminado = false
             }
             if (req.params.codigo !== "0") {
                 condicion_empleado.codigo = { $like: req.params.codigo + '%' }
             }
             if (req.params.nombre !== "0") {
-                condicion_persona.nombre_completo = { $like: '%'+req.params.nombre+'%' }
+                condicion_persona.nombre_completo = { $like: '%' + req.params.nombre + '%' }
             }
             if (req.params.apellido !== "0") {
-                condicion_persona.nombre_completo = { $like: '%'+req.params.apellido+'%' }
+                condicion_persona.nombre_completo = { $like: '%' + req.params.apellido + '%' }
             }
             condicion_empleado.es_empleado = true
             EvaluacionPolifuncional.findAndCountAll({

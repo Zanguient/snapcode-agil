@@ -2718,8 +2718,12 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 			var valor = (fech.getMonth() + 1)
 			if (valor < 10) {
 				valor = "0" + valor
+			}	
+			var valor2 = fech.getDate()
+			if (valor2 < 10) {
+				valor2 = "0" + valor2
 			}		
-			fecha = fech.getDate() + "/" + valor + "/" + fech.getFullYear();
+			fecha = valor2 + "/" + valor + "/" + fech.getFullYear();
 			return fecha
 			// $scope.fechaAplicacionVacuna = new Date(convertirFecha(fecha))
 		}

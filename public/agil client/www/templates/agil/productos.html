@@ -28,7 +28,7 @@
 			<div id="tabla-productos_wrapper" class="dataTables_wrapper form-inline no-footer">
 				<div class="row" ng-include src="'/templates/gral/paginator-header-1.html'">
 				</div>
-				<table id="tabla-productos" class="table table-striped table-bordered table-hover">
+				<table id="tabla-productos" class="table table-striped table-bordered table-hover table-responsive">
 					<thead>
 						<tr>
 							<th class="center">
@@ -277,11 +277,11 @@
 									 class="form-control" />
 								</div>
 								<div class="col-sm-2">
-									<input required type="number" step="0.01" id="precio_unitario" ng-model="producto.rango_positivo" placeholder="Rango +"
+									<input  type="number" step="0.01" id="precio_unitario" ng-model="producto.rango_positivo" placeholder="Rango +"
 									 class="form-control" />
 								</div>
 								<div class="col-sm-2">
-									<input required type="number" step="0.01" id="precio_unitario" ng-model="producto.rango_negativo" placeholder="Rango -"
+									<input  type="number" step="0.01" id="precio_unitario" ng-model="producto.rango_negativo" placeholder="Rango -"
 									 class="form-control" />
 								</div>
 							</div>
@@ -388,13 +388,13 @@
 							<div class="form-group" ng-if="usuario.empresa.usar_vencimientos">
 								<label class="col-sm-3 control-label no-padding-right" for="alerta">Alerta de Vencimiento</label>
 								<div class="col-sm-3">
-									<input required type="number" id="alerta" ng-model="producto.alerta" placeholder="Alerta" class="form-control" />
+									<input  type="number" id="alerta" ng-model="producto.alerta" placeholder="Alerta" class="form-control" />
 								</div>
 							</div>
 							<div class="form-group" ng-if="usuario.empresa.usar_descuentos">
 								<label class="col-sm-2 control-label no-padding-right" for="descuento">Descuento</label>
 								<div class="col-sm-2">
-									<input required type="number" id="descuento" ng-model="producto.descuento" placeholder="Descuento" class="form-control" />
+									<input  type="number" id="descuento" ng-model="producto.descuento" placeholder="Descuento" class="form-control" />
 								</div>
 								<div class="col-sm-2">
 									<label>
