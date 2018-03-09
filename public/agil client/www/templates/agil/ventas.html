@@ -523,7 +523,7 @@
 										</div>
 										<div class="widget-body">
 											<div class="widget-main">
-												<form id="formularioBusquedaProducto" name="formularioBusquedaProducto" novalidate>
+												<!-- <form id="formularioBusquedaProducto" name="formularioBusquedaProducto" novalidate> -->
 													<table class="table table-striped table-bordered table-hover">
 														<thead>
 															<tr>
@@ -631,18 +631,20 @@
 																	</div>
 																</td>
 																<td ng-if="editar_precio">
+																	<form ng-submit="establecerPrecio()">
 																	<div class="row">
 																		<div class="col-sm-12">
-																			<input name="precio_unitario" step="0.001" min="0.1" required class="col-xs-12" ng-change="calcularImporte()" ng-model="detalleVenta.precio_unitario" type="number" />
+																			<input required name="precio_unitario" step="0.001" min="{{detalleVenta.producto.rango_negativo}}" max="{{detalleVenta.producto.rango_positivo}}" required class="col-xs-12" ng-change="calcularImporte()" ng-model="detalleVenta.precio_unitario" type="number" />
 																		</div>
 																	</div>
 																	<div class="row">
 																		<div class="col-sm-12">
-																			<a class="blue" href="javascript:void(0)" ng-click="establecerPrecio()">
+																			<button class="blue" type"submit">
 																				<i class="ace-icon fa fa-check-square-o bigger-130"></i>
-																			</a>
+																			</button>
 																		</div>
 																	</div>
+																</form>
 																</td>
 																<td>
 																	<input onfocus="this.select();" ng-keypress="interceptarTecla($event,'agregar_detalle_venta',false)" id="cantidad" name="cantidad" step="0.001" min="0.1" max="{{detalleVenta.inventario_disponible}}" required class="col-xs-12" ng-change="calcularImporte()" ng-model="detalleVenta.cantidad" type="number" />
@@ -707,7 +709,7 @@
 															</tr>
 														</tbody>
 													</table>
-												</form>
+												<!-- </form> -->
 											</div>
 										</div>
 									</div>

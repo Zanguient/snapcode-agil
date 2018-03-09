@@ -273,15 +273,15 @@
 								<span class="step">3</span>
 								<span class="title">Georeferenciacion</span>
 							</li>
-							<li data-step="4">
+							<li data-step="4" ng-if="usuario.empresa.usar_creditos">
 								<span class="step">4</span>
 								<span class="title">Creditos</span>
 							</li>
-							<li data-step="5">
+							<li data-step="5" ng-if="usuario.empresa.usar_razon_social">
 								<span class="step">5</span>
 								<span class="title">Razon Social</span>
 							</li>
-							<li data-step="6">
+							<li data-step="6" ng-if="usuario.empresa.usar_destinos">
 								<span class="step">6</span>
 								<span class="title">Destinos</span>
 							</li>
@@ -429,7 +429,7 @@
 								</div>
 							</div>
 						</div>
-						<div class="step-pane" data-step="4">
+						<div class="step-pane" data-step="4" ng-if="usuario.empresa.usar_creditos">
 							<div class="form-group">
 								<label class="col-sm-6 control-label no-padding-right" for="Bloqueado">Usar línea de Crédito</label>
 								<div class="col-sm-6">
@@ -459,7 +459,7 @@
 							</div>
 						</div>
 						<!--Hay que llevarlo abajo del 4 -->
-						<div class="step-pane" data-step="5">
+						<div class="step-pane" data-step="5" ng-if="usuario.empresa.usar_razon_social">
 							<div class="form-group">
 								<label class="col-sm-3 control-label no-padding-right" for="razon_social">Razon social</label>
 
@@ -524,7 +524,7 @@
 							</table>
 						</div>
 						<!--Aumentando destino -->
-						<div class="step-pane" data-step="6">
+						<div class="step-pane" data-step="6" ng-if="usuario.empresa.usar_destinos">
 							<div class="center">
 								<h4 class="blue">Destino</h4>
 
