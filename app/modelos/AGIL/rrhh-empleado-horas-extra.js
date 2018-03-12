@@ -1,8 +1,12 @@
 module.exports = function (sequelize, Sequelize) {
 	var RrhhEmpleadoHorasExtra = sequelize.define('agil_rrhh_empleado_horas_extra', {
-		id_empleado: {
+	/* 	id_empleado: {
 			type: Sequelize.INTEGER,
 			field: 'empleado'
+		}, */
+		id_ficha: {
+			type: Sequelize.INTEGER,
+			field: 'ficha'
 		},
 		fecha: {
 			type: Sequelize.DATE,

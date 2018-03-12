@@ -41,7 +41,7 @@ angular.module('agil.controladores')
         $scope.eliminar = function (evaluacion) {
             evaluacion.eliminado = true
             evaluacion.eliminar = true
-            var prom = GuardarEvaluacionPersonal($scope.usuarioSesion.id_empresa, evaluacion)
+            var prom = GuardarEvaluacionPersonal($scope.usuarioSesion.empresa.id, evaluacion)
             prom.then(function (res) {
                 if (res.hasErr) {
                     $scope.mostrarMensaje("Hubo un error no se pudo eliminar: " + res.mensaje)
@@ -54,7 +54,7 @@ angular.module('agil.controladores')
             })
         }
         $scope.obtenerConfiguracionnotas = function () {
-            var prom = ObtenerConfiguracionCalificacion($scope.usuarioSesion.id_empresa)
+            var prom = ObtenerConfiguracionCalificacion($scope.usuarioSesion.empresa.id)
             prom.then(function (res) {
                 for (const key in res.configuracion) {
                     if (res.configuracion[key].encargados) {
@@ -63,7 +63,7 @@ angular.module('agil.controladores')
                         $scope.empleados = res.configuracion[key];
                     }
                 }
-                var otraProm = ObtenerConfiguracionDesempenio($scope.usuarioSesion.id_empresa)
+                var otraProm = ObtenerConfiguracionDesempenio($scope.usuarioSesion.empresa.id)
                 otraProm.then(function (res) {
                     $scope.parametros = res.parametros
                     while (res.parametros.length > 0) {
@@ -158,7 +158,7 @@ angular.module('agil.controladores')
 
         $scope.actualizarListaDesempenio = function (lista) {
             if (lista == null || lista == undefined) {
-                var prom = ObtenerConfiguracionDesempenio($scope.usuarioSesion.id_empresa)
+                var prom = ObtenerConfiguracionDesempenio($scope.usuarioSesion.empresa.id)
                 prom.then(function (res) {
                     while (res.parametros.length > 0) {
                         var dato = res.parametros.pop()
@@ -467,7 +467,7 @@ angular.module('agil.controladores')
                 var report = [[""]]
             }
             var data = []
-            var reporte = ObtenerReportePorMeses(fromMonth, fromYear, untilMonth, untilYear)
+            var reporte = ObtenerReportePorMeses(fromMonth, fromYear, untilMonth, untilYear, $scope.usuarioSesion.empresa.id)
             reporte.then(function (res) {
                 if (res.reporte.length == 0) {
                     $scope.mostrarMensaje('No existen datos')
@@ -724,7 +724,7 @@ angular.module('agil.controladores')
                 var data = [[""], [""], [""]]
             }
             data.push(cabecera)
-            var reporte = ObtenerReporteGeneralPorAnio(year.id, campo)
+            var reporte = ObtenerReporteGeneralPorAnio(year.id, campo, $scope.usuarioSesion.empresa.id)
             reporte.then(function (res) {
                 if (res.reporte.length == 0) {
                     $scope.mostrarMensaje('No existen datos')
@@ -922,7 +922,7 @@ angular.module('agil.controladores')
                 var data = [[""], [""], [""]]
             }
             data.push(cabecera)
-            var reporte = ObtenerReportePorAnio(year.id)
+            var reporte = ObtenerReportePorAnio(year.id, $scope.usuarioSesion.empresa.id)
             reporte.then(function (reportes) {
                 var columns = [];
                 for (var i = 0; i < reportes.reporte.length; i++) {
@@ -1093,7 +1093,7 @@ angular.module('agil.controladores')
             blockUI.start();
             $scope.fieldViewer = FieldViewer({
                 crear: true,
-                id_empresa: $scope.usuarioSesion.id_empresa,
+                id_empresa: $scope.usuarioSesion.empresa.id,
                 configuracion: {
                     anio: { value: "Año", show: true },
                     mes: { value: "Mes", show: true },
@@ -1274,7 +1274,7 @@ angular.module('agil.controladores')
                 encargados.encargados = true
                 var errores = false
                 var conf = [empleados, encargados]
-                var prom = GuardarConfiguracionCalificacion($scope.usuarioSesion.id_empresa, conf)
+                var prom = GuardarConfiguracionCalificacion($scope.usuarioSesion.empresa.id, conf)
                 prom.then(function (res) {
                     if (res.hasErr) {
                         var rrores = res.mensaje
@@ -1286,7 +1286,7 @@ angular.module('agil.controladores')
                     // blockUI.stop()
                 })
                 // $scope.actualizarListaDesempenio($scope.listaDesempenio)
-                var otraProm = GuardarConfiguracionDesempenio($scope.usuarioSesion.id_empresa, $scope.listaDesempenio)
+                var otraProm = GuardarConfiguracionDesempenio($scope.usuarioSesion.empresa.id, $scope.listaDesempenio)
                 otraProm.then(function (resp) {
                     if (resp.hasErr) {
                         $scope.mostrarMensaje('Hubo uno o mas errores. ' + rrores + " " + resp.mensaje)

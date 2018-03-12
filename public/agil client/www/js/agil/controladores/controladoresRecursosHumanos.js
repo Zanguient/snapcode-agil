@@ -1154,14 +1154,14 @@ angular.module('agil.controladores')
         }
         $scope.abrirDialogRolTurnos = function (empleado) {
             $scope.empleado = empleado
-            $scope.rolTurno = { tipo: false, fecha_fin: "", dias_trabajo: null, dias_descanso: null, grupo: "" }
+            $scope.rolTurno = { tipo: false, fecha_fin: "", dias_trabajo: null, dias_descanso: null, grupo: "",id_ficha:null }
             $scope.abrirPopup($scope.idModalRolTurnos);
         }
         $scope.cerrarDialogRolTurnos = function () {
             $scope.cerrarPopup($scope.idModalRolTurnos);
         }
         $scope.abrirDialogHistorialTurnos = function (empleado) {
-            $scope.obtenerlistaRolTurno(empleado.id)
+            $scope.obtenerlistaRolTurno(empleado.ficha.id)
             $scope.abrirPopup($scope.idModalHistorialTurnos);
         }
         $scope.cerrarDialogHistorialTurnos = function () {
@@ -3575,6 +3575,7 @@ angular.module('agil.controladores')
         $scope.GuardarRolTurno = function (rolTurno) {
             rolTurno.fecha_inicio = new Date($scope.convertirFecha(rolTurno.fecha_inicio))
             rolTurno.fecha_fin = new Date($scope.convertirFecha(rolTurno.fecha_fin))
+            rolTurno.id_ficha=$scope.empleado.ficha.id
             var promesa = CrearRolTurno($scope.empleado.id, rolTurno)
             promesa.then(function (datos) {
                 //$scope.imprimirPrestamo(prestamo)
@@ -3595,11 +3596,11 @@ angular.module('agil.controladores')
                     rolTurno.dias_descanso = 15;
                 }
             } else {
-                $scope.rolTurno = { tipo: false, fecha_fin: "", dias_trabajo: null, dias_descanso: null, grupo: "" }
+                $scope.rolTurno = { tipo: false, fecha_fin: "", dias_trabajo: null, dias_descanso: null, grupo: "",id_ficha:null }
             }
         }
-        $scope.obtenerlistaRolTurno = function (idEmpledo) {
-            var promesa = ListaRolTurnos($scope.usuario.id_empresa, idEmpledo)
+        $scope.obtenerlistaRolTurno = function (idficha) {
+            var promesa = ListaRolTurnos($scope.usuario.id_empresa,idficha)
             promesa.then(function (datos) {
                 $scope.listaRolTurno = datos.rolesTurno
 
@@ -3613,6 +3614,7 @@ angular.module('agil.controladores')
             horasExtra.fecha = new Date($scope.convertirFecha(horasExtra.fecha))
             horasExtra.hora_inicio2 = $scope.fechaATiempo(horasExtra.hora_inicio)
             horasExtra.hora_fin2 = $scope.fechaATiempo(horasExtra.hora_fin)
+            horasExtra.id_ficha=$scope.empleado.ficha.id
             var promesa = CrearHorasExtra($scope.empleado.id, horasExtra)
             promesa.then(function (datos) {
                 $scope.cerrarDialogHorasExtras()
@@ -3672,7 +3674,7 @@ angular.module('agil.controladores')
             var filtro = {}
             filtro.inicio = (filtroHorasExtra.inicio.length == 10) ? new Date($scope.convertirFecha(filtroHorasExtra.inicio)) : 0
             filtro.fin = (filtroHorasExtra.fin.length == 10) ? new Date($scope.convertirFecha(filtroHorasExtra.fin)) : 0
-            var promesa = HistorialHorasExtra($scope.empleado.id, filtro)
+            var promesa = HistorialHorasExtra($scope.empleado.ficha.id, filtro)
             promesa.then(function (dato) {
                 $scope.ListaHorasExtraEmpleado = dato
                 if ($scope.ListaHorasExtraEmpleado.length > 0) {
@@ -4570,7 +4572,7 @@ angular.module('agil.controladores')
                     datos.fecha_inicio.setMinutes(datos.fecha_inicio_hora.getMinutes()); datos.fecha_inicio.setHours(datos.fecha_inicio_hora.getHours());
                     datos.fecha_fin.setMinutes(datos.fecha_fin_hora.getMinutes()); datos.fecha_fin.setHours(datos.fecha_fin_hora.getHours());
                     datos.compensaciones = $scope.selectionday
-                    $scope.guardarAusencia($scope.empleado.id, datos)
+                    $scope.guardarAusencia($scope.empleado.ficha.id, datos)
                 } else if (horas == horasDatos) {
                     if (minutos <= minutosDatos) {
                         datos.fecha_inicio = new Date($scope.convertirFecha(datos.fecha_inicio));
@@ -4578,7 +4580,7 @@ angular.module('agil.controladores')
                         datos.fecha_inicio.setMinutes(datos.fecha_inicio_hora.getMinutes()); datos.fecha_inicio.setHours(datos.fecha_inicio_hora.getHours());
                         datos.fecha_fin.setMinutes(datos.fecha_fin_hora.getMinutes()); datos.fecha_fin.setHours(datos.fecha_fin_hora.getHours());
                         datos.compensaciones = $scope.selectionday
-                        $scope.guardarAusencia($scope.empleado.id, datos)
+                        $scope.guardarAusencia($scope.empleado.ficha.id, datos)
                     } else {
                         $scope.mostrarMensaje("La suma del total de horas compensacion es mayor al total de horas de la ausencia!")
                     }
@@ -4589,7 +4591,7 @@ angular.module('agil.controladores')
             } else {
                 datos.fecha_inicio = new Date($scope.convertirFecha(datos.fecha_inicio));
                 datos.fecha_fin = new Date($scope.convertirFecha(datos.fecha_fin));
-                $scope.guardarAusencia($scope.empleado.id, datos)
+                $scope.guardarAusencia($scope.empleado.ficha.id, datos)
             }
 
         }
@@ -4616,7 +4618,7 @@ angular.module('agil.controladores')
                 filtroAusencias.inicio = new Date($scope.convertirFecha(filtro.inicio))
                 filtroAusencias.fin = new Date($scope.convertirFecha(filtro.fin))
             }
-            var promesa = HistorialEmpleadoAusencias($scope.empleado.id, filtroAusencias, 'RRHH_AUSMED')
+            var promesa = HistorialEmpleadoAusencias($scope.empleado.ficha.id, filtroAusencias, 'RRHH_AUSMED')
             promesa.then(function (datos) {
                 datos.forEach(function (dato, index, array) {
                     if (dato.primera_baja) {
@@ -4639,7 +4641,7 @@ angular.module('agil.controladores')
                 filtroAusencias.inicio = new Date($scope.convertirFecha(filtro.inicio))
                 filtroAusencias.fin = new Date($scope.convertirFecha(filtro.fin))
             }
-            var promesa = HistorialEmpleadoAusencias($scope.empleado.id, filtroAusencias, 'RRHH_OTRAUS')
+            var promesa = HistorialEmpleadoAusencias($scope.empleado.ficha.id, filtroAusencias, 'RRHH_OTRAUS')
             promesa.then(function (datos) {
 
                 $scope.historialEmpleadoOtrasAusencias = datos
@@ -4823,7 +4825,7 @@ angular.module('agil.controladores')
             if (datos.dias <= $scope.diasDisponibles) {
                 datos.fecha_inicio = new Date($scope.convertirFecha(datos.fecha_inicio));
                 datos.fecha_fin = new Date($scope.convertirFecha(datos.fecha_fin));
-                var promesa = NuevaVacacionEmpleado($scope.empleado.id, datos)
+                var promesa = NuevaVacacionEmpleado($scope.empleado.ficha.id, datos)
                 promesa.then(function (dato) {
                     $scope.cerrarDialogAusenciasVacaciones()
                     $scope.mostrarMensaje(dato.mensaje)
@@ -4839,7 +4841,7 @@ angular.module('agil.controladores')
                 filtroVacaciones.fin = new Date($scope.convertirFecha(filtro.fin))
 
             }
-            var promesa = HistorialEmpleadoVacaciones($scope.empleado.id, filtroVacaciones)
+            var promesa = HistorialEmpleadoVacaciones($scope.empleado.ficha.id, filtroVacaciones)
             promesa.then(function (datos) {
                 $scope.historialEmpleadoVacaciones = datos
             })

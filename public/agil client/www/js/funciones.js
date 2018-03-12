@@ -18,13 +18,13 @@ function ejecutarScriptsPolifuncionalidad(modalNuevaEvaluacion, modalNuevaEvalua
 	crearPopup(modalParametrosPolifuncionalidad, 'auto', 'auto');
 	crearPopup(idModalReportes, 'auto', 'auto');
 	crearPopup(modalBusquedaPersonal, 'auto', 'auto');
-	crearPopup(reporteGraficoPolifuncional, '80%', 800);
+	crearPopup(reporteGraficoPolifuncional, '85%', 800);
 	aplicarWizardFormulario(modalNuevaEvaluacion, modalNuevaEvaluacionWizard);
 	aplicarWizardFormulario(modalParametrosPolifuncionalidad, modalParametrosPolifuncionalidadWizard);
 }
 
 function ejecutarScriptsProformas(modalConfiguracionActividadesServicios, wizardConfiguracionActividadesServicios, dialogProformaEdicion, dialogClientesProforma, modalConfiguracionActividades, wizardConfiguracionActividades,
-	dialogmodalFechas, dialogBusquedaServicio, dialogDosificacionesDisponibles) {
+	dialogmodalFechas, dialogBusquedaServicio, dialogDosificacionesDisponibles, confirmarDosificacion) {
 	crearPopup(modalConfiguracionActividadesServicios, 'auto', 'auto');
 	crearPopup(modalConfiguracionActividades, 'auto', 'auto');
 	crearPopup(dialogProformaEdicion, 'auto', 'auto');
@@ -32,6 +32,7 @@ function ejecutarScriptsProformas(modalConfiguracionActividadesServicios, wizard
 	crearPopup(dialogmodalFechas, 'auto', 'auto');
 	crearPopup(dialogBusquedaServicio, 'auto', 'auto');
 	crearPopup(dialogDosificacionesDisponibles, 'auto', 'auto');
+	crearPopup(confirmarDosificacion, 'auto', 'auto');
 	
 	aplicarWizardFormulario(wizardConfiguracionActividadesServicios);
 	aplicarWizardFormulario(wizardConfiguracionActividades);

@@ -1,11 +1,11 @@
 angular.module('agil.controladores')
 	.controller('ControladorOperaciones', function ($scope, $filter, $rootScope, $route, $templateCache, $location, $window, $localStorage,
-		blockUI, ConfiguracionVentaVistaDatos, ClasesTipo, ListaGruposProductoEmpresa, ProductosPanel, socket, ListaGruposProductoEmpresa, SolicitudesReposicion,
-		SolicitudesFormulacionProducto, SolicitudReposicion, EliminarSolicitudReposicion, Paginator, ImpresionSolicitudDatos, ListaInventariosProducto) {
+		blockUI, ConfiguracionVentaVistaDatos, ClasesTipo, ListaGruposProductoEmpresa, ProductosOperaciones, socket, ListaGruposProductoEmpresa, SolicitudesReposicion,
+		SolicitudesFormulacionProducto, SolicitudReposicion, EliminarSolicitudReposicion, Paginator, ImpresionSolicitudDatos, ListaInventariosProducto, ListaSucursalesUsuario) {
 
-		$scope.usuario = JSON.parse($localStorage.usuario);
-		convertUrlToBase64Image($scope.usuario.empresa.imagen, function (imagenEmpresa) {
-			$scope.usuario.empresa.imagen = imagenEmpresa;
+		$scope.usuarioSesion = JSON.parse($localStorage.usuario);
+		convertUrlToBase64Image($scope.usuarioSesion.empresa.imagen, function (imagenEmpresa) {
+			$scope.usuarioSesion.empresa.imagen = imagenEmpresa;
 		});
 
 		$scope.idDialogDialogPanelOperaciones = "dialog-panel-operaciones"
@@ -17,7 +17,7 @@ angular.module('agil.controladores')
 		$scope.$on('$viewContentLoaded', function () {
 			resaltarPestaña($location.path().substring(1));
 			ejecutarScriptsOperaciones($scope.idDialogDialogPanelOperaciones, $scope.idDialogEntregaViveres, $scope.idConfirmacionCierre, $scope.idDialogTotalIngredientes);
-			$scope.buscarAplicacion($scope.usuario.aplicacionesUsuario, $location.path().substring(1));
+			$scope.buscarAplicacion($scope.usuarioSesion.aplicacionesUsuario, $location.path().substring(1));
 		});
 
 		$scope.$on('$routeChangeStart', function (next, current) {
@@ -33,14 +33,14 @@ angular.module('agil.controladores')
 			$scope.obtenerConfiguracionVentaVista();
 			$scope.alreadyCalculated = false
 			$scope.sucursalesUsuario = "";
-			for (var i = 0; i < $scope.usuario.sucursalesUsuario.length; i++) {
-				$scope.sucursalesUsuario = $scope.sucursalesUsuario + $scope.usuario.sucursalesUsuario[i].sucursal.id;
-				if (i + 1 != $scope.usuario.sucursalesUsuario.length) {
+			for (var i = 0; i < $scope.usuarioSesion.sucursalesUsuario.length; i++) {
+				$scope.sucursalesUsuario = $scope.sucursalesUsuario + $scope.usuarioSesion.sucursalesUsuario[i].sucursal.id;
+				if (i + 1 != $scope.usuarioSesion.sucursalesUsuario.length) {
 					$scope.sucursalesUsuario = $scope.sucursalesUsuario + ',';
 				}
 			}
-			$scope.detalleVenta = { producto: {}, centroCosto: {}, cantidad: 1, descuento: 0, recargo: 0, ice: 0, excento: 0, tipo_descuento: false, tipo_recargo: false }
-			$scope.solicitud = { solicitudesProductos: [] }
+			// $scope.detalleVenta = { producto: {}, centroCosto: {}, cantidad: 1, descuento: 0, recargo: 0, ice: 0, excento: 0, tipo_descuento: false, tipo_recargo: false }
+			// $scope.solicitud = { solicitudesProductos: [] }
 			$scope.obtenerPaginador()
 			$scope.sucursales = $scope.obtenerSucursales();
 		}
@@ -49,7 +49,7 @@ angular.module('agil.controladores')
 			$scope.paginator = Paginator();
 			$scope.paginator.column = "fecha";
 			$scope.paginator.direccion = "asc";
-			$scope.filtro = { empresa: $scope.usuario.id_empresa, rol: $scope.usuario.rolesUsuario[0].rol.nombre, id: $scope.usuario.id, desde: 0, hasta: 0, sucursal: 0, almacen: 0, movimiento: 0, estado: 0, valuado: 0, pagina: 1, items_pagina: 10, busqueda: "" };
+			$scope.filtro = { empresa: $scope.usuarioSesion.id_empresa, rol: $scope.usuarioSesion.rolesUsuario[0].rol.nombre, id: $scope.usuarioSesion.id, desde: 0, hasta: 0, sucursal: 0, almacen: 0, movimiento: 0, estado: 0, valuado: 0, pagina: 1, items_pagina: 10, busqueda: "" };
 			$scope.paginator.callBack = $scope.obtenerSolicitudes;
 			$scope.paginator.getSearch("", $scope.filtro, null);
 			blockUI.stop();
@@ -70,69 +70,86 @@ angular.module('agil.controladores')
 				$scope.solicitudesOperaciones
 				blockUI.stop()
 			}, function (error) {
-				$scope.mostrarMensaje(error.data)
+				setTimeout(function () {
+					$scope.$apply(function () {
+						$scope.mostrarMensaje(err.stack ? err.stack : err.message)
+					});
+				}, 600)
 				blockUI.stop()
 			})
 		}
 
-			$scope.obtenerSucursales = function () {
-				var sucursales = [];
-				for (var i = 0; i < $scope.usuario.sucursalesUsuario.length; i++) {
-					sucursales.push($scope.usuario.sucursalesUsuario[i].sucursal);
-				}
-				return sucursales;
+		$scope.obtenerSucursales = function () {
+			var sucursales = [];
+			for (var i = 0; i < $scope.usuarioSesion.sucursalesUsuario.length; i++) {
+				sucursales.push($scope.usuarioSesion.sucursalesUsuario[i].sucursal);
 			}
-			$scope.obtenerAlmacenes = function (idSucursal) {
-				if (idSucursal === undefined) {
-					$scope.filtro.sucursal = undefined
-					$scope.almacenes = []
+			return sucursales;
+		}
+		$scope.obtenerAlmacenes = function (idSucursal) {
+			if (idSucursal === undefined) {
+				$scope.filtro.sucursal = undefined
+				$scope.almacenes = []
+			}
+			if (idSucursal !== undefined) {
+				$scope.almacenes = [];
+				var sucursal = $.grep($scope.sucursales, function (e) { return e.id == idSucursal; })[0];
+				$scope.almacenes = sucursal.almacenes;
+				$scope.solicitud.almacen = $scope.almacenes.length == 1 ? $scope.almacenes[0] : null;
+				if ($scope.solicitud.almacen) {
+					$scope.cargarProductos();
+				}else{
+					$scope.productosProcesados = []
 				}
-				if (idSucursal !== undefined) {
-					$scope.almacenes = [];
-					var sucursal = $.grep($scope.sucursales, function (e) { return e.id == idSucursal; })[0];
-					$scope.almacenes = sucursal.almacenes;
-					if ($scope.solicitud.almacen) {
-						$scope.cargarProductos();
+			}
+		}
+		$scope.eliminar = function (solicitud) {
+			$scope.solicitud = solicitud
+			$scope.solicitud.solicitudesProductos.map(function (prod) {
+				var promesa = ListaInventariosProducto(prod.productoSolicitado.id, $scope.solicitud.almacen.id);
+				promesa.then(function (inventarios) {
+					prod.inventarios = inventarios
+					prod.inventario_disponible_utilizado = prod.cantidad
+					if ($scope.solicitud.solicitudesProductos.indexOf(prod) == $scope.solicitud.solicitudesProductos.length - 1) {
+						EliminarSolicitudReposicion.save({ id_solicitud: solicitud.id }, solicitud, function (res) {
+							setTimeout(function () {
+								$scope.$apply(function () {
+									$scope.mostrarMensaje(res.mensaje)
+								});
+							}, 600)
+							// $scope.obtenerSolicitudes()
+							$scope.recargarItemsTabla()
+							$scope.solicitud = undefined
+							blockUI.stop()
+						}, function (error) {
+							$scope.solicitud = undefined
+							setTimeout(function () {
+								$scope.$apply(function () {
+									$scope.mostrarMensaje(err.stack ? err.stack : err.message)
+								});
+							}, 600)
+							blockUI.stop()
+						})
 					}
-				}
-			}
-			$scope.eliminar = function (solicitud) {
-				$scope.solicitud = solicitud
-				$scope.solicitud.solicitudesProductos.map(function (prod) {
-					var promesa = ListaInventariosProducto(prod.productoSolicitado.id, $scope.solicitud.almacen.id);
-					promesa.then(function (inventarios) {
-						prod.inventarios = inventarios
-						prod.inventario_disponible_utilizado = prod.cantidad
-						if($scope.solicitud.solicitudesProductos.indexOf(prod) ==$scope.solicitud.solicitudesProductos.length-1 ){
-							EliminarSolicitudReposicion.save({ id_solicitud: solicitud.id }, solicitud, function (res) {
-								$scope.mostrarMensaje(res.mensaje)
-								$scope.obtenerSolicitudes()
-								$scope.solicitud = undefined
-							}, function (error) {
-								$scope.solicitud = undefined
-								$scope.mostrarMensaje(error.data)
-								blockUI.stop()
-							})
-						}
-					})
 				})
-				$scope.cerrarConfirmacionEliminacion();
-				
-			}
+			})
+			$scope.cerrarConfirmacionEliminacion();
 
-			$scope.ver = function (solicitud) {
-				$scope.solicitud = solicitud
-				$scope.solicitud.ver = true
-				$scope.solicitud.sucursal = $scope.solicitud.almacen.sucursal
-				$scope.obtenerAlmacenes($scope.solicitud.sucursal.id)
-				$scope.solicitud.almacen = $scope.solicitud.almacen
-				// $scope.solicitud.ingredientes = $scope.solicitud.solicitudesProductos
-				// $scope.solicitud.ingredientes = $scope.solicitud.solicitudesProductos.map(function (producto) {
-				// 	producto.elNombre = (producto.producto !== undefined) ? producto.producto.nombre : (producto.productoSolicitado !== undefined) ? producto.productoSolicitado.nombre : productito.productoSolicitudBase.nombre
-				// })
-				$scope.abrirDialogPanelOperaciones()
-			}
-		
+		}
+
+		$scope.ver = function (solicitud) {
+			$scope.solicitud = solicitud
+			$scope.solicitud.ver = true
+			$scope.solicitud.sucursal = $scope.solicitud.almacen.sucursal
+			$scope.obtenerAlmacenes($scope.solicitud.sucursal.id)
+			$scope.solicitud.almacen = $scope.solicitud.almacen
+			// $scope.solicitud.ingredientes = $scope.solicitud.solicitudesProductos
+			// $scope.solicitud.ingredientes = $scope.solicitud.solicitudesProductos.map(function (producto) {
+			// 	producto.elNombre = (producto.producto !== undefined) ? producto.producto.nombre : (producto.productoSolicitado !== undefined) ? producto.productoSolicitado.nombre : productito.productoSolicitudBase.nombre
+			// })
+			$scope.abrirDialogPanelOperaciones()
+		}
+
 		$scope.calcularTotalViveres = function (solicitud) {
 			// if(!$scope.alreadyCalculated){
 			$scope.totalViveresSolicitados = []
@@ -214,7 +231,7 @@ angular.module('agil.controladores')
 					$scope.totalViveresSolicitados.push(obj)
 				}
 			})
-			
+
 			$scope.solicitadoTotalFinalBs = 0
 			var alreadyCount = []
 			$scope.totalViveresSolicitados.map(function (producto) {
@@ -251,7 +268,7 @@ angular.module('agil.controladores')
 			}
 		}
 
-		
+
 		$scope.clasificarGrupo = function (grupo) {
 			$scope.productosProcesados = $filter('filter')($scope.productos, grupo);
 			setTimeout(function () {
@@ -299,7 +316,7 @@ angular.module('agil.controladores')
 				detalleVenta.eliminado = true
 			}
 			if ($scope.productoSeleccionado.detallesIngredientesProducto.length == 0) {
-				$scope.eliminarDetalleVenta($scope.productoSeleccionado,true);
+				$scope.eliminarDetalleVenta($scope.productoSeleccionado, true);
 			} else {
 				var count = 0
 				$scope.productoSeleccionado.detallesIngredientesProducto.map(function (ingr) {
@@ -314,11 +331,11 @@ angular.module('agil.controladores')
 		$scope.disminuirDetalleVenta = function (detalleVenta) {
 			$scope.productosProcesados.map(function (prod) {
 				if (prod.id == detalleVenta.productoSolicitado.id) {
-					prod.inventario_disponible +=1
+					prod.inventario_disponible += 1
 				}
 			})
 			if (detalleVenta.cantidad == 1) {
-				$scope.eliminarDetalleVenta(detalleVenta,true);
+				$scope.eliminarDetalleVenta(detalleVenta, true);
 			} else {
 				detalleVenta.cantidad = detalleVenta.cantidad - 1;
 				detalleVenta.detallesIngredientesProducto.map(function (prod) {
@@ -327,9 +344,9 @@ angular.module('agil.controladores')
 
 			}
 		}
-		$scope.actualizarTotalReal= function (prod) {
+		$scope.actualizarTotalReal = function (prod) {
 			prod.detallesIngredientesProducto.map(function (ing) {
-				ing.total = prod.cantidad*ing.cantidad_ideal
+				ing.total = prod.cantidad * ing.cantidad_ideal
 			})
 			// $scope.productosProcesados.map(function (prodProc) {
 			// 	if (prodProc.id == prod.productoSolicitado.id) {
@@ -339,7 +356,7 @@ angular.module('agil.controladores')
 		}
 		$scope.obtenerConfiguracionVentaVista = function () {
 			blockUI.start();
-			var promise = ConfiguracionVentaVistaDatos($scope.usuario.id_empresa);
+			var promise = ConfiguracionVentaVistaDatos($scope.usuarioSesion.id_empresa);
 			promise.then(function (configuracion) {
 				$scope.configuracionVentaVista = configuracion;
 				blockUI.stop();
@@ -347,7 +364,7 @@ angular.module('agil.controladores')
 		}
 
 		$scope.guardarConfiguracionVentaVista = function () {
-			ConfiguracionVentaVista.update({ id_empresa: $scope.usuario.id_empresa }, $scope.configuracionVentaVista, function (res) {
+			ConfiguracionVentaVista.update({ id_empresa: $scope.usuarioSesion.id_empresa }, $scope.configuracionVentaVista, function (res) {
 
 			});
 		}
@@ -371,9 +388,9 @@ angular.module('agil.controladores')
 		}
 
 		$scope.getFecha = function () {
-			if($scope.solicitud !== undefined){
+			if ($scope.solicitud !== undefined) {
 				return new Date($scope.solicitud.fecha)
-			}else{
+			} else {
 				return new Date()
 			}
 		}
@@ -407,28 +424,47 @@ angular.module('agil.controladores')
 					montobs += prodMonto
 				})
 				solicitud.monto = montobs
-				var fil = { id_empresa: $scope.usuario.id_empresa, rol: $scope.usuario.rolesUsuario[0].rol.nombre, id_usuario: $scope.usuario.id, desde: 0, hasta: 0, sucursal: 0, almacen: 0, movimiento: 0, estado: 0, valuado: 0, pagina: 1, items_pagina: 1000, busqueda: 0 };
+				var fil = { id_empresa: $scope.usuarioSesion.id_empresa, rol: $scope.usuarioSesion.rolesUsuario[0].rol.nombre, id_usuario: $scope.usuarioSesion.id, desde: 0, hasta: 0, sucursal: 0, almacen: 0, movimiento: 0, estado: 0, valuado: 0, pagina: 1, items_pagina: 1000, busqueda: 0 };
 				if (solicitud.modificar === undefined) {
 					solicitud.fecha = new Date()
-					solicitud.id_usuario = $scope.usuario.id
+					solicitud.id_usuario = $scope.usuarioSesion.id
 					solicitud.activo = true
 
 					SolicitudReposicion.save(fil, solicitud, function (res) {
 						blockUI.stop()
-						$scope.mostrarMensaje(res.mensaje)
+						setTimeout(function () {
+							$scope.$apply(function () {
+								$scope.mostrarMensaje(res.mensaje)
+							});
+						}, 600)
 						$scope.cerrarPopupPanel()
+
 					}, function (error) {
 						blockUI.stop()
-						$scope.mostrarMensaje(error.data)
+						setTimeout(function () {
+							$scope.$apply(function () {
+								$scope.mostrarMensaje(err.stack ? err.stack : err.message)
+							});
+						}, 600)
+
 					})
 				} else {
 					SolicitudReposicion.update(fil, solicitud, function (res) {
 						blockUI.stop()
-						$scope.mostrarMensaje(res.mensaje)
+						setTimeout(function () {
+							$scope.$apply(function () {
+								$scope.mostrarMensaje(res.mensaje)
+							});
+						}, 600)
 						$scope.cerrarPopupPanel()
 					}, function (error) {
 						blockUI.stop()
-						$scope.mostrarMensaje(error.data)
+						setTimeout(function () {
+							$scope.$apply(function () {
+								$scope.mostrarMensaje(err.stack ? err.stack : err.message)
+							});
+						}, 600)
+						$scope.mostrarMensaje(err.stack ? err.stack : err.message)
 					})
 				}
 			} else {
@@ -465,27 +501,33 @@ angular.module('agil.controladores')
 				for (var i = 0; i < producto.inventarios.length; i++) {
 					cantidadTotal += (producto.inventarios[i].cantidad);
 				}
-				if($scope.solicitud.solicitudesProductos!==undefined && $scope.solicitud.copia){
+				if ($scope.solicitud.solicitudesProductos !== undefined && $scope.solicitud.copia) {
 					for (var j = 0; j < $scope.solicitud.solicitudesProductos.length; j++) {
 						if ($scope.solicitud.solicitudesProductos[j].productoSolicitado.id == producto.id) {
 							cantidadTotal = cantidadTotal - $scope.solicitud.solicitudesProductos[j].cantidad;
 						}
 					}
-				}	
+				}
 			} else {
 				cantidadTotal = 500000;
 			}
 			return cantidadTotal;
 		}
 		$scope.cargarProductos = function () {
-			var promesa = ProductosPanel($scope.usuario.id_empresa, $scope.solicitud.almacen.id);
+			var promesa = ProductosOperaciones($scope.usuarioSesion.id_empresa, $scope.solicitud.almacen.id);
 			promesa.then(function (productos) {
-				for (var i = 0; i < productos.length; i++) {
-					if (productos[i].activar_inventario) {
-						productos[i].inventario_disponible = $scope.obtenerInventarioTotal(productos[i]);
+				if (productos.length > 0){
+					for (var i = 0; i < productos.length; i++) {
+						if (productos[i].activar_inventario) {
+							productos[i].inventario_disponible = $scope.obtenerInventarioTotal(productos[i]);
+						}
 					}
+					$scope.productos = productos;
+				}else{
+					$scope.productos = [];
 				}
-				$scope.productos = productos;
+				
+				
 				// ======= save localstorage ====
 				if (angular.isDefined($localStorage.productosProcesados)) {
 
@@ -513,9 +555,9 @@ angular.module('agil.controladores')
 		$scope.agregarDetalleVentaPanel = function (producto) {
 			var monto = 0
 			var detalleVenta;
-			$scope.cantidadInventario =0;
+			$scope.cantidadInventario = 0;
 			if (producto.activar_inventario) {
-				$scope.cantidadInventario=producto.inventario_disponible
+				$scope.cantidadInventario = producto.inventario_disponible
 				// for (var i = 0; i < producto.inventarios.length; i++) {
 				// 	$scope.cantidadInventario = $scope.cantidadInventario + producto.inventarios[i].cantidad;
 				// }
@@ -588,7 +630,7 @@ angular.module('agil.controladores')
 				} else {
 					$scope.mostrarMensaje('¡Cantidad de inventario insuficiente, inventario disponible: ' + $scope.cantidadInventario + '!');
 				}
-			}else{
+			} else {
 				var j = 0, encontrado = false
 				while (j < $scope.solicitud.solicitudesProductos.length && !encontrado) {
 					if ($scope.solicitud.solicitudesProductos[j].eliminado === undefined) {
@@ -635,7 +677,7 @@ angular.module('agil.controladores')
 					producto.eliminado = undefined
 				}
 			}
-			
+
 			producto.rankin += 1;
 
 			var indice = $scope.productosProcesados.indexOf(producto);
@@ -657,10 +699,14 @@ angular.module('agil.controladores')
 		}
 
 		$scope.cerrarSolicitud = function (solicitud) {
-			var fil = { id_empresa: $scope.usuario.id_empresa, rol: $scope.usuario.rolesUsuario[0].rol.nombre, id_usuario: $scope.usuario.id, desde: 0, hasta: 0, sucursal: 0, almacen: 0, movimiento: 0, estado: 0, valuado: 0, pagina: 1, items_pagina: 1000, busqueda: 0 };
+			var fil = { id_empresa: $scope.usuarioSesion.id_empresa, rol: $scope.usuarioSesion.rolesUsuario[0].rol.nombre, id_usuario: $scope.usuarioSesion.id, desde: 0, hasta: 0, sucursal: 0, almacen: 0, movimiento: 0, estado: 0, valuado: 0, pagina: 1, items_pagina: 1000, busqueda: 0 };
 			$scope.solicitudCerrar.activo = false
 			SolicitudReposicion.update(fil, $scope.solicitudCerrar, function (res) {
-				$scope.mostrarMensaje(res.mensaje)
+				setTimeout(function () {
+					$scope.$apply(function () {
+						$scope.mostrarMensaje(res.mensaje)
+					});
+				}, 600)
 			})
 			$scope.solicitudCerrar = undefined
 			$scope.cerrarDialogConfirmacionCierre()
@@ -690,7 +736,7 @@ angular.module('agil.controladores')
 		}
 
 		$scope.obtenerGruposProductoEmpresa = function () {
-			var promesa = ListaGruposProductoEmpresa($scope.usuario.id_empresa);
+			var promesa = ListaGruposProductoEmpresa($scope.usuarioSesion.id_empresa);
 			promesa.then(function (grupos) {
 				$scope.grupos_productos = grupos;
 				/*if ( angular.isDefined($localStorage.grupos_check) ) {
@@ -748,6 +794,12 @@ angular.module('agil.controladores')
 				}
 				// =================== fin codigo ============================
 			});
+		}
+		if (angular.isDefined($localStorage.color)) {
+			$scope.color = $localStorage.color;
+		} else {
+			$localStorage.color = { 'style': 'red-style', 'stylebutton': 'red-style-button' };
+			$scope.color = { 'style': 'red-style', 'stylebutton': 'red-style-button' };
 		}
 		$scope.cambiarColor = function (color, buttonColor) {
 			// == save localstorage ====
@@ -881,20 +933,20 @@ angular.module('agil.controladores')
 			if ($scope.solicitud !== undefined) {
 				if ($scope.solicitud.id === undefined) {
 					$scope.productoSeleccionado = undefined
-					$scope.solicitud.fechaTexto = $scope.fechaATexto(new Date())
+					$scope.solicitud.fecha = new Date().toLocaleDateString() //$scope.fechaATexto(new Date())
 				} else {
 					if ($scope.solicitud.copia === undefined) {
-						$scope.solicitud.fechaTexto = $scope.fechaATexto(new Date($scope.solicitud.fecha))
+						$scope.solicitud.fecha = new Date($scope.solicitud.fecha).toLocaleDateString() //$scope.fechaATexto(new Date($scope.solicitud.fecha))
 						$scope.solicitud.nueva = true
 					} else {
 						$scope.solicitud.id = undefined
-						$scope.solicitud.fechaTexto = $scope.fechaATexto(new Date())
+						$scope.solicitud.fecha = new Date().toLocaleDateString() //$scope.fechaATexto(new Date())
 						$scope.solicitud.activo = true
 					}
 				}
 			} else {
 				$scope.solicitud = {}
-				$scope.solicitud.fechaTexto = $scope.fechaATexto(new Date())
+				$scope.solicitud.fecha = new Date().toLocaleDateString() //$scope.fechaATexto(new Date())
 				$scope.solicitud.activo = true
 			}
 			$scope.obtenerGruposProductoEmpresa();
@@ -907,7 +959,8 @@ angular.module('agil.controladores')
 				$scope.solicitud = undefined
 			}
 			$scope.productoSeleccionado = undefined
-			$scope.obtenerSolicitudes()
+			// $scope.obtenerSolicitudes()
+			$scope.recargarItemsTabla()
 			$scope.productosProcesados = []
 			$scope.cerrarPopup($scope.idDialogDialogPanelOperaciones);
 		}
@@ -949,7 +1002,7 @@ angular.module('agil.controladores')
 			blockUI.start();
 			$scope.calcularTotalViveres(solicitud)
 
-			var doc = new PDFDocument({ size: [612, 792], margin: 10 });
+			var doc = new PDFDocument({ size: [612, 792], margin: 10, compress: false });
 			var stream = doc.pipe(blobStream());
 			var fechaActual = new Date();
 			var min = fechaActual.getMinutes();
@@ -976,7 +1029,7 @@ angular.module('agil.controladores')
 					doc.rect(40, 105, 540, y - 115).stroke();
 					doc.text(pagina + "/" + totalPaginas, 570, y + 15);
 					doc.font('Helvetica', 6);
-					doc.text("RESPONSABLE: " + $scope.usuario.nombre_usuario, 45, y + 10);
+					doc.text("RESPONSABLE: " + $scope.usuarioSesion.nombre_usuario, 45, y + 10);
 					doc.text("SOLICITANTE: " + $scope.totalViveresSolicitados.usuario.persona.nombre_completo, 345, y + 10);
 					doc.text("IMPRESION : " + fechaActual.getDate() + "/" + (fechaActual.getMonth() + 1) + "/" + fechaActual.getFullYear() + " Hr. " + fechaActual.getHours() + ":" + min, 175, y + 10);
 					doc.addPage({ size: [612, 792], margin: 10 });
@@ -994,7 +1047,7 @@ angular.module('agil.controladores')
 			}
 			doc.text(pagina + "/" + totalPaginas, 570, y + 15);
 			doc.font('Helvetica', 6);
-			doc.text("RESPONSABLE: " + $scope.usuario.nombre_usuario, 45, y + 5);
+			doc.text("RESPONSABLE: " + $scope.usuarioSesion.nombre_usuario, 45, y + 5);
 			doc.text("SOLICITANTE: " + $scope.totalViveresSolicitados.usuario.persona.nombre_completo, 345, y + 5);
 			doc.text("IMPRESION : " + fechaActual.getDate() + "/" + (fechaActual.getMonth() + 1) + "/" + fechaActual.getFullYear() + " Hr. " + fechaActual.getHours() + ":" + min, 175, y + 5);
 			doc.end();

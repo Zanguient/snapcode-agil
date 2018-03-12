@@ -1,9 +1,13 @@
 
 module.exports = function (sequelize, Sequelize) {
     var RrhhEmpleadoVacaciones = sequelize.define('agil_rrhh_empleado_vacaciones', {
-        id_empleado: {
+   /*      id_empleado: {
             type: Sequelize.INTEGER,
             field: 'empleado'
+        }, */
+        id_ficha: {
+            type: Sequelize.INTEGER,
+            field: 'ficha'
         },
         sabado: {
             type: Sequelize.BOOLEAN,

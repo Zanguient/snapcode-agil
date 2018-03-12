@@ -3,7 +3,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Producto, Dicc
     router.route('/operaciones/empresa/:id_empresa/vintage/:id_usuario/capo/:rol/desde/:desde/hasta/:hasta/suc/:sucursal/alm/:almacen/mov/:movimiento/est/:estado/val/:valuado/pagina/:pagina/items-pagina/:items_pagina/busqueda/:busqueda')
         .post(function (req, res) {
             if (req.body.id === undefined) {
-                fecha = req.body.fechaTexto.split('/')
+                // fecha = req.body.fechaTexto.split('/')
                 SolicitudReposicion.create({
                     id_almacen: req.body.almacen.id,
                     // id_movimiento: movimiento.id,
@@ -524,6 +524,35 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Producto, Dicc
                     });
             }
         })
+
+        router.route('/productos-operaciones/empresa/:id_empresa/almacen/:id_almacen')
+		.get(function (req, res) {
+			Producto.findAll({
+				where: { id_empresa: req.params.id_empresa, publicar_panel: true },
+				include: [{ model: Inventario, as: 'inventarios', where: { id_almacen: req.params.id_almacen, cantidad: { $gte: 0 } }, required: true },
+				{ model: Clase, as: 'tipoProducto' },
+				{
+					model: ProductoBase, as: 'productosBase',
+					include: [{
+						model: Producto, as: 'productoBase',
+						include: [{ model: Inventario, as: 'inventarios'},
+						{ model: Clase, as: 'tipoProducto' },
+						{
+							model: ProductoBase, as: 'productosBase',
+							include: [{
+								model: Producto, as: 'productoBase',
+								include: [{ model: Inventario, as: 'inventarios'},
+								{ model: Clase, as: 'tipoProducto' }]
+							}]
+						}]
+					}]
+				}],
+				order: [[{ model: Inventario, as: 'inventarios' }, 'updatedAt', 'DESC']]
+			}).then(function (productos) {
+				res.json(productos);
+			});
+		});
+
     router.route('/operaciones/impresion/:id_solicitud')
         .get(function (req, res) {
             SolicitudReposicion.find({

@@ -32,7 +32,7 @@ angular.module('agil.servicios')
             var delay = $q.defer();
             var params = {
                 id_empresa: paginador.filter.id_empresa,
-                mes: paginador.filter.mes.id !== undefined ? paginador.filter.mes.id :paginador.filter.mes,
+                mes: paginador.filter.mes.id !== undefined ? paginador.filter.mes.id : paginador.filter.mes,
                 anio: paginador.filter.anio.id !== undefined ? paginador.filter.anio.id : paginador.filter.anio,
                 desempenio: paginador.filter.desempenio && paginador.filter.desempenio.id !== undefined ? paginador.filter.desempenio.id : 0,
                 mas_campo: paginador.filter.mas_campo,
@@ -91,16 +91,16 @@ angular.module('agil.servicios')
     }])
 
     .factory('ReporteMeses', function ($resource) {
-        return $resource(restServer + "reportes/:desde_mes/:desde_anio/:hasta_mes/:hasta_anio", {},
+        return $resource(restServer + "reportes/:desde_mes/:desde_anio/:hasta_mes/:hasta_anio/:id_empresa", {},
             {
                 'update': { method: 'PUT' }
             });
     })
 
     .factory('ObtenerReportePorMeses', ['ReporteMeses', '$q', function (ReporteMeses, $q) {
-        var res = function (fromMonth, fromYear, untilMonth, untilYear) {
+        var res = function (fromMonth, fromYear, untilMonth, untilYear, id_empresa) {
             var delay = $q.defer();
-            ReporteMeses.get({ desde_mes: fromMonth.id, desde_anio: fromYear.id, hasta_mes: untilMonth.id, hasta_anio: untilYear.id }, function (entidades) {
+            ReporteMeses.get({ id_empresa: id_empresa, desde_mes: fromMonth.id, desde_anio: fromYear.id, hasta_mes: untilMonth.id, hasta_anio: untilYear.id }, function (entidades) {
                 delay.resolve(entidades);
             }, function (error) {
                 delay.reject(error);
@@ -111,16 +111,16 @@ angular.module('agil.servicios')
     }])
 
     .factory('ReporteAnual', function ($resource) {
-        return $resource(restServer + "reportes/anual/:anio/campos", {},
+        return $resource(restServer + "reportes/anual/:anio/campos/:id_empresa", {},
             {
                 'update': { method: 'PUT' }
             });
     })
 
     .factory('ObtenerReportePorAnio', ['ReporteAnual', '$q', function (ReporteAnual, $q) {
-        var res = function (year) {
+        var res = function (year, id_empresa) {
             var delay = $q.defer();
-            ReporteAnual.get({ anio: year}, function (entidades) {
+            ReporteAnual.get({ anio: year, id_empresa: id_empresa }, function (entidades) {
                 delay.resolve(entidades);
             }, function (error) {
                 delay.reject(error);
@@ -131,16 +131,16 @@ angular.module('agil.servicios')
     }])
 
     .factory('ReporteAnualCampo', function ($resource) {
-        return $resource(restServer + "reportes/anual/:anio/:campo", {},
+        return $resource(restServer + "reportes/anual/:anio/:campo/:id_empresa", {},
             {
                 'update': { method: 'PUT' }
             });
     })
 
     .factory('ObtenerReporteGeneralPorAnio', ['ReporteAnualCampo', '$q', function (ReporteAnualCampo, $q) {
-        var res = function (year, campo) {
+        var res = function (year, campo, id_empresa) {
             var delay = $q.defer();
-            ReporteAnualCampo.get({ anio: year, campo:campo}, function (entidades) {
+            ReporteAnualCampo.get({ anio: year, campo: campo, id_empresa: id_empresa }, function (entidades) {
                 delay.resolve(entidades);
             }, function (error) {
                 delay.reject(error);
@@ -161,7 +161,7 @@ angular.module('agil.servicios')
     .factory('GuardarConfiguracionCalificacion', ['configuracionCalificacion', '$q', function (configuracionCalificacion, $q) {
         var res = function (idEmpresa, configuracion) {
             var delay = $q.defer();
-            configuracionCalificacion.save({id_empresa: idEmpresa}, configuracion, function (entidades) {
+            configuracionCalificacion.save({ id_empresa: idEmpresa }, configuracion, function (entidades) {
                 delay.resolve(entidades);
             }, function (error) {
                 delay.reject(error);
@@ -174,7 +174,7 @@ angular.module('agil.servicios')
     .factory('ObtenerConfiguracionCalificacion', ['configuracionCalificacion', '$q', function (configuracionCalificacion, $q) {
         var res = function (idEmpresa, configuracion) {
             var delay = $q.defer();
-            configuracionCalificacion.get({id_empresa: idEmpresa}, function (entidades) {
+            configuracionCalificacion.get({ id_empresa: idEmpresa }, function (entidades) {
                 delay.resolve(entidades);
             }, function (error) {
                 delay.reject(error);
@@ -194,7 +194,7 @@ angular.module('agil.servicios')
     .factory('GuardarConfiguracionDesempenio', ['configuracionDesempenio', '$q', function (configuracionDesempenio, $q) {
         var res = function (idEmpresa, configuracion) {
             var delay = $q.defer();
-            configuracionDesempenio.save({id_empresa: idEmpresa}, configuracion, function (entidades) {
+            configuracionDesempenio.save({ id_empresa: idEmpresa }, configuracion, function (entidades) {
                 delay.resolve(entidades);
             }, function (error) {
                 delay.reject(error);
@@ -207,7 +207,7 @@ angular.module('agil.servicios')
     .factory('ObtenerConfiguracionDesempenio', ['configuracionDesempenio', '$q', function (configuracionDesempenio, $q) {
         var res = function (idEmpresa, configuracion) {
             var delay = $q.defer();
-            configuracionDesempenio.get({id_empresa: idEmpresa}, function (entidades) {
+            configuracionDesempenio.get({ id_empresa: idEmpresa }, function (entidades) {
                 delay.resolve(entidades);
             }, function (error) {
                 delay.reject(error);

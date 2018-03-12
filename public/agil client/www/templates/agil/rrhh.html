@@ -6571,7 +6571,7 @@
                 </thead>
                 <tbody>
                     <tr ng-repeat="vacacion in historialEmpresaVacaciones track by $index">
-                        <td>{{vacacion.empleado.persona.nombre_completo}}</td>
+                        <td>{{vacacion.ficha.empleado.persona.nombre_completo}}</td>
                         <td>{{vacacion.fecha_inicio| date:'dd/MM/yyyy'}}</td>
                         <td>{{vacacion.fecha_fin|date:'dd/MM/yyyy'}}</td>
                         <td>{{vacacion.dias}}</td>
@@ -6659,7 +6659,7 @@
                 </thead>
                 <tbody>
                     <tr ng-repeat="ausencia in historialEmpresaAusencias track by $index">
-                        <td>{{ausencia.empleado.persona.nombre_completo}}</td>
+                        <td>{{ausencia.ficha.empleado.persona.nombre_completo}}</td>
                         <td>{{ausencia.fecha_inicio|date:'dd/MM/yyyy'}}</td>
                         <td>{{ausencia.fecha_fin|date:'dd/MM/yyyy'}}</td>
                         <td>{{ausencia.baja}}</td>
@@ -7519,7 +7519,7 @@
                 </thead>
                 <tbody>
                     <tr ng-repeat="ausencia in historialEmpresaOtrasAusencias track by $index">
-                        <td>{{ausencia.empleado.persona.nombre_completo}}</td>
+                        <td>{{ausencia.ficha.empleado.persona.nombre_completo}}</td>
                         <td>{{ausencia.fecha_inicio|date:'dd/MM/yyyy'}}</td>
                         <td>{{ausencia.fecha_fin|date:'dd/MM/yyyy'}}</td>
                         <td>{{ausencia.dias}}</td>

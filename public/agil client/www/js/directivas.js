@@ -81,7 +81,9 @@ angular.module('agil.directivas', [])
         }
       });
       scope.$on('$destroy', function(){
+        if(binding instanceof function(){}){
         binding(); // destroy the bind we created, preventing a memory leak.
+      }
       })
     }
   };

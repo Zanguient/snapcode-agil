@@ -1469,7 +1469,8 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
     router.route('/recursos-humanos/rolTurno/empleado/:id_empleado')
         .post(function (req, res) {
             RrhhEmpleadoRolTurno.create({
-                id_empleado: req.params.id_empleado,
+                /* id_empleado: req.params.id_empleado, */
+                id_ficha: req.body.id_ficha,
                 id_campo: req.body.campo.id,
                 fecha_inicio: req.body.fecha_inicio,
                 fecha_fin: req.body.fecha_fin,
@@ -1487,8 +1488,8 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
         .get(function (req, res) {
             if (req.params.id_empleado != 0) {
                 RrhhEmpleadoRolTurno.findAll({
-                    where: { id_empleado: req.params.id_empleado },
-                    include: [{ model: Clase, as: 'campo' }, { model: MedicoPaciente, as: 'empleado', where: { id_empresa: req.params.id_empresa } }]
+                    where: { id_ficha: req.params.id_empleado },
+                    include: [{ model: Clase, as: 'campo' }, { model: RrhhEmpleadoFicha, as: 'ficha',include:[{model:MedicoPaciente,as:'empleado', where: { id_empresa: req.params.id_empresa }}]}]
                 }).then(function (empleadoRolesTurno) {
                     res.json({ rolesTurno: empleadoRolesTurno })
 
@@ -1506,6 +1507,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
         .post(function (req, res) {
             RrhhEmpleadoHorasExtra.create({
                 id_empleado: req.params.id_empleado,
+                id_ficha: req.body.id_ficha,
                 fecha: req.body.fecha,
                 hora_inicio: req.body.hora_inicio2,
                 hora_fin: req.body.hora_fin2,
@@ -1518,15 +1520,15 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
         })
     router.route('/recursos-humanos/horas-extra/empleado/:id_empleado/inicio/:inicio/fin/:fin')
         .get(function (req, res) {
-            var condicionHorasExtra = { id_empleado: req.params.id_empleado, eliminado: false };
+            var condicionHorasExtra = { id_ficha: req.params.id_empleado, eliminado: false };
             if (req.params.inicio != 0) {
                 var inicio = new Date(req.params.inicio); inicio.setHours(0, 0, 0, 0, 0);
                 var fin = new Date(req.params.fin); fin.setHours(23, 0, 0, 0, 0);
-                var condicionHorasExtra = { id_empleado: req.params.id_empleado, eliminado: false, fecha: { $between: [inicio, fin] } };
+                var condicionHorasExtra = { id_ficha: req.params.id_empleado, eliminado: false, fecha: { $between: [inicio, fin] } };
             }
             RrhhEmpleadoHorasExtra.findAll({
                 where: condicionHorasExtra,
-                include: [{ model: MedicoPaciente, as: 'empleado' }]
+                include: [{ model: RrhhEmpleadoFicha, as: 'ficha',include:[{model:MedicoPaciente,as:'empleado'}] }]
             }).then(function (horasExtra) {
                 res.json(horasExtra)
 
@@ -2022,7 +2024,8 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
     router.route('/recursos-humanos/ausencia/empleado/:id_empleado')
         .post(function (req, res) {
             RrhhEmpleadoAusencia.create({
-                id_empleado: req.params.id_empleado,
+                /* id_empleado: req.params.id_empleado, */
+                id_ficha: req.params.id_empleado,
                 id_tipo: req.body.tipo.id,
                 fecha_inicio: req.body.fecha_inicio,
                 fecha_fin: req.body.fecha_fin,
@@ -2034,22 +2037,26 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                 primera_baja: req.body.primera_baja,
                 planilla: req.body.planilla
             }).then(function (empleadoAusenciaCreado) {
-                if (req.body.compensaciones.length > 0) {
-                    req.body.compensaciones.forEach(function (compensacion, index, array) {
-                        RrhhEmpleadoCompensacionAusencia.create({
-                            id_ausencia: empleadoAusenciaCreado.id,
-                            fecha: compensacion.fecha_real,
-                            hora_inicio: compensacion.hora_inicio,
-                            hora_fin: compensacion.hora_fin,
-                            tiempo: compensacion.total,
-                            eliminado: false
-                        }).then(function (compensacionCreada) {
-                            if (index === (array.length - 1)) {
-                                res.json({ mensaje: "Guardado satisfactoriamente!" })
-                            }
+                if (req.body.compensaciones) {
+                    if (req.body.compensaciones.length > 0) {
+                        req.body.compensaciones.forEach(function (compensacion, index, array) {
+                            RrhhEmpleadoCompensacionAusencia.create({
+                                id_ausencia: empleadoAusenciaCreado.id,
+                                fecha: compensacion.fecha_real,
+                                hora_inicio: compensacion.hora_inicio,
+                                hora_fin: compensacion.hora_fin,
+                                tiempo: compensacion.total,
+                                eliminado: false
+                            }).then(function (compensacionCreada) {
+                                if (index === (array.length - 1)) {
+                                    res.json({ mensaje: "Guardado satisfactoriamente!" })
+                                }
+                            })
                         })
-                    })
 
+                    } else {
+                        res.json({ mensaje: "Guardado satisfactoriamente!" })
+                    }
                 } else {
                     res.json({ mensaje: "Guardado satisfactoriamente!" })
                 }
@@ -2057,20 +2064,20 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
         })
     router.route('/recursos-humanos/ausencias/empleado/:id_empleado/inicio/:inicio/fin/:fin/tipo-ausencia/:tipo_ausencia/tipo/:tipo')
         .get(function (req, res) {
-            var condicionAusencias = { id_empleado: req.params.id_empleado, eliminado: false };
+            var condicionAusencias = { id_ficha: req.params.id_empleado, eliminado: false };
             if (req.params.inicio != 0) {
                 var inicio = new Date(req.params.inicio); inicio.setHours(0, 0, 0, 0, 0);
                 var fin = new Date(req.params.fin); fin.setHours(23, 0, 0, 0, 0);
-                condicionAusencias = { id_empleado: req.params.id_empleado, eliminado: false, fecha_inicio: { $between: [inicio, fin] } };
+                condicionAusencias = { id_ficha: req.params.id_empleado, eliminado: false, fecha_inicio: { $between: [inicio, fin] } };
                 if (req.params.tipo_ausencia != 0) {
-                    condicionAusencias = { id_empleado: req.params.id_empleado, eliminado: false, tipo: req.params.tipo_ausencia, fecha_inicio: { $between: [inicio, fin] } };
+                    condicionAusencias = { id_ficha: req.params.id_empleado, eliminado: false, tipo: req.params.tipo_ausencia, fecha_inicio: { $between: [inicio, fin] } };
                 }
             } else if (req.params.tipo_ausencia != 0) {
-                condicionAusencias = { id_empleado: req.params.id_empleado, eliminado: false, tipo: req.params.tipo_ausencia };
+                condicionAusencias = { id_ficha: req.params.id_empleado, eliminado: false, tipo: req.params.tipo_ausencia };
             }
             RrhhEmpleadoAusencia.findAll({
                 where: condicionAusencias,
-                include: [{ model: MedicoPaciente, as: 'empleado' }, { model: RrhhClaseAsuencia, as: 'tipoAusencia', include: [{ model: Tipo, as: 'tipo', where: { nombre_corto: req.params.tipo } }] }]
+                include: [ { model: RrhhEmpleadoFicha, as: 'ficha',include:[{model:MedicoPaciente,as:'empleado'}] }, { model: RrhhClaseAsuencia, as: 'tipoAusencia', include: [{ model: Tipo, as: 'tipo', where: { nombre_corto: req.params.tipo } }] }]
             }).then(function (ausencias) {
                 res.json(ausencias)
             })
@@ -2091,7 +2098,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
             }
             RrhhEmpleadoAusencia.findAll({
                 where: condicionAusencias,
-                include: [{ model: MedicoPaciente, as: 'empleado', where: { id_empresa: req.params.id_empresa }, include: [{ model: Persona, as: 'persona' }] }, { model: RrhhClaseAsuencia, as: 'tipoAusencia', include: [{ model: Tipo, as: 'tipo', where: { nombre_corto: req.params.tipo } }] }]
+                include: [{ model: RrhhEmpleadoFicha, as: 'ficha',include:[{model:MedicoPaciente,as:'empleado', where: { id_empresa: req.params.id_empresa }, include: [{ model: Persona, as: 'persona' }]}] }, { model: RrhhClaseAsuencia, as: 'tipoAusencia', include: [{ model: Tipo, as: 'tipo', where: { nombre_corto: req.params.tipo } }] }]
             }).then(function (ausencias) {
                 res.json(ausencias)
             })
@@ -2101,7 +2108,8 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
     router.route('/recursos-humanos/vacacion/empleado/:id_empleado')
         .post(function (req, res) {
             RrhhEmpleadoVacaciones.create({
-                id_empleado: req.params.id_empleado,
+                /* id_empleado: req.params.id_empleado, */
+                id_ficha: req.params.id_empleado,
                 fecha_inicio: req.body.fecha_inicio,
                 fecha_fin: req.body.fecha_fin,
                 observacion: req.body.observacion,
@@ -2120,7 +2128,9 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                                 req.body.dias = req.body.dias - restante
                                 tomadas = restante + historial.tomadas
                             } else {
+
                                 tomadas = req.body.dias + historial.tomadas
+                                req.body.dias = 0
                             }
 
                             RrhhEmpleadoHistorialVacacion.update({
@@ -2148,15 +2158,15 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
         })
     router.route('/recursos-humanos/vacacion/empleado/:id_empleado/inicio/:inicio/fin/:fin')
         .get(function (req, res) {
-            var condicionVacaciones = { id_empleado: req.params.id_empleado, eliminado: false };
+            var condicionVacaciones = { id_ficha: req.params.id_empleado, eliminado: false };
             if (req.params.inicio != 0) {
                 var inicio = new Date(req.params.inicio); inicio.setHours(0, 0, 0, 0, 0);
                 var fin = new Date(req.params.fin); fin.setHours(23, 0, 0, 0, 0);
-                condicionVacaciones = { id_empleado: req.params.id_empleado, eliminado: false, fecha_inicio: { $between: [inicio, fin] } };
+                condicionVacaciones = { id_ficha: req.params.id_empleado, eliminado: false, fecha_inicio: { $between: [inicio, fin] } };
             }
             RrhhEmpleadoVacaciones.findAll({
                 where: condicionVacaciones,
-                include: [{ model: MedicoPaciente, as: 'empleado', include: [{ model: Persona, as: 'persona' }] }]
+                include: [{ model: RrhhEmpleadoFicha, as: 'ficha',include:[{model:MedicoPaciente,as:'empleado', include: [{ model: Persona, as: 'persona' }]}] }]
             }).then(function (vacaciones) {
                 res.json(vacaciones)
             })
@@ -2171,7 +2181,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
             }
             RrhhEmpleadoVacaciones.findAll({
                 where: condicionVacaciones,
-                include: [{ model: MedicoPaciente, as: 'empleado', where: { id_empresa: req.params.id_empresa }, include: [{ model: Persona, as: 'persona' }] }]
+                include: [{ model: RrhhEmpleadoFicha, as: 'ficha',include:[{model:MedicoPaciente,as:'empleado', where: { id_empresa: req.params.id_empresa }, include: [{ model: Persona, as: 'persona' }]}] }]
             }).then(function (vacaciones) {
                 res.json(vacaciones)
             })
@@ -2414,12 +2424,13 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                 condicion_persona.nombre_completo = { $like: '%' + req.params.apellido + '%' }
             }
             condicion_empleado.es_empleado = true
+            condicion_empleado.id_empresa = req.params.id_empresa
             EvaluacionPolifuncional.findAndCountAll({
                 offset: (req.params.items_pagina * (req.params.pagina - 1)), limit: req.params.items_pagina,
                 where: condicion_evaluacion,
                 include: [{
-                    model: MedicoPaciente, as: 'empleado',
-                    where: condicion_empleado,
+                    model: MedicoPaciente, as: 'empleado', 
+                    where: condicion_empleado, requires: true,
                     include: [{
                         model: RrhhEmpleadoCargo, as: 'cargos',
                         where: { $or: condicion_cargos },
@@ -2439,7 +2450,8 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
         .get(function (req, res) {
             MedicoPaciente.findAll({
                 where: {
-                    es_empleado: true
+                    es_empleado: true,
+                    empresa: req.params.id_empresa
                 }, include: [{ model: RrhhEmpleadoCargo, as: 'cargos', include: [{ model: Clase, as: 'cargo' }] }, { model: Persona, as: 'persona' }]
             }).then(function (personal) {
                 res.json({ personal: personal })
@@ -2471,7 +2483,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                         // fecha: req.body.fecha
                     },
                     include: [{
-                        model: MedicoPaciente, as: 'empleado',
+                        model: MedicoPaciente, as: 'empleado', where:{id_empresa: req.params.id_empresa}, required: true,
                         include: [{
                             model: RrhhEmpleadoCargo, as: 'cargos',
                             include: [{ model: Clase, as: 'cargo' }]
@@ -2732,14 +2744,15 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
 
     ///////////////////////////////////////////////Reporte por meses
 
-    router.route('/reportes/:desde_mes/:desde_anio/:hasta_mes/:hasta_anio')
+    router.route('/reportes/:desde_mes/:desde_anio/:hasta_mes/:hasta_anio/:id_empresa')
         .get(function (req, res) {
             var desde = new Date(parseInt(req.params.desde_anio), parseInt(req.params.desde_mes), 1, 0, 0, 0)
             var hasta = new Date(parseInt(req.params.hasta_anio), parseInt(req.params.hasta_mes) + 1, 0, 23, 59, 0)
             var condicion = { fecha: { $between: [desde, hasta] } }
             MedicoPaciente.findAll({
                 where: {
-                    es_empleado: true
+                    es_empleado: true,
+                    id_empresa: req.params.id_empresa
                 }, include: [
                     { model: RrhhEmpleadoCargo, as: 'cargos', include: [{ model: Clase, as: 'cargo' }] },
                     { model: Persona, as: 'persona' },
@@ -2782,13 +2795,15 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
 
     ////////////////////////////////////////////////////// Promedios anuales de campos
 
-    router.route('/reportes/anual/:anio/campos')
+    router.route('/reportes/anual/:anio/campos/:id_empresa')
         .get(function (req, res) {
             var condicionCampo = {}
             EvaluacionPolifuncional.findAll({
-                where: { anio: req.params.anio },
+                where: { 
+                    anio: req.params.anio
+                 },
                 include: [{
-                    model: MedicoPaciente, as: 'empleado', where: condicionCampo
+                    model: MedicoPaciente, as: 'empleado', where: {id_empresa: req.params.id_empresa}, required: true
                 }],
                 order: [[{ model: MedicoPaciente, as: 'empleado' }, 'campo', 'asc']]
             }).then(function (evaluaciones) {
@@ -2853,13 +2868,13 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
 
     ////////////////////////////////////////////////////////////////Reporte Anual de campo
 
-    router.route('/reportes/anual/:anio/:campo')
+    router.route('/reportes/anual/:anio/:campo/:id_empresa')
         .get(function (req, res) {
             var condicionCampo = {}
             EvaluacionPolifuncional.findAll({
                 where: { anio: req.params.anio },
                 include: [{
-                    model: MedicoPaciente, as: 'empleado', where: { campo: req.params.campo }
+                    model: MedicoPaciente, as: 'empleado', where: { campo: req.params.campo, id_empresa: req.params.id_empresa }, required: true
                 }],
                 order: [['mes', 'DESC']]
             }).then(function (evaluaciones) {
