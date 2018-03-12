@@ -89,11 +89,14 @@ angular.module('agil.controladores')
         $scope.idModalDialogConfirmacionEntregaAdelantado = 'dialog-entrega-adelantada-prerequisito'
         $scope.IdEntregaPrerequisito = 'dialog-entrega-preRequisito';
         $scope.IdModalVerificarCuenta = 'modal-verificar-cuenta';
+        $scope.IdModalVerificarCuentaRrhh = 'modal-verificar-cuenta-Rrhh';
         $scope.idModalImpresionHojaVida = 'dialog-impresion-hoja-vida';
         $scope.idModalNuevoAnticipoRegularTodos = 'dialog-nuevo-anticipo-regular-todos';
         $scope.idModalTr3BancoMsc = 'modal-tr3-banco-msc'
         $scope.idModalTr3BancoUnion = 'modal-tr3-banco-union'
         $scope.idModalHistorialTr3 = 'modal-historial-tr3'
+        $scope.idModalConfirmarDesabilitacion = 'modal-confirmar-desabilitacion'
+        $scope.idModalReingresoEmpleado = 'modal-reingreso-empleado'
         $scope.$on('$viewContentLoaded', function () {
             // resaltarPestaña($location.path().substring(1));
             resaltarPestaña($location.path().substring(1));
@@ -118,7 +121,7 @@ angular.module('agil.controladores')
                 $scope.idModalRhNuevo, $scope.idModalWizardRhNuevo, $scope.idImagenUsuario, $scope.idEliminarUsuarioRh, $scope.idModalWizardRhVista,
                 $scope.idModalContenedorRhVista, $scope.idModalDialogPrerequisitoNuevo, $scope.idEliminarSeguroEmpleado, $scope.idEliminarFamiliarEmpleado, $scope.idModalHistorialPrerequisito,
                 $scope.idModalEditarPrerequisito, $scope.idModalDialogConfirmacionEntregaAdelantado, $scope.IdEntregaPrerequisito, $scope.IdModalVerificarCuenta, $scope.idModalImpresionHojaVida, $scope.idModalNuevoAnticipoRegularTodos,
-                $scope.idModalTr3BancoMsc, $scope.idModalTr3BancoUnion, $scope.idModalHistorialTr3);
+                $scope.idModalTr3BancoMsc, $scope.idModalTr3BancoUnion, $scope.idModalHistorialTr3, $scope.IdModalVerificarCuentaRrhh, $scope.idModalConfirmarDesabilitacion, $scope.idModalReingresoEmpleado);
             $scope.buscarAplicacion($scope.usuario.aplicacionesUsuario, $location.path().substring(1));
             $scope.obtenerColumnasAplicacion()
             blockUI.stop();
@@ -207,6 +210,9 @@ angular.module('agil.controladores')
             $scope.eliminarPopup($scope.idModalTr3BancoMsc)
             $scope.eliminarPopup($scope.idModalTr3BancoUnion)
             $scope.eliminarPopup($scope.idModalHistorialTr3)
+            $scope.eliminarPopup($scope.IdModalVerificarCuentaRrhh)
+            $scope.eliminarPopup($scope.idModalConfirmarDesabilitacion)
+            $scope.eliminarPopup($scope.idModalReingresoEmpleado)
         });
         $scope.inicio = function () {
             $scope.listYearsAnticipo = $scope.obtenerAnios(2017)
@@ -418,6 +424,7 @@ angular.module('agil.controladores')
             $scope.abrirPopup($scope.idModalRhNuevo);
         }
         $scope.cerrarDialogRhNuevo = function () {
+
             $scope.cerrarPopup($scope.idModalRhNuevo);
         }
         $scope.cerrarDialogEliminarUsuarioRh = function () {
@@ -425,7 +432,10 @@ angular.module('agil.controladores')
         }
         $scope.abrirDialogEliminarUsuarioRh = function (empleado) {
             $scope.empleado = empleado
-            $scope.abrirPopup($scope.idEliminarUsuarioRh);
+            if (empleado.activo) {
+                $scope.abrirPopup($scope.idEliminarUsuarioRh);
+            }
+
         }
         $scope.cerrarDialogEliminarSeguroEmpleado = function () {
 
@@ -1664,26 +1674,7 @@ angular.module('agil.controladores')
                 }, 1500);
             }
         };
-        $scope.changeActivoEmpleado = function (empleado) {
 
-            empleado.activo = (empleado.activo == false) ? true : false
-            var promesa = UsuarioRecursosHUmanosActivo(empleado)
-            promesa.then(function (dato) {
-                empleado.activo = (empleado.activo == true) ? false : true
-                /*  $scope.recargarItemsTabla() */
-                $scope.mostrarMensaje(dato.mensaje)
-            })
-        }
-        $scope.EliminarUsuarioRh = function (empleado) {
-
-            empleado.eliminado = true
-            var promesa = UsuarioRecursosHUmanosActivo(empleado)
-            promesa.then(function (dato) {
-                $scope.cerrarDialogEliminarUsuarioRh()
-                $scope.recargarItemsTabla()
-                $scope.mostrarMensaje(dato.mensaje)
-            })
-        }
         $scope.eliminarFamiliarRh = function () {
             var promesa = EliminarFamiliarRh($scope.familiar)
             promesa.then(function (dato) {
@@ -2175,6 +2166,7 @@ angular.module('agil.controladores')
             $scope.obtenerLogrosIE()
             $scope.obtenertiposAusenciaMedica()
             $scope.obtenerTiposOtrasAusencias()
+            $scope.obtenerTiposBaja()
         }
         $scope.obtenerGrados = function () {
             blockUI.start();
@@ -2478,7 +2470,7 @@ angular.module('agil.controladores')
                 }
             }
         }
-        $scope.guardarConceptoEdicionRrhh = function (datos) {
+        $scope.guardarConceptoEdicionRrhh = function (datos,clase) {
             blockUI.start();
             $scope.tipo_edicion2.clases = datos
             var tipo = $scope.tipo_edicion2
@@ -2488,6 +2480,9 @@ angular.module('agil.controladores')
                     tipo = entidad
                     $scope.tipo_edicion2 = {}
                     blockUI.stop();
+                    $scope.buscarDepartamento(clase.pais)
+                    $scope.buscarMunicipios(clase.departamento)
+                    $scope.buscarLocalidad(clase.provincia)
                     $scope.cerrarDialogDepartamentoEstado();
                     $scope.cerrarDialogProvincia();
                     $scope.cerrarDialogLocalidad();
@@ -2889,17 +2884,23 @@ angular.module('agil.controladores')
 
             var button = $('#siguiente-s').text().trim()
             if (button != "Siguiente") {
-
-                var promesa = GuardarEmpleadoHojaVida($scope.empleado.id, $scope.hojaVida)
-                promesa.then(function (dato) {
-                    $scope.mostrarMensaje(dato.mensaje)
-                    $scope.recargarItemsTabla()
-                })
+                if ($scope.empleado.activo) {
+                    var promesa = GuardarEmpleadoHojaVida($scope.empleado.id, $scope.hojaVida)
+                    promesa.then(function (dato) {
+                        $scope.cerrarDialogHojaVida()
+                        $scope.mostrarMensaje(dato.mensaje)
+                        $scope.recargarItemsTabla()
+                    })
+                } else {
+                    $("#formacion-academica").click()
+                    $scope.cerrarDialogHojaVida()
+                }
             }
         }
         $scope.GuardarHojaDeVidaDirecto = function () {
             var promesa = GuardarEmpleadoHojaVida($scope.empleado.id, $scope.hojaVida)
             promesa.then(function (dato) {
+                $scope.cerrarDialogHojaVida()
                 $scope.mostrarMensaje(dato.mensaje)
                 $scope.recargarItemsTabla()
             })
@@ -3489,6 +3490,7 @@ angular.module('agil.controladores')
         $scope.cerrarModalVerificarCuenta = function () {
             $scope.cerrarPopup($scope.IdModalVerificarCuenta);
         }
+
         $scope.EditarMontoPrestamo = function (prestamo) {
             prestamo.montoEdit = false
             prestamo.total = ((prestamo.monto * prestamo.interes_pactado) / 100) + prestamo.monto
@@ -3532,11 +3534,8 @@ angular.module('agil.controladores')
                     $scope.mostrarMensaje(dato.message)
                 }
             })
-
-
-
-
         }
+
         $scope.obtenerListaEmpleados = function () {
             var promesa = ListaEmpleadosRrhh($scope.usuario.id_empresa)
             promesa.then(function (dato) {
@@ -4165,7 +4164,7 @@ angular.module('agil.controladores')
                 dato.forEach(function (banco, index, array) {
 
                     banco.cuentas = []
-                    if (index == 1) {
+                    if (index == 0) {
                         $scope.bancos.push(banco)
                     }
                     var bandera = false
@@ -4374,7 +4373,7 @@ angular.module('agil.controladores')
                 });
             } else if (datos.tipo == "BU") {
 
-                var cabezera = "\r\n\r\nSanta Cruz"+ " " + dia + " de " + mesActual + " de " + anio + "\r\n" +
+                var cabezera = "\r\n\r\nSanta Cruz" + " " + dia + " de " + mesActual + " de " + anio + "\r\n" +
                     "ESS-P-30/18\r\n" +
                     "Señores:\r\n" +
                     "BANCO UNION  S.A.\r\n" +
@@ -4937,7 +4936,120 @@ angular.module('agil.controladores')
             });
         }
 
+        // desabilitar o habilitar empleados
+        $scope.abrirModalVerificarCuentaRrhh = function (empleado) {
+            $scope.empleado = empleado
+            $scope.abrirPopup($scope.IdModalVerificarCuentaRrhh);
+        }
+        $scope.cerrarModalVerificarCuentaRrhh = function (dato) {
+            if (dato) {
+                $scope.empleado.activo = ($scope.empleado.activo == true) ? false : true
+            }
+            $scope.cerrarPopup($scope.IdModalVerificarCuentaRrhh);
+        }
+        $scope.abrirModalVerificacion = function (empleado) {
 
+            if (empleado.activo == true) {
+                $scope.funcionCerrar = $scope.cerrarModalReingresoEmpleado
+                $scope.funcionArealizar = $scope.ActivarCuentaRrhh
+                $scope.abrirModalVerificarCuentaRrhh(empleado)
+            } else {
+                $scope.funcionCerrar = $scope.cerrarMensajeConfirmacion
+                $scope.funcionArealizar = $scope.verificarCuentaAdminRrhh
+                $scope.abrirModalVerificarCuentaRrhh(empleado)
+                setTimeout(function () {
+                    aplicarDatePickers();
+                }, 300);
+            }
+        }
+        $scope.abrirMensajeConfirmacion = function (cuenta) {
+            $scope.cuenta = cuenta
+            $scope.abrirPopup($scope.idModalConfirmarDesabilitacion);
+        }
+        $scope.abrirModalReingresoEmpleado = function () {
+            $scope.abrirPopup($scope.idModalReingresoEmpleado)
+        }
+        $scope.cerrarModalReingresoEmpleado = function (dato) {
+            if (dato) {
+                $scope.empleado.activo = ($scope.empleado.activo == true) ? false : true
+
+            }
+            if ($scope.empleado.tipoReincorporacion.nombre_corto == "NREING") {
+                $scope.abrirDialogEmpleado($scope.empleado)
+            }
+            $scope.cerrarPopup($scope.idModalReingresoEmpleado)
+        }
+        $scope.cerrarMensajeConfirmacion = function (dato) {
+            if (dato) {
+                $scope.empleado.activo = ($scope.empleado.activo == true) ? false : true
+            }
+            $scope.cerrarPopup($scope.idModalConfirmarDesabilitacion);
+        }
+
+        $scope.verificarCuentaAdminRrhh = function (cuenta) {
+            VerificarUsuarioEmpresa.save({ id_empresa: $scope.usuario.id_empresa }, cuenta, function (dato) {
+
+                if (dato.type) {
+                    if (cuenta.fecha) {
+                        $scope.empleado.nueva_fecha_expiracion = new Date($scope.convertirFecha($scope.cuenta.fecha))
+                    } else {
+                        $scope.empleado.nueva_fecha_expiracion = null
+                    }
+
+                    $scope.abrirMensajeConfirmacion(cuenta)
+                    $scope.cerrarModalVerificarCuentaRrhh();
+                } else {
+                    $scope.mostrarMensaje(dato.message)
+                }
+            })
+
+
+        }
+        $scope.ActivarCuentaRrhh = function (cuenta) {
+            VerificarUsuarioEmpresa.save({ id_empresa: $scope.usuario.id_empresa }, cuenta, function (dato) {
+
+                if (dato.type) {
+                    
+                        $scope.empleado.nueva_fecha_expiracion = null
+                    
+                    /*  $scope.abrirMensajeConfirmacion(cuenta) */
+                    $scope.abrirModalReingresoEmpleado(cuenta)
+                    $scope.cerrarModalVerificarCuentaRrhh();
+                } else {
+                    $scope.mostrarMensaje(dato.message)
+                }
+            })
+
+
+        }
+        $scope.changeActivoEmpleado = function (empleado) {
+
+            empleado.activo = (empleado.activo == false) ? true : false
+            var promesa = UsuarioRecursosHUmanosActivo(empleado)
+            promesa.then(function (dato) {
+                empleado.activo = (empleado.activo == true) ? false : true
+                $scope.funcionCerrar()
+                $scope.cuenta = {}
+                $scope.mostrarMensaje(dato.mensaje)
+            })
+        }
+
+
+        $scope.EliminarUsuarioRh = function (empleado) {
+            if (empleado.activo) {
+                empleado.activo = false
+                $scope.abrirModalVerificacion(empleado)
+            }
+        }
+        $scope.obtenerTiposBaja = function () {
+            blockUI.start();
+            var promesa = ClasesTipo("RRHH_TPRE");
+            promesa.then(function (entidad) {
+                $scope.tiposBajas = entidad
+                blockUI.stop();
+            });
+        }
+        //fin desabilitar o habilitar empleado
         $scope.inicio()
 
 

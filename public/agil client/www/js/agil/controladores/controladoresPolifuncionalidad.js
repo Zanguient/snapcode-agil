@@ -253,8 +253,10 @@ angular.module('agil.controladores')
                     } else {
                         if (evaluacion.encargado) {
                             total += $scope.encargados[key]
+                            evaluacion[key] = $scope.encargados[key]
                         } else {
                             total += $scope.empleados[key]
+                            evaluacion[key] = $scope.empleados[key]
                         }
                     }
                     evaluacion.nota_total = total
@@ -264,8 +266,10 @@ angular.module('agil.controladores')
                     } else {
                         if (evaluacion.encargado) {
                             total += encargados[key]
+                            evaluacion[key] = $scope.encargados[key]
                         } else {
                             total += empleados[key]
+                            evaluacion[key] = $scope.empleados[key]
                         }
                     }
                 }
@@ -400,13 +404,14 @@ angular.module('agil.controladores')
                     var datosCampo = []
                     row.map(function (dat, j) {
                         if (j > 5 && j <= row.length - 2) {
-                            var col = { x: x, y: dat, label: row.length - 2 != j ? mesesReporte[j - 6] : 'TOTAL' }
+                            var col = {y: dat, label: row.length - 2 != j ? mesesReporte[j - 6] : 'TOTALbbbb' }
                             datosCampo.push(col)
                             x += 10
                         }
                     })
                     var dato = {
                         type: "column",
+                        interval: 0,
                         showInLegend: true,
                         legendText: (row[1] + " " + row[2] + " " + row[3] + " " + row[4] + " " + row[5]).toUpperCase(),
                         dataPoints: datosCampo
@@ -442,6 +447,7 @@ angular.module('agil.controladores')
             blockUI.start()
             if (fromMonth === undefined || fromYear === undefined || untilMonth === undefined || untilYear === undefined || fromMonth === null || fromYear === null || untilMonth === null || untilYear === null) {
                 $scope.mostrarMensaje('Ingrese desde que Mes/Año hasta que Mes/Año desea el reporte.')
+                blockUI.stop()
                 return
             }
             if (pdf) {
@@ -570,7 +576,7 @@ angular.module('agil.controladores')
                 var limiteChar = 46
                 var doc = new PDFDocument({ size: [612, 792], margin: 10, compress: false });
                 var stream = doc.pipe(blobStream());
-                doc.image(imagen, 40, 40, { width: 60, height: 60 });
+                doc.image(imagen, 40, 30, { fit: [100, 100] });
                 for (var i = 0; i <= (reporte.length - 1); i++) {
                     if (reporte[i].length < 15) {
                         if (i == 0) {
@@ -671,7 +677,7 @@ angular.module('agil.controladores')
             var dataPointsReporte = []
             reporte.map(function (row, i) {
                 if (i != 0) {
-                    var dato = { x: x, y: row[9], label: row[0] }
+                    var dato = { y: row[9], label: row[0] }
                     dataPointsReporte.push(dato)
                     x += 10
                 }
@@ -685,15 +691,15 @@ angular.module('agil.controladores')
                     },
                     animationEnabled: true,
                     exportEnabled: true,
-                    zoomEnable: true,
+                    // zoomEnable: true,
                     width: 1100,
                     axisX: {
-                        title: "Promedio total mensual",
+                        title: "Promedio total mensual"
                         // titleFontFamily: "comic sans ms"
                     },
-                    data: [-
+                    data: [
                         {
-                            type: $scope.graficoType,
+                            type: "column",
                             dataPoints: dataPointsReporte
                         }
                     ]
@@ -1058,7 +1064,7 @@ angular.module('agil.controladores')
                 if (res.mensaje !== undefined) {
                     $scope.mostrarMensaje(res.mensaje)
                 }
-                $scope.resetFiltro()
+                // $scope.resetFiltro()
                 /*  $scope.cerrarPopPupNuevoPolifuncional() */
             }, function (err) {
                 $scope.mostrarMensaje("Se perdió la conexión.")

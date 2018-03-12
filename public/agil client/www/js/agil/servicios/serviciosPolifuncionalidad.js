@@ -34,7 +34,7 @@ angular.module('agil.servicios')
                 id_empresa: paginador.filter.id_empresa,
                 mes: paginador.filter.mes.id !== undefined ? paginador.filter.mes.id :paginador.filter.mes,
                 anio: paginador.filter.anio.id !== undefined ? paginador.filter.anio.id : paginador.filter.anio,
-                desempenio: paginador.filter.desempenio.id !== undefined ? paginador.filter.desempenio.id : 0,
+                desempenio: paginador.filter.desempenio && paginador.filter.desempenio.id !== undefined ? paginador.filter.desempenio.id : 0,
                 mas_campo: paginador.filter.mas_campo,
                 campo: paginador.filter.campo,
                 cargo: paginador.filter.cargo.id !== undefined ? paginador.filter.cargo.id : 0,

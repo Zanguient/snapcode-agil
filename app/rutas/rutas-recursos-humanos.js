@@ -458,7 +458,31 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                     }
                 }).then(function (personaActualizada) {
                     /*  var mn = (req.body.activo == true) ? 'activo' : 'inactivo' */
-                    res.json({ mensaje: "Usuario actualizado satisfactoriamente!" });
+                    if (req.body.nueva_fecha_expiracion) {
+                        RrhhEmpleadoFicha.update({
+                            fecha_expiracion: req.body.nueva_fecha_expiracion
+                        }, {
+                                where: { id: req.body.ficha.id }
+                            }).then(function (fichaActualizada) {
+                                res.json({ mensaje: "Usuario actualizado satisfactoriamente!" });
+                            })
+
+                    } else if (req.body.tipoReincorporacion) {
+                        if (req.body.tipoReincorporacion.nombre_corto == Diccionario.TIPO_REINCORPORACION) {
+                            RrhhEmpleadoFicha.update({
+                                fecha_expiracion: req.body.nueva_fecha_expiracion
+                            }, {
+                                    where: { id: req.body.ficha.id }
+                                }).then(function (fichaActualizada) {
+                                    res.json({ mensaje: "Usuario actualizado satisfactoriamente!" });
+                                })
+                        } else {
+                            res.json({ mensaje: "Usuario actualizado satisfactoriamente!" });
+                        }
+
+                    } else {
+                        res.json({ mensaje: "Usuario actualizado satisfactoriamente!" });
+                    }
                 })
 
 
@@ -914,7 +938,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                     where: { id_empleado: empleado.id }
                 }).then(function (historialActualizado) {
                     /* req.body.historialVacacion.forEach(function (historial, index, array) { */
-                        var contador=0
+                    var contador = 0
                     for (var i = 0; i < req.body.historialVacacion.length; i++) {
                         var historial = req.body.historialVacacion[i];
                         RrhhEmpleadoHistorialVacacion.create({

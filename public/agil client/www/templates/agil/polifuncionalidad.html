@@ -169,7 +169,7 @@
             <label class="pull-left">&nbsp&nbsp</label>
             <style type="text/css" scoped>
                 .dropdown-menu {
-                    min-width: 400px !important;
+                    min-width: 600px !important;
                 }
             </style>
             <label class="pull-right">
@@ -521,11 +521,11 @@
                                         <div class="col-md-4">
                                             <div ng-if="!evaluacion.encargado">
                                                 <input ng-disabled="evaluacion.ver != undefined" required autofocus type="number" step="1" min="0" max="{{empleados.asistencia_capacitacion}}" class="form-control"
-                                                    ng-model="evaluacion.asistencia_capacitacion" ng-change="calcularTotalEvaluacion(evaluacion)">
+                                                    ng-model="evaluacion.asistencia_capacitacion" ng-change="calcularTotalEvaluacion(evaluacion)"> Max. {{empleados.asistencia_capacitacion}}
                                             </div>
                                             <div ng-if="evaluacion.encargado">
                                                 <input ng-disabled="evaluacion.ver != undefined" required autofocus type="number" step="1" min="0" max="{{encargados.asistencia_capacitacion}}" class="form-control"
-                                                    ng-model="evaluacion.asistencia_capacitacion" ng-change="calcularTotalEvaluacion(evaluacion)">
+                                                    ng-model="evaluacion.asistencia_capacitacion" ng-change="calcularTotalEvaluacion(evaluacion)"> Max. {{encargados.asistencia_capacitacion}}
                                             </div>
 
                                             <label>
@@ -545,11 +545,11 @@
                                         <div class="col-md-4">
                                             <div ng-if="!evaluacion.encargado">
                                                 <input ng-disabled="evaluacion.ver != undefined" required autofocus type="number" step="1" min="0" max="{{empleados.documentos_actualizados}}" class="form-control"
-                                                    ng-model="evaluacion.documentos_actualizados" ng-change="calcularTotalEvaluacion(evaluacion)">
+                                                    ng-model="evaluacion.documentos_actualizados" ng-change="calcularTotalEvaluacion(evaluacion)"> Max. {{empleados.documentos_actualizados}}
                                             </div>
                                             <div ng-if="evaluacion.encargado">
                                                 <input ng-disabled="evaluacion.ver != undefined" required type="number" step="1" min="0" max="{{encargados.documentos_actualizados}}" class="form-control" ng-model="evaluacion.documentos_actualizados"
-                                                    ng-change="calcularTotalEvaluacion(evaluacion)">
+                                                    ng-change="calcularTotalEvaluacion(evaluacion)"> Max. {{encargados.documentos_actualizados}}
                                             </div>
                                             <label>
                                                 <input ng-disabled="evaluacion.ver != undefined" name="switch-field-1" tabindex="-1" ng-model="opcion.documentos_actualizados" class="ace ace-switch ace-switch-4 ng-pristine ng-untouched ng-valid ng-empty"
@@ -568,11 +568,11 @@
                                         <div class="col-md-4">
                                             <div ng-if="!evaluacion.encargado">
                                                 <input ng-disabled="evaluacion.ver != undefined" required autofocus type="number" step="1" min="0" max="{{empleados.trabajo_equipo}}" class="form-control" ng-model="evaluacion.trabajo_equipo"
-                                                    ng-change="calcularTotalEvaluacion(evaluacion)">
+                                                    ng-change="calcularTotalEvaluacion(evaluacion)"> Max. {{empleados.trabajo_equipo}}
                                             </div>
                                             <div ng-if="evaluacion.encargado">
                                                 <input ng-disabled="evaluacion.ver != undefined" required type="number" step="1" min="0" max="{{encargados.trabajo_equipo}}" class="form-control" ng-model="evaluacion.trabajo_equipo"
-                                                    ng-change="calcularTotalEvaluacion(evaluacion)">
+                                                    ng-change="calcularTotalEvaluacion(evaluacion)"> Max. {{encargados.trabajo_equipo}}
                                             </div>
                                              <label>
                                                 <input ng-disabled="evaluacion.ver != undefined" name="switch-field-1" tabindex="-1" ng-model="opcion.trabajo_equipo" class="ace ace-switch ace-switch-4 ng-pristine ng-untouched ng-valid ng-empty"
@@ -591,11 +591,11 @@
                                         <div class="col-md-4">
                                             <div ng-if="!evaluacion.encargado">
                                                 <input ng-disabled="evaluacion.ver != undefined" required autofocus type="number" step="1" min="0" max="{{empleados.funciones_puntualidad}}" class="form-control" ng-model="evaluacion.funciones_puntualidad"
-                                                    ng-change="calcularTotalEvaluacion(evaluacion)">
+                                                    ng-change="calcularTotalEvaluacion(evaluacion)"> Max. {{empleados.funciones_puntualidad}}
                                             </div>
                                             <div ng-if="evaluacion.encargado">
                                                 <input ng-disabled="evaluacion.ver != undefined" required type="number" step="1" min="0" max="{{encargados.funciones_puntualidad}}" class="form-control" ng-model="evaluacion.funciones_puntualidad"
-                                                    ng-change="calcularTotalEvaluacion(evaluacion)">
+                                                    ng-change="calcularTotalEvaluacion(evaluacion)">Max. {{encargados.funciones_puntualidad}}
                                             </div>
                                             <label>
                                                 <input ng-disabled="evaluacion.ver != undefined" name="switch-field-1" tabindex="-1" ng-model="opcion.funciones_puntualidad" class="ace ace-switch ace-switch-4 ng-pristine ng-untouched ng-valid ng-empty"
@@ -614,11 +614,11 @@
                                         <div class="col-md-4">
                                             <div ng-if="!evaluacion.encargado">
                                                 <input ng-disabled="evaluacion.ver != undefined" required autofocus type="number" step="1" min="0" max="{{empleados.higiene_personal}}" class="form-control" ng-model="evaluacion.higiene_personal"
-                                                    ng-change="calcularTotalEvaluacion(evaluacion)">
+                                                    ng-change="calcularTotalEvaluacion(evaluacion)">Max. {{empleados.higiene_personal}}
                                             </div>
                                             <div ng-if="evaluacion.encargado">
                                                 <input ng-disabled="evaluacion.ver != undefined" required type="number" step="1" min="0" max="{{encargados.higiene_personal}}" class="form-control" ng-model="evaluacion.higiene_personal"
-                                                    ng-change="calcularTotalEvaluacion(evaluacion)">
+                                                    ng-change="calcularTotalEvaluacion(evaluacion)">Max. {{encargados.higiene_personal}}
                                             </div>
                                             <label>
                                                 <input ng-disabled="evaluacion.ver != undefined" name="switch-field-1" tabindex="-1" ng-model="opcion.higiene_personal" class="ace ace-switch ace-switch-4 ng-pristine ng-untouched ng-valid ng-empty"
@@ -637,11 +637,11 @@
                                         <div class="col-md-4">
                                             <div ng-if="!evaluacion.encargado">
                                                 <input ng-disabled="evaluacion.ver != undefined" required autofocus type="number" step="1" min="0" max="{{empleados.asistencia_reunion}}" class="form-control" ng-model="evaluacion.asistencia_reunion"
-                                                    ng-change="calcularTotalEvaluacion(evaluacion)">
+                                                    ng-change="calcularTotalEvaluacion(evaluacion)">Max. {{empleados.asistencia_reunion}}
                                             </div>
                                             <div ng-if="evaluacion.encargado">
                                                 <input ng-disabled="evaluacion.ver != undefined" required type="number" step="1" min="0" max="{{encargados.asistencia_reunion}}" class="form-control" ng-model="evaluacion.asistencia_reunion"
-                                                    ng-change="calcularTotalEvaluacion(evaluacion)">
+                                                    ng-change="calcularTotalEvaluacion(evaluacion)">Max. {{encargados.asistencia_reunion}}
                                             </div>
                                            
                                             <label>
@@ -661,11 +661,11 @@
                                         <div class="col-md-4">
                                             <div ng-if="!evaluacion.encargado">
                                                 <input ng-disabled="evaluacion.ver != undefined" required autofocus type="number" step="1" min="0" max="{{empleados.ingreso_campo}}" class="form-control" ng-model="evaluacion.ingreso_campo"
-                                                    ng-change="calcularTotalEvaluacion(evaluacion)">
+                                                    ng-change="calcularTotalEvaluacion(evaluacion)"> Max. {{empleados.ingreso_campo}}
                                             </div>
                                             <div ng-if="evaluacion.encargado">
                                                 <input ng-disabled="evaluacion.ver != undefined" required type="number" step="1" min="0" max="{{encargados.ingreso_campo}}" class="form-control" ng-model="evaluacion.ingreso_campo"
-                                                    ng-change="calcularTotalEvaluacion(evaluacion)">
+                                                    ng-change="calcularTotalEvaluacion(evaluacion)">Max. {{encargados.ingreso_campo}}
                                             </div>
                                             <!-- <input required type="number" step="1" min="0" class="form-control" ng-model="evaluacion.ingreso_campo" ng-change="calcularTotalEvaluacion(evaluacion)"> -->
                                             <label>
@@ -685,11 +685,11 @@
                                         <div class="col-md-4">
                                             <div ng-if="!evaluacion.encargado">
                                                 <input ng-disabled="evaluacion.ver != undefined" required autofocus type="number" step="1" min="0" max="{{empleados.llenado_formularios}}" class="form-control" ng-model="evaluacion.llenado_formularios"
-                                                    ng-change="calcularTotalEvaluacion(evaluacion)">
+                                                    ng-change="calcularTotalEvaluacion(evaluacion)"> Max. {{empleados.llenado_formularios}}
                                             </div>
                                             <div ng-if="evaluacion.encargado">
                                                 <input ng-disabled="evaluacion.ver != undefined" required type="number" step="1" min="0" max="{{encargados.llenado_formularios}}" class="form-control" ng-model="evaluacion.llenado_formularios"
-                                                    ng-change="calcularTotalEvaluacion(evaluacion)">
+                                                    ng-change="calcularTotalEvaluacion(evaluacion)">Max. {{encargados.llenado_formularios}}
                                             </div>
                                             <!-- <input required type="number" step="1" min="0" class="form-control" ng-model="evaluacion.llenado_formularios" ng-change="calcularTotalEvaluacion(evaluacion)"> -->
                                             <label>

@@ -8,6 +8,10 @@ module.exports=function(sequelize,Sequelize){
 		type: Sequelize.DATE,
 		field: 'fecha'
       },
+	  fecha_expiracion: {
+		type: Sequelize.DATE,
+		field: 'fecha_expiracion'
+      },
       codigo_empleado: {
 		type: Sequelize.STRING,
 		field: 'codigo_empleado' 
