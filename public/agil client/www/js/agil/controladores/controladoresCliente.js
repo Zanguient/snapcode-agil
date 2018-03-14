@@ -342,8 +342,51 @@ angular.module('agil.controladores')
 					}
 				});
 			}
+			if (!$scope.usuario.usar_creditos) {
+				var step = $('#credito').attr('class');
+				console.log(step)
+				if (step == "ng-hide active") {
+					$('#siguiente').click();
+				}
+			}
+			if (!$scope.usuario.usar_razon_social) {
+				var step = $('#razonsocial').attr('class');
+				console.log(step)
+				if (step == "ng-hide active") {
+					$('#siguiente').click();
+				}
+			}
+			if (!$scope.usuario.destinos) {
+				var step = $('#destinos').attr('class');
+				console.log(step)
+				if (step == "ng-hide active") {
+					$('#siguiente').click();
+				}
+			}
 		}
-
+		$scope.regresarwizard = function () {
+			if (!$scope.usuario.destinos) {
+				var step = $('#destinos').attr('class');
+				console.log(step)
+				if (step == "ng-hide complete") {
+					$('#anterior').click();
+				}
+			}
+			if (!$scope.usuario.usar_razon_social) {
+				var step = $('#razonsocial').attr('class');
+				console.log(step)
+				if (step == "ng-hide complete") {
+					$('#anterior').click();
+				}
+			}
+			if (!$scope.usuario.usar_creditos) {
+				var step = $('#credito').attr('class');
+				console.log(step)
+				if (step == "ng-hide complete") {
+					$('#anterior').click();
+				}
+			}
+		}
 		$scope.obtenerEmpresas = function () {
 			blockUI.start();
 			var promesa = Empresas();
@@ -405,7 +448,7 @@ angular.module('agil.controladores')
 
 		$scope.generarExcelComprobacionDatosClientes = function (clientes, configuracion) {
 			$scope.obtenerClientes()
-			var data = [["N°", "CODIGO", "CLIENTE", "NIT PRINCIPAL", "RAZÓN SOCIAL PRINCIPAL", "RAZONES CLIENTE", "NIT -RAZON", "CODIGO SAP", "DESTINOS", "DIRECCION DESTINO"]]
+			var data = [["N°", "CODIGO", "CLIENTE", "NIT PRINCIPAL", "RAZÓN SOCIAL PRINCIPAL", "UBIC. GEO.", "RUBRO", "CATEGORIA", "FECHA IMP. 1", "FECHA IMP. 2", "TEXTO 1", "TEXTO 2", "RAZONES CLIENTE", "NIT -RAZON", "CODIGO SAP", "DESTINOS", "DIRECCION DESTINO"]]
 			var iu = []
 			for (var i = 0; i < $scope.clientes.length; i++) {
 				var columns = [];
@@ -420,6 +463,13 @@ angular.module('agil.controladores')
 								columns.push($scope.clientes[i].contacto);
 								columns.push($scope.clientes[i].nit);
 								columns.push($scope.clientes[i].razon_social);
+								columns.push($scope.clientes[i].ubicacion_geografica)
+								columns.push($scope.clientes[i].rubro)
+								columns.push($scope.clientes[i].categoria)
+								columns.push($scope.fechaATexto($scope.clientes[i].fecha1))
+								columns.push($scope.fechaATexto($scope.clientes[i].fecha2))
+								columns.push($scope.clientes[i].texto2)
+								columns.push($scope.clientes[i].texto2)
 								columns.push(razon.razon_social);
 								columns.push(razon.nit);
 								columns.push(razon.codigo_sap);
@@ -434,6 +484,13 @@ angular.module('agil.controladores')
 							columns.push($scope.clientes[i].contacto);
 							columns.push($scope.clientes[i].nit);
 							columns.push($scope.clientes[i].razon_social);
+							columns.push($scope.clientes[i].ubicacion_geografica)
+							columns.push($scope.clientes[i].rubro)
+							columns.push($scope.clientes[i].categoria)
+							columns.push($scope.fechaATexto($scope.clientes[i].fecha1))
+							columns.push($scope.fechaATexto($scope.clientes[i].fecha2))
+							columns.push($scope.clientes[i].texto2)
+							columns.push($scope.clientes[i].texto2)
 							columns.push(razon.razon_social);
 							columns.push(razon.nit);
 							columns.push(razon.codigo_sap);
@@ -452,6 +509,13 @@ angular.module('agil.controladores')
 							columns.push($scope.clientes[i].contacto);
 							columns.push($scope.clientes[i].nit);
 							columns.push($scope.clientes[i].razon_social);
+							columns.push($scope.clientes[i].ubicacion_geografica)
+							columns.push($scope.clientes[i].rubro)
+							columns.push($scope.clientes[i].categoria)
+							columns.push($scope.fechaATexto($scope.clientes[i].fecha1))
+							columns.push($scope.fechaATexto($scope.clientes[i].fecha2))
+							columns.push($scope.clientes[i].texto2)
+							columns.push($scope.clientes[i].texto2)
 							columns.push("sin dato");
 							columns.push("sin dato");
 							columns.push("sin dato");
@@ -466,6 +530,13 @@ angular.module('agil.controladores')
 						columns.push($scope.clientes[i].contacto);
 						columns.push($scope.clientes[i].nit);
 						columns.push($scope.clientes[i].razon_social);
+						columns.push($scope.clientes[i].ubicacion_geografica)
+						columns.push($scope.clientes[i].rubro)
+						columns.push($scope.clientes[i].categoria)
+						columns.push($scope.fechaATexto($scope.clientes[i].fecha1))
+						columns.push($scope.fechaATexto($scope.clientes[i].fecha2))
+						columns.push($scope.clientes[i].texto2)
+						columns.push($scope.clientes[i].texto2)
 						columns.push("sin dato");
 						columns.push("sin dato");
 						columns.push("sin dato");

@@ -976,7 +976,7 @@ angular.module('agil.controladores')
 
         $scope.imprimir = function (proforma, opcionImpresion) {
             blockUI.start();
-            var prom = ProformaInfo(proforma.id)
+            var prom = ProformaInfo(proforma.id, proforma.actividadEconomica.id)
             prom.then(function (proformaE) {
                 $scope.proforma = proformaE.proforma
                 if (proformaE.mensaje !== undefined || proformaE.proforma == null || proformaE.proforma == undefined) {
@@ -1198,7 +1198,7 @@ angular.module('agil.controladores')
             doc.font('Helvetica', 8);
             doc.font('Helvetica-Bold', 8);
             doc.font('Helvetica', 8);
-            doc.image(imagen, 40, 30, { fit: [200, 200] }); //{ fit: [200, 72] } { fit: [100, 72] }
+            doc.image(imagen, 40, 30, { fit: [100, 100] }); //{ fit: [200, 72] } { fit: [100, 72] }
             doc.text($scope.usuario.empresa.telefono1, 80, 60 + separacionExtra);
             doc.text($scope.usuario.empresa.direccion + ' Santa Cruz', 40, 70 + separacionExtra, { width: 90 });
             doc.text('Santa Cruz,     ', 65, 115 + separacionExtra, { lineBreak: false }).font('Helvetica-Bold', 10).text(fecha.split('/')[0], { lineBreak: false }).font('Helvetica', 10).text('   de   ', { lineBreak: false }).font('Helvetica-Bold', 10).text($scope.meses[new Date($scope.convertirFecha(fecha)).getMonth()].nombre, { lineBreak: false }).font('Helvetica', 10).text('   de   ', { lineBreak: false }).font('Helvetica-Bold', 10).text(fecha.split('/')[2])

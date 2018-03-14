@@ -2346,14 +2346,14 @@ angular.module('agil.servicios')
 
 	.factory('ImprimirPdfAlertaDespacho', ['blockUI', 'DibujarCabeceraPDFAlertaDespacho',
 		function (blockUI, DibujarCabeceraPDFAlertaDespacho) {
-			var res = function (despachos, filtro, usuario) {
+			var res = function (despachos, filtro, usuario,convertirFecha) {
 				blockUI.start();
 				var doc = new PDFDocument({ compress: false, size: 'letter', margin: 10 });
 				var stream = doc.pipe(blobStream());
 				// draw some text
 				var totalCosto = 0;
 				var y = 130, itemsPorPagina = 24, items = 0, pagina = 1, totalPaginas = Math.ceil(despachos.length / itemsPorPagina);
-				DibujarCabeceraPDFAlertaDespacho(doc, 1, totalPaginas, despachos, filtro, usuario);
+				DibujarCabeceraPDFAlertaDespacho(doc, 1, totalPaginas, despachos, filtro, usuario,convertirFecha);
 				doc.font('Helvetica', 8);
 				for (var i = 0; i < despachos.length && items <= itemsPorPagina; i++) {
 					var detalle_despacho = despachos[i]
@@ -2374,7 +2374,7 @@ angular.module('agil.servicios')
 						y = 130;
 						items = 0;
 						pagina = pagina + 1;
-						DibujarCabeceraPDFAlertaDespacho(doc, pagina, totalPaginas, despachos, filtro, usuario);
+						DibujarCabeceraPDFAlertaDespacho(doc, pagina, totalPaginas, despachos, filtro, usuario,convertirFecha);
 						doc.font('Helvetica', 8);
 					}
 				}
@@ -2461,7 +2461,7 @@ angular.module('agil.servicios')
 					columns.push(detalle_despacho.despacho.cliente_razon.razon_social)
 					var fecha = new Date(detalle_despacho.despacho.fecha)
 					var dia = ((fecha.getDate()) >= 10) ? fecha.getDate() : "0" + fecha.getDate()
-					var mes = ((fecha.getMonth()) >= 10) ? fecha.getMonth() : "0" + fecha.getMonth()
+					var mes = ((fecha.getMonth()) >= 10) ? (fecha.getMonth()+1) : "0" + (fecha.getMonth()+1)
 					columns.push(dia + "/" + mes + "/" + fecha.getFullYear())
 					columns.push(detalle_despacho.producto.nombre)
 					columns.push(detalle_despacho.cantidad)
@@ -2505,7 +2505,7 @@ angular.module('agil.servicios')
 					columns.push(detalle_despacho.despacho.usuario.persona.nombre_completo)
 					var fecha = new Date(detalle_despacho.despacho.fecha)
 					var dia = ((fecha.getDate()) >= 10) ? fecha.getDate() : "0" + fecha.getDate()
-					var mes = ((fecha.getMonth()) >= 10) ? fecha.getMonth() : "0" + fecha.getMonth()
+					var mes = ((fecha.getMonth()) >= 10) ? (fecha.getMonth()+1) : "0" + (fecha.getMonth()+1)
 					columns.push(dia + "/" + mes + "/" + fecha.getFullYear())
 					columns.push(detalle_despacho.despacho.cliente.codigo)
 					columns.push(detalle_despacho.despacho.cliente.razon_social)
@@ -2548,11 +2548,14 @@ angular.module('agil.servicios')
 			return res;
 		}])
 	.factory('DibujarCabeceraPDFAlertaDespacho', [function () {
-		res = function (doc, pagina, totalPaginas, despachos, filtro, usuario) {
+		res = function (doc, pagina, totalPaginas, despachos, filtro2, usuario,convertirFecha) {
+			var filtro={inicio:filtro2.inicio,fin:filtro2.fin}
 			doc.font('Helvetica-Bold', 12);
 			doc.text("REPORTE DE PEDIDOS", 0, 25, { align: "center" });
 			doc.font('Helvetica', 12);
 			if (filtro.inicio && filtro.fin) {
+				filtro.inicio=new Date(convertirFecha(filtro.inicio))				
+				filtro.fin=new Date(convertirFecha(filtro.fin))
 				var mes = ((filtro.inicio.getMonth() + 1) < 10) ? "0" + (filtro.inicio.getMonth() + 1) : (filtro.inicio.getMonth() + 1);
 				var dia = ((filtro.inicio.getDate()) < 10) ? "0" + filtro.inicio.getDate() : filtro.inicio.getDate();
 				var mes2 = ((filtro.fin.getMonth() + 1) < 10) ? "0" + (filtro.fin.getMonth() + 1) : (filtro.fin.getMonth() + 1);

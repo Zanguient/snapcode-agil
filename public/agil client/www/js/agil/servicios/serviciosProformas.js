@@ -77,7 +77,7 @@ angular.module('agil.servicios')
     .factory('ProformaInfo', ['Proforma', '$q', function (Proforma, $q) {
         var res = function (idProforma,id_actividad) {
             var delay = $q.defer();
-            Proforma.get({ id: idProforma, id_actividad }, function (entidades) {
+            Proforma.get({ id: idProforma, id_actividad: id_actividad }, function (entidades) {
                 delay.resolve(entidades);
             }, function (error) {
                 delay.reject(error);

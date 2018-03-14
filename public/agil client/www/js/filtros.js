@@ -58,6 +58,10 @@ angular.module('agil.filtros', [])
                     return (reverse)?(a.despacho.usuario.persona[field] > b.despacho.usuario.persona[field])? 1:(a.despacho.usuario.persona[field] < b.despacho.usuario.persona[field])?-1 :0:(a.despacho.usuario.persona[field] > b.despacho.usuario.persona[field])? -1:(a.despacho.usuario.persona[field] < b.despacho.usuario.persona[field])?1 :0
                 }else if(tipo=="destino"){
                     return (reverse)?(a.despacho.destino[field] > b.despacho.destino[field])? 1:(a.despacho.destino[field] < b.despacho.destino[field])?-1 :0:(a.despacho.destino[field] > b.despacho.destino[field])? -1:(a.despacho.destino[field] < b.despacho.destino[field])?1 :0
+                }else if(tipo=="fecha"){
+                    return (reverse)?(a.despacho[field] > b.despacho[field])? 1:(a.despacho[field] < b.despacho[field])?-1 :0:(a.despacho[field] > b.despacho[field])? -1:(a.despacho[field] < b.despacho[field])?1 :0
+                }else if(tipo=="producto"){
+                    return (reverse)?(a.producto[field] > b.producto[field])? 1:(a.producto[field] < b.producto[field])?-1 :0:(a.producto[field] > b.producto[field])? -1:(a.producto[field] < b.producto[field])?1 :0
                 }else{
                     return 0;
                 }

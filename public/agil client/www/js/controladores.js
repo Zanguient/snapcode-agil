@@ -1572,7 +1572,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 
 		}
 		$scope.imprimirPdfDespachosALerta = function () {
-			ImprimirPdfAlertaDespacho($scope.gtm_detalles_despacho_seleccionados, $scope.filtroDes, $scope.usuario)
+			ImprimirPdfAlertaDespacho($scope.gtm_detalles_despacho_seleccionados, $scope.filtroDes, $scope.usuario,$scope.convertirFecha)
 		}
 		$scope.imprimirExelDespachosALerta = function () {
 			ExportarExelAlarmasDespachos($scope.gtm_detalles_despacho_seleccionados, $scope.filtroDes, $scope.usuario)
@@ -1726,6 +1726,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 							$scope.facturaProformas.detallesProformas = []
 							$scope.facturaProformas.detalle = ""
 							$scope.facturaProformas.totalImporteBs = 0
+							$scope.facturaProformas.importe = 0
 							$scope.facturaProformas.fecha_factura = new Date().toLocaleDateString()
 							$scope.facturaProformas.fechaTexto = new Date().toLocaleDateString()
 							$scope.facturaProformas.periodo_mes = { id: new Date().getMonth() }
@@ -1735,6 +1736,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 							$scope.facturaProformas.datosProformas.forEach(function (proforma) {
 								$scope.facturaProformas.descripcion += proforma.detalle + ". "
 								$scope.facturaProformas.totalImporteBs += proforma.totalImporteBs
+								$scope.facturaProformas.importe = $scope.facturaProformas.totalImporteBs 
 								$scope.facturaProformas.importeLiteral = ConvertirALiteral($scope.facturaProformas.totalImporteBs.toFixed(2));
 								var promesa = ObtenerCambioMoneda(proforma.fecha_proforma)
 								var tcProforma = { ufv: "--", dolar: "--" }
@@ -1743,6 +1745,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 										tcProforma = {ufv: dato.monedaCambio.ufv, dolar : dato.monedaCambio.dolar};
 									}
 									proforma.tc = tcProforma
+									proforma.importe = proforma.importeTotalBs
 									proforma.detallesProformas.map(function (det, i) {
 										det.tc = proforma.tc
 										if (i === proforma.detallesProformas.length -1) {

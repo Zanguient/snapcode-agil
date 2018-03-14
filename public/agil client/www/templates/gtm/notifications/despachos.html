@@ -54,12 +54,12 @@
 						<div class="form-group col-sm-4">
 							<label for="codigo">desde</label>
 							<input ng-update-hidden class="form-control date-picker" data-date-format="dd/mm/yyyy" type="text" id="filtroCodigo" ng-model="filtroDes.inicio"
-							 placeholder="" ng-change="filtrarDetalleDespachos(filtroDes)" />
+							 placeholder=""/>
 						</div>
 						<div class="form-group col-sm-4">
 							<label for="nombre">hasta</label>
 							<input ng-update-hidden class="form-control date-picker" data-date-format="dd/mm/yyyy" type="text" id="filtroNombre" ng-model="filtroDes.fin"
-							 placeholder="" ng-change="filtrarDetalleDespachos(filtroDes)" />
+							 placeholder=""/>
 						</div>
 						<div class="form-group col-sm-4">
 							<button ng-click="filtrarDetalleDespachos(filtroDes)" type="button" class="btn-primary btn btn-app btn-xs">
@@ -120,7 +120,7 @@
 						</th>
 						<th>Nº</th>
 						<th>
-							<a href="javascript:void(0)" ng-click="despachoSortColumn('nombre_completo','vendedor')">Vendedor
+							<a href="javascript:void(0)" ng-click="despachoSortColumn('nombre_completo','vendedor')">Usuario
 								<span id="Extención" class="sort fa fa-sort icon-only"></span>
 							</a>
 						</th>
@@ -136,9 +136,14 @@
 
 						</th>
 						<th>Destino</th>
-						<th>Fecha</th>
+						<th><a href="javascript:void(0)" ng-click="despachoSortColumn('fecha','fecha')">Fecha
+								<span id="Extención" class="sort fa fa-sort icon-only"></span>
+							</a>
+						</th>
 						<th>Telefono</th>
-						<th>Producto</th>
+						<th><a href="javascript:void(0)" ng-click="despachoSortColumn('nombre','producto')">Producto
+								<span id="Extención" class="sort fa fa-sort icon-only"></span>
+							</a></th>
 						<th>Cantidad</th>
 						<th>Despacho</th>
 						<th>Servicio Transp.</th>

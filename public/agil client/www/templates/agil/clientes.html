@@ -257,7 +257,7 @@
 <div id="modal-wizard-cliente" class="modal wizard-posicion">
 	<div class="modal-dialog">
 		<div class="modal-content">
-			<form ng-submit="saveForm(cliente)">
+			<form ng-submit="saveForm(cliente)" novalidate>
 				<div id="modal-wizard-container-cliente-edicion">
 					<div class="modal-header">
 						<ul class="steps">
@@ -273,15 +273,15 @@
 								<span class="step">3</span>
 								<span class="title">Georeferenciacion</span>
 							</li>
-							<li data-step="4" ng-if="usuario.empresa.usar_creditos">
+							<li id="credito" data-step="4" ng-hide="!usuario.empresa.usar_creditos">
 								<span class="step">4</span>
 								<span class="title">Creditos</span>
 							</li>
-							<li data-step="5" ng-if="usuario.empresa.usar_razon_social">
+							<li id="razonsocial" data-step="5" ng-hide="!usuario.empresa.usar_razon_social">
 								<span class="step">5</span>
 								<span class="title">Razon Social</span>
 							</li>
-							<li data-step="6" ng-if="usuario.empresa.usar_destinos">
+							<li id="destinos"data-step="6" ng-hide="!usuario.empresa.usar_destinos">
 								<span class="step">6</span>
 								<span class="title">Destinos</span>
 							</li>
@@ -429,7 +429,7 @@
 								</div>
 							</div>
 						</div>
-						<div class="step-pane" data-step="4" ng-if="usuario.empresa.usar_creditos">
+						<div class="step-pane" data-step="4" ng-hide="!usuario.empresa.usar_creditos">
 							<div class="form-group">
 								<label class="col-sm-6 control-label no-padding-right" for="Bloqueado">Usar línea de Crédito</label>
 								<div class="col-sm-6">
@@ -459,7 +459,7 @@
 							</div>
 						</div>
 						<!--Hay que llevarlo abajo del 4 -->
-						<div class="step-pane" data-step="5" ng-if="usuario.empresa.usar_razon_social">
+						<div class="step-pane" data-step="5" ng-hide="!usuario.empresa.usar_razon_social">
 							<div class="form-group">
 								<label class="col-sm-3 control-label no-padding-right" for="razon_social">Razon social</label>
 
@@ -524,7 +524,7 @@
 							</table>
 						</div>
 						<!--Aumentando destino -->
-						<div class="step-pane" data-step="6" ng-if="usuario.empresa.usar_destinos">
+						<div class="step-pane" data-step="6" ng-hide="!usuario.empresa.usar_destinos">
 							<div class="center">
 								<h4 class="blue">Destino</h4>
 
@@ -646,7 +646,7 @@
 				</div>
 
 				<div class="modal-footer wizard-actions">
-					<button class="btn btn-sm btn-prev">
+					<button type="button" id="anterior" class="btn btn-sm btn-prev" ng-click="regresarwizard()">
 						<i class="ace-icon fa fa-arrow-left"></i>
 						Anterior
 					</button>

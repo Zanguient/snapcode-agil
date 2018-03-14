@@ -2,7 +2,6 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Sucu
 	schedule, ConfiguracionFactura) {
 
 	router.route('/sucursales')
-
 		.post(function (req, res) {
 			Sucursal.create({
 				id_empresa: req.body.id_empresa,
@@ -240,37 +239,57 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Sucu
 								}
 							});
 						} else {
-							// if (actividadDosificacion.id) {
-							SucursalActividadDosificacion.findOrCreate({
-								where: { id: actividadDosificacion.id },
-								default: {
+							var id = 0
+							if (actividadDosificacion.id != undefined) {
+								id = actividadDosificacion.id
+							}
+							SucursalActividadDosificacion.find({
+								where: { id: id },
+								/* default: {
 									id_sucursal: req.params.id_sucursal,
 									id_actividad: actividadDosificacion.id_actividad,
 									id_dosificacion: actividadDosificacion.id_dosificacion,
 									expirado: false
-								}
-							}).spread(function (actividadDosificacionActualizado, created) {
-								if (created) {
-									if (index === (array.length - 1)) {
-										res.json({ message: "Asignado satisfactoriamente!" });
-									}
+								} */
+							}).then(function (actividadDosificacionActualizado) {
+								if (!actividadDosificacionActualizado) {
+									var idsucursal = parseInt(req.params.id_sucursal)
+									SucursalActividadDosificacion.create({
+
+										id_sucursal: idsucursal,
+										id_actividad: actividadDosificacion.id_actividad,
+										id_dosificacion: actividadDosificacion.id_dosificacion,
+										expirado: false
+
+									}).then(function (actividadDosificacionActualizado) {
+										if (index === (array.length - 1)) {
+											res.json({ message: "Asignado satisfactoriamente!" });
+										}
+									})
+
 								} else {
-									SucursalActividadDosificacion.update({
-										expirado: true
-									}, {
-											where: { id: actividadDosificacionActualizado.id }
-										}).then(function (actividadDosificacionCreado) {
-											SucursalActividadDosificacion.create({
-												id_sucursal: req.params.id_sucursal,
-												id_actividad: actividadDosificacion.id_actividad,
-												id_dosificacion: actividadDosificacion.id_dosificacion,
-												expirado: false
+									if (actividadDosificacion.expirado != true) {
+										SucursalActividadDosificacion.update({
+											expirado: true
+										}, {
+												where: { id: actividadDosificacionActualizado.id }
 											}).then(function (actividadDosificacionCreado) {
-												if (index === (array.length - 1)) {
-													res.json({ message: "Actualizado satisfactoriamente!" });
-												}
+												SucursalActividadDosificacion.create({
+													id_sucursal: req.params.id_sucursal,
+													id_actividad: actividadDosificacion.id_actividad,
+													id_dosificacion: actividadDosificacion.id_dosificacion,
+													expirado: false
+												}).then(function (actividadDosificacionCreado) {
+													if (index === (array.length - 1)) {
+														res.json({ message: "Actualizado satisfactoriamente!" });
+													}
+												});
 											});
-										});
+									} else {
+										if (index === (array.length - 1)) {
+											res.json({ message: "Actualizado satisfactoriamente!" });
+										}
+									}
 								}
 							});
 							// } else {

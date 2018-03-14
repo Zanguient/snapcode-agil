@@ -149,7 +149,7 @@ angular.module('agil.controladores')
 		$scope.saveForm = function (sucursal) {
 			var button = $('#siguiente').text().trim();
 			if (button != "Siguiente") {
-				blockUI.start();
+				blockUI.start();				
 				if (typeof sucursal.id_departamento == "string") {
 					sucursal.id_departamento = sucursal.id_departamento.split('-')[0];
 				}
@@ -213,7 +213,7 @@ angular.module('agil.controladores')
 			var bandera = false
 			if ($scope.sucursal.actividadesDosificaciones.length > 0) {
 				$scope.sucursal.actividadesDosificaciones.forEach(function (dosificacion, index, array) {
-					if (dosificacion.id_dosificacion == actividadDosificacion.dosificacion.id || dosificacion.id_actividad == actividadDosificacion.actividad.id) {
+					if (dosificacion.expirado==false&& (dosificacion.id_dosificacion == actividadDosificacion.dosificacion.id || dosificacion.id_actividad == actividadDosificacion.actividad.id)) {
 						bandera = true
 					}
 					if (index === (array.length - 1)) {
@@ -222,6 +222,7 @@ angular.module('agil.controladores')
 								if (!actividadDosificacion.id) {
 									actividadDosificacion.id_actividad = actividadDosificacion.actividad.id;
 									actividadDosificacion.id_dosificacion = actividadDosificacion.dosificacion.id;
+									actividadDosificacion.expirado=false
 									$scope.sucursal.actividadesDosificaciones.push(actividadDosificacion);
 								}
 								$scope.actividadDosificacion = {}
