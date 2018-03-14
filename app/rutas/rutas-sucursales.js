@@ -268,7 +268,7 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Sucu
 									})
 
 								} else {
-									if (actividadDosificacion.expirado != true) {
+									if (actividadDosificacionActualizado.id_dosificacion != actividadDosificacion.id_dosificacion) {
 										SucursalActividadDosificacion.update({
 											expirado: true
 										}, {
