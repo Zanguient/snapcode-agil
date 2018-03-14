@@ -94,11 +94,12 @@ angular.module('agil.controladores')
 			if (idSucursal !== undefined) {
 				$scope.almacenes = [];
 				var sucursal = $.grep($scope.sucursales, function (e) { return e.id == idSucursal; })[0];
-				$scope.almacenes = sucursal.almacenes;
-				$scope.solicitud.almacen = $scope.almacenes.length == 1 ? $scope.almacenes[0] : null;
+				$scope.almacenes = sucursal ? sucursal.almacenes : [];
+
 				if ($scope.solicitud.almacen) {
 					$scope.cargarProductos();
-				}else{
+				} else {
+					$scope.solicitud.almacen = $scope.almacenes.length == 1 ? $scope.almacenes[0] : $scope.solicitud.almacen ? $scope.solicitud.almacen : null;
 					$scope.productosProcesados = []
 				}
 			}
@@ -516,18 +517,18 @@ angular.module('agil.controladores')
 		$scope.cargarProductos = function () {
 			var promesa = ProductosOperaciones($scope.usuarioSesion.id_empresa, $scope.solicitud.almacen.id);
 			promesa.then(function (productos) {
-				if (productos.length > 0){
+				if (productos.length > 0) {
 					for (var i = 0; i < productos.length; i++) {
 						if (productos[i].activar_inventario) {
 							productos[i].inventario_disponible = $scope.obtenerInventarioTotal(productos[i]);
 						}
 					}
 					$scope.productos = productos;
-				}else{
+				} else {
 					$scope.productos = [];
 				}
-				
-				
+
+
 				// ======= save localstorage ====
 				if (angular.isDefined($localStorage.productosProcesados)) {
 
@@ -632,24 +633,29 @@ angular.module('agil.controladores')
 				}
 			} else {
 				var j = 0, encontrado = false
-				while (j < $scope.solicitud.solicitudesProductos.length && !encontrado) {
-					if ($scope.solicitud.solicitudesProductos[j].eliminado === undefined) {
-						if ($scope.solicitud.solicitudesProductos[j].productoSolicitado.id == producto.id) {
-							$scope.solicitud.solicitudesProductos[j].cantidad = $scope.solicitud.solicitudesProductos[j].cantidad + 1;
-							$scope.solicitud.solicitudesProductos[j].eliminado = undefined
-							$scope.solicitud.solicitudesProductos[j].detallesIngredientesProducto.map(function (ingre) {
-								ingre.total = ingre.cantidad_ideal * $scope.solicitud.solicitudesProductos[j].cantidad
-							})
-							encontrado = true;
-							detalleVenta = $scope.solicitud.solicitudesProductos[j];
-							// producto.inventario_disponible -= 1
-							// var indx = $scope.productosProcesados.indexOf(producto)
-							// $scope.productosProcesados[indx].inventarios[0].cantidad -=1
-							// producto.inventarios[i].cantidad -=1
+				if ($scope.solicitud.solicitudesProductos) {
+					while (j < $scope.solicitud.solicitudesProductos.length && !encontrado) {
+						if ($scope.solicitud.solicitudesProductos[j].eliminado === undefined) {
+							if ($scope.solicitud.solicitudesProductos[j].productoSolicitado.id == producto.id) {
+								$scope.solicitud.solicitudesProductos[j].cantidad = $scope.solicitud.solicitudesProductos[j].cantidad + 1;
+								$scope.solicitud.solicitudesProductos[j].eliminado = undefined
+								$scope.solicitud.solicitudesProductos[j].detallesIngredientesProducto.map(function (ingre) {
+									ingre.total = ingre.cantidad_ideal * $scope.solicitud.solicitudesProductos[j].cantidad
+								})
+								encontrado = true;
+								detalleVenta = $scope.solicitud.solicitudesProductos[j];
+								// producto.inventario_disponible -= 1
+								// var indx = $scope.productosProcesados.indexOf(producto)
+								// $scope.productosProcesados[indx].inventarios[0].cantidad -=1
+								// producto.inventarios[i].cantidad -=1
+							}
 						}
+						j++;
 					}
-					j++;
+				}else {
+					$scope.solicitud.solicitudesProductos = []
 				}
+
 				if (!encontrado) {
 					var formulacion = SolicitudesFormulacionProducto((producto.producto !== undefined) ? producto.producto.id : (producto.id !== undefined) ? producto.id : undefined)
 					var ingredientes = []
@@ -716,11 +722,16 @@ angular.module('agil.controladores')
 			$scope.solicitud = solicitud
 			$scope.solicitud.fechaTexto = $scope.fechaATexto($scope.solicitud.fecha)
 			$scope.solicitud.modificar = true
-			$scope.solicitud.sucursal = $scope.solicitud.almacen.sucursal
-			$scope.obtenerAlmacenes($scope.solicitud.sucursal.id)
-			$scope.solicitud.almacen = $scope.solicitud.almacen
-			$scope.obtenerInventariosProdSolicitud()
 			$scope.abrirDialogPanelOperaciones()
+			$scope.solicitud.sucursal = $scope.solicitud.almacen.sucursal
+
+			$scope.solicitud.almacen = $scope.solicitud.almacen
+			$scope.obtenerAlmacenes($scope.solicitud.sucursal.id)
+			setTimeout(function () {
+				$scope.obtenerInventariosProdSolicitud()
+			}, 500)
+
+
 		}
 
 		$scope.generarListaGruposSeleccionados = function (gruposActualizado, gruposCache) {
@@ -928,8 +939,8 @@ angular.module('agil.controladores')
 		}
 
 		$scope.abrirDialogPanelOperaciones = function () {
-			$scope.sucursal = {}
-			$scope.almacen = {}
+			// $scope.sucursal = {}
+			// $scope.almacen = {}
 			if ($scope.solicitud !== undefined) {
 				if ($scope.solicitud.id === undefined) {
 					$scope.productoSeleccionado = undefined
@@ -937,7 +948,11 @@ angular.module('agil.controladores')
 				} else {
 					if ($scope.solicitud.copia === undefined) {
 						$scope.solicitud.fecha = new Date($scope.solicitud.fecha).toLocaleDateString() //$scope.fechaATexto(new Date($scope.solicitud.fecha))
-						$scope.solicitud.nueva = true
+						if ($scope.solicitud.modificar) {
+
+						} else {
+							$scope.solicitud.nueva = true
+						}
 					} else {
 						$scope.solicitud.id = undefined
 						$scope.solicitud.fecha = new Date().toLocaleDateString() //$scope.fechaATexto(new Date())

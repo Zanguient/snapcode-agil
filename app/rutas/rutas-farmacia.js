@@ -142,7 +142,8 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Farmacia, Pers
 						SucursalActividadDosificacion.find({
 							where: {
 								id_actividad: venta.actividad.id,
-								id_sucursal: venta.sucursal.id
+								id_sucursal: venta.sucursal.id,
+								expirado: false
 							},
 							include: [{ model: Dosificacion, as: 'dosificacion', include: [{ model: Clase, as: 'pieFactura' }] }]
 						}).then(function (sucursalActividadDosificacion) {
@@ -233,7 +234,8 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Farmacia, Pers
 							return SucursalActividadDosificacion.find({
 								where: {
 									id_actividad: venta.actividad.id,
-									id_sucursal: venta.sucursal.id
+									id_sucursal: venta.sucursal.id,
+									expirado: false
 								},
 								transaction: t,
 								include: [{ model: Dosificacion, as: 'dosificacion', include: [{ model: Clase, as: 'pieFactura' }] },

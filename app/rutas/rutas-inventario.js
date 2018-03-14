@@ -726,7 +726,8 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 							return SucursalActividadDosificacion.find({
 								where: {
 									id_actividad: venta.actividad.id,
-									id_sucursal: venta.sucursal.id
+									id_sucursal: venta.sucursal.id,
+									expirado: false
 								},
 								transaction: t,
 								include: [{ model: Dosificacion, as: 'dosificacion', include: [{ model: Clase, as: 'pieFactura' }] },
@@ -748,7 +749,6 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 								if (sucursalActividadDosificacion.sucursal.empresa.usar_pedidos) {
 									venta.pedido = sucursalActividadDosificacion.sucursal.pedido_correlativo;
 								}
-
 								if (!venta.cliente.id) {
 									return Cliente.create({
 										id_empresa: venta.id_empresa,
@@ -1558,7 +1558,8 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 						SucursalActividadDosificacion.find({
 							where: {
 								id_actividad: venta.actividad.id,
-								id_sucursal: venta.sucursal.id
+								id_sucursal: venta.sucursal.id,
+								expirado: false
 							},
 							include: [{ model: Dosificacion, as: 'dosificacion', include: [{ model: Clase, as: 'pieFactura' }] }]
 						}).then(function (sucursalActividadDosificacion) {

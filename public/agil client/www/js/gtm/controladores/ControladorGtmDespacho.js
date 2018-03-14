@@ -424,7 +424,7 @@ angular.module('agil.controladores')
             doc.text("Destino Mercaderia:", 40, y + 100);
             var texto=gtm_despacho.despacho.destino.direccion + " " + gtm_despacho.despacho.destino.destino
             var a =0;
-            if(texto.length>73){
+            if(texto.length>61){
                 a=10;
             }
             doc.text("Nombre Fact:", 40, y + 110+a);

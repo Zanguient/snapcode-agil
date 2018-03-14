@@ -404,7 +404,7 @@ angular.module('agil.controladores')
                     var datosCampo = []
                     row.map(function (dat, j) {
                         if (j > 5 && j <= row.length - 2) {
-                            var col = {y: dat, label: row.length - 2 != j ? mesesReporte[j - 6] : 'TOTALbbbb' }
+                            var col = {y: dat !== '-' ? dat : 0, label: row.length - 2 != j ? mesesReporte[j - 6] : 'TOTAL' }
                             datosCampo.push(col)
                             x += 10
                         }
@@ -573,7 +573,7 @@ angular.module('agil.controladores')
                 if (len == 12) {
                     x = 30
                 }
-                var limiteChar = 46
+                var limiteChar = 50
                 var doc = new PDFDocument({ size: [612, 792], margin: 10, compress: false });
                 var stream = doc.pipe(blobStream());
                 doc.image(imagen, 40, 30, { fit: [100, 100] });
@@ -596,6 +596,9 @@ angular.module('agil.controladores')
                                 x = x - 30
                             }
                             if (j > 0 && j < 5) {
+                                if ((j == 2 || j == 1)  && i >= 1) {
+                                    doc.font('Helvetica', 5);
+                                }
                                 doc.text(reporte[i][j], x, y, { width: limiteChar, align: "center" });
                             }
                             if (j > 4 && j < reporte[i].length - 3) {
@@ -608,7 +611,7 @@ angular.module('agil.controladores')
                             x += spaceX
                         }
                     }
-                    if (reporte[i].length > 14 && reporte[i].length <= 20) {
+                    if (reporte[i].length > 14 && reporte[i].length <= 22) {
                         if (i == 0) {
                             doc.font('Helvetica-Bold', 12);
                             doc.text("MATRIZ POLIFUNCIONALIDAD Y DESEMPEÑO", 50, 30, { align: "center" });
@@ -617,36 +620,45 @@ angular.module('agil.controladores')
                         }
                         for (let j = 0; j < reporte[i].length; j++) {
                             if (i > 0) {
-                                doc.font('Helvetica', 7);
+                                doc.font('Helvetica', 6);
                             } else {
-                                doc.font('Helvetica-Bold', 7);
+                                doc.font('Helvetica-Bold', 6);
                             }
                             if (j == 0) {
                                 doc.text(reporte[i][j], x, y, { width: limiteChar });
-                                x = x - 35
+                                x = x - 40
                             }
                             if (j > 0 && j < 5) {
-                                doc.text(reporte[i][j], x, y, { width: limiteChar, align: "center" });
+                                if ((j == 2 || j == 1) && i >= 1) {
+                                    doc.font('Helvetica', 5);
+                                }
+                                doc.text(reporte[i][j], x, y, { width: limiteChar -5, align: "center" });
                                 x = x - 5
                             }
                             if (j > 4 && j < reporte[i].length - 3) {
-                                doc.text(reporte[i][j], x, y, { width: limiteChar, align: "center" });
+                                doc.text(reporte[i][j], x, y, { width: limiteChar -5, align: "center" });
                                 x = x - 15
                             }
                             if (j >= reporte[i].length - 3) {
-                                doc.text(reporte[i][j], x, y, { width: limiteChar, align: "center" });
+                                doc.text(reporte[i][j], x, y, { width: limiteChar -5, align: "center" });
                             }
                             x += spaceX - 5
                         }
+                    }else{
+                        if (condition) {
+                            
+                        }
                     }
-
+                    if (len > 12) {
+                        x = 20
+                    }
                     if (len == 12) {
                         x = 30
                     }
                     if (len < 12 && len > 10) {
                         x = 35
                     }
-                    if (len < 10) {
+                    if (len <= 10) {
                         x = 40
                     }
                     y += spaceY
@@ -655,7 +667,14 @@ angular.module('agil.controladores')
                         y = 120
                     }
                 }
-
+                if (len > 12) {
+                    setTimeout(function () {
+                        $scope.$apply(function () {
+                            $scope.mostrarMensaje('ADVERTENCIA: El rango de fechas excede el tamaño máximo de impresion.')
+                        })
+                    }, 1000)
+                    
+                }
                 doc.end();
                 stream.on('finish', function () {
                     var fileURL = stream.toBlobURL('application/pdf');

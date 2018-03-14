@@ -158,6 +158,7 @@
         </div>
         <div class="table-header">
             Lista de Proformas
+            <label class="pull-right">TOTAL BS. {{totalProformas | number:2}} &nbsp&nbsp</label>
         </div>
         <div id="tabla-pacientes_wrapper" class="dataTables_wrapper form-inline no-footer">
             <div class="row" ng-include src="'/templates/gral/paginator-header-2.html'">
@@ -350,7 +351,7 @@
                                         <div class="col-lg-7">
                                             <select style="max-width: 180px;width: 180px" ng-change="obtenerServiciosActividadEmpresaPrincipal(nActividad.actividadEconomica.actividad)"
                                                 required id="actividadServicios" name="actividad" ng-options="actividad as actividad.actividad.nombre for actividad in actividadesEmpresaSinRepeticion track by actividad.actividad.id"
-                                                ng-model="nActividad.actividadEconomica.actividad">
+                                                ng-model="nActividad.actividadEconomica">
                                             </select>
                                         </div>
                                     </div>
@@ -455,6 +456,17 @@
     </div>
 </div>
 
+<div id="dialog-dosificar-actividad" title="¿Dosificar actividad?">
+        <p>
+            <span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>¿Esta seguro de reemplazar la dosificación existente por una nueva?
+        </p>
+        <p>
+            La dosificación anterior quedara cerrada y no podra ser usada para la emisión de nuevas facturas.
+        </p>
+        <button type="button" class="btn btn-danger" ng-click="dosificarSucursalActividad()">Si</button>
+        <button type="button" class="btn btn-success" ng-click="cerrarconfirmarDosificacion()">No</button>
+    </div>
+
 <div id="modalConfiguracionActividades" style="overflow-x:hidden !important" class="modal wizard-posicion">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -524,12 +536,14 @@
                                                     <th>Acciones</th>
                                                 </thead>
                                                 <tbody>
-                                                    <tr ng-if="!actividad.eliminado" ng-repeat="actividad in actividadesSucursal track by $index">
+                                                    <tr ng-if="!actividad.expirado" ng-repeat="actividad in actividadesDosificaciones track by $index">
                                                         <td>
                                                             {{actividad.actividad.nombre}}
+                                                            <span ng-if="actividad.eliminado" style="color: red">SE ELIMINARA</span>
                                                         </td>
                                                         <td>
                                                             {{actividad.dosificacion.autorizacion}}
+                                                            <span ng-if="actividad.dosificacion.expirado" style="color: red">EXPIRADO</span>
                                                         </td>
                                                         <td>
                                                             <!-- <a ng-disabled="!aplicacion.puede_eliminar" class="blue" ng-click="sinFuncionalidad()" data-rel="tooltip" tooltip-placement="top"
@@ -546,7 +560,45 @@
                                                                 data-rel="tooltip" tooltip-placement="top" uib-tooltip="Eliminar">
                                                                 <i class="ace-icon fa fa-trash-o bigger-130"></i>
                                                             </a>
-
+                                                            <a ng-click="obtenerHistorialActividad(actividad)" popover-trigger="outsideClick : outsideClick" popover-append-to-body="true" popover-title="Historial" uib-popover-template="PopoverConfiguracionActividadhistorial.templateUrl"
+                                                                popover-placement="top" class="btn button-config btn-minier"
+                                                                type="button" id="id-btn-historialDosificacion">
+                                                                H
+                                                            </a>
+                                                            <script type="text/ng-template" id="PopoverConfiguracionActividadhistorial.html">
+                                                                
+                                                                    <table class="table table-striped table-bordered table-hover ">
+                                                                        <thead>
+                                                                            <tr>
+                                                                                <th>
+                                                                                    N°
+                                                                                </th>
+                                                                                <th>
+                                                                                    autorizacion
+                                                                                </th>
+                                                                                <th>
+                                                                                    Correlativo
+                                                                                </th>
+                                                                            </tr>
+                                                                        </thead>
+                                                                        <tbody>
+                                                                            <tr ng-repeat="actividadd in historialActividad track by $index">
+                                                                                <td>
+                                                                                    {{$index+1}}
+                                                                                </td>
+                                                                                <td>
+                                                                                    {{actividadd.dosificacion.autorizacion}}
+                                                                                    <span ng-if="actividadd.dosificacion.expirado" style="color: red">EXPIRADO</span>
+                                                                                </td>
+                                                                                <td>
+                                                                                    {{actividadd.dosificacion.correlativo}}
+                                                                                </td>
+                                                                            </tr>
+                                                                        </tbody>
+                                                                    </table>
+                                                          
+                                                     
+                                                            </script>
                                                         </td>
                                                     </tr>
                                                 </tbody>
@@ -608,9 +660,7 @@
                     <div class="widget-body">
                         <div class="widget-main">
                             <table class="table table-striped table-bordered table-hover">
-
                                 <tr>
-
                                     <td>
                                         <div class="row">
                                             <div class="container-fluid">
@@ -641,7 +691,7 @@
                                                 <div ng-if="!verificarBloqueoServicios()">
                                                     <select autofocus class="form-control" style="width:150px;" data-validate="validate(required)" ng-change="obtenerServiciosActividadEmpresaPrincipal(proforma.actividadEconomica)"
                                                         required id="actividadProforma" name="actividad" ng-model="proforma.actividadEconomica"
-                                                        ng-options="actividad as actividad.actividad.nombre for actividad in actividadesSucursal track by actividad.actividad.id"
+                                                        ng-options="actividad as actividad.nombre for actividad in actividadesSucursal track by actividad.id"
                                                         data-placeholder="Click para escoger">
                                                         <option value="" disabled selected>Selec. Actividad</option>
                                                     </select>
@@ -649,7 +699,7 @@
                                                 </div>
                                                 <div ng-if="verificarBloqueoServicios()">
                                                     <select class="form-control" data-validate="validate(required)" required id="actividadProformaDisable" name="actividad" ng-model="proforma.actividadEconomica"
-                                                        disabled ng-options="actividad as actividad.actividad.nombre for actividad in actividadesSucursal track by actividad.actividad.id"
+                                                        disabled ng-options="actividad as actividad.nombre for actividad in actividadesSucursal track by actividad.id"
                                                         data-placeholder="Click para escoger">
                                                     </select>
                                                     <span class="red">(*)</span>
@@ -864,7 +914,7 @@
                                                 type="number" />
                                         </td>
                                         <td>
-                                            {{detalleProforma.importeBs | number:2}}
+                                            {{detalleProforma.importe | number:2}}
                                         </td>
                                         <td>
                                             {{detalleProforma.importeSus | number:2}}
@@ -963,7 +1013,7 @@
                                         {{detalle.cantidad}}
                                     </td>
                                     <td>
-                                        {{detalle.importeBs| number:2}}
+                                        {{detalle.importe| number:2}}
                                     </td>
                                     <td>
                                         {{detalle.importeSus | number:2}}
@@ -1070,7 +1120,7 @@
                                             {{servicio.nombre}}
                                         </td>
                                         <td>
-                                            {{servicio.precio_unitario}}
+                                            {{servicio.precio}}
                                         </td>
                                         <td>
                                             <a ng-click="establecerservicio(servicio,true)">SELECCIONAR</a>
@@ -1159,7 +1209,7 @@
 <div id="modalFechas" style="overflow-x:hidden !important" class="modal wizard-posicion">
     <div class="modal-dialog">
         <div class="modal-content">
-            <form name="formularioFiltroOperaciones" novalidate ng-submit="actualizarFechas(proforma)">
+            <form name="formularioFiltroOperaciones" novalidate ng-submit="actualizarFechas(proformaFechas)">
                 <div class="row">
                     <h2 align="center" class="blue">FECHAS</h2>
                 </div>
@@ -1192,7 +1242,7 @@
                                 </div>
                                 <div class="col-md-8">
                                     <input autocomplete="off" ng-update-hidden type="text" data-date-format="dd/mm/yyyy" class="form-control date-picker" id="fecha-recepcion"
-                                        ng-model="proforma.fecha_recepcion" name="fecha-recepcion">
+                                        ng-model="proformaFechas.fecha_recepcion" name="fecha-recepcion">
                                 </div>
                             </div>
                             <div class=" form-group">
@@ -1201,9 +1251,9 @@
 
                                 </div>
                                 <div class="col-md-8">
-                                    <input autocomplete="off" ng-disabled="verificarFechaRecepcion(proforma.fecha_recepcion)" ng-change="compararFechasProformas(proforma.fecha_recepcion,proforma.fecha_proforma_ok)"
+                                    <input autocomplete="off" ng-disabled="verificarFechaRecepcion(proformaFechas.fecha_recepcion)" ng-change="compararFechasProformas(proformaFechas.fecha_recepcion,proformaFechas.fecha_proforma_ok)"
                                         ng-update-hidden type="text" data-date-format="dd/mm/yyyy" class="form-control date-picker"
-                                        id="fecha-proformaOk" ng-model="proforma.fecha_proforma_ok" name="fecha-proformaOk">
+                                        id="fecha-proformaOk" ng-model="proformaFechas.fecha_proforma_ok" name="fecha-proformaOk">
                                 </div>
 
                             </div>
@@ -1212,9 +1262,9 @@
                                     <label for="">Factura</label>
                                 </div>
                                 <div class="col-md-8">
-                                    <input disabled autocomplete="off" ng-change="compararFechasProformas(proforma.fecha_proforma_ok,proforma.fecha_factura)"
+                                    <input disabled autocomplete="off" ng-change="compararFechasProformas(proformaFechas.fecha_proforma_ok,proformaFechas.fecha_factura)"
                                         ng-update-hidden type="text" data-date-format="dd/mm/yyyy" class="form-control date-picker"
-                                        id="fecha-factura" ng-model="proforma.fecha_factura" name="fecha-factura">
+                                        id="fecha-factura" ng-model="proformaFechas.fecha_factura" name="fecha-factura">
                                 </div>
 
                             </div>
@@ -1224,9 +1274,9 @@
                                     <label for="">Cobro</label>
                                 </div>
                                 <div class="col-md-8">
-                                    <input autocomplete="off" ng-disabled="verificarFechaFactura(proforma.fecha_factura)" ng-change="compararFechasProformas(proforma.fecha_factura,proforma.fecha_cobro)"
+                                    <input autocomplete="off" ng-disabled="verificarFechaFactura(proformaFechas.fecha_factura)" ng-change="compararFechasProformas(proformaFechas.fecha_factura,proformaFechas.fecha_cobro)"
                                         ng-update-hidden type="text" data-date-format="dd/mm/yyyy" class="form-control date-picker"
-                                        id="fecha-cobro" ng-model="proforma.fecha_cobro" name="fecha-cobro">
+                                        id="fecha-cobro" ng-model="proformaFechas.fecha_cobro" name="fecha-cobro">
                                 </div>
                             </div>
                         </div>
@@ -1235,8 +1285,7 @@
                 <br>
                 <div class="row">
                     <div class="modal-footer wizard-actions">
-                        <button ng-click="guardarFechas(proforma)" id="siguiente-wizard-fechas-proforma" class="btn btn-success btn-sm btn-next"
-                            data-last="Finish">
+                        <button type="submit" id="siguiente-wizard-fechas-proforma" class="btn btn-success btn-sm btn-next" data-last="Finish">
                             Siguiente
                             <i class="ace-icon fa fa-arrow-right icon-on-right"></i>
                         </button>
@@ -1283,12 +1332,13 @@
                         </td>
                         <td>
                             {{dosificacion.autorizacion}}
+                            <span ng-if="dosificacion.expirado" style="color: red">EXPIRADO</span>
                         </td>
                         <td>
                             {{dosificacion.correlativo}}
                         </td>
                         <td>
-                            <a ng-click="dosificarSucursalActividad(dosificacion)">SELECCIONAR</a>
+                            <a ng-click="abrirconfirmarDosificacion(dosificacion)">SELECCIONAR</a>
                         </td>
                     </tr>
                 </tbody>

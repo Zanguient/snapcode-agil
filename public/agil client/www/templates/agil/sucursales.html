@@ -426,10 +426,10 @@
 
 										<td>{{$index+1}}</td>
 										<td>
-											{{actividadDosificacion.actividad.nombre}}
+											{{actividadDosificacion.actividad.nombre}} <span ng-if="actividadDosificacion.expirado" style="color: red">EXPIRADO</span>
 										</td>
 										<td>
-											{{actividadDosificacion.dosificacion.autorizacion}}
+											{{actividadDosificacion.dosificacion.autorizacion}} <span ng-if="actividadDosificacion.dosificacion.expirado" style="color: red">EXPIRADO</span>
 										</td>
 										<td>
 											<div class="hidden-sm hidden-xs action-buttons">

@@ -23,7 +23,11 @@ module.exports=function(sequelize,Sequelize){
 	  id_pie_factura:{
 		type: Sequelize.INTEGER,
 		field: 'pie_factura' 
-	  }
+		},
+		expirado:{
+			type: Sequelize.BOOLEAN,
+			field: 'expirado' 
+			}
 	}, {
 	  freezeTableName: true 
 	});

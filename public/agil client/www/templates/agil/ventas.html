@@ -401,6 +401,7 @@
 																	<option value="" disabled selected>Selec. Actividad</option>
 																</select>
 																<span class="red">(*)</span>
+																<span ng-if="dosificacionesExpiradas" style="color: red">Las Actividades con dosificaciones expiradas no se muestran</span>
 																<div class="invalid-message help-block" ng-messages="formularioVenta.actividad.$error" ng-if=" (formularioVenta.$submitted && formularioVenta.actividad.$invalid)">
 																	<div ng-messages-include="/templates/GRAL/messages.html"></div>
 																</div>

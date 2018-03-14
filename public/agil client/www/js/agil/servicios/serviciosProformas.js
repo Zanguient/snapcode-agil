@@ -68,16 +68,16 @@ angular.module('agil.servicios')
     }])
 
     .factory('Proforma', function ($resource) {
-        return $resource(restServer + "proforma/:id", {},
+        return $resource(restServer + "proforma/:id/:id_actividad", {},
             {
                 'update': { method: 'PUT' }
             });
     })
 
     .factory('ProformaInfo', ['Proforma', '$q', function (Proforma, $q) {
-        var res = function (idProforma) {
+        var res = function (idProforma,id_actividad) {
             var delay = $q.defer();
-            Proforma.get({ id: idProforma }, function (entidades) {
+            Proforma.get({ id: idProforma, id_actividad }, function (entidades) {
                 delay.resolve(entidades);
             }, function (error) {
                 delay.reject(error);
@@ -216,6 +216,26 @@ angular.module('agil.servicios')
         var res = function (id_usuario) {
             var delay = $q.defer();
             proformaSucursalesUsuario.get({ id_usuario: id_usuario }, function (entidades) {
+                delay.resolve(entidades);
+            }, function (error) {
+                delay.reject(error);
+            });
+            return delay.promise;
+        };
+        return res;
+    }])
+
+    .factory('actividadesHistorial', function ($resource) {
+        return $resource(restServer + "actividades/historial/:id/:id_sucursal", {},
+            {
+                'update': { method: 'PUT' }
+            });
+    })
+
+    .factory('ListaHistorialActividad', ['actividadesHistorial', '$q', function (actividadesHistorial, $q) {
+        var res = function (id, id_sucursal) {
+            var delay = $q.defer();
+            actividadesHistorial.get({ id: id, id_sucursal: id_sucursal }, function (entidades) {
                 delay.resolve(entidades);
             }, function (error) {
                 delay.reject(error);

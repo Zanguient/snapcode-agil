@@ -4,7 +4,7 @@ angular.module('agil.controladores')
 		Venta, Ventas, Clientes, ClientesNit, ProductosNombre, ClasesTipo, VentasContado, VentasCredito,
 		PagosVenta, DatosVenta, VentaEmpresaDatos, ProductosPanel, ListaProductosEmpresa, ListaInventariosProducto,
 		socket, ConfiguracionVentaVistaDatos, ConfiguracionVentaVista, ListaGruposProductoEmpresa,
-		ConfiguracionImpresionEmpresaDato, ImprimirSalida, ListaVendedorVenta, VendedorVenta, VendedorVentaActualizacion, GuardarUsuarLectorDeBarra, VerificarLimiteCredito) {
+		ConfiguracionImpresionEmpresaDato, ImprimirSalida, ListaVendedorVenta, VendedorVenta, VendedorVentaActualizacion, GuardarUsuarLectorDeBarra, VerificarLimiteCredito, ListaSucursalesUsuario) {
 		blockUI.start();
 		$scope.usuario = JSON.parse($localStorage.usuario);
 		convertUrlToBase64Image($scope.usuario.empresa.imagen, function (imagenEmpresa) {
@@ -45,15 +45,16 @@ angular.module('agil.controladores')
 			$scope.obtenerTiposDePago();
 			$scope.obtenerConfiguracionVentaVista();
 
-			$scope.sucursales = $scope.obtenerSucursales();
-
+			$scope.sucursales = []//$scope.obtenerSucursales();
+			$scope.obtenerSucursales();
 			$scope.sucursalesUsuario = "";
-			for (var i = 0; i < $scope.usuario.sucursalesUsuario.length; i++) {
-				$scope.sucursalesUsuario = $scope.sucursalesUsuario + $scope.usuario.sucursalesUsuario[i].sucursal.id;
-				if (i + 1 != $scope.usuario.sucursalesUsuario.length) {
-					$scope.sucursalesUsuario = $scope.sucursalesUsuario + ',';
-				}
-			}
+
+			// for (var i = 0; i < $scope.usuario.sucursalesUsuario.length; i++) {
+			// 	$scope.sucursalesUsuario = $scope.sucursalesUsuario + $scope.usuario.sucursalesUsuario[i].sucursal.id;
+			// 	if (i + 1 != $scope.usuario.sucursalesUsuario.length) {
+			// 		$scope.sucursalesUsuario = $scope.sucursalesUsuario + ',';
+			// 	}
+			// }
 
 			//$scope.obtenerVentas();
 			$scope.obtenerMovimientosEgreso();
@@ -585,10 +586,29 @@ angular.module('agil.controladores')
 
 		$scope.obtenerSucursales = function () {
 			var sucursales = [];
-			for (var i = 0; i < $scope.usuario.sucursalesUsuario.length; i++) {
-				sucursales.push($scope.usuario.sucursalesUsuario[i].sucursal);
-			}
-			return sucursales;
+			// for (var i = 0; i < $scope.usuario.sucursalesUsuario.length; i++) {
+			// 	sucursales.push($scope.usuario.sucursalesUsuario[i].sucursal);
+			// }
+			var promesa = ListaSucursalesUsuario($scope.usuario.id);
+			promesa.then(function (res) {
+				res.sucursales.map(function (_) {
+					$scope.sucursales.push(_.sucursal)
+					// $scope.sucursalesUsuario = $scope.sucursalesUsuario + $scope.usuario.sucursalesUsuario[i].sucursal.id;
+					// if (i + 1 != $scope.usuario.sucursalesUsuario.length) {
+					// 	$scope.sucursalesUsuario = $scope.sucursalesUsuario + ',';
+					// }
+				})
+				$scope.usuario.sucursalesUsuario = res.sucursales
+				for (var i = 0; i < $scope.usuario.sucursalesUsuario.length; i++) {
+					$scope.sucursalesUsuario = $scope.sucursalesUsuario + $scope.usuario.sucursalesUsuario[i].sucursal.id;
+					if (i + 1 != $scope.usuario.sucursalesUsuario.length) {
+						$scope.sucursalesUsuario = $scope.sucursalesUsuario + ',';
+					}
+				}
+				// blockUI.stop();
+			});
+
+			// return sucursales;
 		}
 
 		$scope.obtenerAlmacenesSucursalesDiferente = function (idSucursalOrigen) {
@@ -629,7 +649,12 @@ angular.module('agil.controladores')
 			$scope.actividadesDosificaciones = sucursal.actividadesDosificaciones;
 			$scope.actividades = [];
 			for (var i = 0; i < $scope.actividadesDosificaciones.length; i++) {
-				$scope.actividades.push($scope.actividadesDosificaciones[i].actividad);
+				if (!$scope.actividadesDosificaciones[i].dosificacion.expirado) {
+					$scope.actividades.push($scope.actividadesDosificaciones[i].actividad);
+					
+				}else{
+					$scope.dosificacionesExpiradas = true
+				}
 			}
 			$scope.venta.actividad = $scope.actividades.length == 1 ? $scope.actividades[0] : null;
 		}
@@ -701,7 +726,7 @@ angular.module('agil.controladores')
 
 		$scope.imprimirRecibo = function (data, venta, pago) {
 			blockUI.start();
-			var doc = new PDFDocument({compress: false, size: [227, 353], margin: 10 });
+			var doc = new PDFDocument({ compress: false, size: [227, 353], margin: 10 });
 			var stream = doc.pipe(blobStream());
 			doc.moveDown(2);
 			doc.font('Helvetica-Bold', 8);
@@ -860,7 +885,7 @@ angular.module('agil.controladores')
 
 		}
 		$scope.imprimirFiltroCajaCartaOficio = function (ventas, fechaInicio, fechaFin) {
-			var doc = new PDFDocument({compress: false, size: [612, 792], margin: 0 });
+			var doc = new PDFDocument({ compress: false, size: [612, 792], margin: 0 });
 			var stream = doc.pipe(blobStream());
 			var itemsPorPagina = 20;
 			if ($scope.trueDetalle) {
@@ -1136,7 +1161,7 @@ angular.module('agil.controladores')
 
 
 		$scope.imprimirReporteCierreCajaCartaOficio = function (papel, cierre, ventas, ventasCredito, pagos) {
-			var doc = new PDFDocument({compress: false, size: papel, margin: 0 });
+			var doc = new PDFDocument({ compress: false, size: papel, margin: 0 });
 			var stream = doc.pipe(blobStream());
 			doc.font('Helvetica-Bold', 15);
 			doc.text("CIERRE DE CAJA", 55, 50);
@@ -1213,7 +1238,7 @@ angular.module('agil.controladores')
 		}
 
 		$scope.imprimirReporteCierreCajaRollo = function (papel, cierre, ventas, ventasCredito, pagos) {
-			var doc = new PDFDocument({compress: false, size: papel, margins: { top: 10, bottom: 10, left: 10, right: 20 } });
+			var doc = new PDFDocument({ compress: false, size: papel, margins: { top: 10, bottom: 10, left: 10, right: 20 } });
 			var stream = doc.pipe(blobStream());
 			doc.moveDown(2);
 			doc.font('Helvetica-Bold', 8);
@@ -1333,7 +1358,7 @@ angular.module('agil.controladores')
 			var al = 0;
 			if (venta == undefined) {
 				$scope.venta.sucursal = $scope.sucursales.length == 1 ? $scope.sucursales[0] : null;
-			}else {
+			} else {
 				$scope.venta.sucursal = venta.sucursal;
 				al = venta.almacen;
 			}
@@ -1389,13 +1414,13 @@ angular.module('agil.controladores')
 
 			} else {
 				$scope.$apply(function () {
-                    $scope.message = "¡Debe agregar al menos un producto para realizar la transacción!";
-                    $scope.mostrarMensaje($scope.message);
-                });
+					$scope.message = "¡Debe agregar al menos un producto para realizar la transacción!";
+					$scope.mostrarMensaje($scope.message);
+				});
 			}
 
 			// $scope.venta.sucursal = venta.sucursal.id;
-			
+
 		}
 
 		$scope.verVenta = function (venta) {
@@ -1563,7 +1588,7 @@ angular.module('agil.controladores')
 		}
 
 		$scope.abrirPopupPanel = function (sucursal, almacen, actividad, tipoPago, movimiento) {
-			
+
 			$scope.venta = new Venta({
 				id_empresa: $scope.usuario.id_empresa, id_usuario: $scope.usuario.id, cliente: {},
 				detallesVenta: [], detallesVentaNoConsolidadas: [], despachado: false,
@@ -1574,7 +1599,7 @@ angular.module('agil.controladores')
 				$scope.venta.sucursal =/*$scope.sucursales.length==1?*/$scope.sucursales[0]/*:null*/;
 			}
 			if ($scope.venta.sucursal) {
-				if ($scope.venta.almacen ==null) {
+				if ($scope.venta.almacen == null) {
 					$scope.obtenerAlmacenesActividades($scope.venta.sucursal.id);
 				}
 			}
@@ -1880,8 +1905,6 @@ angular.module('agil.controladores')
 				} else {
 					$scope.calcularImporteDetalleVenta(detalleVenta);
 				}
-				// para disminuir en panel de los productos ========
-				
 
 				$scope.sumarTotal();
 				$scope.sumarTotalImporte();
@@ -2001,18 +2024,18 @@ angular.module('agil.controladores')
 			$scope.abrirPopup($scope.idModalInventario);
 		}
 
-		$scope.barcodeScanned = function(barcode) {
+		$scope.barcodeScanned = function (barcode) {
 			// document.getElementById("inputGroup").focus();
 			$scope.search = barcode;
 
 			// $scope.cargarProductos();       
-	        $scope.filtrarProductos(barcode);   
-	    };
+			$scope.filtrarProductos(barcode);
+		};
 
-	    $scope.limpiarBusqueda = function() {
-	    	$scope.search = "";
-	    	$scope.filtrarProductos();     
-	    }
+		$scope.limpiarBusqueda = function () {
+			$scope.search = "";
+			$scope.filtrarProductos();
+		}
 
 		$scope.buscarInventarios = function (idAlmacen, pagina, itemsPagina, texto, columna, direccion, cantidad) {
 			blockUI.start();

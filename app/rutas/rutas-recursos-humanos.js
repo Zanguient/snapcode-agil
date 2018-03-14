@@ -302,7 +302,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                                     // cargo: req.body.cargo,
                                     campo: req.body.campo,
                                     designacion_empresa: req.body.designacion_empresa,
-                                    eliminado: true,
+                                    eliminado: false,
                                     es_empleado: req.body.es_empleado
                                 }).then(function (medicoPacienteCreado) {
                                     RrhhEmpleadoFicha.create({
@@ -642,59 +642,149 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
             }).then(function (EmpleadoPersonaActualizado) {
                 var haber = parseFloat(req.body.haber_basico)
                 var numero_literal = NumeroLiteral.Convertir(parseFloat(req.body.haber_basico).toFixed(2).toString());
-                RrhhEmpleadoFicha.create({
-                    discapacidad: req.body.discapacidad,
-                    detalle_discapacidades: req.body.detalle_discapacidades,
-                    id_empleado: req.body.empleado.id,
-                    fecha: req.body.fecha_elaboracion,
-                    //codigo_empleado: req.body.codigo_empleado,
-                    id_tipo_contrato: req.body.tipoContrato.id,
-                    fecha_inicio: req.body.fecha_inicio2,
-                    fecha_fin: req.body.fecha_fin2,
-                    id_tipo_personal: req.body.tipoPersonal.id,
-                    id_carga_horarios: req.body.cargaHorario.id,
-                    id_area: req.body.area.id,
-                    id_ubicacion: req.body.ubicacion.id,
-                    haber_basico: haber,
-                    haber_basico_literal: numero_literal,
-                    //contrato: req.body.alergia_quimico,
-                    jubilacion: req.body.jubilacion,
-                    fecha_jubilacion: req.body.fecha_jubilacion,
-                    id_persona_referencia: personaReferenciaCreada.id,
-                    matricula_seguro: req.body.matricula_seguro,
-                    id_seguro_salud: req.body.seguroSalud.id,
-                    id_lugar_seguro_salud: req.body.lugarSeguroSalud.id,
-                    seguro_salud_carnet: req.body.seguro_salud_carnet,
-                    nua_seguro_largo_plazo: req.body.nua_seguro_largo_plazo,
-                    id_aporte_seguro_largo_plazo: req.body.aporteSeguroLargoPlazo.id,
-                    id_lugar_seguro_largo_plazo: req.body.lugarSeguroLargoPlazo.id,
-                    numero_cuenta: req.body.numero_cuenta,
-                    id_banco: req.body.banco.id,
-                }).then(function (medicoPacientefichaCreado) {
-                    if (req.body.contrato2) {
-                        fs.writeFileSync('./contratos/contrato-' + medicoPacientefichaCreado.id + "-" + req.body.contrato2.name, req.body.contrato2.data, 'binary', function (err) {
-                            if (err)
-                                console.log(err);
-                            else
-                                console.log("The file was saved!");
-                        });
+                var inicio = new Date(req.body.fecha_inicio2); inicio.setHours(0, 0, 0, 0, 0);
+               
+                condicionFicha = { id: req.body.id };
+                RrhhEmpleadoFicha.find({
+                    where: condicionFicha,
 
+                }).then(function (ficha) {
+                    var contrato = fechaATexto(ficha.fecha_inicio)
+                    var fechaconT = fechaATexto(inicio)
+                    if (contrato == fechaconT) {
                         RrhhEmpleadoFicha.update({
-                            contrato: req.body.contrato2.name
+                            discapacidad: req.body.discapacidad,
+                            detalle_discapacidades: req.body.detalle_discapacidades,
+                            id_empleado: req.body.empleado.id,
+                            fecha: req.body.fecha_elaboracion,
+                            //codigo_empleado: req.body.codigo_empleado,
+                            id_tipo_contrato: req.body.tipoContrato.id,
+                            fecha_inicio: req.body.fecha_inicio2,
+                            fecha_fin: req.body.fecha_fin2,
+                            id_tipo_personal: req.body.tipoPersonal.id,
+                            id_carga_horarios: req.body.cargaHorario.id,
+                            id_area: req.body.area.id,
+                            id_ubicacion: req.body.ubicacion.id,
+                            haber_basico: haber,
+                            haber_basico_literal: numero_literal,
+                            //contrato: req.body.alergia_quimico,
+                            jubilacion: req.body.jubilacion,
+                            fecha_jubilacion: req.body.fecha_jubilacion,
+                            id_persona_referencia: personaReferenciaCreada.id,
+                            matricula_seguro: req.body.matricula_seguro,
+                            id_seguro_salud: req.body.seguroSalud.id,
+                            id_lugar_seguro_salud: req.body.lugarSeguroSalud.id,
+                            seguro_salud_carnet: req.body.seguro_salud_carnet,
+                            nua_seguro_largo_plazo: req.body.nua_seguro_largo_plazo,
+                            id_aporte_seguro_largo_plazo: req.body.aporteSeguroLargoPlazo.id,
+                            id_lugar_seguro_largo_plazo: req.body.lugarSeguroLargoPlazo.id,
+                            numero_cuenta: req.body.numero_cuenta,
+                            id_banco: req.body.banco.id
                         }, {
-                                where: { id: medicoPacientefichaCreado.id }
-                            }).then(function (affecteedRows) {
-                                guardarOtrosSeguros(req, res, Persona, RrhhEmpleadoFichaOtrosSeguros, RrhhEmpleadoFichaFamiliar, RrhhEmpleadoDiscapacidad, RrhhEmpleadoCargo)
-                            });
+                                where: { id: ficha.id }
+                            }).then(function (actualizado) {
+                                if (req.body.contrato2) {
+                                    fs.writeFileSync('./contratos/contrato-' + ficha.id + "-" + req.body.contrato2.name, req.body.contrato2.data, 'binary', function (err) {
+                                        if (err)
+                                            console.log(err);
+                                        else
+                                            console.log("The file was saved!");
+                                    });
+
+                                    RrhhEmpleadoFicha.update({
+                                        contrato: req.body.contrato2.name
+                                    }, {
+                                            where: { id: ficha.id }
+                                        }).then(function (affecteedRows) {
+                                            guardarOtrosSeguros(req, res, Persona, RrhhEmpleadoFichaOtrosSeguros, RrhhEmpleadoFichaFamiliar, RrhhEmpleadoDiscapacidad, RrhhEmpleadoCargo)
+                                        });
+                                } else {
+                                    guardarOtrosSeguros(req, res, Persona, RrhhEmpleadoFichaOtrosSeguros, RrhhEmpleadoFichaFamiliar, RrhhEmpleadoDiscapacidad, RrhhEmpleadoCargo)
+                                }
+                            })
+
                     } else {
-                        guardarOtrosSeguros(req, res, Persona, RrhhEmpleadoFichaOtrosSeguros, RrhhEmpleadoFichaFamiliar, RrhhEmpleadoDiscapacidad, RrhhEmpleadoCargo)
+                        RrhhEmpleadoFicha.create({
+                            discapacidad: req.body.discapacidad,
+                            detalle_discapacidades: req.body.detalle_discapacidades,
+                            id_empleado: req.body.empleado.id,
+                            fecha: req.body.fecha_elaboracion,
+                            //codigo_empleado: req.body.codigo_empleado,
+                            id_tipo_contrato: req.body.tipoContrato.id,
+                            fecha_inicio: req.body.fecha_inicio2,
+                            fecha_fin: req.body.fecha_fin2,
+                            id_tipo_personal: req.body.tipoPersonal.id,
+                            id_carga_horarios: req.body.cargaHorario.id,
+                            id_area: req.body.area.id,
+                            id_ubicacion: req.body.ubicacion.id,
+                            haber_basico: haber,
+                            haber_basico_literal: numero_literal,
+                            //contrato: req.body.alergia_quimico,
+                            jubilacion: req.body.jubilacion,
+                            fecha_jubilacion: req.body.fecha_jubilacion,
+                            id_persona_referencia: personaReferenciaCreada.id,
+                            matricula_seguro: req.body.matricula_seguro,
+                            id_seguro_salud: req.body.seguroSalud.id,
+                            id_lugar_seguro_salud: req.body.lugarSeguroSalud.id,
+                            seguro_salud_carnet: req.body.seguro_salud_carnet,
+                            nua_seguro_largo_plazo: req.body.nua_seguro_largo_plazo,
+                            id_aporte_seguro_largo_plazo: req.body.aporteSeguroLargoPlazo.id,
+                            id_lugar_seguro_largo_plazo: req.body.lugarSeguroLargoPlazo.id,
+                            numero_cuenta: req.body.numero_cuenta,
+                            id_banco: req.body.banco.id,
+                        }).then(function (medicoPacientefichaCreado) {
+                            if (req.body.contrato2) {
+                                fs.writeFileSync('./contratos/contrato-' + medicoPacientefichaCreado.id + "-" + req.body.contrato2.name, req.body.contrato2.data, 'binary', function (err) {
+                                    if (err)
+                                        console.log(err);
+                                    else
+                                        console.log("The file was saved!");
+                                });
+
+                                RrhhEmpleadoFicha.update({
+                                    contrato: req.body.contrato2.name
+                                }, {
+                                        where: { id: medicoPacientefichaCreado.id }
+                                    }).then(function (affecteedRows) {
+                                        guardarOtrosSeguros(req, res, Persona, RrhhEmpleadoFichaOtrosSeguros, RrhhEmpleadoFichaFamiliar, RrhhEmpleadoDiscapacidad, RrhhEmpleadoCargo)
+                                    });
+                            } else {
+                                guardarOtrosSeguros(req, res, Persona, RrhhEmpleadoFichaOtrosSeguros, RrhhEmpleadoFichaFamiliar, RrhhEmpleadoDiscapacidad, RrhhEmpleadoCargo)
+                            }
+                        })
                     }
-                }).catch(function (err) {
-                    res.json({ mensaje: err.message === undefined ? err.stack : err.message, hasErr: true })
-                });
-            }).catch(function (err) {
-                res.json({ mensaje: err.message === undefined ? err.stack : err.message, hasErr: true })
-            });
+                    /* RrhhEmpleadoFicha.create({
+                        discapacidad: req.body.discapacidad,
+                        detalle_discapacidades: req.body.detalle_discapacidades,
+                        id_empleado: req.body.empleado.id,
+                        fecha: req.body.fecha_elaboracion,
+                        //codigo_empleado: req.body.codigo_empleado,
+                        id_tipo_contrato: req.body.tipoContrato.id,
+                        fecha_inicio: req.body.fecha_inicio2,
+                        fecha_fin: req.body.fecha_fin2,
+                        id_tipo_personal: req.body.tipoPersonal.id,
+                        id_carga_horarios: req.body.cargaHorario.id,
+                        id_area: req.body.area.id,
+                        id_ubicacion: req.body.ubicacion.id,
+                        haber_basico: haber,
+                        haber_basico_literal: numero_literal,
+                        //contrato: req.body.alergia_quimico,
+                        jubilacion: req.body.jubilacion,
+                        fecha_jubilacion: req.body.fecha_jubilacion,
+                        id_persona_referencia: personaReferenciaCreada.id,
+                        matricula_seguro: req.body.matricula_seguro,
+                        id_seguro_salud: req.body.seguroSalud.id,
+                        id_lugar_seguro_salud: req.body.lugarSeguroSalud.id,
+                        seguro_salud_carnet: req.body.seguro_salud_carnet,
+                        nua_seguro_largo_plazo: req.body.nua_seguro_largo_plazo,
+                        id_aporte_seguro_largo_plazo: req.body.aporteSeguroLargoPlazo.id,
+                        id_lugar_seguro_largo_plazo: req.body.lugarSeguroLargoPlazo.id,
+                        numero_cuenta: req.body.numero_cuenta,
+                        id_banco: req.body.banco.id,
+                    }).then(function (medicoPacientefichaCreado) { */
+
+                })
+            })
     }
     function guardarOtrosSeguros(req, res, Persona, RrhhEmpleadoFichaOtrosSeguros, RrhhEmpleadoFichaFamiliar, RrhhEmpleadoDiscapacidad, RrhhEmpleadoCargo) {
         if (req.body.empleado.otrosSeguros.length > 0) {
@@ -931,7 +1021,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
         })
     }
     function guardarHistorialVacacion(RrhhEmpleadoHistorialVacacion, req, res, empleado) {
-        if (req.body.historialVacacion) {
+        if (req.body.historialVacacion.length > 0) {
             RrhhEmpleadoHistorialVacacion.update({
                 eliminado: true,
             }, {
@@ -949,11 +1039,11 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                             id_empleado: empleado.id,
                             eliminado: false
                         }).then(function (historialCreado) {
-                            contador++
+                            
                             if (contador == (req.body.historialVacacion.length - 1)) {
                                 res.json({ message: "Ficha empleado actualizada satisfactoriamente!" })
                             }
-
+                            contador++
                         })
                     }
 
@@ -1489,14 +1579,14 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
             if (req.params.id_empleado != 0) {
                 RrhhEmpleadoRolTurno.findAll({
                     where: { id_ficha: req.params.id_empleado },
-                    include: [{ model: Clase, as: 'campo' }, { model: RrhhEmpleadoFicha, as: 'ficha',include:[{model:MedicoPaciente,as:'empleado', where: { id_empresa: req.params.id_empresa }}]}]
+                    include: [{ model: Clase, as: 'campo' }, { model: RrhhEmpleadoFicha, as: 'ficha', include: [{ model: MedicoPaciente, as: 'empleado', where: { id_empresa: req.params.id_empresa } }] }]
                 }).then(function (empleadoRolesTurno) {
                     res.json({ rolesTurno: empleadoRolesTurno })
 
                 })
             } else {
                 RrhhEmpleadoRolTurno.findAll({
-                    include: [{ model: Clase, as: 'campo' }, { model: MedicoPaciente, as: 'empleado', where: { id_empresa: req.params.id_empresa }, include: [{ model: Persona, as: 'persona' }] }]
+                    include: [{ model: Clase, as: 'campo' }, { model: RrhhEmpleadoFicha, as: 'ficha', include: [{ model: MedicoPaciente, as: 'empleado', where: { id_empresa: req.params.id_empresa }, include: [{ model: Persona, as: 'persona' }] }] }]
                 }).then(function (empleadoRolesTurno) {
                     res.json({ rolesTurno: empleadoRolesTurno })
                 })
@@ -1528,7 +1618,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
             }
             RrhhEmpleadoHorasExtra.findAll({
                 where: condicionHorasExtra,
-                include: [{ model: RrhhEmpleadoFicha, as: 'ficha',include:[{model:MedicoPaciente,as:'empleado'}] }]
+                include: [{ model: RrhhEmpleadoFicha, as: 'ficha', include: [{ model: MedicoPaciente, as: 'empleado' }] }]
             }).then(function (horasExtra) {
                 res.json(horasExtra)
 
@@ -1973,8 +2063,8 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                             } else { 
                                 res.json({ mensaje: "Guardado satisfactoriamente!" })
                              }
-
-
+ 
+ 
                     })
                 })
             }); */
@@ -2077,7 +2167,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
             }
             RrhhEmpleadoAusencia.findAll({
                 where: condicionAusencias,
-                include: [ { model: RrhhEmpleadoFicha, as: 'ficha',include:[{model:MedicoPaciente,as:'empleado'}] }, { model: RrhhClaseAsuencia, as: 'tipoAusencia', include: [{ model: Tipo, as: 'tipo', where: { nombre_corto: req.params.tipo } }] }]
+                include: [{ model: RrhhEmpleadoFicha, as: 'ficha', include: [{ model: MedicoPaciente, as: 'empleado' }] }, { model: RrhhClaseAsuencia, as: 'tipoAusencia', include: [{ model: Tipo, as: 'tipo', where: { nombre_corto: req.params.tipo } }] }]
             }).then(function (ausencias) {
                 res.json(ausencias)
             })
@@ -2098,7 +2188,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
             }
             RrhhEmpleadoAusencia.findAll({
                 where: condicionAusencias,
-                include: [{ model: RrhhEmpleadoFicha, as: 'ficha',include:[{model:MedicoPaciente,as:'empleado', where: { id_empresa: req.params.id_empresa }, include: [{ model: Persona, as: 'persona' }]}] }, { model: RrhhClaseAsuencia, as: 'tipoAusencia', include: [{ model: Tipo, as: 'tipo', where: { nombre_corto: req.params.tipo } }] }]
+                include: [{ model: RrhhEmpleadoFicha, as: 'ficha', include: [{ model: MedicoPaciente, as: 'empleado', where: { id_empresa: req.params.id_empresa }, include: [{ model: Persona, as: 'persona' }] }] }, { model: RrhhClaseAsuencia, as: 'tipoAusencia', include: [{ model: Tipo, as: 'tipo', where: { nombre_corto: req.params.tipo } }] }]
             }).then(function (ausencias) {
                 res.json(ausencias)
             })
@@ -2166,7 +2256,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
             }
             RrhhEmpleadoVacaciones.findAll({
                 where: condicionVacaciones,
-                include: [{ model: RrhhEmpleadoFicha, as: 'ficha',include:[{model:MedicoPaciente,as:'empleado', include: [{ model: Persona, as: 'persona' }]}] }]
+                include: [{ model: RrhhEmpleadoFicha, as: 'ficha', include: [{ model: MedicoPaciente, as: 'empleado', include: [{ model: Persona, as: 'persona' }] }] }]
             }).then(function (vacaciones) {
                 res.json(vacaciones)
             })
@@ -2181,7 +2271,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
             }
             RrhhEmpleadoVacaciones.findAll({
                 where: condicionVacaciones,
-                include: [{ model: RrhhEmpleadoFicha, as: 'ficha',include:[{model:MedicoPaciente,as:'empleado', where: { id_empresa: req.params.id_empresa }, include: [{ model: Persona, as: 'persona' }]}] }]
+                include: [{ model: RrhhEmpleadoFicha, as: 'ficha', include: [{ model: MedicoPaciente, as: 'empleado', where: { id_empresa: req.params.id_empresa }, include: [{ model: Persona, as: 'persona' }] }] }]
             }).then(function (vacaciones) {
                 res.json(vacaciones)
             })
@@ -2288,6 +2378,20 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
             }).then(function (params) {
                 res.json(params)
             })
+        })
+        .post(function (req, res) {
+            RrhhEmpleadoHistorialVacacion.create({
+                aplicadas: req.body.aplicadas,
+                tomadas: req.body.tomadas,
+                anio: req.body.anio,
+                gestion: req.body.gestion,
+                id_empleado: req.params.id,
+                eliminado: false
+            }, {
+                    where: { id_empleado: req.params.id }
+                }).then(function (params) {
+                    res.json(params)
+                })
         })
     router.route('/recursos-humanos/tr3/empresa/:id_empresa')
         .post(function (req, res) {
@@ -2425,14 +2529,15 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
             }
             condicion_empleado.es_empleado = true
             condicion_empleado.id_empresa = req.params.id_empresa
+            condicion_evaluacion.eliminado = false
             EvaluacionPolifuncional.findAndCountAll({
                 offset: (req.params.items_pagina * (req.params.pagina - 1)), limit: req.params.items_pagina,
                 where: condicion_evaluacion,
                 include: [{
-                    model: MedicoPaciente, as: 'empleado', 
-                    where: condicion_empleado, requires: true,
+                    model: MedicoPaciente, as: 'empleado',
+                    where: condicion_empleado, required: true,
                     include: [{
-                        model: RrhhEmpleadoCargo, as: 'cargos',
+                        model: RrhhEmpleadoCargo, as: 'cargos', required: false,
                         where: { $or: condicion_cargos },
                         include: [{ model: Clase, as: 'cargo' }]
                     }, { model: Persona, as: 'persona', where: condicion_persona }]
@@ -2451,7 +2556,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
             MedicoPaciente.findAll({
                 where: {
                     es_empleado: true,
-                    empresa: req.params.id_empresa
+                    id_empresa: req.params.id_empresa
                 }, include: [{ model: RrhhEmpleadoCargo, as: 'cargos', include: [{ model: Clase, as: 'cargo' }] }, { model: Persona, as: 'persona' }]
             }).then(function (personal) {
                 res.json({ personal: personal })
@@ -2479,11 +2584,12 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                     where: {
                         id_empleado: req.body.personal.id,
                         anio: req.body.anio.id,
-                        mes: req.body.mes.id
+                        mes: req.body.mes.id,
+                        eliminado: false
                         // fecha: req.body.fecha
                     },
                     include: [{
-                        model: MedicoPaciente, as: 'empleado', where:{id_empresa: req.params.id_empresa}, required: true,
+                        model: MedicoPaciente, as: 'empleado', where: { id_empresa: req.params.id_empresa }, required: true,
                         include: [{
                             model: RrhhEmpleadoCargo, as: 'cargos',
                             include: [{ model: Clase, as: 'cargo' }]
@@ -2748,7 +2854,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
         .get(function (req, res) {
             var desde = new Date(parseInt(req.params.desde_anio), parseInt(req.params.desde_mes), 1, 0, 0, 0)
             var hasta = new Date(parseInt(req.params.hasta_anio), parseInt(req.params.hasta_mes) + 1, 0, 23, 59, 0)
-            var condicion = { fecha: { $between: [desde, hasta] } }
+            var condicion = { fecha: { $between: [desde, hasta] }, eliminado: false }
             MedicoPaciente.findAll({
                 where: {
                     es_empleado: true,
@@ -2799,11 +2905,9 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
         .get(function (req, res) {
             var condicionCampo = {}
             EvaluacionPolifuncional.findAll({
-                where: { 
-                    anio: req.params.anio
-                 },
+                where: { anio: req.params.anio },
                 include: [{
-                    model: MedicoPaciente, as: 'empleado', where: {id_empresa: req.params.id_empresa}, required: true
+                    model: MedicoPaciente, as: 'empleado', where: { id_empresa: req.params.id_empresa }, required: true
                 }],
                 order: [[{ model: MedicoPaciente, as: 'empleado' }, 'campo', 'asc']]
             }).then(function (evaluaciones) {
@@ -2874,7 +2978,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
             EvaluacionPolifuncional.findAll({
                 where: { anio: req.params.anio },
                 include: [{
-                    model: MedicoPaciente, as: 'empleado', where: { campo: req.params.campo, id_empresa: req.params.id_empresa }, required: true
+                    model: MedicoPaciente, as: 'empleado', where: { id_empresa: req.params.id_empresa, campo: req.params.campo }, required: true
                 }],
                 order: [['mes', 'DESC']]
             }).then(function (evaluaciones) {

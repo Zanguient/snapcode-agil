@@ -433,6 +433,18 @@ angular.module('agil.servicios')
     };
     return res;
 }])
+.factory('GuardarHistorialVacacion', ['HistorialGestionVacacion', '$q', function (HistorialGestionVacacion, $q) {
+    var res = function (idEmpleado,historial) {
+        var delay = $q.defer();
+        HistorialGestionVacacion.save({id:idEmpleado},historial, function (entidad) {
+            delay.resolve(entidad);
+        }, function (error) {
+            delay.reject(error);
+        });
+        return delay.promise;
+    };
+    return res;
+}])
 
 .factory('EmpleadoAnticipo', function ($resource) {
     return $resource(restServer + "recursos-humanos/anticipos/empleado/:id_empleado",null,

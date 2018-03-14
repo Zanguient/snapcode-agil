@@ -53,8 +53,8 @@
 						<td>{{dosificacion.fecha_limite_emision | date:"dd/MM/yyyy"}}</td>
 						<td>{{dosificacion.llave_digital}}</td>
 						<td>{{dosificacion.pieFactura.nombre}}</td>
-						<td ng-if="dosificacion.actividadesSucursales.length==0" style="color:red;">Pendiente de asignación</td>
-						<td ng-if="dosificacion.actividadesSucursales.length==1">{{dosificacion.actividadesSucursales[0].sucursal.nombre}}</td>
+						<td ng-if="dosificacion.actividadesSucursales.length==0" style="color:red;"><span ng-if="dosificacion.expirado">EXPIRADO</span> <span ng-if="!dosificacion.expirado">Pendiente de asignación</span> </td>
+						<td ng-if="dosificacion.actividadesSucursales.length==1">{{dosificacion.actividadesSucursales[0].sucursal.nombre}} <span ng-if="dosificacion.expirado" style="color:red;">EXPIRADO</span></td>
 						<td ng-if="dosificacion.actividadesSucursales.length>1"><span ng-repeat="actividadSucursal in dosificacion.actividadesSucursales">{{actividadSucursal.sucursal.nombre}},</span></td>
 						<td>
 							<div class="hidden-sm hidden-xs action-buttons">
@@ -62,7 +62,7 @@
 									<i class="ace-icon fa fa-search-plus bigger-130"></i>
 								</a>
 
-								<a class="green" href="javascript:void(0)" e-disabled="!aplicacion.puede_modificar" ng-click="modificarDosificacion(dosificacion)">
+								<a ng-if="!dosificacion.expirado" class="green" href="javascript:void(0)" e-disabled="!aplicacion.puede_modificar" ng-click="modificarDosificacion(dosificacion)">
 									<i class="ace-icon fa fa-pencil bigger-130"></i>
 								</a>
 

@@ -11,7 +11,11 @@ module.exports=function(sequelize,Sequelize){
 	  id_dosificacion:{
 		type: Sequelize.INTEGER,
 		field: 'dosificacion' 
-	  }
+		},
+		expirado:{
+			type: Sequelize.BOOLEAN,
+			field: 'expirado' 
+			}
 	}, {
 	  freezeTableName: true 
 	});

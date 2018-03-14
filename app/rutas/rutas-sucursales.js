@@ -44,7 +44,8 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Sucu
 						SucursalActividadDosificacion.create({
 							id_sucursal: sucursalCreada.id,
 							id_actividad: actividadDosificacion.id_actividad,
-							id_dosificacion: actividadDosificacion.id_dosificacion
+							id_dosificacion: actividadDosificacion.id_dosificacion,
+							expirado: false
 						}).then(function (actividadDosificacionCreado) {
 
 						});
@@ -91,12 +92,12 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Sucu
 	router.route('/reiniciar-correlativo/sucursales')
 		.put(function (req, res) {
 			req.body.sucursales.forEach(function (sucursal, array, index) {
-				var comprobante_ingreso_correlativo=(sucursal.reiniciar_comprobante_caja_chica_correlativo)? 1: sucursal.comprobante_ingreso_correlativo;
-				var comprobante_egreso_correlativo=(sucursal.reiniciar_comprobante_egreso_correlativo)? 1: sucursal.comprobante_egreso_correlativo;
-				var comprobante_traspaso_correlativo=(sucursal.reiniciar_comprobante_traspaso_correlativo)? 1: sucursal.comprobante_traspaso_correlativo;
-				var comprobante_caja_chica_correlativo=(sucursal.reiniciar_comprobante_caja_chica_correlativo)? 1: sucursal.comprobante_caja_chica_correlativo;
+				var comprobante_ingreso_correlativo = (sucursal.reiniciar_comprobante_caja_chica_correlativo) ? 1 : sucursal.comprobante_ingreso_correlativo;
+				var comprobante_egreso_correlativo = (sucursal.reiniciar_comprobante_egreso_correlativo) ? 1 : sucursal.comprobante_egreso_correlativo;
+				var comprobante_traspaso_correlativo = (sucursal.reiniciar_comprobante_traspaso_correlativo) ? 1 : sucursal.comprobante_traspaso_correlativo;
+				var comprobante_caja_chica_correlativo = (sucursal.reiniciar_comprobante_caja_chica_correlativo) ? 1 : sucursal.comprobante_caja_chica_correlativo;
 				Sucursal.update({
-					comprobante_ingreso_correlativo:comprobante_ingreso_correlativo,
+					comprobante_ingreso_correlativo: comprobante_ingreso_correlativo,
 					comprobante_egreso_correlativo: comprobante_egreso_correlativo,
 					comprobante_traspaso_correlativo: comprobante_traspaso_correlativo,
 					comprobante_caja_chica_correlativo: comprobante_caja_chica_correlativo,
@@ -133,7 +134,7 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Sucu
 				imprimir_pedido_corto: req.body.imprimir_pedido_corto,
 				cotizacion_correlativo: req.body.cotizacion_correlativo,
 				pre_factura_correlativo: req.body.pre_factura_correlativo,
-				despacho_correlativo:req.body.despacho_correlativo,
+				despacho_correlativo: req.body.despacho_correlativo,
 				comprobante_ingreso_correlativo: req.body.comprobante_ingreso_correlativo,
 				comprobante_egreso_correlativo: req.body.comprobante_egreso_correlativo,
 				comprobante_traspaso_correlativo: req.body.comprobante_traspaso_correlativo,
@@ -239,28 +240,42 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Sucu
 								}
 							});
 						} else {
-							if (actividadDosificacion.id) {
-								SucursalActividadDosificacion.update({
-									id_actividad: actividadDosificacion.id_actividad,
-									id_dosificacion: actividadDosificacion.id_dosificacion
-								}, {
-										where: { id: actividadDosificacion.id }
-									}).then(function (actividadDosificacionActualizado) {
-										if (index === (array.length - 1)) {
-											res.json({ message: "Actualizado satisfactoriamente!" });
-										}
-									});
-							} else {
-								SucursalActividadDosificacion.create({
+							// if (actividadDosificacion.id) {
+							SucursalActividadDosificacion.findOrCreate({
+								where: { id: actividadDosificacion.id },
+								default: {
 									id_sucursal: req.params.id_sucursal,
 									id_actividad: actividadDosificacion.id_actividad,
-									id_dosificacion: actividadDosificacion.id_dosificacion
-								}).then(function (actividadDosificacionCreado) {
+									id_dosificacion: actividadDosificacion.id_dosificacion,
+									expirado: false
+								}
+							}).spread(function (actividadDosificacionActualizado, created) {
+								if (created) {
 									if (index === (array.length - 1)) {
-										res.json({ message: "Actualizado satisfactoriamente!" });
+										res.json({ message: "Asignado satisfactoriamente!" });
 									}
-								});
-							}
+								} else {
+									SucursalActividadDosificacion.update({
+										expirado: true
+									}, {
+											where: { id: actividadDosificacionActualizado.id }
+										}).then(function (actividadDosificacionCreado) {
+											SucursalActividadDosificacion.create({
+												id_sucursal: req.params.id_sucursal,
+												id_actividad: actividadDosificacion.id_actividad,
+												id_dosificacion: actividadDosificacion.id_dosificacion,
+												expirado: false
+											}).then(function (actividadDosificacionCreado) {
+												if (index === (array.length - 1)) {
+													res.json({ message: "Actualizado satisfactoriamente!" });
+												}
+											});
+										});
+								}
+							});
+							// } else {
+
+							// }
 						}
 					});
 				});

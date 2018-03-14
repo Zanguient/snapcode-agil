@@ -1,11 +1,12 @@
 module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Proforma, DetallesProformas, Servicios, Clase, Sucursal, SucursalActividadDosificacion, Dosificacion,
-    CodigoControl, NumeroLiteral, Empresa, ConfiguracionGeneralFactura, Tipo, UsuarioSucursal) {
+    CodigoControl, NumeroLiteral, Empresa, ConfiguracionGeneralFactura, Tipo, UsuarioSucursal, Almacen) {
     router.route('/proformas/empresa/:id_empresa/mes/:mes/anio/:anio/suc/:sucursal/act/:actividad/ser/:servicio/monto/:monto/razon/:razon/usuario/:usuario/pagina/:pagina/items-pagina/:items_pagina/busqueda/:busqueda/num/:numero')
         .get(function (req, res) {
             var condicion = {}
             var condicionCliente = {}
             var condicionServicio = {}
             var condicionUsuario = {}
+            var condicionActividad = {}
             condicion.id_empresa = req.params.id_empresa
             condicion.eliminado = false
             if (req.params.mes != "0") {
@@ -18,7 +19,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
                 condicion.id_sucursal = parseInt(req.params.sucursal)
             }
             if (req.params.actividad != "0") {
-                condicion.id_actividad = parseInt(req.params.actividad)
+                condicionActividad.id = parseInt(req.params.actividad)
             }
             if (req.params.monto != "0") {
                 condicion.totalImporteBs = parseFloat(req.params.monto)
@@ -44,7 +45,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
                     offset: (req.params.items_pagina * (req.params.pagina - 1)), limit: req.params.items_pagina,
                     where: condicion,
                     include: [
-                        { model: Clase, as: 'actividadEconomica' },
+                        { model: Clase, as: 'actividadEconomica', where: condicionActividad },
                         { model: DetallesProformas, as: 'detallesProformas', where: { eliminado: false }, include: [{ model: Servicios, as: 'servicio', where: condicionServicio }] },
                         { model: Usuario, as: 'usuarioProforma', where: condicionUsuario },
                         { model: Cliente, as: 'clienteProforma', where: condicionCliente },
@@ -68,7 +69,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
                 periodo_mes: req.body.periodo_mes.id,
                 periodo_anio: req.body.periodo_anio.id,
                 id_sucursal: req.body.sucursal.id,
-                id_actividad: req.body.actividadEconomica.actividad.id,
+                id_actividad: req.body.actividadEconomica.id,
                 id_cliente: req.body.clienteProforma.id,
                 id_usuario: req.body.usuarioProforma.id,
                 totalImporteBs: req.body.totalImporteBs,
@@ -80,7 +81,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
                         id_servicio: detalle.id_servicio,
                         precio_unitario: detalle.precio_unitario,
                         cantidad: detalle.cantidad,
-                        importeBs: detalle.importeBs,
+                        importe: detalle.importe,
                         id_centro_costo: detalle.centroCosto !== undefined && detalle.centroCosto !== null ? detalle.centroCosto.id : null,
                         eliminado: false
                     }).then(function (detalleCreado) {
@@ -105,7 +106,8 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
                 include: [{
                     model: Sucursal, as: 'sucursal',
                     include: [
-                        {
+                        {model: Almacen, as: 'almacenes'},
+                        {  
                             model: SucursalActividadDosificacion, as: 'actividadesDosificaciones',
                             include: [{ model: Dosificacion, as: 'dosificacion' },
                             { model: Clase, as: 'actividad' }]
@@ -114,7 +116,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
             }).then(function (entidades) {
                 res.json({ sucursales: entidades });
             }).catch(function (err) {
-                res.json({ mensaje: err.message === undefined ? err.data : err.message, hasErr: true })
+                res.json({ mensaje: err.stack === undefined ? err.stack : err.message, hasErr: true })
             });
         });
 
@@ -163,17 +165,23 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
                     res.json({ mensaje: err.message === undefined ? err.data : err.message, hasErr: true })
                 });
         })
-    router.route('/proforma/:id')
+    router.route('/proforma/:id/:id_actividad')
         .get(function (req, res) {
             Proforma.find(
                 {
-                    where: { id: req.params.id },
+                    where: { id: req.params.id, id_actividad: req.params.id_actividad },
                     include: [
                         { model: Clase, as: 'actividadEconomica' },
                         { model: DetallesProformas, as: 'detallesProformas', where: { eliminado: false }, include: [{ model: Servicios, as: 'servicio' }, { model: Clase, as: 'centroCosto' }] },
                         { model: Usuario, as: 'usuarioProforma' },
                         { model: Cliente, as: 'clienteProforma' },
-                        { model: Sucursal, as: 'sucursalProforma' }
+                        { model: Sucursal, as: 'sucursalProforma',include: [
+                            {model: Almacen, as: 'almacenes'},
+                            {  
+                                model: SucursalActividadDosificacion, as: 'actividadesDosificaciones', where: {id_actividad: req.params.id_actividad},
+                                include: [{ model: Dosificacion, as: 'dosificacion' },
+                                { model: Clase, as: 'actividad' }]
+                            }] }
                     ]
                 }).then(function (proforma) {
                     res.json({ proforma: proforma })
@@ -207,7 +215,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
                             id_servicio: detalle.id_servicio,
                             precio_unitario: detalle.precio_unitario,
                             cantidad: detalle.cantidad,
-                            importeBs: detalle.importeBs,
+                            importe: detalle.importe,
                             id_centro_costo: detalle.centroCosto !== undefined && detalle.centroCosto !== null ? detalle.centroCosto.id : null,
                             eliminado: detalle.eliminado
                         }, { where: { id: detalle.id } }).then(function (detalleActializado) {
@@ -223,7 +231,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
                             id_servicio: detalle.id_servicio,
                             precio_unitario: detalle.precio_unitario,
                             cantidad: detalle.cantidad,
-                            importeBs: detalle.importeBs,
+                            importe: detalle.importe,
                             id_centro_costo: detalle.centroCosto !== undefined && detalle.centroCosto !== null ? detalle.centroCosto.id : null,
                             eliminado: detalle.eliminado
                         }).then(function (detalleActializado) {
@@ -238,7 +246,18 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
                 res.json({ mensaje: err.message === undefined ? err.data : err.message, hasErr: true })
             });
         })
-
+    router.route('/actividades/historial/:id/:id_sucursal')
+        .get(function (req, res) {
+            SucursalActividadDosificacion.findAll({
+                where: { id_sucursal: req.params.id_sucursal, id_actividad: req.params.id, expirado: true },
+                include: [{ model: Dosificacion, as: 'dosificacion' },
+                { model: Clase, as: 'actividad' }]
+            }).then(function (histo) {
+                res.json({ historial: histo })
+            }).catch(function (err) {
+                res.json({ historial: [], mensaje: err.stack ? err.stack : err.message, hasErr: true })
+            })
+        })
     router.route('/actividades/empresa/:id_empresa')
         .post(function (req, res) {
             var mensajeExtra = ""
@@ -257,15 +276,15 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
                             }
                             if (!enUso) {
                                 SucursalActividadDosificacion.update({
-                                    eliminado: true
+                                    expirado: true
                                 }, {
-                                        where: { id: actividad.id }
+                                        where: { id_actividad: actividad.id }
                                     }).then(function (actividadEliminada) {
                                         if (i === req.body.length - 1) {
                                             res.json({ mensaje: 'Actividades actualizadas satisfactoriamente!' + mensajeExtra })
                                         }
                                     }).catch(function (err) {
-                                        res.json({ mensaje: err.message === undefined ? err.data : err.message, hasErr: true })
+                                        res.json({ mensaje: err.message === undefined ? err.stack : err.message, hasErr: true })
                                     });
                             } else {
                                 if (i === req.body.length - 1) {
@@ -273,22 +292,51 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
                                 }
                             }
                         }).catch(function (err) {
-                            res.json({ mensaje: err.message === undefined ? err.data : err.message, hasErr: true })
+                            res.json({ mensaje: err.message === undefined ? err.stack : err.message, hasErr: true })
                         });
 
                     } else {
                         SucursalActividadDosificacion.update({
-                            id_sucursal: actividad.id_sucursal,
-                            id_actividad: actividad.actividad.id,
-                            id_dosificacion: (actividad.dosificacion !== undefined && actividad.dosificacion !== null) ? actividad.dosificacion.id : null
+                            // id_sucursal: actividad.id_sucursal,
+                            // id_actividad: actividad.actividad.id,
+                            // id_dosificacion: (actividad.dosificacion !== undefined && actividad.dosificacion !== null) ? actividad.dosificacion.id : null
+                            expirado: true,
                         }, {
                                 where: { id: actividad.id }
                             }).then(function (actividadEmpresaCreada) {
-                                if (i === req.body.length - 1) {
-                                    res.json({ mensaje: 'Actividades actualizadas satisfactoriamente!' })
-                                }
+                                SucursalActividadDosificacion.create({
+                                    id_sucursal: actividad.id_sucursal,
+                                    id_actividad: actividad.actividad.id,
+                                    id_dosificacion: actividad.dosificacion !== undefined ? actividad.dosificacion.id : null
+                                }).then(function (actividadEmpresaCreada) {
+                                    if (actividad.dosificacionAnterior !== undefined && actividad.dosificacionAnterior !== null) {
+                                        if (actividad.dosificacionAnterior.id !== null && actividad.dosificacionAnterior.id !== undefined) {
+                                            Dosificacion.update({
+                                                expirado: true
+                                            }, {
+                                                    where: { id: actividad.dosificacionAnterior.id }
+                                                }).then(function (dosificacionActualizada) {
+                                                    if (i === req.body.length - 1) {
+                                                        res.json({ mensaje: 'Actividades actualizadas satisfactoriamente!' })
+                                                    }
+                                                })
+                                        } else {
+                                            if (i === req.body.length - 1) {
+                                                res.json({ mensaje: 'Actividades actualizadas satisfactoriamente!' })
+                                            }
+                                        }
+                                    } else {
+                                        if (i === req.body.length - 1) {
+                                            res.json({ mensaje: 'Actividades actualizadas satisfactoriamente!' })
+                                        }
+                                    }
+
+                                }).catch(function (err) {
+                                    res.json({ mensaje: err.message === undefined ? err.data : err.message, hasErr: true })
+                                });
+
                             }).catch(function (err) {
-                                res.json({ mensaje: err.message === undefined ? err.data : err.message, hasErr: true })
+                                res.json({ mensaje: err.message === undefined ? err.stack : err.message, hasErr: true })
                             });
                     }
                 } else {
@@ -338,7 +386,6 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
                             DetallesProformas.find({
                                 where: { id_servicio: servicio.id }
                             }).then(function (servicioEnuso) {
-
                                 if (servicioEnuso !== null) {
                                     if (servicioEnuso.id !== undefined) {
                                         enUso = true
@@ -365,7 +412,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
                             });
                         } else {
                             Servicios.update({
-                                id_actividad: servicio.actividad.actividad.id,
+                                id_actividad: servicio.actividad.id,
                                 centro_costo: null,
                                 codigo: servicio.codigo,
                                 nombre: servicio.nombre,
@@ -384,7 +431,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
                     } else {
 
                         Servicios.create({
-                            id_actividad: servicio.actividad.actividad.id,
+                            id_actividad: servicio.actividad.id,
                             centro_costo: null,
                             codigo: servicio.codigo,
                             nombre: servicio.nombre,
@@ -397,8 +444,6 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
                         }).catch(function (err) {
                             res.json({ mensaje: err.message === undefined ? err.data : err.message, hasErr: true })
                         });
-
-
                     }
                 })
             } else {
@@ -492,10 +537,11 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
         .get(function (req, res) {
             var factura = req.body;
             SucursalActividadDosificacion.findAll({
-                // where: {
-                //     id_actividad: req.body.actividadEconomica.id,
-                //     id_sucursal: req.body.sucursal.id
-                // },
+                where: {
+                    //     // id_actividad: req.body.actividadEconomica.id,
+                    // id_sucursal: req.body.sucursal.id,
+                    expirado: false
+                },
                 include: [{ model: Dosificacion, as: 'dosificacion', include: [{ model: Clase, as: 'pieFactura' }] },
                 { model: Sucursal, as: 'sucursal', where: { id_empresa: req.params.id_empresa }, include: [{ model: Empresa, as: 'empresa' }] },
                 { model: Clase, as: 'actividad' }]
@@ -513,7 +559,8 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
             SucursalActividadDosificacion.find({
                 where: {
                     id_actividad: req.body.actividadEconomica.id,
-                    id_sucursal: req.body.sucursal.id
+                    id_sucursal: req.body.sucursal.id,
+                    expirado: false
                 },
                 include: [{ model: Dosificacion, as: 'dosificacion', include: [{ model: Clase, as: 'pieFactura' }] },
                 { model: Sucursal, as: 'sucursal', include: [{ model: Empresa, as: 'empresa' }] }]
@@ -570,8 +617,8 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
                                             var total = 0
                                             factura.detallesVenta = factura.detallesProformas.map(function (det, i) {
                                                 var producto = { codigo: det.servicio.codigo, nombre: det.servicio.nombre, unidad_medida: "" }
-                                                total += det.importeBs
-                                                det.total = det.importeBs * det.cantidad
+                                                total += det.importe
+                                                det.total = det.importe * det.cantidad
                                                 det.producto = producto
                                                 return det
                                             })

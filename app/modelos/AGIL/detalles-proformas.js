@@ -16,7 +16,7 @@ module.exports = function (sequelize, Sequelize) {
 			type: Sequelize.INTEGER,
 			field: 'cantidad'
 		},
-		importeBs: {
+		importe: {
 			type: Sequelize.DECIMAL(20,4),
 			field: 'importe'
 		},

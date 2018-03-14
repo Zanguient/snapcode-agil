@@ -1713,7 +1713,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 					}
 				})
 				paraFacturar.map(function (proforma, i) {
-					var prom = ProformaInfo(proforma.id)
+					var prom = ProformaInfo(proforma.id, proforma.id_actividad)
 					prom.then(function (porformaConsultada) {
 						datosProformas.push(porformaConsultada.proforma)
 						if (i === paraFacturar.length - 1) {
@@ -1740,11 +1740,21 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 								var tcProforma = { ufv: "--", dolar: "--" }
 								promesa.then(function (dato) {
 									if (dato.monedaCambio) {
-										tcProforma = dato.monedaCambio;
+										tcProforma = {ufv: dato.monedaCambio.ufv, dolar : dato.monedaCambio.dolar};
 									}
 									proforma.tc = tcProforma
+									proforma.detallesProformas.map(function (det, i) {
+										det.tc = proforma.tc
+										if (i === proforma.detallesProformas.length -1) {
+											Array.prototype.push.apply($scope.facturaProformas.detallesProformas, proforma.detallesProformas);
+										}
+									})
 								})
-								Array.prototype.push.apply($scope.facturaProformas.detallesProformas, proforma.detallesProformas);
+								$scope.dolarActual = { ufv: "--", dolar: "--" }
+								var promesa = ObtenerCambioMoneda(new Date())
+								promesa.then(function (res) {
+									$scope.dolarActual = { ufv: res.monedaCambio.ufv , dolar: res.monedaCambio.dolar }
+								})
 							});
 
 							blockUI.stop()

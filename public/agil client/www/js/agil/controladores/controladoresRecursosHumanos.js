@@ -5,7 +5,7 @@ angular.module('agil.controladores')
         ClasesTipo, Clases, Paises, CrearEmpleadoFicha, EliminarOtroSeguroRh, EliminarFamiliarRh, PrerequisitoPaciente, PrerequisitosHistorial, UsuarioRhHistorialFicha, ObtenerEmpleadoHojaVida, GuardarEmpleadoHojaVida, CrearPrestamo,
         ObtenerListaPrestamo, CrearRolTurno, CrearPagoPrestamo, VerificarUsuarioEmpresa, EditarPrestamo, ListaEmpleadosRrhh, CrearHorasExtra, HistorialHorasExtra, ListaRolTurnos, ValidarCodigoCuentaEmpleado, $timeout, DatosCapacidadesImpresion, NuevoAnticipoEmpleado,
         ListaAnticiposEmpleado, CrearNuevosAnticiposEmpleados, ActualizarAnticipoEmpleado, NuevaAusenciaEmpleado, HistorialEmpleadoAusencias, HistorialEmpresaEmpleadosAusencias, NuevaVacacionEmpleado, HistorialEmpleadoVacaciones, HistorialEmpresaVacaciones, NuevoFeriado,
-        ListaFeriados, GuardarClasesAusencias, Tipos, ListaBancos, ConfiguracionesVacacion, HistorialGestionesVacacion, GuardarTr3, ListaTr3Empresa) {
+        ListaFeriados, GuardarClasesAusencias, Tipos, ListaBancos, ConfiguracionesVacacion, HistorialGestionesVacacion, GuardarTr3, ListaTr3Empresa,GuardarHistorialVacacion) {
         $scope.usuario = JSON.parse($localStorage.usuario);
         $scope.idModalPrerequisitos = 'dialog-pre-requisitos';
         $scope.idModalEmpleado = 'dialog-empleado';
@@ -779,6 +779,36 @@ angular.module('agil.controladores')
             $scope.obtenerHistorialGestionesVacacion(empleado)
 
         }
+        $scope.abriirmodelAusenciasVacas = function (empleado) {
+            var promesa = HistorialGestionesVacacion(empleado.id)
+            promesa.then(function (dato) {
+                var fechaActual=new Date()
+                if (dato[(dato.length - 1)].gestion < fechaActual.getFullYear()) {
+                    var anioConfiguracion = dato[(dato.length - 1)].anio+1
+                    var config = 0
+                    var gestion = fechaActual.getFullYear()
+                    if (anioConfiguracion < 5) {
+                        config = $scope.configuracionesVacacion[0].dias
+                    } else if (anioConfiguracion < 10) {
+                        config = $scope.configuracionesVacacion[1].dias
+                    } else if (anioConfiguracion >= 10) {
+                        config = $scope.configuracionesVacacion[2].dias
+                    }
+                    var historialVacacion = {
+                        gestion: gestion,
+                        anio: anioConfiguracion,
+                        aplicadas: config,
+                        tomadas: 0
+                    }
+                    var promesa = GuardarHistorialVacacion(empleado.id, historialVacacion)
+                    promesa.then(function (datos) {
+                        $scope.abrirDialogAusenciasVacaciones(empleado)
+                    })
+                } else {
+                    $scope.abrirDialogAusenciasVacaciones(empleado)
+                }
+            })
+        }
         $scope.cerrarDialogAusenciasVacaciones = function () {
             $scope.cerrarPopup($scope.idModalAusenciasVacaciones);
         }
@@ -1154,7 +1184,7 @@ angular.module('agil.controladores')
         }
         $scope.abrirDialogRolTurnos = function (empleado) {
             $scope.empleado = empleado
-            $scope.rolTurno = { tipo: false, fecha_fin: "", dias_trabajo: null, dias_descanso: null, grupo: "",id_ficha:null }
+            $scope.rolTurno = { tipo: false, fecha_fin: "", dias_trabajo: null, dias_descanso: null, grupo: "", id_ficha: null }
             $scope.abrirPopup($scope.idModalRolTurnos);
         }
         $scope.cerrarDialogRolTurnos = function () {
@@ -2470,7 +2500,7 @@ angular.module('agil.controladores')
                 }
             }
         }
-        $scope.guardarConceptoEdicionRrhh = function (datos,clase) {
+        $scope.guardarConceptoEdicionRrhh = function (datos, clase) {
             blockUI.start();
             $scope.tipo_edicion2.clases = datos
             var tipo = $scope.tipo_edicion2
@@ -3575,7 +3605,7 @@ angular.module('agil.controladores')
         $scope.GuardarRolTurno = function (rolTurno) {
             rolTurno.fecha_inicio = new Date($scope.convertirFecha(rolTurno.fecha_inicio))
             rolTurno.fecha_fin = new Date($scope.convertirFecha(rolTurno.fecha_fin))
-            rolTurno.id_ficha=$scope.empleado.ficha.id
+            rolTurno.id_ficha = $scope.empleado.ficha.id
             var promesa = CrearRolTurno($scope.empleado.id, rolTurno)
             promesa.then(function (datos) {
                 //$scope.imprimirPrestamo(prestamo)
@@ -3596,11 +3626,11 @@ angular.module('agil.controladores')
                     rolTurno.dias_descanso = 15;
                 }
             } else {
-                $scope.rolTurno = { tipo: false, fecha_fin: "", dias_trabajo: null, dias_descanso: null, grupo: "",id_ficha:null }
+                $scope.rolTurno = { tipo: false, fecha_fin: "", dias_trabajo: null, dias_descanso: null, grupo: "", id_ficha: null }
             }
         }
         $scope.obtenerlistaRolTurno = function (idficha) {
-            var promesa = ListaRolTurnos($scope.usuario.id_empresa,idficha)
+            var promesa = ListaRolTurnos($scope.usuario.id_empresa, idficha)
             promesa.then(function (datos) {
                 $scope.listaRolTurno = datos.rolesTurno
 
@@ -3614,7 +3644,7 @@ angular.module('agil.controladores')
             horasExtra.fecha = new Date($scope.convertirFecha(horasExtra.fecha))
             horasExtra.hora_inicio2 = $scope.fechaATiempo(horasExtra.hora_inicio)
             horasExtra.hora_fin2 = $scope.fechaATiempo(horasExtra.hora_fin)
-            horasExtra.id_ficha=$scope.empleado.ficha.id
+            horasExtra.id_ficha = $scope.empleado.ficha.id
             var promesa = CrearHorasExtra($scope.empleado.id, horasExtra)
             promesa.then(function (datos) {
                 $scope.cerrarDialogHorasExtras()
@@ -5011,9 +5041,9 @@ angular.module('agil.controladores')
             VerificarUsuarioEmpresa.save({ id_empresa: $scope.usuario.id_empresa }, cuenta, function (dato) {
 
                 if (dato.type) {
-                    
-                        $scope.empleado.nueva_fecha_expiracion = null
-                    
+
+                    $scope.empleado.nueva_fecha_expiracion = null
+
                     /*  $scope.abrirMensajeConfirmacion(cuenta) */
                     $scope.abrirModalReingresoEmpleado(cuenta)
                     $scope.cerrarModalVerificarCuentaRrhh();
