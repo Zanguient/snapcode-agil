@@ -321,36 +321,36 @@
                                         </script>
                             </td>
                             <td>
-                                <a href="javascript:void(0)" disabledclick ng-disabled="empleado.activo" ng-click="abrirIdModalDialogPreRequisitos(empleado)" class="accion tooltip-info" data-rel="tooltip"
-                                    tooltip-placement="top" uib-tooltip="Pre-requisitos">
+                                <a href="javascript:void(0)" disabledclick ng-disabled="empleado.activo" ng-click="abrirIdModalDialogPreRequisitos(empleado)"
+                                    class="accion tooltip-info" data-rel="tooltip" tooltip-placement="top" uib-tooltip="Pre-requisitos">
                                     <span class="icono-prerequisito icono-font"></span>
                                 </a>
-                                <a href="javascript:void(0)" disabledclick ng-disabled="empleado.activo" class="accion tooltip-info" ng-click="abrirDialogEmpleado(empleado)" data-rel="tooltip" data-placement="top"
-                                    uib-tooltip="Datos del Empleado">
+                                <a href="javascript:void(0)" disabledclick ng-disabled="empleado.activo" class="accion tooltip-info" ng-click="abrirDialogEmpleado(empleado)"
+                                    data-rel="tooltip" data-placement="top" uib-tooltip="Datos del Empleado">
                                     <span class="icono-empleado icono-font"></span>
                                 </a>
-                                <a href="javascript:void(0)" ng-click="abrirDialogBeneficiosSociales(empleado)" class="accion tooltip-info" data-rel="tooltip" data-placement="top"
-                                    uib-tooltip="Finiquito">
+                                <a href="javascript:void(0)" ng-click="abrirDialogBeneficiosSociales(empleado)" class="accion tooltip-info" data-rel="tooltip"
+                                    data-placement="top" uib-tooltip="Finiquito">
                                     <span class="icono-veneficios icono-font"></span>
                                 </a>
-                                <a href="javascript:void(0)" disabledclick ng-disabled="empleado.activo" ng-click="abrirDialogAnticipoExtraordinario(empleado)" role="button" class="tooltip-info" data-rel="tooltip"
-                                    data-placement="top" uib-tooltip="Anticipo Extraordinario">
+                                <a href="javascript:void(0)" disabledclick ng-disabled="empleado.activo" ng-click="abrirDialogAnticipoExtraordinario(empleado)"
+                                    role="button" class="tooltip-info" data-rel="tooltip" data-placement="top" uib-tooltip="Anticipo Extraordinario">
                                     <span class="fa fa-money fa-2x text-primary"></span>
                                 </a>
-                                <a href="javascript:void(0)" disabledclick ng-disabled="empleado.activo" ng-click="abrirDialogNuevoPrestamo(empleado)" role="button" class="tooltip-info" data-rel="tooltip"
-                                    data-placement="top" uib-tooltip="Prestamo">
+                                <a href="javascript:void(0)" disabledclick ng-disabled="empleado.activo" ng-click="abrirDialogNuevoPrestamo(empleado)" role="button"
+                                    class="tooltip-info" data-rel="tooltip" data-placement="top" uib-tooltip="Prestamo">
                                     <span class="icono-prestamo icono-font"></span>
                                 </a>
-                                <a href="javascript:void(0)" disabledclick ng-disabled="empleado.activo" ng-click="abriirmodelAusenciasVacas(empleado)" role="button" class="tooltip-info" data-rel="tooltip"
-                                    data-placement="top" uib-tooltip="Ausencias y Vacaciones">
+                                <a href="javascript:void(0)" disabledclick ng-disabled="empleado.activo" ng-click="abriirmodelAusenciasVacas(empleado)" role="button"
+                                    class="tooltip-info" data-rel="tooltip" data-placement="top" uib-tooltip="Ausencias y Vacaciones">
                                     <span class="icono-lupa-calendario icono-font"></span>
                                 </a>
-                                <a href="javascript:void(0)" disabledclick ng-disabled="empleado.activo" ng-click="abrirDialogRolTurnos(empleado)" role="button" class="tooltip-info" data-rel="tooltip"
-                                    data-placement="top" uib-tooltip="Rol de Turnos">
+                                <a href="javascript:void(0)" disabledclick ng-disabled="empleado.activo" ng-click="abrirDialogRolTurnos(empleado)" role="button"
+                                    class="tooltip-info" data-rel="tooltip" data-placement="top" uib-tooltip="Rol de Turnos">
                                     <span class="fa fa-clock-o fa-2x"></span>
                                 </a>
-                                <a href="javascript:void(0)"disabledclick  ng-disabled="empleado.activo" ng-click="abrirDialogHorasExtras(empleado)" role="button" class="tooltip-info" data-rel="tooltip"
-                                    data-placement="top" uib-tooltip="Horas Extras">
+                                <a href="javascript:void(0)" disabledclick ng-disabled="empleado.activo" ng-click="abrirDialogHorasExtras(empleado)" role="button"
+                                    class="tooltip-info" data-rel="tooltip" data-placement="top" uib-tooltip="Horas Extras">
                                     <span class="fa fa-moon-o fa-2x"></span>
                                 </a>
                                 <a class="tooltip-info" data-rel="tooltip" data-placement="top" uib-tooltip="Hoja de vida" type="button" class="btn btn-info btn-xs btn-link pull-left"
@@ -819,8 +819,7 @@
     <div id="dialog-empleado" class="modal">
         <div class="">
             <div class="modal-content">
-                <form ng-submit="guardarFichaTecnica(formularioFichaTecnica,ficha,truevalue)" id="formularioFichaTecnica2"
-                    name="formularioFichaTecnica">
+                <form ng-submit="guardarFichaTecnica(formularioFichaTecnica,ficha,truevalue)" id="formularioFichaTecnica2" name="formularioFichaTecnica">
                     <div id="modal-wizard-empleado-container">
                         <div class="modal-header modal-header-ficha">
                             <div class="titulo-ficha">
@@ -874,8 +873,8 @@
                                         <label for="fecha-elaboracion">Fecha de Elaboración</label>
                                     </div>
                                     <div class="col-sm-6 col-md-2">
-                                        <input  required ng-update-hidden data-date-format="dd/mm/yyyy" type="text" class="form-control date-picker" autocomplete="off" id="fecha-elaboracion"
-                                            ng-model="ficha.fecha_elaboracion">
+                                        <input required ng-update-hidden data-date-format="dd/mm/yyyy" type="text" class="form-control date-picker" autocomplete="off"
+                                            id="fecha-elaboracion" ng-model="ficha.fecha_elaboracion">
                                     </div>
                                     <div class="col-sm-6 col-md-2">
                                         <label for="codigo-empleado">Código Empleado</label>
@@ -948,7 +947,8 @@
                                             <div class="input-group">
                                                 <span class="input-group-addon glyphicon glyphicon-pencil point-edit green" aria-hidden="true" ng-click="abrirDialogConceptoEdicion(tipoExpedido)"></span>
                                                 <select class="form-control" required ng-options="expedido as expedido.nombre_corto for expedido in tipoExpedido.clases | filter:{habilitado:true} track by expedido.id"
-                                                    ng-model="ficha.empleado.extension"></select><span class="red" ng-if="ficha.empleado.extencionMensaje">{{ficha.empleado.extencionMensaje}}</span>
+                                                    ng-model="ficha.empleado.extension"></select>
+                                                <span class="red" ng-if="ficha.empleado.extencionMensaje">{{ficha.empleado.extencionMensaje}}</span>
 
                                             </div>
                                         </div>
@@ -959,7 +959,8 @@
                                             <div class="input-group">
                                                 <span class="input-group-addon glyphicon glyphicon-pencil point-edit green" ng-click="abrirDialogConceptoEdicion(tipoDocumento)"></span>
                                                 <select class="form-control" required ng-options="tipoDocumento as tipoDocumento.nombre_corto for tipoDocumento in tipoDocumento.clases | filter:{habilitado:true} track by tipoDocumento.id"
-                                                    ng-model="ficha.empleado.tipoDocumento"></select><span class="red" ng-if="ficha.empleado.tipoDocumentoMensaje">{{ficha.empleado.tipoDocumentoMensaje}}</span>
+                                                    ng-model="ficha.empleado.tipoDocumento"></select>
+                                                <span class="red" ng-if="ficha.empleado.tipoDocumentoMensaje">{{ficha.empleado.tipoDocumentoMensaje}}</span>
                                                 <!-- <select class="form-control">
                                                 <option>C.I.</option>
                                                 <option>RUN</option>
@@ -981,7 +982,8 @@
                                             <div class="input-group">
                                                 <span class="input-group-addon glyphicon glyphicon-pencil point-edit green" ng-click="abrirDialogConceptoEdicion(estadosCiviles)"></span>
                                                 <select class="form-control" required ng-options="estado as estado.nombre for estado in estadosCiviles.clases | filter:{habilitado:true} track by estado.id"
-                                                    ng-model="ficha.empleado.persona.estadoCivil"></select><span class="red" ng-if="ficha.empleado.personaEstadoCivil">{{ficha.empleado.personaEstadoCivil}}</span>
+                                                    ng-model="ficha.empleado.persona.estadoCivil"></select>
+                                                <span class="red" ng-if="ficha.empleado.personaEstadoCivil">{{ficha.empleado.personaEstadoCivil}}</span>
                                             </div>
                                         </div>
                                         <div class="col-sm-3 col-lg-1">
@@ -1014,7 +1016,8 @@
                                             <label for=""> Genero</label>
                                         </div>
                                         <div class="col-md-1">
-                                            <select  style="width:150px" ng-options="genero as genero.nombre for genero in generos track by genero.id" ng-model="ficha.empleado.persona.genero" required></select>
+                                            <select style="width:150px" ng-options="genero as genero.nombre for genero in generos track by genero.id" ng-model="ficha.empleado.persona.genero"
+                                                required></select>
                                             <span class="red" ng-if="ficha.empleado.personaGenero">{{ficha.empleado.personaGenero}}</span>
                                         </div>
                                     </div>
@@ -1027,7 +1030,7 @@
                                                 <span class="input-group-addon glyphicon glyphicon-pencil point-edit green" ng-click="abrirDialogConceptoEdicion(nacionalidades)"></span>
                                                 <select required style="width:150px" ng-options="nacionalidad as nacionalidad.nombre for nacionalidad in nacionalidades.clases | filter:{habilitado:true} track by nacionalidad.id"
                                                     ng-model="ficha.empleado.persona.pais" ng-change="buscarDepartamento(ficha.empleado.persona.pais)"></select>
-                                                    <span class="red" ng-if="ficha.empleado.personaPais">{{ficha.empleado.personaPais}}</span>
+                                                <span class="red" ng-if="ficha.empleado.personaPais">{{ficha.empleado.personaPais}}</span>
                                             </div>
                                         </div>
 
@@ -1144,6 +1147,10 @@
                                 <div class="cabezera-ficha">
                                     <h4 class="blue">
                                         2. Datos Laborales
+                                        <a uib-tooltip="Permitir Edición" href="javascript:void(0)" ng-click="abrirModalVerificarCuenta(ficha,'datosLaborales')">
+                                            <i ng-hide="!ficha.editDatosLaborales" class="green ace-icon fa fa-unlock bigger-150"></i>
+                                            <i ng-hide="ficha.editDatosLaborales" class="red ace-icon fa fa-lock bigger-150"></i>
+                                        </a>
                                     </h4>
                                 </div>
                                 <div class="container">
@@ -1154,8 +1161,8 @@
                                         <div class="col-sm-3 col-lg-2">
                                             <div class="input-group">
                                                 <span class="input-group-addon glyphicon glyphicon-pencil point-edit green" ng-click="abrirDialogConceptoEdicion(tiposContratos)"></span>
-                                                <select ng-change="completarCamposLaboral(ficha)" name="fecha" id="tipo-contrato" class="form-control" required style="width:150px"
-                                                    ng-options="tipoContrato as tipoContrato.nombre for tipoContrato in tiposContratos.clases | filter:{habilitado:true}  track by tipoContrato.id"
+                                                <select ng-disabled="!ficha.editDatosLaborales" ng-change="completarCamposLaboral(ficha)" name="fecha" id="tipo-contrato"
+                                                    class="form-control" required style="width:150px" ng-options="tipoContrato as tipoContrato.nombre for tipoContrato in tiposContratos.clases | filter:{habilitado:true}  track by tipoContrato.id"
                                                     ng-model="ficha.tipoContrato">
                                                     <option value="">--Seleccionar--</option>
                                                 </select>
@@ -1165,14 +1172,15 @@
                                             <label for="">Fecha Inicio</label>
                                         </div>
                                         <div class="col-sm-3 col-lg-2">
-                                            <input type="text" data-date-format="dd/mm/yyyy" ng-update-hidden class="form-control date-picker" autocomplete="off" ng-model="ficha.fecha_inicio2">
+                                            <input ng-disabled="!ficha.editDatosLaborales" type="text" data-date-format="dd/mm/yyyy" ng-update-hidden class="form-control date-picker"
+                                                autocomplete="off" ng-model="ficha.fecha_inicio2">
                                         </div>
                                         <div class="col-sm-3 col-lg-2">
                                             <label ng-show="ficha.tipoContrato.nombre_corto=='PLF'" for="">Fecha Final</label>
                                         </div>
                                         <div class="col-sm-3 col-lg-2">
-                                            <input ng-show="ficha.tipoContrato.nombre_corto=='PLF'" type="text" data-date-format="dd/mm/yyyy" ng-update-hidden class="form-control date-picker" autocomplete="off"
-                                                ng-model="ficha.fecha_fin2">
+                                            <input ng-disabled="!ficha.editDatosLaborales" ng-show="ficha.tipoContrato.nombre_corto=='PLF'" type="text" data-date-format="dd/mm/yyyy"
+                                                ng-update-hidden class="form-control date-picker" autocomplete="off" ng-model="ficha.fecha_fin2">
                                         </div>
                                     </div>
                                     <div class="row form-group">
@@ -1256,7 +1264,7 @@
                                             <label for="">Haber Básico</label>
                                         </div>
                                         <div class="col-sm-3 col-lg-2">
-                                            <input  required type="text" class="form-control" ng-model="ficha.haber_basico">
+                                            <input required type="text" class="form-control" ng-model="ficha.haber_basico">
                                         </div>
                                         <div class="col-sm-2 col-lg-1">
                                             <label for="">Contrato</label>
@@ -1386,7 +1394,7 @@
                                         </div>
                                         <div class="col-sm-3 col-lg-1">
                                             <label>
-                                                <input  class="ace ace-switch ace-switch-5" ng-model="ficha.seguro_salud_carnet" type="checkbox">
+                                                <input class="ace ace-switch ace-switch-5" ng-model="ficha.seguro_salud_carnet" type="checkbox">
                                                 <span class="lbl check-espaniol"></span>
                                             </label>
                                         </div>
@@ -1523,7 +1531,7 @@
                                 </div>
                             </div>
 
-                            <div id="ficha-familia"class="step-pane" data-step="4">
+                            <div id="ficha-familia" class="step-pane" data-step="4">
                                 <button type="button" class="btn btn-primary btn-xs" ng-click="abrirDialogNuevoFamiliar()">
                                     <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>Nuevo
                                 </button>
@@ -1599,11 +1607,12 @@
                     <div class="modal-footer wizard-actions">
                         <button ng-show="ficha.id" type="submit" class="btn btn-primary btn-sm " ng-click="truevalue=true">
                             <i class="ace-icon fa fa-floppy-o bigger-110"></i>&nbsp; Guardar</button>
-                        <button  id="anterior-f" type="button" class="btn btn-sm btn-prev">
+                        <button id="anterior-f" type="button" class="btn btn-sm btn-prev">
                             <i class="ace-icon fa fa-arrow-left"></i>
                             Anterior
                         </button>
-                        <button class="btn btn-success btn-sm btn-next" type="submit" id="siguiente-f" ng-click="ValidarForm(formularioFichaTecnica,steps,'anterior-f')" data-last="Finish">
+                        <button class="btn btn-success btn-sm btn-next" type="submit" id="siguiente-f" ng-click="ValidarForm(formularioFichaTecnica,steps,'anterior-f')"
+                            data-last="Finish">
                             Siguiente
                             <i class="ace-icon fa fa-arrow-right icon-on-right"></i>
                         </button>
@@ -3019,7 +3028,8 @@
                                         </div>
 
                                         <div class="col-sm-3 col-lg-2">
-                                            <input ng-update-hidden type="text" data-date-format="dd/mm/yyyy" ng-model="logro.fecha" class="form-control date-picker" autocomplete="off">
+                                            <input ng-update-hidden type="text" data-date-format="dd/mm/yyyy" ng-model="logro.fecha" class="form-control date-picker"
+                                                autocomplete="off">
                                         </div>
                                         <div class="col-sm-3 col-lg-1">
                                             <label for="">Motivo</label>
@@ -3819,7 +3829,9 @@
                     <label for="sexo">Genero</label>
                     <label>
                         <select class="ace ace-switch ace-switch-5 big-switch" style="width:250px" name="genero_nuevoRH" id="genero_nuevoRH" ng-model="familiar.persona.genero"
-                            ng-options="genero as genero.nombre for genero in generos track by genero.id"> <option value="">--Ninguno--</option></select>
+                            ng-options="genero as genero.nombre for genero in generos track by genero.id">
+                            <option value="">--Ninguno--</option>
+                        </select>
                     </label>
                 </div>
                 <div class="form-group col-sm-6">
@@ -4102,7 +4114,7 @@
                     <form action="">
                         <div class="center-block width150">
                             <label>
-                                <input name="" class="ace ace-switch ace-switch-5 big-switch" type="checkbox">
+                                <input name="" ng-model="beneficio.tipo" class="ace ace-switch ace-switch-5 big-switch" type="checkbox">
                                 <span class="lbl" data-lbl="Finiquito&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Quinquenio"></span>
                             </label>
                         </div>
@@ -4174,7 +4186,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-6" ng-hide="!beneficio.tipo">
                                 <div class="row">
                                     <div class="form-group col-sm-4">
                                         <label for="quinquenio">Número de Quinquenios</label>
@@ -4190,15 +4202,59 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="col-md-6">
+                                    <div class="form-group row">
+                                        <div class="col-sm-3">
+                                            <label for="">Desahucio</label>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <label>
+                                                <input name="" ng-model="beneficio.desahucio"class="ace ace-switch ace-switch-5" type="checkbox">
+                                                <span class="lbl check-espaniol"></span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div ng-hide="!beneficio.desahucio" class="row">
+                                        <div class="form-group col-sm-4">
+                                            <label for="1-mes">1er Mes</label>
+                                            <input type="text" class="form-control" id="1-mes" name="1-mes">
+                                        </div>
+                                        <div class="form-group col-sm-4">
+                                            <label for="2-mes">2er Mes</label>
+                                            <input type="text" class="form-control" id="2-mes" name="2-mes">
+                                        </div>
+                                        <div class="form-group col-sm-4">
+                                            <label for="3-mes">3er Mes</label>
+                                            <input type="text" class="form-control" id="3-mes" name="3-mes">
+                                        </div>
+                                    </div>
+                                </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-6">
+                            <div class="col-md-12">
+                                    <div class="row">
+                                            <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="otros-ingresos">Otros Ingresos</label>
-                                    &nbsp;&nbsp;&nbsp;
-                                    <button type="button" class="btn btn-primary btn-xs" ng-click="abrirDialogOtroIngreso()">
-                                        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-                                    </button>
+                                    <label for="otros-ingresos col-md-12">
+                                        <b> Otros Ingresos</b>
+                                    </label>
+                                    <br> &nbsp;&nbsp;&nbsp;
+                                    <div class="col-md-4">
+                                        <label for="monto">Monto</label>
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" id="monto" name="monto" placeholder="0.0">
+                                            <span class="input-group-addon">Bs</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="Motivo">Motivo</label>
+                                        <input type="text" class="form-control" id="Motivo" name="Motivo" placeholder="">
+                                    </div>
+                                    <div class="col-md-2">
+                                        <button type="button" class="btn btn-primary btn-xs">
+                                            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                                        </button>
+                                    </div>
                                     <table class="table table-striped table-hover" id="otros-ingresos">
                                         <thead>
                                             <tr>
@@ -4228,69 +4284,64 @@
                                         </tbody>
                                     </table>
                                 </div>
-                                <div class="form-group">
-                                    <label for="deducciones">Deducciones</label>
-                                    &nbsp;&nbsp;&nbsp;
-                                    <button type="button" class="btn btn-primary btn-xs" ng-click="abrirDialogDeduccion()">
-                                        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-                                    </button>
-                                    <table class="table table-striped table-hover" id="deducciones">
-                                        <thead>
-                                            <tr>
-                                                <th>#</th>
-                                                <th>Monto</th>
-                                                <th>Motivo</th>
-                                                <th>Eliminar</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
-                                                <th scope="row">1</th>
-                                                <td>150</td>
-                                                <td>Buen trabajo</td>
-                                                <td>
-                                                    <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <th scope="row">2</th>
-                                                <td>300</td>
-                                                <td>Bono de comida</td>
-                                                <td>
-                                                    <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
                             </div>
                             <div class="col-md-6">
-                                <div class="form-group row">
-                                    <div class="col-sm-3">
-                                        <label for="">Desahucio</label>
+                                <div class="form-group">
+                                    <label for="deducciones col-md-12">
+                                        <b> Deducciones</b>
+                                    </label>
+                                    <br>
+                                    <div class="col-md-4">
+                                        <label for="monto">Monto</label>
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" id="monto" name="monto" placeholder="0.0">
+                                            <span class="input-group-addon">Bs</span>
+                                        </div>
                                     </div>
-                                    <div class="col-sm-3">
-                                        <label>
-                                            <input name="" class="ace ace-switch ace-switch-5" type="checkbox">
-                                            <span class="lbl check-espaniol"></span>
-                                        </label>
+                                    <div class="col-md-6">
+                                        <label for="Motivo">Motivo</label>
+                                        <input type="text" class="form-control" id="Motivo" name="Motivo" placeholder="">
                                     </div>
-                                </div>
-                                <div class="row">
-                                    <div class="form-group col-sm-4">
-                                        <label for="1-mes">1er Mes</label>
-                                        <input type="text" class="form-control" id="1-mes" name="1-mes">
-                                    </div>
-                                    <div class="form-group col-sm-4">
-                                        <label for="2-mes">2er Mes</label>
-                                        <input type="text" class="form-control" id="2-mes" name="2-mes">
-                                    </div>
-                                    <div class="form-group col-sm-4">
-                                        <label for="3-mes">3er Mes</label>
-                                        <input type="text" class="form-control" id="3-mes" name="3-mes">
+                                    <div class="col-md-2">
+                                        <br>
+                                        <button type="button" class="btn btn-primary btn-xs">
+                                            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                                        </button>
                                     </div>
                                 </div>
+                                <table class="table table-striped table-hover" id="deducciones">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Monto</th>
+                                            <th>Motivo</th>
+                                            <th>Eliminar</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <th scope="row">1</th>
+                                            <td>150</td>
+                                            <td>Buen trabajo</td>
+                                            <td>
+                                                <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row">2</th>
+                                            <td>300</td>
+                                            <td>Bono de comida</td>
+                                            <td>
+                                                <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
                             </div>
+                        </div>
+                            </div>
+
+                           
                         </div>
                     </form>
                 </div>
@@ -4563,10 +4614,10 @@
                                 <td>
                                     <div class="action-buttons">
                                         <a ng-if="!anticipo.entregado && !anticipo.montoEdit" class="blue" uib-tooltip="Permitir Edición" href="javascript:void(0)"
-                                            ng-click="abrirModalVerificarCuenta(anticipo)">
+                                            ng-click="abrirModalVerificarCuenta(anticipo,'anticipo')">
                                             <i class="ace-icon fa fa-pencil bigger-130"></i>
                                         </a>
-                                        <a ng-if="!anticipo.entregado && !anticipo.montoEdit" class="red" uib-tooltip="Eliminar" href="javascript:void(0)" ng-click="abrirModalVerificarCuenta(anticipo)">
+                                        <a ng-if="!anticipo.entregado && !anticipo.montoEdit" class="red" uib-tooltip="Eliminar" href="javascript:void(0)" ng-click="abrirModalVerificarCuenta(anticipo,'anticipo')">
                                             <i class="ace-icon fa fa-trash bigger-130"></i>
                                         </a>
                                         <a ng-if="anticipo.montoEdit" class="green" uib-tooltip="Guardar" href="javascript:void(0)" ng-click="ActualizarAnticipo(anticipo)">
@@ -4631,8 +4682,8 @@
                 <div class="form-group row">
                     <label class="col-sm-6" for="fecha-inicial">Fecha Inicial</label>
                     <div class="input-group col-sm-6">
-                        <input type="text" data-date-format="dd/mm/yyyy" class="form-control date-picker" autocomplete="off" id="fecha-inicial" ng-update-hidden ng-model="prestamo.fecha_inicial"
-                            name="fecha-inicial" required>
+                        <input type="text" data-date-format="dd/mm/yyyy" class="form-control date-picker" autocomplete="off" id="fecha-inicial" ng-update-hidden
+                            ng-model="prestamo.fecha_inicial" name="fecha-inicial" required>
                         <span class="input-group-addon"></span>
                     </div>
                 </div>
@@ -4735,13 +4786,13 @@
                             <div class="row">
                                 <div class="form-group col-sm-5">
                                     <label for="nombres">Desde</label>
-                                    <input required type="text" class="form-control date-picker" autocomplete="off" ng-update-hidden ng-model="ausencia.fecha_inicio" data-date-format="dd/mm/yyyy"
-                                        id="inicio-a" name="nombres" placeholder="Desde" ng-change="CalcularDiferenciaDias(ausencia)">
+                                    <input required type="text" class="form-control date-picker" autocomplete="off" ng-update-hidden ng-model="ausencia.fecha_inicio"
+                                        data-date-format="dd/mm/yyyy" id="inicio-a" name="nombres" placeholder="Desde" ng-change="CalcularDiferenciaDias(ausencia)">
                                 </div>
                                 <div class="form-group col-sm-5">
                                     <label for="ap-paterno">Hasta</label>
-                                    <input required type="text" class="form-control date-picker" autocomplete="off" ng-update-hidden ng-model="ausencia.fecha_fin" data-date-format="dd/mm/yyyy"
-                                        id="fin-a" name="ap-paterno" placeholder="Hasta" ng-change="CalcularDiferenciaDias(ausencia)">
+                                    <input required type="text" class="form-control date-picker" autocomplete="off" ng-update-hidden ng-model="ausencia.fecha_fin"
+                                        data-date-format="dd/mm/yyyy" id="fin-a" name="ap-paterno" placeholder="Hasta" ng-change="CalcularDiferenciaDias(ausencia)">
                                 </div>
                                 <div class="form-group col-sm-2">
                                     <div>
@@ -4813,9 +4864,9 @@
                                 <div class="form-group col-sm-5">
                                     <div>
                                         <label for="nombres">Fecha Inicio</label>
-                                        <input required ng-change="CalcularDiferenciaDiasVacacion(vacacion)" type="text" class="form-control date-picker" autocomplete="off" ng-update-hidden
-                                            ng-model="vacacion.fecha_inicio" data-date-format="dd/mm/yyyy" id="nombres" name="nombres"
-                                            placeholder="Desde">
+                                        <input required ng-change="CalcularDiferenciaDiasVacacion(vacacion)" type="text" class="form-control date-picker" autocomplete="off"
+                                            ng-update-hidden ng-model="vacacion.fecha_inicio" data-date-format="dd/mm/yyyy" id="nombres"
+                                            name="nombres" placeholder="Desde">
                                     </div>
                                     <div>
                                         <label class="checkbox-align">
@@ -4828,9 +4879,9 @@
                                 <div class="form-group col-sm-5">
                                     <div>
                                         <label for="ap-paterno">Fecha Final</label>
-                                        <input required ng-change="CalcularDiferenciaDiasVacacion(vacacion)" type="text" class="form-control date-picker" autocomplete="off" ng-update-hidden
-                                            ng-model="vacacion.fecha_fin" data-date-format="dd/mm/yyyy" id="ap-paterno" name="ap-paterno"
-                                            placeholder="Hasta">
+                                        <input required ng-change="CalcularDiferenciaDiasVacacion(vacacion)" type="text" class="form-control date-picker" autocomplete="off"
+                                            ng-update-hidden ng-model="vacacion.fecha_fin" data-date-format="dd/mm/yyyy" id="ap-paterno"
+                                            name="ap-paterno" placeholder="Hasta">
                                     </div>
                                     <div>
                                         <label class="checkbox-align">
@@ -4896,8 +4947,9 @@
                             <div class="row">
                                 <div class="form-group col-sm-3">
                                     <label for="nombres">Desde</label>
-                                    <input required type="text" ng-update-hidden class="form-control date-picker" autocomplete="off" data-date-format="dd/mm/yyyy" id="nombres"
-                                        name="nombres" placeholder="Desde" ng-model="otraAusencia.fecha_inicio" ng-change="CalcularDiferenciaDias(otraAusencia,true)">
+                                    <input required type="text" ng-update-hidden class="form-control date-picker" autocomplete="off" data-date-format="dd/mm/yyyy"
+                                        id="nombres" name="nombres" placeholder="Desde" ng-model="otraAusencia.fecha_inicio"
+                                        ng-change="CalcularDiferenciaDias(otraAusencia,true)">
                                 </div>
                                 <div class="form-group col-sm-2">
                                     <label for="nombres">Hrs</label>
@@ -4909,8 +4961,9 @@
 
                                     <label for="ap-paterno">Hasta</label>
                                     <!-- <input required ng-update-hidden class="form-control date-timepicker" data-date-format="DD/MM/YYYY HH:mm" type="text" id="fechafin" ng-model="otraAusencia.fecha_fin " ng-change="CalcularDiferenciaDias(otraAusencia,true)"> -->
-                                    <input required type="text" ng-update-hidden class="form-control date-picker" autocomplete="off" data-date-format="dd/mm/yyyy" id="ap-paterno"
-                                        name="ap-paterno" placeholder="Hasta" ng-model="otraAusencia.fecha_fin" ng-change="CalcularDiferenciaDias(otraAusencia,true)">
+                                    <input required type="text" ng-update-hidden class="form-control date-picker" autocomplete="off" data-date-format="dd/mm/yyyy"
+                                        id="ap-paterno" name="ap-paterno" placeholder="Hasta" ng-model="otraAusencia.fecha_fin"
+                                        ng-change="CalcularDiferenciaDias(otraAusencia,true)">
                                 </div>
                                 <div class="form-group col-sm-2">
                                     <label for="nombres">Hrs</label>
@@ -5091,8 +5144,8 @@
                 <div class="row">
                     <div class="form-group col-sm-3">
                         <label for="nombres">Desde</label>
-                        <input type="text" class="form-control date-picker" autocomplete="off" ng-update-hidden ng-model="filtroVacacion.inicio" data-date-format="dd/mm/yyyy"
-                            id="nombres" name="nombres" placeholder="Desde">
+                        <input type="text" class="form-control date-picker" autocomplete="off" ng-update-hidden ng-model="filtroVacacion.inicio"
+                            data-date-format="dd/mm/yyyy" id="nombres" name="nombres" placeholder="Desde">
                     </div>
                     <div class="form-group col-sm-3">
                         <label for="ap-paterno">Hasta</label>
@@ -5219,13 +5272,13 @@
                 <div class="row">
                     <div class="form-group col-sm-3">
                         <label for="nombres">Desde</label>
-                        <input type="text" class="form-control date-picker" autocomplete="off" ng-update-hidden ng-model="filtroOtrasAusencias.inicio" data-date-format="dd/mm/yyyy"
-                            id="nombres" name="nombres" placeholder="Desde">
+                        <input type="text" class="form-control date-picker" autocomplete="off" ng-update-hidden ng-model="filtroOtrasAusencias.inicio"
+                            data-date-format="dd/mm/yyyy" id="nombres" name="nombres" placeholder="Desde">
                     </div>
                     <div class="form-group col-sm-3">
                         <label for="ap-paterno">Hasta</label>
-                        <input type="text" class="form-control date-picker" autocomplete="off" ng-update-hidden ng-model="filtroOtrasAusencias.fin" data-date-format="dd/mm/yyyy"
-                            id="ap-paterno" name="ap-paterno" placeholder="Hasta">
+                        <input type="text" class="form-control date-picker" autocomplete="off" ng-update-hidden ng-model="filtroOtrasAusencias.fin"
+                            data-date-format="dd/mm/yyyy" id="ap-paterno" name="ap-paterno" placeholder="Hasta">
                     </div>
                     <div class="form-group col-sm-2">
                         <label for="sexo">Tipo</label>
@@ -5307,13 +5360,13 @@
                 <div class="row">
                     <div class="form-group col-sm-3">
                         <label for="nombres">Desde</label>
-                        <input type="text" ng-update-hidden class="form-control date-picker" autocomplete="off" data-date-format="dd/mm/yyyy" id="nombres" name="nombres"
-                            placeholder="Desde" ng-model="filtroAusencias.inicio">
+                        <input type="text" ng-update-hidden class="form-control date-picker" autocomplete="off" data-date-format="dd/mm/yyyy" id="nombres"
+                            name="nombres" placeholder="Desde" ng-model="filtroAusencias.inicio">
                     </div>
                     <div class="form-group col-sm-3">
                         <label for="ap-paterno">Hasta</label>
-                        <input type="text" ng-update-hidden class="form-control date-picker" autocomplete="off" data-date-format="dd/mm/yyyy" id="ap-paterno" name="ap-paterno"
-                            placeholder="Hasta" ng-model="filtroAusencias.fin">
+                        <input type="text" ng-update-hidden class="form-control date-picker" autocomplete="off" data-date-format="dd/mm/yyyy" id="ap-paterno"
+                            name="ap-paterno" placeholder="Hasta" ng-model="filtroAusencias.fin">
                     </div>
                     <div class="form-group col-sm-2">
                         <label for="sexo">Tipo de Baja</label>
@@ -5497,14 +5550,14 @@
                 <div class="row">
                     <div class="form-group col-sm-6">
                         <label for="nombres">Desde</label>
-                        <input ng-change="calcularDatosRolTurno(rolTurno)" name="fecha" required ng-update-hidden class="form-control date-picker" autocomplete="off"
-                            type="text" data-date-format="dd/mm/yyyy" id="desde" ng-model="rolTurno.fecha_inicio" placeholder="Desde"
-                        />
+                        <input ng-change="calcularDatosRolTurno(rolTurno)" name="fecha" required ng-update-hidden class="form-control date-picker"
+                            autocomplete="off" type="text" data-date-format="dd/mm/yyyy" id="desde" ng-model="rolTurno.fecha_inicio"
+                            placeholder="Desde" />
                     </div>
                     <div class="form-group col-sm-6">
                         <label for="ap-paterno">Hasta</label>
-                        <input required type="text" ng-model="rolTurno.fecha_fin" data-date-format="dd/mm/yyyy" class="form-control date-picker" autocomplete="off"
-                            ng-disabled="rolTurno.tipo" id="ap-paterno" name="ap-paterno" placeholder="Hasta">
+                        <input required type="text" ng-model="rolTurno.fecha_fin" data-date-format="dd/mm/yyyy" class="form-control date-picker"
+                            autocomplete="off" ng-disabled="rolTurno.tipo" id="ap-paterno" name="ap-paterno" placeholder="Hasta">
                     </div>
                 </div>
                 <div class="row">
@@ -5696,13 +5749,13 @@
             <div>
                 <div class="form-group col-sm-3">
                     <label for="nombres">Desde</label>
-                    <input type="text" ng-update-hidden data-date-format="dd/mm/yyyy" ng-model="filtroHorasExtra.inicio" class="form-control date-picker" autocomplete="off"
-                        id="nombres" name="nombres" placeholder="Desde">
+                    <input type="text" ng-update-hidden data-date-format="dd/mm/yyyy" ng-model="filtroHorasExtra.inicio" class="form-control date-picker"
+                        autocomplete="off" id="nombres" name="nombres" placeholder="Desde">
                 </div>
                 <div class="form-group col-sm-3">
                     <label for="ap-paterno">Hasta</label>
-                    <input type="text" ng-update-hidden data-date-format="dd/mm/yyyy" ng-model="filtroHorasExtra.fin" class="form-control date-picker" autocomplete="off"
-                        id="ap-paterno" name="ap-paterno" placeholder="Hasta">
+                    <input type="text" ng-update-hidden data-date-format="dd/mm/yyyy" ng-model="filtroHorasExtra.fin" class="form-control date-picker"
+                        autocomplete="off" id="ap-paterno" name="ap-paterno" placeholder="Hasta">
                 </div>
                 <div class="form-group col-sm-2">
                     <div class="buttons-align">
@@ -5850,7 +5903,7 @@
                                     <td>
                                         <div class="action-buttons">
                                             <a ng-hide="!anticipo.id" ng-if="!anticipo.montoEdit && !anticipo.entregado" class="blue" uib-tooltip="Permitir Edición"
-                                                href="javascript:void(0)" ng-click="abrirModalVerificarCuenta(anticipo)">
+                                                href="javascript:void(0)" ng-click="abrirModalVerificarCuenta(anticipo,'anticipo')">
                                                 <i class="ace-icon fa fa-pencil bigger-130"></i>
                                             </a>
                                             <a ng-if="anticipo.montoEdit" class="green" uib-tooltip="Guardar" href="javascript:void(0)" ng-click="ActualizarAnticipoOrdi(anticipo)">
@@ -5978,8 +6031,8 @@
                     </div>
                     <div class="form-group col-sm-2">
                         <label for="hasta">Hasta</label>
-                        <input ng-update-hidden ng-change="paginator.getSearch(paginator.search,filtro,null)" ng-model="filtro.fin" type="text" class="form-control date-picker" autocomplete="off"
-                            id="hasta" name="hasta">
+                        <input ng-update-hidden ng-change="paginator.getSearch(paginator.search,filtro,null)" ng-model="filtro.fin" type="text" class="form-control date-picker"
+                            autocomplete="off" id="hasta" name="hasta">
                     </div>
                     <div class="form-group col-sm-1 pull-left">
                         <br>
@@ -6063,7 +6116,7 @@
                                 <td>{{prestamo.observacion}}</td>
                                 <td>
                                     <div class="action-buttons">
-                                        <a ng-if="!prestamo.montoEdit" class="blue" uib-tooltip="Permitir Edición" href="javascript:void(0)" ng-click="abrirModalVerificarCuenta(prestamo)">
+                                        <a ng-if="!prestamo.montoEdit" class="blue" uib-tooltip="Permitir Edición" href="javascript:void(0)" ng-click="abrirModalVerificarCuenta(prestamo,'anticipo')">
                                             <i class="ace-icon fa fa-pencil bigger-130"></i>
                                         </a>
                                         <a ng-hide="prestamo.pagadoTotal" ng-if="!prestamo.montoEdit" class="green" href="javascript:void(0)" ng-click="abrirDialogPagoPrestamo(prestamo)">
@@ -6196,8 +6249,8 @@
                         <div class="form-group">
                             <label class="col-sm-6" for="fecha-inicial">Fecha Inicial</label>
                             <div class="input-group col-sm-6">
-                                <input type="text" required data-date-format="dd/mm/yyyy" class="form-control date-picker" autocomplete="off" id="fecha-inicial" ng-update-hidden
-                                    ng-model="prestamo.fecha_inicial" name="fecha-inicial">
+                                <input type="text" required data-date-format="dd/mm/yyyy" class="form-control date-picker" autocomplete="off" id="fecha-inicial"
+                                    ng-update-hidden ng-model="prestamo.fecha_inicial" name="fecha-inicial">
                             </div>
                         </div>
                         <div class="form-group">
@@ -6534,8 +6587,8 @@
                 <div class="row">
                     <div class="form-group col-sm-3">
                         <label for="nombres">Desde</label>
-                        <input type="text" class="form-control date-picker" autocomplete="off" ng-update-hidden ng-model="filtroVacacion.inicio" data-date-format="dd/mm/yyyy"
-                            id="nombres" name="nombres" placeholder="Desde">
+                        <input type="text" class="form-control date-picker" autocomplete="off" ng-update-hidden ng-model="filtroVacacion.inicio"
+                            data-date-format="dd/mm/yyyy" id="nombres" name="nombres" placeholder="Desde">
                     </div>
                     <div class="form-group col-sm-3">
                         <label for="ap-paterno">Hasta</label>
@@ -6611,13 +6664,13 @@
                 <div class="row">
                     <div class="form-group col-sm-3">
                         <label for="nombres">Desde</label>
-                        <input type="text" ng-update-hidden class="form-control date-picker" autocomplete="off" data-date-format="dd/mm/yyyy" id="nombres" name="nombres"
-                            placeholder="Desde" ng-model="filtroAusencias.inicio">
+                        <input type="text" ng-update-hidden class="form-control date-picker" autocomplete="off" data-date-format="dd/mm/yyyy" id="nombres"
+                            name="nombres" placeholder="Desde" ng-model="filtroAusencias.inicio">
                     </div>
                     <div class="form-group col-sm-3">
                         <label for="ap-paterno">Hasta</label>
-                        <input type="text" ng-update-hidden class="form-control date-picker" autocomplete="off" data-date-format="dd/mm/yyyy" id="ap-paterno" name="ap-paterno"
-                            placeholder="Hasta" ng-model="filtroAusencias.fin">
+                        <input type="text" ng-update-hidden class="form-control date-picker" autocomplete="off" data-date-format="dd/mm/yyyy" id="ap-paterno"
+                            name="ap-paterno" placeholder="Hasta" ng-model="filtroAusencias.fin">
                     </div>
                     <div class="form-group col-sm-2">
                         <label for="sexo">Tipo de Baja</label>
@@ -7472,13 +7525,13 @@
                 <div class="row">
                     <div class="form-group col-sm-3">
                         <label for="nombres">Desde</label>
-                        <input type="text" class="form-control date-picker" autocomplete="off" ng-update-hidden ng-model="filtroOtrasAusencias.inicio" data-date-format="dd/mm/yyyy"
-                            id="nombres" name="nombres" placeholder="Desde">
+                        <input type="text" class="form-control date-picker" autocomplete="off" ng-update-hidden ng-model="filtroOtrasAusencias.inicio"
+                            data-date-format="dd/mm/yyyy" id="nombres" name="nombres" placeholder="Desde">
                     </div>
                     <div class="form-group col-sm-3">
                         <label for="ap-paterno">Hasta</label>
-                        <input type="text" class="form-control date-picker" autocomplete="off" ng-update-hidden ng-model="filtroOtrasAusencias.fin" data-date-format="dd/mm/yyyy"
-                            id="ap-paterno" name="ap-paterno" placeholder="Hasta">
+                        <input type="text" class="form-control date-picker" autocomplete="off" ng-update-hidden ng-model="filtroOtrasAusencias.fin"
+                            data-date-format="dd/mm/yyyy" id="ap-paterno" name="ap-paterno" placeholder="Hasta">
                     </div>
                     <div class="form-group col-sm-2">
                         <label for="sexo">Tipo</label>
@@ -7726,8 +7779,8 @@
                                                 <label for="paterno">Apellido Paterno</label>
                                             </div>
                                             <div class="col-lg-7">
-                                                <input required type="text" id="apellido_paterno" ng-model="nuevoRH.persona.apellido_paterno" placeholder="Apellido Paterno" class="form-control"
-                                                    form="datosPersonalesForm" />
+                                                <input required type="text" id="apellido_paterno" ng-model="nuevoRH.persona.apellido_paterno" placeholder="Apellido Paterno"
+                                                    class="form-control" form="datosPersonalesForm" />
                                             </div>
                                         </div>
                                         <div class="row form-group">
@@ -7735,8 +7788,8 @@
                                                 <label for="materno">Apellido Materno</label>
                                             </div>
                                             <div class="col-lg-7">
-                                                <input required type="text" id="apellido_materno" ng-model="nuevoRH.persona.apellido_materno" placeholder="Apellido Materno" class="form-control"
-                                                    form="datosPersonalesForm" />
+                                                <input required type="text" id="apellido_materno" ng-model="nuevoRH.persona.apellido_materno" placeholder="Apellido Materno"
+                                                    class="form-control" form="datosPersonalesForm" />
                                             </div>
 
                                         </div>
@@ -7754,8 +7807,8 @@
                                                 <label for="ci">C.I.</label>
                                             </div>
                                             <div class="col-lg-4">
-                                                <input required type="text" ng-change="copiarCodigodeCi(nuevoRH)" id="ci" ng-model="nuevoRH.persona.ci" placeholder="C.I" class="form-control"
-                                                    form="datosPersonalesForm" />
+                                                <input required type="text" ng-change="copiarCodigodeCi(nuevoRH)" id="ci" ng-model="nuevoRH.persona.ci" placeholder="C.I"
+                                                    class="form-control" form="datosPersonalesForm" />
                                             </div>
                                             <div class="col-lg-1">
                                                 <p>Copiar a codigo</p>
@@ -7906,13 +7959,13 @@
 
                     <div class="modal-footer wizard-actions">
 
-                        <button id="anterior-n"type="button" class="btn btn-sm btn-prev">
+                        <button id="anterior-n" type="button" class="btn btn-sm btn-prev">
                             <i class="ace-icon fa fa-arrow-left"></i>
                             Anterior
                         </button>
 
-                        <button type="submit" id="siguiente" ng-click="ValidarForm(formNuevoRrrhh,steps,'anterior-n')" ng-disabled="data.message=='¡el codigo ya Exsiste!'" class="btn btn-success btn-sm btn-next"
-                            data-last="Finish">
+                        <button type="submit" id="siguiente" ng-click="ValidarForm(formNuevoRrrhh,steps,'anterior-n')" ng-disabled="data.message=='¡el codigo ya Exsiste!'"
+                            class="btn btn-success btn-sm btn-next" data-last="Finish">
                             Siguiente
                             <i class="ace-icon fa fa-arrow-right icon-on-right"></i>
                         </button>
@@ -7949,7 +8002,8 @@
         <div class="row">
             <div class="col-lg-12">
                 <label for="form-field-select-1">Fecha entrega</label>
-                <input type="text" ng-update-hidden class="form-control date-picker" autocomplete="off" ng-model="preRequisito.fecha_entrega_texto" data-date-format="dd/mm/yyyy">
+                <input type="text" ng-update-hidden class="form-control date-picker" autocomplete="off" ng-model="preRequisito.fecha_entrega_texto"
+                    data-date-format="dd/mm/yyyy">
 
             </div>
         </div>
@@ -7995,14 +8049,14 @@
                 <div class="row">
                     <div ng-hide="!filtroCap.capacidadInterna" class="col-md-6">
                         <label for="desde">Desde</label>
-                        <input size="15" ng-update-hidden class="form-control date-picker" autocomplete="off" type="text" data-date-format="dd/mm/yyyy" id="fechainicio"
-                            ng-model="filtroCap.inicio" placeholder="Fecha inicial">
+                        <input size="15" ng-update-hidden class="form-control date-picker" autocomplete="off" type="text" data-date-format="dd/mm/yyyy"
+                            id="fechainicio" ng-model="filtroCap.inicio" placeholder="Fecha inicial">
 
                     </div>
                     <div ng-hide="!filtroCap.capacidadInterna" class="col-md-6">
                         <label for="desde">Hasta </label>
-                        <input size="15" ng-update-hidden class="form-control date-picker" autocomplete="off" type="text" data-date-format="dd/mm/yyyy" id="fechainicio"
-                            ng-model="filtroCap.fin" placeholder="Fecha inicial">
+                        <input size="15" ng-update-hidden class="form-control date-picker" autocomplete="off" type="text" data-date-format="dd/mm/yyyy"
+                            id="fechainicio" ng-model="filtroCap.fin" placeholder="Fecha inicial">
 
                     </div>
                 </div>
@@ -8295,7 +8349,7 @@
             <div class="modal-body">
                 <div>
                     <span>Nombre Usuario: </span>
-                    <input  required class="form-control" type="text" ng-model="cuenta.nombre_usuario">
+                    <input required class="form-control" type="text" ng-model="cuenta.nombre_usuario">
                 </div>
                 <div>
                     <span>Clave</span>
@@ -8304,7 +8358,7 @@
             </div>
             <div class="modal-footer">
                 <div class="col-sm-6">
-                    <button type="submit" class="btn btn-success" >Guardar</button>
+                    <button type="submit" class="btn btn-success">Guardar</button>
                 </div>
 
 
@@ -8334,7 +8388,8 @@
                 </div>
                 <div ng-if="!empleado.activo">
                     <span>Fecha: </span>
-                    <input required ng-update-hidden data-date-format="dd/mm/yyyy" class="form-control date-picker" autocomplete="off" type="text" ng-model="cuenta.fecha">
+                    <input required ng-update-hidden data-date-format="dd/mm/yyyy" class="form-control date-picker" autocomplete="off" type="text"
+                        ng-model="cuenta.fecha">
                 </div>
             </div>
             <div class="modal-footer">
@@ -8353,12 +8408,15 @@
         <form name="formularioAsignarCuenta" novalidate ng-submit="changeActivoEmpleado(empleado)">
             <div class="modal-header">
                 <p>
-                    <h3>¿Esta seguro de <b>Inactivar el trabajador</b>?</h3>
+                    <h3>¿Esta seguro de
+                        <b>Inactivar el trabajador</b>?</h3>
                 </p>
             </div>
             <div class="modal-body">
                 <div>
-                 <p>Se aplicaran todos los efectos jurídicos relacionados a la relación</p><p> laboral de esta inactivación y algunas funcionalidades correcpondiente</p><p> a los trabajadores no podra ser usados</p>
+                    <p>Se aplicaran todos los efectos jurídicos relacionados a la relación</p>
+                    <p> laboral de esta inactivación y algunas funcionalidades correcpondiente</p>
+                    <p> a los trabajadores no podra ser usados</p>
                 </div>
             </div>
             <div class="modal-footer">
@@ -8382,10 +8440,10 @@
             </div>
             <div class="modal-body">
                 <div>
-                 <label>TIPO DE REINGRESO</label>    
-                 <select required ng-model="empleado.tipoReincorporacion" class="form-control" ng-options="tipo as tipo.nombre for tipo in tiposBajas.clases">
-                    <option value="">--Ninguno--</option>
-                </select>
+                    <label>TIPO DE REINGRESO</label>
+                    <select required ng-model="empleado.tipoReincorporacion" class="form-control" ng-options="tipo as tipo.nombre for tipo in tiposBajas.clases">
+                        <option value="">--Ninguno--</option>
+                    </select>
                 </div>
             </div>
             <div class="modal-footer">
@@ -8565,9 +8623,9 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                        <button type="button" uib-tooltip="HISTORIAL" class="btn btn-danger btn-xs pull-left" ng-click="abrirModalHistorialTr3(datosBanco,'BU')">
-                                <span class="glyphicon glyphicon-header" aria-hidden="true"></span>
-                            </button>
+                    <button type="button" uib-tooltip="HISTORIAL" class="btn btn-danger btn-xs pull-left" ng-click="abrirModalHistorialTr3(datosBanco,'BU')">
+                        <span class="glyphicon glyphicon-header" aria-hidden="true"></span>
+                    </button>
                     <button type="submit" class="btn btn-success">Guardar</button>
                     <button type="button" class="btn btn-danger" ng-click="cerrarModalTr3BancoUnion()">Cancelar</button>
                 </div>
@@ -8578,81 +8636,79 @@
     <!-- fin tr3 banco union -->
     <!-- inicio modal historial tr3 -->
     <div id="modal-historial-tr3">
-        
-            <div class="modal-content">
-                <div class="modal-header bg-warning" align="center">
-                    <h3 class="modal-title">Historial</h3>
-                </div>
-                <div class="modal-body">
-                    <div class="table-fixed-header">
-                        <table id="tabla-comprobante-revision" class="table table-striped table-bordered table-hover">
-                            <thead fix-head class="table-head-color">
-                                <tr>
-                                    <th class="center">
-                                        Nº
-                                    </th>
-                                    <th>
-                                        Nombre planilla
-                                    </th>
-                                    <th>
-                                        Numero planilla
-                                    </th>
-                                    <th>
-                                        Origen fondos
-                                    </th>
-                                    <th>
-                                        Destino fondos
-                                    </th>
-                                    <th>
-                                        Acciones
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr ng-repeat="tr3 in historialTr3 track by $index">
 
-                                    <td class="center">
-                                        {{$index+1}}
-                                    </td>
-                                    <td>
-                                        {{tr3.nombre_planilla}}
-                                    </td>
-                                    <td>
-                                        {{tr3.numero_planilla}}
-                                    </td>
-                                    <td>
-                                        {{tr3.origen_fondos}}
-                                    </td>
-                                    <td>
-                                        {{tr3.destino_fondos}}
-                                    </td>
-                                    <td>
-                                        <a href="javascript:void(0)" type="button"
-                                       class="red" ng-click="imprimirTr3(tr3,tipoBanco)">
-                                            <i class="ace-icon fa fa-print bigger-160"></i>
-                                        </a>
-                                        <a href="javascript:void(0)" type="button"
-                                        class="blue" ng-click="imprimirCartaTr3(tr3,tipoBanco)">
-                                            <i class="ace-icon fa fa-print bigger-160"></i>
-                                        </a>
-                                       <!--  <a href="javascript:void(0)" type="button" ng-click="imprimirCartaTr3(tr3,tipoBanco)"
+        <div class="modal-content">
+            <div class="modal-header bg-warning" align="center">
+                <h3 class="modal-title">Historial</h3>
+            </div>
+            <div class="modal-body">
+                <div class="table-fixed-header">
+                    <table id="tabla-comprobante-revision" class="table table-striped table-bordered table-hover">
+                        <thead fix-head class="table-head-color">
+                            <tr>
+                                <th class="center">
+                                    Nº
+                                </th>
+                                <th>
+                                    Nombre planilla
+                                </th>
+                                <th>
+                                    Numero planilla
+                                </th>
+                                <th>
+                                    Origen fondos
+                                </th>
+                                <th>
+                                    Destino fondos
+                                </th>
+                                <th>
+                                    Acciones
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="tr3 in historialTr3 track by $index">
+
+                                <td class="center">
+                                    {{$index+1}}
+                                </td>
+                                <td>
+                                    {{tr3.nombre_planilla}}
+                                </td>
+                                <td>
+                                    {{tr3.numero_planilla}}
+                                </td>
+                                <td>
+                                    {{tr3.origen_fondos}}
+                                </td>
+                                <td>
+                                    {{tr3.destino_fondos}}
+                                </td>
+                                <td>
+                                    <a href="javascript:void(0)" type="button" class="red" ng-click="imprimirTr3(tr3,tipoBanco)">
+                                        <i class="ace-icon fa fa-print bigger-160"></i>
+                                    </a>
+                                    <a href="javascript:void(0)" type="button" class="blue" ng-click="imprimirCartaTr3(tr3,tipoBanco)">
+                                        <i class="ace-icon fa fa-print bigger-160"></i>
+                                    </a>
+                                    <!--  <a href="javascript:void(0)" type="button" ng-click="imprimirCartaTr3(tr3,tipoBanco)"
                                         data-placement="top" uib-tooltip="Historial por Gestion" class="blue">
                                             <i class="ace-icon fa fa-print bigger-160"></i>
                                         </a> -->
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-danger" ng-click="cerrarModalHistorialTr3()">Cancelar</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
-        
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" ng-click="cerrarModalHistorialTr3()">Cancelar</button>
+            </div>
+        </div>
+
     </div>
     <script>
-         if ($("#siguiente-f").click()) {
+        if ($("#siguiente-f").click()) {
             alert("test");
         }
        /*  $("#siguiente-f").click(function(){
@@ -8665,6 +8721,6 @@
             }
         }); */
     </script>
-    
+
     <!-- fin tr3 historial tr3-->
 </div>

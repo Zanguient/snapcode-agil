@@ -718,7 +718,7 @@ angular.module('agil.controladores')
                         $scope.mostrarMensaje("No cuenta con ficha actualmente, crear ficha empleado!")
                     });
                 }, 200);
-                
+
             }
         }
 
@@ -793,7 +793,7 @@ angular.module('agil.controladores')
                         $scope.mostrarMensaje("No cuenta con haber basico actualizar ficha empleado!")
                     });
                 }, 200);
-                
+
             }
         }
         $scope.cerrarDialogNuevoPrestamo = function () {
@@ -1809,6 +1809,7 @@ angular.module('agil.controladores')
             promesa.then(function (datos) {
                 if (datos.ficha) {
                     $scope.ficha = datos.ficha
+                    $scope.ficha.editDatosLaborales = false
                     if ($scope.ficha.fecha_inicio) {
                         $scope.ficha.fecha_inicio2 = $scope.fechaATexto($scope.ficha.fecha_inicio)
                     } else {
@@ -1838,7 +1839,11 @@ angular.module('agil.controladores')
                             $scope.getDaysInMonth($scope.ficha.nac_mes.id, $scope.ficha.nac_anio)
                         }
                     });
-                    var fecha = new Date()
+                    if ($scope.ficha.fecha) {
+                        var fecha = new Date($scope.ficha.fecha)
+                    } else {
+                        var fecha = new Date()
+                    }
                     $scope.ficha.fecha_elaboracion = fecha.getDate() + "/" + (fecha.getMonth() + 1) + "/" + fecha.getFullYear()
                     var dato = $scope.diferenciaEntreDiasEnDias(fechaNacimiento, fechaActual)
                     $scope.ficha.edad = Math.trunc(dato / 365);
@@ -1859,7 +1864,7 @@ angular.module('agil.controladores')
                     //llenarCargos($scope.cargos)
                 } else {
 
-                    $scope.ficha = { empleado: datos.empleado, pacienteReferencia: {} }
+                    $scope.ficha = { empleado: datos.empleado, pacienteReferencia: {}, editDatosLaborales: false }
                     $scope.ficha.empleado.cargo = []
                     $scope.ficha.empleado.otrosSeguros = []
                     $scope.ficha.empleado.familiares = []
@@ -3587,8 +3592,9 @@ angular.module('agil.controladores')
             })
         }
 
-        $scope.abrirModalVerificarCuenta = function (dato) {
+        $scope.abrirModalVerificarCuenta = function (dato,tipo) {
             $scope.dato = dato
+            $scope.tipoDatosPermiso=tipo
             $scope.abrirPopup($scope.IdModalVerificarCuenta);
         }
         $scope.cerrarModalVerificarCuenta = function () {
@@ -3628,10 +3634,19 @@ angular.module('agil.controladores')
                 if (dato.type) {
                     $scope.mostrarMensaje(dato.message)
                     /*  cuenta.abierto= cuenta.abierto; */
-                    if (!$scope.dato.montoEdit) {
-                        $scope.dato.montoEdit = true
-                    } else {
-                        $scope.dato.montoEdit = false
+                    if ( $scope.tipoDatosPermiso == "anticipo") {
+                        if (!$scope.dato.montoEdit) {
+                            $scope.dato.montoEdit = true
+                        } else {
+                            $scope.dato.montoEdit = false
+                        }
+                    }
+                    if( $scope.tipoDatosPermiso=="datosLaborales"){
+                        if (!$scope.dato.editDatosLaborales) {
+                            $scope.dato.editDatosLaborales = true
+                        } else {
+                            $scope.dato.editDatosLaborales = false
+                        } 
                     }
                     $scope.cerrarModalVerificarCuenta();
                 } else {

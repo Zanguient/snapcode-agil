@@ -297,10 +297,10 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, forEach, j
 				condicionTrabajador = { nombre_completo: { $like: "%" + req.params.transportista + "%" } }
 			}
 			if (req.params.tipo != 0) {
-				condicionEstibaje = { nombre: req.params.tipo }
+				condicionEstibaje = { nombre:{ $like: "%" + req.params.tipo + "%" }  }
 			}
 			if (req.params.grupo != 0) {
-				condicionGrupoEstibaje = { nombre: req.params.grupo }
+				condicionGrupoEstibaje = { nombre:{ $like: "%" + req.params.grupo + "%" } }
 			}
 			if (req.params.estado != 0) {
 
