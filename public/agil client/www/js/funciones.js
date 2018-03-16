@@ -1373,3 +1373,60 @@ function convertirSegundosATiempo(time){
 	console.log(result)
 	return result;
 }
+function ValidarForm (form, steps,button) {
+	if (!form.$valid) {	
+		steps.forEach(function (dato, index, array) {
+
+
+			var step = $('#' + dato.cabeza).attr('class');
+			/* console.log(step) */
+			var fail = false
+			if (step == "active") {
+				$('#' + dato.cuerpo).find('select').each(function () {
+					if ($(this).prop('required')) {
+						if (this.value.length > 0) {
+							$(this).removeClass("validacionRRhh");
+							if (this.value == "?") {
+								$(this).addClass("validacionRRhh");
+								fail = true
+							}
+						} else {
+							$(this).addClass("validacionRRhh");
+							fail = true
+						}
+
+					}
+				});
+				$('#' + dato.cuerpo).find('input').each(function () {
+					if ($(this).prop('required')) {
+
+						if (this.value.length > 0) {
+
+							$(this).removeClass("validacionRRhh");
+
+						} else {
+							$(this).addClass("validacionRRhh");
+							fail = true
+						}
+					}
+				});
+				/*  stepDatosLaborales
+				 stepdatosAfiliacion
+				 stepDatosFamiliares */
+				
+			   
+					if (fail) {
+						setTimeout(function () {
+							$('#'+button).click()
+						}, 300);
+
+					}
+				
+			}
+		  
+		});
+		// cancel change
+	}
+
+
+}

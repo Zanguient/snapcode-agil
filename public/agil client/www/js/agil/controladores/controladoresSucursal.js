@@ -213,9 +213,15 @@ angular.module('agil.controladores')
 			var bandera = false
 			if ($scope.sucursal.actividadesDosificaciones.length > 0) {
 				$scope.sucursal.actividadesDosificaciones.forEach(function (dosificacion, index, array) {
-					if (dosificacion.expirado==actividadDosificacion.dosificacion.expirado&& (dosificacion.id_dosificacion == actividadDosificacion.dosificacion.id || dosificacion.id_actividad == actividadDosificacion.actividad.id)) {
-						bandera = true
-					}
+					
+					var expira=(actividadDosificacion.dosificacion.expirado==1)?true:false
+					
+						if(actividadDosificacion.dosificacion.expirado==0){
+							bandera=false
+							if (dosificacion.id_dosificacion == actividadDosificacion.dosificacion.id || dosificacion.id_actividad == actividadDosificacion.actividad.id) {
+								bandera = true
+						}		
+					}	
 					if (index === (array.length - 1)) {
 						if (bandera == false) {
 							if (actividadDosificacion.actividad && actividadDosificacion.dosificacion) {

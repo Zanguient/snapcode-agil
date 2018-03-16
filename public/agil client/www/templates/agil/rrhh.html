@@ -329,7 +329,7 @@
                                     uib-tooltip="Datos del Empleado">
                                     <span class="icono-empleado icono-font"></span>
                                 </a>
-                                <a href="javascript:void(0)" ng-click="abrirDialogBeneficiosSociales()" class="accion tooltip-info" data-rel="tooltip" data-placement="top"
+                                <a href="javascript:void(0)" ng-click="abrirDialogBeneficiosSociales(empleado)" class="accion tooltip-info" data-rel="tooltip" data-placement="top"
                                     uib-tooltip="Finiquito">
                                     <span class="icono-veneficios icono-font"></span>
                                 </a>
@@ -819,7 +819,7 @@
     <div id="dialog-empleado" class="modal">
         <div class="">
             <div class="modal-content">
-                <form novalidate ng-submit="guardarFichaTecnica(formularioFichaTecnica.$valid,ficha,truevalue)" id="formularioFichaTecnica"
+                <form ng-submit="guardarFichaTecnica(formularioFichaTecnica,ficha,truevalue)" id="formularioFichaTecnica2"
                     name="formularioFichaTecnica">
                     <div id="modal-wizard-empleado-container">
                         <div class="modal-header modal-header-ficha">
@@ -837,25 +837,25 @@
                                 </div>
                             </div>
                             <ul class="steps pasos-ficha">
-                                <li data-step="1" class="active">
+                                <li id="stepDatosPersonales" data-step="1" class="active">
                                     <span class="step">
                                         <span class="fa fa-user"></span>
                                     </span>
                                     <span class="title">Datos personales</span>
                                 </li>
-                                <li data-step="2">
+                                <li id="stepDatosLaborales" data-step="2">
                                     <span class="step">
                                         <span class="icono-pre3 icono-step"></span>
                                     </span>
                                     <span class="title">Datos Laborales/Referenciales</span>
                                 </li>
-                                <li data-step="3">
+                                <li id="stepdatosAfiliacion" data-step="3">
                                     <span class="step">
                                         <span class="fa fa-link"></span>
                                     </span>
                                     <span class="title">Afiliaciones</span>
                                 </li>
-                                <li data-step="4">
+                                <li id="stepDatosFamiliares" data-step="4">
                                     <span class="step">
                                         <span class="icono-datos-familiares"></span>
                                     </span>
@@ -868,20 +868,20 @@
                             </ul>
                         </div>
                         <div class="modal-body step-content">
-                            <div class="step-pane active" data-step="1">
+                            <div id="datos-personales" class="step-pane active" data-step="1">
                                 <div class="row">
                                     <div class="col-sm-6 col-md-2">
                                         <label for="fecha-elaboracion">Fecha de Elaboración</label>
                                     </div>
                                     <div class="col-sm-6 col-md-2">
-                                        <input ng-update-hidden data-date-format="dd/mm/yyyy" type="text" class="form-control date-picker" autocomplete="off" id="fecha-elaboracion"
+                                        <input  required ng-update-hidden data-date-format="dd/mm/yyyy" type="text" class="form-control date-picker" autocomplete="off" id="fecha-elaboracion"
                                             ng-model="ficha.fecha_elaboracion">
                                     </div>
                                     <div class="col-sm-6 col-md-2">
                                         <label for="codigo-empleado">Código Empleado</label>
                                     </div>
                                     <div class="col-sm-6 col-md-2">
-                                        <input type="text" autofocus class="form-control" id="codigo-empleado" ng-model="ficha.empleado.codigo">
+                                        <input required type="text" autofocus class="form-control" id="codigo-empleado" ng-model="ficha.empleado.codigo">
                                     </div>
                                     <div class="col-sm-6 col-md-2">
                                         <label for="codigo-empleado">
@@ -948,7 +948,7 @@
                                             <div class="input-group">
                                                 <span class="input-group-addon glyphicon glyphicon-pencil point-edit green" aria-hidden="true" ng-click="abrirDialogConceptoEdicion(tipoExpedido)"></span>
                                                 <select class="form-control" required ng-options="expedido as expedido.nombre_corto for expedido in tipoExpedido.clases | filter:{habilitado:true} track by expedido.id"
-                                                    ng-model="ficha.empleado.extension"></select>
+                                                    ng-model="ficha.empleado.extension"></select><span class="red" ng-if="ficha.empleado.extencionMensaje">{{ficha.empleado.extencionMensaje}}</span>
 
                                             </div>
                                         </div>
@@ -959,7 +959,7 @@
                                             <div class="input-group">
                                                 <span class="input-group-addon glyphicon glyphicon-pencil point-edit green" ng-click="abrirDialogConceptoEdicion(tipoDocumento)"></span>
                                                 <select class="form-control" required ng-options="tipoDocumento as tipoDocumento.nombre_corto for tipoDocumento in tipoDocumento.clases | filter:{habilitado:true} track by tipoDocumento.id"
-                                                    ng-model="ficha.empleado.tipoDocumento"></select>
+                                                    ng-model="ficha.empleado.tipoDocumento"></select><span class="red" ng-if="ficha.empleado.tipoDocumentoMensaje">{{ficha.empleado.tipoDocumentoMensaje}}</span>
                                                 <!-- <select class="form-control">
                                                 <option>C.I.</option>
                                                 <option>RUN</option>
@@ -981,7 +981,7 @@
                                             <div class="input-group">
                                                 <span class="input-group-addon glyphicon glyphicon-pencil point-edit green" ng-click="abrirDialogConceptoEdicion(estadosCiviles)"></span>
                                                 <select class="form-control" required ng-options="estado as estado.nombre for estado in estadosCiviles.clases | filter:{habilitado:true} track by estado.id"
-                                                    ng-model="ficha.empleado.persona.estadoCivil"></select>
+                                                    ng-model="ficha.empleado.persona.estadoCivil"></select><span class="red" ng-if="ficha.empleado.personaEstadoCivil">{{ficha.empleado.personaEstadoCivil}}</span>
                                             </div>
                                         </div>
                                         <div class="col-sm-3 col-lg-1">
@@ -989,13 +989,13 @@
                                         </div>
 
                                         <div class="col-md-1 col-sm-1 col-year">
-                                            <select class="form-control" id="valYear" ng-update-hidden ng-options="year  as year for (idx, year)  in listYears track by year"
+                                            <select required class="form-control" id="valYear" ng-update-hidden ng-options="year  as year for (idx, year)  in listYears track by year"
                                                 ng-change="getDaysInMonth(ficha.nac_mes.id,ficha.nac_anio)" ng-model="ficha.nac_anio">
 
                                             </select>
                                         </div>
                                         <div class="col-md-2 col-sm-2 col-month">
-                                            <select class="form-control" id="valMonth" ng-options="mes  as mes.nombre for mes in meses track by mes.id" ng-change="getDaysInMonth(ficha.nac_mes.id,ficha.nac_anio)"
+                                            <select required class="form-control" id="valMonth" ng-options="mes  as mes.nombre for mes in meses track by mes.id" ng-change="getDaysInMonth(ficha.nac_mes.id,ficha.nac_anio)"
                                                 ng-model="ficha.nac_mes">
                                                 <!--   <option ng-repeat="mes in meses track by mes.id" ng-value="mes">
                                                 {{mes.nombre}}
@@ -1005,7 +1005,7 @@
                                         </div>
                                         <div class="col-md-1 col-sm-1 col-day">
                                             <!-- <input type="text" class="form-control date-picker" autocomplete="off" ng-model="ficha.empleado.pacidente.fecha_nacimiento"> -->
-                                            <select class="form-control" id="valDay" ng-options="dia  as dia for (idx, dia)  in listaDias track by dia" ng-model="ficha.nac_dia">
+                                            <select required class="form-control" id="valDay" ng-options="dia  as dia for (idx, dia)  in listaDias track by dia" ng-model="ficha.nac_dia">
 
                                             </select>
 
@@ -1014,7 +1014,8 @@
                                             <label for=""> Genero</label>
                                         </div>
                                         <div class="col-md-1">
-                                            <select required style="width:150px" ng-options="genero as genero.nombre for genero in generos track by genero.id" ng-model="ficha.empleado.persona.genero"></select>
+                                            <select  style="width:150px" ng-options="genero as genero.nombre for genero in generos track by genero.id" ng-model="ficha.empleado.persona.genero" required></select>
+                                            <span class="red" ng-if="ficha.empleado.personaGenero">{{ficha.empleado.personaGenero}}</span>
                                         </div>
                                     </div>
                                     <div class="row form-group">
@@ -1026,6 +1027,7 @@
                                                 <span class="input-group-addon glyphicon glyphicon-pencil point-edit green" ng-click="abrirDialogConceptoEdicion(nacionalidades)"></span>
                                                 <select required style="width:150px" ng-options="nacionalidad as nacionalidad.nombre for nacionalidad in nacionalidades.clases | filter:{habilitado:true} track by nacionalidad.id"
                                                     ng-model="ficha.empleado.persona.pais" ng-change="buscarDepartamento(ficha.empleado.persona.pais)"></select>
+                                                    <span class="red" ng-if="ficha.empleado.personaPais">{{ficha.empleado.personaPais}}</span>
                                             </div>
                                         </div>
 
@@ -1035,7 +1037,7 @@
                                         <div class="col-sm-3 col-lg-2">
                                             <div class="input-group">
                                                 <span class="input-group-addon glyphicon glyphicon-pencil point-edit green" ng-click="abrirDialogDepartamentoEstado()"></span>
-                                                <select required style="width:150px" ng-options="departamento as departamento.nombre for departamento in departamentos | filter:{habilitado:true} track by departamento.id"
+                                                <select style="width:150px" ng-options="departamento as departamento.nombre for departamento in departamentos | filter:{habilitado:true} track by departamento.id"
                                                     ng-model="ficha.empleado.persona.ciudad" ng-change="buscarMunicipios(ficha.empleado.persona.ciudad)"></select>
                                                 <!--  <select required id="departamento" name="departamento" data-placeholder="Click para escoger" ng-model="empresa.id_departamento" ng-change="buscarMunicipios(empresa.id_departamento)">
                                                     <option ng-selected="departamento.id==empresa.id_departamento" ng-repeat="departamento in departamentos" value="{{departamento.id}}-{{departamento.nombre_corto}}">{{departamento.nombre}}</option>
@@ -1048,7 +1050,7 @@
                                         <div class="col-sm-3 col-lg-2">
                                             <div class="input-group">
                                                 <span class="input-group-addon glyphicon glyphicon-pencil point-edit green" ng-click="abrirDialogProvincia()"></span>
-                                                <select required style="width:150px" ng-options="provincia as provincia.nombre for provincia in provincias | filter:{habilitado:true}  track by provincia.id"
+                                                <select style="width:150px" ng-options="provincia as provincia.nombre for provincia in provincias | filter:{habilitado:true}  track by provincia.id"
                                                     ng-model="ficha.empleado.persona.provincia" ng-change="buscarLocalidad(ficha.empleado.persona.provincia)"></select>
 
                                             </div>
@@ -1059,7 +1061,7 @@
                                         <div class="col-sm-3 col-lg-2">
                                             <div class="input-group">
                                                 <span class="input-group-addon glyphicon glyphicon-pencil point-edit green" ng-click="abrirDialogLocalidad()"></span>
-                                                <select required style="width:150px" ng-options="localidad as localidad.nombre for localidad in localidades | filter:{habilitado:true}  track by localidad.id"
+                                                <select style="width:150px" ng-options="localidad as localidad.nombre for localidad in localidades | filter:{habilitado:true}  track by localidad.id"
                                                     ng-model="ficha.empleado.persona.localidad"></select>
                                             </div>
                                         </div>
@@ -1138,7 +1140,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="step-pane" data-step="2">
+                            <div id="ficha-datos-laborales" class="step-pane" data-step="2">
                                 <div class="cabezera-ficha">
                                     <h4 class="blue">
                                         2. Datos Laborales
@@ -1254,7 +1256,7 @@
                                             <label for="">Haber Básico</label>
                                         </div>
                                         <div class="col-sm-3 col-lg-2">
-                                            <input type="text" class="form-control" ng-model="ficha.haber_basico">
+                                            <input  required type="text" class="form-control" ng-model="ficha.haber_basico">
                                         </div>
                                         <div class="col-sm-2 col-lg-1">
                                             <label for="">Contrato</label>
@@ -1345,7 +1347,7 @@
 
                                 </div>
                             </div>
-                            <div class="step-pane" data-step="3">
+                            <div id="ficha-seguros" class="step-pane" data-step="3">
                                 <div class="cabezera-ficha">
                                     <h4 class="blue">
                                         4. Seguro de Salud
@@ -1357,7 +1359,7 @@
                                             <label for="">Matrícula</label>
                                         </div>
                                         <div class="col-sm-3 col-lg-2">
-                                            <input type="text" class="form-control" ng-model="ficha.matricula_seguro">
+                                            <input required type="text" class="form-control" ng-model="ficha.matricula_seguro">
                                         </div>
                                         <div class="col-sm-3 col-lg-1">
                                             <label for="">Seguro</label>
@@ -1365,7 +1367,7 @@
                                         <div class="col-sm-3 col-lg-2">
                                             <div class="input-group">
                                                 <span class="input-group-addon glyphicon glyphicon-pencil point-edit green" ng-click="abrirDialogConceptoEdicion(segurosSalud)"></span>
-                                                <select class="form-control" style="width:150px" ng-options="seguroSalud as seguroSalud.nombre for seguroSalud in segurosSalud.clases | filter:{habilitado:true} track by seguroSalud.id"
+                                                <select required class="form-control" style="width:150px" ng-options="seguroSalud as seguroSalud.nombre for seguroSalud in segurosSalud.clases | filter:{habilitado:true} track by seguroSalud.id"
                                                     ng-model="ficha.seguroSalud"></select>
                                             </div>
                                         </div>
@@ -1375,7 +1377,7 @@
                                         <div class="col-sm-3 col-lg-2">
                                             <div class="input-group">
                                                 <span class="input-group-addon glyphicon glyphicon-pencil point-edit green" ng-click="abrirDialogConceptoEdicion(lugarSeguroSalud)"></span>
-                                                <select class="form-control" style="width:150px" ng-options="lugarSeguroSalud as lugarSeguroSalud.nombre for lugarSeguroSalud in LugaresSegurosSalud.clases | filter:{habilitado:true} track by lugarSeguroSalud.id"
+                                                <select required class="form-control" style="width:150px" ng-options="lugarSeguroSalud as lugarSeguroSalud.nombre for lugarSeguroSalud in LugaresSegurosSalud.clases | filter:{habilitado:true} track by lugarSeguroSalud.id"
                                                     ng-model="ficha.lugarSeguroSalud"></select>
                                             </div>
                                         </div>
@@ -1384,7 +1386,7 @@
                                         </div>
                                         <div class="col-sm-3 col-lg-1">
                                             <label>
-                                                <input name="" class="ace ace-switch ace-switch-5" ng-model="ficha.seguro_salud_carnet" type="checkbox">
+                                                <input  class="ace ace-switch ace-switch-5" ng-model="ficha.seguro_salud_carnet" type="checkbox">
                                                 <span class="lbl check-espaniol"></span>
                                             </label>
                                         </div>
@@ -1401,7 +1403,7 @@
                                             <label for="">NUA/CUA</label>
                                         </div>
                                         <div class="col-sm-3 col-lg-2">
-                                            <input type="text" class="form-control" ng-model="ficha.nua_seguro_largo_plazo">
+                                            <input required type="text" class="form-control" ng-model="ficha.nua_seguro_largo_plazo">
                                         </div>
                                         <div class="col-sm-3 col-lg-1">
                                             <label for="">Aporte</label>
@@ -1409,7 +1411,7 @@
                                         <div class="col-sm-3 col-lg-2">
                                             <div class="input-group">
                                                 <span class="input-group-addon glyphicon glyphicon-pencil point-edit green" ng-click="abrirDialogConceptoEdicion(aportesSeguroLargoPlazo)"></span>
-                                                <select class="form-control" style="width:150px" ng-options="aporte as aporte.nombre for aporte in aportesSeguroLargoPlazo.clases | filter:{habilitado:true} track by aporte.id"
+                                                <select required class="form-control" style="width:150px" ng-options="aporte as aporte.nombre for aporte in aportesSeguroLargoPlazo.clases | filter:{habilitado:true} track by aporte.id"
                                                     ng-model="ficha.aporteSeguroLargoPlazo"></select>
                                             </div>
                                         </div>
@@ -1419,7 +1421,7 @@
                                         <div class="col-sm-3 col-lg-2">
                                             <div class="input-group">
                                                 <span class="input-group-addon glyphicon glyphicon-pencil point-edit green" ng-click="abrirDialogConceptoEdicion(LugaresSegurosSalud)"></span>
-                                                <select class="form-control" style="width:150px" ng-options="lugarSeguroSalud as lugarSeguroSalud.nombre for lugarSeguroSalud in LugaresSegurosSalud.clases | filter:{habilitado:true} track by lugarSeguroSalud.id"
+                                                <select required class="form-control" style="width:150px" ng-options="lugarSeguroSalud as lugarSeguroSalud.nombre for lugarSeguroSalud in LugaresSegurosSalud.clases | filter:{habilitado:true} track by lugarSeguroSalud.id"
                                                     ng-model="ficha.lugarSeguroLargoPlazo"></select>
                                             </div>
                                         </div>
@@ -1505,7 +1507,7 @@
                                             <label for="">Nro de Cuenta</label>
                                         </div>
                                         <div class="col-sm-3 col-lg-2">
-                                            <input type="text" class="form-control" ng-model="ficha.numero_cuenta">
+                                            <input required type="text" class="form-control" ng-model="ficha.numero_cuenta">
                                         </div>
                                         <div class="col-sm-3 col-lg-1">
                                             <label for="">Banco</label>
@@ -1513,7 +1515,7 @@
                                         <div class="col-sm-3 col-lg-2">
                                             <div class="input-group">
                                                 <span class="input-group-addon glyphicon glyphicon-pencil point-edit green" ng-click="abrirDialogConceptoEdicion(bancos)"></span>
-                                                <select class="form-control" style="width:150px" ng-options="banco as banco.nombre for banco in bancosHdv.clases | filter:{habilitado:true} track by banco.id"
+                                                <select required class="form-control" style="width:150px" ng-options="banco as banco.nombre for banco in bancosHdv.clases | filter:{habilitado:true} track by banco.id"
                                                     ng-model="ficha.banco"></select>
                                             </div>
                                         </div>
@@ -1521,7 +1523,7 @@
                                 </div>
                             </div>
 
-                            <div class="step-pane" data-step="4">
+                            <div id="ficha-familia"class="step-pane" data-step="4">
                                 <button type="button" class="btn btn-primary btn-xs" ng-click="abrirDialogNuevoFamiliar()">
                                     <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>Nuevo
                                 </button>
@@ -1597,11 +1599,11 @@
                     <div class="modal-footer wizard-actions">
                         <button ng-show="ficha.id" type="submit" class="btn btn-primary btn-sm " ng-click="truevalue=true">
                             <i class="ace-icon fa fa-floppy-o bigger-110"></i>&nbsp; Guardar</button>
-                        <button type="button" class="btn btn-sm btn-prev">
+                        <button  id="anterior-f" type="button" class="btn btn-sm btn-prev">
                             <i class="ace-icon fa fa-arrow-left"></i>
                             Anterior
                         </button>
-                        <button class="btn btn-success btn-sm btn-next" type="submit" id="siguiente-f" ng-click="truevalue=false" data-last="Finish">
+                        <button class="btn btn-success btn-sm btn-next" type="submit" id="siguiente-f" ng-click="ValidarForm(formularioFichaTecnica,steps,'anterior-f')" data-last="Finish">
                             Siguiente
                             <i class="ace-icon fa fa-arrow-right icon-on-right"></i>
                         </button>
@@ -3817,7 +3819,7 @@
                     <label for="sexo">Genero</label>
                     <label>
                         <select class="ace ace-switch ace-switch-5 big-switch" style="width:250px" name="genero_nuevoRH" id="genero_nuevoRH" ng-model="familiar.persona.genero"
-                            ng-options="genero as genero.nombre for genero in generos track by genero.id"></select>
+                            ng-options="genero as genero.nombre for genero in generos track by genero.id"> <option value="">--Ninguno--</option></select>
                     </label>
                 </div>
                 <div class="form-group col-sm-6">
@@ -7675,23 +7677,23 @@
     <div id="dialog-rh-nuevo" class="modal wizard-posicion">
         <div class="modal-dialog modal-rh-nuevo">
             <div class="modal-content">
-                <form name="form" ng-submit="saveForm()" novalidate>
+                <form name="formNuevoRrrhh" ng-submit="saveForm()">
                     <div id="modal-wizard-rh-container">
                         <div class="modal-header">
                             <ul class="steps">
-                                <li data-step="1" class="active">
+                                <li id="cabeza-nuevo-datos-personales" data-step="1" class="active">
                                     <span class="step">
                                         <span class="fa fa-user"></span>
                                     </span>
                                     <span class="title">Datos Personales</span>
                                 </li>
-                                <li data-step="2">
+                                <li id="cabeza-nuevo-datos-comple" data-step="2">
                                     <span class="step">
                                         <span class="fa fa-list-alt"></span>
                                     </span>
                                     <span class="title">Datos Complementarios</span>
                                 </li>
-                                <li data-step="3">
+                                <li id="cabeza-nuevo-datos-laborales" data-step="3">
                                     <span class="step">
                                         <span class="fa fa-wrench"></span>
                                     </span>
@@ -7705,7 +7707,7 @@
                         </div>
 
                         <div class="modal-body step-content">
-                            <div class="step-pane active" data-step="1">
+                            <div id="cuerpo-nuevo-datos-personales" class="step-pane active" data-step="1">
                                 <div class="row">
                                     <div class="col-lg-12">
                                         <div class="form-group">
@@ -7724,7 +7726,7 @@
                                                 <label for="paterno">Apellido Paterno</label>
                                             </div>
                                             <div class="col-lg-7">
-                                                <input type="text" id="apellido_paterno" ng-model="nuevoRH.persona.apellido_paterno" placeholder="Apellido Paterno" class="form-control"
+                                                <input required type="text" id="apellido_paterno" ng-model="nuevoRH.persona.apellido_paterno" placeholder="Apellido Paterno" class="form-control"
                                                     form="datosPersonalesForm" />
                                             </div>
                                         </div>
@@ -7733,7 +7735,7 @@
                                                 <label for="materno">Apellido Materno</label>
                                             </div>
                                             <div class="col-lg-7">
-                                                <input type="text" id="apellido_materno" ng-model="nuevoRH.persona.apellido_materno" placeholder="Apellido Materno" class="form-control"
+                                                <input required type="text" id="apellido_materno" ng-model="nuevoRH.persona.apellido_materno" placeholder="Apellido Materno" class="form-control"
                                                     form="datosPersonalesForm" />
                                             </div>
 
@@ -7743,7 +7745,7 @@
                                                 <label for="nombres">Nombres</label>
                                             </div>
                                             <div class="col-lg-7">
-                                                <input type="text" id="nombres" ng-model="nuevoRH.persona.nombres" placeholder="Nombres" class="form-control" form="datosPersonalesForm"
+                                                <input required type="text" id="nombres" ng-model="nuevoRH.persona.nombres" placeholder="Nombres" class="form-control" form="datosPersonalesForm"
                                                 />
                                             </div>
                                         </div>
@@ -7752,7 +7754,7 @@
                                                 <label for="ci">C.I.</label>
                                             </div>
                                             <div class="col-lg-4">
-                                                <input type="text" ng-change="copiarCodigodeCi(nuevoRH)" id="ci" ng-model="nuevoRH.persona.ci" placeholder="C.I" class="form-control"
+                                                <input required type="text" ng-change="copiarCodigodeCi(nuevoRH)" id="ci" ng-model="nuevoRH.persona.ci" placeholder="C.I" class="form-control"
                                                     form="datosPersonalesForm" />
                                             </div>
                                             <div class="col-lg-1">
@@ -7786,7 +7788,7 @@
 
                             </div>
 
-                            <div class="step-pane" data-step="2">
+                            <div id="cuerpo-nuevo-datos-comple" class="step-pane" data-step="2">
                                 <div class="row">
                                     <div class="col-lg-12">
                                         <div class="form-group">
@@ -7858,7 +7860,7 @@
                                 </div>
                             </div>
 
-                            <div class="step-pane" data-step="3">
+                            <div id="cuerpo-nuevo-datos-laborales" class="step-pane" data-step="3">
                                 <div class="row">
                                     <div class="col-lg-12">
                                         <div class="row form-group">
@@ -7866,7 +7868,7 @@
                                                 <label for="empresa">Empresa</label>
                                             </div>
                                             <div class="col-lg-7">
-                                                <input type="text" id="designacion_empresa" ng-model="nuevoRH.designacion_empresa" placeholder="Empresa" class="form-control"
+                                                <input required type="text" id="designacion_empresa" ng-model="nuevoRH.designacion_empresa" placeholder="Empresa" class="form-control"
                                                 />
                                             </div>
                                         </div>
@@ -7875,7 +7877,7 @@
                                                 <label for="campo">Campo</label>
                                             </div>
                                             <div class="col-lg-7">
-                                                <input type="text" id="campo" ng-model="nuevoRH.campo" placeholder="Campo" class="form-control" />
+                                                <input required type="text" id="campo" ng-model="nuevoRH.campo" placeholder="Campo" class="form-control" />
                                             </div>
 
                                         </div>
@@ -7884,7 +7886,7 @@
                                                 <label for="cargo">Cargo</label>
                                             </div>
                                             <div class="col-lg-7">
-                                                <div isteven-multi-select input-model="cargos" output-model="nuevoRH.cargos" button-label="icon nombre" item-label="icon nombre maker"
+                                                <div required isteven-multi-select input-model="cargos" output-model="nuevoRH.cargos" button-label="icon nombre" item-label="icon nombre maker"
                                                     tick-property="ticked" translation="localLang">
                                                 </div>
                                             </div>
@@ -7904,12 +7906,12 @@
 
                     <div class="modal-footer wizard-actions">
 
-                        <button type="button" class="btn btn-sm btn-prev">
+                        <button id="anterior-n"type="button" class="btn btn-sm btn-prev">
                             <i class="ace-icon fa fa-arrow-left"></i>
                             Anterior
                         </button>
 
-                        <button type="submit" id="siguiente" ng-disabled="data.message=='¡el codigo ya Exsiste!'" class="btn btn-success btn-sm btn-next"
+                        <button type="submit" id="siguiente" ng-click="ValidarForm(formNuevoRrrhh,steps,'anterior-n')" ng-disabled="data.message=='¡el codigo ya Exsiste!'" class="btn btn-success btn-sm btn-next"
                             data-last="Finish">
                             Siguiente
                             <i class="ace-icon fa fa-arrow-right icon-on-right"></i>
@@ -8649,6 +8651,20 @@
             </div>
         
     </div>
-
+    <script>
+         if ($("#siguiente-f").click()) {
+            alert("test");
+        }
+       /*  $("#siguiente-f").click(function(){
+            if($("#formularioFichaTecnica").valid()){
+                // allow change
+                console.log("si")
+            }else{
+                console.log("no")
+                // cancel change
+            }
+        }); */
+    </script>
+    
     <!-- fin tr3 historial tr3-->
 </div>
