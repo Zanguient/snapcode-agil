@@ -75,7 +75,7 @@ angular.module('agil.servicios')
     })
 
     .factory('ProformaInfo', ['Proforma', '$q', function (Proforma, $q) {
-        var res = function (idProforma,id_actividad) {
+        var res = function (idProforma, id_actividad) {
             var delay = $q.defer();
             Proforma.get({ id: idProforma, id_actividad: id_actividad }, function (entidades) {
                 delay.resolve(entidades);
@@ -121,8 +121,15 @@ angular.module('agil.servicios')
         return res;
     }])
 
+    // .factory('FacturarProformas', function ($resource) {
+    //     return $resource(restServer + "proforma/facturar/:id_empresa", {},
+    //         {
+    //             'update': { method: 'PUT' }
+    //         });
+    // })
+
     .factory('FacturarProformas', function ($resource) {
-        return $resource(restServer + "proforma/facturar/:id_empresa", {},
+        return $resource(restServer + "ventas", {},
             {
                 'update': { method: 'PUT' }
             });
@@ -131,7 +138,7 @@ angular.module('agil.servicios')
     .factory('FacturaProforma', ['FacturarProformas', '$q', function (FacturarProformas, $q) {
         var res = function (idEmpresa, proformas) {
             var delay = $q.defer();
-            FacturarProformas.save({ id_empresa: idEmpresa }, proformas, function (entidades) {
+            FacturarProformas.save({}, proformas, function (entidades) {
                 delay.resolve(entidades);
             }, function (error) {
                 delay.reject(error);

@@ -506,7 +506,7 @@ angular.module('agil.controladores')
             if ($scope.actividadesDosificaciones.length > 0) {
                 var toDrop = []
                 var nuevasActividades = $scope.actividadesDosificaciones.map(function (_, i) {
-                    if ((_.id === undefined || _.eliminado || (_.id_dosificacion == null &&( _.dosificacion !== undefined || _.dosificacion !== null)) || _.editar) && _.expirado == false) {
+                    if ((_.id === undefined || _.eliminado || (_.id_dosificacion == null &&( _.dosificacion == undefined || _.dosificacion == null)) || _.editar) && _.expirado == false) {
                         return _
                     } else {
                         toDrop.push(i)
@@ -646,13 +646,13 @@ angular.module('agil.controladores')
                         }
                     }
                     if (!encontrado) {
-                        var act = { actividad: actividad, sucursal: sucursal }
+                        var act = { actividad: actividad, sucursal: sucursal, expirado: false }
                         $scope.actividadesDosificaciones.push(act)
                     } else {
                         $scope.mostrarMensaje('La actividad "' + actividad.nombre + '" ya esta en la lista de esta sucursal "' + sucursal.nombre + '".')
                     }
                 } else {
-                    var act = { actividad: actividad, sucursal: sucursal }
+                    var act = { actividad: actividad, sucursal: sucursal, expirado: false }
                     $scope.actividadesDosificaciones.push(act)
                 }
             }

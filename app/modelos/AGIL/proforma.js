@@ -68,9 +68,9 @@ module.exports = function (sequelize, Sequelize) {
             type: Sequelize.INTEGER,
             field: 'autorizacion'
         },
-        fecha_limite_emision:{
+        fecha_limite_emision: {
             type: Sequelize.DATE,
-            field:'fecha_limite_emision'
+            field: 'fecha_limite_emision'
         },
         id_movimiento: {
             type: Sequelize.INTEGER,
@@ -79,6 +79,11 @@ module.exports = function (sequelize, Sequelize) {
         codigo_control:{
             type: Sequelize.STRING,
             field:'codigo_control'
+        },
+        id_venta: {
+            type: Sequelize.INTEGER,
+            field: 'venta',
+            defaultValue: null
         },
         eliminado: {
             type: Sequelize.BOOLEAN,

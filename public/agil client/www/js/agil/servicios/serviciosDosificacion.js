@@ -47,4 +47,25 @@ angular.module('agil.servicios')
 		return delay.promise;
 	};
     return res;
-  }]);
+	}])
+	
+	.factory('VerificarDosificacionesExpiradas', function($resource) {
+		return $resource(restServer+"actualizacion-dosificaciones-expiradas/:id_empresa");
+})
+
+.factory('VencimientoDosificaciones', ['VerificarDosificacionesExpiradas','$q',function(VerificarDosificacionesExpiradas, $q) 
+  {
+	var res = function(idEmpresa) 
+	{
+		var delay = $q.defer();
+		VerificarDosificacionesExpiradas.query({id_empresa:idEmpresa},function(entidades) 
+		{        
+			delay.resolve(entidades);
+		}, function(error) 
+			{
+				delay.reject(error);
+			});
+		return delay.promise;
+	};
+    return res;
+	}]);
