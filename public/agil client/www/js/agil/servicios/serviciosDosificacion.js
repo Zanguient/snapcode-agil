@@ -58,7 +58,7 @@ angular.module('agil.servicios')
 	var res = function(idEmpresa) 
 	{
 		var delay = $q.defer();
-		VerificarDosificacionesExpiradas.query({id_empresa:idEmpresa},function(entidades) 
+		VerificarDosificacionesExpiradas.get({id_empresa:idEmpresa},function(entidades) 
 		{        
 			delay.resolve(entidades);
 		}, function(error) 

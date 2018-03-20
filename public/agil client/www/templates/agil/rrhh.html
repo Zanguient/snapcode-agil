@@ -4132,7 +4132,7 @@
                             </div>
                             <div class="form-group col-sm-6 col-md-3">
                                 <label for="fecha-ingreso">Fecha de Ingreso:</label>
-                                <input type="text" ng-update-hidden class="form-control date-picker" autocomplete="off" ng-model="beneficio.fecha_ingreso" id="fecha-ingreso"
+                                <input type="text" disabled ng-update-hidden class="form-control date-picker" autocomplete="off" ng-model="beneficio.fecha_ingreso" id="fecha-ingreso"
                                     name="fecha-ingreso">
                             </div>
                             <div class="form-group col-sm-6 col-md-3">
@@ -4160,7 +4160,7 @@
                                         <input type="text" ng-model="tiempoTrabajado.dias" class="form-control" id="dias-trabajados" name="dias-trabajados" disabled>
                                     </div>
                                 </div>
-                                <div class="form-group row">
+                                <div class="form-group row" ng-hide="!beneficio.tipo_beneficio">
                                     <label class="col-sm-3" for="motivo-retiro">Motivo de Retiro</label>
                                     <div class="input-group col-sm-9">
                                         <span class="input-group-addon glyphicon glyphicon-pencil point-edit green" ng-click="abrirDialogConceptoEdicion(tipoMotivo)"></span>
@@ -4169,7 +4169,7 @@
                                         </select>
                                     </div>
                                 </div>
-                                <div class="row">
+                                <div class="row" ng-hide="!beneficio.tipo_beneficio">
                                     <div class="form-group col-sm-3">
                                         <label for="">Vacaciones</label>
                                         <button type="button" class="btn btn-primary btn-sm" ng-click="abrirDialogDetalleVacaciones()">Ver detalle</button>
@@ -4208,7 +4208,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-6" >
                                 <div class="form-group row">
                                     <div class="col-sm-3">
                                         <label for="">Desahucio</label>
@@ -4236,7 +4236,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="row">
+                        <div class="row" ng-hide="!beneficio.tipo_beneficio">
                             <div class="col-md-12">
                                 <div class="row">
                                     <div class="col-md-6">

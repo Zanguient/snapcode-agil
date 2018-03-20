@@ -4424,14 +4424,14 @@ angular.module('agil.controladores')
             var anticiposTr3 = []
             var total = 0
             tr3.historialtr3.forEach(function (tr3H, index, array) {
-                total = tr3H.anticipo.monto
+                total += tr3H.anticipo.monto
                 anticiposTr3.push(tr3H.anticipo)
                 if (index === (array.length - 1)) {
                     var dato = { anticipos: anticiposTr3, tipo: tipo, tr3Encontrado: tr3, total: total }
                     if (tipo == "MSC") {
-                        var nombreArchivo = dato.tr3Encontrado.planilla + "" + dia + "" + mes + "" + anio + "" + dato.tr3Encontrado.numero_planilla + ".txt"
+                        var nombreArchivo = dato.tr3Encontrado.planilla + "" + dia + "" + (mes+1) + "" + anio + "" + dato.tr3Encontrado.numero_planilla + ".txt"
                     } else {
-                        var nombreArchivo = dato.tr3Encontrado.planilla + "" + dia + "" + mes + "" + anio + "" + dato.tr3Encontrado.numero_planilla + ".txt"
+                        var nombreArchivo = dato.tr3Encontrado.planilla + "" + dia + "" + (mes+1) + "" + anio + "" + dato.tr3Encontrado.numero_planilla + ".txt"
                     }
                     $scope.descargarArchivo($scope.generarTexto(dato), nombreArchivo);
                 }
@@ -4460,9 +4460,9 @@ angular.module('agil.controladores')
                 if (index === (array.length - 1)) {
                     var dato = { anticipos: anticiposTr3, tipo: tipo, tr3Encontrado: tr3, total: total }
                     if (tipo == "MSC") {
-                        var nombreArchivo = dato.tr3Encontrado.planilla + "" + dia + "" + mes + "" + anio + "" + dato.tr3Encontrado.numero_planilla + ".txt"
+                        var nombreArchivo = dato.tr3Encontrado.planilla + "" + dia + "" + (mes+1) + "" + anio + "" + dato.tr3Encontrado.numero_planilla + ".txt"
                     } else {
-                        var nombreArchivo = dato.tr3Encontrado.planilla + "" + dia + "" + mes + "" + anio + "" + dato.tr3Encontrado.numero_planilla + ".txt"
+                        var nombreArchivo = dato.tr3Encontrado.planilla + "" + dia + "" + (mes+1) + "" + anio + "" + dato.tr3Encontrado.numero_planilla + ".txt"
                     }
                     $scope.descargarArchivo($scope.generarTextoCarta(dato), nombreArchivo);
                 }
@@ -4491,9 +4491,9 @@ angular.module('agil.controladores')
                     $scope.cerrarModalTr3BancoUnion()
                     $scope.buscarAnticiposOridnario($scope.filtroAnticipo)
                     if (datos.tipo == "MSC") {
-                        var nombreArchivo = dato.tr3Encontrado.planilla + "" + dia + "" + mes + "" + anio + "" + dato.tr3Encontrado.numero_planilla + ".txt"
+                        var nombreArchivo = dato.tr3Encontrado.planilla + "" + dia + "" + (mes+1) + "" + anio + "" + dato.tr3Encontrado.numero_planilla + ".txt"
                     } else {
-                        var nombreArchivo = dato.tr3Encontrado.planilla + "" + dia + "" + mes + "" + anio + "" + dato.tr3Encontrado.numero_planilla + ".txt"
+                        var nombreArchivo = dato.tr3Encontrado.planilla + "" + dia + "" + (mes+1) + "" + anio + "" + dato.tr3Encontrado.numero_planilla + ".txt"
                     }
                     $scope.descargarArchivo($scope.generarTexto(dato), nombreArchivo);
                     $scope.descargarArchivo($scope.generarTextoCarta(dato), nombreArchivo);
@@ -4548,20 +4548,20 @@ angular.module('agil.controladores')
 
                     "* Cuenta de débito Nro:                 " + datos.tr3Encontrado.cuenta.numero + "\r\n" +
                     "* Cuenta Pago de Planilla:              " + datos.tr3Encontrado.planilla + "\r\n" +
-                    "* Nombre del archivo:                   " + datos.tr3Encontrado.planilla + "" + dia + "" + mes + "" + anio + "" + datos.tr3Encontrado.numero_planilla + ".tr3\r\n" +
+                    "* Nombre del archivo:                   " + datos.tr3Encontrado.planilla + "" + dia + "" + (mes+1) + "" + anio + "" + datos.tr3Encontrado.numero_planilla + ".tr3\r\n" +
                     "* Código de control:                     87fd35e019787f9612a4ffb9fc2cb415\r\n" +
                     "* Nombre / Número de planilla:  " + datos.tr3Encontrado.numero_planilla + "\r\n" +
                     "* Monto total de débito:                 Bs " + datos.total + "\r\n\r\n" +
 
                     "Los datos apuntados anteriormente y el detalle de pagos, se encuentran en el archivo \r\n" +
-                    datos.tr3Encontrado.planilla + "" + dia + "" + mes + "" + anio + "" + datos.tr3Encontrado.numero_planilla + ".tr3, adjunto a la presente carta.\r\n\r\n " +
+                    datos.tr3Encontrado.planilla + "" + dia + "" + (mes+1) + "" + anio + "" + datos.tr3Encontrado.numero_planilla + ".tr3, adjunto a la presente carta.\r\n\r\n " +
 
                     "Si, a los efectos de la presente, fuera necesario realizar compra venta de moneda nacional\r\n" +
                     "o extranjera,  también  autorizamos e instruimos  realizar las operaciones  necesarias  para\r\n" +
                     "cumplir  con  lo  instruido,  de  tal  manera  que se realicen  los abonos  en  la moneda  que\r\n" +
                     "corresponda a cada cuenta beneficiaria.\r\n" +
                     "de Enero de Debo informar lo siguiente:\r\n" +
-                    "El origen de los fondos corresponde al" + datos.tr3Encontrado.origen_fondos + ".\r\n" +
+                    "El origen de los fondos corresponde al " + datos.tr3Encontrado.origen_fondos + ".\r\n" +
                     "El Destino de los Fondos, " + datos.tr3Encontrado.destino_fondos + ".\r\n\r\n" +
 
                     "Agradecemos su gentil atención a esta solicitud.\r\n\r\n" +
