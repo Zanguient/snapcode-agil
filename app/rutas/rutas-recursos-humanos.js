@@ -1,6 +1,7 @@
 module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente, Persona, Empresa, Sucursal, Clase, Diccionario, Tipo, decodeBase64Image, fs, RrhhEmpleadoFicha, RrhhEmpleadoFichaOtrosSeguros, RrhhEmpleadoFichaFamiliar, RrhhEmpleadoDiscapacidad
     , RrhhEmpleadoCargo, RrhhEmpleadoHojaVida, RrhhEmpleadoFormacionAcademica, RrhhEmpleadoExperienciaLaboral, RrhhEmpleadoLogroInternoExterno, RrhhEmpleadoCapacidadInternaExterna, NumeroLiteral, RrhhEmpleadoPrestamo, RrhhEmpleadoPrestamoPago, RrhhEmpleadoRolTurno, RrhhEmpleadoHorasExtra, RrhhAnticipo,
-    EvaluacionPolifuncional, ConfiguracionCalificacionEvaluacionPolifuncional, ConfiguracionDesempenioEvaluacionPolifuncional, RrhhEmpleadoAusencia, RrhhEmpleadoVacaciones, RrhhEmpleadoCompensacionAusencia, RrhhFeriado, RrhhClaseAsuencia, RrhhEmpleadoConfiguracionVacacion, RrhhEmpleadoHistorialVacacion, RrhhEmpleadoTr3, RrhhEmpleadoAnticipoTr3, Banco) {
+    EvaluacionPolifuncional, ConfiguracionCalificacionEvaluacionPolifuncional, ConfiguracionDesempenioEvaluacionPolifuncional, RrhhEmpleadoAusencia, RrhhEmpleadoVacaciones, RrhhEmpleadoCompensacionAusencia, RrhhFeriado, RrhhClaseAsuencia, RrhhEmpleadoConfiguracionVacacion, RrhhEmpleadoHistorialVacacion, RrhhEmpleadoTr3, RrhhEmpleadoAnticipoTr3, Banco, RrhhEmpleadoDeduccionIngreso,
+    RrhhEmpleadoBeneficioSocial) {
 
     router.route('/recursos-humanos/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion/codigo/:codigo/nombres/:nombres/ci/:ci/campo/:campo/cargo/:cargo/busquedaEmpresa/:busquedaEmpresa/grupo/:grupo_sanguineo/estado/:estado/apellido/:apellido')
         .get(function (req, res) {
@@ -107,7 +108,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                     from agil_medico_paciente "+ condicionContrato + " INNER JOIN agil_rrhh_empleado_cargo AS cargos ON agil_medico_paciente.id = cargos.empleado " + condicionCargo + " \
                     LEFT OUTER JOIN gl_clase AS `cargos.cargo` ON cargos.cargo = `cargos.cargo`.id INNER JOIN gl_persona ON (agil_medico_paciente.persona = gl_persona.id) INNER JOIN gl_clase ON (agil_medico_paciente.extension = gl_clase.id)\
                     where agil_medico_paciente.empresa = "+ req.params.id_empresa + activo + " AND (" + condicion + ") \
-                    AND agil_medico_paciente.es_empleado = true GROUP BY agil_medico_paciente.id order by "+ req.params.columna + " " + req.params.direccion + limite, options)
+                    AND agil_medico_paciente.es_empleado = true GROUP BY agil_medico_paciente.id order by "+ req.params.columna + " " + req.params.direccion + limite, { type: sequelize.QueryTypes.SELECT })
                             .then(function (pacientes) {
                                 var a = ""
                                 var arregloCargos = []
@@ -128,8 +129,8 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                                                 include: [{ model: Clase, as: 'tipoContrato' }],
                                                 order: [['id', 'DESC']]
                                             }).then(function (fichaActual) {
-                                                paciente.dataValues.cargos = cargosEmpleado
-                                                paciente.dataValues.ficha = fichaActual[0]
+                                                paciente.cargos = cargosEmpleado
+                                                paciente.ficha = fichaActual[0]
                                                 arregloCargos.push(paciente)
                                                 if (index === (array.length - 1)) {
                                                     res.json({ pacientes: arregloCargos, paginas: Math.ceil(data.length / req.params.items_pagina) });
@@ -154,12 +155,12 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                 LEFT OUTER JOIN gl_clase AS `cargos.cargo` ON cargos.cargo = `cargos.cargo`.id INNER JOIN gl_persona ON (agil_medico_paciente.persona = gl_persona.id) INNER JOIN gl_clase ON (agil_medico_paciente.extension = gl_clase.id)\
                 where agil_medico_paciente.empresa = "+ req.params.id_empresa + activo + " AND agil_medico_paciente.es_empleado = true GROUP BY agil_medico_paciente.id order by " + req.params.columna + " " + req.params.direccion, { type: sequelize.QueryTypes.SELECT })
                     .then(function (data) {
-                        var options = {
+                        /* var options = {
                             model: MedicoPaciente,
                             include: [{ model: Persona, as: 'persona' },
                             { model: Clase, as: 'extension' }]
                         };
-                        Sequelize.Model.$validateIncludedElements(options);
+                        Sequelize.Model.$validateIncludedElements(options); */
                         sequelize.query("select DISTINCT agil_medico_paciente.id as 'id',agil_medico_paciente.es_empleado as 'es_empleado', agil_medico_paciente.persona as 'id_persona',agil_medico_paciente.codigo as 'codigo',\
                     agil_medico_paciente.empresa as 'id_empresa', gl_clase.nombre as 'extension', agil_medico_paciente.grupo_sanguineo as 'grupo_sanguineo',\
                     agil_medico_paciente.campo as 'campo', agil_medico_paciente.designacion_empresa as 'designacion_empresa',agil_medico_paciente.comentario as 'comentario',\
@@ -168,7 +169,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                     gl_persona.telefono as 'telefono', gl_persona.telefono_movil as 'telefono_movil', gl_persona.fecha_nacimiento as 'fecha_nacimiento'\
                     from agil_medico_paciente "+ condicionContrato + " INNER JOIN agil_rrhh_empleado_cargo AS cargos ON agil_medico_paciente.id = cargos.empleado " + condicionCargo + " \
                     LEFT OUTER JOIN gl_clase AS `cargos.cargo` ON cargos.cargo = `cargos.cargo`.id INNER JOIN gl_persona ON (agil_medico_paciente.persona = gl_persona.id) INNER JOIN gl_clase ON (agil_medico_paciente.extension = gl_clase.id)\
-                    where agil_medico_paciente.empresa = "+ req.params.id_empresa + activo + " AND agil_medico_paciente.es_empleado = true GROUP BY agil_medico_paciente.id order by " + req.params.columna + " " + req.params.direccion + limite, options)
+                    where agil_medico_paciente.empresa = "+ req.params.id_empresa + activo + " AND agil_medico_paciente.es_empleado = true GROUP BY agil_medico_paciente.id order by " + req.params.columna + " " + req.params.direccion + limite, { type: sequelize.QueryTypes.SELECT }/* , options */)
                             .then(function (pacientes) {
                                 var a = ""
                                 var arregloCargos = []
@@ -188,8 +189,8 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                                                 include: [{ model: Clase, as: 'tipoContrato' }],
                                                 order: [['id', 'DESC']],
                                             }).then(function (fichaActual) {
-                                                paciente.dataValues.cargos = cargosEmpleado
-                                                paciente.dataValues.ficha = fichaActual[0]
+                                                paciente.cargos = cargosEmpleado
+                                                paciente.ficha = fichaActual[0]
                                                 arregloCargos.push(paciente)
                                                 if (index === (array.length - 1)) {
                                                     res.json({ pacientes: arregloCargos, paginas: Math.ceil(data.length / req.params.items_pagina) });
@@ -643,7 +644,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                 var haber = parseFloat(req.body.haber_basico)
                 var numero_literal = NumeroLiteral.Convertir(parseFloat(req.body.haber_basico).toFixed(2).toString());
                 var inicio = new Date(req.body.fecha_inicio2); inicio.setHours(0, 0, 0, 0, 0);
-               
+
                 condicionFicha = { id: req.body.id };
                 RrhhEmpleadoFicha.find({
                     where: condicionFicha,
@@ -1039,7 +1040,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                             id_empleado: empleado.id,
                             eliminado: false
                         }).then(function (historialCreado) {
-                            
+
                             if (contador == (req.body.historialVacacion.length - 1)) {
                                 res.json({ message: "Ficha empleado actualizada satisfactoriamente!" })
                             }
@@ -1530,9 +1531,9 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
         .get(function (req, res) {
             MedicoPaciente.findAll({
                 where: { id_empresa: req.params.id_empresa, es_empleado: true, eliminado: false },
-                include: [{ model: Persona, as: 'persona' }]
+                include: [{ model: Persona, as: 'persona' },{model:RrhhEmpleadoFicha,as:'empleadosFichas',limit:1,order: [['id', 'DESC']]}]
             }).then(function (empleados) {
-                if (empleados.length > 0) {
+               /*  if (empleados.length > 0) {
                     empleados.forEach(function (empleado, index, array) {
                         RrhhEmpleadoFicha.findAll({
                             limit: 1,
@@ -1549,11 +1550,11 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                     })
 
                 } else {
-
+ */
                     res.json({ empleados: empleados })
 
-                }
-
+               /*  }
+ */
             })
         })
     router.route('/recursos-humanos/rolTurno/empleado/:id_empleado')
@@ -2085,9 +2086,9 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
             }
             RrhhAnticipo.findAll({
                 where: condicionAnticipo,
-                include: [{ model: MedicoPaciente, as: 'empleado', where: condicionEmpleado, include: [{ model: Persona, as: 'persona' }] }, { model: Clase, as: 'tipoAnticipo' }]
+                include: [{ model: MedicoPaciente, as: 'empleado', where: condicionEmpleado, include: [{ model: Persona, as: 'persona' },{model:RrhhEmpleadoFicha,as:'empleadosFichas',include: [{ model: Clase, as: 'banco' }]}] }, { model: Clase, as: 'tipoAnticipo' }]
             }).then(function (empleadoaAnticipo) {
-                if (empleadoaAnticipo.length > 0) {
+             /*    if (empleadoaAnticipo.length > 0) {
                     empleadoaAnticipo.forEach(function (anticipo, index, array) {
                         RrhhEmpleadoFicha.findAll({
                             limit: 1,
@@ -2104,10 +2105,10 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                         })
                     })
 
-                } else {
+                } else { */
 
                     res.json({ anticipos: empleadoaAnticipo })
-                }
+               /*  } */
             })
         })
     //rutas ausencias
@@ -2459,7 +2460,53 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
             })
         })
 
+        router.route('/recursos-humanos/beneficios/ficha/:id')
+        .get(function (req, res) {
+            RrhhEmpleadoBeneficioSocial.findAll({
+                where:{id_ficha:req.params.id}
+            }).then(function (beneficios) {
+                res.json(beneficios)
+            })
+        })
+        .post(function (req, res) {
+            RrhhEmpleadoBeneficioSocial.create({
+                id_ficha: req.params.id,
+                id_motivo: req.body.motivo.id,
+                fecha_elaboracion: req.body.fecha_elaboracion,
+                fecha_asistensia: req.body.fecha_asistensia,
+                fecha_ingreso: req.body.fecha_ingreso,
+                fecha_retiro: req.body.fecha_retiro,
+                primer_mes: req.body.primer_mes,
+                segundo_mes: req.body.segundo_mes,
+                tercer_mes: req.body.tercer_mes,
+                numero_quinquenio: req.body.numero_quinquenio,
+                quinquenio_adelantado: req.body.quinquenio_adelantado,
+                total_quinquenio: req.body.total_quinquenio,
+                tipo_beneficio: req.body.tipo_beneficio,
+                desahucio: req.body.desahucio,
+                eliminado: false
+            }).then(function (beneficioCreado) {
+                if (req.body.ingresos.length > 0) {
+                    req.body.ingresos.forEach(function (ingreso, index, array) {
+                        RrhhEmpleadoDeduccionIngreso.create({
+                            id_beneficio: beneficioCreado.id,
+                            monto: ingreso.monto,
+                            motivo: ingreso.motivo,
+                            id_tipo: ingreso.tipo.id,
+                            eliminado: false
+                        }).then(function (decuccionCreada) {
+                            if (index === (array.length - 1)) {
+                                guardarDeducciones(req, res, RrhhEmpleadoDeduccionIngreso, beneficioCreado)
+                            }
+                        })
 
+                    });
+                } else {
+                    guardarDeducciones(req, res, RrhhEmpleadoDeduccionIngreso, beneficioCreado)
+                }
+
+            })
+        })
     function fechaATexto(fecha) {
         fech = new Date(fecha)
         var valor = (fech.getMonth() + 1)
@@ -2473,6 +2520,27 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
         fecha = valor2 + "/" + valor + "/" + fech.getFullYear();
         return fecha
         // $scope.fechaAplicacionVacuna = new Date(convertirFecha(fecha))
+    }
+    
+    function guardarDeducciones(req, res, RrhhEmpleadoDeduccionIngreso, beneficioCreado) {
+        if (req.body.deducciones.length > 0) {
+            req.body.deducciones.forEach(function (deduccion, index, array) {
+                RrhhEmpleadoDeduccionIngreso.create({
+                    id_beneficio: beneficioCreado.id,
+                    monto: deduccion.monto,
+                    motivo:deduccion.motivo,
+                    id_tipo:  deduccion.tipo.id,
+                    eliminado: false
+                }).then(function (decuccionCreada) {
+                    if (index === (array.length - 1)) {
+                        res.json({ mensaje: 'Beneficio social creado sadisfactoriamente!' })
+                    }
+                })
+
+            });
+        } else {
+            res.json({ mensaje: 'Beneficio social creado sadisfactoriamente!' })
+        }
     }
     //FIN
     /////////////////////////////////////////////////////// RUTAS PARA POLIFUNCIONAL ///////////////////////////////////////////////////

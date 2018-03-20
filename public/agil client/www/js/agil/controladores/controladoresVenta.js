@@ -1468,7 +1468,7 @@ angular.module('agil.controladores')
 				ventaConsultada.sucursalDestino = datos.sucursalDestino;
 				var fecha = new Date(ventaConsultada.fecha);
 				ventaConsultada.fechaTexto = fecha.getDate() + "/" + (fecha.getMonth() + 1) + "/" + fecha.getFullYear();
-				ImprimirSalida(ventaConsultada.movimiento.clase.nombre_corto, ventaConsultada, false, $scope.usuario);
+				ImprimirSalida(ventaConsultada.movimiento.clase.nombre_corto, ventaConsultada, false, $scope.usuario, false);
 			});
 		}
 
@@ -1516,7 +1516,7 @@ angular.module('agil.controladores')
 								$scope.abrirPopup($scope.idModalImpresionVencimiento);
 								//ImprimirSalida(movimiento, res, true, $scope.usuario);
 							} else {
-								ImprimirSalida(movimiento, res, true, $scope.usuario);
+								ImprimirSalida(movimiento, res, true, $scope.usuario, false);
 							}
 							$scope.crearNuevaVenta(res);
 							$scope.mostrarMensaje('Venta registrada exitosamente!');
@@ -1533,13 +1533,13 @@ angular.module('agil.controladores')
 
 		$scope.imprimirConVencimiento = function () {
 			$scope.impresion.res.con_vencimiento = true;
-			ImprimirSalida($scope.impresion.movimiento, $scope.impresion.res, $scope.impresion.al_guardar, $scope.impresion.usuario);
+			ImprimirSalida($scope.impresion.movimiento, $scope.impresion.res, $scope.impresion.al_guardar, $scope.impresion.usuario, false);
 			$scope.cerrarPopup($scope.idModalImpresionVencimiento);
 		}
 
 		$scope.imprimirSinVencimiento = function () {
 			$scope.impresion.res.con_vencimiento = false;
-			ImprimirSalida($scope.impresion.movimiento, $scope.impresion.res, $scope.impresion.al_guardar, $scope.impresion.usuario);
+			ImprimirSalida($scope.impresion.movimiento, $scope.impresion.res, $scope.impresion.al_guardar, $scope.impresion.usuario, false);
 			$scope.cerrarPopup($scope.idModalImpresionVencimiento);
 		}
 
@@ -1555,7 +1555,7 @@ angular.module('agil.controladores')
 				ventaConsultada.sucursalDestino = datos.sucursalDestino;
 				var fecha = new Date(ventaConsultada.fecha);
 				ventaConsultada.fechaTexto = fecha.getDate() + "/" + (fecha.getMonth() + 1) + "/" + fecha.getFullYear();
-				ImprimirSalida(ventaConsultada.movimiento.clase.nombre_corto, ventaConsultada, false, $scope.usuario);
+				ImprimirSalida(ventaConsultada.movimiento.clase.nombre_corto, ventaConsultada, false, $scope.usuario, false);
 			});
 		}
 
@@ -1626,7 +1626,11 @@ angular.module('agil.controladores')
 			angular.element($window).unbind("keydown");
 			angular.element($window).bind("keydown", function (e) {
 				if (e.keyCode == 115) {
-					$scope.venderProformaDirecto($scope.venta);
+					$scope.venderProformaDirecto($scope.venta, false);
+				}
+
+				if (e.keyCode == 113) {
+					$scope.venderProformaDirecto($scope.venta, true);
 				}
 
 				// ========= para la tecla F10 del panel ventas ============ 
@@ -1663,7 +1667,7 @@ angular.module('agil.controladores')
 
 			if (keyEvent.keyCode == 13) {
 				console.log('llego a cobroooooo 22222222222');
-				$scope.guardarVentaPanel(formularioVentaPanel, venta);
+				$scope.guardarVentaPanel(formularioVentaPanel, venta, false);
 				$scope.cerrarPopPupVentasCobro();
 			}
 
@@ -1802,7 +1806,7 @@ angular.module('agil.controladores')
 		$scope.dragged = false;
 		$scope.proformaClick = function (venta) {
 			if (!$scope.dragged) {
-				$scope.venderProformaDirecto(venta);
+				$scope.venderProformaDirecto(venta, false);
 			}
 
 			$scope.dragged = false;
@@ -1812,7 +1816,7 @@ angular.module('agil.controladores')
 			$scope.dragged = true;
 		};
 
-		$scope.venderProformaDirecto = function (venta) {
+		$scope.venderProformaDirecto = function (venta, llevar) {
 			if (venta.detallesVenta.length > 0) {
 				var promesa = ClientesNit($scope.usuario.id_empresa, 0);
 				promesa.then(function (results) {
@@ -1830,7 +1834,7 @@ angular.module('agil.controladores')
 					fecha = fechaActual;
 					venta.pagado = venta.total;
 					venta.cambio = 0;
-					$scope.guardarVentaPanel(true, venta);
+					$scope.guardarVentaPanel(true, venta, llevar);
 				});
 			} else {
 				$scope.mostrarMensaje("¡Debe agregar al menos un producto para realizar la transacción!");
@@ -1948,7 +1952,7 @@ angular.module('agil.controladores')
 			}
 		}
 
-		$scope.guardarVentaPanel = function (valido, venta) {
+		$scope.guardarVentaPanel = function (valido, venta, llevar) {
 			if (valido) {
 				if ($scope.usuario.empresa.usar_pantalla_cliente) {
 					socket.emit('terminarVenta', venta.sucursal);
@@ -1977,7 +1981,7 @@ angular.module('agil.controladores')
 							$scope.abrirPopupPanel(venta.sucursal, venta.almacen, venta.actividad, venta.tipoPago, venta.movimiento);
 
 						} else {
-							ImprimirSalida(movimiento, res, true, $scope.usuario);
+							ImprimirSalida(movimiento, res, true, $scope.usuario, llevar);
 							$scope.mostrarMensaje('Venta registrada exitosamente!');
 							$scope.cargarProductos();
 							$scope.abrirPopupPanel(venta.sucursal, venta.almacen, venta.actividad, venta.tipoPago, venta.movimiento);

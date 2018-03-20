@@ -68,26 +68,6 @@ angular.module('agil.directivas', [])
         }
     };
 })
-.directive('disabledclick', function () {
-  return {
-    restrict: 'A',
-    priority: 1,
-    terminal: true, // this will prevent default ng-click behaviour
-    link: function (scope, element, attr) {
-      var clickAction = attr.ngClick; // get the current ngclick value
-      var binding = element.bind('click',function () {
-        if (attr.disabled==true) {//check if the tag is available to be clicked
-          scope.$eval(clickAction) // call the event
-        }
-      });
-      scope.$on('$destroy', function(){
-        if(binding instanceof function(){}){
-        binding(); // destroy the bind we created, preventing a memory leak.
-      }
-      })
-    }
-  };
-})
 
 .directive('capitalize', function() {
   return {

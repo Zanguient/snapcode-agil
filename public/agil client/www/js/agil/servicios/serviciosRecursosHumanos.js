@@ -709,3 +709,33 @@ angular.module('agil.servicios')
     };
     return res;
 }])
+.factory('NuevoBeneficioSocial', function ($resource) {
+    return $resource(restServer + "recursos-humanos/beneficios/ficha/:id",null,
+        {
+            'update': { method: 'PUT' }
+        });
+})
+.factory('CrearBeneficioSocial', ['NuevoBeneficioSocial', '$q', function (NuevoBeneficioSocial, $q) {
+    var res = function (datos,idFicha) {
+        var delay = $q.defer();
+        NuevoBeneficioSocial.save({id:idFicha},datos,function (entidad) {
+            delay.resolve(entidad);
+        }, function (error) {
+            delay.reject(error);
+        });
+        return delay.promise;
+    };
+    return res;
+}])
+.factory('ListaBeneficiosEmpleado', ['NuevoBeneficioSocial', '$q', function (NuevoBeneficioSocial, $q) {
+    var res = function (idFicha) {
+        var delay = $q.defer();
+        NuevoBeneficioSocial.query({id:idFicha},function (entidad) {
+            delay.resolve(entidad);
+        }, function (error) {
+            delay.reject(error);
+        });
+        return delay.promise;
+    };
+    return res;
+}])

@@ -54,6 +54,9 @@ angular.module('agil.controladores')
 	});
 	
 	$scope.crearNuevoProducto=function(){
+		$scope.steps = [{ cabeza: "cabeza-datos-producto", cuerpo: "cuerpo-datos-producto" },
+		{ cabeza: "cabeza-datos-adicionales", cuerpo: "cuerpo-datos-adicionales" },
+		{ cabeza: "cabeza-tipo-producto", cuerpo: "cuerpo-tipo-producto" }]
 		var promesa=DatoCodigoSiguienteProductoEmpresa($scope.usuario.id_empresa);
 		promesa.then(function(dato){
 			$scope.ultimo_codigo="FC"+dato.ultimo_codigo;

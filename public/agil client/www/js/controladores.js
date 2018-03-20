@@ -1268,7 +1268,11 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 		$scope.abrirm = function () {
 			$('#modal-wizard-comprobante-edicion').modal('show');
 		}
-
+		
+		$scope.ValidarForm = function (form, steps, button) {
+            ValidarForm(form, steps, button)
+		}
+		
 		$scope.verificarComprasComprobantes = function (idEmpresa) {
 			var promesa = ComprasComprobantesEmpresa(idEmpresa);
 			promesa.then(function (dato) {

@@ -115,6 +115,9 @@ angular.module('agil.controladores')
 		}
 
 		$scope.crearNuevoCliente = function () {
+			$scope.steps = [{ cabeza: "cabeza-datos-cli", cuerpo: "cuerpo-datos-cli" },
+			{ cabeza: "cabeza-datos-adicionales", cuerpo: "cuerpo-datos-adicionales" }]
+			console.log($scope.steps)
 			var promesa = DatoCodigoSiguienteClienteEmpresa($scope.usuario.id_empresa);
 			promesa.then(function (dato) {
 				$scope.ultimo_codigo = dato.ultimo_codigo ? "CLI" + dato.ultimo_codigo : 0;
@@ -215,7 +218,9 @@ angular.module('agil.controladores')
 			blockUI.stop();
 		}
 
-		$scope.saveForm = function (cliente) {
+		$scope.saveForm = function (cliente,form) {
+			
+			
 			var button = $('#siguiente').text().trim();
 			if (button != "Siguiente") {
 				blockUI.start();

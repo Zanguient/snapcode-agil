@@ -207,19 +207,19 @@
 <div id="modal-wizard-producto-edicion" class="modal wizard-posicion">
 	<div class="modal-dialog">
 		<div class="modal-content">
-			<form ng-submit="saveForm(formularioProducto.$valid,producto)" id="formularioProducto" name="formularioProducto" novalidate>
+			<form ng-submit="saveForm(formularioProducto.$valid,producto)" id="formularioProducto" name="formularioProducto">
 				<div id="modal-wizard-container-producto-edicion">
 					<div class="modal-header">
 						<ul class="steps">
-							<li data-step="1" class="active">
+							<li id="cabeza-datos-producto" data-step="1" class="active">
 								<span class="step">1</span>
 								<span class="title">Datos del Producto</span>
 							</li>
-							<li data-step="2">
+							<li id="cabeza-datos-adicionales" data-step="2">
 								<span class="step">2</span>
 								<span class="title">Datos Adicionales</span>
 							</li>
-							<li data-step="3">
+							<li id="cabeza-tipo-producto" data-step="3">
 								<span class="step">3</span>
 								<span class="title">Tipo de Producto</span>
 							</li>
@@ -235,7 +235,7 @@
 					</div>
 
 					<div class="modal-body step-content">
-						<div class="step-pane active" data-step="1">
+						<div id="cuerpo-datos-producto" class="step-pane active" data-step="1">
 							<div class="form-group">
 								<label class="col-sm-6 control-label no-padding-right" for="codigo">Código
 									<span ng-if="!producto.id">(Último Generado:
@@ -302,7 +302,7 @@
 							</div>
 						</div>
 
-						<div class="step-pane" data-step="2">
+						<div  id="cuerpo-datos-adicionales" class="step-pane" data-step="2">
 							<div class="form-group" ng-if="usuario.empresa.usar_panel">
 								<label class="control-label col-xs-6 no-padding-right" for="panel">¿Publicar Panel?</label>
 								<div class="col-xs-6">
@@ -404,7 +404,7 @@
 								</div>
 							</div>
 						</div>
-						<div class="step-pane" data-step="3">
+						<div id="cuerpo-tipo-producto"  class="step-pane" data-step="3">
 							<div class="form-group">
 								<label class="control-label col-xs-12 col-sm-3 no-padding-right">Tipo Producto</label>
 								<div class="col-xs-8 col-sm-4">
@@ -448,7 +448,7 @@
 												 min="0">
 											</td>
 											<td>
-												<button ng-disabled="formularioProducto.id_producto.$invalid" id="agregar_detalle_producto" type="submit" ng-click="agregarDetalleProductosBase(productoBase,productoBaseSeleccion.producto)"
+												<button ng-disabled="formularioProducto.id_producto.$invalid" id="agregar_detalle_producto" type="button" ng-click="agregarDetalleProductosBase(productoBase,productoBaseSeleccion.producto)"
 												 class="btn btn-success btn-sm">
 													<i class="ace-icon fa fa-plus bigger-110"></i>
 												</button>
@@ -568,11 +568,11 @@
 
 				<div class="modal-footer wizard-actions">
 					<button class="btn btn-sm btn-prev">
-						<i class="ace-icon fa fa-arrow-left"></i>
+						<i id="anterior-n" class="ace-icon fa fa-arrow-left"></i>
 						Anterior
 					</button>
 
-					<button type="submit" id="siguiente" class="btn btn-success btn-sm btn-next" data-last="Finish">
+					<button type="submit" id="siguiente" ng-click="ValidarForm(formularioProducto,steps,'anterior-n')" class="btn btn-success btn-sm btn-next" data-last="Finish">
 						Siguiente
 						<i class="ace-icon fa fa-arrow-right icon-on-right"></i>
 					</button>

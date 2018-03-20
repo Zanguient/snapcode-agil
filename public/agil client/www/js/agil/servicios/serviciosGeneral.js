@@ -768,11 +768,11 @@ angular.module('agil.servicios')
 
 	.factory('ImprimirSalida', ['Diccionario', 'ImprimirFactura', 'ImprimirProforma', 'ImprimirNotaBaja', 'ImprimirNotaTraspaso',
 		function (Diccionario, ImprimirFactura, ImprimirProforma, ImprimirNotaBaja, ImprimirNotaTraspaso) {
-			var res = function (movimiento, salida, esAccionGuardar, usuario) {
+			var res = function (movimiento, salida, esAccionGuardar, usuario, llevar) {
 				if (movimiento == Diccionario.EGRE_FACTURACION) {
 					ImprimirFactura(salida, esAccionGuardar, usuario);
 				} else if (movimiento == Diccionario.EGRE_PROFORMA) {
-					ImprimirProforma(salida, esAccionGuardar, usuario);
+					ImprimirProforma(salida, esAccionGuardar, usuario, llevar);
 				}
 				else if (movimiento == Diccionario.EGRE_BAJA) {
 					ImprimirNotaBaja(salida, usuario);
@@ -829,7 +829,7 @@ angular.module('agil.servicios')
 							var sizeY = 230 + (20 * salida.detallesVenta.length);
 							doc = new PDFDocument({ compress: false, size: [227, sizeY], margins: { top: 10, bottom: 10, left: 20, right: 20 } });
 							stream = doc.pipe(blobStream());
-							ImprimirPedido(salida, esAccionGuardar, doc, stream, sizeY,usuario);
+							ImprimirPedido(salida, esAccionGuardar, doc, stream, sizeY,usuario, false);
 						}
 					} else {
 						doc = new PDFDocument({ compress: false, size: papel, margins: { top: 0, bottom: 0, left: 20, right: 20 } });
@@ -838,7 +838,7 @@ angular.module('agil.servicios')
 						if (usuario.empresa.usar_pedidos) {
 							var sizeY = 230 + (20 * salida.detallesVenta.length);
 							doc.addPage({ size: [227, sizeY], margins: { top: 10, bottom: 10, left: 20, right: 20 } });
-							ImprimirPedido(salida, esAccionGuardar, doc, stream, sizeY,usuario);
+							ImprimirPedido(salida, esAccionGuardar, doc, stream, sizeY,usuario,false);
 						}
 					}
 
@@ -1161,16 +1161,21 @@ angular.module('agil.servicios')
 	}])
 
 	.factory('ImprimirPedido', [function () {
-		var res = function (venta, esAccionGuardar, doc, stream, sizeY,usuario) {
+		var res = function (venta, esAccionGuardar, doc, stream, sizeY,usuario, llevar) {
 
 
 			for (var j = 0; j < venta.sucursal.copias_impresion_pedido; j++) {
 				if (j != 0) {
 					doc.addPage({ size: [227, sizeY], margins: { top: 10, bottom: 10, left: 20, right: 20 } });
 				}
+				doc.font('Helvetica-Bold', 12);
+				if (llevar) {
+					doc.text("PARA LLEVAR¡¡¡", { align: 'center' })
+				}
 				doc.font('Helvetica-Bold', 14);
 				doc.text("Nro. Pedido : " + venta.pedido + "", { align: 'left' });
 				doc.font('Helvetica', 12);
+
 				doc.text(venta.sucursal.frase_pedido + " : " + venta.factura, { align: 'left' });
 				doc.moveDown(0.4);
 				doc.text("Cliente : " + venta.cliente.razon_social, { align: 'left' });
@@ -1209,6 +1214,10 @@ angular.module('agil.servicios')
 			}
 			if (venta.sucursal.imprimir_pedido_corto) {
 				doc.addPage({ size: [227, sizeY], margins: { top: 10, bottom: 10, left: 20, right: 20 } });
+				doc.font('Helvetica-Bold', 12);
+				if (llevar) {
+					doc.text("PARA LLEVAR¡¡¡", { align: 'center' })
+				}
 				doc.font('Helvetica-Bold', 14);
 				doc.text(usuario.empresa.razon_social, { align: 'left'});
 				var x= doc.x
@@ -1469,7 +1478,7 @@ angular.module('agil.servicios')
 
 	.factory('ImprimirProforma', ['Diccionario', 'ImprimirProformaCartaOficio', 'ImprimirPedido', 'ImprimirProformaRollo', '$timeout',
 		function (Diccionario, ImprimirProformaCartaOficio, ImprimirPedido, ImprimirProformaRollo, $timeout) {
-			var res = function (venta, esAccionGuardar, usuario) {
+			var res = function (venta, esAccionGuardar, usuario, llevar) {
 				var papel, doc, stream;
 				if (venta.configuracion.tamanoPapelNotaVenta.nombre_corto == Diccionario.FACT_PAPEL_OFICIO) {
 					papel = [612, 936];
@@ -1512,7 +1521,7 @@ angular.module('agil.servicios')
 							var sizeY = 230 + (20 * venta.detallesVenta.length);
 							doc = new PDFDocument({ compress: false, size: [227, sizeY], margins: { top: 10, bottom: 10, left: 20, right: 20 } });
 							stream = doc.pipe(blobStream());
-							ImprimirPedido(venta, esAccionGuardar, doc, stream, sizeY,usuario);
+							ImprimirPedido(venta, esAccionGuardar, doc, stream, sizeY,usuario, llevar);
 						}
 					} else {
 						doc = new PDFDocument({ compress: false, size: papel, margins: { top: 0, bottom: 0, left: 20, right: 20 } });
@@ -1521,7 +1530,7 @@ angular.module('agil.servicios')
 						if (usuario.empresa.usar_pedidos) {
 							var sizeY = 230 + (20 * venta.detallesVenta.length);
 							doc.addPage({ size: [227, sizeY], margins: { top: 10, bottom: 10, left: 20, right: 20 } });
-							ImprimirPedido(venta, esAccionGuardar, doc, stream, sizeY,usuario);
+							ImprimirPedido(venta, esAccionGuardar, doc, stream, sizeY,usuario, llevar);
 						}
 					}
 
