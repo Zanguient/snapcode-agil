@@ -129,7 +129,7 @@ angular.module('agil.servicios')
     // })
 
     .factory('FacturarProformas', function ($resource) {
-        return $resource(restServer + "ventas", {},
+        return $resource(restServer + "ventas/factura/proformas", {},
             {
                 'update': { method: 'PUT' }
             });

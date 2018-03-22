@@ -695,7 +695,7 @@
                                                         data-placeholder="Click para escoger">
                                                         <option value="" disabled selected>Selec. Actividad</option>
                                                     </select>
-                                                    <span class="red">(*)</span>
+                                                    <span class="red">(*)</span> <span ng-if="dosificacionesExpiradas" style="color: red">Las Actividades con dosificaciones expiradas no se muestran</span>
                                                 </div>
                                                 <div ng-if="verificarBloqueoServicios()">
                                                     <select class="form-control" data-validate="validate(required)" required id="actividadProformaDisable" name="actividad" ng-model="proforma.actividadEconomica"

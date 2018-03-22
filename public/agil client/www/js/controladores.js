@@ -1772,7 +1772,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 				var prom = FacturaProforma($scope.usuario.empresa.id, factura)
 				prom.then(function (res) {
 					if (res.hasError === undefined) {
-						ImprimirSalida(res.factura.movimiento.nombre_corto, res.factura, false, $scope.usuario)
+						ImprimirSalida(res.venta.movimiento.nombre_corto, res.venta, false, $scope.usuario)
 						$scope.mostrarMensaje(res.mensaje)
 						$scope.cerrarFacturaProformas()
 						$scope.recargarItemsTabla()
@@ -1864,7 +1864,6 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 									$scope.dolarActual = { ufv: res.monedaCambio.ufv , dolar: res.monedaCambio.dolar }
 								})
 							});
-
 							blockUI.stop()
 						}
 					}, function (err) {

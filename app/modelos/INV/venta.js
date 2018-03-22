@@ -100,7 +100,12 @@ module.exports=function(sequelize,Sequelize){
 		type: Sequelize.BOOLEAN,
 		field: 'contabilizado',
 		defaultValue:false
-	 	}
+		 },
+		 usar_servicios:{
+			 type: Sequelize.BOOLEAN,
+			 field: 'usar_servicios',
+			 defaultValue: false
+		 }
 	 }, {
 	  freezeTableName: true 
 	});

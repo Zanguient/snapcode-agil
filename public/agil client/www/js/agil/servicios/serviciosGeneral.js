@@ -1408,17 +1408,28 @@ angular.module('agil.servicios')
 				var y = doc.y, sumaDescuento = 0, sumaRecargo = 0, sumaIce = 0, sumaExcento = 0;
 				for (var i = 0; i < venta.detallesVenta.length; i++) {
 					doc.text(venta.detallesVenta[i].cantidad, 20, y);
-					if (venta.detallesVenta[i].producto.nombre.length > 40) {
-						doc.fontSize(6);
+					if (venta.detallesVenta[i].producto) {
+						if (venta.detallesVenta[i].producto.nombre.length > 40) {
+							doc.fontSize(6);
+						}
+						doc.text(venta.detallesVenta[i].producto.nombre, 40, y, { width: 100 });
+						doc.fontSize(7);
+						doc.text(venta.detallesVenta[i].precio_unitario.toFixed(2), 150, y);
+						doc.text(venta.detallesVenta[i].importe.toFixed(2), 175, y);
+						sumaDescuento = sumaDescuento + (venta.detallesVenta[i].tipo_descuento ? (venta.detallesVenta[i].importe * (venta.detallesVenta[i].descuento / 100)) : venta.detallesVenta[i].descuento);
+						sumaRecargo = sumaRecargo + (venta.detallesVenta[i].tipo_recargo ? (venta.detallesVenta[i].importe * (venta.detallesVenta[i].recargo / 100)) : venta.detallesVenta[i].recargo);
+						sumaIce = sumaIce + venta.detallesVenta[i].ice;
+						sumaExcento = sumaExcento + venta.detallesVenta[i].excento;
+					} else {
+						if (venta.detallesVenta[i].servicio.nombre.length > 40) {
+							doc.fontSize(6);
+						}
+						doc.text(venta.detallesVenta[i].servicio.nombre, 40, y, { width: 100 });
+						doc.fontSize(7);
+						doc.text(venta.detallesVenta[i].precio_unitario.toFixed(2), 150, y);
+						doc.text(venta.detallesVenta[i].importe.toFixed(2), 175, y);
 					}
-					doc.text(venta.detallesVenta[i].producto.nombre, 40, y, { width: 100 });
-					doc.fontSize(7);
-					doc.text(venta.detallesVenta[i].precio_unitario.toFixed(2), 150, y);
-					doc.text(venta.detallesVenta[i].importe.toFixed(2), 175, y);
-					sumaDescuento = sumaDescuento + (venta.detallesVenta[i].tipo_descuento ? (venta.detallesVenta[i].importe * (venta.detallesVenta[i].descuento / 100)) : venta.detallesVenta[i].descuento);
-					sumaRecargo = sumaRecargo + (venta.detallesVenta[i].tipo_recargo ? (venta.detallesVenta[i].importe * (venta.detallesVenta[i].recargo / 100)) : venta.detallesVenta[i].recargo);
-					sumaIce = sumaIce + venta.detallesVenta[i].ice;
-					sumaExcento = sumaExcento + venta.detallesVenta[i].excento;
+					
 					y = y + 20;
 				}
 				doc.x = 20;
@@ -1586,7 +1597,7 @@ angular.module('agil.servicios')
 						}
 						doc.text(venta.detallesVenta[i].precio_unitario.toFixed(2), 310, y);
 						doc.text(venta.detallesVenta[i].importe.toFixed(2), 345, y);
-						doc.text(venta.detallesVenta[i].descuento.toFixed(2), 395, y);
+						doc.text((venta.detallesVenta[i].descuento?venta.detallesVenta[i].descuento.toFixed(2):0), 395, y);
 						doc.text(venta.detallesVenta[i].recargo.toFixed(2), 430, y);
 						doc.text(venta.detallesVenta[i].ice.toFixed(2), 465, y);
 						doc.text(venta.detallesVenta[i].excento.toFixed(2), 500, y);

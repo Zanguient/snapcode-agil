@@ -22,7 +22,7 @@ angular.module('agil.controladores')
             resaltarPestaña($location.path().substring(1));
             ejecutarScriptsProformas($scope.modalConfiguracionActividadesServicios, $scope.wizardConfiguracionActividadesServicios, $scope.dialogProformaEdicion,
                 $scope.dialogClientesProforma, $scope.modalConfiguracionActividades, $scope.wizardConfiguracionActividades, $scope.dialogmodalFechas,
-                $scope.dialogBusquedaServicio, $scope.dialogDosificacionesDisponibles,  $scope.confirmarDosificacion);
+                $scope.dialogBusquedaServicio, $scope.dialogDosificacionesDisponibles, $scope.confirmarDosificacion);
             $scope.buscarAplicacion($scope.usuario.aplicacionesUsuario, $location.path().substring(1));
             $scope.calcularTotalProformas()
         });
@@ -309,8 +309,14 @@ angular.module('agil.controladores')
             var sucursal = $.grep($scope.sucursales, function (e) { return e.id == idSucursal; })[0];
             $scope.actividadesDosificaciones = sucursal.actividadesDosificaciones;
             $scope.actividadesSucursal = [];
-            $scope.actividadesSucursal = $scope.actividadesDosificaciones.map(function (actividad) {
-                return actividad.actividad
+            $scope.actividadesDosificaciones.map(function (actividad) {
+                if (actividad.dosificacion) {
+                    if (!actividad.expirado && !actividad.dosificacion.expirado) {
+                        $scope.actividadesSucursal.push(actividad.actividad)
+                    } else {
+                        $scope.dosificacionesExpiradas = true
+                    }
+                }
             })
         }
 
@@ -506,7 +512,7 @@ angular.module('agil.controladores')
             if ($scope.actividadesDosificaciones.length > 0) {
                 var toDrop = []
                 var nuevasActividades = $scope.actividadesDosificaciones.map(function (_, i) {
-                    if ((_.id === undefined || _.eliminado || (_.id_dosificacion == null &&( _.dosificacion == undefined || _.dosificacion == null)) || _.editar) && _.expirado == false) {
+                    if ((_.id === undefined || _.eliminado || (_.id_dosificacion == null && (_.dosificacion == undefined || _.dosificacion == null)) || _.editar) && _.expirado == false) {
                         return _
                     } else {
                         toDrop.push(i)
@@ -616,7 +622,7 @@ angular.module('agil.controladores')
                     }
                 }
                 if (!encontrado) {
-                    $scope.actividadADosificar.dosificacionAnterior = $scope.actividadADosificar.dosificacion !== undefined || $scope.actividadADosificar.dosificacion !==null ? $scope.actividadADosificar.dosificacion : null
+                    $scope.actividadADosificar.dosificacionAnterior = $scope.actividadADosificar.dosificacion !== undefined || $scope.actividadADosificar.dosificacion !== null ? $scope.actividadADosificar.dosificacion : null
                     $scope.actividadesDosificaciones[$scope.actividadesDosificaciones.indexOf($scope.actividadADosificar)].dosificacion = $scope.paraDosificar
                     $scope.actividadADosificar.editar = true
                     $scope.actividadADosificar = undefined
@@ -671,7 +677,7 @@ angular.module('agil.controladores')
 
         $scope.cerrarBusquedaServiciosProforma = function () {
             $scope.cerrarPopup($scope.dialogBusquedaServicio)
-        } 
+        }
 
         $scope.abrirconfirmarDosificacion = function (dosificacion) {
             $scope.paraDosificar = dosificacion
@@ -986,7 +992,7 @@ angular.module('agil.controladores')
                     } else {
                         $scope.mostrarMensaje(proformaE.mensaje)
                     }
-                    
+
                 } else {
                     $scope.proforma.fecha_proforma = $scope.fechaATexto(new Date($scope.proforma.fecha_proforma))
                     var dat = new Date($scope.convertirFecha($scope.proforma.fecha_proforma))

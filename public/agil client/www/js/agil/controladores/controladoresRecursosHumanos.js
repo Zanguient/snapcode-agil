@@ -1899,7 +1899,7 @@ angular.module('agil.controladores')
         $scope.eliminarOtroSeguroRh = function (otroSeguro) {
             var promesa = EliminarOtroSeguroRh(otroSeguro)
             promesa.then(function (dato) {
-                $scope.ficha.empleado.otrosSeguros.splice(otroSeguro.index, 1);
+                $scope.ficha.otrosSeguros.splice(otroSeguro.index, 1);
 
                 // $scope.ficha.empleado.otrosSeguros.splice($scope.ficha.empleado.otrosSeguros.indexOf(otroSeguro.index), 1);
                 $scope.otroSeguro = null
@@ -1970,13 +1970,13 @@ angular.module('agil.controladores')
                         familiar.edad = Math.trunc(dato / 365);
                         familiar.eliminado = false
                     });
-                    $scope.ficha.empleado.otrosSeguros.forEach(function (otroSeguro, index, array) {
+                    $scope.ficha.otrosSeguros.forEach(function (otroSeguro, index, array) {
                         otroSeguro.eliminado = false
                     })
                     $scope.seleccionarCargos($scope.ficha.cargos)
-                    $scope.seleccionarDiscapacidades($scope.ficha.empleado.discapacidades)
+                    $scope.seleccionarDiscapacidades($scope.ficha.discapacidades)
                     //llenarCargos($scope.cargos)
-                } else {
+                }/*  else {
 
                     $scope.ficha = { empleado: datos.empleado, pacienteReferencia: {}, editDatosLaborales: false }
                     $scope.ficha.empleado.cargo = []
@@ -1984,7 +1984,7 @@ angular.module('agil.controladores')
                     $scope.ficha.empleado.familiares = []
                     $scope.ficha.empleado.persona.correo_electronico = datos.empleado.persona.correo_electronico
                     $scope.seleccionarCargos($scope.ficha.empleado.cargos)
-                    $scope.seleccionarDiscapacidades($scope.ficha.empleado.discapacidades)
+                    $scope.seleccionarDiscapacidades($scope.ficha.discapacidades)
                     var fechaActual = new Date();
                     $scope.ficha.fecha_elaboracion = fechaActual.getDate() + "/" + (fechaActual.getMonth() + 1) + "/" + fechaActual.getFullYear()
                     var fechaNacimiento = new Date($scope.ficha.empleado.persona.fecha_nacimiento)
@@ -1999,7 +1999,7 @@ angular.module('agil.controladores')
                     });
                     var dato = $scope.diferenciaEntreDiasEnDias(fechaNacimiento, fechaActual)
                     $scope.ficha.edad = Math.trunc(dato / 365)
-                }
+                } */
                 blockUI.stop();
             });
 
@@ -2278,7 +2278,7 @@ angular.module('agil.controladores')
         }
         $scope.agregarSeguro = function (seguro) {
             seguro.eliminado = false
-            $scope.ficha.empleado.otrosSeguros.push(seguro)
+            $scope.ficha.otrosSeguros.push(seguro)
             $scope.seguro = { edit: false }
         }
 
@@ -2299,7 +2299,7 @@ angular.module('agil.controladores')
             if (seguro.id) {
                 seguro.eliminado = true
             } else {
-                $scope.ficha.empleado.otrosSeguros.splice(index, 1);
+                $scope.ficha.otrosSeguros.splice(index, 1);
 
             }
         }
@@ -2341,7 +2341,7 @@ angular.module('agil.controladores')
             $scope.abrirDialogNuevoFamiliar()
         }
         $scope.guardarSeguroEditado = function (dato) {
-            $scope.ficha.empleado.otrosSeguros[dato.index] = dato
+            $scope.ficha.otrosSeguros[dato.index] = dato
             $scope.seguro = { edit: false }
         }
 
@@ -2861,6 +2861,8 @@ angular.module('agil.controladores')
         //FIN RECUPERAR TIPOS FICHA 
 
         $scope.guardarFichaTecnica = function (form, ficha, save) {
+            $scope.ficha.quienModifico=$scope.usuario.id
+            
             var s = $scope.fechaATexto(ficha.fecha_inicio)
             ficha.historialVacacion = []
             if (s != ficha.fecha_inicio2) {

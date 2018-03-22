@@ -90,6 +90,13 @@ angular.module('agil.controladores')
 			}
 			return gruposActualizado;
 		}
+		// $scope.usarServicios = function (usar_servicios) {
+		// 	if (usar_servicios) {
+				
+		// 	}else{
+
+		// 	}
+		// }
 		$scope.verificarLimiteCredito = function (ventaActual) {
 
 			if (ventaActual.cliente && ventaActual.tipoPago.nombre == $scope.diccionario.TIPO_PAGO_CREDITO) {
@@ -649,11 +656,12 @@ angular.module('agil.controladores')
 			$scope.actividadesDosificaciones = sucursal.actividadesDosificaciones;
 			$scope.actividades = [];
 			for (var i = 0; i < $scope.actividadesDosificaciones.length; i++) {
-				if (!$scope.actividadesDosificaciones[i].dosificacion.expirado) {
-					$scope.actividades.push($scope.actividadesDosificaciones[i].actividad);
-					
-				}else{
-					$scope.dosificacionesExpiradas = true
+				if ($scope.actividadesDosificaciones[i].dosificacion) {
+					if (!$scope.actividadesDosificaciones[i].expirado && !$scope.actividadesDosificaciones[i].dosificacion.expirado) {
+						$scope.actividades.push($scope.actividadesDosificaciones[i].actividad);
+					}else{
+						$scope.dosificacionesExpiradas = true
+					}
 				}
 			}
 			$scope.venta.actividad = $scope.actividades.length == 1 ? $scope.actividades[0] : null;

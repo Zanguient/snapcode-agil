@@ -21,6 +21,10 @@ module.exports=function(sequelize,Sequelize){
 		type: Sequelize.DECIMAL(20,4),
 		field: 'precio'
 		},
+		id_empresa:{
+			type: Sequelize.INTEGER,
+			field: 'empresa'
+		},
 		eliminado: {
 			type: Sequelize.BOOLEAN,
 			field: 'eliminado'

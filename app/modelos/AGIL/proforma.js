@@ -61,11 +61,11 @@ module.exports = function (sequelize, Sequelize) {
             field: 'descripcion_factura'
         },
         factura: {
-            type: Sequelize.INTEGER,
+            type: Sequelize.BIGINT,
             field: 'factura'
         },
         autorizacion: {
-            type: Sequelize.INTEGER,
+            type: Sequelize.BIGINT,
             field: 'autorizacion'
         },
         fecha_limite_emision: {
@@ -76,9 +76,9 @@ module.exports = function (sequelize, Sequelize) {
             type: Sequelize.INTEGER,
             field: 'movimiento'
         },
-        codigo_control:{
+        codigo_control: {
             type: Sequelize.STRING,
-            field:'codigo_control'
+            field: 'codigo_control'
         },
         id_venta: {
             type: Sequelize.INTEGER,

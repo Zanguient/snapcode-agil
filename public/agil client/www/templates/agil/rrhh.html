@@ -1483,7 +1483,7 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                <tr ng-if="!seguro.eliminado" ng-repeat="seguro in ficha.empleado.otrosSeguros">
+                                                <tr ng-if="!seguro.eliminado" ng-repeat="seguro in ficha.otrosSeguros">
                                                     <th scope="row">{{$index}}</th>
                                                     <td>{{seguro.tipoSeguro.nombre}}</td>
                                                     <td>{{seguro.monto}}</td>

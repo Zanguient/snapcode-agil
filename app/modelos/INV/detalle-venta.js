@@ -63,7 +63,11 @@ module.exports=function(sequelize,Sequelize){
 	  observaciones: {
 		type: Sequelize.STRING,
 		field: 'observaciones'
-	  }
+		},
+		id_servicio: {
+			type: Sequelize.INTEGER,
+			field: 'servicio'
+		 },
 	}, {
 	  freezeTableName: true 
 	});
