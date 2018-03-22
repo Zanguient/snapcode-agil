@@ -65,7 +65,7 @@ var sequelize = new Sequelize(database,username, dbpass, {
   dialect: 'mysql',
   timezone : "-04:00",
   pool: {
-    max: 5,
+    max: 10,
     min: 0,
     idle: 10000
   }
