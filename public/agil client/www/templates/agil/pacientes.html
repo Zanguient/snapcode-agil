@@ -366,7 +366,8 @@
                                     </a>
                                     <script type="text/ng-template" id="myPopoverTemplate.html">                                           
                                                 <div class="form-group">                                              
-                                                  <p ng-repeat=" cargo in paciente.cargos">{{$index+1}}. {{cargo.cargo.nombre}}</p>
+                                                  <p ng-repeat=" cargo in paciente.ficha.cargos">{{$index+1}}. {{cargo.cargo.nombre}}</p>
+                                                  <p ng-if="paciente.ficha==null">1. Externo</p>
                                                 </div>                                           
                                             </script>
                                 </td>
@@ -2704,18 +2705,18 @@
                                                 </div>
 
                                             </div>
-                                            <div class="row form-group">
+                                          <!--   <div class="row form-group">
                                                 <div class="col-lg-5">
                                                     <label for="cargo">Cargo</label>
                                                 </div>
-                                                <div class="col-lg-7">
+                                                <div class="col-lg-7"> -->
                                                     <!-- <div isteven-multi-select input-model="myArray" output-model="paciente.cargos" button-label="icon nombre" item-label="icon nombre maker"
                                                     tick-property="ticked" translation="localLang">
                                                 </div> -->
-                                                <div isteven-multi-select input-model="cargos" output-model="paciente.cargos" button-label="icon nombre" item-label="icon nombre maker" tick-property="ticked" >
+                                              <!--   <div isteven-multi-select input-model="cargos" output-model="paciente.cargos" button-label="icon nombre" item-label="icon nombre maker" tick-property="ticked" >
                                                     </div>                                                  
                                                 </div>
-                                            </div>
+                                            </div> -->
 
                                         </div>
                                     </div>
@@ -2937,14 +2938,14 @@
                                                 </div>
 
                                             </div>
-                                            <div class="row form-group">
+                                            <!-- <div class="row form-group">
                                                 <div class="col-lg-5">
                                                     <label for="cargo">Cargo</label>
                                                 </div>
                                                 <div class="col-lg-7">
                                                     <input disabled type="text" id="cargo" ng-model="paciente.cargo" placeholder="Cargo" class="form-control" />
                                                 </div>
-                                            </div>
+                                            </div> -->
 
                                         </div>
                                     </div>

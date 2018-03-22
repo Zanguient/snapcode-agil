@@ -168,8 +168,8 @@
 						<td>{{venta.farmacia.paciente.campo}}</td>
 						<td ng-if="venta.total>0">{{venta.total}}</td>
 						<td>
-							<label ng-repeat="cargo in venta.farmacia.paciente.cargos">
-								{{cargo.cargo.nombre}}
+							<label ng-repeat="cargo in venta.farmacia.paciente.empleadosFichas[(venta.farmacia.paciente.empleadosFichas.length-1)].cargos">
+								{{cargo.cargo.nombre}},
 							</label>
 						</td>
 						

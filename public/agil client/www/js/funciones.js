@@ -255,7 +255,7 @@ function ejecutarScriptsRecursosHumanos(idModalPrerequisitos, idModalEmpleado, i
 	idModalHojaVida, idModalwizardContainerHojaVida, idModalSeguro, idModalSeguroLugar, idModalAporte, idModalAporteLugar,
 	idModalTipoOtrosSeguros, idModalBanco, idModalNuevoHijo, idModalNuevoFamiliar, idModalGrado, idModalTitulo,
 	idModalHistorialContrato, idModalBeneficiosSociales, idModalMotivoRetiro, idModalDetalleVacaciones, idModalOtroIngreso,
-	idModalDeduccion, idModalAnticipoExtraordinario, idModalNuevoPrestamo, idModalAusenciasVacaciones, idTabAusenciasVacaciones,
+	idModalBitacoraFicha, idModalAnticipoExtraordinario, idModalNuevoPrestamo, idModalAusenciasVacaciones, idTabAusenciasVacaciones,
 	idModalTipoBaja, idModalFeriados, idModalHitorialVacaciones, idModalCompensacion, idModalHistorialAusencias,
 	idModalHistorialAusenciaMedica, idModalTipoAusencia, idModalRolTurnos, idModalHistorialTurnos, idModalHorasExtras,
 	idModalHistorialHorasExtras, idModalAnticipoRegular, idModalPrestamosPersonal, idModalAdvertencia, idModalPretamosNuevoTodos,
@@ -298,7 +298,7 @@ function ejecutarScriptsRecursosHumanos(idModalPrerequisitos, idModalEmpleado, i
 	crearPopup(idModalBeneficiosSociales, "100%", "auto");
 	crearPopup(idModalMotivoRetiro, "62%", "auto");
 	crearPopup(idModalOtroIngreso, "50%", "auto");
-	crearPopup(idModalDeduccion, "50%", "auto");
+	crearPopup(idModalBitacoraFicha, "50%", "auto");
 	crearPopup(idModalAnticipoExtraordinario, "62%", "auto");
 	crearPopup(idModalNuevoPrestamo, "62%", "auto");
 	crearPopup(idModalAusenciasVacaciones, "62%", "auto");

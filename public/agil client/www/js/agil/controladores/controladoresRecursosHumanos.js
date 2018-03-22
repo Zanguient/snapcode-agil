@@ -40,7 +40,7 @@ angular.module('agil.controladores')
         $scope.idModalMotivoRetiro = "dialog-motivo-retiro";
         $scope.idModalDetalleVacaciones = "dialog-detalle-vacaciones";
         $scope.idModalOtroIngreso = "dialog-nuevo-otro-ingreso";
-        $scope.idModalDeduccion = "dialog-nueva-deduccion";
+        $scope.idModalBitacoraFicha = "dialog-nueva-deduccion";
         $scope.idModalAnticipoExtraordinario = "dialog-anticipo-extraordinario";
         $scope.idModalNuevoPrestamo = "dialog-nuevo-prestamo";
         $scope.idModalAusenciasVacaciones = "dialog-ausencias-vacaciones";
@@ -109,7 +109,7 @@ angular.module('agil.controladores')
                 $scope.idModalSeguro, $scope.idModalSeguroLugar, $scope.idModalAporte, $scope.idModalAporteLugar,
                 $scope.idModalTipoOtrosSeguros, $scope.idModalBanco, $scope.idModalNuevoHijo, $scope.idModalNuevoFamiliar,
                 $scope.idModalGrado, $scope.idModalTitulo, $scope.idModalHistorialContrato, $scope.idModalBeneficiosSociales,
-                $scope.idModalMotivoRetiro, $scope.idModalDetalleVacaciones, $scope.idModalOtroIngreso, $scope.idModalDeduccion,
+                $scope.idModalMotivoRetiro, $scope.idModalDetalleVacaciones, $scope.idModalOtroIngreso, $scope.idModalBitacoraFicha,
                 $scope.idModalAnticipoExtraordinario, $scope.idModalNuevoPrestamo, $scope.idModalAusenciasVacaciones,
                 $scope.idTabAusenciasVacaciones, $scope.idModalTipoBaja, $scope.idModalFeriados, $scope.idModalHitorialVacaciones,
                 $scope.idModalCompensacion, $scope.idModalHistorialAusencias, $scope.idModalHistorialAusenciaMedica, $scope.idModalTipoAusencia,
@@ -161,7 +161,7 @@ angular.module('agil.controladores')
             $scope.eliminarPopup($scope.idModalMotivoRetiro)
             $scope.eliminarPopup($scope.idModalDetalleVacaciones)
             $scope.eliminarPopup($scope.idModalOtroIngreso)
-            $scope.eliminarPopup($scope.idModalDeduccion)
+            $scope.eliminarPopup($scope.idModalBitacoraFicha)
             $scope.eliminarPopup($scope.idModalAnticipoExtraordinario)
             $scope.eliminarPopup($scope.idModalNuevoPrestamo)
             $scope.eliminarPopup($scope.idModalAusenciasVacaciones)
@@ -477,27 +477,27 @@ angular.module('agil.controladores')
         }
 
         $scope.abrirIdModalDialogPreRequisitos = function (empleado) {
-            if(empleado.activo){
-            $scope.empleado = empleado;
-            $scope.verificarAsignacionPrerequisitos()
+            if (empleado.activo) {
+                $scope.empleado = empleado;
+                $scope.verificarAsignacionPrerequisitos()
 
-            $scope.abrirPopup($scope.idModalPrerequisitos);
-        }
+                $scope.abrirPopup($scope.idModalPrerequisitos);
+            }
         }
         $scope.cerrarIdModalDialogPreRequisitos = function () {
             $scope.cerrarPopup($scope.idModalPrerequisitos);
         }
         $scope.abrirDialogEmpleado = function (empleado) {
-            if(empleado.activo){
-            $scope.steps = [{ cabeza: "stepDatosPersonales", cuerpo: "datos-personales" },
-            { cabeza: "stepDatosLaborales", cuerpo: "ficha-datos-laborales" },
-            { cabeza: "stepdatosAfiliacion", cuerpo: "ficha-seguros" },
-            { cabeza: "stepDatosFamiliares", cuerpo: "ficha-familia" }]
-            $scope.obtenerDatosFichaUsuario(empleado);
-            $scope.empleado = empleado
+            if (empleado.activo) {
+                $scope.steps = [{ cabeza: "stepDatosPersonales", cuerpo: "datos-personales" },
+                { cabeza: "stepDatosLaborales", cuerpo: "ficha-datos-laborales" },
+                { cabeza: "stepdatosAfiliacion", cuerpo: "ficha-seguros" },
+                { cabeza: "stepDatosFamiliares", cuerpo: "ficha-familia" }]
+                $scope.obtenerDatosFichaUsuario(empleado);
+                $scope.empleado = empleado
 
 
-            $scope.abrirPopup($scope.idModalEmpleado);
+                $scope.abrirPopup($scope.idModalEmpleado);
             }
         }
         $scope.cerrarDialogEmpleado = function (ficha) {
@@ -731,13 +731,15 @@ angular.module('agil.controladores')
             if (empleado.ficha.fecha_inicio) {
                 var fecha = ""
                 var fechaActual = new Date()
+                var tipo = false
                 if (empleado.ficha.fecha_expiracion) {
                     fecha = $scope.fechaATexto(empleado.ficha.fecha_expiracion)
                     fechaActual = new Date(empleado.ficha.fecha_expiracion)
+                    tipo = true
                 }
                 var fechaAnterior = new Date(empleado.ficha.fecha_inicio)
                 $scope.tiempoTrabajado = duration(fechaAnterior, fechaActual)
-                $scope.beneficio = { anios: 0, meses: 0, dias: 0, fecha_elaboracion: $scope.fechaATexto(new Date()), fecha_ingreso: $scope.fechaATexto(empleado.ficha.fecha_inicio), fecha_retiro: fecha, ingresos: [], deducciones: [] }
+                $scope.beneficio = { tipo_beneficio: tipo, anios: 0, meses: 0, dias: 0, fecha_elaboracion: $scope.fechaATexto(new Date()), fecha_ingreso: $scope.fechaATexto(empleado.ficha.fecha_inicio), fecha_retiro: fecha, ingresos: [], deducciones: [] }
 
                 $scope.deduccion = {}
                 $scope.ingreso = {}
@@ -768,29 +770,33 @@ angular.module('agil.controladores')
             var promesa = HistorialGestionesVacacion(empleado.id)
             promesa.then(function (dato) {
                 var fechaActual = new Date()
-                if (dato[(dato.length - 1)].gestion < fechaActual.getFullYear()) {
-                    var anioConfiguracion = dato[(dato.length - 1)].anio + 1
-                    var config = 0
-                    var gestion = fechaActual.getFullYear()
-                    if (anioConfiguracion < 5) {
-                        config = $scope.configuracionesVacacion[0].dias
-                    } else if (anioConfiguracion < 10) {
-                        config = $scope.configuracionesVacacion[1].dias
-                    } else if (anioConfiguracion >= 10) {
-                        config = $scope.configuracionesVacacion[2].dias
-                    }
-                    var historialVacacion = {
-                        gestion: gestion,
-                        anio: anioConfiguracion,
-                        aplicadas: config,
-                        tomadas: 0
-                    }
-                    var promesa = GuardarHistorialVacacion(empleado.id, historialVacacion)
-                    promesa.then(function (datos) {
+                if (dato.length > 0) {
+                    if (dato[(dato.length - 1)].gestion < fechaActual.getFullYear()) {
+                        var anioConfiguracion = dato[(dato.length - 1)].anio + 1
+                        var config = 0
+                        var gestion = fechaActual.getFullYear()
+                        if (anioConfiguracion < 5) {
+                            config = $scope.configuracionesVacacion[0].dias
+                        } else if (anioConfiguracion < 10) {
+                            config = $scope.configuracionesVacacion[1].dias
+                        } else if (anioConfiguracion >= 10) {
+                            config = $scope.configuracionesVacacion[2].dias
+                        }
+                        var historialVacacion = {
+                            gestion: gestion,
+                            anio: anioConfiguracion,
+                            aplicadas: config,
+                            tomadas: 0
+                        }
+                        var promesa = GuardarHistorialVacacion(empleado.id, historialVacacion)
+                        promesa.then(function (datos) {
+                            $scope.abrirDialogBeneficiosSociales(empleado)
+                        })
+                    } else {
                         $scope.abrirDialogBeneficiosSociales(empleado)
-                    })
+                    }
                 } else {
-                    $scope.abrirDialogBeneficiosSociales(empleado)
+                    $scope.mostrarMensaje("No cuenta con ficha del empleado actualizada, actualizar ficha empleado")
                 }
             })
         }
@@ -816,29 +822,29 @@ angular.module('agil.controladores')
         $scope.cerrarDialogOtroIngreso = function () {
             $scope.cerrarPopup($scope.idModalOtroIngreso);
         }
-        $scope.abrirDialogDeduccion = function () {
-            $scope.abrirPopup($scope.idModalDeduccion);
+        $scope.abrirDialogBitacoraFicha = function () {
+            $scope.abrirPopup($scope.idModalBitacoraFicha);
         }
-        $scope.cerrarDialogDeduccion = function () {
-            $scope.cerrarPopup($scope.idModalDeduccion);
+        $scope.cerrarDialogBitacoraFicha = function () {
+            $scope.cerrarPopup($scope.idModalBitacoraFicha);
         }
         $scope.abrirDialogAnticipoExtraordinario = function (empleado) {
-            if(empleado.activo){
-            $scope.empleado = empleado
-            if (empleado.ficha.haber_basico) {
+            if (empleado.activo) {
+                $scope.empleado = empleado
+                if (empleado.ficha.haber_basico) {
 
-                $scope.obtenerAnticiposExtra(empleado)
+                    $scope.obtenerAnticiposExtra(empleado)
 
-                $scope.abrirPopup($scope.idModalAnticipoExtraordinario);
+                    $scope.abrirPopup($scope.idModalAnticipoExtraordinario);
+                }
+                else {
+                    $timeout(function () {
+                        $scope.$apply(function () {
+                            $scope.mostrarMensaje("No cuenta con haber basico actualizar ficha empleado!")
+                        });
+                    }, 200);
+                }
             }
-            else {
-                $timeout(function () {
-                    $scope.$apply(function () {
-                        $scope.mostrarMensaje("No cuenta con haber basico actualizar ficha empleado!")
-                    });
-                }, 200);
-            }
-        }
         }
         $scope.obtenerAnticiposExtra = function (empleado) {
             var mes = new Date().getMonth()
@@ -858,20 +864,20 @@ angular.module('agil.controladores')
             $scope.cerrarPopup($scope.idModalAnticipoExtraordinario);
         }
         $scope.abrirDialogNuevoPrestamo = function (empleado) {
-            if(empleado.activo){
-            $scope.empleado = empleado
-            $scope.prestamo = {}
-            if (empleado.ficha.haber_basico) {
-                $scope.abrirPopup($scope.idModalNuevoPrestamo);
-            } else {
-                $timeout(function () {
-                    $scope.$apply(function () {
-                        $scope.mostrarMensaje("No cuenta con haber basico actualizar ficha empleado!")
-                    });
-                }, 200);
+            if (empleado.activo) {
+                $scope.empleado = empleado
+                $scope.prestamo = {}
+                if (empleado.ficha.haber_basico) {
+                    $scope.abrirPopup($scope.idModalNuevoPrestamo);
+                } else {
+                    $timeout(function () {
+                        $scope.$apply(function () {
+                            $scope.mostrarMensaje("No cuenta con haber basico actualizar ficha empleado!")
+                        });
+                    }, 200);
 
+                }
             }
-        }
         }
         $scope.cerrarDialogNuevoPrestamo = function () {
             $scope.cerrarPopup($scope.idModalNuevoPrestamo);
@@ -895,45 +901,45 @@ angular.module('agil.controladores')
 
         }
         $scope.abriirmodelAusenciasVacas = function (empleado) {
-            if(empleado.activo){
-            if (empleado.ficha.fecha_inicio) {
-                var promesa = HistorialGestionesVacacion(empleado.id)
-                promesa.then(function (dato) {
-                    var fechaActual = new Date()
-                    if (dato[(dato.length - 1)].gestion < fechaActual.getFullYear()) {
-                        var anioConfiguracion = dato[(dato.length - 1)].anio + 1
-                        var config = 0
-                        var gestion = fechaActual.getFullYear()
-                        if (anioConfiguracion < 5) {
-                            config = $scope.configuracionesVacacion[0].dias
-                        } else if (anioConfiguracion < 10) {
-                            config = $scope.configuracionesVacacion[1].dias
-                        } else if (anioConfiguracion >= 10) {
-                            config = $scope.configuracionesVacacion[2].dias
-                        }
-                        var historialVacacion = {
-                            gestion: gestion,
-                            anio: anioConfiguracion,
-                            aplicadas: config,
-                            tomadas: 0
-                        }
-                        var promesa = GuardarHistorialVacacion(empleado.id, historialVacacion)
-                        promesa.then(function (datos) {
+            if (empleado.activo) {
+                if (empleado.ficha.fecha_inicio) {
+                    var promesa = HistorialGestionesVacacion(empleado.id)
+                    promesa.then(function (dato) {
+                        var fechaActual = new Date()
+                        if (dato[(dato.length - 1)].gestion < fechaActual.getFullYear()) {
+                            var anioConfiguracion = dato[(dato.length - 1)].anio + 1
+                            var config = 0
+                            var gestion = fechaActual.getFullYear()
+                            if (anioConfiguracion < 5) {
+                                config = $scope.configuracionesVacacion[0].dias
+                            } else if (anioConfiguracion < 10) {
+                                config = $scope.configuracionesVacacion[1].dias
+                            } else if (anioConfiguracion >= 10) {
+                                config = $scope.configuracionesVacacion[2].dias
+                            }
+                            var historialVacacion = {
+                                gestion: gestion,
+                                anio: anioConfiguracion,
+                                aplicadas: config,
+                                tomadas: 0
+                            }
+                            var promesa = GuardarHistorialVacacion(empleado.id, historialVacacion)
+                            promesa.then(function (datos) {
+                                $scope.abrirDialogAusenciasVacaciones(empleado)
+                            })
+                        } else {
                             $scope.abrirDialogAusenciasVacaciones(empleado)
-                        })
-                    } else {
-                        $scope.abrirDialogAusenciasVacaciones(empleado)
-                    }
-                })
+                        }
+                    })
+                }
+                else {
+                    $timeout(function () {
+                        $scope.$apply(function () {
+                            $scope.mostrarMensaje("No cuenta con ficha actualmente, crear ficha empleado!")
+                        });
+                    }, 200);
+                }
             }
-            else {
-                $timeout(function () {
-                    $scope.$apply(function () {
-                        $scope.mostrarMensaje("No cuenta con ficha actualmente, crear ficha empleado!")
-                    });
-                }, 200);
-            }
-        }
         }
         $scope.cerrarDialogAusenciasVacaciones = function () {
             $scope.cerrarPopup($scope.idModalAusenciasVacaciones);
@@ -1309,22 +1315,22 @@ angular.module('agil.controladores')
             $scope.cerrarPopup($scope.idModalTipoAusencia);
         }
         $scope.abrirDialogRolTurnos = function (empleado) {
-            if(empleado.activo){
-            if (empleado.ficha.fecha_inicio) {
+            if (empleado.activo) {
+                if (empleado.ficha.fecha_inicio) {
 
 
-                $scope.empleado = empleado
-                $scope.rolTurno = { tipo: false, fecha_fin: "", dias_trabajo: null, dias_descanso: null, grupo: "", id_ficha: null }
-                $scope.abrirPopup($scope.idModalRolTurnos);
+                    $scope.empleado = empleado
+                    $scope.rolTurno = { tipo: false, fecha_fin: "", dias_trabajo: null, dias_descanso: null, grupo: "", id_ficha: null }
+                    $scope.abrirPopup($scope.idModalRolTurnos);
+                }
+                else {
+                    $timeout(function () {
+                        $scope.$apply(function () {
+                            $scope.mostrarMensaje("No cuenta con ficha actualmente, crear ficha empleado!")
+                        });
+                    }, 200);
+                }
             }
-            else {
-                $timeout(function () {
-                    $scope.$apply(function () {
-                        $scope.mostrarMensaje("No cuenta con ficha actualmente, crear ficha empleado!")
-                    });
-                }, 200);
-            }
-        }
         }
         $scope.cerrarDialogRolTurnos = function () {
             $scope.cerrarPopup($scope.idModalRolTurnos);
@@ -1337,22 +1343,22 @@ angular.module('agil.controladores')
             $scope.cerrarPopup($scope.idModalHistorialTurnos);
         }
         $scope.abrirDialogHorasExtras = function (empleado) {
-            if(empleado.activo){
-            if (empleado.ficha.fecha_inicio) {
+            if (empleado.activo) {
+                if (empleado.ficha.fecha_inicio) {
 
-                $scope.empleado = empleado
-                var fecha = new Date()
-                $scope.horaExtra = { fecha: $scope.fechaATexto(fecha) }
-                $scope.abrirPopup($scope.idModalHorasExtras);
+                    $scope.empleado = empleado
+                    var fecha = new Date()
+                    $scope.horaExtra = { fecha: $scope.fechaATexto(fecha) }
+                    $scope.abrirPopup($scope.idModalHorasExtras);
+                }
+                else {
+                    $timeout(function () {
+                        $scope.$apply(function () {
+                            $scope.mostrarMensaje("No cuenta con ficha actualmente, crear ficha empleado!")
+                        });
+                    }, 200);
+                }
             }
-            else {
-                $timeout(function () {
-                    $scope.$apply(function () {
-                        $scope.mostrarMensaje("No cuenta con ficha actualmente, crear ficha empleado!")
-                    });
-                }, 200);
-            }
-        }
         }
         $scope.cerrarDialogHorasExtras = function () {
             $scope.cerrarPopup($scope.idModalHorasExtras);
@@ -1395,7 +1401,7 @@ angular.module('agil.controladores')
 
         }
         $scope.cerrarDialogAnticipoRegular = function () {
-            $scope.listaAnticipos2=[]
+            $scope.listaAnticipos2 = []
             $scope.cerrarPopup($scope.idModalAnticipoRegular);
         }
         $scope.abrirDialogPrestamosPersonal = function () {
@@ -1794,8 +1800,32 @@ angular.module('agil.controladores')
                         paciente.telefonos_referencia = worksheet['X' + row] != undefined && worksheet['X' + row] != "" ? worksheet['X' + row].v.toString() : null;
                         paciente.celular_referencia = worksheet['Y' + row] != undefined && worksheet['Y' + row] != "" ? worksheet['Y' + row].v.toString() : null;
                         paciente.nombre_referencia = worksheet['Z' + row] != undefined && worksheet['Z' + row] != "" ? worksheet['Z' + row].v.toString() : null;
+                        paciente.fecha_inicio = worksheet['AA' + row] != undefined && worksheet['AA' + row] != "" ?$scope.fecha_excel_angular(worksheet['AA' + row].v.toString()) : null;
+                        paciente.haber_basico = worksheet['AB' + row] != undefined && worksheet['AB' + row] != "" ? parseFloat(worksheet['AB' + row].v.toString()) : null;
                         paciente.imagen = "img/icon-user-default.png"
                         paciente.es_empleado = true
+                        var a = new Date(paciente.fecha_inicio)
+                        paciente.historialVacacion = []
+                        var b = a.getFullYear()
+                        var anos = $scope.obtenerAnios(b)
+                        anos.forEach(function (_, index, array) {
+                            var anioConfiguracion = index + 1
+                            var config = null
+                            if (anioConfiguracion < 5) {
+                                config = $scope.configuracionesVacacion[0].dias
+                            } else if (anioConfiguracion < 10) {
+                                config = $scope.configuracionesVacacion[1].dias
+                            } else if (anioConfiguracion >= 10) {
+                                config = $scope.configuracionesVacacion[2].dias
+                            }
+                            var historialVacacion = {
+                                gestion: _,
+                                anio: index + 1,
+                                aplicadas: config,
+                                tomadas: 0
+                            }
+                            paciente.historialVacacion.push(historialVacacion)
+                        });
                         pacientes.push(paciente);
 
                         row++;
@@ -1837,7 +1867,7 @@ angular.module('agil.controladores')
                 }
                 $scope.nuevoRH = dato.medicoPaciente
                 $scope.nuevoRH.persona.fecha_nacimiento = $scope.fechaATexto($scope.nuevoRH.persona.fecha_nacimiento)
-                $scope.seleccionarCargos($scope.nuevoRH.cargos)
+                $scope.seleccionarCargos($scope.nuevoRH.empleadosFichas[($scope.nuevoRH.empleadosFichas.length-1)].cargos)
             })
             $scope.abrirPopup($scope.idModalRhNuevo);
         }
@@ -1897,7 +1927,7 @@ angular.module('agil.controladores')
                     if ($scope.ficha.fecha_inicio) {
                         $scope.ficha.fecha_inicio2 = $scope.fechaATexto($scope.ficha.fecha_inicio)
                     } else {
-                        $scope.ficha.fecha_inicio2 = $scope.fechaATexto(new Date())
+                        $scope.ficha.editDatosLaborales = true
                     }
                     if ($scope.ficha.fecha_fin) {
                         $scope.ficha.fecha_fin2 = $scope.fechaATexto($scope.ficha.fecha_fin)
@@ -1943,7 +1973,7 @@ angular.module('agil.controladores')
                     $scope.ficha.empleado.otrosSeguros.forEach(function (otroSeguro, index, array) {
                         otroSeguro.eliminado = false
                     })
-                    $scope.seleccionarCargos($scope.ficha.empleado.cargos)
+                    $scope.seleccionarCargos($scope.ficha.cargos)
                     $scope.seleccionarDiscapacidades($scope.ficha.empleado.discapacidades)
                     //llenarCargos($scope.cargos)
                 } else {
@@ -3740,14 +3770,14 @@ angular.module('agil.controladores')
         $scope.obtenerListaEmpleados = function () {
             var promesa = ListaEmpleadosRrhh($scope.usuario.id_empresa)
             promesa.then(function (dato) {
-                dato.empleados.forEach(function(empleado,index,array) {
-                    empleado.ficha=empleado.empleadosFichas[0]
-                    if(index===(array.length-1)){
+                dato.empleados.forEach(function (empleado, index, array) {
+                    empleado.ficha = empleado.empleadosFichas[0]
+                    if (index === (array.length - 1)) {
                         $scope.llenarEmpleados(dato.empleados)
                     }
-                    
+
                 });
-              
+
 
             })
         }
@@ -3974,7 +4004,7 @@ angular.module('agil.controladores')
                     datos.anticipos.ordinarios = []
                     datos.anticipos.extraordinarios = []
                     datos.anticipos.forEach(function (anticipo, index, array) {
-                        anticipo.empleado.ficha=anticipo.empleado.empleadosFichas[(anticipo.empleado.empleadosFichas.length-1)]
+                        anticipo.empleado.ficha = anticipo.empleado.empleadosFichas[(anticipo.empleado.empleadosFichas.length - 1)]
                         anticipo.total2 = 0
                         if (anticipo.tipoAnticipo.nombre_corto != filtro.nombre) {
 
@@ -4032,7 +4062,7 @@ angular.module('agil.controladores')
                     datos.anticipos.ordinarios = []
                     datos.anticipos.extraordinarios = []
                     datos.anticipos.forEach(function (anticipo, index, array) {
-                        anticipo.empleado.ficha=anticipo.empleado.empleadosFichas[(anticipo.empleado.empleadosFichas.length-1)]
+                        anticipo.empleado.ficha = anticipo.empleado.empleadosFichas[(anticipo.empleado.empleadosFichas.length - 1)]
                         anticipo.total2 = 0
                         anticipo.anticipo_extraordinaro = 0
                         anticipo.saldo_salario = anticipo.salario_basico - anticipo.total
@@ -4200,7 +4230,7 @@ angular.module('agil.controladores')
         }
         $scope.sumarMontoPrestamoNuevo2 = function (anticipo) {
 
-            anticipo.total = anticipo.anticipo_extraordinaro + anticipo.monto+anticipo.anticipo_ordinaro
+            anticipo.total = anticipo.anticipo_extraordinaro + anticipo.monto + anticipo.anticipo_ordinaro
             anticipo.saldo_salario = anticipo.salario_basico - anticipo.total
         }
 
@@ -4429,9 +4459,9 @@ angular.module('agil.controladores')
                 if (index === (array.length - 1)) {
                     var dato = { anticipos: anticiposTr3, tipo: tipo, tr3Encontrado: tr3, total: total }
                     if (tipo == "MSC") {
-                        var nombreArchivo = dato.tr3Encontrado.planilla + "" + dia + "" + (mes+1) + "" + anio + "" + dato.tr3Encontrado.numero_planilla + ".txt"
+                        var nombreArchivo = dato.tr3Encontrado.planilla + "" + dia + "" + (mes + 1) + "" + anio + "" + dato.tr3Encontrado.numero_planilla + ".tr3"
                     } else {
-                        var nombreArchivo = dato.tr3Encontrado.planilla + "" + dia + "" + (mes+1) + "" + anio + "" + dato.tr3Encontrado.numero_planilla + ".txt"
+                        var nombreArchivo = dato.tr3Encontrado.planilla + "" + dia + "" + (mes + 1) + "" + anio + "" + dato.tr3Encontrado.numero_planilla + ".tr3"
                     }
                     $scope.descargarArchivo($scope.generarTexto(dato), nombreArchivo);
                 }
@@ -4460,9 +4490,9 @@ angular.module('agil.controladores')
                 if (index === (array.length - 1)) {
                     var dato = { anticipos: anticiposTr3, tipo: tipo, tr3Encontrado: tr3, total: total }
                     if (tipo == "MSC") {
-                        var nombreArchivo = dato.tr3Encontrado.planilla + "" + dia + "" + (mes+1) + "" + anio + "" + dato.tr3Encontrado.numero_planilla + ".txt"
+                        var nombreArchivo = dato.tr3Encontrado.planilla + "" + dia + "" + (mes + 1) + "" + anio + "" + dato.tr3Encontrado.numero_planilla + ".txt"
                     } else {
-                        var nombreArchivo = dato.tr3Encontrado.planilla + "" + dia + "" + (mes+1) + "" + anio + "" + dato.tr3Encontrado.numero_planilla + ".txt"
+                        var nombreArchivo = dato.tr3Encontrado.planilla + "" + dia + "" + (mes + 1) + "" + anio + "" + dato.tr3Encontrado.numero_planilla + ".txt"
                     }
                     $scope.descargarArchivo($scope.generarTextoCarta(dato), nombreArchivo);
                 }
@@ -4491,9 +4521,9 @@ angular.module('agil.controladores')
                     $scope.cerrarModalTr3BancoUnion()
                     $scope.buscarAnticiposOridnario($scope.filtroAnticipo)
                     if (datos.tipo == "MSC") {
-                        var nombreArchivo = dato.tr3Encontrado.planilla + "" + dia + "" + (mes+1) + "" + anio + "" + dato.tr3Encontrado.numero_planilla + ".txt"
+                        var nombreArchivo = dato.tr3Encontrado.planilla + "" + dia + "" + (mes + 1) + "" + anio + "" + dato.tr3Encontrado.numero_planilla + ".txt"
                     } else {
-                        var nombreArchivo = dato.tr3Encontrado.planilla + "" + dia + "" + (mes+1) + "" + anio + "" + dato.tr3Encontrado.numero_planilla + ".txt"
+                        var nombreArchivo = dato.tr3Encontrado.planilla + "" + dia + "" + (mes + 1) + "" + anio + "" + dato.tr3Encontrado.numero_planilla + ".txt"
                     }
                     $scope.descargarArchivo($scope.generarTexto(dato), nombreArchivo);
                     $scope.descargarArchivo($scope.generarTextoCarta(dato), nombreArchivo);
@@ -4543,24 +4573,24 @@ angular.module('agil.controladores')
                     "Ref.: Orden de Pago\r\n\r\n" +
                     "De nuestra consideración:\r\n\r\n" +
                     "Mediante la presente y según contrato suscrito con el Banco Mercantil Santa Cruz S.A.,\r\n" +
-                    "autorizamos a ustedes realizar el débito por el valor total de Bs. " + datos.total + "\r\n(" + totalLiteral + ")\r\n" +                   
+                    "autorizamos a ustedes realizar el débito por el valor total de Bs. " + datos.total + "\r\n(" + totalLiteral + ")\r\n" +
                     "correspondiente a la cancelación de la planilla de pago(s), de acuerdo al siguiente detalle:\r\n\r\n" +
 
                     "* Cuenta de débito Nro:                 " + datos.tr3Encontrado.cuenta.numero + "\r\n" +
                     "* Cuenta Pago de Planilla:              " + datos.tr3Encontrado.planilla + "\r\n" +
-                    "* Nombre del archivo:                   " + datos.tr3Encontrado.planilla + "" + dia + "" + (mes+1) + "" + anio + "" + datos.tr3Encontrado.numero_planilla + ".tr3\r\n" +
+                    "* Nombre del archivo:                   " + datos.tr3Encontrado.planilla + "" + dia + "" + (mes + 1) + "" + anio + "" + datos.tr3Encontrado.numero_planilla + ".tr3\r\n" +
                     "* Código de control:                     87fd35e019787f9612a4ffb9fc2cb415\r\n" +
-                    "* Nombre / Número de planilla:  " + datos.tr3Encontrado.numero_planilla + "\r\n" +
+                    "* Nombre / Número de planilla:  " + datos.tr3Encontrado.nombre_planilla + "\r\n" +
                     "* Monto total de débito:                 Bs " + datos.total + "\r\n\r\n" +
 
                     "Los datos apuntados anteriormente y el detalle de pagos, se encuentran en el archivo \r\n" +
-                    datos.tr3Encontrado.planilla + "" + dia + "" + (mes+1) + "" + anio + "" + datos.tr3Encontrado.numero_planilla + ".tr3, adjunto a la presente carta.\r\n\r\n " +
+                    datos.tr3Encontrado.planilla + "" + dia + "" + (mes + 1) + "" + anio + "" + datos.tr3Encontrado.numero_planilla + ".tr3, adjunto a la presente carta.\r\n\r\n " +
 
                     "Si, a los efectos de la presente, fuera necesario realizar compra venta de moneda nacional\r\n" +
                     "o extranjera,  también  autorizamos e instruimos  realizar las operaciones  necesarias  para\r\n" +
                     "cumplir  con  lo  instruido,  de  tal  manera  que se realicen  los abonos  en  la moneda  que\r\n" +
                     "corresponda a cada cuenta beneficiaria.\r\n" +
-                    "de Enero de Debo informar lo siguiente:\r\n" +
+                    "de " + mesActual + " de Debo informar lo siguiente:\r\n" +
                     "El origen de los fondos corresponde al " + datos.tr3Encontrado.origen_fondos + ".\r\n" +
                     "El Destino de los Fondos, " + datos.tr3Encontrado.destino_fondos + ".\r\n\r\n" +
 
@@ -4572,7 +4602,7 @@ angular.module('agil.controladores')
 
 
                     datos.tr3Encontrado.firma_uno + "                                 " + datos.tr3Encontrado.firma_tres + "\r\n" +
-                    datos.tr3Encontrado.firma_dos+"                                             "+  datos.tr3Encontrado.firma_cuatro+"\r\n\r\n\r\n" +
+                    datos.tr3Encontrado.firma_dos + "                                             " + datos.tr3Encontrado.firma_cuatro + "\r\n\r\n\r\n" +
 
 
 
@@ -4612,15 +4642,20 @@ angular.module('agil.controladores')
             var cuerpo = ""
             if (datos.tipo == "MSC") {
                 var nombreArchivoTr3 = datos.tr3Encontrado.nombre_archivo
-                var fecha = $scope.fechaATexto(datos.tr3Encontrado.fecha)
-                var cabezera = datos.tr3Encontrado.planilla + "|" + datos.tr3Encontrado.cuenta.numero + "|0|" + datos.tr3Encontrado.numero_planilla + "|" + nombreArchivoTr3 + "|" + fecha + "|" + fecha + "|" + datos.total + "|1\r\n"
+                var fechaPago = $scope.fechaATexto(datos.tr3Encontrado.fecha)
+                if(datos.tr3Encontrado.historialtr3){
+                var fecha = $scope.fechaATexto(datos.tr3Encontrado.historialtr3[0].anticipo.fecha)
+            }else{
+                var fecha = $scope.fechaATexto(datos.anticipos[0].fecha)
+            }
+                var cabezera = datos.tr3Encontrado.planilla + "|" + datos.tr3Encontrado.cuenta.numero + "|0|" + datos.tr3Encontrado.nombre_planilla + "|" + fecha + "|" + fechaPago + "|" + datos.total + "|" + datos.tr3Encontrado.numero_planilla + "\r\n"
 
                 datos.anticipos.forEach(function (anticipo, index, array) {
                     if (anticipo.empleado.empleadosFichas) {
                         anticipo.empleado.ficha = anticipo.empleado.empleadosFichas[0]
                     }
                     fecha = $scope.fechaATexto(anticipo.fecha)
-                    cabezera += (index + 1) + "|" + anticipo.empleado.ficha.numero_cuenta + "|" + fecha + "|" + datos.tr3Encontrado.numero_planilla + "|" + anticipo.monto + "|||" + datos.tr3Encontrado.nombre_planilla + "\r\n"
+                    cabezera += (index + 1) + "|" + anticipo.empleado.persona.nombre_completo + "|" + anticipo.empleado.ficha.numero_cuenta + "|" + fecha + "|" + datos.tr3Encontrado.numero_planilla + "|" + anticipo.monto + "|||" + datos.tr3Encontrado.nombre_archivo + "\r\n"
                     if (index === (array.length - 1)) {
                         texto.push(cabezera)
                     }
@@ -5265,25 +5300,25 @@ angular.module('agil.controladores')
             empleado.activo = (empleado.activo == false) ? true : false
             var promesa = UsuarioRecursosHUmanosActivo(empleado)
             promesa.then(function (dato) {
-               
+
                 $scope.funcionCerrar()
-                        
+
                 $scope.cuenta = {}
                 $scope.mostrarMensaje(dato.mensaje)
-                
-                    if (empleado.tipoReincorporacion) {
-                        empleado.activo = (empleado.activo == false) ? true : false
-                        if (empleado.tipoReincorporacion.nombre_corto == "NREING") {
-                            $scope.abrirDialogEmpleado(empleado)
-                            $("#siguiente-f").click()
-                            setTimeout(function () {
-                                $scope.ficha.editDatosLaborales=true
-                            }, 400);
-                        }
-                    }else{                        
-                        $scope.recargarItemsTabla()
-                    }     
-                
+
+                if (empleado.tipoReincorporacion) {
+                    empleado.activo = (empleado.activo == false) ? true : false
+                    if (empleado.tipoReincorporacion.nombre_corto == "NREING") {
+                        $scope.abrirDialogEmpleado(empleado)
+                        $("#siguiente-f").click()
+                        setTimeout(function () {
+                            $scope.ficha.editDatosLaborales = true
+                        }, 400);
+                    }
+                } else {
+                    $scope.recargarItemsTabla()
+                }
+
             })
         }
 
@@ -5364,8 +5399,20 @@ angular.module('agil.controladores')
                 $scope.cerrarDialogBeneficiosSociales()
             })
         }
+        $scope.calcularPromedioFiniquito = function (beneficio) {
+            beneficio.promedio = (beneficio.primer_mes2 + beneficio.segundo_mes2 + beneficio.tercer_mes2) / 3
+            beneficio.promedio = parseFloat(beneficio.promedio.toFixed(2))
+
+        }
+        $scope.calcularTotalQuiquenio = function (beneficio) {
+            beneficio.total_quiquenio = beneficio.promedio * (beneficio.numero_quiqueneo * 5)
+            beneficio.total_quiquenio = parseFloat(beneficio.total_quiquenio.toFixed(2))
+        }
         //fin beneficios sociales
         $scope.inicio()
-
+        $scope.calcularDesaucio = function (beneficio) {
+            beneficio.total_desahucio = beneficio.promedio * 3
+            beneficio.total_desahucio == parseFloat(beneficio.desahucio.toFixed(2))
+        }
 
     });

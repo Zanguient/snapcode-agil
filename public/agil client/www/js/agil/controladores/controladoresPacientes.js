@@ -1533,7 +1533,7 @@ angular.module('agil.controladores')
                 console.log(paciente)
                 $scope.paciente = paciente
                 // $scope.ficha.empleado.cargo = []
-                $scope.seleccionarCargos($scope.paciente.cargos)
+                /* $scope.seleccionarCargos($scope.paciente.cargos) */
                 $scope.paciente.fecha_nacimiento_texto = $scope.fechaATexto($scope.paciente.persona.fecha_nacimiento)
                 $scope.paciente.persona.imagen = (paciente.persona.imagen == null) ? "img/icon-user-default.png" : paciente.persona.imagen
                 console.log($scope.paciente.fecha_nacimiento_texto)

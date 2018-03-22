@@ -264,7 +264,11 @@
                         <td ng-if="fieldViewer.getConfiguration().codigo.show">{{evaluacion.empleado.codigo}}</td>
                         <td ng-if="fieldViewer.getConfiguration().nombre.show">{{evaluacion.empleado.persona.nombre_completo}}</td>
                         <td ng-if="fieldViewer.getConfiguration().campo.show">{{evaluacion.empleado.campo}}</td>
-                        <td ng-if="fieldViewer.getConfiguration().cargo.show">{{evaluacion.empleado.cargos.length > 0 ? evaluacion.empleado.cargos[0].cargo.nombre : 'Sin cargo'}}</td>
+                        <td ng-if="fieldViewer.getConfiguration().cargo.show">
+                                <label ng-repeat="cargo in evaluacion.empleado.empleadosFichas[(evaluacion.empleado.empleadosFichas.length-1)].cargos">
+                                        {{cargo.cargo.nombre}},
+                                    </label>
+                        </td>
                         <td ng-if="fieldViewer.getConfiguration().asis_capacitacion.show">{{evaluacion.asistencia_capacitacion}}</td>
                         <td ng-if="fieldViewer.getConfiguration().doc_actualizados.show">{{evaluacion.documentos_actualizados}}</td>
                         <td ng-if="fieldViewer.getConfiguration().trab_equipo.show">{{evaluacion.trabajo_equipo}}</td>

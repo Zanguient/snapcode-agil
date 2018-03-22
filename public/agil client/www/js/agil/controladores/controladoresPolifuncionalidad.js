@@ -471,6 +471,7 @@ angular.module('agil.controladores')
             reporte.then(function (res) {
                 if (res.reporte.length == 0) {
                     $scope.mostrarMensaje('No existen datos')
+                    blockUI.stop()
                     return
                 }
                 if (res.hasErr) {
@@ -492,7 +493,7 @@ angular.module('agil.controladores')
                     columns.push(res.reporte[i].persona.nombre_completo);
                     columns.push(res.reporte[i].persona.ci);
                     columns.push($scope.determinarEstado(res.reporte[i].eliminado));
-                    columns.push(res.reporte[i].cargos.length > 0 ? res.reporte[i].cargos[0].cargo.nombre : 'Sin cargo');
+                    columns.push(res.reporte[i].empleadosFichas[res.reporte[i].empleadosFichas.length-1].cargos.length > 0 ? res.reporte[i].empleadosFichas[res.reporte[i].empleadosFichas.length-1].cargos[0].cargo.nombre : 'Sin cargo');
                     var currentIndx = 0
                     var promedio = 0
                     mesesReporte.map(function (mes) {
@@ -731,6 +732,7 @@ angular.module('agil.controladores')
             blockUI.start()
             if (year === null || year === undefined || campo === undefined || campo === null) {
                 $scope.mostrarMensaje('Ingrese el Campo y el Año del cual desea el reporte.')
+                blockUI.stop()
                 return
             }
             if (pdf) {
@@ -747,6 +749,7 @@ angular.module('agil.controladores')
             reporte.then(function (res) {
                 if (res.reporte.length == 0) {
                     $scope.mostrarMensaje('No existen datos')
+                    blockUI.stop()
                     return
                 }
                 for (var i = 0; i < res.reporte.length; i++) {

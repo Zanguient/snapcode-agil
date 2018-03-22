@@ -483,7 +483,7 @@ module.exports = function (sequelize, Usuario, Persona, Rol, UsuarioRol, Tipo, C
 	MedicoPaciente.belongsTo(Clase, { foreignKey: 'id_extension', as: 'extension' });
 	MedicoPaciente.belongsTo(Clase, { foreignKey: 'id_tipo_documento', as: 'tipoDocumento' });
 	MedicoPaciente.hasMany(RrhhEmpleadoDiscapacidad, { foreignKey: 'id_empleado', as: 'discapacidades' });
-	MedicoPaciente.hasMany(RrhhEmpleadoCargo, { foreignKey: 'id_empleado', as: 'cargos' });
+	/* MedicoPaciente.hasMany(RrhhEmpleadoCargo, { foreignKey: 'id_empleado', as: 'cargos' }); *///22/03/2018
 	MedicoPaciente.hasOne(RrhhEmpleadoHojaVida, { foreignKey: 'id_empleado', as: 'hojaVida' })
 	MedicoPaciente.hasMany(RrhhEmpleadoPrestamo, { foreignKey: 'id_empleado', as: 'Prestamos' });
 	//MedicoPaciente.hasMany(RrhhEmpleadoRolTurno, { foreignKey: 'id_empleado', as: 'rolesTurno' });//ya no funciona 12/03/2018
@@ -673,6 +673,7 @@ module.exports = function (sequelize, Usuario, Persona, Rol, UsuarioRol, Tipo, C
 	RrhhEmpleadoFicha.belongsTo(Clase, { foreignKey: 'id_aporte_seguro_largo_plazo', as: 'aporteSeguroLargoPlazo' });
 	RrhhEmpleadoFicha.belongsTo(Clase, { foreignKey: 'id_lugar_seguro_largo_plazo', as: 'lugarSeguroLargoPlazo' });
 	RrhhEmpleadoFicha.belongsTo(Clase, { foreignKey: 'id_banco', as: 'banco' });
+	RrhhEmpleadoFicha.hasMany(RrhhEmpleadoCargo, { foreignKey: 'id_ficha', as: 'cargos' });
 
 	RrhhEmpleadoFichaOtrosSeguros.belongsTo(MedicoPaciente, { foreignKey: 'id_empleado', as: 'otroSeguro' });
 	RrhhEmpleadoFichaOtrosSeguros.belongsTo(Clase, { foreignKey: 'id_tipo_seguro', as: 'tipoSeguro' });
@@ -684,7 +685,8 @@ module.exports = function (sequelize, Usuario, Persona, Rol, UsuarioRol, Tipo, C
 	RrhhEmpleadoDiscapacidad.belongsTo(MedicoPaciente, { foreignKey: 'id_empleado', as: 'empleadoDiscapacidad' });
 	RrhhEmpleadoDiscapacidad.belongsTo(Clase, { foreignKey: 'id_discapacidad', as: 'discapacidad' });
 
-	RrhhEmpleadoCargo.belongsTo(MedicoPaciente, { foreignKey: 'id_empleado', as: 'EmpleadoCargo' });
+	/* RrhhEmpleadoCargo.belongsTo(MedicoPaciente, { foreignKey: 'id_empleado', as: 'EmpleadoCargo' }); *///22/03/2018
+	RrhhEmpleadoCargo.belongsTo(RrhhEmpleadoFicha, { foreignKey: 'id_ficha', as: 'ficha' });
 	RrhhEmpleadoCargo.belongsTo(Clase, { foreignKey: 'id_cargo', as: 'cargo' });
 
 	RrhhAnticipo.belongsTo(MedicoPaciente, { foreignKey: 'id_empleado', as: 'empleado' });

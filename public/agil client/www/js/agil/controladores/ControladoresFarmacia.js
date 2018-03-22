@@ -681,10 +681,10 @@ angular.module('agil.controladores')
             doc.text(ventas[i].farmacia.paciente.campo, 345, y + 20);
             var cargos = [];
 
-            for (var k = 0; k < ventas[i].farmacia.paciente.cargos.length; k++) {
-                cargos.push(ventas[i].farmacia.paciente.cargos[k].cargo.nombre);
+            for (var k = 0; k < ventas[i].farmacia.paciente.empleadosFichas[ventas[i].farmacia.paciente.empleadosFichas.length-1].cargos.length; k++) {
+                cargos.push(ventas[i].farmacia.paciente.empleadosFichas[ventas[i].farmacia.paciente.empleadosFichas.length-1].cargos[k].cargo.nombre);
             }
-
+            
             doc.text(cargos.toString(), 385, y + 20, { width: 50 });
             
             doc.text(ventas[i].total, 425, y + 20);
@@ -852,8 +852,8 @@ angular.module('agil.controladores')
             columns.push(ventas[i].farmacia.paciente.campo);
             var cargos = [];
 
-            for (var j = 0; j < ventas[i].farmacia.paciente.cargos.length; j++) {
-                cargos.push(ventas[i].farmacia.paciente.cargos[j].cargo.nombre);
+            for (var j = 0; j < ventas[i].farmacia.paciente.empleadosFichas[ventas[i].farmacia.paciente.empleadosFichas.length-1].cargos.length; j++) {
+                cargos.push(ventas[i].farmacia.paciente.empleadosFichas[ventas[i].farmacia.paciente.empleadosFichas.length-1].cargos[j].cargo.nombre);
             }
 
             columns.push(cargos.toString());

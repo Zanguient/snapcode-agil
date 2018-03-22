@@ -165,8 +165,8 @@ angular.module('agil.servicios')
 			doc.moveDown(0.4);
 			var cargos = [];
 
-			for (var j = 0; j < venta.farmacia.paciente.cargos.length; j++) {
-				cargos.push(venta.farmacia.paciente.cargos[j].cargo.nombre);
+			for (var j = 0; j < venta.farmacia.paciente.empleadosFichas[(venta.farmacia.paciente.empleadosFichas.length-1)].cargos.length; j++) {
+				cargos.push(venta.farmacia.paciente.empleadosFichas[(venta.farmacia.paciente.empleadosFichas.length-1)].cargos[j].cargo.nombre);
 			}
 
 			doc.text("Cargos : "  + cargos.toString());

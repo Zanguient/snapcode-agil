@@ -1,4 +1,4 @@
-module.exports = function (router, sequelize, Sequelize, Usuario, Farmacia, Persona, Empresa, Sucursal, Clase, Diccionario, Tipo, Movimiento, SucursalActividadDosificacion, CodigoControl, NumeroLiteral, Dosificacion, Venta, DetalleVenta, Producto, Cliente, Almacen, MedicoPaciente, RrhhEmpleadoCargo, Inventario, ConfiguracionGeneralFactura, DetalleMovimiento, ConfiguracionFactura, decodeBase64Image, fs) {
+module.exports = function (router, sequelize, Sequelize, Usuario, Farmacia, Persona, Empresa, Sucursal, Clase, Diccionario, Tipo, Movimiento, SucursalActividadDosificacion, CodigoControl, NumeroLiteral, Dosificacion, Venta, DetalleVenta, Producto, Cliente, Almacen, MedicoPaciente, RrhhEmpleadoCargo, Inventario, ConfiguracionGeneralFactura, DetalleMovimiento, ConfiguracionFactura, decodeBase64Image, fs,RrhhEmpleadoFicha ) {
 
 	router.route('/venta-farmacia')
 
@@ -65,7 +65,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Farmacia, Pers
 						model: MedicoPaciente, as: 'paciente',
 						where: condicionPaciente,
 						required: pacienteRequerido,
-						include: [{ model: RrhhEmpleadoCargo, as: 'cargos', include: [{ model: Clase, as: "cargo", where: condicionCargo }]}, { model: Persona, as: 'persona', where: condicionPersona}]
+						include: [{ model: RrhhEmpleadoFicha, as: 'empleadosFichas',include:[{ model: RrhhEmpleadoCargo, as: 'cargos', include: [{ model: Clase, as: "cargo" , where: condicionCargo}] }]}, { model: Persona, as: 'persona', where: condicionPersona}]
 					}]
 				},
 				{ model: Clase, as: 'tipoPago' },
@@ -102,7 +102,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Farmacia, Pers
 					model: Farmacia, as: 'farmacia' ,
 					include: [{
 						model: MedicoPaciente, as: 'paciente',
-						include: [{ model: RrhhEmpleadoCargo, as: 'cargos', include: [{ model: Clase, as: "cargo"}]}, { model: Persona, as: 'persona'}]
+						include: [{ model: RrhhEmpleadoFicha, as: 'empleadosFichas',include:[{ model: RrhhEmpleadoCargo, as: 'cargos', include: [{ model: Clase, as: "cargo" }] }]}, { model: Persona, as: 'persona'}]
 					}]
 				},
 				{
