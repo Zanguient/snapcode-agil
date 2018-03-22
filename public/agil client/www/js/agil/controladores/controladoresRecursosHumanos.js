@@ -1932,7 +1932,7 @@ angular.module('agil.controladores')
                     if ($scope.ficha.fecha_fin) {
                         $scope.ficha.fecha_fin2 = $scope.fechaATexto($scope.ficha.fecha_fin)
                     }
-                    $scope.ficha.empleado.cargo = []
+                    $scope.ficha.cargo = []
                     /* $scope.empleado.otrosSeguros = datos.ficha */
                     $scope.ficha.fecha_jubilacion = new Date($scope.ficha.fecha_jubilacion)
                     $scope.ficha.empleado.fecha_vence_documento = new Date($scope.ficha.empleado.fecha_vence_documento)
@@ -3465,7 +3465,7 @@ angular.module('agil.controladores')
                     textomes = mes.nombre
                 }
             });
-            $scope.ficha.empleado.cargo.forEach(function (cargo) {
+            $scope.ficha.cargo.forEach(function (cargo) {
                 if (textocargos == "") {
                     textocargos = cargo.nombre
                 } else {
@@ -3505,7 +3505,7 @@ angular.module('agil.controladores')
                     textomes = mes.nombre
                 }
             });
-            $scope.ficha.empleado.cargo.forEach(function (cargo) {
+            $scope.ficha.cargo.forEach(function (cargo) {
                 if (textocargos == "") {
                     textocargos = cargo.nombre
                 } else {

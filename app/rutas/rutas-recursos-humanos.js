@@ -403,7 +403,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                                                             id_cargo: cargo.id,
                                                             id_ficha: req.body.empleadosFichas[req.body.empleadosFichas.length - 1].id,
                                                         }
-                                                    }).spread(function (ficha, created) {
+                                                    }).spread(function (cargoEncontrado, created) {
                                                         if (!created) {
                                                             RrhhEmpleadoCargo.update({
                                                                 /* id_empleado: req.body.id, */
@@ -508,13 +508,13 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                 { model: Clase, as: 'aporteSeguroLargoPlazo' },
                 { model: Clase, as: 'lugarSeguroLargoPlazo' },
                 { model: Clase, as: 'banco' },
-                { model: RrhhEmpleadoDiscapacidad, as: 'discapacidades', include: [{ model: Clase, as: "discapacidad" }] }, 
+                { model: RrhhEmpleadoDiscapacidad, as: 'discapacidades', include: [{ model: Clase, as: "discapacidad" }] },
                 /* { model: RrhhEmpleadoFichaFamiliar, as: 'familiares' },*/
-                { model: RrhhEmpleadoFichaOtrosSeguros, as: 'otrosSeguros', include: [{ model: Clase, as: "tipoSeguro" }] }, 
+                { model: RrhhEmpleadoFichaOtrosSeguros, as: 'otrosSeguros', include: [{ model: Clase, as: "tipoSeguro" }] },
                 {
                     model: MedicoPaciente, as: 'empleado',
                     include: [{ model: RrhhEmpleadoFichaFamiliar, as: 'familiares', include: [{ model: Clase, as: 'relacion' }, { model: Persona, as: 'persona', include: [{ model: Clase, as: 'genero' }] }] },
-                     { model: Clase, as: 'extension' }, { model: Clase, as: 'tipoDocumento' },
+                    { model: Clase, as: 'extension' }, { model: Clase, as: 'tipoDocumento' },
                     {
                         model: Persona, as: 'persona',
                         include: [{ model: Clase, as: 'genero' },
@@ -529,25 +529,25 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
             }).then(function (fichaEncontrada) {
                 var ficha = fichaEncontrada[0]
                 /* if (ficha) { */
-                    res.json({ ficha: ficha })
-               /*  } else {
-                    MedicoPaciente.find({
-                        where: { id: req.params.id_empleado },
-                        include: [{ model: RrhhEmpleadoDiscapacidad, as: 'discapacidades', include: [{ model: Clase, as: "discapacidad" }] }, { model: RrhhEmpleadoFichaFamiliar, as: 'familiares', include: [{ model: Clase, as: 'relacion' }, { model: Persona, as: 'persona', include: [{ model: Clase, as: 'genero' }] }] },
-                        { model: RrhhEmpleadoFichaOtrosSeguros, as: 'otrosSeguros', include: [{ model: Clase, as: "tipoSeguro" }] }, { model: Clase, as: 'extension' }, { model: Clase, as: 'tipoDocumento' }, { model: Empresa, as: 'empresa' },
-                        {
-                            model: Persona, as: 'persona',
-                            include: [{ model: Clase, as: 'genero' },
-                            { model: Clase, as: 'pais' },
-                            { model: Clase, as: 'ciudad' },
-                            { model: Clase, as: 'provincia' },
-                            { model: Clase, as: 'localidad' },
-                            { model: Clase, as: 'estadoCivil' }]
-                        }]
-                    }).then(function (pacienteEncontrado) {
-                        res.json({ empleado: pacienteEncontrado })
-                    })
-                } */
+                res.json({ ficha: ficha })
+                /*  } else {
+                     MedicoPaciente.find({
+                         where: { id: req.params.id_empleado },
+                         include: [{ model: RrhhEmpleadoDiscapacidad, as: 'discapacidades', include: [{ model: Clase, as: "discapacidad" }] }, { model: RrhhEmpleadoFichaFamiliar, as: 'familiares', include: [{ model: Clase, as: 'relacion' }, { model: Persona, as: 'persona', include: [{ model: Clase, as: 'genero' }] }] },
+                         { model: RrhhEmpleadoFichaOtrosSeguros, as: 'otrosSeguros', include: [{ model: Clase, as: "tipoSeguro" }] }, { model: Clase, as: 'extension' }, { model: Clase, as: 'tipoDocumento' }, { model: Empresa, as: 'empresa' },
+                         {
+                             model: Persona, as: 'persona',
+                             include: [{ model: Clase, as: 'genero' },
+                             { model: Clase, as: 'pais' },
+                             { model: Clase, as: 'ciudad' },
+                             { model: Clase, as: 'provincia' },
+                             { model: Clase, as: 'localidad' },
+                             { model: Clase, as: 'estadoCivil' }]
+                         }]
+                     }).then(function (pacienteEncontrado) {
+                         res.json({ empleado: pacienteEncontrado })
+                     })
+                 } */
             })
         })
         .post(function (req, res) {
@@ -566,13 +566,13 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                 { model: Clase, as: 'aporteSeguroLargoPlazo' },
                 { model: Clase, as: 'lugarSeguroLargoPlazo' },
                 { model: Clase, as: 'banco' },
-                { model: RrhhEmpleadoDiscapacidad, as: 'discapacidades', include: [{ model: Clase, as: "discapacidad" }] }, 
+                { model: RrhhEmpleadoDiscapacidad, as: 'discapacidades', include: [{ model: Clase, as: "discapacidad" }] },
                 /* { model: RrhhEmpleadoFichaFamiliar, as: 'familiares' }, */
                 { model: RrhhEmpleadoFichaOtrosSeguros, as: 'otrosSeguros', include: [{ model: Clase, as: "tipoSeguro" }] },
                 {
                     model: MedicoPaciente, as: 'empleado',
                     include: [{ model: RrhhEmpleadoFichaFamiliar, as: 'familiares', include: [{ model: Clase, as: 'relacion' }, { model: Persona, as: 'persona', include: [{ model: Clase, as: 'genero' }] }] },
-                     { model: Clase, as: 'extension' }, { model: Clase, as: 'tipoDocumento' },
+                    { model: Clase, as: 'extension' }, { model: Clase, as: 'tipoDocumento' },
                     {
                         model: Persona, as: 'persona',
                         include: [{ model: Clase, as: 'genero' },
@@ -974,8 +974,8 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                 id_ficha: ficha.id
             }
         }).then(function (EmpleadoCargosActualizada) {
-            if (req.body.empleado.cargo.length > 0) {
-                req.body.empleado.cargo.forEach(function (cargo, index, array) {
+            if (req.body.cargo.length > 0) {
+                req.body.cargo.forEach(function (cargo, index, array) {
                     RrhhEmpleadoCargo.findOrCreate({
                         where: { id_ficha: ficha.id, id_cargo: cargo.id },
                         defaults: {
@@ -983,7 +983,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                             id_cargo: cargo.id,
                             id_ficha: ficha.id
                         }
-                    }).spread(function (ficha, created) {
+                    }).spread(function (cargoEncontrado, created) {
                         if (!created) {
                             RrhhEmpleadoCargo.update({
                                 /* id_empleado: req.body.empleado.id, */
@@ -993,7 +993,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                                     where: { id_ficha: ficha.id, id_cargo: cargo.id }
                                 }).then(function (actualizado) {
                                     if (index === (array.length - 1)) {
-                                        guardarSeguros(RrhhEmpleadoDiscapacidad, req, req.body.empleado, res, fichaAnterior,ficha)
+                                        guardarSeguros(RrhhEmpleadoDiscapacidad, req, req.body.empleado, res, fichaAnterior, ficha)
                                     }
                                 }).catch(function (err) {
                                     res.json({ mensaje: err.message === undefined ? err.stack : err.message, hasErr: true })
@@ -1001,7 +1001,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
 
                         } else {
                             if (index === (array.length - 1)) {
-                                guardarSeguros(RrhhEmpleadoDiscapacidad, req, req.body.empleado, res, fichaAnterior,ficha)
+                                guardarSeguros(RrhhEmpleadoDiscapacidad, req, req.body.empleado, res, fichaAnterior, ficha)
                             }
                         }
                     }).catch(function (err) {
@@ -1009,26 +1009,26 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                     });
                 });
             } else {
-                guardarSeguros(RrhhEmpleadoDiscapacidad, req, req.body.empleado, res, fichaAnterior,ficha)
+                guardarSeguros(RrhhEmpleadoDiscapacidad, req, req.body.empleado, res, fichaAnterior, ficha)
             }
         })
     }
-    function guardarSeguros(RrhhEmpleadoDiscapacidad, req, empleado, res, fichaAnterior,ficha) {
-        discapacidades = req.body.empleado.discapacidades
+    function guardarSeguros(RrhhEmpleadoDiscapacidad, req, empleado, res, fichaAnterior, ficha) {
+        var discapacidades = req.body.discapacidades
         RrhhEmpleadoDiscapacidad.destroy({
             where: {
                 id_ficha: ficha.id,
             }
         }).then(function (EmpleadoDiscapacidadesActualizada) {
             if (discapacidades.length > 0) {
-                discapacidades.forEach(function (discapacidad, index, array) {
+                req.body.discapacidades.forEach(function (discapacidad, index, array) {
                     RrhhEmpleadoDiscapacidad.findOrCreate({
-                        where: {  id_ficha: ficha.id, id_discapacidad: discapacidad.id },
+                        where: { id_ficha: ficha.id, id_discapacidad: discapacidad.id },
                         defaults: {
                             id_ficha: ficha.id,
                             id_discapacidad: discapacidad.id
                         }
-                    }).spread(function (ficha, created) {
+                    }).spread(function (discapacidadEncontrada, created) {
                         if (!created) {
                             RrhhEmpleadoDiscapacidad.update({
                                 id_ficha: ficha.id,
@@ -3196,7 +3196,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
             { model: Clase, as: 'banco' },
             { model: RrhhEmpleadoDiscapacidad, as: 'discapacidades', include: [{ model: Clase, as: "discapacidad" }] },
             /* { model: RrhhEmpleadoFichaFamiliar, as: 'familiares' },*/
-            { model: RrhhEmpleadoFichaOtrosSeguros, as: 'otrosSeguros', include: [{ model: Clase, as: "tipoSeguro" }] }, 
+            { model: RrhhEmpleadoFichaOtrosSeguros, as: 'otrosSeguros', include: [{ model: Clase, as: "tipoSeguro" }] },
             {
                 model: MedicoPaciente, as: 'empleado',
                 include: [{ model: RrhhEmpleadoFichaFamiliar, as: 'familiares', include: [{ model: Clase, as: 'relacion' }, { model: Persona, as: 'persona', include: [{ model: Clase, as: 'genero' }] }] },
@@ -3531,11 +3531,52 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                     }
                     ArregloCambipos.push(arreglo)
                 }
-
+                var bandera2 = false;
+                var arregloPrueba = []
+                var arregloDatosAcual = ""
+                var arregloDatosAnterior = ""
+                var arregloDiscapacidades = fichaActual.discapacidades.map(function (discapacidad) {
+                    arregloDatosAcual += discapacidad.discapacidad.dataValues.nombre + ", "
+                    return discapacidad;
+                })
+                var arregloDiscapacidadesAnterior = fichaAnterior.discapacidades.map(function (discapacidad) {
+                    arregloDatosAnterior += discapacidad.discapacidad.dataValues.nombre + ", "
+                    return discapacidad;
+                })
+                bandera2 = arregloDiscapacidades.includes(arregloDiscapacidadesAnterior)
+                if(arregloDiscapacidadesAnterior.length!=arregloDiscapacidades.length){
+                    bandera2=true
+                }
+                if (bandera2) {
+                    arreglo = {
+                        id_ficha: fichaActual.id,
+                        campo: "discapacidades",
+                        valor_anterior: arregloDatosAnterior,
+                        valor_actual: arregloDatosAcual,
+                        fecha: req.body.fecha
+                    }
+                    ArregloCambipos.push(arreglo)
+                }
+                /* var arregloDatosAcual=""
+                var arregloDiscapacidades=fichaActual.discapacidades.map(function (discapacidad) {
+                    arregloDatosAcual+=discapacidad.nombre+", "
+                    return discapacidad;
+                })
+               
+                while(arregloDiscapacidades.length>0){
+                    bandera2=false;
+                    var disca=arregloDiscapacidades.pop()                   
+                    for (let j = 0; j < fichaAnterior.discapacidades.length; j++) {
+                        var discapacidadAnterior = fichaAnterior.discapacidades[j];
+                        if(disca.nombre_corto==discapacidadAnterior.nombre_corto){
+                            bandera2=true
+                        }
+                    } 
+                   
+                   
+                } */
                 if (ArregloCambipos.length > 0) {
                     ArregloCambipos.forEach(function (cambio, index, array) {
-                        /* if(cambio.valor_anterior instanceof Date)cambio.valor_anterior=fechaATexto(cambio.valor_anterior)
-                        if(cambio.valor_anterior instanceof Date)cambio.valor_anterior=fechaATexto(cambio.valor_anterior) */
                         RrhhEmpleadoBitacoraFicha.create({
                             id_ficha: cambio.id_ficha,
                             campo: cambio.campo,
