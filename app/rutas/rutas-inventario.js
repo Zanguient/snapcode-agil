@@ -1559,8 +1559,8 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 			Venta.findAll({
 				where: condicionVenta,
 				include: [{
-					model: DetalleVenta, as: 'detallesVenta', required: false,
-					include: [{ model: Producto, as: 'producto', required: false }, { model: Servicios, as: 'servicio', required: false }]
+					model: DetalleVenta, as: 'detallesVenta',
+					include: [{ model: Producto, as: 'producto' }]
 				},
 				{ model: Clase, as: 'tipoPago' },
 				{ model: Usuario, as: 'usuario', where: condicionUsuario },
@@ -1570,55 +1570,55 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 					include: [{ model: Clase, as: 'clase', where: condicionTransaccion }]
 				},
 				{
-					model: Almacen, as: 'almacen', required: false,
+					model: Almacen, as: 'almacen',
 					include: [{
 						model: Sucursal, as: 'sucursal',
-						where: condicionSucursal, required: false
+						where: condicionSucursal
 					}]
 				},
 				{
-					model: Almacen, as: 'almacenTraspaso', required: false,
+					model: Almacen, as: 'almacenTraspaso',
 					include: [{
-						model: Sucursal, as: 'sucursal', required: false
+						model: Sucursal, as: 'sucursal'
 					}]
 				}]
 			}).then(function (entity) {
-				// res.json(entity);
+				res.json(entity);
 				var ventas = []
-				entity.map(function (factura, i) {
-					if (factura.usar_servicios) {
-						Proforma.find(
-							{
-								where: { id_venta: factura.id },
-								include: [
-									// { model: Clase, as: 'actividadEconomica' },
-									// { model: DetallesProformas, as: 'detallesProformas', where: { eliminado: false }, include: [{ model: Servicios, as: 'servicio' }] },
-									// { model: Usuario, as: 'usuarioProforma', where: condicionUsuario },
-									// { model: Cliente, as: 'clienteProforma', where: condicionCliente },
-									{ model: Sucursal, as: 'sucursalProforma', where: condicionSucursal }
-								]
-							}).then(function (proforma) {
-								// factura.movimiento = { clase: movimientoFacturacion, fecha: factura.fecha_factura }
-								if (proforma) {
-									factura.dataValues.almacen = { sucursal: proforma.sucursalProforma }
-									factura.almacen = { sucursal: proforma.sucursalProforma }
-									ventas.push(factura)
-								} else {
-									ventas.push(factura)
-								}
-								if (i === entity.length - 1) {
-									// Array.prototype.push.apply(entity, lstProformas);
-									res.json(ventas)
-								}
-							})
-					} else {
-						ventas.push(factura)
-						if (i === entity.length - 1) {
-							// Array.prototype.push.apply(entity, lstProformas);
-							res.json(ventas)
-						}
-					}
-				})
+				// entity.map(function (factura, i) {
+				// 	if (factura.usar_servicios) {
+				// 		Proforma.find(
+				// 			{
+				// 				where: { id_venta: factura.id },
+				// 				include: [
+				// 					// { model: Clase, as: 'actividadEconomica' },
+				// 					// { model: DetallesProformas, as: 'detallesProformas', where: { eliminado: false }, include: [{ model: Servicios, as: 'servicio' }] },
+				// 					// { model: Usuario, as: 'usuarioProforma', where: condicionUsuario },
+				// 					// { model: Cliente, as: 'clienteProforma', where: condicionCliente },
+				// 					{ model: Sucursal, as: 'sucursalProforma', where: condicionSucursal }
+				// 				]
+				// 			}).then(function (proforma) {
+				// 				// factura.movimiento = { clase: movimientoFacturacion, fecha: factura.fecha_factura }
+				// 				if (proforma) {
+				// 					factura.dataValues.almacen = { sucursal: proforma.sucursalProforma }
+				// 					factura.almacen = { sucursal: proforma.sucursalProforma }
+				// 					ventas.push(factura)
+				// 				} else {
+				// 					ventas.push(factura)
+				// 				}
+				// 				if (i === entity.length - 1) {
+				// 					// Array.prototype.push.apply(entity, lstProformas);
+				// 					res.json(ventas)
+				// 				}
+				// 			})
+				// 	} else {
+				// 		ventas.push(factura)
+				// 		if (i === entity.length - 1) {
+				// 			// Array.prototype.push.apply(entity, lstProformas);
+				// 			res.json(ventas)
+				// 		}
+				// 	}
+				// })
 				////////////////////////////////////////////////////////////////// INCORPORTACIÓN FACTURAS DE PROFORMAS
 				// Proforma.findAll(
 				// 	{
@@ -1698,11 +1698,11 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 				include: [{ model: Cliente, as: 'cliente' },
 				{
 					model: DetalleVenta, as: 'detallesVenta',
-					include: [{ model: Producto, as: 'producto', required: false }, { model: Servicios, as: 'servicio', required: false },
+					include: [{ model: Producto, as: 'producto' },
 					{ model: Inventario, as: 'inventario' }]
 				},
 				{ model: Almacen, as: 'almacen', include: [{ model: Sucursal, as: 'sucursal' }] },
-				{ model: Almacen, as: 'almacenTraspaso', include: [{ model: Sucursal, as: 'sucursal' }], required: false },
+				{ model: Almacen, as: 'almacenTraspaso', include: [{ model: Sucursal, as: 'sucursal' }] },
 				{ model: Clase, as: 'actividad' },
 				{ model: Clase, as: 'tipoPago' },
 				{ model: Movimiento, as: 'movimiento', include: [{ model: Clase, as: 'clase' }] }]
