@@ -139,7 +139,8 @@ router.route('/reportes/ventas-mensuales/:id_empresa/sucursal/:id_sucursal/inici
 										include:[{model:Sucursal,as:'sucursal',where:condicionVenta}]}]},
 						  {model:Inventario,as: 'inventario'}],
 				order: [ [ { model: Venta, as: 'venta' }, 'fecha' ,'ASC'] ]
-			}).then(function(detallesVenta){			
+			}).then(function(detallesVenta){
+				res.header('Content-Length', 938848);			
 				res.json({detallesVenta:detallesVenta,empresa:empresa});		  
 			});
 		});
