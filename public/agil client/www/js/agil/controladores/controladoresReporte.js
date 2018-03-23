@@ -1326,7 +1326,7 @@ angular.module('agil.controladores')
 			fin = new Date($scope.convertirFecha(reporte.fechaFinTexto));
 			var promesa = ReporteVentasMensualesDatos($scope.usuario.id_empresa, reporte.sucursal.id, inicio, fin);
 			promesa.then(function (datos) {
-				var detallesVenta = datos.detallesVenta;
+				var detallesVenta = JSON.parse(datos.detallesVenta);
 				var data = [["FECHA DE LA FACTURA", "N° DE LA FACTURA", "N° DE AUTORIZACION", "NIT/CI CLIENTE", "NOMBRE O RAZON SOCIAL", "UBICACION CLIENTE",
 					"CODIGO", "DETALLE", "UNIDAD", "GRUPO", "CANTIDAD", "PU", "TOTAL", "IMPORTE ICE/IEHD/TASAS", "EXPORTACIONES Y OPERACIONES EXENTAS",
 					"VENTAS GRAVADAS A TASA CERO", "SUBTOTAL", "DESCUENTOS, BONIFICACIONES Y REBAJAS OBTENIDAS",
