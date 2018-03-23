@@ -131,7 +131,7 @@ router.route('/reportes/ventas-mensuales/:id_empresa/sucursal/:id_sucursal/inici
 							include:[{model:Clase,as:'grupo'},{model:Clase,as:'subgrupo'}]},
 						  {model:Venta,as: 'venta',where:{fecha: {$between: [inicio,fin]},activa:true},
 							include:[{model:Cliente,as: 'cliente',required:true},
-									 {model:Usuario,as: 'usuario',required:true},
+									 {model:Usuario,as: 'usuario',required:true,attributes:['id','id_persona','id_empresa','nombre_usuario']},
 									 {model:VendedorVenta,as: 'vendedor',required:false,
 										include:[{model:Persona,as:'persona',required:false}]},
 									 {model:Movimiento,as:'movimiento',include:[{model:Clase,as:'clase',where:{$or: [{nombre_corto:"FACT"}, {nombre_corto:"PFR"}]}}]},
