@@ -298,7 +298,7 @@ function ejecutarScriptsRecursosHumanos(idModalPrerequisitos, idModalEmpleado, i
 	crearPopup(idModalBeneficiosSociales, "100%", "auto");
 	crearPopup(idModalMotivoRetiro, "62%", "auto");
 	crearPopup(idModalOtroIngreso, "50%", "auto");
-	crearPopup(idModalBitacoraFicha, "50%", "auto");
+	crearPopup(idModalBitacoraFicha, "auto", "auto");
 	crearPopup(idModalAnticipoExtraordinario, "62%", "auto");
 	crearPopup(idModalNuevoPrestamo, "62%", "auto");
 	crearPopup(idModalAusenciasVacaciones, "62%", "auto");
@@ -1439,8 +1439,8 @@ function duration(since, until) {
 		var temp = since;
 		since = until;
 		until = temp;
-	} */
-
+	}
+ */
 	var years,months,days;
 	
 	//Years
@@ -1468,7 +1468,7 @@ function duration(since, until) {
 		}
 	}else{
 		if(since.getMonth() > until.getMonth()){
-			months = 12 - (until.getMonth() - since.getMonth());
+			months = 12 - (Math.abs(until.getMonth() - since.getMonth()));
 		}else{
 			months = until.getMonth() - since.getMonth();
 		}

@@ -144,6 +144,42 @@ angular.module('agil.servicios')
     return res;
 }])
 
+.factory('bitacoraFicha', function ($resource) {
+    return $resource(restServer + "recursos-humanos/bitacora-ficha/usuario/:id", null,
+        {
+            'update': { method: 'PUT' }
+        });
+})
+.factory('GuardarBitacoraFicha', ['bitacoraFicha', '$q', function (bitacoraFicha, $q) {
+    var res = function (idEmpleado,bitacora)//idEmpresa, xxx
+    {
+        var delay = $q.defer();
+        bitacoraFicha.save({
+            id: idEmpleado
+                  },bitacora,function (entidades) {
+            delay.resolve(entidades);
+        }, function (error) {
+            delay.reject(error);
+        });
+        return delay.promise;
+    };
+    return res;
+}])
+.factory('VerBitacoraFicha', ['bitacoraFicha', '$q', function (bitacoraFicha, $q) {
+    var res = function (idFicha)//idEmpresa, xxx
+    {
+        var delay = $q.defer();
+        bitacoraFicha.query({
+            id: idFicha
+                  },function (entidades) {
+            delay.resolve(entidades);
+        }, function (error) {
+            delay.reject(error);
+        });
+        return delay.promise;
+    };
+    return res;
+}])
 .factory('CrearEmpleadoFicha', ['UsuarioRhFicha', '$q', function (UsuarioRhFicha, $q) {
     var res = function (ficha) {
         var delay = $q.defer();
@@ -715,6 +751,12 @@ angular.module('agil.servicios')
             'update': { method: 'PUT' }
         });
 })
+.factory('FiniquitoEmpleado', function ($resource) {
+    return $resource(restServer + "recursos-humanos/beneficio/ficha/:id",null,
+        {
+            'update': { method: 'PUT' }
+        });
+})
 .factory('CrearBeneficioSocial', ['NuevoBeneficioSocial', '$q', function (NuevoBeneficioSocial, $q) {
     var res = function (datos,idFicha) {
         var delay = $q.defer();
@@ -731,6 +773,18 @@ angular.module('agil.servicios')
     var res = function (idFicha) {
         var delay = $q.defer();
         NuevoBeneficioSocial.query({id:idFicha},function (entidad) {
+            delay.resolve(entidad);
+        }, function (error) {
+            delay.reject(error);
+        });
+        return delay.promise;
+    };
+    return res;
+}])
+.factory('ObtenerFiniquitoEmpleado', ['FiniquitoEmpleado', '$q', function (FiniquitoEmpleado, $q) {
+    var res = function (idFicha) {
+        var delay = $q.defer();
+        FiniquitoEmpleado.get({id:idFicha},function (entidad) {
             delay.resolve(entidad);
         }, function (error) {
             delay.reject(error);

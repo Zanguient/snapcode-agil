@@ -22,7 +22,7 @@ module.exports = function (sequelize, Sequelize) {
             type: Sequelize.DATE,
             field: 'fecha'
         },
-        usuario: {
+        id_usuario: {
             type: Sequelize.INTEGER,
             field: 'usuario'
         }

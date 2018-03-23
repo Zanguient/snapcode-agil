@@ -4120,30 +4120,30 @@
 
                         <div class="center-block width150">
                             <label>
-                                <input name="" ng-model="beneficio.tipo_beneficio" class="ace ace-switch ace-switch-5 big-switch" type="checkbox">
+                                <input ng-disabled="true" name="" ng-model="beneficio.tipo_beneficio" class="ace ace-switch ace-switch-5 big-switch" type="checkbox">
                                 <span class="lbl" data-lbl="Finiquito&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Quinquenio"></span>
                             </label>
                         </div>
                         <div class="row">
                             <div class="form-group col-sm-6 col-md-3">
                                 <label for="fecha">Fecha de Elaboración:</label>
-                                <input type="text" ng-update-hidden class="form-control date-picker" autocomplete="off" ng-model="beneficio.fecha_elaboracion"
-                                    id="fecha" name="fecha">
+                                <input required type="text" ng-update-hidden data-date-format="dd/mm/yyyy" class="form-control date-picker" autocomplete="off"
+                                    ng-model="beneficio.fecha_elaboracion" id="fecha" name="fecha">
                             </div>
                             <div class="form-group col-sm-6 col-md-3">
                                 <label for="se-presento-el">Se presentó el:</label>
-                                <input type="text" ng-update-hidden class="form-control date-picker" autocomplete="off" ng-model="beneficio.fecha_asistensia"
-                                    id="se-presento-el" name="se-presento-el">
+                                <input required type="text" ng-update-hidden data-date-format="dd/mm/yyyy" class="form-control date-picker" autocomplete="off"
+                                    ng-model="beneficio.fecha_asistensia" id="se-presento-el" name="se-presento-el">
                             </div>
                             <div class="form-group col-sm-6 col-md-3">
                                 <label for="fecha-ingreso">Fecha de Ingreso:</label>
-                                <input type="text" disabled ng-update-hidden class="form-control date-picker" autocomplete="off" ng-model="beneficio.fecha_ingreso"
-                                    id="fecha-ingreso" name="fecha-ingreso">
+                                <input required type="text" disabled ng-update-hidden data-date-format="dd/mm/yyyy" class="form-control date-picker" autocomplete="off"
+                                    ng-model="beneficio.fecha_ingreso" id="fecha-ingreso" name="fecha-ingreso">
                             </div>
                             <div ng-hide="!beneficio.tipo_beneficio" class="form-group col-sm-6 col-md-3">
                                 <label for="fecha-retiro">Fecha de Retiro:</label>
-                                <input type="text" disabled ng-update-hidden class="form-control date-picker" autocomplete="off" ng-model="beneficio.fecha_retiro"
-                                    id="fecha-retiro" name="fecha-retiro">
+                                <input required type="text" disabled ng-update-hidden data-date-format="dd/mm/yyyy" class="form-control date-picker" autocomplete="off"
+                                    ng-model="beneficio.fecha_retiro" id="fecha-retiro" name="fecha-retiro">
                             </div>
                         </div>
                         <div class="row">
@@ -4181,19 +4181,19 @@
                                     </div>
                                     <div class="form-group col-sm-2">
                                         <label for="agnos-vacaciones">Años</label>
-                                        <input type="number" ng-model="beneficio.anios" class="form-control" id="agnos-vacaciones" name="agnos-vacaciones">
+                                        <input type="number" min="0" ng-model="beneficio.anios" class="form-control" id="agnos-vacaciones" name="agnos-vacaciones">
                                     </div>
                                     <div class="form-group col-sm-2">
                                         <label for="meses-vacaciones">Meses</label>
-                                        <input type="number" ng-model="beneficio.meses" class="form-control" id="meses-vacaciones" name="meses-vacaciones">
+                                        <input type="number" min="0" ng-model="beneficio.meses" class="form-control" id="meses-vacaciones" name="meses-vacaciones">
                                     </div>
                                     <div class="form-group col-sm-2">
                                         <label for="meses-vacaciones">Días</label>
-                                        <input type="number" ng-model="beneficio.dias" class="form-control" id="dias-vacaciones" name="dias-vacaciones">
+                                        <input type="number" min="0" ng-model="beneficio.dias" class="form-control" id="dias-vacaciones" name="dias-vacaciones">
                                     </div>
                                     <div class="form-group col-sm-2">
                                         <label for="meses-vacaciones">Total</label>
-                                        <input type="number" ng-model="beneficio.totalV" class="form-control" id="dias-vacaciones" name="dias-vacaciones">
+                                        <input type="number" min="0" ng-model="beneficio.totalV" class="form-control" id="dias-vacaciones" name="dias-vacaciones">
                                     </div>
                                 </div>
                             </div>
@@ -4201,16 +4201,16 @@
                                 <div class="row">
                                     <div class="form-group col-sm-4">
                                         <label for="quinquenio">Número de Quinquenios</label>
-                                        <input type="number" ng-model="beneficio.numero_quinquenio" class="form-control" id="quinquenio" name="quinquenio">
+                                        <input disabled type="number" min="0" ng-value="listabeneficios.length" ng-model="beneficio.numero_quinquenio" class="form-control" id="quinquenio" name="quinquenio">
                                     </div>
                                     <div class="form-group col-sm-4">
                                         <label for="quinquenio-adelanto">Quinquenio Adelantado</label>
-                                        <input type="number" ng-model="beneficio.quinquenio_adelantado" class="form-control" id="quinquenio-adelanto" name="quinquenio-adelanto">
+                                        <input type="number" min="0" ng-model="beneficio.quinquenio_adelantado" class="form-control" id="quinquenio-adelanto" name="quinquenio-adelanto">
                                     </div>
-                                    <div class="form-group col-sm-4">
+                                    <!--  <div class="form-group col-sm-4">
                                         <label for="quinquenio-total">Total Quinquenio a Pagar</label>
                                         <input type="number" ng-model="beneficio.total_quinquenio" class="form-control" id="quinquenio-total" name="quinquenio-total">
-                                    </div>
+                                    </div> -->
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -4218,32 +4218,32 @@
                                 <div class="row">
                                     <div class="form-group col-sm-3">
                                         <label for="1-mes">1er Mes</label>
-                                        <input type="number" ng-change="calcularPromedioFiniquito(beneficio)" ng-model="beneficio.primer_mes2" class="form-control"
+                                        <input type="number" min="0" ng-change="calcularPromedioFiniquito(beneficio)" ng-model="beneficio.primer_mes2" class="form-control"
                                             id="1-mes" name="1-mes">
                                     </div>
                                     <div class="form-group col-sm-3">
                                         <label for="2-mes">2er Mes</label>
-                                        <input type="number" ng-change="calcularPromedioFiniquito(beneficio)" ng-model="beneficio.segundo_mes2" class="form-control"
+                                        <input type="number" min="0" ng-change="calcularPromedioFiniquito(beneficio)" ng-model="beneficio.segundo_mes2" class="form-control"
                                             id="2-mes" name="2-mes">
                                     </div>
                                     <div class="form-group col-sm-3">
                                         <label for="3-mes">3er Mes</label>
-                                        <input type="number" ng-change="calcularPromedioFiniquito(beneficio)" ng-model="beneficio.tercer_mes2" class="form-control"
+                                        <input type="number" min="0" ng-change="calcularPromedioFiniquito(beneficio)" ng-model="beneficio.tercer_mes2" class="form-control"
                                             id="3-mes" name="3-mes">
                                     </div>
                                     <div class="form-group col-sm-3">
                                         <label for="3-mes">Promedio</label>
-                                        <input type="number" step="0.01" ng-model="beneficio.promedio" class="form-control" id="3-mes" name="3-mes">
+                                        <input type="number" disabled step="0.01" min="0" ng-model="beneficio.promedio" class="form-control" id="3-mes" name="3-mes">
                                     </div>
                                 </div>
                                 <div class="form-group row" ng-hide="beneficio.tipo_beneficio">
                                     <div class="form-group col-sm-3">
-                                        <label for="3-mes">Numero quinqueneo</label>
-                                        <input type="number" ng-change="calcularTotalQuiquenio(beneficio)" ng-model="beneficio.numero_quiqueneo" class="form-control"
-                                            id="3-mes" name="3-mes">
+                                        <label for="3-mes">Cantidad quinqueneo</label>
+                                        <input type="number" max="{{quienquenioRestante}}" min="0" ng-change="calcularTotalQuiquenio(beneficio)" ng-model="beneficio.numero_quiqueneo"
+                                            class="form-control" id="3-mes" name="3-mes">
                                     </div>
-                                    <div class="form-group col-sm-3">
-                                        <label for="3-mes">Total</label>
+                                    <div class="form-group col-sm-6">
+                                        <label for="3-mes">Total Quinquenio a Pagar</label>
                                         <input disabled type="number" ng-model="beneficio.total_quiquenio" class="form-control" id="3-mes" name="3-mes">
                                     </div>
                                 </div>
@@ -4276,7 +4276,7 @@
                                             <div class="col-md-4">
                                                 <label for="monto">Monto</label>
                                                 <div class="input-group">
-                                                    <input type="number" ng-model="ingreso.monto" class="form-control" id="monto" name="monto" placeholder="0.0">
+                                                    <input type="number" min="0" ng-model="ingreso.monto" class="form-control" id="monto" name="monto" placeholder="0.0">
                                                     <span class="input-group-addon">Bs</span>
                                                 </div>
                                             </div>
@@ -4302,7 +4302,7 @@
                                                     <tbody>
                                                         <tr ng-repeat="ingreso in beneficio.ingresos">
                                                             <th scope="row">{{$index+1}}</th>
-                                                            <td>{{ingreso.monto}}</td>
+                                                            <td>{{ingreso.monto|number:2}}</td>
                                                             <td>{{ingreso.motivo}}</td>
                                                             <td>
                                                                 <span class="glyphicon glyphicon-remove" ng-click="eliminarOtroIngreso($index)" aria-hidden="true"></span>
@@ -4323,7 +4323,7 @@
                                             <div class="col-md-4">
                                                 <label for="monto">Monto</label>
                                                 <div class="input-group">
-                                                    <input type="number" ng-model="deduccion.monto" class="form-control" id="monto" name="monto" placeholder="0.0">
+                                                    <input type="number" min="0" ng-model="deduccion.monto" class="form-control" id="monto" name="monto" placeholder="0.0">
                                                     <span class="input-group-addon">Bs</span>
                                                 </div>
                                             </div>
@@ -4372,10 +4372,19 @@
                         <a href="javascript:void(0)" type="button" ng-click="abrirModalBeneficioSicial()" class="margin-icons red pull-left">
                             <span class="fa fa-h-square bigger-250"></span>
                         </a>
-                        <button type="submit" class="btn btn-primary">
-                            <span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span> Guardar</button>
-                        <button type="button" class="btn btn-danger" ng-click="cerrarDialogBeneficiosSociales()">
-                            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Cancelar</button>
+                        <div ng-hide="beneficio.tipo_beneficio">
+                            <button ng-disabled="quienquenioRestanteDisabled" type="submit" class="btn btn-primary">
+                                <span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span> Guardar</button>
+                            <button type="button" class="btn btn-danger" ng-click="cerrarDialogBeneficiosSociales()">
+                                <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Cancelar</button>
+                        </div>
+                        <div ng-hide="!beneficio.tipo_beneficio">
+                            <button type="submit" class="btn btn-primary">
+                                <span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span> Guardar</button>
+                            <button type="button" class="btn btn-danger" ng-click="cerrarDialogBeneficiosSociales()">
+                                <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Cancelar</button>
+                        </div>
+
                     </div>
                 </form>
             </div>
@@ -4552,9 +4561,9 @@
             </div>
             <div class="modal-body">
 
-                <div class="table-responsive">
-                    <table class="table table-striped table-hover">
-                        <thead>
+                <div class="table-fixed-header">
+                    <table class="table table-striped table-bordered table-hover ">
+                        <thead fix-head class="table-head-color">
                             <tr>
                                 <th>#</th>
                                 <th>Campo</th>
@@ -4564,13 +4573,17 @@
                                 <th>Usuario</th>
                             </tr>
                         </thead>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
+
                         <tbody>
+                            <tr ng-repeat="cambio in bitacoraCambios track by $index">
+                                <td>{{$index+1}}</td>
+                                <td>{{cambio.campo}}</td>
+                                <td>{{cambio.valor_anterior}}</td>
+                                <td>{{cambio.valor_actual}}</td>
+                                <td>{{cambio.fecha|date:'dd/MM/yyyy'}}</td>
+                                <td>{{cambio.usuario.persona.nombre_completo}}</td>
+
+                            </tr>
                         </tbody>
                     </table>
                 </div>

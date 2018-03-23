@@ -1886,11 +1886,48 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                                                                             id_cargo: cargoClase.id,
                                                                             id_ficha: Creado.id
                                                                         }).then(function (params) {
-                                                                            req.body.historialVacacion = pacienteActual.historialVacacion
-                                                                            guardarHistorialVacacion(RrhhEmpleadoHistorialVacacion, req, res, medicoPacienteActualizado, false)
-                                                                            if (index === (array.length - 1)) {
-                                                                                res.json({ mensaje: "¡Datos de pacientes actualizados satisfactoriamente!" });
+                                                                            if (pacienteActual.historialVacacion.length > 0) {
+                                                                                RrhhEmpleadoHistorialVacacion.update({
+                                                                                    eliminado: true,
+                                                                                }, {
+                                                                                        where: { id_empleado: medicoPacienteActualizado.id }
+                                                                                    }).then(function (historialActualizado) {
+                                                                                        /* req.body.historialVacacion.forEach(function (historial, index, array) { */
+                                                                                        var contador = 0
+                                                                                        for (var i = 0; i < pacienteActual.historialVacacion.length; i++) {
+                                                                                            var historial = pacienteActual.historialVacacion[i];
+                                                                                            RrhhEmpleadoHistorialVacacion.create({
+                                                                                                aplicadas: historial.aplicadas,
+                                                                                                tomadas: historial.tomadas,
+                                                                                                anio: historial.anio,
+                                                                                                gestion: historial.gestion,
+                                                                                                id_empleado: medicoPacienteActualizado.id,
+                                                                                                eliminado: false
+                                                                                            }).then(function (historialCreado) {
+
+                                                                                                if (contador == (pacienteActual.historialVacacion.length - 1)) {
+                                 
+                                                                                                    if (index === (array.length - 1)) {
+                                                                                
+                                                                                                        res.json({ mensaje: "¡Datos de pacientes actualizados satisfactoriamente!" });
+                                                                                                    }
+                                                                                                   
+                                                                                                }
+                                                                                                contador++
+                                                                                            })
+                                                                                        }
+
+                                                                                        /* }) */
+                                                                                    });
+                                                                            } else {
+                                                                                if (index === (array.length - 1)) {
+                                                                                
+                                                                                    res.json({ mensaje: "¡Datos de pacientes actualizados satisfactoriamente!" });
+                                                                                }
+
                                                                             }
+
+                                                                           
                                                                         })
                                                                     })
                                                                 })
@@ -1907,6 +1944,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                 });
             })
         })
+
     router.route('/validar-codigo-empleado')
         .post(function (req, res) {
             MedicoPaciente.find({
@@ -2519,11 +2557,18 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                 res.json(params)
             })
         })
-
+    router.route('/recursos-humanos/beneficio/ficha/:id')
+        .get(function (req, res) {
+            RrhhEmpleadoBeneficioSocial.find({
+                where: { id_ficha: req.params.id, fecha_retiro: { $ne: null } }
+            }).then(function (beneficio) {
+                res.json({ beneficio: beneficio })
+            })
+        })
     router.route('/recursos-humanos/beneficios/ficha/:id')
         .get(function (req, res) {
             RrhhEmpleadoBeneficioSocial.findAll({
-                where: { id_ficha: req.params.id }
+                where: { id_ficha: req.params.id, fecha_retiro: null }
             }).then(function (beneficios) {
                 res.json(beneficios)
             })
@@ -2606,6 +2651,47 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
             res.json({ mensaje: 'Beneficio social creado sadisfactoriamente!' })
         }
     }
+    router.route('/recursos-humanos/bitacora-ficha/usuario/:id')
+        .post(function (req, res) {
+            req.body.forEach(function (cambio, index, array) {
+                if (cambio.valor_anterior == true && cambio.valor_anterior == 1) {
+                    cambio.valor_anterior = "true"
+                } else if (cambio.valor_anterior == false && cambio.valor_anterior == 0) {
+                    cambio.valor_anterior = "false"
+                }
+                if (cambio.valor_actual == true && cambio.valor_actual == 1) {
+                    cambio.valor_actual = "true"
+                } else if (cambio.valor_actual == false && cambio.valor_actual == 0) {
+                    cambio.valor_actual = "false"
+                }
+                RrhhEmpleadoBitacoraFicha.create({
+                    id_ficha: cambio.id_ficha,
+                    campo: cambio.campo,
+                    valor_anterior: cambio.valor_anterior,
+                    valor_actual: cambio.valor_actual,
+                    fecha: cambio.fecha,
+                    id_usuario: req.params.id
+                }).then(function (bitacoraCreada) {
+                    if (index === (array.length - 1)) {
+
+                        res.json({ message: "Ficha empleado actualizada satisfactoriamente!" })
+                    }
+                })
+            })
+        })
+        .get(function (req, res) {
+            RrhhEmpleadoBitacoraFicha.findAll({
+                where: {
+                    id_ficha: req.params.id
+                },
+                include: [{ model: Usuario, as: 'usuario', include: [{ model: Persona, as: 'persona' }] }]
+            }).then(function (bitacoras) {
+
+                res.json(bitacoras)
+
+            })
+        });
+
     //FIN
     /////////////////////////////////////////////////////// RUTAS PARA POLIFUNCIONAL ///////////////////////////////////////////////////
 
@@ -3213,8 +3299,8 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
             }, { model: Persona, as: 'personaReferencia' }],
             order: [['id', 'DESC']]
         }).then(function (fichas) {
-            var fichaActual = fichas[0]
-            var ArregloCambipos = []
+            var fichaActual = fichas[0]/* 
+            var ArregloCambios = []
             var arreglo = {}
             var fecha_contrato_actual = fechaATexto(fichaActual.fecha_inicio)
             var fecha_contrato_anterior = fechaATexto(fichaAnterior.fecha_inicio)
@@ -3228,7 +3314,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                             valor_actual: fichaActual.empleado.extension.dataValues.nombre,
                             fecha: req.body.fecha
                         }
-                        ArregloCambipos.push(arreglo)
+                        ArregloCambios.push(arreglo)
                     }
                 } else if (fichaAnterior.empleado.extension == null && fichaActual.empleado.extension != null) {
                     arreglo = {
@@ -3238,7 +3324,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                         valor_actual: fichaActual.empleado.extension.dataValues.nombre,
                         fecha: req.body.fecha
                     }
-                    ArregloCambipos.push(arreglo)
+                    ArregloCambios.push(arreglo)
                 }
                 if (fichaAnterior.empleado.tipoDocumento != null && fichaActual.empleado.tipoDocumento != null) {
                     if (fichaActual.empleado.tipoDocumento.dataValues.nombre != fichaAnterior.empleado.tipoDocumento.dataValues.nombre) {
@@ -3249,7 +3335,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                             valor_actual: fichaActual.empleado.tipoDocumento.dataValues.nombre,
                             fecha: req.body.fecha
                         }
-                        ArregloCambipos.push(arreglo)
+                        ArregloCambios.push(arreglo)
                     }
                 } else if (fichaAnterior.empleado.tipoDocumento == null && fichaActual.empleado.tipoDocumento != null) {
                     arreglo = {
@@ -3259,7 +3345,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                         valor_actual: fichaActual.empleado.tipoDocumento.dataValues.nombre,
                         fecha: req.body.fecha
                     }
-                    ArregloCambipos.push(arreglo)
+                    ArregloCambios.push(arreglo)
                 }
                 if (fichaAnterior.empleado.persona.pais != null && fichaActual.empleado.persona.pais != null) {
                     if (fichaActual.empleado.persona.pais.dataValues.nombre != fichaAnterior.empleado.persona.pais.dataValues.nombre) {
@@ -3270,7 +3356,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                             valor_actual: fichaActual.empleado.persona.pais.dataValues.nombre,
                             fecha: req.body.fecha
                         }
-                        ArregloCambipos.push(arreglo)
+                        ArregloCambios.push(arreglo)
                     }
                 } else if (fichaAnterior.empleado.persona.pais == null && fichaActual.empleado.persona.pais != null) {
                     arreglo = {
@@ -3280,7 +3366,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                         valor_actual: fichaActual.empleado.persona.pais.dataValues.nombre,
                         fecha: req.body.fecha
                     }
-                    ArregloCambipos.push(arreglo)
+                    ArregloCambios.push(arreglo)
                 }
                 if (fichaAnterior.empleado.persona.genero != null && fichaActual.empleado.persona.genero != null) {
                     if (fichaActual.empleado.persona.genero.dataValues.nombre != fichaAnterior.empleado.persona.genero.dataValues.nombre) {
@@ -3291,7 +3377,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                             valor_actual: fichaActual.empleado.persona.genero.dataValues.nombre,
                             fecha: req.body.fecha
                         }
-                        ArregloCambipos.push(arreglo)
+                        ArregloCambios.push(arreglo)
                     }
                 } else if (fichaAnterior.empleado.persona.genero == null && fichaActual.empleado.persona.genero != null) {
                     arreglo = {
@@ -3301,7 +3387,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                         valor_actual: fichaActual.empleado.persona.genero.dataValues.nombre,
                         fecha: req.body.fecha
                     }
-                    ArregloCambipos.push(arreglo)
+                    ArregloCambios.push(arreglo)
                 }
                 if (fichaAnterior.empleado.persona.ciudad != null && fichaActual.empleado.persona.ciudad != null) {
                     if (fichaActual.empleado.persona.ciudad.dataValues.nombre != fichaAnterior.empleado.persona.ciudad.dataValues.nombre) {
@@ -3312,7 +3398,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                             valor_actual: fichaActual.empleado.persona.ciudad.dataValues.nombre,
                             fecha: req.body.fecha
                         }
-                        ArregloCambipos.push(arreglo)
+                        ArregloCambios.push(arreglo)
                     }
                 } else if (fichaAnterior.empleado.persona.ciudad == null && fichaActual.empleado.persona.ciudad != null) {
                     arreglo = {
@@ -3322,7 +3408,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                         valor_actual: fichaActual.empleado.persona.ciudad.dataValues.nombre,
                         fecha: req.body.fecha
                     }
-                    ArregloCambipos.push(arreglo)
+                    ArregloCambios.push(arreglo)
                 }
                 if (fichaAnterior.empleado.persona.provincia != null && fichaActual.empleado.persona.provincia != null) {
                     if (fichaActual.empleado.persona.provincia.dataValues.nombre != fichaAnterior.empleado.persona.provincia.dataValues.nombre) {
@@ -3333,7 +3419,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                             valor_actual: fichaActual.empleado.persona.provincia.dataValues.nombre,
                             fecha: req.body.fecha
                         }
-                        ArregloCambipos.push(arreglo)
+                        ArregloCambios.push(arreglo)
                     }
                 } else if (fichaAnterior.empleado.persona.provincia == null && fichaActual.empleado.persona.provincia != null) {
                     arreglo = {
@@ -3343,7 +3429,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                         valor_actual: fichaActual.empleado.persona.provincia.dataValues.nombre,
                         fecha: req.body.fecha
                     }
-                    ArregloCambipos.push(arreglo)
+                    ArregloCambios.push(arreglo)
                 }
                 if (fichaAnterior.empleado.persona.localidad != null && fichaActual.empleado.persona.localidad != null) {
                     if (fichaActual.empleado.persona.localidad.dataValues.nombre != fichaAnterior.empleado.persona.localidad.dataValues.nombre) {
@@ -3354,7 +3440,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                             valor_actual: fichaActual.empleado.persona.localidad.dataValues.nombre,
                             fecha: req.body.fecha
                         }
-                        ArregloCambipos.push(arreglo)
+                        ArregloCambios.push(arreglo)
                     }
                 } else if (fichaAnterior.empleado.persona.localidad == null && fichaActual.empleado.persona.localidad != null) {
                     arreglo = {
@@ -3364,7 +3450,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                         valor_actual: fichaActual.empleado.persona.localidad.dataValues.nombre,
                         fecha: req.body.fecha
                     }
-                    ArregloCambipos.push(arreglo)
+                    ArregloCambios.push(arreglo)
                 }
                 if (fichaAnterior.empleado.persona.estadoCivil != null && fichaActual.empleado.persona.estadoCivil != null) {
                     if (fichaActual.empleado.persona.estadoCivil.dataValues.nombre != fichaAnterior.empleado.persona.estadoCivil.dataValues.nombre) {
@@ -3375,7 +3461,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                             valor_actual: fichaActual.empleado.persona.estadoCivil.dataValues.nombre,
                             fecha: req.body.fecha
                         }
-                        ArregloCambipos.push(arreglo)
+                        ArregloCambios.push(arreglo)
                     }
                 } else if (fichaAnterior.empleado.persona.estadoCivil == null && fichaActual.empleado.persona.estadoCivil != null) {
                     arreglo = {
@@ -3385,7 +3471,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                         valor_actual: fichaActual.empleado.persona.estadoCivil.dataValues.nombre,
                         fecha: req.body.fecha
                     }
-                    ArregloCambipos.push(arreglo)
+                    ArregloCambios.push(arreglo)
                 }
 
                 if (fichaActual.empleado.persona.apellido_paterno != fichaAnterior.empleado.persona.apellido_paterno) {
@@ -3396,7 +3482,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                         valor_actual: fichaActual.empleado.persona.apellido_paterno,
                         fecha: req.body.fecha
                     }
-                    ArregloCambipos.push(arreglo)
+                    ArregloCambios.push(arreglo)
                 }
                 if (fichaActual.empleado.persona.apellido_materno != fichaAnterior.empleado.persona.apellido_materno) {
                     arreglo = {
@@ -3406,7 +3492,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                         valor_actual: fichaActual.empleado.persona.apellido_materno,
                         fecha: req.body.fecha
                     }
-                    ArregloCambipos.push(arreglo)
+                    ArregloCambios.push(arreglo)
                 }
                 if (fichaActual.empleado.persona.nombre_completo != fichaAnterior.empleado.persona.nombre_completo) {
                     arreglo = {
@@ -3416,7 +3502,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                         valor_actual: fichaActual.empleado.persona.nombre_completo,
                         fecha: req.body.fecha
                     }
-                    ArregloCambipos.push(arreglo)
+                    ArregloCambios.push(arreglo)
                 }
 
                 if (fichaActual.empleado.persona.nombres != fichaAnterior.empleado.persona.nombres) {
@@ -3427,7 +3513,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                         valor_actual: fichaActual.empleado.persona.nombres,
                         fecha: req.body.fecha
                     }
-                    ArregloCambipos.push(arreglo)
+                    ArregloCambios.push(arreglo)
                 }
                 if (fichaActual.empleado.persona.segundo_nombre != fichaAnterior.empleado.persona.segundo_nombre) {
                     arreglo = {
@@ -3437,7 +3523,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                         valor_actual: fichaActual.empleado.persona.segundo_nombre,
                         fecha: req.body.fecha
                     }
-                    ArregloCambipos.push(arreglo)
+                    ArregloCambios.push(arreglo)
                 }
                 if (fichaActual.empleado.persona.apellido_casada != fichaAnterior.empleado.persona.apellido_casada) {
                     arreglo = {
@@ -3447,7 +3533,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                         valor_actual: fichaActual.empleado.persona.apellido_casada,
                         fecha: req.body.fecha
                     }
-                    ArregloCambipos.push(arreglo)
+                    ArregloCambios.push(arreglo)
                 }
                 if (fichaActual.empleado.persona.ci != fichaAnterior.empleado.persona.ci) {
                     arreglo = {
@@ -3457,7 +3543,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                         valor_actual: fichaActual.empleado.persona.ci,
                         fecha: req.body.fecha
                     }
-                    ArregloCambipos.push(arreglo)
+                    ArregloCambios.push(arreglo)
                 }
                 if (fichaActual.empleado.persona.telefono != fichaAnterior.empleado.persona.telefono) {
                     arreglo = {
@@ -3467,7 +3553,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                         valor_actual: fichaActual.empleado.persona.telefono,
                         fecha: req.body.fecha
                     }
-                    ArregloCambipos.push(arreglo)
+                    ArregloCambios.push(arreglo)
                 }
                 if (fichaActual.empleado.persona.telefono_movil != fichaAnterior.empleado.persona.telefono_movil) {
                     arreglo = {
@@ -3477,7 +3563,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                         valor_actual: fichaActual.empleado.persona.telefono_movil,
                         fecha: req.body.fecha
                     }
-                    ArregloCambipos.push(arreglo)
+                    ArregloCambios.push(arreglo)
                 }
                 if (fichaActual.empleado.persona.direccion_numero != fichaAnterior.empleado.persona.direccion_numero) {
                     arreglo = {
@@ -3487,7 +3573,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                         valor_actual: fichaActual.empleado.persona.direccion_numero,
                         fecha: req.body.fecha
                     }
-                    ArregloCambipos.push(arreglo)
+                    ArregloCambios.push(arreglo)
                 }
                 if (fichaActual.empleado.persona.correo_electronico != fichaAnterior.empleado.persona.correo_electronico) {
                     arreglo = {
@@ -3497,7 +3583,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                         valor_actual: fichaActual.empleado.persona.correo_electronico,
                         fecha: req.body.fecha
                     }
-                    ArregloCambipos.push(arreglo)
+                    ArregloCambios.push(arreglo)
                 }
                 var fecha_nacimiento1 = fechaATexto(fichaActual.empleado.persona.fecha_nacimiento)
                 var fecha_nacimiento2 = fechaATexto(fichaAnterior.empleado.persona.fecha_nacimiento)
@@ -3509,7 +3595,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                         valor_actual: fecha_nacimiento1,
                         fecha: req.body.fecha
                     }
-                    ArregloCambipos.push(arreglo)
+                    ArregloCambios.push(arreglo)
                 }
                 if (fichaActual.empleado.persona.direccion_zona != fichaAnterior.empleado.persona.direccion_zona) {
                     arreglo = {
@@ -3519,7 +3605,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                         valor_actual: fichaActual.empleado.persona.direccion_zona,
                         fecha: req.body.fecha
                     }
-                    ArregloCambipos.push(arreglo)
+                    ArregloCambios.push(arreglo)
                 }
                 if (fichaActual.empleado.codigo != fichaAnterior.empleado.codigo) {
                     arreglo = {
@@ -3529,8 +3615,51 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                         valor_actual: fichaActual.empleado.codigo,
                         fecha: req.body.fecha
                     }
-                    ArregloCambipos.push(arreglo)
+                    ArregloCambios.push(arreglo)
                 }
+                if (fichaActual.detalle_discapacidades != fichaAnterior.detalle_discapacidades) {
+                    arreglo = {
+                        id_ficha: fichaActual.id,
+                        campo: "detalle discapacidades",
+                        valor_anterior: fichaAnterior.detalle_discapacidades,
+                        valor_actual: fichaActual.detalle_discapacidades,
+                        fecha: req.body.fecha
+                    }
+                    ArregloCambios.push(arreglo)
+                }
+                
+
+
+if (fichaActual.matricula_seguro != fichaAnterior.matricula_seguro) {
+    arreglo = {
+        id_ficha: fichaActual.id,
+        campo: "detalle discapacidades",
+        valor_anterior: fichaAnterior.matricula_seguro,
+        valor_actual: fichaActual.matricula_seguro,
+        fecha: req.body.fecha
+    }
+    ArregloCambios.push(arreglo)
+}
+if (fichaActual.nua_seguro_largo_plazo != fichaAnterior.nua_seguro_largo_plazo) {
+    arreglo = {
+        id_ficha: fichaActual.id,
+        campo: "detalle discapacidades",
+        valor_anterior: fichaAnterior.nua_seguro_largo_plazo,
+        valor_actual: fichaActual.nua_seguro_largo_plazo,
+        fecha: req.body.fecha
+    }
+    ArregloCambios.push(arreglo)
+}
+if (fichaActual.numero_cuenta != fichaAnterior.numero_cuenta) {
+    arreglo = {
+        id_ficha: fichaActual.id,
+        campo: "detalle discapacidades",
+        valor_anterior: fichaAnterior.numero_cuenta,
+        valor_actual: fichaActual.numero_cuenta,
+        fecha: req.body.fecha
+    }
+    ArregloCambios.push(arreglo)
+}
                 var bandera2 = false;
                 var arregloPrueba = []
                 var arregloDatosAcual = ""
@@ -3555,28 +3684,11 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                         valor_actual: arregloDatosAcual,
                         fecha: req.body.fecha
                     }
-                    ArregloCambipos.push(arreglo)
+                    ArregloCambios.push(arreglo)
                 }
-                /* var arregloDatosAcual=""
-                var arregloDiscapacidades=fichaActual.discapacidades.map(function (discapacidad) {
-                    arregloDatosAcual+=discapacidad.nombre+", "
-                    return discapacidad;
-                })
-               
-                while(arregloDiscapacidades.length>0){
-                    bandera2=false;
-                    var disca=arregloDiscapacidades.pop()                   
-                    for (let j = 0; j < fichaAnterior.discapacidades.length; j++) {
-                        var discapacidadAnterior = fichaAnterior.discapacidades[j];
-                        if(disca.nombre_corto==discapacidadAnterior.nombre_corto){
-                            bandera2=true
-                        }
-                    } 
-                   
-                   
-                } */
-                if (ArregloCambipos.length > 0) {
-                    ArregloCambipos.forEach(function (cambio, index, array) {
+              
+                if (ArregloCambios.length > 0) {
+                    ArregloCambios.forEach(function (cambio, index, array) {
                         RrhhEmpleadoBitacoraFicha.create({
                             id_ficha: cambio.id_ficha,
                             campo: cambio.campo,
@@ -3595,9 +3707,9 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                 } else {
                     res.json({ message: "Ficha empleado actualizada satisfactoriamente!" })
                 }
-            } else {
-                res.json({ message: "Ficha empleado actualizada satisfactoriamente!" })
-            }
+            } else { */
+            res.json({ message: "Ficha empleado actualizada satisfactoriamente!", fichaActual: fichaActual, fichaAnterior: fichaAnterior })
+            /* } */
         })
     }
 }

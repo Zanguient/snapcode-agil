@@ -5,7 +5,7 @@ angular.module('agil.controladores')
         ClasesTipo, Clases, Paises, CrearEmpleadoFicha, EliminarOtroSeguroRh, EliminarFamiliarRh, PrerequisitoPaciente, PrerequisitosHistorial, UsuarioRhHistorialFicha, ObtenerEmpleadoHojaVida, GuardarEmpleadoHojaVida, CrearPrestamo,
         ObtenerListaPrestamo, CrearRolTurno, CrearPagoPrestamo, VerificarUsuarioEmpresa, EditarPrestamo, ListaEmpleadosRrhh, CrearHorasExtra, HistorialHorasExtra, ListaRolTurnos, ValidarCodigoCuentaEmpleado, $timeout, DatosCapacidadesImpresion, NuevoAnticipoEmpleado,
         ListaAnticiposEmpleado, CrearNuevosAnticiposEmpleados, ActualizarAnticipoEmpleado, NuevaAusenciaEmpleado, HistorialEmpleadoAusencias, HistorialEmpresaEmpleadosAusencias, NuevaVacacionEmpleado, HistorialEmpleadoVacaciones, HistorialEmpresaVacaciones, NuevoFeriado,
-        ListaFeriados, GuardarClasesAusencias, Tipos, ListaBancos, ConfiguracionesVacacion, HistorialGestionesVacacion, GuardarTr3, ListaTr3Empresa, GuardarHistorialVacacion, CrearBeneficioSocial, ListaBeneficiosEmpleado) {
+        ListaFeriados, GuardarClasesAusencias, Tipos, ListaBancos, ConfiguracionesVacacion, HistorialGestionesVacacion, GuardarTr3, ListaTr3Empresa, GuardarHistorialVacacion, CrearBeneficioSocial, ListaBeneficiosEmpleado, GuardarBitacoraFicha, VerBitacoraFicha, ObtenerFiniquitoEmpleado) {
         $scope.usuario = JSON.parse($localStorage.usuario);
         $scope.idModalPrerequisitos = 'dialog-pre-requisitos';
         $scope.idModalEmpleado = 'dialog-empleado';
@@ -257,12 +257,28 @@ angular.module('agil.controladores')
 
         }
         $scope.abrirModalBeneficioSicial = function () {
+
+            $scope.abrirPopup($scope.idModalHistorialBeneficios)
+        }
+        $scope.obtenerbeneficiosSociales = function (tiempoTrabajado) {
+            $scope.quienqueniosDisponibles = true
             var promesa = ListaBeneficiosEmpleado($scope.empleado.ficha.id)
             promesa.then(function (dato) {
                 $scope.listabeneficios = dato
-                $scope.abrirPopup($scope.idModalHistorialBeneficios)
+                var quinquenios = dato.length
+                var anios = quinquenios * 5
+                var añosRestantes = tiempoTrabajado.anios - anios
+                $scope.añosRestantes = añosRestantes
+                $scope.quienquenioRestante = Math.trunc(añosRestantes / 5)
+                if (!$scope.beneficio.tipo_beneficio) {
+                    if ($scope.quienquenioRestante == 0) {
+                        $scope.quienquenioRestanteDisabled = true
+                        $scope.mostrarMensaje("No cuenta con mas quinquenios disponibles")
+                    } else {
+                        $scope.quienquenioRestanteDisabled = false
+                    }
+                }
             })
-
         }
         $scope.cerrarModalBeneficioSicial = function () {
             $scope.cerrarPopup($scope.idModalHistorialBeneficios)
@@ -728,8 +744,9 @@ angular.module('agil.controladores')
         }
         $scope.abrirDialogBeneficiosSociales = function (empleado) {
             $scope.empleado = empleado
+
             if (empleado.ficha.fecha_inicio) {
-                var fecha = ""
+                var fecha = null
                 var fechaActual = new Date()
                 var tipo = false
                 if (empleado.ficha.fecha_expiracion) {
@@ -740,7 +757,7 @@ angular.module('agil.controladores')
                 var fechaAnterior = new Date(empleado.ficha.fecha_inicio)
                 $scope.tiempoTrabajado = duration(fechaAnterior, fechaActual)
                 $scope.beneficio = { tipo_beneficio: tipo, anios: 0, meses: 0, dias: 0, fecha_elaboracion: $scope.fechaATexto(new Date()), fecha_ingreso: $scope.fechaATexto(empleado.ficha.fecha_inicio), fecha_retiro: fecha, ingresos: [], deducciones: [] }
-
+                $scope.obtenerbeneficiosSociales($scope.tiempoTrabajado)
                 $scope.deduccion = {}
                 $scope.ingreso = {}
                 $scope.obtenerTiposOtrosingresosYDeduccion()
@@ -752,7 +769,7 @@ angular.module('agil.controladores')
                     aniosDisponibles: 0,
                     historial: null
                 }
-                $scope.obtenerHistorialGestionesVacacion(empleado, false, true)
+
 
                 $scope.abrirPopup($scope.idModalBeneficiosSociales);
             }
@@ -766,39 +783,48 @@ angular.module('agil.controladores')
             }
         }
         $scope.abrirDialogBeneficiosSociales2 = function (empleado) {
-
-            var promesa = HistorialGestionesVacacion(empleado.id)
-            promesa.then(function (dato) {
-                var fechaActual = new Date()
-                if (dato.length > 0) {
-                    if (dato[(dato.length - 1)].gestion < fechaActual.getFullYear()) {
-                        var anioConfiguracion = dato[(dato.length - 1)].anio + 1
-                        var config = 0
-                        var gestion = fechaActual.getFullYear()
-                        if (anioConfiguracion < 5) {
-                            config = $scope.configuracionesVacacion[0].dias
-                        } else if (anioConfiguracion < 10) {
-                            config = $scope.configuracionesVacacion[1].dias
-                        } else if (anioConfiguracion >= 10) {
-                            config = $scope.configuracionesVacacion[2].dias
-                        }
-                        var historialVacacion = {
-                            gestion: gestion,
-                            anio: anioConfiguracion,
-                            aplicadas: config,
-                            tomadas: 0
-                        }
-                        var promesa = GuardarHistorialVacacion(empleado.id, historialVacacion)
-                        promesa.then(function (datos) {
-                            $scope.abrirDialogBeneficiosSociales(empleado)
-                        })
-                    } else {
-                        $scope.abrirDialogBeneficiosSociales(empleado)
-                    }
+            var promesa2 = ObtenerFiniquitoEmpleado(empleado.ficha.id)
+            promesa2.then(function (dato) {
+                if (dato.beneficio) {
+                    $scope.mostrarMensaje("ya realizo el finiquito")
                 } else {
-                    $scope.mostrarMensaje("No cuenta con ficha del empleado actualizada, actualizar ficha empleado")
+                    var promesa = HistorialGestionesVacacion(empleado.id)
+                    promesa.then(function (dato) {
+                        var fechaActual = new Date()
+                        if (dato.length > 0) {
+                            if (dato[(dato.length - 1)].gestion < fechaActual.getFullYear()) {
+                                var anioConfiguracion = dato[(dato.length - 1)].anio + 1
+                                var config = 0
+                                var gestion = fechaActual.getFullYear()
+                                if (anioConfiguracion < 5) {
+                                    config = $scope.configuracionesVacacion[0].dias
+                                } else if (anioConfiguracion < 10) {
+                                    config = $scope.configuracionesVacacion[1].dias
+                                } else if (anioConfiguracion >= 10) {
+                                    config = $scope.configuracionesVacacion[2].dias
+                                }
+                                var historialVacacion = {
+                                    gestion: gestion,
+                                    anio: anioConfiguracion,
+                                    aplicadas: config,
+                                    tomadas: 0
+                                }
+                                var promesa = GuardarHistorialVacacion(empleado.id, historialVacacion)
+                                promesa.then(function (datos) {
+                                    $scope.obtenerHistorialGestionesVacacion(empleado, false, true)
+                                    $scope.abrirDialogBeneficiosSociales(empleado)
+                                })
+                            } else {
+                                $scope.obtenerHistorialGestionesVacacion(empleado, false, true)
+                                $scope.abrirDialogBeneficiosSociales(empleado)
+                            }
+                        } else {
+                            $scope.mostrarMensaje("No cuenta con ficha del empleado actualizada, actualizar ficha empleado")
+                        }
+                    })
                 }
             })
+
         }
 
         $scope.cerrarDialogBeneficiosSociales = function () {
@@ -823,7 +849,12 @@ angular.module('agil.controladores')
             $scope.cerrarPopup($scope.idModalOtroIngreso);
         }
         $scope.abrirDialogBitacoraFicha = function () {
-            $scope.abrirPopup($scope.idModalBitacoraFicha);
+            var promesa = VerBitacoraFicha($scope.ficha.id)
+            promesa.then(function (dato) {
+                $scope.bitacoraCambios = dato
+                $scope.abrirPopup($scope.idModalBitacoraFicha);
+            })
+
         }
         $scope.cerrarDialogBitacoraFicha = function () {
             $scope.cerrarPopup($scope.idModalBitacoraFicha);
@@ -1800,7 +1831,7 @@ angular.module('agil.controladores')
                         paciente.telefonos_referencia = worksheet['X' + row] != undefined && worksheet['X' + row] != "" ? worksheet['X' + row].v.toString() : null;
                         paciente.celular_referencia = worksheet['Y' + row] != undefined && worksheet['Y' + row] != "" ? worksheet['Y' + row].v.toString() : null;
                         paciente.nombre_referencia = worksheet['Z' + row] != undefined && worksheet['Z' + row] != "" ? worksheet['Z' + row].v.toString() : null;
-                        paciente.fecha_inicio = worksheet['AA' + row] != undefined && worksheet['AA' + row] != "" ?$scope.fecha_excel_angular(worksheet['AA' + row].v.toString()) : null;
+                        paciente.fecha_inicio = worksheet['AA' + row] != undefined && worksheet['AA' + row] != "" ? $scope.fecha_excel_angular(worksheet['AA' + row].v.toString()) : null;
                         paciente.haber_basico = worksheet['AB' + row] != undefined && worksheet['AB' + row] != "" ? parseFloat(worksheet['AB' + row].v.toString()) : null;
                         paciente.imagen = "img/icon-user-default.png"
                         paciente.es_empleado = true
@@ -1867,7 +1898,7 @@ angular.module('agil.controladores')
                 }
                 $scope.nuevoRH = dato.medicoPaciente
                 $scope.nuevoRH.persona.fecha_nacimiento = $scope.fechaATexto($scope.nuevoRH.persona.fecha_nacimiento)
-                $scope.seleccionarCargos($scope.nuevoRH.empleadosFichas[($scope.nuevoRH.empleadosFichas.length-1)].cargos)
+                $scope.seleccionarCargos($scope.nuevoRH.empleadosFichas[($scope.nuevoRH.empleadosFichas.length - 1)].cargos)
             })
             $scope.abrirPopup($scope.idModalRhNuevo);
         }
@@ -2861,8 +2892,8 @@ angular.module('agil.controladores')
         //FIN RECUPERAR TIPOS FICHA 
 
         $scope.guardarFichaTecnica = function (form, ficha, save) {
-            $scope.ficha.quienModifico=$scope.usuario.id
-            
+            $scope.ficha.quienModifico = $scope.usuario.id
+
             var s = $scope.fechaATexto(ficha.fecha_inicio)
             ficha.historialVacacion = []
             if (s != ficha.fecha_inicio2) {
@@ -2928,9 +2959,133 @@ angular.module('agil.controladores')
                 } else {
                     var promesa = CrearEmpleadoFicha(ficha);
                     promesa.then(function (dato) {
-                        $scope.cerrarDialogEmpleado()
-                        $scope.recargarItemsTabla()
-                        $scope.mostrarMensaje(dato.message)
+
+                        var ArregloCambios = []
+                        var arreglo = {}
+                        var cant = 0
+                        var tamaño = Object.keys(dato.fichaActual).length
+                        for (const key in dato.fichaActual) {
+                            var texto = key.substr(0, 3)
+                            if (texto != "id_" && key != "updatedAt" && key != "createdAt" && key != "id" && key != "nombre_corto") {
+                                if (dato.fichaActual[key] instanceof Object) {
+                                    if (dato.fichaActual[key] instanceof Array) {
+                                        console.log("comparar arreglos")
+                                        var bandera2 = false;
+                                        var arregloPrueba = []
+                                        var arregloAcual = ""
+                                        var arregloAnterior = ""
+                                        var arregloDiscapacidades = dato.fichaActual[key]
+                                        dato.fichaActual[key].forEach(function (datoarreglo) {
+                                            if (key == "cargos") {
+                                                arregloAcual += datoarreglo.cargo.nombre + ", "
+                                            }
+                                            if (key == "discapacidades") {
+                                                arregloAcual += datoarreglo.discapacidad.nombre + ", "
+                                            }
+                                            if (key == "otrosSeguros") {
+                                                arregloAcual += datoarreglo.tipoSeguro.nombre + ", "
+                                            }
+                                            /*  return dato.fichaActual[key]; */
+
+                                        })
+                                        var arregloDiscapacidadesAnterior = dato.fichaAnterior[key]
+                                        dato.fichaAnterior[key].forEach(function (datoarreglo) {
+                                            if (key == "cargos") {
+                                                arregloAnterior += datoarreglo.cargo.nombre + ", "
+                                            }
+                                            if (key == "discapacidades") {
+                                                arregloAnterior += datoarreglo.discapacidad.nombre + ", "
+                                            }
+                                            if (key == "otrosSeguros") {
+                                                arregloAcual += datoarreglo.tipoSeguro.nombre + ", "
+                                            }
+                                            /*   return dato.fichaActual[key]; */
+                                        })
+                                        bandera2 = arregloDiscapacidades.includes(arregloDiscapacidadesAnterior)
+                                        if (arregloDiscapacidadesAnterior.length != arregloDiscapacidades.length) {
+                                            bandera2 = true
+                                        }
+                                        if (bandera2) {
+                                            arreglo = {
+                                                id_ficha: dato.fichaActual.id,
+                                                campo: key,
+                                                valor_anterior: arregloAnterior,
+                                                valor_actual: arregloAcual,
+                                                fecha: new Date()
+                                            }
+                                            ArregloCambios.push(arreglo)
+                                        }
+                                    } else {
+                                        for (const key2 in dato.fichaActual[key]) {
+                                            texto = key2.substr(0, 3)
+                                            if (texto != "id_" && key2 != "updatedAt" && key2 != "createdAt" && key2 != "id" && key2 != "nombre_corto") {
+                                                if (dato.fichaActual[key][key2] instanceof Object) {
+                                                    for (const key3 in dato.fichaActual[key][key2]) {
+                                                        texto = key3.substr(0, 3)
+                                                        if (texto != "id_" && key3 != "updatedAt" && key3 != "createdAt" && key3 != "id" && key3 != "nombre_corto") {
+                                                            if (dato.fichaActual[key][key2][key3] instanceof Object) {
+                                                                console.log("aqui otro forin")
+                                                            } else {
+                                                                if (dato.fichaActual[key][key2][key3] != dato.fichaAnterior[key][key2][key3]) {
+                                                                    arreglo = {
+                                                                        id_ficha: dato.fichaActual.id,
+                                                                        campo: key + "." + key2 + "." + key3,
+                                                                        valor_anterior: dato.fichaAnterior[key][key2][key3],
+                                                                        valor_actual: dato.fichaActual[key][key2][key3],
+                                                                        fecha: new Date()
+                                                                    }
+                                                                    ArregloCambios.push(arreglo)
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                } else {
+                                                    if (dato.fichaActual[key][key2] != dato.fichaAnterior[key][key2]) {
+                                                        arreglo = {
+                                                            id_ficha: dato.fichaActual.id,
+                                                            campo: key + "." + key2,
+                                                            valor_anterior: dato.fichaAnterior[key][key2],
+                                                            valor_actual: dato.fichaActual[key][key2],
+                                                            fecha: new Date()
+                                                        }
+                                                        ArregloCambios.push(arreglo)
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                } else {
+                                    if (dato.fichaActual[key] != dato.fichaAnterior[key]) {
+                                        arreglo = {
+                                            id_ficha: dato.fichaActual.id,
+                                            campo: key,
+                                            valor_anterior: dato.fichaAnterior[key],
+                                            valor_actual: dato.fichaActual[key],
+                                            fecha: new Date()
+                                        }
+                                        ArregloCambios.push(arreglo)
+                                    }
+                                }
+                            }
+                            cant++
+                            if (cant === (tamaño - 1)) {
+                                if (ArregloCambios.length > 0) {
+                                    var promesa2 = GuardarBitacoraFicha($scope.usuario.id, ArregloCambios)
+                                    promesa2.then(function (data) {
+                                        $scope.cerrarDialogEmpleado()
+                                        $scope.recargarItemsTabla()
+                                        $scope.mostrarMensaje(dato.message)
+
+                                    })
+                                } else {
+                                    $scope.cerrarDialogEmpleado()
+                                    $scope.recargarItemsTabla()
+                                    $scope.mostrarMensaje(dato.message)
+                                }
+                            }
+
+                        }
+
                     })
                 }
             } else {
@@ -2959,9 +3114,133 @@ angular.module('agil.controladores')
 
                     var promesa = CrearEmpleadoFicha(ficha);
                     promesa.then(function (dato) {
-                        $scope.cerrarDialogEmpleado()
-                        $scope.recargarItemsTabla()
-                        $scope.mostrarMensaje(dato.message)
+
+
+                        var ArregloCambios = []
+                        var arreglo = {}
+                        var cant = 0
+                        var tamaño = Object.keys(dato.fichaActual).length
+                        for (const key in dato.fichaActual) {
+                            var texto = key.substr(0, 3)
+                            if (texto != "id_" && key != "updatedAt" && key != "createdAt" && key != "id") {
+                                if (dato.fichaActual[key] instanceof Object) {
+                                    if (dato.fichaActual[key] instanceof Array) {
+                                        console.log("comparar arreglos")
+                                        var bandera2 = false;
+                                        var arregloPrueba = []
+                                        var arregloAcual = ""
+                                        var arregloAnterior = ""
+                                        var arregloDiscapacidades = dato.fichaActual[key]
+                                        dato.fichaActual[key].forEach(function (datoarreglo) {
+                                            if (key == "cargos") {
+                                                arregloAcual += datoarreglo.cargo.nombre + ", "
+                                            }
+                                            if (key == "discapacidades") {
+                                                arregloAcual += datoarreglo.discapacidad.nombre + ", "
+                                            }
+                                            if (key == "otrosSeguros") {
+                                                arregloAcual += datoarreglo.tipoSeguro.nombre + ", "
+                                            }
+                                            /*  return dato.fichaActual[key]; */
+
+                                        })
+                                        var arregloDiscapacidadesAnterior = dato.fichaAnterior[key]
+                                        dato.fichaAnterior[key].forEach(function (datoarreglo) {
+                                            if (key == "cargos") {
+                                                arregloAnterior += datoarreglo.cargo.nombre + ", "
+                                            }
+                                            if (key == "discapacidades") {
+                                                arregloAnterior += datoarreglo.discapacidad.nombre + ", "
+                                            }
+                                            if (key == "otrosSeguros") {
+                                                arregloAcual += datoarreglo.tipoSeguro.nombre + ", "
+                                            }
+                                            /*   return dato.fichaActual[key]; */
+                                        })
+                                        bandera2 = arregloDiscapacidades.includes(arregloDiscapacidadesAnterior)
+                                        if (arregloDiscapacidadesAnterior.length != arregloDiscapacidades.length) {
+                                            bandera2 = true
+                                        }
+                                        if (bandera2) {
+                                            arreglo = {
+                                                id_ficha: dato.fichaActual.id,
+                                                campo: key,
+                                                valor_anterior: arregloAnterior,
+                                                valor_actual: arregloAcual,
+                                                fecha: new Date()
+                                            }
+                                            ArregloCambios.push(arreglo)
+                                        }
+                                    } else {
+                                        for (const key2 in dato.fichaActual[key]) {
+                                            texto = key2.substr(0, 3)
+                                            if (texto != "id_" && key2 != "updatedAt" && key2 != "createdAt" && key2 != "id") {
+                                                if (dato.fichaActual[key][key2] instanceof Object) {
+                                                    for (const key3 in dato.fichaActual[key][key2]) {
+                                                        texto = key3.substr(0, 3)
+                                                        if (texto != "id_" && key3 != "updatedAt" && key3 != "createdAt" && key3 != "id") {
+                                                            if (dato.fichaActual[key][key2][key3] instanceof Object) {
+                                                                console.log("aqui otro forin")
+                                                            } else {
+                                                                if (dato.fichaActual[key][key2][key3] != dato.fichaAnterior[key][key2][key3]) {
+                                                                    arreglo = {
+                                                                        id_ficha: dato.fichaActual.id,
+                                                                        campo: key + "." + key2 + "." + key3,
+                                                                        valor_anterior: dato.fichaAnterior[key][key2][key3],
+                                                                        valor_actual: dato.fichaActual[key][key2][key3],
+                                                                        fecha: new Date()
+                                                                    }
+                                                                    ArregloCambios.push(arreglo)
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                } else {
+                                                    if (dato.fichaActual[key][key2] != dato.fichaAnterior[key][key2]) {
+                                                        arreglo = {
+                                                            id_ficha: dato.fichaActual.id,
+                                                            campo: key + "." + key2,
+                                                            valor_anterior: dato.fichaAnterior[key][key2],
+                                                            valor_actual: dato.fichaActual[key][key2],
+                                                            fecha: new Date()
+                                                        }
+                                                        ArregloCambios.push(arreglo)
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                } else {
+                                    if (dato.fichaActual[key] != dato.fichaAnterior[key]) {
+                                        arreglo = {
+                                            id_ficha: dato.fichaActual.id,
+                                            campo: key,
+                                            valor_anterior: dato.fichaAnterior[key],
+                                            valor_actual: dato.fichaActual[key],
+                                            fecha: new Date()
+                                        }
+                                        ArregloCambios.push(arreglo)
+                                    }
+                                }
+                            }
+                            cant++
+                            if (cant === (tamaño - 1)) {
+                                if (ArregloCambios.length > 0) {
+                                    var promesa2 = GuardarBitacoraFicha($scope.usuario.id, ArregloCambios)
+                                    promesa2.then(function (data) {
+                                        $scope.cerrarDialogEmpleado()
+                                        $scope.recargarItemsTabla()
+                                        $scope.mostrarMensaje(dato.message)
+
+                                    })
+                                } else {
+                                    $scope.cerrarDialogEmpleado()
+                                    $scope.recargarItemsTabla()
+                                    $scope.mostrarMensaje(dato.message)
+                                }
+                            }
+
+                        }
                     })
                 }
             }
@@ -4645,11 +4924,11 @@ angular.module('agil.controladores')
             if (datos.tipo == "MSC") {
                 var nombreArchivoTr3 = datos.tr3Encontrado.nombre_archivo
                 var fechaPago = $scope.fechaATexto(datos.tr3Encontrado.fecha)
-                if(datos.tr3Encontrado.historialtr3){
-                var fecha = $scope.fechaATexto(datos.tr3Encontrado.historialtr3[0].anticipo.fecha)
-            }else{
-                var fecha = $scope.fechaATexto(datos.anticipos[0].fecha)
-            }
+                if (datos.tr3Encontrado.historialtr3) {
+                    var fecha = $scope.fechaATexto(datos.tr3Encontrado.historialtr3[0].anticipo.fecha)
+                } else {
+                    var fecha = $scope.fechaATexto(datos.anticipos[0].fecha)
+                }
                 var cabezera = datos.tr3Encontrado.planilla + "|" + datos.tr3Encontrado.cuenta.numero + "|0|" + datos.tr3Encontrado.nombre_planilla + "|" + fecha + "|" + fechaPago + "|" + datos.total + "|" + datos.tr3Encontrado.numero_planilla + "\r\n"
 
                 datos.anticipos.forEach(function (anticipo, index, array) {
@@ -5404,6 +5683,30 @@ angular.module('agil.controladores')
         $scope.calcularPromedioFiniquito = function (beneficio) {
             beneficio.promedio = (beneficio.primer_mes2 + beneficio.segundo_mes2 + beneficio.tercer_mes2) / 3
             beneficio.promedio = parseFloat(beneficio.promedio.toFixed(2))
+            if (beneficio.tipo_beneficio) {
+                if (!isNaN(beneficio.promedio)) {
+                    var monto = $scope.añosRestantes * beneficio.promedio
+                    monto += ((beneficio.promedio / 12) * 7) * $scope.tiempoTrabajado.meses
+                    monto += (beneficio.promedio / 365) * $scope.tiempoTrabajado.dias
+                    var ingreso1 = {
+                        monto: monto,
+                        motivo: "indemnización"
+                    }
+                    if (beneficio.ingresos.length > 0) {
+                        beneficio.ingresos.forEach(function (ingreso, array, index) {
+                            if (ingreso.motivo == "indemnización") {
+                                ingreso.monto = monto
+                            } else {
+                                beneficio.ingresos.push(ingreso1)
+                            }
+                        });
+                    } else {
+                        beneficio.ingresos.push(ingreso1)
+                    }
+
+                }
+
+            }
 
         }
         $scope.calcularTotalQuiquenio = function (beneficio) {
@@ -5414,7 +5717,8 @@ angular.module('agil.controladores')
         $scope.inicio()
         $scope.calcularDesaucio = function (beneficio) {
             beneficio.total_desahucio = beneficio.promedio * 3
-            beneficio.total_desahucio == parseFloat(beneficio.desahucio.toFixed(2))
+            beneficio.total_desahucio = parseFloat(beneficio.desahucio.toFixed(2))
+            
         }
 
     });
