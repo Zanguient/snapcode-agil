@@ -762,7 +762,7 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 									}
 								});
 								//SI ES PROFORMA
-							} else if (movimiento == Diccionario.EGRE_PROFORMA) {
+							} else if (req.body.movimiento.nombre_corto == Diccionario.EGRE_PROFORMA) {
 								return Sucursal.find({
 									where: {
 										id: req.body.sucursal.id
@@ -791,7 +791,7 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 									}
 								});
 								//SI ES PREFACTURACION
-							} else if (movimiento == Diccionario.EGRE_PRE_FACTURACION) {
+							} else if (req.body.movimiento.nombre_corto == Diccionario.EGRE_PRE_FACTURACION) {
 								return Sucursal.find({
 									where: {
 										id: req.body.sucursal.id
@@ -820,7 +820,7 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 									}
 								});
 								//SI ES BAJA
-							} else if (movimiento == Diccionario.EGRE_BAJA) {
+							} else if (req.body.movimiento.nombre_corto == Diccionario.EGRE_BAJA) {
 								return Sucursal.find({
 									where: {
 										id: req.body.sucursal.id
@@ -897,7 +897,7 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 									});
 								});
 								//SI ES TRASPASO A OTRA SUCURSAL
-							} else if (movimiento == Diccionario.EGRE_TRASPASO) {
+							} else if (req.body.movimiento.nombre_corto == Diccionario.EGRE_TRASPASO) {
 								return Sucursal.find({
 									where: {
 										id: req.body.sucursal.id
@@ -993,7 +993,7 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 											});
 									});
 								});
-							} else if (movimiento == Diccionario.EGRE_AJUSTE) {
+							} else if (req.body.movimiento.nombre_corto == Diccionario.EGRE_AJUSTE) {
 
 							}
 						});
