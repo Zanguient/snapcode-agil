@@ -47,7 +47,7 @@
 <div id="dialog-gastos" title="Registro de gastos">
   <form name="formularioPago" novalidate ng-submit="generarEstadoResultadosNoContable(gasto,filtro.fechaInicioTexto,filtro.fechaFinTexto)">
 	  <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>¿Ingrese el gasto a registrar?</p>
-	  <input required ng-model="gasto" min="1" type="number" step="0.001">
+	  <input required ng-model="gasto" min="0" type="number" step="0.001">
 	  <button type="submit" class="btn btn-success" ng-disabled="formularioPago.$invalid" >Registrar</button>
 	  <button type="button" class="btn btn-danger"  ng-click="cerrarPopupGastos()">Cancelar</button>
   </form>

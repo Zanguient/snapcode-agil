@@ -748,14 +748,14 @@ angular.module('agil.controladores')
 
             if (empleado.ficha.fecha_inicio) {
                 if (beneficio) {
-                    $scope.beneficio =beneficio
-                    
+                    $scope.beneficio = beneficio
+
                     var fecha = null
                     var fechaActual = new Date()
-                    $scope.beneficio.fecha_elaboracion=$scope.fechaATexto($scope.beneficio.fecha_elaboracion)
-                    $scope.beneficio.fecha_asistensia=$scope.fechaATexto($scope.beneficio.fecha_asistensia)
-                    $scope.beneficio.fecha_ingreso=$scope.fechaATexto($scope.beneficio.fecha_ingreso)
-                    $scope.beneficio.fecha_retiro=$scope.fechaATexto($scope.beneficio.fecha_retiro)
+                    $scope.beneficio.fecha_elaboracion = $scope.fechaATexto($scope.beneficio.fecha_elaboracion)
+                    $scope.beneficio.fecha_asistensia = $scope.fechaATexto($scope.beneficio.fecha_asistensia)
+                    $scope.beneficio.fecha_ingreso = $scope.fechaATexto($scope.beneficio.fecha_ingreso)
+                    $scope.beneficio.fecha_retiro = $scope.fechaATexto($scope.beneficio.fecha_retiro)
                     var tipo = false
                     if (empleado.ficha.fecha_expiracion) {
                         fecha = $scope.fechaATexto(empleado.ficha.fecha_expiracion)
@@ -776,22 +776,22 @@ angular.module('agil.controladores')
                         aniosDisponibles: 0,
                         historial: null
                     }
-                    $scope.beneficio.anios= 0
-                    $scope.beneficio.meses= 0
-                    $scope.beneficio.dias= 0
-                    $scope.beneficio.ingresos=[]
-                    $scope.beneficio.deducciones=[]
+                    $scope.beneficio.anios = 0
+                    $scope.beneficio.meses = 0
+                    $scope.beneficio.dias = 0
+                    $scope.beneficio.ingresos = []
+                    $scope.beneficio.deducciones = []
                     $scope.beneficio.promedio = ($scope.beneficio.primer_mes + $scope.beneficio.segundo_mes + $scope.beneficio.tercer_mes) / 3
-                    $scope.beneficio.deduccionEingresos.forEach(function(deduccionEIngreso,index,array) {
-                        if(deduccionEIngreso.tipo.nombre_corto=="OTRING"){
+                    $scope.beneficio.deduccionEingresos.forEach(function (deduccionEIngreso, index, array) {
+                        if (deduccionEIngreso.tipo.nombre_corto == "OTRING") {
                             $scope.beneficio.ingresos.push(deduccionEIngreso)
-                        }else{
+                        } else {
                             $scope.beneficio.deducciones.push(deduccionEIngreso)
                         }
-                        if(index===(array.length-1)){
+                        if (index === (array.length - 1)) {
                             $scope.calcularDesaucio($scope.beneficio)
-                        }                        
-                    });                    
+                        }
+                    });
                 } else {
                     var fecha = null
                     var fechaActual = new Date()
@@ -808,7 +808,7 @@ angular.module('agil.controladores')
                     $scope.obtenerbeneficiosSociales($scope.tiempoTrabajado)
                     $scope.deduccion = {}
                     $scope.ingreso = {}
-                   
+
                     $scope.vacacion = {
                         sabado: false,
                         inicio_tipo: false,
@@ -1962,7 +1962,7 @@ angular.module('agil.controladores')
 
                     $scope.validar.codigo = CodigoCuenta;
 
-                    $scope.validar.$save(function (data) {
+                    $scope.validar.$save({id_empresa:$scope.usuario.id_empresa},function (data) {
                         $scope.data = data;
                     })
                 }, 1500);
@@ -2029,7 +2029,7 @@ angular.module('agil.controladores')
                     $scope.ficha.nac_anio = fechaNacimiento.getFullYear()
                     $scope.ficha.nac_dia = fechaNacimiento.getDate()
                     var mesNac = fechaNacimiento.getMonth()
-                    $scope.meses.forEach(function (mes, array, index) {
+                    $scope.meses.forEach(function (mes, index, array) {
                         if (mes.id == mesNac) {
                             $scope.ficha.nac_mes = mes
                             $scope.getDaysInMonth($scope.ficha.nac_mes.id, $scope.ficha.nac_anio)
@@ -2073,7 +2073,7 @@ angular.module('agil.controladores')
                     $scope.ficha.nac_anio = fechaNacimiento.getFullYear()
                     $scope.ficha.nac_dia = fechaNacimiento.getDate()
                     var mesNac = fechaNacimiento.getMonth()
-                    $scope.meses.forEach(function (mes, array, index) {
+                    $scope.meses.forEach(function (mes, index,array) {
                         if (mes.id == mesNac) {
                             $scope.ficha.nac_mes = mes
                             $scope.getDaysInMonth($scope.ficha.nac_mes.id, $scope.ficha.nac_anio)
@@ -2412,7 +2412,7 @@ angular.module('agil.controladores')
             $scope.familiar.nac_anio = fechaNacimiento.getFullYear()
             $scope.familiar.nac_dia = fechaNacimiento.getDate()
             var mesNac = fechaNacimiento.getMonth()
-            $scope.meses.forEach(function (mes, array, index) {
+            $scope.meses.forEach(function (mes, index, array) {
                 if (mes.id == mesNac) {
                     $scope.familiar.nac_mes = mes
                     //$scope.getDaysInMonth($scope.ficha.nac_mes.id,$scope.ficha.nac_anio)
@@ -5746,32 +5746,25 @@ angular.module('agil.controladores')
         }
 
         $scope.agregarOtroIngreso = function (model) {
-            $scope.tiposOtrosingresosYDeduccion.clases.forEach(function (otro, index, array) {
-                if (otro.nombre_corto == "OTRING") {
-                    model.tipo = otro
-                }
-                if (index == (array.length - 1)) {
-                    $scope.beneficio.ingresos.push(model);
-                    $scope.ingreso = { motivo: '', monto: '' }
-                }
-            });
+            model.tipo = $scope.tipoOtrosIngresos
+            $scope.beneficio.ingresos.push(model);
+            $scope.ingreso = { motivo: '', monto: '' }
+            $scope.sumartotalOtrosIngresos($scope.beneficio)
         }
 
         $scope.eliminarOtroIngreso = function (index) {
             $scope.beneficio.ingresos.splice(index, 1)
+            $scope.sumartotalOtrosIngresos($scope.beneficio)
         }
         $scope.agregarDeduccion = function (model) {
-            $scope.tiposOtrosingresosYDeduccion.clases.forEach(function (otro, index, array) {
-                if (otro.nombre_corto == "DEDUC") {
-                    model.tipo = otro
-                }
-                if (index == (array.length - 1)) {
-                    $scope.beneficio.deducciones.push(model);
-                    $scope.deduccion = { motivo: '', monto: '' }
-                }
-            });
+            model.tipo = $scope.tipoDeducciones
+            $scope.beneficio.deducciones.push(model);
+            $scope.deduccion = { motivo: '', monto: '' }
+            $scope.sumarTotalDeducciones($scope.beneficio)
         }
+        $scope.sumarTotalDeducciones = function (beneficio) {
 
+        }
         $scope.eliminarDeduccion = function (index) {
             $scope.beneficio.deducciones.splice(index, 1)
         }
@@ -5790,32 +5783,43 @@ angular.module('agil.controladores')
         }
         $scope.agregarQuinquenioAdelantado = function (beneficio) {
             var qA = 0
-            qA = beneficio.quinquenio_adelantado
-            var deduccion = {
-                monto: qA,
-                motivo: "Quinquenio Adelantado",
-                tipo: $scope.tipoDeducciones
-            }
-            if (beneficio.deducciones.length > 0) {
-                var bandera = false
+            if (beneficio.quinquenio_adelantado) {
+                qA = beneficio.quinquenio_adelantado
+                var deduccion = {
+                    monto: qA,
+                    motivo: "Quinquenio Adelantado",
+                    tipo: $scope.tipoDeducciones
+                }
+                if (beneficio.deducciones.length > 0) {
+                    var bandera = false
 
-                beneficio.deducciones.forEach(function (deduccion, array, index) {
-                    bandera = false
-                    if (deduccion.motivo == "Quinquenio Adelantado") {
-                        deduccion.monto = qA
-                        bandera = true
-                    } else {
+                    beneficio.deducciones.forEach(function (deduccion, index, array) {
+                        bandera = false
+                        if (deduccion.motivo == "Quinquenio Adelantado") {
+                            deduccion.monto = qA
+                            bandera = true
+                        }
                         if (index === (array.length - 1)) {
                             if (!bandera) {
                                 beneficio.deducciones.push(deduccion)
                             }
+                            beneficio.total_deducciones = 0
+                            beneficio.deducciones.forEach(function (deduccion, index, array) {
+                                beneficio.total_deducciones += deduccion.monto
+                            })
                         }
+                    });
+                } else {
+                    beneficio.deducciones.push(deduccion)
 
+                }
+            } else {
+                beneficio.deducciones.forEach(function (deduccion, index, array) {
+                    bandera = false
+                    if (deduccion.motivo == "Quinquenio Adelantado") {
+                        beneficio.deducciones.splice(index, 1)
                     }
                 });
-            } else {
-                beneficio.deducciones.push(deduccion)
-
             }
 
         }
@@ -5824,22 +5828,25 @@ angular.module('agil.controladores')
             /* beneficio.promedio = parseFloat(beneficio.promedio.toFixed(2)) */
             if (beneficio.tipo_beneficio) {
                 if (!isNaN(beneficio.promedio)) {
+                    if (beneficio.desahucio) {
+                        $scope.calcularDesaucio(beneficio)
+                    }
                     var monto1 = $scope.añosRestantes * beneficio.promedio
                     var monto2 = (beneficio.promedio / 12) * $scope.tiempoTrabajado.meses
                     var monto3 = (beneficio.promedio / 365) * $scope.tiempoTrabajado.dias
                     var ingreso1 = {
                         monto: monto1,
-                        motivo: "indemnización años",
+                        motivo: "indemnizacion años",
                         tipo: $scope.tipoOtrosIngresos
                     }
                     var ingreso2 = {
                         monto: monto2,
-                        motivo: "indemnización meses",
+                        motivo: "indemnizacion meses",
                         tipo: $scope.tipoOtrosIngresos
                     }
                     var ingreso3 = {
                         monto: monto3,
-                        motivo: "indemnización dias",
+                        motivo: "indemnizacion dias",
                         tipo: $scope.tipoOtrosIngresos
                     }
                     var ingreso4 = {
@@ -5848,52 +5855,38 @@ angular.module('agil.controladores')
                         tipo: $scope.tipoOtrosIngresos
                     }
                     if (beneficio.ingresos.length > 0) {
-                        var bandera = false
-                        beneficio.ingresos.forEach(function (ingreso, array, index) {
-                            bandera = false
-                            if (ingreso.motivo == "indemnización años") {
+                        var bandera = false, bandera2 = false, bandera3 = false, bandera4 = false;
+                        beneficio.ingresos.forEach(function (ingreso, index, array) {
+                            if (ingreso.motivo == "indemnizacion años") {
                                 ingreso.monto = monto1
                                 bandera = true
-                            } else {
-                                if (index === (array.length - 1)) {
-                                    if (!bandera) {
-                                        beneficio.ingresos.push(ingreso1)
-                                    }
-                                }
-
                             }
-                            if (ingreso.motivo == "indemnización meses") {
+                            if (ingreso.motivo == "indemnizacion meses") {
                                 ingreso.monto = monto2
-                                bandera = true
-                            } else {
-                                if (index === (array.length - 1)) {
-                                    if (!bandera) {
-                                        beneficio.ingresos.push(ingreso2)
-                                    }
-                                }
-
+                                bandera2 = true
                             }
-                            if (ingreso.motivo == "indemnización dias") {
+                            if (ingreso.motivo == "indemnizacion dias") {
                                 ingreso.monto = monto3
-                                bandera = true
-                            } else {
-                                if (index === (array.length - 1)) {
-                                    if (!bandera) {
-                                        beneficio.ingresos.push(ingreso3)
-                                    }
-                                }
-
+                                bandera3 = true
                             }
                             if (ingreso.motivo == "Vacacion") {
                                 ingreso.monto = beneficio.promedio * beneficio.totalV,
-                                    bandera = true
-                            } else {
-                                if (index === (array.length - 1)) {
-                                    if (!bandera) {
-                                        beneficio.ingresos.push(ingreso4)
-                                    }
+                                    bandera4 = true
+                            }
+                            if (index === (array.length - 1)) {
+                                if (!bandera) {
+                                    beneficio.ingresos.push(ingreso1)
                                 }
-
+                                if (!bandera2) {
+                                    beneficio.ingresos.push(ingreso2)
+                                }
+                                if (!bandera3) {
+                                    beneficio.ingresos.push(ingreso3)
+                                }
+                                if (!bandera4) {
+                                    beneficio.ingresos.push(ingreso4)
+                                }
+                                $scope.sumartotalOtrosIngresos(beneficio)
                             }
                         });
                     } else {
@@ -5901,12 +5894,46 @@ angular.module('agil.controladores')
                         beneficio.ingresos.push(ingreso2)
                         beneficio.ingresos.push(ingreso3)
                         beneficio.ingresos.push(ingreso4)
+                        $scope.sumartotalOtrosIngresos(beneficio)
                     }
+
+                } else {
+                    var arregloIndex = []
+                    beneficio.ingresos.forEach(function (ingreso, index, array) {
+                        if (ingreso.motivo == "Vacacion") {
+                            arregloIndex.push(index)
+                        }
+                        if (ingreso.motivo == "indemnizacion años") {
+                            arregloIndex.push(index)
+                        }
+                        if (ingreso.motivo == "indemnizacion meses") {
+                            arregloIndex.push(index)
+                        }
+                        if (ingreso.motivo == "indemnizacion dias") {
+                            arregloIndex.push(index)
+                        }
+                        if (ingreso.motivo == "Desahucio") {
+                            arregloIndex.push(index)
+                        }
+                        if (index === (array.length - 1)) {
+                            for (let i = (arregloIndex.length - 1); i >= 0; i--) {
+                                const element = arregloIndex[i];
+                                beneficio.ingresos.splice(element, 1)
+                                $scope.sumartotalOtrosIngresos(beneficio)
+                            }
+                        }
+                    });
 
                 }
 
 
             }
+        }
+        $scope.sumartotalOtrosIngresos = function (beneficio) {
+            beneficio.total_ingresos = 0
+            beneficio.ingresos.forEach(function (ingreso, index, array) {
+                beneficio.total_ingresos += ingreso.monto
+            })
         }
         $scope.calcularTotalQuiquenio = function (beneficio) {
             beneficio.total_quinquenio = beneficio.promedio * (beneficio.numero_quinquenio * 5)
@@ -5916,7 +5943,7 @@ angular.module('agil.controladores')
         //fin beneficios sociales
         $scope.inicio()
         $scope.calcularDesaucio = function (beneficio) {
-            if (beneficio.tipo_beneficio) {
+            if (!isNaN(beneficio.promedio)) {
                 if (beneficio.desahucio) {
                     beneficio.total_desahucio = beneficio.promedio * 3
                     beneficio.total_desahucio = parseFloat(beneficio.total_desahucio.toFixed(2))
@@ -5934,24 +5961,24 @@ angular.module('agil.controladores')
                                 if (ingreso.motivo == "Desahucio") {
                                     ingreso.monto = beneficio.total_desahucio
                                     bandera = true
-                                } else {
-                                    if (index === (array.length - 1)) {
-                                        if (!bandera) {
-                                            beneficio.ingresos.push(ingreso1)
-                                        }
+                                }
+                                if (index === (array.length - 1)) {
+                                    if (!bandera) {
+                                        beneficio.ingresos.push(ingreso1)
+                                        $scope.sumartotalOtrosIngresos(beneficio)
                                     }
-
                                 }
                             });
                         } else {
                             beneficio.ingresos.push(ingreso1)
+                            $scope.sumartotalOtrosIngresos(beneficio)
                         }
 
 
 
                     }
                 } else {
-                    beneficio.total_desahucio = ""
+
                     var bandera = false
                     var indexCampo = 0
                     beneficio.ingresos.forEach(function (ingreso, index, array) {
@@ -5962,17 +5989,23 @@ angular.module('agil.controladores')
                         if (index === (array.length - 1)) {
                             if (bandera) {
                                 beneficio.ingresos.splice(indexCampo, 1)
+                                $scope.sumartotalOtrosIngresos(beneficio)
                             }
                         }
 
 
                     });
                 }
+
+
+
             } else {
-                beneficio.total_desahucio = ""
+                beneficio.ingresos.forEach(function (ingreso, index, array) {
+                    if (ingreso.motivo == "Desahucio") {
+                        beneficio.ingresos.splice(index, 1)
+                        $scope.sumartotalOtrosIngresos(beneficio)
+                    }
+                });
             }
-
-
         }
-
     });

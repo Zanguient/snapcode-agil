@@ -1,7 +1,7 @@
 angular.module('agil.servicios')
 
     .factory('Proformas', function ($resource) {
-        return $resource(restServer + "proformas/empresa/:id_empresa/mes/:mes/anio/:anio/suc/:sucursal/act/:actividad/ser/:servicio/monto/:monto/razon/:razon/usuario/:usuario/pagina/:pagina/items-pagina/:items_pagina/busqueda/:busqueda/num/:numero", {},
+        return $resource(restServer + "proformas/empresa/:id_empresa/mes/:mes/anio/:anio/suc/:sucursal/act/:actividad/ser/:servicio/monto/:monto/razon/:razon/usuario/:usuario/pagina/:pagina/items-pagina/:items_pagina/busqueda/:busqueda/num/:numero/facturas/:id_opcion", {},
             {
                 'update': { method: 'PUT' }
             });
@@ -14,7 +14,7 @@ angular.module('agil.servicios')
             Proformas.get({
                 id_empresa: filtro.filter.empresa, usuario: filtro.filter.usuario, mes: filtro.filter.mes.id !== undefined ? filtro.filter.mes.id : filtro.filter.mes,
                 anio: filtro.filter.anio.id !== undefined ? filtro.filter.anio.id : filtro.filter.anio, sucursal: filtro.filter.sucursal.id !== undefined ? filtro.filter.sucursal.id : 0, actividad: filtro.filter.actividadEconomica !== undefined ? filtro.filter.actividadEconomica.id !== undefined ? filtro.filter.actividadEconomica.id : 0 : 0, monto: filtro.filter.monto, razon: filtro.filter.razon,
-                servicio: filtro.filter.servicio.id !== undefined ? filtro.filter.servicio.id : 0, pagina: filtro.currentPage, items_pagina: filtro.itemsPerPage, busqueda: filtro.search, numero: filtro.filter.numero !== undefined ? filtro.filter.numero : 0
+                servicio: filtro.filter.servicio.id !== undefined ? filtro.filter.servicio.id : 0, pagina: filtro.currentPage, items_pagina: filtro.itemsPerPage, busqueda: filtro.search, numero: filtro.filter.numero !== undefined ? filtro.filter.numero : 0, id_opcion: filtro.filter.proformaFacturadas !== undefined ? filtro.filter.proformaFacturadas.id ? filtro.filter.proformaFacturadas.id : 0  : 0
             }, function (entidades) {
                 delay.resolve(entidades);
             }, function (error) {
@@ -121,24 +121,24 @@ angular.module('agil.servicios')
         return res;
     }])
 
-    // .factory('FacturarProformas', function ($resource) {
-    //     return $resource(restServer + "proforma/facturar/:id_empresa", {},
-    //         {
-    //             'update': { method: 'PUT' }
-    //         });
-    // })
-
     .factory('FacturarProformas', function ($resource) {
-        return $resource(restServer + "ventas/factura/proformas", {},
+        return $resource(restServer + "proforma/facturar/:id_empresa", {},
             {
                 'update': { method: 'PUT' }
             });
     })
 
+    // .factory('FacturarProformas', function ($resource) {
+    //     return $resource(restServer + "ventas/factura/proformas", {},
+    //         {
+    //             'update': { method: 'PUT' }
+    //         });
+    // })
+
     .factory('FacturaProforma', ['FacturarProformas', '$q', function (FacturarProformas, $q) {
         var res = function (idEmpresa, proformas) {
             var delay = $q.defer();
-            FacturarProformas.save({}, proformas, function (entidades) {
+            FacturarProformas.save({id_empresa: idEmpresa}, proformas, function (entidades) {
                 delay.resolve(entidades);
             }, function (error) {
                 delay.reject(error);

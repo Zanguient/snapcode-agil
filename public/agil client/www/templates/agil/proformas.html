@@ -147,7 +147,12 @@
                             <td>
                                 <input ng-model="filtro.usuario" type="text">&nbsp
                             </td>
-                            <td>&nbsp</td>
+                            <td>
+                                <select id="filtroServicio" ng-model="filtro.proformaFacturadas" ng-change="" ng-options="opcion as opcion.nombre for opcion in [{id: 1, nombre: 'Facturados'}, {id: 2, nombre: 'Pendientes'}] track by opcion.id">
+                                    <option value="" selected>TODOS</option>
+                                </select>
+
+                            </td>
                         </tr>
                     </tbody>
                 </table>
@@ -158,7 +163,7 @@
         </div>
         <div class="table-header">
             Lista de Proformas
-            <label class="pull-right">TOTAL BS. {{totalProformas | number:2}} &nbsp&nbsp</label>
+            <label class="pull-right">TOTAL BS. {{totalProformas | number:2}} &nbsp&nbsp $us. {{totalProformasDolar | number: 2}} &nbsp&nbsp</label>
         </div>
         <div id="tabla-pacientes_wrapper" class="dataTables_wrapper form-inline no-footer">
             <div class="row" ng-include src="'/templates/gral/paginator-header-2.html'">
@@ -457,15 +462,15 @@
 </div>
 
 <div id="dialog-dosificar-actividad" title="¿Dosificar actividad?">
-        <p>
-            <span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>¿Esta seguro de reemplazar la dosificación existente por una nueva?
-        </p>
-        <p>
-            La dosificación anterior quedara cerrada y no podra ser usada para la emisión de nuevas facturas.
-        </p>
-        <button type="button" class="btn btn-danger" ng-click="dosificarSucursalActividad()">Si</button>
-        <button type="button" class="btn btn-success" ng-click="cerrarconfirmarDosificacion()">No</button>
-    </div>
+    <p>
+        <span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>¿Esta seguro de reemplazar la dosificación existente por una nueva?
+    </p>
+    <p>
+        La dosificación anterior quedara cerrada y no podra ser usada para la emisión de nuevas facturas.
+    </p>
+    <button type="button" class="btn btn-danger" ng-click="dosificarSucursalActividad()">Si</button>
+    <button type="button" class="btn btn-success" ng-click="cerrarconfirmarDosificacion()">No</button>
+</div>
 
 <div id="modalConfiguracionActividades" style="overflow-x:hidden !important" class="modal wizard-posicion">
     <div class="modal-dialog">
@@ -556,11 +561,12 @@
                                                                 <i class="fa fa-hand-o-up"></i>
                                                             </a>
 
-                                                            <a ng-disabled="!aplicacion.puede_eliminar" class="red" ng-click="abrirPopupConfirmacionEliminacion(eliminarDetalleActividadEmpresa,actividad)"
+                                                            <a ng-disabled="!aplicacion.puede_eliminar" class="red" ng-click="mostarMensajeConfirmacionEliminacionActividad(actividad)"
                                                                 data-rel="tooltip" tooltip-placement="top" uib-tooltip="Eliminar">
                                                                 <i class="ace-icon fa fa-trash-o bigger-130"></i>
                                                             </a>
-                                                            <a ng-click="obtenerHistorialActividad(actividad)" popover-trigger="outsideClick : outsideClick" popover-append-to-body="true" popover-title="Historial" uib-popover-template="PopoverConfiguracionActividadhistorial.templateUrl"
+                                                            <a ng-click="obtenerHistorialActividad(actividad)" popover-trigger="outsideClick : outsideClick" popover-append-to-body="true"
+                                                                popover-title="Historial" uib-popover-template="PopoverConfiguracionActividadhistorial.templateUrl"
                                                                 popover-placement="top" class="btn button-config btn-minier"
                                                                 type="button" id="id-btn-historialDosificacion">
                                                                 H
@@ -695,7 +701,8 @@
                                                         data-placeholder="Click para escoger">
                                                         <option value="" disabled selected>Selec. Actividad</option>
                                                     </select>
-                                                    <span class="red">(*)</span> <span ng-if="dosificacionesExpiradas" style="color: red">Las Actividades con dosificaciones expiradas no se muestran</span>
+                                                    <span class="red">(*)</span>
+                                                    <span ng-if="dosificacionesExpiradas" style="color: red">Las Actividades con dosificaciones expiradas no se muestran</span>
                                                 </div>
                                                 <div ng-if="verificarBloqueoServicios()">
                                                     <select class="form-control" data-validate="validate(required)" required id="actividadProformaDisable" name="actividad" ng-model="proforma.actividadEconomica"

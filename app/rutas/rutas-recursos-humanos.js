@@ -655,13 +655,19 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
         var provincia = (req.body.empleado.persona.provincia) ? req.body.empleado.persona.provincia.id : null
         var localidad = (req.body.empleado.persona.localidad) ? req.body.empleado.persona.localidad.id : null
         var ciudad = (req.body.empleado.persona.ciudad) ? req.body.empleado.persona.ciudad.id : null
+        var nombre =""
+        if(req.body.empleado.persona.segundo_nombre){
+            nombre= req.body.empleado.persona.nombres +' '+req.body.empleado.persona.segundo_nombre+ ' ' + req.body.empleado.persona.apellido_paterno + ' ' + req.body.empleado.persona.apellido_materno
+        }else{
+            nombre= req.body.empleado.persona.nombres + ' ' + req.body.empleado.persona.apellido_paterno + ' ' + req.body.empleado.persona.apellido_materno
+        }
         Persona.update({
             nombres: req.body.empleado.persona.nombres,
             apellido_paterno: req.body.empleado.persona.apellido_paterno,
             apellido_materno: req.body.empleado.persona.apellido_materno,
             ci: req.body.empleado.persona.ci,
             id_genero: req.body.empleado.persona.genero.id,
-            nombre_completo: req.body.empleado.persona.nombres + ' ' + req.body.empleado.persona.apellido_paterno + ' ' + req.body.empleado.persona.apellido_materno,
+            nombre_completo:nombre,
             telefono: req.body.empleado.persona.telefono,
             telefono_movil: req.body.empleado.persona.telefono_movil,
             correo_electronico: req.body.empleado.persona.correo_electronico,
@@ -1037,7 +1043,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                                     where: { id_ficha: ficha.id, id_discapacidad: discapacidad.id }
                                 }).then(function (actualizado) {
                                     if (index === (array.length - 1)) {
-                                        guardarHistorialVacacion(RrhhEmpleadoHistorialVacacion, req, res, empleado, true, fichaAnterior,ficha)
+                                        guardarHistorialVacacion(RrhhEmpleadoHistorialVacacion, req, res, empleado, true, fichaAnterior, ficha)
                                         res.json({ message: "Ficha empleado actualizada satisfactoriamente!" })
                                     }
                                 }).catch(function (err) {
@@ -1046,7 +1052,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
 
                         } else {
                             if (index === (array.length - 1)) {
-                                guardarHistorialVacacion(RrhhEmpleadoHistorialVacacion, req, res, empleado, true, fichaAnterior,ficha)
+                                guardarHistorialVacacion(RrhhEmpleadoHistorialVacacion, req, res, empleado, true, fichaAnterior, ficha)
 
                             }
                         }
@@ -1056,48 +1062,48 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
 
                 })
             } else {
-                guardarHistorialVacacion(RrhhEmpleadoHistorialVacacion, req, res, empleado, true, fichaAnterior,ficha)
+                guardarHistorialVacacion(RrhhEmpleadoHistorialVacacion, req, res, empleado, true, fichaAnterior, ficha)
 
             }
         })
     }
-    function guardarHistorialVacacion(RrhhEmpleadoHistorialVacacion, req, res, empleado, upload, fichaAnterior,ficha) {
+    function guardarHistorialVacacion(RrhhEmpleadoHistorialVacacion, req, res, empleado, upload, fichaAnterior, ficha) {
         if (req.body.historialVacacion.length > 0) {
             /* RrhhEmpleadoHistorialVacacion.update({
                 eliminado: true,
             }, {
                     where: { id_empleado: empleado.id }
                 }).then(function (historialActualizado) { */
-                    /* req.body.historialVacacion.forEach(function (historial, index, array) { */
-                    var contador = 0
-                    for (var i = 0; i < req.body.historialVacacion.length; i++) {
-                        var historial = req.body.historialVacacion[i];
-                        RrhhEmpleadoHistorialVacacion.create({
-                            aplicadas: historial.aplicadas,
-                            tomadas: historial.tomadas,
-                            anio: historial.anio,
-                            gestion: historial.gestion,
-                            /* id_empleado: empleado.id, */
-                            eliminado: false,
-                            id_ficha:ficha.id
-                        }).then(function (historialCreado) {
+            /* req.body.historialVacacion.forEach(function (historial, index, array) { */
+            var contador = 0
+            for (var i = 0; i < req.body.historialVacacion.length; i++) {
+                var historial = req.body.historialVacacion[i];
+                RrhhEmpleadoHistorialVacacion.create({
+                    aplicadas: historial.aplicadas,
+                    tomadas: historial.tomadas,
+                    anio: historial.anio,
+                    gestion: historial.gestion,
+                    /* id_empleado: empleado.id, */
+                    eliminado: false,
+                    id_ficha: ficha.id
+                }).then(function (historialCreado) {
 
-                            if (contador == (req.body.historialVacacion.length - 1)) {
-                                if (upload) {
+                    if (contador == (req.body.historialVacacion.length - 1)) {
+                        if (upload) {
 
-                                    guardarBitacoraCambiosFicha(fichaAnterior, empleado, req, res)
+                            guardarBitacoraCambiosFicha(fichaAnterior, empleado, req, res)
 
 
-                                }else{
+                        } else {
 
-                                }
-                            }
-                            contador++
-                        })
+                        }
                     }
+                    contador++
+                })
+            }
 
-                    /* }) */
-                /* }); */
+            /* }) */
+            /* }); */
 
         } else {
             guardarBitacoraCambiosFicha(fichaAnterior, empleado, req, res)
@@ -1682,7 +1688,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                     where: { nombre_corto: nombre_corto }
                 }).then(function (generoEncontrado) {
                     MedicoPaciente.find({
-                        where: { codigo: pacienteActual.codigo }
+                        where: { codigo: pacienteActual.codigo,id_empresa:req.body.id_empresa }
                     }).then(function (pacienteFound) {
                         // console.log(pacienteFound)
                         if (pacienteFound != null) {
@@ -1694,6 +1700,12 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                                 fs.writeFileSync('./img/persona' + pacienteFound.id_persona + '.jpg', imagenPersona.data, 'base64', function (err) { });
                                 imagen = './img/persona' + pacienteFound.id_persona + '.jpg';
                             }
+                            var nombre=""
+                            if(pacienteActual.segundo_nombre){
+                                nombre= pacienteActual.nombres + ' ' + pacienteActual.segundo_nombre + " " + pacienteActual.apellido_paterno + ' ' + pacienteActual.apellido_materno
+                            }else{
+                                nombre= pacienteActual.nombres + " " + pacienteActual.apellido_paterno + ' ' + pacienteActual.apellido_materno
+                            }
                             Persona.update({
                                 nombres: pacienteActual.nombres,
                                 segundo_nombre: pacienteActual.segundo_nombre,
@@ -1702,7 +1714,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                                 ci: pacienteActual.ci,
                                 imagen: imagen,
                                 id_genero: generoEncontrado.id,
-                                nombre_completo: pacienteActual.nombres + ' ' + pacienteActual.segundo_nombre + ' ' + pacienteActual.apellido_paterno + ' ' + pacienteActual.apellido_materno,
+                                nombre_completo: nombre,
                                 telefono: pacienteActual.telefono,
                                 telefono_movil: pacienteActual.telefono_movil,
                                 fecha_nacimiento: pacienteActual.fecha_nacimiento,
@@ -1790,6 +1802,12 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                                 })
                         } else {
                             console.log('paciente nuevo')
+                            var nombre=""
+                            if(pacienteActual.segundo_nombre){
+                                nombre= pacienteActual.nombres + ' ' + pacienteActual.segundo_nombre + " " + pacienteActual.apellido_paterno + ' ' + pacienteActual.apellido_materno
+                            }else{
+                                nombre= pacienteActual.nombres + " " + pacienteActual.apellido_paterno + ' ' + pacienteActual.apellido_materno
+                            }
                             Persona.create({
                                 nombres: pacienteActual.nombres,
                                 segundo_nombre: pacienteActual.segundo_nombre,
@@ -1797,7 +1815,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                                 apellido_materno: pacienteActual.apellido_materno,
                                 ci: pacienteActual.ci,
                                 id_genero: generoEncontrado.id,
-                                nombre_completo: pacienteActual.nombres + ' ' + pacienteActual.segundo_nombre + " " + pacienteActual.apellido_paterno + ' ' + pacienteActual.apellido_materno,
+                                nombre_completo:nombre,
                                 telefono: pacienteActual.telefono,
                                 telefono_movil: pacienteActual.telefono_movil,
                                 fecha_nacimiento: pacienteActual.fecha_nacimiento,
@@ -1895,34 +1913,34 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                                                                                 }, {
                                                                                         where: { id_empleado: medicoPacienteActualizado.id }
                                                                                     }).then(function (historialActualizado) { */
-                                                                                        /* req.body.historialVacacion.forEach(function (historial, index, array) { */
-                                                                                        var contador = 0
-                                                                                        for (var i = 0; i < pacienteActual.historialVacacion.length; i++) {
-                                                                                            var historial = pacienteActual.historialVacacion[i];
-                                                                                            RrhhEmpleadoHistorialVacacion.create({
-                                                                                                aplicadas: historial.aplicadas,
-                                                                                                tomadas: historial.tomadas,
-                                                                                                anio: historial.anio,
-                                                                                                gestion: historial.gestion,
-                                                                                               /*  id_empleado: medicoPacienteActualizado.id, */
-                                                                                                eliminado: false,
-                                                                                                id_ficha:Creado.id
-                                                                                            }).then(function (historialCreado) {
+                                                                                /* req.body.historialVacacion.forEach(function (historial, index, array) { */
+                                                                                var contador = 0
+                                                                                for (var i = 0; i < pacienteActual.historialVacacion.length; i++) {
+                                                                                    var historial = pacienteActual.historialVacacion[i];
+                                                                                    RrhhEmpleadoHistorialVacacion.create({
+                                                                                        aplicadas: historial.aplicadas,
+                                                                                        tomadas: historial.tomadas,
+                                                                                        anio: historial.anio,
+                                                                                        gestion: historial.gestion,
+                                                                                        /*  id_empleado: medicoPacienteActualizado.id, */
+                                                                                        eliminado: false,
+                                                                                        id_ficha: Creado.id
+                                                                                    }).then(function (historialCreado) {
 
-                                                                                                if (contador == (pacienteActual.historialVacacion.length - 1)) {
+                                                                                        if (contador == (pacienteActual.historialVacacion.length - 1)) {
 
-                                                                                                    if (index === (array.length - 1)) {
+                                                                                            if (index === (array.length - 1)) {
 
-                                                                                                        res.json({ mensaje: "¡Datos de pacientes actualizados satisfactoriamente!" });
-                                                                                                    }
+                                                                                                res.json({ mensaje: "¡Datos de pacientes actualizados satisfactoriamente!" });
+                                                                                            }
 
-                                                                                                }
-                                                                                                contador++
-                                                                                            })
                                                                                         }
+                                                                                        contador++
+                                                                                    })
+                                                                                }
 
-                                                                                        /* }) */
-                                                                                   /*  }); */
+                                                                                /* }) */
+                                                                                /*  }); */
                                                                             } else {
                                                                                 if (index === (array.length - 1)) {
 
@@ -1949,12 +1967,13 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
             })
         })
 
-    router.route('/validar-codigo-empleado')
+    router.route('/validar-codigo-empleado/empresa/:id_empresa')
         .post(function (req, res) {
             MedicoPaciente.find({
                 where: {
                     codigo: req.body.codigo,
-                    eliminado: false
+                    eliminado: false,
+                    id_empresa:req.params.id_empresa
                 }
             }).then(function (entidad) {
                 if (entidad) {
@@ -2565,7 +2584,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
         .get(function (req, res) {
             RrhhEmpleadoBeneficioSocial.find({
                 where: { id_ficha: req.params.id, fecha_retiro: { $ne: null } },
-                include:[{model:RrhhEmpleadoDeduccionIngreso,as:'deduccionEingresos',include:[{model:Clase,as:"tipo"}]}]
+                include: [{ model: RrhhEmpleadoDeduccionIngreso, as: 'deduccionEingresos', include: [{ model: Clase, as: "tipo" }] }]
             }).then(function (beneficio) {
                 res.json({ beneficio: beneficio })
             })
@@ -2579,69 +2598,75 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
             })
         })
         .post(function (req, res) {
-            var id = null
-            if (req.body.motivo) {
-                id = req.body.motivo.id
-            }
-            if (!req.body.tipo_beneficio) {
-                for (let i = 1; i <= req.body.numero_quinquenio; i++) {
-                    var total = req.body.total_quinquenio / req.body.numero_quinquenio
+            if (req.body.id) {
+                res.json({ mensaje: 'Falta Actualizacion en el servidor' })
+            } else {
+
+
+                var id = null
+                if (req.body.motivo) {
+                    id = req.body.motivo.id
+                }
+                if (!req.body.tipo_beneficio) {
+                    for (let i = 1; i <= req.body.numero_quinquenio; i++) {
+                        var total = req.body.total_quinquenio / req.body.numero_quinquenio
+                        RrhhEmpleadoBeneficioSocial.create({
+                            id_ficha: req.params.id,
+                            fecha_elaboracion: req.body.fecha_elaboracion,
+                            fecha_asistensia: req.body.fecha_asistensia,
+                            fecha_ingreso: req.body.fecha_ingreso,
+                            primer_mes: req.body.primer_mes2,
+                            segundo_mes: req.body.segundo_mes2,
+                            tercer_mes: req.body.tercer_mes2,
+                            total_quinquenio: total,
+                            tipo_beneficio: req.body.tipo_beneficio,
+                            eliminado: false
+                        }).then(function (beneficioCreado) {
+                            if (i == req.body.numero_quinquenio) {
+                                res.json({ mensaje: 'Beneficio social creado sadisfactoriamente!' })
+                            }
+                        })
+                    }
+
+                } else {
+
                     RrhhEmpleadoBeneficioSocial.create({
                         id_ficha: req.params.id,
+                        id_motivo: id,
                         fecha_elaboracion: req.body.fecha_elaboracion,
                         fecha_asistensia: req.body.fecha_asistensia,
                         fecha_ingreso: req.body.fecha_ingreso,
-                        primer_mes: req.body.primer_mes2,
-                        segundo_mes: req.body.segundo_mes2,
-                        tercer_mes: req.body.tercer_mes2,
-                        total_quinquenio: total,
+                        fecha_retiro: req.body.fecha_retiro,
+                        primer_mes: req.body.primer_mes,
+                        segundo_mes: req.body.segundo_mes,
+                        tercer_mes: req.body.tercer_mes,
+                        numero_quinquenio: req.body.numero_quinquenio,
+                        quinquenio_adelantado: req.body.quinquenio_adelantado,
                         tipo_beneficio: req.body.tipo_beneficio,
+                        desahucio: req.body.desahucio,
                         eliminado: false
                     }).then(function (beneficioCreado) {
-                        if (i == req.body.numero_quinquenio) {
-                            res.json({ mensaje: 'Beneficio social creado sadisfactoriamente!' })
+                        if (req.body.ingresos.length > 0) {
+                            req.body.ingresos.forEach(function (ingreso, index, array) {
+                                RrhhEmpleadoDeduccionIngreso.create({
+                                    id_beneficio: beneficioCreado.id,
+                                    monto: ingreso.monto,
+                                    motivo: ingreso.motivo,
+                                    id_tipo: ingreso.tipo.id,
+                                    eliminado: false
+                                }).then(function (decuccionCreada) {
+                                    if (index === (array.length - 1)) {
+                                        guardarDeducciones(req, res, RrhhEmpleadoDeduccionIngreso, beneficioCreado)
+                                    }
+                                })
+
+                            });
+                        } else {
+                            guardarDeducciones(req, res, RrhhEmpleadoDeduccionIngreso, beneficioCreado)
                         }
+
                     })
                 }
-
-            } else {
-
-                RrhhEmpleadoBeneficioSocial.create({
-                    id_ficha: req.params.id,
-                    id_motivo: id,
-                    fecha_elaboracion: req.body.fecha_elaboracion,
-                    fecha_asistensia: req.body.fecha_asistensia,
-                    fecha_ingreso: req.body.fecha_ingreso,
-                    fecha_retiro: req.body.fecha_retiro,
-                    primer_mes: req.body.primer_mes,
-                    segundo_mes: req.body.segundo_mes,
-                    tercer_mes: req.body.tercer_mes,
-                    numero_quinquenio: req.body.numero_quinquenio,
-                    quinquenio_adelantado: req.body.quinquenio_adelantado,
-                    tipo_beneficio: req.body.tipo_beneficio,
-                    desahucio: req.body.desahucio,
-                    eliminado: false
-                }).then(function (beneficioCreado) {
-                    if (req.body.ingresos.length > 0) {
-                        req.body.ingresos.forEach(function (ingreso, index, array) {
-                            RrhhEmpleadoDeduccionIngreso.create({
-                                id_beneficio: beneficioCreado.id,
-                                monto: ingreso.monto,
-                                motivo: ingreso.motivo,
-                                id_tipo: ingreso.tipo.id,
-                                eliminado: false
-                            }).then(function (decuccionCreada) {
-                                if (index === (array.length - 1)) {
-                                    guardarDeducciones(req, res, RrhhEmpleadoDeduccionIngreso, beneficioCreado)
-                                }
-                            })
-
-                        });
-                    } else {
-                        guardarDeducciones(req, res, RrhhEmpleadoDeduccionIngreso, beneficioCreado)
-                    }
-
-                })
             }
         })
     function fechaATexto(fecha) {

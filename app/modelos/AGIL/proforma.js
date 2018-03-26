@@ -80,9 +80,19 @@ module.exports = function (sequelize, Sequelize) {
             type: Sequelize.STRING,
             field: 'codigo_control'
         },
-        id_venta: {
+        dias_credito: {
             type: Sequelize.INTEGER,
-            field: 'venta',
+            field: 'dias',
+            defaultValue: null
+        },
+        a_cuenta: {
+            type: Sequelize.DECIMAL(20, 4),
+            field: 'a_cuenta',
+            defaultValue: null
+        },
+        id_tipo_pago: {
+            type: Sequelize.INTEGER,
+            field: 'tipo_pago',
             defaultValue: null
         },
         eliminado: {
