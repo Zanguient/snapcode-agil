@@ -1962,7 +1962,7 @@ angular.module('agil.controladores')
 
                     $scope.validar.codigo = CodigoCuenta;
 
-                    $scope.validar.$save({id_empresa:$scope.usuario.id_empresa},function (data) {
+                    $scope.validar.$save({ id_empresa: $scope.usuario.id_empresa }, function (data) {
                         $scope.data = data;
                     })
                 }, 1500);
@@ -5752,9 +5752,13 @@ angular.module('agil.controladores')
             $scope.sumartotalOtrosIngresos($scope.beneficio)
         }
 
-        $scope.eliminarOtroIngreso = function (index) {
-            $scope.beneficio.ingresos.splice(index, 1)
-            $scope.sumartotalOtrosIngresos($scope.beneficio)
+        $scope.eliminarOtroIngreso = function (index, ingreso) {
+            if (ingreso.id) {
+                ingreso.eliminado = true
+            } else {
+                $scope.beneficio.ingresos.splice(index, 1)
+                $scope.sumartotalOtrosIngresos($scope.beneficio)
+            }
         }
         $scope.agregarDeduccion = function (model) {
             model.tipo = $scope.tipoDeducciones
@@ -5763,10 +5767,18 @@ angular.module('agil.controladores')
             $scope.sumarTotalDeducciones($scope.beneficio)
         }
         $scope.sumarTotalDeducciones = function (beneficio) {
-
+            beneficio.total_deducciones = 0
+            beneficio.deducciones.forEach(function (deduccion, index, array) {
+                beneficio.total_deducciones += deduccion.monto
+            })
         }
-        $scope.eliminarDeduccion = function (index) {
-            $scope.beneficio.deducciones.splice(index, 1)
+        $scope.eliminarDeduccion = function (index, deduccion) {
+            if (deduccion.id) {
+                deduccion.eliminado=true
+            } else {
+                $scope.beneficio.deducciones.splice(index, 1)
+                $scope.sumarTotalDeducciones($scope.beneficio)
+            }
         }
         $scope.guardarBeneficioSocial = function (datos) {
             datos.fecha_elaboracion = new Date($scope.convertirFecha(datos.fecha_elaboracion))
@@ -5785,7 +5797,7 @@ angular.module('agil.controladores')
             var qA = 0
             if (beneficio.quinquenio_adelantado) {
                 qA = beneficio.quinquenio_adelantado
-                var deduccion = {
+                var deduccion2 = {
                     monto: qA,
                     motivo: "Quinquenio Adelantado",
                     tipo: $scope.tipoDeducciones
@@ -5794,23 +5806,19 @@ angular.module('agil.controladores')
                     var bandera = false
 
                     beneficio.deducciones.forEach(function (deduccion, index, array) {
-                        bandera = false
                         if (deduccion.motivo == "Quinquenio Adelantado") {
                             deduccion.monto = qA
                             bandera = true
                         }
                         if (index === (array.length - 1)) {
                             if (!bandera) {
-                                beneficio.deducciones.push(deduccion)
+                                beneficio.deducciones.push(deduccion2)
                             }
-                            beneficio.total_deducciones = 0
-                            beneficio.deducciones.forEach(function (deduccion, index, array) {
-                                beneficio.total_deducciones += deduccion.monto
-                            })
+                            $scope.sumarTotalDeducciones(beneficio)
                         }
                     });
                 } else {
-                    beneficio.deducciones.push(deduccion)
+                    beneficio.deducciones.push(deduccion2)
 
                 }
             } else {
@@ -5818,6 +5826,7 @@ angular.module('agil.controladores')
                     bandera = false
                     if (deduccion.motivo == "Quinquenio Adelantado") {
                         beneficio.deducciones.splice(index, 1)
+                        $scope.sumarTotalDeducciones(beneficio)
                     }
                 });
             }

@@ -100,10 +100,11 @@ angular.module('agil.controladores')
             blockUI.start()
             var dat = new Date(proforma.fecha_proforma)
             $scope.obtenerCambioMonedaProforma(dat)
-            var prom = ProformaInfo(proforma.id)
+            var prom = ProformaInfo(proforma.id, proforma.actividadEconomica.id)
             prom.then(function (proformaE) {
                 $scope.proforma = proformaE.proforma
                 $scope.proforma.sucursal = proformaE.proforma.sucursalProforma
+                $scope.obtenerActividadesSucursal($scope.proforma.sucursal.id)
                 $scope.proforma.actividadEconomica = proformaE.proforma.actividadEconomica
                 $scope.obtenerServiciosActividadEmpresaPrincipal($scope.proforma.actividadEconomica)
                 if (ver !== undefined) {
