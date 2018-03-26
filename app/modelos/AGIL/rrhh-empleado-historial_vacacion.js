@@ -1,8 +1,12 @@
 module.exports = function (sequelize, Sequelize) {
 	var RrhhEmpleadoHistorialVacacion = sequelize.define('agil_rrhh_empleado_historial_vacacion', {
-		id_empleado: {
+		/* id_empleado: {
 			type: Sequelize.INTEGER,
 			field: 'empleado'
+		}, */
+		id_ficha:{
+			type: Sequelize.INTEGER,
+			field: 'ficha'
 		},
 		gestion: {
 			type: Sequelize.INTEGER,

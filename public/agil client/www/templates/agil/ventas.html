@@ -385,7 +385,7 @@
 								<tr ng-if="tipoEgreso!=diccionario.EGRE_TRASPASO">
 									<td>
 										<label>SUCURSAL</label>
-										<select data-validate="validate(required)" required id="sucursal" name="sucursal" ng-options="sucursal as sucursal.nombre for sucursal in sucursales track by sucursal.id"
+										<select ng-disabled="venta.detallesVenta.length>0" data-validate="validate(required)" required id="sucursal" name="sucursal" ng-options="sucursal as sucursal.nombre for sucursal in sucursales track by sucursal.id"
 										 ng-model="venta.sucursal" ng-change="obtenerAlmacenesActividades(venta.sucursal.id)">
 											<option value="" disabled selected>Selec. Sucursal</option>
 										</select>
@@ -396,7 +396,7 @@
 									</td>
 									<td ng-if="tipoEgreso!=diccionario.EGRE_TRASPASO">
 										<label>ALMACEN</label>
-										<select data-validate="validate(required)" required id="almacen" name="almacen" ng-model="venta.almacen" ng-options="almacen as almacen.nombre for almacen in almacenes track by almacen.id"
+										<select ng-disabled="venta.detallesVenta.length>0" data-validate="validate(required)" required id="almacen" name="almacen" ng-model="venta.almacen" ng-options="almacen as almacen.nombre for almacen in almacenes track by almacen.id"
 										 data-placeholder="Click para escoger">
 											<option value="" disabled selected>Selec. Almacen</option>
 										</select>

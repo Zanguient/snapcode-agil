@@ -70,11 +70,20 @@ angular.module('agil.controladores')
             blockUI.start()
             proforma.eliminado = true
             eliminarProforma.save({ id: proforma.id }, proforma, function (res) {
-                $scope.mostrarMensaje(res.mensaje)
+                $timeout(function () {
+                    $scope.$apply(function () {
+                        $scope.mostrarMensaje(res.mensaje)
+                    });
+                }, 500);
+
                 $scope.proformas.splice($scope.proformas.indexOf(proforma), 1)
                 blockUI.stop()
             }, function (err) {
-                $scope.mostrarMensaje(err.message === undefined ? err.data : err.message)
+                $timeout(function () {
+                    $scope.$apply(function () {
+                        $scope.mostrarMensaje(err.message === undefined ? err.stack : err.message)
+                    });
+                }, 500);
                 blockUI.stop()
             })
         }
@@ -92,7 +101,12 @@ angular.module('agil.controladores')
                     $scope.proforma.ver = true
                 }
                 if (proformaE.mensaje !== undefined) {
-                    $scope.mostrarMensaje(proformaE.mensaje)
+                    $timeout(function () {
+                        $scope.$apply(function () {
+                            $scope.mostrarMensaje(proformaE.mensaje)
+                        });
+                    }, 500);
+
                 } else {
                     $scope.proforma.fecha_proforma = $scope.fechaATexto(new Date($scope.proforma.fecha_proforma))
                     var dat = new Date($scope.convertirFecha($scope.proforma.fecha_proforma))
@@ -112,7 +126,12 @@ angular.module('agil.controladores')
                 }
                 blockUI.stop()
             }, function (err) {
-                $scope.mostrarMensaje(err.message === undefined ? err.data : err.message)
+                $timeout(function () {
+                    $scope.$apply(function () {
+                        $scope.mostrarMensaje(err.message === undefined ? err.stack : err.message)
+                    });
+                }, 500)
+
                 blockUI.stop()
             })
             $scope.detalleProforma = undefined
@@ -250,12 +269,20 @@ angular.module('agil.controladores')
                 proforma.fecha_cobro = (proforma.fecha_cobro instanceof Date) ? proforma.fecha_cobro : (proforma.fecha_cobro === null) ? null : new Date($scope.convertirFecha(proforma.fecha_cobro))
                 fechasProforma.save({ id: proforma.id }, proforma, function (res) {
                     $scope.proforma = undefined
-                    $scope.mostrarMensaje(res.mensaje)
+                    $timeout(function () {
+                        $scope.$apply(function () {
+                            $scope.mostrarMensaje(res.mensaje)
+                        });
+                    }, 500)
                     $scope.cerrardialogmodalFechas()
                     $scope.recargarItemsTabla()
                     blockUI.stop()
                 }, function (err) {
-                    $scope.mostrarMensaje(err.message === undefined ? err.data : err.message)
+                    $timeout(function () {
+                        $scope.$apply(function () {
+                            $scope.mostrarMensaje(err.message === undefined ? err.stack : err.message)
+                        });
+                    }, 500)
                     blockUI.stop()
                 })
             }
@@ -292,7 +319,12 @@ angular.module('agil.controladores')
                     }
                 } else {
                     $scope.moneda = { ufv: "--", dolar: "--" }
-                    $scope.mostrarMensaje('La fecha ' + $scope.proforma.fecha_proforma + ' no tiene datos del tipo de cambio de dolar. El tipo de cambio de dolar no afecta la información de la proforma y puede continuar sin problema.')
+                    $timeout(function () {
+                        $scope.$apply(function () {
+                            $scope.mostrarMensaje('La fecha ' + $scope.proforma.fecha_proforma + ' no tiene datos del tipo de cambio de dolar. El tipo de cambio de dolar no afecta la información de la proforma y puede continuar sin problema.')
+                        });
+                    }, 500)
+
                 }
             })
         }
@@ -361,12 +393,22 @@ angular.module('agil.controladores')
 
                 if (nuevosServicios.length > 0) {
                     ActividadServicio.save({ id_empresa: $scope.usuario.empresa.id, id_actividad: 0 }, nuevosServicios, function (res) {
-                        $scope.mostrarMensaje(res.mensaje)
+                        $timeout(function () {
+                            $scope.$apply(function () {
+                                $scope.mostrarMensaje(res.mensaje)
+                            });
+                        }, 500)
+
                         $scope.obtenerSucursales();
                         blockUI.stop()
                         $scope.cerrarConfiguracionActividadesServicios()
                     }, function (err) {
-                        $scope.mostrarMensaje(err.data)
+                        $timeout(function () {
+                            $scope.$apply(function () {
+                                $scope.mostrarMensaje(err.stack)
+                            });
+                        }, 500)
+
                         blockUI.stop()
                     })
                 } else {
@@ -384,7 +426,11 @@ angular.module('agil.controladores')
                 } else {
                     if ($scope.proforma !== undefined) {
                         if ($scope.proforma.actividadEconomica !== undefined) {
-                            $scope.mostrarMensaje('No hay servicios en la actividad seleccionada: "' + $scope.proforma.actividadEconomica.nombre + '"')
+                            $timeout(function () {
+                                $scope.$apply(function () {
+                                    $scope.mostrarMensaje('No hay servicios en la actividad seleccionada: "' + $scope.proforma.actividadEconomica.nombre + '"')
+                                });
+                            }, 500)
                         }
                     }
                 }
@@ -428,12 +474,12 @@ angular.module('agil.controladores')
         }
 
         $scope.agregarDetalleActividadServicio = function (actividadServicio) {
-            if (actividadServicio !== undefined) {
+            if (actividadServicio !== undefined && actividadServicio !== null) {
                 var err = false
-                if (actividadServicio.actividadEconomica === undefined) {
+                if (actividadServicio.actividadEconomica === undefined || actividadServicio.actividadEconomica === null ) {
                     err = true
                 }
-                if (actividadServicio.servicio === undefined) {
+                if (actividadServicio.servicio === undefined && actividadServicio.servicio === null) {
                     err = true
                 } else {
                     if (actividadServicio.servicio.codigo === undefined || actividadServicio.servicio.nombre === undefined || actividadServicio.servicio.precio === undefined) {
@@ -442,17 +488,29 @@ angular.module('agil.controladores')
                         err = true
                     }
                 }
+                if (actividadServicio.actividadEconomica.dosificacion === undefined || actividadServicio.actividadEconomica.dosificacion === null ) {
+                    err = true
+                    errDos = true
+                }
                 if (!err) {
-
                     var check = $scope.buscarservicio(actividadServicio.servicio.nombre)
                     if (check !== undefined) {
                         if (check.length < 1) {
+                            if (actividadServicio.actividadEconomica.dosificacion) {
+                                
+                            } else {
+                                
+                            }
                             if ((actividadServicio.actividadEconomica.dosificacion.id !== undefined && actividadServicio.actividadEconomica.dosificacion.id !== null)) {
                                 var service = { id: actividadServicio.id, actividad: actividadServicio.actividadEconomica.actividad, codigo: actividadServicio.servicio.codigo, nombre: actividadServicio.servicio.nombre, precio: actividadServicio.servicio.precio }
                                 $scope.configuracionActividadServicio.push(service)
                                 $scope.nActividad.servicio = undefined
                             } else {
-                                $scope.mostrarMensaje('La actividad seleccionada no tiene dosificación activa, por favor asigne una dosificación para poder continuar.')
+                                $timeout(function () {
+                                    $scope.$apply(function () {
+                                        $scope.mostrarMensaje('La actividad seleccionada no tiene dosificación activa, por favor asigne una dosificación para poder continuar.')
+                                    });
+                                }, 500)
                             }
                         } else {
                             if (actividadServicio.servicio.id === undefined) {
@@ -460,11 +518,20 @@ angular.module('agil.controladores')
                                 check.map(function (ser) {
                                     if (ser.nombre === actividadServicio.servicio.nombre) {
                                         encontrado = true
-                                        $scope.mostrarMensaje('El servicio ya fue asignado a esta actividad')
+                                        $timeout(function () {
+                                            $scope.$apply(function () {
+                                                $scope.mostrarMensaje('El servicio ya fue asignado a esta actividad')
+
+                                            });
+                                        }, 500)
                                     }
                                     if (ser.codigo === actividadServicio.servicio.codigo) {
                                         encontrado = true
-                                        $scope.mostrarMensaje('El codigo del servicio ya esta en uso o listo para ser asignado.')
+                                        $timeout(function () {
+                                            $scope.$apply(function () {
+                                                $scope.mostrarMensaje('El codigo del servicio ya esta en uso o listo para ser asignado.')
+                                            });
+                                        }, 500)
                                     }
                                 })
                                 if (!encontrado) {
@@ -473,7 +540,11 @@ angular.module('agil.controladores')
                                         $scope.configuracionActividadServicio.push(service)
                                         $scope.nActividad.servicio = undefined
                                     } else {
-                                        $scope.mostrarMensaje('La actividad seleccionada no tiene dosificación activa, por favor asigne una dosificación para poder continuar.')
+                                        $timeout(function () {
+                                            $scope.$apply(function () {
+                                                $scope.mostrarMensaje('La actividad seleccionada no tiene dosificación activa, por favor asigne una dosificación para poder continuar.')
+                                            });
+                                        }, 500)
                                     }
                                 }
                             } else {
@@ -486,11 +557,28 @@ angular.module('agil.controladores')
                             $scope.configuracionActividadServicio.push(service)
                             $scope.nActividad.servicio = undefined
                         } else {
-                            $scope.mostrarMensaje('La actividad seleccionada no tiene dosificación activa, por favor asigne una dosificación para poder continuar.')
+                            $timeout(function () {
+                                $scope.$apply(function () {
+                                    $scope.mostrarMensaje('La actividad seleccionada no tiene dosificación activa, por favor asigne una dosificación para poder continuar.')
+                                });
+                            }, 500)
                         }
                     }
                 } else {
-                    $scope.mostrarMensaje('Revise los datos e intente de nuevo.')
+                    if (errDos) {
+                        $timeout(function () {
+                            $scope.$apply(function () {
+                                $scope.mostrarMensaje('La actividad seleccionada no tiene dosificación activa, por favor asigne una dosificación para poder continuar.')
+                            });
+                        }, 500)
+                    } else {
+                        $timeout(function () {
+                            $scope.$apply(function () {
+                                $scope.mostrarMensaje('Revise los datos e intente de nuevo.')
+                            });
+                        }, 500)
+                    }
+                    
                 }
             }
         }
@@ -525,28 +613,49 @@ angular.module('agil.controladores')
                     ActividadEmpresa.save({ id_empresa: $scope.usuario.empresa.id }, nuevasActividades, function (res) {
                         if (res.hasErr === undefined) {
                             $scope.obtenerSucursales()
-                            $scope.mostrarMensaje(res.mensaje)
+                            $timeout(function () {
+                                $scope.$apply(function () {
+                            $scope.mostrarMensaje(res.mensaje)                                    
+                                });
+                            }, 500)
                             $scope.actividadesDosificaciones = []
                             var prom = ActividadesEmpresa($scope.usuario.empresa.id)
                             prom.then(function (activities) {
                                 $scope.actividadesEmpresa = activities.actividades
                                 if (activities.mensaje !== undefined) {
-                                    $scope.mostrarMensaje(activities.mensaje)
+                                    $timeout(function () {
+                                        $scope.$apply(function () {
+                                            $scope.mostrarMensaje(activities.mensaje)                                                                    
+                                        });
+                                    }, 500)
                                 }
                                 blockUI.stop()
                                 $scope.cerrarConfiguracionActividades()
                             }).catch(function (err) {
-                                $scope.mostrarMensaje(err.message === undefined ? err.data : err.message)
+                                $timeout(function () {
+                                    $scope.$apply(function () {
+                                        $scope.mostrarMensaje(err.message === undefined ? err.stack : err.message)                                                             
+                                    });
+                                }, 500)
                                 blockUI.stop()
                                 $scope.cerrarConfiguracionActividades()
                             })
                         } else {
-                            $scope.mostrarMensaje(res.mensaje)
+                            $timeout(function () {
+                                $scope.$apply(function () {
+                                    $scope.mostrarMensaje(res.mensaje)                                                             
+                                });
+                            }, 500)
+                           
                             blockUI.stop()
                         }
                     }, function (err) {
                         blockUI.stop()
-                        $scope.mostrarMensaje(err.message === undefined ? err.data : err.message)
+                        $timeout(function () {
+                            $scope.$apply(function () {
+                        $scope.mostrarMensaje(err.message === undefined ? err.stack : err.message)                                    
+                            });
+                        }, 500)
                         $scope.cerrarConfiguracionActividades()
                     })
                 } else {
@@ -555,7 +664,12 @@ angular.module('agil.controladores')
                 }
             } else {
                 blockUI.stop()
-                $scope.mostrarMensaje('Ingrese al menos 1 actividad para guardar.')
+                $timeout(function () {
+                    $scope.$apply(function () {
+                        $scope.mostrarMensaje('Ingrese al menos 1 actividad para guardar.')                                  
+                    });
+                }, 500)
+                
             }
         }
 
@@ -571,10 +685,18 @@ angular.module('agil.controladores')
                         $scope.serviciosProcesados = services.servicios
                     }
                     if (services.mensaje !== undefined) {
-                        $scope.mostrarMensaje(services.mensaje)
+                        $timeout(function () {
+                            $scope.$apply(function () {
+                        $scope.mostrarMensaje(services.mensaje)                                                                  
+                            });
+                        }, 500)
                     }
                 }, function (err) {
-                    $scope.mostrarMensaje(err.message)
+                    $timeout(function () {
+                        $scope.$apply(function () {
+                            $scope.mostrarMensaje(err.message)                                                                       
+                        });
+                    }, 500)
                 })
             }
         }
@@ -596,7 +718,11 @@ angular.module('agil.controladores')
                 })
                 blockUI.stop();
             }, function (err) {
-                $scope.mostrarMensaje(err.stack !== undefined ? err.stack : err.message ? err.message : 'No se recibio respuesta del servidor')
+                $timeout(function () {
+                    $scope.$apply(function () {
+                        $scope.mostrarMensaje(err.stack !== undefined ? err.stack : err.message ? err.message : 'No se recibio respuesta del servidor')                                                                    
+                    });
+                }, 500)
             })
         }
 
@@ -628,7 +754,12 @@ angular.module('agil.controladores')
                     $scope.actividadADosificar = undefined
                     $scope.cerrardialogDosificacionesDisponibles()
                 } else {
-                    $scope.mostrarMensaje('Hubo un problema, la dosificacion esta en lista para ser asignada!')
+                    $timeout(function () {
+                        $scope.$apply(function () {
+                            $scope.mostrarMensaje('Hubo un problema, la dosificacion esta en lista para ser asignada!')
+                        });
+                    }, 500);
+
                 }
             }
         }
@@ -640,7 +771,7 @@ angular.module('agil.controladores')
                     var salir = false
                     var indx = 0
                     while (salir == false) {
-                        if ($scope.actividadesDosificaciones[indx].actividad.nombre === actividad.nombre) {
+                        if ($scope.actividadesDosificaciones[indx].actividad.nombre === actividad.nombre && !$scope.actividadesDosificaciones[indx].expirado) {
                             encontrado = true
                             salir = true
                         } else {
@@ -655,7 +786,11 @@ angular.module('agil.controladores')
                         var act = { actividad: actividad, sucursal: sucursal, expirado: false }
                         $scope.actividadesDosificaciones.push(act)
                     } else {
-                        $scope.mostrarMensaje('La actividad "' + actividad.nombre + '" ya esta en la lista de esta sucursal "' + sucursal.nombre + '".')
+                        $timeout(function () {
+                            $scope.$apply(function () {
+                                $scope.mostrarMensaje('La actividad "' + actividad.nombre + '" ya esta en la lista de esta sucursal "' + sucursal.nombre + '".')
+                            });
+                        }, 500);
                     }
                 } else {
                     var act = { actividad: actividad, sucursal: sucursal, expirado: false }
@@ -748,7 +883,11 @@ angular.module('agil.controladores')
                 $scope.clientes = cls
                 $scope.clientesProcesados = cls
             }, function (err) {
-                $scope.mostrarMensaje(err.message)
+                $timeout(function () {
+                    $scope.$apply(function () {
+                $scope.mostrarMensaje(err.message)                                                                                          
+                    });
+                }, 500)
             })
         }
 
@@ -761,12 +900,20 @@ angular.module('agil.controladores')
                 $scope.proformas = res.proformas
                 $scope.paginator.setPages(res.count)
                 if (res.mensaje !== undefined) {
-                    $scope.mostrarMensaje(res.mensaje)
+                    $timeout(function () {
+                        $scope.$apply(function () {
+                            $scope.mostrarMensaje(res.mensaje)                                
+                        });
+                    }, 500)
                 }
                 $scope.filtro = { empresa: $scope.usuario.empresa.id, mes: "", anio: "", sucursal: "", actividad: "", servicio: "", monto: "", razon: "", usuario: "", numero: "" }
                 $scope.calcularTotalProformas()
             }, function (err) {
-                $scope.mostrarMensaje(err.data)
+                $timeout(function () {
+                    $scope.$apply(function () {
+                $scope.mostrarMensaje(err.stack)                                                       
+                    });
+                }, 500)
             })
             blockUI.stop()
         }
@@ -782,7 +929,11 @@ angular.module('agil.controladores')
                     proforma.fecha_proforma = new Date($scope.convertirFecha(proforma.fecha_proforma))
                     proforma.movimiento = 'PFR'
                     Proforma.update({ id: proforma.id }, proforma, function (res) {
-                        $scope.mostrarMensaje(res.mensaje)
+                        $timeout(function () {
+                            $scope.$apply(function () {
+                                $scope.mostrarMensaje(res.mensaje)                                                                      
+                            });
+                        }, 500)
                         if (res.hasErr === undefined) {
                             $scope.cerrardialogProformaEdicion()
                         } else {
@@ -791,7 +942,11 @@ angular.module('agil.controladores')
 
                         blockUI.stop()
                     }, function (err) {
-                        $scope.mostrarMensaje(err.message === undefined ? err.data : err.message)
+                        $timeout(function () {
+                            $scope.$apply(function () {
+                        $scope.mostrarMensaje(err.message === undefined ? err.stack : err.message)                                                                     
+                            });
+                        }, 500)
                         blockUI.stop()
                     })
                 } else {
@@ -800,7 +955,12 @@ angular.module('agil.controladores')
                     proforma.usuarioProforma = $scope.usuario
                     proforma.fecha_proforma = new Date($scope.convertirFecha(proforma.fecha_proforma))
                     Proformas.save(filtro, proforma, function (res) {
-                        $scope.mostrarMensaje(res.mensaje)
+                        $timeout(function () {
+                            $scope.$apply(function () {
+                                $scope.mostrarMensaje(res.mensaje)
+                                                                               
+                            });
+                        }, 500)
                         if (res.hasErr === undefined) {
                             $scope.cerrardialogProformaEdicion()
                         } else {
@@ -808,12 +968,20 @@ angular.module('agil.controladores')
                         }
                         blockUI.stop()
                     }, function (err) {
-                        $scope.mostrarMensaje(err.message === undefined ? err.data : err.message)
+                        $timeout(function () {
+                            $scope.$apply(function () {
+                        $scope.mostrarMensaje(err.message === undefined ? err.stack : err.message)                                                                     
+                            });
+                        }, 500)
                         blockUI.stop()
                     })
                 }
             } else {
-                $scope.mostrarMensaje('Falta algún campo requerido.')
+                $timeout(function () {
+                    $scope.$apply(function () {
+                        $scope.mostrarMensaje('Falta algún dato requerido. Por favor revise el formulario.')                                                                                     
+                    });
+                }, 500)
                 blockUI.stop()
             }
         }
@@ -890,7 +1058,11 @@ angular.module('agil.controladores')
                     }
                 })
             }, function (err) {
-                $scope.mostrarMensaje(err.data !== undefined ? err.data : err.message)
+                $timeout(function () {
+                    $scope.$apply(function () {
+                $scope.mostrarMensaje(err.stack !== undefined ? err.stack : err.message)                                                                                                 
+                    });
+                }, 500)
             })
         }
 
@@ -900,7 +1072,11 @@ angular.module('agil.controladores')
             prom.then(function (actividades) {
                 $scope.actividadesDosificadosEmpresa = actividades.actividades
             }, function (err) {
-                $scope.mostrarMensaje(err.data !== undefined ? err.data : err.message)
+                $timeout(function () {
+                    $scope.$apply(function () {
+                        $scope.mostrarMensaje(err.stack !== undefined ? err.stack : err.message)                                                                                                 
+                    });
+                }, 500)
             })
         }
 
@@ -987,10 +1163,18 @@ angular.module('agil.controladores')
                 $scope.proforma = proformaE.proforma
                 if (proformaE.mensaje !== undefined || proformaE.proforma == null || proformaE.proforma == undefined) {
                     if ((proformaE.proforma == null || proformaE.proforma == undefined) && proformaE.mensaje == undefined) {
-                        $scope.mostrarMensaje('No se encuentra la información requerida')
+                        $timeout(function () {
+                            $scope.$apply(function () {
+                        $scope.mostrarMensaje('No se encuentra la información requerida')                                                                                                                   
+                            });
+                        }, 500)
 
                     } else {
-                        $scope.mostrarMensaje(proformaE.mensaje)
+                        $timeout(function () {
+                            $scope.$apply(function () {
+                                $scope.mostrarMensaje(proformaE.mensaje)                                                                                                                                  
+                            });
+                        }, 500)
                     }
 
                 } else {
@@ -1005,7 +1189,11 @@ angular.module('agil.controladores')
                             }
                         } else {
                             $scope.moneda = { ufv: "--", dolar: "--" }
-                            $scope.mostrarMensaje('La fecha ' + $scope.proforma.fecha_proforma + ' no tiene datos del tipo de cambio de dolar. El tipo de cambio de dolar no afecta la información de la proforma y puede continuar sin problema.')
+                            $timeout(function () {
+                                $scope.$apply(function () {
+                            $scope.mostrarMensaje('La fecha ' + $scope.proforma.fecha_proforma + ' no tiene datos del tipo de cambio de dolar. El tipo de cambio de dolar no afecta la información de la proforma y puede continuar sin problema.')                                                                                                                                                                   
+                                });
+                            }, 500)
                         }
                         convertUrlToBase64Image($scope.usuario.empresa.imagen, function (imagenEmpresa) {
 
@@ -1024,12 +1212,21 @@ angular.module('agil.controladores')
                         blockUI.stop()
 
                     }, function (err) {
-                        $scope.mostrarMensaje(err.message === undefined ? err.data : err.message)
+                        $timeout(function () {
+                            $scope.$apply(function () {
+                                $scope.mostrarMensaje(err.message === undefined ? err.stack : err.message)                                                                                                                                                                                           
+                            });
+                        }, 500)
                         blockUI.stop()
                     })
                 }
             }, function (err) {
-                $scope.mostrarMensaje(err.message === undefined ? err.data : err.message)
+                $timeout(function () {
+                    $scope.$apply(function () {
+                        $scope.mostrarMensaje(err.message === undefined ? err.stack : err.message)                                                                                                                                                                                         
+                    });
+                }, 500)
+               
                 blockUI.stop()
             })
         }

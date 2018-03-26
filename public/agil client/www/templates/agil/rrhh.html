@@ -4120,7 +4120,7 @@
 
                         <div class="center-block width150">
                             <label>
-                                <input ng-disabled="true" name="" ng-model="beneficio.tipo_beneficio" class="ace ace-switch ace-switch-5 big-switch" type="checkbox">
+                                <input autofocus ng-disabled="true" name="" ng-model="beneficio.tipo_beneficio" class="ace ace-switch ace-switch-5 big-switch" type="checkbox">
                                 <span class="lbl" data-lbl="Finiquito&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Quinquenio"></span>
                             </label>
                         </div>
@@ -4181,19 +4181,19 @@
                                     </div>
                                     <div class="form-group col-sm-2">
                                         <label for="agnos-vacaciones">Años</label>
-                                        <input type="number" min="0" ng-model="beneficio.anios" class="form-control" id="agnos-vacaciones" name="agnos-vacaciones">
+                                        <input type="number" disabled min="0" ng-model="beneficio.anios" class="form-control" id="agnos-vacaciones" name="agnos-vacaciones">
                                     </div>
                                     <div class="form-group col-sm-2">
                                         <label for="meses-vacaciones">Meses</label>
-                                        <input type="number" min="0" ng-model="beneficio.meses" class="form-control" id="meses-vacaciones" name="meses-vacaciones">
+                                        <input type="number" disabled min="0" ng-model="beneficio.meses" class="form-control" id="meses-vacaciones" name="meses-vacaciones">
                                     </div>
                                     <div class="form-group col-sm-2">
                                         <label for="meses-vacaciones">Días</label>
-                                        <input type="number" min="0" ng-model="beneficio.dias" class="form-control" id="dias-vacaciones" name="dias-vacaciones">
+                                        <input type="number" disabled min="0" ng-model="beneficio.dias" class="form-control" id="dias-vacaciones" name="dias-vacaciones">
                                     </div>
                                     <div class="form-group col-sm-2">
                                         <label for="meses-vacaciones">Total</label>
-                                        <input type="number" min="0" ng-model="beneficio.totalV" class="form-control" id="dias-vacaciones" name="dias-vacaciones">
+                                        <input type="number" disabled min="0" ng-model="beneficio.totalV" class="form-control" id="dias-vacaciones" name="dias-vacaciones">
                                     </div>
                                 </div>
                             </div>
@@ -4201,11 +4201,11 @@
                                 <div class="row">
                                     <div class="form-group col-sm-4">
                                         <label for="quinquenio">Número de Quinquenios</label>
-                                        <input disabled type="number" min="0" ng-value="listabeneficios.length" ng-model="beneficio.numero_quinquenio" class="form-control" id="quinquenio" name="quinquenio">
+                                        <input disabled type="number" min="0" ng-value="quinqueniosRealizados" ng-model="beneficio.numero_quinquenio" class="form-control" id="quinquenio" name="quinquenio">
                                     </div>
                                     <div class="form-group col-sm-4">
                                         <label for="quinquenio-adelanto">Quinquenio Adelantado</label>
-                                        <input type="number" min="0" ng-model="beneficio.quinquenio_adelantado" class="form-control" id="quinquenio-adelanto" name="quinquenio-adelanto">
+                                        <input type="number" min="0" ng-model="beneficio.quinquenio_adelantado" class="form-control" id="quinquenio-adelanto" name="quinquenio-adelanto" ng-change="agregarQuinquenioAdelantado(beneficio)">
                                     </div>
                                     <!--  <div class="form-group col-sm-4">
                                         <label for="quinquenio-total">Total Quinquenio a Pagar</label>
@@ -4239,12 +4239,16 @@
                                 <div class="form-group row" ng-hide="beneficio.tipo_beneficio">
                                     <div class="form-group col-sm-3">
                                         <label for="3-mes">Cantidad quinqueneo</label>
-                                        <input type="number" max="{{quienquenioRestante}}" min="0" ng-change="calcularTotalQuiquenio(beneficio)" ng-model="beneficio.numero_quiqueneo"
+                                        <input type="number" max="{{quienquenioRestante}}" min="0" ng-change="calcularTotalQuiquenio(beneficio)" ng-model="beneficio.numero_quinquenio"
                                             class="form-control" id="3-mes" name="3-mes">
                                     </div>
+                                    <div class="form-group col-sm-3">
+                                            <label for="3-mes">Total por Quinquenio</label>
+                                            <input disabled type="number" ng-model="beneficio.total_por_quinquenio" class="form-control" id="3-mes" name="3-mes">
+                                        </div>
                                     <div class="form-group col-sm-6">
-                                        <label for="3-mes">Total Quinquenio a Pagar</label>
-                                        <input disabled type="number" ng-model="beneficio.total_quiquenio" class="form-control" id="3-mes" name="3-mes">
+                                        <label for="3-mes">Total Quinquenios a Pagar</label>
+                                        <input disabled type="number" ng-model="beneficio.total_quinquenio" class="form-control" id="3-mes" name="3-mes">
                                     </div>
                                 </div>
                                 <div class="form-group row" ng-hide="!beneficio.tipo_beneficio">
@@ -4261,7 +4265,6 @@
                                         <b>Total desahucio:{{beneficio.total_desahucio}}</b>
                                     </div>
                                 </div>
-
                             </div>
                         </div>
                         <div class="row" ng-hide="!beneficio.tipo_beneficio">
@@ -8720,12 +8723,12 @@
                             <input class="form-control" type="text" ng-model="tr3.planilla" required>
                         </div>
                     </div>
-                    <div class="row">
+                   <!--  <div class="row">
                         <label class="col-md-5">Número de planilla</label>
                         <div class="col-md-7">
                             <input class="form-control" type="number" ng-model="tr3.numero_planilla" required>
                         </div>
-                    </div>
+                    </div> -->
                     <div class="row">
                         <label class="col-md-5"> Dirigido a:</label>
                         <div class="col-md-7">
@@ -8751,17 +8754,23 @@
                         </div>
                     </div>
                     <div class="row">
-                        <label class="col-md-5">firma 1</label>
-                        <div class="col-md-7">
-                            <input class="form-control" type="text" ng-model="tr3.firma_uno" required>
+                            <label class="col-md-5">firma 1</label>
+                            <div class="col-md-4">
+                                <input class="form-control" type="text" ng-model="tr3.firma_uno" required>
+                            </div>
+                            <div class="col-md-3">
+                                <input class="form-control" type="text" ng-model="tr3.firma_dos" required>
+                            </div>
                         </div>
-                    </div>
-                    <div class="row">
-                        <label class="col-md-5">firma 2</label>
-                        <div class="col-md-7">
-                            <input class="form-control" type="text" ng-model="tr3.firma_dos" required>
+                        <div class="row">
+                            <label class="col-md-5">firma 2</label>
+                            <div class="col-md-4">
+                                <input class="form-control" type="text" ng-model="tr3.firma_tres" required>
+                            </div>
+                            <div class="col-md-3">
+                                <input class="form-control" type="text" ng-model="tr3.firma_cuatro" required>
+                            </div>
                         </div>
-                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" uib-tooltip="HISTORIAL" class="btn btn-danger btn-xs pull-left" ng-click="abrirModalHistorialTr3(datosBanco,'BU')">

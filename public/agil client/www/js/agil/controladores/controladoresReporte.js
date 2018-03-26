@@ -1225,7 +1225,7 @@ angular.module('agil.controladores')
 				"Total General", "Fecha Vencimiento", "Lote", "Sucursal", "Almacen"]]
 			for (var i = 0; i < inventarios.length; i++) {
 				inventarios[i].fecha_vencimiento = (inventarios[i].fecha_vencimiento ? new Date(inventarios[i].fecha_vencimiento) : null);
-				inventarios[i].fechaVentimientoTexto = (inventarios[i].fecha_vencimiento ? inventarios[i].fecha_vencimiento.getDate() + "/" + (inventarios[i].fecha_vencimiento.getMonth() + 1) + "/" + inventarios[i].fecha_vencimiento.getFullYear() : "");
+				//inventarios[i].fechaVentimientoTexto = (inventarios[i].fecha_vencimiento ? inventarios[i].fecha_vencimiento.getDate() + "/" + (inventarios[i].fecha_vencimiento.getMonth() + 1) + "/" + inventarios[i].fecha_vencimiento.getFullYear() : "");
 				var columns = [];
 				columns.push(inventarios[i].codigo);
 				columns.push(inventarios[i].nombre);
@@ -1241,7 +1241,7 @@ angular.module('agil.controladores')
 				columns.push(inventarios[i].cantidad);
 				columns.push(inventarios[i].costo_unitario);
 				columns.push(inventarios[i].costo_total);
-				columns.push(inventarios[i].fechaVentimientoTexto);
+				columns.push(inventarios[i].fecha_vencimiento);
 				columns.push(inventarios[i].lote);
 				columns.push(inventarios[i].nombre_sucursal);
 				columns.push(inventarios[i].nombre_almacen);
@@ -1339,7 +1339,7 @@ angular.module('agil.controladores')
 				for (var i = 0; i < detallesVenta.length; i++) {
 					var columns = [];
 					detallesVenta[i].venta.fecha = new Date(detallesVenta[i].venta.fecha);
-					columns.push(detallesVenta[i].venta.fecha.getDate() + "/" + (detallesVenta[i].venta.fecha.getMonth() + 1) + "/" + detallesVenta[i].venta.fecha.getFullYear());
+					columns.push(detallesVenta[i].venta.fecha);
 					columns.push(detallesVenta[i].venta.factura);
 					columns.push(detallesVenta[i].venta.autorizacion);
 					columns.push(detallesVenta[i].venta.cliente.nit);
@@ -1348,7 +1348,11 @@ angular.module('agil.controladores')
 					columns.push(detallesVenta[i].producto.codigo);
 					columns.push(detallesVenta[i].producto.nombre);
 					columns.push(detallesVenta[i].producto.unidad_medida);
-					columns.push(detallesVenta[i].producto.grupo.nombre);
+					if(detallesVenta[i].producto.grupo){
+						columns.push(detallesVenta[i].producto.grupo.nombre);
+					}else{
+						columns.push("");
+					}
 					columns.push(detallesVenta[i].cantidad);
 					columns.push(detallesVenta[i].precio_unitario);
 					columns.push(detallesVenta[i].importe);
@@ -1366,11 +1370,11 @@ angular.module('agil.controladores')
 					if ($scope.usuario.empresa.usar_vencimientos) {
 						if (detallesVenta[i].inventario) {
 							detallesVenta[i].inventario.fecha_vencimiento = new Date(detallesVenta[i].inventario.fecha_vencimiento);
-							columns.push(detallesVenta[i].inventario.fecha_vencimiento.getDate() + "/" + (detallesVenta[i].inventario.fecha_vencimiento.getMonth() + 1) + "/" + detallesVenta[i].inventario.fecha_vencimiento.getFullYear());
+							columns.push(detallesVenta[i].inventario.fecha_vencimiento);
 							columns.push(detallesVenta[i].inventario.lote);
 						} else if (detallesVenta[i].lote != null) {
 							detallesVenta[i].fecha_vencimiento = new Date(detallesVenta[i].fecha_vencimiento);
-							columns.push(detallesVenta[i].fecha_vencimiento.getDate() + "/" + (detallesVenta[i].fecha_vencimiento.getMonth() + 1) + "/" + detallesVenta[i].fecha_vencimiento.getFullYear());
+							columns.push(detallesVenta[i].fecha_vencimiento);
 							columns.push(detallesVenta[i].lote);
 						} else {
 							columns.push("");
@@ -1401,7 +1405,7 @@ angular.module('agil.controladores')
 			var promesa = ReporteVentasMensualesDatos($scope.usuario.id_empresa, reporte.sucursal.id, inicio, fin);
 			promesa.then(function (datos) {
 
-				var detallesVenta = datos.detallesVenta;
+				var detallesVenta = JSON.parse(datos.detallesVenta);
 				console.log(detallesVenta)
 				var doc = new PDFDocument({compress: false, margin: 10 });
 				var stream = doc.pipe(blobStream());
@@ -1728,7 +1732,7 @@ angular.module('agil.controladores')
 				for (var i = 0; i < detallesCompra.length; i++) {
 					var columns = [];
 					detallesCompra[i].compra.fecha = new Date(detallesCompra[i].compra.fecha);
-					columns.push(detallesCompra[i].compra.fecha.getDate() + "/" + (detallesCompra[i].compra.fecha.getMonth() + 1) + "/" + detallesCompra[i].compra.fecha.getFullYear());
+					columns.push(detallesCompra[i].compra.fecha);
 					columns.push(detallesCompra[i].compra.factura);
 					columns.push(detallesCompra[i].compra.autorizacion);
 					columns.push(detallesCompra[i].compra.proveedor.nit);
@@ -1755,7 +1759,7 @@ angular.module('agil.controladores')
 					columns.push(Math.round((detallesCompra[i].total * 0.13) * 100) / 100);
 
 					if (detallesCompra[i].inventario) {
-						columns.push(detallesCompra[i].inventario.fecha_vencimiento);
+						columns.push(new Date(detallesCompra[i].inventario.fecha_vencimiento));
 						columns.push(detallesCompra[i].inventario.lote);
 					} else {
 						columns.push("");

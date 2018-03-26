@@ -45,8 +45,9 @@ function sheet_from_array_of_arrays(data, opts) {
 			if(typeof cell.v === 'number') cell.t = 'n';
 			else if(typeof cell.v === 'boolean') cell.t = 'b';
 			else if(cell.v instanceof Date) {
-				cell.t = 'n'; cell.z = XLSX.SSF._table[14];
+				cell.t = 'd'; cell.z = XLSX.SSF._table[14];
 				cell.v = datenum(cell.v);
+				
 			}
 			else cell.t = 's';
 			
@@ -56,7 +57,19 @@ function sheet_from_array_of_arrays(data, opts) {
 	if(range.s.c < 10000000) ws['!ref'] = XLSX.utils.encode_range(range);
 	return ws;
 }
-
+function datenum(fecha){
+	fech = new Date(fecha)
+	var valor = (fech.getMonth() + 1)
+	if (valor < 10) {
+		valor = "0" + valor
+	}	
+	var valor2 = fech.getDate()
+	if (valor2 < 10) {
+		valor2 = "0" + valor2
+	}		
+	fecha = valor + "/" + valor2 + "/" + fech.getFullYear();
+	return fecha
+}
 function Workbook() {
 	if(!(this instanceof Workbook)) return new Workbook();
 	this.SheetNames = [];

@@ -1102,8 +1102,8 @@ angular.module('agil.controladores')
 					columns.push("");
 				}
 				columns.push(ventas[i].factura);
-				columns.push(ventas[i].fecha.getDate() + "/" + (ventas[i].fecha.getMonth() + 1) + "/" + ventas[i].fecha.getFullYear());
-				columns.push(ventas[i].fecha.getDate() + "/" + (ventas[i].fecha.getMonth() + 1) + "/" + ventas[i].fecha.getFullYear());
+				columns.push(ventas[i].fecha);
+				columns.push(ventas[i].fecha);
 				columns.push(ventas[i].total);
 				if (ventas[i].tipoPago) {
 					columns.push(ventas[i].tipoPago.nombre);

@@ -1,0 +1,4 @@
+ALTER TABLE agil_rrhh_empleado_historial_vacacion add empleado  int(11);
+ALTER TABLE agil_rrhh_empleado_historial_vacacion DROP FOREIGN KEY agil_rrhh_empleado_historial_vacacion_ibfk_1;
+ALTER TABLE agil_rrhh_empleado_historial_vacacion drop ficha;
+ALTER TABLE agil_rrhh_empleado_historial_vacacion ADD CONSTRAINT agil_rrhh_empleado_historial_vacacion_ibfk_1 FOREIGN KEY (empleado) REFERENCES agil_medico_paciente (id);

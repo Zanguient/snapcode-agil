@@ -813,7 +813,9 @@ module.exports = function (sequelize, Usuario, Persona, Rol, UsuarioRol, Tipo, C
 
 	RrhhEmpleadoCompensacionAusencia.belongsTo(RrhhEmpleadoAusencia, { foreignKey: 'id_ausencia', as: 'ausencia' })	
 	
-	RrhhEmpleadoHistorialVacacion.belongsTo(MedicoPaciente, { foreignKey: 'id_empleado', as: 'empleado' })
+	//RrhhEmpleadoHistorialVacacion.belongsTo(MedicoPaciente, { foreignKey: 'id_empleado', as: 'empleado' })25/03/2018
+	RrhhEmpleadoHistorialVacacion.belongsTo(RrhhEmpleadoFicha, { foreignKey: 'id_ficha', as: 'ficha' })
+	RrhhEmpleadoFicha.hasMany(RrhhEmpleadoHistorialVacacion, { foreignKey: 'id_ficha', as: 'historialVacaciones' })
 
 	RrhhEmpleadoTr3.belongsTo(Empresa, { foreignKey: 'id_empresa', as: 'empresa' })
 	RrhhEmpleadoTr3.belongsTo(Clase, { foreignKey: 'id_departamento', as: 'departamento' })

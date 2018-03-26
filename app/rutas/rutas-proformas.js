@@ -54,7 +54,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
                 }).then(function (proformas) {
                     res.json({ proformas: proformas.rows, count: Math.ceil(proformas.count / req.params.items_pagina) })
                 }).catch(function (err) {
-                    res.json({ proformas: [], mensaje: err.message === undefined ? err.data : err.message, hasErr: true })
+                    res.json({ proformas: [], mensaje: err.message === undefined ? err.stack : err.message, hasErr: true })
                 });
         })
         .post(function (req, res) {
@@ -90,11 +90,11 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
                             res.json({ mensaje: 'Proforma creada satisfactoriamente!' })
                         }
                     }).catch(function (err) {
-                        res.json({ mensaje: err.message === undefined ? err.data : err.message, hasErr: true })
+                        res.json({ mensaje: err.message === undefined ? err.stack : err.message, hasErr: true })
                     });
                 })
             }).catch(function (err) {
-                res.json({ mensaje: err.message === undefined ? err.data : err.message, hasErr: true })
+                res.json({ mensaje: err.message === undefined ? err.stack : err.message, hasErr: true })
             });
         })
 
@@ -132,7 +132,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
     //         }).then(function (sucursales) {
     //             res.json({ sucursales: sucursales })
     //         }).catch(function (err) {
-    //             res.json({ mensaje: err.message === undefined ? err.data : err.message, hasErr: true })
+    //             res.json({ mensaje: err.message === undefined ? err.stack : err.message, hasErr: true })
     //         });
     //     })
     router.route('/fechas/proforma/:id')
@@ -163,7 +163,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
                 }).then(function (fechasActualizadas) {
                     res.json({ mensaje: 'Las fechas Fueron actualizadas.' })
                 }).catch(function (err) {
-                    res.json({ mensaje: err.message === undefined ? err.data : err.message, hasErr: true })
+                    res.json({ mensaje: err.message === undefined ? err.stack : err.message, hasErr: true })
                 });
         })
     router.route('/proforma/:id/:id_actividad')
@@ -189,7 +189,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
                 }).then(function (proforma) {
                     res.json({ proforma: proforma })
                 }).catch(function (err) {
-                    res.json({ proforma: {}, mensaje: err.message === undefined ? err.data : err.message, hasErr: true })
+                    res.json({ proforma: {}, mensaje: err.message === undefined ? err.stack : err.message, hasErr: true })
                 });
         })
         .put(function (req, res) {
@@ -225,7 +225,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
                                 res.json({ mensaje: 'Proforma actualizada!' })
                             }
                         }).catch(function (err) {
-                            res.json({ mensaje: err.message === undefined ? err.data : err.message, hasErr: true })
+                            res.json({ mensaje: err.message === undefined ? err.stack : err.message, hasErr: true })
                         });
                     } else {
                         DetallesProformas.create({
@@ -245,7 +245,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
                 })
 
             }).catch(function (err) {
-                res.json({ mensaje: err.message === undefined ? err.data : err.message, hasErr: true })
+                res.json({ mensaje: err.message === undefined ? err.stack : err.message, hasErr: true })
             });
         })
     router.route('/actividades/historial/:id/:id_sucursal')
@@ -309,7 +309,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
                                 SucursalActividadDosificacion.create({
                                     id_sucursal: actividad.id_sucursal,
                                     id_actividad: actividad.actividad.id,
-                                    id_dosificacion: actividad.dosificacion !== undefined ? actividad.dosificacion.id : null
+                                    id_dosificacion: actividad.dosificacion !== undefined && actividad.dosificacion !== null ? actividad.dosificacion.id : null
                                 }).then(function (actividadEmpresaCreada) {
                                     if (actividad.dosificacionAnterior !== undefined && actividad.dosificacionAnterior !== null) {
                                         if (actividad.dosificacionAnterior.id !== null && actividad.dosificacionAnterior.id !== undefined) {
@@ -334,7 +334,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
                                     }
 
                                 }).catch(function (err) {
-                                    res.json({ mensaje: err.message === undefined ? err.data : err.message, hasErr: true })
+                                    res.json({ mensaje: err.message === undefined ? err.stack : err.message, hasErr: true })
                                 });
 
                             }).catch(function (err) {
@@ -351,7 +351,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
                             res.json({ mensaje: 'Actividades actualizadas satisfactoriamente!' })
                         }
                     }).catch(function (err) {
-                        res.json({ mensaje: err.message === undefined ? err.data : err.message, hasErr: true })
+                        res.json({ mensaje: err.message === undefined ? err.stack : err.message, hasErr: true })
                     });
                 }
             })
@@ -363,7 +363,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
             }).then(function (actividades) {
                 res.json({ actividades: actividades })
             }).catch(function (err) {
-                res.json({ actividades: [], mensaje: err.message === undefined ? err.data : err.message, hasErr: true })
+                res.json({ actividades: [], mensaje: err.message === undefined ? err.stack : err.message, hasErr: true })
             });
         })
     // .put(function (req, res) {
@@ -373,7 +373,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
     //     }).then(function (actividadActualizada) {
     //         res.json({ mensaje: 'Actividad Actualizada' })
     //     }).catch(function (err) {
-    //         res.json({ actividades: [], mensaje: err.message === undefined ? err.data : err.message, hasErr: true })
+    //         res.json({ actividades: [], mensaje: err.message === undefined ? err.stack : err.message, hasErr: true })
     //     });
     // })
 
@@ -402,7 +402,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
                                             res.json({ mensaje: 'Servicios actualizados satisfactoriamente!' + mensajeExtra })
                                         }
                                     }).catch(function (err) {
-                                        res.json({ mensaje: err.message === undefined ? err.data : err.message, hasErr: true })
+                                        res.json({ mensaje: err.message === undefined ? err.stack : err.message, hasErr: true })
                                     });
                                 } else {
                                     if (i === req.body.length - 1) {
@@ -410,7 +410,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
                                     }
                                 }
                             }).catch(function (err) {
-                                res.json({ mensaje: err.message === undefined ? err.data : err.message, hasErr: true })
+                                res.json({ mensaje: err.message === undefined ? err.stack : err.message, hasErr: true })
                             });
                         } else {
                             Servicios.update({
@@ -428,7 +428,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
                                         res.json({ mensaje: 'Servicios actualizados satisfactoriamente!' })
                                     }
                                 }).catch(function (err) {
-                                    res.json({ mensaje: err.message === undefined ? err.data : err.message, hasErr: true })
+                                    res.json({ mensaje: err.message === undefined ? err.stack : err.message, hasErr: true })
                                 });
                         }
                     } else {
@@ -446,7 +446,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
                                 res.json({ mensaje: 'Servicio creado satisfactoriamente!' })
                             }
                         }).catch(function (err) {
-                            res.json({ mensaje: err.message === undefined ? err.data : err.message, hasErr: true })
+                            res.json({ mensaje: err.message === undefined ? err.stack : err.message, hasErr: true })
                         });
                     }
                 })
@@ -469,7 +469,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
                 }
 
             }).catch(function (err) {
-                res.json({ servicios: [], mensaje: err.message === undefined ? err.data : err.message, hasErr: true })
+                res.json({ servicios: [], mensaje: err.message === undefined ? err.stack : err.message, hasErr: true })
             });
         })
         .put(function (req, res) {
@@ -485,7 +485,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
             }).then(function (servicioActualizado) {
                 res.json({ mensaje: 'Servicio actualizado' })
             }).catch(function (err) {
-                res.json({ mensaje: err.message === undefined ? err.data : err.message, hasErr: true })
+                res.json({ mensaje: err.message === undefined ? err.stack : err.message, hasErr: true })
             });
         })
 
@@ -500,7 +500,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
                 }).then(function (fechasActualizadas) {
                     res.json({ mensaje: 'Proforma eliminada.' })
                 }).catch(function (err) {
-                    res.json({ mensaje: err.message === undefined ? err.data : err.message, hasErr: true })
+                    res.json({ mensaje: err.message === undefined ? err.stack : err.message, hasErr: true })
                 });
         })
 
@@ -537,7 +537,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
                     res.json({ proformas: [] })
                 }
             }).catch(function (err) {
-                res.json({ mensaje: err.message === undefined ? err.data : err.message, hasErr: true })
+                res.json({ mensaje: err.message === undefined ? err.stack : err.message, hasErr: true })
             });
         })
     function formatearFecha(fecha) {
@@ -560,7 +560,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
             }).then(function (actividades) {
                 res.json({ actividades: actividades })
             }).catch(function (err) {
-                res.json({ mensaje: err.message === undefined ? err.data : err.message, hasErr: true })
+                res.json({ mensaje: err.message === undefined ? err.stack : err.message, hasErr: true })
             });
         })
 
@@ -943,18 +943,18 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
                                             res.json({ mensaje: 'Espere la impresión...', factura: req.body })
 
                                         }).catch(function (err) {
-                                            res.json({ mensaje: err.message === undefined ? err.data : err.message, hasErr: true, factura: req.body })
+                                            res.json({ mensaje: err.message === undefined ? err.stack : err.message, hasErr: true, factura: req.body })
                                         });
                                     }).catch(function (err) {
-                                        res.json({ mensaje: err.message === undefined ? err.data : err.message, hasErr: true, factura: req.body })
+                                        res.json({ mensaje: err.message === undefined ? err.stack : err.message, hasErr: true, factura: req.body })
                                     });
                             }
                         }).catch(function (err) {
-                            res.json({ mensaje: err.message === undefined ? err.data : err.message, hasErr: true, factura: req.body })
+                            res.json({ mensaje: err.message === undefined ? err.stack : err.message, hasErr: true, factura: req.body })
                         });
                 })
             }).catch(function (err) {
-                res.json({ mensaje: err.message === undefined ? err.data : err.message, hasErr: true, factura: req.body })
+                res.json({ mensaje: err.message === undefined ? err.stack : err.message, hasErr: true, factura: req.body })
             });
         })
 
@@ -973,7 +973,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
                         res.json({ detalles: detalles })
                     }
                 }).catch(function (err) {
-                    res.json({ mensaje: err.message === undefined ? err.data : err.message, hasErr: true, factura: req.body })
+                    res.json({ mensaje: err.message === undefined ? err.stack : err.message, hasErr: true, factura: req.body })
                 });
             })
 

@@ -1569,9 +1569,13 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 		$scope.filtrarDetalleDespachos = function (filtro) {
 			if (filtro.inicio) {
 				filtro.inicio2 = new Date($scope.convertirFecha(filtro.inicio))
+			}else{
+				filtro.inicio2=0
 			}
 			if (filtro.fin) {
 				filtro.fin2 = new Date($scope.convertirFecha(filtro.fin))
+			}else{
+				filtro.fin2=0
 			}
 			promesa = GtmDetallesDespachoAlerta($scope.usuario.id_empresa, filtro);
 			promesa.then(function (detallesDespacho) {
