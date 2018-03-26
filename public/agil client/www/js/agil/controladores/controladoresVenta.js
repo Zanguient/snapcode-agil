@@ -675,8 +675,9 @@ angular.module('agil.controladores')
 			$scope.filtrarVentas($scope.sucursalesUsuario, currentDateString, currentDateString);
 		}
 
-		$scope.filtrarVentas = function (sucursalesUsuario, inicio, fin, razon_social, nit, monto, tipo_pago, sucursal, transaccion, usuario) {
+		$scope.filtrarVentas = function (sucursalesUsuario, inicio, fin, razon_social, nit, monto, tipo_pago, sucursal, transaccion, usuario,estado) {
 			razon_social = (razon_social == "" || razon_social == undefined) ? 0 : razon_social;
+			estado= (estado == "" || estado == undefined) ? 0 : estado;
 			nit = (nit == null || nit == undefined) ? 0 : nit;
 			monto = (monto == null || monto == undefined) ? 0 : monto;
 			tipo_pago = (tipo_pago == undefined) ? 0 : tipo_pago;
@@ -698,7 +699,7 @@ angular.module('agil.controladores')
 
 			inicio = new Date($scope.convertirFecha(inicio));
 			fin = new Date($scope.convertirFecha(fin));
-			var promesa = Ventas(sucursalesUsuario, inicio, fin, razon_social, nit, monto, tipo_pago, sucursal, transaccion, usuario);
+			var promesa = Ventas(sucursalesUsuario, inicio, fin, razon_social, nit, monto, tipo_pago, sucursal, transaccion, usuario,estado);
 			promesa.then(function (ventas) {
 				$scope.ventas = ventas;
 				console.log(ventas);

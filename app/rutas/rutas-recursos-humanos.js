@@ -2564,7 +2564,8 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
     router.route('/recursos-humanos/beneficio/ficha/:id')
         .get(function (req, res) {
             RrhhEmpleadoBeneficioSocial.find({
-                where: { id_ficha: req.params.id, fecha_retiro: { $ne: null } }
+                where: { id_ficha: req.params.id, fecha_retiro: { $ne: null } },
+                include:[{model:RrhhEmpleadoDeduccionIngreso,as:'deduccionEingresos',include:[{model:Clase,as:"tipo"}]}]
             }).then(function (beneficio) {
                 res.json({ beneficio: beneficio })
             })
@@ -2612,9 +2613,9 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                     fecha_asistensia: req.body.fecha_asistensia,
                     fecha_ingreso: req.body.fecha_ingreso,
                     fecha_retiro: req.body.fecha_retiro,
-                    primer_mes: req.body.primer_mes2,
-                    segundo_mes: req.body.segundo_mes2,
-                    tercer_mes: req.body.tercer_mes2,
+                    primer_mes: req.body.primer_mes,
+                    segundo_mes: req.body.segundo_mes,
+                    tercer_mes: req.body.tercer_mes,
                     numero_quinquenio: req.body.numero_quinquenio,
                     quinquenio_adelantado: req.body.quinquenio_adelantado,
                     tipo_beneficio: req.body.tipo_beneficio,

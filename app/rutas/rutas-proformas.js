@@ -345,7 +345,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
                     SucursalActividadDosificacion.create({
                         id_sucursal: actividad.sucursal.id,
                         id_actividad: actividad.actividad.id,
-                        id_dosificacion: actividad.dosificacion !== undefined ? actividad.dosificacion.id : null
+                        id_dosificacion: actividad.dosificacion !== undefined && actividad.dosificacion !== null ? actividad.dosificacion.id : null
                     }).then(function (actividadEmpresaCreada) {
                         if (i === req.body.length - 1) {
                             res.json({ mensaje: 'Actividades actualizadas satisfactoriamente!' })

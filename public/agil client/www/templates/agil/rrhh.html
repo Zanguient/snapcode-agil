@@ -4140,7 +4140,7 @@
                                 <input required type="text" disabled ng-update-hidden data-date-format="dd/mm/yyyy" class="form-control date-picker" autocomplete="off"
                                     ng-model="beneficio.fecha_ingreso" id="fecha-ingreso" name="fecha-ingreso">
                             </div>
-                            <div ng-hide="!beneficio.tipo_beneficio" class="form-group col-sm-6 col-md-3">
+                            <div ng-if="beneficio.tipo_beneficio" class="form-group col-sm-6 col-md-3">
                                 <label for="fecha-retiro">Fecha de Retiro:</label>
                                 <input required type="text" disabled ng-update-hidden data-date-format="dd/mm/yyyy" class="form-control date-picker" autocomplete="off"
                                     ng-model="beneficio.fecha_retiro" id="fecha-retiro" name="fecha-retiro">
@@ -4165,16 +4165,16 @@
                                         <input type="text" ng-model="tiempoTrabajado.dias" class="form-control" id="dias-trabajados" name="dias-trabajados" disabled>
                                     </div>
                                 </div>
-                                <div class="form-group row" ng-hide="!beneficio.tipo_beneficio">
+                                <div class="form-group row" ng-if="beneficio.tipo_beneficio">
                                     <label class="col-sm-3" for="motivo-retiro">Motivo de Retiro</label>
                                     <div class="input-group col-sm-9">
                                         <span class="input-group-addon glyphicon glyphicon-pencil point-edit green" ng-click="abrirDialogConceptoEdicion(tipoMotivo)"></span>
-                                        <select ng-model="beneficio.motivo" class="form-control" id="motivo-retiro" name="motivo-retiro" ng-options="motivo as motivo.nombre for motivo in tipoMotivo.clases | filter:{habilitado:true} track by motivo.id">
-
+                                        <select required ng-model="beneficio.motivo" class="form-control" id="motivo-retiro" name="motivo-retiro" ng-options="motivo as motivo.nombre for motivo in tipoMotivo.clases | filter:{habilitado:true} track by motivo.id">
+                                            <option value="">Ninguno</option>
                                         </select>
                                     </div>
                                 </div>
-                                <div class="row" ng-hide="!beneficio.tipo_beneficio">
+                                <div class="row" ng-if="beneficio.tipo_beneficio">
                                     <div class="form-group col-sm-3">
                                         <label for="">Vacaciones</label>
                                         <button type="button" class="btn btn-primary btn-sm" ng-click="abrirDialogDetalleVacaciones()">Ver detalle</button>
@@ -4197,7 +4197,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-6" ng-hide="!beneficio.tipo_beneficio">
+                            <div class="col-md-6" ng-if="beneficio.tipo_beneficio">
                                 <div class="row">
                                     <div class="form-group col-sm-4">
                                         <label for="quinquenio">Número de Quinquenios</label>
@@ -4218,17 +4218,17 @@
                                 <div class="row">
                                     <div class="form-group col-sm-3">
                                         <label for="1-mes">1er Mes</label>
-                                        <input type="number" min="0" ng-change="calcularPromedioFiniquito(beneficio)" ng-model="beneficio.primer_mes2" class="form-control"
+                                        <input required type="number" min="0" ng-change="calcularPromedioFiniquito(beneficio)" ng-model="beneficio.primer_mes" class="form-control"
                                             id="1-mes" name="1-mes">
                                     </div>
                                     <div class="form-group col-sm-3">
                                         <label for="2-mes">2er Mes</label>
-                                        <input type="number" min="0" ng-change="calcularPromedioFiniquito(beneficio)" ng-model="beneficio.segundo_mes2" class="form-control"
+                                        <input required type="number" min="0" ng-change="calcularPromedioFiniquito(beneficio)" ng-model="beneficio.segundo_mes" class="form-control"
                                             id="2-mes" name="2-mes">
                                     </div>
                                     <div class="form-group col-sm-3">
                                         <label for="3-mes">3er Mes</label>
-                                        <input type="number" min="0" ng-change="calcularPromedioFiniquito(beneficio)" ng-model="beneficio.tercer_mes2" class="form-control"
+                                        <input required type="number" min="0" ng-change="calcularPromedioFiniquito(beneficio)" ng-model="beneficio.tercer_mes" class="form-control"
                                             id="3-mes" name="3-mes">
                                     </div>
                                     <div class="form-group col-sm-3">
@@ -4236,7 +4236,7 @@
                                         <input type="number" disabled step="0.01" min="0" ng-model="beneficio.promedio" class="form-control" id="3-mes" name="3-mes">
                                     </div>
                                 </div>
-                                <div class="form-group row" ng-hide="beneficio.tipo_beneficio">
+                                <div class="form-group row" ng-if="!beneficio.tipo_beneficio">
                                     <div class="form-group col-sm-3">
                                         <label for="3-mes">Cantidad quinqueneo</label>
                                         <input type="number" max="{{quienquenioRestante}}" min="0" ng-change="calcularTotalQuiquenio(beneficio)" ng-model="beneficio.numero_quinquenio"
@@ -4251,7 +4251,7 @@
                                         <input disabled type="number" ng-model="beneficio.total_quinquenio" class="form-control" id="3-mes" name="3-mes">
                                     </div>
                                 </div>
-                                <div class="form-group row" ng-hide="!beneficio.tipo_beneficio">
+                                <div class="form-group row" ng-if="beneficio.tipo_beneficio">
                                     <div class="col-sm-3">
                                         <label for="">Desahucio</label>
                                     </div>
@@ -4261,7 +4261,7 @@
                                             <span class="lbl check-espaniol"></span>
                                         </label>
                                     </div>
-                                    <div class="col-sm-6" ng-hide="!beneficio.desahucio">
+                                    <div class="col-sm-6" ng-if="beneficio.desahucio">
                                         <b>Total desahucio:{{beneficio.total_desahucio}}</b>
                                     </div>
                                 </div>
@@ -4304,7 +4304,7 @@
                                                     </thead>
                                                     <tbody>
                                                         <tr ng-repeat="ingreso in beneficio.ingresos">
-                                                            <th scope="row">{{$index+1}}</th>
+                                                            <th >{{$index+1}}</th>
                                                             <td>{{ingreso.monto|number:2}}</td>
                                                             <td>{{ingreso.motivo}}</td>
                                                             <td>
@@ -4375,13 +4375,13 @@
                         <a href="javascript:void(0)" type="button" ng-click="abrirModalBeneficioSicial()" class="margin-icons red pull-left">
                             <span class="fa fa-h-square bigger-250"></span>
                         </a>
-                        <div ng-hide="beneficio.tipo_beneficio">
+                        <div ng-if="!beneficio.tipo_beneficio">
                             <button ng-disabled="quienquenioRestanteDisabled" type="submit" class="btn btn-primary">
                                 <span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span> Guardar</button>
                             <button type="button" class="btn btn-danger" ng-click="cerrarDialogBeneficiosSociales()">
                                 <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Cancelar</button>
                         </div>
-                        <div ng-hide="!beneficio.tipo_beneficio">
+                        <div ng-if="beneficio.tipo_beneficio">
                             <button type="submit" class="btn btn-primary">
                                 <span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span> Guardar</button>
                             <button type="button" class="btn btn-danger" ng-click="cerrarDialogBeneficiosSociales()">

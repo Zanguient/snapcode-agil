@@ -225,6 +225,8 @@ angular.module('agil.controladores')
             $scope.empleadosSeleccionados = []
             $scope.listaBancos()
             $scope.obtenerConfiguracionVacaciones()
+            $scope.obtenerTiposOtrosingresosYDeduccion()
+            $scope.obtenerMotivosRetiro()
         }
 
 
@@ -741,36 +743,80 @@ angular.module('agil.controladores')
         $scope.cerrarDialogHistorialContrato = function () {
             $scope.cerrarPopup($scope.idModalHistorialContrato);
         }
-        $scope.abrirDialogBeneficiosSociales = function (empleado) {
+        $scope.abrirDialogBeneficiosSociales = function (empleado, beneficio) {
             $scope.empleado = empleado
 
             if (empleado.ficha.fecha_inicio) {
-                var fecha = null
-                var fechaActual = new Date()
-                var tipo = false
-                if (empleado.ficha.fecha_expiracion) {
-                    fecha = $scope.fechaATexto(empleado.ficha.fecha_expiracion)
-                    fechaActual = new Date(empleado.ficha.fecha_expiracion)
-                    tipo = true
+                if (beneficio) {
+                    $scope.beneficio =beneficio
+                    
+                    var fecha = null
+                    var fechaActual = new Date()
+                    $scope.beneficio.fecha_elaboracion=$scope.fechaATexto($scope.beneficio.fecha_elaboracion)
+                    $scope.beneficio.fecha_asistensia=$scope.fechaATexto($scope.beneficio.fecha_asistensia)
+                    $scope.beneficio.fecha_ingreso=$scope.fechaATexto($scope.beneficio.fecha_ingreso)
+                    $scope.beneficio.fecha_retiro=$scope.fechaATexto($scope.beneficio.fecha_retiro)
+                    var tipo = false
+                    if (empleado.ficha.fecha_expiracion) {
+                        fecha = $scope.fechaATexto(empleado.ficha.fecha_expiracion)
+                        fechaActual = new Date(empleado.ficha.fecha_expiracion)
+                        tipo = true
+                    }
+                    var fechaAnterior = new Date(empleado.ficha.fecha_inicio)
+                    $scope.tiempoTrabajado = duration(fechaAnterior, fechaActual)
+                    var fechaElaboracion = $scope.fechaATexto(new Date())
+                    //$scope.beneficio = { fecha_elaboracion: fechaElaboracion, tipo_beneficio: tipo, anios: 0, meses: 0, dias: 0, fecha_elaboracion: $scope.fechaATexto(new Date()), fecha_ingreso: $scope.fechaATexto(empleado.ficha.fecha_inicio), fecha_retiro: fecha, ingresos: [], deducciones: [] }
+                    $scope.obtenerbeneficiosSociales($scope.tiempoTrabajado)
+                    $scope.deduccion = {}
+                    $scope.ingreso = {}
+                    $scope.vacacion = {
+                        sabado: false,
+                        inicio_tipo: false,
+                        fin_tipo: false,
+                        aniosDisponibles: 0,
+                        historial: null
+                    }
+                    $scope.beneficio.anios= 0
+                    $scope.beneficio.meses= 0
+                    $scope.beneficio.dias= 0
+                    $scope.beneficio.ingresos=[]
+                    $scope.beneficio.deducciones=[]
+                    $scope.beneficio.promedio = ($scope.beneficio.primer_mes + $scope.beneficio.segundo_mes + $scope.beneficio.tercer_mes) / 3
+                    $scope.beneficio.deduccionEingresos.forEach(function(deduccionEIngreso,index,array) {
+                        if(deduccionEIngreso.tipo.nombre_corto=="OTRING"){
+                            $scope.beneficio.ingresos.push(deduccionEIngreso)
+                        }else{
+                            $scope.beneficio.deducciones.push(deduccionEIngreso)
+                        }
+                        if(index===(array.length-1)){
+                            $scope.calcularDesaucio($scope.beneficio)
+                        }                        
+                    });                    
+                } else {
+                    var fecha = null
+                    var fechaActual = new Date()
+                    var tipo = false
+                    if (empleado.ficha.fecha_expiracion) {
+                        fecha = $scope.fechaATexto(empleado.ficha.fecha_expiracion)
+                        fechaActual = new Date(empleado.ficha.fecha_expiracion)
+                        tipo = true
+                    }
+                    var fechaAnterior = new Date(empleado.ficha.fecha_inicio)
+                    $scope.tiempoTrabajado = duration(fechaAnterior, fechaActual)
+                    var fechaElaboracion = $scope.fechaATexto(new Date())
+                    $scope.beneficio = { fecha_elaboracion: fechaElaboracion, tipo_beneficio: tipo, anios: 0, meses: 0, dias: 0, fecha_elaboracion: $scope.fechaATexto(new Date()), fecha_ingreso: $scope.fechaATexto(empleado.ficha.fecha_inicio), fecha_retiro: fecha, ingresos: [], deducciones: [] }
+                    $scope.obtenerbeneficiosSociales($scope.tiempoTrabajado)
+                    $scope.deduccion = {}
+                    $scope.ingreso = {}
+                   
+                    $scope.vacacion = {
+                        sabado: false,
+                        inicio_tipo: false,
+                        fin_tipo: false,
+                        aniosDisponibles: 0,
+                        historial: null
+                    }
                 }
-                var fechaAnterior = new Date(empleado.ficha.fecha_inicio)
-                $scope.tiempoTrabajado = duration(fechaAnterior, fechaActual)
-                var fechaElaboracion= $scope.fechaATexto(new Date())
-                $scope.beneficio = {fecha_elaboracion:fechaElaboracion ,tipo_beneficio: tipo, anios: 0, meses: 0, dias: 0, fecha_elaboracion: $scope.fechaATexto(new Date()), fecha_ingreso: $scope.fechaATexto(empleado.ficha.fecha_inicio), fecha_retiro: fecha, ingresos: [], deducciones: [] }
-                $scope.obtenerbeneficiosSociales($scope.tiempoTrabajado)
-                $scope.deduccion = {}
-                $scope.ingreso = {}
-                $scope.obtenerTiposOtrosingresosYDeduccion()
-                $scope.obtenerMotivosRetiro()
-                $scope.vacacion = {
-                    sabado: false,
-                    inicio_tipo: false,
-                    fin_tipo: false,
-                    aniosDisponibles: 0,
-                    historial: null
-                }
-
-
                 $scope.abrirPopup($scope.idModalBeneficiosSociales);
             }
             else {
@@ -782,11 +828,16 @@ angular.module('agil.controladores')
 
             }
         }
-        $scope.abrirDialogBeneficiosSociales2 = function (empleado) {
+        $scope.abrirDialogBeneficiosSociales2 = function (empleado, edit) {
             var promesa2 = ObtenerFiniquitoEmpleado(empleado.ficha.id)
             promesa2.then(function (dato) {
                 if (dato.beneficio) {
-                    $scope.mostrarMensaje("ya realizo el finiquito")
+                    if (edit != true) {
+                        $scope.abrirModalVerificarCuenta(empleado, 'finiquito')
+                    } else {
+                        $scope.obtenerHistorialGestionesVacacion(empleado, false, true)
+                        $scope.abrirDialogBeneficiosSociales(empleado, dato.beneficio)
+                    }
                 } else {
                     var promesa = HistorialGestionesVacacion(empleado.ficha.id)
                     promesa.then(function (dato) {
@@ -812,11 +863,11 @@ angular.module('agil.controladores')
                                 var promesa = GuardarHistorialVacacion(empleado.ficha.id, historialVacacion)
                                 promesa.then(function (datos) {
                                     $scope.obtenerHistorialGestionesVacacion(empleado, false, true)
-                                    $scope.abrirDialogBeneficiosSociales(empleado)
+                                    $scope.abrirDialogBeneficiosSociales(empleado, dato.beneficio)
                                 })
                             } else {
                                 $scope.obtenerHistorialGestionesVacacion(empleado, false, true)
-                                $scope.abrirDialogBeneficiosSociales(empleado)
+                                $scope.abrirDialogBeneficiosSociales(empleado, dato.beneficio)
                             }
                         } else {
                             $scope.mostrarMensaje("No cuenta con ficha del empleado actualizada, actualizar ficha empleado")
@@ -4076,6 +4127,10 @@ angular.module('agil.controladores')
                             $scope.dato.editDatosLaborales = false
                         }
                     }
+                    if ($scope.tipoDatosPermiso == "finiquito") {
+                        $scope.cuenta = {}
+                        $scope.abrirDialogBeneficiosSociales2($scope.dato, true)
+                    }
                     $scope.cerrarModalVerificarCuenta();
                 } else {
                     $scope.mostrarMensaje(dato.message)
@@ -5765,8 +5820,8 @@ angular.module('agil.controladores')
 
         }
         $scope.calcularPromedioFiniquito = function (beneficio) {
-            beneficio.promedio = (beneficio.primer_mes2 + beneficio.segundo_mes2 + beneficio.tercer_mes2) / 3
-            beneficio.promedio = parseFloat(beneficio.promedio.toFixed(2))
+            beneficio.promedio = (beneficio.primer_mes + beneficio.segundo_mes + beneficio.tercer_mes) / 3
+            /* beneficio.promedio = parseFloat(beneficio.promedio.toFixed(2)) */
             if (beneficio.tipo_beneficio) {
                 if (!isNaN(beneficio.promedio)) {
                     var monto1 = $scope.añosRestantes * beneficio.promedio

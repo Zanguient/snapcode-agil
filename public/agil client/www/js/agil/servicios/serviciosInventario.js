@@ -163,7 +163,7 @@ angular.module('agil.servicios')
   }])
 
 .factory('VentaFiltro', function($resource) {
-		return $resource(restServer+"ventas/:idsSucursales/inicio/:inicio/fin/:fin/razon-social/:razon_social/nit/:nit/monto/:monto/tipo-venta/:tipo_venta/sucursal/:sucursal/transaccion/:transaccion/usuario/:usuario", null,
+		return $resource(restServer+"ventas/:idsSucursales/inicio/:inicio/fin/:fin/razon-social/:razon_social/nit/:nit/monto/:monto/tipo-venta/:tipo_venta/sucursal/:sucursal/transaccion/:transaccion/usuario/:usuario/estado/:estado", null,
 		{
 			'update': { method:'PUT' }
 		});
@@ -171,10 +171,10 @@ angular.module('agil.servicios')
 
 .factory('Ventas', ['VentaFiltro','$q',function(VentaFiltro, $q) 
   {
-	var res = function(sucursales,inicio,fin,razon_social,nit,monto,tipo_pago,sucursal,transaccion,usuario) 
+	var res = function(sucursales,inicio,fin,razon_social,nit,monto,tipo_pago,sucursal,transaccion,usuario,estado) 
 	{
 		var delay = $q.defer();
-		VentaFiltro.query({idsSucursales:sucursales,inicio:inicio,fin:fin,razon_social:razon_social,nit:nit,monto:monto,tipo_venta:tipo_pago,sucursal:sucursal,transaccion:transaccion,usuario:usuario},function(entidades) 
+		VentaFiltro.query({idsSucursales:sucursales,inicio:inicio,fin:fin,razon_social:razon_social,nit:nit,monto:monto,tipo_venta:tipo_pago,sucursal:sucursal,transaccion:transaccion,usuario:usuario,estado:estado},function(entidades) 
 		{        
 			delay.resolve(entidades);
 		}, function(error) 
