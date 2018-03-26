@@ -1541,7 +1541,7 @@ angular.module('agil.controladores')
 			inicio = new Date($scope.convertirFecha(inicio));
 			fin = new Date($scope.convertirFecha(fin));
 			var promesa = ReporteEstadoResultadosNoContableDatos($scope.usuario.id_empresa, inicio, fin);
-			promesa.then(function (ventasEmpresa) {
+			promesa.then(function (ventasEmpresa) {console.log(ventasEmpresa);
 				promesa = GastosVariosLista($scope.usuario.id_empresa, inicio, fin);
 				promesa.then(function (gastosVariosEmpresa) {
 					var sumaVentasCredito = 0, sumaVentasContado = 0, sumaVentasTotal = 0, costoVentas = 0, sumaVentasFacturacion = 0, sumaVentasProforma = 0;
