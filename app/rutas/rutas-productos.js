@@ -120,7 +120,7 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 			});
 		});
 
-	router.route('/productos/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion')
+	router.route('/productos/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion/grupo/:id_grupo')
 		.get(function (req, res) {
 			var condicionProducto = "empresa=" + req.params.id_empresa, paginas, limit;
 			if (req.params.texto_busqueda != 0) {
@@ -132,7 +132,9 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 				grupo.nombre LIKE '%"+ req.params.texto_busqueda + "%' or \
 				subgrupo.nombre LIKE '%"+ req.params.texto_busqueda + "%')";
 			}
-
+			if (req.params.id_grupo != 0) {
+				condicionProducto += ' and grupo=' + req.params.id_grupo
+			}
 			sequelize.query("select count(producto.id) as cantidad_productos \
 							from agil_producto as producto \
 							LEFT OUTER JOIN gl_clase AS grupo ON (producto.grupo = grupo.id) \
