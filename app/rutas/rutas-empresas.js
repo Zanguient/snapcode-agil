@@ -336,7 +336,7 @@ module.exports = function (router, decodeBase64Image, fs, Empresa, Sucursal, Cla
 
 		router.route('/grupos/empresa/:id_empresa/user/:id_usuario')
 		.get(function (req, res) {
-			sequelize.query("SELECT DISTINCT gl_clase.id, gl_clase.nombre FROM gl_clase,gl_tipo where gl_clase.id in (SELECT grupo from sys_usuario_grupos where usuario ="+req.params.id_usuario+")", { type: sequelize.QueryTypes.SELECT })
+			sequelize.query("SELECT DISTINCT gl_clase.id, gl_clase.nombre FROM gl_clase,gl_tipo where gl_clase.id in (SELECT grupo from sys_usuario_grupos where usuario ="+req.params.id_usuario+") AND gl_tipo.nombre_corto='GRUPOS PRODUCTOS'", { type: sequelize.QueryTypes.SELECT })
 				.then(function (dato) {
 					res.json(dato);;
 				});
