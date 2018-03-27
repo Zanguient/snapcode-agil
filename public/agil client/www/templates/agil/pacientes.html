@@ -87,7 +87,11 @@
                         <tr>
 
                             <td>
-                                <input ng-update-hidden type="text" id="filtroCargo" name="filtroCargo" ng-model="filtro.cargo" />
+                                <select ng-change="paginator.getSearch(paginator.search,filtro,null)" name="fecha" id="tipo-contrato" class="form-control"
+                                required style="width:150px" ng-options="cargo.id as cargo.nombre for cargo in listaCargos.clases track by cargo.id"
+                                ng-model="filtro.cargo">
+                                <option value="">--Ninguno--</option>
+                            </select>
                             </td>
                             <td>
                                 <input ng-update-hidden type="text" name="filtroEmpresa" id="filtroEmpresa" ng-model="filtro.busquedaEmpresa" />

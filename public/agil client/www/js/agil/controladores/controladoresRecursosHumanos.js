@@ -504,13 +504,13 @@ angular.module('agil.controladores')
         $scope.cerrarIdModalDialogPreRequisitos = function () {
             $scope.cerrarPopup($scope.idModalPrerequisitos);
         }
-        $scope.abrirDialogEmpleado = function (empleado,nuevaficha) {
+        $scope.abrirDialogEmpleado = function (empleado, nuevaficha) {
             if (empleado.activo) {
                 $scope.steps = [{ cabeza: "stepDatosPersonales", cuerpo: "datos-personales" },
                 { cabeza: "stepDatosLaborales", cuerpo: "ficha-datos-laborales" },
                 { cabeza: "stepdatosAfiliacion", cuerpo: "ficha-seguros" },
                 { cabeza: "stepDatosFamiliares", cuerpo: "ficha-familia" }]
-                $scope.obtenerDatosFichaUsuario(empleado,nuevaficha);
+                $scope.obtenerDatosFichaUsuario(empleado, nuevaficha);
                 $scope.empleado = empleado
 
 
@@ -633,7 +633,7 @@ angular.module('agil.controladores')
         }
         $scope.abrirDialogHojaVida = function (empleado) {
             $scope.empleado = empleado
-            $scope.empleado.activo=(empleado.eliminado)?false:true
+            $scope.empleado.activo = (empleado.eliminado) ? false : true
             if (!$scope.empleado.persona) {
                 $scope.empleado.persona = { nombre_completo: "" }
                 $scope.empleado.persona.nombre_completo = empleado.nombre_completo
@@ -1811,27 +1811,37 @@ angular.module('agil.controladores')
             var promesa = RecursosHumanosPaginador($scope.paginator);
             promesa.then(function (dato) {
                 $scope.paginator.setPages(dato.paginas);
-                $scope.RecursosHumanosEmpleados = dato.pacientes;
+                for (var i = 0; i < dato.fichas.length; i++) {
+                    var ficha = dato.fichas[i];
+                    dato.pacientes.forEach(function (empleado, index, array) {
+                        empleado.activo = (empleado.activo == 0) ? true : false
+                        empleado.ficha = (empleado.id == ficha.id_empleado) ? ficha:empleado.ficha
 
-                $scope.RecursosHumanosEmpleados.forEach(function (empleado) {
-                    empleado.activo = (empleado.activo == 0) ? true : false
+                        if (index === (array.length - 1)) {
+                            console.log(dato.pacientes)
+                            $scope.RecursosHumanosEmpleados = dato.pacientes;
+                           
+                            console.log($scope.RecursosHumanosEmpleados)
+                            if (seleccionar) {
+                                if (todos) {
+                                    $scope.RecursosHumanosEmpleados.forEach(function (empleado, index, array) {
+                                        
+                                        if (model == false) {
+                                            empleado.select = false
+                                            $scope.empleadosSeleccionados = []
+                                        } else {
 
-                });
-                if (seleccionar) {
-                    if (todos) {
-                        $scope.RecursosHumanosEmpleados.forEach(function (empleado, index, array) {
-                            if (model == false) {
-                                empleado.select = false
-                                $scope.empleadosSeleccionados = []
-                            } else {
-
-                                empleado.select = true
-                                $scope.empleadosSeleccionados.push(empleado)
+                                            empleado.select = true
+                                            $scope.empleadosSeleccionados.push(empleado)
 
 
+                                        }
+                                    });
+                                }
                             }
-                        });
-                    }
+                        }
+
+                    });
                 }
 
                 blockUI.stop();
@@ -2001,7 +2011,7 @@ angular.module('agil.controladores')
 
         }
 
-        $scope.obtenerDatosFichaUsuario = function (empleado,nuevaFicha) {
+        $scope.obtenerDatosFichaUsuario = function (empleado, nuevaFicha) {
             var promesa = UsuarioRecursosHumanosFicha(empleado.id)
             promesa.then(function (datos) {
                 if (datos.ficha) {
@@ -2058,14 +2068,14 @@ angular.module('agil.controladores')
                     })
                     $scope.seleccionarCargos($scope.ficha.cargos)
                     $scope.seleccionarDiscapacidades($scope.ficha.discapacidades)
-                    if(nuevaFicha){
-                    setTimeout(function () {
-                        
-                        $scope.ficha.editDatosLaborales = true
-                        $scope.ficha.fecha_inicio2=$scope.fechaATexto(new Date())
-                        $("#siguiente-f").click()           
-                    }, 200); 
-                }
+                    if (nuevaFicha) {
+                        setTimeout(function () {
+
+                            $scope.ficha.editDatosLaborales = true
+                            $scope.ficha.fecha_inicio2 = $scope.fechaATexto(new Date())
+                            $("#siguiente-f").click()
+                        }, 200);
+                    }
                     //llenarCargos($scope.cargos)
                 }/*  else {
 
@@ -3629,15 +3639,15 @@ angular.module('agil.controladores')
                     }
                 }
                 /*     for (var j = 0; j < $scope.hojaVida.logros.length; j++) {
-    
+         
                        
                         doc.text("FECHA2", 80, y);
                         doc.text("INSTITUCIÓN2", 185, y);
                         doc.text("GRADO2", 305, y);
                         doc.text("CARRERA2", 405, y);
                         y = y + 10;
-    
-    
+         
+         
                         items++;
                         //totalCosto = totalCosto + inventarios[i].costo_total;
                         if (y >=785) {
@@ -4522,8 +4532,8 @@ angular.module('agil.controladores')
 
             })
         }
-        $scope.EliminarAnticipo=function (index) {
-            $scope.listaAnticipos2.splice(index,1)
+        $scope.EliminarAnticipo = function (index) {
+            $scope.listaAnticipos2.splice(index, 1)
         }
         $scope.AgregarAnticipoOrdinario = function (datos) {
             var monto = datos.monto
@@ -5726,9 +5736,9 @@ angular.module('agil.controladores')
                 if (empleado.tipoReincorporacion) {
                     empleado.activo = (empleado.activo == false) ? true : false
                     if (empleado.tipoReincorporacion.nombre_corto == "NREING") {
-                        $scope.abrirDialogEmpleado(empleado,true)    
-                              
-                       
+                        $scope.abrirDialogEmpleado(empleado, true)
+
+
                     }
                 } else {
                     $scope.recargarItemsTabla()
@@ -5874,7 +5884,7 @@ angular.module('agil.controladores')
             if (beneficio.tipo_beneficio) {
                 if (!isNaN(beneficio.promedio)) {
                     if (beneficio.desahucio) {
-                        $scope.calcularDesaucio(beneficio,false)
+                        $scope.calcularDesaucio(beneficio, false)
                     }
                     var monto1 = $scope.añosRestantes * beneficio.promedio
                     var monto2 = (beneficio.promedio / 12) * $scope.tiempoTrabajado.meses
@@ -6020,7 +6030,7 @@ angular.module('agil.controladores')
                                 $scope.sumartotalOtrosIngresos(beneficio)
                             }
 
-                        }else{
+                        } else {
 
                         }
 

@@ -39,6 +39,7 @@ angular.module('agil.servicios')
         var res = function (paginator)//idEmpresa, xxx
         {
             var delay = $q.defer();
+            paginator.filter.cargo=(paginator.filter.cargo)?paginator.filter.cargo:0
             PacientesEmpresaPaginador.get({
                 id_empresa: paginator.filter.empresa,
                 pagina: paginator.currentPage,

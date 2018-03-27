@@ -263,7 +263,7 @@
                     <tbody>
                         <tr ng-repeat="empleado in RecursosHumanosEmpleados track by $index">
                             <td class="center">
-                                {{$index+1}}
+                                {{($index+1)+(paginator.itemsPerPage*(paginator.currentPage-1))}}
                             </td>
                             <td class="center">
                                 <label class="pos-rel">
