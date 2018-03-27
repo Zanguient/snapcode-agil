@@ -468,7 +468,7 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 			});
 		});
 
-	router.route('/productos-panel/empresa/:id_empresa/almacen/:id_almacen')
+	router.route('/productos-panel/empresa/:id_empresa/almacen/:id_almacen/user/:id_user')
 		.get(function (req, res) {
 			Producto.findAll({
 				where: { id_empresa: req.params.id_empresa, publicar_panel: true },
