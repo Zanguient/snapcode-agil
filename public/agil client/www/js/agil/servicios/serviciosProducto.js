@@ -69,12 +69,12 @@ var res = function(idProducto)
     return res;
   }])
 .factory('ProductosEmpresaPaginador', function($resource) {
-		return $resource(restServer+"productos/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion");
+		return $resource(restServer+"productos/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion/grupo/:id_grupo");
 })
 
 .factory('ProductosPaginador', ['ProductosEmpresaPaginador','$q',function(ProductosEmpresaPaginador, $q) 
   {
-	var res = function(idEmpresa,paginator) 
+	var res = function(idEmpresa,paginator, grupo) 
 	{
 		var delay = $q.defer();
 		ProductosEmpresaPaginador.get({id_empresa:idEmpresa,
@@ -82,7 +82,9 @@ var res = function(idProducto)
 																	items_pagina:paginator.itemsPerPage,
 																	texto_busqueda:paginator.search,
 																	columna:paginator.column,
-																	direccion:paginator.direction},function(entidades) 
+																	direccion:paginator.direction,
+																	id_grupo: grupo.id
+																},function(entidades) 
 		{        
 			delay.resolve(entidades);
 		}, function(error) 
@@ -116,15 +118,15 @@ var res = function(idProducto)
   }])
   
 .factory('BusquedaProductosPanel', function($resource) {
-		return $resource(restServer+"productos-panel/empresa/:idEmpresa/almacen/:idAlmacen");
+		return $resource(restServer+"productos-panel/empresa/:idEmpresa/almacen/:idAlmacen/user/:id_usuario");
 })
 
 .factory('ProductosPanel', ['BusquedaProductosPanel','$q',function(BusquedaProductosPanel, $q) 
   {
-	var res = function(idEmpresa,idAlmacen) 
+	var res = function(idEmpresa,idAlmacen,id_usuario) 
 	{
 		var delay = $q.defer();
-		BusquedaProductosPanel.query({idEmpresa:idEmpresa,idAlmacen:idAlmacen},function(entidades) 
+		BusquedaProductosPanel.query({idEmpresa:idEmpresa,idAlmacen:idAlmacen, id_usuario: id_usuario},function(entidades) 
 		{        
 			delay.resolve(entidades);
 		}, function(error) 

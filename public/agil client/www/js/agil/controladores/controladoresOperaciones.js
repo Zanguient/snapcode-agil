@@ -1,7 +1,7 @@
 angular.module('agil.controladores')
 	.controller('ControladorOperaciones', function ($scope, $filter, $rootScope, $route, $templateCache, $location, $window, $localStorage,
 		blockUI, ConfiguracionVentaVistaDatos, ClasesTipo, ListaGruposProductoEmpresa, ProductosOperaciones, socket, ListaGruposProductoEmpresa, SolicitudesReposicion,
-		SolicitudesFormulacionProducto, SolicitudReposicion, EliminarSolicitudReposicion, Paginator, ImpresionSolicitudDatos, ListaInventariosProducto, ListaSucursalesUsuario) {
+		SolicitudesFormulacionProducto, SolicitudReposicion, EliminarSolicitudReposicion, Paginator, ImpresionSolicitudDatos, ListaInventariosProducto, ListaSucursalesUsuario, ListaGruposProductoUsuario) {
 
 		$scope.usuarioSesion = JSON.parse($localStorage.usuario);
 		convertUrlToBase64Image($scope.usuarioSesion.empresa.imagen, function (imagenEmpresa) {
@@ -515,7 +515,7 @@ angular.module('agil.controladores')
 			return cantidadTotal;
 		}
 		$scope.cargarProductos = function () {
-			var promesa = ProductosOperaciones($scope.usuarioSesion.id_empresa, $scope.solicitud.almacen.id);
+			var promesa = ProductosOperaciones($scope.usuarioSesion.id_empresa, $scope.solicitud.almacen.id, $scope.usuarioSesion.id);
 			promesa.then(function (productos) {
 				if (productos.length > 0) {
 					for (var i = 0; i < productos.length; i++) {
@@ -747,7 +747,7 @@ angular.module('agil.controladores')
 		}
 
 		$scope.obtenerGruposProductoEmpresa = function () {
-			var promesa = ListaGruposProductoEmpresa($scope.usuarioSesion.id_empresa);
+			var promesa = ListaGruposProductoUsuario($scope.usuarioSesion.id_empresa, $scope.usuario.id);
 			promesa.then(function (grupos) {
 				$scope.grupos_productos = grupos;
 				/*if ( angular.isDefined($localStorage.grupos_check) ) {

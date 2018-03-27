@@ -56,6 +56,14 @@ module.exports = function (sequelize, Sequelize) {
 			type: Sequelize.BOOLEAN,
 			field: 'desahucio'
 		},
+		total_ingresos:{
+			type: Sequelize.DECIMAL(20, 4),
+			field: 'total_ingresos'
+		},
+		total_deducciones:{
+			type: Sequelize.DECIMAL(20, 4),
+			field: 'total_deducciones'
+		},
 		eliminado: {
 			type: Sequelize.BOOLEAN,
 			field: 'eliminado'

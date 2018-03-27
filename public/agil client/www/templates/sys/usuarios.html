@@ -386,6 +386,20 @@
 								<!--<select required id="sucursal" multiple name="sucursal" ng-init="usuario.sucursales=usuario.sucursalesUsuario" ng-model="usuario.sucursales" ng-options="sucursal.id as sucursal.nombre for sucursal in sucursales track by sucursal.id"  data-placeholder="Click para escoger"></select>-->
 							</div>
 						</div>
+						<div class="form-group">
+								<label class="control-label col-xs-12 col-sm-3 no-padding-right">Grupos</label>
+	
+								<div class="col-xs-12 col-sm-9">
+									<div     
+										isteven-multi-select
+										input-model="gruposUsuario"
+										output-model="usuario.grupos"
+										button-label="icon name"
+										item-label="icon name maker"
+										tick-property="ticked">
+									</div>
+								</div>
+							</div>
 					</div>
 
 					<div class="step-pane" data-step="5">

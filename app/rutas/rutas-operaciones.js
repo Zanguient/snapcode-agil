@@ -1,5 +1,5 @@
 module.exports = function (router, sequelize, Sequelize, Usuario, Producto, Diccionario, Clase, Sucursal, Empresa, ProductoBase, Almacen,
-    Inventario, SolicitudReposicion, DetalleSolicitudProducto, DetalleSolicitudProductoBase, Persona) {
+    Inventario, SolicitudReposicion, DetalleSolicitudProducto, DetalleSolicitudProductoBase, Persona, UsuarioGrupos) {
     router.route('/operaciones/empresa/:id_empresa/vintage/:id_usuario/capo/:rol/desde/:desde/hasta/:hasta/suc/:sucursal/alm/:almacen/mov/:movimiento/est/:estado/val/:valuado/pagina/:pagina/items-pagina/:items_pagina/busqueda/:busqueda')
         .post(function (req, res) {
             if (req.body.id === undefined) {
@@ -415,7 +415,6 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Producto, Dicc
                                         res.json({ mensaje: err.data })
                                     });
                                 }
-
                             } else {
                                 DetalleSolicitudProducto.create({
                                     id_solicitud: req.body.id,
@@ -525,32 +524,84 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Producto, Dicc
             }
         })
 
-        router.route('/productos-operaciones/empresa/:id_empresa/almacen/:id_almacen')
+        router.route('/productos-operaciones/empresa/:id_empresa/almacen/:id_almacen/user/:id_usuario')
 		.get(function (req, res) {
-			Producto.findAll({
-				where: { id_empresa: req.params.id_empresa, publicar_panel: true },
-				include: [{ model: Inventario, as: 'inventarios', where: { id_almacen: req.params.id_almacen}},
-				{ model: Clase, as: 'tipoProducto' },
-				{
-					model: ProductoBase, as: 'productosBase',
-					include: [{
-						model: Producto, as: 'productoBase',
-						include: [{ model: Inventario, as: 'inventarios'},
-						{ model: Clase, as: 'tipoProducto' },
-						{
-							model: ProductoBase, as: 'productosBase',
-							include: [{
-								model: Producto, as: 'productoBase',
-								include: [{ model: Inventario, as: 'inventarios'},
-								{ model: Clase, as: 'tipoProducto' }]
-							}]
-						}]
-					}]
-				}],
-				order: [[{ model: Inventario, as: 'inventarios' }, 'updatedAt', 'DESC']]
-			}).then(function (productos) {
-				res.json(productos);
-			});
+            var listaProductos = []
+            var grupos = []
+            Usuario.find({
+                where: {id: req.params.id_usuario},
+                include:[{ model: UsuarioGrupos, as: 'grupos', include: [{ model: Clase, as: 'grupo' }] }]
+            }).then(function (usuarioEncontrado) {
+                grupos = usuarioEncontrado.grupos.map(function (grupo) {
+                    return grupo.id_grupo
+                })
+                Producto.findAll({
+                    where: { id_empresa: req.params.id_empresa, publicar_panel: true, activar_inventario: false, id_grupo: {$in: grupos} },
+                    include: [{ model: Clase, as: 'tipoProducto' }]
+                }).then(function (productos) {
+                    productos.map(function (producto, i) {
+                        ProductoBase.findAll({
+                            where: { id_producto: producto.id },
+                            include: [{ model: Producto, as: 'productoBase', include: [{ model: Inventario, as: 'inventarios', where: { id_almacen: req.params.id_almacen } }] }]
+                        }).then(function (productosBase) {
+                            producto.dataValues.productosBase = productosBase
+                            if (i == productos.length - 1) {
+                                Array.prototype.push.apply(listaProductos, productos);
+                                Producto.findAll({
+                                    where: { id_empresa: req.params.id_empresa, publicar_panel: true, activar_inventario: true, id_grupo: {$in: grupos} },
+                                    include: [{ model: Inventario, as: 'inventarios', where: { id_almacen: req.params.id_almacen }}],
+                                    include: [{ model: Clase, as: 'tipoProducto' }]
+                                }).then(function (productosInventarios) {
+                                    productosInventarios.map(function (productoInventario, y) {
+                                        Inventario.findAll({
+                                            where: { id_producto: productoInventario.id, id_almacen: req.params.id_almacen }
+                                        }).then(function (inventarios) {
+                                            productoInventario.dataValues.inventarios = inventarios
+                                            ProductoBase.findAll({
+                                                where: { id_producto: productoInventario.id },
+                                                include: [{ model: Producto, as: 'productoBase', include: [{ model: Inventario, as: 'inventarios', where: { id_almacen: req.params.id_almacen} }] }]
+                                            }).then(function (productosBase) {
+                                                productoInventario.productosBase = productosBase
+                                                if (i == productos.length - 1) {
+                                                    if (y == productosInventarios.length - 1) {
+                                                        Array.prototype.push.apply(listaProductos, productosInventarios);
+                                                        res.json(listaProductos);
+                                                    }
+                                                }
+                                            })
+                                        })
+                                    })
+                                })
+                            }
+                        })
+                    })
+                });
+            })
+			
+			// Producto.findAll({
+			// 	where: { id_empresa: req.params.id_empresa, publicar_panel: true },
+			// 	include: [{ model: Inventario, as: 'inventarios', where: { id_almacen: req.params.id_almacen}},
+			// 	{ model: Clase, as: 'tipoProducto' },
+			// 	{
+			// 		model: ProductoBase, as: 'productosBase',
+			// 		include: [{
+			// 			model: Producto, as: 'productoBase',
+			// 			include: [{ model: Inventario, as: 'inventarios'},
+			// 			{ model: Clase, as: 'tipoProducto' },
+			// 			{
+			// 				model: ProductoBase, as: 'productosBase',
+			// 				include: [{
+			// 					model: Producto, as: 'productoBase',
+			// 					include: [{ model: Inventario, as: 'inventarios'},
+			// 					{ model: Clase, as: 'tipoProducto' }]
+			// 				}]
+			// 			}]
+			// 		}]
+			// 	}],
+			// 	order: [[{ model: Inventario, as: 'inventarios' }, 'updatedAt', 'DESC']]
+			// }).then(function (productos) {
+			// 	res.json(productos);
+			// });
 		});
 
     router.route('/operaciones/impresion/:id_solicitud')

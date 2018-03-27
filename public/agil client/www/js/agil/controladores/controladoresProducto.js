@@ -32,6 +32,10 @@ angular.module('agil.controladores')
 		});
 	}
 
+	$scope.filtrarProductos= function(grupo){
+		$scope.mostrarMensaje('filtro por grupo')
+	}
+
 	$scope.obtenerSubGruposProductosEmpresa=function(){
 		var promesa=ListaSubGruposProductoEmpresa($scope.usuario.id_empresa);
 		promesa.then(function(subgrupos){
@@ -582,9 +586,9 @@ angular.module('agil.controladores')
 		
 	}
 	
-	$scope.buscarProductos=function(){
+	$scope.buscarProductos=function(grupo){
 		blockUI.start();
-		var promesa=ProductosPaginador($scope.usuario.id_empresa,$scope.paginator);
+		var promesa=ProductosPaginador($scope.usuario.id_empresa,$scope.paginator,(grupo && grupo.id !==undefined ? grupo : {id: 0}));
 		promesa.then(function(dato){
 			$scope.paginator.setPages(dato.paginas);
 			$scope.productos=dato.productos;

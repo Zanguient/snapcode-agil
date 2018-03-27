@@ -114,6 +114,30 @@ angular.module('agil.servicios')
 	};
     return res;
 	}])
+
+	.factory('GruposProductoUsuario', function($resource) {
+		return $resource(restServer+"grupos/empresa/:id_empresa/user/:id_usuario", null,
+		{
+			'update': { method:'PUT' }
+		});
+})
+
+.factory('ListaGruposProductoUsuario', ['GruposProductoUsuario','$q',function(GruposProductoUsuario, $q) 
+  {
+	var res = function(id_empresa, id_usuario) 
+	{
+		var delay = $q.defer();
+		GruposProductoUsuario.query({id_empresa:id_empresa, id_usuario: id_usuario},function(entidades) 
+		{        
+			delay.resolve(entidades);
+		}, function(error) 
+			{
+				delay.reject(error);
+			});
+		return delay.promise;
+	};
+    return res;
+	}])
 	
 .factory('VendedorVenta', function($resource) {
 		return $resource(restServer+"vendedor-venta/empresa/:id_empresa", null,

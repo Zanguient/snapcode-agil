@@ -167,7 +167,8 @@
                                     tooltip-placement="top" uib-tooltip="Confirmar Entrega">
                                     <i class="ace-icon fa fa-unlock bigger-130"></i>
                                 </a>
-                                <a  ng-if="solicitud.activo" class="orange" href="javascript:void(0)" ng-click="editar(solicitud)">
+                                <a  ng-if="solicitud.activo" class="orange" href="javascript:void(0)" ng-click="editar(solicitud)" data-rel="tooltip"
+                                tooltip-placement="top" uib-tooltip="Modificar">
                                     <i class="ace-icon fa fa-pencil-square-o bigger-130"></i>
                                 </a>
                                 <a ng-if="!solicitud.activo" class="red" href="javascript:void(0)" data-rel="tooltip" tooltip-placement="top" uib-tooltip="Entregado">

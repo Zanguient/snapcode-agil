@@ -4,7 +4,7 @@ angular.module('agil.controladores')
 		Venta, Ventas, Clientes, ClientesNit, ProductosNombre, ClasesTipo, VentasContado, VentasCredito,
 		PagosVenta, DatosVenta, VentaEmpresaDatos, ProductosPanel, ListaProductosEmpresa, ListaInventariosProducto,
 		socket, ConfiguracionVentaVistaDatos, ConfiguracionVentaVista, ListaGruposProductoEmpresa,
-		ConfiguracionImpresionEmpresaDato, ImprimirSalida, ListaVendedorVenta, VendedorVenta, VendedorVentaActualizacion, GuardarUsuarLectorDeBarra, VerificarLimiteCredito, ListaSucursalesUsuario) {
+		ConfiguracionImpresionEmpresaDato, ImprimirSalida, ListaVendedorVenta, VendedorVenta, VendedorVentaActualizacion, GuardarUsuarLectorDeBarra, VerificarLimiteCredito, ListaSucursalesUsuario, ListaGruposProductoUsuario) {
 		blockUI.start();
 		$scope.usuario = JSON.parse($localStorage.usuario);
 		convertUrlToBase64Image($scope.usuario.empresa.imagen, function (imagenEmpresa) {
@@ -156,8 +156,8 @@ angular.module('agil.controladores')
 		}
 
 		$scope.obtenerGruposProductoEmpresa = function () {
-			var promesa = ListaGruposProductoEmpresa($scope.usuario.id_empresa);
-			// var promesa = ListaGruposProductoUsuario($scope.usuario.id_empresa, $scope.usuario.id);
+			// var promesa = ListaGruposProductoEmpresa($scope.usuario.id_empresa);
+			var promesa = ListaGruposProductoUsuario($scope.usuario.id_empresa, $scope.usuario.id);
 			
 			promesa.then(function (grupos) {
 				$scope.grupos_productos = grupos;
@@ -1724,7 +1724,7 @@ angular.module('agil.controladores')
 		}
 
 		$scope.cargarProductos = function () {
-			var promesa = ProductosPanel($scope.usuario.id_empresa, $scope.venta.almacen.id);
+			var promesa = ProductosPanel($scope.usuario.id_empresa, $scope.venta.almacen.id, $scope.usuario.id);
 			promesa.then(function (productos) {
 				for (var i = 0; i < productos.length; i++) {
 					if (productos[i].activar_inventario) {

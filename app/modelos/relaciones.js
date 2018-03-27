@@ -14,7 +14,7 @@ module.exports = function (sequelize, Usuario, Persona, Rol, UsuarioRol, Tipo, C
 	RrhhEmpleadoFichaOtrosSeguros, RrhhEmpleadoFichaFamiliar, MedicoPacientePreRequisito, RrhhEmpleadoDiscapacidad, RrhhEmpleadoCargo, ClienteRazon, GtmDestino, GtmEstibaje, GtmGrupoEstibaje, GtmTransportista, GtmDespacho, GtmClienteDestino,
 	RrhhEmpleadoHojaVida, RrhhEmpleadoFormacionAcademica, RrhhEmpleadoExperienciaLaboral, RrhhEmpleadoLogroInternoExterno, RrhhEmpleadoCapacidadInternaExterna, SolicitudReposicion, DetalleSolicitudProducto, DetalleSolicitudProductoBase, MonedaTipoCambio, ContabilidadCuentaAuxiliar, GtmDespachoDetalle, RrhhEmpleadoPrestamo, RrhhEmpleadoPrestamoPago, Proforma, DetallesProformas, Servicios, Farmacia, RRHHParametros, RrhhEmpleadoRolTurno, RrhhEmpleadoHorasExtra, RRHHPlanillaSueldos, RRHHDetallePlanillaSueldos, RrhhAnticipo, EvaluacionPolifuncional,
 	RrhhEmpleadoAusencia, RrhhEmpleadoVacaciones, RrhhEmpleadoCompensacionAusencia,RrhhClaseAsuencia,RrhhEmpleadoHistorialVacacion,RrhhEmpleadoTr3,RrhhEmpleadoAnticipoTr3,RrhhEmpleadoDeduccionIngreso,
-	RrhhEmpleadoBeneficioSocial,RrhhEmpleadoBitacoraFicha) {
+	RrhhEmpleadoBeneficioSocial,RrhhEmpleadoBitacoraFicha, UsuarioGrupos) {
 
 	Persona.belongsTo(Clase, { foreignKey: 'id_lugar_nacimiento', as: 'lugar_nacimiento' });
 	Persona.belongsTo(Clase, { foreignKey: 'id_genero', as: 'genero' });
@@ -50,6 +50,12 @@ module.exports = function (sequelize, Usuario, Persona, Rol, UsuarioRol, Tipo, C
 	Usuario.hasMany(ComprobanteContabilidad, { foreignKey: 'id_usuario', as: 'usuario' });
 	Usuario.hasMany(RrhhEmpleadoPrestamo, { foreignKey: 'id_usuario', as: 'prestamosUsuarios' });
 	Usuario.hasMany(RrhhEmpleadoPrestamoPago, { foreignKey: 'id_usuario', as: 'pagosPrestamo' });
+
+	Usuario.hasMany(UsuarioGrupos, { foreignKey: 'id_usuario', as: 'grupos' });
+	UsuarioGrupos.belongsTo(Usuario, { foreignKey: 'id_usuario', as: 'usuario' });
+	Clase.hasMany(UsuarioGrupos, { foreignKey: 'id_grupo', as: 'clasegrupo' });
+	UsuarioGrupos.belongsTo(Clase, { foreignKey: 'id_grupo', as: 'grupo' });
+	
 
 	Rol.hasMany(UsuarioRol, { foreignKey: 'id_rol', as: 'rolesUsuario' });
 	Rol.hasMany(RolAplicacion, { foreignKey: 'id_rol', as: 'aplicacionesRol' });

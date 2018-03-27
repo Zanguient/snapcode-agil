@@ -20,7 +20,12 @@
 		<div class="table-header">
 			Lista de Productos
 		</div>
-
+		<span>Grupos: &nbsp;</span> <select class="form-control" style="width:150px;" ng-change="buscarProductos(grupo)"
+                                                        required id="actividadProforma" name="actividad" ng-model="grupo"
+                                                        ng-options="grupo as grupo.nombre for grupo in gruposProducto track by grupo.id"
+                                                        data-placeholder="Click para escoger">
+                                                        <option value="" selected>Todos</option>
+                                                    </select>
 		<!-- div.table-responsive -->
 
 		<!-- div.dataTables_borderWrap -->

@@ -26,13 +26,13 @@ angular.module('agil.servicios')
     }])
 
     .factory('BusquedaProductosOperaciones', function ($resource) {
-        return $resource(restServer + "productos-operaciones/empresa/:id_empresa/almacen/:id_almacen");
+        return $resource(restServer + "productos-operaciones/empresa/:id_empresa/almacen/:id_almacen/user/:id_usuario");
     })
 
     .factory('ProductosOperaciones', ['BusquedaProductosOperaciones', '$q', function (BusquedaProductosOperaciones, $q) {
-        var res = function (idEmpresa, idAlmacen) {
+        var res = function (idEmpresa, idAlmacen, id_usuario) {
             var delay = $q.defer();
-            BusquedaProductosOperaciones.query({ id_empresa: idEmpresa, id_almacen: idAlmacen }, function (entidades) {
+            BusquedaProductosOperaciones.query({ id_empresa: idEmpresa, id_almacen: idAlmacen, id_usuario: id_usuario }, function (entidades) {
                 delay.resolve(entidades);
             }, function (error) {
                     delay.reject(error);

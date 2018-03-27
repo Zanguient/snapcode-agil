@@ -88,8 +88,8 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                 gl_persona.nombre_completo as 'nombre_completo', gl_persona.apellido_paterno as 'apellido_paterno', gl_persona.apellido_materno as 'apellido_materno',\
                 gl_persona.nombres as 'nombres',gl_persona.imagen as 'imagen', agil_medico_paciente.eliminado as 'activo', gl_persona.ci as 'ci', gl_persona.genero as 'id_genero', \
                 gl_persona.telefono as 'telefono', gl_persona.telefono_movil as 'telefono_movil', gl_persona.fecha_nacimiento as 'fecha_nacimiento'\
-                from agil_medico_paciente "+ condicionContrato + " INNER JOIN agil_rrhh_empleado_ficha AS fichas ON (agil_medico_paciente.id = fichas.id_empleado ) INNER JOIN agil_rrhh_empleado_cargo AS cargos ON fichas.id = cargos.ficha  " + condicionCargo + " \
-                LEFT OUTER JOIN gl_clase AS `cargos.cargo` ON cargos.cargo = `cargos.cargo`.id INNER JOIN gl_persona ON (agil_medico_paciente.persona = gl_persona.id) INNER JOIN gl_clase ON (agil_medico_paciente.extension = gl_clase.id)\
+                ,fichas.id as 'id_ficha',`cargos.cargo`.nombre as cargo from agil_medico_paciente "+ condicionContrato + " JOIN agil_rrhh_empleado_ficha AS fichas ON fichas.id=( select agil_rrhh_empleado_ficha.id from agil_rrhh_empleado_ficha where  agil_rrhh_empleado_ficha.id_empleado =  agil_medico_paciente.id order by id desc limit 1) INNER JOIN agil_rrhh_empleado_cargo AS cargos ON fichas.id = cargos.ficha  " + condicionCargo + " \
+                    LEFT OUTER JOIN gl_clase AS `cargos.cargo` ON cargos.cargo = `cargos.cargo`.id INNER JOIN gl_persona ON (agil_medico_paciente.persona = gl_persona.id) INNER JOIN gl_clase ON (agil_medico_paciente.extension = gl_clase.id)\
                 where agil_medico_paciente.empresa = "+ req.params.id_empresa + activo + " AND (" + condicion + ") \
                 AND agil_medico_paciente.es_empleado = true GROUP BY agil_medico_paciente.id order by "+ req.params.columna + " " + req.params.direccion, { type: sequelize.QueryTypes.SELECT })
                     .then(function (data) {
@@ -105,7 +105,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                     gl_persona.nombre_completo as 'nombre_completo', gl_persona.apellido_paterno as 'apellido_paterno', gl_persona.apellido_materno as 'apellido_materno',\
                     gl_persona.nombres as 'nombres',gl_persona.imagen as 'imagen', agil_medico_paciente.eliminado as 'activo', gl_persona.ci as 'ci', gl_persona.genero as 'id_genero', \
                     gl_persona.telefono as 'telefono', gl_persona.telefono_movil as 'telefono_movil', gl_persona.fecha_nacimiento as 'fecha_nacimiento'\
-                    from agil_medico_paciente "+ condicionContrato + " INNER JOIN agil_rrhh_empleado_ficha AS fichas ON (agil_medico_paciente.id = fichas.id_empleado ) INNER JOIN agil_rrhh_empleado_cargo AS cargos ON fichas.id = cargos.ficha  " + condicionCargo + " \
+                    ,fichas.id as 'id_ficha',`cargos.cargo`.nombre as cargo from agil_medico_paciente "+ condicionContrato + " JOIN agil_rrhh_empleado_ficha AS fichas ON fichas.id=( select agil_rrhh_empleado_ficha.id from agil_rrhh_empleado_ficha where  agil_rrhh_empleado_ficha.id_empleado =  agil_medico_paciente.id order by id desc limit 1) INNER JOIN agil_rrhh_empleado_cargo AS cargos ON fichas.id = cargos.ficha  " + condicionCargo + " \
                     LEFT OUTER JOIN gl_clase AS `cargos.cargo` ON cargos.cargo = `cargos.cargo`.id INNER JOIN gl_persona ON (agil_medico_paciente.persona = gl_persona.id) INNER JOIN gl_clase ON (agil_medico_paciente.extension = gl_clase.id)\
                     where agil_medico_paciente.empresa = "+ req.params.id_empresa + activo + " AND (" + condicion + ") \
                     AND agil_medico_paciente.es_empleado = true GROUP BY agil_medico_paciente.id order by "+ req.params.columna + " " + req.params.direccion + limite, { type: sequelize.QueryTypes.SELECT })
@@ -121,10 +121,10 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                                              },
                                              include: [{ model: Clase, as: 'cargo' }]
                                          }).then(function (cargosEmpleado) { */
-                                        RrhhEmpleadoFicha.findAll({
+                                        RrhhEmpleadoFicha.find({
                                             limit: 1,
                                             where: {
-                                                id_empleado: paciente.id
+                                                id: paciente.id_ficha
                                             },
                                             include: [{ model: Clase, as: 'tipoContrato' }, { model: RrhhEmpleadoCargo, as: 'cargos', include: [{ model: Clase, as: 'cargo' }] }],
                                             order: [['id', 'DESC']]
@@ -151,8 +151,8 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                 gl_persona.nombre_completo as 'nombre_completo', gl_persona.apellido_paterno as 'apellido_paterno', gl_persona.apellido_materno as 'apellido_materno',\
                 gl_persona.nombres as 'nombres',gl_persona.imagen as 'imagen', agil_medico_paciente.eliminado as 'activo', gl_persona.ci as 'ci', gl_persona.genero as 'id_genero', \
                 gl_persona.telefono as 'telefono', gl_persona.telefono_movil as 'telefono_movil', gl_persona.fecha_nacimiento as 'fecha_nacimiento'\
-                from agil_medico_paciente "+ condicionContrato + " INNER JOIN agil_rrhh_empleado_ficha AS fichas ON (agil_medico_paciente.id = fichas.id_empleado ) INNER JOIN agil_rrhh_empleado_cargo AS cargos ON fichas.id = cargos.ficha  " + condicionCargo + " \
-                LEFT OUTER JOIN gl_clase AS `cargos.cargo` ON cargos.cargo = `cargos.cargo`.id INNER JOIN gl_persona ON (agil_medico_paciente.persona = gl_persona.id) INNER JOIN gl_clase ON (agil_medico_paciente.extension = gl_clase.id)\
+                ,fichas.id as 'id_ficha',`cargos.cargo`.nombre as cargo from agil_medico_paciente "+ condicionContrato + " JOIN agil_rrhh_empleado_ficha AS fichas ON fichas.id=( select agil_rrhh_empleado_ficha.id from agil_rrhh_empleado_ficha where  agil_rrhh_empleado_ficha.id_empleado =  agil_medico_paciente.id order by id desc limit 1) INNER JOIN agil_rrhh_empleado_cargo AS cargos ON fichas.id = cargos.ficha  " + condicionCargo + " \
+                    LEFT OUTER JOIN gl_clase AS `cargos.cargo` ON cargos.cargo = `cargos.cargo`.id INNER JOIN gl_persona ON (agil_medico_paciente.persona = gl_persona.id) INNER JOIN gl_clase ON (agil_medico_paciente.extension = gl_clase.id)\
                 where agil_medico_paciente.empresa = "+ req.params.id_empresa + activo + " AND agil_medico_paciente.es_empleado = true GROUP BY agil_medico_paciente.id order by " + req.params.columna + " " + req.params.direccion, { type: sequelize.QueryTypes.SELECT })
                     .then(function (data) {
                         /* var options = {
@@ -167,8 +167,8 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                     gl_persona.nombre_completo as 'nombre_completo', gl_persona.apellido_paterno as 'apellido_paterno', gl_persona.apellido_materno as 'apellido_materno',\
                     gl_persona.nombres as 'nombres',gl_persona.imagen as 'imagen', agil_medico_paciente.eliminado as 'activo', gl_persona.ci as 'ci', gl_persona.genero as 'id_genero', \
                     gl_persona.telefono as 'telefono', gl_persona.telefono_movil as 'telefono_movil', gl_persona.fecha_nacimiento as 'fecha_nacimiento'\
-                    from agil_medico_paciente "+ condicionContrato + " INNER JOIN agil_rrhh_empleado_ficha AS fichas ON (agil_medico_paciente.id = fichas.id_empleado ) INNER JOIN agil_rrhh_empleado_cargo AS cargos ON fichas.id = cargos.ficha  " + condicionCargo + " \
-                    LEFT OUTER JOIN gl_clase AS `cargos.cargo` ON cargos.cargo = `cargos.cargo`.id INNER JOIN gl_persona ON (agil_medico_paciente.persona = gl_persona.id) INNER JOIN gl_clase ON (agil_medico_paciente.extension = gl_clase.id)\
+                    ,fichas.id as 'id_ficha',`cargos.cargo`.nombre as cargo from agil_medico_paciente "+ condicionContrato + " JOIN agil_rrhh_empleado_ficha AS fichas ON fichas.id=( select agil_rrhh_empleado_ficha.id from agil_rrhh_empleado_ficha where  agil_rrhh_empleado_ficha.id_empleado =  agil_medico_paciente.id order by id desc limit 1) INNER JOIN agil_rrhh_empleado_cargo AS cargos ON fichas.id = cargos.ficha  " + condicionCargo + " \
+                    LEFT OUTER JOIN gl_clase AS `cargos.cargo` ON cargos.cargo = `cargos.cargo`.id  INNER JOIN gl_persona ON (agil_medico_paciente.persona = gl_persona.id) INNER JOIN gl_clase ON (agil_medico_paciente.extension = gl_clase.id)\
                     where agil_medico_paciente.empresa = "+ req.params.id_empresa + activo + " AND agil_medico_paciente.es_empleado = true GROUP BY agil_medico_paciente.id order by " + req.params.columna + " " + req.params.direccion + limite, { type: sequelize.QueryTypes.SELECT }/* , options */)
                             .then(function (pacientes) {
                                 var a = ""
@@ -181,16 +181,16 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                                             },
                                             include: [{ model: Clase, as: 'cargo' }]
                                         }).then(function (cargosEmpleado) { */
-                                        RrhhEmpleadoFicha.findAll({
-                                            limit: 1,
+                                        RrhhEmpleadoFicha.find({
+                                        
                                             where: {
-                                                id_empleado: paciente.id
+                                                id: paciente.id_ficha
                                             },
                                             include: [{ model: Clase, as: 'tipoContrato' }, { model: RrhhEmpleadoCargo, as: 'cargos', include: [{ model: Clase, as: 'cargo' }] }],
-                                            order: [['id', 'DESC']],
+                                           
                                         }).then(function (fichaActual) {
                                             /* paciente.cargos = cargosEmpleado */
-                                            paciente.ficha = fichaActual[0]
+                                            paciente.ficha = fichaActual
                                             arregloCargos.push(paciente)
                                             if (index === (array.length - 1)) {
                                                 res.json({ pacientes: arregloCargos, paginas: Math.ceil(data.length / req.params.items_pagina) });
@@ -2618,6 +2618,8 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                     quinquenio_adelantado: req.body.quinquenio_adelantado,
                     tipo_beneficio: req.body.tipo_beneficio,
                     desahucio: req.body.desahucio,
+                    total_deducciones: req.body.total_deducciones,
+                    total_ingresos: req.body.total_ingresos,
                     eliminado: false
                 }, {
                         where: { id: req.body.id }
@@ -2650,6 +2652,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                                             })
                                     } else {
                                         RrhhEmpleadoDeduccionIngreso.create({
+                                            id_beneficio: beneficioCreado.id,
                                             monto: ingreso.monto,
                                             motivo: ingreso.motivo,
                                             id_tipo: ingreso.tipo.id,
@@ -2668,8 +2671,6 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                     })
 
             } else {
-
-
                 var id = null
                 if (req.body.motivo) {
                     id = req.body.motivo.id
@@ -2711,6 +2712,8 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                         quinquenio_adelantado: req.body.quinquenio_adelantado,
                         tipo_beneficio: req.body.tipo_beneficio,
                         desahucio: req.body.desahucio,
+                        total_deducciones: req.body.total_deducciones,
+                        total_ingresos: req.body.total_ingresos,
                         eliminado: false
                     }).then(function (beneficioCreado) {
                         if (req.body.ingresos.length > 0) {

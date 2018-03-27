@@ -1310,7 +1310,7 @@
                                             <label for="">Nombre de la Persona</label>
                                         </div>
                                         <div class="col-lg-2">
-                                            <input ng-model="ficha.personaReferencia.nombres" type="text" class="form-control">
+                                            <input required ng-model="ficha.personaReferencia.nombres" type="text" class="form-control">
                                         </div>
                                         <div class="col-lg-2">
                                             <label for="">Teléfono</label>
@@ -4257,7 +4257,7 @@
                                     </div>
                                     <div class="col-sm-3">
                                         <label>
-                                            <input ng-model="beneficio.desahucio" class="ace ace-switch ace-switch-5" type="checkbox" ng-click="calcularDesaucio(beneficio)">
+                                            <input ng-model="beneficio.desahucio" class="ace ace-switch ace-switch-5" type="checkbox" ng-click="calcularDesaucio(beneficio,false)">
                                             <span class="lbl check-espaniol"></span>
                                         </label>
                                     </div>
@@ -4303,12 +4303,12 @@
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        <tr ng-repeat="ingreso in beneficio.ingresos">
+                                                        <tr ng-if="!ingreso.eliminado" ng-repeat="ingreso in beneficio.ingresos">
                                                             <th >{{$index+1}}</th>
                                                             <td>{{ingreso.monto|number:2}}</td>
                                                             <td>{{ingreso.motivo}}</td>
                                                             <td>
-                                                                <span class="glyphicon glyphicon-remove" ng-click="eliminarOtroIngreso($index)" aria-hidden="true"></span>
+                                                                <span class="glyphicon glyphicon-remove" ng-click="eliminarOtroIngreso($index,ingreso)" aria-hidden="true"></span>
                                                             </td>
                                                         </tr>
 
@@ -4360,12 +4360,12 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    <tr ng-repeat="deduccion in beneficio.deducciones">
+                                                    <tr ng-if="!deduccion.eliminado" ng-repeat="deduccion in beneficio.deducciones">
                                                         <th scope="row">{{$index+1}}</th>
                                                         <td>{{deduccion.monto|number:2}}</td>
                                                         <td>{{deduccion.motivo}}</td>
                                                         <td>
-                                                            <span class="glyphicon glyphicon-remove" ng-click="eliminarDeduccion($index)" aria-hidden="true"></span>
+                                                            <span class="glyphicon glyphicon-remove" ng-click="eliminarDeduccion($index,deduccion)" aria-hidden="true"></span>
                                                         </td>
                                                     </tr>
                                                 </tbody>
@@ -5096,7 +5096,7 @@
         </div>
         <div class="modal-body">
             <div class="row">
-                <form ng-submit="agregarTipoAusencia(clase,tiposAusenia)">
+                <form ng-submit="agregarTipoAusencia(clase,tiposAusencia)">
                     <div class="col-sm-4">
                         <div class="form-group">
                             <label for="ciudad">Tipo de baja</label>
@@ -6011,6 +6011,10 @@
                         <span class="fa fa-plus"></span>
                         Nuevo
                     </button>
+                    <button ng-show="listaAnticipos2.length>0" class="btn btn-primary btn-sm pull-right" type="submit">
+                        <span class="glyphicon glyphicon-floppy-disk"></span>
+                        Guardar
+                    </button>
                 </div>
 
                 <div class="clearfix"></div>
@@ -6051,7 +6055,7 @@
                                     <td>{{anticipo.fecha | date: "dd/MM/yyyy"}}</td>
                                     <td>{{anticipo.empleado.persona.nombre_completo}}</td>
                                     <td ng-if="!anticipo.id || anticipo.montoEdit">
-                                        <input class="form-control" type="number" ng-model="anticipo.monto" ng-change="sumarMontoPrestamoNuevo(anticipo)" min="1"
+                                        <input step="0.01" class="form-control" type="number" ng-model="anticipo.monto" ng-change="sumarMontoPrestamoNuevo(anticipo)" min="1"
                                             max="{{listaAnticipos[listaAnticipos.length-2].saldo_salario}}">
                                     </td>
                                     <td ng-if="anticipo.id" ng-hide="anticipo.montoEdit">{{anticipo.monto|number:2}}</td>
@@ -6102,7 +6106,7 @@
                                 <td>{{anticipo.fecha | date: "dd/MM/yyyy"}}</td>
                                 <td>{{anticipo.empleado.persona.nombre_completo}}</td>
                                 <td ng-if="!anticipo.id || anticipo.montoEdit">
-                                    <input class="form-control" max="{{anticipo.tope}}" min="0" type="number" ng-model="anticipo.monto" ng-change="sumarMontoPrestamoNuevo2(anticipo)"
+                                    <input step="0.01" class="form-control" max="{{anticipo.tope}}" min="0" type="number" ng-model="anticipo.monto" ng-change="sumarMontoPrestamoNuevo2(anticipo)"
                                         min="1">
                                 </td>
 
@@ -6115,7 +6119,7 @@
                                 <td>{{anticipo.saldo_salario|number:2}}</td>
                                 <td>
                                     <div class="action-buttons">
-                                        <a class="red" uib-tooltip="Eliminar" href="javascript:void(0)" ng-click="EliminarAnticipo(anticipo)">
+                                        <a class="red" uib-tooltip="Eliminar" href="javascript:void(0)" ng-click="EliminarAnticipo(index)">
                                             <i class="ace-icon fa fa-trash bigger-130"></i>
                                         </a>
 
@@ -6460,14 +6464,18 @@
                     <label> &nbsp;Nuevo anticipo empleados seleccionados </label>
                 </h4>
             </div>
+            <div class="modal-footer wizard-actions">
+                <button type="submit" class="btn btn-primary btn-sm">
+                    <span class="glyphicon glyphicon-floppy-disk"></span>
+                    Generar
+                </button>
+                <button type="button" class="btn btn-danger btn-sm" ng-click="cerrarDialogNuevoAnticipoRegularTodos()">
+                    <i class="ace-icon fa fa-times"></i>Cancelar
+                </button>
+            </div>
             <div class="modal-body">
                 <div class="row">
-                    <label>Seleccionar Empleado</label>
-                    <div class="col-sm-12 form-group">
-                        <div isteven-multi-select input-model="todosLosEmpleados" output-model="anticipo.empleados" button-label="icon nombre" item-label="icon nombre maker"
-                            tick-property="ticked" translation="localLang">
-                        </div>
-                    </div>
+                   
                     <div class="col-sm-12">
 
                         <div class="form-group">
@@ -6499,19 +6507,16 @@
                         </div>
 
                     </div>
-
+                    <label>Seleccionar Empleado</label>
+                    <div class="col-sm-12 form-group">
+                        <div isteven-multi-select input-model="todosLosEmpleados" output-model="anticipo.empleados" button-label="icon nombre" item-label="icon nombre maker"
+                            tick-property="ticked" translation="localLang">
+                        </div>
+                    </div>
 
                 </div>
             </div>
-            <div class="modal-footer wizard-actions">
-                <button type="submit" class="btn btn-primary btn-sm">
-                    <span class="glyphicon glyphicon-floppy-disk"></span>
-                    Generar
-                </button>
-                <button type="button" class="btn btn-danger btn-sm" ng-click="cerrarDialogNuevoAnticipoRegularTodos()">
-                    <i class="ace-icon fa fa-times"></i>Cancelar
-                </button>
-            </div>
+            
         </form>
 
     </div>
@@ -8575,8 +8580,8 @@
             <div class="modal-body">
                 <div>
                     <p>Se aplicaran todos los efectos jurídicos relacionados a la relación</p>
-                    <p> laboral de esta inactivación y algunas funcionalidades correcpondiente</p>
-                    <p> a los trabajadores no podra ser usados</p>
+                    <p>laboral de esta inactivación y algunas funcionalidades correspondiente</p>
+                    <p>a los trabajadores no podra ser usados</p>
                 </div>
             </div>
             <div class="modal-footer">
