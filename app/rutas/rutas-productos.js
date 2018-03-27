@@ -1,6 +1,6 @@
 module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Producto, Proveedor, Cliente, Clase, Inventario, ComisionVendedorProducto,
 	Usuario, DetalleVenta, DetalleMovimiento, Movimiento, Venta, Compra, DetalleCompra, Almacen, Sucursal, signs3, Tipo, ProductoBase, sequelize,
-	ContabilidadCuenta, UsuarioGrupos) {
+	ContabilidadCuenta) {
 
 	router.route('/productos')
 		.post(function (req, res) {
@@ -120,7 +120,7 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 			});
 		});
 
-	router.route('/productos/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion/grupo/:id_grupo')
+	router.route('/productos/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion')
 		.get(function (req, res) {
 			var condicionProducto = "empresa=" + req.params.id_empresa, paginas, limit;
 			if (req.params.texto_busqueda != 0) {
@@ -132,9 +132,7 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 				grupo.nombre LIKE '%"+ req.params.texto_busqueda + "%' or \
 				subgrupo.nombre LIKE '%"+ req.params.texto_busqueda + "%')";
 			}
-			if (req.params.id_grupo != 0) {
-				condicionProducto += ' and grupo=' + req.params.id_grupo
-			}
+
 			sequelize.query("select count(producto.id) as cantidad_productos \
 							from agil_producto as producto \
 							LEFT OUTER JOIN gl_clase AS grupo ON (producto.grupo = grupo.id) \
@@ -470,84 +468,32 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 			});
 		});
 
-	router.route('/productos-panel/empresa/:id_empresa/almacen/:id_almacen/user/:id_usuario')
+	router.route('/productos-panel/empresa/:id_empresa/almacen/:id_almacen')
 		.get(function (req, res) {
-			var listaProductos = []
-			var grupos = []
-			Usuario.find({
-				where: {id: req.params.id_usuario},
-				include:[{ model: UsuarioGrupos, as: 'grupos', include: [{ model: Clase, as: 'grupo' }] }]
-			}).then(function (usuarioEncontrado) {
-				grupos = usuarioEncontrado.grupos.map(function (grupo) {
-					return grupo.id_grupo
-				})
-				Producto.findAll({
-					where: { id_empresa: req.params.id_empresa, publicar_panel: true, activar_inventario: false, id_grupo:{$in: grupos} },
-					include: [{ model: Clase, as: 'tipoProducto' }]
-				}).then(function (productos) {
-					productos.map(function (producto, i) {
-						ProductoBase.findAll({
-							where: { id_producto: producto.id },
-							include: [{ model: Producto, as: 'productoBase', include: [{ model: Inventario, as: 'inventarios', where: { id_almacen: req.params.id_almacen, cantidad: { $gte: 0 } }, required: false }] }]
-						}).then(function (productosBase) {
-							producto.dataValues.productosBase = productosBase
-							if (i == productos.length - 1) {
-								Array.prototype.push.apply(listaProductos, productos);
-								Producto.findAll({
-									where: { id_empresa: req.params.id_empresa, publicar_panel: true, activar_inventario: true, id_grupo:{$in: grupos} },
-									include: [{ model: Inventario, as: 'inventarios', where: { id_almacen: req.params.id_almacen }}],
-									include: [{ model: Clase, as: 'tipoProducto' }]
-								}).then(function (productosInventarios) {
-									productosInventarios.map(function (productoInventario, y) {
-										Inventario.findAll({
-											where: { id_producto: productoInventario.id, id_almacen: req.params.id_almacen }
-										}).then(function (inventarios) {
-											productoInventario.dataValues.inventarios = inventarios
-											ProductoBase.findAll({
-												where: { id_producto: productoInventario.id },
-												include: [{ model: Producto, as: 'productoBase', include: [{ model: Inventario, as: 'inventarios', where: { id_almacen: req.params.id_almacen, cantidad: { $gte: 0 } }}] }]
-											}).then(function (productosBase) {
-												productoInventario.productosBase = productosBase
-												if (i == productos.length - 1) {
-													if (y == productosInventarios.length - 1) {
-														Array.prototype.push.apply(listaProductos, productosInventarios);
-														res.json(listaProductos);
-													}
-												}
-											})
-										})
-									})
-								})
-							}
-						})
-					})
-				});
-			})
-			
-			// Producto.findAll({
-			// 	where: { id_empresa: req.params.id_empresa, publicar_panel: true },
-			// 	include: [{ model: Inventario, as: 'inventarios', where: { id_almacen: req.params.id_almacen, cantidad: { $gte: 0 } }, required: false },
-			// 	{ model: Clase, as: 'tipoProducto' },
-			// 	{
-			// 		model: ProductoBase, as: 'productosBase',
-			// 		include: [{
-			// 			model: Producto, as: 'productoBase',
-			// 			include: [{ model: Inventario, as: 'inventarios', where: { id_almacen: req.params.id_almacen, cantidad: { $gt: 0 } }, required: false },
-			// 			{ model: Clase, as: 'tipoProducto' },
-			// 			{
-			// 				model: ProductoBase, as: 'productosBase',
-			// 				include: [{
-			// 					model: Producto, as: 'productoBase',
-			// 					include: [{ model: Inventario, as: 'inventarios', where: { id_almacen: req.params.id_almacen, cantidad: { $gt: 0 } }, required: false },
-			// 					{ model: Clase, as: 'tipoProducto' }]
-			// 				}]
-			// 			}]
-			// 		}]
-			// 	}],
-			// 	order: [[{ model: Inventario, as: 'inventarios' }, 'updatedAt', 'DESC']]
-			// }).then(function (productos) {
-			// 	res.json(productos);
-			// });
+			Producto.findAll({
+				where: { id_empresa: req.params.id_empresa, publicar_panel: true },
+				include: [{ model: Inventario, as: 'inventarios', where: { id_almacen: req.params.id_almacen, cantidad: { $gte: 0 } }, required: false },
+				{ model: Clase, as: 'tipoProducto' },
+				{
+					model: ProductoBase, as: 'productosBase',
+					include: [{
+						model: Producto, as: 'productoBase',
+						include: [{ model: Inventario, as: 'inventarios', where: { id_almacen: req.params.id_almacen, cantidad: { $gt: 0 } }, required: false },
+						{ model: Clase, as: 'tipoProducto' },
+						{
+							model: ProductoBase, as: 'productosBase',
+							include: [{
+								model: Producto, as: 'productoBase',
+								include: [{ model: Inventario, as: 'inventarios', where: { id_almacen: req.params.id_almacen, cantidad: { $gt: 0 } }, required: false },
+								{ model: Clase, as: 'tipoProducto' }]
+							}]
+						}]
+					}]
+				}],
+				order: [[{ model: Inventario, as: 'inventarios' }, 'updatedAt', 'DESC']]
+			}).then(function (productos) {
+				res.json(productos);
+			});
 		});
 
 	router.route('/comision-productos-vendedor/empresa/:id_empresa/usuario/:id_usuario')
