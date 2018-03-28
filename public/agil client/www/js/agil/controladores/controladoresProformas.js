@@ -2,7 +2,7 @@ angular.module('agil.controladores')
     .controller('controladorProformas', function ($scope, $filter, $rootScope, $route, $templateCache, $location, $window, $localStorage, Paginator, $timeout,
         blockUI, ClasesTipo, socket, ObtenerCambioMoneda, ClientesNit, Proformas, FiltroProformas, ActividadEmpresa, ActividadServicio, ActividadesEmpresa,
         ServiciosEmpresa, Proforma, ProformaInfo, Clientes, fechasProforma, eliminarProforma, ListaSucursalesActividadesDosificacionEmpresa, DosificacionesDisponibles,
-        Sucursales, ListaSucursalesUsuario, ListaHistorialActividad) {
+        Sucursales, ListaSucursalesUsuario, ListaHistorialActividad, ImprimirSalida, ConfiguracionesFacturasProformas) {
 
         $scope.usuario = JSON.parse($localStorage.usuario);
 
@@ -159,6 +159,103 @@ angular.module('agil.controladores')
                     $scope.abrirPopupConfirmacionEliminacion($scope.eliminarDetalleActividadEmpresa, actividad)
                 });
             }, 500)
+        }
+
+        $scope.imprimirFactura = function (proforma) {
+            if (proforma.fecha_factura == null) {
+                $scope.mostrarMensaje('La proforma aún no ha sido facturada.')
+                return
+            }
+            var paraFacturar = [proforma]
+            var datosProformas = []
+
+            var movimiento = {}
+            var promConfigFact = ConfiguracionesFacturasProformas($scope.usuario.id_empresa)
+            promConfigFact.then(function (configuracionFactura) {
+                var promMov = ClasesTipo('MOVEGR')
+                promMov.then(function (dato) {
+                    dato.clases.map(function (clase) {
+                        if (clase.nombre == "FACTURACIÓN" && clase.nombre_corto == "FACT") {
+                            movimiento = clase
+                        }
+                    })
+                    blockUI.start();
+                    var promesa = ClasesTipo("TIPA");
+                    promesa.then(function (entidad) {
+                        $scope.tiposPago = entidad.clases;
+                        paraFacturar.map(function (proforma, i) {
+                            var prom = ProformaInfo(proforma.id, proforma.id_actividad)
+                            prom.then(function (porformaConsultada) {
+                                datosProformas.push(porformaConsultada.proforma)
+                                if (i === paraFacturar.length - 1) {
+                                    $scope.facturaProformas = {}
+                                    $scope.facturaProformas.configuracion = configuracionFactura.configuracion
+                                    $scope.facturaProformas.movimiento = movimiento
+                                    $scope.facturaProformas.cliente = datosProformas[0].clienteProforma
+                                    $scope.facturaProformas.autorizacion = datosProformas[0].autorizacion
+                                    $scope.facturaProformas.factura = datosProformas[0].factura
+                                    $scope.facturaProformas.codigo_control = datosProformas[0].codigo_control
+                                    $scope.facturaProformas.fecha = new Date(datosProformas[0].fecha_factura)
+                                    $scope.facturaProformas.fecha_limite_emision = new Date(datosProformas[0].fecha_limite_emision)
+                                    // $scope.facturaProformas.actividadEconomica = datosProformas[0].actividadEconomica
+                                    $scope.facturaProformas.actividad = datosProformas[0].actividadEconomica
+                                    $scope.facturaProformas.sucursal = datosProformas[0].sucursalProforma
+                                    $scope.facturaProformas.detallesVenta = datosProformas[0].detallesProformas
+                                    $scope.facturaProformas.detalle = ""
+                                    $scope.facturaProformas.totalImporteBs = datosProformas[0].totalImporteBs
+                                    $scope.facturaProformas.importe = datosProformas[0].importe
+                                    $scope.facturaProformas.fecha_factura = new Date(datosProformas[0].fecha_factura).toLocaleDateString()
+                                    $scope.facturaProformas.fechaTexto = new Date($scope.facturaProformas.fecha).toLocaleDateString()
+                                    $scope.facturaProformas.periodo_mes = datosProformas[0].mes
+                                    $scope.facturaProformas.periodo_anio = datosProformas[0].anio
+                                    $scope.facturaProformas.datosProformas = datosProformas
+                                    $scope.facturaProformas.descripcion = ""
+                                    $scope.facturaProformas.movimiento = movimiento
+                                    $scope.facturaProformas.id_movimiento = $scope.facturaProformas.movimiento.id
+                                    $scope.facturaProformas.id_tipo_pago = $scope.tiposPago[0].id
+                                    $scope.facturaProformas.tipoPago = $scope.tiposPago[1]
+                                    $scope.obtenerTipoEgreso($scope.facturaProformas.movimiento)
+                                    $scope.esContado = false
+                                    $scope.facturaProformas.usar_servicios = true
+                                    $scope.facturaProformas.id_usuario = $scope.usuario.id
+                                    $scope.facturaProformas.fecha = datosProformas[0].fecha
+                                    $scope.facturaProformas.id_empresa = $scope.usuario.id_empresa
+                                    $scope.facturaProformas.datosProformas.forEach(function (proforma) {
+                                        $scope.facturaProformas.descripcion += proforma.detalle + ". "
+                                        // $scope.facturaProformas.totalImporteBs += proforma.totalImporteBs
+                                        $scope.facturaProformas.importe = $scope.facturaProformas.totalImporteBs
+                                        $scope.facturaProformas.total = $scope.facturaProformas.importe
+                                        $scope.facturaProformas.importeLiteral = ConvertirALiteral($scope.facturaProformas.totalImporteBs.toFixed(2));
+                                        $scope.facturaProformas.numero_literal = $scope.facturaProformas.importeLiteral
+                                        var promesa = ObtenerCambioMoneda(proforma.fecha_proforma)
+                                        var tcProforma = { ufv: "--", dolar: "--" }
+                                        promesa.then(function (dato) {
+                                            if (dato.monedaCambio) {
+                                                tcProforma = { ufv: dato.monedaCambio.ufv, dolar: dato.monedaCambio.dolar };
+                                            }
+                                            proforma.tc = tcProforma
+                                            proforma.importe = proforma.importeTotalBs
+                                            proforma.detallesProformas.map(function (det, y) {
+                                                det.tc = proforma.tc
+                                                if (y === proforma.detallesProformas.length - 1) {
+                                                    Array.prototype.push.apply($scope.facturaProformas.detallesVenta, proforma.detallesProformas);
+                                                }
+                                            })
+                                        })
+                                        $scope.dolarActual = $scope.obtenerCambioDolarActual()
+                                    });
+                                    blockUI.stop()
+                                    ImprimirSalida("FACT", $scope.facturaProformas, false, $scope.usuario)
+                                }
+                            }, function (err) {
+                                $scope.mostrarMensaje(err.message)
+                                blockUI.stop()
+                            })
+                        })
+                    });
+
+                })
+            })
         }
 
         $scope.eliminarDetalleActividadEmpresa = function (actividad) {
@@ -987,7 +1084,7 @@ angular.module('agil.controladores')
                                 proforma.fecha_proforma = $scope.fechaATexto(proforma.fecha_proforma)
                             });
                         }, 500)
-                        
+
                         blockUI.stop()
                     })
                 } else {

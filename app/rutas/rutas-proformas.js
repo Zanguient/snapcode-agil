@@ -174,7 +174,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
                     res.json({ mensaje:  err.stack !== undefined ? err.stack : err.message, hasErr: true })
                 });
         })
-    router.route('/proforma/:id/:id_actividad')
+    router.route('/proforma/:id')
         .get(function (req, res) {
             Proforma.find(
                 {
@@ -889,86 +889,87 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
                 include: [{ model: Dosificacion, as: 'dosificacion', include: [{ model: Clase, as: 'pieFactura' }] },
                 { model: Sucursal, as: 'sucursal', include: [{ model: Empresa, as: 'empresa' }] }]
             }).then(function (sucursalActividadDosificacion) {
-                if (sucursalActividadDosificacion.dosificacion) {
-                    var dosificacion = sucursalActividadDosificacion.dosificacion;
-                    factura.factura = dosificacion.correlativo;
-                    factura.pieFactura = dosificacion.pieFactura;
-                    factura.codigo_control = CodigoControl.obtenerCodigoControl(dosificacion.autorizacion.toString(),
-                        dosificacion.correlativo.toString(),
-                        factura.cliente.nit.toString(),
-                        formatearFecha(factura.fecha_factura).toString(),
-                        parseFloat(factura.totalImporteBs).toFixed(2),
-                        dosificacion.llave_digital.toString());
-                    factura.autorizacion = dosificacion.autorizacion.toString();
-                    factura.fecha_limite_emision = dosificacion.fecha_limite_emision;
-                    factura.numero_literal = NumeroLiteral.Convertir(parseFloat(factura.totalImporteBs).toFixed(2).toString());
-                    
-                    var laFecha = factura.fecha_factura.split("/")
-                    var fecha_factura = new Date(laFecha[2], laFecha[1] - 1, laFecha[0])
-                    factura.datosProformas.map(function (prof, i) {
-                        Proforma.update({
-                            movimiento: factura.movimiento.id,
-                            factura: factura.factura,
-                            autorizacion: factura.autorizacion,
-                            fecha_limite_emision: factura.fecha_limite_emision,
-                            codigo_control: factura.codigo_control,
-                            descripcion: factura.descripcion,
-                            fecha_factura: fecha_factura,
-                            dias_credito: factura.dias_credito,
-                            a_cuenta: factura.a_cuenta,
-                            id_tipo_pago: factura.tipoPago.id
-                        }, {
-                                where: { id: prof.id }
-                            }).then(function (proformaActualizada) {
-                                if (i === factura.datosProformas.length - 1) {
-                                    Dosificacion.update({
-                                        correlativo: (factura.factura + 1)
-                                    }, {
-                                            where: { id: dosificacion.id }
-                                        }).then(function (correlativoActualizado) {
-                                            ConfiguracionGeneralFactura.find({
-                                                where: {
-                                                    id_empresa: prof.id_empresa
-                                                },
-                                                include: [{ model: Clase, as: 'impresionFactura' },
-                                                { model: Clase, as: 'tipoFacturacion' },
-                                                { model: Clase, as: 'tamanoPapelFactura' },
-                                                { model: Clase, as: 'tituloFactura' },
-                                                { model: Clase, as: 'subtituloFactura' },
-                                                { model: Clase, as: 'tamanoPapelNotaVenta' },
-                                                { model: Clase, as: 'tamanoPapelNotaTraspaso' },
-                                                { model: Clase, as: 'tamanoPapelNotaBaja' },
-                                                { model: Clase, as: 'tamanoPapelNotaPedido' },
-                                                { model: Clase, as: 'tamanoPapelCierreCaja' }]
-                                            }).then(function (configuracionGeneralFactura) {
-                                                factura.configuracion = configuracionGeneralFactura
-                                                var total = 0
-                                                factura.detallesVenta = factura.detallesVenta.map(function (det, i) {
-                                                    var producto = { codigo: det.servicio.codigo, nombre: det.servicio.nombre, unidad_medida: "" }
-                                                    total += det.importe
-                                                    det.total = det.importe * det.cantidad
-                                                    det.producto = producto
-                                                    return det
-                                                })
-                                                factura.total = total
-                                                // factura.cliente = factura.clienteProforma
-                                                res.json({ mensaje: 'Espere la impresión...', factura: req.body })
-
+                if (sucursalActividadDosificacion) {
+                    if (sucursalActividadDosificacion.dosificacion) {
+                        var dosificacion = sucursalActividadDosificacion.dosificacion;
+                        factura.factura = dosificacion.correlativo;
+                        factura.pieFactura = dosificacion.pieFactura;
+                        factura.codigo_control = CodigoControl.obtenerCodigoControl(dosificacion.autorizacion.toString(),
+                            dosificacion.correlativo.toString(),
+                            factura.cliente.nit.toString(),
+                            formatearFecha(factura.fecha_factura).toString(),
+                            parseFloat(factura.totalImporteBs).toFixed(2),
+                            dosificacion.llave_digital.toString());
+                        factura.autorizacion = dosificacion.autorizacion.toString();
+                        factura.fecha_limite_emision = dosificacion.fecha_limite_emision;
+                        factura.numero_literal = NumeroLiteral.Convertir(parseFloat(factura.totalImporteBs).toFixed(2).toString());
+                        
+                        var laFecha = factura.fecha_factura.split("/")
+                        var fecha_factura = new Date(laFecha[2], laFecha[1] - 1, laFecha[0])
+                        factura.datosProformas.map(function (prof, i) {
+                            Proforma.update({
+                                movimiento: factura.movimiento.id,
+                                factura: factura.factura,
+                                autorizacion: factura.autorizacion,
+                                fecha_limite_emision: factura.fecha_limite_emision,
+                                codigo_control: factura.codigo_control,
+                                descripcion: factura.descripcion,
+                                fecha_factura: fecha_factura,
+                                dias_credito: factura.dias_credito,
+                                a_cuenta: factura.a_cuenta,
+                                id_tipo_pago: factura.tipoPago.id
+                            }, {
+                                    where: { id: prof.id }
+                                }).then(function (proformaActualizada) {
+                                    if (i === factura.datosProformas.length - 1) {
+                                        Dosificacion.update({
+                                            correlativo: (factura.factura + 1)
+                                        }, {
+                                                where: { id: dosificacion.id }
+                                            }).then(function (correlativoActualizado) {
+                                                ConfiguracionGeneralFactura.find({
+                                                    where: {
+                                                        id_empresa: prof.id_empresa
+                                                    },
+                                                    include: [{ model: Clase, as: 'impresionFactura' },
+                                                    { model: Clase, as: 'tipoFacturacion' },
+                                                    { model: Clase, as: 'tamanoPapelFactura' },
+                                                    { model: Clase, as: 'tituloFactura' },
+                                                    { model: Clase, as: 'subtituloFactura' },
+                                                    { model: Clase, as: 'tamanoPapelNotaVenta' },
+                                                    { model: Clase, as: 'tamanoPapelNotaTraspaso' },
+                                                    { model: Clase, as: 'tamanoPapelNotaBaja' },
+                                                    { model: Clase, as: 'tamanoPapelNotaPedido' },
+                                                    { model: Clase, as: 'tamanoPapelCierreCaja' }]
+                                                }).then(function (configuracionGeneralFactura) {
+                                                    factura.configuracion = configuracionGeneralFactura
+                                                    var total = 0
+                                                    factura.detallesVenta = factura.detallesVenta.map(function (det, i) {
+                                                        var producto = { codigo: det.servicio.codigo, nombre: det.servicio.nombre, unidad_medida: "" }
+                                                        total += det.importe
+                                                        det.total = det.importe * det.cantidad
+                                                        det.producto = producto
+                                                        return det
+                                                    })
+                                                    factura.total = total
+                                                    // factura.cliente = factura.clienteProforma
+                                                    res.json({ mensaje: 'Espere la impresión...', factura: req.body })
+    
+                                                }).catch(function (err) {
+                                                    res.json({ mensaje:  err.stack !== undefined ? err.stack : err.message, hasError: true, factura: req.body })
+                                                });
                                             }).catch(function (err) {
                                                 res.json({ mensaje:  err.stack !== undefined ? err.stack : err.message, hasError: true, factura: req.body })
                                             });
-                                        }).catch(function (err) {
-                                            res.json({ mensaje:  err.stack !== undefined ? err.stack : err.message, hasError: true, factura: req.body })
-                                        });
-                                }
-                            }).catch(function (err) {
-                                res.json({ mensaje:  err.stack !== undefined ? err.stack : err.message, hasError: true, factura: req.body })
-                            });
-                    })
-                } else {
-                    res.json({ mensaje: 'La actividad no tiene asignada una dosificación activa. No se puede generar factura!', hasError: true, factura: req.body })
+                                    }
+                                }).catch(function (err) {
+                                    res.json({ mensaje:  err.stack !== undefined ? err.stack : err.message, hasError: true, factura: req.body })
+                                });
+                        })
+                    } else {
+                        res.json({ mensaje: 'La actividad no tiene asignada una dosificación activa. No se puede generar factura!', hasError: true, factura: req.body })
+                    }
                 }
-
             }).catch(function (err) {
                 res.json({ mensaje:  err.stack !== undefined ? err.stack : err.message, hasError: true, factura: req.body })
             });
@@ -992,6 +993,28 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
                     res.json({ mensaje:  err.stack !== undefined ? err.stack : err.message, hasErr: true, factura: req.body })
                 });
             })
+        })
 
+        router.route('/configuracion/proforma/facturar/:id_empresa')
+        .get(function (req, res) {
+            ConfiguracionGeneralFactura.find({
+                where: {
+                    id_empresa: req.params.id_empresa
+                },
+                include: [{ model: Clase, as: 'impresionFactura' },
+                { model: Clase, as: 'tipoFacturacion' },
+                { model: Clase, as: 'tamanoPapelFactura' },
+                { model: Clase, as: 'tituloFactura' },
+                { model: Clase, as: 'subtituloFactura' },
+                { model: Clase, as: 'tamanoPapelNotaVenta' },
+                { model: Clase, as: 'tamanoPapelNotaTraspaso' },
+                { model: Clase, as: 'tamanoPapelNotaBaja' },
+                { model: Clase, as: 'tamanoPapelNotaPedido' },
+                { model: Clase, as: 'tamanoPapelCierreCaja' }]
+            }).then(function (configuracionGeneralFactura) {
+                res.json({ configuracion: configuracionGeneralFactura })
+            }).catch(function (err) {
+                res.json({ mensaje:  err.stack !== undefined ? err.stack : err.message, hasError: true, factura: req.body })
+            });
         })
 }

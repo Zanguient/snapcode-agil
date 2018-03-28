@@ -280,14 +280,14 @@
 							<label class="col-sm-3 control-label no-padding-right" for="nombre_usuario">Usuario</label>
 
 							<div class="col-sm-9">
-								<input required type="text" id="nombre_usuario" ng-model="usuario.nombre_usuario" placeholder="Nombre de usuario" class="col-xs-10 col-sm-5"  ng-change="validarUsuario(usuario.nombre_usuario)"/><p ng-class ="{'text-red':data.type,'text-green':!data.type}">{{data.message}}</p>
+								<input required type="text" ng-model="usuario.nombre_usuario" placeholder="Nombre de usuario" class="col-xs-10 col-sm-5"  ng-change="validarUsuario(usuario.nombre_usuario)"/><p ng-class ="{'text-red':data.type,'text-green':!data.type}">{{data.message}}</p>
 							</div>
 						</div>
 						<div class="form-group">
 							<label class="col-sm-3 control-label no-padding-right" for="clave">Clave</label>
 
 							<div class="col-sm-9">
-								<input required type="password" id="clave" ng-model="usuario.clave" placeholder="Clave" class="col-xs-10 col-sm-5" />
+								<input required type="password" ng-model="usuario.clave" placeholder="Clave" class="col-xs-10 col-sm-5" />
 							</div>
 						</div>
 						<div class="form-group">

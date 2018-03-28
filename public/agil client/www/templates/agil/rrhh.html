@@ -303,7 +303,7 @@
 
                             <td ng-if="fieldViewer.getConfiguration().grupo_sanguineo.show">
 
-                                {{empleado.ficha.tipoContrato.nombre}}
+                                {{empleado.tipoContrato}}
                             </td>
                             <td ng-if="fieldViewer.getConfiguration().campo.show">
                                 {{empleado.campo}}
@@ -316,7 +316,7 @@
                                 </a>
                                 <script type="text/ng-template" id="myPopoverTemplate.html">                                           
                                             <div class="form-group">                                              
-                                              <p ng-repeat=" cargo in empleado.ficha.cargos">{{$index+1}}. {{cargo.cargo.nombre}}</p>
+                                              <p>{{empleado.cargos}}</p>
                                             </div>                                           
                                         </script>
                             </td>

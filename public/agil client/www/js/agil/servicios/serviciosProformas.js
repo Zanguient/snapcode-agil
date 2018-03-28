@@ -68,7 +68,7 @@ angular.module('agil.servicios')
     }])
 
     .factory('Proforma', function ($resource) {
-        return $resource(restServer + "proforma/:id/:id_actividad", {},
+        return $resource(restServer + "proforma/:id", {},
             {
                 'update': { method: 'PUT' }
             });
@@ -77,7 +77,7 @@ angular.module('agil.servicios')
     .factory('ProformaInfo', ['Proforma', '$q', function (Proforma, $q) {
         var res = function (idProforma, id_actividad) {
             var delay = $q.defer();
-            Proforma.get({ id: idProforma, id_actividad: id_actividad }, function (entidades) {
+            Proforma.get({ id: idProforma}, function (entidades) {
                 delay.resolve(entidades);
             }, function (error) {
                 delay.reject(error);
@@ -159,6 +159,26 @@ angular.module('agil.servicios')
         var res = function (idEmpresa, idproformas) {
             var delay = $q.defer();
             DetallesProformasAFacturar.get({ id_empresa: idEmpresa }, idproformas, function (entidades) {
+                delay.resolve(entidades);
+            }, function (error) {
+                delay.reject(error);
+            });
+            return delay.promise;
+        };
+        return res;
+    }])
+
+    .factory('configuracionFacturaEmpresa', function ($resource) {
+        return $resource(restServer + "configuracion/proforma/facturar/:id_empresa", {},
+            {
+                'update': { method: 'PUT' }
+            });
+    })
+
+    .factory('ConfiguracionesFacturasProformas', ['configuracionFacturaEmpresa', '$q', function (configuracionFacturaEmpresa, $q) {
+        var res = function (idEmpresa) {
+            var delay = $q.defer();
+            configuracionFacturaEmpresa.get({ id_empresa: idEmpresa }, function (entidades) {
                 delay.resolve(entidades);
             }, function (error) {
                 delay.reject(error);

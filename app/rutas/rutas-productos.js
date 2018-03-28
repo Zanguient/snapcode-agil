@@ -1,6 +1,6 @@
 module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Producto, Proveedor, Cliente, Clase, Inventario, ComisionVendedorProducto,
 	Usuario, DetalleVenta, DetalleMovimiento, Movimiento, Venta, Compra, DetalleCompra, Almacen, Sucursal, signs3, Tipo, ProductoBase, sequelize,
-	ContabilidadCuenta) {
+	ContabilidadCuenta, UsuarioGrupos) {
 
 	router.route('/productos')
 		.post(function (req, res) {
@@ -470,8 +470,60 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 			});
 		});
 
-	router.route('/productos-panel/empresa/:id_empresa/almacen/:id_almacen/user/:id_user')
+	router.route('/productos-panel/empresa/:id_empresa/almacen/:id_almacen/user/:id_usuario')
 		.get(function (req, res) {
+			var listaProductos = []
+			// var grupos = []
+			// Usuario.find({
+			// 	where: {id: req.params.id_usuario},
+			// 	include:[{ model: UsuarioGrupos, as: 'grupos', include: [{ model: Clase, as: 'grupo' }] }]
+			// }).then(function (usuarioEncontrado) {
+			// 	grupos = usuarioEncontrado.grupos.map(function (grupo) {
+			// 		return grupo.id_grupo
+			// 	})
+			// 	Producto.findAll({
+			// 		where: { id_empresa: req.params.id_empresa, publicar_panel: true, activar_inventario: false, id_grupo:{$in: grupos} },
+			// 		include: [{ model: Clase, as: 'tipoProducto' }]
+			// 	}).then(function (productos) {
+			// 		productos.map(function (producto, i) {
+			// 			ProductoBase.findAll({
+			// 				where: { id_producto: producto.id },
+			// 				include: [{ model: Producto, as: 'productoBase', include: [{ model: Inventario, as: 'inventarios', where: { id_almacen: req.params.id_almacen, cantidad: { $gte: 0 } }, required: false }] }]
+			// 			}).then(function (productosBase) {
+			// 				producto.dataValues.productosBase = productosBase
+			// 				if (i == productos.length - 1) {
+			// 					Array.prototype.push.apply(listaProductos, productos);
+			// 					Producto.findAll({
+			// 						where: { id_empresa: req.params.id_empresa, publicar_panel: true, activar_inventario: true, id_grupo:{$in: grupos} },
+			// 						include: [{ model: Inventario, as: 'inventarios', where: { id_almacen: req.params.id_almacen }}],
+			// 						include: [{ model: Clase, as: 'tipoProducto' }]
+			// 					}).then(function (productosInventarios) {
+			// 						productosInventarios.map(function (productoInventario, y) {
+			// 							Inventario.findAll({
+			// 								where: { id_producto: productoInventario.id, id_almacen: req.params.id_almacen }
+			// 							}).then(function (inventarios) {
+			// 								productoInventario.dataValues.inventarios = inventarios
+			// 								ProductoBase.findAll({
+			// 									where: { id_producto: productoInventario.id },
+			// 									include: [{ model: Producto, as: 'productoBase', include: [{ model: Inventario, as: 'inventarios', where: { id_almacen: req.params.id_almacen, cantidad: { $gte: 0 } }}] }]
+			// 								}).then(function (productosBase) {
+			// 									productoInventario.productosBase = productosBase
+			// 									if (i == productos.length - 1) {
+			// 										if (y == productosInventarios.length - 1) {
+			// 											Array.prototype.push.apply(listaProductos, productosInventarios);
+			// 											res.json(listaProductos);
+			// 										}
+			// 									}
+			// 								})
+			// 							})
+			// 						})
+			// 					})
+			// 				}
+			// 			})
+			// 		})
+			// 	});
+			// })
+			
 			Producto.findAll({
 				where: { id_empresa: req.params.id_empresa, publicar_panel: true },
 				include: [{ model: Inventario, as: 'inventarios', where: { id_almacen: req.params.id_almacen, cantidad: { $gte: 0 } }, required: false },

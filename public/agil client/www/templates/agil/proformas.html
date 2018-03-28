@@ -235,11 +235,11 @@
 
                             <td>
                                 <div class="hidden-sm hidden-xs action-buttons">
-                                    <a ng-disabled="!aplicacion.puede_modificar" class="orange" href="javascript:void(0)" ng-click="editar(proforma)">
+                                    <a ng-disabled="!aplicacion.puede_modificar" class="orange" href="javascript:void(0)" ng-click="editar(proforma)"  data-rel="tooltip" tooltip-placement="top" uib-tooltip="Editar">
                                         <i class="ace-icon fa fa-pencil-square-o bigger-130"></i>
                                     </a>
                                     <a popover-trigger="outsideClick : outsideClick" uib-popover-template="impresiones.templateUrl" popover-placement="left"
-                                        class="green" href="javascript:void(0)" data-rel="tooltip" tooltip-placement="top" uib-tooltip="Imprimir">
+                                        class="green" href="javascript:void(0)" data-rel="tooltip" tooltip-placement="top" uib-tooltip="Imprimir proforma">
                                         <i class="ace-icon fa fa-print bigger-130"></i>
                                     </a>
                                     <script type="text/ng-template" id="impresiones.html">													
@@ -262,6 +262,9 @@
                                     <a ng-disabled="!aplicacion.puede_eliminar" class="red" ng-click="abrirPopupConfirmacionEliminacion(eliminar,proforma)" data-rel="tooltip"
                                         tooltip-placement="top" uib-tooltip="Eliminar">
                                         <i class="ace-icon fa fa-trash-o bigger-130"></i>
+                                    </a>
+                                    <a  class="red" href="javascript:void(0)" ng-click="imprimirFactura(proforma)"  data-rel="tooltip" tooltip-placement="top" uib-tooltip="Imprimir factura">
+                                        <i class="ace-icon fa fa-print bigger-130"></i>
                                     </a>
                                 </div>
                                 <div class="hidden-md hidden-lg">

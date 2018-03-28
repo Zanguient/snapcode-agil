@@ -105,6 +105,10 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, decodeBase
 														if (i === req.body.grupos.length - 1) {
 															res.json(usuarioCreado);
 														}
+													}else{
+														if (i === req.body.grupos.length - 1) {
+															res.json(usuarioCreado);
+														}
 													}
 												})
 											})
@@ -147,8 +151,8 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, decodeBase
 				{ model: Empresa, as: 'empresa', include: [{ model: Sucursal, as: 'sucursales' }] },
 				{ model: UsuarioSucursal, as: 'sucursalesUsuario', include: [{ model: Sucursal, as: 'sucursal' }] },
 				{ model: UsuarioAplicacion, as: 'aplicacionesUsuario', include: [{ model: Aplicacion, as: 'aplicacion' }] },
-				{ model: UsuarioRuta, as: 'rutas', include: [{ model: Ruta, as: 'ruta' }] },
-				{ model: UsuarioGrupos, as: 'grupos', include: [{ model: Clase, as: 'grupo' }] }
+				{ model: UsuarioRuta, as: 'rutas', include: [{ model: Ruta, as: 'ruta' }] }
+				// { model: UsuarioGrupos, as: 'grupos', include: [{ model: Clase, as: 'grupo' }] }
 				]
 			}).then(function (usuarios) {
 				res.json(usuarios);
@@ -200,24 +204,27 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, decodeBase
 		});
 	router.route('/usuario/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion')
 		.get(function (req, res) {
-			var condicionUsuario = { id_empresa: req.params.id_empresa };
-
-			if (parseInt(req.params.texto_busqueda)) {
-				condicionUsuario = { id_empresa: req.params.id_empresa, nit: parseInt(req.params.texto_busqueda) }
-			} else if (req.params.texto_busqueda != 0) {
-				condicionUsuario = {
-					id_empresa: req.params.id_empresa,
-					$or: [
-						{
-							nombre_usuario: {
-								$like: "%" + req.params.texto_busqueda + "%"
+			if (req.params.id_empresa == "0") {
+				var condicionUsuario = { id_empresa: { $ne: req.params.id_empresa } };
+			} else {
+				var condicionUsuario = { id_empresa: req.params.id_empresa };
+				if (parseInt(req.params.texto_busqueda)) {
+					condicionUsuario = { id_empresa: req.params.id_empresa, nit: parseInt(req.params.texto_busqueda) }
+				} else if (req.params.texto_busqueda != 0) {
+					condicionUsuario = {
+						id_empresa: req.params.id_empresa,
+						$or: [
+							{
+								nombre_usuario: {
+									$like: "%" + req.params.texto_busqueda + "%"
+								}
 							}
-						}
-					]
-				};
-
-
+						]
+					};
+				}
 			}
+
+
 			var ordenArreglo = [];
 			if (req.params.columna == "nombres") {
 				ordenArreglo.push({ model: Persona, as: 'persona' });
@@ -242,9 +249,9 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, decodeBase
 				{ model: Empresa, as: 'empresa', include: [{ model: Sucursal, as: 'sucursales' }] },
 				{ model: UsuarioSucursal, as: 'sucursalesUsuario', include: [{ model: Sucursal, as: 'sucursal' }] },
 				{ model: UsuarioAplicacion, as: 'aplicacionesUsuario', include: [{ model: Aplicacion, as: 'aplicacion' }] },
-				{ model: UsuarioRuta, as: 'rutas', include: [{ model: Ruta, as: 'ruta' }] },
-				{ model: UsuarioGrupos, as: 'grupos', include: [{ model: Clase, as: 'grupo' }] }
-			],
+				{ model: UsuarioRuta, as: 'rutas', include: [{ model: Ruta, as: 'ruta' }] }
+				// { model: UsuarioGrupos, as: 'grupos', include: [{ model: Clase, as: 'grupo' }] }
+				],
 				order: [ordenArreglo]
 			}).then(function (data) {
 				Usuario.findAll({
@@ -255,8 +262,8 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, decodeBase
 					{ model: Empresa, as: 'empresa', include: [{ model: Sucursal, as: 'sucursales' }] },
 					{ model: UsuarioSucursal, as: 'sucursalesUsuario', include: [{ model: Sucursal, as: 'sucursal' }] },
 					{ model: UsuarioAplicacion, as: 'aplicacionesUsuario', include: [{ model: Aplicacion, as: 'aplicacion' }] },
-					{ model: UsuarioRuta, as: 'rutas', include: [{ model: Ruta, as: 'ruta' }] },
-					{ model: UsuarioGrupos, as: 'grupos', include: [{ model: Clase, as: 'grupo' }] }
+					{ model: UsuarioRuta, as: 'rutas', include: [{ model: Ruta, as: 'ruta' }] }
+					// { model: UsuarioGrupos, as: 'grupos', include: [{ model: Clase, as: 'grupo' }] }
 					],
 					order: [ordenArreglo]
 				}).then(function (usuarios) {
@@ -272,7 +279,7 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, decodeBase
 				},
 				include: [{ model: Person, as: 'person' }, { model: UserRole, as: 'userRoles' },
 				{ model: UsuarioGrupos, as: 'grupos', include: [{ model: Clase, as: 'grupo' }] }
-			]
+				]
 			}).then(function (entity) {
 				res.json(entity);
 			});
@@ -399,7 +406,7 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, decodeBase
 																			if (i === array.length - 1) {
 																				res.json(affectedRows);
 																			}
-																		}else{
+																		} else {
 																			if (i === array.length - 1) {
 																				res.json(affectedRows);
 																			}
