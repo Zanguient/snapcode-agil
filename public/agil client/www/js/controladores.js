@@ -1,6 +1,6 @@
 angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 
-	.controller('ControladorPrincipal', function ($scope, $sce, $rootScope, $route, $templateCache, $location, $window, $localStorage, Sesion,
+	.controller('ControladorPrincipal', function ($scope, $sce, $rootScope, $route, $templateCache, $location, $window, $localStorage, Sesion, $timeout,
 		blockUI, UsuarioSucursalesAutenticacion, VencimientosProductosEmpresa, VencimientosCreditosEmpresa,
 		VencimientosDeudasEmpresa, VentaEmpresaDatos, ClienteVencimientoCredito, socket, $http, Tipos,
 		ProveedorVencimientoCredito, Venta, ClasesTipo, Compra, Producto, DatosVenta, DatosCompra,
@@ -317,7 +317,6 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 		$scope.crearNuevoComprobante = function (venta, compra, comprobante, view) {
 			$scope.htmlTooltip = $sce.trustAsHtml('Acciones Rapidas<br>Ctrl+G=Guardar<br>Ctrl+shift+G=GuardadoRapido');
 			$scope.obtenerCambioMoneda(venta, compra, comprobante, view);
-
 		}
 
 		$scope.subirExcelUfvDolar = function (event) {
@@ -1286,7 +1285,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 			promesa.then(function (dato) {
 				$scope.ventasComprobantes = dato.ventas;
 				$scope.vencimientoTotal = $scope.vencimientoTotal + $scope.ventasComprobantes.length;
-				console.log(dato.ventas)
+				// console.log(dato.ventas)
 			});
 		}
 
@@ -1569,13 +1568,13 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 		$scope.filtrarDetalleDespachos = function (filtro) {
 			if (filtro.inicio) {
 				filtro.inicio2 = new Date($scope.convertirFecha(filtro.inicio))
-			}else{
-				filtro.inicio2=0
+			} else {
+				filtro.inicio2 = 0
 			}
 			if (filtro.fin) {
 				filtro.fin2 = new Date($scope.convertirFecha(filtro.fin))
-			}else{
-				filtro.fin2=0
+			} else {
+				filtro.fin2 = 0
 			}
 			promesa = GtmDetallesDespachoAlerta($scope.usuario.id_empresa, filtro);
 			promesa.then(function (detallesDespacho) {
@@ -1654,6 +1653,8 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 		}
 		$scope.verificarSeleccionProformas = function () {
 			var paraFacturar = []
+			$scope.obtenerMovimientosEgreso()
+			$scope.obtenerTiposDePago()
 			if ($scope.alertasProformas.length > 0) {
 				var id_actividad = $scope.alertasProformas[0].actividad
 				$scope.alertasProformas.map(function (_, i) {
@@ -1728,8 +1729,8 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 				} else {
 					if (paraFacturar.length > 0) {
 						$scope.abrirFacturaProformas(paraFacturar)
-						$scope.obtenerMovimientosEgreso()
-						$scope.obtenerTiposDePago()
+						// $scope.obtenerMovimientosEgreso()
+						// $scope.obtenerTiposDePago()
 						$scope.cerrarListaVencimientoProformas()
 						// $scope.facturaProformas = {}
 						// var totalFacturaBs = 0
@@ -1805,7 +1806,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 				dolarActual = { ufv: res.monedaCambio.ufv, dolar: res.monedaCambio.dolar }
 				return dolarActual
 			}, function (err) {
-				$scope.mostrarMensaje('Hubo un problema al recuperar el cambio de dolar para '+ hoy.toLocaleDateString)
+				$scope.mostrarMensaje('Hubo un problema al recuperar el cambio de dolar para ' + hoy.toLocaleDateString)
 				return dolarActual
 			})
 
@@ -1868,10 +1869,14 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 									}
 									proforma.tc = tcProforma
 									proforma.importe = proforma.importeTotalBs
-									proforma.detallesProformas.map(function (det, i) {
+									proforma.detallesProformas.map(function (det, y) {
 										det.tc = proforma.tc
-										if (i === proforma.detallesProformas.length - 1) {
+										if (y === proforma.detallesProformas.length - 1) {
 											Array.prototype.push.apply($scope.facturaProformas.detallesVenta, proforma.detallesProformas);
+											$timeout(function () {
+												$scope.abrirPopup($scope.facturarProformas)
+											},800)
+											
 										}
 									})
 								})
@@ -1887,7 +1892,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 				})
 			})
 
-			$scope.abrirPopup($scope.facturarProformas)
+			
 		}
 
 		// $scope.imprimirFacturaProforma = function (factura) {
@@ -2845,6 +2850,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 			var year = { id: start_year + i, nombre: start_year + i }
 			return year
 		})
+		$scope.anios.reverse()
 
 		$scope.fechaATexto = function (fecha) {
 			fech = new Date(fecha)

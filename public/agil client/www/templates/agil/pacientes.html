@@ -52,7 +52,10 @@
                                 <input ng-update-hidden type="text" id="filtroCedula" ng-model="filtro.ci" placeholder="" />
                             </td>
                             <td>
-                                <input ng-update-hidden type="text" id="filtroCampo" name="filtroCampo" ng-model="filtro.campo">
+                                    <select required id="campo-rol" class="form-control" name="centroDeCostos" ng-options="centroCosto.id as centroCosto.nombre for centroCosto in centrosDeCostos | filter:{habilitado:true} track by centroCosto.id"
+                                    ng-model="filtro.campo">
+                                    <option value="">--Ninguno--</option>
+                                </select>
                             </td>
                             <td>
                                 <button type="submit" ng-disabled="formularioFiltroCuentas.$invalid" class="btn-primary btn btn-app btn-xs" ng-click="paginator.getSearch(paginator.search,filtro,null)">
@@ -361,7 +364,7 @@
                                     {{paciente.grupo_sanguineo}}
                                 </td>
                                 <td ng-if="fieldViewer.getConfiguration().campo.show">
-                                    {{paciente.campo}}
+                                    {{paciente.campamento}}
                                 </td>
                                 <td ng-if="fieldViewer.getConfiguration().cargo.show">
                                         <a popover-placement="right" uib-popover-template="dynamicPopoverCargos.templateUrl" popover-trigger="outsideClick: outsideClick"
@@ -2705,7 +2708,10 @@
                                                     <label for="campo">Campo</label>
                                                 </div>
                                                 <div class="col-lg-7">
-                                                    <input type="text" id="campo" ng-model="paciente.campo" placeholder="Campo" class="form-control" />
+                                                    <select  required id="campo-rol" name="centroDeCostos" ng-options="centroCosto as centroCosto.nombre for centroCosto in centrosDeCostos | filter:{habilitado:true} track by centroCosto.id"
+                                                ng-model="paciente.campo">
+                                                <option value="">--selecionar--</option>
+                                            </select>
                                                 </div>
 
                                             </div>
@@ -2938,7 +2944,10 @@
                                                     <label for="campo">Campo</label>
                                                 </div>
                                                 <div class="col-lg-7">
-                                                    <input disabled type="text" id="campo" ng-model="paciente.campo" placeholder="Campo" class="form-control" />
+                                                    <select  required id="campo-rol" name="centroDeCostos" ng-options="centroCosto as centroCosto.nombre for centroCosto in centrosDeCostos | filter:{habilitado:true} track by centroCosto.id"
+                                                    ng-model="paciente.campo">
+                                                    <option value="">--selecionar--</option>
+                                                </select>
                                                 </div>
 
                                             </div>

@@ -188,6 +188,7 @@
 									<tr>
 										<th>Nombre Clase</th>
 										<th>Nombre Corto</th>
+										<th ng-if="tipo.nombre=='CENTRO DE COSTOS'" >habilitado</th>
 										<th>Acciones</th>
 									</tr>
 								</thead>
@@ -199,6 +200,12 @@
 											{{clase.nombre}}
 										</td>
 										<td>{{clase.nombre_corto}}</td>
+										<td ng-if="tipo.nombre=='CENTRO DE COSTOS'">
+										<label>
+											<input ng-model="clase.habilitado" name="switch-field-1" class="ace ace-switch ace-switch-5" type="checkbox">
+											<span class="lbl check-espaniol"></span>
+										</label>
+										</td>
 										<td>
 											<div class="hidden-sm hidden-xs action-buttons">
 												<a class="green" href="javascript:void(0)" ng-click="modificarClase(clase)">
@@ -208,6 +215,7 @@
 												<a class="red" href="javascript:void(0)" ng-click="removerClase(clase)">
 													<i class="ace-icon fa fa-trash-o bigger-130"></i>
 												</a>
+												
 											</div>
 
 											<div class="hidden-md hidden-lg">

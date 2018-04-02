@@ -829,7 +829,7 @@ angular.module('agil.servicios')
 							var sizeY = 230 + (20 * salida.detallesVenta.length);
 							doc = new PDFDocument({ compress: false, size: [227, sizeY], margins: { top: 10, bottom: 10, left: 20, right: 20 } });
 							stream = doc.pipe(blobStream());
-							ImprimirPedido(salida, esAccionGuardar, doc, stream, sizeY,usuario, false);
+							ImprimirPedido(salida, esAccionGuardar, doc, stream, sizeY, usuario, false);
 						}
 					} else {
 						doc = new PDFDocument({ compress: false, size: papel, margins: { top: 0, bottom: 0, left: 20, right: 20 } });
@@ -838,7 +838,7 @@ angular.module('agil.servicios')
 						if (usuario.empresa.usar_pedidos) {
 							var sizeY = 230 + (20 * salida.detallesVenta.length);
 							doc.addPage({ size: [227, sizeY], margins: { top: 10, bottom: 10, left: 20, right: 20 } });
-							ImprimirPedido(salida, esAccionGuardar, doc, stream, sizeY,usuario,false);
+							ImprimirPedido(salida, esAccionGuardar, doc, stream, sizeY, usuario, false);
 						}
 					}
 
@@ -876,27 +876,55 @@ angular.module('agil.servicios')
 					DibujarCabeceraFacturaNVCartaOficio(doc, vacia, completa, venta, papel, pagina, totalPaginas, usuario);
 					for (var i = 0; i < venta.detallesVenta.length && items <= itemsPorPagina; i++) {
 						doc.font('Helvetica', 8);
-						venta.detallesVenta[i].fecha_vencimiento = new Date(venta.detallesVenta[i].fecha_vencimiento);
-						var fechaVencimientoTexto = venta.detallesVenta[i].fecha_vencimiento.getDate() + "/" + (venta.detallesVenta[i].fecha_vencimiento.getMonth() + 1) + "/" + venta.detallesVenta[i].fecha_vencimiento.getFullYear().toString().substring(2);
-						doc.text(venta.detallesVenta[i].producto.codigo, 55, y, { width: 70 });
-						doc.text(venta.detallesVenta[i].cantidad, 130, y);
-						doc.text(venta.detallesVenta[i].producto.unidad_medida, 155, y - 3, { width: 43 });
-						var longitudCaracteres = venta.detallesVenta[i].producto.nombre.length;
-						var yDesc = (longitudCaracteres <= 24) ? y : ((longitudCaracteres > 24 && longitudCaracteres <= 60) ? y - 4 : y - 11);
-						doc.text(venta.detallesVenta[i].producto.nombre, 198, yDesc, { width: 130 });
+						if (venta.detallesVenta[i].producto) {
+							venta.detallesVenta[i].fecha_vencimiento = new Date(venta.detallesVenta[i].fecha_vencimiento);
+							var fechaVencimientoTexto = venta.detallesVenta[i].fecha_vencimiento.getDate() + "/" + (venta.detallesVenta[i].fecha_vencimiento.getMonth() + 1) + "/" + venta.detallesVenta[i].fecha_vencimiento.getFullYear().toString().substring(2);
 
-						if (venta.con_vencimiento) {
-							doc.text(fechaVencimientoTexto, 340, y);
-							doc.text(venta.detallesVenta[i].lote, 380, y);
+							doc.text(venta.detallesVenta[i].producto.codigo, 55, y, { width: 70 });
+							doc.text(venta.detallesVenta[i].cantidad, 130, y);
+							doc.text(venta.detallesVenta[i].producto.unidad_medida, 155, y - 3, { width: 43 });
+							var longitudCaracteres = venta.detallesVenta[i].producto.nombre.length;
+							var yDesc = (longitudCaracteres <= 24) ? y : ((longitudCaracteres > 24 && longitudCaracteres <= 60) ? y - 4 : y - 11);
+							doc.text(venta.detallesVenta[i].producto.nombre, 198, yDesc, { width: 130 });
+
+							if (venta.con_vencimiento) {
+								doc.text(fechaVencimientoTexto, 340, y);
+								doc.text(venta.detallesVenta[i].lote, 380, y);
+							}
+							
+							doc.text(venta.detallesVenta[i].precio_unitario.toFixed(2), 410, y);
+							doc.text(venta.detallesVenta[i].importe.toFixed(2), 450, y);
+							doc.text((venta.detallesVenta[i].descuento ? venta.detallesVenta[i].descuento.toFixed(2) : 0), 490, y);
+							doc.text(venta.detallesVenta[i].total.toFixed(2), 530, y);
+							if (completa || vacia) {
+								doc.rect(50, y - 15, 520, 30).stroke();
+							}
+						} else {
+							venta.detallesVenta[i].fecha_vencimiento = new Date(venta.detallesVenta[i].fecha_vencimiento);
+							var fechaVencimientoTexto = venta.detallesVenta[i].fecha_vencimiento.getDate() + "/" + (venta.detallesVenta[i].fecha_vencimiento.getMonth() + 1) + "/" + venta.detallesVenta[i].fecha_vencimiento.getFullYear().toString().substring(2);
+
+							doc.text(venta.detallesVenta[i].servicio.codigo, 55, y, { width: 70 });
+							doc.text(venta.detallesVenta[i].cantidad, 130, y);
+							doc.text(venta.detallesVenta[i].servicio.unidad_medida, 155, y - 3, { width: 43 });
+							var longitudCaracteres = venta.detallesVenta[i].servicio.nombre.length;
+							var yDesc = (longitudCaracteres <= 24) ? y : ((longitudCaracteres > 24 && longitudCaracteres <= 60) ? y - 4 : y - 11);
+							doc.text(venta.detallesVenta[i].servicio.nombre, 198, yDesc, { width: 130 });
+
+							if (venta.con_vencimiento) {
+								doc.text(fechaVencimientoTexto, 340, y);
+								doc.text(venta.detallesVenta[i].lote, 380, y);
+							}
+
+							doc.text(venta.detallesVenta[i].precio_unitario.toFixed(2), 410, y);
+							doc.text(venta.detallesVenta[i].importe.toFixed(2), 450, y);
+							doc.text(venta.detallesVenta[i].descuento.toFixed(2), 490, y);
+							doc.text(venta.detallesVenta[i].total.toFixed(2), 530, y);
+							if (completa || vacia) {
+								doc.rect(50, y - 15, 520, 30).stroke();
+							}
 						}
 
-						doc.text(venta.detallesVenta[i].precio_unitario.toFixed(2), 410, y);
-						doc.text(venta.detallesVenta[i].importe.toFixed(2), 450, y);
-						doc.text(venta.detallesVenta[i].descuento.toFixed(2), 490, y);
-						doc.text(venta.detallesVenta[i].total.toFixed(2), 530, y);
-						if (completa || vacia) {
-							doc.rect(50, y - 15, 520, 30).stroke();
-						}
+
 						y = y + 30;
 
 						items++;
@@ -1161,7 +1189,7 @@ angular.module('agil.servicios')
 	}])
 
 	.factory('ImprimirPedido', [function () {
-		var res = function (venta, esAccionGuardar, doc, stream, sizeY,usuario, llevar) {
+		var res = function (venta, esAccionGuardar, doc, stream, sizeY, usuario, llevar) {
 
 
 			for (var j = 0; j < venta.sucursal.copias_impresion_pedido; j++) {
@@ -1195,12 +1223,22 @@ angular.module('agil.servicios')
 				doc.fontSize(10);
 				for (var i = 0; i < venta.detallesVenta.length; i++) {
 					doc.text(venta.detallesVenta[i].cantidad, 20, y);
-					if (venta.detallesVenta[i].producto.nombre.length > 40) {
-						doc.fontSize(9);
+					if (venta.detallesVenta[i].producto) {
+						if (venta.detallesVenta[i].producto.nombre.length > 40) {
+							doc.fontSize(9);
+						}
+						doc.text(venta.detallesVenta[i].producto.nombre, 50, y, { width: 90 });
+						doc.text(venta.detallesVenta[i].total.toFixed(2), 150, y);
+						doc.fontSize(10);
+					} else {
+						if (venta.detallesVenta[i].servicio.nombre.length > 40) {
+							doc.fontSize(9);
+						}
+						doc.text(venta.detallesVenta[i].servicio.nombre, 50, y, { width: 90 });
+						doc.text((venta.detallesVenta[i].total ? venta.detallesVenta[i].total.toFixed(2) : venta.detallesVenta[i].importe.toFixed(2)), 150, y);
+						doc.fontSize(10);
 					}
-					doc.text(venta.detallesVenta[i].producto.nombre, 50, y, { width: 90 });
-					doc.text(venta.detallesVenta[i].total.toFixed(2), 150, y);
-					doc.fontSize(10);
+
 					y = y + 20;
 				}
 				doc.moveDown(4);
@@ -1219,19 +1257,19 @@ angular.module('agil.servicios')
 					doc.text("PARA LLEVAR¡¡¡", { align: 'center' })
 				}
 				doc.font('Helvetica-Bold', 14);
-				doc.text(usuario.empresa.razon_social, { align: 'left'});
-				var x= doc.x
+				doc.text(usuario.empresa.razon_social, { align: 'left' });
+				var x = doc.x
 				var y = doc.y;
-				doc.text("Nro. Pedido : ",20,y, { align: 'left'});
-				doc.font('Helvetica-Bold',22);
-				doc.text(venta.pedido,120,y-5);
+				doc.text("Nro. Pedido : ", 20, y, { align: 'left' });
+				doc.font('Helvetica-Bold', 22);
+				doc.text(venta.pedido, 120, y - 5);
 				/* doc.text(venta.sucursal.frase_pedido + " : " + venta.factura, { align: 'left' });
 				doc.moveDown(0.4);
 				doc.text("Cliente : " + venta.cliente.razon_social, { align: 'left' });
 				doc.moveDown(0.4);
 				doc.text("NIT/CI : " + venta.cliente.nit, { align: 'left' }); */
 				doc.font('Helvetica', 12);
-				doc.x=20
+				doc.x = 20
 				y = doc.y;
 				doc.text("Cant.   Producto         Subtotal", { align: 'left' });
 				/* x=20 */
@@ -1239,18 +1277,26 @@ angular.module('agil.servicios')
 				doc.fontSize(10);
 				for (var i = 0; i < venta.detallesVenta.length; i++) {
 					doc.text(venta.detallesVenta[i].cantidad, 20, y);
-					if (venta.detallesVenta[i].producto.nombre.length > 40) {
-						doc.fontSize(9);
+					if (venta.detallesVenta[i].producto) {
+						if (venta.detallesVenta[i].producto.nombre.length > 40) {
+							doc.fontSize(9);
+						}
+						doc.text(venta.detallesVenta[i].producto.nombre, 50, y, { width: 90 });
+						doc.text(venta.detallesVenta[i].total.toFixed(2), 150, y);
+						doc.fontSize(10);
+					} else {
+						if (venta.detallesVenta[i].servicio.nombre.length > 40) {
+							doc.fontSize(9);
+						}
+						doc.text(venta.detallesVenta[i].servicio.nombre, 50, y, { width: 90 });
+						doc.text((venta.detallesVenta[i].total ? venta.detallesVenta[i].total.toFixed(2) : venta.detallesVenta[i].importe.toFixed(2)), 150, y);
+						doc.fontSize(10);
 					}
-					doc.text(venta.detallesVenta[i].producto.nombre, 50, y, { width: 90 });
-					doc.text(venta.detallesVenta[i].total.toFixed(2), 150, y);
-					doc.fontSize(10);
 					y = y + 20;
 				}
 				doc.moveDown(4);
 				doc.x = 0;
 				doc.text("Gracias por su preferencia", { align: 'center' });
-				
 			}
 		}
 		return res;
@@ -1305,17 +1351,32 @@ angular.module('agil.servicios')
 				var y = doc.y, sumaDescuento = 0, sumaRecargo = 0, sumaIce = 0, sumaExcento = 0;
 				for (var i = 0; i < venta.detallesVenta.length; i++) {
 					doc.text(venta.detallesVenta[i].cantidad, 15, y);
-					if (venta.detallesVenta[i].producto.nombre.length > 40) {
-						doc.fontSize(6);
+					if (venta.detallesVenta[i].producto) {
+						if (venta.detallesVenta[i].producto.nombre.length > 40) {
+							doc.fontSize(6);
+						}
+						doc.text(venta.detallesVenta[i].producto.nombre, 35, y, { width: 100 });
+						doc.fontSize(7);
+						doc.text(venta.detallesVenta[i].precio_unitario.toFixed(2), 145, y);
+						doc.text(venta.detallesVenta[i].importe.toFixed(2), 180, y);
+						sumaDescuento = sumaDescuento + (venta.detallesVenta[i].tipo_descuento ? (venta.detallesVenta[i].importe * (venta.detallesVenta[i].descuento / 100)) : venta.detallesVenta[i].descuento);
+						sumaRecargo = sumaRecargo + (venta.detallesVenta[i].tipo_recargo ? (venta.detallesVenta[i].importe * (venta.detallesVenta[i].recargo / 100)) : venta.detallesVenta[i].recargo);
+						sumaIce = sumaIce + venta.detallesVenta[i].ice;
+						sumaExcento = sumaExcento + venta.detallesVenta[i].excento;
+					} else {
+						if (venta.detallesVenta[i].servicio.nombre.length > 40) {
+							doc.fontSize(6);
+						}
+						doc.text(venta.detallesVenta[i].servicio.nombre, 35, y, { width: 100 });
+						doc.fontSize(7);
+						doc.text(venta.detallesVenta[i].precio_unitario.toFixed(2), 145, y);
+						doc.text(venta.detallesVenta[i].importe.toFixed(2), 180, y);
+						sumaDescuento = sumaDescuento + (venta.detallesVenta[i].tipo_descuento ? (venta.detallesVenta[i].importe * (venta.detallesVenta[i].descuento / 100)) : venta.detallesVenta[i].descuento);
+						sumaRecargo = sumaRecargo + (venta.detallesVenta[i].tipo_recargo ? (venta.detallesVenta[i].importe * (venta.detallesVenta[i].recargo / 100)) : venta.detallesVenta[i].recargo);
+						sumaIce = sumaIce + venta.detallesVenta[i].ice;
+						sumaExcento = sumaExcento + venta.detallesVenta[i].excento;
 					}
-					doc.text(venta.detallesVenta[i].producto.nombre, 35, y, { width: 100 });
-					doc.fontSize(7);
-					doc.text(venta.detallesVenta[i].precio_unitario.toFixed(2), 145, y);
-					doc.text(venta.detallesVenta[i].importe.toFixed(2), 180, y);
-					sumaDescuento = sumaDescuento + (venta.detallesVenta[i].tipo_descuento ? (venta.detallesVenta[i].importe * (venta.detallesVenta[i].descuento / 100)) : venta.detallesVenta[i].descuento);
-					sumaRecargo = sumaRecargo + (venta.detallesVenta[i].tipo_recargo ? (venta.detallesVenta[i].importe * (venta.detallesVenta[i].recargo / 100)) : venta.detallesVenta[i].recargo);
-					sumaIce = sumaIce + venta.detallesVenta[i].ice;
-					sumaExcento = sumaExcento + venta.detallesVenta[i].excento;
+
 					y = y + 20;
 				}
 				doc.text("--------------", 10, y, { align: 'right' });
@@ -1429,7 +1490,7 @@ angular.module('agil.servicios')
 						doc.text(venta.detallesVenta[i].precio_unitario.toFixed(2), 150, y);
 						doc.text(venta.detallesVenta[i].importe.toFixed(2), 175, y);
 					}
-					
+
 					y = y + 20;
 				}
 				doc.x = 20;
@@ -1471,7 +1532,7 @@ angular.module('agil.servicios')
 				var qrImage = canvas.toDataURL('image/png');
 				doc.image(qrImage, 70, doc.y/*y+110*/, { width: 85, height: 85 });
 				doc.moveDown(0.4);
-				doc.text((venta.pieFactura)?venta.pieFactura.nombre:""/*,0,doc.y*/, { align: 'center', width: 150 });
+				doc.text((venta.pieFactura) ? venta.pieFactura.nombre : ""/*,0,doc.y*/, { align: 'center', width: 150 });
 				doc.moveDown(0.6);
 				doc.text("\"ESTA FACTURA CONTRIBUYE AL DESARROLLO DEL PAIS. EL USO ILICITO DE ESTA SERA SANCIONADO DE ACUERDO A LEY\"", { align: 'center', width: 150 });
 				doc.moveDown(0.4);
@@ -1532,7 +1593,7 @@ angular.module('agil.servicios')
 							var sizeY = 230 + (20 * venta.detallesVenta.length);
 							doc = new PDFDocument({ compress: false, size: [227, sizeY], margins: { top: 10, bottom: 10, left: 20, right: 20 } });
 							stream = doc.pipe(blobStream());
-							ImprimirPedido(venta, esAccionGuardar, doc, stream, sizeY,usuario, llevar);
+							ImprimirPedido(venta, esAccionGuardar, doc, stream, sizeY, usuario, llevar);
 						}
 					} else {
 						doc = new PDFDocument({ compress: false, size: papel, margins: { top: 0, bottom: 0, left: 20, right: 20 } });
@@ -1541,7 +1602,7 @@ angular.module('agil.servicios')
 						if (usuario.empresa.usar_pedidos) {
 							var sizeY = 230 + (20 * venta.detallesVenta.length);
 							doc.addPage({ size: [227, sizeY], margins: { top: 10, bottom: 10, left: 20, right: 20 } });
-							ImprimirPedido(venta, esAccionGuardar, doc, stream, sizeY,usuario, llevar);
+							ImprimirPedido(venta, esAccionGuardar, doc, stream, sizeY, usuario, llevar);
 						}
 					}
 
@@ -1597,7 +1658,7 @@ angular.module('agil.servicios')
 						}
 						doc.text(venta.detallesVenta[i].precio_unitario.toFixed(2), 310, y);
 						doc.text(venta.detallesVenta[i].importe.toFixed(2), 345, y);
-						doc.text((venta.detallesVenta[i].descuento?venta.detallesVenta[i].descuento.toFixed(2):0), 395, y);
+						doc.text((venta.detallesVenta[i].descuento ? venta.detallesVenta[i].descuento.toFixed(2) : 0), 395, y);
 						doc.text(venta.detallesVenta[i].recargo.toFixed(2), 430, y);
 						doc.text(venta.detallesVenta[i].ice.toFixed(2), 465, y);
 						doc.text(venta.detallesVenta[i].excento.toFixed(2), 500, y);
@@ -2366,14 +2427,14 @@ angular.module('agil.servicios')
 
 	.factory('ImprimirPdfAlertaDespacho', ['blockUI', 'DibujarCabeceraPDFAlertaDespacho',
 		function (blockUI, DibujarCabeceraPDFAlertaDespacho) {
-			var res = function (despachos, filtro, usuario,convertirFecha) {
+			var res = function (despachos, filtro, usuario, convertirFecha) {
 				blockUI.start();
 				var doc = new PDFDocument({ compress: false, size: 'letter', margin: 10 });
 				var stream = doc.pipe(blobStream());
 				// draw some text
 				var totalCosto = 0;
 				var y = 130, itemsPorPagina = 24, items = 0, pagina = 1, totalPaginas = Math.ceil(despachos.length / itemsPorPagina);
-				DibujarCabeceraPDFAlertaDespacho(doc, 1, totalPaginas, despachos, filtro, usuario,convertirFecha);
+				DibujarCabeceraPDFAlertaDespacho(doc, 1, totalPaginas, despachos, filtro, usuario, convertirFecha);
 				doc.font('Helvetica', 8);
 				for (var i = 0; i < despachos.length && items <= itemsPorPagina; i++) {
 					var detalle_despacho = despachos[i]
@@ -2394,7 +2455,7 @@ angular.module('agil.servicios')
 						y = 130;
 						items = 0;
 						pagina = pagina + 1;
-						DibujarCabeceraPDFAlertaDespacho(doc, pagina, totalPaginas, despachos, filtro, usuario,convertirFecha);
+						DibujarCabeceraPDFAlertaDespacho(doc, pagina, totalPaginas, despachos, filtro, usuario, convertirFecha);
 						doc.font('Helvetica', 8);
 					}
 				}
@@ -2481,7 +2542,7 @@ angular.module('agil.servicios')
 					columns.push(detalle_despacho.despacho.cliente_razon.razon_social)
 					var fecha = new Date(detalle_despacho.despacho.fecha)
 					var dia = ((fecha.getDate()) >= 10) ? fecha.getDate() : "0" + fecha.getDate()
-					var mes = ((fecha.getMonth()) >= 10) ? (fecha.getMonth()+1) : "0" + (fecha.getMonth()+1)
+					var mes = ((fecha.getMonth()) >= 10) ? (fecha.getMonth() + 1) : "0" + (fecha.getMonth() + 1)
 					columns.push(dia + "/" + mes + "/" + fecha.getFullYear())
 					columns.push(detalle_despacho.producto.nombre)
 					columns.push(detalle_despacho.cantidad)
@@ -2525,7 +2586,7 @@ angular.module('agil.servicios')
 					columns.push(detalle_despacho.despacho.usuario.persona.nombre_completo)
 					var fecha = new Date(detalle_despacho.despacho.fecha)
 					var dia = ((fecha.getDate()) >= 10) ? fecha.getDate() : "0" + fecha.getDate()
-					var mes = ((fecha.getMonth()) >= 10) ? (fecha.getMonth()+1) : "0" + (fecha.getMonth()+1)
+					var mes = ((fecha.getMonth()) >= 10) ? (fecha.getMonth() + 1) : "0" + (fecha.getMonth() + 1)
 					columns.push(dia + "/" + mes + "/" + fecha.getFullYear())
 					columns.push(detalle_despacho.despacho.cliente.codigo)
 					columns.push(detalle_despacho.despacho.cliente.razon_social)
@@ -2568,14 +2629,14 @@ angular.module('agil.servicios')
 			return res;
 		}])
 	.factory('DibujarCabeceraPDFAlertaDespacho', [function () {
-		res = function (doc, pagina, totalPaginas, despachos, filtro2, usuario,convertirFecha) {
-			var filtro={inicio:filtro2.inicio,fin:filtro2.fin}
+		res = function (doc, pagina, totalPaginas, despachos, filtro2, usuario, convertirFecha) {
+			var filtro = { inicio: filtro2.inicio, fin: filtro2.fin }
 			doc.font('Helvetica-Bold', 12);
 			doc.text("REPORTE DE PEDIDOS", 0, 25, { align: "center" });
 			doc.font('Helvetica', 12);
 			if (filtro.inicio && filtro.fin) {
-				filtro.inicio=new Date(convertirFecha(filtro.inicio))				
-				filtro.fin=new Date(convertirFecha(filtro.fin))
+				filtro.inicio = new Date(convertirFecha(filtro.inicio))
+				filtro.fin = new Date(convertirFecha(filtro.fin))
 				var mes = ((filtro.inicio.getMonth() + 1) < 10) ? "0" + (filtro.inicio.getMonth() + 1) : (filtro.inicio.getMonth() + 1);
 				var dia = ((filtro.inicio.getDate()) < 10) ? "0" + filtro.inicio.getDate() : filtro.inicio.getDate();
 				var mes2 = ((filtro.fin.getMonth() + 1) < 10) ? "0" + (filtro.fin.getMonth() + 1) : (filtro.fin.getMonth() + 1);

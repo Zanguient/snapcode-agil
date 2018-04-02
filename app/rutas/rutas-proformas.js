@@ -129,7 +129,6 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
             });
         });
 
-
     // router.route('/sucursales/proforma/:id_empresa/id:usuario')
     //     .get(function (req, res) {
     //         Sucursales.findAll({
@@ -290,9 +289,16 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
                                 }, {
                                         where: { id: actividad.id }
                                     }).then(function (actividadEliminada) {
-                                        if (i === req.body.length - 1) {
-                                            res.json({ mensaje: 'Actividades actualizadas satisfactoriamente!' + mensajeExtra })
-                                        }
+                                        Dosificacion.update({
+                                            expirado: true,
+                                            where: { id: actividad.dosificacion.id}
+                                        }).then(function (dosificacionExpirada) {
+                                            if (i === req.body.length - 1) {
+                                                res.json({ mensaje: 'Actividades actualizadas satisfactoriamente!' + mensajeExtra })
+                                            }
+                                        }).catch(function (err) {
+                                            res.json({ mensaje:  err.stack !== undefined ? err.stack : err.message, hasErr: true })
+                                        });
                                     }).catch(function (err) {
                                         res.json({ mensaje:  err.stack !== undefined ? err.stack : err.message, hasErr: true })
                                     });
@@ -314,37 +320,26 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
                         }, {
                                 where: { id: actividad.id }
                             }).then(function (actividadEmpresaCreada) {
-                                SucursalActividadDosificacion.create({
-                                    id_sucursal: actividad.id_sucursal,
-                                    id_actividad: actividad.actividad.id,
-                                    id_dosificacion: actividad.dosificacion !== undefined && actividad.dosificacion !== null ? actividad.dosificacion.id : null
-                                }).then(function (actividadEmpresaCreada) {
-                                    if (actividad.dosificacionAnterior !== undefined && actividad.dosificacionAnterior !== null) {
-                                        if (actividad.dosificacionAnterior.id !== null && actividad.dosificacionAnterior.id !== undefined) {
-                                            Dosificacion.update({
-                                                expirado: true
-                                            }, {
-                                                    where: { id: actividad.dosificacionAnterior.id }
-                                                }).then(function (dosificacionActualizada) {
-                                                    if (i === req.body.length - 1) {
-                                                        res.json({ mensaje: 'Actividades actualizadas satisfactoriamente!' })
-                                                    }
-                                                })
-                                        } else {
+                                Dosificacion.update({
+                                    expirado: true},{
+                                    where: { id: actividad.dosificacionAnterior.id}
+                                }).then(function (dosificacionExpirada) {
+                                    if (i === req.body.length - 1) {
+                                        SucursalActividadDosificacion.create({
+                                            id_sucursal: actividad.id_sucursal,
+                                            id_actividad: actividad.id_actividad,
+                                            id_dosificacion: actividad.dosificacion !== undefined && actividad.dosificacion !== null ? actividad.dosificacion.id : null
+                                        }).then(function (actividadEmpresaCreada) {
                                             if (i === req.body.length - 1) {
                                                 res.json({ mensaje: 'Actividades actualizadas satisfactoriamente!' })
                                             }
-                                        }
-                                    } else {
-                                        if (i === req.body.length - 1) {
-                                            res.json({ mensaje: 'Actividades actualizadas satisfactoriamente!' })
-                                        }
+                                        }).catch(function (err) {
+                                            res.json({ mensaje:  err.stack !== undefined ? err.stack : err.message, hasErr: true })
+                                        });
                                     }
-
                                 }).catch(function (err) {
                                     res.json({ mensaje:  err.stack !== undefined ? err.stack : err.message, hasErr: true })
                                 });
-
                             }).catch(function (err) {
                                 res.json({ mensaje:  err.stack !== undefined ? err.stack : err.message, hasErr: true })
                             });

@@ -194,7 +194,7 @@
                         <tr ng-if="!proforma.eliminado" ng-repeat="proforma in proformas">
                             <td>{{$index+1}}</td>
                             <td>{{proforma.id}}</td>
-                            <td>{{proforma.clienteProforma.contacto}}</td>
+                            <td>{{proforma.clienteProforma.razon_social}}</td>
                             <td>{{meses[proforma.periodo_mes].nombre}}/{{proforma.periodo_anio}}</td>
                             <td>{{proforma.sucursalProforma.nombre}}</td>
                             <td>{{proforma.actividadEconomica.nombre}}</td>
@@ -238,9 +238,10 @@
                                     <a ng-disabled="!aplicacion.puede_modificar" class="orange" href="javascript:void(0)" ng-click="editar(proforma)"  data-rel="tooltip" tooltip-placement="top" uib-tooltip="Editar">
                                         <i class="ace-icon fa fa-pencil-square-o bigger-130"></i>
                                     </a>
-                                    <a popover-trigger="outsideClick : outsideClick" uib-popover-template="impresiones.templateUrl" popover-placement="left"
-                                        class="green" href="javascript:void(0)" data-rel="tooltip" tooltip-placement="top" uib-tooltip="Imprimir proforma">
-                                        <i class="ace-icon fa fa-print bigger-130"></i>
+                                    <a popover-trigger="outsideClick : outsideClick" uib-popover-template="impresiones.templateUrl" popover-placement="left" data-rel="tooltip" tooltip-placement="left" uib-tooltip="Imprimir proforma"
+                                        class="green" href="javascript:void(0)" >
+                                        <span class="ace-icon fa fa-print bigger-130"></span>
+                                        
                                     </a>
                                     <script type="text/ng-template" id="impresiones.html">													
                                                 
@@ -263,7 +264,7 @@
                                         tooltip-placement="top" uib-tooltip="Eliminar">
                                         <i class="ace-icon fa fa-trash-o bigger-130"></i>
                                     </a>
-                                    <a  class="red" href="javascript:void(0)" ng-click="imprimirFactura(proforma)"  data-rel="tooltip" tooltip-placement="top" uib-tooltip="Imprimir factura">
+                                    <a  class="red" href="javascript:void(0)" ng-click="imprimirFactura(proforma)"  data-rel="tooltip" tooltip-placement="left" uib-tooltip="Imprimir factura">
                                         <i class="ace-icon fa fa-print bigger-130"></i>
                                     </a>
                                 </div>
@@ -280,9 +281,9 @@
                                             </li>
                                             <li>
                                                 <a popover-trigger="outsideClick : outsideClick" uib-popover-template="impresiones.templateUrl" popover-placement="left"
-                                                    class="green" href="javascript:void(0)" data-rel="tooltip" tooltip-placement="top"
-                                                    uib-tooltip="Imprimir">
-                                                    <i class="ace-icon fa fa-print bigger-130"></i>
+                                                    class="green" href="javascript:void(0)" >
+                                                    <i class="ace-icon fa fa-print bigger-130" data-rel="tooltip" tooltip-placement="top"
+                                                    uib-tooltip="Imprimir"></i>
                                                 </a>
                                                 <script type="text/ng-template" id="impresiones.html">													
                                                             

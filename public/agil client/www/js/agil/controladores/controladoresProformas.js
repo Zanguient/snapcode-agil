@@ -24,7 +24,6 @@ angular.module('agil.controladores')
                 $scope.dialogClientesProforma, $scope.modalConfiguracionActividades, $scope.wizardConfiguracionActividades, $scope.dialogmodalFechas,
                 $scope.dialogBusquedaServicio, $scope.dialogDosificacionesDisponibles, $scope.confirmarDosificacion);
             $scope.buscarAplicacion($scope.usuario.aplicacionesUsuario, $location.path().substring(1));
-            // $scope.calcularTotalProformas()
         });
 
         $scope.$on('$routeChangeStart', function (next, current) {
@@ -311,33 +310,6 @@ angular.module('agil.controladores')
             }, 0);
         }
 
-        $scope.filtrarProformasOperaciones = function (filtro, _, __) {
-            if (__ !== undefined) {
-                for (var key in filtro) {
-                    if (filtro[key] == 0) {
-                        filtro[key] = ""
-                    }
-                }
-            } else {
-                for (var key in filtro) {
-                    if (filtro[key] === "" || filtro[key] === null) {
-                        filtro[key] = 0
-                    }
-                }
-            }
-            // for (var key in filtro) {
-            //     if (filtro[key] === "" || filtro[key] === null) {
-            //         filtro[key] = 0
-            //     }
-            // }
-            if (_ === undefined) {
-                $scope.obtenerProformas()
-                // $scope.recargarItemsTabla()
-            } else {
-                return filtro
-            }
-        }
-
         $scope.inicio = function () {
             $scope.actividadesSucursal = []
             $scope.nActividad = {}
@@ -361,7 +333,6 @@ angular.module('agil.controladores')
             }
             $scope.obtenerPaginador()
             $scope.obtenerCentroCosto()
-            // $scope.calcularTotalProformas()
         }
 
         $scope.verificarFechaRecepcion = function (fecha_recepcion) {
@@ -498,10 +469,9 @@ angular.module('agil.controladores')
             $scope.paginator.callBack = $scope.obtenerProformas;
             $scope.paginator.getSearch("", $scope.filtro, null);
             $scope.filtro = { empresa: $scope.usuario.empresa.id, mes: "", anio: "", sucursal: "", actividadEconomica: "", servicio: "", monto: "", razon: "", usuario: "", numero: "" }
-            // $scope.calcularTotalProformas()
             blockUI.stop();
         }
-        // $scope.opcionesFacturas = [{id: 1, nombre: Facturados}, {id: 2, nombre: Pendientes}]
+
         $scope.guardarConfiguracionActividadServicios = function (actividadServicios) {
             var button = $('#siguiente').text().trim();
             if (button != "Siguiente") {
@@ -809,6 +779,10 @@ angular.module('agil.controladores')
         }
 
         $scope.obtenerServiciosActividadEmpresaPrincipal = function (actividad, op) {
+            if (actividad == undefined) {
+                $scope.serviciosProcesados = []
+                return
+            }
             if (actividad.id !== undefined) {
                 var prom = ServiciosEmpresa($scope.usuario.empresa.id, actividad.id)
                 prom.then(function (services) {
@@ -1026,6 +1000,33 @@ angular.module('agil.controladores')
             })
         }
 
+        $scope.filtrarProformasOperaciones = function (filtro, _, __) {
+            if (__ !== undefined) {
+                for (var key in filtro) {
+                    if (filtro[key] == 0) {
+                        filtro[key] = ""
+                    }
+                }
+            } else {
+                for (var key in filtro) {
+                    if (filtro[key] === "" || filtro[key] === null) {
+                        filtro[key] = 0
+                    }
+                }
+            }
+            // for (var key in filtro) {
+            //     if (filtro[key] === "" || filtro[key] === null) {
+            //         filtro[key] = 0
+            //     }
+            // }
+            if (_ === undefined || !_) {
+                $scope.obtenerProformas()
+                // $scope.recargarItemsTabla()
+            } else {
+                return filtro
+            }
+        }
+
         $scope.obtenerProformas = function () {
             blockUI.start()
             $scope.filtro = $scope.filtrarProformasOperaciones($scope.filtro, true)
@@ -1075,7 +1076,6 @@ angular.module('agil.controladores')
                         } else {
                             proforma.fecha_proforma = new Date($scope.convertirFecha(proforma.fecha_proforma))
                         }
-
                         blockUI.stop()
                     }, function (err) {
                         $timeout(function () {

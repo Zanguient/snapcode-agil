@@ -155,7 +155,17 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, decodeBase
 				// { model: UsuarioGrupos, as: 'grupos', include: [{ model: Clase, as: 'grupo' }] }
 				]
 			}).then(function (usuarios) {
-				res.json(usuarios);
+				usuarios.forEach(function (usuario, i) {
+					UsuarioGrupos.findAll({
+						where: {id_usuario: usuario.id},
+						include: [{model: Clase, as: 'grupo'}]
+					}).then(function (gruposUsuario) {
+						usuario.dataValues.grupos = gruposUsuario
+						if (i == usuarios.length -1) {
+							res.json({ usuarios: usuarios, paginas: Math.ceil(data.count / req.params.items_pagina) });
+						}
+					})
+				})
 			});
 		})
 
@@ -249,7 +259,7 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, decodeBase
 				{ model: Empresa, as: 'empresa', include: [{ model: Sucursal, as: 'sucursales' }] },
 				{ model: UsuarioSucursal, as: 'sucursalesUsuario', include: [{ model: Sucursal, as: 'sucursal' }] },
 				{ model: UsuarioAplicacion, as: 'aplicacionesUsuario', include: [{ model: Aplicacion, as: 'aplicacion' }] },
-				{ model: UsuarioRuta, as: 'rutas', include: [{ model: Ruta, as: 'ruta' }] }
+				{ model: UsuarioRuta, as: 'rutas', include: [{ model: Ruta, as: 'ruta' }] },
 				// { model: UsuarioGrupos, as: 'grupos', include: [{ model: Clase, as: 'grupo' }] }
 				],
 				order: [ordenArreglo]
@@ -262,12 +272,23 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, decodeBase
 					{ model: Empresa, as: 'empresa', include: [{ model: Sucursal, as: 'sucursales' }] },
 					{ model: UsuarioSucursal, as: 'sucursalesUsuario', include: [{ model: Sucursal, as: 'sucursal' }] },
 					{ model: UsuarioAplicacion, as: 'aplicacionesUsuario', include: [{ model: Aplicacion, as: 'aplicacion' }] },
-					{ model: UsuarioRuta, as: 'rutas', include: [{ model: Ruta, as: 'ruta' }] }
-					// { model: UsuarioGrupos, as: 'grupos', include: [{ model: Clase, as: 'grupo' }] }
+					{ model: UsuarioRuta, as: 'rutas', include: [{ model: Ruta, as: 'ruta' }] },
+					// { model: UsuarioGrupos, as: 'grupos', include: [{ model: Clase, as: 'grupo' }]} 
 					],
 					order: [ordenArreglo]
 				}).then(function (usuarios) {
-					res.json({ usuarios: usuarios, paginas: Math.ceil(data.count / req.params.items_pagina) });
+					usuarios.forEach(function (usuario, i) {
+						UsuarioGrupos.findAll({
+							where: {id_usuario: usuario.id},
+							include: [{model: Clase, as: 'grupo'}]
+						}).then(function (gruposUsuario) {
+							usuario.dataValues.grupos = gruposUsuario
+							if (i == usuarios.length -1) {
+								res.json({ usuarios: usuarios, paginas: Math.ceil(data.count / req.params.items_pagina) });
+							}
+						})
+					})
+					// res.json({ usuarios: usuariosConGrupos, paginas: Math.ceil(data.count / req.params.items_pagina) });
 				});
 			});
 		});

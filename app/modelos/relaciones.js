@@ -168,7 +168,7 @@ module.exports = function (sequelize, Usuario, Persona, Rol, UsuarioRol, Tipo, C
 	Clase.hasMany(RrhhEmpleadoTr3, { foreignKey: 'id_departamento', as: 'departamentosTr3' })
 	Clase.hasMany(RrhhEmpleadoBeneficioSocial, { foreignKey: 'id_motivo', as: 'tiposmotivos' })
 	Clase.hasMany(RrhhEmpleadoDeduccionIngreso, { foreignKey: 'id_tipo', as: 'tiposDeduccionesIgresos' })
-
+	Clase.hasMany(MedicoPaciente, { foreignKey: 'id_campo', as: 'empleadosCampo' });
 	// MedicoPrerequisito.belongsTo(Clase, { foreignKey: 'id_prerequisito', as: 'prerequisitoClase' });//Ya no es requerido/util/relacion desde 13/12/2017
 	// MedicoPrerequisito.belongsTo(MedicoPaciente, { foreignKey: 'id_paciente', as: 'prerequisitoPaciente' });///Ya no es requerido/util/relacion desde 13/12/2017
 	MedicoPrerequisito.hasMany(MedicoPacientePreRequisito, { foreignKey: 'id_prerequisito', as: 'preRequisitos' })
@@ -488,6 +488,7 @@ module.exports = function (sequelize, Usuario, Persona, Rol, UsuarioRol, Tipo, C
 	MedicoPaciente.hasMany(RrhhEmpleadoFichaFamiliar, { foreignKey: 'id_empleado', as: 'familiares' });
 	MedicoPaciente.belongsTo(Clase, { foreignKey: 'id_extension', as: 'extension' });
 	MedicoPaciente.belongsTo(Clase, { foreignKey: 'id_tipo_documento', as: 'tipoDocumento' });
+	MedicoPaciente.belongsTo(Clase, { foreignKey: 'id_campo', as: 'campo' });
 	//MedicoPaciente.hasMany(RrhhEmpleadoDiscapacidad, { foreignKey: 'id_empleado', as: 'discapacidades' });23/03/2018
 	/* MedicoPaciente.hasMany(RrhhEmpleadoCargo, { foreignKey: 'id_empleado', as: 'cargos' }); *///22/03/2018
 	MedicoPaciente.hasOne(RrhhEmpleadoHojaVida, { foreignKey: 'id_empleado', as: 'hojaVida' })

@@ -8,7 +8,7 @@ module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Su
 				where: {
 					id: req.params.id_paciente
 				},
-				include: [{ model: Persona, as: 'persona', include: [{ model: Clase, as: 'genero' }] }
+				include: [{model:Clase,as:'campo'},{ model: Persona, as: 'persona', include: [{ model: Clase, as: 'genero' }] }
 					// { model: Empresa, as: 'empresa'},{model:MedicoPrerequisito, as: 'prerequisitos',include: [{ model: Clase, as: 'prerequisitoClase' }]}
 				]
 			}).then(function (medicoPaciente) {
@@ -81,7 +81,7 @@ module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Su
 									id_extension: req.body.extension.id,
 									grupo_sanguineo: req.body.grupo_sanguineo,
 									cargo: req.body.cargo,
-									campo: req.body.campo,
+									id_campo: req.body.campo.id,
 									designacion_empresa: req.body.designacion_empresa,
 									eliminado: false,
 								}).then(function (medicoPacienteCreado) {
@@ -127,7 +127,7 @@ module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Su
 							id_extension: req.body.extension.id,
 							grupo_sanguineo: req.body.grupo_sanguineo,
 							cargo: req.body.cargo,
-							campo: req.body.campo,
+							id_campo: req.body.campo.id,
 							designacion_empresa: req.body.designacion_empresa,
 							eliminado: req.body.eliminado,
 						}, {
@@ -155,7 +155,7 @@ module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Su
 				where: {
 					id: req.params.id_paciente
 				},
-				include: [{ model: RrhhEmpleadoFicha, as: 'empleadosFichas',include:[{ model: RrhhEmpleadoCargo, as: 'cargos', include: [{ model: Clase, as: "cargo" }] }]}, { model: Clase, as: 'extension' }, { model: Persona, as: 'persona', include: [{ model: Clase, as: 'genero' }] }
+				include: [{model:Clase,as:'campo'},{ model: RrhhEmpleadoFicha, as: 'empleadosFichas',include:[{ model: RrhhEmpleadoCargo, as: 'cargos', include: [{ model: Clase, as: "cargo" }] }]}, { model: Clase, as: 'extension' }, { model: Persona, as: 'persona', include: [{ model: Clase, as: 'genero' }] }
 					// { model: Empresa, as: 'empresa'},{model:MedicoPrerequisito, as: 'prerequisitos',include: [{ model: Clase, as: 'prerequisitoClase' }]}
 				]
 			}).then(function (medicoPaciente) {
@@ -443,7 +443,7 @@ module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Su
 												id_extension: expClase.id,
 												grupo_sanguineo: pacienteActual.grupo_sanguineo,
 												cargo: pacienteActual.cargo,
-												campo: pacienteActual.campamento,
+												id_campo: pacienteActual.campamento,
 												designacion_empresa: pacienteActual.designacion_empresa,
 												eliminado: false,
 												es_empleado: false
@@ -545,7 +545,7 @@ module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Su
 													grupo_sanguineo: pacienteActual.grupo_sanguineo,
 													cargo: pacienteActual.cargo,
 													id_extension: expClase.id,
-													campo: pacienteActual.campamento,
+													id_campo: pacienteActual.campamento,
 													designacion_empresa: pacienteActual.designacion_empresa,
 													eliminado: false,
 													es_empleado: false
@@ -704,7 +704,7 @@ module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Su
 				where: {
 					empresa: req.params.id_empresa
 				},
-				include: [{ model: RrhhEmpleadoFicha, as: 'empleadosFichas',include:[{ model: RrhhEmpleadoCargo, as: 'cargos', include: [{ model: Clase, as: "cargo" }] }]}, { model: Clase, as: 'extension' }, { model: Persona, as: 'persona', where: { $or: orCondition }, include: [{ model: Clase, as: 'genero' }] }
+				include: [{model:Clase,as:'campo'},{ model: RrhhEmpleadoFicha, as: 'empleadosFichas',include:[{ model: RrhhEmpleadoCargo, as: 'cargos', include: [{ model: Clase, as: "cargo" }] }]}, { model: Clase, as: 'extension' }, { model: Persona, as: 'persona', where: { $or: orCondition }, include: [{ model: Clase, as: 'genero' }] }
 					// { model: Empresa, as: 'empresa'},{model:MedicoPrerequisito, as: 'prerequisitos',include: [{ model: Clase, as: 'prerequisitoClase' }]}
 				]
 			}).then(function (pacientes) {
@@ -909,9 +909,9 @@ module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Su
                 gl_persona.nombre_completo as 'nombre_completo', gl_persona.apellido_paterno as 'apellido_paterno', gl_persona.apellido_materno as 'apellido_materno',\
                 gl_persona.nombres as 'nombres',gl_persona.imagen as 'imagen', agil_medico_paciente.eliminado as 'activo', gl_persona.ci as 'ci', gl_persona.genero as 'id_genero', \
                 gl_persona.telefono as 'telefono', gl_persona.telefono_movil as 'telefono_movil', gl_persona.fecha_nacimiento as 'fecha_nacimiento'\
-                from agil_medico_paciente "+ condicionContrato + " INNER JOIN agil_rrhh_empleado_ficha AS fichas ON (agil_medico_paciente.id = fichas.id_empleado ) INNER JOIN agil_rrhh_empleado_cargo AS cargos ON fichas.id = cargos.ficha  " + condicionCargo + " \
+                ,campamento.nombre as 'campamento' from agil_medico_paciente "+ condicionContrato + " INNER JOIN agil_rrhh_empleado_ficha AS fichas ON (agil_medico_paciente.id = fichas.id_empleado ) INNER JOIN agil_rrhh_empleado_cargo AS cargos ON fichas.id = cargos.ficha  " + condicionCargo + " \
 				LEFT OUTER JOIN gl_clase AS `cargos.cargo` ON cargos.cargo = `cargos.cargo`.id INNER JOIN gl_persona ON (agil_medico_paciente.persona = gl_persona.id) INNER JOIN gl_clase ON (agil_medico_paciente.extension = gl_clase.id)\
-                where agil_medico_paciente.empresa = "+ req.params.id_empresa + activo + " AND (" + condicion + ") \
+                INNER JOIN gl_clase as campamento ON agil_medico_paciente.campo = campamento.id where agil_medico_paciente.empresa = "+ req.params.id_empresa + activo + " AND (" + condicion + ") \
                 GROUP BY agil_medico_paciente.id order by "+ req.params.columna + " " + req.params.direccion, { type: sequelize.QueryTypes.SELECT })
 					.then(function (data) {
 						var options = {
@@ -926,9 +926,9 @@ module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Su
                     gl_persona.nombre_completo as 'nombre_completo', gl_persona.apellido_paterno as 'apellido_paterno', gl_persona.apellido_materno as 'apellido_materno',\
                     gl_persona.nombres as 'nombres',gl_persona.imagen as 'imagen', agil_medico_paciente.eliminado as 'activo', gl_persona.ci as 'ci', gl_persona.genero as 'id_genero', \
                     gl_persona.telefono as 'telefono', gl_persona.telefono_movil as 'telefono_movil', gl_persona.fecha_nacimiento as 'fecha_nacimiento'\
-                    from agil_medico_paciente "+ condicionContrato + " INNER JOIN agil_rrhh_empleado_ficha AS fichas ON (agil_medico_paciente.id = fichas.id_empleado ) INNER JOIN agil_rrhh_empleado_cargo AS cargos ON fichas.id = cargos.ficha  " + condicionCargo + " \
+                    ,campamento.nombre as 'campamento' from agil_medico_paciente "+ condicionContrato + " INNER JOIN agil_rrhh_empleado_ficha AS fichas ON (agil_medico_paciente.id = fichas.id_empleado ) INNER JOIN agil_rrhh_empleado_cargo AS cargos ON fichas.id = cargos.ficha  " + condicionCargo + " \
 					LEFT OUTER JOIN gl_clase AS `cargos.cargo` ON cargos.cargo = `cargos.cargo`.id INNER JOIN gl_persona ON (agil_medico_paciente.persona = gl_persona.id) INNER JOIN gl_clase ON (agil_medico_paciente.extension = gl_clase.id)\
-                    where agil_medico_paciente.empresa = "+ req.params.id_empresa + activo + " AND (" + condicion + ") \
+                    INNER JOIN gl_clase as campamento ON agil_medico_paciente.campo = campamento.id where agil_medico_paciente.empresa = "+ req.params.id_empresa + activo + " AND (" + condicion + ") \
                     GROUP BY agil_medico_paciente.id order by "+ req.params.columna + " " + req.params.direccion + limite, options)
 							.then(function (pacientes) {
 								var a = ""
@@ -964,9 +964,9 @@ module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Su
                 gl_persona.nombre_completo as 'nombre_completo', gl_persona.apellido_paterno as 'apellido_paterno', gl_persona.apellido_materno as 'apellido_materno',\
                 gl_persona.nombres as 'nombres',gl_persona.imagen as 'imagen', agil_medico_paciente.eliminado as 'activo', gl_persona.ci as 'ci', gl_persona.genero as 'id_genero', \
                 gl_persona.telefono as 'telefono', gl_persona.telefono_movil as 'telefono_movil', gl_persona.fecha_nacimiento as 'fecha_nacimiento'\
-                from agil_medico_paciente "+ condicionContrato + " INNER JOIN agil_rrhh_empleado_ficha AS fichas ON (agil_medico_paciente.id = fichas.id_empleado ) INNER JOIN agil_rrhh_empleado_cargo AS cargos ON fichas.id = cargos.ficha  " + condicionCargo + " \
+                ,campamento.nombre as 'campamento' from agil_medico_paciente "+ condicionContrato + " INNER JOIN agil_rrhh_empleado_ficha AS fichas ON (agil_medico_paciente.id = fichas.id_empleado ) INNER JOIN agil_rrhh_empleado_cargo AS cargos ON fichas.id = cargos.ficha  " + condicionCargo + " \
 				LEFT OUTER JOIN gl_clase AS `cargos.cargo` ON cargos.cargo = `cargos.cargo`.id INNER JOIN gl_persona ON (agil_medico_paciente.persona = gl_persona.id) INNER JOIN gl_clase ON (agil_medico_paciente.extension = gl_clase.id)\
-                where agil_medico_paciente.empresa = "+ req.params.id_empresa + activo + " AND (" + condicion + ") GROUP BY agil_medico_paciente.id order by " + req.params.columna + " " + req.params.direccion, { type: sequelize.QueryTypes.SELECT })
+                INNER JOIN gl_clase as campamento ON agil_medico_paciente.campo = campamento.id where agil_medico_paciente.empresa = "+ req.params.id_empresa + activo + " AND (" + condicion + ") GROUP BY agil_medico_paciente.id order by " + req.params.columna + " " + req.params.direccion, { type: sequelize.QueryTypes.SELECT })
 					.then(function (data) {
 						var options = {
 							model: MedicoPaciente,
@@ -980,9 +980,9 @@ module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Su
                     gl_persona.nombre_completo as 'nombre_completo', gl_persona.apellido_paterno as 'apellido_paterno', gl_persona.apellido_materno as 'apellido_materno',\
                     gl_persona.nombres as 'nombres',gl_persona.imagen as 'imagen', agil_medico_paciente.eliminado as 'activo', gl_persona.ci as 'ci', gl_persona.genero as 'id_genero', \
                     gl_persona.telefono as 'telefono', gl_persona.telefono_movil as 'telefono_movil', gl_persona.fecha_nacimiento as 'fecha_nacimiento'\
-                    , GROUP_CONCAT(`cargos.cargo`.nombre order by `cargos.cargo`.id) cargos from agil_medico_paciente "+ condicionContrato + " INNER JOIN agil_rrhh_empleado_ficha AS fichas ON (agil_medico_paciente.id = fichas.id_empleado ) INNER JOIN agil_rrhh_empleado_cargo AS cargos ON fichas.id = cargos.ficha  " + condicionCargo + " \
+                    ,campamento.nombre as 'campamento', GROUP_CONCAT(`cargos.cargo`.nombre order by `cargos.cargo`.id) cargos from agil_medico_paciente "+ condicionContrato + " INNER JOIN agil_rrhh_empleado_ficha AS fichas ON (agil_medico_paciente.id = fichas.id_empleado ) INNER JOIN agil_rrhh_empleado_cargo AS cargos ON fichas.id = cargos.ficha  " + condicionCargo + " \
 					LEFT OUTER JOIN gl_clase AS `cargos.cargo` ON cargos.cargo = `cargos.cargo`.id INNER JOIN gl_persona ON (agil_medico_paciente.persona = gl_persona.id) INNER JOIN gl_clase ON (agil_medico_paciente.extension = gl_clase.id)\
-                    where agil_medico_paciente.empresa = "+ req.params.id_empresa + activo + " AND (" + condicion + ") GROUP BY agil_medico_paciente.id order by " + req.params.columna + " " + req.params.direccion + limite, options)
+                    INNER JOIN gl_clase as campamento ON agil_medico_paciente.campo = campamento.id where agil_medico_paciente.empresa = "+ req.params.id_empresa + activo + " AND (" + condicion + ") GROUP BY agil_medico_paciente.id order by " + req.params.columna + " " + req.params.direccion + limite, options)
 							.then(function (pacientes) {
 								var a = ""
 								var arregloCargos = []
@@ -1017,9 +1017,9 @@ module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Su
                 gl_persona.nombre_completo as 'nombre_completo', gl_persona.apellido_paterno as 'apellido_paterno', gl_persona.apellido_materno as 'apellido_materno',\
                 gl_persona.nombres as 'nombres',gl_persona.imagen as 'imagen', agil_medico_paciente.eliminado as 'activo', gl_persona.ci as 'ci', gl_persona.genero as 'id_genero', \
                 gl_persona.telefono as 'telefono', gl_persona.telefono_movil as 'telefono_movil', gl_persona.fecha_nacimiento as 'fecha_nacimiento'\
-                from agil_medico_paciente "+ condicionContrato + " INNER JOIN agil_rrhh_empleado_ficha AS fichas ON (agil_medico_paciente.id = fichas.id_empleado ) INNER JOIN agil_rrhh_empleado_cargo AS cargos ON fichas.id = cargos.ficha  " + condicionCargo + " \
+                ,campamento.nombre as 'campamento' from agil_medico_paciente "+ condicionContrato + " INNER JOIN agil_rrhh_empleado_ficha AS fichas ON (agil_medico_paciente.id = fichas.id_empleado ) INNER JOIN agil_rrhh_empleado_cargo AS cargos ON fichas.id = cargos.ficha  " + condicionCargo + " \
 				LEFT OUTER JOIN gl_clase AS `cargos.cargo` ON cargos.cargo = `cargos.cargo`.id INNER JOIN gl_persona ON (agil_medico_paciente.persona = gl_persona.id) INNER JOIN gl_clase ON (agil_medico_paciente.extension = gl_clase.id)\
-                where agil_medico_paciente.empresa = "+ req.params.id_empresa + activo + " GROUP BY agil_medico_paciente.id order by " + req.params.columna + " " + req.params.direccion, { type: sequelize.QueryTypes.SELECT })
+                INNER JOIN gl_clase as campamento ON agil_medico_paciente.campo = campamento.id where agil_medico_paciente.empresa = "+ req.params.id_empresa + activo + " GROUP BY agil_medico_paciente.id order by " + req.params.columna + " " + req.params.direccion, { type: sequelize.QueryTypes.SELECT })
 					.then(function (data) {
 						var options = {
 							model: MedicoPaciente,
@@ -1033,9 +1033,9 @@ module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Su
                     gl_persona.nombre_completo as 'nombre_completo', gl_persona.apellido_paterno as 'apellido_paterno', gl_persona.apellido_materno as 'apellido_materno',\
                     gl_persona.nombres as 'nombres',gl_persona.imagen as 'imagen', agil_medico_paciente.eliminado as 'activo', gl_persona.ci as 'ci', gl_persona.genero as 'id_genero', \
                     gl_persona.telefono as 'telefono', gl_persona.telefono_movil as 'telefono_movil', gl_persona.fecha_nacimiento as 'fecha_nacimiento'\
-                    , GROUP_CONCAT(`cargos.cargo`.nombre order by `cargos.cargo`.id) cargos from agil_medico_paciente "+ condicionContrato + " INNER JOIN agil_rrhh_empleado_ficha AS fichas ON (agil_medico_paciente.id = fichas.id_empleado ) INNER JOIN agil_rrhh_empleado_cargo AS cargos ON fichas.id = cargos.ficha  " + condicionCargo + " \
+                    ,campamento.nombre as 'campamento', GROUP_CONCAT(`cargos.cargo`.nombre order by `cargos.cargo`.id) cargos from agil_medico_paciente "+ condicionContrato + " INNER JOIN agil_rrhh_empleado_ficha AS fichas ON (agil_medico_paciente.id = fichas.id_empleado ) INNER JOIN agil_rrhh_empleado_cargo AS cargos ON fichas.id = cargos.ficha  " + condicionCargo + " \
 					LEFT OUTER JOIN gl_clase AS `cargos.cargo` ON cargos.cargo = `cargos.cargo`.id INNER JOIN gl_persona ON (agil_medico_paciente.persona = gl_persona.id) INNER JOIN gl_clase ON (agil_medico_paciente.extension = gl_clase.id)\
-                    where agil_medico_paciente.empresa = "+ req.params.id_empresa + activo + " GROUP BY agil_medico_paciente.id order by " + req.params.columna + " " + req.params.direccion + limite, options)
+                    INNER JOIN gl_clase as campamento ON agil_medico_paciente.campo = campamento.id where agil_medico_paciente.empresa = "+ req.params.id_empresa + activo + " GROUP BY agil_medico_paciente.id order by " + req.params.columna + " " + req.params.direccion + limite, options)
 							.then(function (pacientes) {
 								var a = ""
 								var arregloCargos = []
@@ -1070,8 +1070,8 @@ module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Su
                 gl_persona.nombre_completo as 'nombre_completo', gl_persona.apellido_paterno as 'apellido_paterno', gl_persona.apellido_materno as 'apellido_materno',\
                 gl_persona.nombres as 'nombres',gl_persona.imagen as 'imagen', agil_medico_paciente.eliminado as 'activo', gl_persona.ci as 'ci', gl_persona.genero as 'id_genero', \
                 gl_persona.telefono as 'telefono', gl_persona.telefono_movil as 'telefono_movil', gl_persona.fecha_nacimiento as 'fecha_nacimiento'\
-                from agil_medico_paciente "+ condicionContrato + "  INNER JOIN gl_persona ON (agil_medico_paciente.persona = gl_persona.id) INNER JOIN gl_clase ON (agil_medico_paciente.extension = gl_clase.id)\
-                where agil_medico_paciente.empresa = "+ req.params.id_empresa + activo + " GROUP BY agil_medico_paciente.id order by " + req.params.columna + " " + req.params.direccion, { type: sequelize.QueryTypes.SELECT })
+                ,campamento.nombre as 'campamento' from agil_medico_paciente "+ condicionContrato + "  INNER JOIN gl_persona ON (agil_medico_paciente.persona = gl_persona.id) INNER JOIN gl_clase ON (agil_medico_paciente.extension = gl_clase.id)\
+                INNER JOIN gl_clase as campamento ON agil_medico_paciente.campo = campamento.id where agil_medico_paciente.empresa = "+ req.params.id_empresa + activo + " GROUP BY agil_medico_paciente.id order by " + req.params.columna + " " + req.params.direccion, { type: sequelize.QueryTypes.SELECT })
 					.then(function (data) {
 						var options = {
 							model: MedicoPaciente,
@@ -1085,8 +1085,8 @@ module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Su
                     gl_persona.nombre_completo as 'nombre_completo', gl_persona.apellido_paterno as 'apellido_paterno', gl_persona.apellido_materno as 'apellido_materno',\
                     gl_persona.nombres as 'nombres',gl_persona.imagen as 'imagen', agil_medico_paciente.eliminado as 'activo', gl_persona.ci as 'ci', gl_persona.genero as 'id_genero', \
                     gl_persona.telefono as 'telefono', gl_persona.telefono_movil as 'telefono_movil', gl_persona.fecha_nacimiento as 'fecha_nacimiento'\
-                    from agil_medico_paciente "+ condicionContrato + "  INNER JOIN gl_persona ON (agil_medico_paciente.persona = gl_persona.id) INNER JOIN gl_clase ON (agil_medico_paciente.extension = gl_clase.id)\
-                    where agil_medico_paciente.empresa = "+ req.params.id_empresa + activo + " GROUP BY agil_medico_paciente.id order by " + req.params.columna + " " + req.params.direccion + limite, options)
+                    ,campamento.nombre as 'campamento' from agil_medico_paciente "+ condicionContrato + "  INNER JOIN gl_persona ON (agil_medico_paciente.persona = gl_persona.id) INNER JOIN gl_clase ON (agil_medico_paciente.extension = gl_clase.id)\
+                    INNER JOIN gl_clase as campamento ON agil_medico_paciente.campo = campamento.id where agil_medico_paciente.empresa = "+ req.params.id_empresa + activo + " GROUP BY agil_medico_paciente.id order by " + req.params.columna + " " + req.params.direccion + limite, options)
 							.then(function (pacientes) {
 								var a = ""
 								var arregloCargos = []
@@ -2240,7 +2240,7 @@ module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Su
 				} else {
 					MedicoPaciente.find({
 						where: { id: req.params.id_paciente },
-						include: [
+						include: [{model:Clase,as:'campo'},
 							{ model: Persona, as: 'persona', include: [{ model: Clase, as: 'genero' }] },
 							{ model: Empresa, as: 'empresa' }]
 					}).then(function (pacienteEncontrado) {

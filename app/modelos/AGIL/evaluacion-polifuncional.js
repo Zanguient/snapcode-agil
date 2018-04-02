@@ -65,7 +65,11 @@ module.exports = function (sequelize, Sequelize) {
 			type: Sequelize.BOOLEAN,
 			field: 'eliminado',
 			defaultValue: false
-			}
+			},
+			id_empresa: {
+				type: Sequelize.INTEGER,
+				field: 'empresa'
+			},
 	}, {
 			freezeTableName: true
 		});

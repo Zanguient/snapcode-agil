@@ -97,6 +97,12 @@ angular.module('agil.controladores')
         $scope.idModalConfirmarDesabilitacion = 'modal-confirmar-desabilitacion'
         $scope.idModalReingresoEmpleado = 'modal-reingreso-empleado'
         $scope.idModalHistorialBeneficios = "dialog-historial-beneficio_social"
+        $scope.idModalConfiguracionRopaDeTrabajo = "dialog-configuracion-ropa-trabajo"
+        $scope.idModalReporteRopaDeTrabajo = "dialog-reporte-ropa-trabajo"
+        $scope.idmodalWizardContainerConfiguracionRopaTrabajo="modal-wizard-container-configuracion-ropa-trabajo"
+        $scope.idModalRopaTrabajo="dialog-ropa-trabajo"
+        $scope.idModalNuevaRopaTrabajo="dialog-nueva-ropa-trabajo"
+        $scope.idModalItemsNuevaRopaTrabajo="dialog-items-nueva-ropa-trabajo"
         $scope.$on('$viewContentLoaded', function () {
             // resaltarPestaña($location.path().substring(1));
             resaltarPestaña($location.path().substring(1));
@@ -122,7 +128,7 @@ angular.module('agil.controladores')
                 $scope.idModalContenedorRhVista, $scope.idModalDialogPrerequisitoNuevo, $scope.idEliminarSeguroEmpleado, $scope.idEliminarFamiliarEmpleado, $scope.idModalHistorialPrerequisito,
                 $scope.idModalEditarPrerequisito, $scope.idModalDialogConfirmacionEntregaAdelantado, $scope.IdEntregaPrerequisito, $scope.IdModalVerificarCuenta, $scope.idModalImpresionHojaVida, $scope.idModalNuevoAnticipoRegularTodos,
                 $scope.idModalTr3BancoMsc, $scope.idModalTr3BancoUnion, $scope.idModalHistorialTr3, $scope.IdModalVerificarCuentaRrhh, $scope.idModalConfirmarDesabilitacion, $scope.idModalReingresoEmpleado,
-                $scope.idModalHistorialBeneficios);
+                $scope.idModalHistorialBeneficios,$scope.idModalConfiguracionRopaDeTrabajo,$scope.idModalReporteRopaDeTrabajo,$scope.idmodalWizardContainerConfiguracionRopaTrabajo,$scope.idModalRopaTrabajo,$scope.idModalNuevaRopaTrabajo,$scope.idModalItemsNuevaRopaTrabajo);
             $scope.buscarAplicacion($scope.usuario.aplicacionesUsuario, $location.path().substring(1));
             $scope.obtenerColumnasAplicacion()
             blockUI.stop();
@@ -215,6 +221,11 @@ angular.module('agil.controladores')
             $scope.eliminarPopup($scope.idModalConfirmarDesabilitacion)
             $scope.eliminarPopup($scope.idModalReingresoEmpleado)
             $scope.eliminarPopup($scope.idModalHistorialBeneficios)
+            $scope.eliminarPopup($scope.idModalConfiguracionRopaDeTrabajo)
+            $scope.eliminarPopup($scope.idModalReporteRopaDeTrabajo)
+            $scope.eliminarPopup($scope.idModalRopaTrabajo)
+            $scope.eliminarPopup($scope.idModalNuevaRopaTrabajo)
+            $scope.eliminarPopup($scope.idModalItemsNuevaRopaTrabajo)
         });
         $scope.inicio = function () {
             $scope.listYearsAnticipo = $scope.obtenerAnios(2017)
@@ -227,6 +238,9 @@ angular.module('agil.controladores')
             $scope.obtenerConfiguracionVacaciones()
             $scope.obtenerTiposOtrosingresosYDeduccion()
             $scope.obtenerMotivosRetiro()
+            $scope.dynamicPopoverRopaTrabajo = {
+                templateUrl: 'myPopoverRopaTrabajo.html',
+            };
         }
 
 
@@ -288,6 +302,40 @@ angular.module('agil.controladores')
         $scope.cerrarModalHistorialTr3 = function () {
             $scope.cerrarPopup($scope.idModalHistorialTr3)
         }
+        $scope.abrirModalConfiguracionRopaDeTrabajo = function () {
+            $scope.abrirPopup($scope.idModalConfiguracionRopaDeTrabajo)
+        }
+        $scope.cerrarModalConfiguracionRopaDeTrabajo = function () {
+            $scope.cerrarPopup($scope.idModalConfiguracionRopaDeTrabajo)
+        }
+        $scope.abrirModalReporteRopaDeTrabajo = function () {
+            $scope.abrirPopup($scope.idModalReporteRopaDeTrabajo)
+        }
+        $scope.cerrarModalReporteRopaDeTrabajo = function () {
+            $scope.cerrarPopup($scope.idModalReporteRopaDeTrabajo)
+        }
+        $scope.abrirModalRopaTrabajo = function (empleado) {
+            $scope.empleado=empleado
+            $scope.abrirPopup($scope.idModalRopaTrabajo)
+        }
+        $scope.cerrarModalRopaTrabajo = function () {
+            $scope.cerrarPopup($scope.idModalRopaTrabajo)
+        }
+        $scope.abrirModalNuevaRopaTrabajo = function (empleado) {
+            $scope.empleado=empleado
+            $scope.abrirPopup($scope.idModalNuevaRopaTrabajo)
+        }
+        $scope.cerrarModalNuevaRopaTrabajo = function () {
+            $scope.cerrarPopup($scope.idModalNuevaRopaTrabajo)
+        }
+        $scope.abrirModalItemsNuevaRopaTrabajo = function (empleado) {
+            $scope.empleado=empleado
+            $scope.abrirPopup($scope.idModalItemsNuevaRopaTrabajo)
+        }
+        $scope.cerrarModalItemsNuevaRopaTrabajo = function () {
+            $scope.cerrarPopup($scope.idModalItemsNuevaRopaTrabajo)
+        }
+       
         $scope.abrirModalTr3BancoMsc = function () {
             $scope.abrirPopup($scope.idModalTr3BancoMsc)
         }
@@ -1884,6 +1932,8 @@ angular.module('agil.controladores')
                         paciente.nombre_referencia = worksheet['Z' + row] != undefined && worksheet['Z' + row] != "" ? worksheet['Z' + row].v.toString() : null;
                         paciente.fecha_inicio = worksheet['AA' + row] != undefined && worksheet['AA' + row] != "" ? $scope.fecha_excel_angular(worksheet['AA' + row].v.toString()) : null;
                         paciente.haber_basico = worksheet['AB' + row] != undefined && worksheet['AB' + row] != "" ? parseFloat(worksheet['AB' + row].v.toString()) : null;
+                        paciente.matricula_seguro = worksheet['AC' + row] != undefined && worksheet['AC' + row] != "" ? worksheet['AC' + row].v.toString() : null;
+                        paciente.seguro_salud= worksheet['AD' + row] != undefined && worksheet['AD' + row] != "" ? worksheet['AD' + row].v.toString() : null;
                         paciente.imagen = "img/icon-user-default.png"
                         paciente.es_empleado = true
                         var a = new Date(paciente.fecha_inicio)
@@ -4606,11 +4656,27 @@ angular.module('agil.controladores')
 
             }
         }
-        $scope.sumarMontoPrestamoNuevo = function (anticipo) {
+        $scope.sumarMontoPrestamoNuevo = function (anticipo, index) {
             /*  if (anticipo.id == undefined) { */
             if ($scope.listaAnticipos.length > 1) {
                 if (anticipo.monto) {
-                    anticipo.total = $scope.listaAnticipos[$scope.listaAnticipos.length - 2].total + anticipo.monto
+                    if (index > 0) {
+                        if ($scope.listaAnticipos[index - 1].empleado.id == $scope.listaAnticipos[index].empleado.id) {
+                            anticipo.total = $scope.listaAnticipos[index - 1].total + anticipo.monto
+                        } else {
+                            if (anticipo.anticipo_ordinaro) {
+                                anticipo.total = anticipo.monto + anticipo.anticipo_ordinaro
+                            } else {
+                                anticipo.total = anticipo.monto + anticipo.anticipo_extraordinaro
+                            }
+                        }
+                    } else {
+                        if (anticipo.anticipo_ordinaro) {
+                            anticipo.total = anticipo.monto + anticipo.anticipo_ordinaro
+                        } else {
+                            anticipo.total = anticipo.monto + anticipo.anticipo_extraordinaro
+                        }
+                    }
                 } else {
                     if (anticipo.anticipo_ordinaro) {
                         anticipo.total = anticipo.anticipo_ordinaro

@@ -88,7 +88,7 @@ angular.module('agil.controladores')
 
 			$scope.usuario = usuario;
 			// $scope.obtenerGruposProductoEmpresa()
-			$scope.seleccionarGrupos($scope.usuario.grupos);
+			$scope.seleccionarGrupos($scope.usuario.grupos); 
 			$scope.rol = usuario.rolesUsuario[0].rol;
 			$scope.usuario.sucursales = [];
 			//$scope.sucursales=usuario.empresa.sucursales;
@@ -275,9 +275,11 @@ angular.module('agil.controladores')
 		$scope.veirificarUsuarioRuta = function (ruta, usuario) {
 			var i = 0, encontrado = false;
 			while (i < ruta.usuarios.length && !encontrado) {
+				if(ruta.usuarios[i].usuario){
 				if (ruta.usuarios[i].usuario.nombre_usuario == usuario.nombre_usuario) {
 					encontrado = true;
 				}
+			}
 				i++;
 			}
 			return encontrado;

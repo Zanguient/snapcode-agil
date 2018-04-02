@@ -32,16 +32,16 @@ angular.module('agil.servicios')
             var delay = $q.defer();
             var params = {
                 id_empresa: paginador.filter.id_empresa,
-                mes: paginador.filter.mes.id !== undefined ? paginador.filter.mes.id : paginador.filter.mes,
-                anio: paginador.filter.anio.id !== undefined ? paginador.filter.anio.id : paginador.filter.anio,
+                mes: paginador.filter.mes.id !== undefined ? paginador.filter.mes.id : paginador.filter.mes != "" ? paginador.filter.mes : 0,
+                anio: paginador.filter.anio.id !== undefined ? paginador.filter.anio.id : paginador.filter.anio != "" ? paginador.filter.anio : 0,
                 desempenio: paginador.filter.desempenio && paginador.filter.desempenio.id !== undefined ? paginador.filter.desempenio.id : 0,
-                mas_campo: paginador.filter.mas_campo,
-                campo: paginador.filter.campo,
+                mas_campo: paginador.filter.mas_campo != "" ? paginador.filter.mas_campo : 0,
+                campo: paginador.filter.campo.id !== undefined ? paginador.filter.campo.id : 0,
                 cargo: paginador.filter.cargo.id !== undefined ? paginador.filter.cargo.id : 0,
                 estado: paginador.filter.estado.id !== undefined ? paginador.filter.estado.id : 0,
-                codigo: paginador.filter.codigo,
-                nombre: paginador.filter.nombre,
-                apellido: paginador.filter.apellido,
+                codigo: paginador.filter.codigo == "" ? 0 : paginador.filter.codigo,
+                nombre: paginador.filter.nombre == "" ? 0 : paginador.filter.nombre,
+                apellido: paginador.filter.apellido == "" ? 0 : paginador.filter.apellido,
                 pagina: paginador.currentPage,
                 items_pagina: paginador.itemsPerPage,
                 columna: paginador.column,
@@ -140,7 +140,7 @@ angular.module('agil.servicios')
     .factory('ObtenerReporteGeneralPorAnio', ['ReporteAnualCampo', '$q', function (ReporteAnualCampo, $q) {
         var res = function (year, campo, id_empresa) {
             var delay = $q.defer();
-            ReporteAnualCampo.get({ anio: year, campo: campo, id_empresa: id_empresa }, function (entidades) {
+            ReporteAnualCampo.get({ anio: year, campo: campo.id, id_empresa: id_empresa }, function (entidades) {
                 delay.resolve(entidades);
             }, function (error) {
                 delay.reject(error);

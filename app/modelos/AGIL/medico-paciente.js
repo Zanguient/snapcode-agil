@@ -24,8 +24,8 @@ module.exports = function (sequelize, Sequelize) {
 			type: Sequelize.STRING,
 			field: 'cargo'
 		},
-		campo: {
-			type: Sequelize.STRING,
+		id_campo: {
+			type: Sequelize.INTEGER,
 			field: 'campo'
 		},
 		designacion_empresa: {

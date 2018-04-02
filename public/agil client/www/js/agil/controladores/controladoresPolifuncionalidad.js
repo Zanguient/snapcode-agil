@@ -1,5 +1,5 @@
 angular.module('agil.controladores')
-    .controller('controladorPolifuncionalidad', function ($scope, $location, $localStorage, $templateCache, $route, blockUI, Paginator, FieldViewer,
+    .controller('controladorPolifuncionalidad', function ($scope, $location, $localStorage, $templateCache, $route, blockUI, Paginator, FieldViewer, $timeout,
         $filter, ClasesTipo, ObtenerTodoPersonal, ObtenerEvaluaciones, GuardarEvaluacionPersonal, ObtenerReportePorMeses, ObtenerReportePorAnio, ObtenerReporteGeneralPorAnio, GuardarConfiguracionCalificacion,
         ObtenerConfiguracionCalificacion, GuardarConfiguracionDesempenio, ObtenerConfiguracionDesempenio, ActializarEvaluacionPersonal) {
 
@@ -9,13 +9,14 @@ angular.module('agil.controladores')
         $scope.idModalWizardConceptoEdicion2 = 'modal-wizard-polifuncional-ac-edicion';
         $scope.idModalContenedorConceptoEdicion2 = 'modal-wizard-container-polifuncional-ac-edicion';
         $scope.modalBusquedaPersonal = 'dialog-Busqueda-personal-polifuncional'
+        $scope.modalBusquedaCentroCosto = 'dialog-Busqueda-centro-costo-polifuncional'
         $scope.idModalReportes = 'dialog-reportes-polifuncional'
         $scope.reporteGraficoPolifuncional = 'reporte-grafico-polifuncional'
 
         $scope.$on('$viewContentLoaded', function () {
             resaltarPestaña($location.path().substring(1));
             ejecutarScriptsPolifuncionalidad($scope.idModalWizardPolifuncionalEdicion, $scope.idModalContenedorPolifuncionalEdicion, $scope.modalBusquedaPersonal,
-                $scope.idModalWizardConceptoEdicion2, $scope.idModalContenedorConceptoEdicion2, $scope.idModalReportes, $scope.reporteGraficoPolifuncional);
+                $scope.idModalWizardConceptoEdicion2, $scope.idModalContenedorConceptoEdicion2, $scope.idModalReportes, $scope.reporteGraficoPolifuncional,$scope.modalBusquedaCentroCosto);
             $scope.buscarAplicacion($scope.usuarioSesion.aplicacionesUsuario, $location.path().substring(1));
             $scope.obtenerColumnasAplicacion()
             blockUI.stop();
@@ -27,6 +28,7 @@ angular.module('agil.controladores')
             $scope.eliminarPopup($scope.idModalReportes);
             $scope.eliminarPopup($scope.modalBusquedaPersonal);
             $scope.eliminarPopup($scope.reporteGraficoPolifuncional);
+            $scope.eliminarPopup($scope.modalBusquedaCentroCosto);
         });
 
         $scope.inicio = function () {
@@ -36,8 +38,8 @@ angular.module('agil.controladores')
             $scope.obtenerConfiguracionnotas()
             var filtro = { id_empresa: $scope.usuarioSesion.empresa.id, mes: 0, anio: 0, desempenio: 0, mas_campo: 0, campo: 0, cargo: 0, estado: 0, codigo: 0, nombre: 0, apellido: 0, pagina: 1, items_pagina: 10, columna: 0, direccion: 0 }
             $scope.obtenerPaginador()
-
         }
+
         $scope.eliminar = function (evaluacion) {
             evaluacion.eliminado = true
             evaluacion.eliminar = true
@@ -150,7 +152,7 @@ angular.module('agil.controladores')
         var errorDesempenio = { nombre: 'ERROR', color: "bg-red" }
 
         $scope.listaDesempenio = [
-            { nombre: 'Deficiente', desde: 1, hasta: 25, color: "bg-red" },
+            { nombre: 'Deficiente', desde: 0, hasta: 25, color: "bg-red" },
             { nombre: 'Insatisfactorio', desde: 26, hasta: 50, color: "bg-yellow" },
             { nombre: 'Satisfactorio', desde: 51, hasta: 75, color: "bg-orange-green" },
             { nombre: 'Competente', desde: 76, hasta: 100, color: "bg-blue" }
@@ -388,6 +390,7 @@ angular.module('agil.controladores')
                         blockUI.stop()
                     }, function (err) {
                         var meno = err.stack !== undefined ? err.stack : err.message
+                        evaluacion.editar = undefined
                         $scope.mostrarMensaje("Se perdió la conexión." + meno)
                         blockUI.stop()
                     })
@@ -489,7 +492,7 @@ angular.module('agil.controladores')
                         var columns = [""];
                     }
                     columns.push(i + 1);
-                    columns.push(res.reporte[i].campo);
+                    columns.push(res.reporte[i].campo.nombre);
                     columns.push(res.reporte[i].persona.nombre_completo);
                     columns.push(res.reporte[i].persona.ci);
                     columns.push($scope.determinarEstado(res.reporte[i].eliminado));
@@ -774,10 +777,10 @@ angular.module('agil.controladores')
                 if (pdf) {
                     if (grafico) {
 
-                        $scope.reportePromediosGeneralGrafico(data, year, campo)
+                        $scope.reportePromediosGeneralGrafico(data, year, campo.nombre)
                     } else {
                         blockUI.stop();
-                        $scope.reportePromediosGeneralPdf(data, year, campo)
+                        $scope.reportePromediosGeneralPdf(data, year, campo.nombre)
                     }
                 } else {
                     var ws_name = "SheetJS";
@@ -802,7 +805,7 @@ angular.module('agil.controladores')
                     wb.SheetNames.push(ws_name);
                     wb.Sheets[ws_name] = ws;
                     var wbout = XLSX.write(wb, { bookType: 'xlsx', bookSST: true, type: 'binary' });
-                    saveAs(new Blob([s2ab(wbout)], { type: "application/octet-stream" }), "REPORTE POLIFUNCIONAL Campo " + campo + " : " + anio.id + ".xlsx");
+                    saveAs(new Blob([s2ab(wbout)], { type: "application/octet-stream" }), "REPORTE POLIFUNCIONAL CAMPO " + campo.nombre + " : " + anio.id + ".xlsx");
                     blockUI.stop();
                 }
 
@@ -1086,12 +1089,20 @@ angular.module('agil.controladores')
                 if (res.mensaje !== undefined) {
                     $scope.mostrarMensaje(res.mensaje)
                 }
+//                 $scope.filtrarFiltroPolifuncionalidad($scope.filtro, true)
+                blockUI.stop()
                 // $scope.resetFiltro()
                 /*  $scope.cerrarPopPupNuevoPolifuncional() */
-            }, function (err) {
-                $scope.mostrarMensaje("Se perdió la conexión.")
+            }).catch(function (err) {
+                $timeout(function () {
+                    $scope.$apply(function () {
+                        $scope.mostrarMensaje(err.data)
+                    })
+                }, 500)
+                
+                blockUI.stop()
             })
-            blockUI.stop()
+            // blockUI.stop()
         }
 
         $scope.resetFiltro = function () {
@@ -1103,8 +1114,10 @@ angular.module('agil.controladores')
                 $scope.obtenerEvaluaciones()
             } else {
                 for (var key in filtro) {
-                    if (filtro[key] === "" || filtro[key] === null) {
+                    if (filtro[key] === null || filtro[key] === undefined ) {
                         filtro[key] = 0
+                    } else if ((filtro[key] == 0 || filtro[key] == "0") && (key == "codigo" || key == "nombre" || key == "apellido")) {
+                        filtro[key] = ""
                     }
                 }
                 return filtro
@@ -1187,6 +1200,16 @@ angular.module('agil.controladores')
             }
         }
 
+        $scope.filtrarCentroCosto = function (query) {
+            // $scope.centrosDeCostosProcesado = $filter('filter')($scope.centrosDeCostos, query);
+            if ($scope.centrosDeCostosProcesado !== undefined) {
+                $scope.centrosDeCostosProcesado = $filter('filter')($scope.centrosDeCostos, query);
+            } else {
+                $scope.centrosDeCostosProcesado = $scope.centrosDeCostos
+                
+            }
+        }
+
         $scope.establecerPersonal = function (personal, modal) {
             if ($scope.evaluacion === undefined) {
                 $scope.evaluacion = {}
@@ -1196,6 +1219,18 @@ angular.module('agil.controladores')
 
             if (modal !== undefined) {
                 $scope.cerrarmodalBusquedaPersonal()
+            }
+        }
+
+        $scope.establecercentroCosto = function (centroCosto, modal) {
+            if ($scope.reporte === undefined) {
+                $scope.reporte= {}
+            }
+            // var campoXanio = { id: centroCosto.id, nombre_corto: centroCosto.nombre, nombre: } }
+            $scope.reporte.campoXanio = centroCosto
+
+            if (modal !== undefined) {
+                $scope.cerrarmodalBusquedaCentroCosto()
             }
         }
 
@@ -1260,6 +1295,15 @@ angular.module('agil.controladores')
 
         $scope.cerrarmodalBusquedaPersonal = function () {
             $scope.cerrarPopup($scope.modalBusquedaPersonal);
+        }
+
+        $scope.abrirmodalBusquedaCentroCosto = function () {
+            $scope.filtrarCentroCosto("")
+            $scope.abrirPopup($scope.modalBusquedaCentroCosto);
+        }
+
+        $scope.cerrarmodalBusquedaCentroCosto = function () {
+            $scope.cerrarPopup($scope.modalBusquedaCentroCosto);
         }
 
         $scope.comprobarConfiguracion = function () {

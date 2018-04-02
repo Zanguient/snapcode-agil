@@ -13,11 +13,12 @@ function ejecutarScriptDestino(idModalWizardDestinoEdicion, idContenedorEdicionD
 }
 
 function ejecutarScriptsPolifuncionalidad(modalNuevaEvaluacion, modalNuevaEvaluacionWizard, modalBusquedaPersonal, modalParametrosPolifuncionalidad,
-	modalParametrosPolifuncionalidadWizard, idModalReportes, reporteGraficoPolifuncional) {
+	modalParametrosPolifuncionalidadWizard, idModalReportes, reporteGraficoPolifuncional, modalBusquedaCentroCosto) {
 	crearPopup(modalNuevaEvaluacion, 'auto', 'auto');
 	crearPopup(modalParametrosPolifuncionalidad, 'auto', 'auto');
 	crearPopup(idModalReportes, 'auto', 'auto');
 	crearPopup(modalBusquedaPersonal, 'auto', 'auto');
+	crearPopup(modalBusquedaCentroCosto, 'auto', 'auto');
 	crearPopup(reporteGraficoPolifuncional, '85%', 800);
 	aplicarWizardFormulario(modalNuevaEvaluacion, modalNuevaEvaluacionWizard);
 	aplicarWizardFormulario(modalParametrosPolifuncionalidad, modalParametrosPolifuncionalidadWizard);
@@ -33,7 +34,7 @@ function ejecutarScriptsProformas(modalConfiguracionActividadesServicios, wizard
 	crearPopup(dialogBusquedaServicio, 'auto', 'auto');
 	crearPopup(dialogDosificacionesDisponibles, 'auto', 'auto');
 	crearPopup(confirmarDosificacion, 'auto', 'auto');
-	
+
 	aplicarWizardFormulario(wizardConfiguracionActividadesServicios);
 	aplicarWizardFormulario(wizardConfiguracionActividades);
 }
@@ -264,12 +265,11 @@ function ejecutarScriptsRecursosHumanos(idModalPrerequisitos, idModalEmpleado, i
 	idModalHistorialViajes, idModalReporteAusencias, idModalCertificado, idModalInstitucion, idModalRhNuevo, idModalWizardRhNuevo,
 	idImagenUsuario, idEliminarUsuarioRh, idModalWizardRhVista, idModalContenedorRhVista, idModalDialogPrerequisitoNuevo, idEliminarSeguroEmpleado,
 	idEliminarFamiliarEmpleado, idModalHistorialPrerequisito, idModalEditarPrerequisito, idModalDialogConfirmacionEntregaAdelantado, IdEntregaPrerequisito, IdModalVerificarCuenta, idModalImpresionHojaVida, idModalNuevoAnticipoRegularTodos,
-	idModalTr3BancoMsc,idModalTr3BancoUnion,idModalHistorialTr3,IdModalVerificarCuentaRrhh,idModalConfirmarDesabilitacion,idModalReingresoEmpleado,
-	idModalHistorialBeneficios) {
+	idModalTr3BancoMsc, idModalTr3BancoUnion, idModalHistorialTr3, IdModalVerificarCuentaRrhh, idModalConfirmarDesabilitacion, idModalReingresoEmpleado,
+	idModalHistorialBeneficios, idModalConfiguracionRopaDeTrabajo, idModalReporteRopaDeTrabajo,idmodalWizardContainerConfiguracionRopaTrabajo,idModalRopaTrabajo,idModalNuevaRopaTrabajo,idModalItemsNuevaRopaTrabajo) {
 	crearPopup(idModalPrerequisitos, "90%", 'auto');
 	crearPopup(idModalEmpleado, "100%", 'auto');
 	aplicarWizardFormulario(idModalEmpleado, idModalwizardContainerEmpleado);
-
 	crearPopup(idModalTipoDocumento, "62%", "auto");
 	crearPopup(idModalEstadoCivil, "62%", "auto");
 	crearPopup(idModalNacionalidad, "62%", "auto");
@@ -358,6 +358,13 @@ function ejecutarScriptsRecursosHumanos(idModalPrerequisitos, idModalEmpleado, i
 	crearPopup(idModalConfirmarDesabilitacion, "auto", 'auto');
 	crearPopup(idModalReingresoEmpleado, "auto", 'auto');
 	crearPopup(idModalHistorialBeneficios, "auto", 'auto');
+	crearPopup(idModalConfiguracionRopaDeTrabajo, "50%", 'auto');
+	aplicarWizardFormulario(idModalConfiguracionRopaDeTrabajo, idmodalWizardContainerConfiguracionRopaTrabajo);
+	crearPopup(idModalReporteRopaDeTrabajo, "auto", 'auto');
+	crearPopup(idModalRopaTrabajo, "80%", 'auto');
+	crearPopup(idModalNuevaRopaTrabajo, "50%", 'auto');
+	crearPopup(idModalItemsNuevaRopaTrabajo, "50%", 'auto');
+	
 	setTimeout(function () {
 		aplicarDatePickers();
 		// aplicarHoras();
@@ -1335,16 +1342,16 @@ function parseDate(input) {
 
 
 function getDates(startDate, endDate) {
-	var mes2 = (startDate.getMonth()+1)
-		var dia2 = startDate.getDate()
-		mes2=(mes2<10)?"0"+mes2:mes2
-		dia2=(dia2<10)?"0"+dia2:dia2
-		var mes3 = (endDate.getMonth()+1)
-		var dia3 = endDate.getDate()
-		mes3=(mes3<10)?"0"+mes3:mes3
-		dia3=(dia3<10)?"0"+dia3:dia3
+	var mes2 = (startDate.getMonth() + 1)
+	var dia2 = startDate.getDate()
+	mes2 = (mes2 < 10) ? "0" + mes2 : mes2
+	dia2 = (dia2 < 10) ? "0" + dia2 : dia2
+	var mes3 = (endDate.getMonth() + 1)
+	var dia3 = endDate.getDate()
+	mes3 = (mes3 < 10) ? "0" + mes3 : mes3
+	dia3 = (dia3 < 10) ? "0" + dia3 : dia3
 	startDate = startDate.getFullYear() + "/" + mes2 + "/" + dia2
-	endDate = endDate.getFullYear() + "/" + mes3 + "/" +dia3
+	endDate = endDate.getFullYear() + "/" + mes3 + "/" + dia3
 	var listDate = [];
 	var dateMove = new Date(startDate);
 	var strDate = startDate;
@@ -1352,31 +1359,31 @@ function getDates(startDate, endDate) {
 		//var strDate = dateMove.toISOString().slice(0, 10);
 		listDate.push(strDate);
 		dateMove.setDate(dateMove.getDate() + 1);
-		var mes = (dateMove.getMonth()+1)
+		var mes = (dateMove.getMonth() + 1)
 		var dia = (dateMove.getDate())
-		mes=(mes<10)?"0"+mes:mes
-		dia=(dia<10)?"0"+dia:dia
-		strDate=dateMove.getFullYear() + "/" + mes + "/" + dia
+		mes = (mes < 10) ? "0" + mes : mes
+		dia = (dia < 10) ? "0" + dia : dia
+		strDate = dateMove.getFullYear() + "/" + mes + "/" + dia
 	};
 	return listDate;
 };
-function convertirSegundosATiempo(time){
-	var hours = Math.floor( time / 3600 );  
-	var minutes = Math.floor( (time % 3600) / 60 );
+function convertirSegundosATiempo(time) {
+	var hours = Math.floor(time / 3600);
+	var minutes = Math.floor((time % 3600) / 60);
 	var seconds = time % 60;
-	 
+
 	//Anteponiendo un 0 a los minutos si son menos de 10 
 	minutes = minutes < 10 ? '0' + minutes : minutes;
-	 
+
 	//Anteponiendo un 0 a los segundos si son menos de 10 
 	seconds = seconds < 10 ? '0' + seconds : seconds;
-	 
+
 	var result = hours + ":" + minutes + ":" + seconds;
 	console.log(result)
 	return result;
 }
-function ValidarForm (form, steps,button) {
-	if (!form.$valid) {	
+function ValidarForm(form, steps, button) {
+	if (!form.$valid) {
 		steps.forEach(function (dato, index, array) {
 
 
@@ -1415,17 +1422,17 @@ function ValidarForm (form, steps,button) {
 				/*  stepDatosLaborales
 				 stepdatosAfiliacion
 				 stepDatosFamiliares */
-				
-			   
-					if (fail) {
-						setTimeout(function () {
-							$('#'+button).click()
-						}, 300);
 
-					}
-				
+
+				if (fail) {
+					setTimeout(function () {
+						$('#' + button).click()
+					}, 300);
+
+				}
+
 			}
-		  
+
 		});
 		// cancel change
 	}
@@ -1441,53 +1448,53 @@ function duration(since, until) {
 		until = temp;
 	}
  */
-	var years,months,days;
-	
+	var years, months, days;
+
 	//Years
 	years = (until.getFullYear() - since.getFullYear());
-	if (until.getMonth() == since.getMonth()){
-		if (since.getDate() < (until.getDate()-1)) {
+	if (until.getMonth() == since.getMonth()) {
+		if (since.getDate() < (until.getDate() - 1)) {
 			years += 1;
 		}
-		if(since.getDate()==until.getDate()){
-				years+= 1;
+		if (since.getDate() == until.getDate()) {
+			years += 1;
 		}
 	}
-	if(since.getMonth() > until.getMonth()){
-			years = (years - 1);
+	if (since.getMonth() > until.getMonth()) {
+		years = (years - 1);
 	}
 	//Months
-	if(since.getDate() > until.getDate()){
-		if(since.getMonth() > (until.getMonth()-1)){
+	if (since.getDate() > until.getDate()) {
+		if (since.getMonth() > (until.getMonth() - 1)) {
 			months = 11 - (since.getMonth() - until.getMonth());
-			if (since.getMonth() == until.getMonth()){
+			if (since.getMonth() == until.getMonth()) {
 				months = 11;
 			}
-		}else{
+		} else {
 			months = until.getMonth() - since.getMonth() - 1;
 		}
-	}else{
-		if(since.getMonth() > until.getMonth()){
+	} else {
+		if (since.getMonth() > until.getMonth()) {
 			months = 12 - (Math.abs(until.getMonth() - since.getMonth()));
-		}else{
+		} else {
 			months = until.getMonth() - since.getMonth();
 		}
 	}
 	//Days
-	if(since.getDate() > (until.getDate()-1)){
-		var days_pm = dayssInmonths(until.getMonth(until.getMonth()-1));
-		days =  days_pm - since.getDate() + until.getDate();
-		if((since.getMonth() == until.getMonth()) & (since.getDate()==until.getDate())){			
+	if (since.getDate() > (until.getDate() - 1)) {
+		var days_pm = dayssInmonths(until.getMonth(until.getMonth() - 1));
+		days = days_pm - since.getDate() + until.getDate();
+		if ((since.getMonth() == until.getMonth()) & (since.getDate() == until.getDate())) {
 			days = 0;
 		}
-	}else{
+	} else {
 		days = until.getDate() - since.getDate();
 	}
-	
-	return ({"anios":years,"meses":months,"dias":days});
+
+	return ({ "anios": years, "meses": months, "dias": days });
 }
 
-function dayssInmonths(date){
+function dayssInmonths(date) {
 	date = new Date(date);
 	return 32 - new Date(date.getFullYear(), date.getMonth(), 32).getDate();
 }

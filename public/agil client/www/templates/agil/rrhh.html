@@ -41,7 +41,10 @@
                         </div>
                         <div class="form-group col-sm-6 col-md-3 col-lg-2">
                             <label for="campo">Campo</label>
-                            <input ng-update-hidden type="text" id="filtroCampo" name="filtroCampo" ng-model="filtro.campo">
+                            <select required id="campo-rol" class="form-control" name="centroDeCostos" ng-options="centroCosto.id as centroCosto.nombre for centroCosto in centrosDeCostos | filter:{habilitado:true} track by centroCosto.id"
+                                ng-model="filtro.campo">
+                                <option value="">--selecionar--</option>
+                            </select>
                         </div>
                     </div>
 
@@ -135,6 +138,48 @@
                     </a>
                     <a href="javascript:void(0)" ng-click="abrirDialogViajes()" role="button" data-rel="tooltip" data-placement="top" uib-tooltip="Viajes">
                         <span class="fa fa-bus text-white margin-0-5 bigger-200"></span>
+                    </a>
+                    <a class="tooltip-info blue" popover-placement="right" popover-title="Ropa de Trabajo" uib-popover-template="dynamicPopoverRopaTrabajo.templateUrl"
+                        popover-trigger="outsideClick: outsideClick" type="button" class="btn btn-info btn-xs btn-link pull-left">
+                        <span data-rel="tooltip" data-placement="top" uib-tooltip="Ropa De Trabajo" class="text-white margin-0-5 bigger-200">
+                            <img height="35" width="30" src="assets/avatars/ropa2.png" style="padding-bottom: 5px">
+                        </span>
+                        <script type="text/ng-template" id="myPopoverRopaTrabajo.html">    
+                                                            
+                            <div >
+                                <div class="infobox infobox-green" ng-click="abrirModalConfiguracionRopaDeTrabajo()">
+                                    <div class="infobox-icon">
+                                        <i class="ace-icon fa fa-cog"></i>
+                                    </div>
+
+                                    <div class="infobox-data">
+                                        <span class="infobox-data-text"><font size="4">Configuración</font></span>
+                                        <!-- <div class="infobox-content">comments + 2 reviews</div> -->
+                                    </div>
+
+                                   <!--  <div class="stat stat-success">8%</div> -->
+                                </div>
+
+                                <div class="infobox infobox-blue" ng-click="abrirModalReporteRopaDeTrabajo()">
+                                    <div class="infobox-icon">
+                                        <i class="ace-icon fa fa-print"></i>
+                                    </div>
+
+                                    <div class="infobox-data">
+                                        <span class="infobox-data-text"><font size="4">Reportes</font></span>
+                                       <!--  <div class="infobox-content">new followers</div> -->
+                                    </div>
+
+                                   <!--  <div class="badge badge-success">
+                                        +32%
+                                        <i class="ace-icon fa fa-arrow-up"></i>
+                                    </div> -->
+                                </div>
+                                <br>
+                                                           
+                            </div>  
+                                   
+                    </script>
                     </a>
                 </div>
                 Lista de Trabajadores
@@ -306,7 +351,7 @@
                                 {{empleado.tipoContrato}}
                             </td>
                             <td ng-if="fieldViewer.getConfiguration().campo.show">
-                                {{empleado.campo}}
+                                {{empleado.campamento}}
                             </td>
                             <td ng-if="fieldViewer.getConfiguration().cargo.show">
 
@@ -357,6 +402,11 @@
                                     ng-click="abrirDialogHojaVida(empleado)">
                                     <span class="ace-icon icono-hoja-vida fa-2x" aria-hidden="true"></span>
                                 </a>
+                                <a class="tooltip-info blue" data-rel="tooltip" data-placement="top" uib-tooltip="Ropa De Trabajo" type="button" class="btn btn-info btn-xs btn-link pull-left"
+                                    ng-click="abrirModalRopaTrabajo(empleado)">
+                                    <img height="35" width="30" src="assets/avatars/ropa.png" style="padding-bottom: 5px">
+                                </a>
+
                             </td>
                             <td>
                                 <div class="hidden-sm hidden-xs action-buttons">
@@ -1236,7 +1286,7 @@
                                     </div>
                                     <div class="row form-group">
                                         <div class="col-sm-1 col-lg-1">
-                                            <label for="">Cargo</label>
+                                            <label for="">Cargos</label>
                                         </div>
                                         <div class="col-sm-11 col-lg-4">
                                             <div isteven-multi-select input-model="cargos" output-model="ficha.cargo" button-label="icon nombre" item-label="icon nombre maker"
@@ -4120,7 +4170,8 @@
 
                         <div class="center-block width150">
                             <label>
-                                <input autofocus ng-disabled="true" name="" ng-model="beneficio.tipo_beneficio" class="ace ace-switch ace-switch-5 big-switch" type="checkbox">
+                                <input autofocus ng-disabled="true" name="" ng-model="beneficio.tipo_beneficio" class="ace ace-switch ace-switch-5 big-switch"
+                                    type="checkbox">
                                 <span class="lbl" data-lbl="Finiquito&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Quinquenio"></span>
                             </label>
                         </div>
@@ -4201,11 +4252,13 @@
                                 <div class="row">
                                     <div class="form-group col-sm-4">
                                         <label for="quinquenio">Número de Quinquenios</label>
-                                        <input disabled type="number" min="0" ng-value="quinqueniosRealizados" ng-model="beneficio.numero_quinquenio" class="form-control" id="quinquenio" name="quinquenio">
+                                        <input disabled type="number" min="0" ng-value="quinqueniosRealizados" ng-model="beneficio.numero_quinquenio" class="form-control"
+                                            id="quinquenio" name="quinquenio">
                                     </div>
                                     <div class="form-group col-sm-4">
                                         <label for="quinquenio-adelanto">Quinquenio Adelantado</label>
-                                        <input type="number" min="0" ng-model="beneficio.quinquenio_adelantado" class="form-control" id="quinquenio-adelanto" name="quinquenio-adelanto" ng-change="agregarQuinquenioAdelantado(beneficio)">
+                                        <input type="number" min="0" ng-model="beneficio.quinquenio_adelantado" class="form-control" id="quinquenio-adelanto" name="quinquenio-adelanto"
+                                            ng-change="agregarQuinquenioAdelantado(beneficio)">
                                     </div>
                                     <!--  <div class="form-group col-sm-4">
                                         <label for="quinquenio-total">Total Quinquenio a Pagar</label>
@@ -4243,9 +4296,9 @@
                                             class="form-control" id="3-mes" name="3-mes">
                                     </div>
                                     <div class="form-group col-sm-3">
-                                            <label for="3-mes">Total por Quinquenio</label>
-                                            <input disabled type="number" ng-model="beneficio.total_por_quinquenio" class="form-control" id="3-mes" name="3-mes">
-                                        </div>
+                                        <label for="3-mes">Total por Quinquenio</label>
+                                        <input disabled type="number" ng-model="beneficio.total_por_quinquenio" class="form-control" id="3-mes" name="3-mes">
+                                    </div>
                                     <div class="form-group col-sm-6">
                                         <label for="3-mes">Total Quinquenios a Pagar</label>
                                         <input disabled type="number" ng-model="beneficio.total_quinquenio" class="form-control" id="3-mes" name="3-mes">
@@ -4292,36 +4345,39 @@
                                                     <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
                                                 </button>
                                             </div>
-                                           <!--  <div class="table-fixed-header" style="max-height: 180px !important"> -->
-                                                <table class="table table-striped table-bordered table-hover ">
-                                                    <thead ><!-- fix-head class="table-head-color" -->
-                                                        <tr>
-                                                            <th>#</th>
-                                                            <th>Monto</th>
-                                                            <th>Motivo</th>
-                                                            <th>Eliminar</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        <tr ng-if="!ingreso.eliminado" ng-repeat="ingreso in beneficio.ingresos">
-                                                            <th >{{$index+1}}</th>
-                                                            <td>{{ingreso.monto|number:2}}</td>
-                                                            <td>{{ingreso.motivo}}</td>
-                                                            <td>
-                                                                <span class="glyphicon glyphicon-remove" ng-click="eliminarOtroIngreso($index,ingreso)" aria-hidden="true"></span>
-                                                            </td>
-                                                        </tr>
+                                            <!--  <div class="table-fixed-header" style="max-height: 180px !important"> -->
+                                            <table class="table table-striped table-bordered table-hover ">
+                                                <thead>
+                                                    <!-- fix-head class="table-head-color" -->
+                                                    <tr>
+                                                        <th>#</th>
+                                                        <th>Monto</th>
+                                                        <th>Motivo</th>
+                                                        <th>Eliminar</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr ng-if="!ingreso.eliminado" ng-repeat="ingreso in beneficio.ingresos">
+                                                        <th>{{$index+1}}</th>
+                                                        <td>{{ingreso.monto|number:2}}</td>
+                                                        <td>{{ingreso.motivo}}</td>
+                                                        <td>
+                                                            <span class="glyphicon glyphicon-remove" ng-click="eliminarOtroIngreso($index,ingreso)" aria-hidden="true"></span>
+                                                        </td>
+                                                    </tr>
 
-                                                    </tbody>
-                                                    <tfoot>
-                                                        <tr>
-                                                            <td><b>Total</b></td>
-                                                            <td>{{beneficio.total_ingresos|number:2}}</td>
-                                                            <td></td>
-                                                            <td></td>
-                                                        </tr>
-                                                    </tfoot>
-                                                </table>
+                                                </tbody>
+                                                <tfoot>
+                                                    <tr>
+                                                        <td>
+                                                            <b>Total</b>
+                                                        </td>
+                                                        <td>{{beneficio.total_ingresos|number:2}}</td>
+                                                        <td></td>
+                                                        <td></td>
+                                                    </tr>
+                                                </tfoot>
+                                            </table>
                                             <!-- </div> -->
                                         </div>
                                     </div>
@@ -4350,34 +4406,37 @@
                                             </div>
                                         </div>
                                         <!-- <div class="table-fixed-header" style="max-height: 180px !important"> -->
-                                            <table class="table table-striped table-bordered table-hover ">
-                                                <thead ><!-- fix-head class="table-head-color" -->
-                                                    <tr>
-                                                        <th>#</th>
-                                                        <th>Monto</th>
-                                                        <th>Motivo</th>
-                                                        <th>Eliminar</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    <tr ng-if="!deduccion.eliminado" ng-repeat="deduccion in beneficio.deducciones">
-                                                        <th scope="row">{{$index+1}}</th>
-                                                        <td>{{deduccion.monto|number:2}}</td>
-                                                        <td>{{deduccion.motivo}}</td>
-                                                        <td>
-                                                            <span class="glyphicon glyphicon-remove" ng-click="eliminarDeduccion($index,deduccion)" aria-hidden="true"></span>
-                                                        </td>
-                                                    </tr>
-                                                </tbody>
-                                                <tfoot>
-                                                    <tr>
-                                                        <td><b>Total</b></td>
-                                                        <td>{{beneficio.total_deducciones|number:2}}</td>
-                                                        <td></td>
-                                                        <td></td>
-                                                    </tr>
-                                                </tfoot>
-                                            </table>
+                                        <table class="table table-striped table-bordered table-hover ">
+                                            <thead>
+                                                <!-- fix-head class="table-head-color" -->
+                                                <tr>
+                                                    <th>#</th>
+                                                    <th>Monto</th>
+                                                    <th>Motivo</th>
+                                                    <th>Eliminar</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr ng-if="!deduccion.eliminado" ng-repeat="deduccion in beneficio.deducciones">
+                                                    <th scope="row">{{$index+1}}</th>
+                                                    <td>{{deduccion.monto|number:2}}</td>
+                                                    <td>{{deduccion.motivo}}</td>
+                                                    <td>
+                                                        <span class="glyphicon glyphicon-remove" ng-click="eliminarDeduccion($index,deduccion)" aria-hidden="true"></span>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                            <tfoot>
+                                                <tr>
+                                                    <td>
+                                                        <b>Total</b>
+                                                    </td>
+                                                    <td>{{beneficio.total_deducciones|number:2}}</td>
+                                                    <td></td>
+                                                    <td></td>
+                                                </tr>
+                                            </tfoot>
+                                        </table>
                                         <!-- </div> -->
                                     </div>
                                 </div>
@@ -4672,9 +4731,9 @@
                                 <th scope="row">{{$index+1}}</th>
                                 <td>{{anticipo.fecha | date: "dd/MM/yyyy"}}</td>
                                 <td ng-if="!anticipo.id || anticipo.montoEdit">
-                                    <input ng-if="!anticipo.montoEdit" required class="form-control" type="number" ng-model="anticipo.monto" ng-change="sumarMontoPrestamoNuevo(anticipo)"
+                                    <input ng-if="!anticipo.montoEdit" required class="form-control" type="number" ng-model="anticipo.monto" ng-change="sumarMontoPrestamoNuevo(anticipo,$index)"
                                         min="1" max="{{listaAnticipos[listaAnticipos.length-2].saldo_salario}}">
-                                    <input ng-if="anticipo.montoEdit" required class="form-control" type="number" ng-model="anticipo.monto" ng-change="sumarMontoPrestamoNuevo(anticipo)"
+                                    <input ng-if="anticipo.montoEdit" required class="form-control" type="number" ng-model="anticipo.monto" ng-change="sumarMontoPrestamoNuevo(anticipo,$index)"
                                         min="1">
                                 </td>
                                 <td ng-if="anticipo.id" ng-hide="anticipo.montoEdit">{{anticipo.monto|number:2}}</td>
@@ -5684,7 +5743,7 @@
                     <div class="form-group col-sm-6">
                         <label for="sexo">Campo</label>
                         <div class="input-group">
-                            <select required id="campo-rol" name="centroDeCostos" ng-options="centroCosto as centroCosto.nombre for centroCosto in centrosDeCostos track by centroCosto.id"
+                            <select required id="campo-rol" name="centroDeCostos" ng-options="centroCosto as centroCosto.nombre for centroCosto in centrosDeCostos | filter:{habilitado:true} track by centroCosto.id"
                                 ng-model="rolTurno.campo">
                                 <option value="">--selecionar--</option>
                             </select>
@@ -6055,8 +6114,8 @@
                                     <td>{{anticipo.fecha | date: "dd/MM/yyyy"}}</td>
                                     <td>{{anticipo.empleado.persona.nombre_completo}}</td>
                                     <td ng-if="!anticipo.id || anticipo.montoEdit">
-                                        <input step="0.01" class="form-control" type="number" ng-model="anticipo.monto" ng-change="sumarMontoPrestamoNuevo(anticipo)" min="1"
-                                            max="{{listaAnticipos[listaAnticipos.length-2].saldo_salario}}">
+                                        <input step="0.01" class="form-control" type="number" ng-model="anticipo.monto" ng-change="sumarMontoPrestamoNuevo(anticipo,$index)"
+                                            min="1" max="{{listaAnticipos[listaAnticipos.length-2].saldo_salario}}">
                                     </td>
                                     <td ng-if="anticipo.id" ng-hide="anticipo.montoEdit">{{anticipo.monto|number:2}}</td>
                                     <th>{{anticipo.tope}}</th>
@@ -6475,7 +6534,7 @@
             </div>
             <div class="modal-body">
                 <div class="row">
-                   
+
                     <div class="col-sm-12">
 
                         <div class="form-group">
@@ -6516,7 +6575,7 @@
 
                 </div>
             </div>
-            
+
         </form>
 
     </div>
@@ -8095,7 +8154,10 @@
                                                 <label for="campo">Campo</label>
                                             </div>
                                             <div class="col-lg-7">
-                                                <input required type="text" id="campo" ng-model="nuevoRH.campo" placeholder="Campo" class="form-control" />
+                                                <select required id="campo-rol" name="centroDeCostos" ng-options="centroCosto as centroCosto.nombre for centroCosto in centrosDeCostos | filter:{habilitado:true} track by centroCosto.id"
+                                                    ng-model="nuevoRH.campo">
+                                                    <option value="">--selecionar--</option>
+                                                </select>
                                             </div>
 
                                         </div>
@@ -8451,7 +8513,10 @@
                                                 <label for="campo">Campo</label>
                                             </div>
                                             <div class="col-lg-7">
-                                                <input disabled type="text" id="campo" ng-model="paciente.campo" placeholder="Campo" class="form-control" />
+                                                <select disabled required id="campo-rol" name="centroDeCostos" ng-options="centroCosto as centroCosto.nombre for centroCosto in centrosDeCostos | filter:{habilitado:true} track by centroCosto.id"
+                                                    ng-model="nuevoRH.campo">
+                                                    <option value="">--selecionar--</option>
+                                                </select>
                                             </div>
 
                                         </div>
@@ -8595,6 +8660,451 @@
                 </div>
             </div>
         </form>
+    </div>
+    <div id="dialog-configuracion-ropa-trabajo">
+        <div class="modal-content">
+
+            <form id="formEvaluacionPolifuncional" ng-submit="guardarConfiguracionRopaTrabajo(ropaTrabajo)">
+                <div id="modal-wizard-container-configuracion-ropa-trabajo">
+                    <div class="modal-header ficha">
+                        <h4 class="modal-title" id="myModalLabel">Configuración Ropa de trabajo</h4>
+                    </div>
+                    <div class="modal-header">
+                        <ul class="steps">
+                            <li data-step="1" class="active">
+                                <span class="step">1</span>
+
+                                <span class="title">Selección de personal</span>
+                            </li>
+                            <li data-step="2">
+                                <span class="step">2</span>
+                                <span class="title">Finalizar</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="modal-body step-content">
+                        <div class="step-pane active" data-step="1">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label> Cargo</label>
+                                </div>
+                                <div class="col-md-6">
+                                    <select name="fecha" id="tipo-contrato" class="form-control" required ng-options="cargo.id as cargo.nombre for cargo in listaCargos.clases track by cargo.id"
+                                        ng-model="ropaTrabajo.cargo">
+                                        <option value="">--Ninguno--</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label> Ropa de Trabajo</label>
+                                </div>
+                                <div class="col-md-6">
+                                    <select name="fecha" id="tipo-contrato" class="form-control" required ng-options="cargo.id as cargo.nombre for cargo in listaCargos.clases track by cargo.id"
+                                        ng-model="ropaTrabajo.cargo">
+                                        <option value="">--Ninguno--</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label> Cantidad</label>
+                                </div>
+                                <div class="col-md-6">
+                                    <input required type="text" ng-model="ropaTrabajo.cantidad" class="form-control" placeholder="Cantidad">
+                                </div>
+                                <div class="col-md-12">
+                                    <button type="button" class="btn btn-primary btn-sm" ng-disabled="!empleado.activo" ng-click="agregarLogroHojaVida(logro)">Añadir</button>
+                                    <!-- <button type="button"  class="btn btn-success btn-sm" ng-click="guardarLogroHojaVidaEditada(logro)">Guardar</button> -->
+                                    <button type="button" class="btn btn-app btn-success btn-xs pull-right">
+                                        <i class="ace-icon fa fa-print bigger-160"></i>
+                                        Pdf
+                                    </button>
+                                    <button type="button" class="btn btn-app btn-danger btn-xs pull-right">
+                                        <i class="ace-icon fa fa-print bigger-160"></i>
+                                        Exel
+                                    </button>
+                                </div>
+
+                                <div class="table-responsive">
+                                    <table class="table table-striped table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>#</th>
+                                                <th>Ropa de Trabajo</th>
+                                                <th>Cantidad</th>
+                                                <th>Acciones</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr ng-if="!logro.eliminado" ng-repeat="ropa in ropasDeTrabajo">
+                                                <th scope="row">{{$index+1}}</th>
+                                                <td>{{logro.institucion}}</td>
+                                                <td>{{logro.observacion}}</td>
+
+                                                <td>
+                                                    <div class="action-buttons">
+                                                        <!--    <a class="blue">
+                                                                <i class="ace-icon fa fa-search-plus bigger-130"></i>
+                                                            </a> -->
+                                                        <a class="green" ng-click="editarLogroHojaVida(logro)">
+                                                            <i class="ace-icon fa fa-pencil bigger-130"></i>
+                                                        </a>
+                                                        <a class="red" ng-click="eliminarLogroHojaVida(logro)">
+                                                            <i class="ace-icon fa fa-trash-o bigger-130"></i>
+                                                        </a>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="step-pane" data-step="2">
+                            <div class="center">
+                                <h4 class="blue">Finalizado
+                                </h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer wizard-actions">
+                    <button tabindex="-1" type="button" class="btn btn-sm btn-prev">
+                        <i class="ace-icon fa fa-arrow-left"></i>
+                        Anterior
+                    </button>
+
+                    <button type="submit" id="siguiente-CR" class="btn btn-success btn-sm btn-next" data-last="Finish">
+                        Siguiente
+                        <i class="ace-icon fa fa-arrow-right icon-on-right"></i>
+                    </button>
+
+                    <button tabindex="-1" type="button" class="btn btn-danger btn-sm pull-left" data-dismiss="modal" ng-click="cerrarModalConfiguracionRopaDeTrabajo()">
+                        <i class="ace-icon fa fa-times"></i>
+                        Cancelar
+                    </button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+    <div id="dialog-reporte-ropa-trabajo">
+        <div class="modal-content">
+            <div class="modal-header ficha">
+                <h4 class="modal-title" id="myModalLabel">Reportes Ropa de Trabajo</h4>
+            </div>
+            <div class="modal-body">
+                <form ng-submit="paginator.getSearch(paginator.search,filtro,null)">
+                    <div class="row">
+                        <div class="form-group col-md-1">
+                            <p>
+                                <label for="codigo"></label>
+                            </p>
+                            <p>
+                                <label for="codigo">PERIODO</label>
+                            </p>
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label for="codigo">DESDE</label>
+                            <input ng-update-hidden type="text" class "form-control" id="filtroCodigo" ng-model="filtro.codigo" placeholder="" />
+                        </div>
+
+                        <div class="form-group col-md-3">
+                            <label for="nombre">HASTA</label>
+                            <input ng-update-hidden type="text" class "form-control" id="filtroNombre" ng-model="filtro.nombres" placeholder="" />
+                        </div>
+
+                        <div class="form-group col-md-2">
+                            <label for="campo">CENTRO DE COSTO</label>
+                            <select required id="campo-rol" class="form-control" name="centroDeCostos" ng-options="centroCosto.id as centroCosto.nombre for centroCosto in centrosDeCostos | filter:{habilitado:true} track by centroCosto.id"
+                                ng-model="filtro.campo">
+                                <option value="">--selecionar--</option>
+                            </select>
+                        </div>
+
+
+                        <div class="form-group col-md-3">
+
+                            <button class="btn btn-app btn-danger btn-xs">
+                                <i class="ace-icon fa fa-print bigger-160"></i>
+                                PDF
+                            </button>
+                            <button class="btn btn-app btn-success btn-xs" ng-click="generarExcelEmpleados(RecursosHumanosEmpleados,fieldViewer.getConfiguration())">
+                                <i class="ace-icon fa fa-print bigger-160"></i>
+                                EXCEL
+                            </button>
+                        </div>
+                    </div>
+                </form>
+
+            </div>
+
+            <div class="modal-footer">
+
+                <button tabindex="-1" type="button" class="btn btn-danger btn-sm pull-left" data-dismiss="modal" ng-click="cerrarModalReporteRopaDeTrabajo()">
+                    <i class="ace-icon fa fa-times"></i>
+                    Cancelar
+                </button>
+            </div>
+
+
+        </div>
+    </div>
+    <div id="dialog-ropa-trabajo">
+        <div class="modal-content">
+            <div class="modal-header ficha">
+                <h4 class="modal-title" id="myModalLabel">Ropa de Trabajo</h4>
+
+            </div>
+            <div class="modal-body">
+                <div class="col-md-1">
+                    <a ng-click="abrirModalNuevaRopaTrabajo(empleado)" class="btn btn-primary">
+                        <i class="ace-icon fa fa-plus align-top bigger-125"></i>
+                        Nuevo
+                    </a>
+                </div>
+                <div class="col-md-11">
+                    <h4 align="center">{{empleado.nombre_completo}}</h4>
+                </div>
+                <div class="col-md-12">
+                    <form ng-submit="paginator.getSearch(paginator.search,filtro,null)">
+                        <div class="row">
+                            <div class="form-group col-md-3">
+                                <p>
+                                    <label for="codigo"></label>
+                                </p>
+                                <p>
+                                    <label for="codigo">PERIODO</label>
+                                </p>
+                            </div>
+                            <div class="form-group col-md-3">
+                                <label for="codigo">DESDE</label>
+                                <input ng-update-hidden type="text" class "form-control" id="filtroCodigo" ng-model="filtro.codigo" placeholder="" />
+                            </div>
+
+                            <div class="form-group col-md-3">
+                                <label for="nombre">HASTA</label>
+                                <input ng-update-hidden type="text" class "form-control" id="filtroNombre" ng-model="filtro.nombres" placeholder="" />
+                            </div>
+                            <div class="form-group col-md-3">
+
+                                <button class="btn btn-app btn-danger btn-xs">
+                                    <i class="ace-icon fa fa-print bigger-160"></i>
+                                    PDF
+                                </button>
+                                <button class="btn btn-app btn-success btn-xs" ng-click="generarExcelEmpleados(RecursosHumanosEmpleados,fieldViewer.getConfiguration())">
+                                    <i class="ace-icon fa fa-print bigger-160"></i>
+                                    EXCEL
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>Nro.</th>
+                                <th>Periodo</th>
+                                <th>Fecha</th>
+                                <th>Ropa</th>
+                                <th>Cargos</th>
+                                <th>estado</th>
+                                <th>Cumplimiento</th>
+                                <th>Observaciones</th>
+                                <th>Usuario</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <th scope="row">1</th>
+                                <td>I-2017</td>
+                                <td>15/07/2017</td>
+                                <td>Ropa</td>
+                                <td>Cargos</td>
+                                <td>Completa</td>
+                                <td>En fecha</td>
+                                <td>Ninguna</td>
+                                <td>Usuario</td>
+                                <td>
+                                    <div class="action-buttons">
+
+                                        <a class="green" ng-click="editarLogroHojaVida(logro)">
+                                            <i class="ace-icon fa fa-print bigger-130"></i>
+                                        </a>
+                                        <a class="blue" href="javascript:void(0)" ng-click="abrirDialogVerEmpleado(empleado)" class="tooltip-info" data-rel="tooltip"
+                                            title="View">
+                                            <i class="ace-icon fa fa-search-plus bigger-130"></i>
+                                        </a>
+                                        <a class="green" href="javascript:void(0)" ng-click="modificarEmpleado(empleado)">
+                                            <i class="ace-icon fa fa-pencil bigger-130"></i>
+                                        </a>
+
+                                        <a class="red" href="javascript:void(0)" ng-click="abrirDialogEliminarUsuarioRh(empleado)">
+                                            <i class="ace-icon fa fa-trash-o bigger-130"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+
+                <button tabindex="-1" type="button" class="btn btn-danger btn-sm pull-left" data-dismiss="modal" ng-click="cerrarModalRopaTrabajo()">
+                    <i class="ace-icon fa fa-times"></i>
+                    Cancelar
+                </button>
+            </div>
+
+
+        </div>
+    </div>
+    <div id="dialog-nueva-ropa-trabajo">
+        <div class="modal-content">
+            <form ng-submit="paginator.getSearch(paginator.search,filtro,null)">
+                <div class="modal-header hoja">
+                    <h4 class="modal-title" id="myModalLabel">DOTACIÓN DE ROPA</h4>
+
+                </div>
+                <div class="modal-body">
+                    <h4 align="center">{{empleado.nombre_completo}}</h4>
+
+                    <div class="row">
+                        <div class="form-group col-md-4">
+                            <label for="codigo">Fecha</label>
+                            <input ng-update-hidden type="text" class "form-control" id="filtroCodigo" ng-model="filtro.codigo" placeholder="" />
+                        </div>
+
+                        <div class="form-group col-md-4">
+                            <label for="nombre">Cumpli.</label>
+                            <input ng-update-hidden type="text" class "form-control" id="filtroNombre" ng-model="filtro.nombres" placeholder="" />
+                        </div>
+
+                        <div class="form-group col-md-4">
+                            <label for="campo">Periodo</label>
+                            <div class="input-group">
+                                <span class="input-group-addon glyphicon glyphicon-pencil point-edit green" ng-click="abrirDialogConceptoEdicion(grados)"></span>
+                                <select ng-model="formacionAcademica.grado" class="form-control" ng-options="grado as grado.nombre for grado in grados.clases | filter:{habilitado:true} track by grado.id">
+                                    <option value="">--Ninguno--</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-4">
+                            <label for="codigo">Estado</label>
+                            <input ng-update-hidden type="text" class "form-control" id="filtroCodigo" ng-model="filtro.codigo" placeholder="" />
+                        </div>
+
+
+                        <div class="form-group col-md-4">
+                            <label for="campo">Cargos</label>
+                            <div isteven-multi-select input-model="cargos" output-model="ficha.cargo" button-label="icon nombre" item-label="icon nombre maker"
+                                tick-property="ticked" translation="localLang">
+                            </div>
+
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label for="nombre">Items</label>
+                            <div class="input-group">
+                                <input ng-update-hidden type="text" class "form-control" id="filtroNombre" ng-model="filtro.nombres" placeholder="" />
+                                <span class="input-group-addon glyphicon glyphicon-search point-edit green" ng-click="abrirModalItemsNuevaRopaTrabajo()"></span>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="row">
+                        <div class="form-inline col-md-4">
+                            <label class="inline" for="codigo">Obs.</label>
+                            <input ng-update-hidden type="text" class "form-control" id="filtroCodigo" ng-model="filtro.codigo" placeholder="" />
+                        </div>
+                    </div>
+
+
+                </div>
+
+                <div class="modal-footer">
+
+                    <button tabindex="-1" type="button" class="btn btn-danger btn-sm pull-left" data-dismiss="modal" ng-click="cerrarModalNuevaRopaTrabajo()">
+                        <i class="ace-icon fa fa-times"></i>
+                        Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-primary btn-sm pull-right" data-dismiss="modal" ng-click="cerrarModalNuevaRopaTrabajo()">
+                        <i class="ace-icon fa fa-times"></i>
+                        Guardar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div id="dialog-items-nueva-ropa-trabajo">
+        <div class="modal-content">
+            <form ng-submit="paginator.getSearch(paginator.search,filtro,null)">
+                <div class="modal-header bg-success">
+                    <h4 align="center"> DETALLE</h4>
+                </div>
+                <div class="modal-body">
+                    <h4 align="center">{{empleado.nombre_completo}}</h4>
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th>N°</th>
+                                    <th>ITEMS</th>
+                                    <th>DETALLE</th>
+                                    <th>DISPONIBLE</th>
+                                    <th>CANT.</th>
+
+                                    <th>aCCIONES</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td scope="row">1</td>
+                                    <td>ITEMS</td>
+                                    <td>DETALLE</td>
+                                    <td>DISPONIBLE</td>
+                                    <td>CANT.</td>
+                                    <td>
+                                        <div class="action-buttons">
+
+                                            <a class="green" ng-click="editarLogroHojaVida(logro)">
+                                                <i class="ace-icon fa fa-print bigger-130"></i>
+                                            </a>
+                                            <a class="blue" href="javascript:void(0)" ng-click="abrirDialogVerEmpleado(empleado)" class="tooltip-info" data-rel="tooltip"
+                                                title="View">
+                                                <i class="ace-icon fa fa-search-plus bigger-130"></i>
+                                            </a>
+                                            <a class="green" href="javascript:void(0)" ng-click="modificarEmpleado(empleado)">
+                                                <i class="ace-icon fa fa-pencil bigger-130"></i>
+                                            </a>
+
+                                            <a class="red" href="javascript:void(0)" ng-click="abrirDialogEliminarUsuarioRh(empleado)">
+                                                <i class="ace-icon fa fa-trash-o bigger-130"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+
+                    <button tabindex="-1" type="button" class="btn btn-danger btn-sm pull-left" data-dismiss="modal" ng-click="cerrarModalItemsNuevaRopaTrabajo()">
+                        <i class="ace-icon fa fa-times"></i>
+                        Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-primary btn-sm pull-right" data-dismiss="modal" ng-click="cerrarModalNuevaRopaTrabajo()">
+                        <i class="ace-icon fa fa-times"></i>
+                        Guardar
+                    </button>
+                </div>
+            </form>
+
+        </div>
     </div>
     <div id="modal-reingreso-empleado" title="Asignar Cuenta">
         <form name="formularioAsignarCuenta" ng-submit="changeActivoEmpleado(empleado)">
@@ -8744,7 +9254,7 @@
                             <input class="form-control" type="text" ng-model="tr3.planilla" required>
                         </div>
                     </div>
-                   <!--  <div class="row">
+                    <!--  <div class="row">
                         <label class="col-md-5">Número de planilla</label>
                         <div class="col-md-7">
                             <input class="form-control" type="number" ng-model="tr3.numero_planilla" required>
@@ -8775,23 +9285,23 @@
                         </div>
                     </div>
                     <div class="row">
-                            <label class="col-md-5">firma 1</label>
-                            <div class="col-md-4">
-                                <input class="form-control" type="text" ng-model="tr3.firma_uno" required>
-                            </div>
-                            <div class="col-md-3">
-                                <input class="form-control" type="text" ng-model="tr3.firma_dos" required>
-                            </div>
+                        <label class="col-md-5">firma 1</label>
+                        <div class="col-md-4">
+                            <input class="form-control" type="text" ng-model="tr3.firma_uno" required>
                         </div>
-                        <div class="row">
-                            <label class="col-md-5">firma 2</label>
-                            <div class="col-md-4">
-                                <input class="form-control" type="text" ng-model="tr3.firma_tres" required>
-                            </div>
-                            <div class="col-md-3">
-                                <input class="form-control" type="text" ng-model="tr3.firma_cuatro" required>
-                            </div>
+                        <div class="col-md-3">
+                            <input class="form-control" type="text" ng-model="tr3.firma_dos" required>
                         </div>
+                    </div>
+                    <div class="row">
+                        <label class="col-md-5">firma 2</label>
+                        <div class="col-md-4">
+                            <input class="form-control" type="text" ng-model="tr3.firma_tres" required>
+                        </div>
+                        <div class="col-md-3">
+                            <input class="form-control" type="text" ng-model="tr3.firma_cuatro" required>
+                        </div>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" uib-tooltip="HISTORIAL" class="btn btn-danger btn-xs pull-left" ng-click="abrirModalHistorialTr3(datosBanco,'BU')">
