@@ -474,7 +474,7 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 		.get(function (req, res) {
 			var listaProductos = []
 			var grupos = []
-			Usuario.find({
+			/*Usuario.find({
 				where: {id: req.params.id_usuario},
 				include:[{ model: UsuarioGrupos, as: 'grupos', include: [{ model: Clase, as: 'grupo' }] }]
 			}).then(function (usuarioEncontrado) {
@@ -520,32 +520,32 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 						})
 					})
 				});
-			})
+			})*/
 			
-			// Producto.findAll({
-			// 	where: { id_empresa: req.params.id_empresa, publicar_panel: true },
-			// 	include: [{ model: Inventario, as: 'inventarios', where: { id_almacen: req.params.id_almacen, cantidad: { $gte: 0 } }, required: false },
-			// 	{ model: Clase, as: 'tipoProducto' },
-			// 	{
-			// 		model: ProductoBase, as: 'productosBase',
-			// 		include: [{
-			// 			model: Producto, as: 'productoBase',
-			// 			include: [{ model: Inventario, as: 'inventarios', where: { id_almacen: req.params.id_almacen, cantidad: { $gt: 0 } }, required: false },
-			// 			{ model: Clase, as: 'tipoProducto' },
-			// 			{
-			// 				model: ProductoBase, as: 'productosBase',
-			// 				include: [{
-			// 					model: Producto, as: 'productoBase',
-			// 					include: [{ model: Inventario, as: 'inventarios', where: { id_almacen: req.params.id_almacen, cantidad: { $gt: 0 } }, required: false },
-			// 					{ model: Clase, as: 'tipoProducto' }]
-			// 				}]
-			// 			}]
-			// 		}]
-			// 	}],
-			// 	order: [[{ model: Inventario, as: 'inventarios' }, 'updatedAt', 'DESC']]
-			// }).then(function (productos) {
-			// 	res.json(productos);
-			// });
+			Producto.findAll({
+				where: { id_empresa: req.params.id_empresa, publicar_panel: true },
+				include: [{ model: Inventario, as: 'inventarios', where: { id_almacen: req.params.id_almacen, cantidad: { $gte: 0 } }, required: false },
+				{ model: Clase, as: 'tipoProducto' },
+				{
+					model: ProductoBase, as: 'productosBase',
+					include: [{
+						model: Producto, as: 'productoBase',
+						include: [{ model: Inventario, as: 'inventarios', where: { id_almacen: req.params.id_almacen, cantidad: { $gt: 0 } }, required: false },
+						{ model: Clase, as: 'tipoProducto' },
+						{
+							model: ProductoBase, as: 'productosBase',
+							include: [{
+								model: Producto, as: 'productoBase',
+								include: [{ model: Inventario, as: 'inventarios', where: { id_almacen: req.params.id_almacen, cantidad: { $gt: 0 } }, required: false },
+								{ model: Clase, as: 'tipoProducto' }]
+							}]
+						}]
+					}]
+				}],
+				order: [[{ model: Inventario, as: 'inventarios' }, 'updatedAt', 'DESC']]
+			}).then(function (productos) {
+				res.json(productos);
+			});
 		});
 
 	router.route('/comision-productos-vendedor/empresa/:id_empresa/usuario/:id_usuario')
