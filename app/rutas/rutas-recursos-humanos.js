@@ -408,7 +408,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                         RrhhEmpleadoFicha.update({
                             fecha_expiracion: req.body.nueva_fecha_expiracion
                         }, {
-                                where: { id: req.body.ficha.id }
+                                where: { id: req.body.id_ficha }
                             }).then(function (fichaActualizada) {
                                 res.json({ mensaje: "Usuario actualizado satisfactoriamente!" });
                             })
@@ -418,7 +418,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                             RrhhEmpleadoFicha.update({
                                 fecha_expiracion: req.body.nueva_fecha_expiracion
                             }, {
-                                    where: { id: req.body.ficha.id }
+                                    where: { id: req.body.id_ficha }
                                 }).then(function (fichaActualizada) {
                                     res.json({ mensaje: "Usuario actualizado satisfactoriamente!" });
                                 })

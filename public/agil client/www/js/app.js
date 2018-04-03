@@ -230,7 +230,7 @@ angular.module('agil', ['ngRoute', 'agil.controladores',
             return {
                 'request': function (config) {
                     config.headers = config.headers || {};
-                    if ($localStorage.token) {
+                    if ($localStorage.token && $localStorage.usuario) {
                         var usuario = JSON.parse($localStorage.usuario);
                         if (usuario.rolesUsuario.length > 0 && usuario.rolesUsuario[0].rol) {
                             config.headers.Authorization = 'Bearer ' + $localStorage.token + ' ' + usuario.rolesUsuario[0].rol.nombre;

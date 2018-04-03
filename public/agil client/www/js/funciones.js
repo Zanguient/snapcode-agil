@@ -131,7 +131,7 @@ function ejecutarScriptsInicio(idPopupTablaProductos, idPopupTablaCreditos, idPo
 	crearPopup(IdModalAsignarCuenta, "30%", 270);
 	setTimeout(function name(params) {
 		crearPopup(idModalTablaDespachos, "90%", "auto");
-		crearPopup(idModalTablaAsignacionDespacho, "30%", 320);
+		crearPopup(idModalTablaAsignacionDespacho, "auto", "auto");
 		aplicarDatePickers();
 	}, 2000)
 	crearPopup(IdModalEliminarProductoVencido, "60%", 550)

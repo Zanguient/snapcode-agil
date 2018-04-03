@@ -7,7 +7,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 		ImprimirSalida, Diccionario, VentasComprobantesEmpresa, ComprasComprobantesEmpresa, LibroMayorCuenta, Paginator, ComprobanteRevisarPaginador, AsignarComprobanteFavorito, ListaCuentasComprobanteContabilidad, NuevoComprobanteContabilidad, NuevoComprobante, ComprasComprobante,
 		ConfiguracionesCuentasEmpresa, ContabilidadCambioMoneda, ObtenerCambioMoneda, AsignarCuentaCiente, AsignarCuentaProveedor,
 		GtmTransportistas, GtmEstibajes, GtmGrupoEstibajes, ListasCuentasAuxiliares, GtmDetallesDespachoAlerta, $interval, GuardarGtmDetalleDespachoAlerta, GtmDetalleDespacho, VerificarCorrelativosSucursale, ReiniciarCorrelativoSucursales, ClasesTipoEmpresa, alertasProformasLista, UltimaFechaTipoComprobante,
-		FacturaProforma, ListaDetallesProformasAFacturar, ProformaInfo, FacturarProformas, ImprimirPdfAlertaDespacho, ExportarExelAlarmasDespachos, VencimientoDosificaciones) {
+		FacturaProforma, ListaDetallesProformasAFacturar, ProformaInfo, FacturarProformas, ImprimirPdfAlertaDespacho, ExportarExelAlarmasDespachos, VencimientoDosificaciones,EmpresaDatosInicio) {
 		$scope.idModalTablaVencimientoProductos = "tabla-vencimiento-productos";
 		$scope.idModalTablaDespachos = "tabla-gtm-despachos";
 		$scope.idModalTablaAsignacionDespacho = "tabla-gtm-asignacion-despachos";
@@ -1223,14 +1223,18 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 				} else {
 					var promesa = UsuarioSucursalesAutenticacion(res.data.id);
 					promesa.then(function (usuarioSucursales) {
-						res.data.sucursalesUsuario = usuarioSucursales;
-						$localStorage.token = res.data.token;
-						$localStorage.usuario = JSON.stringify(res.data);
-						$scope.token = $localStorage.token;
-						usuario = res.data;
-						$scope.usuario = usuario;
-						document.title = 'AGIL - ' + $scope.usuario.nombre_usuario;
-						$scope.cargarPagina();
+						promesa = EmpresaDatosInicio(res.data.id_empresa);
+						promesa.then(function (empresa) {
+							res.data.empresa=empresa[0];
+							res.data.sucursalesUsuario = usuarioSucursales;
+							$localStorage.token = res.data.token;
+							$localStorage.usuario = JSON.stringify(res.data);
+							$scope.token = $localStorage.token;
+							usuario = res.data;
+							$scope.usuario = usuario;
+							document.title = 'AGIL - ' + $scope.usuario.nombre_usuario;
+							$scope.cargarPagina();
+						});
 					});
 				}
 				blockUI.stop();
@@ -1444,7 +1448,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 				$scope.vencimientoTotal = $scope.vencimientoTotal - $scope.gtm_detalles_despacho_seleccionados.length;
 				$scope.verificarDespachos($scope.usuario.id_empresa);
 				blockUI.stop();
-				$scope.cerrarListaDespachos();
+				/* $scope.cerrarListaDespachos(); */
 				$scope.recargarItemsTabla()
 				$scope.mostrarMensaje(res.mensaje);
 			});
@@ -1464,11 +1468,24 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 				$scope.gtm_detalles_despacho_seleccionados[i].id_grupo_estibaje = asignacion.id_grupo_estibaje;
 				$scope.gtm_detalles_despacho_seleccionados[i].id_transportista = asignacion.id_transportista;
 			}
+			$scope.guardarDespachos($scope.id_almacen_despacho, $scope.id_sucursal_despacho)
 			$scope.cerrarAsignacionDespacho();
 		}
 
-		$scope.abrirAsignacionDespacho = function () {
-			$scope.abrirPopup($scope.idModalTablaAsignacionDespacho);
+		$scope.abrirAsignacionDespacho = function (model, form, sucursal, almacen) {
+			if (form.$valid) {
+				$scope.id_almacen_despacho = almacen
+				$scope.id_sucursal_despacho = sucursal
+				if (model) {
+					$scope.gtm_detalles_despacho_seleccionados = []
+					$scope.gtm_detalles_despacho_seleccionados.push(model);
+					$scope.abrirPopup($scope.idModalTablaAsignacionDespacho);
+				} else {
+					$scope.abrirPopup($scope.idModalTablaAsignacionDespacho);
+				}
+			} else {
+				$scope.errorDespacho = true
+			}
 		}
 
 		$scope.cerrarAsignacionDespacho = function () {
@@ -1562,7 +1579,12 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 		}
 
 		$scope.abrirListaDespachos = function () {
-			$scope.filtroDes = { inicio: "", fin: "", inicio2: "", fin2: "", razon_social: "", empleado: "" }
+			$scope.PopoverInfoDespacho = {
+				templateUrl: 'PopoverInfoDespacho.html',
+				title: 'informacion',
+				isOpen: false
+			};
+			$scope.filtroDes = { inicio: "", fin: "", inicio2: "", fin2: "", razon_social: "", empleado: "", verTransporte: false }
 			$scope.abrirPopup($scope.idModalTablaDespachos);
 		}
 		$scope.filtrarDetalleDespachos = function (filtro) {
@@ -1875,8 +1897,8 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 											Array.prototype.push.apply($scope.facturaProformas.detallesVenta, proforma.detallesProformas);
 											$timeout(function () {
 												$scope.abrirPopup($scope.facturarProformas)
-											},800)
-											
+											}, 800)
+
 										}
 									})
 								})
@@ -1892,7 +1914,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 				})
 			})
 
-			
+
 		}
 
 		// $scope.imprimirFacturaProforma = function (factura) {

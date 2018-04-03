@@ -562,7 +562,7 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, decodeBase
 				},
 				include: [{ model: Persona, as: 'persona' },
 				// { model: UsuarioGrupos, as: 'grupos', include: [{ model: Clase, as: 'grupo' }] },
-				{ model: Empresa, as: 'empresa', include: [{ model: Sucursal, as: 'sucursales' }] },
+				//{ model: Empresa, as: 'empresa', include: [{ model: Sucursal, as: 'sucursales' }] },
 				{
 					model: UsuarioRol, as: 'rolesUsuario',
 					include: [{

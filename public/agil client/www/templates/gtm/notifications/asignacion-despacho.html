@@ -1,43 +1,38 @@
+<form name="asig" ng-submit="establecerDespacho(asignacion)">
 <div class="modal-header bg-primary">
   <h4 class='smaller text-white text-uppercase'>
-      <label>Definir Despacho General</label>
+    <label>Definir Despacho General</label>
   </h4>
 </div>
-<form name="asig" ng-submit="establecerDespacho(asignacion)">
-<div class="row">
-  <div class="col-sm-12">
-      <div class="form-group">
-          <label for="ciudad">Transportista</label>
-          <select required ng-model="asignacion.id_transportista" ng-options="gtm_transportista.id as gtm_transportista.persona.nombre_completo for gtm_transportista in gtm_transportistas"></select>
-      </div>
+
+<div class="modal-body">
+
+  <div class="form-group">
+    <label for="ciudad">Transportista</label>
+    <select required ng-model="asignacion.id_transportista" ng-options="gtm_transportista.id as gtm_transportista.persona.nombre_completo for gtm_transportista in gtm_transportistas"></select>
   </div>
-</div>
-<div class="row">
-  <div class="col-sm-12">
-      <div class="form-group">
-          <label for="ciudad">Estibaje</label>
-			<select required ng-model="asignacion.id_estibaje" ng-options="gtm_estibaje.id as gtm_estibaje.nombre for gtm_estibaje in gtm_estibajes"></select>
-      </div>
+
+
+
+  <div class="form-group">
+    <label for="ciudad">Estibaje</label>
+    <select required ng-model="asignacion.id_estibaje" ng-options="gtm_estibaje.id as gtm_estibaje.nombre for gtm_estibaje in gtm_estibajes"></select>
   </div>
-</div>
-<div class="row">
-  <div class="col-sm-12">
-      <div class="form-group">
-		  <label for="ciudad">Grupo Estibaje</label>
-			<select required ng-model="asignacion.id_grupo_estibaje" ng-options="gtm_grupo_estibaje.id as gtm_grupo_estibaje.nombre for gtm_grupo_estibaje in gtm_grupo_estibajes"></select>
-      </div>
+
+
+  <div class="form-group">
+    <label for="ciudad">Grupo Estibaje</label>
+    <select required ng-model="asignacion.id_grupo_estibaje" ng-options="gtm_grupo_estibaje.id as gtm_grupo_estibaje.nombre for gtm_grupo_estibaje in gtm_grupo_estibajes"></select>
   </div>
+
 </div>
-<div class="row">
-	<div class="col-sm-12">
-		<div class="modal-footer wizard-actions">
-			<button ng-disabled="asig.$invalid" type="submit" class="btn btn-primary btn-sm">
-				<i class="glyphicon glyphicon-floppy-disk"></i>Asignar
-			</button>
-			<button type="button" class="btn btn-danger btn-sm" ng-click="cerrarAsignacionDespacho()">
-				<i class="ace-icon fa fa-times"></i>Cancelar
-			</button>
-		</div>
-	</div>
+<div class="modal-footer wizard-actions">
+  <button ng-disabled="asig.$invalid" type="submit" class="btn btn-primary btn-sm">
+    <i class="glyphicon glyphicon-floppy-disk"></i>Asignar y Guardar
+  </button>
+  <button type="button" class="btn btn-danger btn-sm" ng-click="cerrarAsignacionDespacho()">
+    <i class="ace-icon fa fa-times"></i>Cancelar
+  </button>
 </div>
+
 </form>

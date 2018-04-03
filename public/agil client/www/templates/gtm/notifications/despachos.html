@@ -1,10 +1,18 @@
-<form name="desp" ng-submit="guardarDespachos(id_almacen_despacho,id_sucursal_despacho)">
+<form name="desp">
 	<div class="modal-header">
 
 		<div class="row">
-			<div class="col-xs-2 col-sm-2">
+			<div class="col-xs-10 col-sm-10">
+
 				<h3>PEDIDOS</h3>
 			</div>
+			<div class="col-xs-2 col-sm-2">
+				<a type="button" class="pull-left" ng-click="verificarDespachos(usuario.id_empresa)">
+					<i class="ace-icon fa fa-refresh icon-animated-bell red2 align-top bigger-200"></i>
+				</a>
+			</div>
+		</div>
+		<div class="row">
 			<div class="col-xs-2 col-sm-2">
 				<a ng-click="abrirDialogRhNuevo()" class="btn btn-primary">
 					<i class="ace-icon fa fa-plus align-top bigger-125"></i>
@@ -13,32 +21,42 @@
 			</div>
 
 			<div class="col-xs-2 col-sm-2">
-				<button class="btn btn-success" type="button" ng-disabled="gtm_detalles_despacho_seleccionados.length==0" ng-click="abrirAsignacionDespacho()">
-					<i class="ace-icon fa fa-truck align-top bigger-125"></i>
+				Sucursal:
+				<select required name="sucursal" id="sucursal" ng-change="obtenerAlmacenes(id_sucursal_despacho)" required ng-model="id_sucursal_despacho"
+				 ng-options="sucursal.id as sucursal.nombre for sucursal in sucursales"></select>
+				<div ng-show="desp.sucursal.$error.required" class="invalid-message help-block" ng-messages="desp.sucursal.$error" ng-if="errorDespacho">
+					<div ng-messages-include="/templates/gral/messages.html"></div>
+				</div>
+			</div>
+			<div class="col-xs-2 col-sm-2">
+				Almacen
+				<select required name="almacen" ng-model="id_almacen_despacho" ng-options="almacen.id as almacen.nombre for almacen in almacenes"></select>
+				<!-- 	<button class="btn btn-primary" ng-disabled="gtm_detalles_despacho_seleccionados.length==0" type="submit">
+				<i class="ace-icon fa fa-floppy-o align-top bigger-125"></i>
+				Guardar</button> -->
+				<div ng-show="desp.almacen.$error.required" class="invalid-message help-block" ng-messages="desp.almacen.$error" ng-if="errorDespacho">
+					<div ng-messages-include="/templates/gral/messages.html"></div>
+				</div>
+			</div>
+
+			<div class="col-xs-2 col-sm-2">
+				<button class="btn btn-success" type="button" ng-disabled="(gtm_detalles_despacho_seleccionados.length==0)?true:false" ng-click="abrirAsignacionDespacho(undefined,desp,id_sucursal_despacho,id_almacen_despacho)">
+					<i class="ace-icon fa fa-truck align-top bigger-125"></i>Despachar
 				</button>
 			</div>
 			<div class="col-xs-2 col-sm-2">
-				Sucursal:
-				<select ng-change="obtenerAlmacenes(id_sucursal_despacho)" required ng-model="id_sucursal_despacho" ng-options="sucursal.id as sucursal.nombre for sucursal in sucursales"></select>
-				Almacen
-				<select required ng-model="id_almacen_despacho" ng-options="almacen.id as almacen.nombre for almacen in almacenes"></select>
-				<button class="btn btn-primary" ng-disabled="gtm_detalles_despacho_seleccionados.length==0" type="submit">
-					<i class="ace-icon fa fa-floppy-o align-top bigger-125"></i>
-					Guardar</button>
+				Total Peso: {{calcularTotalCantidad()}}
+			</div>
+
+			<div class="col-xs-2 col-sm-2">
+
 			</div>
 			<div class="col-xs-2 col-sm-2">
 				<button class="btn btn-danger" type="button" ng-click="cerrarListaDespachos()">
 					<i class="ace-icon fa fa-times red2 align-top bigger-125"></i>
 					Cerrar</button>
 			</div>
-			<div class="col-xs-2 col-sm-2">
-				<a type="button" ng-click="verificarDespachos(usuario.id_empresa)">
-					<i class="ace-icon fa fa-refresh icon-animated-bell red2 align-top bigger-200"></i>
-				</a>
-			</div>
-			<div class="col-xs-2 col-sm-2">
-				Total Peso: {{calcularTotalCantidad()}}
-			</div>
+
 		</div>
 	</div>
 
@@ -50,35 +68,45 @@
 				<legend>Filtro Pedidos</legend>
 				<div>
 
-					<div class="form-row col-sm-6 col-md-6 col-lg-6">
-						<div class="form-group col-sm-4">
+					<div class="form-row">
+						<div class="form-group col-sm-2">
 							<label for="codigo">desde</label>
 							<input ng-update-hidden class="form-control date-picker" data-date-format="dd/mm/yyyy" type="text" id="filtroCodigo" ng-model="filtroDes.inicio"
-							 placeholder=""/>
+							 placeholder="" />
 						</div>
-						<div class="form-group col-sm-4">
+						<div class="form-group col-sm-2">
 							<label for="nombre">hasta</label>
 							<input ng-update-hidden class="form-control date-picker" data-date-format="dd/mm/yyyy" type="text" id="filtroNombre" ng-model="filtroDes.fin"
-							 placeholder=""/>
+							 placeholder="" />
 						</div>
-						<div class="form-group col-sm-4">
-							<button ng-click="filtrarDetalleDespachos(filtroDes)" type="button" class="btn-primary btn btn-app btn-xs">
-								<i class="ace-icon fa fa-search align-top bigger-125"></i>
-								BUSCAR
-							</button>
-						</div>
-						<div class="form-group col-sm-4">
+
+						<div class="form-group col-sm-2">
 							<label for="codigo">Vendedor</label>
 							<input ng-enter="filtrarDetalleDespachos(filtroDes)" type="text" id="filtroVendedorD" ng-model="filtroDes.empleado" placeholder=""
 							/>
 
 						</div>
-						<div class="form-group col-sm-4">
+						<div class="form-group col-sm-2">
 							<label for="nombre">Cliente</label>
 							<input ng-enter="filtrarDetalleDespachos(filtroDes)" type="text" id="filtroNombreD" ng-model="filtroDes.razon_social" placeholder=""
 							/>
 						</div>
-						<div class="form-group col-sm-4">
+						<div class="form-group col-sm-1">
+							<br>
+							<button type="button" data-rel="tooltip" data-placement="left" uib-tooltip="Ocultar Trasportistas" ng-hide="filtro.verTransporte"
+							 class="button-circle button-style pos-rel pull-left" ng-click="filtro.verTransporte=(filtro.verTransporte)?false:true">
+								<i class="ace-icon fa fa-angle-double-up bigger-140"></i>
+							</button>
+							<button type="button" data-rel="tooltip" data-placement="left" uib-tooltip="Mostrar Trasportistas" ng-hide="!filtro.verTransporte"
+							 class="button-circle button-style pos-rel pull-left" ng-click="filtro.verTransporte=(filtro.verTransporte)?false:true">
+								<i class="ace-icon fa fa-angle-double-down bigger-140"></i>
+							</button>
+						</div>
+						<div class="form-group col-sm-3">
+							<button ng-click="filtrarDetalleDespachos(filtroDes)" type="button" class="btn-primary btn btn-app btn-xs">
+								<i class="ace-icon fa fa-search align-top bigger-125"></i>
+								BUSCAR
+							</button>
 							<button type="button" class="btn btn-app btn-danger btn-xs" ng-click="imprimirPdfDespachosALerta()">
 								<i class="ace-icon fa fa-print bigger-160"></i>
 								PDF
@@ -90,17 +118,19 @@
 						</div>
 					</div>
 
-					<div class="col-sm-6 col-md-6 col-lg-6">
+					<div class="col-sm-12 col-md-12 col-lg-12" ng-hide="filtro.verTransporte">
 						<!-- Trasportistas -->
-						<div style="height: 150px ;max-height:150px ;overflow-y: scroll;overflow-x: hidden;border:1px solid gray;" id="style-7">
-							<div class="row" ng-repeat="transportista in gtm_transportistas" style="padding-left:30px">
-								<span>{{transportista.persona.nombre_completo}}</span>
-								<span>
-									<b>Capacidad:</b> {{transportista.capacidad}}</span>
-								<span>
-									<b>Total Carga:</b> {{calcularTotalCarga(transportista)}}</span>
-								<span style="color:red">
-									<b>Faltante:</b> {{transportista.capacidad-calcularTotalCarga(transportista)}}</span>
+						<div class="col-sm-6 col-md-6 col-lg-6">
+							<div style="height: 100px ;max-height:100px ;overflow-y: scroll;overflow-x: hidden;border:1px solid gray;" id="style-7">
+								<div class="row" ng-repeat="transportista in gtm_transportistas" style="padding-left:30px">
+									<span>{{transportista.persona.nombre_completo}}</span>
+									<span>
+										<b>Capacidad:</b> {{transportista.capacidad}}</span>
+									<span>
+										<b>Total Carga:</b> {{calcularTotalCarga(transportista)}}</span>
+									<span style="color:red">
+										<b>Faltante:</b> {{transportista.capacidad-calcularTotalCarga(transportista)}}</span>
+								</div>
 							</div>
 						</div>
 					</div>
@@ -136,22 +166,25 @@
 
 						</th>
 						<th>Destino</th>
-						<th><a href="javascript:void(0)" ng-click="despachoSortColumn('fecha','fecha')">Fecha
+						<th>
+							<a href="javascript:void(0)" ng-click="despachoSortColumn('fecha','fecha')">Fecha
 								<span id="Extención" class="sort fa fa-sort icon-only"></span>
 							</a>
 						</th>
 						<th>Telefono</th>
-						<th><a href="javascript:void(0)" ng-click="despachoSortColumn('nombre','producto')">Producto
+						<th>
+							<a href="javascript:void(0)" ng-click="despachoSortColumn('nombre','producto')">Producto
 								<span id="Extención" class="sort fa fa-sort icon-only"></span>
-							</a></th>
+							</a>
+						</th>
 						<th>Cantidad</th>
 						<th>Despacho</th>
 						<th>Servicio Transp.</th>
 						<th>Despachar</th>
 						<th>Saldo</th>
-						<th>Transportista</th>
+						<!-- <th>Transportista</th>
 						<th>Estibaje</th>
-						<th>Grupo Estibaje</th>
+						<th>Grupo Estibaje</th> -->
 						<th>Acciones</th>
 					</tr>
 				</thead>
@@ -181,7 +214,7 @@
 						</td>
 						<td>{{gtm_detalle_despacho.saldo2}}</td>
 						<!-- <td ng-hide="gtm_detalle_despacho.saldo2">{{gtm_detalle_despacho.saldo}}</td> -->
-						<td>
+						<!-- <td>
 							<select ng-required="gtm_detalle_despacho.seleccionado" ng-model="gtm_detalle_despacho.id_transportista" ng-options="gtm_transportista.id as gtm_transportista.persona.nombre_completo for gtm_transportista in gtm_transportistas"></select>
 						</td>
 						<td>
@@ -189,13 +222,33 @@
 						</td>
 						<td>
 							<select ng-required="gtm_detalle_despacho.seleccionado" ng-model="gtm_detalle_despacho.id_grupo_estibaje" ng-options="gtm_grupo_estibaje.id as gtm_grupo_estibaje.nombre for gtm_grupo_estibaje in gtm_grupo_estibajes"></select>
-						</td>
+						</td> -->
 						<td>
 							<div class="hidden-sm hidden-xs action-buttons">
-
+								<!-- 				<a class="green" ng-disabled="true" href="javascript:void(0)" role="button" ng-click="abrirAsignacionDespacho(gtm_detalle_despacho)">
+											<i class="ace-icon fa fa-truck bigger-130"></i>
+									</a> -->
+								<a href="javascript:void(0)" ng-disabled="true" ng-click="abrirAsignacionDespacho(gtm_detalle_despacho,desp,id_sucursal_despacho,id_almacen_despacho)"
+								 role="button" class="green" data-rel="tooltip" data-placement="left" uib-tooltip="Despachar">
+									<i class="ace-icon fa fa-truck bigger-130"></i>
+								</a>
 								<a class="red" href="javascript:void(0)" ng-click="abrirPopupConfirmacionEliminacion(removerDetalleDespachoAlerta,gtm_detalle_despacho)">
 									<i class="ace-icon fa fa-trash bigger-130"></i>
 								</a>
+								<a uib-tooltip="Información pedido" popover-trigger="outsideClick: outsideClick" popover-append-to-body="true" href="javascript:void(0)"
+								 uib-popover-template="PopoverInfoDespacho.templateUrl" popover-placement="left" class="blue">
+									<i class="fa fa-folder-open"></i>
+								</a>
+								<script type="text/ng-template" id="PopoverInfoDespacho.html">	
+								
+								<div>
+									<p>Razon social: {{gtm_detalle_despacho.despacho.cliente_razon.razon_social}}</p>
+									<p>nit: {{gtm_detalle_despacho.despacho.cliente_razon.nit}}</p>
+									<p>Total: {{gtm_detalle_despacho.cantidad*gtm_detalle_despacho.producto.precio_unitario |number:2}} </p>
+
+								</div>
+							</script>
+
 							</div>
 							<div class="hidden-md hidden-lg">
 								<div class="inline pos-rel">
