@@ -1453,7 +1453,7 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 		});
 	}
 
-	router.route('/ventas/:idsSucursales/inicio/:inicio/fin/:fin/razon-social/:razon_social/nit/:nit/monto/:monto/tipo-venta/:tipo_venta/sucursal/:sucursal/transaccion/:transaccion/usuario/:usuario')
+	router.route('/ventas/:idsSucursales/inicio/:inicio/fin/:fin/razon-social/:razon_social/nit/:nit/monto/:monto/tipo-venta/:tipo_venta/sucursal/:sucursal/transaccion/:transaccion/usuario/:usuario/estado/:estado')
 		.get(/*ensureAuthorized,*/function (req, res) {
 			var inicio = new Date(req.params.inicio); inicio.setHours(0, 0, 0, 0, 0);
 			var fin = new Date(req.params.fin); fin.setHours(23, 59, 59, 0, 0);
