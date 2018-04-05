@@ -7,7 +7,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 		ImprimirSalida, Diccionario, VentasComprobantesEmpresa, ComprasComprobantesEmpresa, LibroMayorCuenta, Paginator, ComprobanteRevisarPaginador, AsignarComprobanteFavorito, ListaCuentasComprobanteContabilidad, NuevoComprobanteContabilidad, NuevoComprobante, ComprasComprobante,
 		ConfiguracionesCuentasEmpresa, ContabilidadCambioMoneda, ObtenerCambioMoneda, AsignarCuentaCiente, AsignarCuentaProveedor,
 		GtmTransportistas, GtmEstibajes, GtmGrupoEstibajes, ListasCuentasAuxiliares, GtmDetallesDespachoAlerta, $interval, GuardarGtmDetalleDespachoAlerta, GtmDetalleDespacho, VerificarCorrelativosSucursale, ReiniciarCorrelativoSucursales, ClasesTipoEmpresa, alertasProformasLista, UltimaFechaTipoComprobante,
-		FacturaProforma, ListaDetallesProformasAFacturar, ProformaInfo, FacturarProformas, ImprimirPdfAlertaDespacho, ExportarExelAlarmasDespachos, VencimientoDosificaciones,EmpresaDatosInicio) {
+		FacturaProforma, ListaDetallesProformasAFacturar, ProformaInfo, FacturarProformas, ImprimirPdfAlertaDespacho, ExportarExelAlarmasDespachos, VencimientoDosificaciones, EmpresaDatosInicio) {
 		$scope.idModalTablaVencimientoProductos = "tabla-vencimiento-productos";
 		$scope.idModalTablaDespachos = "tabla-gtm-despachos";
 		$scope.idModalTablaAsignacionDespacho = "tabla-gtm-asignacion-despachos";
@@ -649,42 +649,43 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 		$scope.reiniciarCorrelativoComprobantes = function () {
 			var fechaActual = new Date()
 			var sucursalesParaActualizar = []
-			var promesa = VerificarCorrelativosSucursale($scope.usuario.id_empresa)
-			promesa.then(function (sucursales) {
-				sucursales.forEach(function (sucursal, index, array) {
-					if (sucursal.fecha_reinicio_correlativo) {
-						var fechaAnterior = new Date(sucursal.fecha_reinicio_correlativo)
-						var fechaAnteriorMes = fechaAnterior.getMonth()
-						var fechaActualMes = fechaActual.getMonth()
-						if (fechaAnteriorMes != fechaActualMes || fechaAnteriorMes < fechaActualMes) {
+			if ($scope.usuario.id_empresa) {
+				var promesa = VerificarCorrelativosSucursale($scope.usuario.id_empresa)
+				promesa.then(function (sucursales) {
+					sucursales.forEach(function (sucursal, index, array) {
+						if (sucursal.fecha_reinicio_correlativo) {
+							var fechaAnterior = new Date(sucursal.fecha_reinicio_correlativo)
+							var fechaAnteriorMes = fechaAnterior.getMonth()
+							var fechaActualMes = fechaActual.getMonth()
+							if (fechaAnteriorMes != fechaActualMes || fechaAnteriorMes < fechaActualMes) {
 
-							sucursalesParaActualizar.push(sucursal)
-							if (index === (array.length - 1)) {
-								var fecha_reinicio_correlativo = new Date()
-								fecha_reinicio_correlativo.setDate(1)
-								var datos = { sucursales: sucursalesParaActualizar, fecha: fecha_reinicio_correlativo }
-								var promesa = ReiniciarCorrelativoSucursales(datos)
-								promesa.then(function (dato) {
-									$scope.mostrarMensaje(dato.message)
-								})
+								sucursalesParaActualizar.push(sucursal)
+								if (index === (array.length - 1)) {
+									var fecha_reinicio_correlativo = new Date()
+									fecha_reinicio_correlativo.setDate(1)
+									var datos = { sucursales: sucursalesParaActualizar, fecha: fecha_reinicio_correlativo }
+									var promesa = ReiniciarCorrelativoSucursales(datos)
+									promesa.then(function (dato) {
+										$scope.mostrarMensaje(dato.message)
+									})
 
-							}
-						} else if (fechaAnteriorMes == 11 && fechaActualMes == 0) {
-							sucursalesParaActualizar.push(sucursal)
-							if (index === (array.length - 1)) {
-								var fecha_reinicio_correlativo = new Date()
-								fecha_reinicio_correlativo.setDate(1)
-								var datos = { sucursales: sucursalesParaActualizar, fecha: fecha_reinicio_correlativo }
-								var promesa = ReiniciarCorrelativoSucursales(datos)
-								promesa.then(function (dato) {
-									$scope.mostrarMensaje(dato.message)
-								})
+								}
+							} else if (fechaAnteriorMes == 11 && fechaActualMes == 0) {
+								sucursalesParaActualizar.push(sucursal)
+								if (index === (array.length - 1)) {
+									var fecha_reinicio_correlativo = new Date()
+									fecha_reinicio_correlativo.setDate(1)
+									var datos = { sucursales: sucursalesParaActualizar, fecha: fecha_reinicio_correlativo }
+									var promesa = ReiniciarCorrelativoSucursales(datos)
+									promesa.then(function (dato) {
+										$scope.mostrarMensaje(dato.message)
+									})
+								}
 							}
 						}
-					}
-				});
-			})
-
+					});
+				})
+			}
 		}
 
 		$scope.ComvertirDebeEnDolar = function (asiento, dato) {
@@ -1225,7 +1226,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 					promesa.then(function (usuarioSucursales) {
 						promesa = EmpresaDatosInicio(res.data.id_empresa);
 						promesa.then(function (empresa) {
-							res.data.empresa=empresa[0];
+							res.data.empresa = empresa[0];
 							res.data.sucursalesUsuario = usuarioSucursales;
 							$localStorage.token = res.data.token;
 							$localStorage.usuario = JSON.stringify(res.data);
@@ -2848,12 +2849,14 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 		};
 		$scope.obtenerCentroCostos = function () {
 			blockUI.start();
-			if ($scope.usuario) {
+			if ($scope.usuario.id_empresa) {
 				var promesa = ClasesTipoEmpresa("CENCOS", $scope.usuario.id_empresa);
 				promesa.then(function (entidad) {
 					$scope.centrosDeCostos = entidad.clases
 					blockUI.stop();
 				});
+			} else {
+				blockUI.stop();
 			}
 		}
 

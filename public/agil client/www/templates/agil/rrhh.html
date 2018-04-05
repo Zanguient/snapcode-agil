@@ -8664,7 +8664,7 @@
     <div id="dialog-configuracion-ropa-trabajo">
         <div class="modal-content">
 
-            <form id="formEvaluacionPolifuncional" ng-submit="guardarConfiguracionRopaTrabajo(ropaTrabajo)">
+            <form novalidate ng-submit="GuardarlistaRopaTrabajoPorCargo(cargo)">
                 <div id="modal-wizard-container-configuracion-ropa-trabajo">
                     <div class="modal-header ficha">
                         <h4 class="modal-title" id="myModalLabel">Configuración Ropa de trabajo</h4>
@@ -8674,7 +8674,7 @@
                             <li data-step="1" class="active">
                                 <span class="step">1</span>
 
-                                <span class="title">Selección de personal</span>
+                                <span class="title">Selección Ropa</span>
                             </li>
                             <li data-step="2">
                                 <span class="step">2</span>
@@ -8684,13 +8684,14 @@
                     </div>
                     <div class="modal-body step-content">
                         <div class="step-pane active" data-step="1">
+                            
                             <div class="row">
                                 <div class="col-md-6">
                                     <label> Cargo</label>
                                 </div>
                                 <div class="col-md-6">
-                                    <select name="fecha" id="tipo-contrato" class="form-control" required ng-options="cargo.id as cargo.nombre for cargo in listaCargos.clases track by cargo.id"
-                                        ng-model="ropaTrabajo.cargo">
+                                    <select name="fecha" id="tipo-contrato" class="form-control" ng-change="listaRopaTrabajoPorCargo(cargo)" ng-options="cargo.id as cargo.nombre for cargo in listaCargos.clases track by cargo.id"
+                                        ng-model="cargo">
                                         <option value="">--Ninguno--</option>
                                     </select>
                                 </div>
@@ -8698,8 +8699,8 @@
                                     <label> Ropa de Trabajo</label>
                                 </div>
                                 <div class="col-md-6">
-                                    <select name="fecha" id="tipo-contrato" class="form-control" required ng-options="cargo.id as cargo.nombre for cargo in listaCargos.clases track by cargo.id"
-                                        ng-model="ropaTrabajo.cargo">
+                                    <select name="fecha" id="tipo-contrato" class="form-control" ng-model-options="{updateOn: 'blur'}" required ng-options="ropa as ropa.nombre for ropa in ropasDeTrabajo track by ropa.id"
+                                        ng-model="ropaTrabajo.ropaTrabajo">
                                         <option value="">--Ninguno--</option>
                                     </select>
                                 </div>
@@ -8707,10 +8708,10 @@
                                     <label> Cantidad</label>
                                 </div>
                                 <div class="col-md-6">
-                                    <input required type="text" ng-model="ropaTrabajo.cantidad" class="form-control" placeholder="Cantidad">
+                                    <input required type="text" ng-model="ropaTrabajo.cantidad" ng-model-options="{updateOn: 'blur'}" class="form-control" placeholder="Cantidad">
                                 </div>
                                 <div class="col-md-12">
-                                    <button type="button" class="btn btn-primary btn-sm" ng-disabled="!empleado.activo" ng-click="agregarLogroHojaVida(logro)">Añadir</button>
+                                    <button type="button" class="btn btn-primary btn-sm" ng-click="agregarRopaTrabajo(ropaTrabajo)">Añadir</button>
                                     <!-- <button type="button"  class="btn btn-success btn-sm" ng-click="guardarLogroHojaVidaEditada(logro)">Guardar</button> -->
                                     <button type="button" class="btn btn-app btn-success btn-xs pull-right">
                                         <i class="ace-icon fa fa-print bigger-160"></i>
@@ -8733,20 +8734,20 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr ng-if="!logro.eliminado" ng-repeat="ropa in ropasDeTrabajo">
+                                            <tr ng-if="!ropa.eliminado" ng-repeat="ropa in listaRopasDeTrabajo">
                                                 <th scope="row">{{$index+1}}</th>
-                                                <td>{{logro.institucion}}</td>
-                                                <td>{{logro.observacion}}</td>
+                                                <td>{{ropa.ropaTrabajo.nombre}}</td>
+                                                <td>{{ropa.cantidad}}</td>
 
                                                 <td>
                                                     <div class="action-buttons">
                                                         <!--    <a class="blue">
                                                                 <i class="ace-icon fa fa-search-plus bigger-130"></i>
                                                             </a> -->
-                                                        <a class="green" ng-click="editarLogroHojaVida(logro)">
+                                                        <a class="green" ng-click="editarRopaTrabajo(ropa)">
                                                             <i class="ace-icon fa fa-pencil bigger-130"></i>
                                                         </a>
-                                                        <a class="red" ng-click="eliminarLogroHojaVida(logro)">
+                                                        <a class="red" ng-click="eliminarRopaTrabajo(ropa)">
                                                             <i class="ace-icon fa fa-trash-o bigger-130"></i>
                                                         </a>
                                                     </div>
@@ -8772,7 +8773,7 @@
                         Anterior
                     </button>
 
-                    <button type="submit" id="siguiente-CR" class="btn btn-success btn-sm btn-next" data-last="Finish">
+                    <button type="submit" id="siguiente-ca" class="btn btn-success btn-sm btn-next" data-last="Finish">
                         Siguiente
                         <i class="ace-icon fa fa-arrow-right icon-on-right"></i>
                     </button>

@@ -23,7 +23,11 @@ module.exports = function (sequelize, Sequelize) {
          fecha: {
             type: Sequelize.DATE,
             field: 'fecha'
-        }
+        },
+        id_kardex_detalle: {
+           type: Sequelize.INTEGER,
+           field: 'kardex_detalle'
+       }
     }, {
             freezeTableName: true
         });

@@ -1,7 +1,33 @@
 module.exports = function (router, ensureAuthorizedAdministrador, fs, forEach, jwt, md5, GtmDespacho,
 	GtmDespachoDetalle, Cliente, Usuario, GtmDestino, Producto, GtmTransportista, GtmEstibaje, GtmGrupoEstibaje,
-	Persona, ClienteRazon, sequelize, Inventario, Movimiento, DetalleMovimiento, Tipo, Clase, Diccionario, Sequelize, Sucursal) {
-
+	Persona, ClienteRazon, sequelize, Inventario, Movimiento, DetalleMovimiento, Tipo, Clase, Diccionario, Sequelize, Sucursal,GtmVentaKardex,GtmVentaKardexDetalle) {
+		router.route('/gtm-despacho/empresa/:id_empresa')
+		.post(function (req, res) {
+			GtmVentaKardex.create({				
+				id_usuario: req.body.id_usuario,
+				fecha: new Date(req.body.fecha.split("/")[2], req.body.fecha.split("/")[1] - 1, req.body.fecha.split("/")[0]),
+				id_empresa: req.params.id_empresa,
+				nit:req.body.nit,
+				razon_social:req.body.razon_social,
+				factura:req.body.factura
+			}).then(function (kardexCreado) {
+				req.body.detalles_kardex.forEach(function (detalle_kardex, index, array) {
+					GtmVentaKardexDetalle.create({
+						id_kardex: kardexCreado.id,
+						cantidad_despacho: 0,
+						id_producto: detalle_kardex.id_producto,
+						cantidad: parseFloat(detalle_kardex.cantidad),												
+						saldo: parseFloat(detalle_kardex.cantidad),
+						entregado: false,						
+						fecha: new Date(req.body.fecha.split("/")[2], req.body.fecha.split("/")[1] - 1, req.body.fecha.split("/")[0]),						
+					}).then(function (detalleDespachoCreado) {
+						if (index === (array.length - 1)) {
+							res.json(despachoCreado);
+						}
+					});
+				});
+			});
+		});
 	router.route('/gtm-despacho/empresa/:id_empresa')
 		.post(function (req, res) {
 			GtmDespacho.create({

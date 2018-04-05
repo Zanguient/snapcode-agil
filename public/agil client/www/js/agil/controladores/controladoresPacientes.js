@@ -4,7 +4,7 @@ angular.module('agil.controladores')
         ListaConsultasMedicoPaciente, CrearMedicoPacienteFicha, BuscarFichaPaciente, ListaDatosTiposControl, ActualizarPatologiaPaciente, ListaPrerequisitosEmpresa, ListaPrerequisitosPaciente, ActualizarPrerequisito, CrearLaboratorio, ListaLaboratorios,
         CrearLaboratorioExamen, ListaLaboratorioExamenes, CrearLaboratorioExamenResultado, LaboratorioExamenListaHistorial, CrearDiagnostico, ListaDiagnosticos, CrearDiagnosticoExamen, ListaDiagnosticoExamenes, DiagnosticoExamenListaHistorial, CrearDiagnosticoExamenResultado,
         PacientesEmpresa, ListaVacunasEmpresa, FichasTecnicasPacientes, SignosVitalesPacientes, SOAPlistaPacientes, aplicacionVacunasPacientes, obtenerPaciente, Comentario, FieldViewer, PacienteActivo, HistorialFichaMedicoPaciente, ActualizarLaboratorio, ActualizarLaboratorioExamen,
-        ActualizarDiagnostico, ActualizarDiagnosticoExamen, EliminarLaboratorio, EliminarLaboratorioExamen, EliminarDiagnosticoExamen, EliminarDiagnostico, Prerequisitos, PrerequisitoPaciente, ListaAlertasPrerequisitosPaciente, PrerequisitosHistorial, ListaAlertasVacunasEmpresa, Vacuna, ClasesTipo, ValidarCodigoCuentaEmpleado, $timeout) {
+        ActualizarDiagnostico, ActualizarDiagnosticoExamen, EliminarLaboratorio, EliminarLaboratorioExamen, EliminarDiagnosticoExamen, EliminarDiagnostico, Prerequisitos, PrerequisitoPaciente, ListaAlertasPrerequisitosPaciente, PrerequisitosHistorial, ListaAlertasVacunasEmpresa, Vacuna, ClasesTipo, ValidarCodigoCuentaEmpleado, $timeout,ClasesTipoEmpresa) {
 
         $scope.usuario = JSON.parse($localStorage.usuario);
         $scope.idModalDialogVacunas = 'dialog-vacunas';
@@ -149,7 +149,7 @@ angular.module('agil.controladores')
 
         $scope.obtenerExpeditos = function () {
             blockUI.start();
-            var promesa = ClasesTipo("RRHH_EXP");
+            var promesa = ClasesTipoEmpresa("RRHH_EXP",$scope.usuario.id_empresa);
             promesa.then(function (entidad) {
                 $scope.expeditos = entidad.clases
                 blockUI.stop();
@@ -158,7 +158,7 @@ angular.module('agil.controladores')
 
         $scope.obtenerCargos = function () {
             blockUI.start();
-            var promesa = ClasesTipo("RRHH_CARGO");
+            var promesa = ClasesTipoEmpresa("RRHH_CARGO",$scope.usuario.id_empresa);
             promesa.then(function (entidad) {
                 var cargos = entidad.clases
                 $scope.listaCargos = entidad
@@ -598,6 +598,17 @@ angular.module('agil.controladores')
                                         
                                     }
                                 });
+                            }else{
+                                if (i === (dato.fichas.length - 1) ){
+                                    dato.pacientes.forEach(function (pac, index, array) {
+                                        pac.activo = (pac.activo == 0) ? true : false
+                                        if (index === array.length - 1) {
+                                            $scope.pacientes = dato.pacientes;
+                                            
+                                        }
+                                });
+                                    
+                                }
                             }
                         }
                     } else {

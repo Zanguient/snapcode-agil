@@ -781,10 +781,59 @@ angular.module('agil.servicios')
     };
     return res;
 }])
+
 .factory('ObtenerFiniquitoEmpleado', ['FiniquitoEmpleado', '$q', function (FiniquitoEmpleado, $q) {
     var res = function (idFicha) {
         var delay = $q.defer();
         FiniquitoEmpleado.get({id:idFicha},function (entidad) {
+            delay.resolve(entidad);
+        }, function (error) {
+            delay.reject(error);
+        });
+        return delay.promise;
+    };
+    return res;
+}])
+.factory('ConfiguracionRopa', function ($resource) {
+    return $resource(restServer + "recursos-humanos/configuracion-ropa-trabajo/cargo/:id_cargo",null,
+        {
+            'update': { method: 'PUT' }
+        });
+})
+.factory('GuardarConfiguracionRopaCargo', ['ConfiguracionRopa', '$q', function (ConfiguracionRopa, $q) {
+    var res = function (datos,idCargo) {
+        var delay = $q.defer();
+        ConfiguracionRopa.save({id_cargo:idCargo},datos,function (entidad) {
+            delay.resolve(entidad);
+        }, function (error) {
+            delay.reject(error);
+        });
+        return delay.promise;
+    };
+    return res;
+}])
+.factory('ListaConfiguracionRopaCargo', ['ConfiguracionRopa', '$q', function (ConfiguracionRopa, $q) {
+    var res = function (idCargo) {
+        var delay = $q.defer();
+        ConfiguracionRopa.query({id_cargo:idCargo},function (entidad) {
+            delay.resolve(entidad);
+        }, function (error) {
+            delay.reject(error);
+        });
+        return delay.promise;
+    };
+    return res;
+}])
+.factory('ReporteConfiguracionRopa', function ($resource) {
+    return $resource(restServer + "reporte/configuracion/ropa-trabajo/empresa/:id_empresa",null,
+        {
+            'update': { method: 'PUT' }
+        });
+})
+.factory('DatosReporteConfiguracionRopa', ['ReporteConfiguracionRopa', '$q', function (ReporteConfiguracionRopa, $q) {
+    var res = function (idEmpresa) {
+        var delay = $q.defer();
+        ReporteConfiguracionRopa.query({id_empresa:idEmpresa},function (entidad) {
             delay.resolve(entidad);
         }, function (error) {
             delay.reject(error);

@@ -4,7 +4,8 @@ angular.module('agil.controladores')
         ClasesTipo, Clases, Paises, CrearEmpleadoFicha, EliminarOtroSeguroRh, EliminarFamiliarRh, PrerequisitoPaciente, PrerequisitosHistorial, UsuarioRhHistorialFicha, ObtenerEmpleadoHojaVida, GuardarEmpleadoHojaVida, CrearPrestamo,
         ObtenerListaPrestamo, CrearRolTurno, CrearPagoPrestamo, VerificarUsuarioEmpresa, EditarPrestamo, ListaEmpleadosRrhh, CrearHorasExtra, HistorialHorasExtra, ListaRolTurnos, ValidarCodigoCuentaEmpleado, $timeout, DatosCapacidadesImpresion, NuevoAnticipoEmpleado,
         ListaAnticiposEmpleado, CrearNuevosAnticiposEmpleados, ActualizarAnticipoEmpleado, NuevaAusenciaEmpleado, HistorialEmpleadoAusencias, HistorialEmpresaEmpleadosAusencias, NuevaVacacionEmpleado, HistorialEmpleadoVacaciones, HistorialEmpresaVacaciones, NuevoFeriado,
-        ListaFeriados, GuardarClasesAusencias, Tipos, ListaBancos, ConfiguracionesVacacion, HistorialGestionesVacacion, GuardarTr3, ListaTr3Empresa, GuardarHistorialVacacion, CrearBeneficioSocial, ListaBeneficiosEmpleado, GuardarBitacoraFicha, VerBitacoraFicha, ObtenerFiniquitoEmpleado) {
+        ListaFeriados, GuardarClasesAusencias, Tipos, ListaBancos, ConfiguracionesVacacion, HistorialGestionesVacacion, GuardarTr3, ListaTr3Empresa, GuardarHistorialVacacion, CrearBeneficioSocial, ListaBeneficiosEmpleado, GuardarBitacoraFicha, VerBitacoraFicha, ObtenerFiniquitoEmpleado,
+        ClasesTipoEmpresa, GuardarConfiguracionRopaCargo, ListaConfiguracionRopaCargo,DatosReporteConfiguracionRopa) {
         $scope.usuario = JSON.parse($localStorage.usuario);
         $scope.idModalPrerequisitos = 'dialog-pre-requisitos';
         $scope.idModalEmpleado = 'dialog-empleado';
@@ -99,10 +100,10 @@ angular.module('agil.controladores')
         $scope.idModalHistorialBeneficios = "dialog-historial-beneficio_social"
         $scope.idModalConfiguracionRopaDeTrabajo = "dialog-configuracion-ropa-trabajo"
         $scope.idModalReporteRopaDeTrabajo = "dialog-reporte-ropa-trabajo"
-        $scope.idmodalWizardContainerConfiguracionRopaTrabajo="modal-wizard-container-configuracion-ropa-trabajo"
-        $scope.idModalRopaTrabajo="dialog-ropa-trabajo"
-        $scope.idModalNuevaRopaTrabajo="dialog-nueva-ropa-trabajo"
-        $scope.idModalItemsNuevaRopaTrabajo="dialog-items-nueva-ropa-trabajo"
+        $scope.idmodalWizardContainerConfiguracionRopaTrabajo = "modal-wizard-container-configuracion-ropa-trabajo"
+        $scope.idModalRopaTrabajo = "dialog-ropa-trabajo"
+        $scope.idModalNuevaRopaTrabajo = "dialog-nueva-ropa-trabajo"
+        $scope.idModalItemsNuevaRopaTrabajo = "dialog-items-nueva-ropa-trabajo"
         $scope.$on('$viewContentLoaded', function () {
             // resaltarPestaña($location.path().substring(1));
             resaltarPestaña($location.path().substring(1));
@@ -128,7 +129,7 @@ angular.module('agil.controladores')
                 $scope.idModalContenedorRhVista, $scope.idModalDialogPrerequisitoNuevo, $scope.idEliminarSeguroEmpleado, $scope.idEliminarFamiliarEmpleado, $scope.idModalHistorialPrerequisito,
                 $scope.idModalEditarPrerequisito, $scope.idModalDialogConfirmacionEntregaAdelantado, $scope.IdEntregaPrerequisito, $scope.IdModalVerificarCuenta, $scope.idModalImpresionHojaVida, $scope.idModalNuevoAnticipoRegularTodos,
                 $scope.idModalTr3BancoMsc, $scope.idModalTr3BancoUnion, $scope.idModalHistorialTr3, $scope.IdModalVerificarCuentaRrhh, $scope.idModalConfirmarDesabilitacion, $scope.idModalReingresoEmpleado,
-                $scope.idModalHistorialBeneficios,$scope.idModalConfiguracionRopaDeTrabajo,$scope.idModalReporteRopaDeTrabajo,$scope.idmodalWizardContainerConfiguracionRopaTrabajo,$scope.idModalRopaTrabajo,$scope.idModalNuevaRopaTrabajo,$scope.idModalItemsNuevaRopaTrabajo);
+                $scope.idModalHistorialBeneficios, $scope.idModalConfiguracionRopaDeTrabajo, $scope.idModalReporteRopaDeTrabajo, $scope.idmodalWizardContainerConfiguracionRopaTrabajo, $scope.idModalRopaTrabajo, $scope.idModalNuevaRopaTrabajo, $scope.idModalItemsNuevaRopaTrabajo);
             $scope.buscarAplicacion($scope.usuario.aplicacionesUsuario, $location.path().substring(1));
             $scope.obtenerColumnasAplicacion()
             blockUI.stop();
@@ -238,6 +239,7 @@ angular.module('agil.controladores')
             $scope.obtenerConfiguracionVacaciones()
             $scope.obtenerTiposOtrosingresosYDeduccion()
             $scope.obtenerMotivosRetiro()
+            $scope.buscarRopaTrabajo()
             $scope.dynamicPopoverRopaTrabajo = {
                 templateUrl: 'myPopoverRopaTrabajo.html',
             };
@@ -303,6 +305,9 @@ angular.module('agil.controladores')
             $scope.cerrarPopup($scope.idModalHistorialTr3)
         }
         $scope.abrirModalConfiguracionRopaDeTrabajo = function () {
+            $scope.listaRopasDeTrabajo = []
+            $scope.ropaTrabajo ={}
+            $scope.cargo=""
             $scope.abrirPopup($scope.idModalConfiguracionRopaDeTrabajo)
         }
         $scope.cerrarModalConfiguracionRopaDeTrabajo = function () {
@@ -315,27 +320,27 @@ angular.module('agil.controladores')
             $scope.cerrarPopup($scope.idModalReporteRopaDeTrabajo)
         }
         $scope.abrirModalRopaTrabajo = function (empleado) {
-            $scope.empleado=empleado
+            $scope.empleado = empleado
             $scope.abrirPopup($scope.idModalRopaTrabajo)
         }
         $scope.cerrarModalRopaTrabajo = function () {
             $scope.cerrarPopup($scope.idModalRopaTrabajo)
         }
         $scope.abrirModalNuevaRopaTrabajo = function (empleado) {
-            $scope.empleado=empleado
+            $scope.empleado = empleado
             $scope.abrirPopup($scope.idModalNuevaRopaTrabajo)
         }
         $scope.cerrarModalNuevaRopaTrabajo = function () {
             $scope.cerrarPopup($scope.idModalNuevaRopaTrabajo)
         }
         $scope.abrirModalItemsNuevaRopaTrabajo = function (empleado) {
-            $scope.empleado=empleado
+            $scope.empleado = empleado
             $scope.abrirPopup($scope.idModalItemsNuevaRopaTrabajo)
         }
         $scope.cerrarModalItemsNuevaRopaTrabajo = function () {
             $scope.cerrarPopup($scope.idModalItemsNuevaRopaTrabajo)
         }
-       
+
         $scope.abrirModalTr3BancoMsc = function () {
             $scope.abrirPopup($scope.idModalTr3BancoMsc)
         }
@@ -1933,7 +1938,7 @@ angular.module('agil.controladores')
                         paciente.fecha_inicio = worksheet['AA' + row] != undefined && worksheet['AA' + row] != "" ? $scope.fecha_excel_angular(worksheet['AA' + row].v.toString()) : null;
                         paciente.haber_basico = worksheet['AB' + row] != undefined && worksheet['AB' + row] != "" ? parseFloat(worksheet['AB' + row].v.toString()) : null;
                         paciente.matricula_seguro = worksheet['AC' + row] != undefined && worksheet['AC' + row] != "" ? worksheet['AC' + row].v.toString() : null;
-                        paciente.seguro_salud= worksheet['AD' + row] != undefined && worksheet['AD' + row] != "" ? worksheet['AD' + row].v.toString() : null;
+                        paciente.seguro_salud = worksheet['AD' + row] != undefined && worksheet['AD' + row] != "" ? worksheet['AD' + row].v.toString() : null;
                         paciente.imagen = "img/icon-user-default.png"
                         paciente.es_empleado = true
                         var a = new Date(paciente.fecha_inicio)
@@ -2527,7 +2532,7 @@ angular.module('agil.controladores')
         }
         $scope.obtenerGrados = function () {
             blockUI.start();
-            var promesa = ClasesTipo("RRHH_GRA");
+            var promesa = ClasesTipoEmpresa("RRHH_GRA", $scope.usuario.id_empresa);
             promesa.then(function (entidad) {
                 $scope.grados = entidad
                 blockUI.stop();
@@ -2535,7 +2540,7 @@ angular.module('agil.controladores')
         }
         $scope.obtenerTitulos = function () {
             blockUI.start();
-            var promesa = ClasesTipo("RRHH_TITL");
+            var promesa = ClasesTipoEmpresa("RRHH_TITL", $scope.usuario.id_empresa);
             promesa.then(function (entidad) {
                 $scope.titulos = entidad
                 blockUI.stop();
@@ -2543,7 +2548,7 @@ angular.module('agil.controladores')
         }
         $scope.obtenerInstituciones = function () {
             blockUI.start();
-            var promesa = ClasesTipo("RRHH_INST");
+            var promesa = ClasesTipoEmpresa("RRHH_INST", $scope.usuario.id_empresa);
             promesa.then(function (entidad) {
                 $scope.instituciones = entidad
                 blockUI.stop();
@@ -2551,7 +2556,7 @@ angular.module('agil.controladores')
         }
         $scope.obtenerCapacidadesIE = function () {
             blockUI.start();
-            var promesa = ClasesTipo("RRHH_TCIE");
+            var promesa = ClasesTipoEmpresa("RRHH_TCIE", $scope.usuario.id_empresa);
             promesa.then(function (entidad) {
                 $scope.capacidadesIE = entidad
                 blockUI.stop();
@@ -2559,7 +2564,7 @@ angular.module('agil.controladores')
         }
         $scope.obtenerLogrosIE = function () {
             blockUI.start();
-            var promesa = ClasesTipo("RRHH_TLIE");
+            var promesa = ClasesTipoEmpresa("RRHH_TLIE", $scope.usuario.id_empresa);
             promesa.then(function (entidad) {
                 $scope.logrosIE = entidad
                 blockUI.stop();
@@ -2578,7 +2583,7 @@ angular.module('agil.controladores')
         // $scope.fechacontratos = [{ 'name': '10/01/2000 - 01/01/2002' }, { 'name': '10/01/2000 - 01/01/2002' }, { 'name': '10/01/2000 - 01/01/2002' }];
         $scope.obtenerCargos = function () {
             blockUI.start();
-            var promesa = ClasesTipo("RRHH_CARGO");
+            var promesa = ClasesTipoEmpresa("RRHH_CARGO", $scope.usuario.id_empresa);
             promesa.then(function (entidad) {
                 var cargos = entidad.clases
                 $scope.listaCargos = entidad
@@ -2588,7 +2593,7 @@ angular.module('agil.controladores')
         }
         $scope.obtenerDiscapacidades = function () {
             blockUI.start();
-            var promesa = ClasesTipo("RRHH_DISC");
+            var promesa = ClasesTipoEmpresa("RRHH_DISC", $scope.usuario.id_empresa);
             promesa.then(function (entidad) {
                 var discapacidades = entidad.clases
                 $scope.llenarDiscapacidades(discapacidades)
@@ -2597,7 +2602,7 @@ angular.module('agil.controladores')
         }
         $scope.obtenerExpeditos = function () {
             blockUI.start();
-            var promesa = ClasesTipo("RRHH_EXP");
+            var promesa = ClasesTipoEmpresa("RRHH_EXP", $scope.usuario.id_empresa);
             promesa.then(function (entidad) {
                 $scope.tipoExpedido = entidad
                 blockUI.stop();
@@ -2605,7 +2610,7 @@ angular.module('agil.controladores')
         }
         $scope.obtenerTipoExpeditos = function () {
             blockUI.start();
-            var promesa = ClasesTipo("RRHH_TEXP");
+            var promesa = ClasesTipoEmpresa("RRHH_TEXP", $scope.usuario.id_empresa);
             promesa.then(function (entidad) {
                 $scope.tipoDocumento = entidad
                 blockUI.stop();
@@ -2613,7 +2618,7 @@ angular.module('agil.controladores')
         }
         $scope.obtenerEstadoCivil = function () {
             blockUI.start();
-            var promesa = ClasesTipo("RRHH_EC");
+            var promesa = ClasesTipoEmpresa("RRHH_EC", $scope.usuario.id_empresa);
             promesa.then(function (entidad) {
                 $scope.estadosCiviles = entidad
                 blockUI.stop();
@@ -2658,6 +2663,13 @@ angular.module('agil.controladores')
                     }
                 });
             }
+        }
+        $scope.buscarRopaTrabajo = function () {
+            var nombre_corto = 'ROPA DE TRABAJO-G';
+            var promesa = Clases(nombre_corto);
+            promesa.then(function (entidades) {
+                $scope.ropasDeTrabajo = entidades;
+            });
         }
         $scope.buscarMunicipios = function (departamento) {
             if (departamento) {
@@ -2884,7 +2896,7 @@ angular.module('agil.controladores')
          } */
         $scope.obtenerTiposContratos = function () {
             blockUI.start();
-            var promesa = ClasesTipo("RRHH_TC");
+            var promesa = ClasesTipoEmpresa("RRHH_TC", $scope.usuario.id_empresa);
             promesa.then(function (entidad) {
                 $scope.tiposContratos = entidad
                 blockUI.stop();
@@ -2892,7 +2904,7 @@ angular.module('agil.controladores')
         }
         $scope.obtenerTiposPersonales = function () {
             blockUI.start();
-            var promesa = ClasesTipo("RRHH_TP");
+            var promesa = ClasesTipoEmpresa("RRHH_TP", $scope.usuario.id_empresa);
             promesa.then(function (entidad) {
                 $scope.tiposPersonales = entidad
                 blockUI.stop();
@@ -2900,7 +2912,7 @@ angular.module('agil.controladores')
         }
         $scope.obtenerCargasHorarios = function () {
             blockUI.start();
-            var promesa = ClasesTipo("RRHH_CH");
+            var promesa = ClasesTipoEmpresa("RRHH_CH", $scope.usuario.id_empresa);
             promesa.then(function (entidad) {
                 $scope.cargasHorarios = entidad
                 blockUI.stop();
@@ -2908,7 +2920,7 @@ angular.module('agil.controladores')
         }
         $scope.obtenerAreas = function () {
             blockUI.start();
-            var promesa = ClasesTipo("RRHH_AREA");
+            var promesa = ClasesTipoEmpresa("RRHH_AREA", $scope.usuario.id_empresa);
             promesa.then(function (entidad) {
                 $scope.listaAreas = entidad
                 blockUI.stop();
@@ -2917,7 +2929,7 @@ angular.module('agil.controladores')
 
         $scope.obtenerUbicacion = function () {
             blockUI.start();
-            var promesa = ClasesTipo("RRHH_UBI");
+            var promesa = ClasesTipoEmpresa("RRHH_UBI", $scope.usuario.id_empresa);
             promesa.then(function (entidad) {
                 $scope.ubicaciones = entidad
                 blockUI.stop();
@@ -2925,7 +2937,7 @@ angular.module('agil.controladores')
         }
         $scope.obtenerSegurosSalud = function () {
             blockUI.start();
-            var promesa = ClasesTipo("RRHH_SS");
+            var promesa = ClasesTipoEmpresa("RRHH_SS", $scope.usuario.id_empresa);
             promesa.then(function (entidad) {
                 $scope.segurosSalud = entidad
                 blockUI.stop();
@@ -2933,7 +2945,7 @@ angular.module('agil.controladores')
         }
         $scope.obtenerLugarSegurosSalud = function () {
             blockUI.start();
-            var promesa = ClasesTipo("RRHH_LSS");
+            var promesa = ClasesTipoEmpresa("RRHH_LSS", $scope.usuario.id_empresa);
             promesa.then(function (entidad) {
                 $scope.LugaresSegurosSalud = entidad
                 blockUI.stop();
@@ -2941,7 +2953,7 @@ angular.module('agil.controladores')
         }
         $scope.obtenerAporteSeguroLargoPlazo = function () {
             blockUI.start();
-            var promesa = ClasesTipo("RRHH_ASLP");
+            var promesa = ClasesTipoEmpresa("RRHH_ASLP", $scope.usuario.id_empresa);
             promesa.then(function (entidad) {
                 $scope.aportesSeguroLargoPlazo = entidad
                 blockUI.stop();
@@ -2949,7 +2961,7 @@ angular.module('agil.controladores')
         }
         $scope.obtenerTipoOtrosSeguros = function () {
             blockUI.start();
-            var promesa = ClasesTipo("RRHH_OST");
+            var promesa = ClasesTipoEmpresa("RRHH_OST", $scope.usuario.id_empresa);
             promesa.then(function (entidad) {
                 $scope.OtrosSegurosTipos = entidad
                 blockUI.stop();
@@ -2957,7 +2969,7 @@ angular.module('agil.controladores')
         }
         $scope.obtenerBancos = function () {
             blockUI.start();
-            var promesa = ClasesTipo("RRHH_BAN");
+            var promesa = ClasesTipoEmpresa("RRHH_BAN", $scope.usuario.id_empresa);
             promesa.then(function (entidad) {
                 $scope.bancosHdv = entidad
                 blockUI.stop();
@@ -2965,7 +2977,7 @@ angular.module('agil.controladores')
         }
         $scope.obtenerFamiliaRelacion = function () {
             blockUI.start();
-            var promesa = ClasesTipo("RRHH_REL");
+            var promesa = ClasesTipoEmpresa("RRHH_REL", $scope.usuario.id_empresa);
             promesa.then(function (entidad) {
                 $scope.relaciones = entidad
                 blockUI.stop();
@@ -4933,7 +4945,7 @@ angular.module('agil.controladores')
                     if (tipo == "MSC") {
                         var nombreArchivo = dato.tr3Encontrado.planilla + "" + dia + "" + (mes + 1) + "" + anio + "" + dato.tr3Encontrado.numero_planilla + ".tr3"
                     } else {
-                        var nombreArchivo = dato.tr3Encontrado.planilla + "" + dia + "" + (mes + 1) + "" + anio + "" + dato.tr3Encontrado.numero_planilla + ".tr3"
+                        var nombreArchivo = "SUELDO" + mesActual + anio + "BUNION.tr3"
                     }
                     $scope.descargarArchivo($scope.generarTexto(dato), nombreArchivo);
                 }
@@ -4978,11 +4990,12 @@ angular.module('agil.controladores')
                 promesa.then(function (dato) {
                     var fecha = new Date(dato.tr3Encontrado.fecha)
                     var mes = fecha.getMonth() + 1
+                    var mes2 = fecha.getMonth()
                     var dia = fecha.getDate()
                     var mesActual = ""
                     for (let i = 0; i < $scope.meses.length; i++) {
                         const element = $scope.meses[i];
-                        if (mes == element.id) {
+                        if (mes2 == element.id) {
                             mesActual = element.nombre
                         }
                     }
@@ -4996,7 +5009,7 @@ angular.module('agil.controladores')
                         var nombreArchivo = dato.tr3Encontrado.planilla + "" + dia + "" + mes + "" + anio + "" + dato.tr3Encontrado.numero_planilla + ".tr3"
                         var nombreArchivo2 = dato.tr3Encontrado.planilla + "" + dia + "" + mes + "" + anio + "" + dato.tr3Encontrado.numero_planilla + ".txt"
                     } else {
-                        var nombreArchivo = dato.tr3Encontrado.planilla + "" + dia + "" + mes + "" + anio + ".tr3"
+                        var nombreArchivo = "SUELDO" + mesActual + anio + "BUNION.tr3"
                         var nombreArchivo2 = dato.tr3Encontrado.planilla + "" + dia + "" + mes + "" + anio + ".txt"
                     }
                     $scope.descargarArchivo($scope.generarTexto(dato), nombreArchivo);
@@ -5064,7 +5077,7 @@ angular.module('agil.controladores')
                     "o extranjera,  también  autorizamos e instruimos  realizar las operaciones  necesarias  para\r\n" +
                     "cumplir  con  lo  instruido,  de  tal  manera  que se realicen  los abonos  en  la moneda  que\r\n" +
                     "corresponda a cada cuenta beneficiaria.\r\n" +
-                    "de " + mesActual + " de Debo informar lo siguiente:\r\n" +
+                    "de " + mesActual + " Debo informar lo siguiente:\r\n" +
                     "El origen de los fondos corresponde al " + datos.tr3Encontrado.origen_fondos + ".\r\n" +
                     "El Destino de los Fondos, " + datos.tr3Encontrado.destino_fondos + ".\r\n\r\n" +
 
@@ -5098,7 +5111,7 @@ angular.module('agil.controladores')
                     "Mediante la presente solicitamos debiten de nuestra cuenta corriente No." + datos.tr3Encontrado.cuenta.numero + "\r\n" + "el importe total de Bs." + datos.total + "(" + totalLiteral + ")\r\n" + ", y el concepto de comisiones debitar de nuestra cuenta." + "\r\n\r\n" +
                     "Se ha realizado la verificación de nuestro extracto de cuenta  No." + datos.tr3Encontrado.cuenta.numero + ", tenemos saldo suficiente lo cual cubre el importe requerido.\r\n\r\n" +
                     "Enviamos planilla detallada adjunta.\r\n\r\n" +
-                    "de " + mesActual + " de Debo informar lo siguiente:\r\n\r\n" +
+                    "de " + mesActual + " Debo informar lo siguiente:\r\n\r\n" +
                     datos.tr3Encontrado.origen_fondos + "\r\n" +
                     datos.tr3Encontrado.destino_fondos + ".\r\n\r\n" +
                     "Agradeciendo de antemano su pronta respuesta vía mail, saludo a Usted cordialmente.\r\n\r\n" +
@@ -5140,11 +5153,12 @@ angular.module('agil.controladores')
             } else if (datos.tipo == "BU") {
                 var fecha = new Date(datos.tr3Encontrado.fecha)
                 var mes = fecha.getMonth() + 1
+                var mes2 = fecha.getMonth()
                 var dia = fecha.getDate()
                 var mesActual = ""
                 for (let i = 0; i < $scope.meses.length; i++) {
                     const element = $scope.meses[i];
-                    if (mes == element.id) {
+                    if (mes2 == element.id) {
                         mesActual = element.nombre
                     }
                 }
@@ -5217,7 +5231,7 @@ angular.module('agil.controladores')
         $scope.obtenertiposAusenciaMedica = function () {
             $scope.tiposAusenciasMedicas = []
             blockUI.start();
-            var promesa = ClasesTipo("RRHH_AUSMED");
+            var promesa = ClasesTipoEmpresa("RRHH_AUSMED", $scope.usuario.id_empresa);
             promesa.then(function (entidad) {
                 $scope.tiposAusenciasMedicas = entidad
 
@@ -5227,7 +5241,7 @@ angular.module('agil.controladores')
         $scope.obtenerTiposOtrasAusencias = function () {
             $scope.tiposOtrasAusencias = []
             blockUI.start();
-            var promesa = ClasesTipo("RRHH_OTRAUS");
+            var promesa = ClasesTipoEmpresa("RRHH_OTRAUS", $scope.usuario.id_empresa);
             promesa.then(function (entidad) {
                 $scope.tiposOtrasAusencias = entidad
                 blockUI.stop();
@@ -5809,7 +5823,7 @@ angular.module('agil.controladores')
         }
         $scope.obtenerTiposBaja = function () {
             blockUI.start();
-            var promesa = ClasesTipo("RRHH_TPRE");
+            var promesa = ClasesTipoEmpresa("RRHH_TPRE", $scope.usuario.id_empresa);
             promesa.then(function (entidad) {
                 $scope.tiposBajas = entidad
                 blockUI.stop();
@@ -5820,7 +5834,7 @@ angular.module('agil.controladores')
         //beneficios sociales
         $scope.obtenerTiposOtrosingresosYDeduccion = function () {
             blockUI.start();
-            var promesa = ClasesTipo("RRHH_TPDOI");
+            var promesa = ClasesTipoEmpresa("RRHH_TPDOI", $scope.usuario.id_empresa);
             promesa.then(function (entidad) {
                 $scope.tiposOtrosingresosYDeduccion = entidad
                 $scope.tiposOtrosingresosYDeduccion.clases.forEach(function (tipo, index, array) {
@@ -5835,7 +5849,7 @@ angular.module('agil.controladores')
         }
         $scope.obtenerMotivosRetiro = function () {
             blockUI.start();
-            var promesa = ClasesTipo("RRHH_TPMR");
+            var promesa = ClasesTipoEmpresa("RRHH_TPMR", $scope.usuario.id_empresa);
             promesa.then(function (entidad) {
                 $scope.tipoMotivo = entidad
                 blockUI.stop();
@@ -6049,7 +6063,7 @@ angular.module('agil.controladores')
             beneficio.total_por_quinquenio = beneficio.total_quinquenio / beneficio.numero_quinquenio
         }
         //fin beneficios sociales
-        $scope.inicio()
+
         $scope.calcularDesaucio = function (beneficio, update) {
             if (!isNaN(beneficio.promedio)) {
                 if (beneficio.desahucio) {
@@ -6119,4 +6133,115 @@ angular.module('agil.controladores')
                 });
             }
         }
+        //inicio ropa de trabajo
+        $scope.listaRopaTrabajoPorCargo = function (cargo) {
+            var promesa = ListaConfiguracionRopaCargo(cargo)
+            promesa.then(function (dato) {
+                $scope.listaRopasDeTrabajo = dato
+            })
+        }
+        $scope.GuardarlistaRopaTrabajoPorCargo = function (cargo) {
+            var button = $('#siguiente-ca').text().trim()
+            if (button != "Siguiente") {
+            var promesa = GuardarConfiguracionRopaCargo($scope.listaRopasDeTrabajo, cargo)
+            promesa.then(function (dato) {
+                $scope.mostrarMensaje(dato.mensaje)
+                $scope.cerrarModalConfiguracionRopaDeTrabajo()
+                $scope.listaRopasDeTrabajo = []
+                $scope.recargarItemsTabla()
+                
+            })
+        }
+        }
+        $scope.agregarRopaTrabajo = function (ropa) {
+
+            var bandera = true
+            if (ropa.edit) {
+                ropa.edit = false
+                $scope.ropaTrabajo = {}
+            } else {
+                if ($scope.listaRopasDeTrabajo.length > 0) {
+                    $scope.listaRopasDeTrabajo.forEach(function (ropaT, index, array) {
+                        if (ropa.ropaTrabajo.nombre == ropaT.ropaTrabajo.nombre) {
+                            bandera = false
+                            if (ropaT.eliminado == true) {
+                                ropaT.eliminado = false
+                            }
+                        }
+                        if (index === (array.length - 1)) {
+                            if (bandera) {
+                                $scope.listaRopasDeTrabajo.push(ropa)
+                                $scope.ropaTrabajo = {}
+                            }
+                        }
+                    });
+                } else {
+                    $scope.listaRopasDeTrabajo.push(ropa)
+                    $scope.ropaTrabajo = {}
+                }
+            }
+
+        }
+
+        $scope.editarRopaTrabajo = function (ropa) {
+            $scope.ropaTrabajo = ropa
+            $scope.ropaTrabajo.edit = true
+        }
+        $scope.eliminarRopaTrabajo = function (ropa) {
+            ropa.eliminado = true;
+        }
+
+        $scope.generarExcelRopaTrabajo = function (ropasTrabajo) {
+            var promesa=DatosReporteConfiguracionRopa($scope.usuario.id_empresa)
+            promesa.then(function(datos){
+                var data = [["N°", "CARGO", "ROPA","EMPLEADO",
+                "CI", "EXTENCÓN", "TIPO CONTRATO", "CAMPO", "CARGO"]]
+            var iu = []
+            for (var i = 0; i < empleados.length; i++) {
+                var columns = [];
+                columns.push((i + 1));
+                columns.push(empleados[i].eliminado);
+                columns.push(empleados[i].codigo);
+                columns.push(empleados[i].nombre_completo);
+                columns.push(empleados[i].designacion_empresa);
+                columns.push(empleados[i].ci);
+                columns.push(empleados[i].extension);
+                columns.push(empleados[i].ficha.tipoContrato.nombre);
+                columns.push(empleados[i].campo);
+                var cargostexto = empleados[i].cargos[0].cargo.nombre
+                iu.push(i)
+                empleados[i].cargos.forEach(function (cargo, index, array) {
+                    if (cargostexto == "") {
+                        cargostexto = cargo
+                    } else {
+                        cargostexto = cargostexto + "-" + cargo.cargo.nombre
+                    }
+                });
+
+                columns.push(cargostexto);
+                data.push(columns);
+            }
+
+            var ws_name = "SheetJS";
+            var wb = new Workbook(), ws = sheet_from_array_of_arrays(data);
+            /* add worksheet to workbook */
+            wb.SheetNames.push(ws_name);
+            wb.Sheets[ws_name] = ws;
+            var wbout = XLSX.write(wb, { bookType: 'xlsx', bookSST: true, type: 'binary' });
+            saveAs(new Blob([s2ab(wbout)], { type: "application/octet-stream" }), "EMPLEADO RRHH.xlsx");
+            blockUI.stop();
+            })            
+        }
+        $scope.obtenerCargosRopaTrabajo = function () {
+            blockUI.start();
+            var promesa = ClasesTipoEmpresa("RRHH_CARGO", $scope.usuario.id_empresa);
+            promesa.then(function (entidad) {
+                var cargos = entidad.clases
+                $scope.listaCargos = entidad
+                $scope.llenarCargos(cargos)
+                blockUI.stop();
+            });
+        }
+        //fin ropa de trabajo
+        $scope.inicio()
     });

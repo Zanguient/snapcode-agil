@@ -1,7 +1,7 @@
 module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente, Persona, Empresa, Sucursal, Clase, Diccionario, Tipo, decodeBase64Image, fs, RrhhEmpleadoFicha, RrhhEmpleadoFichaOtrosSeguros, RrhhEmpleadoFichaFamiliar, RrhhEmpleadoDiscapacidad
     , RrhhEmpleadoCargo, RrhhEmpleadoHojaVida, RrhhEmpleadoFormacionAcademica, RrhhEmpleadoExperienciaLaboral, RrhhEmpleadoLogroInternoExterno, RrhhEmpleadoCapacidadInternaExterna, NumeroLiteral, RrhhEmpleadoPrestamo, RrhhEmpleadoPrestamoPago, RrhhEmpleadoRolTurno, RrhhEmpleadoHorasExtra, RrhhAnticipo,
     EvaluacionPolifuncional, ConfiguracionCalificacionEvaluacionPolifuncional, ConfiguracionDesempenioEvaluacionPolifuncional, RrhhEmpleadoAusencia, RrhhEmpleadoVacaciones, RrhhEmpleadoCompensacionAusencia, RrhhFeriado, RrhhClaseAsuencia, RrhhEmpleadoConfiguracionVacacion, RrhhEmpleadoHistorialVacacion, RrhhEmpleadoTr3, RrhhEmpleadoAnticipoTr3, Banco, RrhhEmpleadoDeduccionIngreso,
-    RrhhEmpleadoBeneficioSocial, RrhhEmpleadoBitacoraFicha) {
+    RrhhEmpleadoBeneficioSocial, RrhhEmpleadoBitacoraFicha, RrhhEmpleadoConfiguracionRopa) {
 
     router.route('/recursos-humanos/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion/codigo/:codigo/nombres/:nombres/ci/:ci/campo/:campo/cargo/:cargo/busquedaEmpresa/:busquedaEmpresa/grupo/:grupo_sanguineo/estado/:estado/apellido/:apellido')
         .get(function (req, res) {
@@ -1739,7 +1739,11 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                             if (index2 === (array2.length - 1)) {
                                 arregloCargo.forEach(function (cargo, index4, array4) {
                                     promises.push(Tipo.find({
-                                        where: { nombre_corto: 'RRHH_CARGO' },
+                                        where: {
+                                            nombre_corto: 'RRHH_CARGO',
+                                            id_empresa: req.body.id_empresa
+                                        },
+
                                         transaction: t
                                     }).then(function (tipoCargo) {
                                         var nombre_corto = cargo.substr(0, 3);
@@ -1760,7 +1764,10 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                                     if (index4 === (array4.length - 1)) {
                                         arregloContrato.forEach(function (contrato, index5, array5) {
                                             promises.push(Tipo.find({
-                                                where: { nombre_corto: 'RRHH_TC' },
+                                                where: {
+                                                    nombre_corto: 'RRHH_TC',
+                                                    id_empresa: req.body.id_empresa
+                                                },
                                                 transaction: t
                                             }).then(function (tipoContrato) {
                                                 var nombre_corto3 = contrato.substr(0, 3);
@@ -1781,7 +1788,10 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                                             if (index5 === (array5.length - 1)) {
                                                 arregloExpedido.forEach(function (expedido, index6, array6) {
                                                     promises.push(Tipo.find({
-                                                        where: { nombre_corto: 'RRHH_EXP' },
+                                                        where: {
+                                                            nombre_corto: 'RRHH_EXP',
+                                                            id_empresa: req.body.id_empresa
+                                                        },
                                                         transaction: t
                                                     }).then(function (tipoExp) {
                                                         var nombre_corto3 = expedido.substr(0, 3);
@@ -1802,10 +1812,13 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                                                     if (index6 === (array6.length - 1)) {
                                                         arregloSegurosSalud.forEach(function (seguroSalud, index7, array7) {
                                                             promises.push(Tipo.find({
-                                                                where: { nombre_corto: 'RRHH_SS' },
+                                                                where: {
+                                                                    nombre_corto: 'RRHH_SS',
+                                                                    id_empresa: req.body.id_empresa
+                                                                },
                                                                 transaction: t
                                                             }).then(function (tipoSeguroSalud) {
-                                                                var nombre_corto3 = expedido.substr(0, 3);
+                                                                var nombre_corto3 = seguroSalud.substr(0, 3);
                                                                 return Clase.findOrCreate({
                                                                     where: {
                                                                         nombre: seguroSalud,
@@ -1867,7 +1880,10 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                                                                                         transaction: t
                                                                                     }).then(function (personaActualizada) {
                                                                                         return Tipo.find({
-                                                                                            where: { nombre_corto: 'RRHH_EXP' }
+                                                                                            where: {
+                                                                                                nombre_corto: 'RRHH_EXP',
+                                                                                                id_empresa: req.body.id_empresa
+                                                                                            }
                                                                                         }).then(function (tipoExp) {
                                                                                             var nombre_corto2 = pacienteActual.extension.substr(0, 3);
                                                                                             return Clase.findOrCreate({
@@ -2028,7 +2044,10 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                                                                                                 transaction: t
                                                                                             }).then(function (imagenAct) {
                                                                                                 return Tipo.find({
-                                                                                                    where: { nombre_corto: 'RRHH_EXP' },
+                                                                                                    where: {
+                                                                                                        nombre_corto: 'RRHH_EXP',
+                                                                                                        id_empresa: req.body.id_empresa
+                                                                                                    },
                                                                                                     transaction: t
                                                                                                 }).then(function (tipoExp) {
                                                                                                     var nombre_corto2 = pacienteActual.extension.substr(0, 3);
@@ -2092,10 +2111,17 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                                                                                                                     },
                                                                                                                         { transaction: t }).then(function (medicoPacienteActualizado) {
                                                                                                                             return Tipo.find({
-                                                                                                                                where: { nombre_corto: 'RRHH_TC' },
+                                                                                                                                where: {
+                                                                                                                                    nombre_corto: 'RRHH_TC',
+                                                                                                                                    id_empresa: req.body.id_empresa
+                                                                                                                                },
                                                                                                                                 transaction: t
                                                                                                                             }).then(function (tipoContrato) {
-                                                                                                                                var nombre_corto3 = pacienteActual.contrato.substr(0, 3);
+                                                                                                                                if (pacienteActual.contrato) {
+                                                                                                                                    var nombre_corto3 = pacienteActual.contrato.substr(0, 3);
+                                                                                                                                } else {
+                                                                                                                                    var nombre_corto3 = null
+                                                                                                                                }
                                                                                                                                 return Clase.findOrCreate({
                                                                                                                                     where: {
                                                                                                                                         nombre: pacienteActual.contrato,
@@ -2111,10 +2137,13 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                                                                                                                                 }).spread(function (contratoClase, created3) {
                                                                                                                                     var fecha = new Date()
                                                                                                                                     return Tipo.find({
-                                                                                                                                        where: { nombre_corto: 'RRHH_SS' },
+                                                                                                                                        where: {
+                                                                                                                                            nombre_corto: 'RRHH_SS',
+                                                                                                                                            id_empresa: req.body.id_empresa
+                                                                                                                                        },
                                                                                                                                         transaction: t
                                                                                                                                     }).then(function (tipoSeguroSalud) {
-                                                                                                                                        var nombre_corto3 = expedido.substr(0, 3);
+                                                                                                                                        var nombre_corto3 = pacienteActual.seguro_salud.substr(0, 3);
                                                                                                                                         return Clase.findOrCreate({
                                                                                                                                             where: {
                                                                                                                                                 nombre: pacienteActual.seguro_salud,
@@ -2138,7 +2167,10 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                                                                                                                                             },
                                                                                                                                                 { transaction: t }).then(function (Creado) {
                                                                                                                                                     return Tipo.find({
-                                                                                                                                                        where: { nombre_corto: 'RRHH_CARGO' },
+                                                                                                                                                        where: {
+                                                                                                                                                            nombre_corto: 'RRHH_CARGO',
+                                                                                                                                                            id_empresa: req.body.id_empresa
+                                                                                                                                                        },
                                                                                                                                                         transaction: t
                                                                                                                                                     }).then(function (tipoCargo) {
                                                                                                                                                         var nombre_corto = pacienteActual.cargo.substr(0, 3);
@@ -2832,20 +2864,26 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                 }).then(function (tr3Encontrado) {
                     var total = 0
                     req.body.anticipos.forEach(function (anticipo, index, array) {
-                        total += anticipo.monto
-                        RrhhAnticipo.update({
-                            entregado: true
-                        }, {
-                                where: { id: anticipo.id }
+                        if (!anticipo.entregado) {
+                            total += anticipo.monto
+                            RrhhAnticipo.update({
+                                entregado: true
+                            }, {
+                                    where: { id: anticipo.id }
+                                })
+                            RrhhEmpleadoAnticipoTr3.create({
+                                id_anticipo: anticipo.id,
+                                id_tr3: tr3Encontrado.id
+                            }).then(function (historialCreado) {
+                                if (index === (array.length - 1)) {
+                                    res.json({ mensaje: "Tr3 creado satisfactoriamente!", anticipos: req.body.anticipos, tipo: req.body.tipo, tr3Encontrado: tr3Encontrado, total: total })
+                                }
                             })
-                        RrhhEmpleadoAnticipoTr3.create({
-                            id_anticipo: anticipo.id,
-                            id_tr3: tr3Encontrado.id
-                        }).then(function (historialCreado) {
+                        } else {
                             if (index === (array.length - 1)) {
                                 res.json({ mensaje: "Tr3 creado satisfactoriamente!", anticipos: req.body.anticipos, tipo: req.body.tipo, tr3Encontrado: tr3Encontrado, total: total })
                             }
-                        })
+                        }
                     })
 
                 })
@@ -3127,7 +3165,94 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
 
             })
         });
+    router.route('/subgrupo/:nombre_corto')
+        .get(function (req, res) {
+            Clase.findAll({
+                where: {
+                    nombre_corto: req.params.nombre_corto
+                },
+                include: [{ model: Producto, as: 'productosSubGrupo' }]
+            }).then(function (entidad) {
+                res.json(entidad);
+            });
+        });
+    router.route('/recursos-humanos/ropa-trabajo/empresa/:id')
+        .get(function (req, res) {
+            Tipo.find({
+                where: {
+                    nombre_corto: "GRUPOS PRODUCTOS",
+                    id_empresa: req.params.id
+                },
+                include: [{ model: Clase, as: 'clases' }]
+            }).then(function (bitacoras) {
 
+                res.json(bitacoras)
+
+            })
+        });
+        router.route('/reporte/configuracion/ropa-trabajo/empresa/:id_empresa')
+        .get(function(req, res) {
+            RrhhEmpleadoConfiguracionRopa.findAll({               
+                include: [{ model: Clase, as: 'cargo'},{ model: Clase, as: 'ropaTrabajo',include:[{model:Tipo,as:'tipo',where:{id_empresa:req.params.id_empresa}}] }]
+            }).then(function(entidad){			
+                res.json(entidad);		  
+            });
+        });	
+    router.route('/recursos-humanos/configuracion-ropa-trabajo/cargo/:id_cargo')
+        .post(function (req, res) {
+            req.body.forEach(function (ropa, index, array) {
+                if (ropa.id) {
+                    if (ropa.eliminado) {
+                        RrhhEmpleadoConfiguracionRopa.destroy({
+                            where: { id: ropa.id }
+                        }).then(function (configuracion) {
+                            if (index === (array.length - 1)) {
+                                res.json({ mensaje: "Configuración guardada sadisfactoriamente!" })
+                            }
+                        })
+                    } else {
+                        RrhhEmpleadoConfiguracionRopa.update({
+                            id_ropa_trabajo: ropa.ropaTrabajo.id,
+                            cantidad: ropa.cantidad
+                        },
+                            {
+                                where: { id: ropa.id }
+                            }).then(function (configuracion) {
+                                if (index === (array.length - 1)) {
+                                    res.json({ mensaje: "Configuración guardada sadisfactoriamente!" })
+                                }
+                            })
+                    }
+                } else {
+                    if (ropa.eliminado) {
+                        if (index === (array.length - 1)) {
+                            res.json({ mensaje: "Configuración guardada sadisfactoriamente!" })
+                        }
+                    } else {
+                        RrhhEmpleadoConfiguracionRopa.create({
+                            id_ropa_trabajo: ropa.ropaTrabajo.id,
+                            id_cargo: req.params.id_cargo,
+                            cantidad: ropa.cantidad
+                        }).then(function (configuracion) {
+                            if (index === (array.length - 1)) {
+                                res.json({ mensaje: "Configuración guardada sadisfactoriamente!" })
+                            }
+                        })
+                    }
+                }
+
+            })
+        })
+        .get(function (req, res) {
+            RrhhEmpleadoConfiguracionRopa.findAll({
+                where: {
+                    id_cargo: req.params.id_cargo,
+                },
+                include: [{ model: Clase, as: 'ropaTrabajo' }]
+            }).then(function (ropasTrabajo) {
+                res.json(ropasTrabajo)
+            })
+        });
     //FIN
     /////////////////////////////////////////////////////// RUTAS PARA POLIFUNCIONAL ///////////////////////////////////////////////////
 
@@ -3190,11 +3315,12 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                 include: [{
                     model: MedicoPaciente, as: 'empleado',
                     where: condicion_empleado,
-                    include: [ { model: Clase, as: 'campo' },{
+                    include: [{ model: Clase, as: 'campo' }, {
                         model: RrhhEmpleadoFicha, as: 'empleadosFichas', include: [{
-                            model: RrhhEmpleadoCargo, as: 'cargos', where: condicion_cargos, include: [{ model: Clase, as: 'cargo' }]}
-                           ]
-                        }, { model: Persona, as: 'persona', where: condicion_persona }]
+                            model: RrhhEmpleadoCargo, as: 'cargos', where: condicion_cargos, include: [{ model: Clase, as: 'cargo' }]
+                        }
+                        ]
+                    }, { model: Persona, as: 'persona', where: condicion_persona }]
                     // }
                     //  include: [{
                     //     model: RrhhEmpleadoCargo, as: 'cargos', required: false,
@@ -3519,7 +3645,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                 where: {
                     es_empleado: true,
                     id_empresa: req.params.id_empresa
-                }, include: [{ model: Clase, as: 'campo' },{ model: RrhhEmpleadoFicha, as: 'empleadosFichas', include: [{ model: RrhhEmpleadoCargo, as: 'cargos', include: [{ model: Clase, as: 'cargo' }] }] },
+                }, include: [{ model: Clase, as: 'campo' }, { model: RrhhEmpleadoFicha, as: 'empleadosFichas', include: [{ model: RrhhEmpleadoCargo, as: 'cargos', include: [{ model: Clase, as: 'cargo' }] }] },
                 { model: Persona, as: 'persona' },
                 { model: EvaluacionPolifuncional, as: 'evaluaciones', where: condicion, order: [['fecha', 'asc']], required: true }
                 ],

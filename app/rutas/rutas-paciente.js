@@ -1,6 +1,6 @@
 module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Sucursal, MedicoPrerequisito, Clase, Diccionario, Tipo, decodeBase64Image, fs, MedicoVacuna, VacunaDosis,
 	MedicoPacienteVacuna, MedicoPacienteVacunaDosis, MedicoPacienteConsulta, MedicoPacienteFicha, sequelize, Sequelize, MedicoLaboratorioExamen, MedicoLaboratorio, MedicoLaboratorioPaciente, MedicoLaboratorioResultado,
-	MedicoLaboratorioResultado, MedicoDiagnostico, MedicoDiagnosticoExamen, MedicoDiagnosticoPaciente, MedicoDiagnosticoResultado, MedicoPacientePreRequisito, RrhhEmpleadoCargo,RrhhEmpleadoFicha) {
+	MedicoLaboratorioResultado, MedicoDiagnostico, MedicoDiagnosticoExamen, MedicoDiagnosticoPaciente, MedicoDiagnosticoResultado, MedicoPacientePreRequisito, RrhhEmpleadoCargo, RrhhEmpleadoFicha) {
 
 	router.route('/paciente/:id_paciente')
 		.get(function (req, res) {
@@ -8,7 +8,7 @@ module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Su
 				where: {
 					id: req.params.id_paciente
 				},
-				include: [{model:Clase,as:'campo'},{ model: Persona, as: 'persona', include: [{ model: Clase, as: 'genero' }] }
+				include: [{ model: Clase, as: 'campo' }, { model: Persona, as: 'persona', include: [{ model: Clase, as: 'genero' }] }
 					// { model: Empresa, as: 'empresa'},{model:MedicoPrerequisito, as: 'prerequisitos',include: [{ model: Clase, as: 'prerequisitoClase' }]}
 				]
 			}).then(function (medicoPaciente) {
@@ -155,7 +155,7 @@ module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Su
 				where: {
 					id: req.params.id_paciente
 				},
-				include: [{model:Clase,as:'campo'},{ model: RrhhEmpleadoFicha, as: 'empleadosFichas',include:[{ model: RrhhEmpleadoCargo, as: 'cargos', include: [{ model: Clase, as: "cargo" }] }]}, { model: Clase, as: 'extension' }, { model: Persona, as: 'persona', include: [{ model: Clase, as: 'genero' }] }
+				include: [{ model: Clase, as: 'campo' }, { model: RrhhEmpleadoFicha, as: 'empleadosFichas', include: [{ model: RrhhEmpleadoCargo, as: 'cargos', include: [{ model: Clase, as: "cargo" }] }] }, { model: Clase, as: 'extension' }, { model: Persona, as: 'persona', include: [{ model: Clase, as: 'genero' }] }
 					// { model: Empresa, as: 'empresa'},{model:MedicoPrerequisito, as: 'prerequisitos',include: [{ model: Clase, as: 'prerequisitoClase' }]}
 				]
 			}).then(function (medicoPaciente) {
@@ -177,42 +177,42 @@ module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Su
 				id_empleado: idpaciente
 			}
 		}).then(function (EmpleadoCargoEliminados) { */
-			/* if (req.body.cargos) {
-				if (req.body.cargos.length > 0) {
-					req.body.cargos.forEach(function (cargo, index, array) {
-						RrhhEmpleadoCargo.findOrCreate({
-							where: { id_empleado: idpaciente, id_cargo: cargo.id },
-							defaults: {
+		/* if (req.body.cargos) {
+			if (req.body.cargos.length > 0) {
+				req.body.cargos.forEach(function (cargo, index, array) {
+					RrhhEmpleadoCargo.findOrCreate({
+						where: { id_empleado: idpaciente, id_cargo: cargo.id },
+						defaults: {
+							id_empleado: idpaciente,
+							id_cargo: cargo.id
+						}
+					}).spread(function (ficha, created) {
+						if (!created) {
+							RrhhEmpleadoCargo.update({
 								id_empleado: idpaciente,
 								id_cargo: cargo.id
-							}
-						}).spread(function (ficha, created) {
-							if (!created) {
-								RrhhEmpleadoCargo.update({
-									id_empleado: idpaciente,
-									id_cargo: cargo.id
-								}, {
-										where: { id_empleado: idpaciente, id_cargo: cargo.id }
-									}).then(function (actualizado) {
-										if (index === (array.length - 1)) {
-											res.json({ message: mensaje });
-										}
-									})
+							}, {
+									where: { id_empleado: idpaciente, id_cargo: cargo.id }
+								}).then(function (actualizado) {
+									if (index === (array.length - 1)) {
+										res.json({ message: mensaje });
+									}
+								})
 
-							} else {
-								if (index === (array.length - 1)) {
-									res.json({ message: mensaje });
-								}
+						} else {
+							if (index === (array.length - 1)) {
+								res.json({ message: mensaje });
 							}
-						})
-					});
-				} else {
-					res.json({ message: mensaje });
-				}
-			} else { */
+						}
+					})
+				});
+			} else {
 				res.json({ message: mensaje });
+			}
+		} else { */
+		res.json({ message: mensaje });
 
-			/* } */
+		/* } */
 		/* }) */
 	}
 	router.route('/pacientes/ficha_tecnica/excel/upload')
@@ -387,210 +387,283 @@ module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Su
 
 	router.route('/pacientes/empresa/excel/upload')
 		.post(function (req, res) {
+			var arregloSucursales = []
+			var bandera = false
 			req.body.pacientes.forEach(function (pacienteActual, index, array) {
-				Clase.find({
-					where: { nombre_corto: pacienteActual.genero }
-				}).then(function (generoEncontrado) {
-					MedicoPaciente.find({
-						where: { codigo: pacienteActual.codigo }
-					}).then(function (pacienteFound) {
-						// console.log(pacienteFound)
-						if (pacienteFound != null) {
-							var imagen;
-							if (pacienteActual.imagen.indexOf('default') > -1) {
-								imagen = pacienteActual.imagen;
-							} else {
-								var imagenPersona = decodeBase64Image(pacienteActual.imagen);
-								fs.writeFileSync('./img/persona' + pacienteFound.id_persona + '.jpg', imagenPersona.data, 'base64', function (err) { });
-								imagen = './img/persona' + pacienteFound.id_persona + '.jpg';
+				if (arregloSucursales.length > 0) {
+					for (var i = 0; i < arregloSucursales.length; i++) {
+						var element = arregloSucursales[i];
+						if (element == pacienteActual.campamento) {
+							bandera = true
+						}
+					}
+					if (!bandera) {
+						arregloSucursales.push(pacienteActual.campamento)
+					}
+				} else {
+					arregloSucursales.push(pacienteActual.campamento)
+				}
+				if (index === (array.length - 1)) {
+					arregloSucursales.forEach(function (sucursal, index2, array2) {
+						Tipo.find({
+							where: {
+								nombre_corto: 'CENCOS',
+								id_empresa: req.body.id_empresa
 							}
-							Persona.update({
-								nombres: pacienteActual.nombres,
-								apellido_paterno: pacienteActual.apellido_paterno,
-								apellido_materno: pacienteActual.apellido_materno,
-								ci: pacienteActual.ci,
-								imagen: imagen,
-								id_genero: generoEncontrado.id,
-								nombre_completo: pacienteActual.nombres + ' ' + pacienteActual.apellido_paterno + ' ' + pacienteActual.apellido_materno,
-								telefono: pacienteActual.telefono,
-								telefono_movil: pacienteActual.telefono_movil,
-								fecha_nacimiento: pacienteActual.fecha_nacimiento,
-								activo: true,
-							}, {
-									where: {
-										id: pacienteFound.id_persona
-									}
-								}).then(function (personaActualizada) {
-									Tipo.find({
-										where: { nombre_corto: 'RRHH_EXP' }
-									}).then(function (tipoExp) {
-										var nombre_corto2 = pacienteActual.extension.substr(0, 3);
-										Clase.findOrCreate({
-											where: {
-												nombre: pacienteActual.extension,
-												id_tipo: tipoExp.dataValues.id,
-											},
-											defaults: {
-												id_tipo: tipoExp.dataValues.id,
-												nombre: pacienteActual.extension,
-												nombre_corto: nombre_corto2
-											}
-										}).spread(function (expClase, created) {
-											MedicoPaciente.update({
-												id_persona: personaActualizada.id,
-												id_empresa: req.body.id_empresa,
-												codigo: pacienteActual.codigo,
-												id_extension: expClase.id,
-												grupo_sanguineo: pacienteActual.grupo_sanguineo,
-												cargo: pacienteActual.cargo,
-												id_campo: pacienteActual.campamento,
-												designacion_empresa: pacienteActual.designacion_empresa,
-												eliminado: false,
-												es_empleado: false
-											}, {
-													where: { id: pacienteFound.id }
-
-												}).then(function (medicoPacienteActualizado) {
-													RrhhEmpleadoCargo.findAll({
-														where: {
-															id_empleado: pacienteFound.id,
-														},
-														include: [{ model: Clase, as: 'cargo', include: [{ model: Tipo, as: 'tipo' }] }]
-													}).then(function (EmpleadoCargos) {
-														var dato = 0;
-														/* EmpleadoCargos.forEach(function (cargo, index, array) {
-															var nombre_corto = pacienteActual.cargo.substr(0, 3);
-															Clase.findOrCreate({
-																where: {
-																	nombre: pacienteActual.cargo,
-																	id_tipo: cargo.dataValues.cargo.dataValues.tipo.dataValues.id,
-																},
-																defaults: {
-																	id_tipo: cargo.dataValues.cargo.dataValues.tipo.dataValues.id,
-																	nombre: pacienteActual.cargo,
-																	nombre_corto: nombre_corto
-																}
-															}).spread(function (cargoClase, created) {
-																RrhhEmpleadoCargo.findOrCreate({
-																	where: {
-																		id_empleado: pacienteFound.id,
-																		id_cargo: cargoClase.id,
-																	},
-																	defaults: {
-																		id_empleado: pacienteFound.id,
-																		id_cargo: cargoClase.id,
-																	}
-																}).spread(function (cargoAc, created) {
-																	if (index === (array.length - 1)) { */
-																		res.json({ mensaje: "¡Datos de pacientes actualizados satisfactoriamente!" });
-																/* 	}
-																})
-															})
-
-														}); */
-													})
-												})
-										})
-									})
-								})
-						} else {
-							console.log('paciente nuevo')
-							Persona.create({
-								nombres: pacienteActual.nombres,
-								apellido_paterno: pacienteActual.apellido_paterno,
-								apellido_materno: pacienteActual.apellido_materno,
-								ci: pacienteActual.ci,
-								id_genero: generoEncontrado.id,
-								nombre_completo: pacienteActual.nombres + ' ' + pacienteActual.apellido_paterno + ' ' + pacienteActual.apellido_materno,
-								telefono: pacienteActual.telefono,
-								telefono_movil: pacienteActual.telefono_movil,
-								fecha_nacimiento: pacienteActual.fecha_nacimiento,
-								activo: true,
-							}).then(function (personaCreada) {
-								var imagen;
-								if (pacienteActual.imagen.indexOf('default') > -1) {
-									imagen = pacienteActual.imagen;
-								} else {
-									var imagenPersona = decodeBase64Image(pacienteActual.imagen);
-									fs.writeFileSync('./img/persona' + personaCreada.id + '.jpg', imagenPersona.data, 'base64', function (err) { });
-									imagen = './img/persona' + personaCreada.id + '.jpg';
-
+						}).then(function (tipo) {
+							Clase.findOrCreate({
+								where: {
+									nombre: sucursal,
+									nombre_corto: sucursal,
+									id_tipo: tipo.dataValues.id
+								},
+								defaults: {
+									nombre: sucursal,
+									id_tipo: tipo.dataValues.id,
+									habilitado: true
 								}
-								Persona.update({
-									imagen: imagen
-								}, {
-										where: {
-											id: personaCreada.id
-										}
-									}).then(function (imagenAct) {
-										Tipo.find({
-											where: { nombre_corto: 'RRHH_EXP' }
-										}).then(function (tipoExp) {
-											var nombre_corto2 = pacienteActual.extension.substr(0, 3);
-											Clase.findOrCreate({
-												where: {
-													nombre: pacienteActual.extension,
-													id_tipo: tipoExp.dataValues.id,
-												},
-												defaults: {
-													id_tipo: tipoExp.dataValues.id,
-													nombre: pacienteActual.extension,
-													nombre_corto: nombre_corto2
-												}
-											}).spread(function (expClase, created) {
-												MedicoPaciente.create({
-													id_persona: personaCreada.id,
-													id_empresa: req.body.id_empresa,
-													codigo: pacienteActual.codigo,
-													grupo_sanguineo: pacienteActual.grupo_sanguineo,
-													cargo: pacienteActual.cargo,
-													id_extension: expClase.id,
-													id_campo: pacienteActual.campamento,
-													designacion_empresa: pacienteActual.designacion_empresa,
-													eliminado: false,
-													es_empleado: false
-													//comentario: pacienteActual.comentario
-												}).then(function (medicoPacienteActualizado) {
-													/* Tipo.find({
-														where: { nombre_corto: 'RRHH_CARGO' }
-													}).then(function (tipoCargo) {
-														var nombre_corto = pacienteActual.cargo.substr(0, 3);
+							})
+						})
+						Sucursal.findOrCreate({
+							where: {
+								nombre: sucursal,
+								id_empresa: req.body.id_empresa
+							},
+							defaults: {
+								nombre: sucursal,
+								id_empresa: req.body.id_empresa
+							}
+						})
+						if (index2 === (array2.length - 1)) {
+							req.body.pacientes.forEach(function (pacienteActual, index, array) {
+								Clase.find({
+									where: { nombre_corto: pacienteActual.genero }
+								}).then(function (generoEncontrado) {
+									MedicoPaciente.find({
+										where: { codigo: pacienteActual.codigo }
+									}).then(function (pacienteFound) {
+										// console.log(pacienteFound)
+										if (pacienteFound != null) {
+											var imagen;
+											if (pacienteActual.imagen.indexOf('default') > -1) {
+												imagen = pacienteActual.imagen;
+											} else {
+												var imagenPersona = decodeBase64Image(pacienteActual.imagen);
+												fs.writeFileSync('./img/persona' + pacienteFound.id_persona + '.jpg', imagenPersona.data, 'base64', function (err) { });
+												imagen = './img/persona' + pacienteFound.id_persona + '.jpg';
+											}
+											Persona.update({
+												nombres: pacienteActual.nombres,
+												apellido_paterno: pacienteActual.apellido_paterno,
+												apellido_materno: pacienteActual.apellido_materno,
+												ci: pacienteActual.ci,
+												imagen: imagen,
+												id_genero: generoEncontrado.id,
+												nombre_completo: pacienteActual.nombres + ' ' + pacienteActual.apellido_paterno + ' ' + pacienteActual.apellido_materno,
+												telefono: pacienteActual.telefono,
+												telefono_movil: pacienteActual.telefono_movil,
+												fecha_nacimiento: pacienteActual.fecha_nacimiento,
+												activo: true,
+											}, {
+													where: {
+														id: pacienteFound.id_persona
+													}
+												}).then(function (personaActualizada) {
+													Tipo.find({
+														where: { nombre_corto: 'RRHH_EXP', id_empresa: req.body.id_empresa }
+													}).then(function (tipoExp) {
+														var nombre_corto2 = pacienteActual.extension.substr(0, 3);
 														Clase.findOrCreate({
 															where: {
-																nombre: pacienteActual.cargo,
-																id_tipo: tipoCargo.dataValues.id,
+																nombre: pacienteActual.extension,
+																id_tipo: tipoExp.dataValues.id,
 															},
 															defaults: {
-																id_tipo: tipoCargo.dataValues.id,
-																nombre: pacienteActual.cargo,
-																nombre_corto: nombre_corto
+																id_tipo: tipoExp.dataValues.id,
+																nombre: pacienteActual.extension,
+																nombre_corto: nombre_corto2
 															}
-														}).spread(function (cargoClase, created) {
-															RrhhEmpleadoCargo.create({
-																id_empleado: medicoPacienteActualizado.id,
-																id_cargo: cargoClase.id
-															}).then(function (params) {
+														}).spread(function (expClase, created) {
+															MedicoPaciente.update({
+																id_persona: personaActualizada.id,
+																id_empresa: req.body.id_empresa,
+																codigo: pacienteActual.codigo,
+																id_extension: expClase.id,
+																grupo_sanguineo: pacienteActual.grupo_sanguineo,
+																cargo: pacienteActual.cargo,
+																id_campo: pacienteActual.campamento,
+																designacion_empresa: pacienteActual.designacion_empresa,
+																eliminado: false,
+																es_empleado: false
+															}, {
+																	where: { id: pacienteFound.id }
 
+																}).then(function (medicoPacienteActualizado) {
+																	RrhhEmpleadoCargo.findAll({
+																		where: {
+																			id_empleado: pacienteFound.id,
+																		},
+																		include: [{ model: Clase, as: 'cargo', include: [{ model: Tipo, as: 'tipo' }] }]
+																	}).then(function (EmpleadoCargos) {
+																		var dato = 0;
+																		/* EmpleadoCargos.forEach(function (cargo, index, array) {
+																			var nombre_corto = pacienteActual.cargo.substr(0, 3);
+																			Clase.findOrCreate({
+																				where: {
+																					nombre: pacienteActual.cargo,
+																					id_tipo: cargo.dataValues.cargo.dataValues.tipo.dataValues.id,
+																				},
+																				defaults: {
+																					id_tipo: cargo.dataValues.cargo.dataValues.tipo.dataValues.id,
+																					nombre: pacienteActual.cargo,
+																					nombre_corto: nombre_corto
+																				}
+																			}).spread(function (cargoClase, created) {
+																				RrhhEmpleadoCargo.findOrCreate({
+																					where: {
+																						id_empleado: pacienteFound.id,
+																						id_cargo: cargoClase.id,
+																					},
+																					defaults: {
+																						id_empleado: pacienteFound.id,
+																						id_cargo: cargoClase.id,
+																					}
+																				}).spread(function (cargoAc, created) {
+																					if (index === (array.length - 1)) { */
+																		res.json({ mensaje: "¡Datos de pacientes actualizados satisfactoriamente!" });
+																		/* 	}
+																		})
+																	})
+		
+																}); */
+																	})
+																})
+														})
+													})
+												})
+										} else {
+											console.log('paciente nuevo')
+											Persona.create({
+												nombres: pacienteActual.nombres,
+												apellido_paterno: pacienteActual.apellido_paterno,
+												apellido_materno: pacienteActual.apellido_materno,
+												ci: pacienteActual.ci,
+												id_genero: generoEncontrado.id,
+												nombre_completo: pacienteActual.nombres + ' ' + pacienteActual.apellido_paterno + ' ' + pacienteActual.apellido_materno,
+												telefono: pacienteActual.telefono,
+												telefono_movil: pacienteActual.telefono_movil,
+												fecha_nacimiento: pacienteActual.fecha_nacimiento,
+												activo: true,
+											}).then(function (personaCreada) {
+												var imagen;
+												if (pacienteActual.imagen.indexOf('default') > -1) {
+													imagen = pacienteActual.imagen;
+												} else {
+													var imagenPersona = decodeBase64Image(pacienteActual.imagen);
+													fs.writeFileSync('./img/persona' + personaCreada.id + '.jpg', imagenPersona.data, 'base64', function (err) { });
+													imagen = './img/persona' + personaCreada.id + '.jpg';
 
-																if (index === (array.length - 1)) { */
-																	res.json({ mensaje: "¡Datos de pacientes actualizados satisfactoriamente!" });
-															/* 	}
+												}
+												Persona.update({
+													imagen: imagen
+												}, {
+														where: {
+															id: personaCreada.id
+														}
+													}).then(function (imagenAct) {
+														Tipo.find({
+															where: { nombre_corto: 'RRHH_EXP', id_empresa: req.body.id_empresa }
+														}).then(function (tipoExp) {
+															var nombre_corto2 = pacienteActual.extension.substr(0, 3);
+															Clase.findOrCreate({
+																where: {
+																	nombre: pacienteActual.extension,
+																	id_tipo: tipoExp.dataValues.id,
+																},
+																defaults: {
+																	id_tipo: tipoExp.dataValues.id,
+																	nombre: pacienteActual.extension,
+																	nombre_corto: nombre_corto2
+																}
+															}).spread(function (expClase, created) {
+																Tipo.find({
+																	where: {
+																		nombre_corto: 'CENCOS',
+																		id_empresa: req.body.id_empresa
+																	}
+																}).then(function (tipo) {
+																	 Clase.findOrCreate({
+																		where: {
+																			nombre: pacienteActual.campamento,
+																			id_tipo: tipo.dataValues.id
+																		},
+																		defaults: {
+																			nombre: pacienteActual.campamento,
+																			id_tipo: tipo.dataValues.id,
+																			habilitado: true
+																		}
+																	}).spread(function (centroCosto, created2) {
+																		MedicoPaciente.create({
+																			id_persona: personaCreada.id,
+																			id_empresa: req.body.id_empresa,
+																			codigo: pacienteActual.codigo,
+																			grupo_sanguineo: pacienteActual.grupo_sanguineo,
+																			cargo: pacienteActual.cargo,
+																			id_extension: expClase.id,
+																			id_campo: centroCosto.id,
+																			designacion_empresa: pacienteActual.designacion_empresa,
+																			eliminado: false,
+																			es_empleado: false
+																			//comentario: pacienteActual.comentario
+																		}).then(function (medicoPacienteActualizado) {
+																			/* Tipo.find({
+																				where: { nombre_corto: 'RRHH_CARGO' }
+																			}).then(function (tipoCargo) {
+																				var nombre_corto = pacienteActual.cargo.substr(0, 3);
+																				Clase.findOrCreate({
+																					where: {
+																						nombre: pacienteActual.cargo,
+																						id_tipo: tipoCargo.dataValues.id,
+																					},
+																					defaults: {
+																						id_tipo: tipoCargo.dataValues.id,
+																						nombre: pacienteActual.cargo,
+																						nombre_corto: nombre_corto
+																					}
+																				}).spread(function (cargoClase, created) {
+																					RrhhEmpleadoCargo.create({
+																						id_empleado: medicoPacienteActualizado.id,
+																						id_cargo: cargoClase.id
+																					}).then(function (params) {
+						
+						
+																						if (index === (array.length - 1)) { */
+																			res.json({ mensaje: "¡Datos de pacientes actualizados satisfactoriamente!" });
+																			/* 	}
+				
+				
+																			})
+				
+																		}) 
+																	})*/
+																		})
+																	})
+																})
 
 
 															})
-
-														}) 
-													})*/
-												})
-
+														})
+													})
 											})
-										})
+										}
 									})
+								});
 							})
 						}
 					})
-				});
+				}
 			})
+
 		})
 	router.route('/pacientes/SOAP/excel/upload')
 		.post(function (req, res) {
@@ -704,7 +777,7 @@ module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Su
 				where: {
 					empresa: req.params.id_empresa
 				},
-				include: [{model:Clase,as:'campo'},{ model: RrhhEmpleadoFicha, as: 'empleadosFichas',include:[{ model: RrhhEmpleadoCargo, as: 'cargos', include: [{ model: Clase, as: "cargo" }] }]}, { model: Clase, as: 'extension' }, { model: Persona, as: 'persona', where: { $or: orCondition }, include: [{ model: Clase, as: 'genero' }] }
+				include: [{ model: Clase, as: 'campo' }, { model: RrhhEmpleadoFicha, as: 'empleadosFichas', include: [{ model: RrhhEmpleadoCargo, as: 'cargos', include: [{ model: Clase, as: "cargo" }] }] }, { model: Clase, as: 'extension' }, { model: Persona, as: 'persona', where: { $or: orCondition }, include: [{ model: Clase, as: 'genero' }] }
 					// { model: Empresa, as: 'empresa'},{model:MedicoPrerequisito, as: 'prerequisitos',include: [{ model: Clase, as: 'prerequisitoClase' }]}
 				]
 			}).then(function (pacientes) {
@@ -941,23 +1014,23 @@ module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Su
 											where: {
 												id_empleado: paciente.id
 											},
-											include: [{ model: Clase, as: 'tipoContrato' },{model:RrhhEmpleadoCargo,as:'cargos',include: [{ model: Clase, as: 'cargo' }]}],
+											include: [{ model: Clase, as: 'tipoContrato' }, { model: RrhhEmpleadoCargo, as: 'cargos', include: [{ model: Clase, as: 'cargo' }] }],
 											order: [['id', 'DESC']],
 										}).then(function (fichaActual) {
 											/* paciente.cargos = cargosEmpleado */
 											/* paciente.dataValues.ficha = fichaActual[0] */
 											arregloCargos.push(fichaActual[0])
 											if (index === (array.length - 1)) {
-												res.json({ pacientes:pacientes,fichas: arregloCargos, paginas: Math.ceil(data.length / req.params.items_pagina) });
+												res.json({ pacientes: pacientes, fichas: arregloCargos, paginas: Math.ceil(data.length / req.params.items_pagina) });
 											}
 										})
 									});
 								} else {
-									res.json({ pacientes: pacientes,fichas: arregloCargos, paginas: Math.ceil(data.length / req.params.items_pagina) });
+									res.json({ pacientes: pacientes, fichas: arregloCargos, paginas: Math.ceil(data.length / req.params.items_pagina) });
 								}
-							}); 
+							});
 					});
-			} else if(req.params.cargo != 0 && condicion.length > 1){
+			} else if (req.params.cargo != 0 && condicion.length > 1) {
 				sequelize.query("select DISTINCT agil_medico_paciente.id as 'id',agil_medico_paciente.es_empleado as 'es_empleado', agil_medico_paciente.persona as 'id_persona',agil_medico_paciente.codigo as 'codigo',\
                 agil_medico_paciente.empresa as 'id_empresa', gl_clase.nombre as 'extension', agil_medico_paciente.grupo_sanguineo as 'grupo_sanguineo',\
                 agil_medico_paciente.campo as 'campo', agil_medico_paciente.designacion_empresa as 'designacion_empresa',agil_medico_paciente.comentario as 'comentario',\
@@ -993,24 +1066,24 @@ module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Su
 											where: {
 												id_empleado: paciente.id
 											},
-											include: [{ model: Clase, as: 'tipoContrato' },{model:RrhhEmpleadoCargo,as:'cargos',include: [{ model: Clase, as: 'cargo' }]}],
+											include: [{ model: Clase, as: 'tipoContrato' }, { model: RrhhEmpleadoCargo, as: 'cargos', include: [{ model: Clase, as: 'cargo' }] }],
 											order: [['id', 'DESC']],
 										}).then(function (fichaActual) {
 											/* paciente.cargos = cargosEmpleado */
-										/* 	paciente.dataValues.ficha = fichaActual[0] */
+											/* 	paciente.dataValues.ficha = fichaActual[0] */
 											arregloCargos.push(fichaActual[0])
 											if (index === (array.length - 1)) {
-												res.json({ pacientes:pacientes,fichas: arregloCargos, paginas: Math.ceil(data.length / req.params.items_pagina) });
+												res.json({ pacientes: pacientes, fichas: arregloCargos, paginas: Math.ceil(data.length / req.params.items_pagina) });
 											}
 										})
 									});
 								} else {
-									res.json({ pacientes: pacientes,fichas: arregloCargos, paginas: Math.ceil(data.length / req.params.items_pagina) });
+									res.json({ pacientes: pacientes, fichas: arregloCargos, paginas: Math.ceil(data.length / req.params.items_pagina) });
 
 								}
 							});
 					});
-			}else if(req.params.cargo != 0){
+			} else if (req.params.cargo != 0) {
 				sequelize.query("select DISTINCT agil_medico_paciente.id as 'id',agil_medico_paciente.es_empleado as 'es_empleado', agil_medico_paciente.persona as 'id_persona',agil_medico_paciente.codigo as 'codigo',\
                 agil_medico_paciente.empresa as 'id_empresa', gl_clase.nombre as 'extension', agil_medico_paciente.grupo_sanguineo as 'grupo_sanguineo',\
                 agil_medico_paciente.campo as 'campo', agil_medico_paciente.designacion_empresa as 'designacion_empresa',agil_medico_paciente.comentario as 'comentario',\
@@ -1046,24 +1119,24 @@ module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Su
 											where: {
 												id_empleado: paciente.id
 											},
-											include: [{ model: Clase, as: 'tipoContrato' },{model:RrhhEmpleadoCargo,as:'cargos',include: [{ model: Clase, as: 'cargo' }]}],
+											include: [{ model: Clase, as: 'tipoContrato' }, { model: RrhhEmpleadoCargo, as: 'cargos', include: [{ model: Clase, as: 'cargo' }] }],
 											order: [['id', 'DESC']],
 										}).then(function (fichaActual) {
 											/* paciente.cargos = cargosEmpleado */
-										/* 	paciente.dataValues.ficha = fichaActual[0] */
+											/* 	paciente.dataValues.ficha = fichaActual[0] */
 											arregloCargos.push(fichaActual[0])
 											if (index === (array.length - 1)) {
-												res.json({ pacientes:pacientes,fichas: arregloCargos, paginas: Math.ceil(data.length / req.params.items_pagina) });
+												res.json({ pacientes: pacientes, fichas: arregloCargos, paginas: Math.ceil(data.length / req.params.items_pagina) });
 											}
 										})
 									});
 								} else {
-									res.json({ pacientes: pacientes,fichas: arregloCargos, paginas: Math.ceil(data.length / req.params.items_pagina) });
+									res.json({ pacientes: pacientes, fichas: arregloCargos, paginas: Math.ceil(data.length / req.params.items_pagina) });
 
 								}
 							});
 					});
-			}else{
+			} else {
 				sequelize.query("select DISTINCT agil_medico_paciente.id as 'id',agil_medico_paciente.es_empleado as 'es_empleado', agil_medico_paciente.persona as 'id_persona',agil_medico_paciente.codigo as 'codigo',\
                 agil_medico_paciente.empresa as 'id_empresa', gl_clase.nombre as 'extension', agil_medico_paciente.grupo_sanguineo as 'grupo_sanguineo',\
                 agil_medico_paciente.campo as 'campo', agil_medico_paciente.designacion_empresa as 'designacion_empresa',agil_medico_paciente.comentario as 'comentario',\
@@ -1097,19 +1170,19 @@ module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Su
 											where: {
 												id_empleado: paciente.id
 											},
-											include: [{ model: Clase, as: 'tipoContrato' },{model:RrhhEmpleadoCargo,as:'cargos',include: [{ model: Clase, as: 'cargo' }]}],
+											include: [{ model: Clase, as: 'tipoContrato' }, { model: RrhhEmpleadoCargo, as: 'cargos', include: [{ model: Clase, as: 'cargo' }] }],
 											order: [['id', 'DESC']],
 										}).then(function (fichaActual) {
 											/* paciente.cargos = cargosEmpleado */
-										/* 	paciente.dataValues.ficha = fichaActual[0] */
+											/* 	paciente.dataValues.ficha = fichaActual[0] */
 											arregloCargos.push(fichaActual[0])
 											if (index === (array.length - 1)) {
-												res.json({ pacientes:pacientes,fichas: arregloCargos, paginas: Math.ceil(data.length / req.params.items_pagina) });
+												res.json({ pacientes: pacientes, fichas: arregloCargos, paginas: Math.ceil(data.length / req.params.items_pagina) });
 											}
 										})
 									});
 								} else {
-									res.json({ pacientes: pacientes,fichas: arregloCargos, paginas: Math.ceil(data.length / req.params.items_pagina) });
+									res.json({ pacientes: pacientes, fichas: arregloCargos, paginas: Math.ceil(data.length / req.params.items_pagina) });
 
 								}
 							});
@@ -2240,9 +2313,9 @@ module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Su
 				} else {
 					MedicoPaciente.find({
 						where: { id: req.params.id_paciente },
-						include: [{model:Clase,as:'campo'},
-							{ model: Persona, as: 'persona', include: [{ model: Clase, as: 'genero' }] },
-							{ model: Empresa, as: 'empresa' }]
+						include: [{ model: Clase, as: 'campo' },
+						{ model: Persona, as: 'persona', include: [{ model: Clase, as: 'genero' }] },
+						{ model: Empresa, as: 'empresa' }]
 					}).then(function (pacienteEncontrado) {
 						res.json({ paciente: pacienteEncontrado })
 					});

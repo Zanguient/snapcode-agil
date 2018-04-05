@@ -33,6 +33,7 @@ angular.module('agil.controladores')
             $scope.paginator = Paginator();
             $scope.paginator.column = "id";
             $scope.paginator.direccion = "asc";
+            
             $scope.filtro = {
                 id_empresa: $scope.usuario.id_empresa, inicio: "",
                 fin: "",
@@ -51,6 +52,14 @@ angular.module('agil.controladores')
             if ($scope.paginator.filter.inicio != 0) {
                 $scope.paginator.filter.inicio = new Date($scope.convertirFecha($scope.paginator.filter.inicio))
                 $scope.paginator.filter.fin = new Date($scope.convertirFecha($scope.paginator.filter.fin))
+            }else{
+                var date= new Date()
+                var inicio= new Date(date.getFullYear(), date.getMonth(), 1);
+                var fin= new Date(date.getFullYear(), date.getMonth() + 1, 0);
+                $scope.paginator.filter.inicio = inicio
+                $scope.paginator.filter.fin = fin 
+                $scope.filtro.inicio=$scope.fechaATexto(inicio)
+                $scope.filtro.fin=$scope.fechaATexto(fin)
             }
             blockUI.start();
             var promesa = GtmDespachos($scope.paginator);
