@@ -23,10 +23,7 @@
 
                 <form novalidate ng-submit="paginator.getSearch(paginator.search,filtro,null)">
                     <div class="form-row">
-                        <div class="form-group col-sm-6 col-md-3 col-lg-2">
-                            <label for="codigo">Código</label>
-                            <input ng-update-hidden type="text" id="filtroCodigo" ng-model="filtro.codigo" placeholder="" />
-                        </div>
+
                         <div class="form-group col-sm-6 col-md-3 col-lg-2">
                             <label for="nombre">Nombre</label>
                             <input ng-update-hidden type="text" id="filtroNombre" ng-model="filtro.nombres" placeholder="" />
@@ -38,6 +35,10 @@
                         <div class="form-group col-sm-6 col-md-3 col-lg-2">
                             <label for="ci">Cedula de Identidad</label>
                             <input ng-update-hidden type="text" id="filtroCedula" ng-model="filtro.ci" placeholder="" />
+                        </div>
+                        <div class="form-group col-sm-6 col-md-3 col-lg-2">
+                            <label for="codigo">Código</label>
+                            <input ng-update-hidden type="text" id="filtroCodigo" ng-model="filtro.codigo" placeholder="" />
                         </div>
                         <div class="form-group col-sm-6 col-md-3 col-lg-2">
                             <label for="campo">Campo</label>
@@ -219,15 +220,16 @@
                                 </li>
                                 <li>
                                     <div class="clearfix">
-                                        <span class="pull-left">
-                                            Importación 2
+                                        <span class="pull-left" style="color:rgb(85, 128, 163) !important">
+                                            fichas
                                         </span>
-                                        <a class="boton-importar pull-right">
+                                        <a href="/recursos/EJEMPLO-DATOS-FICHAS-EMPLEADOS.xlsx" class="boton-importar pull-right">
                                             <i class="fa  fa-cloud-download green"></i>
                                         </a>
-                                        <a class="boton-importar pull-right">
-                                            <i class="fa fa-cloud-upload blue"></i>
-                                        </a>
+                                        <div class="fileUpload boton-importar pull-right">
+                                                <span class="fileUpload-button ace-icon fa fa-cloud-upload blue"></span>
+                                                <input class="upload" type="file" custom-on-file-change="subirExcelFicha" />
+                                            </div>
                                     </div>
                                 </li>
                             </ul>
@@ -8684,7 +8686,7 @@
                     </div>
                     <div class="modal-body step-content">
                         <div class="step-pane active" data-step="1">
-                            
+
                             <div class="row">
                                 <div class="col-md-6">
                                     <label> Cargo</label>
@@ -8713,13 +8715,14 @@
                                 <div class="col-md-12">
                                     <button type="button" class="btn btn-primary btn-sm" ng-click="agregarRopaTrabajo(ropaTrabajo)">Añadir</button>
                                     <!-- <button type="button"  class="btn btn-success btn-sm" ng-click="guardarLogroHojaVidaEditada(logro)">Guardar</button> -->
-                                    <button type="button" class="btn btn-app btn-success btn-xs pull-right">
-                                        <i class="ace-icon fa fa-print bigger-160"></i>
-                                        Pdf
-                                    </button>
-                                    <button type="button" class="btn btn-app btn-danger btn-xs pull-right">
+
+                                    <button type="button" class="btn btn-app btn-success btn-xs pull-right" ng-click="generarExcelRopaTrabajo()">
                                         <i class="ace-icon fa fa-print bigger-160"></i>
                                         Exel
+                                    </button>
+                                    <button type="button" class="btn btn-app btn-danger btn-xs pull-right" ng-click="generarPdfRopaTrabajo()">
+                                        <i class="ace-icon fa fa-print bigger-160"></i>
+                                        Pdf
                                     </button>
                                 </div>
 

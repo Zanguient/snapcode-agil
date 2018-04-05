@@ -5,7 +5,7 @@ angular.module('agil.controladores')
         ObtenerListaPrestamo, CrearRolTurno, CrearPagoPrestamo, VerificarUsuarioEmpresa, EditarPrestamo, ListaEmpleadosRrhh, CrearHorasExtra, HistorialHorasExtra, ListaRolTurnos, ValidarCodigoCuentaEmpleado, $timeout, DatosCapacidadesImpresion, NuevoAnticipoEmpleado,
         ListaAnticiposEmpleado, CrearNuevosAnticiposEmpleados, ActualizarAnticipoEmpleado, NuevaAusenciaEmpleado, HistorialEmpleadoAusencias, HistorialEmpresaEmpleadosAusencias, NuevaVacacionEmpleado, HistorialEmpleadoVacaciones, HistorialEmpresaVacaciones, NuevoFeriado,
         ListaFeriados, GuardarClasesAusencias, Tipos, ListaBancos, ConfiguracionesVacacion, HistorialGestionesVacacion, GuardarTr3, ListaTr3Empresa, GuardarHistorialVacacion, CrearBeneficioSocial, ListaBeneficiosEmpleado, GuardarBitacoraFicha, VerBitacoraFicha, ObtenerFiniquitoEmpleado,
-        ClasesTipoEmpresa, GuardarConfiguracionRopaCargo, ListaConfiguracionRopaCargo,DatosReporteConfiguracionRopa) {
+        ClasesTipoEmpresa, GuardarConfiguracionRopaCargo, ListaConfiguracionRopaCargo, DatosReporteConfiguracionRopa,FichasEmpleadoEmpresa) {
         $scope.usuario = JSON.parse($localStorage.usuario);
         $scope.idModalPrerequisitos = 'dialog-pre-requisitos';
         $scope.idModalEmpleado = 'dialog-empleado';
@@ -306,8 +306,8 @@ angular.module('agil.controladores')
         }
         $scope.abrirModalConfiguracionRopaDeTrabajo = function () {
             $scope.listaRopasDeTrabajo = []
-            $scope.ropaTrabajo ={}
-            $scope.cargo=""
+            $scope.ropaTrabajo = {}
+            $scope.cargo = ""
             $scope.abrirPopup($scope.idModalConfiguracionRopaDeTrabajo)
         }
         $scope.cerrarModalConfiguracionRopaDeTrabajo = function () {
@@ -1935,7 +1935,7 @@ angular.module('agil.controladores')
                         paciente.telefonos_referencia = worksheet['X' + row] != undefined && worksheet['X' + row] != "" ? worksheet['X' + row].v.toString() : null;
                         paciente.celular_referencia = worksheet['Y' + row] != undefined && worksheet['Y' + row] != "" ? worksheet['Y' + row].v.toString() : null;
                         paciente.nombre_referencia = worksheet['Z' + row] != undefined && worksheet['Z' + row] != "" ? worksheet['Z' + row].v.toString() : null;
-                        paciente.fecha_inicio = worksheet['AA' + row] != undefined && worksheet['AA' + row] != "" ? $scope.fecha_excel_angular(worksheet['AA' + row].v.toString()) : null;
+                        paciente.fecha_inicio = worksheet['AA' + row] != undefined && worksheet['AA' + row] != "" ? $scope.fecha_excel_angular(worksheet['AA' + row].v.toString()) : null;                       
                         paciente.haber_basico = worksheet['AB' + row] != undefined && worksheet['AB' + row] != "" ? parseFloat(worksheet['AB' + row].v.toString()) : null;
                         paciente.matricula_seguro = worksheet['AC' + row] != undefined && worksheet['AC' + row] != "" ? worksheet['AC' + row].v.toString() : null;
                         paciente.seguro_salud = worksheet['AD' + row] != undefined && worksheet['AD' + row] != "" ? worksheet['AD' + row].v.toString() : null;
@@ -1975,18 +1975,88 @@ angular.module('agil.controladores')
                 //console.log('pacientes obtenidos')
             }
         }
+        $scope.subirExcelFicha = function (event) {
+            blockUI.start();
+            //console.log('iniciando carga de pacientes')
+            var files = event.target.files;
+            var i, f;
+            for (i = 0, f = files[i]; i != files.length; ++i) {
+                //console.log('iniciando lectura de excel(s)')
+                var reader = new FileReader();
+                var name = f.name;
+                reader.onload = function (e) {
+                    // blockUI.start();
+                    var data = e.target.result;
+
+                    var workbook = XLSX.read(data, { type: 'binary' });
+                    var first_sheet_name = workbook.SheetNames[0];
+                    var row = 2, i = 0;
+                    var worksheet = workbook.Sheets[first_sheet_name];
+                    var pacientes = [];
+                    do {
+                        var paciente = {};
+                        paciente.codigo = worksheet['A' + row] != undefined && worksheet['A' + row] != "" ? worksheet['A' + row].v.toString() : null;
+                        //paciente.apellido_paterno = worksheet['B' + row] != undefined && worksheet['B' + row] != "" ? worksheet['B' + row].v.toString() : null;
+                        paciente.banco = worksheet['C' + row] != undefined && worksheet['C' + row] != "" ? worksheet['C' + row].v.toString() : null;
+                        paciente.numero_cuenta = worksheet['D' + row] != undefined && worksheet['D' + row] != "" ? worksheet['D' + row].v.toString() : null;                        
+                        pacientes.push(paciente);
+                        row++;
+                        i++;
+
+                    } while (worksheet['A' + row] != undefined);
+                    $scope.GuardarFichasEmpleadosRh(pacientes);
+                };
+                reader.readAsBinaryString(f);
+                //console.log('pacientes obtenidos')
+            }
+        }
         $scope.GuardarEmpleadosRh = function (lstpacientes) {
             var empleadoEmpresa = new EmpleadoEmpresa({ pacientes: lstpacientes, id_empresa: $scope.usuario.id_empresa });
             empleadoEmpresa.$save(function (res) {
                 $scope.mostrarMensaje(res.mensaje);
                 $scope.recargarItemsTabla();
+                blockUI.stop();
             })
             // , function (error) {
 
             //     $scope.mostrarMensaje('Ocurrio un problema al momento de guardar!');
             //     $scope.recargarItemsTabla();
             // });
-            blockUI.stop();
+            
+        }
+        $scope.GuardarFichasEmpleadosRh = function (lstpacientes) {
+            var arreglobancos=[]
+            lstpacientes.forEach(function (pacienteActual, index, array) {
+                var bandera = false
+                if (arreglobancos.length > 0) {
+                    for (var i = 0; i < arreglobancos.length; i++) {
+                        var element = arreglobancos[i];
+                        if (element == pacienteActual.banco) {
+                            bandera = true
+                        }
+                    }
+                    if (!bandera) {
+                        arreglobancos.push(pacienteActual.banco)
+                    }
+                } else {
+                    arreglobancos.push(pacienteActual.banco)
+                }
+                if(index===(array.length-1)){
+                    var empleadoEmpresa = new FichasEmpleadoEmpresa({ pacientes: lstpacientes, id_empresa: $scope.usuario.id_empresa ,bancos:arreglobancos});
+                    empleadoEmpresa.$save(function (res) {
+                        $scope.mostrarMensaje(res.mensaje);
+                        $scope.recargarItemsTabla();
+                        blockUI.stop();
+                    })
+                }
+            })
+           
+            // , function (error) {
+
+            //     $scope.mostrarMensaje('Ocurrio un problema al momento de guardar!');
+            //     $scope.recargarItemsTabla();
+            // });
+            
         }
         $scope.fecha_excel_angular = function (fecha_desde_excel) {
             var fecha_minima_angular_indice_excel_1970 = 25569 - 1 //fecha minima angular. el -1 es para ajustar que el resultado da 1 anterior a la fecha real.
@@ -6143,15 +6213,15 @@ angular.module('agil.controladores')
         $scope.GuardarlistaRopaTrabajoPorCargo = function (cargo) {
             var button = $('#siguiente-ca').text().trim()
             if (button != "Siguiente") {
-            var promesa = GuardarConfiguracionRopaCargo($scope.listaRopasDeTrabajo, cargo)
-            promesa.then(function (dato) {
-                $scope.mostrarMensaje(dato.mensaje)
-                $scope.cerrarModalConfiguracionRopaDeTrabajo()
-                $scope.listaRopasDeTrabajo = []
-                $scope.recargarItemsTabla()
-                
-            })
-        }
+                var promesa = GuardarConfiguracionRopaCargo($scope.listaRopasDeTrabajo, cargo)
+                promesa.then(function (dato) {
+                    $scope.mostrarMensaje(dato.mensaje)
+                    $scope.cerrarModalConfiguracionRopaDeTrabajo()
+                    $scope.listaRopasDeTrabajo = []
+                    $scope.recargarItemsTabla()
+
+                })
+            }
         }
         $scope.agregarRopaTrabajo = function (ropa) {
 
@@ -6190,47 +6260,158 @@ angular.module('agil.controladores')
         $scope.eliminarRopaTrabajo = function (ropa) {
             ropa.eliminado = true;
         }
-
-        $scope.generarExcelRopaTrabajo = function (ropasTrabajo) {
-            var promesa=DatosReporteConfiguracionRopa($scope.usuario.id_empresa)
-            promesa.then(function(datos){
-                var data = [["N°", "CARGO", "ROPA","EMPLEADO",
-                "CI", "EXTENCÓN", "TIPO CONTRATO", "CAMPO", "CARGO"]]
-            var iu = []
-            for (var i = 0; i < empleados.length; i++) {
-                var columns = [];
-                columns.push((i + 1));
-                columns.push(empleados[i].eliminado);
-                columns.push(empleados[i].codigo);
-                columns.push(empleados[i].nombre_completo);
-                columns.push(empleados[i].designacion_empresa);
-                columns.push(empleados[i].ci);
-                columns.push(empleados[i].extension);
-                columns.push(empleados[i].ficha.tipoContrato.nombre);
-                columns.push(empleados[i].campo);
-                var cargostexto = empleados[i].cargos[0].cargo.nombre
-                iu.push(i)
-                empleados[i].cargos.forEach(function (cargo, index, array) {
-                    if (cargostexto == "") {
-                        cargostexto = cargo
+        $scope.generarPdfRopaTrabajo = function () {
+            var promesa = DatosReporteConfiguracionRopa($scope.usuario.id_empresa)
+            promesa.then(function (datos) {
+                var ropas = []
+                datos.forEach(function (dato, index, array) {
+                    var datoArreglo = { nombre: dato.cargo.nombre, detalle: [] }
+                    if (ropas.length > 0) {
+                        var bandera = true
+                        for (var i = 0; i < ropas.length; i++) {
+                            datoArreglo = { nombre: dato.cargo.nombre, detalle: [] }
+                            var element = ropas[i];
+                            if (element.nombre == dato.cargo.nombre) {
+                               bandera=false
+                            }
+                            if(i===(ropas.length-1)){
+                                if(bandera){
+                                    ropas.push(datoArreglo)
+                                }
+                            }
+                        }
+                       
                     } else {
-                        cargostexto = cargostexto + "-" + cargo.cargo.nombre
+                        ropas.push(datoArreglo)
                     }
+                    if (index === (array.length - 1)) {
+                        datos.forEach(function (dato2, index2, array2) {
+                            for (var i = 0; i < ropas.length; i++) {
+                                var element = ropas[i];
+                                if (element.nombre == dato2.cargo.nombre) {
+                                    element.detalle.push(dato2)
+                                }
+                            }
+                            if (index2 === (array2.length - 1)) {
+                                convertUrlToBase64Image($scope.usuario.empresa.imagen, function (imagenEmpresa) {
+                                    var imagen = imagenEmpresa;
+                                    var doc = new PDFDocument({ compress: false, size: 'letter', margin: 10 });
+                                    var stream = doc.pipe(blobStream());
+                                    var totalCosto = 0, totalTransporte = 0;
+                                    var y = 100, itemsPorPagina = 25, items = 0, pagina = 1, totalPaginas = Math.ceil((ropas.length*2+datos.length)/ itemsPorPagina);
+                                    $scope.DibujarCabeceraPDFConfigRopa(doc, pagina, totalPaginas, ropas,imagen);
+                                    doc.font('Helvetica', 10);
+                                    for (var i = 0; i < ropas.length && items <= itemsPorPagina; i++) {
+                                        ropaTrabajo = ropas[i]
+                                        doc.text(i + 1, 45, y);
+                                        doc.text(ropaTrabajo.nombre, 80, y);
+                                        y += 30
+                                        items++
+                                        if (items == itemsPorPagina) {
+                                            doc.addPage({ margin: 0, bufferPages: true });
+                                            y = 100;
+                                            items = 0;
+                                            pagina = pagina + 1;
+                                            $scope.DibujarCabeceraPDFConfigRopa(doc, pagina, totalPaginas, ropas,imagen);
+                                            doc.font('Helvetica', 10);
+                                        }
+                                        doc.font('Helvetica-Bold', 10);
+                                        doc.text("ROPA", 80, y);
+                                        doc.text("CANTIDAD", 250, y, { width: 70 });
+                                        doc.font('Helvetica', 10);
+                                        y += 30
+                                        items++
+                                        if (items == itemsPorPagina) {
+                                            doc.addPage({ margin: 0, bufferPages: true });
+                                            y = 100;
+                                            items = 0;
+                                            pagina = pagina + 1;
+                                            $scope.DibujarCabeceraPDFConfigRopa(doc, pagina, totalPaginas, ropas,imagen);
+                                            doc.font('Helvetica', 10);
+                                        }
+                                        for (let j = 0; j < ropaTrabajo.detalle.length; j++) {
+                                            const element = ropaTrabajo.detalle[j];
+                                            doc.text(element.ropaTrabajo.nombre, 80, y);
+                                            doc.text(element.cantidad, 250, y, { width: 70 });
+                                            y += 30
+                                            items++
+                                            if (items == itemsPorPagina) {
+                                                doc.addPage({ margin: 0, bufferPages: true });
+                                                y = 100;
+                                                items = 0;
+                                                pagina = pagina + 1;
+                                                $scope.DibujarCabeceraPDFConfigRopa(doc, pagina, totalPaginas, ropas,imagen);
+                                                doc.font('Helvetica', 10);
+                                            }
+                                        }
+                                        items++
+                                        if (items == itemsPorPagina) {
+                                            doc.addPage({ margin: 0, bufferPages: true });
+                                            y = 100;
+                                            items = 0;
+                                            pagina = pagina + 1;
+                                            $scope.DibujarCabeceraPDFConfigRopa(doc, pagina, totalPaginas, ropas,imagen);
+                                            doc.font('Helvetica', 10);
+                                        }
+                                    }
+                                    doc.end();
+                                    stream.on('finish', function () {
+                                        var fileURL = stream.toBlobURL('application/pdf');
+                                        window.open(fileURL, '_blank', 'location=no');
+                                    });
+                                    blockUI.stop();
+                                })
+                            }
+                        })
+
+                    }
+
                 });
 
-                columns.push(cargostexto);
-                data.push(columns);
-            }
+            })
+        }
+        
+        $scope.DibujarCabeceraPDFConfigRopa = function (doc, pagina, totalPaginas, ropas,imagen) {
+            doc.font('Helvetica-Bold', 14);
+            doc.text("ROPA DE TRABAJO - POR CARGOS", 0, 20, { align: "center" });
+            doc.image(imagen, 30, 10, { fit: [80, 80] });
+            doc.rect(0, 65, 620, 0).stroke();
+            doc.rect(130, 40, 500, 0).stroke();
+            doc.rect(130, 0, 0, 65).stroke();
+            doc.rect(460, 0, 0, 65).stroke();
+            doc.font('Helvetica-Bold', 8);
+            doc.text("Revicion:", 480, 20);
+            doc.text("Fecha de aprobación:", 480, 45);
+            doc.text("Código .", 0, 45, { align: "center" });
+            doc.font('Helvetica', 8);
+            var currentDate = new Date();
+            doc.text("Usuario: " + $scope.usuario.persona.nombre_completo + "      Fecha :  " +$scope.fechaATexto(currentDate)+ "   Hrs. " + currentDate.getHours() + ":" + currentDate.getMinutes(), 15, 765);
+            doc.font('Helvetica-Bold', 8);
+            doc.text("PÁGINA " + pagina+ " DE " + totalPaginas, 0, 740, { align: "center" });
+        }
 
-            var ws_name = "SheetJS";
-            var wb = new Workbook(), ws = sheet_from_array_of_arrays(data);
-            /* add worksheet to workbook */
-            wb.SheetNames.push(ws_name);
-            wb.Sheets[ws_name] = ws;
-            var wbout = XLSX.write(wb, { bookType: 'xlsx', bookSST: true, type: 'binary' });
-            saveAs(new Blob([s2ab(wbout)], { type: "application/octet-stream" }), "EMPLEADO RRHH.xlsx");
-            blockUI.stop();
-            })            
+        $scope.generarExcelRopaTrabajo = function () {
+            var promesa = DatosReporteConfiguracionRopa($scope.usuario.id_empresa)
+            promesa.then(function (datos) {
+                var data = [["N°", "CARGO", "ROPA", "CANTIDAD"]]
+                for (var i = 0; i < datos.length; i++) {
+                    var columns = [];
+                    columns.push((i + 1));
+                    columns.push(datos[i].cargo.nombre);
+                    columns.push(datos[i].ropaTrabajo.nombre);
+                    columns.push(datos[i].cantidad);
+                    data.push(columns);
+                }
+
+                var ws_name = "SheetJS";
+                var wb = new Workbook(), ws = sheet_from_array_of_arrays(data);
+                /* add worksheet to workbook */
+                wb.SheetNames.push(ws_name);
+                wb.Sheets[ws_name] = ws;
+                var wbout = XLSX.write(wb, { bookType: 'xlsx', bookSST: true, type: 'binary' });
+                saveAs(new Blob([s2ab(wbout)], { type: "application/octet-stream" }), "REPORTES CONFIGURACION ROPA DE TRABAJO.xlsx");
+                blockUI.stop();
+            })
         }
         $scope.obtenerCargosRopaTrabajo = function () {
             blockUI.start();

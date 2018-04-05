@@ -724,19 +724,7 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td>
-                                        <label>NIT CLIENTE</label>
-                                        <input ng-disabled="proforma.ver !== undefined" ng-keypress="interceptarTecla($event,'razon_social',true)" data-validate="validate(required)"
-                                            id="nit" name="nit" required type="number" min="0" ng-model="proforma.clienteProforma.nit"
-                                            placeholder="Ingrese el NIT" uib-typeahead="cliente as cliente.nit for cliente in buscarCliente($viewValue)"
-                                            typeahead-wait-ms="2000" typeahead-template-url="templates/autocompletar.html" typeahead-show-hint="false"
-                                            typeahead-min-length="0" typeahead-on-select="establecerCliente($item, $model, $label, $event)">
-                                        <span class="red">(*)</span>
-                                        <!-- <span class="invalid-message" ng-show="formularioProforma.nit.$dirty && formularioProforma.nit.$invalid">
-                                            Debe ingresar un número mayor o igual a 0.
-                                        </span> -->
-
-                                    </td>
+                                    
                                     <td>
                                         <label>RAZÓN SOCIAL CLIENTE</label>
                                         <input ng-disabled="proforma.ver !== undefined" ng-keypress="interceptarTecla($event,'id_servicio',true)" autocomplete="off"
@@ -754,6 +742,19 @@
                                             Dato requerido.
                                         </span> -->
                                     </td>
+                                    <td>
+                                            <label>NIT CLIENTE</label>
+                                            <input ng-disabled="proforma.ver !== undefined" ng-keypress="interceptarTecla($event,'razon_social',true)" data-validate="validate(required)"
+                                                id="nit" name="nit" required type="number" min="0" ng-model="proforma.clienteProforma.nit"
+                                                placeholder="Ingrese el NIT" uib-typeahead="cliente as cliente.nit for cliente in buscarCliente($viewValue)"
+                                                typeahead-wait-ms="2000" typeahead-template-url="templates/autocompletar.html" typeahead-show-hint="false"
+                                                typeahead-min-length="0" typeahead-on-select="establecerCliente($item, $model, $label, $event)">
+                                            <span class="red">(*)</span>
+                                            <!-- <span class="invalid-message" ng-show="formularioProforma.nit.$dirty && formularioProforma.nit.$invalid">
+                                                Debe ingresar un número mayor o igual a 0.
+                                            </span> -->
+    
+                                        </td>
                                 </tr>
                                 <tr>
                                     <td colspan="2">

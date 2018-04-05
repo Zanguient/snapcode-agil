@@ -170,7 +170,7 @@ module.exports = function (sequelize, Usuario, Persona, Rol, UsuarioRol, Tipo, C
 	Clase.hasMany(RrhhEmpleadoBeneficioSocial, { foreignKey: 'id_motivo', as: 'tiposmotivos' })
 	Clase.hasMany(RrhhEmpleadoDeduccionIngreso, { foreignKey: 'id_tipo', as: 'tiposDeduccionesIgresos' })
 	Clase.hasMany(MedicoPaciente, { foreignKey: 'id_campo', as: 'empleadosCampo' });
-	Clase.hasMany(RrhhEmpleadoConfiguracionRopa, { foreignKey: 'id_ropa_trabajo', as: 'ropas' })
+	Clase.hasMany(RrhhEmpleadoConfiguracionRopa, { foreignKey: 'id_ropa_trabajo', as: 'ropasTrabajo' })
 	Clase.hasMany(RrhhEmpleadoConfiguracionRopa, { foreignKey: 'id_cargo', as: 'cargos' })
 
 	// MedicoPrerequisito.belongsTo(Clase, { foreignKey: 'id_prerequisito', as: 'prerequisitoClase' });//Ya no es requerido/util/relacion desde 13/12/2017

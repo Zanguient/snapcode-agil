@@ -1824,8 +1824,8 @@ module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Su
 		.get(function (req, res) {
 			var requisitosPac = []
 			MedicoPrerequisito.findAll({
-
 			}).then(function (lstRequisitos) {
+				if(lstRequisitos.length>0){
 				lstRequisitos.forEach(function (requi, index, array) {
 					var condicionPreRequisito = { id_paciente: req.params.id_paciente, eliminado: false }
 					var desde = false
@@ -1894,7 +1894,11 @@ module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Su
 						}
 					});
 				});
+			}else{
+				res.json({ Prerequisitos: [] });
+			}
 			})
+			
 		})
 	router.route('/medico-paciente-consulta')
 		.post(function (req, res) {
