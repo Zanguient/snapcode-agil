@@ -67,6 +67,10 @@ module.exports = function (sequelize, Sequelize) {
       numero_correlativo: {
           type: Sequelize.INTEGER,
           field: 'numero_correlativo'
+      },
+      alerta: {
+            type: Sequelize.BOOLEAN,
+            field: 'alerta'
       }
     }, {
             freezeTableName: true

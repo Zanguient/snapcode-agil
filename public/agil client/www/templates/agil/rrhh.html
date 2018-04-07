@@ -8977,42 +8977,51 @@
                     <div class="row">
                         <div class="form-group col-md-4">
                             <label for="codigo">Fecha</label>
-                            <input ng-update-hidden type="text" class "form-control" id="filtroCodigo" ng-model="filtro.codigo" placeholder="" />
+                            <input ng-update-hidden type="text" class "form-control" id="filtroCodigo" ng-model="dotacionRopa.fecha" placeholder="" />
                         </div>
 
                         <div class="form-group col-md-4">
                             <label for="nombre">Cumpli.</label>
-                            <input ng-update-hidden type="text" class "form-control" id="filtroNombre" ng-model="filtro.nombres" placeholder="" />
+                            <div class="input-group">                                    
+                                    <select ng-model="dotacionRopa.cumplimiento" class="form-control" ng-options="cumplimiento as cumplimiento.nombre for cumplimiento in cumplimientoDotacion.clases | filter:{habilitado:true} track by cumplimiento.id">
+                                        <option value="">--Ninguno--</option>
+                                    </select>
+                                </div>
                         </div>
 
                         <div class="form-group col-md-4">
-                            <label for="campo">Periodo</label>
-                            <div class="input-group">
-                                <span class="input-group-addon glyphicon glyphicon-pencil point-edit green" ng-click="abrirDialogConceptoEdicion(grados)"></span>
-                                <select ng-model="formacionAcademica.grado" class="form-control" ng-options="grado as grado.nombre for grado in grados.clases | filter:{habilitado:true} track by grado.id">
+                            <label for="periodo">Periodo</label>
+                            <div class="input-group">                               
+                                <select ng-model="dotacionRopa.periodo" class="form-control" ng-options="grado as grado.nombre for grado in grados.clases | filter:{habilitado:true} track by grado.id">
                                     <option value="">--Ninguno--</option>
                                 </select>
+                                <span class="input-group-addon glyphicon glyphicon-pencil point-edit green" ng-click="abrirDialogConceptoEdicion(grados)"></span>
                             </div>
                         </div>
                     </div>
                     <div class="row">
                         <div class="form-group col-md-4">
-                            <label for="codigo">Estado</label>
-                            <input ng-update-hidden type="text" class "form-control" id="filtroCodigo" ng-model="filtro.codigo" placeholder="" />
+                            <label for="estado">Estado</label>
+                            <div class="input-group">                                    
+                                    <select ng-model="dotacionRopa.estado" class="form-control" ng-options="estado as estado.nombre for estado in estadoDotacion.clases | filter:{habilitado:true} track by estado.id">
+                                        <option value="">--Ninguno--</option>
+                                    </select>
+                                </div>
                         </div>
 
 
                         <div class="form-group col-md-4">
-                            <label for="campo">Cargos</label>
-                            <div isteven-multi-select input-model="cargos" output-model="ficha.cargo" button-label="icon nombre" item-label="icon nombre maker"
-                                tick-property="ticked" translation="localLang">
-                            </div>
+                            <label for="cargo">Cargos</label>
+                            <div>
+                                <p ng-repeat="cargo in cargosEmpleado">{{cargo.cargo.nombre}}</p>
+                                </div>
 
                         </div>
                         <div class="form-group col-md-4">
                             <label for="nombre">Items</label>
                             <div class="input-group">
-                                <input ng-update-hidden type="text" class "form-control" id="filtroNombre" ng-model="filtro.nombres" placeholder="" />
+                               <!--  <input ng-update-hidden type="text" class "form-control" id="filtroNombre" ng-model="filtro.nombres" placeholder="" /> -->
+                               <p ng-repeat="items in dotacionItems">{{items.ropaTrabajo.nombre}}</p>
                                 <span class="input-group-addon glyphicon glyphicon-search point-edit green" ng-click="abrirModalItemsNuevaRopaTrabajo()"></span>
                             </div>
                         </div>
@@ -9064,9 +9073,9 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td scope="row">1</td>
-                                    <td>ITEMS</td>
+                                <tr ng-repeat="item in dotacionItems track by $index">
+                                    <td scope="row">{{item.ropaTrabajo.nombre}}</td>
+                                    <td><select ng-model="item.ropa" ng-options="estado as estado.nombre for estado in estadoDotacion.clases | filter:{habilitado:true} track by estado.id"></select></td>
                                     <td>DETALLE</td>
                                     <td>DISPONIBLE</td>
                                     <td>CANT.</td>

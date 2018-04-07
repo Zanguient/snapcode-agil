@@ -1,7 +1,7 @@
 module.exports = function (router, ensureAuthorizedAdministrador, fs, forEach, jwt, md5, GtmDespacho,
 	GtmDespachoDetalle, Cliente, Usuario, GtmDestino, Producto, GtmTransportista, GtmEstibaje, GtmGrupoEstibaje,
-	Persona, ClienteRazon, sequelize, Inventario, Movimiento, DetalleMovimiento, Tipo, Clase, Diccionario, Sequelize, Sucursal,GtmVentaKardex,GtmVentaKardexDetalle) {
-		router.route('/gtm-despacho/empresa/:id_empresa')
+	Persona, ClienteRazon, sequelize, Inventario, Movimiento, DetalleMovimiento, Tipo, Clase, Diccionario, Sequelize, Sucursal,GtmVentaKardex,GtmVentaKardexDetalle, socket, io) {
+		router.route('/gtm-despacho-kardex/empresa/:id_empresa')
 		.post(function (req, res) {
 			GtmVentaKardex.create({				
 				id_usuario: req.body.id_usuario,
@@ -416,5 +416,19 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, forEach, j
 				res.json({ detallesDespacho: detallesDespacho });
 			});
 		})
+
+	router.route('/gtm-detalle-despacho-alert/:id_detalle_despacho')
+		.put(function (req, res) {
+			GtmDespachoDetalle.update({
+				alerta: req.body.alerta
+			}, {
+					where: {
+						id: req.params.id_detalle_despacho
+					}
+				}).then(function (detallesDespacho) {
+					res.json({ mensaje: "Actualizado satisfactoriamente!" });
+				});
+		})
+
 
 }

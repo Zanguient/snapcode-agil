@@ -845,3 +845,21 @@ angular.module('agil.servicios')
     };
     return res;
 }])
+.factory('CargosEmpleado', function ($resource) {
+    return $resource(restServer + "recursos-humanos/cargos/empleado/:id_ficha",null,
+        {
+            'update': { method: 'PUT' }
+        });
+})
+.factory('ListaCargosEmpleado', ['CargosEmpleado', '$q', function (CargosEmpleado, $q) {
+    var res = function (idFicha) {
+        var delay = $q.defer();
+        CargosEmpleado.query({id_ficha:idFicha},function (entidad) {
+            delay.resolve(entidad);
+        }, function (error) {
+            delay.reject(error);
+        });
+        return delay.promise;
+    };
+    return res;
+}])

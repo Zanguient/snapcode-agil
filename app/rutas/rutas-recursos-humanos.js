@@ -3539,6 +3539,17 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                 res.json(ropasTrabajo)
             })
         });
+        router.route('/recursos-humanos/cargos/empleado/:id_ficha')        
+        .get(function (req, res) {
+            RrhhEmpleadoCargo.findAll({
+                where: {
+                    id_ficha: req.params.id_ficha,
+                },
+                include: [{ model: Clase, as: 'cargo',include:[{model:RrhhEmpleadoConfiguracionRopa,as:'ConfiguracionesCargo',include: [{ model: Clase, as: 'cargo' }, { model: Clase, as: 'ropaTrabajo'}]}] }]
+            }).then(function (cargosEmpleado) {
+                res.json(cargosEmpleado)
+            })
+        })
     //FIN
     /////////////////////////////////////////////////////// RUTAS PARA POLIFUNCIONAL ///////////////////////////////////////////////////
 

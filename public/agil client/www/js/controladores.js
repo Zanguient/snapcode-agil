@@ -67,6 +67,8 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 			return sucursales;
 		}
 
+
+
 		//modal nuevo comprobante
 		$scope.validarGuardadoDeComprobante = function (form, nuevoComprobante, form2) {
 			var mensaje = "cuenta "
@@ -2894,7 +2896,9 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 		$scope.SumarDiasMesesAñosfecha = function (fecha, intervalo, dma, simbolo) {
 			return editar_fecha(fecha, intervalo, dma, simbolo)
 		}
+		
 		$scope.inicio = function () {
+
 			$scope.loadData();
 			$rootScope.abs = $window.Math.abs;
 			if ($localStorage.usuario) {

@@ -460,12 +460,12 @@ angular.module('agil.controladores')
 						if (cantidadDisponible > 0) {
 							var nuevoDetalleVenta = JSON.parse(JSON.stringify(detalleVentaOriginal));
 							var cantidadParcial;
-							if (i > 0) {
+							/* if (i > 0) {
 								nuevoDetalleVenta.descuento = 0;
 								nuevoDetalleVenta.recargo = 0;
 								nuevoDetalleVenta.ice = 0;
 								nuevoDetalleVenta.excento = 0;
-							}
+							} */
 							$scope.detalleVenta = nuevoDetalleVenta;
 							if (cantidadTotal > cantidadDisponible) {
 								cantidadParcial = cantidadDisponible;

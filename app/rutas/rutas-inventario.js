@@ -1480,6 +1480,9 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 			if (req.params.transaccion != 0) {
 				condicionTransaccion.id = req.params.transaccion;
 			}
+			if (req.params.estado != 0) {
+				condicionVenta.activa = (req.params.estado == "true") ? true : false;
+			}
 			if (req.params.usuario != 0) {
 				condicionUsuario.nombre_usuario = { $like: "%" + req.params.usuario + "%" };
 			}
