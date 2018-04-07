@@ -2091,7 +2091,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                                                                                                                                         var fechaFichaEncontrada = new Date(fichaEncontrada[0].dataValues.fecha_inicio)
                                                                                                                                         var fecha1 = fechaATexto(fechaFichaEncontrada)
                                                                                                                                         var fecha2 = fechaATexto(pacienteActual.fecha_inicio)
-                                                                                                                                        if (fechaFichaEncontrada == pacienteActual.fecha_inicio) {
+                                                                                                                                        if (fecha1 == fecha2) {
                                                                                                                                             return RrhhEmpleadoFicha.update({
                                                                                                                                                 id_tipo_contrato: contratoClase.dataValues.id,
                                                                                                                                                 fecha_inicio: pacienteActual.fecha_inicio,
