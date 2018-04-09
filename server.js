@@ -28,8 +28,8 @@ var Postgrator = require('postgrator');
 // configure app to use bodyParser()
 // this will let us get the data from a POST
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser({limit: '300mb'}));
-app.use(bodyParser.json());
+app.use(bodyParser({limit: '50mb'}));
+app.use(bodyParser.json({"limit": "50mb"}));
 app.use(cors());
 
 var database="agil",username="agil",dbpass="agil2017@*#";
