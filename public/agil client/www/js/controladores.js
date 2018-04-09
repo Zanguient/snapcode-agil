@@ -1142,13 +1142,15 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 		$scope.cargarPagina = function () {
 			$scope.generarMenus($scope.usuario);
 			$scope.vencimientoTotal = 0;
-			$scope.actualizarVencimientoDosificaciones()
-			$scope.obtenerCentroCostos()
-			$scope.obtenerMovimientoEgresoBaja();
-			$scope.obtenerTiposComprobante();
-			$scope.reiniciarCorrelativoComprobantes()
-			$scope.sucursales = $scope.obtenerSucursales();
 			if ($scope.usuario.empresa) {
+				$scope.actualizarVencimientoDosificaciones()
+				$scope.obtenerCentroCostos();
+				$scope.obtenerMovimientoEgresoBaja();
+				$scope.obtenerTiposComprobante();
+				$scope.reiniciarCorrelativoComprobantes()
+				$scope.sucursales = $scope.obtenerSucursales();
+
+
 				if ($scope.usuario.empresa.usar_vencimientos) {
 					$scope.verificarVencimientosProductos($scope.usuario.id_empresa);
 					$scope.verificarVencimientosCreditos($scope.usuario.id_empresa);
