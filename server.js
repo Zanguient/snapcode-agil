@@ -28,7 +28,7 @@ var Postgrator = require('postgrator');
 // configure app to use bodyParser()
 // this will let us get the data from a POST
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser({limit: '50mb'}));
+app.use(bodyParser({limit: '50mb',extended: true,parameterLimit:50000}));
 app.use(bodyParser.json());
 app.use(cors());
 
