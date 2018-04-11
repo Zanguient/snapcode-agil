@@ -105,7 +105,7 @@ function ejecutarScriptsOperaciones(idDialogDialogPanelOperaciones, idDialogEntr
 function ejecutarScriptsInicio(idPopupTablaProductos, idPopupTablaCreditos, idPopupTablaDeudas, idPopupPago,
 	idPopupActualizarCreditoCliente, idPopupActualizarCreditoDeuda, idPopupDeuda, idModalDescuento, idModalTablaVentasPendientes,
 	idModalTablaComprasPendientes, idModalTablaBancosPendientes, idModalTablaOtrosPendientes, idModalInicioSesion, idModalWizardComprobanteEdicion, IdModalOpcionesQr, IdModalRegistrarComprobante, IdModalRevisarComprobante, IdModalLibroMayor, IdModalAsignarCuenta,
-	idModalTablaDespachos, idModalTablaAsignacionDespacho, IdModalEliminarProductoVencido, dialogAlertasProformas, facturarProformas, mensajeConfirmacionComprobante) {
+	idModalTablaDespachos, idModalTablaAsignacionDespacho, IdModalEliminarProductoVencido, dialogAlertasProformas, facturarProformas, mensajeConfirmacionComprobante, idModalConceptoEdicion) {
 	crearPopup(idPopupTablaProductos, "70%", "auto");
 	crearPopup(idModalWizardComprobanteEdicion, "100%", "auto");
 	crearPopup(idPopupTablaCreditos, "auto", "auto");
@@ -133,6 +133,7 @@ function ejecutarScriptsInicio(idPopupTablaProductos, idPopupTablaCreditos, idPo
 		crearPopup(idModalTablaDespachos, "90%", "auto");
 		crearPopup(idModalTablaAsignacionDespacho, "auto", "auto");
 		aplicarDatePickers();
+		crearPopup(idModalConceptoEdicion, "62%", "auto");
 	}, 2000)
 	crearPopup(IdModalEliminarProductoVencido, "60%", 550)
 	$("#" + idModalInicioSesion).siblings('.ui-dialog-titlebar').remove();
@@ -250,7 +251,7 @@ function ejecutarScriptsMantenimientos(idModalInicioMantenimiento, idModalOTNuev
 	aplicarTiempos();
 }
 
-function ejecutarScriptsRecursosHumanos(idModalPrerequisitos, idModalEmpleado, idModalwizardContainerEmpleado, idModalConceptoEdicion,
+function ejecutarScriptsRecursosHumanos(idModalPrerequisitos, idModalEmpleado, idModalwizardContainerEmpleado,
 	idModalTipoDocumento, idModalEstadoCivil, idModalNacionalidad, idModalDepartamentoEstado, idModalProvincia, idModalLocalidad,
 	idModalTipoDiscapacidad, idModalTipoContrato, idModalTipoPersonal, idModalCargaHoraria, idModalArea, idModalUbicacion, idImput,
 	idModalHojaVida, idModalwizardContainerHojaVida, idModalSeguro, idModalSeguroLugar, idModalAporte, idModalAporteLugar,
@@ -266,7 +267,7 @@ function ejecutarScriptsRecursosHumanos(idModalPrerequisitos, idModalEmpleado, i
 	idImagenUsuario, idEliminarUsuarioRh, idModalWizardRhVista, idModalContenedorRhVista, idModalDialogPrerequisitoNuevo, idEliminarSeguroEmpleado,
 	idEliminarFamiliarEmpleado, idModalHistorialPrerequisito, idModalEditarPrerequisito, idModalDialogConfirmacionEntregaAdelantado, IdEntregaPrerequisito, IdModalVerificarCuenta, idModalImpresionHojaVida, idModalNuevoAnticipoRegularTodos,
 	idModalTr3BancoMsc, idModalTr3BancoUnion, idModalHistorialTr3, IdModalVerificarCuentaRrhh, idModalConfirmarDesabilitacion, idModalReingresoEmpleado,
-	idModalHistorialBeneficios, idModalConfiguracionRopaDeTrabajo, idModalReporteRopaDeTrabajo,idmodalWizardContainerConfiguracionRopaTrabajo,idModalRopaTrabajo,idModalNuevaRopaTrabajo,idModalItemsNuevaRopaTrabajo) {
+	idModalHistorialBeneficios, idModalConfiguracionRopaDeTrabajo, idModalReporteRopaDeTrabajo,idmodalWizardContainerConfiguracionRopaTrabajo,idModalRopaTrabajo,idModalNuevaRopaTrabajo,idModalItemsNuevaRopaTrabajo,idModalEliminarRopaTrabajo) {
 	crearPopup(idModalPrerequisitos, "90%", 'auto');
 	crearPopup(idModalEmpleado, "100%", 'auto');
 	aplicarWizardFormulario(idModalEmpleado, idModalwizardContainerEmpleado);
@@ -348,7 +349,7 @@ function ejecutarScriptsRecursosHumanos(idModalPrerequisitos, idModalEmpleado, i
 	crearPopup(idModalEditarPrerequisito, "40%", 'auto');
 	crearPopup(idModalDialogConfirmacionEntregaAdelantado, "35%", 'auto');
 	crearPopup(IdEntregaPrerequisito, "40%", 'auto');
-	crearPopup(IdModalVerificarCuenta, "auto", 'auto');
+	
 	crearPopup(idModalImpresionHojaVida, "auto", 'auto');
 	crearPopup(idModalNuevoAnticipoRegularTodos, "62%", "auto")
 	crearPopup(idModalTr3BancoMsc, "auto", 'auto');
@@ -364,14 +365,15 @@ function ejecutarScriptsRecursosHumanos(idModalPrerequisitos, idModalEmpleado, i
 	crearPopup(idModalRopaTrabajo, "80%", 'auto');
 	crearPopup(idModalNuevaRopaTrabajo, "50%", 'auto');
 	crearPopup(idModalItemsNuevaRopaTrabajo, "50%", 'auto');
-	
+	crearPopup(IdModalVerificarCuenta, "auto", 'auto');
+	crearPopup(idModalEliminarRopaTrabajo, "auto", 'auto');
 	setTimeout(function () {
 		aplicarDatePickers();
 		// aplicarHoras();
 		aplicarTiempos();
 		AplicarImputFile(idImput);
 		aplicarVisorImagenArchivo(idImagenUsuario);
-		crearPopup(idModalConceptoEdicion, "62%", "auto");
+		
 	}, 2000)
 }
 

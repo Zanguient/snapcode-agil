@@ -13,13 +13,13 @@ module.exports = function (sequelize, Sequelize) {
             type: Sequelize.DATE,
             field: 'fecha'
         },
-        nit: {
+        id_cliente: {
             type: Sequelize.INTEGER,
-            field: 'nit'
+            field: 'cliente'
         },
-        razon_social: {
-            type: Sequelize.STRING,
-            field: 'razon_social'
+        id_cliente_razon: {
+           type: Sequelize.INTEGER,
+           field: 'cliente_razon'
         },
         factura:{
             type: Sequelize.BOOLEAN,

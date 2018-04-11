@@ -22,7 +22,7 @@
 
 			<div class="col-xs-2 col-sm-2">
 				Sucursal:
-				<select required name="sucursal" id="sucursal" ng-change="obtenerAlmacenes(id_sucursal_despacho)" required ng-model="id_sucursal_despacho"
+				<select required class="form-control" name="sucursal" id="sucursal" ng-change="obtenerAlmacenes(id_sucursal_despacho)" required ng-model="id_sucursal_despacho"
 				 ng-options="sucursal.id as sucursal.nombre for sucursal in sucursales"></select>
 				<div ng-show="desp.sucursal.$error.required" class="invalid-message help-block" ng-messages="desp.sucursal.$error" ng-if="errorDespacho">
 					<div ng-messages-include="/templates/gral/messages.html"></div>
@@ -30,7 +30,7 @@
 			</div>
 			<div class="col-xs-2 col-sm-2">
 				Almacen
-				<select required name="almacen" ng-model="id_almacen_despacho" ng-options="almacen.id as almacen.nombre for almacen in almacenes"></select>
+				<select required class="form-control" name="almacen" ng-model="id_almacen_despacho" ng-options="almacen.id as almacen.nombre for almacen in almacenes"></select>
 				<!-- 	<button class="btn btn-primary" ng-disabled="gtm_detalles_despacho_seleccionados.length==0" type="submit">
 				<i class="ace-icon fa fa-floppy-o align-top bigger-125"></i>
 				Guardar</button> -->

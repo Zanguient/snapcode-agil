@@ -863,3 +863,70 @@ angular.module('agil.servicios')
     };
     return res;
 }])
+
+.factory('RopaTrabajoProductos', function ($resource) {
+    return $resource(restServer + "recursos-humanos/ropa-trabajo/productos/subgrupos/:subgrupos",null,
+        {
+            'update': { method: 'PUT' }
+        });
+})
+.factory('ListaRopaTrabajoProductos', ['RopaTrabajoProductos', '$q', function (RopaTrabajoProductos, $q) {
+    var res = function (subgrupos) {
+        var delay = $q.defer();
+        RopaTrabajoProductos.query({subgrupos:subgrupos},function (entidad) {
+            delay.resolve(entidad);
+        }, function (error) {
+            delay.reject(error);
+        });
+        return delay.promise;
+    };
+    return res;
+}])
+.factory('CrearDotacionRopa', function ($resource) {
+    return $resource(restServer + "recursos-humanos/ropa-trabajo/empleado/:id_empleado",null,
+        {
+            'update': { method: 'PUT' }
+        });
+})
+.factory('GuardarDotacionRopa', ['CrearDotacionRopa', '$q', function (CrearDotacionRopa, $q) {
+    var res = function (id_empleado,datos) {
+        var delay = $q.defer();
+        CrearDotacionRopa.save({id_empleado:id_empleado},datos,function (entidad) {
+            delay.resolve(entidad);
+        }, function (error) {
+            delay.reject(error);
+        });
+        return delay.promise;
+    };
+    return res;
+}])
+.factory('BuscarRopasTrabajoEmpleado', function ($resource) {
+    return $resource(restServer + "recursos-humanos/ropa-trabajo/empleado/:id_empleado/inicio/:inicio/fin/:fin",null,
+        {
+            'update': { method: 'PUT' }
+        });
+})
+.factory('ListaDotacionRopa', ['BuscarRopasTrabajoEmpleado', '$q', function (BuscarRopasTrabajoEmpleado, $q) {
+    var res = function (id_empleado,filtro) {
+        var delay = $q.defer();
+        BuscarRopasTrabajoEmpleado.query({id_empleado:id_empleado,inicio:filtro.inicio,fin:filtro.fin},function (entidad) {
+            delay.resolve(entidad);
+        }, function (error) {
+            delay.reject(error);
+        });
+        return delay.promise;
+    };
+    return res;
+}])
+.factory('EliminarDotacionRopa', ['CrearDotacionRopa', '$q', function (CrearDotacionRopa, $q) {
+    var res = function (datos) {
+        var delay = $q.defer();
+        CrearDotacionRopa.update({id_empleado:0},datos,function (entidad) {
+            delay.resolve(entidad);
+        }, function (error) {
+            delay.reject(error);
+        });
+        return delay.promise;
+    };
+    return res;
+}])

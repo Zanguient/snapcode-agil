@@ -227,9 +227,9 @@
                                             <i class="fa  fa-cloud-download green"></i>
                                         </a>
                                         <div class="fileUpload boton-importar pull-right">
-                                                <span class="fileUpload-button ace-icon fa fa-cloud-upload blue"></span>
-                                                <input class="upload" type="file" custom-on-file-change="subirExcelFicha" />
-                                            </div>
+                                            <span class="fileUpload-button ace-icon fa fa-cloud-upload blue"></span>
+                                            <input class="upload" type="file" custom-on-file-change="subirExcelFicha" />
+                                        </div>
                                     </div>
                                 </li>
                             </ul>
@@ -8315,6 +8315,15 @@
         <button type="button" class="btn btn-success" ng-click="cerrarDialogEliminarSeguroEmpleado()">No</button>
     </div>
     <!-- ========= fin modal eliminar seguro empleado ========= -->
+    <!-- ========= inicio  modal eliminar ropa usuario ========= -->
+    <div id="dialog-eliminar-ropa-trabajo" title="¿Eliminación de Seguro?">
+        <p>
+            <span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>¿Esta seguro de eliminar el registro de ropa de trabajo seleccionado?
+        </p>
+        <button type="button" class="btn btn-danger" ng-click="eliminarRopaTrabajoEmpleado(dato)">Si</button>
+        <button type="button" class="btn btn-success" ng-click="cerrarDialogEliminarRopaTrabajo()">No</button>
+    </div>
+    <!-- ========= fin modal eliminar ropa  empleado ========= -->
     <!-- ========= inicio  modal eliminar Familiar empleado ========= -->
     <div id="dialog-eliminar-familiar" title="¿Eliminación de Familiar?">
         <p>
@@ -8859,42 +8868,43 @@
 
             </div>
             <div class="modal-body">
-                <div class="col-md-1">
-                    <a ng-click="abrirModalNuevaRopaTrabajo(empleado)" class="btn btn-primary">
-                        <i class="ace-icon fa fa-plus align-top bigger-125"></i>
-                        Nuevo
-                    </a>
-                </div>
-                <div class="col-md-11">
+
+                <div class="col-md-12">
                     <h4 align="center">{{empleado.nombre_completo}}</h4>
                 </div>
                 <div class="col-md-12">
-                    <form ng-submit="paginator.getSearch(paginator.search,filtro,null)">
+                    <form>
                         <div class="row">
-                            <div class="form-group col-md-3">
-                                <p>
-                                    <label for="codigo"></label>
-                                </p>
+                            <div class="col-md-2">
+                                <a ng-click="ObtenerDotacionesRopa(empleado,undefined,true)" class="btn btn-primary">
+                                    <i class="ace-icon fa fa-plus align-top bigger-125"></i>
+                                    Nuevo
+                                </a>
+                            </div>
+                            <div class="form-group col-md-1">
                                 <p>
                                     <label for="codigo">PERIODO</label>
                                 </p>
                             </div>
                             <div class="form-group col-md-3">
                                 <label for="codigo">DESDE</label>
-                                <input ng-update-hidden type="text" class "form-control" id="filtroCodigo" ng-model="filtro.codigo" placeholder="" />
+                                <input ng-update-hidden  ng-model="filtroropa.inicio" type="text" class= "date-picker form-control" placeholder="" />
                             </div>
 
                             <div class="form-group col-md-3">
                                 <label for="nombre">HASTA</label>
-                                <input ng-update-hidden type="text" class "form-control" id="filtroNombre" ng-model="filtro.nombres" placeholder="" />
+                                <input ng-update-hidden ng-model="filtroropa.fin" type="text" class= "date-picker form-control" placeholder="" />
                             </div>
                             <div class="form-group col-md-3">
-
+                                <button class="btn btn-app btn-primary btn-xs" ng-click="ObtenerDotacionesRopa(empleado,filtroropa)">
+                                    <i class="ace-icon fa fa-print bigger-160"></i>
+                                    buscar
+                                </button>
                                 <button class="btn btn-app btn-danger btn-xs">
                                     <i class="ace-icon fa fa-print bigger-160"></i>
                                     PDF
                                 </button>
-                                <button class="btn btn-app btn-success btn-xs" ng-click="generarExcelEmpleados(RecursosHumanosEmpleados,fieldViewer.getConfiguration())">
+                                <button class="btn btn-app btn-success btn-xs" >
                                     <i class="ace-icon fa fa-print bigger-160"></i>
                                     EXCEL
                                 </button>
@@ -8909,40 +8919,62 @@
                                 <th>Nro.</th>
                                 <th>Periodo</th>
                                 <th>Fecha</th>
-                                <th>Ropa</th>
+                                <th>Ropas</th>
                                 <th>Cargos</th>
-                                <th>estado</th>
+                                <th>Estado</th>
                                 <th>Cumplimiento</th>
                                 <th>Observaciones</th>
                                 <th>Usuario</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <th scope="row">1</th>
-                                <td>I-2017</td>
-                                <td>15/07/2017</td>
-                                <td>Ropa</td>
-                                <td>Cargos</td>
-                                <td>Completa</td>
-                                <td>En fecha</td>
-                                <td>Ninguna</td>
-                                <td>Usuario</td>
+                            <tr ng-repeat="dotacion in listaDotaciones track by $index">
+                                <th scope="row">{{$index+1}}</th>
+                                <td>{{dotacion.periodo.nombre}}</td>
+                                <td>{{dotacion.fecha|date:'dd/MM/yyyy'}}</td>
+                                <td>
+
+                                    <a popover-placement="right" uib-popover-template="dynamicPopoverRopasRopaTrabajo.templateUrl" popover-trigger="outsideClick: outsideClick"
+                                        popover-title="Ropas" class="blue">
+                                        <i class="fa fa-list-ol bigger-200 orange" aria-hidden="true"></i>
+                                    </a>
+                                    <script type="text/ng-template" id="myPopoverRopasRopa.html">                                           
+                                                <div class="form-group">                                              
+                                                        <p ng-repeat="item in dotacion.ropas">{{item.nombre}}</p>
+                                                </div>                                           
+                                            </script>
+                                </td>
+                                <td>
+
+                                    <a popover-placement="right" uib-popover-template="dynamicPopoverCargosRopaTrabajo.templateUrl" popover-trigger="outsideClick: outsideClick"
+                                        popover-title="Cargos" class="blue">
+                                        <i class="fa fa-list-ol bigger-200 orange" aria-hidden="true"></i>
+                                    </a>
+                                    <script type="text/ng-template" id="myPopoverCargosRopa.html">                                           
+                                                <div class="form-group">                                              
+                                                        <p ng-repeat="item in dotacion.cargos">{{item.nombre}}</p>
+                                                </div>                                           
+                                            </script>
+                                </td>
+                                <td>{{dotacion.estado.nombre}}</td>
+                                <td>{{dotacion.cumplimiento.nombre}}</td>
+                                <td>{{dotacion.observacion}}</td>
+                                <td>{{dotacion.usuario.persona.nombre_completo}}</td>
                                 <td>
                                     <div class="action-buttons">
 
-                                        <a class="green" ng-click="editarLogroHojaVida(logro)">
+                                        <a class="green"  href="javascript:void(0)" ng-click="imprimirRopaTrabajo(dotacion)">
                                             <i class="ace-icon fa fa-print bigger-130"></i>
                                         </a>
-                                        <a class="blue" href="javascript:void(0)" ng-click="abrirDialogVerEmpleado(empleado)" class="tooltip-info" data-rel="tooltip"
+                                        <a class="blue" href="javascript:void(0)" class="tooltip-info" data-rel="tooltip" ng-click="abrirModalNuevaRopaTrabajo(empleado,true,$index)"
                                             title="View">
                                             <i class="ace-icon fa fa-search-plus bigger-130"></i>
                                         </a>
-                                        <a class="green" href="javascript:void(0)" ng-click="modificarEmpleado(empleado)">
+                                        <a ng-if="dotacion.id==listaDotaciones[listaDotaciones.length-1].id" class="green" href="javascript:void(0)" ng-click="abrirModalNuevaRopaTrabajo(empleado,true)">
                                             <i class="ace-icon fa fa-pencil bigger-130"></i>
                                         </a>
 
-                                        <a class="red" href="javascript:void(0)" ng-click="abrirDialogEliminarUsuarioRh(empleado)">
+                                        <a ng-if="dotacion.id==listaDotaciones[listaDotaciones.length-1].id" class="red" href="javascript:void(0)" ng-click="abrirModalVerificarCuenta(dotacion,'dotacion')">
                                             <i class="ace-icon fa fa-trash-o bigger-130"></i>
                                         </a>
                                     </div>
@@ -8966,7 +8998,7 @@
     </div>
     <div id="dialog-nueva-ropa-trabajo">
         <div class="modal-content">
-            <form ng-submit="paginator.getSearch(paginator.search,filtro,null)">
+            <form ng-submit="guardarDotacionRopa(dotacionRopa)">
                 <div class="modal-header hoja">
                     <h4 class="modal-title" id="myModalLabel">DOTACIÓN DE ROPA</h4>
 
@@ -8977,51 +9009,62 @@
                     <div class="row">
                         <div class="form-group col-md-4">
                             <label for="codigo">Fecha</label>
-                            <input ng-update-hidden type="text" class "form-control" id="filtroCodigo" ng-model="dotacionRopa.fecha" placeholder="" />
+                            <input ng-disabled="verinformacionDOtacion" vrequired ng-update-hidden data-date-format="dd/mm/yyyy" class="form-control date-picker"
+                                autocomplete="off" type="text" ng-model="dotacionRopa.fecha">
                         </div>
 
                         <div class="form-group col-md-4">
                             <label for="nombre">Cumpli.</label>
-                            <div class="input-group">                                    
-                                    <select ng-model="dotacionRopa.cumplimiento" class="form-control" ng-options="cumplimiento as cumplimiento.nombre for cumplimiento in cumplimientoDotacion.clases | filter:{habilitado:true} track by cumplimiento.id">
-                                        <option value="">--Ninguno--</option>
-                                    </select>
-                                </div>
+                            <div class="input-group">
+                                <select ng-disabled="verinformacionDOtacion" autofocus required ng-model="dotacionRopa.cumplimiento" class="form-control"
+                                    ng-options="cumplimiento as cumplimiento.nombre for cumplimiento in cumplimientoDotacion.clases | filter:{habilitado:true} track by cumplimiento.id">
+                                    <option value="">--Ninguno--</option>
+                                </select>
+                            </div>
                         </div>
 
                         <div class="form-group col-md-4">
                             <label for="periodo">Periodo</label>
-                            <div class="input-group">                               
-                                <select ng-model="dotacionRopa.periodo" class="form-control" ng-options="grado as grado.nombre for grado in grados.clases | filter:{habilitado:true} track by grado.id">
+                            <div class="input-group">
+                                <select ng-disabled="verinformacionDOtacion" required ng-model="dotacionRopa.periodo" class="form-control" ng-options="periodo as periodo.nombre for periodo in periodoDotacion.clases | filter:{habilitado:true} track by periodo.id">
                                     <option value="">--Ninguno--</option>
                                 </select>
-                                <span class="input-group-addon glyphicon glyphicon-pencil point-edit green" ng-click="abrirDialogConceptoEdicion(grados)"></span>
+                                <span class="input-group-addon glyphicon glyphicon-pencil point-edit green" ng-click="abrirDialogConceptoEdicion(periodoDotacion)"></span>
                             </div>
                         </div>
                     </div>
                     <div class="row">
                         <div class="form-group col-md-4">
                             <label for="estado">Estado</label>
-                            <div class="input-group">                                    
-                                    <select ng-model="dotacionRopa.estado" class="form-control" ng-options="estado as estado.nombre for estado in estadoDotacion.clases | filter:{habilitado:true} track by estado.id">
-                                        <option value="">--Ninguno--</option>
-                                    </select>
-                                </div>
+                            <div class="input-group">
+                                <select ng-disabled="verinformacionDOtacion" required ng-model="dotacionRopa.estado" class="form-control" ng-options="estado as estado.nombre for estado in estadoDotacion.clases | filter:{habilitado:true} track by estado.id">
+                                    <option value="">--Ninguno--</option>
+                                </select>
+                            </div>
                         </div>
 
 
                         <div class="form-group col-md-4">
                             <label for="cargo">Cargos</label>
-                            <div>
+                            <div ng-if="!verinformacionDOtacion" class="input-group">
                                 <p ng-repeat="cargo in cargosEmpleado">{{cargo.cargo.nombre}}</p>
-                                </div>
+                            </div>
+                            <div ng-if="verinformacionDOtacion" class="input-group">
+                                <p ng-repeat="cargo in listaDotaciones[indexInfo].cargos">{{cargo.nombre}}</p>
+                            </div>
+
 
                         </div>
                         <div class="form-group col-md-4">
                             <label for="nombre">Items</label>
-                            <div class="input-group">
-                               <!--  <input ng-update-hidden type="text" class "form-control" id="filtroNombre" ng-model="filtro.nombres" placeholder="" /> -->
-                               <p ng-repeat="items in dotacionItems">{{items.ropaTrabajo.nombre}}</p>
+                            <div ng-if="!verinformacionDOtacion" class="input-group">
+                                <!--  <input ng-update-hidden type="text" class "form-control" id="filtroNombre" ng-model="filtro.nombres" placeholder="" /> -->
+                                <p ng-repeat="items in dotacionItems">{{items.ropaTrabajo.nombre}}</p>
+                                <span class="input-group-addon glyphicon glyphicon-search point-edit green" ng-click="abrirModalItemsNuevaRopaTrabajo()"></span>
+                            </div>
+                            <div ng-if="verinformacionDOtacion" class="input-group">
+                                <!--  <input ng-update-hidden type="text" class "form-control" id="filtroNombre" ng-model="filtro.nombres" placeholder="" /> -->
+                                <p ng-repeat="items in listaDotaciones[indexInfo].ropas">{{items.nombre}}</p>
                                 <span class="input-group-addon glyphicon glyphicon-search point-edit green" ng-click="abrirModalItemsNuevaRopaTrabajo()"></span>
                             </div>
                         </div>
@@ -9029,8 +9072,20 @@
                     </div>
                     <div class="row">
                         <div class="form-inline col-md-4">
+                            <label class="inline" for="codigo">Fecha Vencimiento</label>
+                            <input ng-disabled="verinformacionDOtacion" required ng-update-hidden data-date-format="dd/mm/yyyy" class="form-control date-picker"
+                                autocomplete="off" type="text" ng-model="dotacionRopa.fecha_vencimiento">
+                        </div>
+                        <div class="form-inline col-md-4">
                             <label class="inline" for="codigo">Obs.</label>
-                            <input ng-update-hidden type="text" class "form-control" id="filtroCodigo" ng-model="filtro.codigo" placeholder="" />
+                            <input ng-disabled="verinformacionDOtacion" ng-update-hidden type="text" class "form-control" id="filtroCodigo" ng-model="dotacionRopa.observacion"
+                                placeholder="" />
+                        </div>
+                        <div class="form-inline col-md-4">
+                            <label class="inline" for="codigo">Sucursal</label>
+                            <select disabled class="form-control" required id="sucursal" name="sucursal" ng-options="sucursal as sucursal.nombre for sucursal in sucursales track by sucursal.id"
+                                ng-model="dotacionRopa.sucursal">
+                            </select>
                         </div>
                     </div>
 
@@ -9043,7 +9098,7 @@
                         <i class="ace-icon fa fa-times"></i>
                         Cancelar
                     </button>
-                    <button type="submit" class="btn btn-primary btn-sm pull-right" data-dismiss="modal" ng-click="cerrarModalNuevaRopaTrabajo()">
+                    <button ng-if="!verinformacionDOtacion" type="submit" class="btn btn-primary btn-sm pull-right">
                         <i class="ace-icon fa fa-times"></i>
                         Guardar
                     </button>
@@ -9053,7 +9108,7 @@
     </div>
     <div id="dialog-items-nueva-ropa-trabajo">
         <div class="modal-content">
-            <form ng-submit="paginator.getSearch(paginator.search,filtro,null)">
+            <form>
                 <div class="modal-header bg-success">
                     <h4 align="center"> DETALLE</h4>
                 </div>
@@ -9073,28 +9128,24 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr ng-repeat="item in dotacionItems track by $index">
+
+                                <tr ng-repeat="item in dotacionRopa.dotacionItems track by $index">
+                                    <td>{{$index}}</td>
                                     <td scope="row">{{item.ropaTrabajo.nombre}}</td>
-                                    <td><select ng-model="item.ropa" ng-options="estado as estado.nombre for estado in estadoDotacion.clases | filter:{habilitado:true} track by estado.id"></select></td>
-                                    <td>DETALLE</td>
-                                    <td>DISPONIBLE</td>
-                                    <td>CANT.</td>
+                                    <td>
+                                        <select ng-disabled="verinformacionDOtacion" ng-model="item.producto" ng-disabled="!item.editable" ng-change="calularInventarioItem(item)"
+                                            ng-options="producto as producto.nombre for producto in productosRopaTrabajo | filter:{id_subgrupo:item.id_ropa_trabajo} track by producto.id"></select>
+                                    </td>
+                                    <td>{{item.cantidad_disponible}}</td>
+                                    <td>{{item.cantidad}}</td>
                                     <td>
                                         <div class="action-buttons">
 
-                                            <a class="green" ng-click="editarLogroHojaVida(logro)">
-                                                <i class="ace-icon fa fa-print bigger-130"></i>
+                                            <a ng-if="item.entregado" href="javascript:void(0)" class="green" ng-click="seleccionarItem(item)">
+                                                <i class="ace-icon fa fa-thumbs-up bigger-130"></i>
                                             </a>
-                                            <a class="blue" href="javascript:void(0)" ng-click="abrirDialogVerEmpleado(empleado)" class="tooltip-info" data-rel="tooltip"
-                                                title="View">
-                                                <i class="ace-icon fa fa-search-plus bigger-130"></i>
-                                            </a>
-                                            <a class="green" href="javascript:void(0)" ng-click="modificarEmpleado(empleado)">
-                                                <i class="ace-icon fa fa-pencil bigger-130"></i>
-                                            </a>
-
-                                            <a class="red" href="javascript:void(0)" ng-click="abrirDialogEliminarUsuarioRh(empleado)">
-                                                <i class="ace-icon fa fa-trash-o bigger-130"></i>
+                                            <a ng-if="!item.entregado" href="javascript:void(0)" class="dark" ng-click="seleccionarItem(item)">
+                                                <i class="ace-icon fa fa-thumbs-up bigger-130"></i>
                                             </a>
                                         </div>
                                     </td>
@@ -9108,11 +9159,7 @@
 
                     <button tabindex="-1" type="button" class="btn btn-danger btn-sm pull-left" data-dismiss="modal" ng-click="cerrarModalItemsNuevaRopaTrabajo()">
                         <i class="ace-icon fa fa-times"></i>
-                        Cancelar
-                    </button>
-                    <button type="submit" class="btn btn-primary btn-sm pull-right" data-dismiss="modal" ng-click="cerrarModalNuevaRopaTrabajo()">
-                        <i class="ace-icon fa fa-times"></i>
-                        Guardar
+                        Salir
                     </button>
                 </div>
             </form>

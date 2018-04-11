@@ -1,0 +1,1 @@
+ALTER TABLE agil_sucursal ADD ropa_trabajo_correlativo int(11) default 1;

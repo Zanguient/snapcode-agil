@@ -5,7 +5,7 @@ angular.module('agil.controladores')
         ObtenerListaPrestamo, CrearRolTurno, CrearPagoPrestamo, VerificarUsuarioEmpresa, EditarPrestamo, ListaEmpleadosRrhh, CrearHorasExtra, HistorialHorasExtra, ListaRolTurnos, ValidarCodigoCuentaEmpleado, $timeout, DatosCapacidadesImpresion, NuevoAnticipoEmpleado,
         ListaAnticiposEmpleado, CrearNuevosAnticiposEmpleados, ActualizarAnticipoEmpleado, NuevaAusenciaEmpleado, HistorialEmpleadoAusencias, HistorialEmpresaEmpleadosAusencias, NuevaVacacionEmpleado, HistorialEmpleadoVacaciones, HistorialEmpresaVacaciones, NuevoFeriado,
         ListaFeriados, GuardarClasesAusencias, Tipos, ListaBancos, ConfiguracionesVacacion, HistorialGestionesVacacion, GuardarTr3, ListaTr3Empresa, GuardarHistorialVacacion, CrearBeneficioSocial, ListaBeneficiosEmpleado, GuardarBitacoraFicha, VerBitacoraFicha, ObtenerFiniquitoEmpleado,
-        ClasesTipoEmpresa, GuardarConfiguracionRopaCargo, ListaConfiguracionRopaCargo, DatosReporteConfiguracionRopa, FichasEmpleadoEmpresa, ListaCargosEmpleado) {
+        ClasesTipoEmpresa, GuardarConfiguracionRopaCargo, ListaConfiguracionRopaCargo, DatosReporteConfiguracionRopa, FichasEmpleadoEmpresa, ListaCargosEmpleado, ListaRopaTrabajoProductos, GuardarDotacionRopa, ListaDotacionRopa, EliminarDotacionRopa) {
         $scope.usuario = JSON.parse($localStorage.usuario);
         $scope.idModalPrerequisitos = 'dialog-pre-requisitos';
         $scope.idModalEmpleado = 'dialog-empleado';
@@ -104,11 +104,12 @@ angular.module('agil.controladores')
         $scope.idModalRopaTrabajo = "dialog-ropa-trabajo"
         $scope.idModalNuevaRopaTrabajo = "dialog-nueva-ropa-trabajo"
         $scope.idModalItemsNuevaRopaTrabajo = "dialog-items-nueva-ropa-trabajo"
+        $scope.idModalEliminarRopaTrabajo = "dialog-eliminar-ropa-trabajo"
         $scope.$on('$viewContentLoaded', function () {
             // resaltarPestaña($location.path().substring(1));
             resaltarPestaña($location.path().substring(1));
             ejecutarScriptsRecursosHumanos($scope.idModalPrerequisitos, $scope.idModalEmpleado, $scope.idModalwizardContainerEmpleado,
-                $scope.idModalConceptoEdicion, $scope.idModalTipoDocumento, $scope.idModalEstadoCivil, $scope.idModalNacionalidad,
+                $scope.idModalTipoDocumento, $scope.idModalEstadoCivil, $scope.idModalNacionalidad,
                 $scope.idModalDepartamentoEstado, $scope.idModalProvincia, $scope.idModalLocalidad, $scope.idModalTipoDiscapacidad,
                 $scope.idModalTipoContrato, $scope.idModalTipoPersonal, $scope.idModalCargaHoraria, $scope.idModalArea,
                 $scope.idModalUbicacion, $scope.idImputContrato, $scope.idModalHojaVida, $scope.idModalwizardContainerHojaVida,
@@ -129,7 +130,8 @@ angular.module('agil.controladores')
                 $scope.idModalContenedorRhVista, $scope.idModalDialogPrerequisitoNuevo, $scope.idEliminarSeguroEmpleado, $scope.idEliminarFamiliarEmpleado, $scope.idModalHistorialPrerequisito,
                 $scope.idModalEditarPrerequisito, $scope.idModalDialogConfirmacionEntregaAdelantado, $scope.IdEntregaPrerequisito, $scope.IdModalVerificarCuenta, $scope.idModalImpresionHojaVida, $scope.idModalNuevoAnticipoRegularTodos,
                 $scope.idModalTr3BancoMsc, $scope.idModalTr3BancoUnion, $scope.idModalHistorialTr3, $scope.IdModalVerificarCuentaRrhh, $scope.idModalConfirmarDesabilitacion, $scope.idModalReingresoEmpleado,
-                $scope.idModalHistorialBeneficios, $scope.idModalConfiguracionRopaDeTrabajo, $scope.idModalReporteRopaDeTrabajo, $scope.idmodalWizardContainerConfiguracionRopaTrabajo, $scope.idModalRopaTrabajo, $scope.idModalNuevaRopaTrabajo, $scope.idModalItemsNuevaRopaTrabajo);
+                $scope.idModalHistorialBeneficios, $scope.idModalConfiguracionRopaDeTrabajo, $scope.idModalReporteRopaDeTrabajo, $scope.idmodalWizardContainerConfiguracionRopaTrabajo, $scope.idModalRopaTrabajo, $scope.idModalNuevaRopaTrabajo, $scope.idModalItemsNuevaRopaTrabajo,
+                $scope.idModalEliminarRopaTrabajo);
             $scope.buscarAplicacion($scope.usuario.aplicacionesUsuario, $location.path().substring(1));
             $scope.obtenerColumnasAplicacion()
             blockUI.stop();
@@ -138,7 +140,7 @@ angular.module('agil.controladores')
 
         $scope.$on('$routeChangeStart', function (next, current) {
             $scope.eliminarPopup($scope.idModalEmpleado)
-            $scope.eliminarPopup($scope.idModalConceptoEdicion)
+
             $scope.eliminarPopup($scope.idModalTipoDocumento)
             $scope.eliminarPopup($scope.idModalEstadoCivil)
             $scope.eliminarPopup($scope.idModalNacionalidad)
@@ -227,6 +229,7 @@ angular.module('agil.controladores')
             $scope.eliminarPopup($scope.idModalRopaTrabajo)
             $scope.eliminarPopup($scope.idModalNuevaRopaTrabajo)
             $scope.eliminarPopup($scope.idModalItemsNuevaRopaTrabajo)
+            $scope.eliminarPopup($scope.idModalEliminarRopaTrabajo)
         });
         $scope.inicio = function () {
             $scope.listYearsAnticipo = $scope.obtenerAnios(2017)
@@ -320,23 +323,82 @@ angular.module('agil.controladores')
             $scope.cerrarPopup($scope.idModalReporteRopaDeTrabajo)
         }
         $scope.abrirModalRopaTrabajo = function (empleado) {
-            $scope.empleado = empleado
-            $scope.abrirPopup($scope.idModalRopaTrabajo)
+            $scope.filtroropa = {}
+            if (empleado.activo) {
+                $scope.empleado = empleado
+                $scope.dynamicPopoverCargosRopaTrabajo = {
+                    templateUrl: 'myPopoverCargosRopa.html',
+                };
+                $scope.dynamicPopoverRopasRopaTrabajo = {
+                    templateUrl: 'myPopoverRopasRopa.html',
+                };
+                $scope.ObtenerDotacionesRopa(empleado)
+                $scope.abrirPopup($scope.idModalRopaTrabajo)
+            }
         }
         $scope.cerrarModalRopaTrabajo = function () {
             $scope.cerrarPopup($scope.idModalRopaTrabajo)
         }
-        $scope.abrirModalNuevaRopaTrabajo = function (empleado) {
+        $scope.abrirModalNuevaRopaTrabajo = function (empleado, edit, index) {
+            $scope.filtroropa.inicio = ""
+            $scope.filtroropa.fin = ""
             $scope.empleado = empleado
-            $scope.obtenerCargosEmpleado()
-            $scope.abrirPopup($scope.idModalNuevaRopaTrabajo)
+
+            if (edit) {
+                $scope.actualizarDotacion = true
+            } else {
+                $scope.actualizarDotacion = false
+            }
+            if (index != undefined) {
+                $scope.verinformacionDOtacion = true
+                $scope.indexInfo = index
+                console.log($scope.listaDotaciones[$scope.indexInfo].ropas)
+            } else {
+                $scope.verinformacionDOtacion = false
+            }
+            if ($scope.listaDotaciones.length > 0) {
+                var fechaActual = new Date()
+                var fechaVenceGuardada = new Date($scope.listaDotaciones[$scope.listaDotaciones.length - 1].fecha_vencimiento)
+                if (fechaVenceGuardada.getTime() > fechaActual.getTime()) {
+                    $scope.obtenerCargosEmpleado(edit, index, false)
+                    var a = []
+                    $scope.dotacionRopa = $scope.listaDotaciones[$scope.listaDotaciones.length - 1]
+                    $scope.sucursales.forEach(function (su) {
+                        if (su.numero == 0) {
+                            $scope.dotacionRopa.sucursal = su
+                        }
+                    })
+                    $scope.abrirPopup($scope.idModalNuevaRopaTrabajo)
+                } else {
+
+                    $scope.dotacionRopa = { id_usuario: $scope.usuario.id }
+                    $scope.sucursales.forEach(function (su) {
+                        if (su.numero == 0) {
+                            $scope.dotacionRopa.sucursal = su
+                        }
+                    })
+                    $scope.obtenerCargosEmpleado(edit, index, true)
+                    $scope.abrirPopup($scope.idModalNuevaRopaTrabajo)
+                }
+            } else {
+                $scope.empleado = empleado
+                $scope.dotacionRopa = { id_usuario: $scope.usuario.id }
+                $scope.sucursales.forEach(function (su) {
+                    if (su.numero == 0) {
+                        $scope.dotacionRopa.sucursal = su
+                    }
+                })
+                $scope.obtenerCargosEmpleado(edit, index, false)
+                $scope.abrirPopup($scope.idModalNuevaRopaTrabajo)
+            }
         }
         $scope.cerrarModalNuevaRopaTrabajo = function () {
+            $scope.ObtenerDotacionesRopa($scope.empleado)
             $scope.cerrarPopup($scope.idModalNuevaRopaTrabajo)
         }
-        $scope.abrirModalItemsNuevaRopaTrabajo = function (empleado) {
-            console.log($scope.dotacionItems)
-            $scope.empleado = empleado
+        $scope.abrirModalItemsNuevaRopaTrabajo = function () {
+            console.log($scope.dotacionRopa.dotacionItems)
+            $scope.obtenerListaRopaTrabajoProductos()
             $scope.abrirPopup($scope.idModalItemsNuevaRopaTrabajo)
         }
         $scope.cerrarModalItemsNuevaRopaTrabajo = function () {
@@ -2603,6 +2665,7 @@ angular.module('agil.controladores')
             $scope.obtenerTiposBaja()
             $scope.obtenerEstadoDotacion()
             $scope.obtenerCumplimientoDotacion()
+            $scope.obtenerPeriodosDotacion()
         }
         $scope.obtenerGrados = function () {
             blockUI.start();
@@ -4297,6 +4360,10 @@ angular.module('agil.controladores')
                     if ($scope.tipoDatosPermiso == "finiquito") {
                         $scope.cuenta = {}
                         $scope.abrirDialogBeneficiosSociales2($scope.dato, true)
+                    }
+                    if ($scope.tipoDatosPermiso == "dotacion") {
+                        $scope.cuenta = {}
+                        $scope.abrirDialogEliminarRopaTrabajo()
                     }
                     $scope.cerrarModalVerificarCuenta();
                 } else {
@@ -6427,7 +6494,7 @@ angular.module('agil.controladores')
                 blockUI.stop();
             });
         }
-        $scope.obtenerCargosEmpleado = function () {
+        $scope.obtenerCargosEmpleado = function (edit, pocision, nuevo) {
             var promesa = ListaCargosEmpleado($scope.empleado.id_ficha)
             promesa.then(function (datos) {
                 $scope.cargosEmpleado = datos
@@ -6480,16 +6547,131 @@ angular.module('agil.controladores')
                                                 }
                                                 if (i === ($scope.dotacionItems.length - 1)) {
                                                     if (bandera) {
+                                                        dato2.editable = true
+                                                        dato2.modificable = true
+                                                        dato2.entregado = false
                                                         $scope.dotacionItems.push(dato2)
                                                     }
                                                 }
                                             }
                                         } else {
+                                            dato2.editable = true
+                                            dato2.modificable = true
+                                            dato2.entregado = false
                                             $scope.dotacionItems.push(dato2)
                                         }
                                     })
                                     if (index3 === (array3.length - 1)) {
+                                        var dotacionItems2 = []
+                                        if (!edit) {
+                                            var comparar = ($scope.listaDotaciones.length > 0) ? (nuevo) ? false : true : false
+                                            if (comparar) {
+                                                //$scope.dotacionRopa.dotacionItems =  $scope.dotacionItems
+                                                var idsIndex = []
+                                                var ina = $scope.listaDotaciones.length - 1
+                                                if (pocision) {
+                                                    ina = pocision
+                                                }
+                                                console.log($scope.listaDotaciones[ina].dotacionItems.length)
+                                                console.log($scope.dotacionItems.length)
+                                                $scope.listaDotaciones[ina].dotacionItems.forEach(function (dato, index, array) {
+                                                    //$scope.dotacionRopa.dotacionItems
+                                                    var bandera2 = false
+                                                    for (var i = 0; i < $scope.dotacionItems.length; i++) {
+                                                        var element = $scope.dotacionItems[i];
+                                                        var bandera = (element.id_cargo == dato.id_cargo) ? (element.id_ropa_trabajo == dato.id_ropa_trabajo) ? true : false : false
+                                                        if (bandera) {
+                                                            element.producto = dato.producto
+                                                            element.cantidad = dato.cantidad
+                                                            element.entregado = dato.entregado
+                                                            if (element.entregado) {
+                                                                element.modificable = false
+                                                            }
+                                                            if (edit) {
+                                                                element.modificable = true
+                                                            }
+                                                            idsIndex.push(dato.id)
+                                                        } else {
+                                                            bandera2 = true
+                                                        }
+                                                    }
+                                                    if (bandera2) {
 
+                                                        dotacionItems2.push(dato)
+                                                    }
+                                                    if (index === (array.length - 1)) {
+
+
+                                                        idsIndex.forEach(function (dato, index3, array3) {
+                                                            // dotacionItems2.splice(dato, 1)
+                                                            for (var j = 0; j < dotacionItems2.length; j++) {
+                                                                var element2 = dotacionItems2[j];
+                                                                if (element2.id == dato) {
+                                                                    dotacionItems2.splice(j, 1)
+                                                                } else {
+                                                                    element2.editable = false
+                                                                }
+                                                            }
+                                                            if (index3 === (array3.length - 1)) {
+                                                                var arregloid = []
+                                                                $scope.dotacionItems.forEach(function (dotacion, index, array) {
+                                                                    for (let i = 0; i < dotacionItems2.length; i++) {
+                                                                        const element = dotacionItems2[i];
+                                                                        if (dotacion.id_ropa_trabajo == element.id_ropa_trabajo) {
+                                                                            dotacion.producto=element.producto
+                                                                            dotacion.cantidad = element.cantidad
+                                                                            dotacion.entregado = element.entregado
+                                                                            arregloid.push(element.id)
+                                                                        }
+                                                                    }
+                                                                    if (index === (array.length - 1)) {
+                                                                        if (arregloid.length > 0) {
+                                                                            arregloid.forEach(function (id, index, array) {
+                                                                                for (var j = 0; j < dotacionItems2.length; j++) {
+                                                                                    var element2 = dotacionItems2[j];
+                                                                                    if (element2.id == id) {
+                                                                                        dotacionItems2.splice(j, 1)
+                                                                                    } else {
+                                                                                        element2.editable = false
+                                                                                    }
+                                                                                }
+                                                                                if (index === (array.length - 1)) {
+                                                                                    $scope.dotacionItemsDetalle = $scope.dotacionItems.concat(dotacionItems2)
+                                                                                    $scope.dotacionRopa.dotacionItems = $scope.dotacionItemsDetalle
+                                                                                    var fecha = new Date()
+                                                                                    $scope.dotacionRopa.fecha = $scope.fechaATexto(fecha)
+                                                                                    $scope.dotacionRopa.fecha_vencimiento = $scope.fechaATexto($scope.dotacionRopa.fecha_vencimiento)
+                                                                                }
+                                                                            })
+                                                                        } else {
+                                                                            $scope.dotacionItemsDetalle = $scope.dotacionItems.concat(dotacionItems2)
+                                                                            $scope.dotacionRopa.dotacionItems = $scope.dotacionItemsDetalle
+                                                                            var fecha = new Date()
+                                                                            $scope.dotacionRopa.fecha = $scope.fechaATexto(fecha)
+                                                                            $scope.dotacionRopa.fecha_vencimiento = $scope.fechaATexto($scope.dotacionRopa.fecha_vencimiento)
+                                                                        }
+                                                                    }
+                                                                })
+
+                                                            }
+                                                        })
+
+
+
+                                                    }
+                                                });
+                                            } else {
+                                                $scope.dotacionRopa.dotacionItems = $scope.dotacionItems
+                                            }
+                                        } else {
+                                            var ina = $scope.listaDotaciones.length - 1
+                                            if (pocision != undefined) {
+                                                ina = pocision
+                                            }
+                                            $scope.dotacionRopa.dotacionItems = $scope.listaDotaciones[ina].dotacionItems
+
+
+                                        }
                                     }
                                 })
                             }
@@ -6513,6 +6695,239 @@ angular.module('agil.controladores')
                 $scope.cumplimientoDotacion = entidad
                 blockUI.stop();
             });
+        }
+        $scope.obtenerPeriodosDotacion = function () {
+            blockUI.start();
+            var promesa = ClasesTipo("RRHH_PDR");
+            promesa.then(function (entidad) {
+                $scope.periodoDotacion = entidad
+                blockUI.stop();
+            });
+        }
+        $scope.obtenerListaRopaTrabajoProductos = function () {
+            blockUI.start();
+            var subgrupos = ""
+            $scope.dotacionRopa.dotacionItems.forEach(function (item, index, array) {
+                if (index === (array.length - 1)) {
+                    subgrupos += item.id_ropa_trabajo
+                    var promesa = ListaRopaTrabajoProductos(subgrupos);
+                    promesa.then(function (entidad) {
+                        $scope.productosRopaTrabajo = entidad
+                        blockUI.stop();
+                    });
+                } else {
+                    subgrupos += item.id_ropa_trabajo + ","
+                }
+            });
+
+        }
+        $scope.calularInventarioItem = function (item) {
+            item.cantidad_disponible = 0
+            item.producto.inventarios.forEach(function (inv, index, array) {
+                item.cantidad_disponible += inv.cantidad
+            })
+        }
+        $scope.seleccionarItem = function (item) {
+            if (item.editable) {
+                if (item.modificable) {
+                    if (item.entregado) {
+                        item.entregado = (item.entregado) ? false : true
+                    } else {
+                        item.entregado = true
+                    }
+                }
+            }
+        }
+        $scope.guardarDotacionRopa = function (dotacion) {
+            blockUI.start();
+            if ($scope.actualizarDotacion) {
+                $scope.mostrarMensaje("falta funcion para actualizar")
+                blockUI.stop();
+            } else {
+                dotacion.fecha = new Date($scope.convertirFecha(dotacion.fecha))
+                dotacion.fecha_vencimiento = new Date($scope.convertirFecha(dotacion.fecha_vencimiento))
+                var promesa = GuardarDotacionRopa($scope.empleado.id, dotacion)
+                promesa.then(function (entidad) {
+                    $scope.mostrarMensaje(entidad.mensaje)
+                    $scope.ObtenerDotacionesRopa($scope.empleado)
+                    dotacion.numero = entidad.numero
+                    $scope.imprimirRopaTrabajo(dotacion)
+                    $scope.cerrarModalNuevaRopaTrabajo()
+                    blockUI.stop();
+                });
+            }
+        }
+        $scope.ObtenerDotacionesRopa = function (empleado, filtro, nuevo) {
+            var filtroRopa = { inicio: 0, fin: 0 }
+            if (filtro) {
+                if (filtro.inicio != undefined) {
+                    filtroRopa.inicio = filtro.inicio
+                    filtroRopa.fin = filtro.fin
+                }
+            }
+            var promesa = ListaDotacionRopa(empleado.id, filtroRopa)
+            promesa.then(function (entidad) {
+                if (entidad.length > 0) {
+                    entidad.forEach(function (dato, index, array) {
+                        dato.cargos = []
+                        dato.ropas = []
+                        dato.dotacionItems.forEach(function (dotacion, index, array) {
+                            if (dato.cargos.length > 0) {
+                                var bandera = true
+                                for (var i = 0; i < dato.cargos.length; i++) {
+                                    var element = dato.cargos[i];
+                                    if (element.nombre == dotacion.cargo.nombre) {
+                                        bandera = false
+                                    }
+                                }
+                                if (bandera) {
+                                    dato.cargos.push(dotacion.cargo)
+                                }
+                            } else {
+                                dato.cargos.push(dotacion.cargo)
+                            }
+                            if (dato.ropas.length > 0) {
+                                var bandera = true
+                                for (var i = 0; i < dato.ropas.length; i++) {
+                                    var element = dato.ropas[i];
+                                    if (element.nombre == dotacion.ropaTrabajo.nombre) {
+                                        bandera = false
+                                    }
+                                }
+                                if (bandera) {
+                                    dato.ropas.push(dotacion.ropaTrabajo)
+                                }
+                            } else {
+                                dato.ropas.push(dotacion.ropaTrabajo)
+                            }
+                        })
+                        if (index === (array.length - 1)) {
+                            $scope.listaDotaciones = entidad
+                            if (nuevo) {
+                                $scope.abrirModalNuevaRopaTrabajo($scope.empleado, false)
+                            }
+                        }
+                    })
+                } else {
+                    $scope.listaDotaciones = entidad
+                    if (nuevo) {
+                        $scope.abrirModalNuevaRopaTrabajo($scope.empleado, false)
+                    }
+                }
+
+                blockUI.stop();
+            });
+        }
+        $scope.abrirDialogEliminarRopaTrabajo = function () {
+
+            $scope.abrirPopup($scope.idModalEliminarRopaTrabajo)
+
+        }
+        $scope.cerrarDialogEliminarRopaTrabajo = function () {
+            $scope.dato = {}
+            $scope.cerrarPopup($scope.idModalEliminarRopaTrabajo)
+
+        }
+        $scope.eliminarRopaTrabajoEmpleado = function (ropa) {
+
+            var promesa = EliminarDotacionRopa(ropa)
+            promesa.then(function (dato) {
+                $scope.mostrarMensaje(dato.mensaje)
+                $scope.ObtenerDotacionesRopa($scope.empleado)
+                $scope.cerrarDialogEliminarRopaTrabajo()
+            })
+
+        }
+        $scope.imprimirRopaTrabajo = function (datos) {
+            var doc = new PDFDocument({ compress: false, size: 'letter', margin: 10 });
+            var stream = doc.pipe(blobStream());
+            var totalCosto = 0, totalTransporte = 0;
+            var y = 215, itemsPorPagina = 18, items = 0, pagina = 1, totalPaginas = Math.ceil(datos.dotacionItems.length / itemsPorPagina);
+            $scope.DibujarCabeceraPDFRopaTrabajo(doc, pagina, totalPaginas, datos);          
+            
+            doc.font('Helvetica', 10);
+            for (var i = 0; i < datos.dotacionItems.length && items <= itemsPorPagina; i++) {
+                item = datos.dotacionItems[i]
+                doc.text(item.producto.codigo, 45, y, { width: 70 });                codigo
+                doc.text(item.ropaTrabajo.nombre, 175, y, { width: 70 });
+                doc.text(item.producto.unidad_medida, 345, y, { width: 100 });
+                doc.text(item.cantidad, 485, y, { width: 100 });
+                y += 30
+                items++
+                if (items == itemsPorPagina) {
+                    doc.addPage({ margin: 0, bufferPages: true });
+                    y = 215;
+                    items = 0;
+                    pagina = pagina + 1;
+                    $scope.DibujarCabeceraPDFAnticipoRegular(doc, pagina, totalPaginas, datos);
+                  
+                    
+                }
+            }
+            doc.end();
+            stream.on('finish', function () {
+                var fileURL = stream.toBlobURL('application/pdf');
+                window.open(fileURL, '_blank', 'location=no');
+            });
+            blockUI.stop();
+
+        }
+
+        $scope.DibujarCabeceraPDFRopaTrabajo = function (doc, pagina, totalPaginas, dato) {
+            doc.font('Helvetica-Bold', 12);
+            doc.text("DOTACIÓN ROPA DE TRABAJO", 0, 45, { align: "center" });
+            doc.font('Helvetica', 10);
+            doc.text("Nro. " + dato.numero, 0, 65, { align: "center" });
+            doc.text($scope.fechaATexto(new Date(dato.fecha)), 0, 85, { align: "center" });
+            doc.font('Helvetica-Bold', 10);
+            doc.text("Empleado: ", 45, 100);
+            doc.text("Cargo: ", 400, 100)
+            doc.text("Campamento: ", 45, 120);
+            doc.text("Periodo: ", 45, 140);
+            doc.text("Estado: ", 400, 140);
+            doc.text("Retrasado", 45, 160);
+            doc.rect(35, 175, 535,0).dash(5,{space: 10}).stroke()
+            doc.rect(35, 200, 535,0).dash(5,{space: 10}).stroke()
+            doc.text("Código", 45, 185, { width: 70 });
+            doc.text("Descripcion", 175, 185, { width: 70 });
+            doc.text("Unidad", 345, 185, { width: 70 });
+            doc.text("Cant", 485, 185, { width: 70 });
+            doc.font('Helvetica', 10);
+            
+            doc.text($scope.empleado.nombre_completo, 100, 100);
+            doc.text(dato.periodo.nombre, 100, 140);
+            if($scope.empleado.campamento) doc.text($scope.empleado.campamento, 120, 120);
+           
+            doc.text(dato.estado.nombre, 440, 140);
+            var arregloCargos = ""
+            if (dato.cargos) {
+                dato.cargos.forEach(function (cargo, index, array) {
+
+                    if (index === (array.length - 1)) {
+                        arregloCargos += cargo.nombre
+                        doc.text(arregloCargos, 440, 100);
+                    } else {
+                        arregloCargos += cargo.nombre + ", "
+                    }
+                })
+            }else{
+                $scope.cargosEmpleado.forEach(function (cargo, index, array) {
+
+                    if (index === (array.length - 1)) {
+                        arregloCargos += cargo.cargo.nombre
+                        doc.text(arregloCargos, 440, 100);
+                    } else {
+                        arregloCargos += cargo.nombre + ", "
+                    }
+                })
+            }
+
+
+            var currentDate = new Date();
+            doc.text("USUARIO: " + $scope.usuario.persona.nombre_completo + " FECHA:" + $scope.fechaATexto(currentDate), 15, 765);
+            //doc.text("PÁGINA " + pagina + " DE " + totalPaginas, 0, 740, { align: "center" });
+
+
         }
         //fin ropa de trabajo
         $scope.inicio()

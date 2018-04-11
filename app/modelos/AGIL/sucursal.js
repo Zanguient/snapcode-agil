@@ -121,6 +121,10 @@ module.exports = function (sequelize, Sequelize) {
 		despacho_correlativo: {
 			type: Sequelize.INTEGER,
 			field: 'despacho_correlativo'
+		},
+		ropa_trabajo_correlativo: {
+			type: Sequelize.INTEGER,
+			field: 'ropa_trabajo_correlativo'
 		}
 	}, {
 			freezeTableName: true

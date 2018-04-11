@@ -44,7 +44,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 				$scope.idmodalActualizarCreditoCliente, $scope.idmodalActualizarCreditoDeuda, $scope.idModalPagoDeuda, $scope.idModalDescuento, $scope.idModalTablaVentasPendientes,
 				$scope.idModalTablaComprasPendientes, $scope.idModalTablaBancosPendientes, $scope.idModalTablaOtrosPendientes, $scope.idModalInicioSesion,
 				$scope.idModalWizardComprobanteEdicion, $scope.IdModalOpcionesQr, $scope.IdModalRegistrarComprobante, $scope.IdModalRevisarComprobante, $scope.IdModalLibroMayor, $scope.IdModalAsignarCuenta,
-				$scope.idModalTablaDespachos, $scope.idModalTablaAsignacionDespacho, $scope.IdModalEliminarProductoVencido, $scope.dialogAlertasProformas, $scope.facturarProformas, $scope.mensajeConfirmacionComprobante);
+				$scope.idModalTablaDespachos, $scope.idModalTablaAsignacionDespacho, $scope.IdModalEliminarProductoVencido, $scope.dialogAlertasProformas, $scope.facturarProformas, $scope.mensajeConfirmacionComprobante,$scope.idModalConceptoEdicion);
 
 			$scope.inicio();
 			blockUI.stop();

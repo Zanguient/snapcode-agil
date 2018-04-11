@@ -658,7 +658,7 @@
 											<div class="row">
 												<div class="col-sm-12">
 													<input required name="precio_unitario" step="0.001" min="{{detalleVenta.producto.rango_negativo?detalleVenta.producto.rango_negativo:0}}"
-													 max="{{detalleVenta.producto.rango_positivo?detalleVenta.producto.rango_positivo:5000}}" required class="col-xs-12"
+													 max="{{detalleVenta.producto.rango_positivo?detalleVenta.producto.rango_positivo:10000000}}" required class="col-xs-12"
 													 ng-change="calcularImporte()" ng-model="detalleVenta.precio_unitario" type="number" />
 												</div>
 											</div>

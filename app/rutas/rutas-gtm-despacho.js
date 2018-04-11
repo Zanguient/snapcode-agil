@@ -22,7 +22,7 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, forEach, j
 						fecha: new Date(req.body.fecha.split("/")[2], req.body.fecha.split("/")[1] - 1, req.body.fecha.split("/")[0]),						
 					}).then(function (detalleDespachoCreado) {
 						if (index === (array.length - 1)) {
-							res.json(despachoCreado);
+							res.json(detalleDespachoCreado);
 						}
 					});
 				});

@@ -151,6 +151,8 @@ module.exports = function (router, sequelize, Sequelize, jwt, md5, forEach, ensu
 	var RrhhEmpleadoBitacoraFicha= require('../modelos/AGIL/rrhh-empleado-bitacora-ficha')(sequelize, Sequelize);
 	var UsuarioGrupos = require('../modelos/SYS/usuario-grupos')(sequelize, Sequelize);
 	var RrhhEmpleadoConfiguracionRopa = require('../modelos/AGIL/rrhh-empleado-configuracion-ropa')(sequelize, Sequelize);
+	var RrhhEmpleadoDotacionRopaItem = require('../modelos/AGIL/rrhh-empleado-dotacion-ropa-item')(sequelize, Sequelize);
+	var RrhhEmpleadoDotacionRopa  = require('../modelos/AGIL/rrhh-empleado-dotacion-ropa')(sequelize, Sequelize);
 	//*****RELATIONS*****
 	require('../modelos/relaciones.js')(sequelize, Usuario, Persona, Rol, UsuarioRol, Tipo, Clase, Aplicacion, RolAplicacion,
 		Empresa, Sucursal, UsuarioSucursal, Cliente, Proveedor, Producto, UsuarioAplicacion,
@@ -168,7 +170,8 @@ module.exports = function (router, sequelize, Sequelize, jwt, md5, forEach, ensu
 		RrhhEmpleadoFichaOtrosSeguros, RrhhEmpleadoFichaFamiliar, MedicoPacientePreRequisito, RrhhEmpleadoDiscapacidad, RrhhEmpleadoCargo, ClienteRazon, GtmDestino, GtmEstibaje, GtmGrupoEstibaje, GtmTransportista, GtmDespacho, GtmClienteDestino,
 		RrhhEmpleadoHojaVida, RrhhEmpleadoFormacionAcademica, RrhhEmpleadoExperienciaLaboral, RrhhEmpleadoLogroInternoExterno, RrhhEmpleadoCapacidadInternaExterna, SolicitudReposicion, DetalleSolicitudProducto, DetalleSolicitudProductoBase, MonedaTipoCambio, ContabilidadCuentaAuxiliar, GtmDespachoDetalle, RrhhEmpleadoPrestamo, RrhhEmpleadoPrestamoPago, Proforma, DetallesProformas, Servicios, Farmacia, RRHHParametros, RrhhEmpleadoRolTurno, RrhhEmpleadoHorasExtra, RRHHPlanillaSueldos, RRHHDetallePlanillaSueldos, RrhhAnticipo, EvaluacionPolifuncional,
 		RrhhEmpleadoAusencia, RrhhEmpleadoVacaciones, RrhhEmpleadoCompensacionAusencia, RrhhClaseAsuencia,RrhhEmpleadoHistorialVacacion,RrhhEmpleadoTr3,RrhhEmpleadoAnticipoTr3,RrhhEmpleadoDeduccionIngreso,
-		RrhhEmpleadoBeneficioSocial,RrhhEmpleadoBitacoraFicha, UsuarioGrupos,RrhhEmpleadoConfiguracionRopa,GtmVentaKardex,GtmVentaKardexDetalle);
+		RrhhEmpleadoBeneficioSocial,RrhhEmpleadoBitacoraFicha, UsuarioGrupos,RrhhEmpleadoConfiguracionRopa,GtmVentaKardex,GtmVentaKardexDetalle,RrhhEmpleadoDotacionRopaItem,
+		RrhhEmpleadoDotacionRopa);
 
 	require('../sockets/pantallas.js')(io, socket);
 	//*****ROUTES*****
@@ -237,7 +240,8 @@ module.exports = function (router, sequelize, Sequelize, jwt, md5, forEach, ensu
 	require('./rutas-recursos-humanos')(router, sequelize, Sequelize, Usuario, MedicoPaciente, Persona, Empresa, Sucursal, Clase, Diccionario, Tipo, decodeBase64Image, fs, RrhhEmpleadoFicha, RrhhEmpleadoFichaOtrosSeguros, RrhhEmpleadoFichaFamiliar, RrhhEmpleadoDiscapacidad, RrhhEmpleadoCargo,
 		RrhhEmpleadoHojaVida, RrhhEmpleadoFormacionAcademica, RrhhEmpleadoExperienciaLaboral, RrhhEmpleadoLogroInternoExterno, RrhhEmpleadoCapacidadInternaExterna, NumeroLiteral, RrhhEmpleadoPrestamo, RrhhEmpleadoPrestamoPago, RrhhEmpleadoRolTurno, RrhhEmpleadoHorasExtra, RrhhAnticipo, EvaluacionPolifuncional, ConfiguracionCalificacionEvaluacionPolifuncional, ConfiguracionDesempenioEvaluacionPolifuncional, RrhhEmpleadoAusencia, RrhhEmpleadoVacaciones, RrhhEmpleadoCompensacionAusencia,
 		RrhhFeriado, RrhhClaseAsuencia,RrhhEmpleadoConfiguracionVacacion,RrhhEmpleadoHistorialVacacion,RrhhEmpleadoTr3,RrhhEmpleadoAnticipoTr3,Banco,RrhhEmpleadoDeduccionIngreso,
-		RrhhEmpleadoBeneficioSocial,RrhhEmpleadoBitacoraFicha,RrhhEmpleadoConfiguracionRopa)
+		RrhhEmpleadoBeneficioSocial,RrhhEmpleadoBitacoraFicha,RrhhEmpleadoConfiguracionRopa,Producto,Inventario,RrhhEmpleadoDotacionRopaItem,
+		RrhhEmpleadoDotacionRopa)
 
 	require('./rutas-planillas')(router, sequelize, Sequelize, Usuario, RRHHParametros, Persona, Empresa, Sucursal, Clase, Diccionario, Tipo, RrhhEmpleadoFicha, RrhhEmpleadoCargo, MedicoPaciente, RrhhEmpleadoDiscapacidad, RrhhEmpleadoFichaOtrosSeguros, RrhhEmpleadoFichaFamiliar, RrhhEmpleadoHorasExtra, RRHHPlanillaSueldos, RRHHDetallePlanillaSueldos, RrhhEmpleadoPrestamo, decodeBase64Image, fs)
 

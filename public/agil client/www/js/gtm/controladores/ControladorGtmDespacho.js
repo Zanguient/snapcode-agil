@@ -33,7 +33,7 @@ angular.module('agil.controladores')
             $scope.paginator = Paginator();
             $scope.paginator.column = "id";
             $scope.paginator.direccion = "asc";
-            
+
             $scope.filtro = {
                 id_empresa: $scope.usuario.id_empresa, inicio: "",
                 fin: "",
@@ -49,17 +49,19 @@ angular.module('agil.controladores')
 
         }
         $scope.buscarDespachados = function () {
-            if ($scope.paginator.filter.inicio != 0) {
-                $scope.paginator.filter.inicio = new Date($scope.convertirFecha($scope.paginator.filter.inicio))
-                $scope.paginator.filter.fin = new Date($scope.convertirFecha($scope.paginator.filter.fin))
-            }else{
-                var date= new Date()
-                var inicio= new Date(date.getFullYear(), date.getMonth(), 1);
-                var fin= new Date(date.getFullYear(), date.getMonth() + 1, 0);
+            if ($scope.paginator.filter.inicio) {
+                if ($scope.paginator.filter.inicio instanceof Date){}else{
+                    $scope.paginator.filter.inicio = new Date($scope.convertirFecha($scope.paginator.filter.inicio))
+                    $scope.paginator.filter.fin = new Date($scope.convertirFecha($scope.paginator.filter.fin))
+                }
+            } else {
+                var date = new Date()
+                var inicio = new Date(date.getFullYear(), date.getMonth(), 1);
+                var fin = new Date(date.getFullYear(), date.getMonth() + 1, 0);
                 $scope.paginator.filter.inicio = inicio
-                $scope.paginator.filter.fin = fin 
-                $scope.filtro.inicio=$scope.fechaATexto(inicio)
-                $scope.filtro.fin=$scope.fechaATexto(fin)
+                $scope.paginator.filter.fin = fin
+                $scope.filtro.inicio = $scope.fechaATexto(inicio)
+                $scope.filtro.fin = $scope.fechaATexto(fin)
             }
             blockUI.start();
             var promesa = GtmDespachos($scope.paginator);
@@ -95,7 +97,7 @@ angular.module('agil.controladores')
                             var x = 80
                             doc.font('Helvetica', 8);
                             var y = 115 + 80
-                            var a=0
+                            var a = 0
                             $scope.dibujarCabeceraPDFImpresion(doc, gtm_despacho, 0);
                             doc.font('Helvetica', 8);
                             doc.text(1, 55, y);
@@ -128,12 +130,12 @@ angular.module('agil.controladores')
                             if (texto.length > 37) {
                                 a = -6;
                             }
-                            doc.text(texto, 180, y+a, { width: 180 });                        
+                            doc.text(texto, 180, y + a, { width: 180 });
                             doc.text(gtm_despacho.cantidad_despacho, 380, y);
                             //doc.rect(40, x + 80 ,540, y - 70).stroke();
                             doc.text('SERVICIO DE TRANSPORTE', 180, y + 20);
                             doc.text(gtm_despacho.servicio_transporte, 520, y + 20);
-                            doc.text(gtm_despacho.importe+gtm_despacho.servicio_transporte, 520, y + 40);
+                            doc.text(gtm_despacho.importe + gtm_despacho.servicio_transporte, 520, y + 40);
                             doc.rect(40, y + 10, 540, 0).stroke();
                             doc.font('Helvetica-Bold', 8);
                             doc.text('Total', x + 250, y + 40)
@@ -185,7 +187,7 @@ angular.module('agil.controladores')
                             doc.rect(495, y - 35, 0, 85).stroke();
                             doc.rect(160, y + 50, 420, 0).stroke();
                             doc.rect(370, y + 70, 55, 0).stroke();
-                            doc.rect(370, y + 90, 55, 0).stroke();                           
+                            doc.rect(370, y + 90, 55, 0).stroke();
                             y = y + 20;
                             var a = 0
                             // doc.text(2, 55, y);
@@ -199,7 +201,7 @@ angular.module('agil.controladores')
                             //doc.rect(40, x + 80 ,540, y - 70).stroke();
                             doc.text('SERVICIO DE TRANSPORTE', 180, y + 20);
                             doc.text(gtm_despacho.servicio_transporte, 520, y + 20);
-                            doc.text(gtm_despacho.importe+gtm_despacho.servicio_transporte, 520, y + 40);
+                            doc.text(gtm_despacho.importe + gtm_despacho.servicio_transporte, 520, y + 40);
                             doc.rect(40, y + 10, 540, 0).stroke();
                             doc.font('Helvetica-Bold', 8);
                             doc.text('Total', x + 250, y + 40)
@@ -282,7 +284,7 @@ angular.module('agil.controladores')
                     //doc.rect(40, x + 80 ,540, y - 70).stroke();
                     doc.text('SERVICIO DE TRANSPORTE', 180, y + 20);
                     doc.text(gtm_despacho.servicio_transporte, 520, y + 20);
-                    doc.text(gtm_despacho.importe+gtm_despacho.servicio_transporte, 520, y + 40);
+                    doc.text(gtm_despacho.importe + gtm_despacho.servicio_transporte, 520, y + 40);
                     doc.rect(40, y + 10, 540, 0).stroke();
                     doc.font('Helvetica-Bold', 8);
                     doc.text('Total', x + 250, y + 40)
@@ -329,7 +331,7 @@ angular.module('agil.controladores')
                     doc.rect(370, y + 50, 0, 40).stroke();
                     doc.rect(495, y + 50, 0, 20).stroke();
                     doc.rect(580, y + 50, 0, 20).stroke();
-                   
+
                     /*  doc.rect(425, y - 35, 0, 105).stroke(); */
                     doc.rect(495, y - 35, 0, 85).stroke();
                     doc.rect(160, y + 50, 420, 0).stroke();
@@ -348,7 +350,7 @@ angular.module('agil.controladores')
                     //doc.rect(40, x + 80 ,540, y - 70).stroke();
                     doc.text('SERVICIO DE TRANSPORTE', 180, y + 20);
                     doc.text(gtm_despacho.servicio_transporte, 520, y + 20);
-                    doc.text(gtm_despacho.importe+gtm_despacho.servicio_transporte, 520, y + 40);
+                    doc.text(gtm_despacho.importe + gtm_despacho.servicio_transporte, 520, y + 40);
                     doc.rect(40, y + 10, 540, 0).stroke();
                     doc.font('Helvetica-Bold', 8);
                     doc.text('Total', x + 250, y + 40)
@@ -404,7 +406,7 @@ angular.module('agil.controladores')
             doc.text(gtm_despacho.despacho.cliente.codigo, 510, y + 80);
             var textoSap = ""
             doc.text(gtm_despacho.despacho.cliente.razon_social, 80, y + 90);
-          
+
             var ydesc = y + 90;
 
             doc.font('Helvetica-Bold', 8);
@@ -431,30 +433,30 @@ angular.module('agil.controladores')
             doc.text("Importe", 520, 90 + yCabecera);
             doc.text("Clientes:", 40, y + 90);
             doc.text("Destino Mercaderia:", 40, y + 100);
-            var texto=gtm_despacho.despacho.destino.direccion + " " + gtm_despacho.despacho.destino.destino
-            var a =0;
-            if(texto.length>61){
-                a=10;
+            var texto = gtm_despacho.despacho.destino.direccion + " " + gtm_despacho.despacho.destino.destino
+            var a = 0;
+            if (texto.length > 61) {
+                a = 10;
             }
-            doc.text("Nombre Fact:", 40, y + 110+a);
+            doc.text("Nombre Fact:", 40, y + 110 + a);
             doc.font('Helvetica', 8);
             if (gtm_despacho.despacho.cliente_razon !== null && gtm_despacho.despacho.cliente_razon !== undefined) {
                 textoSap = gtm_despacho.despacho.cliente_razon.codigo_sap
-                doc.text(gtm_despacho.despacho.cliente_razon.razon_social, 100, y + 110+a);
+                doc.text(gtm_despacho.despacho.cliente_razon.razon_social, 100, y + 110 + a);
             }
-            doc.text(textoSap, 510, y+90, { width: 80 })
+            doc.text(textoSap, 510, y + 90, { width: 80 })
             doc.font('Helvetica-Bold', 8);
-            doc.text("CI/NIT:", 40, y + 120+a);
-            doc.text("Teléfono:", 200, y + 120+a);
-            doc.text("Dirección:", 40, y + 130+a);
+            doc.text("CI/NIT:", 40, y + 120 + a);
+            doc.text("Teléfono:", 200, y + 120 + a);
+            doc.text("Dirección:", 40, y + 130 + a);
 
             doc.font('Helvetica', 8);
-            doc.text(gtm_despacho.despacho.cliente.nit, 80, y + 120+a);
-            if (gtm_despacho.despacho.cliente.telefono1) doc.text(gtm_despacho.despacho.cliente.telefono1, 240, y + 120+a);
-            doc.text(gtm_despacho.despacho.cliente.direccion, 80, y + 130+a);
+            doc.text(gtm_despacho.despacho.cliente.nit, 80, y + 120 + a);
+            if (gtm_despacho.despacho.cliente.telefono1) doc.text(gtm_despacho.despacho.cliente.telefono1, 240, y + 120 + a);
+            doc.text(gtm_despacho.despacho.cliente.direccion, 80, y + 130 + a);
 
             if (gtm_despacho.despacho.destino !== null && gtm_despacho.despacho.destino !== undefined) {
-                doc.text(texto, 120, y + 100,{width:320});
+                doc.text(texto, 120, y + 100, { width: 320 });
             } else {
                 doc.text("" + " " + "", 120, y + 100);
             }

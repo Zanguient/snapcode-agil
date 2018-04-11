@@ -1,0 +1,1 @@
+ALTER TABLE agil_sucursal drop ropa_trabajo_correlativo;

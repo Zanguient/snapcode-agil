@@ -14,7 +14,8 @@ module.exports = function (sequelize, Usuario, Persona, Rol, UsuarioRol, Tipo, C
 	RrhhEmpleadoFichaOtrosSeguros, RrhhEmpleadoFichaFamiliar, MedicoPacientePreRequisito, RrhhEmpleadoDiscapacidad, RrhhEmpleadoCargo, ClienteRazon, GtmDestino, GtmEstibaje, GtmGrupoEstibaje, GtmTransportista, GtmDespacho, GtmClienteDestino,
 	RrhhEmpleadoHojaVida, RrhhEmpleadoFormacionAcademica, RrhhEmpleadoExperienciaLaboral, RrhhEmpleadoLogroInternoExterno, RrhhEmpleadoCapacidadInternaExterna, SolicitudReposicion, DetalleSolicitudProducto, DetalleSolicitudProductoBase, MonedaTipoCambio, ContabilidadCuentaAuxiliar, GtmDespachoDetalle, RrhhEmpleadoPrestamo, RrhhEmpleadoPrestamoPago, Proforma, DetallesProformas, Servicios, Farmacia, RRHHParametros, RrhhEmpleadoRolTurno, RrhhEmpleadoHorasExtra, RRHHPlanillaSueldos, RRHHDetallePlanillaSueldos, RrhhAnticipo, EvaluacionPolifuncional,
 	RrhhEmpleadoAusencia, RrhhEmpleadoVacaciones, RrhhEmpleadoCompensacionAusencia, RrhhClaseAsuencia, RrhhEmpleadoHistorialVacacion, RrhhEmpleadoTr3, RrhhEmpleadoAnticipoTr3, RrhhEmpleadoDeduccionIngreso,
-	RrhhEmpleadoBeneficioSocial, RrhhEmpleadoBitacoraFicha, UsuarioGrupos, RrhhEmpleadoConfiguracionRopa, GtmVentaKardex, GtmVentaKardexDetalle) {
+	RrhhEmpleadoBeneficioSocial, RrhhEmpleadoBitacoraFicha, UsuarioGrupos, RrhhEmpleadoConfiguracionRopa, GtmVentaKardex, GtmVentaKardexDetalle,RrhhEmpleadoDotacionRopaItem,
+	RrhhEmpleadoDotacionRopa) {
 
 	Persona.belongsTo(Clase, { foreignKey: 'id_lugar_nacimiento', as: 'lugar_nacimiento' });
 	Persona.belongsTo(Clase, { foreignKey: 'id_genero', as: 'genero' });
@@ -51,7 +52,8 @@ module.exports = function (sequelize, Usuario, Persona, Rol, UsuarioRol, Tipo, C
 	Usuario.hasMany(RrhhEmpleadoPrestamo, { foreignKey: 'id_usuario', as: 'prestamosUsuarios' });
 	Usuario.hasMany(RrhhEmpleadoPrestamoPago, { foreignKey: 'id_usuario', as: 'pagosPrestamo' });
 	Usuario.hasMany(GtmVentaKardex, { foreignKey: 'id_usuario', as: 'ventasKardex' })
-	
+	Usuario.hasMany(RrhhEmpleadoDotacionRopa, { foreignKey: 'id_usuario', as: 'dotacionesRopa' })
+
 	Usuario.hasMany(UsuarioGrupos, { foreignKey: 'id_usuario', as: 'grupos' });
 	UsuarioGrupos.belongsTo(Usuario, { foreignKey: 'id_usuario', as: 'usuario' });
 	Clase.hasMany(UsuarioGrupos, { foreignKey: 'id_grupo', as: 'clasegrupo' });
@@ -172,7 +174,12 @@ module.exports = function (sequelize, Usuario, Persona, Rol, UsuarioRol, Tipo, C
 	Clase.hasMany(MedicoPaciente, { foreignKey: 'id_campo', as: 'empleadosCampo' });
 	Clase.hasMany(RrhhEmpleadoConfiguracionRopa, { foreignKey: 'id_ropa_trabajo', as: 'ropasTrabajo' })
 	Clase.hasMany(RrhhEmpleadoConfiguracionRopa, { foreignKey: 'id_cargo', as: 'ConfiguracionesCargo' })
-
+	
+	Clase.hasMany(RrhhEmpleadoDotacionRopaItem, { foreignKey: 'id_ropa_trabajo', as: 'ropas' })	
+	Clase.hasMany(RrhhEmpleadoDotacionRopaItem, { foreignKey: 'id_cargo', as: 'ropasCargo' })
+	Clase.hasMany(RrhhEmpleadoDotacionRopa, { foreignKey: 'id_cumplimiento', as: 'cumplimientos' })
+	Clase.hasMany(RrhhEmpleadoDotacionRopa, { foreignKey: 'id_periodo', as: 'periodos' })
+	Clase.hasMany(RrhhEmpleadoDotacionRopa, { foreignKey: 'id_estado', as: 'estados' })
 	// MedicoPrerequisito.belongsTo(Clase, { foreignKey: 'id_prerequisito', as: 'prerequisitoClase' });//Ya no es requerido/util/relacion desde 13/12/2017
 	// MedicoPrerequisito.belongsTo(MedicoPaciente, { foreignKey: 'id_paciente', as: 'prerequisitoPaciente' });///Ya no es requerido/util/relacion desde 13/12/2017
 	MedicoPrerequisito.hasMany(MedicoPacientePreRequisito, { foreignKey: 'id_prerequisito', as: 'preRequisitos' })
@@ -254,6 +261,7 @@ module.exports = function (sequelize, Usuario, Persona, Rol, UsuarioRol, Tipo, C
 
 	ClienteRazon.belongsTo(Cliente, { foreignKey: 'id_cliente', as: 'cliente' });
 	ClienteRazon.hasMany(GtmDespacho, { foreignKey: 'id_cliente_razon', as: 'despachos' });
+	ClienteRazon.hasMany(GtmVentaKardex, { foreignKey: 'id_cliente_razon', as: 'kardex' });
 	Cliente.hasMany(ClienteRazon, { foreignKey: 'id_cliente', as: 'clientes_razon' });
 
 	Proveedor.belongsTo(Empresa, { foreignKey: 'id_empresa', as: 'empresa' });
@@ -277,7 +285,8 @@ module.exports = function (sequelize, Usuario, Persona, Rol, UsuarioRol, Tipo, C
 	Producto.hasMany(MantenimientoOrdenTrabajoMaterial, { foreignKey: 'id_producto', as: 'productos' });
 	Producto.hasMany(MantenimientoOrdenTrabajo, { foreignKey: 'id_producto', as: 'productos' });
 	Producto.hasMany(GtmVentaKardexDetalle, { foreignKey: 'id_producto', as: 'detalleVentaKardex' })
-	
+	Producto.hasMany(RrhhEmpleadoDotacionRopaItem, { foreignKey: 'id_producto', as: 'itemsRopa' })
+
 	ProductoBase.belongsTo(Producto, { foreignKey: 'id_producto', as: 'producto' });
 	ProductoBase.belongsTo(Producto, { foreignKey: 'id_producto_base', as: 'productoBase' });
 
@@ -506,7 +515,8 @@ module.exports = function (sequelize, Usuario, Persona, Rol, UsuarioRol, Tipo, C
 	MedicoPaciente.hasOne(Farmacia, { foreignKey: 'id_paciente', as: 'farmaciaPaciente' });
 	//MedicoPaciente.hasMany(RrhhEmpleadoAusencia, { foreignKey: 'id_empleado', as: 'ausencias' })//ya no funciona 12/03/2018
 	//MedicoPaciente.hasMany(RrhhEmpleadoVacaciones, { foreignKey: 'id_empleado', as: 'vacaciones' })//ya no funciona 12/03/2018
-
+	MedicoPaciente.hasMany(RrhhEmpleadoDotacionRopa, { foreignKey: 'id_empleado', as: 'dotacionesRopa' })	
+	
 	//RrhhEmpleadoHorasExtra.belongsTo(MedicoPaciente, { foreignKey: 'id_empleado', as: 'empleado' });//ya no funciona 12/03/2018
 	RrhhEmpleadoHorasExtra.belongsTo(RrhhEmpleadoFicha, { foreignKey: 'id_ficha', as: 'ficha' });
 
@@ -868,6 +878,10 @@ module.exports = function (sequelize, Usuario, Persona, Rol, UsuarioRol, Tipo, C
 	GtmVentaKardex.hasMany(GtmVentaKardexDetalle, { foreignKey: 'id_kardex', as: 'detalles_kardex' })
 	GtmVentaKardex.belongsTo(Empresa, { foreignKey: 'id_empresa', as: 'empresa' })
 	GtmVentaKardex.belongsTo(Usuario, { foreignKey: 'id_usuario', as: 'usuario' })
+	GtmVentaKardex.belongsTo(ClienteRazon, { foreignKey: 'id_cliente_razon', as: 'cliente_razon' });
+
+	Cliente.hasMany(GtmVentaKardex, { foreignKey: 'id_cliente', as: 'kardex' });
+	GtmVentaKardex.belongsTo(Cliente, { foreignKey: 'id_cliente', as: 'cliente' });
 
 	GtmVentaKardexDetalle.belongsTo(GtmVentaKardex, { foreignKey: 'id_kardex', as: 'kardex' })
 	GtmVentaKardexDetalle.belongsTo(Producto, { foreignKey: 'id_producto', as: 'producto' })
@@ -878,4 +892,15 @@ module.exports = function (sequelize, Usuario, Persona, Rol, UsuarioRol, Tipo, C
 	GtmVentaKardexDetalle.hasMany(GtmVentaKardexDetalle, { foreignKey: 'id_padre', as: 'hijosDetalle' })
 	GtmVentaKardexDetalle.belongsTo(GtmVentaKardexDetalle, { foreignKey: 'id_padre', as: 'padre' })
 
+	RrhhEmpleadoDotacionRopaItem.belongsTo(RrhhEmpleadoDotacionRopa, { foreignKey: 'id_dotacion_ropa', as: 'dotacionRopa' })
+	RrhhEmpleadoDotacionRopaItem.belongsTo(Producto, { foreignKey: 'id_producto', as: 'producto' })
+	RrhhEmpleadoDotacionRopaItem.belongsTo(Clase, { foreignKey: 'id_ropa_trabajo', as: 'ropaTrabajo' })
+	RrhhEmpleadoDotacionRopaItem.belongsTo(Clase, { foreignKey: 'id_cargo', as: 'cargo' })
+	
+	RrhhEmpleadoDotacionRopa.belongsTo(Clase, { foreignKey: 'id_cumplimiento', as: 'cumplimiento' })
+	RrhhEmpleadoDotacionRopa.belongsTo(Clase, { foreignKey: 'id_periodo', as: 'periodo' })
+	RrhhEmpleadoDotacionRopa.belongsTo(Clase, { foreignKey: 'id_estado', as: 'estado' })
+	RrhhEmpleadoDotacionRopa.hasMany(RrhhEmpleadoDotacionRopaItem, { foreignKey: 'id_dotacion_ropa', as: 'dotacionItems' })
+	RrhhEmpleadoDotacionRopa.belongsTo(MedicoPaciente, { foreignKey: 'id_empleado', as: 'empleado' })	
+	RrhhEmpleadoDotacionRopa.belongsTo(Usuario, { foreignKey: 'id_usuario', as: 'usuario' })
 }
