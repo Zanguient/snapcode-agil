@@ -44,7 +44,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 				$scope.idmodalActualizarCreditoCliente, $scope.idmodalActualizarCreditoDeuda, $scope.idModalPagoDeuda, $scope.idModalDescuento, $scope.idModalTablaVentasPendientes,
 				$scope.idModalTablaComprasPendientes, $scope.idModalTablaBancosPendientes, $scope.idModalTablaOtrosPendientes, $scope.idModalInicioSesion,
 				$scope.idModalWizardComprobanteEdicion, $scope.IdModalOpcionesQr, $scope.IdModalRegistrarComprobante, $scope.IdModalRevisarComprobante, $scope.IdModalLibroMayor, $scope.IdModalAsignarCuenta,
-				$scope.idModalTablaDespachos, $scope.idModalTablaAsignacionDespacho, $scope.IdModalEliminarProductoVencido, $scope.dialogAlertasProformas, $scope.facturarProformas, $scope.mensajeConfirmacionComprobante,$scope.idModalConceptoEdicion);
+				$scope.idModalTablaDespachos, $scope.idModalTablaAsignacionDespacho, $scope.IdModalEliminarProductoVencido, $scope.dialogAlertasProformas, $scope.facturarProformas, $scope.mensajeConfirmacionComprobante);
 
 			$scope.inicio();
 			blockUI.stop();
@@ -1141,16 +1141,14 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 
 		$scope.cargarPagina = function () {
 			$scope.generarMenus($scope.usuario);
-			$scope.vencimientoTotal = 0;console.log($scope.usuario);
+			$scope.vencimientoTotal = 0;
+			$scope.actualizarVencimientoDosificaciones()
+			$scope.obtenerCentroCostos()
+			$scope.obtenerMovimientoEgresoBaja();
+			$scope.obtenerTiposComprobante();
+			$scope.reiniciarCorrelativoComprobantes()
+			$scope.sucursales = $scope.obtenerSucursales();
 			if ($scope.usuario.empresa) {
-				$scope.actualizarVencimientoDosificaciones()
-				$scope.obtenerCentroCostos();
-				$scope.obtenerMovimientoEgresoBaja();
-				$scope.obtenerTiposComprobante();
-				$scope.reiniciarCorrelativoComprobantes()
-				$scope.sucursales = $scope.obtenerSucursales();
-
-
 				if ($scope.usuario.empresa.usar_vencimientos) {
 					$scope.verificarVencimientosProductos($scope.usuario.id_empresa);
 					$scope.verificarVencimientosCreditos($scope.usuario.id_empresa);
@@ -1226,25 +1224,21 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 				if (res.type == false) {
 					$scope.error = res.data;
 				} else {
-					$scope.usuario = res.data;
-					$localStorage.token = res.data.token;
-					$scope.token = $localStorage.token;
-					if(res.data.id_empresa){
-						var promesa = UsuarioSucursalesAutenticacion(res.data.id);
-						promesa.then(function (usuarioSucursales) {
-							promesa = EmpresaDatosInicio(res.data.id_empresa);
-							promesa.then(function (empresa) {
-								res.data.empresa = empresa[0];
-								res.data.sucursalesUsuario = usuarioSucursales;
-								$localStorage.usuario = JSON.stringify(res.data);
-								$scope.cargarPagina();
-							});
+					var promesa = UsuarioSucursalesAutenticacion(res.data.id);
+					promesa.then(function (usuarioSucursales) {
+						promesa = EmpresaDatosInicio(res.data.id_empresa);
+						promesa.then(function (empresa) {
+							res.data.empresa = empresa[0];
+							res.data.sucursalesUsuario = usuarioSucursales;
+							$localStorage.token = res.data.token;
+							$localStorage.usuario = JSON.stringify(res.data);
+							$scope.token = $localStorage.token;
+							usuario = res.data;
+							$scope.usuario = usuario;
+							document.title = 'AGIL - ' + $scope.usuario.nombre_usuario;
+							$scope.cargarPagina();
 						});
-					}else{
-						$localStorage.usuario = JSON.stringify(res.data);
-						$scope.cargarPagina();
-					}	
-					document.title = 'AGIL - ' + $scope.usuario.nombre_usuario;
+					});
 				}
 				blockUI.stop();
 			}, function (data, status, headers, config) {
