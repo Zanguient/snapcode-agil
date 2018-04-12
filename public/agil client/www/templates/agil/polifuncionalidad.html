@@ -1,7 +1,7 @@
 <div class="row">
     <div class="col-xs-12">
         <h3 class="header lighter blue">POLIFUNCIONALIDAD TRABAJADORES</h3>
-        <button ng-disabled="comprobarConfiguracion()" class="btn btn-primary" ng-click="abrirNuevoEvaluacionPolifuncional()">
+        <button ng-disabled="!aplicacion.puede_crear" class="btn btn-primary" ng-click="abrirNuevoEvaluacionPolifuncional()">
             <i class="ace-icon fa fa-plus align-top bigger-125"></i>
             Nuevo
         </button>
