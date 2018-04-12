@@ -2317,7 +2317,7 @@ module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Su
 				} else {
 					MedicoPaciente.find({
 						where: { id: req.params.id_paciente },
-						include: [{ model: Clase, as: 'campo' },
+						include: [{ model: Clase, as: 'extension' },{ model: Clase, as: 'campo' },
 						{ model: Persona, as: 'persona', include: [{ model: Clase, as: 'genero' }] },
 						{ model: Empresa, as: 'empresa' }]
 					}).then(function (pacienteEncontrado) {

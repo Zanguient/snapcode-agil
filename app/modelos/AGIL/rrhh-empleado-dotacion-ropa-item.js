@@ -24,6 +24,10 @@ module.exports = function (sequelize, Sequelize) {
         cantidad: {
             type: Sequelize.INTEGER,
             field: 'cantidad'
+        },
+        anterior:{
+            type: Sequelize.BOOLEAN,
+            field: 'anterior' 
         }
     }, {
             freezeTableName: true

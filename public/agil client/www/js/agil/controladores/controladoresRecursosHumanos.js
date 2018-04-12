@@ -6618,7 +6618,7 @@ angular.module('agil.controladores')
                                                                     for (let i = 0; i < dotacionItems2.length; i++) {
                                                                         const element = dotacionItems2[i];
                                                                         if (dotacion.id_ropa_trabajo == element.id_ropa_trabajo) {
-                                                                            dotacion.producto=element.producto
+                                                                            dotacion.producto = element.producto
                                                                             dotacion.cantidad = element.cantidad
                                                                             dotacion.entregado = element.entregado
                                                                             arregloid.push(element.id)
@@ -6843,25 +6843,31 @@ angular.module('agil.controladores')
             var stream = doc.pipe(blobStream());
             var totalCosto = 0, totalTransporte = 0;
             var y = 215, itemsPorPagina = 18, items = 0, pagina = 1, totalPaginas = Math.ceil(datos.dotacionItems.length / itemsPorPagina);
-            $scope.DibujarCabeceraPDFRopaTrabajo(doc, pagina, totalPaginas, datos);          
-            
+            $scope.DibujarCabeceraPDFRopaTrabajo(doc, pagina, totalPaginas, datos);
+
             doc.font('Helvetica', 10);
             for (var i = 0; i < datos.dotacionItems.length && items <= itemsPorPagina; i++) {
                 item = datos.dotacionItems[i]
-                doc.text(item.producto.codigo, 45, y, { width: 70 });                codigo
-                doc.text(item.ropaTrabajo.nombre, 175, y, { width: 70 });
-                doc.text(item.producto.unidad_medida, 345, y, { width: 100 });
-                doc.text(item.cantidad, 485, y, { width: 100 });
-                y += 30
-                items++
+                if (item.entregado) {
+                    var cargardatos=(item.anterior)?false:true
+                    if (cargardatos) {
+                        doc.text(item.producto.codigo, 45, y, { width: 70 }); codigo
+                        doc.text(item.ropaTrabajo.nombre, 175, y, { width: 70 });
+                        doc.text(item.producto.unidad_medida, 345, y, { width: 100 });
+                        doc.text(item.cantidad, 485, y, { width: 100 });
+                        y += 30
+
+                        items++
+                    }
+                }
                 if (items == itemsPorPagina) {
                     doc.addPage({ margin: 0, bufferPages: true });
                     y = 215;
                     items = 0;
                     pagina = pagina + 1;
                     $scope.DibujarCabeceraPDFAnticipoRegular(doc, pagina, totalPaginas, datos);
-                  
-                    
+
+
                 }
             }
             doc.end();
@@ -6886,18 +6892,18 @@ angular.module('agil.controladores')
             doc.text("Periodo: ", 45, 140);
             doc.text("Estado: ", 400, 140);
             doc.text("Retrasado", 45, 160);
-            doc.rect(35, 175, 535,0).dash(5,{space: 10}).stroke()
-            doc.rect(35, 200, 535,0).dash(5,{space: 10}).stroke()
+            doc.rect(35, 175, 535, 0).dash(5, { space: 10 }).stroke()
+            doc.rect(35, 200, 535, 0).dash(5, { space: 10 }).stroke()
             doc.text("Código", 45, 185, { width: 70 });
             doc.text("Descripcion", 175, 185, { width: 70 });
             doc.text("Unidad", 345, 185, { width: 70 });
             doc.text("Cant", 485, 185, { width: 70 });
             doc.font('Helvetica', 10);
-            
+
             doc.text($scope.empleado.nombre_completo, 100, 100);
             doc.text(dato.periodo.nombre, 100, 140);
-            if($scope.empleado.campamento) doc.text($scope.empleado.campamento, 120, 120);
-           
+            if ($scope.empleado.campamento) doc.text($scope.empleado.campamento, 120, 120);
+
             doc.text(dato.estado.nombre, 440, 140);
             var arregloCargos = ""
             if (dato.cargos) {
@@ -6910,7 +6916,7 @@ angular.module('agil.controladores')
                         arregloCargos += cargo.nombre + ", "
                     }
                 })
-            }else{
+            } else {
                 $scope.cargosEmpleado.forEach(function (cargo, index, array) {
 
                     if (index === (array.length - 1)) {
@@ -6921,8 +6927,6 @@ angular.module('agil.controladores')
                     }
                 })
             }
-
-
             var currentDate = new Date();
             doc.text("USUARIO: " + $scope.usuario.persona.nombre_completo + " FECHA:" + $scope.fechaATexto(currentDate), 15, 765);
             //doc.text("PÁGINA " + pagina + " DE " + totalPaginas, 0, 740, { align: "center" });
