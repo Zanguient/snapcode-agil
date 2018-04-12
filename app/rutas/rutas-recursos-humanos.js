@@ -2068,7 +2068,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                                     }).then(function (expClase) {
                                         var idexpClase = null
                                         if (expClase) {
-                                            idexpClase = expClase.id
+                                            idexpClase = expClase.dataValues.id
                                         }
                                         return Sucursal.find({
                                             where: {
@@ -2119,7 +2119,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                                                                 id_extension: idexpClase,
                                                                 cargo: pacienteActual.cargo,
                                                                 id_campo: idcentroCosto,
-                                                                id_tipo_documento: TexpClase.id,
+                                                                id_tipo_documento: TexpClase.dataValues.id,
                                                                 designacion_empresa: pacienteActual.designacion_empresa,
                                                                 eliminado: pacienteActual.eliminado,
                                                                 es_empleado: true
@@ -2492,7 +2492,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                                             }).then(function (expClase) {
                                                 var idexp = null
                                                 if (expClase) {
-                                                    idexp = expClase.id
+                                                    idexp = expClase.dataValues.id
                                                 }
                                                 return Sucursal.find({
                                                     where: {
@@ -2533,7 +2533,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                                                             }).then(function (tipoE) {
                                                                 return Clase.find({
                                                                     where: {
-                                                                        nombre: "CI",
+                                                                        nombre_corto: "CI",
                                                                         id_tipo: tipoE.dataValues.id,
                                                                     },
                                                                     transaction: t,
@@ -2547,7 +2547,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                                                                         codigo: pacienteActual.codigo,
                                                                         cargo: pacienteActual.cargo,
                                                                         id_extension: idexp,
-                                                                        id_tipo_documento: TexpClase.id,
+                                                                        id_tipo_documento: TexpClase.dataValues.id,
                                                                         id_campo: id,
                                                                         designacion_empresa: pacienteActual.designacion_empresa,
                                                                         eliminado: false,

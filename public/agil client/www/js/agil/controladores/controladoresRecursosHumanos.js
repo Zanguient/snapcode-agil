@@ -4797,13 +4797,13 @@ angular.module('agil.controladores')
         $scope.AgregarAnticipoExtraordinario = function () {
             /*   $scope.obtenerAnticiposExtra($scope.empleado) */
             if ($scope.listaAnticipos.length == 0) {
-                var anticipo = { fecha: new Date(), monto: null, total2: $scope.anticipo_ordinaroOextra, anticipo_ordinaro: $scope.anticipo_ordinaroOextra, total: $scope.anticipo_ordinaroOextra, salario_basico: $scope.empleado.haber_basico, saldo_salario: $scope.empleado.haber_basico, empleado:$scope.empleado }
+                var anticipo = { fecha: new Date(), monto: null, total2: $scope.anticipo_ordinaroOextra, anticipo_ordinaro: $scope.anticipo_ordinaroOextra, total: $scope.anticipo_ordinaroOextra, salario_basico: $scope.empleado.haber_basico, saldo_salario: $scope.empleado.haber_basico, empleado: $scope.empleado }
                 $scope.listaAnticipos.push(anticipo)
             } else {
                 if ($scope.listaAnticipos[$scope.listaAnticipos.length - 1].id) {
 
 
-                    var anticipo = { fecha: new Date(), monto: null, anticipo_ordinaro: $scope.anticipo_ordinaroOextra, total: $scope.listaAnticipos[$scope.listaAnticipos.length - 1].total, salario_basico: $scope.empleado.haber_basico, saldo_salario: null, empleado:$scope.empleado}
+                    var anticipo = { fecha: new Date(), monto: null, anticipo_ordinaro: $scope.anticipo_ordinaroOextra, total: $scope.listaAnticipos[$scope.listaAnticipos.length - 1].total, salario_basico: $scope.empleado.haber_basico, saldo_salario: null, empleado: $scope.empleado }
 
                     anticipo.saldo_salario = anticipo.salario_basico - anticipo.total
 
@@ -6875,6 +6875,21 @@ angular.module('agil.controladores')
 
                 }
             }
+            doc.font('Helvetica', 10);
+            var currentDate = new Date();
+            if (y < 400) {
+                y = 335
+            } else {
+                y += 30
+            }
+            doc.rect(85, y - 5, 85, 0).dash(5, { space: 10 }).stroke()
+            doc.rect(300, y - 5, 85, 0).dash(5, { space: 10 }).stroke()
+            doc.rect(455, y - 5, 85, 0).dash(5, { space: 10 }).stroke()
+            doc.text("encargado Área", 85, y);
+            doc.text("Supervisor", 315, y);
+            doc.text("Recibó conforme", 455, y);
+            y += 30
+            doc.text("USUARIO: " + $scope.usuario.persona.nombre_completo + " FECHA:" + $scope.fechaATexto(currentDate), 15, y);
             doc.end();
             stream.on('finish', function () {
                 var fileURL = stream.toBlobURL('application/pdf');
@@ -6932,15 +6947,14 @@ angular.module('agil.controladores')
                     }
                 })
             }
-            var currentDate = new Date();
-            doc.text("USUARIO: " + $scope.usuario.persona.nombre_completo + " FECHA:" + $scope.fechaATexto(currentDate), 15, 765);
+
             //doc.text("PÁGINA " + pagina + " DE " + totalPaginas, 0, 740, { align: "center" });
 
 
         }
         $scope.generarReporteRopaTrabajo = function (tipo, filtro) {
             if (tipo == "pdf") {
-                $scope.mostrarMensaje(tipo)
+                $scope.generarpdfRopaTrabajoEmpleados(filtro)
             } else {
                 $scope.generarExcelRopaTrabajoEmpleados(filtro)
             }
@@ -6959,10 +6973,10 @@ angular.module('agil.controladores')
                     filtro.inicio = ""
                     filtro.fin = ""
                 }
-                var cont=1
+                var cont = 1
                 var data = [["N°", "Asignado a:", "Codigo de Artículo", "Descripción", "unidad", "cantidad", "PU", "TOTAL", "N° de Documento", "Fecha de Entrega"]]
                 for (var i = 0; i < datos.length; i++) {
-                    if (datos[i].dotacionRopa.empleado.id_campo==filtro.campo) {
+                    if (datos[i].dotacionRopa.empleado.id_campo == filtro.campo) {
                         var columns = [];
                         columns.push((cont++));
                         columns.push(datos[i].dotacionRopa.empleado.persona.nombre_completo);
@@ -6987,6 +7001,69 @@ angular.module('agil.controladores')
                 saveAs(new Blob([s2ab(wbout)], { type: "application/octet-stream" }), "REPORTES CONFIGURACION ROPA DE TRABAJO.xlsx");
                 blockUI.stop();
             })
+        }
+        $scope.generarpdfRopaTrabajoEmpleados = function (filtro) {
+            if (filtro.inicio) {
+                filtro.inicio = new Date($scope.convertirFecha(filtro.inicio))
+                filtro.fin = new Date($scope.convertirFecha(filtro.fin))
+            } else {
+                filtro.inicio = 0
+                filtro.fin = 0
+            }
+            var promesa = ListaDotacionRopaEmpresa($scope.usuario.id_empresa, filtro)
+            promesa.then(function (datos) {
+                if (filtro.inicio == 0) {
+                    filtro.inicio = ""
+                    filtro.fin = ""
+                }
+                var cont = 1
+                var doc = new PDFDocument({ compress: false, size: 'letter', margin: 10 });
+                var stream = doc.pipe(blobStream());
+                var totalCosto = 0, totalTransporte = 0;
+                var y = 215, itemsPorPagina = 18, items = 0, pagina = 1, totalPaginas = Math.ceil(datos.length / itemsPorPagina);
+                $scope.DibujarCabeceraPDFRopaTrabajoEmpleados(doc, pagina, totalPaginas, datos);
+
+                doc.font('Helvetica', 10);
+                for (var i = 0; i < datos.length && items <= itemsPorPagina; i++) {
+                    item = datos[i]
+
+                    if (items == itemsPorPagina) {
+                        doc.addPage({ margin: 0, bufferPages: true });
+                        y = 215;
+                        items = 0;
+                        pagina = pagina + 1;
+                        $scope.DibujarCabeceraPDFRopaTrabajoEmpleados(doc, pagina, totalPaginas, datos);
+
+                    }
+                }
+                doc.end();
+                stream.on('finish', function () {
+                    var fileURL = stream.toBlobURL('application/pdf');
+                    window.open(fileURL, '_blank', 'location=no');
+                });
+                blockUI.stop();
+            })
+
+
+        }
+
+        $scope.DibujarCabeceraPDFRopaTrabajoEmpleados = function (doc, pagina, totalPaginas, dato) {
+            doc.font('Helvetica-Bold', 14);
+            doc.text("ROPA DE TRABAJO - POR CARGOS", 0, 20, { align: "center" });
+            //doc.image(imagen, 30, 10, { fit: [80, 80] });
+            doc.rect(0, 65, 620, 0).stroke();
+            doc.rect(130, 40, 500, 0).stroke();
+            doc.rect(130, 0, 0, 65).stroke();
+            doc.rect(460, 0, 0, 65).stroke();
+            doc.font('Helvetica-Bold', 8);
+            doc.text("Revicion:", 480, 20);
+            doc.text("Fecha de aprobación:", 480, 45);
+            doc.text("Código .", 0, 45, { align: "center" });
+            doc.font('Helvetica', 8);
+            var currentDate = new Date();
+            doc.text("Usuario: " + $scope.usuario.persona.nombre_completo + "      Fecha :  " + $scope.fechaATexto(currentDate) + "   Hrs. " + currentDate.getHours() + ":" + currentDate.getMinutes(), 15, 765);
+            doc.font('Helvetica-Bold', 8);
+            doc.text("PÁGINA " + pagina + " DE " + totalPaginas, 0, 740, { align: "center" });
         }
         //fin ropa de trabajo
 
