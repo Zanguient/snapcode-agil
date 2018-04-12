@@ -5,7 +5,7 @@ angular.module('agil.controladores')
         ObtenerListaPrestamo, CrearRolTurno, CrearPagoPrestamo, VerificarUsuarioEmpresa, EditarPrestamo, ListaEmpleadosRrhh, CrearHorasExtra, HistorialHorasExtra, ListaRolTurnos, ValidarCodigoCuentaEmpleado, $timeout, DatosCapacidadesImpresion, NuevoAnticipoEmpleado,
         ListaAnticiposEmpleado, CrearNuevosAnticiposEmpleados, ActualizarAnticipoEmpleado, NuevaAusenciaEmpleado, HistorialEmpleadoAusencias, HistorialEmpresaEmpleadosAusencias, NuevaVacacionEmpleado, HistorialEmpleadoVacaciones, HistorialEmpresaVacaciones, NuevoFeriado,
         ListaFeriados, GuardarClasesAusencias, Tipos, ListaBancos, ConfiguracionesVacacion, HistorialGestionesVacacion, GuardarTr3, ListaTr3Empresa, GuardarHistorialVacacion, CrearBeneficioSocial, ListaBeneficiosEmpleado, GuardarBitacoraFicha, VerBitacoraFicha, ObtenerFiniquitoEmpleado,
-        ClasesTipoEmpresa, GuardarConfiguracionRopaCargo, ListaConfiguracionRopaCargo, DatosReporteConfiguracionRopa, FichasEmpleadoEmpresa, ListaCargosEmpleado, ListaRopaTrabajoProductos, GuardarDotacionRopa, ListaDotacionRopa, EliminarDotacionRopa) {
+        ClasesTipoEmpresa, GuardarConfiguracionRopaCargo, ListaConfiguracionRopaCargo, DatosReporteConfiguracionRopa, FichasEmpleadoEmpresa, ListaCargosEmpleado, ListaRopaTrabajoProductos, GuardarDotacionRopa, ListaDotacionRopa, EliminarDotacionRopa, ListaDotacionRopaEmpresa) {
         $scope.usuario = JSON.parse($localStorage.usuario);
         $scope.idModalPrerequisitos = 'dialog-pre-requisitos';
         $scope.idModalEmpleado = 'dialog-empleado';
@@ -2130,6 +2130,11 @@ angular.module('agil.controladores')
         }
 
         $scope.modificarEmpleado = function (elpaciente) {
+            $scope.steps = [{ cabeza: "cabeza-nuevo-datos-personales", cuerpo: "cuerpo-nuevo-datos-personales" },
+            { cabeza: "cabeza-nuevo-datos-comple", cuerpo: "cuerpo-nuevo-datos-comple" },
+            { cabeza: "cabeza-nuevo-datos-laborales", cuerpo: "cuerpo-nuevo-datos-laborales" }
+
+            ]
             promesaPaciente = obtenerEmpleadoRh(elpaciente.id)
             promesaPaciente.then(function (dato) {
 
@@ -4792,13 +4797,13 @@ angular.module('agil.controladores')
         $scope.AgregarAnticipoExtraordinario = function () {
             /*   $scope.obtenerAnticiposExtra($scope.empleado) */
             if ($scope.listaAnticipos.length == 0) {
-                var anticipo = { fecha: new Date(), monto: null, total2: $scope.anticipo_ordinaroOextra, anticipo_ordinaro: $scope.anticipo_ordinaroOextra, total: $scope.anticipo_ordinaroOextra, salario_basico: $scope.empleado.haber_basico, saldo_salario: $scope.empleado.haber_basico }
+                var anticipo = { fecha: new Date(), monto: null, total2: $scope.anticipo_ordinaroOextra, anticipo_ordinaro: $scope.anticipo_ordinaroOextra, total: $scope.anticipo_ordinaroOextra, salario_basico: $scope.empleado.haber_basico, saldo_salario: $scope.empleado.haber_basico, empleado:$scope.empleado }
                 $scope.listaAnticipos.push(anticipo)
             } else {
                 if ($scope.listaAnticipos[$scope.listaAnticipos.length - 1].id) {
 
 
-                    var anticipo = { fecha: new Date(), monto: null, anticipo_ordinaro: $scope.anticipo_ordinaroOextra, total: $scope.listaAnticipos[$scope.listaAnticipos.length - 1].total, salario_basico: $scope.empleado.haber_basico, saldo_salario: null }
+                    var anticipo = { fecha: new Date(), monto: null, anticipo_ordinaro: $scope.anticipo_ordinaroOextra, total: $scope.listaAnticipos[$scope.listaAnticipos.length - 1].total, salario_basico: $scope.empleado.haber_basico, saldo_salario: null, empleado:$scope.empleado}
 
                     anticipo.saldo_salario = anticipo.salario_basico - anticipo.total
 
@@ -6849,7 +6854,7 @@ angular.module('agil.controladores')
             for (var i = 0; i < datos.dotacionItems.length && items <= itemsPorPagina; i++) {
                 item = datos.dotacionItems[i]
                 if (item.entregado) {
-                    var cargardatos=(item.anterior)?false:true
+                    var cargardatos = (item.anterior) ? false : true
                     if (cargardatos) {
                         doc.text(item.producto.codigo, 45, y, { width: 70 }); codigo
                         doc.text(item.ropaTrabajo.nombre, 175, y, { width: 70 });
@@ -6933,6 +6938,57 @@ angular.module('agil.controladores')
 
 
         }
+        $scope.generarReporteRopaTrabajo = function (tipo, filtro) {
+            if (tipo == "pdf") {
+                $scope.mostrarMensaje(tipo)
+            } else {
+                $scope.generarExcelRopaTrabajoEmpleados(filtro)
+            }
+        }
+        $scope.generarExcelRopaTrabajoEmpleados = function (filtro) {
+            if (filtro.inicio) {
+                filtro.inicio = new Date($scope.convertirFecha(filtro.inicio))
+                filtro.fin = new Date($scope.convertirFecha(filtro.fin))
+            } else {
+                filtro.inicio = 0
+                filtro.fin = 0
+            }
+            var promesa = ListaDotacionRopaEmpresa($scope.usuario.id_empresa, filtro)
+            promesa.then(function (datos) {
+                if (filtro.inicio == 0) {
+                    filtro.inicio = ""
+                    filtro.fin = ""
+                }
+                var cont=1
+                var data = [["N°", "Asignado a:", "Codigo de Artículo", "Descripción", "unidad", "cantidad", "PU", "TOTAL", "N° de Documento", "Fecha de Entrega"]]
+                for (var i = 0; i < datos.length; i++) {
+                    if (datos[i].dotacionRopa.empleado.id_campo==filtro.campo) {
+                        var columns = [];
+                        columns.push((cont++));
+                        columns.push(datos[i].dotacionRopa.empleado.persona.nombre_completo);
+                        columns.push(datos[i].producto.codigo);
+                        columns.push(datos[i].producto.nombre);
+                        columns.push(datos[i].producto.unidad_medida);
+                        columns.push(datos[i].cantidad);
+                        columns.push(datos[i].producto.precio_unitario);
+                        columns.push(datos[i].producto.precio_unitario * datos[i].cantidad);
+                        columns.push(datos[i].dotacionRopa.numero);
+                        columns.push(new Date(datos[i].dotacionRopa.fecha));
+                        data.push(columns);
+                    }
+                }
+
+                var ws_name = "SheetJS";
+                var wb = new Workbook(), ws = sheet_from_array_of_arrays(data);
+                /* add worksheet to workbook */
+                wb.SheetNames.push(ws_name);
+                wb.Sheets[ws_name] = ws;
+                var wbout = XLSX.write(wb, { bookType: 'xlsx', bookSST: true, type: 'binary' });
+                saveAs(new Blob([s2ab(wbout)], { type: "application/octet-stream" }), "REPORTES CONFIGURACION ROPA DE TRABAJO.xlsx");
+                blockUI.stop();
+            })
+        }
         //fin ropa de trabajo
+
         $scope.inicio()
     });

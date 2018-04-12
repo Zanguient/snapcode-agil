@@ -1290,8 +1290,8 @@
                                         <div class="col-sm-1 col-lg-1">
                                             <label for="">Cargos</label>
                                         </div>
-                                        <div class="col-sm-11 col-lg-4">
-                                            <div isteven-multi-select input-model="cargos" output-model="ficha.cargo" button-label="icon nombre" item-label="icon nombre maker"
+                                        <div class="col-sm-11 col-lg-4" >
+                                            <div id="cargos" isteven-multi-select required input-model="cargos" output-model="ficha.cargo" button-label="icon nombre" item-label="icon nombre maker"
                                                 tick-property="ticked" translation="localLang">
                                             </div>
                                         </div>
@@ -8168,9 +8168,10 @@
                                                 <label for="cargo">Cargo</label>
                                             </div>
                                             <div class="col-lg-7">
-                                                <div required isteven-multi-select input-model="cargos" output-model="nuevoRH.cargos" button-label="icon nombre" item-label="icon nombre maker"
+                                                <div required isteven-multi-select id="cargos" input-model="cargos" output-model="nuevoRH.cargos" button-label="icon nombre" item-label="icon nombre maker"
                                                     tick-property="ticked" translation="localLang">
                                                 </div>
+                                                <input  hidden required ng-model="nuevoRH.cargos">
                                             </div>
                                         </div>
 
@@ -8534,13 +8535,13 @@
                                         <div class="row form-group">
                                             <div class="col-lg-5">
                                                 <label ng-hide="paciente.ver" for="cargo">Cargo</label>
-                                                <label for="cargo">Cargos:</label>
+                                                <!-- <label for="cargo">Cargos:</label> -->
                                             </div>
                                             <div class="col-lg-7">
-                                                <div ng-hide="paciente.ver" isteven-multi-select input-model="cargos" output-model="nuevoRH.cargos" button-label="icon nombre"
+                                                <div ng-hide="!paciente.ver" id="cargos" isteven-multi-select input-model="cargos" output-model="nuevoRH.cargos" button-label="icon nombre"
                                                     item-label="icon nombre maker" tick-property="ticked" translation="localLang">
                                                 </div>
-                                                <p ng-hide="!paciente.ver" ng-repeat="cargo in nuevoRH.cargos">{{$index+1}}. {{cargo.nombre}}.</p>
+                                                <p ng-hide="paciente.ver" ng-repeat="cargo in nuevoRH.cargos">{{$index+1}}. {{cargo.nombre}}.</p>
                                             </div>
                                         </div>
 
@@ -8805,7 +8806,7 @@
                 <h4 class="modal-title" id="myModalLabel">Reportes Ropa de Trabajo</h4>
             </div>
             <div class="modal-body">
-                <form ng-submit="paginator.getSearch(paginator.search,filtro,null)">
+                <form ng-submit="generarReporteRopaTrabajo(tipo,filtroReporte)">
                     <div class="row">
                         <div class="form-group col-md-1">
                             <p>
@@ -8817,30 +8818,32 @@
                         </div>
                         <div class="form-group col-md-3">
                             <label for="codigo">DESDE</label>
-                            <input ng-update-hidden type="text" class "form-control" id="filtroCodigo" ng-model="filtro.codigo" placeholder="" />
+                            <input ng-update-hidden class="form-control date-picker ng-pristine ng-untouched ng-isolate-scope ng-empty ng-invalid ng-invalid-required"
+                            type="text" data-date-format="dd/mm/yyyy" ng-model="filtroReporte.inicio" placeholder="" />
                         </div>
 
                         <div class="form-group col-md-3">
                             <label for="nombre">HASTA</label>
-                            <input ng-update-hidden type="text" class "form-control" id="filtroNombre" ng-model="filtro.nombres" placeholder="" />
+                            <input ng-update-hidden class="form-control date-picker ng-pristine ng-untouched ng-isolate-scope ng-empty ng-invalid ng-invalid-required"
+                            type="text" data-date-format="dd/mm/yyyy" ng-model="filtroReporte.fin" placeholder="" />
                         </div>
 
-                        <div class="form-group col-md-2">
+                        <div class="form-group col-md-3">
                             <label for="campo">CENTRO DE COSTO</label>
                             <select required id="campo-rol" class="form-control" name="centroDeCostos" ng-options="centroCosto.id as centroCosto.nombre for centroCosto in centrosDeCostos | filter:{habilitado:true} track by centroCosto.id"
-                                ng-model="filtro.campo">
+                                ng-model="filtroReporte.campo">
                                 <option value="">--selecionar--</option>
                             </select>
                         </div>
 
 
-                        <div class="form-group col-md-3">
+                        <div class="form-group col-md-2">
 
-                            <button class="btn btn-app btn-danger btn-xs">
+                            <button class="btn btn-app btn-danger btn-xs" type="submit" ng-click="tipo='pdf'">
                                 <i class="ace-icon fa fa-print bigger-160"></i>
                                 PDF
                             </button>
-                            <button class="btn btn-app btn-success btn-xs" ng-click="generarExcelEmpleados(RecursosHumanosEmpleados,fieldViewer.getConfiguration())">
+                            <button class="btn btn-app btn-success btn-xs" ng-click="tipo='exel'">
                                 <i class="ace-icon fa fa-print bigger-160"></i>
                                 EXCEL
                             </button>

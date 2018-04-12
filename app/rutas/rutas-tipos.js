@@ -19,7 +19,7 @@ router.route('/tipos/:nombre_corto')
 				nombre_corto: req.params.nombre_corto,
 				id_empresa:req.params.id_empresa
 			},
-			include: [{model:Clase,as: 'clases'}]
+			include: [{model:Clase,as: 'clases'},{model:RrhhClaseAsuencia,as:'ausencias'}]
 		}).then(function(entidad){			
 			res.json(entidad);		  
 		});

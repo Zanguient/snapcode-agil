@@ -1385,7 +1385,7 @@ function convertirSegundosATiempo(time) {
 	return result;
 }
 function ValidarForm(form, steps, button) {
-	if (!form.$valid) {
+	/* if (!form.$valid) { */
 		steps.forEach(function (dato, index, array) {
 
 
@@ -1421,6 +1421,19 @@ function ValidarForm(form, steps, button) {
 						}
 					}
 				});
+				$('#' + dato.cuerpo).find('#cargos').each(function () {
+					
+
+						if (this.innerText !="No se ha seleccionado nada") {
+
+							$(this).removeClass("validacionRRhh");
+
+						} else {
+							$(this).addClass("validacionRRhh");
+							fail = true
+						}
+					
+				});
 				/*  stepDatosLaborales
 				 stepdatosAfiliacion
 				 stepDatosFamiliares */
@@ -1437,7 +1450,7 @@ function ValidarForm(form, steps, button) {
 
 		});
 		// cancel change
-	}
+	
 
 
 }

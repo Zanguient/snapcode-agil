@@ -930,3 +930,21 @@ angular.module('agil.servicios')
     };
     return res;
 }])
+.factory('BuscarRopasTrabajoEmpresa', function ($resource) {
+    return $resource(restServer + "recursos-humanos/ropa-trabajo/empresa/:id_empresa/inicio/:inicio/fin/:fin/campamento/:campamento",null,
+        {
+            'update': { method: 'PUT' }
+        });
+})
+.factory('ListaDotacionRopaEmpresa', ['BuscarRopasTrabajoEmpresa', '$q', function (BuscarRopasTrabajoEmpresa, $q) {
+    var res = function (idEmpresa,filtro) {
+        var delay = $q.defer();
+        BuscarRopasTrabajoEmpresa.query({id_empresa:idEmpresa,inicio:filtro.inicio,fin:filtro.fin,campamento:filtro.campo},function (entidad) {
+            delay.resolve(entidad);
+        }, function (error) {
+            delay.reject(error);
+        });
+        return delay.promise;
+    };
+    return res;
+}])
