@@ -350,5 +350,29 @@ angular.module('agil.servicios')
 		return delay.promise;
 	};
     return res;
+	}])
+	
+	.factory('UsuarioSeleccionado', function($resource) {
+		return $resource(restServer+"usuario/:id_usuario", { id_usuario: '@id' },
+		{
+			'update': { method:'PUT' }
+		});
+})
+
+.factory('ObtenerUsuario', ['UsuarioSeleccionado','$q',function(UsuarioSeleccionado, $q) 
+  {
+	var res = function(id_usuario) 
+	{
+		var delay = $q.defer();
+		UsuarioSeleccionado.get({id_usuario: id_usuario},function(entidades) 
+		{        
+			delay.resolve(entidades);
+		}, function(error) 
+			{
+				delay.reject(error);
+			});
+		return delay.promise;
+	};
+    return res;
   }])
 	

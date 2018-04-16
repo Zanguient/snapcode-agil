@@ -1,7 +1,7 @@
 angular.module('agil.controladores')
 
 .controller('ControladorCompras', function($scope,$localStorage,$location,$templateCache,$route,blockUI,DatosCompra,$timeout,
-											Compra,Compras,Proveedores,ProveedoresNit,ListaProductosEmpresa,ClasesTipo,CompraDatos,
+											Compra,Compras,Proveedores,ProveedoresNit,ListaProductosEmpresaUsuario,ClasesTipo,CompraDatos,
 											ConfiguracionCompraVistaDatos,ConfiguracionCompraVista){
 	blockUI.start();
 	
@@ -108,10 +108,9 @@ angular.module('agil.controladores')
 	
 	$scope.buscarProducto=function(query) {
 		if(query!="" && query!=undefined && $scope.busquedaProductoHabilidato){
-			var promesa=ListaProductosEmpresa($scope.usuario.id_empresa,query);
+			var promesa=ListaProductosEmpresaUsuario($scope.usuario.id_empresa,query, $scope.usuario.id);
 			return promesa;
 		}
-		
 	};
 	
 	$scope.agregarDetalleCompra=function(detalleCompra){
@@ -351,7 +350,7 @@ angular.module('agil.controladores')
 		blockUI.start();
 		inicio=new Date($scope.convertirFecha(inicio));
 		fin=new Date($scope.convertirFecha(fin));
-		var promesa=Compras(sucursalesUsuario,inicio,fin,razon_social,nit,monto,tipo_pago,sucursal,usuario);
+		var promesa=Compras(sucursalesUsuario,inicio,fin,razon_social,nit,monto,tipo_pago,sucursal,usuario, $scope.usuario.id);
 		promesa.then(function(compras){
 			$scope.compras=compras;
 			blockUI.stop();

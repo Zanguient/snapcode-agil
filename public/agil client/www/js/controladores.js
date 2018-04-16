@@ -1193,7 +1193,9 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 			/* $scope.verificarNotifiacion = $interval(function () { */
 			$scope.vencimientoTotal = 0
 			if ($scope.usuario.empresa.usar_proformas) {
-				$scope.verificarAlertasProformas($scope.usuario.id_empresa)
+				if ($scope.usuario.id_empresa) {
+					$scope.verificarAlertasProformas($scope.usuario.id_empresa)
+				}
 			}
 			if ($scope.usuario.empresa) {
 				if ($scope.usuario.empresa.usar_vencimientos) {
@@ -1225,6 +1227,9 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 			Sesion.iniciarSesion(usuario, function (res) {
 				if (res.type == false) {
 					$scope.error = res.data;
+					if (res.mensaje !== undefined) {
+						$scope.mostrarMensaje(res.mensaje)
+					}
 				} else {
 					$scope.usuario = res.data;
 					$localStorage.token = res.data.token;
@@ -1683,9 +1688,9 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 			});
 		}
 		$scope.verificarSeleccionProformas = function () {
-			var paraFacturar = []
 			$scope.obtenerMovimientosEgreso()
 			$scope.obtenerTiposDePago()
+			var paraFacturar = []
 			if ($scope.alertasProformas.length > 0) {
 				var id_actividad = $scope.alertasProformas[0].actividad
 				$scope.alertasProformas.map(function (_, i) {
@@ -1698,6 +1703,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 				})
 			}
 		}
+		
 		$scope.obtenerTipoEgreso = function (movimiento) {
 			var nombre_corto = movimiento.nombre_corto;
 			$scope.tipoEgreso = nombre_corto;
@@ -1868,6 +1874,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 							$scope.facturaProformas.detallesVenta = []
 							$scope.facturaProformas.detalle = ""
 							$scope.facturaProformas.totalImporteBs = 0
+							$scope.facturaProformas.totalImporteSus = 0
 							$scope.facturaProformas.importe = 0
 							$scope.facturaProformas.fecha_factura = new Date().toLocaleDateString()
 							$scope.facturaProformas.fechaTexto = new Date().toLocaleDateString()
@@ -1889,6 +1896,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 							$scope.facturaProformas.datosProformas.forEach(function (proforma) {
 								$scope.facturaProformas.descripcion += proforma.detalle + ". "
 								$scope.facturaProformas.totalImporteBs += proforma.totalImporteBs
+								
 								$scope.facturaProformas.importe = $scope.facturaProformas.totalImporteBs
 								$scope.facturaProformas.total = $scope.facturaProformas.importe
 								$scope.facturaProformas.importeLiteral = ConvertirALiteral($scope.facturaProformas.totalImporteBs.toFixed(2));
@@ -1899,6 +1907,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 										tcProforma = { ufv: dato.monedaCambio.ufv, dolar: dato.monedaCambio.dolar };
 									}
 									proforma.tc = tcProforma
+									$scope.facturaProformas.totalImporteSus = $scope.facturaProformas.totalImporteBs / tcProforma.dolar
 									proforma.importe = proforma.importeTotalBs
 									proforma.detallesProformas.map(function (det, y) {
 										det.tc = proforma.tc

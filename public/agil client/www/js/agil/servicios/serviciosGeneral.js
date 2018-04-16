@@ -891,10 +891,10 @@ angular.module('agil.servicios')
 								doc.text(fechaVencimientoTexto, 340, y);
 								doc.text(venta.detallesVenta[i].lote, 380, y);
 							}
-							
+
 							doc.text(venta.detallesVenta[i].precio_unitario.toFixed(2), 410, y);
 							doc.text(venta.detallesVenta[i].importe.toFixed(2), 450, y);
-							doc.text((venta.detallesVenta[i].descuento ? venta.detallesVenta[i].descuento.toFixed(2) : 0), 490, y);
+							doc.text((venta.detallesVenta[i].descuento ? venta.detallesVenta[i].descuento.toFixed(2) : "0.00"), 490, y);
 							doc.text(venta.detallesVenta[i].total.toFixed(2), 530, y);
 							if (completa || vacia) {
 								doc.rect(50, y - 15, 520, 30).stroke();
@@ -905,7 +905,7 @@ angular.module('agil.servicios')
 
 							doc.text(venta.detallesVenta[i].servicio.codigo, 55, y, { width: 70 });
 							doc.text(venta.detallesVenta[i].cantidad, 130, y);
-							doc.text(venta.detallesVenta[i].servicio.unidad_medida, 155, y - 3, { width: 43 });
+							// 							doc.text(venta.detallesVenta[i].servicio.unidad_medida, 155, y - 3, { width: 43 });
 							var longitudCaracteres = venta.detallesVenta[i].servicio.nombre.length;
 							var yDesc = (longitudCaracteres <= 24) ? y : ((longitudCaracteres > 24 && longitudCaracteres <= 60) ? y - 4 : y - 11);
 							doc.text(venta.detallesVenta[i].servicio.nombre, 198, yDesc, { width: 130 });
@@ -915,20 +915,16 @@ angular.module('agil.servicios')
 								doc.text(venta.detallesVenta[i].lote, 380, y);
 							}
 
-							doc.text(venta.detallesVenta[i].precio_unitario.toFixed(2), 410, y);
+							// doc.text(venta.detallesVenta[i].precio_unitario.toFixed(2), 410, y);
 							doc.text(venta.detallesVenta[i].importe.toFixed(2), 450, y);
-							doc.text(venta.detallesVenta[i].descuento.toFixed(2), 490, y);
+							// doc.text((venta.detallesVenta[i].descuento ? venta.detallesVenta[i].descuento.toFixed(2) : "0.00"), 490, y);
 							doc.text(venta.detallesVenta[i].total.toFixed(2), 530, y);
 							if (completa || vacia) {
 								doc.rect(50, y - 15, 520, 30).stroke();
 							}
 						}
-
-
 						y = y + 30;
-
 						items++;
-
 						if (items == itemsPorPagina) {
 							doc.addPage({ size: papel, margin: 10 });
 							y = 240;
@@ -977,30 +973,58 @@ angular.module('agil.servicios')
 					DibujarCabeceraFacturaNVmedioOficio(doc, vacia, completa, venta, papel, pagina, totalPaginas, usuario);
 					for (var i = 0; i < venta.detallesVenta.length && items <= itemsPorPagina; i++) {
 						doc.font('Helvetica', 8);
-						if (existenDescuentos) {
-							doc.text(venta.detallesVenta[i].producto.codigo, 55, y);
-							doc.text(venta.detallesVenta[i].cantidad, 115, y);
-							doc.text(venta.detallesVenta[i].producto.unidad_medida, 140, y);
-							doc.text(venta.detallesVenta[i].producto.nombre, 180, y - 6, { width: 120 });
-							doc.text(venta.detallesVenta[i].precio_unitario.toFixed(2), 300, y);
-							doc.text(venta.detallesVenta[i].importe.toFixed(2), 335, y);
-							doc.text(venta.detallesVenta[i].tipo_descuento ? "%" : "Bs", 385, y - 10);
-							doc.text(venta.detallesVenta[i].descuento.toFixed(2), 385, y);
-							doc.text(venta.detallesVenta[i].tipo_recargo ? "%" : "Bs", 420, y - 10);
-							doc.text(venta.detallesVenta[i].recargo.toFixed(2), 420, y);
-							doc.text(venta.detallesVenta[i].ice.toFixed(2), 455, y);
-							doc.text(venta.detallesVenta[i].excento.toFixed(2), 490, y);
-							doc.text(venta.detallesVenta[i].total.toFixed(2), 520, y);
+						if (venta.detallesVenta[i].producto) {
+							if (existenDescuentos) {
+								doc.text(venta.detallesVenta[i].producto.codigo, 55, y);
+								doc.text(venta.detallesVenta[i].cantidad, 115, y);
+								doc.text(venta.detallesVenta[i].producto.unidad_medida, 140, y);
+								doc.text(venta.detallesVenta[i].producto.nombre, 180, y - 6, { width: 120 });
+								doc.text(venta.detallesVenta[i].precio_unitario.toFixed(2), 300, y);
+								doc.text(venta.detallesVenta[i].importe.toFixed(2), 335, y);
+								doc.text(venta.detallesVenta[i].tipo_descuento ? "%" : "Bs", 385, y - 10);
+								doc.text(venta.detallesVenta[i].descuento.toFixed(2), 385, y);
+								doc.text(venta.detallesVenta[i].tipo_recargo ? "%" : "Bs", 420, y - 10);
+								doc.text(venta.detallesVenta[i].recargo.toFixed(2), 420, y);
+								doc.text(venta.detallesVenta[i].ice.toFixed(2), 455, y);
+								doc.text(venta.detallesVenta[i].excento.toFixed(2), 490, y);
+								doc.text(venta.detallesVenta[i].total.toFixed(2), 520, y);
+							} else {
+								doc.text(venta.detallesVenta[i].producto.codigo, 55, y);
+								doc.text(venta.detallesVenta[i].cantidad, 110, y);
+								doc.text(venta.detallesVenta[i].producto.unidad_medida, 165, y);
+								var longitudCaracteres = venta.detallesVenta[i].producto.nombre.length;
+								var yDesc = (longitudCaracteres <= 45) ? y : ((longitudCaracteres > 45 && longitudCaracteres <= 90) ? y - 4 : y - 11);
+								doc.text(venta.detallesVenta[i].producto.nombre, 220, yDesc, { width: 225 });
+								doc.text(venta.detallesVenta[i].precio_unitario.toFixed(2), 450, y);
+								doc.text(venta.detallesVenta[i].total.toFixed(2), 520, y);
+							}
 						} else {
-							doc.text(venta.detallesVenta[i].producto.codigo, 55, y);
-							doc.text(venta.detallesVenta[i].cantidad, 110, y);
-							doc.text(venta.detallesVenta[i].producto.unidad_medida, 165, y);
-							var longitudCaracteres = venta.detallesVenta[i].producto.nombre.length;
-							var yDesc = (longitudCaracteres <= 45) ? y : ((longitudCaracteres > 45 && longitudCaracteres <= 90) ? y - 4 : y - 11);
-							doc.text(venta.detallesVenta[i].producto.nombre, 220, yDesc, { width: 225 });
-							doc.text(venta.detallesVenta[i].precio_unitario.toFixed(2), 450, y);
-							doc.text(venta.detallesVenta[i].total.toFixed(2), 520, y);
+							if (existenDescuentos) {
+								doc.text(venta.detallesVenta[i].servicio.codigo, 55, y);
+								doc.text(venta.detallesVenta[i].cantidad, 115, y);
+								// doc.text(venta.detallesVenta[i].servicio.unidad_medida, 140, y);
+								doc.text(venta.detallesVenta[i].servicio.nombre, 180, y - 6, { width: 120 });
+								doc.text(venta.detallesVenta[i].precio_unitario.toFixed(2), 300, y);
+								doc.text(venta.detallesVenta[i].importe.toFixed(2), 335, y);
+								// doc.text(venta.detallesVenta[i].tipo_descuento ? "%" : "Bs", 385, y - 10);
+								// doc.text(venta.detallesVenta[i].descuento.toFixed(2), 385, y);
+								// doc.text(venta.detallesVenta[i].tipo_recargo ? "%" : "Bs", 420, y - 10);
+								// doc.text(venta.detallesVenta[i].recargo.toFixed(2), 420, y);
+								// doc.text(venta.detallesVenta[i].ice.toFixed(2), 455, y);
+								// doc.text(venta.detallesVenta[i].excento.toFixed(2), 490, y);
+								doc.text(venta.detallesVenta[i].total.toFixed(2), 520, y);
+							} else {
+								doc.text(venta.detallesVenta[i].servicio.codigo, 55, y);
+								doc.text(venta.detallesVenta[i].cantidad, 110, y);
+								// doc.text(venta.detallesVenta[i].servicio.unidad_medida, 165, y);
+								var longitudCaracteres = venta.detallesVenta[i].servicio.nombre.length;
+								var yDesc = (longitudCaracteres <= 45) ? y : ((longitudCaracteres > 45 && longitudCaracteres <= 90) ? y - 4 : y - 11);
+								doc.text(venta.detallesVenta[i].servicio.nombre, 220, yDesc, { width: 225 });
+								doc.text(venta.detallesVenta[i].precio_unitario.toFixed(2), 450, y);
+								doc.text(venta.detallesVenta[i].total.toFixed(2), 520, y);
+							}
 						}
+
 						if (completa || vacia) {
 							doc.rect(50, y - 15, 520, 30).stroke();
 						}
@@ -1076,16 +1100,18 @@ angular.module('agil.servicios')
 				doc.text("COCHABAMBA - BOLIVIA", 60, 137);
 			}
 			doc.font('Helvetica-Bold', 16);
-			doc.text("PROFORMA NV", 250, 100);
+			doc.text(venta.configuracion.tituloFactura.nombre.toUpperCase(), 250, 100);
 			doc.font('Helvetica-Bold', 8);
-
+			doc.text(venta.actividad.nombre, 380, 105, { width: 200 });
 			if (completa || vacia) {
-
-				doc.text("Nro. ", 480, 60);
-
+				doc.rect(380, 50, 190, 50).stroke();
+				doc.text("NIT : ", 390, 60);
+				doc.text("FACTURA No : ", 390, 70);
+				doc.text("AUTORIZACIÓN No : ", 390, 80);
 			}
-			doc.text(venta.factura, 500, 60);
-			doc.text(venta.tipoPago.nombre_corto, 485, 70);
+			doc.text(usuario.empresa.nit, 500, 60);
+			doc.text(venta.factura, 500, 70);
+			doc.text(venta.autorizacion, 500, 80);
 
 			if (completa || vacia) {
 				doc.rect(50, 150, 520, 50).stroke();
@@ -1102,17 +1128,21 @@ angular.module('agil.servicios')
 				//doc.rect(50,225,520,papel[1]-175-225).stroke();
 				doc.text("CODIGO", 55, 210, { width: 70 });
 				doc.text("CANT.", 125, 210);
-				doc.text("UNID.", 160, 210, { width: 43 });
+				if (venta.detallesVenta[0].producto) {
+					doc.text("UNIDAD", 155, 210);
+				}
 				doc.text("DETALLE", 198, 210);
 
 				if (venta.con_vencimiento) {
 					doc.text("VENC.", 340, 210);
 					doc.text("LOTE", 380, 210);
 				}
-
-				doc.text("P.UNIT.", 410, 210);
+				if (venta.detallesVenta[0].producto) {
+				doc.text("P.UNIT.", 410, 210);}
 				doc.text("IMP.", 450, 210);
-				doc.text("DESC.", 490, 210);
+				if (venta.detallesVenta[0].producto) {
+					doc.text("DESC.", 490, 210);
+				}
 				doc.text("TOTAL", 530, 210);
 			}
 			doc.font('Helvetica', 7);
@@ -1166,19 +1196,23 @@ angular.module('agil.servicios')
 				if (existenDescuentos) {
 					doc.text("CODIGO", 55, 210);
 					doc.text("CANT.", 110, 210);
-					doc.text("UNID.", 140, 210);
-					doc.text("DETALLE", 180, 210);
+					doc.text("DETALLE", 160, 210);
 					doc.text("P. UNIT.", 300, 210);
 					doc.text("IMPORTE", 335, 210);
-					doc.text("DESC.", 385, 210);
-					doc.text("REC.", 420, 210);
-					doc.text("ICE", 455, 210);
-					doc.text("EXC.", 490, 210);
+					if (venta.detallesVenta[0].producto) {
+						doc.text("UNID.", 140, 210);
+						doc.text("DESC.", 385, 210);
+						doc.text("REC.", 420, 210);
+						doc.text("ICE", 455, 210);
+						doc.text("EXC.", 490, 210);
+					}
 					doc.text("TOTAL", 520, 210);
 				} else {
 					doc.text("CODIGO", 55, 210);
 					doc.text("CANTIDAD", 110, 210);
-					doc.text("UNIDAD", 165, 210);
+					if (venta.detallesVenta[0].producto) {
+						doc.text("UNIDAD", 165, 210);
+					}
 					doc.text("DETALLE", 220, 210);
 					doc.text("P.UNIT.", 450, 210);
 					doc.text("TOTAL", 520, 210);

@@ -1,7 +1,7 @@
 module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCompra, Almacen, Sucursal, Empresa, sequelize, Sequelize,
 	Tipo, Clase, Proveedor, Producto, Movimiento, DetalleMovimiento, Inventario, Venta, DetalleVenta,
 	Cliente, CodigoControl, NumeroLiteral, Diccionario, SucursalActividadDosificacion, Dosificacion,
-	ConfiguracionGeneralFactura, ConfiguracionFactura, PagoVenta, PagoCompra, Usuario, DetalleVentaNoConsolidada, ClienteCuenta, ContabilidadCuenta, ProveedorCuenta) {
+	ConfiguracionGeneralFactura, ConfiguracionFactura, PagoVenta, PagoCompra, Usuario, DetalleVentaNoConsolidada, ClienteCuenta, ContabilidadCuenta, ProveedorCuenta, UsuarioGrupos) {
 	router.route('/inventarios/:id_empresa')
 		.get(function (req, res) {
 			Producto.findAll({
@@ -35,7 +35,7 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 
 		});
 
-	router.route('/inventarios/empresa/:id_empresa/almacen/:id_almacen/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion/cantidad/:cantidad')
+	router.route('/inventarios/empresa/:id_empresa/almacen/:id_almacen/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion/cantidad/:cantidad/grupo/:id_grupo/user/:id_usuario')
 		.get(function (req, res) {
 			var condicionProducto = "empresa=" + req.params.id_empresa;
 			if (req.params.texto_busqueda != 0) {
@@ -47,53 +47,65 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 				} else {
 					condicionProducto = condicionProducto + " and cantidad = 0"
 				}
+			}			
+			if (req.params.cantidad != 0) {
+				if (req.params.cantidad == 1) {
+					condicionProducto.cantidad = { $gte: 0 }
+				} else {
+					condicionProducto.cantidad = { $eq: 0 }
+				}
 			}
-			sequelize.query("select count(*) as cantidad_productos \
-			from agil_producto\
-			INNER JOIN gl_clase AS tipoProducto ON (agil_producto.tipo_producto = tipoProducto.id)\
-			LEFT  JOIN gl_clase AS gr ON (agil_producto.grupo = gr.id)\
-			LEFT  JOIN gl_clase AS sgr ON (agil_producto.subgrupo = sgr.id)\
-			LEFT OUTER JOIN inv_inventario on agil_producto.id=inv_inventario.producto where "+ condicionProducto + " and almacen=" + req.params.id_almacen, { type: sequelize.QueryTypes.SELECT })
-				.then(function (data) {
-					var options = {
-						model: Producto,
-						include: [{ model: Clase, as: 'tipoProducto' }]
-					};
-					Sequelize.Model.$validateIncludedElements(options);
-					//options.hasJoin = true;
-					sequelize.query("select tipoProducto.id as 'tipoProducto.id',tipoProducto.nombre as 'tipoProducto.nombre',tipoProducto.nombre_corto as 'tipoProducto.nombre_corto', agil_producto.id,agil_producto.activar_inventario,unidad_medida,descuento,descuento_fijo,precio_unitario,inventario_minimo,codigo,agil_producto.nombre,descripcion,sum(inv_inventario.cantidad) as cantidad,min(inv_inventario.fecha_vencimiento) as fecha_vencimiento,gr.nombre as grupo,sgr.nombre as subgrupo\
+			UsuarioGrupos.findAll({
+				where: { id_usuario: req.params.id_usuario }
+			}).then(function (grupos) {
+				var condicionGrupo = ""
+				if (grupos.length > 0) {
+					var grupoLiteral = '('
+					var grupoArray = []
+					grupos.forEach(function (grupo, i) {
+						grupoArray.push(grupo.id_grupo)
+						if (i == grupos.length - 1) {
+							grupoLiteral += grupo.id_grupo + ')'
+						} else {
+							grupoLiteral += grupo.id_grupo + ','
+						}
+					})
+					if (req.params.id_grupo != "0") {
+						condicionProducto += " and agil_producto.grupo ="+req.params.id_grupo
+					}
+					condicionProducto += " and agil_producto.grupo in " + grupoLiteral
+					
+					sequelize.query("select count(*) as cantidad_productos\
+					from agil_producto\
+					INNER JOIN gl_clase AS tipoProducto ON (agil_producto.tipo_producto = tipoProducto.id)\
+					LEFT  JOIN gl_clase AS gr ON (agil_producto.grupo = gr.id)\
+					LEFT  JOIN gl_clase AS sgr ON (agil_producto.subgrupo = sgr.id)\
+					LEFT OUTER JOIN inv_inventario on agil_producto.id=inv_inventario.producto where "+ condicionProducto + " and almacen=" + req.params.id_almacen+ " GROUP BY agil_producto.id", { type: sequelize.QueryTypes.SELECT })
+						.then(function (data) {
+							var cantidad_productos = data.length
+							var options = {
+								model: Producto,
+								include: [{ model: Clase, as: 'tipoProducto' }]
+							};
+							Sequelize.Model.$validateIncludedElements(options);
+							sequelize.query("select tipoProducto.id as 'tipoProducto.id',tipoProducto.nombre as 'tipoProducto.nombre',tipoProducto.nombre_corto as 'tipoProducto.nombre_corto', agil_producto.id,agil_producto.activar_inventario,unidad_medida,descuento,descuento_fijo,precio_unitario,inventario_minimo,codigo,agil_producto.nombre,descripcion,sum(inv_inventario.cantidad) as cantidad,min(inv_inventario.fecha_vencimiento) as fecha_vencimiento,gr.nombre as grupo,sgr.nombre as subgrupo\
 							from agil_producto\
 							INNER JOIN gl_clase AS tipoProducto ON (agil_producto.tipo_producto = tipoProducto.id)\
 							LEFT  JOIN gl_clase AS gr ON (agil_producto.grupo = gr.id)\
 							LEFT  JOIN gl_clase AS sgr ON (agil_producto.subgrupo = sgr.id)\
 							LEFT OUTER JOIN inv_inventario on agil_producto.id=inv_inventario.producto where "+ condicionProducto + " and almacen=" + req.params.id_almacen + " \
 			                 GROUP BY agil_producto.id order by "+ req.params.columna + " " + req.params.direccion + " LIMIT " + (req.params.items_pagina * (req.params.pagina - 1)) + "," + req.params.items_pagina, options)
-						.then(function (productos) {
-							res.json({ productos: productos, paginas: Math.ceil(data[0].cantidad_productos / req.params.items_pagina) });
+								.then(function (productos) {
+									res.json({ productos: productos, paginas: Math.ceil(cantidad_productos / req.params.items_pagina) });
+								});
 						});
-				});
-
-			/*Producto.findAndCountAll({ 
-				where:condicionProducto,
-				include: [{model:Inventario,as: 'inventarios',required:false,where:{cantidad:{$gt:0}},
-							include: [{model:Almacen,as: 'almacen',
-										include: [{model:Sucursal,as: 'sucursal'}]}]}]
-				
-			}).then(function(data){
-				Producto.findAll({ 
-					offset:(req.params.items_pagina*(req.params.pagina-1)), limit:req.params.items_pagina,
-					where:condicionProducto,
-					include: [{model:Inventario,as: 'inventarios',required:false,where:{cantidad:{$gt:0}},
-							include: [{model:Almacen,as: 'almacen',
-										include: [{model:Sucursal,as: 'sucursal'}]}]}],
-					order:[[req.params.columna,req.params.direccion]]
-				}).then(function(productos){			
-					res.json({productos:productos,paginas:Math.ceil(data.count/req.params.items_pagina)});		  
-				});
-			});*/
+				} else {
+					res.json({ productos: [], mensaje: 'El usuario no cuenta con grupos de productos asignados.', paginas: Math.ceil(productos.count / req.params.items_pagina) });
+				}
+			})
 		});
 
-	router.route('/compras/:idsSucursales/inicio/:inicio/fin/:fin/razon-social/:razon_social/nit/:nit/monto/:monto/tipo-compra/:tipo_compra/sucursal/:sucursal/usuario/:usuario')
+	router.route('/compras/:idsSucursales/inicio/:inicio/fin/:fin/razon-social/:razon_social/nit/:nit/monto/:monto/tipo-compra/:tipo_compra/sucursal/:sucursal/usuario/:usuario/user/:id_usuario')
 		.get(/*ensureAuthorized,*/function (req, res) {
 			var inicio = new Date(req.params.inicio); inicio.setHours(0, 0, 0, 0, 0);
 			var fin = new Date(req.params.fin); fin.setHours(23, 59, 59, 0, 0);
@@ -120,26 +132,33 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 			if (req.params.usuario != 0) {
 				condicionUsuario.nombre_usuario = { $like: "%" + req.params.usuario + "%" };
 			}
-			Compra.findAll({
-				where: condicionCompra,
-				include: [{
-					model: DetalleCompra, as: 'detallesCompra',
-					include: [{ model: Producto, as: 'producto' },
-					{ model: Clase, as: 'centroCosto'/*,where:{nombre_corto:'ALM'}*/ }]
-				},
-				{ model: Clase, as: 'tipoPago' },
-				{ model: Usuario, as: 'usuario', where: condicionUsuario },
-				{ model: Proveedor, as: 'proveedor', where: condicionProveedor },
-				{
-					model: Almacen, as: 'almacen',
+			UsuarioGrupos.findAll({
+				where:{ id_usuario: req.params.id_usuario}
+			}).then(function (grupos) {
+				var gruposUsuario = grupos.map(function (grupo) {
+					return grupo.id_grupo
+				})
+				Compra.findAll({
+					where: condicionCompra,
 					include: [{
-						model: Sucursal, as: 'sucursal',
-						where: condicionSucursal
+						model: DetalleCompra, as: 'detallesCompra',
+						include: [{ model: Producto, as: 'producto', where :{ id_grupo: {$in: gruposUsuario}} },
+						{ model: Clase, as: 'centroCosto'/*,where:{nombre_corto:'ALM'}*/ }]
+					},
+					{ model: Clase, as: 'tipoPago' },
+					{ model: Usuario, as: 'usuario', where: condicionUsuario },
+					{ model: Proveedor, as: 'proveedor', where: condicionProveedor },
+					{
+						model: Almacen, as: 'almacen',
+						include: [{
+							model: Sucursal, as: 'sucursal',
+							where: condicionSucursal
+						}]
 					}]
-				}]
-			}).then(function (entity) {
-				res.json(entity);
-			});
+				}).then(function (entity) {
+					res.json(entity);
+				});
+			})
 		});
 
 	router.route('/compras/:id')

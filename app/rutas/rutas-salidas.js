@@ -1,5 +1,5 @@
 module.exports=function(router,forEach,decodeBase64Image,fs,Empresa,Producto,Proveedor,Cliente,Clase,Inventario,ComisionVendedorProducto,
-						Usuario,DetalleVenta,DetalleMovimiento,Movimiento,Venta,Compra,DetalleCompra,Almacen,Sucursal,signs3,Tipo,VentaReprogramacionPago){
+						Usuario,DetalleVenta,DetalleMovimiento,Movimiento,Venta,Compra,DetalleCompra,Almacen,Sucursal,signs3,Tipo,VentaReprogramacionPago, UsuarioGrupos){
 
 router.route('/productos/empresa/:id_empresa/texto/:texto')
 	.get(function(req, res) {
@@ -14,6 +14,29 @@ router.route('/productos/empresa/:id_empresa/texto/:texto')
 		}).then(function(productos){
 			res.json(productos);		  
 		});
+	});
+
+	router.route('/productos/empresa/:id_empresa/texto/:texto/user/:id_usuario')
+	.get(function(req, res) {
+		UsuarioGrupos.findAll({
+			where: {id_usuario: req.params.id_usuario}
+		}).then(function (grupos) {
+			var gurposUsuario = grupos.map(function (grupo) {
+				return grupo.id_grupo
+			})
+			Producto.findAll({ 
+				where: {
+					id_empresa:req.params.id_empresa,
+					id_grupo: {$in: gurposUsuario},
+					$or: [{nombre:{$like:'%'+req.params.texto+'%'}},
+						  {codigo:{$like:'%'+req.params.texto+'%'}},
+						  {codigo_fabrica:{$like:'%'+req.params.texto+'%'}},
+						  {descripcion:{$like:'%'+req.params.texto+'%'}}]},
+				include:[{model:Clase,as:'tipoProducto'}]
+			}).then(function(productos){
+				res.json(productos);		  
+			});
+		})
 	});
 	
 router.route('/inventarios/producto/:id_producto/almacen/:id_almacen')

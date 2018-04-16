@@ -900,6 +900,24 @@ angular.module('agil.servicios')
     };
     return res;
 }])
+.factory('DotacionRopaActualizar', function ($resource) {
+    return $resource(restServer + "recursos-humanos/ropa-trabajo/actualizar/empleado/:id_empleado",null,
+        {
+            'update': { method: 'PUT' }
+        });
+})
+.factory('ActualizarDotacionRopa', ['DotacionRopaActualizar', '$q', function (DotacionRopaActualizar, $q) {
+    var res = function (id_empleado,datos) {
+        var delay = $q.defer();
+        DotacionRopaActualizar.update({id_empleado:id_empleado},datos,function (entidad) {
+            delay.resolve(entidad);
+        }, function (error) {
+            delay.reject(error);
+        });
+        return delay.promise;
+    };
+    return res;
+}])
 .factory('BuscarRopasTrabajoEmpleado', function ($resource) {
     return $resource(restServer + "recursos-humanos/ropa-trabajo/empleado/:id_empleado/inicio/:inicio/fin/:fin",null,
         {

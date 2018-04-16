@@ -5,7 +5,7 @@ angular.module('agil.controladores')
         ObtenerListaPrestamo, CrearRolTurno, CrearPagoPrestamo, VerificarUsuarioEmpresa, EditarPrestamo, ListaEmpleadosRrhh, CrearHorasExtra, HistorialHorasExtra, ListaRolTurnos, ValidarCodigoCuentaEmpleado, $timeout, DatosCapacidadesImpresion, NuevoAnticipoEmpleado,
         ListaAnticiposEmpleado, CrearNuevosAnticiposEmpleados, ActualizarAnticipoEmpleado, NuevaAusenciaEmpleado, HistorialEmpleadoAusencias, HistorialEmpresaEmpleadosAusencias, NuevaVacacionEmpleado, HistorialEmpleadoVacaciones, HistorialEmpresaVacaciones, NuevoFeriado,
         ListaFeriados, GuardarClasesAusencias, Tipos, ListaBancos, ConfiguracionesVacacion, HistorialGestionesVacacion, GuardarTr3, ListaTr3Empresa, GuardarHistorialVacacion, CrearBeneficioSocial, ListaBeneficiosEmpleado, GuardarBitacoraFicha, VerBitacoraFicha, ObtenerFiniquitoEmpleado,
-        ClasesTipoEmpresa, GuardarConfiguracionRopaCargo, ListaConfiguracionRopaCargo, DatosReporteConfiguracionRopa, FichasEmpleadoEmpresa, ListaCargosEmpleado, ListaRopaTrabajoProductos, GuardarDotacionRopa, ListaDotacionRopa, EliminarDotacionRopa, ListaDotacionRopaEmpresa) {
+        ClasesTipoEmpresa, GuardarConfiguracionRopaCargo, ListaConfiguracionRopaCargo, DatosReporteConfiguracionRopa, FichasEmpleadoEmpresa, ListaCargosEmpleado, ListaRopaTrabajoProductos, GuardarDotacionRopa, ListaDotacionRopa, EliminarDotacionRopa, ListaDotacionRopaEmpresa, ActualizarDotacionRopa) {
         $scope.usuario = JSON.parse($localStorage.usuario);
         $scope.idModalPrerequisitos = 'dialog-pre-requisitos';
         $scope.idModalEmpleado = 'dialog-empleado';
@@ -339,7 +339,7 @@ angular.module('agil.controladores')
         $scope.cerrarModalRopaTrabajo = function () {
             $scope.cerrarPopup($scope.idModalRopaTrabajo)
         }
-        $scope.abrirModalNuevaRopaTrabajo = function (empleado, edit, index) {
+        $scope.abrirModalNuevaRopaTrabajo = function (empleado, edit, index, visible) {
             $scope.filtroropa.inicio = ""
             $scope.filtroropa.fin = ""
             $scope.empleado = empleado
@@ -353,7 +353,9 @@ angular.module('agil.controladores')
                 $scope.verinformacionDOtacion = true
                 $scope.indexInfo = index
                 console.log($scope.listaDotaciones[$scope.indexInfo].ropas)
-            } else {
+            } else if (visible != undefined) {
+                $scope.indexInfo = visible
+                $scope.visible = true
                 $scope.verinformacionDOtacion = false
             }
             if ($scope.listaDotaciones.length > 0) {
@@ -6048,6 +6050,7 @@ angular.module('agil.controladores')
             }
             var promesa = CrearBeneficioSocial(datos, $scope.empleado.id_ficha)
             promesa.then(function (dato) {
+                $scope.imprimirFiniquito(datos)
                 $scope.mostrarMensaje(dato.mensaje)
                 $scope.cerrarDialogBeneficiosSociales()
             })
@@ -6667,6 +6670,9 @@ angular.module('agil.controladores')
                                                 });
                                             } else {
                                                 $scope.dotacionRopa.dotacionItems = $scope.dotacionItems
+                                                var fecha = new Date()
+                                                $scope.dotacionRopa.fecha = $scope.fechaATexto(fecha)
+
                                             }
                                         } else {
                                             var ina = $scope.listaDotaciones.length - 1
@@ -6674,7 +6680,9 @@ angular.module('agil.controladores')
                                                 ina = pocision
                                             }
                                             $scope.dotacionRopa.dotacionItems = $scope.listaDotaciones[ina].dotacionItems
-
+                                            var fecha = new Date()
+                                            $scope.dotacionRopa.fecha = $scope.fechaATexto(fecha)
+                                            $scope.dotacionRopa.fecha_vencimiento = $scope.fechaATexto($scope.dotacionRopa.fecha_vencimiento)
 
                                         }
                                     }
@@ -6741,12 +6749,28 @@ angular.module('agil.controladores')
                         item.entregado = true
                     }
                 }
+            } else if (!item.anterior) {
+                if (item.entregado) {
+                    item.entregado = (item.entregado) ? false : true
+                } else {
+                    item.entregado = true
+                }
             }
         }
         $scope.guardarDotacionRopa = function (dotacion) {
             blockUI.start();
             if ($scope.actualizarDotacion) {
-                $scope.mostrarMensaje("falta funcion para actualizar")
+                dotacion.fecha = new Date($scope.convertirFecha(dotacion.fecha))
+                dotacion.fecha_vencimiento = new Date($scope.convertirFecha(dotacion.fecha_vencimiento))
+                var promesa = ActualizarDotacionRopa($scope.empleado.id, dotacion)
+                promesa.then(function (entidad) {
+                    $scope.mostrarMensaje(entidad.mensaje)
+                    $scope.ObtenerDotacionesRopa($scope.empleado)
+                    dotacion.numero = entidad.numero
+                    $scope.imprimirRopaTrabajo(dotacion)
+                    $scope.cerrarModalNuevaRopaTrabajo()
+                    blockUI.stop();
+                });
                 blockUI.stop();
             } else {
                 dotacion.fecha = new Date($scope.convertirFecha(dotacion.fecha))
@@ -7012,60 +7036,177 @@ angular.module('agil.controladores')
             }
             var promesa = ListaDotacionRopaEmpresa($scope.usuario.id_empresa, filtro)
             promesa.then(function (datos) {
-                if (filtro.inicio == 0) {
-                    filtro.inicio = ""
-                    filtro.fin = ""
-                }
-                var cont = 1
-                var doc = new PDFDocument({ compress: false, size: 'letter', margin: 10 });
-                var stream = doc.pipe(blobStream());
-                var totalCosto = 0, totalTransporte = 0;
-                var y = 215, itemsPorPagina = 18, items = 0, pagina = 1, totalPaginas = Math.ceil(datos.length / itemsPorPagina);
-                $scope.DibujarCabeceraPDFRopaTrabajoEmpleados(doc, pagina, totalPaginas, datos);
+                arregloNombres = []
+                datos.forEach(function (dato, index, array) {
 
-                doc.font('Helvetica', 10);
-                for (var i = 0; i < datos.length && items <= itemsPorPagina; i++) {
-                    item = datos[i]
-
-                    if (items == itemsPorPagina) {
-                        doc.addPage({ margin: 0, bufferPages: true });
-                        y = 215;
-                        items = 0;
-                        pagina = pagina + 1;
-                        $scope.DibujarCabeceraPDFRopaTrabajoEmpleados(doc, pagina, totalPaginas, datos);
-
+                    if (index == 0) {
+                        arregloNombres.push(dato.dotacionRopa.empleado.persona.nombre_completo)
+                    } else {
+                        var bandera = false
+                        for (var i = 0; i < arregloNombres.length; i++) {
+                            var element = arregloNombres[i];
+                            if (element === dato.dotacionRopa.empleado.persona.nombre_completo) {
+                                bandera = true
+                            }
+                        }
+                        if (!bandera) {
+                            arregloNombres.push(dato.dotacionRopa.empleado.persona.nombre_completo)
+                        }
                     }
-                }
-                doc.end();
-                stream.on('finish', function () {
-                    var fileURL = stream.toBlobURL('application/pdf');
-                    window.open(fileURL, '_blank', 'location=no');
-                });
-                blockUI.stop();
-            })
+                    if (index === (array.length - 1)) {
+                        convertUrlToBase64Image($scope.usuario.empresa.imagen, function (imagenEmpresa) {
+                            var imagen = imagenEmpresa;
+                            if (filtro.inicio == 0) {
+                                filtro.inicio = ""
+                                filtro.fin = ""
+                            }
+                            var cont = 1
+                            var doc = new PDFDocument({ compress: false, size: 'letter', margin: 10 });
+                            var stream = doc.pipe(blobStream());
+                            var totalCosto = 0, totalTransporte = 0;
+                            var y = 110, itemsPorPagina = 20, items = 0, pagina = 1, totalPaginas = Math.ceil((datos.length + arregloNombres.length) / itemsPorPagina);
+                            $scope.DibujarCabeceraPDFRopaTrabajoEmpleados(doc, pagina, totalPaginas, datos, imagen);
 
+                            doc.font('Helvetica', 10);
+                            for (var i = 0; i < datos.length && items <= itemsPorPagina; i++) {
+                                item = datos[i]
+                                if (i == 0) {
+                                    doc.font('Helvetica-Bold', 10);
+                                    doc.text("Asignado a:", 45, y)
+                                    doc.font('Helvetica', 10);
+                                    doc.text(item.dotacionRopa.empleado.persona.nombre_completo, 105, y)
+                                    y += 30
+                                    doc.rect(30, y - 15, 550, 0).stroke();
+                                    doc.rect(30, y - 15, 0, 30).stroke();
+                                    doc.rect(580, y - 15, 0, 30).stroke();
+                                    items++
+                                }
+                                if (i > 0) {
+                                    if (item.dotacionRopa.empleado.persona.nombre_completo === datos[i - 1].dotacionRopa.empleado.persona.nombre_completo) {
+                                        doc.rect(30, y - 15, 0, 30).stroke();
+                                        doc.rect(580, y - 15, 0, 30).stroke();
+                                    } else {
+                                        doc.rect(30, y - 15, 550, 0).stroke();
+                                        doc.font('Helvetica-Bold', 10);
+                                        doc.text("Asignado a:", 45, y)
+                                        doc.font('Helvetica', 10);
+                                        doc.text(item.dotacionRopa.empleado.persona.nombre_completo, 105, y)
+                                        y += 30
+                                        doc.rect(30, y - 15, 550, 0).stroke();
+                                        doc.rect(30, y - 15, 0, 30).stroke();
+                                        doc.rect(580, y - 15, 0, 30).stroke();
+                                        items++
+                                    }
+
+                                }
+                                doc.text(i + 1, 35, y)
+                                doc.text(item.producto.codigo, 85, y)
+                                doc.text(item.producto.nombre, 145, y)
+                                doc.text(item.producto.unidad_medida, 245, y)
+                                doc.text(item.cantidad, 295, y)
+                                doc.text(item.producto.precio_unitario, 345, y)
+                                doc.text(item.producto.precio_unitario * item.cantidad, 400, y)
+                                doc.text(item.dotacionRopa.numero, 480, y)
+                                doc.text($scope.fechaATexto(new Date(item.dotacionRopa.fecha)), 500, y)
+                                y += 30
+                                items++
+                                if (items == itemsPorPagina) {
+                                    doc.rect(30, y - 15, 550, 0).stroke();
+                                    doc.addPage({ margin: 0, bufferPages: true });
+                                    y = 110;
+                                    items = 0;
+                                    pagina = pagina + 1;
+                                    $scope.DibujarCabeceraPDFRopaTrabajoEmpleados(doc, pagina, totalPaginas, datos, imagen);
+                                    if (datos[i + 1].dotacionRopa.empleado.persona.nombre_completo === datos[i].dotacionRopa.empleado.persona.nombre_completo) {
+                                        doc.rect(30, y - 15, 550, 0).stroke();
+                                        doc.font('Helvetica-Bold', 10);
+                                        doc.text("Asignado a:", 45, y)
+                                        doc.font('Helvetica', 10);
+                                        doc.text(item.dotacionRopa.empleado.persona.nombre_completo, 105, y)
+                                        y += 30
+                                        doc.rect(30, y - 15, 550, 0).stroke();
+                                        doc.rect(30, y - 15, 0, 30).stroke();
+                                        doc.rect(580, y - 15, 0, 30).stroke();
+                                        items++
+                                    } else {
+
+                                    }
+
+                                }
+                            }
+                            doc.rect(30, y - 15, 550, 0).stroke();
+                            doc.end();
+                            stream.on('finish', function () {
+                                var fileURL = stream.toBlobURL('application/pdf');
+                                window.open(fileURL, '_blank', 'location=no');
+                            });
+                            blockUI.stop();
+                        })
+                    }
+                });
+
+            })
 
         }
 
-        $scope.DibujarCabeceraPDFRopaTrabajoEmpleados = function (doc, pagina, totalPaginas, dato) {
-            doc.font('Helvetica-Bold', 14);
-            doc.text("ROPA DE TRABAJO - POR CARGOS", 0, 20, { align: "center" });
-            //doc.image(imagen, 30, 10, { fit: [80, 80] });
-            doc.rect(0, 65, 620, 0).stroke();
-            doc.rect(130, 40, 500, 0).stroke();
-            doc.rect(130, 0, 0, 65).stroke();
-            doc.rect(460, 0, 0, 65).stroke();
+        $scope.DibujarCabeceraPDFRopaTrabajoEmpleados = function (doc, pagina, totalPaginas, dato, imagen) {
+            doc.font('Helvetica-Bold', 12);
+            doc.text("DOTACION DE ROPA E IMPLEMENTOS DE TRABAJO", 0, 50, { align: "center" });
+            doc.image(imagen, 40, 40, { fit: [80, 80] });
+            doc.rect(30, 35, 550, 0).stroke();
+            doc.rect(30, 95, 550, 0).stroke();
+            doc.rect(130, 70, 450, 0).stroke();
+            doc.rect(130, 35, 0, 60).stroke();
+            doc.rect(460, 35, 0, 60).stroke();
+            doc.rect(30, 35, 0, 60).stroke();
+            doc.rect(580, 35, 0, 60).stroke();
             doc.font('Helvetica-Bold', 8);
-            doc.text("Revicion:", 480, 20);
-            doc.text("Fecha de aprobación:", 480, 45);
-            doc.text("Código .", 0, 45, { align: "center" });
+            doc.text("Revicion:", 470, 50);
+            doc.text("Fecha de aprobación:", 470, 75);
+            doc.text("Código .", 0, 75, { align: "center" });
             doc.font('Helvetica', 8);
             var currentDate = new Date();
             doc.text("Usuario: " + $scope.usuario.persona.nombre_completo + "      Fecha :  " + $scope.fechaATexto(currentDate) + "   Hrs. " + currentDate.getHours() + ":" + currentDate.getMinutes(), 15, 765);
             doc.font('Helvetica-Bold', 8);
             doc.text("PÁGINA " + pagina + " DE " + totalPaginas, 0, 740, { align: "center" });
         }
-        //fin ropa de trabajo
+
+        $scope.imprimirFiniquito = function (datos) {
+
+            convertUrlToBase64Image("./img/finiquito.png", function (imagenFiniquito) {
+                convertUrlToBase64Image("./img/finiquito2.png", function (imagenFiniquito2) {
+                    var imagen = imagenFiniquito;
+                    var imagen2 = imagenFiniquito2
+                    var cont = 1
+                    var doc = new PDFDocument({ compress: false, size: [612, 936], margin: 10 });
+                    var y = 198
+                    var stream = doc.pipe(blobStream());
+                    //primera pagina
+                    doc.image(imagen, 30, 30, { fit: [572, 876] });
+                    doc.font('Helvetica', 10);
+                    doc.fillColor('#4183C4')                                        
+                    y =($scope.usuario.empresa.razon_social.length > 50)?192:198
+                    doc.text($scope.usuario.empresa.razon_social, 280, y, { width: 250 })
+                    y =($scope.usuario.empresa.direccion.length > 29)?217:222
+                    doc.text($scope.usuario.empresa.direccion, 385, y, { width: 170 })
+                    doc.text($scope.empleado.nombre_completo, 280, 243, { width: 250 })
+                    doc.text($scope.empleado.nombre_completo, 280, 243, { width: 250 })
+                    //segunda pagina
+                    doc.addPage({ margin: 0, size: [612, 936], bufferPages: true });
+                    doc.image(imagen2, 30, 30, { fit: [572, 876] });
+                    doc.end();
+                    stream.on('finish', function () {
+                        var fileURL = stream.toBlobURL('application/pdf');
+                        window.open(fileURL, '_blank', 'location=no');
+                    });
+                    blockUI.stop();
+
+
+                })
+            })
+        }
+
+
 
         $scope.inicio()
     });

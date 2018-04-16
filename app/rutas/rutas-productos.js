@@ -82,6 +82,24 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 				res.json(resp);
 			});
 		});
+
+	router.route('/productos/empresa/:id_empresa/user/:id_usuario')
+		.get(function (req, res) {
+			UsuarioGrupos.findAll({
+				where: { id_usuario: req.params.id_usuario }
+			}).then(function (grupos) {
+				var gruposUser = grupos.map(function (grupo) {
+					return grupo.id_grupo
+				})
+				Producto.findAll({
+					where: { id_empresa: req.params.id_empresa, codigo: { $not: null }, id_grupo: { $in: gruposUser } },
+					include: [{ model: Empresa, as: 'empresa' }],
+					order: [['codigo', 'ASC']]
+				}).then(function (resp) {
+					res.json(resp);
+				});
+			})
+		});
 	router.route('/productos/kardex/:id_producto/almacen/:id_almacen/fecha-inicial/:fecha_inicio/fecha-final/:fecha_fin/lote/:lote')
 		.get(function (req, res) {
 			var fechaInicial = req.params.fecha_inicio == 0 ? new Date(2016, 0, 1, 0, 0, 0) : new Date(req.params.fecha_inicio);
@@ -120,44 +138,66 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 			});
 		});
 
-	router.route('/productos/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion/grupo/:id_grupo')
+	router.route('/productos/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion/grupo/:id_grupo/user/:id_user')
 		.get(function (req, res) {
-			var condicionProducto = "empresa=" + req.params.id_empresa, paginas, limit;
-			if (req.params.texto_busqueda != 0) {
-				condicionProducto = condicionProducto + " and (\
-				codigo LIKE '%"+ req.params.texto_busqueda + "%' or \
-				producto.nombre LIKE '%"+ req.params.texto_busqueda + "%' or \
-				unidad_medida LIKE '%"+ req.params.texto_busqueda + "%' or \
-				descripcion LIKE '%"+ req.params.texto_busqueda + "%' or \
-				grupo.nombre LIKE '%"+ req.params.texto_busqueda + "%' or \
-				subgrupo.nombre LIKE '%"+ req.params.texto_busqueda + "%')";
-			}
-			if (req.params.id_grupo != 0) {
-				condicionProducto += ' and grupo=' + req.params.id_grupo
-			}
-			sequelize.query("select count(producto.id) as cantidad_productos \
-							from agil_producto as producto \
-							LEFT OUTER JOIN gl_clase AS grupo ON (producto.grupo = grupo.id) \
-							LEFT OUTER JOIN gl_clase AS subgrupo ON (producto.subgrupo = subgrupo.id) \
-							WHERE "+ condicionProducto, { type: sequelize.QueryTypes.SELECT })
-				.then(function (data) {
-					if (req.params.items_pagina != 0) {
-						limit = " LIMIT " + (req.params.items_pagina * (req.params.pagina - 1)) + "," + req.params.items_pagina;
-						paginas = Math.ceil(data[0].cantidad_productos / req.params.items_pagina);
-					} else {
-						limit = "";
-						paginas = 1;
+			var gruposProductos = ''
+			UsuarioGrupos.findAll({
+				where: { id_usuario: req.params.id_user }
+			}).then(function (grupos) {
+				if (grupos.length == 0) {
+					res.json({ productos: [], hasError: true, mensaje: 'Los grupos del usuario no cuentan con productos.' });
+				} else {
+					grupos.forEach(function (grupo, i) {
+						if (i == grupos.length - 1) {
+							gruposProductos += grupo.id_grupo + ''
+						} else {
+							gruposProductos += grupo.id_grupo + ','
+						}
+					})
+					var condicionProducto = "empresa=" + req.params.id_empresa, paginas, limit;
+					if (req.params.texto_busqueda != 0) {
+						condicionProducto = condicionProducto + " and (\
+					codigo LIKE '%"+ req.params.texto_busqueda + "%' or \
+					producto.nombre LIKE '%"+ req.params.texto_busqueda + "%' or \
+					unidad_medida LIKE '%"+ req.params.texto_busqueda + "%' or \
+					descripcion LIKE '%"+ req.params.texto_busqueda + "%' or \
+					grupo.nombre LIKE '%"+ req.params.texto_busqueda + "%' or \
+					subgrupo.nombre LIKE '%"+ req.params.texto_busqueda + "%')";
 					}
-					sequelize.query("select producto.id,producto.publicar_panel,producto.activar_inventario,producto.codigo,producto.nombre as nombre,producto.imagen,producto.unidad_medida,producto.precio_unitario,producto.inventario_minimo,producto.descripcion,grupo.nombre as grupo,subgrupo.nombre as subgrupo\
-					from agil_producto as producto\
-					LEFT OUTER JOIN gl_clase AS grupo ON (producto.grupo = grupo.id)\
-					LEFT OUTER JOIN gl_clase AS subgrupo ON (producto.subgrupo = subgrupo.id)\
-					WHERE "+ condicionProducto + " \
-					ORDER BY producto."+ req.params.columna + " " + req.params.direccion + limit, { type: sequelize.QueryTypes.SELECT })
-						.then(function (productos) {
-							res.json({ productos: productos, paginas: paginas });
+					if (req.params.id_grupo != 0) {
+						condicionProducto += ' and producto.grupo =' + req.params.id_grupo
+					}
+					sequelize.query("select count(producto.id) as cantidad_productos \
+								from agil_producto as producto \
+								LEFT OUTER JOIN gl_clase AS grupo ON (producto.grupo = grupo.id) \
+								LEFT OUTER JOIN gl_clase AS subgrupo ON (producto.subgrupo = subgrupo.id) \
+								WHERE "+ condicionProducto + " and producto.grupo in (" + gruposProductos + ")", { type: sequelize.QueryTypes.SELECT })
+						.then(function (data) {
+							if (req.params.items_pagina != 0) {
+								limit = " LIMIT " + (req.params.items_pagina * (req.params.pagina - 1)) + "," + req.params.items_pagina;
+								paginas = Math.ceil(data[0].cantidad_productos / req.params.items_pagina);
+							} else {
+								limit = "";
+								paginas = 1;
+							}
+							sequelize.query("select producto.id,producto.publicar_panel,producto.activar_inventario,producto.codigo,producto.nombre as nombre,producto.imagen,producto.unidad_medida,producto.precio_unitario,producto.inventario_minimo,producto.descripcion,grupo.nombre as grupo,subgrupo.nombre as subgrupo\
+						from agil_producto as producto\
+						LEFT OUTER JOIN gl_clase AS grupo ON (producto.grupo = grupo.id)\
+						LEFT OUTER JOIN gl_clase AS subgrupo ON (producto.subgrupo = subgrupo.id)\
+						WHERE "+ condicionProducto + " and producto.grupo in (" + gruposProductos + ") \
+						ORDER BY producto."+ req.params.columna + " " + req.params.direccion + limit, { type: sequelize.QueryTypes.SELECT })
+								.then(function (productos) {
+									res.json({ productos: productos, paginas: paginas });
+								}).catch(function (err) {
+									res.json({ productos: [], hasError: true, mensaje: err.stack });
+								});
+						}).catch(function (err) {
+							res.json({ productos: [], hasError: true, mensaje: err.stack });
 						});
-				});
+				}
+			}).catch(function (err) {
+				res.json({ productos: [], hasError: true, mensaje: err.stack });
+			})
 		});
 
 	router.route('/productos/empresa')
@@ -472,85 +512,62 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 
 	router.route('/productos-panel/empresa/:id_empresa/almacen/:id_almacen/user/:id_usuario')
 		.get(function (req, res) {
-			var listaProductos = []
-			var grupos = []
-			/*Usuario.find({
-				where: {id: req.params.id_usuario},
-				include:[{ model: UsuarioGrupos, as: 'grupos', include: [{ model: Clase, as: 'grupo' }] }]
-			}).then(function (usuarioEncontrado) {
-				grupos = usuarioEncontrado.grupos.map(function (grupo) {
+			UsuarioGrupos.findAll({
+				where: { id_usuario: req.params.id_usuario }
+			}).then(function (grupos) {
+				var gruposUsuario = grupos.map(function (grupo) {
 					return grupo.id_grupo
 				})
 				Producto.findAll({
-					where: { id_empresa: req.params.id_empresa, publicar_panel: true, activar_inventario: false, id_grupo:{$in: grupos} },
-					include: [{ model: Clase, as: 'tipoProducto' }]
-				}).then(function (productos) {
-					productos.map(function (producto, i) {
-						ProductoBase.findAll({
-							where: { id_producto: producto.id },
-							include: [{ model: Producto, as: 'productoBase', include: [{ model: Inventario, as: 'inventarios', where: { id_almacen: req.params.id_almacen, cantidad: { $gte: 0 } }, required: false }] }]
-						}).then(function (productosBase) {
-							producto.dataValues.productosBase = productosBase
-							if (i == productos.length - 1) {
-								Array.prototype.push.apply(listaProductos, productos);
-								Producto.findAll({
-									where: { id_empresa: req.params.id_empresa, publicar_panel: true, activar_inventario: true, id_grupo:{$in: grupos} },
-									include: [{ model: Inventario, as: 'inventarios', where: { id_almacen: req.params.id_almacen }}],
-									include: [{ model: Clase, as: 'tipoProducto' }]
-								}).then(function (productosInventarios) {
-									productosInventarios.map(function (productoInventario, y) {
-										Inventario.findAll({
-											where: { id_producto: productoInventario.id, id_almacen: req.params.id_almacen }
-										}).then(function (inventarios) {
-											productoInventario.dataValues.inventarios = inventarios
-											ProductoBase.findAll({
-												where: { id_producto: productoInventario.id },
-												include: [{ model: Producto, as: 'productoBase', include: [{ model: Inventario, as: 'inventarios', where: { id_almacen: req.params.id_almacen, cantidad: { $gte: 0 } }}] }]
-											}).then(function (productosBase) {
-												productoInventario.productosBase = productosBase
-													if (y == productosInventarios.length - 1) {
-														Array.prototype.push.apply(listaProductos, productosInventarios);
-														res.json(listaProductos);
-													}
-											})
-										})
-									})
-								})
-							}
-						})
-					})
-				});
-			})*/
-			
-			Producto.findAll({
-				where: { id_empresa: req.params.id_empresa, publicar_panel: true },
-				include: [{ model: Inventario, as: 'inventarios', where: { id_almacen: req.params.id_almacen, cantidad: { $gte: 0 } }, required: false },
-				{ model: Clase, as: 'tipoProducto' },
-				{
-					model: ProductoBase, as: 'productosBase',
-					include: [{
-						model: Producto, as: 'productoBase',
-						include: [{ model: Inventario, as: 'inventarios', where: { id_almacen: req.params.id_almacen, cantidad: { $gt: 0 } }, required: false },
+					where: { id_empresa: req.params.id_empresa, publicar_panel: true, id_grupo:{$in:gruposUsuario} },
+					include: [
+						{ model: Inventario, as: 'inventarios', required: false, where: { id_almacen: req.params.id_almacen, cantidad: { $gte: 0 } } },
 						{ model: Clase, as: 'tipoProducto' },
-						{
-							model: ProductoBase, as: 'productosBase',
+						{ model: ProductoBase, as: 'productosBase' , required: false,
 							include: [{
-								model: Producto, as: 'productoBase',
-								include: [{ model: Inventario, as: 'inventarios', where: { id_almacen: req.params.id_almacen, cantidad: { $gt: 0 } }, required: false },
-								{ model: Clase, as: 'tipoProducto' }]
+								model: Producto, as: 'productoBase', required: false,
+								include: [{ model: Inventario, as: 'inventarios', required: false, where: { id_almacen: req.params.id_almacen, cantidad: { $gte: 0 } } },
+								{ model: Clase, as: 'tipoProducto' },
+								{
+									model: ProductoBase, as: 'productosBase', required: false,
+									include: [{
+										model: Producto, as: 'productoBase', required: false,
+										include: [{ model: Inventario, as: 'inventarios', required: false, where: { id_almacen: req.params.id_almacen, cantidad: { $gte: 0 } } },
+										{ model: Clase, as: 'tipoProducto' }]
+									}]
+								}]
 							}]
-						}]
-					}]
-				}],
-				order: [[{ model: Inventario, as: 'inventarios' }, 'updatedAt', 'DESC']]
-			}).then(function (productos) {
-				res.json(productos);
+						}],
+					order: [[{ model: Inventario, as: 'inventarios' }, 'updatedAt', 'DESC']]
+				}).then(function (productos) {
+					res.json(productos);
+				}).catch(function (err) {
+					res.json([{ hasError: true, mensaje: err.stack + '---LN 523 rutas productos' }]);
+				});
+			}).catch(function (err) {
+				res.json([{ hasError: true, mensaje: err.stack + '---LN 517 rutas productos' }]);
 			});
 		});
 
 	router.route('/comision-productos-vendedor/empresa/:id_empresa/usuario/:id_usuario')
 		.get(function (req, res) {
-			obtenerComisionesProductoVendedor(req, res, true);
+			var gruposProductos = []
+			UsuarioGrupos.findAll({
+				where: { id_usuario: req.params.id_usuario }
+			}).then(function (grupos) {
+				if (grupos.length == 0) {
+					res.json([{ mensaje: 'El usuario no cuenta con grupos de productos asignados!' }])
+				} else {
+					grupos.map(function (grupo, i) {
+						gruposProductos.push(grupo.id_grupo)
+						if (i == grupos.length - 1) {
+							obtenerComisionesProductoVendedor(req, res, true, gruposProductos);
+						}
+					})
+				}
+			}).catch(function (err) {
+				res.json([{ mensaje: err.stack }])
+			})
 		})
 
 		.put(function (req, res) {
@@ -574,26 +591,34 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 				});
 		});
 
-	function obtenerComisionesProductoVendedor(req, res, verificar) {
-		var configuracionesPremisa = obtenerComisionesProductoPremisa(req, true);
+	function obtenerComisionesProductoVendedor(req, res, verificar, gruposProductos) {
+		var configuracionesPremisa = obtenerComisionesProductoPremisa(req, true, gruposProductos);
 		configuracionesPremisa.then(function (entities) {
 			if (entities.length > 0) {
 				if (verificar) {
-					verificarProductosFaltantes(req, res, entities);
+					// verificarProductosFaltantes(req, res, entities);
+					devolverComisiones(entities, res);
 				} else {
 					devolverComisiones(entities, res);
 				}
 			} else {
-				crearComisionesProductoVendedor(req, res);
+				crearComisionesProductoVendedor(req, res, gruposProductos);
 			}
 		});
 	}
 
-	function obtenerComisionesProductoPremisa(req, required) {
+	function obtenerComisionesProductoPremisa(req, required, gruposProductos) {
+
 		return Producto.findAll({
-			where: { id_empresa: req.params.id_empresa },
+			where: { id_empresa: req.params.id_empresa, id_grupo: { $in: gruposProductos } },
 			include: [{ model: ComisionVendedorProducto, as: 'comisionesVendedores', where: { id_usuario: req.params.id_usuario }, required: required }]
 		});
+
+		//old change at 06/04/2018
+		// return Producto.findAll({
+		// 	where: { id_empresa: req.params.id_empresa },
+		// 	include: [{ model: ComisionVendedorProducto, as: 'comisionesVendedores', where: { id_usuario: req.params.id_usuario }, required: required }]
+		// });
 	}
 
 	function verificarProductosFaltantes(req, res, originalEntities) {
@@ -619,10 +644,10 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 		res.json(entities);
 	}
 
-	function crearComisionesProductoVendedor(req, res) {
+	function crearComisionesProductoVendedor(req, res, gruposProductos) {
 		Producto.findAll({
 			where: {
-				id_empresa: req.params.id_empresa
+				id_empresa: req.params.id_empresa, id_grupo: { $in: gruposProductos }
 			}
 		}).then(function (productos) {
 			productos.forEach(function (producto, index, array) {
@@ -631,7 +656,8 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 					id_usuario: req.params.id_usuario
 				}).then(function (score) {
 					if (index === (array.length - 1)) {
-						obtenerComisionesProductoVendedor(req, res, false);
+						obtenerComisionesProductoVendedor(req, res, false, gruposProductos);
+						// res.json(productos)
 					}
 				});
 			});
@@ -704,5 +730,53 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 				});
 		});
 
-
+	router.route('/catalogo-productos/empresa/:id_empresa/grupo/:id_grupo/user/:id_usuario')
+		.get(function (req, res) {
+			var condicionProducto = "empresa=" + req.params.id_empresa
+			if (req.params.id_grupo != 0) {
+				condicionProducto += ' and producto.grupo =' + req.params.id_grupo
+				sequelize.query("select * \
+					from agil_producto as producto\
+					WHERE "+ condicionProducto, { type: sequelize.QueryTypes.SELECT })
+					.then(function (productos) {
+						res.json({ catalogo: productos });
+					}).catch(function (err) {
+						res.json({ catalogo: [], hasError: true, mensaje: err.stack });
+					});
+			} else {
+				UsuarioGrupos.findAll({
+					where: { id_usuario: req.params.id_usuario }
+				}).then(function (grupos) {
+					var grupoLiteral = '('
+					var grupoArray = []
+					grupos.forEach(function (grupo, i) {
+						grupoArray.push(grupo.id_grupo)
+						if (i == grupos.length - 1) {
+							grupoLiteral += grupo.id_grupo + ')'
+						} else {
+							grupoLiteral += grupo.id_grupo + ','
+						}
+					})
+					condicionProducto += ' and producto.grupo in ' + grupoLiteral
+					// 	sequelize.query("select * \
+					// from agil_producto as producto LEFT OUTER JOIN gl_clase as grupo\
+					// 	WHERE "+ condicionProducto, { type: sequelize.QueryTypes.SELECT })
+					// 		.then(function (productos) {
+					// 			res.json({ catalogo: productos });
+					// 		}).catch(function (err) {
+					// 			res.json({ catalogo: [], hasError: true, mensaje: err.stack });
+					// 		});
+					Producto.findAll({
+						where: { id_grupo: { $in: grupoArray } },
+						include: [{ model: Clase, as: 'grupo' }, { model: Clase, as: 'subgrupo' }]
+					}).then(function (productos) {
+						res.json({ catalogo: productos });
+					}).catch(function (err) {
+						res.json({ catalogo: [], hasError: true, mensaje: err.stack });
+					});
+				}).catch(function (err) {
+					res.json({ catalogo: [], hasError: true, mensaje: err.stack });
+				});
+			}
+		});
 }

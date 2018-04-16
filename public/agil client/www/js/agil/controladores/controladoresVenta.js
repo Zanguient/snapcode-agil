@@ -2,7 +2,7 @@ angular.module('agil.controladores')
 
 	.controller('ControladorVentas', function ($scope, $filter, $localStorage, $location, $templateCache, $route, blockUI, $timeout, $window, InventarioPaginador,
 		Venta, Ventas, Clientes, ClientesNit, ProductosNombre, ClasesTipo, VentasContado, VentasCredito,
-		PagosVenta, DatosVenta, VentaEmpresaDatos, ProductosPanel, ListaProductosEmpresa, ListaInventariosProducto,
+		PagosVenta, DatosVenta, VentaEmpresaDatos, ProductosPanel, ListaProductosEmpresaUsuario, ListaInventariosProducto,
 		socket, ConfiguracionVentaVistaDatos, ConfiguracionVentaVista, ListaGruposProductoEmpresa,
 		ConfiguracionImpresionEmpresaDato, ImprimirSalida, ListaVendedorVenta, VendedorVenta, VendedorVentaActualizacion, GuardarUsuarLectorDeBarra, VerificarLimiteCredito, ListaSucursalesUsuario, ListaGruposProductoUsuario) {
 		blockUI.start();
@@ -110,7 +110,7 @@ angular.module('agil.controladores')
 
 					dato.ventas.forEach(function (venta, index, array) {
 						totalsaldo += venta.saldo
-						console.log(totalsaldo)
+						//console.log(totalsaldo)
 						if (totalsaldo >= ventaActual.cliente.linea_credito) {
 							mensaje.uno = "exedio el limite de la linea de credito"
 
@@ -173,7 +173,7 @@ angular.module('agil.controladores')
 					}
 				}
 	
-				$scope.cambiarListaGruposCheck=function(grupo){console.log(grupo);
+				$scope.cambiarListaGruposCheck=function(grupo){//console.log(grupo);
 					grupo.selected=!grupo.selected;
 					$localStorage.grupos_check=JSON.stringify($scope.grupos_check);
 				}*/
@@ -296,7 +296,7 @@ angular.module('agil.controladores')
 		$scope.buscarProductoLectorBarra = function (query) {
 			blockUI.start()
 			if (query != "" && query != undefined) {
-				var promesa = ListaProductosEmpresa($scope.usuario.id_empresa, query);
+				var promesa = ListaProductosEmpresaUsuario($scope.usuario.id_empresa, query, $scope.usuario.id);
 				promesa.then(function (datos) {
 					if (datos.length == 1) {
 						$scope.establecerProducto(datos[0])
@@ -315,7 +315,7 @@ angular.module('agil.controladores')
 		$scope.buscarProducto = function (query) {
 			blockUI.start()
 			if (query != "" && query != undefined) {
-				var promesa = ListaProductosEmpresa($scope.usuario.id_empresa, query);
+				var promesa = ListaProductosEmpresaUsuario($scope.usuario.id_empresa, query, $scope.usuario.id);
 				/*  promesa.then(function (datos) {
 					if (datos.length > 1) {
 					} else {
@@ -702,7 +702,7 @@ angular.module('agil.controladores')
 			var promesa = Ventas(sucursalesUsuario, inicio, fin, razon_social, nit, monto, tipo_pago, sucursal, transaccion, usuario,estado);
 			promesa.then(function (ventas) {
 				$scope.ventas = ventas;
-				console.log(ventas);
+				//console.log(ventas);
 				blockUI.stop();
 
 				//$scope.aplicarTabla('tabla-ventas',6);
@@ -1359,7 +1359,7 @@ angular.module('agil.controladores')
 		}
 
 		$scope.crearNuevaVenta = function (venta) {
-			console.log("venta ressss =========== ", venta);
+			//console.log("venta ressss =========== ", venta);
 
 			$scope.blockerVenta = true
 			$scope.venta = new Venta({
@@ -1399,7 +1399,7 @@ angular.module('agil.controladores')
 
 
 		$scope.venderProformaDirectoNormal = function (venta) {
-			console.log("venta.sucursal.id ==", venta.sucursal.id);
+			//console.log("venta.sucursal.id ==", venta.sucursal.id);
 			if (venta.detallesVenta.length > 0) {
 				var promesa = ClientesNit($scope.usuario.id_empresa, 0);
 				promesa.then(function (results) {
@@ -1418,7 +1418,7 @@ angular.module('agil.controladores')
 					venta.pagado = venta.total;
 					venta.cambio = 0;
 					$scope.usuario.empresa.usar_vencimientos = false;
-					console.log("la ventaaa directo ======== ", venta);
+					//console.log("la ventaaa directo ======== ", venta);
 					$scope.guardarVenta(true, venta);
 					$scope.venta.sucursal = venta.sucursal;
 				});
@@ -1674,10 +1674,10 @@ angular.module('agil.controladores')
 		}
 
 		$scope.capturarPago = function (keyEvent, formularioVentaPanel, venta) {
-			console.log('llego a cobroooooo 11111');
+			//console.log('llego a cobroooooo 11111');
 
 			if (keyEvent.keyCode == 13) {
-				console.log('llego a cobroooooo 22222222222');
+				//console.log('llego a cobroooooo 22222222222');
 				$scope.guardarVentaPanel(formularioVentaPanel, venta, false);
 				$scope.cerrarPopPupVentasCobro();
 			}
@@ -1762,7 +1762,7 @@ angular.module('agil.controladores')
 
 		$scope.textorder = 'A<- ->Z';
 		$scope.ordenarProductos = function (orden) {
-			console.log(orden);
+			//console.log(orden);
 			$scope.productosProcesados = $filter('orderBy')($scope.productos, ['nombre'], orden);
 			$scope.ordenProductos = !orden;
 			// ====  para agregar el texto de orden el sistema ====
@@ -1869,7 +1869,7 @@ angular.module('agil.controladores')
 		}
 
 		$scope.agregarDetalleVentaPanel = function (producto) {
-			console.log("producto sssssssssss ", producto);
+			//console.log("producto sssssssssss ", producto);
 			//if (producto.activar_inventario) {
 				var detalleVenta;
 				$scope.cantidadInventario = 0;
@@ -2061,7 +2061,7 @@ angular.module('agil.controladores')
 				$scope.textoBusqueda = texto;
 			}
 			$scope.paginaActual = pagina;
-			var promesa = InventarioPaginador($scope.usuario.id_empresa, idAlmacen, pagina, itemsPagina, texto, columna, direccion, cantidad);
+			var promesa = InventarioPaginador($scope.usuario.id_empresa, idAlmacen, pagina, itemsPagina, texto, columna, direccion, cantidad, undefined, $scope.usuario.id);
 			promesa.then(function (dato) {
 				var productos = dato.productos;
 				//var mproductos=[];
@@ -2140,7 +2140,7 @@ angular.module('agil.controladores')
 				localStorage.usuario = JSON.stringify($scope.usuario);
 				var promesa = GuardarUsuarLectorDeBarra($scope.usuario)
 			}
-			console.log($scope.usuario.usar_lector_de_barra)
+			//console.log($scope.usuario.usar_lector_de_barra)
 		}
 
 		$scope.inicio();

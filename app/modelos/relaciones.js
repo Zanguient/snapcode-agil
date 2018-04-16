@@ -886,8 +886,10 @@ module.exports = function (sequelize, Usuario, Persona, Rol, UsuarioRol, Tipo, C
 	GtmVentaKardexDetalle.belongsTo(GtmVentaKardex, { foreignKey: 'id_kardex', as: 'kardex' })
 	GtmVentaKardexDetalle.belongsTo(Producto, { foreignKey: 'id_producto', as: 'producto' })
 
+	// aqui sta mal la relacion ============
+
 	GtmVentaKardexDetalle.hasMany(GtmDespacho, { foreignKey: 'id_kardex_detalle', as: 'despachos' })
-	GtmVentaKardexDetalle.belongsTo(GtmVentaKardexDetalle, { foreignKey: 'id_kardex_detalle', as: 'detalle_Kardex' })
+	GtmDespacho.belongsTo(GtmVentaKardexDetalle, { foreignKey: 'id_kardex_detalle', as: 'detalle_Kardex' })
 	
 	GtmVentaKardexDetalle.hasMany(GtmVentaKardexDetalle, { foreignKey: 'id_padre', as: 'hijosDetalle' })
 	GtmVentaKardexDetalle.belongsTo(GtmVentaKardexDetalle, { foreignKey: 'id_padre', as: 'padre' })

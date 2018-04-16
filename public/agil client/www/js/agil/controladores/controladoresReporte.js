@@ -8,12 +8,12 @@ angular.module('agil.controladores')
 
 		$scope.inicio = function () {
 			$scope.proveedores = ReportEstadoCuentasProveedoresDatos.show({ id_empresa: $scope.usuario.id_empresa });
-			console.log($scope.proveedores);
+			//console.log($scope.proveedores);
 			setTimeout(function () {
 				ejecutarScriptsTabla('tabla-estadoCuentaProveedores', 10);
 			}, 2000);
 			uiGmapGoogleMapApi.then(function (maps) {
-				console.log(maps);//google.maps.event.trigger(maps[0].map, 'resize');
+				//console.log(maps);//google.maps.event.trigger(maps[0].map, 'resize');
 				$scope.map = {
 					center: { latitude: -17.403800007775388, longitude: -66.11349012184144 }, zoom: 17, bounds: {
 						northeast: {
@@ -151,9 +151,9 @@ angular.module('agil.controladores')
 
 		$scope.inicio = function () {
 			$scope.obtenerClientes();
-			console.log($scope.clientes);
+			//console.log($scope.clientes);
 			uiGmapGoogleMapApi.then(function (maps) {
-				console.log(maps);//google.maps.event.trigger(maps[0].map, 'resize');
+				//console.log(maps);//google.maps.event.trigger(maps[0].map, 'resize');
 				$scope.map = {
 					center: { latitude: -17.403800007775388, longitude: -66.11349012184144 }, zoom: 17, bounds: {
 						northeast: {
@@ -261,7 +261,7 @@ angular.module('agil.controladores')
 
 		$scope.generarPdfEstadoCuentasCliente = function (cliente, tipoImprecion) {
 			blockUI.start();
-			console.log($scope.usuario.empresa)
+			//console.log($scope.usuario.empresa)
 
 			var doc = new PDFDocument({ size: 'letter', margin: 10 });
 			var stream = doc.pipe(blobStream());
@@ -272,7 +272,7 @@ angular.module('agil.controladores')
 			$scope.dibujarCabeceraPDFEstadoCuentasCliente(doc, 1, totalPaginas, cliente);
 			doc.font('Helvetica', 8);
 			for (var i = 0; i < cliente.ventas.length && items <= itemsPorPagina; i++) {
-				console.log(cliente.ventas[i].factura);
+				//console.log(cliente.ventas[i].factura);
 				doc.rect(30, y - 10, 555, 20).stroke();
 				cliente.ventas[i].fecha = new Date(cliente.ventas[i].fecha);
 				doc.text(cliente.ventas[i].fecha.getDate() + "/" + (cliente.ventas[i].fecha.getMonth() + 1) + "/" + cliente.ventas[i].fecha.getFullYear(), 45, y);
@@ -391,7 +391,7 @@ angular.module('agil.controladores')
 			doc.font('Helvetica', 8);
 		}
 		$scope.abrirEstadoCuentaCliente = function (cliente) {
-			console.log(cliente)
+			//console.log(cliente)
 			$scope.totalPagado = 0;
 
 			for (var i = 0; i < cliente.ventas.length; i++) {
@@ -409,9 +409,9 @@ angular.module('agil.controladores')
 					cliente.ventas[i].totalPago = cliente.ventas[i].totalPago + cliente.ventas[i].pagosVenta[f].monto_pagado;
 				}
 				cliente.ventas[i].fecha_vencimiento = $scope.sumaFecha(cliente.ventas[i].dias_credito, fecha);
-				console.log(cliente.ventas[i].tipoPago.nombre)
+				//console.log(cliente.ventas[i].tipoPago.nombre)
 			}
-			console.log($scope.totalPagado)
+			//console.log($scope.totalPagado)
 
 			var i = cliente.ventas.length - 1;
 			$scope.totalgeneral = 0;
@@ -655,7 +655,7 @@ angular.module('agil.controladores')
 			var promesa = ReporteLibroVentasDatos($scope.usuario.id_empresa, reporte.gestion, reporte.mes.split("-")[0]);
 			promesa.then(function (datos) {
 				var ventas = datos.ventas;
-				var doc = new PDFDocument({compress: false, margin: 10, layout: 'landscape' });
+				var doc = new PDFDocument({ compress: false, margin: 10, layout: 'landscape' });
 				var stream = doc.pipe(blobStream());
 				// draw some text
 				$scope.dibujarCabeceraPDFLibroVentas(doc, datos, reporte, 1);
@@ -1038,45 +1038,49 @@ angular.module('agil.controladores')
 	})
 
 	.controller('ControladorReporteAlmacenes', function ($scope, $window, $localStorage, $location, $templateCache, $route, blockUI,
-		InventariosCosto, InventarioPaginadorAlmacen) {
+		InventariosCosto, InventarioPaginadorAlmacen, InventarioReporteAlmacen) {
 
 		$scope.usuario = JSON.parse($localStorage.usuario);
 
 		$scope.inicio = function () {
 			$scope.sucursales = $scope.obtenerSucursales();
 			$scope.reporte = {};
-			
-			$scope.reporte.sucursal = ($scope.sucursales.length ==1) ? $scope.sucursales[0] : null;
-			if($scope.sucursales.length==1){
+
+			$scope.reporte.sucursal = ($scope.sucursales.length == 1) ? $scope.sucursales[0] : null;
+			if ($scope.sucursales.length == 1) {
 				$scope.obtenerAlmacenes($scope.sucursales[0].id)
-				$scope.reporte.almacen = ($scope.almacenes.length ==2) ? $scope.almacenes[1] : null;
-				
+				$scope.reporte.almacen = ($scope.almacenes.length == 1) ? $scope.almacenes[0] : null;
 			}
-			$scope.obtenerInventarios();
+			// $scope.obtenerInventarios();
 		}
 
 		$scope.obtenerAlmacenes = function (idSucursal) {
 			$scope.almacenes = [];
-			$scope.almacenes.push({ id: 0, nombre: "TODOS" });			
-			var sucursal = $.grep($scope.sucursales, function (e) { return e.id == idSucursal; })[0];
-			$scope.almacenes = $scope.almacenes.concat(sucursal.almacenes);
+			// $scope.almacenes.push({ id: 0, nombre: "TODOS" });		
+			if (idSucursal !== undefined && idSucursal !== null) {
+				var sucursal = $.grep($scope.sucursales, function (e) { return e.id == idSucursal; })[0];
+				$scope.almacenes = $scope.almacenes.concat(sucursal.almacenes);
+				$scope.reporte.almacen = ($scope.almacenes.length == 1) ? $scope.almacenes[0] : null;
+			}
+			$scope.obtenerInventarios()
 		}
 
 		$scope.obtenerSucursales = function () {
 			var sucursales = [];
-			if ($scope.usuario.sucursalesUsuario.length > 1) {
-				sucursales.push({ id: 0, nombre: "TODOS" });
-			
-			}
+			// if ($scope.usuario.sucursalesUsuario.length > 1) {
+			// 	sucursales.push({ id: 0, nombre: "TODOS" });
+
+			// }
 			for (var i = 0; i < $scope.usuario.sucursalesUsuario.length; i++) {
 				sucursales.push($scope.usuario.sucursalesUsuario[i].sucursal);
 			}
 			return sucursales;
 		}
 		$scope.establecerAlmacenBusqueda = function (reporte) {
-			console.log(almacen.id);
+			//console.log(almacen.id);
 			$scope.almacenBusqueda = reporte.almacen;
 			$scope.sucursalBusqueda = reporte.sucursal;
+			$scope.obtenerInventarios()
 		}
 		$scope.obtenerInventarios = function () {
 			$scope.abs = $window.Math.abs;
@@ -1085,17 +1089,44 @@ angular.module('agil.controladores')
 			$scope.columna = "cantidad";
 			$scope.direccion = "asc";
 			$scope.textoBusqueda = "";
-			if ($scope.sucursales.length == 1) {
-				$scope.sucursalBusqueda = $scope.sucursales[0];
-				$scope.almacenes = $scope.sucursalBusqueda.almacenes;
-				if ($scope.almacenes.length == 1) {
-					$scope.almacenBusqueda = $scope.sucursalBusqueda.almacenes[0];
+			if ($scope.reporte.sucursal !== undefined && $scope.reporte.sucursal !== null) {
+				$scope.sucursalBusqueda = $scope.reporte.sucursal
+				if ($scope.reporte.almacen !== undefined && $scope.reporte.almacen) {
+					$scope.almacenBusqueda = $scope.reporte.almacen
 					$scope.buscarInventarios($scope.sucursalBusqueda.id, $scope.almacenBusqueda.id, $scope.paginaActual, $scope.itemsPorPagina, $scope.textoBusqueda, $scope.columna, $scope.direccion);
+				} else {
+					$scope.buscarInventarios($scope.sucursalBusqueda.id, 0, $scope.paginaActual, $scope.itemsPorPagina, $scope.textoBusqueda, $scope.columna, $scope.direccion);
 				}
+			} else {
+				if ($scope.sucursales.length == 1) {
+					$scope.reporte.sucursal = ($scope.sucursales.length == 1) ? $scope.sucursales[0] : null;
+					if ($scope.sucursales.length == 1) {
+						$scope.obtenerAlmacenes($scope.sucursales[0].id)
+						$scope.reporte.almacen = ($scope.almacenes.length == 2) ? $scope.almacenes[1] : null;
+					}
+				}
+				$scope.buscarInventarios($scope.sucursalBusqueda.id, $scope.almacenBusqueda.id, $scope.paginaActual, $scope.itemsPorPagina, $scope.textoBusqueda, $scope.columna, $scope.direccion);
 			}
+			// if ($scope.sucursales.length >0) {
+			// 	if($scope.reporte.sucursal !== undefined && $scope.reporte.sucursal !== null){
+			// 		$scope.sucursalBusqueda = $scope.reporte.sucursal;
+			// 	}else {
+			// 		$scope.sucursalBusqueda = 0;
+			// 	}
+
+			// 	$scope.almacenes = $scope.sucursalBusqueda !== 0 ? $scope.sucursalBusqueda.almacenes : 0;
+			// 	if ($scope.almacenes.length == 1) {
+			// 		$scope.almacenBusqueda = $scope.sucursalBusqueda.almacenes[0];
+			// 		$scope.buscarInventarios($scope.sucursalBusqueda.id, $scope.almacenBusqueda.id, $scope.paginaActual, $scope.itemsPorPagina, $scope.textoBusqueda, $scope.columna, $scope.direccion);
+			// 	}else {
+			// 		$scope.buscarInventarios($scope.sucursalBusqueda.id, 0, $scope.paginaActual, $scope.itemsPorPagina, $scope.textoBusqueda, $scope.columna, $scope.direccion);
+			// 	}
+			// }else{
+			// 	$scope.buscarInventarios(0, 0, $scope.paginaActual, $scope.itemsPorPagina, $scope.textoBusqueda, $scope.columna, $scope.direccion);
+			// }
 		}
 		$scope.clasificarColumna = function (columna) {
-			console.log(columna);
+			//console.log(columna);
 			if ($scope.columna == columna) {
 				if ($scope.direccion == "asc") {
 					$scope.direccion = "desc";
@@ -1115,13 +1146,28 @@ angular.module('agil.controladores')
 				$("#" + columna).removeClass("fa-sort");
 			}
 			$scope.columna = columna;
-			$scope.buscarInventarios($scope.sucursalBusqueda.id, $scope.almacenBusqueda.id, $scope.paginaActual, $scope.itemsPorPagina, $scope.textoBusqueda, $scope.columna, $scope.direccion);
+			if ($scope.reporte.sucursal !== undefined) {
+				if ($scope.reporte.almacen !== undefined) {
+					$scope.almacenBusqueda = $scope.reporte.almacen
+				} else {
+					$scope.almacenBusqueda = { id: 0 }
+				}
+				$scope.buscarInventarios($scope.reporte.sucursal.id, $scope.almacenBusqueda.id, $scope.paginaActual, $scope.itemsPorPagina, $scope.textoBusqueda, $scope.columna, $scope.direccion);
+			} else {
+				$scope.reporte.sucursal
+			}
+
 		}
 
 		$scope.buscarInventarios = function (idSucursal, idAlmacen, pagina, itemsPagina, texto, columna, direccion) {
 			blockUI.start();
-			$scope.itemsPorPagina = itemsPagina;
-
+			$scope.itemsPorPagina = itemsPagina !== "TODOS" ? itemsPagina : 0;
+			if (idSucursal == undefined || idSucursal == null) {
+				idSucursal = 0
+			}
+			if (idAlmacen == undefined || idAlmacen == null) {
+				idAlmacen = 0
+			}
 			if (texto == "" || texto == null) {
 				texto = 0;
 			} else {
@@ -1130,10 +1176,10 @@ angular.module('agil.controladores')
 			if (itemsPagina == "todos") {
 				itemsPagina = $scope.inventarios.length * $scope.inventarios.paginas;
 			}
-			$scope.paginaActual = pagina;
-			var promesa = InventarioPaginadorAlmacen($scope.usuario.id_empresa, idSucursal, idAlmacen, pagina, itemsPagina, texto, columna, direccion);
+			$scope.paginaActual = (pagina != $scope.paginaActual) ? pagina : 1;
+			var promesa = InventarioPaginadorAlmacen($scope.usuario.id_empresa, idSucursal, idAlmacen, $scope.paginaActual, itemsPagina, texto, columna, direccion, $scope.usuario.id);
 			promesa.then(function (inventarios) {
-				console.log(inventarios)
+				//console.log(inventarios)
 				var inventario = inventarios.inventario;
 				$scope.paginas = [];
 				for (var i = 1; i <= inventarios.paginas; i++) {
@@ -1142,119 +1188,239 @@ angular.module('agil.controladores')
 
 				$scope.inventarios = inventario;
 				$scope.inventarios.paginas = inventarios.paginas;
-				console.log($scope.inventarios)
+				//console.log($scope.inventarios)
 
 				blockUI.stop();
-			});
+			}).catch(function (err) {
+				var memo = (err.stack !== undefined && err.stack !== null) ? err.stack : (err.data !== undefined && err.data !== null) ? err.data : (err.message !== undefined && err.message !== null) ? err.message : ' Error desconocido al buscar inventarios en reportes almacen,';
+				$scope.mostrarMensaje('ERROR. ' + memo)
+				blockUI.stop();
+			})
 		}
 
-		$scope.generarPdfAlmacenes = function () {
+		$scope.generarPdfAlmacenes = function (reporte) {
 			blockUI.start();
-			var inventarios = $scope.inventarios;
-			var doc = new PDFDocument({ margin: 10 });
-			var stream = doc.pipe(blobStream());
-			// draw some text
-			var totalCosto = 0;
-			var y = 90, itemsPorPagina = 33, items = 0, pagina = 1, totalPaginas = Math.ceil(inventarios.length / itemsPorPagina);
-			$scope.dibujarCabeceraPDFAlmacenes(doc, 1, totalPaginas);
-			doc.font('Helvetica', 7);
-			for (var i = 0; i < inventarios.length && items <= itemsPorPagina; i++) {
-				doc.rect(30, y - 10, 555, 20).stroke();
-				doc.text(inventarios[i].codigo, 35, y);
-				doc.text(inventarios[i].cantidad, 110, y);
-				doc.text(inventarios[i].unidad_medida, 160, y);
-				if ($scope.usuario.empresa.usar_vencimientos) {
-					if (inventarios[i].nombre.length > 35) {
-						doc.text(inventarios[i].nombre, 210, y - 6, { width: 170 });
+			if (reporte.solo_pagina_actual) {
+				var inventarios = $scope.inventarios;
+				var doc = new PDFDocument({ margin: 10, compress: false });
+				var stream = doc.pipe(blobStream());
+				// draw some text
+				var totalCosto = 0;
+				var y = 90, itemsPorPagina = 33, items = 0, pagina = 1, totalPaginas = Math.ceil(inventarios.length / itemsPorPagina);
+				$scope.dibujarCabeceraPDFAlmacenes(doc, 1, totalPaginas);
+				doc.font('Helvetica', 7);
+				for (var i = 0; i < inventarios.length && items <= itemsPorPagina; i++) {
+					doc.rect(30, y - 10, 555, 20).stroke();
+					doc.text(inventarios[i].codigo, 35, y);
+					doc.text(inventarios[i].cantidad, 110, y);
+					doc.text(inventarios[i].unidad_medida, 160, y);
+					if ($scope.usuario.empresa.usar_vencimientos) {
+						if (inventarios[i].nombre.length > 35) {
+							doc.text(inventarios[i].nombre, 210, y - 6, { width: 170 });
+						} else {
+							doc.text(inventarios[i].nombre, 210, y, { width: 170 });
+						}
+						inventarios[i].fecha_vencimiento = new Date(inventarios[i].fecha_vencimiento);
+						doc.text(inventarios[i].fecha_vencimiento.getDate() + "/" + (inventarios[i].fecha_vencimiento.getMonth() + 1) + "/" + inventarios[i].fecha_vencimiento.getFullYear(), 380, y);
+						doc.text(((inventarios[i].lote == null) ? 'No definido.' : inventarios[i].lote), 430, y);
 					} else {
-						doc.text(inventarios[i].nombre, 210, y, { width: 170 });
+						doc.text(inventarios[i].nombre, 210, y);
 					}
-					inventarios[i].fecha_vencimiento = new Date(inventarios[i].fecha_vencimiento);
-					doc.text(inventarios[i].fecha_vencimiento.getDate() + "/" + (inventarios[i].fecha_vencimiento.getMonth() + 1) + "/" + inventarios[i].fecha_vencimiento.getFullYear(), 380, y);
-					doc.text(inventarios[i].lote, 430, y);
-				} else {
-					doc.text(inventarios[i].nombre, 210, y);
+					doc.text(inventarios[i].costo_unitario.toFixed(2), 470, y);
+					doc.text(inventarios[i].costo_total.toFixed(2), 530, y);
+					y = y + 20;
+					items++;
+					totalCosto = totalCosto + inventarios[i].costo_total;
+					if (items == itemsPorPagina) {
+						var fechaActual = new Date();
+						var min = fechaActual.getMinutes();
+						if (min < 10) {
+							min = "0" + min;
+						}
+						doc.text("USUARIO: " + $scope.usuario.nombre_usuario, 45, y);
+						doc.text("EMISIÓN : " + fechaActual.getDate() + "/" + (fechaActual.getMonth() + 1) + "/" + fechaActual.getFullYear() + " Hr. " + fechaActual.getHours() + ":" + min, 450, y);
+						doc.addPage({ margin: 0, bufferPages: true });
+						y = 90;
+						items = 0;
+						pagina = pagina + 1;
+						$scope.dibujarCabeceraPDFAlmacenes(doc, pagina, totalPaginas);
+						doc.font('Helvetica', 7);
+					}
 				}
-				doc.text(inventarios[i].costo_unitario.toFixed(2), 470, y);
-				doc.text(inventarios[i].costo_total.toFixed(2), 530, y);
-				y = y + 20;
-				items++;
-				totalCosto = totalCosto + inventarios[i].costo_total;
-				if (items == itemsPorPagina) {
+				doc.rect(30, y - 10, 555, 20).stroke();
+				doc.font('Helvetica-Bold', 8);
+				doc.text("Total General", 400, y);
+				doc.text(Math.round(totalCosto * 100) / 100, 530, y);
+				var fechaActual = new Date();
+				var min = fechaActual.getMinutes();
+				if (min < 10) {
+					min = "0" + min;
+				}
+				doc.font('Helvetica', 7);
+				doc.text("USUARIO: " + $scope.usuario.nombre_usuario, 45, y + 20);
+				doc.text("EMISIÓN : " + fechaActual.getDate() + "/" + (fechaActual.getMonth() + 1) + "/" + fechaActual.getFullYear() + " Hr. " + fechaActual.getHours() + ":" + min, 450, y + 20);
+				doc.end();
+				stream.on('finish', function () {
+					var fileURL = stream.toBlobURL('application/pdf');
+					window.open(fileURL, '_blank', 'location=no');
+				});
+
+			} else {
+
+				var prom = InventarioReporteAlmacen($scope.usuario.id_empresa, reporte.sucursal.id, (reporte.almacen !== null && reporte.almacen !== undefined && reporte.almacen !== 0) ? reporte.almacen.id : 0, $scope.usuario.id)
+				prom.then(function (res) {
+					var inventarios = res.inventario;
+					var doc = new PDFDocument({ margin: 10, compress: false });
+					var stream = doc.pipe(blobStream());
+					// draw some text
+					var totalCosto = 0;
+					var y = 90, itemsPorPagina = 33, items = 0, pagina = 1, totalPaginas = Math.ceil(inventarios.length / itemsPorPagina);
+					$scope.dibujarCabeceraPDFAlmacenes(doc, 1, totalPaginas);
+					doc.font('Helvetica', 7);
+					for (var i = 0; i < inventarios.length && items <= itemsPorPagina; i++) {
+						doc.rect(30, y - 10, 555, 20).stroke();
+						doc.text(inventarios[i].codigo, 35, y);
+						doc.text(inventarios[i].cantidad, 110, y);
+						doc.text(inventarios[i].unidad_medida, 160, y);
+						if ($scope.usuario.empresa.usar_vencimientos) {
+							if (inventarios[i].nombre.length > 35) {
+								doc.text(inventarios[i].nombre, 210, y - 6, { width: 170 });
+							} else {
+								doc.text(inventarios[i].nombre, 210, y, { width: 170 });
+							}
+							inventarios[i].fecha_vencimiento = new Date(inventarios[i].fecha_vencimiento);
+							doc.text(inventarios[i].fecha_vencimiento.getDate() + "/" + (inventarios[i].fecha_vencimiento.getMonth() + 1) + "/" + inventarios[i].fecha_vencimiento.getFullYear(), 380, y);
+							doc.text(((inventarios[i].lote == null) ? 'No definido.' : inventarios[i].lote), 430, y);
+						} else {
+							doc.text(inventarios[i].nombre, 210, y);
+						}
+						doc.text(inventarios[i].costo_unitario.toFixed(2), 470, y);
+						doc.text(inventarios[i].costo_total.toFixed(2), 530, y);
+						y = y + 20;
+						items++;
+						totalCosto = totalCosto + inventarios[i].costo_total;
+						if (items == itemsPorPagina) {
+							var fechaActual = new Date();
+							var min = fechaActual.getMinutes();
+							if (min < 10) {
+								min = "0" + min;
+							}
+							doc.text("USUARIO: " + $scope.usuario.nombre_usuario, 45, y);
+							doc.text("EMISIÓN : " + fechaActual.getDate() + "/" + (fechaActual.getMonth() + 1) + "/" + fechaActual.getFullYear() + " Hr. " + fechaActual.getHours() + ":" + min, 450, y);
+							doc.addPage({ margin: 0, bufferPages: true });
+							y = 90;
+							items = 0;
+							pagina = pagina + 1;
+							$scope.dibujarCabeceraPDFAlmacenes(doc, pagina, totalPaginas);
+							doc.font('Helvetica', 7);
+						}
+					}
+					doc.rect(30, y - 10, 555, 20).stroke();
+					doc.font('Helvetica-Bold', 8);
+					doc.text("Total General", 400, y);
+					doc.text(Math.round(totalCosto * 100) / 100, 530, y);
 					var fechaActual = new Date();
 					var min = fechaActual.getMinutes();
 					if (min < 10) {
 						min = "0" + min;
 					}
-					doc.text("USUARIO: " + $scope.usuario.nombre_usuario, 45, y);
-					doc.text("EMISIÓN : " + fechaActual.getDate() + "/" + (fechaActual.getMonth() + 1) + "/" + fechaActual.getFullYear() + " Hr. " + fechaActual.getHours() + ":" + min, 450, y);
-					doc.addPage({ margin: 0, bufferPages: true });
-					y = 90;
-					items = 0;
-					pagina = pagina + 1;
-					$scope.dibujarCabeceraPDFAlmacenes(doc, pagina, totalPaginas);
 					doc.font('Helvetica', 7);
-				}
+					doc.text("USUARIO: " + $scope.usuario.nombre_usuario, 45, y + 20);
+					doc.text("EMISIÓN : " + fechaActual.getDate() + "/" + (fechaActual.getMonth() + 1) + "/" + fechaActual.getFullYear() + " Hr. " + fechaActual.getHours() + ":" + min, 450, y + 20);
+					doc.end();
+					stream.on('finish', function () {
+						var fileURL = stream.toBlobURL('application/pdf');
+						window.open(fileURL, '_blank', 'location=no');
+					});
+				})
 			}
-			doc.rect(30, y - 10, 555, 20).stroke();
-			doc.font('Helvetica-Bold', 8);
-			doc.text("Total General", 400, y);
-			doc.text(Math.round(totalCosto * 100) / 100, 530, y);
-			var fechaActual = new Date();
-			var min = fechaActual.getMinutes();
-			if (min < 10) {
-				min = "0" + min;
-			}
-			doc.font('Helvetica', 7);
-			doc.text("USUARIO: " + $scope.usuario.nombre_usuario, 45, y + 20);
-			doc.text("EMISIÓN : " + fechaActual.getDate() + "/" + (fechaActual.getMonth() + 1) + "/" + fechaActual.getFullYear() + " Hr. " + fechaActual.getHours() + ":" + min, 450, y + 20);
-			doc.end();
-			stream.on('finish', function () {
-				var fileURL = stream.toBlobURL('application/pdf');
-				window.open(fileURL, '_blank', 'location=no');
-			});
+
+
 			blockUI.stop();
 
 		}
 
 		$scope.generarExcelAlmacenes = function (reporte) {
 			blockUI.start();
-			var inventarios = $scope.inventarios;
-			var data = [["Código", "Nombre", "Unidad de Medida", "Precio Unitario", "Descripción", "Inventario Mínimo",
-				"Grupo", "Sub-Grupo", "Carac. Esp. 1", "Carac. Esp. 2", "Codigo de fabrica", "Cant.", "Costo Unitario",
-				"Total General", "Fecha Vencimiento", "Lote", "Sucursal", "Almacen"]]
-			for (var i = 0; i < inventarios.length; i++) {
-				inventarios[i].fecha_vencimiento = (inventarios[i].fecha_vencimiento ? new Date(inventarios[i].fecha_vencimiento) : null);
-				//inventarios[i].fechaVentimientoTexto = (inventarios[i].fecha_vencimiento ? inventarios[i].fecha_vencimiento.getDate() + "/" + (inventarios[i].fecha_vencimiento.getMonth() + 1) + "/" + inventarios[i].fecha_vencimiento.getFullYear() : "");
-				var columns = [];
-				columns.push(inventarios[i].codigo);
-				columns.push(inventarios[i].nombre);
-				columns.push(inventarios[i].unidad_medida);
-				columns.push(inventarios[i].precio_unitario);
-				columns.push(inventarios[i].descripcion);
-				columns.push(inventarios[i].inventario_minimo);
-				columns.push(inventarios[i].grupo);
-				columns.push(inventarios[i].subgrupo);
-				columns.push(inventarios[i].caracteristica_especial1);
-				columns.push(inventarios[i].caracteristica_especial2);
-				columns.push(inventarios[i].codigo_fabrica);
-				columns.push(inventarios[i].cantidad);
-				columns.push(inventarios[i].costo_unitario);
-				columns.push(inventarios[i].costo_total);
-				columns.push(inventarios[i].fecha_vencimiento);
-				columns.push(inventarios[i].lote);
-				columns.push(inventarios[i].nombre_sucursal);
-				columns.push(inventarios[i].nombre_almacen);
-				data.push(columns);
+			if (reporte.solo_pagina_actual) {
+				var inventarios = $scope.inventarios;
+				var data = [["Código", "Nombre", "Unidad de Medida", "Precio Unitario", "Descripción", "Inventario Mínimo",
+					"Grupo", "Sub-Grupo", "Carac. Esp. 1", "Carac. Esp. 2", "Codigo de fabrica", "Cant.", "Costo Unitario",
+					"Total General", "Fecha Vencimiento", "Lote", "Sucursal", "Almacen"]]
+				for (var i = 0; i < inventarios.length; i++) {
+					inventarios[i].fecha_vencimiento = (inventarios[i].fecha_vencimiento ? new Date(inventarios[i].fecha_vencimiento) : null);
+					//inventarios[i].fechaVentimientoTexto = (inventarios[i].fecha_vencimiento ? inventarios[i].fecha_vencimiento.getDate() + "/" + (inventarios[i].fecha_vencimiento.getMonth() + 1) + "/" + inventarios[i].fecha_vencimiento.getFullYear() : "");
+					var columns = [];
+					columns.push(inventarios[i].codigo);
+					columns.push(inventarios[i].nombre);
+					columns.push(inventarios[i].unidad_medida);
+					columns.push(inventarios[i].precio_unitario);
+					columns.push(inventarios[i].descripcion);
+					columns.push(inventarios[i].inventario_minimo);
+					columns.push(inventarios[i].grupo);
+					columns.push(inventarios[i].subgrupo);
+					columns.push(inventarios[i].caracteristica_especial1);
+					columns.push(inventarios[i].caracteristica_especial2);
+					columns.push(inventarios[i].codigo_fabrica);
+					columns.push(inventarios[i].cantidad);
+					columns.push(inventarios[i].costo_unitario);
+					columns.push(inventarios[i].costo_total);
+					columns.push(inventarios[i].fecha_vencimiento);
+					columns.push(inventarios[i].lote);
+					columns.push(inventarios[i].nombre_sucursal);
+					columns.push(inventarios[i].nombre_almacen);
+					data.push(columns);
+				}
+
+				var ws_name = "SheetJS";
+				var wb = new Workbook(), ws = sheet_from_array_of_arrays(data);
+				/* add worksheet to workbook */
+				wb.SheetNames.push(ws_name);
+				wb.Sheets[ws_name] = ws;
+				var wbout = XLSX.write(wb, { bookType: 'xlsx', bookSST: true, type: 'binary' });
+				saveAs(new Blob([s2ab(wbout)], { type: "application/octet-stream" }), "REPORTE-ALMACENES.xlsx");
+
+			} else {
+				var prom = InventarioReporteAlmacen($scope.usuario.id_empresa, reporte.sucursal.id, (reporte.almacen && reporte.almacen !== null  && reporte.almacen !== 0) ? reporte.almacen.id : 0, $scope.usuario.id)
+				prom.then(function (res) {
+					var inventarios = res.inventario;
+					var data = [["Código", "Nombre", "Unidad de Medida", "Precio Unitario", "Descripción", "Inventario Mínimo",
+						"Grupo", "Sub-Grupo", "Carac. Esp. 1", "Carac. Esp. 2", "Codigo de fabrica", "Cant.", "Costo Unitario",
+						"Total General", "Fecha Vencimiento", "Lote", "Sucursal", "Almacen"]]
+					for (var i = 0; i < inventarios.length; i++) {
+						inventarios[i].fecha_vencimiento = (inventarios[i].fecha_vencimiento ? new Date(inventarios[i].fecha_vencimiento) : null);
+						//inventarios[i].fechaVentimientoTexto = (inventarios[i].fecha_vencimiento ? inventarios[i].fecha_vencimiento.getDate() + "/" + (inventarios[i].fecha_vencimiento.getMonth() + 1) + "/" + inventarios[i].fecha_vencimiento.getFullYear() : "");
+						var columns = [];
+						columns.push(inventarios[i].codigo);
+						columns.push(inventarios[i].nombre);
+						columns.push(inventarios[i].unidad_medida);
+						columns.push(inventarios[i].precio_unitario);
+						columns.push(inventarios[i].descripcion);
+						columns.push(inventarios[i].inventario_minimo);
+						columns.push(inventarios[i].grupo);
+						columns.push(inventarios[i].subgrupo);
+						columns.push(inventarios[i].caracteristica_especial1);
+						columns.push(inventarios[i].caracteristica_especial2);
+						columns.push(inventarios[i].codigo_fabrica);
+						columns.push(inventarios[i].cantidad);
+						columns.push(inventarios[i].costo_unitario);
+						columns.push(inventarios[i].costo_total);
+						columns.push(inventarios[i].fecha_vencimiento);
+						columns.push(inventarios[i].lote);
+						columns.push(inventarios[i].nombre_sucursal);
+						columns.push(inventarios[i].nombre_almacen);
+						data.push(columns);
+					}
+					var ws_name = "SheetJS";
+					var wb = new Workbook(), ws = sheet_from_array_of_arrays(data);
+					/* add worksheet to workbook */
+					wb.SheetNames.push(ws_name);
+					wb.Sheets[ws_name] = ws;
+					var wbout = XLSX.write(wb, { bookType: 'xlsx', bookSST: true, type: 'binary' });
+					saveAs(new Blob([s2ab(wbout)], { type: "application/octet-stream" }), "REPORTE-ALMACENES.xlsx");
+				})
 			}
 
-			var ws_name = "SheetJS";
-			var wb = new Workbook(), ws = sheet_from_array_of_arrays(data);
-			/* add worksheet to workbook */
-			wb.SheetNames.push(ws_name);
-			wb.Sheets[ws_name] = ws;
-			var wbout = XLSX.write(wb, { bookType: 'xlsx', bookSST: true, type: 'binary' });
-			saveAs(new Blob([s2ab(wbout)], { type: "application/octet-stream" }), "REPORTE-ALMACENES.xlsx");
 			blockUI.stop();
 
 		}
@@ -1263,7 +1429,7 @@ angular.module('agil.controladores')
 			doc.font('Helvetica-Bold', 12);
 			doc.text("REPORTE ALMACENES", 0, 25, { align: "center" });
 			doc.font('Helvetica-Bold', 10);
-			doc.text("SUCURSAL:" + $scope.reporte.sucursal.nombre + " - ALMACEN:" + $scope.reporte.almacen.nombre, 0, 38, { align: "center" });
+			doc.text("SUCURSAL:" + $scope.reporte.sucursal.nombre + " - ALMACEN:" + (($scope.reporte.almacen !== null && $scope.reporte.almacen !== undefined && $scope.reporte.almacen !== 0) ? $scope.reporte.almacen.nombre : 'TODOS LOS ALMACENES'), 0, 38, { align: "center" });
 			doc.font('Helvetica-Bold', 8);
 			doc.text("PÁGINA " + pagina + " DE " + totalPaginas, 0, 750, { align: "center" });
 
@@ -1292,11 +1458,11 @@ angular.module('agil.controladores')
 		$scope.usuario = JSON.parse($localStorage.usuario);
 
 		$scope.inicio = function () {
-			
+
 			$scope.obtenerGestiones();
-			$scope.sucursales = $scope.obtenerSucursales();		
-			$scope.reporte={}
-			$scope.reporte.sucursal = ($scope.sucursales.length ==1) ? $scope.sucursales[0] : null;
+			$scope.sucursales = $scope.obtenerSucursales();
+			$scope.reporte = {}
+			$scope.reporte.sucursal = ($scope.sucursales.length == 1) ? $scope.sucursales[0] : null;
 			ejecutarScriptsVentasMensuales();
 		}
 
@@ -1348,9 +1514,9 @@ angular.module('agil.controladores')
 					columns.push(detallesVenta[i].producto.codigo);
 					columns.push(detallesVenta[i].producto.nombre);
 					columns.push(detallesVenta[i].producto.unidad_medida);
-					if(detallesVenta[i].producto.grupo){
+					if (detallesVenta[i].producto.grupo) {
 						columns.push(detallesVenta[i].producto.grupo.nombre);
-					}else{
+					} else {
 						columns.push("");
 					}
 					columns.push(detallesVenta[i].cantidad);
@@ -1406,8 +1572,8 @@ angular.module('agil.controladores')
 			promesa.then(function (datos) {
 
 				var detallesVenta = JSON.parse(datos.detallesVenta);
-				console.log(detallesVenta)
-				var doc = new PDFDocument({compress: false, margin: 10 });
+				//console.log(detallesVenta)
+				var doc = new PDFDocument({ compress: false, margin: 10 });
 				var stream = doc.pipe(blobStream());
 				// draw some text
 
@@ -1419,7 +1585,7 @@ angular.module('agil.controladores')
 				for (var i = 0; i < detallesVenta.length && items <= itemsPorPagina; i++) {
 					doc.rect(40, y - 10, 540, 40).stroke();
 					doc.font('Helvetica', 8);
-					detallesVenta[i].venta.fecha = new Date(detallesVenta[i].venta.fecha); console.log(new Date().getFullYear().toString().substr(-2));
+					detallesVenta[i].venta.fecha = new Date(detallesVenta[i].venta.fecha); //console.log(new Date().getFullYear().toString().substr(-2));
 					doc.text(detallesVenta[i].venta.fecha.getDate() + "/" + (detallesVenta[i].venta.fecha.getMonth() + 1) + "/" + detallesVenta[i].venta.fecha.getFullYear().toString().substr(-2), 45, y);
 					doc.text((detallesVenta[i].venta.factura ? detallesVenta[i].venta.factura : ""), 80, y);
 					doc.font('Helvetica', 7);
@@ -1541,7 +1707,7 @@ angular.module('agil.controladores')
 			inicio = new Date($scope.convertirFecha(inicio));
 			fin = new Date($scope.convertirFecha(fin));
 			var promesa = ReporteEstadoResultadosNoContableDatos($scope.usuario.id_empresa, inicio, fin);
-			promesa.then(function (ventasEmpresa) {console.log(ventasEmpresa);
+			promesa.then(function (ventasEmpresa) {//console.log(ventasEmpresa);
 				promesa = GastosVariosLista($scope.usuario.id_empresa, inicio, fin);
 				promesa.then(function (gastosVariosEmpresa) {
 					var sumaVentasCredito = 0, sumaVentasContado = 0, sumaVentasTotal = 0, costoVentas = 0, sumaVentasFacturacion = 0, sumaVentasProforma = 0;
@@ -1694,13 +1860,13 @@ angular.module('agil.controladores')
 		$scope.inicio = function () {
 			$scope.obtenerGestiones();
 			$scope.sucursales = $scope.obtenerSucursales();
-			$scope.reporte={}
-			$scope.reporte.sucursal = ($scope.sucursales.length ==1) ? $scope.sucursales[0] : null;
+			$scope.reporte = {}
+			$scope.reporte.sucursal = ($scope.sucursales.length == 1) ? $scope.sucursales[0] : null;
 			ejecutarScriptsVentasMensuales();
 		}
 		$scope.obtenerSucursales = function () {
 			var sucursales = [];
-			
+
 			if ($scope.usuario.sucursalesUsuario.length > 1) {
 				sucursales.push({ id: 0, nombre: "TODOS" });
 			}
@@ -1726,7 +1892,7 @@ angular.module('agil.controladores')
 			promesa.then(function (datos) {
 				var detallesCompra = datos.detallesCompra;
 				var data = [["FECHA DE LA FACTURA", "N° DE LA FACTURA", "N° DE AUTORIZACION", "NIT/CI CLIENTE", "NOMBRE O RAZON SOCIAL",
-					"CODIGO", "DETALLE","UNIDAD", "GRUPO", "CANTIDAD", "PU", "TOTAL", "IMPORTE ICE/IEHD/TASAS", "EXENTOS",
+					"CODIGO", "DETALLE", "UNIDAD", "GRUPO", "CANTIDAD", "PU", "TOTAL", "IMPORTE ICE/IEHD/TASAS", "EXENTOS",
 					"SUBTOTAL", "DESCUENTOS, BONIFICACIONES Y REBAJAS OBTENIDAS",
 					"IMPORTE BASE PARA DEBITO FISCAL", "CREDITO FISCAL", "FECHA DE VENCIMIENTO", "LOTE", "SUCURSAL", "USUARIO", "CENTRO DE COSTOS"]]
 				for (var i = 0; i < detallesCompra.length; i++) {
@@ -1739,15 +1905,15 @@ angular.module('agil.controladores')
 					columns.push(detallesCompra[i].compra.proveedor.razon_social);
 					columns.push(detallesCompra[i].producto.codigo);
 					columns.push(detallesCompra[i].producto.nombre);
-					
+
 					columns.push(detallesCompra[i].producto.unidad_medida);
 					if (detallesCompra[i].producto.grupo) {
-						columns.push(detallesCompra[i].producto.grupo.nombre);						
+						columns.push(detallesCompra[i].producto.grupo.nombre);
 					} else {
 						columns.push("");
 
 					}
-					columns.push(detallesCompra[i].cantidad);				
+					columns.push(detallesCompra[i].cantidad);
 					columns.push(detallesCompra[i].costo_unitario);
 					columns.push(detallesCompra[i].importe);
 					columns.push(detallesCompra[i].ice);
@@ -1771,7 +1937,7 @@ angular.module('agil.controladores')
 					columns.push(detallesCompra[i].compra.almacen.sucursal.nombre);
 					columns.push($scope.usuario.nombre_usuario);
 					columns.push(detallesCompra[i].centroCosto.nombre_corto);
-					
+
 					data.push(columns);
 				}
 

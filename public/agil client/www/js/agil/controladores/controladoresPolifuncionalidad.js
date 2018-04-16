@@ -36,6 +36,7 @@ angular.module('agil.controladores')
             $scope.obtenerCentroCosto()
             $scope.actualizarListaDesempenio()
             $scope.obtenerConfiguracionnotas()
+            $scope.filtrarPersonal("")
             var filtro = { id_empresa: $scope.usuarioSesion.empresa.id, mes: 0, anio: 0, desempenio: 0, mas_campo: 0, campo: 0, cargo: 0, estado: 0, codigo: 0, nombre: 0, apellido: 0, pagina: 1, items_pagina: 10, columna: 0, direccion: 0 }
             $scope.obtenerPaginador()
         }

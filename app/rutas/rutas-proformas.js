@@ -207,6 +207,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
                 // fecha_recepcion:null,
                 // fecha_factura:null,
                 // fecha_cobro:null,
+                detalle: req.body.detalle,
                 id_empresa: req.body.id_empresa,
                 periodo_mes: req.body.periodo_mes.id,
                 periodo_anio: req.body.periodo_anio.id,
@@ -242,7 +243,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
                             cantidad: detalle.cantidad,
                             importe: detalle.importe,
                             id_centro_costo: detalle.centroCosto !== undefined && detalle.centroCosto !== null ? detalle.centroCosto.id : null,
-                            eliminado: detalle.eliminado
+                            eliminado: false
                         }).then(function (detalleActializado) {
                             if (i === req.body.detallesProformas.length - 1) {
                                 res.json({ mensaje: 'Proforma actualizada!' })
@@ -509,39 +510,43 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
 
     router.route('/alertas/proformas/:id_empresa')
         .get(function (req, res) {
-            Proforma.findAll({
-                where: {
-                    id_empresa: req.params.id_empresa,
-                    eliminado: false,
-                    fecha_factura: null,
-                    fecha_proforma_ok: { $not: null }
-                },
-                include: [
-                    { model: Clase, as: 'actividadEconomica' },
-                    { model: Cliente, as: 'clienteProforma' },
-                ]
-
-            }).then(function (proformasAlertas) {
-                var proformasVencimiento = []
-                if (proformasAlertas.length > 0) {
-                    proformasAlertas.map(function (proforma, i) {
-                        var fecPro = new Date(proforma.fecha_proforma).getTime()
-
-                        var hoy = new Date().getTime()
-                        var dif = Math.floor((hoy - fecPro) / 86400000)
-                        if (dif >= -30 && dif <= 30) {
-                            proformasVencimiento.push(proforma)
-                        }
-                        if (i === proformasAlertas.length - 1) {
-                            res.json({ proformas: proformasVencimiento })
-                        }
-                    })
-                } else {
-                    res.json({ proformas: [] })
-                }
-            }).catch(function (err) {
-                res.json({ mensaje:  err.stack !== undefined ? err.stack : err.message, hasErr: true })
-            });
+            if (req.params.id_empresa) {
+                Proforma.findAll({
+                    where: {
+                        id_empresa: req.params.id_empresa,
+                        eliminado: false,
+                        fecha_factura: null,
+                        fecha_proforma_ok: { $not: null }
+                    },
+                    include: [
+                        { model: Clase, as: 'actividadEconomica' },
+                        { model: Cliente, as: 'clienteProforma' },
+                    ]
+    
+                }).then(function (proformasAlertas) {
+                    var proformasVencimiento = []
+                    if (proformasAlertas.length > 0) {
+                        proformasAlertas.map(function (proforma, i) {
+                            var fecPro = new Date(proforma.fecha_proforma).getTime()
+    
+                            var hoy = new Date().getTime()
+                            var dif = Math.floor((hoy - fecPro) / 86400000)
+                            if (dif >= -30 && dif <= 30) {
+                                proformasVencimiento.push(proforma)
+                            }
+                            if (i === proformasAlertas.length - 1) {
+                                res.json({ proformas: proformasVencimiento })
+                            }
+                        })
+                    } else {
+                        res.json({ proformas: [] })
+                    }
+                }).catch(function (err) {
+                    res.json({ mensaje:  err.stack !== undefined ? err.stack : err.message, hasErr: true })
+                });
+            } else {
+                
+            }
         })
     function formatearFecha(fecha) {
         var mes = fecha.split('/')[1];

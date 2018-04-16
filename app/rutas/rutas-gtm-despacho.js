@@ -7,14 +7,14 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, forEach, j
 				id_usuario: req.body.id_usuario,
 				fecha: new Date(req.body.fecha.split("/")[2], req.body.fecha.split("/")[1] - 1, req.body.fecha.split("/")[0]),
 				id_empresa: req.params.id_empresa,
-				nit:req.body.nit,
-				razon_social:req.body.razon_social,
+				id_cliente: req.body.id_cliente,
+		        id_cliente_razon: req.body.id_cliente_razon,
 				factura:req.body.factura
 			}).then(function (kardexCreado) {
 				req.body.detalles_kardex.forEach(function (detalle_kardex, index, array) {
 					GtmVentaKardexDetalle.create({
 						id_kardex: kardexCreado.id,
-						cantidad_despacho: 0,
+						cantidad_despachada: 0,
 						id_producto: detalle_kardex.id_producto,
 						cantidad: parseFloat(detalle_kardex.cantidad),												
 						saldo: parseFloat(detalle_kardex.cantidad),
@@ -28,6 +28,79 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, forEach, j
 				});
 			});
 		});
+		
+router.route('/pedido-kardex/gtm-despacho/empresa/:id_empresa')
+.post(function (req, res) {
+	req.body.detalles_kardex.forEach(function (detalle, index, array) {
+		if (detalle.saldo == 0) {
+			detalle.entregado = true
+		}
+		// === actualizar el padre ====
+		GtmVentaKardexDetalle.update({
+			cantidad_despacho: detalle.cantidad_despacho,
+			id_producto: detalle.id_producto,
+			saldo: detalle.saldo,
+			entregado: detalle.entregado,
+			fecha: new Date(detalle.fecha.split("/")[2], detalle.fecha.split("/")[1] - 1, detalle.fecha.split("/")[0]),
+		},
+		{
+			where:{
+				id:detalle.id
+			}
+		}).then(function (detalleKardexActualizado) {
+			// ==== agragar su historial con su padre =====
+			GtmVentaKardexDetalle.create({
+				id_kardex: detalle.id_kardex,
+				cantidad_despachada: detalle.cantidad_despacho,
+				id_producto: detalle.id_producto,
+				cantidad: detalle.cantidad,
+				saldo: detalle.saldo,
+				entregado: false,
+				id_padre: detalle.id,
+				fecha: new Date(detalle.fecha.split("/")[2], detalle.fecha.split("/")[1] - 1, detalle.fecha.split("/")[0]),
+			}).then(function (detalleDespachoCreado) {
+				res.json(detalleDespachoCreado);
+			});
+		});
+
+	});
+
+	// cantidad = 10
+	// cantidad_despacho = 0
+	// Saldo = 10
+	
+
+	// cantidad = 10
+	// cantidad_despacho = 5
+	// Saldo = 10 - cantidad_despacho = 5
+
+	// cantidad = 10
+	// cantidad_despacho = 5
+	// Saldo = 5 - cantidad_despacho = 0
+
+
+
+
+});
+	router.route('/gtm-despacho-kardex-sin-factura/empresa/:id_empresa')
+		.get(function (req, res) {
+			GtmVentaKardex.findAll({
+					where: {factura:false},
+					include: [{model: Cliente, as: 'cliente'},{
+						model: GtmVentaKardexDetalle, as: 'detalles_kardex',
+						where: {entregado: false, id_padre: null},
+						include: [{ model: Producto, as: 'producto' }]
+						// include: [{ model: Usuario, as: 'usuario', include: [{ model: Persona, as: 'persona', where: condicionVendedor }] },
+						// { model: ClienteRazon, as: 'cliente_razon' },
+						// { model: Cliente, as: 'cliente', where: condicionCliente },
+						// { model: GtmDestino, as: 'destino' }]
+					}],
+					order: [['id', 'asc']]
+				}).then(function (detallesDespacho) {
+					res.json(detallesDespacho);
+				});
+		});
+		
 	router.route('/gtm-despacho/empresa/:id_empresa')
 		.post(function (req, res) {
 			GtmDespacho.create({

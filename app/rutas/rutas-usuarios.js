@@ -105,7 +105,7 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, decodeBase
 														if (i === req.body.grupos.length - 1) {
 															res.json(usuarioCreado);
 														}
-													}else{
+													} else {
 														if (i === req.body.grupos.length - 1) {
 															res.json(usuarioCreado);
 														}
@@ -150,22 +150,23 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, decodeBase
 				{ model: UsuarioRol, as: 'rolesUsuario', include: [{ model: Rol, as: 'rol' }] },
 				{ model: Empresa, as: 'empresa', include: [{ model: Sucursal, as: 'sucursales' }] },
 				{ model: UsuarioSucursal, as: 'sucursalesUsuario', include: [{ model: Sucursal, as: 'sucursal' }] },
-				{ model: UsuarioAplicacion, as: 'aplicacionesUsuario', include: [{ model: Aplicacion, as: 'aplicacion' }] },
-				{ model: UsuarioRuta, as: 'rutas', include: [{ model: Ruta, as: 'ruta' }] }
-				// { model: UsuarioGrupos, as: 'grupos', include: [{ model: Clase, as: 'grupo' }] }
+					// { model: UsuarioAplicacion, as: 'aplicacionesUsuario', include: [{ model: Aplicacion, as: 'aplicacion' }] },
+					// { model: UsuarioRuta, as: 'rutas', include: [{ model: Ruta, as: 'ruta' }] }
+					// { model: UsuarioGrupos, as: 'grupos', include: [{ model: Clase, as: 'grupo' }] }
 				]
 			}).then(function (usuarios) {
-				usuarios.forEach(function (usuario, i) {
-					UsuarioGrupos.findAll({
-						where: {id_usuario: usuario.id},
-						include: [{model: Clase, as: 'grupo'}]
-					}).then(function (gruposUsuario) {
-						usuario.dataValues.grupos = gruposUsuario
-						if (i == usuarios.length -1) {
-							res.json({ usuarios: usuarios, paginas: Math.ceil(data.count / req.params.items_pagina) });
-						}
-					})
-				})
+				res.json({ usuarios: usuarios, paginas: Math.ceil(data.count / req.params.items_pagina) });
+				// usuarios.forEach(function (usuario, i) {
+				// 	UsuarioGrupos.findAll({
+				// 		where: { id_usuario: usuario.id },
+				// 		include: [{ model: Clase, as: 'grupo' }]
+				// 	}).then(function (gruposUsuario) {
+				// 		usuario.dataValues.grupos = gruposUsuario
+				// 		if (i == usuarios.length - 1) {
+				// 			res.json({ usuarios: usuarios, paginas: Math.ceil(data.count / req.params.items_pagina) });
+				// 		}
+				// 	})
+				// })
 			});
 		})
 
@@ -233,8 +234,6 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, decodeBase
 					};
 				}
 			}
-
-
 			var ordenArreglo = [];
 			if (req.params.columna == "nombres") {
 				ordenArreglo.push({ model: Persona, as: 'persona' });
@@ -257,10 +256,10 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, decodeBase
 				include: [{ model: Persona, as: 'persona' },
 				{ model: UsuarioRol, as: 'rolesUsuario', include: [{ model: Rol, as: 'rol' }] },
 				{ model: Empresa, as: 'empresa', include: [{ model: Sucursal, as: 'sucursales' }] },
-				{ model: UsuarioSucursal, as: 'sucursalesUsuario', include: [{ model: Sucursal, as: 'sucursal' }] },
-				{ model: UsuarioAplicacion, as: 'aplicacionesUsuario', include: [{ model: Aplicacion, as: 'aplicacion' }] },
-				{ model: UsuarioRuta, as: 'rutas', include: [{ model: Ruta, as: 'ruta' }] },
-				// { model: UsuarioGrupos, as: 'grupos', include: [{ model: Clase, as: 'grupo' }] }
+				{ model: UsuarioSucursal, as: 'sucursalesUsuario', include: [{ model: Sucursal, as: 'sucursal' }] }
+					// { model: UsuarioAplicacion, as: 'aplicacionesUsuario', include: [{ model: Aplicacion, as: 'aplicacion' }] },
+					// { model: UsuarioRuta, as: 'rutas', include: [{ model: Ruta, as: 'ruta' }] },
+					// { model: UsuarioGrupos, as: 'grupos', include: [{ model: Clase, as: 'grupo' }] }
 				],
 				order: [ordenArreglo]
 			}).then(function (data) {
@@ -271,26 +270,31 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, decodeBase
 					{ model: UsuarioRol, as: 'rolesUsuario', include: [{ model: Rol, as: 'rol' }] },
 					{ model: Empresa, as: 'empresa', include: [{ model: Sucursal, as: 'sucursales' }] },
 					{ model: UsuarioSucursal, as: 'sucursalesUsuario', include: [{ model: Sucursal, as: 'sucursal' }] },
-					{ model: UsuarioAplicacion, as: 'aplicacionesUsuario', include: [{ model: Aplicacion, as: 'aplicacion' }] },
-					{ model: UsuarioRuta, as: 'rutas', include: [{ model: Ruta, as: 'ruta' }] },
-					// { model: UsuarioGrupos, as: 'grupos', include: [{ model: Clase, as: 'grupo' }]} 
+						// { model: UsuarioAplicacion, as: 'aplicacionesUsuario', include: [{ model: Aplicacion, as: 'aplicacion' }] },
+						// { model: UsuarioRuta, as: 'rutas', include: [{ model: Ruta, as: 'ruta' }] },
+						// { model: UsuarioGrupos, as: 'grupos', include: [{ model: Clase, as: 'grupo' }]} 
 					],
 					order: [ordenArreglo]
 				}).then(function (usuarios) {
-					usuarios.forEach(function (usuario, i) {
-						UsuarioGrupos.findAll({
-							where: {id_usuario: usuario.id},
-							include: [{model: Clase, as: 'grupo'}]
-						}).then(function (gruposUsuario) {
-							usuario.dataValues.grupos = gruposUsuario
-							if (i == usuarios.length -1) {
-								res.json({ usuarios: usuarios, paginas: Math.ceil(data.count / req.params.items_pagina) });
-							}
-						})
-					})
+					res.json({ usuarios: usuarios, paginas: Math.ceil(data.count / req.params.items_pagina) });
+					// usuarios.forEach(function (usuario, i) {
+					// 	UsuarioGrupos.findAll({
+					// 		where: {id_usuario: usuario.id},
+					// 		include: [{model: Clase, as: 'grupo'}]
+					// 	}).then(function (gruposUsuario) {
+					// 		usuario.dataValues.grupos = gruposUsuario
+					// 		if (i == usuarios.length -1) {
+					// 			res.json({ usuarios: usuarios, paginas: Math.ceil(data.count / req.params.items_pagina) });
+					// 		}
+					// 	})
+					// })
 					// res.json({ usuarios: usuariosConGrupos, paginas: Math.ceil(data.count / req.params.items_pagina) });
-				});
-			});
+				}).catch(function (err) {
+					res.json({ usuarios: [], mensaje: err.stack + '-- filtro LN 265.' });
+				})
+			}).catch(function (err) {
+				res.json({ usuarios: [], mensaje: err.stack + '-- filtro LN 252.' });
+			})
 		});
 	router.route('/usuarios/:id_usuario')
 		.get(function (req, res) {
@@ -374,34 +378,26 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, decodeBase
 																	id_usuario: req.body.id,
 																	id_sucursal: id_sucursal
 																}).then(function (usuarioSucursalCreado) {
-																	if (req.body.grupos.length > 0) {
-																		req.body.grupos.map(function (grupo, i) {
-																			UsuarioGrupos.findOrCreate({
-																				where: {
-																					id_usuario: req.body.id,
-																					id_grupo: grupo.id
-																				}
-																				,
-																				default: {
-																					id_usuario: req.body.id,
-																					id_grupo: grupo.id
-																				}
-																			}).spread(function (gruposUsuarios, created) {
-																				if (created) {
-																					if (index === array.length - 1) {
+																	if (index === array.length - 1) {
+																		if (req.body.grupos.length > 0) {
+																			UsuarioGrupos.destroy({
+																				where: { id_usuario: req.body.id }
+																			}).then(function (affectedRows) {
+																				req.body.grupos.map(function (grupo, i) {
+																					UsuarioGrupos.create({
+																						id_usuario: req.body.id,
+																						id_grupo: grupo.id
+																					}).then(function (grupoAsignado) {
+
 																						if (i === req.body.grupos.length - 1) {
 																							res.json(affectedRows);
 																						}
-																					}
-																				} else {
-																					if (index === array.length - 1) {
-																						if (i === req.body.grupos.length - 1) {
-																							res.json(affectedRows);
-																						}
-																					}
-																				}
+
+																					})
+
+																				})
 																			})
-																		})
+																		}
 																	} else {
 																		if (index === array.length - 1) {
 																			res.json(affectedRows);
@@ -560,39 +556,75 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, decodeBase
 					nombre_usuario: req.body.nombre_usuario,
 					clave: md5(req.body.clave)
 				},
-				include: [{ model: Persona, as: 'persona' },
-				// { model: UsuarioGrupos, as: 'grupos', include: [{ model: Clase, as: 'grupo' }] },
-				//{ model: Empresa, as: 'empresa', include: [{ model: Sucursal, as: 'sucursales' }] },
-				{
-					model: UsuarioRol, as: 'rolesUsuario',
-					include: [{
-						model: Rol, as: 'rol',
-						include: [{
-							model: RolAplicacion, as: 'aplicacionesRol',
-							include: [{
-								model: Aplicacion, as: 'aplicacion', include: [{
-									model: Aplicacion, as: 'subaplicaciones',
-									include: [{ model: RolAplicacion, as: 'rolAplicaciones' }]
-								}]
-							}]
-						}]
-					}]
-				},
-				{ model: UsuarioAplicacion, as: 'aplicacionesUsuario', include: [{ model: Aplicacion, as: 'aplicacion', include: [{ model: Aplicacion, as: 'subaplicaciones' }] }] }]
+				include: [{ model: Persona, as: 'persona' }
+					// { model: UsuarioGrupos, as: 'grupos', include: [{ model: Clase, as: 'grupo' }] },
+					// { model: Empresa, as: 'empresa', include: [{ model: Sucursal, as: 'sucursales' }] },
+					// {
+					// 	model: UsuarioRol, as: 'rolesUsuario',
+					// 	include: [{
+					// 		model: Rol, as: 'rol',
+					// 		include: [{
+					// 			model: RolAplicacion, as: 'aplicacionesRol',
+					// 			include: [{
+					// 				model: Aplicacion, as: 'aplicacion', include: [{
+					// 					model: Aplicacion, as: 'subaplicaciones',
+					// 					include: [{ model: RolAplicacion, as: 'rolAplicaciones' }]
+					// 				}]
+					// 			}]
+					// 		}]
+					// 	}]
+					// },
+					// { model: UsuarioAplicacion, as: 'aplicacionesUsuario', include: [{ model: Aplicacion, as: 'aplicacion', include: [{ model: Aplicacion, as: 'subaplicaciones' }] }] }
+				]
 			}).then(function (entidad) {
 				if (entidad) {
-					res.json({
-						type: true,
-						data: entidad,
-						token: entidad.token
-					});
+					UsuarioAplicacion.findAll({
+						where: { id_usuario: entidad.id },
+						include: [{ model: Aplicacion, as: 'aplicacion', include: [{ model: Aplicacion, as: 'subaplicaciones' }] }]
+					}).then(function (aplicacionesUsuario) {
+						entidad.dataValues.aplicacionesUsuario = aplicacionesUsuario
+						UsuarioRol.findAll({
+							where: { id_usuario: entidad.id },
+							include: [{
+								model: Rol, as: 'rol',
+								include: [{
+									model: RolAplicacion, as: 'aplicacionesRol',
+									include: [{
+										model: Aplicacion, as: 'aplicacion', include: [{
+											model: Aplicacion, as: 'subaplicaciones',
+											include: [{ model: RolAplicacion, as: 'rolAplicaciones' }]
+										}]
+									}]
+								}]
+							}]
+						}).then(function (rolesUsuario) {
+							entidad.dataValues.rolesUsuario = rolesUsuario
+							res.json({
+								type: true,
+								data: entidad,
+								token: entidad.token
+							});
+						}).catch(function (err) {
+							res.json({ type: false, data: "¡Usuario o clave incorrecta!", mensaje: err.stack + '-- autenticar usuarios LN 594.' });
+						})
+					}).catch(function (err) {
+						res.json({ type: false, data: "¡Usuario o clave incorrecta!", mensaje: err.stack + '-- autenticar usuarios LN 589.' });
+					})
+
+					// res.json({
+					// 	type: true,
+					// 	data: entidad,
+					// 	token: entidad.token
+					// })
 				} else {
 					res.json({
 						type: false,
 						data: "¡Usuario o clave incorrecta!"
 					});
 				}
-			});
+			}).catch(function (err) {
+				res.json({ type: false, data: "¡Usuario o clave incorrecta!", mensaje: err.stack + '-- autenticar usuarios LN 562.' });
+			})
 		});
 
 
@@ -616,6 +648,57 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, decodeBase
 			});
 		});
 
+	router.route('/usuario/:id_usuario')
+		.get(function (req, res) {
+			Usuario.find({
+				where: {
+					id: req.params.id_usuario
+				},
+				include: [{ model: Persona, as: 'persona' },
+				{ model: UsuarioRol, as: 'rolesUsuario', include: [{ model: Rol, as: 'rol' }] },
+				{ model: Empresa, as: 'empresa', include: [{ model: Sucursal, as: 'sucursales' }] },
+				{ model: UsuarioSucursal, as: 'sucursalesUsuario', include: [{ model: Sucursal, as: 'sucursal' }] },
+					// { model: UsuarioAplicacion, as: 'aplicacionesUsuario', include: [{ model: Aplicacion, as: 'aplicacion' }] },
+					// { model: UsuarioRuta, as: 'rutas', include: [{ model: Ruta, as: 'ruta' }] },
+					// { model: UsuarioGrupos, as: 'grupos', include: [{ model: Clase, as: 'grupo' }]} 
+				]
+			}).then(function (entidad) {
+				if (entidad) {
+					UsuarioGrupos.findAll({
+						where: { id_usuario: entidad.id },
+						include: [{ model: Clase, as: 'grupo' }]
+					}).then(function (grupos) {
+						entidad.dataValues.grupos = grupos
+						UsuarioAplicacion.findAll({
+							where: { id_usuario: entidad.id },
+							include: [{ model: Aplicacion, as: 'aplicacion' }]
+						}).then(function (aplicacionesUsuario) {
+							entidad.dataValues.aplicacionesUsuario = aplicacionesUsuario
+							UsuarioRuta.findAll({
+								where: { id_usuario: entidad.id },
+								include: [{ model: Ruta, as: 'ruta' }]
+							}).then(function (rutas) {
+								entidad.dataValues.rutas = rutas
+								res.json({ usuario: entidad });
+							}).catch(function (err) {
+								res.json({ usuario: {}, mensaje: err.stack + '-- rutas usuario LN 648.' });
+							})
+						}).catch(function (err) {
+							res.json({ usuario: {}, mensaje: err.stack + '-- rutas usuario LN 643.' });
+						})
+					}).catch(function (err) {
+						res.json({ usuario: {}, mensaje: err.stack + '-- rutas usuario LN 638.' });
+					})
+				} else {
+					res.json({
+						type: false,
+						mensaje: "¡Usuario no encontrado!"
+					});
+				}
+			}).catch(function (err) {
+				res.json({ usuario: {}, mensaje: err.stack + '-- rutas usuario LN 624.' });
+			})
+		});
 
 	router.route('/validar')
 		.post(function (req, res) {

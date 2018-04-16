@@ -126,7 +126,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                     LEFT OUTER JOIN gl_clase AS `cargos.cargo` ON cargos.cargo = `cargos.cargo`.id left JOIN gl_persona ON (agil_medico_paciente.persona = gl_persona.id) left JOIN gl_clase ON agil_medico_paciente.extension = gl_clase.id\
                     left JOIN gl_clase as campamento ON agil_medico_paciente.campo = campamento.id where agil_medico_paciente.empresa = "+ req.params.id_empresa + activo + " AND agil_medico_paciente.es_empleado = true GROUP BY agil_medico_paciente.id order by " + req.params.columna + " " + req.params.direccion, { type: sequelize.QueryTypes.SELECT })
                     .then(function (data) {
-                         var options = {
+                        var options = {
                             model: MedicoPaciente,
                             include: [{ model: Persona, as: 'persona' },
                             { model: Clase, as: 'extension' }]
@@ -1636,14 +1636,12 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                     }).then(function (tipo) {
                         return Clase.findOrCreate({
                             where: {
-                                nombre: banco,
-                                nombre_corto: banco,
+                                nombre: banco,                                
                                 id_tipo: tipo.dataValues.id
                             },
                             transaction: t,
                             defaults: {
                                 nombre: banco,
-                                nombre_corto: banco,
                                 id_tipo: tipo.dataValues.id,
                                 habilitado: true
                             }
@@ -1884,7 +1882,8 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                         defaults: {
                             id_tipo: tipoCargo.dataValues.id,
                             nombre: cargo,
-                            nombre_corto: nombre_corto
+                            nombre_corto: nombre_corto,
+                            habilitado:true
                         }
                     })
                 }))
@@ -1918,7 +1917,9 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                         defaults: {
                             id_tipo: tipoContrato.dataValues.id,
                             nombre: contrato,
-                            nombre_corto: nombre_corto3
+                            nombre_corto: nombre_corto3,
+                            habilitado:true
+                            
                         }
                     })
                 }))
@@ -1950,7 +1951,8 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                         defaults: {
                             id_tipo: tipoExp.dataValues.id,
                             nombre: expedido,
-                            nombre_corto: nombre_corto3
+                            nombre_corto: nombre_corto3,
+                            habilitado:true
                         }
                     })
                 }))
@@ -1984,7 +1986,8 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                         defaults: {
                             id_tipo: tipoSeguroSalud.dataValues.id,
                             nombre: seguroSalud,
-                            nombre_corto: nombre_corto3
+                            nombre_corto: nombre_corto3,
+                            habilitado:true
                         }
                     })
                 }))
@@ -2194,7 +2197,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                                                                                             haber_basico: pacienteActual.haber_basico,
                                                                                             matricula_seguro: pacienteActual.matricula_seguro,
                                                                                             id_seguro_salud: idSeguroSalud,
-                                                                                            seguro_salud_carnet:true
+                                                                                            seguro_salud_carnet: true
                                                                                         },
                                                                                             {
                                                                                                 where: {
@@ -2607,7 +2610,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                                                                                                 haber_basico: pacienteActual.haber_basico,
                                                                                                 matricula_seguro: pacienteActual.matricula_seguro,
                                                                                                 id_seguro_salud: idSeguroSalud,
-                                                                                                seguro_salud_carnet:true
+                                                                                                seguro_salud_carnet: true
                                                                                             },
                                                                                                 { transaction: t }).then(function (Creado) {
                                                                                                     return Tipo.find({
@@ -3670,6 +3673,36 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                 res.json(cargosEmpleado)
             })
         })
+    router.route('/recursos-humanos/ropa-trabajo/actualizar/empleado/:id_empleado')
+        .put(function (req, res) {
+            RrhhEmpleadoDotacionRopa.update({
+                fecha: req.body.fecha,
+                fecha_vencimiento: req.body.fecha_vencimiento,
+                id_cumplimiento: req.body.cumplimiento.id,
+                id_periodo: req.body.periodo.id,
+                id_estado: req.body.estado.id,
+                observacion: req.body.observacion,
+                id_usuario: req.body.id_usuario},{
+                    where:{id:req.body.id
+                }
+            }).then(function (dotacionActualizada) {
+                req.body.dotacionItems.forEach(function (item, index, array) {
+                    RrhhEmpleadoDotacionRopaItem.update({
+                        id_producto: item.producto.id,
+                        entregado: item.entregado,
+                        id_ropa_trabajo: item.ropaTrabajo.id,
+                        id_cargo: item.cargo.id,
+                        cantidad: item.cantidad
+                    }, {
+                            where: { id: item.id }
+                        }).then(function (detalleCreado) {
+                            if (index === (array.length - 1)) {
+                                res.json({ mensaje: "Creado Satisfactoriamente!", numero: req.body.numero })
+                            }
+                        })
+                })
+            })
+        })
     router.route('/recursos-humanos/ropa-trabajo/empleado/:id_empleado')
         .post(function (req, res) {
             Sucursal.find({
@@ -3752,6 +3785,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                     model: RrhhEmpleadoDotacionRopaItem, as: "dotacionItems",
                     include: [{ model: Clase, as: "cargo" }, { model: Clase, as: "ropaTrabajo" }, { model: Producto, as: "producto" }]
                 },
+                { model: MedicoPaciente, as: "empleado" },
                 { model: Clase, as: "estado" },
                 { model: Clase, as: "periodo" },
                 { model: Clase, as: "cumplimiento" },
@@ -3767,13 +3801,13 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
             if (req.params.inicio != 0) {
                 var inicio = new Date(req.params.inicio); inicio.setHours(0, 0, 0, 0, 0);
                 var fin = new Date(req.params.fin); fin.setHours(23, 59, 59, 59, 0);
-                condicionRopaTrabajo = {eliminado: false, fecha: { $between: [inicio, fin] } };
-            }            
-             RrhhEmpleadoDotacionRopaItem.findAll({     
-                where:{anterior:false},        
+                condicionRopaTrabajo = { eliminado: false, fecha: { $between: [inicio, fin] } };
+            }
+            RrhhEmpleadoDotacionRopaItem.findAll({
+                where: { anterior: false },
                 include: [{ model: Clase, as: "cargo" }, { model: Clase, as: "ropaTrabajo" }, { model: Producto, as: "producto" }, {
-                    model: RrhhEmpleadoDotacionRopa, as: "dotacionRopa", where:condicionRopaTrabajo,
-                    include: [{ model: MedicoPaciente, as: "empleado", where: { id_empresa: req.params.id_empresa}, include: [{ model: Persona, as: 'persona' }] },
+                    model: RrhhEmpleadoDotacionRopa, as: "dotacionRopa", where: condicionRopaTrabajo,
+                    include: [{ model: MedicoPaciente, as: "empleado", where: { id_campo: req.params.campamento, id_empresa: req.params.id_empresa }, include: [{ model: Persona, as: 'persona' }] },
                     { model: Clase, as: "estado" },
                     { model: Clase, as: "periodo" },
                     { model: Clase, as: "cumplimiento" },
@@ -3782,7 +3816,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                 order: [["dotacion_ropa", "asc"]]
             }).then(function (entity) {
                 res.json(entity)
-            }) 
+            })
             /* MedicoPaciente.findAll({     
                 where: { id_empresa: req.params.id_empresa,id_campo:req.params.campamento }, 
                 include:[{ model: Persona, as: 'persona' },{model:RrhhEmpleadoDotacionRopa,as:"dotacionesRopa",require:false, where:condicionRopaTrabajo,include: [{

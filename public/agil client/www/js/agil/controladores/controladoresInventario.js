@@ -1,7 +1,7 @@
 angular.module('agil.controladores')
 
 	.controller('ControladorInventarios', function ($scope,$timeout, $filter, $window, $localStorage, $location, $templateCache, $route, blockUI, ListaInventariosProducto,
-		Inventario, Inventarios, InventarioPaginador, Productos, ActualizacionInventario, ListaProductosEmpresa, IngresosPorInventario,ActualizarDetalleMovimiento) {
+		Inventario, Inventarios, InventarioPaginador, Productos, ActualizacionInventario, ListaProductosEmpresa, IngresosPorInventario,ActualizarDetalleMovimiento, ListaGruposProductoUsuario, ProductosUsuario) {
 		blockUI.start();
 
 		$scope.usuario = JSON.parse($localStorage.usuario);
@@ -11,9 +11,11 @@ angular.module('agil.controladores')
 		$scope.idModalCreacionInventario = 'dialog-creacion-inventario-inicial';
 
 		$scope.inicio = function () {
+			$scope.seleccionGrupo = {}
 			$scope.obtenerSucursales();
 			$scope.obtenerInventarios();
-			$scope.compraIngresosPorInventario();			
+			$scope.compraIngresosPorInventario();
+			$scope.obtenerGruposProductosEmpresaUsuario()			
 			//$scope.aplicarTabla('tabla-inventarios',4);
 		}
 		$scope.establecerCantidad=function(model){
@@ -61,6 +63,25 @@ angular.module('agil.controladores')
 			}
 		}
 
+		$scope.obtenerGruposProductosEmpresaUsuario = function () {
+			blockUI.start()
+			var promesa = ListaGruposProductoUsuario($scope.usuario.id_empresa, $scope.usuario.id);
+			promesa.then(function (grupos) {
+				blockUI.stop()
+				if (grupos.length > 0) {
+					$scope.gruposProducto = grupos;
+				} else {
+					$scope.gruposProducto = []
+					$scope.mostrarMensaje('Parece que el usuario actual no cuenta con grupos de productos.')
+				}
+			}).catch(function (err) {
+				blockUI.stop()
+				$scope.gruposProducto = []
+				var mensaje = (err.stack !== undefined && err.stack !== null) ? err.stack : (err.data !== undefined && err.data !== null && err.data !== "") ? err.data : 'Error: Se perdio la conexión.'
+				$scope.mostrarMensaje(mensaje)
+			})
+		}
+
 		$scope.verificarPulso = function (evento, textoBusqueda) {
 			if (evento.keyCode === 13) { //enter pressed
 				$scope.textoBusqueda = textoBusqueda;
@@ -81,33 +102,47 @@ angular.module('agil.controladores')
 			} else {
 				$("#" + producto.id).css("display", "none");
 			}
-
 		}
-
+		function compare(a, b) {
+			if ($scope.direccion == "asc"){
+				return a.cantidad_total - b.cantidad_total
+			}else{
+				return b.cantidad_total - a.cantidad_total
+			}
+		}
 		$scope.clasificarColumna = function (columna) {
-			if ($scope.columna == columna) {
-				if ($scope.direccion == "asc") {
+			if (columna == "cantidad") {
+				if ($scope.direccion == "asc"){
 					$scope.direccion = "desc";
-					$("#" + columna).removeClass("fa-caret-up");
-					$("#" + columna).addClass("fa-caret-down");
+				}else{
+					$scope.direccion = "asc";
+				}
+				$scope.productos.sort(compare)
+			} else {
+				if ($scope.columna == columna) {
+					if ($scope.direccion == "asc") {
+						$scope.direccion = "desc";
+						$("#" + columna).removeClass("fa-caret-up");
+						$("#" + columna).addClass("fa-caret-down");
+					} else {
+						$scope.direccion = "asc";
+						$("#" + columna).removeClass("fa-caret-down");
+						$("#" + columna).addClass("fa-caret-up");
+					}
 				} else {
 					$scope.direccion = "asc";
-					$("#" + columna).removeClass("fa-caret-down");
+					$(".sort").removeClass("fa-caret-up");
+					$(".sort").removeClass("fa-caret-down");
+					$(".sort").addClass("fa-sort");
 					$("#" + columna).addClass("fa-caret-up");
+					$("#" + columna).removeClass("fa-sort");
 				}
-			} else {
-				$scope.direccion = "asc";
-				$(".sort").removeClass("fa-caret-up");
-				$(".sort").removeClass("fa-caret-down");
-				$(".sort").addClass("fa-sort");
-				$("#" + columna).addClass("fa-caret-up");
-				$("#" + columna).removeClass("fa-sort");
+				$scope.columna = columna;
+				$scope.buscarInventarios($scope.almacenBusqueda.id, $scope.paginaActual, $scope.itemsPorPagina, $scope.textoBusqueda, $scope.columna, $scope.direccion,$scope.cantidadInventario, $scope.seleccionGrupo.id);
 			}
-			$scope.columna = columna;
-			$scope.buscarInventarios($scope.almacenBusqueda.id, $scope.paginaActual, $scope.itemsPorPagina, $scope.textoBusqueda, $scope.columna, $scope.direccion,$scope.cantidadInventario);
 		}
 
-		$scope.buscarInventarios = function (idAlmacen, pagina, itemsPagina, texto, columna, direccion,cantidad) {
+		$scope.buscarInventarios = function (idAlmacen, pagina, itemsPagina, texto, columna, direccion,cantidad, grupo) {
 			blockUI.start();
 			$scope.itemsPorPagina = itemsPagina;
 			if (texto == "" || texto == null) {
@@ -116,7 +151,7 @@ angular.module('agil.controladores')
 				$scope.textoBusqueda = texto;
 			}
 			$scope.paginaActual = pagina;
-			var promesa = InventarioPaginador($scope.usuario.id_empresa, idAlmacen, pagina, itemsPagina, texto, columna, direccion,cantidad);
+			var promesa = InventarioPaginador($scope.usuario.id_empresa, idAlmacen, pagina, itemsPagina, texto, columna, direccion,cantidad, grupo, $scope.usuario.id);
 			promesa.then(function (dato) {
 				var productos = dato.productos;
 				var mproductos = [];
@@ -448,7 +483,7 @@ angular.module('agil.controladores')
 		}
 
 		$scope.bajarExcelInventarios = function () {
-			var promesa = Productos($scope.usuario.id_empresa);
+			var promesa = ProductosUsuario($scope.usuario.id_empresa, $scope.usuario.id);
 			promesa.then(function (productos) {
 				var data = [["Codigo", "Nombre o Descripción", "Unidad de medida", "Costo Unitario", "Cantidad a ingresar",
 					"Fecha de vencimiento (dia/mes/año)", "Lote"]]

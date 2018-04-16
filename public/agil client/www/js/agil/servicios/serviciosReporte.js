@@ -103,15 +103,15 @@ angular.module('agil.servicios')
   }])
 
 .factory('InventarioAlmacenPaginador', function($resource) {
-		return $resource(restServer+"reportes/empresa/:id_empresa/sucursal/:id_sucursal/almacen/:id_almacen/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion");
+		return $resource(restServer+"reportes/empresa/:id_empresa/sucursal/:id_sucursal/almacen/:id_almacen/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion/user/:id_usuario");
 })
 
 .factory('InventarioPaginadorAlmacen', ['InventarioAlmacenPaginador','$q',function(InventarioAlmacenPaginador, $q) 
   {
-	var res = function(idEmpresa,idSucursal,idAlmacen,pagina,itemsPagina,texto,columna,direccion) 
+	var res = function(idEmpresa,idSucursal,idAlmacen,pagina,itemsPagina,texto,columna,direccion, id_usuario) 
 	{
 		var delay = $q.defer();
-		InventarioAlmacenPaginador.get({id_empresa:idEmpresa,id_sucursal:idSucursal,id_almacen:idAlmacen,pagina:pagina,items_pagina:itemsPagina,texto_busqueda:texto,columna:columna,direccion:direccion},function(entidades) 
+		InventarioAlmacenPaginador.get({id_empresa:idEmpresa,id_sucursal:idSucursal,id_almacen:idAlmacen,pagina:pagina,items_pagina:itemsPagina,texto_busqueda:texto,columna:columna,direccion:direccion, id_usuario: id_usuario},function(entidades) 
 		{        
 			delay.resolve(entidades);
 		}, function(error) 
@@ -121,7 +121,28 @@ angular.module('agil.servicios')
 		return delay.promise;
 	};
     return res;
-}])      
+}])
+
+.factory('InventarioAlmacenReporte', function($resource) {
+	return $resource(restServer+"reportes/empresa/:id_empresa/sucursal/:id_sucursal/almacen/:id_almacen/user/:id_usuario");
+})
+
+.factory('InventarioReporteAlmacen', ['InventarioAlmacenReporte','$q',function(InventarioAlmacenReporte, $q) 
+{
+var res = function(idEmpresa,idSucursal,idAlmacen, id_usuario) 
+{
+	var delay = $q.defer();
+	InventarioAlmacenReporte.get({id_empresa:idEmpresa,id_sucursal:idSucursal,id_almacen:idAlmacen, id_usuario: id_usuario},function(entidades) 
+	{        
+		delay.resolve(entidades);
+	}, function(error) 
+		{
+			delay.reject(error);
+		});
+	return delay.promise;
+};
+	return res;
+}])
 
 .factory('ReporteVentasMensuales', function($resource) {
 		return $resource(restServer+"reportes/ventas-mensuales/:id_empresa/sucursal/:id_sucursal/inicio/:inicio/fin/:fin");

@@ -14,6 +14,7 @@
 			<i class="ace-icon fa fa-cloud-download align-top bigger-125"></i>
 			Ejemplo Importacion
 		</a>
+		<button type="button" class="btn btn-yellow" ng-click="descargarCatalogo()">Descargar catálogo productos</button>
 		<div class="clearfix">
 			<div class="pull-right tableTools-container"></div>
 		</div>
@@ -21,7 +22,7 @@
 			Lista de Productos
 		</div>
 		<span>Grupos: &nbsp;</span> <select class="form-control" style="width:150px;" ng-change="buscarProductos(grupo)"
-                                                        required id="actividadProforma" name="actividad" ng-model="grupo"
+                                                        required id="selectGruposProductos" name="selectGruposProductos" ng-model="grupo"
                                                         ng-options="grupo as grupo.nombre for grupo in gruposProducto track by grupo.id"
                                                         data-placeholder="Click para escoger">
                                                         <option value="" selected>Todos</option>

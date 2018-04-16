@@ -19,6 +19,27 @@ angular.module('agil.servicios')
 		return delay.promise;
 	};
     return res;
+	}])
+	
+	.factory('BusquedaProductosEmpresaUsuario', function($resource) {
+		return $resource(restServer+"productos/empresa/:idEmpresa/texto/:texto/user/:id_usuario");
+})
+
+.factory('ListaProductosEmpresaUsuario', ['BusquedaProductosEmpresaUsuario','$q',function(BusquedaProductosEmpresaUsuario, $q) 
+  {
+	var res = function(idEmpresa,texto, id_usuario) 
+	{
+		var delay = $q.defer();
+		BusquedaProductosEmpresaUsuario.query({idEmpresa:idEmpresa,texto:texto, id_usuario: id_usuario},function(entidades) 
+		{        
+			delay.resolve(entidades);
+		}, function(error) 
+			{
+				delay.reject(error);
+			});
+		return delay.promise;
+	};
+    return res;
   }])
   
 .factory('InventariosProducto', function($resource) {

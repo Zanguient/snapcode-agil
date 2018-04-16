@@ -44,7 +44,8 @@ angular.module('agil.controladores')
             $scope.totalProformasDolar = 0
             var promesa = ObtenerCambioMoneda(new Date())
             promesa.then(function (res) {
-                for (let i = 0; i < $scope.proformas.length; i++) {
+                $scope.totalProformas = 0
+                for (var i = 0; i < $scope.proformas.length; i++) {
                     $scope.totalProformas += $scope.proformas[i].totalImporteBs
                     $scope.totalProformasDolar = $scope.totalProformas / res.monedaCambio.dolar
                 }
@@ -96,6 +97,22 @@ angular.module('agil.controladores')
             })
         }
         $scope.editar = function (proforma, ver) {
+            var dfecha = new Date(proforma.fecha_factura)
+            if (proforma.fecha_factura !== null && proforma.fecha_factura !== undefined) {
+                if (Object.prototype.toString.call(dfecha) === "[object Date]") {
+                    // it is a date
+                    if (isNaN(dfecha.getTime())) {  // d.valueOf() could also work
+                        // date is not valid
+                        $scope.mostrarMensaje('Hay un problema con la fecha de la factura. Se bloqueará la edición de esta proforma.')
+                        return
+                    }
+                    else {
+                        // date is valid
+                        $scope.mostrarMensaje('Esta proforma no se puede editar, ya fué facturada.')
+                        return
+                    }
+                }
+            }
             blockUI.start()
             var dat = new Date(proforma.fecha_proforma)
             $scope.obtenerCambioMonedaProforma(dat)
@@ -219,7 +236,7 @@ angular.module('agil.controladores')
                                     $scope.facturaProformas.id_usuario = $scope.usuario.id
                                     $scope.facturaProformas.fecha = datosProformas[0].fecha
                                     $scope.facturaProformas.id_empresa = $scope.usuario.id_empresa
-                                    $scope.facturaProformas.datosProformas.forEach(function (proforma) {
+                                    $scope.facturaProformas.datosProformas.forEach(function (proforma, i) {
                                         $scope.facturaProformas.descripcion += proforma.detalle + ". "
                                         // $scope.facturaProformas.totalImporteBs += proforma.totalImporteBs
                                         $scope.facturaProformas.importe = $scope.facturaProformas.totalImporteBs
@@ -236,15 +253,18 @@ angular.module('agil.controladores')
                                             proforma.importe = proforma.importeTotalBs
                                             proforma.detallesProformas.map(function (det, y) {
                                                 det.tc = proforma.tc
+                                                det.total = det.importe * det.cantidad
                                                 if (y === proforma.detallesProformas.length - 1) {
                                                     Array.prototype.push.apply($scope.facturaProformas.detallesVenta, proforma.detallesProformas);
+                                                    if (i == $scope.facturaProformas.datosProformas.length - 1) {
+                                                        ImprimirSalida("FACT", $scope.facturaProformas, false, $scope.usuario)
+                                                    }
+                                                    $scope.dolarActual = $scope.obtenerCambioDolarActual()
                                                 }
                                             })
                                         })
-                                        $scope.dolarActual = $scope.obtenerCambioDolarActual()
                                     });
                                     blockUI.stop()
-                                    ImprimirSalida("FACT", $scope.facturaProformas, false, $scope.usuario)
                                 }
                             }, function (err) {
                                 $scope.mostrarMensaje(err.message)
@@ -1044,7 +1064,14 @@ angular.module('agil.controladores')
                 }
                 $scope.filtro = $scope.filtrarProformasOperaciones($scope.filtro, true, true)
                 // $scope.filtro = { empresa: $scope.usuario.empresa.id, mes: "", anio: "", sucursal: "", actividad: "", servicio: "", monto: "", razon: "", usuario: "", numero: "" }
-                $scope.calcularTotalProformas()
+                $timeout(function () {
+                    $scope.$apply(function () {
+                        $scope.totalProformas = 0
+                        $scope.totalProformasDolar = 0
+                        $scope.calcularTotalProformas()
+                    })
+                }, 1000)
+                
             }, function (err) {
                 $timeout(function () {
                     $scope.$apply(function () {

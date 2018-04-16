@@ -111,7 +111,7 @@ angular.module('agil.servicios')
     .factory('alertasProformasLista', ['alertas', '$q', function (alertas, $q) {
         var res = function (idEmpresa) {
             var delay = $q.defer();
-            alertas.get({ id_empresa: idEmpresa }, function (entidades) {
+            alertas.get({ id_empresa: (idEmpresa !== null && idEmpresa !== undefined && idEmpresa !== "") ? idEmpresa : 0 }, function (entidades) {
                 delay.resolve(entidades);
             }, function (error) {
                 delay.reject(error);

@@ -63,7 +63,7 @@ angular.module('agil.servicios')
   }])
 
 .factory('CompraFiltro', function($resource) {
-		return $resource(restServer+"compras/:idsSucursales/inicio/:inicio/fin/:fin/razon-social/:razon_social/nit/:nit/monto/:monto/tipo-compra/:tipo_compra/sucursal/:sucursal/usuario/:usuario", null,
+		return $resource(restServer+"compras/:idsSucursales/inicio/:inicio/fin/:fin/razon-social/:razon_social/nit/:nit/monto/:monto/tipo-compra/:tipo_compra/sucursal/:sucursal/usuario/:usuario/user/:id_usuario", null,
 		{
 			'update': { method:'PUT' }
 		});
@@ -71,10 +71,10 @@ angular.module('agil.servicios')
 
 .factory('Compras', ['CompraFiltro','$q',function(CompraFiltro, $q) 
   {
-	var res = function(sucursales,inicio,fin,razon_social,nit,monto,tipo_pago,sucursal,usuario) 
+	var res = function(sucursales,inicio,fin,razon_social,nit,monto,tipo_pago,sucursal,usuario, id_usuario) 
 	{
 		var delay = $q.defer();
-		CompraFiltro.query({idsSucursales:sucursales,inicio:inicio,fin:fin,razon_social:razon_social,nit:nit,monto:monto,tipo_compra:tipo_pago,sucursal:sucursal,usuario:usuario},function(entidades) 
+		CompraFiltro.query({idsSucursales:sucursales,inicio:inicio,fin:fin,razon_social:razon_social,nit:nit,monto:monto,tipo_compra:tipo_pago,sucursal:sucursal,usuario:usuario, id_usuario: id_usuario},function(entidades) 
 		{        
 			delay.resolve(entidades);
 		}, function(error) 
@@ -87,15 +87,15 @@ angular.module('agil.servicios')
   }])
  
  .factory('InventarioEmpresaPaginador', function($resource) {
-		return $resource(restServer+"inventarios/empresa/:id_empresa/almacen/:id_almacen/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion/cantidad/:cantidad");
+		return $resource(restServer+"inventarios/empresa/:id_empresa/almacen/:id_almacen/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion/cantidad/:cantidad/grupo/:id_grupo/user/:id_usuario");
 })
 
 .factory('InventarioPaginador', ['InventarioEmpresaPaginador','$q',function(InventarioEmpresaPaginador, $q) 
   {
-	var res = function(idEmpresa,idAlmacen,pagina,itemsPagina,texto,columna,direccion,cantidad) 
+	var res = function(idEmpresa,idAlmacen,pagina,itemsPagina,texto,columna,direccion,cantidad, grupo, id_usuario) 
 	{
 		var delay = $q.defer();
-		InventarioEmpresaPaginador.get({id_empresa:idEmpresa,id_almacen:idAlmacen,pagina:pagina,items_pagina:itemsPagina,texto_busqueda:texto,columna:columna,direccion:direccion,cantidad:cantidad},function(entidades) 
+		InventarioEmpresaPaginador.get({id_empresa:idEmpresa,id_almacen:idAlmacen,pagina:pagina,items_pagina:itemsPagina,texto_busqueda:texto,columna:columna,direccion:direccion,cantidad:cantidad, id_grupo: (grupo !== undefined && grupo !== null && grupo !== "")?grupo:0, id_usuario: id_usuario},function(entidades) 
 		{        
 			delay.resolve(entidades);
 		}, function(error) 

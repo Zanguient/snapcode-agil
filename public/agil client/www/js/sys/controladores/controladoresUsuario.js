@@ -1,7 +1,7 @@
 angular.module('agil.controladores')
 
 	.controller('ControladorUsuarios', function ($scope, $location, $window, $localStorage, $templateCache, $route, blockUI, Usuario, Empresas, Roles, $timeout,
-		UsuariosEmpresa, Rutas, UsuarioRutas, UsuarioComision, UsuarioComisiones, Sucursales, UsuariosEmpresaPaginador, validarUsuario, Paginator, ListaGruposProductoEmpresa) {
+		UsuariosEmpresa, Rutas, UsuarioRutas, UsuarioComision, UsuarioComisiones, Sucursales, UsuariosEmpresaPaginador, validarUsuario, Paginator, ListaGruposProductoEmpresa, ObtenerUsuario) {
 
 		$scope.idModalWizardUsuarioEdicion = 'modal-wizard-usuario';
 		$scope.idModalWizardUsuarioVista = 'modal-wizard-usuario-vista';
@@ -19,7 +19,7 @@ angular.module('agil.controladores')
 			var promesa = ListaGruposProductoEmpresa($scope.usuarioSesion.id_empresa);
 
 			promesa.then(function (grupos) {
-				$scope.gruposProducto = []
+				$scope.gruposProducto = grupos
 				$scope.llenarGrupos(grupos);
 				// if ($scope.usuario.grupos) {
 				// 	$scope.seleccionarGrupos($scope.usuario.grupos)
@@ -73,46 +73,114 @@ angular.module('agil.controladores')
 		}
 
 		$scope.verUsuario = function (usuario) {
-			console.log(usuario);
-			$scope.usuario = usuario;
-			$scope.rol = usuario.rolesUsuario[0].rol;
-			$scope.usuario.sucursales = [];
-			$scope.sucursales = usuario.empresa.sucursales;
-			for (var i = 0; i < $scope.usuario.sucursalesUsuario.length; i++) {
-				$scope.usuario.sucursales.push($scope.usuario.sucursalesUsuario[i].sucursal);
-			}
-			$scope.abrirPopup($scope.idModalWizardUsuarioVista);
+			blockUI.start()
+			var prom = ObtenerUsuario(usuario.id)
+			prom.then(function (res) {
+				if (res.mensaje == undefined) {
+					$scope.usuario = res.usuario;
+					$scope.rol = res.usuario.rolesUsuario[0].rol;
+					$scope.usuario.sucursales = [];
+					// 					$scope.sucursales = res.usuario.empresa.sucursales;
+					for (var i = 0; i < $scope.usuario.sucursalesUsuario.length; i++) {
+						$scope.usuario.sucursales.push($scope.usuario.sucursalesUsuario[i].sucursal);
+					}
+					blockUI.stop()
+					$scope.abrirPopup($scope.idModalWizardUsuarioVista);
+				} else {
+					blockUI.stop()
+					$scope.mostrarMensaje(res.mensaje)
+				}
+			}).catch(function (err) {
+				var mensaje = (err.stack !== undefined && err.stack !== null) ? err.stack : (err.data !== undefined && err.data !== null) ? err.data : 'Error: no hubo respuesta del servidor o hubo un cambio de red. -- controlador usuarios LN 78.'
+				$scope.mostrarMensaje(mensaje)
+				blockUI.stop()
+			})
+
+			//old: change at 06/04/2018
+			// //console.log(usuario);
+			// $scope.usuario = usuario;
+			// $scope.rol = usuario.rolesUsuario[0].rol;
+			// $scope.usuario.sucursales = [];
+			// $scope.sucursales = usuario.empresa.sucursales;
+			// for (var i = 0; i < $scope.usuario.sucursalesUsuario.length; i++) {
+			// 	$scope.usuario.sucursales.push($scope.usuario.sucursalesUsuario[i].sucursal);
+			// }
+			// $scope.abrirPopup($scope.idModalWizardUsuarioVista);
 		}
 
 		$scope.modificarUsuario = function (usuario) {
 
-			$scope.usuario = usuario;
-			// $scope.obtenerGruposProductoEmpresa()
-			$scope.seleccionarGrupos($scope.usuario.grupos); 
-			$scope.rol = usuario.rolesUsuario[0].rol;
-			$scope.usuario.sucursales = [];
-			//$scope.sucursales=usuario.empresa.sucursales;
-			for (var i = 0; i < $scope.usuario.sucursalesUsuario.length; i++) {
-				$scope.usuario.sucursales.push($scope.usuario.sucursalesUsuario[i].sucursal);
-			}
-			var sucursales;
-			// $scope.obtenerGruposProductoEmpresa()
-			if ($scope.usuarioSesion.empresa) {
-				sucursales = $scope.usuarioSesion.empresa.sucursales;
-				/* $scope.llenarSucursales(sucursales); */
-				$scope.seleccionarSucursales($scope.usuario.sucursales);
-				// $scope.seleccionarGrupos($scope.usuario.grupos);
-				$scope.abrirPopup($scope.idModalWizardUsuarioEdicion);
-			} else {
-				var promesa = Sucursales(usuario.id_empresa);
-				promesa.then(function (datos) {
-					sucursales = datos;
-					$scope.llenarSucursales(sucursales);
-					$scope.seleccionarSucursales($scope.usuario.sucursales);
+			blockUI.start()
+			var prom = ObtenerUsuario(usuario.id)
+			prom.then(function (res) {
+				if (res.mensaje == undefined) {
+					$scope.llenarGrupos($scope.gruposProducto)
+					$scope.usuario = res.usuario;
 					// $scope.seleccionarGrupos($scope.usuario.grupos);
-					$scope.abrirPopup($scope.idModalWizardUsuarioEdicion);
-				});
-			}
+					$scope.rol = res.usuario.rolesUsuario[0].rol;
+					$scope.usuario.sucursales = [];
+					// $scope.sucursales = res.usuario.empresa.sucursales;
+					for (var i = 0; i < $scope.usuario.sucursalesUsuario.length; i++) {
+						$scope.usuario.sucursales.push($scope.usuario.sucursalesUsuario[i].sucursal);
+					}
+					var sucursales;
+					$scope.seleccionarGrupos($scope.usuario.grupos);
+					// //$scope.obtenerGruposProductoEmpresa()
+					if ($scope.usuarioSesion.empresa) {
+						sucursales = $scope.usuarioSesion.empresa.sucursales;
+						$scope.llenarSucursales(sucursales);
+						$scope.seleccionarSucursales($scope.usuario.sucursales);
+						// //$scope.seleccionarGrupos($scope.usuario.grupos);
+						$scope.abrirPopup($scope.idModalWizardUsuarioEdicion);
+					} else {
+						var promesa = Sucursales(res.usuario.id_empresa);
+						promesa.then(function (datos) {
+							sucursales = datos;
+							$scope.llenarSucursales(sucursales);
+							$scope.seleccionarSucursales($scope.usuario.sucursales);
+							// //$scope.seleccionarGrupos($scope.usuario.grupos);
+							$scope.abrirPopup($scope.idModalWizardUsuarioEdicion);
+						});
+					}
+					blockUI.stop()
+				} else {
+					blockUI.stop()
+					$scope.mostrarMensaje(res.mensaje)
+				}
+			}).catch(function (err) {
+				var mensaje = (err.stack !== undefined && err.stack !== null) ? err.stack : (err.data !== undefined && err.data !== null) ? err.data : 'Error: no hubo respuesta del servidor o hubo un cambio de red. -- controlador usuarios LN 78.'
+				$scope.mostrarMensaje(mensaje)
+				blockUI.stop()
+			})
+
+			//old: change at 06/04/2018
+			// $scope.usuario = usuario;
+			// // //$scope.obtenerGruposProductoEmpresa()
+			// $scope.seleccionarGrupos($scope.usuario.grupos);
+			// $scope.rol = usuario.rolesUsuario[0].rol;
+			// $scope.usuario.sucursales = [];
+			// // //$scope.sucursales=usuario.empresa.sucursales;
+			// for (var i = 0; i < $scope.usuario.sucursalesUsuario.length; i++) {
+			// 	$scope.usuario.sucursales.push($scope.usuario.sucursalesUsuario[i].sucursal);
+			// }
+			// var sucursales;
+			// // //$scope.obtenerGruposProductoEmpresa()
+			// if ($scope.usuarioSesion.empresa) {
+			// 	sucursales = $scope.usuarioSesion.empresa.sucursales;
+			// 	// /* $scope.llenarSucursales(sucursales); */
+			// 	$scope.seleccionarSucursales($scope.usuario.sucursales);
+			// 	// //$scope.seleccionarGrupos($scope.usuario.grupos);
+			// 	$scope.abrirPopup($scope.idModalWizardUsuarioEdicion);
+			// } else {
+			// 	var promesa = Sucursales(usuario.id_empresa);
+			// 	promesa.then(function (datos) {
+			// 		sucursales = datos;
+			// 		$scope.llenarSucursales(sucursales);
+			// 		$scope.seleccionarSucursales($scope.usuario.sucursales);
+			// 		// //$scope.seleccionarGrupos($scope.usuario.grupos);
+			// 		$scope.abrirPopup($scope.idModalWizardUsuarioEdicion);
+			// 	});
+			// }
 		}
 
 		$scope.validarUsuario = function (usuarioNombre) {
@@ -158,6 +226,7 @@ angular.module('agil.controladores')
 			// 	$scope.usuario.grupos= []
 			// 	$scope.seleccionargrupos($scope.usuario.grupos)
 			// }
+			$scope.gruposUsuario = []
 			for (var i = 0; i < datosGrupos.length; i++) {
 				var grupo = {
 					name: datosGrupos[i].nombre,
@@ -275,11 +344,11 @@ angular.module('agil.controladores')
 		$scope.veirificarUsuarioRuta = function (ruta, usuario) {
 			var i = 0, encontrado = false;
 			while (i < ruta.usuarios.length && !encontrado) {
-				if(ruta.usuarios[i].usuario){
-				if (ruta.usuarios[i].usuario.nombre_usuario == usuario.nombre_usuario) {
-					encontrado = true;
+				if (ruta.usuarios[i].usuario) {
+					if (ruta.usuarios[i].usuario.nombre_usuario == usuario.nombre_usuario) {
+						encontrado = true;
+					}
 				}
-			}
 				i++;
 			}
 			return encontrado;
@@ -297,12 +366,22 @@ angular.module('agil.controladores')
 		}
 
 		$scope.modificarComisiones = function (usuario) {
+			blockUI.start()
 			$scope.usuario = usuario;
 			var promise = UsuarioComisiones(usuario.id, $scope.usuarioSesion.id_empresa);
 			promise.then(function (productos) {
-				$scope.productos = productos;
-				$scope.abrirPopup($scope.idModalWizardUsuarioComisiones);
-			});
+				if (productos[0].mensaje !== undefined) {
+					$scope.mostrarMensaje(productos[0].mensaje)
+				} else {
+					$scope.productos = productos;
+					$scope.abrirPopup($scope.idModalWizardUsuarioComisiones);
+				}
+				blockUI.stop()
+			}).catch(function (err) {
+				var mensaje = (err.stack !== undefined && err.stack !== null) ? err.stack : (err.data !== undefined && err.data !== null) ? err.data : 'Error: no hubo respuesta del servidor o hubo un cambio de red. -- controlador usuarios LN 78.'
+				$scope.mostrarMensaje(mensaje)
+				blockUI.stop()
+			})
 		}
 
 		$scope.guardarComisiones = function (usuario) {
@@ -412,11 +491,20 @@ angular.module('agil.controladores')
 			blockUI.start();
 			var promesa = UsuariosEmpresaPaginador($scope.paginator);
 			promesa.then(function (dato) {
-				$scope.usuarios = dato.usuarios;
-				console.log(dato.usuarios)
-				$scope.paginator.setPages(dato.paginas);
-				blockUI.stop();
-			});
+				if (dato.mensaje == undefined) {
+					$scope.usuarios = dato.usuarios;
+					// console.log(dato.usuarios)
+					$scope.paginator.setPages(dato.paginas);
+					blockUI.stop();
+				} else {
+					blockUI.stop();
+					$scope.mostrarMensaje(dato.mensaje)
+				}
+			}).catch(function (err) {
+				var mensaje = (err.stack !== undefined && err.stack !== null) ? err.stack : (err.data !== undefined && err.data !== null) ? err.data : 'Error: no hubo respuesta del servidor o hubo un cambio de red. -- controlador usuarios LN 78.'
+				$scope.mostrarMensaje(mensaje)
+				blockUI.stop()
+			})
 		}
 		/* $scope.obtenerUsuarios=function(){
 			blockUI.start();

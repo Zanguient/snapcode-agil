@@ -597,7 +597,14 @@
 							<label class="control-label col-xs-12 col-sm-3 no-padding-right">Sucursales</label>
 
 							<div class="col-xs-12 col-sm-9">
-								<select disabled required id="sucursal" multiple name="sucursal" ng-init="usuario.sucursales=usuario.sucursalesUsuario" ng-model="usuario.sucursales" ng-options="sucursal.id as sucursal.nombre for sucursal in sucursales track by sucursal.id"  data-placeholder="Click para escoger"></select>
+								<select disabled required id="sucursal" multiple name="sucursal" ng-init="usuario.sucursales=usuario.sucursalesUsuario" ng-model="usuario.sucursales" ng-options="sucursal as sucursal.nombre for sucursal in usuario.sucursales track by sucursal.id"  data-placeholder="Click para escoger"></select>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="control-label col-xs-12 col-sm-3 no-padding-right">Grupos Productos</label>
+
+							<div class="col-xs-12 col-sm-9">
+								<select disabled required id="gruposProductos" multiple name="gruposProductos"  ng-model="usuario.grupos" ng-options="grupo as grupo.grupo.nombre for grupo in usuario.grupos track by grupo.id"  data-placeholder="Click para escoger"></select>
 							</div>
 						</div>
 					</div>

@@ -196,7 +196,7 @@ module.exports = function (router, sequelize, Sequelize, jwt, md5, forEach, ensu
 	require('./rutas-configuraciones-factura')(router, Sucursal, ConfiguracionFactura, Clase, ConfiguracionGeneralFactura);
 	require('./rutas-configuraciones-app')(router, Usuario, ConfiguracionVendedorApp, Clase, ConfiguracionGeneralApp, Rol, UsuarioRol, Diccionario, Persona);
 	require('./rutas-reportes')(router, sequelize, Sequelize, Compra, Proveedor, Almacen, Sucursal, Empresa, Venta, Cliente, Movimiento, Clase,
-		Inventario, Producto, DetalleVenta, DetalleCompra, Usuario, Diccionario, PagoVenta, Persona, VendedorVenta);
+		Inventario, Producto, DetalleVenta, DetalleCompra, Usuario, Diccionario, PagoVenta, Persona, VendedorVenta, UsuarioGrupos);
 	require('./rutas-rutas')(router, Ruta, RutaDia, RutaCliente, Clase, Cliente, Persona, UsuarioRuta, Usuario, Venta, Movimiento,
 		DetalleVenta, Producto, DetalleVentaNoConsolidada);
 	require('./rutas-seguimiento-app')(router, UsuarioRuta, Ruta, Usuario, Persona, Venta, RutaDia, Clase, DetalleVenta, Producto, Cliente,
@@ -221,9 +221,9 @@ module.exports = function (router, sequelize, Sequelize, jwt, md5, forEach, ensu
 	require('./rutas-inventario')(router, ensureAuthorized, forEach, Compra, DetalleCompra, Almacen, Sucursal, Empresa, sequelize, Sequelize,
 		Tipo, Clase, Proveedor, Producto, Movimiento, DetalleMovimiento, Inventario, Venta, DetalleVenta,
 		Cliente, CodigoControl, NumeroLiteral, Diccionario, SucursalActividadDosificacion, Dosificacion,
-		ConfiguracionGeneralFactura, ConfiguracionFactura, PagoVenta, PagoCompra, Usuario, DetalleVentaNoConsolidada, ClienteCuenta, ContabilidadCuenta, ProveedorCuenta, Farmacia, Proforma, DetallesProformas, Servicios);
+		ConfiguracionGeneralFactura, ConfiguracionFactura, PagoVenta, PagoCompra, Usuario, DetalleVentaNoConsolidada, ClienteCuenta, ContabilidadCuenta, ProveedorCuenta, UsuarioGrupos);
 	require('./rutas-salidas')(router, forEach, decodeBase64Image, fs, Empresa, Producto, Proveedor, Cliente, Clase, Inventario, ComisionVendedorProducto, Usuario,
-		DetalleVenta, DetalleMovimiento, Movimiento, Venta, Compra, DetalleCompra, Almacen, Sucursal, signs3, Tipo, VentaReprogramacionPago, Farmacia);
+		DetalleVenta, DetalleMovimiento, Movimiento, Venta, Compra, DetalleCompra, Almacen, Sucursal, signs3, Tipo, VentaReprogramacionPago, UsuarioGrupos);
 
 	require('./rutas-mesa')(router, forEach, fs, sequelize, Empresa, Dosificacion, SucursalActividadDosificacion,
 		Sucursal, Clase, Mesa, Sala, PedidoRestaurante, MesaPedidoRestaurante, DetallePedidoRestaurante,

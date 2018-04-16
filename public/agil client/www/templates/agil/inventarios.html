@@ -76,14 +76,16 @@
 							<div class="dataTables_length" id="tabla-productos_length">
 								<label>
 									Mostrar
-									<select ng-model="itemsPorPagina" ng-change="buscarInventarios(almacenBusqueda.id,1,itemsPorPagina,textoBusqueda,columna,direccion,cantidadInventario)"
+									<select ng-model="itemsPorPagina" ng-change="buscarInventarios(almacenBusqueda.id,1,itemsPorPagina,textoBusqueda,columna,direccion,cantidadInventario, seleccionGrupo.id)"
 									 name="tabla-proveedores_length" aria-controls="tabla-productos" class="form-control input-sm">
 										<option selected value="10">10</option>
 										<option value="25">25</option>
 										<option value="50">50</option>
 										<option value="100">100</option>
-									</select> productos por página</label>
+									</select> productos por página </label>
+								</select>
 							</div>
+
 						</div>
 						<div class="col-xs-6">
 							<table>
@@ -105,19 +107,32 @@
 											 data-placeholder="Click para escoger" ng-change="establecerAlmacenBusqueda(almacenBusqueda)"></select>&nbsp
 										</td>
 										<td>
-												<label>Cantidades</label>&nbsp
-											</td>
-											<td>
-													<select required id="CantidadesAlmacen" name="cantidades-alma" ng-model="cantidadInventario"  ng-change="establecerCantidad(cantidadInventario)"data-placeholder="Click para escoger">
-															<option value="0">Todos</option>
-															<option value="1">Con Saldo</option>
-															<option value="2">Sin Saldo</option></select>&nbsp
-											</td>
+											<label>Cantidades</label>&nbsp
+										</td>
+										<td>
+											<select required id="CantidadesAlmacen" name="cantidades-alma" ng-model="cantidadInventario" ng-change="establecerCantidad(cantidadInventario)"
+											 data-placeholder="Click para escoger">
+												<option value="0">Todos</option>
+												<option value="1">Con Saldo</option>
+												<option value="2">Sin Saldo</option>
+											</select>&nbsp
+										</td>
+										<td>
+											<div class="row">
+												<span>Grupos:</span>
+												<select class="form-control" ng-model="$parent.seleccionGrupo" ng-options="grupo as grupo.nombre for grupo in gruposProducto track by grupo.id" style="width:150px;" id="selectGruposProductos"
+												 name="selectGruposProductos"  
+												 data-placeholder="Click para escoger">
+													<option value="" >Todos</option>
+													</select>
+											</div>
+										</td>
+										
 									</tr>
 								</tbody>
 							</table>
 						</div>
-					
+
 						<div class="col-xs-2">
 							<div id="tabla-productos_filter" class="dataTables_filter">
 								<label>Búscar:
@@ -127,7 +142,7 @@
 							</div>
 						</div>
 						<div class="col-xs-1">
-							<button ng-disabled="formularioBusquedaInventario.$invalid" type="button" ng-click="buscarInventarios(almacenBusqueda.id,paginaActual,itemsPorPagina,textoBusqueda,columna,direccion,cantidadInventario)"
+							<button ng-disabled="formularioBusquedaInventario.$invalid" type="button" ng-click="buscarInventarios(almacenBusqueda.id,paginaActual,itemsPorPagina,textoBusqueda,columna,direccion,cantidadInventario, seleccionGrupo.id)"
 							 class="btn btn-primary">
 								<i class="ace-icon fa fa-search-plus align-top bigger-125"></i>
 							</button>

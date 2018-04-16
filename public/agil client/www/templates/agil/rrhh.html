@@ -8,6 +8,10 @@
                     <i class="ace-icon fa fa-plus align-top bigger-125"></i>
                     Nuevo
                 </a>
+              <!--   <a ng-click="imprimirFiniquito()" class="btn btn-primary">
+                        <i class="ace-icon fa fa-plus align-top bigger-125"></i>
+                        finiquito prueba impresion
+                    </a> -->
                 <!-- <div class="fileUpload btn btn-primary btn-success">
                     <span class="fileUpload-button ace-icon fa fa-cloud-upload align-top bigger-125">&nbsp;&nbsp;Importar</span>
                     <input class="upload" type="file" custom-on-file-change="subirExcelProductos">&nbsp;&nbsp;
@@ -8973,7 +8977,7 @@
                                             title="View">
                                             <i class="ace-icon fa fa-search-plus bigger-130"></i>
                                         </a>
-                                        <a ng-if="dotacion.id==listaDotaciones[listaDotaciones.length-1].id" class="green" href="javascript:void(0)" ng-click="abrirModalNuevaRopaTrabajo(empleado,true)">
+                                        <a ng-if="dotacion.id==listaDotaciones[listaDotaciones.length-1].id" class="green" href="javascript:void(0)" ng-click="abrirModalNuevaRopaTrabajo(empleado,true,undefined,$index)">
                                             <i class="ace-icon fa fa-pencil bigger-130"></i>
                                         </a>
 
@@ -9049,18 +9053,20 @@
 
                         <div class="form-group col-md-4">
                             <label for="cargo">Cargos</label>
-                            <div ng-if="!verinformacionDOtacion" class="input-group">
+                            <div ng-if="!verinformacionDOtacion" ng-hide="visible" class="input-group">
                                 <p ng-repeat="cargo in cargosEmpleado">{{cargo.cargo.nombre}}</p>
                             </div>
                             <div ng-if="verinformacionDOtacion" class="input-group">
                                 <p ng-repeat="cargo in listaDotaciones[indexInfo].cargos">{{cargo.nombre}}</p>
                             </div>
-
+                            <div ng-show="visible">
+                                    <p ng-repeat="cargo in listaDotaciones[indexInfo].cargos">{{cargo.nombre}}</p>     
+                            </div>
 
                         </div>
                         <div class="form-group col-md-4">
                             <label for="nombre">Items</label>
-                            <div ng-if="!verinformacionDOtacion" class="input-group">
+                            <div ng-if="!verinformacionDOtacion" ng-hide="visible" class="input-group">
                                 <!--  <input ng-update-hidden type="text" class "form-control" id="filtroNombre" ng-model="filtro.nombres" placeholder="" /> -->
                                 <p ng-repeat="items in dotacionItems">{{items.ropaTrabajo.nombre}}</p>
                                 <span class="input-group-addon glyphicon glyphicon-search point-edit green" ng-click="abrirModalItemsNuevaRopaTrabajo()"></span>
@@ -9070,6 +9076,11 @@
                                 <p ng-repeat="items in listaDotaciones[indexInfo].ropas">{{items.nombre}}</p>
                                 <span class="input-group-addon glyphicon glyphicon-search point-edit green" ng-click="abrirModalItemsNuevaRopaTrabajo()"></span>
                             </div>
+                            <div ng-show="visible" class="input-group">
+                                    <!--  <input ng-update-hidden type="text" class "form-control" id="filtroNombre" ng-model="filtro.nombres" placeholder="" /> -->
+                                    <p ng-repeat="items in listaDotaciones[indexInfo].ropas">{{items.nombre}}</p>
+                                    <span class="input-group-addon glyphicon glyphicon-search point-edit green" ng-click="abrirModalItemsNuevaRopaTrabajo()"></span>
+                                </div>
                         </div>
 
                     </div>

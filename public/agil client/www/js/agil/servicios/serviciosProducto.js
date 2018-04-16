@@ -52,6 +52,10 @@ var res = function(idProducto)
 		return $resource(restServer+"productos/empresa/:idEmpresa");
 })
 
+.factory('ProductosEmpresaUsuario', function($resource) {
+	return $resource(restServer+"productos/empresa/:idEmpresa/user/:id_usuario");
+})
+
 .factory('Productos', ['ProductosEmpresa','$q',function(ProveedoresEmpresa, $q) 
   {
 	var res = function(idEmpresa) 
@@ -67,14 +71,30 @@ var res = function(idProducto)
 		return delay.promise;
 	};
     return res;
+	}])
+	.factory('ProductosUsuario', ['ProductosEmpresaUsuario','$q',function(ProductosEmpresaUsuario, $q) 
+  {
+	var res = function(idEmpresa,id_usuario) 
+	{
+		var delay = $q.defer();
+		ProductosEmpresaUsuario.query({idEmpresa:idEmpresa, id_usuario: id_usuario},function(entidades) 
+		{        
+			delay.resolve(entidades);
+		}, function(error) 
+			{
+				delay.reject(error);
+			});
+		return delay.promise;
+	};
+    return res;
   }])
 .factory('ProductosEmpresaPaginador', function($resource) {
-		return $resource(restServer+"productos/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion/grupo/:id_grupo");
+		return $resource(restServer+"productos/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion/grupo/:id_grupo/user/:id_usuario");
 })
 
 .factory('ProductosPaginador', ['ProductosEmpresaPaginador','$q',function(ProductosEmpresaPaginador, $q) 
   {
-	var res = function(idEmpresa,paginator, grupo) 
+	var res = function(idEmpresa, paginator, id_usuario) 
 	{
 		var delay = $q.defer();
 		ProductosEmpresaPaginador.get({id_empresa:idEmpresa,
@@ -83,7 +103,8 @@ var res = function(idProducto)
 																	texto_busqueda:paginator.search,
 																	columna:paginator.column,
 																	direccion:paginator.direction,
-																	id_grupo: grupo.id
+																	id_grupo: paginator.filter.id,
+																	id_usuario: id_usuario
 																},function(entidades) 
 		{        
 			delay.resolve(entidades);
@@ -178,4 +199,29 @@ var res = function(idProducto)
 		return delay.promise;
 	};
     return res;
+	}])
+
+	.factory('CatalogoProductosEmpresa', function($resource) {
+		return $resource(restServer+"catalogo-productos/empresa/:id_empresa/grupo/:id_grupo/user/:id_usuario");
+})
+
+.factory('CatalogoProductos', ['CatalogoProductosEmpresa','$q',function(CatalogoProductosEmpresa, $q) 
+  {
+	var res = function(idEmpresa, grupo, id_usuario) 
+	{
+		var delay = $q.defer();
+		CatalogoProductosEmpresa.get({id_empresa:idEmpresa,
+																	id_grupo: grupo.id,
+																	id_usuario: id_usuario
+																},function(entidades) 
+		{        
+			delay.resolve(entidades);
+		}, function(error) 
+			{
+				delay.reject(error);
+			});
+		return delay.promise;
+	};
+    return res;
   }]);
+	
