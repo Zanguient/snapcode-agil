@@ -685,8 +685,8 @@ angular.module('agil.controladores')
 					columns.push(res.catalogo[i].precio_unitario);
 					columns.push(res.catalogo[i].descripcion);
 					columns.push(res.catalogo[i].inventario_minimo);
-					columns.push(res.catalogo[i].grupo.nombre);
-					columns.push(res.catalogo[i].subgrupo.nombre);
+					columns.push((res.catalogo[i].grupo !== null && res.catalogo[i].grupo !== undefined ? res.catalogo[i].grupo.nombre : "Sin grupo"));
+					columns.push((res.catalogo[i].subgrupo !== null && res.catalogo[i].subgrupo !== undefined ? res.catalogo[i].subgrupo.nombre : "Sin subgrupo"));
 					columns.push(res.catalogo[i].caracteristica_especial1);
 					columns.push(res.catalogo[i].caracteristica_especial2);
 					columns.push(res.catalogo[i].codigo_fabrica);

@@ -735,14 +735,32 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 			var condicionProducto = "empresa=" + req.params.id_empresa
 			if (req.params.id_grupo != 0) {
 				condicionProducto += ' and producto.grupo =' + req.params.id_grupo
-				sequelize.query("select * \
-					from agil_producto as producto\
-					WHERE "+ condicionProducto, { type: sequelize.QueryTypes.SELECT })
-					.then(function (productos) {
+				UsuarioGrupos.findAll({
+					where: { id_usuario: req.params.id_usuario }
+				}).then(function (grupos) {
+					// var grupoLiteral = '('
+					// var grupoArray = []
+					// grupos.forEach(function (grupo, i) {
+					// 	grupoArray.push(grupo.id_grupo)
+					// 	if (i == grupos.length - 1) {
+					// 		grupoLiteral += grupo.id_grupo + ')'
+					// 	} else {
+					// 		grupoLiteral += grupo.id_grupo + ','
+					// 	}
+					// })
+					// condicionProducto += ' and producto.grupo in ' + grupoLiteral
+					Producto.findAll({
+						where: { id_grupo: req.params.id_grupo },
+						include: [{ model: Clase, as: 'grupo' }, { model: Clase, as: 'subgrupo' }]
+					}).then(function (productos) {
 						res.json({ catalogo: productos });
 					}).catch(function (err) {
 						res.json({ catalogo: [], hasError: true, mensaje: err.stack });
 					});
+				}).catch(function (err) {
+					res.json({ catalogo: [], hasError: true, mensaje: err.stack });
+				});
+
 			} else {
 				UsuarioGrupos.findAll({
 					where: { id_usuario: req.params.id_usuario }
