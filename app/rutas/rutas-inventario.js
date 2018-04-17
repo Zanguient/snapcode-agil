@@ -132,33 +132,26 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 			if (req.params.usuario != 0) {
 				condicionUsuario.nombre_usuario = { $like: "%" + req.params.usuario + "%" };
 			}
-			UsuarioGrupos.findAll({
-				where:{ id_usuario: req.params.id_usuario}
-			}).then(function (grupos) {
-				var gruposUsuario = grupos.map(function (grupo) {
-					return grupo.id_grupo
-				})
-				Compra.findAll({
-					where: condicionCompra,
+			Compra.findAll({
+				where: condicionCompra,
+				include: [{
+					model: DetalleCompra, as: 'detallesCompra',
+					include: [{ model: Producto, as: 'producto' },
+					{ model: Clase, as: 'centroCosto'/*,where:{nombre_corto:'ALM'}*/ }]
+				},
+				{ model: Clase, as: 'tipoPago' },
+				{ model: Usuario, as: 'usuario', where: condicionUsuario },
+				{ model: Proveedor, as: 'proveedor', where: condicionProveedor },
+				{
+					model: Almacen, as: 'almacen',
 					include: [{
-						model: DetalleCompra, as: 'detallesCompra',
-						include: [{ required:false, model: Producto, as: 'producto', where :{ id_grupo: {$in: gruposUsuario}} },
-						{ model: Clase, as: 'centroCosto'/*,where:{nombre_corto:'ALM'}*/ }]
-					},
-					{ model: Clase, as: 'tipoPago' },
-					{ model: Usuario, as: 'usuario', where: condicionUsuario },
-					{ model: Proveedor, as: 'proveedor', where: condicionProveedor },
-					{
-						model: Almacen, as: 'almacen',
-						include: [{
-							model: Sucursal, as: 'sucursal',
-							where: condicionSucursal
-						}]
+						model: Sucursal, as: 'sucursal',
+						where: condicionSucursal
 					}]
-				}).then(function (entity) {
-					res.json(entity);
-				});
-			})
+				}]
+			}).then(function (entity) {
+				res.json(entity);
+			});
 		});
 
 	router.route('/compras/:id')
