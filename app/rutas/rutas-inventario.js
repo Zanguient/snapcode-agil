@@ -142,7 +142,7 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 					where: condicionCompra,
 					include: [{
 						model: DetalleCompra, as: 'detallesCompra',
-						include: [{ model: Producto, as: 'producto', where :{ id_grupo: {$in: gruposUsuario}} },
+						include: [{ required:false, model: Producto, as: 'producto', where :{ id_grupo: {$in: gruposUsuario}} },
 						{ model: Clase, as: 'centroCosto'/*,where:{nombre_corto:'ALM'}*/ }]
 					},
 					{ model: Clase, as: 'tipoPago' },
