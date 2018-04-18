@@ -8,10 +8,7 @@
                     <i class="ace-icon fa fa-plus align-top bigger-125"></i>
                     Nuevo
                 </a>
-              <!--   <a ng-click="imprimirFiniquito()" class="btn btn-primary">
-                        <i class="ace-icon fa fa-plus align-top bigger-125"></i>
-                        finiquito prueba impresion
-                    </a> -->
+
                 <!-- <div class="fileUpload btn btn-primary btn-success">
                     <span class="fileUpload-button ace-icon fa fa-cloud-upload align-top bigger-125">&nbsp;&nbsp;Importar</span>
                     <input class="upload" type="file" custom-on-file-change="subirExcelProductos">&nbsp;&nbsp;
@@ -225,7 +222,7 @@
                                 <li>
                                     <div class="clearfix">
                                         <span class="pull-left" style="color:rgb(85, 128, 163) !important">
-                                            fichas
+                                            Fichas
                                         </span>
                                         <a href="/recursos/EJEMPLO-DATOS-FICHAS-EMPLEADOS.xlsx" class="boton-importar pull-right">
                                             <i class="fa  fa-cloud-download green"></i>
@@ -236,6 +233,20 @@
                                         </div>
                                     </div>
                                 </li>
+                                <li>
+                                        <div class="clearfix">
+                                            <span class="pull-left" style="color:rgb(85, 128, 163) !important">
+                                                Familiares
+                                            </span>
+                                            <a href="/recursos/EJEMPLO-DATOS-FICHAS-EMPLEADOS-FAMILIARES.xlsx" class="boton-importar pull-right">
+                                                <i class="fa  fa-cloud-download green"></i>
+                                            </a>
+                                            <div class="fileUpload boton-importar pull-right">
+                                                <span class="fileUpload-button ace-icon fa fa-cloud-upload blue"></span>
+                                                <input class="upload" type="file" custom-on-file-change="subirExcelFichaEmpleadoFamiliares" />
+                                            </div>
+                                        </div>
+                                    </li>
                             </ul>
                         </li>
                         <li class="dropdown-footer"></li>
@@ -941,9 +952,9 @@
                                     <div class="col-sm-6 col-md-2">
                                         <label for="codigo-empleado">
                                             <h4>
-                                                <strong>Edad {{ficha.edad}} años</h4>
-                                            </strong>
-                                            </h3>
+                                                <strong>Edad {{ficha.edad}} años</strong></h4>
+                                            
+                                           
                                         </label>
                                     </div>
 
@@ -1294,9 +1305,9 @@
                                         <div class="col-sm-1 col-lg-1">
                                             <label for="">Cargos</label>
                                         </div>
-                                        <div class="col-sm-11 col-lg-4" >
-                                            <div id="cargos" isteven-multi-select required input-model="cargos" output-model="ficha.cargo" button-label="icon nombre" item-label="icon nombre maker"
-                                                tick-property="ticked" translation="localLang">
+                                        <div class="col-sm-11 col-lg-4">
+                                            <div id="cargos" isteven-multi-select required input-model="cargos" output-model="ficha.cargo" button-label="icon nombre"
+                                                item-label="icon nombre maker" tick-property="ticked" translation="localLang">
                                             </div>
                                         </div>
 
@@ -1636,7 +1647,7 @@
                                                         <span class="lbl check-espaniol"></span>
                                                     </label>
                                                 </td>
-                                                <td>{{familiar.otrosDatos}}</td>
+                                                <td>{{familiar.referencia}}</td>
                                                 <td>
                                                     <div class="hidden-sm hidden-xs action-buttons">
                                                         <a class="green" ng-click="editarFamiliar(familiar,$index)">
@@ -1661,7 +1672,7 @@
                         </div>
                     </div>
                     <div class="modal-footer wizard-actions">
-                        <button ng-show="ficha.id" type="submit" class="btn btn-primary btn-sm " ng-click="truevalue=true">
+                        <button  ng-show="ficha.id" type="submit" class="btn btn-primary btn-sm " ng-click="truevalue=true"  ng-disabled="nopuedoModificarFicha">
                             <i class="ace-icon fa fa-floppy-o bigger-110"></i>&nbsp; Guardar</button>
                         <button id="anterior-f" type="button" class="btn btn-sm btn-prev">
                             <i class="ace-icon fa fa-arrow-left"></i>
@@ -3961,7 +3972,7 @@
                 </div>
                 <div class="form-group col-sm-6">
                     <label for="otros-datos">Otros Datos</label>
-                    <input type="text" class="form-control" ng-model="familiar.otrosDatos" id="otros-datos" name="otros-datos" placeholder="">
+                    <input type="text" class="form-control" ng-model="familiar.referencia" id="otros-datos" name="otros-datos" placeholder="">
                 </div>
             </div>
             <div class="">
@@ -4231,7 +4242,17 @@
                                         </select>
                                     </div>
                                 </div>
-                                <div class="row" ng-if="beneficio.tipo_beneficio">
+                                <div align="center" class="pull-center col-md-12" ng-if="beneficio.tipo_beneficio">
+                                        <button type="button"  data-rel="tooltip" data-placement="left" uib-tooltip="Ocultar vacacion e aguinaldo" ng-hide="verVacacion"
+                                        class="button-circle button-style pos-rel" ng-click="verVacacion=(verVacacion)?false:true">
+                                        <i class="ace-icon fa fa-angle-double-up bigger-140"></i>
+                                    </button>
+                                    <button type="button" data-rel="tooltip" data-placement="left" uib-tooltip="Mostrar vacacion e aguinaldo" ng-hide="!verVacacion"
+                                        class="button-circle button-style pos-rel" ng-click="verVacacion=(verVacacion)?false:true">
+                                        <i class="ace-icon fa fa-angle-double-down bigger-140"></i>
+                                    </button>
+                                </div>
+                                <div class="row" ng-hide="verVacacion" ng-if="beneficio.tipo_beneficio">
                                     <div class="form-group col-sm-3">
                                         <label for="">Vacaciones</label>
                                         <button type="button" class="btn btn-primary btn-sm" ng-click="abrirDialogDetalleVacaciones()">Ver detalle</button>
@@ -4252,6 +4273,21 @@
                                         <label for="meses-vacaciones">Total</label>
                                         <input type="number" disabled min="0" ng-model="beneficio.totalV" class="form-control" id="dias-vacaciones" name="dias-vacaciones">
                                     </div>
+
+                                    <div class="form-group col-sm-3">
+                                        <label for="">Aguinaldo de navidad</label>
+
+                                    </div>
+                                    <div class="form-group col-sm-2">
+                                        <label for="agnos-vacaciones">meses</label>
+                                        <input type="number" disabled min="0" ng-model="beneficio.mesesAguinaldo" class="form-control" id="agnos-vacaciones" name="agnos-vacaciones">
+                                    </div>
+                                    <div class="form-group col-sm-2">
+                                        <label for="meses-vacaciones">dias</label>
+                                        <input type="number" disabled min="0" ng-model="beneficio.diasAguinaldo" class="form-control" id="meses-vacaciones" name="meses-vacaciones">
+                                    </div>
+                                   
+
                                 </div>
                             </div>
                             <div class="col-md-6" ng-if="beneficio.tipo_beneficio">
@@ -4279,16 +4315,25 @@
                                         <label for="1-mes">1er Mes</label>
                                         <input required type="number" min="0" ng-change="calcularPromedioFiniquito(beneficio)" ng-model="beneficio.primer_mes" class="form-control"
                                             id="1-mes" name="1-mes">
+                                        <select ng-change="seleccionarMesesFiniquito(beneficio)" ng-options="mes  as mes.nombre for mes in meses track by mes.id"
+                                            ng-model="beneficio.mes_uno" class="form-control" ng-change="buscarAnticiposExtraoridnario(filtroAnticipo)">
+                                        </select>
                                     </div>
                                     <div class="form-group col-sm-3">
                                         <label for="2-mes">2er Mes</label>
                                         <input required type="number" min="0" ng-change="calcularPromedioFiniquito(beneficio)" ng-model="beneficio.segundo_mes" class="form-control"
                                             id="2-mes" name="2-mes">
+                                        <select disabled ng-options="mes  as mes.nombre for mes in meses track by mes.id" ng-model="beneficio.mes_dos" class="form-control"
+                                            ng-change="buscarAnticiposExtraoridnario(filtroAnticipo)">
+                                        </select>
                                     </div>
                                     <div class="form-group col-sm-3">
                                         <label for="3-mes">3er Mes</label>
                                         <input required type="number" min="0" ng-change="calcularPromedioFiniquito(beneficio)" ng-model="beneficio.tercer_mes" class="form-control"
                                             id="3-mes" name="3-mes">
+                                        <select disabled ng-options="mes  as mes.nombre for mes in meses track by mes.id" ng-model="beneficio.mes_tres" class="form-control"
+                                            ng-change="buscarAnticiposExtraoridnario(filtroAnticipo)">
+                                        </select>
                                     </div>
                                     <div class="form-group col-sm-3">
                                         <label for="3-mes">Promedio</label>
@@ -4445,17 +4490,33 @@
                                         </table>
                                         <!-- </div> -->
                                     </div>
+
                                 </div>
+
                             </div>
 
 
                         </div>
-
+                        <div class="row">
+                            <div class="col-md-2">
+                                <label>
+                                    <input name="" ng-model="beneficio.tipo_pago" class="ace ace-switch ace-switch-5 big-switch" type="checkbox">
+                                    <span class="lbl" data-lbl="Cheque&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Efectivo"></span>
+                                </label>
+                            </div>
+                            <div class="col-md-4 pull-left">
+                                <select required ng-if="beneficio.tipo_pago" ng-model="beneficio.cuenta" class="form-control" id="motivo-retiro" name="motivo-retiro"
+                                    ng-options="cuenta as (cuenta.nombre+'- cuenta: '+cuenta.numero) for cuenta in cuentasBancos track by cuenta.id">
+                                    <option value="">Ninguno</option>
+                                </select>
+                            </div>
+                        </div>
                     </div>
                     <div class="modal-footer">
                         <a href="javascript:void(0)" type="button" ng-click="abrirModalBeneficioSicial()" class="margin-icons red pull-left">
                             <span class="fa fa-h-square bigger-250"></span>
                         </a>
+
                         <div ng-if="!beneficio.tipo_beneficio">
                             <button ng-disabled="quienquenioRestanteDisabled" type="submit" class="btn btn-primary">
                                 <span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span> Guardar</button>
@@ -5621,10 +5682,7 @@
                         <th>Fecha Elaboracion</th>
                         <th>Se presento el</th>
                         <th>fecha Ingreso</th>
-                        <th>fecha Retiro</th>
-                        <th>Motivo</th>
-                        <th>ingresos</th>
-                        <th>deducciones</th>
+                        <th>cantidad Quinquenios</th>
                         <th>Acciones</th>
                     </tr>
                 </thead>
@@ -5633,15 +5691,13 @@
                         <td>{{beneficio.fecha_elaboracion | date:'dd/MM/yyyy'}}</td>
                         <td>{{beneficio.fecha_asistensia| date:'dd/MM/yyyy'}}</td>
                         <td>{{beneficio.fecha_ingreso| date:'dd/MM/yyyy'}}</td>
-                        <td>{{beneficio.fecha_retiro| date:'dd/MM/yyyy'}}</td>
-                        <td>{{beneficio.motivo.nombre}}</td>
-                        <td>{{beneficio.id}}</td>
-                        <td>{{beneficio.id}}</td>
+                        <td>{{beneficio.numero_quinquenio}}</td>
+
                         <td>
-                            <a class="blue">
+                            <a href="javascript:void(0)" class="blue">
                                 <span class="fa fa-search-plus bigger-130" aria-hidden="true"></span>
                             </a>
-                            <a class="green">
+                            <a href="javascript:void(0)" class="green" ng-click="imprimirFiniquito(beneficio,true)">
                                 <i class="ace-icon fa fa-print bigger-130"></i>
                             </a>
                         </td>
@@ -8172,10 +8228,10 @@
                                                 <label for="cargo">Cargo</label>
                                             </div>
                                             <div class="col-lg-7">
-                                                <div required isteven-multi-select id="cargos" input-model="cargos" output-model="nuevoRH.cargos" button-label="icon nombre" item-label="icon nombre maker"
-                                                    tick-property="ticked" translation="localLang">
+                                                <div required isteven-multi-select id="cargos" input-model="cargos" output-model="nuevoRH.cargos" button-label="icon nombre"
+                                                    item-label="icon nombre maker" tick-property="ticked" translation="localLang">
                                                 </div>
-                                                <input  hidden required ng-model="nuevoRH.cargos">
+                                                <input hidden required ng-model="nuevoRH.cargos">
                                             </div>
                                         </div>
 
@@ -8823,13 +8879,13 @@
                         <div class="form-group col-md-3">
                             <label for="codigo">DESDE</label>
                             <input ng-update-hidden class="form-control date-picker ng-pristine ng-untouched ng-isolate-scope ng-empty ng-invalid ng-invalid-required"
-                            type="text" data-date-format="dd/mm/yyyy" ng-model="filtroReporte.inicio" placeholder="" />
+                                type="text" data-date-format="dd/mm/yyyy" ng-model="filtroReporte.inicio" placeholder="" />
                         </div>
 
                         <div class="form-group col-md-3">
                             <label for="nombre">HASTA</label>
                             <input ng-update-hidden class="form-control date-picker ng-pristine ng-untouched ng-isolate-scope ng-empty ng-invalid ng-invalid-required"
-                            type="text" data-date-format="dd/mm/yyyy" ng-model="filtroReporte.fin" placeholder="" />
+                                type="text" data-date-format="dd/mm/yyyy" ng-model="filtroReporte.fin" placeholder="" />
                         </div>
 
                         <div class="form-group col-md-3">
@@ -8895,12 +8951,12 @@
                             </div>
                             <div class="form-group col-md-3">
                                 <label for="codigo">DESDE</label>
-                                <input ng-update-hidden  ng-model="filtroropa.inicio" type="text" class= "date-picker form-control" placeholder="" />
+                                <input ng-update-hidden ng-model="filtroropa.inicio" type="text" class="date-picker form-control" placeholder="" />
                             </div>
 
                             <div class="form-group col-md-3">
                                 <label for="nombre">HASTA</label>
-                                <input ng-update-hidden ng-model="filtroropa.fin" type="text" class= "date-picker form-control" placeholder="" />
+                                <input ng-update-hidden ng-model="filtroropa.fin" type="text" class="date-picker form-control" placeholder="" />
                             </div>
                             <div class="form-group col-md-3">
                                 <button class="btn btn-app btn-primary btn-xs" ng-click="ObtenerDotacionesRopa(empleado,filtroropa)">
@@ -8911,7 +8967,7 @@
                                     <i class="ace-icon fa fa-print bigger-160"></i>
                                     PDF
                                 </button>
-                                <button class="btn btn-app btn-success btn-xs" >
+                                <button class="btn btn-app btn-success btn-xs">
                                     <i class="ace-icon fa fa-print bigger-160"></i>
                                     EXCEL
                                 </button>
@@ -8970,7 +9026,7 @@
                                 <td>
                                     <div class="action-buttons">
 
-                                        <a class="green"  href="javascript:void(0)" ng-click="imprimirRopaTrabajo(dotacion)">
+                                        <a class="green" href="javascript:void(0)" ng-click="imprimirRopaTrabajo(dotacion)">
                                             <i class="ace-icon fa fa-print bigger-130"></i>
                                         </a>
                                         <a class="blue" href="javascript:void(0)" class="tooltip-info" data-rel="tooltip" ng-click="abrirModalNuevaRopaTrabajo(empleado,true,$index)"
@@ -9060,7 +9116,7 @@
                                 <p ng-repeat="cargo in listaDotaciones[indexInfo].cargos">{{cargo.nombre}}</p>
                             </div>
                             <div ng-show="visible">
-                                    <p ng-repeat="cargo in listaDotaciones[indexInfo].cargos">{{cargo.nombre}}</p>     
+                                <p ng-repeat="cargo in listaDotaciones[indexInfo].cargos">{{cargo.nombre}}</p>
                             </div>
 
                         </div>
@@ -9077,10 +9133,10 @@
                                 <span class="input-group-addon glyphicon glyphicon-search point-edit green" ng-click="abrirModalItemsNuevaRopaTrabajo()"></span>
                             </div>
                             <div ng-show="visible" class="input-group">
-                                    <!--  <input ng-update-hidden type="text" class "form-control" id="filtroNombre" ng-model="filtro.nombres" placeholder="" /> -->
-                                    <p ng-repeat="items in listaDotaciones[indexInfo].ropas">{{items.nombre}}</p>
-                                    <span class="input-group-addon glyphicon glyphicon-search point-edit green" ng-click="abrirModalItemsNuevaRopaTrabajo()"></span>
-                                </div>
+                                <!--  <input ng-update-hidden type="text" class "form-control" id="filtroNombre" ng-model="filtro.nombres" placeholder="" /> -->
+                                <p ng-repeat="items in listaDotaciones[indexInfo].ropas">{{items.nombre}}</p>
+                                <span class="input-group-addon glyphicon glyphicon-search point-edit green" ng-click="abrirModalItemsNuevaRopaTrabajo()"></span>
+                            </div>
                         </div>
 
                     </div>

@@ -358,7 +358,9 @@ angular.module('agil.servicios')
 .factory('FichasEmpleadoEmpresa', function ($resource) {
     return $resource(restServer + "fichas/empleados/empresa/excel/upload")
 })
-
+.factory('FamiliaresEmpleadoEmpresa', function ($resource) {
+    return $resource(restServer + "familiares/empleados/empresa/excel/upload")
+})
 .factory('HorasExtra', function ($resource) {
     return $resource(restServer + "recursos-humanos/horas-extra/empleado/:id_empleado",{ id_empleado: '@id_empleado' },
         {

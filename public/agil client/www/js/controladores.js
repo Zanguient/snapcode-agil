@@ -23,7 +23,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 		$scope.idmodalActualizarCreditoDeuda = "dialog-actualizar-deudas";
 		$scope.idModalDescuento = "dialog-edicion-descuento";
 		$scope.idModalInicioSesion = "popup-inicio-sesion";
-		$scope.idModalConceptoEdicion = 'dialog-conceptos';
+		
 		//nuevo comprobante
 		$scope.idModalWizardComprobanteEdicion = 'modal-wizard-comprobante-edicion';
 		$scope.idPopupQr = 'modal-wizard-comprobante-edicions';
@@ -44,7 +44,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 				$scope.idmodalActualizarCreditoCliente, $scope.idmodalActualizarCreditoDeuda, $scope.idModalPagoDeuda, $scope.idModalDescuento, $scope.idModalTablaVentasPendientes,
 				$scope.idModalTablaComprasPendientes, $scope.idModalTablaBancosPendientes, $scope.idModalTablaOtrosPendientes, $scope.idModalInicioSesion,
 				$scope.idModalWizardComprobanteEdicion, $scope.IdModalOpcionesQr, $scope.IdModalRegistrarComprobante, $scope.IdModalRevisarComprobante, $scope.IdModalLibroMayor, $scope.IdModalAsignarCuenta,
-				$scope.idModalTablaDespachos, $scope.idModalTablaAsignacionDespacho, $scope.IdModalEliminarProductoVencido, $scope.dialogAlertasProformas, $scope.facturarProformas, $scope.mensajeConfirmacionComprobante,$scope.idModalConceptoEdicion);
+				$scope.idModalTablaDespachos, $scope.idModalTablaAsignacionDespacho, $scope.IdModalEliminarProductoVencido, $scope.dialogAlertasProformas, $scope.facturarProformas, $scope.mensajeConfirmacionComprobante);
 
 			$scope.inicio();
 			blockUI.stop();
@@ -2821,15 +2821,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 			blockUI.stop();
 		}
 
-		$scope.abrirDialogConceptoEdicion = function (tipo) {
-			$scope.tipo_edicion = tipo;
-			$scope.clase = {};
-			$scope.abrirPopup($scope.idModalConceptoEdicion);
-		}
-		$scope.cerrarDialogConceptoEdicion = function () {
-			$scope.cerrarPopup($scope.idModalConceptoEdicion);
-		}
-
+		
 		$scope.agregarConceptoEdicion = function (clase) {
 			if (clase.nombre && clase.nombre_corto) {
 				if ($scope.tipo_edicion.clases.indexOf(clase) == -1) {

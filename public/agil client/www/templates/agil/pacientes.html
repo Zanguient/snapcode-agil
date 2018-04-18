@@ -259,6 +259,7 @@
 
             </div>
             <!-- div.table-responsive -->
+            <div id="dialog-conceptos" class="modal" ng-include src="'/templates/gral/concepto-edicion.html'"></div>
             <!-- div.dataTables_borderWrap -->
             <div>
 
@@ -2606,8 +2607,8 @@
                                                     <label for="extension">Extensión</label>
                                                 </div>
                                                 <div class="input-group col-lg-7">
-                                                    <span class="input-group-addon glyphicon glyphicon-pencil point-edit green" aria-hidden="true" ng-click="abrirDialogExpedidoEn()"></span>
-                                                    <select class="form-control" required ng-options="expedido as expedido.nombre_corto for expedido in expeditos track by expedido.id"
+                                                    <span class="input-group-addon glyphicon glyphicon-pencil point-edit green" aria-hidden="true" ng-click="abrirDialogConceptoEdicion(expeditos)"></span>
+                                                    <select class="form-control" required ng-options="expedido as expedido.nombre_corto for expedido in expeditos.clases track by expedido.id"
                                                         ng-model="paciente.extension"></select>
                                                 </div>
                                             </div>
@@ -2851,8 +2852,8 @@
                                                     <label for="extension">Extensión</label>
                                                 </div>
                                                 <div class="input-group- col-lg-7">
-                                                    <span class="input-group-addon glyphicon glyphicon-pencil point-edit green" aria-hidden="true" ng-click="abrirDialogExpedidoEn()"></span>
-                                                    <select class="form-control" required ng-options="expedido as expedido.nombre_corto for expedido in expeditos track by expedido.id"
+                                                    <span class="input-group-addon glyphicon glyphicon-pencil point-edit green" aria-hidden="true" ng-click="abrirDialogConceptoEdicion(expeditos)"></span>
+                                                    <select class="form-control" required ng-options="expedido as expedido.nombre_corto for expedido in expeditos.clases track by expedido.id"
                                                         ng-model="paciente.extension"></select>
                                                 </div>
                                             </div>

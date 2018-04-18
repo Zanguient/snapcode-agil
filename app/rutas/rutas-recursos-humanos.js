@@ -86,10 +86,10 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                 agil_medico_paciente.empresa as 'id_empresa', gl_clase.nombre as 'extension', agil_medico_paciente.grupo_sanguineo as 'grupo_sanguineo',\
                 agil_medico_paciente.campo as 'campo', agil_medico_paciente.designacion_empresa as 'designacion_empresa', agil_medico_paciente.comentario as 'comentario', \
                 gl_persona.nombre_completo as 'nombre_completo', gl_persona.apellido_paterno as 'apellido_paterno', gl_persona.apellido_materno as 'apellido_materno',\
-                gl_persona.nombres as 'nombres',gl_persona.imagen as 'imagen', agil_medico_paciente.eliminado as 'activo', gl_persona.ci as 'ci', gl_persona.genero as 'id_genero', \
+                estado.nombre as 'estado', gl_persona.nombres as 'nombres',gl_persona.direccion_zona as 'direccion',gl_persona.imagen as 'imagen', agil_medico_paciente.eliminado as 'activo', gl_persona.ci as 'ci', gl_persona.genero as 'id_genero', \
                 gl_persona.telefono as 'telefono', gl_persona.telefono_movil as 'telefono_movil', gl_persona.fecha_nacimiento as 'fecha_nacimiento'\
                 ,campamento.nombre as 'campamento',fichas.fecha_inicio as 'fecha_inicio',fichas.fecha_expiracion as 'fecha_expiracion',fichas.haber_basico as 'haber_basico',fichas.id as 'id_ficha',contrato.nombre as 'tipoContrato', GROUP_CONCAT(`cargos.cargo`.nombre order by `cargos.cargo`.id) cargos from agil_medico_paciente "+ condicionContrato + " JOIN agil_rrhh_empleado_ficha AS fichas ON fichas.id=( select agil_rrhh_empleado_ficha.id from agil_rrhh_empleado_ficha where  agil_rrhh_empleado_ficha.id_empleado =  agil_medico_paciente.id order by id desc limit 1) INNER JOIN gl_clase AS contrato ON fichas.tipo_contrato = contrato.id INNER JOIN agil_rrhh_empleado_cargo AS cargos ON fichas.id = cargos.ficha  " + condicionCargo + " \
-                    LEFT OUTER JOIN gl_clase AS `cargos.cargo` ON cargos.cargo = `cargos.cargo`.id left JOIN gl_persona ON (agil_medico_paciente.persona = gl_persona.id) left JOIN gl_clase ON agil_medico_paciente.extension = gl_clase.id\
+                    LEFT OUTER JOIN gl_clase AS `cargos.cargo` ON cargos.cargo = `cargos.cargo`.id left JOIN gl_persona ON (agil_medico_paciente.persona = gl_persona.id) left JOIN gl_clase ON agil_medico_paciente.extension = gl_clase.id left JOIN gl_clase as estado ON gl_persona.genero = estado.id\
                     left JOIN gl_clase as campamento ON agil_medico_paciente.campo = campamento.id where agil_medico_paciente.empresa = "+ req.params.id_empresa + activo + " AND (" + condicion + ") \
                 AND agil_medico_paciente.es_empleado = true GROUP BY agil_medico_paciente.id order by "+ req.params.columna + " " + req.params.direccion, { type: sequelize.QueryTypes.SELECT })
                     .then(function (data) {
@@ -103,10 +103,10 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                     agil_medico_paciente.empresa as 'id_empresa', gl_clase.nombre as 'extension', agil_medico_paciente.grupo_sanguineo as 'grupo_sanguineo',\
                     agil_medico_paciente.campo as 'campo', agil_medico_paciente.designacion_empresa as 'designacion_empresa', agil_medico_paciente.comentario as 'comentario', \
                     gl_persona.nombre_completo as 'nombre_completo', gl_persona.apellido_paterno as 'apellido_paterno', gl_persona.apellido_materno as 'apellido_materno',\
-                    gl_persona.nombres as 'nombres',gl_persona.imagen as 'imagen', agil_medico_paciente.eliminado as 'activo', gl_persona.ci as 'ci', gl_persona.genero as 'id_genero', \
+                    estado.nombre as 'estado', gl_persona.nombres as 'nombres',gl_persona.direccion_zona as 'direccion',gl_persona.imagen as 'imagen', agil_medico_paciente.eliminado as 'activo', gl_persona.ci as 'ci', gl_persona.genero as 'id_genero', \
                     gl_persona.telefono as 'telefono', gl_persona.telefono_movil as 'telefono_movil', gl_persona.fecha_nacimiento as 'fecha_nacimiento'\
                     ,campamento.nombre as 'campamento',fichas.fecha_inicio as 'fecha_inicio',fichas.fecha_expiracion as 'fecha_expiracion',fichas.haber_basico as 'haber_basico',fichas.id as 'id_ficha',contrato.nombre as 'tipoContrato', GROUP_CONCAT(`cargos.cargo`.nombre order by `cargos.cargo`.id) cargos from agil_medico_paciente "+ condicionContrato + " JOIN agil_rrhh_empleado_ficha AS fichas ON fichas.id=( select agil_rrhh_empleado_ficha.id from agil_rrhh_empleado_ficha where  agil_rrhh_empleado_ficha.id_empleado =  agil_medico_paciente.id order by id desc limit 1) left JOIN gl_clase AS contrato ON fichas.tipo_contrato = contrato.id left JOIN agil_rrhh_empleado_cargo AS cargos ON fichas.id = cargos.ficha  " + condicionCargo + " \
-                    LEFT OUTER JOIN gl_clase AS `cargos.cargo` ON cargos.cargo = `cargos.cargo`.id left JOIN gl_persona ON (agil_medico_paciente.persona = gl_persona.id) left JOIN gl_clase ON agil_medico_paciente.extension = gl_clase.id\
+                    LEFT OUTER JOIN gl_clase AS `cargos.cargo` ON cargos.cargo = `cargos.cargo`.id left JOIN gl_persona ON (agil_medico_paciente.persona = gl_persona.id) left JOIN gl_clase ON agil_medico_paciente.extension = gl_clase.id left JOIN gl_clase as estado ON gl_persona.genero = estado.id\
                     left JOIN gl_clase as campamento ON agil_medico_paciente.campo = campamento.id where agil_medico_paciente.empresa = "+ req.params.id_empresa + activo + " AND (" + condicion + ") \
                     AND agil_medico_paciente.es_empleado = true GROUP BY agil_medico_paciente.id order by "+ req.params.columna + " " + req.params.direccion + limite, { type: sequelize.QueryTypes.SELECT })
                             .then(function (pacientes) {
@@ -120,10 +120,10 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                 agil_medico_paciente.empresa as 'id_empresa', gl_clase.nombre as 'extension', agil_medico_paciente.grupo_sanguineo as 'grupo_sanguineo',\
                 agil_medico_paciente.campo as 'campo', agil_medico_paciente.designacion_empresa as 'designacion_empresa',agil_medico_paciente.comentario as 'comentario',\
                 gl_persona.nombre_completo as 'nombre_completo', gl_persona.apellido_paterno as 'apellido_paterno', gl_persona.apellido_materno as 'apellido_materno',\
-                gl_persona.nombres as 'nombres',gl_persona.imagen as 'imagen', agil_medico_paciente.eliminado as 'activo', gl_persona.ci as 'ci', gl_persona.genero as 'id_genero', \
+                estado.nombre as 'estado', gl_persona.nombres as 'nombres',gl_persona.direccion_zona as 'direccion',gl_persona.imagen as 'imagen', agil_medico_paciente.eliminado as 'activo', gl_persona.ci as 'ci', gl_persona.genero as 'id_genero', \
                 gl_persona.telefono as 'telefono', gl_persona.telefono_movil as 'telefono_movil', gl_persona.fecha_nacimiento as 'fecha_nacimiento'\
                 ,campamento.nombre as 'campamento',fichas.fecha_inicio as 'fecha_inicio',fichas.fecha_expiracion as 'fecha_expiracion',fichas.haber_basico as 'haber_basico',fichas.id as 'id_ficha',contrato.nombre as 'tipoContrato', GROUP_CONCAT(`cargos.cargo`.nombre order by `cargos.cargo`.id) cargos from agil_medico_paciente "+ condicionContrato + " JOIN agil_rrhh_empleado_ficha AS fichas ON fichas.id=( select agil_rrhh_empleado_ficha.id from agil_rrhh_empleado_ficha where  agil_rrhh_empleado_ficha.id_empleado =  agil_medico_paciente.id order by id desc limit 1) left JOIN gl_clase AS contrato ON fichas.tipo_contrato = contrato.id left JOIN agil_rrhh_empleado_cargo AS cargos ON fichas.id = cargos.ficha  " + condicionCargo + " \
-                    LEFT OUTER JOIN gl_clase AS `cargos.cargo` ON cargos.cargo = `cargos.cargo`.id left JOIN gl_persona ON (agil_medico_paciente.persona = gl_persona.id) left JOIN gl_clase ON agil_medico_paciente.extension = gl_clase.id\
+                    LEFT OUTER JOIN gl_clase AS `cargos.cargo` ON cargos.cargo = `cargos.cargo`.id left JOIN gl_persona ON (agil_medico_paciente.persona = gl_persona.id) left JOIN gl_clase ON agil_medico_paciente.extension = gl_clase.id left JOIN gl_clase as estado ON gl_persona.genero = estado.id\
                     left JOIN gl_clase as campamento ON agil_medico_paciente.campo = campamento.id where agil_medico_paciente.empresa = "+ req.params.id_empresa + activo + " AND agil_medico_paciente.es_empleado = true GROUP BY agil_medico_paciente.id order by " + req.params.columna + " " + req.params.direccion, { type: sequelize.QueryTypes.SELECT })
                     .then(function (data) {
                         var options = {
@@ -136,10 +136,10 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                     agil_medico_paciente.empresa as 'id_empresa', extencion.nombre as 'extension', agil_medico_paciente.grupo_sanguineo as 'grupo_sanguineo',\
                     agil_medico_paciente.campo as 'campo', agil_medico_paciente.designacion_empresa as 'designacion_empresa',agil_medico_paciente.comentario as 'comentario',\
                     gl_persona.nombre_completo as 'nombre_completo', gl_persona.apellido_paterno as 'apellido_paterno', gl_persona.apellido_materno as 'apellido_materno',\
-                    gl_persona.nombres as 'nombres',gl_persona.imagen as 'imagen', agil_medico_paciente.eliminado as 'activo', gl_persona.ci as 'ci', gl_persona.genero as 'id_genero', \
+                    estado.nombre as 'estado', gl_persona.nombres as 'nombres',gl_persona.direccion_zona as 'direccion',gl_persona.imagen as 'imagen', agil_medico_paciente.eliminado as 'activo', gl_persona.ci as 'ci', gl_persona.genero as 'id_genero', \
                     gl_persona.telefono as 'telefono', gl_persona.telefono_movil as 'telefono_movil', gl_persona.fecha_nacimiento as 'fecha_nacimiento'\
                     ,campamento.nombre as 'campamento',fichas.fecha_inicio as 'fecha_inicio',fichas.fecha_expiracion as 'fecha_expiracion',fichas.haber_basico as 'haber_basico',fichas.id as 'id_ficha',contrato.nombre as 'tipoContrato', GROUP_CONCAT(`cargos.cargo`.nombre order by `cargos.cargo`.id) cargos from agil_medico_paciente "+ condicionContrato + " JOIN agil_rrhh_empleado_ficha AS fichas ON fichas.id=( select agil_rrhh_empleado_ficha.id from agil_rrhh_empleado_ficha where  agil_rrhh_empleado_ficha.id_empleado =  agil_medico_paciente.id order by id desc limit 1) left JOIN gl_clase AS contrato ON fichas.tipo_contrato = contrato.id left JOIN agil_rrhh_empleado_cargo AS cargos ON fichas.id = cargos.ficha  " + condicionCargo + " \
-                    LEFT OUTER JOIN gl_clase AS `cargos.cargo` ON cargos.cargo = `cargos.cargo`.id  left JOIN gl_persona ON (agil_medico_paciente.persona = gl_persona.id) left JOIN gl_clase as extencion ON agil_medico_paciente.extension = extencion.id \
+                    LEFT OUTER JOIN gl_clase AS `cargos.cargo` ON cargos.cargo = `cargos.cargo`.id  left JOIN gl_persona ON (agil_medico_paciente.persona = gl_persona.id) left JOIN gl_clase as extencion ON agil_medico_paciente.extension = extencion.id left JOIN gl_clase as estado ON gl_persona.estado_civil = estado.id\
                     left JOIN gl_clase as campamento ON agil_medico_paciente.campo = campamento.id where agil_medico_paciente.empresa = "+ req.params.id_empresa + activo + " AND agil_medico_paciente.es_empleado = true GROUP BY agil_medico_paciente.id order by " + req.params.columna + " " + req.params.direccion + limite, { type: sequelize.QueryTypes.SELECT }/* , options */)
                             .then(function (pacientes) {
                                 res.json({ pacientes: pacientes, paginas: Math.ceil(data.length / req.params.items_pagina) });
@@ -899,6 +899,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                             id_persona_familiar: personaCreada.id,
                             id_relacion: familiar.relacion.id,
                             afiliado: familiar.persona.afiliado,
+                            referencia:familiar.referencia
                         }).then(function (RrhhEmpleadoFichaFamiliarCreado) {
                             if (index === (array.length - 1)) {
                                 guardarCargo(req, res, RrhhEmpleadoDiscapacidad, RrhhEmpleadoCargo, ficha, fichaAnterior)
@@ -1636,7 +1637,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                     }).then(function (tipo) {
                         return Clase.findOrCreate({
                             where: {
-                                nombre: banco,                                
+                                nombre: banco,
                                 id_tipo: tipo.dataValues.id
                             },
                             transaction: t,
@@ -1699,6 +1700,106 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                 return Promise.all(promises);
             }).then(function (result) {
                 res.json({ mensaje: "¡Datos de ficha empleados actualizados satisfactoriamente!" });
+            }).catch(function (err) {
+                res.json({ hasError: true, message: err.stack });
+            });
+        })
+
+    router.route('/familiares/empleados/empresa/excel/upload')
+        .post(function (req, res) {
+            var promises = [];
+            sequelize.transaction(function (t) {
+                req.body.relaciones.forEach(function (relacion, index, array) {
+                    promises.push(Tipo.find({
+                        where: {
+                            nombre_corto: 'RRHH_REL',
+                            id_empresa: req.body.id_empresa
+                        }
+                    }).then(function (tipo) {
+                        return Clase.findOrCreate({
+                            where: {
+                                nombre: relacion,
+                                id_tipo: tipo.dataValues.id
+                            },
+                            transaction: t,
+                            defaults: {
+                                nombre: relacion,
+                                id_tipo: tipo.dataValues.id,
+                                habilitado: true
+                            }
+                        })
+                    }))
+                    if (index === (array.length - 1)) {
+                        req.body.familiares.forEach(function (familiar, index3, array3) {
+                            promises.push(MedicoPaciente.find({
+                                where: { codigo: familiar.codigoEmpleado, id_empresa: req.body.id_empresa },
+                                transaction: t
+                            }).then(function (pacienteFound) {
+                                // console.log(pacienteFound)
+                                if (pacienteFound != null) {
+                                    return Tipo.find({
+                                        where: {
+                                            nombre_corto: 'RRHH_REL',
+                                            id_empresa: req.body.id_empresa
+                                        }, transaction: t
+                                    }).then(function (tipo) {
+                                        return Clase.find({
+                                            where: {
+                                                nombre: familiar.relacion,
+                                                id_tipo: tipo.dataValues.id
+                                            },
+                                            transaction: t,
+                                        }).then(function (relacionEncontrado) {
+                                            var nombre_corto = familiar.genero.charAt(0)
+                                            return Clase.find({
+                                                where: { nombre_corto: nombre_corto },
+                                                transaction: t
+                                            }).then(function (generoEncontrado) {
+                                                var nombre = ""
+                                                if (familiar.nombres) {
+                                                    nombre += familiar.nombres
+                                                }
+                                                if (familiar.apellido_paterno) {
+                                                    nombre += ' ' + familiar.apellido_paterno
+                                                }
+                                                if (familiar.apellido_materno) {
+                                                    nombre += ' ' + familiar.apellido_materno
+                                                }
+                                                return Persona.create({
+                                                    nombres: familiar.nombres,
+                                                    apellido_paterno: familiar.apellido_paterno,
+                                                    apellido_materno: familiar.apellido_materno,
+                                                    fecha_nacimiento: familiar.fecha_nacimiento,
+                                                    nombre_completo: nombre,
+                                                    id_genero: generoEncontrado.dataValues.id
+                                                }, {
+                                                        transaction: t
+                                                    }).then(function (personaCreada) {
+                                                        return RrhhEmpleadoFichaFamiliar.create({
+                                                            id_empleado: pacienteFound.dataValues.id,
+                                                            id_persona_familiar: personaCreada.dataValues.id,
+                                                            id_relacion: relacionEncontrado.dataValues.id,
+                                                            //afiliado: familiar.afiliado
+                                                            referencia:familiar.referencia
+                                                        }, {
+                                                                transaction: t
+                                                            }).then(function (RrhhEmpleadoFichaFamiliarCreado) {
+                                                            })
+                                                    })
+                                            })
+                                        })
+                                    })
+
+
+                                }
+
+                            }))
+                        })
+                    }
+                })
+                return Promise.all(promises);
+            }).then(function (result) {
+                res.json({ mensaje: "¡Datos de familiares empleados actualizados satisfactoriamente!" });
             }).catch(function (err) {
                 res.json({ hasError: true, message: err.stack });
             });
@@ -1883,7 +1984,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                             id_tipo: tipoCargo.dataValues.id,
                             nombre: cargo,
                             nombre_corto: nombre_corto,
-                            habilitado:true
+                            habilitado: true
                         }
                     })
                 }))
@@ -1918,8 +2019,8 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                             id_tipo: tipoContrato.dataValues.id,
                             nombre: contrato,
                             nombre_corto: nombre_corto3,
-                            habilitado:true
-                            
+                            habilitado: true
+
                         }
                     })
                 }))
@@ -1952,7 +2053,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                             id_tipo: tipoExp.dataValues.id,
                             nombre: expedido,
                             nombre_corto: nombre_corto3,
-                            habilitado:true
+                            habilitado: true
                         }
                     })
                 }))
@@ -1987,7 +2088,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                             id_tipo: tipoSeguroSalud.dataValues.id,
                             nombre: seguroSalud,
                             nombre_corto: nombre_corto3,
-                            habilitado:true
+                            habilitado: true
                         }
                     })
                 }))
@@ -2260,7 +2361,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
 
                                                                                                                                             if (index === (array.length - 1)) {
 
-                                                                                                                                                res.json({ mensaje: "¡Datos de pacientes actualizados satisfactoriamente!" });
+                                                                                                                                                res.json({ mensaje: "¡Datos de empleado actualizados satisfactoriamente!" });
                                                                                                                                             }
 
                                                                                                                                         }
@@ -2272,7 +2373,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                                                                                                                         } else {
                                                                                                                             if (index === (array.length - 1)) {
 
-                                                                                                                                res.json({ mensaje: "¡Datos de pacientes actualizados satisfactoriamente!" });
+                                                                                                                                res.json({ mensaje: "¡Datos de empleado actualizados satisfactoriamente!" });
                                                                                                                             }
 
                                                                                                                         }
@@ -2348,7 +2449,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
         
                                                                                                                                           if (index === (array.length - 1)) {
         
-                                                                                                                                              res.json({ mensaje: "¡Datos de pacientes actualizados satisfactoriamente!" });
+                                                                                                                                              res.json({ mensaje: "¡Datos de empleado actualizados satisfactoriamente!" });
                                                                                                                                           }
         
                                                                                                                                       }
@@ -2360,7 +2461,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                                                                                                                       } else {
                                                                                                                           if (index === (array.length - 1)) {
         
-                                                                                                                              res.json({ mensaje: "¡Datos de pacientes actualizados satisfactoriamente!" });
+                                                                                                                              res.json({ mensaje: "¡Datos de empleado actualizados satisfactoriamente!" });
                                                                                                                           }
         
                                                                                                                       }
@@ -2660,7 +2761,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
 
                                                                                                                                         if (index === (array.length - 1)) {
 
-                                                                                                                                            res.json({ mensaje: "¡Datos de pacientes actualizados satisfactoriamente!" });
+                                                                                                                                            res.json({ mensaje: "¡Datos de empleado actualizados satisfactoriamente!" });
                                                                                                                                         }
 
                                                                                                                                     }
@@ -2673,7 +2774,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                                                                                                                     } else {
                                                                                                                         if (index === (array.length - 1)) {
 
-                                                                                                                            res.json({ mensaje: "¡Datos de pacientes actualizados satisfactoriamente!" });
+                                                                                                                            res.json({ mensaje: "¡Datos de empleado actualizados satisfactoriamente!" });
                                                                                                                         }
 
                                                                                                                     }
@@ -3328,7 +3429,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
         .get(function (req, res) {
             RrhhEmpleadoBeneficioSocial.find({
                 where: { id_ficha: req.params.id, fecha_retiro: { $ne: null } },
-                include: [{ model: Clase, as: 'motivo' }, { model: RrhhEmpleadoDeduccionIngreso, as: 'deduccionEingresos', include: [{ model: Clase, as: "tipo" }] }]
+                include: [{ model: Clase, as: 'motivo' }, { model: Banco, as: 'cuenta' }, { model: RrhhEmpleadoDeduccionIngreso, as: 'deduccionEingresos', include: [{ model: Clase, as: "tipo" }] }]
             }).then(function (beneficio) {
                 res.json({ beneficio: beneficio })
             })
@@ -3343,11 +3444,14 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
         })
         .post(function (req, res) {
             if (req.body.id) {
-                var id = null
+                var id = null, idcuenta = null;
                 if (req.body.motivo) {
                     id = req.body.motivo.id
                 }
 
+                if (req.body.cuenta) {
+                    idcuenta = req.body.cuenta.id
+                }
                 RrhhEmpleadoBeneficioSocial.update({
                     id_ficha: req.params.id,
                     id_motivo: id,
@@ -3364,7 +3468,12 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                     desahucio: req.body.desahucio,
                     total_deducciones: req.body.total_deducciones,
                     total_ingresos: req.body.total_ingresos,
-                    eliminado: false
+                    eliminado: false,
+                    id_cuenta_banco: idcuenta,
+                    promedio: req.body.promedio,
+                    mes_uno: req.body.mes_uno.id,
+                    mes_dos: req.body.mes_dos.id,
+                    mes_tres: req.body.mes_tres.id,
                 }, {
                         where: { id: req.body.id }
                     }).then(function (beneficioActualizado) {
@@ -3415,31 +3524,35 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                     })
 
             } else {
-                var id = null
+                var id = null, idcuenta = null;
                 if (req.body.motivo) {
                     id = req.body.motivo.id
                 }
+                if (req.body.cuenta) {
+                    idcuenta = req.body.cuenta.id
+                }
                 if (!req.body.tipo_beneficio) {
-                    for (let i = 1; i <= req.body.numero_quinquenio; i++) {
-                        var total = req.body.total_quinquenio / req.body.numero_quinquenio
-                        RrhhEmpleadoBeneficioSocial.create({
-                            id_ficha: req.params.id,
-                            fecha_elaboracion: req.body.fecha_elaboracion,
-                            fecha_asistensia: req.body.fecha_asistensia,
-                            fecha_ingreso: req.body.fecha_ingreso,
-                            primer_mes: req.body.primer_mes2,
-                            segundo_mes: req.body.segundo_mes2,
-                            tercer_mes: req.body.tercer_mes2,
-                            total_quinquenio: total,
-                            tipo_beneficio: req.body.tipo_beneficio,
-                            eliminado: false
-                        }).then(function (beneficioCreado) {
-                            if (i == req.body.numero_quinquenio) {
-                                res.json({ mensaje: 'Beneficio social creado sadisfactoriamente!' })
-                            }
-                        })
-                    }
+                    RrhhEmpleadoBeneficioSocial.create({
+                        id_ficha: req.params.id,
+                        fecha_elaboracion: req.body.fecha_elaboracion,
+                        fecha_asistensia: req.body.fecha_asistensia,
+                        fecha_ingreso: req.body.fecha_ingreso,
+                        primer_mes: req.body.primer_mes,
+                        segundo_mes: req.body.segundo_mes,
+                        tercer_mes: req.body.tercer_mes,
+                        total_quinquenio: req.body.total_quinquenio,
+                        tipo_beneficio: req.body.tipo_beneficio,
+                        eliminado: false,
+                        numero_quinquenio: req.body.numero_quinquenio,
+                        id_cuenta_banco: idcuenta,
+                        promedio: req.body.promedio,
+                        mes_uno: req.body.mes_uno.id,
+                        mes_dos: req.body.mes_dos.id,
+                        mes_tres: req.body.mes_tres.id,
+                    }).then(function (beneficioCreado) {
+                        res.json({ mensaje: 'Beneficio social creado sadisfactoriamente!' })
 
+                    })
                 } else {
 
                     RrhhEmpleadoBeneficioSocial.create({
@@ -3458,7 +3571,12 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                         desahucio: req.body.desahucio,
                         total_deducciones: req.body.total_deducciones,
                         total_ingresos: req.body.total_ingresos,
-                        eliminado: false
+                        eliminado: false,
+                        id_cuenta_banco: idcuenta,
+                        promedio: req.body.promedio,
+                        mes_uno: req.body.mes_uno.id,
+                        mes_dos: req.body.mes_dos.id,
+                        mes_tres: req.body.mes_tres.id,
                     }).then(function (beneficioCreado) {
                         if (req.body.ingresos.length > 0) {
                             req.body.ingresos.forEach(function (ingreso, index, array) {
@@ -3682,26 +3800,28 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                 id_periodo: req.body.periodo.id,
                 id_estado: req.body.estado.id,
                 observacion: req.body.observacion,
-                id_usuario: req.body.id_usuario},{
-                    where:{id:req.body.id
-                }
-            }).then(function (dotacionActualizada) {
-                req.body.dotacionItems.forEach(function (item, index, array) {
-                    RrhhEmpleadoDotacionRopaItem.update({
-                        id_producto: item.producto.id,
-                        entregado: item.entregado,
-                        id_ropa_trabajo: item.ropaTrabajo.id,
-                        id_cargo: item.cargo.id,
-                        cantidad: item.cantidad
-                    }, {
-                            where: { id: item.id }
-                        }).then(function (detalleCreado) {
-                            if (index === (array.length - 1)) {
-                                res.json({ mensaje: "Creado Satisfactoriamente!", numero: req.body.numero })
-                            }
-                        })
+                id_usuario: req.body.id_usuario
+            }, {
+                    where: {
+                        id: req.body.id
+                    }
+                }).then(function (dotacionActualizada) {
+                    req.body.dotacionItems.forEach(function (item, index, array) {
+                        RrhhEmpleadoDotacionRopaItem.update({
+                            id_producto: item.producto.id,
+                            entregado: item.entregado,
+                            id_ropa_trabajo: item.ropaTrabajo.id,
+                            id_cargo: item.cargo.id,
+                            cantidad: item.cantidad
+                        }, {
+                                where: { id: item.id }
+                            }).then(function (detalleCreado) {
+                                if (index === (array.length - 1)) {
+                                    res.json({ mensaje: "Creado Satisfactoriamente!", numero: req.body.numero })
+                                }
+                            })
+                    })
                 })
-            })
         })
     router.route('/recursos-humanos/ropa-trabajo/empleado/:id_empleado')
         .post(function (req, res) {

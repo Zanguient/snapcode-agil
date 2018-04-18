@@ -4,7 +4,7 @@ angular.module('agil.controladores')
         ListaConsultasMedicoPaciente, CrearMedicoPacienteFicha, BuscarFichaPaciente, ListaDatosTiposControl, ActualizarPatologiaPaciente, ListaPrerequisitosEmpresa, ListaPrerequisitosPaciente, ActualizarPrerequisito, CrearLaboratorio, ListaLaboratorios,
         CrearLaboratorioExamen, ListaLaboratorioExamenes, CrearLaboratorioExamenResultado, LaboratorioExamenListaHistorial, CrearDiagnostico, ListaDiagnosticos, CrearDiagnosticoExamen, ListaDiagnosticoExamenes, DiagnosticoExamenListaHistorial, CrearDiagnosticoExamenResultado,
         PacientesEmpresa, ListaVacunasEmpresa, FichasTecnicasPacientes, SignosVitalesPacientes, SOAPlistaPacientes, aplicacionVacunasPacientes, obtenerPaciente, Comentario, FieldViewer, PacienteActivo, HistorialFichaMedicoPaciente, ActualizarLaboratorio, ActualizarLaboratorioExamen,
-        ActualizarDiagnostico, ActualizarDiagnosticoExamen, EliminarLaboratorio, EliminarLaboratorioExamen, EliminarDiagnosticoExamen, EliminarDiagnostico, Prerequisitos, PrerequisitoPaciente, ListaAlertasPrerequisitosPaciente, PrerequisitosHistorial, ListaAlertasVacunasEmpresa, Vacuna, ClasesTipo, ValidarCodigoCuentaEmpleado, $timeout,ClasesTipoEmpresa) {
+        ActualizarDiagnostico, ActualizarDiagnosticoExamen, EliminarLaboratorio, EliminarLaboratorioExamen, EliminarDiagnosticoExamen, EliminarDiagnostico, Prerequisitos, PrerequisitoPaciente, ListaAlertasPrerequisitosPaciente, PrerequisitosHistorial, ListaAlertasVacunasEmpresa, Vacuna, ClasesTipo, ValidarCodigoCuentaEmpleado, $timeout, ClasesTipoEmpresa) {
 
         $scope.usuario = JSON.parse($localStorage.usuario);
         $scope.idModalDialogVacunas = 'dialog-vacunas';
@@ -55,6 +55,7 @@ angular.module('agil.controladores')
         $scope.IdModalDialogDiagnosticoExamenHistoricoResultado = 'dialog-historico-resultado-diag';
         $scope.idModalDialogVerResultadosHistorialLab = 'dialog-ver-resultados-Examen';
         $scope.idModalDialogConfirmacionEntregaAdelantado = 'dialog-entrega-adelantada-prerequisito'
+        $scope.idModalConceptoEdicion = 'dialog-conceptos';
 
         $scope.$on('$viewContentLoaded', function () {
             resaltarPestaña($location.path().substring(1));
@@ -68,7 +69,7 @@ angular.module('agil.controladores')
                 $scope.idModalDialogExamenesDiagnostico, $scope.idModalDialogNuevoExamenDiagnostico, $scope.idModalDialogHistorialFicha, $scope.idModalDialogCredencial,
                 $scope.idModalDialogPatologias, $scope.idModalDialogComentario, $scope.idModalAlertPrerequisitos, $scope.idModalDiasActivacionPrerequisitos,
                 $scope.idModalReprogramarPrerequisitos, $scope.idModalAlertVacunas, $scope.idModalDiasActivacionVacunas, $scope.idModalReprogramarVacunas, $scope.idImagenUsuario,
-                $scope.idModalHistorialConsulta, $scope.idModalWizardPacienteVista, $scope.idModalContenedorPacienteVista, $scope.idModalEliminarPaciente, $scope.IdModalDialogNuevoLaboratorio, $scope.IdModalDialogDiagnosticoExamenHistoricoResultado, $scope.idModalDialogVerResultadosHistorialLab, $scope.idModalDialogConfirmacionEntregaAdelantado);
+                $scope.idModalHistorialConsulta, $scope.idModalWizardPacienteVista, $scope.idModalContenedorPacienteVista, $scope.idModalEliminarPaciente, $scope.IdModalDialogNuevoLaboratorio, $scope.IdModalDialogDiagnosticoExamenHistoricoResultado, $scope.idModalDialogVerResultadosHistorialLab, $scope.idModalDialogConfirmacionEntregaAdelantado, $scope.idModalConceptoEdicion);
             $scope.buscarAplicacion($scope.usuario.aplicacionesUsuario, $location.path().substring(1));
             $scope.obtenerColumnasAplicacion();
         });
@@ -115,7 +116,8 @@ angular.module('agil.controladores')
             $scope.eliminarPopup($scope.IdModalDialogDiagnosticoExamenHistoricoResultado)
             $scope.eliminarPopup($scope.idModalDialogVerResultadosHistorialLab)
             $scope.eliminarPopup($scope.idModalReprogramarVacunas)
-            $scope.eliminarPopup($scope.idModalDialogConfirmacionEntregaAdelantado);
+            $scope.eliminarPopup($scope.idModalDialogConfirmacionEntregaAdelantado)
+            $scope.eliminarPopup($scope.idModalConceptoEdicion)
         });
 
         $scope.inicio = function () {
@@ -146,19 +148,26 @@ angular.module('agil.controladores')
             $scope.dosisEdit = false
             $scope.fechaResultado = $scope.fechaATexto(new Date())
         }
-
+        $scope.abrirDialogConceptoEdicion = function (tipo) {
+            $scope.tipo_edicion = tipo;
+            $scope.clase = {};
+            $scope.abrirPopup($scope.idModalConceptoEdicion);
+        }
+        $scope.cerrarDialogConceptoEdicion = function () {
+            $scope.cerrarPopup($scope.idModalConceptoEdicion);
+        }
         $scope.obtenerExpeditos = function () {
             blockUI.start();
-            var promesa = ClasesTipoEmpresa("RRHH_EXP",$scope.usuario.id_empresa);
+            var promesa = ClasesTipoEmpresa("RRHH_EXP", $scope.usuario.id_empresa);
             promesa.then(function (entidad) {
-                $scope.expeditos = entidad.clases
+                $scope.expeditos = entidad
                 blockUI.stop();
             });
         }
 
         $scope.obtenerCargos = function () {
             blockUI.start();
-            var promesa = ClasesTipoEmpresa("RRHH_CARGO",$scope.usuario.id_empresa);
+            var promesa = ClasesTipoEmpresa("RRHH_CARGO", $scope.usuario.id_empresa);
             promesa.then(function (entidad) {
                 var cargos = entidad.clases
                 $scope.listaCargos = entidad
@@ -595,19 +604,19 @@ angular.module('agil.controladores')
                                     pac.ficha = (pac.id == ficha.id_empleado) ? ficha : pac.ficha
                                     if (index === array.length - 1) {
                                         $scope.pacientes = dato.pacientes;
-                                        
+
                                     }
                                 });
-                            }else{
-                                if (i === (dato.fichas.length - 1) ){
+                            } else {
+                                if (i === (dato.fichas.length - 1)) {
                                     dato.pacientes.forEach(function (pac, index, array) {
                                         pac.activo = (pac.activo == 0) ? true : false
                                         if (index === array.length - 1) {
                                             $scope.pacientes = dato.pacientes;
-                                            
+
                                         }
-                                });
-                                    
+                                    });
+
                                 }
                             }
                         }
@@ -616,13 +625,13 @@ angular.module('agil.controladores')
                             pac.activo = (pac.activo == 0) ? true : false
                             if (index === array.length - 1) {
                                 $scope.pacientes = dato.pacientes;
-                                
+
                             }
-                    });
+                        });
                     }
                 } else {
                     $scope.pacientes = dato.pacientes;
-                      
+
                 }
                 blockUI.stop();
             });

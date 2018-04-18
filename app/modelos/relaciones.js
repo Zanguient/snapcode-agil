@@ -866,6 +866,9 @@ module.exports = function (sequelize, Usuario, Persona, Rol, UsuarioRol, Tipo, C
 	RrhhEmpleadoBeneficioSocial.belongsTo(RrhhEmpleadoFicha, { foreignKey: 'id_ficha', as: 'ficha' })
 	RrhhEmpleadoFicha.hasMany(RrhhEmpleadoBeneficioSocial, { foreignKey: 'id_ficha', as: 'beneficiosSociales' })
 
+	RrhhEmpleadoBeneficioSocial.belongsTo(Banco, { foreignKey: 'id_cuenta_banco', as: 'cuenta' })
+	Banco.hasMany(RrhhEmpleadoBeneficioSocial, { foreignKey: 'id_cuenta_banco', as: 'beneficiosSociales' })
+	
 	RrhhEmpleadoBitacoraFicha.belongsTo(RrhhEmpleadoFicha, { foreignKey: 'id_ficha', as: 'ficha' })
 	RrhhEmpleadoFicha.hasMany(RrhhEmpleadoBitacoraFicha, { foreignKey: 'id_ficha', as: 'bitacoraCambios' })
 	RrhhEmpleadoBitacoraFicha.belongsTo(Usuario, { foreignKey: 'id_usuario', as: 'usuario' })

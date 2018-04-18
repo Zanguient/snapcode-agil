@@ -36,6 +36,22 @@ module.exports = function (sequelize, Sequelize) {
 			type: Sequelize.DECIMAL(20, 4),
 			field: 'tercer_mes'
 		},
+		mes_uno: {
+			type: Sequelize.INTEGER,
+			field: 'mes_uno'
+		},
+		mes_dos: {
+			type: Sequelize.INTEGER,
+			field: 'mes_dos'
+		},
+		mes_tres: {
+			type: Sequelize.INTEGER,
+			field: 'mes_tres'
+		},
+		promedio: {
+			type: Sequelize.DECIMAL(20, 4),
+			field: 'promedio'
+		},
 		numero_quinquenio: {
 			type: Sequelize.DECIMAL(20, 4),
 			field: 'numero_quinquenio'
@@ -56,11 +72,11 @@ module.exports = function (sequelize, Sequelize) {
 			type: Sequelize.BOOLEAN,
 			field: 'desahucio'
 		},
-		total_ingresos:{
+		total_ingresos: {
 			type: Sequelize.DECIMAL(20, 4),
 			field: 'total_ingresos'
 		},
-		total_deducciones:{
+		total_deducciones: {
 			type: Sequelize.DECIMAL(20, 4),
 			field: 'total_deducciones'
 		},
@@ -68,6 +84,10 @@ module.exports = function (sequelize, Sequelize) {
 			type: Sequelize.BOOLEAN,
 			field: 'eliminado'
 		},
+		id_cuenta_banco: {
+			type: Sequelize.INTEGER,
+			field: 'cuenta_banco'
+		}
 	}, {
 			freezeTableName: true
 		});

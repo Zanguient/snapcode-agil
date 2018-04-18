@@ -1,0 +1,5 @@
+ALTER TABLE agil_rrhh_empleado_beneficio_social drop cuenta_banco;
+ALTER TABLE agil_rrhh_empleado_beneficio_social drop promedio;
+ALTER TABLE agil_rrhh_empleado_beneficio_social drop mes_uno;
+ALTER TABLE agil_rrhh_empleado_beneficio_social drop mes_dos;
+ALTER TABLE agil_rrhh_empleado_beneficio_social drop mes_tres;
