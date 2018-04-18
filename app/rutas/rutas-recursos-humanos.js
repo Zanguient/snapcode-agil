@@ -416,7 +416,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                     } else if (req.body.tipoReincorporacion) {
                         if (req.body.tipoReincorporacion.nombre_corto == Diccionario.TIPO_REINCORPORACION) {
                             RrhhEmpleadoFicha.update({
-                                fecha_expiracion: req.body.nueva_fecha_expiracion
+                                fecha_expiracion: null
                             }, {
                                     where: { id: req.body.id_ficha }
                                 }).then(function (fichaActualizada) {
@@ -3244,8 +3244,10 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                     if (feriado.id == undefined) {
                         feriado.start = new Date(feriado.start)
                         feriado.end = new Date(feriado.end)
-                        feriado.start.setHours(0, 0, 0, 0, 0);
-                        feriado.end.setHours(23, 59, 0, 0, 0);
+                     /*    var a = new Date().setTime(feriado.start .getTime() + 1000 * 60 * 60 * 24)
+                        feriado.start = new Date(a)     */                    
+                        feriado.start.setHours(20, 0, 0, 0, 0);
+                        feriado.end.setHours(20, 0, 0, 0, 0);
                         RrhhFeriado.create({
                             fecha_inicio: feriado.start,
                             fecha_fin: feriado.end,

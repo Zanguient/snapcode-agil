@@ -2822,35 +2822,9 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 		}
 
 		
-		$scope.agregarConceptoEdicion = function (clase) {
-			if (clase.nombre && clase.nombre_corto) {
-				if ($scope.tipo_edicion.clases.indexOf(clase) == -1) {
-					$scope.tipo_edicion.clases.push(clase);
-				}
-				$scope.clase = {}
-			}
-		}
+		
 
-		$scope.modificarConceptoEdicion = function (clase) {
-			$scope.clase = clase;
-		}
-
-		$scope.removerConceptoEdicion = function (clase) {
-			clase.eliminado = true;
-		}
-
-		$scope.guardarConceptoEdicion = function (tipo) {
-			blockUI.start();
-			Tipos.update({ id_tipo: tipo.id }, tipo, function (res) {
-				var promesa = ClasesTipo(tipo.nombre_corto);
-				promesa.then(function (entidad) {
-					tipo = entidad
-					blockUI.stop();
-					$scope.cerrarDialogConceptoEdicion();
-					$scope.mostrarMensaje('Guardado Exitosamente!');
-				});
-			});
-		}
+		
 		$scope.PopoverCuentasAxiliares = {
 			templateUrl: 'PopoverCuentasAxiliares.html',
 			title: 'Cuentas Axiliares',

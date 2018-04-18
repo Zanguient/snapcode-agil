@@ -4,7 +4,7 @@ angular.module('agil.controladores')
         ListaConsultasMedicoPaciente, CrearMedicoPacienteFicha, BuscarFichaPaciente, ListaDatosTiposControl, ActualizarPatologiaPaciente, ListaPrerequisitosEmpresa, ListaPrerequisitosPaciente, ActualizarPrerequisito, CrearLaboratorio, ListaLaboratorios,
         CrearLaboratorioExamen, ListaLaboratorioExamenes, CrearLaboratorioExamenResultado, LaboratorioExamenListaHistorial, CrearDiagnostico, ListaDiagnosticos, CrearDiagnosticoExamen, ListaDiagnosticoExamenes, DiagnosticoExamenListaHistorial, CrearDiagnosticoExamenResultado,
         PacientesEmpresa, ListaVacunasEmpresa, FichasTecnicasPacientes, SignosVitalesPacientes, SOAPlistaPacientes, aplicacionVacunasPacientes, obtenerPaciente, Comentario, FieldViewer, PacienteActivo, HistorialFichaMedicoPaciente, ActualizarLaboratorio, ActualizarLaboratorioExamen,
-        ActualizarDiagnostico, ActualizarDiagnosticoExamen, EliminarLaboratorio, EliminarLaboratorioExamen, EliminarDiagnosticoExamen, EliminarDiagnostico, Prerequisitos, PrerequisitoPaciente, ListaAlertasPrerequisitosPaciente, PrerequisitosHistorial, ListaAlertasVacunasEmpresa, Vacuna, ClasesTipo, ValidarCodigoCuentaEmpleado, $timeout, ClasesTipoEmpresa) {
+        ActualizarDiagnostico, ActualizarDiagnosticoExamen,Tipos, EliminarLaboratorio, EliminarLaboratorioExamen, EliminarDiagnosticoExamen, EliminarDiagnostico, Prerequisitos, PrerequisitoPaciente, ListaAlertasPrerequisitosPaciente, PrerequisitosHistorial, ListaAlertasVacunasEmpresa, Vacuna, ClasesTipo, ValidarCodigoCuentaEmpleado, $timeout, ClasesTipoEmpresa) {
 
         $scope.usuario = JSON.parse($localStorage.usuario);
         $scope.idModalDialogVacunas = 'dialog-vacunas';
@@ -156,6 +156,34 @@ angular.module('agil.controladores')
         $scope.cerrarDialogConceptoEdicion = function () {
             $scope.cerrarPopup($scope.idModalConceptoEdicion);
         }
+        $scope.agregarConceptoEdicion = function (clase) {
+			if (clase.nombre && clase.nombre_corto) {
+				if ($scope.tipo_edicion.clases.indexOf(clase) == -1) {
+					$scope.tipo_edicion.clases.push(clase);
+				}
+				$scope.clase = {}
+			}
+        }
+        $scope.modificarConceptoEdicion = function (clase) {
+			$scope.clase = clase;
+		}
+
+		$scope.removerConceptoEdicion = function (clase) {
+			clase.eliminado = true;
+		}
+
+		$scope.guardarConceptoEdicion = function (tipo) {
+			blockUI.start();
+			Tipos.update({ id_tipo: tipo.id }, tipo, function (res) {
+				var promesa = ClasesTipo(tipo.nombre_corto);
+				promesa.then(function (entidad) {
+					tipo = entidad
+					blockUI.stop();
+					$scope.cerrarDialogConceptoEdicion();
+					$scope.mostrarMensaje('Guardado Exitosamente!');
+				});
+			});
+		}
         $scope.obtenerExpeditos = function () {
             blockUI.start();
             var promesa = ClasesTipoEmpresa("RRHH_EXP", $scope.usuario.id_empresa);
