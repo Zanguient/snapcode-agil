@@ -4315,7 +4315,7 @@
                                         <label for="1-mes">1er Mes</label>
                                         <input required type="number" min="0" ng-change="calcularPromedioFiniquito(beneficio)" ng-model="beneficio.primer_mes" class="form-control"
                                             id="1-mes" name="1-mes">
-                                        <select ng-change="seleccionarMesesFiniquito(beneficio)" ng-options="mes  as mes.nombre for mes in meses track by mes.id"
+                                        <select tabindex="-1" ng-change="seleccionarMesesFiniquito(beneficio)" ng-options="mes  as mes.nombre for mes in meses track by mes.id"
                                             ng-model="beneficio.mes_uno" class="form-control" ng-change="buscarAnticiposExtraoridnario(filtroAnticipo)">
                                         </select>
                                     </div>

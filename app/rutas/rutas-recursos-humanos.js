@@ -899,7 +899,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                             id_persona_familiar: personaCreada.id,
                             id_relacion: familiar.relacion.id,
                             afiliado: familiar.persona.afiliado,
-                            referencia:familiar.referencia
+                            referencia: familiar.referencia
                         }).then(function (RrhhEmpleadoFichaFamiliarCreado) {
                             if (index === (array.length - 1)) {
                                 guardarCargo(req, res, RrhhEmpleadoDiscapacidad, RrhhEmpleadoCargo, ficha, fichaAnterior)
@@ -1708,101 +1708,106 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
     router.route('/familiares/empleados/empresa/excel/upload')
         .post(function (req, res) {
             var promises = [];
-            sequelize.transaction(function (t) {
-                req.body.relaciones.forEach(function (relacion, index, array) {
-                    promises.push(Tipo.find({
+            var arregloRelacionesCreadas = []
+
+            req.body.relaciones.forEach(function (relacion, index, array) {
+                Tipo.find({
+                    where: {
+                        nombre_corto: 'RRHH_REL',
+                        id_empresa: req.body.id_empresa
+                    }
+                }).then(function (tipo) {
+                    Clase.findOrCreate({
                         where: {
-                            nombre_corto: 'RRHH_REL',
-                            id_empresa: req.body.id_empresa
+                            nombre: relacion,
+                            id_tipo: tipo.dataValues.id
+                        },
+                        defaults: {
+                            nombre: relacion,
+                            id_tipo: tipo.dataValues.id,
+                            habilitado: true
                         }
-                    }).then(function (tipo) {
-                        return Clase.findOrCreate({
-                            where: {
-                                nombre: relacion,
-                                id_tipo: tipo.dataValues.id
-                            },
-                            transaction: t,
-                            defaults: {
-                                nombre: relacion,
-                                id_tipo: tipo.dataValues.id,
-                                habilitado: true
-                            }
-                        })
-                    }))
-                    if (index === (array.length - 1)) {
-                        req.body.familiares.forEach(function (familiar, index3, array3) {
-                            promises.push(MedicoPaciente.find({
-                                where: { codigo: familiar.codigoEmpleado, id_empresa: req.body.id_empresa },
-                                transaction: t
-                            }).then(function (pacienteFound) {
-                                // console.log(pacienteFound)
-                                if (pacienteFound != null) {
-                                    return Tipo.find({
-                                        where: {
-                                            nombre_corto: 'RRHH_REL',
-                                            id_empresa: req.body.id_empresa
-                                        }, transaction: t
-                                    }).then(function (tipo) {
-                                        return Clase.find({
-                                            where: {
-                                                nombre: familiar.relacion,
-                                                id_tipo: tipo.dataValues.id
-                                            },
-                                            transaction: t,
-                                        }).then(function (relacionEncontrado) {
-                                            var nombre_corto = familiar.genero.charAt(0)
-                                            return Clase.find({
-                                                where: { nombre_corto: nombre_corto },
-                                                transaction: t
-                                            }).then(function (generoEncontrado) {
-                                                var nombre = ""
-                                                if (familiar.nombres) {
-                                                    nombre += familiar.nombres
-                                                }
-                                                if (familiar.apellido_paterno) {
-                                                    nombre += ' ' + familiar.apellido_paterno
-                                                }
-                                                if (familiar.apellido_materno) {
-                                                    nombre += ' ' + familiar.apellido_materno
-                                                }
-                                                return Persona.create({
-                                                    nombres: familiar.nombres,
-                                                    apellido_paterno: familiar.apellido_paterno,
-                                                    apellido_materno: familiar.apellido_materno,
-                                                    fecha_nacimiento: familiar.fecha_nacimiento,
-                                                    nombre_completo: nombre,
-                                                    id_genero: generoEncontrado.dataValues.id
-                                                }, {
+                    }).spread(function (dato, cread) {                      
+                        if (index === (array.length - 1)) {
+                            sequelize.transaction(function (t) {
+                                req.body.familiares.forEach(function (familiar, index3, array3) {
+                                    promises.push(MedicoPaciente.find({
+                                        where: { codigo: familiar.codigoEmpleado, id_empresa: req.body.id_empresa },
+                                        transaction: t
+                                    }).then(function (pacienteFound) {
+                                        // console.log(pacienteFound)
+                                        if (pacienteFound != null) {
+                                            return Tipo.find({
+                                                where: {
+                                                    nombre_corto: 'RRHH_REL',
+                                                    id_empresa: req.body.id_empresa
+                                                }, transaction: t
+                                            }).then(function (tipo) {
+                                                return Clase.find({
+                                                    where: {
+                                                        nombre: familiar.relacion,
+                                                        id_tipo: tipo.dataValues.id
+                                                    },
+                                                    transaction: t,
+
+                                                }).then(function (relacionEncontrado) {
+                                                    var nombre_corto = familiar.genero.charAt(0)
+                                                    return Clase.find({
+                                                        where: { nombre_corto: nombre_corto },
                                                         transaction: t
-                                                    }).then(function (personaCreada) {
-                                                        return RrhhEmpleadoFichaFamiliar.create({
-                                                            id_empleado: pacienteFound.dataValues.id,
-                                                            id_persona_familiar: personaCreada.dataValues.id,
-                                                            id_relacion: relacionEncontrado.dataValues.id,
-                                                            //afiliado: familiar.afiliado
-                                                            referencia:familiar.referencia
+                                                    }).then(function (generoEncontrado) {
+                                                        var nombre = ""
+                                                        if (familiar.nombres) {
+                                                            nombre += familiar.nombres
+                                                        }
+                                                        if (familiar.apellido_paterno) {
+                                                            nombre += ' ' + familiar.apellido_paterno
+                                                        }
+                                                        if (familiar.apellido_materno) {
+                                                            nombre += ' ' + familiar.apellido_materno
+                                                        }
+                                                        return Persona.create({
+                                                            nombres: familiar.nombres,
+                                                            apellido_paterno: familiar.apellido_paterno,
+                                                            apellido_materno: familiar.apellido_materno,
+                                                            fecha_nacimiento: familiar.fecha_nacimiento,
+                                                            nombre_completo: nombre,
+                                                            id_genero: generoEncontrado.id
                                                         }, {
                                                                 transaction: t
-                                                            }).then(function (RrhhEmpleadoFichaFamiliarCreado) {
+                                                            }).then(function (personaCreada) {
+                                                                return RrhhEmpleadoFichaFamiliar.create({
+                                                                    id_empleado: pacienteFound.id,
+                                                                    id_persona_familiar: personaCreada.id,
+                                                                    id_relacion: relacionEncontrado.id,
+                                                                    //afiliado: familiar.afiliado
+                                                                    referencia: familiar.referencia
+                                                                }, {
+                                                                        transaction: t
+                                                                    }).then(function (RrhhEmpleadoFichaFamiliarCreado) {
+                                                                    })
                                                             })
                                                     })
+                                                })
                                             })
-                                        })
-                                    })
 
 
-                                }
+                                        }
 
-                            }))
-                        })
-                    }
+                                    }))
+                                })
+                                return Promise.all(promises);
+                            }).then(function (result) {
+                                res.json({ mensaje: "¡Datos de familiares empleados actualizados satisfactoriamente!" });
+                            }).catch(function (err) {
+                                res.json({ hasError: true, mensaje: err.stack });
+                            });
+                        }
+                    })
                 })
-                return Promise.all(promises);
-            }).then(function (result) {
-                res.json({ mensaje: "¡Datos de familiares empleados actualizados satisfactoriamente!" });
-            }).catch(function (err) {
-                res.json({ hasError: true, mensaje: err.stack });
-            });
+
+            })
+
         })
     router.route('/empleados/empresa/excel/upload')
         .post(function (req, res) {
@@ -3244,8 +3249,8 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                     if (feriado.id == undefined) {
                         feriado.start = new Date(feriado.start)
                         feriado.end = new Date(feriado.end)
-                     /*    var a = new Date().setTime(feriado.start .getTime() + 1000 * 60 * 60 * 24)
-                        feriado.start = new Date(a)     */                    
+                        /*    var a = new Date().setTime(feriado.start .getTime() + 1000 * 60 * 60 * 24)
+                           feriado.start = new Date(a)     */
                         feriado.start.setHours(20, 0, 0, 0, 0);
                         feriado.end.setHours(20, 0, 0, 0, 0);
                         RrhhFeriado.create({

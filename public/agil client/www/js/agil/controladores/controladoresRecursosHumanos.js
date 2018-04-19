@@ -909,7 +909,7 @@ angular.module('agil.controladores')
                     beneficio.mes_uno = $scope.meses[beneficio.mes_uno]
                     beneficio.mes_dos = $scope.meses[beneficio.mes_dos]
                     beneficio.mes_tres = $scope.meses[beneficio.mes_tres]
-                    beneficio.totalAguinaldo = $scope.CalcularAguinaldoNavidad(beneficio)
+                    beneficio.totalAguinaldo = $scope.CalcularAguinaldoNavidad2(beneficio)
                     var fechaAnterior = new Date(empleado.fecha_inicio)
                     $scope.tiempoTrabajado = duration(fechaAnterior, fechaActual)
                     var fechaElaboracion = $scope.fechaATexto(new Date())
@@ -2136,10 +2136,6 @@ angular.module('agil.controladores')
                     familiaresEmpleadoEmpresa.$save(function (res) {
                         $scope.mostrarMensaje(res.mensaje);
                         $scope.recargarItemsTabla();
-                        blockUI.stop();
-                    }).catch(function (err) {
-                        var men = (err.data !== undefined && err.data !== null) ? err.data : err.message
-                        $scope.mostrarMensaje('Se produjo un error! > ' + men)
                         blockUI.stop();
                     })
                 }
@@ -6267,7 +6263,7 @@ angular.module('agil.controladores')
             }
 
         }
-        $scope.CalcularAguinaldoNavidad = function (beneficio) {
+   /*      $scope.CalcularAguinaldoNavidad = function (beneficio) {
             var mes = new Date(beneficio.fecha_retiro).getMonth()
             var dias = new Date(beneficio.fecha_retiro).getDate()
             var ultimoDia = new Date(date.getFullYear(), date.getMonth() + 1, 0);
@@ -6281,7 +6277,7 @@ angular.module('agil.controladores')
             var sueldomes = beneficio.promedio / 12
             var sueldodia = sueldomes / 30
             return sueldomes * beneficio.mesesAguinaldo + sueldodia * beneficio.diasAguinaldo
-        }
+        } */
         $scope.CalcularAguinaldoNavidad2= function (beneficio) {
             var mes = new Date($scope.convertirFecha(beneficio.fecha_retiro)).getMonth()
             var dias = new Date($scope.convertirFecha(beneficio.fecha_retiro)).getDate()
