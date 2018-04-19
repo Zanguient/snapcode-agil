@@ -377,11 +377,11 @@ function ejecutarScriptsRecursosHumanos(idModalPrerequisitos, idModalEmpleado, i
 		aplicarTiempos();
 		AplicarImputFile(idImput);
 		aplicarVisorImagenArchivo(idImagenUsuario);
-		crearPopup(idModalConceptoEdicion, "62%", "auto");
-	}, 2000)
-
 		
-
+	}, 2000)
+	setTimeout(function () {
+	crearPopup(idModalConceptoEdicion, "62%", "auto");
+}, 5000)
 }
 
 function ejecutarScriptsPlanillaSueldos(idModalNuevaPlanillaSueldos, idModalEditarPlanillaSueldo, idModalParametros, idModalTR3,

@@ -1266,7 +1266,15 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 					if (usuario.rolesUsuario[i].rol.aplicacionesRol[j].aplicacion.id_padre == null) {
 						var app = usuario.rolesUsuario[i].rol.aplicacionesRol[j].aplicacion;
 						app.subaplicaciones = [];
-						$scope.aplicaciones.push(app);
+						for (var k = 0; k < usuario.aplicacionesUsuario.length; k++) {
+							var element = usuario.aplicacionesUsuario[k];
+							if (element.aplicacion.titulo == app.titulo)
+								if (element.puede_ver) {
+									$scope.aplicaciones.push(app);
+								}
+
+						}
+						
 					}
 				}
 			}
