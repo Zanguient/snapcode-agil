@@ -1801,7 +1801,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
             }).then(function (result) {
                 res.json({ mensaje: "¡Datos de familiares empleados actualizados satisfactoriamente!" });
             }).catch(function (err) {
-                res.json({ hasError: true, message: err.stack });
+                res.json({ hasError: true, mensaje: err.stack });
             });
         })
     router.route('/empleados/empresa/excel/upload')

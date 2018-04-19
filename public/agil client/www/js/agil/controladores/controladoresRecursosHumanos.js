@@ -1307,7 +1307,6 @@ angular.module('agil.controladores')
                 var bandera = true
                 if (datos.length > 0) {
                     datos.forEach(function (feriado, index, array) {
-                        
                         var inicio = $scope.fechaATexto(feriado.start._d)
                         var inicio2 = $scope.fechaATexto(start._d)
                         if (inicio == inicio2) {
@@ -2100,7 +2099,7 @@ angular.module('agil.controladores')
                         familiar.nombres = worksheet['D' + row] != undefined && worksheet['D' + row] != "" ? worksheet['D' + row].v.toString() : null;
                         familiar.apellido_paterno = worksheet['E' + row] != undefined && worksheet['E' + row] != "" ? worksheet['E' + row].v.toString() : null;
                         familiar.apellido_materno = worksheet['F' + row] != undefined && worksheet['F' + row] != "" ? worksheet['F' + row].v.toString() : null;
-                        familiar.fecha_nacimiento = worksheet['G' + row] != undefined && worksheet['G' + row] != "" ? $scope.fecha_excel_angular(worksheet['G' + row].v.toString()) : null;
+                        familiar.fecha_nacimiento = worksheet['G' + row] != undefined && worksheet['G' + row] != "" ? new Date($scope.fecha_excel_angular(worksheet['G' + row].v.toString())) : null;
                         familiar.relacion = worksheet['H' + row] != undefined && worksheet['H' + row] != "" ? worksheet['H' + row].v.toString() : null;
                         familiar.referencia = worksheet['I' + row] != undefined && worksheet['I' + row] != "" ? worksheet['I' + row].v.toString() : null;
                         familiares.push(familiar);
@@ -2137,6 +2136,10 @@ angular.module('agil.controladores')
                     familiaresEmpleadoEmpresa.$save(function (res) {
                         $scope.mostrarMensaje(res.mensaje);
                         $scope.recargarItemsTabla();
+                        blockUI.stop();
+                    }).catch(function (err) {
+                        var men = (err.data !== undefined && err.data !== null) ? err.data : err.message
+                        $scope.mostrarMensaje('Se produjo un error! > ' + men)
                         blockUI.stop();
                     })
                 }
