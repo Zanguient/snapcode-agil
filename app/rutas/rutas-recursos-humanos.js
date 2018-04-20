@@ -3559,7 +3559,9 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                     }).then(function (beneficioCreado) {
                         res.json({ mensaje: 'Beneficio social creado sadisfactoriamente!' })
 
-                    })
+                    }).catch(function (err) {
+                        res.json({ hasError: true, mensaje: err.stack });
+                    });
                 } else {
 
                     RrhhEmpleadoBeneficioSocial.create({
@@ -3597,14 +3599,18 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                                     if (index === (array.length - 1)) {
                                         guardarDeducciones(req, res, RrhhEmpleadoDeduccionIngreso, beneficioCreado)
                                     }
-                                })
+                                }).catch(function (err) {
+                                    res.json({ hasError: true, mensaje: err.stack });
+                                });
 
                             });
                         } else {
                             guardarDeducciones(req, res, RrhhEmpleadoDeduccionIngreso, beneficioCreado)
                         }
 
-                    })
+                    }).catch(function (err) {
+                        res.json({ hasError: true, mensaje: err.stack });
+                    });
                 }
             }
         })
@@ -3633,7 +3639,9 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                         if (index === (array.length - 1)) {
                             res.json({ mensaje: 'Beneficio social actualizado sadisfactoriamente!' })
                         }
-                    })
+                    }).catch(function (err) {
+                        res.json({ hasError: true, mensaje: err.stack });
+                    });
                 } else if (deduccion.id) {
                     RrhhEmpleadoDeduccionIngreso.update({
                         monto: deduccion.monto,
@@ -3645,7 +3653,9 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                             if (index === (array.length - 1)) {
                                 res.json({ mensaje: 'Beneficio social actualizado sadisfactoriamente!' })
                             }
-                        })
+                        }).catch(function (err) {
+                            res.json({ hasError: true, mensaje: err.stack });
+                        });
                 } else {
                     RrhhEmpleadoDeduccionIngreso.create({
                         id_beneficio: beneficioCreado.id,
@@ -3657,7 +3667,9 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                         if (index === (array.length - 1)) {
                             res.json({ mensaje: 'Beneficio social actualizado sadisfactoriamente!' })
                         }
-                    })
+                    }).catch(function (err) {
+                        res.json({ hasError: true, mensaje: err.stack });
+                    });
                 }
 
             });

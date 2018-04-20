@@ -6210,6 +6210,10 @@ angular.module('agil.controladores')
                 $scope.imprimirFiniquito(datos, false)
                 $scope.mostrarMensaje(dato.mensaje)
                 $scope.cerrarDialogBeneficiosSociales()
+            }).catch(function (err) {
+                var men = (err.data !== undefined && err.data !== null) ? err.data : err.message
+                $scope.mostrarMensaje('Se produjo un error! > ' + men)
+                blockUI.stop();
             })
         }
         $scope.seleccionarMesesFiniquito = function (beneficio) {
@@ -6279,9 +6283,10 @@ angular.module('agil.controladores')
             return sueldomes * beneficio.mesesAguinaldo + sueldodia * beneficio.diasAguinaldo
         } */
         $scope.CalcularAguinaldoNavidad2= function (beneficio) {
-            var mes = new Date($scope.convertirFecha(beneficio.fecha_retiro)).getMonth()
+            var fecha= new Date($scope.convertirFecha(beneficio.fecha_retiro))
+            var mes = new Date($scope.convertirFecha(beneficio.fecha_retiro)).getMonth()+1
             var dias = new Date($scope.convertirFecha(beneficio.fecha_retiro)).getDate()
-            var ultimoDia = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+            var ultimoDia = new Date(fecha.getFullYear(), fecha.getMonth() + 1, 0);
             if (dias === ultimoDia.getDate()) {
                 beneficio.diasAguinaldo = 0
                 beneficio.mesesAguinaldo = mes

@@ -1473,7 +1473,7 @@ function duration(since, until) {
 	var years, months, days;
 
 	//Years
-	years = (until.getFullYear() - since.getFullYear());
+	years = (until.getFullYear() - since.getFullYear())-1;
 	if (until.getMonth() == since.getMonth()) {
 		if (since.getDate() < (until.getDate() - 1)) {
 			years += 1;
