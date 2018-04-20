@@ -24,6 +24,14 @@ function ejecutarScriptsPolifuncionalidad(modalNuevaEvaluacion, modalNuevaEvalua
 	aplicarWizardFormulario(modalParametrosPolifuncionalidad, modalParametrosPolifuncionalidadWizard);
 }
 
+function ejecutarScriptsTransacciones(modalNuevoIngreso, modalNuevoEgreso, modalSeguimiento, modalRevision) {
+	crearPopup(modalNuevoIngreso, "auto", "auto");
+	crearPopup(modalNuevoEgreso, "auto", "auto");
+	crearPopup(modalSeguimiento, "auto", "auto");
+	crearPopup(modalRevision, "auto", "auto");
+	// aplicarWizardFormulario(idModalWizardDestinoEdicion, idContenedorEdicionDestino);
+}
+
 function ejecutarScriptsProformas(modalConfiguracionActividadesServicios, wizardConfiguracionActividadesServicios, dialogProformaEdicion, dialogClientesProforma, modalConfiguracionActividades, wizardConfiguracionActividades,
 	dialogmodalFechas, dialogBusquedaServicio, dialogDosificacionesDisponibles, confirmarDosificacion) {
 	crearPopup(modalConfiguracionActividadesServicios, 'auto', 'auto');
@@ -97,7 +105,7 @@ function ejecutarScriptsInventario(idModalActualizacionInventario, idModalCreaci
 }
 
 function ejecutarScriptsOperaciones(idDialogDialogPanelOperaciones, idDialogEntregaViveres, idConfirmacionCierre, idDialogTotalIngredientes) {
-	crearPopup(idDialogDialogPanelOperaciones, "100%", 'auto');
+	crearPopup(idDialogDialogPanelOperaciones, "100%", screen.height);
 	crearPopup(idDialogEntregaViveres, "60%", 'auto');
 	crearPopup(idConfirmacionCierre, "40%", 'auto');
 	crearPopup(idDialogTotalIngredientes, "60%", 'auto');
@@ -1007,6 +1015,9 @@ function crearPopup(idPopup, ancho, altura) {
 
 	$("#" + idPopup).siblings('.ui-dialog-titlebar').remove();
 	$("#" + idPopup).dialog("moveToTop");
+	// $("#" + idPopup).draggable({
+	// 	handle: ".modal-header"
+	// });
 }
 
 function crearArregloColumnas(valor, longitud) {
@@ -1473,9 +1484,9 @@ function duration(since, until) {
 	var years, months, days;
 
 	//Years
-	years = (until.getFullYear() - since.getFullYear())-1;
+	years = (until.getFullYear() - since.getFullYear());
 	if (until.getMonth() == since.getMonth()) {
-		if (since.getDate() < (until.getDate() - 1)) {
+		if (since.getDate() >(until.getDate() - 1)) {
 			years += 1;
 		}
 		if (since.getDate() == until.getDate()) {

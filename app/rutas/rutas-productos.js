@@ -519,11 +519,12 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 					return grupo.id_grupo
 				})
 				Producto.findAll({
-					where: { id_empresa: req.params.id_empresa, publicar_panel: true, id_grupo:{$in:gruposUsuario} },
+					where: { id_empresa: req.params.id_empresa, publicar_panel: true, id_grupo: { $in: gruposUsuario } },
 					include: [
 						{ model: Inventario, as: 'inventarios', required: false, where: { id_almacen: req.params.id_almacen, cantidad: { $gte: 0 } } },
 						{ model: Clase, as: 'tipoProducto' },
-						{ model: ProductoBase, as: 'productosBase' , required: false,
+						{
+							model: ProductoBase, as: 'productosBase', required: false,
 							include: [{
 								model: Producto, as: 'productoBase', required: false,
 								include: [{ model: Inventario, as: 'inventarios', required: false, where: { id_almacen: req.params.id_almacen, cantidad: { $gte: 0 } } },
@@ -734,33 +735,14 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 		.get(function (req, res) {
 			var condicionProducto = "empresa=" + req.params.id_empresa
 			if (req.params.id_grupo != 0) {
-				condicionProducto += ' and producto.grupo =' + req.params.id_grupo
-				UsuarioGrupos.findAll({
-					where: { id_usuario: req.params.id_usuario }
-				}).then(function (grupos) {
-					// var grupoLiteral = '('
-					// var grupoArray = []
-					// grupos.forEach(function (grupo, i) {
-					// 	grupoArray.push(grupo.id_grupo)
-					// 	if (i == grupos.length - 1) {
-					// 		grupoLiteral += grupo.id_grupo + ')'
-					// 	} else {
-					// 		grupoLiteral += grupo.id_grupo + ','
-					// 	}
-					// })
-					// condicionProducto += ' and producto.grupo in ' + grupoLiteral
-					Producto.findAll({
-						where: { id_grupo: req.params.id_grupo },
-						include: [{ model: Clase, as: 'grupo' }, { model: Clase, as: 'subgrupo' }]
-					}).then(function (productos) {
-						res.json({ catalogo: productos });
-					}).catch(function (err) {
-						res.json({ catalogo: [], hasError: true, mensaje: err.stack });
-					});
+				Producto.findAll({
+					where: { id_empresa: req.params.id_empresa, id_grupo: req.params.id_grupo },
+					include: [{ model: Clase, as: 'grupo' }, { model: Clase, as: 'subgrupo' }]
+				}).then(function (productos) {
+					res.json({ catalogo: productos });
 				}).catch(function (err) {
 					res.json({ catalogo: [], hasError: true, mensaje: err.stack });
 				});
-
 			} else {
 				UsuarioGrupos.findAll({
 					where: { id_usuario: req.params.id_usuario }
@@ -769,23 +751,9 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 					var grupoArray = []
 					grupos.forEach(function (grupo, i) {
 						grupoArray.push(grupo.id_grupo)
-						if (i == grupos.length - 1) {
-							grupoLiteral += grupo.id_grupo + ')'
-						} else {
-							grupoLiteral += grupo.id_grupo + ','
-						}
 					})
-					condicionProducto += ' and producto.grupo in ' + grupoLiteral
-					// 	sequelize.query("select * \
-					// from agil_producto as producto LEFT OUTER JOIN gl_clase as grupo\
-					// 	WHERE "+ condicionProducto, { type: sequelize.QueryTypes.SELECT })
-					// 		.then(function (productos) {
-					// 			res.json({ catalogo: productos });
-					// 		}).catch(function (err) {
-					// 			res.json({ catalogo: [], hasError: true, mensaje: err.stack });
-					// 		});
 					Producto.findAll({
-						where: { id_grupo: { $in: grupoArray } },
+						where: { id_empresa: req.params.id_empresa, id_grupo: { $in: grupoArray } },
 						include: [{ model: Clase, as: 'grupo' }, { model: Clase, as: 'subgrupo' }]
 					}).then(function (productos) {
 						res.json({ catalogo: productos });

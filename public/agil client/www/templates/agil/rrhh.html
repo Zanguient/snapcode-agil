@@ -234,19 +234,19 @@
                                     </div>
                                 </li>
                                 <li>
-                                        <div class="clearfix">
-                                            <span class="pull-left" style="color:rgb(85, 128, 163) !important">
-                                                Familiares
-                                            </span>
-                                            <a href="/recursos/EJEMPLO-DATOS-FICHAS-EMPLEADOS-FAMILIARES.xlsx" class="boton-importar pull-right">
-                                                <i class="fa  fa-cloud-download green"></i>
-                                            </a>
-                                            <div class="fileUpload boton-importar pull-right">
-                                                <span class="fileUpload-button ace-icon fa fa-cloud-upload blue"></span>
-                                                <input class="upload" type="file" custom-on-file-change="subirExcelFichaEmpleadoFamiliares" />
-                                            </div>
+                                    <div class="clearfix">
+                                        <span class="pull-left" style="color:rgb(85, 128, 163) !important">
+                                            Familiares
+                                        </span>
+                                        <a href="/recursos/EJEMPLO-DATOS-FICHAS-EMPLEADOS-FAMILIARES.xlsx" class="boton-importar pull-right">
+                                            <i class="fa  fa-cloud-download green"></i>
+                                        </a>
+                                        <div class="fileUpload boton-importar pull-right">
+                                            <span class="fileUpload-button ace-icon fa fa-cloud-upload blue"></span>
+                                            <input class="upload" type="file" custom-on-file-change="subirExcelFichaEmpleadoFamiliares" />
                                         </div>
-                                    </li>
+                                    </div>
+                                </li>
                             </ul>
                         </li>
                         <li class="dropdown-footer"></li>
@@ -952,9 +952,10 @@
                                     <div class="col-sm-6 col-md-2">
                                         <label for="codigo-empleado">
                                             <h4>
-                                                <strong>Edad {{ficha.edad}} años</strong></h4>
-                                            
-                                           
+                                                <strong>Edad {{ficha.edad}} años</strong>
+                                            </h4>
+
+
                                         </label>
                                     </div>
 
@@ -1672,7 +1673,7 @@
                         </div>
                     </div>
                     <div class="modal-footer wizard-actions">
-                        <button  ng-show="ficha.id" type="submit" class="btn btn-primary btn-sm " ng-click="truevalue=true"  ng-disabled="nopuedoModificarFicha">
+                        <button ng-show="ficha.id" type="submit" class="btn btn-primary btn-sm " ng-click="truevalue=true" ng-disabled="nopuedoModificarFicha">
                             <i class="ace-icon fa fa-floppy-o bigger-110"></i>&nbsp; Guardar</button>
                         <button id="anterior-f" type="button" class="btn btn-sm btn-prev">
                             <i class="ace-icon fa fa-arrow-left"></i>
@@ -4243,7 +4244,7 @@
                                     </div>
                                 </div>
                                 <div align="center" class="pull-center col-md-12" ng-if="beneficio.tipo_beneficio">
-                                        <button type="button"  data-rel="tooltip" data-placement="left" uib-tooltip="Ocultar vacacion y aguinaldo" ng-hide="verVacacion"
+                                    <button type="button" data-rel="tooltip" data-placement="left" uib-tooltip="Ocultar vacacion y aguinaldo" ng-hide="verVacacion"
                                         class="button-circle button-style pos-rel" ng-click="verVacaciones()">
                                         <i class="ace-icon fa fa-angle-double-up bigger-140"></i>
                                     </button>
@@ -4286,7 +4287,7 @@
                                         <label for="meses-vacaciones">dias</label>
                                         <input type="number" disabled min="0" ng-model="beneficio.diasAguinaldo" class="form-control" id="meses-vacaciones" name="meses-vacaciones">
                                     </div>
-                                   
+
 
                                 </div>
                             </div>
@@ -4336,8 +4337,14 @@
                                         </select>
                                     </div>
                                     <div class="form-group col-sm-3">
-                                        <label for="3-mes">Promedio</label>
-                                        <input type="number" disabled step="0.01" min="0" ng-model="beneficio.promedio" class="form-control" id="3-mes" name="3-mes">
+                                        <p>
+                                            <label for="3-mes">Promedio</label>
+                                        </p>
+                                        <p>
+                                            <label>
+                                                <b>{{beneficio.promedio|number:2}}</b>
+                                            </label>
+                                        </p>
                                     </div>
                                 </div>
                                 <div class="form-group row" ng-if="!beneficio.tipo_beneficio">
@@ -4366,7 +4373,7 @@
                                         </label>
                                     </div>
                                     <div class="col-sm-6" ng-if="beneficio.desahucio">
-                                        <b>Total desahucio:{{beneficio.total_desahucio}}</b>
+                                        <b>Total desahucio:{{beneficio.total_desahucio|number:2}}</b>
                                     </div>
                                 </div>
                             </div>
@@ -5837,8 +5844,8 @@
                     </div>
                     <div class="form-group col-sm-6">
                         <label for="ap-paterno">Hasta</label>
-                        <input required type="text" ng-model="rolTurno.fecha_fin" data-date-format="dd/mm/yyyy" class="form-control date-picker"
-                            autocomplete="off" ng-disabled="rolTurno.tipo" id="ap-paterno" name="ap-paterno" placeholder="Hasta">
+                        <input type="text" ng-model="rolTurno.fecha_fin" data-date-format="dd/mm/yyyy" class="form-control date-picker" autocomplete="off"
+                            ng-disabled="rolTurno.tipo" id="ap-paterno" name="ap-paterno" placeholder="Hasta">
                     </div>
                 </div>
                 <div class="row">

@@ -82,10 +82,11 @@ router.route('/pedido-kardex/gtm-despacho/empresa/:id_empresa')
 
 
 });
-	router.route('/gtm-despacho-kardex-sin-factura/empresa/:id_empresa')
+	router.route('/gtm-despacho-kardex-factura/empresa/:id_empresa/usuario/:id_usuario/factura/:factura')
 		.get(function (req, res) {
 			GtmVentaKardex.findAll({
-					where: {factura:false},
+
+					where: {factura:(req.params.factura == "true") ? true : false, id_empresa:req.params.id_empresa, id_usuario:req.params.id_usuario},
 					include: [{model: Cliente, as: 'cliente'},{
 						model: GtmVentaKardexDetalle, as: 'detalles_kardex',
 						where: {entregado: false, id_padre: null},

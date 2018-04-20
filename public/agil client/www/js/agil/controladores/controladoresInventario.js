@@ -183,7 +183,12 @@ angular.module('agil.controladores')
 				$scope.productos = mproductos;
 
 				blockUI.stop();
-			});
+			}).catch(function (err) {
+				blockUI.stop()
+				$scope.Productos = []
+				var mensaje = (err.stack !== undefined && err.stack !== null) ? err.stack : (err.data !== undefined && err.data !== null && err.data !== "") ? err.data : 'Error: Se perdio la conexión.'
+				$scope.mostrarMensaje(mensaje)
+			})
 		}
 
 		$scope.colorearInventarioDisponible = function (inventarioDisponible, producto) {

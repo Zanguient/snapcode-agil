@@ -48,22 +48,13 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 					condicionProducto = condicionProducto + " and cantidad = 0"
 				}
 			}			
-			if (req.params.cantidad != 0) {
-				if (req.params.cantidad == 1) {
-					condicionProducto.cantidad = { $gte: 0 }
-				} else {
-					condicionProducto.cantidad = { $eq: 0 }
-				}
-			}
 			UsuarioGrupos.findAll({
 				where: { id_usuario: req.params.id_usuario }
 			}).then(function (grupos) {
 				var condicionGrupo = ""
 				if (grupos.length > 0) {
 					var grupoLiteral = '('
-					var grupoArray = []
 					grupos.forEach(function (grupo, i) {
-						grupoArray.push(grupo.id_grupo)
 						if (i == grupos.length - 1) {
 							grupoLiteral += grupo.id_grupo + ')'
 						} else {
