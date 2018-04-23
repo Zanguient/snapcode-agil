@@ -1,0 +1,1 @@
+ALTER TABLE agil_rrhh_empleado_rol_turno MODIFY grupo INT(11);

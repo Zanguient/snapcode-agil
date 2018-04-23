@@ -4092,7 +4092,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                         mes: req.body.mes.id,
                         id_empresa: req.params.id_empresa,
                         eliminado: false
-                        // fecha: req.body.fecha
+                        // fecha: req.body.fecha,
                     },
                     include: [{
                         model: MedicoPaciente, as: 'empleado', where: { id_empresa: req.params.id_empresa },
@@ -4157,7 +4157,54 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                     res.json({ mensaje: err.message === undefined ? err.stack : err.message, hasErr: true })
                 });
         })
-
+    
+        router.route('/evaluacion/personal/test/:id_empresa')
+        .post(function (req, res) {
+            MedicoPaciente.findAll({
+                where:{
+                    es_empleado: true,
+                    id_empresa: req.params.id_empresa
+                }
+            }).then(function (empleados) {
+                empleados.map(function (empleado, i) {
+                    EvaluacionPolifuncional.findOrCreate({
+                        where: {
+                            id_empleado: empleado.id,
+                            anio: new Date().getFullYear(),
+                            mes: new Date().getMonth()+4,
+                            id_empresa: req.params.id_empresa,
+                            eliminado: false
+                            // fecha: req.body.fecha
+                        },
+                        defaults: {
+                            id_empleado: empleado.id,
+                            anio: new Date().getFullYear(),
+                            mes: new Date().getMonth()+4,
+                            fecha: new Date(),
+                            asistencia_capacitacion: Math.floor((Math.random() * 10) + 1),
+                            documentos_actualizados: Math.floor((Math.random() * 10) + 1),
+                            trabajo_equipo: Math.floor((Math.random() * 10) + 1),
+                            funciones_puntualidad: Math.floor((Math.random() * 10) + 1),
+                            higiene_personal: Math.floor((Math.random() * 10) + 1),
+                            asistencia_reunion: Math.floor((Math.random() * 10) + 1),
+                            ingreso_campo: Math.floor((Math.random() * 10) + 1),
+                            llenado_formularios: Math.floor((Math.random() * 10) + 1),
+                            nota_total: 80,
+                            id_desempenio: 8,
+                            encargado: false,
+                            eliminado: false,
+                            id_empresa: req.params.id_empresa
+                        }
+                    }).spread(function (evaluacion, nueva) {
+                        if (i=== empleados.length -1) {
+                            res.json({ mensaje: 'Evaluación Creada satisfactoriamente!' })
+                        }
+                    }).catch(function (err) {
+                        res.json({ mensaje: err.message !== undefined ? err.stack : err.message, hasErr: true })
+                    });
+                })
+            })
+        })
 
     /////////////////////////////////////////// configuraciones
 
@@ -4364,7 +4411,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                 where: {
                     es_empleado: true,
                     id_empresa: req.params.id_empresa
-                }, include: [{ model: Clase, as: 'campo' }, { model: RrhhEmpleadoFicha, as: 'empleadosFichas', include: [{ model: RrhhEmpleadoCargo, as: 'cargos', include: [{ model: Clase, as: 'cargo' }] }] },
+                }, include: [{ model: Clase, as: 'campo' }, { model: RrhhEmpleadoFicha, as: 'empleadosFichas', required: false, include: [{ model: RrhhEmpleadoCargo, as: 'cargos', required: false, include: [{ model: Clase, as: 'cargo' }] }] },
                 { model: Persona, as: 'persona' },
                 { model: EvaluacionPolifuncional, as: 'evaluaciones', where: condicion, order: [['fecha', 'asc']], required: true }
                 ],
@@ -4457,18 +4504,25 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                         }
                     }
                 }
-                reporteAnual.map(function (campo) {
-                    campo.asistencia_capacitacion = campo.asistencia_capacitacion / campo.count
-                    campo.documentos_actualizados = campo.documentos_actualizados / campo.count
-                    campo.trabajo_equipo = campo.trabajo_equipo / campo.count
-                    campo.funciones_puntualidad = campo.funciones_puntualidad / campo.count
-                    campo.higiene_personal = campo.higiene_personal / campo.count
-                    campo.asistencia_reunion = campo.asistencia_reunion / campo.count
-                    campo.ingreso_campo = campo.ingreso_campo / campo.count
-                    campo.llenado_formularios = campo.llenado_formularios / campo.count
-                    campo.total = campo.asistencia_capacitacion + campo.documentos_actualizados + campo.trabajo_equipo + campo.funciones_puntualidad + campo.higiene_personal + campo.asistencia_reunion + campo.ingreso_campo + campo.llenado_formularios
-                })
-                res.json({ reporte: reporteAnual })
+                if (reporteAnual.length > 0) {
+                    reporteAnual.map(function (campo, i) {
+                        campo.asistencia_capacitacion = campo.asistencia_capacitacion / campo.count
+                        campo.documentos_actualizados = campo.documentos_actualizados / campo.count
+                        campo.trabajo_equipo = campo.trabajo_equipo / campo.count
+                        campo.funciones_puntualidad = campo.funciones_puntualidad / campo.count
+                        campo.higiene_personal = campo.higiene_personal / campo.count
+                        campo.asistencia_reunion = campo.asistencia_reunion / campo.count
+                        campo.ingreso_campo = campo.ingreso_campo / campo.count
+                        campo.llenado_formularios = campo.llenado_formularios / campo.count
+                        campo.total = campo.asistencia_capacitacion + campo.documentos_actualizados + campo.trabajo_equipo + campo.funciones_puntualidad + campo.higiene_personal + campo.asistencia_reunion + campo.ingreso_campo + campo.llenado_formularios
+                        if (i== reporteAnual.length -1) {
+                            res.json({ reporte: reporteAnual })
+                        }
+                    })
+                }else{
+                    res.json({ reporte: [], mensaje: 'No existen datos.' })
+                }
+                
             }).catch(function (err) {
                 res.json({ reporte: [], mensaje: err.message === undefined ? err.stack : err.message, hasErr: true })
             });
@@ -4528,18 +4582,26 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                         }
                     }
                 }
-                reporteAnual.map(function (campo) {
-                    campo.asistencia_capacitacion = campo.asistencia_capacitacion / campo.count
-                    campo.documentos_actualizados = campo.documentos_actualizados / campo.count
-                    campo.trabajo_equipo = campo.trabajo_equipo / campo.count
-                    campo.funciones_puntualidad = campo.funciones_puntualidad / campo.count
-                    campo.higiene_personal = campo.higiene_personal / campo.count
-                    campo.asistencia_reunion = campo.asistencia_reunion / campo.count
-                    campo.ingreso_campo = campo.ingreso_campo / campo.count
-                    campo.llenado_formularios = campo.llenado_formularios / campo.count
-                    campo.total = campo.asistencia_capacitacion + campo.documentos_actualizados + campo.trabajo_equipo + campo.funciones_puntualidad + campo.higiene_personal + campo.asistencia_reunion + campo.ingreso_campo + campo.llenado_formularios
-                })
-                res.json({ reporte: reporteAnual })
+                if (reporteAnual.length > 0) {
+                    reporteAnual.map(function (campo, i) {
+                        campo.asistencia_capacitacion = campo.asistencia_capacitacion / campo.count
+                        campo.documentos_actualizados = campo.documentos_actualizados / campo.count
+                        campo.trabajo_equipo = campo.trabajo_equipo / campo.count
+                        campo.funciones_puntualidad = campo.funciones_puntualidad / campo.count
+                        campo.higiene_personal = campo.higiene_personal / campo.count
+                        campo.asistencia_reunion = campo.asistencia_reunion / campo.count
+                        campo.ingreso_campo = campo.ingreso_campo / campo.count
+                        campo.llenado_formularios = campo.llenado_formularios / campo.count
+                        campo.total = campo.asistencia_capacitacion + campo.documentos_actualizados + campo.trabajo_equipo + campo.funciones_puntualidad + campo.higiene_personal + campo.asistencia_reunion + campo.ingreso_campo + campo.llenado_formularios
+                        if (i == reporteAnual.length -1) {
+                            res.json({ reporte: reporteAnual })
+                        }
+                    })
+                }else{
+                    res.json({ reporte: [], mensaje: 'No existen datos.' })
+                }
+                
+                
             }).catch(function (err) {
                 res.json({ reporte: [], mensaje: err.message === undefined ? err.stack : err.message, hasErr: true })
             });

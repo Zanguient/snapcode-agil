@@ -1,5 +1,10 @@
-function ejecutarScriptDespacho(idModalAsignacionFactura) {
-	crearPopup(idModalAsignacionFactura, "20%", 200);
+function ejecutarScriptDespacho(idModalAsignacionFactura,idModalVentaKardexFactura,idModalAsignacionFacturaKardex,idModalDetalleKardex) {
+	
+	crearPopup(idModalVentaKardexFactura, "60%", 'auto');
+	crearPopup(idModalAsignacionFactura, "auto", 'auto');
+	crearPopup(idModalDetalleKardex, "auto", 'auto')
+	crearPopup(idModalAsignacionFacturaKardex, "auto", 'auto')
+	
 }
 
 function ejecutarScriptEstibaje(idModalWizardEstibajeEdicion, idContenedorEdicionEstibaje) {
@@ -141,9 +146,9 @@ function ejecutarScriptsInicio(idPopupTablaProductos, idPopupTablaCreditos, idPo
 		crearPopup(idModalTablaDespachos, "90%", "auto");
 		crearPopup(idModalTablaAsignacionDespacho, "auto", "auto");
 		aplicarDatePickers();
-		
+
 	}, 2000)
-	
+
 	crearPopup(IdModalEliminarProductoVencido, "60%", 550)
 	$("#" + idModalInicioSesion).siblings('.ui-dialog-titlebar').remove();
 	aplicarDatePickers();
@@ -151,8 +156,8 @@ function ejecutarScriptsInicio(idPopupTablaProductos, idPopupTablaCreditos, idPo
 	$(document).on('click', '#field-viewer', function (e) {
 		e.stopPropagation();
 	});
-	
-	
+
+
 
 }
 function quitarScrollInputNumber() {
@@ -189,7 +194,7 @@ function ejecutarScriptsPacientes(idModalDialogVacunas, idModalDialogConsulta, i
 	idModalDialogPatologias, idModalDialogComentario, idModalAlertPrerequisitos, idModalDiasActivacionPrerequisitos,
 	idModalReprogramarPrerequisitos, idModalAlertVacunas, idModalDiasActivacionVacunas, idModalReprogramarVacunas, idImagenUsuario, idModalHistorialConsulta,
 	idModalWizardPacienteVista, idModalContenedorPacienteVista, idModalEliminarPaciente, IdModalDialogNuevoLaboratorio, IdModalDialogDiagnosticoExamenHistoricoResultado,
-	idModalDialogVerResultadosHistorialLab, idModalDialogConfirmacionEntregaAdelantado,idModalConceptoEdicion) {
+	idModalDialogVerResultadosHistorialLab, idModalDialogConfirmacionEntregaAdelantado, idModalConceptoEdicion) {
 	crearPopup(idModalDialogVacunas, "60%", 'auto');
 	crearPopup(idModalDialogVacunasConfig, "60%", 'auto');
 	crearPopup(idModalDialogVacunaEdicion, "70%", 'auto');
@@ -279,7 +284,7 @@ function ejecutarScriptsRecursosHumanos(idModalPrerequisitos, idModalEmpleado, i
 	idImagenUsuario, idEliminarUsuarioRh, idModalWizardRhVista, idModalContenedorRhVista, idModalDialogPrerequisitoNuevo, idEliminarSeguroEmpleado,
 	idEliminarFamiliarEmpleado, idModalHistorialPrerequisito, idModalEditarPrerequisito, idModalDialogConfirmacionEntregaAdelantado, IdEntregaPrerequisito, IdModalVerificarCuenta, idModalImpresionHojaVida, idModalNuevoAnticipoRegularTodos,
 	idModalTr3BancoMsc, idModalTr3BancoUnion, idModalHistorialTr3, IdModalVerificarCuentaRrhh, idModalConfirmarDesabilitacion, idModalReingresoEmpleado,
-	idModalHistorialBeneficios, idModalConfiguracionRopaDeTrabajo, idModalReporteRopaDeTrabajo,idmodalWizardContainerConfiguracionRopaTrabajo,idModalRopaTrabajo,idModalNuevaRopaTrabajo,idModalItemsNuevaRopaTrabajo,idModalEliminarRopaTrabajo,idModalConceptoEdicion) {
+	idModalHistorialBeneficios, idModalConfiguracionRopaDeTrabajo, idModalReporteRopaDeTrabajo, idmodalWizardContainerConfiguracionRopaTrabajo, idModalRopaTrabajo, idModalNuevaRopaTrabajo, idModalItemsNuevaRopaTrabajo, idModalEliminarRopaTrabajo, idModalConceptoEdicion) {
 	crearPopup(idModalPrerequisitos, "90%", 'auto');
 	crearPopup(idModalEmpleado, "100%", 'auto');
 	aplicarWizardFormulario(idModalEmpleado, idModalwizardContainerEmpleado);
@@ -361,7 +366,7 @@ function ejecutarScriptsRecursosHumanos(idModalPrerequisitos, idModalEmpleado, i
 	crearPopup(idModalEditarPrerequisito, "40%", 'auto');
 	crearPopup(idModalDialogConfirmacionEntregaAdelantado, "35%", 'auto');
 	crearPopup(IdEntregaPrerequisito, "40%", 'auto');
-	
+
 	crearPopup(idModalImpresionHojaVida, "auto", 'auto');
 	crearPopup(idModalNuevoAnticipoRegularTodos, "62%", "auto")
 	crearPopup(idModalTr3BancoMsc, "auto", 'auto');
@@ -385,11 +390,11 @@ function ejecutarScriptsRecursosHumanos(idModalPrerequisitos, idModalEmpleado, i
 		aplicarTiempos();
 		AplicarImputFile(idImput);
 		aplicarVisorImagenArchivo(idImagenUsuario);
-		
+
 	}, 2000)
 	setTimeout(function () {
-	crearPopup(idModalConceptoEdicion, "62%", "auto");
-}, 5000)
+		crearPopup(idModalConceptoEdicion, "62%", "auto");
+	}, 5000)
 }
 
 function ejecutarScriptsPlanillaSueldos(idModalNuevaPlanillaSueldos, idModalEditarPlanillaSueldo, idModalParametros, idModalTR3,
@@ -1404,71 +1409,71 @@ function convertirSegundosATiempo(time) {
 }
 function ValidarForm(form, steps, button) {
 	/* if (!form.$valid) { */
-		steps.forEach(function (dato, index, array) {
+	steps.forEach(function (dato, index, array) {
 
 
-			var step = $('#' + dato.cabeza).attr('class');
-			/* console.log(step) */
-			var fail = false
-			if (step == "active") {
-				$('#' + dato.cuerpo).find('select').each(function () {
-					if ($(this).prop('required')) {
-						if (this.value.length > 0) {
-							$(this).removeClass("validacionRRhh");
-							if (this.value == "?") {
-								$(this).addClass("validacionRRhh");
-								fail = true
-							}
-						} else {
+		var step = $('#' + dato.cabeza).attr('class');
+		/* console.log(step) */
+		var fail = false
+		if (step == "active") {
+			$('#' + dato.cuerpo).find('select').each(function () {
+				if ($(this).prop('required')) {
+					if (this.value.length > 0) {
+						$(this).removeClass("validacionRRhh");
+						if (this.value == "?") {
 							$(this).addClass("validacionRRhh");
 							fail = true
 						}
-
+					} else {
+						$(this).addClass("validacionRRhh");
+						fail = true
 					}
-				});
-				$('#' + dato.cuerpo).find('input').each(function () {
-					if ($(this).prop('required')) {
-
-						if (this.value.length > 0) {
-
-							$(this).removeClass("validacionRRhh");
-
-						} else {
-							$(this).addClass("validacionRRhh");
-							fail = true
-						}
-					}
-				});
-				$('#' + dato.cuerpo).find('#cargos').each(function () {
-					
-
-						if (this.innerText !="No se ha seleccionado nada") {
-
-							$(this).removeClass("validacionRRhh");
-
-						} else {
-							$(this).addClass("validacionRRhh");
-							fail = true
-						}
-					
-				});
-				/*  stepDatosLaborales
-				 stepdatosAfiliacion
-				 stepDatosFamiliares */
-
-
-				if (fail) {
-					setTimeout(function () {
-						$('#' + button).click()
-					}, 300);
 
 				}
+			});
+			$('#' + dato.cuerpo).find('input').each(function () {
+				if ($(this).prop('required')) {
+
+					if (this.value.length > 0) {
+
+						$(this).removeClass("validacionRRhh");
+
+					} else {
+						$(this).addClass("validacionRRhh");
+						fail = true
+					}
+				}
+			});
+			$('#' + dato.cuerpo).find('#cargos').each(function () {
+
+
+				if (this.innerText != "No se ha seleccionado nada") {
+
+					$(this).removeClass("validacionRRhh");
+
+				} else {
+					$(this).addClass("validacionRRhh");
+					fail = true
+				}
+
+			});
+			/*  stepDatosLaborales
+			 stepdatosAfiliacion
+			 stepDatosFamiliares */
+
+
+			if (fail) {
+				setTimeout(function () {
+					$('#' + button).click()
+				}, 300);
 
 			}
 
-		});
-		// cancel change
-	
+		}
+
+	});
+	// cancel change
+
 
 
 }
@@ -1486,7 +1491,7 @@ function duration(since, until) {
 	//Years
 	years = (until.getFullYear() - since.getFullYear());
 	if (until.getMonth() == since.getMonth()) {
-		if (since.getDate() >(until.getDate() - 1)) {
+		if (since.getDate() > (until.getDate() - 1)) {
 			years += 1;
 		}
 		if (since.getDate() == until.getDate()) {

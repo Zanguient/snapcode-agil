@@ -16,7 +16,7 @@ angular.module('agil.controladores')
         $scope.$on('$viewContentLoaded', function () {
             resaltarPestaña($location.path().substring(1));
             ejecutarScriptsPolifuncionalidad($scope.idModalWizardPolifuncionalEdicion, $scope.idModalContenedorPolifuncionalEdicion, $scope.modalBusquedaPersonal,
-                $scope.idModalWizardConceptoEdicion2, $scope.idModalContenedorConceptoEdicion2, $scope.idModalReportes, $scope.reporteGraficoPolifuncional,$scope.modalBusquedaCentroCosto);
+                $scope.idModalWizardConceptoEdicion2, $scope.idModalContenedorConceptoEdicion2, $scope.idModalReportes, $scope.reporteGraficoPolifuncional, $scope.modalBusquedaCentroCosto);
             $scope.buscarAplicacion($scope.usuarioSesion.aplicacionesUsuario, $location.path().substring(1));
             $scope.obtenerColumnasAplicacion()
             blockUI.stop();
@@ -408,7 +408,7 @@ angular.module('agil.controladores')
                     var datosCampo = []
                     row.map(function (dat, j) {
                         if (j > 5 && j <= row.length - 2) {
-                            var col = {y: dat !== '-' ? dat : 0, label: row.length - 2 != j ? mesesReporte[j - 6] : 'TOTAL' }
+                            var col = { y: dat !== '-' ? dat : 0, label: row.length - 2 != j ? mesesReporte[j - 6] : 'TOTAL' }
                             datosCampo.push(col)
                             x += 10
                         }
@@ -497,7 +497,7 @@ angular.module('agil.controladores')
                     columns.push(res.reporte[i].persona.nombre_completo);
                     columns.push(res.reporte[i].persona.ci);
                     columns.push($scope.determinarEstado(res.reporte[i].eliminado));
-                    columns.push(res.reporte[i].empleadosFichas[res.reporte[i].empleadosFichas.length-1].cargos.length > 0 ? res.reporte[i].empleadosFichas[res.reporte[i].empleadosFichas.length-1].cargos[0].cargo.nombre : 'Sin cargo');
+                    columns.push(res.reporte[i].empleadosFichas[res.reporte[i].empleadosFichas.length - 1].cargos.length > 0 ? res.reporte[i].empleadosFichas[res.reporte[i].empleadosFichas.length - 1].cargos[0].cargo.nombre : 'Sin cargo');
                     var currentIndx = 0
                     var promedio = 0
                     mesesReporte.map(function (mes) {
@@ -581,12 +581,12 @@ angular.module('agil.controladores')
                 var limiteChar = 50
                 var doc = new PDFDocument({ size: [612, 792], margin: 10, compress: false });
                 var stream = doc.pipe(blobStream());
-                doc.image(imagen, 40, 30, { fit: [100, 100] });
+                doc.image(imagen, 40, 30, { fit: [85, 85] });
                 for (var i = 0; i <= (reporte.length - 1); i++) {
-                    if (reporte[i].length < 15) {
+                    if (reporte[i].length <= 14) {
                         if (i == 0) {
                             doc.font('Helvetica-Bold', 12);
-                            doc.text("MATRIZ POLIFUNCIONALIDAD Y DESEMPEÑO11", 50, 30, { align: "center" });
+                            //doc.text("MATRIZ POLIFUNCIONALIDAD Y DESEMPEÑO11", 50, 30, { align: "center" });
                             doc.text("DESDE " + mesDesde.nombre + "-" + anioDesde.id + " HASTA " + mesHasta.nombre + "-" + anioHasta.id, 50, 45, { align: "center" });
                             doc.text(" TODOS LOS CAMPOS " + " TODOS LOS EMPLEADOS", 50, 60, { align: "center" });
                         }
@@ -601,13 +601,18 @@ angular.module('agil.controladores')
                                 x = x - 30
                             }
                             if (j > 0 && j < 5) {
-                                if ((j == 2 || j == 1)  && i >= 1) {
+                                if ((j == 2 || j == 1 || j == 5) && i >= 1) {
                                     doc.font('Helvetica', 5);
                                 }
                                 doc.text(reporte[i][j], x, y, { width: limiteChar, align: "center" });
                             }
                             if (j > 4 && j < reporte[i].length - 3) {
-                                doc.text(reporte[i][j], x, y, { width: limiteChar, align: "center" });
+                                if (j == 5) {
+                                    doc.text(reporte[i][j].toLowerCase(), x, y, { width: limiteChar, align: "center" });
+                                } else {
+                                    doc.text(reporte[i][j], x, y, { width: limiteChar, align: "center" });
+                                }
+
                                 x = x - 10
                             }
                             if (j >= reporte[i].length - 3) {
@@ -616,7 +621,7 @@ angular.module('agil.controladores')
                             x += spaceX
                         }
                     }
-                    if (reporte[i].length > 14 && reporte[i].length <= 22) {
+                    if (reporte[i].length >= 15 && reporte[i].length <= 23) {
                         if (i == 0) {
                             doc.font('Helvetica-Bold', 12);
                             doc.text("MATRIZ POLIFUNCIONALIDAD Y DESEMPEÑO", 50, 30, { align: "center" });
@@ -637,21 +642,17 @@ angular.module('agil.controladores')
                                 if ((j == 2 || j == 1) && i >= 1) {
                                     doc.font('Helvetica', 5);
                                 }
-                                doc.text(reporte[i][j], x, y, { width: limiteChar -5, align: "center" });
+                                doc.text(reporte[i][j], x, y, { width: limiteChar - 5, align: "center" });
                                 x = x - 5
                             }
                             if (j > 4 && j < reporte[i].length - 3) {
-                                doc.text(reporte[i][j], x, y, { width: limiteChar -5, align: "center" });
+                                doc.text(reporte[i][j], x, y, { width: limiteChar - 5, align: "center" });
                                 x = x - 15
                             }
                             if (j >= reporte[i].length - 3) {
-                                doc.text(reporte[i][j], x, y, { width: limiteChar -5, align: "center" });
+                                doc.text(reporte[i][j], x, y, { width: limiteChar - 5, align: "center" });
                             }
                             x += spaceX - 5
-                        }
-                    }else{
-                        if (condition) {
-                            
                         }
                     }
                     if (len > 12) {
@@ -669,8 +670,44 @@ angular.module('agil.controladores')
                     y += spaceY
                     if (y > 700) {
                         doc.addPage({ size: 'letter', margin: 10 });
+                        
+                        doc.font('Helvetica-Bold', 12);
+                        //doc.text("MATRIZ POLIFUNCIONALIDAD Y DESEMPEÑO11", 50, 30, { align: "center" });
+                        doc.text("DESDE " + mesDesde.nombre + "-" + anioDesde.id + " HASTA " + mesHasta.nombre + "-" + anioHasta.id, 50, 45, { align: "center" });
+                        doc.text(" TODOS LOS CAMPOS " + " TODOS LOS EMPLEADOS", 50, 60, { align: "center" });
+
+                        for (let k = 0; k < reporte[0].length; k++) {
+                            doc.font('Helvetica-Bold', 8);
+                            doc.text(reporte[0][k], x, y-625, { width: limiteChar });
+
+                            if (k == 0) {
+                                // doc.text(reporte[i][j], x, y, { width: limiteChar });
+                                x = x - 20
+                            }
+                            if (k == 2) {
+                                x = x + 10
+                            }
+                            if (k > 4 && k < reporte[i].length - 3) {
+                                x = x - 10
+                            }
+
+                            x += spaceX
+                        }
+                        if (len > 12) {
+                            x = 20
+                        }
+                        if (len == 12) {
+                            x = 30
+                        }
+                        if (len < 12 && len > 10) {
+                            x = 35
+                        }
+                        if (len <= 10) {
+                            x = 40
+                        }
                         y = 120
                     }
+                    
                 }
                 if (len > 12) {
                     setTimeout(function () {
@@ -678,7 +715,7 @@ angular.module('agil.controladores')
                             $scope.mostrarMensaje('ADVERTENCIA: El rango de fechas excede el tamaño máximo de impresion.')
                         })
                     }, 1000)
-                    
+
                 }
                 doc.end();
                 stream.on('finish', function () {
@@ -777,7 +814,7 @@ angular.module('agil.controladores')
                 }
                 if (pdf) {
                     if (grafico) {
-
+                        blockUI.stop()
                         $scope.reportePromediosGeneralGrafico(data, year, campo.nombre)
                     } else {
                         blockUI.stop();
@@ -811,8 +848,8 @@ angular.module('agil.controladores')
                 }
 
             }).catch(function (err) {
-                var men = (err.data !== undefined && err.data !== null) ? err.data : err.message
-                $scope.mostrarMensaje('Se produjo un error! > ' + men)
+                var men = (err.data !== undefined && err.data !== null) ? err.data : (err.message !== null && err.message !== undefined) ? err.message : (err.stack !== undefined && err.stack !== null) ? err.stack: 'Se perdió la conexión al servidor.'
+                $scope.mostrarMensaje('Se produjo un error! ' + men)
                 blockUI.stop();
             })
         }
@@ -830,7 +867,7 @@ angular.module('agil.controladores')
                 var limiteChar = 70
                 var doc = new PDFDocument({ size: [792, 612], margin: 10, compress: false });
                 var stream = doc.pipe(blobStream());
-                doc.image(imagen, 40, 40, { width: 60, height: 60 });
+                doc.image(imagen, 40, 40, { fit: [85, 85] });
                 for (var i = 0; i <= (reporte.length - 1); i++) {
                     if (i == 0) {
                         doc.font('Helvetica-Bold', 12);
@@ -935,6 +972,7 @@ angular.module('agil.controladores')
         $scope.reportePromediosCampoExcel = function (year, pdf, grafico) {
             blockUI.start()
             if (year === null || year === undefined) {
+                blockUI.stop();
                 $scope.mostrarMensaje('Ingrese el Año del cual desea el reporte.')
                 return
             }
@@ -953,7 +991,7 @@ angular.module('agil.controladores')
                 var columns = [];
                 for (var i = 0; i < reportes.reporte.length; i++) {
                     columns = [];
-                    columns.push(reportes.reporte[i].campo);
+                    columns.push((reportes.reporte[i].campo !== null && reportes.reporte[i].campo != undefined) ? reportes.reporte[i].campo.nombre : "");
                     columns.push(reportes.reporte[i].asistencia_capacitacion);
                     columns.push(reportes.reporte[i].documentos_actualizados);
                     columns.push(reportes.reporte[i].trabajo_equipo);
@@ -999,7 +1037,7 @@ angular.module('agil.controladores')
                     ws['!rows'] = [{ hpx: 28, level: 3 }]
                     wb.SheetNames.push(ws_name);
                     wb.Sheets[ws_name] = ws;
-                    var wbout = XLSX.write(wb, { bookType: 'xlsx', bookSST: true, type: 'binary', cellStyles: true });
+                    var wbout = XLSX.write(wb, { bookType: 'xlsx', bookSST: false, type: 'binary' });
                     saveAs(new Blob([s2ab(wbout)], { type: "application/octet-stream" }), "REPORTE ANUAL POLIFUNCIONAL POR CAMPOS " + year.id + ".xlsx");
                     blockUI.stop();
                 }
@@ -1011,28 +1049,33 @@ angular.module('agil.controladores')
             var y = 180
             var spaceY = 15
             var spaceX = 70
+            var itemsPorPagina = 25
+            var items = 0
             var taa = 20
             convertUrlToBase64Image($scope.usuario.empresa.imagen, function (imagenEmpresa) {
                 var imagen = imagenEmpresa;
                 var len = reporte[0].length - 8
                 var margen = 10
-
+                var pagina = 1
                 var limiteChar = 70
                 var doc = new PDFDocument({ size: [792, 612], margin: 10, compress: false });
                 var stream = doc.pipe(blobStream());
-                doc.image(imagen, 40, 40, { width: 60, height: 60 });
+                doc.image(imagen, 40, 40, { fit: [85, 85] });
                 for (var i = 0; i <= (reporte.length - 1); i++) {
 
                     if (i == 0) {
                         doc.font('Helvetica-Bold', 12);
                         doc.text("MATRIZ POLIFUNCIONALIDAD Y DESEMPEÑO", 50, 40, { align: "center" });
                         doc.text("GESTIÓN " + year.id, 50, 55, { align: "center" });
+                        doc.font('Helvetica', 12);
+                        doc.text(pagina, 730, 585, { width: limiteChar, align: "center" });
                         // doc.text(" " + campo.toUpperCase() + " ", 50, 70, { align: "center" });
                     }
 
                     for (let j = 0; j < reporte[i].length; j++) {
                         if (j > 0) {
                             if (i == 0) {
+
                                 doc.font('Helvetica-Bold', 7);
                                 if (j >= reporte[i].length - 2) {
                                     doc.text(reporte[i][j], x - taa, y - 40, { width: limiteChar, align: "center" });
@@ -1063,12 +1106,36 @@ angular.module('agil.controladores')
                             doc.text(reporte[i][j], x, y, { width: limiteChar, align: "center" });
                         }
                         x += spaceX
+
                     }
                     x = 25
+                    items += 1
                     y += spaceY
-                    if (y > 700) {
-                        doc.addPage({ size: 'letter', margin: 10 });
+                    if (y > 580) {
+
+                        doc.addPage({ size: [792, 612], margin: 10 });
+
+                        pagina += 1
+                        doc.font('Helvetica', 12);
+                        doc.text(pagina, 730, y, { width: limiteChar, align: "center" });
+                        doc.font('Helvetica-Bold', 12);
+                        doc.text("MATRIZ POLIFUNCIONALIDAD Y DESEMPEÑO", 50, 40, { align: "center" });
+                        doc.text("GESTIÓN " + year.id, 50, 55, { align: "center" });
+                        taa = 20
                         y = 120
+                        doc.font('Helvetica-Bold', 7);
+                        for (let k = 0; k < reporte[0].length; k++) {
+                            if (k >= reporte[0].length - 2) {
+                                doc.text(reporte[0][k], x - taa, y - 40, { width: limiteChar, align: "center" });
+                                taa = taa + 20
+                            } else {
+                                doc.text(reporte[0][k], x, y - 40, { width: limiteChar, align: "center" });
+                            }
+                            x += spaceX
+                        }
+                        // doc.font('Helvetica', 12);
+                        // doc.text(pagina, x , y , { width: limiteChar, align: "center" });
+                        x = 25
                     }
                 }
                 doc.end();
@@ -1090,7 +1157,7 @@ angular.module('agil.controladores')
                 if (res.mensaje !== undefined) {
                     $scope.mostrarMensaje(res.mensaje)
                 }
-//                 $scope.filtrarFiltroPolifuncionalidad($scope.filtro, true)
+                //                 $scope.filtrarFiltroPolifuncionalidad($scope.filtro, true)
                 blockUI.stop()
                 // $scope.resetFiltro()
                 /*  $scope.cerrarPopPupNuevoPolifuncional() */
@@ -1100,7 +1167,7 @@ angular.module('agil.controladores')
                         $scope.mostrarMensaje(err.data)
                     })
                 }, 500)
-                
+
                 blockUI.stop()
             })
             // blockUI.stop()
@@ -1115,7 +1182,7 @@ angular.module('agil.controladores')
                 $scope.obtenerEvaluaciones()
             } else {
                 for (var key in filtro) {
-                    if (filtro[key] === null || filtro[key] === undefined ) {
+                    if (filtro[key] === null || filtro[key] === undefined) {
                         filtro[key] = 0
                     } else if ((filtro[key] == 0 || filtro[key] == "0") && (key == "codigo" || key == "nombre" || key == "apellido")) {
                         filtro[key] = ""
@@ -1207,7 +1274,7 @@ angular.module('agil.controladores')
                 $scope.centrosDeCostosProcesado = $filter('filter')($scope.centrosDeCostos, query);
             } else {
                 $scope.centrosDeCostosProcesado = $scope.centrosDeCostos
-                
+
             }
         }
 
@@ -1225,7 +1292,7 @@ angular.module('agil.controladores')
 
         $scope.establecercentroCosto = function (centroCosto, modal) {
             if ($scope.reporte === undefined) {
-                $scope.reporte= {}
+                $scope.reporte = {}
             }
             // var campoXanio = { id: centroCosto.id, nombre_corto: centroCosto.nombre, nombre: } }
             $scope.reporte.campoXanio = centroCosto

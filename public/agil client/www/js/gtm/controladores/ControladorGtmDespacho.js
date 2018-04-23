@@ -1,18 +1,20 @@
 angular.module('agil.controladores')
 
     .controller('ControladorGtmDespacho', function ($scope, $localStorage, $location, $templateCache, $route, blockUI, Paginator, FieldViewer,
-        GtmDespachos, GtmDetalleDespacho, GetGtmDetalleDespachoHijos, ImprimirPdfDespachos, ExportarExelDespachos) {
+        GtmDespachos, GtmDetalleDespacho, GetGtmDetalleDespachoHijos, ImprimirPdfDespachos, ExportarExelDespachos, ListaDetalleKardexFactura,GtmDetalleDespachoKardex) {
 
         blockUI.start();
 
         $scope.usuario = JSON.parse($localStorage.usuario);
         $scope.idModalAsignacionFactura = 'modal-asignacion-factura';
-
+        $scope.idModalVentaKardexFactura = 'modal-venta-kardex-factura';
+        $scope.idModalAsignacionFacturaKardex = "modal-asignacion-factura-kardex"
+        $scope.idModalDetalleKardex = "modal-detalle-kardex"
         $scope.usuario = JSON.parse($localStorage.usuario);
 
         $scope.$on('$viewContentLoaded', function () {
             resaltarPestaña($location.path().substring(1));
-            ejecutarScriptDespacho($scope.idModalAsignacionFactura);
+            ejecutarScriptDespacho($scope.idModalAsignacionFactura, $scope.idModalVentaKardexFactura, $scope.idModalAsignacionFacturaKardex,$scope.idModalDetalleKardex);
             $scope.buscarAplicacion($scope.usuario.aplicacionesUsuario, $location.path().substring(1));
         });
 
@@ -50,7 +52,7 @@ angular.module('agil.controladores')
         }
         $scope.buscarDespachados = function () {
             if ($scope.paginator.filter.inicio) {
-                if ($scope.paginator.filter.inicio instanceof Date){}else{
+                if ($scope.paginator.filter.inicio instanceof Date) { } else {
                     $scope.paginator.filter.inicio = new Date($scope.convertirFecha($scope.paginator.filter.inicio))
                     $scope.paginator.filter.fin = new Date($scope.convertirFecha($scope.paginator.filter.fin))
                 }
@@ -470,14 +472,47 @@ angular.module('agil.controladores')
         $scope.cerrarAsignacionFactura = function () {
             $scope.cerrarPopup($scope.idModalAsignacionFactura);
         }
+        $scope.abrirModalVentaKardexFactura = function () {
+            var filtro={pendiente:true}
+            $scope.filtroVentaKardex={pendiente:true}
+            $scope.obtenerVentaKardexFactura(filtro)
+            $scope.abrirPopup($scope.idModalVentaKardexFactura);
+        }
 
+        $scope.cerrarVentaKardexFactura = function () {
+            $scope.cerrarPopup($scope.idModalVentaKardexFactura);
+        }
+        $scope.abrirModalAsignacionFacturaKardex = function (detalle) {
+            $scope.detalle_kardex = detalle
+            $scope.abrirPopup($scope.idModalAsignacionFacturaKardex);
+        }
+
+        $scope.cerrarAsignacionFacturaKardex = function () {
+            $scope.cerrarPopup($scope.idModalAsignacionFacturaKardex);
+        }
+        $scope.abrirModalDetalleKardex = function (kardex) {
+            $scope.kardex = kardex
+            $scope.abrirPopup( $scope.idModalDetalleKardex);
+        }
+
+        $scope.cerrarDetalleKardex = function () {
+            $scope.cerrarPopup( $scope.idModalDetalleKardex);
+        }
+       
         $scope.establecerFactura = function (detalle_despacho) {
             GtmDetalleDespacho.update({ id_detalle_despacho: detalle_despacho.id }, detalle_despacho, function (res) {
                 $scope.cerrarAsignacionFactura();
                 $scope.mostrarMensaje(res.mensaje);
             });
         }
-
+        $scope.establecerFacturaKardex = function (detalle_kardex) {
+            GtmDetalleDespachoKardex.update({ id_detalle_kardex: detalle_kardex.id }, detalle_kardex, function (res) {
+                var filtro={pendiente:true}
+                $scope.obtenerVentaKardexFactura(filtro)
+                $scope.cerrarAsignacionFacturKardex();
+                $scope.mostrarMensaje(res.mensaje);
+            });
+        }
         $scope.removerDetalleDespacho = function (detalle_despacho) {
             detalle_despacho = new GtmDetalleDespacho(detalle_despacho);
             detalle_despacho.$delete(function (res) {
@@ -485,11 +520,31 @@ angular.module('agil.controladores')
                 $scope.mostrarMensaje(res.mensaje);
             });
         }
-
+        $scope.obtenerVentaKardexFactura = function (filtro) {
+            if(filtro.inicio){
+                filtro.inicio=new Date($scope.convertirFecha(filtro.inicio))
+                filtro.fin=new Date($scope.convertirFecha(filtro.fin))
+            }else{
+                filtro.inicio=0
+                filtro.fin=0
+            }
+            var promesa = ListaDetalleKardexFactura($scope.usuario.id_empresa,filtro)
+            promesa.then(function (dato) {
+                if($scope.filtroVentaKardex.inicio instanceof Date){
+                    $scope.filtroVentaKardex.inicio=$scope.fechaATexto($scope.filtroVentaKardex.inicio)
+                    $scope.filtroVentaKardex.fin=$scope.fechaATexto($scope.filtroVentaKardex.fin)
+                }
+                $scope.detalleKardexFactura = dato
+            })
+        }
         $scope.$on('$routeChangeStart', function (next, current) {
             $scope.eliminarPopup($scope.idModalAsignacionFactura);
-        });
-        $scope.inicio();
+            $scope.eliminarPopup($scope.idModalVentaKardexFactura);
+            $scope.eliminarPopup($scope.idModalAsignacionFacturaKardex)
+            $scope.eliminarPopup($scope.idModalDetalleKardex)
+    });
+
+$scope.inicio();
     });
 
 

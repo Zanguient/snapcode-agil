@@ -172,7 +172,13 @@ angular.module('agil.servicios')
 				'update': { method: 'PUT' }
 			});
 	})
-
+	.factory('GtmDetalleDespachoKardex', function ($resource) {
+		return $resource(restServer + "gtm-detalle-kardex/:id_detalle_kardex", { id_detalle_kardex: '@id' },
+			{
+				'update': { method: 'PUT' }
+			});
+	})
+	
 	.factory('GtmDestinosEmpresa', ['GtmDestino', '$q', function (GtmDestino, $q) {
 		var res = function (id_empresa, destinos) {
 			var delay = $q.defer();
@@ -218,4 +224,23 @@ angular.module('agil.servicios')
 		};
 		return res;
 	}])
+	.factory('GtmDetalleKardexFactura', function ($resource) {
+		return $resource(restServer + "gtm-despacho-kardex-factura/empresa/:id_empresa/inicio/:inicio/fin/:fin/pendiente/:pendiente", null,
+			{
+				'update': { method: 'PUT' }
+			});
+	})
 
+	.factory('ListaDetalleKardexFactura', ['GtmDetalleKardexFactura', '$q', function (GtmDetalleKardexFactura, $q) {
+		var res = function (idEmpresa,filtro) {
+			var delay = $q.defer();
+			GtmDetalleKardexFactura.query({id_empresa:idEmpresa,inicio:filtro.inicio,fin:filtro.fin,pendiente:filtro.pendiente}, function (entidad) {
+				delay.resolve(entidad);
+			}, function (error) {
+				delay.reject(error);
+			});
+			return delay.promise;
+		};
+		return res;
+	}])
+	

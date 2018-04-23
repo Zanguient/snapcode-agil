@@ -9,15 +9,15 @@ module.exports = function (sequelize, Sequelize) {
             field: 'fecha'
         },
         cantidad: {
-            type: Sequelize.INTEGER,
+            type: Sequelize.DECIMAL(20,4),
             field: 'cantidad'
         },
         cantidad_despachada: {
-            type: Sequelize.INTEGER,
+            type: Sequelize.DECIMAL(20,4),
             field: 'cantidad_despachada'
         },
         saldo: {
-            type: Sequelize.INTEGER,
+            type: Sequelize.DECIMAL(20,4),
             field: 'saldo'
         },
         id_padre: {
@@ -31,7 +31,11 @@ module.exports = function (sequelize, Sequelize) {
         entregado:{
             type: Sequelize.BOOLEAN,
             field: 'entregado'
-        }
+        },
+        factura: {
+            type: Sequelize.INTEGER,
+            field: 'factura'
+        },
     }, {
             freezeTableName: true
         });
