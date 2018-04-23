@@ -114,31 +114,33 @@ angular.module('agil.controladores')
 	};
 	
 	$scope.agregarDetalleCompra=function(detalleCompra){
-		if(detalleCompra.producto.nombre.id){
-			detalleCompra.producto=detalleCompra.producto.nombre;
-		}
-		if(detalleCompra.centroCosto.nombre.id){
-			detalleCompra.centroCosto=detalleCompra.centroCosto.nombre;
-		}else{
-			if(detalleCompra.centroCosto.nombre==$scope.diccionario.CENTRO_COSTO_ALMACEN){
-				var centroCostoAlmacen=$.grep($scope.centrosCosto, function(e){return e.nombre == $scope.diccionario.CENTRO_COSTO_ALMACEN;})[0];
-				detalleCompra.centroCosto=centroCostoAlmacen;
+		if(detalleCompra.producto.id){
+			if(detalleCompra.producto.nombre.id){
+				detalleCompra.producto=detalleCompra.producto.nombre;
 			}
+			if(detalleCompra.centroCosto.nombre.id){
+				detalleCompra.centroCosto=detalleCompra.centroCosto.nombre;
+			}else{
+				if(detalleCompra.centroCosto.nombre==$scope.diccionario.CENTRO_COSTO_ALMACEN){
+					var centroCostoAlmacen=$.grep($scope.centrosCosto, function(e){return e.nombre == $scope.diccionario.CENTRO_COSTO_ALMACEN;})[0];
+					detalleCompra.centroCosto=centroCostoAlmacen;
+				}
+			}
+			if(detalleCompra.fechaVencimientoTexto){
+				detalleCompra.fecha_vencimiento=new Date($scope.convertirFecha(detalleCompra.fechaVencimientoTexto));
+			}
+			$scope.compra.detallesCompra.push(detalleCompra);
+			$scope.sumarTotal();
+			$scope.sumarTotalImporte();
+			if($scope.compra.descuento_general){
+				$scope.calcularImporteGeneral();
+			}
+			if($scope.compra.tipoPago.nombre==$scope.diccionario.TIPO_PAGO_CREDITO){
+				$scope.calcularSaldo();
+			}
+			$scope.detalleCompra={producto:{},centroCosto:{},cantidad:1,descuento:0,recargo:0,ice:0,excento:0,tipo_descuento:false,tipo_recargo:false}
+			$scope.enfocar('centro_costo');
 		}
-		if(detalleCompra.fechaVencimientoTexto){
-			detalleCompra.fecha_vencimiento=new Date($scope.convertirFecha(detalleCompra.fechaVencimientoTexto));
-		}
-		$scope.compra.detallesCompra.push(detalleCompra);
-		$scope.sumarTotal();
-		$scope.sumarTotalImporte();
-		if($scope.compra.descuento_general){
-			$scope.calcularImporteGeneral();
-		}
-		if($scope.compra.tipoPago.nombre==$scope.diccionario.TIPO_PAGO_CREDITO){
-			$scope.calcularSaldo();
-		}
-		$scope.detalleCompra={producto:{},centroCosto:{},cantidad:1,descuento:0,recargo:0,ice:0,excento:0,tipo_descuento:false,tipo_recargo:false}
-		$scope.enfocar('centro_costo');
 	}
 	
 	$scope.eliminarDetalleCompra=function(detalleCompra){

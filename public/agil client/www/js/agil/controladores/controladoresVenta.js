@@ -451,56 +451,58 @@ angular.module('agil.controladores')
 		}
 
 		$scope.agregarDetalleVenta = function (detalleVenta) {
-			if (detalleVenta.producto.activar_inventario) {
-				if (detalleVenta.costos.length > 1) {
-					var cantidadTotal = detalleVenta.cantidad, i = 0, detalleVentaOriginal = JSON.parse(JSON.stringify(detalleVenta));
-					while (i < detalleVenta.costos.length && cantidadTotal > 0) {
-						detalleVenta.inventarioProducto = detalleVenta.costos[i];
-						var cantidadDisponible = $scope.obtenerInventarioTotalPorFechaVencimiento(detalleVenta);
-						if (cantidadDisponible > 0) {
-							var nuevoDetalleVenta = JSON.parse(JSON.stringify(detalleVentaOriginal));
-							var cantidadParcial;
-							/* if (i > 0) {
-								nuevoDetalleVenta.descuento = 0;
-								nuevoDetalleVenta.recargo = 0;
-								nuevoDetalleVenta.ice = 0;
-								nuevoDetalleVenta.excento = 0;
-							} */
-							$scope.detalleVenta = nuevoDetalleVenta;
-							if (cantidadTotal > cantidadDisponible) {
-								cantidadParcial = cantidadDisponible;
-								cantidadTotal = cantidadTotal - cantidadDisponible
-							} else {
-								cantidadParcial = cantidadTotal;
-								cantidadTotal = 0;
+			if(detalleVenta.producto.id){
+				if (detalleVenta.producto.activar_inventario) {
+					if (detalleVenta.costos.length > 1) {
+						var cantidadTotal = detalleVenta.cantidad, i = 0, detalleVentaOriginal = JSON.parse(JSON.stringify(detalleVenta));
+						while (i < detalleVenta.costos.length && cantidadTotal > 0) {
+							detalleVenta.inventarioProducto = detalleVenta.costos[i];
+							var cantidadDisponible = $scope.obtenerInventarioTotalPorFechaVencimiento(detalleVenta);
+							if (cantidadDisponible > 0) {
+								var nuevoDetalleVenta = JSON.parse(JSON.stringify(detalleVentaOriginal));
+								var cantidadParcial;
+								/* if (i > 0) {
+									nuevoDetalleVenta.descuento = 0;
+									nuevoDetalleVenta.recargo = 0;
+									nuevoDetalleVenta.ice = 0;
+									nuevoDetalleVenta.excento = 0;
+								} */
+								$scope.detalleVenta = nuevoDetalleVenta;
+								if (cantidadTotal > cantidadDisponible) {
+									cantidadParcial = cantidadDisponible;
+									cantidadTotal = cantidadTotal - cantidadDisponible
+								} else {
+									cantidadParcial = cantidadTotal;
+									cantidadTotal = 0;
+								}
+								nuevoDetalleVenta.cantidad = cantidadParcial;
+								nuevoDetalleVenta.fecha_vencimiento = detalleVenta.costos[i].fecha_vencimiento;
+								nuevoDetalleVenta.lote = detalleVenta.costos[i].lote;
+								nuevoDetalleVenta.costos = [];
+								nuevoDetalleVenta.costos.push(detalleVenta.costos[i]);
+								nuevoDetalleVenta.inventario = detalleVenta.costos[i];
+								$scope.calcularImporte();
+								$scope.venta.detallesVenta.push(nuevoDetalleVenta);
 							}
-							nuevoDetalleVenta.cantidad = cantidadParcial;
-							nuevoDetalleVenta.fecha_vencimiento = detalleVenta.costos[i].fecha_vencimiento;
-							nuevoDetalleVenta.lote = detalleVenta.costos[i].lote;
-							nuevoDetalleVenta.costos = [];
-							nuevoDetalleVenta.costos.push(detalleVenta.costos[i]);
-							nuevoDetalleVenta.inventario = detalleVenta.costos[i];
-							$scope.calcularImporte();
-							$scope.venta.detallesVenta.push(nuevoDetalleVenta);
+							i++;
 						}
-						i++;
+					} else {
+						detalleVenta.fecha_vencimiento = detalleVenta.costos[0].fecha_vencimiento;
+						detalleVenta.lote = detalleVenta.costos[0].lote;
+						detalleVenta.inventario = detalleVenta.costos[0];
+						$scope.venta.detallesVenta.push(detalleVenta);
 					}
 				} else {
-					detalleVenta.fecha_vencimiento = detalleVenta.costos[0].fecha_vencimiento;
-					detalleVenta.lote = detalleVenta.costos[0].lote;
-					detalleVenta.inventario = detalleVenta.costos[0];
 					$scope.venta.detallesVenta.push(detalleVenta);
 				}
-			} else {
-				$scope.venta.detallesVenta.push(detalleVenta);
+				$scope.inventariosDisponibleProducto = [];
+				$scope.sumarTotal();
+				$scope.sumarTotalImporte();
+				$scope.calcularSaldo();
+				$scope.calcularCambio();
+				$scope.detalleVenta = { producto: { activar_inventario: true }, cantidad: 1, descuento: 0, recargo: 0, ice: 0, excento: 0, tipo_descuento: false, tipo_recargo: false }
+				$scope.enfocar('id_producto');
 			}
-			$scope.inventariosDisponibleProducto = [];
-			$scope.sumarTotal();
-			$scope.sumarTotalImporte();
-			$scope.calcularSaldo();
-			$scope.calcularCambio();
-			$scope.detalleVenta = { producto: { activar_inventario: true }, cantidad: 1, descuento: 0, recargo: 0, ice: 0, excento: 0, tipo_descuento: false, tipo_recargo: false }
-			$scope.enfocar('id_producto');
 		}
 
 		$scope.enfocar = function (elemento) {
