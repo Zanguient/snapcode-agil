@@ -343,7 +343,7 @@ function ejecutarScriptsRecursosHumanos(idModalPrerequisitos, idModalEmpleado, i
 	crearPopup(idModalReporteVacaciones, "70%", "auto");
 	crearPopup(idModalReporteBajasMedicas, "70%", "auto");
 	crearPopup(idModalReporteRolTurnos, "70%", "auto");
-	crearPopup(idModalReporteTurnosDetallado, "80%", "auto");
+	crearPopup(idModalReporteTurnosDetallado, "100%",  screen.height);
 	crearPopup(idModalViajes, "100%", "auto");
 	crearPopup(idModalVisita, "50%", "auto");
 	crearPopup(idModalVehiculosViaje, "62%", "auto");
@@ -574,7 +574,7 @@ function ejecutarScriptsConcepto(idPopupEdicion, idContenedorEdicion) {
 	aplicarWizardFormulario(idPopupEdicion, idContenedorEdicion);
 }
 
-function ejecutarScriptsProducto(idPopupEdicion, idPopupVista, idPopupKadex, idPopupEliminacion, idContenedorEdicion, idContenedorVista, idContenedorKardex, idImagen) {
+function ejecutarScriptsProducto(idPopupEdicion, idPopupVista, idPopupKadex, idPopupEliminacion, idContenedorEdicion, idContenedorVista, idContenedorKardex, idImagen,idModalReporteProductosKardex) {
 	crearPopup(idPopupEdicion, "60%", 610);
 	crearPopup(idPopupVista, "60%", 610);
 	crearPopup(idPopupKadex, "90%", 610);
@@ -583,6 +583,7 @@ function ejecutarScriptsProducto(idPopupEdicion, idPopupVista, idPopupKadex, idP
 	aplicarWizardFormulario(idPopupKadex, idContenedorKardex);
 	aplicarVisorImagenArchivo(idImagen);
 	crearPopup(idPopupEliminacion, "30%", 170);
+	crearPopup(idModalReporteProductosKardex,"auto","auto")
 	setTimeout(function () {
 		aplicarDatePickers();
 	}, 200);

@@ -59,6 +59,10 @@ module.exports = function (sequelize, Sequelize) {
         fecha: {
            type: Sequelize.DATE,
            field: 'fecha'
+       },       
+        fecha_factura: {
+           type: Sequelize.DATE,
+           field: 'fecha_factura'
        },
        servicio_transporte: {
           type: Sequelize.DECIMAL(20,4),

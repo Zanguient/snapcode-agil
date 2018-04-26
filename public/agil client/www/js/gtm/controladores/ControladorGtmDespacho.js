@@ -467,6 +467,9 @@ angular.module('agil.controladores')
         $scope.abrirModalAsignacionFactura = function (detalle_despacho) {
             $scope.abrirPopup($scope.idModalAsignacionFactura);
             $scope.detalle_despacho = detalle_despacho;
+            if($scope.detalle_despacho.fecha_factura){
+                $scope.detalle_despacho.fecha_factura=$scope.fechaATexto($scope.detalle_despacho.fecha_factura)
+            }
         }
 
         $scope.cerrarAsignacionFactura = function () {
@@ -484,6 +487,7 @@ angular.module('agil.controladores')
         }
         $scope.abrirModalAsignacionFacturaKardex = function (detalle) {
             $scope.detalle_kardex = detalle
+            
             $scope.abrirPopup($scope.idModalAsignacionFacturaKardex);
         }
 
@@ -500,6 +504,8 @@ angular.module('agil.controladores')
         }
        
         $scope.establecerFactura = function (detalle_despacho) {
+
+            detalle_despacho.fecha_factura=(detalle_despacho.fecha_factura)? new Date($scope.convertirFecha(detalle_despacho.fecha_factura)):null
             GtmDetalleDespacho.update({ id_detalle_despacho: detalle_despacho.id }, detalle_despacho, function (res) {
                 $scope.cerrarAsignacionFactura();
                 $scope.mostrarMensaje(res.mensaje);

@@ -236,32 +236,37 @@
 </div>
 
 <div id="modal-asignacion-factura">
-	<div class="modal-header bg-primary">
-		<h4 class='smaller text-white text-uppercase'>
-			<label>Asignacion Factura</label>
-		</h4>
-	</div>
 	<form name="asig" ng-submit="establecerFactura(detalle_despacho)">
-		<div class="row">
-			<div class="col-sm-12">
-				<div class="form-group">
-					<label for="ciudad">N° Factura</label>
-					<input type="number" required ng-model="detalle_despacho.factura">
-				</div>
-			</div>
+		<div class="modal-header bg-primary">
+			<h4 class='smaller text-white text-uppercase'>
+				<label>Asignacion Factura</label>
+			</h4>
 		</div>
-		<div class="row">
-			<div class="col-sm-12">
-				<div class="modal-footer wizard-actions">
-					<button ng-disabled="asig.$invalid" type="submit" class="btn btn-primary btn-sm">
-						<i class="glyphicon glyphicon-floppy-disk"></i>Asignar
-					</button>
-					<button type="button" class="btn btn-danger btn-sm" ng-click="cerrarAsignacionFactura()">
-						<i class="ace-icon fa fa-times"></i>Cancelar
-					</button>
-				</div>
+
+		<div class="modal-body">
+
+			<div class="form-group">
+				<label for="ciudad">N° Factura</label>
+				<input type="number" required ng-model="detalle_despacho.factura" class="form-control">
 			</div>
+
+
+			<div class="form-group">
+				<label for="ciudad">Fecha</label>
+				<input type="text" data-date-format="dd/mm/yyyy" ng-update-hidden class="date-picker form-control" ng-model="detalle_despacho.fecha_factura">
+			</div>
+
 		</div>
+
+		<div class="modal-footer wizard-actions">
+			<button  type="submit" class="btn btn-primary btn-sm">
+				<i class="glyphicon glyphicon-floppy-disk"></i>Asignar
+			</button>
+			<button type="button" class="btn btn-danger btn-sm" ng-click="cerrarAsignacionFactura()">
+				<i class="ace-icon fa fa-times"></i>Cancelar
+			</button>
+		</div>
+
 	</form>
 </div>
 <div id="modal-asignacion-factura-kardex">
@@ -282,7 +287,7 @@
 		<div class="row">
 			<div class="col-sm-12">
 				<div class="modal-footer wizard-actions">
-					<button ng-disabled="asig.$invalid" type="submit" class="btn btn-primary btn-sm">
+					<button  type="submit" class="btn btn-primary btn-sm">
 						<i class="glyphicon glyphicon-floppy-disk"></i>Asignar
 					</button>
 					<button type="button" class="btn btn-danger btn-sm" ng-click="cerrarAsignacionFacturaKardex()">
@@ -365,8 +370,8 @@
 
 					<label>
 						<b>Pendientes</b>
-						<input ng-value="true" name="switch-field-1" autofocus class="ace ace-switch ace-switch-4 ng-pristine ng-untouched ng-valid ng-empty" type="checkbox"
-						 ng-model="filtroVentaKardex.pendiente">
+						<input ng-value="true" name="switch-field-1" autofocus class="ace ace-switch ace-switch-4 ng-pristine ng-untouched ng-valid ng-empty"
+						 type="checkbox" ng-model="filtroVentaKardex.pendiente">
 						<span class="lbl check-descuento"></span>
 					</label>
 

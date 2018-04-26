@@ -168,6 +168,26 @@ angular.module('agil.servicios')
         return res;
     }])
 
+    .factory('listaProformasFacturadas', function ($resource) {
+        return $resource(restServer + "factura/:id_factura/proforma/facturada/:id_empresa", {},
+            {
+                'update': { method: 'PUT' }
+            });
+    })
+
+    .factory('ProformasFacturadas', ['listaProformasFacturadas', '$q', function (listaProformasFacturadas, $q) {
+        var res = function (idEmpresa, id_factura) {
+            var delay = $q.defer();
+            listaProformasFacturadas.get({ id_empresa: idEmpresa, id_factura }, function (entidades) {
+                delay.resolve(entidades);
+            }, function (error) {
+                delay.reject(error);
+            });
+            return delay.promise;
+        };
+        return res;
+    }])
+
     .factory('configuracionFacturaEmpresa', function ($resource) {
         return $resource(restServer + "configuracion/proforma/facturar/:id_empresa", {},
             {

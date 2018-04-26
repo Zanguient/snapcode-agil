@@ -1,7 +1,7 @@
 angular.module('agil.controladores')
     .controller('controladorPolifuncionalidad', function ($scope, $location, $localStorage, $templateCache, $route, blockUI, Paginator, FieldViewer, $timeout,
         $filter, ClasesTipo, ObtenerTodoPersonal, ObtenerEvaluaciones, GuardarEvaluacionPersonal, ObtenerReportePorMeses, ObtenerReportePorAnio, ObtenerReporteGeneralPorAnio, GuardarConfiguracionCalificacion,
-        ObtenerConfiguracionCalificacion, GuardarConfiguracionDesempenio, ObtenerConfiguracionDesempenio, ActializarEvaluacionPersonal) {
+        ObtenerConfiguracionCalificacion, GuardarConfiguracionDesempenio, ObtenerConfiguracionDesempenio, ActualizarEvaluacionPersonal) {
 
         $scope.usuarioSesion = JSON.parse($localStorage.usuario);
         $scope.idModalWizardPolifuncionalEdicion = 'modal-wizard-polifuncional-edicion';
@@ -380,7 +380,7 @@ angular.module('agil.controladores')
                 } else {
                     evaluacion.fecha = new Date(evaluacion.anio.id, evaluacion.mes.id, 15, 12, 0, 0)
                     if (evaluacion.editar) {
-                        var prom = ActializarEvaluacionPersonal($scope.usuarioSesion.empresa.id, evaluacion)
+                        var prom = ActualizarEvaluacionPersonal($scope.usuarioSesion.empresa.id, evaluacion)
                     } else {
                         var prom = GuardarEvaluacionPersonal($scope.usuarioSesion.empresa.id, evaluacion)
                     }
@@ -454,21 +454,18 @@ angular.module('agil.controladores')
                 blockUI.stop()
                 return
             }
-            if (pdf) {
-                var cabecera = ["N°", "Campo", "Empleado", "C.I.", "Estado", "Cargo"]
-                var report = []
-            } else {
-                var cabecera = ["", "N°", "Campo", "Empleado", "C.I.", "Estado", "Cargo"]
+            var cabecera = ["N°", "Campo", "Empleado", "C.I.", "Estado", "Cargo"]
+            var report = []
+            if (pdf === undefined) {
                 var wscols = [
-                    { wch: 4 },
+                    // { wch: 4 },
                     { wch: 4 },
                     { wch: 12 },
                     { wch: 20 },
                     { wch: 9 },
                     { wch: 8 },
                     { wch: 9 }
-                ];
-                var report = [[""]]
+                ];                
             }
             var data = []
             var reporte = ObtenerReportePorMeses(fromMonth, fromYear, untilMonth, untilYear, $scope.usuarioSesion.empresa.id)
@@ -487,11 +484,7 @@ angular.module('agil.controladores')
                 })
                 mesesReporte = res.mesesReporte
                 for (var i = 0; i < res.reporte.length; i++) {
-                    if (pdf) {
-                        var columns = [];
-                    } else {
-                        var columns = [""];
-                    }
+                    var columns = [];
                     columns.push(i + 1);
                     columns.push(res.reporte[i].campo.nombre);
                     columns.push(res.reporte[i].persona.nombre_completo);
@@ -586,8 +579,8 @@ angular.module('agil.controladores')
                     if (reporte[i].length <= 14) {
                         if (i == 0) {
                             doc.font('Helvetica-Bold', 12);
-                            //doc.text("MATRIZ POLIFUNCIONALIDAD Y DESEMPEÑO11", 50, 30, { align: "center" });
-                            doc.text("DESDE " + mesDesde.nombre + "-" + anioDesde.id + " HASTA " + mesHasta.nombre + "-" + anioHasta.id, 50, 45, { align: "center" });
+                            doc.text("MATRIZ POLIFUNCIONALIDAD Y DESEMPEÑO", 50, 30, { align: "center" });
+                            doc.text("DESDE " + mesDesde.nombre.toUpperCase() + "-" + anioDesde.id + " HASTA " + mesHasta.nombre.toUpperCase() + "-" + anioHasta.id, 50, 45, { align: "center" });
                             doc.text(" TODOS LOS CAMPOS " + " TODOS LOS EMPLEADOS", 50, 60, { align: "center" });
                         }
                         for (let j = 0; j < reporte[i].length; j++) {
@@ -672,7 +665,7 @@ angular.module('agil.controladores')
                         doc.addPage({ size: 'letter', margin: 10 });
                         
                         doc.font('Helvetica-Bold', 12);
-                        //doc.text("MATRIZ POLIFUNCIONALIDAD Y DESEMPEÑO11", 50, 30, { align: "center" });
+                        doc.text("MATRIZ POLIFUNCIONALIDAD Y DESEMPEÑO", 50, 30, { align: "center" });
                         doc.text("DESDE " + mesDesde.nombre + "-" + anioDesde.id + " HASTA " + mesHasta.nombre + "-" + anioHasta.id, 50, 45, { align: "center" });
                         doc.text(" TODOS LOS CAMPOS " + " TODOS LOS EMPLEADOS", 50, 60, { align: "center" });
 
@@ -776,15 +769,9 @@ angular.module('agil.controladores')
                 blockUI.stop()
                 return
             }
-            if (pdf) {
-                var cabecera = ["", "Asistencia Capacitación", "Documentos Actualizados", "Trabajo en equipo", "Cumplimiento de las funciones asignadas y puntualidad en el horario de trabajo",
+            var cabecera = ["", "Asistencia Capacitación", "Documentos Actualizados", "Trabajo en equipo", "Cumplimiento de las funciones asignadas y puntualidad en el horario de trabajo",
                     "Higiene personal", "Puntualidad a la asistencia de reunión de 5 minutos en campo", "Cumplimiento de ingreso a campo", "Aplicación y llenado correcto de los formularios del SIG", "TOTAL", "DESEMPEÑO"]
                 var data = []
-            } else {
-                var cabecera = [" ", "Asistencia Capacitación", "Documentos Actualizados", "Trabajo en equipo", "Cumplimiento de las funciones asignadas y puntualidad en el horario de trabajo",
-                    "Higiene personal", "Puntualidad a la asistencia de reunión de 5 minutos en campo", "Cumplimiento de ingreso a campo", "Aplicación y llenado correcto de los formularios del SIG", "TOTAL", "DESEMPEÑO"]
-                var data = [[""], [""], [""]]
-            }
             data.push(cabecera)
             var reporte = ObtenerReporteGeneralPorAnio(year.id, campo, $scope.usuarioSesion.empresa.id)
             reporte.then(function (res) {
@@ -838,7 +825,7 @@ angular.module('agil.controladores')
                     ];
                     ws['!cols'] = wscols;
                     ws['!rows'] = [{ hpx: 28, level: 3 }];
-                    ws["!merges"] = [{ s: { r: 0, c: 0 }, e: { r: 1, c: 0 } }, { s: { r: 2, c: 0 }, e: { r: 2, c: 1 } }]
+                    // ws["!merges"] = [{ s: { r: 0, c: 0 }, e: { r: 1, c: 0 } }, { s: { r: 2, c: 0 }, e: { r: 2, c: 1 } }]
                     /* add worksheet to workbook */
                     wb.SheetNames.push(ws_name);
                     wb.Sheets[ws_name] = ws;
@@ -855,7 +842,7 @@ angular.module('agil.controladores')
         }
 
         $scope.reportePromediosGeneralPdf = function (reporte, year, campo) {
-            var x = 20
+            var x = 15
             var y = 180
             var spaceY = 25
             var spaceX = 70
@@ -881,10 +868,10 @@ angular.module('agil.controladores')
                                 doc.font('Helvetica-Bold', 7);
                                 if (j >= reporte[i].length - 2) {
 
-                                    doc.text(reporte[i][j], x - taa, y - 40, { width: limiteChar, align: "center" });
+                                    doc.text(reporte[i][j], x - taa,  y - 40, { width: limiteChar, align: "center" });
                                     taa = taa + 20
                                 } else {
-                                    doc.text(reporte[i][j], x, y - 40, { width: limiteChar, align: "center" });
+                                    doc.text(reporte[i][j], x , y - 40, { width: limiteChar, align: "center" });
                                 }
                             } else {
                                 doc.font('Helvetica', 8);
@@ -976,15 +963,9 @@ angular.module('agil.controladores')
                 $scope.mostrarMensaje('Ingrese el Año del cual desea el reporte.')
                 return
             }
-            if (pdf) {
-                var cabecera = [" ", "Asistencia Capacitación", "Documentos Actualizados", "Trabajo en equipo", "Cumplimiento de las funciones asignadas y puntualidad en el horario de trabajo",
+            var cabecera = [" ", "Asistencia Capacitación", "Documentos Actualizados", "Trabajo en equipo", "Cumplimiento de las funciones asignadas y puntualidad en el horario de trabajo",
                     "Higiene personal", "Puntualidad a la asistencia de reunión de 5 minutos en campo", "Cumplimiento de ingreso a campo", "Aplicación y llenado correcto de los formularios del SIG", "TOTAL", "DESEMPEÑO"]
                 var data = []
-            } else {
-                var cabecera = [" ", "Asistencia Capacitación", "Documentos Actualizados", "Trabajo en equipo", "Cumplimiento de las funciones asignadas y puntualidad en el horario de trabajo",
-                    "Higiene personal", "Puntualidad a la asistencia de reunión de 5 minutos en campo", "Cumplimiento de ingreso a campo", "Aplicación y llenado correcto de los formularios del SIG", "TOTAL", "DESEMPEÑO"]
-                var data = [[""], [""], [""]]
-            }
             data.push(cabecera)
             var reporte = ObtenerReportePorAnio(year.id, $scope.usuarioSesion.empresa.id)
             reporte.then(function (reportes) {

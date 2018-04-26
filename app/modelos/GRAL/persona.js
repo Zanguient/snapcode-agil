@@ -119,7 +119,11 @@ module.exports=function(sequelize,Sequelize){
 	  id_estado_civil:{
 		type: Sequelize.INTEGER,
 		field: 'estado_civil'  
-	  }
+		},
+		id_expedido:{
+			type: Sequelize.INTEGER,
+		field: 'expedido'  	
+		}
 	}, {
 	  freezeTableName: true 
 	});

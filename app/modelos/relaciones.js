@@ -15,7 +15,7 @@ module.exports = function (sequelize, Usuario, Persona, Rol, UsuarioRol, Tipo, C
 	RrhhEmpleadoHojaVida, RrhhEmpleadoFormacionAcademica, RrhhEmpleadoExperienciaLaboral, RrhhEmpleadoLogroInternoExterno, RrhhEmpleadoCapacidadInternaExterna, SolicitudReposicion, DetalleSolicitudProducto, DetalleSolicitudProductoBase, MonedaTipoCambio, ContabilidadCuentaAuxiliar, GtmDespachoDetalle, RrhhEmpleadoPrestamo, RrhhEmpleadoPrestamoPago, Proforma, DetallesProformas, Servicios, Farmacia, RRHHParametros, RrhhEmpleadoRolTurno, RrhhEmpleadoHorasExtra, RRHHPlanillaSueldos, RRHHDetallePlanillaSueldos, RrhhAnticipo, EvaluacionPolifuncional,
 	RrhhEmpleadoAusencia, RrhhEmpleadoVacaciones, RrhhEmpleadoCompensacionAusencia, RrhhClaseAsuencia, RrhhEmpleadoHistorialVacacion, RrhhEmpleadoTr3, RrhhEmpleadoAnticipoTr3, RrhhEmpleadoDeduccionIngreso,
 	RrhhEmpleadoBeneficioSocial, RrhhEmpleadoBitacoraFicha, UsuarioGrupos, RrhhEmpleadoConfiguracionRopa, GtmVentaKardex, GtmVentaKardexDetalle,RrhhEmpleadoDotacionRopaItem,
-	RrhhEmpleadoDotacionRopa) {
+	RrhhEmpleadoDotacionRopa,RrhhViajeDetalle,RrhhViaje,RrhhViajeDestino) {
 
 	Persona.belongsTo(Clase, { foreignKey: 'id_lugar_nacimiento', as: 'lugar_nacimiento' });
 	Persona.belongsTo(Clase, { foreignKey: 'id_genero', as: 'genero' });
@@ -33,7 +33,8 @@ module.exports = function (sequelize, Usuario, Persona, Rol, UsuarioRol, Tipo, C
 	Persona.belongsTo(Clase, { foreignKey: 'id_localidad_nacimiento', as: 'localidad' });
 	Persona.belongsTo(Clase, { foreignKey: 'id_estado_civil', as: 'estadoCivil' });
 	Persona.hasOne(RrhhEmpleadoFichaFamiliar, { foreignKey: 'id_persona_familiar', as: 'personas' });
-
+	Persona.belongsTo(Clase, { foreignKey: 'id_expedido', as: 'expedido' });
+	Persona.hasMany(RrhhViajeDetalle, { foreignKey: 'id_visita', as: 'visitasViaje' })
 
 	Usuario.belongsTo(Persona, { foreignKey: 'id_persona', as: 'persona' });
 	Usuario.hasMany(UsuarioRol, { foreignKey: 'id_usuario', as: 'rolesUsuario' });
@@ -180,6 +181,12 @@ module.exports = function (sequelize, Usuario, Persona, Rol, UsuarioRol, Tipo, C
 	Clase.hasMany(RrhhEmpleadoDotacionRopa, { foreignKey: 'id_cumplimiento', as: 'cumplimientos' })
 	Clase.hasMany(RrhhEmpleadoDotacionRopa, { foreignKey: 'id_periodo', as: 'periodos' })
 	Clase.hasMany(RrhhEmpleadoDotacionRopa, { foreignKey: 'id_estado', as: 'estados' })
+	Clase.hasMany(RrhhEmpleadoRolTurno, { foreignKey: 'id_grupo', as: 'grupos' });
+	Clase.hasMany(Persona, { foreignKey: 'id_expedido', as: 'expedidos' });
+	Clase.hasMany(RrhhViaje, { foreignKey: 'id_vehiculo', as: 'vehiculos' })
+	Clase.hasMany(RrhhViajeDetalle, { foreignKey: 'id_tipo_viaje', as: 'tiposViaje' })
+	Clase.hasMany(RrhhViajeDestino, { foreignKey: 'id_destino', as: 'destinos' })
+
 	// MedicoPrerequisito.belongsTo(Clase, { foreignKey: 'id_prerequisito', as: 'prerequisitoClase' });//Ya no es requerido/util/relacion desde 13/12/2017
 	// MedicoPrerequisito.belongsTo(MedicoPaciente, { foreignKey: 'id_paciente', as: 'prerequisitoPaciente' });///Ya no es requerido/util/relacion desde 13/12/2017
 	MedicoPrerequisito.hasMany(MedicoPacientePreRequisito, { foreignKey: 'id_prerequisito', as: 'preRequisitos' })
@@ -516,7 +523,8 @@ module.exports = function (sequelize, Usuario, Persona, Rol, UsuarioRol, Tipo, C
 	//MedicoPaciente.hasMany(RrhhEmpleadoAusencia, { foreignKey: 'id_empleado', as: 'ausencias' })//ya no funciona 12/03/2018
 	//MedicoPaciente.hasMany(RrhhEmpleadoVacaciones, { foreignKey: 'id_empleado', as: 'vacaciones' })//ya no funciona 12/03/2018
 	MedicoPaciente.hasMany(RrhhEmpleadoDotacionRopa, { foreignKey: 'id_empleado', as: 'dotacionesRopa' })	
-	
+	MedicoPaciente.hasMany(RrhhViaje, { foreignKey: 'id_conductor', as: 'condutores' })
+	MedicoPaciente.hasMany(RrhhViaje, { foreignKey: 'id_relevo', as: 'relevos' })
 	//RrhhEmpleadoHorasExtra.belongsTo(MedicoPaciente, { foreignKey: 'id_empleado', as: 'empleado' });//ya no funciona 12/03/2018
 	RrhhEmpleadoHorasExtra.belongsTo(RrhhEmpleadoFicha, { foreignKey: 'id_ficha', as: 'ficha' });
 
@@ -524,9 +532,12 @@ module.exports = function (sequelize, Usuario, Persona, Rol, UsuarioRol, Tipo, C
 	RrhhEmpleadoFicha.hasMany(RrhhEmpleadoRolTurno, { foreignKey: 'id_ficha', as: 'rolesTurno' });
 	RrhhEmpleadoFicha.hasMany(RrhhEmpleadoDiscapacidad, { foreignKey: 'id_ficha', as: 'discapacidades' });
 	RrhhEmpleadoFicha.hasMany(RrhhEmpleadoFichaOtrosSeguros, { foreignKey: 'id_ficha', as: 'otrosSeguros' })
+	RrhhEmpleadoFicha.hasMany(RrhhViajeDetalle, { foreignKey: 'id_ficha', as: 'detallesViaje' })
+
 	//RrhhEmpleadoRolTurno.belongsTo(MedicoPaciente, { foreignKey: 'id_empleado', as: 'empleado' });//ya no funciona 12/03/2018
 	RrhhEmpleadoRolTurno.belongsTo(RrhhEmpleadoFicha, { foreignKey: 'id_ficha', as: 'ficha' });
 	RrhhEmpleadoRolTurno.belongsTo(Clase, { foreignKey: 'id_campo', as: 'campo' });
+	RrhhEmpleadoRolTurno.belongsTo(Clase, { foreignKey: 'id_grupo', as: 'grupo' });
 
 	RrhhEmpleadoPrestamo.belongsTo(MedicoPaciente, { foreignKey: 'id_empleado', as: 'empleado' });
 	RrhhEmpleadoPrestamo.belongsTo(Usuario, { foreignKey: 'id_usuario', as: 'usuario' });
@@ -908,4 +919,18 @@ module.exports = function (sequelize, Usuario, Persona, Rol, UsuarioRol, Tipo, C
 	RrhhEmpleadoDotacionRopa.hasMany(RrhhEmpleadoDotacionRopaItem, { foreignKey: 'id_dotacion_ropa', as: 'dotacionItems' })
 	RrhhEmpleadoDotacionRopa.belongsTo(MedicoPaciente, { foreignKey: 'id_empleado', as: 'empleado' })	
 	RrhhEmpleadoDotacionRopa.belongsTo(Usuario, { foreignKey: 'id_usuario', as: 'usuario' })
+	
+RrhhViaje.belongsTo(Clase, { foreignKey: 'id_vehiculo', as: 'vehiculo' })
+RrhhViaje.belongsTo(MedicoPaciente, { foreignKey: 'id_conductor', as: 'condutor' })
+RrhhViaje.belongsTo(MedicoPaciente, { foreignKey: 'id_relevo', as: 'relevo' })
+RrhhViaje.hasMany(RrhhViajeDetalle, { foreignKey: 'id_viaje', as: 'viajeDetalles' })
+RrhhViaje.hasMany(RrhhViajeDestino, { foreignKey: 'id_viaje', as: 'viajeDestinos' })
+
+RrhhViajeDetalle.belongsTo(RrhhViaje, { foreignKey: 'id_viaje', as: 'viaje' })
+RrhhViajeDetalle.belongsTo(Clase, { foreignKey: 'id_tipo_viaje', as: 'tipoViaje' })
+RrhhViajeDetalle.belongsTo(RrhhEmpleadoFicha, { foreignKey: 'id_ficha', as: 'ficha' })
+RrhhViajeDetalle.belongsTo(Persona, { foreignKey: 'id_visita', as: 'visita' })
+
+RrhhViajeDestino.belongsTo(Clase, { foreignKey: 'id_destino', as: 'destino' })
+RrhhViajeDestino.belongsTo(RrhhViaje, { foreignKey: 'id_viaje', as: 'viaje' })
 }

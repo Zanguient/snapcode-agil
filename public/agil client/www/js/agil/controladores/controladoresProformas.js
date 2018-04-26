@@ -2,7 +2,7 @@ angular.module('agil.controladores')
     .controller('controladorProformas', function ($scope, $filter, $rootScope, $route, $templateCache, $location, $window, $localStorage, Paginator, $timeout,
         blockUI, ClasesTipo, socket, ObtenerCambioMoneda, ClientesNit, Proformas, FiltroProformas, ActividadEmpresa, ActividadServicio, ActividadesEmpresa,
         ServiciosEmpresa, Proforma, ProformaInfo, Clientes, fechasProforma, eliminarProforma, ListaSucursalesActividadesDosificacionEmpresa, DosificacionesDisponibles,
-        Sucursales, ListaSucursalesUsuario, ListaHistorialActividad, ImprimirSalida, ConfiguracionesFacturasProformas) {
+        Sucursales, ListaSucursalesUsuario, ListaHistorialActividad, ImprimirSalida, ConfiguracionesFacturasProformas, ProformasFacturadas) {
 
         $scope.usuario = JSON.parse($localStorage.usuario);
 
@@ -152,12 +152,7 @@ angular.module('agil.controladores')
                 }
                 blockUI.stop()
             }, function (err) {
-                $timeout(function () {
-                    $scope.$apply(function () {
-                        $scope.mostrarMensaje(err.message === undefined ? err.stack : err.message)
-                    });
-                }, 500)
-
+                $scope.mostrarMensaje(err.message === undefined ? err.stack : err.message)
                 blockUI.stop()
             })
             $scope.detalleProforma = undefined
@@ -170,11 +165,7 @@ angular.module('agil.controladores')
         }
 
         $scope.mostarMensajeConfirmacionEliminacionActividad = function (actividad) {
-            $timeout(function () {
-                $scope.$apply(function () {
-                    $scope.abrirPopupConfirmacionEliminacion($scope.eliminarDetalleActividadEmpresa, actividad)
-                });
-            }, 500)
+            $scope.abrirPopupConfirmacionEliminacion($scope.eliminarDetalleActividadEmpresa, actividad)
         }
 
         $scope.imprimirFactura = function (proforma) {
@@ -182,98 +173,129 @@ angular.module('agil.controladores')
                 $scope.mostrarMensaje('La proforma aún no ha sido facturada.')
                 return
             }
+            blockUI.start()
             var paraFacturar = [proforma]
             var datosProformas = []
-
-            var movimiento = {}
-            var promConfigFact = ConfiguracionesFacturasProformas($scope.usuario.id_empresa)
-            promConfigFact.then(function (configuracionFactura) {
-                var promMov = ClasesTipo('MOVEGR')
-                promMov.then(function (dato) {
-                    dato.clases.map(function (clase) {
-                        if (clase.nombre == "FACTURACIÓN" && clase.nombre_corto == "FACT") {
-                            movimiento = clase
-                        }
-                    })
-                    blockUI.start();
-                    var promesa = ClasesTipo("TIPA");
-                    promesa.then(function (entidad) {
-                        $scope.tiposPago = entidad.clases;
-                        paraFacturar.map(function (proforma, i) {
-                            var prom = ProformaInfo(proforma.id, proforma.id_actividad)
-                            prom.then(function (porformaConsultada) {
-                                datosProformas.push(porformaConsultada.proforma)
-                                if (i === paraFacturar.length - 1) {
-                                    $scope.facturaProformas = {}
-                                    $scope.facturaProformas.configuracion = configuracionFactura.configuracion
-                                    $scope.facturaProformas.movimiento = movimiento
-                                    $scope.facturaProformas.cliente = datosProformas[0].clienteProforma
-                                    $scope.facturaProformas.autorizacion = datosProformas[0].autorizacion
-                                    $scope.facturaProformas.factura = datosProformas[0].factura
-                                    $scope.facturaProformas.codigo_control = datosProformas[0].codigo_control
-                                    $scope.facturaProformas.fecha = new Date(datosProformas[0].fecha_factura)
-                                    $scope.facturaProformas.fecha_limite_emision = new Date(datosProformas[0].fecha_limite_emision)
-                                    // $scope.facturaProformas.actividadEconomica = datosProformas[0].actividadEconomica
-                                    $scope.facturaProformas.actividad = datosProformas[0].actividadEconomica
-                                    $scope.facturaProformas.sucursal = datosProformas[0].sucursalProforma
-                                    $scope.facturaProformas.detallesVenta = datosProformas[0].detallesProformas
-                                    $scope.facturaProformas.detalle = ""
-                                    $scope.facturaProformas.totalImporteBs = datosProformas[0].totalImporteBs
-                                    $scope.facturaProformas.importe = datosProformas[0].importe
-                                    $scope.facturaProformas.fecha_factura = new Date(datosProformas[0].fecha_factura).toLocaleDateString()
-                                    $scope.facturaProformas.fechaTexto = new Date($scope.facturaProformas.fecha).toLocaleDateString()
-                                    $scope.facturaProformas.periodo_mes = datosProformas[0].mes
-                                    $scope.facturaProformas.periodo_anio = datosProformas[0].anio
-                                    $scope.facturaProformas.datosProformas = datosProformas
-                                    $scope.facturaProformas.descripcion = ""
-                                    $scope.facturaProformas.movimiento = movimiento
-                                    $scope.facturaProformas.id_movimiento = $scope.facturaProformas.movimiento.id
-                                    $scope.facturaProformas.id_tipo_pago = $scope.tiposPago[0].id
-                                    $scope.facturaProformas.tipoPago = $scope.tiposPago[1]
-                                    $scope.obtenerTipoEgreso($scope.facturaProformas.movimiento)
-                                    $scope.esContado = false
-                                    $scope.facturaProformas.usar_servicios = true
-                                    $scope.facturaProformas.id_usuario = $scope.usuario.id
-                                    $scope.facturaProformas.fecha = datosProformas[0].fecha
-                                    $scope.facturaProformas.id_empresa = $scope.usuario.id_empresa
-                                    $scope.facturaProformas.datosProformas.forEach(function (proforma, i) {
-                                        $scope.facturaProformas.descripcion += proforma.detalle + ". "
-                                        // $scope.facturaProformas.totalImporteBs += proforma.totalImporteBs
-                                        $scope.facturaProformas.importe = $scope.facturaProformas.totalImporteBs
-                                        $scope.facturaProformas.total = $scope.facturaProformas.importe
-                                        $scope.facturaProformas.importeLiteral = ConvertirALiteral($scope.facturaProformas.totalImporteBs.toFixed(2));
-                                        $scope.facturaProformas.numero_literal = $scope.facturaProformas.importeLiteral
-                                        var promesa = ObtenerCambioMoneda(proforma.fecha_proforma)
-                                        var tcProforma = { ufv: "--", dolar: "--" }
-                                        promesa.then(function (dato) {
-                                            if (dato.monedaCambio) {
-                                                tcProforma = { ufv: dato.monedaCambio.ufv, dolar: dato.monedaCambio.dolar };
-                                            }
-                                            proforma.tc = tcProforma
-                                            proforma.importe = proforma.importeTotalBs
-                                            proforma.detallesProformas.map(function (det, y) {
-                                                det.tc = proforma.tc
-                                                det.total = det.importe * det.cantidad
-                                                if (y === proforma.detallesProformas.length - 1) {
-                                                    Array.prototype.push.apply($scope.facturaProformas.detallesVenta, proforma.detallesProformas);
-                                                    if (i == $scope.facturaProformas.datosProformas.length - 1) {
-                                                        ImprimirSalida("FACT", $scope.facturaProformas, false, $scope.usuario)
-                                                    }
-                                                    $scope.dolarActual = $scope.obtenerCambioDolarActual()
-                                                }
-                                            })
-                                        })
-                                    });
-                                    blockUI.stop()
-                                }
-                            }, function (err) {
-                                $scope.mostrarMensaje(err.message)
-                                blockUI.stop()
-                            })
+            var prom = ProformasFacturadas($scope.usuario.id_empresa, proforma.factura)
+            prom.then(function (res) {
+                datosProformas = res.datosProformas
+                var movimiento = {}
+                var promConfigFact = ConfiguracionesFacturasProformas($scope.usuario.id_empresa)
+                promConfigFact.then(function (configuracionFactura) {
+                    var promMov = ClasesTipo('MOVEGR')
+                    promMov.then(function (dato) {
+                        dato.clases.map(function (clase) {
+                            if (clase.nombre == "FACTURACIÓN" && clase.nombre_corto == "FACT") {
+                                movimiento = clase
+                            }
                         })
-                    });
+                        var promesa = ClasesTipo("TIPA");
+                        promesa.then(function (entidad) {
+                            $scope.tiposPago = entidad.clases;
+                            // if (i === paraFacturar.length - 1) {
+                            $scope.facturaProformas = {}
+                            $scope.facturaProformas.configuracion = configuracionFactura.configuracion
+                            $scope.facturaProformas.movimiento = movimiento
+                            $scope.facturaProformas.cliente = datosProformas[0].clienteProforma
+                            $scope.facturaProformas.autorizacion = datosProformas[0].autorizacion
+                            $scope.facturaProformas.factura = datosProformas[0].factura
+                            $scope.facturaProformas.codigo_control = datosProformas[0].codigo_control
+                            $scope.facturaProformas.fecha = new Date(datosProformas[0].fecha_factura)
+                            $scope.facturaProformas.fecha_limite_emision = new Date(datosProformas[0].fecha_limite_emision)
+                            // $scope.facturaProformas.actividadEconomica = datosProformas[0].actividadEconomica
+                            $scope.facturaProformas.actividad = datosProformas[0].actividadEconomica
+                            $scope.facturaProformas.sucursal = datosProformas[0].sucursalProforma
+                            $scope.facturaProformas.detallesVenta = []
+                            $scope.facturaProformas.detalle = ""
+                            $scope.facturaProformas.totalImporteBs = datosProformas[0].totalImporteBs
+                            $scope.facturaProformas.importe = datosProformas[0].importe
+                            $scope.facturaProformas.fecha_factura = new Date(datosProformas[0].fecha_factura).toLocaleDateString()
+                            $scope.facturaProformas.fechaTexto = new Date($scope.facturaProformas.fecha).toLocaleDateString()
+                            $scope.facturaProformas.periodo_mes = datosProformas[0].mes
+                            $scope.facturaProformas.periodo_anio = datosProformas[0].anio
+                            $scope.facturaProformas.datosProformas = datosProformas
+                            $scope.facturaProformas.descripcion = ""
+                            $scope.facturaProformas.movimiento = movimiento
+                            $scope.facturaProformas.id_movimiento = $scope.facturaProformas.movimiento.id
+                            $scope.facturaProformas.id_tipo_pago = $scope.tiposPago[0].id
+                            $scope.facturaProformas.tipoPago = $scope.tiposPago[1]
+                            $scope.obtenerTipoEgreso($scope.facturaProformas.movimiento)
+                            $scope.esContado = false
+                            $scope.facturaProformas.usar_servicios = true
+                            $scope.facturaProformas.id_usuario = $scope.usuario.id
+                            $scope.facturaProformas.fecha = datosProformas[0].fecha
+                            $scope.facturaProformas.id_empresa = $scope.usuario.id_empresa
+                            $scope.facturaProformas.datosProformas.forEach(function (proforma, i) {
+                                $scope.facturaProformas.descripcion += proforma.detalle + ". "
+                                // $scope.facturaProformas.totalImporteBs += proforma.totalImporteBs
+                                $scope.facturaProformas.importe = 0
+                                $scope.facturaProformas.total = 0
+                                // $scope.facturaProformas.importeLiteral = ConvertirALiteral($scope.facturaProformas.totalImporteBs.toFixed(2));
+                                // $scope.facturaProformas.numero_literal = $scope.facturaProformas.importeLiteral
+                                var promesa = ObtenerCambioMoneda(proforma.fecha_proforma)
+                                var tcProforma = { ufv: "--", dolar: "--" }
+                                promesa.then(function (dato) {
+                                    if (dato.monedaCambio) {
+                                        tcProforma = { ufv: dato.monedaCambio.ufv, dolar: dato.monedaCambio.dolar };
+                                    }
+                                    proforma.tc = tcProforma
+                                    // proforma.importe = proforma.importeTotalBs
+                                    proforma.detallesProformas.map(function (det, y) {
+                                        $scope.facturaProformas.importe += det.precio_unitario * det.cantidad
+                                        $scope.facturaProformas.detallesVenta.push(det)
+                                        $scope.facturaProformas.total = $scope.facturaProformas.importe
+                                        $scope.facturaProformas.importeLiteral = ConvertirALiteral($scope.facturaProformas.importe.toFixed(2));
+                                        $scope.facturaProformas.numero_literal = $scope.facturaProformas.importeLiteral
+                                        det.tc = proforma.tc
+                                        det.total = det.importe * det.cantidad
+                                        if (y === proforma.detallesProformas.length - 1) {
+                                            // Array.prototype.push.apply($scope.facturaProformas.detallesVenta, proforma.detallesProformas);
+                                            if (i == $scope.facturaProformas.datosProformas.length - 1) {
+                                                if ($scope.checkResourceImg($scope.usuario.empresa.imagen, $scope.usuario.empresa.imageLoaded)) {
+                                                    convertUrlToBase64Image($scope.usuario.empresa.imagen, function (imagenEmpresa) {
+                                                        $scope.usuario.empresa.imagen = imagenEmpresa
+                                                        $scope.usuario.empresa.imageLoaded = true
+                                                        ImprimirSalida("FACT", $scope.facturaProformas, false, $scope.usuario)
+                                                    })
+                                                } else {
+                                                    $scope.mostrarMensaje('Existe un problema con la imagen, no se incluira en la impresión.')
+                                                    $timeout(function () {
+                                                        ImprimirSalida("FACT", $scope.facturaProformas, false, $scope.usuario)
+                                                    }, 1500)
+                                                }
+                                                // convertUrlToBase64Image($scope.usuario.empresa.imagen, function (imagenEmpresa) {
+                                                //     $scope.usuario.empresa.imagen = imagenEmpresa
+                                                //     ImprimirSalida("FACT", $scope.facturaProformas, false, $scope.usuario)
+                                                // })
 
+
+                                            }
+                                            $scope.dolarActual = $scope.obtenerCambioDolarActual()
+                                        }
+                                    })
+                                    // blockUI.stop()
+                                })
+                            });
+                            blockUI.stop()
+                            // }
+                            // paraFacturar.map(function (proforma, i) {
+                            //     var prom = ProformaInfo(proforma.id, proforma.id_actividad)
+                            //     prom.then(function (porformaConsultada) {
+                            //         datosProformas.push(porformaConsultada.proforma)
+
+                            //     }, function (err) {
+                            //         $scope.mostrarMensaje(err.message)
+                            //         blockUI.stop()
+                            //     })
+                            // })
+                        });
+
+                    })
                 })
+            }).catch(function (err) {
+                var msg = (err.stack !== undefined && err.stack !== null) ? err.stack : (err.message !== undefined && err.message !== null) ? err.message : 'Se perdió la conexión.'
+                $scope.mostrarMensaje(msg)
+                blockUI.stop()
             })
         }
 
@@ -388,20 +410,12 @@ angular.module('agil.controladores')
                 proforma.fecha_cobro = (proforma.fecha_cobro instanceof Date) ? proforma.fecha_cobro : (proforma.fecha_cobro === null) ? null : new Date($scope.convertirFecha(proforma.fecha_cobro))
                 fechasProforma.save({ id: proforma.id }, proforma, function (res) {
                     $scope.proforma = undefined
-                    $timeout(function () {
-                        $scope.$apply(function () {
-                            $scope.mostrarMensaje(res.mensaje)
-                        });
-                    }, 500)
+                    $scope.mostrarMensaje(res.mensaje)
                     $scope.cerrardialogmodalFechas()
                     $scope.recargarItemsTabla()
                     blockUI.stop()
                 }, function (err) {
-                    $timeout(function () {
-                        $scope.$apply(function () {
-                            $scope.mostrarMensaje(err.message === undefined ? err.stack : err.message)
-                        });
-                    }, 500)
+                    $scope.mostrarMensaje(err.message === undefined ? err.stack : err.message)
                     blockUI.stop()
                 })
             }
@@ -413,15 +427,16 @@ angular.module('agil.controladores')
 
         $scope.agregardetalleProforma = function (detalleProforma) {
             if (detalleProforma.id_servicio !== undefined) {
-
                 $scope.proforma.totalImporteBs = 0
                 $scope.proforma.totalImporteSus = 0
                 var ser = { servicio: detalleProforma }
                 $scope.detallesProformas.push(detalleProforma)
                 $scope.detalleProforma = {}
-                $scope.detallesProformas.forEach(function (proforma) {
-                    $scope.proforma.totalImporteBs += proforma.importe
-                    $scope.proforma.totalImporteSus += proforma.importeSus
+                $scope.detallesProformas.forEach(function (detalle) {
+                    if (!detalle.eliminado) {
+                        $scope.proforma.totalImporteBs += detalle.importe
+                        $scope.proforma.totalImporteSus += detalle.importeSus
+                    }
                 });
                 $scope.proforma.importeLiteral = ConvertirALiteral($scope.proforma.totalImporteBs.toFixed(2));
                 $scope.modificarProformaPrecioUnitarioServicio(detalleProforma)
@@ -438,12 +453,7 @@ angular.module('agil.controladores')
                     }
                 } else {
                     $scope.moneda = { ufv: "--", dolar: "--" }
-                    $timeout(function () {
-                        $scope.$apply(function () {
-                            $scope.mostrarMensaje('La fecha ' + $scope.proforma.fecha_proforma + ' no tiene datos del tipo de cambio de dolar. El tipo de cambio de dolar no afecta la información de la proforma y puede continuar sin problema.')
-                        });
-                    }, 500)
-
+                    $scope.mostrarMensaje('La fecha ' + $scope.proforma.fecha_proforma + ' no tiene datos del tipo de cambio de dolar. El tipo de cambio de dolar no afecta la información de la proforma y puede continuar sin problema.')
                 }
             })
         }
@@ -511,22 +521,12 @@ angular.module('agil.controladores')
 
                 if (nuevosServicios.length > 0) {
                     ActividadServicio.save({ id_empresa: $scope.usuario.empresa.id, id_actividad: 0 }, nuevosServicios, function (res) {
-                        $timeout(function () {
-                            $scope.$apply(function () {
-                                $scope.mostrarMensaje(res.mensaje)
-                            });
-                        }, 500)
-
+                        $scope.mostrarMensaje(res.mensaje)
                         $scope.obtenerSucursales();
                         blockUI.stop()
                         $scope.cerrarConfiguracionActividadesServicios()
                     }, function (err) {
-                        $timeout(function () {
-                            $scope.$apply(function () {
-                                $scope.mostrarMensaje(err.stack)
-                            });
-                        }, 500)
-
+                        $scope.mostrarMensaje(err.stack)
                         blockUI.stop()
                     })
                 } else {
@@ -544,11 +544,7 @@ angular.module('agil.controladores')
                 } else {
                     if ($scope.proforma !== undefined) {
                         if ($scope.proforma.actividadEconomica !== undefined) {
-                            $timeout(function () {
-                                $scope.$apply(function () {
-                                    $scope.mostrarMensaje('No hay servicios en la actividad seleccionada: "' + $scope.proforma.actividadEconomica.nombre + '"')
-                                });
-                            }, 500)
+                            $scope.mostrarMensaje('No hay servicios en la actividad seleccionada: "' + $scope.proforma.actividadEconomica.nombre + '"')
                         }
                     }
                 }
@@ -626,11 +622,7 @@ angular.module('agil.controladores')
                                 $scope.configuracionActividadServicio.push(service)
                                 $scope.nActividad.servicio = undefined
                             } else {
-                                $timeout(function () {
-                                    $scope.$apply(function () {
-                                        $scope.mostrarMensaje('La actividad seleccionada no tiene dosificación activa, por favor asigne una dosificación para poder continuar.')
-                                    });
-                                }, 500)
+                                $scope.mostrarMensaje('La actividad seleccionada no tiene dosificación activa, por favor asigne una dosificación para poder continuar.')
                             }
                         } else {
                             if (actividadServicio.servicio.id === undefined) {
@@ -638,20 +630,11 @@ angular.module('agil.controladores')
                                 check.map(function (ser) {
                                     if (ser.nombre === actividadServicio.servicio.nombre) {
                                         encontrado = true
-                                        $timeout(function () {
-                                            $scope.$apply(function () {
-                                                $scope.mostrarMensaje('El servicio ya fue asignado a esta actividad')
-
-                                            });
-                                        }, 500)
+                                        $scope.mostrarMensaje('El servicio ya fue asignado a esta actividad')                                       
                                     }
                                     if (ser.codigo === actividadServicio.servicio.codigo) {
                                         encontrado = true
-                                        $timeout(function () {
-                                            $scope.$apply(function () {
-                                                $scope.mostrarMensaje('El codigo del servicio ya esta en uso o listo para ser asignado.')
-                                            });
-                                        }, 500)
+                                        $scope.mostrarMensaje('El codigo del servicio ya esta en uso o listo para ser asignado.')
                                     }
                                 })
                                 if (!encontrado) {
@@ -660,11 +643,7 @@ angular.module('agil.controladores')
                                         $scope.configuracionActividadServicio.push(service)
                                         $scope.nActividad.servicio = undefined
                                     } else {
-                                        $timeout(function () {
-                                            $scope.$apply(function () {
-                                                $scope.mostrarMensaje('La actividad seleccionada no tiene dosificación activa, por favor asigne una dosificación para poder continuar.')
-                                            });
-                                        }, 500)
+                                        $scope.mostrarMensaje('La actividad seleccionada no tiene dosificación activa, por favor asigne una dosificación para poder continuar.')
                                     }
                                 }
                             } else {
@@ -677,26 +656,14 @@ angular.module('agil.controladores')
                             $scope.configuracionActividadServicio.push(service)
                             $scope.nActividad.servicio = undefined
                         } else {
-                            $timeout(function () {
-                                $scope.$apply(function () {
-                                    $scope.mostrarMensaje('La actividad seleccionada no tiene dosificación activa, por favor asigne una dosificación para poder continuar.')
-                                });
-                            }, 500)
+                            $scope.mostrarMensaje('La actividad seleccionada no tiene dosificación activa, por favor asigne una dosificación para poder continuar.')
                         }
                     }
                 } else {
                     if (errDos) {
-                        $timeout(function () {
-                            $scope.$apply(function () {
-                                $scope.mostrarMensaje('La actividad seleccionada no tiene dosificación activa, por favor asigne una dosificación para poder continuar.')
-                            });
-                        }, 500)
+                        $scope.mostrarMensaje('La actividad seleccionada no tiene dosificación activa, por favor asigne una dosificación para poder continuar.')                        
                     } else {
-                        $timeout(function () {
-                            $scope.$apply(function () {
-                                $scope.mostrarMensaje('Revise los datos e intente de nuevo.')
-                            });
-                        }, 500)
+                        $scope.mostrarMensaje('Revise los datos e intente de nuevo.')                        
                     }
 
                 }
@@ -733,54 +700,31 @@ angular.module('agil.controladores')
                     ActividadEmpresa.save({ id_empresa: $scope.usuario.empresa.id }, nuevasActividades, function (res) {
                         if (res.hasErr === undefined) {
                             $scope.obtenerSucursales()
-                            $timeout(function () {
-                                $scope.$apply(function () {
-                                    $scope.mostrarMensaje(res.mensaje)
-                                });
-                            }, 500)
+                            $scope.mostrarMensaje(res.mensaje)
                             $scope.actividadesDosificaciones = []
                             var prom = ActividadesEmpresa($scope.usuario.empresa.id)
                             prom.then(function (activities) {
                                 $scope.actividadesEmpresa = activities.actividades
                                 if (activities.mensaje !== undefined) {
-                                    $timeout(function () {
-                                        $scope.$apply(function () {
-                                            $scope.mostrarMensaje(activities.mensaje)
-
-                                        });
-                                    }, 500)
+                                    $scope.mostrarMensaje(activities.mensaje)                                    
                                 }
                                 blockUI.stop()
                                 $scope.cerrarConfiguracionActividades()
                                 // $scope.obtenerActividadesSucursal(sucursalActividades.id)
 
                             }).catch(function (err) {
-                                $timeout(function () {
-                                    $scope.$apply(function () {
-                                        $scope.mostrarMensaje(err.message === undefined ? err.stack : err.message)
-
-                                    });
-                                }, 500)
+                                $scope.mostrarMensaje(err.message === undefined ? err.stack : err.message)                                
                                 blockUI.stop()
                                 $scope.cerrarConfiguracionActividades()
 
                             })
                         } else {
-                            $timeout(function () {
-                                $scope.$apply(function () {
-                                    $scope.mostrarMensaje(res.mensaje)
-                                });
-                            }, 500)
-
+                            $scope.mostrarMensaje(res.mensaje)                            
                             blockUI.stop()
                         }
                     }, function (err) {
                         blockUI.stop()
-                        $timeout(function () {
-                            $scope.$apply(function () {
-                                $scope.mostrarMensaje(err.message === undefined ? err.stack : err.message)
-                            });
-                        }, 500)
+                        $scope.mostrarMensaje(err.message === undefined ? err.stack : err.message)                        
                         $scope.cerrarConfiguracionActividades()
                     })
                 } else {
@@ -789,12 +733,7 @@ angular.module('agil.controladores')
                 }
             } else {
                 blockUI.stop()
-                $timeout(function () {
-                    $scope.$apply(function () {
-                        $scope.mostrarMensaje('Ingrese al menos 1 actividad para guardar.')
-                    });
-                }, 500)
-
+                $scope.mostrarMensaje('Ingrese al menos 1 actividad para guardar.')
             }
         }
 
@@ -814,18 +753,10 @@ angular.module('agil.controladores')
                         $scope.serviciosProcesados = services.servicios
                     }
                     if (services.mensaje !== undefined) {
-                        $timeout(function () {
-                            $scope.$apply(function () {
-                                $scope.mostrarMensaje(services.mensaje)
-                            });
-                        }, 500)
+                        $scope.mostrarMensaje(services.mensaje)                       
                     }
                 }, function (err) {
-                    $timeout(function () {
-                        $scope.$apply(function () {
-                            $scope.mostrarMensaje(err.message)
-                        });
-                    }, 500)
+                    $scope.mostrarMensaje(err.message)
                 })
             }
         }
@@ -847,11 +778,7 @@ angular.module('agil.controladores')
                 })
                 blockUI.stop();
             }, function (err) {
-                $timeout(function () {
-                    $scope.$apply(function () {
-                        $scope.mostrarMensaje(err.stack !== undefined ? err.stack : err.message ? err.message : 'No se recibio respuesta del servidor')
-                    });
-                }, 500)
+                $scope.mostrarMensaje(err.stack !== undefined ? err.stack : err.message ? err.message : 'No se recibio respuesta del servidor')                
             })
         }
 
@@ -883,12 +810,7 @@ angular.module('agil.controladores')
                     $scope.actividadADosificar = undefined
                     $scope.cerrardialogDosificacionesDisponibles()
                 } else {
-                    $timeout(function () {
-                        $scope.$apply(function () {
-                            $scope.mostrarMensaje('Hubo un problema, la dosificacion esta en lista para ser asignada!')
-                        });
-                    }, 500);
-
+                    $scope.mostrarMensaje('Hubo un problema, la dosificacion esta en lista para ser asignada!')                   
                 }
             }
         }
@@ -915,11 +837,7 @@ angular.module('agil.controladores')
                         var act = { actividad: actividad, sucursal: sucursal, expirado: false }
                         $scope.actividadesDosificaciones.push(act)
                     } else {
-                        $timeout(function () {
-                            $scope.$apply(function () {
-                                $scope.mostrarMensaje('La actividad "' + actividad.nombre + '" ya esta en la lista de esta sucursal "' + sucursal.nombre + '".')
-                            });
-                        }, 500);
+                        $scope.mostrarMensaje('La actividad "' + actividad.nombre + '" ya esta en la lista de esta sucursal "' + sucursal.nombre + '".')                       
                     }
                 } else {
                     var act = { actividad: actividad, sucursal: sucursal, expirado: false }
@@ -1012,11 +930,7 @@ angular.module('agil.controladores')
                 $scope.clientes = cls
                 $scope.clientesProcesados = cls
             }, function (err) {
-                $timeout(function () {
-                    $scope.$apply(function () {
-                        $scope.mostrarMensaje(err.message)
-                    });
-                }, 500)
+                $scope.mostrarMensaje(err.message)                
             })
         }
 
@@ -1056,11 +970,7 @@ angular.module('agil.controladores')
                 $scope.proformas = res.proformas
                 $scope.paginator.setPages(res.count)
                 if (res.mensaje !== undefined) {
-                    $timeout(function () {
-                        $scope.$apply(function () {
-                            $scope.mostrarMensaje(res.mensaje)
-                        });
-                    }, 500)
+                    $scope.mostrarMensaje(res.mensaje)
                 }
                 $scope.filtro = $scope.filtrarProformasOperaciones($scope.filtro, true, true)
                 // $scope.filtro = { empresa: $scope.usuario.empresa.id, mes: "", anio: "", sucursal: "", actividad: "", servicio: "", monto: "", razon: "", usuario: "", numero: "" }
@@ -1071,13 +981,9 @@ angular.module('agil.controladores')
                         $scope.calcularTotalProformas()
                     })
                 }, 1000)
-                
+
             }, function (err) {
-                $timeout(function () {
-                    $scope.$apply(function () {
-                        $scope.mostrarMensaje(err.stack)
-                    });
-                }, 500)
+                $scope.mostrarMensaje(err.stack)
             })
             blockUI.stop()
         }
@@ -1093,25 +999,17 @@ angular.module('agil.controladores')
                     proforma.fecha_proforma = new Date($scope.convertirFecha(proforma.fecha_proforma))
                     proforma.movimiento = 'PFR'
                     Proforma.update({ id: proforma.id }, proforma, function (res) {
-                        $timeout(function () {
-                            $scope.$apply(function () {
-                                $scope.mostrarMensaje(res.mensaje)
-                            });
-                        }, 500)
+                        $scope.mostrarMensaje(res.mensaje)                        
                         if (res.hasError === undefined) {
                             $scope.cerrardialogProformaEdicion()
                         } else {
+                            $scope.proforma = res.proforma
                             proforma.fecha_proforma = new Date($scope.convertirFecha(proforma.fecha_proforma))
                         }
                         blockUI.stop()
                     }, function (err) {
-                        $timeout(function () {
-                            $scope.$apply(function () {
-                                $scope.mostrarMensaje(err.message === undefined ? err.stack : err.message)
-                                proforma.fecha_proforma = $scope.fechaATexto(proforma.fecha_proforma)
-                            });
-                        }, 500)
-
+                        $scope.mostrarMensaje(err.message === undefined ? err.stack : err.message)
+                        proforma.fecha_proforma = $scope.fechaATexto(proforma.fecha_proforma)
                         blockUI.stop()
                     })
                 } else {
@@ -1120,33 +1018,21 @@ angular.module('agil.controladores')
                     proforma.usuarioProforma = $scope.usuario
                     proforma.fecha_proforma = new Date($scope.convertirFecha(proforma.fecha_proforma))
                     Proformas.save(filtro, proforma, function (res) {
-                        $timeout(function () {
-                            $scope.$apply(function () {
-                                $scope.mostrarMensaje(res.mensaje)
-
-                            });
-                        }, 500)
+                        $scope.mostrarMensaje(res.mensaje)
                         if (res.hasErr === undefined) {
                             $scope.cerrardialogProformaEdicion()
                         } else {
+                            $scope.proforma = res.proforma
                             proforma.fecha_proforma = $scope.fechaATexto(proforma.fecha_proforma)
                         }
                         blockUI.stop()
                     }, function (err) {
-                        $timeout(function () {
-                            $scope.$apply(function () {
-                                $scope.mostrarMensaje(err.message === undefined ? err.stack : err.message)
-                            });
-                        }, 500)
+                        $scope.mostrarMensaje(err.message === undefined ? err.stack : err.message)
                         blockUI.stop()
                     })
                 }
             } else {
-                $timeout(function () {
-                    $scope.$apply(function () {
-                        $scope.mostrarMensaje('Falta algún dato requerido. Por favor revise el formulario.')
-                    });
-                }, 500)
+                $scope.mostrarMensaje('Falta algún dato requerido. Por favor revise el formulario.')
                 blockUI.stop()
             }
         }
@@ -1223,11 +1109,7 @@ angular.module('agil.controladores')
                     }
                 })
             }, function (err) {
-                $timeout(function () {
-                    $scope.$apply(function () {
-                        $scope.mostrarMensaje(err.stack !== undefined ? err.stack : err.message)
-                    });
-                }, 500)
+                $scope.mostrarMensaje(err.stack !== undefined ? err.stack : err.message)
             })
         }
 
@@ -1237,11 +1119,7 @@ angular.module('agil.controladores')
             prom.then(function (actividades) {
                 $scope.actividadesDosificadosEmpresa = actividades.actividades
             }, function (err) {
-                $timeout(function () {
-                    $scope.$apply(function () {
-                        $scope.mostrarMensaje(err.stack !== undefined ? err.stack : err.message)
-                    });
-                }, 500)
+                $scope.mostrarMensaje(err.stack !== undefined ? err.stack : err.message)
             })
         }
 
@@ -1257,10 +1135,7 @@ angular.module('agil.controladores')
             $scope.actividadEconomicaEmpresa = undefined
             $scope.actividadesSucursal = []
             $scope.obtenerActividadesEmpresa($scope.usuario.empresa.id)
-            $timeout(function () {
-                $scope.recargarItemsTabla()
-            }, 2000)
-
+            $scope.recargarItemsTabla()            
             $scope.cerrarPopup($scope.modalConfiguracionActividades);
         }
 
@@ -1331,18 +1206,9 @@ angular.module('agil.controladores')
                 $scope.proforma = proformaE.proforma
                 if (proformaE.mensaje !== undefined || proformaE.proforma == null || proformaE.proforma == undefined) {
                     if ((proformaE.proforma == null || proformaE.proforma == undefined) && proformaE.mensaje == undefined) {
-                        $timeout(function () {
-                            $scope.$apply(function () {
-                                $scope.mostrarMensaje('No se encuentra la información requerida')
-                            });
-                        }, 500)
-
+                        $scope.mostrarMensaje('No se encuentra la información requerida')                        
                     } else {
-                        $timeout(function () {
-                            $scope.$apply(function () {
-                                $scope.mostrarMensaje(proformaE.mensaje)
-                            });
-                        }, 500)
+                        $scope.mostrarMensaje(proformaE.mensaje)                        
                     }
 
                 } else {
@@ -1357,11 +1223,8 @@ angular.module('agil.controladores')
                             }
                         } else {
                             $scope.moneda = { ufv: "--", dolar: "--" }
-                            $timeout(function () {
-                                $scope.$apply(function () {
-                                    $scope.mostrarMensaje('La fecha ' + $scope.proforma.fecha_proforma + ' no tiene datos del tipo de cambio de dolar. El tipo de cambio de dolar no afecta la información de la proforma y puede continuar sin problema.')
-                                });
-                            }, 500)
+                            $scope.mostrarMensaje('La fecha ' + $scope.proforma.fecha_proforma + ' no tiene datos del tipo de cambio de dolar. El tipo de cambio de dolar no afecta la información de la proforma y puede continuar sin problema.')
+                            
                         }
                         convertUrlToBase64Image($scope.usuario.empresa.imagen, function (imagenEmpresa) {
 
@@ -1380,21 +1243,12 @@ angular.module('agil.controladores')
                         blockUI.stop()
 
                     }, function (err) {
-                        $timeout(function () {
-                            $scope.$apply(function () {
-                                $scope.mostrarMensaje(err.message === undefined ? err.stack : err.message)
-                            });
-                        }, 500)
+                        $scope.mostrarMensaje(err.message === undefined ? err.stack : err.message)                        
                         blockUI.stop()
                     })
                 }
             }, function (err) {
-                $timeout(function () {
-                    $scope.$apply(function () {
-                        $scope.mostrarMensaje(err.message === undefined ? err.stack : err.message)
-                    });
-                }, 500)
-
+                $scope.mostrarMensaje(err.message === undefined ? err.stack : err.message)                
                 blockUI.stop()
             })
         }

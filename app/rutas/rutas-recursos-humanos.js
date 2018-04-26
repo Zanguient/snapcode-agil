@@ -543,6 +543,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                             id_extension: req.body.empleado.extension.id,
                             id_tipo_documento: req.body.empleado.tipoDocumento.id,
                             fecha_vence_documento: req.body.empleado.fecha_vence_documento,
+                            chofer: req.body.empleado.chofer
                         }, {
                                 where: {
                                     id: req.body.empleado.id
@@ -575,6 +576,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                                 id_extension: req.body.empleado.extension.id,
                                 id_tipo_documento: req.body.empleado.tipoDocumento.id,
                                 fecha_vence_documento: req.body.empleado.fecha_vence_documento,
+                                chofer: req.body.empleado.chofer
                             }, {
                                     where: {
                                         id: req.body.empleado.id
@@ -667,7 +669,8 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                             id_aporte_seguro_largo_plazo: req.body.aporteSeguroLargoPlazo.id,
                             id_lugar_seguro_largo_plazo: req.body.lugarSeguroLargoPlazo.id,
                             numero_cuenta: req.body.numero_cuenta,
-                            id_banco: req.body.banco.id
+                            id_banco: req.body.banco.id,
+
                         }, {
                                 where: { id: ficha.id }
                             }).then(function (actualizado) {
@@ -720,6 +723,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                             id_lugar_seguro_largo_plazo: req.body.lugarSeguroLargoPlazo.id,
                             numero_cuenta: req.body.numero_cuenta,
                             id_banco: req.body.banco.id,
+
                         }).then(function (medicoPacientefichaCreado) {
                             if (req.body.contrato2) {
                                 fs.writeFileSync('./contratos/contrato-' + medicoPacientefichaCreado.id + "-" + req.body.contrato2.name, req.body.contrato2.data, 'binary', function (err) {
@@ -1555,8 +1559,18 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
   */
             })
         })
+    router.route('/recursos-humanos/choferes/empresa/:id_empresa')
+        .get(function (req, res) {
+            MedicoPaciente.findAll({
+                where: { id_empresa: req.params.id_empresa, chofer: true },
+                include: [{ model: Persona, as: 'persona' }]
+            }).then(function (dato) {
+                res.json(dato)
+            })
+        })
     router.route('/recursos-humanos/rolTurno/empleado/:id_empleado')
         .post(function (req, res) {
+            req.body.fecha_fin = (req.body.fecha_fin == '') ? null : req.body.fecha_fin
             RrhhEmpleadoRolTurno.create({
                 /* id_empleado: req.params.id_empleado, */
                 id_ficha: req.body.id_ficha,
@@ -1566,7 +1580,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                 tipo: req.body.tipo,
                 dias_trabajado: req.body.dias_trabajo,
                 dias_descanso: req.body.dias_descanso,
-                grupo: req.body.grupo,
+                id_grupo: req.body.grupo,
                 eliminado: false
             }).then(function (empleadoRolTurnoCreado) {
                 res.json({ mensaje: "Guardado satisfactoriamente!" })
@@ -1577,21 +1591,54 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
         .get(function (req, res) {
             if (req.params.id_empleado != 0) {
                 RrhhEmpleadoRolTurno.findAll({
-                    where: { id_ficha: req.params.id_empleado },
+                    where: { id_ficha: req.params.id_empleado, eliminado: false },
                     include: [{ model: Clase, as: 'campo' }, { model: RrhhEmpleadoFicha, as: 'ficha', include: [{ model: MedicoPaciente, as: 'empleado', where: { id_empresa: req.params.id_empresa } }] }]
                 }).then(function (empleadoRolesTurno) {
                     res.json({ rolesTurno: empleadoRolesTurno })
 
                 })
             } else {
-                RrhhEmpleadoRolTurno.findAll({
-                    include: [{ model: Clase, as: 'campo' }, { model: RrhhEmpleadoFicha, as: 'ficha', include: [{ model: MedicoPaciente, as: 'empleado', where: { id_empresa: req.params.id_empresa }, include: [{ model: Persona, as: 'persona' }] }] }]
+                MedicoPaciente.findAll({                    
+                   where:{id_empresa:req.params.id_empresa,es_empleado:true,eliminado:false},
+                        include:[{ model: Persona, as: 'persona' },
+                        { model: RrhhEmpleadoFicha, as: 'empleadosFichas',
+                            include: [{model:RrhhEmpleadoRolTurno, as:"rolesTurno",include: [{ model: Clase, as: 'campo' }, { model: Clase, as: 'grupo' }]},{ model: RrhhEmpleadoCargo, as: 'cargos', include: [{ model: Clase, as: 'cargo' }] }, { model: RrhhEmpleadoVacaciones, as: 'vacaciones' }, { model: RrhhEmpleadoAusencia, as: 'ausencias', include: [{ model: RrhhClaseAsuencia, as: 'tipoAusencia', include: [{ model: Tipo, as: 'tipo' }] }]}]}]
                 }).then(function (empleadoRolesTurno) {
-                    res.json({ rolesTurno: empleadoRolesTurno })
+                    sequelize.query("select min(fecha_inicio) as fecha from agil_rrhh_empleado_rol_turno;", { type: sequelize.QueryTypes.SELECT })
+                        .then(function (fechaInicio) {
+                            res.json({ rolesTurno: empleadoRolesTurno, fechaInicio: fechaInicio[0].fecha })
+                        })
                 })
+                
+                /* RrhhEmpleadoRolTurno.findAll({
+                    where: { eliminado: false },
+                    include: [{ model: Clase, as: 'campo' }, { model: Clase, as: 'grupo' }, { model: RrhhEmpleadoFicha, as: 'ficha', include: [{ model: RrhhEmpleadoCargo, as: 'cargos', include: [{ model: Clase, as: 'cargo' }] }, { model: RrhhEmpleadoVacaciones, as: 'vacaciones' }, { model: RrhhEmpleadoAusencia, as: 'ausencias', include: [{ model: RrhhClaseAsuencia, as: 'tipoAusencia', include: [{ model: Tipo, as: 'tipo' }] }] }, { model: MedicoPaciente, as: 'empleado', where: { id_empresa: req.params.id_empresa }, include: [{ model: Persona, as: 'persona' }] }] }]
+                }).then(function (empleadoRolesTurno) {
+                    sequelize.query("select min(fecha_inicio) as fecha from agil_rrhh_empleado_rol_turno;", { type: sequelize.QueryTypes.SELECT })
+                        .then(function (fechaInicio) {
+                            res.json({ rolesTurno: empleadoRolesTurno, fechaInicio: fechaInicio[0].fecha })
+                        })
+                }) */
             }
         })
-
+    router.route('/recursos-humanos/empresa/:id_empresa/rolTurno/inicio/:inicio/fin/:fin/grupo/:grupo')
+        .get(function (req, res) {
+            var condicionRolTurno = { eliminado: false };
+            if (req.params.inicio != 0) {
+                var inicio = new Date(req.params.inicio); inicio.setHours(0, 0, 0, 0, 0);
+                var fin = new Date(req.params.fin); fin.setHours(23, 0, 0, 0, 0);
+                var condicionRolTurno = { eliminado: false, fecha_inicio: { $between: [inicio, fin] } };
+            }
+            if (req.params.grupo != "0") {
+                condicionRolTurno.id_grupo = req.params.grupo
+            }
+            RrhhEmpleadoRolTurno.findAll({
+                where: condicionRolTurno,
+                include: [{ model: Clase, as: 'campo' }, { model: Clase, as: 'grupo' }, { model: RrhhEmpleadoFicha, as: 'ficha', include: [{ model: RrhhEmpleadoVacaciones, as: 'vacaciones' }, { model: RrhhEmpleadoAusencia, as: 'ausencias', include: [{ model: RrhhClaseAsuencia, as: 'tipoAusencia', include: [{ model: Tipo, as: 'tipo' }] }] }, { model: MedicoPaciente, as: 'empleado', where: { id_empresa: req.params.id_empresa }, include: [{ model: Persona, as: 'persona' }] }] }]
+            }).then(function (empleadoRolesTurno) {
+                res.json({ rolesTurno: empleadoRolesTurno })
+            })
+        })
     router.route('/recursos-humanos/horas-extra/empleado/:id_empleado')
         .post(function (req, res) {
             RrhhEmpleadoHorasExtra.create({
@@ -1727,7 +1774,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                             id_tipo: tipo.dataValues.id,
                             habilitado: true
                         }
-                    }).spread(function (dato, cread) {                      
+                    }).spread(function (dato, cread) {
                         if (index === (array.length - 1)) {
                             sequelize.transaction(function (t) {
                                 req.body.familiares.forEach(function (familiar, index3, array3) {
@@ -4157,11 +4204,11 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                     res.json({ mensaje: err.message === undefined ? err.stack : err.message, hasErr: true })
                 });
         })
-    
-        router.route('/evaluacion/personal/test/:id_empresa')
+
+    router.route('/evaluacion/personal/test/:id_empresa')
         .post(function (req, res) {
             MedicoPaciente.findAll({
-                where:{
+                where: {
                     es_empleado: true,
                     id_empresa: req.params.id_empresa
                 }
@@ -4171,7 +4218,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                         where: {
                             id_empleado: empleado.id,
                             anio: new Date().getFullYear(),
-                            mes: new Date().getMonth()+4,
+                            mes: new Date().getMonth() + 4,
                             id_empresa: req.params.id_empresa,
                             eliminado: false
                             // fecha: req.body.fecha
@@ -4179,7 +4226,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                         defaults: {
                             id_empleado: empleado.id,
                             anio: new Date().getFullYear(),
-                            mes: new Date().getMonth()+4,
+                            mes: new Date().getMonth() + 4,
                             fecha: new Date(),
                             asistencia_capacitacion: Math.floor((Math.random() * 10) + 1),
                             documentos_actualizados: Math.floor((Math.random() * 10) + 1),
@@ -4196,7 +4243,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                             id_empresa: req.params.id_empresa
                         }
                     }).spread(function (evaluacion, nueva) {
-                        if (i=== empleados.length -1) {
+                        if (i === empleados.length - 1) {
                             res.json({ mensaje: 'Evaluación Creada satisfactoriamente!' })
                         }
                     }).catch(function (err) {
@@ -4515,14 +4562,14 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                         campo.ingreso_campo = campo.ingreso_campo / campo.count
                         campo.llenado_formularios = campo.llenado_formularios / campo.count
                         campo.total = campo.asistencia_capacitacion + campo.documentos_actualizados + campo.trabajo_equipo + campo.funciones_puntualidad + campo.higiene_personal + campo.asistencia_reunion + campo.ingreso_campo + campo.llenado_formularios
-                        if (i== reporteAnual.length -1) {
+                        if (i == reporteAnual.length - 1) {
                             res.json({ reporte: reporteAnual })
                         }
                     })
-                }else{
+                } else {
                     res.json({ reporte: [], mensaje: 'No existen datos.' })
                 }
-                
+
             }).catch(function (err) {
                 res.json({ reporte: [], mensaje: err.message === undefined ? err.stack : err.message, hasErr: true })
             });
@@ -4593,15 +4640,15 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                         campo.ingreso_campo = campo.ingreso_campo / campo.count
                         campo.llenado_formularios = campo.llenado_formularios / campo.count
                         campo.total = campo.asistencia_capacitacion + campo.documentos_actualizados + campo.trabajo_equipo + campo.funciones_puntualidad + campo.higiene_personal + campo.asistencia_reunion + campo.ingreso_campo + campo.llenado_formularios
-                        if (i == reporteAnual.length -1) {
+                        if (i == reporteAnual.length - 1) {
                             res.json({ reporte: reporteAnual })
                         }
                     })
-                }else{
+                } else {
                     res.json({ reporte: [], mensaje: 'No existen datos.' })
                 }
-                
-                
+
+
             }).catch(function (err) {
                 res.json({ reporte: [], mensaje: err.message === undefined ? err.stack : err.message, hasErr: true })
             });

@@ -1,0 +1,1 @@
+ALTER TABLE sh_school ADD contract_correlative int default 1;

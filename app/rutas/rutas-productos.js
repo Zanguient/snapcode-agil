@@ -82,7 +82,47 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 				res.json(resp);
 			});
 		});
+	router.route('/productos/kardex/empresa/:id_empresa/almacen/:id_almacen/grupo/:grupo')
+		.get(function (req, res) {
+			
+			var condicion={id_empresa: req.params.id_empresa, codigo: { $not: null } }
+			if(req.params.grupo!=0){
+				condicion={id_grupo:req.params.grupo, id_empresa: req.params.id_empresa, codigo: { $not: null } }
+			}
+			Producto.findAll({
+				where:condicion ,
+				include: [{ model: Empresa, as: 'empresa' },
+				{
+					model: DetalleMovimiento, as: "detallesMovimiento",
+					include: [{ model: Inventario, as: 'inventario'},
+					{
+						model: Movimiento, as: 'movimiento',
+						where: {
+							id_almacen: req.params.id_almacen},	
+						order:[["id","asc"]],					
+						include: [{
+							model: Compra, as: 'compra',
+							include: [{ model: Proveedor, as: 'proveedor' }]
+						},
+						{
+							model: Venta, as: 'venta',
+							include: [{ model: Cliente, as: 'cliente' }]
+						},
+						{
+							model: Almacen, as: 'almacen',
+							include: [{ model: Sucursal, as: 'sucursal' }]
+						},
+						{ model: Tipo, as: 'tipo' },
+						{ model: Clase, as: 'clase' }]
+					}]
+				}],
 
+				order: [['id', 'ASC']]
+
+			}).then(function (resp) {
+				res.json(resp);
+			});
+		});
 	router.route('/productos/empresa/:id_empresa/user/:id_usuario')
 		.get(function (req, res) {
 			UsuarioGrupos.findAll({

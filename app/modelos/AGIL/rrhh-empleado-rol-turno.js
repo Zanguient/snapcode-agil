@@ -33,8 +33,8 @@ module.exports = function (sequelize, Sequelize) {
             type: Sequelize.INTEGER,
             field: 'dias_descanso'
         },
-        grupo: {
-            type: Sequelize.STRING,
+        id_grupo: {
+            type: Sequelize.INTEGER,
             field: 'grupo'
         },
         eliminado: {

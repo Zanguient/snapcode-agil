@@ -2610,30 +2610,45 @@ angular.module('agil.servicios')
 				if (filtro.razon_social != "") {
 					cliente = despachos[0].despacho.cliente.razon_social
 				} */
-				var data = [["", "", "REPORTE DE DESPACHOS "]/*,  ["Vendedor :" +vendedor], ["Cliente :" + cliente] */, ["Nro", "Nro. pedido", "Vendedor", "Fecha", "Cod Cliente", "Cliente", "Razón social", "NIT", "Destino", "Direccion", "Producto", "Cantidad", "P/U", "Total", "Transportista", "Costo", "Grupo de Estibaje", "Tipo de Estibaje", "Costo Estibaje", "C.S. transporte", "Total Pedido", "F. Pedido", "Factura SAP"]]
+				var data = [["", "", "REPORTE DE DESPACHOS "]/*,  ["Vendedor :" +vendedor], ["Cliente :" + cliente] */, ["cod. dest","Destino", "Direccion","Cod Cliente", "Cliente","cod dest.factura","Razón social","NIT","Vendedor", "Nro. pedido", "F. Pedido", "Factura SAP","fecha fact.","No. Despacho","fecha desp.","Transportista","doc. Cobranza","Fecha Pago","Cod. prodcuto","Producto", "cant. pedido","cant. Despacho", "P/U", "Total",  "Costo", "Grupo de Estibaje", "Tipo de Estibaje", "Costo Estibaje", "C.S. transporte", "Total Pedido"]]
 				var totalCosto = 0;
 				for (var i = 0; i < despachos.length; i++) {
 					var detalle_despacho = despachos[i]
 					var columns = [];
-					columns.push(i + 1)
-					columns.push(detalle_despacho.numero_correlativo)
+					columns.push(detalle_despacho.despacho.destino != undefined ? detalle_despacho.despacho.destino.codigo : "")
+					columns.push(detalle_despacho.despacho.destino != undefined ? detalle_despacho.despacho.destino.destino : "Sin destino")
+					columns.push(detalle_despacho.despacho.destino != undefined ? detalle_despacho.despacho.destino.direccion : "Sin direccion")
+					columns.push(detalle_despacho.despacho.cliente.codigo)
+					columns.push(detalle_despacho.despacho.cliente.razon_social)
+					columns.push(detalle_despacho.despacho.cliente_razon != undefined ? detalle_despacho.despacho.cliente_razon.codigo_sap : "")		
+					columns.push(detalle_despacho.despacho.cliente_razon != undefined ? detalle_despacho.despacho.cliente_razon.razon_social : "")
+					columns.push(detalle_despacho.despacho.cliente.nit)
 					columns.push(detalle_despacho.despacho.usuario.persona.nombre_completo)
 					var fecha = new Date(detalle_despacho.despacho.fecha)
 					var dia = ((fecha.getDate()) >= 10) ? fecha.getDate() : "0" + fecha.getDate()
 					var mes = ((fecha.getMonth()) >= 10) ? (fecha.getMonth() + 1) : "0" + (fecha.getMonth() + 1)
-					columns.push(dia + "/" + mes + "/" + fecha.getFullYear())
-					columns.push(detalle_despacho.despacho.cliente.codigo)
-					columns.push(detalle_despacho.despacho.cliente.razon_social)
-					columns.push(detalle_despacho.despacho.cliente_razon != undefined ? detalle_despacho.despacho.cliente_razon.razon_social : "")
-					columns.push(detalle_despacho.despacho.cliente.nit)
-					columns.push(detalle_despacho.despacho.destino != undefined ? detalle_despacho.despacho.destino.destino : "Sin destino")
-					columns.push(detalle_despacho.despacho.destino != undefined ? detalle_despacho.despacho.destino.direccion : "Sin direccion")
+					columns.push(detalle_despacho.despacho.id)
+					columns.push(new Date(detalle_despacho.despacho.fecha))
+					
+
+					columns.push(detalle_despacho.factura)
+					columns.push(new Date(detalle_despacho.fecha_factura))
+					columns.push(detalle_despacho.numero_correlativo)
+					var fechaPedido = new Date(detalle_despacho.fecha)
+					var dia2 = ((fechaPedido.getDate()) >= 10) ? fechaPedido.getDate() : "0" + fechaPedido.getDate()
+					var mes2 = ((fechaPedido.getMonth() + 1) >= 10) ? (fechaPedido.getMonth() + 1) : "0" + (fechaPedido.getMonth() + 1)
+					columns.push(new Date(detalle_despacho.fecha))
+					columns.push(detalle_despacho.transportista.persona.nombre_completo)
+					columns.push("")
+					columns.push("")
+					columns.push(detalle_despacho.producto.codigo)
 					columns.push(detalle_despacho.producto.nombre)
+					columns.push(detalle_despacho.cantidad)
 					columns.push(detalle_despacho.cantidad_despacho)
 					columns.push(detalle_despacho.producto.precio_unitario)
-					var total = detalle_despacho.producto.precio_unitario * detalle_despacho.cantidad
+					var total = detalle_despacho.producto.precio_unitario * detalle_despacho.cantidad_despacho
 					columns.push(total)
-					columns.push(detalle_despacho.transportista.persona.nombre_completo)
+					
 					var costo = detalle_despacho.transportista.costo_transporte * detalle_despacho.cantidad_despacho
 					columns.push(costo)
 					columns.push(detalle_despacho.grupo_estibaje.nombre)
@@ -2643,10 +2658,7 @@ angular.module('agil.servicios')
 					columns.push(detalle_despacho.servicio_transporte)
 					var TotalPedido = detalle_despacho.servicio_transporte + total
 					columns.push(TotalPedido)
-					var fechaPedido = new Date(detalle_despacho.fecha)
-					var dia2 = ((fechaPedido.getDate()) >= 10) ? fechaPedido.getDate() : "0" + fechaPedido.getDate()
-					var mes2 = ((fechaPedido.getMonth() + 1) >= 10) ? (fechaPedido.getMonth() + 1) : "0" + (fechaPedido.getMonth() + 1)
-					columns.push(dia2 + "/" + mes2 + "/" + fechaPedido.getFullYear())
+					
 					columns.push(detalle_despacho.despacho.cliente_razon != undefined ? detalle_despacho.despacho.cliente_razon.codigo_sap : "")
 					data.push(columns);
 				}

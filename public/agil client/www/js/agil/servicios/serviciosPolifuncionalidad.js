@@ -77,7 +77,7 @@ angular.module('agil.servicios')
         return res;
     }])
 
-    .factory('ActializarEvaluacionPersonal', ['EvaluacionPersonal', '$q', function (EvaluacionPersonal, $q) {
+    .factory('ActualizarEvaluacionPersonal', ['EvaluacionPersonal', '$q', function (EvaluacionPersonal, $q) {
         var res = function (id_empresa, evaluacion) {
             var delay = $q.defer();
             EvaluacionPersonal.update({ id_empresa: id_empresa }, evaluacion, function (entidades) {

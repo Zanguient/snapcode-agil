@@ -23,7 +23,26 @@ var res = function(idProducto)
 };
 	return res;
 }])
+.factory('ListaProductosKardex', function($resource) {
+	return $resource(restServer+"productos/kardex/empresa/:id_empresa/almacen/:id_almacen/grupo/:grupo");
+})
 
+.factory('ReporteProductosKardex', ['ListaProductosKardex','$q',function(ListaProductosKardex, $q) 
+{
+var res = function(idEmpresa,filtro) 
+{
+	var delay = $q.defer();
+	ListaProductosKardex.query({id_empresa:idEmpresa,id_almacen:filtro.almacen,grupo:filtro.grupo},function(entidades) 
+	{        
+		delay.resolve(entidades);
+	}, function(error) 
+		{
+			delay.reject(error);
+		});
+	return delay.promise;
+};
+	return res;
+}])
 .factory('ProductosKardex', function($resource) {
 		return $resource(restServer+"productos/kardex/:id_producto/almacen/:id_almacen/fecha-inicial/:fecha_inicio/fecha-final/:fecha_fin/lote/:lote");
 })

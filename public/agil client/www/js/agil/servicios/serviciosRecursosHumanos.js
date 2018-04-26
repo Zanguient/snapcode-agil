@@ -286,6 +286,7 @@ angular.module('agil.servicios')
             'update': { method: 'PUT' }
         });
 })
+
 .factory('CrearRolTurno', ['RolTurno', '$q', function (RolTurno, $q) {
     var res = function (idEmpleado,rolTurno) {
         var delay = $q.defer();
@@ -968,3 +969,39 @@ angular.module('agil.servicios')
     };
     return res;
 }])
+.factory('FiltroRolTurno', function ($resource) {
+    return $resource(restServer + "recursos-humanos/empresa/:id_empresa/rolTurno/inicio/:inicio/fin/:fin/grupo/:grupo",{ id_empleado: '@id_empleado' },
+        {
+            'update': { method: 'PUT' }
+        });
+})
+.factory('ListaRolTurnosEmpresa', ['FiltroRolTurno', '$q', function (FiltroRolTurno, $q) {
+    var res = function (idEmpresa,filtro) {
+        var delay = $q.defer();
+        FiltroRolTurno.get({ id_empresa: idEmpresa,inicio:filtro.inicio,fin:filtro.fin,grupo:filtro.grupo}, function (entidad) {
+            delay.resolve(entidad);
+        }, function (error) {
+            delay.reject(error);
+        });
+        return delay.promise;
+    };
+    return res;
+}])
+.factory('ChoferesViaje', function ($resource) {
+    return $resource(restServer + "recursos-humanos/choferes/empresa/:id_empresa", null ,
+        {
+            'update': { method: 'PUT' }
+        });
+})
+.factory('ListaChoferesViaje', ['ChoferesViaje', '$q', function (ChoferesViaje, $q) {
+    var res = function (idEmpresa) {
+        var delay = $q.defer();
+        ChoferesViaje.query({ id_empresa: idEmpresa}, function (entidad) {
+            delay.resolve(entidad);
+        }, function (error) {
+            delay.reject(error);
+        });
+        return delay.promise;
+    };
+    return res;
+}]) 

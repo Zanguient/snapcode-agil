@@ -15,18 +15,20 @@
 			Ejemplo Importacion
 		</a>
 		<button type="button" class="btn btn-yellow" ng-click="descargarCatalogo()">Descargar catálogo productos</button>
+		<button type="button" class="btn btn-yellow" ng-click="abrirModalReporteProductosKardex()">Reporte Productos Kardex</button>
 		<div class="clearfix">
 			<div class="pull-right tableTools-container"></div>
 		</div>
+
 		<div class="table-header">
 			Lista de Productos
 		</div>
-		<span>Grupos: &nbsp;</span> <select class="form-control" style="width:150px;" ng-change="buscarProductos(grupo)"
-                                                        required id="selectGruposProductos" name="selectGruposProductos" ng-model="grupo"
-                                                        ng-options="grupo as grupo.nombre for grupo in gruposProducto track by grupo.id"
-                                                        data-placeholder="Click para escoger">
-                                                        <option value="" selected>Todos</option>
-                                                    </select>
+		<span>Grupos: &nbsp;</span>
+		<select class="form-control" style="width:150px;" ng-change="buscarProductos(grupo)" required id="selectGruposProductos"
+		 name="selectGruposProductos" ng-model="grupo" ng-options="grupo as grupo.nombre for grupo in gruposProducto track by grupo.id"
+		 data-placeholder="Click para escoger">
+			<option value="" selected>Todos</option>
+		</select>
 		<!-- div.table-responsive -->
 
 		<!-- div.dataTables_borderWrap -->
@@ -270,11 +272,11 @@
 
 							<div class="space-4"></div>
 							<div class="form-group">
-									<div class="col-sm-3"></div>	
-									<div class="col-sm-5"></div>	
-									<div class="col-sm-2">Rango +</div>	
-									<div class="col-sm-2">Rango -</div>	
-								</div>	
+								<div class="col-sm-3"></div>
+								<div class="col-sm-5"></div>
+								<div class="col-sm-2">Rango +</div>
+								<div class="col-sm-2">Rango -</div>
+							</div>
 							<div class="form-group">
 								<label class="col-sm-3 control-label no-padding-right" for="precio_unitario">Precio de Venta</label>
 
@@ -283,12 +285,12 @@
 									 class="form-control" />
 								</div>
 								<div class="col-sm-2">
-									<input  type="number" step="0.01" id="precio_unitario" ng-model="producto.rango_positivo" placeholder="Rango +"
-									 class="form-control" />
+									<input type="number" step="0.01" id="precio_unitario" ng-model="producto.rango_positivo" placeholder="Rango +" class="form-control"
+									/>
 								</div>
 								<div class="col-sm-2">
-									<input  type="number" step="0.01" id="precio_unitario" ng-model="producto.rango_negativo" placeholder="Rango -"
-									 class="form-control" />
+									<input type="number" step="0.01" id="precio_unitario" ng-model="producto.rango_negativo" placeholder="Rango -" class="form-control"
+									/>
 								</div>
 							</div>
 							<div class="form-group">
@@ -308,7 +310,7 @@
 							</div>
 						</div>
 
-						<div  id="cuerpo-datos-adicionales" class="step-pane" data-step="2">
+						<div id="cuerpo-datos-adicionales" class="step-pane" data-step="2">
 							<div class="form-group" ng-if="usuario.empresa.usar_panel">
 								<label class="control-label col-xs-6 no-padding-right" for="panel">¿Publicar Panel?</label>
 								<div class="col-xs-6">
@@ -394,13 +396,13 @@
 							<div class="form-group" ng-if="usuario.empresa.usar_vencimientos">
 								<label class="col-sm-3 control-label no-padding-right" for="alerta">Alerta de Vencimiento</label>
 								<div class="col-sm-3">
-									<input  type="number" id="alerta" ng-model="producto.alerta" placeholder="Alerta" class="form-control" />
+									<input type="number" id="alerta" ng-model="producto.alerta" placeholder="Alerta" class="form-control" />
 								</div>
 							</div>
 							<div class="form-group" ng-if="usuario.empresa.usar_descuentos">
 								<label class="col-sm-2 control-label no-padding-right" for="descuento">Descuento</label>
 								<div class="col-sm-2">
-									<input  type="number" id="descuento" ng-model="producto.descuento" placeholder="Descuento" class="form-control" />
+									<input type="number" id="descuento" ng-model="producto.descuento" placeholder="Descuento" class="form-control" />
 								</div>
 								<div class="col-sm-2">
 									<label>
@@ -410,7 +412,7 @@
 								</div>
 							</div>
 						</div>
-						<div id="cuerpo-tipo-producto"  class="step-pane" data-step="3">
+						<div id="cuerpo-tipo-producto" class="step-pane" data-step="3">
 							<div class="form-group">
 								<label class="control-label col-xs-12 col-sm-3 no-padding-right">Tipo Producto</label>
 								<div class="col-xs-8 col-sm-4">
@@ -578,7 +580,8 @@
 						Anterior
 					</button>
 
-					<button type="submit" id="siguiente" ng-click="ValidarForm(formularioProducto,steps,'anterior-n')" class="btn btn-success btn-sm btn-next" data-last="Finish">
+					<button type="submit" id="siguiente" ng-click="ValidarForm(formularioProducto,steps,'anterior-n')" class="btn btn-success btn-sm btn-next"
+					 data-last="Finish">
 						Siguiente
 						<i class="ace-icon fa fa-arrow-right icon-on-right"></i>
 					</button>
@@ -922,4 +925,49 @@
 	</p>
 	<button type="button" class="btn btn-danger" ng-click="eliminarProducto(producto)">Si</button>
 	<button type="button" class="btn btn-success" ng-click="cerrarConfirmacionEliminacion()">No</button>
+</div>
+
+<div id="dialog-reporte-productos-kardex" title="¿Eliminación de Producto?">
+	<form ng-submit="reporteProductosKardex(imp)">
+		<div class="modal-header primary">
+			Reporte Productos Kardex
+		</div>
+		<div class="modal-body">
+
+
+			<div>
+				<label>SUCURSAL</label>&nbsp
+
+				<select required ng-options="sucursal as sucursal.nombre for sucursal in sucursales track by sucursal.id" ng-model="imp.sucursal"
+				 ng-change="obtenerAlmacenes(imp.sucursal.id)">
+				</select>&nbsp
+			</div>
+			<div>
+				<label>ALMACEN</label>&nbsp
+
+				<select required ng-model="imp.almacen" ng-options="almacen.id as almacen.nombre for almacen in almacenes track by almacen.id"
+				 data-placeholder="Click para escoger" ng-change="establecerAlmacen(almacenes.id_almacen)" required=""></select>&nbsp
+
+			</div>
+			<div>
+				<span>Grupos: &nbsp;</span>
+				<select class="form-control" style="width:150px;"id="selectGruposProductos"
+				 name="selectGruposProductos" ng-model="imp.grupo" ng-options="grupo.id as grupo.nombre for grupo in gruposProducto track by grupo.id"
+				 data-placeholder="Click para escoger">
+					<option value="" selected>Todos</option>
+				</select>
+			</div>
+
+		</div>
+		<div class="modal-footer">
+			<button type="submit" class="btn btn-primary btn-sm pull-right">
+				<i class="ace-icon fa fa-search"></i>
+				Generar Reporte
+			</button>&nbsp
+			<button type="button" class="btn btn-danger btn-sm pull-left" ng-click="cerrarModalReporteProductosKardex()">
+				<i class="ace-icon fa fa-search"></i>
+				Cancelar
+			</button>&nbsp
+		</div>
+	</form>
 </div>

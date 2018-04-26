@@ -1,0 +1,1 @@
+ALTER TABLE sh_school ADD sell_correlative int default 1;

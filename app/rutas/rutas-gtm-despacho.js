@@ -499,7 +499,8 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, forEach, j
 	router.route('/gtm-detalle-despacho/:id_detalle_despacho')
 		.put(function (req, res) {
 			GtmDespachoDetalle.update({
-				factura: req.body.factura
+				factura: req.body.factura,
+				fecha_factura: req.body.fecha_factura
 			}, {
 					where: {
 						id: req.params.id_detalle_despacho

@@ -221,6 +221,10 @@ angular.module('agil', ['ngRoute', 'agil.controladores',
             .when('/polifuncionalidad', {
                 controller:'controladorPolifuncionalidad',
                 templateUrl:'templates/agil/polifuncionalidad.html'
+            })
+            .when('/transacciones', {
+                controller:'controladorTransacciones',
+                templateUrl:'templates/agil/transacciones.html'
             }) 
         .otherwise({
           redirectTo:'/'

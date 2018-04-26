@@ -1,0 +1,1 @@
+ALTER TABLE sh_teacher_registry ADD hours decimal(20,4);

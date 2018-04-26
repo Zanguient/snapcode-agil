@@ -4,7 +4,7 @@ angular.module('agil.controladores')
 		$route, blockUI, Producto, Productos, ProductosPaginador, ProductosEmpresa,
 		ClasesTipo, Clases, ProductoKardex, ProductosEmpresaCreacion, DatoCodigoSiguienteProductoEmpresa, ListaProductosEmpresa,
 		Paginator, ListaCuentasComprobanteContabilidad, DatosProducto, CatalogoProductos,
-		ListaGruposProductoEmpresa, ListaSubGruposProductoEmpresa, ListaGruposProductoUsuario) {
+		ListaGruposProductoEmpresa, ListaSubGruposProductoEmpresa, ListaGruposProductoUsuario, ReporteProductosKardex) {
 		blockUI.start();
 		$scope.idModalWizardProductoKardex = 'modal-wizard-producto-kardex';
 		$scope.idModalWizardProductoEdicion = 'modal-wizard-producto-edicion';
@@ -14,7 +14,7 @@ angular.module('agil.controladores')
 		$scope.idModalContenedorProductoVista = 'modal-wizard-container-producto-vista';
 		$scope.idModalContenedorProductoKardex = 'modal-wizard-container-producto-kardex';
 		$scope.idImagenProducto = 'imagen-producto';
-
+		$scope.idModalReporteProductosKardex = "dialog-reporte-productos-kardex"
 		$scope.usuario = JSON.parse($localStorage.usuario);
 
 		$scope.inicio = function () {
@@ -44,6 +44,112 @@ angular.module('agil.controladores')
 			})
 		}
 
+		$scope.reporteProductosKardex = function (filtro) {
+			blockUI.start()
+			if(filtro.grupo ==undefined){
+				filtro.grupo=0
+			}
+			var promesa = ReporteProductosKardex($scope.usuario.id_empresa, filtro)
+			promesa.then(function (datos) {
+				//$scope.datosReporteProductoKardex=datos
+				if (datos.length == 0) {
+					$scope.mostrarMensaje('No existen datos')
+					blockUI.stop()
+
+				} else {
+					for (var i = 0; i < datos.length; i++) {
+						datos[i] = $scope.generarKardexProductoReporte(datos[i])
+						if (i === (datos.length - 1)) {
+							var report = []
+							var cabecera = [
+								"Código",
+								"Nombre",
+								"Unidad Medida",
+								"Saldo Fisico",
+								"Saldo Valuado"]
+							var wscols = [
+								{ wch: 15 },
+								{ wch: 20 },
+								{ wch: 15 },
+								{ wch: 15 },
+							];
+							report.push(cabecera)
+							for (var i = 0; i < datos.length; i++) {
+								var columns = [];
+								columns.push(datos[i].codigo);
+								columns.push(datos[i].nombre);
+								columns.push(datos[i].unidad_medida);
+								columns.push(datos[i].detallesMovimiento[datos[i].detallesMovimiento.length-1].saldoFisico)
+								columns.push(datos[i].detallesMovimiento[datos[i].detallesMovimiento.length-1].saldoV);
+								report.push(columns);
+							}
+
+							var ws_name = "SheetJS";
+							var wb = new Workbook(), ws = sheet_from_array_of_arrays(report);
+							ws['!cols'] = wscols;
+							/* add worksheet to workbook */
+							wb.SheetNames.push(ws_name);
+							wb.Sheets[ws_name] = ws;
+							var wbout = XLSX.write(wb, { bookType: 'xlsx', bookSST: true, type: 'binary', cellStyles: true });
+							saveAs(new Blob([s2ab(wbout)], { type: "application/octet-stream" }), "Catálogo productos.xlsx");
+							blockUI.stop();
+						}
+					}
+
+				}
+
+
+
+			})
+		}
+		$scope.generarKardexProductoReporte = function (datos) {
+			var dato = datos;
+			$scope.Math = Math;
+			dato.detallesMovimiento.sort(function(a,b){
+				return a.id-b.id
+			})
+			for (var i = 0; i < dato.detallesMovimiento.length; i++) {
+				dato.detallesMovimiento[i].costo_unitario = Math.round((dato.detallesMovimiento[i].costo_unitario * 0.87) * 100) / 100;
+				if (i == 0 && dato.detallesMovimiento[i].tipo == "SALDO ANTERIOR") {
+					dato.detallesMovimiento[i].saldoFisico = dato.detallesMovimiento[i].saldoFisico;
+					dato.detallesMovimiento[i].saldoValuado = dato.detallesMovimiento[i].saldoValuado;
+					dato.detallesMovimiento[i].costo_unitario = Math.round((dato.detallesMovimiento[i].costo_unitario * 100 / 87) * 100) / 100;
+				} else if (i == 0 && dato.detallesMovimiento[i].movimiento.tipo.nombre_corto == $scope.diccionario.MOV_ING && dato.detallesMovimiento[i].movimiento.clase.nombre_corto == $scope.diccionario.ING_INV_INICIAL) {
+					dato.detallesMovimiento[i].saldoFisico = dato.detallesMovimiento[i].cantidad;
+					dato.detallesMovimiento[i].saldoValuado = Math.round((dato.detallesMovimiento[i].saldoFisico * dato.detallesMovimiento[i].costo_unitario) * 100) / 100;
+					dato.detallesMovimiento[i].tipo = dato.detallesMovimiento[i].movimiento.clase.nombre;
+				} else if (i == 0 && dato.detallesMovimiento[i].movimiento.tipo.nombre_corto == $scope.diccionario.MOV_ING) {
+					dato.detallesMovimiento[i].saldoFisico = dato.detallesMovimiento[i].cantidad;
+					dato.detallesMovimiento[i].saldoValuado = Math.round((dato.detallesMovimiento[i].saldoFisico * dato.detallesMovimiento[i].costo_unitario) * 100) / 100;
+					dato.detallesMovimiento[i].tipo = dato.detallesMovimiento[i].movimiento.clase.nombre;
+				}else if (i == 0 && dato.detallesMovimiento[i].movimiento.tipo.nombre_corto == $scope.diccionario.MOV_EGR) {
+					dato.detallesMovimiento[i].saldoFisico = dato.detallesMovimiento[i].cantidad;
+					dato.detallesMovimiento[i].saldoValuado = Math.round((dato.detallesMovimiento[i].saldoFisico * dato.detallesMovimiento[i].costo_unitario) * 100) / 100;
+					dato.detallesMovimiento[i].tipo = dato.detallesMovimiento[i].movimiento.clase.nombre;
+				}
+				else {
+					if (dato.detallesMovimiento[i].movimiento.tipo.nombre_corto == $scope.diccionario.MOV_ING) {
+						dato.detallesMovimiento[i].saldoFisico = dato.detallesMovimiento[i - 1].saldoFisico + dato.detallesMovimiento[i].cantidad;
+						dato.detallesMovimiento[i].saldoValuado = Math.round((dato.detallesMovimiento[i - 1].saldoValuado + (dato.detallesMovimiento[i].cantidad * dato.detallesMovimiento[i].costo_unitario)) * 100) / 100;
+						dato.detallesMovimiento[i].tipo = dato.detallesMovimiento[i].movimiento.clase.nombre;
+					} else {
+						if (dato.detallesMovimiento[i].movimiento.venta) {
+							//dato.detallesMovimiento[i].costo_unitario=dato.detallesMovimiento[i].costo_unitario*0.87;
+							dato.detallesMovimiento[i].saldoFisico = dato.detallesMovimiento[i - 1].saldoFisico - dato.detallesMovimiento[i].cantidad;
+							dato.detallesMovimiento[i].saldoValuado = Math.round((dato.detallesMovimiento[i - 1].saldoValuado - (dato.detallesMovimiento[i].cantidad * dato.detallesMovimiento[i].costo_unitario)) * 100) / 100;
+							dato.detallesMovimiento[i].tipo = dato.detallesMovimiento[i].movimiento.clase.nombre + " Nro. " + dato.detallesMovimiento[i].movimiento.venta.factura;
+						} else {
+							dato.detallesMovimiento[i].saldoFisico = dato.detallesMovimiento[i - 1].saldoFisico - dato.detallesMovimiento[i].cantidad;
+							dato.detallesMovimiento[i].saldoValuado = Math.round((dato.detallesMovimiento[i - 1].saldoValuado - (dato.detallesMovimiento[i].cantidad * dato.detallesMovimiento[i].costo_unitario)) * 100) / 100;
+							dato.detallesMovimiento[i].tipo = dato.detallesMovimiento[i].movimiento.clase.nombre;
+						}
+					}
+
+				}
+				dato.detallesMovimiento[i].saldoV = dato.detallesMovimiento[i].saldoValuado.toFixed(2);
+			}
+			return dato;
+		}
 		$scope.obtenerSubGruposProductosEmpresa = function () {
 			var promesa = ListaSubGruposProductoEmpresa($scope.usuario.id_empresa);
 			promesa.then(function (subgrupos) {
@@ -60,7 +166,8 @@ angular.module('agil.controladores')
 				$scope.idModalContenedorProductoEdicion,
 				$scope.idModalContenedorProductoVista,
 				$scope.idModalContenedorProductoKardex,
-				$scope.idImagenProducto);
+				$scope.idImagenProducto,
+				$scope.idModalReporteProductosKardex);
 			$scope.buscarAplicacion($scope.usuario.aplicacionesUsuario, $location.path().substring(1));
 			blockUI.stop();
 		});
@@ -98,6 +205,15 @@ angular.module('agil.controladores')
 		$scope.cerrarPopPupKardex = function () {
 			$scope.cerrarPopup($scope.idModalWizardProductoKardex);
 			$scope.search.inventario.lote = "";
+		}
+		$scope.abrirModalReporteProductosKardex = function () {
+			$scope.imp = {}
+			$scope.abrirPopup($scope.idModalReporteProductosKardex);
+		}
+
+		$scope.cerrarModalReporteProductosKardex = function () {
+			$scope.imp = {}
+			$scope.cerrarPopup($scope.idModalReporteProductosKardex);
 		}
 
 		$scope.kardexProducto = function (producto) {
@@ -795,6 +911,7 @@ angular.module('agil.controladores')
 			$scope.eliminarPopup($scope.idModalWizardProductoVista);
 			$scope.eliminarPopup($scope.idModalEliminarProducto);
 			$scope.eliminarPopup($scope.idModalWizardProductoKardex);
+			$scope.eliminarPopup($scope.idModalReporteProductosKardex);
 		});
 
 		$scope.inicio();

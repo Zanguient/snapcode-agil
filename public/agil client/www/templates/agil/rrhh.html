@@ -958,7 +958,18 @@
 
                                         </label>
                                     </div>
+                                    <div class="col-sm-6 col-md-2">
+                                        <label>
+                                            chofer
+                                        </label>
 
+                                        <div>
+                                            <label>
+                                                <input name="" class="ace ace-switch ace-switch-5" type="checkbox" ng-model="ficha.empleado.chofer">
+                                                <span class="lbl check-espaniol"></span>
+                                            </label>
+                                        </div>
+                                    </div>
 
                                 </div>
                                 <div class="page-header">
@@ -5844,8 +5855,8 @@
                     </div>
                     <div class="form-group col-sm-6">
                         <label for="ap-paterno">Hasta</label>
-                        <input type="text" ng-model="rolTurno.fecha_fin" data-date-format="dd/mm/yyyy" class="form-control date-picker" autocomplete="off"
-                            ng-disabled="rolTurno.tipo" id="ap-paterno" name="ap-paterno" placeholder="Hasta">
+                        <input type="text" ng-update-hidden ng-model="rolTurno.fecha_fin" data-date-format="dd/mm/yyyy" class="form-control date-picker"
+                            autocomplete="off" ng-disabled="rolTurno.tipo" id="ap-paterno" name="ap-paterno" placeholder="Hasta">
                     </div>
                 </div>
                 <div class="row">
@@ -5861,7 +5872,9 @@
                 <div class="row">
                     <div class="form-group col-sm-6">
                         <label for="ap-materno">Grupo</label>
-                        <input required type="text" ng-model="rolTurno.grupo" class="form-control" id="ap-paterno" name="ap-paterno" placeholder="Grupo">
+                        <select ng-model="rolTurno.grupo" class="form-control" ng-options="grupo.id as grupo.nombre for grupo in gruposRol.clases | filter:{habilitado:true} track by grupo.id">
+                            <option value="">--Ninguno--</option>
+                        </select>
                     </div>
                 </div>
 
@@ -5932,7 +5945,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr ng-repeat="rolTurno in listaRolTurno track by $index">
+                    <tr ng-repeat="rolTurno in empleadosRolTurno track by $index">
                         <td>{{rolTurno.campo.nombre}}</td>
                         <td>{{rolTurno.fecha_inicio | date: "dd/MM/yyyy"}}</td>
                         <td>{{rolTurno.fecha_fin | date: "dd/MM/yyyy"}}</td>
@@ -7039,71 +7052,77 @@
     <div id="dialog-reporte-rol-turnos" class="modal">
         <div class="modal-header ficha">
             <h4 class="modal-title" id="myModalLabel"> ROLES DE TURNOS</h4>
-            <h5 class="modal-title">Campo:Margarita, Cargo:chofer, Empresa:YPFB</h5>
+            <!--     <h5 class="modal-title">Campo:Margarita, Cargo:chofer, Empresa:YPFB</h5> -->
         </div>
         <div class="modal-body">
             <div class="row">
-                <div class="form-group col-sm-3">
-                    <label for="nombres">Desde</label>
-                    <input type="text" class="form-control date-picker" autocomplete="off" id="nombres" name="nombres" placeholder="Desde">
-                </div>
-                <div class="form-group col-sm-3">
-                    <label for="ap-paterno">Hasta</label>
-                    <input type="text" class="form-control date-picker" autocomplete="off" id="ap-paterno" name="ap-paterno" placeholder="Hasta">
-                </div>
-                <div class="form-group col-sm-2">
-                    <label for="sexo">Grupo</label>
-                    <div class="input-group">
-                        <select class="form-control">
-                            <option value="CB">-----</option>
-
-                        </select>
+                <form ng-submit="obtenerlistaRolTurnoEmpresa(filtroRol)">
+                    <div class="form-group col-sm-3">
+                        <label for="nombres">Desde</label>
+                        <input type="text" ng-update-hidden data-date-format="dd/mm/yyyy" class="form-control date-picker" ng-model="filtroRol.inicio"
+                            autocomplete="off" id="nombres" name="nombres" placeholder="Desde">
                     </div>
-                </div>
-                <div class="form-group col-sm-4">
-                    <div class="buttons-align">
-                        <button type="button" class="btn btn-primary btn-sm">
-                            <i class=" fa fa-search-plus align-top "></i>
-                            Filtrar
-                        </button>
-                        <button type="button" ng-click="abrirDialogReporteTurnosDetallado()" class="btn btn-purple btn-sm">
-                            <i class=" fa fa-list-alt bigger-130"></i>
-                        </button>
-
+                    <div class="form-group col-sm-3">
+                        <label for="ap-paterno">Hasta</label>
+                        <input type="text" ng-update-hidden data-date-format="dd/mm/yyyy" class="form-control date-picker" ng-model="filtroRol.fin"
+                            autocomplete="off" id="ap-paterno" name="ap-paterno" placeholder="Hasta">
                     </div>
-                </div>
+                    <div class="form-group col-sm-2">
+                        <label for="sexo">Grupo</label>
+                        <div class="input-group">
+
+                            <select ng-model="filtroRol.grupo" class="form-control" ng-options="grupo.id as grupo.nombre for grupo in gruposRol.clases | filter:{habilitado:true} track by grupo.id">
+                                <option value="">--Ninguno--</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group col-sm-4">
+                        <div class="buttons-align">
+                            <button type="submit" class="btn btn-primary btn-sm">
+                                <i class=" fa fa-search-plus align-top "></i>
+                                Filtrar
+                            </button>
+                            <button type="button" ng-click="abrirDialogReporteTurnosDetallado(filtroRol)" class="btn btn-purple btn-sm">
+                                <i class=" fa fa-list-alt bigger-130"></i>
+                            </button>
+
+                        </div>
+                    </div>
+                </form>
             </div>
-            <table class="table table-striped table-hover">
-                <thead>
-                    <tr>
-                        <th>Nombre</th>
-                        <th>Campo</th>
-                        <th>F.Inicio</th>
-                        <th>F.Fin</th>
-                        <th>D. Trab</th>
-                        <th>D. Desc</th>
-                        <th>Grupo</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr ng-repeat="rolTurno in listaRolTurno track by $index">
-                        <td>{{rolTurno.empleado.persona.nombre_completo}}</td>
-                        <td>{{rolTurno.campo.nombre}}</td>
-                        <td>{{rolTurno.fecha_inicio | date: "dd/MM/yyyy"}}</td>
-                        <td>{{rolTurno.fecha_fin | date: "dd/MM/yyyy"}}</td>
-                        <td>{{rolTurno.dias_trabajado}}</td>
-                        <td>{{rolTurno.dias_descanso}}</td>
-                        <td>{{rolTurno.grupo}}</td>
-                        <td>
-                            <a class="blue">
-                                <span class="fa fa-search-plus bigger-130" aria-hidden="true"></span>
-                            </a>
-                        </td>
-                    </tr>
+            <div class="table-fixed-header">
+                <table id="tabla-comprobante-revision" class="table table-striped table-bordered table-hover">
+                    <thead fix-head class="table-head-color">
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Campo</th>
+                            <th>F.Inicio</th>
+                            <th>F.Fin</th>
+                            <th>D. Trab</th>
+                            <th>D. Desc</th>
+                            <th>Grupo</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="rolTurno in listaRolTurnoFiltro track by $index">
+                            <td>{{rolTurno.ficha.empleado.persona.nombre_completo}}</td>
+                            <td>{{rolTurno.campo.nombre}}</td>
+                            <td>{{rolTurno.fecha_inicio | date: "dd/MM/yyyy"}}</td>
+                            <td>{{rolTurno.fecha_fin | date: "dd/MM/yyyy"}}</td>
+                            <td>{{rolTurno.dias_trabajado}}</td>
+                            <td>{{rolTurno.dias_descanso}}</td>
+                            <td>{{rolTurno.grupo.nombre}}</td>
+                            <td>
+                                <a class="blue">
+                                    <span class="fa fa-search-plus bigger-130" aria-hidden="true"></span>
+                                </a>
+                            </td>
+                        </tr>
 
-                </tbody>
-            </table>
+                    </tbody>
+                </table>
+            </div>
         </div>
         <div class="modal-footer wizard-actions">
             <button type="button" class="btn btn-danger btn-sm">
@@ -7125,60 +7144,125 @@
     <div id="dialog-reporte-turnos-detallado" class="modal">
         <div class="modal-header ficha">
             <h4 class="modal-title" id="myModalLabel"> ROLES DE TURNOS</h4>
-            <h5 class="modal-title">Campo:Margarita, Cargo:chofer, Empresa:YPFB</h5>
+            <!--  <h5 class="modal-title">Campo:Margarita, Cargo:chofer, Empresa:YPFB</h5> -->
         </div>
 
-        <table class="table table-striped table-hover table-bordered">
+        <div class="modal-body">
+            <form ng-submit="realizarCalendarioTrabajo(filtroRolCal)">
+                <div class="row">
+                    <div class="form-group col-sm-3">
+                        <label for="nombres">Desde</label>
+                        <input type="text" ng-update-hidden data-date-format="dd/mm/yyyy" class="form-control date-picker" ng-change="cambiarFecha(filtroRolCal)"
+                            ng-model="filtroRolCal.inicio" autocomplete="off" id="nombres" name="nombres" placeholder="Desde">
+                    </div>
+                    <div class="form-group col-sm-3">
+                        <label for="ap-paterno">Hasta</label>
+                        <input type="text" ng-update-hidden data-date-format="dd/mm/yyyy" class="form-control date-picker" ng-model="filtroRolCal.fin"
+                            autocomplete="off" id="ap-paterno" name="ap-paterno" ng-change="cambiarFecha(filtroRolCal)" placeholder="Hasta">
+                    </div>
+                   <!--  <div class="form-group col-sm-2">
+                        <label for="sexo">Año</label>
+                        <div class="input-group">
+                            <select required id="gestion" name="gestion" ng-options="gestion as gestion.nombre for gestion in gestiones track by gestion.id"
+                                ng-model="filtroRolCal.gestion">
+                            </select>&nbsp
+                        </div>
+                    </div> -->
+                    <div class="form-group col-sm-4">
+                        <div class="buttons-align">
+                            <button autofocus type="submit" class="btn btn-primary btn-sm">
+                                <i class=" fa fa-search-plus align-top "></i>
+                                Filtrar
+                            </button>
 
-            <thead>
-                <tr>
-                    <th colspan="6"></th>
-                    <th colspan="4">AGOSTO</th>
-                </tr>
-                <tr>
-                    <th>Campo</th>
-                    <th>G</th>
-                    <th>Empleado</th>
-                    <th>Cargo</th>
-                    <th>Telefono</th>
-                    <th>Residencia</th>
-                    <th>25</th>
-                    <th>26</th>
-                    <th>27</th>
-                    <th>28</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>Juan Perez</td>
-                    <td>margarita</td>
-                    <td>11/03/2017</td>
-                    <td>11/03/2017</td>
-                    <td>11</td>
-                    <td>7</td>
-                    <td>D</td>
-                    <td>D</td>
-                    <td>D</td>
-                    <td>T</td>
-                </tr>
+                        </div>
+                    </div>
+                </div>
+            </form>
+            <div class="table-fixed-header">
 
-            </tbody>
-        </table>
-        <div class="row">
-            <div class="modal-footer wizard-actions">
-                <button type="button" class="btn btn-danger btn-sm">
-                    <i class=" fa fa-print"></i>
-                    Pdf
-                </button>
-                <button type="button" class="btn btn-success btn-sm">
-                    <i class=" fa fa-print "></i>
-                    Excel
-                </button>
-                <button class="btn btn-danger btn-sm pull-left" ng-click="cerrarDialogReporteTurnosDetallado()">
-                    <i class="ace-icon fa fa-times"></i>Cancelar
-                </button>
+                <table id="tabla-comprobante-revision" class="zui-table table table-striped table-bordered table-hover">
+                    <thead fix-head class="table-head-color">
+                        <tr>
+                            <th colspan="6"></th>
+                            <th ng-if="mes.visible" colspan="{{mes.dias.length}}" ng-repeat="mes in mesesRolTurno track by $index">{{mes.nombre}} {{mes.anio}}</th>
+                        </tr>
+                        <tr>
+                            <th>Campo</th>
+                            <th>G</th>
+                            <th>Empleado
+                                <span style="color: #DDEFEF;">.........................................</span>
+                            </th>
+
+                            <th>Cargo</th>
+                            <th>Telefono</th>
+                            <th>Residencia</th>
+                            <th ng-if="dia.mes.visible && dia.visible" ng-hide ng-repeat="dia in diasAnio track by $index">{{dia.dia}}</th>
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-if="empleado.verDatos" ng-repeat="empleado in empleadosRolTurno track by $index">
+                            <td ><p ng-repeat="rol in empleado.empleadosFichas[empleado.empleadosFichas.length - 1].rolTurno">{{rol.campo.nombre}}</p></td>
+
+                            <td><p ng-repeat="rol in empleado.empleadosFichas[empleado.empleadosFichas.length - 1].rolTurno">{{rol.grupo.nombre_corto}}</p></td>
+                            <td>{{empleado.persona.nombre_completo}}</td>
+                            <td>
+                                <p ng-repeat="cargo in empleado.empleadosFichas[empleado.empleadosFichas.length - 1].cargos">{{cargo.cargo.nombre}}</p>
+                            </td>
+                            <td>{{empleado.persona.telefono_movil}}</td>
+                            <td>7</td>
+                            <td ng-if="dia.mes.visible && dia.visible" tooltip-rel="tooltip" tooltip-placement="left" uib-tooltip-html="dia.mensaje"
+                                ng-repeat="dia in empleado.diasAnio track by $index">{{dia.texto}}</td>
+
+                        </tr>
+
+                    </tbody>
+                    <tfoot>
+                        <tr>
+
+                            <th colspan="6">Personal Trabajo</th>
+
+                            <th ng-if="dia.mes.visible && dia.visible" ng-repeat="dia in diasAnioPieTrabajos track by $index">{{dia.texto}}</th>
+
+                        </tr>
+                    </tfoot>
+                    <tfoot>
+                        <tr>
+
+                            <th colspan="6">Personal Vacacion </th>
+
+                            <th ng-if="dia.mes.visible && dia.visible" ng-repeat="dia in diasAnioPieVacaciones track by $index">{{dia.texto}}</th>
+
+                        </tr>
+                    </tfoot>
+                    <tfoot>
+                        <tr>
+
+                            <th colspan="6">Personal Ausencia</th>
+
+                            <th ng-if="dia.mes.visible && dia.visible" ng-repeat="dia in diasAnioPieAusencias track by $index">{{dia.texto}}</th>
+
+                        </tr>
+                    </tfoot>
+                </table>
             </div>
+
         </div>
+        <div class="modal-footer wizard-actions">
+            <button type="button" class="btn btn-danger btn-sm">
+                <i class=" fa fa-print"></i>
+                Pdf
+            </button>
+            <button type="button" class="btn btn-success btn-sm">
+                <i class=" fa fa-print "></i>
+                Excel
+            </button>
+            <button class="btn btn-danger btn-sm pull-left" ng-click="cerrarDialogReporteTurnosDetallado()">
+                <i class="ace-icon fa fa-times"></i>Cancelar
+            </button>
+        </div>
+
     </div>
     <!--- ==== fin modal reporte rol de turno ================================ -->
     <!--- ==== modal viajes  ================================ -->
@@ -7197,17 +7281,15 @@
                                 <div class="form-group row">
                                     <label class="col-sm-3" for="motivo-retiro">Vehículo</label>
                                     <div class="input-group col-sm-9">
-                                        <span class="input-group-addon glyphicon glyphicon-pencil point-edit green" ng-click="abrirDialogVehiculosViaje()"></span>
-                                        <select class="form-control" id="motivo-retiro" name="motivo-retiro">
-                                            <option></option>
-                                            <option>Toyota Coaster</option>
-                                        </select>
+                                        <span class="input-group-addon glyphicon glyphicon-pencil point-edit green" aria-hidden="true" ng-click="abrirDialogConceptoEdicion(vehiculosViaje)"></span>
+                                        <select class="form-control" required ng-options="vehiculo as vehiculo.nombre for vehiculo in vehiculosViaje.clases | filter:{habilitado:true} track by vehiculo.id"
+                                            ng-model="viaje.vehiculo"></select>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-md-8">
                                 <h4 class="line-dashed">
-                                    <i class="ace-icon fa fa-caret-right blue"></i> Toyota Coaster 1067-ZYG, Placa 1067-ZYG</h4>
+                                    <i class="ace-icon fa fa-caret-right blue"></i>{{viaje.vehiculo.nombre}}</h4>
                             </div>
                         </div>
                         <div class="row">
@@ -7215,16 +7297,14 @@
                                 <div class="form-group row">
                                     <label class="col-sm-3" for="motivo-retiro">Conductor</label>
                                     <div class="input-group col-sm-9">
-                                        <select class="form-control" id="motivo-retiro" name="motivo-retiro">
-                                            <option></option>
-                                            <option>Luis Alberto</option>
-                                        </select>
+                                        <select class="form-control" required ng-options="chofer as chofer.persona.nombre_completo for chofer in choferesViaje track by chofer.id"
+                                            ng-model="viaje.conductor"></select>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-md-8">
                                 <h4 class="line-dashed">
-                                    <i class="ace-icon fa fa-caret-right blue"></i> Velasco salvador Luis Alberto Licencia 3279122, Cat. "C"</h4>
+                                    <i class="ace-icon fa fa-caret-right blue"></i>{{viaje.conductor.persona.nombre_completo}}</h4>
                             </div>
                         </div>
                         <div class="row">
@@ -7232,47 +7312,49 @@
                                 <div class="form-group row">
                                     <label class="col-sm-3" for="motivo-retiro">Relevo</label>
                                     <div class="input-group col-sm-9">
-                                        <select class="form-control" id="motivo-retiro" name="motivo-retiro">
-                                            <option></option>
-                                            <option>Luis Alberto</option>
-                                        </select>
+                                        <select class="form-control" required ng-options="chofer as chofer.persona.nombre_completo for chofer in choferesViaje track by chofer.id"
+                                            ng-model="viaje.relevo"></select>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-md-8">
                                 <h4 class="line-dashed">
-                                    <i class="ace-icon fa fa-caret-right blue"></i> Velasco salvador Luis Alberto Licencia 3279122, Cat. "C"</h4>
+                                    <i class="ace-icon fa fa-caret-right blue"></i>{{viaje.relevo.persona.nombre_completo}}</h4>
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-4">
+                            <div class="col-md-12 ">
                                 <div class="form-group row">
-                                    <label class="col-sm-3" for="motivo-retiro">Destinos</label>
-                                    <div class="input-group col-sm-9">
-                                        <span class="input-group-addon glyphicon glyphicon-pencil point-edit green" ng-click="abrirDialogDestinos()"></span>
-                                        <select class="form-control" id="motivo-retiro" name="motivo-retiro">
-                                            <option></option>
-                                            <option>Santa Cruz</option>
-                                        </select>
+                                    <label class="col-sm-1" for="motivo-retiro">Destinos</label>
+                                    <div class="input-group col-sm-11">
+                                        <div id="cargos" isteven-multi-select required input-model="campamento" output-model="ficha.cargo" button-label="icon nombre"
+                                            item-label="icon nombre maker" tick-property="ticked" translation="localLang">
+                                        </div>
 
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-8">
-                            </div>
+                            
                         </div>
-                        <div class="row">
-                            <div class="col-md-12">
-                                <table class="table table-striped table-hover table-viajes" id="otros-ingresos">
-                                    <thead>
+                        <div class="row">                            
+                                <div class="table-fixed-header">
+                                    <table id="tabla-comprobante-revision" class="table table-striped table-bordered table-hover">
+                                        <thead fix-head class="table-head-color">
                                         <tr>
                                             <th colspan="5" class="table-head-white">
                                                 <div class="row row-table">
                                                     <label class="col-sm-1" for="motivo-retiro">Ingreso</label>
                                                     <div class="col-sm-4">
-                                                        <input type="text" class="form-control imput-width">
+                                                        <input type="text" class="form-control date-picker" ng-update-hidden data-date-format="dd/mm/yyyy" ng-model="viaje.fecha_ingreso">
                                                     </div>
-                                                    <div class="col-md-7">
+                                                    <div class="col-md-3">
+                                                        <label for="otros-ingresos">Empleados</label>
+                                                        &nbsp;&nbsp;&nbsp;
+                                                        <button type="button" class="btn btn-white btn-primary btn-xs btn-bold" ng-click="CargarEmpleadosViaje(viaje.fecha_ingreso)">
+                                                            <span class="fa fa-users bigger-160" aria-hidden="true"></span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="col-md-3">
                                                         <label for="otros-ingresos">Visitantes</label>
                                                         &nbsp;&nbsp;&nbsp;
                                                         <button type="button" class="btn btn-white btn-success btn-xs btn-bold" ng-click="abrirDialogVisita()">
@@ -7284,21 +7366,21 @@
                                             <th class="table-head-blue">Total 1 Pasajeros</th>
                                         </tr>
                                         <tr>
-                                            <th class="table-head-blue" width="4%">Nro</th>
-                                            <th class="table-head-blue" width="11.5%">Campo</th>
-                                            <th class="table-head-blue" width="33%">Empleado</th>
-                                            <th class="table-head-blue" width="20%">C.I.</th>
-                                            <th class="table-head-blue">Estado</th>
-                                            <th class="table-head-blue">Acciones</th>
+                                            <th>Nro</th>
+                                            <th>Campo</th>
+                                            <th>Empleado</th>
+                                            <th>C.I.</th>
+                                            <th>Estado</th>
+                                            <th>Acciones</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr>
-                                            <td>1</td>
-                                            <td>PBR-LAL</td>
-                                            <td>Juan Carlos Zambrana Garcia</td>
-                                            <td>4363637383 SCZ</td>
-                                            <td>Habilitado</td>
+                                        <tr ng-repeat="empleado in empleadosEntrada track by $index">
+                                            <td>{{$index+1}}</td>
+                                            <td>{{empleado.campo.nombre}}</td>
+                                            <td>{{empleado.ficha.empleado.persona.nombre_completo}}</td>
+                                            <td>{{empleado.ficha.empleado.persona.ci}}</td>                                            
+                                            <td>{{empleado.grupo.nombre}}</td>
                                             <td>
                                                 <a class="red">
                                                     <i class="ace-icon fa fa-trash-o bigger-130"></i>
@@ -7309,71 +7391,31 @@
                                                 </label>
                                             </td>
                                         </tr>
-                                        <tr>
-                                            <td>2</td>
-                                            <td>PBR-LAL</td>
-                                            <td>Juan Carlos Zambrana Garcia</td>
-                                            <td>4363637383 SCZ</td>
-                                            <td>Habilitado</td>
-                                            <td>
-                                                <a class="red">
-                                                    <i class="ace-icon fa fa-trash-o bigger-130"></i>
-                                                </a>
-                                                <label>
-                                                    <input name="todos" id="todos" class="ace ace-switch ace-switch-5 col-sm-9" type="checkbox">
-                                                    <span class="lbl check-espaniol"></span>
-                                                </label>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>3</td>
-                                            <td>PBR-LAL</td>
-                                            <td>Juan Carlos Zambrana Garcia</td>
-                                            <td>4363637383 SCZ</td>
-                                            <td>Habilitado</td>
-                                            <td>
-                                                <a class="red">
-                                                    <i class="ace-icon fa fa-trash-o bigger-130"></i>
-                                                </a>
-                                                <label>
-                                                    <input name="todos" id="todos" class="ace ace-switch ace-switch-5 col-sm-9" type="checkbox">
-                                                    <span class="lbl check-espaniol"></span>
-                                                </label>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>4</td>
-                                            <td>PBR-LAL</td>
-                                            <td>Juan Carlos Zambrana Garcia</td>
-                                            <td>4363637383 SCZ</td>
-                                            <td>Habilitado</td>
-                                            <td>
-                                                <a class="red">
-                                                    <i class="ace-icon fa fa-trash-o bigger-130"></i>
-                                                </a>
-                                                <label>
-                                                    <input name="todos" id="todos" class="ace ace-switch ace-switch-5 col-sm-9" type="checkbox">
-                                                    <span class="lbl check-espaniol"></span>
-                                                </label>
-                                            </td>
-                                        </tr>
+                                        
                                     </tbody>
                                 </table>
                             </div>
                         </div>
 
                         <div class="row">
-                            <div class="col-md-12">
-                                <table class="table table-striped table-hover table-viajes" id="otros-ingresos">
-                                    <thead>
+                            <div class="table-fixed-header">
+                                <table id="tabla-comprobante-revision" class="table table-striped table-bordered table-hover">
+                                    <thead fix-head class="table-head-color">
                                         <tr>
                                             <th colspan="5" class="table-head-white">
                                                 <div class="row row-table">
                                                     <label class="col-sm-1" for="motivo-retiro">Salida</label>
                                                     <div class="col-sm-4">
-                                                        <input type="text" class="form-control imput-width">
+                                                        <input type="text" class="form-control date-picker" ng-update-hidden data-date-format="dd/mm/yyyy" ng-model="viaje.fecha_salida">
                                                     </div>
-                                                    <div class="col-md-4">
+                                                    <div class="col-md-2">
+                                                        <label for="otros-ingresos">Empleados</label>
+                                                        &nbsp;&nbsp;&nbsp;
+                                                        <button type="button" class="btn btn-white btn-primary btn-xs btn-bold" ng-click="CargarEmpleadosViajeSalida(viaje.fecha_salida)">
+                                                            <span class="fa fa-users bigger-160" aria-hidden="true"></span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="col-md-2">
                                                         <label for="otros-ingresos">Visitantes</label>
                                                         &nbsp;&nbsp;&nbsp;
                                                         <button type="button" class="btn btn-white btn-success btn-xs btn-bold" ng-click="abrirDialogVisita()">
@@ -7401,12 +7443,12 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr>
-                                            <td>1</td>
-                                            <td>PBR-LAL</td>
-                                            <td>Juan Carlos Zambrana Garcia</td>
-                                            <td>4363637383 SCZ</td>
-                                            <td>Habilitado</td>
+                                        <tr ng-repeat="empleado in empleadosSalida track by $index">
+                                            <td>{{$index+1}}</td>
+                                            <td>{{empleado.campo.nombre}}</td>
+                                            <td>{{empleado.ficha.empleado.persona.nombre_completo}}</td>
+                                            <td>{{empleado.ficha.empleado.persona.ci}}</td>                                            
+                                            <td>{{empleado.grupo.nombre}}</td>
                                             <td>
                                                 <a class="red">
                                                     <i class="ace-icon fa fa-trash-o bigger-130"></i>
@@ -7417,54 +7459,7 @@
                                                 </label>
                                             </td>
                                         </tr>
-                                        <tr>
-                                            <td>2</td>
-                                            <td>PBR-LAL</td>
-                                            <td>Juan Carlos Zambrana Garcia</td>
-                                            <td>4363637383 SCZ</td>
-                                            <td>Habilitado</td>
-                                            <td>
-                                                <a class="red">
-                                                    <i class="ace-icon fa fa-trash-o bigger-130"></i>
-                                                </a>
-                                                <label>
-                                                    <input name="todos" id="todos" class="ace ace-switch ace-switch-5 col-sm-9" type="checkbox">
-                                                    <span class="lbl check-espaniol"></span>
-                                                </label>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>3</td>
-                                            <td>PBR-LAL</td>
-                                            <td>Juan Carlos Zambrana Garcia</td>
-                                            <td>4363637383 SCZ</td>
-                                            <td>Habilitado</td>
-                                            <td>
-                                                <a class="red">
-                                                    <i class="ace-icon fa fa-trash-o bigger-130"></i>
-                                                </a>
-                                                <label>
-                                                    <input name="todos" id="todos" class="ace ace-switch ace-switch-5 col-sm-9" type="checkbox">
-                                                    <span class="lbl check-espaniol"></span>
-                                                </label>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>4</td>
-                                            <td>PBR-LAL</td>
-                                            <td>Juan Carlos Zambrana Garcia</td>
-                                            <td>4363637383 SCZ</td>
-                                            <td>Habilitado</td>
-                                            <td>
-                                                <a class="red">
-                                                    <i class="ace-icon fa fa-trash-o bigger-130"></i>
-                                                </a>
-                                                <label>
-                                                    <input name="todos" id="todos" class="ace ace-switch ace-switch-5 col-sm-9" type="checkbox">
-                                                    <span class="lbl check-espaniol"></span>
-                                                </label>
-                                            </td>
-                                        </tr>
+                                       
                                     </tbody>
                                 </table>
                             </div>

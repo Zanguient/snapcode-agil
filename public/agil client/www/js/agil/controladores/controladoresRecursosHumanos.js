@@ -6,7 +6,7 @@ angular.module('agil.controladores')
         ListaAnticiposEmpleado, CrearNuevosAnticiposEmpleados, ActualizarAnticipoEmpleado, NuevaAusenciaEmpleado, HistorialEmpleadoAusencias, HistorialEmpresaEmpleadosAusencias, NuevaVacacionEmpleado, HistorialEmpleadoVacaciones, HistorialEmpresaVacaciones, NuevoFeriado,
         ListaFeriados, GuardarClasesAusencias, Tipos, ListaBancos, ConfiguracionesVacacion, HistorialGestionesVacacion, GuardarTr3, ListaTr3Empresa, GuardarHistorialVacacion, CrearBeneficioSocial, ListaBeneficiosEmpleado, GuardarBitacoraFicha, VerBitacoraFicha, ObtenerFiniquitoEmpleado,
         ClasesTipoEmpresa, GuardarConfiguracionRopaCargo, ListaConfiguracionRopaCargo, DatosReporteConfiguracionRopa, FichasEmpleadoEmpresa, ListaCargosEmpleado, ListaRopaTrabajoProductos, GuardarDotacionRopa, ListaDotacionRopa, EliminarDotacionRopa, ListaDotacionRopaEmpresa, ActualizarDotacionRopa,
-        FamiliaresEmpleadoEmpresa) {
+        FamiliaresEmpleadoEmpresa, ListaRolTurnosEmpresa, ListaChoferesViaje) {
         $scope.usuario = JSON.parse($localStorage.usuario);
         $scope.idModalPrerequisitos = 'dialog-pre-requisitos';
         $scope.idModalEmpleado = 'dialog-empleado';
@@ -234,6 +234,8 @@ angular.module('agil.controladores')
             $scope.eliminarPopup($scope.idModalConceptoEdicion)
         });
         $scope.inicio = function () {
+
+            $scope.localStorageSpace()
             $scope.listYearsAnticipo = $scope.obtenerAnios(2017)
             $scope.obtenerGenero();
             $scope.obtenerRecursosHumanos();
@@ -247,9 +249,12 @@ angular.module('agil.controladores')
             $scope.buscarRopaTrabajo()
             $scope.obtenerCuentasBancos()
             $scope.buscarDepartamentoFiniquito()
+            $scope.obtenerGestiones()
+            $scope.obtenerChoferesViaje()
             $scope.dynamicPopoverRopaTrabajo = {
                 templateUrl: 'myPopoverRopaTrabajo.html',
             };
+
         }
 
         $scope.abrirDialogConceptoEdicion = function (tipo) {
@@ -1804,19 +1809,49 @@ angular.module('agil.controladores')
             $scope.cerrarPopup($scope.idModalReporteBajasMedicas);
         }
         $scope.abrirDialogReporteRolTurnos = function () {
+            $scope.filtroRol = { inicio: 0, fin: 0, grupo: 0 }
             $scope.obtenerlistaRolTurno(0)
+            $scope.obtenerlistaRolTurnoEmpresa($scope.filtroRol)
             $scope.abrirPopup($scope.idModalReporteRolTurnos);
         }
         $scope.cerrarDialogReporteRolTurnos = function () {
             $scope.cerrarPopup($scope.idModalReporteRolTurnos);
         }
         $scope.abrirDialogReporteTurnosDetallado = function () {
+
             $scope.abrirPopup($scope.idModalReporteTurnosDetallado);
+        }
+        $scope.cambiarFecha = function (filtro) {
+            /*  if (filtro.inicio.length > 9) {
+                 var fecha = new Date($scope.convertirFecha(filtro.inicio))
+                 fecha.setFullYear(parseInt($scope.filtroRolCal.gestion.nombre))
+                 filtro.inicio = $scope.fechaATexto(fecha)
+             }
+             if (filtro.fin.length > 9) {
+                 fecha = new Date($scope.convertirFecha(filtro.fin))
+                 if (fecha.getFullYear() == $scope.filtroRolCal.gestion.nombre) {
+                     filtro.fin = $scope.fechaATexto(fecha)
+                 } else {
+                     fecha.setFullYear(parseInt($scope.filtroRolCal.gestion.nombre))
+                     fecha = new Date(fecha.getFullYear(), 12, 0);
+                     filtro.fin = $scope.fechaATexto(fecha)
+                 }
+ 
+             } */
+        }
+        $scope.formatofecha = function (fecha) {
+            var datos = fecha.split("/")
+            return datos[2] + "/" + datos[1] + "/" + datos[0]
         }
         $scope.cerrarDialogReporteTurnosDetallado = function () {
             $scope.cerrarPopup($scope.idModalReporteTurnosDetallado);
         }
         $scope.abrirDialogViajes = function () {
+            /* var fecha = new Date()
+            var ultimoDia = new Date(fecha.getFullYear(), 12, 0).getDate();
+            $scope.filtroRolCal = { inicio: $scope.fechaInicioCalendario, fin: ultimoDia + "/12/" + fecha.getFullYear() }
+            $scope.realizarCalendarioTrabajo($scope.filtroRolCal) */
+            $scope.obtenerlistaRolTurno(0)
             $scope.abrirPopup($scope.idModalViajes);
         }
         $scope.cerrarDialogViajes = function () {
@@ -2774,6 +2809,33 @@ angular.module('agil.controladores')
             $scope.obtenerEstadoDotacion()
             $scope.obtenerCumplimientoDotacion()
             $scope.obtenerPeriodosDotacion()
+            $scope.obtenerGruposRol()
+            $scope.obtenerVehiculosViaje()
+            $scope.obtenerTipoViajeDetalle()
+        }
+        $scope.obtenerGruposRol = function () {
+            blockUI.start();
+            var promesa = ClasesTipoEmpresa("RRHH_GROL", $scope.usuario.id_empresa);
+            promesa.then(function (entidad) {
+                $scope.gruposRol = entidad
+                blockUI.stop();
+            });
+        }
+        $scope.obtenerVehiculosViaje = function () {
+            blockUI.start();
+            var promesa = ClasesTipoEmpresa("RRHH_VVIA", $scope.usuario.id_empresa);
+            promesa.then(function (entidad) {
+                $scope.vehiculosViaje = entidad
+                blockUI.stop();
+            });
+        }
+        $scope.obtenerTipoViajeDetalle = function () {
+            blockUI.start();
+            var promesa = ClasesTipoEmpresa("RRHH_TVIA", $scope.usuario.id_empresa);
+            promesa.then(function (entidad) {
+                $scope.tiposViaje = entidad
+                blockUI.stop();
+            });
         }
         $scope.obtenerGrados = function () {
             blockUI.start();
@@ -4547,7 +4609,7 @@ angular.module('agil.controladores')
         //inicio rol turno
         $scope.GuardarRolTurno = function (rolTurno) {
             rolTurno.fecha_inicio = new Date($scope.convertirFecha(rolTurno.fecha_inicio))
-            rolTurno.fecha_fin = new Date($scope.convertirFecha(rolTurno.fecha_fin))
+            if (rolTurno.fecha_fin) rolTurno.fecha_fin = new Date($scope.convertirFecha(rolTurno.fecha_fin))
             rolTurno.id_ficha = $scope.empleado.id_ficha
             var promesa = CrearRolTurno($scope.empleado.id, rolTurno)
             promesa.then(function (datos) {
@@ -4558,28 +4620,46 @@ angular.module('agil.controladores')
             })
         }
         $scope.calcularDatosRolTurno = function (rolTurno) {
-            if (rolTurno.fecha_inicio && rolTurno.fecha_inicio.length == 10) {
-                if (rolTurno.tipo) {
-                    //rolTurno.fecha_fin = $scope.SumarDiasMesesAñosfecha(rolTurno.fecha_inicio, 35, "d", "/")
-                    rolTurno.dias_trabajo = 14;
-                    rolTurno.dias_descanso = 7;
-                } else {
-                    //rolTurno.fecha_fin = $scope.SumarDiasMesesAñosfecha(rolTurno.fecha_inicio, 22, "d", "/")
-                    rolTurno.dias_trabajo = 7;
-                    rolTurno.dias_descanso = 15;
-                }
+            if (rolTurno.tipo) {
+                rolTurno.fecha_fin = ""
+                rolTurno.dias_trabajo = 14;
+                rolTurno.dias_descanso = 7;
             } else {
-                $scope.rolTurno = { tipo: false, fecha_fin: "", dias_trabajo: null, dias_descanso: null, grupo: "", id_ficha: null }
+                //rolTurno.fecha_fin = $scope.SumarDiasMesesAñosfecha(rolTurno.fecha_inicio, 22, "d", "/")
+                rolTurno.dias_trabajo = 14;
+                rolTurno.dias_descanso = 7;
             }
+
         }
         $scope.obtenerlistaRolTurno = function (idficha) {
             var promesa = ListaRolTurnos($scope.usuario.id_empresa, idficha)
             promesa.then(function (datos) {
-                $scope.listaRolTurno = datos.rolesTurno
-
+                $scope.empleadosRolTurno = datos.rolesTurno
+                $scope.fechaInicioCalendario = $scope.fechaATexto(new Date(datos.fechaInicio))
+                if (idficha == 0) {
+                    var fecha = new Date()
+                    var ultimoDia = new Date(fecha.getFullYear(), 12, 0).getDate();
+                    $scope.filtroRolCal = { inicio: $scope.fechaInicioCalendario, fin: ultimoDia + "/12/" + fecha.getFullYear() }
+                    $scope.realizarCalendarioTrabajo($scope.filtroRolCal)
+                }
             })
         }
-        ListaRolTurnos
+        $scope.obtenerlistaRolTurnoEmpresa = function (filtro) {
+            if (filtro.inicio != 0) {
+                filtro.inicio = new Date($scope.convertirFecha(filtro.inicio))
+                filtro.fin = new Date($scope.convertirFecha(filtro.fin))
+            }
+            var promesa = ListaRolTurnosEmpresa($scope.usuario.id_empresa, filtro)
+            promesa.then(function (datos) {
+                $scope.listaRolTurnoFiltro = datos.rolesTurno
+                if (filtro.inicio == 0) {
+                    $scope.filtroRol = { inicio: "", fin: "", grupo: 0 }
+                } else {
+                    filtro.inicio = $scope.fechaATexto(filtro.inicio)
+                    filtro.fin = $scope.fechaATexto(filtro.fin)
+                }
+            })
+        }
         //fin rol turno
 
         //inicio horas extra
@@ -5630,9 +5710,11 @@ angular.module('agil.controladores')
                 filtro.tipo_ausencia = 0
             }
             var filtroAusencias = { inicio: 0, fin: 0, tipo_ausencia: filtro.tipo_ausencia }
-            if (filtro.inicio) {
-                filtroAusencias.inicio = new Date($scope.convertirFecha(filtro.inicio))
-                filtroAusencias.fin = new Date($scope.convertirFecha(filtro.fin))
+            if (filtro) {
+                if (filtro.inicio) {
+                    filtroAusencias.inicio = new Date($scope.convertirFecha(filtro.inicio))
+                    filtroAusencias.fin = new Date($scope.convertirFecha(filtro.fin))
+                }
             }
             var promesa = HistorialEmpleadoAusencias($scope.empleado.id_ficha, filtroAusencias, 'RRHH_AUSMED')
             promesa.then(function (datos) {
@@ -7584,5 +7666,357 @@ angular.module('agil.controladores')
 
 
 
+        var mes_text = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+
+        var dia_text = ["Dom", "Lun", "Mar", "Mie", "Juv", "Vie", "Sab"];
+
+
+
+        $scope.obtenerChoferesViaje = function () {
+            var promesa = ListaChoferesViaje($scope.usuario.id_empresa)
+            promesa.then(function (dato) {
+                $scope.choferesViaje = dato
+            })
+        }
+        $scope.CargarEmpleadosViaje = function (fecha) {
+            $scope.empleadosEntrada = []
+            $scope.empleadosRolTurno.forEach(function (rol, index, array) {
+                for (var i = 0; i < rol.diasAnio.length; i++) {
+                    var element = rol.diasAnio[i];
+                    if (element.fecha == $scope.fechaATexto(new Date($scope.convertirFecha(fecha)))) {
+                        if (element.texto == "T") {
+                            if (i == 0) {
+                                $scope.empleadosEntrada.push(element)
+                            } else if (rol.diasAnio[i - 1].texto == "" || rol.diasAnio[i - 1].texto == "D" || rol.diasAnio[i - 1].texto == "DA" || rol.diasAnio[i - 1].texto == "DV") {
+                                $scope.empleadosEntrada.push(element)
+                            }
+                        }
+                    }
+                }
+                if (index === (array.length - 1)) {
+                    console.log($scope.empleadosEntrada)
+                }
+            })
+        }
+        $scope.localStorageSpace = function () {
+            var data = '';
+
+            console.log('Current local storage: ');
+
+            for (var key in window.localStorage) {
+
+                if (window.localStorage.hasOwnProperty(key)) {
+                    data += window.localStorage[key];
+                    console.log(key + " = " + ((window.localStorage[key].length * 16) / (8 * 1024)).toFixed(2) + ' KB');
+                }
+
+            }
+
+            console.log(data ? '\n' + 'Total space used: ' + ((data.length * 16) / (8 * 1024)).toFixed(2) + ' KB' : 'Empty (0 KB)');
+            console.log(data ? 'Approx. space remaining: ' + (5120 - ((data.length * 16) / (8 * 1024)).toFixed(2)) + ' KB' : '5 MB');
+        };
+
+
+        $scope.CargarEmpleadosViajeSalida = function (fecha) {
+            $scope.empleadosSalida = []
+            $scope.empleadosRolTurno.forEach(function (rol, index, array) {
+                for (var i = 0; i < rol.diasAnio.length; i++) {
+                    var element = rol.diasAnio[i];
+                    if (element.fecha == $scope.fechaATexto(new Date($scope.convertirFecha(fecha)))) {
+                        if (element.texto == "D") {
+
+                            if (rol.diasAnio[i - 1].texto == "T" || rol.diasAnio[i - 1].texto == "TA" || rol.diasAnio[i - 1].texto == "TV") {
+                                $scope.empleadosSalida.push(rol)
+                            }
+                        }
+                    }
+                }
+                if (index === (array.length - 1)) {
+                    console.log($scope.empleadosSalida)
+                }
+            })
+        }
+        $scope.realizarCalendarioTrabajo = function (filtro, viaje) {
+
+            var anio = []
+            if (filtro) {
+                if (filtro.inicio) {
+                    var inicio = new Date($scope.convertirFecha(filtro.inicio)).getFullYear();
+                    var fin = new Date($scope.convertirFecha(filtro.fin)).getFullYear();
+                    while (inicio <= fin) {
+                        anio.push(inicio)
+                        inicio++
+                    }
+                }
+
+                /*  if (filtro.gestion) {
+                     anio = parseInt(filtro.gestion.nombre)
+                 } */
+            } else {
+
+                anio.push(new Date().getFullYear())
+            }
+
+            $scope.diasAnio = $scope.CalendarioRolTurnos(anio, filtro)
+            $scope.diasAnioPieTrabajos = $scope.CalendarioRolTurnos(anio, filtro)
+            $scope.diasAnioPieAusencias = $scope.CalendarioRolTurnos(anio, filtro)
+            $scope.diasAnioPieVacaciones = $scope.CalendarioRolTurnos(anio, filtro)
+            $scope.empleadosRolTurno.forEach(function (rol, index, array) {
+
+                rol.diasAnio = $scope.CalendarioRolTurnos(anio, filtro)
+
+                if (index == array.length - 1) {
+                    $scope.empleadosRolTurno.forEach(function (rol, index, array) {
+
+
+                        for (var u = 0; u < rol.empleadosFichas[rol.empleadosFichas.length - 1].rolesTurno.length; u++) {
+                            var rolturno = rol.empleadosFichas[rol.empleadosFichas.length - 1].rolesTurno[u];
+                            var bandera = false
+                            var a = 1
+                            for (var i = 0; i < rol.diasAnio.length; i++) {
+                                var element = rol.diasAnio[i];
+                                if (rol.empleadosFichas[rol.empleadosFichas.length - 1].rolesTurno.length > 0) {
+                                    rol.verDatos = true
+                                } else {
+                                    rol.verDatos = false
+                                }
+                                if (element.fecha == $scope.fechaATexto(rolturno.fecha_inicio)) {
+                                    bandera = true
+                                } else if (new Date($scope.convertirFecha(element.fecha)).getFullYear() > new Date(rolturno.fecha_inicio).getFullYear()) {
+                                    if (new Date($scope.convertirFecha(element.fecha)).getDate() >= new Date(rolturno.fecha_inicio).getDate())
+                                        bandera = true
+                                }
+                                if (bandera) {
+                                    if (a <= rolturno.dias_trabajado) {
+                                        element.texto = "T"
+                                        a++
+                                    } else if (a <= (rolturno.dias_trabajado + rolturno.dias_descanso)) {
+                                        element.texto = "D"
+                                        if (a === (rolturno.dias_trabajado + rolturno.dias_descanso)) {
+                                            a = 0
+                                        }
+                                        a++
+                                    }
+                                    /*  if (element.fecha == $scope.fechaATexto(rolturno.fecha_fin)) {
+                                         i = rol.diasAnio.length + 2
+                                     } */
+                                }
+                            }
+                        }
+                        if (index == array.length - 1) {
+                            $scope.empleadosRolTurno.forEach(function (rol, index, array) {
+
+                                for (var j = 0; j < rol.empleadosFichas[rol.empleadosFichas.length - 1].ausencias.length; j++) {
+                                    var element = rol.empleadosFichas[rol.empleadosFichas.length - 1].ausencias[j];
+                                    element.fechas = getDates(new Date(element.fecha_inicio), new Date(element.fecha_fin))
+
+
+                                }
+                                if (index == array.length - 1) {
+                                    $scope.empleadosRolTurno.forEach(function (rol, index, array) {
+
+                                        for (var j = 0; j < rol.empleadosFichas[rol.empleadosFichas.length - 1].ausencias.length; j++) {
+                                            var element1 = rol.empleadosFichas[rol.empleadosFichas.length - 1].ausencias[j];
+                                            for (var k = 0; k < element1.fechas.length; k++) {
+                                                var element2 = element1.fechas[k];
+                                                for (var i = 0; i < rol.diasAnio.length; i++) {
+                                                    var element = rol.diasAnio[i];
+                                                    if (element2 == $scope.formatofecha(element.fecha)) {
+                                                        element.mensaje = $sce.trustAsHtml(element1.tipoAusencia.tipo.nombre + '<br> motivo:' + element1.tipoAusencia.nombre);
+                                                        if (element.texto == "D") {
+                                                            element.texto += "A"
+                                                        } else {
+                                                            element.texto += "A"
+                                                        }
+                                                    }
+                                                }
+
+                                            }
+                                        }
+                                        if (index == array.length - 1) {
+                                            $scope.empleadosRolTurno.forEach(function (rol, index, array) {
+
+                                                for (var j = 0; j < rol.empleadosFichas[rol.empleadosFichas.length - 1].vacaciones.length; j++) {
+                                                    var element = rol.empleadosFichas[rol.empleadosFichas.length - 1].vacaciones[j];
+                                                    element.fechas = getDates(new Date(element.fecha_inicio), new Date(element.fecha_fin))
+                                                }
+
+                                                if (index == array.length - 1) {
+                                                    $scope.empleadosRolTurno.forEach(function (rol, index, array) {
+
+                                                        for (var j = 0; j < rol.empleadosFichas[rol.empleadosFichas.length - 1].vacaciones.length; j++) {
+                                                            var element1 = rol.empleadosFichas[rol.empleadosFichas.length - 1].vacaciones[j];
+                                                            for (var k = 0; k < element1.fechas.length; k++) {
+                                                                var element2 = element1.fechas[k];
+                                                                for (var i = 0; i < rol.diasAnio.length; i++) {
+                                                                    var element = rol.diasAnio[i];
+                                                                    if (element2 == $scope.formatofecha(element.fecha)) {
+                                                                        element.mensaje = $sce.trustAsHtml("vacacion del <br>" + $scope.fechaATexto(element1.fecha_inicio) + " al " + $scope.fechaATexto(element1.fecha_fin));
+                                                                        if (element.texto == "D") {
+                                                                            element.texto += "V"
+                                                                        } else {
+                                                                            element.texto += "V"
+                                                                        }
+                                                                    }
+                                                                }
+
+                                                            }
+                                                        }
+                                                        if (index === (array.length - 1)) {
+                                                            $scope.diasAnioPieTrabajos.forEach(function (diaPie, index, array) {
+                                                                diaPie.texto = parseInt(0)
+                                                                for (var i = 0; i < $scope.empleadosRolTurno.length; i++) {
+                                                                    var element = $scope.empleadosRolTurno[i];
+                                                                    for (var j = 0; j < element.diasAnio.length; j++) {
+                                                                        var element2 = element.diasAnio[j];
+                                                                        if (diaPie.fecha == element2.fecha) {
+                                                                            if (element2.texto == "T") {
+                                                                                diaPie.texto += 1
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                }
+                                                            });
+                                                            $scope.diasAnioPieAusencias.forEach(function (diaPie, index, array) {
+                                                                diaPie.texto = parseInt(0)
+                                                                for (var i = 0; i < $scope.empleadosRolTurno.length; i++) {
+                                                                    var element = $scope.empleadosRolTurno[i];
+                                                                    for (var j = 0; j < element.diasAnio.length; j++) {
+                                                                        var element2 = element.diasAnio[j];
+                                                                        if (diaPie.fecha == element2.fecha) {
+                                                                            if (element2.texto == "A" || element2.texto == "TA" || element2.texto == "DA") {
+                                                                                diaPie.texto += 1
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                }
+                                                            });
+                                                            $scope.diasAnioPieVacaciones.forEach(function (diaPie, index, array) {
+
+                                                                diaPie.texto = parseInt(0)
+                                                                for (var i = 0; i < $scope.empleadosRolTurno.length; i++) {
+                                                                    var element = $scope.empleadosRolTurno[i];
+                                                                    for (var j = 0; j < element.diasAnio.length; j++) {
+                                                                        var element2 = element.diasAnio[j];
+                                                                        if (diaPie.fecha == element2.fecha) {
+                                                                            if (element2.texto == "V" || element2.texto == "TV"|| element2.texto == "DV") {
+                                                                                diaPie.texto += 1
+                                                                            }
+                                                                        }
+
+                                                                    }
+                                                                }
+                                                                if (index === (array.length - 1)) {
+
+                                                                }
+                                                            });
+                                                        }
+                                                    })
+                                                }
+                                            })
+
+                                        }
+                                    })
+
+                                }
+                            })
+
+                        }
+                    })
+                }
+            })
+        }
+        $scope.CalendarioRolTurnos = function (anio, filtro) {
+            $scope.mesesRolTurno = []
+            var diasAnio = []
+            if (filtro) {
+                if (filtro.inicio) {
+                    var inicio = new Date($scope.convertirFecha(filtro.inicio)).getMonth()
+                    var fin = new Date($scope.convertirFecha(filtro.fin)).getMonth()
+                    var diaInicio = new Date($scope.convertirFecha(filtro.inicio)).getDate()
+                    var diafin = new Date($scope.convertirFecha(filtro.fin)).getDate()
+                }
+            }
+            for (var l = 0; l < anio.length; l++) {
+                var elementanio = anio[l];
+                var meses = Object.assign([], $scope.meses)
+                meses.forEach(function (mes, index, array) {
+                    var cmes = Object.assign({}, mes)
+                    cmes.dias = []
+                    cmes.anio = elementanio
+                    if (filtro) {
+                        if (filtro.inicio) {
+                            if (cmes.id > inicio - 1 && cmes.id <= fin) {
+                                cmes.visible = true
+                            } else {
+                                cmes.visible = false
+                            }
+                        } else {
+                            cmes.visible = true
+                        }
+                    } else {
+                        cmes.visible = true
+                    }
+                    $scope.mesesRolTurno.push(cmes)
+                    if (index === (array.length - 1)) {
+
+                        for (var i = 1; i < 366; i++) {
+                            var fecha = $scope.fechaPorDia(elementanio, i);
+                            var mes = fecha.getMonth();
+                            var dia = fecha.getDate()
+                            var dia_semana = fecha.getDay();
+                            var diaactual = { id: i, dia: dia, visible: true, texto: "", fecha: $scope.fechaATexto(fecha), mes: $scope.mesesRolTurno[mes] }
+
+                            if (mes == inicio) {
+                                if (dia >= diaInicio) {
+                                    diasAnio.push(diaactual)
+                                } else {
+                                    diaactual.visible = false
+                                    diasAnio.push(diaactual)
+                                }
+                            } else if (mes == fin) {
+                                if (dia <= diafin) {
+                                    diasAnio.push(diaactual)
+                                } else {
+                                    diaactual.visible = false
+                                    diasAnio.push(diaactual)
+                                }
+                            } else {
+                                diasAnio.push(diaactual)
+                            }
+
+                            for (var j = 0; j < $scope.mesesRolTurno.length; j++) {
+                                var element = $scope.mesesRolTurno[j];
+                                if (element.anio == elementanio) {
+                                    if (element.id == mes) {
+                                        if (element.id == inicio) {
+                                            if (dia >= diaInicio) {
+                                                element.dias.push(dia)
+                                            }
+                                        } else if (element.id == fin) {
+                                            if (dia <= diafin) {
+                                                element.dias.push(dia)
+                                            }
+                                        } else {
+                                            element.dias.push(dia)
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+
+                    }
+                });
+            }
+
+
+            return diasAnio
+        }
+
+        $scope.fechaPorDia = function (año, dia) {
+            var date = new Date(año, 0);
+            return new Date(date.setDate(dia));
+        }
         $scope.inicio()
     });

@@ -51,8 +51,11 @@ module.exports = function (sequelize, Sequelize) {
 		id_tipo_documento: {
 			type: Sequelize.INTEGER,
 			field: 'tipo_documento'
-		},
-	
+		},		
+		chofer: {
+			type: Sequelize.BOOLEAN,
+			field: 'chofer'
+		}
 	}, {
 			freezeTableName: true
 		});

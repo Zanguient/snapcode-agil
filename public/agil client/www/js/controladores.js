@@ -1790,7 +1790,6 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 						// 		console.log(det.precio_unitario)
 						// 	})
 						// })
-						// $scope.mostrarMensaje('Factura generada por favor espere... de 10 a 20 min xD mentira... pero espere no se cuanto tiempo especialmente si esta usando Google Chrome!... Sí no quiere esperar intente usando Firefox.')
 					} else {
 						$scope.mostrarMensaje('Una o mas proformas seleccionada(s) no tiene la fecha de proforma OK. total:' + proformaNoOk.length)
 					}
@@ -1822,7 +1821,19 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 				var prom = FacturaProforma($scope.usuario.empresa.id, factura)
 				prom.then(function (res) {
 					if (res.hasError === undefined) {
-						ImprimirSalida("FACT", res.factura, false, $scope.usuario)
+						if ($scope.checkResourceImg($scope.usuario.empresa.imagen, $scope.usuario.empresa.imageLoaded)) {
+							convertUrlToBase64Image($scope.usuario.empresa.imagen, function (imagenEmpresa) {
+								$scope.usuario.empresa.imagen = imagenEmpresa
+								$scope.usuario.empresa.imageLoaded = true
+								ImprimirSalida("FACT", res.factura, false, $scope.usuario)
+							})
+						} else {
+						   $scope.mostrarMensaje('Existe un problema con la imagen, no se incluira en la impresión.')
+						   $timeout(function () {
+							ImprimirSalida("FACT", res.factura, false, $scope.usuario)
+						   }, 1500)
+						}
+						// ImprimirSalida("FACT", res.factura, false, $scope.usuario)
 						$scope.mostrarMensaje(res.mensaje)
 						$scope.cerrarFacturaProformas()
 						$scope.recargarItemsTabla()
@@ -1830,8 +1841,9 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 						$scope.mostrarMensaje(res.mensaje)
 					}
 					blockUI.stop()
-				}, function (err) {
-					$scope.mostrarMensaje('No hubo respuesta del servidor y se perdio la conexión.')
+				}).catch( function (err) {
+					var msg = (err.stack !== undefined && err.stack !== null) ? err.stack : (err.message !== undefined && err.message !== null) ? err.message : 'Se perdió la conexión.'
+					$scope.mostrarMensaje(msg)
 					blockUI.stop()
 				})
 			} else {
@@ -1877,8 +1889,25 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 							$scope.facturaProformas.movimiento = movimiento
 							$scope.facturaProformas.cliente = datosProformas[0].clienteProforma
 							// $scope.facturaProformas.actividadEconomica = datosProformas[0].actividadEconomica
+							var continuar = false
 							$scope.facturaProformas.actividad = datosProformas[0].actividadEconomica
-							$scope.facturaProformas.sucursal = datosProformas[0].sucursalProforma
+							datosProformas[0].sucursalProforma.actividadesDosificaciones.forEach(function (dosificacion, k) {
+								if (dosificacion.id_actividad == $scope.facturaProformas.actividad.id && !dosificacion.expirado && !dosificacion.dosificacion.expirado) {
+									$scope.facturaProformas.sucursal = Object.assign({},datosProformas[0].sucursalProforma)
+									$scope.facturaProformas.sucursal.actividadesDosificaciones = Object.assign([], dosificacion)
+								}
+								if (k == datosProformas[0].sucursalProforma.actividadesDosificaciones.length -1) {
+									if ($scope.facturaProformas.sucursal !== undefined) {
+										continuar = true
+									}
+								} 
+							})
+							if(!continuar){
+								blockUI.stop()
+								$scope.mostrarMensaje('Existe un problema con la dosificación actual. No se puede continuar con la facturación')
+								return
+							}
+							// $scope.facturaProformas.sucursal = datosProformas[0].sucursalProforma
 							$scope.facturaProformas.detallesVenta = []
 							$scope.facturaProformas.detalle = ""
 							$scope.facturaProformas.totalImporteBs = 0
@@ -1939,10 +1968,31 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 					})
 				})
 			})
-
-
 		}
 
+		$scope.checkResourceImg = function (url, alreadyCheck) {
+			var req = new XMLHttpRequest();
+			var urli = url.split('.')
+			if (urli.length == 4) {
+				return false
+			}else if(urli.length == 2){
+				return true
+			}else {
+				if (alreadyCheck) {
+					return true
+				}else {
+					return false
+				}
+			}
+            // req.open('HEAD', host, true);
+            // req.send();
+            // if (req.status === 404) {
+            //     return true;
+            // }
+            // if (req.status === 403) {
+            //     return false;
+            // }
+        };
 		// $scope.imprimirFacturaProforma = function (factura) {
 
 		// }
@@ -1978,7 +2028,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 							// $scope.moneda = { ufv: "--", dolar: 0 }
 							$scope.mostrarMensaje('La fecha ' + _.fecha_proforma + ' no tiene datos del tipo de cambio de dolar.')
 						}
-						_.totalSus = _.totalImporteBs * dolores
+						_.totalSus = _.totalImporteBs / dolores
 
 					})
 				})
@@ -2844,12 +2894,26 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 				var promesa = ClasesTipoEmpresa("CENCOS", $scope.usuario.id_empresa);
 				promesa.then(function (entidad) {
 					$scope.centrosDeCostos = entidad.clases
+					$scope.llenarCampamentos($scope.centrosDeCostos)
 					blockUI.stop();
 				});
 			} else {
 				blockUI.stop();
 			}
 		}
+		$scope.llenarCampamentos = function (campamentos) {
+            $scope.campamento = [];
+            for (var i = 0; i < campamentos.length; i++) {
+                var campamento = {
+                    nombre: campamentos[i].nombre,
+                    maker: "",
+                    ticked: false,
+                    id: campamentos[i].id
+                }
+                $scope.campamento.push(campamento);
+            }
+            
+        }
 
 		$scope.obtenerMeses = function () { }
 
