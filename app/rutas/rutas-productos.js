@@ -220,8 +220,9 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 								limit = "";
 								paginas = 1;
 							}
-							sequelize.query("select producto.id,producto.publicar_panel,producto.activar_inventario,producto.codigo,producto.nombre as nombre,producto.imagen,producto.unidad_medida,producto.precio_unitario,producto.inventario_minimo,producto.descripcion,grupo.nombre as grupo,subgrupo.nombre as subgrupo\
+							sequelize.query("select producto.id,producto.publicar_panel,producto.activar_inventario,producto.codigo,producto.nombre as nombre,producto.imagen,producto.unidad_medida,producto.precio_unitario,producto.inventario_minimo,producto.descripcion,tipoProducto.nombre as tipoProducto,grupo.nombre as grupo,subgrupo.nombre as subgrupo\
 						from agil_producto as producto\
+						LEFT OUTER JOIN gl_clase AS tipoProducto ON (producto.tipo_producto = tipoProducto.id)\
 						LEFT OUTER JOIN gl_clase AS grupo ON (producto.grupo = grupo.id)\
 						LEFT OUTER JOIN gl_clase AS subgrupo ON (producto.subgrupo = subgrupo.id)\
 						WHERE "+ condicionProducto + " and producto.grupo in (" + gruposProductos + ") \

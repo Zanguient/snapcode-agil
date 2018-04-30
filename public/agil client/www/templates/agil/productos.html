@@ -83,6 +83,7 @@
 									<span id="descripcion" class="sort fa fa-sort icon-only"></span>
 								</a>
 							</th>
+							
 							<th class="center">
 								<a href="javascript:void(0)" ng-click="paginator.sortColumn('grupo')">Grupo
 									<span id="grupo" class="sort fa fa-sort icon-only"></span>
@@ -92,6 +93,9 @@
 								<a href="javascript:void(0)" ng-click="paginator.sortColumn('subgrupo')">Subgrupo
 									<span id="subgrupo" class="sort fa fa-sort icon-only"></span>
 								</a>
+							</th>
+							<th class="center">
+								Tipo Producto
 							</th>
 							<th>Acciones</th>
 						</tr>
@@ -134,11 +138,15 @@
 							<td>
 								{{producto.descripcion}}
 							</td>
+							
 							<td>
 								{{producto.grupo}}
 							</td>
 							<td>
 								{{producto.subgrupo}}
+							</td>
+							<td>
+								{{producto.tipoProducto}}
 							</td>
 							<td>
 								<div class="hidden-sm hidden-xs action-buttons">

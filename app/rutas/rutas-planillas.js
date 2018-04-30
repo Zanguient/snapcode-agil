@@ -86,45 +86,114 @@ module.exports = function (router, sequelize, Sequelize, Usuario, RRHHParametros
 			// var primerDia = new Date(req.params.gestion,parseInt(req.params.mes)-1,1,0,0,0);
 			// var ultimoDia = new Date(req.params.gestion,parseInt(req.params.mes)-1,mes.getDate(),23,59,59);
    //          { model: RrhhEmpleadoHorasExtra, as: 'horasExtra', where:{fecha: {$between: [primerDia,ultimoDia]}}},
-            MedicoPaciente.findAll({
-            	where: {
-                    es_empleado: true,
-                    id_empresa:req.params.id_empresa
-                },
-                include: [{
-			        model: RrhhEmpleadoFicha,
-			        as: 'empleadosFichas',
-			        where: {
-			        	haber_basico: {$ne: null} 
-			        },
-			        limit: 1,
-			        order: [['id', 'DESC']]
-			        // corregir para q no aparesca los empleados q no tienen ficha
-			    },{ model: Persona, as: 'persona'},
-			    { model: RrhhEmpleadoCargo, as: 'cargos', include: [{ model: Clase, as: "cargo" }]}]
-			    
-            }).then(function (empleado) {
-            	var empleados = [];
-            	empleado.forEach( function(element, index) {
-            		if (element.dataValues.empleadosFichas.length > 0) {
-            			empleados.push(element);
-            		}
-            	});
-            	res.json({ empleados: empleados });
-            	
+   			var activo = "true"
+   			
+   			sequelize.query("select DISTINCT agil_medico_paciente.id as 'id',agil_medico_paciente.es_empleado as 'es_empleado', agil_medico_paciente.persona as 'id_persona',agil_medico_paciente.codigo as 'codigo',\
+                    agil_medico_paciente.empresa as 'id_empresa', extencion.nombre as 'extension', agil_medico_paciente.grupo_sanguineo as 'grupo_sanguineo',\
+                    agil_medico_paciente.campo as 'campo', agil_medico_paciente.designacion_empresa as 'designacion_empresa',agil_medico_paciente.comentario as 'comentario',\
+                    gl_persona.nombre_completo as 'nombre_completo', gl_persona.apellido_paterno as 'apellido_paterno', gl_persona.apellido_materno as 'apellido_materno',\
+                    estado.nombre as 'estado', gl_persona.nombres as 'nombres',gl_persona.direccion_zona as 'direccion',gl_persona.imagen as 'imagen', agil_medico_paciente.eliminado as 'activo', gl_persona.ci as 'ci', gl_persona.genero as 'id_genero', \
+                    gl_persona.telefono as 'telefono', gl_persona.telefono_movil as 'telefono_movil', gl_persona.fecha_nacimiento as 'fecha_nacimiento'\
+                    ,campamento.nombre as 'campamento',fichas.fecha_inicio as 'fecha_inicio',fichas.fecha_expiracion as 'fecha_expiracion',fichas.haber_basico as 'haber_basico', fichas.matricula_seguro as 'matricula_seguro',fichas.id as 'id_ficha',contrato.nombre as 'tipoContrato', GROUP_CONCAT(`cargos.cargo`.nombre order by `cargos.cargo`.id) cargos from agil_medico_paciente  JOIN agil_rrhh_empleado_ficha AS fichas ON fichas.id=( select agil_rrhh_empleado_ficha.id from agil_rrhh_empleado_ficha where  agil_rrhh_empleado_ficha.id_empleado =  agil_medico_paciente.id order by id desc limit 1) left JOIN gl_clase AS contrato ON fichas.tipo_contrato = contrato.id left JOIN agil_rrhh_empleado_cargo AS cargos ON fichas.id = cargos.ficha \
+                    LEFT OUTER JOIN gl_clase AS `cargos.cargo` ON cargos.cargo = `cargos.cargo`.id  left JOIN gl_persona ON (agil_medico_paciente.persona = gl_persona.id) left JOIN gl_clase as extencion ON agil_medico_paciente.extension = extencion.id left JOIN gl_clase as estado ON gl_persona.estado_civil = estado.id\
+                    left JOIN gl_clase as campamento ON agil_medico_paciente.campo = campamento.id where agil_medico_paciente.empresa = "+ req.params.id_empresa + " AND agil_medico_paciente.es_empleado = true GROUP BY agil_medico_paciente.id", { type: sequelize.QueryTypes.SELECT })
+            .then(function (pacientes) {
+                res.json({ empleados: pacientes });
             });
+   // ==================================================================================
+   		// 	MedicoPaciente.findAll({
+   		// 		where: {
+     //                es_empleado: true,
+     //                id_empresa:req.params.id_empresa
+     //            }
+   		// 	}).then(function (empleados) {
+   		// 		var empleadosArray = [];
+   		// 		empleados.forEach( function(element, index) {
+   		// 			// console.log("los datosss ", element);
+   					
+   		// 			RrhhEmpleadoFicha.findOne({
+					//     where: {
+					//         id_empleado: element.dataValues.id,
+					//     },
+					//     include: [
+					//     	{ model: RrhhEmpleadoCargo, as: 'cargos', include: [{ model: Clase, as: "cargo" }] },
+					//     	{ model: MedicoPaciente, as: 'empleado', include: [{ model: Persona, as: 'persona' }] }
+					//     ],
+					//     order: [ [ 'id', 'DESC' ]],
+					// }).then(function(entries){
+					  
+					//   empleadosArray.push(entries);
+					//   console.log("empleadosss ", empleadosArray);
+					// }); 
+
+   		// 		});
+   				
+   		// 		// res.json({ empleados: empleadosArray });
+   				
+   		// 	});
+
+   		// ==================================================================================================== 
+
+        //     MedicoPaciente.findAll({
+        //     	where: {
+        //             es_empleado: true,
+        //             id_empresa:req.params.id_empresa
+        //         },
+                
+        //         include: [
+        //         	{ model: Clase, as: 'campo' }, 
+        //         	{ model: RrhhEmpleadoFicha, 
+        //         		as: 'empleadosFichas', 
+
+                		
+        //         		where: {
+                			
+				    //     	haber_basico: {$ne: null} 
+				    //     },
+				        
+				        
+        //         		include: [{ model: RrhhEmpleadoCargo, as: 'cargos', include: [{ model: Clase, as: "cargo" }] }],
+                		
+        //         		order: [['id', 'DESC']],
+                		
+                		
+                		
+        //         	}, 
+        //         	{ model: Clase, as: 'extension' }, 
+        //         	{ model: Persona, as: 'persona', include: [{ model: Clase, as: 'genero' }] }
+        //             // { model: Empresa, as: 'empresa'},{model:MedicoPrerequisito, as: 'prerequisitos',include: [{ model: Clase, as: 'prerequisitoClase' }]}
+        //         ]
+        //         // para hacer las query ==================================================================================
+        //         // primero obtener todos los pacientes de la empresa
+        //         // luego de los resultados  hacer un for para obtener el id de el empleado
+        //         // luego hacer el findall en fichas y hacer el where con el id del empleado y obtener la ultima ficha con limit
+                
+			    
+        //     }).then(function (empleado) {
+        //     	var empleados = [];
+        //     	empleado.forEach( function(element, index) {
+            
+        //     		if (element.dataValues.empleadosFichas.length > 0) {
+        //     			empleados.push(element);
+        //     		}
+        //     	});
+        //     	res.json({ empleados: empleados });
+            	
+        //     });
         })
-    router.route('/recursos-humanos/horas-extra/empleado-sueldo/:id_empleado/gestion/:gestion/mes/:mes')
+    router.route('/recursos-humanos/horas-extra/empleado-sueldo/:id_ficha/gestion/:gestion/mes/:mes/empleado/:id_empleado')
         .get(function (req, res) {
             var mes= new Date(req.params.gestion,parseInt(req.params.mes),0);
 			var primerDia = new Date(req.params.gestion,parseInt(req.params.mes)-1,1,0,0,0);
 			console.log("primerDia =======", primerDia);
 			var ultimoDia = new Date(req.params.gestion,parseInt(req.params.mes)-1,mes.getDate(),23,59,59); 
 			console.log("ultimoDia =======", ultimoDia);
+		
 
             RrhhEmpleadoHorasExtra.findAll({
-                where:{id_empleado: req.params.id_empleado, eliminado: false, fecha: {$between: [primerDia,ultimoDia]}}
+                where:{id_ficha: req.params.id_ficha, eliminado: false, fecha: {$between: [primerDia,ultimoDia]}}
             }).then(function (horasExtra) {
+   
             	var totalHoras = "";
                 var timeHoras = 0;
                 var timeMinutos = 0;
@@ -141,6 +210,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, RRHHParametros
                         }
                         totalHoras = timeHoras;
                     }
+                 
                 }else{
                     totalHoras = 0;
                 }
@@ -148,6 +218,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, RRHHParametros
                 RrhhEmpleadoPrestamo.findAll({
 					where:{id_empleado: req.params.id_empleado, cuota:{$gt: 0}}
 				}).then( function (prestamos) {
+					console.log("los prestamos ======================================================", prestamos);
 					var totalCuotas = 0;
 					
 					if (prestamos.length > 0) {
@@ -155,6 +226,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, RRHHParametros
 						var fechaVencimiento = "";
 	                    for (var j = 0; j < prestamos.length; j++) {
 	                    	fechaInicial = fechaATexto(prestamos[j].fecha_inicial);
+	                    	
 	                    	fechaVencimiento = editar_fecha(fechaInicial, prestamos[j].plazo, "m", "/");
 	          
 	             			// totalCuotas = totalCuotas + prestamos[j].cuota;

@@ -367,15 +367,16 @@
                     <tbody>
                         <tr ng-repeat="empleado in planilla.RecursosHumanosEmpleados">
                             <td>{{$index+1}}</td>
-                            <td>{{empleado.persona.nombre_completo}}</td>
-                            <td>{{empleado.persona.fecha_nacimiento | date:'dd/MM/yyyy'}}</td>
-                            <td>{{empleado.persona.ci}}</td>
+                            <td>{{empleado.nombre_completo}}</td>
+                            <td>{{empleado.fecha_nacimiento | date:'dd/MM/yyyy'}}</td>
+                            <td>{{empleado.ci}}</td>
                             <td>
-                                <label ng-repeat="cargo in empleado.cargos">{{cargo.cargo.nombre}}</label>
+                                {{empleado.cargos}}
+                                <!-- <label ng-repeat="cargo in empleado.cargos">{{cargo.cargo.nombre}}</label> -->
                             </td>
-                            <td>{{empleado.campo}}</td>
-                            <td>{{empleado.empleadosFichas[0].fecha_inicio | date:'dd/MM/yyyy'}}</td>
-                            <td>{{empleado.empleadosFichas[0].matricula_seguro}}</td>
+                            <td>{{empleado.campamento}}</td>
+                            <td>{{empleado.fecha_inicio | date:'dd/MM/yyyy'}}</td>
+                            <td>{{empleado.matricula_seguro}}</td>
                             <td>{{empleado.sueldoBasico}}</td>
                             <td>{{empleado.horasExtras}}</td>
                             <td>{{empleado.totalHorasExtras}}</td>

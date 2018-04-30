@@ -45,14 +45,14 @@ angular.module('agil.servicios')
 }])
 
 .factory('RecursosHumanosHorasEmpleados', function ($resource) {
-    return $resource(restServer + "recursos-humanos/horas-extra/empleado-sueldo/:id_empleado/gestion/:gestion/mes/:mes");
+    return $resource(restServer + "recursos-humanos/horas-extra/empleado-sueldo/:id_ficha/gestion/:gestion/mes/:mes/empleado/:id_empleado");
 })
 
 .factory('RecursosHumanosEmpleadosHorasExtras', ['RecursosHumanosHorasEmpleados', '$q', function (RecursosHumanosHorasEmpleados, $q) {
-    var res = function(idEmpleado, gestion, mes) 
+    var res = function(idFicha, gestion, mes, idEmpleado) 
 	{
 		var delay = $q.defer();
-		RecursosHumanosHorasEmpleados.get({id_empleado:idEmpleado, gestion:gestion, mes:mes},function(parametros) 
+		RecursosHumanosHorasEmpleados.get({id_ficha:idFicha, gestion:gestion, mes:mes, id_empleado: idEmpleado},function(parametros) 
 		{        
 			delay.resolve(parametros);
 		}, function(error) 

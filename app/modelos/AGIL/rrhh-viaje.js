@@ -4,17 +4,17 @@ module.exports = function (sequelize, Sequelize) {
             type: Sequelize.INTEGER,
             field: 'vehiculo'
         },
-        id_destino: {
-            type: Sequelize.INTEGER,
-            field: 'destino'
-        },
         id_conductor: {
             type: Sequelize.INTEGER,
             field: 'conductor'
         },
-        id_relacion: {
+        id_empresa: {
             type: Sequelize.INTEGER,
-            field: 'relacion'
+            field: 'empresa'
+        },
+        id_relevo: {
+            type: Sequelize.INTEGER,
+            field: 'relevo'
         },
         fecha_ingreso: {
             type: Sequelize.DATE,
@@ -23,6 +23,14 @@ module.exports = function (sequelize, Sequelize) {
         fecha_salida: {
             type: Sequelize.DATE,
             field: 'fecha_salida'
+        },
+        eliminado:{
+            type: Sequelize.BOOLEAN,
+            field: 'relevo'
+        },
+        fecha:{
+            type: Sequelize.DATE,
+            field: 'fecha'
         }
     }, {
             freezeTableName: true

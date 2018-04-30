@@ -1,7 +1,7 @@
 module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente, Persona, Empresa, Sucursal, Clase, Diccionario, Tipo, decodeBase64Image, fs, RrhhEmpleadoFicha, RrhhEmpleadoFichaOtrosSeguros, RrhhEmpleadoFichaFamiliar, RrhhEmpleadoDiscapacidad
     , RrhhEmpleadoCargo, RrhhEmpleadoHojaVida, RrhhEmpleadoFormacionAcademica, RrhhEmpleadoExperienciaLaboral, RrhhEmpleadoLogroInternoExterno, RrhhEmpleadoCapacidadInternaExterna, NumeroLiteral, RrhhEmpleadoPrestamo, RrhhEmpleadoPrestamoPago, RrhhEmpleadoRolTurno, RrhhEmpleadoHorasExtra, RrhhAnticipo,
     EvaluacionPolifuncional, ConfiguracionCalificacionEvaluacionPolifuncional, ConfiguracionDesempenioEvaluacionPolifuncional, RrhhEmpleadoAusencia, RrhhEmpleadoVacaciones, RrhhEmpleadoCompensacionAusencia, RrhhFeriado, RrhhClaseAsuencia, RrhhEmpleadoConfiguracionVacacion, RrhhEmpleadoHistorialVacacion, RrhhEmpleadoTr3, RrhhEmpleadoAnticipoTr3, Banco, RrhhEmpleadoDeduccionIngreso,
-    RrhhEmpleadoBeneficioSocial, RrhhEmpleadoBitacoraFicha, RrhhEmpleadoConfiguracionRopa, Producto, Inventario, RrhhEmpleadoDotacionRopaItem, RrhhEmpleadoDotacionRopa) {
+    RrhhEmpleadoBeneficioSocial, RrhhEmpleadoBitacoraFicha, RrhhEmpleadoConfiguracionRopa, Producto, Inventario, RrhhEmpleadoDotacionRopaItem, RrhhEmpleadoDotacionRopa, RrhhViajeDetalle, RrhhViaje, RrhhViajeDestino) {
 
     router.route('/recursos-humanos/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion/codigo/:codigo/nombres/:nombres/ci/:ci/campo/:campo/cargo/:cargo/busquedaEmpresa/:busquedaEmpresa/grupo/:grupo_sanguineo/estado/:estado/apellido/:apellido')
         .get(function (req, res) {
@@ -1568,6 +1568,31 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                 res.json(dato)
             })
         })
+    /* router.route('/recursos-humanos/crearrolturno/:id_empresa')
+    .get(function (req, res) {
+        RrhhEmpleadoFicha.findAll({            
+            include: [{model:MedicoPaciente,as:"empleado",where: { id_empresa: req.params.id_empresa, es_empleado: true },include: [{ model: Persona, as: 'persona' }]}],
+        }).then(function (datos) {
+            datos.forEach(function(dato,index,array) {
+                RrhhEmpleadoRolTurno.create({
+                   
+                    id_ficha: dato.dataValues.id,
+                    id_campo: 810,
+                    fecha_inicio: new Date(),                   
+                    tipo: 1,
+                    dias_trabajado:14,
+                    dias_descanso: 7,
+                    id_grupo: 4287,
+                    eliminado: false
+                }).then(function (empleadoRolTurnoCreado) {
+                    if(index===(array.length-1)){
+                        res.json({ mensaje: "Creado satisfactoriamente!" })
+                     }
+               
+               });
+            })
+        })
+    }) */
     router.route('/recursos-humanos/rolTurno/empleado/:id_empleado')
         .post(function (req, res) {
             req.body.fecha_fin = (req.body.fecha_fin == '') ? null : req.body.fecha_fin
@@ -1598,18 +1623,20 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
 
                 })
             } else {
-                MedicoPaciente.findAll({                    
-                   where:{id_empresa:req.params.id_empresa,es_empleado:true,eliminado:false},
-                        include:[{ model: Persona, as: 'persona' },
-                        { model: RrhhEmpleadoFicha, as: 'empleadosFichas',
-                            include: [{model:RrhhEmpleadoRolTurno, as:"rolesTurno",include: [{ model: Clase, as: 'campo' }, { model: Clase, as: 'grupo' }]},{ model: RrhhEmpleadoCargo, as: 'cargos', include: [{ model: Clase, as: 'cargo' }] }, { model: RrhhEmpleadoVacaciones, as: 'vacaciones' }, { model: RrhhEmpleadoAusencia, as: 'ausencias', include: [{ model: RrhhClaseAsuencia, as: 'tipoAusencia', include: [{ model: Tipo, as: 'tipo' }] }]}]}]
+                MedicoPaciente.findAll({                  
+                    where: { id_empresa: req.params.id_empresa, es_empleado: true, eliminado: false },
+                    include: [{ model: Persona, as: 'persona' },
+                    {
+                        model: RrhhEmpleadoFicha, as: 'empleadosFichas',
+                        include: [{ model: RrhhEmpleadoRolTurno, as: "rolesTurno", include: [{ model: Clase, as: 'campo' }, { model: Clase, as: 'grupo' }] }, { model: RrhhEmpleadoCargo, as: 'cargos', include: [{ model: Clase, as: 'cargo' }] }, { model: RrhhEmpleadoVacaciones, as: 'vacaciones' }, { model: RrhhEmpleadoAusencia, as: 'ausencias', include: [{ model: RrhhClaseAsuencia, as: 'tipoAusencia', include: [{ model: Tipo, as: 'tipo' }] }] }]
+                    }]
                 }).then(function (empleadoRolesTurno) {
                     sequelize.query("select min(fecha_inicio) as fecha from agil_rrhh_empleado_rol_turno;", { type: sequelize.QueryTypes.SELECT })
                         .then(function (fechaInicio) {
                             res.json({ rolesTurno: empleadoRolesTurno, fechaInicio: fechaInicio[0].fecha })
                         })
                 })
-                
+
                 /* RrhhEmpleadoRolTurno.findAll({
                     where: { eliminado: false },
                     include: [{ model: Clase, as: 'campo' }, { model: Clase, as: 'grupo' }, { model: RrhhEmpleadoFicha, as: 'ficha', include: [{ model: RrhhEmpleadoCargo, as: 'cargos', include: [{ model: Clase, as: 'cargo' }] }, { model: RrhhEmpleadoVacaciones, as: 'vacaciones' }, { model: RrhhEmpleadoAusencia, as: 'ausencias', include: [{ model: RrhhClaseAsuencia, as: 'tipoAusencia', include: [{ model: Tipo, as: 'tipo' }] }] }, { model: MedicoPaciente, as: 'empleado', where: { id_empresa: req.params.id_empresa }, include: [{ model: Persona, as: 'persona' }] }] }]
@@ -1620,6 +1647,31 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                         })
                 }) */
             }
+        })
+        router.route('/recursos-humanos/empresa/:id_empresa/rolTurnoCalendario/inicio/:inicio/fin/:fin/pagina/:pagina/items_pagina/:items_pagina/texto_busqueda/:texto_busqueda/columna/:columna/direccion/:direccion/grupo/:grupo/nombre/:nombre')
+        .get(function (req, res) { 
+            var condicionRolTurno={},
+            condicionEmpleado={}
+            if (req.params.grupo != "0") {
+                condicionRolTurno.id_grupo = req.params.grupo
+            } 
+            if (req.params.nombre != "0") {
+                condicionEmpleado.nombre_completo = { $like: '%' +req.params.nombre + '%' }                
+            }     
+                MedicoPaciente.findAndCountAll({
+                    offset: (req.params.items_pagina * (req.params.pagina - 1)), limit: req.params.items_pagina,
+                    where: { id_empresa: req.params.id_empresa, es_empleado: true, eliminado: false },
+                    include: [{ model: Persona, as: 'persona', where: condicionEmpleado },
+                    {
+                        model: RrhhEmpleadoFicha, as: 'empleadosFichas',
+                        include: [{ model: RrhhEmpleadoRolTurno, as: "rolesTurno",where:condicionRolTurno, include: [{ model: Clase, as: 'campo' }, { model: Clase, as: 'grupo' }] }, { model: RrhhEmpleadoCargo, as: 'cargos', include: [{ model: Clase, as: 'cargo' }] }, { model: RrhhEmpleadoVacaciones, as: 'vacaciones' }, { model: RrhhEmpleadoAusencia, as: 'ausencias', include: [{ model: RrhhClaseAsuencia, as: 'tipoAusencia', include: [{ model: Tipo, as: 'tipo' }] }] }]
+                    }]
+                }).then(function (datos) {
+                    sequelize.query("select min(fecha_inicio) as fecha from agil_rrhh_empleado_rol_turno;", { type: sequelize.QueryTypes.SELECT })
+                        .then(function (fechaInicio) {
+                            res.json({ rolesTurno: datos.rows,fechaInicio: fechaInicio[0].fecha , paginas: Math.ceil(datos.count / req.params.items_pagina) });
+                        })
+                })            
         })
     router.route('/recursos-humanos/empresa/:id_empresa/rolTurno/inicio/:inicio/fin/:fin/grupo/:grupo')
         .get(function (req, res) {
@@ -4018,7 +4070,164 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                 res.json(entity)
             })  */
         })
+    router.route('/recursos-humanos/viaje/empresa/:id_empresa/inicio/:inicio/fin/:fin/tipoPasajero/:tipoPasajero/destino/:destino/vehiculo/:vehiculo/conductor/:conductor/tipoViaje/:tipoViaje/pagina/:pagina/items_pagina/:items_pagina/texto_busqueda/:texto_busqueda/columna/:columna/direccion/:direccion')
+        .get(function (req, res) {
+            var condicionViaje={id_empresa:req.params.id_empresa}
+            var condicionDetalleViaje={}
+            var condicionEmpleado={}
+            if (req.params.inicio != 0 && req.params.fin != 0) {
+                var fechaInicial =  new Date(req.params.inicio);
+                var fechaFinal =  new Date(req.params.fin);
+                fechaInicial.setHours(0, 0, 0, 0, 0);
+                fechaFinal.setHours(23, 59, 59, 59, 0);
+                condicionViaje = {id_empresa:req.params.id_empresa,
+                    $or: [
+                        {
+                            fecha: { $between: [fechaInicial, fechaFinal] },                            
+                        }
+                    ]
+                };
+            }
+            if(req.params.tipoPasajero !=0){
+                if(req.params.tipoPasajero=="E"){
+                    condicionDetalleViaje.id_ficha={$ne:null}
+                }else if(req.params.tipoPasajero=="V"){
+                    condicionDetalleViaje.id_visita={$ne:null}
+                }
+            }
+            if(req.params.vehiculo !=0){
+                condicionViaje.id_vehiculo=req.params.vehiculo
+            }
+            if(req.params.conductor !=0){
+                condicionViaje.id_conductor=req.params.conductor
+            }
+            if(req.params.tipoViaje !=0){
+                condicionDetalleViaje.id_tipo_viaje=parseInt(req.params.tipoViaje)
+            }
+            if(req.params.destino !=0){
+                condicionEmpleado.id_campo=parseInt(req.params.destino)
+                condicionDetalleViaje.id_ficha={$ne:null}
+            }
+            RrhhViajeDetalle.findAndCountAll({
+                where:condicionDetalleViaje,
+                offset: (req.params.items_pagina * (req.params.pagina - 1)), limit: req.params.items_pagina,
+                include: [{ model: Clase, as: "tipoViaje" }, { model: RrhhViaje, as: "viaje", where: condicionViaje, include: [{ model: Clase, as: "vehiculo" }, { model: MedicoPaciente, as: "conductor", required: false, include: [{ model: Persona, as: "persona", required: false }] }] },
+                { model: Persona, as: "visita", required: false },
+                { model: RrhhEmpleadoFicha, as: "ficha", required: false, include: [{ model: MedicoPaciente, as: "empleado",where:condicionEmpleado,required: false, include: [{ model: Persona, as: "persona", required: false },{model:Clase,as:'campo'}] }] }],
+                order: [["id", "asc"]]
+            }).then(function (datos) {
+                res.json({ viajes: datos.rows, paginas: Math.ceil(datos.count / req.params.items_pagina) });
+            })
+        })
+    router.route('/recursos-humanos/viaje/empresa/:id_empresa')
+        .post(function (req, res) {
+            RrhhViaje.create({
+                id_empresa: req.params.id_empresa,
+                id_vehiculo: req.body.vehiculo.id,
+                id_conductor: req.body.conductor.id,
+                id_relevo: req.body.relevo.id,
+                fecha_ingreso: req.body.fecha_ingreso,
+                fecha_salida: req.body.fecha_salida,
+                fecha:req.body.fecha
+            }).then(function (viajeCreado) {
+                req.body.destinos.forEach(function (destino, index, array) {
+                    RrhhViajeDestino.create({
+                        id_viaje: viajeCreado.id,
+                        id_destino: destino.id,
+                    }).then(function (destinoCreado) {
+                        if (index === (array.length - 1)) {
+                            if(req.body.empleadosEntrada.length>0){
+                            req.body.empleadosEntrada.forEach(function (entrada, index, array) {                            
+                                if (entrada.esVisita) {
+                                    Persona.create({
+                                        nombres: entrada.persona.nombres,
+                                        apellido_paterno: entrada.persona.apellido_paterno,
+                                        apellido_materno: entrada.persona.apellido_materno,
+                                        nombre_completo: entrada.persona.nombre_completo,
+                                        ci: entrada.persona.ci,
+                                        id_expedido: entrada.persona.expedido.id,
+                                    }).then(function (personaCreada) {
+                                        RrhhViajeDetalle.create({
+                                            id_viaje: viajeCreado.id,
+                                            id_visita: personaCreada.id,
+                                            eliminado: false,
+                                            estado: entrada.estadoViaje,
+                                            id_tipo_viaje: entrada.tipoViaje.id
+                                        }).then(function (destinoCreado) {
+                                            if (index === (array.length - 1)) {
+                                                guardarEmpleadosSalida(req,res,viajeCreado)
+                                            }
+                                        })
+                                    })
 
+                                } else {
+                                    RrhhViajeDetalle.create({
+                                        id_viaje: viajeCreado.id,
+                                        id_ficha: entrada.id_ficha,
+                                        eliminado: false,
+                                        estado: entrada.estadoViaje,
+                                        id_tipo_viaje: entrada.tipoViaje.id
+                                    }).then(function (destinoCreado) {
+                                        if (index === (array.length - 1)) {
+                                            guardarEmpleadosSalida(req,res,viajeCreado)
+                                        }
+                                    })
+                                }
+                           
+                            })
+                        }else{
+                            guardarEmpleadosSalida(req,res,viajeCreado)
+                        }
+                        }
+                    })
+
+                });
+            })
+        })
+        function guardarEmpleadosSalida(req,res,viajeCreado){
+            if(req.body.empleadosSalida.length>0){
+            req.body.empleadosSalida.forEach(function (salida, index, array) {                            
+                if (salida.esVisita) {
+                    Persona.create({
+                        nombres: salida.persona.nombres,
+                        apellido_paterno: salida.persona.apellido_paterno,
+                        apellido_materno: salida.persona.apellido_materno,
+                        nombre_completo: salida.persona.nombre_completo,
+                        ci: salida.persona.ci,
+                        id_expedido: salida.persona.expedido.id,
+                    }).then(function (personaCreada) {
+                        RrhhViajeDetalle.create({
+                            id_viaje: viajeCreado.id,
+                            id_visita: personaCreada.id,
+                            eliminado: false,
+                            estado: salida.estadoViaje,
+                            id_tipo_viaje: salida.tipoViaje.id
+                        }).then(function (destinoCreado) {
+                            if (index === (array.length - 1)) {
+                                res.json({ mensaje: "Creado Satisfactoriamente" })
+                            }
+                        })
+                    })
+
+                } else {
+                    RrhhViajeDetalle.create({
+                        id_viaje: viajeCreado.id,
+                        id_ficha: salida.id_ficha,
+                        eliminado: false,
+                        estado: salida.estadoViaje,
+                        id_tipo_viaje: salida.tipoViaje.id
+                    }).then(function (destinoCreado) {
+                        if (index === (array.length - 1)) {
+                            res.json({ mensaje: "Creado Satisfactoriamente" })
+                        }
+                    })
+                }
+           
+            })
+        }else{
+            res.json({ mensaje: "Creado Satisfactoriamente" })
+        }
+        }
     //FIN
     /////////////////////////////////////////////////////// RUTAS PARA POLIFUNCIONAL ///////////////////////////////////////////////////
 

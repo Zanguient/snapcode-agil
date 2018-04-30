@@ -14,8 +14,8 @@ module.exports = function (sequelize, Usuario, Persona, Rol, UsuarioRol, Tipo, C
 	RrhhEmpleadoFichaOtrosSeguros, RrhhEmpleadoFichaFamiliar, MedicoPacientePreRequisito, RrhhEmpleadoDiscapacidad, RrhhEmpleadoCargo, ClienteRazon, GtmDestino, GtmEstibaje, GtmGrupoEstibaje, GtmTransportista, GtmDespacho, GtmClienteDestino,
 	RrhhEmpleadoHojaVida, RrhhEmpleadoFormacionAcademica, RrhhEmpleadoExperienciaLaboral, RrhhEmpleadoLogroInternoExterno, RrhhEmpleadoCapacidadInternaExterna, SolicitudReposicion, DetalleSolicitudProducto, DetalleSolicitudProductoBase, MonedaTipoCambio, ContabilidadCuentaAuxiliar, GtmDespachoDetalle, RrhhEmpleadoPrestamo, RrhhEmpleadoPrestamoPago, Proforma, DetallesProformas, Servicios, Farmacia, RRHHParametros, RrhhEmpleadoRolTurno, RrhhEmpleadoHorasExtra, RRHHPlanillaSueldos, RRHHDetallePlanillaSueldos, RrhhAnticipo, EvaluacionPolifuncional,
 	RrhhEmpleadoAusencia, RrhhEmpleadoVacaciones, RrhhEmpleadoCompensacionAusencia, RrhhClaseAsuencia, RrhhEmpleadoHistorialVacacion, RrhhEmpleadoTr3, RrhhEmpleadoAnticipoTr3, RrhhEmpleadoDeduccionIngreso,
-	RrhhEmpleadoBeneficioSocial, RrhhEmpleadoBitacoraFicha, UsuarioGrupos, RrhhEmpleadoConfiguracionRopa, GtmVentaKardex, GtmVentaKardexDetalle,RrhhEmpleadoDotacionRopaItem,
-	RrhhEmpleadoDotacionRopa,RrhhViajeDetalle,RrhhViaje,RrhhViajeDestino) {
+	RrhhEmpleadoBeneficioSocial, RrhhEmpleadoBitacoraFicha, UsuarioGrupos, RrhhEmpleadoConfiguracionRopa, GtmVentaKardex, GtmVentaKardexDetalle, RrhhEmpleadoDotacionRopaItem,
+	RrhhEmpleadoDotacionRopa, RrhhViajeDetalle, RrhhViaje, RrhhViajeDestino) {
 
 	Persona.belongsTo(Clase, { foreignKey: 'id_lugar_nacimiento', as: 'lugar_nacimiento' });
 	Persona.belongsTo(Clase, { foreignKey: 'id_genero', as: 'genero' });
@@ -175,8 +175,8 @@ module.exports = function (sequelize, Usuario, Persona, Rol, UsuarioRol, Tipo, C
 	Clase.hasMany(MedicoPaciente, { foreignKey: 'id_campo', as: 'empleadosCampo' });
 	Clase.hasMany(RrhhEmpleadoConfiguracionRopa, { foreignKey: 'id_ropa_trabajo', as: 'ropasTrabajo' })
 	Clase.hasMany(RrhhEmpleadoConfiguracionRopa, { foreignKey: 'id_cargo', as: 'ConfiguracionesCargo' })
-	
-	Clase.hasMany(RrhhEmpleadoDotacionRopaItem, { foreignKey: 'id_ropa_trabajo', as: 'ropas' })	
+
+	Clase.hasMany(RrhhEmpleadoDotacionRopaItem, { foreignKey: 'id_ropa_trabajo', as: 'ropas' })
 	Clase.hasMany(RrhhEmpleadoDotacionRopaItem, { foreignKey: 'id_cargo', as: 'ropasCargo' })
 	Clase.hasMany(RrhhEmpleadoDotacionRopa, { foreignKey: 'id_cumplimiento', as: 'cumplimientos' })
 	Clase.hasMany(RrhhEmpleadoDotacionRopa, { foreignKey: 'id_periodo', as: 'periodos' })
@@ -232,7 +232,7 @@ module.exports = function (sequelize, Usuario, Persona, Rol, UsuarioRol, Tipo, C
 	Empresa.hasOne(RRHHPlanillaSueldos, { foreignKey: 'id_empresa', as: 'rrhhPlanillaSueldos' });
 	Empresa.hasMany(RrhhEmpleadoTr3, { foreignKey: 'id_empresa', as: 'listaTr3' })
 	Empresa.hasMany(GtmVentaKardex, { foreignKey: 'id_empresa', as: 'ventasKardex' })
-
+	Empresa.hasMany(RrhhViaje, { foreignKey: 'id_empresa', as: 'viajes' }) 
 	RRHHParametros.belongsTo(Empresa, { foreignKey: 'id_empresa', as: 'empresa' });
 	RRHHPlanillaSueldos.belongsTo(Empresa, { foreignKey: 'id_empresa', as: 'empresa' });
 	RRHHPlanillaSueldos.hasOne(RRHHDetallePlanillaSueldos, { foreignKey: 'planilla', as: 'rrhhDetallePlanillaSueldos' });
@@ -522,9 +522,9 @@ module.exports = function (sequelize, Usuario, Persona, Rol, UsuarioRol, Tipo, C
 	MedicoPaciente.hasOne(Farmacia, { foreignKey: 'id_paciente', as: 'farmaciaPaciente' });
 	//MedicoPaciente.hasMany(RrhhEmpleadoAusencia, { foreignKey: 'id_empleado', as: 'ausencias' })//ya no funciona 12/03/2018
 	//MedicoPaciente.hasMany(RrhhEmpleadoVacaciones, { foreignKey: 'id_empleado', as: 'vacaciones' })//ya no funciona 12/03/2018
-	MedicoPaciente.hasMany(RrhhEmpleadoDotacionRopa, { foreignKey: 'id_empleado', as: 'dotacionesRopa' })	
-	MedicoPaciente.hasMany(RrhhViaje, { foreignKey: 'id_conductor', as: 'condutores' })
-	MedicoPaciente.hasMany(RrhhViaje, { foreignKey: 'id_relevo', as: 'relevos' })
+	MedicoPaciente.hasMany(RrhhEmpleadoDotacionRopa, { foreignKey: 'id_empleado', as: 'dotacionesRopa' })
+	MedicoPaciente.hasMany(RrhhViaje, { foreignKey: 'id_conductor', as: 'conductores' })
+	MedicoPaciente.hasMany(RrhhViaje, { foreignKey: 'id_relevo', as: 'relevos' }) 
 	//RrhhEmpleadoHorasExtra.belongsTo(MedicoPaciente, { foreignKey: 'id_empleado', as: 'empleado' });//ya no funciona 12/03/2018
 	RrhhEmpleadoHorasExtra.belongsTo(RrhhEmpleadoFicha, { foreignKey: 'id_ficha', as: 'ficha' });
 
@@ -532,7 +532,7 @@ module.exports = function (sequelize, Usuario, Persona, Rol, UsuarioRol, Tipo, C
 	RrhhEmpleadoFicha.hasMany(RrhhEmpleadoRolTurno, { foreignKey: 'id_ficha', as: 'rolesTurno' });
 	RrhhEmpleadoFicha.hasMany(RrhhEmpleadoDiscapacidad, { foreignKey: 'id_ficha', as: 'discapacidades' });
 	RrhhEmpleadoFicha.hasMany(RrhhEmpleadoFichaOtrosSeguros, { foreignKey: 'id_ficha', as: 'otrosSeguros' })
-	RrhhEmpleadoFicha.hasMany(RrhhViajeDetalle, { foreignKey: 'id_ficha', as: 'detallesViaje' })
+	 RrhhEmpleadoFicha.hasMany(RrhhViajeDetalle, { foreignKey: 'id_ficha', as: 'detallesViaje' })
 
 	//RrhhEmpleadoRolTurno.belongsTo(MedicoPaciente, { foreignKey: 'id_empleado', as: 'empleado' });//ya no funciona 12/03/2018
 	RrhhEmpleadoRolTurno.belongsTo(RrhhEmpleadoFicha, { foreignKey: 'id_ficha', as: 'ficha' });
@@ -879,7 +879,7 @@ module.exports = function (sequelize, Usuario, Persona, Rol, UsuarioRol, Tipo, C
 
 	RrhhEmpleadoBeneficioSocial.belongsTo(Banco, { foreignKey: 'id_cuenta_banco', as: 'cuenta' })
 	Banco.hasMany(RrhhEmpleadoBeneficioSocial, { foreignKey: 'id_cuenta_banco', as: 'beneficiosSociales' })
-	
+
 	RrhhEmpleadoBitacoraFicha.belongsTo(RrhhEmpleadoFicha, { foreignKey: 'id_ficha', as: 'ficha' })
 	RrhhEmpleadoFicha.hasMany(RrhhEmpleadoBitacoraFicha, { foreignKey: 'id_ficha', as: 'bitacoraCambios' })
 	RrhhEmpleadoBitacoraFicha.belongsTo(Usuario, { foreignKey: 'id_usuario', as: 'usuario' })
@@ -904,7 +904,7 @@ module.exports = function (sequelize, Usuario, Persona, Rol, UsuarioRol, Tipo, C
 
 	GtmVentaKardexDetalle.hasMany(GtmDespacho, { foreignKey: 'id_kardex_detalle', as: 'despachos' })
 	GtmDespacho.belongsTo(GtmVentaKardexDetalle, { foreignKey: 'id_kardex_detalle', as: 'detalle_Kardex' })
-	
+
 	GtmVentaKardexDetalle.hasMany(GtmVentaKardexDetalle, { foreignKey: 'id_padre', as: 'hijosDetalle' })
 	GtmVentaKardexDetalle.belongsTo(GtmVentaKardexDetalle, { foreignKey: 'id_padre', as: 'padre' })
 
@@ -912,25 +912,26 @@ module.exports = function (sequelize, Usuario, Persona, Rol, UsuarioRol, Tipo, C
 	RrhhEmpleadoDotacionRopaItem.belongsTo(Producto, { foreignKey: 'id_producto', as: 'producto' })
 	RrhhEmpleadoDotacionRopaItem.belongsTo(Clase, { foreignKey: 'id_ropa_trabajo', as: 'ropaTrabajo' })
 	RrhhEmpleadoDotacionRopaItem.belongsTo(Clase, { foreignKey: 'id_cargo', as: 'cargo' })
-	
+
 	RrhhEmpleadoDotacionRopa.belongsTo(Clase, { foreignKey: 'id_cumplimiento', as: 'cumplimiento' })
 	RrhhEmpleadoDotacionRopa.belongsTo(Clase, { foreignKey: 'id_periodo', as: 'periodo' })
 	RrhhEmpleadoDotacionRopa.belongsTo(Clase, { foreignKey: 'id_estado', as: 'estado' })
 	RrhhEmpleadoDotacionRopa.hasMany(RrhhEmpleadoDotacionRopaItem, { foreignKey: 'id_dotacion_ropa', as: 'dotacionItems' })
-	RrhhEmpleadoDotacionRopa.belongsTo(MedicoPaciente, { foreignKey: 'id_empleado', as: 'empleado' })	
+	RrhhEmpleadoDotacionRopa.belongsTo(MedicoPaciente, { foreignKey: 'id_empleado', as: 'empleado' })
 	RrhhEmpleadoDotacionRopa.belongsTo(Usuario, { foreignKey: 'id_usuario', as: 'usuario' })
-	
-RrhhViaje.belongsTo(Clase, { foreignKey: 'id_vehiculo', as: 'vehiculo' })
-RrhhViaje.belongsTo(MedicoPaciente, { foreignKey: 'id_conductor', as: 'condutor' })
-RrhhViaje.belongsTo(MedicoPaciente, { foreignKey: 'id_relevo', as: 'relevo' })
-RrhhViaje.hasMany(RrhhViajeDetalle, { foreignKey: 'id_viaje', as: 'viajeDetalles' })
-RrhhViaje.hasMany(RrhhViajeDestino, { foreignKey: 'id_viaje', as: 'viajeDestinos' })
 
-RrhhViajeDetalle.belongsTo(RrhhViaje, { foreignKey: 'id_viaje', as: 'viaje' })
-RrhhViajeDetalle.belongsTo(Clase, { foreignKey: 'id_tipo_viaje', as: 'tipoViaje' })
-RrhhViajeDetalle.belongsTo(RrhhEmpleadoFicha, { foreignKey: 'id_ficha', as: 'ficha' })
-RrhhViajeDetalle.belongsTo(Persona, { foreignKey: 'id_visita', as: 'visita' })
+	RrhhViaje.belongsTo(Clase, { foreignKey: 'id_vehiculo', as: 'vehiculo' })
+	RrhhViaje.belongsTo(MedicoPaciente, { foreignKey: 'id_conductor', as: 'conductor' })
+	RrhhViaje.belongsTo(MedicoPaciente, { foreignKey: 'id_relevo', as: 'relevo' })
+	RrhhViaje.hasMany(RrhhViajeDetalle, { foreignKey: 'id_viaje', as: 'viajeDetalles' })
+	RrhhViaje.hasMany(RrhhViajeDestino, { foreignKey: 'id_viaje', as: 'viajeDestinos' }) 
+	RrhhViaje.belongsTo(Empresa, { foreignKey: 'id_empresa', as: 'empresa' }) 
 
-RrhhViajeDestino.belongsTo(Clase, { foreignKey: 'id_destino', as: 'destino' })
-RrhhViajeDestino.belongsTo(RrhhViaje, { foreignKey: 'id_viaje', as: 'viaje' })
+	 RrhhViajeDetalle.belongsTo(RrhhViaje, { foreignKey: 'id_viaje', as: 'viaje' })
+	RrhhViajeDetalle.belongsTo(Clase, { foreignKey: 'id_tipo_viaje', as: 'tipoViaje' })
+	RrhhViajeDetalle.belongsTo(RrhhEmpleadoFicha, { foreignKey: 'id_ficha', as: 'ficha' })
+	RrhhViajeDetalle.belongsTo(Persona, { foreignKey: 'id_visita', as: 'visita' })
+
+	RrhhViajeDestino.belongsTo(Clase, { foreignKey: 'id_destino', as: 'destino' })
+	RrhhViajeDestino.belongsTo(RrhhViaje, { foreignKey: 'id_viaje', as: 'viaje' })
 }

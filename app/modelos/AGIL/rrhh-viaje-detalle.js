@@ -17,11 +17,11 @@ module.exports = function (sequelize, Sequelize) {
             field: 'eliminado'
         },        
         estado: {
-            type: Sequelize.BOOLEAN,
+            type: Sequelize.STRING,
             field: 'estado'
         },
         id_tipo_viaje: {
-            type: Sequelize.DATE,
+            type: Sequelize.INTEGER,
             field: 'tipo_viaje'
         }
     }, {

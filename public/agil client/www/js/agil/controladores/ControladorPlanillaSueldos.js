@@ -67,13 +67,13 @@ angular.module('agil.controladores')
 
             planilla.RecursosHumanosEmpleados.forEach(function (empleado) {
                 
-                console.log('los ides de empleados ==== ', empleado.id);
-                promesa = RecursosHumanosEmpleadosHorasExtras(empleado.id, planilla.gestion, planilla.mes.split("-")[0]);
+                console.log('los ides de empleados ==== ', empleado);
+                promesa = RecursosHumanosEmpleadosHorasExtras(empleado.id_ficha, planilla.gestion, planilla.mes.split("-")[0], empleado.id);
                 promesa.then(function (dato) {
-                    empleado.sueldoBasico = empleado.empleadosFichas[0].haber_basico;
+                    empleado.sueldoBasico = empleado.haber_basico;
                     $scope.horasExtras = 8; // == sacar horas extras ==================
-                    console.log('ficha fecha inicio ==== ', empleado.empleadosFichas[0].fecha_inicio);
-                    $scope.antiguedad = calcAge(empleado.empleadosFichas[0].fecha_inicio); // == sacar años de antiguedad ==================
+                    console.log('ficha fecha inicio ==== ', empleado.fecha_inicio);
+                    $scope.antiguedad = calcAge(empleado.fecha_inicio); // == sacar años de antiguedad ==================
                     console.log("$scope.antiguedad", $scope.antiguedad);
                     
                     $scope.bonoFrontera = 0; // == sacar bono frontera ==================
@@ -191,7 +191,7 @@ angular.module('agil.controladores')
         if (planilla.RecursosHumanosEmpleados != undefined) {
             for(var i=0;i<planilla.RecursosHumanosEmpleados.length;i++){
                 totalEmpleados = totalEmpleados + 1;
-                $scope.totalSueldoBasico=$scope.totalSueldoBasico+planilla.RecursosHumanosEmpleados[i].sueldoBasico;
+                $scope.totalSueldoBasico=round($scope.totalSueldoBasico+planilla.RecursosHumanosEmpleados[i].sueldoBasico, 2);
                 $scope.sumaHorasExtras=$scope.sumaHorasExtras+planilla.RecursosHumanosEmpleados[i].horasExtras;
                 $scope.sumaTotalHorasExtras=$scope.sumaTotalHorasExtras+planilla.RecursosHumanosEmpleados[i].totalHorasExtras;
                 $scope.sumaRecargoNocturno=$scope.sumaRecargoNocturno+planilla.RecursosHumanosEmpleados[i].recargoNocturno;

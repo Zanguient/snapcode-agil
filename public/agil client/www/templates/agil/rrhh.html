@@ -5945,7 +5945,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr ng-repeat="rolTurno in empleadosRolTurno track by $index">
+                    <tr ng-repeat="rolTurno in empleadosRolTurnoE track by $index">
                         <td>{{rolTurno.campo.nombre}}</td>
                         <td>{{rolTurno.fecha_inicio | date: "dd/MM/yyyy"}}</td>
                         <td>{{rolTurno.fecha_fin | date: "dd/MM/yyyy"}}</td>
@@ -7148,34 +7148,66 @@
         </div>
 
         <div class="modal-body">
-            <form ng-submit="realizarCalendarioTrabajo(filtroRolCal)">
+            <form ng-submit="paginator.getSearch(paginator.search,filtroRolCal,null)">
                 <div class="row">
-                    <div class="form-group col-sm-3">
-                        <label for="nombres">Desde</label>
-                        <input type="text" ng-update-hidden data-date-format="dd/mm/yyyy" class="form-control date-picker" ng-change="cambiarFecha(filtroRolCal)"
-                            ng-model="filtroRolCal.inicio" autocomplete="off" id="nombres" name="nombres" placeholder="Desde">
-                    </div>
-                    <div class="form-group col-sm-3">
-                        <label for="ap-paterno">Hasta</label>
-                        <input type="text" ng-update-hidden data-date-format="dd/mm/yyyy" class="form-control date-picker" ng-model="filtroRolCal.fin"
-                            autocomplete="off" id="ap-paterno" name="ap-paterno" ng-change="cambiarFecha(filtroRolCal)" placeholder="Hasta">
-                    </div>
-                   <!--  <div class="form-group col-sm-2">
-                        <label for="sexo">Año</label>
-                        <div class="input-group">
-                            <select required id="gestion" name="gestion" ng-options="gestion as gestion.nombre for gestion in gestiones track by gestion.id"
-                                ng-model="filtroRolCal.gestion">
-                            </select>&nbsp
+                    <div class="col-md-12">
+                        <div class="form-group col-sm-2">
+                            <label for="nombres">Desde</label>
+                            <input type="text" ng-update-hidden data-date-format="dd/mm/yyyy" class="form-control date-picker" ng-change="cambiarFecha(filtroRolCal)"
+                                ng-model="filtroRolCal.inicio2" autocomplete="off" id="nombres" name="nombres" placeholder="Desde">
                         </div>
-                    </div> -->
-                    <div class="form-group col-sm-4">
-                        <div class="buttons-align">
-                            <button autofocus type="submit" class="btn btn-primary btn-sm">
-                                <i class=" fa fa-search-plus align-top "></i>
-                                Filtrar
-                            </button>
+                        <div class="form-group col-sm-2">
+                            <label for="ap-paterno">Hasta</label>
+                            <input type="text" ng-update-hidden data-date-format="dd/mm/yyyy" class="form-control date-picker" ng-model="filtroRolCal.fin"
+                                autocomplete="off" id="ap-paterno" name="ap-paterno" ng-change="cambiarFecha(filtroRolCal)" placeholder="Hasta">
+                        </div>
+                        <div class="form-group col-sm-2">
+                            <label for="sexo">Grupo</label>
+                            <div class="input-group">
+                                <select ng-model="filtroRolCal.grupo" class="form-control" ng-options="grupo.id as grupo.nombre for grupo in gruposRol.clases | filter:{habilitado:true} track by grupo.id">
+                                    <option value="">--Ninguno--</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group col-sm-2">
+                            <label for="ap-paterno">Empleado</label>
+                            <input type="text" class="form-control" ng-model="filtroRolCal.nombre" autocomplete="off" id="ap-paterno" name="ap-paterno"
+                                placeholder="nombre">
+                        </div>
+                        <div class="form-group col-sm-4">
+                            <div class="buttons-align">
+                                <button autofocus type="submit" class="btn btn-primary btn-sm">
+                                    <i class=" fa fa-search-plus align-top "></i>
+                                    Filtrar
+                                </button>
 
+                            </div>
                         </div>
+                    </div>
+                    <div class="col-md-12" align="center">
+                        <!-- <p> -->
+                            <b>T: Trabajado</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                      <!--   </p> -->
+                       <!--  <p> -->
+                            <b>TA: Ausencia</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                       <!--  </p>
+                        <p> -->
+                            <b>TV: Vacacion</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <!-- </p> -->
+
+              <!--       </div>
+                    <div class="col-md-3"> -->
+
+                       <!--  <p> -->
+                            <b>D: Descanso</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                       <!--  </p>
+                        <p> -->
+                            <b>DA: Ausencia</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                       <!--  </p>
+                        <p> -->
+                            <b>DV: Vacacion</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                       <!--  </p> -->
+
                     </div>
                 </div>
             </form>
@@ -7203,9 +7235,13 @@
                     </thead>
                     <tbody>
                         <tr ng-if="empleado.verDatos" ng-repeat="empleado in empleadosRolTurno track by $index">
-                            <td ><p ng-repeat="rol in empleado.empleadosFichas[empleado.empleadosFichas.length - 1].rolTurno">{{rol.campo.nombre}}</p></td>
+                            <td>
+                                <p ng-repeat="rol in empleado.empleadosFichas[empleado.empleadosFichas.length - 1].rolTurno">{{rol.campo.nombre}}</p>
+                            </td>
 
-                            <td><p ng-repeat="rol in empleado.empleadosFichas[empleado.empleadosFichas.length - 1].rolTurno">{{rol.grupo.nombre_corto}}</p></td>
+                            <td>
+                                <p ng-repeat="rol in empleado.empleadosFichas[empleado.empleadosFichas.length - 1].rolTurno">{{rol.grupo.nombre_corto}}</p>
+                            </td>
                             <td>{{empleado.persona.nombre_completo}}</td>
                             <td>
                                 <p ng-repeat="cargo in empleado.empleadosFichas[empleado.empleadosFichas.length - 1].cargos">{{cargo.cargo.nombre}}</p>
@@ -7246,8 +7282,10 @@
                         </tr>
                     </tfoot>
                 </table>
-            </div>
 
+            </div>
+            <div class="row" ng-include src="'/templates/gral/paginator.html'">
+            </div>
         </div>
         <div class="modal-footer wizard-actions">
             <button type="button" class="btn btn-danger btn-sm">
@@ -7273,8 +7311,9 @@
                     <h4 class="modal-title" id="myModalLabel">
                         <i class='fa fa-bus'></i> Viajes</h4>
                 </div>
-                <div class="modal-body container-fluid">
-                    <form action="">
+                <form ng-submit="guardarViaje(viaje)">
+                    <div class="modal-body container-fluid">
+
 
                         <div class="row">
                             <div class="col-md-4">
@@ -7327,19 +7366,19 @@
                                 <div class="form-group row">
                                     <label class="col-sm-1" for="motivo-retiro">Destinos</label>
                                     <div class="input-group col-sm-11">
-                                        <div id="cargos" isteven-multi-select required input-model="campamento" output-model="ficha.cargo" button-label="icon nombre"
+                                        <div id="cargos" isteven-multi-select required input-model="campamento" output-model="viaje.destinos" button-label="icon nombre"
                                             item-label="icon nombre maker" tick-property="ticked" translation="localLang">
                                         </div>
 
                                     </div>
                                 </div>
                             </div>
-                            
+
                         </div>
-                        <div class="row">                            
-                                <div class="table-fixed-header">
-                                    <table id="tabla-comprobante-revision" class="table table-striped table-bordered table-hover">
-                                        <thead fix-head class="table-head-color">
+                        <div class="row">
+                            <div class="table-fixed-header">
+                                <table id="tabla-comprobante-revision" class="table table-striped table-bordered table-hover">
+                                    <thead fix-head class="table-head-color">
                                         <tr>
                                             <th colspan="5" class="table-head-white">
                                                 <div class="row row-table">
@@ -7375,12 +7414,12 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr ng-repeat="empleado in empleadosEntrada track by $index">
+                                        <tr ng-repeat="empleado in viaje.empleadosEntrada track by $index">
                                             <td>{{$index+1}}</td>
                                             <td>{{empleado.campo.nombre}}</td>
-                                            <td>{{empleado.ficha.empleado.persona.nombre_completo}}</td>
-                                            <td>{{empleado.ficha.empleado.persona.ci}}</td>                                            
-                                            <td>{{empleado.grupo.nombre}}</td>
+                                            <td>{{empleado.persona.nombre_completo}}</td>
+                                            <td>{{empleado.persona.ci}}</td>
+                                            <td>{{empleado.estadoViaje}}</td>
                                             <td>
                                                 <a class="red">
                                                     <i class="ace-icon fa fa-trash-o bigger-130"></i>
@@ -7391,7 +7430,7 @@
                                                 </label>
                                             </td>
                                         </tr>
-                                        
+
                                     </tbody>
                                 </table>
                             </div>
@@ -7443,12 +7482,12 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr ng-repeat="empleado in empleadosSalida track by $index">
+                                        <tr ng-repeat="empleado in viaje.empleadosSalida track by $index">
                                             <td>{{$index+1}}</td>
                                             <td>{{empleado.campo.nombre}}</td>
-                                            <td>{{empleado.ficha.empleado.persona.nombre_completo}}</td>
-                                            <td>{{empleado.ficha.empleado.persona.ci}}</td>                                            
-                                            <td>{{empleado.grupo.nombre}}</td>
+                                            <td>{{empleado.persona.nombre_completo}}</td>
+                                            <td>{{empleado.persona.ci}}</td>
+                                            <td>{{empleado.estadoViaje}}</td>
                                             <td>
                                                 <a class="red">
                                                     <i class="ace-icon fa fa-trash-o bigger-130"></i>
@@ -7459,21 +7498,22 @@
                                                 </label>
                                             </td>
                                         </tr>
-                                       
+
                                     </tbody>
                                 </table>
                             </div>
                         </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-danger" ng-click="abrirDialogHistorialViajes()">
-                        <span class="fa fa-h-square bigger-130" aria-hidden="true"></span> Historial</button>
-                    <button type="button" class="btn btn-primary" ng-click="cerrarDialogViajes()">
-                        <span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span> Guardar</button>
-                    <button type="button" class="btn btn-danger pull-left" ng-click="cerrarDialogViajes()">
-                        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Cancelar</button>
-                </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" ng-click="abrirDialogHistorialViajes()">
+                            <span class="fa fa-h-square bigger-130" aria-hidden="true"></span> Historial</button>
+                        <button type="submit" class="btn btn-primary">
+                            <span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span> Guardar</button>
+                        <button type="button" class="btn btn-danger pull-left" ng-click="cerrarDialogViajes()">
+                            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Cancelar</button>
+                    </div>
+                </form>
             </div>
             <!-- /.modal-content -->
         </div>
@@ -7489,43 +7529,46 @@
             </h4>
         </div>
         <div class="space-6"></div>
-        <form>
+        <form ng-submit="agregarvisitaEntrada(visita)">
 
-            <div class="row">
+            <div class="modal-body">
 
                 <div class="form-group col-sm-6">
                     <label for="ap-paterno">Apellido Paterno</label>
-                    <input type="text" class="form-control" id="ap-paterno" name="ap-paterno" placeholder="Apellido Paterno">
+                    <input type="text" class="form-control" ng-model="visita.persona.apellido_paterno" name="ap-paterno" placeholder="Apellido Paterno">
                 </div>
                 <div class="form-group col-sm-6">
                     <label for="ap-paterno">Apellido Materno</label>
-                    <input type="text" class="form-control" id="ap-paterno" name="ap-paterno" placeholder="Apellido Materno">
+                    <input type="text" class="form-control" ng-model="visita.persona.apellido_materno" placeholder="Apellido Materno">
                 </div>
                 <div class="form-group col-sm-6">
                     <label for="nombres">Nombre(s)</label>
-                    <input type="text" class="form-control" id="nombres" name="nombres" placeholder="Nombre(s)">
+                    <input type="text" class="form-control" ng-model="visita.persona.nombres" placeholder="Nombre(s)">
                 </div>
-                <div class="form-group col-sm-4">
+                <div class="form-group col-sm-3">
                     <label for="nombres">C.I.</label>
-                    <input type="text" class="form-control" id="nombres" name="nombres" placeholder="C.I.">
+                    <input type="text" class="form-control" ng-model="visita.persona.ci" id="nombres" name="nombres" placeholder="C.I.">
                 </div>
-                <div class="form-group col-sm-2">
-                    <label for="nombres">Exp.</label>
-                    <input type="text" class="form-control" id="nombres" name="nombres" placeholder="CBBA">
+                <div class="form-group col-sm-3">
+                    <label for="nombres">Exp.
+
+                        <select class="form-control" required ng-options="expedido as expedido.nombre_corto for expedido in tipoExpedido.clases | filter:{habilitado:true} track by expedido.id"
+                            ng-model="visita.persona.expedido"></select>
                 </div>
             </div>
 
-        </form>
-        <div class="row">
+
+
             <div class="modal-footer wizard-actions">
-                <button class="btn btn-primary btn-sm" ng-click="cerrarDialogVisita()">
+                <button class="btn btn-primary btn-sm" type="submit">
                     <i class="glyphicon glyphicon-plus"></i>Agregar
                 </button>
-                <button class="btn btn-danger btn-sm" ng-click="cerrarDialogVisita()">
+                <button class="btn btn-danger btn-sm" type="button" ng-click="cerrarDialogVisita()">
                     <i class="ace-icon fa fa-times"></i>Cancelar
                 </button>
             </div>
-        </div>
+
+        </form>
     </div>
     <!--- ==== fin modal nuevo visita  ================================ -->
     <!--- modal vehiculos de viaje  ======== -->
@@ -7674,132 +7717,145 @@
                 <label> &nbsp;Lista de viajes </label>
             </h4>
         </div>
-        <div class="row">
-            <div class="space-6"></div>
-            <div class="form-group col-sm-1">
-                <label for="nombres">Desde</label>
-            </div>
-            <div class="form-group col-sm-2">
-                <input type="text" class="form-control date-picker" autocomplete="off" id="nombres" name="nombres" placeholder="Desde">
-            </div>
-            <div class="form-group col-sm-1">
-                <label for="ap-paterno">Hasta</label>
-            </div>
-            <div class="form-group col-sm-2">
-                <input type="text" class="form-control date-picker" autocomplete="off" id="ap-paterno" name="ap-paterno" placeholder="Hasta">
-            </div>
-            <div class="form-group col-sm-1">
-                <label for="ap-paterno">T.Pasajero</label>
-            </div>
-            <div class="form-group col-sm-2">
-                <select class="form-control" id="motivo-retiro" name="motivo-retiro">
-                    <option>Empleado</option>
-                    <option>Visita</option>
-                </select>
-            </div>
-            <div class="form-group col-sm-3">
-                <div class="buttons-alig">
-                    <button type="button" class="btn btn-primary btn-sm">
-                        <i class=" fa fa-search-plus align-top "></i>
-                        Filtrar
-                    </button>
+        <div class="modal-body">
+            <form ng-submit="paginator.getSearch(paginator.search,filtroViaje,null)">
+                <div class="row">
+                    <div class="space-6"></div>
+                    <div class="form-group col-sm-1">
+                        <label for="nombres">Desde</label>
+                    </div>
+                    <div class="form-group col-sm-2">
+                        <input type="text" ng-update-hidden ng-model="filtroViaje.inicio" data-date-format="dd/mm/yyyy" class="form-control date-picker"
+                            autocomplete="off" id="nombres" name="nombres" placeholder="Desde">
+                    </div>
+                    <div class="form-group col-sm-1">
+                        <label for="ap-paterno">Hasta</label>
+                    </div>
+                    <div class="form-group col-sm-2">
+                        <input type="text" ng-update-hidden ng-model="filtroViaje.fin" data-date-format="dd/mm/yyyy" class="form-control date-picker"
+                            autocomplete="off" id="ap-paterno" name="ap-paterno" placeholder="Hasta">
+                    </div>
+                    <div class="form-group col-sm-1">
+                        <label for="ap-paterno">T.Pasajero</label>
+                    </div>
+                    <div class="form-group col-sm-2">
+                        <select class="form-control" ng-model="filtroViaje.tipoPasajero" id="motivo-retiro" name="motivo-retiro">
+                            <option value="">--todos--</option>
+                            <option value="E">Empleado</option>
+                            <option value="V">Visita</option>
+                        </select>
+                    </div>
+                    <div class="form-group col-sm-3">
+                        <div class="buttons-alig">
+                            <button type="submit" class="btn btn-primary btn-sm">
+                                <i class=" fa fa-search-plus align-top "></i>
+                                Filtrar
+                            </button>
 
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group col-sm-1">
+                        <label for="nombres">Destino</label>
+                    </div>
+                    <div class="form-group col-sm-2">
+                        <select id="campo-rol" class="form-control" name="centroDeCostos" ng-options="centroCosto.id as centroCosto.nombre for centroCosto in centrosDeCostos | filter:{habilitado:true} track by centroCosto.id"
+                            ng-model="filtroViaje.destino">
+                            <option value="">todos</option>
+                        </select>
+                    </div>
+                    <div class="form-group col-sm-1">
+                        <label for="ap-paterno">Vehículo</label>
+                    </div>
+                    <div class="form-group col-sm-2">
+                        <select class="form-control" ng-options="vehiculo.id as vehiculo.nombre for vehiculo in vehiculosViaje.clases | filter:{habilitado:true} track by vehiculo.id"
+                            ng-model="filtroViaje.vehiculo">
+                            <option value="">todos</option>
+                        </select>
+                    </div>
+                    <div class="form-group col-sm-1">
+                        <label for="ap-paterno">Conductor</label>
+                    </div>
+                    <div class="form-group col-sm-2">
+                        <select class="form-control" ng-options="chofer.id as chofer.persona.nombre_completo for chofer in choferesViaje track by chofer.id"
+                            ng-model="filtroViaje.conductor">
+                            <option value="">todos</option>
+                        </select>
+                    </div>
+                    <div class="form-group col-sm-1">
+                        <label for="ap-paterno">T Viaje</label>
+                    </div>
+                    <div class="form-group col-sm-2">
+                        <select class="form-control" ng-options="tipo.id as tipo.nombre for tipo in tiposViaje.clases track by tipo.id" ng-model="filtroViaje.tipoViaje">
+                            <option value="">todos</option>
+                        </select>
+                    </div>
+                </div>
+            </form>
+            <div class="dataTables_wrapper form-inline no-footer">
+                <!--  <div class="row" ng-include src="'/templates/gral/paginator-header-2.html'">
+                </div> -->
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Destino</th>
+                            <th>Vehículo</th>
+                            <th>Conductor</th>
+                            <th>T. Viaje</th>
+                            <th>Pasajero</th>
+                            <th>T.Pas</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="detalle in viajesEmpresa track by $index">
+                            <td>{{detalle.viaje.fecha|date:'dd/MM/yyyy'}}</td>
+                            <td>{{detalle.ficha.empleado.campo.nombre}}</td>
+                            <td>{{detalle.viaje.vehiculo.nombre}}</td>
+                            <td>{{detalle.viaje.conductor.persona.nombre_completo}}</td>
+                            <td>{{detalle.tipoViaje.nombre}}</td>
+                            <td ng-if="detalle.id_ficha">{{detalle.ficha.empleado.persona.nombre_completo}}</td>
+                            <td ng-if="detalle.id_visita">{{detalle.visita.nombre_completo}}</td>
+                            <td ng-if="detalle.id_ficha">Empleado</td>
+                            <td ng-if="detalle.id_visita">Visita</td>
+                            <td>
+                                <a class="blue">
+                                    <span class="fa fa-search-plus bigger-130" aria-hidden="true"></span>
+                                </a>
+                                <a class="purple">
+                                    <i class="ace-icon fa fa-print bigger-130"></i>
+                                </a>
+                                <a class="green">
+                                    <i class="ace-icon fa fa-pencil bigger-130"></i>
+                                </a>
+                                <a class="red">
+                                    <i class="ace-icon fa fa-trash-o bigger-130"></i>
+                                </a>
+                            </td>
+                        </tr>
+
+                    </tbody>
+                </table>
+                <div class="row" ng-include src="'/templates/gral/paginator.html'" ng-if="RecursosHumanosEmpleados.length > 0">
                 </div>
             </div>
         </div>
-        <div class="row">
-            <div class="form-group col-sm-1">
-                <label for="nombres">Destino</label>
-            </div>
-            <div class="form-group col-sm-2">
-                <select class="form-control" id="motivo-retiro" name="motivo-retiro">
-                    <option></option>
-                    <option>Santa Cruz</option>
-                </select>
-            </div>
-            <div class="form-group col-sm-1">
-                <label for="ap-paterno">Vehículo</label>
-            </div>
-            <div class="form-group col-sm-2">
-                <select class="form-control" id="motivo-retiro" name="motivo-retiro">
-                    <option></option>
-                    <option>Santa Cruz</option>
-                </select>
-            </div>
-            <div class="form-group col-sm-1">
-                <label for="ap-paterno">Conductor</label>
-            </div>
-            <div class="form-group col-sm-2">
-                <select class="form-control" id="motivo-retiro" name="motivo-retiro">
-                    <option></option>
-                    <option>Santa Cruz</option>
-                </select>
-            </div>
-            <div class="form-group col-sm-1">
-                <label for="ap-paterno">T Viaje</label>
-            </div>
-            <div class="form-group col-sm-2">
-                <select class="form-control" id="motivo-retiro" name="motivo-retiro">
-                    <option>Ingreso</option>
-                    <option>Salida</option>
-                </select>
-            </div>
+        <div class="modal-footer wizard-actions">
+            <button type="button" class="btn btn-danger btn-sm">
+                <i class=" fa fa-print align-top "></i>
+                Pdf
+            </button>
+            <button type="button" class="btn btn-success btn-sm">
+                <i class=" fa fa-print align-top "></i>
+                Excel
+            </button>
+            <button class="btn btn-danger btn-sm pull-left" ng-click="cerrarDialogHistorialViajes()">
+                <i class="ace-icon fa fa-times"></i>Cancelar
+            </button>
         </div>
-        <table class="table table-striped table-hover">
-            <thead>
-                <tr>
-                    <th>Fecha</th>
-                    <th>Destino</th>
-                    <th>Vehículo</th>
-                    <th>Conductor</th>
-                    <th>T. Viaje</th>
-                    <th>Pasajero</th>
-                    <th>T.Pas</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>11/03/2017</td>
-                    <td>PTX-9218</td>
-                    <td>Toyota Hice 3626TDF</td>
-                    <td>Juan Carlos Zambrana Garcia</td>
-                    <td>Ingreso</td>
-                    <td>Pamela Alarcon</td>
-                    <td>Empleado</td>
-                    <td>
-                        <a class="blue">
-                            <span class="fa fa-search-plus bigger-130" aria-hidden="true"></span>
-                        </a>
-                        <a class="purple">
-                            <i class="ace-icon fa fa-print bigger-130"></i>
-                        </a>
-                        <a class="green">
-                            <i class="ace-icon fa fa-pencil bigger-130"></i>
-                        </a>
-                        <a class="red">
-                            <i class="ace-icon fa fa-trash-o bigger-130"></i>
-                        </a>
-                    </td>
-                </tr>
 
-            </tbody>
-        </table>
-        <div class="row">
-            <div class="modal-footer wizard-actions">
-                <button type="button" class="btn btn-danger btn-sm">
-                    <i class=" fa fa-print align-top "></i>
-                    Pdf
-                </button>
-                <button type="button" class="btn btn-success btn-sm">
-                    <i class=" fa fa-print align-top "></i>
-                    Excel
-                </button>
-                <button class="btn btn-danger btn-sm pull-left" ng-click="cerrarDialogHistorialViajes()">
-                    <i class="ace-icon fa fa-times"></i>Cancelar
-                </button>
-            </div>
-        </div>
     </div>
     <!--- ==== fin modal historial de viajes  ================================ -->
     <!--- ==== modal reporte ausencias ================================ -->
