@@ -284,7 +284,7 @@ function ejecutarScriptsRecursosHumanos(idModalPrerequisitos, idModalEmpleado, i
 	idImagenUsuario, idEliminarUsuarioRh, idModalWizardRhVista, idModalContenedorRhVista, idModalDialogPrerequisitoNuevo, idEliminarSeguroEmpleado,
 	idEliminarFamiliarEmpleado, idModalHistorialPrerequisito, idModalEditarPrerequisito, idModalDialogConfirmacionEntregaAdelantado, IdEntregaPrerequisito, IdModalVerificarCuenta, idModalImpresionHojaVida, idModalNuevoAnticipoRegularTodos,
 	idModalTr3BancoMsc, idModalTr3BancoUnion, idModalHistorialTr3, IdModalVerificarCuentaRrhh, idModalConfirmarDesabilitacion, idModalReingresoEmpleado,
-	idModalHistorialBeneficios, idModalConfiguracionRopaDeTrabajo, idModalReporteRopaDeTrabajo, idmodalWizardContainerConfiguracionRopaTrabajo, idModalRopaTrabajo, idModalNuevaRopaTrabajo, idModalItemsNuevaRopaTrabajo, idModalEliminarRopaTrabajo, idModalConceptoEdicion) {
+	idModalHistorialBeneficios, idModalConfiguracionRopaDeTrabajo, idModalReporteRopaDeTrabajo, idmodalWizardContainerConfiguracionRopaTrabajo, idModalRopaTrabajo, idModalNuevaRopaTrabajo, idModalItemsNuevaRopaTrabajo, idModalEliminarRopaTrabajo, idModalConceptoEdicion,idModalVisitaSalida) {
 	crearPopup(idModalPrerequisitos, "90%", 'auto');
 	crearPopup(idModalEmpleado, "100%", 'auto');
 	aplicarWizardFormulario(idModalEmpleado, idModalwizardContainerEmpleado);
@@ -384,6 +384,7 @@ function ejecutarScriptsRecursosHumanos(idModalPrerequisitos, idModalEmpleado, i
 	crearPopup(idModalItemsNuevaRopaTrabajo, "50%", 'auto');
 	crearPopup(IdModalVerificarCuenta, "auto", 'auto');
 	crearPopup(idModalEliminarRopaTrabajo, "auto", 'auto');
+	crearPopup(idModalVisitaSalida, "auto", 'auto');
 	setTimeout(function () {
 		aplicarDatePickers();
 		// aplicarHoras();

@@ -70,6 +70,7 @@ angular.module('agil.controladores')
         $scope.idModalReporteTurnosDetallado = "dialog-reporte-turnos-detallado";
         $scope.idModalViajes = "dialog-viajes";
         $scope.idModalVisita = "dialog-visita";
+        $scope.idModalVisitaSalida ="dialog-visita-salida"
         $scope.idModalVehiculosViaje = "dialog-vehiculos-viaje";
         $scope.idModalDestinos = "dialog-destinos";
         $scope.idModalHistorialViajes = "dialog-historial-viajes";
@@ -133,7 +134,7 @@ angular.module('agil.controladores')
                 $scope.idModalEditarPrerequisito, $scope.idModalDialogConfirmacionEntregaAdelantado, $scope.IdEntregaPrerequisito, $scope.IdModalVerificarCuenta, $scope.idModalImpresionHojaVida, $scope.idModalNuevoAnticipoRegularTodos,
                 $scope.idModalTr3BancoMsc, $scope.idModalTr3BancoUnion, $scope.idModalHistorialTr3, $scope.IdModalVerificarCuentaRrhh, $scope.idModalConfirmarDesabilitacion, $scope.idModalReingresoEmpleado,
                 $scope.idModalHistorialBeneficios, $scope.idModalConfiguracionRopaDeTrabajo, $scope.idModalReporteRopaDeTrabajo, $scope.idmodalWizardContainerConfiguracionRopaTrabajo, $scope.idModalRopaTrabajo, $scope.idModalNuevaRopaTrabajo, $scope.idModalItemsNuevaRopaTrabajo,
-                $scope.idModalEliminarRopaTrabajo, $scope.idModalConceptoEdicion);
+                $scope.idModalEliminarRopaTrabajo, $scope.idModalConceptoEdicion,$scope.idModalVisitaSalida);
             $scope.buscarAplicacion($scope.usuario.aplicacionesUsuario, $location.path().substring(1));
             $scope.obtenerColumnasAplicacion()
             blockUI.stop();
@@ -232,6 +233,7 @@ angular.module('agil.controladores')
             $scope.eliminarPopup($scope.idModalItemsNuevaRopaTrabajo)
             $scope.eliminarPopup($scope.idModalEliminarRopaTrabajo)
             $scope.eliminarPopup($scope.idModalConceptoEdicion)
+            $scope.eliminarPopup($scope.idModalVisitaSalida)
         });
         $scope.inicio = function () {
 
@@ -1862,6 +1864,14 @@ angular.module('agil.controladores')
         $scope.cerrarDialogVisita = function () {
             $scope.cerrarPopup($scope.idModalVisita);
         }
+        $scope.abrirDialogVisitaSalida = function () {
+            $scope.visita = { persona: { nombres: "", apellido_paterno: "", apellido_materno: "", ci: null, expedido: null }, visita: true, estadoViaje: "Visita" }
+            $scope.abrirPopup($scope.idModalVisitaSalida);
+        }
+        $scope.cerrarDialogVisitaSalida = function () {
+            $scope.cerrarPopup($scope.idModalVisitaSalida);
+        }
+        $scope.eliminarPopup
         $scope.agregarvisitaEntrada = function (visita) {
             $scope.tiposViaje.clases.forEach(function (tipo, index, array) {
                 if (tipo.nombre == "INGRESO") {
@@ -1880,6 +1890,27 @@ angular.module('agil.controladores')
                 }
 
             })
+            scope.cerrarDialogVisita()
+        }
+        $scope.agregarvisitaSalida = function (visita) {
+            $scope.tiposViaje.clases.forEach(function (tipo, index, array) {
+                if (tipo.nombre == "SALIDA") {
+                    visita.tipoViaje = tipo
+                }
+                if (index == (array.length - 1)) {
+                    visita.persona.nombre_completo = visita.persona.nombres
+                    if (visita.persona.apellido_paterno != "") {
+                        visita.persona.nombre_completo += " " + visita.persona.nombre_completo
+                    }
+                    if (visita.persona.apellido_materno != "") {
+                        visita.persona.nombre_completo += " " + visita.persona.apellido_materno
+                    }
+                    visita.esVisita = true
+                    $scope.viaje.empleadosSalida.push(visita)
+                }
+
+            })
+            $scope.cerrarDialogVisitaSalida()
         }
         $scope.abrirDialogVehiculosViaje = function () {
             $scope.abrirPopup($scope.idModalVehiculosViaje);
