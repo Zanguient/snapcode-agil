@@ -238,7 +238,7 @@
 
         <div class="modal-body">
             
-            <legend>Filtro Planilla RC-IVA</legend>
+            <!-- <legend>Filtro Planilla RC-IVA</legend> -->
             <table class="table table-striped table-bordered table-hover table-block" align="center">
                 <tbody>
                     <tr>
@@ -294,7 +294,7 @@
                             </button>
                         </td> 
                     </tr>   
-                    <tr>
+                    <!-- <tr>
                         <td>
                             <label></label>&nbsp;
                         </td>
@@ -310,8 +310,8 @@
                         <td>
                             <label>Campamento</label>&nbsp;
                         </td>
-                    </tr>
-                    <tr>
+                    </tr> -->
+                    <!-- <tr>
                         <td>FILTRO</td>
                         <td>    
                             <input type="text" ng-model="filtro.razon_social" class="ng-pristine ng-untouched ng-valid ng-empty">
@@ -322,17 +322,17 @@
                        <td>
                             <select id="pago" name="pago" ng-model="filtro.tipo_pago"  class="form-control"><option value="? undefined:undefined ?"></option>
                                 <option value="0">TODOS</option>
-                                <!-- ngRepeat: tipoPago in tiposPago --><option ng-repeat="tipoPago in tiposPago" value="17" class="ng-binding ng-scope">Cocinero</option><!-- end ngRepeat: tipoPago in tiposPago --><option ng-repeat="tipoPago in tiposPago" value="18" class="ng-binding ng-scope">Copero</option><!-- end ngRepeat: tipoPago in tiposPago -->
+                                <option ng-repeat="tipoPago in tiposPago" value="17" class="ng-binding ng-scope">Cocinero</option><option ng-repeat="tipoPago in tiposPago" value="18" class="ng-binding ng-scope">Copero</option>
                             </select>
                         </td>
                         <td>
                             <select id="pago" name="pago" ng-model="filtro.tipo_pago" class="form-control"><option value="? undefined:undefined ?"></option>
                                 <option value="0">TODOS</option>
-                                <!-- ngRepeat: tipoPago in tiposPago --><option ng-repeat="tipoPago in tiposPago" value="17" class="ng-binding ng-scope">EMSSCZ</option><!-- end ngRepeat: tipoPago in tiposPago --><option ng-repeat="tipoPago in tiposPago" value="18" class="ng-binding ng-scope">BULO BULO</option><!-- end ngRepeat: tipoPago in tiposPago -->
+                                <option ng-repeat="tipoPago in tiposPago" value="17" class="ng-binding ng-scope">EMSSCZ</option><option ng-repeat="tipoPago in tiposPago" value="18" class="ng-binding ng-scope">BULO BULO</option>
                             </select>
                         </td>
-                    </tr>
-                    <tr>
+                    </tr> -->
+                    <!-- <tr>
                         <td>
                             <label></label>&nbsp;
                         </td>
@@ -345,8 +345,8 @@
                         <td colspan="2">
                        
                         </td>
-                    </tr>
-                    <tr>
+                    </tr> -->
+                    <!-- <tr>
                         <td>
                             
                         </td>
@@ -359,7 +359,7 @@
                         <td colspan="2">
                             
                         </td>
-                    </tr>
+                    </tr> -->
                 </tbody>
             </table>
             <div class="table-header">
@@ -418,13 +418,14 @@
                                 </label>
                             </td>
                             <td>{{$index+1}}</td>
-                            <td>{{empleado.persona.nombre_completo}}</td>
-                            <td>{{empleado.persona.ci}}</td>
+                            <td>{{empleado.nombre_completo}}</td>
+                            <td>{{empleado.ci}}</td>
                             <td>
-                                <label ng-repeat="cargo in empleado.cargos">{{cargo.cargo.nombre}}</label>
+                                <!-- <label ng-repeat="cargo in empleado.cargos">{{cargo.cargo.nombre}}</label> -->
+                                {{empleado.cargos}}
                             </td>
                             <td>{{empleado.campo}}</td>
-                            <td>{{empleado.empleadosFichas[0].matricula_seguro}}</td>
+                            <td>{{empleado.matricula_seguro}}</td>
                             <td>{{empleado.netoImponible}}</td>
                             <td>{{empleado.dos_SMN}}</td>
                             <td>{{empleado.diferencia}}</td>
@@ -484,21 +485,23 @@
     <!-- =====  fin modal  nueva planilla sueldos ====== -->
     <!-- =====  modal  formulario-110 ====== -->
     <div id="dialog-formulario-110" class="modal">
+        <form name="form110" novalidate>
         <div class="modal-header ficha">
             <h4 class="modal-title" id="myModalLabel"> Carga de Formulario 110</h4>
             <h5 class="modal-title">{{sueldo.persona.nombre_completo}}</h5>
         </div>
         <div class="modal-body">
-            <form>
+            
                 <div class="row">
                     <div class="form-group col-sm-12">
                         <label for="sexo">Monto Declarado</label>
                         <input type="number" class="form-control" id="nombres" name="nombres" placeholder="Monto Declarado" ng-model="sueldo.montoDeclarado">
                     </div>
-                    <div class="form-group col-sm-12" ng-class="{ 'has-error' : valido }">
+                    <div class="form-group col-sm-12" ng-class="{ 'has-error' : form110.ivacf.$error.required }">
                         <label>IVA CF</label>
-                        <input type="number" ng-change="calcularRCIVA(sueldo)" class="form-control" id="nombres" name="nombres" placeholder="IVA CF" ng-model="sueldo.ivaCF">
-                        <p ng-show="valido" class="help-block">{{mensage}}</p>
+                        <input type="number" ng-change="calcularRCIVA(sueldo)" class="form-control" id="nombres" name="ivacf" placeholder="IVA CF" ng-model="sueldo.ivaCF" required>
+                        <span ng-show="form110.ivacf.$error.required" class="help-block">El IVA CF es requerido </span>
+                        
                     </div>
 
                     <div class="form-group col-sm-12">
@@ -506,14 +509,15 @@
                         <input type="number" class="form-control" id="nombres" name="nombres" placeholder="Número de Facturas" ng-model="sueldo.muneroFacturas">
                     </div>
                 </div>
-            </form>
+            
         </div><!-- /.row -->
         <div class="modal-footer wizard-actions">
-            <button class="btn btn-primary btn-sm" ng-click="modificarFormulario110(sueldo)"><i class="glyphicon glyphicon-floppy-disk"></i>Guardar
+            <button class="btn btn-primary btn-sm" ng-disabled="form110.ivacf.$dirty && form110.ivacf.$invalid" ng-click="modificarFormulario110(sueldo)"><i class="glyphicon glyphicon-floppy-disk"></i>Guardar
             </button>
             <button class="btn btn-danger btn-sm" ng-click="cerrarDialogFormulario110()"><i class="ace-icon fa fa-times"></i>Cancelar
             </button>
         </div>
+        </form>
     </div>
     <!--- ==== fin modal formulario-110 ================================ -->
     <!--- ==== modal formulario-general-110  ================================ -->
@@ -522,7 +526,7 @@
             <h4 class='smaller text-white text-uppercase'><i class='icono-impuestos bigger-180'></i> <label> Carga General Del Formulario 110 </label></h4>
         </div>
         <div class="clearfix"></div>
-        <div class="table-responsive">
+        <div class="table-responsive" style="overflow-y:  scroll; overflow-x:  visible; max-height: 450px;">
             <table class="table table-striped table-hover">
                 <thead>
                     <tr>
@@ -536,7 +540,7 @@
                 <tbody>
                     <tr ng-repeat="empleado in EmpleadosSeleccionados">
                         <th scope="row">{{$index+1}}</th>
-                        <td>{{empleado.persona.nombre_completo}}</td>
+                        <td>{{empleado.nombre_completo}}</td>
                         <td>
                             <input type="number" enter ng-model="empleado.montoDeclarado">
                         </td>

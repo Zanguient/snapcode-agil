@@ -325,7 +325,7 @@
 					<td>{{hijoKardex.producto.nombre}}</td>
 					<td>{{hijoKardex.cantidad_despachada}}</td>
 					<td>{{hijoKardex.producto.precio_unitario}}</td>
-					<td>{{hijoKardex.cantidad*hijoKardex.producto.precio_unitario}}</td>
+					<td>{{hijoKardex.cantidad_despachada*hijoKardex.producto.precio_unitario}}</td>
 
 				</tr>
 
@@ -395,7 +395,12 @@
 						<th>Fecha</th>
 						<th>Usuario</th>
 						<th>Cliente</th>
-						<th>Monto</th>
+						<th>Producto</th>
+						<th>Cantidad</th>
+						<th>P/u</th>
+						<th>Total</th>
+						<th>Pedidos</th>
+						<th>Saldo</th>
 						<th>Factura</th>
 						<th>Acciones</th>
 					</tr>
@@ -406,10 +411,15 @@
 						<td>{{kardex.fecha |date:'dd/MM/yyyy'}}</td>
 						<td>{{kardex.usuario.persona.nombre_completo}}</td>
 						<td>{{kardex.cliente.razon_social}}</td>
+						<td>{{kardex.detalles_kardex[0].producto.nombre}}</td>
 						<td>{{kardex.detalles_kardex[0].cantidad}}</td>
+						<td>{{kardex.detalles_kardex[0].producto.precio_unitario}}</td>						
+						<td>{{kardex.detalles_kardex[0].cantidad*kardex.detalles_kardex[0].producto.precio_unitario}}</td>
+						<td>{{kardex.detalles_kardex[0].hijosDetalle.length}}</td>
+						<td>{{kardex.detalles_kardex[0].saldo}}</td>
 						<td>{{kardex.detalles_kardex[0].factura}}</td>
 						<td>
-							<a class="green" href="javascript:void(0)" ng-click="abrirModalAsignacionFacturaKardex(kardex)">
+							<a class="green" href="javascript:void(0)" ng-click="abrirModalAsignacionFacturaKardex(kardex.detalles_kardex[0])">
 								<i class="ace-icon fa fa-unlock bigger-130"></i>
 							</a>
 							<a class="blue">

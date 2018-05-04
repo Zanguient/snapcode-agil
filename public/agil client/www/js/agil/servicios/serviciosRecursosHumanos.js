@@ -1084,3 +1084,33 @@ angular.module('agil.servicios')
     };
     return res;
 }])
+.factory('ListaViajesRrhh', function ($resource) {
+    return $resource(restServer + "recursos-humanos/viaje/empresa/:id_empresa/inicio/:inicio/fin/:fin/destino/:destino/vehiculo/:vehiculo/conductor/:conductor/relevo/:relevo/pagina/:pagina/items_pagina/:items_pagina/texto_busqueda/:texto_busqueda/columna/:columna/direccion/:direccion", null ,
+        {
+            'update': { method: 'PUT' }
+        });
+})
+.factory('ViajeRrhhLista', ['ListaViajesRrhh', '$q', function (ListaViajesRrhh, $q) {
+    var res = function (paginator) {
+        var delay = $q.defer();
+        ListaViajesRrhh.get({id_empresa:paginator.filter.empresa,
+            inicio:paginator.filter.inicio,
+            fin:paginator.filter.fin,            
+            destino:paginator.filter.destino,
+            vehiculo:paginator.filter.vehiculo,
+            conductor:paginator.filter.conductor,
+            relevo:paginator.filter.relevo,
+            pagina: paginator.currentPage,
+            items_pagina: paginator.itemsPerPage,
+            texto_busqueda: paginator.search,
+            columna: paginator.column,
+            direccion: paginator.direction,
+        }, function (entidad) {
+            delay.resolve(entidad);
+        }, function (error) {
+            delay.reject(error);
+        });
+        return delay.promise;
+    };
+    return res;
+}])

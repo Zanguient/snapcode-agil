@@ -26,7 +26,7 @@ module.exports = function (sequelize, Sequelize) {
         },
         eliminado:{
             type: Sequelize.BOOLEAN,
-            field: 'relevo'
+            field: 'eliminado'
         },
         fecha:{
             type: Sequelize.DATE,

@@ -662,7 +662,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 							if (fechaAnteriorMes != fechaActualMes || fechaAnteriorMes < fechaActualMes) {
 
 								sucursalesParaActualizar.push(sucursal)
-								if (index === (array.length - 1)) {
+								if (index === (sucursales.length - 1)) {
 									var fecha_reinicio_correlativo = new Date()
 									fecha_reinicio_correlativo.setDate(1)
 									var datos = { sucursales: sucursalesParaActualizar, fecha: fecha_reinicio_correlativo }
@@ -683,6 +683,16 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 										$scope.mostrarMensaje(dato.message)
 									})
 								}
+							}
+						}else{
+							if (index === (array.length - 1)) {
+								var fecha_reinicio_correlativo = new Date()
+								fecha_reinicio_correlativo.setDate(1)
+								var datos = { sucursales: sucursalesParaActualizar, fecha: fecha_reinicio_correlativo }
+								var promesa = ReiniciarCorrelativoSucursales(datos)
+								promesa.then(function (dato) {
+									$scope.mostrarMensaje(dato.message)
+								})
 							}
 						}
 					});

@@ -487,7 +487,6 @@ angular.module('agil.controladores')
         }
         $scope.abrirModalAsignacionFacturaKardex = function (detalle) {
             $scope.detalle_kardex = detalle
-            
             $scope.abrirPopup($scope.idModalAsignacionFacturaKardex);
         }
 
@@ -515,7 +514,7 @@ angular.module('agil.controladores')
             GtmDetalleDespachoKardex.update({ id_detalle_kardex: detalle_kardex.id }, detalle_kardex, function (res) {
                 var filtro={pendiente:true}
                 $scope.obtenerVentaKardexFactura(filtro)
-                $scope.cerrarAsignacionFacturKardex();
+                $scope.cerrarAsignacionFacturaKardex();
                 $scope.mostrarMensaje(res.mensaje);
             });
         }

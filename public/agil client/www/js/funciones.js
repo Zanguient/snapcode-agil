@@ -1,6 +1,6 @@
 function ejecutarScriptDespacho(idModalAsignacionFactura,idModalVentaKardexFactura,idModalAsignacionFacturaKardex,idModalDetalleKardex) {
 	
-	crearPopup(idModalVentaKardexFactura, "60%", 'auto');
+	crearPopup(idModalVentaKardexFactura, "80%", 'auto');
 	crearPopup(idModalAsignacionFactura, "auto", 'auto');
 	crearPopup(idModalDetalleKardex, "auto", 'auto')
 	crearPopup(idModalAsignacionFacturaKardex, "auto", 'auto')
@@ -284,7 +284,8 @@ function ejecutarScriptsRecursosHumanos(idModalPrerequisitos, idModalEmpleado, i
 	idImagenUsuario, idEliminarUsuarioRh, idModalWizardRhVista, idModalContenedorRhVista, idModalDialogPrerequisitoNuevo, idEliminarSeguroEmpleado,
 	idEliminarFamiliarEmpleado, idModalHistorialPrerequisito, idModalEditarPrerequisito, idModalDialogConfirmacionEntregaAdelantado, IdEntregaPrerequisito, IdModalVerificarCuenta, idModalImpresionHojaVida, idModalNuevoAnticipoRegularTodos,
 	idModalTr3BancoMsc, idModalTr3BancoUnion, idModalHistorialTr3, IdModalVerificarCuentaRrhh, idModalConfirmarDesabilitacion, idModalReingresoEmpleado,
-	idModalHistorialBeneficios, idModalConfiguracionRopaDeTrabajo, idModalReporteRopaDeTrabajo, idmodalWizardContainerConfiguracionRopaTrabajo, idModalRopaTrabajo, idModalNuevaRopaTrabajo, idModalItemsNuevaRopaTrabajo, idModalEliminarRopaTrabajo, idModalConceptoEdicion,idModalVisitaSalida) {
+	idModalHistorialBeneficios, idModalConfiguracionRopaDeTrabajo, idModalReporteRopaDeTrabajo, idmodalWizardContainerConfiguracionRopaTrabajo, idModalRopaTrabajo, idModalNuevaRopaTrabajo, idModalItemsNuevaRopaTrabajo, idModalEliminarRopaTrabajo, idModalConceptoEdicion,idModalVisitaSalida,idModalDesabilitarPasajero,
+	idModalCerrarRolDeTurno) {
 	crearPopup(idModalPrerequisitos, "90%", 'auto');
 	crearPopup(idModalEmpleado, "100%", 'auto');
 	aplicarWizardFormulario(idModalEmpleado, idModalwizardContainerEmpleado);
@@ -319,16 +320,7 @@ function ejecutarScriptsRecursosHumanos(idModalPrerequisitos, idModalEmpleado, i
 	crearPopup(idModalBitacoraFicha, "auto", "auto");
 	crearPopup(idModalAnticipoExtraordinario, "62%", "auto");
 	crearPopup(idModalNuevoPrestamo, "62%", "auto");
-	crearPopup(idModalAusenciasVacaciones, "62%", "auto");
-	aplicarTab(idTabAusenciasVacaciones);
-	crearPopup(idModalTipoBaja, "50%", "auto");
-	crearPopup(idModalFeriados, "50%", "auto");
-	crearPopup(idModalHitorialVacaciones, "65%", "auto");
-	crearPopup(idModalDetalleVacaciones, "70%", "auto");
-	crearPopup(idModalCompensacion, "50%", "auto");
-	crearPopup(idModalHistorialAusencias, "65%", "auto");
-	crearPopup(idModalHistorialAusenciaMedica, "65%", "auto");
-	crearPopup(idModalTipoAusencia, "50%", "auto");
+	
 	crearPopup(idModalRolTurnos, "50%", "auto");
 	crearPopup(idModalHistorialTurnos, "70%", "auto");
 	crearPopup(idModalHorasExtras, "50%", "auto");
@@ -344,7 +336,17 @@ function ejecutarScriptsRecursosHumanos(idModalPrerequisitos, idModalEmpleado, i
 	crearPopup(idModalReporteBajasMedicas, "70%", "auto");
 	crearPopup(idModalReporteRolTurnos, "70%", "auto");
 	crearPopup(idModalReporteTurnosDetallado, "100%",  screen.height);
-	crearPopup(idModalViajes, "100%", "auto");
+	crearPopup(idModalViajes, "auto", "auto");
+	crearPopup(idModalAusenciasVacaciones, "62%", "auto");
+	aplicarTab(idTabAusenciasVacaciones);
+	crearPopup(idModalTipoBaja, "50%", "auto");
+	crearPopup(idModalFeriados, "50%", "auto");
+	crearPopup(idModalHitorialVacaciones, "65%", "auto");
+	crearPopup(idModalDetalleVacaciones, "70%", "auto");
+	crearPopup(idModalCompensacion, "50%", "auto");
+	crearPopup(idModalHistorialAusencias, "65%", "auto");
+	crearPopup(idModalHistorialAusenciaMedica, "65%", "auto");
+	crearPopup(idModalTipoAusencia, "50%", "auto");
 	crearPopup(idModalVisita, "50%", "auto");
 	crearPopup(idModalVehiculosViaje, "62%", "auto");
 	crearPopup(idModalDestinos, "62%", "auto");
@@ -385,6 +387,8 @@ function ejecutarScriptsRecursosHumanos(idModalPrerequisitos, idModalEmpleado, i
 	crearPopup(IdModalVerificarCuenta, "auto", 'auto');
 	crearPopup(idModalEliminarRopaTrabajo, "auto", 'auto');
 	crearPopup(idModalVisitaSalida, "auto", 'auto');
+	crearPopup(idModalDesabilitarPasajero, "auto", 'auto');
+	crearPopup(idModalCerrarRolDeTurno, "auto", 'auto');
 	setTimeout(function () {
 		aplicarDatePickers();
 		// aplicarHoras();
@@ -400,7 +404,7 @@ function ejecutarScriptsRecursosHumanos(idModalPrerequisitos, idModalEmpleado, i
 
 function ejecutarScriptsPlanillaSueldos(idModalNuevaPlanillaSueldos, idModalEditarPlanillaSueldo, idModalParametros, idModalTR3,
 	idModalHistorialTR3, idEliminarSueldoEmpleado) {
-	crearPopup(idModalNuevaPlanillaSueldos, "100%", "auto");
+	crearPopup(idModalNuevaPlanillaSueldos, "100%", 700);
 	crearPopup(idModalEditarPlanillaSueldo, "50%", "auto");
 	crearPopup(idModalParametros, "90%", "auto");
 	crearPopup(idModalTR3, "75%", "auto");
@@ -414,7 +418,7 @@ function ejecutarScriptsIncrementoSalarial(idModalNuevoIncrementoSalarial) {
 
 function ejecutarScriptsPlanillaRCIVA(idModalNuevoPlanillaRCIVA, idModalFormulario110, idModalFormularioGeneral110,
 	idModalArchivosTXT) {
-	crearPopup(idModalNuevoPlanillaRCIVA, "100%", "auto");
+	crearPopup(idModalNuevoPlanillaRCIVA, "100%", 700);
 	crearPopup(idModalFormulario110, "40%", "auto");
 	crearPopup(idModalFormularioGeneral110, "70%", "auto");
 	crearPopup(idModalArchivosTXT, "60%", "auto");

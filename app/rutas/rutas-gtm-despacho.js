@@ -458,28 +458,54 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, forEach, j
 				{ model: GtmEstibaje, as: 'estibaje', where: condicionEstibaje }],
 				order: [['id', 'asc']]
 			}).then(function (data) {
-				GtmDespachoDetalle.findAll({
-					offset: (req.params.items_pagina * (req.params.pagina - 1)), limit: req.params.items_pagina,
-					where: condicionDespacho,
-					include: [{
-						model: GtmDespacho, as: 'despacho',
-						where: { id_empresa: req.params.id_empresa },
-						include: [{ model: Usuario, as: 'usuario', include: [{ model: Persona, as: 'persona', where: condicionVendedor }] },
-						{ model: ClienteRazon, as: 'cliente_razon' },
-						{ model: Cliente, as: 'cliente', where: condicionCliente },
-						{ model: GtmDestino, as: 'destino' }]
-					},
-					{ model: Producto, as: 'producto' },
-					{
-						model: GtmTransportista, as: 'transportista',
-						include: [{ model: Persona, as: 'persona', where: condicionTrabajador }]
-					},
-					{ model: GtmGrupoEstibaje, as: 'grupo_estibaje', where: condicionGrupoEstibaje },
-					{ model: GtmEstibaje, as: 'estibaje', where: condicionEstibaje }],
-					order: [['id', 'asc']]
-				}).then(function (detallesDespacho) {
-					res.json({ detallesDespacho: detallesDespacho, paginas: Math.ceil(data.count / req.params.items_pagina) });
-				});
+
+				if(req.params.items_pagina!=0){
+					GtmDespachoDetalle.findAll({
+						offset: (req.params.items_pagina * (req.params.pagina - 1)), limit: req.params.items_pagina,
+						where: condicionDespacho,
+						include: [{
+							model: GtmDespacho, as: 'despacho',
+							where: { id_empresa: req.params.id_empresa },
+							include: [{ model: Usuario, as: 'usuario', include: [{ model: Persona, as: 'persona', where: condicionVendedor }] },
+							{ model: ClienteRazon, as: 'cliente_razon' },
+							{ model: Cliente, as: 'cliente', where: condicionCliente },
+							{ model: GtmDestino, as: 'destino' }]
+						},
+						{ model: Producto, as: 'producto' },
+						{
+							model: GtmTransportista, as: 'transportista',
+							include: [{ model: Persona, as: 'persona', where: condicionTrabajador }]
+						},
+						{ model: GtmGrupoEstibaje, as: 'grupo_estibaje', where: condicionGrupoEstibaje },
+						{ model: GtmEstibaje, as: 'estibaje', where: condicionEstibaje }],
+						order: [['id', 'asc']]
+					}).then(function (detallesDespacho) {
+						res.json({ detallesDespacho: detallesDespacho, paginas: Math.ceil(data.count / req.params.items_pagina) });
+					});
+				}else{
+					GtmDespachoDetalle.findAll({
+						offset: (req.params.items_pagina * (req.params.pagina - 1)),
+						where: condicionDespacho,
+						include: [{
+							model: GtmDespacho, as: 'despacho',
+							where: { id_empresa: req.params.id_empresa },
+							include: [{ model: Usuario, as: 'usuario', include: [{ model: Persona, as: 'persona', where: condicionVendedor }] },
+							{ model: ClienteRazon, as: 'cliente_razon' },
+							{ model: Cliente, as: 'cliente', where: condicionCliente },
+							{ model: GtmDestino, as: 'destino' }]
+						},
+						{ model: Producto, as: 'producto' },
+						{
+							model: GtmTransportista, as: 'transportista',
+							include: [{ model: Persona, as: 'persona', where: condicionTrabajador }]
+						},
+						{ model: GtmGrupoEstibaje, as: 'grupo_estibaje', where: condicionGrupoEstibaje },
+						{ model: GtmEstibaje, as: 'estibaje', where: condicionEstibaje }],
+						order: [['id', 'asc']]
+					}).then(function (detallesDespacho) {
+						res.json({ detallesDespacho: detallesDespacho, paginas: 1 });
+					});
+				}
 			});
 		});
 

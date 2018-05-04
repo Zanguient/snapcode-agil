@@ -76,10 +76,10 @@ angular.module('agil.controladores')
                     
                     planilla.RecursosHumanosEmpleados.forEach(function (empleado) {
                         
-                        promesa = RecursosHumanosEmpleadosHorasExtras(empleado.id, planilla.gestion, planilla.mes.split("-")[0]);
+                        promesa = RecursosHumanosEmpleadosHorasExtras(empleado.id_ficha, planilla.gestion, planilla.mes.split("-")[0], empleado.id);
                         promesa.then(function (dato) {
-                            empleado.sueldoBasico = empleado.empleadosFichas[0].haber_basico;
-                            $scope.antiguedad = calcAge(empleado.empleadosFichas[0].fecha_inicio); // == sacar años de antiguedad ==================
+                            empleado.sueldoBasico = empleado.haber_basico;
+                            $scope.antiguedad = calcAge(empleado.fecha_inicio); // == sacar años de antiguedad ==================
                             $scope.bonoFrontera = 0; // == sacar bono frontera ==================
                             $scope.otrosBonos = 0; // == sacar otros bonos ==================
 
@@ -96,7 +96,7 @@ angular.module('agil.controladores')
                             empleado.muneroFacturas = 0;
                             empleado.ivaCF = 0;
 
-                            empleado.netoImponible = empleado.totalGanado - empleado.afp;
+                            empleado.netoImponible = round(empleado.totalGanado - empleado.afp, 2);
                             empleado.dos_SMN = $scope.parametros.salario_minimo * 2;
 
                             empleado.diferencia = 0;
@@ -427,7 +427,7 @@ angular.module('agil.controladores')
             for (var i = 0; i < planillas.RecursosHumanosEmpleados.length; i++) {
                 var columns = [];
                 columns.push(planillas.RecursosHumanosEmpleados[i].codigo);
-                columns.push(planillas.RecursosHumanosEmpleados[i].persona.nombre_completo);
+                columns.push(planillas.RecursosHumanosEmpleados[i].nombre_completo);
                 columns.push(0);
                 columns.push(0);
                 columns.push(0);

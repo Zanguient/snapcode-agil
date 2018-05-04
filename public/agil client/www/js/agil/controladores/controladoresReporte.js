@@ -991,12 +991,6 @@ angular.module('agil.controladores')
 					window.open(fileURL, '_blank', 'location=no');
 				});
 				blockUI.stop();
-
-
-
-
-
-				blockUI.stop();
 			});
 		}
 
