@@ -6,42 +6,26 @@ angular.module('agil.controladores')
         ListaAnticiposEmpleado, CrearNuevosAnticiposEmpleados, ActualizarAnticipoEmpleado, NuevaAusenciaEmpleado, HistorialEmpleadoAusencias, HistorialEmpresaEmpleadosAusencias, NuevaVacacionEmpleado, HistorialEmpleadoVacaciones, HistorialEmpresaVacaciones, NuevoFeriado,
         ListaFeriados, GuardarClasesAusencias, Tipos, ListaBancos, ConfiguracionesVacacion, HistorialGestionesVacacion, GuardarTr3, ListaTr3Empresa, GuardarHistorialVacacion, CrearBeneficioSocial, ListaBeneficiosEmpleado, GuardarBitacoraFicha, VerBitacoraFicha, ObtenerFiniquitoEmpleado,
         ClasesTipoEmpresa, GuardarConfiguracionRopaCargo, ListaConfiguracionRopaCargo, DatosReporteConfiguracionRopa, FichasEmpleadoEmpresa, ListaCargosEmpleado, ListaRopaTrabajoProductos, GuardarDotacionRopa, ListaDotacionRopa, EliminarDotacionRopa, ListaDotacionRopaEmpresa, ActualizarDotacionRopa,
-        FamiliaresEmpleadoEmpresa, ListaRolTurnosEmpresa, ListaChoferesViaje, GuardarViajeRrhh, ListaViajeRrhh, ListaRolTurnosCalendario, ViajeRrhhLista) {
+        FamiliaresEmpleadoEmpresa, ListaRolTurnosEmpresa, ListaChoferesViaje, GuardarViajeRrhh, ListaViajeRrhh, ListaRolTurnosCalendario, ViajeRrhhLista, BeneficioEmpresa,GuardarConductoresEmpresa) {
         $scope.usuario = JSON.parse($localStorage.usuario);
         $scope.idModalPrerequisitos = 'dialog-pre-requisitos';
         $scope.idModalEmpleado = 'dialog-empleado';
         $scope.idModalwizardContainerEmpleado = 'modal-wizard-empleado-container';
-        $scope.idModalTipoDocumento = "dialog-tipo-documento";
-        $scope.idModalEstadoCivil = "dialog-estado-civil";
-        $scope.idModalNacionalidad = "dialog-nacionalidad";
         $scope.idModalDepartamentoEstado = "dialog-departamento-estado";
         $scope.idModalProvincia = "dialog-provincia";
         $scope.idModalLocalidad = "dialog-localidad";
-        $scope.idModalTipoDiscapacidad = "dialog-tipo-discapacidad";
-        $scope.idModalTipoContrato = "dialog-tipo-contrato";
-        $scope.idModalTipoPersonal = "dialog-tipo-personal";
-        $scope.idModalCargaHoraria = "dialog-carga-horaria";
-        $scope.idModalUbicacion = "dialog-ubicacion";
-        $scope.idModalArea = "dialog-area";
+
         $scope.idImputContrato = "id-contrato";
         $scope.idModalHojaVida = 'modal-hoja-vida';
-        $scope.idModalSeguro = "dialog-seguro";
-        $scope.idModalSeguroLugar = "dialog-seguro-lugar";
-        $scope.idModalAporte = "dialog-aporte";
-        $scope.idModalAporteLugar = "dialog-aporte-lugar";
-        $scope.idModalTipoOtrosSeguros = "dialog-tipo-otros-seguros";
-        $scope.idModalwizardContainerHojaVida = 'modal-wizard-hoja-vida-container';
-        $scope.idModalBanco = "dialog-banco";
-        $scope.idModalNuevoHijo = "dialog-nuevo-hijo";
+
         $scope.idModalNuevoFamiliar = "dialog-nuevo-familiar";
-        $scope.idModalGrado = "dialog-grado";
-        $scope.idModalTitulo = "dialog-titulo";
+
         $scope.idModalHistorialContrato = "dialog-historial-contrato";
         $scope.idModalBeneficiosSociales = "modal-beneficios-sociales";
-        $scope.idModalMotivoRetiro = "dialog-motivo-retiro";
+
         $scope.idModalDetalleVacaciones = "dialog-detalle-vacaciones";
-        $scope.idModalOtroIngreso = "dialog-nuevo-otro-ingreso";
-        $scope.idModalBitacoraFicha = "dialog-nueva-deduccion";
+
+        $scope.idModalBitacoraFicha = "dialog-bitacora-ficha";
         $scope.idModalAnticipoExtraordinario = "dialog-anticipo-extraordinario";
         $scope.idModalNuevoPrestamo = "dialog-nuevo-prestamo";
         $scope.idModalAusenciasVacaciones = "dialog-ausencias-vacaciones";
@@ -72,11 +56,11 @@ angular.module('agil.controladores')
         $scope.idModalVisita = "dialog-visita";
         $scope.idModalVisitaSalida = "dialog-visita-salida"
         $scope.idModalVehiculosViaje = "dialog-vehiculos-viaje";
-        $scope.idModalDestinos = "dialog-destinos";
+        $scope.idModalConductoresViaje = 'dialog-conductores-viaje'
         $scope.idModalHistorialViajes = "dialog-historial-viajes";
         $scope.idModalReporteAusencias = "dialog-reporte-ausencias";
         $scope.idModalCertificado = "dialog-certificado";
-        $scope.idModalInstitucion = "dialog-institucion";
+
         $scope.idModalRhNuevo = "dialog-rh-nuevo";
         $scope.idModalWizardRhNuevo = "modal-wizard-rh-container";
         $scope.idImagenUsuario = 'imagen-persona';
@@ -114,14 +98,9 @@ angular.module('agil.controladores')
             // resaltarPestaña($location.path().substring(1));
             resaltarPestaña($location.path().substring(1));
             ejecutarScriptsRecursosHumanos($scope.idModalPrerequisitos, $scope.idModalEmpleado, $scope.idModalwizardContainerEmpleado,
-                $scope.idModalTipoDocumento, $scope.idModalEstadoCivil, $scope.idModalNacionalidad,
-                $scope.idModalDepartamentoEstado, $scope.idModalProvincia, $scope.idModalLocalidad, $scope.idModalTipoDiscapacidad,
-                $scope.idModalTipoContrato, $scope.idModalTipoPersonal, $scope.idModalCargaHoraria, $scope.idModalArea,
-                $scope.idModalUbicacion, $scope.idImputContrato, $scope.idModalHojaVida, $scope.idModalwizardContainerHojaVida,
-                $scope.idModalSeguro, $scope.idModalSeguroLugar, $scope.idModalAporte, $scope.idModalAporteLugar,
-                $scope.idModalTipoOtrosSeguros, $scope.idModalBanco, $scope.idModalNuevoHijo, $scope.idModalNuevoFamiliar,
-                $scope.idModalGrado, $scope.idModalTitulo, $scope.idModalHistorialContrato, $scope.idModalBeneficiosSociales,
-                $scope.idModalMotivoRetiro, $scope.idModalDetalleVacaciones, $scope.idModalOtroIngreso, $scope.idModalBitacoraFicha,
+                $scope.idModalDepartamentoEstado, $scope.idModalProvincia, $scope.idModalLocalidad, $scope.idImputContrato, $scope.idModalHojaVida, $scope.idModalwizardContainerHojaVida,
+                $scope.idModalNuevoFamiliar, $scope.idModalHistorialContrato, $scope.idModalBeneficiosSociales,
+                $scope.idModalDetalleVacaciones, $scope.idModalBitacoraFicha,
                 $scope.idModalAnticipoExtraordinario, $scope.idModalNuevoPrestamo, $scope.idModalAusenciasVacaciones,
                 $scope.idTabAusenciasVacaciones, $scope.idModalTipoBaja, $scope.idModalFeriados, $scope.idModalHitorialVacaciones,
                 $scope.idModalCompensacion, $scope.idModalHistorialAusencias, $scope.idModalHistorialAusenciaMedica, $scope.idModalTipoAusencia,
@@ -129,14 +108,14 @@ angular.module('agil.controladores')
                 $scope.idModalAnticipoRegular, $scope.idModalPrestamosPersonal, $scope.idModalAdvertencia, $scope.idModalPretamosNuevoTodos,
                 $scope.idModalReporteHijos, $scope.idModalReporteVeneficios, $scope.idModalPagoPrestamo, $scope.idModalReporteVacaciones,
                 $scope.idModalReporteBajasMedicas, $scope.idModalReporteRolTurnos, $scope.idModalReporteTurnosDetallado,
-                $scope.idModalViajes, $scope.idModalVisita, $scope.idModalVehiculosViaje, $scope.idModalDestinos,
-                $scope.idModalHistorialViajes, $scope.idModalReporteAusencias, $scope.idModalCertificado, $scope.idModalInstitucion,
+                $scope.idModalViajes, $scope.idModalVisita, $scope.idModalVehiculosViaje,
+                $scope.idModalHistorialViajes, $scope.idModalReporteAusencias, $scope.idModalCertificado,
                 $scope.idModalRhNuevo, $scope.idModalWizardRhNuevo, $scope.idImagenUsuario, $scope.idEliminarUsuarioRh, $scope.idModalWizardRhVista,
                 $scope.idModalContenedorRhVista, $scope.idModalDialogPrerequisitoNuevo, $scope.idEliminarSeguroEmpleado, $scope.idEliminarFamiliarEmpleado, $scope.idModalHistorialPrerequisito,
                 $scope.idModalEditarPrerequisito, $scope.idModalDialogConfirmacionEntregaAdelantado, $scope.IdEntregaPrerequisito, $scope.IdModalVerificarCuenta, $scope.idModalImpresionHojaVida, $scope.idModalNuevoAnticipoRegularTodos,
                 $scope.idModalTr3BancoMsc, $scope.idModalTr3BancoUnion, $scope.idModalHistorialTr3, $scope.IdModalVerificarCuentaRrhh, $scope.idModalConfirmarDesabilitacion, $scope.idModalReingresoEmpleado,
                 $scope.idModalHistorialBeneficios, $scope.idModalConfiguracionRopaDeTrabajo, $scope.idModalReporteRopaDeTrabajo, $scope.idmodalWizardContainerConfiguracionRopaTrabajo, $scope.idModalRopaTrabajo, $scope.idModalNuevaRopaTrabajo, $scope.idModalItemsNuevaRopaTrabajo,
-                $scope.idModalEliminarRopaTrabajo, $scope.idModalConceptoEdicion, $scope.idModalVisitaSalida, $scope.idModalDesabilitarPasajero, $scope.idModalCerrarRolDeTurno);
+                $scope.idModalEliminarRopaTrabajo, $scope.idModalConceptoEdicion, $scope.idModalVisitaSalida, $scope.idModalDesabilitarPasajero, $scope.idModalCerrarRolDeTurno, $scope.idModalConductoresViaje);
             $scope.buscarAplicacion($scope.usuario.aplicacionesUsuario, $location.path().substring(1));
             $scope.obtenerColumnasAplicacion()
             blockUI.stop();
@@ -145,34 +124,18 @@ angular.module('agil.controladores')
 
         $scope.$on('$routeChangeStart', function (next, current) {
             $scope.eliminarPopup($scope.idModalEmpleado)
-            $scope.eliminarPopup($scope.idModalTipoDocumento)
-            $scope.eliminarPopup($scope.idModalEstadoCivil)
-            $scope.eliminarPopup($scope.idModalNacionalidad)
             $scope.eliminarPopup($scope.idModalDepartamentoEstado)
             $scope.eliminarPopup($scope.idModalProvincia)
             $scope.eliminarPopup($scope.idModalLocalidad)
-            $scope.eliminarPopup($scope.idModalTipoDiscapacidad)
-            $scope.eliminarPopup($scope.idModalTipoContrato)
-            $scope.eliminarPopup($scope.idModalTipoPersonal)
-            $scope.eliminarPopup($scope.idModalCargaHoraria)
-            $scope.eliminarPopup($scope.idModalArea)
-            $scope.eliminarPopup($scope.idModalUbicacion)
             $scope.eliminarPopup($scope.idModalHojaVida)
-            $scope.eliminarPopup($scope.idModalSeguro)
-            $scope.eliminarPopup($scope.idModalSeguroLugar)
-            $scope.eliminarPopup($scope.idModalAporte)
-            $scope.eliminarPopup($scope.idModalAporteLugar)
-            $scope.eliminarPopup($scope.idModalTipoOtrosSeguros)
-            $scope.eliminarPopup($scope.idModalBanco)
-            $scope.eliminarPopup($scope.idModalNuevoHijo)
+
             $scope.eliminarPopup($scope.idModalNuevoFamiliar)
-            $scope.eliminarPopup($scope.idModalGrado)
-            $scope.eliminarPopup($scope.idModalTitulo)
+
             $scope.eliminarPopup($scope.idModalHistorialContrato)
             $scope.eliminarPopup($scope.idModalBeneficiosSociales)
-            $scope.eliminarPopup($scope.idModalMotivoRetiro)
+
             $scope.eliminarPopup($scope.idModalDetalleVacaciones)
-            $scope.eliminarPopup($scope.idModalOtroIngreso)
+
             $scope.eliminarPopup($scope.idModalBitacoraFicha)
             $scope.eliminarPopup($scope.idModalAnticipoExtraordinario)
             $scope.eliminarPopup($scope.idModalNuevoPrestamo)
@@ -202,11 +165,11 @@ angular.module('agil.controladores')
             $scope.eliminarPopup($scope.idModalViajes)
             $scope.eliminarPopup($scope.idModalVisita)
             $scope.eliminarPopup($scope.idModalVehiculosViaje)
-            $scope.eliminarPopup($scope.idModalDestinos)
+
             $scope.eliminarPopup($scope.idModalHistorialViajes)
             $scope.eliminarPopup($scope.idModalReporteAusencias)
             $scope.eliminarPopup($scope.idModalCertificado)
-            $scope.eliminarPopup($scope.idModalInstitucion)
+
             $scope.eliminarPopup($scope.idModalPrerequisitos)
             $scope.eliminarPopup($scope.idModalRhNuevo)
             $scope.eliminarPopup($scope.idModalWizardRhVista)
@@ -238,6 +201,7 @@ angular.module('agil.controladores')
             $scope.eliminarPopup($scope.idModalVisitaSalida)
             $scope.eliminarPopup($scope.idModalDesabilitarPasajero)
             $scope.eliminarPopup($scope.idModalCerrarRolDeTurno)
+            $scope.eliminarPopup($scope.idModalConductoresViaje)
         });
         $scope.inicio = function () {
 
@@ -277,6 +241,13 @@ angular.module('agil.controladores')
         $scope.cerrarDialogCerrarRolDeTurno = function () {
             $scope.cerrarPopup($scope.idModalCerrarRolDeTurno);
         }
+        $scope.abrirDialogConductoresViaje = function () {          
+            $scope.conductor = {};
+            $scope.abrirPopup($scope.idModalConductoresViaje);
+        }
+        $scope.cerrarDialogConductoresViaje = function () {
+            $scope.cerrarPopup($scope.idModalConductoresViaje);
+        }
 
         $scope.obtenerColumnasAplicacion = function () {
             $scope.fieldViewer = FieldViewer({
@@ -302,6 +273,10 @@ angular.module('agil.controladores')
             promesa.then(function (dato) {
                 $scope.historialTr3 = dato
                 $scope.abrirPopup($scope.idModalHistorialTr3)
+            }).catch(function (err) {
+                var men = (err.data !== undefined && err.data !== null) ? err.data : err.message
+                $scope.mostrarMensaje('Se produjo un error! > ' + men)
+                blockUI.stop();
             })
 
         }
@@ -694,25 +669,6 @@ angular.module('agil.controladores')
             }
         }
 
-        $scope.abrirDialogTipoDocumento = function () {
-            $scope.abrirPopup($scope.idModalTipoDocumento);
-        }
-        $scope.cerrarDialogTipoDocumento = function () {
-            $scope.idModalHitorialAusencias
-            $scope.cerrarPopup($scope.idModalTipoDocumento);
-        }
-        $scope.abrirDialogEstadoCivil = function () {
-            $scope.abrirPopup($scope.idModalEstadoCivil);
-        }
-        $scope.cerrarDialogEstadoCivil = function () {
-            $scope.cerrarPopup($scope.idModalEstadoCivil);
-        }
-        $scope.abrirDialogNacionalidad = function () {
-            $scope.abrirPopup($scope.idModalNacionalidad);
-        }
-        $scope.cerrarDialogNacionalidad = function () {
-            $scope.cerrarPopup($scope.idModalNacionalidad);
-        }
         $scope.abrirDialogDepartamentoEstado = function () {
             $scope.clase = { pais: $scope.ficha.empleado.persona.pais }
             var promesa = ClasesTipo("DEP");
@@ -751,36 +707,7 @@ angular.module('agil.controladores')
         $scope.cerrarDialogLocalidad = function () {
             $scope.cerrarPopup($scope.idModalLocalidad);
         }
-        $scope.abrirDialogTipoDiscapacidad = function () {
-            $scope.abrirPopup($scope.idModalTipoDiscapacidad);
-        }
-        $scope.cerrarDialogTipoDiscapacidad = function () {
-            $scope.cerrarPopup($scope.idModalTipoDiscapacidad);
-        }
-        $scope.abrirDialogTipoContrato = function () {
-            $scope.abrirPopup($scope.idModalTipoContrato);
-        }
-        $scope.cerrarDialogTipoContrato = function () {
-            $scope.cerrarPopup($scope.idModalTipoContrato);
-        }
-        $scope.abrirDialogTipoPersonal = function () {
-            $scope.abrirPopup($scope.idModalTipoPersonal);
-        }
-        $scope.cerrarDialogTipoPersonal = function () {
-            $scope.cerrarPopup($scope.idModalTipoPersonal);
-        }
-        $scope.abrirDialogCargaHoraria = function () {
-            $scope.abrirPopup($scope.idModalCargaHoraria);
-        }
-        $scope.cerrarDialogCargaHoraria = function () {
-            $scope.cerrarPopup($scope.idModalCargaHoraria);
-        }
-        $scope.abrirDialogArea = function () {
-            $scope.abrirPopup($scope.idModalArea);
-        }
-        $scope.cerrarDialogArea = function () {
-            $scope.cerrarPopup($scope.idModalArea);
-        }
+
         //$scope.cargos = [{ 'name': 'Chofer' }, { 'name': 'Ayudante de Of.' }, { 'name': 'Mecanico' }];
         // $scope.discapacidades = [{ 'name': 'Fisica' }, { 'name': 'Sensorial' }, { 'name': 'Psiquica' }, { 'name': 'Intelectual o Mental' }];
         $scope.fechacontratos = [{ 'name': '10/01/2000 - 01/01/2002' }, { 'name': '10/01/2000 - 01/01/2002' }, { 'name': '10/01/2000 - 01/01/2002' }];
@@ -793,12 +720,7 @@ angular.module('agil.controladores')
             nothingSelected: "No se ha seleccionado nada"
         };
 
-        $scope.abrirDialogUbicacion = function () {
-            $scope.abrirPopup($scope.idModalUbicacion);
-        }
-        $scope.cerrarDialogUbicacion = function () {
-            $scope.cerrarPopup($scope.idModalUbicacion);
-        }
+
         $scope.abrirDialogHojaVida = function (empleado) {
             $scope.empleado = empleado
             $scope.empleado.activo = (empleado.eliminado) ? false : true
@@ -841,48 +763,7 @@ angular.module('agil.controladores')
         $scope.cerrarDialogHojaVida = function () {
             $scope.cerrarPopup($scope.idModalHojaVida);
         }
-        $scope.abrirDialogSeguro = function () {
-            $scope.abrirPopup($scope.idModalSeguro);
-        }
-        $scope.cerrarDialogSeguro = function () {
-            $scope.cerrarPopup($scope.idModalSeguro);
-        }
-        $scope.abrirDialogSeguroLugar = function () {
-            $scope.abrirPopup($scope.idModalSeguroLugar);
-        }
-        $scope.cerrarDialogSeguroLugar = function () {
-            $scope.cerrarPopup($scope.idModalSeguroLugar);
-        }
-        $scope.abrirDialogAporte = function () {
-            $scope.abrirPopup($scope.idModalAporte);
-        }
-        $scope.cerrarDialogAporte = function () {
-            $scope.cerrarPopup($scope.idModalAporte);
-        }
-        $scope.abrirDialogAporteLugar = function () {
-            $scope.abrirPopup($scope.idModalAporteLugar);
-        }
-        $scope.cerrarDialogAporteLugar = function () {
-            $scope.cerrarPopup($scope.idModalAporteLugar);
-        }
-        $scope.abrirDialogTipoOtrosSeguros = function () {
-            $scope.abrirPopup($scope.idModalTipoOtrosSeguros);
-        }
-        $scope.cerrarDialogTipoOtrosSeguros = function () {
-            $scope.cerrarPopup($scope.idModalTipoOtrosSeguros);
-        }
-        $scope.abrirDialogBanco = function () {
-            $scope.abrirPopup($scope.idModalBanco);
-        }
-        $scope.cerrarDialogBanco = function () {
-            $scope.cerrarPopup($scope.idModalBanco);
-        }
-        $scope.abrirDialogNuevoHijo = function () {
-            $scope.abrirPopup($scope.idModalNuevoHijo);
-        }
-        $scope.cerrarDialogNuevoHijo = function () {
-            $scope.cerrarPopup($scope.idModalNuevoHijo);
-        }
+
         $scope.abrirDialogNuevoFamiliar = function () {
             $scope.abrirPopup($scope.idModalNuevoFamiliar);
         }
@@ -893,18 +774,7 @@ angular.module('agil.controladores')
             }
             $scope.cerrarPopup($scope.idModalNuevoFamiliar);
         }
-        $scope.abrirDialogGrado = function () {
-            $scope.abrirPopup($scope.idModalGrado);
-        }
-        $scope.cerrarDialogGrado = function () {
-            $scope.cerrarPopup($scope.idModalGrado);
-        }
-        $scope.abrirDialogTitulo = function () {
-            $scope.abrirPopup($scope.idModalTitulo);
-        }
-        $scope.cerrarDialogTitulo = function () {
-            $scope.cerrarPopup($scope.idModalTitulo);
-        }
+
         $scope.abrirDialogHistorialContrato = function () {
             $scope.obtenerHistorialContratos($scope.empleado)
             $scope.abrirPopup($scope.idModalHistorialContrato);
@@ -1061,24 +931,14 @@ angular.module('agil.controladores')
         $scope.cerrarDialogBeneficiosSociales = function () {
             $scope.cerrarPopup($scope.idModalBeneficiosSociales);
         }
-        $scope.abrirDialogMotivoRetiro = function () {
-            $scope.abrirPopup($scope.idModalMotivoRetiro);
-        }
-        $scope.cerrarDialogMotivoRetiro = function () {
-            $scope.cerrarPopup($scope.idModalMotivoRetiro);
-        }
+        d
         $scope.abrirDialogDetalleVacaciones = function () {
             $scope.abrirPopup($scope.idModalDetalleVacaciones);
         }
         $scope.cerrarDialogDetalleVacaciones = function () {
             $scope.cerrarPopup($scope.idModalDetalleVacaciones);
         }
-        $scope.abrirDialogOtroIngreso = function () {
-            $scope.abrirPopup($scope.idModalOtroIngreso);
-        }
-        $scope.cerrarDialogOtroIngreso = function () {
-            $scope.cerrarPopup($scope.idModalOtroIngreso);
-        }
+
         $scope.abrirDialogBitacoraFicha = function () {
             var promesa = VerBitacoraFicha($scope.ficha.id)
             promesa.then(function (dato) {
@@ -1793,9 +1653,12 @@ angular.module('agil.controladores')
             $scope.cerrarPopup($scope.idModalReporteHijos);
         }
         $scope.abrirDialogReporteVeneficios = function () {
+            $scope.obtenerbeneficiosSocialesEmpresa()
+            $scope.empleado = undefined
             $scope.abrirPopup($scope.idModalReporteVeneficios);
         }
         $scope.cerrarDialogReporteVeneficios = function () {
+            $scope.obtenerRecursosHumanos()
             $scope.cerrarPopup($scope.idModalReporteVeneficios);
         }
         $scope.abrirDialogPagoPrestamo = function (prestamo) {
@@ -1875,6 +1738,7 @@ angular.module('agil.controladores')
         $scope.abrirDialogViajes = function () {
             $scope.viaje = { empleadosEntrada: [], empleadosSalida: [] }
             $scope.obtenerlistaRolTurno(0)
+            $scope.obtenerChoferesViaje()
             $scope.abrirPopup($scope.idModalViajes);
         }
         $scope.cerrarDialogViajes = function () {
@@ -1968,12 +1832,7 @@ angular.module('agil.controladores')
         $scope.cerrarDialogVehiculosViaje = function () {
             $scope.cerrarPopup($scope.idModalVehiculosViaje);
         }
-        $scope.abrirDialogDestinos = function () {
-            $scope.abrirPopup($scope.idModalDestinos);
-        }
-        $scope.cerrarDialogDestinos = function () {
-            $scope.cerrarPopup($scope.idModalDestinos);
-        }
+
         $scope.abrirDialogHistorialViajes = function () {
             $scope.obtenerViajesPasajeros()
             $scope.VerViajes = false
@@ -2013,13 +1872,6 @@ angular.module('agil.controladores')
         $scope.cerrarDialogCertificado = function () {
             $scope.cerrarPopup($scope.idModalCertificado);
         }
-        $scope.abrirDialogInstitucion = function () {
-            $scope.abrirPopup($scope.idModalInstitucion);
-        }
-        $scope.cerrarDialogInstitucion = function () {
-            $scope.cerrarPopup($scope.idModalInstitucion);
-        }
-
 
         $scope.button_clicked = false;
         $scope.disableImput = function ($event) {
@@ -2930,6 +2782,7 @@ angular.module('agil.controladores')
             $scope.obtenerVehiculosViaje()
             $scope.obtenerTipoViajeDetalle()
             $scope.obtenerTiposEstadosPasajeros()
+            $scope.obtenerTipoLicenciaVehiculo()
         }
         $scope.obtenerTiposEstadosPasajeros = function () {
             blockUI.start();
@@ -2945,6 +2798,14 @@ angular.module('agil.controladores')
             var promesa = ClasesTipoEmpresa("RRHH_GROL", $scope.usuario.id_empresa);
             promesa.then(function (entidad) {
                 $scope.gruposRol = entidad
+                blockUI.stop();
+            });
+        }
+        $scope.obtenerTipoLicenciaVehiculo = function () {
+            blockUI.start();
+            var promesa = ClasesTipoEmpresa("RRHH_TLVVIA", $scope.usuario.id_empresa);
+            promesa.then(function (entidad) {
+                $scope.TiposLicenciasVehiculo = entidad
                 blockUI.stop();
             });
         }
@@ -6032,6 +5893,10 @@ angular.module('agil.controladores')
             promesa.then(function (dato) {
                 $scope.historialGestionesVacacion = dato
                 var fechaActual = new Date()
+                if (empleado.fecha_Retiro_beneficio) {
+                    fechaActual = new Date(empleado.fecha_Retiro_beneficio)
+                }
+
                 var fechaAnterior = new Date(empleado.fecha_inicio)
                 var datow = $scope.diferenciaEntreDiasEnDias(fechaAnterior, fechaActual)
                 var años = Math.round(datow / 365)
@@ -6105,9 +5970,34 @@ angular.module('agil.controladores')
                 $scope.clase = {}
             }
         }
+        $scope.agregarConductor = function (conductor) {
+            conductor.habilitado=true
+            $scope.choferesViaje.push(conductor);
+            $scope.conductor = {}
+        }
+        $scope.editarConductor = function (conductor) {          
+            $scope.conductor = conductor
+        }
+        $scope.filtrarConductor=function(tipo){
+            if(tipo){
+                $scope.tipoConductor={id_empleado:tipo}
+            }else{
+                $scope.tipoConductor={}
+            }
+            
+        }
+        $scope.guardarConductores=function(){
+            var promesa = GuardarConductoresEmpresa($scope.usuario.id_empresa,$scope.choferesViaje)
+            promesa.then(function(dato){
+                $scope.mostrarMensaje(dato.mensaje)
+                $scope.obtenerChoferesViaje()
+                $scope.cerrarDialogConductoresViaje()
+            })
+        }
         $scope.modificarConceptoEdicion = function (clase) {
             $scope.clase = clase;
         }
+      
         $scope.modificarConceptoEdicionVehiculo = function (clase) {
             var datosVehiculo = clase.nombre.split("-")
             clase.vehiculo = datosVehiculo[0]
@@ -6533,6 +6423,8 @@ angular.module('agil.controladores')
             datos.fecha_ingreso = new Date($scope.convertirFecha(datos.fecha_ingreso))
             if (datos.fecha_retiro) {
                 datos.fecha_retiro = new Date($scope.convertirFecha(datos.fecha_retiro))
+            } else {
+                datos.fecha_retiro = new Date()
             }
             var promesa = CrearBeneficioSocial(datos, $scope.empleado.id_ficha)
             promesa.then(function (dato) {
@@ -7727,8 +7619,51 @@ angular.module('agil.controladores')
             doc.text("PÁGINA " + pagina + " DE " + totalPaginas, 0, 740, { align: "center" });
         }
 
-        $scope.imprimirFiniquito = function (beneficio, historial) {
+        $scope.imprimirFiniquito = function (beneficio, historial, historial2) {
 
+            if (historial2) {
+                $scope.vacacion = {}
+                $scope.beneficio = beneficio
+                $scope.empleado = beneficio.ficha.empleado
+                $scope.empleado.id_ficha = beneficio.ficha.id
+                $scope.empleado.haber_basico = beneficio.ficha.haber_basico
+                $scope.empleado.fecha_inicio = beneficio.ficha.fecha_inicio
+                $scope.empleado.fecha_Retiro_beneficio = new Date(beneficio.fecha_retiro)
+                $scope.empleado.nombre_completo = beneficio.ficha.empleado.persona.nombre_completo
+                $scope.empleado.estado = beneficio.ficha.empleado.persona.estadoCivil.nombre
+                $scope.empleado.direccion = beneficio.ficha.empleado.persona.direccion_zona
+                $scope.empleado.fecha_nacimiento = beneficio.ficha.empleado.persona.fecha_nacimiento
+                $scope.empleado.ci = beneficio.ficha.empleado.persona.ci
+                $scope.empleado.extension = beneficio.ficha.empleado.extension.nombre
+                $scope.obtenerHistorialGestionesVacacion($scope.empleado, false, true)
+                var fechaActual = new Date()
+                if (beneficio.fecha_retiro) {
+                    fechaActual = new Date(beneficio.fecha_retiro)
+                }
+                var fechaAnterior = new Date(beneficio.fecha_ingreso)
+                $scope.tiempoTrabajado = duration(fechaAnterior, fechaActual)
+                beneficio.mes_uno = $scope.meses[beneficio.mes_uno]
+                beneficio.mes_dos = $scope.meses[beneficio.mes_dos]
+                beneficio.mes_tres = $scope.meses[beneficio.mes_tres]
+                if (beneficio.fecha_retiro) {
+                    beneficio.fecha_retiro = $scope.fechaATexto(beneficio.fecha_retiro)
+                    beneficio.totalAguinaldo = $scope.CalcularAguinaldoNavidad2(beneficio)
+                }
+                beneficio.ingresos = []
+                beneficio.deducciones = []
+                //beneficio.promedio = (beneficio.primer_mes + beneficio.segundo_mes + beneficio.tercer_mes) / 3
+                beneficio.deduccionEingresos.forEach(function (deduccionEIngreso, index, array) {
+                    if (deduccionEIngreso.tipo.nombre_corto == "OTRING") {
+                        beneficio.ingresos.push(deduccionEIngreso)
+                    } else {
+                        beneficio.deducciones.push(deduccionEIngreso)
+                    }
+                    if (index === (array.length - 1)) {
+
+                        $scope.calcularDesaucio(beneficio, true)
+                    }
+                });
+            }
             convertUrlToBase64Image("./img/finiquito.png", function (imagenFiniquito) {
                 convertUrlToBase64Image("./img/finiquito2.png", function (imagenFiniquito2) {
                     var imagen = imagenFiniquito;
@@ -7739,6 +7674,12 @@ angular.module('agil.controladores')
                     var stream = doc.pipe(blobStream());
                     //primera pagina
                     if (historial) {
+                        var fechaActual = new Date()
+                        if (beneficio.fecha_retiro) {
+                            fechaActual = new Date(beneficio.fecha_retiro)
+                        }
+                        var fechaAnterior = new Date(beneficio.fecha_ingreso)
+                        $scope.tiempoTrabajado = duration(fechaAnterior, fechaActual)
                         beneficio.mes_uno = $scope.meses[beneficio.mes_uno]
                         beneficio.mes_dos = $scope.meses[beneficio.mes_dos]
                         beneficio.mes_tres = $scope.meses[beneficio.mes_tres]
@@ -7752,6 +7693,7 @@ angular.module('agil.controladores')
                     y = ($scope.usuario.empresa.direccion.length > 29) ? 206 : 211
                     doc.text($scope.usuario.empresa.direccion, 387, y, { width: 170 })
                     y = ($scope.usuario.empresa.direccion.length > 29) ? 231 : 236
+
                     doc.text($scope.empleado.nombre_completo, 280, y, { width: 250 })
                     if ($scope.empleado.direccion) {
                         y = ($scope.empleado.direccion.length > 24) ? 255 : 260
@@ -7770,7 +7712,9 @@ angular.module('agil.controladores')
                     if (beneficio.fecha_retiro) {
                         mes = new Date(beneficio.fecha_retiro).getMonth()
                         anio = new Date(beneficio.fecha_retiro).getFullYear()
-                        doc.text($scope.fechaATexto(beneficio.fecha_retiro), 490, 298, { width: 250 })
+                        if (beneficio.tipo_beneficio) {
+                            doc.text($scope.fechaATexto(beneficio.fecha_retiro), 490, 298, { width: 250 })
+                        }
                     }
                     if (beneficio.motivo) {
                         y = (beneficio.motivo.nombre.length > 18) ? 315 : 320
@@ -7887,9 +7831,13 @@ angular.module('agil.controladores')
                     doc.text(anio.toString().substr(-2), 515, 240)
                     doc.end();
                     stream.on('finish', function () {
+
                         var fileURL = stream.toBlobURL('application/pdf');
                         window.open(fileURL, '_blank', 'location=no');
                     });
+                    if (historial2) {
+                        $scope.paginator.getSearch($scope.paginator.search, $scope.filtroBeneficioEmpresa, null)
+                    }
                     blockUI.stop();
 
 
@@ -7998,15 +7946,15 @@ angular.module('agil.controladores')
                                                 }
                                                 if (index === (array.length - 1)) {
                                                     if (bandera == true) {
-                                                        rol.campo=Object.assign({}, role.campo)
+                                                        rol.campo = Object.assign({}, role.campo)
                                                         if (role.fecha_fin) {
-                                                            if(new Date($scope.convertirFecha(fecha)).getTime()<new Date(role.fecha_fin).getTime()){
+                                                            if (new Date($scope.convertirFecha(fecha)).getTime() < new Date(role.fecha_fin).getTime()) {
                                                                 $scope.viaje.empleadosEntrada.push(Object.assign({}, rol))
                                                             }
-                                                        }else{
+                                                        } else {
                                                             $scope.viaje.empleadosEntrada.push(Object.assign({}, rol))
                                                         }
-                                                       
+
                                                     }
                                                 }
                                             })
@@ -8239,38 +8187,38 @@ angular.module('agil.controladores')
                                 if (bandera) {
                                     if (a <= rolturno.dias_trabajado) {
                                         if (rolturno.fecha_fin) {
-                                            if(fechaFin==element.fecha){
-                                                i= rol.diasAnio.length
+                                            if (fechaFin == element.fecha) {
+                                                i = rol.diasAnio.length
                                                 element.texto = "T"
-                                            }else{
+                                            } else {
                                                 element.texto = "T"
                                             }
                                             a++
-                                        }else{
+                                        } else {
                                             element.texto = "T"
                                             a++
                                         }
                                     } else if (a <= (rolturno.dias_trabajado + rolturno.dias_descanso)) {
                                         if (rolturno.fecha_fin) {
-                                            if(fechaFin==element.fecha){
-                                                i= rol.diasAnio.length
+                                            if (fechaFin == element.fecha) {
+                                                i = rol.diasAnio.length
                                                 element.texto = "D"
                                             }
-                                            else{
+                                            else {
                                                 element.texto = "D"
                                             }
                                             if (a === (rolturno.dias_trabajado + rolturno.dias_descanso)) {
                                                 a = 0
                                             }
                                             a++
-                                        }else{
+                                        } else {
                                             element.texto = "D"
                                             if (a === (rolturno.dias_trabajado + rolturno.dias_descanso)) {
                                                 a = 0
                                             }
                                             a++
                                         }
-                                       
+
                                     }
                                     /*  if (element.fecha == $scope.fechaATexto(rolturno.fecha_fin)) {
                                          i = rol.diasAnio.length + 2
@@ -8735,12 +8683,12 @@ angular.module('agil.controladores')
             doc.rect(30, 150, 550, 0).stroke();
             doc.text("Fecha:", 35, 160);
             doc.font('Helvetica', 10);
-            doc.text(datos.conductor.persona.nombre_completo, 135, 110);
-            doc.text(datos.relevo.persona.nombre_completo, 135, 125);
+            doc.text(datos.conductor.nombre, 135, 110);
+            doc.text(datos.relevo.nombre, 135, 125);
             var datosVehiculo = datos.vehiculo.nombre.split("-")
             doc.text(datosVehiculo[0], 135, 140);
-            doc.text("falta Dato", 415, 110);
-            doc.text("falta Dato", 415, 125);
+            doc.text(datos.conductor.licencia + " " + datos.conductor.tipoLicencia.nombre, 415, 110);
+            doc.text(datos.relevo.licencia + " " + datos.relevo.tipoLicencia.nombre, 415, 125);
             doc.text(datosVehiculo[1], 415, 140);
             doc.text($scope.fechaATexto(datos.fecha) + tipo, 135, 160);
             doc.rect(30, 105, 0, 45).stroke();
@@ -8771,7 +8719,37 @@ angular.module('agil.controladores')
                 xx += 95
             })
         }
+        $scope.obtenerbeneficiosSocialesEmpresa = function () {
+            $scope.paginator = Paginator();
+            $scope.paginator.column = "id";
+            $scope.paginator.direccion = "asc";
+            $scope.filtroBeneficioEmpresa = {
+                empresa: $scope.usuario.id_empresa,
+                inicio: "",
+                fin: "",
+                motivo: "",
+                tipo: 0,
+            }
+            $scope.paginator.callBack = $scope.listaBeneficiosEmpresa;
+            $scope.paginator.getSearch("", $scope.filtroBeneficioEmpresa, null);
 
+
+        }
+        $scope.listaBeneficiosEmpresa = function () {
+            if ($scope.paginator.filter.inicio != 0) {
+                $scope.paginator.filter.inicio = new Date($scope.convertirFecha($scope.paginator.filter.inicio))
+                $scope.paginator.filter.fin = new Date($scope.convertirFecha($scope.paginator.filter.fin))
+            }
+            var promesa = BeneficioEmpresa($scope.paginator)
+            promesa.then(function (datos) {
+                if ($scope.paginator.filter.inicio != 0) {
+                    $scope.paginator.filter.inicio = $scope.fechaATexto($scope.paginator.filter.inicio)
+                    $scope.paginator.filter.fin = $scope.fechaATexto($scope.paginator.filter.fin)
+                }
+                $scope.paginator.setPages(datos.paginas);
+                $scope.beneficiosEmpresa = datos.beneficios
+            })
+        }
 
         $scope.fechaPorDia = function (año, dia) {
             var date = new Date(año, 0);

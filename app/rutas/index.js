@@ -156,6 +156,7 @@ module.exports = function (router, sequelize, Sequelize, jwt, md5, forEach, ensu
 	var RrhhViajeDetalle = require('../modelos/AGIL/rrhh-viaje-detalle')(sequelize, Sequelize);
 	var RrhhViaje = require('../modelos/AGIL/rrhh-viaje')(sequelize, Sequelize);
 	var RrhhViajeDestino = require('../modelos/AGIL/rrhh-viaje-destino')(sequelize, Sequelize);
+	var RrhhViajeConductor= require('../modelos/AGIL/rrhh-viaje-conductor')(sequelize, Sequelize);
 	//*****RELATIONS*****
 	require('../modelos/relaciones.js')(sequelize, Usuario, Persona, Rol, UsuarioRol, Tipo, Clase, Aplicacion, RolAplicacion,
 		Empresa, Sucursal, UsuarioSucursal, Cliente, Proveedor, Producto, UsuarioAplicacion,
@@ -174,7 +175,7 @@ module.exports = function (router, sequelize, Sequelize, jwt, md5, forEach, ensu
 		RrhhEmpleadoHojaVida, RrhhEmpleadoFormacionAcademica, RrhhEmpleadoExperienciaLaboral, RrhhEmpleadoLogroInternoExterno, RrhhEmpleadoCapacidadInternaExterna, SolicitudReposicion, DetalleSolicitudProducto, DetalleSolicitudProductoBase, MonedaTipoCambio, ContabilidadCuentaAuxiliar, GtmDespachoDetalle, RrhhEmpleadoPrestamo, RrhhEmpleadoPrestamoPago, Proforma, DetallesProformas, Servicios, Farmacia, RRHHParametros, RrhhEmpleadoRolTurno, RrhhEmpleadoHorasExtra, RRHHPlanillaSueldos, RRHHDetallePlanillaSueldos, RrhhAnticipo, EvaluacionPolifuncional,
 		RrhhEmpleadoAusencia, RrhhEmpleadoVacaciones, RrhhEmpleadoCompensacionAusencia, RrhhClaseAsuencia,RrhhEmpleadoHistorialVacacion,RrhhEmpleadoTr3,RrhhEmpleadoAnticipoTr3,RrhhEmpleadoDeduccionIngreso,
 		RrhhEmpleadoBeneficioSocial,RrhhEmpleadoBitacoraFicha, UsuarioGrupos,RrhhEmpleadoConfiguracionRopa,GtmVentaKardex,GtmVentaKardexDetalle,RrhhEmpleadoDotacionRopaItem,
-		RrhhEmpleadoDotacionRopa,RrhhViajeDetalle,RrhhViaje,RrhhViajeDestino);
+		RrhhEmpleadoDotacionRopa,RrhhViajeDetalle,RrhhViaje,RrhhViajeDestino,RrhhViajeConductor);
 
 	require('../sockets/pantallas.js')(io, socket);
 	//*****ROUTES*****
@@ -244,7 +245,7 @@ module.exports = function (router, sequelize, Sequelize, jwt, md5, forEach, ensu
 		RrhhEmpleadoHojaVida, RrhhEmpleadoFormacionAcademica, RrhhEmpleadoExperienciaLaboral, RrhhEmpleadoLogroInternoExterno, RrhhEmpleadoCapacidadInternaExterna, NumeroLiteral, RrhhEmpleadoPrestamo, RrhhEmpleadoPrestamoPago, RrhhEmpleadoRolTurno, RrhhEmpleadoHorasExtra, RrhhAnticipo, EvaluacionPolifuncional, ConfiguracionCalificacionEvaluacionPolifuncional, ConfiguracionDesempenioEvaluacionPolifuncional, RrhhEmpleadoAusencia, RrhhEmpleadoVacaciones, RrhhEmpleadoCompensacionAusencia,
 		RrhhFeriado, RrhhClaseAsuencia,RrhhEmpleadoConfiguracionVacacion,RrhhEmpleadoHistorialVacacion,RrhhEmpleadoTr3,RrhhEmpleadoAnticipoTr3,Banco,RrhhEmpleadoDeduccionIngreso,
 		RrhhEmpleadoBeneficioSocial,RrhhEmpleadoBitacoraFicha,RrhhEmpleadoConfiguracionRopa,Producto,Inventario,RrhhEmpleadoDotacionRopaItem,
-		RrhhEmpleadoDotacionRopa,RrhhViajeDetalle,RrhhViaje,RrhhViajeDestino)
+		RrhhEmpleadoDotacionRopa,RrhhViajeDetalle,RrhhViaje,RrhhViajeDestino,RrhhViajeConductor)
 
 	require('./rutas-planillas')(router, sequelize, Sequelize, Usuario, RRHHParametros, Persona, Empresa, Sucursal, Clase, Diccionario, Tipo, RrhhEmpleadoFicha, RrhhEmpleadoCargo, MedicoPaciente, RrhhEmpleadoDiscapacidad, RrhhEmpleadoFichaOtrosSeguros, RrhhEmpleadoFichaFamiliar, RrhhEmpleadoHorasExtra, RRHHPlanillaSueldos, RRHHDetallePlanillaSueldos, RrhhEmpleadoPrestamo, decodeBase64Image, fs)
 

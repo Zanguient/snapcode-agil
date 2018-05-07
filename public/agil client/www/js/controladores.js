@@ -23,7 +23,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 		$scope.idmodalActualizarCreditoDeuda = "dialog-actualizar-deudas";
 		$scope.idModalDescuento = "dialog-edicion-descuento";
 		$scope.idModalInicioSesion = "popup-inicio-sesion";
-		
+
 		//nuevo comprobante
 		$scope.idModalWizardComprobanteEdicion = 'modal-wizard-comprobante-edicion';
 		$scope.idPopupQr = 'modal-wizard-comprobante-edicions';
@@ -684,15 +684,17 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 									})
 								}
 							}
-						}else{
+						} else {
 							if (index === (array.length - 1)) {
 								var fecha_reinicio_correlativo = new Date()
 								fecha_reinicio_correlativo.setDate(1)
 								var datos = { sucursales: sucursalesParaActualizar, fecha: fecha_reinicio_correlativo }
-								var promesa = ReiniciarCorrelativoSucursales(datos)
-								promesa.then(function (dato) {
-									$scope.mostrarMensaje(dato.message)
-								})
+								if (sucursalesParaActualizar.length > 0) {
+									var promesa = ReiniciarCorrelativoSucursales(datos)
+									promesa.then(function (dato) {
+										$scope.mostrarMensaje(dato.message)
+									})
+								}
 							}
 						}
 					});
@@ -776,16 +778,16 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 		}
 		$scope.verificarCuenta = function (formularioAsignarCuenta, cuenta) {
 			if (cuenta.id) {
-				formularioAsignarCuenta.asignarCuenta.$error.cuenta = false
+				formularioAsignarCuenta.asig.$error.cuenta = false
 				$scope.error = null
 			} else {
-				formularioAsignarCuenta.asignarCuenta.$error.cuenta = true
+				formularioAsignarCuenta.asig.$error.cuenta = true
 				$scope.error = "asd"
 			}
 		}
 		$scope.AsignarCuentaClienteProvedor = function (formularioAsignarCuenta) {
 			if ($scope.datos.cuenta.id) {
-				formularioAsignarCuenta.asignarCuenta.$error.cuenta = false
+				formularioAsignarCuenta.asig.$error.cuenta = false
 				$scope.datos.$save(function (data) {
 					$scope.mostrarMensaje(data.menssage)
 					$scope.cerrarCuentaClienteProvedor()
@@ -1151,7 +1153,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 
 		$scope.cargarPagina = function () {
 			$scope.generarMenus($scope.usuario);
-			$scope.vencimientoTotal = 0;console.log($scope.usuario);
+			$scope.vencimientoTotal = 0; console.log($scope.usuario);
 			if ($scope.usuario.empresa) {
 				$scope.actualizarVencimientoDosificaciones()
 				$scope.obtenerCentroCostos();
@@ -1244,7 +1246,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 					$scope.usuario = res.data;
 					$localStorage.token = res.data.token;
 					$scope.token = $localStorage.token;
-					if(res.data.id_empresa){
+					if (res.data.id_empresa) {
 						var promesa = UsuarioSucursalesAutenticacion(res.data.id);
 						promesa.then(function (usuarioSucursales) {
 							promesa = EmpresaDatosInicio(res.data.id_empresa);
@@ -1255,10 +1257,10 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 								$scope.cargarPagina();
 							});
 						});
-					}else{
+					} else {
 						$localStorage.usuario = JSON.stringify(res.data);
 						$scope.cargarPagina();
-					}	
+					}
 					document.title = 'AGIL - ' + $scope.usuario.nombre_usuario;
 				}
 				blockUI.stop();
@@ -1284,7 +1286,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 								}
 
 						}
-						
+
 					}
 				}
 			}
@@ -1721,7 +1723,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 				})
 			}
 		}
-		
+
 		$scope.obtenerTipoEgreso = function (movimiento) {
 			var nombre_corto = movimiento.nombre_corto;
 			$scope.tipoEgreso = nombre_corto;
@@ -1838,10 +1840,10 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 								ImprimirSalida("FACT", res.factura, false, $scope.usuario)
 							})
 						} else {
-						   $scope.mostrarMensaje('Existe un problema con la imagen, no se incluira en la impresión.')
-						   $timeout(function () {
-							ImprimirSalida("FACT", res.factura, false, $scope.usuario)
-						   }, 1500)
+							$scope.mostrarMensaje('Existe un problema con la imagen, no se incluira en la impresión.')
+							$timeout(function () {
+								ImprimirSalida("FACT", res.factura, false, $scope.usuario)
+							}, 1500)
 						}
 						// ImprimirSalida("FACT", res.factura, false, $scope.usuario)
 						$scope.mostrarMensaje(res.mensaje)
@@ -1851,7 +1853,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 						$scope.mostrarMensaje(res.mensaje)
 					}
 					blockUI.stop()
-				}).catch( function (err) {
+				}).catch(function (err) {
 					var msg = (err.stack !== undefined && err.stack !== null) ? err.stack : (err.message !== undefined && err.message !== null) ? err.message : 'Se perdió la conexión.'
 					$scope.mostrarMensaje(msg)
 					blockUI.stop()
@@ -1903,16 +1905,16 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 							$scope.facturaProformas.actividad = datosProformas[0].actividadEconomica
 							datosProformas[0].sucursalProforma.actividadesDosificaciones.forEach(function (dosificacion, k) {
 								if (dosificacion.id_actividad == $scope.facturaProformas.actividad.id && !dosificacion.expirado && !dosificacion.dosificacion.expirado) {
-									$scope.facturaProformas.sucursal = Object.assign({},datosProformas[0].sucursalProforma)
+									$scope.facturaProformas.sucursal = Object.assign({}, datosProformas[0].sucursalProforma)
 									$scope.facturaProformas.sucursal.actividadesDosificaciones = Object.assign([], dosificacion)
 								}
-								if (k == datosProformas[0].sucursalProforma.actividadesDosificaciones.length -1) {
+								if (k == datosProformas[0].sucursalProforma.actividadesDosificaciones.length - 1) {
 									if ($scope.facturaProformas.sucursal !== undefined) {
 										continuar = true
 									}
-								} 
+								}
 							})
-							if(!continuar){
+							if (!continuar) {
 								blockUI.stop()
 								$scope.mostrarMensaje('Existe un problema con la dosificación actual. No se puede continuar con la facturación')
 								return
@@ -1943,7 +1945,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 							$scope.facturaProformas.datosProformas.forEach(function (proforma) {
 								$scope.facturaProformas.descripcion += proforma.detalle + ". "
 								$scope.facturaProformas.totalImporteBs += proforma.totalImporteBs
-								
+
 								$scope.facturaProformas.importe = $scope.facturaProformas.totalImporteBs
 								$scope.facturaProformas.total = $scope.facturaProformas.importe
 								$scope.facturaProformas.importeLiteral = ConvertirALiteral($scope.facturaProformas.totalImporteBs.toFixed(2));
@@ -1985,24 +1987,24 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 			var urli = url.split('.')
 			if (urli.length == 4) {
 				return false
-			}else if(urli.length == 2){
+			} else if (urli.length == 2) {
 				return true
-			}else {
+			} else {
 				if (alreadyCheck) {
 					return true
-				}else {
+				} else {
 					return false
 				}
 			}
-            // req.open('HEAD', host, true);
-            // req.send();
-            // if (req.status === 404) {
-            //     return true;
-            // }
-            // if (req.status === 403) {
-            //     return false;
-            // }
-        };
+			// req.open('HEAD', host, true);
+			// req.send();
+			// if (req.status === 404) {
+			//     return true;
+			// }
+			// if (req.status === 403) {
+			//     return false;
+			// }
+		};
 		// $scope.imprimirFacturaProforma = function (factura) {
 
 		// }
@@ -2889,10 +2891,10 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 			blockUI.stop();
 		}
 
-		
-		
 
-		
+
+
+
 		$scope.PopoverCuentasAxiliares = {
 			templateUrl: 'PopoverCuentasAxiliares.html',
 			title: 'Cuentas Axiliares',
@@ -2912,18 +2914,18 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 			}
 		}
 		$scope.llenarCampamentos = function (campamentos) {
-            $scope.campamento = [];
-            for (var i = 0; i < campamentos.length; i++) {
-                var campamento = {
-                    nombre: campamentos[i].nombre,
-                    maker: "",
-                    ticked: false,
-                    id: campamentos[i].id
-                }
-                $scope.campamento.push(campamento);
-            }
-            
-        }
+			$scope.campamento = [];
+			for (var i = 0; i < campamentos.length; i++) {
+				var campamento = {
+					nombre: campamentos[i].nombre,
+					maker: "",
+					ticked: false,
+					id: campamentos[i].id
+				}
+				$scope.campamento.push(campamento);
+			}
+
+		}
 
 		$scope.obtenerMeses = function () { }
 
@@ -2959,7 +2961,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 		$scope.SumarDiasMesesAñosfecha = function (fecha, intervalo, dma, simbolo) {
 			return editar_fecha(fecha, intervalo, dma, simbolo)
 		}
-		
+
 		$scope.inicio = function () {
 
 			$scope.loadData();

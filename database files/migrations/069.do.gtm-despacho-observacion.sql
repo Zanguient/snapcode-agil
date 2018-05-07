@@ -1,0 +1,1 @@
+ALTER TABLE agil_gtm_despacho ADD observacion VARCHAR(255);

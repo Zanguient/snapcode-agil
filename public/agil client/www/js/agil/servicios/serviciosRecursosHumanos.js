@@ -1114,3 +1114,52 @@ angular.module('agil.servicios')
     };
     return res;
 }])
+.factory('ListaBeneficioEmpresa', function ($resource) {
+    return $resource(restServer + "recursos-humanos/beneficio/empresa/:id_empresa/tipo/:tipo/inicio/:inicio/fin/:fin/motivo/:motivo/pagina/:pagina/items_pagina/:items_pagina/texto_busqueda/:texto_busqueda/columna/:columna/direccion/:direccion", null ,
+        {
+            'update': { method: 'PUT' }
+        });
+})
+.factory('BeneficioEmpresa', ['ListaBeneficioEmpresa', '$q', function (ListaBeneficioEmpresa, $q) {
+    var res = function (paginator) {
+        var delay = $q.defer();
+        ListaBeneficioEmpresa.get({
+            id_empresa:paginator.filter.empresa,
+            inicio:paginator.filter.inicio,
+            fin:paginator.filter.fin,            
+            motivo:paginator.filter.motivo,
+            tipo:paginator.filter.tipo,          
+            pagina: paginator.currentPage,
+            items_pagina: paginator.itemsPerPage,
+            texto_busqueda: paginator.search,
+            columna: paginator.column,
+            direccion: paginator.direction,
+        }, function (entidad) {
+            delay.resolve(entidad);
+        }, function (error) {
+            delay.reject(error);
+        });
+        return delay.promise;
+    };
+    return res;
+}])
+.factory('SaveConductoresEmpresa', function ($resource) {
+    return $resource(restServer + "recursos-humanos/conductor/empresa/:id_empresa", null ,
+        {
+            'update': { method: 'PUT' }
+        });
+})
+.factory('GuardarConductoresEmpresa', ['SaveConductoresEmpresa', '$q', function (SaveConductoresEmpresa, $q) {
+    var res = function (idEmpresa,datos) {
+        var delay = $q.defer();
+        SaveConductoresEmpresa.save({
+            id_empresa:idEmpresa
+        },datos, function (entidad) {
+            delay.resolve(entidad);
+        }, function (error) {
+            delay.reject(error);
+        });
+        return delay.promise;
+    };
+    return res;
+}])

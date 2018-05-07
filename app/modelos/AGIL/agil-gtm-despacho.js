@@ -27,7 +27,11 @@ module.exports = function (sequelize, Sequelize) {
         id_kardex_detalle: {
            type: Sequelize.INTEGER,
            field: 'kardex_detalle'
-       }
+       },
+       observacion: {
+            type: Sequelize.STRING,
+            field: 'observacion'
+        }
     }, {
             freezeTableName: true
         });

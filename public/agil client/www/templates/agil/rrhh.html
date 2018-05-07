@@ -882,6 +882,7 @@
 
     </div>
     <!-- ===== fin panel ============================= -->
+    <div id="dialog-conceptos" class="modal" ng-include src="'/templates/gral/concepto-edicion.html'"></div>
     <!---================ el modal Datos del Empleado ====== -->
     <div id="dialog-empleado" class="modal">
         <div class="">
@@ -949,7 +950,7 @@
                                     <div class="col-sm-6 col-md-2">
                                         <input required type="text" autofocus class="form-control" id="codigo-empleado" ng-model="ficha.empleado.codigo">
                                     </div>
-                                    <div class="col-sm-6 col-md-2">
+                                    <div class="col-sm-6 col-md-4">
                                         <label for="codigo-empleado">
                                             <h4>
                                                 <strong>Edad {{ficha.edad}} años</strong>
@@ -970,7 +971,14 @@
                                             </label>
                                         </div>
                                     </div>
+                                    <div ng-if="ficha.empleado.chofer" class="col-sm-6 col-md-2">
+                                        <div class="input-group">
+                                            <span class="input-group-addon glyphicon glyphicon-pencil point-edit green" aria-hidden="true" ng-click="abrirDialogConceptoEdicion(TiposLicenciasVehiculo)"></span>
+                                            <select class="form-control" required ng-options="licencia as licencia.nombre_corto for licencia in TiposLicenciasVehiculo.clases | filter:{habilitado:true} track by licencia.id"
+                                                ng-model="ficha.empleado.conductor.tipoLicencia"></select>
 
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="page-header">
                                     <h4 class="blue">
@@ -1716,321 +1724,7 @@
         </div>
     </div>
     <!-- PAGE CONTENT ENDS datos empleado -->
-    <!-- dialog expedido en  -->
-    <div id="dialog-expedido-en" class="modal" tabindex="-1">
 
-        <div class="modal-header bg-primary">
-            <h4 class='smaller text-white text-uppercase'>
-                <i class='icono-prerequisito'></i>
-                <label> &nbsp;Expedido en:</label>
-            </h4>
-        </div>
-        <div class="row">
-            <div class="col-sm-5">
-                <div class="form-group">
-                    <label for="ciudad">Ciudad</label>
-                    <input type="text" class="form-control" id="ciudad" name="ciudad" placeholder="Cochabamba">
-                </div>
-            </div>
-            <div class="col-sm-5">
-                <div class="form-group">
-                    <label for="ciudad">Abreviatura</label>
-                    <input type="text" class="form-control" id="ciudad" name="ciudad" placeholder="CB">
-                </div>
-            </div>
-            <div class="col-sm-2">
-                <br>
-                <div class="form-group">
-                    <button type="button" class="btn btn-success" onclick="dialog('expedido-en-cru')">
-                        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <table class="table table-striped table-hover">
-            <thead>
-                <tr>
-                    <th>Ciudad</th>
-                    <th>Abreviatura</th>
-                    <th>Editar</th>
-                    <th>Habilitar</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <th scope="row">Cochabamba</th>
-                    <td>CB</td>
-                    <td>
-                        <span class="glyphicon glyphicon-pencil" aria-hidden="true" onclick="dialog('expedido-en-cru')"></span>
-                    </td>
-                    <td>
-                        <label>
-                            <input name="switch-field-1" class="ace ace-switch ace-switch-5" type="checkbox">
-                            <span class="lbl check-espaniol"></span>
-                        </label>
-                    </td>
-                </tr>
-                <tr>
-                    <th scope="row">La Paz</th>
-                    <td>LP</td>
-                    <td>
-                        <span class="glyphicon glyphicon-pencil" aria-hidden="true" onclick="dialog('expedido-en-cru')"></span>
-                    </td>
-                    <td>
-                        <label>
-                            <input name="switch-field-1" class="ace ace-switch ace-switch-5" type="checkbox">
-                            <span class="lbl check-espaniol"></span>
-                        </label>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-        <div class="row">
-            <div class="modal-footer wizard-actions">
-                <button class="btn btn-primary btn-sm" ng-click="cerrarDialogExpedidoEn()">
-                    <i class="glyphicon glyphicon-floppy-disk"></i>Guardar
-                </button>
-                <button class="btn btn-danger btn-sm" ng-click="cerrarDialogExpedidoEn()">
-                    <i class="ace-icon fa fa-times"></i>Cancelar
-                </button>
-            </div>
-        </div>
-    </div>
-    <!--- fin expedido en ======== -->
-    <!--- modal tipo documento  ======== -->
-    <div id="dialog-tipo-documento" class="modal" title="Tipo de Documento" item-width="500">
-        <div class="modal-header bg-primary">
-            <h4 class='smaller text-white text-uppercase'>
-                <i class='icono-prerequisito'></i>
-                <label> &nbsp;Tipos de Documentos</label>
-            </h4>
-        </div>
-        <div class="row">
-            <div class="col-sm-5">
-                <div class="form-group">
-                    <label for="ciudad">Tipo</label>
-                    <input type="text" class="form-control" id="ciudad" name="ciudad" placeholder="Carnet de Identidad">
-                </div>
-            </div>
-            <div class="col-sm-5">
-                <div class="form-group">
-                    <label for="ciudad">Abreviatura</label>
-                    <input type="text" class="form-control" id="ciudad" name="ciudad" placeholder="C.I.">
-                </div>
-            </div>
-            <div class="col-sm-2">
-                <br>
-                <div class="form-group">
-                    <button type="button" class="btn btn-success" onclick="dialog('expedido-en-cru')">
-                        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-                    </button>
-                </div>
-            </div>
-        </div>
-        <table class="table table-striped table-hover">
-            <thead>
-                <tr>
-                    <th>Tipo</th>
-                    <th>Abreviatura</th>
-                    <th>Editar</th>
-                    <th>Habilitar</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <th scope="row">Carnet de Identidad</th>
-                    <td>C.I.</td>
-                    <td>
-                        <span class="glyphicon glyphicon-pencil" aria-hidden="true" onclick="dialog('tipo-documento-cru')"></span>
-                    </td>
-                    <td>
-                        <label>
-                            <input name="switch-field-1" class="ace ace-switch ace-switch-5" type="checkbox">
-                            <span class="lbl check-espaniol"></span>
-                        </label>
-                    </td>
-                </tr>
-                <tr>
-                    <th scope="row">Registro Único Nacional</th>
-                    <td>RUN</td>
-                    <td>
-                        <span class="glyphicon glyphicon-pencil" aria-hidden="true" onclick="dialog('tipo-documento-cru')"></span>
-                    </td>
-                    <td>
-                        <label>
-                            <input name="switch-field-1" class="ace ace-switch ace-switch-5" type="checkbox">
-                            <span class="lbl check-espaniol"></span>
-                        </label>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-        <div class="row">
-            <div class="modal-footer wizard-actions">
-                <button class="btn btn-primary btn-sm" ng-click="cerrarDialogTipoDocumento()">
-                    <i class="glyphicon glyphicon-floppy-disk"></i>Guardar
-                </button>
-                <button class="btn btn-danger btn-sm" ng-click="cerrarDialogTipoDocumento()">
-                    <i class="ace-icon fa fa-times"></i>Cancelar
-                </button>
-            </div>
-        </div>
-    </div>
-    <!--- fin modal tipo documento  ======== -->
-    <!--- === modal estado civil  ======== -->
-    <div id="dialog-estado-civil" class="modal" title="Estado Civil" item-width="500">
-        <div class="modal-header bg-primary">
-            <h4 class='smaller text-white text-uppercase'>
-                <i class='icono-prerequisito'></i>
-                <label> &nbsp;Estados Civiles</label>
-            </h4>
-        </div>
-        <div class="row">
-            <div class="col-sm-10">
-                <div class="form-group">
-                    <label for="ciudad">Estado Civil</label>
-                    <input type="text" class="form-control" id="ciudad" name="ciudad" placeholder="Soltero">
-                </div>
-            </div>
-
-            <div class="col-sm-2">
-                <br>
-                <div class="form-group">
-                    <button type="button" class="btn btn-success" onclick="dialog('expedido-en-cru')">
-                        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-                    </button>
-                </div>
-            </div>
-        </div>
-        <table class="table table-striped table-hover">
-
-            <thead>
-                <tr>
-                    <th>Estado Civil</th>
-                    <th>Editar</th>
-                    <th>Habilitar</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <th scope="row">Casado</th>
-                    <td>
-                        <span class="glyphicon glyphicon-pencil" aria-hidden="true" onclick="dialog('estado-civil-cru')"></span>
-                    </td>
-                    <td>
-                        <label>
-                            <input name="switch-field-1" class="ace ace-switch ace-switch-5" type="checkbox">
-                            <span class="lbl check-espaniol"></span>
-                        </label>
-                    </td>
-                </tr>
-                <tr>
-                    <th scope="row">Soltero</th>
-                    <td>
-                        <span class="glyphicon glyphicon-pencil" aria-hidden="true" onclick="dialog('estado-civil-cru')"></span>
-                    </td>
-                    <td>
-                        <label>
-                            <input name="switch-field-1" class="ace ace-switch ace-switch-5" type="checkbox">
-                            <span class="lbl check-espaniol"></span>
-                        </label>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-        <div class="row">
-            <div class="modal-footer wizard-actions">
-                <button class="btn btn-primary btn-sm" ng-click="cerrarDialogEstadoCivil()">
-                    <i class="glyphicon glyphicon-floppy-disk"></i>Guardar
-                </button>
-                <button class="btn btn-danger btn-sm" ng-click="cerrarDialogEstadoCivil()">
-                    <i class="ace-icon fa fa-times"></i>Cancelar
-                </button>
-            </div>
-        </div>
-    </div>
-    <!--- fin === modal estado civil  ======== -->
-    <!-- === modal nacionalidad ==== -->
-    <div id="dialog-nacionalidad" class="modal" title="Nacionalidad" item-width="500">
-        <div class="modal-header bg-primary">
-            <h4 class='smaller text-white text-uppercase'>
-                <i class='icono-prerequisito'></i>
-                <label> &nbsp;Nacionalidades</label>
-            </h4>
-        </div>
-        <div class="row">
-            <div class="col-sm-5">
-                <div class="form-group">
-                    <label for="ciudad">País</label>
-                    <input type="text" class="form-control" id="ciudad" name="ciudad" placeholder="Bolivia">
-                </div>
-            </div>
-            <div class="col-sm-5">
-                <div class="form-group">
-                    <label for="ciudad">Gentilicio</label>
-                    <input type="text" class="form-control" id="ciudad" name="ciudad" placeholder="Boliviana">
-                </div>
-            </div>
-            <div class="col-sm-2">
-                <br>
-                <div class="form-group">
-                    <button type="button" class="btn btn-success" onclick="dialog('expedido-en-cru')">
-                        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-                    </button>
-                </div>
-            </div>
-        </div>
-        <table class="table table-striped table-hover">
-            <thead>
-                <tr>
-                    <th>País</th>
-                    <th>Gentilicio</th>
-                    <th>Editar</th>
-                    <th>Habilitar</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <th scope="row">Bolivia</th>
-                    <td>Boliviano</td>
-                    <td>
-                        <span class="glyphicon glyphicon-pencil" aria-hidden="true" onclick="dialog('nacionalidad-cru')"></span>
-                    </td>
-                    <td>
-                        <label>
-                            <input name="switch-field-1" class="ace ace-switch ace-switch-5" type="checkbox">
-                            <span class="lbl check-espaniol"></span>
-                        </label>
-                    </td>
-                </tr>
-                <tr>
-                    <th scope="row">Argentina</th>
-                    <td>Argentino</td>
-                    <td>
-                        <span class="glyphicon glyphicon-pencil" aria-hidden="true" onclick="dialog('nacionalidad-cru')"></span>
-                    </td>
-                    <td>
-                        <label>
-                            <input name="switch-field-1" class="ace ace-switch ace-switch-5" type="checkbox">
-                            <span class="lbl check-espaniol"></span>
-                        </label>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-        <div class="row">
-            <div class="modal-footer wizard-actions">
-                <button class="btn btn-primary btn-sm" ng-click="cerrarDialogNacionalidad()">
-                    <i class="glyphicon glyphicon-floppy-disk"></i>Guardar
-                </button>
-                <button class="btn btn-danger btn-sm" ng-click="cerrarDialogNacionalidad()">
-                    <i class="ace-icon fa fa-times"></i>Cancelar
-                </button>
-            </div>
-        </div>
-    </div>
-    <!-- === Fin modal nacionalidad ==== -->
     <!-- === modal departamento estado"==== -->
     <div id="dialog-departamento-estado" class="modal" title="Departamento o Estado" item-width="500">
         <div class="modal-header bg-primary">
@@ -2300,440 +1994,7 @@
         </div>
     </div>
     <!--- ==== fin modal localidad === -->
-    <!--- ==== modal tipo discapicidad ================================ -->
-    <div id="dialog-tipo-discapacidad" class="modal" title="Tipo Discapacidad" item-width="500">
-        <div class="modal-header bg-primary">
-            <h4 class='smaller text-white text-uppercase'>
-                <i class='icono-prerequisito'></i>
-                <label> &nbsp;Tipo Discapacidad </label>
-            </h4>
-        </div>
-        <div class="row">
-            <div class="col-sm-10">
-                <div class="form-group">
-                    <label for="ciudad">Tipo discapacidad</label>
-                    <input type="text" class="form-control" id="ciudad" name="ciudad" placeholder="Fisica">
-                </div>
-            </div>
-            <div class="col-sm-2">
-                <br>
-                <div class="form-group">
-                    <button type="button" class="btn btn-success" onclick="dialog('expedido-en-cru')">
-                        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-                    </button>
-                </div>
-            </div>
-        </div>
-        <table class="table table-striped table-hover">
-            <thead>
-                <tr>
-                    <th>Tipo Discapacidad</th>
-                    <th>Editar</th>
-                    <th>Habilitar</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <th scope="row">Física</th>
-                    <td>
-                        <span class="glyphicon glyphicon-pencil" aria-hidden="true" onclick="dialog('tipo-discapacidad-cru')"></span>
-                    </td>
-                    <td>
-                        <label>
-                            <input name="switch-field-1" class="ace ace-switch ace-switch-5" type="checkbox">
-                            <span class="lbl check-espaniol"></span>
-                        </label>
-                    </td>
-                </tr>
-                <tr>
-                    <th scope="row">Sensorial</th>
-                    <td>
-                        <span class="glyphicon glyphicon-pencil" aria-hidden="true" onclick="dialog('tipo-discapacidad-cru')"></span>
-                    </td>
-                    <td>
-                        <label>
-                            <input name="switch-field-1" class="ace ace-switch ace-switch-5" type="checkbox">
-                            <span class="lbl check-espaniol"></span>
-                        </label>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-        <div class="row">
-            <div class="modal-footer wizard-actions">
-                <button class="btn btn-primary btn-sm" ng-click="cerrarDialogTipoDiscapacidad()">
-                    <i class="glyphicon glyphicon-floppy-disk"></i>Guardar
-                </button>
-                <button class="btn btn-danger btn-sm" ng-click="cerrarDialogTipoDiscapacidad()">
-                    <i class="ace-icon fa fa-times"></i>Cancelar
-                </button>
-            </div>
-        </div>
-    </div>
-    <!--- ==== fin modal tipo discapicidad ================================ -->
-    <!--- ==== modal tipo contratro ================================ -->
-    <div id="dialog-tipo-contrato" class="mmodal" title="Tipo Contrato" item-width="500">
-        <div class="modal-header bg-primary">
-            <h4 class='smaller text-white text-uppercase'>
-                <i class='icono-prerequisito'></i>
-                <label> &nbsp;Tipo Contrato </label>
-            </h4>
-        </div>
-        <div class="row">
-            <div class="col-sm-10">
-                <div class="form-group">
-                    <label for="ciudad">Tipo Contrato</label>
-                    <input type="text" class="form-control" id="ciudad" name="ciudad" placeholder="Indefinido">
-                </div>
-            </div>
-            <div class="col-sm-2">
-                <br>
-                <div class="form-group">
-                    <button type="button" class="btn btn-success" onclick="dialog('expedido-en-cru')">
-                        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-                    </button>
-                </div>
-            </div>
-        </div>
-        <table class="table table-striped table-hover">
-            <thead>
-                <tr>
-                    <th>Tipo Contrato</th>
-                    <th>Editar</th>
-                    <th>Habilitar</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <th scope="row">Indefinido</th>
-                    <td>
-                        <span class="glyphicon glyphicon-pencil" aria-hidden="true" onclick="dialog('tipo-contrato-cru')"></span>
-                    </td>
-                    <td>
-                        <label>
-                            <input name="switch-field-1" class="ace ace-switch ace-switch-5" type="checkbox">
-                            <span class="lbl check-espaniol"></span>
-                        </label>
-                    </td>
-                </tr>
-                <tr>
-                    <th scope="row">Plazo Fijo</th>
-                    <td>
-                        <span class="glyphicon glyphicon-pencil" aria-hidden="true" onclick="dialog('tipo-contrato-cru')"></span>
-                    </td>
-                    <td>
-                        <label>
-                            <input name="switch-field-1" class="ace ace-switch ace-switch-5" type="checkbox">
-                            <span class="lbl check-espaniol"></span>
-                        </label>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-        <div class="row">
-            <div class="modal-footer wizard-actions">
-                <button class="btn btn-primary btn-sm" ng-click="cerrarDialogTipoContrato()">
-                    <i class="glyphicon glyphicon-floppy-disk"></i>Guardar
-                </button>
-                <button class="btn btn-danger btn-sm" ng-click="cerrarDialogTipoContrato()">
-                    <i class="ace-icon fa fa-times"></i>Cancelar
-                </button>
-            </div>
-        </div>
-    </div>
-    <!--- ==== fin modal tipo contrato ================================ -->
-    <!--- ==== modal tipo personal ================================ -->
-    <div id="dialog-tipo-personal" class="modal" title="Tipo de Personal" item-width="500">
-        <div class="modal-header bg-primary">
-            <h4 class='smaller text-white text-uppercase'>
-                <i class='icono-prerequisito'></i>
-                <label> &nbsp;Tipo Contrato </label>
-            </h4>
-        </div>
-        <div class="row">
-            <div class="col-sm-10">
-                <div class="form-group">
-                    <label for="ciudad">Tipo Personal</label>
-                    <input type="text" class="form-control" id="ciudad" name="ciudad" placeholder="Campo">
-                </div>
-            </div>
-            <div class="col-sm-2">
-                <br>
-                <div class="form-group">
-                    <button type="button" class="btn btn-success" onclick="dialog('expedido-en-cru')">
-                        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-                    </button>
-                </div>
-            </div>
-        </div>
-        <table class="table table-striped table-hover">
-            <thead>
-                <tr>
-                    <th>Tipo de Personal</th>
-                    <th>Editar</th>
-                    <th>Habilitar</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <th scope="row">Campo</th>
-                    <td>
-                        <span class="glyphicon glyphicon-pencil" aria-hidden="true" onclick="dialog('tipo-personal-cru')"></span>
-                    </td>
-                    <td>
-                        <label>
-                            <input name="switch-field-1" class="ace ace-switch ace-switch-5" type="checkbox">
-                            <span class="lbl check-espaniol"></span>
-                        </label>
-                    </td>
-                </tr>
-                <tr>
-                    <th scope="row">Oficina</th>
-                    <td>
-                        <span class="glyphicon glyphicon-pencil" aria-hidden="true" onclick="dialog('tipo-personal-cru')"></span>
-                    </td>
-                    <td>
-                        <label>
-                            <input name="switch-field-1" class="ace ace-switch ace-switch-5" type="checkbox">
-                            <span class="lbl check-espaniol"></span>
-                        </label>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-        <div class="row">
-            <div class="modal-footer wizard-actions">
-                <button class="btn btn-primary btn-sm" ng-click="cerrarDialogTipoPersonal()">
-                    <i class="glyphicon glyphicon-floppy-disk"></i>Guardar
-                </button>
-                <button class="btn btn-danger btn-sm" ng-click="cerrarDialogTipoPersonal()">
-                    <i class="ace-icon fa fa-times"></i>Cancelar
-                </button>
-            </div>
-        </div>
-    </div>
-    <!--- ==== fin modal tipo personal ================================ -->
-    <!--- ==== modal carga horaria ================================ -->
-    <div id="dialog-carga-horaria" class="modal" title="Carga Horaria" item-width="500">
-        <div class="modal-header bg-primary">
-            <h4 class='smaller text-white text-uppercase'>
-                <i class='icono-prerequisito'></i>
-                <label> &nbsp;Carga Horaria </label>
-            </h4>
-        </div>
-        <div class="row">
-            <div class="col-sm-10">
-                <div class="form-group">
-                    <label for="ciudad">Carga Horaria</label>
-                    <input type="text" class="form-control" id="ciudad" name="ciudad" placeholder="Tiempo Completo">
-                </div>
-            </div>
-            <div class="col-sm-2">
-                <br>
-                <div class="form-group">
-                    <button type="button" class="btn btn-success" onclick="dialog('expedido-en-cru')">
-                        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-                    </button>
-                </div>
-            </div>
-        </div>
-        <table class="table table-striped table-hover">
-            <thead>
-                <tr>
-                    <th>Carga Horaria</th>
-                    <th>Editar</th>
-                    <th>Habilitar</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <th scope="row">Tiempo Completo</th>
-                    <td>
-                        <span class="glyphicon glyphicon-pencil" aria-hidden="true" onclick="dialog('carga-horaria-cru')"></span>
-                    </td>
-                    <td>
-                        <label>
-                            <input name="switch-field-1" class="ace ace-switch ace-switch-5" type="checkbox">
-                            <span class="lbl check-espaniol"></span>
-                        </label>
-                    </td>
-                </tr>
-                <tr>
-                    <th scope="row">Medio Tiempo</th>
-                    <td>
-                        <span class="glyphicon glyphicon-pencil" aria-hidden="true" onclick="dialog('carga-horaria-cru')"></span>
-                    </td>
-                    <td>
-                        <label>
-                            <input name="switch-field-1" class="ace ace-switch ace-switch-5" type="checkbox">
-                            <span class="lbl check-espaniol"></span>
-                        </label>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-        <div class="row">
-            <div class="modal-footer wizard-actions">
-                <button class="btn btn-primary btn-sm" ng-click="cerrarDialogCargaHoraria()">
-                    <i class="glyphicon glyphicon-floppy-disk"></i>Guardar
-                </button>
-                <button class="btn btn-danger btn-sm" ng-click="cerrarDialogCargaHoraria()">
-                    <i class="ace-icon fa fa-times"></i>Cancelar
-                </button>
-            </div>
-        </div>
-    </div>
-    <!--- ==== fin modal carga horaria ================================ -->
-    <!--- ==== modal area ================================ -->
-    <div id="dialog-area" class="modal" title="Área" item-width="500">
-        <div class="modal-header bg-primary">
-            <h4 class='smaller text-white text-uppercase'>
-                <i class='icono-prerequisito'></i>
-                <label> &nbsp;Área </label>
-            </h4>
-        </div>
-        <div class="row">
-            <div class="col-sm-5">
-                <div class="form-group">
-                    <label for="ciudad">Área</label>
-                    <input type="text" class="form-control" id="ciudad" name="ciudad" placeholder="margarita">
-                </div>
-            </div>
-            <div class="col-sm-5">
-                <div class="form-group">
-                    <label for="ciudad">Abreviatura</label>
-                    <input type="text" class="form-control" id="ciudad" name="ciudad" placeholder="MRG">
-                </div>
-            </div>
-            <div class="col-sm-2">
-                <br>
-                <div class="form-group">
-                    <button type="button" class="btn btn-success" onclick="dialog('expedido-en-cru')">
-                        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-                    </button>
-                </div>
-            </div>
-        </div>
-        <table class="table table-striped table-hover">
-            <caption>Áreas</caption>
-            <thead>
-                <tr>
-                    <th>Área</th>
-                    <th>Abreviatura</th>
-                    <th>Editar</th>
-                    <th>Habilitar</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <th scope="row">Margarita</th>
-                    <th>MRG</th>
-                    <td>
-                        <span class="glyphicon glyphicon-pencil" aria-hidden="true" onclick="dialog('area-cru')"></span>
-                    </td>
-                    <td>
-                        <label>
-                            <input name="switch-field-1" class="ace ace-switch ace-switch-5" type="checkbox">
-                            <span class="lbl check-espaniol"></span>
-                        </label>
-                    </td>
-                </tr>
-                <tr>
-                    <th scope="row">Repsol</th>
-                    <th>RPS</th>
-                    <td>
-                        <span class="glyphicon glyphicon-pencil" aria-hidden="true" onclick="dialog('area-cru')"></span>
-                    </td>
-                    <td>
-                        <label>
-                            <input name="switch-field-1" class="ace ace-switch ace-switch-5" type="checkbox">
-                            <span class="lbl check-espaniol"></span>
-                        </label>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-        <div class="row">
-            <div class="modal-footer wizard-actions">
-                <button class="btn btn-primary btn-sm" ng-click="cerrarDialogArea()">
-                    <i class="glyphicon glyphicon-floppy-disk"></i>Guardar
-                </button>
-                <button class="btn btn-danger btn-sm" ng-click="cerrarDialogArea()">
-                    <i class="ace-icon fa fa-times"></i>Cancelar
-                </button>
-            </div>
-        </div>
-    </div>
-    <!--- ==== fin modal carea ================================ -->
-    <!--- ==== modal ubicaion ================================ -->
-    <div id="dialog-ubicacion" class="modal" title="Ubicación" item-width="500">
-        <div class="modal-header bg-primary">
-            <h4 class='smaller text-white text-uppercase'>
-                <i class='icono-prerequisito'></i>
-                <label> &nbsp;Ubicacíon </label>
-            </h4>
-        </div>
-        <div class="row">
-            <div class="col-sm-5">
-                <div class="form-group">
-                    <label for="ciudad">Ubicacíon</label>
-                    <input type="text" class="form-control" id="ciudad" name="ciudad" placeholder="San Lorenzo">
-                </div>
-            </div>
-            <div class="col-sm-5">
-                <div class="form-group">
-                    <label for="ciudad">Abreviatura</label>
-                    <input type="text" class="form-control" id="ciudad" name="ciudad" placeholder="SL">
-                </div>
-            </div>
-            <div class="col-sm-2">
-                <br>
-                <div class="form-group">
-                    <button type="button" class="btn btn-success" onclick="dialog('expedido-en-cru')">
-                        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-                    </button>
-                </div>
-            </div>
-        </div>
-        <table class="table table-striped table-hover">
-            <caption>Ubicaciones</caption>
-            <thead>
-                <tr>
-                    <th>Ubicación</th>
-                    <th>Abreviatura</th>
-                    <th>Editar</th>
-                    <th>Habilitar</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <th scope="row">San Lorenzo</th>
-                    <th>SL</th>
-                    <td>
-                        <span class="glyphicon glyphicon-pencil" aria-hidden="true" onclick="dialog('ubicacion-cru')"></span>
-                    </td>
-                    <td>
-                        <label>
-                            <input name="switch-field-1" class="ace ace-switch ace-switch-5" type="checkbox">
-                            <span class="lbl check-espaniol"></span>
-                        </label>
-                    </td>
-                </tr>
 
-            </tbody>
-        </table>
-        <div class="row">
-            <div class="modal-footer wizard-actions">
-                <button class="btn btn-primary btn-sm" ng-click="cerrarDialogUbicacion()">
-                    <i class="glyphicon glyphicon-floppy-disk"></i>Guardar
-                </button>
-                <button class="btn btn-danger btn-sm" ng-click="cerrarDialogUbicacion()">
-                    <i class="ace-icon fa fa-times"></i>Cancelar
-                </button>
-            </div>
-        </div>
-    </div>
-    <!--- ==== fin modal ubicacion ================================ -->
     <!--- ==== modal hoja de vida ================================ -->
     <div id="modal-hoja-vida" class="modal">
         <div class="">
@@ -3212,691 +2473,7 @@
         </div>
     </div>
     <!--- ==== fin modal hoja de vida ================================ -->
-    <!--- ==== modal seguro ================================ -->
-    <div id="dialog-seguro" class="modal" title="Seguro" item-width="500">
-        <div class="modal-header bg-primary">
-            <h4 class='smaller text-white text-uppercase'>
-                <i class='icono-prerequisito'></i>
-                <label> &nbsp;Seguro </label>
-            </h4>
-        </div>
-        <div class="row">
-            <div class="col-sm-10">
-                <div class="form-group">
-                    <label for="ciudad">Seguro</label>
-                    <input type="text" class="form-control" id="ciudad" name="ciudad" placeholder="San Lorenzo">
-                </div>
-            </div>
-            <div class="col-sm-2">
-                <br>
-                <div class="form-group">
-                    <button type="button" class="btn btn-success" onclick="dialog('expedido-en-cru')">
-                        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-                    </button>
-                </div>
-            </div>
-        </div>
-        <table class="table table-striped table-hover">
-            <caption>Seguros</caption>
-            <thead>
-                <tr>
-                    <th>Seguro</th>
-                    <th>Editar</th>
-                    <th>Habilitar</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <th scope="row">Caja Petrolera</th>
-                    <td>
-                        <span class="glyphicon glyphicon-pencil" aria-hidden="true" onclick="dialog('seguro-cru')"></span>
-                    </td>
-                    <td>
-                        <label>
-                            <input name="switch-field-1" class="ace ace-switch ace-switch-5" type="checkbox">
-                            <span class="lbl check-espaniol"></span>
-                        </label>
-                    </td>
-                </tr>
-                <tr>
-                    <th scope="row">Caja Cordes</th>
-                    <td>
-                        <span class="glyphicon glyphicon-pencil" aria-hidden="true" onclick="dialog('seguro-cru')"></span>
-                    </td>
-                    <td>
-                        <label>
-                            <input name="switch-field-1" class="ace ace-switch ace-switch-5" type="checkbox">
-                            <span class="lbl check-espaniol"></span>
-                        </label>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-        <div class="row">
-            <div class="modal-footer wizard-actions">
-                <button class="btn btn-primary btn-sm" ng-click="cerrarDialogSeguro()">
-                    <i class="glyphicon glyphicon-floppy-disk"></i>Guardar
-                </button>
-                <button class="btn btn-danger btn-sm" ng-click="cerrarDialogSeguro()">
-                    <i class="ace-icon fa fa-times"></i>Cancelar
-                </button>
-            </div>
-        </div>
-    </div>
-    <!--- ==== fin modal seguro ================================ -->
-    <!--- ==== modal seguro lugar ================================ -->
-    <div id="dialog-seguro-lugar" class="modal" title="Lugar de Seguro" item-width="400">
-        <div class="modal-header bg-primary">
-            <h4 class='smaller text-white text-uppercase'>
-                <i class='icono-prerequisito'></i>
-                <label> &nbsp;Lugar de Seguro </label>
-            </h4>
-        </div>
-        <div class="row">
-            <div class="col-sm-10">
-                <div class="form-group">
-                    <label for="ciudad">Lugar de Seguro</label>
-                    <input type="text" class="form-control" id="ciudad" name="ciudad" placeholder="Lugar">
-                </div>
-            </div>
-            <div class="col-sm-2">
-                <br>
-                <div class="form-group">
-                    <button type="button" class="btn btn-success" onclick="dialog('expedido-en-cru')">
-                        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-                    </button>
-                </div>
-            </div>
-        </div>
-        <table class="table table-striped table-hover">
-            <caption>Lugares de Seguros</caption>
-            <thead>
-                <tr>
-                    <th>Lugar de Seguro</th>
-                    <th>Editar</th>
-                    <th>Habilitar</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <th scope="row">Villa Tunari</th>
-                    <td>
-                        <span class="glyphicon glyphicon-pencil" aria-hidden="true" onclick="dialog('seguro-lugar-cru')"></span>
-                    </td>
-                    <td>
-                        <label>
-                            <input name="switch-field-1" class="ace ace-switch ace-switch-5" type="checkbox">
-                            <span class="lbl check-espaniol"></span>
-                        </label>
-                    </td>
-                </tr>
-                <tr>
-                    <th scope="row">Villa Montes</th>
-                    <td>
-                        <span class="glyphicon glyphicon-pencil" aria-hidden="true" onclick="dialog('seguro-lugar-cru')"></span>
-                    </td>
-                    <td>
-                        <label>
-                            <input name="switch-field-1" class="ace ace-switch ace-switch-5" type="checkbox">
-                            <span class="lbl check-espaniol"></span>
-                        </label>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-        <div class="row">
-            <div class="modal-footer wizard-actions">
-                <button class="btn btn-primary btn-sm" ng-click="cerrarDialogSeguroLugar()">
-                    <i class="glyphicon glyphicon-floppy-disk"></i>Guardar
-                </button>
-                <button class="btn btn-danger btn-sm" ng-click="cerrarDialogSeguroLugar()">
-                    <i class="ace-icon fa fa-times"></i>Cancelar
-                </button>
-            </div>
-        </div>
-    </div>
-    <!--- ==== fin modal seguro lugar ================================ -->
-    <!--- ==== modal aporte ================================ -->
-    <div id="dialog-aporte" class="modal" title="Aporte">
-        <div class="modal-header bg-primary">
-            <h4 class='smaller text-white text-uppercase'>
-                <i class='icono-prerequisito'></i>
-                <label> &nbsp;Aporte </label>
-            </h4>
-        </div>
-        <div class="row">
-            <div class="col-sm-10">
-                <div class="form-group">
-                    <label for="ciudad">Aporte</label>
-                    <input type="text" class="form-control" id="ciudad" name="ciudad" placeholder="AFP">
-                </div>
-            </div>
-            <div class="col-sm-2">
-                <br>
-                <div class="form-group">
-                    <button type="button" class="btn btn-success" onclick="dialog('expedido-en-cru')">
-                        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-                    </button>
-                </div>
-            </div>
-        </div>
-        <table class="table table-striped table-hover">
-            <caption>Aportes</caption>
-            <thead>
-                <tr>
-                    <th>Aporte</th>
-                    <th>Editar</th>
-                    <th>Habilitar</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <th scope="row">AFP Previsión</th>
-                    <td>
-                        <span class="glyphicon glyphicon-pencil" aria-hidden="true" onclick="dialog('aporte-cru')"></span>
-                    </td>
-                    <td>
-                        <label>
-                            <input name="switch-field-1" class="ace ace-switch ace-switch-5" type="checkbox">
-                            <span class="lbl check-espaniol"></span>
-                        </label>
-                    </td>
-                </tr>
-                <tr>
-                    <th scope="row">AFP Futuro</th>
-                    <td>
-                        <span class="glyphicon glyphicon-pencil" aria-hidden="true" onclick="dialog('aporte-cru')"></span>
-                    </td>
-                    <td>
-                        <label>
-                            <input name="switch-field-1" class="ace ace-switch ace-switch-5" type="checkbox">
-                            <span class="lbl check-espaniol"></span>
-                        </label>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-        <div class="row">
-            <div class="modal-footer wizard-actions">
-                <button class="btn btn-primary btn-sm" ng-click="cerrarDialogAporte()">
-                    <i class="glyphicon glyphicon-floppy-disk"></i>Guardar
-                </button>
-                <button class="btn btn-danger btn-sm" ng-click="cerrarDialogAporte()">
-                    <i class="ace-icon fa fa-times"></i>Cancelar
-                </button>
-            </div>
-        </div>
-    </div>
-    <!--- ==== fin modal aporte ================================ -->
-    <!--- ==== modal aporte lugar ================================ -->
-    <div id="dialog-aporte-lugar" class="modal" title="Lugar de Aporte" item-width="400">
-        <div class="modal-header bg-primary">
-            <h4 class='smaller text-white text-uppercase'>
-                <i class='icono-prerequisito'></i>
-                <label> &nbsp;Lugar de aporte </label>
-            </h4>
-        </div>
-        <div class="row">
-            <div class="col-sm-10">
-                <div class="form-group">
-                    <label for="ciudad">Lugar de Aporte</label>
-                    <input type="text" class="form-control" id="ciudad" name="ciudad" placeholder="Lugar">
-                </div>
-            </div>
-            <div class="col-sm-2">
-                <br>
-                <div class="form-group">
-                    <button type="button" class="btn btn-success" onclick="dialog('expedido-en-cru')">
-                        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-                    </button>
-                </div>
-            </div>
-        </div>
-        <table class="table table-striped table-hover">
-            <caption>Lugares de Aporte</caption>
-            <thead>
-                <tr>
-                    <th>Lugar de Aporte</th>
-                    <th>Editar</th>
-                    <th>Habilitar</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <th scope="row">Villa Tunari</th>
-                    <td>
-                        <span class="glyphicon glyphicon-pencil" aria-hidden="true" onclick="dialog('aporte-lugar-cru')"></span>
-                    </td>
-                    <td>
-                        <label>
-                            <input name="switch-field-1" class="ace ace-switch ace-switch-5" type="checkbox">
-                            <span class="lbl check-espaniol"></span>
-                        </label>
-                    </td>
-                </tr>
-                <tr>
-                    <th scope="row">Villa Montes</th>
-                    <td>
-                        <span class="glyphicon glyphicon-pencil" aria-hidden="true" onclick="dialog('aporte-lugar-cru')"></span>
-                    </td>
-                    <td>
-                        <label>
-                            <input name="switch-field-1" class="ace ace-switch ace-switch-5" type="checkbox">
-                            <span class="lbl check-espaniol"></span>
-                        </label>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-        <div class="row">
-            <div class="modal-footer wizard-actions">
-                <button class="btn btn-primary btn-sm" ng-click="cerrarDialogAporteLugar()">
-                    <i class="glyphicon glyphicon-floppy-disk"></i>Guardar
-                </button>
-                <button class="btn btn-danger btn-sm" ng-click="cerrarDialogAporteLugar()">
-                    <i class="ace-icon fa fa-times"></i>Cancelar
-                </button>
-            </div>
-        </div>
-    </div>
-    <!--- ==== fin modal aporte lugar  ================================ -->
-    <!--- ==== modal tipo otros seguros ================================ -->
-    <div id="dialog-tipo-otros-seguros" class="modal" title="Tipo de Seguros" item-width="400">
-        <div class="modal-header bg-primary">
-            <h4 class='smaller text-white text-uppercase'>
-                <i class='icono-prerequisito'></i>
-                <label> &nbsp;Tipo de Seguros </label>
-            </h4>
-        </div>
-        <div class="row">
-            <div class="col-sm-10">
-                <div class="form-group">
-                    <label for="ciudad">Tipo de Seguros</label>
-                    <input type="text" class="form-control" id="ciudad" name="ciudad" placeholder="Vida">
-                </div>
-            </div>
-            <div class="col-sm-2">
-                <br>
-                <div class="form-group">
-                    <button type="button" class="btn btn-success" onclick="dialog('expedido-en-cru')">
-                        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-                    </button>
-                </div>
-            </div>
-        </div>
-        <table class="table table-striped table-hover">
-            <caption>Tipo de Seguros</caption>
-            <thead>
-                <tr>
-                    <th>Tipo de Seguros</th>
-                    <th>Editar</th>
-                    <th>Habilitar</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <th scope="row">Vida</th>
-                    <td>
-                        <span class="glyphicon glyphicon-pencil" aria-hidden="true" onclick="dialog('tipo-otros-seguros-cru')"></span>
-                    </td>
-                    <td>
-                        <label>
-                            <input name="switch-field-1" class="ace ace-switch ace-switch-5" type="checkbox">
-                            <span class="lbl check-espaniol"></span>
-                        </label>
-                    </td>
-                </tr>
-                <tr>
-                    <th scope="row">Accidentes</th>
-                    <td>
-                        <span class="glyphicon glyphicon-pencil" aria-hidden="true" onclick="dialog('tipo-otros-seguros-cru')"></span>
-                    </td>
-                    <td>
-                        <label>
-                            <input name="switch-field-1" class="ace ace-switch ace-switch-5" type="checkbox">
-                            <span class="lbl check-espaniol"></span>
-                        </label>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-        <div class="row">
-            <div class="modal-footer wizard-actions">
-                <button class="btn btn-primary btn-sm" ng-click="cerrarDialogTipoOtrosSeguros()">
-                    <i class="glyphicon glyphicon-floppy-disk"></i>Guardar
-                </button>
-                <button class="btn btn-danger btn-sm" ng-click="cerrarDialogTipoOtrosSeguros()">
-                    <i class="ace-icon fa fa-times"></i>Cancelar
-                </button>
-            </div>
-        </div>
-    </div>
-    <!--- ==== fin modal tipo otros seguros  ================================ -->
-    <!--- ==== modal banco  ================================ -->
-    <div id="dialog-banco" class="modal" title="Banco">
-        <div class="modal-header bg-primary">
-            <h4 class='smaller text-white text-uppercase'>
-                <i class='icono-prerequisito'></i>
-                <label> &nbsp;Banco </label>
-            </h4>
-        </div>
-        <div class="row">
-            <div class="col-sm-5">
-                <div class="form-group">
-                    <label for="ciudad">Banco</label>
-                    <input type="text" class="form-control" id="ciudad" name="ciudad" placeholder="Banco Mercantil Santa Cruz">
-                </div>
-            </div>
-            <div class="col-sm-5">
-                <div class="form-group">
-                    <label for="ciudad">Alias</label>
-                    <input type="text" class="form-control" id="ciudad" name="ciudad" placeholder="BMSC">
-                </div>
-            </div>
-            <div class="col-sm-2">
-                <br>
-                <div class="form-group">
-                    <button type="button" class="btn btn-success" onclick="dialog('expedido-en-cru')">
-                        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-                    </button>
-                </div>
-            </div>
-        </div>
-        <table class="table table-striped table-hover">
-            <caption>Bancos</caption>
-            <thead>
-                <tr>
-                    <th>Banco</th>
-                    <th>Alias</th>
-                    <th>Editar</th>
-                    <th>Habilitar</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <th scope="row">Banco Mercantil Santa Cruz</th>
-                    <th>BMSC</th>
-                    <td>
-                        <span class="glyphicon glyphicon-pencil" aria-hidden="true" onclick="dialog('banco-cru')"></span>
-                    </td>
-                    <td>
-                        <label>
-                            <input name="switch-field-1" class="ace ace-switch ace-switch-5" type="checkbox">
-                            <span class="lbl check-espaniol"></span>
-                        </label>
-                    </td>
-                </tr>
-                <tr>
-                    <th scope="row">Banco de Crédito del Perú</th>
-                    <th>BCP</th>
-                    <td>
-                        <span class="glyphicon glyphicon-pencil" aria-hidden="true" onclick="dialog('banco-cru')"></span>
-                    </td>
-                    <td>
-                        <label>
-                            <input name="switch-field-1" class="ace ace-switch ace-switch-5" type="checkbox">
-                            <span class="lbl check-espaniol"></span>
-                        </label>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-        <div class="row">
-            <div class="modal-footer wizard-actions">
-                <button class="btn btn-primary btn-sm" ng-click="cerrarDialogBanco()">
-                    <i class="glyphicon glyphicon-floppy-disk"></i>Guardar
-                </button>
-                <button class="btn btn-danger btn-sm" ng-click="cerrarDialogBanco()">
-                    <i class="ace-icon fa fa-times"></i>Cancelar
-                </button>
-            </div>
-        </div>
-    </div>
-    <!--- ==== fin modal banco  ================================ -->
-    <!--- ==== modal nuevo hijo  ================================ -->
-    <div id="dialog-nuevo-hijo" class="modal" title="Datos del Hijo">
-        <div class="modal-header bg-primary">
-            <h4 class='smaller text-white text-uppercase'>
-                <i class='icono-datos-familiares'></i>
-                <label> &nbsp;Datos de Hij@ </label>
-            </h4>
-        </div>
-        <div class="space-6"></div>
-        <form>
-            <div class="row">
-                <div class="form-group col-sm-6">
-                    <label for="sexo">Sexo</label>
-                    <label>
-                        <input id="sexo" name="sexo" class="ace ace-switch ace-switch-5 big-switch" type="checkbox">
-                        <span class="lbl" data-lbl="Masculino&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Femenino"></span>
-                    </label>
-                </div>
-                <div class="form-group col-sm-6">
-                    <label for="afiliado">Afiliado</label>
-                    <label>
-                        <input id="afiliado" name="afiliado" class="ace ace-switch ace-switch-5" type="checkbox">
-                        <span class="lbl check-espaniol"></span>
-                    </label>
-                </div>
-            </div>
-            <div class="row">
-                <div class="form-group col-sm-6">
-                    <label for="nombres">Nombres</label>
-                    <input type="text" class="form-control" id="nombres" name="nombres" placeholder="Juan">
-                </div>
-                <div class="form-group col-sm-6">
-                    <label for="ap-paterno">Apellido Paterno</label>
-                    <input type="text" class="form-control" id="ap-paterno" name="ap-paterno" placeholder="Valdez">
-                </div>
-            </div>
-            <div class="row">
-                <div class="form-group col-sm-6">
-                    <label for="ap-materno">Apellido Materno</label>
-                    <input type="text" class="form-control" id="ap-materno" name="ap-materno" placeholder="Sánchez">
-                </div>
-                <div class="form-group col-sm-6">
-                    <div class="row">
-                        <div class="col-md-12">
-                            <label for="document">Fecha de nacimiento</label>
-                        </div>
 
-                        <div class="col-md-4 col-sm-4 col-day">
-                            <select class="form-control" id="valDayH">
-                                <option value="01">1</option>
-                                <option value="02">2</option>
-                                <option value="03">3</option>
-                                <option value="04">4</option>
-                                <option value="05">5</option>
-                                <option value="06">6</option>
-                                <option value="07">7</option>
-                                <option value="08">8</option>
-                                <option value="09">9</option>
-                                <option value="10">10</option>
-                                <option value="11">11</option>
-                                <option value="12">12</option>
-                                <option value="13">13</option>
-                                <option value="14">14</option>
-                                <option value="15">15</option>
-                                <option value="16">16</option>
-                                <option value="17">17</option>
-                                <option value="18">18</option>
-                                <option value="19">19</option>
-                                <option value="20">20</option>
-                                <option value="21">21</option>
-                                <option value="22">22</option>
-                                <option value="23">23</option>
-                                <option value="24">24</option>
-                                <option value="25">25</option>
-                                <option value="26">26</option>
-                                <option value="27">27</option>
-                                <option value="28">28</option>
-                                <option value="29">29</option>
-                                <option value="30">30</option>
-                                <option value="31">31</option>
-                            </select>
-                        </div>
-                        <div class="col-md-4 col-sm-4 col-month">
-                            <select class="form-control" id="valMonthH">
-                                <option value="01">Enero</option>
-                                <option value="02">Febrero</option>
-                                <option value="03">Marzo</option>
-                                <option value="04">Abril</option>
-                                <option value="05">Mayo</option>
-                                <option value="06">Junio</option>
-                                <option value="07">Julio</option>
-                                <option value="08">Agosto</option>
-                                <option value="09">Septiembre</option>
-                                <option value="10">Octubre</option>
-                                <option value="11">Noviembre</option>
-                                <option value="12">Diciembre</option>
-                            </select>
-                        </div>
-                        <div class="col-md-4 col-sm-4 col-year">
-                            <select class="form-control" id="valYearH">
-                                <option value="2017">2017</option>
-                                <option value="2016">2016</option>
-                                <option value="2015">2015</option>
-                                <option value="2014">2014</option>
-                                <option value="2012">2013</option>
-                                <option value="2011">2011</option>
-                                <option value="2010">2010</option>
-                                <option value="2009">2009</option>
-                                <option value="2008">2008</option>
-                                <option value="2007">2007</option>
-                                <option value="2006">2006</option>
-                                <option value="2005">2005</option>
-                                <option value="2004">2004</option>
-                                <option value="2003">2003</option>
-                                <option value="2002">2002</option>
-                                <option value="2001">2001</option>
-                                <option value="2000">2000</option>
-                                <option value="1999">1999</option>
-                                <option value="1998">1998</option>
-                                <option value="1997">1997</option>
-                                <option value="1996">1996</option>
-                                <option value="1995">1995</option>
-                                <option value="1994">1994</option>
-                                <option value="1993">1993</option>
-                                <option value="1992">1992</option>
-                                <option value="1991">1991</option>
-                                <option value="1990">1990</option>
-
-                                <option value="1989">1989</option>
-                                <option value="1988">1988</option>
-                                <option value="1987">1987</option>
-                                <option value="1986">1986</option>
-                                <option value="1985">1985</option>
-                                <option value="1984">1984</option>
-                                <option value="1983">1983</option>
-                                <option value="1982">1982</option>
-                                <option value="1981">1981</option>
-                                <option value="1980">1980</option>
-
-                                <option value="1979">1979</option>
-                                <option value="1978">1978</option>
-                                <option value="1977">1977</option>
-                                <option value="1976">1976</option>
-                                <option value="1975">1975</option>
-                                <option value="1974">1974</option>
-                                <option value="1973">1973</option>
-                                <option value="1972">1972</option>
-                                <option value="1971">1971</option>
-                                <option value="1970">1970</option>
-
-                                <option value="1969">1969</option>
-                                <option value="1968">1968</option>
-                                <option value="1967">1967</option>
-                                <option value="1966">1966</option>
-                                <option value="1965">1965</option>
-                                <option value="1964">1964</option>
-                                <option value="1963">1963</option>
-                                <option value="1962">1962</option>
-                                <option value="1961">1961</option>
-                                <option value="1960">1960</option>
-
-                                <option value="1959">1959</option>
-                                <option value="1958">1958</option>
-                                <option value="1957">1957</option>
-                                <option value="1956">1956</option>
-                                <option value="1955">1955</option>
-                                <option value="1954">1954</option>
-                                <option value="1953">1953</option>
-                                <option value="1952">1952</option>
-                                <option value="1951">1951</option>
-                                <option value="1950">1950</option>
-
-                                <option value="1949">1949</option>
-                                <option value="1948">1948</option>
-                                <option value="1947">1947</option>
-                                <option value="1946">1946</option>
-                                <option value="1945">1945</option>
-                                <option value="1944">1944</option>
-                                <option value="1943">1943</option>
-                                <option value="1942">1942</option>
-                                <option value="1941">1941</option>
-                                <option value="1940">1940</option>
-
-                                <option value="1939">1939</option>
-                                <option value="1938">1938</option>
-                                <option value="1937">1937</option>
-                                <option value="1936">1936</option>
-                                <option value="1935">1935</option>
-                                <option value="1934">1934</option>
-                                <option value="1933">1933</option>
-                                <option value="1932">1932</option>
-                                <option value="1931">1931</option>
-                                <option value="1930">1930</option>
-
-                                <option value="1929">1929</option>
-                                <option value="1928">1928</option>
-                                <option value="1927">1927</option>
-                                <option value="1926">1926</option>
-                                <option value="1925">1925</option>
-                                <option value="1924">1924</option>
-                                <option value="1923">1923</option>
-                                <option value="1922">1922</option>
-                                <option value="1921">1921</option>
-                                <option value="1920">1920</option>
-
-                                <option value="1929">1919</option>
-                                <option value="1928">1918</option>
-                                <option value="1927">1917</option>
-                                <option value="1926">1916</option>
-                                <option value="1925">1915</option>
-                                <option value="1924">1914</option>
-                                <option value="1923">1913</option>
-                                <option value="1922">1912</option>
-                                <option value="1921">1911</option>
-                                <option value="1920">1910</option>
-
-                            </select>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="form-group col-sm-6">
-                    <label for="otros-datosh">Otros Datos</label>
-                    <input type="text" class="form-control" id="otros-datosh" name="otros-datos" placeholder="">
-                </div>
-                <div class="form-group col-sm-6">
-                    <label for="edad">Edad</label>
-                    <input type="number" class="form-control" id="edad" disabled>
-                </div>
-            </div>
-        </form>
-        <div class="row">
-            <div class="modal-footer wizard-actions">
-                <button class="btn btn-primary btn-sm" ng-click="cerrarDialogNuevoHijo()">
-                    <i class="glyphicon glyphicon-plus"></i>Agregar
-                </button>
-                <button class="btn btn-danger btn-sm" ng-click="cerrarDialogNuevoHijo()">
-                    <i class="ace-icon fa fa-times"></i>Cancelar
-                </button>
-            </div>
-        </div>
-    </div>
-    <!--- ==== fin modal nuevo hijo  ================================ -->
     <!--- ==== modal nuevo familiar  ================================ -->
     <div id="dialog-nuevo-familiar" class="modal" title="Datos del Familiar">
         <div class="modal-header bg-primary">
@@ -4014,128 +2591,7 @@
         </div>
     </div>
     <!--- ==== fin modal nuevo familiar  ================================ -->
-    <!--- ==== modal tipo grado ================================ -->
-    <div id="dialog-grado" class="modal" title="Tipo de Seguros" item-width="400">
-        <div class="modal-header bg-primary">
-            <h4 class='smaller text-white text-uppercase'>
-                <i class='icono-prerequisito'></i>
-                <label> &nbsp;Grado </label>
-            </h4>
-        </div>
-        <div class="row">
-            <div class="col-sm-10">
-                <div class="form-group">
-                    <label for="ciudad">Grado</label>
-                    <input type="text" class="form-control" id="ciudad" name="ciudad" placeholder="Grado">
-                </div>
-            </div>
-            <div class="col-sm-2">
-                <br>
-                <div class="form-group">
-                    <button type="button" class="btn btn-success" onclick="dialog('expedido-en-cru')">
-                        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-                    </button>
-                </div>
-            </div>
-        </div>
-        <table class="table table-striped table-hover">
-            <caption>Grados</caption>
-            <thead>
-                <tr>
-                    <th>Grado</th>
-                    <th>Editar</th>
-                    <th>Habilitar</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <th scope="row">Bachillerato</th>
-                    <td>
-                        <span class="glyphicon glyphicon-pencil" aria-hidden="true" onclick="dialog('tipo-otros-seguros-cru')"></span>
-                    </td>
-                    <td>
-                        <label>
-                            <input name="switch-field-1" class="ace ace-switch ace-switch-5" type="checkbox">
-                            <span class="lbl check-espaniol"></span>
-                        </label>
-                    </td>
-                </tr>
 
-            </tbody>
-        </table>
-        <div class="row">
-            <div class="modal-footer wizard-actions">
-                <button class="btn btn-primary btn-sm" ng-click="cerrarDialogGrado()">
-                    <i class="glyphicon glyphicon-floppy-disk"></i>Guardar
-                </button>
-                <button class="btn btn-danger btn-sm" ng-click="cerrarDialogGrado()">
-                    <i class="ace-icon fa fa-times"></i>Cancelar
-                </button>
-            </div>
-        </div>
-    </div>
-    <!--- ==== fin modal grados  ================================ -->
-    <!--- ==== modal titulo ================================ -->
-    <div id="dialog-titulo" class="modal" item-width="400">
-        <div class="modal-header bg-primary">
-            <h4 class='smaller text-white text-uppercase'>
-                <i class='icono-prerequisito'></i>
-                <label> &nbsp;Titulo </label>
-            </h4>
-        </div>
-        <div class="row">
-            <div class="col-sm-10">
-                <div class="form-group">
-                    <label for="ciudad">Titulo</label>
-                    <input type="text" class="form-control" id="ciudad" name="ciudad" placeholder="Titulo">
-                </div>
-            </div>
-            <div class="col-sm-2">
-                <br>
-                <div class="form-group">
-                    <button type="button" class="btn btn-success" onclick="dialog('expedido-en-cru')">
-                        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-                    </button>
-                </div>
-            </div>
-        </div>
-        <table class="table table-striped table-hover">
-            <caption>Titulos</caption>
-            <thead>
-                <tr>
-                    <th>Titulo</th>
-                    <th>Editar</th>
-                    <th>Habilitar</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <th scope="row">Licenciado</th>
-                    <td>
-                        <span class="glyphicon glyphicon-pencil" aria-hidden="true" onclick="dialog('tipo-otros-seguros-cru')"></span>
-                    </td>
-                    <td>
-                        <label>
-                            <input name="switch-field-1" class="ace ace-switch ace-switch-5" type="checkbox">
-                            <span class="lbl check-espaniol"></span>
-                        </label>
-                    </td>
-                </tr>
-
-            </tbody>
-        </table>
-        <div class="row">
-            <div class="modal-footer wizard-actions">
-                <button class="btn btn-primary btn-sm" ng-click="cerrarDialogTitulo()">
-                    <i class="glyphicon glyphicon-floppy-disk"></i>Guardar
-                </button>
-                <button class="btn btn-danger btn-sm" ng-click="cerrarDialogTitulo()">
-                    <i class="ace-icon fa fa-times"></i>Cancelar
-                </button>
-            </div>
-        </div>
-    </div>
-    <!--- ==== fin modal titulo  ================================ -->
     <!--- ==== modal historial contrato ================================ -->
     <div id="dialog-historial-contrato" class="modal">
         <div class="modal-header bg-primary">
@@ -4556,77 +3012,7 @@
         <!-- /.modal-dialog -->
     </div>
     <!-- ===== fin modal beneficos sociales ====== -->
-    <!-- =====  modal motivo retiro ====== -->
-    <div id="dialog-motivo-retiro" class="modal">
-        <div class="modal-header bg-primary">
-            <h4 class='smaller text-white text-uppercase'>
-                <i class='icono-prerequisito'></i>
-                <label> &nbsp;Motivo Retiro </label>
-            </h4>
-        </div>
-        <div class="row">
-            <div class="col-sm-10">
-                <div class="form-group">
-                    <label for="ciudad">Motivo de Retiro</label>
-                    <input type="text" class="form-control" id="ciudad" name="ciudad" placeholder="Voluntario">
-                </div>
-            </div>
-            <div class="col-sm-2">
-                <br>
-                <div class="form-group">
-                    <button type="button" class="btn btn-success" onclick="dialog('expedido-en-cru')">
-                        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-                    </button>
-                </div>
-            </div>
-        </div>
-        <table class="table table-striped table-hover">
-            <thead>
-                <tr>
-                    <th>Motivo Retiro</th>
-                    <th>Editar</th>
-                    <th>Habilitar</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <th scope="row">Voluntario</th>
-                    <td>
-                        <span class="glyphicon glyphicon-pencil" aria-hidden="true" onclick="dialog('motivo-retiro-cru')"></span>
-                    </td>
-                    <td>
-                        <label>
-                            <input name="switch-field-1" class="ace ace-switch ace-switch-5" type="checkbox">
-                            <span class="lbl check-espaniol"></span>
-                        </label>
-                    </td>
-                </tr>
-                <tr>
-                    <th scope="row">Culminación Contrato</th>
-                    <td>
-                        <span class="glyphicon glyphicon-pencil" aria-hidden="true" onclick="dialog('motivo-retiro-cru')"></span>
-                    </td>
-                    <td>
-                        <label>
-                            <input name="switch-field-1" class="ace ace-switch ace-switch-5" type="checkbox">
-                            <span class="lbl check-espaniol"></span>
-                        </label>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-        <div class="row">
-            <div class="modal-footer wizard-actions">
-                <button class="btn btn-primary btn-sm" ng-click="cerrarDialogMotivoRetiro()">
-                    <i class="glyphicon glyphicon-floppy-disk"></i>Guardar
-                </button>
-                <button class="btn btn-danger btn-sm" ng-click="cerrarDialogMotivoRetiro()">
-                    <i class="ace-icon fa fa-times"></i>Cancelar
-                </button>
-            </div>
-        </div>
-    </div>
-    <!-- ===== fin modal motivo retiro ====== -->
+
     <!-- =====  modal detalle vacaciones ====== -->
     <div id="dialog-detalle-vacaciones" class="modal">
         <div class="modal-header ficha">
@@ -4680,41 +3066,9 @@
         </div>
     </div>
     <!-- ===== fin modal detalle vacaciones ====== -->
-    <!-- =====  modal  otro ingreso ====== -->
-    <div id="dialog-nuevo-otro-ingreso" class="modal">
-        <div class="modal-header bg-primary">
-            <h4 class='smaller text-white text-uppercase'>
-                <i class='icono-prerequisito'></i>
-                <label> &nbsp;Otro Ingreso </label>
-            </h4>
-        </div>
-        <form>
-            <div class="form-group">
-                <label for="monto">Monto</label>
-                <div class="input-group">
-                    <input type="text" class="form-control" id="monto" name="monto" placeholder="0.0">
-                    <span class="input-group-addon">Bs</span>
-                </div>
-            </div>
-            <div class="form-group">
-                <label for="Motivo">Motivo</label>
-                <input type="text" class="form-control" id="Motivo" name="Motivo" placeholder="">
-            </div>
-        </form>
-        <div class="row">
-            <div class="modal-footer wizard-actions">
-                <button class="btn btn-primary btn-sm" ng-click="cerrarDialogOtroIngreso()">
-                    <i class="glyphicon glyphicon-floppy-disk"></i>Guardar
-                </button>
-                <button class="btn btn-danger btn-sm" ng-click="cerrarDialogOtroIngreso()">
-                    <i class="ace-icon fa fa-times"></i>Cancelar
-                </button>
-            </div>
-        </div>
-    </div>
-    <!-- ===== fin modal otro ingreso  ====== -->
+
     <!-- =====  modal  deduccion ====== -->
-    <div id="dialog-nueva-deduccion" class="modal">
+    <div id="dialog-bitacora-ficha" class="modal">
         <form>
             <div class="modal-header bg-primary">
                 <h4 class='smaller text-white text-uppercase'>
@@ -6723,26 +5077,36 @@
             </h4>
         </div>
         <div class="modal-body">
-            <form>
+            <form ng-submit="paginator.getSearch(paginator.search,filtroBeneficioEmpresa,null)">
                 <div class="center-block width150">
                     <label>
-                        <input name="" class="ace ace-switch ace-switch-5 big-switch" type="checkbox">
+                        <input name="" class="ace ace-switch ace-switch-5 big-switch" type="checkbox" ng-model="filtroBeneficioEmpresa.tipo" ng-click="paginator.getSearch(paginator.search,filtroBeneficioEmpresa,null)">
                         <span class="lbl" data-lbl="Finiquito&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Quinquenio"></span>
                     </label>
                 </div>
-                <h3 class="text-center">Campo Margarita - Cargo Choferes - Empresa Repsol</h3>
                 <div class="row">
-                    <div class="form-group col-sm-4">
+                    <div class="form-group col-sm-3">
                         <label for="desde">Desde</label>
-                        <input type="text" class="form-control date-picker" autocomplete="off" id="desde" name="desde">
+                        <input type="text" class="form-control date-picker" ng-update-hidden data-date-format="dd/mm/yyyy" ng-model="filtroBeneficioEmpresa.inicio"
+                            autocomplete="off" id="desde" name="desde">
                     </div>
-                    <div class="form-group col-sm-4">
+                    <div class="form-group col-sm-3">
                         <label for="hasta">Hasta</label>
-                        <input type="text" class="form-control date-picker" autocomplete="off" id="hasta" name="hasta">
+                        <input type="text" class="form-control date-picker" ng-update-hidden data-date-format="dd/mm/yyyy" ng-model="filtroBeneficioEmpresa.fin"
+                            autocomplete="off" id="hasta" name="hasta">
                     </div>
-                    <div class="form-group col-sm-4">
+                    <div class="form-group col-sm-3" ng-if="filtroBeneficioEmpresa.tipo">
                         <label for="motivo">Motivo</label>
-                        <input type="text" class="form-control" id="motivo" name="motivo">
+                        <select ng-model="filtroBeneficioEmpresa.motivo" class="form-control" id="motivo-retiro" name="motivo-retiro" ng-options="motivo.id as motivo.nombre for motivo in tipoMotivo.clases | filter:{habilitado:true} track by motivo.id">
+                            <option value="">Ninguno</option>
+                        </select>
+                    </div>
+                    <div class="form-group col-sm-3">
+                        <br>
+                        <button type="submit" class="btn btn-primary btn-sm">
+                            <span class="fa fa-search"></span>
+                            Filtrar
+                        </button>
                     </div>
                 </div>
             </form>
@@ -6762,56 +5126,45 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <th scope="row">1</th>
-                            <td>Juan Pérez</td>
-                            <td>17/01/2017</td>
-                            <td>Voluntario</td>
-                            <td>22/07/2017</td>
-                            <td>22/07/2017</td>
-                            <td>402805</td>
-                            <td>BMSC</td>
+                        <tr ng-repeat="beneficio in beneficiosEmpresa track by $index">
+                            <th scope="row">{{$index+1}}</th>
+                            <td>{{beneficio.ficha.empleado.persona.nombre_completo}}</td>
+                            <td>{{beneficio.fecha_asistensia|date:'dd/MM/yyyy'}}</td>
+                            <td>{{beneficio.motivo.nombre}}</td>
+                            <td>{{beneficio.fecha_elaboracion|date:'dd/MM/yyyy'}}</td>
+                            <td>fecha?</td>
+                            <td>??</td>
+                            <td>{{beneficio.cuenta.nombre}}</td>
                             <td>
-                                <a class="green">
+                                <a class="green" href="javascript:void(0)" ng-click="imprimirFiniquito(beneficio,false,true)">
                                     <span class="ace-icon fa fa-print bigger-130"></span>
                                 </a>
                             </td>
                         </tr>
-                        <tr>
-                            <th scope="row">2</th>
-                            <td>Juana Pérez</td>
-                            <td>17/01/2017</td>
-                            <td>Voluntario</td>
-                            <td>19/10/2017</td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td>
-                                <a class="green">
-                                    <span class="ace-icon fa fa-print bigger-130"></span>
-                                </a>
-                            </td>
-                        </tr>
+
                     </tbody>
                 </table>
+                <div class="row" ng-include src="'/templates/gral/paginator.html'">
+                </div>
             </div>
-        </div>
-        <div class="row">
 
-            <div class="modal-footer wizard-actions">
-                <button class="btn btn-danger btn-sm" ng-click="cerrarDialogReporteVeneficios()">
-                    <span class="fa fa-print"></span>
-                    PDF
-                </button>
-                <button class="btn btn-success btn-sm" ng-click="cerrarDialogReporteVeneficios()">
-                    <span class="fa fa-print"></span>
-                    EXCEL
-                </button>
-                <button class="btn btn-danger btn-sm pull-left" ng-click="cerrarDialogReporteVeneficios()">
-                    <i class="ace-icon fa fa-times"></i>Cancelar
-                </button>
-            </div>
         </div>
+
+
+        <div class="modal-footer wizard-actions">
+            <button class="btn btn-danger btn-sm" ng-click="cerrarDialogReporteVeneficios()">
+                <span class="fa fa-print"></span>
+                PDF
+            </button>
+            <button class="btn btn-success btn-sm" ng-click="cerrarDialogReporteVeneficios()">
+                <span class="fa fa-print"></span>
+                EXCEL
+            </button>
+            <button class="btn btn-danger btn-sm pull-left" ng-click="cerrarDialogReporteVeneficios()">
+                <i class="ace-icon fa fa-times"></i>Cancelar
+            </button>
+        </div>
+
     </div>
     <!-- ======= Fin Modal modal beneficios sociales ====== -->
     <!-- ======= Modal modal pago prestamo ====== -->
@@ -6887,7 +5240,7 @@
     <div id="dialog-reporte-vacaciones" class="modal">
         <div class="modal-header ficha">
             <h4 class="modal-title" id="myModalLabel"> REPORTE DE VACACIONES</h4>
-            <h5 class="modal-title">Campo:Margarita, Cargo:chofer, Empresa:YPFB</h5>
+
         </div>
         <div class="modal-body">
             <form ng-submit="obtenerHistorialEmpresaVacacion(filtroVacacion)">
@@ -6964,7 +5317,7 @@
     <div id="dialog-reporte-bajas-medicas" class="modal">
         <div class="modal-header ficha">
             <h4 class="modal-title" id="myModalLabel"> REPORTE DE BAJAS MÉDICAS</h4>
-            <h5 class="modal-title">Campo:Margarita, Cargo:chofer, Empresa:YPFB</h5>
+
         </div>
         <div class="modal-body">
             <form ng-submit="obtenerHistorialEmpresaAusenciasMedicas(filtroAusencias)">
@@ -7053,7 +5406,7 @@
     <div id="dialog-reporte-rol-turnos" class="modal">
         <div class="modal-header ficha">
             <h4 class="modal-title" id="myModalLabel"> ROLES DE TURNOS</h4>
-            <!--     <h5 class="modal-title">Campo:Margarita, Cargo:chofer, Empresa:YPFB</h5> -->
+            <!--      -->
         </div>
         <div class="modal-body">
             <div class="row">
@@ -7145,7 +5498,7 @@
     <div id="dialog-reporte-turnos-detallado" class="modal">
         <div class="modal-header ficha">
             <h4 class="modal-title" id="myModalLabel"> ROLES DE TURNOS</h4>
-            <!--  <h5 class="modal-title">Campo:Margarita, Cargo:chofer, Empresa:YPFB</h5> -->
+            <!--   -->
         </div>
 
         <div class="modal-body">
@@ -7319,14 +5672,15 @@
                                 <div class="form-group row">
                                     <label class="col-sm-3" for="motivo-retiro">Conductor</label>
                                     <div class="input-group col-sm-9">
-                                        <select class="form-control" required ng-options="chofer as chofer.persona.nombre_completo for chofer in choferesViaje track by chofer.id"
+                                        <span class="input-group-addon glyphicon glyphicon-pencil point-edit green" aria-hidden="true" ng-click="abrirDialogConductoresViaje(choferesViaje)"></span>
+                                        <select class="form-control" required ng-options="chofer as chofer.nombre for chofer in choferesViaje|filter:{habilitado:true} track by chofer.id"
                                             ng-model="viaje.conductor"></select>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-md-8">
                                 <h4 class="line-dashed">
-                                    <i class="ace-icon fa fa-caret-right blue"></i>{{viaje.conductor.persona.nombre_completo}}</h4>
+                                    <i class="ace-icon fa fa-caret-right blue"></i>{{viaje.conductor.nombre}}, {{viaje.conductor.licencia}} {{viaje.conductor.tipoLicencia.nombre}}</h4>
                             </div>
                         </div>
                         <div class="row">
@@ -7334,14 +5688,14 @@
                                 <div class="form-group row">
                                     <label class="col-sm-3" for="motivo-retiro">Relevo</label>
                                     <div class="input-group col-sm-9">
-                                        <select class="form-control" required ng-options="chofer as chofer.persona.nombre_completo for chofer in choferesViaje track by chofer.id"
+                                        <select class="form-control" required ng-options="chofer as chofer.nombre for chofer in choferesViaje|filter:{habilitado:true} track by chofer.id"
                                             ng-model="viaje.relevo"></select>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-md-8">
                                 <h4 class="line-dashed">
-                                    <i class="ace-icon fa fa-caret-right blue"></i>{{viaje.relevo.persona.nombre_completo}}</h4>
+                                    <i class="ace-icon fa fa-caret-right blue"></i>{{viaje.relevo.nombre}} {{viaje.relevo.licencia}} {{viaje.relevo.tipoLicencia.nombre}}</h4>
                             </div>
                         </div>
                         <div class="row">
@@ -7693,71 +6047,102 @@
         </div>
     </div>
     <!--- fin modal vehiculos de viaje  ======== -->
-    <!--- modal destinos  ======== -->
-    <div id="dialog-destinos" class="modal">
+    <!--- modal vehiculos de viaje  ======== -->
+    <div id="dialog-conductores-viaje" class="modal" title="Tipo de Documento" item-width="500">
         <div class="modal-header bg-primary">
             <h4 class='smaller text-white text-uppercase'>
                 <i class='icono-prerequisito'></i>
-                <label> &nbsp;Destinos</label>
+                <label> &nbsp;Conductores de Viaje</label>
             </h4>
         </div>
-        <div class="row">
-            <div class="col-sm-10">
-                <div class="form-group">
-                    <label for="ciudad">Destino</label>
-                    <input type="text" class="form-control" id="ciudad" name="ciudad" placeholder="Vehículo">
+        <form ng-submit="agregarConductor(conductor)">
+            <div class="row">
+                <div class="col-sm-5">
+                    <div class="form-group">
+                        <label for="ciudad">Conductor</label>
+                        <input type="text" required class="form-control" ng-model-options="{updateOn: 'blur'}" ng-model="conductor.nombre" placeholder="Conductor">
+                    </div>
+                </div>
+                <div class="col-sm-5">
+                    <div class="form-group">
+                        <label for="ciudad">Licencia:</label>
+                        <input type="text" required class="form-control" ng-model-options="{updateOn: 'blur'}" ng-model="conductor.licencia" placeholder="Licencia">
+                    </div>
+                </div>
+                <div class="col-sm-5">
+                    <div class="form-group">
+                        <label for="ciudad">Tipo Licencia:</label>
+                        <div class="input-group">
+                            <span class="input-group-addon glyphicon glyphicon-pencil point-edit green" aria-hidden="true" ng-click="abrirDialogConceptoEdicion(TiposLicenciasVehiculo)"></span>
+                            <select required class="form-control" ng-model-options="{updateOn: 'blur'}" ng-options="licencia as licencia.nombre_corto for licencia in TiposLicenciasVehiculo.clases | filter:{habilitado:true} track by licencia.id"
+                                ng-model="conductor.tipoLicencia">
+                                <option value="">--seleccionar--</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-2">
+                    <br>
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-success">
+                            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                        </button>
+                    </div>
+                </div>
+                <div class="col-sm-5">
+                    <div class="form-group pull-right">
+                        <label for="ciudad">Filtrar Conductor:</label>
+                        <div class="input-group">                           
+                            <select ng-model="tipo" ng-change=filtrarConductor(tipo)>                                  
+                                <option value="!!">Empleados</option>
+                                <option value="!">Externos</option>
+                                <option value="">Todos</option>
+                            </select>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="col-sm-2">
-                <br>
-                <div class="form-group">
-                    <button type="button" class="btn btn-success" onclick="dialog('expedido-en-cru')">
-                        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-                    </button>
-                </div>
-            </div>
-        </div>
+        </form>
         <table class="table table-striped table-hover">
             <thead>
                 <tr>
-                    <th>Nro</th>
-                    <th>Destino</th>
+                    <th>Nombre</th>
+                    <th>Licencia</th>
+                    <th>Habilitar</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td>1</td>
-                    <td>Santa Cruz</td>
+                <tr ng-repeat="conductor in choferesViaje|filter:tipoConductor">
+                    <th scope="row">{{conductor.nombre}}</th>
+                    <td>{{conductor.licencia}} {{conductor.tipoLicencia.nombre}}</td>
                     <td>
-                        <a class="red">
-                            <i class="ace-icon fa fa-trash-o bigger-130"></i>
-                        </a>
                         <label>
-                            <input name="switch-field-1" class="ace ace-switch ace-switch-5" type="checkbox">
+                            <input ng-disabled="conductor.id_empleado" ng-model="conductor.habilitado" name="switch-field-1" class="ace ace-switch ace-switch-5"
+                                type="checkbox">
                             <span class="lbl check-espaniol"></span>
                         </label>
+                    </td>
+                    <td>
+                        <a class="green" ng-if="!conductor.id_empleado" href="javascript:void(0)" ng-click="editarConductor(conductor)">
+                            <i class="ace-icon fa fa-pencil bigger-130"></i>
+                        </a>
                     </td>
                 </tr>
             </tbody>
         </table>
         <div class="row">
             <div class="modal-footer wizard-actions">
-                <button type="button" class="btn btn-danger btn-sm">
-                    <i class=" fa fa-print"></i>
-                    Pdf
+                <button class="btn btn-primary btn-sm" ng-click="guardarConductores()">
+                    <i class="glyphicon glyphicon-floppy-disk"></i>Guardar
                 </button>
-                <button type="button" class="btn btn-success btn-sm">
-                    <i class=" fa fa-print "></i>
-                    Excel
-                </button>
-                <button class="btn btn-danger btn-sm pull-left" ng-click="cerrarDialogDestinos()">
+                <button class="btn btn-danger btn-sm pull-left" ng-click="cerrarDialogConductoresViaje()">
                     <i class="ace-icon fa fa-times"></i>Cancelar
                 </button>
             </div>
         </div>
     </div>
-    <!--- fin modal destinos  ======== -->
+    <!--- fin modal vehiculos de viaje  ======== -->
     <!--- ==== modal historial de viajes ================================ -->
     <div id="dialog-historial-viajes" class="modal">
         <div class="modal-header bg-primary">
@@ -7869,7 +6254,7 @@
                             <td>{{detalle.viaje.fecha|date:'dd/MM/yyyy'}}</td>
                             <td>{{detalle.campo.nombre}}</td>
                             <td>{{detalle.viaje.vehiculo.nombre}}</td>
-                            <td>{{detalle.viaje.conductor.persona.nombre_completo}}</td>
+                            <td>{{detalle.viaje.conductor.nombre}}</td>
                             <td>{{detalle.tipoViaje.nombre}}</td>
                             <td ng-if="detalle.id_ficha">{{detalle.ficha.empleado.persona.nombre_completo}}</td>
                             <td ng-if="detalle.id_visita">{{detalle.visita.nombre_completo}}</td>
@@ -7988,8 +6373,8 @@
                         <tr ng-repeat="viaje in viajesEmpresa track by $index">
                             <td>{{viaje.fecha|date:'dd/MM/yyyy'}}</td>
                             <td>{{viaje.vehiculo.nombre}}</td>
-                            <td>{{viaje.conductor.persona.nombre_completo}}</td>
-                            <td>{{viaje.relevo.persona.nombre_completo}}</td>
+                            <td>{{viaje.conductor.nombre}}</td>
+                            <td>{{viaje.relevo.nombre}}</td>
                             <td>
                                 <p ng-repeat="destino in viaje.destinos">{{destino.destino.nombre}}</p>
                             </td>
@@ -8048,7 +6433,7 @@
     <div id="dialog-reporte-ausencias" class="modal">
         <div class="modal-header ficha">
             <h4 class="modal-title" id="myModalLabel"> REPORTE DE AUSENCIAS</h4>
-            <h5 class="modal-title">Campo:Margarita, Cargo:chofer, Empresa:YPFB</h5>
+
         </div>
         <div class="modal-body">
             <form ng-submit="obtenerHistorialEmpresaOtrasAusencias(filtroOtrasAusencias)">
@@ -8193,69 +6578,7 @@
         </div>
     </div>
     <!-- ========= fin certificado ========= -->
-    <!--- ==== modal institucion ================================ -->
-    <div id="dialog-institucion" class="modal">
-        <div class="modal-header bg-primary">
-            <h4 class='smaller text-white text-uppercase'>
-                <i class='icono-prerequisito'></i>
-                <label> &nbsp;Institución </label>
-            </h4>
-        </div>
-        <div class="row">
-            <div class="col-sm-10">
-                <div class="form-group">
-                    <label for="ciudad">Institución</label>
-                    <input type="text" class="form-control" id="ciudad" name="ciudad" placeholder="Grado">
-                </div>
-            </div>
-            <div class="col-sm-2">
-                <br>
-                <div class="form-group">
-                    <button type="button" class="btn btn-success">
-                        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-                    </button>
-                </div>
-            </div>
-        </div>
-        <table class="table table-striped table-hover">
-            <caption>Instituciones</caption>
-            <thead>
-                <tr>
-                    <th>Institución</th>
-                    <th>Editar</th>
-                    <th>Habilitar</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <th scope="row">Aleman</th>
-                    <td>
-                        <span class="glyphicon glyphicon-pencil" aria-hidden="true" onclick="dialog('tipo-otros-seguros-cru')"></span>
-                    </td>
-                    <td>
-                        <label>
-                            <input name="switch-field-1" class="ace ace-switch ace-switch-5" type="checkbox">
-                            <span class="lbl check-espaniol"></span>
-                        </label>
-                    </td>
-                </tr>
 
-            </tbody>
-        </table>
-        <div class="row">
-            <div class="modal-footer wizard-actions">
-                <button class="btn btn-primary btn-sm" ng-click="cerrarDialogInstitucion()">
-                    <i class="glyphicon glyphicon-floppy-disk"></i>Guardar
-                </button>
-                <button class="btn btn-danger btn-sm" ng-click="cerrarDialogInstitucion()">
-                    <i class="ace-icon fa fa-times"></i>Cancelar
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <div id="dialog-conceptos" class="modal" ng-include src="'/templates/gral/concepto-edicion.html'"></div>
-    <!--- ==== fin modal institucion  ================================ -->
     <!-- ========= inicio nuevo modal recusos humanos ========= -->
     <div id="dialog-rh-nuevo" class="modal wizard-posicion">
         <div class="modal-dialog modal-rh-nuevo">
@@ -9719,7 +8042,8 @@
                     </div>
                     <div class="form-group">
                         <label for="ciudad">Fecha fin</label>
-                        <input type="text" class="form-control date-picker" ng-update-hidden data-date-format="dd/mm/yyyy" ng-model-options="{updateOn: 'blur'}" required ng-model="dato.fecha_fin">
+                        <input type="text" class="form-control date-picker" ng-update-hidden data-date-format="dd/mm/yyyy" ng-model-options="{updateOn: 'blur'}"
+                            required ng-model="dato.fecha_fin">
                     </div>
 
                 </div>

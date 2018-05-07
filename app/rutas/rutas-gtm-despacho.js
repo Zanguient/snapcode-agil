@@ -5,11 +5,12 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, forEach, j
 		.post(function (req, res) {
 			GtmVentaKardex.create({
 				id_usuario: req.body.id_usuario,
-				fecha: new Date(req.body.fecha.split("/")[2], req.body.fecha.split("/")[1] - 1, req.body.fecha.split("/")[0]),
+				fecha: new Date(req.body.fecha.split("/")[2], req.body.fecha.split("/")[1], req.body.fecha.split("/")[0]),
 				id_empresa: req.params.id_empresa,
 				id_cliente: req.body.id_cliente,
 				id_cliente_razon: req.body.id_cliente_razon,
-				factura: req.body.factura
+				factura: req.body.factura,
+				observacion: req.body.observacion
 			}).then(function (kardexCreado) {
 				req.body.detalles_kardex.forEach(function (detalle_kardex, index, array) {
 					GtmVentaKardexDetalle.create({
@@ -19,7 +20,7 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, forEach, j
 						cantidad: parseFloat(detalle_kardex.cantidad),
 						saldo: parseFloat(detalle_kardex.cantidad),
 						entregado: false,
-						fecha: new Date(req.body.fecha.split("/")[2], req.body.fecha.split("/")[1] - 1, req.body.fecha.split("/")[0]),
+						fecha: new Date(req.body.fecha.split("/")[2], req.body.fecha.split("/")[1], req.body.fecha.split("/")[0]),
 					}).then(function (detalleDespachoCreado) {
 						if (index === (array.length - 1)) {
 							res.json(detalleDespachoCreado);
@@ -41,7 +42,7 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, forEach, j
 					id_producto: detalle.id_producto,
 					saldo: detalle.saldo,
 					entregado: detalle.entregado,
-					fecha: new Date(detalle.fecha.split("/")[2], detalle.fecha.split("/")[1] - 1, detalle.fecha.split("/")[0]),
+					fecha: new Date(detalle.fecha.split("/")[2], detalle.fecha.split("/")[1], detalle.fecha.split("/")[0]),
 				},
 					{
 						where: {
@@ -57,7 +58,7 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, forEach, j
 							saldo: detalle.saldo,
 							entregado: false,
 							id_padre: detalle.id,
-							fecha: new Date(detalle.fecha.split("/")[2], detalle.fecha.split("/")[1] - 1, detalle.fecha.split("/")[0]),
+							fecha: new Date(detalle.fecha.split("/")[2], detalle.fecha.split("/")[1], detalle.fecha.split("/")[0]),
 						}).then(function (detalleDespachoCreado) {
 							res.json(detalleDespachoCreado);
 						});
@@ -138,7 +139,8 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, forEach, j
 				id_destino: req.body.id_destino,
 				id_cliente_razon: req.body.id_cliente_razon,
 				fecha: new Date(req.body.fecha.split("/")[2], req.body.fecha.split("/")[1] - 1, req.body.fecha.split("/")[0]),
-				id_empresa: req.params.id_empresa
+				id_empresa: req.params.id_empresa,
+				observacion: req.body.observacion
 			}).then(function (despachoCreado) {
 				req.body.detalles_despacho.forEach(function (detalle_despacho, index, array) {
 					GtmDespachoDetalle.create({

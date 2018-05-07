@@ -1,7 +1,8 @@
 angular.module('agil.controladores')
 
     .controller('ControladorGtmDespacho', function ($scope, $localStorage, $location, $templateCache, $route, blockUI, Paginator, FieldViewer,
-        GtmDespachos, GtmDetalleDespacho, GetGtmDetalleDespachoHijos, ImprimirPdfDespachos, ExportarExelDespachos, ListaDetalleKardexFactura,GtmDetalleDespachoKardex) {
+        GtmDespachos, GtmDetalleDespacho, GetGtmDetalleDespachoHijos, ImprimirPdfDespachos, ExportarExelDespachos, ListaDetalleKardexFactura, GtmDetalleDespachoKardex,
+        VerificarUsuarioEmpresa) {
 
         blockUI.start();
 
@@ -10,11 +11,13 @@ angular.module('agil.controladores')
         $scope.idModalVentaKardexFactura = 'modal-venta-kardex-factura';
         $scope.idModalAsignacionFacturaKardex = "modal-asignacion-factura-kardex"
         $scope.idModalDetalleKardex = "modal-detalle-kardex"
+        $scope.IdModalVerificarCuenta = 'modal-verificar-cuenta';
         $scope.usuario = JSON.parse($localStorage.usuario);
 
         $scope.$on('$viewContentLoaded', function () {
             resaltarPestaña($location.path().substring(1));
-            ejecutarScriptDespacho($scope.idModalAsignacionFactura, $scope.idModalVentaKardexFactura, $scope.idModalAsignacionFacturaKardex,$scope.idModalDetalleKardex);
+            ejecutarScriptDespacho($scope.idModalAsignacionFactura, $scope.idModalVentaKardexFactura, $scope.idModalAsignacionFacturaKardex, $scope.idModalDetalleKardex,
+                $scope.IdModalVerificarCuenta);
             $scope.buscarAplicacion($scope.usuario.aplicacionesUsuario, $location.path().substring(1));
         });
 
@@ -70,7 +73,6 @@ angular.module('agil.controladores')
             promesa.then(function (dato) {
                 $scope.paginator.setPages(dato.paginas);
                 $scope.despachos = dato.detallesDespacho;
-
                 blockUI.stop();
             });
         }
@@ -467,8 +469,8 @@ angular.module('agil.controladores')
         $scope.abrirModalAsignacionFactura = function (detalle_despacho) {
             $scope.abrirPopup($scope.idModalAsignacionFactura);
             $scope.detalle_despacho = detalle_despacho;
-            if($scope.detalle_despacho.fecha_factura){
-                $scope.detalle_despacho.fecha_factura=$scope.fechaATexto($scope.detalle_despacho.fecha_factura)
+            if ($scope.detalle_despacho.fecha_factura) {
+                $scope.detalle_despacho.fecha_factura = $scope.fechaATexto($scope.detalle_despacho.fecha_factura)
             }
         }
 
@@ -476,8 +478,8 @@ angular.module('agil.controladores')
             $scope.cerrarPopup($scope.idModalAsignacionFactura);
         }
         $scope.abrirModalVentaKardexFactura = function () {
-            var filtro={pendiente:true}
-            $scope.filtroVentaKardex={pendiente:true}
+            var filtro = { pendiente: true }
+            $scope.filtroVentaKardex = { pendiente: true }
             $scope.obtenerVentaKardexFactura(filtro)
             $scope.abrirPopup($scope.idModalVentaKardexFactura);
         }
@@ -495,16 +497,16 @@ angular.module('agil.controladores')
         }
         $scope.abrirModalDetalleKardex = function (kardex) {
             $scope.kardex = kardex
-            $scope.abrirPopup( $scope.idModalDetalleKardex);
+            $scope.abrirPopup($scope.idModalDetalleKardex);
         }
 
         $scope.cerrarDetalleKardex = function () {
-            $scope.cerrarPopup( $scope.idModalDetalleKardex);
+            $scope.cerrarPopup($scope.idModalDetalleKardex);
         }
-       
+
         $scope.establecerFactura = function (detalle_despacho) {
 
-            detalle_despacho.fecha_factura=(detalle_despacho.fecha_factura)? new Date($scope.convertirFecha(detalle_despacho.fecha_factura)):null
+            detalle_despacho.fecha_factura = (detalle_despacho.fecha_factura) ? new Date($scope.convertirFecha(detalle_despacho.fecha_factura)) : null
             GtmDetalleDespacho.update({ id_detalle_despacho: detalle_despacho.id }, detalle_despacho, function (res) {
                 $scope.cerrarAsignacionFactura();
                 $scope.mostrarMensaje(res.mensaje);
@@ -512,8 +514,8 @@ angular.module('agil.controladores')
         }
         $scope.establecerFacturaKardex = function (detalle_kardex) {
             GtmDetalleDespachoKardex.update({ id_detalle_kardex: detalle_kardex.id }, detalle_kardex, function (res) {
-                var filtro={pendiente:true}
-                $scope.obtenerVentaKardexFactura(filtro)
+                
+                $scope.obtenerVentaKardexFactura($scope.filtroVentaKardex)
                 $scope.cerrarAsignacionFacturaKardex();
                 $scope.mostrarMensaje(res.mensaje);
             });
@@ -526,20 +528,46 @@ angular.module('agil.controladores')
             });
         }
         $scope.obtenerVentaKardexFactura = function (filtro) {
-            if(filtro.inicio){
-                filtro.inicio=new Date($scope.convertirFecha(filtro.inicio))
-                filtro.fin=new Date($scope.convertirFecha(filtro.fin))
-            }else{
-                filtro.inicio=0
-                filtro.fin=0
+            if (filtro.inicio) {
+                filtro.inicio = new Date($scope.convertirFecha(filtro.inicio))
+                filtro.fin = new Date($scope.convertirFecha(filtro.fin))
+            } else {
+                filtro.inicio = 0
+                filtro.fin = 0
             }
-            var promesa = ListaDetalleKardexFactura($scope.usuario.id_empresa,filtro)
+            var promesa = ListaDetalleKardexFactura($scope.usuario.id_empresa, filtro)
             promesa.then(function (dato) {
-                if($scope.filtroVentaKardex.inicio instanceof Date){
-                    $scope.filtroVentaKardex.inicio=$scope.fechaATexto($scope.filtroVentaKardex.inicio)
-                    $scope.filtroVentaKardex.fin=$scope.fechaATexto($scope.filtroVentaKardex.fin)
+                if ($scope.filtroVentaKardex.inicio instanceof Date) {
+                    $scope.filtroVentaKardex.inicio = $scope.fechaATexto($scope.filtroVentaKardex.inicio)
+                    $scope.filtroVentaKardex.fin = $scope.fechaATexto($scope.filtroVentaKardex.fin)
                 }
                 $scope.detalleKardexFactura = dato
+            })
+        }
+
+        $scope.abrirModalVerificarCuenta = function (dato, tipo) {
+            $scope.dato = dato
+            $scope.tipoDatosPermiso = tipo
+            $scope.abrirPopup($scope.IdModalVerificarCuenta);
+        }
+        $scope.cerrarModalVerificarCuenta = function () {
+            $scope.cerrarPopup($scope.IdModalVerificarCuenta);
+        }
+        $scope.verificarCuentaAdmin = function (cuenta) {
+            VerificarUsuarioEmpresa.save({ id_empresa: $scope.usuario.id_empresa }, cuenta, function (dato) {
+                if (dato.type) {
+                    $scope.mostrarMensaje(dato.message)
+                    /*  cuenta.abierto= cuenta.abierto; */
+                    if ($scope.tipoDatosPermiso == "despacho") { 
+                            $scope.abrirModalAsignacionFactura($scope.dato)
+                    }
+                    if ($scope.tipoDatosPermiso == "despachoKardex") {
+                        $scope.abrirModalAsignacionFacturaKardex($scope.dato)
+                }
+                    $scope.cerrarModalVerificarCuenta();
+                } else {
+                    $scope.mostrarMensaje(dato.message)
+                }
             })
         }
         $scope.$on('$routeChangeStart', function (next, current) {
@@ -547,9 +575,10 @@ angular.module('agil.controladores')
             $scope.eliminarPopup($scope.idModalVentaKardexFactura);
             $scope.eliminarPopup($scope.idModalAsignacionFacturaKardex)
             $scope.eliminarPopup($scope.idModalDetalleKardex)
-    });
+            $scope.eliminarPopup($scope.IdModalVerificarCuenta)
+        });
 
-$scope.inicio();
+        $scope.inicio();
     });
 
 

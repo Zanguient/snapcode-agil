@@ -1,7 +1,7 @@
 module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente, Persona, Empresa, Sucursal, Clase, Diccionario, Tipo, decodeBase64Image, fs, RrhhEmpleadoFicha, RrhhEmpleadoFichaOtrosSeguros, RrhhEmpleadoFichaFamiliar, RrhhEmpleadoDiscapacidad
     , RrhhEmpleadoCargo, RrhhEmpleadoHojaVida, RrhhEmpleadoFormacionAcademica, RrhhEmpleadoExperienciaLaboral, RrhhEmpleadoLogroInternoExterno, RrhhEmpleadoCapacidadInternaExterna, NumeroLiteral, RrhhEmpleadoPrestamo, RrhhEmpleadoPrestamoPago, RrhhEmpleadoRolTurno, RrhhEmpleadoHorasExtra, RrhhAnticipo,
     EvaluacionPolifuncional, ConfiguracionCalificacionEvaluacionPolifuncional, ConfiguracionDesempenioEvaluacionPolifuncional, RrhhEmpleadoAusencia, RrhhEmpleadoVacaciones, RrhhEmpleadoCompensacionAusencia, RrhhFeriado, RrhhClaseAsuencia, RrhhEmpleadoConfiguracionVacacion, RrhhEmpleadoHistorialVacacion, RrhhEmpleadoTr3, RrhhEmpleadoAnticipoTr3, Banco, RrhhEmpleadoDeduccionIngreso,
-    RrhhEmpleadoBeneficioSocial, RrhhEmpleadoBitacoraFicha, RrhhEmpleadoConfiguracionRopa, Producto, Inventario, RrhhEmpleadoDotacionRopaItem, RrhhEmpleadoDotacionRopa, RrhhViajeDetalle, RrhhViaje, RrhhViajeDestino) {
+    RrhhEmpleadoBeneficioSocial, RrhhEmpleadoBitacoraFicha, RrhhEmpleadoConfiguracionRopa, Producto, Inventario, RrhhEmpleadoDotacionRopaItem, RrhhEmpleadoDotacionRopa, RrhhViajeDetalle, RrhhViaje, RrhhViajeDestino, RrhhViajeConductor) {
 
     router.route('/recursos-humanos/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion/codigo/:codigo/nombres/:nombres/ci/:ci/campo/:campo/cargo/:cargo/busquedaEmpresa/:busquedaEmpresa/grupo/:grupo_sanguineo/estado/:estado/apellido/:apellido')
         .get(function (req, res) {
@@ -455,7 +455,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                 { model: RrhhEmpleadoFichaOtrosSeguros, as: 'otrosSeguros', include: [{ model: Clase, as: "tipoSeguro" }] },
                 {
                     model: MedicoPaciente, as: 'empleado',
-                    include: [{ model: RrhhEmpleadoFichaFamiliar, as: 'familiares', include: [{ model: Clase, as: 'relacion' }, { model: Persona, as: 'persona', include: [{ model: Clase, as: 'genero' }] }] },
+                    include: [{ model: RrhhViajeConductor, as: 'conductor', include: [{ model: Clase, as: "tipoLicencia" }] }, { model: RrhhEmpleadoFichaFamiliar, as: 'familiares', include: [{ model: Clase, as: 'relacion' }, { model: Persona, as: 'persona', include: [{ model: Clase, as: 'genero' }] }] },
                     { model: Clase, as: 'extension' }, { model: Clase, as: 'tipoDocumento' },
                     {
                         model: Persona, as: 'persona',
@@ -549,7 +549,58 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                                     id: req.body.empleado.id
                                 }
                             }).then(function (medicoPacienteActualizado) {
-                                guardarDatosFicha(req, res, personaReferenciaCreada, Persona, RrhhEmpleadoFicha, RrhhEmpleadoFichaOtrosSeguros, RrhhEmpleadoFichaFamiliar, RrhhEmpleadoCargo, RrhhEmpleadoDiscapacidad, fichaAnterior)
+                                if (req.body.empleado.chofer) {
+                                    RrhhViajeConductor.find({
+                                        where: { id_empleado: req.body.empleado.id }
+                                    }).then(function (conductor) {
+                                        var nombre = ""
+                                        if (req.body.empleado.persona.segundo_nombre) {
+                                            nombre = req.body.empleado.persona.nombres + ' ' + req.body.empleado.persona.segundo_nombre + ' ' + req.body.empleado.persona.apellido_paterno + ' ' + req.body.empleado.persona.apellido_materno
+                                        } else {
+                                            nombre = req.body.empleado.persona.nombres + ' ' + req.body.empleado.persona.apellido_paterno + ' ' + req.body.empleado.persona.apellido_materno
+                                        }
+                                        if (conductor) {
+                                            RrhhViajeConductor.update({
+                                                nombre: nombre,
+                                                licencia: req.body.empleado.persona.ci,
+                                                id_tipo_licencia: req.body.empleado.conductor.tipoLicencia.id,
+                                                habilitado: true,
+                                            }, {
+                                                    where: { id: conductor.id }
+                                                }).then(function (conductorCreado) {
+                                                    guardarDatosFicha(req, res, personaReferenciaCreada, Persona, RrhhEmpleadoFicha, RrhhEmpleadoFichaOtrosSeguros, RrhhEmpleadoFichaFamiliar, RrhhEmpleadoCargo, RrhhEmpleadoDiscapacidad, fichaAnterior)
+                                                })
+                                        } else {
+                                            RrhhViajeConductor.create({
+                                                nombre:nombre,
+                                                licencia: req.body.empleado.persona.ci,
+                                                id_empleado: req.body.empleado.id,
+                                                habilitado: true,
+                                                id_tipo_licencia: req.body.empleado.conductor.tipoLicencia.id,
+                                                id_empresa: req.body.empleado.id_empresa
+                                            }).then(function (conductorCreado) {
+                                                guardarDatosFicha(req, res, personaReferenciaCreada, Persona, RrhhEmpleadoFicha, RrhhEmpleadoFichaOtrosSeguros, RrhhEmpleadoFichaFamiliar, RrhhEmpleadoCargo, RrhhEmpleadoDiscapacidad, fichaAnterior)
+                                            })
+                                        }
+                                    })
+                                } else {
+                                    RrhhViajeConductor.find({
+                                        where: { id_empleado: req.body.empleado.id }
+                                    }).then(function (conductor) {
+                                        if (conductor) {
+                                            RrhhViajeConductor.update({
+                                                habilitado: false
+                                            }, {
+                                                    where: { id: conductor.id }
+                                                }).then(function (conductorCreado) {
+                                                    guardarDatosFicha(req, res, personaReferenciaCreada, Persona, RrhhEmpleadoFicha, RrhhEmpleadoFichaOtrosSeguros, RrhhEmpleadoFichaFamiliar, RrhhEmpleadoCargo, RrhhEmpleadoDiscapacidad, fichaAnterior)
+                                                })
+                                        } else {
+                                            guardarDatosFicha(req, res, personaReferenciaCreada, Persona, RrhhEmpleadoFicha, RrhhEmpleadoFichaOtrosSeguros, RrhhEmpleadoFichaFamiliar, RrhhEmpleadoCargo, RrhhEmpleadoDiscapacidad, fichaAnterior)
+                                        }
+                                    })
+                                }
+
                             }).catch(function (err) {
                                 res.json({ mensaje: err.message === undefined ? err.stack : err.message, hasErr: true })
                             });
@@ -583,7 +634,59 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                                     }
                                 }).then(function (medicoPacienteActualizado) {
                                     var personaReferencia = req.body.personaReferencia
-                                    guardarDatosFicha(req, res, personaReferencia, Persona, RrhhEmpleadoFicha, RrhhEmpleadoFichaOtrosSeguros, RrhhEmpleadoFichaFamiliar, RrhhEmpleadoCargo, RrhhEmpleadoDiscapacidad, fichaAnterior)
+                                    if (req.body.empleado.chofer) {
+                                        RrhhViajeConductor.find({
+                                            where: { id_empleado: req.body.empleado.id }
+                                        }).then(function (conductor) {
+                                            if (conductor) {
+                                                var nombre = ""
+                                                if (req.body.empleado.persona.segundo_nombre) {
+                                                    nombre = req.body.empleado.persona.nombres + ' ' + req.body.empleado.persona.segundo_nombre + ' ' + req.body.empleado.persona.apellido_paterno + ' ' + req.body.empleado.persona.apellido_materno
+                                                } else {
+                                                    nombre = req.body.empleado.persona.nombres + ' ' + req.body.empleado.persona.apellido_paterno + ' ' + req.body.empleado.persona.apellido_materno
+                                                }
+                                                RrhhViajeConductor.update({
+                                                    nombre: nombre,
+                                                    licencia: req.body.empleado.persona.ci,
+                                                    id_tipo_licencia: req.body.empleado.conductor.tipoLicencia.id,
+                                                }, {
+                                                        where: { id: conductor.id }
+                                                    }).then(function (conductorCreado) {
+                                                        guardarDatosFicha(req, res, personaReferencia, Persona, RrhhEmpleadoFicha, RrhhEmpleadoFichaOtrosSeguros, RrhhEmpleadoFichaFamiliar, RrhhEmpleadoCargo, RrhhEmpleadoDiscapacidad, fichaAnterior)
+                                                    })
+                                            } else {
+                                              
+                                                RrhhViajeConductor.create({
+                                                    nombre: nombre,
+                                                    licencia: req.body.empleado.persona.ci,
+                                                    id_empleado: req.body.empleado.id,
+                                                    habilitado: true,
+                                                    id_empresa: req.body.empleado.id_empresa,
+                                                    id_tipo_licencia: req.body.empleado.conductor.tipoLicencia.id,
+                                                }).then(function (conductorCreado) {
+                                                    guardarDatosFicha(req, res, personaReferencia, Persona, RrhhEmpleadoFicha, RrhhEmpleadoFichaOtrosSeguros, RrhhEmpleadoFichaFamiliar, RrhhEmpleadoCargo, RrhhEmpleadoDiscapacidad, fichaAnterior)
+                                                })
+                                            }
+                                        })
+                                    } else {
+                                        RrhhViajeConductor.find({
+                                            where: { id_empleado: req.body.empleado.id }
+                                        }).then(function (conductor) {
+                                            if (conductor) {
+                                                RrhhViajeConductor.update({
+                                                    habilitado: false,
+                                                    id_tipo_licencia: req.body.conductor.tipoLicencia.id,
+                                                }, {
+                                                        where: { id: conductor.id }
+                                                    }).then(function (conductorCreado) {
+                                                        guardarDatosFicha(req, res, personaReferencia, Persona, RrhhEmpleadoFicha, RrhhEmpleadoFichaOtrosSeguros, RrhhEmpleadoFichaFamiliar, RrhhEmpleadoCargo, RrhhEmpleadoDiscapacidad, fichaAnterior)
+                                                    })
+                                            } else {
+                                                guardarDatosFicha(req, res, personaReferencia, Persona, RrhhEmpleadoFicha, RrhhEmpleadoFichaOtrosSeguros, RrhhEmpleadoFichaFamiliar, RrhhEmpleadoCargo, RrhhEmpleadoDiscapacidad, fichaAnterior)
+                                            }
+                                        })
+                                    }
+
                                 }).catch(function (err) {
                                     res.json({ mensaje: err.message === undefined ? err.stack : err.message, hasErr: true })
                                 });
@@ -1561,9 +1664,9 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
         })
     router.route('/recursos-humanos/choferes/empresa/:id_empresa')
         .get(function (req, res) {
-            MedicoPaciente.findAll({
-                where: { id_empresa: req.params.id_empresa, chofer: true },
-                include: [{ model: Persona, as: 'persona' }]
+            RrhhViajeConductor.findAll({
+                where: { id_empresa: req.params.id_empresa },
+                include: [{ model: Clase, as: 'tipoLicencia' }]
             }).then(function (dato) {
                 res.json(dato)
             })
@@ -3555,16 +3658,38 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
     router.route('/recursos-humanos/beneficio/ficha/:id')
         .get(function (req, res) {
             RrhhEmpleadoBeneficioSocial.find({
-                where: { id_ficha: req.params.id, fecha_retiro: { $ne: null } },
+                where: { id_ficha: req.params.id, tipo_beneficio: true },
                 include: [{ model: Clase, as: 'motivo' }, { model: Banco, as: 'cuenta' }, { model: RrhhEmpleadoDeduccionIngreso, as: 'deduccionEingresos', include: [{ model: Clase, as: "tipo" }] }]
             }).then(function (beneficio) {
                 res.json({ beneficio: beneficio })
             })
         })
+    router.route('/recursos-humanos/beneficio/empresa/:id_empresa/tipo/:tipo/inicio/:inicio/fin/:fin/motivo/:motivo/pagina/:pagina/items_pagina/:items_pagina/texto_busqueda/:texto_busqueda/columna/:columna/direccion/:direccion')
+        .get(function (req, res) {
+            var condicionBeneficio = { tipo_beneficio: false }
+
+            if (req.params.inicio != 0) {
+                var inicio = new Date(req.params.inicio); inicio.setHours(0, 0, 0, 0, 0);
+                var fin = new Date(req.params.fin); fin.setHours(23, 0, 0, 0, 0);
+                condicionBeneficio.fecha_elaboracion = { $between: [inicio, fin] };
+            }
+            if (req.params.tipo != 0) {
+                condicionBeneficio.tipo_beneficio = true
+            }
+            if (req.params.motivo != 0) {
+                condicionBeneficio.id_motivo = req.params.motivo
+            }
+            RrhhEmpleadoBeneficioSocial.findAndCountAll({
+                where: condicionBeneficio,
+                include: [{ model: RrhhEmpleadoFicha, as: 'ficha', include: [{ model: MedicoPaciente, as: 'empleado', where: { id_empresa: req.params.id_empresa }, include: [{ model: Clase, as: 'extension' }, { model: Persona, as: 'persona', include: [{ model: Clase, as: 'estadoCivil' }] }] }] }, { model: Clase, as: 'motivo' }, { model: Banco, as: 'cuenta' }, { model: RrhhEmpleadoDeduccionIngreso, as: 'deduccionEingresos', include: [{ model: Clase, as: "tipo" }] }]
+            }).then(function (datos) {
+                res.json({ beneficios: datos.rows, paginas: Math.ceil(datos.count / req.params.items_pagina) });
+            })
+        })
     router.route('/recursos-humanos/beneficios/ficha/:id')
         .get(function (req, res) {
             RrhhEmpleadoBeneficioSocial.findAll({
-                where: { id_ficha: req.params.id, fecha_retiro: null }
+                where: { id_ficha: req.params.id, tipo_beneficio: false }
             }).then(function (beneficios) {
                 res.json(beneficios)
             })
@@ -3677,7 +3802,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                         mes_dos: req.body.mes_dos.id,
                         mes_tres: req.body.mes_tres.id,
                     }).then(function (beneficioCreado) {
-                        res.json({ mensaje: 'Beneficio social creado sadisfactoriamente!' })
+                        res.json({ mensaje: 'Beneficio social creado satisfactoriamente!' })
 
                     }).catch(function (err) {
                         res.json({ hasError: true, mensaje: err.stack });
@@ -3757,7 +3882,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                         where: { id: deduccion.id }
                     }).then(function (decuccionEliminada) {
                         if (index === (array.length - 1)) {
-                            res.json({ mensaje: 'Beneficio social actualizado sadisfactoriamente!' })
+                            res.json({ mensaje: 'Beneficio social actualizado satisfactoriamente!' })
                         }
                     }).catch(function (err) {
                         res.json({ hasError: true, mensaje: err.stack });
@@ -3771,7 +3896,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                             where: { id: deduccion.id }
                         }).then(function (decuccionActualizada) {
                             if (index === (array.length - 1)) {
-                                res.json({ mensaje: 'Beneficio social actualizado sadisfactoriamente!' })
+                                res.json({ mensaje: 'Beneficio social actualizado satisfactoriamente!' })
                             }
                         }).catch(function (err) {
                             res.json({ hasError: true, mensaje: err.stack });
@@ -3785,7 +3910,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                         eliminado: false
                     }).then(function (decuccionCreada) {
                         if (index === (array.length - 1)) {
-                            res.json({ mensaje: 'Beneficio social actualizado sadisfactoriamente!' })
+                            res.json({ mensaje: 'Beneficio social actualizado satisfactoriamente!' })
                         }
                     }).catch(function (err) {
                         res.json({ hasError: true, mensaje: err.stack });
@@ -3794,7 +3919,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
 
             });
         } else {
-            res.json({ mensaje: 'Beneficio social creado sadisfactoriamente!' })
+            res.json({ mensaje: 'Beneficio social creado satisfactoriamente!' })
         }
     }
     router.route('/recursos-humanos/bitacora-ficha/usuario/:id')
@@ -3856,7 +3981,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                             where: { id: ropa.id }
                         }).then(function (configuracion) {
                             if (index === (array.length - 1)) {
-                                res.json({ mensaje: "Configuración guardada sadisfactoriamente!" })
+                                res.json({ mensaje: "Configuración guardada satisfactoriamente!" })
                             }
                         })
                     } else {
@@ -3868,14 +3993,14 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                                 where: { id: ropa.id }
                             }).then(function (configuracion) {
                                 if (index === (array.length - 1)) {
-                                    res.json({ mensaje: "Configuración guardada sadisfactoriamente!" })
+                                    res.json({ mensaje: "Configuración guardada satisfactoriamente!" })
                                 }
                             })
                     }
                 } else {
                     if (ropa.eliminado) {
                         if (index === (array.length - 1)) {
-                            res.json({ mensaje: "Configuración guardada sadisfactoriamente!" })
+                            res.json({ mensaje: "Configuración guardada satisfactoriamente!" })
                         }
                     } else {
                         RrhhEmpleadoConfiguracionRopa.create({
@@ -3884,7 +4009,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                             cantidad: ropa.cantidad
                         }).then(function (configuracion) {
                             if (index === (array.length - 1)) {
-                                res.json({ mensaje: "Configuración guardada sadisfactoriamente!" })
+                                res.json({ mensaje: "Configuración guardada satisfactoriamente!" })
                             }
                         })
                     }
@@ -4027,7 +4152,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
             }, {
                     where: { id: req.body.id }
                 }).then(function (eliminado) {
-                    res.json({ mensaje: "Eliminado sadisfactoriamente" })
+                    res.json({ mensaje: "Eliminado satisfactoriamente" })
                 })
         })
     router.route('/recursos-humanos/ropa-trabajo/empleado/:id_empleado/inicio/:inicio/fin/:fin')
@@ -4132,7 +4257,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
             RrhhViajeDetalle.findAndCountAll({
                 where: condicionDetalleViaje,
                 offset: (req.params.items_pagina * (req.params.pagina - 1)), limit: req.params.items_pagina,
-                include: [{ model: Clase, as: 'estado' }, { model: Clase, as: 'campo' }, { model: Clase, as: "tipoViaje" }, { model: RrhhViaje, as: "viaje", where: condicionViaje, include: [{ model: Clase, as: "vehiculo" }, { model: MedicoPaciente, as: "conductor", required: false, include: [{ model: Persona, as: "persona", required: false }] }] },
+                include: [{ model: Clase, as: 'estado' }, { model: Clase, as: 'campo' }, { model: Clase, as: "tipoViaje" }, { model: RrhhViaje, as: "viaje", where: condicionViaje, include: [{ model: Clase, as: "vehiculo" }, { model: RrhhViajeConductor, as: "conductor", required: false }] },
                 { model: Persona, as: "visita", required: false },
                 { model: RrhhEmpleadoFicha, as: "ficha", required: false, include: [{ model: MedicoPaciente, as: "empleado", required: false, include: [{ model: Persona, as: "persona", required: false }] }] }],
                 order: [["id", "asc"]]
@@ -4176,8 +4301,8 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                 where: condicionViaje,
                 offset: (req.params.items_pagina * (req.params.pagina - 1)), limit: req.params.items_pagina,
                 include: [{ model: Clase, as: "vehiculo" },
-                { model: MedicoPaciente, as: "conductor", required: false, include: [{ model: Persona, as: "persona", required: false }] },
-                { model: MedicoPaciente, as: "relevo", required: false, include: [{ model: Persona, as: "persona", required: false }] },
+                { model: RrhhViajeConductor, as: "conductor", required: false, include: [{ model: Clase, as: 'tipoLicencia' }] },
+                { model: RrhhViajeConductor, as: "relevo", required: false, include: [{ model: Clase, as: 'tipoLicencia' }] },
                 { model: RrhhViajeDestino, as: "destinos", include: [{ model: Clase, as: 'destino' }] },
                 {
                     model: RrhhViajeDetalle, as: "viajeDetalles",
@@ -4309,6 +4434,45 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
             res.json({ mensaje: "Creado Satisfactoriamente" })
         }
     }
+    router.route('/recursos-humanos/conductor/empresa/:id_empresa')
+        .post(function (req, res) {
+            req.body.forEach(function (conductor, index, array) {
+                if (conductor.id_empleado) {
+                    if (index === (array.length - 1)) {
+                        res.json({ mensaje: "Agregados satisfactoriamente!" })
+                    }
+                } else {
+                    if (conductor.id) {
+                        RrhhViajeConductor.update({
+                            nombre: conductor.nombre,
+                            licencia: conductor.licencia,
+                            habilitado: conductor.habilitado,
+                            id_empresa: req.params.id_empresa,
+                            id_tipo_licencia: conductor.tipoLicencia.id,
+                        }, {
+                                where: { id: conductor.id }
+                            }).then(function (ConductorActualizado) {
+                                if (index === (array.length - 1)) {
+                                    res.json({ mensaje: "Agregados satisfactoriamente!" })
+                                }
+                            })
+                    } else {
+                        RrhhViajeConductor.create({
+                            nombre: conductor.nombre,
+                            licencia: conductor.licencia,
+                            habilitado: conductor.habilitado,
+                            id_empresa: req.params.id_empresa,
+                            id_tipo_licencia: conductor.tipoLicencia.id,
+                        }).then(function (ConductorCreado) {
+                            if (index === (array.length - 1)) {
+                                res.json({ mensaje: "Agregados satisfactoriamente!" })
+                            }
+                        })
+                    }
+
+                }
+            });
+        });
     //FIN
     /////////////////////////////////////////////////////// RUTAS PARA POLIFUNCIONAL ///////////////////////////////////////////////////
 

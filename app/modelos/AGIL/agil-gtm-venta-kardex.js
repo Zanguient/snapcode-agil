@@ -24,6 +24,10 @@ module.exports = function (sequelize, Sequelize) {
         factura:{
             type: Sequelize.BOOLEAN,
             field: 'factura'
+        },
+        observacion: {
+            type: Sequelize.STRING,
+            field: 'observacion'
         }
     }, {
             freezeTableName: true
