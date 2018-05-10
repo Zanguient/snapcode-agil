@@ -15,9 +15,8 @@ angular.module('agil.controladores')
 		$scope.idModalContenedorUsuarioComisiones = 'modal-wizard-container-usuario-comisiones';
 
 		$scope.usuarioSesion = JSON.parse($localStorage.usuario);
-		$scope.obtenerGruposProductoEmpresa = function () {
-			var promesa = ListaGruposProductoEmpresa($scope.usuarioSesion.id_empresa);
-
+		$scope.obtenerGruposProductoEmpresa = function (id_empresa) {
+			var promesa = ListaGruposProductoEmpresa((id_empresa !== undefined) ? id_empresa : $scope.usuarioSesion.id_empresa);
 			promesa.then(function (grupos) {
 				$scope.gruposProducto = grupos
 				$scope.llenarGrupos(grupos);
@@ -114,35 +113,74 @@ angular.module('agil.controladores')
 			var prom = ObtenerUsuario(usuario.id)
 			prom.then(function (res) {
 				if (res.mensaje == undefined) {
-					$scope.llenarGrupos($scope.gruposProducto)
-					$scope.usuario = res.usuario;
-					// $scope.seleccionarGrupos($scope.usuario.grupos);
-					$scope.rol = res.usuario.rolesUsuario[0].rol;
-					$scope.usuario.sucursales = [];
-					// $scope.sucursales = res.usuario.empresa.sucursales;
-					for (var i = 0; i < $scope.usuario.sucursalesUsuario.length; i++) {
-						$scope.usuario.sucursales.push($scope.usuario.sucursalesUsuario[i].sucursal);
-					}
-					var sucursales;
-					$scope.seleccionarGrupos($scope.usuario.grupos);
-					// //$scope.obtenerGruposProductoEmpresa()
-					if ($scope.usuarioSesion.empresa) {
-						sucursales = $scope.usuarioSesion.empresa.sucursales;
-						$scope.llenarSucursales(sucursales);
-						$scope.seleccionarSucursales($scope.usuario.sucursales);
-						// //$scope.seleccionarGrupos($scope.usuario.grupos);
-						$scope.abrirPopup($scope.idModalWizardUsuarioEdicion);
+					if ($scope.usuarioSesion.id_empresa == null) {
+						var promesa = ListaGruposProductoEmpresa(usuario.id_empresa);
+						promesa.then(function (grupos) {
+							$scope.gruposProducto = grupos
+							$scope.llenarGrupos(grupos);
+							$scope.llenarGrupos($scope.gruposProducto)
+							$scope.usuario = res.usuario;
+							// $scope.seleccionarGrupos($scope.usuario.grupos);
+							$scope.rol = res.usuario.rolesUsuario[0].rol;
+							$scope.usuario.sucursales = [];
+							// $scope.sucursales = res.usuario.empresa.sucursales;
+							for (var i = 0; i < $scope.usuario.sucursalesUsuario.length; i++) {
+								$scope.usuario.sucursales.push($scope.usuario.sucursalesUsuario[i].sucursal);
+							}
+							var sucursales;
+							//subido
+							$scope.seleccionarGrupos($scope.usuario.grupos);
+							// //$scope.obtenerGruposProductoEmpresa()
+							if ($scope.usuarioSesion.empresa) {
+								sucursales = $scope.usuarioSesion.empresa.sucursales;
+								$scope.llenarSucursales(sucursales);
+								$scope.seleccionarSucursales($scope.usuario.sucursales);
+								// //$scope.seleccionarGrupos($scope.usuario.grupos);
+								$scope.abrirPopup($scope.idModalWizardUsuarioEdicion);
+							} else {
+								var promesa = Sucursales(res.usuario.id_empresa);
+								promesa.then(function (datos) {
+									sucursales = datos;
+									$scope.llenarSucursales(sucursales);
+									$scope.seleccionarSucursales($scope.usuario.sucursales);
+									// //$scope.seleccionarGrupos($scope.usuario.grupos);
+									$scope.abrirPopup($scope.idModalWizardUsuarioEdicion);
+								});
+							}
+							blockUI.stop()
+
+						})
 					} else {
-						var promesa = Sucursales(res.usuario.id_empresa);
-						promesa.then(function (datos) {
-							sucursales = datos;
+						$scope.llenarGrupos($scope.gruposProducto)
+						$scope.usuario = res.usuario;
+						// $scope.seleccionarGrupos($scope.usuario.grupos);
+						$scope.rol = res.usuario.rolesUsuario[0].rol;
+						$scope.usuario.sucursales = [];
+						// $scope.sucursales = res.usuario.empresa.sucursales;
+						for (var i = 0; i < $scope.usuario.sucursalesUsuario.length; i++) {
+							$scope.usuario.sucursales.push($scope.usuario.sucursalesUsuario[i].sucursal);
+						}
+						var sucursales;
+						$scope.seleccionarGrupos($scope.usuario.grupos);
+						// //$scope.obtenerGruposProductoEmpresa()
+						if ($scope.usuarioSesion.empresa) {
+							sucursales = $scope.usuarioSesion.empresa.sucursales;
 							$scope.llenarSucursales(sucursales);
 							$scope.seleccionarSucursales($scope.usuario.sucursales);
 							// //$scope.seleccionarGrupos($scope.usuario.grupos);
 							$scope.abrirPopup($scope.idModalWizardUsuarioEdicion);
-						});
+						} else {
+							var promesa = Sucursales(res.usuario.id_empresa);
+							promesa.then(function (datos) {
+								sucursales = datos;
+								$scope.llenarSucursales(sucursales);
+								$scope.seleccionarSucursales($scope.usuario.sucursales);
+								// //$scope.seleccionarGrupos($scope.usuario.grupos);
+								$scope.abrirPopup($scope.idModalWizardUsuarioEdicion);
+							});
+						}
+						blockUI.stop()
 					}
-					blockUI.stop()
 				} else {
 					blockUI.stop()
 					$scope.mostrarMensaje(res.mensaje)
