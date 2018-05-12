@@ -1,0 +1,4 @@
+ALTER TABLE agil_rrhh_detalle_planilla_sueldos DROP FOREIGN KEY agil_rrhh_detalle_planilla_sueldos_ibfk_2;
+ALTER TABLE agil_rrhh_detalle_planilla_sueldos DROP empleado;
+ALTER TABLE agil_rrhh_detalle_planilla_sueldos ADD ficha  int(11);
+ALTER TABLE agil_rrhh_detalle_planilla_sueldos ADD CONSTRAINT agil_rrhh_detalle_planilla_sueldos_ibfk_2 FOREIGN KEY (ficha) REFERENCES agil_rrhh_empleado_ficha (id);

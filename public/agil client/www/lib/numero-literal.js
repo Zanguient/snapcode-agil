@@ -7,7 +7,7 @@ var DECENAS=["diez ", "once ", "doce ", "trece ", "catorce ", "quince ", "diecis
 var CENTENAS=["", "ciento ", "doscientos ", "trecientos ", "cuatrocientos ", "quinientos ", "seiscientos ",
 	"setecientos ", "ochocientos ", "novecientos "]
 
-function ConvertirALiteral(numero) {
+function ConvertirALiteral(numero,tipo) {
 	var mayusculas = true;
 	var literal = "";
 	var parte_decimal;
@@ -22,8 +22,11 @@ function ConvertirALiteral(numero) {
 	if (re.exec(numero)) {
 		//se divide el numero 0000000,00 -> entero y decimal
 		var Num=numero.split(",");
+		if(tipo ==undefined){
+			tipo="Bolivianos"
+		}
 		//de da formato al numero decimal
-		parte_decimal = Num[1] + "/100 Bolivianos.";
+		parte_decimal = Num[1] + "/100 "+tipo+".";
 		//se convierte el numero a literal
 		if (parseInt(Num[0]) == 0) {//si el valor es cero
 			literal = "cero ";

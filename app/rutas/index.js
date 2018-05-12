@@ -104,6 +104,8 @@ module.exports = function (router, sequelize, Sequelize, jwt, md5, forEach, ensu
 	var RRHHParametros = require('../modelos/AGIL/rrhh-parametros')(sequelize, Sequelize);
 	var ConfiguracionCalificacionEvaluacionPolifuncional = require('../modelos/AGIL/configuracion-calificacion-evaluacion')(sequelize, Sequelize);
 	var ConfiguracionDesempenioEvaluacionPolifuncional = require('../modelos/AGIL/configuracion-desempenio-evaluacion')(sequelize, Sequelize);
+	var CuentaTransaccion = require('../modelos/AGIL/cuenta-transaccion')(sequelize, Sequelize);
+	var TransaccionSeguimiento = require('../modelos/AGIL/transaccion-seguimiento')(sequelize, Sequelize)	
 	//entities INV
 	var Inventario = require('../modelos/INV/inventario')(sequelize, Sequelize);
 	var Movimiento = require('../modelos/INV/movimiento')(sequelize, Sequelize);
@@ -136,6 +138,8 @@ module.exports = function (router, sequelize, Sequelize, jwt, md5, forEach, ensu
 	var RrhhEmpleadoHorasExtra = require('../modelos/AGIL/rrhh-empleado-horas-extra')(sequelize, Sequelize);
 	var RRHHPlanillaSueldos = require('../modelos/AGIL/rrhh-planilla-sueldos')(sequelize, Sequelize);
 	var RRHHDetallePlanillaSueldos = require('../modelos/AGIL/rrhh-detalle-planilla-sueldos')(sequelize, Sequelize);
+	var RRHHPlanillaRcIva = require('../modelos/AGIL/rrhh-planilla-rc-iva')(sequelize, Sequelize);
+	var RRHHDetallePlanillaRcIva = require('../modelos/AGIL/rrhh-detalle-planilla-rc-iva')(sequelize, Sequelize);
 	var RrhhAnticipo = require('../modelos/AGIL/rrhh-empleado-anticipo')(sequelize, Sequelize);
 	var RrhhEmpleadoAusencia = require('../modelos/AGIL/rrhh-empleado-ausencia')(sequelize, Sequelize);
 	var RrhhEmpleadoVacaciones = require('../modelos/AGIL/rrhh-empleado-vacaciones')(sequelize, Sequelize);
@@ -157,6 +161,7 @@ module.exports = function (router, sequelize, Sequelize, jwt, md5, forEach, ensu
 	var RrhhViaje = require('../modelos/AGIL/rrhh-viaje')(sequelize, Sequelize);
 	var RrhhViajeDestino = require('../modelos/AGIL/rrhh-viaje-destino')(sequelize, Sequelize);
 	var RrhhViajeConductor= require('../modelos/AGIL/rrhh-viaje-conductor')(sequelize, Sequelize);
+	var GtmDespachoDetalleResivo= require('../modelos/AGIL/agil-gtm-despacho-detalle-resivo')(sequelize, Sequelize);
 	//*****RELATIONS*****
 	require('../modelos/relaciones.js')(sequelize, Usuario, Persona, Rol, UsuarioRol, Tipo, Clase, Aplicacion, RolAplicacion,
 		Empresa, Sucursal, UsuarioSucursal, Cliente, Proveedor, Producto, UsuarioAplicacion,
@@ -175,8 +180,7 @@ module.exports = function (router, sequelize, Sequelize, jwt, md5, forEach, ensu
 		RrhhEmpleadoHojaVida, RrhhEmpleadoFormacionAcademica, RrhhEmpleadoExperienciaLaboral, RrhhEmpleadoLogroInternoExterno, RrhhEmpleadoCapacidadInternaExterna, SolicitudReposicion, DetalleSolicitudProducto, DetalleSolicitudProductoBase, MonedaTipoCambio, ContabilidadCuentaAuxiliar, GtmDespachoDetalle, RrhhEmpleadoPrestamo, RrhhEmpleadoPrestamoPago, Proforma, DetallesProformas, Servicios, Farmacia, RRHHParametros, RrhhEmpleadoRolTurno, RrhhEmpleadoHorasExtra, RRHHPlanillaSueldos, RRHHDetallePlanillaSueldos, RrhhAnticipo, EvaluacionPolifuncional,
 		RrhhEmpleadoAusencia, RrhhEmpleadoVacaciones, RrhhEmpleadoCompensacionAusencia, RrhhClaseAsuencia,RrhhEmpleadoHistorialVacacion,RrhhEmpleadoTr3,RrhhEmpleadoAnticipoTr3,RrhhEmpleadoDeduccionIngreso,
 		RrhhEmpleadoBeneficioSocial,RrhhEmpleadoBitacoraFicha, UsuarioGrupos,RrhhEmpleadoConfiguracionRopa,GtmVentaKardex,GtmVentaKardexDetalle,RrhhEmpleadoDotacionRopaItem,
-		RrhhEmpleadoDotacionRopa,RrhhViajeDetalle,RrhhViaje,RrhhViajeDestino,RrhhViajeConductor);
-
+		RrhhEmpleadoDotacionRopa,RrhhViajeDetalle,RrhhViaje,RrhhViajeDestino,RrhhViajeConductor,TransaccionSeguimiento, CuentaTransaccion,GtmDespachoDetalleResivo, RRHHPlanillaRcIva, RRHHDetallePlanillaRcIva);
 	require('../sockets/pantallas.js')(io, socket);
 	//*****ROUTES*****
 	//SYS
@@ -217,9 +221,11 @@ module.exports = function (router, sequelize, Sequelize, jwt, md5, forEach, ensu
 	require('./rutas-gtm-transportistas')(router, ensureAuthorizedAdministrador, fs, forEach, jwt, md5, GtmTransportista, Persona);
 	require('./rutas-gtm-grupo-estibajes')(router, ensureAuthorizedAdministrador, fs, forEach, jwt, md5, GtmGrupoEstibaje);
 	require('./rutas-gtm-despacho')(router, ensureAuthorizedAdministrador, fs, forEach, jwt, md5, GtmDespacho, GtmDespachoDetalle, Cliente, Usuario, GtmDestino, Producto
-		,GtmTransportista, GtmEstibaje, GtmGrupoEstibaje, Persona, ClienteRazon, sequelize, Inventario, Movimiento, DetalleMovimiento, Tipo, Clase, Diccionario, Sequelize, Sucursal,GtmVentaKardex,GtmVentaKardexDetalle, socket, io);
-
-
+		,GtmTransportista, GtmEstibaje, GtmGrupoEstibaje, Persona, ClienteRazon, sequelize, Inventario, Movimiento, DetalleMovimiento, Tipo, Clase, Diccionario, Sequelize, Sucursal,GtmVentaKardex,GtmVentaKardexDetalle, socket, io,GtmDespachoDetalleResivo,Banco);
+	require('./rutas-transacciones')(router, ensureAuthorizedAdministrador, fs, forEach, jwt, md5, Banco, Clase, TransaccionSeguimiento, CuentaTransaccion, Cliente, ClienteRazon,
+		MedicoPaciente, Persona, sequelize, Proveedor, ProveedorCuenta, Venta, Almacen, Sucursal, PagoVenta, PagoCompra, Compra)
+	
+	
 
 	//INV
 	require('./rutas-inventario')(router, ensureAuthorized, forEach, Compra, DetalleCompra, Almacen, Sucursal, Empresa, sequelize, Sequelize,
@@ -227,7 +233,7 @@ module.exports = function (router, sequelize, Sequelize, jwt, md5, forEach, ensu
 		Cliente, CodigoControl, NumeroLiteral, Diccionario, SucursalActividadDosificacion, Dosificacion,
 		ConfiguracionGeneralFactura, ConfiguracionFactura, PagoVenta, PagoCompra, Usuario, DetalleVentaNoConsolidada, ClienteCuenta, ContabilidadCuenta, ProveedorCuenta, UsuarioGrupos);
 	require('./rutas-salidas')(router, forEach, decodeBase64Image, fs, Empresa, Producto, Proveedor, Cliente, Clase, Inventario, ComisionVendedorProducto, Usuario,
-		DetalleVenta, DetalleMovimiento, Movimiento, Venta, Compra, DetalleCompra, Almacen, Sucursal, signs3, Tipo, VentaReprogramacionPago, UsuarioGrupos);
+		DetalleVenta, DetalleMovimiento, Movimiento, Venta, Compra, DetalleCompra, Almacen, Sucursal, signs3, Tipo, VentaReprogramacionPago, UsuarioGrupos,ProductoBase);
 
 	require('./rutas-mesa')(router, forEach, fs, sequelize, Empresa, Dosificacion, SucursalActividadDosificacion,
 		Sucursal, Clase, Mesa, Sala, PedidoRestaurante, MesaPedidoRestaurante, DetallePedidoRestaurante,

@@ -1,0 +1,1377 @@
+<div class="row">
+    <div class="col-xs-12">
+        <h3 class="header smaller lighter blue">BANCOS</h3>
+
+        <button class="btn btn-primary" ng-click="crearNuevoIngreso()">
+            <i class="ace-icon fa fa-plus align-top bigger-125"></i>
+            Ingreso
+        </button>
+
+        <button class="btn btn-danger" ng-click="crearNuevoEgreso()">
+            <i class="ace-icon fa fa-minus align-top bigger-125"></i>
+            Egreso
+        </button>
+        <a class="btn btn-success" href="#/bancos">
+            <i class="ace-icon fa glyphicon-euro align-top bigger-125"></i>
+            Cuentas
+        </a>
+        <div>
+            <!-- <div class="col-md-7"> -->
+            <form name="formularioFiltroPolifuncionalidad" novalidate ng-submit="filtrarTransacciones(filtro)">
+                <fieldset>
+                    <br>
+                    <legend>Filtro Transacciones</legend>
+                    <table class="table table-striped table-bordered table-hover">
+                        <tbody>
+                            <tr>
+                                <td>
+
+                                </td>
+                                <td>
+                                    <label>Desde</label>
+                                </td>
+                                <td>
+                                    <label>Hasta</label>
+                                </td>
+
+                                <td>
+
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    PERIODO
+                                </td>
+                                <td>
+                                    <input ng-update-hidden type="text" class="date-picker form-control" data-date-format="dd/mm/yyyy" ng-model="filtro.desde">
+                                    <!-- <select required id="mesPolifuncionalidad" name="mesPolifuncionalidad" ng-options="mes as mes.nombre for mes in mesesFiltro track by mes.id"
+                                        ng-model="filtro.mes">
+                                        <option value="" selected>TODOS</option>
+                                    </select> -->
+                                </td>
+                                <td>
+                                    <input ng-update-hidden type="text" class="date-picker form-control" data-date-format="dd/mm/yyyy" ng-model="filtro.hasta">
+                                    <!-- <select required id="anioPolifuncionalidad" name="anioPolifuncionalidad" ng-options="anio as anio.nombre for anio in anios track by anio.id"
+                                        ng-model="filtro.anio">
+                                        <option value="" selected>TODOS</option>
+                                    </select> -->
+                                </td>
+                                <td>
+                                    <div class=" container-fluid">
+                                        <button type="submit" class="btn btn-app btn-primary btn-xs">
+                                            <i class="ace-icon fa fa-search align-top bigger-100"></i>
+                                            Filtrar
+                                        </button>
+                                        <button type="submit" class="btn btn-app btn-danger btn-xs">
+                                            <i class="ace-icon fa fa-print align-top bigger-100"></i>
+                                            PDF
+                                        </button>
+                                        <button type="submit" class="btn btn-app btn-success btn-xs">
+                                            <i class="ace-icon fa fa-print align-top bigger-100"></i>
+                                            Excel
+                                        </button>
+                                    </div>
+                                </td>
+                                <td rowspan="5" colspan="2">
+                                    <div id="sidebar" style='width:100%' class="sidebar">
+                                        <script type="text/javascript">
+                                            try { ace.settings.check('sidebar', 'fixed') } catch (e) { }
+                                            var options = [];
+                                        </script>
+                                        <div class="sidebar-shortcuts-large" id="sidebar-shortcuts-large">
+                                            <div class="container-fluid row">
+                                                <div class="center">
+                                                    <b>ESTADO DE CUENTA</b>
+                                                </div>
+                                                <div class="container-fluid">
+                                                    <div class=" col-md-6">
+                                                        <div class="row">
+                                                            <b>Fondos disponibles</b>
+                                                        </div>
+                                                        <div class="row">
+                                                            <b>Ingresos en tránsito</b>
+                                                        </div>
+                                                        <div class="row">
+                                                            <b>Egresos en tránsito</b>
+                                                        </div>
+                                                        <div class="row">
+                                                            <b>Saldo Final</b>
+                                                        </div>
+                                                        <!-- <div class="row">
+                                                            &nbsp;
+                                                        </div> -->
+                                                        <div class="row">
+                                                            <b>Saldo Pignorado</b>
+                                                        </div>
+                                                    </div>
+                                                    <div class=" col-md-6">
+                                                        <div class="row">
+                                                            <b ng-if="fondosDisponibles >= 0">{{fondosDisponibles | number: 2}}</b>
+                                                            <b ng-if="fondosDisponibles < 0" class="red">{{fondosDisponibles | number: 2}}</b>
+                                                        </div>
+                                                        <div class="row">
+                                                            <b>{{ingresosEnTransito | number: 2}}</b>
+                                                        </div>
+                                                        <div class="row">
+                                                            <b class="red">{{egresosEnTransito*-1 | number: 2}}</b>
+                                                        </div>
+                                                        <div class="row">
+                                                            <b ng-if="saldoFinal >= 0">{{saldoFinal | number: 2}}</b>
+                                                            <b ng-if="saldoFinal < 0" class="red">{{saldoFinal | number: 2}}</b>
+                                                        </div>
+                                                        <!-- <div class="container-fluid row">
+                                                            &nbsp;
+                                                        </div> -->
+                                                        <div class="container-fluid row">
+                                                            <b ng-if="saldoPignorado >= 0"> {{saldoPignorado | number: 2}}</b>
+                                                            <b ng-if="saldoPignorado < 0" class="red"> {{saldoPignorado | number: 2}}</b>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="sidebar-toggle sidebar-collapse" id="sidebar-collapse">
+                                            <i class="ace-icon fa fa-angle-double-up" data-icon1="ace-icon fa fa-angle-double-up" data-icon2="ace-icon fa fa-angle-double-down"></i>
+                                        </div>
+                                        <script type="text/javascript">
+                                            try { ace.settings.check('sidebar', 'collapsed') } catch (e) { }
+                                        </script>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+
+                                </td>
+                                <td>
+                                    <label>Banco/Cta.</label>
+                                </td>
+                                <td>
+                                    <label>Nombre</label>
+                                </td>
+                                <td>
+                                    <label>Concepto</label>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    FILTRO
+                                </td>
+                                <td>
+                                    <!-- <select id="centroCostoPolifuncionalidad" name="centroCostoPolifuncionalidad" ng-options="centroCosto as centroCosto.nombre for centroCosto in centrosCostos track by centroCosto.id"
+                                            ng-model="filtro.centroCosto">
+                                            <option value="" selected>TODOS</option>
+                                        </select> -->
+                                    <select required id="filtro-bancos" name="filtro-bancos" ng-options="banco as (banco.nombre +' '+ banco.numero) for banco in bancos track by banco.id" ng-change="seleccionarCuenta(filtro.cuenta)"
+                                        ng-model="filtro.cuenta">
+                                        <!-- <option value="">TODOS</option> -->
+                                    </select>
+                                </td>
+                                <td>
+                                    <input type="text" name="filtro-nombre" id="filtro-nombre" ng-model="filtro.nombre">
+                                </td>
+                                <td style="max-width: 20%; width: 20%">
+                                    <select style="max-width: 180px;width: 180px" id="filtro-concepto" name="filtro-concepto" ng-options="concepto as concepto.nombre for concepto in concepto track by concepto.id"
+                                        ng-model="filtro.concepto">
+                                        <option value="" selected>TODOS</option>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+
+                                </td>
+                                <td>
+                                    <label>Ref./Doc.</label>
+                                </td>
+                                <td>
+                                    <label>Tipo documento</label>
+                                </td>
+                                <td>
+                                    <label>Estado</label>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td>
+                                    <input type="text" ng-model="filtro.ref_doc">
+                                    <!-- <select id="filtro-ref-doc" name="filtro-ref-doc" ng-options="ref_doc as ref_doc.nombre for ref_doc in ref_documentos track by ref_doc.id"
+                                        ng-model="filtro.ref_doc">
+                                        <option value="" selected>TODOS</option>
+                                    </select> -->
+
+                                </td>
+                                <td>
+                                    <select id="filtro-tipo" name="filtro-tipo" ng-options="tipo_doc as tipo.nombre for tipo in tiposDocumentos track by tipo.id"
+                                        ng-model="filtro.tipo_doc">
+                                        <option value="" selected>TODOS</option>
+                                    </select>
+                                </td>
+                                <td>
+                                    <select id="filtro-estado" name="filtro-estado" ng-options="estado as estado.nombre for estado in estadosTransaccion track by estado.id"
+                                        ng-model="filtro.estado">
+                                        <option value="" selected>TODOS</option>
+                                    </select>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </fieldset>
+            </form>
+        </div>
+
+        <div class="clearfix">
+            <div class="pull-right tableTools-container"></div>
+        </div>
+        <div class="table-header">
+            Lista de Transacciones
+            <style type="text/css" scoped>
+                .dropdown-menu {
+                    min-width: 250px !important;
+                }
+            </style>
+            <label class="pull-right">
+                <div class="col-xs-10" ng-include src="'/templates/gral/fields-viewer.html'"></div>
+            </label>
+        </div>
+        <div id="tabla-transacciones_wrapper" class="dataTables_wrapper form-inline no-footer">
+            <div class="row" ng-include src="'/templates/gral/paginator-header-2.html'">
+            </div>
+            <table id="tabla-bancos" class="table table-striped table-bordered table-hover">
+                <thead>
+                    <tr>
+                        <th class="center">
+                            <label class="pos-rel">
+                                <input type="checkbox" class="ace" />
+                                <span class="lbl"></span>
+                            </label>
+                        </th>
+                        <th class="center" ng-if="fieldViewer.getConfiguration().numero.show">
+                            N°
+                        </th>
+                        <th ng-if="fieldViewer.getConfiguration().fecha.show">Fecha</th>
+                        <th ng-if="fieldViewer.getConfiguration().banco.show">Banco</th>
+                        <th class="hidden-480" ng-if="fieldViewer.getConfiguration().detalle.show">Detalle</th>
+                        <th class="hidden-480" ng-if="fieldViewer.getConfiguration().nombre.show">Nombre</th>
+                        <th ng-if="fieldViewer.getConfiguration().concepto.show">Concepto</th>
+                        <th ng-if="fieldViewer.getConfiguration().observaciones.show">Observaciones</th>
+                        <th ng-if="fieldViewer.getConfiguration().ref_doc.show">Ref./Doc.</th>
+                        <th ng-if="fieldViewer.getConfiguration().tipo_doc.show">Documento</th>
+                        <th ng-if="fieldViewer.getConfiguration().debe.show">Debe</th>
+                        <th ng-if="fieldViewer.getConfiguration().haber.show">Haber</th>
+                        <th ng-if="fieldViewer.getConfiguration().saldo.show">Saldo</th>
+                        <th ng-if="fieldViewer.getConfiguration().estado.show">Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="center">
+                            <label class="pos-rel">
+                                <input type="checkbox" class="ace" />
+                                <span class="lbl"></span>
+                            </label>
+                        </td>
+                        <td class="center" ng-if="fieldViewer.getConfiguration().numero.show">
+                        </td>
+                        <td ng-if="fieldViewer.getConfiguration().fecha.show">
+
+                        </td>
+                        <td ng-if="fieldViewer.getConfiguration().banco.show"></td>
+                        <td ng-if="fieldViewer.getConfiguration().detalle.show">Saldo incial</td>
+                        <td ng-if="fieldViewer.getConfiguration().nombre.show"></td>
+                        <td ng-if="fieldViewer.getConfiguration().concepto.show"></td>
+                        <td ng-if="fieldViewer.getConfiguration().observaciones.show"></td>
+                        <td ng-if="fieldViewer.getConfiguration().ref_doc.show"></td>
+                        <td ng-if="fieldViewer.getConfiguration().tipo_doc.show"></td>
+                        <td ng-if="fieldViewer.getConfiguration().debe.show"></td>
+                        <td ng-if="fieldViewer.getConfiguration().haber.show"></td>
+                        <td ng-if="fieldViewer.getConfiguration().saldo.show">{{saldoInicial | number: 2}}</td>
+                        <td ng-if="fieldViewer.getConfiguration().estado.show"></td>
+                        <td>
+                            <a class="orange" href="javascript:void(0)" e-disabled="!aplicacion.puede_ver" ng-click="ver(transaccion)" data-rel="tooltip"
+                                tooltip-placement="top" uib-tooltip="Ver">
+                                <i class="ace-icon fa fa-file-text bigger-130"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    <tr ng-repeat="transaccion in transacciones">
+                        <td class="center">
+                            <label class="pos-rel">
+                                <input type="checkbox" class="ace" />
+                                <span class="lbl"></span>
+                            </label>
+                        </td>
+                        <td class="center" ng-if="fieldViewer.getConfiguration().numero.show">
+                            {{$index+1}}
+                        </td>
+                        <td ng-if="fieldViewer.getConfiguration().fecha.show">
+                            {{transaccion.fecha | date: 'dd/MM/yyyy'}}
+                        </td>
+                        <td ng-if="fieldViewer.getConfiguration().banco.show">{{transaccion.cuenta.nombre}}</td>
+                        <td ng-if="fieldViewer.getConfiguration().detalle.show">{{transaccion.detalle}}</td>
+                        <td ng-if="fieldViewer.getConfiguration().nombre.show">{{(transaccion.cliente !== null && transaccion.cliente !== undefined)? transaccion.cliente.razon_social:
+                            transaccion.proveedor.razon_social}}
+                        </td>
+                        <td ng-if="fieldViewer.getConfiguration().concepto.show">{{transaccion.concepto.nombre}}</td>
+                        <td ng-if="fieldViewer.getConfiguration().observaciones.show">{{transaccion.observaciones}}</td>
+                        <td ng-if="fieldViewer.getConfiguration().ref_doc.show">{{transaccion.ref_doc}}</td>
+                        <td ng-if="fieldViewer.getConfiguration().tipo_doc.show">{{transaccion.tipo_documento.nombre}}</td>
+                        <td ng-if="fieldViewer.getConfiguration().debe.show">{{transaccion.debe | number: 2}}</td>
+                        <td ng-if="fieldViewer.getConfiguration().haber.show">{{transaccion.haber | number: 2}}</td>
+                        <td ng-if="fieldViewer.getConfiguration().saldo.show">
+                            <div class="red" ng-if="transaccion.saldo < 0">
+                                    {{transaccion.saldo | number: 2}}
+                                <!-- <div ng-if="$index > 0">
+                                    <div ng-if="transaccion.haber*0 === 0">
+                                        {{transaccion.saldo + transacciones[$index-1].saldo | number: 2}}
+                                    </div>
+                                    <div ng-if="transaccion.debe*0 === 0">
+                                        {{transaccion.saldo - transacciones[$index-1].saldo | number: 2}}</div>
+                                </div>
+                                <div ng-if="$index == 0">
+                                    {{transaccion.saldo | number: 2}}
+                                </div> -->
+                            </div>
+                            <div ng-if="transaccion.saldo >= 0">
+                                <!-- <div ng-if="$index > 0">
+                                    {{transaccion.saldo + transacciones[$index-1].saldo | number: 2}}
+                                </div>
+                                <div ng-if="$index == 0">
+                                    {{transaccion.saldo | number: 2}}
+                                </div> -->
+                                {{transaccion.saldo | number: 2}}
+                            </div>
+                        </td>
+                        <td ng-if="fieldViewer.getConfiguration().estado.show">{{transaccion.estado.nombre}}</td>
+                        <td>
+                            <div class="hidden-sm hidden-xs action-buttons">
+                                <a ng-if="transaccion.haber && !transaccion.debe" class="orange" e-disabled="!aplicacion.puede_ver" href="javascript:void(0)" ng-click="abrirModalVerIngreso(transaccion)" data-rel="tooltip"
+                                    tooltip-placement="top" uib-tooltip="Ver">
+                                    <i class="ace-icon fa fa-file-text bigger-130"></i>
+                                </a>
+                                <a ng-if="transaccion.debe && !transaccion.haber" class="orange" e-disabled="!aplicacion.puede_ver" href="javascript:void(0)" ng-click="abrirModalVerEgreso(transaccion)" data-rel="tooltip"
+                                    tooltip-placement="top" uib-tooltip="Ver">
+                                    <i class="ace-icon fa fa-file-text bigger-130"></i>
+                                </a>
+                                <a ng-if="transaccion.saldo && !transaccion.debe && !transaccion.haber" class="orange" e-disabled="!aplicacion.puede_ver" href="javascript:void(0)" ng-click="abrirModalVerIngreso(transaccion)" data-rel="tooltip"
+                                    tooltip-placement="top" uib-tooltip="Ver">
+                                    <i class="ace-icon fa fa-file-text bigger-130"></i>
+                                </a>
+                                <a ng-if="transaccion.seguimientos[0].black" href="javascript:void(0)" ng-click="seguimiento(transaccion)" data-rel="tooltip"
+                                    tooltip-placement="top" uib-tooltip="Seguimiento">
+                                    <img src="/img/hand-black.png" alt="" height="15" width="20">
+                                </a>
+
+                                <a ng-if="transaccion.seguimientos[0].yellow" href="javascript:void(0)" ng-click="seguimiento(transaccion)" data-rel="tooltip"
+                                    tooltip-placement="top" uib-tooltip="Seguimiento">
+                                    <img src="/img/hand-yellow.png" alt="" height="15" width="20">
+                                </a>
+
+                                <a ng-if="transaccion.seguimientos[0].green" href="javascript:void(0)" ng-click="seguimiento(transaccion)" data-rel="tooltip"
+                                    tooltip-placement="top" uib-tooltip="Seguimiento">
+                                    <img src="/img/hand-green.png" alt="" height="15" width="20">
+                                </a>
+
+                                <a href="javascript:void(0)" class="bg-silver img-circle" ng-if="transaccion.estado.nombre === 'EN TRÁNSITO'" ng-click="estadoConfirmado(transaccion)"
+                                    data-rel="tooltip" tooltip-placement="top" uib-tooltip="Confirmar"> &nbsp;
+                                    <i class="ace-icon fa fa-thumbs-up white"></i> &nbsp;
+                                </a>
+
+                                <a href="javascript:void(0)" class="bg-green img-circle" ng-if="transaccion.estado.nombre === 'CONFIRMADO'" data-rel="tooltip"
+                                    tooltip-placement="top" uib-tooltip="Confirmado">
+                                    &nbsp;
+                                    <i class="ace-icon fa fa-thumbs-up white"></i> &nbsp;
+                                </a>
+
+                                <a href="javascript:void(0)" class="green" ng-if="!transaccion.revisado" ng-click="abrirModalRevision(transaccion)" data-rel="tooltip"
+                                    tooltip-placement="top" uib-tooltip="Cerrar">
+                                    <i class="ace-icon fa fa-unlock bigger-130"></i>
+                                </a>
+
+                                <a href="javascript:void(0)" class="red" ng-if="transaccion.revisado" data-rel="tooltip" tooltip-placement="top" uib-tooltip="Cerrado">
+                                    <i class="ace-icon fa fa-lock bigger-130"></i>
+                                </a>
+                            </div>
+
+                            <!-- <div class="hidden-md hidden-lg">
+                                <div class="inline pos-rel">
+                                    <button class="btn btn-minier btn-yellow dropdown-toggle" data-toggle="dropdown" data-position="auto">
+                                        <i class="ace-icon fa fa-caret-down icon-only bigger-120"></i>
+                                    </button>
+
+                                    <ul class="dropdown-menu dropdown-only-icon dropdown-yellow dropdown-menu-right dropdown-caret dropdown-close">
+                                        <li>
+                                            <a href="javascript:void(0)" e-disabled="!aplicacion.puede_ver" ng-click="verBanco(banco)" class="tooltip-info" data-rel="tooltip"
+                                                title="View">
+                                                <span class="blue">
+                                                    <i class="ace-icon fa fa-search-plus bigger-120"></i>
+                                                </span>
+                                            </a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)" e-disabled="!aplicacion.puede_modificar" ng-click="modificarBanco(banco)" class="tooltip-success"
+                                                data-rel="tooltip" title="Edit">
+                                                <span class="green">
+                                                    <i class="ace-icon fa fa-pencil-square-o bigger-120"></i>
+                                                </span>
+                                            </a>
+                                        </li>
+
+                                        <li>
+                                            <a href="javascript:void(0)" e-disabled="!aplicacion.puede_eliminar" ng-click="mostrarConfirmacionEliminacion(banco)" class="tooltip-error"
+                                                data-rel="tooltip" title="Delete">
+                                                <span class="red">
+                                                    <i class="ace-icon fa fa-trash-o bigger-120"></i>
+                                                </span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div> -->
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <!-- <div class="row">
+                <div class="col-xs-6">
+                    <div class="dataTables_info" id="tabla-productos_info" role="status" aria-live="polite">Mostrando página {{paginaActual}} de {{paginas.length}}</div>
+                    <div class="dataTables_info" id="tabla-productos_info" role="status" aria-live="polite">Mostrando página {{cotizacion}} de {{cotizaciones.length}}</div>
+                </div>
+                <div class="col-xs-6">
+                    <div class="dataTables_paginate paging_simple_numbers" id="tabla-productos_paginate">
+                        <ul class="pagination">
+                            <li class="paginate_button previous" aria-controls="tabla-productos" tabindex="0" id="tabla-productos_previous">
+                                <a href="javascript:void(0)" ng-click="buscarBancos(1,itemsPorPagina,textoBusqueda)">Primero</a>
+                            </li>
+                            <li class="paginate_button previous" ng-class="{disabled:paginaActual==1}" aria-controls="tabla-productos" tabindex="0" id="tabla-productos_previous">
+                                <a href="javascript:void(0)" e-disabled="paginaActual==1" ng-click="buscarBancos(paginaActual-1,itemsPorPagina,textoBusqueda)">
+                                    <<</a>
+                            </li>
+                            <li class="paginate_button" ng-class="{active:paginaActual==pagina}" aria-controls="tabla-productos" tabindex="0" ng-repeat="pagina in paginas"
+                                ng-if="abs(paginaActual-pagina)<4">
+                                <a href="javascript:void(0)" ng-click="buscarBancos(pagina,itemsPorPagina,textoBusqueda)">{{pagina}}</a>
+                            </li>
+                            <li class="paginate_button" ng-class="{disabled:paginaActual==paginas.length}" aria-controls="tabla-productos" tabindex="0"
+                                id="tabla-productos_next">
+                                <a href="javascript:void(0)" e-disabled="paginaActual==paginas.length" ng-click="buscarBancos(paginaActual+1,itemsPorPagina,textoBusqueda)">>></a>
+                            </li>
+                            <li class="paginate_button previous" aria-controls="tabla-productos" tabindex="0" id="tabla-productos_previous">
+                                <a href="javascript:void(0)" ng-click="buscarBancos(paginas.length,itemsPorPagina,textoBusqueda)">Ultimo</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div> -->
+        </div>
+        <div class="row" ng-include src="'/templates/gral/paginator.html'" ng-if="transacciones.length > 0">
+        </div>
+    </div>
+</div>
+
+<div id="modal-wizard-seguimiento" class="modal wizard-posicion">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form ng-submit="guardarSeguimiento(transaccion)">
+                <div class="modal-header bg-blue">
+                    <h2 class="center">SEGUIMIENTO</h2>
+                </div>
+                <div class="modal-body">
+                    <div class="container-fluid">
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <b>Proveedor</b>
+                                    <label>
+                                        <input name="switch-field-1" tabindex="-1" ng-model="transaccion.seguimientos[0].proveedor" class="ace ace-switch ace-switch-4 ng-pristine ng-untouched ng-valid ng-empty"
+                                            type="checkbox">
+                                        <span class="lbl check-descuento"></span>
+                                    </label>
+                                </div>
+                                <div class="col-md-6">
+                                    <!-- <label>
+                                        <input type="checkbox" class="ace" ng-model="seguimiento.proveedor" />
+                                        <span class="lbl"></span>
+                                    </label> -->
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div ng-if="!transaccion.seguimientos[0].proveedor" class="row">
+                                <div class="col-md-6">
+                                    <b>Entregado por:</b>
+                                    <select style="max-width: 180px;width: 180px" name="seguimiento-entregado" ng-model="transaccion.seguimientos[0].entregado_por"
+                                        ng-options="empleado as empleado.persona.nombre_completo for empleado in empleados track by empleado.id">
+                                        <option disabled value="">Seleccion personal</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <b>Devuelto a:</b>
+                                    <select ng-disabled="transaccion.seguimientos[0].id_entregado == null" style="max-width: 180px;width: 180px" name="seguimiento-devuelto"
+                                        ng-model="transaccion.seguimientos[0].devuelto_a" ng-options="empleado as empleado.persona.nombre_completo for empleado in empleados track by empleado.id">
+                                        <option disabled value="">Seleccion personal</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div ng-if="transaccion.seguimientos[0].proveedor" class="row">
+                                <div class="col-md-6">
+                                    <b>Entregado por:</b>
+                                    <select name="seguimiento-entregado" ng-model="transaccion.seguimientos[0].entregado_por" ng-options="empleado as empleado.persona.nombre_completo for empleado in empleados track by empleado.id">
+                                        <option disabled value="">Seleccion personal</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <!-- <b>Devuelto</b>
+                                        <select name="banco" ng-model="ingreso.banco" ng-options="banco as banco.nombre for banco in bancos track by banco.id">
+                                            <option disabled value="">Seleccione un devuelto</option>
+                                        </select> -->
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div ng-if="!transaccion.seguimientos[0].proveedor" class="row">
+                                <div class="col-md-6">
+                                    <b>Fecha entrega &nbsp; &nbsp; &nbsp; &nbsp; </b>
+                                    <br>
+                                    <b ng-if="transaccion.seguimientos[0].fecha_entrega" class="green">{{transaccion.seguimientos[0].fecha_entrega | date: dd/mm/yyyy}}</b>
+                                    <b ng-if="!transaccion.seguimientos[0].fecha_entrega" class="red">{{fecha_hoy | date: dd/mm/yyyy}}</b>
+                                    <!-- <input autocomplete="off" class="date-picker" type="text" ng-update-hidden data-date-format="dd/mm/yyyy" name="fecha" ng-model="segumiento.fecha" disabled> -->
+                                </div>
+                                <div class="col-md-6">
+                                    <b>Fecha devolución &nbsp; &nbsp; &nbsp; &nbsp; </b>
+                                    <br>
+                                    <b ng-if="transaccion.seguimientos[0].fecha_devolucion" class="green">{{transaccion.seguimientos[0].fecha_devolucion | date: dd/mm/yyyy}}</b>
+                                    <b ng-if="!transaccion.seguimientos[0].fecha_devolucion" class="red">{{fecha_hoy | date: dd/mm/yyyy}}</b>
+                                    <!-- <input autocomplete="off" class="date-picker" type="text" ng-update-hidden data-date-format="dd/mm/yyyy" name="fecha" ng-model="segumiento.fecha" disabled> -->
+                                </div>
+                            </div>
+                            <div ng-if="transaccion.seguimientos[0].proveedor" class="row">
+                                <div class="col-md-6">
+                                    <b>Fecha entrega &nbsp; &nbsp; &nbsp; &nbsp; </b>
+                                    <br>
+                                    <b ng-if="transaccion.seguimientos[0].fecha_entrega" class="green">{{transaccion.seguimientos[0].fecha_entrega | date: dd/mm/yyyy}}</b>
+                                    <b ng-if="!transaccion.seguimientos[0].fecha_entrega" class="red">{{fecha_hoy | date: dd/mm/yyyy}}</b>
+                                    <!-- <input autocomplete="off" class="date-picker" type="text" ng-update-hidden data-date-format="dd/mm/yyyy" name="fecha" ng-model="segumiento.fecha" disabled> -->
+                                </div>
+                                <div class="col-md-6">
+                                    <!-- <b>Fecha devuelto &nbsp; &nbsp; &nbsp; &nbsp; </b>
+                                    <br>
+                                    <b ng-if="transaccion.seguimiento.fecha_devuelto">{{transaccion.seguimiento.fecha_devuelto | date: dd/mm/yyyy}}</b>
+                                    <b ng-if="!transaccion.seguimiento.fecha_devuelto">{{transaccion.seguimiento.fecha_nueva_devuelto | date: dd/mm/yyyy}}</b> -->
+                                    <!-- <input autocomplete="off" class="date-picker" type="text" ng-update-hidden data-date-format="dd/mm/yyyy" name="fecha" ng-model="segumiento.fecha" disabled> -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer wizard-actions">
+                    <button type="submit" class="btn btn-primary">GUARDAR</button>
+                    <button type="button" ng-click="cerrarModalSeguimiento()" class="btn btn-danger pull-left">SALIR</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div id="modal-wizard-revision" class="modal wizard-posicion">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form ng-submit="guardarRevision()">
+                <div class="modal-header bg-blue">
+                    <h2 class="center">REVISADO</h2>
+                </div>
+                <div class="modal-body">
+                    <div class="container-fluid">
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <b>Observaciones &nbsp; &nbsp; &nbsp; &nbsp; </b>
+                                    <input autocomplete="off" type="text" ng-model="transaccion.observaciones">
+                                </div>
+                                <div class="col-md-6">
+                                    <!-- <input class="date-picker" type="text" ng-update-hidden data-date-format="dd/mm/yyyy" name="fecha" ng-model="segumiento.fecha"> -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer wizard-actions">
+                    <button type="submit" class="btn btn-success">GUARDAR</button>
+                    <button type="button" ng-click="cerrarModalRevision()" class="btn btn-danger pull-left">SALIR</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div id="modal-wizard-nuevo-ingreso" class="modal wizard-posicion">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form ng-submit="guardarIngreso(ingreso)">
+                <div class="modal-header bg-blue">
+                    <h2 class="center">REGISTRAR INGRESO</h2>
+                </div>
+                <div class="modal-body">
+                    <div class="container-fluid">
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <b>Fecha</b>
+                                </div>
+                                <div class="col-md-6">
+                                    <div hidden>
+                                        <input type="text" class="date-picker" name="escondido" autofocus>
+                                    </div>
+                                    <div ng-if="ingreso.fecha != undefined">
+                                        <input ng-update-hidden type="text" name="fecha" data-date-format="dd/mm/yyyy" autocomplete="off" class="date-picker" ng-model="ingreso.fecha">
+                                    </div>
+                                    <div ng-if="ingreso.fecha == undefined">
+                                        <input ng-update-hidden type="text" name="fecha" data-date-format="dd/mm/yyyy" autocomplete="off" class="date-picker" ng-model="ingreso.fecha">
+                                        <!-- <input class="date-picker" ng-model="ingreso.fecha" ng-update-hidden type="text" name="fecha" data-date-format="dd/mm/yyyy"> -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <b>Concepto</b>
+                                </div>
+                                <div class="col-md-6">
+                                    <select required ng-model="ingreso.concepto" ng-options="concepto.id as concepto.nombre for concepto in conceptosTransaccion track by concepto.id" ng-change="verificarConcepto(ingreso)">
+                                        <option disabled value="">Seleccione concepto</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <b>Banco</b>
+                                </div>
+                                <div class="col-md-6">
+                                    <select name="banco" required ng-model="ingreso.cuenta" ng-options="banco.id as (banco.nombre + ' ' + banco.numero) for banco in bancos track by banco.id">
+                                        <option disabled value="">Seleccione un banco</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group" ng-if="showSelecccionCliente(ingreso)">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <b>Nombre</b>
+                                </div>
+                                <div class="col-md-6" style="max-width: 200px; width: 200px">
+                                    <select style="max-width: 180px;width: 180px" ng-model="ingreso.venta" ng-options="venta as (venta.cliente.razon_social + ' - Factura N° '+ venta.factura + ' - SALDO = ' + venta.saldo) for venta in vencimientosCobros track by venta.id"
+                                        ng-change="establecerConceptoIngreso(ingreso)">
+                                        <option disabled value="">Seleccione una credito de cliente</option>
+                                    </select>
+                                    <!-- <input type="text" name="nombre" ng-model="ingreso.cliente.persona.nombre">
+                                        <a href="javascript:void(0)" ng-click="abrirModalVencimientoCreditos()">
+                                            <i class="green fa fa-money bigger-200"></i>
+                                        </a> -->
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <b>Detalle</b>
+                                </div>
+                                <div class="col-md-6">
+                                    <input type="text" name="detalle" ng-model="ingreso.detalle">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <b>Observación</b>
+                                </div>
+                                <div class="col-md-6">
+                                    <input type="text" name="observacion" ng-model="ingreso.observacion">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <b>Ref./Doc.</b>
+                                </div>
+                                <div class="col-md-6">
+                                    <input type="number" name="ref_doc" ng-model="ingreso.ref_doc">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <b>Tipo</b>
+                                </div>
+                                <div class="col-md-6">
+                                    <select ng-model="ingreso.tipo_doc" ng-options="tipo.id as tipo.nombre for tipo in tiposDocumentos track by tipo.id">
+                                        <option value="">Seleccione tipo de documento</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <b>Monto</b>
+                                </div>
+                                <div class="col-md-6">
+                                    <input type="number" step="0.01" name="monto" ng-model="ingreso.haber" max="{{ingreso.venta.saldo}}">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer wizard-actions">
+                    <button type="submit" class="btn btn-success">INGRESAR</button>
+                    <button type="button" class="btn-primary img-circle">
+                        <b class="bigger-170">></b>
+                    </button>
+                    <button type="button" ng-click="cerrarModalNuevoIngreso()" class="btn btn-danger pull-left">SALIR</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div id="modal-wizard-ver-ingreso" class="modal wizard-posicion">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form ng-submit="cerrarModalVerIngreso()">
+                <div class="modal-header bg-blue">
+                    <h2 class="center">REGISTRO DE INGRESO</h2>
+                </div>
+                <div class="modal-body">
+                    <div class="container-fluid">
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <b>Fecha</b>
+                                </div>
+                                <div class="col-md-6">
+                                    <div hidden>
+                                        <input type="text" class="date-picker" name="escondido" autofocus>
+                                    </div>
+                                    <div>
+                                        <input disabled ng-update-hidden type="text" name="fecha" data-date-format="dd/mm/yyyy" autocomplete="off" class="date-picker"
+                                            ng-model="ingreso.fecha">
+                                    </div>
+                                    <!-- <div ng-if="ingreso.fecha == undefined">
+                                            <input disabled ng-update-hidden type="text" name="fecha" data-date-format="dd/mm/yyyy" autocomplete="off" class="date-picker" ng-model="ingreso.fecha">
+                                        </div> -->
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <b>Concepto</b>
+                                </div>
+                                <div class="col-md-6">
+                                    <select disabled ng-model="ingreso.concepto" ng-options="concepto.id as concepto.nombre for concepto in conceptosTransaccion track by concepto.id">
+                                        <option disabled value="">Seleccione concepto</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <b>Banco</b>
+                                </div>
+                                <div class="col-md-6">
+                                    <select name="banco" disabled ng-model="ingreso.cuenta" ng-options="banco.id as (banco.nombre + ' ' + banco.numero) for banco in bancos track by banco.id">
+                                        <option disabled value="">Seleccione un banco</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <b>Nombre</b>
+                                </div>
+                                <div class="col-md-6">
+                                    <select disabled ng-model="ingreso.venta" ng-options="venta as (venta.cliente.razon_social + ' - Factura N° '+ venta.factura + ' - Saldo ' + venta.saldo) for venta in vencimientosCreditos track by venta.id"
+                                        ng-change="establecerConceptoIngreso(ingreso)">
+                                        <option disabled value="">Seleccione una credito de cliente</option>
+                                    </select>
+                                    <!-- <input type="text" name="nombre" ng-model="ingreso.cliente.persona.nombre">
+                                            <a href="javascript:void(0)" ng-click="abrirModalVencimientoCreditos()">
+                                                <i class="green fa fa-money bigger-200"></i>
+                                            </a> -->
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <b>Detalle</b>
+                                </div>
+                                <div class="col-md-6">
+                                    <input disabled type="text" name="detalle" ng-model="ingreso.detalle">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <b>Observación</b>
+                                </div>
+                                <div class="col-md-6">
+                                    <input disabled type="text" name="observacion" ng-model="ingreso.observacion">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <b>Ref./Doc.</b>
+                                </div>
+                                <div class="col-md-6">
+                                    <input disabled type="number" name="ref_doc" ng-model="ingreso.ref_doc">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <b>Tipo</b>
+                                </div>
+                                <div class="col-md-6">
+                                    <select disabled ng-model="ingreso.tipo_doc" ng-options="tipo.id as tipo.nombre for tipo in tiposDocumentos track by tipo.id">
+                                        <option value="">Seleccione tipo de documento</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <b>Monto</b>
+                                </div>
+                                <div class="col-md-6">
+                                    <input disabled type="number" step="0.01" name="monto" ng-model="ingreso.haber">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer wizard-actions">
+                    <!-- <button type="submit" class="btn btn-success">INGRESAR</button> -->
+                    <button type="button" class="btn-primary img-circle">
+                        <b class="bigger-170">></b>
+                    </button>
+                    <button type="button" ng-click="cerrarModalVerIngreso()" class="btn btn-danger pull-left">SALIR</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div id="modal-wizard-nuevo-egreso" class="modal wizard-posicion">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form ng-submit="guardarEgreso(egreso)">
+                <div class="modal-header bg-red">
+                    <h2 class="center">REGISTRAR EGRESO</h2>
+                </div>
+                <div class="modal-body">
+                    <div class="container-fluid">
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <b>Fecha</b>
+                                </div>
+                                <div class="col-md-6">
+                                    <div hidden>
+                                        <input type="text" class="date-picker" name="escondido" autofocus>
+                                    </div>
+                                    <div ng-if="egreso.fecha != undefined">
+                                        <input autocomplete="off" class="date-picker" ng-model="egreso.fecha" ng-update-hidden type="text" name="fecha" data-date-format="dd/mm/yyyy">
+                                    </div>
+                                    <div ng-if="egreso.fecha == undefined">
+                                        <input class="date-picker" ng-model="egreso.fecha" ng-update-hidden type="text" name="fecha" data-date-format="dd/mm/yyyy">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <b>Concepto</b>
+                                </div>
+                                <div class="col-md-6">
+                                    <select required ng-model="egreso.concepto" ng-options="concepto.id as concepto.nombre for concepto in conceptosTransaccion track by concepto.id">
+                                        <option disabled value="">Seleccione concepto</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <b>Banco</b>
+                                </div>
+                                <div class="col-md-6">
+                                    <select name="banco" ng-model="egreso.cuenta" ng-options="banco.id as (banco.nombre + ' ' + banco.numero) for banco in bancos track by banco.id">
+                                        <option disabled value="">Seleccione un banco</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <b>Nombre</b>
+                                </div>
+                                <div class="col-md-6">
+                                    <select ng-model="egreso.compra" ng-options="compra as (compra.proveedor.razon_social + ' - Factura N° '+ compra.factura + ' - Saldo ' + compra.saldo) for compra in vencimientosDeudas track by compra.id"
+                                        ng-change="establecerConceptoEgreso(egreso)">
+                                        <option disabled value="">Seleccione una deuda a proveedor</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <b>Detalle</b>
+                                </div>
+                                <div class="col-md-6">
+                                    <input type="text" name="detalle" ng-model="egreso.detalle">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <b>Observación</b>
+                                </div>
+                                <div class="col-md-6">
+                                    <input type="text" name="observacion" ng-model="egreso.observacion">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <b>Ref./Doc.</b>
+                                </div>
+                                <div class="col-md-6">
+                                    <input type="number" name="ref_doc" ng-model="egreso.ref_doc">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <b>Tipo</b>
+                                </div>
+                                <div class="col-md-6">
+                                    <select ng-model="egreso.tipo_doc" ng-options="tipo.id as tipo.nombre for tipo in tiposDocumentos track by tipo.id">
+                                        <option value="">Seleccione tipo de documento</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <b>Monto</b>
+                                </div>
+                                <div class="col-md-6">
+                                    <input type="number" step="0.01" name="monto" ng-model="egreso.debe">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer wizard-actions">
+                    <button type="submit" class="btn btn-success">INGRESAR</button>
+                    <button type="button" ng-click="cerrarModalNuevoEgreso()" class="btn btn-danger pull-left">SALIR</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div id="modal-wizard-ver-egreso" class="modal wizard-posicion">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form ng-submit="cerrarModalVerEgreso()">
+                <div class="modal-header bg-red">
+                    <h2 class="center">REGISTRO DE EGRESO</h2>
+                </div>
+                <div class="modal-body">
+                    <div class="container-fluid">
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <b>Fecha</b>
+                                </div>
+                                <div class="col-md-6">
+                                    <div hidden>
+                                        <input disabled type="text" class="date-picker" name="escondido" autofocus>
+                                    </div>
+                                    <div ng-if="egreso.fecha != undefined">
+                                        <input disabled autocomplete="off" class="date-picker" ng-model="egreso.fecha" ng-update-hidden type="text" name="fecha"
+                                            data-date-format="dd/mm/yyyy">
+                                    </div>
+                                    <div ng-if="egreso.fecha == undefined">
+                                        <input disabled class="date-picker" ng-model="egreso.fecha" ng-update-hidden type="text" name="fecha" data-date-format="dd/mm/yyyy">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <b>Concepto</b>
+                                </div>
+                                <div class="col-md-6">
+                                    <select disabled ng-model="egreso.concepto" ng-options="concepto.id as concepto.nombre for concepto in conceptosTransaccion track by concepto.id">
+                                        <option disabled value="">Seleccione concepto</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <b>Banco</b>
+                                </div>
+                                <div class="col-md-6">
+                                    <select name="banco" disabled ng-model="egreso.cuenta" ng-options="banco.id as (banco.nombre + ' ' + banco.numero) for banco in bancos track by banco.id">
+                                        <option disabled value="">Seleccione un banco</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <b>Nombre</b>
+                                </div>
+                                <div class="col-md-6">
+                                    <select disabled ng-model="egreso.compra" ng-options="compra as (compra.proveedor.razon_social + ' - Factura N° '+ compra.factura + ' - Saldo ' + compra.saldo) for compra in vencimientosDeudas track by compra.id"
+                                        ng-change="establecerConceptoEgreso(egreso)">
+                                        <option disabled value="">Seleccione una deuda a proveedor</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <b>Detalle</b>
+                                </div>
+                                <div class="col-md-6">
+                                    <input disabled type="text" name="detalle" ng-model="egreso.detalle">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <b>Observación</b>
+                                </div>
+                                <div class="col-md-6">
+                                    <input disabled type="text" name="observacion" ng-model="egreso.observacion">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <b>Ref./Doc.</b>
+                                </div>
+                                <div class="col-md-6">
+                                    <input disabled type="number" name="ref_doc" ng-model="egreso.ref_doc">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <b>Tipo</b>
+                                </div>
+                                <div class="col-md-6">
+                                    <select disabled ng-model="egreso.tipo_doc" ng-options="tipo.id as tipo.nombre for tipo in tiposDocumentos track by tipo.id">
+                                        <option value="">Seleccione tipo de documento</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <b>Monto</b>
+                                </div>
+                                <div class="col-md-6">
+                                    <input disabled type="number" step="0.01" name="monto" ng-model="egreso.debe">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer wizard-actions">
+                    <button type="button" ng-click="cerrarModalVerEgreso()" class="btn btn-danger pull-left">SALIR</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div id="tabla-vencimiento-creditos-transaciones">
+    <div>
+        <div class="table-header" align="center">
+            Vencimiento Creditos
+        </div>
+
+    </div>
+    <div class="modal-body">
+        <div class="table-fixed-header">
+            <table class="table table-striped table-bordered table-hover ">
+                <thead fix-head class="table-head-color">
+                    <tr>
+                        <!-- <th class="center">
+                            <label>
+                                <input type="checkbox" class="ace" ng-model="venta.seleccionada" />
+                                <span class="lbl"></span>
+                            </label>
+                        </th> -->
+                        <th>Nº</th>
+                        <th>Razón Social Cliente</th>
+                        <th>Factura</th>
+                        <th>Fecha Vencimiento</th>
+                        <th>Saldo</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="venta in vencimientosCreditos">
+                        <!-- <td class="center">
+                            <label>
+                                <input type="checkbox" class="ace" ng-model="venta.seleccionada" />
+                                <span class="lbl"></span>
+                            </label>
+                        </td> -->
+                        <td>{{$index+1}}</td>
+                        <td>{{venta.cliente.razon_social}}</td>
+                        <td>{{venta.factura}}</td>
+                        <td>{{venta.fecha_vencimiento | date:"dd/MM/yyyy"}}
+                            <span class="red" ng-if="venta.fecha_anterior"> - ({{venta.fecha_anterior | date:"dd/MM/yyyy" }})</span>
+                        </td>
+                        <td>{{venta.saldo|number:2}}</td>
+                        <td>
+                            <a class="red" href="javascript:void(0)" ng-click="seleccionarCredito(venta)">
+                                <i class="ace-icon fa fa-calendar bigger-130">Seleccionar</i>
+                            </a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="modal-footer">
+
+        <!-- <button class="btn btn-primary" type="button" ng-click="imprimirListaVencimientoCreditos(vencimientosCreditos)">
+            <i class="ace-icon fa fa-print align-top bigger-125"></i>Imprimir
+        </button> -->
+
+        <button class="btn btn-danger" type="button" ng-click="cerrarModalVencimientoCreditos()">
+            <i class="ace-icon fa fa-times red2 align-top bigger-125"></i>Cancelar
+        </button>
+    </div>
+</div>
+
+<!-- <div id="modal-wizard-banco" class="modal wizard-posicion">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form ng-submit="saveForm(banco)">
+                <div id="modal-wizard-container-banco-edicion">
+                    <div class="modal-header">
+                        <ul class="steps">
+                            <li data-step="1" class="active">
+                                <span class="step">1</span>
+                                <span class="title">Datos del Banco</span>
+                            </li>
+                            <li data-step="2">
+                                <span class="step">2</span>
+                                <span class="title">Datos Adicionales</span>
+                            </li>
+                            <li data-step="3">
+                                <span class="step">3</span>
+                                <span class="title">Finalización</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="modal-body step-content">
+                        <div class="step-pane active" data-step="1">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label no-padding-right" for="nombre">Nombre</label>
+
+                                <div class="col-sm-9">
+                                    <input required type="text" id="nombre" ng-model="banco.nombre" placeholder="nombre" class="col-xs-10 col-sm-5" />
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label no-padding-right" for="numero">Número</label>
+
+                                <div class="col-sm-9">
+                                    <input required type="text" id="numero" ng-model="banco.numero" placeholder="numero" class="form-control" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="step-pane" data-step="2">
+                            <div class="form-group">
+                                <label class="control-label col-xs-12 col-sm-3 no-padding-right">Tipo de Cuenta</label>
+
+                                <div class="col-xs-12 col-sm-9">
+                                    <select required id="tipoCuenta" name="tipoCuenta" ng-model="banco.tipoCuenta" ng-options="tipoCuenta as tipoCuenta.nombre for tipoCuenta in tiposCuenta track by tipoCuenta.id"
+                                        data-placeholder="Click para escoger"></select>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="control-label col-xs-12 col-sm-3 no-padding-right">Tipo de Moneda</label>
+
+                                <div class="col-xs-12 col-sm-9">
+                                    <select required id="tipoMoneda" name="tipoMoneda" ng-model="banco.tipoMoneda" ng-options="tipoMoneda as tipoMoneda.nombre for tipoMoneda in tiposMoneda track by tipoMoneda.id"
+                                        data-placeholder="Click para escoger"></select>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="step-pane" data-step="3">
+                            <div class="center">
+                                <h4 class="blue">Finalizacion</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer wizard-actions">
+                    <button class="btn btn-sm btn-prev">
+                        <i class="ace-icon fa fa-arrow-left"></i>
+                        Anterior
+                    </button>
+
+                    <button type="submit" id="siguiente" class="btn btn-success btn-sm btn-next" data-last="Finish">
+                        Siguiente
+                        <i class="ace-icon fa fa-arrow-right icon-on-right"></i>
+                    </button>
+
+                    <button type="button" class="btn btn-danger btn-sm pull-left" data-dismiss="modal" ng-click="cerrarPopPupNuevoBanco()">
+                        <i class="ace-icon fa fa-times"></i>
+                        Cancelar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div> -->
+<!-- PAGE CONTENT ENDS -->
+
+<!-- <div id="modal-wizard-banco-vista" class="modal wizard-posicion">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div id="modal-wizard-container-banco-vista">
+                <div class="modal-header">
+                    <ul class="steps">
+                        <li data-step="1" class="active">
+                            <span class="step">1</span>
+                            <span class="title">Datos del Banco</span>
+                        </li>
+                        <li data-step="2">
+                            <span class="step">2</span>
+                            <span class="title">Datos Adicionales</span>
+                        </li>
+                        <li data-step="3">
+                            <span class="step">3</span>
+                            <span class="title">Finalización</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="modal-body step-content">
+                    <div class="step-pane active" data-step="1">
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label no-padding-right" for="nombre">Nombre</label>
+
+                            <div class="col-sm-9">
+                                <input disabled required type="text" id="nombre" ng-model="banco.nombre" placeholder="nombre" class="col-xs-10 col-sm-5"
+                                />
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label no-padding-right" for="numero">Número</label>
+
+                            <div class="col-sm-9">
+                                <input disabled required type="text" id="numero" ng-model="banco.numero" placeholder="numero" class="form-control" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="step-pane" data-step="2">
+                        <div class="form-group">
+                            <label class="control-label col-xs-12 col-sm-3 no-padding-right">Tipo de Cuenta</label>
+
+                            <div class="col-xs-12 col-sm-9">
+                                <select disabled required id="tipoCuenta" name="tipoCuenta" ng-model="banco.tipoCuenta" ng-options="tipoCuenta as tipoCuenta.nombre for tipoCuenta in tiposCuenta track by tipoCuenta.id"
+                                    data-placeholder="Click para escoger"></select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label col-xs-12 col-sm-3 no-padding-right">Tipo de Moneda</label>
+
+                            <div class="col-xs-12 col-sm-9">
+                                <select disabled required id="tipoMoneda" name="tipoMoneda" ng-model="banco.tipoMoneda" ng-options="tipoMoneda as tipoMoneda.nombre for tipoMoneda in tiposMoneda track by tipoMoneda.id"
+                                    data-placeholder="Click para escoger"></select>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="step-pane" data-step="3">
+                        <div class="center">
+                            <h4 class="blue">Finalizacion</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer wizard-actions">
+                <button class="btn btn-sm btn-prev">
+                    <i class="ace-icon fa fa-arrow-left"></i>
+                    Anterior
+                </button>
+
+                <button type="submit" id="siguiente" class="btn btn-success btn-sm btn-next" data-last="Finish">
+                    Siguiente
+                    <i class="ace-icon fa fa-arrow-right icon-on-right"></i>
+                </button>
+
+                <button type="button" class="btn btn-danger btn-sm pull-left" data-dismiss="modal" ng-click="cerrarPopPupNuevoBanco()">
+                    <i class="ace-icon fa fa-times"></i>
+                    Cancelar
+                </button>
+            </div>
+        </div>
+    </div>
+</div> -->
+
+<!-- <div id="dialog-eliminar-banco" title="¿Eliminación de Banco?">
+  <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>¿Esta seguro de eliminar el Banco seleccionado?</p>
+  <button type="button" class="btn btn-danger" ng-click="eliminarBanco(banco)">Si</button>
+  <button type="button" class="btn btn-success"  ng-click="cerrarConfirmacionEliminacion()">No</button>
+</div> -->

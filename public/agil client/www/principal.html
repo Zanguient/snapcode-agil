@@ -2783,13 +2783,13 @@
 											<label>FECHA</label>
 											<input class="form-control date-picker" disabled type="text" data-date-format="dd/mm/yyyy" id="fecha_FActura_PRoforma" ng-update-hidden
 											 ng-model="facturaProformas.fecha_factura">
-											 <label>Movimiento</label>
-											<select disabled required class="form-control" id="movimiento" name="movimiento" ng-model="facturaProformas.movimiento" data-placeholder="Click para escoger" ng-change="obtenerTipoEgreso(facturaProformas.movimiento)"
-											 ng-options="movimiento as movimiento.nombre for movimiento in movimientosEgreso track by movimiento.id">
+											<label>Movimiento</label>
+											<select disabled required class="form-control" id="movimiento" name="movimiento" ng-model="facturaProformas.movimiento" data-placeholder="Click para escoger"
+											 ng-change="obtenerTipoEgreso(facturaProformas.movimiento)" ng-options="movimiento as movimiento.nombre for movimiento in movimientosEgreso track by movimiento.id">
 											</select>
 											<label>TIPO DE PAGO</label>
-											<select class="form-control" data-validate="validate(required)" required id="pago" name="pago" ng-model="facturaProformas.tipoPago" data-placeholder="Elija un tipo de pago"
-											 ng-change="cambiarTipoPago(facturaProformas)" ng-options="tipoPago as tipoPago.nombre for tipoPago in tiposPago track by tipoPago.id">
+											<select class="form-control" data-validate="validate(required)" required id="pago" name="pago" ng-model="facturaProformas.tipoPago"
+											 data-placeholder="Elija un tipo de pago" ng-change="cambiarTipoPago(facturaProformas)" ng-options="tipoPago as tipoPago.nombre for tipoPago in tiposPago track by tipoPago.id">
 											</select>
 											<span class="red">(*)</span>
 										</td>
@@ -2815,7 +2815,7 @@
 									</tr>
 									<tr ng-if="tipoEgreso==diccionario.EGRE_FACTURACION || tipoEgreso==diccionario.EGRE_PROFORMA">
 										<td ng-if="!esContado">
-											<label >DIAS</label>
+											<label>DIAS</label>
 											<input required type="number" min="1" name="dias" ng-model="facturaProformas.dias_credito" />
 											<span class="red">(*)</span>
 											<span class="invalid-message" ng-show="formularioFacturarProforma.dias.$dirty && formularioFacturarProforma.dias.$invalid">
@@ -2823,22 +2823,23 @@
 											</span>
 										</td>
 										<td ng-if="!esContado">
-											<label >SUJETO A CF</label>
+											<label>SUJETO A CF</label>
 											<input disabled type="number" step="0.001" ng-model="facturaProformas.importe" />
 										</td>
 									</tr>
 									<tr ng-if="tipoEgreso==diccionario.EGRE_FACTURACION || tipoEgreso==diccionario.EGRE_PROFORMA">
 										<td ng-if="!esContado">
-											<label >A CUENTA (Bs)</label>
-											<input min="0" name="acuenta" required type="number" step="0.001" ng-model="facturaProformas.a_cuenta" value="0.0" ng-change="calcularSaldoFacturaProforma(facturaProformas)"/>
+											<label>A CUENTA (Bs)</label>
+											<input min="0" name="acuenta" required type="number" step="0.001" ng-model="facturaProformas.a_cuenta" value="0.0" ng-change="calcularSaldoFacturaProforma(facturaProformas)"
+											/>
 											<span class="red">(*)</span>
 											<span class="invalid-message" ng-show="formularioFacturarProforma.acuenta.$dirty && formularioFacturarProforma.acuenta.$invalid">
 												Debe especificar un valor numérico mayor o igual a 0.
 											</span>
 										</td>
 										<td ng-if="!esContado">
-											<label >SALDO</label>
-											<input disabled type="number" step="0.001" ng-model="facturaProformas.saldo"/>
+											<label>SALDO</label>
+											<input disabled type="number" step="0.001" ng-model="facturaProformas.saldo" />
 										</td>
 									</tr>
 								</table>

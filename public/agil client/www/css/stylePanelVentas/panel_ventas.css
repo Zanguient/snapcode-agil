@@ -242,6 +242,7 @@
 .swiper-wrapper{
 	width: 1137px !important;
 }
+
 .no-skin .sidebar-toggle>.ace-icon {
     border-color: #e3403d;
     color: #fff;
@@ -394,7 +395,15 @@ h2.ssb-title {
 /*#807e7e === gris === */
 
 @media only screen and (min-width: 600px) {
-
+    .productos-button {
+        width: 180px!important;
+        margin-right: 20px !important;
+        margin-top: 20px !important;
+        /* border-width: 10px !important; */
+    }
+    .swiper-wrapper{
+        width: 999px !important;
+    }
 }
 
 @media (min-width: 768px) and (max-width: 1030px) {
@@ -409,6 +418,13 @@ h2.ssb-title {
     	height: 65px !important;
     	font-size: 12.5px !important;
 	}
+    
+    .productos-button {
+        width: 170px!important;
+        margin-right: 15px !important;
+        margin-top: 15px !important;
+        /* border-width: 10px !important; */
+    }
 }
 
 #dialog-pago {

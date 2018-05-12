@@ -15,7 +15,7 @@ module.exports=function(sequelize,Sequelize){
 	  id_tipo_cuenta: {
 		type: Sequelize.INTEGER,
 		field: 'tipo_cuenta'
-	  },
+		},
 	  id_tipo_moneda: {
 		type: Sequelize.INTEGER,
 		field: 'tipo_moneda'

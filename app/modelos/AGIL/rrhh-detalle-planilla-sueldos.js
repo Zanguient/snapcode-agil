@@ -4,9 +4,9 @@ module.exports=function(sequelize,Sequelize){
 			type: Sequelize.INTEGER,
 			field: 'planilla'
 		},
-		empleado: {
+		ficha: {
 			type: Sequelize.INTEGER,
-			field: 'empleado'
+			field: 'ficha'
 		},
 		importe_sueldo_basico:{
 	        type: Sequelize.DECIMAL(20,4),

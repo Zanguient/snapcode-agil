@@ -1,9 +1,14 @@
-function ejecutarScriptDespacho(idModalAsignacionFactura, idModalVentaKardexFactura, idModalAsignacionFacturaKardex, idModalDetalleKardex,IdModalVerificarCuenta) {
+function ejecutarScriptDespacho(idModalAsignacionFactura, idModalVentaKardexFactura, idModalAsignacionFacturaKardex, idModalDetalleKardex,IdModalVerificarCuenta,
+	IdModalCobros,IdModalHistorialCobros) {
 
 	crearPopup(idModalVentaKardexFactura, "80%", 'auto');
 	crearPopup(idModalAsignacionFactura, "auto", 'auto');
 	crearPopup(idModalDetalleKardex, "auto", 'auto')
-	crearPopup(idModalAsignacionFacturaKardex, "auto", 'auto')
+	crearPopup(idModalAsignacionFacturaKardex, "auto", 'auto')	
+	crearPopup(IdModalCobros, "50%", 'auto');
+	crearPopup(IdModalHistorialCobros, "50%", 'auto');
+
+
 	crearPopup(IdModalVerificarCuenta, "auto", 'auto');
 }
 
@@ -29,11 +34,14 @@ function ejecutarScriptsPolifuncionalidad(modalNuevaEvaluacion, modalNuevaEvalua
 	aplicarWizardFormulario(modalParametrosPolifuncionalidad, modalParametrosPolifuncionalidadWizard);
 }
 
-function ejecutarScriptsTransacciones(modalNuevoIngreso, modalNuevoEgreso, modalSeguimiento, modalRevision) {
+function ejecutarScriptsTransacciones(modalNuevoIngreso, modalNuevoEgreso, modalSeguimiento, modalRevision, modalVencimientoCreditos, modalVerIngreso, modalVerEgreso) {
 	crearPopup(modalNuevoIngreso, "auto", "auto");
 	crearPopup(modalNuevoEgreso, "auto", "auto");
 	crearPopup(modalSeguimiento, "auto", "auto");
 	crearPopup(modalRevision, "auto", "auto");
+	crearPopup(modalVencimientoCreditos, "auto", "auto");
+	crearPopup(modalVerIngreso, "auto", "auto");
+	crearPopup(modalVerEgreso, "auto", "auto");
 	// aplicarWizardFormulario(idModalWizardDestinoEdicion, idContenedorEdicionDestino);
 }
 
@@ -143,7 +151,7 @@ function ejecutarScriptsInicio(idPopupTablaProductos, idPopupTablaCreditos, idPo
 	crearPopup(IdModalLibroMayor, "70%", "auto");
 	crearPopup(IdModalAsignarCuenta, "30%", 270);
 	setTimeout(function name(params) {
-		crearPopup(idModalTablaDespachos, "90%", "auto");
+		crearPopup(idModalTablaDespachos, screen.width, screen.height);
 		crearPopup(idModalTablaAsignacionDespacho, "auto", "auto");
 		aplicarDatePickers();
 
@@ -1285,11 +1293,15 @@ function sumaFecha(d, fecha) {
 
 function aplicarSwiper(slidesPerView, slidesPerColumn, paginationClickable, spaceBetween) {
 	var swiper = new Swiper('.swiper-container', {
-		//pagination: '.swiper-pagination',
-		slidesPerView: slidesPerView,
+	
+		// slidesPerView: slidesPerView,
+		// slidesPerColumn: slidesPerColumn,
+		// paginationClickable: paginationClickable,
+		// spaceBetween: spaceBetween
 		slidesPerColumn: slidesPerColumn,
 		paginationClickable: paginationClickable,
-		spaceBetween: spaceBetween
+		slidesPerView: 'auto',
+      	spaceBetween: 30,
 	});
 }
 function editar_fecha(fecha, intervalo, dma, simbolo) {

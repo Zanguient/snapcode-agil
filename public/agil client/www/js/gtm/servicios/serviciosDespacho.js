@@ -243,4 +243,20 @@ angular.module('agil.servicios')
 		};
 		return res;
 	}])
-	
+	.factory('GtmDespachoResivo', function ($resource) {
+		return $resource(restServer + "gtm-despacho-detalle-resivo/:id_despacho", null,
+			{
+				'update': { method: 'PUT' }
+			});
+	}).factory('CrearDespachoResivo', ['GtmDespachoResivo', '$q', function (GtmDespachoResivo, $q) {
+		var res = function (idDespacho, datos) {
+			var delay = $q.defer();
+			GtmDespachoResivo.save({ id_despacho: idDespacho }, datos, function (entidad) {
+				delay.resolve(entidad);
+			}, function (error) {
+				delay.reject(error);
+			});
+			return delay.promise;
+		};
+		return res;
+	}])

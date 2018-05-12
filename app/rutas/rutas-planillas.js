@@ -322,7 +322,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, RRHHParametros
 			    importe_total_descuento:req.body.importeTotalDescuento,
 			    importe_liquido_pagable:req.body.importeLiquidoPagable
 			}).then(function(planillaCreado){
-				console.log("planillaCreado =============== ", planillaCreado);
+				// console.log("planillaCreado =============== ", planillaCreado);
 				
 				// for para guardar los detalles de las planillas ==================
 				planillas.RecursosHumanosEmpleados.forEach(function (detallePlanilla, index, array) {
@@ -336,7 +336,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, RRHHParametros
     function CrearDetallePlanillaSueldos(planilla, detallePlanilla) {
     	RRHHDetallePlanillaSueldos.create({
     		planilla: planilla.id,
-			empleado: detallePlanilla.id,
+			ficha: detallePlanilla.id_ficha,
 			importe_sueldo_basico:detallePlanilla.sueldoBasico,
 			horas_extras: detallePlanilla.horasExtras,
 			importe_horas_extras: detallePlanilla.totalHorasExtras,

@@ -694,7 +694,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 									promesa.then(function (dato) {
 										$scope.mostrarMensaje(dato.message)
 									})
-								}
+						}
 							}
 						}
 					});
@@ -1961,13 +1961,16 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 									proforma.detallesProformas.map(function (det, y) {
 										det.tc = proforma.tc
 										if (y === proforma.detallesProformas.length - 1) {
+											$scope.mostrarMensaje('Por favor espere... El tiempo de espera varia según la cantidad de proformas que desea facturar y la cantidad de detalles.')
 											Array.prototype.push.apply($scope.facturaProformas.detallesVenta, proforma.detallesProformas);
 											$timeout(function () {
 												$scope.abrirPopup($scope.facturarProformas)
-											}, 800)
+											}, (5000))
 
 										}
 									})
+								}).catch(function (err) {
+									
 								})
 								$scope.dolarActual = $scope.obtenerCambioDolarActual()
 
@@ -2962,8 +2965,15 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 			return editar_fecha(fecha, intervalo, dma, simbolo)
 		}
 
-		$scope.inicio = function () {
+		Date.prototype.getWeekNumber = function () {
+			var d = new Date(+this);  //Creamos un nuevo Date con la fecha de "this".
+			d.setHours(0, 0, 0, 0);   //Nos aseguramos de limpiar la hora.
+			d.setDate(d.getDate() + 4 - (d.getDay() || 7)); // Recorremos los días para asegurarnos de estar "dentro de la semana"
+			//Finalmente, calculamos redondeando y ajustando por la naturaleza de los números en JS:
+			return Math.ceil((((d - new Date(d.getFullYear(), 0, 1)) / 8.64e7) + 1) / 7);
+		};
 
+		$scope.inicio = function () {
 			$scope.loadData();
 			$rootScope.abs = $window.Math.abs;
 			if ($localStorage.usuario) {
@@ -2978,7 +2988,4 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 				$scope.abrirPopup($scope.idModalInicioSesion);
 			}
 		}
-
-
-
 	});

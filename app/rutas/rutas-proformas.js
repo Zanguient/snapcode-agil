@@ -1100,6 +1100,8 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
                             }).then(function (detallesReestablecidos) {
                                 res.json({ mensaje: 'Operación correcta.' })
                             })
+                    }).catch(function (err) {
+                        res.json({mensaje: err.stack})
                     })
             }
         })

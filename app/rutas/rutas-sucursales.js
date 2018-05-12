@@ -134,6 +134,8 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Sucu
 				cotizacion_correlativo: req.body.cotizacion_correlativo,
 				pre_factura_correlativo: req.body.pre_factura_correlativo,
 				despacho_correlativo: req.body.despacho_correlativo,
+				despacho_recivo_correlativo: req.body.despacho_recivo_correlativo,
+				ropa_trabajo_correlativo: req.body.ropa_trabajo_correlativo,
 				comprobante_ingreso_correlativo: req.body.comprobante_ingreso_correlativo,
 				comprobante_egreso_correlativo: req.body.comprobante_egreso_correlativo,
 				comprobante_traspaso_correlativo: req.body.comprobante_traspaso_correlativo,

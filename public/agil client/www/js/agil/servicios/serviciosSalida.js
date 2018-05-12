@@ -22,15 +22,15 @@ angular.module('agil.servicios')
 	}])
 	
 	.factory('BusquedaProductosEmpresaUsuario', function($resource) {
-		return $resource(restServer+"productos/empresa/:idEmpresa/texto/:texto/user/:id_usuario");
+		return $resource(restServer+"productos/empresa/:idEmpresa/texto/:texto/user/:id_usuario/almacen/:id_almacen");
 })
 
 .factory('ListaProductosEmpresaUsuario', ['BusquedaProductosEmpresaUsuario','$q',function(BusquedaProductosEmpresaUsuario, $q) 
   {
-	var res = function(idEmpresa,texto, id_usuario) 
+	var res = function(idEmpresa,texto, id_usuario, id_almacen) 
 	{
 		var delay = $q.defer();
-		BusquedaProductosEmpresaUsuario.query({idEmpresa:idEmpresa,texto:texto, id_usuario: id_usuario},function(entidades) 
+		BusquedaProductosEmpresaUsuario.query({idEmpresa:idEmpresa,texto:texto, id_usuario: id_usuario, id_almacen: id_almacen},function(entidades) 
 		{        
 			delay.resolve(entidades);
 		}, function(error) 

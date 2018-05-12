@@ -296,7 +296,7 @@ angular.module('agil.controladores')
 		$scope.buscarProductoLectorBarra = function (query) {
 			blockUI.start()
 			if (query != "" && query != undefined) {
-				var promesa = ListaProductosEmpresaUsuario($scope.usuario.id_empresa, query, $scope.usuario.id);
+				var promesa = ListaProductosEmpresaUsuario($scope.usuario.id_empresa, query, $scope.usuario.id, $scope.venta.almacen.id);
 				promesa.then(function (datos) {
 					if (datos.length == 1) {
 						$scope.establecerProducto(datos[0])

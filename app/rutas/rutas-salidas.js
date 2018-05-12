@@ -1,5 +1,5 @@
 module.exports=function(router,forEach,decodeBase64Image,fs,Empresa,Producto,Proveedor,Cliente,Clase,Inventario,ComisionVendedorProducto,
-						Usuario,DetalleVenta,DetalleMovimiento,Movimiento,Venta,Compra,DetalleCompra,Almacen,Sucursal,signs3,Tipo,VentaReprogramacionPago, UsuarioGrupos){
+						Usuario,DetalleVenta,DetalleMovimiento,Movimiento,Venta,Compra,DetalleCompra,Almacen,Sucursal,signs3,Tipo,VentaReprogramacionPago, UsuarioGrupos, ProductoBase){
 
 router.route('/productos/empresa/:id_empresa/texto/:texto')
 	.get(function(req, res) {
@@ -16,7 +16,7 @@ router.route('/productos/empresa/:id_empresa/texto/:texto')
 		});
 	});
 
-	router.route('/productos/empresa/:id_empresa/texto/:texto/user/:id_usuario')
+	router.route('/productos/empresa/:id_empresa/texto/:texto/user/:id_usuario/almacen/:id_almacen')
 	.get(function(req, res) {
 		UsuarioGrupos.findAll({
 			where: {id_usuario: req.params.id_usuario}
@@ -24,6 +24,7 @@ router.route('/productos/empresa/:id_empresa/texto/:texto')
 			var gurposUsuario = grupos.map(function (grupo) {
 				return grupo.id_grupo
 			})
+
 			Producto.findAll({ 
 				where: {
 					id_empresa:req.params.id_empresa,
@@ -32,12 +33,32 @@ router.route('/productos/empresa/:id_empresa/texto/:texto')
 						  {codigo:{$like:'%'+req.params.texto+'%'}},
 						  {codigo_fabrica:{$like:'%'+req.params.texto+'%'}},
 						  {descripcion:{$like:'%'+req.params.texto+'%'}}]},
-				include:[{model:Clase,as:'tipoProducto'}]
+				include:[
+				{model:Clase,as:'tipoProducto'},
+				{
+					model: ProductoBase, as: 'productosBase', required: false,
+					include: [{
+						model: Producto, as: 'productoBase', required: false,
+						include: [{ model: Inventario, as: 'inventarios', required: false, where: { id_almacen: req.params.id_almacen, cantidad: { $gte: 0 } } },
+						{ model: Clase, as: 'tipoProducto' },
+						{
+							model: ProductoBase, as: 'productosBase', required: false,
+							include: [{
+								model: Producto, as: 'productoBase', required: false,
+								include: [{ model: Inventario, as: 'inventarios', required: false, where: { id_almacen: req.params.id_almacen, cantidad: { $gte: 0 } } },
+								{ model: Clase, as: 'tipoProducto' }]
+							}]
+						}]
+					}]
+				}
+				]
 			}).then(function(productos){
 				res.json(productos);		  
 			});
 		})
 	});
+
+	
 	
 router.route('/inventarios/producto/:id_producto/almacen/:id_almacen')
 	.get(function(req, res) {

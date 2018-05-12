@@ -122,6 +122,10 @@ module.exports = function (sequelize, Sequelize) {
 			type: Sequelize.INTEGER,
 			field: 'despacho_correlativo'
 		},
+		despacho_recivo_correlativo: {
+			type: Sequelize.INTEGER,
+			field: 'despacho_recivo_correlativo'
+		},
 		ropa_trabajo_correlativo: {
 			type: Sequelize.INTEGER,
 			field: 'ropa_trabajo_correlativo'

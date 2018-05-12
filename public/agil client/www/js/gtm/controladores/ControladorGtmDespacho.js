@@ -2,9 +2,10 @@ angular.module('agil.controladores')
 
     .controller('ControladorGtmDespacho', function ($scope, $localStorage, $location, $templateCache, $route, blockUI, Paginator, FieldViewer,
         GtmDespachos, GtmDetalleDespacho, GetGtmDetalleDespachoHijos, ImprimirPdfDespachos, ExportarExelDespachos, ListaDetalleKardexFactura, GtmDetalleDespachoKardex,
-        VerificarUsuarioEmpresa) {
+        VerificarUsuarioEmpresa, CrearDespachoResivo, ClasesTipo, ListaBancos, ClasesTipoEmpresa) {
 
         blockUI.start();
+
 
         $scope.usuario = JSON.parse($localStorage.usuario);
         $scope.idModalAsignacionFactura = 'modal-asignacion-factura';
@@ -12,18 +13,24 @@ angular.module('agil.controladores')
         $scope.idModalAsignacionFacturaKardex = "modal-asignacion-factura-kardex"
         $scope.idModalDetalleKardex = "modal-detalle-kardex"
         $scope.IdModalVerificarCuenta = 'modal-verificar-cuenta';
+        $scope.IdModalCobros = 'modal-cobros';
+        $scope.IdModalHistorialCobros = 'modal-historial-cobros'
         $scope.usuario = JSON.parse($localStorage.usuario);
 
         $scope.$on('$viewContentLoaded', function () {
             resaltarPestaña($location.path().substring(1));
             ejecutarScriptDespacho($scope.idModalAsignacionFactura, $scope.idModalVentaKardexFactura, $scope.idModalAsignacionFacturaKardex, $scope.idModalDetalleKardex,
-                $scope.IdModalVerificarCuenta);
+                $scope.IdModalVerificarCuenta, $scope.IdModalCobros, $scope.IdModalHistorialCobros);
             $scope.buscarAplicacion($scope.usuario.aplicacionesUsuario, $location.path().substring(1));
         });
 
 
         $scope.inicio = function () {
             $scope.obtenerDespachados();
+            $scope.obtenerTiposPagoResivo()
+            $scope.obtenerCuentasBancos()
+            $scope.obtenerOtrosBancos()
+            $scope.verDatosCobroDespachos = false
         }
 
         /*  $scope.obtenerDespachados = function () {
@@ -32,7 +39,14 @@ angular.module('agil.controladores')
                  $scope.despachos = despachos;
              });
          } */
-
+        $scope.obtenerTiposPagoResivo = function () {
+            blockUI.start();
+            var promesa = ClasesTipo("GTM_TP");
+            promesa.then(function (entidad) {
+                $scope.tiposPagosResivo = entidad.clases;
+                blockUI.stop();
+            });
+        }
         $scope.obtenerDespachados = function () {
             blockUI.start();
             $scope.paginator = Paginator();
@@ -73,6 +87,15 @@ angular.module('agil.controladores')
             promesa.then(function (dato) {
                 $scope.paginator.setPages(dato.paginas);
                 $scope.despachos = dato.detallesDespacho;
+                $scope.totalesDespachos = { producto: 0, servicio_transporte: 0, total: 0 }
+                $scope.despachos.forEach(function (despacho, index, array) {
+                    $scope.totalesDespachos.producto += despacho.producto.precio_unitario * despacho.cantidad_despacho
+                    $scope.totalesDespachos.servicio_transporte += despacho.servicio_transporte
+                    if (index === (array.length - 1)) {
+                        $scope.totalesDespachos.total = $scope.totalesDespachos.producto + $scope.totalesDespachos.servicio_transporte
+                    }
+
+                })
                 blockUI.stop();
             });
         }
@@ -514,7 +537,7 @@ angular.module('agil.controladores')
         }
         $scope.establecerFacturaKardex = function (detalle_kardex) {
             GtmDetalleDespachoKardex.update({ id_detalle_kardex: detalle_kardex.id }, detalle_kardex, function (res) {
-                
+
                 $scope.obtenerVentaKardexFactura($scope.filtroVentaKardex)
                 $scope.cerrarAsignacionFacturaKardex();
                 $scope.mostrarMensaje(res.mensaje);
@@ -544,10 +567,54 @@ angular.module('agil.controladores')
                 $scope.detalleKardexFactura = dato
             })
         }
+        $scope.CalcularMontoEnDolar = function (detalle_despacho) {
+            if (detalle_despacho.resivo.tipo_moneda) {
+                detalle_despacho.resivo.monto = detalle_despacho.resivo.monto_dolar
+            } else {
+                detalle_despacho.resivo.maxmonto_dolar = detalle_despacho.saldo_pago_ac / detalle_despacho.resivo.cambio_moneda
+                detalle_despacho.resivo.monto = detalle_despacho.resivo.monto_dolar * detalle_despacho.resivo.cambio_moneda
+            }
+        }
+        $scope.montoDolar = function (detalle_despacho) {
+            detalle_despacho.resivo.monto_dolar = detalle_despacho.resivo.monto
+        }
+        $scope.abrirModalCobros = function (detalle_despacho) {
+            $scope.detalle_despacho = detalle_despacho
+            var factura = ($scope.detalle_despacho.factura) ? $scope.detalle_despacho.factura : ""
+            $scope.detalle_despacho.resivo = {
+                tipo_moneda: true,
+                monto_dolar: 0,
+                cambio_moneda: 6.9,
+                fecha: $scope.fechaATexto(new Date()),
+                tipoPago: $scope.tiposPagosResivo[0],
+                eliminado: false,
+                concepto: "Pago total de " + $scope.detalle_despacho.cantidad_despacho + " " + $scope.detalle_despacho.producto.unidad_medida + " de " + $scope.detalle_despacho.producto.nombre + " y servicio de distribución s/g factura nro. " + factura
+            }
+
+            $scope.abrirPopup($scope.IdModalCobros);
+        }
+        $scope.cerrarModalCobros = function () {
+            if ($scope.detalle_despacho.resivo.edit) {
+                $scope.obtenerDespachados()
+            }
+            $scope.cerrarPopup($scope.IdModalCobros);
+        }
+        $scope.abrirModalHistorialCobros = function () {
+            $scope.detalle_despacho.recivos = $scope.detalle_despacho.recivos.sort(function (a, b) {
+                return a.id - b.id;
+            });
+            $scope.abrirPopup($scope.IdModalHistorialCobros);
+        }
+        $scope.cerrarModalHistorialCobros = function () {
+            $scope.cerrarPopup($scope.IdModalHistorialCobros);
+        }
+
+
 
         $scope.abrirModalVerificarCuenta = function (dato, tipo) {
             $scope.dato = dato
             $scope.tipoDatosPermiso = tipo
+            $scope.cuenta = {}
             $scope.abrirPopup($scope.IdModalVerificarCuenta);
         }
         $scope.cerrarModalVerificarCuenta = function () {
@@ -558,24 +625,205 @@ angular.module('agil.controladores')
                 if (dato.type) {
                     $scope.mostrarMensaje(dato.message)
                     /*  cuenta.abierto= cuenta.abierto; */
-                    if ($scope.tipoDatosPermiso == "despacho") { 
-                            $scope.abrirModalAsignacionFactura($scope.dato)
+                    if ($scope.tipoDatosPermiso == "despacho") {
+                        $scope.abrirModalAsignacionFactura($scope.dato)
                     }
                     if ($scope.tipoDatosPermiso == "despachoKardex") {
                         $scope.abrirModalAsignacionFacturaKardex($scope.dato)
-                }
-                    $scope.cerrarModalVerificarCuenta();
+                    }
+                    if ($scope.tipoDatosPermiso == "EditarDespachoResivo") {
+                        $scope.detalle_despacho.resivo = $scope.dato
+                        $scope.detalle_despacho.resivo.edit = true
+                        $scope.detalle_despacho.saldo_pago_ac = $scope.detalle_despacho.saldo_pago_ac + $scope.detalle_despacho.resivo.monto
+                        $scope.detalle_despacho.pago_ac = $scope.detalle_despacho.pago_ac - $scope.detalle_despacho.resivo.monto
+                        $scope.tiposPagosResivo.forEach(function (dato, index, array) {
+                            if ($scope.dato.tipoPago.id == dato.id) {
+                                $scope.detalle_despacho.resivo.tipoPago = dato
+                            }
+                        })
+
+                        $scope.detalle_despacho.resivo.fecha = $scope.fechaATexto($scope.detalle_despacho.resivo.fecha)
+                        $scope.cerrarModalHistorialCobros()
+                    }
+                    if ($scope.tipoDatosPermiso == "EliminarDespachoResivo") {
+                        $scope.dato.eliminado = true
+                        $scope.dato.pago_ac = $scope.detalle_despacho.pago_ac - $scope.dato.monto
+                        $scope.dato.saldo_pago_ac = $scope.detalle_despacho.total - $scope.dato.pago_ac
+                        $scope.crearDespachoResivo($scope.dato)
+                        $scope.cerrarModalHistorialCobros()
+
+                    }
+
+                    $scope.cerrarModalVerificarCuenta(dato);
                 } else {
                     $scope.mostrarMensaje(dato.message)
                 }
             })
         }
+
+        $scope.crearDespachoResivo = function (dato) {
+            dato.fecha = new Date($scope.convertirFecha(dato.fecha))
+            if (dato.eliminado == false) {
+                dato.pago_ac = $scope.detalle_despacho.pago_ac + dato.monto
+                dato.saldo_pago_ac = $scope.detalle_despacho.total - dato.pago_ac
+            }
+            var promesa = CrearDespachoResivo($scope.detalle_despacho.id, dato)
+            promesa.then(function (dato) {
+                $scope.mostrarMensaje(dato.mensaje)
+                if (dato.recivo.eliminado == false) {
+                    $scope.imprimirResivo(dato.recivo)
+                }
+                $scope.cerrarModalCobros()
+                $scope.obtenerDespachados()
+
+            })
+        }
+        $scope.obtenerCuentasBancos = function () {
+            blockUI.start();
+            var promesa = ListaBancos($scope.usuario.id_empresa);
+            promesa.then(function (bancos) {
+                $scope.cuentasBancos = bancos;
+                blockUI.stop();
+            });
+        }
+        $scope.obtenerOtrosBancos = function () {
+            blockUI.start();
+            var promesa = ClasesTipoEmpresa("RRHH_BAN", $scope.usuario.id_empresa);
+            promesa.then(function (entidad) {
+                $scope.otrosBancos = entidad
+                blockUI.stop();
+            });
+        }
+
+        $scope.verDatosCobros = function () {
+            $scope.verDatosCobroDespachos = ($scope.verDatosCobroDespachos) ? false : true
+        }
+
+        $scope.imprimirResivo = function (recivo) {
+
+            convertUrlToBase64Image($scope.usuario.empresa.imagen, function (imagenEmpresa) {
+                var doc = new PDFDocument({ compress: false, size: [612, 468], margin: 10 });
+                var stream = doc.pipe(blobStream());
+                var fechaActual = new Date();
+                $scope.dibujarCabeceraPDFImpresionRecivo(doc, recivo, imagenEmpresa);
+                if (recivo.tipo_moneda) {
+                    doc.text(recivo.monto + " .-", 485, 40);
+                    doc.text("----", 485, 65);
+                    doc.text("----", 485, 90);
+
+                } else {
+                    doc.text("----", 485, 40);
+                    doc.text(recivo.monto + " .-", 485, 65);
+                    doc.text(recivo.cambio_moneda + " .-", 485, 90);
+
+                }
+                if (recivo.tipoPago.nombre == "CHEQUE") {
+                    doc.text(recivo.numero_cuenta, 270, 310);
+                    doc.text(recivo.otroBanco.nombre, 470, 310)
+                } else if (recivo.tipoPago.nombre == "DEPOSITO") {
+                    doc.moveTo(103, 320)
+                    .lineTo(105, 325)
+                    .dash(0, { space: 0 })
+
+                    .lineTo(115, 310)
+                    .stroke()
+                    doc.text(recivo.banco.nombre, 470, 310)
+                } else {
+                    doc.moveTo(103, 320)
+                        .lineTo(105, 325)
+                        .dash(0, { space: 0 })
+
+                        .lineTo(115, 310)
+                        .stroke()
+                    doc.text("----", 270, 310);
+                    doc.text("----", 475, 310)
+                }
+                doc.text($scope.detalle_despacho.despacho.cliente.razon_social, 100, 130);
+                doc.text("                          "+ConvertirALiteral(recivo.monto.toFixed(2), "DÓLARES"), 40, 160,{width:550,lineGap: 14 });
+                doc.text("                               "+recivo.concepto, 40, 220,{width:550,lineGap: 14 });
+                doc.text($scope.detalle_despacho.despacho.cliente_razon.razon_social+"-"+$scope.detalle_despacho.despacho.cliente_razon.nit, 165, 280);
+                doc.text(($scope.detalle_despacho.factura) ? $scope.detalle_despacho.factura : "", 465, 280);
+                var dato=recivo.sucursal.departamento.nombre_corto.split("-")[0]
+                doc.text((fechaActual.getDate() >= 10) ? dato+ "  "+fechaActual.getDate() :dato+ "  "+ "0" + fechaActual.getDate(), 160, 340);
+                doc.text(((fechaActual.getMonth() + 1) >= 10) ? (fechaActual.getMonth() + 1) : "0" + (fechaActual.getMonth() + 1), 310, 340);
+                var anio = fechaActual.getFullYear()
+                var cadena = anio.toString();
+                anio = cadena.substr(-2)
+                doc.text(anio, 440, 340);
+                doc.font('Helvetica', 8);
+
+                doc.end();
+                stream.on('finish', function () {
+                    var fileURL = stream.toBlobURL('application/pdf');
+                    window.open(fileURL, '_blank', 'location=no');
+                });
+
+            });
+        }
+
+        $scope.dibujarCabeceraPDFImpresionRecivo = function (doc, recivo, imagenEmpresa) {
+            doc.font('Helvetica-Bold', 16);
+            //cabecera
+            doc.text("RECIBO DE INGRESO", 0, 50, { align: "center" });
+            doc.text(recivo.sucursal.nombre, 0, 70, { align: "center" });
+            doc.text("N° " + recivo.numero_correlativo, 0, 85, { align: "center" });
+            doc.image(imagenEmpresa, 40, 40, { fit: [100, 100] });
+            doc.rect(450, 35, 140, 20).stroke();
+            doc.rect(450, 60, 140, 20).stroke();
+            doc.rect(450, 85, 140, 20).stroke();
+            doc.font('Helvetica-Bold', 12);
+            doc.text("Bs.", 455, 40);
+            doc.text("$us.", 455, 65);
+            doc.text("T./C.", 455, 90);
+            //cuerpo
+            doc.font('Helvetica', 12);
+            doc.text("Recibí de:", 40, 130);
+            doc.rect(100, 140, 490, 0).dash(1, { space: 5 }).stroke();
+            doc.text("El importe de:", 40, 160);
+            doc.rect(130, 170, 460, 0).stroke();
+            doc.rect(40, 200, 550, 0).stroke();
+            doc.text("Por concepto de:", 40, 220);
+            doc.rect(140, 230, 450, 0).stroke();
+            doc.rect(40, 260, 550, 0).stroke();
+            doc.text("Factura a Nombre de:", 40, 280);
+            doc.rect(165, 290, 280, 0).stroke();
+            doc.text("N°", 450, 280);
+            doc.rect(465, 290, 120, 0).stroke();
+            doc.text("Efectivo", 40, 310);
+            doc.rect(90, 300, 40, 30).dash(0, { space: 0 }).stroke();
+            doc.text("Cheque N°", 200, 310);
+            doc.rect(260, 320, 130, 0).dash(1, { space: 5 }).stroke();
+            doc.text("Banco", 430, 310)
+            doc.rect(465, 320, 120, 0).stroke();
+            doc.rect(140, 350, 100, 0).stroke();
+            doc.text("de", 240, 340);
+            doc.rect(260, 350, 135, 0).stroke();
+            doc.text("de 20", 400, 340);
+            doc.rect(440, 350, 40, 0).stroke();
+            doc.text("Recibí conforme", 80, 400);
+            doc.rect(40, 395, 180, 0).stroke();
+            doc.text("Nombre:", 40, 415);
+            doc.rect(85, 425, 120, 0).stroke();
+            doc.text("C.I:", 40, 430);
+            doc.rect(60, 440, 145, 0).stroke();
+            doc.text("Entregué conforme", 440, 400);
+            doc.rect(405, 395, 180, 0).stroke();
+            doc.text("Nombre:", 405, 415);
+            doc.rect(455, 425, 130, 0).stroke();
+            doc.text("C.I:", 405, 430);
+            doc.rect(422, 440, 162, 0).stroke();
+
+
+        }
+
         $scope.$on('$routeChangeStart', function (next, current) {
             $scope.eliminarPopup($scope.idModalAsignacionFactura);
             $scope.eliminarPopup($scope.idModalVentaKardexFactura);
             $scope.eliminarPopup($scope.idModalAsignacionFacturaKardex)
             $scope.eliminarPopup($scope.idModalDetalleKardex)
             $scope.eliminarPopup($scope.IdModalVerificarCuenta)
+            $scope.eliminarPopup($scope.IdModalCobros)
+            $scope.eliminarPopup($scope.IdModalHistorialCobros)
         });
 
         $scope.inicio();

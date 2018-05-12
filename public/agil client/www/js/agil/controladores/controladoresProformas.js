@@ -663,7 +663,7 @@ angular.module('agil.controladores')
                     if (errDos) {
                         $scope.mostrarMensaje('La actividad seleccionada no tiene dosificación activa, por favor asigne una dosificación para poder continuar.')                        
                     } else {
-                        $scope.mostrarMensaje('Revise los datos e intente de nuevo.')                        
+                        $scope.mostrarMensaje('Revise los datos e intente nuevamente.')                        
                     }
 
                 }
