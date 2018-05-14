@@ -550,6 +550,26 @@ angular.module('agil.controladores')
        
     }
 
+    $scope.generar=function(planilla){
+        // planilla.$save(function(dato){
+        //     $scope.nuevaPlanillaSueldos();
+        //     blockUI.stop();
+        //     // console.log('llego ', dato);
+        //     // $scope.cerrarPopPupEdicion();
+        //     $scope.mostrarMensaje('Planilla registrada exitosamente!');
+        //     // $scope.recargarItemsTabla();
+        //     // $scope.imprimirCompra(compra);
+        // },function(error) {
+            
+        //     blockUI.stop();
+        //     console.log('fallo ', error);
+        //     // $scope.cerrarPopPupEdicion();
+        //     // $scope.mostrarMensaje('Ocurrio un problema al momento de guardar!');
+        //     // $scope.recargarItemsTabla();
+        // });
+        console.log('los datos  de planilla rc ivaaa ', planilla);
+    }
+
     $scope.cerrarDialogFormularioGeneral110=function () {
         $scope.cerrarPopup($scope.idModalFormularioGeneral110); 
     }

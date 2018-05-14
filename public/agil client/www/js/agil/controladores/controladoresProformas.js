@@ -119,7 +119,7 @@ angular.module('agil.controladores')
             var prom = ProformaInfo(proforma.id, proforma.actividadEconomica.id)
             prom.then(function (proformaE) {
                 $scope.proforma = proformaE.proforma
-                $scope.proforma.sucursal = proformaE.proforma.sucursalProforma
+                $scope.proforma.sucursal = proformaE.proforma.sucursal
                 $scope.obtenerActividadesSucursal($scope.proforma.sucursal.id)
                 $scope.proforma.actividadEconomica = proformaE.proforma.actividadEconomica
                 $scope.obtenerServiciosActividadEmpresaPrincipal($scope.proforma.actividadEconomica)
@@ -196,7 +196,7 @@ angular.module('agil.controladores')
                             $scope.facturaProformas = {}
                             $scope.facturaProformas.configuracion = configuracionFactura.configuracion
                             $scope.facturaProformas.movimiento = movimiento
-                            $scope.facturaProformas.cliente = datosProformas[0].clienteProforma
+                            $scope.facturaProformas.cliente = datosProformas[0].cliente
                             $scope.facturaProformas.autorizacion = datosProformas[0].autorizacion
                             $scope.facturaProformas.factura = datosProformas[0].factura
                             $scope.facturaProformas.codigo_control = datosProformas[0].codigo_control
@@ -204,7 +204,7 @@ angular.module('agil.controladores')
                             $scope.facturaProformas.fecha_limite_emision = new Date(datosProformas[0].fecha_limite_emision)
                             // $scope.facturaProformas.actividadEconomica = datosProformas[0].actividadEconomica
                             $scope.facturaProformas.actividad = datosProformas[0].actividadEconomica
-                            $scope.facturaProformas.sucursal = datosProformas[0].sucursalProforma
+                            $scope.facturaProformas.sucursal = datosProformas[0].sucursal
                             $scope.facturaProformas.detallesVenta = []
                             $scope.facturaProformas.detalle = ""
                             $scope.facturaProformas.totalImporteBs = datosProformas[0].totalImporteBs
@@ -343,7 +343,7 @@ angular.module('agil.controladores')
         }
 
         $scope.establecerCliente = function (cliente) {
-            $scope.proforma.clienteProforma = cliente;
+            $scope.proforma.cliente = cliente;
         }
 
         $scope.enfocar = function (elemento) {
@@ -919,8 +919,8 @@ angular.module('agil.controladores')
             }
         }
 
-        $scope.seleccionarClienteProforma = function (client) {
-            $scope.proforma.clienteProforma = client
+        $scope.seleccionarcliente = function (client) {
+            $scope.proforma.cliente = client
             $scope.cerrardialogClientesProforma()
         }
 
@@ -983,7 +983,7 @@ angular.module('agil.controladores')
                 }, 1000)
 
             }, function (err) {
-                $scope.mostrarMensaje(err.stack)
+                $scope.mostrarMensaje(err.data)
             })
             blockUI.stop()
         }
@@ -1445,9 +1445,9 @@ angular.module('agil.controladores')
             doc.text("CI/NIT:", 440, 145 + separacionExtra);
             doc.text("Teléfono:", 40, 60 + separacionExtra);
             doc.font('Helvetica', 8);
-            doc.text(proforma.clienteProforma.razon_social, 100, 143 + separacionExtra);
+            doc.text(proforma.cliente.razon_social, 100, 143 + separacionExtra);
 
-            doc.text(proforma.clienteProforma.nit, 500, 145 + separacionExtra);
+            doc.text(proforma.cliente.nit, 500, 145 + separacionExtra);
             doc.rect(40, 110 + separacionExtra, 540, 20).stroke();
             doc.rect(40, 135 + separacionExtra, 540, 20).stroke();
             doc.rect(40, 210, 540, 490).stroke(); //235

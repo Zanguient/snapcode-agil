@@ -2,7 +2,7 @@ angular.module('agil.controladores')
 
     .controller('controladorTransacciones', function ($scope, $localStorage, $location, $templateCache, $route, blockUI, ObtenerTodoPersonal, TransaccionBancoPaginador, $timeout,
         Paginator, ListaBancos, ClasesTipo, TransaccionIngresoBanco, FieldViewer, TransaccionEgresoBanco, TransaccionSeguimientoBanco, TransaccionSeguimientoEstado, TransaccionRevisionEstado,
-        SaldoCuenta, SaldoDisponibleCuenta) {
+        SaldoCuenta, SaldoDisponibleCuenta, SaldoProformas) {
 
         $scope.modalNuevoIngreso = 'modal-wizard-nuevo-ingreso'
         $scope.modalNuevoEgreso = 'modal-wizard-nuevo-egreso'
@@ -38,7 +38,7 @@ angular.module('agil.controladores')
             $scope.obtenerEstadosTransaccion()
             //$scope.obtenerSaldoInicial()
             $timeout(function () {
-            $scope.obtenerVencimientos()                
+                $scope.obtenerVencimientos()
             }, 5000)
 
             $scope.fondosDisponibles = 0
@@ -80,8 +80,27 @@ angular.module('agil.controladores')
 
         $scope.obtenerVencimientos = function () {
             $scope.vencimientosCobros = []
-            Array.prototype.push.apply($scope.vencimientosCobros, $scope.vencimientosCreditos)
-            Array.prototype.push.apply($scope.vencimientosCobros, $scope.alertasProformas)
+            $scope.verificarVencimientosCreditos($scope.usuario.id_empresa)
+            var prom = SaldoProformas($scope.usuario.id_empresa)
+            prom.then(function (res) {
+                var proformas = []
+                if (res.hasErr) {
+                    $scope.mostrarMensaje(res.mensaje)
+                } else {
+                    res.proformas.forEach(element => {
+                        var proforma = { id: element.id, factura: element.factura, total: element.monto, cliente: { razon_social: element.razon_social }, a_cuenta: element.a_cuenta, saldo: element.saldo, es_proforma: true }
+                        proformas.push(proforma)
+                    });
+
+                    Array.prototype.push.apply($scope.vencimientosCobros, proformas)
+                }
+                Array.prototype.push.apply($scope.vencimientosCobros, $scope.vencimientosCreditos)
+                // Array.prototype.push.apply($scope.vencimientosCobros, $scope.alertasProformas)
+
+            }).catch(function (err) {
+
+            })
+
             console.log($scope.vencimientosCobros)
 
         }
@@ -110,11 +129,24 @@ angular.module('agil.controladores')
             if (ingreso === undefined || ingreso === null) {
                 return true
             }
-            if (ingreso.concepto === $scope.SALDO_INICIAL.id) {
-                return false
+            if (ingreso.concepto !== undefined && ingreso.concepto !== null) {
+                if (ingreso.concepto.id !== undefined) {
+                    if (ingreso.concepto.id === $scope.SALDO_INICIAL.id) {
+                        return false
+                    } else {
+                        return true
+                    }
+                } else {
+                    if (ingreso.concepto === $scope.SALDO_INICIAL.id) {
+                        return false
+                    } else {
+                        return true
+                    }
+                }
             } else {
                 return true
             }
+
         }
 
         $scope.obtenerEstadosTransaccion = function () {
@@ -134,10 +166,10 @@ angular.module('agil.controladores')
             });
         }
 
-        $scope.seleccionarCuenta = function (id) {
+        $scope.seleccionarCuenta = function (cuentaBanco) {
             $scope.cuentaSeleccionada = undefined
             $scope.bancos.forEach(cuenta => {
-                if (cuenta.id === id) {
+                if (cuenta.id === cuentaBanco.id) {
                     $scope.cuentaSeleccionada = cuenta
                     $scope.filtro.cuenta = $scope.cuentaSeleccionada
                 }
@@ -307,7 +339,7 @@ angular.module('agil.controladores')
             if ($scope.filtro.cuenta === 0) {
                 $scope.filtro.cuenta = $scope.cuentaSeleccionada
             }
-            $scope.saldoPrevio = $scope.saldoInicial
+            // $scope.saldoPrevio = $scope.saldoInicial
             $scope.filtro = $scope.filtrarTransacciones($scope.filtro, true)
             $scope.paginator.filter = $scope.filtro
             var prom = TransaccionBancoPaginador($scope.usuario.id_empresa, $scope.paginator)
@@ -320,10 +352,10 @@ angular.module('agil.controladores')
                         $scope.verificarSeguimiento(transaccion)
                     });
                     $scope.paginator.setPages(res.paginas)
-                    
+
                     $scope.calcularFondosDisponibles()
                     $scope.obtenerSaldoInicial()
-
+                    $scope.obtenerVencimientos()
                 }
 
                 blockUI.stop()
@@ -411,30 +443,6 @@ angular.module('agil.controladores')
 
         $scope.guardarSeguimiento = function (transaccion) {
             blockUI.start()
-            // var rror = false
-            // var memo = ''
-            // if (transaccion.seguimientos[0].id_entregado === null || transaccion.seguimientos[0].id_entregado === undefined) {
-            //     $scope.mensaje('Seleccione quién entrego el documento.')
-            //     return
-            // } else if (transaccion.seguimientos[0].fecha_entregado === null){
-            //     if (transaccion.seguimientos[0].entregado_por === null) {
-            //         transaccion.seguimientos[0].fecha_entregado = new Date()
-            //     }else{
-            //         rror = true
-            //         memo += 'Error con la fecha de entrega'
-            //     }
-            // } else if (transaccion.seguimientos[0].id_devuelto === null || transaccion.seguimientos[0].id_devuelto === undefined){
-            //     if (transaccion.seguimientos[0].devuelto_a === null) {
-            //         transaccion.seguimientos[0].fecha_devuelto = new Date()
-            //     }else{
-            //         rror = true
-            //         memo += 'Error con la fecha de devolución'
-            //     }
-            // }
-
-            // if (transaccion.seguimientos[0].fecha_entregado === null && transaccion.seguimientos[0].id) {
-
-            // }
             if (transaccion.seguimientos[0].id_entregado !== null) {
                 if (transaccion.seguimientos[0].id_entregado !== transaccion.seguimientos[0].entregado_por.id) {
                     $scope.mostrarMensaje('No se permiten cambios!')
@@ -442,12 +450,12 @@ angular.module('agil.controladores')
                     return
                 } else {
                     if (transaccion.seguimientos[0].id_devuelto !== null && !transaccion.seguimientos[0].proveedor) {
-                        if (transaccion.seguimientos[0].id_devuelto === transaccion.seguimientos[0].devuelto_a.id) {
+                        if (transaccion.seguimientos[0].id_devuelto !== transaccion.seguimientos[0].devuelto_a.id) {
                             $scope.mostrarMensaje('No se permiten cambios!')
                             blockUI.stop()
                             return
                         }
-                    } else if (transaccion.seguimientos[0].fecha_devolucion === null && !transaccion.seguimientos[0].proveedor) {
+                    } else if (transaccion.seguimientos[0].fecha_devolucion === null && (!transaccion.seguimientos[0].proveedor && (transaccion.seguimientos[0].devuelto_a !== 0 && transaccion.seguimientos[0].devuelto_a !== undefined && transaccion.seguimientos[0].devuelto_a !== null))) {
                         transaccion.seguimientos[0].fecha_devolucion = new Date()
                         transaccion.seguimientos[0].id_devuelto = transaccion.seguimientos[0].devuelto_a.id
                     }
@@ -526,6 +534,7 @@ angular.module('agil.controladores')
             if ($scope.SALDO_INICIAL.id === ingreso.concepto) {
                 ingreso.venta = undefined
                 ingreso.detalle = 'Ingreso apertura.'
+
             }
         }
 
@@ -555,9 +564,31 @@ angular.module('agil.controladores')
 
                 } else {
                     $scope.mostrarMensaje(res.mensaje)
+                    ingreso.venta.saldo -= ingreso.haber
+                    if (ingreso.venta.es_proforma) {
+                        if (ingreso.concepto !== $scope.SALDO_INICIAL.id) {
+                            var pago = {pago: ConvertirALiteral(ingreso.haber.toFixed(2))}
+                            $scope.imprimirReciboVencimientoCreditoProforma(pago, res.venta, ingreso.haber);
+                        }
+                       
+                    } else {
+                        if (ingreso.concepto !== $scope.SALDO_INICIAL.id) {
+                            var pago = {pago: ConvertirALiteral(ingreso.haber.toFixed(2))}
+                            $scope.imprimirReciboVencimientoCredito(pago, res.venta, ingreso.haber, true);
+                        }
+                    }
+                    // 
+                    // if (ingreso.concepto !== $scope.SALDO_INICIAL.id) {
+                    //     $scope.imprimirReciboVencimientoCredito(pago, res.venta, ingreso.haber);
+                    //     $scope.verificarVencimientosCreditos($scope.usuario.id_empresa);
+                    // }
                     $scope.verificarVencimientosCreditos($scope.usuario.id_empresa);
-                    $scope.recargarItemsTabla()
-                    ingreso.fecha = ingreso.fecha.toLocaleDateString()
+
+                    // $scope.recargarItemsTabla()
+                    $scope.filtrarTransacciones($scope.filtro)
+                    // ingreso.fecha = ingreso.fecha.toLocaleDateString()
+                    $scope.cerrarModalNuevoIngreso()
+                    $scope.obtenerVencimientos()
                 }
                 blockUI.stop()
             }).catch(function (err) {
@@ -581,7 +612,9 @@ angular.module('agil.controladores')
                 } else {
                     $scope.mostrarMensaje(res.mensaje)
                     $scope.verificarVencimientosDeudas($scope.usuario.id_empresa);
-                    $scope.recargarItemsTabla()
+                    // $scope.recargarItemsTabla()
+                    $scope.filtrarTransacciones($scope.filtro)
+                    $scope.cerrarModalNuevoEgreso()
                 }
                 blockUI.stop()
             }).catch(function (err) {
@@ -591,6 +624,97 @@ angular.module('agil.controladores')
                 blockUI.stop()
             })
         }
+
+        $scope.imprimirReciboVencimientoCreditoProforma = function (data, venta, pago) {
+
+			blockUI.start();
+			var doc = new PDFDocument({ size: [227, 353], margin: 10 });
+			var stream = doc.pipe(blobStream());
+			doc.moveDown(2);
+			doc.font('Helvetica-Bold', 8);
+			doc.text($scope.usuario.empresa.razon_social.toUpperCase(), { align: 'center' });
+			doc.moveDown(0.4);
+			doc.font('Helvetica', 7);
+			doc.text(venta.sucursal.nombre.toUpperCase(), { align: 'center' });
+			doc.moveDown(0.4);
+			doc.text(venta.sucursal.direccion.toUpperCase(), { align: 'center' });
+			doc.moveDown(0.4);
+			var telefono = (venta.sucursal.telefono1 != null ? venta.sucursal.telefono1 : "") +
+				(venta.sucursal.telefono2 != null ? "-" + venta.sucursal.telefono2 : "") +
+				(venta.sucursal.telefono3 != null ? "-" + venta.sucursal.telefono3 : "");
+			doc.text("TELF.: " + telefono, { align: 'center' });
+			doc.moveDown(0.4);
+			doc.text("COCHABAMBA - BOLIVIA", { align: 'center' });
+			doc.moveDown(0.5);
+			doc.font('Helvetica-Bold', 8);
+			doc.text("RECIBO", { align: 'center' });
+			doc.font('Helvetica', 7);
+			doc.moveDown(0.4);
+			doc.text("------------------------------------", { align: 'center' });
+			doc.moveDown(0.4);
+			doc.text(venta.sucursal.nota_recibo_correlativo, { align: 'center' });
+			//doc.text("NIT: "+$scope.usuario.empresa.nit,{align:'center'});
+
+			//doc.text("FACTURA No: "+venta.factura,{align:'center'});
+			doc.moveDown(0.4);
+			//doc.text("AUTORIZACIÓN No: "+venta.autorizacion,{align:'center'});
+			doc.moveDown(0.4);
+			doc.text("------------------------------------", { align: 'center' });
+			doc.moveDown(0.4);
+			//doc.text(venta.actividad.nombre,{align:'center'});
+			doc.moveDown(0.6);
+			var date = new Date();
+			doc.text("FECHA : " + date.getDate() + "/" + (date.getMonth() + 1) + "/" + date.getFullYear(), { align: 'left' });
+			doc.moveDown(0.4);
+			doc.text("He recibido de : " + venta.cliente.razon_social, { align: 'left' });
+			doc.moveDown(0.4);
+			doc.text("---------------------------------------------------------------------------------", { align: 'center' });
+			doc.moveDown(0.2);
+			doc.text("                                        CONCEPTO                                   ", { align: 'left' });
+			doc.moveDown(0.2);
+			doc.text("---------------------------------------------------------------------------------", { align: 'center' });
+			doc.moveDown(0.4);
+			venta.fecha = new Date(venta.fecha);
+			doc.text("Fecha: " + venta.fecha.getDate() + "/" + (venta.fecha.getMonth() + 1) + "/" + venta.fecha.getFullYear(), 15, 210);
+			var textoFact = venta.factura
+			doc.text(textoFact, 105, 210, { width: 100 });
+			doc.text("Saldo Bs " + (venta.saldo - pago) + ".-", 105, 220, { width: 100 });
+			doc.text("Bs " + pago + ".-", 170, 210, { width: 100 });
+
+			doc.text("--------------", 10, 230, { align: 'right' });
+			//oc.text("--------------------",{align:'right'});
+			doc.moveDown(0.3);
+			doc.text("TOTAL Bs.              " + pago.toFixed(2), { align: 'right' });
+			doc.moveDown(0.4);
+			doc.moveDown(0.4);
+			doc.text("SON: " + data.pago, { align: 'left' });
+			doc.moveDown(0.6);
+
+			doc.moveDown(0.4);
+
+			doc.moveDown(0.4);
+			doc.moveDown(0.4);
+			doc.moveDown(0.4);
+			doc.moveDown(0.4);
+			doc.moveDown(0.4);
+			doc.moveDown(0.4);
+			doc.moveDown(0.4);
+			doc.moveDown(0.4);
+			doc.moveDown(0.4);
+			doc.moveDown(0.4);
+			doc.moveDown(0.4);
+			doc.moveDown(0.4);
+
+			doc.text("-------------------------                       -------------------------", { align: 'center' });
+			doc.text("ENTREGUE CONFORME            RECIBI CONFORME", { align: 'center' });
+			doc.end();
+			stream.on('finish', function () {
+				var fileURL = stream.toBlobURL('application/pdf');
+				window.open(fileURL, '_blank', 'location=no');
+			});
+			blockUI.stop();
+
+		}
 
         // $scope.seleccionarCredito = function (venta) {
         //     $scope.ingreso.cliente
@@ -617,7 +741,8 @@ angular.module('agil.controladores')
                             $scope.mostrarMensaje(res.mensaje)
                         } else {
                             transaccion.estado.confirmado = true
-                            $scope.recargarItemsTabla()
+                            $scope.filtrarTransacciones($scope.filtro)
+                            // $scope.recargarItemsTabla()
                             $scope.mostrarMensaje(res.mensaje)
                         }
                         blockUI.stop()
@@ -629,11 +754,12 @@ angular.module('agil.controladores')
                 }
             } else {
                 blockUI.stop()
-                $scope.mostrarMensaje('No se puede confirmar el estado de la transacción, no existe información de seguimiento.')
+                $scope.mostrarMensaje('No se puede confirmar el estado de la transacción, no existe información de seguimiento o esta inclompleta.')
             }
         }
 
         $scope.abrirModalNuevoIngreso = function () {
+            $scope.verificarVencimientosCreditos($scope.usuario.id_empresa);
             $scope.ingreso = {}
             $scope.ingreso.fecha = new Date().toLocaleDateString()
             $scope.abrirPopup($scope.modalNuevoIngreso)
@@ -662,6 +788,7 @@ angular.module('agil.controladores')
         }
 
         $scope.cerrarModalNuevoEgreso = function () {
+            $scope.egreso = undefined
             $scope.cerrarPopup($scope.modalNuevoEgreso)
         }
 
@@ -746,10 +873,14 @@ angular.module('agil.controladores')
 
         $scope.establecerConceptoIngreso = function (ingreso) {
             ingreso.detalle = 'Cobro Factura N° ' + ingreso.venta.factura
+            ingreso.factura = ingreso.venta.factura
+            ingreso.haber = ingreso.venta.saldo
         }
 
         $scope.establecerConceptoEgreso = function (egreso) {
             egreso.detalle = 'Pago Factura N° ' + egreso.compra.factura
+            egreso.factura = egreso.compra.factura
+            egreso.debe = egreso.compra.saldo
         }
 
         $scope.cerrarModalVencimientoCreditos = function () {

@@ -223,7 +223,7 @@ module.exports = function (router, sequelize, Sequelize, jwt, md5, forEach, ensu
 	require('./rutas-gtm-despacho')(router, ensureAuthorizedAdministrador, fs, forEach, jwt, md5, GtmDespacho, GtmDespachoDetalle, Cliente, Usuario, GtmDestino, Producto
 		,GtmTransportista, GtmEstibaje, GtmGrupoEstibaje, Persona, ClienteRazon, sequelize, Inventario, Movimiento, DetalleMovimiento, Tipo, Clase, Diccionario, Sequelize, Sucursal,GtmVentaKardex,GtmVentaKardexDetalle, socket, io,GtmDespachoDetalleResivo,Banco);
 	require('./rutas-transacciones')(router, ensureAuthorizedAdministrador, fs, forEach, jwt, md5, Banco, Clase, TransaccionSeguimiento, CuentaTransaccion, Cliente, ClienteRazon,
-		MedicoPaciente, Persona, sequelize, Proveedor, ProveedorCuenta, Venta, Almacen, Sucursal, PagoVenta, PagoCompra, Compra)
+		MedicoPaciente, Persona, sequelize, Proveedor, ProveedorCuenta, Venta, Almacen, Sucursal, PagoVenta, PagoCompra, Compra, Proforma)
 	
 	
 

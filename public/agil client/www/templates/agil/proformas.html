@@ -194,9 +194,9 @@
                         <tr ng-if="!proforma.eliminado" ng-repeat="proforma in proformas">
                             <td>{{$index+1}}</td>
                             <td>{{proforma.id}}</td>
-                            <td>{{proforma.clienteProforma.razon_social}}</td>
+                            <td>{{proforma.cliente.razon_social}}</td>
                             <td>{{meses[proforma.periodo_mes].nombre}}/{{proforma.periodo_anio}}</td>
-                            <td>{{proforma.sucursalProforma.nombre}}</td>
+                            <td>{{proforma.sucursal.nombre}}</td>
                             <td>{{proforma.actividadEconomica.nombre}}</td>
                             <td>
                                 {{proforma.detallesProformas[0].servicio.nombre}}
@@ -676,7 +676,7 @@
                                             <div class="container-fluid">
                                                 <label>SUCURSAL</label>
                                                 <div ng-if="!verificarBloqueoServicios()">
-                                                    <select class="form-control" data-validate="validate(required)" required id="sucursalProforma" name="sucursal" ng-options="sucursal as sucursal.nombre for sucursal in sucursales track by sucursal.id"
+                                                    <select class="form-control" data-validate="validate(required)" required id="sucursal" name="sucursal" ng-options="sucursal as sucursal.nombre for sucursal in sucursales track by sucursal.id"
                                                         ng-model="proforma.sucursal" ng-change="obtenerActividadesSucursal(proforma.sucursal.id)">
                                                         <option value="" disabled selected>Selec. Sucursal</option>
                                                     </select>
@@ -729,7 +729,7 @@
                                         <label>RAZÓN SOCIAL CLIENTE</label>
                                         <input ng-disabled="proforma.ver !== undefined" ng-keypress="interceptarTecla($event,'id_servicio',true)" autocomplete="off"
                                             data-validate="validate(required)" id="razon_social" name="razon_social" required
-                                            type="text" ng-model="proforma.clienteProforma.razon_social" placeholder="Ingrese la Razon Social"
+                                            type="text" ng-model="proforma.cliente.razon_social" placeholder="Ingrese la Razon Social"
                                             uib-typeahead="cliente as cliente.razon_social for cliente in buscarCliente($viewValue)"
                                             typeahead-wait-ms="2000" typeahead-template-url="templates/autocompletar.html" typeahead-show-hint="false"
                                             typeahead-min-length="0" typeahead-on-select="establecerCliente($item, $model, $label, $event)">
@@ -745,7 +745,7 @@
                                     <td>
                                             <label>NIT CLIENTE</label>
                                             <input ng-disabled="proforma.ver !== undefined" ng-keypress="interceptarTecla($event,'razon_social',true)" data-validate="validate(required)"
-                                                id="nit" name="nit" required type="number" min="0" ng-model="proforma.clienteProforma.nit"
+                                                id="nit" name="nit" required type="number" min="0" ng-model="proforma.cliente.nit"
                                                 placeholder="Ingrese el NIT" uib-typeahead="cliente as cliente.nit for cliente in buscarCliente($viewValue)"
                                                 typeahead-wait-ms="2000" typeahead-template-url="templates/autocompletar.html" typeahead-show-hint="false"
                                                 typeahead-min-length="0" typeahead-on-select="establecerCliente($item, $model, $label, $event)">
@@ -1204,7 +1204,7 @@
                                             {{cliente.nit}}
                                         </td>
                                         <td>
-                                            <a ng-click="seleccionarClienteProforma(cliente)">SELECCIONAR</a>
+                                            <a ng-click="seleccionarcliente(cliente)">SELECCIONAR</a>
                                         </td>
                                     </tr>
                                 </tbody>
@@ -1286,7 +1286,7 @@
                                     <label for="">Cobro</label>
                                 </div>
                                 <div class="col-md-8">
-                                    <input autocomplete="off" ng-disabled="verificarFechaFactura(proformaFechas.fecha_factura)" ng-change="compararFechasProformas(proformaFechas.fecha_factura,proformaFechas.fecha_cobro)"
+                                    <input autocomplete="off" disabled
                                         ng-update-hidden type="text" data-date-format="dd/mm/yyyy" class="form-control date-picker"
                                         id="fecha-cobro" ng-model="proformaFechas.fecha_cobro" name="fecha-cobro">
                                 </div>

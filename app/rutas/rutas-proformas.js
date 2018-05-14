@@ -56,8 +56,8 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
                         { model: Clase, as: 'actividadEconomica', where: condicionActividad },
                         { model: DetallesProformas, as: 'detallesProformas', where: { eliminado: false }, include: [{ model: Servicios, as: 'servicio', where: condicionServicio }] },
                         { model: Usuario, as: 'usuarioProforma', where: condicionUsuario },
-                        { model: Cliente, as: 'clienteProforma', where: condicionCliente },
-                        { model: Sucursal, as: 'sucursalProforma' }
+                        { model: Cliente, as: 'cliente', where: condicionCliente },
+                        { model: Sucursal, as: 'sucursal' }
                     ]
                 }).then(function (proformas) {
                     res.json({ proformas: proformas.rows, count: Math.ceil(proformas.count / req.params.items_pagina) })
@@ -78,7 +78,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
                 periodo_anio: req.body.periodo_anio.id,
                 id_sucursal: req.body.sucursal.id,
                 id_actividad: req.body.actividadEconomica.id,
-                id_cliente: req.body.clienteProforma.id,
+                id_cliente: req.body.cliente.id,
                 id_usuario: req.body.usuarioProforma.id,
                 totalImporteBs: req.body.totalImporteBs,
                 // dias: null,
@@ -182,9 +182,9 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
                         { model: Clase, as: 'actividadEconomica' },
                         { model: DetallesProformas, as: 'detallesProformas', where: { eliminado: false }, include: [{ model: Servicios, as: 'servicio' }, { model: Clase, as: 'centroCosto' }] },
                         { model: Usuario, as: 'usuarioProforma' },
-                        { model: Cliente, as: 'clienteProforma' },
+                        { model: Cliente, as: 'cliente' },
                         {
-                            model: Sucursal, as: 'sucursalProforma', include: [
+                            model: Sucursal, as: 'sucursal', include: [
                                 // { model: Almacen, as: 'almacenes' },
                                 {
                                     model: SucursalActividadDosificacion, as: 'actividadesDosificaciones',
@@ -211,9 +211,9 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
                 id_empresa: req.body.id_empresa,
                 periodo_mes: req.body.periodo_mes.id,
                 periodo_anio: req.body.periodo_anio.id,
-                id_sucursal: req.body.sucursalProforma.id,
+                id_sucursal: req.body.sucursal.id,
                 id_actividad: req.body.actividadEconomica.id,
-                id_cliente: req.body.clienteProforma.id,
+                id_cliente: req.body.cliente.id,
                 id_usuario: req.body.usuarioProforma.id,
                 totalImporteBs: req.body.totalImporteBs,
                 eliminado: false
@@ -510,8 +510,8 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
                 eliminado: true
             }, {
                     where: {
-                        id: req.body.id,
-                        fecha_proforma_ok: { $not: null }
+                        id: req.body.id
+                        // fecha_proforma_ok: { $not: null }
                     }
                 }).then(function (fechasActualizadas) {
                     res.json({ mensaje: 'Proforma eliminada.' })
@@ -530,9 +530,9 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
                         { model: Clase, as: 'actividadEconomica' },
                         { model: DetallesProformas, as: 'detallesProformas', where: { eliminado: false }, include: [{ model: Servicios, as: 'servicio' }, { model: Clase, as: 'centroCosto' }] },
                         { model: Usuario, as: 'usuarioProforma' },
-                        { model: Cliente, as: 'clienteProforma' },
+                        { model: Cliente, as: 'cliente' },
                         {
-                            model: Sucursal, as: 'sucursalProforma', include: [
+                            model: Sucursal, as: 'sucursal', include: [
                                 {
                                     model: SucursalActividadDosificacion, as: 'actividadesDosificaciones',
                                     include: [{ model: Dosificacion, as: 'dosificacion' },
@@ -559,27 +559,25 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
                     },
                     include: [
                         { model: Clase, as: 'actividadEconomica' },
-                        { model: Cliente, as: 'clienteProforma' },
+                        { model: Cliente, as: 'cliente' },
                     ]
 
                 }).then(function (proformasAlertas) {
-                    var proformasVencimiento = []
-                    if (proformasAlertas.length > 0) {
-                        proformasAlertas.map(function (proforma, i) {
-                            var fecPro = new Date(proforma.fecha_proforma).getTime()
-
-                            var hoy = new Date().getTime()
-                            var dif = Math.floor((hoy - fecPro) / 86400000)
-                            if (dif >= -30 && dif <= 30) {
-                                proformasVencimiento.push(proforma)
-                            }
-                            if (i === proformasAlertas.length - 1) {
-                                res.json({ proformas: proformasVencimiento })
-                            }
-                        })
-                    } else {
-                        res.json({ proformas: [] })
-                    }
+                    res.json({ proformas: proformasAlertas })
+                    // var proformasVencimiento = []
+                    // if (proformasAlertas.length > 0) {
+                    //     proformasAlertas.map(function (proforma, i) {
+                    //         proforma.dataValues.saldo = proforma.dataValues.totalImporteBs - (proforma.dataValues.a_cuenta !== null ? proforma.dataValues.a_cuenta: 0) 
+                    //         if (proforma.dataValues.saldo >0) {
+                    //             proformasVencimiento.push(proforma)
+                    //         }
+                    //         if (i === proformasAlertas.length - 1) {
+                    //             res.json({ proformas: proformasAlertas })
+                    //         }
+                    //     })
+                    // } else {
+                    //     res.json({ proformas: [] })
+                    // }
                 }).catch(function (err) {
                     res.json({ mensaje: err.stack !== undefined ? err.stack : err.message, hasErr: true })
                 });
@@ -920,6 +918,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
 
             sequelize.transaction(function (t) {
                 var factura = req.body;
+                
                 return SucursalActividadDosificacion.find({
                     where: {
                         id_actividad: req.body.actividad.id,
@@ -991,12 +990,12 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
                                                         factura.detallesVenta = factura.detallesVenta.map(function (det, i) {
                                                             var producto = { codigo: det.servicio.codigo, nombre: det.servicio.nombre, unidad_medida: "" }
                                                             total += det.importe
-                                                            det.total = det.importe * det.cantidad
+                                                            det.total = det.precio_unitario * det.cantidad
                                                             det.producto = producto
                                                             return det
                                                         })
                                                         factura.total = total
-                                                        // factura.cliente = factura.clienteProforma
+                                                        // factura.cliente = factura.cliente
                                                         return new Promise(function (fulfill, reject) {
                                                             fulfill({});
                                                         });

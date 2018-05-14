@@ -15,12 +15,13 @@ angular.module('agil.controladores')
         $scope.IdModalVerificarCuenta = 'modal-verificar-cuenta';
         $scope.IdModalCobros = 'modal-cobros';
         $scope.IdModalHistorialCobros = 'modal-historial-cobros'
+        $scope.idModalConceptoEdicion='dialog-conceptos';
         $scope.usuario = JSON.parse($localStorage.usuario);
 
         $scope.$on('$viewContentLoaded', function () {
             resaltarPestaña($location.path().substring(1));
             ejecutarScriptDespacho($scope.idModalAsignacionFactura, $scope.idModalVentaKardexFactura, $scope.idModalAsignacionFacturaKardex, $scope.idModalDetalleKardex,
-                $scope.IdModalVerificarCuenta, $scope.IdModalCobros, $scope.IdModalHistorialCobros);
+                $scope.IdModalVerificarCuenta, $scope.IdModalCobros, $scope.IdModalHistorialCobros,$scope.idModalConceptoEdicion);
             $scope.buscarAplicacion($scope.usuario.aplicacionesUsuario, $location.path().substring(1));
         });
 
@@ -694,7 +695,14 @@ angular.module('agil.controladores')
                 blockUI.stop();
             });
         }
-
+        $scope.abrirDialogConceptoEdicion = function (tipo) {
+            $scope.tipo_edicion = tipo;
+            $scope.clase = {};
+            $scope.abrirPopup($scope.idModalConceptoEdicion);
+        }
+        $scope.cerrarDialogConceptoEdicion = function () {
+            $scope.cerrarPopup($scope.idModalConceptoEdicion);
+        }
         $scope.verDatosCobros = function () {
             $scope.verDatosCobroDespachos = ($scope.verDatosCobroDespachos) ? false : true
         }
@@ -824,6 +832,7 @@ angular.module('agil.controladores')
             $scope.eliminarPopup($scope.IdModalVerificarCuenta)
             $scope.eliminarPopup($scope.IdModalCobros)
             $scope.eliminarPopup($scope.IdModalHistorialCobros)
+            $scope.eliminarPopup($scope.idModalConceptoEdicion)
         });
 
         $scope.inicio();

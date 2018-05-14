@@ -1289,7 +1289,6 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 				return Promise.all(promises);
 			} else {
 				var promises = [];
-				console.log("llegooooooo a los productossssssssssssssssssssssssssssssssssssssssssssssssss");
 				for (var i = 0; i < detalleVenta.producto.productosBase.length; i++) {
 					if (detalleVenta.producto.productosBase[i].productoBase.tipoProducto.nombre_corto == Diccionario.TIPO_PRODUCTO_BASE) {
 						if ((i + 1) == detalleVenta.producto.productosBase.length) {

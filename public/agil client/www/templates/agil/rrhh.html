@@ -256,7 +256,7 @@
             <div class="dataTables_wrapper form-inline no-footer">
                 <div class="row" ng-include src="'/templates/gral/paginator-header-1.html'">
                 </div>
-                <table id="dynamic-table" class="table table-striped table-bordered table-hover">
+                <table id="dynamic-table" class="table table-striped table-bordered table-hover table-responsive-actual">
 
                     <thead>
                         <tr>
@@ -324,17 +324,17 @@
                     </thead>
                     <tbody>
                         <tr ng-repeat="empleado in RecursosHumanosEmpleados track by $index">
-                            <td class="center">
+                            <td data-label="N°:">
                                 {{($index+1)+(paginator.itemsPerPage*(paginator.currentPage-1))}}
                             </td>
-                            <td class="center">
+                            <td data-label="Seleccionar:">
                                 <label class="pos-rel">
                                     <input name="switch-field-1" type="checkbox" class="ace" ng-model="empleado.select" ng-change="selecionarEmpleados(empleado,false,selectTodos)"
                                     />
                                     <span class="lbl"></span>
                                 </label>
                             </td>
-                            <td class="center">
+                            <td data-label="Activo:">
                                 <label>
                                     <input name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="empleado.activo" ng-change="abrirModalVerificacion(empleado)"
                                     />
@@ -343,34 +343,34 @@
                                 </label>
                                 <!-- {{empleado.activo}} -->
                             </td>
-                            <td class="center" ng-if="fieldViewer.getConfiguration().codigo.show">
+                            <td data-label="Codigo:"ng-if="fieldViewer.getConfiguration().codigo.show">
                                 {{empleado.codigo}}
                             </td>
-                            <td ng-if="fieldViewer.getConfiguration().nombre.show">
+                            <td data-label="Nombre Completo:" ng-if="fieldViewer.getConfiguration().nombre.show">
                                 {{empleado.nombre_completo}}
                             </td>
-                            <td ng-if="fieldViewer.getConfiguration().empresa.show">
+                            <td data-label="Empresa:" ng-if="fieldViewer.getConfiguration().empresa.show">
                                 {{empleado.designacion_empresa}}
                             </td>
-                            <td ng-if="fieldViewer.getConfiguration().imagen.show">
+                            <td data-label="Imagen:" ng-if="fieldViewer.getConfiguration().imagen.show">
                                 <img src="{{empleado.imagen}}" width="50">
                             </td>
-                            <td ng-if="fieldViewer.getConfiguration().ci.show">
+                            <td data-label="CI:" ng-if="fieldViewer.getConfiguration().ci.show">
                                 {{empleado.ci}}
                             </td>
-                            <td ng-if="fieldViewer.getConfiguration().extension.show">
+                            <td data-label="Extención:" ng-if="fieldViewer.getConfiguration().extension.show">
 
                                 {{empleado.extension}}
                             </td>
 
-                            <td ng-if="fieldViewer.getConfiguration().grupo_sanguineo.show">
+                            <td data-label="Tipo Contrato:" ng-if="fieldViewer.getConfiguration().grupo_sanguineo.show">
 
                                 {{empleado.tipoContrato}}
                             </td>
-                            <td ng-if="fieldViewer.getConfiguration().campo.show">
+                            <td data-label="Campo:" ng-if="fieldViewer.getConfiguration().campo.show">
                                 {{empleado.campamento}}
                             </td>
-                            <td ng-if="fieldViewer.getConfiguration().cargo.show">
+                            <td data-label="Cargos:" ng-if="fieldViewer.getConfiguration().cargo.show">
 
                                 <a popover-placement="right" uib-popover-template="dynamicPopoverCargos.templateUrl" popover-trigger="outsideClick: outsideClick"
                                     popover-title="Cargos" class="blue">
@@ -382,7 +382,7 @@
                                             </div>                                           
                                         </script>
                             </td>
-                            <td>
+                            <td data-label="Acciones:">
                                 <a href="javascript:void(0)" ng-disabled="empleado.activo" ng-click="abrirIdModalDialogPreRequisitos(empleado)" class="accion tooltip-info"
                                     data-rel="tooltip" tooltip-placement="top" uib-tooltip="Pre-requisitos">
                                     <span class="icono-prerequisito icono-font"></span>
@@ -425,8 +425,8 @@
                                 </a>
 
                             </td>
-                            <td>
-                                <div class="hidden-sm hidden-xs action-buttons">
+                            <td data-label="Gestion">
+                                <div class="action-buttons">
 
                                     <a class="blue" href="javascript:void(0)" ng-click="abrirDialogVerEmpleado(empleado)" class="tooltip-info" data-rel="tooltip"
                                         title="View">
@@ -4516,7 +4516,7 @@
                 <div class="clearfix"></div>
                 <div ng-hide="listaAnticipos2.length>0" class="table-responsive">
                     <div class="table-fixed-header">
-                        <table id="tabla-comprobante-revision" class="table table-striped table-bordered table-hover">
+                        <table id="tabla-comprobante-revision" class="table table-responsive-actual table-striped table-bordered table-hover">
                             <thead fix-head class="table-head-color">
                                 <tr>
                                     <th>#</th>
@@ -4540,27 +4540,27 @@
                             </thead>
                             <tbody>
                                 <tr ng-repeat="anticipo in listaAnticipos track by $index">
-                                    <th scope="row">{{$index+1}}</th>
-                                    <th>
+                                    <td data-label="N°:">{{$index+1}}</td>
+                                    <td data-label="Seleccionar:">
                                         <label class="pos-rel">
                                             <input name="switch-field-1" type="checkbox" class="ace" ng-model="anticipo.select" ng-change="selecionarAnticipos(anticipo,null,null)"
                                             />
                                             <span class="lbl"></span>
                                         </label>
-                                    </th>
-                                    <td>{{anticipo.fecha | date: "dd/MM/yyyy"}}</td>
-                                    <td>{{anticipo.empleado.persona.nombre_completo}}</td>
-                                    <td ng-if="!anticipo.id || anticipo.montoEdit">
+                                    </td>
+                                    <td data-label="Fecha:">{{anticipo.fecha | date: "dd/MM/yyyy"}}</td>
+                                    <td data-label="Empleado:">{{anticipo.empleado.persona.nombre_completo}}</td>
+                                    <td data-label="Monto:" ng-if="!anticipo.id || anticipo.montoEdit">
                                         <input step="0.01" class="form-control" type="number" ng-model="anticipo.monto" ng-change="sumarMontoPrestamoNuevo(anticipo,$index)"
                                             min="1" max="{{listaAnticipos[listaAnticipos.length-2].saldo_salario}}">
                                     </td>
-                                    <td ng-if="anticipo.id" ng-hide="anticipo.montoEdit">{{anticipo.monto|number:2}}</td>
-                                    <th>{{anticipo.tope}}</th>
-                                    <td>{{anticipo.anticipo_extraordinaro|number:2}}</td>
-                                    <td>{{anticipo.total|number:2}} </td>
-                                    <td>{{anticipo.salario_basico|number:2}}</td>
-                                    <td>{{anticipo.saldo_salario|number:2}}</td>
-                                    <td>
+                                    <td data-label="Monto:" ng-if="anticipo.id" ng-hide="anticipo.montoEdit">{{anticipo.monto|number:2}}</td>
+                                    <td data-label="Topo Monto:" >{{anticipo.tope}}</td>
+                                    <td data-label="Anticipo Extra">{{anticipo.anticipo_extraordinaro|number:2}}</td>
+                                    <td data-label="Total Anticipo:">{{anticipo.total|number:2}} </td>
+                                    <td data-label="Salario Básico:">{{anticipo.salario_basico|number:2}}</td>
+                                    <td data-label="Saldo Salario:">{{anticipo.saldo_salario|number:2}}</td>
+                                    <td data-label="Acciones:">
                                         <div class="action-buttons">
                                             <a ng-hide="!anticipo.id" ng-if="!anticipo.montoEdit && !anticipo.entregado" class="blue" uib-tooltip="Permitir Edición"
                                                 href="javascript:void(0)" ng-click="abrirModalVerificarCuenta(anticipo,'anticipo')">
@@ -4580,7 +4580,7 @@
                     </div>
                 </div>
                 <div ng-show="listaAnticipos2.length>0" class="table-responsive">
-                    <table class="table table-striped table-hover">
+                    <table class="table table-striped table-hover table-responsive-actual">
                         <thead>
                             <tr>
                                 <th>#</th>
@@ -4598,22 +4598,22 @@
                         </thead>
                         <tbody>
                             <tr ng-repeat="anticipo in listaAnticipos2 track by $index">
-                                <th scope="row">{{$index+1}}</th>
-                                <td>{{anticipo.fecha | date: "dd/MM/yyyy"}}</td>
-                                <td>{{anticipo.empleado.persona.nombre_completo}}</td>
-                                <td ng-if="!anticipo.id || anticipo.montoEdit">
+                                <th data-label="N°:">{{$index+1}}</th>
+                                <td data-label="Fecha:">{{anticipo.fecha | date: "dd/MM/yyyy"}}</td>
+                                <td data-label="Empleado:">{{anticipo.empleado.persona.nombre_completo}}</td>
+                                <td data-label="Monto:" ng-if="!anticipo.id || anticipo.montoEdit">
                                     <input step="0.01" class="form-control" max="{{anticipo.tope}}" min="0" type="number" ng-model="anticipo.monto" ng-change="sumarMontoPrestamoNuevo2(anticipo)"
                                         min="1">
                                 </td>
 
-                                <td ng-show="anticipo.tipo" ng-if="anticipo.id" ng-hide="anticipo.montoEdit">{{anticipo.monto|number:2}}</td>
-                                <th>{{anticipo.tope}}</th>
-                                <td>{{anticipo.anticipo_extraordinaro|number:2}}</td>
-                                <td>{{anticipo.anticipo_ordinaro|number:2}}</td>
-                                <td>{{anticipo.total|number:2}}</td>
-                                <td>{{anticipo.salario_basico|number:2}}</td>
-                                <td>{{anticipo.saldo_salario|number:2}}</td>
-                                <td>
+                                <td data-label="Monto:" ng-show="anticipo.tipo" ng-if="anticipo.id" ng-hide="anticipo.montoEdit">{{anticipo.monto|number:2}}</td>
+                                <th data-label="Topo Monto:">{{anticipo.tope}}</th>
+                                <td  data-label="Anticipo Extra">{{anticipo.anticipo_extraordinaro|number:2}}</td>
+                                <td  data-label="Anticipo ordidinario:">{{anticipo.anticipo_ordinaro|number:2}}</td>
+                                <td  data-label="Total Anticipo:">{{anticipo.total|number:2}}</td>
+                                <td data-label="Salario Básico:">{{anticipo.salario_basico|number:2}}</td>
+                                <td data-label="Saldo Salario:">{{anticipo.saldo_salario|number:2}}</td>
+                                <td data-label="Acciones:">
                                     <div class="action-buttons">
                                         <a class="red" uib-tooltip="Eliminar" href="javascript:void(0)" ng-click="EliminarAnticipo(index)">
                                             <i class="ace-icon fa fa-trash bigger-130"></i>
@@ -8071,7 +8071,7 @@
             </div>
             <div class="modal-body">
                 <div class="table-fixed-header">
-                    <table id="tabla-comprobante-revision" class="table table-striped table-bordered table-hover">
+                    <table id="tabla-comprobante-revision" class="table table-responsive-actual table-striped table-bordered table-hover">
                         <thead fix-head class="table-head-color">
                             <tr>
                                 <th class="center">
@@ -8097,22 +8097,22 @@
                         <tbody>
                             <tr ng-repeat="tr3 in historialTr3 track by $index">
 
-                                <td class="center">
+                                <td data-label="N°" class="center">
                                     {{$index+1}}
                                 </td>
-                                <td>
+                                <td data-label="Nombre planilla:">
                                     {{tr3.nombre_planilla}}
                                 </td>
-                                <td>
+                                <td data-label="Numero Planilla:">
                                     {{tr3.numero_planilla}}
                                 </td>
-                                <td>
+                                <td data-label="Origen Fondos:">
                                     {{tr3.origen_fondos}}
                                 </td>
-                                <td>
+                                <td data-label="Destino Fondos:">
                                     {{tr3.destino_fondos}}
                                 </td>
-                                <td>
+                                <td data-label="Acciones:">
                                     <a href="javascript:void(0)" type="button" class="red" ng-click="imprimirTr3(tr3,tipoBanco)">
                                         <i class="ace-icon fa fa-print bigger-160"></i>
                                     </a>

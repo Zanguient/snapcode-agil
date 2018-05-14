@@ -203,22 +203,22 @@ angular.module('agil.servicios')
 		return res;
 	}])
 
-	// .factory('SaldoDisponibleCuentaEmpresa', function ($resource) {
-	// 	return $resource(restServer + "transacciones/saldo/disponible/empresa/:id_empresa/:id_cuenta/:fecha_desde/:fecha_hasta", null, ///:id_empresa/:id_usuario/:id_trans
-	// 	{
-	// 		'update': { method: 'PUT' }
-	// 	})
-	// })
+	.factory('SaldoProformasEmpresa', function ($resource) {
+		return $resource(restServer + "transacciones/saldo/proformas/empresa/:id_empresa", null, ///:id_empresa/:id_usuario/:id_trans
+		{
+			'update': { method: 'PUT' }
+		})
+	})
 
-	// .factory('SaldoDisponibleCuenta', ['SaldoDisponibleCuentaEmpresa', '$q', function (SaldoDisponibleCuentaEmpresa, $q) {
-	// 	var res = function (idEmpresa, cuenta, desde, hasta) {
-	// 		var delay = $q.defer();
-	// 		SaldoDisponibleCuentaEmpresa.get({ id_empresa: idEmpresa, id_cuenta: cuenta, fecha_desde: desde, fecha_hasta: hasta },null , function (entidades) {
-	// 			delay.resolve(entidades);
-	// 		}, function (error) {
-	// 			delay.reject(error);
-	// 		});
-	// 		return delay.promise;
-	// 	};
-	// 	return res;
-	// }])
+	.factory('SaldoProformas', ['SaldoProformasEmpresa', '$q', function (SaldoProformasEmpresa, $q) {
+		var res = function (idEmpresa) {
+			var delay = $q.defer();
+			SaldoProformasEmpresa.get({ id_empresa: idEmpresa},null , function (entidades) {
+				delay.resolve(entidades);
+			}, function (error) {
+				delay.reject(error);
+			});
+			return delay.promise;
+		};
+		return res;
+	}])

@@ -6,6 +6,56 @@
 	color: white;
 	text-align-last: center;
 }
+/* responsive table */
+
+@media screen and (max-width: 600px) {
+	.table-responsive-actual {
+	  border: 0;
+	}
+  
+	.table-responsive-actual caption {
+	  font-size: 1.3em;
+	}
+	
+	.table-responsive-actual thead {
+	  border: none;
+	  clip: rect(0 0 0 0);
+	  height: 1px;
+	  margin: -1px;
+	  overflow: hidden;
+	  padding: 0;
+	  position: absolute;
+	  width: 1px;
+	}
+	
+	.table-responsive-actual tr {
+	  border-bottom: 3px solid #ddd;
+	  display: block;
+	  margin-bottom: .625em;
+	}
+	
+	.table-responsive-actual td {
+	  border-bottom: 1px solid #ddd;
+	  display: block;
+	  font-size: .8em;
+	  text-align: right;
+	}
+	
+	.table-responsive-actual td::before {
+	  /*
+	  * aria-label has no advantage, it won't be read inside a .table-responsive-actual
+	  content: attr(aria-label);
+	  */
+	  content: attr(data-label);
+	  float: left;
+	  font-weight: bold;
+	  text-transform: uppercase;
+	}
+	
+	.table-responsive-actual td:last-child {
+	  border-bottom: 0;
+	}
+  }
 /*table fixed header*/
 .table-fixed-header{
 	overflow-y: scroll;height:auto;width:auto;max-height: 300px;
@@ -38,10 +88,11 @@
  #formNuevoComprobante input[type=number]::-webkit-inner-spin-button, 
 input[type=number]::-webkit-outer-spin-button { 
   -webkit-appearance: none; 
+  appearance: none;
   margin: 0; 
 }
 
-#formNuevoComprobante input[type=number] { -moz-appearance:textfield; }
+#formNuevoComprobante input[type=number] { -moz-appearance:textfield;appearance: textfield; }
 
 #formNuevoComprobante .dropdown-menu {
 	/* position: static !important;
@@ -135,6 +186,7 @@ input {
 	margin: 0;
 	padding: 0;
 	-webkit-appearance: none;
+	appearance: none;
 }
 #content-img{
 float:left;

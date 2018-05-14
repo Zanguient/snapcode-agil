@@ -2628,8 +2628,8 @@
 					<tbody>
 						<tr ng-repeat="proforma in alertasProformas">
 							<td>{{proforma.id}}</td>
-							<td>{{proforma.clienteProforma.nit}}</td>
-							<td>{{proforma.clienteProforma.razon_social}}</td>
+							<td>{{proforma.cliente.nit}}</td>
+							<td>{{proforma.cliente.razon_social}}</td>
 							<td>{{proforma.actividadEconomica.nombre}}</td>
 							<td>{{meses[proforma.periodo_mes-1].nombre}}/{{proforma.periodo_anio}}</td>
 							<td>

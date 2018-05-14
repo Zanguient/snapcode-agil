@@ -64,6 +64,10 @@ module.exports = function (sequelize, Sequelize) {
             type: Sequelize.BOOLEAN,
             field: 'cerrada'
         },
+        factura: {
+            type: Sequelize.INTEGER,
+            field: 'factura'
+        },
         eliminado: {
             type: Sequelize.BOOLEAN,
             field: 'eliminado'

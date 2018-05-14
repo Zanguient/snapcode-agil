@@ -675,7 +675,7 @@
 							<option value="">Ninguno</option>
 						</select>
 						<span ng-if="detalle_despacho.resivo.tipoPago.nombre=='CHEQUE'" class="input-group-addon glyphicon glyphicon-pencil point-edit green"
-						 ng-click="abrirDialogConceptoEdicion(bancosHdv)"></span>
+						 ng-click="abrirDialogConceptoEdicion(otrosBancos)"></span>
 						<select ng-if="detalle_despacho.resivo.tipoPago.nombre=='CHEQUE'" required class="form-control" style="width:150px" ng-options="banco as banco.nombre for banco in otrosBancos.clases | filter:{habilitado:true} track by banco.id"
 						 ng-model="detalle_despacho.resivo.otroBanco">
 							<option value="">Ninguno</option>
@@ -753,3 +753,4 @@
 
 	</div>
 </div>
+<div id="dialog-conceptos" class="modal" ng-include src="'/templates/gral/concepto-edicion.html'"></div>

@@ -43,14 +43,14 @@
                                     PERIODO
                                 </td>
                                 <td>
-                                    <input ng-update-hidden type="text" class="date-picker form-control" data-date-format="dd/mm/yyyy" ng-model="filtro.desde">
+                                    <input ng-update-hidden type="text" class="date-picker form-control" data-date-format="dd/MM/yyyy" ng-model="filtro.desde">
                                     <!-- <select required id="mesPolifuncionalidad" name="mesPolifuncionalidad" ng-options="mes as mes.nombre for mes in mesesFiltro track by mes.id"
                                         ng-model="filtro.mes">
                                         <option value="" selected>TODOS</option>
                                     </select> -->
                                 </td>
                                 <td>
-                                    <input ng-update-hidden type="text" class="date-picker form-control" data-date-format="dd/mm/yyyy" ng-model="filtro.hasta">
+                                    <input ng-update-hidden type="text" class="date-picker form-control" data-date-format="dd/MM/yyyy" ng-model="filtro.hasta">
                                     <!-- <select required id="anioPolifuncionalidad" name="anioPolifuncionalidad" ng-options="anio as anio.nombre for anio in anios track by anio.id"
                                         ng-model="filtro.anio">
                                         <option value="" selected>TODOS</option>
@@ -171,7 +171,7 @@
                                     <input type="text" name="filtro-nombre" id="filtro-nombre" ng-model="filtro.nombre">
                                 </td>
                                 <td style="max-width: 20%; width: 20%">
-                                    <select style="max-width: 180px;width: 180px" id="filtro-concepto" name="filtro-concepto" ng-options="concepto as concepto.nombre for concepto in concepto track by concepto.id"
+                                    <select style="max-width: 180px;width: 180px" id="filtro-concepto" name="filtro-concepto" ng-options="concepto.id as concepto.nombre for concepto in conceptosTransaccion track by concepto.id"
                                         ng-model="filtro.concepto">
                                         <option value="" selected>TODOS</option>
                                     </select>
@@ -202,13 +202,13 @@
 
                                 </td>
                                 <td>
-                                    <select id="filtro-tipo" name="filtro-tipo" ng-options="tipo_doc as tipo.nombre for tipo in tiposDocumentos track by tipo.id"
+                                    <select id="filtro-tipo" name="filtro-tipo" ng-options="tipo_doc.id as tipo_doc.nombre for tipo_doc in tiposDocumentos track by tipo_doc.id"
                                         ng-model="filtro.tipo_doc">
                                         <option value="" selected>TODOS</option>
                                     </select>
                                 </td>
                                 <td>
-                                    <select id="filtro-estado" name="filtro-estado" ng-options="estado as estado.nombre for estado in estadosTransaccion track by estado.id"
+                                    <select id="filtro-estado" name="filtro-estado" ng-options="estado.id as estado.nombre for estado in estadosTransaccion track by estado.id"
                                         ng-model="filtro.estado">
                                         <option value="" selected>TODOS</option>
                                     </select>
@@ -384,12 +384,12 @@
                                     <i class="ace-icon fa fa-thumbs-up white"></i> &nbsp;
                                 </a>
 
-                                <a href="javascript:void(0)" class="green" ng-if="!transaccion.revisado" ng-click="abrirModalRevision(transaccion)" data-rel="tooltip"
+                                <a href="javascript:void(0)" class="green" ng-if="!transaccion.cerrada" ng-click="abrirModalRevision(transaccion)" data-rel="tooltip"
                                     tooltip-placement="top" uib-tooltip="Cerrar">
                                     <i class="ace-icon fa fa-unlock bigger-130"></i>
                                 </a>
 
-                                <a href="javascript:void(0)" class="red" ng-if="transaccion.revisado" data-rel="tooltip" tooltip-placement="top" uib-tooltip="Cerrado">
+                                <a href="javascript:void(0)" class="red" ng-if="transaccion.cerrada" data-rel="tooltip" tooltip-placement="top" uib-tooltip="Cerrado">
                                     <i class="ace-icon fa fa-lock bigger-130"></i>
                                 </a>
                             </div>
@@ -522,10 +522,7 @@
                                     </select>
                                 </div>
                                 <div class="col-md-6">
-                                    <!-- <b>Devuelto</b>
-                                        <select name="banco" ng-model="ingreso.banco" ng-options="banco as banco.nombre for banco in bancos track by banco.id">
-                                            <option disabled value="">Seleccione un devuelto</option>
-                                        </select> -->
+
                                 </div>
                             </div>
                         </div>
@@ -534,32 +531,28 @@
                                 <div class="col-md-6">
                                     <b>Fecha entrega &nbsp; &nbsp; &nbsp; &nbsp; </b>
                                     <br>
-                                    <b ng-if="transaccion.seguimientos[0].fecha_entrega" class="green">{{transaccion.seguimientos[0].fecha_entrega | date: dd/mm/yyyy}}</b>
-                                    <b ng-if="!transaccion.seguimientos[0].fecha_entrega" class="red">{{fecha_hoy | date: dd/mm/yyyy}}</b>
-                                    <!-- <input autocomplete="off" class="date-picker" type="text" ng-update-hidden data-date-format="dd/mm/yyyy" name="fecha" ng-model="segumiento.fecha" disabled> -->
+                                    <b ng-if="transaccion.seguimientos[0].fecha_entrega" class="green">{{transaccion.seguimientos[0].fecha_entrega | date: "dd/MM/yyyy"}}</b>
+                                    <b ng-if="!transaccion.seguimientos[0].fecha_entrega" class="red">{{fecha_hoy | date: "dd/MM/yyyy"}}</b>
+                                   
                                 </div>
                                 <div class="col-md-6">
                                     <b>Fecha devolución &nbsp; &nbsp; &nbsp; &nbsp; </b>
                                     <br>
-                                    <b ng-if="transaccion.seguimientos[0].fecha_devolucion" class="green">{{transaccion.seguimientos[0].fecha_devolucion | date: dd/mm/yyyy}}</b>
-                                    <b ng-if="!transaccion.seguimientos[0].fecha_devolucion" class="red">{{fecha_hoy | date: dd/mm/yyyy}}</b>
-                                    <!-- <input autocomplete="off" class="date-picker" type="text" ng-update-hidden data-date-format="dd/mm/yyyy" name="fecha" ng-model="segumiento.fecha" disabled> -->
+                                    <b ng-if="transaccion.seguimientos[0].fecha_devolucion" class="green">{{transaccion.seguimientos[0].fecha_devolucion | date: "dd/MM/yyyy"}}</b>
+                                    <b ng-if="!transaccion.seguimientos[0].fecha_devolucion" class="red">{{fecha_hoy | date: "dd/MM/yyyy"}}</b>
+                                    
                                 </div>
                             </div>
                             <div ng-if="transaccion.seguimientos[0].proveedor" class="row">
                                 <div class="col-md-6">
                                     <b>Fecha entrega &nbsp; &nbsp; &nbsp; &nbsp; </b>
                                     <br>
-                                    <b ng-if="transaccion.seguimientos[0].fecha_entrega" class="green">{{transaccion.seguimientos[0].fecha_entrega | date: dd/mm/yyyy}}</b>
-                                    <b ng-if="!transaccion.seguimientos[0].fecha_entrega" class="red">{{fecha_hoy | date: dd/mm/yyyy}}</b>
-                                    <!-- <input autocomplete="off" class="date-picker" type="text" ng-update-hidden data-date-format="dd/mm/yyyy" name="fecha" ng-model="segumiento.fecha" disabled> -->
+                                    <b ng-if="transaccion.seguimientos[0].fecha_entrega" class="green">{{transaccion.seguimientos[0].fecha_entrega | date: "dd/MM/yyyy"}}</b>
+                                    <b ng-if="!transaccion.seguimientos[0].fecha_entrega" class="red">{{fecha_hoy | date: "dd/MM/yyyy"}}</b>
+                                   
                                 </div>
                                 <div class="col-md-6">
-                                    <!-- <b>Fecha devuelto &nbsp; &nbsp; &nbsp; &nbsp; </b>
-                                    <br>
-                                    <b ng-if="transaccion.seguimiento.fecha_devuelto">{{transaccion.seguimiento.fecha_devuelto | date: dd/mm/yyyy}}</b>
-                                    <b ng-if="!transaccion.seguimiento.fecha_devuelto">{{transaccion.seguimiento.fecha_nueva_devuelto | date: dd/mm/yyyy}}</b> -->
-                                    <!-- <input autocomplete="off" class="date-picker" type="text" ng-update-hidden data-date-format="dd/mm/yyyy" name="fecha" ng-model="segumiento.fecha" disabled> -->
+                                   
                                 </div>
                             </div>
                         </div>
@@ -590,7 +583,7 @@
                                     <input autocomplete="off" type="text" ng-model="transaccion.observaciones">
                                 </div>
                                 <div class="col-md-6">
-                                    <!-- <input class="date-picker" type="text" ng-update-hidden data-date-format="dd/mm/yyyy" name="fecha" ng-model="segumiento.fecha"> -->
+                                    <!-- <input class="date-picker" type="text" ng-update-hidden data-date-format="dd/MM/yyyy" name="fecha" ng-model="segumiento.fecha"> -->
                                 </div>
                             </div>
                         </div>
@@ -624,11 +617,11 @@
                                         <input type="text" class="date-picker" name="escondido" autofocus>
                                     </div>
                                     <div ng-if="ingreso.fecha != undefined">
-                                        <input ng-update-hidden type="text" name="fecha" data-date-format="dd/mm/yyyy" autocomplete="off" class="date-picker" ng-model="ingreso.fecha">
+                                        <input ng-update-hidden type="text" name="fecha" data-date-format="dd/MM/yyyy" autocomplete="off" class="date-picker" ng-model="ingreso.fecha">
                                     </div>
                                     <div ng-if="ingreso.fecha == undefined">
-                                        <input ng-update-hidden type="text" name="fecha" data-date-format="dd/mm/yyyy" autocomplete="off" class="date-picker" ng-model="ingreso.fecha">
-                                        <!-- <input class="date-picker" ng-model="ingreso.fecha" ng-update-hidden type="text" name="fecha" data-date-format="dd/mm/yyyy"> -->
+                                        <input ng-update-hidden type="text" name="fecha" data-date-format="dd/MM/yyyy" autocomplete="off" class="date-picker" ng-model="ingreso.fecha">
+                                        <!-- <input class="date-picker" ng-model="ingreso.fecha" ng-update-hidden type="text" name="fecha" data-date-format="dd/MM/yyyy"> -->
                                     </div>
                                 </div>
                             </div>
@@ -662,8 +655,8 @@
                                 <div class="col-md-6">
                                     <b>Nombre</b>
                                 </div>
-                                <div class="col-md-6" style="max-width: 200px; width: 200px">
-                                    <select style="max-width: 180px;width: 180px" ng-model="ingreso.venta" ng-options="venta as (venta.cliente.razon_social + ' - Factura N° '+ venta.factura + ' - SALDO = ' + venta.saldo) for venta in vencimientosCobros track by venta.id"
+                                <div class="col-md-6" style="max-width: 280px; width: 280px">
+                                    <select style="max-width: 280px;width: 280px" ng-model="ingreso.venta" ng-options="venta as (venta.cliente.razon_social + ' - Factura N° '+ venta.factura + ' - SALDO = ' + venta.saldo +(venta.es_proforma ? ' Proforma':'')) for venta in vencimientosCobros track by venta.id"
                                         ng-change="establecerConceptoIngreso(ingreso)">
                                         <option disabled value="">Seleccione una credito de cliente</option>
                                     </select>
@@ -710,7 +703,7 @@
                                     <b>Tipo</b>
                                 </div>
                                 <div class="col-md-6">
-                                    <select ng-model="ingreso.tipo_doc" ng-options="tipo.id as tipo.nombre for tipo in tiposDocumentos track by tipo.id">
+                                    <select required ng-model="ingreso.tipo_doc" ng-options="tipo.id as tipo.nombre for tipo in tiposDocumentos track by tipo.id">
                                         <option value="">Seleccione tipo de documento</option>
                                     </select>
                                 </div>
@@ -722,7 +715,7 @@
                                     <b>Monto</b>
                                 </div>
                                 <div class="col-md-6">
-                                    <input type="number" step="0.01" name="monto" ng-model="ingreso.haber" max="{{ingreso.venta.saldo}}">
+                                    <input required type="number" step="0.001" name="monto" ng-model="ingreso.haber" max="{{ingreso.venta.saldo}}" value="{{ingreso.venta.saldo}}">
                                 </div>
                             </div>
                         </div>
@@ -759,11 +752,11 @@
                                         <input type="text" class="date-picker" name="escondido" autofocus>
                                     </div>
                                     <div>
-                                        <input disabled ng-update-hidden type="text" name="fecha" data-date-format="dd/mm/yyyy" autocomplete="off" class="date-picker"
+                                        <input disabled ng-update-hidden type="text" name="fecha" data-date-format="dd/MM/yyyy" autocomplete="off" class="date-picker"
                                             ng-model="ingreso.fecha">
                                     </div>
                                     <!-- <div ng-if="ingreso.fecha == undefined">
-                                            <input disabled ng-update-hidden type="text" name="fecha" data-date-format="dd/mm/yyyy" autocomplete="off" class="date-picker" ng-model="ingreso.fecha">
+                                            <input disabled ng-update-hidden type="text" name="fecha" data-date-format="dd/MM/yyyy" autocomplete="off" class="date-picker" ng-model="ingreso.fecha">
                                         </div> -->
                                 </div>
                             </div>
@@ -792,7 +785,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="form-group">
+                        <div class="form-group" ng-if="showSelecccionCliente(ingreso)">
                             <div class="row">
                                 <div class="col-md-6">
                                     <b>Nombre</b>
@@ -894,10 +887,10 @@
                                         <input type="text" class="date-picker" name="escondido" autofocus>
                                     </div>
                                     <div ng-if="egreso.fecha != undefined">
-                                        <input autocomplete="off" class="date-picker" ng-model="egreso.fecha" ng-update-hidden type="text" name="fecha" data-date-format="dd/mm/yyyy">
+                                        <input autocomplete="off" class="date-picker" ng-model="egreso.fecha" ng-update-hidden type="text" name="fecha" data-date-format="dd/MM/yyyy">
                                     </div>
                                     <div ng-if="egreso.fecha == undefined">
-                                        <input class="date-picker" ng-model="egreso.fecha" ng-update-hidden type="text" name="fecha" data-date-format="dd/mm/yyyy">
+                                        <input class="date-picker" ng-model="egreso.fecha" ng-update-hidden type="text" name="fecha" data-date-format="dd/MM/yyyy">
                                     </div>
                                 </div>
                             </div>
@@ -920,7 +913,7 @@
                                     <b>Banco</b>
                                 </div>
                                 <div class="col-md-6">
-                                    <select name="banco" ng-model="egreso.cuenta" ng-options="banco.id as (banco.nombre + ' ' + banco.numero) for banco in bancos track by banco.id">
+                                    <select required name="banco" ng-model="egreso.cuenta" ng-options="banco.id as (banco.nombre + ' ' + banco.numero) for banco in bancos track by banco.id">
                                         <option disabled value="">Seleccione un banco</option>
                                     </select>
                                 </div>
@@ -932,7 +925,7 @@
                                     <b>Nombre</b>
                                 </div>
                                 <div class="col-md-6">
-                                    <select ng-model="egreso.compra" ng-options="compra as (compra.proveedor.razon_social + ' - Factura N° '+ compra.factura + ' - Saldo ' + compra.saldo) for compra in vencimientosDeudas track by compra.id"
+                                    <select required ng-model="egreso.compra" ng-options="compra as (compra.proveedor.razon_social + ' - Factura N° '+ compra.factura + ' - Saldo ' + compra.saldo) for compra in vencimientosDeudas track by compra.id"
                                         ng-change="establecerConceptoEgreso(egreso)">
                                         <option disabled value="">Seleccione una deuda a proveedor</option>
                                     </select>
@@ -975,7 +968,7 @@
                                     <b>Tipo</b>
                                 </div>
                                 <div class="col-md-6">
-                                    <select ng-model="egreso.tipo_doc" ng-options="tipo.id as tipo.nombre for tipo in tiposDocumentos track by tipo.id">
+                                    <select required ng-model="egreso.tipo_doc" ng-options="tipo.id as tipo.nombre for tipo in tiposDocumentos track by tipo.id">
                                         <option value="">Seleccione tipo de documento</option>
                                     </select>
                                 </div>
@@ -987,7 +980,7 @@
                                     <b>Monto</b>
                                 </div>
                                 <div class="col-md-6">
-                                    <input type="number" step="0.01" name="monto" ng-model="egreso.debe">
+                                    <input required type="number" step="0.001" name="monto" ng-model="egreso.debe" max="{{egreso.compra.saldo}}" value="{{egreso.compra.saldo}}">
                                 </div>
                             </div>
                         </div>
@@ -1022,10 +1015,10 @@
                                     </div>
                                     <div ng-if="egreso.fecha != undefined">
                                         <input disabled autocomplete="off" class="date-picker" ng-model="egreso.fecha" ng-update-hidden type="text" name="fecha"
-                                            data-date-format="dd/mm/yyyy">
+                                            data-date-format="dd/MM/yyyy">
                                     </div>
                                     <div ng-if="egreso.fecha == undefined">
-                                        <input disabled class="date-picker" ng-model="egreso.fecha" ng-update-hidden type="text" name="fecha" data-date-format="dd/mm/yyyy">
+                                        <input disabled class="date-picker" ng-model="egreso.fecha" ng-update-hidden type="text" name="fecha" data-date-format="dd/MM/yyyy">
                                     </div>
                                 </div>
                             </div>

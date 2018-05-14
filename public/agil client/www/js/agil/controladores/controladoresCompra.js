@@ -108,7 +108,7 @@ angular.module('agil.controladores')
 	
 	$scope.buscarProducto=function(query) {
 		if(query!="" && query!=undefined && $scope.busquedaProductoHabilidato){
-			var promesa=ListaProductosEmpresaUsuario($scope.usuario.id_empresa,query, $scope.usuario.id);
+			var promesa=ListaProductosEmpresaUsuario($scope.usuario.id_empresa,query, $scope.usuario.id, $scope.compra.almacen.id);
 			return promesa;
 		}
 	};

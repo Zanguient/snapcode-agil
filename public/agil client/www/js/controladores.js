@@ -1740,9 +1740,9 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 			var proformaNoOk = []
 			if (listaProformas.length > 0) {
 				actividadComparar = listaProformas[0].actividadEconomica.id
-				clienteComparar = listaProformas[0].clienteProforma.id
+				clienteComparar = listaProformas[0].cliente.id
 				listaProformas.map(function (pro) {
-					if (actividadComparar == pro.actividadEconomica.id && clienteComparar == pro.clienteProforma.id) {
+					if (actividadComparar == pro.actividadEconomica.id && clienteComparar == pro.cliente.id) {
 						// var checkDate = new Date(pro.fecha_proforma_ok)
 						if (pro.fecha_proforma_ok !== null) {
 							men += pro.id + ', '
@@ -1753,7 +1753,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 					} else {
 						noMismaActividad.push(pro)
 					}
-					if (clienteComparar == pro.clienteProforma.id) {
+					if (clienteComparar == pro.cliente.id) {
 
 					} else {
 						noMismoCliente.push(pro)
@@ -1773,12 +1773,12 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 						textCli += " La(s) razón(es) social(es) "
 						noMismoCliente.map(function (cli, i) {
 							if (i === noMismoCliente.length - 1) {
-								textCli += cli.clienteProforma.razon_social
+								textCli += cli.cliente.razon_social
 							} else {
-								textCli += cli.clienteProforma.razon_social + ", "
+								textCli += cli.cliente.razon_social + ", "
 							}
 						})
-						textCli += " no pertenecen al mismo cliente " + listaProformas[0].clienteProforma.razon_social + "  "
+						textCli += " no pertenecen al mismo cliente " + listaProformas[0].cliente.razon_social + "  "
 					}
 
 					text += " no pertenecen a la misma actividad de " + listaProformas[0].actividadEconomica.nombre + "  "
@@ -1794,7 +1794,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 						// var totalFacturaSus = 0
 						// $scope.detallesFacturaProformas = []
 						// $scope.facturaProformas.proformas = paraFacturar
-						// $scope.facturaProformas.cliente = paraFacturar[0].clienteProforma
+						// $scope.facturaProformas.cliente = paraFacturar[0].cliente
 						// $scope.facturaProformas.actividad = paraFacturar[0].actividadEconomica
 
 						// paraFacturar.map(function (pro) {
@@ -1899,16 +1899,16 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 						if (i === paraFacturar.length - 1) {
 							$scope.facturaProformas = {}
 							$scope.facturaProformas.movimiento = movimiento
-							$scope.facturaProformas.cliente = datosProformas[0].clienteProforma
+							$scope.facturaProformas.cliente = datosProformas[0].cliente
 							// $scope.facturaProformas.actividadEconomica = datosProformas[0].actividadEconomica
 							var continuar = false
 							$scope.facturaProformas.actividad = datosProformas[0].actividadEconomica
-							datosProformas[0].sucursalProforma.actividadesDosificaciones.forEach(function (dosificacion, k) {
+							datosProformas[0].sucursal.actividadesDosificaciones.forEach(function (dosificacion, k) {
 								if (dosificacion.id_actividad == $scope.facturaProformas.actividad.id && !dosificacion.expirado && !dosificacion.dosificacion.expirado) {
-									$scope.facturaProformas.sucursal = Object.assign({}, datosProformas[0].sucursalProforma)
+									$scope.facturaProformas.sucursal = Object.assign({}, datosProformas[0].sucursal)
 									$scope.facturaProformas.sucursal.actividadesDosificaciones = Object.assign([], dosificacion)
 								}
-								if (k == datosProformas[0].sucursalProforma.actividadesDosificaciones.length - 1) {
+								if (k == datosProformas[0].sucursal.actividadesDosificaciones.length - 1) {
 									if ($scope.facturaProformas.sucursal !== undefined) {
 										continuar = true
 									}
@@ -1919,7 +1919,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 								$scope.mostrarMensaje('Existe un problema con la dosificación actual. No se puede continuar con la facturación')
 								return
 							}
-							// $scope.facturaProformas.sucursal = datosProformas[0].sucursalProforma
+							// $scope.facturaProformas.sucursal = datosProformas[0].sucursal
 							$scope.facturaProformas.detallesVenta = []
 							$scope.facturaProformas.detalle = ""
 							$scope.facturaProformas.totalImporteBs = 0
@@ -2416,7 +2416,10 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 			});
 		}
 
-		$scope.imprimirReciboVencimientoCredito = function (data, venta, pago) {
+		$scope.imprimirReciboVencimientoCredito = function (data, venta, pago, usar_venta_enviada) {
+			if (usar_venta_enviada) {
+				$scope.venta = venta
+			}
 			blockUI.start();
 			var doc = new PDFDocument({ size: [227, 353], margin: 10 });
 			var stream = doc.pipe(blobStream());
@@ -2503,7 +2506,102 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 				window.open(fileURL, '_blank', 'location=no');
 			});
 			blockUI.stop();
+			$scope.venta = undefined
 		}
+		// $scope.imprimirReciboVencimientoCredito = function (data, venta, pago) {
+		// 	blockUI.start();
+		// 	var doc = new PDFDocument({ size: [227, 353], margin: 10, compress: false });
+		// 	var stream = doc.pipe(blobStream());
+		// 	doc.moveDown(2);
+		// 	doc.font('Helvetica-Bold', 8);
+		// 	doc.text($scope.usuario.empresa.razon_social.toUpperCase(), { align: 'center' });
+		// 	doc.moveDown(0.4);
+		// 	doc.font('Helvetica', 7);
+		// 	doc.text((venta.almacen !== undefined)?venta.almacen.sucursal.nombre.toUpperCase():(venta.sucursal !== undefined) ? venta.sucursal.nombre.toUpperCase(): 'ERROR', { align: 'center' });
+		// 	doc.moveDown(0.4);
+		// 	doc.text((venta.almacen !== undefined)?venta.almacen.sucursal.direccion.toUpperCase():(venta.sucursal !== undefined) ? venta.sucursal.direccion.toUpperCase(): 'ERROR', { align: 'center' });
+		// 	doc.moveDown(0.4);
+		// 	var telefono = (venta.almacen !== undefined)? (venta.almacen.sucursal.telefono1 != null ? venta.almacen.sucursal.telefono1 : "") +
+		// 		(venta.almacen.sucursal.telefono2 != null ? "-" + venta.almacen.sucursal.telefono2 : "") +
+		// 		(venta.almacen.sucursal.telefono3 != null ? "-" + venta.almacen.sucursal.telefono3 : ""):(venta.sucursal.telefono1 != null ? venta.sucursal.telefono1 : "") +
+		// 		(venta.sucursal.telefono2 != null ? "-" + venta.sucursal.telefono2 : "") +
+		// 		(venta.sucursal.telefono3 != null ? "-" + venta.sucursal.telefono3 : "")
+		// 	doc.text("TELF.: " + telefono, { align: 'center' });
+		// 	doc.moveDown(0.4);
+		// 	doc.text("COCHABAMBA - BOLIVIA", { align: 'center' });
+		// 	doc.moveDown(0.5);
+		// 	doc.font('Helvetica-Bold', 8);
+		// 	doc.text("RECIBO", { align: 'center' });
+		// 	doc.font('Helvetica', 7);
+		// 	doc.moveDown(0.4);
+		// 	doc.text("------------------------------------", { align: 'center' });
+		// 	doc.moveDown(0.4);
+		// 	doc.text((venta.almacen !== undefined) ? venta.almacen.sucursal.nota_recibo_correlativo : venta.sucursal.nota_recibo_correlativo, { align: 'center' });
+		// 	//doc.text("NIT: "+$scope.usuario.empresa.nit,{align:'center'});
+
+		// 	//doc.text("FACTURA No: "+venta.factura,{align:'center'});
+		// 	doc.moveDown(0.4);
+		// 	//doc.text("AUTORIZACIÓN No: "+venta.autorizacion,{align:'center'});
+		// 	doc.moveDown(0.4);
+		// 	doc.text("------------------------------------", { align: 'center' });
+		// 	doc.moveDown(0.4);
+		// 	//doc.text(venta.actividad.nombre,{align:'center'});
+		// 	doc.moveDown(0.6);
+		// 	var date = new Date();
+		// 	doc.text("FECHA : " + date.getDate() + "/" + (date.getMonth() + 1) + "/" + date.getFullYear(), { align: 'left' });
+		// 	doc.moveDown(0.4);
+		// 	doc.text("He recibido de : " + ($scope.venta !== undefined) ? $scope.venta.cliente.razon_social : (venta.cliente) ? venta.cliente.razon_social : '', { align: 'left' });
+		// 	doc.moveDown(0.4);
+		// 	doc.text("---------------------------------------------------------------------------------", { align: 'center' });
+		// 	doc.moveDown(0.2);
+		// 	doc.text("       CONCEPTO                                   ", { align: 'left' });
+		// 	doc.moveDown(0.2);
+		// 	doc.text("---------------------------------------------------------------------------------", { align: 'center' });
+		// 	doc.moveDown(0.4);
+		// 	venta.fecha = new Date(venta.fecha);
+		// 	doc.text("Fecha: " + venta.fecha.getDate() + "/" + (venta.fecha.getMonth() + 1) + "/" + venta.fecha.getFullYear(), 15, 210);
+		// 	if ($scope.venta !== undefined) {
+		// 		var textoFact = $scope.venta.movimiento.clase.nombre_corto == $scope.diccionario.EGRE_FACTURACION ? "Factura nro. " + $scope.venta.factura : "Proforma nro. " + $scope.venta.factura;
+		// 	} else {
+		// 		var textoFact = venta.movimiento.clase.nombre_corto == $scope.diccionario.EGRE_FACTURACION ? "Factura nro. " + $scope.venta.factura : "Proforma nro. " + $scope.venta.factura;	
+		// 	}
+		// 	doc.text(textoFact, 105, 210, { width: 100 });
+		// 	doc.text("Saldo Bs " + (venta.saldo - pago) + ".-", 105, 220, { width: 100 });
+		// 	doc.text("Bs " + pago + ".-", 170, 210, { width: 100 });
+
+		// 	doc.text("--------------", 10, 230, { align: 'right' });
+		// 	//oc.text("--------------------",{align:'right'});
+		// 	doc.moveDown(0.3);
+		// 	doc.text("TOTAL Bs.              " + pago.toFixed(2), { align: 'right' });
+		// 	doc.moveDown(0.4);
+		// 	doc.moveDown(0.4);
+		// 	doc.text("SON: " + data.pago, { align: 'left' });
+		// 	doc.moveDown(0.6);
+
+		// 	doc.moveDown(0.4);
+
+		// 	doc.moveDown(0.4);
+		// 	doc.moveDown(0.4);
+		// 	doc.moveDown(0.4);
+		// 	doc.moveDown(0.4);
+		// 	doc.moveDown(0.4);
+		// 	doc.moveDown(0.4);
+		// 	doc.moveDown(0.4);
+		// 	doc.moveDown(0.4);
+		// 	doc.moveDown(0.4);
+		// 	doc.moveDown(0.4);
+		// 	doc.moveDown(0.4);
+		// 	doc.moveDown(0.4);
+
+		// 	doc.text("-------------------------                       -------------------------", { align: 'center' });
+		// 	doc.text("ENTREGUE CONFORME            RECIBI CONFORME", { align: 'center' });
+		// 	doc.end();
+		// 	stream.on('finish', function () {
+		// 		var fileURL = stream.toBlobURL('application/pdf');
+		// 		window.open(fileURL, '_blank', 'location=no');
+		// 	});
+		// 	blockUI.stop();
+		// }
 
 		$scope.imprimirReciboVencimientoDeuda = function (data, compra, pago) {
 			blockUI.start();
