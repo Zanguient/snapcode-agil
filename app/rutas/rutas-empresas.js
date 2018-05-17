@@ -1,5 +1,5 @@
 module.exports = function (router, decodeBase64Image, fs, Empresa, Sucursal, Clase, Tipo, signs3,
-	ConfiguracionVentaVista, ConfiguracionCompraVista, sequelize) {
+	ConfiguracionVentaVista, ConfiguracionCompraVista, sequelize, EmpresaAplicacion, Aplicacion) {
 
 	router.route('/empresas')
 
@@ -159,7 +159,29 @@ module.exports = function (router, decodeBase64Image, fs, Empresa, Sucursal, Cla
 		}, {
 				where: { id: empresaCreada.id }
 			}).then(function (affecteedRows) {
-				res.json({ empresa: empresaCreada, url: imagen, signedRequest: signedRequest, image_name: 'empresa-' + empresaCreada.id + '.jpg' });
+				EmpresaAplicacion.destroy({
+					where: {
+						id_empresa: empresaCreada.id
+					}
+
+				}).then(function (empresaAplicacionActualizado) {
+
+					req.body.aplicaciones.forEach(function (aplicacion, index, array) {
+						EmpresaAplicacion.findOrCreate({
+							where: { id_aplicacion: aplicacion.id, id_empresa: empresaCreada.id },
+							defaults: {
+								d_aplicacion: aplicacion.id,
+								id_empresa: empresaCreada.id
+							}
+						}).spread(function (cargoEncontrado, created) {
+							if (index === (array.length - 1)) {
+								res.json({ empresa: empresaCreada, url: imagen, signedRequest: signedRequest, image_name: 'empresa-' + empresaCreada.id + '.jpg' });
+							}
+
+						});
+
+					});
+				});
 			});
 	}
 
@@ -232,7 +254,7 @@ module.exports = function (router, decodeBase64Image, fs, Empresa, Sucursal, Cla
 			}
 			Empresa.findAll({
 				where: condicion,
-				include: [{ model: Clase, as: 'departamento' },
+				include: [{ model: Clase, as: 'departamento' },{ model: EmpresaAplicacion, as: 'aplicacionesEmpresa' },
 				{ model: Clase, as: 'municipio' },
 				{ model: Sucursal, as: 'sucursales' }]
 			}).then(function (entidades) {
@@ -255,7 +277,22 @@ module.exports = function (router, decodeBase64Image, fs, Empresa, Sucursal, Cla
 				});
 			});
 		});
-
+	router.route('/sistema/aplicaciones')
+		.get(function (req, res) {
+			Aplicacion.findAll({
+				
+			}).then(function (Aplicaciones) {
+				res.json(Aplicaciones);
+			});
+		})
+		router.route('/sistema/aplicaciones/empresa/:id_empresa')
+		.get(function (req, res) {
+			EmpresaAplicacion.findAll({
+				where:{id_empresa:req.params.id_empresa}
+			}).then(function (Aplicaciones) {
+				res.json(Aplicaciones);
+			});
+		})
 	router.route('/empresas/:id_empresa/configuracion-venta-vista')
 		.get(function (req, res) {
 			ConfiguracionVentaVista.find({
@@ -334,9 +371,9 @@ module.exports = function (router, decodeBase64Image, fs, Empresa, Sucursal, Cla
 				});
 		});
 
-		router.route('/grupos/empresa/:id_empresa/user/:id_usuario')
+	router.route('/grupos/empresa/:id_empresa/user/:id_usuario')
 		.get(function (req, res) {
-			sequelize.query("SELECT DISTINCT gl_clase.id, gl_clase.nombre FROM gl_clase inner join gl_tipo on gl_clase.tipo = gl_tipo.id where gl_clase.id in (SELECT grupo from sys_usuario_grupos where usuario ="+req.params.id_usuario+") and gl_tipo.empresa = " + req.params.id_empresa, { type: sequelize.QueryTypes.SELECT })
+			sequelize.query("SELECT DISTINCT gl_clase.id, gl_clase.nombre FROM gl_clase inner join gl_tipo on gl_clase.tipo = gl_tipo.id where gl_clase.id in (SELECT grupo from sys_usuario_grupos where usuario =" + req.params.id_usuario + ") and gl_tipo.empresa = " + req.params.id_empresa, { type: sequelize.QueryTypes.SELECT })
 				.then(function (dato) {
 					res.json(dato);;
 				});

@@ -59,6 +59,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 			 $scope.eliminarPopup($scope.IdModalOpcionesQr);
 			 $scope.eliminarPopup($scope.IdModalAsignarCuenta); */
 		});
+	  
 		$scope.obtenerSucursales = function () {
 			var sucursales = [];
 			for (var i = 0; i < $scope.usuario.sucursalesUsuario.length; i++) {
@@ -694,7 +695,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 									promesa.then(function (dato) {
 										$scope.mostrarMensaje(dato.message)
 									})
-						}
+								}
 							}
 						}
 					});
@@ -1160,6 +1161,11 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 				$scope.obtenerMovimientoEgresoBaja();
 				$scope.obtenerTiposComprobante();
 				$scope.reiniciarCorrelativoComprobantes()
+				if(screen.width>960){
+					$('.modal-rh-nuevo').addClass('modal-dialog');
+				}else{
+					$('.modal-rh-nuevo').removeClass('modal-dialog');
+				}
 				$scope.sucursales = $scope.obtenerSucursales();
 
 
@@ -1272,21 +1278,47 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 
 		$scope.generarMenus = function (usuario) {
 			$scope.aplicaciones = [];
+
 			for (var i = 0; i < usuario.rolesUsuario.length; i++) {
 				for (var j = 0; j < usuario.rolesUsuario[i].rol.aplicacionesRol.length; j++) {
 					usuario.rolesUsuario[i].rol.aplicacionesRol[j].aplicacion.url = usuario.rolesUsuario[i].rol.aplicacionesRol[j].aplicacion.url.replace("?", usuario.persona.id + "");
 					if (usuario.rolesUsuario[i].rol.aplicacionesRol[j].aplicacion.id_padre == null) {
 						var app = usuario.rolesUsuario[i].rol.aplicacionesRol[j].aplicacion;
 						app.subaplicaciones = [];
-						for (var k = 0; k < usuario.aplicacionesUsuario.length; k++) {
-							var element = usuario.aplicacionesUsuario[k];
-							if (element.aplicacion.titulo == app.titulo)
-								if (element.puede_ver) {
-									$scope.aplicaciones.push(app);
+						var bandera = false
+						if (usuario.empresa) {
+							if (usuario.empresa.aplicacionesEmpresa.length > 0) {
+								for (var d = 0; d < usuario.empresa.aplicacionesEmpresa.length; d++) {
+									var element = usuario.aplicacionesUsuario[d];
+									if (element) {
+										if (element.id_aplicacion == app.id) {
+											bandera = true
+										}
+									}
 								}
+								if (bandera) {
+									for (var k = 0; k < usuario.aplicacionesUsuario.length; k++) {
+										var element = usuario.aplicacionesUsuario[k];
+										if (element.aplicacion.titulo == app.titulo)
+											if (element.puede_ver) {
+												$scope.aplicaciones.push(app);
+											}
 
+									}
+								}
+							} else {
+								for (var k = 0; k < usuario.aplicacionesUsuario.length; k++) {
+									var element = usuario.aplicacionesUsuario[k];
+									if (element.aplicacion.titulo == app.titulo)
+										if (element.puede_ver) {
+											$scope.aplicaciones.push(app);
+										}
+
+								}
+							}
+						} else {
+							$scope.aplicaciones.push(app);
 						}
-
 					}
 				}
 			}
@@ -1295,7 +1327,42 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 				for (var j = 0; j < usuario.rolesUsuario[i].rol.aplicacionesRol.length; j++) {
 					for (var z = 0; z < $scope.aplicaciones.length; z++) {
 						if (usuario.rolesUsuario[i].rol.aplicacionesRol[j].aplicacion.id_padre == $scope.aplicaciones[z].id) {
-							$scope.aplicaciones[z].subaplicaciones.push(usuario.rolesUsuario[i].rol.aplicacionesRol[j].aplicacion);
+							var app2 = usuario.rolesUsuario[i].rol.aplicacionesRol[j].aplicacion;
+
+							var bandera = false
+							if (usuario.empresa) {
+								if (usuario.empresa.aplicacionesEmpresa.length > 0) {
+									for (var d = 0; d < usuario.empresa.aplicacionesEmpresa.length; d++) {
+										var element = usuario.aplicacionesUsuario[d];
+										if (element) {
+											if (element.id_aplicacion == app2.id) {
+												bandera = true
+											}
+										}
+									}
+									if (bandera) {
+										for (var k = 0; k < usuario.aplicacionesUsuario.length; k++) {
+											var element = usuario.aplicacionesUsuario[k];
+											if (element.aplicacion.titulo == app2.titulo)
+												if (element.puede_ver) {
+													$scope.aplicaciones[z].subaplicaciones.push(app2);
+												}
+
+										}
+									}
+								} else {
+									for (var k = 0; k < usuario.aplicacionesUsuario.length; k++) {
+										var element = usuario.aplicacionesUsuario[k];
+										if (element.aplicacion.titulo == app2.titulo)
+											if (element.puede_ver) {
+												$scope.aplicaciones[z].subaplicaciones.push(app2);
+											}
+
+									}
+								}
+							} else {
+								$scope.aplicaciones[z].subaplicaciones.push(app2);
+							}
 						}
 					}
 				}
@@ -1970,7 +2037,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 										}
 									})
 								}).catch(function (err) {
-									
+
 								})
 								$scope.dolarActual = $scope.obtenerCambioDolarActual()
 
@@ -3016,14 +3083,16 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 		}
 		$scope.llenarCampamentos = function (campamentos) {
 			$scope.campamento = [];
-			for (var i = 0; i < campamentos.length; i++) {
-				var campamento = {
-					nombre: campamentos[i].nombre,
-					maker: "",
-					ticked: false,
-					id: campamentos[i].id
+			if (campamentos) {
+				for (var i = 0; i < campamentos.length; i++) {
+					var campamento = {
+						nombre: campamentos[i].nombre,
+						maker: "",
+						ticked: false,
+						id: campamentos[i].id
+					}
+					$scope.campamento.push(campamento);
 				}
-				$scope.campamento.push(campamento);
 			}
 
 		}
@@ -3076,6 +3145,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 			$rootScope.abs = $window.Math.abs;
 			if ($localStorage.usuario) {
 				$scope.usuario = JSON.parse($localStorage.usuario);
+
 				$scope.ComprobanteGuardado = $localStorage.nuevoComprobante
 				console.log($scope.ComprobanteGuardado)
 				console.log($scope.usuario)

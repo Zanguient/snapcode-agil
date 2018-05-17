@@ -296,93 +296,84 @@ function ejecutarScriptsRecursosHumanos(idModalPrerequisitos, idModalEmpleado, i
 	idModalTr3BancoMsc, idModalTr3BancoUnion, idModalHistorialTr3, IdModalVerificarCuentaRrhh, idModalConfirmarDesabilitacion, idModalReingresoEmpleado,
 	idModalHistorialBeneficios, idModalConfiguracionRopaDeTrabajo, idModalReporteRopaDeTrabajo, idmodalWizardContainerConfiguracionRopaTrabajo, idModalRopaTrabajo, idModalNuevaRopaTrabajo, idModalItemsNuevaRopaTrabajo, idModalEliminarRopaTrabajo, idModalConceptoEdicion, idModalVisitaSalida, idModalDesabilitarPasajero,
 	idModalCerrarRolDeTurno, idModalConductoresViaje) {
-	var Width = "auto"
-	var height = "auto"
-	if (screen.width < 960) {
-		Width = screen.width
-		height = screen.height
-	}
-
-
-
-	crearPopup(idModalPrerequisitos, Width, height);
-	crearPopup(idModalEmpleado, Width, height);
+	crearPopup(idModalPrerequisitos, "auto", "auto");
+	crearPopup(idModalEmpleado, "auto", "auto");
 	aplicarWizardFormulario(idModalEmpleado, idModalwizardContainerEmpleado);
-	crearPopup(idModalDepartamentoEstado, Width, height);
-	crearPopup(idModalProvincia, Width,height);
-	crearPopup(idModalLocalidad, Width,height);
-	crearPopup(idModalHojaVida, Width, height);
+	crearPopup(idModalDepartamentoEstado, "auto", "auto");
+	crearPopup(idModalProvincia, "auto","auto");
+	crearPopup(idModalLocalidad, "auto","auto");
+	crearPopup(idModalHojaVida, "auto", "auto");
 	aplicarWizardFormulario(idModalHojaVida, idModalwizardContainerHojaVida);
-	crearPopup(idModalHistorialContrato, Width, height);
-	crearPopup(idModalBeneficiosSociales, Width, height);
-	crearPopup(idModalBitacoraFicha, Width, height);
-	crearPopup(idModalAnticipoExtraordinario, Width,height);
-	crearPopup(idModalNuevoPrestamo, Width, height);
-	crearPopup(idModalRolTurnos, Width, height);
-	crearPopup(idModalHistorialTurnos, Width, height);
-	crearPopup(idModalHorasExtras, Width, height);
-	crearPopup(idModalHistorialHorasExtras, Width, height);
-	crearPopup(idModalAnticipoRegular, Width, height);
-	crearPopup(idModalPrestamosPersonal, Width,height);
-	crearPopup(idModalAdvertencia, Width, height);
-	crearPopup(idModalPretamosNuevoTodos, Width, height);
-	crearPopup(idModalReporteHijos, Width, height);
-	crearPopup(idModalReporteVeneficios, Width, height);
-	crearPopup(idModalPagoPrestamo, Width, height);
-	crearPopup(idModalReporteVacaciones, Width, height);
-	crearPopup(idModalReporteBajasMedicas, Width, height);
-	crearPopup(idModalReporteRolTurnos, Width, height);
-	crearPopup(idModalReporteTurnosDetallado, Width, screen.height);
-	crearPopup(idModalViajes, Width, height);
-	crearPopup(idModalAusenciasVacaciones, Width, height);
+	crearPopup(idModalHistorialContrato, "auto", "auto");
+	crearPopup(idModalBeneficiosSociales, "auto", "auto");
+	crearPopup(idModalBitacoraFicha, "auto", "auto");
+	crearPopup(idModalAnticipoExtraordinario, "auto","auto");
+	crearPopup(idModalNuevoPrestamo, "auto", "auto");
+	crearPopup(idModalRolTurnos, "auto", "auto");
+	crearPopup(idModalHistorialTurnos, "auto", "auto");
+	crearPopup(idModalHorasExtras, "auto", "auto");
+	crearPopup(idModalHistorialHorasExtras, "auto", "auto");
+	crearPopup(idModalAnticipoRegular, "auto", "auto");
+	crearPopup(idModalPrestamosPersonal, "auto","auto");
+	crearPopup(idModalAdvertencia, "auto", "auto");
+	crearPopup(idModalPretamosNuevoTodos, "auto", "auto");
+	crearPopup(idModalReporteHijos, "auto", "auto");
+	crearPopup(idModalReporteVeneficios, "auto", "auto");
+	crearPopup(idModalPagoPrestamo, "auto", "auto");
+	crearPopup(idModalReporteVacaciones, "auto", "auto");
+	crearPopup(idModalReporteBajasMedicas, "auto", "auto");
+	crearPopup(idModalReporteRolTurnos, "auto", "auto");
+	crearPopup(idModalReporteTurnosDetallado, screen.width,"auto");
+	crearPopup(idModalViajes, "auto", "auto");
+	crearPopup(idModalAusenciasVacaciones, "auto", "auto");
 	aplicarTab(idTabAusenciasVacaciones);
-	crearPopup(idModalTipoBaja, Width, height);
-	crearPopup(idModalFeriados, Width, height);
-	crearPopup(idModalHitorialVacaciones, Width, height);
-	crearPopup(idModalDetalleVacaciones, Width, height);
-	crearPopup(idModalCompensacion, Width, height);
-	crearPopup(idModalHistorialAusencias, Width, height);
-	crearPopup(idModalHistorialAusenciaMedica, Width, height);
-	crearPopup(idModalTipoAusencia, Width, height);
-	crearPopup(idModalVisita, Width, height);
-	crearPopup(idModalVehiculosViaje, Width, height);
-	crearPopup(idModalHistorialViajes, Width, height);
-	crearPopup(idModalReporteAusencias, Width, height);
-	crearPopup(idModalCertificado, Width, height);
-	crearPopup(idModalRhNuevo, Width, height);
-	crearPopup(idEliminarUsuarioRh, Width, height);
+	crearPopup(idModalTipoBaja, "auto", "auto");
+	crearPopup(idModalFeriados, "auto", "auto");
+	crearPopup(idModalHitorialVacaciones, "auto", "auto");
+	crearPopup(idModalDetalleVacaciones, "auto", "auto");
+	crearPopup(idModalCompensacion, "auto", "auto");
+	crearPopup(idModalHistorialAusencias, "auto", "auto");
+	crearPopup(idModalHistorialAusenciaMedica, "auto", "auto");
+	crearPopup(idModalTipoAusencia, "auto", "auto");
+	crearPopup(idModalVisita, "auto", "auto");
+	crearPopup(idModalVehiculosViaje, "auto", "auto");
+	crearPopup(idModalHistorialViajes, "auto", "auto");
+	crearPopup(idModalReporteAusencias, "auto", "auto");
+	crearPopup(idModalCertificado, "auto", "auto");
+	crearPopup(idModalRhNuevo, "auto", "auto");
+	crearPopup(idEliminarUsuarioRh, "auto", "auto");
 	aplicarWizardFormulario(idModalRhNuevo, idModalWizardRhNuevo)
-	crearPopup(idModalWizardRhVista, Width, height);
-	crearPopup(idEliminarSeguroEmpleado, Width, height);
-	crearPopup(idEliminarFamiliarEmpleado, Width, height);
+	crearPopup(idModalWizardRhVista, "auto", "auto");
+	crearPopup(idEliminarSeguroEmpleado, "auto", "auto");
+	crearPopup(idEliminarFamiliarEmpleado, "auto", "auto");
 	aplicarWizardFormulario(idModalWizardRhVista, idModalContenedorRhVista);
-	crearPopup(idModalDialogPrerequisitoNuevo, Width, height);
-	crearPopup(idModalNuevoFamiliar, Width, height);
-	crearPopup(idModalHistorialPrerequisito, Width, height);
-	crearPopup(idModalEditarPrerequisito, Width, height);
-	crearPopup(idModalDialogConfirmacionEntregaAdelantado, Width, height);
-	crearPopup(IdEntregaPrerequisito, Width, height);
-	crearPopup(idModalImpresionHojaVida, Width, height);
-	crearPopup(idModalNuevoAnticipoRegularTodos, Width, height)
-	crearPopup(idModalTr3BancoMsc, Width, height);
-	crearPopup(idModalTr3BancoUnion, Width, height);
-	crearPopup(idModalHistorialTr3, Width, height);
-	crearPopup(IdModalVerificarCuentaRrhh, Width, height);
-	crearPopup(idModalConfirmarDesabilitacion, Width, height);
-	crearPopup(idModalReingresoEmpleado, Width, height);
-	crearPopup(idModalHistorialBeneficios, Width, height);
-	crearPopup(idModalConfiguracionRopaDeTrabajo, Width, height);
+	crearPopup(idModalDialogPrerequisitoNuevo, "auto", "auto");
+	crearPopup(idModalNuevoFamiliar, "auto", "auto");
+	crearPopup(idModalHistorialPrerequisito, "auto", "auto");
+	crearPopup(idModalEditarPrerequisito, "auto", "auto");
+	crearPopup(idModalDialogConfirmacionEntregaAdelantado, "auto", "auto");
+	crearPopup(IdEntregaPrerequisito, "auto", "auto");
+	crearPopup(idModalImpresionHojaVida, "auto", "auto");
+	crearPopup(idModalNuevoAnticipoRegularTodos, "auto", "auto")
+	crearPopup(idModalTr3BancoMsc, "auto", "auto");
+	crearPopup(idModalTr3BancoUnion, "auto", "auto");
+	crearPopup(idModalHistorialTr3, "auto", "auto");
+	crearPopup(IdModalVerificarCuentaRrhh, "auto", "auto");
+	crearPopup(idModalConfirmarDesabilitacion, "auto", "auto");
+	crearPopup(idModalReingresoEmpleado, "auto", "auto");
+	crearPopup(idModalHistorialBeneficios, "auto", "auto");
+	crearPopup(idModalConfiguracionRopaDeTrabajo, "auto", "auto");
 	aplicarWizardFormulario(idModalConfiguracionRopaDeTrabajo, idmodalWizardContainerConfiguracionRopaTrabajo);
-	crearPopup(idModalReporteRopaDeTrabajo, Width, height);
-	crearPopup(idModalRopaTrabajo, Width, height);
-	crearPopup(idModalNuevaRopaTrabajo, Width, height);
-	crearPopup(idModalItemsNuevaRopaTrabajo, Width, height);
-	crearPopup(IdModalVerificarCuenta, Width, height);
-	crearPopup(idModalEliminarRopaTrabajo, Width, height);
-	crearPopup(idModalVisitaSalida, Width, height);
-	crearPopup(idModalDesabilitarPasajero, Width, height);
-	crearPopup(idModalCerrarRolDeTurno, Width, height);
-	crearPopup(idModalConductoresViaje, Width, height);
+	crearPopup(idModalReporteRopaDeTrabajo, "auto", "auto");
+	crearPopup(idModalRopaTrabajo, "auto", "auto");
+	crearPopup(idModalNuevaRopaTrabajo, "auto", "auto");
+	crearPopup(idModalItemsNuevaRopaTrabajo, "auto", "auto");
+	crearPopup(IdModalVerificarCuenta, "auto", "auto");
+	crearPopup(idModalEliminarRopaTrabajo, "auto", "auto");
+	crearPopup(idModalVisitaSalida, "auto", "auto");
+	crearPopup(idModalDesabilitarPasajero, "auto", "auto");
+	crearPopup(idModalCerrarRolDeTurno, "auto", "auto");
+	crearPopup(idModalConductoresViaje, "auto", "auto");
 	setTimeout(function () {
 		aplicarDatePickers();
 		// aplicarHoras();
@@ -392,7 +383,7 @@ function ejecutarScriptsRecursosHumanos(idModalPrerequisitos, idModalEmpleado, i
 
 	}, 2000)
 	setTimeout(function () {
-		crearPopup(idModalConceptoEdicion, Width, height);
+		crearPopup(idModalConceptoEdicion, "auto", "auto");
 	}, 5000)
 }
 
@@ -551,21 +542,21 @@ function ejecutarScriptsCompra(idPopupEdicion, idPopupVista, idPopupEliminacion,
 }
 
 function ejecutarScriptsDosificacion(idPopupEdicion, idPopupVista, idPopupEliminacion, idContenedorEdicion, idContenedorVista) {
-	crearPopup(idPopupEdicion, "60%", 550);
-	crearPopup(idPopupVista, "60%", 550);
+	crearPopup(idPopupEdicion, "auto", "auto");
+	crearPopup(idPopupVista, "auto", "auto");
 	aplicarWizardFormulario(idPopupEdicion, idContenedorEdicion);
 	aplicarWizardFormulario(idPopupVista, idContenedorVista);
-	crearPopup(idPopupEliminacion, "30%", 170);
+	crearPopup(idPopupEliminacion, "auto", "auto");
 	aplicarDatePickers();
 }
 
 function ejecutarScriptsSucursal(idPopupEdicion, idPopupVista, idPopupEliminacion, idContenedorEdicion, idContenedorVista, idPopupCorrelativoEdicion) {
-	crearPopup(idPopupEdicion, "60%", 550);
-	crearPopup(idPopupVista, "60%", 550);
-	crearPopup(idPopupCorrelativoEdicion, "60%", "auto");
+	crearPopup(idPopupEdicion, "auto", "auto");
+	crearPopup(idPopupVista, "auto", "auto");
+	crearPopup(idPopupCorrelativoEdicion, "auto", "auto");
 	aplicarWizardFormulario(idPopupEdicion, idContenedorEdicion);
 	aplicarWizardFormulario(idPopupVista, idContenedorVista);
-	crearPopup(idPopupEliminacion, "30%", 170);
+	crearPopup(idPopupEliminacion, "auto", "auto");
 }
 
 function ejecutarScriptsConcepto(idPopupEdicion, idContenedorEdicion) {
@@ -589,34 +580,34 @@ function ejecutarScriptsProducto(idPopupEdicion, idPopupVista, idPopupKadex, idP
 }
 
 function ejecutarScriptsProveedor(idPopupEdicion, idPopupVista, idPopupEliminacion, idContenedorEdicion, idContenedorVista) {
-	crearPopup(idPopupEdicion, "60%", 550);
-	crearPopup(idPopupVista, "60%", 550);
+	crearPopup(idPopupEdicion, "auto", "auto");
+	crearPopup(idPopupVista,"auto", "auto");
 	aplicarWizardFormulario(idPopupEdicion, idContenedorEdicion);
 	aplicarWizardFormulario(idPopupVista, idContenedorVista);
 	aplicarDatePickers();
-	crearPopup(idPopupEliminacion, "30%", 170);
+	crearPopup(idPopupEliminacion, "auto", "auto");
 }
 
 function ejecutarScriptsCliente(idPopupEdicion, idPopupVista, idPopupEliminacion, idContenedorEdicion, idContenedorVista) {
-	crearPopup(idPopupEdicion, "60%", 550);
-	crearPopup(idPopupVista, "60%", 550);
+	crearPopup(idPopupEdicion,"auto", "auto");
+	crearPopup(idPopupVista, "auto", "auto");
 	aplicarWizardFormulario(idPopupEdicion, idContenedorEdicion);
 	aplicarWizardFormulario(idPopupVista, idContenedorVista);
 	aplicarDatePickers();
-	crearPopup(idPopupEliminacion, "30%", 170);
+	crearPopup(idPopupEliminacion, "auto", "auto");
 }
 
 function ejecutarScriptsUsuario(idPopupEdicion, idImagen, idContenedorEdicion, idPopupVista, idContenedorVista,
-	idPopupEliminacion, idPopupRutas, idContenedorRutas, idPopupComisiones, idContenedorComisiones) {
-	crearPopup(idPopupEdicion, "60%", 550);
-	crearPopup(idPopupVista, "60%", 550);
-	crearPopup(idPopupRutas, "60%", 550);
-	crearPopup(idPopupComisiones, "60%", 550);
+	idPopupEliminacion, idPopupRutas, idContenedorRutas, idPopupComisiones, idContenedorComisiones) {		
+	crearPopup(idPopupEdicion, "auto", "auto");
+	crearPopup(idPopupVista, "auto", "auto");
+	crearPopup(idPopupRutas, "auto", "auto");
+	crearPopup(idPopupComisiones, "auto", "auto");
 	aplicarWizardFormulario(idPopupEdicion, idContenedorEdicion);
 	aplicarWizardFormulario(idPopupVista, idContenedorVista);
 	aplicarWizardFormulario(idPopupRutas, idContenedorRutas);
 	aplicarWizardFormulario(idPopupComisiones, idContenedorComisiones);
-	crearPopup(idPopupEliminacion, "30%", 170);
+	crearPopup(idPopupEliminacion, "auto", "auto");
 	aplicarVisorImagenArchivo(idImagen);
 }
 
@@ -1014,7 +1005,8 @@ function crearPopup(idPopup, ancho, altura) {
 		modal: true,
 		width: ancho,
 		height: altura,
-		autoOpen: false
+		autoOpen: false,
+		resizable: true,
 	});
 
 

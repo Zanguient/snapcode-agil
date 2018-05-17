@@ -7,7 +7,7 @@
 			Nuevo
 		</button>
 
-		<button ng-disabled="!usuario.empresa.usar_panel" class="btn btn-info btn-xlg" ng-click="abrirPopupPanel(null,null,null,null,null)">
+		<button ng-disabled="!usuario.empresa.usar_panel || !aplicacion.puede_crear" class="btn btn-info btn-xlg" ng-click="abrirPopupPanel(null,null,null,null,null)">
 			<i class="ace-icon fa fa-key align-top bigger-125"></i>
 			Panel de Ventas
 		</button>
@@ -15,6 +15,7 @@
 		<form name="formularioFiltroVentas" novalidate ng-submit="filtrarVentas(sucursalesUsuario,fechaInicioTexto,fechaFinTexto,filtro.razon_social,filtro.nit,filtro.monto,filtro.tipo_pago,filtro.sucursal,filtro.transaccion,filtro.usuario,filtro.estado)">
 			<fieldset>
 				<legend>Filtro Ventas</legend>
+				<div style="overflow-x:auto;">
 				<table class="table table-striped table-bordered table-hover">
 					<tbody>
 						<tr>
@@ -150,6 +151,7 @@
 						</tr>
 					</tbody>
 				</table>
+			</div>
 			</fieldset>
 		</form>
 
@@ -163,7 +165,7 @@
 		<!-- div.table-responsive -->
 
 		<!-- div.dataTables_borderWrap -->
-		<div>
+		<div style="overflow-x:auto;">
 			<table id="tabla-ventas" class="table table-striped table-bordered table-hover">
 				<thead>
 					<tr>

@@ -21,7 +21,7 @@
 					<i class="ace-icon fa fa-home bigger-160"></i>
 					Sala: {{sala.posicion}}
 				</button>
-				<button ng-disabled="!usuario.empresa.usar_salas && salas.length==1" type="button" ng-if="filtro.sucursal" ng-click="crearSala(filtro.sucursal.id)" class="btn btn-white btn-info btn-bold">
+				<button ng-disabled="!usuario.empresa.usar_salas && salas.length==1 || !aplicacion.puede_crear" type="button" ng-if="filtro.sucursal" ng-click="crearSala(filtro.sucursal.id)" class="btn btn-white btn-info btn-bold">
 					<i class="ace-icon fa fa-plus bigger-120 blue"></i>
 				</button>
 			</div>
@@ -30,7 +30,7 @@
 					<i class="ace-icon fa fa-male bigger-200"></i>
 					Garzon: {{garzon.codigo}}
 				</button>
-				<button ng-disabled="garzones.length==10" type="button" ng-click="crearGarzon()" class="btn btn-white btn-info btn-bold">
+				<button ng-disabled="garzones.length==10 || !aplicacion.puede_crear" type="button" ng-click="crearGarzon()" class="btn btn-white btn-info btn-bold">
 					<i class="ace-icon fa fa-plus bigger-120 blue"></i>
 				</button>
 			</div>
@@ -40,11 +40,11 @@
 		</div>
 		<div class="table-header" ng-if="salaVista">
 			MESAS SALA : {{salaVista.nombre}} - {{salaVista.posicion}}
-			<button type="button" ng-click="crearMesa(salaVista.id)" class="align-right btn btn-success btn-info btn-bold">
+			<button ng-disabled="!aplicacion.puede_crear" type="button" ng-click="crearMesa(salaVista.id)" class="align-right btn btn-success btn-info btn-bold">
 				<i class="ace-icon fa fa-plus bigger-120 blue"></i>
 				Agregar Mesa
 			</button>
-			<button type="button" ng-click="modificarSala(salaVista.id)" class="align-right btn btn-success btn-info btn-bold">
+			<button ng-disabled="!aplicacion.puede_modificar"  type="button" ng-click="modificarSala(salaVista.id)" class="align-right btn btn-success btn-info btn-bold">
 				<i class="ace-icon fa fa-pencil bigger-120 blue"></i>
 				Modificar Sala
 			</button>

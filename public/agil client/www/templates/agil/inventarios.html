@@ -2,7 +2,7 @@
 	<div class="col-xs-12">
 		<h3 class="header smaller lighter blue">INVENTARIO</h3>
 		<div class="row">
-			<div class="col-xs-4">
+			<div class=" col-sm-12 col-md-4">
 				<fieldset>
 					<legend>Importación Única Inventario Inicial</legend>
 					<button ng-disabled="!aplicacion.puede_crear" class="btn btn-primary" ng-click="crearNuevoInventario()">
@@ -11,10 +11,11 @@
 					</button>
 				</fieldset>
 			</div>
-			<div class="col-xs-8">
+			<div class="col-sm-12 col-md-8">
 				<form name="formularioImportacionInventario" novalidate>
 					<fieldset>
 						<legend>Importación Múltiple Inventario Inicial</legend>
+						<div style="overflow-x:auto;">
 						<table>
 							<tbody>
 								<tr ng-if="tipoEgreso!=diccionario.EGRE_TRASPASO">
@@ -53,6 +54,7 @@
 								</tr>
 							</tbody>
 						</table>
+					</div>
 					</fieldset>
 				</form>
 			</div>
@@ -72,7 +74,7 @@
 			<div id="tabla-productos_wrapper" class="dataTables_wrapper form-inline no-footer">
 				<div class="row">
 					<form name="formularioBusquedaInventario" novalidate>
-						<div class="row col-xs-12">
+						<div style="overflow-x:auto"class="row col-xs-12">
 							<table>
 								<tbody>
 									<tr ng-if="tipoEgreso!=diccionario.EGRE_TRASPASO">

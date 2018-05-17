@@ -7,7 +7,7 @@
 			<fieldset>
 				<legend>Filtro de despachos
 				</legend>
-
+				<div style="overflow-x:auto;">
 				<table class="table table-striped table-bordered table-hover">
 					<tbody>
 						<tr>
@@ -108,6 +108,7 @@
 						</tr>
 					</tbody>
 				</table>
+				</div>
 			</fieldset>
 		</form>
 	</div>
@@ -157,7 +158,7 @@
 		<div class="dataTables_wrapper form-inline no-footer">
 			<div class="row" ng-include src="'/templates/gral/paginator-header-1.html'">
 			</div>
-
+			<div style="overflow-x:auto;">
 			<table id="tabla-destinos" class="table table-striped table-bordered table-hover">
 				<thead>
 					<tr>
@@ -221,15 +222,15 @@
 						</td>
 						<td>{{gtm_detalle_despacho.factura}}</td>
 						<td>
-							<div class="hidden-sm hidden-xs action-buttons">
+							<div class="action-buttons">
 								<a class="blue" href="javascript:void(0)" ng-click="imprimir(gtm_detalle_despacho)">
 									<i class="ace-icon fa fa-print bigger-130"></i>
 								</a>
 
-								<a class="green" ng-if="!gtm_detalle_despacho.factura" href="javascript:void(0)" ng-click="abrirModalAsignacionFactura(gtm_detalle_despacho)">
+								<a class="green" e-disabled="!aplicacion.puede_modificar" ng-if="!gtm_detalle_despacho.factura" href="javascript:void(0)" ng-click="abrirModalAsignacionFactura(gtm_detalle_despacho)">
 									<i class="ace-icon fa fa-unlock bigger-130"></i>
 								</a>
-								<a class="red" ng-if="gtm_detalle_despacho.factura" href="javascript:void(0)" ng-click="abrirModalVerificarCuenta(gtm_detalle_despacho,'despacho')">
+								<a class="red" e-disabled="!aplicacion.puede_modificar" ng-if="gtm_detalle_despacho.factura" href="javascript:void(0)" ng-click="abrirModalVerificarCuenta(gtm_detalle_despacho,'despacho')">
 									<i class="ace-icon fa fa-lock bigger-130"></i>
 								</a>
 
@@ -245,11 +246,11 @@
 		
 											</span>
 										</a> -->
-								<a class="red" ng-if="!gtm_detalle_despacho.factura" href="javascript:void(0)" ng-click="abrirPopupConfirmacionEliminacion(removerDetalleDespacho,gtm_detalle_despacho)">
+								<a class="red" e-disabled="!aplicacion.puede_eliminar" ng-if="!gtm_detalle_despacho.factura" href="javascript:void(0)" ng-click="abrirPopupConfirmacionEliminacion(removerDetalleDespacho,gtm_detalle_despacho)">
 									<i class="ace-icon fa fa-trash-o bigger-130"></i>
 								</a>
 
-								<div class="hidden-md hidden-lg">
+							<!-- 	<div class="hidden-md hidden-lg">
 									<div class="inline pos-rel">
 										<button class="btn btn-minier btn-yellow dropdown-toggle" data-toggle="dropdown" data-position="auto">
 											<i class="ace-icon fa fa-caret-down icon-only bigger-120"></i>
@@ -281,11 +282,12 @@
 													</span>
 												</a>
 									</div>
-								</div>
+								</div> -->
 						</td>
 					</tr>
 				</tbody>
 			</table>
+		</div>
 			<div class="row" ng-include src="'/templates/gral/paginator.html'" ng-if="despachos.length > 0">
 			</div>
 			</div>
@@ -687,7 +689,7 @@
 
 		</div>
 		<div class="modal-footer">
-			<button ng-if="detalle_despacho.saldo_pago_ac>0" type="submit" class="btn btn-success">
+			<button ng-disabled="!aplicacion.puede_crear" ng-if="detalle_despacho.saldo_pago_ac>0" type="submit" class="btn btn-success">
 				<i class="ace-icon fa fa-floppy-o bigger-160"></i>Guardar</button>
 
 			<button type="button" class="btn btn-danger pull-left" ng-click="cerrarModalCobros()">
@@ -733,11 +735,11 @@
 						<a class="blue" href="javascript:void(0)" ng-click="imprimirResivo(recivo)">
 							<i class="ace-icon fa fa-print bigger-130"></i>
 						</a>
-						<a ng-if="$index===detalle_despacho.recivos.length-1 && recivo.eliminado ==false" class="green" href="javascript:void(0)"
+						<a e-disabled="!aplicacion.puede_modificar" ng-if="$index===detalle_despacho.recivos.length-1 && recivo.eliminado ==false" class="green" href="javascript:void(0)"
 						 ng-click="abrirModalVerificarCuenta(recivo,'EditarDespachoResivo')">
 							<i class="ace-icon fa fa-pencil bigger-130"></i>
 						</a>
-						<a ng-if="$index===detalle_despacho.recivos.length-1 && recivo.eliminado ==false" class="red" href="javascript:void(0)" ng-click="abrirModalVerificarCuenta(recivo,'EliminarDespachoResivo')">
+						<a e-disabled="!aplicacion.puede_eliminar" ng-if="$index===detalle_despacho.recivos.length-1 && recivo.eliminado ==false" class="red" href="javascript:void(0)" ng-click="abrirModalVerificarCuenta(recivo,'EliminarDespachoResivo')">
 							<i class="ace-icon fa fa-trash-o bigger-130"></i>
 						</a>
 

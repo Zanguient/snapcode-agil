@@ -413,6 +413,15 @@
 							</li>
 						</ul>
 					</li>
+					<li ng-if="usuario.rolesUsuario[0].rol.nombre==diccionario.ROL_ADMINISTRADOR">
+						<a href="#empresas" data-rel="tooltip" tooltip-placement="bottom" uib-tooltip="Confirmación Empresa" >
+							<span class="fa-stack">
+								<i class="fa fa-home green fa-stack-2x bigger-210"></i>
+								<i class="ace-icon fa fa-cogs  fa-stack-1x bigger-130" style="padding-top: 5px;padding-left: 15px;"></i>
+
+							</span>
+						</a>
+					</li>
 				</ul>
 			</div>
 		</div>
@@ -539,7 +548,9 @@
 																!usuario.empresa.usar_mantenimiento)|| 
 																((aplicacion.titulo==diccionario.MENU_PROFORMAS) && 
 																usuario.empresa && 
-																!usuario.empresa.usar_proformas))}">
+																!usuario.empresa.usar_proformas)|| 
+																((aplicacion.titulo=='EMPRESAS') && 
+																usuario.empresa))}">
 									<a href="#/{{aplicacion.url}}">
 										<i class="menu-icon fa {{aplicacion.atributo_clase}}"></i>
 										<span class="menu-text">{{aplicacion.titulo}}</span>
@@ -1349,7 +1360,7 @@
 							<td>{{venta.cliente.razon_social}}</td>
 							<td>{{venta.total|number:2}}</td>
 							<td>
-								<div class="hidden-sm hidden-xs action-buttons">
+								<div class="action-buttons">
 									<a class="blue" href="javascript:void(0)" ng-click="crearNuevoComprobante(venta)">
 										<i class="ace-icon fa fa-sign-out bigger-130"></i>
 									</a>
@@ -1402,8 +1413,8 @@
 				<h3>Asignar Cuenta</h3>
 			</p>
 			<div class="col-sm-12">
-				<input name="asig" required ng-keypress="interceptarTecla($event,'cantidad',true)" id="asig" required type="text"
-				 ng-model="datos.cuenta" placeholder="Busqueda..." uib-typeahead="cuenta as (cuenta.codigo+'-'+cuenta.nombre+'-'+cuenta.descripcion+'-'+cuenta.tipoCuenta.nombre) for cuenta in buscarCuentas($viewValue)"
+				<input name="asig" required ng-keypress="interceptarTecla($event,'cantidad',true)" id="asig" required type="text" ng-model="datos.cuenta"
+				 placeholder="Busqueda..." uib-typeahead="cuenta as (cuenta.codigo+'-'+cuenta.nombre+'-'+cuenta.descripcion+'-'+cuenta.tipoCuenta.nombre) for cuenta in buscarCuentas($viewValue)"
 				 typeahead-wait-ms="1000" typeahead-template-url="templates/autocompletar.html" typeahead-show-hint="false" typeahead-min-length="3"
 				 typeahead-on-select="verificarCuenta(formularioAsignarCuenta,datos.cuenta)">
 				<span class="red">(*)</span>
@@ -1961,6 +1972,7 @@
 									</div>
 								</div>
 								<!-- <div style="overflow-y: scroll;height:auto"> -->
+										<div style="overflow-x:auto;">
 								<table id="tabla-comprobante" class="table table-striped table-bordered table-hover">
 									<thead>
 										<tr>
@@ -2112,7 +2124,7 @@
 										</tr>
 									</tfoot>
 								</table>
-								<!-- </div> -->
+								</div>
 							</div>
 						</div>
 					</div>
@@ -3080,6 +3092,7 @@
 						$('#navbar').removeClass('h-navbar');
 					}
 				}
+				
 			}).triggerHandler('settings.ace.two_menu', ['sidebar_fixed', $('#sidebar').hasClass('sidebar-fixed')]);
 
 

@@ -348,7 +348,7 @@ angular.module('agil.controladores')
         }
 
         $scope.asignarVacunas = function () {
-            if (!$scope.paciente.activo) {
+            if (!$scope.paciente.eliminado) {
                 $scope.mostrarMensaje('No se puede asignar vacuna a un paciente inactivo!')
             } else {
                 blockUI.start();
@@ -628,7 +628,7 @@ angular.module('agil.controladores')
                             var ficha = dato.fichas[i];
                             if (ficha != null) {
                                 dato.pacientes.forEach(function (pac, index, array) {
-                                    pac.activo = (pac.activo == 0) ? true : false
+                                    pac.eliminado = (pac.activo == 0) ? true : false
                                     pac.ficha = (pac.id == ficha.id_empleado) ? ficha : pac.ficha
                                     if (index === array.length - 1) {
                                         $scope.pacientes = dato.pacientes;
@@ -638,7 +638,7 @@ angular.module('agil.controladores')
                             } else {
                                 if (i === (dato.fichas.length - 1)) {
                                     dato.pacientes.forEach(function (pac, index, array) {
-                                        pac.activo = (pac.activo == 0) ? true : false
+                                        pac.eliminado = (pac.activo == 0) ? true : false
                                         if (index === array.length - 1) {
                                             $scope.pacientes = dato.pacientes;
 
@@ -650,7 +650,7 @@ angular.module('agil.controladores')
                         }
                     } else {
                         dato.pacientes.forEach(function (pac, index, array) {
-                            pac.activo = (pac.activo == 0) ? true : false
+                            pac.eliminado = (pac.activo == 0) ? true : false
                             if (index === array.length - 1) {
                                 $scope.pacientes = dato.pacientes;
 
@@ -702,7 +702,7 @@ angular.module('agil.controladores')
                 $scope.paciente = paciente
             }
             blockUI.start();
-            if (!$scope.paciente.activo) {
+            if (!$scope.paciente.eliminado) {
                 $scope.mostrarMensaje('No se puede aplicar vacuna a un paciente inactivo!')
                 blockUI.stop()
                 return

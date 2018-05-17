@@ -2,7 +2,7 @@
 	<div class="col-xs-12">
 		<h3 class="header smaller lighter blue">Estibaje</h3>
 
-		<button class="btn btn-primary" ng-click="crearNuevoEstibaje()">
+		<button ng-disabled="!aplicacion.puede_crear" class="btn btn-primary" ng-click="crearNuevoEstibaje()">
 			<i class="ace-icon fa fa-plus align-top bigger-125"></i>
 			Nuevo
 		</button>
@@ -29,8 +29,8 @@
 		<!-- div.dataTables_borderWrap -->
 		<div>
 			<div id="tabla-clientes_wrapper" class="dataTables_wrapper form-inline no-footer">
-				
-				<table id="tabla-estibajes" class="table table-striped table-bordered table-hover">
+					<div style="overflow-x:auto;">
+				<table id="tabla-estibajes" class="table table-striped table-bordered table-hover ">
 					<thead>
 						<tr>
 							<th class="center">
@@ -47,34 +47,34 @@
 
 					<tbody>
 						<tr ng-repeat="estibaje in estibajes">
-							<td class="center">
+							<td  data-label="N°:" >
 								{{$index+1}}
 							</td>
 						<!-- Falta modificar-->
-							<td>
+							<td  data-label="Código:">
 								{{estibaje.codigo}}
 							</td>
-							<td>
+							<td  data-label="Nombre del Estibaje:">
 								{{estibaje.nombre}}
 							</td>
-							<td>{{estibaje.descripcion}}</td>
-							<td>{{estibaje.costo}}</td>
-							<td>
-								<div class="hidden-sm hidden-xs action-buttons">
+							<td  data-label="Características:">{{estibaje.descripcion}}</td>
+							<td  data-label="Costos:">{{estibaje.costo}}</td>
+							<td  data-label="Acciones:">
+								<div class="action-buttons"><!-- hidden-sm hidden-xs  -->
 									<a class="blue" href="javascript:void(0)" e-disabled="!aplicacion.puede_ver" ng-click="verCliente(cliente)">
 									<i class="ace-icon fa fa-search-plus bigger-130"></i>
 								</a>
 
-									<a class="green" href="javascript:void(0)" ng-click="modificarEstibaje(estibaje)">
+									<a class="green"  e-disabled="!aplicacion.puede_modificiar" href="javascript:void(0)" ng-click="modificarEstibaje(estibaje)">
 									<i class="ace-icon fa fa-pencil bigger-130"></i>
 								</a>
 
-									<a class="red" href="javascript:void(0)" ng-click="abrirPopupConfirmacionEliminacion(removerEstibaje,estibaje)">
+									<a class="red" e-disabled="!aplicacion.puede_eliminar" href="javascript:void(0)" ng-click="abrirPopupConfirmacionEliminacion(removerEstibaje,estibaje)">
 									<i class="ace-icon fa fa-trash-o bigger-130"></i>
 								</a>
 								</div>
 
-								<div class="hidden-md hidden-lg">
+								<!-- <div class="hidden-md hidden-lg">
 									<div class="inline pos-rel">
 										<button class="btn btn-minier btn-yellow dropdown-toggle" data-toggle="dropdown" data-position="auto">
 										<i class="ace-icon fa fa-caret-down icon-only bigger-120"></i>
@@ -109,11 +109,12 @@
 											</li>
 										</ul>
 									</div>
-								</div>
+								</div> -->
 							</td>
 						</tr>
 					</tbody>
 				</table>
+			</div>
 			</div>
 		</div>
 	</div>

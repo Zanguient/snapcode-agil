@@ -417,11 +417,11 @@
                                                         {{servicio.precio | number:2}}
                                                     </td>
                                                     <td>
-                                                        <a ng-disabled="!aplicacion.puede_eliminar" class="red" ng-click="abrirPopupConfirmacionEliminacion(eliminarDetalleConfiguracion,servicio)"
+                                                        <a e-disabled="!aplicacion.puede_eliminar" class="red" ng-click="abrirPopupConfirmacionEliminacion(eliminarDetalleConfiguracion,servicio)"
                                                             data-rel="tooltip" tooltip-placement="top" uib-tooltip="Eliminar">
                                                             <i class="ace-icon fa fa-trash-o bigger-130"></i>
                                                         </a>
-                                                        <a ng-disabled="!aplicacion.puede_modificar" class="blue" ng-click="editarServicio(servicio)" data-rel="tooltip" tooltip-placement="top"
+                                                        <a e-disabled="!aplicacion.puede_modificar" class="blue" ng-click="editarServicio(servicio)" data-rel="tooltip" tooltip-placement="top"
                                                             uib-tooltip="Modificar">
                                                             <i class="ace-icon fa fa-pencil-square-o bigger-130"></i>
                                                         </a>
@@ -450,7 +450,7 @@
                         Anterior
                     </button> -->
 
-                    <button id="siguienteP" class="btn btn-success btn-sm btn-next" data-last="Finish">
+                    <button id="siguienteP" ng-disabled="!aplicacion.puede_crear" class="btn btn-success btn-sm btn-next" data-last="Finish">
                         Siguiente
                         <i class="ace-icon fa fa-arrow-right icon-on-right"></i>
                     </button>
@@ -560,7 +560,7 @@
                                                                 <i class="ace-icon fa fa-book"></i>
                                                             </a> -->
 
-                                                            <a ng-disabled="!aplicacion.puede_eliminar" class="green" ng-click="abrirdialogDosificacionesDisponibles(actividad)" data-rel="tooltip"
+                                                            <a ng-disabled="!aplicacion.puede_modificar" class="green" ng-click="abrirdialogDosificacionesDisponibles(actividad)" data-rel="tooltip"
                                                                 tooltip-placement="top" uib-tooltip="Dosificar">
                                                                 <i class="fa fa-hand-o-up"></i>
                                                             </a>
@@ -634,7 +634,7 @@
                             Anterior
                         </button> -->
 
-                    <button id="siguiente-wizard-configuracion-proforma" class="btn btn-success btn-sm btn-next" data-last="Finish">
+                    <button ng-disabled="!aplicacion.puede_crear" id="siguiente-wizard-configuracion-proforma" class="btn btn-success btn-sm btn-next" data-last="Finish">
                         Siguiente
                         <i class="ace-icon fa fa-arrow-right icon-on-right"></i>
                     </button>

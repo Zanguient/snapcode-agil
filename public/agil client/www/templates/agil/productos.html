@@ -36,183 +36,185 @@
 			<div id="tabla-productos_wrapper" class="dataTables_wrapper form-inline no-footer">
 				<div class="row" ng-include src="'/templates/gral/paginator-header-1.html'">
 				</div>
-				<table id="tabla-productos" class="table table-striped table-bordered table-hover table-responsive">
-					<thead>
-						<tr>
-							<th class="center">
-								Nº
-							</th>
-							<th ng-if="usuario.empresa.usar_panel" class="center">
-								<a href="javascript:void(0)" ng-click="paginator.sortColumn('publicar_panel')">¿Publicado Panel?
-									<span id="publicar_panel" class="sort fa fa-sort icon-only"></span>
-								</a>
-							</th>
-							<th class="center">
-								<a href="javascript:void(0)" ng-click="paginator.sortColumn('activar_inventario')">¿Inventario Activado?
-									<span id="activar_inventario" class="sort fa fa-sort icon-only"></span>
-								</a>
-							</th>
-							<th class="center">
-								<a href="javascript:void(0)" ng-click="paginator.sortColumn('codigo')">Código
-									<span id="codigo" class="sort fa fa-sort icon-only"></span>
-								</a>
-							</th>
-							<th class="center">
-								<a href="javascript:void(0)" ng-click="paginator.sortColumn('nombre')">Nombre
-									<span id="nombre" class="sort fa fa-sort icon-only"></span>
-								</a>
-							</th>
-							<th>Imagen</th>
-							<th class="center">
-								<a href="javascript:void(0)" ng-click="paginator.sortColumn('unidad_medida')">Unidad de Medida
-									<span id="unidad_medida" class="sort fa fa-sort icon-only"></span>
-								</a>
-							</th>
-							<th class="center">
-								<a href="javascript:void(0)" ng-click="paginator.sortColumn('precio_unitario')">Precio Unitario
-									<span id="precio_unitario" class="sort fa fa-sort icon-only"></span>
-								</a>
-							</th>
-							<th class="center">
-								<a href="javascript:void(0)" ng-click="paginator.sortColumn('inventario_minimo')">Inventario Mínimo
-									<span id="inventario_minimo" class="sort fa fa-sort icon-only"></span>
-								</a>
-							</th>
-							<th class="center">
-								<a href="javascript:void(0)" ng-click="paginator.sortColumn('descripcion')">Descripcion
-									<span id="descripcion" class="sort fa fa-sort icon-only"></span>
-								</a>
-							</th>
-							
-							<th class="center">
-								<a href="javascript:void(0)" ng-click="paginator.sortColumn('grupo')">Grupo
-									<span id="grupo" class="sort fa fa-sort icon-only"></span>
-								</a>
-							</th>
-							<th class="center">
-								<a href="javascript:void(0)" ng-click="paginator.sortColumn('subgrupo')">Subgrupo
-									<span id="subgrupo" class="sort fa fa-sort icon-only"></span>
-								</a>
-							</th>
-							<th class="center">
-								Tipo Producto
-							</th>
-							<th>Acciones</th>
-						</tr>
-					</thead>
-
-					<tbody>
-						<tr ng-repeat="producto in productos">
-							<td class="center">
-								{{($index+1)+(paginator.itemsPerPage*(paginator.currentPage-1))}}
-							</td>
-							<td ng-if="usuario.empresa.usar_panel">
-								<label>
-									<input ng-change="actualizarProducto(producto)" name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox"
-									 ng-model="producto.publicar_panel" />
-									<span class="lbl check-descuento"></span>
-								</label>
-							</td>
-							<td>
-								<label>
-									<input ng-change="actualizarProducto(producto)" name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox"
-									 ng-model="producto.activar_inventario" />
-									<span class="lbl check-descuento"></span>
-								</label>
-							</td>
-							<td>
-								{{producto.codigo}}
-							</td>
-							<td>
-								{{producto.nombre}}
-							</td>
-							<td>
-								<img src="{{producto.imagen}}" width="50">
-							</td>
-							<td>{{producto.unidad_medida}}</td>
-							<td>{{producto.precio_unitario | number:2}}</td>
-
-							<td>
-								{{producto.inventario_minimo}}
-							</td>
-							<td>
-								{{producto.descripcion}}
-							</td>
-							
-							<td>
-								{{producto.grupo}}
-							</td>
-							<td>
-								{{producto.subgrupo}}
-							</td>
-							<td>
-								{{producto.tipoProducto}}
-							</td>
-							<td>
-								<div class="hidden-sm hidden-xs action-buttons">
-									<a class="blue" href="javascript:void(0)" e-disabled="!aplicacion.puede_ver" ng-click="verProducto(producto)">
-										<i class="ace-icon fa fa-search-plus bigger-130"></i>
+				<div style="overflow-x:auto;">
+					<table id="tabla-productos" class="table table-striped table-bordered table-hover table-responsive">
+						<thead>
+							<tr>
+								<th class="center">
+									Nº
+								</th>
+								<th ng-if="usuario.empresa.usar_panel" class="center">
+									<a href="javascript:void(0)" ng-click="paginator.sortColumn('publicar_panel')">¿Publicado Panel?
+										<span id="publicar_panel" class="sort fa fa-sort icon-only"></span>
 									</a>
-
-									<a class="green" href="javascript:void(0)" e-disabled="!aplicacion.puede_modificar" ng-click="modificarProducto(producto)">
-										<i class="ace-icon fa fa-pencil bigger-130"></i>
+								</th>
+								<th class="center">
+									<a href="javascript:void(0)" ng-click="paginator.sortColumn('activar_inventario')">¿Inventario Activado?
+										<span id="activar_inventario" class="sort fa fa-sort icon-only"></span>
 									</a>
-
-									<a class="red" href="javascript:void(0)" e-disabled="!aplicacion.puede_eliminar" ng-click="mostrarConfirmacionEliminacion(producto)">
-										<i class="ace-icon fa fa-trash-o bigger-130"></i>
+								</th>
+								<th class="center">
+									<a href="javascript:void(0)" ng-click="paginator.sortColumn('codigo')">Código
+										<span id="codigo" class="sort fa fa-sort icon-only"></span>
 									</a>
-									<a class="orange" href="javascript:void(0)" ng-click="kardexProducto(producto);">
-										<i class="ace-icon fa fa-file-text bigger-130"></i>
+								</th>
+								<th class="center">
+									<a href="javascript:void(0)" ng-click="paginator.sortColumn('nombre')">Nombre
+										<span id="nombre" class="sort fa fa-sort icon-only"></span>
 									</a>
-								</div>
+								</th>
+								<th>Imagen</th>
+								<th class="center">
+									<a href="javascript:void(0)" ng-click="paginator.sortColumn('unidad_medida')">Unidad de Medida
+										<span id="unidad_medida" class="sort fa fa-sort icon-only"></span>
+									</a>
+								</th>
+								<th class="center">
+									<a href="javascript:void(0)" ng-click="paginator.sortColumn('precio_unitario')">Precio Unitario
+										<span id="precio_unitario" class="sort fa fa-sort icon-only"></span>
+									</a>
+								</th>
+								<th class="center">
+									<a href="javascript:void(0)" ng-click="paginator.sortColumn('inventario_minimo')">Inventario Mínimo
+										<span id="inventario_minimo" class="sort fa fa-sort icon-only"></span>
+									</a>
+								</th>
+								<th class="center">
+									<a href="javascript:void(0)" ng-click="paginator.sortColumn('descripcion')">Descripcion
+										<span id="descripcion" class="sort fa fa-sort icon-only"></span>
+									</a>
+								</th>
 
-								<div class="hidden-md hidden-lg">
-									<div class="inline pos-rel">
-										<button class="btn btn-minier btn-yellow dropdown-toggle" data-toggle="dropdown" data-position="auto">
-											<i class="ace-icon fa fa-caret-down icon-only bigger-120"></i>
-										</button>
+								<th class="center">
+									<a href="javascript:void(0)" ng-click="paginator.sortColumn('grupo')">Grupo
+										<span id="grupo" class="sort fa fa-sort icon-only"></span>
+									</a>
+								</th>
+								<th class="center">
+									<a href="javascript:void(0)" ng-click="paginator.sortColumn('subgrupo')">Subgrupo
+										<span id="subgrupo" class="sort fa fa-sort icon-only"></span>
+									</a>
+								</th>
+								<th class="center">
+									Tipo Producto
+								</th>
+								<th>Acciones</th>
+							</tr>
+						</thead>
 
-										<ul class="dropdown-menu dropdown-only-icon dropdown-yellow dropdown-menu-right dropdown-caret dropdown-close">
-											<li>
-												<a href="javascript:void(0)" e-disabled="!aplicacion.puede_ver" ng-click="verProducto(producto)" class="tooltip-info" data-rel="tooltip"
-												 title="View">
-													<span class="blue">
-														<i class="ace-icon fa fa-search-plus bigger-120"></i>
-													</span>
-												</a>
-											</li>
+						<tbody>
+							<tr ng-repeat="producto in productos">
+								<td class="center">
+									{{($index+1)+(paginator.itemsPerPage*(paginator.currentPage-1))}}
+								</td>
+								<td ng-if="usuario.empresa.usar_panel">
+									<label>
+										<input ng-change="actualizarProducto(producto)" name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox"
+										 ng-model="producto.publicar_panel" />
+										<span class="lbl check-descuento"></span>
+									</label>
+								</td>
+								<td>
+									<label>
+										<input ng-change="actualizarProducto(producto)" name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox"
+										 ng-model="producto.activar_inventario" />
+										<span class="lbl check-descuento"></span>
+									</label>
+								</td>
+								<td>
+									{{producto.codigo}}
+								</td>
+								<td>
+									{{producto.nombre}}
+								</td>
+								<td>
+									<img src="{{producto.imagen}}" width="50">
+								</td>
+								<td>{{producto.unidad_medida}}</td>
+								<td>{{producto.precio_unitario | number:2}}</td>
 
-											<li>
-												<a href="javascript:void(0)" e-disabled="!aplicacion.puede_modificar" ng-click="modificarProducto(producto)" class="tooltip-success"
-												 data-rel="tooltip" title="Edit">
-													<span class="green">
-														<i class="ace-icon fa fa-pencil-square-o bigger-120"></i>
-													</span>
-												</a>
-											</li>
+								<td>
+									{{producto.inventario_minimo}}
+								</td>
+								<td>
+									{{producto.descripcion}}
+								</td>
 
-											<li>
-												<a href="javascript:void(0)" e-disabled="!aplicacion.puede_eliminar" ng-click="mostrarConfirmacionEliminacion(producto)"
-												 class="tooltip-error" data-rel="tooltip" title="Delete">
-													<span class="red">
-														<i class="ace-icon fa fa-trash-o bigger-120"></i>
-													</span>
-												</a>
-											</li>
-											<li>
-												<a href="javascript:void(0)" ng-click="kardexProducto(producto)" class="tooltip-info" data-rel="tooltip" title="View">
-													<span class="orange">
-														<i class="ace-icon fa fa-file-text bigger-120"></i>
-													</span>
-												</a>
-											</li>
-										</ul>
+								<td>
+									{{producto.grupo}}
+								</td>
+								<td>
+									{{producto.subgrupo}}
+								</td>
+								<td>
+									{{producto.tipoProducto}}
+								</td>
+								<td>
+									<div class="hidden-sm hidden-xs action-buttons">
+										<a class="blue" href="javascript:void(0)" e-disabled="!aplicacion.puede_ver" ng-click="verProducto(producto)">
+											<i class="ace-icon fa fa-search-plus bigger-130"></i>
+										</a>
+
+										<a class="green" href="javascript:void(0)" e-disabled="!aplicacion.puede_modificar" ng-click="modificarProducto(producto)">
+											<i class="ace-icon fa fa-pencil bigger-130"></i>
+										</a>
+
+										<a class="red" href="javascript:void(0)" e-disabled="!aplicacion.puede_eliminar" ng-click="mostrarConfirmacionEliminacion(producto)">
+											<i class="ace-icon fa fa-trash-o bigger-130"></i>
+										</a>
+										<a class="orange" href="javascript:void(0)" ng-click="kardexProducto(producto);">
+											<i class="ace-icon fa fa-file-text bigger-130"></i>
+										</a>
 									</div>
-								</div>
-							</td>
-						</tr>
-					</tbody>
-				</table>
+
+									<div class="hidden-md hidden-lg">
+										<div class="inline pos-rel">
+											<button class="btn btn-minier btn-yellow dropdown-toggle" data-toggle="dropdown" data-position="auto">
+												<i class="ace-icon fa fa-caret-down icon-only bigger-120"></i>
+											</button>
+
+											<ul class="dropdown-menu dropdown-only-icon dropdown-yellow dropdown-menu-right dropdown-caret dropdown-close">
+												<li>
+													<a href="javascript:void(0)" e-disabled="!aplicacion.puede_ver" ng-click="verProducto(producto)" class="tooltip-info" data-rel="tooltip"
+													 title="View">
+														<span class="blue">
+															<i class="ace-icon fa fa-search-plus bigger-120"></i>
+														</span>
+													</a>
+												</li>
+
+												<li>
+													<a href="javascript:void(0)" e-disabled="!aplicacion.puede_modificar" ng-click="modificarProducto(producto)" class="tooltip-success"
+													 data-rel="tooltip" title="Edit">
+														<span class="green">
+															<i class="ace-icon fa fa-pencil-square-o bigger-120"></i>
+														</span>
+													</a>
+												</li>
+
+												<li>
+													<a href="javascript:void(0)" e-disabled="!aplicacion.puede_eliminar" ng-click="mostrarConfirmacionEliminacion(producto)"
+													 class="tooltip-error" data-rel="tooltip" title="Delete">
+														<span class="red">
+															<i class="ace-icon fa fa-trash-o bigger-120"></i>
+														</span>
+													</a>
+												</li>
+												<li>
+													<a href="javascript:void(0)" ng-click="kardexProducto(producto)" class="tooltip-info" data-rel="tooltip" title="View">
+														<span class="orange">
+															<i class="ace-icon fa fa-file-text bigger-120"></i>
+														</span>
+													</a>
+												</li>
+											</ul>
+										</div>
+									</div>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
 				<div class="row" ng-include src="'/templates/gral/paginator.html'">
 				</div>
 			</div>
@@ -959,9 +961,8 @@
 			</div>
 			<div>
 				<span>Grupos: &nbsp;</span>
-				<select class="form-control" style="width:150px;"id="selectGruposProductos"
-				 name="selectGruposProductos" ng-model="imp.grupo" ng-options="grupo.id as grupo.nombre for grupo in gruposProducto track by grupo.id"
-				 data-placeholder="Click para escoger">
+				<select class="form-control" style="width:150px;" id="selectGruposProductos" name="selectGruposProductos" ng-model="imp.grupo"
+				 ng-options="grupo.id as grupo.nombre for grupo in gruposProducto track by grupo.id" data-placeholder="Click para escoger">
 					<option value="" selected>Todos</option>
 				</select>
 			</div>

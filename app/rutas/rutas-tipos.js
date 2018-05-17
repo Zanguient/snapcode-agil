@@ -7,7 +7,7 @@ router.route('/tipos/:nombre_corto')
 			where:{
 				nombre_corto: req.params.nombre_corto
 			},
-			include: [{model:Clase,as: 'clases'},{model:RrhhClaseAsuencia,as:'ausencias'}]
+			include: [{model:Clase,as: 'clases',where:{eliminado:false}},{model:RrhhClaseAsuencia,as:'ausencias'}]
 		}).then(function(entidad){			
 			res.json(entidad);		  
 		});
@@ -19,7 +19,7 @@ router.route('/tipos/:nombre_corto')
 				nombre_corto: req.params.nombre_corto,
 				id_empresa:req.params.id_empresa
 			},
-			include: [{model:Clase,as: 'clases'},{model:RrhhClaseAsuencia,as:'ausencias'}]
+			include: [{model:Clase,as: 'clases',where:{eliminado:false}},{model:RrhhClaseAsuencia,as:'ausencias'}]
 		}).then(function(entidad){			
 			res.json(entidad);		  
 		});
@@ -28,7 +28,7 @@ router.route('/clases/:nombre_corto')
 	.get(function(req, res) {
 		Clase.findAll({ 
 			where:{
-				nombre_corto: req.params.nombre_corto
+				nombre_corto: req.params.nombre_corto,eliminado:false
 			}
 		}).then(function(entidad){			
 			res.json(entidad);		  
@@ -51,7 +51,7 @@ router.route('/clases/:nombre_corto')
 				var condicion =  { $like: "%" +req.params.nombre_corto+ "%" }
 
 			Clase.findAll({ 
-				where:{
+				where:{eliminado:false,
 					nombre_corto: condicion
 				}
 				,include:[{model:Tipo,as:'tipo'}]
@@ -78,7 +78,8 @@ router.route('/tipos/:id_tipo')
 		}).then(function(tipoActualizado){
 			req.body.clases.forEach(function(clase, index, array){
 				if(clase.eliminado){
-					Clase.destroy({ 
+					Clase.update({ 
+						eliminado:clase.eliminado},{
 						where: { id : clase.id }
 					}).then(function(claseEliminado){
 							
@@ -88,7 +89,8 @@ router.route('/tipos/:id_tipo')
 						Clase.update({
 							nombre:clase.nombre,
 							nombre_corto:clase.nombre_corto,
-							habilitado:clase.habilitado
+							habilitado:clase.habilitado,
+							eliminado:clase.eliminado
 						},{ 
 							where: { id : clase.id }
 						}).then(function(claseActualizada){
@@ -99,7 +101,8 @@ router.route('/tipos/:id_tipo')
 							nombre:clase.nombre,
 							nombre_corto:clase.nombre_corto,
 							id_tipo:req.params.id_tipo,
-							habilitado:clase.habilitado
+							habilitado:clase.habilitado,
+							eliminado:false
 						}).then(function(claseCreado){
 							
 						});
@@ -139,7 +142,8 @@ router.route('/tipos/empresa')
 					Clase.create({
 						nombre:clase.nombre,
 						nombre_corto:clase.nombre_corto,
-						id_tipo:tipoCreado.id
+						id_tipo:tipoCreado.id,
+						eliminado:false
 					}).then(function(instanceCreated){
 						if(index===(array.length-1)){
 							res.json(tipoCreado);

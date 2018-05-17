@@ -6324,15 +6324,15 @@ angular.module('agil.controladores')
                     empleado.activo = (empleado.activo == false) ? true : false
                     if (empleado.tipoReincorporacion.nombre_corto == "NREING") {
                         $scope.primeroGuardarParaCerrar = true
-                        $scope.recargarItemsTabla()
+                        $scope.obtenerRecursosHumanos();
                         $scope.abrirDialogEmpleado(empleado, true)
 
 
                     } else {
-                        $scope.recargarItemsTabla()
+                        $scope.obtenerRecursosHumanos();
                     }
                 } else {
-                    $scope.recargarItemsTabla()
+                    $scope.obtenerRecursosHumanos();
                 }
 
             })

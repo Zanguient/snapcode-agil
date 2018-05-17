@@ -1,6 +1,6 @@
 angular.module('agil.controladores')
 
-.controller('ControladorEmpresas', function($scope,$localStorage,$location,$templateCache,$route,blockUI,ClasesTipo,Clases,Empresa,Empresas){
+.controller('ControladorEmpresas', function($scope,$localStorage,$location,$templateCache,$route,blockUI,ClasesTipo,Clases,Empresa,Empresas,ListaAplicacionesSistema){
 	blockUI.start();
 	
 	$scope.idModalWizardEmpresaEdicion='modal-wizard-empresa';
@@ -14,6 +14,7 @@ angular.module('agil.controladores')
 	
 	$scope.inicio=function(){
 		$scope.obtenerEmpresas($scope.usuario.id_empresa);
+		$scope.obtenerAplicaciones()
 		setTimeout(function() {
 			ejecutarScriptsTabla('tabla-empresas',11);
 		},2000);
@@ -64,6 +65,7 @@ angular.module('agil.controladores')
 		if(empresa.departamento){
 			$scope.buscarMunicipios(empresa.id_departamento+'-'+empresa.departamento.nombre_corto);
 		}
+		$scope.seleccionarAplicaciones(empresa.aplicacionesEmpresa)
 		$scope.abrirPopup($scope.idModalWizardEmpresaEdicion);
 	}
 	
@@ -195,7 +197,34 @@ angular.module('agil.controladores')
 			blockUI.stop();
 		});
 	}
-	
+	$scope.obtenerAplicaciones = function(){
+		var promesa = ListaAplicacionesSistema()
+		promesa.then(function(datos){			
+			$scope.llenarAplicaciones(datos)
+		})
+	}
+	$scope.llenarAplicaciones = function (aplicaciones) {
+		$scope.aplicacionesSistema = [];
+		for (var i = 0; i < aplicaciones.length; i++) {
+			var aplicacion = {
+				name: aplicaciones[i].titulo,
+				maker: "",
+				ticked: false,
+				id: aplicaciones[i].id
+			}
+			$scope.aplicacionesSistema.push(aplicacion);
+		}
+	}
+	$scope.seleccionarAplicaciones = function (aplicacionesEmpresa) {
+		for (var i = 0; i < $scope.aplicacionesSistema.length; i++) {
+			for (var j = 0; j < aplicacionesEmpresa.length; j++) {
+				if ($scope.aplicacionesSistema[i].id == aplicacionesEmpresa[j].id_aplicacion) {
+					$scope.aplicacionesSistema[i].ticked = true;
+				}
+			}
+		}
+	}
+
 	$scope.$on('$routeChangeStart', function(next, current) { 
 		$scope.eliminarPopup($scope.idModalWizardEmpresaEdicion);
 		$scope.eliminarPopup($scope.idModalWizardEmpresaVista);

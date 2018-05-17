@@ -9,7 +9,7 @@
         <div class="fileUpload btn btn-primary btn-success">
             <span class="fileUpload-button ace-icon fa fa-cloud-upload align-top bigger-125">&nbsp&nbspImportar</span>
             <!-- CAMBIAR aplicacion POR !aplicacion -->
-            <input ng-disabled="aplicacion.puede_crear" class="upload" type="file" custom-on-file-change="subirExcelPacientes" />&nbsp&nbsp
+            <input ng-disabled="!aplicacion.puede_crear" class="upload" type="file" custom-on-file-change="subirExcelPacientes" />&nbsp&nbsp
         </div>
         <a href="/recursos/EJEMPLO-DATOS-CUENTAS.xlsx" class="btn btn-primary btn-danger">
             <i class="ace-icon fa fa-cloud-download align-top bigger-125"></i>
@@ -21,98 +21,100 @@
         <form name="formularioFiltroPacientes" novalidate ng-submit="paginator.getSearch(textSearch,filtro,null)">
             <fieldset>
                 <legend>Filtro Pacientes</legend>
-                <table class="table table-striped table-bordered table-hover">
-                    <tbody>
-                        <tr>
+                <div style="overflow-x:auto;">
+                    <table class="table table-striped table-bordered table-hover">
+                        <tbody>
+                            <tr>
 
-                            <th>
-                                <label>Código</label>&nbsp
-                            </th>
-                            <th>
-                                <label>Nombre y Apellídos</label>&nbsp
-                            </th>
-                            <th>
-                                <label>Celuda de Identidad</label>&nbsp
-                            </th>
-                            <th>
-                                <label>Campo</label>&nbsp
-                            </th>
-                            <th>
-                            </th>
-                        </tr>
-                        <tr>
+                                <th>
+                                    <label>Código</label>&nbsp
+                                </th>
+                                <th>
+                                    <label>Nombre y Apellídos</label>&nbsp
+                                </th>
+                                <th>
+                                    <label>Celuda de Identidad</label>&nbsp
+                                </th>
+                                <th>
+                                    <label>Campo</label>&nbsp
+                                </th>
+                                <th>
+                                </th>
+                            </tr>
+                            <tr>
 
-                            <td>
-                                <input ng-update-hidden type="text" id="filtroCodigo" ng-model="filtro.codigo" placeholder="" />
-                            </td>
-                            <td>
-                                <input ng-update-hidden type="text" id="filtroNombre" ng-model="filtro.nombres" placeholder="" />
-                            </td>
-                            <td>
-                                <input ng-update-hidden type="text" id="filtroCedula" ng-model="filtro.ci" placeholder="" />
-                            </td>
-                            <td>
+                                <td>
+                                    <input ng-update-hidden type="text" id="filtroCodigo" ng-model="filtro.codigo" placeholder="" />
+                                </td>
+                                <td>
+                                    <input ng-update-hidden type="text" id="filtroNombre" ng-model="filtro.nombres" placeholder="" />
+                                </td>
+                                <td>
+                                    <input ng-update-hidden type="text" id="filtroCedula" ng-model="filtro.ci" placeholder="" />
+                                </td>
+                                <td>
                                     <select required id="campo-rol" class="form-control" name="centroDeCostos" ng-options="centroCosto.id as centroCosto.nombre for centroCosto in centrosDeCostos | filter:{habilitado:true} track by centroCosto.id"
-                                    ng-model="filtro.campo">
-                                    <option value="">--Ninguno--</option>
-                                </select>
-                            </td>
-                            <td>
-                                <button type="submit" ng-disabled="formularioFiltroCuentas.$invalid" class="btn-primary btn btn-app btn-xs" ng-click="paginator.getSearch(paginator.search,filtro,null)">
-                                    <i class="ace-icon fa fa-search align-top bigger-125"></i>
-                                    BUSCAR
-                                </button>
-                                <button id="pdf" ng-disabled="!Cuentas" class="btn btn-app btn-danger btn-xs" ng-click="imprimirFiltroCajaCartaOficio(Cuentas)">
-                                    <i class="ace-icon fa fa-print bigger-160"></i>
-                                    PDF
-                                </button>
-                                <button id="pdf" ng-disabled="!Cuentas" class="btn btn-app btn-success btn-xs" ng-click="imprimirFiltroExcelCajaCartaOficio(Cuentas)">
-                                    <i class="ace-icon fa fa-print bigger-160"></i>
-                                    Excel
-                                </button>
-                            </td>
-                        </tr>
-                        <tr>
+                                        ng-model="filtro.campo">
+                                        <option value="">--Ninguno--</option>
+                                    </select>
+                                </td>
+                                <td>
+                                    <button type="submit" ng-disabled="formularioFiltroCuentas.$invalid" class="btn-primary btn btn-app btn-xs" ng-click="paginator.getSearch(paginator.search,filtro,null)">
+                                        <i class="ace-icon fa fa-search align-top bigger-125"></i>
+                                        BUSCAR
+                                    </button>
+                                    <button id="pdf" ng-disabled="!Cuentas" class="btn btn-app btn-danger btn-xs" ng-click="imprimirFiltroCajaCartaOficio(Cuentas)">
+                                        <i class="ace-icon fa fa-print bigger-160"></i>
+                                        PDF
+                                    </button>
+                                    <button id="pdf" ng-disabled="!Cuentas" class="btn btn-app btn-success btn-xs" ng-click="imprimirFiltroExcelCajaCartaOficio(Cuentas)">
+                                        <i class="ace-icon fa fa-print bigger-160"></i>
+                                        Excel
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
 
-                            <td>
-                                <label>Cargo</label>&nbsp
-                            </td>
-                            <td>
-                                <label>Empresa</label>&nbsp
-                            </td>
-                            <td>
-                                <label>Estado</label>&nbsp
-                            </td>
-                            <td>
-                                <label>Grupo Sanguineo</label>&nbsp
-                            </td>
-                        </tr>
-                        <tr>
+                                <td>
+                                    <label>Cargo</label>&nbsp
+                                </td>
+                                <td>
+                                    <label>Empresa</label>&nbsp
+                                </td>
+                                <td>
+                                    <label>Estado</label>&nbsp
+                                </td>
+                                <td>
+                                    <label>Grupo Sanguineo</label>&nbsp
+                                </td>
+                            </tr>
+                            <tr>
 
-                            <td>
-                                <select ng-change="paginator.getSearch(paginator.search,filtro,null)" name="fecha" id="tipo-contrato" class="form-control"
-                                required style="width:150px" ng-options="cargo.id as cargo.nombre for cargo in listaCargos.clases track by cargo.id"
-                                ng-model="filtro.cargo">
-                                <option value="">--Ninguno--</option>
-                            </select>
-                            </td>
-                            <td>
-                                <input ng-update-hidden type="text" name="filtroEmpresa" id="filtroEmpresa" ng-model="filtro.busquedaEmpresa" />
-                            </td>
-                            <td>
-                                <select id="filtroEstado" name="filtroEstado" ng-model="filtro.estado">
-                                    <option value="Activo">Inactivo</option>
-                                    <option value="Inactivo">Activo</option>
-                                </select>
-                            </td>
-                            <td>
-                                <input ng-update-hidden type="text" name="filtroGrupoSanguineo" id="filtroGrupoSanguineo" ng-model="filtro.grupo_sanguineo"
-                                />
-                            </td>
-                            <td></td>
-                        </tr>
-                    </tbody>
-                </table>
+                                <td>
+                                    <select ng-change="paginator.getSearch(paginator.search,filtro,null)" name="fecha" id="tipo-contrato" class="form-control"
+                                        required style="width:150px" ng-options="cargo.id as cargo.nombre for cargo in listaCargos.clases track by cargo.id"
+                                        ng-model="filtro.cargo">
+                                        <option value="">--Ninguno--</option>
+                                    </select>
+                                </td>
+                                <td>
+                                    <input ng-update-hidden type="text" name="filtroEmpresa" id="filtroEmpresa" ng-model="filtro.busquedaEmpresa" />
+                                </td>
+                                <td>
+                                    <select id="filtroEstado" name="filtroEstado" ng-model="filtro.estado">
+                                        <option value="Activo">Inactivo</option>
+                                        <option value="Inactivo">Activo</option>
+                                    </select>
+                                </td>
+                                <td>
+                                    <input ng-update-hidden type="text" name="filtroGrupoSanguineo" id="filtroGrupoSanguineo" ng-model="filtro.grupo_sanguineo"
+                                    />
+                                </td>
+                                <td></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </fieldset>
         </form>
 
@@ -267,164 +269,238 @@
                     <!-- <div class="row" ng-include src="'/templates/gral/fields-viewer.html'"> -->
                     <div class="row" ng-include src="'/templates/gral/paginator-header-1.html'">
                     </div>
-                    <table id="tabla-contabilidadCuentas" class="table table-striped table-bordered table-hover" ng-if="pacientes.length > 0">
-                        <thead>
-                            <tr><th class="center">
-                                Nro.
-                            </th>
-                                <th class="center">
-                                    <a href="javascript:void(0)" ng-click="paginator.sortColumn('activo',obtenerLista)">Activo
-                                        <span id="codigo" class="sort fa fa-sort icon-only"></span>
-                                    </a>
-                                </th>
-                                <th class="center" ng-if="fieldViewer.getConfiguration().codigo.show">
-                                    <a href="javascript:void(0)" ng-click="paginator.sortColumn('codigo',obtenerLista)">Código
-                                        <span id="codigo" class="sort fa fa-sort icon-only"></span>
-                                    </a>
-                                </th>
-                                <th class="center" ng-if="fieldViewer.getConfiguration().nombre.show">
-                                    <a href="javascript:void(0)" ng-click="paginator.sortColumn('nombre_completo',obtenerLista)">Nombre completo
-                                        <span id="nombre_completo" class="sort fa fa-sort icon-only"></span>
-                                    </a>
-                                </th>
-                                <th class="center" ng-if="fieldViewer.getConfiguration().empresa.show">
-                                    <a href="javascript:void(0)" ng-click="paginator.sortColumn('designacion_empresa',obtenerLista)">Empresa
-                                        <span id="nombre" class="sort fa fa-sort icon-only"></span>
-                                    </a>
-                                </th>
-                                <th class="center" ng-if="fieldViewer.getConfiguration().imagen.show">Imagen </th>
-                                <th class="center" ng-if="fieldViewer.getConfiguration().ci.show">
-                                    <a href="javascript:void(0)" ng-click="paginator.sortColumn('ci',obtenerLista)">C.I.
-                                        <span id="CI" class="sort fa fa-sort icon-only"></span>
-                                    </a>
-                                </th>
-                                <th class="center" ng-if="fieldViewer.getConfiguration().extension.show">
-                                    <a href="javascript:void(0)" ng-click="paginator.sortColumn('extension',obtenerLista)">Extención
-                                        <span id="Extención" class="sort fa fa-sort icon-only"></span>
-                                    </a>
-                                </th>
-                                <th class="center" ng-if="fieldViewer.getConfiguration().grupo_sanguineo.show">
-                                    <a href="javascript:void(0)" ng-click="paginator.sortColumn('grupo_sanguineo',obtenerLista)">Grupo sanguineo
-                                        <span id="Grupo_sanguineo" class="sort fa fa-sort icon-only"></span>
-                                    </a>
-                                    <!-- <a class="blue" href="javascript:void(0)" e-disabled="!aplicacion.puede_modificar" ng-click="agregarClasificacionCuenta()">
+                    <div style="overflow-x:auto;">
+                        <table id="tabla-contabilidadCuentas" class="table table-striped table-bordered table-hover" ng-if="pacientes.length > 0">
+                            <thead>
+                                <tr>
+                                    <th class="center">
+                                        Nro.
+                                    </th>
+                                    <th class="center">
+                                        <a href="javascript:void(0)" ng-click="paginator.sortColumn('activo',obtenerLista)">Activo
+                                            <span id="codigo" class="sort fa fa-sort icon-only"></span>
+                                        </a>
+                                    </th>
+                                    <th class="center" ng-if="fieldViewer.getConfiguration().codigo.show">
+                                        <a href="javascript:void(0)" ng-click="paginator.sortColumn('codigo',obtenerLista)">Código
+                                            <span id="codigo" class="sort fa fa-sort icon-only"></span>
+                                        </a>
+                                    </th>
+                                    <th class="center" ng-if="fieldViewer.getConfiguration().nombre.show">
+                                        <a href="javascript:void(0)" ng-click="paginator.sortColumn('nombre_completo',obtenerLista)">Nombre completo
+                                            <span id="nombre_completo" class="sort fa fa-sort icon-only"></span>
+                                        </a>
+                                    </th>
+                                    <th class="center" ng-if="fieldViewer.getConfiguration().empresa.show">
+                                        <a href="javascript:void(0)" ng-click="paginator.sortColumn('designacion_empresa',obtenerLista)">Empresa
+                                            <span id="nombre" class="sort fa fa-sort icon-only"></span>
+                                        </a>
+                                    </th>
+                                    <th class="center" ng-if="fieldViewer.getConfiguration().imagen.show">Imagen </th>
+                                    <th class="center" ng-if="fieldViewer.getConfiguration().ci.show">
+                                        <a href="javascript:void(0)" ng-click="paginator.sortColumn('ci',obtenerLista)">C.I.
+                                            <span id="CI" class="sort fa fa-sort icon-only"></span>
+                                        </a>
+                                    </th>
+                                    <th class="center" ng-if="fieldViewer.getConfiguration().extension.show">
+                                        <a href="javascript:void(0)" ng-click="paginator.sortColumn('extension',obtenerLista)">Extención
+                                            <span id="Extención" class="sort fa fa-sort icon-only"></span>
+                                        </a>
+                                    </th>
+                                    <th class="center" ng-if="fieldViewer.getConfiguration().grupo_sanguineo.show">
+                                        <a href="javascript:void(0)" ng-click="paginator.sortColumn('grupo_sanguineo',obtenerLista)">Grupo sanguineo
+                                            <span id="Grupo_sanguineo" class="sort fa fa-sort icon-only"></span>
+                                        </a>
+                                        <!-- <a class="blue" href="javascript:void(0)" e-disabled="!aplicacion.puede_modificar" ng-click="agregarClasificacionCuenta()">
                                         <i class="ace-icon fa fa-plus bigger-130"></i>
                                     </a> -->
-                                </th>
-                                <th class="center" ng-if="fieldViewer.getConfiguration().campo.show">
-                                    <a href="javascript:void(0)" ng-click="paginator.sortColumn('campo',obtenerLista)">Campo
-                                        <span id="Campo" class="sort fa fa-sort icon-only"></span>
-                                    </a>
-                                </th>
-                                <th class="center" ng-if="fieldViewer.getConfiguration().cargo.show">
-                                    <a href="javascript:void(0)" ng-click="paginator.sortColumn('cargo',obtenerLista)">Cargo
-                                        <span id="Cargo" class="sort fa fa-sort icon-only"></span>
-                                    </a>
-                                </th>
-                                <th class="center">Acciones</th>
-                                <th class="center">Gestion</th>
-                            </tr>
-                        </thead>
+                                    </th>
+                                    <th class="center" ng-if="fieldViewer.getConfiguration().campo.show">
+                                        <a href="javascript:void(0)" ng-click="paginator.sortColumn('campo',obtenerLista)">Campo
+                                            <span id="Campo" class="sort fa fa-sort icon-only"></span>
+                                        </a>
+                                    </th>
+                                    <th class="center" ng-if="fieldViewer.getConfiguration().cargo.show">
+                                        <a href="javascript:void(0)" ng-click="paginator.sortColumn('cargo',obtenerLista)">Cargo
+                                            <span id="Cargo" class="sort fa fa-sort icon-only"></span>
+                                        </a>
+                                    </th>
+                                    <th class="center">Acciones</th>
+                                    <th class="center">Gestion</th>
+                                </tr>
+                            </thead>
 
-                        <tbody>
-                            <tr ng-repeat="paciente in pacientes">
+                            <tbody>
+                                <tr ng-repeat="paciente in pacientes">
                                     <td class="center">
                                         {{($index+1)+(paginator.itemsPerPage*(paginator.currentPage-1))}}
                                     </td>
-                                <td class="center">
-                                    
-                                    <label>
-                                        <input disabled name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="paciente.activo" ng-change="changeActivo(paciente)"
-                                        />
-                                        <span class="lbl check-descuento"></span>
-                                    </label>
-                                    <!-- {{paciente.activo}} -->
-                                </td>
-                                <td ng-if="fieldViewer.getConfiguration().codigo.show" class="center">
-                                    {{paciente.codigo}}
-                                </td>
-                                <td ng-if="fieldViewer.getConfiguration().nombre.show">
-                                    {{paciente.nombre_completo}}
-                                </td>
-                                <td ng-if="fieldViewer.getConfiguration().empresa.show">
-                                    {{paciente.designacion_empresa}}
-                                </td>
-                                <td ng-if="fieldViewer.getConfiguration().imagen.show">
-                                    <img src="{{paciente.imagen}}" width="50">
-                                </td>
-                                <td ng-if="fieldViewer.getConfiguration().ci.show">
-                                    {{paciente.ci}}
-                                </td>
-                                <td ng-if="fieldViewer.getConfiguration().extension.show">
+                                    <td class="center">
 
-                                    {{paciente.extension}}
-                                </td>
+                                        <label>
+                                            <input disabled name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="paciente.eliminado" ng-change="changeActivo(paciente)"
+                                            />
+                                            <span class="lbl check-descuento"></span>
+                                        </label>
+                                        <!-- {{paciente.activo}} -->
+                                    </td>
+                                    <td ng-if="fieldViewer.getConfiguration().codigo.show" class="center">
+                                        {{paciente.codigo}}
+                                    </td>
+                                    <td ng-if="fieldViewer.getConfiguration().nombre.show">
+                                        {{paciente.nombre_completo}}
+                                    </td>
+                                    <td ng-if="fieldViewer.getConfiguration().empresa.show">
+                                        {{paciente.designacion_empresa}}
+                                    </td>
+                                    <td ng-if="fieldViewer.getConfiguration().imagen.show">
+                                        <img src="{{paciente.imagen}}" width="50">
+                                    </td>
+                                    <td ng-if="fieldViewer.getConfiguration().ci.show">
+                                        {{paciente.ci}}
+                                    </td>
+                                    <td ng-if="fieldViewer.getConfiguration().extension.show">
 
-                                <td ng-if="fieldViewer.getConfiguration().grupo_sanguineo.show">
+                                        {{paciente.extension}}
+                                    </td>
 
-                                    {{paciente.grupo_sanguineo}}
-                                </td>
-                                <td ng-if="fieldViewer.getConfiguration().campo.show">
-                                    {{paciente.campamento}}
-                                </td>
-                                <td ng-if="fieldViewer.getConfiguration().cargo.show">
+                                    <td ng-if="fieldViewer.getConfiguration().grupo_sanguineo.show">
+
+                                        {{paciente.grupo_sanguineo}}
+                                    </td>
+                                    <td ng-if="fieldViewer.getConfiguration().campo.show">
+                                        {{paciente.campamento}}
+                                    </td>
+                                    <td ng-if="fieldViewer.getConfiguration().cargo.show">
                                         <a popover-placement="right" uib-popover-template="dynamicPopoverCargos.templateUrl" popover-trigger="outsideClick: outsideClick"
-                                        popover-title="Cargos" class="blue">
-                                        <i class="fa fa-list-ol bigger-200 orange" aria-hidden="true"></i>
-                                    </a>
-                                    <script type="text/ng-template" id="myPopoverTemplate.html">                                           
+                                            popover-title="Cargos" class="blue">
+                                            <i class="fa fa-list-ol bigger-200 orange" aria-hidden="true"></i>
+                                        </a>
+                                        <script type="text/ng-template" id="myPopoverTemplate.html">                                           
                                                 <div class="form-group">                                              
                                                   <p ng-repeat=" cargo in paciente.ficha.cargos">{{$index+1}}. {{cargo.cargo.nombre}}</p>
                                                   <p ng-if="paciente.ficha==null">1. Externo</p>
                                                 </div>                                           
                                             </script>
-                                </td>
-                                <td>
-                                    <div class="hidden-sm hidden-xs action-buttons">
-                                        <a href="javascript:void(0)" ng-click="abrirIdModalDialogPreRequisitos(paciente)" id="id-btn-dialogPrerequisitos" class="acciones tooltip-info"
-                                            data-rel="tooltip" tooltip-placement="top" uib-tooltip="Pre-requisitos">
-                                            <span class="icono-prerequisito icono-font"></span>
-                                        </a>
-                                        <!---CORREGIR e-disable to !aplicacion... e-disabled="aplicacion.puede_modificar" -->
-                                        <a href="javascript:void(0)" ng-click="abrirDialogVacunas(paciente)" class="acciones vacuna tooltip-info" data-rel="tooltip"
-                                            tooltip-placement="top" uib-tooltip="Vacuna">
-                                            <span class="icono-vacuna icono-font"></span>
-                                        </a>
-                                        <a href="javascript:void(0)" ng-click="abrirIdModalDialogLaboratorio(paciente)" id="id-btn-laboratorio" class="acciones laboratorio tooltip-info"
-                                            data-rel="tooltip" tooltip-placement="top" uib-tooltip="Laboratorio">
-                                            <span class="icono-laboratorio icono-font"></span>
-                                        </a>
-                                        <a href="javascript:void(0)" ng-click="crearNuevaConsulta(paciente)" id="id-btn-consulta" data-toggle="modal" class="acciones consulta tooltip-info"
-                                            data-rel="tooltip" tooltip-placement="top" uib-tooltip="Consulta">
-                                            <span class="icono-consulta icono-font"></span>
-                                        </a>
-                                        <a href="javascript:void(0)" ng-click="abrirDialogDiagnosticos(paciente)" class="acciones diagnostico tooltip-info" data-rel="tooltip"
-                                            tooltip-placement="top" uib-tooltip="Diagnostico">
-                                            <span class="icono-diagnostico icono-font"></span>
-                                        </a>
-                                        <a href="javascript:void(0)" ng-click="abrirIdModalFichaTecnica(paciente)" class="acciones tooltip-info" data-rel="tooltip"
-                                            tooltip-placement="top" uib-tooltip="Ficha medica">
-                                            <span class="icono-ficha_medica icono-font"></span>
-                                        </a>
-                                        <a href="javascript:void(0)" ng-click="abrirDialogDialogCredencial(paciente)" class="acciones credencial-salud tooltip-info"
-                                            data-rel="tooltip" tooltip-placement="top" uib-tooltip="Credencial" data-original-title="Credencial de salud">
-                                            <span class="icono-credencial_salud icono-font"></span>
-                                        </a>
+                                    </td>
+                                    <td>
+                                        <div class="hidden-md hidden-lg">
+                                            <div class="inline pos-rel">
+                                                <button class="btn btn-minier btn-yellow dropdown-toggle" data-toggle="dropdown" data-position="auto">
+                                                    <i class="ace-icon fa fa-caret-down icon-only bigger-120"></i>
+                                                </button>
 
-                                        <a href="javascript:void(0)" ng-click="abrirIdModalGraficoSV(paciente)" class="acciones graficos tooltip-info" data-rel="tooltip"
-                                            tooltip-placement="top" uib-tooltip="Graficos S.V." id="id-btn-dialogGrafico">
-                                            <span class="icono-graficosv icono-font"></span>
-                                        </a>
-                                        <a href="javascript:void(0)" ng-click="abrirDialogDialogPatologias(paciente)" class="acciones graficos tooltip-info purple"
-                                            data-rel="tooltip" tooltip-placement="top" uib-tooltip="Patologias">
-                                            <span class="icono-patologia icono-font"></span>
-                                        </a>
-                                        <a href="javascript:void(0)" ng-click="abrirDialogDialogComentario(paciente)" class="acciones graficos tooltip-info grey"
-                                            data-rel="tooltip" tooltip-placement="top" uib-tooltip="{{paciente.comentario}}">
-                                            <span class="fa fa-comment" style="font-size: 20px;"></span>
-                                        </a>
-                                    </div>
-                                    <div class="hidden-md hidden-lg">
+                                                <ul class="dropdown-menu dropdown-only-icon dropdown-yellow dropdown-menu-right dropdown-caret dropdown-close">
+                                                    <li>
+                                                        <a href="javascript:void(0)" ng-click="abrirIdModalDialogPreRequisitos(paciente)" id="id-btn-dialogPrerequisitos" class="acciones tooltip-info"
+                                                            data-rel="tooltip" tooltip-placement="top" uib-tooltip="Pre-requisitos">
+                                                            <span class="icono-prerequisito icono-font"></span>
+                                                        </a>
+                                                    </li>
+                                                    <a href="javascript:void(0)" ng-click="abrirDialogVacunas(paciente)" class="acciones vacuna tooltip-info" data-rel="tooltip"
+                                                        tooltip-placement="top" uib-tooltip="Vacuna">
+                                                        <span class="icono-vacuna icono-font"></span>
+                                                    </a>
+                                                    <li>
+                                                        <a href="javascript:void(0)" ng-click="abrirIdModalDialogLaboratorio(paciente)" id="id-btn-laboratorio" class="acciones laboratorio tooltip-info"
+                                                            data-rel="tooltip" tooltip-placement="top" uib-tooltip="Laboratorio">
+                                                            <span class="icono-laboratorio icono-font"></span>
+                                                        </a>
+                                                    </li>
+                                                    <a href="javascript:void(0)" ng-click="crearNuevaConsulta(paciente)" id="id-btn-consulta" data-toggle="modal" class="acciones consulta tooltip-info"
+                                                        data-rel="tooltip" tooltip-placement="top" uib-tooltip="Consulta">
+                                                        <span class="icono-consulta icono-font"></span>
+                                                    </a>
+
+                                                    <li>
+                                                        <a href="javascript:void(0)" ng-click="abrirDialogDiagnosticos(paciente)" class="acciones diagnostico tooltip-info" data-rel="tooltip"
+                                                            tooltip-placement="top" uib-tooltip="Diagnostico">
+                                                            <span class="icono-diagnostico icono-font"></span>
+                                                        </a>
+
+                                                    </li>
+                                                    <a href="javascript:void(0)" ng-click="abrirIdModalFichaTecnica(paciente)" class="acciones tooltip-info" data-rel="tooltip"
+                                                        tooltip-placement="top" uib-tooltip="Ficha medica">
+                                                        <span class="icono-ficha_medica icono-font"></span>
+                                                    </a>
+                                                    <li>
+                                                        <a href="javascript:void(0)" ng-click="abrirDialogDialogCredencial(paciente)" class="acciones credencial-salud tooltip-info"
+                                                            data-rel="tooltip" tooltip-placement="top" uib-tooltip="Credencial"
+                                                            data-original-title="Credencial de salud">
+                                                            <span class="icono-credencial_salud icono-font"></span>
+                                                        </a>
+
+
+                                                    </li>
+                                                    <li>
+                                                        <a href="javascript:void(0)" ng-click="abrirIdModalGraficoSV(paciente)" class="acciones graficos tooltip-info" data-rel="tooltip"
+                                                            tooltip-placement="top" uib-tooltip="Graficos S.V." id="id-btn-dialogGrafico">
+                                                            <span class="icono-graficosv icono-font"></span>
+                                                        </a>
+
+                                                    </li>
+                                                    <li>
+                                                        <a href="javascript:void(0)" ng-click="abrirDialogDialogPatologias(paciente)"
+                                                            class="acciones graficos tooltip-info purple" data-rel="tooltip"
+                                                            tooltip-placement="top" uib-tooltip="Patologias">
+                                                            <span class="icono-patologia icono-font"></span>
+                                                        </a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="javascript:void(0)" ng-click="abrirDialogDialogComentario(paciente)"
+                                                            class="acciones graficos tooltip-info grey" data-rel="tooltip" tooltip-placement="top"
+                                                            uib-tooltip="{{paciente.comentario}}">
+                                                            <span class="fa fa-comment" style="font-size: 20px;"></span>
+                                                        </a>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        <div class="hidden-sm hidden-xs action-buttons">
+                                            <a href="javascript:void(0)" ng-click="abrirIdModalDialogPreRequisitos(paciente)" id="id-btn-dialogPrerequisitos" class="acciones tooltip-info"
+                                                data-rel="tooltip" tooltip-placement="top" uib-tooltip="Pre-requisitos">
+                                                <span class="icono-prerequisito icono-font"></span>
+                                            </a>
+                                            <!---CORREGIR e-disable to !aplicacion... e-disabled="aplicacion.puede_modificar" -->
+                                            <a href="javascript:void(0)" ng-click="abrirDialogVacunas(paciente)" class="acciones vacuna tooltip-info" data-rel="tooltip"
+                                                tooltip-placement="top" uib-tooltip="Vacuna">
+                                                <span class="icono-vacuna icono-font"></span>
+                                            </a>
+                                            <a href="javascript:void(0)" ng-click="abrirIdModalDialogLaboratorio(paciente)" id="id-btn-laboratorio" class="acciones laboratorio tooltip-info"
+                                                data-rel="tooltip" tooltip-placement="top" uib-tooltip="Laboratorio">
+                                                <span class="icono-laboratorio icono-font"></span>
+                                            </a>
+                                            <a href="javascript:void(0)" ng-click="crearNuevaConsulta(paciente)" id="id-btn-consulta" data-toggle="modal" class="acciones consulta tooltip-info"
+                                                data-rel="tooltip" tooltip-placement="top" uib-tooltip="Consulta">
+                                                <span class="icono-consulta icono-font"></span>
+                                            </a>
+                                            <a href="javascript:void(0)" ng-click="abrirDialogDiagnosticos(paciente)" class="acciones diagnostico tooltip-info" data-rel="tooltip"
+                                                tooltip-placement="top" uib-tooltip="Diagnostico">
+                                                <span class="icono-diagnostico icono-font"></span>
+                                            </a>
+                                            <a href="javascript:void(0)" ng-click="abrirIdModalFichaTecnica(paciente)" class="acciones tooltip-info" data-rel="tooltip"
+                                                tooltip-placement="top" uib-tooltip="Ficha medica">
+                                                <span class="icono-ficha_medica icono-font"></span>
+                                            </a>
+                                            <a href="javascript:void(0)" ng-click="abrirDialogDialogCredencial(paciente)" class="acciones credencial-salud tooltip-info"
+                                                data-rel="tooltip" tooltip-placement="top" uib-tooltip="Credencial" data-original-title="Credencial de salud">
+                                                <span class="icono-credencial_salud icono-font"></span>
+                                            </a>
+
+                                            <a href="javascript:void(0)" ng-click="abrirIdModalGraficoSV(paciente)" class="acciones graficos tooltip-info" data-rel="tooltip"
+                                                tooltip-placement="top" uib-tooltip="Graficos S.V." id="id-btn-dialogGrafico">
+                                                <span class="icono-graficosv icono-font"></span>
+                                            </a>
+                                            <a href="javascript:void(0)" ng-click="abrirDialogDialogPatologias(paciente)" class="acciones graficos tooltip-info purple"
+                                                data-rel="tooltip" tooltip-placement="top" uib-tooltip="Patologias">
+                                                <span class="icono-patologia icono-font"></span>
+                                            </a>
+                                            <a href="javascript:void(0)" ng-click="abrirDialogDialogComentario(paciente)" class="acciones graficos tooltip-info grey"
+                                                data-rel="tooltip" tooltip-placement="top" uib-tooltip="{{paciente.comentario}}">
+                                                <span class="fa fa-comment" style="font-size: 20px;"></span>
+                                            </a>
+                                        </div>
+                                        <!-- <div class="hidden-md hidden-lg">
                                         <div class="inline pos-rel">
                                             <button class="btn btn-minier btn-yellow dropdown-toggle" data-toggle="dropdown" data-position="auto">
                                                 <i class="ace-icon fa fa-caret-down icon-only bigger-120"></i>
@@ -440,7 +516,7 @@
                                                     </a>
                                                 </li>
                                                 <li>
-                                                    <!-- e-disabled="!aplicacion.puede_modificar" -->
+                                                   
                                                     <a href="javascript:void(0)" ng-click="modificarPaciente(paciente)" class="tooltip-success" data-rel="tooltip" title="Edit">
                                                         <span class="green">
                                                             <i class="ace-icon fa fa-pencil-square-o bigger-120"></i>
@@ -466,25 +542,27 @@
                                             </ul>
                                         </div>
                                     </div>
-                                </td>
-                                <td>
-                                    <div class="hidden-sm hidden-xs action-buttons">
+                                </td> -->
+                                        <td>
+                                            <div class="action-buttons">
 
-                                        <a class="blue" href="javascript:void(0)" ng-click="verPaciente(paciente)" class="tooltip-info" data-rel="tooltip" title="View">
-                                            <i class="ace-icon fa fa-search-plus bigger-130"></i>
-                                        </a>
-                                        <a class="green" href="javascript:void(0)" ng-click="modificarPaciente(paciente)">
-                                            <i class="ace-icon fa fa-pencil bigger-130"></i>
-                                        </a>
+                                                <a class="blue" href="javascript:void(0)" e-disabled="!aplicacion.puede_ver" ng-click="verPaciente(paciente)" class="tooltip-info"
+                                                    data-rel="tooltip" title="View">
+                                                    <i class="ace-icon fa fa-search-plus bigger-130"></i>
+                                                </a>
+                                                <a class="green" href="javascript:void(0)" e-disabled="!aplicacion.puede_modificar" ng-click="modificarPaciente(paciente)">
+                                                    <i class="ace-icon fa fa-pencil bigger-130"></i>
+                                                </a>
 
-                                        <a class="red" href="javascript:void(0)" ng-click="mostrarConfirmacionEliminacion(paciente)">
-                                            <i class="ace-icon fa fa-trash-o bigger-130"></i>
-                                        </a>
-                                    </div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                                                <a class="red" href="javascript:void(0)" e-disabled="!aplicacion.puede_eliminar" ng-click="mostrarConfirmacionEliminacion(paciente)">
+                                                    <i class="ace-icon fa fa-trash-o bigger-130"></i>
+                                                </a>
+                                            </div>
+                                        </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                     <div class="row" ng-include src="'/templates/gral/paginator.html'" ng-if="pacientes.length > 0">
                     </div>
                 </div>
@@ -567,7 +645,8 @@
                                                     <label for="">Fecha y Hora</label>
                                                 </div>
                                                 <div class="col-lg-7">
-                                                <input required ng-update-hidden class="form-control date-timepicker" data-date-format="DD/MM/YYYY HH:mm A" type="text" id="consultaFecha" ng-model="consulta.fecha">
+                                                    <input required ng-update-hidden class="form-control date-timepicker" data-date-format="DD/MM/YYYY HH:mm A" type="text" id="consultaFecha"
+                                                        ng-model="consulta.fecha">
                                                 </div>
                                             </div>
                                             <div class="row">
@@ -838,7 +917,7 @@
                                 Anterior
                             </button>
 
-                            <button class="btn btn-success btn-sm btn-next" id="siguiente-c" data-last="Finish">
+                            <button ng-disabled="!aplicacion.puede_crear" class="btn btn-success btn-sm btn-next" id="siguiente-c" data-last="Finish">
                                 Siguiente
                                 <i class="ace-icon fa fa-arrow-right icon-on-right"></i>
                             </button>
@@ -1005,7 +1084,7 @@
                 <div class="row">
                     <h4 class="blue titulo-pre-requisito">{{paciente.designacion_empresa}}</h4>
                 </div> -->
-                <button ng-click="abrirDialogDiagnosticoNuevo()" id="id-btn-buscar-consulta" class="btn btn-search">
+                <button ng-disabled="!aplicacion.puede_crear" ng-click="abrirDialogDiagnosticoNuevo()" id="id-btn-buscar-consulta" class="btn btn-search">
                     <i class="ace-icon fa fa-plus align-top bigger-125"></i>
                     Nuevo
                 </button>
@@ -1035,17 +1114,17 @@
 
                                 </td>
                                 <td>
-                                    <div class="hidden-sm hidden-xs action-buttons">
+                                    <div class="action-buttons">
 
                                         <a class="blue" ng-click="abrirDialogDiagnosticoNuevo(diagnostico,true)">
                                             <i class="ace-icon fa fa-search-plus bigger-130"></i>
                                         </a>
 
-                                        <a class="green" ng-click="abrirDialogDiagnosticoNuevo(diagnostico)">
+                                        <a class="green" e-disabled="!aplicacion.puede_modificar" ng-click="abrirDialogDiagnosticoNuevo(diagnostico)">
                                             <i class="ace-icon fa fa-pencil bigger-130"></i>
                                         </a>
 
-                                        <a class="red" ng-click="eliminarDiagnostico(diagnostico)">
+                                        <a class="red" e-disabled="!aplicacion.puede_eliminar" ng-click="eliminarDiagnostico(diagnostico)">
                                             <i class="ace-icon fa fa-trash-o bigger-130"></i>
                                         </a>
                                     </div>
@@ -1059,10 +1138,10 @@
             <div class="space-6"></div>
             <div class="col-lg-12 ui-dialog-buttonpane ui-widget-content ui-helper-clearfix">
                 <div class="ui-dialog-buttonset">
-                    <button ng-click="cerrarDialogDiagnosticos()" type="button" class="btn btn-primary btn-sm">
+                    <!-- <button ng-click="cerrarDialogDiagnosticos()" type="button" class="btn btn-primary btn-sm">
                         <i class="ace-icon fa fa-floppy-o bigger-110"></i>
                         Guardar
-                    </button>
+                    </button> -->
                     <button ng-click="cerrarDialogDiagnosticos()" type="button" class="btn btn-danger btn-sm">
                         <i class="ace-icon fa fa-times bigger-110"></i>
                         Cancelar
@@ -1166,7 +1245,8 @@
             <form name="formResult" ng-submit="guardarDiagnosticoExamenResultados(formResult,fechaResultado)" novalidate>
                 <div class="container-fluid">
                     <div class="col-lg-4">
-                        <button type="button" ng-click="abrirDialogNuevoExamenDiagnostico()" id="id-btn-nuevo-resultado" class="btn btn-primary">
+                        <button ng-disabled="!aplicacion.puede_crear" type="button" ng-click="abrirDialogNuevoExamenDiagnostico()" id="id-btn-nuevo-resultado"
+                            class="btn btn-primary">
                             <i class="ace-icon fa fa-plus align-top bigger-125"></i>
                             Nuevo
                         </button>
@@ -1175,13 +1255,13 @@
                     <div class="col-lg-4">
                         <label> Fecha:</label>
                         <label>
-                                <input required size="15" name="fecha" ng-update-hidden="" class="form-control date-picker ng-pristine ng-untouched ng-isolate-scope ng-empty ng-invalid ng-invalid-required"
-                                    type="text" data-date-format="dd/mm/yyyy" id="fechainicio" ng-model="fechaResultado" placeholder="Fecha inicial">
-                                <div ng-show="formResult.fecha.$error.required" class="invalid-message help-block" ng-messages="formResult.fecha.$error"
-                                    ng-if="formResult.fecha.$touched || (formResult.$submitted && formResult.fecha.$invalid)">
-                                    <div ng-messages-include="/templates/gral/messages.html"></div>
-                                </div>
-                            </label>
+                            <input required size="15" name="fecha" ng-update-hidden="" class="form-control date-picker ng-pristine ng-untouched ng-isolate-scope ng-empty ng-invalid ng-invalid-required"
+                                type="text" data-date-format="dd/mm/yyyy" id="fechainicio" ng-model="fechaResultado" placeholder="Fecha inicial">
+                            <div ng-show="formResult.fecha.$error.required" class="invalid-message help-block" ng-messages="formResult.fecha.$error"
+                                ng-if="formResult.fecha.$touched || (formResult.$submitted && formResult.fecha.$invalid)">
+                                <div ng-messages-include="/templates/gral/messages.html"></div>
+                            </div>
+                        </label>
                     </div>
                 </div>
                 <br>
@@ -1209,17 +1289,17 @@
                                         <input type="text" ng-model="examen.estado" class="form-control">
                                     </td>
                                     <td>
-                                        <div class="hidden-sm hidden-xs action-buttons">
+                                        <div class="action-buttons">
 
                                             <a class="blue" ng-click="abrirDialogNuevoExamenDiagnostico(examen,true)">
                                                 <i class="ace-icon fa fa-search-plus bigger-130"></i>
                                             </a>
 
-                                            <a class="green" ng-click="abrirDialogNuevoExamenDiagnostico(examen)">
+                                            <a class="green" e-disabled="!aplicacion.puede_modificar" ng-click="abrirDialogNuevoExamenDiagnostico(examen)">
                                                 <i class="ace-icon fa fa-pencil bigger-130"></i>
                                             </a>
 
-                                            <a class="red" ng-click="eliminarNuevoDiagnosticoExamen(examen)">
+                                            <a class="red" e-disabled="!aplicacion.puede_eliminar" ng-click="eliminarNuevoDiagnosticoExamen(examen)">
                                                 <i class="ace-icon fa fa-trash-o bigger-130"></i>
                                             </a>
                                         </div>
@@ -1240,7 +1320,7 @@
                         <button ng-click="abrirIdModalDialogDiagnosticoExamenesHistoricoResultados()" type="button" class="btn btn-white  btn-bold btn-danger"
                             id="id-btn-historicoResultado">
                             <i class="ace-icon fa fa-h-square bigger-110"></i>&nbsp; Historico</button>
-                        <button type="submit" class="btn btn-primary btn-sm ">
+                        <button ng-disabled="!aplicacion.puede_crear" type="submit" class="btn btn-primary btn-sm ">
                             <i class="ace-icon fa fa-floppy-o bigger-110"></i>&nbsp; Guardar</button>
                         <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal" ng-click="cerrarDialogExamenesDiagnostico()">
                             <i class="ace-icon fa fa-times"></i>Cancelar
@@ -1404,8 +1484,8 @@
                         <!-- <td><a class="green" href="javascript:void(0)" ng-click="abrirDialogVacunaEditar(vacuna.pacienteVacuna)" id="id-btn-vacunaEditar"><i class=" fa fa-pencil bigger-130"></i></a></td> -->
                         <td>{{vacuna.fecha_ultima_aplicacion | date:"dd/MM/yyyy"}}</td>
                         <td>
-                            <a href="javascript:void(0)" ng-click="disableImput(vacuna)" class="acciones vacuna tooltip-info" data-rel="tooltip" data-placement="bottom"
-                                data-original-title="Vacuna">
+                            <a e-disabled="!aplicacion.puede_crear" href="javascript:void(0)" ng-click="disableImput(vacuna)" class="acciones vacuna tooltip-info"
+                                data-rel="tooltip" data-placement="bottom" data-original-title="Vacuna">
                                 <i class="ace-icon pacientes-vacuna bigger-130 icono-vacuna"></i>
                             </a>
                         </td>
@@ -1463,7 +1543,7 @@
             </div>
             <br>
             <!-- TOP BAR -->
-            <button id="nuevaVacuna" class="btn btn-primary" ng-click="abriridModalDialogVacunaNueva()">
+            <button ng-disabled="!aplicacion.puede_crear" id="nuevaVacuna" class="btn btn-primary" ng-click="abriridModalDialogVacunaNueva()">
                 <i class="ace-icon fa fa-plus align-top bigger-125"></i>
                 Nuevo
             </button>
@@ -1484,13 +1564,14 @@
                     <tr ng-repeat="vacuna in vacunas">
                         <td>{{vacuna.nombre}}</td>
                         <td>
-                            <a class="green" ng-click="abrirDialogVacunaEditar(vacuna)" id="id-btn-vacunaEditar">
+                            <a class="green" e-disabled="!aplicacion.puede_modificar" ng-click="abrirDialogVacunaEditar(vacuna)" id="id-btn-vacunaEditar">
                                 <i class=" fa fa-pencil bigger-130"></i>
                             </a>
                         </td>
                         <td>
                             <label>
-                                <input name="switch-field-1" ng-model="vacuna.asignada" class="ace ace-switch ace-switch-4" type="checkbox" />
+                                <input e-disabled="!aplicacion.puede_modificar" name="switch-field-1" ng-model="vacuna.asignada" class="ace ace-switch ace-switch-4"
+                                    type="checkbox" />
                                 <!--ng-change="asignarVacuna(vacuna)"-->
                                 <span class="lbl check-descuento"></span>
                             </label>
@@ -1502,7 +1583,7 @@
             <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix">
                 <div class="ui-dialog-buttonset">
                     <!-- <button ng-click="cerrarPopUpVacunasConfig()" type="button" class="btn btn-white  btn-bold btn-danger "><i class="ace-icon fa fa-h-square  bigger-110"></i>&nbsp; Historial</button> -->
-                    <button ng-click="asignarVacunas()" type="button" class="btn btn-primary">
+                    <button ng-disabled="!aplicacion.puede_crear" ng-click="asignarVacunas()" type="button" class="btn btn-primary">
                         <i class="ace-icon fa fa-floppy-o bigger-110"></i>&nbsp; Guardar</button>
                     <button ng-click="cerrarPopUpVacunasConfig()" type="button" class="btn btn-danger">
                         <i class="ace-icon fa fa-times bigger-110"></i>&nbsp; Cancelar</button>
@@ -1996,7 +2077,7 @@
                 <div class="row">
                     <h4 class="blue titulo-pre-requisito">{{paciente.designacion_empresa}}</h4>
                 </div> -->
-                <button ng-click="abrirIdModalDialogNuevoLaboratorio()" id="id-btn-nuevo-examen" class="btn btn-primary">
+                <button ng-disabled="!aplicacion.puede_crear" ng-click="abrirIdModalDialogNuevoLaboratorio()" id="id-btn-nuevo-examen" class="btn btn-primary">
                     <i class="ace-icon fa fa-plus align-top aling-left bigger-125"></i>
                     Nuevo
                 </button>
@@ -2020,21 +2101,21 @@
                                     <tr ng-repeat="laboratorio in listaLaboratorios">
                                         <td>{{laboratorio.nombre}}</td>
                                         <td>
-                                            <div class="hidden-sm hidden-xs action-buttons">
+                                            <div class="action-buttons">
                                                 <a href="javascript:void(0)" ng-click="abrirIdModalDialogLaboratorioExamenes(laboratorio)" class="blue">
                                                     <i class="icono-prerequisito icono-font"></i>
                                                 </a>
                                             </div>
                                         </td>
                                         <td>
-                                            <div class="hidden-sm hidden-xs action-buttons">
+                                            <div class="action-buttons">
                                                 <a class="blue" ng-click="abrirIdModalDialogNuevoLaboratorio(laboratorio,true)">
                                                     <i class="ace-icon fa fa-search-plus bigger-130"></i>
                                                 </a>
-                                                <a class="green" ng-click="abrirIdModalDialogNuevoLaboratorio(laboratorio)">
+                                                <a class="green" e-disabled="!aplicacion.puede_modificar" ng-click="abrirIdModalDialogNuevoLaboratorio(laboratorio)">
                                                     <i class="ace-icon fa fa-pencil bigger-130"></i>
                                                 </a>
-                                                <a class="red" ng-click="EliminarNuevoLaboratorio(laboratorio)">
+                                                <a class="red" e-disabled="!aplicacion.puede_eliminar" ng-click="EliminarNuevoLaboratorio(laboratorio)">
                                                     <i class="ace-icon fa fa-trash-o bigger-130"></i>
                                                 </a>
                                             </div>
@@ -2048,10 +2129,10 @@
                     <div class="col-lg-12">
                         <div class="modal-footer">
 
-                            <button type="button" id="guardarLaboratorio" ng-click="cerrarIdModalDialogLaboratorio()" class="btn btn-primary">
+                            <!--  <button type="button" id="guardarLaboratorio" ng-click="cerrarIdModalDialogLaboratorio()" class="btn btn-primary">
                                 <i class="ace-icon fa fa-floppy-o bigger-110"></i>
                                 Guardar
-                            </button>
+                            </button> -->
                             <button type="button" ng-click="cerrarIdModalDialogLaboratorio()" class="btn btn-danger" data-dismiss="modal">
                                 <i class="ace-icon fa fa-times"></i>
                                 Cancelar
@@ -2136,7 +2217,7 @@
                                 type="text" data-date-format="dd/mm/yyyy" id="fechafin" ng-model="filtro.fin" placeholder="Fecha fin">
                         </td>
                         <td>
-                            <button ng-click="abrirDialogPrerequisitoNuevo()" type="submit" class="btn btn-sm btn-primary">
+                            <button ng-disabled="!aplicacion.puede_crear" ng-click="abrirDialogPrerequisitoNuevo()" type="submit" class="btn btn-sm btn-primary">
                                 <i class="ace-icon fa fa-plus align-top bigger-125"></i>
                                 NUEVO
                             </button>
@@ -2168,7 +2249,7 @@
                         <th>
                             <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">Pre-requisito</div>
                             <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 pos-fixed pull-rigth">
-                                <a data-toggle="dropdown" class="dropdown-toggle" id="zoomBtn">
+                                <a data-toggle="dropdown" ng-disabled="!aplicacion.puede_crear" class="dropdown-toggle" id="zoomBtn">
                                     <i class="glyphicon  glyphicon-list-alt"></i>
                                 </a>
                                 <ul class="dropdown-menu-left dropdown-navbar navbar-orange dropdown-menu dropdown-caret dropdown-close">
@@ -2185,7 +2266,7 @@
                                                 </label>
                                                 <label class="blue">{{requisito.nombre}}</label>
                                                 <label>
-                                                    <a class="green" href="javascript:void(0)" ng-click="abrirDialogPrerequisitoEditar(requisito)">
+                                                    <a class="green" ng-disabled="!aplicacion.modificar" href="javascript:void(0)" ng-click="abrirDialogPrerequisitoEditar(requisito)">
                                                         <i class="ace-icon fa fa-pencil bigger-130"></i>
                                                     </a>
                                                 </label>
@@ -2237,12 +2318,12 @@
                                     </a>
                                 </div>
                                 <div class="col-sm-4" ng-if="!prerequisito.entregado">
-                                    <a class="red" href="javascript:void(0)" id="id-btn-entrega2" ng-click="verificarFechaEntregaPrerequisito(prerequisito,paciente)">
+                                    <a e-disabled="!aplicacion.puede_modificar" class="red" href="javascript:void(0)" id="id-btn-entrega2" ng-click="verificarFechaEntregaPrerequisito(prerequisito,paciente)">
                                         <i class="ace-icon fa fa-check-circle  bigger-130"></i>
                                     </a>
                                 </div>
                                 <div class="col-sm-4">
-                                    <a class="green" href="javascript:void(0)" ng-click="abrirDialogEditarPreRequisito(prerequisito)">
+                                    <a e-disabled="!aplicacion.puede_modificar" class="green" href="javascript:void(0)" ng-click="abrirDialogEditarPreRequisito(prerequisito)">
                                         <i class="ace-icon fa fa-pencil bigger-130"></i>
                                     </a>
                                 </div>
@@ -2624,18 +2705,18 @@
                                 <div class="step-pane" data-step="2">
                                     <div class="row">
                                         <div class="col-lg-12">
-                                                <div class="form-group">
-                                                        <label class="col-sm-5 control-label no-padding-right" for="codigo">Código                                                
-                                                        </label>
-            
-                                                        <div class="col-sm-7">
-                                                            <input required type="text" id="codigo_cuenta" ng-model="paciente.codigo" placeholder="Codigo" class="col-xs-10 col-sm-5"
-                                                                ng-change="validarCodigoCuentaEmpleado(paciente.codigo)" />
-                                                            <br>
-                                                            <p ng-class="{'text-red':data.type,'text-green':!data.type}"> {{data.message}}</p>
-                                                        </div>
-                                                    </div>
-                                           <!--  <div class="row form-group">
+                                            <div class="form-group">
+                                                <label class="col-sm-5 control-label no-padding-right" for="codigo">Código
+                                                </label>
+
+                                                <div class="col-sm-7">
+                                                    <input required type="text" id="codigo_cuenta" ng-model="paciente.codigo" placeholder="Codigo" class="col-xs-10 col-sm-5"
+                                                        ng-change="validarCodigoCuentaEmpleado(paciente.codigo)" />
+                                                    <br>
+                                                    <p ng-class="{'text-red':data.type,'text-green':!data.type}"> {{data.message}}</p>
+                                                </div>
+                                            </div>
+                                            <!--  <div class="row form-group">
                                                 <div class="col-lg-5">
                                                     <label for="codigo">Codigo</label>
                                                 </div>
@@ -2709,22 +2790,22 @@
                                                     <label for="campo">Campo</label>
                                                 </div>
                                                 <div class="col-lg-7">
-                                                    <select  required id="campo-rol" name="centroDeCostos" ng-options="centroCosto as centroCosto.nombre for centroCosto in centrosDeCostos | filter:{habilitado:true} track by centroCosto.id"
-                                                ng-model="paciente.campo">
-                                                <option value="">--selecionar--</option>
-                                            </select>
+                                                    <select required id="campo-rol" name="centroDeCostos" ng-options="centroCosto as centroCosto.nombre for centroCosto in centrosDeCostos | filter:{habilitado:true} track by centroCosto.id"
+                                                        ng-model="paciente.campo">
+                                                        <option value="">--selecionar--</option>
+                                                    </select>
                                                 </div>
 
                                             </div>
-                                          <!--   <div class="row form-group">
+                                            <!--   <div class="row form-group">
                                                 <div class="col-lg-5">
                                                     <label for="cargo">Cargo</label>
                                                 </div>
                                                 <div class="col-lg-7"> -->
-                                                    <!-- <div isteven-multi-select input-model="myArray" output-model="paciente.cargos" button-label="icon nombre" item-label="icon nombre maker"
+                                            <!-- <div isteven-multi-select input-model="myArray" output-model="paciente.cargos" button-label="icon nombre" item-label="icon nombre maker"
                                                     tick-property="ticked" translation="localLang">
                                                 </div> -->
-                                              <!--   <div isteven-multi-select input-model="cargos" output-model="paciente.cargos" button-label="icon nombre" item-label="icon nombre maker" tick-property="ticked" >
+                                            <!--   <div isteven-multi-select input-model="cargos" output-model="paciente.cargos" button-label="icon nombre" item-label="icon nombre maker" tick-property="ticked" >
                                                     </div>                                                  
                                                 </div>
                                             </div> -->
@@ -2748,7 +2829,8 @@
                                 Anterior
                             </button>
 
-                            <button type="submit" ng-disabled="data.message=='¡el codigo ya Exsiste!'" id="siguiente" class="btn btn-success btn-sm btn-next" data-last="Finish">
+                            <button type="submit" ng-disabled="data.message=='¡el codigo ya Exsiste!'" id="siguiente" class="btn btn-success btn-sm btn-next"
+                                data-last="Finish">
                                 Siguiente
                                 <i class="ace-icon fa fa-arrow-right icon-on-right"></i>
                             </button>
@@ -2945,10 +3027,10 @@
                                                     <label for="campo">Campo</label>
                                                 </div>
                                                 <div class="col-lg-7">
-                                                    <select  required id="campo-rol" name="centroDeCostos" ng-options="centroCosto as centroCosto.nombre for centroCosto in centrosDeCostos | filter:{habilitado:true} track by centroCosto.id"
-                                                    ng-model="paciente.campo">
-                                                    <option value="">--selecionar--</option>
-                                                </select>
+                                                    <select required id="campo-rol" name="centroDeCostos" ng-options="centroCosto as centroCosto.nombre for centroCosto in centrosDeCostos | filter:{habilitado:true} track by centroCosto.id"
+                                                        ng-model="paciente.campo">
+                                                        <option value="">--selecionar--</option>
+                                                    </select>
                                                 </div>
 
                                             </div>
@@ -3275,7 +3357,8 @@
 
             <div>
                 <div class="modal-footer wizard-actions">
-                    <button type="button" ng-click="guardarPatoliga()" class="btn btn-primary btn-sm " data-dismiss="modal">
+                    <button ng-disabled="!aplicacion.puede_crear" type="button" ng-click="guardarPatoliga()" class="btn btn-primary btn-sm "
+                        data-dismiss="modal">
                         <i class="ace-icon fa fa-floppy-o"></i>
                         guardar
                     </button>
@@ -3331,7 +3414,7 @@
                 <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix">
                     <div class="ui-dialog-buttonset">
 
-                        <button type="submit" id="guardarRequisitos" class="btn btn-primary" data-last="Finish">
+                        <button ng-disabled="!aplicacion.puede_crear" type="submit" id="guardarRequisitos" class="btn btn-primary" data-last="Finish">
                             <i class="ace-icon fa fa-floppy-o bigger-110"></i>
                             Guardar
                         </button>
@@ -3802,7 +3885,8 @@
             <form name="formResult" ng-submit="guardarLaboratorioExamenResultados(formResult,fechaResultado)" novalidate>
                 <div>
                     <div class="col-lg-3">
-                        <button type="button" ng-click="abrirIdModalDialogLaboratorioExamenesNuevoResultado()" id="id-btn-nuevo-resultado" class="btn btn-primary">
+                        <button ng-disabled="!aplicacion.puede_crear" type="button" ng-click="abrirIdModalDialogLaboratorioExamenesNuevoResultado()"
+                            id="id-btn-nuevo-resultado" class="btn btn-primary">
                             <i class="ace-icon fa fa-plus align-top bigger-125"></i> Nuevo</button>
 
                     </div>
@@ -3837,17 +3921,17 @@
 
                                     </td>
                                     <td>
-                                        <div class="hidden-sm hidden-xs action-buttons">
+                                        <div class="action-buttons">
 
                                             <a class="blue" ng-click="abrirIdModalDialogLaboratorioExamenesNuevoResultado(examen,true)">
                                                 <i class="ace-icon fa fa-search-plus bigger-130"></i>
                                             </a>
 
-                                            <a class="green" ng-click="abrirIdModalDialogLaboratorioExamenesNuevoResultado(examen)">
+                                            <a class="green" e-disabled="!aplicacion.puede_modificar" ng-click="abrirIdModalDialogLaboratorioExamenesNuevoResultado(examen)">
                                                 <i class="ace-icon fa fa-pencil bigger-130"></i>
                                             </a>
 
-                                            <a class="red" ng-click="EliminarNuevoLaboratorioExamen(examen)">
+                                            <a class="red" e-disabled="!aplicacion.puede_eliminar" ng-click="EliminarNuevoLaboratorioExamen(examen)">
                                                 <i class="ace-icon fa fa-trash-o bigger-130"></i>
                                             </a>
                                         </div>
@@ -3866,7 +3950,7 @@
                         <button ng-click="abrirIdModalDialogLaboratorioExamenesHistoricoResultados()" type="button" class="btn btn-white  btn-bold btn-danger"
                             id="id-btn-historicoResultado">
                             <i class="ace-icon fa fa-h-square bigger-110"></i>&nbsp; Historico</button>
-                        <button type="submit" class="btn btn-primary btn-sm ">
+                        <button ng-disabled="!aplicacion.puede_modificar" type="submit" class="btn btn-primary btn-sm ">
                             <i class="ace-icon fa fa-floppy-o bigger-110"></i>&nbsp; Guardar</button>
                         <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal" ng-click="cerrarIdModalDialogLaboratorioExamenes()">
                             <i class="ace-icon fa fa-times"></i>Cancelar
@@ -4174,7 +4258,7 @@
                                         </a>
                                     </div>
                                     <div class="col-sm-4" ng-if="!prerequisito.entregado">
-                                        <a class="red" id="id-btn-entrega2" ng-click="verificarFechaEntregaPrerequisito(prerequisito)">
+                                        <a class="red" e-disabled="!aplicacion.puede_modificar" id="id-btn-entrega2" ng-click="verificarFechaEntregaPrerequisito(prerequisito)">
                                             <i class="ace-icon fa fa-check-circle  bigger-130"></i>
                                         </a>
                                     </div>
@@ -4182,7 +4266,8 @@
                                         <i class="ace-icon fa fa-check-circle  bigger-130"></i>
                                     </a> -->
                                     <div class="col-sm-4">
-                                        <a id="id-reprogramar2" class="blue" ng-click="abrirDialogReprogramarPrerequisitos(prerequisito)" id="id-btn-entrega">
+                                        <a id="id-reprogramar2" e-disabled="!aplicacion.puede_modificar" class="blue" ng-click="abrirDialogReprogramarPrerequisitos(prerequisito)"
+                                            id="id-btn-entrega">
                                             <i class="ace-icon fa fa-calendar  bigger-130"></i>
                                         </a>
                                     </div>
@@ -4235,7 +4320,7 @@
                 <br>
             </div>
             <div class="modal-footer wizard-actions">
-                <button ng-click="setDiasActivacionPrerequisitos(dias_Activacion)" type="button" class="btn btn-primary">
+                <button ng-disabled="!aplicacion.puede_crear" ng-click="setDiasActivacionPrerequisitos(dias_Activacion)" type="button" class="btn btn-primary">
                     <i class="ace-icon fa fa-floppy-o bigger-110"></i>Guardar</button>
                 <button class="btn btn-danger" data-dismiss="modal" ng-click="cerrarDialogDialogDiasActivacionPrerequisitos()">
                     <i class="ace-icon fa fa-times"></i>
@@ -4267,7 +4352,7 @@
             </div>
             <div class="space-6"></div>
             <div class="modal-footer wizard-actions">
-                <button ng-click="reprogramarPrerequisitos(fecha_reprogramada)" type="button" class="btn btn-primary">
+                <button ng-disabled="!aplicacion.puede_crear" ng-click="reprogramarPrerequisitos(fecha_reprogramada)" type="button" class="btn btn-primary">
                     <i class="ace-icon fa fa-floppy-o bigger-110"></i>Guardar</button>
                 <button class="btn btn-danger" data-dismiss="modal" ng-click="cerrarDialogReprogramarPrerequisitos()">
                     <i class="ace-icon fa fa-times"></i>
@@ -4437,7 +4522,7 @@
             </div>
             <div class="space-6"></div>
             <div class="modal-footer wizard-actions">
-                <button ng-click="setDiasActivacionVacunas(dias_Activacion)" type="button" class="btn btn-primary">
+                <button ng-disabled="!aplicacion.puede_crear" ng-click="setDiasActivacionVacunas(dias_Activacion)" type="button" class="btn btn-primary">
                     <i class="ace-icon fa fa-floppy-o bigger-110"></i>Guardar</button>
                 <button class="btn btn-danger" data-dismiss="modal" ng-click="cerrarDialogDiasActivacionVacunas()">
                     <i class="ace-icon fa fa-times"></i>
@@ -4974,13 +5059,13 @@
                             <i class="ace-icon fa fa-h-square  bigger-110"></i>
                             Historial
                         </button>
-                        <button ng-if="mostarGuardarFicha" type="button" class="btn btn-primary btn-sm " ng-click="guardarFichaTecnicaExistente(formularioFichaTecnica.$valid,ficha)">
+                        <button ng-if="mostarGuardarFicha" ng-disabled="!aplicacion.puede_crear" type="button" class="btn btn-primary btn-sm " ng-click="guardarFichaTecnicaExistente(formularioFichaTecnica.$valid,ficha)">
                             <i class="ace-icon fa fa-floppy-o bigger-110"></i>&nbsp; Guardar</button>
                         <button class="btn btn-sm btn-prev">
                             <i class="ace-icon fa fa-arrow-left"></i>
                             Anterior
                         </button>
-                        <button class="btn btn-success btn-sm btn-next" id="siguiente-f" data-last="Finish">
+                        <button class="btn btn-success btn-sm btn-next" ng-disabled="!aplicacion.puede_crear" id="siguiente-f" data-last="Finish">
                             Siguiente
                             <i class="ace-icon fa fa-arrow-right icon-on-right"></i>
                         </button>

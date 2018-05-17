@@ -3645,7 +3645,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                         model: RrhhAnticipo, as: 'anticipo',
                         include: [{
                             model: MedicoPaciente, as: 'empleado',
-                            include: [{ model: Persona, as: 'persona' }, { model: RrhhEmpleadoFicha, as: 'empleadosFichas', limit: 1, order: [["id", "desc"]] }]
+                            include: [{ model: Persona, as: 'persona' }, { model: RrhhEmpleadoFicha, as: 'empleadosFichas',required:false, limit: 1, order: [["id", "desc"]] }]
                         }]
                     }]
                 },

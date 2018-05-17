@@ -15,6 +15,10 @@ module.exports=function(sequelize,Sequelize){
 	  habilitado:{
 		type: Sequelize.BOOLEAN,
 		field: 'habilitado' 
+	  },
+	  eliminado:{
+		type: Sequelize.BOOLEAN,
+		field: 'eliminado' 
 	  }
 	}, {
 	  freezeTableName: true 

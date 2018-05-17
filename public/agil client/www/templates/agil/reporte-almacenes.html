@@ -5,7 +5,7 @@
 
 			<div class="row">
 
-				<div class="col-xs-3">
+				<div class="col-sm-4">
 					<label>SUCURSAL</label>
 					<select required id="sucursal" name="sucursal" ng-options="sucursal as sucursal.nombre for sucursal in sucursales track by sucursal.id"
 					 ng-model="reporte.sucursal" ng-change="obtenerAlmacenes(reporte.sucursal.id)">
@@ -13,7 +13,7 @@
 					</select>
 					<span class="red">(*)</span>
 				</div>
-				<div class="col-xs-3">
+				<div class="col-sm-4">
 					<label>ALMACEN</label>
 					<select id="almacen" name="almacen" ng-model="reporte.almacen" ng-options="almacen as almacen.nombre for almacen in almacenes track by almacen.id"
 					 data-placeholder="Click para escoger " ng-change="establecerAlmacenBusqueda(reporte)">
@@ -99,7 +99,7 @@
 						</div>
 					</form>
 				</div>
-				<div class="row">
+				<div style="overflow-x:auto;">
 					<table id="tabla-inventarios" class="table table-striped table-bordered table-hover">
 						<thead>
 							<tr>

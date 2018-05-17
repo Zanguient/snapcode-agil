@@ -30,7 +30,7 @@ angular.module('agil.controladores')
 	$scope.$on('$viewContentLoaded', function(){
 		resaltarPestaña($location.path().substring(1));
 		ejecutarScriptsConcepto($scope.idModalWizardConceptoEdicion,$scope.idModalContenedorConceptoEdicion);
-		//$scope.buscarAplicacion($scope.usuarioSesion.aplicacionesUsuario,$location.path().substring(1));
+		$scope.buscarAplicacion($scope.usuarioSesion.aplicacionesUsuario,$location.path().substring(1));
 		blockUI.stop();
 	});
 	
@@ -63,7 +63,9 @@ angular.module('agil.controladores')
 	$scope.removerClase=function(clase){
 		clase.eliminado=true;
 	}
-	
+	$scope.activarClase=function(clase){
+		clase.eliminado=false;
+	}
 	$scope.modificarConcepto=function(tipo){
 		$scope.tipo=tipo;
 		$scope.abrirPopup($scope.idModalWizardConceptoEdicion);

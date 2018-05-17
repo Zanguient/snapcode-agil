@@ -10,6 +10,7 @@
 		<form name="formularioFiltroCompras" novalidate ng-submit="filtrarCompras(sucursalesUsuario,filtro.fechaInicioTexto,filtro.fechaFinTexto,filtro.razon_social,filtro.nit,filtro.monto,filtro.tipo_pago,filtro.sucursal,filtro.usuario)">
 			<fieldset>
 				<legend>Filtro Compras</legend>
+				<div style="overflow-x:auto;">
 				<table class="table table-striped table-bordered table-hover">
 					<tbody>
 						<tr>
@@ -115,6 +116,7 @@
 						</tr>
 					</tbody>
 				</table>
+			</div>
 			</fieldset>
 		</form>
 		
@@ -128,7 +130,7 @@
 		<!-- div.table-responsive -->
 
 		<!-- div.dataTables_borderWrap -->
-		<div>
+		<div style="overflow-x:auto;">
 			<table id="tabla-compras" class="table table-striped table-bordered table-hover">
 				<thead>
 					<tr>
@@ -261,6 +263,8 @@
 </div>
 
 <div id="modal-wizard-compra-edicion" class="modal wizard-posicion">
+		<div class="modal-dialog modal-rh-nuevo">
+				<div class="modal-content">
 			<div class="row">
 								<div class="col-sm-4">
 									<div class="widget-box">
@@ -840,6 +844,8 @@
 									</div>
 								</div>
 							</div>
+						</div>
+					</div>
 </div><!-- PAGE CONTENT ENDS -->
 
 <div id="modal-wizard-compra-vista" class="modal wizard-posicion">

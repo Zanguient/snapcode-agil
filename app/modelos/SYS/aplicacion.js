@@ -129,7 +129,7 @@ module.exports=function(sequelize,Sequelize){
 		sequelize.query("INSERT IGNORE INTO sys_aplicacion SET id = 37,titulo = 'PACIENTES',atributo_clase='fa-eyedropper',url='pacientes',createdAt = NOW(),updatedAt = NOW();").spread(function(results, metadata) {
 		  //console.log(metadata+" rows affected in sys_application");
 		});
-		sequelize.query("INSERT IGNORE INTO sys_aplicacion SET id = 38,titulo = 'VEHICULOS',atributo_clase='fa-truck',url='vehiculos',createdAt = NOW(),updatedAt = NOW();").spread(function(results, metadata) {
+		sequelize.query("INSERT IGNORE INTO sys_aplicacion SET id = 38,titulo = 'MANTENIMIENTO',atributo_clase='fa-truck',url='vehiculos',createdAt = NOW(),updatedAt = NOW();").spread(function(results, metadata) {
 		  //console.log(metadata+" rows affected in sys_application");
 		});
 		sequelize.query("INSERT IGNORE INTO sys_aplicacion SET id = 39,titulo = 'RRHH',atributo_clase='fa-users',url='rrhh',createdAt = NOW(),updatedAt = NOW();").spread(function(results, metadata) {
@@ -160,6 +160,9 @@ module.exports=function(sequelize,Sequelize){
 		  //console.log(metadata+" rows affected in sys_application");
 		});
 		sequelize.query("INSERT IGNORE INTO sys_aplicacion SET id = 48,titulo = 'POLIFUNCIONALIDAD',atributo_clase='fa fa-street-view',url='polifuncionalidad',createdAt = NOW(),updatedAt = NOW();").spread(function(results, metadata) {
+		  //console.log(metadata+" rows affected in sys_application");
+		});
+		sequelize.query("INSERT IGNORE INTO sys_aplicacion SET id = 49,titulo = 'TRANSACCIONES',atributo_clase='gryphicon-euro',url='transacciones',createdAt = NOW(),updatedAt = NOW();").spread(function(results, metadata) {
 		  //console.log(metadata+" rows affected in sys_application");
 		});
 	});

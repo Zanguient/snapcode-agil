@@ -18,7 +18,7 @@
 		<!-- div.table-responsive -->
 
 		<!-- div.dataTables_borderWrap -->
-		<div>
+		<div style="overflow-x:auto;">
 			<table id="tabla-empresas" class="table table-striped table-bordered table-hover">
 				<thead>
 					<tr>
@@ -30,23 +30,23 @@
 						</th>
 						<th>Razón Social</th>
 						<th>Nit</th>
-						<th class="hidden-480">Imagen</th>
+						<th>Imagen</th>
 
 						<th>
 							<i class="ace-icon fa fa-clock-o bigger-110 hidden-480"></i>
 							Dirección
 						</th>
-						<th class="hidden-480" ng-if="usuario.rolesUsuario[0].rol.nombre!=diccionario.USUARIO_SUPERADMIN">Telefono 1</th>
-						<th class="hidden-480" ng-if="usuario.rolesUsuario[0].rol.nombre!=diccionario.USUARIO_SUPERADMIN">Telefono 2</th>
-						<th class="hidden-480" ng-if="usuario.rolesUsuario[0].rol.nombre!=diccionario.USUARIO_SUPERADMIN">Departamento</th>
-						<th class="hidden-480" ng-if="usuario.rolesUsuario[0].rol.nombre!=diccionario.USUARIO_SUPERADMIN">Municipio</th>
-						<th class="hidden-480" ng-if="usuario.rolesUsuario[0].rol.nombre==diccionario.USUARIO_SUPERADMIN">¿Usa Panel?</th>
-						<th class="hidden-480" ng-if="usuario.rolesUsuario[0].rol.nombre==diccionario.USUARIO_SUPERADMIN">¿Usa Vencimientos?</th>
-						<th class="hidden-480" ng-if="usuario.rolesUsuario[0].rol.nombre==diccionario.USUARIO_SUPERADMIN">¿Usa Servicios?</th>
-						<th class="hidden-480" ng-if="usuario.rolesUsuario[0].rol.nombre==diccionario.USUARIO_SUPERADMIN">¿Usa Consumos?</th>
-						<th class="hidden-480" ng-if="usuario.rolesUsuario[0].rol.nombre==diccionario.USUARIO_SUPERADMIN">¿Usa Descuentos?</th>
-						<th class="hidden-480" ng-if="usuario.rolesUsuario[0].rol.nombre==diccionario.USUARIO_SUPERADMIN">¿Usa Geo?</th>
-						<th class="hidden-480" ng-if="usuario.rolesUsuario[0].rol.nombre==diccionario.USUARIO_SUPERADMIN">¿Usa Pedidos?</th>
+						<th ng-if="usuario.rolesUsuario[0].rol.nombre!=diccionario.USUARIO_SUPERADMIN">Telefono 1</th>
+						<th ng-if="usuario.rolesUsuario[0].rol.nombre!=diccionario.USUARIO_SUPERADMIN">Telefono 2</th>
+						<th ng-if="usuario.rolesUsuario[0].rol.nombre!=diccionario.USUARIO_SUPERADMIN">Departamento</th>
+						<th ng-if="usuario.rolesUsuario[0].rol.nombre!=diccionario.USUARIO_SUPERADMIN">Municipio</th>
+						<th ng-if="usuario.rolesUsuario[0].rol.nombre==diccionario.USUARIO_SUPERADMIN">¿Usa Panel?</th>
+						<th ng-if="usuario.rolesUsuario[0].rol.nombre==diccionario.USUARIO_SUPERADMIN">¿Usa Vencimientos?</th>
+						<th ng-if="usuario.rolesUsuario[0].rol.nombre==diccionario.USUARIO_SUPERADMIN">¿Usa Servicios?</th>
+						<th ng-if="usuario.rolesUsuario[0].rol.nombre==diccionario.USUARIO_SUPERADMIN">¿Usa Consumos?</th>
+						<th ng-if="usuario.rolesUsuario[0].rol.nombre==diccionario.USUARIO_SUPERADMIN">¿Usa Descuentos?</th>
+						<th ng-if="usuario.rolesUsuario[0].rol.nombre==diccionario.USUARIO_SUPERADMIN">¿Usa Geo?</th>
+						<th ng-if="usuario.rolesUsuario[0].rol.nombre==diccionario.USUARIO_SUPERADMIN">¿Usa Pedidos?</th>
 						<th>Acciones</th>
 					</tr>
 				</thead>
@@ -276,213 +276,230 @@
 							<input id="imagen-empresa-oculto" ng-model="empresa.imagen" name="imagen" type="hidden" ng-update-hidden>
 						</div>
 					</div>
+					<div class="row form-group"  ng-if="usuario.rolesUsuario[0].rol.nombre==diccionario.USUARIO_SUPERADMIN">
+						<div class="col-lg-5">
+							<label  for="aplicaciones">Aplicaciones</label>
+							<!-- <label for="cargo">Cargos:</label> -->
+						</div>
+						<div class="col-lg-7">
+								<div
+								isteven-multi-select 
+								input-model="aplicacionesSistema" 
+								output-model="empresa.aplicaciones"
+								button-label="icon name"        
+								item-label="icon name maker"        
+								tick-property="ticked"
+								>
+							</div>  							
+						</div>
+					</div>
 					<!-- <div class="col-md-6"> -->
-						<div class="form-group" ng-if="usuario.rolesUsuario[0].rol.nombre==diccionario.USUARIO_SUPERADMIN">
-							<label class="control-label col-xs-6 no-padding-right">¿Usar Panel?</label>
+					<div class="form-group" ng-if="usuario.rolesUsuario[0].rol.nombre==diccionario.USUARIO_SUPERADMIN">
+						<label class="control-label col-xs-6 no-padding-right">¿Usar Panel?</label>
 
-							<div class="col-xs-6">
-								<label>
-									<input name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="empresa.usar_panel" />
-									<span class="lbl check-descuento"></span>
-								</label>
-							</div>
+						<div class="col-xs-6">
+							<label>
+								<input name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="empresa.usar_panel" />
+								<span class="lbl check-descuento"></span>
+							</label>
 						</div>
-						<div class="form-group" ng-if="usuario.rolesUsuario[0].rol.nombre==diccionario.USUARIO_SUPERADMIN">
-							<label class="control-label col-xs-6 no-padding-right">¿Usar Vencimientos?</label>
+					</div>
+					<div class="form-group" ng-if="usuario.rolesUsuario[0].rol.nombre==diccionario.USUARIO_SUPERADMIN">
+						<label class="control-label col-xs-6 no-padding-right">¿Usar Vencimientos?</label>
 
-							<div class="col-xs-6">
-								<label>
-									<input name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="empresa.usar_vencimientos" />
-									<span class="lbl check-descuento"></span>
-								</label>
-							</div>
+						<div class="col-xs-6">
+							<label>
+								<input name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="empresa.usar_vencimientos" />
+								<span class="lbl check-descuento"></span>
+							</label>
 						</div>
-						<div class="form-group" ng-if="usuario.rolesUsuario[0].rol.nombre==diccionario.USUARIO_SUPERADMIN">
-							<label class="control-label col-xs-6 no-padding-right">¿Usar Servicios?</label>
+					</div>
+					<div class="form-group" ng-if="usuario.rolesUsuario[0].rol.nombre==diccionario.USUARIO_SUPERADMIN">
+						<label class="control-label col-xs-6 no-padding-right">¿Usar Servicios?</label>
 
-							<div class="col-xs-6">
-								<label>
-									<input name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="empresa.usar_servicios" />
-									<span class="lbl check-descuento"></span>
-								</label>
-							</div>
+						<div class="col-xs-6">
+							<label>
+								<input name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="empresa.usar_servicios" />
+								<span class="lbl check-descuento"></span>
+							</label>
 						</div>
-						<div class="form-group" ng-if="usuario.rolesUsuario[0].rol.nombre==diccionario.USUARIO_SUPERADMIN">
-							<label class="control-label col-xs-6 no-padding-right">¿Usar Consumos?</label>
+					</div>
+					<div class="form-group" ng-if="usuario.rolesUsuario[0].rol.nombre==diccionario.USUARIO_SUPERADMIN">
+						<label class="control-label col-xs-6 no-padding-right">¿Usar Consumos?</label>
 
-							<div class="col-xs-6">
-								<label>
-									<input name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="empresa.usar_consumos" />
-									<span class="lbl check-descuento"></span>
-								</label>
-							</div>
+						<div class="col-xs-6">
+							<label>
+								<input name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="empresa.usar_consumos" />
+								<span class="lbl check-descuento"></span>
+							</label>
 						</div>
-						<div class="form-group" ng-if="usuario.rolesUsuario[0].rol.nombre==diccionario.USUARIO_SUPERADMIN">
-							<label class="control-label col-xs-6 no-padding-right">¿Usar Descuentos?</label>
+					</div>
+					<div class="form-group" ng-if="usuario.rolesUsuario[0].rol.nombre==diccionario.USUARIO_SUPERADMIN">
+						<label class="control-label col-xs-6 no-padding-right">¿Usar Descuentos?</label>
 
-							<div class="col-xs-6">
-								<label>
-									<input name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="empresa.usar_descuentos" />
-									<span class="lbl check-descuento"></span>
-								</label>
-							</div>
+						<div class="col-xs-6">
+							<label>
+								<input name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="empresa.usar_descuentos" />
+								<span class="lbl check-descuento"></span>
+							</label>
 						</div>
-						<div class="form-group" ng-if="usuario.rolesUsuario[0].rol.nombre==diccionario.USUARIO_SUPERADMIN">
-							<label class="control-label col-xs-6 no-padding-right">¿Usar Georeferenciacion?</label>
+					</div>
+					<div class="form-group" ng-if="usuario.rolesUsuario[0].rol.nombre==diccionario.USUARIO_SUPERADMIN">
+						<label class="control-label col-xs-6 no-padding-right">¿Usar Georeferenciacion?</label>
 
-							<div class="col-xs-6">
-								<label>
-									<input name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="empresa.usar_georeferenciacion"
-									/>
-									<span class="lbl check-descuento"></span>
-								</label>
-							</div>
+						<div class="col-xs-6">
+							<label>
+								<input name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="empresa.usar_georeferenciacion"
+								/>
+								<span class="lbl check-descuento"></span>
+							</label>
 						</div>
-						<div class="form-group" ng-if="usuario.rolesUsuario[0].rol.nombre==diccionario.USUARIO_SUPERADMIN">
-							<label class="control-label col-xs-6 no-padding-right">¿Usar Pedidos?</label>
+					</div>
+					<div class="form-group" ng-if="usuario.rolesUsuario[0].rol.nombre==diccionario.USUARIO_SUPERADMIN">
+						<label class="control-label col-xs-6 no-padding-right">¿Usar Pedidos?</label>
 
-							<div class="col-xs-6">
-								<label>
-									<input name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="empresa.usar_pedidos" />
-									<span class="lbl check-descuento"></span>
-								</label>
-							</div>
+						<div class="col-xs-6">
+							<label>
+								<input name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="empresa.usar_pedidos" />
+								<span class="lbl check-descuento"></span>
+							</label>
 						</div>
-						<div class="form-group" ng-if="usuario.rolesUsuario[0].rol.nombre==diccionario.USUARIO_SUPERADMIN">
-							<label class="control-label col-xs-6 no-padding-right">¿Usar Pantalla Cliente?</label>
+					</div>
+					<div class="form-group" ng-if="usuario.rolesUsuario[0].rol.nombre==diccionario.USUARIO_SUPERADMIN">
+						<label class="control-label col-xs-6 no-padding-right">¿Usar Pantalla Cliente?</label>
 
-							<div class="col-xs-6">
-								<label>
-									<input name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="empresa.usar_pantalla_cliente"
-									/>
-									<span class="lbl check-descuento"></span>
-								</label>
-							</div>
+						<div class="col-xs-6">
+							<label>
+								<input name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="empresa.usar_pantalla_cliente"
+								/>
+								<span class="lbl check-descuento"></span>
+							</label>
 						</div>
-						<div class="form-group" ng-if="usuario.rolesUsuario[0].rol.nombre==diccionario.USUARIO_SUPERADMIN">
-							<label class="control-label col-xs-6 no-padding-right">¿Usar Pantalla Despacho?</label>
+					</div>
+					<div class="form-group" ng-if="usuario.rolesUsuario[0].rol.nombre==diccionario.USUARIO_SUPERADMIN">
+						<label class="control-label col-xs-6 no-padding-right">¿Usar Pantalla Despacho?</label>
 
-							<div class="col-xs-6">
-								<label>
-									<input name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="empresa.usar_pantalla_despacho"
-									/>
-									<span class="lbl check-descuento"></span>
-								</label>
-							</div>
+						<div class="col-xs-6">
+							<label>
+								<input name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="empresa.usar_pantalla_despacho"
+								/>
+								<span class="lbl check-descuento"></span>
+							</label>
 						</div>
-						<div class="form-group" ng-if="usuario.rolesUsuario[0].rol.nombre==diccionario.USUARIO_SUPERADMIN">
-							<label class="control-label col-xs-6 no-padding-right">¿Usar Mesas?</label>
+					</div>
+					<div class="form-group" ng-if="usuario.rolesUsuario[0].rol.nombre==diccionario.USUARIO_SUPERADMIN">
+						<label class="control-label col-xs-6 no-padding-right">¿Usar Mesas?</label>
 
-							<div class="col-xs-6">
-								<label>
-									<input name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="empresa.usar_mesas" />
-									<span class="lbl check-descuento"></span>
-								</label>
-							</div>
+						<div class="col-xs-6">
+							<label>
+								<input name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="empresa.usar_mesas" />
+								<span class="lbl check-descuento"></span>
+							</label>
 						</div>
-						<div class="form-group" ng-if="usuario.rolesUsuario[0].rol.nombre==diccionario.USUARIO_SUPERADMIN">
-							<label class="control-label col-xs-6 no-padding-right">¿Usar Salas?</label>
+					</div>
+					<div class="form-group" ng-if="usuario.rolesUsuario[0].rol.nombre==diccionario.USUARIO_SUPERADMIN">
+						<label class="control-label col-xs-6 no-padding-right">¿Usar Salas?</label>
 
-							<div class="col-xs-6">
-								<label>
-									<input name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="empresa.usar_salas" />
-									<span class="lbl check-descuento"></span>
-								</label>
-							</div>
+						<div class="col-xs-6">
+							<label>
+								<input name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="empresa.usar_salas" />
+								<span class="lbl check-descuento"></span>
+							</label>
 						</div>
+					</div>
 					<!-- </div> -->
 					<!-- <div class="col-md-6"> -->
-						<div class="form-group" ng-if="usuario.rolesUsuario[0].rol.nombre==diccionario.USUARIO_SUPERADMIN">
-							<label class="control-label col-xs-6 no-padding-right">¿Usar Contabilidad?</label>
+					<div class="form-group" ng-if="usuario.rolesUsuario[0].rol.nombre==diccionario.USUARIO_SUPERADMIN">
+						<label class="control-label col-xs-6 no-padding-right">¿Usar Contabilidad?</label>
 
-							<div class="col-xs-6">
-								<label>
-									<input name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="empresa.usar_contabilidad" />
-									<span class="lbl check-descuento"></span>
-								</label>
-							</div>
+						<div class="col-xs-6">
+							<label>
+								<input name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="empresa.usar_contabilidad" />
+								<span class="lbl check-descuento"></span>
+							</label>
 						</div>
-						<div class="form-group" ng-if="usuario.rolesUsuario[0].rol.nombre==diccionario.USUARIO_SUPERADMIN">
-							<label class="control-label col-xs-6 no-padding-right">¿Usar Medico?</label>
+					</div>
+					<div class="form-group" ng-if="usuario.rolesUsuario[0].rol.nombre==diccionario.USUARIO_SUPERADMIN">
+						<label class="control-label col-xs-6 no-padding-right">¿Usar Medico?</label>
 
-							<div class="col-xs-6">
-								<label>
-									<input name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="empresa.usar_medico" />
-									<span class="lbl check-descuento"></span>
-								</label>
-							</div>
+						<div class="col-xs-6">
+							<label>
+								<input name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="empresa.usar_medico" />
+								<span class="lbl check-descuento"></span>
+							</label>
 						</div>
-						<div class="form-group" ng-if="usuario.rolesUsuario[0].rol.nombre==diccionario.USUARIO_SUPERADMIN">
-							<label class="control-label col-xs-6 no-padding-right">¿Usar Mantenimiento?</label>
+					</div>
+					<div class="form-group" ng-if="usuario.rolesUsuario[0].rol.nombre==diccionario.USUARIO_SUPERADMIN">
+						<label class="control-label col-xs-6 no-padding-right">¿Usar Mantenimiento?</label>
 
-							<div class="col-xs-6">
-								<label>
-									<input name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="empresa.usar_mantenimiento" />
-									<span class="lbl check-descuento"></span>
-								</label>
-							</div>
+						<div class="col-xs-6">
+							<label>
+								<input name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="empresa.usar_mantenimiento" />
+								<span class="lbl check-descuento"></span>
+							</label>
 						</div>
-						<div class="form-group" ng-if="usuario.rolesUsuario[0].rol.nombre==diccionario.USUARIO_SUPERADMIN">
-							<label class="control-label col-xs-6 no-padding-right">¿Usar Cuentas Auxiliares?</label>
+					</div>
+					<div class="form-group" ng-if="usuario.rolesUsuario[0].rol.nombre==diccionario.USUARIO_SUPERADMIN">
+						<label class="control-label col-xs-6 no-padding-right">¿Usar Cuentas Auxiliares?</label>
 
-							<div class="col-xs-6">
-								<label>
-									<input name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="empresa.usar_cuentas_auxiliares"
-									/>
-									<span class="lbl check-descuento"></span>
-								</label>
-							</div>
+						<div class="col-xs-6">
+							<label>
+								<input name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="empresa.usar_cuentas_auxiliares"
+								/>
+								<span class="lbl check-descuento"></span>
+							</label>
 						</div>
-						<div class="form-group" ng-if="usuario.rolesUsuario[0].rol.nombre==diccionario.USUARIO_SUPERADMIN">
-							<label class="control-label col-xs-6 no-padding-right">¿Usar proformas?</label>
+					</div>
+					<div class="form-group" ng-if="usuario.rolesUsuario[0].rol.nombre==diccionario.USUARIO_SUPERADMIN">
+						<label class="control-label col-xs-6 no-padding-right">¿Usar proformas?</label>
 
-							<div class="col-xs-6">
-								<label>
-									<input name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="empresa.usar_proformas" />
-									<span class="lbl check-descuento"></span>
-								</label>
-							</div>
+						<div class="col-xs-6">
+							<label>
+								<input name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="empresa.usar_proformas" />
+								<span class="lbl check-descuento"></span>
+							</label>
 						</div>
-						<div class="form-group" ng-if="usuario.rolesUsuario[0].rol.nombre==diccionario.USUARIO_SUPERADMIN">
-							<label class="control-label col-xs-6 no-padding-right">¿Usar Créditos?</label>
+					</div>
+					<div class="form-group" ng-if="usuario.rolesUsuario[0].rol.nombre==diccionario.USUARIO_SUPERADMIN">
+						<label class="control-label col-xs-6 no-padding-right">¿Usar Créditos?</label>
 
-							<div class="col-xs-6">
-								<label>
-									<input name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="empresa.usar_creditos" />
-									<span class="lbl check-descuento"></span>
-								</label>
-							</div>
+						<div class="col-xs-6">
+							<label>
+								<input name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="empresa.usar_creditos" />
+								<span class="lbl check-descuento"></span>
+							</label>
 						</div>
-						<div class="form-group" ng-if="usuario.rolesUsuario[0].rol.nombre==diccionario.USUARIO_SUPERADMIN">
-							<label class="control-label col-xs-6 no-padding-right">¿Usar Destinos?</label>
+					</div>
+					<div class="form-group" ng-if="usuario.rolesUsuario[0].rol.nombre==diccionario.USUARIO_SUPERADMIN">
+						<label class="control-label col-xs-6 no-padding-right">¿Usar Destinos?</label>
 
-							<div class="col-xs-6">
-								<label>
-									<input name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="empresa.usar_destinos" />
-									<span class="lbl check-descuento"></span>
-								</label>
-							</div>
+						<div class="col-xs-6">
+							<label>
+								<input name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="empresa.usar_destinos" />
+								<span class="lbl check-descuento"></span>
+							</label>
 						</div>
-						<div class="form-group" ng-if="usuario.rolesUsuario[0].rol.nombre==diccionario.USUARIO_SUPERADMIN">
-							<label class="control-label col-xs-6 no-padding-right">¿Usar Razón S.?</label>
+					</div>
+					<div class="form-group" ng-if="usuario.rolesUsuario[0].rol.nombre==diccionario.USUARIO_SUPERADMIN">
+						<label class="control-label col-xs-6 no-padding-right">¿Usar Razón S.?</label>
 
-							<div class="col-xs-6">
-								<label>
-									<input name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="empresa.usar_razon_social" />
-									<span class="lbl check-descuento"></span>
-								</label>
-							</div>
+						<div class="col-xs-6">
+							<label>
+								<input name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="empresa.usar_razon_social" />
+								<span class="lbl check-descuento"></span>
+							</label>
 						</div>
-						<div class="form-group" ng-if="usuario.rolesUsuario[0].rol.nombre==diccionario.USUARIO_SUPERADMIN">
-							<label class="control-label col-xs-6 no-padding-right">¿Usar funcionalidades adicionales Bancos?</label>
+					</div>
+					<div class="form-group" ng-if="usuario.rolesUsuario[0].rol.nombre==diccionario.USUARIO_SUPERADMIN">
+						<label class="control-label col-xs-6 no-padding-right">¿Usar funcionalidades adicionales Bancos?</label>
 
-							<div class="col-xs-6">
-								<label>
-									<input name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="empresa.usar_bancos" />
-									<span class="lbl check-descuento"></span>
-								</label>
-							</div>
+						<div class="col-xs-6">
+							<label>
+								<input name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="empresa.usar_bancos" />
+								<span class="lbl check-descuento"></span>
+							</label>
 						</div>
+					</div>
 					<!-- </div> -->
 				</div>
 				<div class="step-pane" data-step="3" ng-if="esNuevo">

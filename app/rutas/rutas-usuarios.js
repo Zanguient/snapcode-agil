@@ -1,6 +1,6 @@
 module.exports = function (router, ensureAuthorizedAdministrador, fs, decodeBase64Image, forEach, jwt, md5, Usuario, Persona, UsuarioRol, Rol, Tipo, Clase,
 	Aplicacion, RolAplicacion, Empresa, UsuarioSucursal, Sucursal, UsuarioAplicacion,
-	Almacen, SucursalActividadDosificacion, Dosificacion, UsuarioRuta, Ruta, VistaColumnasAplicacion, Diccionario, ComprobanteContabilidad, UsuarioGrupos) {
+	Almacen, SucursalActividadDosificacion, Dosificacion, UsuarioRuta, Ruta, VistaColumnasAplicacion, Diccionario, ComprobanteContabilidad, UsuarioGrupos,EmpresaAplicacion) {
 
 	router.route('/usuarios')
 		.post(function (req, res) {
@@ -656,7 +656,7 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, decodeBase
 				},
 				include: [{ model: Persona, as: 'persona' },
 				{ model: UsuarioRol, as: 'rolesUsuario', include: [{ model: Rol, as: 'rol' }] },
-				{ model: Empresa, as: 'empresa', include: [{ model: Sucursal, as: 'sucursales' }] },
+				{ model: Empresa, as: 'empresa', include: [{ model: EmpresaAplicacion, as: 'aplicacionesEmpresa' },{ model: Sucursal, as: 'sucursales' }] },
 				{ model: UsuarioSucursal, as: 'sucursalesUsuario', include: [{ model: Sucursal, as: 'sucursal' }] },
 					// { model: UsuarioAplicacion, as: 'aplicacionesUsuario', include: [{ model: Aplicacion, as: 'aplicacion' }] },
 					// { model: UsuarioRuta, as: 'rutas', include: [{ model: Ruta, as: 'ruta' }] },

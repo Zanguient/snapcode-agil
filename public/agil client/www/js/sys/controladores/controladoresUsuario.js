@@ -1,7 +1,7 @@
 angular.module('agil.controladores')
 
 	.controller('ControladorUsuarios', function ($scope, $location, $window, $localStorage, $templateCache, $route, blockUI, Usuario, Empresas, Roles, $timeout,
-		UsuariosEmpresa, Rutas, UsuarioRutas, UsuarioComision, UsuarioComisiones, Sucursales, UsuariosEmpresaPaginador, validarUsuario, Paginator, ListaGruposProductoEmpresa, ObtenerUsuario) {
+		UsuariosEmpresa, Rutas, UsuarioRutas, Diccionario, UsuarioComision, UsuarioComisiones, Sucursales, UsuariosEmpresaPaginador, validarUsuario, Paginator, ListaGruposProductoEmpresa, ObtenerUsuario, ListaAplicacionesSistemaEmpresa) {
 
 		$scope.idModalWizardUsuarioEdicion = 'modal-wizard-usuario';
 		$scope.idModalWizardUsuarioVista = 'modal-wizard-usuario-vista';
@@ -29,10 +29,12 @@ angular.module('agil.controladores')
 		$scope.inicio = function () {
 			$scope.gruposUsuario = []
 			$scope.obtenerEmpresas();
+
 			$scope.obtenerRoles();
 			$scope.obtenerUsuarios();
 			if ($scope.usuarioSesion.empresa) {
 				$scope.obtenerRutas();
+				$scope.obtenerAplicacionesEmpresas($scope.usuarioSesion.id_empresa)
 			}
 			$scope.obtenerGruposProductoEmpresa()
 			/* var sucursales=($scope.usuarioSesion.empresa)?$scope.usuarioSesion.empresa.sucursales:[];
@@ -56,6 +58,7 @@ angular.module('agil.controladores')
 				$scope.idModalWizardUsuarioComisiones,
 				$scope.idModalContenedorUsuarioComisiones);
 			$scope.buscarAplicacion($scope.usuarioSesion.aplicacionesUsuario, $location.path().substring(1));
+			console.log($scope.aplicacion)
 			blockUI.stop();
 		});
 
@@ -64,7 +67,9 @@ angular.module('agil.controladores')
 				$scope.usuario = new Usuario({ persona: { imagen: "img/icon-user-default.png" }, sucursales: [], id_empresa: $scope.usuarioSesion.id_empresa });
 				//$scope.sucursales=$scope.usuarioSesion.empresa.sucursales;
 				$scope.seleccionarSucursales([]);
+
 			} else {
+
 				$scope.usuario = new Usuario({ persona: { imagen: "img/icon-user-default.png" }, sucursales: [] });
 				$scope.sucursales = [];
 			}
@@ -129,6 +134,9 @@ angular.module('agil.controladores')
 							}
 							var sucursales;
 							//subido
+							$scope.selectRol=JSON.stringify(usuario.rolesUsuario[0]);
+							$scope.aplicacionesEmpresa=$scope.usuario.empresa.aplicacionesEmpresa
+							$scope.usuario.aplicacionesUsuario = $scope.verificarAplicacionesUsuario()
 							$scope.seleccionarGrupos($scope.usuario.grupos);
 							// //$scope.obtenerGruposProductoEmpresa()
 							if ($scope.usuarioSesion.empresa) {
@@ -136,6 +144,7 @@ angular.module('agil.controladores')
 								$scope.llenarSucursales(sucursales);
 								$scope.seleccionarSucursales($scope.usuario.sucursales);
 								// //$scope.seleccionarGrupos($scope.usuario.grupos);
+
 								$scope.abrirPopup($scope.idModalWizardUsuarioEdicion);
 							} else {
 								var promesa = Sucursales(res.usuario.id_empresa);
@@ -151,8 +160,10 @@ angular.module('agil.controladores')
 
 						})
 					} else {
+						var indexAplicacion=[]
 						$scope.llenarGrupos($scope.gruposProducto)
 						$scope.usuario = res.usuario;
+						$scope.usuario.aplicacionesUsuario = $scope.verificarAplicacionesUsuario()
 						// $scope.seleccionarGrupos($scope.usuario.grupos);
 						$scope.rol = res.usuario.rolesUsuario[0].rol;
 						$scope.usuario.sucursales = [];
@@ -168,6 +179,7 @@ angular.module('agil.controladores')
 							$scope.llenarSucursales(sucursales);
 							$scope.seleccionarSucursales($scope.usuario.sucursales);
 							// //$scope.seleccionarGrupos($scope.usuario.grupos);
+
 							$scope.abrirPopup($scope.idModalWizardUsuarioEdicion);
 						} else {
 							var promesa = Sucursales(res.usuario.id_empresa);
@@ -220,7 +232,208 @@ angular.module('agil.controladores')
 			// 	});
 			// }
 		}
+		$scope.verificarAplicacionesUsuario=function () {
+			var indexAplicacion=[]
+			$scope.usuario.aplicacionesUsuario.map(function (app,index,array) {
+				if (app.puede_ver == true) {
+					app.editable = true
+				} else {
+					app.editable = false
+				}
+				if (app.aplicacion.titulo == Diccionario.MENU_REPORTE || app.aplicacion.titulo == Diccionario.MENU_APPMOVIL || app.aplicacion.titulo == Diccionario.MENU_LIBRO_COMPRA || app.aplicacion.titulo == Diccionario.MENU_LIBRO_VENTAS
+					|| app.aplicacion.titulo == Diccionario.MENU_REPORTE_VENTAS || app.aplicacion.titulo == Diccionario.MENU_REPORTE_COMPRAS || app.aplicacion.titulo == Diccionario.MENU_ESTADO_RESULTADOS || app.aplicacion.titulo == Diccionario.MENU_ALMACEN ||
+					app.aplicacion.titulo == Diccionario.MENU_CERT_COD_CONTROL || app.aplicacion.titulo == Diccionario.MENU_ESTADO_CUENTAS_CLIENTES || app.aplicacion.titulo == Diccionario.MENU_ESTADO_CUENTAS_PROVEEDORES ||
+					app.aplicacion.titulo == Diccionario.MENU_SEGUIMIENTOAPP || app.aplicacion.titulo == Diccionario.MENU_PANTALLA || app.aplicacion.titulo == Diccionario.MENU_PANTALLACLIENTE || app.aplicacion.titulo == Diccionario.MENU_PANTALLADESPACHO ||
+					app.aplicacion.titulo == Diccionario.MENU_DESPACHO) {
+					var bandera = false
+					for (var k = 0; k < $scope.aplicacionesEmpresa.length; k++) {
+						var element = $scope.aplicacionesEmpresa[k];
+						if (element.id_aplicacion == app.aplicacion.id) {
+							bandera = true
+						}
+					}
+					if (bandera) {
+						app.ver_puede_crear = false
+						app.ver_puede_modificar = false
+						app.ver_puede_eliminar = false
+					}
+					else {
+						indexAplicacion.push(index)
+						app.puede_ver = false
+						app.editable = false
+						app.puede_crear = false
+						app.puede_modificar = false
+						app.puede_eliminar = false
 
+					}
+				} else if (app.aplicacion.titulo == Diccionario.MENU_EMPRESA) {
+					var bandera = false
+					for (var k = 0; k < $scope.aplicacionesEmpresa.length; k++) {
+						var element = $scope.aplicacionesEmpresa[k];
+						if (element.id_aplicacion == app.aplicacion.id) {
+							bandera = true
+						}
+					}
+					if (bandera) {
+						app.ver_puede_crear = false
+						app.ver_puede_modificar = true
+						app.ver_puede_eliminar = false
+					}
+					else {
+						indexAplicacion.push(index)
+						app.puede_ver = false
+						app.editable = false
+						app.puede_crear = false
+						app.puede_modificar = false
+						app.puede_eliminar = false
+
+					}
+
+				} else if (app.aplicacion.titulo == Diccionario.MENU_MESAS) {
+					var bandera = false
+					for (var k = 0; k < $scope.aplicacionesEmpresa.length; k++) {
+						var element = $scope.aplicacionesEmpresa[k];
+						if (element.id_aplicacion == app.aplicacion.id) {
+							bandera = true
+						}
+					}
+					if (bandera) {
+						app.ver_puede_crear = true
+						app.ver_puede_modificar = false
+						app.ver_puede_eliminar = false
+					}
+					else {
+						indexAplicacion.push(index)
+						app.puede_ver = false
+						app.editable = false
+						app.puede_crear = false
+						app.puede_modificar = false
+						app.puede_eliminar = false
+
+					}
+
+				} else if (app.aplicacion.titulo == Diccionario.MENU_VENTA) {
+					var bandera = false
+					for (var k = 0; k < $scope.aplicacionesEmpresa.length; k++) {
+						var element = $scope.aplicacionesEmpresa[k];
+						if (element.id_aplicacion == app.aplicacion.id) {
+							bandera = true
+						}
+					}
+					if (bandera) {
+						app.ver_puede_crear = true
+						app.ver_puede_modificar = false
+						app.ver_puede_eliminar = true
+					}
+					else {
+						indexAplicacion.push(index)
+						app.puede_ver = false
+						app.editable = false
+						app.puede_crear = false
+						app.puede_modificar = false
+						app.puede_eliminar = false
+
+					}
+
+				} else if (app.aplicacion.titulo == Diccionario.MENU_CONFIGURACION) {
+					var bandera = false
+					for (var k = 0; k < $scope.aplicacionesEmpresa.length; k++) {
+						var element = $scope.aplicacionesEmpresa[k];
+						if (element.id_aplicacion == app.aplicacion.id) {
+							bandera = true
+						}
+					}
+					if (bandera) {
+						app.ver_puede_crear = true
+						app.ver_puede_modificar = true
+						app.ver_puede_eliminar = false
+					}
+					else {
+						indexAplicacion.push(index)
+						app.puede_ver = false
+						app.editable = false
+						app.puede_crear = false
+						app.puede_modificar = false
+						app.puede_eliminar = false
+
+					}
+
+				} else if (app.aplicacion.titulo == Diccionario.MENU_CONCEPTO) {
+					var bandera = false
+					for (var k = 0; k < $scope.aplicacionesEmpresa.length; k++) {
+						var element = $scope.aplicacionesEmpresa[k];
+						if (element.id_aplicacion == app.aplicacion.id) {
+							bandera = true
+						}
+					}
+					if (bandera) {
+						app.ver_puede_crear = true
+						app.ver_puede_modificar = false
+						app.ver_puede_eliminar = true
+					}
+					else {
+						indexAplicacion.push(index)
+						app.puede_ver = false
+						app.editable = false
+						app.puede_crear = false
+						app.puede_modificar = false
+						app.puede_eliminar = false
+
+					}
+
+				} else if (app.aplicacion.titulo == Diccionario.MENU_DOSIFICACION) {
+					var bandera = false
+					for (var k = 0; k < $scope.aplicacionesEmpresa.length; k++) {
+						var element = $scope.aplicacionesEmpresa[k];
+						if (element.id_aplicacion == app.aplicacion.id) {
+							bandera = true
+						}
+					}
+					if (bandera) {
+						app.ver_puede_crear = true
+						app.ver_puede_modificar = false
+						app.ver_puede_eliminar = true
+					}
+					else {
+						indexAplicacion.push(index)
+						app.puede_ver = false
+						app.editable = false
+						app.puede_crear = false
+						app.puede_modificar = false
+						app.puede_eliminar = false
+
+					}
+				} else {
+					var bandera = false
+					for (var k = 0; k < $scope.aplicacionesEmpresa.length; k++) {
+						var element = $scope.aplicacionesEmpresa[k];
+						if (element.id_aplicacion == app.aplicacion.id) {
+							bandera = true
+						}
+					}
+					if (bandera) {
+						app.ver_puede_crear = true
+						app.ver_puede_modificar = true
+						app.ver_puede_eliminar = true
+					}
+					else {
+						indexAplicacion.push(index)
+						app.puede_ver = false
+						app.editable = false
+						app.puede_crear = false
+						app.puede_modificar = false
+						app.puede_eliminar = false
+
+					}
+				}
+				return app
+			})
+			indexAplicacion.reverse().forEach(function(dato,index,array){
+				$scope.usuario.aplicacionesUsuario.splice(dato,1)
+			})
+			return $scope.usuario.aplicacionesUsuario
+			
+		}
 		$scope.validarUsuario = function (usuarioNombre) {
 			var nombre = usuarioNombre;
 			if (nombre != '') {
@@ -333,20 +546,266 @@ angular.module('agil.controladores')
 
 			});
 		}
+		$scope.verificarSelecionado = function (aplicacion) {
+			if (aplicacion.puede_ver) {
+				aplicacion.puede_crear = true
+				aplicacion.puede_modificar = true
+				aplicacion.puede_eliminar = true
+				aplicacion.editable = true
+				$scope.usuario.aplicacionesUsuario.forEach(function (apli) {
+					if (aplicacion.id_aplicacion == apli.aplicacion.id_padre) {
+						apli.puede_crear = true
+						apli.puede_ver = true
+						apli.puede_modificar = true
+						apli.puede_eliminar = true
+						apli.editable = true
+					}
+				});
+			} else {
+				aplicacion.puede_crear = false
+				aplicacion.puede_modificar = false
+				aplicacion.puede_eliminar = false
+				aplicacion.editable = false
+				$scope.usuario.aplicacionesUsuario.forEach(function (apli) {
+					if (aplicacion.id_aplicacion == apli.aplicacion.id_padre) {
+						apli.puede_crear = false
+						apli.puede_ver = false
+						apli.puede_modificar = false
+						apli.puede_eliminar = false
+						apli.editable = false
+					}
+				});
+			}
 
+		}
+		$scope.CargarAplicacion = function (i, bandera, crear, modificar, eliminar) {
+			var modelo = {
+				id_aplicacion: $scope.rol.aplicacionesRol[i].aplicacion.id,
+				aplicacion: $scope.rol.aplicacionesRol[i].aplicacion,
+				puede_crear: bandera,
+				puede_ver: bandera,
+				puede_modificar: bandera,
+				puede_eliminar: bandera,
+				editable: bandera,
+				ver_puede_crear: crear,
+				ver_puede_modificar: modificar,
+				ver_puede_eliminar: eliminar
+			}
+			return modelo
+		}
 		$scope.buscarRol = function (idRol) {
+		/* 	var datosRol = JSON.parse(rol);
+			var idRol = datosRol.id
+			var rol = JSON.parse($scope.usuario.rol)
+			$scope.usuario.id_rol = rol.id */
 			var roles = $.grep($scope.roles, function (e) { return e.id == idRol; });
 			$scope.rol = roles[0];
 			$scope.usuario.aplicacionesUsuario = [];
 			for (var i = 0; i < $scope.rol.aplicacionesRol.length; i++) {
-				$scope.usuario.aplicacionesUsuario.push({
-					id_aplicacion: $scope.rol.aplicacionesRol[i].aplicacion.id,
-					aplicacion: $scope.rol.aplicacionesRol[i].aplicacion,
-					puede_crear: true,
-					puede_ver: true,
-					puede_modificar: true,
-					puede_eliminar: true
-				});
+				if ($scope.rol.nombre == Diccionario.ROL_ADMINISTRADOR) {
+					if ($scope.rol.aplicacionesRol[i].aplicacion.titulo == Diccionario.MENU_REPORTE || $scope.rol.aplicacionesRol[i].aplicacion.titulo == Diccionario.MENU_APPMOVIL || $scope.rol.aplicacionesRol[i].aplicacion.titulo == Diccionario.MENU_LIBRO_COMPRA || $scope.rol.aplicacionesRol[i].aplicacion.titulo == Diccionario.MENU_LIBRO_VENTAS
+						|| $scope.rol.aplicacionesRol[i].aplicacion.titulo == Diccionario.MENU_REPORTE_VENTAS || $scope.rol.aplicacionesRol[i].aplicacion.titulo == Diccionario.MENU_REPORTE_COMPRAS || $scope.rol.aplicacionesRol[i].aplicacion.titulo == Diccionario.MENU_ESTADO_RESULTADOS || $scope.rol.aplicacionesRol[i].aplicacion.titulo == Diccionario.MENU_ALMACEN ||
+						$scope.rol.aplicacionesRol[i].aplicacion.titulo == Diccionario.MENU_CERT_COD_CONTROL || $scope.rol.aplicacionesRol[i].aplicacion.titulo == Diccionario.MENU_ESTADO_CUENTAS_CLIENTES || $scope.rol.aplicacionesRol[i].aplicacion.titulo == Diccionario.MENU_ESTADO_CUENTAS_PROVEEDORES ||
+						$scope.rol.aplicacionesRol[i].aplicacion.titulo == Diccionario.MENU_SEGUIMIENTOAPP || $scope.rol.aplicacionesRol[i].aplicacion.titulo == Diccionario.MENU_PANTALLA || $scope.rol.aplicacionesRol[i].aplicacion.titulo == Diccionario.MENU_PANTALLACLIENTE || $scope.rol.aplicacionesRol[i].aplicacion.titulo == Diccionario.MENU_PANTALLADESPACHO ||
+						$scope.rol.aplicacionesRol[i].aplicacion.titulo == Diccionario.MENU_DESPACHO) {
+
+						for (var k = 0; k < $scope.aplicacionesEmpresa.length; k++) {
+							var element = $scope.aplicacionesEmpresa[k];
+							if (element.id_aplicacion == $scope.rol.aplicacionesRol[i].aplicacion.id) {
+								$scope.usuario.aplicacionesUsuario.push($scope.CargarAplicacion(i, true, false, false, false));
+							}
+						}
+
+					} else if ($scope.rol.aplicacionesRol[i].aplicacion.titulo == Diccionario.MENU_EMPRESA) {
+						for (var k = 0; k < $scope.aplicacionesEmpresa.length; k++) {
+							var element = $scope.aplicacionesEmpresa[k];
+							if (element.id_aplicacion == $scope.rol.aplicacionesRol[i].aplicacion.id) {
+								$scope.usuario.aplicacionesUsuario.push($scope.CargarAplicacion(i, true, false, true, false));
+							}
+						}
+					} else if ($scope.rol.aplicacionesRol[i].aplicacion.titulo == Diccionario.MENU_MESAS) {
+						for (var k = 0; k < $scope.aplicacionesEmpresa.length; k++) {
+							var element = $scope.aplicacionesEmpresa[k];
+							if (element.id_aplicacion == $scope.rol.aplicacionesRol[i].aplicacion.id) {
+								$scope.usuario.aplicacionesUsuario.push($scope.CargarAplicacion(i, true, true, false, false));
+							}
+						}
+					} else if ($scope.rol.aplicacionesRol[i].aplicacion.titulo == Diccionario.MENU_VENTA) {
+						for (var k = 0; k < $scope.aplicacionesEmpresa.length; k++) {
+							var element = $scope.aplicacionesEmpresa[k];
+							if (element.id_aplicacion == $scope.rol.aplicacionesRol[i].aplicacion.id) {
+								$scope.usuario.aplicacionesUsuario.push($scope.CargarAplicacion(i, true, true, false, true));
+							}
+						}
+					} else if ($scope.rol.aplicacionesRol[i].aplicacion.titulo == Diccionario.MENU_CONFIGURACION) {
+						for (var k = 0; k < $scope.aplicacionesEmpresa.length; k++) {
+							var element = $scope.aplicacionesEmpresa[k];
+							if (element.id_aplicacion == $scope.rol.aplicacionesRol[i].aplicacion.id) {
+								$scope.usuario.aplicacionesUsuario.push($scope.CargarAplicacion(i, true, true, true, false));
+							}
+						}
+					} else if ($scope.rol.aplicacionesRol[i].aplicacion.titulo == Diccionario.MENU_CONCEPTO) {
+						for (var k = 0; k < $scope.aplicacionesEmpresa.length; k++) {
+							var element = $scope.aplicacionesEmpresa[k];
+							if (element.id_aplicacion == $scope.rol.aplicacionesRol[i].aplicacion.id) {
+								$scope.usuario.aplicacionesUsuario.push($scope.CargarAplicacion(i, true, true, false, true));
+							}
+						}
+					} else if ($scope.rol.aplicacionesRol[i].aplicacion.titulo == Diccionario.MENU_DOSIFICACION) {
+						for (var k = 0; k < $scope.aplicacionesEmpresa.length; k++) {
+							var element = $scope.aplicacionesEmpresa[k];
+							if (element.id_aplicacion == $scope.rol.aplicacionesRol[i].aplicacion.id) {
+								$scope.usuario.aplicacionesUsuario.push($scope.CargarAplicacion(i, true, true, false, true));
+							}
+						}
+					} else {
+						for (var k = 0; k < $scope.aplicacionesEmpresa.length; k++) {
+							var element = $scope.aplicacionesEmpresa[k];
+							if (element.id_aplicacion == $scope.rol.aplicacionesRol[i].aplicacion.id) {
+								$scope.usuario.aplicacionesUsuario.push($scope.CargarAplicacion(i, true, true, true, true));
+							}
+						}
+					}
+				} else if ($scope.rol.nombre == Diccionario.ROL_OPERADOR) {
+					if ($scope.rol.aplicacionesRol[i].aplicacion.titulo == Diccionario.MENU_REPORTE || $scope.rol.aplicacionesRol[i].aplicacion.titulo == Diccionario.MENU_APPMOVIL || $scope.rol.aplicacionesRol[i].aplicacion.titulo == Diccionario.MENU_LIBRO_COMPRA || $scope.rol.aplicacionesRol[i].aplicacion.titulo == Diccionario.MENU_LIBRO_VENTAS
+						|| $scope.rol.aplicacionesRol[i].aplicacion.titulo == Diccionario.MENU_REPORTE_VENTAS || $scope.rol.aplicacionesRol[i].aplicacion.titulo == Diccionario.MENU_REPORTE_COMPRAS || $scope.rol.aplicacionesRol[i].aplicacion.titulo == Diccionario.MENU_ESTADO_RESULTADOS || $scope.rol.aplicacionesRol[i].aplicacion.titulo == Diccionario.MENU_ALMACEN ||
+						$scope.rol.aplicacionesRol[i].aplicacion.titulo == Diccionario.MENU_CERT_COD_CONTROL || $scope.rol.aplicacionesRol[i].aplicacion.titulo == Diccionario.MENU_ESTADO_CUENTAS_CLIENTES || $scope.rol.aplicacionesRol[i].aplicacion.titulo == Diccionario.MENU_ESTADO_CUENTAS_PROVEEDORES ||
+						$scope.rol.aplicacionesRol[i].aplicacion.titulo == Diccionario.MENU_SEGUIMIENTOAPP || $scope.rol.aplicacionesRol[i].aplicacion.titulo == Diccionario.MENU_PANTALLA || $scope.rol.aplicacionesRol[i].aplicacion.titulo == Diccionario.MENU_PANTALLACLIENTE || $scope.rol.aplicacionesRol[i].aplicacion.titulo == Diccionario.MENU_PANTALLADESPACHO ||
+						$scope.rol.aplicacionesRol[i].aplicacion.titulo == Diccionario.MENU_DESPACHO) {
+						for (var k = 0; k < $scope.aplicacionesEmpresa.length; k++) {
+							var element = $scope.aplicacionesEmpresa[k];
+							if (element.id_aplicacion == $scope.rol.aplicacionesRol[i].aplicacion.id) {
+								$scope.usuario.aplicacionesUsuario.push($scope.CargarAplicacion(i, false, false, false, false));
+							}
+						}
+					} else if ($scope.rol.aplicacionesRol[i].aplicacion.titulo == Diccionario.MENU_EMPRESA) {
+						for (var k = 0; k < $scope.aplicacionesEmpresa.length; k++) {
+							var element = $scope.aplicacionesEmpresa[k];
+							if (element.id_aplicacion == $scope.rol.aplicacionesRol[i].aplicacion.id) {
+								$scope.usuario.aplicacionesUsuario.push($scope.CargarAplicacion(i, false, false, true, false));
+							}
+						}
+					} else if ($scope.rol.aplicacionesRol[i].aplicacion.titulo == Diccionario.MENU_MESAS) {
+						for (var k = 0; k < $scope.aplicacionesEmpresa.length; k++) {
+							var element = $scope.aplicacionesEmpresa[k];
+							if (element.id_aplicacion == $scope.rol.aplicacionesRol[i].aplicacion.id) {
+								$scope.usuario.aplicacionesUsuario.push($scope.CargarAplicacion(i, false, true, false, false));
+							}
+						}
+					} else if ($scope.rol.aplicacionesRol[i].aplicacion.titulo == Diccionario.MENU_VENTA) {
+						for (var k = 0; k < $scope.aplicacionesEmpresa.length; k++) {
+							var element = $scope.aplicacionesEmpresa[k];
+							if (element.id_aplicacion == $scope.rol.aplicacionesRol[i].aplicacion.id) {
+								$scope.usuario.aplicacionesUsuario.push($scope.CargarAplicacion(i, true, true, false, true));
+							}
+						}
+					}else if ($scope.rol.aplicacionesRol[i].aplicacion.titulo == Diccionario.MENU_COMPRA) {
+						for (var k = 0; k < $scope.aplicacionesEmpresa.length; k++) {
+							var element = $scope.aplicacionesEmpresa[k];
+							if (element.id_aplicacion == $scope.rol.aplicacionesRol[i].aplicacion.id) {
+								$scope.usuario.aplicacionesUsuario.push($scope.CargarAplicacion(i, true, true, true, true));
+							}
+						}
+					}  else if ($scope.rol.aplicacionesRol[i].aplicacion.titulo == Diccionario.MENU_CONFIGURACION) {
+						for (var k = 0; k < $scope.aplicacionesEmpresa.length; k++) {
+							var element = $scope.aplicacionesEmpresa[k];
+							if (element.id_aplicacion == $scope.rol.aplicacionesRol[i].aplicacion.id) {
+								$scope.usuario.aplicacionesUsuario.push($scope.CargarAplicacion(i, false, true, true, false));
+							}
+						}
+					} else if ($scope.rol.aplicacionesRol[i].aplicacion.titulo == Diccionario.MENU_CONCEPTO) {
+						for (var k = 0; k < $scope.aplicacionesEmpresa.length; k++) {
+							var element = $scope.aplicacionesEmpresa[k];
+							if (element.id_aplicacion == $scope.rol.aplicacionesRol[i].aplicacion.id) {
+								$scope.usuario.aplicacionesUsuario.push($scope.CargarAplicacion(i, false, true, false, true));
+							}
+						}
+					} else if ($scope.rol.aplicacionesRol[i].aplicacion.titulo == Diccionario.MENU_DOSIFICACION) {
+						for (var k = 0; k < $scope.aplicacionesEmpresa.length; k++) {
+							var element = $scope.aplicacionesEmpresa[k];
+							if (element.id_aplicacion == $scope.rol.aplicacionesRol[i].aplicacion.id) {
+								$scope.usuario.aplicacionesUsuario.push($scope.CargarAplicacion(i, false, true, false, true));
+							}
+						}
+					} else {
+						for (var k = 0; k < $scope.aplicacionesEmpresa.length; k++) {
+							var element = $scope.aplicacionesEmpresa[k];
+							if (element.id_aplicacion == $scope.rol.aplicacionesRol[i].aplicacion.id) {
+								$scope.usuario.aplicacionesUsuario.push($scope.CargarAplicacion(i, false, true, true, true));
+							}
+						}
+					}
+				} else if ($scope.rol.nombre == Diccionario.ROL_VENDEDOR) {
+					if ($scope.rol.aplicacionesRol[i].aplicacion.titulo == Diccionario.MENU_REPORTE || $scope.rol.aplicacionesRol[i].aplicacion.titulo == Diccionario.MENU_APPMOVIL || $scope.rol.aplicacionesRol[i].aplicacion.titulo == Diccionario.MENU_LIBRO_COMPRA || $scope.rol.aplicacionesRol[i].aplicacion.titulo == Diccionario.MENU_LIBRO_VENTAS
+						|| $scope.rol.aplicacionesRol[i].aplicacion.titulo == Diccionario.MENU_REPORTE_VENTAS || $scope.rol.aplicacionesRol[i].aplicacion.titulo == Diccionario.MENU_REPORTE_COMPRAS || $scope.rol.aplicacionesRol[i].aplicacion.titulo == Diccionario.MENU_ESTADO_RESULTADOS || $scope.rol.aplicacionesRol[i].aplicacion.titulo == Diccionario.MENU_ALMACEN ||
+						$scope.rol.aplicacionesRol[i].aplicacion.titulo == Diccionario.MENU_CERT_COD_CONTROL || $scope.rol.aplicacionesRol[i].aplicacion.titulo == Diccionario.MENU_ESTADO_CUENTAS_CLIENTES || $scope.rol.aplicacionesRol[i].aplicacion.titulo == Diccionario.MENU_ESTADO_CUENTAS_PROVEEDORES ||
+						$scope.rol.aplicacionesRol[i].aplicacion.titulo == Diccionario.MENU_SEGUIMIENTOAPP || $scope.rol.aplicacionesRol[i].aplicacion.titulo === Diccionario.MENU_PANTALLA || $scope.rol.aplicacionesRol[i].aplicacion.titulo == Diccionario.MENU_PANTALLACLIENTE || $scope.rol.aplicacionesRol[i].aplicacion.titulo == Diccionario.MENU_PANTALLADESPACHO ||
+						$scope.rol.aplicacionesRol[i].aplicacion.titulo == Diccionario.MENU_DESPACHO) {
+						for (var k = 0; k < $scope.aplicacionesEmpresa.length; k++) {
+							var element = $scope.aplicacionesEmpresa[k];
+							if (element.id_aplicacion == $scope.rol.aplicacionesRol[i].aplicacion.id) {
+								$scope.usuario.aplicacionesUsuario.push($scope.CargarAplicacion(i, false, false, false, false));
+							}
+						}
+					} else if ($scope.rol.aplicacionesRol[i].aplicacion.titulo == Diccionario.MENU_EMPRESA) {
+						for (var k = 0; k < $scope.aplicacionesEmpresa.length; k++) {
+							var element = $scope.aplicacionesEmpresa[k];
+							if (element.id_aplicacion == $scope.rol.aplicacionesRol[i].aplicacion.id) {
+								$scope.usuario.aplicacionesUsuario.push($scope.CargarAplicacion(i, false, false, true, false));
+							}
+						}
+					} else if ($scope.rol.aplicacionesRol[i].aplicacion.titulo == Diccionario.MENU_MESAS) {
+						for (var k = 0; k < $scope.aplicacionesEmpresa.length; k++) {
+							var element = $scope.aplicacionesEmpresa[k];
+							if (element.id_aplicacion == $scope.rol.aplicacionesRol[i].aplicacion.id) {
+								$scope.usuario.aplicacionesUsuario.push($scope.CargarAplicacion(i, false, true, false, false));
+							}
+						}
+					} else if ($scope.rol.aplicacionesRol[i].aplicacion.titulo == Diccionario.MENU_VENTA) {
+						for (var k = 0; k < $scope.aplicacionesEmpresa.length; k++) {
+							var element = $scope.aplicacionesEmpresa[k];
+							if (element.id_aplicacion == $scope.rol.aplicacionesRol[i].aplicacion.id) {
+								$scope.usuario.aplicacionesUsuario.push($scope.CargarAplicacion(i, true, true, false, true));
+							}
+						}
+					}else if ($scope.rol.aplicacionesRol[i].aplicacion.titulo == Diccionario.MENU_COMPRA) {
+						for (var k = 0; k < $scope.aplicacionesEmpresa.length; k++) {
+							var element = $scope.aplicacionesEmpresa[k];
+							if (element.id_aplicacion == $scope.rol.aplicacionesRol[i].aplicacion.id) {
+								$scope.usuario.aplicacionesUsuario.push($scope.CargarAplicacion(i, true, true, true, true));
+							}
+						}
+					}  else if ($scope.rol.aplicacionesRol[i].aplicacion.titulo == Diccionario.MENU_CONFIGURACION) {
+						for (var k = 0; k < $scope.aplicacionesEmpresa.length; k++) {
+							var element = $scope.aplicacionesEmpresa[k];
+							if (element.id_aplicacion == $scope.rol.aplicacionesRol[i].aplicacion.id) {
+								$scope.usuario.aplicacionesUsuario.push($scope.CargarAplicacion(i, false, true, true, false));
+							}
+						}
+					} else if ($scope.rol.aplicacionesRol[i].aplicacion.titulo == Diccionario.MENU_CONCEPTO) {
+						for (var k = 0; k < $scope.aplicacionesEmpresa.length; k++) {
+							var element = $scope.aplicacionesEmpresa[k];
+							if (element.id_aplicacion == $scope.rol.aplicacionesRol[i].aplicacion.id) {
+								$scope.usuario.aplicacionesUsuario.push($scope.CargarAplicacion(i, false, true, false, true));
+							}
+						}
+					} else if ($scope.rol.aplicacionesRol[i].aplicacion.titulo == Diccionario.MENU_DOSIFICACION) {
+						for (var k = 0; k < $scope.aplicacionesEmpresa.length; k++) {
+							var element = $scope.aplicacionesEmpresa[k];
+							if (element.id_aplicacion == $scope.rol.aplicacionesRol[i].aplicacion.id) {
+								$scope.usuario.aplicacionesUsuario.push($scope.CargarAplicacion(i, false, true, false, true));
+							}
+						}
+					} else {
+						for (var k = 0; k < $scope.aplicacionesEmpresa.length; k++) {
+							var element = $scope.aplicacionesEmpresa[k];
+							if (element.id_aplicacion == $scope.rol.aplicacionesRol[i].aplicacion.id) {
+								$scope.usuario.aplicacionesUsuario.push($scope.CargarAplicacion(i, false, true, true, true));
+							}
+						}
+					}
+				}
+
 			}
 		}
 
@@ -471,12 +930,24 @@ angular.module('agil.controladores')
 				blockUI.stop();
 			});
 		}
-
+		$scope.obtenerAplicacionesEmpresas = function (idEmpresa) {
+			blockUI.start();
+			var promesa = ListaAplicacionesSistemaEmpresa(idEmpresa);
+			promesa.then(function (datos) {
+				$scope.aplicacionesEmpresa = datos;
+				blockUI.stop();
+			});
+		}
 		$scope.obtenerRoles = function () {
 			blockUI.start();
 			var promesa = Roles();
 			promesa.then(function (roles) {
 				$scope.roles = roles;
+				$scope.roles.forEach(function(rol,index,array){
+					if(rol.nombre==="SUPER-ADMINISTRADOR"){
+						$scope.roles.splice(index,1)
+					}
+				})
 				blockUI.stop();
 			});
 		}

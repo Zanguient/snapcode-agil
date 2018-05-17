@@ -3,7 +3,7 @@
 		<h3 class="header smaller lighter blue">VALIDADOR CODIGO DE CONTROL</h3>
 		<div class="fileUpload btn btn-primary btn-success">
 			<span class="fileUpload-button ace-icon fa fa-cloud-upload align-top bigger-125">&nbsp&nbspImportar pruebas</span>
-			<input class="upload" type="file" custom-on-file-change="subirExcelPruebasDosificaciones"/>&nbsp&nbsp
+			<input  ng-disabled="!aplicacion.puede_crear"  class="upload" type="file" custom-on-file-change="subirExcelPruebasDosificaciones"/>&nbsp&nbsp
 		</div>
 		<a href="/recursos/EJEMPLO-PRUEBAS-CODIGO-CONTROL.xlsx" class="btn btn-primary btn-danger">
 			<i class="ace-icon fa fa-cloud-download align-top bigger-125"></i>
@@ -23,7 +23,7 @@
 		<!-- div.table-responsive -->
 
 		<!-- div.dataTables_borderWrap -->
-		<div>
+		<div style="overflow-x:auto;">
 			<table id="tabla-pruebas-codigo-control" class="table table-striped table-bordered table-hover">
 				<thead>
 					<tr>
