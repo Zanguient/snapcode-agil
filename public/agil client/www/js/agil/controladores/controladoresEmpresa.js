@@ -38,7 +38,7 @@ angular.module('agil.controladores')
 	
 	$scope.crearNuevaEmpresa=function(){
 		$scope.esNuevo=true;
-		$scope.empresa=new Empresa({sucursal:{},imagen:"img/icon-user-default.png"});
+		$scope.empresa=new Empresa({sucursal:{},imagen:"img/icon-user-default.png",aplicaciones:[]});
 		$scope.abrirPopup($scope.idModalWizardEmpresaEdicion);
 	}
 	
@@ -60,6 +60,7 @@ angular.module('agil.controladores')
 	}
 	
 	$scope.modificarEmpresa=function(empresa){
+		empresa.aplicaciones=[]
 		$scope.esNuevo=false;
 		$scope.empresa=empresa;
 		if(empresa.departamento){

@@ -3229,6 +3229,7 @@
     <!-- ===== fin modal anticipo extraordinario  ====== -->
     <!-- =====  modal  nuevo prestamo ====== -->
     <div id="dialog-nuevo-prestamo" class="modal">
+            <div class="modal-dialog modal-rh-nuevo">
         <div class="modal-header bg-primary">
             <h4 class='smaller text-white text-uppercase'>
                 <i class='fa fa-money'></i>
@@ -3298,9 +3299,11 @@
             </div>
         </form>
     </div>
+</div>
     <!-- ===== fin modal nuevo prestamo  ====== -->
     <!-- =====  modal  ausencias y  vacaciones ====== -->
     <div id="dialog-ausencias-vacaciones" class="modal">
+            <div class="modal-dialog modal-rh-nuevo">
         <div class="modal-header ficha">
             <h4 class="modal-title" id="myModalLabel"> Ausencias y Vacaciones</h4>
             <h5 class="modal-title">{{empleado.nombre_completo}}</h5>
@@ -3587,7 +3590,7 @@
                 <i class="ace-icon fa fa-times"></i>Cancelar
             </button>
         </div>
-
+    </div>
     </div>
     <!--- ==== fin modal ausencias y vacaciones  ================================ -->
     <!--- ==== modal tipo baja  ================================ -->
@@ -3681,6 +3684,7 @@
 
     <!--- ==== modal feriados  ================================ -->
     <div id="dialog-feriados" class="modal">
+            <div class="modal-dialog modal-rh-nuevo">
         <div class="modal-header bg-primary">
             <h4 class='smaller text-white text-uppercase'>
                 <i class='icono-prerequisito'></i>
@@ -3705,9 +3709,11 @@
             </div>
         </div>
     </div>
+    </div>
     <!--- ==== fin modal feriados  ================================ -->
     <!--- ==== modal historial vacaciones ================================ -->
     <div id="dialog-historial-vacaciones" class="modal">
+         
         <div class="modal-header bg-primary">
             <h4 class='smaller text-white text-uppercase'>
                 <i class='icono-prerequisito'></i>
@@ -3778,11 +3784,12 @@
                 <i class="ace-icon fa fa-times"></i>Cancelar
             </button>
         </div>
-
+    
     </div>
     <!--- ==== fin modal historial vacaciones  ================================ -->
     <!--- ==== modal dias compensacion  ================================ -->
     <div id="dialog-compesacion" class="modal">
+            <div class="modal-dialog modal-rh-nuevo">
         <div class="modal-header bg-primary">
             <h4 class='smaller text-white text-uppercase'>
                 <i class='icono-prerequisito'></i>
@@ -3832,7 +3839,7 @@
                 </button>
             </div>
         </div>
-    </div>
+    </div></div>
     <!--- ==== fin modal dias compensacion  ================================ -->
     <!--- ==== modal historial ausencias ================================ -->
     <div id="dialog-historial-ausencias" class="modal">
@@ -4483,6 +4490,7 @@
     <!--- ==== fin modal historial horas extras  ================================ -->
     <!--- ==== modal anticipo regular  ================================ -->
     <div id="dialog-anticipo-regular" class="modal">
+
         <div class="modal-header bg-primary">
             <h4 class='smaller text-white text-uppercase'>
                 <i class='fa fa-money'></i>
@@ -4621,7 +4629,7 @@
                                 <td data-label="Saldo Salario:">{{anticipo.saldo_salario|number:2}}</td>
                                 <td data-label="Acciones:">
                                     <div class="action-buttons">
-                                        <a class="red" uib-tooltip="Eliminar" href="javascript:void(0)" ng-click="EliminarAnticipo(index)">
+                                        <a class="red" uib-tooltip="Eliminar" href="javascript:void(0)" ng-click="EliminarAnticipo($index)">
                                             <i class="ace-icon fa fa-trash bigger-130"></i>
                                         </a>
 
@@ -5028,53 +5036,54 @@
     <!-- ======= Fin Modal modal anticipos regulares empleados nuevo todos =========== -->
     <!-- ======= Modal modal reporte de hijos =========== -->
     <div id="dialog-reporte-hijos" class="modal">
-        <div class="modal-header bg-primary">
-            <h4 class='smaller text-white text-uppercase'>
-                <i class='icono-prestamo icono-font'></i>
-                <label> &nbsp;Reporte de hij@s </label>
-            </h4>
-        </div>
-        <div class="modal-body">
-            <form>
-                <div class="form-group form-row">
-                    <label class="col-sm-3" for="todos">Todos</label>
-                    <label>
-                        <input name="todos" id="todos" class="ace ace-switch ace-switch-5 col-sm-9" type="checkbox">
-                        <span class="lbl check-espaniol"></span>
-                    </label>
-                </div>
-                <div class="form-group">
-                    <label class="col-sm-3" for="rango">Rango</label>
-                    <div class="input-group col-sm-9">
-                        <input type="number" class="input-sm form-control" name="start">
-                        <span class="input-group-addon">
-                            <span class="fa fa-exchange"></span>
-                        </span>
-                        <input type="number" class="input-sm form-control" name="end">
-                        <span class="input-group-addon">
-                            años
-                        </span>
+        <div class="modal-dialog modal-rh-nuevo">
+            <div class="modal-header bg-primary">
+                <h4 class='smaller text-white text-uppercase'>
+                    <i class='icono-prestamo icono-font'></i>
+                    <label> &nbsp;Reporte de hij@s </label>
+                </h4>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group form-row">
+                        <label class="col-sm-3" for="todos">Todos</label>
+                        <label>
+                            <input name="todos" id="todos" class="ace ace-switch ace-switch-5 col-sm-9" type="checkbox">
+                            <span class="lbl check-espaniol"></span>
+                        </label>
                     </div>
-                </div>
-            </form>
-        </div>
-        <div class="row">
+                    <div class="form-group">
+                        <label class="col-sm-3" for="rango">Rango</label>
+                        <div class="input-group col-sm-9">
+                            <input type="number" class="input-sm form-control" name="start">
+                            <span class="input-group-addon">
+                                <span class="fa fa-exchange"></span>
+                            </span>
+                            <input type="number" class="input-sm form-control" name="end">
+                            <span class="input-group-addon">
+                                años
+                            </span>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="row">
 
-            <div class="modal-footer wizard-actions">
-                <button class="btn btn-danger btn-sm" ng-click="cerrarDialogReporteHijos()">
-                    <span class="fa fa-print"></span>
-                    PDF
-                </button>
-                <button class="btn btn-success btn-sm" ng-click="cerrarDialogReporteHijos()">
-                    <span class="fa fa-print"></span>
-                    EXCEL
-                </button>
-                <button class="btn btn-danger btn-sm pull-left" ng-click="cerrarDialogReporteHijos()">
-                    <i class="ace-icon fa fa-times"></i>Cancelar
-                </button>
+                <div class="modal-footer wizard-actions">
+                    <button class="btn btn-danger btn-sm" ng-click="cerrarDialogReporteHijos()">
+                        <span class="fa fa-print"></span>
+                        PDF
+                    </button>
+                    <button class="btn btn-success btn-sm" ng-click="cerrarDialogReporteHijos()">
+                        <span class="fa fa-print"></span>
+                        EXCEL
+                    </button>
+                    <button class="btn btn-danger btn-sm pull-left" ng-click="cerrarDialogReporteHijos()">
+                        <i class="ace-icon fa fa-times"></i>Cancelar
+                    </button>
+                </div>
             </div>
         </div>
-
     </div>
     <!-- ======= Fin Modal modal reporte de hijos ====== -->
     <!-- ======= Modal reporte beneficios sociales ====== -->
@@ -7324,6 +7333,7 @@
         </form>
     </div>
     <div id="dialog-configuracion-ropa-trabajo">
+            <div class="modal-dialog modal-rh-nuevo">
         <div class="modal-content">
 
             <form novalidate ng-submit="GuardarlistaRopaTrabajoPorCargo(cargo)">
@@ -7447,10 +7457,11 @@
                     </button>
                 </div>
             </form>
-
+        </div>
         </div>
     </div>
     <div id="dialog-reporte-ropa-trabajo">
+            <div class="modal-dialog modal-rh-nuevo">
         <div class="modal-content">
             <div class="modal-header ficha">
                 <h4 class="modal-title" id="myModalLabel">Reportes Ropa de Trabajo</h4>
@@ -7510,7 +7521,7 @@
                     Cancelar
                 </button>
             </div>
-
+        </div>
 
         </div>
     </div>

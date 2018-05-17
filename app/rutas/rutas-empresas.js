@@ -130,8 +130,12 @@ module.exports = function (router, decodeBase64Image, fs, Empresa, Sucursal, Cla
 															}
 															actualizarImagenEmpresa(empresaCreada, req, res, null, imagen);
 														}
+													}).catch(function (err) {
+														res.json({ mensaje: err.message === undefined ? err.stack : err.message, hasErr: true })
 													});
-												});
+												}).catch(function (err) {
+													res.json({ mensaje: err.message === undefined ? err.stack : err.message, hasErr: true })
+												});;
 											});
 										});
 									});
@@ -165,23 +169,30 @@ module.exports = function (router, decodeBase64Image, fs, Empresa, Sucursal, Cla
 					}
 
 				}).then(function (empresaAplicacionActualizado) {
+					if (req.body.aplicaciones.length > 0) {
+						req.body.aplicaciones.forEach(function (aplicacion, index, array) {
+							EmpresaAplicacion.findOrCreate({
+								where: { id_aplicacion: aplicacion.id, id_empresa: empresaCreada.id },
+								defaults: {
+									d_aplicacion: aplicacion.id,
+									id_empresa: empresaCreada.id
+								}
+							}).spread(function (cargoEncontrado, created) {
+								if (index === (array.length - 1)) {
+									res.json({ empresa: empresaCreada, url: imagen, signedRequest: signedRequest, image_name: 'empresa-' + empresaCreada.id + '.jpg' });
+								}
 
-					req.body.aplicaciones.forEach(function (aplicacion, index, array) {
-						EmpresaAplicacion.findOrCreate({
-							where: { id_aplicacion: aplicacion.id, id_empresa: empresaCreada.id },
-							defaults: {
-								d_aplicacion: aplicacion.id,
-								id_empresa: empresaCreada.id
-							}
-						}).spread(function (cargoEncontrado, created) {
-							if (index === (array.length - 1)) {
-								res.json({ empresa: empresaCreada, url: imagen, signedRequest: signedRequest, image_name: 'empresa-' + empresaCreada.id + '.jpg' });
-							}
+							}).catch(function (err) {
+								res.json({ mensaje: err.message === undefined ? err.stack : err.message, hasErr: true })
+							});
 
 						});
-
-					});
+					}
+				}).catch(function (err) {
+					res.json({ mensaje: err.message === undefined ? err.stack : err.message, hasErr: true })
 				});
+			}).catch(function (err) {
+				res.json({ mensaje: err.message === undefined ? err.stack : err.message, hasErr: true })
 			});
 	}
 
@@ -254,7 +265,7 @@ module.exports = function (router, decodeBase64Image, fs, Empresa, Sucursal, Cla
 			}
 			Empresa.findAll({
 				where: condicion,
-				include: [{ model: Clase, as: 'departamento' },{ model: EmpresaAplicacion, as: 'aplicacionesEmpresa' },
+				include: [{ model: Clase, as: 'departamento' }, { model: EmpresaAplicacion, as: 'aplicacionesEmpresa' },
 				{ model: Clase, as: 'municipio' },
 				{ model: Sucursal, as: 'sucursales' }]
 			}).then(function (entidades) {
@@ -280,15 +291,15 @@ module.exports = function (router, decodeBase64Image, fs, Empresa, Sucursal, Cla
 	router.route('/sistema/aplicaciones')
 		.get(function (req, res) {
 			Aplicacion.findAll({
-				
+
 			}).then(function (Aplicaciones) {
 				res.json(Aplicaciones);
 			});
 		})
-		router.route('/sistema/aplicaciones/empresa/:id_empresa')
+	router.route('/sistema/aplicaciones/empresa/:id_empresa')
 		.get(function (req, res) {
 			EmpresaAplicacion.findAll({
-				where:{id_empresa:req.params.id_empresa}
+				where: { id_empresa: req.params.id_empresa }
 			}).then(function (Aplicaciones) {
 				res.json(Aplicaciones);
 			});

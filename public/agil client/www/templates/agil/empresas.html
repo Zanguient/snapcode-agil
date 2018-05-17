@@ -276,21 +276,22 @@
 							<input id="imagen-empresa-oculto" ng-model="empresa.imagen" name="imagen" type="hidden" ng-update-hidden>
 						</div>
 					</div>
-					<div class="row form-group"  ng-if="usuario.rolesUsuario[0].rol.nombre==diccionario.USUARIO_SUPERADMIN">
+					<div class="row form-group">
 						<div class="col-lg-5">
-							<label  for="aplicaciones">Aplicaciones</label>
+							<label for="aplicaciones">Aplicaciones</label>
 							<!-- <label for="cargo">Cargos:</label> -->
 						</div>
+						
 						<div class="col-lg-7">
-								<div
-								isteven-multi-select 
-								input-model="aplicacionesSistema" 
-								output-model="empresa.aplicaciones"
-								button-label="icon name"        
-								item-label="icon name maker"        
-								tick-property="ticked"
-								>
-							</div>  							
+							<!-- <div isteven-multi-select input-model="aplicacionesSistema" output-model="empresa.aplicaciones" button-label="icon name"
+							 item-label="icon name maker" tick-property="ticked">
+							</div> -->
+							<div isteven-multi-select input-model="aplicacionesSistema" output-model="empresa.aplicaciones" button-label="icon name" item-label="icon name maker"
+							tick-property="ticked">
+						   </div>
+						<!-- 	<isteven-multi-select input-model="aplicacionesSistema" output-model="empresa.aplicaciones" button-label="icon name" item-label="icon name maker"
+							 tick-property="ticked">
+							</isteven-multi-select> -->
 						</div>
 					</div>
 					<!-- <div class="col-md-6"> -->
