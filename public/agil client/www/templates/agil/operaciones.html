@@ -184,7 +184,7 @@
                                 <a  class="blue" href="javascript:void(0)" ng-click="copiar(solicitud)" data-rel="tooltip" tooltip-placement="top" uib-tooltip="Copiar">
                                     <i class="ace-icon fa fa-files-o bigger-130"></i>
                                 </a>
-                                <a  class="red" ng-if="solicitud.activo" ng-click="abrirPopupConfirmacionEliminacion(eliminar,solicitud)" data-rel="tooltip"
+                                <a  class="red" ng-if="solicitud.activo" href="javascript:void(0)" ng-click="abrirPopupConfirmacionEliminacion(eliminar,solicitud)" data-rel="tooltip"
                                     tooltip-placement="top" uib-tooltip="Eliminar">
                                     <i class="ace-icon fa fa-trash-o bigger-130"></i>
                                 </a>
@@ -242,7 +242,7 @@
     </div>
 </div>
 
-<div id="dialog-panel-operaciones" class="modal wizard-posicion" style="overflow-y: hidden;">
+<div id="dialog-panel-operaciones" class="modal wizard-posicion" style="overflow-y: scroll;">
     <div class="container-fluid">
         <div class="row">
             <div class="col-xs-12">
@@ -354,7 +354,7 @@
                                                     </div>
                                                     <div class="col-sm-2">
                                                             <div class="">
-                                                                <a   type="button" ng-click="calcularTotalViveres()" class="pos-rel pull-right" data-rel="tooltip" tooltip-placement="top" uib-tooltip="Ver total viveres solicitados">
+                                                                <a   type="button" ng-click="calcularTotalViveres(solicitud)" class="pos-rel pull-right" data-rel="tooltip" tooltip-placement="top" uib-tooltip="Ver total viveres solicitados">
                                                                    <img class="button-style btn-panel {{color.stylebutton}} btn-block btn-minier text-cut" style="width:80%;height:80%" class="pos-rel pull-right" src="img/icono-viveres-2.png">
                                                                 </a>
                                                             </div>
@@ -462,11 +462,11 @@
                                                                                             {{ingrediente.cantidad_ideal * productoSeleccionado.cantidad | number:2}}
                                                                                         </td>
                                                                                         <td style="min-width: 85px">
-                                                                                            <input ng-update-hidden ng-disabled="solicitud.ver!==undefined" style="width:100%" type="number" step="0.1" ng-model="ingrediente.total">
+                                                                                            <input ng-update-hidden ng-disabled="solicitud.ver!==undefined" style="width:100%" type="number" step="0.01" ng-model="ingrediente.total" >
                                                                                         </td>
                                                                                         <td>
                                                                                             <div class="col-sm-12">
-                                                                                                <!-- <button type="button" ng-click="disminuirDetalleVenta(detalleVenta)" class="button-style btn red-style-button btn-xs">
+                                                                                                <!-- <button type="button" ng-click="disminuirDetalleVenta(detalleVenta)" class="button-style btn red-style-button btn-xs" pattern="^\d+(?:\.\d{1,2})?$">
                                                                                                                 <i class="ace-icon fa fa-minus bigger-100"></i>
                                                                                                             </button> -->
                                                                                                 <button type="button" ng-disabled="solicitud.ver!==undefined" ng-click="eliminarIngrediente(ingrediente)" class="button-style btn red-style-button btn-xs">
@@ -516,7 +516,8 @@
                                                                                 {{$index+1}}
                                                                             </td>
                                                                             <td style="min-width: 85px; max-width:100px">
-                                                                                <input ng-update-hidden ng-disabled="solicitud.ver!==undefined" style="width:100%" type="number" step="1" ng-model="detalleVenta.cantidad" ng-change="actualizarTotalReal(detalleVenta)">
+                                                                                <input ng-disabled="solicitud.ver!==undefined" ng-if="detalleVenta.productoSolicitado.usar_inventario" style="width:100%" type="number" step="1" ng-model="detalleVenta.cantidad" max="{{detalleVenta.inventario_disponible}}" ng-change="actualizarTotalReal(detalleVenta)">
+                                                                                <input ng-disabled="solicitud.ver!==undefined" ng-if="!detalleVenta.productoSolicitado.usar_inventario" style="width:100%" type="number" step="1" ng-model="detalleVenta.cantidad" g-change="actualizarTotalReal(detalleVenta)">
                                                                             </td>
                                                                             <td>
                                                                                 {{(detalleVenta.producto!==undefined)?detalleVenta.producto.nombre:detalleVenta.productoSolicitado.nombre}}
@@ -615,7 +616,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr ng-repeat="ingrediente in totalViveresSolicitados">
+                    <tr ng-repeat="ingrediente in totalViveresSolicitados.productos">
                         <td>
                             {{$index+1}}
                         </td>

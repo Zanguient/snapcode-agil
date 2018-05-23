@@ -225,7 +225,11 @@ angular.module('agil', ['ngRoute', 'agil.controladores',
             .when('/transacciones', {
                 controller:'controladorTransacciones',
                 templateUrl:'templates/agil/transacciones.html'
-            }) 
+            })
+            .when('/pedidos', {
+                controller:'ControladorPedidos',
+                templateUrl:'templates/agil/pedidos.html'
+            })
         .otherwise({
           redirectTo:'/'
         });

@@ -35,8 +35,8 @@ angular.module('agil.servicios')
             BusquedaProductosOperaciones.query({ id_empresa: idEmpresa, id_almacen: idAlmacen, id_usuario: id_usuario }, function (entidades) {
                 delay.resolve(entidades);
             }, function (error) {
-                    delay.reject(error);
-                });
+                delay.reject(error);
+            });
             return delay.promise;
         };
         return res;
@@ -92,15 +92,50 @@ angular.module('agil.servicios')
         return res;
     }])
 
-// .factory('EliminarSolicitudesReposicion', ['EliminarSolicitudReposicion', '$q', function (Eliminar, $q) {
-//     var res = function (idSolicitud) {
-//         var delay = $q.defer();
-//         Eliminar.get({id_solicitud:idSolicitud}, function (entidades) {
-//             delay.resolve(entidades);
-//         }, function (error) {
-//             delay.reject(error);
-//         });
-//         return delay.promise;
-//     };
-//     return res;
-// }])
+    .factory('CerrarSolicitudViveres', function ($resource) {
+        return $resource(restServer + "productos-operaciones/empresa/:id_empresa/cerrar", null,
+            {
+                'update': { method: 'PUT' }
+            });
+    })
+
+    .factory('CerrarSolicitud', ['CerrarSolicitudViveres', '$q', function (CerrarSolicitudViveres, $q) {
+        var res = function (solicitud, id_empresa) {
+            var delay = $q.defer();
+            CerrarSolicitudViveres.save({ id_empresa: id_empresa }, solicitud, function (entidades) {
+                delay.resolve(entidades);
+            }, function (error) {
+                delay.reject(error);
+            });
+            return delay.promise;
+        };
+        return res;
+    }])
+
+    .factory('SolicitudReposicionEmpresa', function ($resource) {
+        return $resource(restServer + "solicitud/empresa/:id_empresa", {},
+            {
+                'update': { method: 'PUT' }
+            });
+    })
+    .factory('Solicitud', ['SolicitudReposicionEmpresa', '$q', function (SolicitudReposicionEmpresa, $q) {
+        var res = function (solicitud, id_empresa, actualizar) {
+            var delay = $q.defer();
+            if (actualizar) {
+                SolicitudReposicionEmpresa.update({id_empresa: id_empresa}, solicitud, function (entidades) {
+                    delay.resolve(entidades);
+                }, function (error) {
+                    delay.reject(error);
+                });
+                return delay.promise;
+            } else {
+                SolicitudReposicionEmpresa.save({ id_empresa: id_empresa }, solicitud, function (entidades) {
+                    delay.resolve(entidades);
+                }, function (error) {
+                    delay.reject(error);
+                });
+                return delay.promise;
+            }
+        };
+        return res;
+    }])

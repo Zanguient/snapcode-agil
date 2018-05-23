@@ -52,7 +52,7 @@ angular.module('agil.controladores')
             prom.then(function (res) {
                 $scope.empleados = res.personal
                 $scope.obtenerTransacciones()
-            }).catch(function () {
+            }).catch(function (err) {
                 var msg = (err.stack !== undefined && err.stack !== null) ? err.stack : (err.message !== undefined && err.message !== null) ? err.message : 'Se perdió la conexión.'
                 $scope.mostrarMensaje(msg)
             })

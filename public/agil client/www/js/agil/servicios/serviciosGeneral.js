@@ -2665,8 +2665,8 @@ angular.module('agil.servicios')
 					columns.push(detalle_despacho.producto.nombre)
 					columns.push(detalle_despacho.cantidad)
 					columns.push(detalle_despacho.cantidad_despacho)
-					columns.push(detalle_despacho.producto.precio_unitario)
-					var total = detalle_despacho.producto.precio_unitario * detalle_despacho.cantidad_despacho
+					columns.push(detalle_despacho.precio_unitario)
+					var total = detalle_despacho.precio_unitario * detalle_despacho.cantidad_despacho
 					columns.push(total)
 					
 					var costo = detalle_despacho.transportista.costo_transporte * detalle_despacho.cantidad_despacho

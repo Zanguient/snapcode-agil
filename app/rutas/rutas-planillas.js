@@ -1,4 +1,4 @@
-module.exports = function (router, sequelize, Sequelize, Usuario, RRHHParametros, Persona, Empresa, Sucursal, Clase, Diccionario, Tipo, RrhhEmpleadoFicha, RrhhEmpleadoCargo, MedicoPaciente, RrhhEmpleadoDiscapacidad, RrhhEmpleadoFichaOtrosSeguros, RrhhEmpleadoFichaFamiliar, RrhhEmpleadoHorasExtra, RRHHPlanillaSueldos, RRHHDetallePlanillaSueldos, RrhhEmpleadoPrestamo, decodeBase64Image, fs) {
+module.exports = function (router, sequelize, Sequelize, Usuario, RRHHParametros, Persona, Empresa, Sucursal, Clase, Diccionario, Tipo, RrhhEmpleadoFicha, RrhhEmpleadoCargo, MedicoPaciente, RrhhEmpleadoDiscapacidad, RrhhEmpleadoFichaOtrosSeguros, RrhhEmpleadoFichaFamiliar, RrhhEmpleadoHorasExtra, RRHHPlanillaSueldos, RRHHDetallePlanillaSueldos, RrhhEmpleadoPrestamo, RRHHPlanillaRcIva, RRHHDetallePlanillaRcIva, RrhhAnticipo, decodeBase64Image, fs) {
 
     router.route('/rrhh-parametros/:id_empresa')
     .get(function(req, res) {
@@ -94,7 +94,9 @@ module.exports = function (router, sequelize, Sequelize, Usuario, RRHHParametros
                     gl_persona.nombre_completo as 'nombre_completo', gl_persona.apellido_paterno as 'apellido_paterno', gl_persona.apellido_materno as 'apellido_materno',\
                     estado.nombre as 'estado', gl_persona.nombres as 'nombres',gl_persona.direccion_zona as 'direccion',gl_persona.imagen as 'imagen', agil_medico_paciente.eliminado as 'activo', gl_persona.ci as 'ci', gl_persona.genero as 'id_genero', \
                     gl_persona.telefono as 'telefono', gl_persona.telefono_movil as 'telefono_movil', gl_persona.fecha_nacimiento as 'fecha_nacimiento'\
-                    ,campamento.nombre as 'campamento',fichas.fecha_inicio as 'fecha_inicio',fichas.fecha_expiracion as 'fecha_expiracion',fichas.haber_basico as 'haber_basico', fichas.matricula_seguro as 'matricula_seguro',fichas.id as 'id_ficha',contrato.nombre as 'tipoContrato', GROUP_CONCAT(`cargos.cargo`.nombre order by `cargos.cargo`.id) cargos from agil_medico_paciente  JOIN agil_rrhh_empleado_ficha AS fichas ON fichas.id=( select agil_rrhh_empleado_ficha.id from agil_rrhh_empleado_ficha where  agil_rrhh_empleado_ficha.id_empleado =  agil_medico_paciente.id order by id desc limit 1) left JOIN gl_clase AS contrato ON fichas.tipo_contrato = contrato.id left JOIN agil_rrhh_empleado_cargo AS cargos ON fichas.id = cargos.ficha \
+                    ,campamento.nombre as 'campamento',fichas.fecha_inicio as 'fecha_inicio',fichas.fecha_expiracion as 'fecha_expiracion',fichas.haber_basico as 'haber_basico', fichas.matricula_seguro as 'matricula_seguro',fichas.id as 'id_ficha',contrato.nombre as 'tipoContrato', rrhhDetallePlanillaRcIva.nuevo_saldo AS 'nuevo_saldo', rrhhDetallePlanillaRcIva.rc_iva_mes AS 'rc_iva_mes', GROUP_CONCAT(`cargos.cargo`.nombre order by `cargos.cargo`.id) cargos from agil_medico_paciente  JOIN agil_rrhh_empleado_ficha AS fichas ON fichas.id=( select agil_rrhh_empleado_ficha.id from agil_rrhh_empleado_ficha where  agil_rrhh_empleado_ficha.id_empleado =  agil_medico_paciente.id order by id desc limit 1) \
+                    LEFT JOIN agil_rrhh_detalle_planilla_rc_iva AS rrhhDetallePlanillaRcIva ON rrhhDetallePlanillaRcIva.id = ( SELECT agil_rrhh_detalle_planilla_rc_iva.id FROM agil_rrhh_detalle_planilla_rc_iva WHERE agil_rrhh_detalle_planilla_rc_iva.ficha = fichas.id ORDER BY id DESC LIMIT 1)\
+                     left JOIN gl_clase AS contrato ON fichas.tipo_contrato = contrato.id left JOIN agil_rrhh_empleado_cargo AS cargos ON fichas.id = cargos.ficha \
                     LEFT OUTER JOIN gl_clase AS `cargos.cargo` ON cargos.cargo = `cargos.cargo`.id  left JOIN gl_persona ON (agil_medico_paciente.persona = gl_persona.id) left JOIN gl_clase as extencion ON agil_medico_paciente.extension = extencion.id left JOIN gl_clase as estado ON gl_persona.estado_civil = estado.id\
                     left JOIN gl_clase as campamento ON agil_medico_paciente.campo = campamento.id where agil_medico_paciente.empresa = "+ req.params.id_empresa + " AND agil_medico_paciente.es_empleado = true GROUP BY agil_medico_paciente.id", { type: sequelize.QueryTypes.SELECT })
             .then(function (pacientes) {
@@ -215,6 +217,10 @@ module.exports = function (router, sequelize, Sequelize, Usuario, RRHHParametros
                     totalHoras = 0;
                 }
 
+                // =========================================================================================================================
+                // ==== hacer filtro del modelo recursos humanos anticipos para obtener el ultimo anticipo del mes del empleado :)  ============
+                // =========================================================================================================================
+
                 RrhhEmpleadoPrestamo.findAll({
 					where:{id_empleado: req.params.id_empleado, cuota:{$gt: 0}}
 				}).then( function (prestamos) {
@@ -239,7 +245,18 @@ module.exports = function (router, sequelize, Sequelize, Usuario, RRHHParametros
 	                    totalCuotas = 0;
 	                }
 	                // console.log("los totales prestamos =====================", totalCuotas);
-	                res.json({totalHoras: totalHoras, totalCuotas: totalCuotas});
+	                // res.json({totalHoras: totalHoras, totalCuotas: totalCuotas});
+	                // query anticipo =============
+	                RrhhAnticipo.findOne({
+	                	where:{id_empleado: req.params.id_empleado, eliminado: false, fecha: {$between: [primerDia,ultimoDia]}},
+	                	order: [ [ 'createdAt', 'DESC' ]]
+	                }).then(function (anticipo) {
+	                	var totalanticipo = 0;
+	                	if (anticipo) {
+	                		totalanticipo = anticipo.total;
+	                	}
+	                	res.json({totalHoras: totalHoras, totalCuotas: totalCuotas, totalAnticipo: totalanticipo});
+	                });
 
 				});
 
@@ -355,5 +372,97 @@ module.exports = function (router, sequelize, Sequelize, Usuario, RRHHParametros
 			
 		});
     }
+
+
+
+    router.route('/rrhh-planilla-rc-iva/:id_empresa')
+    	.post(function(req, res) {
+    		var planillas = req.body;
+    		console.log('los datos recibidos', planillas);
+	    	RRHHPlanillaRcIva.create({
+			    id_empresa: req.body.id_empresa,
+				mes:req.body.mes,
+				anio:req.body.gestion,
+				total_empleados:req.body.totalEmpleados,
+				total: req.body.importeLiquidoPagable,
+				neto_imponible:req.body.netoImponible,
+				dos_smn:req.body.sumaDos_SMN,
+				diferencia:req.body.sumaDiferencia,
+				rc_iva:req.body.sumarcIva13,
+				dos_smn13:req.body.sumaDos_SMN13,
+				f110:req.body.sumaF110,
+				rc_iva_fisico:req.body.sumaRcIvaFisco,
+				saldo_dependiente:req.body.sumaSaldoDependiente,
+				saldo_anterior:req.body.sumaSaldoAnterior,
+				actualizacion:req.body.sumaActualizacion,
+				saldo_actualizado:req.body.sumaSaldoActualizado,
+				saldo_total:req.body.sumaSaldoTotal,
+				saldo_utilizado:req.body.sumaSaldoUtilizado,
+				rc_iva_mes:req.body.sumaRcIvaMes,
+				nuevo_saldo:req.body.sumaSaldoNuevo
+			}).then(function(planillaCreado){
+				// console.log("planillaCreado =============== ", planillaCreado);
+				
+				// for para guardar los detalles de las planillas ==================
+				planillas.RecursosHumanosEmpleados.forEach(function (detallePlanilla, index, array) {
+					CrearDetallePlanillaRcIva(planillaCreado, detallePlanilla);
+				});
+
+				res.json(planillaCreado);
+			});
+    	});
+
+    	function CrearDetallePlanillaRcIva(planilla, detallePlanilla) {
+	    	RRHHDetallePlanillaRcIva.create({
+				planilla:planilla.id,
+				ficha:detallePlanilla.id_ficha,
+				neto_imponible:detallePlanilla.netoImponible,
+				dos_smn:detallePlanilla.dos_SMN,
+				diferencia:detallePlanilla.diferencia,
+				rc_iva:detallePlanilla.rcIva13,
+				dos_smn13:detallePlanilla.dos_SMN13,
+				f110:detallePlanilla.f110,
+				rc_iva_fisico:detallePlanilla.rcIvaFisco,
+				saldo_dependiente:detallePlanilla.saldoDependiente,
+				saldo_anterior:detallePlanilla.saldoAnterior,
+				actualizacion:detallePlanilla.actualizacion,
+				saldo_actualizado:detallePlanilla.saldoActualizado,
+				saldo_total:detallePlanilla.saldoTotal,
+				saldo_utilizado:detallePlanilla.saldoTotal,
+				rc_iva_mes:detallePlanilla.rcIvaMes,
+				nuevo_saldo:detallePlanilla.saldoNuevo
+			}).then(function (detalles) {
+				
+			});
+	    };
+	    //  =====  api para obtener  planilla rc iva del mes ========
+	    router.route('/rrhh-planilla-rc-iva/valid/:id_empresa/gestion/:gestion/mes/:mes')
+		.get(function (req, res) {
+    		RRHHPlanillaRcIva.findAll({
+            	where: {
+                    id_empresa:req.params.id_empresa, 
+                    anio:req.params.gestion,
+                    mes:req.params.mes
+                }
+            }).then(function (planillas) {
+            	res.json({ planillas: planillas });
+            });
+    	});
+
+    	router.route('/rrhh-planilla-rc-iva/:id_empresa/gestion/:gestion/mes/:mes')
+		.get(function (req, res) {
+    		RRHHPlanillaRcIva.findAll({
+            	where: {
+                    id_empresa:req.params.id_empresa, 
+                    anio:req.params.gestion,
+                    mes:req.params.mes
+                },
+                include: [
+                	{ model: RRHHDetallePlanillaRcIva, as: 'rrhhPlanillaRcIva' }
+                ]
+            }).then(function (planillas) {
+            	res.json({ planillas: planillas });
+            });
+    	});
 
 }

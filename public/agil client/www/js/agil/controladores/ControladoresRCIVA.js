@@ -1,6 +1,6 @@
 angular.module('agil.controladores')
 
-.controller('ControladoresRCIVA', function($scope,$localStorage,$location,$templateCache,$route,blockUI, RecursosHumanosEmpleados, RecursosHumanosEmpleadosHorasExtras, ClasesTipo, Parametros, ObtenerCambioMoneda){
+.controller('ControladoresRCIVA', function($scope,$localStorage,$location,$templateCache,$route,blockUI, RecursosHumanosEmpleados, RecursosHumanosEmpleadosHorasExtras, ClasesTipo, Parametros, ObtenerCambioMoneda, RecursosHumanosPlanillaRCIVA, RRHHlistaPlanillaRCIVA, ListaRRHHPlanillaRCIVA){
 	$scope.$on('$viewContentLoaded', function () {
         
         $scope.idModalNuevoPlanillaRCIVA = 'dialog-nueva-planilla-rc-iva';
@@ -36,7 +36,25 @@ angular.module('agil.controladores')
 
     $scope.obtenerGestiones();
 
+    $scope.obtenerPlanillaRcIva=function(planillaRcIva) {
+        console.log("la cabezeraaa ", planillaRcIva);
+        var promRcIva=ListaRRHHPlanillaRCIVA($scope.usuario.id_empresa, planillaRcIva.gestion, planillaRcIva.mes);
+        promRcIva.then(function(planillaR){
+            console.log("la cabezeraaa ", planillaR);
+       
+            $scope.planillasRcIva=planillaR.planillas;
+          
+        });
+    }
+
+    $scope.nuevaPlanillaRcIva = function () {
+        $scope.planilla=new RecursosHumanosPlanillaRCIVA({id_empresa:$scope.usuario.id_empresa});
+        $scope.sumarTotales($scope.planilla);
+    }
+
+
     $scope.abrirDialogNuevoPlanillaRCIVA= function () {
+        $scope.nuevaPlanillaRcIva();
         $scope.abrirPopup($scope.idModalNuevoPlanillaRCIVA);
     }
     $scope.cerrarDialogNuevoPlanillaRCIVA=function () {
@@ -60,104 +78,117 @@ angular.module('agil.controladores')
         // $scope.ufvs = {}
 
         // // var dat = new Date($scope.convertirFecha(fechaUFVActual));
-        Promise.all([ObtenerCambioMoneda(fechaUFVActual), ObtenerCambioMoneda(fechaUFVAnterior)]).then( function(dato) {
+        Promise.all([ObtenerCambioMoneda(fechaUFVActual), ObtenerCambioMoneda(fechaUFVAnterior), RRHHlistaPlanillaRCIVA($scope.usuario.id_empresa, planilla.gestion, planilla.mes)]).then( function(dato) {
             // $scope.ufvs.ufvActual = (data[0].monedaCambio==null)?0:data[0].monedaCambio.ufv; 
             // $scope.ufvs.ufvAnterior =  (data[1].monedaCambio==null)?0:data[1].monedaCambio.ufv; 
+            console.log("del mel planillaaaaaaaaaaaasss ", dato[2].planillas.length);
             
             $scope.ufvActual = (dato[0].monedaCambio==null)?0:dato[0].monedaCambio.ufv;
             console.log("$scope.ufvActual ==== ", $scope.ufvActual);
             $scope.ufvAnterior = (dato[1].monedaCambio==null)?0:dato[1].monedaCambio.ufv; 
             var msg = 'Venta registrada exitosamente!';
 
-            if ($scope.ufvActual > 0 && $scope.ufvAnterior > 0) {
-                var promesa = RecursosHumanosEmpleados($scope.usuario.id_empresa);
-                promesa.then(function (dato) {
-                    planilla.RecursosHumanosEmpleados = dato.empleados;
-                    
-                    planilla.RecursosHumanosEmpleados.forEach(function (empleado) {
+            if (dato[2].planillas.length == 0) {
+
+                if ($scope.ufvActual > 0 && $scope.ufvAnterior > 0) {
+                    var promesa = RecursosHumanosEmpleados($scope.usuario.id_empresa);
+                    promesa.then(function (dato) {
+                        planilla.RecursosHumanosEmpleados = dato.empleados;
                         
-                        promesa = RecursosHumanosEmpleadosHorasExtras(empleado.id_ficha, planilla.gestion, planilla.mes.split("-")[0], empleado.id);
-                        promesa.then(function (dato) {
-                            empleado.sueldoBasico = empleado.haber_basico;
-                            $scope.antiguedad = calcAge(empleado.fecha_inicio); // == sacar años de antiguedad ==================
-                            $scope.bonoFrontera = 0; // == sacar bono frontera ==================
-                            $scope.otrosBonos = 0; // == sacar otros bonos ==================
-
-                            empleado.horasExtras = dato.totalHoras;
-                            empleado.totalHorasExtras = round((empleado.sueldoBasico/30/8*empleado.horasExtras)*2, 2);
-                            empleado.recargoNocturno= round((empleado.sueldoBasico/30/8*empleado.horasExtras)*1.5, 2);
-                            empleado.bonoAntiguedad = $scope.calcularBonoAntiguedad($scope.antiguedad);
-                            empleado.bonoFrontera = $scope.bonoFrontera;
-                            empleado.otrosBonos = $scope.otrosBonos;
-                            empleado.totalGanado = empleado.sueldoBasico+empleado.totalHorasExtras+empleado.recargoNocturno+empleado.bonoAntiguedad+empleado.bonoFrontera+empleado.otrosBonos;
-                            empleado.afp = round(empleado.totalGanado * 12.71/100, 2);
-
-                            empleado.montoDeclarado = 0;
-                            empleado.muneroFacturas = 0;
-                            empleado.ivaCF = 0;
-
-                            empleado.netoImponible = round(empleado.totalGanado - empleado.afp, 2);
-                            empleado.dos_SMN = $scope.parametros.salario_minimo * 2;
-
-                            empleado.diferencia = 0;
-                            if (empleado.netoImponible > empleado.dos_SMN) {
-                                empleado.diferencia = round(empleado.netoImponible - empleado.dos_SMN, 2);
-                            }
-
-                            empleado.rcIva13 = round(empleado.diferencia * 0.13, 2);
-                            empleado.dos_SMN13 = ($scope.parametros.salario_minimo * 2)*0.13;
-                            empleado.f110 = empleado.ivaCF;
-                            var calculo = empleado.rcIva13 - empleado.dos_SMN13;
-                            var calculo2 = calculo-empleado.f110;
-
-                            empleado.rcIvaFisco = 0;
-                            if (calculo2>=0) {
-                                empleado.rcIvaFisco = round(calculo2, 2);
-                            }
-
-                            if (calculo2>=0) {
-                                empleado.saldoDependiente = 0;
-                            }else{
-                                empleado.saldoDependiente = round(empleado.f110-calculo, 2);
-                            }
-                            // ==== obtener de la casilla nuevo saldo del mes anterior de planilla rc-iva)
-                            empleado.saldoAnterior = 10;
-
-                            empleado.actualizacion = round((empleado.saldoAnterior/$scope.ufvAnterior*$scope.ufvActual)-empleado.saldoAnterior, 2);
-                            empleado.saldoActualizado = empleado.saldoAnterior + empleado.actualizacion;
-                            empleado.saldoTotal = round(empleado.saldoDependiente + empleado.saldoActualizado, 2);
+                        planilla.RecursosHumanosEmpleados.forEach(function (empleado) {
                             
-                            var calculo3 = empleado.rcIvaFisco-empleado.saldoActualizado;
-                            if ( calculo3 > 0) {
-                                empleado.saldoUtilizado =  round(empleado.rcIvaFisco - calculo3, 2);
-                            }else{
-                                empleado.saldoUtilizado =  empleado.rcIvaFisco;
-                            }
+                            promesa = RecursosHumanosEmpleadosHorasExtras(empleado.id_ficha, planilla.gestion, planilla.mes.split("-")[0], empleado.id);
+                            promesa.then(function (dato) {
+                                empleado.sueldoBasico = empleado.haber_basico;
+                                $scope.antiguedad = calcAge(empleado.fecha_inicio); // == sacar años de antiguedad ==================
+                                $scope.bonoFrontera = 0; // == sacar bono frontera ==================
+                                $scope.otrosBonos = 0; // == sacar otros bonos ==================
 
-                            empleado.rcIvaMes = 0;
-                            if (empleado.rcIvaFisco>empleado.saldoTotal) {
-                                empleado.rcIvaMes = round(empleado.rcIvaFisco-empleado.saldoTotal, 2);
-                            }
+                                empleado.horasExtras = dato.totalHoras;
+                                empleado.totalHorasExtras = round((empleado.sueldoBasico/30/8*empleado.horasExtras)*2, 2);
+                                empleado.recargoNocturno= round((empleado.sueldoBasico/30/8*empleado.horasExtras)*1.5, 2);
+                                empleado.bonoAntiguedad = $scope.calcularBonoAntiguedad($scope.antiguedad);
+                                empleado.bonoFrontera = $scope.bonoFrontera;
+                                empleado.otrosBonos = $scope.otrosBonos;
+                                empleado.totalGanado = empleado.sueldoBasico+empleado.totalHorasExtras+empleado.recargoNocturno+empleado.bonoAntiguedad+empleado.bonoFrontera+empleado.otrosBonos;
+                                empleado.afp = round(empleado.totalGanado * 12.71/100, 2);
 
-                            if (empleado.rcIvaMes>0) {
-                                empleado.saldoNuevo = 0;
-                            }else{
-                                 empleado.saldoNuevo = empleado.saldoTotal-empleado.rcIvaFisco;
-                            }
-                            $scope.sumarTotales(planilla);
-                        });       
+                                empleado.montoDeclarado = 0;
+                                empleado.muneroFacturas = 0;
+                                empleado.ivaCF = 0;
 
+                                empleado.netoImponible = round(empleado.totalGanado - empleado.afp, 2);
+                                empleado.dos_SMN = $scope.parametros.salario_minimo * 2;
+
+                                empleado.diferencia = 0;
+                                if (empleado.netoImponible > empleado.dos_SMN) {
+                                    empleado.diferencia = round(empleado.netoImponible - empleado.dos_SMN, 2);
+                                }
+
+                                empleado.rcIva13 = round(empleado.diferencia * 0.13, 2);
+                                empleado.dos_SMN13 = ($scope.parametros.salario_minimo * 2)*0.13;
+                                empleado.f110 = empleado.ivaCF;
+                                var calculo = empleado.rcIva13 - empleado.dos_SMN13;
+                                var calculo2 = calculo-empleado.f110;
+
+                                empleado.rcIvaFisco = 0;
+                                if (calculo2>=0) {
+                                    empleado.rcIvaFisco = round(calculo2, 2);
+                                }
+
+                                if (calculo2>=0) {
+                                    empleado.saldoDependiente = 0;
+                                }else{
+                                    empleado.saldoDependiente = round(empleado.f110-calculo, 2);
+                                }
+                                // ==== obtener de la casilla nuevo saldo del mes anterior de planilla rc-iva)
+                                if (empleado.nuevo_saldo == null){
+                                    empleado.nuevo_saldo = 0;
+                                } 
+                                
+                                empleado.saldoAnterior = empleado.nuevo_saldo;
+
+                                empleado.actualizacion = round((empleado.saldoAnterior/$scope.ufvAnterior*$scope.ufvActual)-empleado.saldoAnterior, 2);
+                                empleado.saldoActualizado = empleado.saldoAnterior + empleado.actualizacion;
+                                empleado.saldoTotal = round(empleado.saldoDependiente + empleado.saldoActualizado, 2);
+                                
+                                var calculo3 = empleado.rcIvaFisco-empleado.saldoActualizado;
+                                if ( calculo3 > 0) {
+                                    empleado.saldoUtilizado =  round(empleado.rcIvaFisco - calculo3, 2);
+                                }else{
+                                    empleado.saldoUtilizado =  empleado.rcIvaFisco;
+                                }
+
+                                empleado.rcIvaMes = 0;
+                                if (empleado.rcIvaFisco>empleado.saldoTotal) {
+                                    empleado.rcIvaMes = round(empleado.rcIvaFisco-empleado.saldoTotal, 2);
+                                }
+
+                                if (empleado.rcIvaMes>0) {
+                                    empleado.saldoNuevo = 0;
+                                }else{
+                                     empleado.saldoNuevo = empleado.saldoTotal-empleado.rcIvaFisco;
+                                }
+                                $scope.sumarTotales(planilla);
+                            });       
+
+                        });
+                        
                     });
-                    
-                });
 
+                }else{
+                    
+                    $scope.$apply(function () {
+                        $scope.message = "Falta las UFVs para poder crear nuevas planillas";
+                        $scope.mostrarMensaje($scope.message);
+                    });
+                   
+                }
             }else{
-                
                 $scope.$apply(function () {
-                    $scope.message = "Falta las UFVs para poder crear nuevas planillas";
+                    $scope.message = "Ya se creo planilla para este periodo "+ "'"+planilla.mes.split("-")[1]+"-"+planilla.gestion+"'";
                     $scope.mostrarMensaje($scope.message);
                 });
-               
             }
             blockUI.stop();
             
@@ -292,6 +323,7 @@ angular.module('agil.controladores')
                 $scope.netoImponible=$scope.netoImponible+planilla.RecursosHumanosEmpleados[i].netoImponible;
                 $scope.sumaDos_SMN=$scope.sumaDos_SMN+planilla.RecursosHumanosEmpleados[i].dos_SMN;
                 $scope.sumaDiferencia=$scope.sumaDiferencia+planilla.RecursosHumanosEmpleados[i].diferencia;
+
                 $scope.sumarcIva13=$scope.sumarcIva13+planilla.RecursosHumanosEmpleados[i].rcIva13;
                 $scope.sumaDos_SMN13=$scope.sumaDos_SMN13+planilla.RecursosHumanosEmpleados[i].dos_SMN13;
                 $scope.sumaF110=$scope.sumaF110+planilla.RecursosHumanosEmpleados[i].f110;
@@ -306,21 +338,22 @@ angular.module('agil.controladores')
                 $scope.sumaSaldoNuevo=round($scope.sumaSaldoNuevo+planilla.RecursosHumanosEmpleados[i].saldoNuevo, 2);
             }
         }   
-        // planilla.totalEmpleados = totalEmpleados;
-        // planilla.importeSueldoBasico = $scope.totalSueldoBasico;
-        // planilla.totalHorasExtras = $scope.sumaHorasExtras;
-        // planilla.importeHorasExtras = $scope.sumaTotalHorasExtras;
-        // planilla.importeRecargoNocturno = $scope.sumaRecargoNocturno;
-        // planilla.importeBonoAntiguedad = $scope.sumaBonoAntiguedad;
-        // planilla.importeBonoFrontera = $scope.sumaBonoFrontera;
-        // planilla.importeOtrosBonos = $scope.sumaOtrosBonos;
-        // planilla.importeAFP = $scope.sumaAFP;
-        // planilla.importeRCIVA = $scope.sumaRCIVA; 
-        // planilla.importeAniticipos = $scope.sumaAniticipos;
-        // planilla.importePrestamos = $scope.sumaPrestamos;
-        // planilla.importeTotalDescuento = $scope.sumaTotalDescuento;
-        // planilla.importeTotalGanado = $scope.sumaTotalGanado;    
-        // planilla.importeLiquidoPagable = $scope.sumaLiquidoPagable;
+        planilla.totalEmpleados = totalEmpleados;
+        planilla.netoImponible = $scope.netoImponible;
+        planilla.sumaDos_SMN = $scope.sumaDos_SMN;
+        planilla.sumaDiferencia = $scope.sumaDiferencia;
+        planilla.sumarcIva13 = $scope.sumarcIva13;
+        planilla.sumaDos_SMN13 = $scope.sumaDos_SMN13;
+        planilla.sumaF110 = $scope.sumaF110;
+        planilla.sumaRcIvaFisco = $scope.sumaRcIvaFisco;
+        planilla.sumaSaldoDependiente = $scope.sumaSaldoDependiente;
+        planilla.sumaSaldoAnterior = $scope.sumaSaldoAnterior; 
+        planilla.sumaActualizacion = $scope.sumaActualizacion;
+        planilla.sumaSaldoActualizado = $scope.sumaSaldoActualizado;
+        planilla.sumaSaldoTotal = $scope.sumaSaldoTotal;
+        planilla.sumaSaldoUtilizado = $scope.sumaSaldoUtilizado;    
+        planilla.sumaRcIvaMes = $scope.sumaRcIvaMes;
+        planilla.sumaSaldoNuevo = $scope.sumaSaldoNuevo;
         
     }
 
@@ -551,22 +584,22 @@ angular.module('agil.controladores')
     }
 
     $scope.generar=function(planilla){
-        // planilla.$save(function(dato){
-        //     $scope.nuevaPlanillaSueldos();
-        //     blockUI.stop();
-        //     // console.log('llego ', dato);
-        //     // $scope.cerrarPopPupEdicion();
-        //     $scope.mostrarMensaje('Planilla registrada exitosamente!');
-        //     // $scope.recargarItemsTabla();
-        //     // $scope.imprimirCompra(compra);
-        // },function(error) {
+        planilla.$save(function(dato){
+            $scope.nuevaPlanillaRcIva();
+            blockUI.stop();
+            // console.log('llego ', dato);
+            // $scope.cerrarPopPupEdicion();
+            $scope.mostrarMensaje('Planilla registrada exitosamente!');
+            // $scope.recargarItemsTabla();
+            // $scope.imprimirCompra(compra);
+        },function(error) {
             
-        //     blockUI.stop();
-        //     console.log('fallo ', error);
-        //     // $scope.cerrarPopPupEdicion();
-        //     // $scope.mostrarMensaje('Ocurrio un problema al momento de guardar!');
-        //     // $scope.recargarItemsTabla();
-        // });
+            blockUI.stop();
+            console.log('fallo ', error);
+            // $scope.cerrarPopPupEdicion();
+            // $scope.mostrarMensaje('Ocurrio un problema al momento de guardar!');
+            // $scope.recargarItemsTabla();
+        });
         console.log('los datos  de planilla rc ivaaa ', planilla);
     }
 

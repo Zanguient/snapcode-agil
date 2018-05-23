@@ -70,6 +70,7 @@ angular.module('agil.controladores')
                 console.log('los ides de empleados ==== ', empleado);
                 promesa = RecursosHumanosEmpleadosHorasExtras(empleado.id_ficha, planilla.gestion, planilla.mes.split("-")[0], empleado.id);
                 promesa.then(function (dato) {
+                    console.log("los datos de  los empleados ", dato);
                     empleado.sueldoBasico = empleado.haber_basico;
                     $scope.horasExtras = 8; // == sacar horas extras ==================
                     console.log('ficha fecha inicio ==== ', empleado.fecha_inicio);
@@ -108,10 +109,15 @@ angular.module('agil.controladores')
                     empleado.bonoAntiguedad = $scope.calcularBonoAntiguedad($scope.antiguedad);
                     empleado.bonoFrontera = $scope.bonoFrontera;
                     empleado.otrosBonos = $scope.otrosBonos;
-                    empleado.totalGanado = empleado.sueldoBasico+empleado.totalHorasExtras+empleado.recargoNocturno+empleado.bonoAntiguedad+empleado.bonoFrontera+empleado.otrosBonos;
+                    empleado.totalGanado = round(empleado.sueldoBasico+empleado.totalHorasExtras+empleado.recargoNocturno+empleado.bonoAntiguedad+empleado.bonoFrontera+empleado.otrosBonos, 2);
                     empleado.afp = round(empleado.totalGanado * 12.71/100, 2);
-                    empleado.rc_iva = 0; // sacar de planilla rc-iva
-                    empleado.anticipos = 0; // sacar de planilla anticipos 
+                    if (empleado.rc_iva_mes == null) {
+                        empleado.rc_iva_mes = 0;
+                    }
+                    empleado.rc_iva = empleado.rc_iva_mes; // sacar de planilla rc-iva
+                    // ==== falta rescatar planilla anticipos =================================================0
+                    empleado.anticipos = round(dato.totalAnticipo, 2); // sacar de planilla anticipos 
+                    // =========================================================================================
                     empleado.prestamos = round(dato.totalCuotas, 2); // sacar de recursos humanos 
                     empleado.totalDescuento = round(empleado.afp+empleado.rc_iva+empleado.anticipos+empleado.prestamos, 2);
                     empleado.liquidoPagable = round(empleado.totalGanado - empleado.totalDescuento, 2);

@@ -34,19 +34,31 @@
                         <tr>
                             <td class="no-border-right text-right">PERIODO</td>
                             <td>
-                                <select id="pago" name="pago" ng-model="filtro.tipo_pago" data-placeholder="Elija un tipo de pago" class="form-control"><option value="? undefined:undefined ?"></option>
-                                    <option value="0">ENERO</option>
-                                    <!-- ngRepeat: tipoPago in tiposPago --><option ng-repeat="tipoPago in tiposPago" value="17" class="ng-binding ng-scope">FEBRERO</option><!-- end ngRepeat: tipoPago in tiposPago --><option ng-repeat="tipoPago in tiposPago" value="18" class="ng-binding ng-scope">MARZO</option><!-- end ngRepeat: tipoPago in tiposPago -->
-                                </select>
+                                <select id="pago" name="pago" required ng-model="planillaRcIva.mes" >
+                                    <option value="" ng-show="false"></option>
+                                    <option value="1-ENERO">ENERO</option>
+                                    <option value="2-FEBRERO">FEBRERO</option>
+                                    <option value="3-MARZO">MARZO</option>
+                                    <option value="4-ABRIL">ABRIL</option>
+                                    <option value="5-MAYO">MAYO</option>
+                                    <option value="6-JUNIO">JUNIO</option>
+                                    <option value="7-JULIO">JULIO</option>
+                                    <option value="8-AGOSTO">AGOSTO</option>
+                                    <option value="9-SEPTIEMBRE">SEPTIEMBRE</option>
+                                    <option value="10-OCTUBRE">OCTUBRE</option>
+                                    <option value="11-NOVIEMBRE">NOVIEMBRE</option>
+                                    <option value="12-DICIEMBRE">DICIEMBRE</option>
+                                </select> 
                             </td>
                             <td>
-                                <select id="pago" name="pago" ng-model="filtro.tipo_pago" data-placeholder="Elija un tipo de pago" class="form-control"><option value="? undefined:undefined ?"></option>
-                                    <option value="0">2015</option>
-                                    <!-- ngRepeat: tipoPago in tiposPago --><option ng-repeat="tipoPago in tiposPago" value="17" class="ng-binding ng-scope">2016</option><!-- end ngRepeat: tipoPago in tiposPago --><option ng-repeat="tipoPago in tiposPago" value="18" class="ng-binding ng-scope">2017</option><!-- end ngRepeat: tipoPago in tiposPago -->
+                                 <select required id="gestion" name="gestion"  
+                                    ng-options="gestion.nombre_corto as gestion.nombre for gestion in gestiones | orderBy:'-nombre' track by gestion.id" 
+                                    ng-model="planillaRcIva.gestion">
+                                    <option value="" ng-show="false"></option>
                                 </select>
                             </td>
                             <td colspan="3">
-                                <button type="submit" ng-disabled="formularioFiltroVentas.$invalid" class="btn btn-primary">
+                                <button type="button" ng-click="obtenerPlanillaRcIva(planillaRcIva)" class="btn btn-primary">
 									<i class="ace-icon fa fa-search  align-top bigger-125"></i>
 										Filtrar
 								</button>
@@ -79,7 +91,7 @@
                             <th>Neto Imponible:</th>
                             <th>2 SMN:</th>
                             <th>Diferencia</th>
-                            <th>RC-IVA</th>
+                            <th>RC-IVA 13%</th>
                             <th>13% de 2 SMN</th>
                             <th>F-110</th>
                             <th>RC-IVA Fisco</th>
@@ -89,31 +101,31 @@
                             <th>Saldo Actualizado</th>
                             <th>Saldo Total</th>
                             <th>Saldo Utilizado</th>
-                            <th>RC-IVA</th>
+                            <th>RC-IVA Mes</th>
                             <th>Saldo Nuevo</th>
                             <th class="table__side-rc-iva head-side-rc-iva">Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
+                        <tr ng-repeat="p in planillasRcIva">
                             <td>1</td>
-                            <td>2017</td>
-                            <td>Enero</td>
-                            <td>800000</td>
-                            <td>40000</td>
-                            <td>760000</td>
-                            <td>98800</td>
-                            <td>50000</td>
-                            <td>5200</td>
-                            <td>0</td>
-                            <td>10000</td>
-                            <td>5000</td>
-                            <td>100</td>
-                            <td>5100</td>
-                            <td>10200</td>
-                            <td>5200</td>
-                            <td>0</td>
-                            <td>5000</td>
+                            <td>{{p.anio}}</td>
+                            <td>{{p.mes.split('-')[1]}}</td>
+                            <td>{{p.neto_imponible}}</td>
+                            <td>{{p.dos_smn}}</td>
+                            <td>{{p.diferencia}}</td>
+                            <td>{{p.rc_iva}}</td>
+                            <td>{{p.dos_smn13}}</td>
+                            <td>{{p.f110}}</td>
+                            <td>{{p.rc_iva_fisico}}</td>
+                            <td>{{p.saldo_dependiente}}</td>
+                            <td>{{p.saldo_anterior}}</td>
+                            <td>{{p.actualizacion}}</td>
+                            <td>{{p.saldo_actualizado}}</td>
+                            <td>{{p.saldo_total}}</td>
+                            <td>{{p.saldo_utilizado}}</td>
+                            <td>{{p.rc_iva_mes}}</td>
+                            <td>{{p.nuevo_saldo}}</td>
                             <td class="table__side-rc-iva">
                                 <div class="hidden-sm hidden-xs action-buttons">
                                     <a class="blue" href="#">
@@ -131,79 +143,8 @@
                                 </div>
                             </td>
                         </tr>
-                        <tr>
-                            <td>2</td>
-                            <td>2017</td>
-                            <td>sdfsdfsdfsdf</td>
-                            <td>800000</td>
-                           <td>40000</td>
-                            <td>760000</td>
-                            <td>98800</td>
-                            <td>50000</td>
-                            <td>5200</td>
-                            <td>23232323</td>
-                            <td>10000</td>
-                            <td>5000</td>
-                            <td>100</td>
-                            <td>5100</td>
-                            <td>10200</td>
-                            <td>5200</td>
-                            <td>0</td>
-                            <td>5000</td>
-                            <td class="table__side-rc-iva">
-                               <div class="hidden-sm hidden-xs action-buttons">
-                                    <a class="blue" href="#">
-                                        <i class="ace-icon fa fa-search-plus bigger-130"></i>
-                                    </a>
-                                    <a class="red" href="#">
-                                        <i class="ace-icon fa fa-pencil-square-o bigger-130"></i>
-                                    </a>
-                                     <a class="blue" href="#">
-                                        <i class="ace-icon glyphicon glyphicon-print bigger-130"></i>
-                                    </a>
-                                    <a class="red" href="#">
-                                        <i class="ace-icon fa fa-trash-o bigger-130"></i>
-                                    </a>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>3</td>
-                            <td>2017</td>
-                            <td>Noviembre</td>
-                            <td>800000</td>
-                            <td>40000</td>
-                            <td>760000</td>
-                            <td>98800</td>
-                            <td>50000</td>
-                            <td>5200</td>
-                            <td>0</td>
-                            <td>10000</td>
-                            <td>5000</td>
-                            <td>100</td>
-                            <td>5100</td>
-                            <td>10200</td>
-                            <td>5200</td>
-                            <td>0</td>
-                            <td>5000</td>
-                            <td class="table__side-rc-iva">
-                                <div class="hidden-sm hidden-xs action-buttons">
-
-                                    <a class="blue" href="#">
-                                        <i class="ace-icon fa fa-search-plus bigger-130"></i>
-                                    </a>
-                                    <a class="red" href="#">
-                                        <i class="ace-icon fa fa-pencil-square-o bigger-130"></i>
-                                    </a>
-                                     <a class="blue" href="#">
-                                        <i class="ace-icon glyphicon glyphicon-print bigger-130"></i>
-                                    </a>
-                                    <a class="red" href="#">
-                                        <i class="ace-icon fa fa-trash-o bigger-130"></i>
-                                    </a>
-                                </div>
-                            </td>
-                        </tr>
+                       
+                        
                         <tr>
                             <td></td>
                             <td></td>

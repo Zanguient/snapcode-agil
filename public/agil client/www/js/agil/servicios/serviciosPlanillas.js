@@ -89,3 +89,49 @@ angular.module('agil.servicios')
 	};
     return res;
 }])
+
+.factory('RecursosHumanosPlanillaRCIVA', function($resource) {
+		return $resource(restServer+"rrhh-planilla-rc-iva/:id_empresa", { id_empresa: '@id_empresa' },{
+			'update': { method:'PUT' }
+		});
+})
+
+.factory('RRHHPlanillaRCIVARuta', function($resource) {
+		return $resource(restServer+"rrhh-planilla-rc-iva/valid/:id_empresa/gestion/:gestion/mes/:mes");
+})
+
+.factory('RRHHlistaPlanillaRCIVA', ['RRHHPlanillaRCIVARuta', '$q', function (RRHHPlanillaRCIVARuta, $q) {
+    var res = function(id_empresa, gestion, mes) 
+	{
+		var delay = $q.defer();
+		RRHHPlanillaRCIVARuta.get({id_empresa:id_empresa, gestion:gestion, mes:mes},function(planillas) 
+		{        
+			delay.resolve(planillas);
+		}, function(error) 
+			{
+				delay.reject(error);
+			});
+		return delay.promise;
+	};
+    return res;
+}])
+
+.factory('RutaRRHHPlanillaRCIVA', function($resource) {
+		return $resource(restServer+"rrhh-planilla-rc-iva/:id_empresa/gestion/:gestion/mes/:mes");
+})
+
+.factory('ListaRRHHPlanillaRCIVA', ['RutaRRHHPlanillaRCIVA', '$q', function (RutaRRHHPlanillaRCIVA, $q) {
+    var res = function(id_empresa, gestion, mes) 
+	{
+		var delay = $q.defer();
+		RutaRRHHPlanillaRCIVA.get({id_empresa:id_empresa, gestion:gestion, mes:mes},function(planillas) 
+		{        
+			delay.resolve(planillas);
+		}, function(error) 
+			{
+				delay.reject(error);
+			});
+		return delay.promise;
+	};
+    return res;
+}])
