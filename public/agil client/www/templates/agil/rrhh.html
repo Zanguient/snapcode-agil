@@ -185,12 +185,19 @@
                     </a>
                 </div>
                 Lista de Trabajadores
+                <div class="pos-rel pull-right">
+                    <a class="btn btn-primary btn-xs" ng-disabled="!aplicacion.puede_crear" ng-click="abrirDialogPrerequisitoNuevo()">
+                        <i class="ace-icon fa fa-plus bigger-125"></i>
+
+                    </a>
+                </div>
                 <div class="inline pos-rel pull-right">
                     <!--   <a data-toggle="dropdown" href="javascript:void(0)" class="dropdown-toggle button-columna" aria-expanded="false">
                         <i class="glyphicon  glyphicon-list-alt"></i>
                     </a> -->
                     <div class="col-sm-10" ng-include src="'/templates/gral/fields-viewer.html'"></div>
                 </div>
+
                 <!-- boton importar -->
                 <div class="pos-rel pull-right">
                     <a data-toggle="dropdown" class="btn btn-primary btn-xs dropdown-toggle" id="zoomBtn">
@@ -2988,6 +2995,21 @@
                                     <option value="">Ninguno</option>
                                 </select>
                             </div>
+                            <div class="col-md-2">
+                                <label for="monto">Cargo</label>
+
+                                <div class="input-group">
+                                    <input required type="text" ng-model="beneficio.cargo_imprecion" class="form-control">
+
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="monto">Nombre</label>
+                                <div class="input-group">
+                                    <input required type="text" ng-model="beneficio.empleado_cargo_impresion" class="form-control">
+
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -3229,368 +3251,368 @@
     <!-- ===== fin modal anticipo extraordinario  ====== -->
     <!-- =====  modal  nuevo prestamo ====== -->
     <div id="dialog-nuevo-prestamo" class="modal">
-            <div class="modal-dialog modal-rh-nuevo">
-        <div class="modal-header bg-primary">
-            <h4 class='smaller text-white text-uppercase'>
-                <i class='fa fa-money'></i>
-                <label> &nbsp;Nuevo Préstamo </label>
-            </h4>
+        <div class="modal-dialog modal-rh-nuevo">
+            <div class="modal-header bg-primary">
+                <h4 class='smaller text-white text-uppercase'>
+                    <i class='fa fa-money'></i>
+                    <label> &nbsp;Nuevo Préstamo </label>
+                </h4>
+            </div>
+            <h3 class="text-center">{{empleado.nombre_completo}}</h3>
+            <form ng-submit="GuardarPrestamo(prestamo)">
+                <div class="modal-body">
+                    <div class="form-group row">
+                        <label class="col-sm-6" for="monto">Monto</label>
+                        <div class="input-group col-sm-6">
+                            <input ng-change="calcularCuota(prestamo)" type="number" class="form-control" id="monto" name="monto" placeholder="1000"
+                                ng-model="prestamo.monto" required>
+                            <span class="input-group-addon">Bs</span>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-6" for="interes-pactado">Interes Pactado</label>
+                        <div class="input-group col-sm-6">
+                            <input ng-change="calcularCuota(prestamo)" type="number" class="form-control" id="interes-pactado" ng-model="prestamo.interes_pactado"
+                                name="interes-pactado" value="0" required>
+                            <span class="input-group-addon">%</span>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-6" for="fecha-inicial">Fecha Inicial</label>
+                        <div class="input-group col-sm-6">
+                            <input type="text" data-date-format="dd/mm/yyyy" class="form-control date-picker" autocomplete="off" id="fecha-inicial" ng-update-hidden
+                                ng-model="prestamo.fecha_inicial" name="fecha-inicial" required>
+                            <span class="input-group-addon"></span>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-6" for="plazo">Plazo</label>
+                        <div class="input-group col-sm-6">
+                            <input ng-change="calcularCuota(prestamo)" type="number" class="form-control" id="plazoP" name="plazo" ng-model="prestamo.plazo"
+                                placeholder="6" required>
+                            <span class="input-group-addon">Meses</span>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-6" for="observaciones">Observaciones</label>
+                        <div class="input-group col-sm-6">
+                            <input required type="text" class="form-control" id="observaciones" name="observaciones" ng-model="prestamo.observacion"
+                                placeholder="Desc. Planilla">
+                            <span class="input-group-addon"></span>
+                        </div>
+                    </div>
+
+                </div>
+                <div ng-if="prestamo.cuota">
+                    <p class="text-center">Se pagará en
+                        <strong>{{prestamo.tiempo_plazo_literal}}</strong>, la cuota será de Bs
+                        <strong>{{prestamo.cuota2}}</strong>
+                    </p>
+                </div>
+
+                <div class="modal-footer wizard-actions">
+                    <button class="btn btn-primary btn-sm" type="submit">
+                        <i class="glyphicon glyphicon-floppy-disk"></i>Guardar
+                    </button>
+                    <button type="button" class="btn btn-danger btn-sm" ng-click="cerrarDialogNuevoPrestamo()">
+                        <i class="ace-icon fa fa-times"></i>Cancelar
+                    </button>
+
+                </div>
+            </form>
         </div>
-        <h3 class="text-center">{{empleado.nombre_completo}}</h3>
-        <form ng-submit="GuardarPrestamo(prestamo)">
-            <div class="modal-body">
-                <div class="form-group row">
-                    <label class="col-sm-6" for="monto">Monto</label>
-                    <div class="input-group col-sm-6">
-                        <input ng-change="calcularCuota(prestamo)" type="number" class="form-control" id="monto" name="monto" placeholder="1000"
-                            ng-model="prestamo.monto" required>
-                        <span class="input-group-addon">Bs</span>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label class="col-sm-6" for="interes-pactado">Interes Pactado</label>
-                    <div class="input-group col-sm-6">
-                        <input ng-change="calcularCuota(prestamo)" type="number" class="form-control" id="interes-pactado" ng-model="prestamo.interes_pactado"
-                            name="interes-pactado" value="0" required>
-                        <span class="input-group-addon">%</span>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label class="col-sm-6" for="fecha-inicial">Fecha Inicial</label>
-                    <div class="input-group col-sm-6">
-                        <input type="text" data-date-format="dd/mm/yyyy" class="form-control date-picker" autocomplete="off" id="fecha-inicial" ng-update-hidden
-                            ng-model="prestamo.fecha_inicial" name="fecha-inicial" required>
-                        <span class="input-group-addon"></span>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label class="col-sm-6" for="plazo">Plazo</label>
-                    <div class="input-group col-sm-6">
-                        <input ng-change="calcularCuota(prestamo)" type="number" class="form-control" id="plazoP" name="plazo" ng-model="prestamo.plazo"
-                            placeholder="6" required>
-                        <span class="input-group-addon">Meses</span>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label class="col-sm-6" for="observaciones">Observaciones</label>
-                    <div class="input-group col-sm-6">
-                        <input required type="text" class="form-control" id="observaciones" name="observaciones" ng-model="prestamo.observacion"
-                            placeholder="Desc. Planilla">
-                        <span class="input-group-addon"></span>
-                    </div>
-                </div>
-
-            </div>
-            <div ng-if="prestamo.cuota">
-                <p class="text-center">Se pagará en
-                    <strong>{{prestamo.tiempo_plazo_literal}}</strong>, la cuota será de Bs
-                    <strong>{{prestamo.cuota2}}</strong>
-                </p>
-            </div>
-
-            <div class="modal-footer wizard-actions">
-                <button class="btn btn-primary btn-sm" type="submit">
-                    <i class="glyphicon glyphicon-floppy-disk"></i>Guardar
-                </button>
-                <button type="button" class="btn btn-danger btn-sm" ng-click="cerrarDialogNuevoPrestamo()">
-                    <i class="ace-icon fa fa-times"></i>Cancelar
-                </button>
-
-            </div>
-        </form>
     </div>
-</div>
     <!-- ===== fin modal nuevo prestamo  ====== -->
     <!-- =====  modal  ausencias y  vacaciones ====== -->
     <div id="dialog-ausencias-vacaciones" class="modal">
-            <div class="modal-dialog modal-rh-nuevo">
-        <div class="modal-header ficha">
-            <h4 class="modal-title" id="myModalLabel"> Ausencias y Vacaciones</h4>
-            <h5 class="modal-title">{{empleado.nombre_completo}}</h5>
-        </div>
-        <div class="modal-body">
-            <div>
-                <div id="tab-ausencias-vacaciones">
-                    <ul class="inbox-tabs nav nav-tabs  tab-size-bigger tab-space-1">
-                        <li>
-                            <a id="ausencia-medica" class="blue" href="#tabs-1">
-                                <i class="ace-icon icono-pre2 bigger-200"></i>
-                                AUSENCIA MÉDICA
-                            </a>
-                        </li>
-                        <li>
-                            <a id="vacacion" class="blue" href="#tabs-2">
-                                <i class=" ace-icon icono-vacaciones bigger-200"></i>
-                                VACACIONES
-                            </a>
-                        </li>
-                        <li>
-                            <a id="otra-ausencia" class="blue" href="#tabs-3">
-                                <i class="ace-icon icono-ausencia bigger-200"></i>
-                                OTRAS AUSENCIAS
-                            </a>
-                        </li>
-                    </ul>
+        <div class="modal-dialog modal-rh-nuevo">
+            <div class="modal-header ficha">
+                <h4 class="modal-title" id="myModalLabel"> Ausencias y Vacaciones</h4>
+                <h5 class="modal-title">{{empleado.nombre_completo}}</h5>
+            </div>
+            <div class="modal-body">
+                <div>
+                    <div id="tab-ausencias-vacaciones">
+                        <ul class="inbox-tabs nav nav-tabs  tab-size-bigger tab-space-1">
+                            <li>
+                                <a id="ausencia-medica" class="blue" href="#tabs-1">
+                                    <i class="ace-icon icono-pre2 bigger-200"></i>
+                                    AUSENCIA MÉDICA
+                                </a>
+                            </li>
+                            <li>
+                                <a id="vacacion" class="blue" href="#tabs-2">
+                                    <i class=" ace-icon icono-vacaciones bigger-200"></i>
+                                    VACACIONES
+                                </a>
+                            </li>
+                            <li>
+                                <a id="otra-ausencia" class="blue" href="#tabs-3">
+                                    <i class="ace-icon icono-ausencia bigger-200"></i>
+                                    OTRAS AUSENCIAS
+                                </a>
+                            </li>
+                        </ul>
 
-                    <div id="tabs-1">
-                        <form ng-submit="crearNuevaAusencia(ausencia)">
-                            <div class="row">
-                                <div class="form-group col-sm-6">
-                                    <label for="sexo">Tipo de baja</label>
-                                    <div class="input-group">
-                                        <select required ng-model="ausencia.tipo" class="form-control" ng-change="CalcularDiferenciaDias(ausencia)" ng-options="ausencia as ausencia.nombre for ausencia in tiposAusenciasMedicas.ausencias| filter:{habilitado:true} track by ausencia.id">
-                                            <option value="">--Ninguno--</option>
-                                        </select>
-                                        <span class="input-group-addon glyphicon glyphicon-pencil point-edit green" ng-click="abrirDialogTipoBaja(tiposAusenciasMedicas)"></span>
+                        <div id="tabs-1">
+                            <form ng-submit="crearNuevaAusencia(ausencia)">
+                                <div class="row">
+                                    <div class="form-group col-sm-6">
+                                        <label for="sexo">Tipo de baja</label>
+                                        <div class="input-group">
+                                            <select required ng-model="ausencia.tipo" class="form-control" ng-change="CalcularDiferenciaDias(ausencia)" ng-options="ausencia as ausencia.nombre for ausencia in tiposAusenciasMedicas.ausencias| filter:{habilitado:true} track by ausencia.id">
+                                                <option value="">--Ninguno--</option>
+                                            </select>
+                                            <span class="input-group-addon glyphicon glyphicon-pencil point-edit green" ng-click="abrirDialogTipoBaja(tiposAusenciasMedicas)"></span>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="form-group col-sm-3">
-                                    <label for="afiliado">1era Baja</label>
-                                    <label class="checkbox-align">
-                                        <input id="afiliado" name="afiliado" ng-model="ausencia.primera_baja" ng-change="CalcularDiferenciaDias(ausencia)" class="ace ace-switch ace-switch-5"
-                                            type="checkbox">
-                                        <span class="lbl check-espaniol"></span>
-                                    </label>
-                                </div>
-                                <div class="form-group col-sm-3">
-                                    <label for="">Historial</label>
-                                    <div class="checkbox-align">
-                                        <a href="javascript:void(0)" ng-click="abrirDialogHistorialAusenciaMedica()" class="margin-icons red">
-                                            <span class="fa fa-h-square bigger-250"></span>
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="form-group col-sm-5">
-                                    <label for="nombres">Desde</label>
-                                    <input required type="text" class="form-control date-picker" autocomplete="off" ng-update-hidden ng-model="ausencia.fecha_inicio"
-                                        data-date-format="dd/mm/yyyy" id="inicio-a" name="nombres" placeholder="Desde" ng-change="CalcularDiferenciaDias(ausencia)">
-                                </div>
-                                <div class="form-group col-sm-5">
-                                    <label for="ap-paterno">Hasta</label>
-                                    <input required type="text" class="form-control date-picker" autocomplete="off" ng-update-hidden ng-model="ausencia.fecha_fin"
-                                        data-date-format="dd/mm/yyyy" id="fin-a" name="ap-paterno" placeholder="Hasta" ng-change="CalcularDiferenciaDias(ausencia)">
-                                </div>
-                                <div class="form-group col-sm-2">
-                                    <div>
-                                        <label for="ap-paterno">Dias</label>
-                                        <input required disabled min="1" type="number" class="form-control" id="dias-a" name="ap-paterno" ng-model="ausencia.dias"
-                                            placeholder="Dias">
-                                    </div>
-                                    <div ng-if="ausencia.primera_baja">
-                                        <label>dias reales :
-                                            <b>{{ausencia.dias_reales}}</b>
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="form-group col-sm-12">
-                                    <label for="ap-materno">Diagnostico</label>
-                                    <textarea class="form-control" id="form-field-8-d" ng-model="ausencia.diagnostico" placeholder="Diagnostico"></textarea>
-                                </div>
-                                <div class="form-group col-sm-12">
-                                    <label for="ap-materno">Observación</label>
-                                    <textarea class="form-control" id="form-field-8-o" ng-model="ausencia.observacion" placeholder="Observación"></textarea>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-sm-12 wizard-actions">
-                                    <button ng-disabled="!aplicacion.puede_crear" class="btn btn-primary btn-sm" type="submit">
-                                        <i class="glyphicon glyphicon-floppy-disk"></i>Guardar
-                                    </button>
-
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-
-                    <div id="tabs-2">
-                        <form ng-submit="crearNuevaVacacion(vacacion)">
-                            <div class="row">
-
-                                <div class="form-group col-sm-2">
-                                    <label for="">Feriados</label>
-                                    <a href="javascript:void(0)" ng-click="abrirDialogFeriados()" class="checkbox-align green">
-                                        <span class="fa fa-calendar bigger-250"></span>
-                                    </a>
-                                </div>
-                                <div class="form-group col-sm-4">
-                                    <label for="afiliado">Sábado</label>
-                                    <label class="checkbox-align">
-                                        <input id="afiliado" name="afiliado" ng-change="CalcularDiferenciaDiasVacacion(vacacion)" ng-model="vacacion.sabado" class="ace ace-switch ace-switch-5"
-                                            type="checkbox">
-                                        <span class="lbl check-espaniol"></span>
-                                    </label>
-                                </div>
-                                <div class="form-group col-sm-6">
-                                    <label for="">Historial</label>
-                                    <div class="checkbox-align">
-                                        <a href="javascript:void(0)" type="button" ng-click="abrirDialogHitorialVacaciones()" class="margin-icons red" data-rel="tooltip"
-                                            data-placement="top" uib-tooltip="Historial">
-                                            <span class="fa fa-h-square bigger-250"></span>
-                                        </a>
-                                        <a href="javascript:void(0)" type="button" ng-click="abrirDialogDetalleVacaciones()" class="margin-icons red" data-rel="tooltip"
-                                            data-placement="top" uib-tooltip="Historial por Gestion">
-                                            <span class="fa fa-print bigger-250"></span>
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="form-group col-sm-5">
-                                    <div>
-                                        <label for="nombres">Fecha Inicio</label>
-                                        <input required ng-change="CalcularDiferenciaDiasVacacion(vacacion)" type="text" class="form-control date-picker" autocomplete="off"
-                                            ng-update-hidden ng-model="vacacion.fecha_inicio" data-date-format="dd/mm/yyyy" id="nombres"
-                                            name="nombres" placeholder="Desde">
-                                    </div>
-                                    <div>
+                                    <div class="form-group col-sm-3">
+                                        <label for="afiliado">1era Baja</label>
                                         <label class="checkbox-align">
-                                            <input class="ace ace-switch ace-switch-5 big-switch" ng-change="CalcularDiferenciaDiasVacacion(vacacion)" ng-model="vacacion.inicio_tipo"
+                                            <input id="afiliado" name="afiliado" ng-model="ausencia.primera_baja" ng-change="CalcularDiferenciaDias(ausencia)" class="ace ace-switch ace-switch-5"
                                                 type="checkbox">
-                                            <span class="lbl" data-lbl="DÍA&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1/2 DÍA"></span>
+                                            <span class="lbl check-espaniol"></span>
                                         </label>
                                     </div>
-                                </div>
-                                <div class="form-group col-sm-5">
-                                    <div>
-                                        <label for="ap-paterno">Fecha Final</label>
-                                        <input required ng-change="CalcularDiferenciaDiasVacacion(vacacion)" type="text" class="form-control date-picker" autocomplete="off"
-                                            ng-update-hidden ng-model="vacacion.fecha_fin" data-date-format="dd/mm/yyyy" id="ap-paterno"
-                                            name="ap-paterno" placeholder="Hasta">
-                                    </div>
-                                    <div>
-                                        <label class="checkbox-align">
-                                            <input class="ace ace-switch ace-switch-5 big-switch" ng-change="CalcularDiferenciaDiasVacacion(vacacion)" ng-model="vacacion.fin_tipo"
-                                                type="checkbox">
-                                            <span class="lbl" data-lbl="DÍA&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1/2 DÍA"></span>
-                                        </label>
+                                    <div class="form-group col-sm-3">
+                                        <label for="">Historial</label>
+                                        <div class="checkbox-align">
+                                            <a href="javascript:void(0)" ng-click="abrirDialogHistorialAusenciaMedica()" class="margin-icons red">
+                                                <span class="fa fa-h-square bigger-250"></span>
+                                            </a>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="form-group col-sm-2">
-                                    <div>
-                                        <label for="ap-paterno">Dias</label>
-                                        <input type="text" required disabled class="form-control" ng-model="vacacion.dias" id="ap-paterno" name="ap-paterno" placeholder="Dias">
+                                <div class="row">
+                                    <div class="form-group col-sm-5">
+                                        <label for="nombres">Desde</label>
+                                        <input required type="text" class="form-control date-picker" autocomplete="off" ng-update-hidden ng-model="ausencia.fecha_inicio"
+                                            data-date-format="dd/mm/yyyy" id="inicio-a" name="nombres" placeholder="Desde" ng-change="CalcularDiferenciaDias(ausencia)">
+                                    </div>
+                                    <div class="form-group col-sm-5">
+                                        <label for="ap-paterno">Hasta</label>
+                                        <input required type="text" class="form-control date-picker" autocomplete="off" ng-update-hidden ng-model="ausencia.fecha_fin"
+                                            data-date-format="dd/mm/yyyy" id="fin-a" name="ap-paterno" placeholder="Hasta" ng-change="CalcularDiferenciaDias(ausencia)">
+                                    </div>
+                                    <div class="form-group col-sm-2">
+                                        <div>
+                                            <label for="ap-paterno">Dias</label>
+                                            <input required disabled min="1" type="number" class="form-control" id="dias-a" name="ap-paterno" ng-model="ausencia.dias"
+                                                placeholder="Dias">
+                                        </div>
+                                        <div ng-if="ausencia.primera_baja">
+                                            <label>dias reales :
+                                                <b>{{ausencia.dias_reales}}</b>
+                                            </label>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="row">
-                                <div class="form-group col-sm-12">
-                                    <label for="ap-materno">Observación </label>
-                                    <label for="" class="pull-right text-muted">Retorno el {{vacacion.fecha_Retorno}}</label>
-                                    <textarea class="form-control" required ng-model="vacacion.observacion" id="form-field-8" placeholder="Observación"></textarea>
+                                <div class="row">
+                                    <div class="form-group col-sm-12">
+                                        <label for="ap-materno">Diagnostico</label>
+                                        <textarea class="form-control" id="form-field-8-d" ng-model="ausencia.diagnostico" placeholder="Diagnostico"></textarea>
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label for="ap-materno">Observación</label>
+                                        <textarea class="form-control" id="form-field-8-o" ng-model="ausencia.observacion" placeholder="Observación"></textarea>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-sm-12 wizard-actions">
-                                    <button ng-disabled="!usarVacacion ||!aplicacion.puede_crear" class="btn btn-primary btn-sm" type="submit">
-                                        <i class="glyphicon glyphicon-floppy-disk"></i>Guardar
-                                    </button>
+                                <div class="row">
+                                    <div class="col-sm-12 wizard-actions">
+                                        <button ng-disabled="!aplicacion.puede_crear" class="btn btn-primary btn-sm" type="submit">
+                                            <i class="glyphicon glyphicon-floppy-disk"></i>Guardar
+                                        </button>
 
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-
-                    <div id="tabs-3">
-                        <form ng-submit="crearNuevaAusencia(otraAusencia,true)">
-                            <div class="row">
-                                <div class="form-group col-sm-6">
-                                    <label for="sexo">Tipo</label>
-                                    <div class="input-group">
-                                        <select required ng-model="otraAusencia.tipo" class="form-control" ng-options="ausencia as ausencia.nombre for ausencia in tiposOtrasAusencias.ausencias | filter:{habilitado:true} track by ausencia.id">
-                                            <option value="">--Ninguno--</option>
-                                        </select>
-                                        <span class="input-group-addon glyphicon glyphicon-pencil point-edit green" ng-click="abrirDialogTipoAusencia(tiposOtrasAusencias)"></span>
                                     </div>
                                 </div>
-                                <div class="form-group col-sm-2">
-                                    <label for="">Historial</label>
-                                    <div class="checkbox-align">
-                                        <a href="javascript:void(0)" ng-click="abrirDialogHistorialAusencias()" class="margin-icons red">
-                                            <span class="fa fa-h-square bigger-250"></span>
+                            </form>
+                        </div>
+
+                        <div id="tabs-2">
+                            <form ng-submit="crearNuevaVacacion(vacacion)">
+                                <div class="row">
+
+                                    <div class="form-group col-sm-2">
+                                        <label for="">Feriados</label>
+                                        <a href="javascript:void(0)" ng-click="abrirDialogFeriados()" class="checkbox-align green">
+                                            <span class="fa fa-calendar bigger-250"></span>
                                         </a>
                                     </div>
+                                    <div class="form-group col-sm-4">
+                                        <label for="afiliado">Sábado</label>
+                                        <label class="checkbox-align">
+                                            <input id="afiliado" name="afiliado" ng-change="CalcularDiferenciaDiasVacacion(vacacion)" ng-model="vacacion.sabado" class="ace ace-switch ace-switch-5"
+                                                type="checkbox">
+                                            <span class="lbl check-espaniol"></span>
+                                        </label>
+                                    </div>
+                                    <div class="form-group col-sm-6">
+                                        <label for="">Historial</label>
+                                        <div class="checkbox-align">
+                                            <a href="javascript:void(0)" type="button" ng-click="abrirDialogHitorialVacaciones()" class="margin-icons red" data-rel="tooltip"
+                                                data-placement="top" uib-tooltip="Historial">
+                                                <span class="fa fa-h-square bigger-250"></span>
+                                            </a>
+                                            <a href="javascript:void(0)" type="button" ng-click="abrirDialogDetalleVacaciones()" class="margin-icons red" data-rel="tooltip"
+                                                data-placement="top" uib-tooltip="Historial por Gestion">
+                                                <span class="fa fa-print bigger-250"></span>
+                                            </a>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="form-group col-sm-4">
-                                    <label for="afiliado">Planilla</label>
-                                    <label class="checkbox-align">
-                                        <input id="afiliado" name="afiliado" ng-model="otraAusencia.planilla" class="ace ace-switch ace-switch-5" type="checkbox">
-                                        <span class="lbl check-espaniol"></span>
-                                    </label>
+                                <div class="row">
+                                    <div class="form-group col-sm-5">
+                                        <div>
+                                            <label for="nombres">Fecha Inicio</label>
+                                            <input required ng-change="CalcularDiferenciaDiasVacacion(vacacion)" type="text" class="form-control date-picker" autocomplete="off"
+                                                ng-update-hidden ng-model="vacacion.fecha_inicio" data-date-format="dd/mm/yyyy"
+                                                id="nombres" name="nombres" placeholder="Desde">
+                                        </div>
+                                        <div>
+                                            <label class="checkbox-align">
+                                                <input class="ace ace-switch ace-switch-5 big-switch" ng-change="CalcularDiferenciaDiasVacacion(vacacion)" ng-model="vacacion.inicio_tipo"
+                                                    type="checkbox">
+                                                <span class="lbl" data-lbl="DÍA&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1/2 DÍA"></span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-sm-5">
+                                        <div>
+                                            <label for="ap-paterno">Fecha Final</label>
+                                            <input required ng-change="CalcularDiferenciaDiasVacacion(vacacion)" type="text" class="form-control date-picker" autocomplete="off"
+                                                ng-update-hidden ng-model="vacacion.fecha_fin" data-date-format="dd/mm/yyyy"
+                                                id="ap-paterno" name="ap-paterno" placeholder="Hasta">
+                                        </div>
+                                        <div>
+                                            <label class="checkbox-align">
+                                                <input class="ace ace-switch ace-switch-5 big-switch" ng-change="CalcularDiferenciaDiasVacacion(vacacion)" ng-model="vacacion.fin_tipo"
+                                                    type="checkbox">
+                                                <span class="lbl" data-lbl="DÍA&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1/2 DÍA"></span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-sm-2">
+                                        <div>
+                                            <label for="ap-paterno">Dias</label>
+                                            <input type="text" required disabled class="form-control" ng-model="vacacion.dias" id="ap-paterno" name="ap-paterno" placeholder="Dias">
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="row">
-                                <div class="form-group col-sm-3">
-                                    <label for="nombres">Desde</label>
-                                    <input required type="text" ng-update-hidden class="form-control date-picker" autocomplete="off" data-date-format="dd/mm/yyyy"
-                                        id="nombres" name="nombres" placeholder="Desde" ng-model="otraAusencia.fecha_inicio"
-                                        ng-change="CalcularDiferenciaDias(otraAusencia,true)">
+                                <div class="row">
+                                    <div class="form-group col-sm-12">
+                                        <label for="ap-materno">Observación </label>
+                                        <label for="" class="pull-right text-muted">Retorno el {{vacacion.fecha_Retorno}}</label>
+                                        <textarea class="form-control" required ng-model="vacacion.observacion" id="form-field-8" placeholder="Observación"></textarea>
+                                    </div>
                                 </div>
-                                <div class="form-group col-sm-2">
-                                    <label for="nombres">Hrs</label>
-                                    <input required type="time" class="form-control" id="nombres" name="nombres" placeholder="Desde" ng-model="otraAusencia.fecha_inicio_hora"
-                                        ng-change="CalcularDiferenciaDias(otraAusencia,true)">
-                                    <!--  <input required ng-update-hidden class="form-control date-timepicker" data-date-format="DD/MM/YYYY HH:mm" type="text" id="fechafin" ng-model="otraAusencia.fecha_inicio" ng-change="CalcularDiferenciaDias(otraAusencia,true)"> -->
-                                </div>
-                                <div class="form-group col-sm-3">
+                                <div class="row">
+                                    <div class="col-sm-12 wizard-actions">
+                                        <button ng-disabled="!usarVacacion ||!aplicacion.puede_crear" class="btn btn-primary btn-sm" type="submit">
+                                            <i class="glyphicon glyphicon-floppy-disk"></i>Guardar
+                                        </button>
 
-                                    <label for="ap-paterno">Hasta</label>
-                                    <!-- <input required ng-update-hidden class="form-control date-timepicker" data-date-format="DD/MM/YYYY HH:mm" type="text" id="fechafin" ng-model="otraAusencia.fecha_fin " ng-change="CalcularDiferenciaDias(otraAusencia,true)"> -->
-                                    <input required type="text" ng-update-hidden class="form-control date-picker" autocomplete="off" data-date-format="dd/mm/yyyy"
-                                        id="ap-paterno" name="ap-paterno" placeholder="Hasta" ng-model="otraAusencia.fecha_fin"
-                                        ng-change="CalcularDiferenciaDias(otraAusencia,true)">
+                                    </div>
                                 </div>
-                                <div class="form-group col-sm-2">
-                                    <label for="nombres">Hrs</label>
-                                    <input required type="time" class="form-control" id="nombres" name="nombres" placeholder="Desde" ng-change="CalcularDiferenciaDias(otraAusencia,true)"
-                                        ng-model="otraAusencia.fecha_fin_hora">
-                                </div>
-                                <div class="form-group col-sm-2">
-                                    <label for="ap-paterno">Hrs</label>
-                                    <input required disabled type="text" class="form-control" id="ap-paterno" name="ap-paterno" ng-model="otraAusencia.horas"
-                                        required placeholder="Dias">
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="form-group col-sm-12">
-                                    <label for="ap-materno">Compensa dias</label>
-                                    <a href="javascript:void(0)" ng-click="abrirDialogCompensacion()" class="checkbox-align green">
-                                        <span class="fa fa-calendar bigger-250"></span>
-                                    </a>
-                                </div>
-                                <div class="form-group col-sm-12">
-                                    <label for="ap-materno">Observación</label>
-                                    <textarea class="form-control" id="form-field-8" placeholder="Observación" required ng-model="otraAusencia.observacion"></textarea>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-sm-12 wizard-actions">
-                                    <button ng-disabled="!aplicacion.puede_crear" class="btn btn-primary btn-sm" type="submit">
-                                        <i class="glyphicon glyphicon-floppy-disk"></i>Guardar
-                                    </button>
+                            </form>
+                        </div>
 
+                        <div id="tabs-3">
+                            <form ng-submit="crearNuevaAusencia(otraAusencia,true)">
+                                <div class="row">
+                                    <div class="form-group col-sm-6">
+                                        <label for="sexo">Tipo</label>
+                                        <div class="input-group">
+                                            <select required ng-model="otraAusencia.tipo" class="form-control" ng-options="ausencia as ausencia.nombre for ausencia in tiposOtrasAusencias.ausencias | filter:{habilitado:true} track by ausencia.id">
+                                                <option value="">--Ninguno--</option>
+                                            </select>
+                                            <span class="input-group-addon glyphicon glyphicon-pencil point-edit green" ng-click="abrirDialogTipoAusencia(tiposOtrasAusencias)"></span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-sm-2">
+                                        <label for="">Historial</label>
+                                        <div class="checkbox-align">
+                                            <a href="javascript:void(0)" ng-click="abrirDialogHistorialAusencias()" class="margin-icons red">
+                                                <span class="fa fa-h-square bigger-250"></span>
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-sm-4">
+                                        <label for="afiliado">Planilla</label>
+                                        <label class="checkbox-align">
+                                            <input id="afiliado" name="afiliado" ng-model="otraAusencia.planilla" class="ace ace-switch ace-switch-5" type="checkbox">
+                                            <span class="lbl check-espaniol"></span>
+                                        </label>
+                                    </div>
                                 </div>
-                            </div>
-                        </form>
+                                <div class="row">
+                                    <div class="form-group col-sm-3">
+                                        <label for="nombres">Desde</label>
+                                        <input required type="text" ng-update-hidden class="form-control date-picker" autocomplete="off" data-date-format="dd/mm/yyyy"
+                                            id="nombres" name="nombres" placeholder="Desde" ng-model="otraAusencia.fecha_inicio"
+                                            ng-change="CalcularDiferenciaDias(otraAusencia,true)">
+                                    </div>
+                                    <div class="form-group col-sm-2">
+                                        <label for="nombres">Hrs</label>
+                                        <input required type="time" class="form-control" id="nombres" name="nombres" placeholder="Desde" ng-model="otraAusencia.fecha_inicio_hora"
+                                            ng-change="CalcularDiferenciaDias(otraAusencia,true)">
+                                        <!--  <input required ng-update-hidden class="form-control date-timepicker" data-date-format="DD/MM/YYYY HH:mm" type="text" id="fechafin" ng-model="otraAusencia.fecha_inicio" ng-change="CalcularDiferenciaDias(otraAusencia,true)"> -->
+                                    </div>
+                                    <div class="form-group col-sm-3">
+
+                                        <label for="ap-paterno">Hasta</label>
+                                        <!-- <input required ng-update-hidden class="form-control date-timepicker" data-date-format="DD/MM/YYYY HH:mm" type="text" id="fechafin" ng-model="otraAusencia.fecha_fin " ng-change="CalcularDiferenciaDias(otraAusencia,true)"> -->
+                                        <input required type="text" ng-update-hidden class="form-control date-picker" autocomplete="off" data-date-format="dd/mm/yyyy"
+                                            id="ap-paterno" name="ap-paterno" placeholder="Hasta" ng-model="otraAusencia.fecha_fin"
+                                            ng-change="CalcularDiferenciaDias(otraAusencia,true)">
+                                    </div>
+                                    <div class="form-group col-sm-2">
+                                        <label for="nombres">Hrs</label>
+                                        <input required type="time" class="form-control" id="nombres" name="nombres" placeholder="Desde" ng-change="CalcularDiferenciaDias(otraAusencia,true)"
+                                            ng-model="otraAusencia.fecha_fin_hora">
+                                    </div>
+                                    <div class="form-group col-sm-2">
+                                        <label for="ap-paterno">Hrs</label>
+                                        <input required disabled type="text" class="form-control" id="ap-paterno" name="ap-paterno" ng-model="otraAusencia.horas"
+                                            required placeholder="Dias">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group col-sm-12">
+                                        <label for="ap-materno">Compensa dias</label>
+                                        <a href="javascript:void(0)" ng-click="abrirDialogCompensacion()" class="checkbox-align green">
+                                            <span class="fa fa-calendar bigger-250"></span>
+                                        </a>
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label for="ap-materno">Observación</label>
+                                        <textarea class="form-control" id="form-field-8" placeholder="Observación" required ng-model="otraAusencia.observacion"></textarea>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-12 wizard-actions">
+                                        <button ng-disabled="!aplicacion.puede_crear" class="btn btn-primary btn-sm" type="submit">
+                                            <i class="glyphicon glyphicon-floppy-disk"></i>Guardar
+                                        </button>
+
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
                     </div>
                 </div>
+                <!-- /.col -->
+
+                <div class="vspace-6-sm"></div>
             </div>
-            <!-- /.col -->
+            <!-- /.row -->
 
-            <div class="vspace-6-sm"></div>
+            <div class="modal-footer">
+
+                <button class="btn btn-danger btn-sm pull-left" ng-click="cerrarDialogAusenciasVacaciones()">
+                    <i class="ace-icon fa fa-times"></i>Cancelar
+                </button>
+            </div>
         </div>
-        <!-- /.row -->
-
-        <div class="modal-footer">
-
-            <button class="btn btn-danger btn-sm pull-left" ng-click="cerrarDialogAusenciasVacaciones()">
-                <i class="ace-icon fa fa-times"></i>Cancelar
-            </button>
-        </div>
-    </div>
     </div>
     <!--- ==== fin modal ausencias y vacaciones  ================================ -->
     <!--- ==== modal tipo baja  ================================ -->
@@ -3684,36 +3706,36 @@
 
     <!--- ==== modal feriados  ================================ -->
     <div id="dialog-feriados" class="modal">
-            <div class="modal-dialog modal-rh-nuevo">
-        <div class="modal-header bg-primary">
-            <h4 class='smaller text-white text-uppercase'>
-                <i class='icono-prerequisito'></i>
-                <label> &nbsp;Feriados </label>
-            </h4>
-        </div>
-        <div class="row">
-            <div class="col-sm-12">
-                <div class="space"></div>
-                <div id="calendar"></div>
+        <div class="modal-dialog modal-rh-nuevo">
+            <div class="modal-header bg-primary">
+                <h4 class='smaller text-white text-uppercase'>
+                    <i class='icono-prerequisito'></i>
+                    <label> &nbsp;Feriados </label>
+                </h4>
             </div>
-        </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="space"></div>
+                    <div id="calendar"></div>
+                </div>
+            </div>
 
-        <div class="row">
-            <div class="modal-footer wizard-actions">
-                <button class="btn btn-primary btn-sm" ng-disabled="!aplicacion.puede_crear" ng-click="GuardarFeriadosCalendario()">
-                    <i class="glyphicon glyphicon-floppy-disk"></i>Guardar
-                </button>
-                <button class="btn btn-danger btn-sm" ng-click="cerrarDialogFeriados()">
-                    <i class="ace-icon fa fa-times"></i>Cancelar
-                </button>
+            <div class="row">
+                <div class="modal-footer wizard-actions">
+                    <button class="btn btn-primary btn-sm" ng-disabled="!aplicacion.puede_crear" ng-click="GuardarFeriadosCalendario()">
+                        <i class="glyphicon glyphicon-floppy-disk"></i>Guardar
+                    </button>
+                    <button class="btn btn-danger btn-sm" ng-click="cerrarDialogFeriados()">
+                        <i class="ace-icon fa fa-times"></i>Cancelar
+                    </button>
+                </div>
             </div>
         </div>
-    </div>
     </div>
     <!--- ==== fin modal feriados  ================================ -->
     <!--- ==== modal historial vacaciones ================================ -->
     <div id="dialog-historial-vacaciones" class="modal">
-         
+
         <div class="modal-header bg-primary">
             <h4 class='smaller text-white text-uppercase'>
                 <i class='icono-prerequisito'></i>
@@ -3784,62 +3806,63 @@
                 <i class="ace-icon fa fa-times"></i>Cancelar
             </button>
         </div>
-    
+
     </div>
     <!--- ==== fin modal historial vacaciones  ================================ -->
     <!--- ==== modal dias compensacion  ================================ -->
     <div id="dialog-compesacion" class="modal">
-            <div class="modal-dialog modal-rh-nuevo">
-        <div class="modal-header bg-primary">
-            <h4 class='smaller text-white text-uppercase'>
-                <i class='icono-prerequisito'></i>
-                <label> &nbsp;Determine días a compensar </label>
-            </h4>
-        </div>
-        <div class="row">
-            <div class="col-sm-12">
-                <div class="space"></div>
-                <div id="calendar-compensacion"></div>
-                <div class="space"></div>
-                <table class="table table-striped table-hover">
-                    <thead>
-                        <tr>
-                            <th class="table-head-conpensaciones">Fecha</th>
-                            <th class="table-head-conpensaciones">Hora inicio</th>
-                            <th class="table-head-conpensaciones">Hora fin</th>
-                            <th class="table-head-conpensaciones">T.H.</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr ng-repeat="d in selectionday | orderBy: 'fecha'">
-                            <td>{{d.fecha}}</td>
-                            <td>{{d.hora_inicio}}</td>
-                            <td>{{d.hora_fin}}</td>
-                            <td>{{d.total}}</td>
-                        </tr>
-                        <tr>
-                            <td></td>
-                            <td></td>
-                            <td>Total Horas</td>
-                            <td>{{SumaTotalHoras}}</td>
-                        </tr>
+        <div class="modal-dialog modal-rh-nuevo">
+            <div class="modal-header bg-primary">
+                <h4 class='smaller text-white text-uppercase'>
+                    <i class='icono-prerequisito'></i>
+                    <label> &nbsp;Determine días a compensar </label>
+                </h4>
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="space"></div>
+                    <div id="calendar-compensacion"></div>
+                    <div class="space"></div>
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th class="table-head-conpensaciones">Fecha</th>
+                                <th class="table-head-conpensaciones">Hora inicio</th>
+                                <th class="table-head-conpensaciones">Hora fin</th>
+                                <th class="table-head-conpensaciones">T.H.</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="d in selectionday | orderBy: 'fecha'">
+                                <td>{{d.fecha}}</td>
+                                <td>{{d.hora_inicio}}</td>
+                                <td>{{d.hora_fin}}</td>
+                                <td>{{d.total}}</td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td>Total Horas</td>
+                                <td>{{SumaTotalHoras}}</td>
+                            </tr>
 
-                    </tbody>
-                </table>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="modal-footer wizard-actions">
+                    <button ng-if="otraAusencia.id" class="btn btn-primary btn-sm" ng-click="GuardarFeriadosCalendario()">
+                        <i class="glyphicon glyphicon-floppy-disk"></i>Guardar
+                    </button>
+                    <button class="btn btn-danger btn-sm" ng-click="cerrarDialogCompensacion()">
+                        <i class="ace-icon fa fa-times"></i>Cancelar
+                    </button>
+                </div>
             </div>
         </div>
-
-        <div class="row">
-            <div class="modal-footer wizard-actions">
-                <button ng-if="otraAusencia.id" class="btn btn-primary btn-sm" ng-click="GuardarFeriadosCalendario()">
-                    <i class="glyphicon glyphicon-floppy-disk"></i>Guardar
-                </button>
-                <button class="btn btn-danger btn-sm" ng-click="cerrarDialogCompensacion()">
-                    <i class="ace-icon fa fa-times"></i>Cancelar
-                </button>
-            </div>
-        </div>
-    </div></div>
+    </div>
     <!--- ==== fin modal dias compensacion  ================================ -->
     <!--- ==== modal historial ausencias ================================ -->
     <div id="dialog-historial-ausencias" class="modal">
@@ -3913,7 +3936,7 @@
                             <a class="green">
                                 <i class="ace-icon fa fa-print bigger-130"></i>
                             </a>
-                            <a class="green" e-disabled="!aplicaciin.puede_crear">
+                            <a class="green" e-disabled="!aplicacion.puede_crear">
                                 <i class="ace-icon fa fa-pencil bigger-130"></i>
                             </a>
                         </td>
@@ -4250,7 +4273,7 @@
 
             <div class="modal-footer wizard-actions">
 
-                <button ng-disabled="!aplicaciin.puede_crear" type="submit" class="btn btn-primary btn-sm">
+                <button ng-disabled="!aplicacion.puede_crear" type="submit" class="btn btn-primary btn-sm">
                     <i class="glyphicon glyphicon-floppy-disk"></i>Guardar
                 </button>
                 <button type="button" class="btn btn-danger btn-sm" ng-click="cerrarDialogRolTurnos()">
@@ -4395,7 +4418,7 @@
 
             </div>
             <div class="modal-footer wizard-actions">
-                <button ng-disabled="!aplicaciin.puede_crear" class="btn btn-primary btn-sm" type="submit">
+                <button ng-disabled="!aplicacion.puede_crear" class="btn btn-primary btn-sm" type="submit">
                     <i class="glyphicon glyphicon-floppy-disk"></i>Guardar
                 </button>
                 <button type="button" class="btn btn-danger btn-sm" ng-click="cerrarDialogHorasExtras()">
@@ -4531,7 +4554,7 @@
                 <div ng-hide="listaAnticipos2.length>0" class="table-responsive">
                     <div class="table-fixed-header">
                         <table id="tabla-comprobante-revision" class="table table-responsive-actual table-striped table-bordered table-hover">
-                            <thead fix-head class="table-head-color">
+                            <thead class="table-head-color">
                                 <tr>
                                     <th>#</th>
                                     <th>
@@ -7241,6 +7264,7 @@
     <!-- fin ver empleado-->
     <!-- inicio confirmar usuario -->
     <div id="modal-verificar-cuenta" title="Asignar Cuenta">
+
         <form name="formularioAsignarCuenta" ng-submit="verificarCuentaAdmin(cuenta,$index)">
             <div class="modal-header">
                 <p>
@@ -7272,6 +7296,7 @@
     <!-- fin confirmar usuario -->
     <!-- inicio desabilitar usuario -->
     <div id="modal-verificar-cuenta-Rrhh" title="Asignar Cuenta">
+
         <form name="formularioAsignarCuenta" ng-submit="funcionArealizar(cuenta,$index)">
             <div class="modal-header">
                 <p>
@@ -7292,6 +7317,16 @@
                     <input required ng-update-hidden data-date-format="dd/mm/yyyy" class="form-control date-picker" autocomplete="off" type="text"
                         ng-model="cuenta.fecha">
                 </div>
+                <div ng-if="!empleado.activo">
+                    <p>Motivo de Retiro: </p>
+                    <!--  <span class="input-group-addon glyphicon glyphicon-pencil point-edit green" ng-click="abrirDialogConceptoEdicion(tipoMotivo)"></span> -->
+                    <a href="javascript:void(0)" ng-click="abrirDialogConceptoEdicion(tipoMotivo)">
+                        <i class="fa fa-pencil bigger-140"></i>
+                    </a>
+                    <select required ng-model="cuenta.motivo_retiro" class="form-control" id="motivo-retiro" name="motivo-retiro" ng-options="motivo.id as motivo.nombre for motivo in tipoMotivo.clases | filter:{habilitado:true} track by motivo.id">
+                        <option value="">Ninguno</option>
+                    </select>
+                </div>
             </div>
             <div class="modal-footer">
                 <div class="col-sm-6">
@@ -7304,6 +7339,7 @@
                 </div>
             </div>
         </form>
+
     </div>
     <div id="modal-confirmar-desabilitacion" title="Asignar Cuenta">
         <form name="formularioAsignarCuenta" novalidate ng-submit="changeActivoEmpleado(empleado)">
@@ -7333,195 +7369,196 @@
         </form>
     </div>
     <div id="dialog-configuracion-ropa-trabajo">
-            <div class="modal-dialog modal-rh-nuevo">
-        <div class="modal-content">
+        <div class="modal-dialog modal-rh-nuevo">
+            <div class="modal-content">
 
-            <form novalidate ng-submit="GuardarlistaRopaTrabajoPorCargo(cargo)">
-                <div id="modal-wizard-container-configuracion-ropa-trabajo">
-                    <div class="modal-header ficha">
-                        <h4 class="modal-title" id="myModalLabel">Configuración Ropa de trabajo</h4>
-                    </div>
-                    <div class="modal-header">
-                        <ul class="steps">
-                            <li data-step="1" class="active">
-                                <span class="step">1</span>
+                <form novalidate ng-submit="GuardarlistaRopaTrabajoPorCargo(cargo)">
+                    <div id="modal-wizard-container-configuracion-ropa-trabajo">
+                        <div class="modal-header ficha">
+                            <h4 class="modal-title" id="myModalLabel">Configuración Ropa de trabajo</h4>
+                        </div>
+                        <div class="modal-header">
+                            <ul class="steps">
+                                <li data-step="1" class="active">
+                                    <span class="step">1</span>
 
-                                <span class="title">Selección Ropa</span>
-                            </li>
-                            <li data-step="2">
-                                <span class="step">2</span>
-                                <span class="title">Finalizar</span>
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="modal-body step-content">
-                        <div class="step-pane active" data-step="1">
+                                    <span class="title">Selección Ropa</span>
+                                </li>
+                                <li data-step="2">
+                                    <span class="step">2</span>
+                                    <span class="title">Finalizar</span>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="modal-body step-content">
+                            <div class="step-pane active" data-step="1">
 
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <label> Cargo</label>
-                                </div>
-                                <div class="col-md-6">
-                                    <select name="fecha" id="tipo-contrato" class="form-control" ng-change="listaRopaTrabajoPorCargo(cargo)" ng-options="cargo.id as cargo.nombre for cargo in listaCargos.clases track by cargo.id"
-                                        ng-model="cargo">
-                                        <option value="">--Ninguno--</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-6">
-                                    <label> Ropa de Trabajo</label>
-                                </div>
-                                <div class="col-md-6">
-                                    <select name="fecha" id="tipo-contrato" class="form-control" ng-model-options="{updateOn: 'blur'}" required ng-options="ropa as ropa.nombre for ropa in ropasDeTrabajo track by ropa.id"
-                                        ng-model="ropaTrabajo.ropaTrabajo">
-                                        <option value="">--Ninguno--</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-6">
-                                    <label> Cantidad</label>
-                                </div>
-                                <div class="col-md-6">
-                                    <input required type="text" ng-model="ropaTrabajo.cantidad" ng-model-options="{updateOn: 'blur'}" class="form-control" placeholder="Cantidad">
-                                </div>
-                                <div class="col-md-12">
-                                    <button type="button" class="btn btn-primary btn-sm" ng-click="agregarRopaTrabajo(ropaTrabajo)">Añadir</button>
-                                    <!-- <button type="button"  class="btn btn-success btn-sm" ng-click="guardarLogroHojaVidaEditada(logro)">Guardar</button> -->
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label> Cargo</label>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <select name="fecha" id="tipo-contrato" class="form-control" ng-change="listaRopaTrabajoPorCargo(cargo)" ng-options="cargo.id as cargo.nombre for cargo in listaCargos.clases track by cargo.id"
+                                            ng-model="cargo">
+                                            <option value="">--Ninguno--</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label> Ropa de Trabajo</label>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <select name="fecha" id="tipo-contrato" class="form-control" ng-model-options="{updateOn: 'blur'}" required ng-options="ropa as ropa.nombre for ropa in ropasDeTrabajo track by ropa.id"
+                                            ng-model="ropaTrabajo.ropaTrabajo">
+                                            <option value="">--Ninguno--</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label> Cantidad</label>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <input required type="text" ng-model="ropaTrabajo.cantidad" ng-model-options="{updateOn: 'blur'}" class="form-control" placeholder="Cantidad">
+                                    </div>
+                                    <div class="col-md-12">
+                                        <button type="button" class="btn btn-primary btn-sm" ng-click="agregarRopaTrabajo(ropaTrabajo)">Añadir</button>
+                                        <!-- <button type="button"  class="btn btn-success btn-sm" ng-click="guardarLogroHojaVidaEditada(logro)">Guardar</button> -->
 
-                                    <button type="button" class="btn btn-app btn-success btn-xs pull-right" ng-click="generarExcelRopaTrabajo()">
-                                        <i class="ace-icon fa fa-print bigger-160"></i>
-                                        Exel
-                                    </button>
-                                    <button type="button" class="btn btn-app btn-danger btn-xs pull-right" ng-click="generarPdfRopaTrabajo()">
-                                        <i class="ace-icon fa fa-print bigger-160"></i>
-                                        Pdf
-                                    </button>
-                                </div>
+                                        <button type="button" class="btn btn-app btn-success btn-xs pull-right" ng-click="generarExcelRopaTrabajo()">
+                                            <i class="ace-icon fa fa-print bigger-160"></i>
+                                            Exel
+                                        </button>
+                                        <button type="button" class="btn btn-app btn-danger btn-xs pull-right" ng-click="generarPdfRopaTrabajo()">
+                                            <i class="ace-icon fa fa-print bigger-160"></i>
+                                            Pdf
+                                        </button>
+                                    </div>
 
-                                <div class="table-responsive">
-                                    <table class="table table-striped table-hover">
-                                        <thead>
-                                            <tr>
-                                                <th>#</th>
-                                                <th>Ropa de Trabajo</th>
-                                                <th>Cantidad</th>
-                                                <th>Acciones</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr ng-if="!ropa.eliminado" ng-repeat="ropa in listaRopasDeTrabajo">
-                                                <th scope="row">{{$index+1}}</th>
-                                                <td>{{ropa.ropaTrabajo.nombre}}</td>
-                                                <td>{{ropa.cantidad}}</td>
+                                    <div class="table-responsive">
+                                        <table class="table table-striped table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <th>#</th>
+                                                    <th>Ropa de Trabajo</th>
+                                                    <th>Cantidad</th>
+                                                    <th>Acciones</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr ng-if="!ropa.eliminado" ng-repeat="ropa in listaRopasDeTrabajo">
+                                                    <th scope="row">{{$index+1}}</th>
+                                                    <td>{{ropa.ropaTrabajo.nombre}}</td>
+                                                    <td>{{ropa.cantidad}}</td>
 
-                                                <td>
-                                                    <div class="action-buttons">
-                                                        <!--    <a class="blue">
+                                                    <td>
+                                                        <div class="action-buttons">
+                                                            <!--    <a class="blue">
                                                                 <i class="ace-icon fa fa-search-plus bigger-130"></i>
                                                             </a> -->
-                                                        <a class="green" e-disabled="!aplicacion.puede_crear" ng-click="editarRopaTrabajo(ropa)">
-                                                            <i class="ace-icon fa fa-pencil bigger-130"></i>
-                                                        </a>
-                                                        <a class="red" e-disabled="!aplicacion.puede_eliminar" ng-click="eliminarRopaTrabajo(ropa)">
-                                                            <i class="ace-icon fa fa-trash-o bigger-130"></i>
-                                                        </a>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
+                                                            <a class="green" e-disabled="!aplicacion.puede_crear" ng-click="editarRopaTrabajo(ropa)">
+                                                                <i class="ace-icon fa fa-pencil bigger-130"></i>
+                                                            </a>
+                                                            <a class="red" e-disabled="!aplicacion.puede_eliminar" ng-click="eliminarRopaTrabajo(ropa)">
+                                                                <i class="ace-icon fa fa-trash-o bigger-130"></i>
+                                                            </a>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="step-pane" data-step="2">
+                                <div class="center">
+                                    <h4 class="blue">Finalizado
+                                    </h4>
                                 </div>
                             </div>
                         </div>
-                        <div class="step-pane" data-step="2">
-                            <div class="center">
-                                <h4 class="blue">Finalizado
-                                </h4>
+                    </div>
+
+                    <div class="modal-footer wizard-actions">
+                        <button tabindex="-1" type="button" class="btn btn-sm btn-prev">
+                            <i class="ace-icon fa fa-arrow-left"></i>
+                            Anterior
+                        </button>
+
+                        <button type="submit" ng-disabled="!aplicacion.puede_crear" id="siguiente-ca" class="btn btn-success btn-sm btn-next" data-last="Finish">
+                            Siguiente
+                            <i class="ace-icon fa fa-arrow-right icon-on-right"></i>
+                        </button>
+
+                        <button tabindex="-1" type="button" class="btn btn-danger btn-sm pull-left" data-dismiss="modal" ng-click="cerrarModalConfiguracionRopaDeTrabajo()">
+                            <i class="ace-icon fa fa-times"></i>
+                            Cancelar
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div id="dialog-reporte-ropa-trabajo">
+        <div class="modal-dialog modal-rh-nuevo">
+            <div class="modal-content">
+                <div class="modal-header ficha">
+                    <h4 class="modal-title" id="myModalLabel">Reportes Ropa de Trabajo</h4>
+                </div>
+                <div class="modal-body">
+                    <form ng-submit="generarReporteRopaTrabajo(tipo,filtroReporte)">
+                        <div class="row">
+                            <div class="form-group col-md-1">
+                                <p>
+                                    <label for="codigo"></label>
+                                </p>
+                                <p>
+                                    <label for="codigo">PERIODO</label>
+                                </p>
+                            </div>
+                            <div class="form-group col-md-3">
+                                <label for="codigo">DESDE</label>
+                                <input ng-update-hidden class="form-control date-picker ng-pristine ng-untouched ng-isolate-scope ng-empty ng-invalid ng-invalid-required"
+                                    type="text" data-date-format="dd/mm/yyyy" ng-model="filtroReporte.inicio" placeholder=""
+                                />
+                            </div>
+
+                            <div class="form-group col-md-3">
+                                <label for="nombre">HASTA</label>
+                                <input ng-update-hidden class="form-control date-picker ng-pristine ng-untouched ng-isolate-scope ng-empty ng-invalid ng-invalid-required"
+                                    type="text" data-date-format="dd/mm/yyyy" ng-model="filtroReporte.fin" placeholder="" />
+                            </div>
+
+                            <div class="form-group col-md-3">
+                                <label for="campo">CENTRO DE COSTO</label>
+                                <select required id="campo-rol" class="form-control" name="centroDeCostos" ng-options="centroCosto.id as centroCosto.nombre for centroCosto in centrosDeCostos | filter:{habilitado:true} track by centroCosto.id"
+                                    ng-model="filtroReporte.campo">
+                                    <option value="">--selecionar--</option>
+                                </select>
+                            </div>
+
+
+                            <div class="form-group col-md-2">
+
+                                <button class="btn btn-app btn-danger btn-xs" type="submit" ng-click="tipo='pdf'">
+                                    <i class="ace-icon fa fa-print bigger-160"></i>
+                                    PDF
+                                </button>
+                                <button class="btn btn-app btn-success btn-xs" ng-click="tipo='exel'">
+                                    <i class="ace-icon fa fa-print bigger-160"></i>
+                                    EXCEL
+                                </button>
                             </div>
                         </div>
-                    </div>
+                    </form>
+
                 </div>
 
-                <div class="modal-footer wizard-actions">
-                    <button tabindex="-1" type="button" class="btn btn-sm btn-prev">
-                        <i class="ace-icon fa fa-arrow-left"></i>
-                        Anterior
-                    </button>
+                <div class="modal-footer">
 
-                    <button type="submit" ng-disabled="!aplicacion.puede_crear" id="siguiente-ca" class="btn btn-success btn-sm btn-next" data-last="Finish">
-                        Siguiente
-                        <i class="ace-icon fa fa-arrow-right icon-on-right"></i>
-                    </button>
-
-                    <button tabindex="-1" type="button" class="btn btn-danger btn-sm pull-left" data-dismiss="modal" ng-click="cerrarModalConfiguracionRopaDeTrabajo()">
+                    <button tabindex="-1" type="button" class="btn btn-danger btn-sm pull-left" data-dismiss="modal" ng-click="cerrarModalReporteRopaDeTrabajo()">
                         <i class="ace-icon fa fa-times"></i>
                         Cancelar
                     </button>
                 </div>
-            </form>
-        </div>
-        </div>
-    </div>
-    <div id="dialog-reporte-ropa-trabajo">
-            <div class="modal-dialog modal-rh-nuevo">
-        <div class="modal-content">
-            <div class="modal-header ficha">
-                <h4 class="modal-title" id="myModalLabel">Reportes Ropa de Trabajo</h4>
             </div>
-            <div class="modal-body">
-                <form ng-submit="generarReporteRopaTrabajo(tipo,filtroReporte)">
-                    <div class="row">
-                        <div class="form-group col-md-1">
-                            <p>
-                                <label for="codigo"></label>
-                            </p>
-                            <p>
-                                <label for="codigo">PERIODO</label>
-                            </p>
-                        </div>
-                        <div class="form-group col-md-3">
-                            <label for="codigo">DESDE</label>
-                            <input ng-update-hidden class="form-control date-picker ng-pristine ng-untouched ng-isolate-scope ng-empty ng-invalid ng-invalid-required"
-                                type="text" data-date-format="dd/mm/yyyy" ng-model="filtroReporte.inicio" placeholder="" />
-                        </div>
-
-                        <div class="form-group col-md-3">
-                            <label for="nombre">HASTA</label>
-                            <input ng-update-hidden class="form-control date-picker ng-pristine ng-untouched ng-isolate-scope ng-empty ng-invalid ng-invalid-required"
-                                type="text" data-date-format="dd/mm/yyyy" ng-model="filtroReporte.fin" placeholder="" />
-                        </div>
-
-                        <div class="form-group col-md-3">
-                            <label for="campo">CENTRO DE COSTO</label>
-                            <select required id="campo-rol" class="form-control" name="centroDeCostos" ng-options="centroCosto.id as centroCosto.nombre for centroCosto in centrosDeCostos | filter:{habilitado:true} track by centroCosto.id"
-                                ng-model="filtroReporte.campo">
-                                <option value="">--selecionar--</option>
-                            </select>
-                        </div>
-
-
-                        <div class="form-group col-md-2">
-
-                            <button class="btn btn-app btn-danger btn-xs" type="submit" ng-click="tipo='pdf'">
-                                <i class="ace-icon fa fa-print bigger-160"></i>
-                                PDF
-                            </button>
-                            <button class="btn btn-app btn-success btn-xs" ng-click="tipo='exel'">
-                                <i class="ace-icon fa fa-print bigger-160"></i>
-                                EXCEL
-                            </button>
-                        </div>
-                    </div>
-                </form>
-
-            </div>
-
-            <div class="modal-footer">
-
-                <button tabindex="-1" type="button" class="btn btn-danger btn-sm pull-left" data-dismiss="modal" ng-click="cerrarModalReporteRopaDeTrabajo()">
-                    <i class="ace-icon fa fa-times"></i>
-                    Cancelar
-                </button>
-            </div>
-        </div>
 
         </div>
     </div>
@@ -7540,7 +7577,7 @@
                     <form>
                         <div class="row">
                             <div class="col-md-2">
-                                <a e-disabled="!aplicaciin.puede_crear" ng-click="ObtenerDotacionesRopa(empleado,undefined,true)" class="btn btn-primary">
+                                <a e-disabled="!aplicacion.puede_crear" ng-click="ObtenerDotacionesRopa(empleado,undefined,true)" class="btn btn-primary">
                                     <i class="ace-icon fa fa-plus align-top bigger-125"></i>
                                     Nuevo
                                 </a>
@@ -7634,12 +7671,12 @@
                                             title="View">
                                             <i class="ace-icon fa fa-search-plus bigger-130"></i>
                                         </a>
-                                        <a e-disabled="!aplicaciin.puede_modificar" ng-if="dotacion.id==listaDotaciones[listaDotaciones.length-1].id" class="green"
+                                        <a e-disabled="!aplicacion.puede_modificar" ng-if="dotacion.id==listaDotaciones[listaDotaciones.length-1].id" class="green"
                                             href="javascript:void(0)" ng-click="abrirModalNuevaRopaTrabajo(empleado,true,undefined,$index)">
                                             <i class="ace-icon fa fa-pencil bigger-130"></i>
                                         </a>
 
-                                        <a e-disabled="!aplicaciin.puede_eliminar" ng-if="dotacion.id==listaDotaciones[listaDotaciones.length-1].id" class="red"
+                                        <a e-disabled="!aplicacion.puede_eliminar" ng-if="dotacion.id==listaDotaciones[listaDotaciones.length-1].id" class="red"
                                             href="javascript:void(0)" ng-click="abrirModalVerificarCuenta(dotacion,'dotacion')">
                                             <i class="ace-icon fa fa-trash-o bigger-130"></i>
                                         </a>
@@ -7663,125 +7700,146 @@
         </div>
     </div>
     <div id="dialog-nueva-ropa-trabajo">
-        <div class="modal-content">
-            <form ng-submit="guardarDotacionRopa(dotacionRopa)">
-                <div class="modal-header hoja">
-                    <h4 class="modal-title" id="myModalLabel">DOTACIÓN DE ROPA</h4>
-
-                </div>
-                <div class="modal-body">
-                    <h4 align="center">{{empleado.nombre_completo}}</h4>
-
-                    <div class="row">
-                        <div class="form-group col-md-4">
-                            <label for="codigo">Fecha</label>
-                            <input ng-disabled="verinformacionDOtacion" vrequired ng-update-hidden data-date-format="dd/mm/yyyy" class="form-control date-picker"
-                                autocomplete="off" type="text" ng-model="dotacionRopa.fecha">
-                        </div>
-
-                        <div class="form-group col-md-4">
-                            <label for="nombre">Cumpli.</label>
-                            <div class="input-group">
-                                <select ng-disabled="verinformacionDOtacion" autofocus required ng-model="dotacionRopa.cumplimiento" class="form-control"
-                                    ng-options="cumplimiento as cumplimiento.nombre for cumplimiento in cumplimientoDotacion.clases | filter:{habilitado:true} track by cumplimiento.id">
-                                    <option value="">--Ninguno--</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="form-group col-md-4">
-                            <label for="periodo">Periodo</label>
-                            <div class="input-group">
-                                <select ng-disabled="verinformacionDOtacion" required ng-model="dotacionRopa.periodo" class="form-control" ng-options="periodo as periodo.nombre for periodo in periodoDotacion.clases | filter:{habilitado:true} track by periodo.id">
-                                    <option value="">--Ninguno--</option>
-                                </select>
-                                <span class="input-group-addon glyphicon glyphicon-pencil point-edit green" ng-click="abrirDialogConceptoEdicion(periodoDotacion)"></span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="form-group col-md-4">
-                            <label for="estado">Estado</label>
-                            <div class="input-group">
-                                <select ng-disabled="verinformacionDOtacion" required ng-model="dotacionRopa.estado" class="form-control" ng-options="estado as estado.nombre for estado in estadoDotacion.clases | filter:{habilitado:true} track by estado.id">
-                                    <option value="">--Ninguno--</option>
-                                </select>
-                            </div>
-                        </div>
-
-
-                        <div class="form-group col-md-4">
-                            <label for="cargo">Cargos</label>
-                            <div ng-if="!verinformacionDOtacion" ng-hide="visible" class="input-group">
-                                <p ng-repeat="cargo in cargosEmpleado">{{cargo.cargo.nombre}}</p>
-                            </div>
-                            <div ng-if="verinformacionDOtacion" class="input-group">
-                                <p ng-repeat="cargo in listaDotaciones[indexInfo].cargos">{{cargo.nombre}}</p>
-                            </div>
-                            <div ng-show="visible">
-                                <p ng-repeat="cargo in listaDotaciones[indexInfo].cargos">{{cargo.nombre}}</p>
-                            </div>
-
-                        </div>
-                        <div class="form-group col-md-4">
-                            <label for="nombre">Items</label>
-                            <div ng-if="!verinformacionDOtacion" ng-hide="visible" class="input-group">
-                                <!--  <input ng-update-hidden type="text" class "form-control" id="filtroNombre" ng-model="filtro.nombres" placeholder="" /> -->
-                                <p ng-repeat="items in dotacionItems">{{items.ropaTrabajo.nombre}}</p>
-                                <span class="input-group-addon glyphicon glyphicon-search point-edit green" ng-click="abrirModalItemsNuevaRopaTrabajo()"></span>
-                            </div>
-                            <div ng-if="verinformacionDOtacion" class="input-group">
-                                <!--  <input ng-update-hidden type="text" class "form-control" id="filtroNombre" ng-model="filtro.nombres" placeholder="" /> -->
-                                <p ng-repeat="items in listaDotaciones[indexInfo].ropas">{{items.nombre}}</p>
-                                <span class="input-group-addon glyphicon glyphicon-search point-edit green" ng-click="abrirModalItemsNuevaRopaTrabajo()"></span>
-                            </div>
-                            <div ng-show="visible" class="input-group">
-                                <!--  <input ng-update-hidden type="text" class "form-control" id="filtroNombre" ng-model="filtro.nombres" placeholder="" /> -->
-                                <p ng-repeat="items in listaDotaciones[indexInfo].ropas">{{items.nombre}}</p>
-                                <span class="input-group-addon glyphicon glyphicon-search point-edit green" ng-click="abrirModalItemsNuevaRopaTrabajo()"></span>
-                            </div>
-                        </div>
+        <div class="modal-dialog modal-rh-nuevo">
+            <div class="modal-content">
+                <form ng-submit="guardarDotacionRopa(dotacionRopa)">
+                    <div class="modal-header hoja">
+                        <h4 class="modal-title" id="myModalLabel">DOTACIÓN DE ROPA</h4>
 
                     </div>
-                    <div class="row">
-                        <div class="form-inline col-md-4">
-                            <label class="inline" for="codigo">Fecha Vencimiento</label>
-                            <input ng-disabled="verinformacionDOtacion" required ng-update-hidden data-date-format="dd/mm/yyyy" class="form-control date-picker"
-                                autocomplete="off" type="text" ng-model="dotacionRopa.fecha_vencimiento">
+                    <div class="modal-body">
+                        <h4 align="center">{{empleado.nombre_completo}}</h4>
+
+                        <div class="row">
+                            <div class="form-group col-md-4">
+                                <label for="codigo">Fecha</label>
+                                <input ng-disabled="verinformacionDOtacion" vrequired ng-update-hidden data-date-format="dd/mm/yyyy" class="form-control date-picker"
+                                    autocomplete="off" type="text" ng-model="dotacionRopa.fecha">
+                            </div>
+
+                            <div class="form-group col-md-4">
+                                <label for="nombre">Cumpli.</label>
+                                <div class="input-group">
+                                    <select ng-disabled="verinformacionDOtacion" autofocus required ng-model="dotacionRopa.cumplimiento" class="form-control"
+                                        ng-options="cumplimiento as cumplimiento.nombre for cumplimiento in cumplimientoDotacion.clases | filter:{habilitado:true} track by cumplimiento.id">
+                                        <option value="">--Ninguno--</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group col-md-4">
+                                <label for="periodo">Periodo</label>
+                                <div class="input-group">
+                                    <select ng-disabled="verinformacionDOtacion" required ng-model="dotacionRopa.periodo" class="form-control" ng-options="periodo as periodo.nombre for periodo in periodoDotacion.clases | filter:{habilitado:true} track by periodo.id">
+                                        <option value="">--Ninguno--</option>
+                                    </select>
+                                    <span class="input-group-addon glyphicon glyphicon-pencil point-edit green" ng-click="abrirDialogConceptoEdicion(periodoDotacion)"></span>
+                                </div>
+                            </div>
                         </div>
-                        <div class="form-inline col-md-4">
-                            <label class="inline" for="codigo">Obs.</label>
-                            <input ng-disabled="verinformacionDOtacion" ng-update-hidden type="text" class "form-control" id="filtroCodigo" ng-model="dotacionRopa.observacion"
-                                placeholder="" />
+                        <div class="row">
+                            <div class="form-group col-md-4">
+                                <label for="estado">Estado</label>
+                                <div class="input-group">
+                                    <select ng-disabled="verinformacionDOtacion" required ng-model="dotacionRopa.estado" class="form-control" ng-options="estado as estado.nombre for estado in estadoDotacion.clases | filter:{habilitado:true} track by estado.id">
+                                        <option value="">--Ninguno--</option>
+                                    </select>
+                                </div>
+                            </div>
+
+
+                            <div class="form-group col-md-4">
+                                <label for="cargo">Cargos</label>
+                                <div ng-if="!verinformacionDOtacion" ng-hide="visible" class="input-group">
+                                    <p ng-repeat="cargo in cargosEmpleado">{{cargo.cargo.nombre}}</p>
+                                </div>
+                                <div ng-if="verinformacionDOtacion" class="input-group">
+                                    <p ng-repeat="cargo in listaDotaciones[indexInfo].cargos">{{cargo.nombre}}</p>
+                                </div>
+                                <div ng-show="visible">
+                                    <p ng-repeat="cargo in listaDotaciones[indexInfo].cargos">{{cargo.nombre}}</p>
+                                </div>
+
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label for="nombre">Items</label>
+                                <div ng-if="!verinformacionDOtacion" ng-hide="visible" class="input-group">
+                                    <!--  <input ng-update-hidden type="text" class "form-control" id="filtroNombre" ng-model="filtro.nombres" placeholder="" /> -->
+                                    <p ng-repeat="items in dotacionItems">{{items.ropaTrabajo.nombre}}</p>
+                                    <span class="input-group-addon glyphicon glyphicon-search point-edit green" ng-click="abrirModalItemsNuevaRopaTrabajo()"></span>
+                                </div>
+                                <div ng-if="verinformacionDOtacion" class="input-group">
+                                    <!--  <input ng-update-hidden type="text" class "form-control" id="filtroNombre" ng-model="filtro.nombres" placeholder="" /> -->
+                                    <p ng-repeat="items in listaDotaciones[indexInfo].ropas">{{items.nombre}}</p>
+                                    <span class="input-group-addon glyphicon glyphicon-search point-edit green" ng-click="abrirModalItemsNuevaRopaTrabajo()"></span>
+                                </div>
+                                <div ng-show="visible" class="input-group">
+                                    <!--  <input ng-update-hidden type="text" class "form-control" id="filtroNombre" ng-model="filtro.nombres" placeholder="" /> -->
+                                    <p ng-repeat="items in listaDotaciones[indexInfo].ropas">{{items.nombre}}</p>
+                                    <span class="input-group-addon glyphicon glyphicon-search point-edit green" ng-click="abrirModalItemsNuevaRopaTrabajo()"></span>
+                                </div>
+                            </div>
+
                         </div>
-                        <div class="form-inline col-md-4">
-                            <label class="inline" for="codigo">Sucursal</label>
-                            <select disabled class="form-control" required id="sucursal" name="sucursal" ng-options="sucursal as sucursal.nombre for sucursal in sucursales track by sucursal.id"
-                                ng-model="dotacionRopa.sucursal">
-                            </select>
+                        <div class="row">
+
+                            <div class="col-md-12">
+                                <p  for="codigo">Obs.</p>
+                                <input ng-disabled="verinformacionDOtacion" ng-update-hidden type="text" class="form-control" id="filtroCodigo" ng-model="dotacionRopa.observacion"
+                                    placeholder="" />
+                            </div>
+                            <div class="form-inline col-md-4">
+                                <label class="inline" for="codigo">Fecha Vencimiento</label>
+                                <input ng-disabled="verinformacionDOtacion" required ng-update-hidden data-date-format="dd/mm/yyyy" class="form-control date-picker"
+                                    autocomplete="off" type="text" ng-model="dotacionRopa.fecha_vencimiento">
+                            </div>
+                            <!--  <div class="form-inline col-md-4">
+                                <label class="inline" for="codigo">Sucursal</label>
+                                <select disabled class="form-control" required id="sucursal" name="sucursal" ng-options="sucursal as sucursal.nombre for sucursal in sucursales track by sucursal.id"
+                                    ng-model="dotacionRopa.sucursal">
+                                </select>
+                            </div> -->
+                            <div class="col-md-3 col-sm-4">
+                                Sucursal:
+                                <select disabled required class="form-control" name="sucursal" id="sucursal" ng-change="obtenerAlmacenes(dotacionRopa.sucursal.id)"
+                                    required ng-model="dotacionRopa.sucursal" ng-options="sucursal as sucursal.nombre for sucursal in sucursales"></select>
+                                <div ng-show="desp.sucursal.$error.required" class="invalid-message help-block" ng-messages="desp.sucursal.$error" ng-if="errorDespacho">
+                                    <div ng-messages-include="/templates/gral/messages.html"></div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-sm-4">
+                                Almacen
+                                <select required ng-disabled="editAlmacen" class="form-control" name="almacen" ng-model="dotacionRopa.almacen" ng-options="almacen as almacen.nombre for almacen in almacenes track by almacen.id"></select>
+                                <!-- 	<button class="btn btn-primary" ng-disabled="gtm_detalles_despacho_seleccionados.length==0" type="submit">
+                                    <i class="ace-icon fa fa-floppy-o align-top bigger-125"></i>
+                                    Guardar</button> -->
+                                <div ng-show="desp.almacen.$error.required" class="invalid-message help-block" ng-messages="desp.almacen.$error" ng-if="errorDespacho">
+                                    <div ng-messages-include="/templates/gral/messages.html"></div>
+                                </div>
+                            </div>
                         </div>
+
+
                     </div>
 
+                    <div class="modal-footer">
 
-                </div>
-
-                <div class="modal-footer">
-
-                    <button tabindex="-1" type="button" class="btn btn-danger btn-sm pull-left" data-dismiss="modal" ng-click="cerrarModalNuevaRopaTrabajo()">
-                        <i class="ace-icon fa fa-times"></i>
-                        Cancelar
-                    </button>
-                    <button ng-if="!verinformacionDOtacion" type="submit" class="btn btn-primary btn-sm pull-right">
-                        <i class="ace-icon fa fa-times"></i>
-                        Guardar
-                    </button>
-                </div>
-            </form>
+                        <button tabindex="-1" type="button" class="btn btn-danger btn-sm pull-left" data-dismiss="modal" ng-click="cerrarModalNuevaRopaTrabajo()">
+                            <i class="ace-icon fa fa-times"></i>
+                            Cancelar
+                        </button>
+                        <button ng-if="!verinformacionDOtacion" type="submit" class="btn btn-primary btn-sm pull-right">
+                            <i class="ace-icon fa fa-times"></i>
+                            Guardar
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
     <div id="dialog-items-nueva-ropa-trabajo">
         <div class="modal-content">
-            <form>
+            <form ng-submit="cerrarModalItemsNuevaRopaTrabajo()">
                 <div class="modal-header bg-success">
                     <h4 align="center"> DETALLE</h4>
                 </div>
@@ -7806,18 +7864,19 @@
                                     <td>{{$index}}</td>
                                     <td scope="row">{{item.ropaTrabajo.nombre}}</td>
                                     <td>
-                                        <select ng-disabled="verinformacionDOtacion" ng-model="item.producto" ng-disabled="!item.editable" ng-change="calularInventarioItem(item)"
-                                            ng-options="producto as producto.nombre for producto in productosRopaTrabajo | filter:{id_subgrupo:item.id_ropa_trabajo} track by producto.id"></select>
+                                        <select   ng-disabled="verinformacionDOtacion || item.entregado" ng-model="item.producto"  required ng-change="calularInventarioItem(item)"
+                                            ng-options="producto as producto.nombre for producto in productosRopaTrabajo | filter:{id_subgrupo:item.id_ropa_trabajo} track by producto.id"><option value="">Seleccionar</option></select>
+                                            
                                     </td>
                                     <td>{{item.cantidad_disponible}}</td>
                                     <td>{{item.cantidad}}</td>
                                     <td>
                                         <div class="action-buttons">
 
-                                            <a ng-if="item.entregado" href="javascript:void(0)" class="green" ng-click="seleccionarItem(item)">
+                                            <a e-disabled="item.cantidad_disponible<item.cantidad" ng-if="item.entregado" href="javascript:void(0)" class="green" ng-click="seleccionarItem(item)">
                                                 <i class="ace-icon fa fa-thumbs-up bigger-130"></i>
                                             </a>
-                                            <a ng-if="!item.entregado" href="javascript:void(0)" class="dark" ng-click="seleccionarItem(item)">
+                                            <a e-disabled="item.cantidad_disponible<item.cantidad" ng-if="!item.entregado" href="javascript:void(0)" class="dark" ng-click="seleccionarItem(item)">
                                                 <i class="ace-icon fa fa-thumbs-up bigger-130"></i>
                                             </a>
                                         </div>
@@ -7830,7 +7889,7 @@
 
                 <div class="modal-footer">
 
-                    <button tabindex="-1" type="button" class="btn btn-danger btn-sm pull-left" data-dismiss="modal" ng-click="cerrarModalItemsNuevaRopaTrabajo()">
+                    <button type="submit" class="btn btn-danger btn-sm pull-left" >
                         <i class="ace-icon fa fa-times"></i>
                         Salir
                     </button>

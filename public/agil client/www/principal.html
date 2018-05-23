@@ -1753,7 +1753,7 @@
 
 	<div id="modal-wizard-comprobante-edicion" class="modal wizard-posicion">
 		<div class="modal-content">
-			<form id="formNuevoComprobante" name="formNuevoComprobante" novalidate ng-submit="validarGuardadoDeComprobante(formNuevoComprobante,nuevoComprobante)">
+			<form id="formNuevoComprobante" novalidate name="formNuevoComprobante" ng-submit="validarGuardadoDeComprobante(formNuevoComprobante,nuevoComprobante)">
 				<div class="modal-header">
 					<div class="row">
 						<div class="col-sm-9">
@@ -2079,22 +2079,22 @@
 											</th>
 
 											<td>
-												<input class="input-fix-mousewheel1" ng-focus="establecerCuentaActual2(asiento)" ng-disabled="asiento.cuenta.id==undefined || verComprobante"
-												 id="{{$index}}-Bs" type="number" ng-model="asiento.debe_bs" ng-change="ComvertirDebeEnDolar(asiento,true);cal(nuevoComprobante.asientosContables)"
-												 enter>
+												<input required class="input-fix-mousewheel1" ng-focus="establecerCuentaActual2(asiento);inputDebebs(asiento)" ng-disabled="asiento.cuenta.id==undefined || verComprobante"
+												 id="{{$index}}-Bs" type="number" step="0.01" ng-model="asiento.debe_bs" ng-change="ComvertirDebeEnDolar(asiento,true);cal(nuevoComprobante.asientosContables)"
+												enter>
 											</td>
 											<td>
-												<input class="input-fix-mousewheel1" ng-focus="establecerCuentaActual2(asiento)" ng-disabled="asiento.cuenta.id==undefined || verComprobante"
-												 id="{{$index}}-Cs" type="number" ng-model="asiento.haber_bs" ng-change="ComvertirHaberEnDolar(asiento,true);cal(nuevoComprobante.asientosContables)"
+												<input required class="input-fix-mousewheel1" ng-focus="inputhaberbs2(asiento);establecerCuentaActual2(asiento)" ng-disabled="asiento.cuenta.id==undefined || verComprobante"
+												 id="{{$index}}-Cs" type="number" step="0.01"  ng-model="asiento.haber_bs" ng-change="ComvertirHaberEnDolar(asiento,true);cal(nuevoComprobante.asientosContables)"
 												 enter>
 											</td>
 											<td ng-if="opcionBimonetario">
-												<input class="input-fix-mousewheel1" ng-focus="establecerCuentaActual2(asiento)" ng-disabled="asiento.cuenta.id==undefined || verComprobante"
-												 type="number" ng-model="asiento.debe_sus" ng-change="ComvertirDebeEnBolivianos(asiento);cal(nuevoComprobante.asientosContables)"
+												<input required class="input-fix-mousewheel1" ng-focus="establecerCuentaActual2(asiento);inputDebeSus(asiento)" ng-disabled="asiento.cuenta.id==undefined || verComprobante"
+												 type="number" ng-model="asiento.debe_sus" step="0.01"  ng-change="ComvertirDebeEnBolivianos(asiento);cal(nuevoComprobante.asientosContables)"
 												 enter>
 											</td>
 											<td ng-if="opcionBimonetario">
-												<input class="input-fix-mousewheel1" ng-focus="establecerCuentaActual2(asiento)" ng-disabled="asiento.cuenta.id==undefined || verComprobante"
+												<input required class="input-fix-mousewheel1" step="0.01" ng-focus="establecerCuentaActual2(asiento);inputHaberSus(asiento)" ng-disabled="asiento.cuenta.id==undefined || verComprobante"
 												 type="number" ng-model="asiento.haber_sus" ng-change="ComvertirHaberEnBolivianos(asiento);cal(nuevoComprobante.asientosContables)"
 												 enter>
 											</td>
@@ -2116,10 +2116,10 @@
 										<tr ng-if="nuevoComprobante.asientosContables.length>0">
 											<td></td>
 											<td colspan="2" style="text-align: right">total</td>
-											<td style="text-align: center">{{totales.debe_bs}}</td>
-											<td style="text-align: center">{{totales.haber_bs}}</td>
-											<td ng-if="opcionBimonetario" style="text-align: center">{{totales.debe_sus}}</td>
-											<td ng-if="opcionBimonetario" style="text-align: center">{{totales.haber_sus}}</td>
+											<td style="text-align: center">{{totales.debe_bs|number:2}}</td>
+											<td style="text-align: center">{{totales.haber_bs|number:2}}</td>
+											<td ng-if="opcionBimonetario" style="text-align: center">{{totales.debe_sus|number:2}}</td>
+											<td ng-if="opcionBimonetario" style="text-align: center">{{totales.haber_sus|number:2}}</td>
 											<td></td>
 										</tr>
 									</tfoot>

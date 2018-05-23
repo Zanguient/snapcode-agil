@@ -29,6 +29,14 @@ module.exports = function (sequelize, Sequelize) {
             type: Sequelize.INTEGER,
             field: 'usuario'
         },
+        id_sucursal: {
+            type: Sequelize.INTEGER,
+            field: 'sucursal'
+        },
+        id_almacen: {
+            type: Sequelize.INTEGER,
+            field: 'almacen'
+        },
         observacion: {
             type: Sequelize.STRING,
             field: 'observacion'

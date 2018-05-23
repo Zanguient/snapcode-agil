@@ -79,6 +79,7 @@ angular.module('agil.controladores')
 			$scope.compra.fecha=new Date($scope.compra.fecha);
 			$scope.compra.fechaTexto=$scope.compra.fecha.getDate()+"/"+($scope.compra.fecha.getMonth()+1)+"/"+$scope.compra.fecha.getFullYear();
 			$scope.compra.sucursal=compraConsultada.almacen.sucursal;
+			
 			$scope.obtenerAlmacenes($scope.compra.sucursal.id);
 			$scope.cambiarTipoPago($scope.compra.tipoPago);
 			if($scope.usuario.empresa.usar_vencimientos){
@@ -308,7 +309,9 @@ angular.module('agil.controladores')
 		$scope.almacenes=[];
 		var sucursal=$.grep($scope.sucursales, function(e){return e.id == idSucursal;})[0];
 		$scope.almacenes=sucursal.almacenes;
+		if($scope.compra.id== undefined){
 		$scope.compra.almacen=$scope.almacenes.length==1?$scope.almacenes[0]:null;
+		}
 	}
 	
 	$scope.$on('$viewContentLoaded', function(){

@@ -1039,7 +1039,11 @@ angular.module('agil.controladores')
 		$scope.inicio = function () {
 			$scope.sucursales = $scope.obtenerSucursales();
 			$scope.reporte = {};
-
+			$scope.itemsPorPagina = 10;
+			$scope.paginaActual = 1;
+			$scope.columna = "cantidad";
+			$scope.direccion = "asc";
+			$scope.textoBusqueda = "";
 			$scope.reporte.sucursal = ($scope.sucursales.length == 1) ? $scope.sucursales[0] : null;
 			if ($scope.sucursales.length == 1) {
 				$scope.obtenerAlmacenes($scope.sucursales[0].id)
@@ -1077,12 +1081,7 @@ angular.module('agil.controladores')
 			$scope.obtenerInventarios()
 		}
 		$scope.obtenerInventarios = function () {
-			$scope.abs = $window.Math.abs;
-			$scope.itemsPorPagina = 10;
-			$scope.paginaActual = 1;
-			$scope.columna = "cantidad";
-			$scope.direccion = "asc";
-			$scope.textoBusqueda = "";
+			$scope.abs = $window.Math.abs;			
 			if ($scope.reporte.sucursal !== undefined && $scope.reporte.sucursal !== null) {
 				$scope.sucursalBusqueda = $scope.reporte.sucursal
 				if ($scope.reporte.almacen !== undefined && $scope.reporte.almacen) {

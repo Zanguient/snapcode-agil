@@ -933,6 +933,10 @@ module.exports = function (sequelize, Usuario, Persona, Rol, UsuarioRol, Tipo, C
 	RrhhEmpleadoDotacionRopa.hasMany(RrhhEmpleadoDotacionRopaItem, { foreignKey: 'id_dotacion_ropa', as: 'dotacionItems' })
 	RrhhEmpleadoDotacionRopa.belongsTo(MedicoPaciente, { foreignKey: 'id_empleado', as: 'empleado' })	
 	RrhhEmpleadoDotacionRopa.belongsTo(Usuario, { foreignKey: 'id_usuario', as: 'usuario' })
+	RrhhEmpleadoDotacionRopa.belongsTo(Sucursal, { foreignKey: 'id_sucursal', as: 'sucursal' })
+	RrhhEmpleadoDotacionRopa.belongsTo(Almacen, { foreignKey: 'id_almacen', as: 'almacen' })
+	Sucursal.hasMany(RrhhEmpleadoDotacionRopa, { foreignKey: 'id_sucursal', as: 'dotacionesRopa' })
+	Almacen.hasMany(RrhhEmpleadoDotacionRopa, { foreignKey: 'id_almacen', as: 'dotacionesRopa' })
 
 	RrhhViaje.belongsTo(Clase, { foreignKey: 'id_vehiculo', as: 'vehiculo' })
 	RrhhViaje.belongsTo(RrhhViajeConductor, { foreignKey: 'id_conductor', as: 'conductor' })

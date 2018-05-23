@@ -87,7 +87,15 @@ module.exports = function (sequelize, Sequelize) {
 		id_cuenta_banco: {
 			type: Sequelize.INTEGER,
 			field: 'cuenta_banco'
-		}
+		},
+		empleado_cargo_impresion: {
+			type: Sequelize.STRING,
+			field: 'empleado_cargo_impresion'
+		},
+		cargo_imprecion: {
+			type: Sequelize.STRING,
+			field: 'cargo_imprecion'
+		},
 	}, {
 			freezeTableName: true
 		});

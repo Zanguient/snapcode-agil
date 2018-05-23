@@ -1,7 +1,7 @@
 module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente, Persona, Empresa, Sucursal, Clase, Diccionario, Tipo, decodeBase64Image, fs, RrhhEmpleadoFicha, RrhhEmpleadoFichaOtrosSeguros, RrhhEmpleadoFichaFamiliar, RrhhEmpleadoDiscapacidad
     , RrhhEmpleadoCargo, RrhhEmpleadoHojaVida, RrhhEmpleadoFormacionAcademica, RrhhEmpleadoExperienciaLaboral, RrhhEmpleadoLogroInternoExterno, RrhhEmpleadoCapacidadInternaExterna, NumeroLiteral, RrhhEmpleadoPrestamo, RrhhEmpleadoPrestamoPago, RrhhEmpleadoRolTurno, RrhhEmpleadoHorasExtra, RrhhAnticipo,
     EvaluacionPolifuncional, ConfiguracionCalificacionEvaluacionPolifuncional, ConfiguracionDesempenioEvaluacionPolifuncional, RrhhEmpleadoAusencia, RrhhEmpleadoVacaciones, RrhhEmpleadoCompensacionAusencia, RrhhFeriado, RrhhClaseAsuencia, RrhhEmpleadoConfiguracionVacacion, RrhhEmpleadoHistorialVacacion, RrhhEmpleadoTr3, RrhhEmpleadoAnticipoTr3, Banco, RrhhEmpleadoDeduccionIngreso,
-    RrhhEmpleadoBeneficioSocial, RrhhEmpleadoBitacoraFicha, RrhhEmpleadoConfiguracionRopa, Producto, Inventario, RrhhEmpleadoDotacionRopaItem, RrhhEmpleadoDotacionRopa, RrhhViajeDetalle, RrhhViaje, RrhhViajeDestino, RrhhViajeConductor) {
+    RrhhEmpleadoBeneficioSocial, RrhhEmpleadoBitacoraFicha, RrhhEmpleadoConfiguracionRopa, Producto, Inventario, RrhhEmpleadoDotacionRopaItem, RrhhEmpleadoDotacionRopa, RrhhViajeDetalle, RrhhViaje, RrhhViajeDestino, RrhhViajeConductor, Movimiento, DetalleMovimiento,Almacen) {
 
     router.route('/recursos-humanos/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion/codigo/:codigo/nombres/:nombres/ci/:ci/campo/:campo/cargo/:cargo/busquedaEmpresa/:busquedaEmpresa/grupo/:grupo_sanguineo/estado/:estado/apellido/:apellido')
         .get(function (req, res) {
@@ -406,11 +406,21 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                     /*  var mn = (req.body.activo == true) ? 'activo' : 'inactivo' */
                     if (req.body.nueva_fecha_expiracion) {
                         RrhhEmpleadoFicha.update({
-                            fecha_expiracion: req.body.nueva_fecha_expiracion
+                            fecha_expiracion: req.body.nueva_fecha_expiracion,
+
                         }, {
                                 where: { id: req.body.id_ficha }
                             }).then(function (fichaActualizada) {
-                                res.json({ mensaje: "Usuario actualizado satisfactoriamente!" });
+                                RrhhEmpleadoBeneficioSocial.create({
+                                    id_ficha: req.body.id_ficha,
+                                    tipo_beneficio: true,
+                                    fecha_retiro: req.body.nueva_fecha_expiracion,
+                                    id_motivo: req.body.motivo_retiro,
+                                    eliminado: false
+                                }).then(function (creado) {
+                                    res.json({ mensaje: "Usuario actualizado satisfactoriamente!" });
+                                })
+
                             })
 
                     } else if (req.body.tipoReincorporacion) {
@@ -420,7 +430,17 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                             }, {
                                     where: { id: req.body.id_ficha }
                                 }).then(function (fichaActualizada) {
-                                    res.json({ mensaje: "Usuario actualizado satisfactoriamente!" });
+                                    RrhhEmpleadoBeneficioSocial.update({
+                                        eliminado: true
+                                    }, {
+                                            where: {
+                                                id_ficha: req.body.id_ficha,
+                                                tipo_beneficio: true
+                                            }
+                                        }).then(function (beneficioEncontrado) {
+                                            res.json({ mensaje: "Usuario actualizado satisfactoriamente!" });
+                                        })
+
                                 })
                         } else {
                             res.json({ mensaje: "Usuario actualizado satisfactoriamente!" });
@@ -572,7 +592,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                                                 })
                                         } else {
                                             RrhhViajeConductor.create({
-                                                nombre:nombre,
+                                                nombre: nombre,
                                                 licencia: req.body.empleado.persona.ci,
                                                 id_empleado: req.body.empleado.id,
                                                 habilitado: true,
@@ -655,7 +675,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                                                         guardarDatosFicha(req, res, personaReferencia, Persona, RrhhEmpleadoFicha, RrhhEmpleadoFichaOtrosSeguros, RrhhEmpleadoFichaFamiliar, RrhhEmpleadoCargo, RrhhEmpleadoDiscapacidad, fichaAnterior)
                                                     })
                                             } else {
-                                              
+
                                                 RrhhViajeConductor.create({
                                                     nombre: nombre,
                                                     licencia: req.body.empleado.persona.ci,
@@ -3645,7 +3665,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                         model: RrhhAnticipo, as: 'anticipo',
                         include: [{
                             model: MedicoPaciente, as: 'empleado',
-                            include: [{ model: Persona, as: 'persona' }, { model: RrhhEmpleadoFicha, as: 'empleadosFichas',required:false, limit: 1, order: [["id", "desc"]] }]
+                            include: [{ model: Persona, as: 'persona' }, { model: RrhhEmpleadoFicha, as: 'empleadosFichas', required: false, limit: 1, order: [["id", "desc"]] }]
                         }]
                     }]
                 },
@@ -3658,7 +3678,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
     router.route('/recursos-humanos/beneficio/ficha/:id')
         .get(function (req, res) {
             RrhhEmpleadoBeneficioSocial.find({
-                where: { id_ficha: req.params.id, tipo_beneficio: true },
+                where: { id_ficha: req.params.id, tipo_beneficio: true, eliminado: false },
                 include: [{ model: Clase, as: 'motivo' }, { model: Banco, as: 'cuenta' }, { model: RrhhEmpleadoDeduccionIngreso, as: 'deduccionEingresos', include: [{ model: Clase, as: "tipo" }] }]
             }).then(function (beneficio) {
                 res.json({ beneficio: beneficio })
@@ -3726,6 +3746,8 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                     mes_uno: req.body.mes_uno.id,
                     mes_dos: req.body.mes_dos.id,
                     mes_tres: req.body.mes_tres.id,
+                    empleado_cargo_impresion: req.body.empleado_cargo_impresion,
+                    cargo_imprecion: req.body.cargo_imprecion,
                 }, {
                         where: { id: req.body.id }
                     }).then(function (beneficioActualizado) {
@@ -3801,6 +3823,8 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                         mes_uno: req.body.mes_uno.id,
                         mes_dos: req.body.mes_dos.id,
                         mes_tres: req.body.mes_tres.id,
+                        empleado_cargo_impresion: req.body.empleado_cargo_impresion,
+                        cargo_imprecion: req.body.cargo_imprecion,
                     }).then(function (beneficioCreado) {
                         res.json({ mensaje: 'Beneficio social creado satisfactoriamente!' })
 
@@ -3831,6 +3855,8 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                         mes_uno: req.body.mes_uno.id,
                         mes_dos: req.body.mes_dos.id,
                         mes_tres: req.body.mes_tres.id,
+                        empleado_cargo_impresion: req.body.empleado_cargo_impresion,
+                        cargo_imprecion: req.body.cargo_imprecion,
                     }).then(function (beneficioCreado) {
                         if (req.body.ingresos.length > 0) {
                             req.body.ingresos.forEach(function (ingreso, index, array) {
@@ -4057,94 +4083,292 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
         })
     router.route('/recursos-humanos/ropa-trabajo/actualizar/empleado/:id_empleado')
         .put(function (req, res) {
-            RrhhEmpleadoDotacionRopa.update({
-                fecha: req.body.fecha,
-                fecha_vencimiento: req.body.fecha_vencimiento,
-                id_cumplimiento: req.body.cumplimiento.id,
-                id_periodo: req.body.periodo.id,
-                id_estado: req.body.estado.id,
-                observacion: req.body.observacion,
-                id_usuario: req.body.id_usuario
-            }, {
-                    where: {
-                        id: req.body.id
-                    }
-                }).then(function (dotacionActualizada) {
-                    req.body.dotacionItems.forEach(function (item, index, array) {
-                        RrhhEmpleadoDotacionRopaItem.update({
+            sequelize.transaction(function (t) {
+                var promises = [];
+
+                return RrhhEmpleadoDotacionRopa.update({
+                    fecha: req.body.fecha,
+                    fecha_vencimiento: req.body.fecha_vencimiento,
+                    id_cumplimiento: req.body.cumplimiento.id,
+                    id_periodo: req.body.periodo.id,
+                    id_estado: req.body.estado.id,
+                    observacion: req.body.observacion,
+                    id_usuario: req.body.id_usuario,
+                }, {
+                    transaction: t,
+                        where: {
+                            id: req.body.id
+                        }
+                    }).then(function (dotacionActualizada) {
+                        return actualizarItemRopa(req, res, t)
+                    })
+            }).then(function (result) {
+                res.json({ mensaje: "Creado Satisfactoriamente!", numero: req.body.numero })
+            }).catch(function (err) {
+                var error = (err.stack) ? err.stack : err
+                res.json({ hasError: true, mensaje: error });
+            });
+        })
+    function actualizarItemRopa(req, res, t) {
+        var promises = []
+        req.body.dotacionItems.forEach(function (item, index, array) {
+
+            item.id = (item.id) ? item.id : 0
+            promises.push(RrhhEmpleadoDotacionRopaItem.find({
+                transaction: t,
+                where: { id_ropa_trabajo: item.id_ropa_trabajo, id_producto: item.producto.id, entregado: true }
+            }).then(function (dato) {
+                if (dato) {
+                    if (!dato.entregado) {
+                        return Producto.find({
+                            include: [{
+                                model: Inventario, as: 'inventarios', required: false, where: {
+                                    id_almacen: req.body.almacen.id
+                                }
+                            }],
+                            where: {
+                                id: item.producto.id
+                            },
+                            transaction: t
+                        }).then(function (producto) {
+                            return Tipo.find({
+                                where: { nombre_corto: Diccionario.MOV_EGRE },
+                                transaction: t
+                            }).then(function (tipoMovimiento) {
+                                return Clase.find({
+                                    where: { nombre_corto: Diccionario.EGRE_PROFORMA },
+                                    transaction: t
+                                }).then(function (tipoEgreso) {
+                                    calcularCostosEgresosRopa(tipoMovimiento, tipoEgreso, producto, item.cantidad, producto.inventarios, index, array, res, t, req, item)
+                                })
+                            })
+                        })
+                    } else {
+                        return RrhhEmpleadoDotacionRopaItem.update({
                             id_producto: item.producto.id,
                             entregado: item.entregado,
                             id_ropa_trabajo: item.ropaTrabajo.id,
                             id_cargo: item.cargo.id,
                             cantidad: item.cantidad
                         }, {
-                                where: { id: item.id }
-                            }).then(function (detalleCreado) {
-                                if (index === (array.length - 1)) {
-                                    res.json({ mensaje: "Creado Satisfactoriamente!", numero: req.body.numero })
-                                }
-                            })
-                    })
-                })
-        })
-    router.route('/recursos-humanos/ropa-trabajo/empleado/:id_empleado')
-        .post(function (req, res) {
-            Sucursal.find({
-                where: {
-                    id: req.body.sucursal.id,//your where conditions, or without them if you need ANY entry
-                }
-            }).then(function (SucursalEncontrada) {
-                var nuemero_correlativo = SucursalEncontrada.ropa_trabajo_correlativo
-                RrhhEmpleadoDotacionRopa.create({
-                    fecha: req.body.fecha,
-                    fecha_vencimiento: req.body.fecha_vencimiento,
-                    id_cumplimiento: req.body.cumplimiento.id,
-                    id_periodo: req.body.periodo.id,
-                    id_estado: req.body.estado.id,
-                    id_empleado: req.params.id_empleado,
-                    observacion: req.body.observacion,
-                    id_usuario: req.body.id_usuario,
-                    eliminado: false,
-                    numero: SucursalEncontrada.ropa_trabajo_correlativo
-                }).then(function (dotacionCreada) {
-                    var numero = SucursalEncontrada.ropa_trabajo_correlativo + 1;
-                    Sucursal.update({
-                        ropa_trabajo_correlativo: numero
-                    }, {
-                            where: {
-                                id: req.body.sucursal.id,
+                                where: { id: item.id },
+                                transaction: t
+                            }).then(function (detalleCreado) { })
+                    }
+                } else {
+                    return Producto.find({
+                        include: [{
+                            model: Inventario, as: 'inventarios', required: false, where: {
+                                id_almacen: req.body.almacen.id
                             }
-                        }).then(function (sucursalActualizada) {
-                            req.body.dotacionItems.forEach(function (item, index, array) {
-                                if (item.editable) {
-                                    var anterior = false
-                                    if (!item.modificable) {
-                                        anterior = true
-                                    }
-                                    RrhhEmpleadoDotacionRopaItem.create({
-                                        id_dotacion_ropa: dotacionCreada.dataValues.id,
-                                        id_producto: item.producto.id,
-                                        entregado: item.entregado,
-                                        id_ropa_trabajo: item.ropaTrabajo.id,
-                                        id_cargo: item.cargo.id,
-                                        cantidad: item.cantidad,
-                                        anterior: anterior
-                                    }).then(function (detalleCreado) {
-                                        if (index === (array.length - 1)) {
-                                            res.json({ mensaje: "Creado Satisfactoriamente!", numero: nuemero_correlativo })
-                                        }
-                                    })
-                                } else {
-                                    if (index === (array.length - 1)) {
-                                        res.json({ mensaje: "Creado Satisfactoriamente!", numero: nuemero_correlativo })
-                                    }
-                                }
+                        }],
+                        where: {
+                            id: item.producto.id
+                        },
+                        transaction: t
+                    }).then(function (producto) {
+                        return Tipo.find({
+                            where: { nombre_corto: Diccionario.MOV_EGRE },
+                            transaction: t
+                        }).then(function (tipoMovimiento) {
+                            return Clase.find({
+                                where: { nombre_corto: Diccionario.EGRE_PROFORMA },
+                                transaction: t
+                            }).then(function (tipoEgreso) {
+                                calcularCostosEgresosRopa(tipoMovimiento, tipoEgreso, producto, item.cantidad, producto.inventarios, index, array, res, t, req, item)
                             })
                         })
+                    })
+                }
+            }))
 
+
+
+
+
+            /*  RrhhEmpleadoDotacionRopaItem.update({
+                 id_producto: item.producto.id,
+                 entregado: item.entregado,
+                 id_ropa_trabajo: item.ropaTrabajo.id,
+                 id_cargo: item.cargo.id,
+                 cantidad: item.cantidad
+             }, {
+                     where: { id: item.id }
+                 }).then(function (detalleCreado) {
+                     if (index === (array.length - 1)) {
+                         res.json({ mensaje: "Creado Satisfactoriamente!", numero: req.body.numero })
+                     }
+                 }) */
+        })
+        return Promise.all(promises);
+    }
+
+    function calcularCostosEgresosRopa(tipoMovimiento, tipoEgreso, producto, cantidad, inventarios, index, array, res, t, req, item) {
+        var cantidadTotal = cantidad;
+        if (producto.activar_inventario) {
+            if (inventarios.length > 0) {
+                var promises = [];
+                var totalInventario = 0
+                for (var p = 0; p < inventarios.length; p++) {
+                    totalInventario = totalInventario + inventarios[p].cantidad;
+                    if (p === (inventarios.length - 1)) {
+                        if (totalInventario >= cantidad) {
+                            return Movimiento.create({
+                                id_tipo: tipoMovimiento.id,
+                                id_clase: tipoEgreso.id,
+                                id_almacen: req.body.id_almacen,
+                                fecha: new Date()
+                            }, { transaction: t }).then(function (movimientoCreado) {
+                                var anterior = false
+                                if (!item.modificable) {
+                                    anterior = true
+                                }
+                                return RrhhEmpleadoDotacionRopaItem.update({
+                                    id_producto: item.producto.id,
+                                    entregado: item.entregado,
+                                    id_ropa_trabajo: item.ropaTrabajo.id,
+                                    id_cargo: item.cargo.id,
+                                    cantidad: item.cantidad
+                                }, {
+                                        where: { id: item.id },
+                                        transaction: t
+                                    }).then(function (detalleCreado) {
+                                        for (var i = 0; i < inventarios.length; i++) {
+                                            if (cantidadTotal > 0) {
+                                                var cantidadParcial;
+                                                if (cantidadTotal > inventarios[i].cantidad) {
+                                                    cantidadParcial = inventarios[i].cantidad;
+                                                    cantidadTotal = cantidadTotal - inventarios[i].cantidad
+                                                } else {
+                                                    cantidadParcial = cantidadTotal;
+                                                    cantidadTotal = 0;
+                                                }
+
+                                                if (cantidadParcial > 0) {
+                                                    //req.body.mensaje += "cliente pedido: "+detalle_despacho.despacho.cliente.razon_social+" producto: "+producto.nombre+" inventario=" + totalInventario+ "cantidad despachadas=" + cantidad+"|------|"														
+                                                    var rrr = crearMovimientoEgresoYActualizarInventario(movimientoCreado, producto, cantidad, inventarios, cantidadParcial, inventarios[i], index, array, i, res, t);
+                                                    //console.log(rrr);
+                                                    promises.push(new Promise(function (fulfill, reject) {
+                                                        fulfill({});
+                                                    }));
+                                                }
+                                            } else {
+                                                //if (index == (array.length - 1) && i == (inventarios.length - 1)) {
+                                                //res.json(venta);
+                                                /*promises.push(new Promise(function (fulfill, reject){
+                                                    fulfill(venta);
+                                                }));*/
+                                                //}
+                                            }
+                                        }
+                                    })
+
+                            })
+                        } else {
+                            var anterior = false
+                            if (!item.modificable) {
+                                anterior = true
+                            }
+                            promises.push(RrhhEmpleadoDotacionRopaItem.update({
+                                id_dotacion_ropa: dotacionCreada.dataValues.id,
+                                id_producto: item.producto.id,
+                                entregado: false,
+                                id_ropa_trabajo: item.ropaTrabajo.id,
+                                id_cargo: item.cargo.id,
+                                cantidad: item.cantidad,
+                                anterior: anterior
+                            }, {
+                                    where: { id: item.id },
+                                    transaction: t
+                                }).then(function (detalleCreado) {
+                                    //  req.body.mensaje += "cliente pedido: " + detalle_despacho.despacho.cliente.razon_social + " producto: " + producto.nombre + " inventario=" + totalInventario + "cantidad despachadas=" + cantidad + "|---|"
+                                }))
+
+                        }
+                    }
+                }
+                return Promise.all(promises);
+            } else {
+                return RrhhEmpleadoDotacionRopaItem.create({
+                    id_dotacion_ropa: dotacionCreada.dataValues.id,
+                    id_producto: item.producto.id,
+                    entregado: false,
+                    id_ropa_trabajo: item.ropaTrabajo.id,
+                    id_cargo: item.cargo.id,
+                    cantidad: item.cantidad,
+                    anterior: anterior
+                }, {
+                        transaction: t
+                    }).then(function (detalleCreado) {
+                        return new Promise(function (fulfill, reject) {
+                            fulfill({});
+                        }); //  req.body.mensaje += "cliente pedido: " + detalle_despacho.despacho.cliente.razon_social + " producto: " + producto.nombre + " inventario=" + totalInventario + "cantidad despachadas=" + cantidad + "|---|"
+                    })
+                //if (index == (array.length - 1)) {
+
+                //}
+            }
+        } else {
+            //if (index == (array.length - 1)) {
+            return new Promise(function (fulfill, reject) {
+                fulfill(venta);
+            });
+            //}
+        }
+    }
+    router.route('/recursos-humanos/ropa-trabajo/empleado/:id_empleado')
+        .post(function (req, res) {
+            req.body.mensaje = ""
+            sequelize.transaction(function (t) {
+                var promises = [];
+                var a = 0
+                return Sucursal.find({
+                    transaction: t,
+                    where: {
+
+                        id: req.body.sucursal.id,//your where conditions, or without them if you need ANY entry
+                    }
+                }).then(function (SucursalEncontrada) {
+                    var nuemero_correlativo = SucursalEncontrada.ropa_trabajo_correlativo
+                    req.body.nuemero_correlativo = nuemero_correlativo
+                    return RrhhEmpleadoDotacionRopa.create({
+                        fecha: req.body.fecha,
+                        fecha_vencimiento: req.body.fecha_vencimiento,
+                        id_cumplimiento: req.body.cumplimiento.id,
+                        id_periodo: req.body.periodo.id,
+                        id_estado: req.body.estado.id,
+                        id_empleado: req.params.id_empleado,
+                        observacion: req.body.observacion,
+                        id_usuario: req.body.id_usuario,
+                        eliminado: false,
+                        numero: SucursalEncontrada.ropa_trabajo_correlativo,
+                        id_sucursal: req.body.sucursal.id,
+                        id_almacen: req.body.almacen.id,
+                    }, {
+                            transaction: t,
+                        }).then(function (dotacionCreada) {
+                            var numero = SucursalEncontrada.ropa_trabajo_correlativo + 1;
+                            return Sucursal.update({
+                                ropa_trabajo_correlativo: numero
+                            }, {
+                                    transaction: t,
+                                    where: {
+                                        id: req.body.sucursal.id,
+                                    }
+                                }).then(function (sucursalActualizada) {
+                                    return agreregarItemsRopa(req, res, dotacionCreada, nuemero_correlativo, t, a)
+                                })
+
+                        })
                 })
-            })
 
+
+            }).then(function (result) {
+                res.json({ mensaje: "Creado Satisfactoriamente!", numero: req.body.nuemero_correlativo })
+            }).catch(function (err) {
+                var error = (err.stack) ? err.stack : err
+                res.json({ hasError: true, mensaje: error });
+            });
         })
         .put(function (req, res) {
             RrhhEmpleadoDotacionRopa.update({
@@ -4155,6 +4379,290 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                     res.json({ mensaje: "Eliminado satisfactoriamente" })
                 })
         })
+
+    function agreregarItemsRopa(req, res, dotacionCreada, nuemero_correlativo, t, a) {
+        var promises = []
+        req.body.dotacionItems.forEach(function (item, index, array) {
+            if (item.editable) {
+                item.id = (item.id) ? item.id : 0
+                promises.push(RrhhEmpleadoDotacionRopaItem.find({
+                    transaction: t,
+                    where: { id_ropa_trabajo: item.id_ropa_trabajo, id_producto: item.producto.id, entregado: true }
+                }).then(function (dato) {
+                    if (dato) {
+                        if (!dato.entregado) {
+                            return Producto.find({
+                                include: [{
+                                    model: Inventario, as: 'inventarios', required: false, where: {
+                                        id_almacen: req.body.almacen.id
+                                    }
+                                }],
+                                where: {
+                                    id: item.producto.id
+                                },
+                                transaction: t
+                            }).then(function (producto) {
+                                return Tipo.find({
+                                    where: { nombre_corto: Diccionario.MOV_EGRE },
+                                    transaction: t
+                                }).then(function (tipoMovimiento) {
+                                    return Clase.find({
+                                        where: { nombre_corto: Diccionario.EGRE_PROFORMA },
+                                        transaction: t
+                                    }).then(function (tipoEgreso) {
+                                        return calcularCostosEgresos(tipoMovimiento, tipoEgreso, producto, item.cantidad, producto.inventarios, index, array, res, t, req, item, a, dotacionCreada);
+                                    })
+                                })
+                            })
+                        } else {
+                            var anterior = false
+                            if (!item.modificable) {
+                                anterior = true
+                            }
+                            return RrhhEmpleadoDotacionRopaItem.create({
+                                id_dotacion_ropa: dotacionCreada.dataValues.id,
+                                id_producto: item.producto.id,
+                                entregado: item.entregado,
+                                id_ropa_trabajo: item.ropaTrabajo.id,
+                                id_cargo: item.cargo.id,
+                                cantidad: item.cantidad,
+                                anterior: anterior
+                            }, {
+                                    transaction: t
+                                }).then(function (detalleCreado) { })
+                        }
+                    } else {
+                        if (item.entregado) {
+                            return Producto.find({
+                                include: [{
+                                    model: Inventario, as: 'inventarios', required: false, where: {
+                                        id_almacen: req.body.almacen.id
+                                    }
+                                }],
+                                where: {
+                                    id: item.producto.id
+                                },
+                                transaction: t
+                            }).then(function (producto) {
+                                return Tipo.find({
+                                    where: { nombre_corto: Diccionario.MOV_EGRE },
+                                    transaction: t
+                                }).then(function (tipoMovimiento) {
+                                    return Clase.find({
+                                        where: { nombre_corto: Diccionario.EGRE_PROFORMA },
+                                        transaction: t
+                                    }).then(function (tipoEgreso) {
+                                        return calcularCostosEgresos(tipoMovimiento, tipoEgreso, producto, item.cantidad, producto.inventarios, index, array, res, t, req, item, a, dotacionCreada);
+                                    })
+                                })
+                            })
+                        } else {
+                            var anterior = false
+                            if (!item.modificable) {
+                                anterior = true
+                            }
+                            return RrhhEmpleadoDotacionRopaItem.create({
+                                id_dotacion_ropa: dotacionCreada.dataValues.id,
+                                id_producto: item.producto.id,
+                                entregado: item.entregado,
+                                id_ropa_trabajo: item.ropaTrabajo.id,
+                                id_cargo: item.cargo.id,
+                                cantidad: item.cantidad,
+                                anterior: anterior
+                            }, {
+                                    transaction: t
+                                }).then(function (detalleCreado) { })
+                        }
+                    }
+                }))
+            } else {
+                var anterior = false
+                if (!item.modificable) {
+                    anterior = true
+                }
+                promises.push(
+                    RrhhEmpleadoDotacionRopaItem.create({
+                        id_dotacion_ropa: dotacionCreada.dataValues.id,
+                        id_producto: item.producto.id,
+                        entregado: item.entregado,
+                        id_ropa_trabajo: item.ropaTrabajo.id,
+                        id_cargo: item.cargo.id,
+                        cantidad: item.cantidad,
+                        anterior: anterior
+                    }, {
+                            transaction: t
+                        }).then(function (detalleCreado) { })
+                )
+            }
+        })
+
+        return Promise.all(promises);
+    }
+    function crearMovimientoEgresoYActualizarInventario(movimientoCreado, producto, cantidad, inventarios, cantidadParcial, costo, index, array, i, res, t) {
+        console.log(cantidad);
+        return DetalleMovimiento.create({
+            id_movimiento: movimientoCreado.id,
+            id_producto: producto.id,
+            cantidad: cantidadParcial,
+            costo_unitario: costo.costo_unitario,
+            importe: (cantidadParcial * costo.costo_unitario),
+            total: (cantidadParcial * costo.costo_unitario),
+            descuento: 0,
+            recargo: 0,
+            ice: 0,
+            excento: 0,
+            tipo_descuento: 0,
+            tipo_recargo: 0,
+            id_inventario: costo.id
+        }, { transaction: t }).then(function (detalleMovimientoCreado) {
+            sequelize.transaction({ isolationLevel: Sequelize.Transaction.ISOLATION_LEVELS.READ_COMMITTED }, function (tu) {
+                return Inventario.find({
+                    where: {
+                        id: costo.id
+                    },
+                    transaction: tu,
+                    lock: tu.LOCK.UPDATE
+                }).then(function (inventario) {
+                    return Inventario.update({
+                        cantidad: inventario.cantidad - cantidadParcial,
+                        costo_total: ((inventario.cantidad - cantidadParcial) * costo.costo_unitario)
+                    }, {
+                            where: {
+                                id: inventario.id
+                            },
+                            transaction: tu
+                        });
+                });
+            }).then(function (result) {
+                return new Promise(function (fulfill, reject) {
+                    fulfill({});
+                });
+            }).catch(function (err) {
+                return new Promise(function (fulfill, reject) {
+                    reject(err);
+                });
+            });
+        });
+    }
+
+    function calcularCostosEgresos(tipoMovimiento, tipoEgreso, producto, cantidad, inventarios, index, array, res, t, req, item, a, dotacionCreada) {
+        var cantidadTotal = cantidad;
+        if (producto.activar_inventario) {
+            if (inventarios.length > 0) {
+                var promises = [];
+                var totalInventario = 0
+                for (var p = 0; p < inventarios.length; p++) {
+                    totalInventario = totalInventario + inventarios[p].cantidad;
+                    if (p === (inventarios.length - 1)) {
+                        if (totalInventario >= cantidad) {
+                            return Movimiento.create({
+                                id_tipo: tipoMovimiento.id,
+                                id_clase: tipoEgreso.id,
+                                id_almacen: req.body.id_almacen,
+                                fecha: new Date()
+                            }, { transaction: t }).then(function (movimientoCreado) {
+                                var anterior = false
+                                if (!item.modificable) {
+                                    anterior = true
+                                }
+                                return RrhhEmpleadoDotacionRopaItem.create({
+                                    id_dotacion_ropa: dotacionCreada.dataValues.id,
+                                    id_producto: item.producto.id,
+                                    entregado: item.entregado,
+                                    id_ropa_trabajo: item.ropaTrabajo.id,
+                                    id_cargo: item.cargo.id,
+                                    cantidad: item.cantidad,
+                                    anterior: anterior
+                                }, {
+                                        transaction: t
+                                    }).then(function (detalleCreado) {
+                                        for (var i = 0; i < inventarios.length; i++) {
+                                            if (cantidadTotal > 0) {
+                                                var cantidadParcial;
+                                                if (cantidadTotal > inventarios[i].cantidad) {
+                                                    cantidadParcial = inventarios[i].cantidad;
+                                                    cantidadTotal = cantidadTotal - inventarios[i].cantidad
+                                                } else {
+                                                    cantidadParcial = cantidadTotal;
+                                                    cantidadTotal = 0;
+                                                }
+
+                                                if (cantidadParcial > 0) {
+                                                    //req.body.mensaje += "cliente pedido: "+detalle_despacho.despacho.cliente.razon_social+" producto: "+producto.nombre+" inventario=" + totalInventario+ "cantidad despachadas=" + cantidad+"|------|"														
+                                                    var rrr = crearMovimientoEgresoYActualizarInventario(movimientoCreado, producto, cantidad, inventarios, cantidadParcial, inventarios[i], index, array, i, res, t);
+                                                    //console.log(rrr);
+                                                    promises.push(new Promise(function (fulfill, reject) {
+                                                        fulfill({});
+                                                    }));
+                                                }
+                                            } else {
+                                                //if (index == (array.length - 1) && i == (inventarios.length - 1)) {
+                                                //res.json(venta);
+                                                /*promises.push(new Promise(function (fulfill, reject){
+                                                    fulfill(venta);
+                                                }));*/
+                                                //}
+                                            }
+                                        }
+                                    })
+
+                            })
+                        } else {
+                            var anterior = false
+                            if (!item.modificable) {
+                                anterior = true
+                            }
+                            promises.push(RrhhEmpleadoDotacionRopaItem.create({
+                                id_dotacion_ropa: dotacionCreada.dataValues.id,
+                                id_producto: item.producto.id,
+                                entregado: false,
+                                id_ropa_trabajo: item.ropaTrabajo.id,
+                                id_cargo: item.cargo.id,
+                                cantidad: item.cantidad,
+                                anterior: anterior
+                            }, {
+                                    transaction: t
+                                }).then(function (detalleCreado) {
+                                    //  req.body.mensaje += "cliente pedido: " + detalle_despacho.despacho.cliente.razon_social + " producto: " + producto.nombre + " inventario=" + totalInventario + "cantidad despachadas=" + cantidad + "|---|"
+                                }))
+
+                        }
+                    }
+                }
+                return Promise.all(promises);
+            } else {
+                var anterior = false
+                if (!item.modificable) {
+                    anterior = true
+                }
+
+                return RrhhEmpleadoDotacionRopaItem.create({
+                    id_dotacion_ropa: dotacionCreada.dataValues.id,
+                    id_producto: item.producto.id,
+                    entregado: false,
+                    id_ropa_trabajo: item.ropaTrabajo.id,
+                    id_cargo: item.cargo.id,
+                    cantidad: item.cantidad,
+                    anterior: anterior
+                }, {
+                        transaction: t
+                    }).then(function (detalleCreado) {
+                        return new Promise(function (fulfill, reject) {
+                            fulfill({});
+                        }); //  req.body.mensaje += "cliente pedido: " + detalle_despacho.despacho.cliente.razon_social + " producto: " + producto.nombre + " inventario=" + totalInventario + "cantidad despachadas=" + cantidad + "|---|"
+                    })
+                //if (index == (array.length - 1)) {
+
+                //}
+            }
+        } else {
+            //if (index == (array.length - 1)) {
+            return new Promise(function (fulfill, reject) {
+                fulfill(venta);
+            });
+            //}
+        }
+    }
     router.route('/recursos-humanos/ropa-trabajo/empleado/:id_empleado/inicio/:inicio/fin/:fin')
         .get(function (req, res) {
             var condicionRopaTrabajo = { id_empleado: req.params.id_empleado, eliminado: false }
@@ -4165,9 +4673,9 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
             }
             RrhhEmpleadoDotacionRopa.findAll({
                 where: condicionRopaTrabajo,
-                include: [{
+                include: [{ model: Sucursal, as: "sucursal" }, { model: Almacen, as: "almacen" },{
                     model: RrhhEmpleadoDotacionRopaItem, as: "dotacionItems",
-                    include: [{ model: Clase, as: "cargo" }, { model: Clase, as: "ropaTrabajo" }, { model: Producto, as: "producto" }]
+                    include: [ { model: Clase, as: "cargo" }, { model: Clase, as: "ropaTrabajo" }, { model: Producto, as: "producto", include: [{ model: Inventario, as: 'inventarios' }] }]
                 },
                 { model: MedicoPaciente, as: "empleado" },
                 { model: Clase, as: "estado" },

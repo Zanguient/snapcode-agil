@@ -59,7 +59,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 			 $scope.eliminarPopup($scope.IdModalOpcionesQr);
 			 $scope.eliminarPopup($scope.IdModalAsignarCuenta); */
 		});
-	  
+
 		$scope.obtenerSucursales = function () {
 			var sucursales = [];
 			for (var i = 0; i < $scope.usuario.sucursalesUsuario.length; i++) {
@@ -966,6 +966,18 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 			$scope.cuentaActual = { id: cuenta.id, nombre: cuenta.nombre, debe: cuenta.debe, haber: cuenta.haber, saldo: cuenta.saldo };
 
 		}
+		$scope.inputDebebs = function (asiento) {
+			asiento.debe_bs = (asiento.debe_bs == 0) ? "" : asiento.debe_bs
+		}
+		$scope.inputDebeSus = function (asiento) {
+			asiento.debe_sus = (asiento.debe_sus == 0) ? "" : asiento.debe_sus
+		}
+		$scope.inputhaberbs2 = function (asiento) {
+			asiento.haber_bs = (asiento.haber_bs == 0) ? "" : asiento.haber_bs
+		}
+		$scope.inputHaberSus = function (asiento) {
+			asiento.haber_sus = (asiento.haber_sus == 0) ? "" : asiento.haber_sus
+		}
 		$scope.obtenerListarCuentasAuxiliares = function () {
 			var promesa = ListasCuentasAuxiliares($scope.usuario.id_empresa, 'CLIENTE')
 			promesa.then(function (datos) {
@@ -1161,9 +1173,9 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 				$scope.obtenerMovimientoEgresoBaja();
 				$scope.obtenerTiposComprobante();
 				$scope.reiniciarCorrelativoComprobantes()
-				if(screen.width>960){
+				if (screen.width > 960) {
 					$('.modal-rh-nuevo').addClass('modal-dialog');
-				}else{
+				} else {
 					$('.modal-rh-nuevo').removeClass('modal-dialog');
 				}
 				$scope.sucursales = $scope.obtenerSucursales();
@@ -1289,12 +1301,14 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 						if (usuario.empresa) {
 							if (usuario.empresa.aplicacionesEmpresa.length > 0) {
 								for (var d = 0; d < usuario.empresa.aplicacionesEmpresa.length; d++) {
-									var element = usuario.aplicacionesUsuario[d];
+									var element = usuario.empresa.aplicacionesEmpresa[d];
 									if (element) {
 										if (element.id_aplicacion == app.id) {
 											bandera = true
+											d=usuario.empresa.aplicacionesEmpresa.length
 										}
 									}
+								
 								}
 								if (bandera) {
 									for (var k = 0; k < usuario.aplicacionesUsuario.length; k++) {
@@ -1333,10 +1347,11 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 							if (usuario.empresa) {
 								if (usuario.empresa.aplicacionesEmpresa.length > 0) {
 									for (var d = 0; d < usuario.empresa.aplicacionesEmpresa.length; d++) {
-										var element = usuario.aplicacionesUsuario[d];
+										var element = usuario.empresa.aplicacionesEmpresa[d];
 										if (element) {
 											if (element.id_aplicacion == app2.id) {
 												bandera = true
+												d=usuario.empresa.aplicacionesEmpresa.length
 											}
 										}
 									}
@@ -1546,13 +1561,21 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 			blockUI.start();
 			var fecha = new Date()
 			GuardarGtmDetalleDespachoAlerta.update({ id_empresa: $scope.usuario.id_empresa, fecha: fecha }, { detalles_despacho: $scope.gtm_detalles_despacho_seleccionados, id_almacen: id_almacen_despacho, id_sucursal: id_sucursal_despacho }, function (res) {
-				$scope.vencimientoTotal = $scope.vencimientoTotal - $scope.gtm_detalles_despacho_seleccionados.length;
-				$scope.verificarDespachos($scope.usuario.id_empresa);
+
+
 				blockUI.stop();
 				/* $scope.cerrarListaDespachos(); */
-				$scope.recargarItemsTabla()
-				$scope.mostrarMensaje(res.mensaje);
-			});
+				if (res.hasError) {
+					$scope.mostrarMensaje(res.mensaje);
+				} else {
+					$scope.vencimientoTotal = $scope.vencimientoTotal - $scope.gtm_detalles_despacho_seleccionados.length;
+					$scope.verificarDespachos($scope.usuario.id_empresa);
+					$scope.mostrarMensaje(res.mensaje);
+					/* $scope.recargarItemsTabla()					 */
+				}
+
+
+			})
 		}
 
 		$scope.calcularSaldoDespacho = function (gtm_detalle_despacho) {

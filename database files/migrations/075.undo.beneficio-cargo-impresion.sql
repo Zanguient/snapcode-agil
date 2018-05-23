@@ -1,0 +1,2 @@
+ALTER TABLE agil_rrhh_empleado_beneficio_social drop  empleado_cargo_impresion;
+ALTER TABLE agil_rrhh_empleado_beneficio_social drop  cargo_imprecion;
