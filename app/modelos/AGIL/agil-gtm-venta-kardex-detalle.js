@@ -36,6 +36,14 @@ module.exports = function (sequelize, Sequelize) {
             type: Sequelize.INTEGER,
             field: 'factura'
         },
+        precio_unitario: {
+            type: Sequelize.DECIMAL(20, 4),
+            field: 'precio_unitario'
+        },
+        servicio_transporte: {
+            type: Sequelize.DECIMAL(20, 4),
+            field: 'servicio_transporte'
+        },
     }, {
             freezeTableName: true
         });

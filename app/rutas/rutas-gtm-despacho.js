@@ -153,6 +153,8 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, forEach, j
 						id_producto: detalle_kardex.id_producto,
 						cantidad: parseFloat(detalle_kardex.cantidad),
 						saldo: parseFloat(detalle_kardex.cantidad),
+						precio_unitario : parseFloat(detalle_kardex.precio_unitario),
+						servicio_transporte : parseFloat(detalle_kardex.servicio_transporte),
 						entregado: false,
 						fecha: new Date(req.body.fecha.split("/")[2], req.body.fecha.split("/")[1], req.body.fecha.split("/")[0]),
 					}).then(function (detalleDespachoCreado) {

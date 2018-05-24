@@ -54,14 +54,15 @@ angular.module('agil.controladores')
 			var fechaArreglo = fecha.split('/');
 			if (fechaArreglo.length == 3) {
 				if (fechaArreglo[0].length > 2) {
-					var fechaFormateada = fechaArreglo[2] + fechaArreglo[1] + fechaArreglo[0];
-				} else {
 					var fechaFormateada = fechaArreglo[0] + fechaArreglo[1] + fechaArreglo[2];
+					
+				} else {
+					var fechaFormateada = fechaArreglo[2] + fechaArreglo[1] + fechaArreglo[0];
 				}
 			} else {
 				fecha = $scope.fechaATexto(new Date($scope.fecha_excel_angular(fecha)))
 				var fechaArreglo = fecha.split('/');
-				var fechaFormateada = fechaArreglo[0] + fechaArreglo[1] + fechaArreglo[2];
+				var fechaFormateada = fechaArreglo[2] + fechaArreglo[1] + fechaArreglo[0];
 			}
 
 			return fechaFormateada;

@@ -17,7 +17,7 @@ angular.module('agil.controladores')
 
         $scope.idImputContrato = "id-contrato";
         $scope.idModalHojaVida = 'modal-hoja-vida';
-
+        $scope.idModalwizardContainerHojaVida = 'modal-wizard-hoja-vida-container';
         $scope.idModalNuevoFamiliar = "dialog-nuevo-familiar";
 
         $scope.idModalHistorialContrato = "dialog-historial-contrato";

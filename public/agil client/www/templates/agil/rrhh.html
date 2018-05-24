@@ -2007,9 +2007,9 @@
 
     <!--- ==== modal hoja de vida ================================ -->
     <div id="modal-hoja-vida" class="modal">
-        <div class="">
+        <div class="modal-content">
             <form id="formulario-hoja-vida" novalidate ng-submit="GuardarHojaDeVida()">
-                <div class="modal-content">
+                
                     <div id="modal-wizard-hoja-vida-container">
                         <div class="modal-header hoja">
                             <div class="titulo-ficha">
@@ -2470,7 +2470,7 @@
                             <i class="ace-icon fa fa-arrow-left"></i>
                             Anterior
                         </button>
-                        <button type="submit" e-disabled="!aplicacion.puede_crear" id="siguiente-s" class="btn btn-success btn-sm btn-next" data-last="Finish">
+                        <button type="submit" id="siguiente-s" class="btn btn-success btn-sm btn-next" data-last="Finish">
                             Siguiente
                             <i class="ace-icon fa fa-arrow-right icon-on-right"></i>
                         </button>
@@ -2479,7 +2479,7 @@
                             Cancelar
                         </button>
                     </div>
-                </div>
+                
             </form>
         </div>
     </div>
