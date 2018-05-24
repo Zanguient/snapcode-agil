@@ -534,7 +534,8 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, forEach, j
 					promises.push(Producto.find({
 						include: [{
 							model: Inventario, as: 'inventarios', required: false, where: {
-								id_almacen: req.body.id_almacen
+								id_almacen: req.body.id_almacen,
+								cantidad:{$gt:0}
 							}
 						}],
 						where: {
