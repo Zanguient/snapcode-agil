@@ -112,6 +112,18 @@ module.exports = function (sequelize, Sequelize) {
 			type: Sequelize.BOOLEAN,
 			field: 'usar_razon_social'
 		},
+		usar_correlativos_clientes: {
+			type: Sequelize.BOOLEAN,
+			field: 'usar_correlativos_clientes'
+		},
+		usar_correlativos_destinos: {
+			type: Sequelize.BOOLEAN,
+			field: 'usar_correlativos_destinos'
+		},
+		usar_funciones_erp: {
+			type: Sequelize.BOOLEAN,
+			field: 'usar_funciones_erp'
+		},
 	}, {
 			freezeTableName: true
 		});

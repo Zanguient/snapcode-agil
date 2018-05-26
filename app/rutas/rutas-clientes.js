@@ -1,5 +1,5 @@
 module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Cliente, RutaCliente, Venta,
-	VentaReprogramacionPago, sequelize, ClienteRazon, GtmClienteDestino, GtmDestino) {
+	VentaReprogramacionPago, sequelize, ClienteRazon, GtmClienteDestino, GtmDestino, Clase) {
 
 	router.route('/clientes')
 		.post(function (req, res) {
@@ -65,57 +65,132 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Clie
 							res.json({ mensaje: "¡Ya existia un cliente con codigo o nit iguales, por lo que se actualizo!" });
 						});
 				} else {
-					Cliente.create({
-						destino: req.body.destino, //aumentamos esto
-						id_empresa: req.body.id_empresa,
-						razon_social: req.body.razon_social,
-						codigo: req.body.codigo,
-						nit: req.body.nit,
-						direccion: req.body.direccion,
-						telefono1: req.body.telefono1,
-						telefono2: req.body.telefono2,
-						telefono3: req.body.telefono3,
-						contacto: req.body.contacto,
-						rubro: req.body.rubro,
-						categoria: req.body.categoria,
-						ubicacion_geografica: req.body.ubicacion_geografica,
-						fecha1: req.body.fecha1,
-						fecha2: req.body.fecha2,
-						texto1: req.body.texto1,
-						texto2: req.body.texto2,
-						latitud: req.body.latitud,
-						longitud: req.body.longitud,
-						linea_credito: req.body.linea_credito,
-						plazo_credito: req.body.plazo_credito,
-						usar_limite_credito: req.body.usar_limite_credito,
-						bloquear_limite_credito: req.body.bloquear_limite_credito
-					}).then(function (clienteCreado) {
-						guardarContratosCliente(req, res, clienteCreado)
-						req.body.clientes_razon.forEach(function (cliente_razon, index, array) {
-							if (!cliente_razon.eliminado) {
-								ClienteRazon.create({
-									id_cliente: clienteCreado.id,
-									razon_social: cliente_razon.razon_social,
-									nit: cliente_razon.nit,
-									codigo_sap: cliente_razon.codigo_sap,
-
-								}).then(function (clienteRazonCreado) {
-								});
+					if (req.body.correlativo) {
+						Clase.find({
+							where: { id: req.body.correlativo.id }
+						}).then(function (correlativoEncontrado) {
+							var numero_correlativo = correlativoEncontrado.nombre_corto.split("-")[0]
+							var maximo = parseInt(correlativoEncontrado.nombre_corto.split("-")[1])
+							if (numero_correlativo > maximo) {
+								numero_correlativo = null
 							}
-						});
+							Cliente.create({
+								destino: req.body.destino, //aumentamos esto
+								id_empresa: req.body.id_empresa,
+								razon_social: req.body.razon_social,
+								codigo: numero_correlativo,
+								nit: req.body.nit,
+								direccion: req.body.direccion,
+								telefono1: req.body.telefono1,
+								telefono2: req.body.telefono2,
+								telefono3: req.body.telefono3,
+								contacto: req.body.contacto,
+								rubro: req.body.rubro,
+								categoria: req.body.categoria,
+								ubicacion_geografica: req.body.ubicacion_geografica,
+								fecha1: req.body.fecha1,
+								fecha2: req.body.fecha2,
+								texto1: req.body.texto1,
+								texto2: req.body.texto2,
+								latitud: req.body.latitud,
+								longitud: req.body.longitud,
+								linea_credito: req.body.linea_credito,
+								plazo_credito: req.body.plazo_credito,
+								usar_limite_credito: req.body.usar_limite_credito,
+								bloquear_limite_credito: req.body.bloquear_limite_credito
+							}).then(function (clienteCreado) {
+								var numero = parseInt(numero_correlativo) + 1
+								var nombre_corto = numero + "-" + maximo
+								if (numero_correlativo > maximo) {
+									nombre_corto =maximo-maximo
+								}
+								Clase.update({
+									nombre_corto: nombre_corto
+								}, {
+										where: { id: req.body.correlativo.id }
+									}).then(function (correlativoActualizado) {
+										guardarContratosCliente(req, res, clienteCreado)
+										req.body.clientes_razon.forEach(function (cliente_razon, index, array) {
+											if (!cliente_razon.eliminado) {
+												ClienteRazon.create({
+													id_cliente: clienteCreado.id,
+													razon_social: cliente_razon.razon_social,
+													nit: cliente_razon.nit,
+													codigo_sap: cliente_razon.codigo_sap,
 
-						req.body.cliente_destinos.forEach(function (clienteDestino, index, array) {
-							if (!clienteDestino.eliminado) {
-								GtmClienteDestino.create({
-									id_cliente: clienteCreado.id,
-									id_destino: clienteDestino.id_destino,
+												}).then(function (clienteRazonCreado) {
+												});
+											}
+										});
 
-								}).then(function (GtmClienteDestinoCreado) {
-								});
-							}
+										req.body.cliente_destinos.forEach(function (clienteDestino, index, array) {
+											if (!clienteDestino.eliminado) {
+												GtmClienteDestino.create({
+													id_cliente: clienteCreado.id,
+													id_destino: clienteDestino.id_destino,
+
+												}).then(function (GtmClienteDestinoCreado) {
+												});
+											}
+										});
+									})
+								res.json({ mensaje: "¡Cliente creado satisfactoriamente!" });
+							});
+						})
+					} else {
+						Cliente.create({
+							destino: req.body.destino, //aumentamos esto
+							id_empresa: req.body.id_empresa,
+							razon_social: req.body.razon_social,
+							codigo: req.body.codigo,
+							nit: req.body.nit,
+							direccion: req.body.direccion,
+							telefono1: req.body.telefono1,
+							telefono2: req.body.telefono2,
+							telefono3: req.body.telefono3,
+							contacto: req.body.contacto,
+							rubro: req.body.rubro,
+							categoria: req.body.categoria,
+							ubicacion_geografica: req.body.ubicacion_geografica,
+							fecha1: req.body.fecha1,
+							fecha2: req.body.fecha2,
+							texto1: req.body.texto1,
+							texto2: req.body.texto2,
+							latitud: req.body.latitud,
+							longitud: req.body.longitud,
+							linea_credito: req.body.linea_credito,
+							plazo_credito: req.body.plazo_credito,
+							usar_limite_credito: req.body.usar_limite_credito,
+							bloquear_limite_credito: req.body.bloquear_limite_credito
+						}).then(function (clienteCreado) {
+							guardarContratosCliente(req, res, clienteCreado)
+							req.body.clientes_razon.forEach(function (cliente_razon, index, array) {
+								if (!cliente_razon.eliminado) {
+									ClienteRazon.create({
+										id_cliente: clienteCreado.id,
+										razon_social: cliente_razon.razon_social,
+										nit: cliente_razon.nit,
+										codigo_sap: cliente_razon.codigo_sap,
+
+									}).then(function (clienteRazonCreado) {
+									});
+								}
+							});
+
+							req.body.cliente_destinos.forEach(function (clienteDestino, index, array) {
+								if (!clienteDestino.eliminado) {
+									GtmClienteDestino.create({
+										id_cliente: clienteCreado.id,
+										id_destino: clienteDestino.id_destino,
+
+									}).then(function (GtmClienteDestinoCreado) {
+									});
+								}
+							});
+							res.json({ mensaje: "¡Cliente creado satisfactoriamente!" });
 						});
-						res.json({ mensaje: "¡Cliente creado satisfactoriamente!" });
-					});
+					}
+
 				}
 			});
 		});
@@ -571,14 +646,14 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Clie
 						res.json({ clientes: clientes, paginas: Math.ceil(data.count / req.params.items_pagina) });
 					});
 				});
-			}else{
+			} else {
 				Cliente.findAndCountAll({
 
 					where: condicionCliente,
 					include: [{ model: Empresa, as: 'empresa' }],
 					order: [['id', 'asc']]
 				}).then(function (data) {
-					Cliente.findAll({						
+					Cliente.findAll({
 						where: condicionCliente,
 						include: [{ model: Empresa, as: 'empresa' },
 						{
@@ -589,7 +664,7 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Clie
 						}],
 						order: [['id', 'asc']]
 					}).then(function (clientes) {
-						res.json({ clientes: clientes, paginas:1});
+						res.json({ clientes: clientes, paginas: 1 });
 					});
 				});
 			}

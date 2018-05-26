@@ -281,15 +281,15 @@
 							<label for="aplicaciones">Aplicaciones</label>
 							<!-- <label for="cargo">Cargos:</label> -->
 						</div>
-						
+
 						<div class="col-lg-7">
 							<!-- <div isteven-multi-select input-model="aplicacionesSistema" output-model="empresa.aplicaciones" button-label="icon name"
 							 item-label="icon name maker" tick-property="ticked">
 							</div> -->
-							<div isteven-multi-select input-model="aplicacionesSistema" output-model="empresa.aplicaciones" button-label="icon name" item-label="icon name maker"
-							tick-property="ticked">
-						   </div>
-						<!-- 	<isteven-multi-select input-model="aplicacionesSistema" output-model="empresa.aplicaciones" button-label="icon name" item-label="icon name maker"
+							<div isteven-multi-select input-model="aplicacionesSistema" output-model="empresa.aplicaciones" button-label="icon name"
+							 item-label="icon name maker" tick-property="ticked">
+							</div>
+							<!-- 	<isteven-multi-select input-model="aplicacionesSistema" output-model="empresa.aplicaciones" button-label="icon name" item-label="icon name maker"
 							 tick-property="ticked">
 							</isteven-multi-select> -->
 						</div>
@@ -501,6 +501,39 @@
 							</label>
 						</div>
 					</div>
+					<div class="form-group" ng-if="usuario.rolesUsuario[0].rol.nombre==diccionario.USUARIO_SUPERADMIN">
+						<label class="control-label col-xs-6 no-padding-right">¿Usar correlativos clientes?</label>
+
+						<div class="col-xs-6">
+							<label>
+								<input name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="empresa.usar_correlativos_clientes"
+								/>
+								<span class="lbl check-descuento"></span>
+							</label>
+						</div>
+					</div>
+					<div class="form-group" ng-if="usuario.rolesUsuario[0].rol.nombre==diccionario.USUARIO_SUPERADMIN">
+						<label class="control-label col-xs-6 no-padding-right">¿Usar correlativos destinos?</label>
+
+						<div class="col-xs-6">
+							<label>
+								<input name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="empresa.usar_correlativos_destinos"
+								/>
+								<span class="lbl check-descuento"></span>
+							</label>
+						</div>
+					</div>
+					<div class="form-group" ng-if="usuario.rolesUsuario[0].rol.nombre==diccionario.USUARIO_SUPERADMIN">
+							<label class="control-label col-xs-6 no-padding-right">¿Usar funciones ERP?</label>
+	
+							<div class="col-xs-6">
+								<label>
+									<input name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="empresa.usar_funciones_erp"
+									/>
+									<span class="lbl check-descuento"></span>
+								</label>
+							</div>
+						</div>
 					<!-- </div> -->
 				</div>
 				<div class="step-pane" data-step="3" ng-if="esNuevo">

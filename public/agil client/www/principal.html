@@ -482,7 +482,9 @@
 													!usuario.empresa.usar_mantenimiento)|| 
 													((aplicacion.titulo==diccionario.MENU_PROFORMAS) && 
 													usuario.empresa && 
-													!usuario.empresa.usar_proformas)}">
+													!usuario.empresa.usar_proformas)|| 
+													((aplicacion.titulo=='EMPRESAS') && 
+													usuario.empresa))}">
 					<a href="#/{{aplicacion.url}}" ng-class="{'dropdown-toggle':aplicacion.subaplicaciones.length>0}">
 						<i class="menu-icon fa {{aplicacion.atributo_clase}}"></i>
 						<span class="menu-text">{{aplicacion.titulo}}</span>
@@ -499,7 +501,9 @@
 													  || 
 													((subaplicacion.titulo==diccionario.MENU_PANTALLADESPACHO) && 
 													usuario.empresa && 
-													!usuario.empresa.usar_pantalla_despacho)}">
+													!usuario.empresa.usar_pantalla_despacho)||((subaplicacion.titulo==diccionario.MENU_ESTADO_RESULTADOS) && 
+													usuario.empresa && 
+													usuario.empresa.usar_funciones_erp)}">
 							<a href="#/{{subaplicacion.url}}">
 								<i class="menu-icon fa {{subaplicacion.atributo_clase}}"></i>
 								{{subaplicacion.titulo}}
@@ -561,7 +565,9 @@
 									<ul class="submenu" ng-if="aplicacion.subaplicaciones.length>0">
 										<li class="hover" ng-repeat="subaplicacion in aplicacion.subaplicaciones" ng-class="{'menu-hidden':((subaplicacion.titulo==diccionario.MENU_APPMOVIL) && usuario.empresa && !usuario.empresa.usar_georeferenciacion)
 																	  || ((subaplicacion.titulo==diccionario.MENU_PANTALLACLIENTE) && usuario.empresa && !usuario.empresa.usar_pantalla_cliente)
-																	  || ((subaplicacion.titulo==diccionario.MENU_PANTALLADESPACHO) && usuario.empresa && !usuario.empresa.usar_pantalla_despacho)}">
+																	  || ((subaplicacion.titulo==diccionario.MENU_PANTALLADESPACHO) && usuario.empresa && !usuario.empresa.usar_pantalla_despacho||((subaplicacion.titulo==diccionario.MENU_ESTADO_RESULTADOS) && 
+																	  usuario.empresa && 
+																	  usuario.empresa.usar_funciones_erp))}">
 											<a href="#/{{subaplicacion.url}}">
 												<i class="menu-icon fa {{subaplicacion.atributo_clase}}"></i>
 												{{subaplicacion.titulo}}

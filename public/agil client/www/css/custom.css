@@ -6,6 +6,9 @@
 	color: white;
 	text-align-last: center;
 }
+.myOwnBg {
+	background-color: red;
+ }
 /* responsive table */
 
 @media screen and (max-width: 600px) {

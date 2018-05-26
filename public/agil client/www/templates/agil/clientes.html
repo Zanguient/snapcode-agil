@@ -24,6 +24,10 @@
 		<div class="table-header">
 			Lista de Clientes
 			<div class="pos-rel pull-right">
+				<a href="javascript:void(0)" ng-if="usuario.rolesUsuario[0].rol.nombre==diccionario.ROL_ADMINISTRADOR && usuario.empresa.usar_correlativos_clientes" ng-click="abrirModalConceptoEdicionCorrelativos()">
+					<img src="img/icono-correlativo.png" height="30" width="30" alt="">
+
+				</a>
 				<a data-toggle="dropdown" class="btn btn-primary btn-xs dropdown-toggle" id="zoomBtn">
 					<i class="ace-icon fa fa-wrench  bigger-110 icon-only "></i>
 				</a>
@@ -256,7 +260,7 @@
 </div>
 
 <div id="modal-wizard-cliente" class="modal wizard-posicion">
-		<div class="modal-dialog modal-rh-nuevo">
+	<div class="modal-dialog modal-rh-nuevo">
 		<div class="modal-content">
 			<form name="nuevoCliente" ng-submit="saveForm(cliente)">
 				<div id="modal-wizard-container-cliente-edicion">
@@ -301,13 +305,25 @@
 						<div id="cuerpo-datos-cli" class="step-pane active" data-step="1">
 							<div class="form-group">
 								<div class="row">
-									<label class="col-sm-6 control-label no-padding-right" for="codigo">Código
+									<label ng-if="!usuario.empresa.usar_correlativos_clientes" class="col-sm-3 control-label no-padding-right" for="codigo">Código
 										<span ng-if="!cliente.id">(Último Generado:
 											<b>{{ultimo_codigo}}</b>)</span>
 									</label>
-
-									<div class="col-sm-6">
-										<input required type="text" id="codigo" ng-model="cliente.codigo" placeholder="Código" class="col-xs-10 col-sm-5" />
+									<label ng-if="usuario.empresa.usar_correlativos_clientes" class="col-sm-3 control-label no-padding-right" for="codigo">Código
+										<span ng-if="!cliente.id">(codigo disponible:
+											<b>{{cliente.correlativo.correlativo}}</b>)</span>
+									</label>
+									<div ng-if="usuario.empresa.usar_correlativos_clientes" ng-hide="cliente.id" class="col-sm-4">
+										<span>Correlativo de:</span>
+										<select ng-if="!cliente.id" required ng-model="cliente.correlativo" class="form-control" ng-change="obtenerCorrelativoCliente();cargarCodigo(cliente)"
+										 ng-options="correlativo as correlativo.nombre for correlativo in correlativosClientes.clases | filter:{habilitado:true} track by correlativo.id">
+											<option value="">--seleecionar--</option>
+										</select>
+									</div>
+									<div class="col-sm-5">
+										<br ng-hide="cliente.id" ng-if="usuario.empresa.usar_correlativos_clientes">
+										<input ng-disabled="usuario.empresa.usar_correlativos_clientes" required type="text" id="codigo" ng-model="cliente.codigo"
+										 placeholder="Código" class="form-control" />
 									</div>
 								</div>
 							</div>
@@ -338,7 +354,7 @@
 									<label class="col-sm-3 control-label no-padding-right" for="direccion">Dirección</label>
 
 									<div class="col-sm-9">
-										<input  type="text" id="direccion" ng-model="cliente.direccion" placeholder="dirección" class="form-control" />
+										<input type="text" id="direccion" ng-model="cliente.direccion" placeholder="dirección" class="form-control" />
 									</div>
 								</div>
 							</div>
@@ -347,7 +363,7 @@
 									<label class="col-sm-3 control-label no-padding-right" for="telefono1">Teléfono 1</label>
 
 									<div class="col-sm-9">
-										<input  type="text" id="telefono1" ng-model="cliente.telefono1" placeholder="telefono 1" class="form-control" />
+										<input type="text" id="telefono1" ng-model="cliente.telefono1" placeholder="telefono 1" class="form-control" />
 									</div>
 								</div>
 							</div>
@@ -377,7 +393,7 @@
 									<label class="col-sm-3 control-label no-padding-right" for="contacto">Contacto</label>
 
 									<div class="col-sm-9">
-										<input type="text"  id="contacto" ng-model="cliente.contacto" placeholder="contacto" class="form-control" />
+										<input type="text" id="contacto" ng-model="cliente.contacto" placeholder="contacto" class="form-control" />
 									</div>
 								</div>
 							</div>
@@ -718,7 +734,7 @@
 </div>
 
 <div id="modal-wizard-cliente-vista" class="modal wizard-posicion">
-		<div class="modal-dialog modal-rh-nuevo">
+	<div class="modal-dialog modal-rh-nuevo">
 		<div class="modal-content">
 			<div id="modal-wizard-container-cliente-vista">
 				<div class="modal-header">
@@ -953,3 +969,37 @@
 	<button type="button" class="btn btn-danger" ng-click="eliminarCliente(cliente)">Si</button>
 	<button type="button" class="btn btn-success" ng-click="cerrarConfirmacionEliminacion()">No</button>
 </div>
+<div id="dialog-conceptos-correlativos" class="modal" ng-include src="'/templates/gral/concepto-edicion-correlativos.html'"></div>
+
+<!-- inicio confirmar usuario -->
+<div id="modal-verificar-cuenta" title="Asignar Cuenta">
+
+	<form name="formularioAsignarCuenta" ng-submit="verificarCuentaAdmin(cuenta,$index)">
+		<div class="modal-header">
+			<p>
+				<h3>Verificar Cuenta</h3>
+			</p>
+		</div>
+		<div class="modal-body">
+			<div>
+				<span>Nombre Usuario: </span>
+				<input required class="form-control" type="text" ng-model="cuenta.nombre_usuario">
+			</div>
+			<div>
+				<span>Clave</span>
+				<input required class="form-control" type="password" name="contra" ng-model="cuenta.clave">
+			</div>
+		</div>
+		<div class="modal-footer">
+			<div class="col-sm-6">
+				<button type="submit" class="btn btn-success">Guardar</button>
+			</div>
+
+
+			<div class="col-sm-6">
+				<button type="button" class="btn btn-danger" ng-click="cerrarModalVerificarCuenta()">Cancelar</button>
+			</div>
+		</div>
+	</form>
+</div>
+<!-- fin confirmar usuario -->

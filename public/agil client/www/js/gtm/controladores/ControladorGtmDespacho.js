@@ -90,7 +90,7 @@ angular.module('agil.controladores')
                 $scope.despachos = dato.detallesDespacho;
                 $scope.totalesDespachos = { producto: 0, servicio_transporte: 0, total: 0 }
                 $scope.despachos.forEach(function (despacho, index, array) {
-                    $scope.totalesDespachos.producto += despacho.producto.precio_unitario * despacho.cantidad_despacho
+                    $scope.totalesDespachos.producto += despacho.precio_unitario * despacho.cantidad_despacho
                     $scope.totalesDespachos.servicio_transporte += despacho.servicio_transporte
                     if (index === (array.length - 1)) {
                         $scope.totalesDespachos.total = $scope.totalesDespachos.producto + $scope.totalesDespachos.servicio_transporte

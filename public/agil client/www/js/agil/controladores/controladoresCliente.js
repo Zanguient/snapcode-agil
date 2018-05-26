@@ -2,15 +2,19 @@ angular.module('agil.controladores')
 
 	.controller('ControladorClientes', function ($scope, $window, $localStorage, $location, $templateCache, $route, blockUI, $timeout,
 		ClientesPaginador, Cliente, Clientes, Empresas, ClientesEmpresa, uiGmapGoogleMapApi, $cordovaGeolocation,
-		DatoCodigoSiguienteClienteEmpresa, DestinosCliente, RazonesSocialesCliente) {
+		DatoCodigoSiguienteClienteEmpresa, DestinosCliente, RazonesSocialesCliente, ClasesTipoEmpresa, Diccionario, Tipos, ClasesTipo,
+		VerificarUsuarioEmpresa) {
 		blockUI.start();
 
 		$scope.usuario = JSON.parse($localStorage.usuario);
-
+		$scope.idModalConceptoEdicionCorrelativos = 'dialog-conceptos-correlativos';
+		$scope.IdModalVerificarCuenta = 'modal-verificar-cuenta';
 		$scope.inicio = function () {
+			$scope.diccionario = Diccionario
 			$scope.obtenerEmpresas();
 			$scope.obtenerClientes();
 			$scope.obtenerDestinos();
+
 			/*setTimeout(function() {
 				ejecutarScriptsTabla('tabla-clientes',10);
 			},2000);*/
@@ -33,11 +37,35 @@ angular.module('agil.controladores')
 
 		$scope.$on('$viewContentLoaded', function () {
 			resaltarPestaña($location.path().substring(1));
-			ejecutarScriptsCliente('modal-wizard-cliente', 'modal-wizard-cliente-vista', 'dialog-eliminar-cliente', 'modal-wizard-container-cliente-edicion', 'modal-wizard-container-cliente-vista');
+			ejecutarScriptsCliente('modal-wizard-cliente', 'modal-wizard-cliente-vista', 'dialog-eliminar-cliente', 'modal-wizard-container-cliente-edicion', 'modal-wizard-container-cliente-vista', $scope.idModalConceptoEdicionCorrelativos, $scope.IdModalVerificarCuenta);
 			$scope.buscarAplicacion($scope.usuario.aplicacionesUsuario, $location.path().substring(1));
 			blockUI.stop();
 		});
+		$scope.obtenerCorrelativoCliente = function () {
+			blockUI.start();
+			var promesa = ClasesTipoEmpresa("correlativo_clientes", $scope.usuario.id_empresa);
+			promesa.then(function (entidad) {
+				if (entidad.clases.length > 1) {
+					entidad.clases.sort(function (a, b) {
+						a.correlativo = a.nombre_corto.split('-')[0]
+						a.correlativo_maximo = a.nombre_corto.split('-')[1]
+						b.correlativo = b.nombre_corto.split('-')[0]
+						b.correlativo_maximo = b.nombre_corto.split('-')[1]
+						return a.correlativo - b.correlativo
+					})
+				} else if (entidad.clases.length == 1) {
+					entidad.clases[0].correlativo = entidad.clases[0].nombre_corto.split('-')[0]
+					entidad.clases[0].correlativo_maximo = entidad.clases[0].nombre_corto.split('-')[1]
+				}
 
+				$scope.correlativosClientes = entidad
+
+				blockUI.stop();
+			});
+		}
+		$scope.cargarCodigo = function (cliente) {
+			cliente.codigo = cliente.correlativo.correlativo
+		}
 		$scope.obtenerClientes = function () {
 			$scope.abs = $window.Math.abs;
 			$scope.itemsPorPagina = 10;
@@ -115,6 +143,7 @@ angular.module('agil.controladores')
 		}
 
 		$scope.crearNuevoCliente = function () {
+			$scope.obtenerCorrelativoCliente()
 			$scope.steps = [{ cabeza: "cabeza-datos-cli", cuerpo: "cuerpo-datos-cli" },
 			{ cabeza: "cabeza-datos-adicionales", cuerpo: "cuerpo-datos-adicionales" }]
 			console.log($scope.steps)
@@ -184,6 +213,7 @@ angular.module('agil.controladores')
 			$scope.cerrarPopup('modal-wizard-cliente-vista');
 		}
 
+
 		$scope.cerrarPopPupNuevoCliente = function () {
 			$scope.cerrarPopup('modal-wizard-cliente');
 		}
@@ -218,9 +248,9 @@ angular.module('agil.controladores')
 			blockUI.stop();
 		}
 
-		$scope.saveForm = function (cliente,form) {
-			
-			
+		$scope.saveForm = function (cliente, form) {
+
+
 			var button = $('#siguiente').text().trim();
 			if (button != "Siguiente") {
 				blockUI.start();
@@ -658,10 +688,107 @@ angular.module('agil.controladores')
 			});
 		}
 
+		$scope.abrirModalConceptoEdicionCorrelativos = function (Tipo) {
+			blockUI.start();
+			var promesa = ClasesTipoEmpresa("correlativo_clientes", $scope.usuario.id_empresa);
+			promesa.then(function (entidad) {
+				//$scope.correlativosClientes = entidad
+				if (entidad.clases.length > 1) {
+					entidad.clases.sort(function (a, b) {
+						a.correlativo = a.nombre_corto.split('-')[0]
+						a.correlativo_maximo = a.nombre_corto.split('-')[1]
+						b.correlativo = b.nombre_corto.split('-')[0]
+						b.correlativo_maximo = b.nombre_corto.split('-')[1]
+						return a.correlativo - b.correlativo
+					})
+					$scope.minimo=parseInt(entidad.clases[entidad.clases.length-1].correlativo_maximo)+1
+					
+				} else if (entidad.clases.length == 1) {
+					entidad.clases[0].correlativo = entidad.clases[0].nombre_corto.split('-')[0]
+					entidad.clases[0].correlativo_maximo = entidad.clases[0].nombre_corto.split('-')[1]
+					$scope.minimo=parseInt(entidad.clases[0].correlativo_maximo)+1
+				}
+				$scope.tipo_edicion = entidad;
+				$scope.clase = {};
+				$scope.abrirPopup($scope.idModalConceptoEdicionCorrelativos);
+				blockUI.stop();
+			});
+
+		}
+		$scope.cerrarModalConceptoEdicionCorrelativos = function () {
+			$scope.cerrarPopup($scope.idModalConceptoEdicionCorrelativos);
+		}
+		$scope.agregarConceptoEdicion = function (clase) {
+			clase.nombre_corto = clase.correlativo + "-" + clase.correlativo_maximo
+
+			if ($scope.tipo_edicion.clases.indexOf(clase) == -1) {
+				if ($scope.tipo_edicion.clases.length > 0) {
+					/* if (clase.correlativo > $scope.tipo_edicion.clases[$scope.tipo_edicion.clases.length - 1].correlativo_maximo) { */
+						$scope.tipo_edicion.clases.push(clase);
+						$scope.minimo=clase.correlativo_maximo+1
+					/* } else {
+						$scope.mostrarMensaje("El valor de correlativo debe ser mayor al valor maximo del ultimo correlativo")
+					} */
+				} else {
+					$scope.tipo_edicion.clases.push(clase);
+					$scope.minimo=clase.correlativo_maximo+1
+				}
+
+			}
+			$scope.clase = {}
+
+		}
+		$scope.modificarConceptoEdicion = function (clase) {
+			clase.correlativo=parseInt(clase.correlativo)
+			clase.correlativo_maximo=parseInt(clase.correlativo_maximo)
+			$scope.clase = clase;
+		}
+		$scope.removerConceptoEdicion = function (clase) {
+			clase.eliminado = true;
+		}
+
+		$scope.guardarConceptoEdicion = function (tipo) {
+			blockUI.start();
+			Tipos.update({ id_tipo: tipo.id }, tipo, function (res) {
+				var promesa = ClasesTipo(tipo.nombre_corto);
+				promesa.then(function (entidad) {
+					tipo = entidad
+					blockUI.stop();
+					$scope.cerrarModalConceptoEdicionCorrelativos();
+					$scope.mostrarMensaje('Guardado Exitosamente!');
+				});
+			});
+		}
+
+		$scope.abrirModalVerificarCuenta = function (dato, tipo) {
+			$scope.dato = dato
+			$scope.tipoDatosPermiso = tipo
+			$scope.abrirPopup($scope.IdModalVerificarCuenta);
+		}
+		$scope.cerrarModalVerificarCuenta = function () {
+			$scope.cerrarPopup($scope.IdModalVerificarCuenta);
+		}
+		$scope.verificarCuentaAdmin = function (cuenta) {
+			VerificarUsuarioEmpresa.save({ id_empresa: $scope.usuario.id_empresa }, cuenta, function (dato) {
+
+				if (dato.type) {
+					$scope.mostrarMensaje(dato.message)
+					/*  cuenta.abierto= cuenta.abierto; */
+					if ($scope.tipoDatosPermiso == "correlativo") {
+						$scope.modificarConceptoEdicion($scope.dato)
+					}
+					$scope.cerrarModalVerificarCuenta();
+				} else {
+					$scope.mostrarMensaje(dato.message)
+				}
+			})
+		}
 		$scope.$on('$routeChangeStart', function (next, current) {
 			$scope.eliminarPopup('modal-wizard-cliente');
 			$scope.eliminarPopup('modal-wizard-cliente-vista');
 			$scope.eliminarPopup('dialog-eliminar-cliente');
+			$scope.eliminarPopup($scope.idModalConceptoEdicionCorrelativos);
+			$scope.eliminarPopup($scope.IdModalVerificarCuenta);
 		});
 
 		$scope.inicio();

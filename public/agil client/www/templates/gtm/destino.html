@@ -21,6 +21,55 @@
 		</div>
 		<div class="table-header">
 			Lista de Destinos
+			<div class="pos-rel pull-right">
+				<a href="javascript:void(0)" ng-if="usuario.rolesUsuario[0].rol.nombre==diccionario.ROL_ADMINISTRADOR && usuario.empresa.usar_correlativos_destinos" ng-click="abrirModalConceptoEdicionCorrelativos()">
+					<img src="img/icono-correlativo.png" height="30" width="30" alt="">
+
+				</a>
+				<!-- <a data-toggle="dropdown" class="btn btn-primary btn-xs dropdown-toggle" id="zoomBtn">
+					<i class="ace-icon fa fa-wrench  bigger-110 icon-only "></i>
+				</a>
+				<ul class="dropdown-menu-right dropdown-navbar navbar-orange dropdown-menu dropdown-caret dropdown-close importar-text">
+					<li class="dropdown-header header-importar">
+						<i class="ace-icon fa fa-wrench white"></i>
+						Importaciones
+					</li>
+					<li class="dropdown-content">
+						<ul class="dropdown-menu dropdown-navbar navbar-pink">
+							<li>
+								<div class="clearfix">
+									<span class="pull-left" style="color:rgb(85, 128, 163) !important">
+										Razones sociales Clientes
+									</span>
+
+									<a href="/recursos/EJEMPLO-RAZONES-SOCIALES-CLIENTES.xlsx" class="boton-importar pull-right">
+										<i class="fa  fa-cloud-download green"></i>
+									</a>
+
+									<div class="fileUpload boton-importar pull-right">
+										<span class="fileUpload-button ace-icon fa fa-cloud-upload blue"></span>
+										<input class="upload" type="file" custom-on-file-change="subirExcelRazonesSocialesCliente" />
+									</div>
+								</div>
+							</li>
+							<li>
+								<div class="clearfix">
+									<span class="pull-left">
+										Importación 2
+									</span>
+									<a class="boton-importar pull-right">
+										<i class="fa  fa-cloud-download green"></i>
+									</a>
+									<a class="boton-importar pull-right">
+										<i class="fa fa-cloud-upload blue"></i>
+									</a>
+								</div>
+							</li>
+						</ul>
+					</li>
+					<li class="dropdown-footer"></li>
+				</ul> -->
+			</div>
 		</div>
 
 		<!-- div.table-responsive -->
@@ -121,11 +170,11 @@
 <div id="modal-wizard-destino-edicion" class="modal wizard-posicion">
 	<div class="modal-dialog">
 		<div class="modal-content">
-			<form ng-submit="guardarDestino(destino)">
+			<form name="nuevoDestino"  ng-submit="guardarDestino(destino)">
 				<div id="modal-wizard-container-destino-edicion">
 					<div class="modal-header">
 						<ul class="steps">
-							<li data-step="1" class="active">
+							<li  id="cabeza-datos-destino"  data-step="1" class="active">
 								<span class="step">1</span>
 								<span class="title">Datos del Destino</span>
 							</li>
@@ -137,14 +186,33 @@
 					</div>
 
 					<div class="modal-body step-content">
-						<div class="step-pane active" data-step="1">
-							<div class="form-group">
+						<div  id="cuerpo-datos-destino"  class="step-pane active" data-step="1">
+							<div ng-if="!usuario.empresa.usar_correlativos_destinos" class="form-group">
 								<label class="col-sm-3 control-label no-padding-right" for="codigo">Código</label>
 
 								<div class="col-sm-9">
 									<input required type="text" id="codigo" ng-model="destino.codigo" placeholder="Código" class="col-xs-10 col-sm-5" />
 								</div>
 							</div>
+							<div ng-if="usuario.empresa.usar_correlativos_destinos" class="form-group">
+								<label class="col-sm-3 control-label no-padding-right" for="codigo">Código</label>
+								<div  ng-if="!destino.id" class="col-sm-4">
+									<span>Correlativo de:</span>
+									<select required ng-model="destino.correlativo" class="form-control" ng-change="obtenerCorrelativoCliente();cargarCodigo(destino)"
+									 ng-options="correlativo as correlativo.nombre for correlativo in correlativosDestino.clases | filter:{habilitado:true} track by correlativo.id">
+										<option value="">--seleecionar--</option>
+									</select>
+								</div>
+								<div  ng-if="!destino.id" class="col-sm-5">
+									<br>
+									<input ng-disabled="usuario.empresa.usar_correlativos_destinos"required type="text" id="codigo" ng-model="destino.codigo" placeholder="Código" class="col-xs-10 col-sm-5" />
+								</div>
+								<div  ng-if="destino.id" class="col-sm-9">
+										
+										<input ng-disabled="usuario.empresa.usar_correlativos_destinos"required type="text" id="codigo" ng-model="destino.codigo" placeholder="Código" class="col-xs-10 col-sm-5" />
+									</div>
+							</div>
+
 							<div class="form-group">
 								<label class="col-sm-3 control-label no-padding-right" for="destino">Destino</label>
 
@@ -171,12 +239,12 @@
 				</div>
 
 				<div class="modal-footer wizard-actions">
-					<button class="btn btn-sm btn-prev">
+					<button id="anterior" class="btn btn-sm btn-prev">
 						<i class="ace-icon fa fa-arrow-left"></i>
 						Anterior
 					</button>
 
-					<button type="submit" id="siguiente" class="btn btn-success btn-sm btn-next" data-last="Finish">
+					<button type="submit" id="siguiente" class="btn btn-success btn-sm btn-next" data-last="Finish" ng-click="ValidarForm(nuevoDestino,steps,'anterior')">
 						Siguiente
 						<i class="ace-icon fa fa-arrow-right icon-on-right"></i>
 					</button>
@@ -190,3 +258,39 @@
 		</div>
 	</div>
 </div>
+
+
+<div id="dialog-conceptos-correlativos" class="modal" ng-include src="'/templates/gral/concepto-edicion-correlativos.html'"></div>
+
+<!-- inicio confirmar usuario -->
+<div id="modal-verificar-cuenta" title="Asignar Cuenta">
+
+	<form name="formularioAsignarCuenta" ng-submit="verificarCuentaAdmin(cuenta,$index)">
+		<div class="modal-header">
+			<p>
+				<h3>Verificar Cuenta</h3>
+			</p>
+		</div>
+		<div class="modal-body">
+			<div>
+				<span>Nombre Usuario: </span>
+				<input required class="form-control" type="text" ng-model="cuenta.nombre_usuario">
+			</div>
+			<div>
+				<span>Clave</span>
+				<input required class="form-control" type="password" name="contra" ng-model="cuenta.clave">
+			</div>
+		</div>
+		<div class="modal-footer">
+			<div class="col-sm-6">
+				<button type="submit" class="btn btn-success">Guardar</button>
+			</div>
+
+
+			<div class="col-sm-6">
+				<button type="button" class="btn btn-danger" ng-click="cerrarModalVerificarCuenta()">Cancelar</button>
+			</div>
+		</div>
+	</form>
+</div>
+<!-- fin confirmar usuario -->

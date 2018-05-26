@@ -197,7 +197,7 @@ module.exports = function (router, sequelize, Sequelize, jwt, md5, forEach, ensu
 
 	//AGIL
 	require('./rutas-empresas')(router, decodeBase64Image, fs, Empresa, Sucursal, Clase, Tipo, signs3, ConfiguracionVentaVista, ConfiguracionCompraVista, sequelize,EmpresaAplicacion,Aplicacion);
-	require('./rutas-clientes')(router, forEach, decodeBase64Image, fs, Empresa, Cliente, RutaCliente, Venta, VentaReprogramacionPago, sequelize, ClienteRazon, GtmClienteDestino, GtmDestino);
+	require('./rutas-clientes')(router, forEach, decodeBase64Image, fs, Empresa, Cliente, RutaCliente, Venta, VentaReprogramacionPago, sequelize, ClienteRazon, GtmClienteDestino, GtmDestino,Clase);
 	require('./rutas-proveedores')(router, sequelize, forEach, decodeBase64Image, fs, Empresa, Proveedor, Compra, CompraReprogramacionPago);
 	require('./rutas-productos')(router, forEach, decodeBase64Image, fs, Empresa, Producto, Proveedor, Cliente, Clase, Inventario, ComisionVendedorProducto, Usuario,
 		DetalleVenta, DetalleMovimiento, Movimiento, Venta, Compra, DetalleCompra, Almacen, Sucursal, signs3, Tipo, ProductoBase, sequelize, ContabilidadCuenta, UsuarioGrupos);
@@ -220,7 +220,7 @@ module.exports = function (router, sequelize, Sequelize, jwt, md5, forEach, ensu
 	require('./rutas-comprobante-contabilidad')(router, ComprobanteContabilidad, AsientoContabilidad, ContabilidadCuenta, ClasificacionCuenta, Sucursal, Clase, Usuario, Diccionario, Empresa, Persona, Compra, Venta, MonedaTipoCambio, NumeroLiteral, ContabilidadCuentaAuxiliar); //MonedaTipoCambio
 	// require('./rutas-contabilidad-clasificacion-cuenta')(router,ClasificacionCuenta,tipo,Usuario,Diccionario);
 	require('./rutas-gtm-estibajes')(router, ensureAuthorizedAdministrador, fs, forEach, jwt, md5, GtmEstibaje); //MonedaTipoCambio
-	require('./rutas-gtm-destinos')(router, ensureAuthorizedAdministrador, fs, forEach, jwt, md5, GtmDestino, Cliente, GtmClienteDestino);
+	require('./rutas-gtm-destinos')(router, ensureAuthorizedAdministrador, fs, forEach, jwt, md5, GtmDestino, Cliente, GtmClienteDestino,Clase);
 	require('./rutas-gtm-transportistas')(router, ensureAuthorizedAdministrador, fs, forEach, jwt, md5, GtmTransportista, Persona);
 	require('./rutas-gtm-grupo-estibajes')(router, ensureAuthorizedAdministrador, fs, forEach, jwt, md5, GtmGrupoEstibaje);
 	require('./rutas-gtm-despacho')(router, ensureAuthorizedAdministrador, fs, forEach, jwt, md5, GtmDespacho, GtmDespachoDetalle, Cliente, Usuario, GtmDestino, Producto

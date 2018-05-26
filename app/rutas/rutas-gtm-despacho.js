@@ -290,7 +290,7 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, forEach, j
 						despachado: false,
 						eliminado: false,
 						fecha: new Date(req.body.fecha.split("/")[2], req.body.fecha.split("/")[1] - 1, req.body.fecha.split("/")[0]),
-						servicio_transporte: (detalle_despacho.servicio_transporte ? parseFloat(detalle_despacho.servicio_transporte) : 0)
+						servicio_transporte: (detalle_despacho.servicio_transporte ? parseFloat(detalle_despacho.servicio_transporte)*parseFloat(detalle_despacho.cantidad) : 0)
 					}).then(function (detalleDespachoCreado) {
 						if (index === (array.length - 1)) {
 							res.json(despachoCreado);
@@ -436,7 +436,7 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, forEach, j
 											var numero = 0;
 											numero = SucursalEncontrada.despacho_correlativo + a
 											a++
-											var total = detalle_despacho.servicio_transporte + (detalle_despacho.producto.precio_unitario * detalle_despacho.cantidad_despacho2)
+											var total = detalle_despacho.servicio_transporte + (detalle_despacho.precio_unitario * detalle_despacho.cantidad_despacho2)
 											return GtmDespachoDetalle.create({
 												cantidad_despacho: detalle_despacho.cantidad_despacho2,
 												saldo: detalle_despacho.saldo2,

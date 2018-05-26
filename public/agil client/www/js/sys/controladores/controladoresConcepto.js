@@ -1,6 +1,6 @@
 angular.module('agil.controladores')
 
-.controller('ControladorConceptos', function($scope,$location,$localStorage,$templateCache,$route,blockUI,Tipos,TiposEmpresa,ListaTiposEmpresa,Sucursales){
+.controller('ControladorConceptos', function($scope,$location,$localStorage,$templateCache,$route,blockUI,Tipos,TiposEmpresa,ListaTiposEmpresa,Sucursales,Diccionario){
 	
 	blockUI.start();
 	
@@ -11,7 +11,7 @@ angular.module('agil.controladores')
 	
 	$scope.inicio=function(){
 		$scope.obtenerTipos();
-		
+		$scope.diccionario=Diccionario
 		setTimeout(function() {
 			ejecutarScriptsTabla('tabla-conceptos',2);
 		},2000);
