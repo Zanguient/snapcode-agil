@@ -79,6 +79,9 @@
 								<td>
 									<label>Vendedor</label>&nbsp
 								</td>
+								<!-- <td>
+									<label>Cliente</label>&nbsp
+								</td> -->
 							</tr>
 							<tr>
 								<td>
@@ -105,6 +108,9 @@
 								<td>
 									<input type="text" ng-model="filtro.vendedor">
 								</td>
+								<!-- <td>
+									<input type="text" ng-model="paginator.search">
+								</td> -->
 							</tr>
 						</tbody>
 					</table>
@@ -547,10 +553,10 @@
 		<div class="modal-header bg-success">
 			<p>
 				<h4 class="modal-title text-center">RECIBO DE INGRESO</h4>
-				<p  class="text-center">
+				<p class="text-center">
 					<b>{{detalle_despacho.despacho.cliente.razon_social}}&nbsp;</b>
 				</p>
-				<p  class="text-center">
+				<p class="text-center">
 					<b>Pedido Nro. {{detalle_despacho.numero_correlativo}}&nbsp;</b>
 				</p>
 			</p>
@@ -589,15 +595,15 @@
 					<div class="col-md-9">
 						<p>{{detalle_despacho.despacho.cliente.nit}}&nbsp;</p>
 					</div>
-				
-			
+
+
 					<div class="col-md-3">
 						<p>Detalle.:</p>
 					</div>
 					<div class="col-md-9">
 						<p>{{detalle_despacho.cantidad_despacho}} {{detalle_despacho.producto.nombre.toUpperCase()}}&nbsp;</p>
 					</div>
-				
+
 					<div class="col-md-3">
 						<p>Fecha.:</p>
 					</div>
@@ -607,22 +613,30 @@
 					</div>
 				</div>
 				<div class="col-md-4">
-					<a href="javascript:void(0)" ng-click="verinfo=(verinfo)?false:true"><i class="fa fa-exclamation-circle bigger-160 red"></i></a>
+					<a href="javascript:void(0)" ng-click="verinfo=(verinfo)?false:true">
+						<i class="fa fa-exclamation-circle bigger-160 red"></i>
+					</a>
 					<div ng-show="verinfo" class="row" style="border: thin solid green">
-						
-								<p class="col-sm-6">Producto</p>
-								<p class="col-sm-6">{{detalle_despacho.precio_unitario*detalle_despacho.cantidad_despacho|number:2}}</p>
-								<p class="col-sm-6">Servicio</p>
-								<p class="col-sm-6">{{detalle_despacho.servicio_transporte|number:2}}</p>
-								<p class="col-sm-6"><b>TOTAL</b></p>								
-								<p class="col-sm-6">{{detalle_despacho.total|number:2}}</p>
-								<P class="col-sm-12 red">Pago a/c</P>								
-								<P class="col-sm-6">Total Pagos</P>
-								<p class="col-sm-6">{{detalle_despacho.pago_ac|number:2}}</p>							
-								<p class="col-sm-6 red"><b>Saldo bs.</b></p>
-								<p class="col-sm-6"><b>{{detalle_despacho.saldo_pago_ac|number:2}}</b></p>
-								
-						
+
+						<p class="col-sm-6">Producto</p>
+						<p class="col-sm-6">{{detalle_despacho.precio_unitario*detalle_despacho.cantidad_despacho|number:2}}</p>
+						<p class="col-sm-6">Servicio</p>
+						<p class="col-sm-6">{{detalle_despacho.servicio_transporte|number:2}}</p>
+						<p class="col-sm-6">
+							<b>TOTAL</b>
+						</p>
+						<p class="col-sm-6">{{detalle_despacho.total|number:2}}</p>
+						<P class="col-sm-12 red">Pago a/c</P>
+						<P class="col-sm-6">Total Pagos</P>
+						<p class="col-sm-6">{{detalle_despacho.pago_ac|number:2}}</p>
+						<p class="col-sm-6 red">
+							<b>Saldo bs.</b>
+						</p>
+						<p class="col-sm-6">
+							<b>{{detalle_despacho.saldo_pago_ac|number:2}}</b>
+						</p>
+
+
 					</div>
 				</div>
 				<div class="col-md-12">

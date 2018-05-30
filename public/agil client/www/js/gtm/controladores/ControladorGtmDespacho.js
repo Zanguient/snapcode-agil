@@ -69,10 +69,13 @@ angular.module('agil.controladores')
 
         }
         $scope.buscarDespachados = function () {
-            if ($scope.paginator.filter.inicio) {
-                if ($scope.paginator.filter.inicio instanceof Date) { } else {
-                    $scope.paginator.filter.inicio = new Date($scope.convertirFecha($scope.paginator.filter.inicio))
-                    $scope.paginator.filter.fin = new Date($scope.convertirFecha($scope.paginator.filter.fin))
+            if ($scope.paginator.filter.inicio != 0) {
+                if ($scope.filtro.inicio && $scope.filtro.fin) {
+                    $scope.paginator.filter.inicio = new Date($scope.convertirFecha($scope.filtro.inicio))
+                    $scope.paginator.filter.fin = new Date($scope.convertirFecha($scope.filtro.fin))
+                } else {
+                    $scope.paginator.filter.inicio = 0
+                    $scope.paginator.filter.fin = 0
                 }
             } else {
                 var date = new Date()
@@ -479,7 +482,7 @@ angular.module('agil.controladores')
             doc.text("Dirección:", 40, y + 130 + a);
 
             doc.font('Helvetica', 8);
-            doc.text(gtm_despacho.despacho.cliente.nit, 80, y + 120 + a);
+            doc.text(gtm_despacho.despacho.cliente_razon.nit, 80, y + 120 + a);
             if (gtm_despacho.despacho.cliente.telefono1) doc.text(gtm_despacho.despacho.cliente.telefono1, 240, y + 120 + a);
             doc.text(gtm_despacho.despacho.cliente.direccion, 80, y + 130 + a);
 

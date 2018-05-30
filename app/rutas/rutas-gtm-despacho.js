@@ -153,8 +153,8 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, forEach, j
 						id_producto: detalle_kardex.id_producto,
 						cantidad: parseFloat(detalle_kardex.cantidad),
 						saldo: parseFloat(detalle_kardex.cantidad),
-						precio_unitario : parseFloat(detalle_kardex.precio_unitario),
-						servicio_transporte : parseFloat(detalle_kardex.servicio_transporte),
+						precio_unitario: parseFloat(detalle_kardex.precio_unitario),
+						servicio_transporte: parseFloat(detalle_kardex.servicio_transporte),
 						entregado: false,
 						fecha: new Date(req.body.fecha.split("/")[2], req.body.fecha.split("/")[1], req.body.fecha.split("/")[0]),
 					}).then(function (detalleDespachoCreado) {
@@ -290,7 +290,7 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, forEach, j
 						despachado: false,
 						eliminado: false,
 						fecha: new Date(req.body.fecha.split("/")[2], req.body.fecha.split("/")[1] - 1, req.body.fecha.split("/")[0]),
-						servicio_transporte: (detalle_despacho.servicio_transporte ? parseFloat(detalle_despacho.servicio_transporte)*parseFloat(detalle_despacho.cantidad) : 0)
+						servicio_transporte: (detalle_despacho.servicio_transporte ? parseFloat(detalle_despacho.servicio_transporte) * parseFloat(detalle_despacho.cantidad) : 0)
 					}).then(function (detalleDespachoCreado) {
 						if (index === (array.length - 1)) {
 							res.json(despachoCreado);
@@ -518,11 +518,87 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, forEach, j
 				//}
 			}
 		} else {
-			//if (index == (array.length - 1)) {
-			return new Promise(function (fulfill, reject) {
-				fulfill(venta);
+			return Movimiento.create({
+				id_tipo: tipoMovimiento.id,
+				id_clase: tipoEgreso.id,
+				id_almacen: req.body.id_almacen,
+				fecha: new Date()
+			}, { transaction: t }).then(function (movimientoCreado) {
+
+
+				var despachado = false;
+				if (detalle_despacho.saldo2 == 0) {
+					despachado = true
+				}
+				if (detalle_despacho.saldo != detalle_despacho.cantidad) {
+					detalle_despacho.servicio_transporte = 0
+				}
+				detalle_despacho.cantidad_despacho = detalle_despacho.cantidad_despacho + detalle_despacho.cantidad_despacho2
+				return GtmDespachoDetalle.update({
+					cantidad_despacho: detalle_despacho.cantidad_despacho,
+					saldo: detalle_despacho.saldo2,
+					id_transportista: detalle_despacho.id_transportista,
+					id_estibaje: detalle_despacho.id_estibaje,
+					id_grupo_estibaje: detalle_despacho.id_grupo_estibaje,
+					despachado: despachado
+				}, {
+						where: {
+							id: detalle_despacho.id
+						}/*,
+					transaction: t*/
+					}, { transaction: t }).then(function (desact) {
+						return Sucursal.find({
+							where: {
+								id: req.body.id_sucursal,//your where conditions, or without them if you need ANY entry
+							}
+						}, { transaction: t }).then(function (SucursalEncontrada) {
+							var numero = 0;
+							numero = SucursalEncontrada.despacho_correlativo + a
+							a++
+							var total = detalle_despacho.servicio_transporte + (detalle_despacho.precio_unitario * detalle_despacho.cantidad_despacho2)
+							return GtmDespachoDetalle.create({
+								cantidad_despacho: detalle_despacho.cantidad_despacho2,
+								saldo: detalle_despacho.saldo2,
+								id_transportista: detalle_despacho.id_transportista,
+								id_estibaje: detalle_despacho.id_estibaje,
+								id_grupo_estibaje: detalle_despacho.id_grupo_estibaje,
+								despachado: despachado,
+								id_despacho: detalle_despacho.id_despacho,
+								id_producto: detalle_despacho.id_producto,
+								cantidad: detalle_despacho.cantidad,
+								precio_unitario: detalle_despacho.precio_unitario,
+								importe: detalle_despacho.importe,
+								eliminado: false,
+								id_padre: detalle_despacho.id,
+								fecha: req.params.fecha,
+								servicio_transporte: detalle_despacho.servicio_transporte,
+								numero_correlativo: numero,
+								pago_ac: 0,
+								saldo_pago_ac: total,
+								total: total,
+								id_sucursal: req.body.id_sucursal,
+								id_almacen: req.body.id_almacen
+
+							}, { transaction: t }).then(function (detalleDespachoCreado) {
+								SucursalEncontrada.despacho_correlativo = SucursalEncontrada.despacho_correlativo + a
+								return Sucursal.update({
+									despacho_correlativo: SucursalEncontrada.despacho_correlativo
+								}, {
+										where: {
+											id: req.body.id_sucursal,
+										}
+
+									}, { transaction: t }).then(function (actualizado) {
+										//if (index == (array.length - 1)) {
+										return new Promise(function (fulfill, reject) {
+											fulfill(venta);
+										});
+										//}
+									});
+							});
+						});
+					});
 			});
-			//}
 		}
 	}
 
@@ -537,7 +613,7 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, forEach, j
 						include: [{
 							model: Inventario, as: 'inventarios', required: false, where: {
 								id_almacen: req.body.id_almacen,
-								cantidad:{$gt:0}
+								cantidad: { $gt: 0 }
 							}
 						}],
 						where: {
@@ -590,26 +666,48 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, forEach, j
 				condicionDespacho = { id_padre: { $ne: null }, eliminado: false, fecha: { $between: [inicio, fin] } };
 			}
 			if (req.params.transportista != 0) {
-				condicionTrabajador.nombre_completo={ $like: "%" + req.params.transportista + "%" } 
+				condicionTrabajador.nombre_completo = { $like: "%" + req.params.transportista + "%" }
 			}
 			if (req.params.tipo != 0) {
-				condicionEstibaje.nombre= { $like: "%" + req.params.tipo + "%" } 
+				condicionEstibaje.nombre = { $like: "%" + req.params.tipo + "%" }
 			}
 			if (req.params.grupo != 0) {
-				condicionGrupoEstibaje.nombre= { $like: "%" + req.params.grupo + "%" } 
+				condicionGrupoEstibaje.nombre = { $like: "%" + req.params.grupo + "%" }
 			}
 			if (req.params.estado != 0) {
 
 			}
 			if (req.params.vendedor != 0) {
-				condicionVendedor.nombre_completo= { $like: "%" + req.params.vendedor + "%" } 
+
+				condicionVendedor =
+					{
+						$or: [
+							{
+								nombre_completo: {
+									$like: "%" + req.params.vendedor + "%"
+								}
+							}
+
+						]
+					}
 			}
 			if (req.params.texto_busqueda != 0) {
-				condicionCliente.razon_social= { $like: "%" + req.params.texto_busqueda + "%" } 
+				condicionCliente =
+					{
+						$or: [
+							{
+								razon_social: {
+									$like: "%" + req.params.texto_busqueda + "%"
+								}
+							}
+
+						]
+					}
 			}
 			GtmDespachoDetalle.findAndCountAll({
 				where: condicionDespacho,
-				include: [{ model: GtmDespachoDetalleResivo, as: 'recivos', include: [{ model: Clase, as: 'tipoPago' }, { model: Clase, as: 'otroBanco' }, { model: Banco, as: 'banco' }] }, {
+				
+				include: [{ model: GtmDespachoDetalleResivo, as: 'recivos',required:false, include: [{ model: Sucursal, as: 'sucursal',required:false, include: [{ model: Clase, as: 'departamento',required:false }] }, { model: Clase, as: 'tipoPago',required:false }, { model: Clase, as: 'otroBanco',required:false }, { model: Banco, as: 'banco',required:false }] }, {
 					model: GtmDespacho, as: 'despacho',
 					where: { id_empresa: req.params.id_empresa },
 					include: [{ model: Usuario, as: 'usuario', include: [{ model: Persona, as: 'persona', where: condicionVendedor }] },
@@ -629,9 +727,10 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, forEach, j
 
 				if (req.params.items_pagina != 0) {
 					GtmDespachoDetalle.findAll({
+						subQuery: false,
 						offset: (req.params.items_pagina * (req.params.pagina - 1)), limit: req.params.items_pagina,
 						where: condicionDespacho,
-						include: [{ model: GtmDespachoDetalleResivo, as: 'recivos', include: [{ model: Sucursal, as: 'sucursal', include: [{ model: Clase, as: 'departamento' }] }, { model: Clase, as: 'tipoPago' }, { model: Clase, as: 'otroBanco' }, { model: Banco, as: 'banco' }] }, {
+						include: [{ model: GtmDespachoDetalleResivo, as: 'recivos', required: false, include: [{ model: Sucursal, as: 'sucursal', required: false, include: [{ model: Clase, as: 'departamento', required: false }] }, { model: Clase, as: 'tipoPago', required: false }, { model: Clase, as: 'otroBanco', required: false }, { model: Banco, as: 'banco', required: false }] }, {
 							model: GtmDespacho, as: 'despacho',
 							where: { id_empresa: req.params.id_empresa },
 							include: [{ model: Usuario, as: 'usuario', include: [{ model: Persona, as: 'persona', where: condicionVendedor }] },
@@ -652,9 +751,10 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, forEach, j
 					});
 				} else {
 					GtmDespachoDetalle.findAll({
+						subQuery: false,
 						offset: (req.params.items_pagina * (req.params.pagina - 1)),
 						where: condicionDespacho,
-						include: [{ model: GtmDespachoDetalleResivo, as: 'recivos', include: [{ model: Sucursal, as: 'sucursal', include: [{ model: Clase, as: 'departamento' }] }, { model: Clase, as: 'tipoPago' }, { model: Clase, as: 'otroBanco' }, { model: Banco, as: 'banco' }] }, {
+						include: [{ model: GtmDespachoDetalleResivo, as: 'recivos', required: false, include: [{ model: Sucursal, as: 'sucursal', required: false, include: [{ model: Clase, as: 'departamento', required: false }] }, { model: Clase, as: 'tipoPago', required: false }, { model: Clase, as: 'otroBanco', required: false }, { model: Banco, as: 'banco', required: false }] }, {
 							model: GtmDespacho, as: 'despacho',
 							where: { id_empresa: req.params.id_empresa },
 							include: [{ model: Usuario, as: 'usuario', include: [{ model: Persona, as: 'persona', where: condicionVendedor }] },
