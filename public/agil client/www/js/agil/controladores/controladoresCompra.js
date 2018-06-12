@@ -185,6 +185,28 @@ angular.module('agil.controladores')
 		$scope.verificarProducto = function (detalleCompra) {
 			if (detalleCompra.centroCosto.nombre.nombre == $scope.diccionario.CENTRO_COSTO_ALMACEN) {
 				if (detalleCompra.producto.id) {
+					if ($scope.compra.movimiento.clase != undefined) {
+						if ($scope.compra.movimiento.clase.nombre == $scope.diccionario.MOVING_POR_RETENCION_BIENES) {
+							detalleCompra.descuento = 0
+							detalleCompra.ice = 0
+							detalleCompra.recargo = 0
+							detalleCompra.excento = 0
+							$scope.configuracionCompraVista.mostrar_it_retencion = true
+							$scope.configuracionCompraVista.mostrar_iue = true
+							$scope.configuracionCompraVista.mostrar_pagado = true
+							$scope.agregarDetalleCompra(detalleCompra);
+						} else {
+							$scope.agregarDetalleCompra(detalleCompra);
+						}
+					} else {
+						$scope.agregarDetalleCompra(detalleCompra);
+					}
+
+				} else {
+					$scope.mostrarMensaje("El producto no se encuentra en el catalogo")
+				}
+			} else {
+				if ($scope.compra.movimiento.clase != undefined) {
 					if ($scope.compra.movimiento.clase.nombre == $scope.diccionario.MOVING_POR_RETENCION_BIENES) {
 						detalleCompra.descuento = 0
 						detalleCompra.ice = 0
@@ -197,20 +219,6 @@ angular.module('agil.controladores')
 					} else {
 						$scope.agregarDetalleCompra(detalleCompra);
 					}
-
-				} else {
-					$scope.mostrarMensaje("El producto no se encuentra en el catalogo")
-				}
-			} else {
-				if ($scope.compra.movimiento.clase.nombre == $scope.diccionario.MOVING_POR_RETENCION_BIENES) {
-					detalleCompra.descuento = 0
-					detalleCompra.ice = 0
-					detalleCompra.recargo = 0
-					detalleCompra.excento = 0
-					$scope.configuracionCompraVista.mostrar_it_retencion = true
-					$scope.configuracionCompraVista.mostrar_iue = true
-					$scope.configuracionCompraVista.mostrar_pagado = true
-					$scope.agregarDetalleCompra(detalleCompra);
 				} else {
 					$scope.agregarDetalleCompra(detalleCompra);
 				}
