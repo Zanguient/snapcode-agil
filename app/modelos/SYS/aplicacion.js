@@ -162,7 +162,10 @@ module.exports=function(sequelize,Sequelize){
 		sequelize.query("INSERT IGNORE INTO sys_aplicacion SET id = 48,titulo = 'POLIFUNCIONALIDAD',atributo_clase='fa fa-street-view',url='polifuncionalidad',createdAt = NOW(),updatedAt = NOW();").spread(function(results, metadata) {
 		  //console.log(metadata+" rows affected in sys_application");
 		});
-		sequelize.query("INSERT IGNORE INTO sys_aplicacion SET id = 49,titulo = 'TRANSACCIONES',atributo_clase='gryphicon-euro',url='transacciones',createdAt = NOW(),updatedAt = NOW();").spread(function(results, metadata) {
+		sequelize.query("INSERT IGNORE INTO sys_aplicacion SET id = 49,titulo = 'TRANSACCIONES',atributo_clase='glyphicon-euro',url='transacciones',createdAt = NOW(),updatedAt = NOW();").spread(function(results, metadata) {
+		  //console.log(metadata+" rows affected in sys_application");
+		});
+		sequelize.query("INSERT IGNORE INTO sys_aplicacion SET id = 50,titulo = 'PEDIDOS',atributo_clase='glyphicon-euro',url='pedidos',createdAt = NOW(),updatedAt = NOW();").spread(function(results, metadata) {
 		  //console.log(metadata+" rows affected in sys_application");
 		});
 	});

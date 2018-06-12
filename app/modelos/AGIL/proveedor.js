@@ -84,6 +84,10 @@ module.exports=function(sequelize,Sequelize){
 			type: Sequelize.STRING,
 			field: 'documento_seguro_social'
 		},
+		productos: {
+			type: Sequelize.STRING,
+			field: 'productos'
+		},
 	}, {
 	  freezeTableName: true 
 	});

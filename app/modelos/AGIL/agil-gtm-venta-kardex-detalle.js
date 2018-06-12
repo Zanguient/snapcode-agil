@@ -44,6 +44,10 @@ module.exports = function (sequelize, Sequelize) {
             type: Sequelize.DECIMAL(20, 4),
             field: 'servicio_transporte'
         },
+        eliminado: {
+            type: Sequelize.BOOLEAN,
+            field: 'eliminado'
+        }
     }, {
             freezeTableName: true
         });

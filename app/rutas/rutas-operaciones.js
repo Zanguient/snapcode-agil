@@ -81,22 +81,20 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Producto, Dicc
                 if (req.params.items_pagina !== "0") {
                     SolicitudReposicion.findAndCountAll({
                         where: condicion,
-
                         include: [{ model: Almacen, as: 'almacen', include: [{ model: Sucursal, as: 'sucursal' }] },
                         {
-                            model: DetalleSolicitudProducto, as: 'solicitudesProductos', include: [{ model: Producto, as: 'productoSolicitado', include: [{ model: Inventario, as: 'inventarios', required: false }] },
-                            { model: DetalleSolicitudProductoBase, as: 'detallesIngredientesProducto', include: [{ model: Producto, as: 'productoSolicitudBase', include: [{ model: Inventario, as: 'inventarios', required: false }] }] }]
+                            model: DetalleSolicitudProducto, as: 'solicitudesProductos', include: [{ model: Producto, as: 'productoSolicitado', include: [{ model: Inventario, as: 'inventarios', required: false },{ model: Clase, as: 'grupo' }, { model: Clase, as: 'subgrupo' }] },
+                            { model: DetalleSolicitudProductoBase, as: 'detallesIngredientesProducto', include: [{ model: Producto, as: 'productoSolicitudBase', include: [{ model: Inventario, as: 'inventarios', required: false }, { model: Clase, as: 'grupo' }, { model: Clase, as: 'subgrupo' }] }] }]
                         },
                         { model: Usuario, as: 'usuario', include: [{ model: Persona, as: 'persona', where: condicionPersona }] }]//, { model: Clase, as: 'movimiento' }]
-
                     }).then(function (data) {
                         SolicitudReposicion.findAll({
                             offset: (req.params.items_pagina * (req.params.pagina - 1)), limit: req.params.items_pagina,
                             where: condicion,
                             include: [{ model: Almacen, as: 'almacen', include: [{ model: Sucursal, as: 'sucursal' }] },
                             {
-                                model: DetalleSolicitudProducto, as: 'solicitudesProductos', include: [{ model: Producto, as: 'productoSolicitado', include: [{ model: Inventario, as: 'inventarios', required: false }] },
-                                { model: DetalleSolicitudProductoBase, as: 'detallesIngredientesProducto', include: [{ model: Producto, as: 'productoSolicitudBase', include: [{ model: Inventario, as: 'inventarios', required: false }] }] }]
+                                model: DetalleSolicitudProducto, as: 'solicitudesProductos', include: [{ model: Producto, as: 'productoSolicitado', include: [{ model: Inventario, as: 'inventarios', required: false },{ model: Clase, as: 'grupo' }, { model: Clase, as: 'subgrupo' }] },
+                                { model: DetalleSolicitudProductoBase, as: 'detallesIngredientesProducto', include: [{ model: Producto, as: 'productoSolicitudBase', include: [{ model: Inventario, as: 'inventarios', required: false },{ model: Clase, as: 'grupo' }, { model: Clase, as: 'subgrupo' }] }] }]
                             },
                             { model: Usuario, as: 'usuario', include: [{ model: Persona, as: 'persona', where: condicionPersona }] }]//, { model: Clase, as: 'movimiento' }]
 
@@ -113,8 +111,8 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Producto, Dicc
                         where: condicion,
                         include: [{ model: Almacen, as: 'almacen', include: [{ model: Sucursal, as: 'sucursal' }] },
                         {
-                            model: DetalleSolicitudProducto, as: 'solicitudesProductos', include: [{ model: Producto, as: 'productoSolicitado', include: [{ model: Inventario, as: 'inventarios', required: false }] },
-                            { model: DetalleSolicitudProductoBase, as: 'detallesIngredientesProducto', include: [{ model: Producto, as: 'productoSolicitudBase', include: [{ model: Inventario, as: 'inventarios', required: false }] }] }]
+                            model: DetalleSolicitudProducto, as: 'solicitudesProductos', include: [{ model: Producto, as: 'productoSolicitado', include: [{ model: Inventario, as: 'inventarios', required: false },{ model: Clase, as: 'grupo' }, { model: Clase, as: 'subgrupo' }] },
+                            { model: DetalleSolicitudProductoBase, as: 'detallesIngredientesProducto', include: [{ model: Producto, as: 'productoSolicitudBase', include: [{ model: Inventario, as: 'inventarios', required: false },{ model: Clase, as: 'grupo' }, { model: Clase, as: 'subgrupo' }] }] }]
                         },
                         { model: Usuario, as: 'usuario', include: [{ model: Persona, as: 'persona', where: condicionPersona }] }]//, { model: Clase, as: 'movimiento' }]
 
@@ -123,8 +121,8 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Producto, Dicc
                             where: condicion,
                             include: [{ model: Almacen, as: 'almacen', include: [{ model: Sucursal, as: 'sucursal' }] },
                             {
-                                model: DetalleSolicitudProducto, as: 'solicitudesProductos', include: [{ model: Producto, as: 'productoSolicitado', include: [{ model: Inventario, as: 'inventarios', required: false }] },
-                                { model: DetalleSolicitudProductoBase, as: 'detallesIngredientesProducto', include: [{ model: Producto, as: 'productoSolicitudBase', include: [{ model: Inventario, as: 'inventarios', required: false }] }] }]
+                                model: DetalleSolicitudProducto, as: 'solicitudesProductos', include: [{ model: Producto, as: 'productoSolicitado', include: [{ model: Inventario, as: 'inventarios', required: false },{ model: Clase, as: 'grupo' }, { model: Clase, as: 'subgrupo' }] },
+                                { model: DetalleSolicitudProductoBase, as: 'detallesIngredientesProducto', include: [{ model: Producto, as: 'productoSolicitudBase', include: [{ model: Inventario, as: 'inventarios', required: false },{ model: Clase, as: 'grupo' }, { model: Clase, as: 'subgrupo' }] }] }]
                             },
                             { model: Usuario, as: 'usuario', include: [{ model: Persona, as: 'persona', where: condicionPersona }] }]//, { model: Clase, as: 'movimiento' }]
                         }).then(function (solicitudes) {
@@ -155,8 +153,8 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Producto, Dicc
                             where: condicion,
                             include: [{ model: Almacen, as: 'almacen', include: [{ model: Sucursal, as: 'sucursal' }] },
                             {
-                                model: DetalleSolicitudProducto, as: 'solicitudesProductos', include: [{ model: Producto, as: 'productoSolicitado', include: [{ model: Inventario, as: 'inventarios', required: false }] },
-                                { model: DetalleSolicitudProductoBase, as: 'detallesIngredientesProducto', include: [{ model: Producto, as: 'productoSolicitudBase', include: [{ model: Inventario, as: 'inventarios', required: false }] }] }]
+                                model: DetalleSolicitudProducto, as: 'solicitudesProductos', include: [{ model: Producto, as: 'productoSolicitado', include: [{ model: Inventario, as: 'inventarios', required: false },{ model: Clase, as: 'grupo' }, { model: Clase, as: 'subgrupo' }] },
+                                { model: DetalleSolicitudProductoBase, as: 'detallesIngredientesProducto', include: [{ model: Producto, as: 'productoSolicitudBase', include: [{ model: Inventario, as: 'inventarios', required: false },{ model: Clase, as: 'grupo' }, { model: Clase, as: 'subgrupo' }] }] }]
                             },
                             { model: Usuario, as: 'usuario', include: [{ model: Persona, as: 'persona', where: condicionPersona }] }],//, { model: Clase, as: 'movimiento' }],
                             order: [['id', 'asc']]
@@ -183,8 +181,8 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Producto, Dicc
                             where: condicion,
                             include: [{ model: Almacen, as: 'almacen', include: [{ model: Sucursal, as: 'sucursal' }] },
                             {
-                                model: DetalleSolicitudProducto, as: 'solicitudesProductos', include: [{ model: Producto, as: 'productoSolicitado', include: [{ model: Inventario, as: 'inventarios', required: false }] },
-                                { model: DetalleSolicitudProductoBase, as: 'detallesIngredientesProducto', include: [{ model: Producto, as: 'productoSolicitudBase', include: [{ model: Inventario, as: 'inventarios', required: false }] }] }]
+                                model: DetalleSolicitudProducto, as: 'solicitudesProductos', include: [{ model: Producto, as: 'productoSolicitado', include: [{ model: Inventario, as: 'inventarios', required: false },{ model: Clase, as: 'grupo' }, { model: Clase, as: 'subgrupo' }] },
+                                { model: DetalleSolicitudProductoBase, as: 'detallesIngredientesProducto', include: [{ model: Producto, as: 'productoSolicitudBase', include: [{ model: Inventario, as: 'inventarios', required: false },{ model: Clase, as: 'grupo' }, { model: Clase, as: 'subgrupo' }] }] }]
                             },
                             { model: Usuario, as: 'usuario', include: [{ model: Persona, as: 'persona', where: condicionPersona }] }],//, { model: Clase, as: 'movimiento' }],
                             order: [['id', 'asc']]
@@ -258,62 +256,32 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Producto, Dicc
     router.route('/solicitud/empresa/:id_empresa')
         .post(function (req, res) {
             sequelize.transaction({ isolationLevel: Sequelize.Transaction.ISOLATION_LEVELS.SERIALIZABLE }, function (t) {
-                return Tipo.find({
-                    where: { nombre_corto: Diccionario.MOV_EGRE },
-                    transaction: t
-                }).then(function (tipoMovimiento) {
-                    return Clase.find({
-                        where: { nombre_corto: Diccionario.EGRE_TRASPASO },
-                        transaction: t
-                    }).then(function (conceptoMovimiento) {
-                        return Movimiento.create({
-                            id_tipo: tipoMovimiento.id,
-                            id_clase: conceptoMovimiento.id,
-                            id_almacen: req.body.almacen.id,
-                            fecha: req.body.fecha
-                        }, { transaction: t }).then(function (movimientoEgresoCreado) {
-                            return SolicitudReposicion.create({
-                                id_almacen: req.body.almacen.id,
-                                id_movimiento: movimientoEgresoCreado.id,
-                                fecha: req.body.fecha,
-                                id_usuario: req.body.id_usuario,
-                                activo: req.body.activo,
-                                monto: req.body.monto
-                            }, { transaction: t }).then(function (solicitudCreada) {
-                                var aceptado = false
-                                var done = false
-                                var detallesSolicitud = []
-                                for (let i = 0; i < req.body.solicitudesProductos.length; i++) {
-                                    detallesSolicitud.push(
-                                        crearDetalleSolicitudProducto(req.body.solicitudesProductos[i], solicitudCreada, t)
-                                    )
-                                }
-                                return Promise.all(detallesSolicitud).then(function (donePromises) {
-                                    console.log(donePromises)
-                                    return new Promise(function (fulfill, reject) {
-                                        fulfill('Solicitud creada, para actualizar el inventario cierre la solicitud.')
-                                    })
-                                })
-                            }).catch(function (err) {
-                                return new Promise(function (fulfill, reject) {
-                                    reject((err.stack !== undefined) ? err.stack : err);
-                                });
-                            });
-                        }).catch(function (err) {
-                            return new Promise(function (fulfill, reject) {
-                                reject((err.stack !== undefined) ? err.stack : err);
-                            });
-                        })
-                    }).catch(function (err) {
+                return SolicitudReposicion.create({
+                    id_almacen: req.body.almacen.id,
+                    // id_movimiento: movimientoEgresoCreado.id,
+                    fecha: req.body.fecha,
+                    id_usuario: req.body.id_usuario,
+                    activo: req.body.activo,
+                    monto: req.body.monto
+                }, { transaction: t }).then(function (solicitudCreada) {
+                    var aceptado = false
+                    var done = false
+                    var detallesSolicitud = []
+                    for (let i = 0; i < req.body.solicitudesProductos.length; i++) {
+                        detallesSolicitud.push(
+                            crearDetalleSolicitudProducto(req.body.solicitudesProductos[i], solicitudCreada, t)
+                        )
+                    }
+                    return Promise.all(detallesSolicitud).then(function (donePromises) {
                         return new Promise(function (fulfill, reject) {
-                            reject((err.stack !== undefined) ? err.stack : err);
-                        });
+                            fulfill('Solicitud creada, para actualizar el inventario confirme la entrega.')
+                        })
                     })
                 }).catch(function (err) {
                     return new Promise(function (fulfill, reject) {
                         reject((err.stack !== undefined) ? err.stack : err);
                     });
-                })
+                });
             }).then(function (result) {
                 if (result) {
                     res.json({ mensaje: result })
@@ -428,41 +396,39 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Producto, Dicc
             var trans = sequelize.transaction({
                 isolationLevel: Sequelize.Transaction.ISOLATION_LEVELS.SERIALIZABLE
             }, function (t) {
-                return SolicitudReposicion.update({
-                    activo: false
-                }, {
-                        where: { id: req.body.id }, transaction: t
-                    }).then(function (solicitudActualizada) {
-                        return Tipo.find({
-                            where: { nombre_corto: Diccionario.MOV_EGRE },
-                            transaction: t
-                        }).then(function (tipoMovimiento) {
-                            return Clase.find({
-                                where: { nombre_corto: Diccionario.EGRE_TRASPASO },
-                                transaction: t
-                            }).then(function (conceptoMovimiento) {
-                                return Movimiento.create({
-                                    id_tipo: tipoMovimiento.id,
-                                    id_clase: conceptoMovimiento.id,
-                                    id_almacen: req.body.almacen.id,
-                                    fecha: req.body.fecha
-                                }, { transaction: t }).then(function (movimientoEgresoCreado) {
+                return Tipo.find({
+                    where: { nombre_corto: Diccionario.MOV_EGRE },
+                    transaction: t
+                }).then(function (tipoMovimiento) {
+                    return Clase.find({
+                        where: { nombre_corto: Diccionario.EGRE_TRASPASO },
+                        transaction: t
+                    }).then(function (conceptoMovimiento) {
+                        return Movimiento.create({
+                            id_tipo: tipoMovimiento.id,
+                            id_clase: conceptoMovimiento.id,
+                            id_almacen: req.body.almacen.id,
+                            fecha: req.body.fecha
+                        }, { transaction: t }).then(function (movimientoEgresoCreado) {
+                            return SolicitudReposicion.update({
+                                id_movimiento:movimientoEgresoCreado.id,
+                                activo: false
+                            }, {
+                                    where: { id: req.body.id }, transaction: t
+                                }).then(function (solicitudActualizada) {
                                     for (let index = 0; index < req.body.listaProductosSolicitados.productos.length; index++) {
                                         Mypromise.push(calcularCostosEgresos(req.body.listaProductosSolicitados.productos[index], req.body.listaProductosSolicitados.productos[index].productoSolicitudBase, req.body.listaProductosSolicitados.productos[index].cantidad_real, req.body.listaProductosSolicitados.productos[index].productoSolicitudBase.inventarios, movimientoEgresoCreado, index, req.body.listaProductosSolicitados, res, req.body, t))
                                     }
-                                    return Promise.all(Mypromise).then(function (fulfill, reject) {
-                                        fulfill('Solicitud cerrada, inventario actualizado.')
+                                    return Promise.all(Mypromise).then(function (data) {
+                                        return new Promise(function (fulfill, reject) {
+                                            fulfill('Solicitud cerrada, inventario actualizado.')
+                                        })
                                     })
                                 }).catch(function (err) {
                                     return new Promise(function (fulfill, reject) {
                                         reject((err.stack !== undefined) ? err.stack : err);
                                     });
                                 })
-                            }).catch(function (err) {
-                                return new Promise(function (fulfill, reject) {
-                                    reject((err.stack !== undefined) ? err.stack : err);
-                                });
-                            })
                         }).catch(function (err) {
                             return new Promise(function (fulfill, reject) {
                                 reject((err.stack !== undefined) ? err.stack : err);
@@ -473,6 +439,11 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Producto, Dicc
                             reject((err.stack !== undefined) ? err.stack : err);
                         });
                     })
+                }).catch(function (err) {
+                    return new Promise(function (fulfill, reject) {
+                        reject((err.stack !== undefined) ? err.stack : err);
+                    });
+                })
             }).then(function (transaccionCreada) {
                 if (transaccionCreada !== undefined) {
                     res.json({ mensaje: transaccionCreada })
@@ -730,140 +701,19 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Producto, Dicc
                 res.json({ mensaje: err.stack })
             });
         });
+
+        router.route('/operaciones/pedido/:id_empresa')
+        .post(function (req, res) {
+            Producto.find({
+                where: { id: req.params.id_producto, },
+                include: [{
+                    model: ProductoBase, as: 'productosBase', where: { id_producto: { $ne: null } }, required: true,
+                    include: [{ model: Producto, as: 'productoBase', required: true }]
+                }]
+            }).then(function (producto) {
+                res.json(producto);
+            }).catch(function (err) {
+                res.json({ mensaje: err.stack })
+            });
+        });
 }
-
-
- // .put(function (req, res) {
-        //     SolicitudReposicion.update({
-        //         id_almacen: req.body.almacen.id,
-        //         // id_movimiento: req.body.movimiento.id,
-        //         fecha: req.body.fecha,
-        //         id_usuario: req.body.id_usuario,
-        //         activo: req.body.activo,
-        //         monto: req.body.monto
-        //     }, {
-        //             where: { id: req.body.id }
-        //         }).then(function (solicitudActualizada) {
-        //             req.body.solicitudesProductos.forEach(function (producto, index, array) {
-        //                 if (producto.id !== undefined) {
-        //                     if (producto.eliminado === undefined) {
-        //                         DetalleSolicitudProducto.update({
-        //                             id_solicitud: req.body.id,
-        //                             id_producto: (producto.id_producto !== undefined) ? producto.id_producto : producto.producto.id,
-        //                             cantidad: producto.cantidad
-        //                         }, {
-        //                                 where: { id: producto.id }
-        //                             }).then(function (detalleActualizado) {
-        //                                 if (producto.detallesIngredientesProducto.length > 0) {
-        //                                     producto.detallesIngredientesProducto.forEach(function (ingrediente, indx, arry) {
-        //                                         if (ingrediente.eliminado === undefined) {
-        //                                             if (ingrediente.id !== undefined) {
-        //                                                 DetalleSolicitudProductoBase.update({
-        //                                                     id_detalle_solicitud_producto: ingrediente.id_detalle_solicitud_producto,
-        //                                                     id_producto_base: (ingrediente.productoBase !== undefined) ? ingrediente.productoBase.id : ingrediente.id_producto_base,
-        //                                                     cantidad_ideal: ingrediente.cantidad_ideal,
-        //                                                     cantidad_real: ingrediente.cantidad_real,
-        //                                                     total: ingrediente.total
-        //                                                 }, {
-        //                                                         where: { id: ingrediente.id }
-        //                                                     }).then(function (detalleBaseActualizado) {
-        //                                                         if (index === array.length - 1) {
-        //                                                             if (indx === arry.length - 1) {
-        //                                                                 res.json({ mensaje: 'Solicitud actualizada' })
-        //                                                             }
-        //                                                         }
-        //                                                     }).catch(function (err) {
-        //                                                         res.json({ mensaje: err.stack })
-        //                                                     });
-        //                                             } else {
-        //                                                 DetalleSolicitudProductoBase.create({
-        //                                                     id_detalle_solicitud_producto: producto.id,
-        //                                                     id_producto_base: ingrediente.id_producto_base,
-        //                                                     cantidad_ideal: ingrediente.cantidad_ideal,
-        //                                                     cantidad_real: ingrediente.cantidad_real,
-        //                                                     total: ingrediente.total
-        //                                                 }).then(function (detalleBaseCreado) {
-        //                                                     if (index === array.length - 1) {
-        //                                                         if (indx === arry.length - 1) {
-        //                                                             res.json({ mensaje: 'Solicitud Actualizada' })
-        //                                                         }
-        //                                                     }
-        //                                                 }).catch(function (err) {
-        //                                                     res.json({ mensaje: err.stack })
-        //                                                 });
-        //                                             }
-        //                                         } else {
-        //                                             DetalleSolicitudProductoBase.destroy({
-        //                                                 where: {
-        //                                                     id: ingrediente.id
-        //                                                 }
-        //                                             }).then(function (elementoEliminado) {
-        //                                                 if (index === array.length - 1) {
-        //                                                     if (indx === arry.length - 1) {
-        //                                                         res.json({ mensaje: 'Solicitud actualizada' })
-        //                                                     }
-        //                                                 }
-        //                                             }).catch(function (err) {
-        //                                                 res.json({ mensaje: err.stack })
-        //                                             });
-        //                                         }
-        //                                     });
-        //                                 } else {
-        //                                     if (index === array.length - 1) {
-        //                                         res.json({ mensaje: 'Solicitud Actualizada' })
-        //                                     }
-        //                                 }
-        //                             }).catch(function (err) {
-        //                                 res.json({ mensaje: err.stack })
-        //                             });
-        //                     } else {
-        //                         DetalleSolicitudProducto.destroy({
-        //                             where: {
-        //                                 id: producto.id
-        //                             }
-        //                         }).then(function (elementoEliminado) {
-        //                             if (index === array.length - 1) {
-        //                                 res.json({ mensaje: 'Solicitud Actualizada' })
-        //                             }
-        //                         }).catch(function (err) {
-        //                             res.json({ mensaje: err.stack })
-        //                         });
-        //                     }
-        //                 } else {
-        //                     DetalleSolicitudProducto.create({
-        //                         id_solicitud: req.body.id,
-        //                         id_producto: producto.productoSolicitado.id,
-        //                         cantidad: producto.cantidad
-        //                     }).then(function (detalleCreado) {
-        //                         if (producto.detallesIngredientesProducto.length > 0) {
-        //                             producto.detallesIngredientesProducto.forEach(function (ingrediente, indxe, arrye) {
-        //                                 DetalleSolicitudProductoBase.create({
-        //                                     id_detalle_solicitud_producto: detalleCreado.id,
-        //                                     id_producto_base: ingrediente.id_producto_base,
-        //                                     cantidad_ideal: ingrediente.cantidad_ideal,
-        //                                     cantidad_real: ingrediente.cantidad_real,
-        //                                     total: ingrediente.total
-        //                                 }).then(function (detalleBaseCreado) {
-        //                                     if (index === array.length - 1) {
-        //                                         if (indxe === arrye.length - 1) {
-        //                                             res.json({ mensaje: 'Solicitud Actualizada' })
-        //                                         }
-        //                                     }
-        //                                 }).catch(function (err) {
-        //                                     res.json({ mensaje: err.stack })
-        //                                 });
-        //                             });
-        //                         } else {
-        //                             if (index === array.length - 1) {
-        //                                 res.json({ mensaje: 'Solicitud Actualizada' })
-        //                             }
-        //                         }
-        //                     }).catch(function (err) {
-        //                         res.json({ mensaje: err.stack })
-        //                     });
-        //                 }
-        //             });
-        //         }).catch(function (err) {
-        //             res.json({ mensaje: err.stack })
-        //         });
-        // })

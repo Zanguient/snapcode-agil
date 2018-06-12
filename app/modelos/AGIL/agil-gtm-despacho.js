@@ -24,10 +24,6 @@ module.exports = function (sequelize, Sequelize) {
             type: Sequelize.DATE,
             field: 'fecha'
         },
-        id_kardex_detalle: {
-           type: Sequelize.INTEGER,
-           field: 'kardex_detalle'
-       },
        observacion: {
             type: Sequelize.STRING,
             field: 'observacion'

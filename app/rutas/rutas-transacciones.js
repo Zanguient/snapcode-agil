@@ -1244,15 +1244,6 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, forEach, j
                             res.json({ mensaje: err.stack })
                         })
                 });
-
-
-
-            // sequelize.query("SELECT MAX(agil_cuenta_transaccion.id), agil_cuenta_transaccion.saldo from agil_cuenta_transaccion where empresa =" + req.params.id_empresa + " and fecha BETWEEN " + ayer + " and " + hoy + "and estado = (select id from gl_clase where nombre_corto = CONFIRMADO)", { type: sequelize.QueryTypes.SELECT })
-            //     .then(function (dato) {
-            //         res.json({ cuenta: dato });
-            //     }).catch(function (err) {
-            //         res.json({ mensaje: err.stack })
-            //     })
         });
 
 }

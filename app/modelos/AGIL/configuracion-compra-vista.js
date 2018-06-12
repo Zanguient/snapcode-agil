@@ -55,7 +55,20 @@ module.exports=function(sequelize,Sequelize){
 	  mostrar_lote:{
 		type: Sequelize.BOOLEAN,
 		field: 'mostrar_lote'  
+		},
+	  mostrar_it_retencion:{
+		type: Sequelize.BOOLEAN,
+		field: 'mostrar_it_retencion'  
+	  },
+	  mostrar_iue:{
+		type: Sequelize.BOOLEAN,
+		field: 'mostrar_iue'  
+	  },
+	  mostrar_pagado:{
+		type: Sequelize.BOOLEAN,
+		field: 'mostrar_pagado'  
 	  }
+		
 	}, {
 	  freezeTableName: true 
 	});

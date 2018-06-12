@@ -1,0 +1,2 @@
+ALTER TABLE agil_gtm_despacho_detalle drop kardex_detalle;
+ALTER TABLE agil_gtm_despacho_detalle DROP FOREIGN KEY agil_gtm_despacho_detalle_ibfk_7;

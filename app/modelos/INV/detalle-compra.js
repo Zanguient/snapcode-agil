@@ -55,7 +55,15 @@ module.exports=function(sequelize,Sequelize){
 	  id_inventario: {
 		type: Sequelize.INTEGER,
 		field: 'inventario'
-	  }
+	  },
+	  it: {
+		type: Sequelize.DECIMAL(20,4),
+		field: 'it'
+	  },
+	  iue: {
+		type: Sequelize.DECIMAL(20,4),
+		field: 'iue'
+	  },
 	}, {
 	  freezeTableName: true 
 	});

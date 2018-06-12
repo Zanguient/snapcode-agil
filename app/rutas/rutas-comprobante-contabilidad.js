@@ -587,29 +587,28 @@ module.exports = function (router, ComprobanteContabilidad, AsientoContabilidad,
 											}, {
 													where: { id: asientoContable.cuenta.id }
 												}).then(function (CuentaActualizada) {
-													if (index === (array.length - 1)) {
-
-														if (req.body.id_venta) {
+														if (asientoContable.id_venta) {
 															var t = true;
 															Venta.update({
 																contabilizado: t
 															}, {
 																	where: {
-																		id: req.body.id_venta,
+																		id: asientoContable.id_venta,
 																	}
 																}).then(function (ventaActualizada) {
 																	res.json({ mensaje: "¡Comprobante creado satisfactoriamente!", comprobante: ComprobanteCreado });
 																})
-														} else if (req.body.id_compra) {
+														} else if (asientoContable.id_compra) {
 															var t = true;
 															Compra.update({
 																contabilizado: t
 															}, {
 																	where: {
-																		id: req.body.id_compra,
+																		id: asientoContable.id_compra,
 																	}
-																}).then(function (compraActualizada) {
-																	res.json({ mensaje: "¡Comprobante creado satisfactoriamente!", comprobante: ComprobanteCreado });
+																}).then(function (compraActualizada) {																	
+																	res.json({ mensaje: "¡Comprobante creado satisfactoriamente!", comprobante: ComprobanteCreado });																
+																	
 																})
 														} else {
 															res.json({ mensaje: "¡Comprobante creado satisfactoriamente!", comprobante: ComprobanteCreado });
@@ -617,7 +616,7 @@ module.exports = function (router, ComprobanteContabilidad, AsientoContabilidad,
 
 
 
-													}
+													
 												})
 										})
 									})

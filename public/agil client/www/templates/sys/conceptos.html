@@ -34,7 +34,7 @@
 				</thead>
 
 				<tbody>
-					<tr ng-if="tipo.nombre!=diccionario.TIPO_CORRELATIVO_CLIENTES && tipo.nombre!=diccionario.TIPO_CORRELATIVO_DESTINOS" ng-repeat="tipo in tipos">
+					<tr ng-repeat="tipo in tipos"><!-- ng-if="tipo.nombre!=diccionario.TIPO_CORRELATIVO_CLIENTES && tipo.nombre!=diccionario.TIPO_CORRELATIVO_DESTINOS" -->
 						<td class="center">
 							<label class="pos-rel">
 								<input type="checkbox" class="ace" />

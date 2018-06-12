@@ -40,6 +40,14 @@ module.exports = function (sequelize, Sequelize) {
         eliminado:{
             type: Sequelize.BOOLEAN,
             field: 'eliminado'
+        },
+        domingos:{
+            type: Sequelize.INTEGER,
+            field: 'domingos'
+        },
+        feriados:{
+            type: Sequelize.INTEGER,
+            field: 'feriados'
         }
     }, {
             freezeTableName: true

@@ -95,6 +95,14 @@ module.exports = function (sequelize, Sequelize) {
         id_almacen: {
             type: Sequelize.INTEGER,
             field: 'almacen'
+        },
+        kardex_detalle: {
+            type: Sequelize.INTEGER,
+            field: 'kardex_detalle'
+        },
+        id_movimiento: {
+            type: Sequelize.INTEGER,
+            field: 'movimiento'
         }
     }, {
             freezeTableName: true

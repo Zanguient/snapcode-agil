@@ -7,14 +7,15 @@ angular.module('agil.controladores')
         $scope.idModalFormulario110 = 'dialog-formulario-110';
         $scope.idModalFormularioGeneral110 = 'dialog-formulario-general-110';
         $scope.idModalArchivosTXT = 'dialog-archivos-txt';
+        $scope.idModalEditarPlanillaRCIVA = 'dialog-editar-planilla-rc-iva';
         
         ejecutarScriptsPlanillaRCIVA($scope.idModalNuevoPlanillaRCIVA, $scope.idModalFormulario110, $scope.idModalFormularioGeneral110, 
-            $scope.idModalArchivosTXT);
+            $scope.idModalArchivosTXT, $scope.idModalEditarPlanillaRCIVA);
     });
 
     $scope.$on('$routeChangeStart', function (next, current) {
         $scope.eliminarPopup($scope.idModalNuevoPlanillaRCIVA, $scope.idModalFormulario110,$scope.idModalFormularioGeneral110, 
-            $scope.idModalArchivosTXT);
+            $scope.idModalArchivosTXT, $scope.idModalEditarPlanillaRCIVA);
     });
 
     $scope.usuario=JSON.parse($localStorage.usuario);
@@ -45,6 +46,17 @@ angular.module('agil.controladores')
             $scope.planillasRcIva=planillaR.planillas;
           
         });
+    }
+
+//  ==== para editar planilla =====================================
+    $scope.EditarRciva=function(planilla){
+        console.log("llego a editar ", planilla);
+        $scope.planillaEdit = planilla;
+        $scope.abrirPopup($scope.idModalEditarPlanillaRCIVA);
+    }
+
+    $scope.cerrarDialogEditarPlanillaRCIVA=function() {
+        $scope.cerrarPopup($scope.idModalEditarPlanillaRCIVA);
     }
 
     $scope.nuevaPlanillaRcIva = function () {

@@ -63,28 +63,42 @@ angular.module('agil.servicios')
 			COMPROBANTE_CAJA_CHICA: "CAJA CHICA",
 			MENU_VEHICULOS: "VEHICULOS",
 			MENU_PROFORMAS: "PROFORMAS",
-			MENU_USUARIO:"USUARIOS",
-			MENU_EMPRESA:"EMPRESAS",
-			MENU_VENTA:"VENTAS",
-			MENU_COMPRA:"COMPRAS",			
-			MENU_CONFIGURACION:"CONFIGURACIONES",
-			MENU_REPORTE:"REPORTES",
-			MENU_LIBRO_COMPRA:"LIBRO DE COMPRAS",
-			MENU_LIBRO_VENTAS:"LIBRO DE VENTAS",
-			MENU_REPORTE_VENTAS:"REPORTE DE VENTAS",
-			MENU_REPORTE_COMPRAS:"REPORTE DE COMPRAS",
+			MENU_USUARIO: "USUARIOS",
+			MENU_EMPRESA: "EMPRESAS",
+			MENU_VENTA: "VENTAS",
+			MENU_COMPRA: "COMPRAS",
+			MENU_CONFIGURACION: "CONFIGURACIONES",
+			MENU_REPORTE: "REPORTES",
+			MENU_LIBRO_COMPRA: "LIBRO DE COMPRAS",
+			MENU_LIBRO_VENTAS: "LIBRO DE VENTAS",
+			MENU_REPORTE_VENTAS: "REPORTE DE VENTAS",
+			MENU_REPORTE_COMPRAS: "REPORTE DE COMPRAS",
 			MENU_ESTADO_RESULTADOS: "ESTADO DE RESULTADOS NO CONTABLE",
-			MENU_ALMACEN:"ALMACENES",
-			MENU_CERT_COD_CONTROL:"CERT. COD. DE CONTROL",
-			MENU_ESTADO_CUENTAS_CLIENTES:"ESTADO DE CUENTAS CLIENTES",
-			MENU_ESTADO_CUENTAS_PROVEEDORES:"ESTADO DE CUENTAS PROVEEDORES",		
-			MENU_PANTALLA:"PANTALLAS",			
-			MENU_DESPACHO:"DESPACHOS",
-			MENU_CONCEPTO:"CONCEPTOS",
-			MENU_DOSIFICACION:"DOSIFICACIONES",
-			TIPO_CORRELATIVO_CLIENTES:"CORRELATIVO CLIENTES",
-			TIPO_CORRELATIVO_DESTINOS:"CORRELATIVO DESTINOS",
-			
+			MENU_ALMACEN: "ALMACENES",
+			MENU_CERT_COD_CONTROL: "CERT. COD. DE CONTROL",
+			MENU_ESTADO_CUENTAS_CLIENTES: "ESTADO DE CUENTAS CLIENTES",
+			MENU_ESTADO_CUENTAS_PROVEEDORES: "ESTADO DE CUENTAS PROVEEDORES",
+			MENU_PANTALLA: "PANTALLAS",
+			MENU_DESPACHO: "DESPACHOS",
+			MENU_CONCEPTO: "CONCEPTOS",
+			MENU_DOSIFICACION: "DOSIFICACIONES",
+			TIPO_CORRELATIVO_CLIENTES: "CORRELATIVO CLIENTES",
+			TIPO_CORRELATIVO_DESTINOS: "CORRELATIVO DESTINOS",
+			MOVING_INVENTARIO_INICIAL: "INGRESO POR INVENTARIO INICIAL",
+			MOVING_POR_TRASPASO: "INGRESO POR TRASPASO",
+			MOVING_POR_DEVOLUCION: "INGRESO POR DEVOLUCIÓN",
+			MOVING_DIARIO: "INGRESO DIARIO",
+			MOVING_POR_AJUSTE: "INGRESO POR AJUSTE",
+			MOVING_POR_IMPORTACION: "INGRESO POR IMPORTACIÓN",
+			MOVING_POR_RETENCION_SERVICIOS: "INGRESO POR RETENCIONES DE SERVICIOS",
+			MOVING_POR_RETENCION_BIENES: "INGRESO POR RETENCIONES DE BIENES",
+			MOVING_POR_COMPRA_SIN_FACTURA: "INGRESO POR COMPRA S/F",
+			IT_RETENCION_BIEN: "IT RETENCION BIEN ALMACEN",
+			IUE_RETENCION_BIEN: "IUE RETENCION BIEN ALMACEN",
+			CUENTA_ALMACEN_RETENCION_BIEN: "CUENTA ALMACEN RETENCION BIEN",
+			CUENTA_GASTO_RETENCION_BIEN: "CUENTA GASTO RETENCION BIEN",
+			IT_RETENCION_BIEN_GASTO: "IT RETENCION BIEN GASTO",
+			IUE_RETENCION_BIEN_GASTO: "IUE RETENCION BIEN GASTO"
 		}
 	}])
 
@@ -1110,7 +1124,7 @@ angular.module('agil.servicios')
 	.factory('DibujarCabeceraFacturaNVCartaOficio', [function () {
 		var res = function (doc, vacia, completa, venta, papel, pagina, totalPaginas, usuario) {
 			if (vacia) {
-				if (usuario.empresa.imagen.length > 100) { doc.image(usuario.empresa.imagen, 60, 50,{ fit: [75, 75] } ); } //{ width: 50, height: 50 }
+				if (usuario.empresa.imagen.length > 100) { doc.image(usuario.empresa.imagen, 60, 50, { fit: [75, 75] }); } //{ width: 50, height: 50 }
 				doc.font('Helvetica-Bold', 8);
 				doc.text(usuario.empresa.razon_social.toUpperCase(), 60, 105);
 				doc.font('Helvetica', 7);
@@ -1161,7 +1175,8 @@ angular.module('agil.servicios')
 					doc.text("LOTE", 380, 210);
 				}
 				if (venta.detallesVenta[0].producto) {
-				doc.text("P.UNIT.", 410, 210);}
+					doc.text("P.UNIT.", 410, 210);
+				}
 				doc.text("IMP.", 450, 210);
 				if (venta.detallesVenta[0].producto) {
 					doc.text("DESC.", 490, 210);
@@ -1178,7 +1193,7 @@ angular.module('agil.servicios')
 	.factory('DibujarCabeceraFacturaNVmedioOficio', ['VerificarDescuentos', function (VerificarDescuentos) {
 		var res = function (doc, vacia, completa, venta, papel, pagina, totalPaginas, usuario) {
 			if (vacia) {
-				if (usuario.empresa.imagen.length > 100) { doc.image(usuario.empresa.imagen, 60, 50,  { fit: [75, 75] }); } //width: 50, height: 50
+				if (usuario.empresa.imagen.length > 100) { doc.image(usuario.empresa.imagen, 60, 50, { fit: [75, 75] }); } //width: 50, height: 50
 				doc.font('Helvetica-Bold', 8);
 				doc.text(usuario.empresa.razon_social.toUpperCase(), 60, 105);
 				doc.font('Helvetica', 7);
@@ -1790,7 +1805,7 @@ angular.module('agil.servicios')
 		function (VerificarDescuentos) {
 			var res = function (doc, vacia, completa, venta, papel, pagina, totalPaginas, usuario) {
 				if (vacia) {
-					if (usuario.empresa.imagen.length > 100) { doc.image(usuario.empresa.imagen, 60, 50,{ fit: [75, 75] } ); } //{ width: 50, height: 50 }
+					if (usuario.empresa.imagen.length > 100) { doc.image(usuario.empresa.imagen, 60, 50, { fit: [75, 75] }); } //{ width: 50, height: 50 }
 					doc.font('Helvetica-Bold', 8);
 					doc.text(usuario.empresa.razon_social.toUpperCase(), 120, 60);
 					doc.font('Helvetica', 7);
@@ -2633,7 +2648,7 @@ angular.module('agil.servicios')
 				if (filtro.razon_social != "") {
 					cliente = despachos[0].despacho.cliente.razon_social
 				} */
-				var data = [["", "", "REPORTE DE DESPACHOS "]/*,  ["Vendedor :" +vendedor], ["Cliente :" + cliente] */, ["cod. dest","Destino", "Direccion","Cod Cliente", "Cliente","cod dest.factura","Razón social","NIT","Vendedor", "Nro. pedido", "F. Pedido", "Factura SAP","fecha fact.","No. Despacho","fecha desp.","Transportista","doc. Cobranza","Fecha Pago","Cod. prodcuto","Producto", "cant. pedido","cant. Despacho", "P/U", "Total",  "Costo", "Grupo de Estibaje", "Tipo de Estibaje", "Costo Estibaje", "C.S. transporte", "Total Pedido"]]
+				var data = [["", "", "REPORTE DE DESPACHOS "]/*,  ["Vendedor :" +vendedor], ["Cliente :" + cliente] */, ["cod. dest", "Destino", "Direccion", "Cod Cliente", "Cliente", "cod dest.factura", "Razón social", "NIT", "Vendedor", "Nro. pedido", "F. Pedido", "Factura SAP", "fecha fact.", "No. Despacho", "fecha desp.", "Transportista", "doc. Cobranza", "Fecha Pago", "Cod. prodcuto", "Producto", "cant. pedido", "cant. Despacho", "P/U", "Total", "Costo", "Grupo de Estibaje", "Tipo de Estibaje", "Costo Estibaje", "C.S. transporte", "Total Pedido"]]
 				var totalCosto = 0;
 				for (var i = 0; i < despachos.length; i++) {
 					var detalle_despacho = despachos[i]
@@ -2643,7 +2658,7 @@ angular.module('agil.servicios')
 					columns.push(detalle_despacho.despacho.destino != undefined ? detalle_despacho.despacho.destino.direccion : "Sin direccion")
 					columns.push(detalle_despacho.despacho.cliente.codigo)
 					columns.push(detalle_despacho.despacho.cliente.razon_social)
-					columns.push(detalle_despacho.despacho.cliente_razon != undefined ? detalle_despacho.despacho.cliente_razon.codigo_sap : "")		
+					columns.push(detalle_despacho.despacho.cliente_razon != undefined ? detalle_despacho.despacho.cliente_razon.codigo_sap : "")
 					columns.push(detalle_despacho.despacho.cliente_razon != undefined ? detalle_despacho.despacho.cliente_razon.razon_social : "")
 					columns.push(detalle_despacho.despacho.cliente_razon != undefined ? detalle_despacho.despacho.cliente_razon.nit : "")
 					columns.push(detalle_despacho.despacho.usuario.persona.nombre_completo)
@@ -2652,7 +2667,7 @@ angular.module('agil.servicios')
 					var mes = ((fecha.getMonth()) >= 10) ? (fecha.getMonth() + 1) : "0" + (fecha.getMonth() + 1)
 					columns.push(detalle_despacho.despacho.id)
 					columns.push(new Date(detalle_despacho.despacho.fecha))
-					
+
 
 					columns.push(detalle_despacho.factura)
 					columns.push(new Date(detalle_despacho.fecha_factura))
@@ -2671,7 +2686,7 @@ angular.module('agil.servicios')
 					columns.push(detalle_despacho.precio_unitario)
 					var total = detalle_despacho.precio_unitario * detalle_despacho.cantidad_despacho
 					columns.push(total)
-					
+
 					var costo = detalle_despacho.transportista.costo_transporte * detalle_despacho.cantidad_despacho
 					columns.push(costo)
 					columns.push(detalle_despacho.grupo_estibaje.nombre)
@@ -2681,7 +2696,7 @@ angular.module('agil.servicios')
 					columns.push(detalle_despacho.servicio_transporte)
 					var TotalPedido = detalle_despacho.servicio_transporte + total
 					columns.push(TotalPedido)
-					
+
 					columns.push(detalle_despacho.despacho.cliente_razon != undefined ? detalle_despacho.despacho.cliente_razon.codigo_sap : "")
 					data.push(columns);
 				}

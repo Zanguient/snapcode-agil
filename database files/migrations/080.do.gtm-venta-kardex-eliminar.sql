@@ -1,0 +1,1 @@
+ALTER TABLE agil_gtm_venta_kardex add eliminar tinyint default 0;

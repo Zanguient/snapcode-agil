@@ -108,6 +108,9 @@ module.exports = function (router, decodeBase64Image, fs, Empresa, Sucursal, Cla
 													mostrar_lote: false,
 													mostrar_codigo_producto: true,
 													mostrar_unidad_producto: true,
+													mostrar_it_retencion: true,
+													mostrar_iue: true,
+													mostrar_pagado: true,
 													id_empresa: empresaCreada.id
 												}).then(function (configuracionCompraVistaCreada) {
 													Clase.find({
@@ -335,7 +338,8 @@ module.exports = function (router, decodeBase64Image, fs, Empresa, Sucursal, Cla
 				mostrar_fecha_vencimiento: req.body.mostrar_fecha_vencimiento,
 				mostrar_lote: req.body.mostrar_lote,
 				mostrar_codigo_producto: req.body.mostrar_codigo_producto,
-				mostrar_unidad_producto: req.body.mostrar_unidad_producto
+				mostrar_unidad_producto: req.body.mostrar_unidad_producto,
+
 			}, {
 					where: {
 						id_empresa: req.params.id_empresa
@@ -370,7 +374,11 @@ module.exports = function (router, decodeBase64Image, fs, Empresa, Sucursal, Cla
 				mostrar_fecha_vencimiento: req.body.mostrar_fecha_vencimiento,
 				mostrar_lote: req.body.mostrar_lote,
 				mostrar_codigo_producto: req.body.mostrar_codigo_producto,
-				mostrar_unidad_producto: req.body.mostrar_unidad_producto
+				mostrar_unidad_producto: req.body.mostrar_unidad_producto,
+				mostrar_it_retencion: req.body.mostrar_it_retencion,
+				mostrar_iue: req.body.mostrar_iue,
+				mostrar_pagado: req.body.mostrar_pagado,
+
 			}, {
 					where: {
 						id_empresa: req.params.id_empresa

@@ -118,7 +118,12 @@ angular.module('agil.controladores')
             $scope.saldoInicial = 0
             var prom = SaldoCuenta($scope.usuario.id_empresa, $scope.cuentaSeleccionada.id, $scope.filtro.desde, $scope.filtro.hasta)
             prom.then(function (res) {
-                $scope.saldoInicial = res.cuenta[0].saldo
+                if (res.cuenta !== undefined) {
+                    $scope.saldoInicial = res.cuenta[0].saldo
+                } else {
+                    $scope.mostrarMensaje('La cuenta Nro. ' + $scope.cuentaSeleccionada.numero + ' de ' + $scope.cuentaSeleccionada.nombre + ' no cuenta con un ingreso de apertura')
+                }
+                
             }).catch(function (err) {
                 var msg = (err.data !== undefined && err.data !== null) ? err.data : (err.message !== undefined && err.message !== null) ? err.message : 'Se perdió la conexión.'
                 $scope.mostrarMensaje(msg)

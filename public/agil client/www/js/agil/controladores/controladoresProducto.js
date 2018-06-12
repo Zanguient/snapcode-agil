@@ -55,7 +55,7 @@ angular.module('agil.controladores')
 				if (datos.length == 0) {
 					$scope.mostrarMensaje('No existen datos')
 					blockUI.stop()
-
+z
 				} else {
 					for (var i = 0; i < datos.length; i++) {
 						datos[i] = $scope.generarKardexProductoReporte(datos[i])
@@ -241,7 +241,7 @@ angular.module('agil.controladores')
 			$scope.kardexproduto = null;
 
 			if (fechaInicio != 0) {
-				var promesa = ProductoKardex(idProducto, idAlmacen, 0, fechaInicio, lote);
+				var promesa = ProductoKardex(idProducto, almacen.id, 0, fechaInicio, lote);
 				promesa.then(function (detMovsSaldo) {
 					var detalleMovimientoSaldoAnterior = $scope.obtenerSaldo(detMovsSaldo);
 					promesa = ProductoKardex($scope.idProducto, $scope.idAlmacen, fechaInicio, fechaFin, lote);
@@ -875,6 +875,7 @@ angular.module('agil.controladores')
 						producto.alerta = worksheet['M' + row] != undefined && worksheet['M' + row] != "" ? parseFloat(worksheet['M' + row].v.toString()) : null;
 						producto.descuento = worksheet['N' + row] != undefined && worksheet['N' + row] != "" ? parseFloat(worksheet['N' + row].v.toString()) : null;
 						producto.descuento_fijo = worksheet['O' + row] != undefined && worksheet['N' + row] != "" ? (parseInt(worksheet['O' + row].v.toString()) == 1 ? true : false) : null;
+						producto.marca = worksheet['P' + row] != undefined && worksheet['P' + row] != "" ? worksheet['P' + row].v.toString() : null;
 						productos.push(producto);
 						row++;
 						i++;

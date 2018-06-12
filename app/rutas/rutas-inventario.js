@@ -38,16 +38,17 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 	router.route('/inventarios/empresa/:id_empresa/almacen/:id_almacen/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion/cantidad/:cantidad/grupo/:id_grupo/user/:id_usuario')
 		.get(function (req, res) {
 			var condicionProducto = "empresa=" + req.params.id_empresa;
+			var condicionCantidad = ""
 			if (req.params.texto_busqueda != 0) {
 				condicionProducto = condicionProducto + " and (codigo like '%" + req.params.texto_busqueda + "%' or agil_producto.nombre like '%" + req.params.texto_busqueda + "%' or unidad_medida like '%" + req.params.texto_busqueda + "%' or descripcion like '%" + req.params.texto_busqueda + "%' or gr.nombre like '%" + req.params.texto_busqueda + "%' or sgr.nombre like '%" + req.params.texto_busqueda + "%')";
 			}
 			if (req.params.cantidad != 0) {
 				if (req.params.cantidad == 1) {
-					condicionProducto = condicionProducto + " and cantidad > 0"
+					condicionCantidad = " HAVING SUM(inv_inventario.cantidad) > 0 "
 				} else {
-					condicionProducto = condicionProducto + " and cantidad = 0"
+					condicionCantidad = " HAVING SUM(inv_inventario.cantidad) < 0 "
 				}
-			}			
+			}
 			UsuarioGrupos.findAll({
 				where: { id_usuario: req.params.id_usuario }
 			}).then(function (grupos) {
@@ -62,16 +63,16 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 						}
 					})
 					if (req.params.id_grupo != "0") {
-						condicionProducto += " and agil_producto.grupo ="+req.params.id_grupo
+						condicionProducto += " and agil_producto.grupo =" + req.params.id_grupo
 					}
 					condicionProducto += " and agil_producto.grupo in " + grupoLiteral
-					
+
 					sequelize.query("select count(*) as cantidad_productos\
 					from agil_producto\
 					INNER JOIN gl_clase AS tipoProducto ON (agil_producto.tipo_producto = tipoProducto.id)\
 					LEFT  JOIN gl_clase AS gr ON (agil_producto.grupo = gr.id)\
 					LEFT  JOIN gl_clase AS sgr ON (agil_producto.subgrupo = sgr.id)\
-					LEFT OUTER JOIN inv_inventario on agil_producto.id=inv_inventario.producto where "+ condicionProducto + " and almacen=" + req.params.id_almacen+ " GROUP BY agil_producto.id", { type: sequelize.QueryTypes.SELECT })
+					LEFT OUTER JOIN inv_inventario on agil_producto.id=inv_inventario.producto where "+ condicionProducto + " and almacen=" + req.params.id_almacen + " GROUP BY agil_producto.id " + condicionCantidad, { type: sequelize.QueryTypes.SELECT })
 						.then(function (data) {
 							var cantidad_productos = data.length
 							var options = {
@@ -85,7 +86,7 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 							LEFT  JOIN gl_clase AS gr ON (agil_producto.grupo = gr.id)\
 							LEFT  JOIN gl_clase AS sgr ON (agil_producto.subgrupo = sgr.id)\
 							LEFT OUTER JOIN inv_inventario on agil_producto.id=inv_inventario.producto where "+ condicionProducto + " and almacen=" + req.params.id_almacen + " \
-			                 GROUP BY agil_producto.id order by "+ req.params.columna + " " + req.params.direccion + " LIMIT " + (req.params.items_pagina * (req.params.pagina - 1)) + "," + req.params.items_pagina, options)
+			                 GROUP BY agil_producto.id "+ condicionCantidad + " order by " + req.params.columna + " " + req.params.direccion + " LIMIT " + (req.params.items_pagina * (req.params.pagina - 1)) + "," + req.params.items_pagina, options)
 								.then(function (productos) {
 									res.json({ productos: productos, paginas: Math.ceil(cantidad_productos / req.params.items_pagina) });
 								});
@@ -126,6 +127,9 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 			Compra.findAll({
 				where: condicionCompra,
 				include: [{
+					model: Movimiento, as: 'movimiento',
+					include: [{ model: Clase, as: 'clase' }]
+				}, {
 					model: DetalleCompra, as: 'detallesCompra',
 					include: [{ model: Producto, as: 'producto' },
 					{ model: Clase, as: 'centroCosto'/*,where:{nombre_corto:'ALM'}*/ }]
@@ -153,7 +157,7 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 				},
 				include: [{
 					model: Movimiento, as: 'movimiento',
-					include: [{ model: DetalleMovimiento, as: 'detallesMovimiento' }]
+					include: [{ model: DetalleMovimiento, as: 'detallesMovimiento' }, { model: Clase, as: 'clase' }]
 				},
 				{
 					model: DetalleCompra, as: 'detallesCompra',
@@ -194,7 +198,11 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 					excento: compra.excento,
 					tipo_descuento: compra.tipo_descuento,
 					tipo_recargo: compra.tipo_recargo,
-					total: compra.total
+					total: compra.total,
+					usar_producto: compra.usar_producto,
+					observacion: compra.observacion,
+					dui: compra.dui,
+					tipo_retencion: compra.tipo_retencion,
 				}, {
 						where: {
 							id: compra.id
@@ -397,7 +405,7 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 			Compra.findAll({
 				where: { contabilizado: false },
 
-				include: [{ model: Proveedor, as: 'proveedor', include: [{ model: ProveedorCuenta, as: 'proveedorCuenta', include: [{ model: ContabilidadCuenta, as: 'cuenta', include: [{ model: Clase, as: 'tipoCuenta' }] }] }] },
+				include: [{ model: Movimiento, as: 'movimiento', include: [{ model: Clase, as: 'clase' }] }, { model: Proveedor, as: 'proveedor', include: [{ model: ProveedorCuenta, as: 'proveedorCuenta', include: [{ model: ContabilidadCuenta, as: 'cuenta', include: [{ model: Clase, as: 'tipoCuenta' }] }] }] },
 
 				{ model: Almacen, as: 'almacen', include: [{ model: Sucursal, as: 'sucursal', where: { id_empresa: req.params.id_empresa } }] },
 
@@ -429,6 +437,9 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 				Clase.find({
 					where: { nombre_corto: 'ID' }
 				}).then(function (conceptoMovimiento) {
+					if (compra.movimiento.clase) {
+						conceptoMovimiento = compra.movimiento.clase
+					}
 					Movimiento.create({
 						id_tipo: tipoMovimiento.id,
 						id_clase: conceptoMovimiento.id,
@@ -479,7 +490,11 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 			tipo_descuento: compra.tipo_descuento,
 			tipo_recargo: compra.tipo_recargo,
 			total: compra.total,
-			id_usuario: compra.id_usuario
+			id_usuario: compra.id_usuario,
+			usar_producto: compra.usar_producto,
+			observacion: compra.observacion,
+			dui: compra.dui,
+			tipo_retencion: compra.tipo_retencion,
 		}).then(function (compraCreada) {
 			compra.detallesCompra.forEach(function (detalleCompra, index, array) {
 				if (!detalleCompra.producto.id) {
@@ -553,7 +568,9 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 					tipo_descuento: detalleCompra.tipo_descuento,
 					tipo_recargo: detalleCompra.tipo_recargo,
 					total: detalleCompra.total,
-					id_inventario: inventarioCreado.id
+					id_inventario: inventarioCreado.id,
+					it: detalleCompra.it,
+					iue: detalleCompra.iue
 				}).then(function (detalleCompraCreada) {
 					DetalleMovimiento.create({
 						id_movimiento: idMovimiento,
@@ -588,7 +605,9 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 				excento: detalleCompra.excento,
 				tipo_descuento: detalleCompra.tipo_descuento,
 				tipo_recargo: detalleCompra.tipo_recargo,
-				total: detalleCompra.total
+				total: detalleCompra.total,
+				it: detalleCompra.it,
+				iue: detalleCompra.iue
 			}).then(function (detalleCompraCreada) {
 
 			});
@@ -1676,7 +1695,7 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 		.get(function (req, res) {
 			var inicio = new Date(req.params.inicio); inicio.setHours(0, 0, 0, 0, 0);
 			var fin = new Date(req.params.fin); fin.setHours(23, 59, 59, 0, 0);
-			var condicionVenta = { fecha: { $between: [inicio, fin] },activa:true };
+			var condicionVenta = { fecha: { $between: [inicio, fin] }, activa: true };
 			Venta.findAll({
 				where: condicionVenta,
 				include: [{

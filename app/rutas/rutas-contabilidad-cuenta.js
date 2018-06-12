@@ -124,13 +124,61 @@ module.exports = function (router, ContabilidadCuenta, ClasificacionCuenta, Tipo
 												id_tipo: tipoEncontradoE.id
 											}, defaults: { id_empresa: req.params.id_empresa, id_tipo: tipoEncontradoE.id, valor: req.body.valor, nombre: Diccionario.IVA_CF }
 										}).then(function (ListaCuenta) {
-											ConfiguracionCuenta.findAll({
+											ConfiguracionCuenta.findOrCreate({
 												where: {
 													id_empresa: req.params.id_empresa,
+													nombre: Diccionario.IT_RETENCION_BIEN,
+													id_tipo: tipoEncontrado.id
+												}, defaults: { id_empresa: req.params.id_empresa, id_tipo: tipoEncontrado.id, valor: req.body.valor, nombre: Diccionario.IT_RETENCION_BIEN }
+											}).then(function (ListaCuenta) {
+												ConfiguracionCuenta.findOrCreate({
+													where: {
+														id_empresa: req.params.id_empresa,
+														nombre: Diccionario.IUE_RETENCION_BIEN,
+														id_tipo: tipoEncontrado.id
+													}, defaults: { id_empresa: req.params.id_empresa, id_tipo: tipoEncontrado.id, valor: req.body.valor, nombre: Diccionario.IUE_RETENCION_BIEN }
+												}).then(function (ListaCuenta) {
+													ConfiguracionCuenta.findOrCreate({
+														where: {
+															id_empresa: req.params.id_empresa,
+															nombre: Diccionario.CUENTA_ALMACEN_RETENCION_BIEN,
+															id_tipo: tipoEncontrado.id
+														}, defaults: { id_empresa: req.params.id_empresa, id_tipo: tipoEncontrado.id, valor: req.body.valor, nombre: Diccionario.CUENTA_ALMACEN_RETENCION_BIEN }
+													}).then(function (ListaCuenta) {
+														ConfiguracionCuenta.findOrCreate({
+															where: {
+																id_empresa: req.params.id_empresa,
+																nombre: Diccionario.IT_RETENCION_BIEN_GASTO,
+																id_tipo: tipoEncontrado.id
+															}, defaults: { id_empresa: req.params.id_empresa, id_tipo: tipoEncontrado.id, valor: req.body.valor, nombre: Diccionario.IT_RETENCION_BIEN_GASTO }
+														}).then(function (ListaCuenta) {
+															ConfiguracionCuenta.findOrCreate({
+																where: {
+																	id_empresa: req.params.id_empresa,
+																	nombre: Diccionario.IUE_RETENCION_BIEN_GASTO,
+																	id_tipo: tipoEncontrado.id
+																}, defaults: { id_empresa: req.params.id_empresa, id_tipo: tipoEncontrado.id, valor: req.body.valor, nombre: Diccionario.IUE_RETENCION_BIEN_GASTO }
+															}).then(function (ListaCuenta) {
+																ConfiguracionCuenta.findOrCreate({
+																	where: {
+																		id_empresa: req.params.id_empresa,
+																		nombre: Diccionario.CUENTA_GASTO_RETENCION_BIEN,
+																		id_tipo: tipoEncontrado.id
+																	}, defaults: { id_empresa: req.params.id_empresa, id_tipo: tipoEncontrado.id, valor: req.body.valor, nombre: Diccionario.CUENTA_GASTO_RETENCION_BIEN }
+																}).then(function (ListaCuenta) {
+																	ConfiguracionCuenta.findAll({
+																		where: {
+																			id_empresa: req.params.id_empresa,
 
-												}, include: [{ model: ContabilidadCuenta, as: 'cuenta' }, { model: Tipo, as: 'tipo' }], order: [['id', 'asc']]
-											}).then(function (ListaConfiguracionCuenta) {
-												res.json({ lista: ListaConfiguracionCuenta, menssage: "plantilla actualizada satisfactoriamente!" })
+																		}, include: [{ model: ContabilidadCuenta, as: 'cuenta' }, { model: Tipo, as: 'tipo' }], order: [['id', 'asc']]
+																	}).then(function (ListaConfiguracionCuenta) {
+																		res.json({ lista: ListaConfiguracionCuenta, menssage: "plantilla actualizada satisfactoriamente!" })
+																	})
+																})
+															})
+														})
+													})
+												})
 											})
 										})
 									})
@@ -212,7 +260,83 @@ module.exports = function (router, ContabilidadCuenta, ClasificacionCuenta, Tipo
 																		id_tipo: tipoEncontradoE.id
 																	}
 																}).then(function (configuracionActualizado) {
-																	res.json({ menssage: "Actualizado Sadisfactoriamente!" })
+																	Tipo.find({
+																		where: {
+																			nombre_corto: Diccionario.MOV_ING
+																		}
+																	}).then(function (tipoEncontrado) {
+																		if (req.body.usar_funciones_erp) {
+																			ConfiguracionCuenta.update({
+																				id_cuenta: req.body.retencionBienes.it.cuenta.id,
+																				valor: req.body.retencionBienes.it.porsentaje.toString(),
+																			}, {
+																					where: {
+																						id_empresa: req.params.id_empresa,
+																						nombre: Diccionario.IT_RETENCION_BIEN,
+																						id_tipo: tipoEncontrado.id
+																					}
+																				}).then(function (configuracionActualizado) {
+																					ConfiguracionCuenta.update({
+																						id_cuenta: req.body.retencionBienes.iue.cuenta.id,
+																						valor: req.body.retencionBienes.iue.porsentaje.toString(),
+																					}, {
+																							where: {
+																								id_empresa: req.params.id_empresa,
+																								nombre: Diccionario.IUE_RETENCION_BIEN,
+																								id_tipo: tipoEncontrado.id
+																							}
+																						}).then(function (configuracionActualizado) {
+																							ConfiguracionCuenta.update({
+																								id_cuenta: req.body.retencionBienes.almacen.cuenta.id,
+																								valor: req.body.retencionBienes.almacen.porsentaje.toString(),
+																							}, {
+																									where: {
+																										id_empresa: req.params.id_empresa,
+																										nombre: Diccionario.CUENTA_ALMACEN_RETENCION_BIEN,
+																										id_tipo: tipoEncontrado.id
+																									}
+																								}).then(function (configuracionActualizado) {
+																									ConfiguracionCuenta.update({
+																										id_cuenta: req.body.retencionBienesGasto.it.cuenta.id,
+																										valor: req.body.retencionBienesGasto.it.porsentaje.toString(),
+																									}, {
+																											where: {
+																												id_empresa: req.params.id_empresa,
+																												nombre: Diccionario.IT_RETENCION_BIEN_GASTO,
+																												id_tipo: tipoEncontrado.id
+																											}
+																										}).then(function (configuracionActualizado) {
+																											ConfiguracionCuenta.update({
+																												id_cuenta: req.body.retencionBienesGasto.iue.cuenta.id,
+																												valor: req.body.retencionBienesGasto.iue.porsentaje.toString(),
+																											}, {
+																													where: {
+																														id_empresa: req.params.id_empresa,
+																														nombre: Diccionario.IUE_RETENCION_BIEN_GASTO,
+																														id_tipo: tipoEncontrado.id
+																													}
+																												}).then(function (configuracionActualizado) {
+																													ConfiguracionCuenta.update({
+																														id_cuenta: req.body.retencionBienesGasto.gasto.cuenta.id,
+																														valor: req.body.retencionBienesGasto.gasto.porsentaje.toString(),
+																													}, {
+																															where: {
+																																id_empresa: req.params.id_empresa,
+																																nombre: Diccionario.CUENTA_GASTO_RETENCION_BIEN,
+																																id_tipo: tipoEncontrado.id
+																															}
+																														}).then(function (configuracionActualizado) {
+																															res.json({ menssage: "Actualizado Sadisfactoriamente!" })
+																														})
+																												})
+																										})
+																								})
+																						})
+																				})
+																		}else{
+																			res.json({ menssage: "Actualizado Sadisfactoriamente!" })
+																		}
+																	})
 																})
 														})
 												})
@@ -226,18 +350,18 @@ module.exports = function (router, ContabilidadCuenta, ClasificacionCuenta, Tipo
 		})
 	router.route('/contabilidad-cuenta/:id')
 		.put(function (req, res) {
-			var idTipoAux = null,id_texto1=null,id_texto2=null,id_texto3=null
+			var idTipoAux = null, id_texto1 = null, id_texto2 = null, id_texto3 = null
 			if (req.body.tipoAuxiliar) {
 				idTipoAux = req.body.tipoAuxiliar.id
 			}
-			if(req.body.especifica_texto1){
-				id_texto1=req.body.especifica_texto1.id
+			if (req.body.especifica_texto1) {
+				id_texto1 = req.body.especifica_texto1.id
 			}
-			if(req.body.especifica_texto2){
-				id_texto2=req.body.especifica_texto2.id
+			if (req.body.especifica_texto2) {
+				id_texto2 = req.body.especifica_texto2.id
 			}
-			if(req.body.especifica_texto3){
-				id_texto3=req.body.especifica_texto3.id
+			if (req.body.especifica_texto3) {
+				id_texto3 = req.body.especifica_texto3.id
 			}
 			ContabilidadCuenta.update({
 				id_empresa: req.body.id_empresa,
@@ -258,8 +382,8 @@ module.exports = function (router, ContabilidadCuenta, ClasificacionCuenta, Tipo
 				id_especifica_texto1: id_texto1,
 				id_especifica_texto2: id_texto2,
 				id_especifica_texto3: id_texto3,
-				tipo_especifica:req.body.tipo_especifica,
-				vincular_cuenta:req.body.vincular_cuenta
+				tipo_especifica: req.body.tipo_especifica,
+				vincular_cuenta: req.body.vincular_cuenta
 			}, {
 					where: {
 						id: req.body.id
@@ -268,8 +392,8 @@ module.exports = function (router, ContabilidadCuenta, ClasificacionCuenta, Tipo
 					if (req.body.cuentaC != null) {
 						ClienteCuenta.findOrCreate({
 							where: { id_cuenta: req.body.id },
-							defaults: {			
-								id_cuenta:  req.body.id,
+							defaults: {
+								id_cuenta: req.body.id,
 								id_cliente: req.body.cuentaC.cliente.id
 							}
 						}).spread(function (ficha, created) {
@@ -277,10 +401,10 @@ module.exports = function (router, ContabilidadCuenta, ClasificacionCuenta, Tipo
 								ClienteCuenta.update({
 									id_cliente: req.body.cuentaC.cliente.id
 								}, {
-									where: { id_cuenta: req.body.id },
+										where: { id_cuenta: req.body.id },
 									}).then(function (actualizado) {
 										guardarCuentaespecificas(req, res, Clase)
-									})	
+									})
 							} else {
 								guardarCuentaespecificas(req, res, Clase)
 							}
@@ -288,8 +412,8 @@ module.exports = function (router, ContabilidadCuenta, ClasificacionCuenta, Tipo
 					} else if (req.body.cuentaP != null) {
 						ProveedorCuenta.findOrCreate({
 							where: { id_cuenta: req.body.id },
-							defaults: {			
-								id_cuenta:  req.body.id,
+							defaults: {
+								id_cuenta: req.body.id,
 								id_proveedor: req.body.cuentaP.proveedor.id
 							}
 						}).spread(function (ficha, created) {
@@ -297,10 +421,10 @@ module.exports = function (router, ContabilidadCuenta, ClasificacionCuenta, Tipo
 								ProveedorCuenta.update({
 									id_proveedor: req.body.proveedor.id
 								}, {
-									where: { id_cuenta: req.body.id },
+										where: { id_cuenta: req.body.id },
 									}).then(function (actualizado) {
 										guardarCuentaespecificas(req, res, Clase)
-									})	
+									})
 							} else {
 								guardarCuentaespecificas(req, res, Clase)
 							}
@@ -313,18 +437,18 @@ module.exports = function (router, ContabilidadCuenta, ClasificacionCuenta, Tipo
 
 	router.route('/contabilidad-cuenta')
 		.post(function (req, res) {
-			var idTipoAux = null,id_texto1=null,id_texto2=null,id_texto3=null
+			var idTipoAux = null, id_texto1 = null, id_texto2 = null, id_texto3 = null
 			if (req.body.tipoAuxiliar) {
 				idTipoAux = req.body.tipoAuxiliar.id
 			}
-			if(req.body.especifica_texto1){
-				id_texto1=req.body.especifica_texto1.id
+			if (req.body.especifica_texto1) {
+				id_texto1 = req.body.especifica_texto1.id
 			}
-			if(req.body.especifica_texto2){
-				id_texto2=req.body.especifica_texto2.id
+			if (req.body.especifica_texto2) {
+				id_texto2 = req.body.especifica_texto2.id
 			}
-			if(req.body.especifica_texto3){
-				id_texto3=req.body.especifica_texto3.id
+			if (req.body.especifica_texto3) {
+				id_texto3 = req.body.especifica_texto3.id
 			}
 			ContabilidadCuenta.create({
 				id_empresa: req.body.id_empresa,
@@ -346,8 +470,8 @@ module.exports = function (router, ContabilidadCuenta, ClasificacionCuenta, Tipo
 				id_especifica_texto1: id_texto1,
 				id_especifica_texto2: id_texto2,
 				id_especifica_texto3: id_texto3,
-				tipo_especifica:req.body.tipo_especifica,
-				vincular_cuenta:req.body.vincular_cuenta
+				tipo_especifica: req.body.tipo_especifica,
+				vincular_cuenta: req.body.vincular_cuenta
 			}).then(function (cuentaCreada) {
 				if (req.body.cliente != null) {
 					ClienteCuenta.create({
@@ -374,27 +498,27 @@ module.exports = function (router, ContabilidadCuenta, ClasificacionCuenta, Tipo
 	function guardarCuentaespecificas(req, res, Clase) {
 		if (req.body.especifica) {
 			var a = 1
-			Clase.update({ 
+			Clase.update({
 				nombre_corto: req.body.especifica_texto1.nombre_corto
-			 },{
-				where: { id: req.body.especifica_texto1.id }
-			})
-			Clase.update({ 
+			}, {
+					where: { id: req.body.especifica_texto1.id }
+				})
+			Clase.update({
 				nombre_corto: req.body.especifica_texto2.nombre_corto
-			 },{
-				where: { id: req.body.especifica_texto2.id }
-			})
-			Clase.update({ 
+			}, {
+					where: { id: req.body.especifica_texto2.id }
+				})
+			Clase.update({
 				nombre_corto: req.body.especifica_texto3.nombre_corto
-			 },{
-				where: { id: req.body.especifica_texto3.id }
-			}).then(function (params) {
-				res.json({mensaje:"guardado Sadisfactoriamente"})
-			})
-			
-		}else{
-			res.json({mensaje:"guardado Sadisfactoriamente"})
-			
+			}, {
+					where: { id: req.body.especifica_texto3.id }
+				}).then(function (params) {
+					res.json({ mensaje: "guardado Sadisfactoriamente" })
+				})
+
+		} else {
+			res.json({ mensaje: "guardado Sadisfactoriamente" })
+
 		}
 	}
 	router.route('/contabilidad-cuentas/clasificaciones')
@@ -546,21 +670,21 @@ module.exports = function (router, ContabilidadCuenta, ClasificacionCuenta, Tipo
 			}).then(function (data) {
 				var datosCuenta = {
 					where: condicionCuenta,
-					include: [{model:ProveedorCuenta,as:'cuentaP',include: [{ model: Proveedor, as: 'proveedor' }]},{model:ClienteCuenta,as:'cuentaC',include: [{ model: Cliente, as: 'cliente' }]},
-						{
-							model: ClasificacionCuenta, as: "clasificacion",
-							include: [{ model: Clase, as: 'saldo' }, { model: Clase, as: 'movimiento' }]
-						},
-						{
-							model: Clase, as: 'tipoCuenta'
-						},
-						{
-							model: Clase, as: 'claseCalculo'
-						},
-						{
-							model: Clase, as: 'tipoAuxiliar'
-						}
-												
+					include: [{ model: ProveedorCuenta, as: 'cuentaP', include: [{ model: Proveedor, as: 'proveedor' }] }, { model: ClienteCuenta, as: 'cuentaC', include: [{ model: Cliente, as: 'cliente' }] },
+					{
+						model: ClasificacionCuenta, as: "clasificacion",
+						include: [{ model: Clase, as: 'saldo' }, { model: Clase, as: 'movimiento' }]
+					},
+					{
+						model: Clase, as: 'tipoCuenta'
+					},
+					{
+						model: Clase, as: 'claseCalculo'
+					},
+					{
+						model: Clase, as: 'tipoAuxiliar'
+					}
+
 					],
 					order: [ordenArreglo]
 				}

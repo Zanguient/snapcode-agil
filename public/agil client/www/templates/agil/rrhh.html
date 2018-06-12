@@ -3419,6 +3419,7 @@
                                 </div>
                                 <div class="row">
                                     <div class="col-sm-12 wizard-actions">
+                                       
                                         <button ng-disabled="!aplicacion.puede_crear" class="btn btn-primary btn-sm" type="submit">
                                             <i class="glyphicon glyphicon-floppy-disk"></i>Guardar
                                         </button>
@@ -3507,6 +3508,7 @@
                                 </div>
                                 <div class="row">
                                     <div class="col-sm-12 wizard-actions">
+                                         
                                         <button ng-disabled="!usarVacacion ||!aplicacion.puede_crear" class="btn btn-primary btn-sm" type="submit">
                                             <i class="glyphicon glyphicon-floppy-disk"></i>Guardar
                                         </button>
@@ -3761,11 +3763,11 @@
                                 <i class=" fa fa-search-plus align-top "></i>
                                 Filtrar
                             </button>
-                            <button type="button" class="btn btn-danger btn-sm">
+                            <button type="button" class="btn btn-danger btn-sm" ng-click="generarPdfEstadoVacacionEmpresa(historialEmpleadoVacaciones,true)">
                                 <i class=" fa fa-print align-top "></i>
                                 Pdf
                             </button>
-                            <button type="button" class="btn btn-success btn-sm">
+                            <button type="button" class="btn btn-success btn-sm" ng-click="generarExcelEstadoVacacionEmpresa(historialEmpleadoVacaciones)">
                                 <i class=" fa fa-print align-top "></i>
                                 Excel
                             </button>
@@ -3784,7 +3786,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr ng-repeat="vacacion in historialEmpleadoVacaciones track by $index">
+                    <tr ng-repeat="vacacion in historialEmpleadoVacaciones track by vacacion.id">
                         <td>{{vacacion.fecha_inicio |date:'dd/MM/yyyy'}}</td>
                         <td>{{vacacion.dias}}</td>
                         <td>{{vacacion.observacion}}</td>
@@ -3792,7 +3794,7 @@
                             <a class="blue">
                                 <span class="fa fa-search-plus bigger-130" aria-hidden="true"></span>
                             </a>
-                            <a class="green">
+                            <a class="green" ng-click="imprimirReciboVacacion(vacacion,empleado.nombre_completo,empleado.fecha_inicio)">
                                 <i class="ace-icon fa fa-print bigger-130"></i>
                             </a>
                         </td>
@@ -5302,11 +5304,11 @@
                                 <i class=" fa fa-search-plus align-top "></i>
                                 Filtrar
                             </button>
-                            <button type="button" class="btn btn-danger btn-sm">
+                            <button type="button" class="btn btn-danger btn-sm" ng-click="generarPdfEstadoVacacionEmpresa(historialEmpresaVacaciones,false)">
                                 <i class=" fa fa-print align-top "></i>
                                 Pdf
                             </button>
-                            <button type="button" class="btn btn-success btn-sm">
+                            <button type="button" class="btn btn-success btn-sm" ng-click="generarExcelEstadoVacacionEmpresa(historialEmpresaVacaciones)">
                                 <i class=" fa fa-print align-top "></i>
                                 Excel
                             </button>
@@ -5336,7 +5338,7 @@
                             <a class="blue">
                                 <span class="fa fa-search-plus bigger-130" aria-hidden="true"></span>
                             </a>
-                            <a class="green">
+                            <a class="green" ng-click="imprimirReciboVacacion(vacacion,vacacion.ficha.empleado.persona.nombre_completo,vacacion.ficha.fecha_inicio)">
                                 <i class="ace-icon fa fa-print bigger-130"></i>
                             </a>
                         </td>

@@ -15,7 +15,7 @@ module.exports = function (router, sequelize, Sequelize, Compra, Proveedor, Alma
 					where: {
 						fecha: { $between: [primerDia, ultimoDia] }
 					},
-					include: [{ model: Proveedor, as: 'proveedor' },
+					include: [{ model: Proveedor, as: 'proveedor' },{ model: Movimiento, as: 'movimiento', include: [{ model: Clase, as: 'clase'}]},
 					{
 						model: Almacen, as: 'almacen',
 						include: [{ model: Sucursal, as: 'sucursal', where: { id_empresa: req.params.id_empresa } }]

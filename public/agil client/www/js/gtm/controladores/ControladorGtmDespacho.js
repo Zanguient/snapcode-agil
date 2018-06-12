@@ -464,7 +464,7 @@ angular.module('agil.controladores')
             doc.text("Importe", 520, 90 + yCabecera);
             doc.text("Clientes:", 40, y + 90);
             doc.text("Destino Mercaderia:", 40, y + 100);
-            var texto = gtm_despacho.despacho.destino.direccion + " " + gtm_despacho.despacho.destino.destino
+            var texto =gtm_despacho.despacho.destino.destino
             var a = 0;
             if (texto.length > 61) {
                 a = 10;
@@ -484,7 +484,7 @@ angular.module('agil.controladores')
             doc.font('Helvetica', 8);
             doc.text(gtm_despacho.despacho.cliente_razon.nit, 80, y + 120 + a);
             if (gtm_despacho.despacho.cliente.telefono1) doc.text(gtm_despacho.despacho.cliente.telefono1, 240, y + 120 + a);
-            doc.text(gtm_despacho.despacho.cliente.direccion, 80, y + 130 + a);
+            doc.text(gtm_despacho.despacho.destino.direccion, 80, y + 130 + a);
 
             if (gtm_despacho.despacho.destino !== null && gtm_despacho.despacho.destino !== undefined) {
                 doc.text(texto, 120, y + 100, { width: 320 });
@@ -716,58 +716,59 @@ angular.module('agil.controladores')
                 var doc = new PDFDocument({ compress: false, size: 'letter', margin: 10 });
                 var stream = doc.pipe(blobStream());
                 var fechaActual = new Date(recivo.fecha);
-                $scope.dibujarCabeceraPDFImpresionRecivo(doc, recivo, imagenEmpresa, 50);
+                $scope.dibujarCabeceraPDFImpresionRecivo(doc, recivo, imagenEmpresa, 30);
                 if (recivo.tipo_moneda) {
-                    doc.text(recivo.monto + " .-", 485, 40);
-                    doc.text("----", 485, 65);
-                    doc.text("----", 485, 90);
+                    doc.text(recivo.monto + " .-", 485, 20);
+                    doc.text("----", 485, 45);
+                    doc.text("----", 485, 70);
 
                 } else {
-                    doc.text("----", 485, 40);
-                    doc.text(recivo.monto + " .-", 485, 65);
-                    doc.text(recivo.cambio_moneda + " .-", 485, 90);
+                    doc.text("----", 485, 20);
+                    doc.text(recivo.monto + " .-", 485, 45);
+                    doc.text(recivo.cambio_moneda + " .-", 485, 70);
 
                 }
-                doc.text($scope.detalle_despacho.despacho.cliente.razon_social, 100, 130);
+                doc.text($scope.detalle_despacho.despacho.cliente.razon_social, 100, 110);
                 if (recivo.tipo_moneda) {
-                    doc.text("                          " + ConvertirALiteral(recivo.monto.toFixed(2)), 40, 150, { width: 550, lineGap: 6 });
+                    doc.text("                          " + ConvertirALiteral(recivo.monto.toFixed(2)), 40, 130, { width: 550, lineGap: 6 });
                 } else {
-                    doc.text("                          " + ConvertirALiteral(recivo.monto.toFixed(2), "DÓLARES"), 40, 150, { width: 550, lineGap: 6 });
+                    doc.text("                          " + ConvertirALiteral(recivo.monto.toFixed(2), "DÓLARES"), 40, 130, { width: 550, lineGap: 6 });
                 }
-                doc.text("                               " + recivo.concepto, 40, 190, { width: 550, lineGap: 6 });
-                doc.text($scope.detalle_despacho.despacho.cliente_razon.razon_social + "-" + $scope.detalle_despacho.despacho.cliente_razon.nit, 165, 230);
-                doc.text(($scope.detalle_despacho.factura) ? $scope.detalle_despacho.factura : "", 465, 230);
+                doc.text("                               " + recivo.concepto, 40, 170, { width: 550, lineGap: 6 });
+                doc.text($scope.detalle_despacho.despacho.cliente_razon.razon_social + "-" + $scope.detalle_despacho.despacho.cliente_razon.nit, 165, 210);
+                doc.text(($scope.detalle_despacho.factura) ? $scope.detalle_despacho.factura : "", 465, 210);
                 if (recivo.tipoPago.nombre == "CHEQUE") {
-                    doc.text(recivo.numero_cuenta, 270, 250);
-                    doc.text(recivo.otroBanco.nombre, 470, 250)
+                    doc.text(recivo.numero_cuenta, 270, 230);
+                    doc.text(recivo.otroBanco.nombre, 470, 230)
                 } else if (recivo.tipoPago.nombre == "DEPOSITO") {
 
-                    doc.text(recivo.banco.nombre, 470, 250)
+                    doc.text(recivo.banco.nombre, 470, 230)
                 } else {
-                    doc.moveTo(103, 260)
-                        .lineTo(105, 265)
+                    doc.moveTo(103, 240)
+                        .lineTo(105, 245)
                         .dash(0, { space: 0 })
 
-                        .lineTo(115, 250)
+                        .lineTo(115, 230)
                         .stroke()
-                    doc.text("----", 270, 250);
-                    doc.text("----", 475, 250)
+                    doc.text("----", 270, 230);
+                    doc.text("----", 475, 230)
                 }
 
                 var dato = recivo.sucursal.departamento.nombre_corto.split("-")[0]
-                doc.text((fechaActual.getDate() >= 10) ? dato + "  " + fechaActual.getDate() : dato + "  " + "0" + fechaActual.getDate(), 160, 280);
-                doc.text(((fechaActual.getMonth() + 1) >= 10) ? (fechaActual.getMonth() + 1) : "0" + (fechaActual.getMonth() + 1), 310, 280);
+                doc.text((fechaActual.getDate() >= 10) ? dato + "  " + fechaActual.getDate() : dato + "  " + "0" + fechaActual.getDate(), 160, 260);
+                doc.text(((fechaActual.getMonth() + 1) >= 10) ? (fechaActual.getMonth() + 1) : "0" + (fechaActual.getMonth() + 1), 310, 260);
                 var anio = fechaActual.getFullYear()
                 var cadena = anio.toString();
                 anio = cadena.substr(-2)
-                doc.text(anio, 440, 280);
+                doc.text(anio, 440, 260);
                 var currentDate = new Date()
 
                 doc.font('Helvetica', 5);
-                doc.text("EMISIÓN: " + fechaActual.getDate() + "/" + (fechaActual.getMonth() + 1) + "/" + fechaActual.getFullYear(), 200, 395);
-                doc.text("IMPRESIÓN: " + currentDate.getDate() + "/" + (currentDate.getMonth() + 1) + "/" + currentDate.getFullYear(), 260, 395);
-                doc.text("USUARIO: " + $scope.usuario.persona.nombre_completo, 40, 395);
+                doc.text("EMISIÓN: " + fechaActual.getDate() + "/" + (fechaActual.getMonth() + 1) + "/" + fechaActual.getFullYear(), 200, 375);
+                doc.text("IMPRESIÓN: " + currentDate.getDate() + "/" + (currentDate.getMonth() + 1) + "/" + currentDate.getFullYear(), 260, 375);
+                doc.text("USUARIO: " + $scope.usuario.persona.nombre_completo, 40, 375);
                 doc.font('Helvetica', 8);
+                doc.rect(3, 400, 600, 0).dash(1, { space: 5 }).stroke();
                 $scope.dibujarCabeceraPDFImpresionRecivo(doc, recivo, imagenEmpresa, 430);
                 if (recivo.tipo_moneda) {
                     doc.text(recivo.monto + " .-", 485, 420);

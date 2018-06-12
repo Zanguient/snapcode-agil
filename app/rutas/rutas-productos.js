@@ -311,7 +311,8 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 													comision: producto.comision,
 													alerta: producto.alerta,
 													descuento: producto.descuento,
-													descuento_fijo: producto.descuento_fijo
+													descuento_fijo: producto.descuento_fijo,
+													marca:producto.marca
 												}, {
 														where: {
 															id: productoEncontrado.id
@@ -338,7 +339,8 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 													alerta: producto.alerta,
 													descuento: producto.descuento,
 													descuento_fijo: producto.descuento_fijo,
-													id_tipo_producto: clase.id
+													id_tipo_producto: clase.id,
+													marca:producto.marca
 												}, { transaction: t });
 											}
 										})
@@ -805,5 +807,69 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 					res.json({ catalogo: [], hasError: true, mensaje: err.stack });
 				});
 			}
+		});
+
+		//buscar por subgrupo de productos
+		router.route('/productos/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion/subgrupo/:id_subgrupo/user/:id_user')
+		.get(function (req, res) {
+			var gruposProductos = ''
+			UsuarioGrupos.findAll({
+				where: { id_usuario: req.params.id_user }
+			}).then(function (grupos) {
+				if (grupos.length == 0) {
+					res.json({ productos: [], hasError: true, mensaje: 'Los grupos del usuario no cuentan con productos.' });
+				} else {
+					grupos.forEach(function (grupo, i) {
+						if (i == grupos.length - 1) {
+							gruposProductos += grupo.id_grupo + ''
+						} else {
+							gruposProductos += grupo.id_grupo + ','
+						}
+					})
+					var condicionProducto = "empresa=" + req.params.id_empresa, paginas, limit;
+					if (req.params.texto_busqueda != 0) {
+						condicionProducto = condicionProducto + " and (\
+					codigo LIKE '%"+ req.params.texto_busqueda + "%' or \
+					producto.nombre LIKE '%"+ req.params.texto_busqueda + "%' or \
+					unidad_medida LIKE '%"+ req.params.texto_busqueda + "%' or \
+					descripcion LIKE '%"+ req.params.texto_busqueda + "%' or \
+					grupo.nombre LIKE '%"+ req.params.texto_busqueda + "%' or \
+					subgrupo.nombre LIKE '%"+ req.params.texto_busqueda + "%')";
+					}
+					if (req.params.id_subgrupo != 0) {
+						condicionProducto += ' and producto.subgrupo =' + req.params.id_subgrupo
+					}
+					sequelize.query("select count(producto.id) as cantidad_productos \
+								from agil_producto as producto \
+								LEFT OUTER JOIN gl_clase AS grupo ON (producto.grupo = grupo.id) \
+								LEFT OUTER JOIN gl_clase AS subgrupo ON (producto.subgrupo = subgrupo.id) \
+								WHERE "+ condicionProducto + " and producto.grupo in (" + gruposProductos + ")", { type: sequelize.QueryTypes.SELECT })
+						.then(function (data) {
+							if (req.params.items_pagina != 0) {
+								limit = " LIMIT " + (req.params.items_pagina * (req.params.pagina - 1)) + "," + req.params.items_pagina;
+								paginas = Math.ceil(data[0].cantidad_productos / req.params.items_pagina);
+							} else {
+								limit = "";
+								paginas = 1;
+							}
+							sequelize.query("select producto.id,producto.publicar_panel,producto.activar_inventario,producto.codigo,producto.nombre as nombre,producto.imagen,producto.unidad_medida,producto.precio_unitario,producto.inventario_minimo,producto.descripcion,tipoProducto.nombre as tipoProducto,grupo.nombre as grupo,subgrupo.nombre as subgrupo\
+						from agil_producto as producto\
+						LEFT OUTER JOIN gl_clase AS tipoProducto ON (producto.tipo_producto = tipoProducto.id)\
+						LEFT OUTER JOIN gl_clase AS grupo ON (producto.grupo = grupo.id)\
+						LEFT OUTER JOIN gl_clase AS subgrupo ON (producto.subgrupo = subgrupo.id)\
+						WHERE "+ condicionProducto + " and producto.grupo in (" + gruposProductos + ") \
+						ORDER BY producto."+ req.params.columna + " " + req.params.direccion + limit, { type: sequelize.QueryTypes.SELECT })
+								.then(function (productos) {
+									res.json({ productos: productos, paginas: paginas });
+								}).catch(function (err) {
+									res.json({ productos: [], hasError: true, mensaje: err.stack });
+								});
+						}).catch(function (err) {
+							res.json({ productos: [], hasError: true, mensaje: err.stack });
+						});
+				}
+			}).catch(function (err) {
+				res.json({ productos: [], hasError: true, mensaje: err.stack });
+			})
 		});
 }

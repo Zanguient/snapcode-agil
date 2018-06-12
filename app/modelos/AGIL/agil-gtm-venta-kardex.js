@@ -28,6 +28,10 @@ module.exports = function (sequelize, Sequelize) {
         observacion: {
             type: Sequelize.STRING,
             field: 'observacion'
+        },
+        eliminar: {
+            type: Sequelize.BOOLEAN,
+            field: 'eliminar'
         }
     }, {
             freezeTableName: true

@@ -363,7 +363,7 @@
 												<th>Detalle</th>
 												<th class="col-md-3" ng-if="usuario.empresa.usar_vencimientos">Lote</th>
 												<th class="col-md-4" ng-if="usuario.empresa.usar_vencimientos">Vencimiento. </th>
-												<th class="col-md-3">P. Unit</th>
+												<th class="col-md-3">Costo Unitario</th>
 												<th>Total</th>
 											</tr>
 										</thead>
@@ -392,15 +392,15 @@
 												</td>
 												<td ng-if="usuario.empresa.usar_vencimientos">
 													<span ng-hide="editing" ng-dblclick="editItem(detallesMovimiento)">{{detallesMovimiento.inventario.fecha_vencimientoTexto}}</span>
-													<input class="col-sm-12" ng-change="editMovientoDetalle(detallesMovimiento)" ng-show="editing" ng-model="detallesMovimiento.inventario.fecha_vencimientoTexto"
+													<input tabindex="-1" class="col-sm-12" ng-change="editMovientoDetalle(detallesMovimiento)" ng-show="editing" ng-model="detallesMovimiento.inventario.fecha_vencimientoTexto"
 													 ng-blur="doneEditing(detallesMovimiento)" autofocus />
 													<a class="green">
 														<i ng-if="animate" class="ace-icon fa fa-floppy-o bigger--130"></i>
 													</a>
 												</td>
 												<td>
-													<span ng-hide="editing" ng-dblclick="editItem(detallesMovimiento)">{{detallesMovimiento.producto.precio_unitario | number:2}}</span>
-													<input class="col-sm-12" type="number" ng-change="editMovientoDetalle(detallesMovimiento)" ng-show="editing" ng-model="detallesMovimiento.producto.precio_unitario"
+													<span ng-hide="editing" ng-dblclick="editItem(detallesMovimiento)">{{detallesMovimiento.costo_unitario}}</span>
+													<input class="col-sm-12" type="number" ng-change="editMovientoDetalle(detallesMovimiento)" ng-show="editing" ng-model="detallesMovimiento.costo_unitario"
 													 ng-blur="doneEditing(detallesMovimiento)" autofocus />
 													<a class="green">
 														<i ng-if="animate" class="ace-icon fa fa-floppy-o bigger--130"></i>

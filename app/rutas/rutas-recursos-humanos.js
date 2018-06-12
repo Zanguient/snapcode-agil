@@ -1,7 +1,7 @@
 module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente, Persona, Empresa, Sucursal, Clase, Diccionario, Tipo, decodeBase64Image, fs, RrhhEmpleadoFicha, RrhhEmpleadoFichaOtrosSeguros, RrhhEmpleadoFichaFamiliar, RrhhEmpleadoDiscapacidad
     , RrhhEmpleadoCargo, RrhhEmpleadoHojaVida, RrhhEmpleadoFormacionAcademica, RrhhEmpleadoExperienciaLaboral, RrhhEmpleadoLogroInternoExterno, RrhhEmpleadoCapacidadInternaExterna, NumeroLiteral, RrhhEmpleadoPrestamo, RrhhEmpleadoPrestamoPago, RrhhEmpleadoRolTurno, RrhhEmpleadoHorasExtra, RrhhAnticipo,
     EvaluacionPolifuncional, ConfiguracionCalificacionEvaluacionPolifuncional, ConfiguracionDesempenioEvaluacionPolifuncional, RrhhEmpleadoAusencia, RrhhEmpleadoVacaciones, RrhhEmpleadoCompensacionAusencia, RrhhFeriado, RrhhClaseAsuencia, RrhhEmpleadoConfiguracionVacacion, RrhhEmpleadoHistorialVacacion, RrhhEmpleadoTr3, RrhhEmpleadoAnticipoTr3, Banco, RrhhEmpleadoDeduccionIngreso,
-    RrhhEmpleadoBeneficioSocial, RrhhEmpleadoBitacoraFicha, RrhhEmpleadoConfiguracionRopa, Producto, Inventario, RrhhEmpleadoDotacionRopaItem, RrhhEmpleadoDotacionRopa, RrhhViajeDetalle, RrhhViaje, RrhhViajeDestino, RrhhViajeConductor, Movimiento, DetalleMovimiento,Almacen) {
+    RrhhEmpleadoBeneficioSocial, RrhhEmpleadoBitacoraFicha, RrhhEmpleadoConfiguracionRopa, Producto, Inventario, RrhhEmpleadoDotacionRopaItem, RrhhEmpleadoDotacionRopa, RrhhViajeDetalle, RrhhViaje, RrhhViajeDestino, RrhhViajeConductor, Movimiento, DetalleMovimiento, Almacen, RrhhEmpleadoDescuentoVacacionHistorial) {
 
     router.route('/recursos-humanos/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion/codigo/:codigo/nombres/:nombres/ci/:ci/campo/:campo/cargo/:cargo/busquedaEmpresa/:busquedaEmpresa/grupo/:grupo_sanguineo/estado/:estado/apellido/:apellido')
         .get(function (req, res) {
@@ -3416,8 +3416,11 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                 sabado: req.body.sabado,
                 inicio_tipo: req.body.inicio_tipo,
                 fin_tipo: req.body.fin_tipo,
-                eliminado: false
+                eliminado: false,
+                domingos: req.body.domingos,
+                feriados: req.body.dias_descuento,
             }).then(function (empleadoVacacionCreado) {//dias=12
+                var gestiones=""
                 req.body.historial.forEach(function (historial, index, array) {
                     if (historial.anio <= req.body.aniosDisponibles) {
                         var restante = historial.aplicadas - historial.tomadas
@@ -3431,25 +3434,37 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                                 tomadas = req.body.dias + historial.tomadas
                                 req.body.dias = 0
                             }
+                            if (tomadas != 0) {
+                                restantes=(historial.aplicadas -tomadas)+" días de la gestion "+historial.gestion + "-" + (historial.gestion + 1)
+                                gestiones += historial.gestion + "-" + (historial.gestion + 1) + ", "
+                                RrhhEmpleadoHistorialVacacion.update({
+                                    tomadas: tomadas
+                                }, {
+                                        where: { id: historial.id }
+                                    }).then(function (historialVacacionActualizado) {
+                                        RrhhEmpleadoDescuentoVacacionHistorial.create({
+                                            id_vacacion: empleadoVacacionCreado.id,
+                                            id_historial_vacacion: historial.id
+                                        }).then(function (descuentoCreado) {
+                                            if (index === (array.length - 1)) {
+                                                res.json({ mensaje: "Guardado satisfactoriamente!",gestiones:gestiones,restantes:restantes })
+                                            }
+                                        })
 
-                            RrhhEmpleadoHistorialVacacion.update({
-                                tomadas: tomadas
-                            }, {
-                                    where: { id: historial.id }
-                                }).then(function (historialVacacionActualizado) {
-                                    if (index === (array.length - 1)) {
-                                        res.json({ mensaje: "Guardado satisfactoriamente!" })
-                                    }
-                                })
-
+                                    })
+                            } else {
+                                if (index === (array.length - 1)) {
+                                    res.json({ mensaje: "Guardado satisfactoriamente!",gestiones:gestiones,restantes:restantes })
+                                }
+                            }
                         } else {
                             if (index === (array.length - 1)) {
-                                res.json({ mensaje: "Guardado satisfactoriamente!" })
+                                res.json({ mensaje: "Guardado satisfactoriamente!",gestiones:gestiones,restantes:restantes })
                             }
                         }
                     } else {
                         if (index === (array.length - 1)) {
-                            res.json({ mensaje: "Guardado satisfactoriamente!" })
+                            res.json({ mensaje: "Guardado satisfactoriamente!",gestiones:gestiones,restantes:restantes })
                         }
                     }
                 });
@@ -3465,7 +3480,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
             }
             RrhhEmpleadoVacaciones.findAll({
                 where: condicionVacaciones,
-                include: [{ model: RrhhEmpleadoFicha, as: 'ficha', include: [{ model: MedicoPaciente, as: 'empleado', include: [{ model: Persona, as: 'persona' }] }] }]
+                include: [{ model: RrhhEmpleadoDescuentoVacacionHistorial, as: 'detalleDescuentosVacacionHistorial', include: [{ model: RrhhEmpleadoHistorialVacacion, as: 'historialVacacion' }] }, { model: RrhhEmpleadoFicha, as: 'ficha', include: [{ model: MedicoPaciente, as: 'empleado', include: [{ model: Persona, as: 'persona' }] }] }]
             }).then(function (vacaciones) {
                 res.json(vacaciones)
             })
@@ -3480,7 +3495,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
             }
             RrhhEmpleadoVacaciones.findAll({
                 where: condicionVacaciones,
-                include: [{ model: RrhhEmpleadoFicha, as: 'ficha', include: [{ model: MedicoPaciente, as: 'empleado', where: { id_empresa: req.params.id_empresa }, include: [{ model: Persona, as: 'persona' }] }] }]
+                include: [{ model: RrhhEmpleadoDescuentoVacacionHistorial, as: 'detalleDescuentosVacacionHistorial', include: [{ model: RrhhEmpleadoHistorialVacacion, as: 'historialVacacion' }] }, { model: RrhhEmpleadoFicha, as: 'ficha', include: [{ model: MedicoPaciente, as: 'empleado', where: { id_empresa: req.params.id_empresa }, include: [{ model: Persona, as: 'persona' }] }] }]
             }).then(function (vacaciones) {
                 res.json(vacaciones)
             })
@@ -4095,7 +4110,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                     observacion: req.body.observacion,
                     id_usuario: req.body.id_usuario,
                 }, {
-                    transaction: t,
+                        transaction: t,
                         where: {
                             id: req.body.id
                         }
@@ -4673,9 +4688,9 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
             }
             RrhhEmpleadoDotacionRopa.findAll({
                 where: condicionRopaTrabajo,
-                include: [{ model: Sucursal, as: "sucursal" }, { model: Almacen, as: "almacen" },{
+                include: [{ model: Sucursal, as: "sucursal" }, { model: Almacen, as: "almacen" }, {
                     model: RrhhEmpleadoDotacionRopaItem, as: "dotacionItems",
-                    include: [ { model: Clase, as: "cargo" }, { model: Clase, as: "ropaTrabajo" }, { model: Producto, as: "producto", include: [{ model: Inventario, as: 'inventarios' }] }]
+                    include: [{ model: Clase, as: "cargo" }, { model: Clase, as: "ropaTrabajo" }, { model: Producto, as: "producto", include: [{ model: Inventario, as: 'inventarios' }] }]
                 },
                 { model: MedicoPaciente, as: "empleado" },
                 { model: Clase, as: "estado" },

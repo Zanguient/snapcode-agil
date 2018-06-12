@@ -154,50 +154,182 @@ angular.module('agil.controladores')
 		}
 
 		$scope.guardarPlantillaIngreso = function (form, plantilla) {
+			$scope.visible.verPlantillaIngreso = true
+			$scope.visible.verPlantillaEgreso = true
+			$scope.visible.verPlantillarRetencionBien = true
+			$scope.visible.verPlantillarRetencionBienGasto = true
 			if (!plantilla.ingreso.ivadf.cuenta || !plantilla.ingreso.ivadf.cuenta.id) {
+				$scope.visible.verPlantillaIngreso = true
 				$scope.errorIvadf = "sdf"
-				form.asignarCuentaIvaDf.$error.cuenta = true;
+				if (form.asignarCuentaIvaDf) {
+					form.asignarCuentaIvaDf.$error.cuenta = false;
+				}
 			} else {
+				$scope.verPlantillaIngreso = false
 				$scope.errorIvadf = null
-				form.asignarCuentaIvaDf.$error.cuenta = false;
+				if (form.asignarCuentaIvaDf) {
+					form.asignarCuentaIvaDf.$error.cuenta = false;
+				}
 			}
 			if (!plantilla.ingreso.it.cuenta || !plantilla.ingreso.it.cuenta.id) {
+				$scope.visible.verPlantillaIngreso = true
 				$scope.errorIT = "sdf"
-				form.asignarCuentaIt.$error.cuenta = true;
+				if (form.asignarCuentaIt) {
+					form.asignarCuentaIt.$error.cuenta = false;
+				}
 			} else {
+				$scope.verPlantillaIngreso = false
 				$scope.errorIT = null
-				form.asignarCuentaIt.$error.cuenta = false;
+				if (form.asignarCuentaIt) {
+					form.asignarCuentaIt.$error.cuenta = false;
+				}
 			}
 
 			if (!plantilla.ingreso.itPorPagar.cuenta || !plantilla.ingreso.itPorPagar.cuenta.id) {
+				$scope.visible.verPlantillaIngreso = true
 				$scope.errorItPorPagar = "sdf"
-				form.asignarCuentaItPorPagar.$error.cuenta = true;
+				if (form.asignarCuentaItPorPagar) {
+					form.asignarCuentaItPorPagar.$error.cuenta = false;
+				}
 			} else {
+				$scope.verPlantillaIngreso = false
 				$scope.errorItPorPagar = null
-				form.asignarCuentaItPorPagar.$error.cuenta = false;
+				if (form.asignarCuentaItPorPagar) {
+					form.asignarCuentaItPorPagar.$error.cuenta = false;
+				}
 			}
 			if (!plantilla.ingreso.cajaBanco.cuenta || !plantilla.ingreso.cajaBanco.cuenta.id) {
+				$scope.visible.verPlantillaIngreso = true
 				$scope.errorIngresoCaja = "sdf"
-				form.asignarCuentaIngresoCaja.$error.cuenta = true;
+				if (form.asignarCuentaIngresoCaja) {
+					form.asignarCuentaIngresoCaja.$error.cuenta = false;
+				}
 			} else {
+				$scope.verPlantillaIngreso = false
 				$scope.errorIngresoCaja = null
-				form.asignarCuentaIngresoCaja.$error.cuenta = false;
+				if (form.asignarCuentaIngresoCaja) {
+					form.asignarCuentaIngresoCaja.$error.cuenta = false;
+				}
 			}
 			if (!plantilla.egreso.ivacf.cuenta || !plantilla.egreso.ivacf.cuenta.id) {
+				$scope.visible.verPlantillaEgreso = true
 				$scope.errorIvacf = "sdf"
-				form.asignarCuentaIvaCf.$error.cuenta = true;
+				if (form.asignarCuentaIvaCf) {
+					form.asignarCuentaIvaCf.$error.cuenta = false;
+				}
+
+
 			} else {
+				$scope.verPlantillaEgreso = false
 				$scope.errorIvacf = null
-				form.asignarCuentaIvaCf.$error.cuenta = false;
+				if (form.asignarCuentaIvaCf) {
+					form.asignarCuentaIvaCf.$error.cuenta = false;
+				}
 			}
 			if (!plantilla.egreso.cajaBanco.cuenta || !plantilla.egreso.cajaBanco.cuenta.id) {
+				$scope.visible.verPlantillaEgreso = true
 				$scope.errorEgresoCaja = "sdf"
-				form.asignarCuentaEgresoCaja.$error.cuenta = true;
+				if (form.asignarCuentaEgresoCaja) {
+					form.asignarCuentaEgresoCaja.$error.cuenta = false;
+				}
 			} else {
+				$scope.verPlantillaEgreso = false
 				$scope.errorEgresoCaja = null
-				form.asignarCuentaEgresoCaja.$error.cuenta = false;
+				if (form.asignarCuentaEgresoCaja) {
+					form.asignarCuentaEgresoCaja.$error.cuenta = false;
+				}
 			}
-			if ($scope.errorIvacf == null && $scope.errorEgresoCaja == null && $scope.errorIvadf == null && $scope.errorIT == null && $scope.errorItPorPagar == null) {
+			if ($scope.usuario.empresa.usar_funciones_erp) {
+				if (!plantilla.retencionBienes.almacen.cuenta || !plantilla.retencionBienes.almacen.cuenta.id) {
+					$scope.visible.verPlantillarRetencionBien = true
+					$scope.errorEgresoBienAlmacen = "sdf"
+					if (form.asignarAlmacenBienes) {
+						form.asignarAlmacenBienes.$error.cuenta = false;
+					}
+				} else {
+					$scope.verPlantillarRetencionBien = false
+					$scope.errorEgresoBienAlmacen = null
+					if (form.asignarAlmacenBienes) {
+						form.asignarAlmacenBienes.$error.cuenta = false;
+					}
+				}
+				if (!plantilla.retencionBienes.it.cuenta || !plantilla.retencionBienes.it.cuenta.id) {
+					$scope.visible.verPlantillarRetencionBien = true
+					$scope.errorEgresoBienIt = "sdf"
+					if (form.asignarItBienes) {
+						form.asignarItBienes.$error.cuenta = false;
+					}
+				} else {
+					$scope.verPlantillarRetencionBien = false
+					$scope.errorEgresoBienIt = null
+					if (form.asignarItBienes) {
+						form.asignarItBienes.$error.cuenta = false;
+					}
+				}
+				if (!plantilla.retencionBienes.iue.cuenta || !plantilla.retencionBienes.iue.cuenta.id) {
+					$scope.visible.verPlantillarRetencionBien = true
+					$scope.errorEgresoBienIue = "sdf"
+					if (form.asignarIueBienes) {
+						form.asignarIueBienes.$error.cuenta = false;
+					}
+				} else {
+					$scope.verPlantillarRetencionBien = false
+					$scope.errorEgresoBienIue = null
+					if (form.asignarIueBienes) {
+						form.asignarIueBienes.$error.cuenta = false;
+					}
+				}
+				if (!plantilla.retencionBienesGasto.gasto.cuenta || !plantilla.retencionBienesGasto.gasto.cuenta.id) {
+					$scope.visible.verPlantillarRetencionBienGasto = true
+					$scope.errorEgresoBienGasto = "sdf"
+					if (form.asignarGastoBienes) {
+						form.asignarGastoBienes.$error.cuenta = false;
+					}
+				} else {
+					$scope.verPlantillarRetencionBienGasto = false
+					$scope.errorEgresoBienGasto = null
+					if (form.asignarGastoBienes) {
+						form.asignarGastoBienes.$error.cuenta = false;
+					}
+				}
+				if (!plantilla.retencionBienesGasto.it.cuenta || !plantilla.retencionBienesGasto.it.cuenta.id) {
+					$scope.visible.verPlantillarRetencionBienGasto = true
+					$scope.errorEgresoBienGastoIt = "sdf"
+					if (form.asignarGastoItBienes) {
+						form.asignarGastoItBienes.$error.cuenta = false;
+					}
+				} else {
+					$scope.verPlantillarRetencionBienGasto = false
+					$scope.errorEgresoBienGastoIt = null
+					if (form.asignarGastoItBienes) {
+						form.asignarGastoItBienes.$error.cuenta = false;
+					}
+				}
+				if (!plantilla.retencionBienesGasto.iue.cuenta || !plantilla.retencionBienesGasto.iue.cuenta.id) {
+					$scope.visible.verPlantillarRetencionBienGasto = true
+					$scope.errorEgresoBienGastoIue = "sdf"
+					if (form.asignarGastoIueBienes) {
+						form.asignarGastoIueBienes.$error.cuenta = false;
+					}
+				} else {
+					$scope.verPlantillarRetencionBienGasto = false
+					$scope.errorEgresoBienGastoIue = null
+					if (form.asignarGastoIueBienes) {
+						form.asignarGastoIueBienes.$error.cuenta = false;
+					}
+				}
+			} else {
+				$scope.errorEgresoBienAlmacen = null
+				$scope.errorEgresoBienIt = null
+				$scope.errorEgresoBienIue = null
+				$scope.errorEgresoBienGasto = null
+				$scope.errorEgresoBienGastoIt = null
+				$scope.errorEgresoBienGastoIue = null
+			}
+			if ($scope.errorEgresoBienGasto == null &&
+				$scope.errorEgresoBienGastoIt == null &&
+				$scope.errorEgresoBienGastoIue == null && $scope.errorEgresoBienIue == null && $scope.errorEgresoBienIt == null && $scope.errorEgresoBienAlmacen == null && $scope.errorIvacf == null && $scope.errorEgresoCaja == null && $scope.errorIvadf == null && $scope.errorIT == null && $scope.errorItPorPagar == null) {
+				plantilla.usar_funciones_erp = $scope.usuario.empresa.usar_funciones_erp
 				ConfiguracionCuentas.update({ id_empresa: $scope.usuario.id_empresa }, plantilla, function (dato) {
 					$scope.mostrarMensaje(dato.menssage)
 					$scope.cerrarPlantillaIngreso()
@@ -206,7 +338,8 @@ angular.module('agil.controladores')
 
 		}
 		$scope.BoscarOcrearPlantillaIngreso = function () {
-			$scope.plantilla = { egreso: { ivacf: {}, cajaBanco: {} }, ingreso: { ivadf: {}, it: {}, itPorPagar: {}, cajaBanco: {} } }
+			
+			$scope.plantilla = { retencionBienesGasto: { it: {}, iue: {}, gasto: {} }, retencionBienes: { it: {}, iue: {}, almacen: {} }, egreso: { ivacf: {}, cajaBanco: {} }, ingreso: { ivadf: {}, it: {}, itPorPagar: {}, cajaBanco: {} } }
 			var promesa = ConfiguracionCuentaEmpresa($scope.usuario.id_empresa);
 			promesa.then(function (entidad) {
 				console.log(entidad.lista)
@@ -228,6 +361,24 @@ angular.module('agil.controladores')
 					}
 					if (Diccionario.CAJA_BANCOS == lista.nombre) {
 						$scope.plantilla.egreso.cajaBanco = { porsentaje: parseInt(lista.valor), cuenta: lista.cuenta }
+					}
+					if (Diccionario.IT_RETENCION_BIEN == lista.nombre) {
+						$scope.plantilla.retencionBienes.it = { porsentaje: parseInt(lista.valor), cuenta: lista.cuenta }
+					}
+					if (Diccionario.IUE_RETENCION_BIEN == lista.nombre) {
+						$scope.plantilla.retencionBienes.iue = { porsentaje: parseInt(lista.valor), cuenta: lista.cuenta }
+					}
+					if (Diccionario.CUENTA_ALMACEN_RETENCION_BIEN == lista.nombre) {
+						$scope.plantilla.retencionBienes.almacen = { porsentaje: parseInt(lista.valor), cuenta: lista.cuenta }
+					}
+					if (Diccionario.IT_RETENCION_BIEN_GASTO == lista.nombre) {
+						$scope.plantilla.retencionBienesGasto.it = { porsentaje: parseInt(lista.valor), cuenta: lista.cuenta }
+					}
+					if (Diccionario.IUE_RETENCION_BIEN_GASTO == lista.nombre) {
+						$scope.plantilla.retencionBienesGasto.iue = { porsentaje: parseInt(lista.valor), cuenta: lista.cuenta }
+					}
+					if (Diccionario.CUENTA_GASTO_RETENCION_BIEN == lista.nombre) {
+						$scope.plantilla.retencionBienesGasto.gasto = { porsentaje: parseInt(lista.valor), cuenta: lista.cuenta }
 					}
 				}, this);
 
@@ -254,6 +405,11 @@ angular.module('agil.controladores')
 			$scope.filtro = filtro
 		}
 		$scope.abrirPlantillaIngreso = function () {
+			$scope.visible={}
+			$scope.visible.verPlantillaIngreso = true
+			$scope.visible.verPlantillaEgreso = true
+			$scope.visible.verPlantillarRetencionBien = true
+			$scope.visible.verPlantillarRetencionBienGasto = true
 			$scope.BoscarOcrearPlantillaIngreso();
 			$scope.obtenerConfigCuentas()
 

@@ -6136,6 +6136,7 @@ angular.module('agil.controladores')
                 datos.fecha_fin = new Date($scope.convertirFecha(datos.fecha_fin));
                 var promesa = NuevaVacacionEmpleado($scope.empleado.id_ficha, datos)
                 promesa.then(function (dato) {
+                    $scope.imprimirReciboVacacion(datos, $scope.empleado.nombre_completo, $scope.empleado.fecha_inicio, dato.gestiones, dato.restantes)
                     $scope.cerrarDialogAusenciasVacaciones()
                     $scope.mostrarMensaje(dato.mensaje)
                 })
@@ -8816,10 +8817,228 @@ angular.module('agil.controladores')
                 $scope.beneficiosEmpresa = datos.beneficios
             })
         }
+        $scope.imprimirReciboVacacion = function (vacacion, nombre, fechaIngreso, gestion, restante) {
 
+            convertUrlToBase64Image($scope.usuario.empresa.imagen, function (imagenEmpresa) {
+                var doc = new PDFDocument({ compress: false, size: 'letter', margin: 10 });
+                var stream = doc.pipe(blobStream());
+                var fechaActual = new Date();
+                var y = 30
+                var currentDate = new Date()
+                $scope.dibujarCabeceraPDFImpresionVacacion(doc, vacacion, imagenEmpresa, y, nombre);
+                doc.font('Helvetica', 10);
+                doc.text($scope.fechaATexto(currentDate), 80, y + 80);
+                doc.text(nombre, 90, y + 110);
+                doc.text($scope.fechaATexto(fechaIngreso), 410, y + 110);
+
+                var gestiones = ""
+                if (vacacion.detalleDescuentosVacacionHistorial) {
+                    for (var i = 0; i < vacacion.detalleDescuentosVacacionHistorial.length; i++) {
+                        var element = vacacion.detalleDescuentosVacacionHistorial[i]
+                        gestiones = element.historialVacacion.gestion + "-" + (element.historialVacacion.gestion + 1)
+                    }
+                    if (vacacion.detalleDescuentosVacacionHistorial.length > 0) {
+                        doc.text((vacacion.detalleDescuentosVacacionHistorial[vacacion.detalleDescuentosVacacionHistorial.length - 1].historialVacacion.aplicadas - vacacion.detalleDescuentosVacacionHistorial[vacacion.detalleDescuentosVacacionHistorial.length - 1].historialVacacion.tomadas) + " días de la Gestion " + vacacion.detalleDescuentosVacacionHistorial[vacacion.detalleDescuentosVacacionHistorial.length - 1].historialVacacion.gestion + "-" + (vacacion.detalleDescuentosVacacionHistorial[vacacion.detalleDescuentosVacacionHistorial.length - 1].historialVacacion.gestion + 1), 430, y + 140);
+                    }
+                } else {
+                    doc.text(restante, 430, y + 140);
+                }
+                if (gestion != undefined) {
+                    doc.text(gestion, 100, y + 140);
+                } else {
+                    doc.text(gestiones, 100, y + 140);
+                }
+                doc.text((vacacion.inicio_tipo) ? $scope.fechaATexto(vacacion.fecha_inicio) + " (dia)" : $scope.fechaATexto(vacacion.fecha_inicio) + " (medio dia)", 60, y + 170);
+                doc.text((vacacion.fin_tipo) ? $scope.fechaATexto(vacacion.fecha_fin) + " (dia)" : $scope.fechaATexto(vacacion.fecha_fin) + " (medio dia)", 370, y + 170);
+                doc.text(vacacion.dias + " días", 70, y + 200);
+                doc.text(vacacion.domingos, 305, y + 200)
+                if (vacacion.feriados != undefined) {
+                    doc.text(vacacion.feriados, 410, y + 200)
+                } else {
+                    doc.text(vacacion.dias_descuento, 410, y + 200)
+                }
+
+                doc.text(vacacion.observacion, 40, y + 260);
+
+
+                doc.font('Helvetica', 5);
+                doc.text("EMISIÓN: " + fechaActual.getDate() + "/" + (fechaActual.getMonth() + 1) + "/" + fechaActual.getFullYear(), 200, 375);
+                doc.text("IMPRESIÓN: " + currentDate.getDate() + "/" + (currentDate.getMonth() + 1) + "/" + currentDate.getFullYear(), 260, 375);
+                doc.text("USUARIO: " + $scope.usuario.persona.nombre_completo, 40, 375);
+                doc.font('Helvetica', 8);
+                doc.rect(3, 400, 600, 0).dash(1, { space: 5 }).stroke();
+                y = 430
+                $scope.dibujarCabeceraPDFImpresionVacacion(doc, vacacion, imagenEmpresa, 430, nombre);
+                doc.font('Helvetica', 10);
+                doc.text($scope.fechaATexto(currentDate), 80, y + 80);
+                doc.text(nombre, 90, y + 110);
+                doc.text($scope.fechaATexto(fechaIngreso), 410, y + 110);
+                var gestiones = ""
+                if (vacacion.detalleDescuentosVacacionHistorial) {
+                    for (var i = 0; i < vacacion.detalleDescuentosVacacionHistorial.length; i++) {
+                        var element = vacacion.detalleDescuentosVacacionHistorial[i]
+                        gestiones = element.historialVacacion.gestion + "-" + (element.historialVacacion.gestion + 1)
+
+
+                    }
+                    if (vacacion.detalleDescuentosVacacionHistorial.length > 0) {
+                        doc.text((vacacion.detalleDescuentosVacacionHistorial[vacacion.detalleDescuentosVacacionHistorial.length - 1].historialVacacion.aplicadas - vacacion.detalleDescuentosVacacionHistorial[vacacion.detalleDescuentosVacacionHistorial.length - 1].historialVacacion.tomadas) + " días de la Gestion " + vacacion.detalleDescuentosVacacionHistorial[vacacion.detalleDescuentosVacacionHistorial.length - 1].historialVacacion.gestion + "-" + (vacacion.detalleDescuentosVacacionHistorial[vacacion.detalleDescuentosVacacionHistorial.length - 1].historialVacacion.gestion + 1), 430, y + 140);
+                    }
+                } else {
+                    doc.text(restante, 430, y + 140);
+                }
+                if (gestion != undefined) {
+                    doc.text(gestion, 100, y + 140);
+                } else {
+                    doc.text(gestiones, 100, y + 140);
+                }
+                /*  doc.text("N/A", 295, y + 140); */
+
+                doc.text((vacacion.inicio_tipo) ? $scope.fechaATexto(vacacion.fecha_inicio) + " (dia)" : $scope.fechaATexto(vacacion.fecha_inicio) + " (medio dia)", 60, y + 170);
+                doc.text((vacacion.fin_tipo) ? $scope.fechaATexto(vacacion.fecha_fin) + " (dia)" : $scope.fechaATexto(vacacion.fecha_fin) + " (medio dia)", 370, y + 170);
+                doc.text(vacacion.dias + " días", 70, y + 200);
+                doc.text(vacacion.domingos, 305, y + 200)
+                if (vacacion.feriados != undefined) {
+                    doc.text(vacacion.feriados, 410, y + 200)
+                } else {
+                    doc.text(vacacion.dias_descuento, 410, y + 200)
+                }
+
+                doc.text(vacacion.observacion, 40, y + 260);
+                doc.font('Helvetica', 5);
+                doc.text("EMISIÓN: " + fechaActual.getDate() + "/" + (fechaActual.getMonth() + 1) + "/" + fechaActual.getFullYear(), 200, 775);
+                doc.text("IMPRESIÓN: " + currentDate.getDate() + "/" + (currentDate.getMonth() + 1) + "/" + currentDate.getFullYear(), 260, 775);
+                doc.text("USUARIO: " + $scope.usuario.persona.nombre_completo, 40, 775);
+                doc.end();
+                stream.on('finish', function () {
+                    var fileURL = stream.toBlobURL('application/pdf');
+                    window.open(fileURL, '_blank', 'location=no');
+                });
+
+            });
+        }
+
+        $scope.dibujarCabeceraPDFImpresionVacacion = function (doc, vacacion, imagenEmpresa, y, nombre) {
+            doc.font('Helvetica-Bold', 16);
+            //cabecera
+            doc.text("BOLETA DE PERMISO", 0, y, { align: "center" });
+            doc.text("VACACIONES", 0, y + 30, { align: "center" });
+            doc.rect(0, y + 65, 630, 0).dash(0, { space: 0 }).stroke();
+            doc.image(imagenEmpresa, 40, y - 20, { fit: [80, 80] });            //cuerpo       
+            doc.font('Helvetica-Bold', 10);
+            doc.text("Fecha:", 40, y + 80);
+            doc.text("Nombre:", 40, y + 110);
+            doc.text("F. Ingreso:", 350, y + 110);
+            doc.text("Gestiones:", 40, y + 140);
+            /*  doc.text("Gestión 2:", 240, y + 140); */
+            doc.text("Días restantes:", 350, y + 140);
+            doc.text("del:", 40, y + 170);
+            doc.text("Al:", 350, y + 170);
+            doc.text("Total:", 40, y + 200);
+            doc.text("OBSERVACIÓN", 40, y + 230);
+            doc.text("Domingos:", 240, y + 200)
+            doc.text("Feriados:", 350, y + 200)
+            doc.font('Helvetica', 10);
+            doc.text(nombre, 40, y + 330);
+            doc.text("ENCARGADO AREA", 280, y + 330);
+            doc.text("ENCARGADO R.R.H.H.", 440, y + 330);
+        }
         $scope.fechaPorDia = function (año, dia) {
             var date = new Date(año, 0);
             return new Date(date.setDate(dia));
         }
+
+        $scope.generarPdfEstadoVacacionEmpresa = function (datos, delEmpleado) {
+            blockUI.start();
+            var doc = new PDFDocument({ size: 'letter', margin: 10 });
+            var stream = doc.pipe(blobStream());
+            // draw some text
+            var totalCosto = 0;
+            var y = 120, itemsPorPagina = 28, items = 0, pagina = 1, totalPaginas = Math.ceil(datos.length / itemsPorPagina);
+            $scope.dibujarCabeceraPDFVacacionEmpresa(doc, 1, totalPaginas, datos, delEmpleado);
+            doc.font('Helvetica', 8);
+            for (var i = 0; i < datos.length && items <= itemsPorPagina; i++) {
+                var vacacion = datos[i]
+                doc.text(vacacion.ficha.empleado.persona.nombre_completo, 45, y);
+                doc.text($scope.fechaATexto(vacacion.fecha_inicio), 220, y, { width: 50 });
+                doc.text($scope.fechaATexto(vacacion.fecha_fin), 290, y, { width: 60 });
+                doc.text(vacacion.dias, 370, y, { width: 50 });
+                doc.text(vacacion.observacion, 420, y, { width: 200 });
+                y = y + 20;
+                items++;
+                if (items == itemsPorPagina) {
+                    doc.addPage({ margin: 0, bufferPages: true });
+                    y = 120;
+                    items = 0;
+                    pagina = pagina + 1;
+                    $scope.dibujarCabeceraPDFVacacionEmpresa(doc, 1, totalPaginas, datos, delEmpleado);
+                    doc.font('Helvetica', 8);
+                }
+            }
+            doc.font('Helvetica', 5);
+            var fechaActual = new Date();
+            var min = fechaActual.getMinutes();
+            if (min < 10) {
+                min = "0" + min;
+            }
+            var currentDate = new Date()
+            //doc.text("EMISIÓN: " + fechaActual.getDate() + "/" + (fechaActual.getMonth() + 1) + "/" + fechaActual.getFullYear(), 200, 775);
+            doc.text("IMPRESIÓN: " + $scope.fechaATexto(fechaActual) + " Hr. " + fechaActual.getHours() + ":" + min, 180, 775);
+            doc.text("USUARIO: " + $scope.usuario.persona.nombre_completo, 40, 775);
+            doc.font('Helvetica-Bold', 8);
+            doc.end();
+            stream.on('finish', function () {
+                var fileURL = stream.toBlobURL('application/pdf');
+                window.open(fileURL, '_blank', 'location=no');
+            });
+            blockUI.stop();
+
+        }
+        $scope.generarExcelEstadoVacacionEmpresa = function (datos) {
+            var data = [["", "", "REPORTE DE VACACIONES"], ["Nombre", "Desde", "Hasta", "Días", "Observacion", "Sabado"]]
+            var totalCosto = 0;
+            for (var i = 0; i < datos.length; i++) {
+                var columns = [];
+                var vacacion = datos[i]
+                columns.push(vacacion.ficha.empleado.persona.nombre_completo);
+                columns.push(new Date(vacacion.fecha_inicio));
+                columns.push(new Date(vacacion.fecha_fin));
+                columns.push(vacacion.dias);
+                columns.push(vacacion.observacion);
+                columns.push((vacacion.sabado) ? "Si" : "No");
+                data.push(columns);
+            }
+            var ws_name = "SheetJS";
+            var wb = new Workbook(), ws = sheet_from_array_of_arrays(data);
+            /* add worksheet to workbook */
+            wb.SheetNames.push(ws_name);
+            wb.Sheets[ws_name] = ws;
+            var wbout = XLSX.write(wb, { bookType: 'xlsx', bookSST: true, type: 'binary' });
+            saveAs(new Blob([s2ab(wbout)], { type: "application/octet-stream" }), "REPORTE-VACACIONES.xlsx");
+            blockUI.stop();
+
+        }
+
+        $scope.dibujarCabeceraPDFVacacionEmpresa = function (doc, pagina, totalPaginas, datos, delEmpleado) {
+            doc.font('Helvetica-Bold', 12);
+            doc.text("REPORTE DE VACACIONES", 0, 25, { align: "center" });
+            if (delEmpleado) {
+                doc.text($scope.empleado.nombre_completo, 0, 45, { align: "center" });
+                doc.text("PERIODO: TODOS", 0, 65, { align: "center" });
+            } else {
+                doc.text("PERIODO: TODOS", 0, 45, { align: "center" });
+            }
+
+            doc.font('Helvetica-Bold', 8);
+            doc.text("NOMBRE", 45, 90);
+            doc.text("DESDE", 220, 90);
+            doc.text("HASTA", 290, 90);
+            doc.text("DÍAS", 370, 90);
+            doc.text("OBSERVACIÓN", 420, 90);
+            doc.font('Helvetica-Bold', 8);
+            doc.text("PÁGINA " + pagina + " DE " + totalPaginas, 0, 740, { align: "center" });
+        }
+
+
         $scope.inicio()
     });

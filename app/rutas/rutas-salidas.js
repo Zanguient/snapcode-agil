@@ -19,6 +19,9 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 
 	router.route('/productos/empresa/:id_empresa/texto/:texto/user/:id_usuario/almacen/:id_almacen')
 		.get(function (req, res) {
+			if (req.params.id_almacen === 0) {
+				req.params.id_almacen = undefined
+			}
 			UsuarioGrupos.findAll({
 				where: { id_usuario: req.params.id_usuario }
 			}).then(function (grupos) {
@@ -37,6 +40,7 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 					},
 					include: [
 						{ model: Clase, as: 'tipoProducto' },
+						{ model: Inventario, as: 'inventarios', required: false, where: { id_almacen: req.params.id_almacen, cantidad: { $gte: 0 } } },
 						{
 							model: ProductoBase, as: 'productosBase', required: false,
 							include: [{

@@ -24,6 +24,10 @@ module.exports = function (sequelize, Sequelize) {
             type: Sequelize.BOOLEAN,
             field: 'recibido'
         },
+        id_usuario: {
+            type: Sequelize.INTEGER,
+            field: 'usuario'
+        },
         eliminado: {
             type: Sequelize.BOOLEAN,
             field: 'eliminado'

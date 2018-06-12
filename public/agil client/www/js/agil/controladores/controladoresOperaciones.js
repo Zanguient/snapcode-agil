@@ -2,7 +2,7 @@ angular.module('agil.controladores')
 	.controller('ControladorOperaciones', function ($scope, $filter, $rootScope, $route, $templateCache, $location, $window, $localStorage,
 		blockUI, ConfiguracionVentaVistaDatos, ClasesTipo, ListaGruposProductoEmpresa, ProductosOperaciones, socket, ListaGruposProductoEmpresa, SolicitudesReposicion,
 		SolicitudesFormulacionProducto, SolicitudReposicion, EliminarSolicitudReposicion, Paginator, ImpresionSolicitudDatos, ListaInventariosProducto, ListaSucursalesUsuario,
-		ListaGruposProductoUsuario, CerrarSolicitud, Solicitud) {
+		ListaGruposProductoUsuario, CerrarSolicitud, Solicitud, ProveedoresNit, ListaProductosEmpresaUsuario, $timeout, GuardarPedido) {
 
 		$scope.usuarioSesion = JSON.parse($localStorage.usuario);
 		convertUrlToBase64Image($scope.usuarioSesion.empresa.imagen, function (imagenEmpresa) {
@@ -14,10 +14,13 @@ angular.module('agil.controladores')
 		$scope.idDialogEntregaViveres = "dialogEntregaViveres"
 		$scope.idConfirmacionCierre = "dialog-confirmacion-entrega"
 		$scope.idDialogTotalIngredientes = "dialog-total-ingredientes"
+		$scope.idDialogoListadoPedido = "modal-listado-nuevo-pedido"
+		$scope.idDialogoNuevoPedido = "modal-nuevo-pedido"
 
 		$scope.$on('$viewContentLoaded', function () {
 			resaltarPestaña($location.path().substring(1));
-			ejecutarScriptsOperaciones($scope.idDialogDialogPanelOperaciones, $scope.idDialogEntregaViveres, $scope.idConfirmacionCierre, $scope.idDialogTotalIngredientes);
+			ejecutarScriptsOperaciones($scope.idDialogDialogPanelOperaciones, $scope.idDialogEntregaViveres, $scope.idConfirmacionCierre, $scope.idDialogTotalIngredientes,
+				$scope.idDialogoListadoPedido, $scope.idDialogoNuevoPedido);
 			$scope.buscarAplicacion($scope.usuarioSesion.aplicacionesUsuario, $location.path().substring(1));
 		});
 
@@ -26,9 +29,14 @@ angular.module('agil.controladores')
 			$scope.eliminarPopup($scope.idDialogEntregaViveres);
 			$scope.eliminarPopup($scope.idConfirmacionCierre)
 			$scope.eliminarPopup($scope.idDialogTotalIngredientes)
+			$scope.eliminarPopup($scope.idDialogoListadoPedido)
+			$scope.eliminarPopup($scope.idDialogoNuevoPedido)
 		})
 
 		$scope.inicio = function () {
+			$scope.imprimir = { detalle: false }
+			$scope.detallesPedido = []
+			$scope.mostarBusquedaProducto = false
 			$scope.ordenProductos = true;
 			$scope.esContado = true;
 			$scope.obtenerConfiguracionVentaVista();
@@ -44,7 +52,145 @@ angular.module('agil.controladores')
 			// $scope.solicitud = { solicitudesProductos: [] }
 			$scope.obtenerPaginador()
 			$scope.sucursales = $scope.obtenerSucursales();
+			$scope.obtenerGruposProductosEmpresaUsuario()
 		}
+
+		$scope.buscarProveedor = function (query) {
+			if (query != "" && query != undefined) {
+				var promesa = ProveedoresNit($scope.usuario.id_empresa, query);
+				return promesa;
+			}
+		}
+
+		$scope.buscarProducto = function (query) {
+			if (query != "" && query != undefined) {
+				var promesa = ListaProductosEmpresaUsuario($scope.usuario.id_empresa, query, $scope.usuario.id, 0);
+				return promesa;
+			}
+		};
+
+		$scope.establecerProducto = function (producto, modelo) {
+			$scope.detallePedido = {}
+			producto.tipoProducto = producto['tipoProducto'] == null ? { id: producto['tipoProducto.id'], nombre: producto['tipoProducto.nombre'], nombre_corto: producto['tipoProducto.nombre_corto'] } : producto.tipoProducto;
+			// var centroCostos = $scope.pedido.centroCosto;
+			var inv_disponible = 0
+			if (producto.inventarios.length > 0) {
+				producto.inventarios.forEach(function (inventario) {
+					inv_disponible += inventario.cantidad
+				})
+			}
+			$scope.detallePedido = {
+				producto: producto, precio_unitario: producto.precio_unitario,
+				cantidad: 1, inventario_disponible: inv_disponible
+			};
+			// $scope.cerrarPopup($scope.idModalInventario);
+			// $scope.enfocar('cantidad');
+		}
+
+		$scope.nuevoPedido = function () {
+			$scope.detallesPedido = []
+			$scope.pedido = {}
+			$scope.detallePedido = {}
+			$scope.abrirModalNuevoPedido()
+		}
+
+		$scope.generarPedido = function () {
+			$scope.detallesPedido = []
+			$scope.pedido = { generado: true }
+			$scope.detallePedido = {}
+			var listaproductosProcesados = $scope.calcularViveresDesdeFiltro(true)
+			$scope.detallesPedido = listaproductosProcesados.map(function (detalle) {
+				var inv_disponible = 0
+				if (detalle.producto.inventarios.length > 0) {
+					detalle.producto.inventarios.forEach(function (inventario) {
+						inv_disponible += inventario.cantidad
+					})
+				}
+				var detallePedido = {
+					producto: detalle.producto, precio_unitario: detalle.producto.precio_unitario,
+					cantidad: detalle.cantidad,
+					solicitud: detalle.solicitud
+				};
+				return detallePedido
+			})
+			$scope.abriridDialogoListadoPedido()
+		}
+
+		// $scope.guardarPedido = function (pedido, generado) {
+		// 	blockUI.start()
+		// 	if (pedido !== undefined && detallesPedido) {
+		// 		if (generado) {
+		// 			pedido.solicitudesIds = $scope.solicitudesPedido.map(function (solicitud) {
+		// 				return solicitud
+		// 			})
+		// 		}
+		// 		var prom = GuardarPedido($scope.usuario.id_Empresa, pedido, $scope.usuarioSesion.id)
+		// 		prom.then(function (res) {
+		// 			if (res.hasErr) {
+		// 				$scope.mostrarMensaje(res.mensaje)
+		// 			} else {
+		// 				$scope.mostrarMensaje(res.mensaje)
+		// 				if (generado) {
+		// 					$scope.cerraridDialogoListadoPedido()
+		// 				} else {
+		// 					$scope.cerrarModalNuevoPedido()
+		// 				}
+		// 			}
+		// 			blockUI.stop()
+		// 		}).catch(function (err) {
+		// 			var msg = (err.stack !== undefined && err.stack !== null) ? err.stack : (err.message !== undefined && err.message !== null) ? err.message : 'Se perdió la conexión.'
+		// 			$scope.mostrarMensaje(msg)
+		// 		})
+		// 	} else {
+		// 		$scope.mostrarMensaje('Existe un problema con los datos del pedido, no se puede generar!')
+		// 	}
+		// }
+
+		$scope.agregardetallePedido = function (producto) {
+			$scope.detallesPedido.push(producto)
+			$scope.detallePedido = {}
+			$scope.busqueda.producto = ""
+		}
+
+		$scope.interceptarTecla = function (keyEvent, elemento, esEnfocar) {
+			if (keyEvent.which === 13) {
+				if (esEnfocar) {
+					$scope.enfocar(elemento);
+				} else {
+					$timeout(function () {
+						$('#' + elemento).trigger('click');
+					}, 0);
+				}
+			}
+		}
+
+		$scope.mostrarBusqueda = function () {
+			if ($scope.mostarBusquedaProducto) {
+				$scope.mostarBusquedaProducto = false
+			} else {
+				$scope.mostarBusquedaProducto = true
+			}
+		}
+
+		$scope.obtenerGruposProductosEmpresaUsuario = function () {
+			blockUI.start()
+			var promesa = ListaGruposProductoUsuario($scope.usuarioSesion.id_empresa, $scope.usuarioSesion.id);
+			promesa.then(function (grupos) {
+				blockUI.stop()
+				if (grupos.length > 0) {
+					$scope.gruposProducto = grupos;
+				} else {
+					$scope.gruposProducto = []
+					$scope.mostrarMensaje('Parece que el usuario actual no cuenta con grupos de productos.')
+				}
+			}).catch(function (err) {
+				blockUI.stop()
+				$scope.gruposProducto = []
+				var mensaje = (err.stack !== undefined && err.stack !== null) ? err.stack : (err.data !== undefined && err.data !== null && err.data !== "") ? err.data : 'Error: Se perdio la conexión.'
+				$scope.mostrarMensaje(mensaje)
+			})
+		}
+
 		$scope.obtenerPaginador = function () {
 			blockUI.start();
 			$scope.paginator = Paginator();
@@ -54,8 +200,8 @@ angular.module('agil.controladores')
 			$scope.paginator.callBack = $scope.obtenerSolicitudes;
 			$scope.paginator.getSearch("", $scope.filtro, null);
 			blockUI.stop();
-
 		}
+
 		$scope.obtenerSolicitudes = function () {
 			blockUI.start()
 			$scope.filtro.busqueda = $scope.paginator.search
@@ -87,6 +233,7 @@ angular.module('agil.controladores')
 			}
 			return sucursales;
 		}
+
 		$scope.obtenerAlmacenes = function (idSucursal) {
 			if (idSucursal === undefined) {
 				$scope.filtro.sucursal = undefined
@@ -96,7 +243,6 @@ angular.module('agil.controladores')
 				$scope.almacenes = [];
 				var sucursal = $.grep($scope.sucursales, function (e) { return e.id == idSucursal; })[0];
 				$scope.almacenes = sucursal ? sucursal.almacenes : [];
-
 				if ($scope.solicitud.almacen) {
 					$scope.cargarProductos();
 				} else {
@@ -105,38 +251,33 @@ angular.module('agil.controladores')
 				}
 			}
 		}
+
 		$scope.eliminar = function (solicitud) {
 			$scope.solicitud = solicitud
 			$scope.solicitud.solicitudesProductos.map(function (prod) {
 				var promesa = ListaInventariosProducto(prod.productoSolicitado.id, $scope.solicitud.almacen.id);
 				promesa.then(function (inventarios) {
 					prod.inventarios = inventarios
-					prod.inventario_disponible_utilizado = prod.cantidad
+					// prod.inventario_disponible_utilizado = prod.cantidad
 					if ($scope.solicitud.solicitudesProductos.indexOf(prod) == $scope.solicitud.solicitudesProductos.length - 1) {
 						EliminarSolicitudReposicion.save({ id_solicitud: solicitud.id }, solicitud, function (res) {
-							setTimeout(function () {
-								$scope.$apply(function () {
-									$scope.mostrarMensaje(res.mensaje)
-								});
-							}, 600)
-							// $scope.obtenerSolicitudes()
-							$scope.recargarItemsTabla()
-							$scope.solicitud = undefined
+							if (res.hasErr) {
+								$scope.mostrarMensaje(res.mensaje)
+							} else {
+								$scope.recargarItemsTabla()
+								$scope.solicitud = undefined
+							}
 							blockUI.stop()
-						}, function (error) {
+						}).catch(function (err) {
 							$scope.solicitud = undefined
-							setTimeout(function () {
-								$scope.$apply(function () {
-									$scope.mostrarMensaje(err.stack ? err.stack : err.message)
-								});
-							}, 600)
+							var msg = (err.stack !== undefined && err.stack !== null) ? err.stack : (err.message !== undefined && err.message !== null) ? err.message : (err.data !== null && err.data !== undefined) ? err.data : 'Se perdió la conexión.'
+							$scope.mostrarMensaje(msg)
 							blockUI.stop()
 						})
 					}
 				})
 			})
 			$scope.cerrarConfirmacionEliminacion();
-
 		}
 
 		$scope.ver = function (solicitud) {
@@ -164,61 +305,6 @@ angular.module('agil.controladores')
 				$scope.totalViveresSolicitados.almacen = solicitud.almacen
 				$scope.totalViveresSolicitados.identificador = solicitud.id
 				$scope.totalViveresSolicitados.productos = []
-				// $scope.solicitud.solicitudesProductos.forEach(function (producto) {
-				// 	if (producto.eliminado === false || producto.eliminado === undefined) {
-				// 		if (producto.productoSolicitado.activar_inventario) {
-				// 			var obj = {
-				// 				cantidad_ideal: producto.cantidad,
-				// 				cantidad_real: producto.cantidad,
-				// 				id: producto.id,
-				// 				id_detalle_solicitud_producto: producto.id,
-				// 				id_producto_base: producto.productoSolicitado,
-				// 				productoSolicitudBase: producto.productoSolicitado,
-				// 				total: 0
-				// 			}
-				// 			$scope.totalViveresSolicitados.productos.push(obj)
-				// 			if (producto.detallesIngredientesProducto.length > 0) {
-				// 				producto.detallesIngredientesProducto.map(function (ingrediente) {
-				// 					if (ingrediente.eliminado === undefined || ingrediente.eliminado === false) {
-				// 						if (ingrediente.productoSolicitudBase.activar_inventario) {
-				// 							var objt = {
-				// 								cantidad_ideal: producto.cantidad,
-				// 								cantidad_real: producto.cantidad,
-				// 								id: producto.id,
-				// 								id_detalle_solicitud_producto: producto.id_detalle_solicitud_producto,
-				// 								id_producto_base: producto.productoSolicitado,
-				// 								productoSolicitudBase: producto.productoSolicitado,
-				// 								total: 0
-				// 							}
-				// 							$scope.totalViveresSolicitados.productos.push(objt)
-				// 						}
-				// 					}
-				// 				})
-				// 			}
-				// 		} else {
-				// 			if (producto.detallesIngredientesProducto.length > 0) {
-				// 				producto.detallesIngredientesProducto.map(function (ingrediente) {
-				// 					if (ingrediente.eliminado === undefined || ingrediente.eliminado === false) {
-				// 						if (ingrediente.productoSolicitudBase.activar_inventario) {
-				// 							var objt = {
-				// 								cantidad_ideal: producto.cantidad,
-				// 								cantidad_real: producto.cantidad,
-				// 								id: producto.id,
-				// 								id_detalle_solicitud_producto: producto.id_detalle_solicitud_producto,
-				// 								id_producto_base: producto.productoSolicitado,
-				// 								productoSolicitudBase: producto.productoSolicitado,
-				// 								total: 0
-				// 							}
-				// 							$scope.totalViveresSolicitados.productos.push(objt)
-				// 						}
-				// 					}
-				// 				})
-				// 			}
-				// 		}
-				// 	} else {
-
-				// 	}
-				// })
 			} else {
 				throw new Error('Hubo un problema con la solicitud, no esta definida!')
 				$scope.mostrarMensaje('Hubo un problema con la solicitud, no esta definida!')
@@ -229,13 +315,17 @@ angular.module('agil.controladores')
 				if (producto.eliminado === false || producto.eliminado === undefined) {
 					if (producto.productoSolicitado.activar_inventario) {
 						var obj = {
+							estado: solicitud.activo,
+							almacen: solicitud.almacen,
 							cantidad_ideal: producto.cantidad,
 							cantidad_real: producto.cantidad,
 							id: producto.id,
 							id_detalle_solicitud_producto: producto.id,
 							id_producto_base: producto.productoSolicitado,
 							productoSolicitudBase: producto.productoSolicitado,
-							total: producto.cantidad
+							total: producto.cantidad,
+							monto: solicitud.monto,
+							solicitud: solicitud.id
 						}
 						$scope.totalViveresSolicitados.productos.push(obj)
 					}
@@ -243,32 +333,24 @@ angular.module('agil.controladores')
 						producto.detallesIngredientesProducto.map(function (ingrediente) {
 							if (ingrediente.eliminado === undefined || ingrediente.eliminado === false) {
 								var obj = {
+									estado: solicitud.activo,
+									almacen: solicitud.almacen,
 									cantidad_ideal: ingrediente.cantidad_ideal,
 									cantidad_real: ingrediente.cantidad_real,
 									id: ingrediente.id,
 									id_detalle_solicitud_producto: ingrediente.id_detalle_solicitud_producto,
 									id_producto_base: ingrediente.id_producto_base,
 									productoSolicitudBase: ingrediente.productoSolicitudBase,
-									total: 0
+									total: 0,
+									monto: solicitud.monto,
+									solicitud: solicitud.id
 								}
 								xArr.push(obj)
 							}
 						})
-					} else {
-						var obj = {
-							cantidad_ideal: producto.cantidad,
-							cantidad_real: producto.cantidad,
-							id: undefined,
-							id_detalle_solicitud_producto: producto.id,
-							id_producto_base: producto.id_producto,
-							productoSolicitudBase: producto.productoSolicitado,
-							total: 0
-						}
-						xArr.push(obj)
 					}
 				}
 			})
-
 			var toDrop = []
 			$scope.solicitud.solicitudesProductos.map(function (item) {
 				var indx = 0
@@ -283,31 +365,30 @@ angular.module('agil.controladores')
 					indx += 1
 				}
 			})
-
 			toDrop.forEach(element => {
-				// xArr.slice(element,1)
 				delete xArr[element]
 			});
-			// $scope.totalViveresSolicitados = 
 			xArr.map(function (itm) {
 				if (itm !== undefined) {
 					var obj = {
+						estado: solicitud.activo,
+						almacen: solicitud.almacen,
 						cantidad_ideal: 0,
 						cantidad_real: 0,
 						id: itm.id,
 						id_detalle_solicitud_producto: itm.id_detalle_solicitud_producto,
 						id_producto_base: itm.id_producto_base,
 						productoSolicitudBase: itm.productoSolicitudBase,
-						total: 0
+						total: 0,
+						monto: solicitud.monto,
+						solicitud: solicitud.id
 					}
 					$scope.totalViveresSolicitados.productos.push(obj)
 				}
 			})
-
 			$scope.solicitadoTotalFinalBs = 0
 			var alreadyCount = []
 			$scope.totalViveresSolicitados.productos.map(function (producto) {
-				// producto.total = 0
 				producto.totalMostrar = 0
 				$scope.solicitud.solicitudesProductos.map(function (item) {
 					item.detallesIngredientesProducto.map(function (ingr) {
@@ -368,11 +449,6 @@ angular.module('agil.controladores')
 		}
 
 		$scope.eliminarDetalleVenta = function (detalleVenta, disminuido) {
-			// $scope.productosProcesados.map(function (prod) {
-			// 	if (prod.id == detalleVenta.productoSolicitado.id && !disminuido) {
-			// 		prod.inventario_disponible += detalleVenta.cantidad
-			// 	}
-			// })
 			if (detalleVenta.id === undefined) {
 				$scope.solicitud.solicitudesProductos.splice($scope.solicitud.solicitudesProductos.indexOf(detalleVenta), 1);
 			} else {
@@ -404,11 +480,6 @@ angular.module('agil.controladores')
 		}
 
 		$scope.disminuirDetalleVenta = function (detalleVenta) {
-			// $scope.productosProcesados.map(function (prod) {
-			// 	if (prod.id == detalleVenta.productoSolicitado.id) {
-			// 		prod.inventario_disponible += 1
-			// 	}
-			// })
 			if (detalleVenta.cantidad == 1) {
 				$scope.eliminarDetalleVenta(detalleVenta, true);
 			} else {
@@ -419,16 +490,13 @@ angular.module('agil.controladores')
 
 			}
 		}
+
 		$scope.actualizarTotalReal = function (prod) {
 			prod.detallesIngredientesProducto.map(function (ing) {
 				ing.total = prod.cantidad * ing.cantidad_ideal
 			})
-			// $scope.productosProcesados.map(function (prodProc) {
-			// 	if (prodProc.id == prod.productoSolicitado.id) {
-			// 		prodProc.inventario_disponible =prodProc.inventario_disponible - (prod.cantidad - prod.inventario_disponible_utilizado)
-			// 	}
-			// })
 		}
+
 		$scope.obtenerConfiguracionVentaVista = function () {
 			blockUI.start();
 			var promise = ConfiguracionVentaVistaDatos($scope.usuarioSesion.id_empresa);
@@ -487,7 +555,6 @@ angular.module('agil.controladores')
 							if (produc.eliminado === undefined || produc.eliminado === false) {
 								produc.detallesIngredientesProducto.map(function (ingrediente) {
 									if (ingrediente.eliminado === undefined || ingrediente.eliminado === false) {
-										// ingrediente.total = ingrediente.cantidad_real * produc.cantidad
 										prodMonto += ingrediente.total * ingrediente.productoSolicitudBase.precio_unitario
 									}
 								})
@@ -501,7 +568,9 @@ angular.module('agil.controladores')
 					montobs += prodMonto
 				})
 				solicitud.monto = montobs
-				solicitud.fecha = new Date(solicitud.fecha.split('/').reverse())
+				var fortime = new Date()
+				var dateSplit = solicitud.fecha.split('/').reverse()
+				solicitud.fecha = new Date(dateSplit[0], dateSplit[1] - 1, dateSplit[2], fortime.getHours(), fortime.getMinutes())
 				solicitud.id_usuario = $scope.usuarioSesion.id
 				solicitud.activo = true
 				var prom = Solicitud(solicitud, $scope.usuarioSesion.id_empresa, solicitud.modificar)
@@ -530,10 +599,7 @@ angular.module('agil.controladores')
 				var promesa = ListaInventariosProducto(prod.productoSolicitado.id, $scope.solicitud.almacen.id);
 				promesa.then(function (inventarios) {
 					prod.inventarios = inventarios
-					prod.inventario_disponible_utilizado = prod.cantidad
-					// prod.inventarios.map(function (inv) {
-					// 	prod.inventario_disponible =
-					// })
+					// prod.inventario_disponible_utilizado = prod.cantidad
 				})
 			})
 		}
@@ -570,6 +636,7 @@ angular.module('agil.controladores')
 			}
 			return cantidadTotal;
 		}
+
 		$scope.cargarProductos = function () {
 			var promesa = ProductosOperaciones($scope.usuarioSesion.id_empresa, $scope.solicitud.almacen.id, $scope.usuarioSesion.id);
 			promesa.then(function (productos) {
@@ -583,14 +650,10 @@ angular.module('agil.controladores')
 				} else {
 					$scope.productos = [];
 				}
-
-
 				// ======= save localstorage ====
 				if (angular.isDefined($localStorage.productosProcesados)) {
-
 					// ===== conbinar array productos con storage ====
 					$scope.productosProcesados = productos;
-
 					for (var i = 0; i < $localStorage.productosProcesados.length; i++) {
 						for (var j = 0; j < $scope.productosProcesados.length; j++) {
 							if ($localStorage.productosProcesados[i].id == $scope.productosProcesados[j].id) {
@@ -602,7 +665,6 @@ angular.module('agil.controladores')
 					$scope.productosProcesados = productos;
 				}
 				// ===== Fin save localstorage ====
-
 				setTimeout(function () {
 					aplicarSwiper(4, 3, true, 2);
 				}, 1000);
@@ -621,9 +683,6 @@ angular.module('agil.controladores')
 			};
 			if (producto.activar_inventario) {
 				$scope.cantidadInventario = producto.inventario_disponible
-				// for (var i = 0; i < producto.inventarios.length; i++) {
-				// 	$scope.cantidadInventario = $scope.cantidadInventario + producto.inventarios[i].cantidad;
-				// }
 				var j = 0, encontrado = false;
 				if ($scope.solicitud.solicitudesProductos === undefined) {
 					$scope.solicitud.solicitudesProductos = []
@@ -639,10 +698,6 @@ angular.module('agil.controladores')
 								})
 								encontrado = true;
 								detalleVenta = $scope.solicitud.solicitudesProductos[j];
-								// producto.inventario_disponible -= 1
-								// var indx = $scope.productosProcesados.indexOf(producto)
-								// $scope.productosProcesados[indx].inventarios[0].cantidad -=1
-								// producto.inventarios[i].cantidad -=1
 							}
 						}
 						j++;
@@ -673,7 +728,6 @@ angular.module('agil.controladores')
 									cantidad: 1,
 									detallesIngredientesProducto: ingredientes
 								};
-								// producto.inventario_disponible -= 1
 								$scope.solicitud.solicitudesProductos.push(detalleVenta);
 							} else {
 								$scope.mostrarMensaje('¡Cantidad de inventario insuficiente, inventario disponible: ' + $scope.cantidadInventario + '!');
@@ -686,7 +740,6 @@ angular.module('agil.controladores')
 								cantidad: 1,
 								detallesIngredientesProducto: ingredientes
 							};
-							// producto.inventario_disponible -= 1
 							$scope.solicitud.solicitudesProductos.push(detalleVenta);
 						}
 					} else {
@@ -708,10 +761,6 @@ angular.module('agil.controladores')
 								})
 								encontrado = true;
 								detalleVenta = $scope.solicitud.solicitudesProductos[j];
-								// producto.inventario_disponible -= 1
-								// var indx = $scope.productosProcesados.indexOf(producto)
-								// $scope.productosProcesados[indx].inventarios[0].cantidad -=1
-								// producto.inventarios[i].cantidad -=1
 							}
 						}
 						j++;
@@ -747,12 +796,9 @@ angular.module('agil.controladores')
 					})
 				} else {
 					producto.eliminado = undefined
-
 				}
 			}
-
 			producto.rankin += 1;
-
 			var indice = $scope.productosProcesados.indexOf(producto);
 			$scope.productosProcesados[indice] = producto;
 			$localStorage.productosProcesados = $scope.productosProcesados;
@@ -774,7 +820,7 @@ angular.module('agil.controladores')
 		$scope.cerrarSolicitud = function (solicitud) {
 			blockUI.start()
 			var productosSolicitados = $scope.calcularTotalViveres(solicitud, true)
-				solicitud.listaProductosSolicitados = productosSolicitados
+			solicitud.listaProductosSolicitados = productosSolicitados
 			var prom = CerrarSolicitud(solicitud, $scope.usuarioSesion.id_empresa)
 			prom.then(function (res) {
 				if (res.hasErr) {
@@ -821,25 +867,6 @@ angular.module('agil.controladores')
 			var promesa = ListaGruposProductoUsuario($scope.usuarioSesion.id_empresa, $scope.usuario.id);
 			promesa.then(function (grupos) {
 				$scope.grupos_productos = grupos;
-				/*if ( angular.isDefined($localStorage.grupos_check) ) {
-					$scope.grupos_check=JSON.parse($localStorage.grupos_check);
-					$scope.grupos_check=$scope.generarListaGruposSeleccionados($scope.grupos_productos,$scope.grupos_check);
-				} else {
-					$scope.grupos_check=[];
-					for (var i = 0; i < $scope.grupos_productos.length; i++) {
-						$scope.grupos_productos[i].selected = true;
-						$scope.grupos_check.push($scope.grupos_productos[i]);
-						$localStorage.grupos_check=JSON.stringify($scope.grupos_check);
-					}
-				}
-		
-				$scope.cambiarListaGruposCheck=function(grupo){console.log(grupo);
-					grupo.selected=!grupo.selected;
-					$localStorage.grupos_check=JSON.stringify($scope.grupos_check);
-				}*/
-
-				// ================== codigo filtro grupos checkbox ==============
-
 				// == condicion save localstorage ====
 				if (angular.isDefined($localStorage.grupos_productos)) {
 					$scope.grupos_productos = $scope.generarListaGruposSeleccionados($scope.grupos_productos, $localStorage.grupos_productos);
@@ -848,8 +875,6 @@ angular.module('agil.controladores')
 						$scope.grupos_productos[i].selected = true;
 					}
 				}
-
-
 				//save checked list function
 				$scope.listChecked = [];
 				$scope.saveCheckList = function () {
@@ -860,12 +885,9 @@ angular.module('agil.controladores')
 							$scope.listChecked.push($scope.grupos_productos[i]);
 						}
 					}
-
 					$localStorage.grupos_productos = $scope.grupos_productos;
 				}
-
 				$scope.saveCheckList();
-
 				//checked or unchecked function	
 				$scope.allChecked = false;
 				$scope.checkedUnchecked = function () {
@@ -877,12 +899,14 @@ angular.module('agil.controladores')
 				// =================== fin codigo ============================
 			});
 		}
+
 		if (angular.isDefined($localStorage.color)) {
 			$scope.color = $localStorage.color;
 		} else {
 			$localStorage.color = { 'style': 'red-style', 'stylebutton': 'red-style-button' };
 			$scope.color = { 'style': 'red-style', 'stylebutton': 'red-style-button' };
 		}
+
 		$scope.cambiarColor = function (color, buttonColor) {
 			// == save localstorage ====
 			$localStorage.color = { 'style': color, 'stylebutton': buttonColor };
@@ -896,7 +920,6 @@ angular.module('agil.controladores')
 		}
 
 		$scope.showHideFirstRow = function () {
-
 			if ($(".first-row").css("display") == "none") {
 				$('.first-row').show("slow");
 			} else {
@@ -905,11 +928,11 @@ angular.module('agil.controladores')
 		}
 
 		$scope.dragged = false;
+
 		$scope.proformaClick = function (venta) {
 			if (!$scope.dragged) {
 				$scope.venderProformaDirecto(venta);
 			}
-
 			$scope.dragged = false;
 		};
 
@@ -975,14 +998,12 @@ angular.module('agil.controladores')
 					filtro[key] = 0
 				}
 			}
-
 			$scope.obtenerSolicitudes()
 		}
 
 		$scope.copiar = function (solicitud) {
 			solicitud.id = undefined
 			solicitud.solicitudesProductos = solicitud.solicitudesProductos.map(function (producto) {
-				// producto.elNombre = (producto.producto !== undefined) ? producto.producto.nombre : (producto.productoSolicitado !== undefined) ? producto.productoSolicitado.nombre : productito.productoSolicitudBase.nombre
 				producto.id = undefined
 				producto.id_solicitud = undefined
 				if (producto.detallesIngredientesProducto.length > 0) {
@@ -1010,15 +1031,13 @@ angular.module('agil.controladores')
 		}
 
 		$scope.abrirDialogPanelOperaciones = function () {
-			// $scope.sucursal = {}
-			// $scope.almacen = {}
 			if ($scope.solicitud !== undefined) {
 				if ($scope.solicitud.id === undefined) {
 					$scope.productoSeleccionado = undefined
-					$scope.solicitud.fecha = new Date().toLocaleDateString() //$scope.fechaATexto(new Date())
+					$scope.solicitud.fecha = new Date().toLocaleDateString()
 				} else {
 					if ($scope.solicitud.copia === undefined) {
-						$scope.solicitud.fecha = new Date($scope.solicitud.fecha).toLocaleDateString() //$scope.fechaATexto(new Date($scope.solicitud.fecha))
+						$scope.solicitud.fecha = new Date($scope.solicitud.fecha).toLocaleDateString()
 						if ($scope.solicitud.modificar) {
 
 						} else {
@@ -1026,13 +1045,13 @@ angular.module('agil.controladores')
 						}
 					} else {
 						$scope.solicitud.id = undefined
-						$scope.solicitud.fecha = new Date().toLocaleDateString() //$scope.fechaATexto(new Date())
+						$scope.solicitud.fecha = new Date().toLocaleDateString()
 						$scope.solicitud.activo = true
 					}
 				}
 			} else {
 				$scope.solicitud = {}
-				$scope.solicitud.fecha = new Date().toLocaleDateString() //$scope.fechaATexto(new Date())
+				$scope.solicitud.fecha = new Date().toLocaleDateString()
 				$scope.solicitud.activo = true
 			}
 			$scope.obtenerGruposProductoEmpresa();
@@ -1045,12 +1064,22 @@ angular.module('agil.controladores')
 				$scope.solicitud = undefined
 			}
 			$scope.productoSeleccionado = undefined
-			// $scope.obtenerSolicitudes()
 			$scope.recargarItemsTabla()
 			$scope.productosProcesados = []
 			$scope.cerrarPopup($scope.idDialogDialogPanelOperaciones);
 		}
 
+		$scope.abriridDialogoListadoPedido = function () {
+			$scope.abrirPopup($scope.idDialogoListadoPedido);
+		}
+
+		$scope.cerraridDialogoListadoPedido = function () {
+			$scope.detallesPedido = []
+			$scope.pedido = {}
+			$scope.detallePedido = {}
+			$scope.solicitudesPedido = []
+			$scope.cerrarPopup($scope.idDialogoListadoPedido);
+		}
 		$scope.abrirDialogDatos = function () {
 			$scope.abrirPopup($scope.idDialogDatos);
 		}
@@ -1073,21 +1102,16 @@ angular.module('agil.controladores')
 		}
 
 		$scope.abrirDialogTotalIngredientes = function () {
-			// $scope.totalViveresSolicitados=[]
-
 			$scope.abrirPopup($scope.idDialogTotalIngredientes);
 		}
 		$scope.cerrarDialogTotalIngredientes = function () {
-			// $scope.totalViveresSolicitados = []
 			$scope.alreadyCalculated = false
 			$scope.cerrarPopup($scope.idDialogTotalIngredientes);
 		}
 
 		$scope.generarPdfSolicitud = function (solicitud) {
-
 			blockUI.start();
-			$scope.calcularTotalViveres(solicitud)
-
+			$scope.calcularTotalViveres(solicitud, true)
 			var doc = new PDFDocument({ size: [612, 792], margin: 10, compress: false });
 			var stream = doc.pipe(blobStream());
 			var fechaActual = new Date();
@@ -1099,18 +1123,15 @@ angular.module('agil.controladores')
 			var y = 115, itemsPorPagina = 29, items = 0, pagina = 1, totalPaginas = Math.ceil($scope.totalViveresSolicitados.length / itemsPorPagina);
 			$scope.dibujarCabeceraPDFSolicitud(doc, pagina, totalPaginas);
 
-			for (var i = 0; i < $scope.totalViveresSolicitados.length && items <= itemsPorPagina; i++) {
-				// doc.rect(40, y - 10, 540, 40).stroke();
-
+			for (var i = 0; i < $scope.totalViveresSolicitados.productos.length && items <= itemsPorPagina; i++) {
 				doc.font('Helvetica', 8);
 				doc.text(i + 1, 65, y);
-				doc.text($scope.totalViveresSolicitados[i].productoSolicitudBase.codigo, 100, y);
-				doc.text($scope.totalViveresSolicitados[i].productoSolicitudBase.nombre, 220, y);
-				doc.text($scope.totalViveresSolicitados[i].productoSolicitudBase.unidad_medida, 400, y);
-				doc.text($scope.totalViveresSolicitados[i].totalMostrar.toFixed(2), 500, y);
+				doc.text($scope.totalViveresSolicitados.productos[i].productoSolicitudBase.codigo, 100, y);
+				doc.text($scope.totalViveresSolicitados.productos[i].productoSolicitudBase.nombre, 220, y);
+				doc.text($scope.totalViveresSolicitados.productos[i].productoSolicitudBase.unidad_medida, 400, y);
+				doc.text($scope.totalViveresSolicitados.productos[i].total.toFixed(2), 500, y);
 				y = y + 20;
 				items++;
-
 				if (items > itemsPorPagina) {
 					doc.rect(40, 105, 540, y - 115).stroke();
 					doc.text(pagina + "/" + totalPaginas, 570, y + 15);
@@ -1142,16 +1163,11 @@ angular.module('agil.controladores')
 				window.open(fileURL, '_blank', 'location=no');
 			});
 			blockUI.stop();
-
 		}
+
 		$scope.dibujarCabeceraPDFSolicitud = function (doc, pagina, totalPaginas) {
 			doc.font('Helvetica-Bold', 12);
 			doc.text("CONSUMOS", 0, 25, { align: "center" });
-			// doc.font('Helvetica', 8);
-			//doc.text("Desde  "+reporte.fechaInicioTexto,-70,40,{align:"center"});
-			//doc.text("Hasta "+reporte.fechaFinTexto,70,40,{align:"center"});
-			//doc.text("FOLIO "+pagina,550,25);
-			// doc.rect(40, 60, 540, 40).stroke();
 			doc.font('Helvetica-Bold', 8);
 			doc.text("SUCURSAL : ", -40, 50, { align: "center" });
 			doc.font('Helvetica', 8);
@@ -1163,23 +1179,401 @@ angular.module('agil.controladores')
 			doc.font('Helvetica-Bold', 14);
 			doc.text("N°", 380, 40, { align: "center" });
 			doc.text($scope.totalViveresSolicitados.identificador, 440, 40, { align: "center" });
+			doc.rect(40, 80, 540, 25).stroke();
+			doc.font('Helvetica-Bold', 8);
+			doc.text("Nº", 65, 90);
+			doc.text("Código Ítem", 100, 90);
+			doc.text("Producto", 220, 90);
+			doc.text("Unidad medida", 380, 90);
+			doc.text("Cantidad solicitada", 480, 90);
+		}
+
+		$scope.calcularViveresDesdeFiltro = function (UnDatoPorProducto) {
+			var detallesSolicitudes = []
+			$scope.totalViveresSolicitados = {}
+			$scope.solicitudesPedido = []
+			$scope.solicitudesOperaciones.forEach(function (solicitud, i) {
+				if ((!solicitud.activo && UnDatoPorProducto === undefined)) {
+					var desdd = $scope.calcularTotalViveres(solicitud, true)
+					detallesSolicitudes.push(desdd)
+				} else if (UnDatoPorProducto && !solicitud.id_pedido) {
+					$scope.solicitudesPedido.push(solicitud.id)
+					var desdd = $scope.calcularTotalViveres(solicitud, true)
+					detallesSolicitudes.push(desdd)
+				}
+			})
+			var productosParaSerProcesados = []
+			detallesSolicitudes.forEach(function (productoParaProcesar) {
+				productoParaProcesar.productos.forEach(function (producto) {
+					var productoSinProcesado = {
+						almacen: producto.almacen,
+						sucursal: producto.almacen.sucursal,
+						cantidad: producto.cantidad_real,
+						fecha: productoParaProcesar.fecha,
+						hora_fecha: productoParaProcesar.fecha,
+						usuario: productoParaProcesar.usuario,
+						estado: producto.estado,
+						producto: producto.productoSolicitudBase,
+						costo: (producto.productoSolicitudBase.inventarios ? producto.productoSolicitudBase.inventarios.length ? producto.productoSolicitudBase.inventarios[0].costo_unitario : 0 : 0),
+						grupo: producto.productoSolicitudBase.grupo,
+						subgrupo: producto.productoSolicitudBase.subgrupo,
+						total: (producto.productoSolicitudBase.inventarios ? producto.productoSolicitudBase.inventarios.length ? producto.productoSolicitudBase.inventarios[0].costo_unitario : 0 : 0) * producto.cantidad_real,
+						monto: producto.monto,
+						solicitud: producto.solicitud
+					}
+					productosParaSerProcesados.push(productoSinProcesado)
+				})
+			})
+			if (UnDatoPorProducto) {
+				var productosReporteDetalle = []
+				while (productosParaSerProcesados.length > 0) {
+					var dato = productosParaSerProcesados.pop()
+					if (productosReporteDetalle.length === 0) {
+						productosReporteDetalle.push(dato)
+					} else {
+						var encontrado = false
+						var indx
+						productosReporteDetalle.forEach(function (producto, i) {
+							if (producto.producto.id == dato.producto.id && !encontrado) {
+								encontrado = true
+								indx = i
+							}
+						})
+						if (encontrado && indx !== undefined) {
+							productosReporteDetalle[indx].cantidad += dato.cantidad
+							productosReporteDetalle[indx].total = productosReporteDetalle[indx].cantidad * productosReporteDetalle[indx].costo
+						} else {
+							productosReporteDetalle.push(dato)
+						}
+					}
+				}
+				return productosReporteDetalle
+			} else {
+				return productosParaSerProcesados
+			}
+		}
+
+		$scope.reporteExcel = function (pdf) {
+			blockUI.start()
+			if ($scope.imprimir.detalle) {
+				var cabecera = ["Nro.", "Sucursal", "Almacén", "Hora-fecha", "Usuario", "Estado", "Detalle", "Unidad", "Grupo", "Subgrupo", "Cantidad", "Costo", "Total"]
+				var data = []
+				data.push(cabecera)
+				var reporteEx = $scope.calcularViveresDesdeFiltro()
+				var columns = [];
+				for (var i = 0; i < reporteEx.length; i++) {
+					columns = [];
+					columns.push(i + 1);
+					columns.push(reporteEx[i].almacen.sucursal.nombre);
+					columns.push(reporteEx[i].almacen.nombre);
+					// columns.push(new Date(reporteEx[i].fecha).toLocaleDateString());
+					columns.push(new Date(reporteEx[i].fecha).toLocaleTimeString() + ' ' + new Date(reporteEx[i].fecha).toLocaleDateString());
+					columns.push(reporteEx[i].usuario.nombre_usuario);
+					columns.push((reporteEx[i].estado ? 'Abierto' : 'Cerrado'));
+					columns.push(reporteEx[i].producto.nombre);
+					columns.push(reporteEx[i].producto.unidad_medida);
+					columns.push(reporteEx[i].grupo.nombre);
+					columns.push(reporteEx[i].subgrupo.nombre);
+					columns.push(reporteEx[i].cantidad);
+					columns.push(reporteEx[i].costo);
+					columns.push(reporteEx[i].total.toFixed(2));
+					data.push(columns);
+				}
+			} else {
+				var cabecera = ["Nro.", "Sucursal", "Hora-fecha", "Monto", "Usuario", "Estado"]
+				var data = []
+				data.push(cabecera)
+				// var reporteEx = $scope.calcularViveresDesdeFiltro()
+				var columns = [];
+				for (var i = 0; i < $scope.solicitudesOperaciones.length; i++) {
+					columns = [];
+					columns.push(i + 1);
+					columns.push($scope.solicitudesOperaciones[i].almacen.sucursal.nombre);
+					// columns.push(new Date($scope.solicitudesOperaciones[i].fecha).toLocaleDateString());
+					columns.push(new Date($scope.solicitudesOperaciones[i].fecha).toLocaleTimeString() + ' ' + new Date($scope.solicitudesOperaciones[i].fecha).toLocaleDateString());
+					columns.push($scope.solicitudesOperaciones[i].monto);
+					columns.push($scope.solicitudesOperaciones[i].usuario.nombre_usuario);
+					columns.push(($scope.solicitudesOperaciones[i].activo ? 'Abierto' : 'Cerrado'));
+					data.push(columns);
+				}
+			}
+			if (pdf) {
+				$scope.reportePdf(data)
+			} else {
+				var ws_name = "SheetJS";
+				var wb = new Workbook()
+				var ws = sheet_from_array_of_arrays(data);
+				var wscols = [
+					{ wch: 5 },
+					{ wch: 18 },
+					{ wch: 18 },
+					{ wch: 12 },
+					{ wch: 15 },
+					{ wch: 15 },
+					{ wch: 12 },
+					{ wch: 25 },
+					{ wch: 12 },
+					{ wch: 12 },
+					{ wch: 12 }
+				];
+				ws['!cols'] = wscols;
+				ws['!rows'] = [{ hpx: 28, level: 3 }]
+				wb.SheetNames.push(ws_name);
+				wb.Sheets[ws_name] = ws;
+				var wbout = XLSX.write(wb, { bookType: 'xlsx', bookSST: false, type: 'binary' });
+				saveAs(new Blob([s2ab(wbout)], { type: "application/octet-stream" }), "REPORTE OPERACIONES.xlsx");
+				blockUI.stop();
+			}
+		}
+
+		$scope.reportePdf = function (reporte) {
+			var doc = new PDFDocument({ size: 'letter', margin: 10, compress: false }); //[612, 792]
+			var stream = doc.pipe(blobStream());
+			var fechaActual = new Date();
+			var min = fechaActual.getMinutes();
+			if (min < 10) {
+				min = "0" + min;
+			}
+			$scope.posXforPdf = []
+			doc.font('Helvetica', 8);
+			var x = 65, y = 115, itemsPorPagina = 29, items = 0, pagina = 1, totalPaginas = Math.ceil(reporte.length / itemsPorPagina);
+			$scope.dibujarCabeceraReportePdf(doc, reporte)
+			if ($scope.imprimir.detalle) {
+				x = 50
+				for (var i = 0; i < reporte.length && items <= itemsPorPagina; i++) {
+					var px = x
+					doc.font('Helvetica', 8);
+					if (i > 0) {
+						for (var j = 0; j < reporte[i].length; j++) {
+							doc.text(reporte[i][j], px, y, { width: 40 }, { align: "center" });
+							if (j == 0) {
+								px = $scope.posXforPdf[j]
+							} else {
+								px = $scope.posXforPdf[j]
+							}
+						}
+						y = y + 20;
+						items++;
+					}
+					if (items > itemsPorPagina) {
+						doc.rect(40, 105, 540, y - 115).stroke();
+						doc.text(pagina + "/" + totalPaginas, 570, y + 15);
+						doc.font('Helvetica', 6);
+						// doc.text("RESPONSABLE: " + $scope.usuarioSesion.nombre_usuario, 45, y + 10);
+						// doc.text("SOLICITANTE: " + $scope.reporte.usuario.persona.nombre_completo, 345, y + 10);
+						doc.text("IMPRESION : " + fechaActual.getDate() + "/" + (fechaActual.getMonth() + 1) + "/" + fechaActual.getFullYear() + " Hr. " + fechaActual.getHours() + ":" + min, 175, y + 10);
+						doc.addPage({ size: [612, 792], margin: 10 });
+						y = 115;
+						items = 0;
+						pagina = pagina + 1;
+						$scope.dibujarCabeceraPDFSolicitud(doc, pagina, totalPaginas);
+					}
+				}
+			} else {
+				for (var i = 0; i < reporte.length && items <= itemsPorPagina; i++) {
+					var px = x
+					doc.font('Helvetica', 8);
+					if (i > 0) {
+						for (var j = 0; j < reporte[i].length; j++) {
+							doc.text(reporte[i][j], px, y, { width: 40 });
+							if (j == 0) {
+								px += 30
+							} else {
+								px += 60
+							}
+						}
+						y = y + 20;
+						items++;
+					}
+					if (items > itemsPorPagina) {
+						doc.rect(40, 105, 540, y - 115).stroke();
+						doc.text(pagina + "/" + totalPaginas, 570, y + 15);
+						doc.font('Helvetica', 6);
+						// doc.text("RESPONSABLE: " + $scope.usuarioSesion.nombre_usuario, 45, y + 10);
+						// doc.text("SOLICITANTE: " + $scope.reporte.usuario.persona.nombre_completo, 345, y + 10);
+						doc.text("IMPRESION : " + fechaActual.getDate() + "/" + (fechaActual.getMonth() + 1) + "/" + fechaActual.getFullYear() + " Hr. " + fechaActual.getHours() + ":" + min, 175, y + 10);
+						doc.addPage({ size: [612, 792], margin: 10 });
+						y = 115;
+						items = 0;
+						pagina = pagina + 1;
+						$scope.dibujarCabeceraPDFSolicitud(doc, pagina, totalPaginas);
+					}
+				}
+			}
+			doc.rect(40, 105, 540, 650).stroke();
+			var fechaActual = new Date();
+			var min = fechaActual.getMinutes();
+			if (min < 10) {
+				min = "0" + min;
+			}
+			doc.text(pagina + "/" + totalPaginas, 570, 765);
+			doc.font('Helvetica', 6);
+			// doc.text("RESPONSABLE: " + $scope.usuarioSesion.nombre_usuario, 45, y + 5);
+			// doc.text("SOLICITANTE: " + $scope.totalViveresSolicitados.usuario.persona.nombre_completo, 345, y + 5);
+			doc.text("IMPRESION : " + fechaActual.getDate() + "/" + (fechaActual.getMonth() + 1) + "/" + fechaActual.getFullYear() + " Hr. " + fechaActual.getHours() + ":" + min, 175, 765);
+			doc.end();
+			stream.on('finish', function () {
+				var fileURL = stream.toBlobURL('application/pdf');
+				window.open(fileURL, '_blank', 'location=no');
+			});
+			blockUI.stop();
+		}
+
+		$scope.dibujarCabeceraReportePdf = function (doc, reporte) {
+			doc.font('Helvetica-Bold', 12);
+			doc.text("REPORTE OPERACIONES", 0, 25, { align: "center" });
+			// doc.font('Helvetica', 8);
+			//doc.text("Desde  "+reporte.fechaInicioTexto,-70,40,{align:"center"});
+			//doc.text("Hasta "+reporte.fechaFinTexto,70,40,{align:"center"});
+			//doc.text("FOLIO "+pagina,550,25);
+			// // doc.rect(40, 60, 540, 40).stroke();
+			// doc.font('Helvetica-Bold', 8);
+			// doc.text("SUCURSAL : ", -40, 50, { align: "center" });
+			// doc.font('Helvetica', 8);
+			// doc.text($scope.totalViveresSolicitados.sucursal.nombre, 60, 50, { align: "center" });
+			doc.font('Helvetica-Bold', 8);
+			doc.text("FECHA : ", 40, 60, { width: 40 });
+			doc.font('Helvetica', 8);
+			doc.text(new Date().toLocaleDateString(), 75, 60, { width: 40 });
+			// doc.font('Helvetica-Bold', 14);
+			// doc.text("N°", 380, 40, { align: "center" });
+			// doc.text($scope.totalViveresSolicitados.identificador, 440, 40, { align: "center" });
 			// doc.text("NIT : ", 440, 75);
 			// doc.font('Helvetica', 8);
 			//doc.text(datos.empresa.razon_social,195,75);
 			//doc.text(datos.empresa.nit,460,75);		
 			doc.rect(40, 80, 540, 25).stroke();
 			doc.font('Helvetica-Bold', 8);
+			if ($scope.imprimir.detalle) {
+				px = 50
+				for (let i = 0; i < reporte[0].length; i++) {
+					doc.text(reporte[0][i], px, 90);
+					if (i == 0) {
+						px += reporte[0][i].length * 4 + 5
+						$scope.posXforPdf.push(px)
+					} else {
+						if ($scope.imprimir.detalle) {
+							px += reporte[0][i].length * 4 + 15
+							$scope.posXforPdf.push(px)
+						} else {
+							px += reporte[0][i].length * 4 + 15
+							$scope.posXforPdf.push(px)
+						}
+					}
+				}
+			} else {
+				px = 65
+				for (let i = 0; i < reporte[0].length; i++) {
+					doc.text(reporte[0][i], px, 90);
+					if (i == 0) {
+						px += 20
+						$scope.posXforPdf.push(px)
+					} else {
+						if ($scope.imprimir.detalle) {
+							px += 40
+							// $scope.posXforPdf.push(px) 
+						} else {
+							px += 60
+							// $scope.posXforPdf.push(px)
+						}
+					}
+				}
+			}
 
-			doc.text("Nº", 65, 90);
-			doc.text("Código Ítem", 100, 90);
-			doc.text("Producto", 220, 90);
-			doc.text("Unidad medida", 380, 90);
-			doc.text("Cantidad solicitada", 480, 90);
-			// doc.text("Lote", 405, 110, { width: 35 });
-			// doc.text("Descuento", 440, 110);
-			// doc.text("Recargo", 490, 110);
-			// doc.text("Total", 535, 110);
-			// doc.font('Helvetica', 8);
+
+			// if ($scope.imprimir.detalle) {
+			// 	doc.font('Helvetica-Bold', 8);
+			// 	doc.text("Nº", 65, 90);
+			// 	doc.text("Sucursal", 75, 90);
+			// 	doc.text("Almacén", 85, 90)
+			// 	doc.text("Fecha", 95, 90);
+			// 	doc.text("Hora-fecha", 105, 90);
+			// 	doc.text("Usuario", 115, 90);
+			// 	doc.text("Estado", 125, 90);
+			// 	doc.text("Detalle", 135, 90);
+			// 	doc.text("Unidad", 145, 90);
+			// 	doc.text("Grupo", 155, 90);
+			// 	doc.text("Subgrupo", 165, 90);
+			// 	doc.text("Cantidad", 175, 90);
+			// 	doc.text("Costo", 185, 90);
+			// 	doc.text("Total", 195, 90);
+			// } else {
+			// 	doc.font('Helvetica-Bold', 8);
+			// 	doc.text("Nº", 65, 90);
+			// 	doc.text("Sucursal", 75, 90);
+			// 	doc.text("Fecha", 95, 90);
+			// 	doc.text("Hora-fecha", 105, 90);
+			// 	doc.text("Monto", 115, 90);
+			// 	doc.text("Usuario", 125, 90);
+			// 	doc.text("Estado", 135, 90);
+			// }
+			doc.font('Helvetica', 8);
 		}
+
+		$scope.abrirModalNuevoPedido = function () {
+			$scope.abrirPopup($scope.idDialogoNuevoPedido);
+		}
+
+		$scope.cerrarModalNuevoPedido = function () {
+			$scope.detallesPedido = []
+			$scope.pedido = {}
+			$scope.detallePedido = {}
+			$scope.solicitudesPedido = []
+			$scope.cerrarPopup($scope.idDialogoNuevoPedido);
+		}
+
+		$scope.eliminarDetallePedido = function (detalle) {
+			if (detalle.id) {
+				detalle.eliminar = true
+			} else {
+				$scope.detallesPedido.splice($scope.detallesPedido.indexOf(detalle), 1);
+			}
+		}
+
+		$scope.guardarPedido = function (pedido, generado) {
+			blockUI.start()
+			if (pedido !== undefined && $scope.detallesPedido.length > 0) {
+				if (generado) {
+					pedido.solicitudesIds = $scope.solicitudesPedido.map(function (solicitud) {
+						return solicitud
+					})
+				}
+				var fortime = new Date()
+				var dateSplit = pedido.fecha.split('/').reverse()
+				var sendPedido = {
+					fecha: new Date(dateSplit[0], dateSplit[1] - 1, dateSplit[2], fortime.getHours(), fortime.getMinutes()),
+					sucursal: pedido.sucursal,
+					almacen: pedido.almacen,
+					proveedor: pedido.proveedor.id,
+					observacion: pedido.observacion,
+					grupo: (pedido.grupo !== undefined ? pedido.grupo !== null ? pedido.grupo : 0 : 0),
+					detallesPedido: $scope.detallesPedido,
+					usuario: $scope.usuarioSesion.id,
+					solicitudesIds: pedido.generado ? $scope.solicitudesPedido : []
+				}
+				var prom = GuardarPedido($scope.usuario.id_empresa, sendPedido, $scope.usuarioSesion.id)
+				prom.then(function (res) {
+					if (res.hasErr) {
+						$scope.mostrarMensaje(res.mensaje)
+					} else {
+						$scope.mostrarMensaje(res.mensaje)
+						$scope.recargarItemsTabla()
+					}
+					blockUI.stop()
+				}).catch(function (err) {
+					blockUI.stop()
+					var msg = (err.stack !== undefined && err.stack !== null) ? err.stack : (err.data !== undefined && err.data !== null) ? err.data : (err.message !== undefined && err.message !== null) ? err.message : 'Se perdió la conexión.'
+					$scope.mostrarMensaje(msg)
+				})
+			} else {
+				if ($scope.detallesPedido.length > 0) {
+					$scope.mostrarMensaje('Existe un problema con los datos del pedido, no se puede generar!')
+				} else {
+					$scope.mostrarMensaje('Existe un problema con los datos del pedido, no se puede generar sin lista de productos!')
+				}
+				blockUI.stop()
+			}
+		}
+
 		$scope.inicio()
 	})

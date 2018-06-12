@@ -12,10 +12,6 @@ module.exports = function (sequelize, Sequelize) {
             type: Sequelize.INTEGER,
             field: 'producto'
         },
-        id_solicitud: {
-            type: Sequelize.INTEGER,
-            field: 'solicitud'
-        },
         cantidad: {
             type: Sequelize.DECIMAL(20, 4),
             field: 'cantidad'
@@ -23,6 +19,14 @@ module.exports = function (sequelize, Sequelize) {
         recibido: {
             type: Sequelize.BOOLEAN,
             field: 'recibido'
+        },
+        observacion: {
+            type: Sequelize.STRING,
+            field: 'observacion'
+        },
+        id_solicitud: {
+            type: Sequelize.INTEGER,
+            field: 'solicitud'
         },
         eliminado: {
             type: Sequelize.BOOLEAN,

@@ -813,27 +813,31 @@ angular.module('agil.controladores')
 			promesa.then(function (datos) {
 				var compras = datos.compras;
 				var linea = "";
+				var numeral = 1
 				for (var i = 0; i < compras.length; i++) {
-					compras[i].fecha = new Date(compras[i].fecha);
-					linea = linea + "1|";
-					linea = linea + (i + 1) + "|";
-					var fecha = (compras[i].fecha.getDate() < 10) ? "0" + compras[i].fecha.getDate() : compras[i].fecha.getDate();
-					var mes = ((compras[i].fecha.getMonth() + 1) < 10) ? "0" + (compras[i].fecha.getMonth() + 1) : (compras[i].fecha.getMonth() + 1);
-					linea = linea + fecha + "/" + mes + "/" + compras[i].fecha.getFullYear() + "\|";
-					linea = linea + compras[i].proveedor.nit + "|";
-					linea = linea + compras[i].proveedor.razon_social + "|";
-					linea = linea + compras[i].factura + "|";
-					linea = linea + "0" + "|";
-					linea = linea + compras[i].autorizacion + "|";
-					linea = linea + compras[i].importe + "|";
-					linea = linea + 0 + "|";
-					linea = linea + compras[i].importe + "|";
-					var descuento = compras[i].descuento - compras[i].recargo + compras[i].ice + compras[i].excento;
-					linea = linea + descuento + "|";
-					linea = linea + compras[i].total + "|";
-					linea = linea + (Math.round((compras[i].total * 0.13) * 100) / 100) + "|";
-					linea = linea + compras[i].codigo_control + "|";
-					linea = linea + "1" + "\n"
+					if (compras[i].movimiento.clase.nombre !== $scope.diccionario.MOVING_POR_COMPRA_SIN_FACTURA &&compras[i].movimiento.clase.nombre !== $scope.diccionario.MOVING_POR_RETENCION_BIENES) {
+						compras[i].fecha = new Date(compras[i].fecha);
+						linea = linea + "1|";
+						linea = linea + (numeral) + "|";
+						var fecha = (compras[i].fecha.getDate() < 10) ? "0" + compras[i].fecha.getDate() : compras[i].fecha.getDate();
+						var mes = ((compras[i].fecha.getMonth() + 1) < 10) ? "0" + (compras[i].fecha.getMonth() + 1) : (compras[i].fecha.getMonth() + 1);
+						linea = linea + fecha + "/" + mes + "/" + compras[i].fecha.getFullYear() + "\|";
+						linea = linea + compras[i].proveedor.nit + "|";
+						linea = linea + compras[i].proveedor.razon_social + "|";
+						linea = linea + compras[i].factura + "|";
+						linea = linea + "0" + "|";
+						linea = linea + compras[i].autorizacion + "|";
+						linea = linea + compras[i].importe + "|";
+						linea = linea + 0 + "|";
+						linea = linea + compras[i].importe + "|";
+						var descuento = compras[i].descuento - compras[i].recargo + compras[i].ice + compras[i].excento;
+						linea = linea + descuento + "|";
+						linea = linea + compras[i].total + "|";
+						linea = linea + (Math.round((compras[i].total * 0.13) * 100) / 100) + "|";
+						linea = linea + compras[i].codigo_control + "|";
+						linea = linea + "1" + "\n"
+						numeral++
+					}
 				}
 				var file = new Blob([linea.replace(/\n/g, "\r\n")], { type: 'text/plain' });
 				saveAs(file, "compras_" + reporte.mes.split("-")[0] + reporte.gestion + "_" + datos.empresa.nit + ".txt");
@@ -848,48 +852,52 @@ angular.module('agil.controladores')
 				var compras = datos.compras;
 				var data = [["N°", "FECHA DE LA FACTURA O DUI", "NIT PROVEEDOR", "NOMBRE Y APELLIDOS/RAZON SOCIAL", "N° DE LA FACTURA", "N° DE DUI", "N° DE AUTORIZACION", "IMPORTE TOTAL DE LA COMPRA", "IMPORTE NO SUJETO A CREDITO FISCAL", "SUBTOTAL", "DESCUENTOS, BONIFICACIONES Y REBAJAS OBTENIDAS", "IMPORTE BASE PARA CREDITO FISCAL", "CREDITO FISCAL", "CODIGO DE CONTROL", "TIPO DE COMPRA"]]
 				var sumaImporte = 0, sumaImporteNo = 0, sumaTotal = 0, sumaDescuentos = 0, sumaImporteBase = 0, sumaCredito = 0;
+				var numeral = 1
 				for (var i = 0; i < compras.length; i++) {
 					var columns = [];
-					compras[i].fecha = new Date(compras[i].fecha);
-					columns.push(i + 1);
-					columns.push(compras[i].fecha.getDate() + "/" + (compras[i].fecha.getMonth() + 1) + "/" + compras[i].fecha.getFullYear());
-					columns.push(compras[i].proveedor.nit);
-					columns.push(compras[i].proveedor.razon_social);
-					columns.push(compras[i].factura);
-					columns.push(0);
-					columns.push(compras[i].autorizacion);
-					columns.push(compras[i].importe);
-					columns.push(0);
-					columns.push(compras[i].importe);
-					var descuento = compras[i].descuento - compras[i].recargo + compras[i].ice + compras[i].excento;
-					columns.push(descuento);
-					columns.push(compras[i].total);
-					columns.push(Math.round((compras[i].total * 0.13) * 100) / 100);
-					columns.push(compras[i].codigo_control);
-					columns.push(1);
-					sumaImporte = sumaImporte + compras[i].importe;
-					sumaImporteNo = 0;
-					sumaTotal = sumaTotal + compras[i].importe;
-					sumaDescuentos = sumaDescuentos + descuento;
-					sumaImporteBase = sumaImporteBase + compras[i].total;
-					sumaCredito = sumaCredito + (Math.round((compras[i].total * 0.13) * 100) / 100);
-					data.push(columns);
-					if (i + 1 == compras.length) {
-						columns = [];
-						columns.push("");
-						columns.push("");
-						columns.push("");
-						columns.push("");
-						columns.push("");
-						columns.push("");
-						columns.push("TOTALES");
-						columns.push(Math.round((sumaImporte) * 100) / 100);
-						columns.push(Math.round((sumaImporteNo) * 100) / 100);
-						columns.push(Math.round((sumaTotal) * 100) / 100);
-						columns.push(Math.round((sumaDescuentos) * 100) / 100);
-						columns.push(Math.round((sumaImporteBase) * 100) / 100);
-						columns.push(Math.round((sumaCredito) * 100) / 100);
+					if (compras[i].movimiento.clase.nombre !== $scope.diccionario.MOVING_POR_COMPRA_SIN_FACTURA &&compras[i].movimiento.clase.nombre !== $scope.diccionario.MOVING_POR_RETENCION_BIENES) {
+						compras[i].fecha = new Date(compras[i].fecha);
+						columns.push(numeral);
+						columns.push(compras[i].fecha.getDate() + "/" + (compras[i].fecha.getMonth() + 1) + "/" + compras[i].fecha.getFullYear());
+						columns.push(compras[i].proveedor.nit);
+						columns.push(compras[i].proveedor.razon_social);
+						columns.push(compras[i].factura);
+						columns.push(0);
+						columns.push(compras[i].autorizacion);
+						columns.push(compras[i].importe);
+						columns.push(0);
+						columns.push(compras[i].importe);
+						var descuento = compras[i].descuento - compras[i].recargo + compras[i].ice + compras[i].excento;
+						columns.push(descuento);
+						columns.push(compras[i].total);
+						columns.push(Math.round((compras[i].total * 0.13) * 100) / 100);
+						columns.push(compras[i].codigo_control);
+						columns.push(1);
+						sumaImporte = sumaImporte + compras[i].importe;
+						sumaImporteNo = 0;
+						sumaTotal = sumaTotal + compras[i].importe;
+						sumaDescuentos = sumaDescuentos + descuento;
+						sumaImporteBase = sumaImporteBase + compras[i].total;
+						sumaCredito = sumaCredito + (Math.round((compras[i].total * 0.13) * 100) / 100);
 						data.push(columns);
+						if (i + 1 == compras.length) {
+							columns = [];
+							columns.push("");
+							columns.push("");
+							columns.push("");
+							columns.push("");
+							columns.push("");
+							columns.push("");
+							columns.push("TOTALES");
+							columns.push(Math.round((sumaImporte) * 100) / 100);
+							columns.push(Math.round((sumaImporteNo) * 100) / 100);
+							columns.push(Math.round((sumaTotal) * 100) / 100);
+							columns.push(Math.round((sumaDescuentos) * 100) / 100);
+							columns.push(Math.round((sumaImporteBase) * 100) / 100);
+							columns.push(Math.round((sumaCredito) * 100) / 100);
+							data.push(columns);
+						}
+						numeral++
 					}
 				}
 
@@ -914,75 +922,79 @@ angular.module('agil.controladores')
 				// draw some text
 				$scope.dibujarCabeceraPDFLibroCompras(doc, datos, reporte, 1);
 				doc.font('Helvetica', 8);
+				var numeral = 1
 				var y = 170, itemsPorPagina = 12, items = 0, pagina = 1;
 				var sumaImporte = 0, sumaImporteNo = 0, sumaTotal = 0, sumaDescuentos = 0, sumaImporteBase = 0, sumaCredito = 0;
 				var sumaSubImporte = 0, sumaSubImporteNo = 0, sumaSubTotal = 0, sumaSubDescuentos = 0, sumaSubImporteBase = 0, sumaSubCredito = 0;
 				for (var i = 0; i < compras.length && items <= itemsPorPagina; i++) {
-					doc.rect(40, y - 10, 720, 30).stroke();
-					compras[i].fecha = new Date(compras[i].fecha);
-					doc.text(i + 1, 45, y);
-					doc.text(compras[i].fecha.getDate() + "/" + (compras[i].fecha.getMonth() + 1) + "/" + compras[i].fecha.getFullYear(), 65, y);
-					doc.text(compras[i].proveedor.nit, 110, y);
-					doc.text(compras[i].proveedor.razon_social, 165, y - 6, { width: 100 });
-					doc.text(compras[i].factura, 275, y);
-					doc.text(0, 320, y);
-					doc.text(compras[i].autorizacion, 335, y);
-					doc.text(compras[i].importe, 410, y);
-					doc.text(0, 450, y);
-					doc.text(compras[i].importe, 480, y);
-					var descuento = compras[i].descuento - compras[i].recargo + compras[i].ice + compras[i].excento;
-					doc.text(descuento, 520, y);
-					doc.text(compras[i].total, 565, y);
-					doc.text(Math.round((compras[i].total * 0.13) * 100) / 100, 605, y);
-					doc.text(compras[i].codigo_control, 640, y);
-					doc.text(1, 740, y);
-					y = y + 30;
-					sumaSubImporte = sumaSubImporte + compras[i].importe;
-					sumaSubImporteNo = 0;
-					sumaSubTotal = sumaSubTotal + compras[i].importe;
-					sumaSubDescuentos = sumaSubDescuentos + descuento;
-					sumaSubImporteBase = sumaSubImporteBase + compras[i].total;
-					sumaSubCredito = sumaSubCredito + (Math.round((compras[i].total * 0.13) * 100) / 100);
-					sumaImporte = sumaImporte + compras[i].importe;
-					sumaImporteNo = 0;
-					sumaTotal = sumaTotal + compras[i].importe;
-					sumaDescuentos = sumaDescuentos + descuento;
-					sumaImporteBase = sumaImporteBase + compras[i].total;
-					sumaCredito = sumaCredito + (Math.round((compras[i].total * 0.13) * 100) / 100);
-					items++;
-
-					if (items == itemsPorPagina || i + 1 == compras.length) {
-						doc.font('Helvetica-Bold', 8);
-						doc.text("SUBTOTALES", 320, y);
-						doc.text(Math.round((sumaSubImporte) * 100) / 100, 400, y);
-						doc.text(Math.round((sumaSubImporteNo) * 100) / 100, 450, y);
-						doc.text(Math.round((sumaSubTotal) * 100) / 100, 480, y);
-						doc.text(Math.round((sumaSubDescuentos) * 100) / 100, 520, y);
-						doc.text(Math.round((sumaSubImporteBase) * 100) / 100, 565, y);
-						doc.text(Math.round((sumaSubCredito) * 100) / 100, 605, y);
+					if (compras[i].movimiento.clase.nombre !== $scope.diccionario.MOVING_POR_COMPRA_SIN_FACTURA && compras[i].movimiento.clase.nombre !== $scope.diccionario.MOVING_POR_RETENCION_BIENES) {
 						doc.rect(40, y - 10, 720, 30).stroke();
-						doc.font('Helvetica', 8);
-						sumaSubImporte = 0; sumaSubImporteNo = 0; sumaSubTotal = 0; sumaSubDescuentos = 0; sumaSubImporteBase = 0; sumaSubCredito = 0;
+						compras[i].fecha = new Date(compras[i].fecha);
+						doc.text(numeral, 45, y);
+						doc.text(compras[i].fecha.getDate() + "/" + (compras[i].fecha.getMonth() + 1) + "/" + compras[i].fecha.getFullYear(), 65, y);
+						doc.text(compras[i].proveedor.nit, 110, y);
+						doc.text(compras[i].proveedor.razon_social, 165, y - 6, { width: 100 });
+						doc.text(compras[i].factura, 275, y);
+						doc.text(0, 320, y);
+						doc.text(compras[i].autorizacion, 335, y);
+						doc.text(compras[i].importe, 410, y);
+						doc.text(0, 450, y);
+						doc.text(compras[i].importe, 480, y);
+						var descuento = compras[i].descuento - compras[i].recargo + compras[i].ice + compras[i].excento;
+						doc.text(descuento, 520, y);
+						doc.text(compras[i].total, 565, y);
+						doc.text(Math.round((compras[i].total * 0.13) * 100) / 100, 605, y);
+						doc.text(compras[i].codigo_control, 640, y);
+						doc.text(1, 740, y);
+						y = y + 30;
+						sumaSubImporte = sumaSubImporte + compras[i].importe;
+						sumaSubImporteNo = 0;
+						sumaSubTotal = sumaSubTotal + compras[i].importe;
+						sumaSubDescuentos = sumaSubDescuentos + descuento;
+						sumaSubImporteBase = sumaSubImporteBase + compras[i].total;
+						sumaSubCredito = sumaSubCredito + (Math.round((compras[i].total * 0.13) * 100) / 100);
+						sumaImporte = sumaImporte + compras[i].importe;
+						sumaImporteNo = 0;
+						sumaTotal = sumaTotal + compras[i].importe;
+						sumaDescuentos = sumaDescuentos + descuento;
+						sumaImporteBase = sumaImporteBase + compras[i].total;
+						sumaCredito = sumaCredito + (Math.round((compras[i].total * 0.13) * 100) / 100);
+						items++;
 
-						if (i + 1 == compras.length) {
+						if (items == itemsPorPagina || i + 1 == compras.length) {
 							doc.font('Helvetica-Bold', 8);
-							doc.text("TOTALES", 320, y + 30);
-							doc.text(Math.round((sumaImporte) * 100) / 100, 400, y + 30);
-							doc.text(Math.round((sumaImporteNo) * 100) / 100, 450, y + 30);
-							doc.text(Math.round((sumaTotal) * 100) / 100, 480, y + 30);
-							doc.text(Math.round((sumaDescuentos) * 100) / 100, 520, y + 30);
-							doc.text(Math.round((sumaImporteBase) * 100) / 100, 565, y + 30);
-							doc.text(Math.round((sumaCredito) * 100) / 100, 605, y + 30);
-							doc.rect(40, y - 10 + 30, 720, 30).stroke();
+							doc.text("SUBTOTALES", 320, y);
+							doc.text(Math.round((sumaSubImporte) * 100) / 100, 400, y);
+							doc.text(Math.round((sumaSubImporteNo) * 100) / 100, 450, y);
+							doc.text(Math.round((sumaSubTotal) * 100) / 100, 480, y);
+							doc.text(Math.round((sumaSubDescuentos) * 100) / 100, 520, y);
+							doc.text(Math.round((sumaSubImporteBase) * 100) / 100, 565, y);
+							doc.text(Math.round((sumaSubCredito) * 100) / 100, 605, y);
+							doc.rect(40, y - 10, 720, 30).stroke();
 							doc.font('Helvetica', 8);
-						} else {
-							doc.addPage({ margin: 0, bufferPages: true, layout: 'landscape' });
-							y = 170;
-							items = 0;
-							pagina = pagina + 1;
-							$scope.dibujarCabeceraPDFLibroCompras(doc, datos, reporte, pagina);
-							doc.font('Helvetica', 8);
+							sumaSubImporte = 0; sumaSubImporteNo = 0; sumaSubTotal = 0; sumaSubDescuentos = 0; sumaSubImporteBase = 0; sumaSubCredito = 0;
+
+							if (i + 1 == compras.length) {
+								doc.font('Helvetica-Bold', 8);
+								doc.text("TOTALES", 320, y + 30);
+								doc.text(Math.round((sumaImporte) * 100) / 100, 400, y + 30);
+								doc.text(Math.round((sumaImporteNo) * 100) / 100, 450, y + 30);
+								doc.text(Math.round((sumaTotal) * 100) / 100, 480, y + 30);
+								doc.text(Math.round((sumaDescuentos) * 100) / 100, 520, y + 30);
+								doc.text(Math.round((sumaImporteBase) * 100) / 100, 565, y + 30);
+								doc.text(Math.round((sumaCredito) * 100) / 100, 605, y + 30);
+								doc.rect(40, y - 10 + 30, 720, 30).stroke();
+								doc.font('Helvetica', 8);
+							} else {
+								doc.addPage({ margin: 0, bufferPages: true, layout: 'landscape' });
+								y = 170;
+								items = 0;
+								pagina = pagina + 1;
+								$scope.dibujarCabeceraPDFLibroCompras(doc, datos, reporte, pagina);
+								doc.font('Helvetica', 8);
+							}
 						}
+						numeral++
 					}
 				}
 				doc.end();
@@ -1081,7 +1093,7 @@ angular.module('agil.controladores')
 			$scope.obtenerInventarios()
 		}
 		$scope.obtenerInventarios = function () {
-			$scope.abs = $window.Math.abs;			
+			$scope.abs = $window.Math.abs;
 			if ($scope.reporte.sucursal !== undefined && $scope.reporte.sucursal !== null) {
 				$scope.sucursalBusqueda = $scope.reporte.sucursal
 				if ($scope.reporte.almacen !== undefined && $scope.reporte.almacen) {
@@ -1374,7 +1386,7 @@ angular.module('agil.controladores')
 				saveAs(new Blob([s2ab(wbout)], { type: "application/octet-stream" }), "REPORTE-ALMACENES.xlsx");
 
 			} else {
-				var prom = InventarioReporteAlmacen($scope.usuario.id_empresa, reporte.sucursal.id, (reporte.almacen && reporte.almacen !== null  && reporte.almacen !== 0) ? reporte.almacen.id : 0, $scope.usuario.id)
+				var prom = InventarioReporteAlmacen($scope.usuario.id_empresa, reporte.sucursal.id, (reporte.almacen && reporte.almacen !== null && reporte.almacen !== 0) ? reporte.almacen.id : 0, $scope.usuario.id)
 				prom.then(function (res) {
 					var inventarios = res.inventario;
 					var data = [["Código", "Nombre", "Unidad de Medida", "Precio Unitario", "Descripción", "Inventario Mínimo",

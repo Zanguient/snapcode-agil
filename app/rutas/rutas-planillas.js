@@ -458,7 +458,40 @@ module.exports = function (router, sequelize, Sequelize, Usuario, RRHHParametros
                     mes:req.params.mes
                 },
                 include: [
-                	{ model: RRHHDetallePlanillaRcIva, as: 'rrhhPlanillaRcIva' }
+                	{ 
+                		model: RRHHDetallePlanillaRcIva, as: 'rrhhPlanillaRcIva',
+                		
+                		include: [
+                			{ model: RrhhEmpleadoFicha, as: 'rrhhDetallePlanillaRcIva',
+                			// attributes: [sequelize.literal('`empleado.persona`.`nombre_completo`'), 'empleado'],
+                			include: [
+                				{model: MedicoPaciente, as: 'empleado',
+                				include: [{model: Persona, as: 'persona'}]
+                			 	}
+                			]
+                							    
+                			}
+
+
+                		]
+                		
+        //         		as: 'empleadosFichas', 
+
+                		
+        //         		where: {
+                			
+				    //     	haber_basico: {$ne: null} 
+				    //     },
+				        
+				        
+        //         		include: [{ model: RrhhEmpleadoCargo, as: 'cargos', include: [{ model: Clase, as: "cargo" }] }],
+                		
+        //         		order: [['id', 'DESC']],
+                		
+                		
+                		
+                	}  
+                	
                 ]
             }).then(function (planillas) {
             	res.json({ planillas: planillas });
