@@ -28,7 +28,6 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 				var gurposUsuario = grupos.map(function (grupo) {
 					return grupo.id_grupo
 				})
-
 				Producto.findAll({
 					where: {
 						id_empresa: req.params.id_empresa,

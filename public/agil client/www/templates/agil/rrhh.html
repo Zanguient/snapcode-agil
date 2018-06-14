@@ -2009,477 +2009,477 @@
     <div id="modal-hoja-vida" class="modal">
         <div class="modal-content">
             <form id="formulario-hoja-vida" novalidate ng-submit="GuardarHojaDeVida()">
-                
-                    <div id="modal-wizard-hoja-vida-container">
-                        <div class="modal-header hoja">
-                            <div class="titulo-ficha">
 
-                                <h4>
-                                    <span class="icono-hoja-vida"></span> {{empleado.persona.nombre_completo}}</h4>
+                <div id="modal-wizard-hoja-vida-container">
+                    <div class="modal-header hoja">
+                        <div class="titulo-ficha">
+
+                            <h4>
+                                <span class="icono-hoja-vida"></span> {{empleado.persona.nombre_completo}}</h4>
+                        </div>
+                    </div>
+                    <div class="modal-header">
+                        <div class="foto-paciente">
+                            <span class="profile-picture">
+                                <img id="avatar" class="editable img-responsive editable-click editable-empty" alt="Alex's Avatar" src="{{empleado.imagen}}">
+                            </span>
+                            <div class="width-85 label label-Light label-xlg arrowed-in arrowed-in-right">
+                                <span class="titulo-foto red"></span>
                             </div>
                         </div>
-                        <div class="modal-header">
-                            <div class="foto-paciente">
-                                <span class="profile-picture">
-                                    <img id="avatar" class="editable img-responsive editable-click editable-empty" alt="Alex's Avatar" src="{{empleado.imagen}}">
+                        <ul class="steps pasos-ficha">
+                            <li data-step="1" class="active" id="formacion-academica">
+                                <span class="step">
+                                    <span class="icono-formacion-academica"></span>
                                 </span>
-                                <div class="width-85 label label-Light label-xlg arrowed-in arrowed-in-right">
-                                    <span class="titulo-foto red"></span>
+                                <span class="title">Formación Académica</span>
+                            </li>
+                            <li data-step="2">
+                                <span class="step">
+                                    <span class="fa fa-briefcase"></span>
+                                </span>
+                                <span class="title">Experiencia Laboral</span>
+                            </li>
+                            <li data-step="3">
+                                <span class="step">
+                                    <span class="icono-capacitaciones icono-step"></span>
+                                </span>
+                                <span class="title">Capacitaciones</span>
+                            </li>
+                            <li data-step="4">
+                                <span class="step">
+                                    <span class="icono-logros icono-step-soap"></span>
+                                </span>
+                                <span class="title">Logros</span>
+                            </li>
+                            <li data-step="5">
+                                <span class="step">
+                                    <span class="icono-logros icono-step-soap"></span>
+                                </span>
+                                <h3 align="center">Finalizado</h3>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="modal-body step-content">
+                        <div class="step-pane active" data-step="1">
+                            <div class="page-header">
+                                <h4 class="blue">
+                                    1. Formación Académica
+                                </h4>
+                            </div>
+                            <div class="container">
+                                <div class="row form-group">
+                                    <div class="col-sm-3 col-lg-2">
+                                        <label for="">Grado</label>
+                                    </div>
+                                    <div class="col-sm-3 col-lg-2">
+                                        <div class="input-group">
+                                            <span class="input-group-addon glyphicon glyphicon-pencil point-edit green" ng-click="abrirDialogConceptoEdicion(grados)"></span>
+                                            <select ng-model="formacionAcademica.grado" class="form-control" ng-options="grado as grado.nombre for grado in grados.clases | filter:{habilitado:true} track by grado.id">
+                                                <option value="">--Ninguno--</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-3 col-lg-2">
+                                        <label for="">Título</label>
+                                    </div>
+                                    <div class="col-sm-3 col-lg-2">
+                                        <div class="input-group">
+                                            <span class="input-group-addon glyphicon glyphicon-pencil point-edit green" ng-click="abrirDialogConceptoEdicion(titulos)"></span>
+                                            <select ng-model="formacionAcademica.titulo" class="form-control" ng-options="titulo as titulo.nombre for titulo in titulos.clases | filter:{habilitado:true}  track by titulo.id">
+                                                <option value="">--Ninguno--</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-3 col-lg-2">
+                                        <label for="">Año de Obtención de Título</label>
+                                    </div>
+                                    <div class="col-sm-3 col-lg-2">
+                                        <input type="text" class="form-control" ng-model="formacionAcademica.anio_obtencion">
+                                    </div>
+                                </div>
+                                <div class="row form-group">
+                                    <div class="col-sm-3 col-lg-2">
+                                        <label for="">Institución</label>
+                                    </div>
+                                    <div class="col-sm-3 col-lg-2">
+                                        <div class="input-group">
+                                            <span class="input-group-addon glyphicon glyphicon-pencil point-edit green" ng-click="abrirDialogConceptoEdicion(instituciones)"></span>
+                                            <select ng-model="formacionAcademica.institucion" ng-options="institucion as institucion.nombre for institucion in instituciones.clases | filter:{habilitado:true}  track by institucion.id"
+                                                class="form-control">
+                                                <option value="">--Ninguno--</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-3 col-lg-2">
+                                        <label for="">Descripción</label>
+                                    </div>
+                                    <div class="col-sm-3 col-lg-2">
+                                        <input type="text" class="form-control" ng-model="formacionAcademica.descripcion">
+                                    </div>
+                                    <div class="col-sm-1 col-sm-offset-11 col-lg-offset-3">
+                                        <button ng-disabled="!empleado.activo" ng-if="!formacionAcademica.edit" type="button" class="btn btn-primary btn-sm" ng-click="agregarFormacionAcademica(formacionAcademica)">Añadir</button>
+                                        <button ng-if="formacionAcademica.edit" type="button" class="btn btn-success btn-sm" ng-click="guardarFormacionAcademicaEditada(formacionAcademica)">Guardar</button>
+                                    </div>
+                                </div>
+                                <div class="row table-responsive">
+                                    <table class="table table-striped table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>#</th>
+                                                <th>Grado</th>
+                                                <th>Título</th>
+                                                <th>Año de Obtención</th>
+                                                <th>Institución</th>
+                                                <th>Descripción</th>
+                                                <th>Acciones</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr ng-if="!formacionAcademica.eliminado" ng-repeat="formacionAcademica in hojaVida.formacionesAcademicas">
+                                                <th scope="row">{{$index+1}}</th>
+                                                <td>{{formacionAcademica.grado.nombre}}</td>
+                                                <td>{{formacionAcademica.titulo.nombre}}</td>
+                                                <td>{{formacionAcademica.anio_obtencion}}</td>
+                                                <td>{{formacionAcademica.institucion.nombre}}</td>
+                                                <td>{{formacionAcademica.descripcion}}</td>
+                                                <td>
+                                                    <div class="action-buttons">
+                                                        <!--    <a class="blue" >
+                                                        <i class="ace-icon fa fa-search-plus bigger-130"></i>
+                                                    </a> -->
+                                                        <a class="green">
+                                                            <i class="ace-icon fa fa-pencil bigger-130" ng-click="editarFomracionAcademica(formacionAcademica,$index)"></i>
+                                                        </a>
+                                                        <a class="red">
+                                                            <i class="ace-icon fa fa-trash-o bigger-130" ng-click="eliminarFomracionAcademica(formacionAcademica)"></i>
+                                                        </a>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
-                            <ul class="steps pasos-ficha">
-                                <li data-step="1" class="active" id="formacion-academica">
-                                    <span class="step">
-                                        <span class="icono-formacion-academica"></span>
-                                    </span>
-                                    <span class="title">Formación Académica</span>
-                                </li>
-                                <li data-step="2">
-                                    <span class="step">
-                                        <span class="fa fa-briefcase"></span>
-                                    </span>
-                                    <span class="title">Experiencia Laboral</span>
-                                </li>
-                                <li data-step="3">
-                                    <span class="step">
-                                        <span class="icono-capacitaciones icono-step"></span>
-                                    </span>
-                                    <span class="title">Capacitaciones</span>
-                                </li>
-                                <li data-step="4">
-                                    <span class="step">
-                                        <span class="icono-logros icono-step-soap"></span>
-                                    </span>
-                                    <span class="title">Logros</span>
-                                </li>
-                                <li data-step="5">
-                                    <span class="step">
-                                        <span class="icono-logros icono-step-soap"></span>
-                                    </span>
-                                    <h3 align="center">Finalizado</h3>
-                                </li>
-                            </ul>
                         </div>
-                        <div class="modal-body step-content">
-                            <div class="step-pane active" data-step="1">
-                                <div class="page-header">
-                                    <h4 class="blue">
-                                        1. Formación Académica
-                                    </h4>
+                        <div class="step-pane" data-step="2">
+                            <div class="cabezera-ficha">
+                                <h4 class="blue">
+                                    2. Experiencia Laboral
+                                </h4>
+                            </div>
+                            <div class="container">
+                                <div class="row form-group">
+                                    <div class="col-sm-3 col-lg-1">
+                                        <label for="">Fecha Inicio</label>
+                                    </div>
+                                    <div class="col-sm-3 col-lg-2">
+                                        <input type="text" class="form-control date-picker" autocomplete="off" data-date-format="dd/mm/yyyy" ng-update-hidden ng-model="experienciaLaboral.fecha_inicio">
+                                    </div>
+                                    <div class="col-sm-3 col-lg-1">
+                                        <label for="">Fecha Final</label>
+                                    </div>
+                                    <div class="col-sm-3 col-lg-2">
+                                        <input type="text" class="form-control date-picker" autocomplete="off" data-date-format="dd/mm/yyyy" ng-update-hidden ng-model="experienciaLaboral.fecha_fin">
+                                    </div>
+                                    <div class="col-sm-3 col-lg-1">
+                                        <label for="">Empresa</label>
+                                    </div>
+                                    <div class="col-sm-3 col-lg-2">
+                                        <input type="Text" class="form-control" ng-model="experienciaLaboral.empresa">
+                                    </div>
+                                    <div class="col-sm-3 col-lg-1">
+                                        <label for="">Cargo</label>
+                                    </div>
+                                    <div class="col-sm-3 col-lg-2">
+                                        <input type="Text" class="form-control" ng-model="experienciaLaboral.cargo">
+                                    </div>
                                 </div>
-                                <div class="container">
-                                    <div class="row form-group">
-                                        <div class="col-sm-3 col-lg-2">
-                                            <label for="">Grado</label>
-                                        </div>
-                                        <div class="col-sm-3 col-lg-2">
-                                            <div class="input-group">
-                                                <span class="input-group-addon glyphicon glyphicon-pencil point-edit green" ng-click="abrirDialogConceptoEdicion(grados)"></span>
-                                                <select ng-model="formacionAcademica.grado" class="form-control" ng-options="grado as grado.nombre for grado in grados.clases | filter:{habilitado:true} track by grado.id">
-                                                    <option value="">--Ninguno--</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-3 col-lg-2">
-                                            <label for="">Título</label>
-                                        </div>
-                                        <div class="col-sm-3 col-lg-2">
-                                            <div class="input-group">
-                                                <span class="input-group-addon glyphicon glyphicon-pencil point-edit green" ng-click="abrirDialogConceptoEdicion(titulos)"></span>
-                                                <select ng-model="formacionAcademica.titulo" class="form-control" ng-options="titulo as titulo.nombre for titulo in titulos.clases | filter:{habilitado:true}  track by titulo.id">
-                                                    <option value="">--Ninguno--</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-3 col-lg-2">
-                                            <label for="">Año de Obtención de Título</label>
-                                        </div>
-                                        <div class="col-sm-3 col-lg-2">
-                                            <input type="text" class="form-control" ng-model="formacionAcademica.anio_obtencion">
-                                        </div>
+                                <div class="row form-group">
+                                    <div class="col-sm-3 col-lg-1">
+                                        <label for="">Motivo Retiro</label>
                                     </div>
-                                    <div class="row form-group">
-                                        <div class="col-sm-3 col-lg-2">
-                                            <label for="">Institución</label>
-                                        </div>
-                                        <div class="col-sm-3 col-lg-2">
-                                            <div class="input-group">
-                                                <span class="input-group-addon glyphicon glyphicon-pencil point-edit green" ng-click="abrirDialogConceptoEdicion(instituciones)"></span>
-                                                <select ng-model="formacionAcademica.institucion" ng-options="institucion as institucion.nombre for institucion in instituciones.clases | filter:{habilitado:true}  track by institucion.id"
-                                                    class="form-control">
-                                                    <option value="">--Ninguno--</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-3 col-lg-2">
-                                            <label for="">Descripción</label>
-                                        </div>
-                                        <div class="col-sm-3 col-lg-2">
-                                            <input type="text" class="form-control" ng-model="formacionAcademica.descripcion">
-                                        </div>
-                                        <div class="col-sm-1 col-sm-offset-11 col-lg-offset-3">
-                                            <button ng-disabled="!empleado.activo" ng-if="!formacionAcademica.edit" type="button" class="btn btn-primary btn-sm" ng-click="agregarFormacionAcademica(formacionAcademica)">Añadir</button>
-                                            <button ng-if="formacionAcademica.edit" type="button" class="btn btn-success btn-sm" ng-click="guardarFormacionAcademicaEditada(formacionAcademica)">Guardar</button>
-                                        </div>
+                                    <div class="col-sm-3 col-lg-2">
+                                        <input type="text" class="form-control" ng-model="experienciaLaboral.motivo_retiro">
                                     </div>
-                                    <div class="row table-responsive">
-                                        <table class="table table-striped table-hover">
-                                            <thead>
-                                                <tr>
-                                                    <th>#</th>
-                                                    <th>Grado</th>
-                                                    <th>Título</th>
-                                                    <th>Año de Obtención</th>
-                                                    <th>Institución</th>
-                                                    <th>Descripción</th>
-                                                    <th>Acciones</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr ng-if="!formacionAcademica.eliminado" ng-repeat="formacionAcademica in hojaVida.formacionesAcademicas">
-                                                    <th scope="row">{{$index+1}}</th>
-                                                    <td>{{formacionAcademica.grado.nombre}}</td>
-                                                    <td>{{formacionAcademica.titulo.nombre}}</td>
-                                                    <td>{{formacionAcademica.anio_obtencion}}</td>
-                                                    <td>{{formacionAcademica.institucion.nombre}}</td>
-                                                    <td>{{formacionAcademica.descripcion}}</td>
-                                                    <td>
-                                                        <div class="action-buttons">
-                                                            <!--    <a class="blue" >
+                                    <div class="col-sm-3 col-lg-1">
+                                        <label for="">Contacto</label>
+                                        <span>
+                                            <b>(Nombre/Cargo)</b>
+                                        </span>
+                                    </div>
+                                    <div class="col-sm-3 col-lg-2">
+                                        <input type="text" class="form-control" ng-model="experienciaLaboral.contacto">
+                                    </div>
+                                    <div class="col-sm-3 col-lg-1">
+                                        <label for="">Teléfono</label>
+                                    </div>
+                                    <div class="col-sm-3 col-lg-2">
+                                        <input type="Text" class="form-control" ng-model="experienciaLaboral.telefono">
+                                    </div>
+                                    <div class="col-sm-1 col-sm-offset-5 col-lg-offset-2">
+                                        <button ng-disabled="!empleado.activo" ng-if="!experienciaLaboral.edit" type="button" class="btn btn-primary btn-sm" ng-click="agregarExperienciaLaboral(experienciaLaboral)">Añadir</button>
+                                        <button ng-if="experienciaLaboral.edit" type="button" class="btn btn-success btn-sm" ng-click="guardarExperienciaLaboralEditada(experienciaLaboral)">Guardar</button>
+                                    </div>
+                                </div>
+                                <div class="row table-responsive">
+                                    <table class="table table-striped table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>#</th>
+                                                <th>Fecha Inicio</th>
+                                                <th>Fecha Fin</th>
+                                                <th>Empresa</th>
+                                                <th>Cargo</th>
+                                                <th>Motivo Retiro</th>
+                                                <th>Contacto</th>
+                                                <th>Teléfono</th>
+                                                <th>Acciones</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr ng-if="!experienciaLaboral.eliminado" ng-repeat="experienciaLaboral in hojaVida.experienciasLaborales">
+                                                <th scope="row">{{$index+1}}</th>
+                                                <td>{{experienciaLaboral.fecha_inicioTexto}}</td>
+                                                <td>{{experienciaLaboral.fecha_finTexto}}</td>
+                                                <td>{{experienciaLaboral.empresa}}</td>
+                                                <td>{{experienciaLaboral.cargo}}</td>
+                                                <td>{{experienciaLaboral.motivo_retiro}}</td>
+                                                <td>{{experienciaLaboral.contacto}}</td>
+                                                <td>{{experienciaLaboral.telefono}}</td>
+                                                <td>
+                                                    <div class="action-buttons">
+                                                        <!--  <a class="blue" >
                                                         <i class="ace-icon fa fa-search-plus bigger-130"></i>
                                                     </a> -->
-                                                            <a class="green">
-                                                                <i class="ace-icon fa fa-pencil bigger-130" ng-click="editarFomracionAcademica(formacionAcademica,$index)"></i>
-                                                            </a>
-                                                            <a class="red">
-                                                                <i class="ace-icon fa fa-trash-o bigger-130" ng-click="eliminarFomracionAcademica(formacionAcademica)"></i>
-                                                            </a>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
+                                                        <a class="green">
+                                                            <i class="ace-icon fa fa-pencil bigger-130" ng-click="editarExperienciaLaboral(experienciaLaboral,$index)"></i>
+                                                        </a>
+                                                        <a class="red">
+                                                            <i class="ace-icon fa fa-trash-o bigger-130" ng-click="eliminarExperienciaLaboral(experienciaLaboral)"></i>
+                                                        </a>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
-                            <div class="step-pane" data-step="2">
-                                <div class="cabezera-ficha">
-                                    <h4 class="blue">
-                                        2. Experiencia Laboral
-                                    </h4>
+                        </div>
+                        <div class="step-pane" data-step="3">
+
+                            <div class="cabezera-ficha">
+                                <h4 class="blue">
+                                    5. Capacitaciones
+                                </h4>
+                            </div>
+                            <div class="container">
+                                <div class="row form-group">
+                                    <div class="col-sm-3 col-lg-1">
+                                        <label for="">Tipo</label>
+                                    </div>
+                                    <div class="col-sm-3 col-lg-2">
+                                        <div class="input-group">
+                                            <span class="input-group-addon glyphicon glyphicon-pencil point-edit green" ng-click="abrirDialogConceptoEdicion(capacidadesIE)"></span>
+                                            <select ng-model="capacidad.tipoCapacidad" class="form-control" ng-options="capacidad as capacidad.nombre for capacidad in capacidadesIE.clases | filter:{habilitado:true}  track by capacidad.id">
+                                                <option value="">--Ninguno--</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-3 col-lg-1">
+                                        <label for="">Fecha</label>
+                                    </div>
+                                    <div class="col-sm-3 col-lg-2">
+                                        <input type="text" ng-update-hidden data-date-format="dd/mm/yyyy" class="form-control date-picker" autocomplete="off" ng-model="capacidad.fecha">
+                                    </div>
+                                    <div class="col-sm-3 col-lg-1">
+                                        <label for="">Curso</label>
+                                    </div>
+                                    <div class="col-sm-3 col-lg-2">
+                                        <input type="text" class="form-control" ng-model="capacidad.curso">
+                                    </div>
+                                    <div class="col-sm-3 col-lg-1">
+                                        <label for="">Institución</label>
+                                    </div>
+                                    <div class="col-sm-3 col-lg-2">
+                                        <input type="Text" class="form-control" ng-model="capacidad.institucion">
+                                    </div>
                                 </div>
-                                <div class="container">
-                                    <div class="row form-group">
-                                        <div class="col-sm-3 col-lg-1">
-                                            <label for="">Fecha Inicio</label>
-                                        </div>
-                                        <div class="col-sm-3 col-lg-2">
-                                            <input type="text" class="form-control date-picker" autocomplete="off" data-date-format="dd/mm/yyyy" ng-update-hidden ng-model="experienciaLaboral.fecha_inicio">
-                                        </div>
-                                        <div class="col-sm-3 col-lg-1">
-                                            <label for="">Fecha Final</label>
-                                        </div>
-                                        <div class="col-sm-3 col-lg-2">
-                                            <input type="text" class="form-control date-picker" autocomplete="off" data-date-format="dd/mm/yyyy" ng-update-hidden ng-model="experienciaLaboral.fecha_fin">
-                                        </div>
-                                        <div class="col-sm-3 col-lg-1">
-                                            <label for="">Empresa</label>
-                                        </div>
-                                        <div class="col-sm-3 col-lg-2">
-                                            <input type="Text" class="form-control" ng-model="experienciaLaboral.empresa">
-                                        </div>
-                                        <div class="col-sm-3 col-lg-1">
-                                            <label for="">Cargo</label>
-                                        </div>
-                                        <div class="col-sm-3 col-lg-2">
-                                            <input type="Text" class="form-control" ng-model="experienciaLaboral.cargo">
-                                        </div>
+                                <div class="row form-group">
+                                    <div class="col-sm-3 col-lg-1">
+                                        <label for="">Certificado</label>
                                     </div>
-                                    <div class="row form-group">
-                                        <div class="col-sm-3 col-lg-1">
-                                            <label for="">Motivo Retiro</label>
-                                        </div>
-                                        <div class="col-sm-3 col-lg-2">
-                                            <input type="text" class="form-control" ng-model="experienciaLaboral.motivo_retiro">
-                                        </div>
-                                        <div class="col-sm-3 col-lg-1">
-                                            <label for="">Contacto</label>
-                                            <span>
-                                                <b>(Nombre/Cargo)</b>
-                                            </span>
-                                        </div>
-                                        <div class="col-sm-3 col-lg-2">
-                                            <input type="text" class="form-control" ng-model="experienciaLaboral.contacto">
-                                        </div>
-                                        <div class="col-sm-3 col-lg-1">
-                                            <label for="">Teléfono</label>
-                                        </div>
-                                        <div class="col-sm-3 col-lg-2">
-                                            <input type="Text" class="form-control" ng-model="experienciaLaboral.telefono">
-                                        </div>
-                                        <div class="col-sm-1 col-sm-offset-5 col-lg-offset-2">
-                                            <button ng-disabled="!empleado.activo" ng-if="!experienciaLaboral.edit" type="button" class="btn btn-primary btn-sm" ng-click="agregarExperienciaLaboral(experienciaLaboral)">Añadir</button>
-                                            <button ng-if="experienciaLaboral.edit" type="button" class="btn btn-success btn-sm" ng-click="guardarExperienciaLaboralEditada(experienciaLaboral)">Guardar</button>
-                                        </div>
+                                    <div class="col-sm-3 col-lg-2">
+                                        <input type="Text" class="form-control" ng-model="capacidad.certificado">
                                     </div>
-                                    <div class="row table-responsive">
-                                        <table class="table table-striped table-hover">
-                                            <thead>
-                                                <tr>
-                                                    <th>#</th>
-                                                    <th>Fecha Inicio</th>
-                                                    <th>Fecha Fin</th>
-                                                    <th>Empresa</th>
-                                                    <th>Cargo</th>
-                                                    <th>Motivo Retiro</th>
-                                                    <th>Contacto</th>
-                                                    <th>Teléfono</th>
-                                                    <th>Acciones</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr ng-if="!experienciaLaboral.eliminado" ng-repeat="experienciaLaboral in hojaVida.experienciasLaborales">
-                                                    <th scope="row">{{$index+1}}</th>
-                                                    <td>{{experienciaLaboral.fecha_inicioTexto}}</td>
-                                                    <td>{{experienciaLaboral.fecha_finTexto}}</td>
-                                                    <td>{{experienciaLaboral.empresa}}</td>
-                                                    <td>{{experienciaLaboral.cargo}}</td>
-                                                    <td>{{experienciaLaboral.motivo_retiro}}</td>
-                                                    <td>{{experienciaLaboral.contacto}}</td>
-                                                    <td>{{experienciaLaboral.telefono}}</td>
-                                                    <td>
-                                                        <div class="action-buttons">
-                                                            <!--  <a class="blue" >
+
+                                    <div class="col-sm-1 col-sm-offset-5 col-lg-offset-8">
+                                        <button ng-disabled="!empleado.activo" ng-if="!capacidad.edit" type="button" class="btn btn-primary btn-sm" ng-click="agregarCapacidadHojaVida(capacidad)">Añadir</button>
+                                        <button ng-if="capacidad.edit" type="button" class="btn btn-primary btn-sm" ng-click="guardarCapacidadHojaVidaEditada(capacidad)">Guardar</button>
+                                    </div>
+                                </div>
+                                <div class="row table-responsive">
+                                    <table class="table table-striped table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>#</th>
+                                                <th>Fecha</th>
+                                                <th>tipo</th>
+                                                <th>Curso</th>
+                                                <th>Institución</th>
+                                                <th>Certificado</th>
+                                                <th>Acciones</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr ng-if="!capacidad.eliminado" ng-repeat="capacidad in hojaVida.capacidades">
+                                                <th scope="row">{{$index+1}}</th>
+                                                <td>{{capacidad.fechaTexto}}</td>
+                                                <td>{{capacidad.tipoCapacidad.nombre}}</td>
+                                                <td>{{capacidad.curso}}</td>
+                                                <td>{{capacidad.institucion}}</td>
+                                                <td>{{capacidad.certificado}}</td>
+                                                <td>
+                                                    <div class="action-buttons">
+                                                        <!--  <a class="blue" >
                                                         <i class="ace-icon fa fa-search-plus bigger-130"></i>
                                                     </a> -->
-                                                            <a class="green">
-                                                                <i class="ace-icon fa fa-pencil bigger-130" ng-click="editarExperienciaLaboral(experienciaLaboral,$index)"></i>
-                                                            </a>
-                                                            <a class="red">
-                                                                <i class="ace-icon fa fa-trash-o bigger-130" ng-click="eliminarExperienciaLaboral(experienciaLaboral)"></i>
-                                                            </a>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
+                                                        <a class="green">
+                                                            <i class="ace-icon fa fa-pencil bigger-130" ng-click="editarCapacidadHojaVida(capacidad)"></i>
+                                                        </a>
+                                                        <a class="red">
+                                                            <i class="ace-icon fa fa-trash-o bigger-130" ng-click="eliminarCapacidadHojaVida(capacidad)"></i>
+                                                        </a>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
-                            <div class="step-pane" data-step="3">
-
-                                <div class="cabezera-ficha">
-                                    <h4 class="blue">
-                                        5. Capacitaciones
-                                    </h4>
-                                </div>
-                                <div class="container">
-                                    <div class="row form-group">
-                                        <div class="col-sm-3 col-lg-1">
-                                            <label for="">Tipo</label>
-                                        </div>
-                                        <div class="col-sm-3 col-lg-2">
-                                            <div class="input-group">
-                                                <span class="input-group-addon glyphicon glyphicon-pencil point-edit green" ng-click="abrirDialogConceptoEdicion(capacidadesIE)"></span>
-                                                <select ng-model="capacidad.tipoCapacidad" class="form-control" ng-options="capacidad as capacidad.nombre for capacidad in capacidadesIE.clases | filter:{habilitado:true}  track by capacidad.id">
-                                                    <option value="">--Ninguno--</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-3 col-lg-1">
-                                            <label for="">Fecha</label>
-                                        </div>
-                                        <div class="col-sm-3 col-lg-2">
-                                            <input type="text" ng-update-hidden data-date-format="dd/mm/yyyy" class="form-control date-picker" autocomplete="off" ng-model="capacidad.fecha">
-                                        </div>
-                                        <div class="col-sm-3 col-lg-1">
-                                            <label for="">Curso</label>
-                                        </div>
-                                        <div class="col-sm-3 col-lg-2">
-                                            <input type="text" class="form-control" ng-model="capacidad.curso">
-                                        </div>
-                                        <div class="col-sm-3 col-lg-1">
-                                            <label for="">Institución</label>
-                                        </div>
-                                        <div class="col-sm-3 col-lg-2">
-                                            <input type="Text" class="form-control" ng-model="capacidad.institucion">
-                                        </div>
-                                    </div>
-                                    <div class="row form-group">
-                                        <div class="col-sm-3 col-lg-1">
-                                            <label for="">Certificado</label>
-                                        </div>
-                                        <div class="col-sm-3 col-lg-2">
-                                            <input type="Text" class="form-control" ng-model="capacidad.certificado">
-                                        </div>
-
-                                        <div class="col-sm-1 col-sm-offset-5 col-lg-offset-8">
-                                            <button ng-disabled="!empleado.activo" ng-if="!capacidad.edit" type="button" class="btn btn-primary btn-sm" ng-click="agregarCapacidadHojaVida(capacidad)">Añadir</button>
-                                            <button ng-if="capacidad.edit" type="button" class="btn btn-primary btn-sm" ng-click="guardarCapacidadHojaVidaEditada(capacidad)">Guardar</button>
-                                        </div>
-                                    </div>
-                                    <div class="row table-responsive">
-                                        <table class="table table-striped table-hover">
-                                            <thead>
-                                                <tr>
-                                                    <th>#</th>
-                                                    <th>Fecha</th>
-                                                    <th>tipo</th>
-                                                    <th>Curso</th>
-                                                    <th>Institución</th>
-                                                    <th>Certificado</th>
-                                                    <th>Acciones</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr ng-if="!capacidad.eliminado" ng-repeat="capacidad in hojaVida.capacidades">
-                                                    <th scope="row">{{$index+1}}</th>
-                                                    <td>{{capacidad.fechaTexto}}</td>
-                                                    <td>{{capacidad.tipoCapacidad.nombre}}</td>
-                                                    <td>{{capacidad.curso}}</td>
-                                                    <td>{{capacidad.institucion}}</td>
-                                                    <td>{{capacidad.certificado}}</td>
-                                                    <td>
-                                                        <div class="action-buttons">
-                                                            <!--  <a class="blue" >
-                                                        <i class="ace-icon fa fa-search-plus bigger-130"></i>
-                                                    </a> -->
-                                                            <a class="green">
-                                                                <i class="ace-icon fa fa-pencil bigger-130" ng-click="editarCapacidadHojaVida(capacidad)"></i>
-                                                            </a>
-                                                            <a class="red">
-                                                                <i class="ace-icon fa fa-trash-o bigger-130" ng-click="eliminarCapacidadHojaVida(capacidad)"></i>
-                                                            </a>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
+                        </div>
+                        <div class="step-pane" data-step="4">
+                            <div class="cabezera-ficha">
+                                <h4 class="blue">
+                                    5. Logros
+                                </h4>
                             </div>
-                            <div class="step-pane" data-step="4">
-                                <div class="cabezera-ficha">
-                                    <h4 class="blue">
-                                        5. Logros
-                                    </h4>
+                            <div class="container">
+                                <div class="row form-group">
+
+                                    <div class="col-sm-3 col-lg-1">
+                                        <label for="">Tipo</label>
+                                    </div>
+                                    <div class="col-sm-3 col-lg-2">
+                                        <div class="input-group">
+                                            <span class="input-group-addon glyphicon glyphicon-pencil point-edit green" ng-click="abrirDialogConceptoEdicion(logrosIE)"></span>
+                                            <select ng-model="logro.tipoLogro" class="form-control" ng-options="logro as logro.nombre for logro in logrosIE.clases | filter:{habilitado:true}  track by logro.id">
+                                                <option value="">--Ninguno--</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-3 col-lg-1">
+                                        <label for="">Fecha</label>
+                                    </div>
+
+                                    <div class="col-sm-3 col-lg-2">
+                                        <input ng-update-hidden type="text" data-date-format="dd/mm/yyyy" ng-model="logro.fecha" class="form-control date-picker"
+                                            autocomplete="off">
+                                    </div>
+                                    <div class="col-sm-3 col-lg-1">
+                                        <label for="">Motivo</label>
+                                    </div>
+                                    <div class="col-sm-3 col-lg-2">
+                                        <input type="text" class="form-control" ng-model="logro.motivo">
+                                    </div>
+                                    <div class="col-sm-3 col-lg-1">
+                                        <label for="">Institución</label>
+                                    </div>
+                                    <div class="col-sm-3 col-lg-2">
+                                        <input type="Text" class="form-control" ng-model="logro.institucion">
+                                    </div>
                                 </div>
-                                <div class="container">
-                                    <div class="row form-group">
-
-                                        <div class="col-sm-3 col-lg-1">
-                                            <label for="">Tipo</label>
-                                        </div>
-                                        <div class="col-sm-3 col-lg-2">
-                                            <div class="input-group">
-                                                <span class="input-group-addon glyphicon glyphicon-pencil point-edit green" ng-click="abrirDialogConceptoEdicion(logrosIE)"></span>
-                                                <select ng-model="logro.tipoLogro" class="form-control" ng-options="logro as logro.nombre for logro in logrosIE.clases | filter:{habilitado:true}  track by logro.id">
-                                                    <option value="">--Ninguno--</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-3 col-lg-1">
-                                            <label for="">Fecha</label>
-                                        </div>
-
-                                        <div class="col-sm-3 col-lg-2">
-                                            <input ng-update-hidden type="text" data-date-format="dd/mm/yyyy" ng-model="logro.fecha" class="form-control date-picker"
-                                                autocomplete="off">
-                                        </div>
-                                        <div class="col-sm-3 col-lg-1">
-                                            <label for="">Motivo</label>
-                                        </div>
-                                        <div class="col-sm-3 col-lg-2">
-                                            <input type="text" class="form-control" ng-model="logro.motivo">
-                                        </div>
-                                        <div class="col-sm-3 col-lg-1">
-                                            <label for="">Institución</label>
-                                        </div>
-                                        <div class="col-sm-3 col-lg-2">
-                                            <input type="Text" class="form-control" ng-model="logro.institucion">
-                                        </div>
+                                <div class="row form-group">
+                                    <div class="col-sm-3 col-lg-1">
+                                        <label for="">Observaciones</label>
                                     </div>
-                                    <div class="row form-group">
-                                        <div class="col-sm-3 col-lg-1">
-                                            <label for="">Observaciones</label>
-                                        </div>
-                                        <div class="col-sm-3 col-lg-2">
-                                            <input type="Text" class="form-control" ng-model="logro.observacion">
-                                        </div>
-                                        <div class="col-sm-1 col-sm-offset-5 col-lg-offset-8">
-                                            <button type="button" ng-if="!logro.edit" class="btn btn-primary btn-sm" ng-disabled="!empleado.activo" ng-click="agregarLogroHojaVida(logro)">Añadir</button>
-                                            <button type="button" ng-if="logro.edit" class="btn btn-success btn-sm" ng-click="guardarLogroHojaVidaEditada(logro)">Guardar</button>
-                                        </div>
+                                    <div class="col-sm-3 col-lg-2">
+                                        <input type="Text" class="form-control" ng-model="logro.observacion">
                                     </div>
-                                    <div class="row table-responsive">
-                                        <table class="table table-striped table-hover">
-                                            <thead>
-                                                <tr>
-                                                    <th>#</th>
-                                                    <th>Fecha</th>
-                                                    <th>Motivo</th>
-                                                    <th>institucion</th>
-                                                    <th>Observaciones</th>
-                                                    <th>Acciones</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr ng-if="!logro.eliminado" ng-repeat="logro in hojaVida.logros">
-                                                    <th scope="row">{{$index+1}}</th>
-                                                    <td>{{logro.fechaTexto}}</td>
-                                                    <td>{{logro.motivo}}</td>
-                                                    <td>{{logro.institucion}}</td>
-                                                    <td>{{logro.observacion}}</td>
+                                    <div class="col-sm-1 col-sm-offset-5 col-lg-offset-8">
+                                        <button type="button" ng-if="!logro.edit" class="btn btn-primary btn-sm" ng-disabled="!empleado.activo" ng-click="agregarLogroHojaVida(logro)">Añadir</button>
+                                        <button type="button" ng-if="logro.edit" class="btn btn-success btn-sm" ng-click="guardarLogroHojaVidaEditada(logro)">Guardar</button>
+                                    </div>
+                                </div>
+                                <div class="row table-responsive">
+                                    <table class="table table-striped table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>#</th>
+                                                <th>Fecha</th>
+                                                <th>Motivo</th>
+                                                <th>institucion</th>
+                                                <th>Observaciones</th>
+                                                <th>Acciones</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr ng-if="!logro.eliminado" ng-repeat="logro in hojaVida.logros">
+                                                <th scope="row">{{$index+1}}</th>
+                                                <td>{{logro.fechaTexto}}</td>
+                                                <td>{{logro.motivo}}</td>
+                                                <td>{{logro.institucion}}</td>
+                                                <td>{{logro.observacion}}</td>
 
-                                                    <td>
-                                                        <div class="action-buttons">
-                                                            <!--    <a class="blue">
+                                                <td>
+                                                    <div class="action-buttons">
+                                                        <!--    <a class="blue">
                                                                 <i class="ace-icon fa fa-search-plus bigger-130"></i>
                                                             </a> -->
-                                                            <a class="green" ng-click="editarLogroHojaVida(logro)">
-                                                                <i class="ace-icon fa fa-pencil bigger-130"></i>
-                                                            </a>
-                                                            <a class="red" ng-click="eliminarLogroHojaVida(logro)">
-                                                                <i class="ace-icon fa fa-trash-o bigger-130"></i>
-                                                            </a>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
+                                                        <a class="green" ng-click="editarLogroHojaVida(logro)">
+                                                            <i class="ace-icon fa fa-pencil bigger-130"></i>
+                                                        </a>
+                                                        <a class="red" ng-click="eliminarLogroHojaVida(logro)">
+                                                            <i class="ace-icon fa fa-trash-o bigger-130"></i>
+                                                        </a>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
-                            <div class="step-pane" data-step="5">
+                        </div>
+                        <div class="step-pane" data-step="5">
 
-                                <div class="cabezera-ficha">
-                                    <div class="container">
-                                        Finalizado
-                                    </div>
+                            <div class="cabezera-ficha">
+                                <div class="container">
+                                    Finalizado
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="modal-footer-hoja wizard-actions">
-                        <button type="button" type="button" ng-click="abrirModalImprimirHojaVida()" class="btn btn-success btn-sm ">
-                            <i class="ace-icon fa fa-print bigger-110"></i>&nbsp; Imprimir</button>
-                        <button type="button" ng-disabled="!empleado.activo ||!aplicacion.puede_crear" type="button" ng-click="GuardarHojaDeVidaDirecto()"
-                            class="btn btn-primary btn-sm ">
-                            <i class="ace-icon fa fa-floppy-o bigger-110"></i>&nbsp; Guardar</button>
-                        <button class="btn btn-sm btn-prev">
-                            <i class="ace-icon fa fa-arrow-left"></i>
-                            Anterior
-                        </button>
-                        <button type="submit" id="siguiente-s" class="btn btn-success btn-sm btn-next" data-last="Finish">
-                            Siguiente
-                            <i class="ace-icon fa fa-arrow-right icon-on-right"></i>
-                        </button>
-                        <button type="button" class="btn btn-danger btn-sm pull-left" ng-click="cerrarDialogHojaVida()">
-                            <i class="ace-icon fa fa-times"></i>
-                            Cancelar
-                        </button>
-                    </div>
-                
+                </div>
+                <div class="modal-footer-hoja wizard-actions">
+                    <button type="button" type="button" ng-click="abrirModalImprimirHojaVida()" class="btn btn-success btn-sm ">
+                        <i class="ace-icon fa fa-print bigger-110"></i>&nbsp; Imprimir</button>
+                    <button type="button" ng-disabled="!empleado.activo ||!aplicacion.puede_crear" type="button" ng-click="GuardarHojaDeVidaDirecto()"
+                        class="btn btn-primary btn-sm ">
+                        <i class="ace-icon fa fa-floppy-o bigger-110"></i>&nbsp; Guardar</button>
+                    <button class="btn btn-sm btn-prev">
+                        <i class="ace-icon fa fa-arrow-left"></i>
+                        Anterior
+                    </button>
+                    <button type="submit" id="siguiente-s" class="btn btn-success btn-sm btn-next" data-last="Finish">
+                        Siguiente
+                        <i class="ace-icon fa fa-arrow-right icon-on-right"></i>
+                    </button>
+                    <button type="button" class="btn btn-danger btn-sm pull-left" ng-click="cerrarDialogHojaVida()">
+                        <i class="ace-icon fa fa-times"></i>
+                        Cancelar
+                    </button>
+                </div>
+
             </form>
         </div>
     </div>
@@ -3419,7 +3419,7 @@
                                 </div>
                                 <div class="row">
                                     <div class="col-sm-12 wizard-actions">
-                                       
+
                                         <button ng-disabled="!aplicacion.puede_crear" class="btn btn-primary btn-sm" type="submit">
                                             <i class="glyphicon glyphicon-floppy-disk"></i>Guardar
                                         </button>
@@ -3508,7 +3508,7 @@
                                 </div>
                                 <div class="row">
                                     <div class="col-sm-12 wizard-actions">
-                                         
+
                                         <button ng-disabled="!usarVacacion ||!aplicacion.puede_crear" class="btn btn-primary btn-sm" type="submit">
                                             <i class="glyphicon glyphicon-floppy-disk"></i>Guardar
                                         </button>
@@ -5489,7 +5489,7 @@
             </div>
             <div class="table-fixed-header">
                 <table id="tabla-comprobante-revision" class="table table-striped table-bordered table-hover">
-                    <thead fix-head class="table-head-color">
+                    <thead class="table-head-color">
                         <tr>
                             <th>Nombre</th>
                             <th>Campo</th>
@@ -5571,7 +5571,14 @@
                             <input type="text" class="form-control" ng-model="filtroRolCal.nombre" autocomplete="off" id="ap-paterno" name="ap-paterno"
                                 placeholder="nombre">
                         </div>
-                        <div class="form-group col-sm-4">
+                        <div class="form-group col-sm-2">
+                            <label for="ap-paterno">Campamento</label>
+                            <select required id="campo-rol" class="form-control" name="centroDeCostos" ng-options="centroCosto.id as centroCosto.nombre for centroCosto in centrosDeCostos | filter:{habilitado:true} track by centroCosto.id"
+                                ng-model="filtroRolCal.campo">
+                                <option value="">--seleccionar--</option>
+                            </select>
+                        </div>
+                        <div class="form-group col-sm-2">
                             <div class="buttons-align">
                                 <button autofocus type="submit" class="btn btn-primary btn-sm">
                                     <i class=" fa fa-search-plus align-top "></i>
@@ -5584,7 +5591,7 @@
                     <div class="col-md-12" align="center">
                         <b>T: Trabajado</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                         <b>D: Descanso</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                        <b>TAM y DAM: Ausencia Medica</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <b>TBM y DBD: Ausencia Medica</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                         <b>TOA y DOA: Otro tipo de Ausencia</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                         <b>TV y DV: Vacacion</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                     </div>
@@ -5613,22 +5620,22 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr ng-if="empleado.verDatos" ng-repeat="empleado in empleadosRolTurno track by $index">
+                        <tr ng-repeat="roles in empleadosRolTurno track by $index">
                             <td>
-                                <p ng-repeat="rol in empleado.empleadosFichas[empleado.empleadosFichas.length - 1].rolTurno">{{rol.campo.nombre}}</p>
+                                <p>{{roles.campo.nombre}}</p>
                             </td>
 
                             <td>
-                                <p ng-repeat="rol in empleado.empleadosFichas[empleado.empleadosFichas.length - 1].rolTurno">{{rol.grupo.nombre_corto}}</p>
+                                <p>{{roles.grupo.nombre_corto}}</p>
                             </td>
-                            <td>{{empleado.persona.nombre_completo}}</td>
+                            <td>{{roles.ficha.empleado.persona.nombre_completo}}</td>
                             <td>
-                                <p ng-repeat="cargo in empleado.empleadosFichas[empleado.empleadosFichas.length - 1].cargos">{{cargo.cargo.nombre}}</p>
+                                <p ng-repeat="cargo in roles.ficha.cargos">{{cargo.cargo.nombre}}</p>
                             </td>
-                            <td>{{empleado.persona.telefono_movil}}</td>
+                            <td>{{roles.ficha.empleado.persona.telefono_movil}}</td>
                             <td>7</td>
                             <td ng-if="dia.mes.visible && dia.visible" tooltip-append-to-body="true" tooltip-rel="tooltip" tooltip-placement="left" uib-tooltip-html="dia.mensaje"
-                                ng-repeat="dia in empleado.diasAnio track by $index">{{dia.texto}}</td>
+                                ng-repeat="dia in roles.diasAnio track by $index">{{dia.texto}}</td>
 
                         </tr>
 
@@ -7786,7 +7793,7 @@
                         <div class="row">
 
                             <div class="col-md-12">
-                                <p  for="codigo">Obs.</p>
+                                <p for="codigo">Obs.</p>
                                 <input ng-disabled="verinformacionDOtacion" ng-update-hidden type="text" class="form-control" id="filtroCodigo" ng-model="dotacionRopa.observacion"
                                     placeholder="" />
                             </div>
@@ -7866,9 +7873,11 @@
                                     <td>{{$index}}</td>
                                     <td scope="row">{{item.ropaTrabajo.nombre}}</td>
                                     <td>
-                                        <select   ng-disabled="verinformacionDOtacion || item.entregado" ng-model="item.producto"  required ng-change="calularInventarioItem(item)"
-                                            ng-options="producto as producto.nombre for producto in productosRopaTrabajo | filter:{id_subgrupo:item.id_ropa_trabajo} track by producto.id"><option value="">Seleccionar</option></select>
-                                            
+                                        <select ng-disabled="verinformacionDOtacion || item.entregado" ng-model="item.producto" required ng-change="calularInventarioItem(item)"
+                                            ng-options="producto as producto.nombre for producto in productosRopaTrabajo | filter:{id_subgrupo:item.id_ropa_trabajo} track by producto.id">
+                                            <option value="">Seleccionar</option>
+                                        </select>
+
                                     </td>
                                     <td>{{item.cantidad_disponible}}</td>
                                     <td>{{item.cantidad}}</td>
@@ -7891,7 +7900,7 @@
 
                 <div class="modal-footer">
 
-                    <button type="submit" class="btn btn-danger btn-sm pull-left" >
+                    <button type="submit" class="btn btn-danger btn-sm pull-left">
                         <i class="ace-icon fa fa-times"></i>
                         Salir
                     </button>

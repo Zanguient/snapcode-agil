@@ -417,7 +417,7 @@ angular.module('agil.servicios')
     return res;
 }]) 
 .factory('ListRolTurnoEmpleadosCalendario', function ($resource) {
-    return $resource(restServer + "recursos-humanos/empresa/:id_empresa/rolTurnoCalendario/inicio/:inicio/fin/:fin/pagina/:pagina/items_pagina/:items_pagina/texto_busqueda/:texto_busqueda/columna/:columna/direccion/:direccion/grupo/:grupo/nombre/:nombre",null,
+    return $resource(restServer + "recursos-humanos/empresa/:id_empresa/rolTurnoCalendario/inicio/:inicio/fin/:fin/pagina/:pagina/items_pagina/:items_pagina/texto_busqueda/:texto_busqueda/columna/:columna/direccion/:direccion/grupo/:grupo/nombre/:nombre/campo/:campo",null,
         {
             'update': { method: 'PUT' }
         });
@@ -435,7 +435,8 @@ angular.module('agil.servicios')
             columna: paginator.column,
             direccion: paginator.direction,
             grupo:paginator.filter.grupo,
-            nombre:paginator.filter.nombre
+            nombre:paginator.filter.nombre,
+            campo:paginator.filter.campo
         }, function (entidad) {
             delay.resolve(entidad);
         }, function (error) {

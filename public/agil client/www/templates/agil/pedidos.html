@@ -268,7 +268,7 @@
                                     </div>
                                     <div class="col-md-6">
                                         <label>
-                                            <input name="switch-field-1" tabindex="-1" ng-model="pedido.por_proveedor" class="ace ace-switch ace-switch-4 ng-pristine ng-untouched ng-valid ng-empty"
+                                            <input name="switch-field-1" tabindex="-1" ng-model="pedido.por_proveedor" class="ace ace-switch ace-switch-4 ng-pristine ng-untouched ng-valid ng-empty" ng-click="generarPorProveedor()"
                                                 type="checkbox">
                                             <span class="lbl check-descuento"></span>
                                         </label>
@@ -372,7 +372,7 @@
                                         <b>Grupo producto</b>
                                     </div>
                                     <div class="col-md-6">
-                                        <select class="form-control" style="width:150px;" ng-change="buscarProductos(grupo)" id="selectGruposProductos" name="selectGruposProductos"
+                                        <select class="form-control" style="width:150px;" ng-change="buscarProductos(1)" id="selectGruposProductos" name="selectGruposProductos"
                                             ng-model="pedido.grupo" ng-options="grupo.id as grupo.nombre for grupo in gruposProducto track by grupo.id"
                                             data-placeholder="Click para escoger">
                                             <option value="" selected>Todos</option>
@@ -562,7 +562,7 @@
                     <div class="col-md-6">
                         <label>
                             Mostrar
-                            <select ng-model="paginatorProductos.itemsPerPage" ng-change="buscarProductos()" name="tabla-proveedores_length" aria-controls="tabla-productos"
+                            <select ng-model="paginatorProductos.itemsPerPage" ng-change="buscarProductos(1)" name="tabla-proveedores_length" aria-controls="tabla-productos"
                                 class="form-control input-sm">
                                 <option selected value="10">10</option>
                                 <option value="25">25</option>
@@ -572,7 +572,7 @@
                     </div>
                     <div class="col-md-6">
                         <label>Grupos</label>
-                        <select class="form-control" style="width:150px;" ng-change="buscarProductos()" id="selectGruposProductos" name="selectGruposProductos"
+                        <select class="form-control" style="width:150px;" ng-change="buscarProductos(1)" id="selectGruposProductos" name="selectGruposProductos"
                             ng-model="configuracionPorveedor.grupo" ng-options="grupo as grupo.nombre for grupo in gruposProducto track by grupo.id"
                             data-placeholder="Click para escoger">
                             <option value="" selected>Todos</option>
@@ -605,7 +605,7 @@
                                 </th>
                                 <th class="center">
                                     <label class="pos-rel">
-                                        <input type="checkbox" class="ace" ng-model="selecccionProductosProveedor.seleccionar_todos" ng-click="seleccionarTodosParaAsignar()"
+                                        <input type="checkbox" class="ace" ng-model="seleccionProductosProveedor.seleccionar_todos" ng-click="seleccionarTodosParaAsignar()"
                                         />
                                         <span class="lbl"></span>
                                     </label>
@@ -842,7 +842,7 @@
                     <div class="col-md-6">
                         <label>
                             Mostrar
-                            <select ng-model="paginatorProductos.itemsPerPage" ng-change="buscarProductos()" name="tabla-proveedores_length" aria-controls="tabla-productos"
+                            <select ng-model="paginatorProductosAsignados.itemsPerPage" ng-change="buscarProductosAsignados(1)" name="tabla-proveedores_length" aria-controls="tabla-productos"
                                 class="form-control input-sm">
                                 <option selected value="10">10</option>
                                 <option value="25">25</option>
@@ -852,12 +852,12 @@
                     </div>
                     <div class="col-md-6">
                         <label>Grupos</label>
-                        <select class="form-control" style="width:150px;" ng-change="buscarProductos()" id="selectGruposProductos" name="selectGruposProductos"
-                            ng-model="configuracionPorveedor.grupo" ng-options="grupo as grupo.nombre for grupo in gruposProducto track by grupo.id"
+                        <select class="form-control" style="width:150px;" ng-change="buscarProductosAsignados(1)" id="selectGruposProductos" name="selectGruposProductos"
+                            ng-model="productosAsignadosPorveedor.grupo" ng-options="grupo as grupo.nombre for grupo in gruposProducto track by grupo.id"
                             data-placeholder="Click para escoger">
                             <option value="" selected>Todos</option>
                         </select>
-                        <button type="button" class="btn btn-primary" ng-click="actualizarProductosProveedor()">
+                        <button type="button" class="btn btn-primary" ng-click="agregarProductosSeleccionados()">
                             Guardar
                         </button>
                     </div>
@@ -865,7 +865,7 @@
                 <div class="col-md-4">
                     <div id="tabla-productos_filter" class="dataTables_filter">
                         <label>Búsqueda:
-                            <input type="search" class="form-control input-sm" ng-model="configuracionPorveedor.textoBusqueda" ng-keydown="verificarPulso($event,configuracionPorveedor.textoBusqueda)">
+                            <input type="search" class="form-control input-sm" ng-model="productosAsignadosPorveedor.textoBusqueda" ng-keydown="verificarPulso($event,configuracionPorveedor.textoBusqueda)">
                         </label>
                     </div>
                 </div>
@@ -885,50 +885,50 @@
                                 </th>
                                 <th class="center">
                                     <label class="pos-rel">
-                                        <input type="checkbox" class="ace" ng-model="selecccionProductosProveedor.seleccionar_todos" ng-click="seleccionarTodosParaAsignar()"
+                                        <input type="checkbox" class="ace" ng-model="seleccionProductosProveedorAsignados.seleccionar_todos" ng-click="seleccionarTodosParaAsignar()"
                                         />
                                         <span class="lbl"></span>
                                     </label>
                                 </th>
                                 <th class="center">
-                                    <a href="javascript:void(0)" ng-click="paginatorProductos.sortColumn('codigo')">Código
+                                    <a href="javascript:void(0)" ng-click="paginatorProductosAsignados.sortColumn('codigo')">Código
                                         <span id="codigo" class="sort fa fa-sort icon-only"></span>
                                     </a>
                                 </th>
                                 <th class="center">
-                                    <a href="javascript:void(0)" ng-click="paginatorProductos.sortColumn('nombre')">Nombre
+                                    <a href="javascript:void(0)" ng-click="paginatorProductosAsignados.sortColumn('nombre')">Nombre
                                         <span id="nombre" class="sort fa fa-sort icon-only"></span>
                                     </a>
                                 </th>
                                 <th>Imagen</th>
                                 <th class="center">
-                                    <a href="javascript:void(0)" ng-click="paginatorProductos.sortColumn('unidad_medida')">Unidad de Medida
+                                    <a href="javascript:void(0)" ng-click="paginatorProductosAsignados.sortColumn('unidad_medida')">Unidad de Medida
                                         <span id="unidad_medida" class="sort fa fa-sort icon-only"></span>
                                     </a>
                                 </th>
                                 <th class="center">
-                                    <a href="javascript:void(0)" ng-click="paginatorProductos.sortColumn('precio_unitario')">Precio Unitario
+                                    <a href="javascript:void(0)" ng-click="paginatorProductosAsignados.sortColumn('precio_unitario')">Precio Unitario
                                         <span id="precio_unitario" class="sort fa fa-sort icon-only"></span>
                                     </a>
                                 </th>
                                 <th class="center">
-                                    <a href="javascript:void(0)" ng-click="paginatorProductos.sortColumn('inventario_minimo')">Inventario Mínimo
+                                    <a href="javascript:void(0)" ng-click="paginatorProductosAsignados.sortColumn('inventario_minimo')">Inventario Mínimo
                                         <span id="inventario_minimo" class="sort fa fa-sort icon-only"></span>
                                     </a>
                                 </th>
                                 <th class="center">
-                                    <a href="javascript:void(0)" ng-click="paginatorProductos.sortColumn('descripcion')">Descripcion
+                                    <a href="javascript:void(0)" ng-click="paginatorProductosAsignados.sortColumn('descripcion')">Descripcion
                                         <span id="descripcion" class="sort fa fa-sort icon-only"></span>
                                     </a>
                                 </th>
 
                                 <th class="center">
-                                    <a href="javascript:void(0)" ng-click="paginatorProductos.sortColumn('grupo')">Grupo
+                                    <a href="javascript:void(0)" ng-click="paginatorProductosAsignados.sortColumn('grupo')">Grupo
                                         <span id="grupo" class="sort fa fa-sort icon-only"></span>
                                     </a>
                                 </th>
                                 <th class="center">
-                                    <a href="javascript:void(0)" ng-click="paginatorProductos.sortColumn('subgrupo')">Subgrupo
+                                    <a href="javascript:void(0)" ng-click="paginatorProductosAsignados.sortColumn('subgrupo')">Subgrupo
                                         <span id="subgrupo" class="sort fa fa-sort icon-only"></span>
                                     </a>
                                 </th>
@@ -942,11 +942,11 @@
                         <tbody>
                             <tr ng-repeat="producto in productosAsignadosProveedor">
                                 <td class="center">
-                                    {{($index+1)+(paginatorProductos.itemsPerPage*(paginatorProductos.currentPage-1))}}
+                                    {{($index+1)+(paginatorProductosAsignados.itemsPerPage*(paginatorProductosAsignados.currentPage-1))}}
                                 </td>
                                 <td class="center">
                                     <label class="pos-rel">
-                                        <input type="checkbox" class="ace" ng-model="producto.seleccionado" ng-click="modificarListaProductosProveedor(producto)"
+                                        <input type="checkbox" class="ace" ng-model="producto.seleccionado" ng-click="seleccionarProductoAsignado(producto)"
                                         />
                                         <span class="lbl"></span>
                                     </label>
@@ -1015,29 +1015,29 @@
             </div>
             <div class="row">
                 <div class="col-xs-6">
-                    <div class="dataTables_info" id="tabla-productos_info" role="status" aria-live="polite">Mostrando página {{paginatorProductos.currentPage}} de {{paginatorProductos.pages.length}}</div>
+                    <div class="dataTables_info" id="tabla-productos_info" role="status" aria-live="polite">Mostrando página {{paginatorProductosAsignados.currentPage}} de {{paginatorProductosAsignados.pages.length}}</div>
                 </div>
                 <div class="col-xs-6">
                     <div class="dataTables_paginate paging_simple_numbers" id="tabla-productos_paginate">
                         <ul class="pagination">
                             <li class="paginate_button previous" aria-controls="tabla-productos" tabindex="0" id="tabla-productos_previous">
-                                <a href="javascript:void(0)" ng-click="buscarProductos(1)">Primero</a>
+                                <a href="javascript:void(0)" ng-click="buscarProductosAsignados(1)">Primero</a>
                             </li>
-                            <li class="paginate_button previous" ng-class="{disabled:paginatorProductos.currentPage==1}" aria-controls="tabla-productos"
+                            <li class="paginate_button previous" ng-class="{disabled:paginatorProductosAsignados.currentPage==1}" aria-controls="tabla-productos"
                                 tabindex="0" id="tabla-productos_previous">
-                                <a href="javascript:void(0)" e-disabled="paginatorProductos.currentPage==1" ng-click="buscarProductos(paginatorProductos.currentPage-1)">
+                                <a href="javascript:void(0)" e-disabled="paginatorProductosAsignados.currentPage==1" ng-click="buscarProductosAsignados(paginatorProductosAsignados.currentPage-1)">
                                     <<</a>
                             </li>
-                            <li class="paginate_button" ng-class="{active:paginatorProductos.currentPage==pagina}" aria-controls="tabla-productos" tabindex="0"
-                                ng-repeat="pagina in paginatorProductos.pages" ng-if="abs(paginatorProductos.currentPage-pagina)<4">
-                                <a href="javascript:void(0)" ng-click="buscarProductos(pagina)">{{pagina}}</a>
+                            <li class="paginate_button" ng-class="{active:paginatorProductosAsignados.currentPage==pagina}" aria-controls="tabla-productos" tabindex="0"
+                                ng-repeat="pagina in paginatorProductosAsignados.pages" ng-if="abs(paginatorProductosAsignados.currentPage-pagina)<4">
+                                <a href="javascript:void(0)" ng-click="buscarProductosAsignados(pagina)">{{pagina}}</a>
                             </li>
-                            <li class="paginate_button" ng-class="{disabled:paginatorProductos.currentPage==paginatorProductos.pages.length}" aria-controls="tabla-productos"
+                            <li class="paginate_button" ng-class="{disabled:paginatorProductosAsignados.currentPage==paginatorProductosAsignados.pages.length}" aria-controls="tabla-productos"
                                 tabindex="0" id="tabla-productos_next">
-                                <a href="javascript:void(0)" e-disabled="paginatorProductos.currentPage==paginatorProductos.pages.length" ng-click="buscarProductos(paginatorProductos.currentPage+1)">>></a>
+                                <a href="javascript:void(0)" e-disabled="paginatorProductosAsignados.currentPage==paginatorProductosAsignados.pages.length" ng-click="buscarProductosAsignados(paginatorProductosAsignados.currentPage+1)">>></a>
                             </li>
                             <li class="paginate_button previous" aria-controls="tabla-productos" tabindex="0" id="tabla-productos_previous">
-                                <a href="javascript:void(0)" ng-click="buscarProductos(paginatorProductos.pages.length)">Ultimo</a>
+                                <a href="javascript:void(0)" ng-click="buscarProductosAsignados(paginatorProductosAsignados.pages.length)">Ultimo</a>
                             </li>
                         </ul>
                     </div>

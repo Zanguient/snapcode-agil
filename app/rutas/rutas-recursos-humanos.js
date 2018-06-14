@@ -1792,9 +1792,10 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                 }) */
             }
         })
-    router.route('/recursos-humanos/empresa/:id_empresa/rolTurnoCalendario/inicio/:inicio/fin/:fin/pagina/:pagina/items_pagina/:items_pagina/texto_busqueda/:texto_busqueda/columna/:columna/direccion/:direccion/grupo/:grupo/nombre/:nombre')
+    router.route('/recursos-humanos/empresa/:id_empresa/rolTurnoCalendario/inicio/:inicio/fin/:fin/pagina/:pagina/items_pagina/:items_pagina/texto_busqueda/:texto_busqueda/columna/:columna/direccion/:direccion/grupo/:grupo/nombre/:nombre/campo/:campo')
         .get(function (req, res) {
             var condicionRolTurno = {},
+            condicionCampo = {},
                 condicionEmpleado = {}
             if (req.params.grupo != "0") {
                 condicionRolTurno.id_grupo = req.params.grupo
@@ -1802,7 +1803,14 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
             if (req.params.nombre != "0") {
                 condicionEmpleado.nombre_completo = { $like: '%' + req.params.nombre + '%' }
             }
-            MedicoPaciente.findAndCountAll({
+            if (req.params.campo != "0") {
+                condicionRolTurno.id_campo= req.params.campo
+            }
+            RrhhEmpleadoRolTurno.findAndCountAll({
+                where: condicionRolTurno,
+                include: [{ model: Clase, as: 'campo'}, { model: Clase, as: 'grupo' }, { model: RrhhEmpleadoFicha, as: 'ficha', include: [{ model: RrhhEmpleadoCargo, as: 'cargos', include: [{ model: Clase, as: 'cargo' }] },{ model: RrhhEmpleadoVacaciones, as: 'vacaciones' }, { model: RrhhEmpleadoAusencia, as: 'ausencias', include: [{ model: RrhhClaseAsuencia, as: 'tipoAusencia', include: [{ model: Tipo, as: 'tipo' }] }] }, { model: MedicoPaciente, as: 'empleado', where: { id_empresa: req.params.id_empresa }, include: [{ model: Persona, as: 'persona',where:condicionEmpleado }] }] }]
+            }).then(function (datos) {
+           /*  MedicoPaciente.findAndCountAll({
                 offset: (req.params.items_pagina * (req.params.pagina - 1)), limit: req.params.items_pagina,
                 where: { id_empresa: req.params.id_empresa, es_empleado: true, eliminado: false },
                 include: [{ model: Persona, as: 'persona', where: condicionEmpleado },
@@ -1810,7 +1818,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                     model: RrhhEmpleadoFicha, as: 'empleadosFichas',
                     include: [{ model: RrhhEmpleadoRolTurno, as: "rolesTurno", where: condicionRolTurno, include: [{ model: Clase, as: 'campo' }, { model: Clase, as: 'grupo' }] }, { model: RrhhEmpleadoCargo, as: 'cargos', include: [{ model: Clase, as: 'cargo' }] }, { model: RrhhEmpleadoVacaciones, as: 'vacaciones' }, { model: RrhhEmpleadoAusencia, as: 'ausencias', include: [{ model: RrhhClaseAsuencia, as: 'tipoAusencia', include: [{ model: Tipo, as: 'tipo' }] }] }]
                 }]
-            }).then(function (datos) {
+            }).then(function (datos) { */
                 sequelize.query("select min(fecha_inicio) as fecha from agil_rrhh_empleado_rol_turno;", { type: sequelize.QueryTypes.SELECT })
                     .then(function (fechaInicio) {
                         res.json({ rolesTurno: datos.rows, fechaInicio: fechaInicio[0].fecha, paginas: Math.ceil(datos.count / req.params.items_pagina) });

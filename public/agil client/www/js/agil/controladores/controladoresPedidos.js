@@ -1,7 +1,7 @@
 angular.module('agil.controladores')
 	.controller('ControladorPedidos', function ($scope, $filter, $rootScope, $route, $templateCache, $location, $window, $localStorage,
 		blockUI, ClasesTipo, socket, Paginator, PedidosFiltro, ListaGruposProductoUsuario, ProveedoresNit, ListaProductosEmpresaUsuario, GuardarPedido, ListaProveedores, InventarioPaginador,
-		ProductosPaginador, ListaProductosProveedores, ActualizarProductosProveedor, ListaSubGruposProductoEmpresa, ProductosPaginadorSubgrupos) {
+		ProductosPaginador, ListaProductosProveedores, ActualizarProductosProveedor, ListaSubGruposProductoEmpresa, ProductosPaginadorSubgrupos, ProductosPaginadorAsignados) {
 
 		$scope.usuarioSesion = JSON.parse($localStorage.usuario);
 		convertUrlToBase64Image($scope.usuarioSesion.empresa.imagen, function (imagenEmpresa) {
@@ -31,7 +31,8 @@ angular.module('agil.controladores')
 		$scope.inicio = function () {
 			$scope.imprimir = { detalle: false };
 			$scope.listaProductosProveedor = [];
-			$scope.selecccionProductosProveedor = { seleccionar_todos: false };
+			$scope.seleccionProductosProveedor = { seleccionar_todos: false };
+			$scope.productosAsignadosPorveedor = { itemsPorPagina: 10, textoBusqueda: "", paginaActual: 1, paginas: [1] };
 			$scope.configuracionPorveedor = { itemsPorPagina: 10, textoBusqueda: "", paginaActual: 1, paginas: [1] };
 			$scope.detallesPedido = [];
 			$scope.mostarBusquedaProducto = false;
@@ -48,6 +49,7 @@ angular.module('agil.controladores')
 
 			$scope.obtenerProveedores();
 			$scope.obtenerProductos();
+			$scope.obtenerProductosAsignados();
 			$scope.filtro = {
 				desde: 0,
 				hasta: 0,
@@ -68,7 +70,7 @@ angular.module('agil.controladores')
 		$scope.obtenerGruposProductosEmpresaUsuario = function () {
 			blockUI.start();
 			// var promesa = ListaGruposProductoUsuario($scope.usuarioSesion.id_empresa, $scope.usuarioSesion.id);
-			var promesa = ListaSubGruposProductoEmpresa($scope.usuarioSesion.id_empresa, $scope.usuarioSesion.id);			
+			var promesa = ListaSubGruposProductoEmpresa($scope.usuarioSesion.id_empresa, $scope.usuarioSesion.id);
 			promesa.then(function (grupos) {
 				blockUI.stop();
 				if (grupos.length > 0) {
@@ -120,7 +122,7 @@ angular.module('agil.controladores')
 
 		$scope.checkProveedor = function (pedido) {
 			if ($scope.pedido) {
-				if ($scope.pedido.proveedor.id) {
+				if ($scope.pedido.proveedor) {
 					return true;
 				} else {
 					return false;
@@ -137,12 +139,12 @@ angular.module('agil.controladores')
 			}
 		}
 
-		$scope.buscarProducto = function (query) {
-			if (query != "" && query != undefined) {
-				var promesa = ListaProductosEmpresaUsuario($scope.usuario.id_empresa, query, $scope.usuario.id, 0);
-				return promesa;
-			}
-		};
+		// $scope.buscarProducto = function (query) {
+		// 	if (query != "" && query != undefined) {
+		// 		var promesa = ListaProductosEmpresaUsuario($scope.usuario.id_empresa, query, $scope.usuario.id, 0);
+		// 		return promesa;
+		// 	}
+		// };
 
 		$scope.establecerProducto = function (producto, modelo) {
 			$scope.detallePedido = {};
@@ -211,7 +213,17 @@ angular.module('agil.controladores')
 
 		$scope.agregardetallePedido = function (producto) {
 			if (producto !== undefined && producto !== null) {
-				$scope.detallesPedido.push(producto);
+				if (!$scope.detallesPedido.some(function (prod) {
+					return prod.producto.id === producto.producto.id
+				})) {
+					$scope.detallesPedido.push(producto);
+				} else {
+					$scope.detallesPedido.forEach(function (prod) {
+						if (prod.producto.id === producto.producto.id) {
+							prod.cantidad += producto.cantidad
+						}
+					})
+				}
 				$scope.detallePedido = undefined;
 			} else {
 				$scope.mostrarMensaje('Ocurrió un problema, no se puede agregar un valor no definido o nulo.');
@@ -834,25 +846,102 @@ angular.module('agil.controladores')
 		// }
 		$scope.abrirModalProductosProveedor = function (pedido) {
 			if ($scope.checkProveedor(pedido)) {
-				$scope.buscarProductos();
-				$scope.obtenerProductosProveedor($scope.pedido.proveedor);
-				$scope.verificarAsignacionProductosProveedor()
+				$scope.buscarProductos(null, $scope.pedido);
+				// $scope.obtenerProductosProveedor($scope.pedido.proveedor);
+				// $scope.verificarAsignacionProductosProveedor()
 				$scope.abrirPopup($scope.idDialogProductosProveedor);
 			} else {
 				$scope.mostrarMensaje('Seleccione un proveedor para ver su asignación de productos..');
 			}
 		};
 
+		$scope.seleccionarProductoAsignado = function (producto) {
+			if (!$scope.productosProveedorSeleccionados.some(function (id) {
+				return id === producto.id
+			})) {
+				// SS
+				$scope.productosProveedorSeleccionados.push(producto)
+			}
+		}
+
+		$scope.agregarProductosSeleccionados = function () {
+			$scope.productosProveedorSeleccionados.forEach(function (producto) {
+				$scope.detallePedido = {
+					producto: producto, precio_unitario: producto.precio_unitario,
+					cantidad: 1
+				};
+				$scope.agregardetallePedido($scope.detallePedido)
+			})
+		}
+
+		$scope.eliminarDetallePedido = function (detalle) {
+			$scope.detallesPedido.splice($scope.detallesPedido.indexOf(detalle), 1);
+		}
+
 		$scope.generarPorProveedor = function () {
 			if ($scope.pedido.proveedor) {
-				$scope.productosAsignadosProveedor = []
-				$scope.productosAsignacionProveedor.forEach(function (producto) {
-					if ($scope.listaProductosProveedor.some(function (id) {
-						return id === producto.id
-					})) {
-						$scope.productosAsignadosProveedor.push(producto)
+				if ($scope.pedido.por_proveedor) {
+					if ($scope.pedido.proveedor.productos.length > 0) {
+						$scope.paginatorProductosAsignados.filter = $scope.productosAsignadosPorveedor.grupo ? $scope.productosAsignadosPorveedor.grupo : { id: 0 };
+						var ids_productos_proveedor = "";
+
+						// var promesa = ProductosPaginador($scope.usuarioSesion.id_empresa, $scope.paginatorProductosAsignados, $scope.usuarioSesion.id); //por grupos
+						var prom = ListaProductosProveedores($scope.usuarioSesion.id_empresa, $scope.pedido.proveedor);
+						prom.then(function (res) {
+							if (res.hasErr) {
+								$scope.mostrarMensaje(res.mensaje);
+								$scope.listaProductosProveedor = [];
+							} else {
+								if (res.productos) {
+									var arr = res.productos.split(',');
+									$scope.listaProductosProveedor = arr.map(function (id) {
+										return parseInt(id);
+									});
+									var promesa = ProductosPaginadorAsignados($scope.usuarioSesion.id_empresa, $scope.paginatorProductosAsignados, $scope.usuarioSesion.id, $scope.listaProductosProveedor, true); ///por subgrupos
+									promesa.then(function (dato) {
+										if (dato.hasErr) {
+											$scope.mostrarMensaje(dato.mensaje);
+										} else {
+											$scope.paginatorProductosAsignados.setPages(dato.paginas);
+											$scope.productosAsignadosProveedor = dato.productos;
+											$scope.productosAsignadosProveedor.forEach(function (producto) {
+												if ($scope.listaProductosProveedor.some(function (id) {
+													return id === producto.id
+												})) {
+													$scope.detallePedido = {
+														producto: producto, precio_unitario: producto.precio_unitario,
+														cantidad: 1
+													};
+													$scope.agregardetallePedido($scope.detallePedido)
+												}
+											})
+										}
+										blockUI.stop();
+									}).catch(function (err) {
+										blockUI.stop();
+										var memo = (err.stack !== undefined && err.stack !== null && err.stack !== "") ? err.stack : (err.data !== null && err.data !== undefined & err.data !== "") ? err.data : "Error: se perdio la conexión con el servidor.";
+										$scope.mostrarMensaje(memo);
+									});
+								} else {
+									$scope.mostrarMensaje('El proveedor no tiene productos asignados.')
+									$scope.listaProductosProveedor = [];
+								}
+							}
+							blockUI.stop();
+						}).catch(function (err) {
+							blockUI.stop();
+							var memo = (err.stack !== undefined && err.stack !== null && err.stack !== "") ? err.stack : (err.data !== null && err.data !== undefined & err.data !== "") ? err.data : "Error: se perdio la conexión con el servidor.";
+							$scope.mostrarMensaje(memo);
+						})
+
+					} else {
+						$scope.mostrarMensaje('El proveedor no tiene productos asignados.')
 					}
-				})
+				} else {
+					$scope.detallePedido = {}
+					$scope.detallesPedido = []
+				}
+
 			} else {
 				$scope.mostrarMensaje('Seleccione un proveedor.')
 			}
@@ -879,38 +968,22 @@ angular.module('agil.controladores')
 		};
 
 		$scope.buscarProducto = function (query, proveedor) {
+			if ($scope.pedido === undefined) {
+				$scope.mostrarMensaje('Seleccione un almacen')
+				return
+			}
+
 			if (query != "" && query != undefined && proveedor == undefined) {
-				var promesa = ListaProductosEmpresa($scope.usuarioSesion.id_empresa, query);
+				var promesa = ListaProductosEmpresaUsuario($scope.usuarioSesion.id_empresa, query, $scope.usuarioSesion.id, $scope.pedido.almacen);
 				return promesa;
 			} else if (query != "" && query != undefined && proveedor) {
-				var promesa = ListaProductosEmpresa($scope.usuarioSesion.id_empresa, query);
+				var promesa = ListaProductosEmpresaUsuario($scope.usuarioSesion.id_empresa, query, $scope.usuarioSesion.id, $scope.pedido.almacen);
 				return promesa;
 			}
 		};
 
 		$scope.obtenerProductosProveedor = function (proveedor) {
 			blockUI.start()
-			var prom = ListaProductosProveedores($scope.usuarioSesion.id_empresa, proveedor);
-			prom.then(function (res) {
-				if (res.hasErr) {
-					$scope.mostrarMensaje(res.mensaje);
-					$scope.listaProductosProveedor = [];
-				} else {
-					if (res.productos) {
-						var arr = res.productos.split(',');
-						$scope.listaProductosProveedor = arr.map(function (id) {
-							return parseInt(id);
-						});
-					}else{
-						$scope.listaProductosProveedor = [];
-					}
-				}
-				blockUI.stop();
-			}).catch(function (err) {
-				blockUI.stop();
-				var memo = (err.stack !== undefined && err.stack !== null && err.stack !== "") ? err.stack : (err.data !== null && err.data !== undefined & err.data !== "") ? err.data : "Error: se perdio la conexión con el servidor.";
-				$scope.mostrarMensaje(memo);
-			})
 		};
 
 		$scope.modificarListaProductosProveedor = function (producto) {
@@ -922,19 +995,33 @@ angular.module('agil.controladores')
 			}
 		};
 
+		$scope.modificarListaProductosProveedorSeleccionados = function (producto) {
+			var indx = $scope.listaProductosProveedor.indexOf(producto.id);
+			if (indx >= 0 && !producto.seleccionado) {
+				$scope.listaProductosProveedor.splice(indx, 1);
+			} else if (indx == -1 && producto.seleccionado) {
+				$scope.listaProductosProveedor.push(producto.id);
+			}
+		};
+
 		$scope.seleccionarTodosParaAsignar = function () {
-			if ($scope.selecccionProductosProveedor.seleccionar_todos) {
-				$scope.productosAsignacionProveedor.forEach(function (producto) {
+			if ($scope.seleccionProductosProveedorAsignados.seleccionar_todos) {
+				$scope.productosAsignadosProveedor.forEach(function (producto) {
 					producto.seleccionado = true;
-					$scope.modificarListaProductosProveedor(producto)
+					$scope.productosProveedorSeleccionados.push(producto)
 				});
 			} else {
-				$scope.productosAsignacionProveedor.forEach(function (producto) {
+				$scope.productosAsignadosProveedor.forEach(function (producto) {
 					producto.seleccionado = false;
-					$scope.modificarListaProductosProveedor(producto)
+					$scope.productosProveedorSeleccionados.push(producto)
 				});
 			}
 		};
+		$scope.deseleccionarTodosAsignados = function () {
+			$scope.productosAsignadosProveedor.forEach(function (producto) {
+				producto.seleccionado = false;
+			});
+		}
 
 		$scope.actualizarProductosProveedor = function () {
 			var prom = ActualizarProductosProveedor($scope.usuarioSesion.id_empresa, $scope.listaProductosProveedor, $scope.pedido.proveedor);
@@ -952,7 +1039,7 @@ angular.module('agil.controladores')
 			})
 		};
 
-		$scope.buscarProductos = function (pagina) {
+		$scope.buscarProductos = function (pagina, pedido) {
 			blockUI.start();
 			if (pagina) {
 				$scope.paginatorProductos.currentPage = pagina;
@@ -966,7 +1053,30 @@ angular.module('agil.controladores')
 				} else {
 					$scope.paginatorProductos.setPages(dato.paginas);
 					$scope.productosAsignacionProveedor = dato.productos;
-					$scope.verificarAsignacionProductosProveedor();
+					if ($scope.pedido && $scope.pedido.proveedor) {
+						var prom = ListaProductosProveedores($scope.usuarioSesion.id_empresa, $scope.pedido.proveedor);
+						prom.then(function (res) {
+							if (res.hasErr) {
+								$scope.mostrarMensaje(res.mensaje);
+								$scope.listaProductosProveedor = [];
+							} else {
+								if (res.productos) {
+									var arr = res.productos.split(',');
+									$scope.listaProductosProveedor = arr.map(function (id) {
+										return parseInt(id);
+									});
+									$scope.verificarAsignacionProductosProveedor();
+								} else {
+									$scope.listaProductosProveedor = [];
+								}
+							}
+							blockUI.stop();
+						}).catch(function (err) {
+							blockUI.stop();
+							var memo = (err.stack !== undefined && err.stack !== null && err.stack !== "") ? err.stack : (err.data !== null && err.data !== undefined & err.data !== "") ? err.data : "Error: se perdio la conexión con el servidor.";
+							$scope.mostrarMensaje(memo);
+						})
+					}
 				}
 				blockUI.stop();
 			}).catch(function (err) {
@@ -974,6 +1084,70 @@ angular.module('agil.controladores')
 				var memo = (err.stack !== undefined && err.stack !== null && err.stack !== "") ? err.stack : (err.data !== null && err.data !== undefined & err.data !== "") ? err.data : "Error: se perdio la conexión con el servidor.";
 				$scope.mostrarMensaje(memo);
 			});
+		};
+
+		$scope.obtenerProductosAsignados = function () {
+			$scope.paginatorProductosAsignados = Paginator();
+			$scope.paginatorProductosAsignados.column = "nombre";
+			$scope.paginatorProductosAsignados.filter = $scope.grupo;
+			$scope.paginatorProductosAsignados.callBack = $scope.buscarProductosAsignados;
+			$scope.paginatorProductosAsignados.getSearch("", null, null);
+		};
+
+		$scope.buscarProductosAsignados = function (pagina, pedido) {
+			blockUI.start();
+			if (pagina) {
+				$scope.paginatorProductosAsignados.currentPage = pagina;
+			}
+			if ($scope.pedido === undefined) {
+				$scope.pedido = {};
+				$scope.mostrarMensaje('Seleccione un proveedor.')
+			} else {
+				if ($scope.pedido.proveedor.productos.length > 0) {
+					$scope.paginatorProductosAsignados.filter = $scope.productosAsignadosPorveedor.grupo ? $scope.productosAsignadosPorveedor.grupo : { id: 0 };
+					var ids_productos_proveedor = "";
+
+					// var promesa = ProductosPaginador($scope.usuarioSesion.id_empresa, $scope.paginatorProductosAsignados, $scope.usuarioSesion.id); //por grupos
+					var prom = ListaProductosProveedores($scope.usuarioSesion.id_empresa, $scope.pedido.proveedor);
+					prom.then(function (res) {
+						if (res.hasErr) {
+							$scope.mostrarMensaje(res.mensaje);
+							$scope.listaProductosProveedor = [];
+						} else {
+							if (res.productos) {
+								var arr = res.productos.split(',');
+								$scope.listaProductosProveedor = arr.map(function (id) {
+									return parseInt(id);
+								});
+								var promesa = ProductosPaginadorAsignados($scope.usuarioSesion.id_empresa, $scope.paginatorProductosAsignados, $scope.usuarioSesion.id, $scope.listaProductosProveedor); ///por subgrupos
+								promesa.then(function (dato) {
+									if (dato.hasErr) {
+										$scope.mostrarMensaje(dato.mensaje);
+									} else {
+										$scope.paginatorProductosAsignados.setPages(dato.paginas);
+										$scope.productosAsignadosProveedor = dato.productos;
+									}
+									blockUI.stop();
+								}).catch(function (err) {
+									blockUI.stop();
+									var memo = (err.stack !== undefined && err.stack !== null && err.stack !== "") ? err.stack : (err.data !== null && err.data !== undefined & err.data !== "") ? err.data : "Error: se perdio la conexión con el servidor.";
+									$scope.mostrarMensaje(memo);
+								});
+							} else {
+								$scope.listaProductosProveedor = [];
+							}
+						}
+						blockUI.stop();
+					}).catch(function (err) {
+						blockUI.stop();
+						var memo = (err.stack !== undefined && err.stack !== null && err.stack !== "") ? err.stack : (err.data !== null && err.data !== undefined & err.data !== "") ? err.data : "Error: se perdio la conexión con el servidor.";
+						$scope.mostrarMensaje(memo);
+					})
+
+				} else {
+					$scope.mostrarMensaje('El proveedor no tiene productos asignados.')
+				}
+			}
 		};
 
 		$scope.cerrarModalProductosProveedor = function () {
@@ -999,13 +1173,14 @@ angular.module('agil.controladores')
 		$scope.cerrarModalBusquedaProveedor = function () {
 			$scope.cerrarPopup($scope.idDialogBusquedaProveedor);
 		};
-		
+
 		$scope.abrirmodalProductosAsignadosProveedor = function () {
 			if ($scope.pedido === undefined) {
-				$scope.pedido = {por_proveedor: false};
+				$scope.pedido = { por_proveedor: false };
 			}
+			$scope.productosProveedorSeleccionados = []
 			if ($scope.pedido.proveedor) {
-				$scope.generarPorProveedor();
+				$scope.buscarProductosAsignados();
 				$scope.abrirPopup($scope.idDialogProductosAsigandosProveedor);
 			} else {
 				$scope.mostrarMensaje('Seleccione un proveedor.');

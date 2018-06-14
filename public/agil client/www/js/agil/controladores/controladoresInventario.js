@@ -592,6 +592,7 @@ angular.module('agil.controladores')
 		$scope.animate=false;
 		$scope.editMovientoDetalle = function (detallesMovimiento) {
 			detallesMovimiento.inventario.fecha_vencimiento = new Date($scope.convertirFecha(detallesMovimiento.inventario.fecha_vencimientoTexto));
+			detallesMovimiento.total=detallesMovimiento.cantidad*detallesMovimiento.costo_unitario-detallesMovimiento.descuento+detallesMovimiento.recargo-detallesMovimiento.ice-detallesMovimiento.excento
 			console.log(detallesMovimiento)
 			ActualizarDetalleMovimiento.update({ id:detallesMovimiento.id}, detallesMovimiento, function (data) {			
 				$timeout(function() {

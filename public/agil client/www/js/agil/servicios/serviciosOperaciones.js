@@ -65,12 +65,25 @@ angular.module('agil.servicios')
 
 
 
-    .factory('EliminarSolicitudReposicion', function ($resource) {
+    .factory('EliminarSolicitud', function ($resource) {
         return $resource(restServer + "operaciones/eliminar/:id_solicitud", null,
             {
                 'update': { method: 'PUT' }
             });
     })
+
+    .factory('EliminarSolicitudReposicion', ['EliminarSolicitud', '$q', function (EliminarSolicitud, $q) {
+        var res = function (solicitud) {
+            var delay = $q.defer();
+            EliminarSolicitud.save({ id_solicitud: solicitud.id }, solicitud, function (entidades) {
+                delay.resolve(entidades);
+            }, function (error) {
+                delay.reject(error);
+            });
+            return delay.promise;
+        };
+        return res;
+    }])
 
     .factory('DatosImpresion', function ($resource) {
         return $resource(restServer + "operaciones/impresion/:id_solicitud", null,

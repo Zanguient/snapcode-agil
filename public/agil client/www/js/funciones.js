@@ -135,14 +135,16 @@ function ejecutarScriptsInventario(idModalActualizacionInventario, idModalCreaci
 }
 
 function ejecutarScriptsOperaciones(idDialogDialogPanelOperaciones, idDialogEntregaViveres, idConfirmacionCierre, idDialogTotalIngredientes, idDialogoListadoPedido, idDialogoNuevoPedido,
-	idDialogBusquedaProveedor) {
+	idDialogProductosProveedor, idDialogBusquedaProveedor, idDialogProductosAsigandosProveedor) {
 	crearPopup(idDialogDialogPanelOperaciones, "100%", screen.height);
 	crearPopup(idDialogEntregaViveres, "60%", 'auto');
 	crearPopup(idConfirmacionCierre, "40%", 'auto');
 	crearPopup(idDialogTotalIngredientes, "60%", 'auto');
 	crearPopup(idDialogoListadoPedido, "auto", 'auto');
 	crearPopup(idDialogoNuevoPedido, "auto", 'auto');
+	crearPopup(idDialogProductosProveedor, "auto", 'auto');
 	crearPopup(idDialogBusquedaProveedor, "auto", 'auto');
+	crearPopup(idDialogProductosAsigandosProveedor, "auto", 'auto');
 }
 function ejecutarScriptsInicio(idPopupTablaProductos, idPopupTablaCreditos, idPopupTablaDeudas, idPopupPago,
 	idPopupActualizarCreditoCliente, idPopupActualizarCreditoDeuda, idPopupDeuda, idModalDescuento, idModalTablaVentasPendientes,

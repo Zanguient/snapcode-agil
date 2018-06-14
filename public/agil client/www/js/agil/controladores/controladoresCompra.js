@@ -2,7 +2,7 @@ angular.module('agil.controladores')
 
 	.controller('ControladorCompras', function ($scope, $localStorage, $location, $templateCache, $route, blockUI, DatosCompra, $timeout,
 		Compra, Compras, Proveedores, ProveedoresNit, ListaProductosEmpresaUsuario, ClasesTipo, CompraDatos,
-		ConfiguracionCompraVistaDatos, ConfiguracionCompraVista, ConfiguracionesCuentasEmpresa) {
+		ConfiguracionCompraVistaDatos, ConfiguracionCompraVista, ConfiguracionesCuentasEmpresa, ClasesTipoEmpresa, Tipos) {
 		blockUI.start();
 
 		$scope.usuario = JSON.parse($localStorage.usuario);
@@ -13,6 +13,7 @@ angular.module('agil.controladores')
 		$scope.idModalContenedorCompraEdicion = 'modal-wizard-container-compra-edicion';
 		$scope.idModalContenedorCompraVista = 'modal-wizard-container-compra-vista';
 		$scope.idInputCompletar = 'nit';
+		$scope.idModalServicios = 'dialog-servicios'
 		$scope.url = restServer + '/proveedores/empresa/' + $scope.usuario.id_empresa + '/texto/';
 
 		$scope.inicio = function () {
@@ -36,45 +37,54 @@ angular.module('agil.controladores')
 		$scope.obtenerconfiuracionCuentas = function () {
 			var promesa = ConfiguracionesCuentasEmpresa($scope.usuario.id_empresa);
 			var a = false;
-			$scope.plantilla = { retencionBienesGasto: { it: {}, iue: {}, gasto: {} }, retencionBienes: { it: {}, iue: {}, almacen: {} }, egreso: { ivacf: {}, cajaBanco: {} }, ingreso: { ivadf: {}, it: {}, itPorPagar: {}, cajaBanco: {} } }
+			$scope.plantilla = { retencionServicios: { it: {}, iue: {}, servicio: {} }, retencionBienesGasto: { it: {}, iue: {}, gasto: {} }, retencionBienes: { it: {}, iue: {}, almacen: {} }, egreso: { ivacf: {}, cajaBanco: {} }, ingreso: { ivadf: {}, it: {}, itPorPagar: {}, cajaBanco: {} } }
 			promesa.then(function (entidad) {
 
 				entidad.lista.forEach(function (lista) {
 					if ($scope.diccionario.IVA_DF == lista.nombre) {
-						$scope.plantilla.ingreso.ivadf = { porsentaje: parseInt(lista.valor), cuenta: lista.cuenta }
+						$scope.plantilla.ingreso.ivadf = { porsentaje: parseFloat(lista.valor), cuenta: lista.cuenta }
 					}
 					if ($scope.diccionario.IT == lista.nombre) {
-						$scope.plantilla.ingreso.it = { porsentaje: parseInt(lista.valor), cuenta: lista.cuenta }
+						$scope.plantilla.ingreso.it = { porsentaje: parseFloat(lista.valor), cuenta: lista.cuenta }
 					}
 					if ($scope.diccionario.IT_POR_PAGAR == lista.nombre) {
-						$scope.plantilla.ingreso.itPorPagar = { porsentaje: parseInt(lista.valor), cuenta: lista.cuenta }
+						$scope.plantilla.ingreso.itPorPagar = { porsentaje: parseFloat(lista.valor), cuenta: lista.cuenta }
 					}
 					if ($scope.diccionario.CAJA_BANCOS == lista.nombre) {
-						$scope.plantilla.ingreso.cajaBanco = { porsentaje: parseInt(lista.valor), cuenta: lista.cuenta }
+						$scope.plantilla.ingreso.cajaBanco = { porsentaje: parseFloat(lista.valor), cuenta: lista.cuenta }
 					}
 					if ($scope.diccionario.IVA_CF == lista.nombre) {
-						$scope.plantilla.egreso.ivacf = { porsentaje: parseInt(lista.valor), cuenta: lista.cuenta }
+						$scope.plantilla.egreso.ivacf = { porsentaje: parseFloat(lista.valor), cuenta: lista.cuenta }
 					}
 					if ($scope.diccionario.CAJA_BANCOS == lista.nombre) {
-						$scope.plantilla.egreso.cajaBanco = { porsentaje: parseInt(lista.valor), cuenta: lista.cuenta }
+						$scope.plantilla.egreso.cajaBanco = { porsentaje: parseFloat(lista.valor), cuenta: lista.cuenta }
 					}
 					if ($scope.diccionario.IT_RETENCION_BIEN == lista.nombre) {
-						$scope.plantilla.retencionBienes.it = { porsentaje: parseInt(lista.valor), cuenta: lista.cuenta }
+						$scope.plantilla.retencionBienes.it = { porsentaje: parseFloat(lista.valor), cuenta: lista.cuenta }
 					}
 					if ($scope.diccionario.IUE_RETENCION_BIEN == lista.nombre) {
-						$scope.plantilla.retencionBienes.iue = { porsentaje: parseInt(lista.valor), cuenta: lista.cuenta }
+						$scope.plantilla.retencionBienes.iue = { porsentaje: parseFloat(lista.valor), cuenta: lista.cuenta }
 					}
 					if ($scope.diccionario.CUENTA_ALMACEN_RETENCION_BIEN == lista.nombre) {
-						$scope.plantilla.retencionBienes.almacen = { porsentaje: parseInt(lista.valor), cuenta: lista.cuenta }
+						$scope.plantilla.retencionBienes.almacen = { porsentaje: parseFloat(lista.valor), cuenta: lista.cuenta }
 					}
 					if ($scope.diccionario.IT_RETENCION_BIEN_GASTO == lista.nombre) {
-						$scope.plantilla.retencionBienesGasto.it = { porsentaje: parseInt(lista.valor), cuenta: lista.cuenta }
+						$scope.plantilla.retencionBienesGasto.it = { porsentaje: parseFloat(lista.valor), cuenta: lista.cuenta }
 					}
 					if ($scope.diccionario.IUE_RETENCION_BIEN_GASTO == lista.nombre) {
-						$scope.plantilla.retencionBienesGasto.iue = { porsentaje: parseInt(lista.valor), cuenta: lista.cuenta }
+						$scope.plantilla.retencionBienesGasto.iue = { porsentaje: parseFloat(lista.valor), cuenta: lista.cuenta }
 					}
 					if ($scope.diccionario.CUENTA_GASTO_RETENCION_BIEN == lista.nombre) {
-						$scope.plantilla.retencionBienesGasto.gasto = { porsentaje: parseInt(lista.valor), cuenta: lista.cuenta }
+						$scope.plantilla.retencionBienesGasto.gasto = { porsentaje: parseFloat(lista.valor), cuenta: lista.cuenta }
+					}
+					if ($scope.diccionario.IT_RETENCION_SERVICIO == lista.nombre) {
+						$scope.plantilla.retencionServicios.it = { porsentaje: parseFloat(lista.valor), cuenta: lista.cuenta }
+					}
+					if ($scope.diccionario.IUE_RETENCION_SERVICIO == lista.nombre) {
+						$scope.plantilla.retencionServicios.iue = { porsentaje: parseFloat(lista.valor), cuenta: lista.cuenta }
+					}
+					if ($scope.diccionario.CUENTA_RETENCION_SERVICIO == lista.nombre) {
+						$scope.plantilla.retencionServicios.servicio = { porsentaje: parseFloat(lista.valor), cuenta: lista.cuenta }
 					}
 				}, this);
 			})
@@ -224,7 +234,32 @@ angular.module('agil.controladores')
 				}
 			}
 		}
+		$scope.verificarServicio = function (detalleCompra) {
 
+			if (detalleCompra.servicio.id) {
+				if ($scope.compra.movimiento.clase != undefined) {
+					if ($scope.compra.movimiento.clase.nombre == $scope.diccionario.MOVING_POR_RETENCION_BIENES) {
+						detalleCompra.descuento = 0
+						detalleCompra.ice = 0
+						detalleCompra.recargo = 0
+						detalleCompra.excento = 0
+						$scope.configuracionCompraVista.mostrar_it_retencion = true
+						$scope.configuracionCompraVista.mostrar_iue = true
+						$scope.configuracionCompraVista.mostrar_pagado = true
+						$scope.agregarDetalleCompraServicio(detalleCompra);
+					} else {
+						$scope.agregarDetalleCompraServicio(detalleCompra);
+					}
+				} else {
+					$scope.agregarDetalleCompraServicio(detalleCompra);
+				}
+
+			} else {
+				$scope.mostrarMensaje("El producto no se encuentra en el catalogo")
+			}
+
+
+		}
 		$scope.agregarDetalleCompra = function (detalleCompra) {
 			if (detalleCompra.producto.nombre.id) {
 				detalleCompra.producto = detalleCompra.producto.nombre;
@@ -253,7 +288,20 @@ angular.module('agil.controladores')
 			$scope.detalleCompra = { producto: {}, centroCosto: {}, cantidad: 1, descuento: 0, recargo: 0, ice: 0, excento: 0, tipo_descuento: false, tipo_recargo: false }
 			$scope.enfocar('centro_costo');
 		}
-
+		$scope.agregarDetalleCompraServicio = function (detalleCompra) {
+		
+			$scope.compra.detallesCompra.push(detalleCompra);
+			$scope.sumarTotal();
+			$scope.sumarTotalImporte();
+			if ($scope.compra.descuento_general) {
+				$scope.calcularImporteGeneral();
+			}
+			if ($scope.compra.tipoPago.nombre == $scope.diccionario.TIPO_PAGO_CREDITO) {
+				$scope.calcularSaldo();
+			}
+			$scope.detalleCompra = { producto: {}, centroCosto: {}, cantidad: 1, descuento: 0, recargo: 0, ice: 0, excento: 0, tipo_descuento: false, tipo_recargo: false }
+			$scope.enfocar('centro_costo');
+		}
 		$scope.eliminarDetalleCompra = function (detalleCompra) {
 			if ($scope.compra.id) {
 				detalleCompra.eliminado = true;
@@ -486,7 +534,7 @@ angular.module('agil.controladores')
 			resaltarPestaña($location.path().substring(1));
 			ejecutarScriptsCompra($scope.idModalWizardCompraEdicion, $scope.idModalWizardCompraVista,
 				$scope.idModalEliminarCompra, $scope.idModalContenedorCompraEdicion,
-				$scope.idModalContenedorCompraVista, $scope.idInputCompletar, $scope.url, $scope.idModalPago);
+				$scope.idModalContenedorCompraVista, $scope.idInputCompletar, $scope.url, $scope.idModalPago, $scope.idModalServicios);
 			$scope.buscarAplicacion($scope.usuario.aplicacionesUsuario, $location.path().substring(1));
 			$('#formularioCompra').ketchup({
 				validateEvents: 'blur focus keyup change submit'
@@ -548,6 +596,50 @@ angular.module('agil.controladores')
 			$scope.cerrarPopup($scope.idModalPago);
 		}
 
+		$scope.abrirDialogServicios = function (tipo) {
+			$scope.tipo_edicion = tipo;
+			$scope.clase = {};
+			$scope.abrirPopup($scope.idModalServicios);
+		}
+
+		$scope.cerrarDialogServicios = function () {
+			$scope.cerrarPopup($scope.idModalServicios);
+		}
+		$scope.obtenerServicios = function () {
+			blockUI.start();
+			var promesa = ClasesTipoEmpresa("SERVICIOS_COMPRA", $scope.usuario.id_empresa);
+			promesa.then(function (entidad) {
+				$scope.datosServicios = entidad
+				blockUI.stop();
+			});
+		}
+		$scope.agregarConceptoEdicion = function (clase) {
+			if (clase.nombre && clase.nombre_corto) {
+				if ($scope.tipo_edicion.clases.indexOf(clase) == -1) {
+					$scope.tipo_edicion.clases.push(clase);
+				}
+				$scope.clase = {}
+			}
+		}
+		$scope.modificarConceptoEdicion = function (clase) {
+			$scope.clase = clase;
+		}
+
+		$scope.removerConceptoEdicion = function (clase) {
+			clase.eliminado = true;
+		}
+		$scope.guardarConceptoEdicion = function (tipo) {
+			blockUI.start();
+			Tipos.update({ id_tipo: tipo.id }, tipo, function (res) {
+				var promesa = ClasesTipo(tipo.nombre_corto);
+				promesa.then(function (entidad) {
+					tipo = entidad
+					blockUI.stop();
+					$scope.cerrarDialogServicios();
+					$scope.mostrarMensaje('Guardado Exitosamente!');
+				});
+			});
+		}
 		$scope.efectuarPago = function (pago) {
 			blockUI.start();
 			Compra.update({ id: $scope.compra.id }, { pago: pago, id_usuario_cajero: $scope.usuario.id }, function (data) {
@@ -663,9 +755,9 @@ angular.module('agil.controladores')
 		}
 
 		$scope.crearNuevaCompra = function () {
-
+			$scope.obtenerServicios()
 			$scope.compra = new Compra({
-				usar_producto: true, movimiento: {}, tipo_retencion: true,
+				usar_producto: true, movimiento: {clase:{}}, tipo_retencion: true,
 				id_empresa: $scope.usuario.id_empresa, id_usuario: $scope.usuario.id, proveedor: {}, id_tipo_pago: $scope.tiposPago[0].id, tipoPago: $scope.tiposPago[0],
 				detallesCompra: [], descuento_general: false, tipo_descuento: false, codigo_control: 0, autorizacion: 0,
 				tipo_recargo: false, descuento: 0, recargo: 0, ice: 0, excento: 0
@@ -927,6 +1019,17 @@ angular.module('agil.controladores')
 			$scope.enfocar('cantidad');
 
 		}
+		$scope.establecerServicio = function (producto) {
+			producto.tipoProducto = producto['tipoProducto'] == null ? { id: producto['tipoProducto.id'], nombre: producto['tipoProducto.nombre'], nombre_corto: producto['tipoProducto.nombre_corto'] } : producto.tipoProducto;
+			var centroCostos = $scope.detalleCompra.centroCosto;
+			$scope.detalleCompra = {
+				centroCosto: null, servicio: producto, precio_unitario: producto.precio_unitario,
+				cantidad: 1, descuento: 0, recargo: 0, ice: 0, excento: 0, tipo_descuento: false, tipo_recargo: false
+			};
+			$scope.cerrarPopup($scope.idModalInventario);
+			$scope.enfocar('cantidad');
+
+		}
 		$scope.cerrarPopPupEdicion = function () {
 			$scope.cerrarPopup($scope.idModalWizardCompraEdicion);
 		}
@@ -936,6 +1039,7 @@ angular.module('agil.controladores')
 			$scope.eliminarPopup($scope.idModalWizardCompraVista);
 			$scope.eliminarPopup($scope.idModalEliminarCompra);
 			$scope.eliminarPopup($scope.idModalPago);
+			$scope.eliminarPopup($scope.idModalServicios);
 		});
 
 		$scope.inicio();

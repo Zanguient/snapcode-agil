@@ -723,7 +723,9 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Clie
 			Cliente.create({
 				id_empresa: req.params.id_empresa,
 				razon_social: req.body.razon_social,
-				nit: 0
+				nit: 0,
+				telefono1: req.body.telefono,
+				contacto: req.body.contacto
 			}).then(function (clienteCreado) {
 				res.json(clienteCreado);
 			});

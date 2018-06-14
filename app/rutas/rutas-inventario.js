@@ -1823,9 +1823,13 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 		});
 	router.route('/actualizar-movimiento-detalle/:id')
 		.put(function (req, res) {
+			var imp = req.body.cantidad * req.body.costo_unitario
+			var total = imp - req.body.descuento + req.body.recargo - req.body.ice - req.body.excento
 			DetalleMovimiento.update({
 				cantidad: req.body.cantidad,
-				costo_unitario: req.body.costo_unitario
+				costo_unitario: req.body.costo_unitario,
+				importe: imp,
+				total: total
 			}, {
 					where: { id: req.params.id }
 
@@ -1834,7 +1838,8 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 						cantidad: req.body.cantidad,
 						costo_unitario: req.body.costo_unitario,
 						lote: req.body.inventario.lote,
-						fecha_vencimiento: req.body.inventario.fecha_vencimiento
+						fecha_vencimiento: req.body.inventario.fecha_vencimiento,
+						costo_total: total
 					}, {
 							where: {
 								id: req.body.id_inventario
@@ -1844,6 +1849,27 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 							res.json({ mensaje: "actualizado satisfactoriamente!" });
 						});
 				});
+			// DetalleMovimiento.update({
+			// 	cantidad: req.body.cantidad,
+			// 	costo_unitario: req.body.costo_unitario
+			// }, {
+			// 		where: { id: req.params.id }
+
+			// 	}).then(function (detalleMovimientoActualizado) {
+			// 		Inventario.update({
+			// 			cantidad: req.body.cantidad,
+			// 			costo_unitario: req.body.costo_unitario,
+			// 			lote: req.body.inventario.lote,
+			// 			fecha_vencimiento: req.body.inventario.fecha_vencimiento
+			// 		}, {
+			// 				where: {
+			// 					id: req.body.id_inventario
+			// 				}
+
+			// 			}).then(function (inventarioActualizado) {
+			// 				res.json({ mensaje: "actualizado satisfactoriamente!" });
+			// 			});
+			// 	});
 		});
 	router.route('/cliente/verificar-credito/:id_cliente/tipo/:id_tipo')
 		.get(function (req, res) {

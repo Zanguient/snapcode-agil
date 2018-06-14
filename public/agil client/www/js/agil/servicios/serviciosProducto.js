@@ -205,7 +205,7 @@ angular.module('agil.servicios')
 
 	///busqueda por subgrupos de producto.
 	.factory('ProductosEmpresaPaginadorSubgrupos', function ($resource) {
-		return $resource(restServer + "productos/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion/subgrupo/:id_subgrupo/user/:id_usuario");
+		return $resource(restServer + "productos/asignacion/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion/subgrupo/:id_subgrupo/user/:id_usuario");
 	})
 
 	.factory('ProductosPaginadorSubgrupos', ['ProductosEmpresaPaginadorSubgrupos', '$q', function (ProductosEmpresaPaginadorSubgrupos, $q) {
@@ -229,3 +229,56 @@ angular.module('agil.servicios')
 		};
 		return res;
 	}])
+
+	.factory('ProductosAsignadosPaginadorProveedor', function ($resource) {
+		return $resource(restServer + "productos/asignados/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion/subgrupo/:id_subgrupo/user/:id_usuario/:ids");
+	})
+
+	.factory('ProductosPaginadorAsignados', ['ProductosAsignadosPaginadorProveedor', '$q', function (ProductosAsignadosPaginadorProveedor, $q) {
+		var res = function (idEmpresa, paginator, id_usuario, proveedorIds, todos) {
+			var delay = $q.defer();
+			ProductosAsignadosPaginadorProveedor.get({
+				id_empresa: idEmpresa,
+				pagina: paginator.currentPage,
+				items_pagina: todos ? 0 : paginator.itemsPerPage,
+				texto_busqueda: paginator.search,
+				columna: paginator.column,
+				direccion: paginator.direction,
+				id_subgrupo: paginator.filter.id,
+				id_usuario: id_usuario,
+				ids: proveedorIds
+			}, function (entidades) {
+					delay.resolve(entidades);
+				}, function (error) {
+					delay.reject(error);
+				});
+			return delay.promise;
+		};
+		return res;
+	}])
+
+	// .factory('ProductosAsignadosPaginadorProveedor', function ($resource) {
+	// 	return $resource(restServer + "productos/asignados/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion/subgrupo/:id_subgrupo/user/:id_usuario");
+	// })
+
+	// .factory('ProductosPaginadorSubgrupos', ['ProductosAsignadosPaginadorProveedor', '$q', function (ProductosAsignadosPaginadorProveedor, $q) {
+	// 	var res = function (idEmpresa, paginator, id_usuario) {
+	// 		var delay = $q.defer();
+	// 		ProductosAsignadosPaginadorProveedor.get({
+	// 			id_empresa: idEmpresa,
+	// 			pagina: paginator.currentPage,
+	// 			items_pagina: paginator.itemsPerPage,
+	// 			texto_busqueda: paginator.search,
+	// 			columna: paginator.column,
+	// 			direccion: paginator.direction,
+	// 			id_subgrupo: paginator.filter.id,
+	// 			id_usuario: id_usuario
+	// 		}, function (entidades) {
+	// 				delay.resolve(entidades);
+	// 			}, function (error) {
+	// 				delay.reject(error);
+	// 			});
+	// 		return delay.promise;
+	// 	};
+	// 	return res;
+	// }])
