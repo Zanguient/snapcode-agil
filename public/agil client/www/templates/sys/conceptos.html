@@ -2,7 +2,7 @@
 	<div class="col-xs-12">
 		<h3 class="header smaller lighter blue">CONCEPTOS</h3>
 
-		<button ng-disabled="!aplicacion.puede_crear" class="btn btn-primary" ng-click="crearNuevoConcepto()">
+		<button  class="btn btn-primary" ng-click="crearNuevoConcepto()">
 			<i class="ace-icon fa fa-plus align-top bigger-125"></i>
 			Nuevo
 		</button>
@@ -48,15 +48,15 @@
 						<td>{{tipo.nombre_corto}}</td>
 						<td>
 							<div class="hidden-sm hidden-xs action-buttons">
-								<a class="blue" href="javascript:void(0)" e-disabled="!aplicacion.puede_ver" ng-click="verUsuario(usuario)">
+								<a class="blue" href="javascript:void(0)"  ng-click="verUsuario(usuario)">
 									<i class="ace-icon fa fa-search-plus bigger-130"></i>
 								</a>
 
-								<a class="green" e-disabled="!aplicacion.puede_modificar" href="javascript:void(0)" ng-click="modificarConcepto(tipo)">
+								<a class="green"  href="javascript:void(0)" ng-click="modificarConcepto(tipo)">
 									<i class="ace-icon fa fa-pencil bigger-130"></i>
 								</a>
 
-								<a class="red" e-disabled="!aplicacion.puede_eliminar" href="javascript:void(0)" ng-click="mostrarConfirmacionEliminacion(usuario)">
+								<a class="red"  href="javascript:void(0)" ng-click="mostrarConfirmacionEliminacion(usuario)">
 									<i class="ace-icon fa fa-trash-o bigger-130"></i>
 								</a>
 							</div>
@@ -69,7 +69,7 @@
 
 									<ul class="dropdown-menu dropdown-only-icon dropdown-yellow dropdown-menu-right dropdown-caret dropdown-close">
 										<li>
-											<a href="javascript:void(0)" e-disabled="!aplicacion.puede_ver" ng-click="verUsuario(usuario)" class="tooltip-info" data-rel="tooltip"
+											<a href="javascript:void(0)"  ng-click="verUsuario(usuario)" class="tooltip-info" data-rel="tooltip"
 											 title="View">
 												<span class="blue">
 													<i class="ace-icon fa fa-search-plus bigger-120"></i>
@@ -78,7 +78,7 @@
 										</li>
 
 										<li>
-											<a href="javascript:void(0)" e-disabled="!aplicacion.puede_modificar" ng-click="modificarConcepto(tipo)" class="tooltip-success"
+											<a href="javascript:void(0)"  ng-click="modificarConcepto(tipo)" class="tooltip-success"
 											 data-rel="tooltip" title="Edit">
 												<span class="green">
 													<i class="ace-icon fa fa-pencil-square-o bigger-120"></i>
@@ -87,7 +87,7 @@
 										</li>
 
 										<li>
-											<a href="javascript:void(0)" e-disabled="!aplicacion.puede_eliminar" ng-click="mostrarConfirmacionEliminacion(usuario)" class="tooltip-error"
+											<a href="javascript:void(0)"  ng-click="mostrarConfirmacionEliminacion(usuario)" class="tooltip-error"
 											 data-rel="tooltip" title="Delete">
 												<span class="red">
 													<i class="ace-icon fa fa-trash-o bigger-120"></i>

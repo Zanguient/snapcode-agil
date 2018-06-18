@@ -230,6 +230,10 @@ angular.module('agil', ['ngRoute', 'agil.controladores',
                 controller:'ControladorPedidos',
                 templateUrl:'templates/agil/pedidos.html'
             })
+            .when('/activos-fijos', {
+                controller:'ControladorActivosFijos',
+                templateUrl:'templates/agil/activosFijos.html'
+            })
         .otherwise({
           redirectTo:'/'
         });

@@ -709,6 +709,11 @@ function ejecutarScriptsVehiculos(modalNuevoMantenimiento, modalReportarIncident
 	aplicarTiempos();
 }
 
+function ejecutarScriptsActivos(idModalconfiguracionActivos){
+	console.log('creadon modal configuraccion activos fijos.')
+	crearPopup(idModalconfiguracionActivos, 'auto', 'auto');
+}
+
 function aplicarMultiSelect() {
 	$('.multiselect').multiselect({
 		enableFiltering: true,

@@ -268,8 +268,8 @@
                                     </div>
                                     <div class="col-md-6">
                                         <label>
-                                            <input name="switch-field-1" tabindex="-1" ng-model="pedido.por_proveedor" class="ace ace-switch ace-switch-4 ng-pristine ng-untouched ng-valid ng-empty" ng-click="generarPorProveedor()"
-                                                type="checkbox">
+                                            <input name="switch-field-1" tabindex="-1" ng-model="pedido.por_proveedor" class="ace ace-switch ace-switch-4 ng-pristine ng-untouched ng-valid ng-empty"
+                                                ng-click="generarPorProveedor()" type="checkbox">
                                             <span class="lbl check-descuento"></span>
                                         </label>
                                     </div>
@@ -344,12 +344,17 @@
                                     </div>
                                 </div>
                                 <div class="col-md-6">
-                                    <a class="container-fluid" href="javascript:void(0)" ng-click="abrirModalProductosProveedor()">
-                                        <img style="width:10%;height:10%" src="img/Red_Silhouette_-_Gear_and_Tools.svg.png">
-                                    </a>
-                                    <a class="container-fluid" href="javascript:void(0)" ng-click="abrirmodalProductosAsignadosProveedor()">
-                                        <img style="width:10%;height:10%" src="img/cestoProductos.png">
-                                    </a>
+                                    <div class="col-md-4"> &nbsp;</div>
+                                    <div class="col-md-4">
+                                        <a href="javascript:void(0)" ng-click="abrirModalProductosProveedor()">
+                                            <img style="width:50%;height:50%" src="img/Red_Silhouette_-_Gear_and_Tools.svg.png">
+                                        </a>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <a href="javascript:void(0)" ng-click="abrirmodalProductosAsignadosProveedor()">
+                                            <img style="width:50%;height:50%" src="img/cestoProductos.png">
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -372,8 +377,8 @@
                                         <b>Grupo producto</b>
                                     </div>
                                     <div class="col-md-6">
-                                        <select class="form-control" style="width:150px;" ng-change="buscarProductos(1)" id="selectGruposProductos" name="selectGruposProductos"
-                                            ng-model="pedido.grupo" ng-options="grupo.id as grupo.nombre for grupo in gruposProducto track by grupo.id"
+                                        <select class="form-control" style="width:150px;" ng-change="filtrarProductosSeleccionadosPorGrupo()" id="selectGruposProductos" name="selectGruposProductos"
+                                            ng-model="pedido.grupo" ng-options="grupo.id as grupo.nombre for grupo in subGruposProducto track by grupo.id"
                                             data-placeholder="Click para escoger">
                                             <option value="" selected>Todos</option>
                                         </select>
@@ -573,7 +578,7 @@
                     <div class="col-md-6">
                         <label>Grupos</label>
                         <select class="form-control" style="width:150px;" ng-change="buscarProductos(1)" id="selectGruposProductos" name="selectGruposProductos"
-                            ng-model="configuracionPorveedor.grupo" ng-options="grupo as grupo.nombre for grupo in gruposProducto track by grupo.id"
+                            ng-model="configuracionPorveedor.grupo" ng-options="grupo as grupo.nombre for grupo in subGruposProducto track by grupo.id"
                             data-placeholder="Click para escoger">
                             <option value="" selected>Todos</option>
                         </select>
@@ -773,7 +778,7 @@
             <div class="container-fluid">
                 <div class="col-md-8">
                     <label>Búsqueda:
-                        <input type="search" class="form-control input-sm" ng-model="textoBusquedaProveedor" ng-change="filtrarProveedor(textoBusquedaProveedor)">
+                        <input type="search" class="form-control input-sm" ng-model="textoBusquedaProveedor" ng-change="filtrarProveedores(textoBusquedaProveedor)">
                     </label>
                 </div>
                 <div class="col-md-4">
@@ -842,8 +847,8 @@
                     <div class="col-md-6">
                         <label>
                             Mostrar
-                            <select ng-model="paginatorProductosAsignados.itemsPerPage" ng-change="buscarProductosAsignados(1)" name="tabla-proveedores_length" aria-controls="tabla-productos"
-                                class="form-control input-sm">
+                            <select ng-model="paginatorProductosAsignados.itemsPerPage" ng-change="buscarProductosAsignados(1)" name="tabla-proveedores_length"
+                                aria-controls="tabla-productos" class="form-control input-sm">
                                 <option selected value="10">10</option>
                                 <option value="25">25</option>
                                 <option value="50">50</option>
@@ -853,7 +858,7 @@
                     <div class="col-md-6">
                         <label>Grupos</label>
                         <select class="form-control" style="width:150px;" ng-change="buscarProductosAsignados(1)" id="selectGruposProductos" name="selectGruposProductos"
-                            ng-model="productosAsignadosPorveedor.grupo" ng-options="grupo as grupo.nombre for grupo in gruposProducto track by grupo.id"
+                            ng-model="productosAsignadosPorveedor.grupo" ng-options="grupo as grupo.nombre for grupo in subGruposProducto track by grupo.id"
                             data-placeholder="Click para escoger">
                             <option value="" selected>Todos</option>
                         </select>
@@ -865,12 +870,12 @@
                 <div class="col-md-4">
                     <div id="tabla-productos_filter" class="dataTables_filter">
                         <label>Búsqueda:
-                            <input type="search" class="form-control input-sm" ng-model="productosAsignadosPorveedor.textoBusqueda" ng-keydown="verificarPulso($event,configuracionPorveedor.textoBusqueda)">
+                            <input type="search" class="form-control input-sm" ng-model="productosAsignadosPorveedor.textoBusqueda" ng-keydown="verificarPulsoAsignados($event,productosAsignadosPorveedor.textoBusqueda)">
                         </label>
                     </div>
                 </div>
                 <div class="col-md-2">
-                    <button type="button" ng-click="cerrarModalProductosAsignadosProveedor()" class="btn btn-danger pull-right">
+                    <button type="button" ng-click="cerrarModalProductosAsignadosProveedor(true)" class="btn btn-danger pull-right">
                         <i class="ace-icon fa fa-close align-top bigger-125"></i>
                     </button>
                 </div>
@@ -885,7 +890,7 @@
                                 </th>
                                 <th class="center">
                                     <label class="pos-rel">
-                                        <input type="checkbox" class="ace" ng-model="seleccionProductosProveedorAsignados.seleccionar_todos" ng-click="seleccionarTodosParaAsignar()"
+                                        <input type="checkbox" class="ace" ng-model="seleccionProductosProveedorAsignados.seleccionar_todos" ng-click="seleccionarTodosAsignados()"
                                         />
                                         <span class="lbl"></span>
                                     </label>
@@ -946,8 +951,7 @@
                                 </td>
                                 <td class="center">
                                     <label class="pos-rel">
-                                        <input type="checkbox" class="ace" ng-model="producto.seleccionado" ng-click="seleccionarProductoAsignado(producto)"
-                                        />
+                                        <input type="checkbox" class="ace" ng-model="producto.seleccionado" ng-click="seleccionarProductoAsignado(producto)" />
                                         <span class="lbl"></span>
                                     </label>
                                 </td>
@@ -1028,13 +1032,14 @@
                                 <a href="javascript:void(0)" e-disabled="paginatorProductosAsignados.currentPage==1" ng-click="buscarProductosAsignados(paginatorProductosAsignados.currentPage-1)">
                                     <<</a>
                             </li>
-                            <li class="paginate_button" ng-class="{active:paginatorProductosAsignados.currentPage==pagina}" aria-controls="tabla-productos" tabindex="0"
-                                ng-repeat="pagina in paginatorProductosAsignados.pages" ng-if="abs(paginatorProductosAsignados.currentPage-pagina)<4">
+                            <li class="paginate_button" ng-class="{active:paginatorProductosAsignados.currentPage==pagina}" aria-controls="tabla-productos"
+                                tabindex="0" ng-repeat="pagina in paginatorProductosAsignados.pages" ng-if="abs(paginatorProductosAsignados.currentPage-pagina)<4">
                                 <a href="javascript:void(0)" ng-click="buscarProductosAsignados(pagina)">{{pagina}}</a>
                             </li>
-                            <li class="paginate_button" ng-class="{disabled:paginatorProductosAsignados.currentPage==paginatorProductosAsignados.pages.length}" aria-controls="tabla-productos"
-                                tabindex="0" id="tabla-productos_next">
-                                <a href="javascript:void(0)" e-disabled="paginatorProductosAsignados.currentPage==paginatorProductosAsignados.pages.length" ng-click="buscarProductosAsignados(paginatorProductosAsignados.currentPage+1)">>></a>
+                            <li class="paginate_button" ng-class="{disabled:paginatorProductosAsignados.currentPage==paginatorProductosAsignados.pages.length}"
+                                aria-controls="tabla-productos" tabindex="0" id="tabla-productos_next">
+                                <a href="javascript:void(0)" e-disabled="paginatorProductosAsignados.currentPage==paginatorProductosAsignados.pages.length"
+                                    ng-click="buscarProductosAsignados(paginatorProductosAsignados.currentPage+1)">>></a>
                             </li>
                             <li class="paginate_button previous" aria-controls="tabla-productos" tabindex="0" id="tabla-productos_previous">
                                 <a href="javascript:void(0)" ng-click="buscarProductosAsignados(paginatorProductosAsignados.pages.length)">Ultimo</a>

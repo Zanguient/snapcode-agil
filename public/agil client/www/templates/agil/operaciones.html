@@ -696,7 +696,7 @@
                                     <div class="col-md-6">
                                         <label>
                                             <input ng-disabled="evaluacion.ver != undefined" name="switch-field-1" tabindex="-1" ng-model="pedido.por_proveedor" class="ace ace-switch ace-switch-4 ng-pristine ng-untouched ng-valid ng-empty"
-                                                type="checkbox">
+                                            ng-click="generarPorProveedor()" type="checkbox">
                                             <span class="lbl check-descuento"></span>
                                         </label>
                                     </div>
@@ -769,12 +769,17 @@
                                             <i class="ace-icon fa fa-search-plus bigger-110"></i>
                                         </button>
                                     </div>
-                                    <div class="col-md-6">
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="col-md-4"> &nbsp;</div>
+                                    <div class="col-md-4">
                                         <a href="javascript:void(0)" ng-click="abrirModalProductosProveedor()">
-                                            <img style="width:10%;height:10%" src="img/Red_Silhouette_-_Gear_and_Tools.svg.png">
+                                            <img style="width:50%;height:50%" src="img/Red_Silhouette_-_Gear_and_Tools.svg.png">
                                         </a>
+                                    </div>
+                                    <div class="col-md-4">
                                         <a href="javascript:void(0)" ng-click="abrirmodalProductosAsignadosProveedor()">
-                                            <img style="width:10%;height:10%" src="img/cestoProductos.png">
+                                            <img style="width:50%;height:50%" src="img/cestoProductos.png">
                                         </a>
                                     </div>
                                 </div>
@@ -799,8 +804,8 @@
                                         <b>Grupo producto</b>
                                     </div>
                                     <div class="col-md-6">
-                                        <select class="form-control" style="width:150px;" ng-change="buscarProductos(grupo)" id="selectGruposProductos" name="selectGruposProductos"
-                                            ng-model="pedido.grupo" ng-options="grupo.id as grupo.nombre for grupo in gruposProducto track by grupo.id"
+                                        <select class="form-control" style="width:150px;" ng-change="filtrarProductosSeleccionadosPorGrupo()" id="selectGruposProductos" name="selectGruposProductos"
+                                            ng-model="pedido.grupo" ng-options="grupo.id as grupo.nombre for grupo in subGruposProducto track by grupo.id"
                                             data-placeholder="Click para escoger">
                                             <option value="" selected>Todos</option>
                                         </select>
@@ -987,7 +992,7 @@
         <div class="modal-content">
             <form ng-submit="guardarPedido(pedido)">
                 <div class="modal-header bg-blue">
-                    <h2 class="center">Nuevo Pedido</h2>
+                    <h2 class="center">Nuevo Pedido nro2</h2>
                 </div>
                 <div class="modal-body">
                     <div class="container-fluid">
@@ -999,8 +1004,8 @@
                                     </div>
                                     <div class="col-md-6">
                                         <label>
-                                            <input ng-disabled="evaluacion.ver != undefined" name="switch-field-1" tabindex="-1" ng-model="pedido.por_proveedor" class="ace ace-switch ace-switch-4 ng-pristine ng-untouched ng-valid ng-empty"
-                                                type="checkbox">
+                                            <input name="switch-field-1" tabindex="-1" ng-model="pedido.por_proveedor" class="ace ace-switch ace-switch-4 ng-pristine ng-untouched ng-valid ng-empty"
+                                            ng-click="generarPorProveedor()" type="checkbox">
                                             <span class="lbl check-descuento"></span>
                                         </label>
                                     </div>
@@ -1074,12 +1079,17 @@
                                         </button>
 
                                     </div>
-                                    <div class="col-md-6">
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="col-md-4"> &nbsp;</div>
+                                    <div class="col-md-4">
                                         <a href="javascript:void(0)" ng-click="abrirModalProductosProveedor()">
-                                            <img style="width:10%;height:10%" src="img/Red_Silhouette_-_Gear_and_Tools.svg.png">
+                                            <img style="width:50%;height:50%" src="img/Red_Silhouette_-_Gear_and_Tools.svg.png">
                                         </a>
+                                    </div>
+                                    <div class="col-md-4">
                                         <a href="javascript:void(0)" ng-click="abrirmodalProductosAsignadosProveedor()">
-                                            <img style="width:10%;height:10%" src="img/cestoProductos.png">
+                                            <img style="width:50%;height:50%" src="img/cestoProductos.png">
                                         </a>
                                     </div>
                                 </div>
@@ -1104,8 +1114,8 @@
                                         <b>Grupo producto</b>
                                     </div>
                                     <div class="col-md-6">
-                                        <select class="form-control" style="width:150px;" ng-change="buscarProductos(grupo)" id="selectGruposProductos" name="selectGruposProductos"
-                                            ng-model="pedido.grupo" ng-options="grupo.id as grupo.nombre for grupo in gruposProducto track by grupo.id"
+                                        <select class="form-control" style="width:150px;" ng-change="filtrarProductosSeleccionadosPorGrupo()" id="selectGruposProductos" name="selectGruposProductos"
+                                            ng-model="pedido.grupo" ng-options="grupo.id as grupo.nombre for grupo in subGruposProducto track by grupo.id"
                                             data-placeholder="Click para escoger">
                                             <option value="" selected>Todos</option>
                                         </select>
@@ -1295,7 +1305,7 @@
                     <div class="col-md-6">
                         <label>
                             Mostrar
-                            <select ng-model="paginatorProductos.itemsPerPage" ng-change="buscarProductos()" name="tabla-proveedores_length" aria-controls="tabla-productos"
+                            <select ng-model="paginatorProductos.itemsPerPage" ng-change="buscarProductos(1)" name="tabla-proveedores_length" aria-controls="tabla-productos"
                                 class="form-control input-sm">
                                 <option selected value="10">10</option>
                                 <option value="25">25</option>
@@ -1305,8 +1315,8 @@
                     </div>
                     <div class="col-md-6">
                         <label>Grupos</label>
-                        <select class="form-control" style="width:150px;" ng-change="buscarProductos()" id="selectGruposProductos" name="selectGruposProductos"
-                            ng-model="configuracionPorveedor.grupo" ng-options="grupo as grupo.nombre for grupo in gruposProducto track by grupo.id"
+                        <select class="form-control" style="width:150px;"  ng-change="buscarProductos(1)" id="selectGruposProductos" name="selectGruposProductos"
+                            ng-model="configuracionPorveedor.grupo" ng-options="grupo as grupo.nombre for grupo in subGruposProducto track by grupo.id"
                             data-placeholder="Click para escoger">
                             <option value="" selected>Todos</option>
                         </select>
@@ -1575,7 +1585,7 @@
                     <div class="col-md-6">
                         <label>
                             Mostrar
-                            <select ng-model="paginatorProductosAsignados.itemsPerPage" ng-change="buscarProductosAsignados()" name="tabla-proveedores_length"
+                            <select ng-model="paginatorProductosAsignados.itemsPerPage" ng-change="buscarProductosAsignados(1)" name="tabla-proveedores_length"
                                 aria-controls="tabla-productos" class="form-control input-sm">
                                 <option selected value="10">10</option>
                                 <option value="25">25</option>
@@ -1585,8 +1595,8 @@
                     </div>
                     <div class="col-md-6">
                         <label>Grupos</label>
-                        <select class="form-control" style="width:150px;" ng-change="buscarProductosAsignados()" id="selectGruposProductos" name="selectGruposProductos"
-                            ng-model="productosAsignadosPorveedor.grupo" ng-options="grupo as grupo.nombre for grupo in gruposProducto track by grupo.id"
+                        <select class="form-control" style="width:150px;" ng-change="buscarProductosAsignados(1)" id="selectGruposProductos" name="selectGruposProductos"
+                            ng-model="productosAsignadosPorveedor.grupo" ng-options="grupo as grupo.nombre for grupo in subGruposProducto track by grupo.id"
                             data-placeholder="Click para escoger">
                             <option value="" selected>Todos</option>
                         </select>
@@ -1598,7 +1608,7 @@
                 <div class="col-md-4">
                     <div id="tabla-productos_filter" class="dataTables_filter">
                         <label>Búsqueda:
-                            <input type="search" class="form-control input-sm" ng-model="productosAsignadosPorveedor.textoBusqueda" ng-keydown="verificarPulso($event,configuracionPorveedor.textoBusqueda)">
+                            <input type="search" class="form-control input-sm" ng-model="productosAsignadosPorveedor.textoBusqueda" ng-keydown="verificarPulsoAsignados($event,productosAsignadosPorveedor.textoBusqueda)">
                         </label>
                     </div>
                 </div>

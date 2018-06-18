@@ -168,6 +168,9 @@ module.exports=function(sequelize,Sequelize){
 		sequelize.query("INSERT IGNORE INTO sys_aplicacion SET id = 50,titulo = 'PEDIDOS',atributo_clase='glyphicon-euro',url='pedidos',createdAt = NOW(),updatedAt = NOW();").spread(function(results, metadata) {
 		  //console.log(metadata+" rows affected in sys_application");
 		});
+		sequelize.query("INSERT IGNORE INTO sys_aplicacion SET id = 51,titulo = 'ACTIVOS',atributo_clase='glyphicon-euro',url='activos-fijos',createdAt = NOW(),updatedAt = NOW();").spread(function(results, metadata) {
+		  //console.log(metadata+" rows affected in sys_application");
+		});
 	});
 	
 	return Aplicacion;

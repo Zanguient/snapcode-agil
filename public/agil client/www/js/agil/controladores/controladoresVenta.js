@@ -92,7 +92,7 @@ angular.module('agil.controladores')
 		}
 		// $scope.usarServicios = function (usar_servicios) {
 		// 	if (usar_servicios) {
-				
+
 		// 	}else{
 
 		// 	}
@@ -158,7 +158,7 @@ angular.module('agil.controladores')
 		$scope.obtenerGruposProductoEmpresa = function () {
 			// var promesa = ListaGruposProductoEmpresa($scope.usuario.id_empresa);
 			var promesa = ListaGruposProductoUsuario($scope.usuario.id_empresa, $scope.usuario.id);
-			
+
 			promesa.then(function (grupos) {
 				$scope.grupos_productos = grupos;
 				/*if ( angular.isDefined($localStorage.grupos_check) ) {
@@ -451,7 +451,7 @@ angular.module('agil.controladores')
 		}
 
 		$scope.agregarDetalleVenta = function (detalleVenta) {
-			if(detalleVenta.producto.id){
+			if (detalleVenta.producto.id) {
 				if (detalleVenta.producto.activar_inventario) {
 					if (detalleVenta.costos.length > 1) {
 						var cantidadTotal = detalleVenta.cantidad, i = 0, detalleVentaOriginal = JSON.parse(JSON.stringify(detalleVenta));
@@ -663,7 +663,7 @@ angular.module('agil.controladores')
 				if ($scope.actividadesDosificaciones[i].dosificacion) {
 					if (!$scope.actividadesDosificaciones[i].expirado && !$scope.actividadesDosificaciones[i].dosificacion.expirado) {
 						$scope.actividades.push($scope.actividadesDosificaciones[i].actividad);
-					}else{
+					} else {
 						$scope.dosificacionesExpiradas = true
 					}
 				}
@@ -677,9 +677,9 @@ angular.module('agil.controladores')
 			$scope.filtrarVentas($scope.sucursalesUsuario, currentDateString, currentDateString);
 		}
 
-		$scope.filtrarVentas = function (sucursalesUsuario, inicio, fin, razon_social, nit, monto, tipo_pago, sucursal, transaccion, usuario,estado) {
+		$scope.filtrarVentas = function (sucursalesUsuario, inicio, fin, razon_social, nit, monto, tipo_pago, sucursal, transaccion, usuario, estado) {
 			razon_social = (razon_social == "" || razon_social == undefined) ? 0 : razon_social;
-			estado= (estado == "" || estado == undefined) ? 0 : estado;
+			estado = (estado == "" || estado == undefined) ? 0 : estado;
 			nit = (nit == null || nit == undefined) ? 0 : nit;
 			monto = (monto == null || monto == undefined) ? 0 : monto;
 			tipo_pago = (tipo_pago == undefined) ? 0 : tipo_pago;
@@ -701,7 +701,7 @@ angular.module('agil.controladores')
 
 			inicio = new Date($scope.convertirFecha(inicio));
 			fin = new Date($scope.convertirFecha(fin));
-			var promesa = Ventas(sucursalesUsuario, inicio, fin, razon_social, nit, monto, tipo_pago, sucursal, transaccion, usuario,estado);
+			var promesa = Ventas(sucursalesUsuario, inicio, fin, razon_social, nit, monto, tipo_pago, sucursal, transaccion, usuario, estado);
 			promesa.then(function (ventas) {
 				$scope.ventas = ventas;
 				//console.log(ventas);
@@ -1378,7 +1378,9 @@ angular.module('agil.controladores')
 
 			if ($scope.venta.sucursal) {
 				$scope.obtenerAlmacenesActividades($scope.venta.sucursal.id);
-				$scope.venta.almacen = al;
+				if (al.id) {
+					$scope.venta.almacen = al;
+				}
 			}
 			$scope.venta.movimiento = $scope.movimientosEgreso[0];
 			// $scope.venta.sucursal =  $scope.sucursales[0];
@@ -1873,44 +1875,33 @@ angular.module('agil.controladores')
 		$scope.agregarDetalleVentaPanel = function (producto) {
 			//console.log("producto sssssssssss ", producto);
 			//if (producto.activar_inventario) {
-				var detalleVenta;
-				$scope.cantidadInventario = 0;
-				if (producto.activar_inventario) {
-					for (var i = 0; i < producto.inventarios.length; i++) {
-						$scope.cantidadInventario = $scope.cantidadInventario + producto.inventarios[i].cantidad;
-					}
+			var detalleVenta;
+			$scope.cantidadInventario = 0;
+			if (producto.activar_inventario) {
+				for (var i = 0; i < producto.inventarios.length; i++) {
+					$scope.cantidadInventario = $scope.cantidadInventario + producto.inventarios[i].cantidad;
 				}
-				var j = 0, encontrado = false;
-				while (j < $scope.venta.detallesVenta.length && !encontrado) {
-					if (($scope.venta.detallesVenta[j].producto.id == producto.id)) {
-						if (producto.activar_inventario) {
-							if (($scope.venta.detallesVenta[j].cantidad + 1) <= $scope.cantidadInventario) {
-								$scope.venta.detallesVenta[j].cantidad = $scope.venta.detallesVenta[j].cantidad + 1;
-							} else {
-								$scope.mostrarMensaje('¡Cantidad de inventario insuficiente, inventario disponible: ' + $scope.cantidadInventario + '!');
-							}
-						} else {
-							$scope.venta.detallesVenta[j].cantidad = $scope.venta.detallesVenta[j].cantidad + 1;
-						}
-						encontrado = true;
-						detalleVenta = $scope.venta.detallesVenta[j];
-					}
-					j++;
-				}
-				if (!encontrado) {
+			}
+			var j = 0, encontrado = false;
+			while (j < $scope.venta.detallesVenta.length && !encontrado) {
+				if (($scope.venta.detallesVenta[j].producto.id == producto.id)) {
 					if (producto.activar_inventario) {
-						if (1 <= $scope.cantidadInventario) {
-							detalleVenta = {
-								producto: producto, precio_unitario: producto.precio_unitario,
-								inventario_disponible: $scope.cantidadInventario, costos: producto.inventarios,
-								cantidad: 1, descuento: producto.descuento, tipo_descuento: (producto.descuento > 0 ? true : false), recargo: 0, ice: 0, excento: 0, tipo_recargo: false
-							};
-							$scope.venta.detallesVenta.push(detalleVenta);
-							$scope.calcularImporteDetalleVenta(detalleVenta);
+						if (($scope.venta.detallesVenta[j].cantidad + 1) <= $scope.cantidadInventario) {
+							$scope.venta.detallesVenta[j].cantidad = $scope.venta.detallesVenta[j].cantidad + 1;
 						} else {
 							$scope.mostrarMensaje('¡Cantidad de inventario insuficiente, inventario disponible: ' + $scope.cantidadInventario + '!');
 						}
 					} else {
+						$scope.venta.detallesVenta[j].cantidad = $scope.venta.detallesVenta[j].cantidad + 1;
+					}
+					encontrado = true;
+					detalleVenta = $scope.venta.detallesVenta[j];
+				}
+				j++;
+			}
+			if (!encontrado) {
+				if (producto.activar_inventario) {
+					if (1 <= $scope.cantidadInventario) {
 						detalleVenta = {
 							producto: producto, precio_unitario: producto.precio_unitario,
 							inventario_disponible: $scope.cantidadInventario, costos: producto.inventarios,
@@ -1918,31 +1909,42 @@ angular.module('agil.controladores')
 						};
 						$scope.venta.detallesVenta.push(detalleVenta);
 						$scope.calcularImporteDetalleVenta(detalleVenta);
+					} else {
+						$scope.mostrarMensaje('¡Cantidad de inventario insuficiente, inventario disponible: ' + $scope.cantidadInventario + '!');
 					}
 				} else {
+					detalleVenta = {
+						producto: producto, precio_unitario: producto.precio_unitario,
+						inventario_disponible: $scope.cantidadInventario, costos: producto.inventarios,
+						cantidad: 1, descuento: producto.descuento, tipo_descuento: (producto.descuento > 0 ? true : false), recargo: 0, ice: 0, excento: 0, tipo_recargo: false
+					};
+					$scope.venta.detallesVenta.push(detalleVenta);
 					$scope.calcularImporteDetalleVenta(detalleVenta);
 				}
+			} else {
+				$scope.calcularImporteDetalleVenta(detalleVenta);
+			}
 
-				$scope.sumarTotal();
-				$scope.sumarTotalImporte();
-				$scope.calcularSaldo();
-				$scope.capturarInteraccion();
-				// ========= para rankin de vendidos =====================//
-				producto.rankin += 1;
+			$scope.sumarTotal();
+			$scope.sumarTotalImporte();
+			$scope.calcularSaldo();
+			$scope.capturarInteraccion();
+			// ========= para rankin de vendidos =====================//
+			producto.rankin += 1;
 
-				var indice = $scope.productosProcesados.indexOf(producto);
-				$scope.productosProcesados[indice] = producto;
+			var indice = $scope.productosProcesados.indexOf(producto);
+			$scope.productosProcesados[indice] = producto;
 
-				// setTimeout(function(){
-				// 	aplicarSwiper(4,3,true,2);
-				// },5);
-				$localStorage.productosProcesados = $scope.productosProcesados;
+			// setTimeout(function(){
+			// 	aplicarSwiper(4,3,true,2);
+			// },5);
+			$localStorage.productosProcesados = $scope.productosProcesados;
 			//}else{
-				//$scope.mostrarMensaje('¡No esta activado el inventario para este producto!');
+			//$scope.mostrarMensaje('¡No esta activado el inventario para este producto!');
 
 			//}
 			if (producto.activar_inventario) {
-				producto.inventario_disponible = $scope.cantidadInventario-detalleVenta.cantidad;
+				producto.inventario_disponible = $scope.cantidadInventario - detalleVenta.cantidad;
 			}
 
 			// ===== fin rankin ============================//
