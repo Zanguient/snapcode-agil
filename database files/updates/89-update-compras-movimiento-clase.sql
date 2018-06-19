@@ -1,0 +1,1 @@
+update inv_movimiento set clase=21 where clase is NULL

@@ -437,7 +437,7 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 				Clase.find({
 					where: { nombre_corto: 'ID' }
 				}).then(function (conceptoMovimiento) {
-					if (compra.movimiento.clase) {
+					if (compra.movimiento.clase.id) {
 						conceptoMovimiento = compra.movimiento.clase
 					}
 					Movimiento.create({
