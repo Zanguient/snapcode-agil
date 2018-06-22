@@ -1,4 +1,4 @@
-function ejecutarScriptDespacho(idModalAsignacionFactura, idModalVentaKardexFactura, idModalAsignacionFacturaKardex, idModalDetalleKardex, IdModalVerificarCuenta,
+﻿function ejecutarScriptDespacho(idModalAsignacionFactura, idModalVentaKardexFactura, idModalAsignacionFacturaKardex, idModalDetalleKardex, IdModalVerificarCuenta,
 	IdModalCobros, IdModalHistorialCobros,idModalConceptoEdicion) {
 
 	crearPopup(idModalVentaKardexFactura, "80%", 'auto');
