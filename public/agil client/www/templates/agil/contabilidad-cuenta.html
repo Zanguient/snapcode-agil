@@ -740,65 +740,82 @@
 								</tbody>
 							</table>
 						</div>
-						<!-- <div class="col-xs-12" style="background-color:yellow">
-									<a><div align="center"  ng-click="verPlantillarRetencionServicio=(verPlantillarRetencionServicio)?false:true">
-										<h3 class="text-white">PLANTILLA DE RETENCION DE SERVICIOS</h3>
-									</div></a>
-									<table ng-if="verPlantillarRetencionServicio" class="table  table-bordered">
-										<thead>
-											<tr>
-												<th>
-													<label>Nombre</label>
-												</th>
-												<th>
-													<label>%</label>
-												</th>
-												<th>
-													<label>Cuenta</label>
-												</th>
-											</tr>
-										</thead>
-										<tbody>
-											<tr>
-												<th>
-													<label>IVA CF</label>
-												</th>
-												<th>
-													<input class="form-control" required type="number" min="0" max="100" ng-model="plantilla.egreso.ivacf.porsentaje"> </th>
-												<th>
-													<input class="form-control" required name="asignarCuentaIvaCf" ng-keypress="interceptarTecla($event,'cantidad',true)" id="asignarCuentaIvaCf"
-													 type="text" ng-model="plantilla.egreso.ivacf.cuenta" placeholder="Busqueda..." uib-typeahead="cuenta as (cuenta.codigo+'-'+cuenta.nombre+'-'+cuenta.descripcion+'-'+cuenta.tipoCuenta.nombre) for cuenta in buscarCuentas($viewValue)"
-													 typeahead-wait-ms="1000" typeahead-template-url="templates/autocompletar.html" typeahead-show-hint="false" typeahead-min-length="3">
-													<div ng-show="errorIvacf" class="invalid-message help-block" ng-messages="formularioPlantillaCuenta.asignarCuentaIvaCf.$error"
-													 ng-if="formularioPlantillaCuenta.asignarCuentaIvaCf.$touched || (formularioPlantillaCuenta.$submitted && formularioPlantillaCuenta.asignarCuentaIvaCf.$invalid)">
-														<div ng-messages-include="/templates/GRAL/messages.html"></div>
-													</div>
-												</th>
-											</tr>
-											<tr>
-												<th>
-													<label>CAJA/BANCOS</label>
-												</th>
-												<th>
-													<input class="form-control" required type="number" min="0" max="100" ng-model="plantilla.egreso.cajaBanco.porsentaje">
-												</th>
-												<th>
-													<div>
-														<input class="form-control" required name="asignarCuentaEgresoCaja" ng-keypress="interceptarTecla($event,'cantidad',true)"
-														 id="asignarCuentaEgresoCaja" type="text" ng-model="plantilla.egreso.cajaBanco.cuenta" placeholder="Busqueda..."
-														 uib-typeahead="cuenta as (cuenta.codigo+'-'+cuenta.nombre+'-'+cuenta.descripcion+'-'+cuenta.tipoCuenta.nombre) for cuenta in buscarCuentas($viewValue)"
-														 typeahead-wait-ms="1000" typeahead-template-url="templates/autocompletar.html" typeahead-show-hint="false" typeahead-min-length="3">
-													</div>
-		
-													<div ng-show="errorEgresoCaja" class="invalid-message help-block" ng-messages="formularioPlantillaCuenta.asignarCuentaEgresoCaja.$error"
-													 ng-if="formularioPlantillaCuenta.asignarCuentaEgresoCaja.$touched || (formularioPlantillaCuenta.$submitted && formularioPlantillaCuenta.asignarCuentaEgresoCaja.$invalid)">
-														<div ng-messages-include="/templates/GRAL/messages.html"></div>
-													</div>
-												</th>
-											</tr>
-										</tbody>
-									</table>
-								</div> -->
+						<div class="col-xs-12" style="background-color:springgreen" ng-if="usuario.empresa.usar_funciones_erp">
+							<div align="center" ng-click="visible.verPlantillarRetencionServicio=(visible.verPlantillarRetencionServicio)?false:true">
+								<a>
+									<h3 class="text-white">PLANTILLA DE RETENCION DE SERVICIOS</h3>
+								</a>
+							</div>
+							<table ng-if="visible.verPlantillarRetencionServicio" class="table  table-bordered">
+								<thead>
+									<tr>
+										<th>
+											<label>Nombre</label>
+										</th>
+										<th>
+											<label>%</label>
+										</th>
+										<th>
+											<label>Cuenta</label>
+										</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<th>
+											<label>Cuenta de Servicio</label>
+										</th>
+										<th>
+											<input class="form-control" required type="number" min="0" max="100" ng-model="plantilla.retencionServicios.servicio.porsentaje"> </th>
+										<th>
+											<input class="form-control" required name="asignarServicio" ng-keypress="interceptarTecla($event,'cantidad',true)" id="asignarServicio"
+											 type="text" ng-model="plantilla.retencionServicios.servicio.cuenta" placeholder="Busqueda..." uib-typeahead="cuenta as (cuenta.codigo+'-'+cuenta.nombre+'-'+cuenta.descripcion+'-'+cuenta.tipoCuenta.nombre) for cuenta in buscarCuentas($viewValue)"
+											 typeahead-wait-ms="1000" typeahead-template-url="templates/autocompletar.html" typeahead-show-hint="false" typeahead-min-length="3">
+											<div ng-show="errorServicio" class="invalid-message help-block" ng-messages="formularioPlantillaCuenta.asignarServicio.$error"
+											 ng-if="formularioPlantillaCuenta.asignarServicio.$touched || (formularioPlantillaCuenta.$submitted && formularioPlantillaCuenta.asignarServicio.$invalid)">
+												<div ng-messages-include="/templates/GRAL/messages.html"></div>
+											</div>
+										</th>
+									</tr>
+									<tr>
+										<th>
+											<label>IUE</label>
+										</th>
+										<th>
+											<input class="form-control" required type="number" min="0" max="100" ng-model="plantilla.retencionServicios.iue.porsentaje"> </th>
+										<th>
+											<input class="form-control" required name="asignarServicioIue" ng-keypress="interceptarTecla($event,'cantidad',true)" id="asignarServicioIue"
+											 type="text" ng-model="plantilla.retencionServicios.iue.cuenta" placeholder="Busqueda..." uib-typeahead="cuenta as (cuenta.codigo+'-'+cuenta.nombre+'-'+cuenta.descripcion+'-'+cuenta.tipoCuenta.nombre) for cuenta in buscarCuentas($viewValue)"
+											 typeahead-wait-ms="1000" typeahead-template-url="templates/autocompletar.html" typeahead-show-hint="false" typeahead-min-length="3">
+											<div ng-show="errorServicioIue" class="invalid-message help-block" ng-messages="formularioPlantillaCuenta.asignarServicioIue.$error"
+											 ng-if="formularioPlantillaCuenta.asignarServicioIue.$touched || (formularioPlantillaCuenta.$submitted && formularioPlantillaCuenta.asignarServicioIue.$invalid)">
+												<div ng-messages-include="/templates/GRAL/messages.html"></div>
+											</div>
+										</th>
+									</tr>
+									<tr>
+										<th>
+											<label>IT</label>
+										</th>
+										<th>
+											<input class="form-control" required type="number" min="0" max="100" ng-model="plantilla.retencionServicios.it.porsentaje">
+										</th>
+										<th>
+											<div>
+												<input class="form-control" required name="asignarServicioIt" ng-keypress="interceptarTecla($event,'cantidad',true)" id="asignarServicioIt"
+												 type="text" ng-model="plantilla.retencionServicios.it.cuenta" placeholder="Busqueda..." uib-typeahead="cuenta as (cuenta.codigo+'-'+cuenta.nombre+'-'+cuenta.descripcion+'-'+cuenta.tipoCuenta.nombre) for cuenta in buscarCuentas($viewValue)"
+												 typeahead-wait-ms="1000" typeahead-template-url="templates/autocompletar.html" typeahead-show-hint="false" typeahead-min-length="3">
+											</div>
+
+											<div ng-show="errorServicioIt" class="invalid-message help-block" ng-messages="formularioPlantillaCuenta.asignarServicioIt.$error"
+											 ng-if="formularioPlantillaCuenta.asignarServicioIt.$touched || (formularioPlantillaCuenta.$submitted && formularioPlantillaCuenta.asignarServicioIt.$invalid)">
+												<div ng-messages-include="/templates/GRAL/messages.html"></div>
+											</div>
+										</th>
+									</tr>
+								</tbody>
+							</table>
+						</div>
 					</div>
 				</div>
 

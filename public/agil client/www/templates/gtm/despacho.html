@@ -172,6 +172,7 @@
 								N°
 							</th>
 							<th>Fecha</th>
+							<th>N° Despacho</th>
 							<th>Vendedor</th>
 							<th>Cliente</th>
 							<th>S. Transporte</th>
@@ -197,6 +198,9 @@
 								{{$index+1}}
 							</td>
 							<td>{{gtm_detalle_despacho.fecha | date:"dd/MM/yyyy"}}</td>
+							<td class="center">
+									{{gtm_detalle_despacho.numero_correlativo}}
+								</td>
 							<td>{{gtm_detalle_despacho.despacho.usuario.persona.nombre_completo}}</td>
 							<td>{{gtm_detalle_despacho.despacho.cliente.razon_social}}</td>
 							<td>{{gtm_detalle_despacho.servicio_transporte}}</td>

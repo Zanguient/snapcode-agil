@@ -259,18 +259,18 @@ module.exports = function (router, sequelize, Sequelize, Compra, Proveedor, Alma
 				}
 			}).then(function (empresa) {
 				DetalleCompra.findAll({
-					include: [{ model: Inventario, as: 'inventario' },
-					{ model: Producto, as: 'producto', include: [{ model: Clase, as: 'grupo' }] },
+					include: [{ model: Inventario, as: 'inventario',required:false },{ model: Clase, as: 'servicio',required:false },
+					{ model: Producto, as: 'producto',required:false, include: [{ model: Clase, as: 'grupo',required:false }] },
 					{
 						model: Compra, as: 'compra', where: { fecha: { $between: [inicio, fin] } },
-						include: [{ model: Proveedor, as: 'proveedor' },
+						include: [{ model: Proveedor, as: 'proveedor',required:false },
 						{
-							model: Almacen, as: 'almacen',
-							include: [{ model: Sucursal, as: 'sucursal', where: condicionCompra }]
+							model: Almacen, as: 'almacen',required:false,
+							include: [{ model: Sucursal, as: 'sucursal', where: condicionCompra,required:false }]
 						}]
 					},
-					{ model: Clase, as: 'centroCosto'/*,where:{nombre_corto:'ALM'}*/ }],
-					order: [[{ model: Compra, as: 'compra' }, 'fecha', 'ASC']]
+					{ model: Clase, as: 'centroCosto'/*,where:{nombre_corto:'ALM'}*/ ,required:false}],
+					order: [[{ model: Compra, as: 'compra',required:false }, 'fecha', 'ASC']]
 				}).then(function (detallesCompra) {
 					res.json({ detallesCompra: detallesCompra, empresa: empresa });
 				});

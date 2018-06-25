@@ -4241,7 +4241,7 @@
                 <div class="row">
                     <div class="form-group col-sm-6">
                         <label for="nombres">Desde</label>
-                        <input ng-change="calcularDatosRolTurno(rolTurno)" name="fecha" required ng-update-hidden class="form-control date-picker"
+                        <input ng-disabled="rolTurno.blokearDatos" ng-change="calcularDatosRolTurno(rolTurno)" name="fecha" required ng-update-hidden class="form-control date-picker"
                             autocomplete="off" type="text" data-date-format="dd/mm/yyyy" id="desde" ng-model="rolTurno.fecha_inicio"
                             placeholder="Desde" />
                     </div>
@@ -4254,11 +4254,11 @@
                 <div class="row">
                     <div class="form-group col-sm-6">
                         <label for="nombres">D. Trabajo</label>
-                        <input required type="number" ng-model="rolTurno.dias_trabajado" class="form-control" id="nombres" name="nombres" placeholder="D. Trabajo">
+                        <input ng-disabled="rolTurno.blokearDatos" required type="number" ng-model="rolTurno.dias_trabajado" class="form-control" id="nombres" name="nombres" placeholder="D. Trabajo">
                     </div>
                     <div class="form-group col-sm-6">
                         <label for="ap-paterno">D. Descanso</label>
-                        <input required type="number" ng-model="rolTurno.dias_descanso" class="form-control" id="ap-paterno" name="ap-paterno" placeholder="D. Descanso">
+                        <input ng-disabled="rolTurno.blokearDatos" required type="number" ng-model="rolTurno.dias_descanso" class="form-control" id="ap-paterno" name="ap-paterno" placeholder="D. Descanso">
                     </div>
                 </div>
                 <div class="row">

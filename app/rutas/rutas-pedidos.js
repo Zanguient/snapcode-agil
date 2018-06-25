@@ -130,6 +130,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
             sequelize.transaction(function (t) {
                 return Pedido.create({
                     id_sucursal: req.body.sucursal,
+                    id_almacen: req.body.almacen,
                     id_empresa: req.params.id_empresa,
                     id_proveedor: req.body.proveedor,
                     // id_compra: req.body.id_compra,
@@ -179,64 +180,6 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
                             reject((err.stack !== undefined) ? err.stack : err);
                         });
                     })
-                // return Tipo.find({
-                //     where: { nombre_corto: 'MOVING' },
-                //     transaction: t
-                // }).then(function (tipoMovimiento) {
-                //     return Clase.find({
-                //         where: { nombre_corto: 'ID' },
-                //         transaction: t
-                //     }).then(function (conceptoMovimiento) {
-                //         return Movimiento.create({
-                //             id_tipo: tipoMovimiento.id,
-                //             id_clase: conceptoMovimiento.id,
-                //             id_almacen: compra.almacen,
-                //             fecha: compra.fecha
-                //         }, { transaction: t }).then(function (movimientoCreado) {
-                //             return Compra.create({
-                //                 id_almacen: compra.almacen,
-                //                 id_proveedor: compra.proveedor,
-                //                 id_movimiento: movimientoCreado.id,
-                //                 factura: 0,
-                //                 autorizacion: 0,
-                //                 fecha: compra.fecha,
-                //                 codigo_control: 0,
-                //                 importe: 0,
-                //                 id_tipo_pago: 18,
-                //                 dias_credito: null,
-                //                 a_cuenta: null,
-                //                 saldo: null,
-                //                 descuento_general: false,
-                //                 descuento: 0,
-                //                 recargo: 0,
-                //                 ice: 0,
-                //                 excento: 0,
-                //                 tipo_descuento: 0,
-                //                 tipo_recargo: 0,
-                //                 total: 0,
-                //                 id_usuario: compra.usuario
-                //             }, { transaction: t }).then(function (compraCreada) {
-
-                //             }).catch(function (err) {
-                //                 return new Promise(function (fulfill, reject) {
-                //                     reject((err.stack !== undefined) ? err.stack : err);
-                //                 });
-                //             })
-                //         }).catch(function (err) {
-                //             return new Promise(function (fulfill, reject) {
-                //                 reject((err.stack !== undefined) ? err.stack : err);
-                //             });
-                //         })
-                //     }).catch(function (err) {
-                //         return new Promise(function (fulfill, reject) {
-                //             reject((err.stack !== undefined) ? err.stack : err);
-                //         });
-                //     })
-                // }).catch(function (err) {
-                //     return new Promise(function (fulfill, reject) {
-                //         reject((err.stack !== undefined) ? err.stack : err);
-                //     });
-                // })
             }).then(function (result) {
                 res.json({ mensaje: result })
             }).catch(function (err) {
@@ -266,117 +209,4 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
                 });
             })
     }
-
-    // function crearDetalleCompra(detalleCompra, idMovimiento, idCompra, idAlmacen, idProducto, idCentroCosto, t) {
-    //     return sequelize.query('select max(id) as id, costo_unitario  from inv_inventario where producto = ' + idProducto, { type: sequelize.QueryTypes.SELECT, transaction: t }).then(function (costos) {
-    //         detalleCompra.costo_unitario = costos[0].costo_unitario ? costos[0].costo_unitario : 0
-    //         return Inventario.create({
-    //             id_almacen: idAlmacen,
-    //             id_producto: idProducto,
-    //             cantidad: detalleCompra.cantidad,
-    //             costo_unitario: detalleCompra.costo_unitario,
-    //             costo_total: detalleCompra.costo_unitario * detalleCompra.cantidad,
-    //             fecha_vencimiento: null,
-    //             lote: null
-    //         }, { transaction: t }).then(function (inventarioCreado) {
-    //             return DetalleCompra.create({
-    //                 id_compra: idCompra,
-    //                 id_producto: idProducto,
-    //                 id_centro_costo: idCentroCosto,
-    //                 costo_unitario: detalleCompra.costo_unitario,
-    //                 cantidad: detalleCompra.cantidad,
-    //                 importe: detalleCompra.importe,
-    //                 descuento: detalleCompra.descuento,
-    //                 recargo: detalleCompra.recargo,
-    //                 ice: detalleCompra.ice,
-    //                 excento: detalleCompra.excento,
-    //                 tipo_descuento: detalleCompra.tipo_descuento,
-    //                 tipo_recargo: detalleCompra.tipo_recargo,
-    //                 total: detalleCompra.total,
-    //                 id_inventario: inventarioCreado.id
-    //             }, { transaction: t }).then(function (detalleCompraCreada) {
-    //                 return DetalleMovimiento.create({
-    //                     id_movimiento: idMovimiento,
-    //                     id_producto: idProducto,
-    //                     costo_unitario: detalleCompra.costo_unitario,
-    //                     cantidad: detalleCompra.cantidad,
-    //                     importe: (detalleCompra.costo_unitario * detalleCompra.cantidad),
-    //                     descuento: detalleCompra.descuento,
-    //                     recargo: detalleCompra.recargo,
-    //                     ice: detalleCompra.ice,
-    //                     excento: detalleCompra.excento,
-    //                     tipo_descuento: detalleCompra.tipo_descuento,
-    //                     tipo_recargo: detalleCompra.tipo_recargo,
-    //                     total: detalleCompra.total,
-    //                     id_inventario: inventarioCreado.id
-    //                 }, { transaction: t }).then(function (detalleMovimientoCreado) {
-    //                     return new Promise(function (fulfill, reject) {
-    //                         fulfill('Detalle movimiento Creado')
-    //                     })
-    //                 }).catch(function (err) {
-    //                     return new Promise(function (fulfill, reject) {
-    //                         reject((err.stack !== undefined) ? err.stack : err);
-    //                     });
-    //                 })
-    //             }).catch(function (err) {
-    //                 return new Promise(function (fulfill, reject) {
-    //                     reject((err.stack !== undefined) ? err.stack : err);
-    //                 });
-    //             })
-    //         }).catch(function (err) {
-    //             return new Promise(function (fulfill, reject) {
-    //                 reject((err.stack !== undefined) ? err.stack : err);
-    //             });
-    //         })
-    //     }).catch(function (err) {
-    //         return new Promise(function (fulfill, reject) {
-    //             reject((err.stack !== undefined) ? err.stack : err);
-    //         });
-    //     })
-
-    // }
-
-    // function crearDetalleMovimientoIngresoYCrearInventario(idMovimiento, idAlmacen, idProducto,
-    //     costo_unitario, cantidad, descuento,
-    //     recargo, ice, excento,
-    //     tipo_descuento, tipo_recargo,
-    //     total, fecha_vencimiento, lote, traspaso, t) {
-    //     return Inventario.create({
-    //         id_almacen: idAlmacen,
-    //         id_producto: idProducto,
-    //         cantidad: cantidad,
-    //         costo_unitario: costo_unitario,
-    //         costo_total: total,
-    //         fecha_vencimiento: fecha_vencimiento,
-    //         lote: lote
-    //     }, { transaction: t }).then(function (inventarioCreado) {
-    //         return DetalleMovimiento.create({
-    //             id_movimiento: idMovimiento,
-    //             id_producto: idProducto,
-    //             costo_unitario: costo_unitario,
-    //             cantidad: cantidad,
-    //             importe: (costo_unitario * cantidad),
-    //             descuento: descuento,
-    //             recargo: recargo,
-    //             ice: ice,
-    //             excento: excento,
-    //             tipo_descuento: tipo_descuento,
-    //             tipo_recargo: tipo_recargo,
-    //             total: total,
-    //             id_inventario: inventarioCreado.id
-    //         }, { transaction: t }).then(function (detCreado) {
-    //             return new Promise(function (fulfill, reject) {
-    //                 fulfill(traspaso);
-    //             });
-    //         }).catch(function (err) {
-    //             return new Promise(function (fulfill, reject) {
-    //                 reject((err.stack !== undefined) ? err.stack : err);
-    //             });
-    //         })
-    //     }).catch(function (err) {
-    //         return new Promise(function (fulfill, reject) {
-    //             reject((err.stack !== undefined) ? err.stack : err);
-    //         });
-    //     })
-    // }
 }

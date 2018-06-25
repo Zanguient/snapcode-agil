@@ -124,6 +124,10 @@ module.exports = function (sequelize, Sequelize) {
 			type: Sequelize.BOOLEAN,
 			field: 'usar_funciones_erp'
 		},
+		usar_estado_resultados_no_contables: {
+			type: Sequelize.BOOLEAN,
+			field: 'usar_estado_resultados_no_contables'
+		},
 	}, {
 			freezeTableName: true
 		});

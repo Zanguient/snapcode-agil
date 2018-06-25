@@ -586,6 +586,7 @@ angular.module('agil.controladores')
             $scope.detalle_despacho = detalle_despacho
             var factura = ($scope.detalle_despacho.factura) ? $scope.detalle_despacho.factura : ""
             $scope.detalle_despacho.resivo = {
+                sucursal:$scope.sucursales[0],
                 tipo_moneda: true,
                 monto_dolar: 0,
                 cambio_moneda: 6.9,

@@ -11,7 +11,18 @@ angular.module('agil.servicios')
 				'update': { method: 'PUT' }
 			});
 	})
-
+	.factory('EliminarProveedor', ['Proveedor', '$q', function (Proveedor, $q) {
+		var res = function (proveedor) {
+			var delay = $q.defer();
+			Proveedor.delete({ idProveedor: proveedor}, function (entidades) {
+				delay.resolve(entidades);
+			}, function (error) {
+				delay.reject(error);
+			});
+			return delay.promise;
+		};
+		return res;
+	}])
 	.factory('ProveedoresEmpresaPaginador', function ($resource) {
 		return $resource(restServer + "proveedor/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda");
 	})

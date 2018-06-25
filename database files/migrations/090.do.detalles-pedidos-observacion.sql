@@ -1,0 +1,1 @@
+ALTER TABLE agil_detalles_pedidos add observacion varchar(255);

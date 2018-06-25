@@ -98,7 +98,10 @@ angular.module('agil.servicios')
 			CUENTA_ALMACEN_RETENCION_BIEN: "CUENTA ALMACEN RETENCION BIEN",
 			CUENTA_GASTO_RETENCION_BIEN: "CUENTA GASTO RETENCION BIEN",
 			IT_RETENCION_BIEN_GASTO: "IT RETENCION BIEN GASTO",
-			IUE_RETENCION_BIEN_GASTO: "IUE RETENCION BIEN GASTO"
+			IUE_RETENCION_BIEN_GASTO: "IUE RETENCION BIEN GASTO",
+			CUENTA_RETENCION_SERVICIO:"CUENTA RETENCION SERVICIO",
+			IT_RETENCION_SERVICIO:"IT RETENCION SERVICIO",
+			IUE_RETENCION_SERVICIO:"IUE RETENCION SERVICIO"
 		}
 	}])
 
@@ -1124,7 +1127,7 @@ angular.module('agil.servicios')
 	.factory('DibujarCabeceraFacturaNVCartaOficio', [function () {
 		var res = function (doc, vacia, completa, venta, papel, pagina, totalPaginas, usuario) {
 			if (vacia) {
-				if (usuario.empresa.imagen.length > 100) { doc.image(usuario.empresa.imagen, 60, 50, { fit: [75, 75] }); } //{ width: 50, height: 50 }
+				if (usuario.empresa.imagen.length > 100) { doc.image(usuario.empresa.imagen, 60, 40, { fit: [75, 75] }); } //{ width: 50, height: 50 }
 				doc.font('Helvetica-Bold', 8);
 				doc.text(usuario.empresa.razon_social.toUpperCase(), 60, 105);
 				doc.font('Helvetica', 7);
@@ -1137,18 +1140,18 @@ angular.module('agil.servicios')
 				doc.text("COCHABAMBA - BOLIVIA", 60, 137);
 			}
 			doc.font('Helvetica-Bold', 16);
-			doc.text(venta.configuracion.tituloFactura.nombre.toUpperCase(), 250, 100);
+			doc.text(venta.configuracion.tituloFactura.nombre.toUpperCase(), 250, 90);
 			doc.font('Helvetica-Bold', 8);
-			doc.text(venta.actividad.nombre, 380, 105, { width: 200 });
+			doc.text(venta.actividad.nombre, 380, 95, { width: 200 });
 			if (completa || vacia) {
-				doc.rect(380, 50, 190, 50).stroke();
-				doc.text("NIT : ", 390, 60);
-				doc.text("FACTURA No : ", 390, 70);
-				doc.text("AUTORIZACIÓN No : ", 390, 80);
+				doc.rect(380, 40, 190, 50).stroke();
+				doc.text("NIT : ", 390, 50);
+				doc.text("FACTURA No : ", 390, 60);
+				doc.text("AUTORIZACIÓN No : ", 390, 70);
 			}
-			doc.text(usuario.empresa.nit, 500, 60);
-			doc.text(venta.factura, 500, 70);
-			doc.text(venta.autorizacion, 500, 80);
+			doc.text(usuario.empresa.nit, 500, 50);
+			doc.text(venta.factura, 500, 60);
+			doc.text(venta.autorizacion, 500, 70);
 
 			if (completa || vacia) {
 				doc.rect(50, 150, 520, 50).stroke();
@@ -1807,15 +1810,15 @@ angular.module('agil.servicios')
 				if (vacia) {
 					if (usuario.empresa.imagen.length > 100) { doc.image(usuario.empresa.imagen, 60, 50, { fit: [75, 75] }); } //{ width: 50, height: 50 }
 					doc.font('Helvetica-Bold', 8);
-					doc.text(usuario.empresa.razon_social.toUpperCase(), 120, 60);
+					doc.text(usuario.empresa.razon_social.toUpperCase(), 150, 60);
 					doc.font('Helvetica', 7);
-					doc.text(venta.sucursal.nombre.toUpperCase(), 120, 70);
-					doc.text(venta.sucursal.direccion.toUpperCase(), 120, 80);
+					doc.text(venta.sucursal.nombre.toUpperCase(), 150, 70);
+					doc.text(venta.sucursal.direccion.toUpperCase(), 150, 80);
 					var telefono = (venta.sucursal.telefono1 != null ? venta.sucursal.telefono1 : "") +
 						(venta.sucursal.telefono2 != null ? "-" + venta.sucursal.telefono2 : "") +
 						(venta.sucursal.telefono3 != null ? "-" + venta.sucursal.telefono3 : "");
-					doc.text("TELF.: " + telefono, 120, 90);
-					doc.text("COCHABAMBA - BOLIVIA", 120, 100);
+					doc.text("TELF.: " + telefono, 150, 90);
+					doc.text("COCHABAMBA - BOLIVIA", 150, 100);
 				}
 				doc.font('Helvetica-Bold', 16);
 				doc.text('PROFORMA Nº ' + venta.factura, 200, 125);

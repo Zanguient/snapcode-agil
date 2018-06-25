@@ -452,9 +452,9 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 								$scope.ListaConfiguaracionCuenta.forEach(function (configuracionCuenta) {
 									if (configuracionCuenta.tipo.nombre_corto == Diccionario.MOV_ING) {
 										if (configuracionCuenta.nombre == "IT" || configuracionCuenta.nombre == "CAJA/BANCOS") {
-											var asiento = {id_venta:venta2.id, cuenta: configuracionCuenta.cuenta, debe_bs: venta2.total * configuracionCuenta.valor / 100, haber_bs: "", debe_sus: Math.round(((venta2.total * configuracionCuenta.valor / 100) / $scope.moneda.dolar) * 10000) / 10000, haber_sus: "", eliminado: false, activo: true, isOpen: false }
+											var asiento = { id_venta: venta2.id, cuenta: configuracionCuenta.cuenta, debe_bs: venta2.total * configuracionCuenta.valor / 100, haber_bs: "", debe_sus: Math.round(((venta2.total * configuracionCuenta.valor / 100) / $scope.moneda.dolar) * 10000) / 10000, haber_sus: "", eliminado: false, activo: true, isOpen: false }
 											$scope.nuevoComprobante.asientosContables.push(asiento);
-										} else {
+										} else if (configuracionCuenta.nombre == "IVA DF" || configuracionCuenta.nombre == "IT POR PAGAR") {
 											var asiento = { cuenta: configuracionCuenta.cuenta, debe_bs: "", haber_bs: venta2.total * configuracionCuenta.valor / 100, debe_sus: "", haber_sus: Math.round(((venta2.total * configuracionCuenta.valor / 100) / $scope.moneda.dolar) * 10000) / 10000, eliminado: false, activo: true, isOpen: false }
 											$scope.nuevoComprobante.asientosContables.push(asiento);
 										}
@@ -489,10 +489,11 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 						console.log($scope.ListaConfiguaracionCuenta)
 						$scope.ListaConfiguaracionCuenta.forEach(function (configuracionCuenta, index, array) {
 							if (configuracionCuenta.tipo.nombre_corto == Diccionario.MOV_ING) {
+
 								if (configuracionCuenta.nombre == "IT" || configuracionCuenta.nombre == "CAJA/BANCOS") {
-									var asiento = { id_venta:venta.id,cuenta: configuracionCuenta.cuenta, debe_bs: venta.total * configuracionCuenta.valor / 100, haber_bs: "", debe_sus: Math.round(((venta.total * configuracionCuenta.valor / 100) / $scope.moneda.dolar) * 10000) / 10000, haber_sus: "", eliminado: false, activo: true }
+									var asiento = { id_venta: venta.id, cuenta: configuracionCuenta.cuenta, debe_bs: venta.total * configuracionCuenta.valor / 100, haber_bs: "", debe_sus: Math.round(((venta.total * configuracionCuenta.valor / 100) / $scope.moneda.dolar) * 10000) / 10000, haber_sus: "", eliminado: false, activo: true }
 									$scope.nuevoComprobante.asientosContables.push(asiento);
-								} else {
+								} else if (configuracionCuenta.nombre == "IVA DF" || configuracionCuenta.nombre == "IT POR PAGAR") {
 									var asiento = { cuenta: configuracionCuenta.cuenta, debe_bs: "", haber_bs: venta.total * configuracionCuenta.valor / 100, debe_sus: "", haber_sus: Math.round(((venta.total * configuracionCuenta.valor / 100) / $scope.moneda.dolar) * 10000) / 10000, eliminado: false, activo: true }
 									$scope.nuevoComprobante.asientosContables.push(asiento);
 								}
@@ -517,11 +518,15 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 				if (compra instanceof Array) {
 					compra.forEach(function (compra2, index, array) {
 						if (compra2.check) {
+							if (compra2.movimiento == undefined) {
+								compra2.movimiento = { clase: compra2.tipoMovimiento }
+							}
 							$scope.nuevoComprobante.id_compra = compra2.id
 							if (compra2.proveedor.proveedorCuenta != null) {
 								var cuenta = compra2.proveedor.proveedorCuenta.cuenta
-								if (compra2.movimiento.clase.nombre != $scope.diccionario.MOVING_POR_COMPRA_SIN_FACTURA) {
-									var asiento = { id_compra:compra2.id, cuenta: cuenta, debe_bs: compra2.total * (87 / 100), haber_bs: "", debe_sus: Math.round(((compra2.total * (87 / 100)) / $scope.moneda.dolar) * 10000) / 10000, haber_sus: "", eliminado: false, activo: true, isOpen: false }
+
+								if (compra2.movimiento.clase.nombre == $scope.diccionario.MOVING_POR_IMPORTACION || compra2.movimiento.clase.nombre == $scope.diccionario.MOVING_DIARIO) {
+									var asiento = { id_compra: compra2.id, cuenta: cuenta, debe_bs: compra2.total * (87 / 100), haber_bs: "", debe_sus: Math.round(((compra2.total * (87 / 100)) / $scope.moneda.dolar) * 10000) / 10000, haber_sus: "", eliminado: false, activo: true, isOpen: false }
 									var asiento2 = {}
 									$scope.nuevoComprobante.asientosContables.push(asiento);
 									$scope.ListaConfiguaracionCuenta.forEach(function (configuracionCuenta) {
@@ -536,9 +541,65 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 										}
 
 									}, this);
-								} else {
+								} else if (compra2.movimiento.clase.nombre == $scope.diccionario.MOVING_POR_COMPRA_SIN_FACTURA) {
 									var asiento = { cuenta: cuenta, debe_bs: "", haber_bs: compra2.total, debe_sus: "", haber_sus: Math.round(((compra2.total) / $scope.moneda.dolar) * 10000) / 10000, eliminado: false, activo: true, isOpen: false }
 									$scope.nuevoComprobante.asientosContables.push(asiento);
+								} else if (compra2.movimiento.clase.nombre == $scope.diccionario.MOVING_POR_RETENCION_SERVICIOS) {
+									var asiento = { id_compra: compra2.id, cuenta: cuenta, debe_bs: compra2.total, haber_bs: "", debe_sus: Math.round(((compra2.total * (87 / 100)) / $scope.moneda.dolar) * 10000) / 10000, haber_sus: "", eliminado: false, activo: true, isOpen: false }
+									var asiento2 = {}
+									var tiposCompras = { alm: 0, gasto: 0 }
+									$scope.nuevoComprobante.asientosContables.push(asiento);
+
+									$scope.ListaConfiguaracionCuenta.forEach(function (configuracionCuenta, index, array) {
+										if (configuracionCuenta.tipo.nombre_corto == Diccionario.MOV_ING) {
+
+											if (configuracionCuenta.nombre == 'CUENTA RETENCION SERVICIO' || configuracionCuenta.nombre == 'IT RETENCION SERVICIO' || configuracionCuenta.nombre == "IUE RETENCION SERVICIO") {
+												asiento2 = { cuenta: configuracionCuenta.cuenta, debe_bs: "", haber_bs: compra2.total * configuracionCuenta.valor / 100, debe_sus: "", haber_sus: Math.round(((compra2.total * configuracionCuenta.valor / 100) / $scope.moneda.dolar) * 10000) / 10000, eliminado: false, activo: true, isOpen: false }
+												$scope.nuevoComprobante.asientosContables.push(asiento2)
+											}
+
+										}
+										if (index === array.length - 1) {
+											$scope.cal($scope.nuevoComprobante.asientosContables)
+											$scope.abrirPopup($scope.idModalWizardComprobanteEdicion);
+										}
+									}, this);
+
+								} else if (compra2.movimiento.clase.nombre == $scope.diccionario.MOVING_POR_RETENCION_BIENES) {
+									var asiento = { id_compra: compra2.id, cuenta: cuenta, debe_bs: compra2.total, haber_bs: "", debe_sus: Math.round(((compra2.total * (87 / 100)) / $scope.moneda.dolar) * 10000) / 10000, haber_sus: "", eliminado: false, activo: true, isOpen: false }
+									var asiento2 = {}
+									var tiposCompras = { alm: 0, gasto: 0 }
+									$scope.nuevoComprobante.asientosContables.push(asiento);
+									compra2.detallesCompra.forEach(function (dato, index, array) {
+										if (dato.centroCosto.nombre_corto == "ALM") {
+											tiposCompras.alm++
+										} else if (dato.centroCosto.nombre_corto != "ALM") {
+											tiposCompras.gasto++
+										}
+										if (index === (array.length - 1)) {
+											$scope.ListaConfiguaracionCuenta.forEach(function (configuracionCuenta, index, array) {
+												if (configuracionCuenta.tipo.nombre_corto == Diccionario.MOV_ING) {
+													if (tiposCompras.gasto >= 0 && tiposCompras.alm > 0) {
+														if (configuracionCuenta.nombre == 'CUENTA ALMACEN RETENCION BIEN' || configuracionCuenta.nombre == 'IT RETENCION BIEN ALMACEN' || configuracionCuenta.nombre == "IUE RETENCION BIEN ALMACEN") {
+															asiento2 = { cuenta: configuracionCuenta.cuenta, debe_bs: "", haber_bs: compra2.total * configuracionCuenta.valor / 100, debe_sus: "", haber_sus: Math.round(((compra2.total * configuracionCuenta.valor / 100) / $scope.moneda.dolar) * 10000) / 10000, eliminado: false, activo: true, isOpen: false }
+															$scope.nuevoComprobante.asientosContables.push(asiento2)
+														}
+													} else if (tiposCompras.gasto > 0 && tiposCompras.alm == 0) {
+														if (configuracionCuenta.nombre == 'CUENTA GASTO RETENCION BIEN' || configuracionCuenta.nombre == 'IT RETENCION BIEN GASTO' || configuracionCuenta.nombre == "IUE RETENCION BIEN GASTO") {
+															asiento2 = { cuenta: configuracionCuenta.cuenta, debe_bs: "", haber_bs: compra2.total * configuracionCuenta.valor / 100, debe_sus: "", haber_sus: Math.round(((compra2.total * configuracionCuenta.valor / 100) / $scope.moneda.dolar) * 10000) / 10000, eliminado: false, activo: true, isOpen: false }
+															$scope.nuevoComprobante.asientosContables.push(asiento2)
+														}
+													}
+												}
+												if (index === array.length - 1) {
+													$scope.cal($scope.nuevoComprobante.asientosContables)
+													$scope.abrirPopup($scope.idModalWizardComprobanteEdicion);
+												}
+											}, this);
+										}
+									})
+
+
 								}
 							} else {
 								a = true
@@ -562,15 +623,18 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 					if (compra.proveedor.proveedorCuenta != null) {
 						$scope.nuevoComprobante.id_compra = compra.id
 						var cuenta = compra.proveedor.proveedorCuenta.cuenta
-						if (compra.movimiento.clase.nombre != $scope.diccionario.MOVING_POR_COMPRA_SIN_FACTURA) {
-							var asiento = { id_compra:compra.id,cuenta: cuenta, debe_bs: compra.total * (87 / 100), haber_bs: "", debe_sus: Math.round(((compra.total * (87 / 100)) / $scope.moneda.dolar) * 10000) / 10000, haber_sus: "", eliminado: false, activo: true, isOpen: false }
+						if (compra.movimiento == undefined) {
+							compra.movimiento = { clase: compra.tipoMovimiento }
+						}
+						if (compra.movimiento.clase.nombre == $scope.diccionario.MOVING_POR_IMPORTACION || compra.movimiento.clase.nombre == $scope.diccionario.MOVING_DIARIO) {
+							var asiento = { id_compra: compra.id, cuenta: cuenta, debe_bs: compra.total * (87 / 100), haber_bs: "", debe_sus: Math.round(((compra.total * (87 / 100)) / $scope.moneda.dolar) * 10000) / 10000, haber_sus: "", eliminado: false, activo: true, isOpen: false }
 							var asiento2 = {}
 							$scope.nuevoComprobante.asientosContables.push(asiento);
 							$scope.ListaConfiguaracionCuenta.forEach(function (configuracionCuenta, index, array) {
 								if (configuracionCuenta.tipo.nombre_corto == Diccionario.MOV_EGR) {
 									if (configuracionCuenta.nombre == "CAJA/BANCOS") {
 										asiento2 = { cuenta: configuracionCuenta.cuenta, debe_bs: "", haber_bs: compra.total * configuracionCuenta.valor / 100, debe_sus: "", haber_sus: Math.round(((compra.total * configuracionCuenta.valor / 100) / $scope.moneda.dolar) * 10000) / 10000, eliminado: false, activo: true, isOpen: false }
-									} else {
+									} else if (configuracionCuenta.nombre == "IVA CF") {
 										var asiento = { cuenta: configuracionCuenta.cuenta, debe_bs: compra.total * configuracionCuenta.valor / 100, haber_bs: "", debe_sus: Math.round(((compra.total * configuracionCuenta.valor / 100) / $scope.moneda.dolar) * 10000) / 10000, haber_sus: "", eliminado: false, activo: true, isOpen: false }
 										$scope.nuevoComprobante.asientosContables.push(asiento);
 									}
@@ -581,8 +645,64 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 									$scope.abrirPopup($scope.idModalWizardComprobanteEdicion);
 								}
 							}, this);
-						} else {
-							var asiento = { cuenta: cuenta, debe_bs: "", haber_bs: compra.total, debe_sus:"", haber_sus:  Math.round(((compra.total) / $scope.moneda.dolar) * 10000) / 10000, eliminado: false, activo: true, isOpen: false }
+						} else if (compra.movimiento.clase.nombre == $scope.diccionario.MOVING_POR_RETENCION_SERVICIOS) {
+							var asiento = { id_compra: compra.id, cuenta: cuenta, debe_bs: compra.total, haber_bs: "", debe_sus: Math.round(((compra.total * (87 / 100)) / $scope.moneda.dolar) * 10000) / 10000, haber_sus: "", eliminado: false, activo: true, isOpen: false }
+							var asiento2 = {}
+							var tiposCompras = { alm: 0, gasto: 0 }
+							$scope.nuevoComprobante.asientosContables.push(asiento);
+
+							$scope.ListaConfiguaracionCuenta.forEach(function (configuracionCuenta, index, array) {
+								if (configuracionCuenta.tipo.nombre_corto == Diccionario.MOV_ING) {
+
+									if (configuracionCuenta.nombre == 'CUENTA RETENCION SERVICIO' || configuracionCuenta.nombre == 'IT RETENCION SERVICIO' || configuracionCuenta.nombre == "IUE RETENCION SERVICIO") {
+										asiento2 = { cuenta: configuracionCuenta.cuenta, debe_bs: "", haber_bs: compra.total * configuracionCuenta.valor / 100, debe_sus: "", haber_sus: Math.round(((compra.total * configuracionCuenta.valor / 100) / $scope.moneda.dolar) * 10000) / 10000, eliminado: false, activo: true, isOpen: false }
+										$scope.nuevoComprobante.asientosContables.push(asiento2)
+									}
+
+								}
+								if (index === array.length - 1) {
+									$scope.cal($scope.nuevoComprobante.asientosContables)
+									$scope.abrirPopup($scope.idModalWizardComprobanteEdicion);
+								}
+							}, this);
+
+						} else if (compra.movimiento.clase.nombre == $scope.diccionario.MOVING_POR_RETENCION_BIENES) {
+							var asiento = { id_compra: compra.id, cuenta: cuenta, debe_bs: compra.total, haber_bs: "", debe_sus: Math.round(((compra.total * (87 / 100)) / $scope.moneda.dolar) * 10000) / 10000, haber_sus: "", eliminado: false, activo: true, isOpen: false }
+							var asiento2 = {}
+							var tiposCompras = { alm: 0, gasto: 0 }
+							$scope.nuevoComprobante.asientosContables.push(asiento);
+							compra.detallesCompra.forEach(function (dato, index, array) {
+								if (dato.centroCosto.nombre_corto == "ALM") {
+									tiposCompras.alm++
+								} else if (dato.centroCosto.nombre_corto != "ALM") {
+									tiposCompras.gasto++
+								}
+								if (index === (array.length - 1)) {
+									$scope.ListaConfiguaracionCuenta.forEach(function (configuracionCuenta, index, array) {
+										if (configuracionCuenta.tipo.nombre_corto == Diccionario.MOV_ING) {
+											if (tiposCompras.gasto >= 0 && tiposCompras.alm > 0) {
+												if (configuracionCuenta.nombre == 'CUENTA ALMACEN RETENCION BIEN' || configuracionCuenta.nombre == 'IT RETENCION BIEN ALMACEN' || configuracionCuenta.nombre == "IUE RETENCION BIEN ALMACEN") {
+													asiento2 = { cuenta: configuracionCuenta.cuenta, debe_bs: "", haber_bs: compra.total * configuracionCuenta.valor / 100, debe_sus: "", haber_sus: Math.round(((compra.total * configuracionCuenta.valor / 100) / $scope.moneda.dolar) * 10000) / 10000, eliminado: false, activo: true, isOpen: false }
+													$scope.nuevoComprobante.asientosContables.push(asiento2)
+												}
+											} else if (tiposCompras.gasto > 0 && tiposCompras.alm == 0) {
+												if (configuracionCuenta.nombre == 'CUENTA GASTO RETENCION BIEN' || configuracionCuenta.nombre == 'IT RETENCION BIEN GASTO' || configuracionCuenta.nombre == "IUE RETENCION BIEN GASTO") {
+													asiento2 = { cuenta: configuracionCuenta.cuenta, debe_bs: "", haber_bs: compra.total * configuracionCuenta.valor / 100, debe_sus: "", haber_sus: Math.round(((compra.total * configuracionCuenta.valor / 100) / $scope.moneda.dolar) * 10000) / 10000, eliminado: false, activo: true, isOpen: false }
+													$scope.nuevoComprobante.asientosContables.push(asiento2)
+												}
+											}
+										}
+										if (index === array.length - 1) {
+											$scope.cal($scope.nuevoComprobante.asientosContables)
+											$scope.abrirPopup($scope.idModalWizardComprobanteEdicion);
+										}
+									}, this);
+								}
+							})
+
+
+						} else if (compra.movimiento.clase.nombre == $scope.diccionario.MOVING_POR_COMPRA_SIN_FACTURA) {
+							var asiento = { cuenta: cuenta, debe_bs: "", haber_bs: compra.total, debe_sus: "", haber_sus: Math.round(((compra.total) / $scope.moneda.dolar) * 10000) / 10000, eliminado: false, activo: true, isOpen: false }
 							$scope.nuevoComprobante.asientosContables.push(asiento);
 							$scope.cal($scope.nuevoComprobante.asientosContables)
 							$scope.abrirPopup($scope.idModalWizardComprobanteEdicion);

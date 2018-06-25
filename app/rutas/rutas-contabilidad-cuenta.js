@@ -166,13 +166,37 @@ module.exports = function (router, ContabilidadCuenta, ClasificacionCuenta, Tipo
 																		id_tipo: tipoEncontrado.id
 																	}, defaults: { id_empresa: req.params.id_empresa, id_tipo: tipoEncontrado.id, valor: req.body.valor, nombre: Diccionario.CUENTA_GASTO_RETENCION_BIEN }
 																}).then(function (ListaCuenta) {
-																	ConfiguracionCuenta.findAll({
+																	ConfiguracionCuenta.findOrCreate({
 																		where: {
 																			id_empresa: req.params.id_empresa,
+																			nombre: Diccionario.CUENTA_RETENCION_SERVICIO,
+																			id_tipo: tipoEncontrado.id
+																		}, defaults: { id_empresa: req.params.id_empresa, id_tipo: tipoEncontrado.id, valor: req.body.valor, nombre: Diccionario.CUENTA_RETENCION_SERVICIO }
+																	}).then(function (ListaCuenta) {
+																		ConfiguracionCuenta.findOrCreate({
+																			where: {
+																				id_empresa: req.params.id_empresa,
+																				nombre: Diccionario.IT_RETENCION_SERVICIO,
+																				id_tipo: tipoEncontrado.id
+																			}, defaults: { id_empresa: req.params.id_empresa, id_tipo: tipoEncontrado.id, valor: req.body.valor, nombre: Diccionario.IT_RETENCION_SERVICIO }
+																		}).then(function (ListaCuenta) {
+																			ConfiguracionCuenta.findOrCreate({
+																				where: {
+																					id_empresa: req.params.id_empresa,
+																					nombre: Diccionario.IUE_RETENCION_SERVICIO,
+																					id_tipo: tipoEncontrado.id
+																				}, defaults: { id_empresa: req.params.id_empresa, id_tipo: tipoEncontrado.id, valor: req.body.valor, nombre: Diccionario.IUE_RETENCION_SERVICIO }
+																			}).then(function (ListaCuenta) {
+																				ConfiguracionCuenta.findAll({
+																					where: {
+																						id_empresa: req.params.id_empresa,
 
-																		}, include: [{ model: ContabilidadCuenta, as: 'cuenta' }, { model: Tipo, as: 'tipo' }], order: [['id', 'asc']]
-																	}).then(function (ListaConfiguracionCuenta) {
-																		res.json({ lista: ListaConfiguracionCuenta, menssage: "plantilla actualizada satisfactoriamente!" })
+																					}, include: [{ model: ContabilidadCuenta, as: 'cuenta' }, { model: Tipo, as: 'tipo' }], order: [['id', 'asc']]
+																				}).then(function (ListaConfiguracionCuenta) {
+																					res.json({ lista: ListaConfiguracionCuenta, menssage: "plantilla actualizada satisfactoriamente!" })
+																				})
+																			})
+																		})
 																	})
 																})
 															})
@@ -326,14 +350,47 @@ module.exports = function (router, ContabilidadCuenta, ClasificacionCuenta, Tipo
 																																id_tipo: tipoEncontrado.id
 																															}
 																														}).then(function (configuracionActualizado) {
-																															res.json({ menssage: "Actualizado Sadisfactoriamente!" })
+																															ConfiguracionCuenta.update({
+																																id_cuenta: req.body.retencionServicios.servicio.cuenta.id,
+																																valor: req.body.retencionServicios.servicio.porsentaje.toString(),
+																															}, {
+																																	where: {
+																																		id_empresa: req.params.id_empresa,
+																																		nombre: Diccionario.CUENTA_RETENCION_SERVICIO,
+																																		id_tipo: tipoEncontrado.id
+																																	}
+																																}).then(function (configuracionActualizado) {
+																																	ConfiguracionCuenta.update({
+																																		id_cuenta: req.body.retencionServicios.it.cuenta.id,
+																																		valor: req.body.retencionServicios.it.porsentaje.toString(),
+																																	}, {
+																																			where: {
+																																				id_empresa: req.params.id_empresa,
+																																				nombre: Diccionario.IT_RETENCION_SERVICIO,
+																																				id_tipo: tipoEncontrado.id
+																																			}
+																																		}).then(function (configuracionActualizado) {
+																																			ConfiguracionCuenta.update({
+																																				id_cuenta: req.body.retencionServicios.iue.cuenta.id,
+																																				valor: req.body.retencionServicios.iue.porsentaje.toString(),
+																																			}, {
+																																					where: {
+																																						id_empresa: req.params.id_empresa,
+																																						nombre: Diccionario.IUE_RETENCION_SERVICIO,
+																																						id_tipo: tipoEncontrado.id
+																																					}
+																																				}).then(function (configuracionActualizado) {
+																																					res.json({ menssage: "Actualizado Sadisfactoriamente!" })
+																																				})
+																																		})
+																																})
 																														})
 																												})
 																										})
 																								})
 																						})
 																				})
-																		}else{
+																		} else {
 																			res.json({ menssage: "Actualizado Sadisfactoriamente!" })
 																		}
 																	})

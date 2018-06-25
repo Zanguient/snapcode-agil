@@ -1,4 +1,4 @@
-module.exports = function (router, sequelize, forEach, decodeBase64Image, fs, Empresa, Proveedor, Compra, CompraReprogramacionPago) {
+module.exports = function (router, sequelize, forEach, decodeBase64Image, fs, Empresa, Proveedor, Compra, CompraReprogramacionPago,Pedido) {
 
 	router.route('/proveedores')
 
@@ -339,12 +339,29 @@ module.exports = function (router, sequelize, forEach, decodeBase64Image, fs, Em
 		})
 
 		.delete(function (req, res) {
-			Proveedor.destroy({
+			Compra.findAll({
 				where: {
-					id: req.params.id_proveedor
+					id_proveedor: req.params.id_proveedor
 				}
-			}).then(function (affectedRows) {
-				res.json({ message: "Eliminado Satisfactoriamente!" });
+			}).then(function (comprasProvedor) {
+				Pedido.findAll({
+					where: {
+						id_proveedor: req.params.id_proveedor
+					}
+				}).then(function (pedidosProvedor) {
+					if (comprasProvedor.length == 0 && pedidosProvedor.length == 0) {
+						Proveedor.destroy({
+							where: {
+								id: req.params.id_proveedor
+							}
+						}).then(function (affectedRows) {
+							res.json({ mensaje: "Eliminado Satisfactoriamente!" });
+						});
+					} else {
+						res.json({ mensaje: "El Provedor cuenta con movimientos Realizados no es posible eliminar!" });
+					}
+
+				});
 			});
 		});
 
@@ -380,13 +397,13 @@ module.exports = function (router, sequelize, forEach, decodeBase64Image, fs, Em
 				if (productos.length == 0) {
 					productos += id
 				} else {
-					productos += "," +id
+					productos += "," + id
 				}
 			})
 			Proveedor.update({
 				productos: productos
 			}, {
-					where: {id: req.body.id_proveedor}
+					where: { id: req.body.id_proveedor }
 				}).then(function (productosProveedorActualizados) {
 					res.json({ mensaje: 'Productos del proveedor actualizados' })
 				}).catch(function (err) {

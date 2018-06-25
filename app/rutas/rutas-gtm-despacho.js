@@ -189,45 +189,45 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, forEach, j
 						entregado: detalle.entregado,
 						fecha: new Date(detalle.fecha.split("/")[2], detalle.fecha.split("/")[1], detalle.fecha.split("/")[0]),
 					},
-					{
-						where: {
-							id: detalle.id
-						}
-					}).then(function (detalleKardexActualizado) {
-						// ==== agragar su historial con su padre =====
-						GtmVentaKardexDetalle.create({
-							id_kardex: detalle.id_kardex,
-							cantidad_despachada: detalle.cantidad_despacho,
-							id_producto: detalle.id_producto,
-							cantidad: detalle.cantidad,
-							saldo: detalle.saldo,
-							entregado: false,
-							id_padre: detalle.id,
-							fecha: new Date(detalle.fecha.split("/")[2], detalle.fecha.split("/")[1], detalle.fecha.split("/")[0]),
-						}).then(function (detallekardexDespachoCreado) {
-							GtmDespachoDetalle.create({
-								id_despacho: despachoCreado.id,
-								cantidad_despacho: 0,
+						{
+							where: {
+								id: detalle.id
+							}
+						}).then(function (detalleKardexActualizado) {
+							// ==== agragar su historial con su padre =====
+							GtmVentaKardexDetalle.create({
+								id_kardex: detalle.id_kardex,
+								cantidad_despachada: detalle.cantidad_despacho,
 								id_producto: detalle.id_producto,
-								cantidad: parseFloat(detalle.cantidad_pedido),
-								precio_unitario: parseFloat(detalle.precio_unitario),
-								importe: parseFloat(detalle.total),
-								saldo: parseFloat(detalle.cantidad),
-								despachado: false,
-								eliminado: false,
-								kardex_detalle: detallekardexDespachoCreado.id,
-								fecha: new Date(req.body.fecha.split("/")[2], req.body.fecha.split("/")[1] - 1, req.body.fecha.split("/")[0]),
-								servicio_transporte: (detalle.servicio_transporte ? parseFloat(detalle.servicio_transporte) * parseFloat(detalle.cantidad) : 0)
-							}).then(function (detalleDespachoCreado) {
-								if (index === (array.length - 1)) {
-									res.json(despachoCreado);
-								}
+								cantidad: detalle.cantidad,
+								saldo: detalle.saldo,
+								entregado: false,
+								id_padre: detalle.id,
+								fecha: new Date(detalle.fecha.split("/")[2], detalle.fecha.split("/")[1], detalle.fecha.split("/")[0]),
+							}).then(function (detallekardexDespachoCreado) {
+								GtmDespachoDetalle.create({
+									id_despacho: despachoCreado.id,
+									cantidad_despacho: 0,
+									id_producto: detalle.id_producto,
+									cantidad: parseFloat(detalle.cantidad_pedido),
+									precio_unitario: parseFloat(detalle.precio_unitario),
+									importe: parseFloat(detalle.total),
+									saldo: parseFloat(detalle.cantidad),
+									despachado: false,
+									eliminado: false,
+									kardex_detalle: detallekardexDespachoCreado.id,
+									fecha: new Date(req.body.fecha.split("/")[2], req.body.fecha.split("/")[1] - 1, req.body.fecha.split("/")[0]),
+									servicio_transporte: (detalle.servicio_transporte ? parseFloat(detalle.servicio_transporte) * parseFloat(detalle.cantidad) : 0)
+								}).then(function (detalleDespachoCreado) {
+									if (index === (array.length - 1)) {
+										res.json(despachoCreado);
+									}
+								});
 							});
 						});
-					});
 				});
 			});
-			
+
 		});
 
 	// router.route('/pedido-kardex/gtm-despacho/empresa/:id_empresa')
@@ -289,11 +289,11 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, forEach, j
 		});
 	router.route('/gtm-despacho-kardex-factura/empresa/:id_empresa/inicio/:inicio/fin/:fin/pendiente/:pendiente')
 		.get(function (req, res) {
-			var condicionKardex = { factura: true, id_empresa: req.params.id_empresa, eliminado: false }
+			var condicionKardex = { factura: true, id_empresa: req.params.id_empresa, eliminar: false }
 			if (req.params.inicio != 0) {
 				var inicio = new Date(req.params.inicio); inicio.setHours(0, 0, 0, 0, 0);
 				var fin = new Date(req.params.fin); fin.setHours(23, 59, 59, 0, 0);
-				condicionKardex = { factura: true, id_empresa: req.params.id_empresa, fecha: { $between: [inicio, fin] } };
+				condicionKardex = { factura: true, id_empresa: req.params.id_empresa, fecha: { $between: [inicio, fin] }, eliminar: false };
 			}
 			var condicionDetalle = { entregado: false, id_padre: null, factura: { $ne: null } }
 			if (req.params.pendiente == "true") {
@@ -752,17 +752,23 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, forEach, j
 					}
 			}
 			if (req.params.texto_busqueda != 0) {
-				condicionCliente =
+				var datonumerico = parseInt(req.params.texto_busqueda)
+				if(!isNaN(datonumerico)){
+					condicionDespacho.numero_correlativo = req.params.texto_busqueda
+				}else{
+					condicionCliente =
 					{
 						$or: [
 							{
 								razon_social: {
 									$like: "%" + req.params.texto_busqueda + "%"
-								}
+								},
+
 							}
 
 						]
 					}
+				}
 			}
 			GtmDespachoDetalle.findAndCountAll({
 				where: condicionDespacho,
@@ -1042,44 +1048,44 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, forEach, j
 				}).then(function (detallesDespacho) {
 					GtmDespachoDetalle.find({
 						where: {
-							id : req.params.id_detalle_despacho
+							id: req.params.id_detalle_despacho
 						},
-						include: [{ 
+						include: [{
 							model: GtmVentaKardexDetalle, as: 'detalle_Kardex',
 							where: {
 								eliminado: false
 							},
-							include: [{model: GtmVentaKardexDetalle, as: 'padre'}]
+							include: [{ model: GtmVentaKardexDetalle, as: 'padre' }]
 						}]
 					})
-					.then(function(despacho) {
-					// === obtener el detalle del hijo para obtener el padre 
-					// 			// ==== actualizar kardex padre sumar saldo de despacho eliminado
-						if (despacho != null) {
-							GtmVentaKardexDetalle.update({
-								saldo: despacho.dataValues.detalle_Kardex.padre.saldo+despacho.dataValues.detalle_Kardex.cantidad_despachada
-							}, {
-								where: {
-									id: despacho.dataValues.detalle_Kardex.id_padre
-								}
-							}).then(function (detallesDespachos) {
-								// 			// === eliminar hijo
+						.then(function (despacho) {
+							// === obtener el detalle del hijo para obtener el padre 
+							// 			// ==== actualizar kardex padre sumar saldo de despacho eliminado
+							if (despacho != null) {
 								GtmVentaKardexDetalle.update({
-									eliminado: true
+									saldo: despacho.dataValues.detalle_Kardex.padre.saldo + despacho.dataValues.detalle_Kardex.cantidad_despachada
 								}, {
-									where: {
-										id: despacho.dataValues.detalle_Kardex.id
-									}
-								}).then(function (affectedRows) {
-									res.json({ message: "Eliminado Satisfactoriamente!" });
-								});
-							});
-						}else{
-							res.json({ message: "Eliminado Satisfactoriamente!" });
-						}
-						// console.log("los datos de despacho ", despacho.dataValues.detalle_Kardex);
-						
-					});
+										where: {
+											id: despacho.dataValues.detalle_Kardex.id_padre
+										}
+									}).then(function (detallesDespachos) {
+										// 			// === eliminar hijo
+										GtmVentaKardexDetalle.update({
+											eliminado: true
+										}, {
+												where: {
+													id: despacho.dataValues.detalle_Kardex.id
+												}
+											}).then(function (affectedRows) {
+												res.json({ message: "Eliminado Satisfactoriamente!" });
+											});
+									});
+							} else {
+								res.json({ message: "Eliminado Satisfactoriamente!" });
+							}
+							// console.log("los datos de despacho ", despacho.dataValues.detalle_Kardex);
+
+						});
 
 
 				});

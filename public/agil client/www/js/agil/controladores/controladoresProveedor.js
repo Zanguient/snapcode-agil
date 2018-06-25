@@ -1,6 +1,6 @@
 angular.module('agil.controladores')
 
-	.controller('ControladorProveedores', function ($scope, $window, $localStorage, $location, $templateCache, $route, blockUI, Proveedor, Proveedores, Empresas, ProveedoresEmpresa, ProveedoresPaginador) {
+	.controller('ControladorProveedores', function ($scope, $window, $localStorage, $location, $templateCache, $route, blockUI, Proveedor, Proveedores, Empresas, ProveedoresEmpresa, ProveedoresPaginador, EliminarProveedor) {
 		blockUI.start();
 
 		$scope.usuario = JSON.parse($localStorage.usuario);
@@ -68,8 +68,12 @@ angular.module('agil.controladores')
 		$scope.eliminarProveedor = function (proveedor) {
 			blockUI.start();
 			$scope.cerrarConfirmacionEliminacion();
-			proveedor.$delete();
-			$scope.mostrarMensaje('Eliminado exitosamente!');
+			/* proveedor.$delete(); */
+			var promesa = EliminarProveedor(proveedor.id)
+			promesa.then(function (dato) {
+				$scope.mostrarMensaje(dato.mensaje);
+			})
+
 			$scope.recargarItemsTabla();
 			blockUI.stop();
 		}
@@ -90,14 +94,48 @@ angular.module('agil.controladores')
 						documentosFinal.push(documento2)
 					}
 					if (index == array.length - 1) {
-						if(documentosFinal.length>0){
-						documentosFinal.forEach(function (documento, index, array) {
-							r = new FileReader();
-							if (documento) {
-								r.onloadend = function (e) {
-									documento.nombre=documento.name
-										documento.data=e.target.result
-									//send your binary data via $http or $resource or do anything else with it
+						if (documentosFinal.length > 0) {
+							documentosFinal.forEach(function (documento, index, array) {
+								r = new FileReader();
+								if (documento) {
+									r.onloadend = function (e) {
+										documento.nombre = documento.name
+										documento.data = e.target.result
+										//send your binary data via $http or $resource or do anything else with it
+										if (index === array.length - 1) {
+											proveedor.fecha1 = null;
+											if (proveedor.fechatexto1) {
+												proveedor.fecha1 = new Date($scope.convertirFecha(proveedor.fechatexto1));
+											}
+											proveedor.fecha2 = null;
+											if (proveedor.fechatexto2) {
+												proveedor.fecha2 = new Date($scope.convertirFecha(proveedor.fechatexto2));
+											}
+											if (proveedor.id) {
+												Proveedor.update({ idProveedor: proveedor.id }, proveedor, function (res) {
+													blockUI.stop();
+													$scope.cerrarPopPupNuevoProveedor();
+													$scope.mostrarMensaje('Actualizado Exitosamente!');
+													$scope.recargarItemsTabla();
+												});
+											} else {
+												proveedor.$save(function (proveedor) {
+													blockUI.stop();
+													$scope.proveedor = new Proveedor({});
+													$scope.cerrarPopPupNuevoProveedor();
+													$scope.mostrarMensaje('Guardado Exitosamente!');
+													$scope.recargarItemsTabla();
+												}, function (error) {
+													blockUI.stop();
+													$scope.cerrarPopPupNuevoProveedor();
+													$scope.mostrarMensaje('Ocurrio un problema al momento de guardar!');
+													$scope.recargarItemsTabla();
+												});
+											}
+										}
+									}
+									r.readAsBinaryString(documento);
+								} else {
 									if (index === array.length - 1) {
 										proveedor.fecha1 = null;
 										if (proveedor.fechatexto1) {
@@ -130,73 +168,39 @@ angular.module('agil.controladores')
 										}
 									}
 								}
-								r.readAsBinaryString(documento);
-							} else {
-								if (index === array.length - 1) {
-									proveedor.fecha1 = null;
-									if (proveedor.fechatexto1) {
-										proveedor.fecha1 = new Date($scope.convertirFecha(proveedor.fechatexto1));
-									}
-									proveedor.fecha2 = null;
-									if (proveedor.fechatexto2) {
-										proveedor.fecha2 = new Date($scope.convertirFecha(proveedor.fechatexto2));
-									}
-									if (proveedor.id) {
-										Proveedor.update({ idProveedor: proveedor.id }, proveedor, function (res) {
-											blockUI.stop();
-											$scope.cerrarPopPupNuevoProveedor();
-											$scope.mostrarMensaje('Actualizado Exitosamente!');
-											$scope.recargarItemsTabla();
-										});
-									} else {
-										proveedor.$save(function (proveedor) {
-											blockUI.stop();
-											$scope.proveedor = new Proveedor({});
-											$scope.cerrarPopPupNuevoProveedor();
-											$scope.mostrarMensaje('Guardado Exitosamente!');
-											$scope.recargarItemsTabla();
-										}, function (error) {
-											blockUI.stop();
-											$scope.cerrarPopPupNuevoProveedor();
-											$scope.mostrarMensaje('Ocurrio un problema al momento de guardar!');
-											$scope.recargarItemsTabla();
-										});
-									}
-								}
-							}
 
-						})
-					}else{
-						proveedor.fecha1 = null;
-									if (proveedor.fechatexto1) {
-										proveedor.fecha1 = new Date($scope.convertirFecha(proveedor.fechatexto1));
-									}
-									proveedor.fecha2 = null;
-									if (proveedor.fechatexto2) {
-										proveedor.fecha2 = new Date($scope.convertirFecha(proveedor.fechatexto2));
-									}
-									if (proveedor.id) {
-										Proveedor.update({ idProveedor: proveedor.id }, proveedor, function (res) {
-											blockUI.stop();
-											$scope.cerrarPopPupNuevoProveedor();
-											$scope.mostrarMensaje('Actualizado Exitosamente!');
-											$scope.recargarItemsTabla();
-										});
-									} else {
-										proveedor.$save(function (proveedor) {
-											blockUI.stop();
-											$scope.proveedor = new Proveedor({});
-											$scope.cerrarPopPupNuevoProveedor();
-											$scope.mostrarMensaje('Guardado Exitosamente!');
-											$scope.recargarItemsTabla();
-										}, function (error) {
-											blockUI.stop();
-											$scope.cerrarPopPupNuevoProveedor();
-											$scope.mostrarMensaje('Ocurrio un problema al momento de guardar!');
-											$scope.recargarItemsTabla();
-										});
-									}
-					}
+							})
+						} else {
+							proveedor.fecha1 = null;
+							if (proveedor.fechatexto1) {
+								proveedor.fecha1 = new Date($scope.convertirFecha(proveedor.fechatexto1));
+							}
+							proveedor.fecha2 = null;
+							if (proveedor.fechatexto2) {
+								proveedor.fecha2 = new Date($scope.convertirFecha(proveedor.fechatexto2));
+							}
+							if (proveedor.id) {
+								Proveedor.update({ idProveedor: proveedor.id }, proveedor, function (res) {
+									blockUI.stop();
+									$scope.cerrarPopPupNuevoProveedor();
+									$scope.mostrarMensaje('Actualizado Exitosamente!');
+									$scope.recargarItemsTabla();
+								});
+							} else {
+								proveedor.$save(function (proveedor) {
+									blockUI.stop();
+									$scope.proveedor = new Proveedor({});
+									$scope.cerrarPopPupNuevoProveedor();
+									$scope.mostrarMensaje('Guardado Exitosamente!');
+									$scope.recargarItemsTabla();
+								}, function (error) {
+									blockUI.stop();
+									$scope.cerrarPopPupNuevoProveedor();
+									$scope.mostrarMensaje('Ocurrio un problema al momento de guardar!');
+									$scope.recargarItemsTabla();
+								});
+							}
+						}
 					}
 
 				})

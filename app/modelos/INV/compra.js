@@ -4,6 +4,14 @@ module.exports = function (sequelize, Sequelize) {
 			type: Sequelize.INTEGER,
 			field: 'almacen'
 		},
+		id_sucursal: {
+			type: Sequelize.INTEGER,
+			field: 'sucursal'
+		},
+		id_tipo_movimiento: {
+			type: Sequelize.INTEGER,
+			field: 'tipo_movimiento'
+		},
 		id_proveedor: {
 			type: Sequelize.INTEGER,
 			field: 'proveedor'

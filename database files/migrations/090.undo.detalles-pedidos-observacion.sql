@@ -1,0 +1,1 @@
+ALTER TABLE agil_detalles_pedidos drop observacion;

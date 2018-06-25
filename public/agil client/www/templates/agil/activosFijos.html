@@ -1,0 +1,327 @@
+<div class="row">
+    <div class="col-xs-12">
+        <h3 class="header smaller lighter blue">ACTIVOS FIJOS</h3>
+        <div>
+            <form name="formularioFiltroActivosFijos" novalidate ng-submit="filtrarActivosFijos(filtro)">
+                <fieldset>
+                    <br>
+                    <legend>Filtro de Activos</legend>
+                    <table class="table table-striped table-bordered table-hover">
+                        <tbody>
+                            <tr>
+                                <td>
+
+                                </td>
+                                <td>
+                                    <label>Mes</label>
+                                </td>
+                                <td>
+                                    <label>Año</label>
+                                </td>
+                                <td></td>
+
+                                <td>
+                                    <label> Sub Totales</label>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    PERIODO
+                                </td>
+                                <td>
+                                    <select required id="mesFiltroActivosFijos" name="mesFiltroActivosFijos" ng-options="mes as mes.nombre for mes in mesesFiltro track by mes.id"
+                                        ng-model="filtro.mes">
+                                        <option value="" selected>TODOS</option>
+                                    </select>
+                                </td>
+                                <td>
+                                    <select required id="anioFiltroActivosFijos" name="anioFiltroActivosFijos" ng-options="anio as anio.nombre for anio in anios track by anio.id"
+                                        ng-model="filtro.anio">
+                                        <option value="" selected>TODOS</option>
+                                    </select>
+                                </td>
+                                <td>
+                                    <div class=" container-fluid">
+                                        <button type="submit" class="btn btn-app btn-primary btn-xs">
+                                            <i class="ace-icon fa fa-search align-top bigger-100"></i>
+                                            Filtrar
+                                        </button>
+                                        <button type="submit" class="btn btn-app btn-danger btn-xs">
+                                            <i class="ace-icon fa fa-print align-top bigger-100"></i>
+                                            PDF
+                                        </button>
+                                        <button type="submit" class="btn btn-app btn-success btn-xs">
+                                            <i class="ace-icon fa fa-print align-top bigger-100"></i>
+                                            Excel
+                                        </button>
+                                    </div>
+                                </td>
+                                <td>
+
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+
+                                </td>
+                                <td>
+                                    <label>Sub grupo</label>
+                                </td>
+                                <td>
+                                    <label>Código</label>
+                                </td>
+                                <td>
+                                    <label>Activo</label>
+                                </td>
+                                <td>
+                                    <label>Vida útil</label>
+                                </td>
+                                <td>
+
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    FILTRO
+                                </td>
+                                <td>
+                                    <select class="form-control" style="width:150px;" ng-change="filtrarProductosSeleccionadosPorGrupo()" id="selectGruposProductos"
+                                        name="selectGruposProductos" ng-model="filtro.grupo" ng-options="grupo.id as grupo.nombre for grupo in subGruposProducto track by grupo.id"
+                                        data-placeholder="Click para escoger">
+                                        <option value="" selected>Todos</option>
+                                    </select>
+                                </td>
+                                <td>
+                                    <input type="text" name="filtro-activos-codigo" id="filtro-activos-codigo" ng-model="filtro.codigo">
+                                </td>
+                                <td style="max-width: 20%; width: 20%">
+                                    <select style="max-width: 180px;width: 180px" ng-options="estado as estado.nombre for estado in listaEstados track by estado.id"
+                                        ng-model="filtro.activo">
+                                        <option value="" selected>TODOS</option>
+                                    </select>
+                                </td>
+                                <td>
+                                    <input type="text" name="filtro-vida-util" id="filtro-vida-util" ng-model="filtro.vida_util">
+                                </td>
+                                <td>
+                                    <input type="text">
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </fieldset>
+            </form>
+        </div>
+        <div class="clearfix">
+            <div class="pull-right tableTools-container"></div>
+        </div>
+        <div class="table-header">
+            Cuadro de activos fijos
+            <label class="pull-left" data-rel="tooltip" tooltip-placement="top" uib-tooltip="Configuración">
+                <a class="blue" ng-click="abrirConfiguracionActivos()">
+                    <i class="ace-icon fa fa-cogs text-white bigger-130"></i>
+                </a>
+            </label>
+            <style type="text/css" scoped>
+                .dropdown-menu {
+                    min-width: 400px !important;
+                }
+            </style>
+            <label class="pull-right">
+                <div class="col-xs-10" ng-include src="'/templates/gral/fields-viewer.html'"></div>
+            </label>
+        </div>
+        <div id="tabla-activos-fijos" class="dataTables_wrapper form-inline no-footer">
+            <div class="row" ng-include src="'/templates/gral/paginator-header-2.html'">
+            </div>
+            <table id="tabla-activos" class="table table-striped table-bordered table-hover">
+                <thead>
+                    <tr>
+                        <th class="center">
+                            <label class="pos-rel">
+                                <input type="checkbox" class="ace" />
+                                <span class="lbl"></span>
+                            </label>
+                        </th>
+                        <th class="center" ng-if="fieldViewer.getConfiguration().numero.show">
+                            N°
+                        </th>
+                        <th ng-if="fieldViewer.getConfiguration().activo.show">Activo</th>
+                        <th ng-if="fieldViewer.getConfiguration().codigo.show">Código</th>
+                        <th ng-if="fieldViewer.getConfiguration().cantidad.show">Cantidad</th>
+                        <th class="hidden-480" ng-if="fieldViewer.getConfiguration().mes.show">Mes</th>
+                        <th class="hidden-480" ng-if="fieldViewer.getConfiguration().anio.show">Año</th>
+                        <th ng-if="fieldViewer.getConfiguration().fecha_ingreso.show">Fecha Ingr.</th>
+                        <th ng-if="fieldViewer.getConfiguration().valor.show">Valor</th>
+                        <th ng-if="fieldViewer.getConfiguration().actualizacion.show">Act.</th>
+                        <th ng-if="fieldViewer.getConfiguration().valor_actualizado.show">Total A.</th>
+                        <th ng-if="fieldViewer.getConfiguration().depreciacion_acumulada.show">Dep. A</th>
+                        <th ng-if="fieldViewer.getConfiguration().actualizacion_depreciacion_acumulada.show">A. D.A.</th>
+                        <th ng-if="fieldViewer.getConfiguration().depreciacion_acumulada_actualizada.show">Dep Act.</th>
+                        <th ng-if="fieldViewer.getConfiguration().depreciacion_mes.show">Dep. M.</th>
+                        <th ng-if="fieldViewer.getConfiguration().total_depreciacion.show">Total Dep.</th>
+                        <th ng-if="fieldViewer.getConfiguration().valor_neto.show">Valor Net.</th>
+                        <th ng-if="fieldViewer.getConfiguration().vida_util.show">Vida U.</th>
+                        <th ng-if="fieldViewer.getConfiguration().vida_restante.show">Vida R.</th>
+                        <th ng-if="fieldViewer.getConfiguration().revaluado.show">revaluó</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="activoFijo in activosFijos">
+                        <td class="center">
+                            <label class="pos-rel">
+                                <input type="checkbox" class="ace" />
+                                <span class="lbl"></span>
+                            </label>
+                        </td>
+                        <td class="center" ng-if="fieldViewer.getConfiguration().numero.show"> {{$index+1}}
+                        </td>
+                        <td ng-if="fieldViewer.getConfiguration().activo.show">{{activoFijo.producto.nombre}}</td>
+                        <td ng-if="fieldViewer.getConfiguration().codigo.show">{{activoFijo.producto.codigo}}</td>
+                        <td ng-if="fieldViewer.getConfiguration().cantidad.show">{{activoFijo.cantidad}}</td>
+                        <td class="hidden-480" ng-if="fieldViewer.getConfiguration().mes.show">{{activoFijo.mesDepreciacion}}</td>
+                        <td class="hidden-480" ng-if="fieldViewer.getConfiguration().anio.show">{{activoFijo.anioDepreciacion}}</td>
+                        <td ng-if="fieldViewer.getConfiguration().fecha_ingreso.show">{{activoFijo.fecha_ingreso}}</td>
+                        <td ng-if="fieldViewer.getConfiguration().valor.show">{{activoFijo.valor}}</td>
+                        <td ng-if="fieldViewer.getConfiguration().actualizacion.show">{{activoFijo.Actualizacion}}</td>
+                        <td ng-if="fieldViewer.getConfiguration().valor_actualizado.show">{{activoFijo.totalActualizacion}}</td>
+                        <td ng-if="fieldViewer.getConfiguration().depreciacion_acumulada.show">{{activoFijo.depreciacion_acumulada}}</td>
+                        <td ng-if="fieldViewer.getConfiguration().actualizacion_depreciacion_acumulada.show">{{activoFijo.actualizacionDepreciacionAcumulada}}</td>
+                        <td ng-if="fieldViewer.getConfiguration().depreciacion_acumulada_actualizada.show">{{activoFijo.depreciacionAcumuladaActualizada}}</td>
+                        <td ng-if="fieldViewer.getConfiguration().depreciacion_mes.show">{{activoFijo.depreciacionMes}}</td>
+                        <td ng-if="fieldViewer.getConfiguration().total_depreciacion.show">{{activoFijo.totalDepreciacion}}</td>
+                        <td ng-if="fieldViewer.getConfiguration().valor_neto.show">{{activoFijo.valorNeto}}</td>
+                        <td ng-if="fieldViewer.getConfiguration().vida_util.show">{{activoFijo.vidaUtil}}</td>
+                        <td ng-if="fieldViewer.getConfiguration().vida_restante.show">{{activoFijo.vidaRestante}}</td>
+                        <td ng-if="fieldViewer.getConfiguration().revaluado.show">{{activoFijo.revaluado}}</td>
+                        <td>
+                            <a class="orange" href="javascript:void(0)" e-disabled="!aplicacion.puede_ver" ng-click="ver(transaccion)" data-rel="tooltip"
+                                tooltip-placement="top" uib-tooltip="Ver">
+                                <i class="ace-icon fa fa-file-text bigger-130"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="center">
+
+                        </td>
+                        <td class="center" ng-if="fieldViewer.getConfiguration().numero.show">
+                        </td>
+                        <td ng-if="fieldViewer.getConfiguration().activo.show"></td>
+                        <td ng-if="fieldViewer.getConfiguration().codigo.show"></td>
+                        <td ng-if="fieldViewer.getConfiguration().cantidad.show"></td>
+                        <td class="hidden-480" ng-if="fieldViewer.getConfiguration().mes.show"></td>
+                        <td class="hidden-480" ng-if="fieldViewer.getConfiguration().anio.show"></td>
+                        <td ng-if="fieldViewer.getConfiguration().fecha_ingreso.show"></td>
+                        <td ng-if="fieldViewer.getConfiguration().valor.show"></td>
+                        <td ng-if="fieldViewer.getConfiguration().actualizacion.show"></td>
+                        <td ng-if="fieldViewer.getConfiguration().valor_actualizado.show"></td>
+                        <td ng-if="fieldViewer.getConfiguration().depreciacion_acumulada.show"></td>
+                        <td ng-if="fieldViewer.getConfiguration().actualizacion_depreciacion_acumulada.show"></td>
+                        <td ng-if="fieldViewer.getConfiguration().depreciacion_acumulada_actualizada.show"></td>
+                        <td ng-if="fieldViewer.getConfiguration().depreciacion_mes.show"></td>
+                        <td ng-if="fieldViewer.getConfiguration().total_depreciacion.show"></td>
+                        <td ng-if="fieldViewer.getConfiguration().valor_neto.show"></td>
+                        <td ng-if="fieldViewer.getConfiguration().vida_util.show"></td>
+                        <td ng-if="fieldViewer.getConfiguration().vida_restante.show"></td>
+                        <td ng-if="fieldViewer.getConfiguration().revaluado.show"></td>
+                        <td>
+
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="row" ng-include src="'/templates/gral/paginator.html'" ng-if="activosFijos.length > 0">
+        </div>
+    </div>
+</div>
+
+<div id="modal-configuracion-activos" class="modal wizard-posicion">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form ng-submit="guardarConfiguracionActivos()">
+                <div class="modal-header bg-blue">
+                    <h2 class="center">CONFIGURACIÓN</h2>
+                </div>
+                <div class="modal-body">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>
+                                            <label>Sub-Grupo</label>
+                                        </th>
+                                        <th>
+                                            <label>Vida útil</label>
+                                        </th>
+                                        <th>
+                                            <label>Factor</label>
+                                        </th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <select class="form-control" style="width:150px;" ng-change="filtrarProductosSeleccionadosPorGrupo()" id="selectGruposProductos"
+                                                name="selectGruposProductos" ng-model="configuracion.grupo" ng-options="grupo.id as grupo.nombre for grupo in subGruposProducto track by grupo.id"
+                                                data-placeholder="Click para escoger">
+                                                <option value="" selected>Todos</option>
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <select class="form-control" ng-options="mes as mes.nombre for mes in mesesFiltro track by mes.id" ng-model="configuracion.mes">
+                                                <option value="" selected>TODOS</option>
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <select class="form-control" ng-options="mes as mes.nombre for mes in mesesFiltro track by mes.id" ng-model="configuracion.mes">
+                                                <option value="" selected>TODOS</option>
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <button class=" btn btn-primary btn-xs" ng-click="mostrarMensaje('Sin funcionalidad.')">
+                                                <i class="fa fa-plus bigger-120"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="row">
+                            <table id="tabla-activos" class="table table-striped table-bordered table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Sub-Grupo</th>
+                                        <th>Vida útil</th>
+                                        <th>Factor %</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr ng-repeat="configuracion in configuracionActivosFijos">
+                                        <td>{{configuracion.activo}}</td>
+                                        <td>{{configuracion.vida_util}}</td>
+                                        <td>{{configuracion.factor}}</td>
+                                        <td>
+                                            <a ng-if="pedido.activo" class="orange" href="javascript:void(0)" ng-click="editar(pedido)">
+                                                <i class="ace-icon fa fa-pencil-square-o bigger-130"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer wizard-actions">
+                    <button type="submit" class="btn btn-success">GUARDAR</button>
+                    <button type="button" ng-click="cerrarModalConfiguracionActivos()" class="btn btn-danger pull-left">SALIR</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

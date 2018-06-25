@@ -1,7 +1,26 @@
 module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCompra, Almacen, Sucursal, Empresa, sequelize, Sequelize,
 	Tipo, Clase, Proveedor, Producto, Movimiento, DetalleMovimiento, Inventario, Venta, DetalleVenta,
 	Cliente, CodigoControl, NumeroLiteral, Diccionario, SucursalActividadDosificacion, Dosificacion,
-	ConfiguracionGeneralFactura, ConfiguracionFactura, PagoVenta, PagoCompra, Usuario, DetalleVentaNoConsolidada, ClienteCuenta, ContabilidadCuenta, ProveedorCuenta, UsuarioGrupos) {
+	ConfiguracionGeneralFactura, ConfiguracionFactura, PagoVenta, PagoCompra, Usuario, DetalleVentaNoConsolidada, ClienteCuenta, ContabilidadCuenta, ProveedorCuenta, UsuarioGrupos, Pedido, DetallesPedido, ProductoBase) {
+	router.route('/compra/pedido/empresa/:id_empresa')
+		.get(function (req, res) {
+			Pedido.findAll({
+				where: {
+					eliminado: false,
+					id_empresa: req.params.id_empresa,
+					recibido:false,
+					id_compra: null
+				}, include: [{ model: Proveedor, as: 'proveedor' }, { model: Almacen, as: 'almacen' }, { model: Sucursal, as: 'sucursal' }, {
+					model: DetallesPedido, as: 'detallesPedido', include: [{
+						model: Producto, as: 'producto', nclude: [
+							{ model: Clase, as: 'tipoProducto' },						
+						]
+					}]
+				}]
+			}).then(function (Pedidos) {
+				res.json({ pedidos: Pedidos });
+			});
+		});
 	router.route('/inventarios/:id_empresa')
 		.get(function (req, res) {
 			Producto.findAll({
@@ -97,7 +116,7 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 			})
 		});
 
-	router.route('/compras/:idsSucursales/inicio/:inicio/fin/:fin/razon-social/:razon_social/nit/:nit/monto/:monto/tipo-compra/:tipo_compra/sucursal/:sucursal/usuario/:usuario/user/:id_usuario')
+	router.route('/compras/:idsSucursales/inicio/:inicio/fin/:fin/razon-social/:razon_social/nit/:nit/monto/:monto/tipo-compra/:tipo_compra/sucursal/:sucursal/usuario/:usuario/user/:id_usuario/tipo/:tipo')
 		.get(/*ensureAuthorized,*/function (req, res) {
 			var inicio = new Date(req.params.inicio); inicio.setHours(0, 0, 0, 0, 0);
 			var fin = new Date(req.params.fin); fin.setHours(23, 59, 59, 0, 0);
@@ -124,17 +143,18 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 			if (req.params.usuario != 0) {
 				condicionUsuario.nombre_usuario = { $like: "%" + req.params.usuario + "%" };
 			}
+			condicionCompra.usar_producto = true
 			Compra.findAll({
 				where: condicionCompra,
-				include: [{
+				include: [/* {model:Clase,as:'tipoMovimiento'},{ model: Sucursal, as: 'sucursal',where: condicionSucursal }, */ {
 					model: Movimiento, as: 'movimiento',
 					include: [{ model: Clase, as: 'clase' }]
 				}, {
 					model: DetalleCompra, as: 'detallesCompra',
 					include: [{ model: Producto, as: 'producto' },
-					{ model: Clase, as: 'centroCosto'/*,where:{nombre_corto:'ALM'}*/ }]
+					{ model: Clase, as: 'centroCosto',/*,where:{nombre_corto:'ALM'}*/ }]
 				},
-				{ model: Clase, as: 'tipoPago' },
+				{ model: Clase, as: 'tipoPago', },
 				{ model: Usuario, as: 'usuario', where: condicionUsuario },
 				{ model: Proveedor, as: 'proveedor', where: condicionProveedor },
 				{
@@ -145,7 +165,33 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 					}]
 				}]
 			}).then(function (entity) {
-				res.json(entity);
+				condicionCompra.usar_producto = false
+				Compra.findAll({
+					where: condicionCompra,
+					include: [{ model: Clase, as: 'tipoMovimiento' }, { model: Sucursal, as: 'sucursal', where: condicionSucursal }, {
+						model: DetalleCompra, as: 'detallesCompra',
+						include: [{ model: Clase, as: 'servicio' }
+						]
+					},
+					{ model: Clase, as: 'tipoPago', },
+					{ model: Usuario, as: 'usuario', where: condicionUsuario },
+					{ model: Proveedor, as: 'proveedor', where: condicionProveedor },
+					]
+				}).then(function (entity2) {
+					var compras = entity.concat(entity2);
+
+					if (req.params.tipo == 'productos') {
+						res.json(entity);
+					} else if (req.params.tipo == 'servicios') {
+						res.json(entity2);
+					} else {
+						compras = compras.sort(function (a, b) {
+							return a.fecha - b.fecha;
+						});
+						res.json(compras);
+					}
+
+				});
 			});
 		});
 
@@ -155,21 +201,21 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 				where: {
 					id: req.params.id
 				},
-				include: [{
-					model: Movimiento, as: 'movimiento',
-					include: [{ model: DetalleMovimiento, as: 'detallesMovimiento' }, { model: Clase, as: 'clase' }]
+				include: [{ model: Clase, as: 'tipoMovimiento', required: false }, { model: Sucursal, as: 'sucursal', required: false }, {
+					model: Movimiento, as: 'movimiento', required: false,
+					include: [{ model: DetalleMovimiento, as: 'detallesMovimiento', required: false }, { model: Clase, as: 'clase' }]
 				},
 				{
-					model: DetalleCompra, as: 'detallesCompra',
-					include: [{ model: Producto, as: 'producto' },
-					{ model: Inventario, as: 'inventario' },
-					{ model: Clase, as: 'centroCosto'/*,where:{nombre_corto:'ALM'}*/ }]
+					model: DetalleCompra, as: 'detallesCompra', required: false,
+					include: [{ model: Producto, as: 'producto', required: false }, { model: Clase, as: 'servicio', required: false },
+					{ model: Inventario, as: 'inventario', required: false },
+					{ model: Clase, as: 'centroCosto'/*,where:{nombre_corto:'ALM'}*/, required: false }]
 				},
-				{ model: Clase, as: 'tipoPago' },
-				{ model: Proveedor, as: 'proveedor' },
+				{ model: Clase, as: 'tipoPago', required: false },
+				{ model: Proveedor, as: 'proveedor', required: false },
 				{
-					model: Almacen, as: 'almacen',
-					include: [{ model: Sucursal, as: 'sucursal' }]
+					model: Almacen, as: 'almacen', required: false,
+					include: [{ model: Sucursal, as: 'sucursal', required: false }]
 				}]
 			}).then(function (entity) {
 				res.json(entity);
@@ -179,141 +225,218 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 		.put(function (req, res) {
 			if (req.body.esModificacion) {
 				var compra = req.body;
-				Compra.update({
-					id_almacen: compra.almacen.id,
-					id_proveedor: compra.proveedor.id,
-					factura: compra.factura,
-					autorizacion: compra.autorizacion,
-					fecha: compra.fecha,
-					codigo_control: compra.codigo_control,
-					importe: compra.importe,
-					id_tipo_pago: compra.id_tipo_pago,
-					dias_credito: compra.dias_credito,
-					a_cuenta: compra.a_cuenta,
-					saldo: compra.saldo,
-					descuento_general: compra.descuento_general,
-					descuento: compra.descuento,
-					recargo: compra.recargo,
-					ice: compra.ice,
-					excento: compra.excento,
-					tipo_descuento: compra.tipo_descuento,
-					tipo_recargo: compra.tipo_recargo,
-					total: compra.total,
-					usar_producto: compra.usar_producto,
-					observacion: compra.observacion,
-					dui: compra.dui,
-					tipo_retencion: compra.tipo_retencion,
-				}, {
-						where: {
-							id: compra.id
-						}
-					}).then(function (compraActualizada) {
-						Movimiento.update({
-							id_almacen: compra.almacen.id,
-							fecha: compra.fecha,
-						}, {
-								where: {
-									id: compra.movimiento.id
-								}
-							}).then(function (movimientoActualizado) {
-								compra.detallesCompra.forEach(function (detalleCompra, index, array) {
-									if (detalleCompra.id) {
-										if (!detalleCompra.eliminado) {
-											DetalleCompra.update({
-												cantidad: detalleCompra.cantidad,
-												costo_unitario: detalleCompra.costo_unitario,
-												importe: detalleCompra.importe,
-												total: detalleCompra.total,
-											}, {
-													where: {
-														id: detalleCompra.id
-													}
-												}).then(function (detalleCompraActualizado) {
-													DetalleMovimiento.find({
+				if (req.body.usar_producto) {
+					Compra.update({
+						id_almacen: compra.almacen.id,
+						id_proveedor: compra.proveedor.id,
+						factura: compra.factura,
+						autorizacion: compra.autorizacion,
+						fecha: compra.fecha,
+						codigo_control: compra.codigo_control,
+						importe: compra.importe,
+						id_tipo_pago: compra.id_tipo_pago,
+						dias_credito: compra.dias_credito,
+						a_cuenta: compra.a_cuenta,
+						saldo: compra.saldo,
+						descuento_general: compra.descuento_general,
+						descuento: compra.descuento,
+						recargo: compra.recargo,
+						ice: compra.ice,
+						excento: compra.excento,
+						tipo_descuento: compra.tipo_descuento,
+						tipo_recargo: compra.tipo_recargo,
+						total: compra.total,
+						usar_producto: compra.usar_producto,
+						observacion: compra.observacion,
+						dui: compra.dui,
+						tipo_retencion: compra.tipo_retencion,
+					}, {
+							where: {
+								id: compra.id
+							}
+						}).then(function (compraActualizada) {
+							Movimiento.update({
+								id_almacen: compra.almacen.id,
+								fecha: compra.fecha,
+							}, {
+									where: {
+										id: compra.movimiento.id
+									}
+								}).then(function (movimientoActualizado) {
+									compra.detallesCompra.forEach(function (detalleCompra, index, array) {
+										if (detalleCompra.id) {
+											if (!detalleCompra.eliminado) {
+												DetalleCompra.update({
+													cantidad: detalleCompra.cantidad,
+													costo_unitario: detalleCompra.costo_unitario,
+													importe: detalleCompra.importe,
+													total: detalleCompra.total,
+												}, {
 														where: {
-															id_inventario: detalleCompra.id_inventario,
-															id_movimiento: compra.movimiento.id,
-															id_producto: detalleCompra.producto.id
+															id: detalleCompra.id
 														}
-													}).then(function (detalleMovimiento) {
-														Inventario.find({
+													}).then(function (detalleCompraActualizado) {
+														DetalleMovimiento.find({
 															where: {
-																id: detalleCompra.id_inventario
+																id_inventario: detalleCompra.id_inventario,
+																id_movimiento: compra.movimiento.id,
+																id_producto: detalleCompra.producto.id
 															}
-														}).then(function (inventario) {
-															var diferencia = 0, cantidadInventario = inventario.cantidad;
-															if (detalleCompra.cantidad > detalleMovimiento.cantidad) {
-																diferencia = detalleCompra.cantidad - detalleMovimiento.cantidad;
-																cantidadInventario = cantidadInventario + diferencia;
-															} else if (detalleCompra.cantidad < detalleMovimiento.cantidad) {
-																diferencia = detalleMovimiento.cantidad - detalleCompra.cantidad;
-																cantidadInventario = cantidadInventario - diferencia;
-															}
-															Inventario.update({
-																cantidad: cantidadInventario,
-																costo_unitario: detalleCompra.costo_unitario,
-																costo_total: detalleCompra.costo_unitario * cantidadInventario,
-																fecha_vencimiento: (detalleCompra.inventario.fechaVencimientoTexto ? new Date(detalleCompra.inventario.fechaVencimientoTexto.split('/')[1] + "/" + detalleCompra.inventario.fechaVencimientoTexto.split('/')[0] + "/" + detalleCompra.inventario.fechaVencimientoTexto.split('/')[2]) : null),
-																lote: detalleCompra.inventario.lote
-															}, {
-																	where: {
-																		id: inventario.id
-																	}
-																}).then(function (inventarioActualizado) {
-																	DetalleMovimiento.update({
-																		cantidad: detalleCompra.cantidad,
-																		costo_unitario: detalleCompra.costo_unitario,
-																		importe: detalleCompra.importe,
-																		total: detalleCompra.total
-																	}, {
-																			where: {
-																				id: detalleMovimiento.id
-																			}
-																		}).then(function (detalleMovimientoActualizado) {
+														}).then(function (detalleMovimiento) {
+															Inventario.find({
+																where: {
+																	id: detalleCompra.id_inventario
+																}
+															}).then(function (inventario) {
+																var diferencia = 0, cantidadInventario = inventario.cantidad;
+																if (detalleCompra.cantidad > detalleMovimiento.cantidad) {
+																	diferencia = detalleCompra.cantidad - detalleMovimiento.cantidad;
+																	cantidadInventario = cantidadInventario + diferencia;
+																} else if (detalleCompra.cantidad < detalleMovimiento.cantidad) {
+																	diferencia = detalleMovimiento.cantidad - detalleCompra.cantidad;
+																	cantidadInventario = cantidadInventario - diferencia;
+																}
+																Inventario.update({
+																	cantidad: cantidadInventario,
+																	costo_unitario: detalleCompra.costo_unitario,
+																	costo_total: detalleCompra.costo_unitario * cantidadInventario,
+																	fecha_vencimiento: (detalleCompra.inventario.fechaVencimientoTexto ? new Date(detalleCompra.inventario.fechaVencimientoTexto.split('/')[1] + "/" + detalleCompra.inventario.fechaVencimientoTexto.split('/')[0] + "/" + detalleCompra.inventario.fechaVencimientoTexto.split('/')[2]) : null),
+																	lote: detalleCompra.inventario.lote
+																}, {
+																		where: {
+																			id: inventario.id
+																		}
+																	}).then(function (inventarioActualizado) {
+																		DetalleMovimiento.update({
+																			cantidad: detalleCompra.cantidad,
+																			costo_unitario: detalleCompra.costo_unitario,
+																			importe: detalleCompra.importe,
+																			total: detalleCompra.total
+																		}, {
+																				where: {
+																					id: detalleMovimiento.id
+																				}
+																			}).then(function (detalleMovimientoActualizado) {
 
-																		});
-																});
+																			});
+																	});
+															});
 														});
 													});
-												});
-										} else {
-											DetalleMovimiento.destroy({
-												where: {
-													id_inventario: detalleCompra.id_inventario,
-													id_movimiento: compra.movimiento.id,
-													id_producto: detalleCompra.producto.id
-												}
-											}).then(function (detalleMovimientoEliminado) {
-												DetalleCompra.destroy({
+											} else {
+												DetalleMovimiento.destroy({
 													where: {
-														id: detalleCompra.id
+														id_inventario: detalleCompra.id_inventario,
+														id_movimiento: compra.movimiento.id,
+														id_producto: detalleCompra.producto.id
 													}
-												}).then(function (detalleCompraEliminado) {
-													Inventario.update(
-														{
-															cantidad: 0
-														}, {
-															where: {
-																id: detalleCompra.id_inventario
-															}
-														}).then(function (inventarioEliminado) {
+												}).then(function (detalleMovimientoEliminado) {
+													DetalleCompra.destroy({
+														where: {
+															id: detalleCompra.id
+														}
+													}).then(function (detalleCompraEliminado) {
+														Inventario.update(
+															{
+																cantidad: 0
+															}, {
+																where: {
+																	id: detalleCompra.id_inventario
+																}
+															}).then(function (inventarioEliminado) {
 
-														});
+															});
+													});
 												});
-											});
+											}
+										} else {
+											crearDetalleCompra(detalleCompra, compra.movimiento.id, compra.id, compra.almacen.id, detalleCompra.producto.id, detalleCompra.centroCosto.id)
 										}
-									} else {
-										crearDetalleCompra(detalleCompra, compra.movimiento.id, compra.id, compra.almacen.id, detalleCompra.producto.id, detalleCompra.centroCosto.id)
-									}
 
 
-									if (index == (array.length - 1)) {
-										res.json({ mensaje: "Compra actualizada satisfactoriamente!" });
-									}
+										if (index == (array.length - 1)) {
+											res.json({ mensaje: "Compra actualizada satisfactoriamente!" });
+										}
+									});
 								});
-							});
-					});
+						});
+				} else {
+					Compra.update({
+						id_sucursal: compra.sucursal.id,
+						id_tipo_movimiento: compra.movimiento.clase.id,
+						id_proveedor: compra.proveedor.id,
+						factura: compra.factura,
+						autorizacion: compra.autorizacion,
+						fecha: compra.fecha,
+						codigo_control: compra.codigo_control,
+						importe: compra.importe,
+						id_tipo_pago: compra.id_tipo_pago,
+						dias_credito: compra.dias_credito,
+						a_cuenta: compra.a_cuenta,
+						saldo: compra.saldo,
+						descuento_general: compra.descuento_general,
+						descuento: compra.descuento,
+						recargo: compra.recargo,
+						ice: compra.ice,
+						excento: compra.excento,
+						tipo_descuento: compra.tipo_descuento,
+						tipo_recargo: compra.tipo_recargo,
+						total: compra.total,
+						id_usuario: compra.id_usuario,
+						usar_producto: compra.usar_producto,
+						observacion: compra.observacion,
+						dui: compra.dui,
+						tipo_retencion: compra.tipo_retencion,
+					}, {
+							where: {
+								id: compra.id
+							}
+						}).then(function (compraActualizada) {
 
+							compra.detallesCompra.forEach(function (detalleCompra, index, array) {
+								if (detalleCompra.id) {
+									if (!detalleCompra.eliminado) {
+										DetalleCompra.update({
+											cantidad: detalleCompra.cantidad,
+											costo_unitario: detalleCompra.costo_unitario,
+											importe: detalleCompra.importe,
+											total: detalleCompra.total,
+										}, {
+												where: {
+													id: detalleCompra.id
+												}
+											}).then(function (detalleCompraActualizado) {
+
+											});
+									} else {
+										DetalleMovimiento.destroy({
+											where: {
+												id_inventario: detalleCompra.id_inventario,
+												id_movimiento: compra.movimiento.id,
+												id_producto: detalleCompra.producto.id
+											}
+										}).then(function (detalleMovimientoEliminado) {
+											DetalleCompra.destroy({
+												where: {
+													id: detalleCompra.id
+												}
+											}).then(function (detalleCompraEliminado) {
+
+											});
+										});
+									}
+								} else {
+									crearDetalleCompraServicio(detalleCompra, compra.id, res);
+								}
+
+
+								if (index == (array.length - 1)) {
+									res.json({ mensaje: "Compra actualizada satisfactoriamente!" });
+								}
+							});
+
+						});
+				}
 			} else {
 				Compra.find({
 					where: { id: req.params.id },
@@ -379,14 +502,14 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 										id_empresa: compra.id_empresa,
 										nit: compra.nit,
 									}).then(function (proveedorCreado) {
-										crearCompra(compra, res, proveedorCreado.id, movimientoCreado.id);
+										crearCompra(compra, res, proveedorCreado.id, movimientoCreado.id, conceptoMovimiento.id);
 										if (index === (array.length - 1)) {
 											res.json({ mensaje: "¡Comprobante creado satisfactoriamente!" });
 										}
 
 									});
 								} else {
-									crearCompra(compra, res, provedorEncontrado.id, movimientoCreado.id);
+									crearCompra(compra, res, provedorEncontrado.id, movimientoCreado.id, conceptoMovimiento.id);
 									if (index === (array.length - 1)) {
 										res.json({ mensaje: "¡Comprobante creado satisfactoriamente!" });
 									}
@@ -403,16 +526,31 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 	router.route('/compras/empresa/:id_empresa')
 		.get(function (req, res) {
 			Compra.findAll({
-				where: { contabilizado: false },
+				where: { contabilizado: false, usar_producto: true },
 
-				include: [{ model: Movimiento, as: 'movimiento', include: [{ model: Clase, as: 'clase' }] }, { model: Proveedor, as: 'proveedor', include: [{ model: ProveedorCuenta, as: 'proveedorCuenta', include: [{ model: ContabilidadCuenta, as: 'cuenta', include: [{ model: Clase, as: 'tipoCuenta' }] }] }] },
+				include: [{
+					model: DetalleCompra, as: 'detallesCompra',
+					include: [{ model: Producto, as: 'producto' },
+					{ model: Clase, as: 'centroCosto',/*,where:{nombre_corto:'ALM'}*/ }]
+				}, { model: Movimiento, as: 'movimiento', include: [{ model: Clase, as: 'clase' }] }, { model: Proveedor, as: 'proveedor', include: [{ model: ProveedorCuenta, as: 'proveedorCuenta', include: [{ model: ContabilidadCuenta, as: 'cuenta', include: [{ model: Clase, as: 'tipoCuenta' }] }] }] },
 
 				{ model: Almacen, as: 'almacen', include: [{ model: Sucursal, as: 'sucursal', where: { id_empresa: req.params.id_empresa } }] },
 
 				]
 
 			}).then(function (Compras) {
-				res.json({ compras: Compras })
+				Compra.findAll({
+					where: { contabilizado: false, usar_producto: false },
+					include: [{ model: Clase, as: 'tipoMovimiento' }, { model: Sucursal, as: 'sucursal', where: { id_empresa: req.params.id_empresa } }, { model: Movimiento, as: 'movimiento', required: false, include: [{ model: Clase, as: 'clase' }] }, { model: Proveedor, as: 'proveedor', include: [{ model: ProveedorCuenta, as: 'proveedorCuenta', include: [{ model: ContabilidadCuenta, as: 'cuenta', include: [{ model: Clase, as: 'tipoCuenta' }] }] }] }
+
+					]
+				}).then(function (Compras2) {
+					var compras3 = Compras.concat(Compras2);
+					compras3 = compras3.sort(function (a, b) {
+						return a.fecha - b.fecha;
+					});
+					res.json({ compras: compras3 })
+				})
 			})
 		})
 	//lista de ventas sin contabilizar		
@@ -431,38 +569,124 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 	router.route('/compras')
 		.post(/*ensureAuthorized,*/function (req, res) {
 			var compra = req.body;
-			Tipo.find({
-				where: { nombre_corto: 'MOVING' }
-			}).then(function (tipoMovimiento) {
-				Clase.find({
-					where: { nombre_corto: 'ID' }
-				}).then(function (conceptoMovimiento) {
-					if (compra.movimiento.clase.id) {
-						conceptoMovimiento = compra.movimiento.clase
-					}
-					Movimiento.create({
-						id_tipo: tipoMovimiento.id,
-						id_clase: conceptoMovimiento.id,
-						id_almacen: compra.almacen.id,
-						fecha: compra.fecha
-					}).then(function (movimientoCreado) {
+			if (req.body.usar_producto) {
+				Tipo.find({
+					where: { nombre_corto: 'MOVING' }
+				}).then(function (tipoMovimiento) {
+					Clase.find({
+						where: { nombre_corto: 'ID' }
+					}).then(function (conceptoMovimiento) {
+						if (compra.movimiento.clase.id) {
+							conceptoMovimiento = compra.movimiento.clase
+						}
+						Movimiento.create({
+							id_tipo: tipoMovimiento.id,
+							id_clase: conceptoMovimiento.id,
+							id_almacen: compra.almacen.id,
+							fecha: compra.fecha
+						}).then(function (movimientoCreado) {
+							if (!compra.proveedor.id) {
+								Proveedor.create({
+									id_empresa: compra.id_empresa,
+									nit: compra.proveedor.nit,
+									razon_social: compra.proveedor.razon_social
+								}).then(function (proveedorCreado) {
+									crearCompra(compra, res, proveedorCreado.id, movimientoCreado.id, conceptoMovimiento.id);
+								});
+							} else {
+								crearCompra(compra, res, compra.proveedor.id, movimientoCreado.id, conceptoMovimiento.id);
+							}
+						});
+					});
+				});
+			} else {
+				Tipo.find({
+					where: { nombre_corto: 'MOVING' }
+				}).then(function (tipoMovimiento) {
+					Clase.find({
+						where: { nombre_corto: 'ID' }
+					}).then(function (conceptoMovimiento) {
+						if (compra.movimiento.clase) {
+							conceptoMovimiento = compra.movimiento.clase
+						}
+
 						if (!compra.proveedor.id) {
 							Proveedor.create({
 								id_empresa: compra.id_empresa,
 								nit: compra.proveedor.nit,
 								razon_social: compra.proveedor.razon_social
 							}).then(function (proveedorCreado) {
-								crearCompra(compra, res, proveedorCreado.id, movimientoCreado.id);
+								crearCompraServicio(compra, res, proveedorCreado.id, conceptoMovimiento.id)
 							});
 						} else {
-							crearCompra(compra, res, compra.proveedor.id, movimientoCreado.id);
+							crearCompraServicio(compra, res, compra.proveedor.id, conceptoMovimiento.id)
 						}
-					});
-				});
-			});
+					})
+				})
+			}
 		})
+	function crearCompraServicio(compra, res, idProveedor, idtipo) {
+		Compra.create({
+			id_sucursal: compra.sucursal.id,
+			id_tipo_movimiento: idtipo,
+			id_proveedor: idProveedor,
+			factura: compra.factura,
+			autorizacion: compra.autorizacion,
+			fecha: compra.fecha,
+			codigo_control: compra.codigo_control,
+			importe: compra.importe,
+			id_tipo_pago: compra.id_tipo_pago,
+			dias_credito: compra.dias_credito,
+			a_cuenta: compra.a_cuenta,
+			saldo: compra.saldo,
+			descuento_general: compra.descuento_general,
+			descuento: compra.descuento,
+			recargo: compra.recargo,
+			ice: compra.ice,
+			excento: compra.excento,
+			tipo_descuento: compra.tipo_descuento,
+			tipo_recargo: compra.tipo_recargo,
+			total: compra.total,
+			id_usuario: compra.id_usuario,
+			usar_producto: compra.usar_producto,
+			observacion: compra.observacion,
+			dui: compra.dui,
+			tipo_retencion: compra.tipo_retencion,
+		}).then(function (compraCreada) {
+			compra.detallesCompra.forEach(function (detalleCompra, index, array) {
+				crearDetalleCompraServicio(detalleCompra, compraCreada.id, res);
+				if (index == (array.length - 1)) {
+					compra.id = compraCreada.id;
+					res.json({ compra: compra, mensaje: "creado satisfactoriamente!" });
+				}
+			})
 
-	function crearCompra(compra, res, idProveedor, idMovimiento) {
+		})
+	}
+
+	function crearDetalleCompraServicio(detalleCompra, idCompra, res) {
+		DetalleCompra.create({
+			id_compra: idCompra,
+			costo_unitario: detalleCompra.costo_unitario,
+			cantidad: detalleCompra.cantidad,
+			importe: detalleCompra.importe,
+			descuento: detalleCompra.descuento,
+			recargo: detalleCompra.recargo,
+			ice: detalleCompra.ice,
+			excento: detalleCompra.excento,
+			tipo_descuento: detalleCompra.tipo_descuento,
+			tipo_recargo: detalleCompra.tipo_recargo,
+			total: detalleCompra.total,
+			it: detalleCompra.it,
+			iue: detalleCompra.iue,
+			id_servicio: detalleCompra.servicio.id
+		}).then(function (detalleCompraCreada) {
+
+		});
+
+
+	}
+	function crearCompra(compra, res, idProveedor, idMovimiento, idTipo) {
 		/* 	var almacenid=null;
 			if(compra.almacen==undefined){
 				almacenid =null;
@@ -470,6 +694,7 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 				almacenid=compra.almacen.id;
 			} */
 		Compra.create({
+			id_tipo_movimiento: idTipo,
 			id_almacen: compra.almacen.id,
 			id_proveedor: idProveedor,
 			id_movimiento: idMovimiento,
@@ -512,11 +737,11 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 									nombre: detalleCompra.centroCosto.nombre,
 									id_tipo: tipoCentroCosto.id
 								}).then(function (centroCostoCreado) {
-									crearDetalleCompra(detalleCompra, idMovimiento, compraCreada.id, compra.almacen.id, productoCreado.id, centroCostoCreado.id);
+									crearDetalleCompra(detalleCompra, idMovimiento, compraCreada.id, compra.almacen.id, productoCreado.id, centroCostoCreado.id, res, compra);
 								});
 							});
 						} else {
-							crearDetalleCompra(detalleCompra, idMovimiento, compraCreada.id, compra.almacen.id, productoCreado.id, detalleCompra.centroCosto.id);
+							crearDetalleCompra(detalleCompra, idMovimiento, compraCreada.id, compra.almacen.id, productoCreado.id, detalleCompra.centroCosto.id, res, compra);
 						}
 					});
 				} else {
@@ -528,22 +753,62 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 								nombre: detalleCompra.centroCosto.nombre,
 								id_tipo: tipoCentroCosto.id
 							}).then(function (centroCostoCreado) {
-								crearDetalleCompra(detalleCompra, idMovimiento, compraCreada.id, compra.almacen.id, detalleCompra.producto.id, centroCostoCreado.id);
+								crearDetalleCompra(detalleCompra, idMovimiento, compraCreada.id, compra.almacen.id, detalleCompra.producto.id, centroCostoCreado.id, res, compra);
 							});
 						});
 					} else {
-						crearDetalleCompra(detalleCompra, idMovimiento, compraCreada.id, compra.almacen.id, detalleCompra.producto.id, detalleCompra.centroCosto.id);
+						crearDetalleCompra(detalleCompra, idMovimiento, compraCreada.id, compra.almacen.id, detalleCompra.producto.id, detalleCompra.centroCosto.id, res, compra);
 					}
 				}
 				if (index == (array.length - 1)) {
 					compra.id = compraCreada.id;
-					res.json(compra);
+					if (compra.generado_por_pedido) {
+						compra.pedido.detallesPedido.forEach(function (detalle, index, array) {
+							if (detalle.eliminado == true) {
+								DetallesPedido.update({
+									eliminado: true
+								}, {
+										where: { id: detalle.id }
+									})
+								if (index == (array.length - 1)) {
+									Pedido.update({
+										recibido: true,
+										id_compra:compra.id
+									}, {
+											where: { id: compra.pedido.id }
+										}).then(function (productoEntregado) {
+											res.json({ compra: compra, mensaje: "creado satisfactoriamente!" });
+										})
+								}
+							} else {
+								DetallesPedido.update({
+									recibido: true
+								}, {
+										where: { id: detalle.id }
+									})
+								if (index == (array.length - 1)) {
+									Pedido.update({
+										recibido: true
+									}, {
+											where: { id: compra.pedido.id }
+										}).then(function (productoEntregado) {
+											res.json({ compra: compra, mensaje: "creado satisfactoriamente!" });
+										})
+								}
+							}
+
+
+						})
+
+					} else {
+						res.json({ compra: compra, mensaje: "creado satisfactoriamente!" });
+					}
 				}
 			});
 		});
 	}
 
-	function crearDetalleCompra(detalleCompra, idMovimiento, idCompra, idAlmacen, idProducto, idCentroCosto) {
+	function crearDetalleCompra(detalleCompra, idMovimiento, idCompra, idAlmacen, idProducto, idCentroCosto, res, compra) {
 		if (detalleCompra.centroCosto.nombre_corto == "ALM") {
 			Inventario.create({
 				id_almacen: idAlmacen,
@@ -587,7 +852,7 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 						total: detalleCompra.total,
 						id_inventario: inventarioCreado.id
 					}).then(function (detalleMovimientoCreado) {
-
+						res.json({ mensaje: "creado satisfactoriamente" })
 					});
 				});
 			});
@@ -609,7 +874,7 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 				it: detalleCompra.it,
 				iue: detalleCompra.iue
 			}).then(function (detalleCompraCreada) {
-
+				res.json({ mensaje: "creado satisfactoriamente" })
 			});
 		}
 	}
@@ -1757,19 +2022,20 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 				where: {
 					id: req.params.id
 				},
-				include: [{ model: Proveedor, as: 'proveedor' },
+				include: [{ model: Clase, as: 'tipoMovimiento', required: false }, { model: Sucursal, as: 'sucursal', required: false }, { model: Proveedor, as: 'proveedor', required: false },
 				{
-					model: DetalleCompra, as: 'detallesCompra', include: [{ model: Producto, as: 'producto' },
-					{ model: Inventario, as: 'inventario' }]
+					model: DetalleCompra, as: 'detallesCompra', include: [{ model: Clase, as: 'servicio', required: false }, { model: Producto, as: 'producto', required: false },
+					{ model: Inventario, as: 'inventario', required: false }]
 				},
-				{ model: Almacen, as: 'almacen', include: [{ model: Sucursal, as: 'sucursal' }] },
+				{ model: Almacen, as: 'almacen', required: false, include: [{ model: Sucursal, as: 'sucursal', required: false }] },
 				//{model:Clase,as:'actividad'},
-				{ model: Clase, as: 'tipoPago' },
-				{ model: Movimiento, as: 'movimiento', include: [{ model: Clase, as: 'clase' }] }]
+				{ model: Clase, as: 'tipoPago', required: false },
+				{ model: Movimiento, as: 'movimiento', required: false, include: [{ model: Clase, as: 'clase' }] }]
 
 			}).then(function (compra) {
-				compra.sucursal = compra.almacen.sucursal;
-
+				if (compra.sucursal == undefined) {
+					compra.sucursal = compra.almacen.sucursal;
+				}
 				compra.numero_literal = NumeroLiteral.Convertir(parseFloat(compra.total).toFixed(2).toString());
 
 				ConfiguracionGeneralFactura.find({
@@ -1884,4 +2150,5 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 
 			});
 		});
+
 }

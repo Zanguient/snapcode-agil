@@ -1,0 +1,1 @@
+ALTER TABLE agil_pedidos add almacen int(11);

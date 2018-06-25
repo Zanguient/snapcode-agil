@@ -2,7 +2,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Producto, Dicc
     Inventario, SolicitudReposicion, DetalleSolicitudProducto, DetalleSolicitudProductoBase, Persona, UsuarioGrupos, Tipo, Movimiento, DetalleMovimiento) {
     router.route('/operaciones/empresa/:id_empresa/vintage/:id_usuario/capo/:rol/desde/:desde/hasta/:hasta/suc/:sucursal/alm/:almacen/mov/:movimiento/est/:estado/val/:valuado/pagina/:pagina/items-pagina/:items_pagina/busqueda/:busqueda')
         .get(function (req, res) {
-            var condicion = {}
+            var condicion = {id_empresa: req.params.id_empresa}
             var condicionSucursal = {}
             var condicionAlmacen = {}
             var condicionUsuario = {}
@@ -262,7 +262,8 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Producto, Dicc
                     fecha: req.body.fecha,
                     id_usuario: req.body.id_usuario,
                     activo: req.body.activo,
-                    monto: req.body.monto
+                    monto: req.body.monto,
+                    empresa: req.params.id_empresa
                 }, { transaction: t }).then(function (solicitudCreada) {
                     var aceptado = false
                     var done = false
@@ -301,7 +302,8 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Producto, Dicc
                     fecha: req.body.fecha,
                     id_usuario: req.body.id_usuario,
                     activo: req.body.activo,
-                    monto: req.body.monto
+                    monto: req.body.monto,
+                    empresa: req.params.id_empresa
                 }, {
                         where: { id: req.body.id },
                         transaction: t
@@ -564,19 +566,19 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Producto, Dicc
                     where: { id_empresa: req.params.id_empresa, publicar_panel: true, id_grupo: { $in: gruposUsuario } },
                     include: [
                         { model: Inventario, as: 'inventarios', required: false, where: { id_almacen: req.params.id_almacen, cantidad: { $gte: 0 } } },
-                        { model: Clase, as: 'tipoProducto' },
+                        { model: Clase, as: 'tipoProducto', required: false },
                         {
                             model: ProductoBase, as: 'productosBase', required: false,
                             include: [{
                                 model: Producto, as: 'productoBase', required: false,
                                 include: [{ model: Inventario, as: 'inventarios', required: false, where: { id_almacen: req.params.id_almacen, cantidad: { $gte: 0 } } },
-                                { model: Clase, as: 'tipoProducto' },
+                                { model: Clase, as: 'tipoProducto', required: false },
                                 {
                                     model: ProductoBase, as: 'productosBase', required: false,
                                     include: [{
                                         model: Producto, as: 'productoBase', required: false,
                                         include: [{ model: Inventario, as: 'inventarios', required: false, where: { id_almacen: req.params.id_almacen, cantidad: { $gte: 0 } } },
-                                        { model: Clase, as: 'tipoProducto' }]
+                                        { model: Clase, as: 'tipoProducto', required: false }]
                                     }]
                                 }]
                             }]

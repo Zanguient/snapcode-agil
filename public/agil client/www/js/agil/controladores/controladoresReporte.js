@@ -1979,9 +1979,9 @@ angular.module('agil.controladores')
 					detallesCompra[i].compra.fecha = new Date(detallesCompra[i].compra.fecha);
 					doc.text(detallesCompra[i].compra.fecha.getDate() + "/" + (detallesCompra[i].compra.fecha.getMonth() + 1) + "/" + detallesCompra[i].compra.fecha.getFullYear(), 45, y);
 					doc.text((detallesCompra[i].compra.factura ? detallesCompra[i].compra.factura : ""), 90, y);
-					doc.text(detallesCompra[i].compra.proveedor.razon_social, 135, y - 6, { width: 80 });
-					doc.text(detallesCompra[i].producto.nombre, 225, y - 6, { width: 80 });
-					doc.text(detallesCompra[i].producto.unidad_medida, 300, y, { width: 50 });
+					doc.text((detallesCompra[i].compra.proveedor)?detallesCompra[i].compra.proveedor.razon_social:"", 135, y - 6, { width: 80 });
+					doc.text((detallesCompra[i].producto)?detallesCompra[i].producto.nombre:detallesCompra[i].servicio.nombre, 225, y - 6, { width: 80 });
+					doc.text((detallesCompra[i].producto)?detallesCompra[i].producto.unidad_medida:"", 300, y, { width: 50 });
 					if (detallesCompra[i].inventario) {
 						detallesCompra[i].inventario.fecha_vencimiento = new Date(detallesCompra[i].inventario.fecha_vencimiento);
 						doc.text(detallesCompra[i].inventario.fecha_vencimiento.getDate() + "/" + (detallesCompra[i].inventario.fecha_vencimiento.getMonth() + 1) + "/" + detallesCompra[i].inventario.fecha_vencimiento.getFullYear(), 345, y);

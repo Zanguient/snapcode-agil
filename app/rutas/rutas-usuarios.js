@@ -1,6 +1,6 @@
 module.exports = function (router, ensureAuthorizedAdministrador, fs, decodeBase64Image, forEach, jwt, md5, Usuario, Persona, UsuarioRol, Rol, Tipo, Clase,
 	Aplicacion, RolAplicacion, Empresa, UsuarioSucursal, Sucursal, UsuarioAplicacion,
-	Almacen, SucursalActividadDosificacion, Dosificacion, UsuarioRuta, Ruta, VistaColumnasAplicacion, Diccionario, ComprobanteContabilidad, UsuarioGrupos,EmpresaAplicacion) {
+	Almacen, SucursalActividadDosificacion, Dosificacion, UsuarioRuta, Ruta, VistaColumnasAplicacion, Diccionario, ComprobanteContabilidad, UsuarioGrupos, EmpresaAplicacion,sequelize) {
 
 	router.route('/usuarios')
 		.post(function (req, res) {
@@ -458,42 +458,50 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, decodeBase
 		})
 
 		.delete(function (req, res) {
-			UsuarioAplicacion.destroy({
-				where: {
-					id_usuario: req.params.id_usuario
-				}
-			}).then(function (affectedRows) {
-				UsuarioSucursal.destroy({
+			var promises = [];
+			sequelize.transaction(function (t) {
+				promises.push(UsuarioAplicacion.destroy({
 					where: {
 						id_usuario: req.params.id_usuario
-					}
+					},  transaction: t
 				}).then(function (affectedRows) {
-					UsuarioRol.destroy({
+					return UsuarioSucursal.destroy({
 						where: {
 							id_usuario: req.params.id_usuario
-						}
+						},  transaction: t
 					}).then(function (affectedRows) {
-						Usuario.find({
+						return UsuarioRol.destroy({
 							where: {
-								id: req.params.id_usuario
-							}
-						}).then(function (usuario) {
-							Persona.destroy({
+								id_usuario: req.params.id_usuario
+							},  transaction: t
+						}).then(function (affectedRows) {
+							return Usuario.find({
 								where: {
-									id: usuario.id_persona
-								}
-							}).then(function (affectedRows) {
-								Usuario.destroy({
+									id: req.params.id_usuario
+								},  transaction: t
+							}).then(function (usuario) {
+								return Persona.destroy({
 									where: {
-										id: req.params.id_usuario
-									}
+										id: usuario.id_persona
+									},  transaction: t
 								}).then(function (affectedRows) {
-									res.json({ message: "Eliminado Satisfactoriamente!" });
+									return Usuario.destroy({
+										where: {
+											id: req.params.id_usuario
+										},  transaction: t
+									}).then(function (affectedRows) {
+										res.json({ message: "Eliminado Satisfactoriamente!" });
+									});
 								});
 							});
 						});
 					});
-				});
+				}));
+				return Promise.all(promises);
+			}).then(function (result) {
+				res.json({ message: "Eliminado Satisfactoriamente!" });
+			}).catch(function (err) {
+				res.json({ hasError: true, message: "el usuario cuenta con movimientos no se puede eliminar!" });
 			});
 		});
 
@@ -656,7 +664,7 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, decodeBase
 				},
 				include: [{ model: Persona, as: 'persona' },
 				{ model: UsuarioRol, as: 'rolesUsuario', include: [{ model: Rol, as: 'rol' }] },
-				{ model: Empresa, as: 'empresa', include: [{ model: EmpresaAplicacion, as: 'aplicacionesEmpresa' },{ model: Sucursal, as: 'sucursales' }] },
+				{ model: Empresa, as: 'empresa', include: [{ model: EmpresaAplicacion, as: 'aplicacionesEmpresa' }, { model: Sucursal, as: 'sucursales' }] },
 				{ model: UsuarioSucursal, as: 'sucursalesUsuario', include: [{ model: Sucursal, as: 'sucursal' }] },
 					// { model: UsuarioAplicacion, as: 'aplicacionesUsuario', include: [{ model: Aplicacion, as: 'aplicacion' }] },
 					// { model: UsuarioRuta, as: 'rutas', include: [{ model: Ruta, as: 'ruta' }] },

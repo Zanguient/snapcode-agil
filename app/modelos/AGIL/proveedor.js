@@ -85,7 +85,7 @@ module.exports=function(sequelize,Sequelize){
 			field: 'documento_seguro_social'
 		},
 		productos: {
-			type: Sequelize.STRING,
+			type: Sequelize.TEXT('long'),
 			field: 'productos'
 		},
 	}, {

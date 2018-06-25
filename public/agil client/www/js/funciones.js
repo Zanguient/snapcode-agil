@@ -1,4 +1,4 @@
-﻿function ejecutarScriptDespacho(idModalAsignacionFactura, idModalVentaKardexFactura, idModalAsignacionFacturaKardex, idModalDetalleKardex, IdModalVerificarCuenta,
+function ejecutarScriptDespacho(idModalAsignacionFactura, idModalVentaKardexFactura, idModalAsignacionFacturaKardex, idModalDetalleKardex, IdModalVerificarCuenta,
 	IdModalCobros, IdModalHistorialCobros,idModalConceptoEdicion) {
 
 	crearPopup(idModalVentaKardexFactura, "80%", 'auto');
@@ -545,10 +545,13 @@ function ejecutarScriptsVenta(idPopupEdicion, idPopupVista, idPopupEliminacion,
 }
 
 function ejecutarScriptsCompra(idPopupEdicion, idPopupVista, idPopupEliminacion,
-	idContenedorEdicion, idContenedorVista, idInput, url, idPopupPago) {
+	idContenedorEdicion, idContenedorVista, idInput, url, idPopupPago,idModalServicios,idModalPedidos,idModalDetallePedidos) {
 	crearPopup(idPopupEdicion, "100%", 600);
 	crearPopup(idPopupVista, "100%", 600);
 	crearPopup(idPopupPago, "30%", 200);
+	crearPopup(idModalServicios,'auto','auto')
+	crearPopup(idModalPedidos,'auto','auto')
+	crearPopup(idModalDetallePedidos, "100%", 600);
 	setTimeout(function () {
 		aplicarDatePickers();
 	}, 200);

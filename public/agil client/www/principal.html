@@ -222,6 +222,7 @@
 	<script src="js/agil/servicios/serviciosFarmacia.js"></script>
 	<script src="js/agil/servicios/serviciosPlanillas.js"></script>
 	<script src="js/agil/servicios/serviciosPedidos.js"></script>
+	<script src="js/agil/servicios/serviciosActivosFijos.js"></script>
 
 
 </head>
@@ -417,7 +418,7 @@
 						</ul>
 					</li>
 					<li ng-if="usuario.rolesUsuario[0].rol.nombre==diccionario.ROL_ADMINISTRADOR">
-						<a href="#empresas" data-rel="tooltip" tooltip-placement="bottom" uib-tooltip="Confirmación Empresa" >
+						<a href="#empresas" data-rel="tooltip" tooltip-placement="bottom" uib-tooltip="Confirmación Empresa">
 							<span class="fa-stack">
 								<i class="fa fa-home green fa-stack-2x bigger-210"></i>
 								<i class="ace-icon fa fa-cogs  fa-stack-1x bigger-130" style="padding-top: 5px;padding-left: 15px;"></i>
@@ -504,7 +505,7 @@
 													usuario.empresa && 
 													!usuario.empresa.usar_pantalla_despacho)||((subaplicacion.titulo==diccionario.MENU_ESTADO_RESULTADOS) && 
 													usuario.empresa && 
-													usuario.empresa.usar_funciones_erp)}">
+													!usuario.empresa.usar_estado_resultados_no_contables)}">
 							<a href="#/{{subaplicacion.url}}">
 								<i class="menu-icon fa {{subaplicacion.atributo_clase}}"></i>
 								{{subaplicacion.titulo}}
@@ -568,7 +569,7 @@
 																	  || ((subaplicacion.titulo==diccionario.MENU_PANTALLACLIENTE) && usuario.empresa && !usuario.empresa.usar_pantalla_cliente)
 																	  || ((subaplicacion.titulo==diccionario.MENU_PANTALLADESPACHO) && usuario.empresa && !usuario.empresa.usar_pantalla_despacho)||((subaplicacion.titulo==diccionario.MENU_ESTADO_RESULTADOS) && 
 																	  usuario.empresa && 
-																	  usuario.empresa.usar_funciones_erp)}">
+																	  !usuario.empresa.usar_estado_resultados_no_contables)}">
 											<a href="#/{{subaplicacion.url}}">
 												<i class="menu-icon fa {{subaplicacion.atributo_clase}}"></i>
 												{{subaplicacion.titulo}}
@@ -1442,24 +1443,35 @@
 		</form>
 	</div>
 
+	<div id="tabla-compras-pendientes" class="modal">
 
-	<div id="tabla-compras-pendientes" style="overflow-y: hidden">
-		<div>
-			<div class="table-header" align="center">
-				Compras Pendientes
-			</div>
+		<div class="modal-header bg-primary">
+			
+				
+				<div class="table-header" align="center">
+						<h4 class='smaller text-white text-uppercase'>Compras Pendientes</h4>
+				</div>
+
+			
 		</div>
+
 		<div class="modal-body">
 			<div align="right">
 				<a class="blue" href="javascript:void(0)" ng-click="crearNuevoComprobante(null,comprasComprobantes)">
 					<i class="ace-icon fa fa-sign-out bigger-130"></i>Generar
 				</a>
 			</div>
+
+			<div class="clearfix"></div>
+
 			<div class="table-fixed-header">
-				<table class="table table-striped table-bordered table-hover ">
-					<thead fix-head class="table-head-color">
+				<table id="tabla-comprobante-revision" class="table table-responsive-actual table-striped table-bordered table-hover">
+					<thead class="table-head-color">
 						<tr>
-							<th>Nº</th>
+							<th>#</th>
+							<th>
+								
+							</th>
 							<th>fecha</th>
 							<th>Origen</th>
 							<th>Razónn Social</th>
@@ -1469,8 +1481,14 @@
 						</tr>
 					</thead>
 					<tbody>
-						<tr ng-repeat="compra in comprasComprobantes">
-							<td>{{$index+1}}</td>
+						<tr ng-repeat="compra in comprasComprobantes track by $index">
+							<td data-label="N°:">{{$index+1}}</td>
+							<td data-label="Seleccionar:">
+								<label class="pos-rel">
+									<input name="switch-field-1" type="checkbox" class="ace" ng-model="compra.check" />
+									<span class="lbl"></span>
+								</label>
+							</td>
 							<td>{{compra.fecha | date:"dd/MM/yyyy"}}</td>
 							<td>{{}}</td>
 							<td>{{compra.proveedor.razon_social}}</td>
@@ -1488,11 +1506,11 @@
 											<h3>!</h3>
 										</i>
 									</a>
-									<label>
-										<input name="switch-field-1" class="ace ace-switch ace-switch-4 ng-pristine ng-untouched ng-valid ng-empty" type="checkbox"
-										 ng-model="compra.check">
-										<span class="lbl check-descuento"></span>
-									</label>
+									<!-- 	<label>
+												<input type="checkbox" class="ace" ng-model="compra.check" />
+												<span class="lbl"></span>
+											</label> -->
+
 								</div>
 							</td>
 							<td>
@@ -1503,8 +1521,10 @@
 					</tbody>
 				</table>
 			</div>
+
+
 		</div>
-		<div class="modal-footer">
+		<div class="modal-footer wizard-actions">
 			<button class="btn btn-primary" type="button" ng-click="">
 				<i class="ace-icon fa fa-print align-top bigger-125"></i>Imprimir
 			</button>
@@ -1513,7 +1533,83 @@
 				<i class="ace-icon fa fa-times red2 align-top bigger-125"></i>Cancelar
 			</button>
 		</div>
+
 	</div>
+	<!-- <div id="tabla-compras-pendientes" style="overflow-y: hidden">
+		
+			<div class="modal-content">
+				<div class="modal-header">
+					<div class="table-header" align="center">
+						Compras Pendientes
+					</div>
+				</div>
+				<div class="modal-body">
+					<div align="right">
+						<a class="blue" href="javascript:void(0)" ng-click="crearNuevoComprobante(null,comprasComprobantes)">
+							<i class="ace-icon fa fa-sign-out bigger-130"></i>Generar
+						</a>
+					</div>
+					<div class="table-fixed-header">
+						<table class="table table-striped table-bordered table-hover ">
+							<thead class="table-head-color">
+								<tr>
+									<th>Nº</th>
+									<th>fecha</th>
+									<th>Origen</th>
+									<th>Razónn Social</th>
+									<th>Monto</th>
+									<th>Acciones</th>
+									<th>Estado</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr ng-repeat="compra in comprasComprobantes">
+									<td>{{$index+1}}</td>
+									<td>{{compra.fecha | date:"dd/MM/yyyy"}}</td>
+									<td>{{}}</td>
+									<td>{{compra.proveedor.razon_social}}</td>
+									<td>{{compra.total|number:2}}</td>
+									<td>
+										<div class="hidden-sm hidden-xs action-buttons">
+											<a class="blue" href="javascript:void(0)" ng-click="crearNuevoComprobante(null,compra)">
+												<i class="ace-icon fa fa-sign-out bigger-130"></i>
+											</a>
+											<a class="green" href="javascript:void(0)" ng-click="">
+												<i class="ace-icon fa fa-print bigger-130"></i>
+											</a>
+											<a class="red" ng-if="!compra.proveedor.proveedorCuenta" href="javascript:void(0)" ng-click="abrirCuentaClienteProvedor(null,compra.proveedor)">
+												<i class="ace-icon">
+													<h3>!</h3>
+												</i>
+											</a>
+											<label>
+												<input type="checkbox" class="ace" ng-model="compra.check" />
+												<span class="lbl"></span>
+											</label>
+
+										</div>
+									</td>
+									<td>
+										<div ng-if="compra.proveedor.proveedorCuenta">Preparado</div>
+										<div ng-if="!compra.proveedor.proveedorCuenta">Definir</div>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button class="btn btn-primary" type="button" ng-click="">
+						<i class="ace-icon fa fa-print align-top bigger-125"></i>Imprimir
+					</button>
+
+					<button class="btn btn-danger" type="button" ng-click="cerrarModalComprasPendientes()">
+						<i class="ace-icon fa fa-times red2 align-top bigger-125"></i>Cancelar
+					</button>
+				</div>
+			</div>
+		
+	</div> -->
 
 
 	<div id="tabla-bancos-pendientes">
@@ -1981,86 +2077,86 @@
 									</div>
 								</div>
 								<!-- <div style="overflow-y: scroll;height:auto"> -->
-										<div style="overflow-x:auto;">
-								<table id="tabla-comprobante" class="table table-striped table-bordered table-hover">
-									<thead>
-										<tr>
-											<th rowspan="2" style="text-align: center">Nº</th>
-											<th rowspan="2" style="text-align: center">
-												<div class="col-sm-12">Cuenta
-													<a tabindex="-1" uib-tooltip="Nuevo Asiento" id="agregar_asiento" class="blue" ng-disabled="verComprobante" ng-click="agregarAsiento(formNuevoComprobante)">
-														<i class="ace-icon fa fa-plus bigger-130"></i>
+								<div style="overflow-x:auto;">
+									<table id="tabla-comprobante" class="table table-striped table-bordered table-hover">
+										<thead>
+											<tr>
+												<th rowspan="2" style="text-align: center">Nº</th>
+												<th rowspan="2" style="text-align: center">
+													<div class="col-sm-12">Cuenta
+														<a tabindex="-1" uib-tooltip="Nuevo Asiento" id="agregar_asiento" class="blue" ng-disabled="verComprobante" ng-click="agregarAsiento(formNuevoComprobante)">
+															<i class="ace-icon fa fa-plus bigger-130"></i>
+														</a>
+														<input name="asientos" ng-hide="true" ng-model="nuevoComprobante.a" />
+													</div>
+													<div class="col-sm-6"></div>
+													<div class="col-sm-6" ng-hide="nuevoComprobante.asientosContables.length>0">
+														<div ng-show="formNuevoComprobante.asientos.$error.detalleAsiento" class="invalid-message help-block center" ng-messages="formNuevoComprobante.asientos.$error"
+														 ng-if="formNuevoComprobante.asientos.$valid || (formNuevoComprobante.$submitted && formNuevoComprobante.asientos.$invalid)">
+															<div ng-messages-include="/templates/gral/messages.html"></div>
+														</div>
+													</div>
+												</th>
+												<th rowspan="2" width="90">Centros Costos</th>
+												<th colspan="2" style="text-align: center">Bolivianos</th>
+												<th class="red" style="text-align: center" ng-if="opcionBimonetario" colspan="2">Dólores</th>
+												<th rowspan="1" width="90">Acciones</th>
+											</tr>
+											<tr>
+
+												<th style="text-align: center">Debe</th>
+												<th style="text-align: center">Haber</th>
+												<th style="text-align: center" class="red" ng-if="opcionBimonetario">Debe</th>
+												<th style="text-align: center" class="red" ng-if="opcionBimonetario">Haber</th>
+												<th>
+													<div class="row" uib-tooltip-html="htmlTooltip">
+														<div class="col-sm-12">
+															<a tabindex="-1" class="orange" href="javascript:void(0)" ng-click="">
+																<i class="ace-icon fa fa-trash-o bigger-130"></i>
+															</a>
+															<a tabindex="-1" class="green" href="javascript:void(0)" ng-click="">
+																<i class="ace-icon fa fa-file-text-o bigger-130"></i>
+															</a>
+														</div>
+														<div class="col-sm-12">
+															<a tabindex="-1" class="blue" href="javascript:void(0)" ng-click="">
+																<i class="ace-icon fa fa-trash-o bigger-130"></i>
+															</a>
+															<a tabindex="-1" class="dark" href="javascript:void(0)" ng-click="">
+																<i class="ace-icon fa fa-file-text-o bigger-130"></i>
+															</a>
+														</div>
+													</div>
+												</th>
+											</tr>
+										</thead>
+
+										<tbody ng-if="!asiento.eliminado" ng-repeat="asiento in nuevoComprobante.asientosContables track by $index">
+											<tr scope="row">
+												<td>
+													{{$index +1}}
+												</td>
+												<td>
+
+													<a class="orange" uib-tooltip="Libros Mayores" ng-if="asiento.cuenta.id" ng-click="abrirModalLibrosMayores(asiento)">
+														<i class="ace-icon fa fa-file-text-o bigger-130"></i>
 													</a>
-													<input name="asientos" ng-hide="true" ng-model="nuevoComprobante.a" />
-												</div>
-												<div class="col-sm-6"></div>
-												<div class="col-sm-6" ng-hide="nuevoComprobante.asientosContables.length>0">
-													<div ng-show="formNuevoComprobante.asientos.$error.detalleAsiento" class="invalid-message help-block center" ng-messages="formNuevoComprobante.asientos.$error"
-													 ng-if="formNuevoComprobante.asientos.$valid || (formNuevoComprobante.$submitted && formNuevoComprobante.asientos.$invalid)">
-														<div ng-messages-include="/templates/gral/messages.html"></div>
-													</div>
-												</div>
-											</th>
-											<th rowspan="2" width="90">Centros Costos</th>
-											<th colspan="2" style="text-align: center">Bolivianos</th>
-											<th class="red" style="text-align: center" ng-if="opcionBimonetario" colspan="2">Dólores</th>
-											<th rowspan="1" width="90">Acciones</th>
-										</tr>
-										<tr>
+													<input enter autocomplete="off" typeahead-append-to-body="true" ng-focus="establecerCuentaActual2(asiento)" ng-disabled="verComprobante"
+													 ng-keypress="interceptarTecla($event,'cantidad',true)" id="{{$index}}-As" name="{{$index}}-As" required type="text"
+													 ng-model="asiento.cuenta" placeholder="Busqueda..." uib-typeahead="cuenta as (cuenta.codigo+'-'+cuenta.nombre) for cuenta in buscarCuentas($viewValue)"
+													 typeahead-wait-ms="1000" typeahead-template-url="templates/autocompletar.html" typeahead-show-hint="false" typeahead-on-select="establecerCuentaActual(asiento,$index)"
+													 typeahead-min-length="1">
+													<span class="invalid-message" ng-show="!asiento.cuenta.id">
+														Seleccionar cuenta
+													</span>
 
-											<th style="text-align: center">Debe</th>
-											<th style="text-align: center">Haber</th>
-											<th style="text-align: center" class="red" ng-if="opcionBimonetario">Debe</th>
-											<th style="text-align: center" class="red" ng-if="opcionBimonetario">Haber</th>
-											<th>
-												<div class="row" uib-tooltip-html="htmlTooltip">
-													<div class="col-sm-12">
-														<a tabindex="-1" class="orange" href="javascript:void(0)" ng-click="">
-															<i class="ace-icon fa fa-trash-o bigger-130"></i>
-														</a>
-														<a tabindex="-1" class="green" href="javascript:void(0)" ng-click="">
-															<i class="ace-icon fa fa-file-text-o bigger-130"></i>
-														</a>
-													</div>
-													<div class="col-sm-12">
-														<a tabindex="-1" class="blue" href="javascript:void(0)" ng-click="">
-															<i class="ace-icon fa fa-trash-o bigger-130"></i>
-														</a>
-														<a tabindex="-1" class="dark" href="javascript:void(0)" ng-click="">
-															<i class="ace-icon fa fa-file-text-o bigger-130"></i>
-														</a>
-													</div>
-												</div>
-											</th>
-										</tr>
-									</thead>
-
-									<tbody ng-if="!asiento.eliminado" ng-repeat="asiento in nuevoComprobante.asientosContables track by $index">
-										<tr scope="row">
-											<td>
-												{{$index +1}}
-											</td>
-											<td>
-
-												<a class="orange" uib-tooltip="Libros Mayores" ng-if="asiento.cuenta.id" ng-click="abrirModalLibrosMayores(asiento)">
-													<i class="ace-icon fa fa-file-text-o bigger-130"></i>
-												</a>
-												<input enter autocomplete="off" typeahead-append-to-body="true" ng-focus="establecerCuentaActual2(asiento)" ng-disabled="verComprobante"
-												 ng-keypress="interceptarTecla($event,'cantidad',true)" id="{{$index}}-As" name="{{$index}}-As" required type="text"
-												 ng-model="asiento.cuenta" placeholder="Busqueda..." uib-typeahead="cuenta as (cuenta.codigo+'-'+cuenta.nombre) for cuenta in buscarCuentas($viewValue)"
-												 typeahead-wait-ms="1000" typeahead-template-url="templates/autocompletar.html" typeahead-show-hint="false" typeahead-on-select="establecerCuentaActual(asiento,$index)"
-												 typeahead-min-length="1">
-												<span class="invalid-message" ng-show="!asiento.cuenta.id">
-													Seleccionar cuenta
-												</span>
-
-												<a ng-click="abrirCuentasAxiliares(asiento)" uib-tooltip="Cuentas Auxiliares" href="javascript:void(0)" ng-if="asiento.cuenta.tipoAuxiliar.id"
-												 uib-popover-template="PopoverCuentasAxiliares.templateUrl" popover-is-open="asiento.isOpen" popover-placement="right-bottom"
-												 class="blue">
-													<i class="fa fa-external-link"></i>
-												</a>&nbsp
-												<span class="red">{{asiento.cuentaAux.nombre}}</span>
-												<script type="text/ng-template" id="PopoverCuentasAxiliares.html">													
+													<a ng-click="abrirCuentasAxiliares(asiento)" uib-tooltip="Cuentas Auxiliares" href="javascript:void(0)" ng-if="asiento.cuenta.tipoAuxiliar.id"
+													 uib-popover-template="PopoverCuentasAxiliares.templateUrl" popover-is-open="asiento.isOpen" popover-placement="right-bottom"
+													 class="blue">
+														<i class="fa fa-external-link"></i>
+													</a>&nbsp
+													<span class="red">{{asiento.cuentaAux.nombre}}</span>
+													<script type="text/ng-template" id="PopoverCuentasAxiliares.html">													
 													<div class="modal-header">
 															<button type="button" class="close" ng-click="asiento.isOpen=false">&times;</button>
 															<h4 class="modal-title">Cuentas Auxiliares</h4>
@@ -2078,61 +2174,61 @@
 														  </select>
 														</div>
 												</script>
-											</td>
-											<th>
-												<select ng-focus="establecerCuentaActual2(asiento)" ng-disabled="asiento.cuenta.id==undefined || verComprobante" required
-												 id="sucursalOrigen{{$index}}" name="centroDeCostos" ng-options="centroCosto as centroCosto.nombre for centroCosto in centrosDeCostos track by centroCosto.id"
-												 ng-model="asiento.centroCosto" enter>
-													<option value="">--Ninguno--</option>
-												</select>
-											</th>
+												</td>
+												<th>
+													<select ng-focus="establecerCuentaActual2(asiento)" ng-disabled="asiento.cuenta.id==undefined || verComprobante" required
+													 id="sucursalOrigen{{$index}}" name="centroDeCostos" ng-options="centroCosto as centroCosto.nombre for centroCosto in centrosDeCostos track by centroCosto.id"
+													 ng-model="asiento.centroCosto" enter>
+														<option value="">--Ninguno--</option>
+													</select>
+												</th>
 
-											<td>
-												<input required class="input-fix-mousewheel1" ng-focus="establecerCuentaActual2(asiento);inputDebebs(asiento)" ng-disabled="asiento.cuenta.id==undefined || verComprobante"
-												 id="{{$index}}-Bs" type="number" step="0.01" ng-model="asiento.debe_bs" ng-change="ComvertirDebeEnDolar(asiento,true);cal(nuevoComprobante.asientosContables)"
-												enter>
-											</td>
-											<td>
-												<input required class="input-fix-mousewheel1" ng-focus="inputhaberbs2(asiento);establecerCuentaActual2(asiento)" ng-disabled="asiento.cuenta.id==undefined || verComprobante"
-												 id="{{$index}}-Cs" type="number" step="0.01"  ng-model="asiento.haber_bs" ng-change="ComvertirHaberEnDolar(asiento,true);cal(nuevoComprobante.asientosContables)"
-												 enter>
-											</td>
-											<td ng-if="opcionBimonetario">
-												<input required class="input-fix-mousewheel1" ng-focus="establecerCuentaActual2(asiento);inputDebeSus(asiento)" ng-disabled="asiento.cuenta.id==undefined || verComprobante"
-												 type="number" ng-model="asiento.debe_sus" step="0.01"  ng-change="ComvertirDebeEnBolivianos(asiento);cal(nuevoComprobante.asientosContables)"
-												 enter>
-											</td>
-											<td ng-if="opcionBimonetario">
-												<input required class="input-fix-mousewheel1" step="0.01" ng-focus="establecerCuentaActual2(asiento);inputHaberSus(asiento)" ng-disabled="asiento.cuenta.id==undefined || verComprobante"
-												 type="number" ng-model="asiento.haber_sus" ng-change="ComvertirHaberEnBolivianos(asiento);cal(nuevoComprobante.asientosContables)"
-												 enter>
-											</td>
-											<td>
-												<a ng-hide="verComprobante" tabindex="-1" class="blue" href="javascript:void(0)" ng-click="eliminarAsiento(asiento,index)">
-													<i class="ace-icon fa fa-trash-o bigger-130"></i>
-												</a>
-											</td>
+												<td>
+													<input required class="input-fix-mousewheel1" ng-focus="establecerCuentaActual2(asiento);inputDebebs(asiento)" ng-disabled="asiento.cuenta.id==undefined || verComprobante"
+													 id="{{$index}}-Bs" type="number" step="0.01" ng-model="asiento.debe_bs" ng-change="ComvertirDebeEnDolar(asiento,true);cal(nuevoComprobante.asientosContables)"
+													 enter>
+												</td>
+												<td>
+													<input required class="input-fix-mousewheel1" ng-focus="inputhaberbs2(asiento);establecerCuentaActual2(asiento)" ng-disabled="asiento.cuenta.id==undefined || verComprobante"
+													 id="{{$index}}-Cs" type="number" step="0.01" ng-model="asiento.haber_bs" ng-change="ComvertirHaberEnDolar(asiento,true);cal(nuevoComprobante.asientosContables)"
+													 enter>
+												</td>
+												<td ng-if="opcionBimonetario">
+													<input required class="input-fix-mousewheel1" ng-focus="establecerCuentaActual2(asiento);inputDebeSus(asiento)" ng-disabled="asiento.cuenta.id==undefined || verComprobante"
+													 type="number" ng-model="asiento.debe_sus" step="0.01" ng-change="ComvertirDebeEnBolivianos(asiento);cal(nuevoComprobante.asientosContables)"
+													 enter>
+												</td>
+												<td ng-if="opcionBimonetario">
+													<input required class="input-fix-mousewheel1" step="0.01" ng-focus="establecerCuentaActual2(asiento);inputHaberSus(asiento)"
+													 ng-disabled="asiento.cuenta.id==undefined || verComprobante" type="number" ng-model="asiento.haber_sus" ng-change="ComvertirHaberEnBolivianos(asiento);cal(nuevoComprobante.asientosContables)"
+													 enter>
+												</td>
+												<td>
+													<a ng-hide="verComprobante" tabindex="-1" class="blue" href="javascript:void(0)" ng-click="eliminarAsiento(asiento,index)">
+														<i class="ace-icon fa fa-trash-o bigger-130"></i>
+													</a>
+												</td>
 
-										</tr>
-										<tr ng-if="asiento.cuenta.id">
-											<td colspan="8">
-												<input ng-change="agregarNuevoAsiento(asiento,$index)" ng-disabled="verComprobante" class="form-control" ng-model="asiento.glosa"
-												 placeholder="Agregar glosa individial" enter>
-											</td>
-										</tr>
-									</tbody>
-									<tfoot>
-										<tr ng-if="nuevoComprobante.asientosContables.length>0">
-											<td></td>
-											<td colspan="2" style="text-align: right">total</td>
-											<td style="text-align: center">{{totales.debe_bs|number:2}}</td>
-											<td style="text-align: center">{{totales.haber_bs|number:2}}</td>
-											<td ng-if="opcionBimonetario" style="text-align: center">{{totales.debe_sus|number:2}}</td>
-											<td ng-if="opcionBimonetario" style="text-align: center">{{totales.haber_sus|number:2}}</td>
-											<td></td>
-										</tr>
-									</tfoot>
-								</table>
+											</tr>
+											<tr ng-if="asiento.cuenta.id">
+												<td colspan="8">
+													<input ng-change="agregarNuevoAsiento(asiento,$index)" ng-disabled="verComprobante" class="form-control" ng-model="asiento.glosa"
+													 placeholder="Agregar glosa individial" enter>
+												</td>
+											</tr>
+										</tbody>
+										<tfoot>
+											<tr ng-if="nuevoComprobante.asientosContables.length>0">
+												<td></td>
+												<td colspan="2" style="text-align: right">total</td>
+												<td style="text-align: center">{{totales.debe_bs|number:2}}</td>
+												<td style="text-align: center">{{totales.haber_bs|number:2}}</td>
+												<td ng-if="opcionBimonetario" style="text-align: center">{{totales.debe_sus|number:2}}</td>
+												<td ng-if="opcionBimonetario" style="text-align: center">{{totales.haber_sus|number:2}}</td>
+												<td></td>
+											</tr>
+										</tfoot>
+									</table>
 								</div>
 							</div>
 						</div>
@@ -3101,7 +3197,7 @@
 						$('#navbar').removeClass('h-navbar');
 					}
 				}
-				
+
 			}).triggerHandler('settings.ace.two_menu', ['sidebar_fixed', $('#sidebar').hasClass('sidebar-fixed')]);
 
 

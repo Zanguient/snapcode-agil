@@ -524,16 +524,26 @@
 						</div>
 					</div>
 					<div class="form-group" ng-if="usuario.rolesUsuario[0].rol.nombre==diccionario.USUARIO_SUPERADMIN">
-							<label class="control-label col-xs-6 no-padding-right">¿Usar funciones ERP?</label>
-	
-							<div class="col-xs-6">
-								<label>
-									<input name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="empresa.usar_funciones_erp"
-									/>
-									<span class="lbl check-descuento"></span>
-								</label>
-							</div>
+						<label class="control-label col-xs-6 no-padding-right">¿Usar funciones ERP?</label>
+
+						<div class="col-xs-6">
+							<label>
+								<input name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="empresa.usar_funciones_erp" />
+								<span class="lbl check-descuento"></span>
+							</label>
 						</div>
+					</div>
+					<div class="form-group" ng-if="usuario.rolesUsuario[0].rol.nombre==diccionario.USUARIO_SUPERADMIN">
+						<label class="control-label col-xs-6 no-padding-right">¿Usar estado de resultados no contable?</label>
+
+						<div class="col-xs-6">
+							<label>
+								<input name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="empresa.usar_estado_resultados_no_contables"
+								/>
+								<span class="lbl check-descuento"></span>
+							</label>
+						</div>
+					</div>
 					<!-- </div> -->
 				</div>
 				<div class="step-pane" data-step="3" ng-if="esNuevo">

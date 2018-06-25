@@ -339,46 +339,55 @@ angular.module('agil.controladores')
 		}
 		$scope.BoscarOcrearPlantillaIngreso = function () {
 			
-			$scope.plantilla = { retencionBienesGasto: { it: {}, iue: {}, gasto: {} }, retencionBienes: { it: {}, iue: {}, almacen: {} }, egreso: { ivacf: {}, cajaBanco: {} }, ingreso: { ivadf: {}, it: {}, itPorPagar: {}, cajaBanco: {} } }
+			$scope.plantilla = { retencionServicios: { it: {}, iue: {}, servicio: {} },retencionBienesGasto: { it: {}, iue: {}, gasto: {} }, retencionBienes: { it: {}, iue: {}, almacen: {} }, egreso: { ivacf: {}, cajaBanco: {} }, ingreso: { ivadf: {}, it: {}, itPorPagar: {}, cajaBanco: {} } }
 			var promesa = ConfiguracionCuentaEmpresa($scope.usuario.id_empresa);
 			promesa.then(function (entidad) {
 				console.log(entidad.lista)
 				entidad.lista.forEach(function (lista) {
 					if (Diccionario.IVA_DF == lista.nombre) {
-						$scope.plantilla.ingreso.ivadf = { porsentaje: parseInt(lista.valor), cuenta: lista.cuenta }
+						$scope.plantilla.ingreso.ivadf = { porsentaje: parseFloat(lista.valor), cuenta: lista.cuenta }
 					}
 					if (Diccionario.IT == lista.nombre) {
-						$scope.plantilla.ingreso.it = { porsentaje: parseInt(lista.valor), cuenta: lista.cuenta }
+						$scope.plantilla.ingreso.it = { porsentaje: parseFloat(lista.valor), cuenta: lista.cuenta }
 					}
 					if (Diccionario.IT_POR_PAGAR == lista.nombre) {
-						$scope.plantilla.ingreso.itPorPagar = { porsentaje: parseInt(lista.valor), cuenta: lista.cuenta }
+						$scope.plantilla.ingreso.itPorPagar = { porsentaje: parseFloat(lista.valor), cuenta: lista.cuenta }
 					}
 					if (Diccionario.CAJA_BANCOS == lista.nombre) {
-						$scope.plantilla.ingreso.cajaBanco = { porsentaje: parseInt(lista.valor), cuenta: lista.cuenta }
+						$scope.plantilla.ingreso.cajaBanco = { porsentaje: parseFloat(lista.valor), cuenta: lista.cuenta }
 					}
 					if (Diccionario.IVA_CF == lista.nombre) {
-						$scope.plantilla.egreso.ivacf = { porsentaje: parseInt(lista.valor), cuenta: lista.cuenta }
+						$scope.plantilla.egreso.ivacf = { porsentaje: parseFloat(lista.valor), cuenta: lista.cuenta }
 					}
 					if (Diccionario.CAJA_BANCOS == lista.nombre) {
-						$scope.plantilla.egreso.cajaBanco = { porsentaje: parseInt(lista.valor), cuenta: lista.cuenta }
+						$scope.plantilla.egreso.cajaBanco = { porsentaje: parseFloat(lista.valor), cuenta: lista.cuenta }
 					}
 					if (Diccionario.IT_RETENCION_BIEN == lista.nombre) {
-						$scope.plantilla.retencionBienes.it = { porsentaje: parseInt(lista.valor), cuenta: lista.cuenta }
+						$scope.plantilla.retencionBienes.it = { porsentaje: parseFloat(lista.valor), cuenta: lista.cuenta }
 					}
 					if (Diccionario.IUE_RETENCION_BIEN == lista.nombre) {
-						$scope.plantilla.retencionBienes.iue = { porsentaje: parseInt(lista.valor), cuenta: lista.cuenta }
+						$scope.plantilla.retencionBienes.iue = { porsentaje: parseFloat(lista.valor), cuenta: lista.cuenta }
 					}
 					if (Diccionario.CUENTA_ALMACEN_RETENCION_BIEN == lista.nombre) {
-						$scope.plantilla.retencionBienes.almacen = { porsentaje: parseInt(lista.valor), cuenta: lista.cuenta }
+						$scope.plantilla.retencionBienes.almacen = { porsentaje: parseFloat(lista.valor), cuenta: lista.cuenta }
 					}
 					if (Diccionario.IT_RETENCION_BIEN_GASTO == lista.nombre) {
-						$scope.plantilla.retencionBienesGasto.it = { porsentaje: parseInt(lista.valor), cuenta: lista.cuenta }
+						$scope.plantilla.retencionBienesGasto.it = { porsentaje: parseFloat(lista.valor), cuenta: lista.cuenta }
 					}
 					if (Diccionario.IUE_RETENCION_BIEN_GASTO == lista.nombre) {
-						$scope.plantilla.retencionBienesGasto.iue = { porsentaje: parseInt(lista.valor), cuenta: lista.cuenta }
+						$scope.plantilla.retencionBienesGasto.iue = { porsentaje: parseFloat(lista.valor), cuenta: lista.cuenta }
 					}
 					if (Diccionario.CUENTA_GASTO_RETENCION_BIEN == lista.nombre) {
-						$scope.plantilla.retencionBienesGasto.gasto = { porsentaje: parseInt(lista.valor), cuenta: lista.cuenta }
+						$scope.plantilla.retencionBienesGasto.gasto = { porsentaje: parseFloat(lista.valor), cuenta: lista.cuenta }
+					}
+					if (Diccionario.IT_RETENCION_SERVICIO == lista.nombre) {
+						$scope.plantilla.retencionServicios.it = { porsentaje: parseFloat(lista.valor), cuenta: lista.cuenta }
+					}
+					if (Diccionario.IUE_RETENCION_SERVICIO == lista.nombre) {
+						$scope.plantilla.retencionServicios.iue = { porsentaje: parseFloat(lista.valor), cuenta: lista.cuenta }
+					}
+					if (Diccionario.CUENTA_RETENCION_SERVICIO == lista.nombre) {
+						$scope.plantilla.retencionServicios.servicio = { porsentaje: parseFloat(lista.valor), cuenta: lista.cuenta }
 					}
 				}, this);
 
@@ -410,6 +419,7 @@ angular.module('agil.controladores')
 			$scope.visible.verPlantillaEgreso = true
 			$scope.visible.verPlantillarRetencionBien = true
 			$scope.visible.verPlantillarRetencionBienGasto = true
+			$scope.visible.verPlantillarRetencionServicio=true
 			$scope.BoscarOcrearPlantillaIngreso();
 			$scope.obtenerConfigCuentas()
 

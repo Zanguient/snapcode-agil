@@ -4659,11 +4659,17 @@ angular.module('agil.controladores')
         $scope.calcularDatosRolTurno = function (rolTurno) {
             var bandera = true
             if ($scope.empleadosRolTurnoE.length > 0) {
+                var fechaInicio = ""
+                contFijos = 0
                 $scope.empleadosRolTurnoE.forEach(function (rol, index, array) {
-                    if (rol.tipo = true) {
+                    if (rol.tipo == true) {
+                        contFijos++
                         bandera = false
                         if (rol.fecha_fin) {
                             bandera = true
+                            fechaInicio = $scope.fechaATexto(sumaFecha(1, rol.fecha_fin))
+                        } else {
+                            fechaInicio = $scope.fechaATexto(sumaFecha(rol.dias_trabajado, rol.fecha_inicio))
                         }
                     }
                     if (index === (array.length - 1)) {
@@ -4678,11 +4684,19 @@ angular.module('agil.controladores')
                                 rolTurno.dias_descanso = 0;
                             }
                         } else {
-                            if (rolTurno.tipo) {
-                                rolTurno.dias_trabajado = 7;
-                                rolTurno.dias_descanso = 14;
-                                rolTurno.tipo = false
-                                $scope.mostrarMensaje("ya cuenta con un rol turno fijo es nesesario cerrarlo para poder crear otro!")
+                            if (contFijos > 1) {
+                                rolTurno.tipo=false
+                                $scope.mostrarMensaje("ya cuenta con dos roles de turno fijos, las asignaciones de fechas estan copadas!. Para asignar otro rol de turno fijo debe dar de baja 1")
+                            }else{
+                                if (rolTurno.tipo) {
+                                    rolTurno.blokearDatos = true
+                                    rolTurno.dias_trabajado = 7;
+                                    rolTurno.dias_descanso = 14;
+                                    /* rolTurno.tipo = false */
+                                    $scope.mostrarMensaje("ya cuenta con un rol turno fijo,se genero otro con la configuracion fija!")
+                                    rolTurno.fecha_inicio = fechaInicio
+                                }
+                               
                             }
                         }
                     }
@@ -4729,7 +4743,7 @@ angular.module('agil.controladores')
                 fin: "",
                 grupo: "",
                 nombre: "",
-                campo:""
+                campo: ""
             }
             $scope.paginator.callBack = $scope.listaRolTurnoCal;
             $scope.paginator.getSearch("", $scope.filtroRolCal, null);
@@ -4746,7 +4760,7 @@ angular.module('agil.controladores')
 
                 var fecha = new Date()
                 var ultimoDia = new Date(fecha.getFullYear(), 12, 0).getDate();
-                var fecha2 = "", grupo = "", nombre = "", fecha3 = "";
+                var fecha2 = "", grupo = "", nombre = "", fecha3 = "", campo = "";
                 if ($scope.filtroRolCal.inicio2) {
                     fecha2 = $scope.filtroRolCal.inicio2
                 }
@@ -4762,7 +4776,7 @@ angular.module('agil.controladores')
                 if ($scope.filtroRolCal.campo) {
                     campo = $scope.filtroRolCal.campo
                 }
-                $scope.filtroRolCal = {campo:campo, nombre: nombre, grupo: grupo, empresa: $scope.usuario.id_empresa, fin2: fecha3, inicio2: fecha2, inicio: $scope.fechaInicioCalendario, fin: ultimoDia + "/12/" + fecha.getFullYear() }
+                $scope.filtroRolCal = { campo: campo, nombre: nombre, grupo: grupo, empresa: $scope.usuario.id_empresa, fin2: fecha3, inicio2: fecha2, inicio: $scope.fechaInicioCalendario, fin: ultimoDia + "/12/" + fecha.getFullYear() }
 
                 $scope.realizarCalendarioTrabajo($scope.filtroRolCal)
 

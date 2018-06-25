@@ -375,4 +375,20 @@ angular.module('agil.servicios')
 	};
     return res;
   }])
+	.factory('EliminarUsuario', ['Usuario','$q',function(Usuario, $q) 
+  {
+	var res = function(id_usuario) 
+	{
+		var delay = $q.defer();
+		Usuario.delete({id_usuario: id_usuario},function(entidades) 
+		{        
+			delay.resolve(entidades);
+		}, function(error) 
+			{
+				delay.reject(error);
+			});
+		return delay.promise;
+	};
+    return res;
+  }])
 	

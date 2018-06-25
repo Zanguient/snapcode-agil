@@ -63,7 +63,11 @@ module.exports=function(sequelize,Sequelize){
 	  iue: {
 		type: Sequelize.DECIMAL(20,4),
 		field: 'iue'
-	  },
+		},
+		id_servicio:{
+			type: Sequelize.INTEGER,
+		field: 'servicio'
+		}
 	}, {
 	  freezeTableName: true 
 	});

@@ -31,7 +31,11 @@ module.exports = function (sequelize, Sequelize) {
         eliminado: {
             type: Sequelize.BOOLEAN,
             field: 'eliminado'
-        }
+        },
+        id_almacen: {
+            type: Sequelize.INTEGER,
+            field: 'almacen'
+        },
     }, {
             freezeTableName: true
         });

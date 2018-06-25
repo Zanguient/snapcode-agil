@@ -1,7 +1,7 @@
 angular.module('agil.controladores')
 
 	.controller('ControladorUsuarios', function ($scope, $location, $window, $localStorage, $templateCache, $route, blockUI, Usuario, Empresas, Roles, $timeout,
-		UsuariosEmpresa, Rutas, UsuarioRutas, Diccionario, UsuarioComision, UsuarioComisiones, Sucursales, UsuariosEmpresaPaginador, validarUsuario, Paginator, ListaGruposProductoEmpresa, ObtenerUsuario, ListaAplicacionesSistemaEmpresa) {
+		UsuariosEmpresa, Rutas, UsuarioRutas, Diccionario, UsuarioComision, UsuarioComisiones, Sucursales, UsuariosEmpresaPaginador, validarUsuario, Paginator, ListaGruposProductoEmpresa, ObtenerUsuario, ListaAplicacionesSistemaEmpresa,EliminarUsuario) {
 
 		$scope.idModalWizardUsuarioEdicion = 'modal-wizard-usuario';
 		$scope.idModalWizardUsuarioVista = 'modal-wizard-usuario-vista';
@@ -529,8 +529,12 @@ angular.module('agil.controladores')
 		$scope.eliminarUsuario = function (usuario) {
 			blockUI.start();
 			$scope.cerrarConfirmacionEliminacion();
-			usuario.$delete();
-			$scope.mostrarMensaje('Eliminado exitosamente!');
+			/* usuario.$delete(); */
+			var promesa = EliminarUsuario(usuario.id)
+			promesa.then(function(dato){
+				$scope.mostrarMensaje(dato.message);
+			})
+		
 			$scope.recargarItemsTabla();
 			blockUI.stop();
 		}
