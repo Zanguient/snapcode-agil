@@ -332,10 +332,13 @@ angular.module('agil.controladores')
 
 		}
 		$scope.establecerProducto = function (producto) {
+
 			producto.tipoProducto = producto['tipoProducto'] == null ? { id: producto['tipoProducto.id'], nombre: producto['tipoProducto.nombre'], nombre_corto: producto['tipoProducto.nombre_corto'] } : producto.tipoProducto;
 			$scope.editar_precio = false;
+
 			var promesa = ListaInventariosProducto(producto.id, $scope.venta.almacen.id);
 			promesa.then(function (inventarios) {
+				console.log("entrooooooo a lista inventarios ======= ");
 				producto.inventarios = inventarios;
 				for (var i = 0; i < producto.inventarios.length; i++) {
 					producto.inventarios[i].fecha_vencimiento = (producto.inventarios[i].fecha_vencimiento ? new Date(producto.inventarios[i].fecha_vencimiento) : null);
@@ -343,6 +346,7 @@ angular.module('agil.controladores')
 					producto.inventarios[i].detallesMovimiento[0].movimiento.fecha = new Date(producto.inventarios[i].detallesMovimiento[0].movimiento.fecha);
 					producto.inventarios[i].detallesMovimiento[0].movimiento.fechaTexto = producto.inventarios[i].detallesMovimiento[0].movimiento.fecha.getDate() + "/" + (producto.inventarios[i].detallesMovimiento[0].movimiento.fecha.getMonth() + 1) + "/" + producto.inventarios[i].detallesMovimiento[0].movimiento.fecha.getFullYear();
 				}
+
 				$scope.inventariosDisponibleProducto = [];
 				$scope.inventariosDisponibleProducto.push({ id: 0, fecha_vencimiento: "TODOS", fechaVencimientoTexto: "TODOS" });
 				$scope.inventariosDisponibleProducto = $scope.inventariosDisponibleProducto.concat(producto.inventarios);
@@ -352,6 +356,16 @@ angular.module('agil.controladores')
 					inventario_disponible: inventarioDisponible, costos: producto.activar_inventario ? producto.inventarios : [],
 					cantidad: 1, descuento: producto.descuento, recargo: 0, ice: 0, excento: 0, tipo_descuento: (producto.descuento > 0 ? true : false), tipo_recargo: false
 				};
+
+				// === para colocar el costo unitario de inventario == 
+				$scope.precio_inventario;
+				if (producto.inventarios.length > 0) {
+					$scope.precio_inventario = producto.inventarios.pop().costo_unitario + " Bs";
+
+				}else{
+					$scope.precio_inventario = "Sin histórico";
+				}
+
 				$scope.colorearInventarioDisponible(inventarioDisponible, producto);
 				//	$scope.enfocar('cantidad');
 				document.getElementById("cantidad").focus();
@@ -500,6 +514,7 @@ angular.module('agil.controladores')
 				$scope.sumarTotalImporte();
 				$scope.calcularSaldo();
 				$scope.calcularCambio();
+				$scope.precio_inventario = "Sin histórico";
 				$scope.detalleVenta = { producto: { activar_inventario: true }, cantidad: 1, descuento: 0, recargo: 0, ice: 0, excento: 0, tipo_descuento: false, tipo_recargo: false }
 				$scope.enfocar('id_producto');
 			}

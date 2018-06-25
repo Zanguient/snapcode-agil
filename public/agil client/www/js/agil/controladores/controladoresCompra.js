@@ -1245,6 +1245,10 @@ angular.module('agil.controladores')
 			$scope.enfocar('cantidad');
 
 		}
+		$scope.establecerServicioSeleccionado = function(clase){
+			$scope.establecerServicio(clase)
+			$scope.cerrarDialogServicios()
+		}
 		$scope.establecerServicio = function (producto) {
 			producto.tipoProducto = producto['tipoProducto'] == null ? { id: producto['tipoProducto.id'], nombre: producto['tipoProducto.nombre'], nombre_corto: producto['tipoProducto.nombre_corto'] } : producto.tipoProducto;
 			var centroCostos = $scope.detalleCompra.centroCosto;

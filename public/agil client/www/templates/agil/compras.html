@@ -728,11 +728,11 @@
 										</td>
 
 										<td>
-											<input onfocus="this.select();" id="costo_unitario" ng-keypress="interceptarTecla($event,'cantidad',true)" required class="col-xs-12"
+											<input autofocus onfocus="this.select();" id="costo_unitario" ng-keypress="interceptarTecla($event,'cantidad',true)" required class="col-xs-12"
 											 ng-change="calcularImporte()" step="0.001" ng-model="detalleCompra.costo_unitario" type="number" />
 										</td>
 										<td>
-											<input onfocus="this.select();" id="cantidad" ng-keypress="interceptarTecla($event,'agregar_detalle_compra',false)" required
+											<input  id="cantidad" ng-keypress="interceptarTecla($event,'agregar_detalle_compra',false)" required
 											 class="col-xs-12" ng-change="calcularImporte()" ng-model="detalleCompra.cantidad" type="number" />
 										</td>
 										<td>
@@ -1853,6 +1853,7 @@
 					<th>Comentario</th>
 					<th>Editar</th>
 					<th>Habilitar</th>
+					<th>Acciones</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -1860,7 +1861,7 @@
 					<th scope="row">{{clase.nombre}}</th>
 					<th scope="row">{{clase.nombre_corto}}</th>
 					<td>
-						<a ng-click="modificarConceptoEdicion(clase)">
+						<a href="javascript:void(0)"ng-click="modificarConceptoEdicion(clase)">
 							<span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
 						</a>
 					</td>
@@ -1869,6 +1870,13 @@
 							<input name="switch-field-1" class="ace ace-switch ace-switch-5" type="checkbox" ng-model="clase.habilitado">
 							<span class="lbl check-espaniol"></span>
 						</label>
+					</td>
+					<td>
+							<a href="javascript:void(0)"role="button" data-rel="tooltip" data-placement="top"
+							uib-tooltip="Anticipos Regulares"ng-click="establecerServicioSeleccionado(clase)">
+							<span class="badge badge-success "><span class="fa fa-check bigger-200" aria-hidden="true"></span></span>
+							</a>
+							
 					</td>
 				</tr>
 			</tbody>
@@ -1992,12 +2000,9 @@
 							</thead>
 							<tbody>
 								<tr>
-
 									<td>
 										{{detalle.detalleCompra.producto.nombre}}
-
 									</td>
-
 									<td ng-if="detalle.detalleCompra.producto.nombre.id">
 										{{detalle.detalleCompra.producto.nombre.unidad_medida}}
 									</td>
@@ -2013,9 +2018,9 @@
 										/>
 									</td>
 									<td>
-										<input  required onfocus="this.select();" ng-keypress="interceptarTecla($event,'cantidad',true)"  class="col-xs-12" ng-change="calcularImportePedido(detalle.detalleCompra)"
+										<input required onfocus="this.select();" ng-keypress="interceptarTecla($event,'cantidad',true)" class="col-xs-12" ng-change="calcularImportePedido(detalle.detalleCompra)"
 										 step="0.001" min="0.001" ng-model="detalle.detalleCompra.costo_unitario" value="{{detalle.detalleCompra.producto.inventarios.length>0?detalle.detalleCompra.producto.nombre.inventarios[0].costo_unitario:0}}"
-										 type="number"  required/>
+										 type="number" required/>
 									</td>
 									<td>
 										<!-- <input onfocus="this.select();" id="cantidad" ng-keypress="interceptarTecla($event,'agregar_detalle_compra',false)" required

@@ -654,6 +654,11 @@
 												</a>
 											</div>
 										</div>
+
+										<span class="blue">
+                                    	Último precio
+                                		</span>
+										<span class="label label-danger label-white middle tooltip-info" ng-if="precio_inventario"  data-rel="tooltip" tooltip-placement="top" uib-tooltip="Último precio de compra">{{precio_inventario}}</span>
 									</td>
 									<td ng-if="editar_precio">
 										<form ng-submit="establecerPrecio()">

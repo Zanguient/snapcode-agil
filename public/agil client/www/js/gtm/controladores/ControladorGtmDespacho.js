@@ -324,8 +324,8 @@ angular.module('agil.controladores')
                     doc.text('DESPACHO', 60, y + 110, { align: "left" })
                     doc.text($scope.usuario.persona.nombre_completo, 60, y + 120, { align: "left" })
                     /* doc.text('HORA DESP.: ', 60, y + 130, { align: "left" }) */
-                    var hora = new Date().getHours()
-                    var min = new Date().getMinutes()
+                    var hora = new Date(gtm_despacho.fecha).getHours()
+                    var min = new Date(gtm_despacho.fecha).getMinutes()
                     min = (min < 10) ? min = "0" + min : min;
                     hora = (hora < 10) ? hora = "0" + hora : hora;
                     doc.text('HORA DESP.: ' + hora + ':' + min, 60, y + 130, { align: "left" })
@@ -390,8 +390,8 @@ angular.module('agil.controladores')
                     doc.text('DESPACHO', 60, y + 110, { align: "left" })
                     doc.text($scope.usuario.persona.nombre_completo, 60, y + 120, { align: "left" })
                     /* doc.text('HORA DESP.: ', 60, y + 130, { align: "left" }) */
-                    var hora = new Date().getHours()
-                    var min = new Date().getMinutes()
+                    var hora = new Date(gtm_despacho.fecha).getHours()
+                    var min = new Date(gtm_despacho.fecha).getMinutes()
                     min = (min < 10) ? min = "0" + min : min;
                     hora = (hora < 10) ? hora = "0" + hora : hora;
                     doc.text('HORA DESP.: ' + hora + ':' + min, 60, y + 130, { align: "left" })
@@ -433,7 +433,7 @@ angular.module('agil.controladores')
             doc.text("Cliente: ", 465, y + 80);
             doc.text("Cod. SAP: ", 465, y + 90);
             doc.font('Helvetica', 8);
-            doc.text(fecha, 540, y + 60, { width: 45 });
+            doc.text($scope.fechaATexto(gtm_despacho.fecha), 540, y + 60, { width: 45 });
             doc.text(gtm_despacho.despacho.cliente.codigo, 510, y + 80);
             var textoSap = ""
             doc.text(gtm_despacho.despacho.cliente.razon_social, 80, y + 90);
@@ -464,7 +464,7 @@ angular.module('agil.controladores')
             doc.text("Importe", 520, 90 + yCabecera);
             doc.text("Clientes:", 40, y + 90);
             doc.text("Destino Mercaderia:", 40, y + 100);
-            var texto =gtm_despacho.despacho.destino.destino
+            var texto = gtm_despacho.despacho.destino.destino
             var a = 0;
             if (texto.length > 61) {
                 a = 10;
@@ -586,7 +586,7 @@ angular.module('agil.controladores')
             $scope.detalle_despacho = detalle_despacho
             var factura = ($scope.detalle_despacho.factura) ? $scope.detalle_despacho.factura : ""
             $scope.detalle_despacho.resivo = {
-                sucursal:$scope.sucursales[0],
+                sucursal: $scope.sucursales[0],
                 tipo_moneda: true,
                 monto_dolar: 0,
                 cambio_moneda: 6.9,
@@ -679,8 +679,11 @@ angular.module('agil.controladores')
                     $scope.imprimirResivo(dato.recivo)
                 }
                 $scope.cerrarModalCobros()
-                $scope.obtenerDespachados()
-
+                if ($scope.paginator.search) {
+                    $scope.paginator.getSearch($scope.paginator.search, $scope.paginator.filter, null);
+                } else {
+                    $scope.paginator.getSearch("", $scope.paginator.filter, null);
+                }
             })
         }
         $scope.obtenerCuentasBancos = function () {

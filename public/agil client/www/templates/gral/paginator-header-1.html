@@ -13,7 +13,7 @@
 <div class="col-sm-6" align="right">
   <div>
   <label>Buscar:
-    <input class="form-control input-sm" type="search" ng-model="textSearch" ng-keydown="paginator.getSearch(textSearch,paginator.filter,$event)">
+    <input class="form-control input-sm" type="search" ng-model="textSearch" ng-model-options='{ debounce: 600 }' ng-change="paginator.getSearch(textSearch,paginator.filter,$event)">
   </label>
   </div>
 </div>
