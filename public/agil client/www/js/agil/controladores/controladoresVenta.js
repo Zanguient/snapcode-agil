@@ -490,8 +490,10 @@ angular.module('agil.controladores')
 									cantidadTotal = 0;
 								}
 								nuevoDetalleVenta.cantidad = cantidadParcial;
-								nuevoDetalleVenta.fecha_vencimiento = detalleVenta.costos[i].fecha_vencimiento;
-								nuevoDetalleVenta.lote = detalleVenta.costos[i].lote;
+								if ($scope.usuario.empresa.usar_vencimientos) {
+									nuevoDetalleVenta.fecha_vencimiento = detalleVenta.costos[i].fecha_vencimiento;
+									nuevoDetalleVenta.lote = detalleVenta.costos[i].lote;
+								}
 								nuevoDetalleVenta.costos = [];
 								nuevoDetalleVenta.costos.push(detalleVenta.costos[i]);
 								nuevoDetalleVenta.inventario = detalleVenta.costos[i];
@@ -501,9 +503,14 @@ angular.module('agil.controladores')
 							i++;
 						}
 					} else {
-						detalleVenta.fecha_vencimiento = detalleVenta.costos[0].fecha_vencimiento;
-						detalleVenta.lote = detalleVenta.costos[0].lote;
-						detalleVenta.inventario = detalleVenta.costos[0];
+						if (detalleVenta.costos.length > 0) {
+							if ($scope.usuario.empresa.usar_vencimientos) {
+								detalleVenta.fecha_vencimiento = detalleVenta.costos[0].fecha_vencimiento;
+								detalleVenta.lote = detalleVenta.costos[0].lote;
+								detalleVenta.inventario = detalleVenta.costos[0];
+							}
+						}
+
 						$scope.venta.detallesVenta.push(detalleVenta);
 					}
 				} else {
