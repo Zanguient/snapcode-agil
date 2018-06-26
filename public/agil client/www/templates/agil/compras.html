@@ -607,11 +607,12 @@
 											<input onfocus="this.select();" id="costo_unitario" ng-keypress="interceptarTecla($event,'cantidad',true)" required class="col-xs-12"
 											 ng-change="calcularImporte()" step="0.001" ng-model="detalleCompra.costo_unitario" value="{{detalleCompra.producto.inventarios.length>0?detalleCompra.producto.nombre.inventarios[0].costo_unitario:0}}"
 											 type="number" />
-									
+
 											<span class="blue">
-                                        	Último precio
-                                    		</span>
-											<span class="label label-danger label-white middle tooltip-info" ng-if="precio_inventario"  data-rel="tooltip" tooltip-placement="top" uib-tooltip="Último precio de compra">{{precio_inventario}}</span>
+												Último precio
+											</span>
+											<span class="label label-danger label-white middle tooltip-info" ng-if="precio_inventario" data-rel="tooltip" tooltip-placement="top"
+											 uib-tooltip="Último precio de compra">{{precio_inventario}}</span>
 										</td>
 										<td>
 											<input onfocus="this.select();" id="cantidad" ng-keypress="interceptarTecla($event,'agregar_detalle_compra',false)" required
@@ -728,12 +729,13 @@
 										</td>
 
 										<td>
-											<input autofocus onfocus="this.select();" id="costo_unitario" ng-keypress="interceptarTecla($event,'cantidad',true)" required class="col-xs-12"
-											 ng-change="calcularImporte()" step="0.001" ng-model="detalleCompra.costo_unitario" type="number" />
+											<input autofocus onfocus="this.select();" id="costo_unitario" ng-keypress="interceptarTecla($event,'cantidad',true)" required
+											 class="col-xs-12" ng-change="calcularImporte()" step="0.001" ng-model="detalleCompra.costo_unitario" type="number"
+											/>
 										</td>
 										<td>
-											<input  id="cantidad" ng-keypress="interceptarTecla($event,'agregar_detalle_compra',false)" required
-											 class="col-xs-12" ng-change="calcularImporte()" ng-model="detalleCompra.cantidad" type="number" />
+											<input id="cantidad" ng-keypress="interceptarTecla($event,'agregar_detalle_compra',false)" required class="col-xs-12" ng-change="calcularImporte()"
+											 ng-model="detalleCompra.cantidad" type="number" />
 										</td>
 										<td>
 											{{detalleCompra.importe|number:2}}
@@ -1861,7 +1863,7 @@
 					<th scope="row">{{clase.nombre}}</th>
 					<th scope="row">{{clase.nombre_corto}}</th>
 					<td>
-						<a href="javascript:void(0)"ng-click="modificarConceptoEdicion(clase)">
+						<a href="javascript:void(0)" ng-click="modificarConceptoEdicion(clase)">
 							<span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
 						</a>
 					</td>
@@ -1872,11 +1874,12 @@
 						</label>
 					</td>
 					<td>
-							<a href="javascript:void(0)"role="button" data-rel="tooltip" data-placement="top"
-							uib-tooltip="Anticipos Regulares"ng-click="establecerServicioSeleccionado(clase)">
-							<span class="badge badge-success "><span class="fa fa-check bigger-200" aria-hidden="true"></span></span>
-							</a>
-							
+						<a href="javascript:void(0)" role="button" data-rel="tooltip" data-placement="top" uib-tooltip="Anticipos Regulares" ng-click="establecerServicioSeleccionado(clase)">
+							<span class="badge badge-success ">
+								<span class="fa fa-check bigger-200" aria-hidden="true"></span>
+							</span>
+						</a>
+
 					</td>
 				</tr>
 			</tbody>
@@ -1928,9 +1931,14 @@
 					<td>{{pedido.fecha | date:"dd/MM/yyyy"}}</td>
 
 					<td>
-						<label>
-							<a ng-click="abrirDialogDetallePedidos(pedido)">
+						<label ng-if="!pedido.eliminado"> 
+							<a  ng-click="abrirDialogDetallePedidos(pedido)">
 								<i class="fa fa-check bigger-200"></i>
+							</a>
+						</label>
+						<label>
+							<a class="red" ng-click="abrirDialogEliminarPedido(pedido)">
+								<i class="fa fa-trash-o bigger-200"></i>
 							</a>
 						</label>
 					</td>
@@ -1947,7 +1955,13 @@
 
 </div>
 <!-- ========= fin pedidos ========= -->
-
+<div id="dialog-eliminar-pedido" title="¿Eliminación de pedido?">
+		<p>
+			<span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>¿Esta seguro de eliminar el pedido seleccionado?
+		</p>
+		<button type="button" class="btn btn-danger" ng-click="EliminarPedido(pedido)">Si</button>
+		<button type="button" class="btn btn-success" ng-click="cerrarDialogEliminarPedido()">No</button>
+	</div>
 <!-- === modal detalle pedidos"==== -->
 <div id="dialog-detalle-pedidos" class="modal" t item-width="500">
 	<div class="modal-header bg-primary">
@@ -1963,7 +1977,10 @@
 				<div class="widget-header">
 					<h4 class="widget-title">BUSQUEDA PRODUCTO</h4>
 				</div>
-				<div class="widget-body" ng-repeat="detalle in pedido.detallesPedido">
+				<button type="button" ng-click="verDescuentosPedido()" class="btn btn-info btn-sm">
+					<i class="ace-icon fa fa-exchange bigger-110"></i>
+				</button>
+				<div class="widget-body">
 					<div class="widget-main">
 
 						<table class="table table-striped table-bordered table-hover">
@@ -1990,16 +2007,40 @@
 									<th>
 										<label>CANT. (u)</label>
 									</th>
+									<th ng-if="verDescuento">
+										<label>DESC. (-)</label>
+										<label>
+											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="detalle.detalleCompra.tipo_descuento" ng-change="recalcular()"
+											/>
+											<span class="lbl check-compra"></span>
+										</label>
+									</th>
+									<th ng-if="verDescuento">
+										<label>REC. (+)</label>
+										<label>
+											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="detalle.detalleCompra.tipo_recargo" ng-change="recalcular()"
+											/>
+											<span class="lbl check-compra"></span>
+										</label>
+									</th>
+									<th ng-if="verDescuento">
+										<label>ICE (-)</label>
+									</th>
+									<th ng-if="verDescuento">
+										<label>EXC. (-)</label>
+									</th>
+
 									<th>
 										<label>IMP. (Bs)</label>
 									</th>
+
 									<th>
 										<label>ACC.</label>
 									</th>
 								</tr>
 							</thead>
 							<tbody>
-								<tr>
+								<tr ng-repeat="detalle in pedido.detallesPedido | filter:{eliminado:false}">
 									<td>
 										{{detalle.detalleCompra.producto.nombre}}
 									</td>
@@ -2027,65 +2068,36 @@
 											 class="col-xs-12" ng-change="calcularImportePedido(detalle.detalleCompra)" ng-model="detalle.detalleCompra.cantidad" type="number" /> -->
 										{{detalle.detalleCompra.cantidad}}
 									</td>
+
+									<td ng-if="verDescuento">
+										<input required ng-change="calcularImportePedido(detalle.detalleCompra)" ng-model="detalle.detalleCompra.descuento" step="0.001"
+										 class="col-xs-12" type="number" value="0" />
+									</td>
+									<td ng-if="verDescuento">
+										<input required ng-change="calcularImportePedido(detalle.detalleCompra)" ng-model="detalle.detalleCompra.recargo" step="0.001"
+										 class="col-xs-12" type="number" value="0" />
+									</td>
+									<td ng-if="verDescuento">
+										<input required ng-change="calcularImportePedido(detalle.detalleCompra)" ng-model="detalle.detalleCompra.ice" step="0.001"
+										 class="col-xs-12" type="number" value="0" />
+									</td>
+									<td ng-if="verDescuento">
+										<input required ng-change="calcularImportePedido(detalle.detalleCompra)" ng-model="detalle.detalleCompra.excento" step="0.001"
+										 class="col-xs-12" type="number" value="0" />
+									</td>
 									<td>
 										{{detalle.detalleCompra.importe|number:2}}
 									</td>
 									<td>
 
-										<div class="space-6"></div>
-										<button type="button" ng-click="mostrarDescuentos()" class="btn btn-info btn-sm">
-											<i class="ace-icon fa fa-exchange bigger-110"></i>
+
+
+										<button type="button" ng-click="EliminarPedidoDetalle(detalle)" class="btn btn-danger btn-sm">
+											<i class="ace-icon fa fa-trash-o bigger-110"></i>
 										</button>
 									</td>
 								</tr>
-								<tr class="des-datos" style="display:none;">
-									<th ng-if="!compra.descuento_general">
-										<label>DESC. (-)</label>
-										<label>
-											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="detalle.detalleCompra.tipo_descuento" ng-change="recalcular()"
-											/>
-											<span class="lbl check-compra"></span>
-										</label>
-									</th>
-									<th ng-if="!compra.descuento_general">
-										<label>REC. (+)</label>
-										<label>
-											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="detalle.detalleCompra.tipo_recargo" ng-change="recalcular()"
-											/>
-											<span class="lbl check-compra"></span>
-										</label>
-									</th>
-									<th ng-if="!compra.descuento_general">
-										<label>ICE (-)</label>
-									</th>
-									<th ng-if="!compra.descuento_general">
-										<label>EXC. (-)</label>
-									</th>
-									<!--<th>
-																				<label>SUJETO A DF</label>
-																			</th>-->
-								</tr>
-								<tr class="des-datos" style="display:none;">
-									<td ng-if="!compra.descuento_general">
-										<input required ng-change="calcularImportePedido(detalle.detalleCompra)" ng-model="detalle.detalleCompra.descuento" step="0.001"
-										 class="col-xs-12" type="number" value="0" />
-									</td>
-									<td ng-if="!compra.descuento_general">
-										<input required ng-change="calcularImportePedido(detalle.detalleCompra)" ng-model="detalle.detalleCompra.recargo" step="0.001"
-										 class="col-xs-12" type="number" value="0" />
-									</td>
-									<td ng-if="!compra.descuento_general">
-										<input required ng-change="calcularImportePedido(detalle.detalleCompra)" ng-model="detalle.detalleCompra.ice" step="0.001"
-										 class="col-xs-12" type="number" value="0" />
-									</td>
-									<td ng-if="!compra.descuento_general">
-										<input required ng-change="calcularImportePedido(detalle.detalleCompra)" ng-model="detalle.detalleCompra.excento" step="0.001"
-										 class="col-xs-12" type="number" value="0" />
-									</td>
-									<!--<td>
-																				{{detalle.detalleCompra.total}}
-																			</td>-->
-								</tr>
+
 							</tbody>
 						</table>
 

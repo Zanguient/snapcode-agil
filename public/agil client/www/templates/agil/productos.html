@@ -351,14 +351,14 @@
 							<div class="form-group">
 								<label class="col-sm-3 control-label no-padding-right">Grupo</label>
 								<div class="col-sm-9">
-									<select required name="grupo_producto" id="grupo_producto" ng-model="producto.grupo" ng-options="grupoProducto as grupoProducto.nombre for grupoProducto in gruposProducto | filter:{habilitado:true} track by grupoProducto.id">
+									<select required name="grupo_producto" id="grupo_producto" ng-model="producto.grupo" ng-options="grupoProducto as grupoProducto.nombre for grupoProducto in gruposProducto | filter:{habilitado:1} track by grupoProducto.id">
 									</select>
 								</div>
 							</div>
 							<div class="form-group">
 								<label class="col-sm-3 control-label no-padding-right">Sub-Grupo</label>
 								<div class="col-sm-9">
-									<select required name="subgrupo_producto" id="subgrupo_producto" ng-model="producto.subgrupo" ng-options="subgrupoProducto as subgrupoProducto.nombre for subgrupoProducto in subgruposProducto | filter:{habilitado:true} track by subgrupoProducto.id">
+									<select required name="subgrupo_producto" id="subgrupo_producto" ng-model="producto.subgrupo" ng-options="subgrupoProducto as subgrupoProducto.nombre for subgrupoProducto in subgruposProducto | filter:{habilitado:1} track by subgrupoProducto.id">
 									</select>
 								</div>
 							</div>

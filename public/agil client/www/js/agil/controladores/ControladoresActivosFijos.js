@@ -37,8 +37,8 @@ angular.module('agil.controladores')
                 id_empresa: $scope.usuarioSesion.empresa.id,
                 configuracion: {
                     numero: { value: "Número.", show: true },
-                    activo: { value: "Activo", show: true },
-                    codigo: { value: "Código", show: true },
+                    activo: { value: "Activo.", show: true },
+                    codigo: { value: "Código.", show: true },
                     cantidad: { value: "Cantidad.", show: true },
                     mes: { value: "Mes.", show: true },
                     anio: { value: "Año.", show: true },
@@ -52,7 +52,7 @@ angular.module('agil.controladores')
                     depreciacion_mes: { value: "Depreciación mensual.", show: true },
                     total_depreciacion: { value: "Total depreciación.", show: true },
                     valor_neto: { value: "Valor neto.", show: true },
-                    vida_util: { value: "Vida útil ", show: true },
+                    vida_util: { value: "Vida útil.", show: true },
                     vida_restante: { value: "Vida restante (Meses).", show: true },
                     revaluado: { value: "Revaluado", show: true }
                 }

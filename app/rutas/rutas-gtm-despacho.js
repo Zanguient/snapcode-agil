@@ -212,7 +212,7 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, forEach, j
 									cantidad: parseFloat(detalle.cantidad_pedido),
 									precio_unitario: parseFloat(detalle.precio_unitario),
 									importe: parseFloat(detalle.total),
-									saldo: parseFloat(detalle.cantidad),
+									saldo: parseFloat(detalle.cantidad_pedido),
 									despachado: false,
 									eliminado: false,
 									kardex_detalle: detallekardexDespachoCreado.id,
@@ -908,7 +908,7 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, forEach, j
 												var total = PadreEncontrado.dataValues.cantidad_despacho - DespachoActual.dataValues.cantidad_despacho
 												return GtmDespachoDetalle.update({
 													cantidad_despacho: total,
-													saldo: PadreEncontrado.saldo + DespachoActual.cantidad_despacho,
+													saldo: PadreEncontrado.saldo + DespachoActual.dataValues.cantidad_despacho,
 													despachado: false
 												}, {
 														where: { id: DespachoActual.id_padre },
@@ -1002,7 +1002,8 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, forEach, j
 			GtmDespachoDetalle.findAll({
 				where: {
 					id: { $lt: req.params.id_detalle_despacho },
-					id_padre: req.params.id_padre
+					id_padre: req.params.id_padre,
+					eliminado:false
 				}
 			}).then(function (detallesDespacho) {
 				res.json({ detallesDespacho: detallesDespacho });

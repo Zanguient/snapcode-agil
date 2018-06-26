@@ -263,7 +263,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Producto, Dicc
                     id_usuario: req.body.id_usuario,
                     activo: req.body.activo,
                     monto: req.body.monto,
-                    empresa: req.params.id_empresa
+                    id_empresa: req.params.id_empresa
                 }, { transaction: t }).then(function (solicitudCreada) {
                     var aceptado = false
                     var done = false

@@ -62,3 +62,36 @@ angular.module('agil.servicios')
     };
     return res;
 }])
+.factory('EliminarPedido', function ($resource) {
+    return $resource(restServer + "pedido/:id_pedido");
+})
+
+.factory('EliminarPedidoEmpresa', ['EliminarPedido', '$q', function (EliminarPedido, $q) {
+    var res = function (idPedido) {
+        var delay = $q.defer();
+        EliminarPedido.delete({ id_pedido: idPedido}, function (entidades) {
+            delay.resolve(entidades);
+        }, function (error) {
+            delay.reject(error);
+        });
+        return delay.promise;
+    };
+    return res;
+}])
+.factory('EliminarDetallePedido', function ($resource) {
+    return $resource(restServer + "pedido/detalle/:id_detalle");
+})
+
+.factory('EliminarDetallePedidoEmpresa', ['EliminarDetallePedido', '$q', function (EliminarDetallePedido, $q) {
+    var res = function (idDetalle) {
+        var delay = $q.defer();
+        EliminarDetallePedido.delete({id_detalle: idDetalle}, function (entidades) {
+            delay.resolve(entidades);
+        }, function (error) {
+            delay.reject(error);
+        });
+        return delay.promise;
+    };
+    return res;
+}])
+

@@ -2,7 +2,7 @@ angular.module('agil.controladores')
 
 	.controller('ControladorCompras', function ($scope, $localStorage, $location, $templateCache, $route, blockUI, DatosCompra, $timeout,
 		Compra, Compras, Proveedores, ProveedoresNit, ListaProductosEmpresaUsuario, ClasesTipo, CompraDatos,
-		ConfiguracionCompraVistaDatos, ConfiguracionCompraVista, ConfiguracionesCuentasEmpresa, ClasesTipoEmpresa, Tipos, SaveCompra, ListaCompraPedidosEmpresa) {
+		ConfiguracionCompraVistaDatos, ConfiguracionCompraVista, ConfiguracionesCuentasEmpresa, ClasesTipoEmpresa, Tipos, SaveCompra, ListaCompraPedidosEmpresa, EliminarPedidoEmpresa, EliminarDetallePedidoEmpresa) {
 		blockUI.start();
 
 		$scope.usuario = JSON.parse($localStorage.usuario);
@@ -16,6 +16,7 @@ angular.module('agil.controladores')
 		$scope.idModalServicios = 'dialog-servicios'
 		$scope.idModalPedidos = 'dialog-pedidos'
 		$scope.idModalDetallePedidos = 'dialog-detalle-pedidos'
+		$scope.idModalEliminarPedido = 'dialog-eliminar-pedido'
 		$scope.url = restServer + '/proveedores/empresa/' + $scope.usuario.id_empresa + '/texto/';
 
 		$scope.inicio = function () {
@@ -186,11 +187,11 @@ angular.module('agil.controladores')
 
 		$scope.aplicarFechaTextoDetalleCompra = function (compra) {
 			for (var i = 0; i < compra.detallesCompra.length; i++) {
-				if(	compra.detallesCompra[i].centroCosto.nombre_corto=="ALM"){
+				if (compra.detallesCompra[i].centroCosto.nombre_corto == "ALM") {
 					compra.detallesCompra[i].inventario.fecha_vencimiento = new Date(compra.detallesCompra[i].inventario.fecha_vencimiento);
 					compra.detallesCompra[i].inventario.fechaVencimientoTexto = compra.detallesCompra[i].inventario.fecha_vencimiento.getDate() + "/" + (compra.detallesCompra[i].inventario.fecha_vencimiento.getMonth() + 1) + "/" + compra.detallesCompra[i].inventario.fecha_vencimiento.getFullYear();
 				}
-			
+
 			}
 		}
 
@@ -662,7 +663,7 @@ angular.module('agil.controladores')
 			resaltarPestaña($location.path().substring(1));
 			ejecutarScriptsCompra($scope.idModalWizardCompraEdicion, $scope.idModalWizardCompraVista,
 				$scope.idModalEliminarCompra, $scope.idModalContenedorCompraEdicion,
-				$scope.idModalContenedorCompraVista, $scope.idInputCompletar, $scope.url, $scope.idModalPago, $scope.idModalServicios, $scope.idModalPedidos, $scope.idModalDetallePedidos);
+				$scope.idModalContenedorCompraVista, $scope.idInputCompletar, $scope.url, $scope.idModalPago, $scope.idModalServicios, $scope.idModalPedidos, $scope.idModalDetallePedidos, $scope.idModalEliminarPedido);
 			$scope.buscarAplicacion($scope.usuario.aplicacionesUsuario, $location.path().substring(1));
 			$('#formularioCompra').ketchup({
 				validateEvents: 'blur focus keyup change submit'
@@ -756,10 +757,12 @@ angular.module('agil.controladores')
 			$scope.abrirPopup($scope.idModalDetallePedidos);
 		}
 		$scope.guardarDetalleCompraDePedido = function (detallePedido) {
-			$scope.compra.generado_por_pedido=true
-			$scope.compra.pedido=$scope.pedido
+			$scope.compra.generado_por_pedido = true
+			$scope.compra.pedido = $scope.pedido
 			detallePedido.forEach(function (detalle) {
-				$scope.verificarProducto(detalle.detalleCompra)
+				if (detalle.eliminado != true) {
+					$scope.verificarProducto(detalle.detalleCompra)
+				}
 			})
 			$scope.cerrarDialogDetallePedidos()
 		}
@@ -786,7 +789,13 @@ angular.module('agil.controladores')
 		$scope.cerrarDialogDetallePedidos = function () {
 			$scope.cerrarPopup($scope.idModalDetallePedidos);
 		}
-
+		$scope.cerrarDialogEliminarPedido = function () {
+			$scope.cerrarPopup($scope.idModalEliminarPedido);
+		}
+		$scope.abrirDialogEliminarPedido = function (pedido) {
+			$scope.pedido = pedido
+			$scope.abrirPopup($scope.idModalEliminarPedido);
+		}
 		$scope.obtenerPedidosEmpresa = function () {
 			var promesa = ListaCompraPedidosEmpresa($scope.usuario.id_empresa)
 			promesa.then(function (dato) {
@@ -944,7 +953,9 @@ angular.module('agil.controladores')
 
 		$scope.crearNuevaCompra = function () {
 			$scope.obtenerServicios()
-			$scope.compra = new Compra({generado_por_pedido:false,
+			$scope.verDescuento = false
+			$scope.compra = new Compra({
+				generado_por_pedido: false,
 				usar_producto: true, movimiento: { clase: {} }, tipo_retencion: true,
 				id_empresa: $scope.usuario.id_empresa, id_usuario: $scope.usuario.id, proveedor: {}, id_tipo_pago: $scope.tiposPago[0].id, tipoPago: $scope.tiposPago[0],
 				detallesCompra: [], descuento_general: false, tipo_descuento: false, codigo_control: 0, autorizacion: 0,
@@ -1027,6 +1038,23 @@ angular.module('agil.controladores')
 			doc.rect(50, 225, 540, 792 - 118 - 225).stroke();
 
 			if (existenDescuentos) {
+				if ($scope.usuario.empresa.usar_vencimientos) {
+				doc.font('Helvetica-Bold', 7);
+				doc.text("CODIGO", 55, 210);
+				doc.text("CANT.", 105, 210);
+				doc.text("UNID.", 135, 210);
+				doc.text("DETALLE", 170, 210);
+				doc.text("P. UNIT.", 280, 210);
+				doc.text("IMPORTE", 315, 210);
+				doc.text("DESC.", 365, 210);
+				doc.text("REC.", 395, 210);
+				doc.text("ICE", 425, 210);
+				doc.text("EXC.", 455, 210);
+				doc.text("F. VENC.", 485, 210, { width: 50 });
+				doc.text("LOTE", 525, 210);
+				doc.text("TOTAL", 555, 210);
+			} else {
+				doc.font('Helvetica-Bold', 8);
 				doc.text("CODIGO", 55, 210);
 				doc.text("CANT.", 105, 210);
 				doc.text("UNID.", 135, 210);
@@ -1038,7 +1066,9 @@ angular.module('agil.controladores')
 				doc.text("ICE", 455, 210);
 				doc.text("EXC.", 490, 210);
 				doc.text("TOTAL", 520, 210);
+			}
 			} else {
+				doc.font('Helvetica-Bold', 8);
 				doc.text("CODIGO", 55, 210);
 				doc.text("CANT.", 135, 210);
 				doc.text("UNID.", 165, 210);
@@ -1052,7 +1082,7 @@ angular.module('agil.controladores')
 				doc.text("P.UNIT.", 495, 210);
 				doc.text("TOTAL", 540, 210);
 			}
-			doc.font('Helvetica', 8);
+			doc.font('Helvetica', 6);
 			var currentDate = new Date();
 			doc.text("Usuario: " + $scope.usuario.nombre_usuario + "   " + "Fecha:" + currentDate.getDate() + "/" + (currentDate.getMonth() + 1) + "/" + currentDate.getFullYear() + "   " + "Hr:" + currentDate.getHours() + ":" + currentDate.getMinutes(), 50, 750);
 		}
@@ -1076,28 +1106,65 @@ angular.module('agil.controladores')
 
 				var y = 240;
 				for (var i = 0; i < compra.detallesCompra.length; i++) {
-					doc.font('Helvetica', 8);
+
 					if (existenDescuentos) {
-						if (compra.detallesCompra[i].producto) doc.text(compra.detallesCompra[i].producto.codigo, 55, y, { width: 70 });
-						doc.text(compra.detallesCompra[i].cantidad, 110, y);
-						if (compra.detallesCompra[i].producto) doc.text(compra.detallesCompra[i].producto.unidad_medida, 135, y);
+						
+						if ($scope.usuario.empresa.usar_vencimientos) {
+							doc.font('Helvetica', 7);
+							var longitudCaracteres = compra.detallesCompra[i].producto.codigo.length;
+							var yDesc = (longitudCaracteres <= 11) ? y : ((longitudCaracteres > 11 && longitudCaracteres <= 22) ? y - 4 : y - 11);
+							if (compra.detallesCompra[i].producto) doc.text(compra.detallesCompra[i].producto.codigo, 55, yDesc, { width: 50 });
+							doc.text(compra.detallesCompra[i].cantidad, 110, y);
+							if (compra.detallesCompra[i].producto) doc.text(compra.detallesCompra[i].producto.unidad_medida, 135, y);
 
-						if (compra.detallesCompra[i].producto) {
-							doc.text(compra.detallesCompra[i].producto.nombre, 170, y - 6, { width: 130 });
+							if (compra.detallesCompra[i].producto) {
+								doc.text(compra.detallesCompra[i].producto.nombre, 170, y - 6, { width: 130 });
+							} else {
+								doc.text(compra.detallesCompra[i].servicio.nombre, 170, y - 6, { width: 130 });
+							}
+
+							doc.text(compra.detallesCompra[i].costo_unitario.toFixed(2), 280, y);
+							doc.text(compra.detallesCompra[i].importe.toFixed(2), 315, y);
+							doc.text(compra.detallesCompra[i].tipo_descuento ? "%" : "Bs", 365, y - 10);
+							doc.text(compra.detallesCompra[i].descuento.toFixed(2), 365, y);
+							doc.text(compra.detallesCompra[i].tipo_recargo ? "%" : "Bs", 395, y - 10);
+							doc.text(compra.detallesCompra[i].recargo.toFixed(2), 395, y);
+							doc.text(compra.detallesCompra[i].ice.toFixed(2), 425, y);
+							doc.text(compra.detallesCompra[i].excento.toFixed(2), 455, y);
+							doc.text(compra.detallesCompra[i].total.toFixed(2), 555, y);
+
+							if (compra.detallesCompra[i].inventario) {
+								compra.detallesCompra[i].inventario.fecha_vencimiento = new Date(compra.detallesCompra[i].inventario.fecha_vencimiento);
+								compra.detallesCompra[i].inventario.fechaVencimientoTexto = compra.detallesCompra[i].inventario.fecha_vencimiento.getDate() + "/" + (compra.detallesCompra[i].inventario.fecha_vencimiento.getMonth() + 1) + "/" + compra.detallesCompra[i].inventario.fecha_vencimiento.getYear();
+								doc.text(compra.detallesCompra[i].inventario.fechaVencimientoTexto, 485, y);
+								doc.text((compra.detallesCompra[i].inventario.lote) ? compra.detallesCompra[i].inventario.lote : "", 525, y);
+							}
 						} else {
-							doc.text(compra.detallesCompra[i].servicio.nombre, 170, y - 6, { width: 130 });
-						}
+							doc.font('Helvetica', 8);
+							var longitudCaracteres = compra.detallesCompra[i].producto.codigo.length;
+							var yDesc = (longitudCaracteres <= 11) ? y : ((longitudCaracteres > 11 && longitudCaracteres <= 22) ? y - 4 : y - 11);
+							if (compra.detallesCompra[i].producto) doc.text(compra.detallesCompra[i].producto.codigo, 55, yDesc, { width: 70 });
+							doc.text(compra.detallesCompra[i].cantidad, 110, y);
+							if (compra.detallesCompra[i].producto) doc.text(compra.detallesCompra[i].producto.unidad_medida, 135, y);
 
-						doc.text(compra.detallesCompra[i].costo_unitario.toFixed(2), 300, y);
-						doc.text(compra.detallesCompra[i].importe.toFixed(2), 335, y);
-						doc.text(compra.detallesCompra[i].tipo_descuento ? "%" : "Bs", 385, y - 10);
-						doc.text(compra.detallesCompra[i].descuento.toFixed(2), 385, y);
-						doc.text(compra.detallesCompra[i].tipo_recargo ? "%" : "Bs", 420, y - 10);
-						doc.text(compra.detallesCompra[i].recargo.toFixed(2), 420, y);
-						doc.text(compra.detallesCompra[i].ice.toFixed(2), 455, y);
-						doc.text(compra.detallesCompra[i].excento.toFixed(2), 490, y);
-						doc.text(compra.detallesCompra[i].total.toFixed(2), 520, y);
+							if (compra.detallesCompra[i].producto) {
+								doc.text(compra.detallesCompra[i].producto.nombre, 170, y - 6, { width: 130 });
+							} else {
+								doc.text(compra.detallesCompra[i].servicio.nombre, 170, y - 6, { width: 130 });
+							}
+
+							doc.text(compra.detallesCompra[i].costo_unitario.toFixed(2), 300, y);
+							doc.text(compra.detallesCompra[i].importe.toFixed(2), 335, y);
+							doc.text(compra.detallesCompra[i].tipo_descuento ? "%" : "Bs", 385, y - 10);
+							doc.text(compra.detallesCompra[i].descuento.toFixed(2), 385, y);
+							doc.text(compra.detallesCompra[i].tipo_recargo ? "%" : "Bs", 420, y - 10);
+							doc.text(compra.detallesCompra[i].recargo.toFixed(2), 420, y);
+							doc.text(compra.detallesCompra[i].ice.toFixed(2), 455, y);
+							doc.text(compra.detallesCompra[i].excento.toFixed(2), 490, y);
+							doc.text(compra.detallesCompra[i].total.toFixed(2), 520, y);
+						}
 					} else {
+						doc.font('Helvetica', 8);
 						if (compra.detallesCompra[i].producto) doc.text(compra.detallesCompra[i].producto.codigo, 55, y, { width: 70 });
 						doc.text(compra.detallesCompra[i].cantidad, 140, y);
 						if (compra.detallesCompra[i].producto) doc.text(compra.detallesCompra[i].producto.unidad_medida, 160, y);
@@ -1225,7 +1292,7 @@ angular.module('agil.controladores')
 		}
 
 		$scope.establecerProducto = function (producto) {
-			
+
 			producto.tipoProducto = producto['tipoProducto'] == null ? { id: producto['tipoProducto.id'], nombre: producto['tipoProducto.nombre'], nombre_corto: producto['tipoProducto.nombre_corto'] } : producto.tipoProducto;
 			var centroCostos = $scope.detalleCompra.centroCosto;
 			// === para colocar el costo unitario de inventario == 
@@ -1233,7 +1300,7 @@ angular.module('agil.controladores')
 			if (producto.inventarios.length > 0) {
 				$scope.precio_inventario = producto.inventarios.pop().costo_unitario + " Bs";
 
-			}else{
+			} else {
 				$scope.precio_inventario = "Sin histórico";
 			}
 
@@ -1245,7 +1312,10 @@ angular.module('agil.controladores')
 			$scope.enfocar('cantidad');
 
 		}
-		$scope.establecerServicioSeleccionado = function(clase){
+		$scope.verDescuentosPedido = function () {
+			$scope.verDescuento = ($scope.verDescuento == false) ? true : false
+		}
+		$scope.establecerServicioSeleccionado = function (clase) {
 			$scope.establecerServicio(clase)
 			$scope.cerrarDialogServicios()
 		}
@@ -1269,6 +1339,21 @@ angular.module('agil.controladores')
 
 			})
 		}
+		$scope.EliminarPedido = function (pedido) {
+			var promesa = EliminarPedidoEmpresa(pedido.id)
+			promesa.then(function (dato) {
+				$scope.mostrarMensaje(dato.mensaje)
+				$scope.obtenerPedidosEmpresa()
+				$scope.cerrarDialogEliminarPedido()
+			})
+		}
+		$scope.EliminarPedidoDetalle = function (detalle) {
+			detalle.eliminado = true
+			var promesa = EliminarDetallePedidoEmpresa(detalle.id)
+			promesa.then(function (dato) {
+				$scope.mostrarMensaje(dato.mensaje)
+			})
+		}
 		$scope.$on('$routeChangeStart', function (next, current) {
 			$scope.eliminarPopup($scope.idModalWizardCompraEdicion);
 			$scope.eliminarPopup($scope.idModalWizardCompraVista);
@@ -1277,6 +1362,7 @@ angular.module('agil.controladores')
 			$scope.eliminarPopup($scope.idModalServicios);
 			$scope.eliminarPopup($scope.idModalPedidos);
 			$scope.eliminarPopup($scope.idModalDetallePedidos);
+			$scope.eliminarPopup($scope.idModalEliminarPedido);
 		});
 
 		$scope.inicio();

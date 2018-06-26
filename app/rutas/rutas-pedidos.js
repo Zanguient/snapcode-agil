@@ -23,7 +23,28 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
                 res.json({ mensaje: err.stack, hasErr: true });
             })
         })
+    router.route('/pedido/:id_pedido')
+        .delete(function (req, res) {
+            Pedido.update({
+                eliminado: true
+            }, {
+                    where: { id: req.params.id_pedido }
 
+                }).then(function (actualizado) {
+                    res.json({ mensaje: "eliminado satisfactoriamente" })
+                })
+        })
+    router.route('/pedido/detalle/:id_detalle')
+        .delete(function (req, res) {
+            DetallesPedido.update({
+                eliminado: true
+            }, {
+                    where: { id: req.params.id_detalle }
+
+                }).then(function (actualizado) {
+                    res.json({ mensaje: "eliminado satisfactoriamente" })
+                })
+        })
     router.route('/proveedores/:id_empresa')
         .get(function (req, res) {
             Proveedor.findAll({

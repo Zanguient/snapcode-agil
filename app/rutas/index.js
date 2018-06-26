@@ -166,6 +166,11 @@ module.exports = function (router, sequelize, Sequelize, jwt, md5, forEach, ensu
 	var Pedido = require('../modelos/AGIL/agil-pedidos')(sequelize, Sequelize);
 	var DetallesPedido = require('../modelos/AGIL/agil-detalle-pedidos')(sequelize, Sequelize);
 	var RrhhEmpleadoDescuentoVacacionHistorial= require('../modelos/AGIL/rrhh-empleado-descuento-vacacion-historial')(sequelize, Sequelize);
+	// activos fijos
+		var ActivosFijos = require('../modelos/AGIL/activos-fijos')(sequelize, Sequelize);
+		var ActivosFijosValores = require('../modelos/AGIL/activos-fijos-valor')(sequelize, Sequelize);
+		var ActivosFijosConfiguracion = require('../modelos/AGIL/activos-fijos-configuracion')(sequelize, Sequelize);
+
 	//*****RELATIONS*****
 	require('../modelos/relaciones.js')(sequelize, Usuario, Persona, Rol, UsuarioRol, Tipo, Clase, Aplicacion, RolAplicacion,
 		Empresa, Sucursal, UsuarioSucursal, Cliente, Proveedor, Producto, UsuarioAplicacion,
@@ -184,7 +189,7 @@ module.exports = function (router, sequelize, Sequelize, jwt, md5, forEach, ensu
 		RrhhEmpleadoHojaVida, RrhhEmpleadoFormacionAcademica, RrhhEmpleadoExperienciaLaboral, RrhhEmpleadoLogroInternoExterno, RrhhEmpleadoCapacidadInternaExterna, SolicitudReposicion, DetalleSolicitudProducto, DetalleSolicitudProductoBase, MonedaTipoCambio, ContabilidadCuentaAuxiliar, GtmDespachoDetalle, RrhhEmpleadoPrestamo, RrhhEmpleadoPrestamoPago, Proforma, DetallesProformas, Servicios, Farmacia, RRHHParametros, RrhhEmpleadoRolTurno, RrhhEmpleadoHorasExtra, RRHHPlanillaSueldos, RRHHDetallePlanillaSueldos, RrhhAnticipo, EvaluacionPolifuncional,
 		RrhhEmpleadoAusencia, RrhhEmpleadoVacaciones, RrhhEmpleadoCompensacionAusencia, RrhhClaseAsuencia,RrhhEmpleadoHistorialVacacion,RrhhEmpleadoTr3,RrhhEmpleadoAnticipoTr3,RrhhEmpleadoDeduccionIngreso,
 		RrhhEmpleadoBeneficioSocial,RrhhEmpleadoBitacoraFicha, UsuarioGrupos,RrhhEmpleadoConfiguracionRopa,GtmVentaKardex,GtmVentaKardexDetalle,RrhhEmpleadoDotacionRopaItem,
-		RrhhEmpleadoDotacionRopa,RrhhViajeDetalle,RrhhViaje,RrhhViajeDestino,RrhhViajeConductor,TransaccionSeguimiento, CuentaTransaccion,GtmDespachoDetalleResivo, RRHHPlanillaRcIva, RRHHDetallePlanillaRcIva,EmpresaAplicacion, Pedido, DetallesPedido,RrhhEmpleadoDescuentoVacacionHistorial);
+		RrhhEmpleadoDotacionRopa,RrhhViajeDetalle,RrhhViaje,RrhhViajeDestino,RrhhViajeConductor,TransaccionSeguimiento, CuentaTransaccion,GtmDespachoDetalleResivo, RRHHPlanillaRcIva, RRHHDetallePlanillaRcIva,EmpresaAplicacion, Pedido, DetallesPedido,RrhhEmpleadoDescuentoVacacionHistorial, ActivosFijos, ActivosFijosValores, ActivosFijosConfiguracion);
 	require('../sockets/pantallas.js')(io, socket);
 	//*****ROUTES*****
 	//SYS
@@ -265,6 +270,7 @@ module.exports = function (router, sequelize, Sequelize, jwt, md5, forEach, ensu
 	require('./rutas-pedidos')(router, sequelize, Sequelize, Usuario, Cliente, Proforma, DetallesProformas, Servicios, Clase, Sucursal, SucursalActividadDosificacion, Dosificacion,
 		Empresa, Tipo, UsuarioSucursal, Almacen, Venta, DetalleVenta, Pedido, DetallesPedido, SolicitudReposicion, DetalleSolicitudProducto, DetalleSolicitudProductoBase, Proveedor, Persona,
 	Compra, Movimiento, Inventario, DetalleCompra, DetalleMovimiento )
+	require('./rutas-activos-fijos')(router, sequelize, Sequelize, Usuario, ActivosFijos, ActivosFijosValores, ActivosFijosConfiguracion)
 	router.route('/test')
 		.get(function (req, res) {
 			var rest;
