@@ -1795,7 +1795,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
     router.route('/recursos-humanos/empresa/:id_empresa/rolTurnoCalendario/inicio/:inicio/fin/:fin/pagina/:pagina/items_pagina/:items_pagina/texto_busqueda/:texto_busqueda/columna/:columna/direccion/:direccion/grupo/:grupo/nombre/:nombre/campo/:campo')
         .get(function (req, res) {
             var condicionRolTurno = {},
-            condicionCampo = {},
+                condicionCampo = {},
                 condicionEmpleado = {}
             if (req.params.grupo != "0") {
                 condicionRolTurno.id_grupo = req.params.grupo
@@ -1804,21 +1804,21 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                 condicionEmpleado.nombre_completo = { $like: '%' + req.params.nombre + '%' }
             }
             if (req.params.campo != "0") {
-                condicionRolTurno.id_campo= req.params.campo
+                condicionRolTurno.id_campo = req.params.campo
             }
             RrhhEmpleadoRolTurno.findAndCountAll({
                 where: condicionRolTurno,
-                include: [{ model: Clase, as: 'campo'}, { model: Clase, as: 'grupo' }, { model: RrhhEmpleadoFicha, as: 'ficha', include: [{ model: RrhhEmpleadoCargo, as: 'cargos', include: [{ model: Clase, as: 'cargo' }] },{ model: RrhhEmpleadoVacaciones, as: 'vacaciones' }, { model: RrhhEmpleadoAusencia, as: 'ausencias', include: [{ model: RrhhClaseAsuencia, as: 'tipoAusencia', include: [{ model: Tipo, as: 'tipo' }] }] }, { model: MedicoPaciente, as: 'empleado', where: { id_empresa: req.params.id_empresa }, include: [{ model: Persona, as: 'persona',where:condicionEmpleado }] }] }]
+                include: [{ model: Clase, as: 'campo' }, { model: Clase, as: 'grupo' }, { model: RrhhEmpleadoFicha, as: 'ficha', include: [{ model: RrhhEmpleadoCargo, as: 'cargos', include: [{ model: Clase, as: 'cargo' }] }, { model: RrhhEmpleadoVacaciones, as: 'vacaciones' }, { model: RrhhEmpleadoAusencia, as: 'ausencias', include: [{ model: RrhhClaseAsuencia, as: 'tipoAusencia', include: [{ model: Tipo, as: 'tipo' }] }] }, { model: MedicoPaciente, as: 'empleado', where: { id_empresa: req.params.id_empresa }, include: [{ model: Persona, as: 'persona', where: condicionEmpleado }] }] }]
             }).then(function (datos) {
-           /*  MedicoPaciente.findAndCountAll({
-                offset: (req.params.items_pagina * (req.params.pagina - 1)), limit: req.params.items_pagina,
-                where: { id_empresa: req.params.id_empresa, es_empleado: true, eliminado: false },
-                include: [{ model: Persona, as: 'persona', where: condicionEmpleado },
-                {
-                    model: RrhhEmpleadoFicha, as: 'empleadosFichas',
-                    include: [{ model: RrhhEmpleadoRolTurno, as: "rolesTurno", where: condicionRolTurno, include: [{ model: Clase, as: 'campo' }, { model: Clase, as: 'grupo' }] }, { model: RrhhEmpleadoCargo, as: 'cargos', include: [{ model: Clase, as: 'cargo' }] }, { model: RrhhEmpleadoVacaciones, as: 'vacaciones' }, { model: RrhhEmpleadoAusencia, as: 'ausencias', include: [{ model: RrhhClaseAsuencia, as: 'tipoAusencia', include: [{ model: Tipo, as: 'tipo' }] }] }]
-                }]
-            }).then(function (datos) { */
+                /*  MedicoPaciente.findAndCountAll({
+                     offset: (req.params.items_pagina * (req.params.pagina - 1)), limit: req.params.items_pagina,
+                     where: { id_empresa: req.params.id_empresa, es_empleado: true, eliminado: false },
+                     include: [{ model: Persona, as: 'persona', where: condicionEmpleado },
+                     {
+                         model: RrhhEmpleadoFicha, as: 'empleadosFichas',
+                         include: [{ model: RrhhEmpleadoRolTurno, as: "rolesTurno", where: condicionRolTurno, include: [{ model: Clase, as: 'campo' }, { model: Clase, as: 'grupo' }] }, { model: RrhhEmpleadoCargo, as: 'cargos', include: [{ model: Clase, as: 'cargo' }] }, { model: RrhhEmpleadoVacaciones, as: 'vacaciones' }, { model: RrhhEmpleadoAusencia, as: 'ausencias', include: [{ model: RrhhClaseAsuencia, as: 'tipoAusencia', include: [{ model: Tipo, as: 'tipo' }] }] }]
+                     }]
+                 }).then(function (datos) { */
                 sequelize.query("select min(fecha_inicio) as fecha from agil_rrhh_empleado_rol_turno;", { type: sequelize.QueryTypes.SELECT })
                     .then(function (fechaInicio) {
                         res.json({ rolesTurno: datos.rows, fechaInicio: fechaInicio[0].fecha, paginas: Math.ceil(datos.count / req.params.items_pagina) });
@@ -3428,7 +3428,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                 domingos: req.body.domingos,
                 feriados: req.body.dias_descuento,
             }).then(function (empleadoVacacionCreado) {//dias=12
-                var gestiones=""
+                var gestiones = ""
                 req.body.historial.forEach(function (historial, index, array) {
                     if (historial.anio <= req.body.aniosDisponibles) {
                         var restante = historial.aplicadas - historial.tomadas
@@ -3443,7 +3443,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                                 req.body.dias = 0
                             }
                             if (tomadas != 0) {
-                                restantes=(historial.aplicadas -tomadas)+" días de la gestion "+historial.gestion + "-" + (historial.gestion + 1)
+                                restantes = (historial.aplicadas - tomadas) + " días de la gestion " + historial.gestion + "-" + (historial.gestion + 1)
                                 gestiones += historial.gestion + "-" + (historial.gestion + 1) + ", "
                                 RrhhEmpleadoHistorialVacacion.update({
                                     tomadas: tomadas
@@ -3455,24 +3455,24 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                                             id_historial_vacacion: historial.id
                                         }).then(function (descuentoCreado) {
                                             if (index === (array.length - 1)) {
-                                                res.json({ mensaje: "Guardado satisfactoriamente!",gestiones:gestiones,restantes:restantes })
+                                                res.json({ mensaje: "Guardado satisfactoriamente!", gestiones: gestiones, restantes: restantes })
                                             }
                                         })
 
                                     })
                             } else {
                                 if (index === (array.length - 1)) {
-                                    res.json({ mensaje: "Guardado satisfactoriamente!",gestiones:gestiones,restantes:restantes })
+                                    res.json({ mensaje: "Guardado satisfactoriamente!", gestiones: gestiones, restantes: restantes })
                                 }
                             }
                         } else {
                             if (index === (array.length - 1)) {
-                                res.json({ mensaje: "Guardado satisfactoriamente!",gestiones:gestiones,restantes:restantes })
+                                res.json({ mensaje: "Guardado satisfactoriamente!", gestiones: gestiones, restantes: restantes })
                             }
                         }
                     } else {
                         if (index === (array.length - 1)) {
-                            res.json({ mensaje: "Guardado satisfactoriamente!",gestiones:gestiones,restantes:restantes })
+                            res.json({ mensaje: "Guardado satisfactoriamente!", gestiones: gestiones, restantes: restantes })
                         }
                     }
                 });
@@ -3493,8 +3493,17 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                 res.json(vacaciones)
             })
         })
-    router.route('/recursos-humanos/vacacion/empresa/:id_empresa/inicio/:inicio/fin/:fin')
+    router.route('/recursos-humanos/vacacion/empresa/:id_empresa/inicio/:inicio/fin/:fin/estado/:estado')
         .get(function (req, res) {
+            var condicionEmpleado = { id_empresa: req.params.id_empresa }
+            if (req.params.estado != 2) {
+                if (req.params.estado == 0) {
+                      wwwwwwcondicionEmpleado = { eliminado: true, id_empresa: req.params.id_empresa }
+                } else {
+                    condicionEmpleado = { eliminado: false, id_empresa: req.params.id_empresa }
+                }
+
+            }
             var condicionVacaciones = { eliminado: false };
             if (req.params.inicio != 0) {
                 var inicio = new Date(req.params.inicio); inicio.setHours(0, 0, 0, 0, 0);
@@ -3503,7 +3512,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
             }
             RrhhEmpleadoVacaciones.findAll({
                 where: condicionVacaciones,
-                include: [{ model: RrhhEmpleadoDescuentoVacacionHistorial, as: 'detalleDescuentosVacacionHistorial', include: [{ model: RrhhEmpleadoHistorialVacacion, as: 'historialVacacion' }] }, { model: RrhhEmpleadoFicha, as: 'ficha', include: [{ model: MedicoPaciente, as: 'empleado', where: { id_empresa: req.params.id_empresa }, include: [{ model: Persona, as: 'persona' }] }] }]
+                include: [{ model: RrhhEmpleadoDescuentoVacacionHistorial, as: 'detalleDescuentosVacacionHistorial', include: [{ model: RrhhEmpleadoHistorialVacacion, as: 'historialVacacion' }] }, { model: RrhhEmpleadoFicha, as: 'ficha', include: [{ model: RrhhEmpleadoHistorialVacacion, as: 'historialVacaciones' },{ model: MedicoPaciente, as: 'empleado', where: condicionEmpleado, include: [{ model: Persona, as: 'persona' }] }] }]
             }).then(function (vacaciones) {
                 res.json(vacaciones)
             })

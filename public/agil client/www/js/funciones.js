@@ -315,7 +315,7 @@ function ejecutarScriptsRecursosHumanos(idModalPrerequisitos, idModalEmpleado, i
 	idEliminarFamiliarEmpleado, idModalHistorialPrerequisito, idModalEditarPrerequisito, idModalDialogConfirmacionEntregaAdelantado, IdEntregaPrerequisito, IdModalVerificarCuenta, idModalImpresionHojaVida, idModalNuevoAnticipoRegularTodos,
 	idModalTr3BancoMsc, idModalTr3BancoUnion, idModalHistorialTr3, IdModalVerificarCuentaRrhh, idModalConfirmarDesabilitacion, idModalReingresoEmpleado,
 	idModalHistorialBeneficios, idModalConfiguracionRopaDeTrabajo, idModalReporteRopaDeTrabajo, idmodalWizardContainerConfiguracionRopaTrabajo, idModalRopaTrabajo, idModalNuevaRopaTrabajo, idModalItemsNuevaRopaTrabajo, idModalEliminarRopaTrabajo, idModalConceptoEdicion, idModalVisitaSalida, idModalDesabilitarPasajero,
-	idModalCerrarRolDeTurno, idModalConductoresViaje) {
+	idModalCerrarRolDeTurno, idModalConductoresViaje,idModalHistorialGestionesVacaciones) {
 	crearPopup(idModalPrerequisitos, "auto", "auto");
 	crearPopup(idModalEmpleado, "auto", "auto");
 	aplicarWizardFormulario(idModalEmpleado, idModalwizardContainerEmpleado);
@@ -394,6 +394,7 @@ function ejecutarScriptsRecursosHumanos(idModalPrerequisitos, idModalEmpleado, i
 	crearPopup(idModalDesabilitarPasajero, "auto", "auto");
 	crearPopup(idModalCerrarRolDeTurno, "auto", "auto");
 	crearPopup(idModalConductoresViaje, "auto", "auto");
+	crearPopup(idModalHistorialGestionesVacaciones, "auto", "auto");
 	setTimeout(function () {
 		aplicarDatePickers();
 		// aplicarHoras();

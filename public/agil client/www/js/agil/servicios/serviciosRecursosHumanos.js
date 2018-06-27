@@ -678,7 +678,7 @@ angular.module('agil.servicios')
     return res;
 }])
 .factory('EmpresaListaVacaciones', function ($resource) {
-    return $resource(restServer + "recursos-humanos/vacacion/empresa/:id_empresa/inicio/:inicio/fin/:fin",null,
+    return $resource(restServer + "recursos-humanos/vacacion/empresa/:id_empresa/inicio/:inicio/fin/:fin/estado/:estado",null,
         {
             'update': { method: 'PUT' }
         });
@@ -686,7 +686,7 @@ angular.module('agil.servicios')
 .factory('HistorialEmpresaVacaciones', ['EmpresaListaVacaciones', '$q', function (EmpresaListaVacaciones, $q) {
     var res = function (idEmpresa,filtro) {
         var delay = $q.defer();
-        EmpresaListaVacaciones.query({id_empresa: idEmpresa,inicio:filtro.inicio,fin:filtro.fin}, function (entidad) {
+        EmpresaListaVacaciones.query({id_empresa: idEmpresa,inicio:filtro.inicio,fin:filtro.fin,estado:filtro.estado}, function (entidad) {
             delay.resolve(entidad);
         }, function (error) {
             delay.reject(error);

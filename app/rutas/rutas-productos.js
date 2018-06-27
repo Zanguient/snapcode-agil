@@ -594,7 +594,7 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 					return grupo.id_grupo
 				})
 				Producto.findAll({
-					where: { id_empresa: req.params.id_empresa, publicar_panel: true, id_grupo: { $in: gruposUsuario }, activo_fijo: false },
+					where: { id_empresa: req.params.id_empresa, publicar_panel: true, id_grupo: { $in: gruposUsuario } },
 					include: [
 						{ model: Inventario, as: 'inventarios', required: false, where: { id_almacen: req.params.id_almacen, cantidad: { $gte: 0 } } },
 						{ model: Clase, as: 'tipoProducto' },
