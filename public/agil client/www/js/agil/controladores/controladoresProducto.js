@@ -481,6 +481,9 @@ z
 		}
 
 		$scope.modificarProducto = function (producto) {
+			$scope.steps = [{ cabeza: "cabeza-datos-producto", cuerpo: "cuerpo-datos-producto" },
+			{ cabeza: "cabeza-datos-adicionales", cuerpo: "cuerpo-datos-adicionales" },
+			{ cabeza: "cabeza-tipo-producto", cuerpo: "cuerpo-tipo-producto" }]
 			var promesa = DatosProducto(producto.id);
 			promesa.then(function (datosProducto) {
 				$scope.producto = datosProducto;

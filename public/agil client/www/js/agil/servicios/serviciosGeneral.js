@@ -1127,7 +1127,7 @@ angular.module('agil.servicios')
 
 	.factory('DibujarCabeceraFacturaNVCartaOficio', [function () {
 		var res = function (doc, vacia, completa, venta, papel, pagina, totalPaginas, usuario) {
-			if (venta.usar_pf) {
+			if (venta.configuracion.usar_pf) {
 				if (vacia) {
 					if (usuario.empresa.imagen.length > 100) { doc.image(usuario.empresa.imagen, 60, 40, { fit: [65, 65] }); } //{ width: 50, height: 50 }
 					doc.font('Helvetica-Bold', 8);
@@ -1145,6 +1145,7 @@ angular.module('agil.servicios')
 				}
 				doc.font('Helvetica-Bold', 16);
 				doc.text(venta.configuracion.tituloFactura.nombre.toUpperCase(), 250, 90);
+				doc.font('Helvetica-Bold', 8);
 				if (completa || vacia) {
 					doc.rect(380, 40, 190, 50).stroke();
 					doc.text("NIT : ", 390, 50);
@@ -1264,7 +1265,7 @@ angular.module('agil.servicios')
 
 	.factory('DibujarCabeceraFacturaNVmedioOficio', ['VerificarDescuentos', function (VerificarDescuentos) {
 		var res = function (doc, vacia, completa, venta, papel, pagina, totalPaginas, usuario) {
-			if (venta.usar_pf) {
+			if (venta.configuracion.usar_pf) {
 				if (vacia) {
 					if (usuario.empresa.imagen.length > 100) { doc.image(usuario.empresa.imagen, 60, 40, { fit: [65, 65] }); } //width: 50, height: 50
 					doc.font('Helvetica-Bold', 8);
