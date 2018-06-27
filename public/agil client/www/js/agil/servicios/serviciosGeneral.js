@@ -99,9 +99,9 @@ angular.module('agil.servicios')
 			CUENTA_GASTO_RETENCION_BIEN: "CUENTA GASTO RETENCION BIEN",
 			IT_RETENCION_BIEN_GASTO: "IT RETENCION BIEN GASTO",
 			IUE_RETENCION_BIEN_GASTO: "IUE RETENCION BIEN GASTO",
-			CUENTA_RETENCION_SERVICIO:"CUENTA RETENCION SERVICIO",
-			IT_RETENCION_SERVICIO:"IT RETENCION SERVICIO",
-			IUE_RETENCION_SERVICIO:"IUE RETENCION SERVICIO"
+			CUENTA_RETENCION_SERVICIO: "CUENTA RETENCION SERVICIO",
+			IT_RETENCION_SERVICIO: "IT RETENCION SERVICIO",
+			IUE_RETENCION_SERVICIO: "IUE RETENCION SERVICIO"
 		}
 	}])
 
@@ -1087,28 +1087,29 @@ angular.module('agil.servicios')
 					doc.text(venta.total.toFixed(2), 520, y);
 
 					doc.text("SON : " + venta.numero_literal, 55, y);
+				
+					
+						doc.text("CÓDIGO DE CONTROL : " + venta.codigo_control, 55, y + 30);
+						venta.fecha_limite_emision = new Date(venta.fecha_limite_emision);
+						doc.text("FECHA LÍMITE DE EMISIÓN: " + venta.fecha_limite_emision.getDate() + "/" + (venta.fecha_limite_emision.getMonth() + 1) + "/" + venta.fecha_limite_emision.getFullYear(), 55, y + 60);
 
+						if (completa || vacia) {
+							doc.rect(50, y - 15, 520, 30).stroke();
+							doc.rect(50, y + 25, 400, 20).stroke();
+							doc.rect(50, y + 55, 400, 20).stroke();
+						}
 
-					doc.text("CÓDIGO DE CONTROL : " + venta.codigo_control, 55, y + 30);
-					venta.fecha_limite_emision = new Date(venta.fecha_limite_emision);
-					doc.text("FECHA LÍMITE DE EMISIÓN: " + venta.fecha_limite_emision.getDate() + "/" + (venta.fecha_limite_emision.getMonth() + 1) + "/" + venta.fecha_limite_emision.getFullYear(), 55, y + 60);
-
-					if (completa || vacia) {
-						doc.rect(50, y - 15, 520, 30).stroke();
-						doc.rect(50, y + 25, 400, 20).stroke();
-						doc.rect(50, y + 55, 400, 20).stroke();
-					}
-
-					qr.canvas({
-						canvas: canvas,
-						value: usuario.empresa.nit + "|" + venta.factura + "|" + venta.autorizacion + "|" + venta.fechaTexto + "|" + venta.total.toFixed(2) + "|" + venta.total.toFixed(2) + "|" + venta.codigo_control + "|" + venta.cliente.nit + "|" + "0" + "|" + "0" + "|" + "0" + "|" + "0"
-					}, function () { });
-					var qrImage = canvas.toDataURL('image/png');
-					doc.image(qrImage, 470, y + 20, { width: 70, height: 70 });
-					if (completa || vacia) {
-						doc.text(venta.pieFactura !== undefined && venta.pieFactura !== null ? venta.pieFactura.nombre : "", 50, papel[1] - 60);
-						doc.text("\"ESTA FACTURA CONTRIBUYE AL DESARROLLO DEL PAIS. EL USO ILICITO DE ESTA SERA SANCIONADO DE ACUERDO A LEY\"", 50, papel[1] - 40);
-					}
+						qr.canvas({
+							canvas: canvas,
+							value: usuario.empresa.nit + "|" + venta.factura + "|" + venta.autorizacion + "|" + venta.fechaTexto + "|" + venta.total.toFixed(2) + "|" + venta.total.toFixed(2) + "|" + venta.codigo_control + "|" + venta.cliente.nit + "|" + "0" + "|" + "0" + "|" + "0" + "|" + "0"
+						}, function () { });
+						var qrImage = canvas.toDataURL('image/png');
+						doc.image(qrImage, 470, y + 20, { width: 70, height: 70 });
+						if (completa || vacia) {
+							doc.text(venta.pieFactura !== undefined && venta.pieFactura !== null ? venta.pieFactura.nombre : "", 50, papel[1] - 60);
+							doc.text("\"ESTA FACTURA CONTRIBUYE AL DESARROLLO DEL PAIS. EL USO ILICITO DE ESTA SERA SANCIONADO DE ACUERDO A LEY\"", 50, papel[1] - 40);
+						}
+				
 				}
 
 				doc.end();
@@ -1126,160 +1127,281 @@ angular.module('agil.servicios')
 
 	.factory('DibujarCabeceraFacturaNVCartaOficio', [function () {
 		var res = function (doc, vacia, completa, venta, papel, pagina, totalPaginas, usuario) {
-			if (vacia) {
-				if (usuario.empresa.imagen.length > 100) { doc.image(usuario.empresa.imagen, 60, 40, { fit: [65, 65] }); } //{ width: 50, height: 50 }
-				doc.font('Helvetica-Bold', 8);
-				doc.text(usuario.empresa.razon_social.toUpperCase(), 60, 105);
-				doc.font('Helvetica', 7);
-				doc.text(venta.sucursal.nombre.toUpperCase(), 60, 113);
-				var yDesc = (longitudCaracteres <= 45) ? 129 : ((longitudCaracteres > 45 && longitudCaracteres <= 90) ? 139 : 145);
-				doc.text(venta.sucursal.direccion.toUpperCase(), 60, 121);
-				var telefono = (venta.sucursal.telefono1 != null ? venta.sucursal.telefono1 : "") +
-					(venta.sucursal.telefono2 != null ? "-" + venta.sucursal.telefono2 : "") +
-					(venta.sucursal.telefono3 != null ? "-" + venta.sucursal.telefono3 : "");
-				doc.text("TELF.: " + telefono, 60, yDesc);
-				doc.text("COCHABAMBA - BOLIVIA", 60, yDesc+8);
-			}
-			doc.font('Helvetica-Bold', 16);
-			doc.text(venta.configuracion.tituloFactura.nombre.toUpperCase(), 250, 90);
-			doc.font('Helvetica-Bold', 8);
-			if(venta.configuracion.tituloFactura.nombre_corto=="TITFACT"){
-				doc.text("", 380, 95, { width: 200 });
-			}else{
-				doc.text(venta.actividad.nombre, 380, 95, { width: 200 });
-			}
-			
-			if (completa || vacia) {
-				doc.rect(380, 40, 190, 50).stroke();
-				doc.text("NIT : ", 390, 50);
-				if(venta.configuracion.tituloFactura.nombre_corto=="TITFACT"){
+			if (venta.usar_pf) {
+				if (vacia) {
+					if (usuario.empresa.imagen.length > 100) { doc.image(usuario.empresa.imagen, 60, 40, { fit: [65, 65] }); } //{ width: 50, height: 50 }
+					doc.font('Helvetica-Bold', 8);
+					doc.text(usuario.empresa.razon_social.toUpperCase(), 60, 105);
+					doc.font('Helvetica', 7);
+					doc.text(venta.sucursal.nombre.toUpperCase(), 60, 113);
+					var longitudCaracteres = venta.sucursal.direccion.length;
+					var yDesc = (longitudCaracteres <= 45) ? 129 : ((longitudCaracteres > 45 && longitudCaracteres <= 90) ? 139 : 145);
+					doc.text(venta.sucursal.direccion.toUpperCase(), 60, 121);
+					var telefono = (venta.sucursal.telefono1 != null ? venta.sucursal.telefono1 : "") +
+						(venta.sucursal.telefono2 != null ? "-" + venta.sucursal.telefono2 : "") +
+						(venta.sucursal.telefono3 != null ? "-" + venta.sucursal.telefono3 : "");
+					doc.text("TELF.: " + telefono, 60, yDesc);
+					doc.text("COCHABAMBA - BOLIVIA", 60, yDesc + 8);
+				}
+				doc.font('Helvetica-Bold', 16);
+				doc.text(venta.configuracion.tituloFactura.nombre.toUpperCase(), 250, 90);
+				if (completa || vacia) {
+					doc.rect(380, 40, 190, 50).stroke();
+					doc.text("NIT : ", 390, 50);
 					doc.text("Nota No : ", 390, 60);
-				}else{
+				}
+				doc.text(usuario.empresa.nit, 500, 50);
+				doc.text(venta.factura, 500, 60);
+				if (completa || vacia) {
+					doc.rect(50, 160, 520, 40).stroke();
+					doc.text("FECHA : ", 60, 165);
+					doc.text("SEÑOR(ES) : ", 60, 175);
+					doc.text("NIT : ", 360, 165);
+				}
+				doc.text(venta.fechaTexto, 120, 165);
+				doc.text(venta.cliente.razon_social, 120, 175);
+				doc.text(venta.cliente.nit, 400, 165);
+
+				if (completa || vacia) {
+					doc.rect(50, 200, 520, 25).stroke();
+					//doc.rect(50,225,520,papel[1]-175-225).stroke();
+					doc.text("CODIGO", 55, 210, { width: 70 });
+					doc.text("CANT.", 125, 210);
+					if (venta.detallesVenta[0].producto) {
+						doc.text("UNIDAD", 155, 210);
+					}
+					doc.text("DETALLE", 198, 210);
+
+					if (venta.con_vencimiento) {
+						doc.text("VENC.", 340, 210);
+						doc.text("LOTE", 380, 210);
+					}
+					if (venta.detallesVenta[0].producto) {
+						doc.text("P.UNIT.", 410, 210);
+					}
+					doc.text("IMP.", 450, 210);
+					if (venta.detallesVenta[0].producto) {
+						doc.text("DESC.", 490, 210);
+					}
+					doc.text("TOTAL", 530, 210);
+				}
+				doc.font('Helvetica', 7);
+
+				doc.text("PÁGINA " + pagina + " DE " + totalPaginas, 500, papel[1] - 60);
+
+			} else {
+				if (vacia) {
+					if (usuario.empresa.imagen.length > 100) { doc.image(usuario.empresa.imagen, 60, 40, { fit: [65, 65] }); } //{ width: 50, height: 50 }
+					doc.font('Helvetica-Bold', 8);
+					doc.text(usuario.empresa.razon_social.toUpperCase(), 60, 105);
+					doc.font('Helvetica', 7);
+					doc.text(venta.sucursal.nombre.toUpperCase(), 60, 113);
+					var longitudCaracteres = venta.sucursal.direccion.length;
+					var yDesc = (longitudCaracteres <= 45) ? 129 : ((longitudCaracteres > 45 && longitudCaracteres <= 90) ? 139 : 145);
+					doc.text(venta.sucursal.direccion.toUpperCase(), 60, 121);
+					var telefono = (venta.sucursal.telefono1 != null ? venta.sucursal.telefono1 : "") +
+						(venta.sucursal.telefono2 != null ? "-" + venta.sucursal.telefono2 : "") +
+						(venta.sucursal.telefono3 != null ? "-" + venta.sucursal.telefono3 : "");
+					doc.text("TELF.: " + telefono, 60, yDesc);
+					doc.text("COCHABAMBA - BOLIVIA", 60, yDesc + 8);
+				}
+				doc.font('Helvetica-Bold', 16);
+				doc.text(venta.configuracion.tituloFactura.nombre.toUpperCase(), 250, 90);
+				doc.font('Helvetica-Bold', 8);
+				doc.text(venta.actividad.nombre, 380, 95, { width: 200 });
+
+
+				if (completa || vacia) {
+					doc.rect(380, 40, 190, 50).stroke();
+					doc.text("NIT : ", 390, 50);
 					doc.text("FACTURA No : ", 390, 60);
+					doc.text("AUTORIZACIÓN No : ", 390, 70);
 				}
-				
-				doc.text("AUTORIZACIÓN No : ", 390, 70);
+				doc.text(usuario.empresa.nit, 500, 50);
+				doc.text(venta.factura, 500, 60);
+				doc.text(venta.autorizacion, 500, 70);
+
+				if (completa || vacia) {
+					doc.rect(50, 160, 520, 40).stroke();
+					doc.text("FECHA : ", 60, 165);
+					doc.text("SEÑOR(ES) : ", 60, 175);
+					doc.text("NIT : ", 360, 165);
+				}
+				doc.text(venta.fechaTexto, 120, 165);
+				doc.text(venta.cliente.razon_social, 120, 175);
+				doc.text(venta.cliente.nit, 400, 165);
+
+				if (completa || vacia) {
+					doc.rect(50, 200, 520, 25).stroke();
+					//doc.rect(50,225,520,papel[1]-175-225).stroke();
+					doc.text("CODIGO", 55, 210, { width: 70 });
+					doc.text("CANT.", 125, 210);
+					if (venta.detallesVenta[0].producto) {
+						doc.text("UNIDAD", 155, 210);
+					}
+					doc.text("DETALLE", 198, 210);
+
+					if (venta.con_vencimiento) {
+						doc.text("VENC.", 340, 210);
+						doc.text("LOTE", 380, 210);
+					}
+					if (venta.detallesVenta[0].producto) {
+						doc.text("P.UNIT.", 410, 210);
+					}
+					doc.text("IMP.", 450, 210);
+					if (venta.detallesVenta[0].producto) {
+						doc.text("DESC.", 490, 210);
+					}
+					doc.text("TOTAL", 530, 210);
+				}
+				doc.font('Helvetica', 7);
+
+				doc.text("PÁGINA " + pagina + " DE " + totalPaginas, 500, papel[1] - 60);
 			}
-			doc.text(usuario.empresa.nit, 500, 50);
-			doc.text(venta.factura, 500, 60);
-			doc.text(venta.autorizacion, 500, 70);
-
-			if (completa || vacia) {
-				doc.rect(50, 150, 520, 30).stroke();
-				doc.text("FECHA : ", 60, 165);
-				doc.text("SEÑOR(ES) : ", 60, 175);
-				doc.text("NIT : ", 360, 165);
-			}
-			doc.text(venta.fechaTexto, 120, 165);
-			doc.text(venta.cliente.razon_social, 120, 175);
-			doc.text(venta.cliente.nit, 400, 165);
-
-			if (completa || vacia) {
-				doc.rect(50, 200, 520, 25).stroke();
-				//doc.rect(50,225,520,papel[1]-175-225).stroke();
-				doc.text("CODIGO", 55, 210, { width: 70 });
-				doc.text("CANT.", 125, 210);
-				if (venta.detallesVenta[0].producto) {
-					doc.text("UNIDAD", 155, 210);
-				}
-				doc.text("DETALLE", 198, 210);
-
-				if (venta.con_vencimiento) {
-					doc.text("VENC.", 340, 210);
-					doc.text("LOTE", 380, 210);
-				}
-				if (venta.detallesVenta[0].producto) {
-					doc.text("P.UNIT.", 410, 210);
-				}
-				doc.text("IMP.", 450, 210);
-				if (venta.detallesVenta[0].producto) {
-					doc.text("DESC.", 490, 210);
-				}
-				doc.text("TOTAL", 530, 210);
-			}
-			doc.font('Helvetica', 7);
-
-			doc.text("PÁGINA " + pagina + " DE " + totalPaginas, 500, papel[1] - 60);
 		};
 		return res;
 	}])
 
 	.factory('DibujarCabeceraFacturaNVmedioOficio', ['VerificarDescuentos', function (VerificarDescuentos) {
 		var res = function (doc, vacia, completa, venta, papel, pagina, totalPaginas, usuario) {
-			if (vacia) {
-				if (usuario.empresa.imagen.length > 100) { doc.image(usuario.empresa.imagen, 60, 40, { fit: [65, 65] }); } //width: 50, height: 50
+			if (venta.usar_pf) {
+				if (vacia) {
+					if (usuario.empresa.imagen.length > 100) { doc.image(usuario.empresa.imagen, 60, 40, { fit: [65, 65] }); } //width: 50, height: 50
+					doc.font('Helvetica-Bold', 8);
+					doc.text(usuario.empresa.razon_social.toUpperCase(), 60, 105);
+					doc.font('Helvetica', 7);
+					doc.text(venta.sucursal.nombre.toUpperCase(), 60, 113);
+					var longitudCaracteres = venta.sucursal.direccion.length;
+					var yDesc = (longitudCaracteres <= 45) ? 129 : ((longitudCaracteres > 45 && longitudCaracteres <= 90) ? 139 : 145);
+					doc.text(venta.sucursal.direccion.toUpperCase(), 60, 121, { width: 200 });
+					var telefono = (venta.sucursal.telefono1 != null ? venta.sucursal.telefono1 : "") +
+						(venta.sucursal.telefono2 != null ? "-" + venta.sucursal.telefono2 : "") +
+						(venta.sucursal.telefono3 != null ? "-" + venta.sucursal.telefono3 : "");
+					doc.text("TELF.: " + telefono, 60, yDesc);
+					doc.text("COCHABAMBA - BOLIVIA", 60, yDesc + 8);
+				}
+				doc.font('Helvetica-Bold', 16);
+				doc.text(venta.configuracion.tituloFactura.nombre.toUpperCase(), 250, 100);
 				doc.font('Helvetica-Bold', 8);
-				doc.text(usuario.empresa.razon_social.toUpperCase(), 60, 105);
-				doc.font('Helvetica', 7);
-				doc.text(venta.sucursal.nombre.toUpperCase(), 60, 113);
-				var longitudCaracteres =venta.sucursal.direccion.length;
-				var yDesc = (longitudCaracteres <= 45) ? 129 : ((longitudCaracteres > 45 && longitudCaracteres <= 90) ? 139 : 145);
-				doc.text(venta.sucursal.direccion.toUpperCase(), 60, 121,{ width: 200 });
-				var telefono = (venta.sucursal.telefono1 != null ? venta.sucursal.telefono1 : "") +
-					(venta.sucursal.telefono2 != null ? "-" + venta.sucursal.telefono2 : "") +
-					(venta.sucursal.telefono3 != null ? "-" + venta.sucursal.telefono3 : "");
-				doc.text("TELF.: " + telefono, 60, yDesc);
-				doc.text("COCHABAMBA - BOLIVIA", 60, yDesc+8);
-			}
-			doc.font('Helvetica-Bold', 16);
-			doc.text(venta.configuracion.tituloFactura.nombre.toUpperCase(), 250, 100);
-			doc.font('Helvetica-Bold', 8);
-			if(venta.configuracion.tituloFactura.nombre_corto=="TITFACT"){
-				doc.text("", 380, 105, { width: 200 });
-			}else{
+
+
+				if (completa || vacia) {
+					doc.rect(380, 40, 190, 50).stroke();
+					doc.text("NIT : ", 390, 50);
+					doc.text("NOTA No : ", 390, 60);
+
+				}
+				doc.text(usuario.empresa.nit, 500, 50);
+				doc.text(venta.factura, 500, 60);
+				doc.text(venta.autorizacion, 500, 70);
+				if (completa || vacia) {
+					doc.rect(50, 160, 520, 40).stroke();
+					doc.text("FECHA : ", 60, 165);
+					doc.text("SEÑOR(ES) : ", 60, 175);
+					doc.text("NIT : ", 360, 165);
+				}
+				doc.text(venta.fechaTexto, 120, 165);
+				doc.text(venta.cliente.razon_social, 120, 175);
+				doc.text(venta.cliente.nit, 400, 165);
+				if (completa || vacia) {
+					doc.rect(50, 200, 520, 25).stroke();
+					//doc.rect(50,225,520,papel[1]-175-225).stroke();
+					var existenDescuentos = VerificarDescuentos(venta.detallesVenta);
+					if (existenDescuentos) {
+						doc.text("CODIGO", 55, 210);
+						doc.text("CANT.", 110, 210);
+						doc.text("DETALLE", 160, 210);
+						doc.text("P. UNIT.", 300, 210);
+						doc.text("IMPORTE", 335, 210);
+						if (venta.detallesVenta[0].producto) {
+							doc.text("UNID.", 140, 210);
+							doc.text("DESC.", 385, 210);
+							doc.text("REC.", 420, 210);
+							doc.text("ICE", 455, 210);
+							doc.text("EXC.", 490, 210);
+						}
+						doc.text("TOTAL", 520, 210);
+					} else {
+						doc.text("CODIGO", 55, 210);
+						doc.text("CANTIDAD", 110, 210);
+						if (venta.detallesVenta[0].producto) {
+							doc.text("UNIDAD", 165, 210);
+						}
+						doc.text("DETALLE", 220, 210);
+						doc.text("P.UNIT.", 450, 210);
+						doc.text("TOTAL", 520, 210);
+					}
+				}
+			} else {
+				if (vacia) {
+					if (usuario.empresa.imagen.length > 100) { doc.image(usuario.empresa.imagen, 60, 40, { fit: [65, 65] }); } //width: 50, height: 50
+					doc.font('Helvetica-Bold', 8);
+					doc.text(usuario.empresa.razon_social.toUpperCase(), 60, 105);
+					doc.font('Helvetica', 7);
+					doc.text(venta.sucursal.nombre.toUpperCase(), 60, 113);
+					var longitudCaracteres = venta.sucursal.direccion.length;
+					var yDesc = (longitudCaracteres <= 45) ? 129 : ((longitudCaracteres > 45 && longitudCaracteres <= 90) ? 139 : 145);
+					doc.text(venta.sucursal.direccion.toUpperCase(), 60, 121, { width: 200 });
+					var telefono = (venta.sucursal.telefono1 != null ? venta.sucursal.telefono1 : "") +
+						(venta.sucursal.telefono2 != null ? "-" + venta.sucursal.telefono2 : "") +
+						(venta.sucursal.telefono3 != null ? "-" + venta.sucursal.telefono3 : "");
+					doc.text("TELF.: " + telefono, 60, yDesc);
+					doc.text("COCHABAMBA - BOLIVIA", 60, yDesc + 8);
+				}
+				doc.font('Helvetica-Bold', 16);
+				doc.text(venta.configuracion.tituloFactura.nombre.toUpperCase(), 250, 100);
+				doc.font('Helvetica-Bold', 8);
 				doc.text(venta.actividad.nombre, 380, 105, { width: 200 });
-			}
-			if (completa || vacia) {
-				doc.rect(380, 40, 190, 50).stroke();
-				doc.text("NIT : ", 390, 50);
-				if(venta.configuracion.tituloFactura.nombre_corto=="TITFACT"){
-					doc.text("Nota No : ", 390, 60);
-				}else{
+
+				if (completa || vacia) {
+					doc.rect(380, 40, 190, 50).stroke();
+					doc.text("NIT : ", 390, 50);
 					doc.text("FACTURA No : ", 390, 60);
+					doc.text("AUTORIZACIÓN No : ", 390, 70);
 				}
-				doc.text("AUTORIZACIÓN No : ", 390, 70);
-			}
-			doc.text(usuario.empresa.nit, 500, 50);
-			doc.text(venta.factura, 500, 60);
-			doc.text(venta.autorizacion, 500, 70);
-			if (completa || vacia) {
-				doc.rect(50, 160, 520, 40).stroke();
-				doc.text("FECHA : ", 60, 165);
-				doc.text("SEÑOR(ES) : ", 60, 175);
-				doc.text("NIT : ", 360, 165);
-			}
-			doc.text(venta.fechaTexto, 120, 165);
-			doc.text(venta.cliente.razon_social, 120, 175);
-			doc.text(venta.cliente.nit, 400, 165);
-			if (completa || vacia) {
-				doc.rect(50, 200, 520, 25).stroke();
-				//doc.rect(50,225,520,papel[1]-175-225).stroke();
-				var existenDescuentos = VerificarDescuentos(venta.detallesVenta);
-				if (existenDescuentos) {
-					doc.text("CODIGO", 55, 210);
-					doc.text("CANT.", 110, 210);
-					doc.text("DETALLE", 160, 210);
-					doc.text("P. UNIT.", 300, 210);
-					doc.text("IMPORTE", 335, 210);
-					if (venta.detallesVenta[0].producto) {
-						doc.text("UNID.", 140, 210);
-						doc.text("DESC.", 385, 210);
-						doc.text("REC.", 420, 210);
-						doc.text("ICE", 455, 210);
-						doc.text("EXC.", 490, 210);
+				doc.text(usuario.empresa.nit, 500, 50);
+				doc.text(venta.factura, 500, 60);
+				doc.text(venta.autorizacion, 500, 70);
+				if (completa || vacia) {
+					doc.rect(50, 160, 520, 40).stroke();
+					doc.text("FECHA : ", 60, 165);
+					doc.text("SEÑOR(ES) : ", 60, 175);
+					doc.text("NIT : ", 360, 165);
+				}
+				doc.text(venta.fechaTexto, 120, 165);
+				doc.text(venta.cliente.razon_social, 120, 175);
+				doc.text(venta.cliente.nit, 400, 165);
+				if (completa || vacia) {
+					doc.rect(50, 200, 520, 25).stroke();
+					//doc.rect(50,225,520,papel[1]-175-225).stroke();
+					var existenDescuentos = VerificarDescuentos(venta.detallesVenta);
+					if (existenDescuentos) {
+						doc.text("CODIGO", 55, 210);
+						doc.text("CANT.", 110, 210);
+						doc.text("DETALLE", 160, 210);
+						doc.text("P. UNIT.", 300, 210);
+						doc.text("IMPORTE", 335, 210);
+						if (venta.detallesVenta[0].producto) {
+							doc.text("UNID.", 140, 210);
+							doc.text("DESC.", 385, 210);
+							doc.text("REC.", 420, 210);
+							doc.text("ICE", 455, 210);
+							doc.text("EXC.", 490, 210);
+						}
+						doc.text("TOTAL", 520, 210);
+					} else {
+						doc.text("CODIGO", 55, 210);
+						doc.text("CANTIDAD", 110, 210);
+						if (venta.detallesVenta[0].producto) {
+							doc.text("UNIDAD", 165, 210);
+						}
+						doc.text("DETALLE", 220, 210);
+						doc.text("P.UNIT.", 450, 210);
+						doc.text("TOTAL", 520, 210);
 					}
-					doc.text("TOTAL", 520, 210);
-				} else {
-					doc.text("CODIGO", 55, 210);
-					doc.text("CANTIDAD", 110, 210);
-					if (venta.detallesVenta[0].producto) {
-						doc.text("UNIDAD", 165, 210);
-					}
-					doc.text("DETALLE", 220, 210);
-					doc.text("P.UNIT.", 450, 210);
-					doc.text("TOTAL", 520, 210);
 				}
 			}
+
 		};
 		return res;
 	}])
