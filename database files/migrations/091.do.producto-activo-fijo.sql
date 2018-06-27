@@ -1,0 +1,1 @@
+ALTER TABLE agil_producto add activo_fijo tinyint(0);

@@ -112,6 +112,10 @@ module.exports=function(sequelize,Sequelize){
 			type: Sequelize.DECIMAL(20,4),
 			field: 'rango_negativo'
 			},
+			activo_fijo: {
+				type: Sequelize.BOOLEAN,
+				field: 'activo_fijo'
+				}
 	}, {
 	  freezeTableName: true 
 	});

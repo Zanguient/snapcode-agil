@@ -1,6 +1,6 @@
 module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Producto, Proveedor, Cliente, Clase, Inventario, ComisionVendedorProducto,
 	Usuario, DetalleVenta, DetalleMovimiento, Movimiento, Venta, Compra, DetalleCompra, Almacen, Sucursal, signs3, Tipo, ProductoBase, sequelize,
-	ContabilidadCuenta, UsuarioGrupos) {
+	ContabilidadCuenta, UsuarioGrupos, ActivosFijos, ActivosFijosValores) {
 
 	router.route('/productos')
 		.post(function (req, res) {
@@ -32,6 +32,7 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 				id_cuenta: (req.body.cuenta ? req.body.cuenta.id : null),
 				rango_positivo: req.body.rango_positivo,
 				rango_negativo: req.body.rango_negativo,
+				activo_fijo: req.body.activo_fijo
 			}).then(function (productoCreado) {
 				req.body.productosBase.forEach(function (productoBase, index, array) {
 					if (!productoBase.eliminado) {
@@ -44,6 +45,33 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 						});
 					}
 				});
+				if (req.body.activo_fijo) {
+					ActivosFijos.create({
+						id_usuario:  req.body.usuario,
+						id_empresa: req.body.id_empresa,
+						id_producto: productoCreado.dataValues.id,
+						fecha_ingreso: new Date(req.body.fecha_ingreso.split('/').reverse()),
+						revaluado: false,
+						eliminado: false
+					}).then(function (ACtivoCreado) {
+						ActivosFijosValores.create({
+							id_usuario: req.body.usuario,
+							id_activo: ACtivoCreado.dataValues.id,
+							mes: (new Date(req.body.fecha_ingreso.split('/').reverse()).getMonth()),
+							anio: (new Date(req.body.fecha_ingreso.split('/').reverse()).getFullYear()),
+							valor: req.body.valor_actualizado,
+							incremento_actualizacion: 0,
+							valor_actualizado: req.body.valor_actualizado,
+							depreciacion_acumulada: req.body.depreciacion_acumulada,
+							incremento_actualizacion_depreciacion_acumulada: 0,
+							depreciacion_acumulada_actualizada: req.body.depreciacion_acumulada,
+							depreciacion: (req.body.depreciacion_acumulada/10)/12,
+							total_depreciacion_acumulada: req.body.depreciacion_acumulada + ((req.body.depreciacion_acumulada/10)/12),
+							valor_neto: req.body.valor_actualizado - req.body.depreciacion_acumulada + ((req.body.depreciacion_acumulada/10)/12),
+							eliminado: false
+						});
+					})
+				}
 
 				Clase.find({
 					where: { nombre_corto: 'OAL' }
@@ -84,22 +112,23 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 		});
 	router.route('/productos/kardex/empresa/:id_empresa/almacen/:id_almacen/grupo/:grupo')
 		.get(function (req, res) {
-			
-			var condicion={id_empresa: req.params.id_empresa, codigo: { $not: null } }
-			if(req.params.grupo!=0){
-				condicion={id_grupo:req.params.grupo, id_empresa: req.params.id_empresa, codigo: { $not: null } }
+
+			var condicion = { id_empresa: req.params.id_empresa, codigo: { $not: null } }
+			if (req.params.grupo != 0) {
+				condicion = { id_grupo: req.params.grupo, id_empresa: req.params.id_empresa, codigo: { $not: null } }
 			}
 			Producto.findAll({
-				where:condicion ,
+				where: condicion,
 				include: [{ model: Empresa, as: 'empresa' },
 				{
 					model: DetalleMovimiento, as: "detallesMovimiento",
-					include: [{ model: Inventario, as: 'inventario'},
+					include: [{ model: Inventario, as: 'inventario' },
 					{
 						model: Movimiento, as: 'movimiento',
 						where: {
-							id_almacen: req.params.id_almacen},	
-						order:[["id","asc"]],					
+							id_almacen: req.params.id_almacen
+						},
+						order: [["id", "asc"]],
 						include: [{
 							model: Compra, as: 'compra',
 							include: [{ model: Proveedor, as: 'proveedor' }]
@@ -312,7 +341,8 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 													alerta: producto.alerta,
 													descuento: producto.descuento,
 													descuento_fijo: producto.descuento_fijo,
-													marca:producto.marca
+													marca: producto.marca,
+													activo_fijo: req.body.activo_fijo
 												}, {
 														where: {
 															id: productoEncontrado.id
@@ -340,7 +370,8 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 													descuento: producto.descuento,
 													descuento_fijo: producto.descuento_fijo,
 													id_tipo_producto: clase.id,
-													marca:producto.marca
+													marca: producto.marca,
+													activo_fijo: producto.activo_fijo
 												}, { transaction: t });
 											}
 										})
@@ -394,6 +425,7 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 				id_cuenta: (req.body.cuenta ? req.body.cuenta.id : null),
 				rango_positivo: req.body.rango_positivo,
 				rango_negativo: req.body.rango_negativo,
+				activo_fijo: req.body.activo_fijo
 			}, {
 					where: {
 						id: req.params.id_producto
@@ -562,7 +594,7 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 					return grupo.id_grupo
 				})
 				Producto.findAll({
-					where: { id_empresa: req.params.id_empresa, publicar_panel: true, id_grupo: { $in: gruposUsuario } },
+					where: { id_empresa: req.params.id_empresa, publicar_panel: true, id_grupo: { $in: gruposUsuario }, activo_fijo: false },
 					include: [
 						{ model: Inventario, as: 'inventarios', required: false, where: { id_almacen: req.params.id_almacen, cantidad: { $gte: 0 } } },
 						{ model: Clase, as: 'tipoProducto' },
@@ -691,7 +723,7 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 	function crearComisionesProductoVendedor(req, res, gruposProductos) {
 		Producto.findAll({
 			where: {
-				id_empresa: req.params.id_empresa, id_grupo: { $in: gruposProductos }
+				id_empresa: req.params.id_empresa, id_grupo: { $in: gruposProductos }, activo_fijo: false
 			}
 		}).then(function (productos) {
 			productos.forEach(function (producto, index, array) {
@@ -711,7 +743,7 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 	function crearComisionesVendedor(req, res, ids) {
 		Producto.findAll({
 			where: {
-				id: { $in: ids }
+				id: { $in: ids }, activo_fijo: false
 			}
 		}).then(function (productos) {
 			productos.forEach(function (producto, index, array) {
@@ -738,7 +770,7 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 				Inventario.findAll({
 					where: { fecha_vencimiento: { $not: null }, cantidad: { $gt: 0 } },
 					include: [{
-						model: Producto, as: 'producto', where: { id_empresa: req.params.id_empresa },
+						model: Producto, as: 'producto', where: { id_empresa: req.params.id_empresa, activo_fijo: false },
 						include: [{ model: Clase, as: 'tipoProducto' }]
 					},
 					{
@@ -809,8 +841,8 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 			}
 		});
 
-		//buscar por subgrupo de productos, paginador Asignacion de producos proveedor (Pedidos).
-		router.route('/productos/asignacion/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion/subgrupo/:id_subgrupo/user/:id_user')
+	//buscar por subgrupo de productos, paginador Asignacion de producos proveedor (Pedidos).
+	router.route('/productos/asignacion/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion/subgrupo/:id_subgrupo/user/:id_user')
 		.get(function (req, res) {
 			var gruposProductos = ''
 			UsuarioGrupos.findAll({
@@ -873,8 +905,8 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 			})
 		});
 
-		// Paginador productos asignados proveedor (Pedidos)
-		router.route('/productos/asignados/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion/subgrupo/:id_subgrupo/user/:id_user/:ids')
+	// Paginador productos asignados proveedor (Pedidos)
+	router.route('/productos/asignados/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion/subgrupo/:id_subgrupo/user/:id_user/:ids')
 		.get(function (req, res) {
 			var gruposProductos = ''
 			UsuarioGrupos.findAll({
@@ -890,7 +922,7 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 							gruposProductos += grupo.id_grupo + ','
 						}
 					})
-					var condicionProducto = "producto.id in ("+ req.params.ids +") and empresa=" + req.params.id_empresa, paginas, limit;
+					var condicionProducto = "producto.id in (" + req.params.ids + ") and empresa=" + req.params.id_empresa, paginas, limit;
 					if (req.params.texto_busqueda != 0) {
 						condicionProducto = condicionProducto + " and (\
 					codigo LIKE '%"+ req.params.texto_busqueda + "%' or \

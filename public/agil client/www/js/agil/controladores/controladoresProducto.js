@@ -1,6 +1,6 @@
 angular.module('agil.controladores')
 
-	.controller('ControladorProductos', function ($scope, $filter, $window, $localStorage, $location, $templateCache,
+	.controller('ControladorProductos', function ($scope, $timeout, $filter, $window, $localStorage, $location, $templateCache,
 		$route, blockUI, Producto, Productos, ProductosPaginador, ProductosEmpresa,
 		ClasesTipo, Clases, ProductoKardex, ProductosEmpresaCreacion, DatoCodigoSiguienteProductoEmpresa, ListaProductosEmpresa,
 		Paginator, ListaCuentasComprobanteContabilidad, DatosProducto, CatalogoProductos,
@@ -155,6 +155,15 @@ z
 			promesa.then(function (subgrupos) {
 				$scope.subgruposProducto = subgrupos;
 			});
+		}
+
+		$scope.activoFijoAplicarDatePicker = function () {
+			if ($scope.producto.activo_fijo) {
+				$timeout(function () {
+					aplicarDatePickers();
+				}, 400);
+				
+			}
 		}
 
 		$scope.$on('$viewContentLoaded', function () {
@@ -570,6 +579,7 @@ z
 		$scope.guardarProducto = function (producto, recargarItemsTabla) {
 			blockUI.start();
 			var imagenProducto = producto.imagen;
+			producto.usuario = $scope.usuario.id
 			if (producto.id) {
 				Producto.update({ idProducto: producto.id }, producto, function (res) {
 					if (res.signedRequest == null) {
