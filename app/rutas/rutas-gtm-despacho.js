@@ -1101,11 +1101,11 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, forEach, j
 			}
 			var condicionCliente = {}
 			var condicionEmpleado = {}
-			var condicionDespacho = { id_empresa: req.params.id_empresa, id_usuario: rep.params.id_usuario}
+			var condicionDespacho = { id_empresa: req.params.id_empresa, id_usuario: req.params.id_usuario}
 			if (req.params.inicio != 0 && req.params.fin != 0) {
 				var inicio = new Date(req.params.inicio); inicio.setHours(0, 0, 0, 0, 0);
 				var fin = new Date(req.params.fin); fin.setHours(23, 59, 59, 0, 0);
-				condicionDespacho = { id_empresa: req.params.id_empresa, fecha: { $between: [inicio, fin] } };
+				condicionDespacho = { id_empresa: req.params.id_empresa, id_usuario: req.params.id_usuario, fecha: { $between: [inicio, fin] } };
 			}
 			if (req.params.empleado != 0) {
 				condicionEmpleado = {

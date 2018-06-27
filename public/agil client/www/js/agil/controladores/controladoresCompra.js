@@ -17,6 +17,7 @@ angular.module('agil.controladores')
 		$scope.idModalPedidos = 'dialog-pedidos'
 		$scope.idModalDetallePedidos = 'dialog-detalle-pedidos'
 		$scope.idModalEliminarPedido = 'dialog-eliminar-pedido'
+		$scope.idModalEliminarProductoPedido ='dialog-eliminar-producto-pedido'
 		$scope.url = restServer + '/proveedores/empresa/' + $scope.usuario.id_empresa + '/texto/';
 
 		$scope.inicio = function () {
@@ -663,7 +664,7 @@ angular.module('agil.controladores')
 			resaltarPestaña($location.path().substring(1));
 			ejecutarScriptsCompra($scope.idModalWizardCompraEdicion, $scope.idModalWizardCompraVista,
 				$scope.idModalEliminarCompra, $scope.idModalContenedorCompraEdicion,
-				$scope.idModalContenedorCompraVista, $scope.idInputCompletar, $scope.url, $scope.idModalPago, $scope.idModalServicios, $scope.idModalPedidos, $scope.idModalDetallePedidos, $scope.idModalEliminarPedido);
+				$scope.idModalContenedorCompraVista, $scope.idInputCompletar, $scope.url, $scope.idModalPago, $scope.idModalServicios, $scope.idModalPedidos, $scope.idModalDetallePedidos, $scope.idModalEliminarPedido,$scope.idModalEliminarProductoPedido);
 			$scope.buscarAplicacion($scope.usuario.aplicacionesUsuario, $location.path().substring(1));
 			$('#formularioCompra').ketchup({
 				validateEvents: 'blur focus keyup change submit'
@@ -796,6 +797,14 @@ angular.module('agil.controladores')
 			$scope.pedido = pedido
 			$scope.abrirPopup($scope.idModalEliminarPedido);
 		}
+		$scope.cerrarDialogEliminarDetallePedido = function () {
+			$scope.cerrarPopup($scope.idModalEliminarProductoPedido);
+		}
+		$scope.abrirDialogEliminarDetallePedido = function (detalle) {
+			$scope.detalle = detalle
+			$scope.abrirPopup($scope.idModalEliminarProductoPedido);
+		}
+	
 		$scope.obtenerPedidosEmpresa = function () {
 			var promesa = ListaCompraPedidosEmpresa($scope.usuario.id_empresa)
 			promesa.then(function (dato) {
@@ -1352,6 +1361,7 @@ angular.module('agil.controladores')
 			var promesa = EliminarDetallePedidoEmpresa(detalle.id)
 			promesa.then(function (dato) {
 				$scope.mostrarMensaje(dato.mensaje)
+				$scope.cerrarDialogEliminarDetallePedido()
 			})
 		}
 		$scope.$on('$routeChangeStart', function (next, current) {
@@ -1363,6 +1373,7 @@ angular.module('agil.controladores')
 			$scope.eliminarPopup($scope.idModalPedidos);
 			$scope.eliminarPopup($scope.idModalDetallePedidos);
 			$scope.eliminarPopup($scope.idModalEliminarPedido);
+			$scope.eliminarPopup($scope.idModalEliminarProductoPedido);
 		});
 
 		$scope.inicio();

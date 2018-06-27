@@ -1962,6 +1962,13 @@
 		<button type="button" class="btn btn-danger" ng-click="EliminarPedido(pedido)">Si</button>
 		<button type="button" class="btn btn-success" ng-click="cerrarDialogEliminarPedido()">No</button>
 	</div>
+	<div id="dialog-eliminar-producto-pedido" title="¿Eliminación de pedido?">
+		<p>
+			<span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>¿Esta seguro de eliminar el producto seleccionado?
+		</p>
+		<button type="button" class="btn btn-danger" ng-click="EliminarPedidoDetalle(detalle)">Si</button>
+		<button type="button" class="btn btn-success" ng-click="cerrarDialogEliminarPedido()">No</button>
+	</div>
 <!-- === modal detalle pedidos"==== -->
 <div id="dialog-detalle-pedidos" class="modal" t item-width="500">
 	<div class="modal-header bg-primary">
@@ -2092,7 +2099,7 @@
 
 
 
-										<button type="button" ng-click="EliminarPedidoDetalle(detalle)" class="btn btn-danger btn-sm">
+										<button type="button" ng-click="abrirDialogEliminarDetallePedido(detalle)" class="btn btn-danger btn-sm">
 											<i class="ace-icon fa fa-trash-o bigger-110"></i>
 										</button>
 									</td>

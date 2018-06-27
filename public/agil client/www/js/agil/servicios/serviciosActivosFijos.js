@@ -47,9 +47,9 @@ angular.module('agil.servicios')
 }])
 
 .factory('ObtenerConfiguracionActivosFijos', ['ConfiguracionActivos', '$q', function (ConfiguracionActivos, $q) {
-    var res = function (idEmpresa, usuario, configuracion) {
+    var res = function (idEmpresa, usuario) {
         var delay = $q.defer();
-        ConfiguracionActivos.get({ id_empresa: idEmpresa, id_usuario: 0}, configuracion, function (entidades) {
+        ConfiguracionActivos.get({ id_empresa: idEmpresa, id_usuario: usuario}, function (entidades) {
             delay.resolve(entidades);
         }, function (error) {
             delay.reject(error);

@@ -16,18 +16,43 @@ angular.module('agil.controladores')
             $scope.eliminarPopup($scope.idModalconfiguracionActivos);
         });
 
+        // $scope.mesesVidaUtil = Array.apply(null, new Array(12)).map(function (_, i) {
+        //     return { id: i + 1 }
+        // })
+
+        $scope.factorConfiguracion = Array.apply(null, new Array(20)).map(function (_, i) {
+            return { id: (i + 1) * 5 }
+        })
+
         $scope.abrirConfiguracionActivos = function () {
             $scope.abrirPopup($scope.idModalconfiguracionActivos);
         }
+
         $scope.cerrarConfiguracionActivos = function () {
             $scope.cerrarPopup($scope.idModalconfiguracionActivos);
         }
 
         $scope.inicio = function () {
             $scope.obtenerSubGruposProductosEmpresaUsuario();
+            $scope.obtenerConfiguracionActivos()
             $scope.listaEstados = [
                 { id: 1, nombre: 'Activo' },
                 { id: 2, nombre: 'Inactivo' }];
+        }
+
+        $scope.agregarDetalleConfiguracion = function (detalle) {
+            if (!$scope.configuracionActivosFijos.some(function (det) {
+                return det.subgrupo.id === detalle.subgrupo.id
+            })) {
+                var detalleConfiguracion = {
+                    subgrupo: detalle.subgrupo,
+                    vida_util: detalle.vida_util.id,
+                    factor: detalle.factor.id
+                }
+                $scope.configuracionActivosFijos.push(detalleConfiguracion)
+            } else {
+                $scope.mostrarMensaje('Ya existe en la lista de configuración.')
+            }
         }
 
         $scope.obtenerColumnasAplicacion = function () {
@@ -83,13 +108,13 @@ angular.module('agil.controladores')
 
         $scope.obtenerConfiguracionActivos = function () {
             blockUI.start()
-            var prom = ObtenerConfiguracionActivosFijos($scope.usuarioSesion.id_empresa)
+            var prom = ObtenerConfiguracionActivosFijos($scope.usuarioSesion.id_empresa, $scope.usuarioSesion.id)
             prom.then(function (res) {
                 if (res.hasErr) {
+                    $scope.configuracionActivosFijos = []
                     $scope.mostrarMensaje(res.mensaje)
                 } else {
                     $scope.configuracionActivosFijos = res.configuracion
-                    $scope.abrirConfiguracionActivos()
                 }
                 blockUI.stop()
             }).catch(function (err) {
@@ -112,10 +137,9 @@ angular.module('agil.controladores')
             var prom = ActivosFijosEmpresa($scope.usuarioSesion.id_empresa, $scope.usuarioSesion.id)
             prom.then(function (res) {
                 if (res.hasErr) {
-                    $scope.mostrarMensaje(res.mensaje)
+                    $scope.mostrarMensaje(res.mensaje);
                 } else {
-                    $scope.activosFijos = res.configuracion
-                    $scope.abrirConfiguracionActivos()
+                    $scope.activosFijos = res.configuracion;
                 }
                 blockUI.stop()
             }).catch(function (err) {
@@ -125,22 +149,27 @@ angular.module('agil.controladores')
             })
         }
 
-        $scope.guardarConfigucacionActivos = function () {
+        $scope.guardarConfiguracionActivos = function () {
             blockUI.start()
-            var prom = ObtenerConfiguracionActivosFijos($scope.usuarioSesion.id_empresa)
-            prom.then(function (res) {
-                if (res.hasErr) {
-                    $scope.mostrarMensaje(res.mensaje)
-                } else {
-                    $scope.activosFijos = res.configuracion
-                    $scope.abrirConfiguracionActivos()
-                }
-                blockUI.stop()
-            }).catch(function (err) {
-                blockUI.stop();
-                var memo = (err.stack !== undefined && err.stack !== null && err.stack !== "") ? err.stack : (err.data !== null && err.data !== undefined & err.data !== "") ? err.data : "Error: se perdio la conexión con el servidor.";
-                $scope.mostrarMensaje(memo);
-            })
+            if ($scope.configuracionActivosFijos.length > 0) {
+                var prom = GuardarConfiguracionActivosFijos($scope.usuarioSesion.id_empresa, $scope.usuarioSesion.id, $scope.configuracionActivosFijos)
+                prom.then(function (res) {
+                    if (res.hasErr) {
+                        $scope.mostrarMensaje(res.mensaje)
+                    } else {
+                        $scope.mostrarMensaje(res.mensaje)
+                        $scope.cerrarConfiguracionActivos()
+                    }
+                    blockUI.stop()
+                }).catch(function (err) {
+                    blockUI.stop();
+                    var memo = (err.stack !== undefined && err.stack !== null && err.stack !== "") ? err.stack : (err.data !== null && err.data !== undefined & err.data !== "") ? err.data : "Error: se perdio la conexión con el servidor.";
+                    $scope.mostrarMensaje(memo);
+                })
+            } else {
+                $scope.mostrarMensaje('No hay cambios para guardar.')
+            }
+
         };
         $scope.inicio();
     });

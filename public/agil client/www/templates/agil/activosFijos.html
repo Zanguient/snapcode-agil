@@ -266,26 +266,35 @@
                                 <tbody>
                                     <tr>
                                         <td>
-                                            <select class="form-control" style="width:150px;" ng-change="filtrarProductosSeleccionadosPorGrupo()" id="selectGruposProductos"
-                                                name="selectGruposProductos" ng-model="configuracion.grupo" ng-options="grupo.id as grupo.nombre for grupo in subGruposProducto track by grupo.id"
+                                            &nbsp; &nbsp;
+                                            <select class="form-control form-inline" style="width:150px;" ng-change="filtrarProductosSeleccionadosPorGrupo()" id="selectGruposProductos"
+                                                name="selectGruposProductos" ng-model="configuracion.subgrupo" ng-options="subgrupo as subgrupo.nombre for subgrupo in subGruposProducto track by subgrupo.id"
                                                 data-placeholder="Click para escoger">
                                                 <option value="" selected>Todos</option>
                                             </select>
+                                            &nbsp; &nbsp;
                                         </td>
                                         <td>
-                                            <select class="form-control" ng-options="mes as mes.nombre for mes in mesesFiltro track by mes.id" ng-model="configuracion.mes">
-                                                <option value="" selected>TODOS</option>
+                                            &nbsp; &nbsp;
+                                            <input type="text" class="form-control form-inline" ng-model="configuracion.vida_util" placeholder="Vida util en meses." step="1" min="1">
+                                            <!-- <select class="form-control form-inline" ng-options="vida.id for vida in mesesVidaUtil track by vida.id" ng-model="configuracion.vida_util">
+                                                <option value="" selected>--Vida util (Meses)--</option>
+                                            </select> -->
+                                            &nbsp; &nbsp;
+                                        </td>
+                                        <td>
+                                            &nbsp; &nbsp;
+                                            <select class="form-control form-inline" ng-options="factor.id for factor in factorConfiguracion track by factor.id" ng-model="configuracion.factor">
+                                                <option value="" selected>--Factor %--</option>
                                             </select>
+                                            &nbsp; &nbsp;
                                         </td>
                                         <td>
-                                            <select class="form-control" ng-options="mes as mes.nombre for mes in mesesFiltro track by mes.id" ng-model="configuracion.mes">
-                                                <option value="" selected>TODOS</option>
-                                            </select>
-                                        </td>
-                                        <td>
-                                            <button class=" btn btn-primary btn-xs" ng-click="mostrarMensaje('Sin funcionalidad.')">
+                                            &nbsp; &nbsp;
+                                            <button type="button" class=" btn btn-primary btn-xs" ng-click="agregarDetalleConfiguracion(configuracion)">
                                                 <i class="fa fa-plus bigger-120"></i>
                                             </button>
+                                            &nbsp; &nbsp;
                                         </td>
                                     </tr>
                                 </tbody>
@@ -303,7 +312,7 @@
                                 </thead>
                                 <tbody>
                                     <tr ng-repeat="configuracion in configuracionActivosFijos">
-                                        <td>{{configuracion.activo}}</td>
+                                        <td>{{configuracion.subgrupo.nombre}}</td>
                                         <td>{{configuracion.vida_util}}</td>
                                         <td>{{configuracion.factor}}</td>
                                         <td>
@@ -319,7 +328,7 @@
                 </div>
                 <div class="modal-footer wizard-actions">
                     <button type="submit" class="btn btn-success">GUARDAR</button>
-                    <button type="button" ng-click="cerrarModalConfiguracionActivos()" class="btn btn-danger pull-left">SALIR</button>
+                    <button type="button" ng-click="cerrarConfiguracionActivos()" class="btn btn-danger pull-left">SALIR</button>
                 </div>
             </form>
         </div>

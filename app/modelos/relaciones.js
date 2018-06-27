@@ -1045,6 +1045,7 @@ module.exports = function (sequelize, Usuario, Persona, Rol, UsuarioRol, Tipo, C
 	ActivosFijos.belongsTo(Producto, {foreignKey: 'id_producto', as: 'activo'})
 	ActivosFijos.hasMany(ActivosFijosValores, {foreignKey: 'id_activo', as:'valores'})
 	ActivosFijosValores.belongsTo(ActivosFijos, {foreignKey: 'id_activo', as: 'valoracion'})
-	//ActivosFijosConfiguracion -
+	Clase.hasOne(ActivosFijosConfiguracion, {foreignKey: 'id_subgrupo', as: 'subgrupo'})
+	ActivosFijosConfiguracion.belongsTo(Clase, {foreignKey: 'id_subgrupo', as: 'subgrupo'})
 }
 

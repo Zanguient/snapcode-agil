@@ -99,7 +99,6 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, forEach, j
                                                             id_empresa: req.params.id_empresa
                                                         }
                                                     }).then(function (transaccionEncontrada) {
-                                                        var continuar = true
                                                         if (transaccionEncontrada) {
                                                             if (!req.body.venta.es_proforma) {
                                                                 return Venta.find({
@@ -459,7 +458,7 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, forEach, j
                     }
                     
                 } else {
-                    throw new Error('Se produjo un error y no se puede asegurar los datos, los cambios fueron revertidos.');
+                    throw new Error('Se produjo un error y no se puede asegurar los datos, los cambios fueron no revertidos.');
                 }
             }).catch(function (err) {
                 res.json({ mensaje: (err.stack !== undefined) ? err.stack : err, hasErr: true })
@@ -732,7 +731,7 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, forEach, j
                 if (transaccionCreada !== undefined) {
                     res.json({ mensaje: 'Transacción completada.' })
                 } else {
-                    throw new Error('Se produjo un error y no se puede asegurar los datos, los cambios fueron revertidos.');
+                    throw new Error('Se produjo un error y no se puede asegurar los datos, los cambios no fueron revertidos.');
                 }
             }).catch(function (err) {
                 res.json({ mensaje: (err.stack !== undefined) ? err.stack : err, hasErr: true })
