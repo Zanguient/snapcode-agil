@@ -8,12 +8,12 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 				where: {
 					eliminado: false,
 					id_empresa: req.params.id_empresa,
-					recibido:false,
+					recibido: false,
 					id_compra: null
 				}, include: [{ model: Proveedor, as: 'proveedor' }, { model: Almacen, as: 'almacen' }, { model: Sucursal, as: 'sucursal' }, {
 					model: DetallesPedido, as: 'detallesPedido', include: [{
 						model: Producto, as: 'producto', nclude: [
-							{ model: Clase, as: 'tipoProducto' },						
+							{ model: Clase, as: 'tipoProducto' },
 						]
 					}]
 				}]
@@ -773,7 +773,7 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 								if (index == (array.length - 1)) {
 									Pedido.update({
 										recibido: true,
-										id_compra:compra.id
+										id_compra: compra.id
 									}, {
 											where: { id: compra.pedido.id }
 										}).then(function (productoEntregado) {
@@ -1483,28 +1483,34 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 
 	function calcularCostosEgresos(detalleVenta, producto, cantidad, inventarios, movimientoCreado, index, array, res, venta, t) {
 		var cantidadTotal = cantidad;
-		if (producto.activar_inventario) {
-			if (inventarios.length > 0) {
-				var promises = [];
+		if (inventarios.length == 0) {
+			return Inventario.findAll({
+				where: { id_producto: producto.id }, transaccion: t
+			}).then(function (encontrado) {
+				inventarios = encontrado
 
-				for (var i = 0; i < inventarios.length; i++) {
-					if (cantidadTotal > 0) {
-						var cantidadParcial;
-						if (cantidadTotal > inventarios[i].cantidad) {
-							cantidadParcial = inventarios[i].cantidad;
-							cantidadTotal = cantidadTotal - inventarios[i].cantidad
-						} else {
-							cantidadParcial = cantidadTotal;
-							cantidadTotal = 0;
-						}
+				if (producto.activar_inventario) {
+					if (inventarios.length > 0) {
+						var promises = [];
 
-						if (cantidadParcial > 0) {
-							var rrr = crearMovimientoEgresoYActualizarInventario(movimientoCreado, detalleVenta, producto, cantidad, inventarios, cantidadParcial, inventarios[i], index, array, i, res, venta, t);
-							//console.log(rrr);
-							promises.push(new Promise(function (fulfill, reject) {
-								fulfill(venta);
-							}));
-						} /*else {
+						for (var i = 0; i < inventarios.length; i++) {
+							if (cantidadTotal > 0) {
+								var cantidadParcial;
+								if (cantidadTotal > inventarios[i].cantidad) {
+									cantidadParcial = inventarios[i].cantidad;
+									cantidadTotal = cantidadTotal - inventarios[i].cantidad
+								} else {
+									cantidadParcial = cantidadTotal;
+									cantidadTotal = 0;
+								}
+
+								if (cantidadParcial > 0) {
+									var rrr = crearMovimientoEgresoYActualizarInventario(movimientoCreado, detalleVenta, producto, cantidad, inventarios, cantidadParcial, inventarios[i], index, array, i, res, venta, t);
+									//console.log(rrr);
+									promises.push(new Promise(function (fulfill, reject) {
+										fulfill(venta);
+									}));
+								} /*else {
 							//if (index == (array.length - 1) && i == (inventarios.length - 1)) {
 								//res.json(venta);
 								promises.push(new Promise(function (fulfill, reject){
@@ -1512,16 +1518,78 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 								}));
 							//}
 						}*/
+							} else {
+								//if (index == (array.length - 1) && i == (inventarios.length - 1)) {
+								//res.json(venta);
+								/*promises.push(new Promise(function (fulfill, reject){
+									fulfill(venta);
+								}));*/
+								//}
+							}
+						}
+						return Promise.all(promises);
 					} else {
-						//if (index == (array.length - 1) && i == (inventarios.length - 1)) {
-						//res.json(venta);
-						/*promises.push(new Promise(function (fulfill, reject){
+						//if (index == (array.length - 1)) {
+						return new Promise(function (fulfill, reject) {
 							fulfill(venta);
-						}));*/
+						});
 						//}
 					}
+				} else {
+					//if (index == (array.length - 1)) {
+					return new Promise(function (fulfill, reject) {
+						fulfill(venta);
+					});
+					//}
 				}
-				return Promise.all(promises);
+			})
+		} else {
+			if (producto.activar_inventario) {
+				if (inventarios.length > 0) {
+					var promises = [];
+
+					for (var i = 0; i < inventarios.length; i++) {
+						if (cantidadTotal > 0) {
+							var cantidadParcial;
+							if (cantidadTotal > inventarios[i].cantidad) {
+								cantidadParcial = inventarios[i].cantidad;
+								cantidadTotal = cantidadTotal - inventarios[i].cantidad
+							} else {
+								cantidadParcial = cantidadTotal;
+								cantidadTotal = 0;
+							}
+
+							if (cantidadParcial > 0) {
+								var rrr = crearMovimientoEgresoYActualizarInventario(movimientoCreado, detalleVenta, producto, cantidad, inventarios, cantidadParcial, inventarios[i], index, array, i, res, venta, t);
+								//console.log(rrr);
+								promises.push(new Promise(function (fulfill, reject) {
+									fulfill(venta);
+								}));
+							} /*else {
+						//if (index == (array.length - 1) && i == (inventarios.length - 1)) {
+							//res.json(venta);
+							promises.push(new Promise(function (fulfill, reject){
+								fulfill(venta);
+							}));
+						//}
+					}*/
+						} else {
+							//if (index == (array.length - 1) && i == (inventarios.length - 1)) {
+							//res.json(venta);
+							/*promises.push(new Promise(function (fulfill, reject){
+								fulfill(venta);
+							}));*/
+							//}
+						}
+					}
+					return Promise.all(promises);
+				} else {
+					//if (index == (array.length - 1)) {
+					return new Promise(function (fulfill, reject) {
+						fulfill(venta);
+					});
+					//}
+				}
 			} else {
 				//if (index == (array.length - 1)) {
 				return new Promise(function (fulfill, reject) {
@@ -1529,12 +1597,6 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 				});
 				//}
 			}
-		} else {
-			//if (index == (array.length - 1)) {
-			return new Promise(function (fulfill, reject) {
-				fulfill(venta);
-			});
-			//}
 		}
 	}
 

@@ -770,7 +770,7 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 				Inventario.findAll({
 					where: { fecha_vencimiento: { $not: null }, cantidad: { $gt: 0 } },
 					include: [{
-						model: Producto, as: 'producto', where: { id_empresa: req.params.id_empresa, activo_fijo: false },
+						model: Producto, as: 'producto', where: { id_empresa: req.params.id_empresa },
 						include: [{ model: Clase, as: 'tipoProducto' }]
 					},
 					{
