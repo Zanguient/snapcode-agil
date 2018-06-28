@@ -15,7 +15,7 @@ module.exports = function (router, sequelize, Sequelize, Compra, Proveedor, Alma
 					where: {
 						fecha: { $between: [primerDia, ultimoDia] }
 					},
-					include: [{ model: Proveedor, as: 'proveedor' },{ model: Movimiento, as: 'movimiento', include: [{ model: Clase, as: 'clase'}]},
+					include: [{ model: Proveedor, as: 'proveedor' }, { model: Movimiento, as: 'movimiento', include: [{ model: Clase, as: 'clase' }] },
 					{
 						model: Almacen, as: 'almacen',
 						include: [{ model: Sucursal, as: 'sucursal', where: { id_empresa: req.params.id_empresa } }]
@@ -198,7 +198,7 @@ module.exports = function (router, sequelize, Sequelize, Compra, Proveedor, Alma
 							where "+ condicionProducto + "\
 			                GROUP BY i.id  order by p.codigo")
 					.then(function (inventario) {
-						res.json({ inventario: inventario[0]});
+						res.json({ inventario: inventario[0] });
 					});
 			})
 		});
@@ -259,21 +259,39 @@ module.exports = function (router, sequelize, Sequelize, Compra, Proveedor, Alma
 				}
 			}).then(function (empresa) {
 				DetalleCompra.findAll({
-					include: [{ model: Inventario, as: 'inventario',required:false },{ model: Clase, as: 'servicio',required:false },
-					{ model: Producto, as: 'producto',required:false, include: [{ model: Clase, as: 'grupo',required:false }] },
+					include: [{ model: Inventario, as: 'inventario' },
+					{ model: Producto, as: 'producto', include: [{ model: Clase, as: 'grupo' }] },
 					{
 						model: Compra, as: 'compra', where: { fecha: { $between: [inicio, fin] } },
-						include: [{ model: Proveedor, as: 'proveedor',required:false },
+						include: [{ model: Proveedor, as: 'proveedor' },
 						{
-							model: Almacen, as: 'almacen',required:false,
-							include: [{ model: Sucursal, as: 'sucursal', where: condicionCompra,required:false }]
+							model: Almacen, as: 'almacen',
+							include: [{ model: Sucursal, as: 'sucursal', where: condicionCompra }]
 						}]
 					},
-					{ model: Clase, as: 'centroCosto'/*,where:{nombre_corto:'ALM'}*/ ,required:false}],
-					order: [[{ model: Compra, as: 'compra',required:false }, 'fecha', 'ASC']]
+					{ model: Clase, as: 'centroCosto'/*,where:{nombre_corto:'ALM'}*/ }],
+					order: [[{ model: Compra, as: 'compra' }, 'fecha', 'ASC']]
 				}).then(function (detallesCompra) {
-					res.json({ detallesCompra: detallesCompra, empresa: empresa });
+					DetalleCompra.findAll({
+						include: [{ model: Clase, as: 'servicio', },
+
+						{
+							model: Compra, as: 'compra', where: { fecha: { $between: [inicio, fin] } },
+							include: [{ model: Proveedor, as: 'proveedor' },
+							{ model: Sucursal, as: 'sucursal', where: condicionCompra }]
+						}
+						],
+						order: [[{ model: Compra, as: 'compra' }, 'fecha', 'ASC']]
+					}).then(function (detallesCompraServicio) {
+						var detallesCompra2 = detallesCompra.concat(detallesCompraServicio);
+						detallesCompra2 = detallesCompra2.sort(function (a, b) {
+							return a.compra.fecha - b.compra.fecha;
+						});
+						res.json({ detallesCompra: detallesCompra2, empresa: empresa });
+					});
+
 				});
+
 			});
 		});
 
