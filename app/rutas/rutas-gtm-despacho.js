@@ -1127,7 +1127,8 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, forEach, j
 					{ model: ClienteRazon, as: 'cliente_razon' },
 					{ model: GtmDestino, as: 'destino' }]
 				},
-				{ model: Producto, as: 'producto' }]
+				{ model: Producto, as: 'producto' },
+				{ model: GtmVentaKardexDetalle, as: 'detalle_Kardex'}]
 			}).then(function (detallesDespacho) {
 				res.json(detallesDespacho);
 			});
