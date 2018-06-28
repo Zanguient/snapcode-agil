@@ -1939,7 +1939,8 @@ angular.module('agil.controladores')
 
 					//columns.push(0);
 					//columns.push(0);
-					columns.push(detallesCompra[i].compra.almacen.sucursal.nombre);
+					console.log(i)
+					columns.push((detallesCompra[i].compra.almacen.sucursal)?detallesCompra[i].compra.almacen.sucursal.nombre:"");
 					columns.push($scope.usuario.nombre_usuario);
 					columns.push(detallesCompra[i].centroCosto.nombre_corto);
 
@@ -1980,7 +1981,8 @@ angular.module('agil.controladores')
 					doc.text(detallesCompra[i].compra.fecha.getDate() + "/" + (detallesCompra[i].compra.fecha.getMonth() + 1) + "/" + detallesCompra[i].compra.fecha.getFullYear(), 45, y);
 					doc.text((detallesCompra[i].compra.factura ? detallesCompra[i].compra.factura : ""), 90, y);
 					doc.text((detallesCompra[i].compra.proveedor)?detallesCompra[i].compra.proveedor.razon_social:"", 135, y - 6, { width: 80 });
-					doc.text((detallesCompra[i].producto)?detallesCompra[i].producto.nombre:detallesCompra[i].servicio.nombre, 225, y - 6, { width: 80 });
+					console.log(i)
+					doc.text((detallesCompra[i].producto)?detallesCompra[i].producto.nombre:(detallesCompra[i].servicio)?detallesCompra[i].servicio.nombre:"", 225, y - 6, { width: 80 });
 					doc.text((detallesCompra[i].producto)?detallesCompra[i].producto.unidad_medida:"", 300, y, { width: 50 });
 					if (detallesCompra[i].inventario) {
 						detallesCompra[i].inventario.fecha_vencimiento = new Date(detallesCompra[i].inventario.fecha_vencimiento);

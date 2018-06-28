@@ -2212,5 +2212,50 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 
 			});
 		});
+	router.route('/actualizarMovimientos/empresa/:id_empresa')
+		.get(function (req, res) {
+			sequelize.transaction(function (t) {
+				var promises = []
+				return Venta.findAll({
+					include: [{
+						model: Almacen, as: 'almacen',
+						include: [{
+							model: Sucursal, as: 'sucursal',
+							include: [{ model: Empresa, as: 'empresa', where: { id: req.params.id_empresa } }]
+						}]
+					}, {
+						model: DetalleVenta, as: 'detallesVenta',
+						include: [{ model: Producto, as: 'producto' }
+						]
+					}],transaccion:t
+				}).then(function (Ventas) {
+					Ventas.forEach(function (venta, index, array) {
+						for (var i = 0; i < venta.detallesVenta.length; i++) {
+							var detalle = venta.detallesVenta[i];						
+								promises.push(DetalleMovimiento.findAll({
+									where: { id_movimiento: venta.id_movimiento },transaccion:t
+								}).then(function (detalleMovimientoEncontrado) {
+									if (detalleMovimientoEncontrado.length == 0) {
+										return Movimiento.find({
+											where: { id: venta.id_movimiento },transaccion:t
+										}).then(function (movimientoEncontrado) {
+											promises.push(calcularCostosEgresos(detalle, detalle.producto, detalle.cantidad, {}, movimientoEncontrado, index, array, res, venta, t))
+										})
 
+									}
+								}))
+
+						
+						}
+
+					})
+
+				});
+				return Promise.all(promises);
+			}).then(function (result) {
+				res.json({ mensaje: "movimientos actualizados satisfactoriamente" })
+			}).catch(function (err) {
+				res.json({ hasError: true, message: err.stack });
+			});
+		});
 }

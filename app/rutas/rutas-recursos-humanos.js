@@ -3512,7 +3512,8 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
             }
             RrhhEmpleadoVacaciones.findAll({
                 where: condicionVacaciones,
-                include: [{ model: RrhhEmpleadoDescuentoVacacionHistorial, as: 'detalleDescuentosVacacionHistorial', include: [{ model: RrhhEmpleadoHistorialVacacion, as: 'historialVacacion' }] }, { model: RrhhEmpleadoFicha, as: 'ficha', include: [{ model: RrhhEmpleadoHistorialVacacion, as: 'historialVacaciones' },{ model: MedicoPaciente, as: 'empleado', where: condicionEmpleado, include: [{ model: Persona, as: 'persona' }] }] }]
+                include: [{ model: RrhhEmpleadoDescuentoVacacionHistorial, as: 'detalleDescuentosVacacionHistorial', include: [{ model: RrhhEmpleadoHistorialVacacion, as: 'historialVacacion' }] }, { model: RrhhEmpleadoFicha, as: 'ficha', include: [{
+                    model: RrhhEmpleadoCargo, as: 'cargos', include: [{ model: Clase, as: 'cargo' }]},{ model: RrhhEmpleadoHistorialVacacion, as: 'historialVacaciones' },{ model: MedicoPaciente, as: 'empleado', where: condicionEmpleado, include: [{ model: Persona, as: 'persona' },{ model: Clase, as: 'campo' }] }] }]
             }).then(function (vacaciones) {
                 res.json(vacaciones)
             })

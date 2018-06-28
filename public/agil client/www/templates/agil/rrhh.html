@@ -5393,7 +5393,13 @@
                 <table class="table table-bordered">
                     <thead>
                         <tr>
-                            <th rowspan="2" class="text-center">Empleado</th>
+                            <th rowspan="2" class="text-center">Incluir Prorreteo
+                                <label class="pos-rel">
+                                    <input name="switch-field-1" type="checkbox" class="ace" ng-model="prorreteo" ng-change="AgregarProrreteo(prorreteo)"
+                                    />
+                                    <span class="lbl"></span>
+                                </label>
+                            </th>
                             <th rowspan="2" class="text-center">gestion</th>
                             <th rowspan="2" class="text-center">Año</th>
                             <th colspan="3" class="text-center">Dias</th>
@@ -5404,8 +5410,8 @@
                             <th class="text-center">restantes</th>
                         </tr>
                     </thead>
-                    <tbody ng-repeat="historial in historialEmpresaVacaciones">
-                        <tr ng-repeat="gestiones in historial.ficha.historialVacaciones | orderBy:' anio'">
+                    <tbody ng-repeat="historial in historialEmpresaVacacionesGestion">
+                        <tr ng-if="!historial.ficha.fecha_expiracion" ng-repeat="gestiones in historial.ficha.historialVacaciones | orderBy:' anio'">
                             <td>
                                 {{historial.ficha.empleado.persona.nombre_completo}}
                             </td>
@@ -5427,15 +5433,15 @@
         </div>
 
         <div class="modal-footer wizard-actions">
-            <button type="button" class="btn btn-danger btn-sm" ng-click="generarPdfHistorialVacacionEmpresa(historialEmpresaVacaciones,false)">
+            <button type="button" class="btn btn-danger btn-sm" ng-click="generarPdfHistorialVacacionEmpresa(historialEmpresaVacacionesGestion,false)">
                 <i class=" fa fa-print align-top "></i>
                 Pdf
             </button>
-            <button type="button" class="btn btn-success btn-sm" ng-click="generarExcelHistorialVacacionEmpresa(historialEmpresaVacaciones)">
+            <button type="button" class="btn btn-success btn-sm" ng-click="generarExcelHistorialVacacionEmpresa(historialEmpresaVacacionesGestion)">
                 <i class=" fa fa-print align-top "></i>
                 Excel
             </button>
-            <button class="btn btn-danger btn-sm" ng-click="cerrarDialogReporteVacaciones()">
+            <button class="btn btn-danger btn-sm" ng-click="cerrarDialogHistorialGestionesVacaciones()">
                 <i class="ace-icon fa fa-times"></i>Cancelar
             </button>
         </div>

@@ -252,6 +252,8 @@ angular.module('agil.controladores')
         }
         $scope.abrirDialogHistorialGestionesVacaciones = function () {
             $scope.conductor = {};
+            var filtroVacacion = {}
+            $scope.obtenerHistorialEmpresaVacacionGestion(filtroVacacion)
             $scope.abrirPopup($scope.idModalHistorialGestionesVacaciones);
         }
         $scope.cerrarDialogHistorialGestionesVacaciones = function () {
@@ -9072,23 +9074,25 @@ angular.module('agil.controladores')
             doc.font('Helvetica', 8);
             for (var i = 0; i < datos.length; i++) {
                 var vacacion = datos[i]
-                for (var k = 0; k < vacacion.ficha.historialVacaciones.length && items <= itemsPorPagina; k++) {
-                    var Historial = vacacion.ficha.historialVacaciones[k]
-                    doc.text(vacacion.ficha.empleado.persona.nombre_completo, 45, y);
-                    doc.text(Historial.aplicadas, 250, y, { width: 50 });
-                    doc.text(Historial.tomadas, 350, y, { width: 60 });
-                    doc.text(Historial.aplicadas - Historial.tomadas, 450, y, { width: 50 });
-                    y = y + 20;
-                    items++;
-                }
+                if (!vacacion.ficha.fecha_expiracion) {
+                    for (var k = 0; k < vacacion.ficha.historialVacaciones.length && items <= itemsPorPagina; k++) {
+                        var Historial = vacacion.ficha.historialVacaciones[k]
+                        doc.text(vacacion.ficha.empleado.persona.nombre_completo, 45, y);
+                        doc.text(Historial.aplicadas, 250, y, { width: 50 });
+                        doc.text(Historial.tomadas, 350, y, { width: 60 });
+                        doc.text(Historial.aplicadas - Historial.tomadas, 450, y, { width: 50 });
+                        y = y + 20;
+                        items++;
+                    }
 
-                if (items == itemsPorPagina) {
-                    doc.addPage({ margin: 0, bufferPages: true });
-                    y = 120;
-                    items = 0;
-                    pagina = pagina + 1;
-                    $scope.dibujarCabeceraPDFHistorialVacacionEmpresa(doc, 1, totalPaginas, datos, delEmpleado);
-                    doc.font('Helvetica', 8);
+                    if (items == itemsPorPagina) {
+                        doc.addPage({ margin: 0, bufferPages: true });
+                        y = 120;
+                        items = 0;
+                        pagina = pagina + 1;
+                        $scope.dibujarCabeceraPDFHistorialVacacionEmpresa(doc, 1, totalPaginas, datos, delEmpleado);
+                        doc.font('Helvetica', 8);
+                    }
                 }
             }
             doc.font('Helvetica', 5);
@@ -9116,27 +9120,28 @@ angular.module('agil.controladores')
             for (var i = 0; i < datos.length; i++) {
                 var columns = [];
                 var vacacion = datos[i]
-
-                columns.push(vacacion.ficha.empleado.persona.nombre_completo);
-                columns.push(new Date(vacacion.fecha_inicio));
-                columns.push(new Date(vacacion.fecha_fin));
-                columns.push(vacacion.dias);
-                columns.push(vacacion.observacion);
-                columns.push((vacacion.sabado) ? "Si" : "No");
-                var textoGestion = ""
-                for (var j = 0; j < vacacion.detalleDescuentosVacacionHistorial.length; j++) {
-                    if (j > 0) {
-                        textoGestion += ", "
+                if (!vacacion.ficha.fecha_expiracion) {
+                    columns.push(vacacion.ficha.empleado.persona.nombre_completo);
+                    columns.push(new Date(vacacion.fecha_inicio));
+                    columns.push(new Date(vacacion.fecha_fin));
+                    columns.push(vacacion.dias);
+                    columns.push(vacacion.observacion);
+                    columns.push((vacacion.sabado) ? "Si" : "No");
+                    var textoGestion = ""
+                    for (var j = 0; j < vacacion.detalleDescuentosVacacionHistorial.length; j++) {
+                        if (j > 0) {
+                            textoGestion += ", "
+                        }
+                        var element = vacacion.detalleDescuentosVacacionHistorial[j];
+                        var gestionfin = element.historialVacacion.gestion + 1
+                        textoGestion += element.historialVacacion.gestion + "-" + gestionfin;
                     }
-                    var element = vacacion.detalleDescuentosVacacionHistorial[j];
-                    var gestionfin = element.historialVacacion.gestion + 1
-                    textoGestion += element.historialVacacion.gestion + "-" + gestionfin;
+                    columns.push(textoGestion);
+                    columns.push(vacacion.diasRestantes);
+                    columns.push((vacacion.ficha.empleado.eliminado) ? "Incantivo" : "Activo");
+                    columns.push(new Date(vacacion.ficha.fecha_expiracion));
+                    data.push(columns);
                 }
-                columns.push(textoGestion);
-                columns.push(vacacion.diasRestantes);
-                columns.push((vacacion.ficha.empleado.eliminado) ? "Incantivo" : "Activo");
-                columns.push(new Date(vacacion.ficha.fecha_expiracion));
-                data.push(columns);
             }
             var ws_name = "SheetJS";
             var wb = new Workbook(), ws = sheet_from_array_of_arrays(data);
@@ -9158,17 +9163,25 @@ angular.module('agil.controladores')
                     var columns = [];
                     var Historial = vacacion.ficha.historialVacaciones[k]
                     columns.push(vacacion.ficha.empleado.persona.nombre_completo);
-                    columns.push("");
-                    columns.push("");
-                    var añoGes=Historial.gestion+1
-                   var textoGestion=Historial.gestion+"-"+añoGes
-                    columns.push(textoGestion);                   
+                    var textoCargo=""
+                    for (var d = 0; d < vacacion.ficha.cargos.length; d++) {
+                        var cargo = vacacion.ficha.cargos[d];
+                        if(d>0){
+                            textoCargo+=", "
+                        }
+                        textoCargo+=cargo.cargo.nombre
+                    }
+                    columns.push(textoCargo);
+                    columns.push(vacacion.ficha.empleado.campo.nombre);
+                    var añoGes = Historial.gestion + 1
+                    var textoGestion = Historial.gestion + "-" + añoGes
+                    columns.push(textoGestion);
                     columns.push(Historial.aplicadas);
                     columns.push(Historial.tomadas);
-                    columns.push(Historial.aplicadas-Historial.tomadas);
+                    columns.push(Historial.aplicadas - Historial.tomadas);
                     data.push(columns);
                 }
-               
+
             }
             var ws_name = "SheetJS";
             var wb = new Workbook(), ws = sheet_from_array_of_arrays(data);
@@ -9218,7 +9231,50 @@ angular.module('agil.controladores')
             doc.font('Helvetica-Bold', 8);
             doc.text("PÁGINA " + pagina + " DE " + totalPaginas, 0, 740, { align: "center" });
         }
+        $scope.AgregarProrreteo = function (bandera) {
+            if (bandera == true) {
+                var anio = new Date().getFullYear()
+                var mes = new Date().getMonth()
+                for (var i = 0; i < $scope.historialEmpresaVacacionesGestion.length; i++) {
+                    var historial = $scope.historialEmpresaVacacionesGestion[i];
+                    for (var j = 0; j < historial.ficha.historialVacaciones.length; j++) {
+                        var element = historial.ficha.historialVacaciones[j];
 
+                        if (element.gestion == anio) {
+                            element.aplicadas = Math.round((element.aplicadas * mes) / 12);
+                        }
+                    }
 
+                }
+            } else {
+                var filtro = {}
+                $scope.obtenerHistorialEmpresaVacacionGestion(filtro)
+            }
+        }
+        $scope.obtenerHistorialEmpresaVacacionGestion = function (filtro) {
+            var filtroVacaciones = { inicio: 0, fin: 0, estado: 2 }
+            if (filtro.inicio) {
+                filtroVacaciones.inicio = new Date($scope.convertirFecha(filtro.inicio))
+                filtroVacaciones.fin = new Date($scope.convertirFecha(filtro.fin))
+
+            }
+            if (filtro.estado) {
+                filtroVacaciones.estado = filtro.estado
+            }
+            var promesa = HistorialEmpresaVacaciones($scope.usuario.id_empresa, filtroVacaciones)
+            promesa.then(function (datos) {
+
+                datos.forEach(function (dato, index, array) {
+                    dato.diasRestantes = 0
+                    for (var i = 0; i < dato.ficha.historialVacaciones.length; i++) {
+                        var element = dato.ficha.historialVacaciones[i];
+                        dato.diasRestantes += element.aplicadas - element.tomadas
+                    }
+                    if (index === (array.length - 1)) {
+                        $scope.historialEmpresaVacacionesGestion = datos
+                    }
+                })
+            })
+        }
         $scope.inicio()
     });
