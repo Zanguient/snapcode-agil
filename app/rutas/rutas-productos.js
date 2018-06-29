@@ -175,11 +175,11 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 			var fechaFinal = req.params.fecha_fin == 0 ? new Date() : new Date(req.params.fecha_fin);
 			var condicionInventario = {};
 			if (req.params.lote != "0") {
-				condicionInventario = { lote: req.params.lote }
+				condicionInventario = {id_producto: req.params.id_producto, lote: req.params.lote }
 			}
 			DetalleMovimiento.findAll({
 				where: { id_producto: req.params.id_producto },
-				include: [{ model: Inventario, as: 'inventario', where: condicionInventario },
+				include: [{ model: Inventario, as: 'inventario'},
 				{
 					model: Movimiento, as: 'movimiento',
 					where: {

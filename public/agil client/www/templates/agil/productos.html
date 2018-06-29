@@ -749,7 +749,7 @@
 								</thead>
 
 								<tbody>
-									<tr ng-repeat="detalleMovimiento in kardexproduto.detallesMovimiento | filter:search:strict">
+									<tr ng-repeat="detalleMovimiento in kardexproduto.detallesMovimiento | filter:search:strict| filter:{lote:filtro.lote}">
 										<td>{{detalleMovimiento.movimiento.fecha | date:"dd/MM/yyyy "}}</td>
 										<td>
 											<p ng-if="detalleMovimiento.movimiento.id_tipo != '7'">{{detalleMovimiento.tipo}} {{detalleMovimiento.movimiento.compra.proveedor.razon_social}}</p>
@@ -799,7 +799,7 @@
 											</table>
 										</td>
 										<td ng-if="usuario.empresa.usar_vencimientos">
-											{{detalleMovimiento.inventario.lote}}
+											{{detalleMovimiento.lote}}
 										</td>
 										<td ng-if="usuario.empresa.usar_vencimientos">
 											{{detalleMovimiento.inventario.fecha_vencimiento | date:"dd/MM/yyyy"}}
