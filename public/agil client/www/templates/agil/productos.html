@@ -721,7 +721,7 @@
 											<label>LOTE</label>&nbsp
 										</td>
 										<td>
-											<input type="text" placeholder="Ingrese el Lote" ng-model="filtro.lote">
+											<input type="text" placeholder="Ingrese el Lote" ng-model="filtro.lote" ng-change="verificarLote(filtro,imp.almacen)">
 										</td>
 										<td>
 											<button type="button" class="btn btn-primary btn-sm pull-left" data-dismiss="modal" ng-click="buscarKardexProducto(producto.id,imp.almacen,filtro)"
@@ -749,7 +749,7 @@
 								</thead>
 
 								<tbody>
-									<tr ng-repeat="detalleMovimiento in kardexproduto.detallesMovimiento | filter:search:strict| filter:{lote:filtro.lote}">
+									<tr ng-repeat="detalleMovimiento in kardexproduto.detallesMovimiento | filter:search:strict| filtroKardex:{lote:filtro.lote,datos:kardexproduto.detallesMovimiento}">
 										<td>{{detalleMovimiento.movimiento.fecha | date:"dd/MM/yyyy "}}</td>
 										<td>
 											<p ng-if="detalleMovimiento.movimiento.id_tipo != '7'">{{detalleMovimiento.tipo}} {{detalleMovimiento.movimiento.compra.proveedor.razon_social}}</p>

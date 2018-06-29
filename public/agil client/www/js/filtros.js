@@ -15,6 +15,34 @@ angular.module('agil.filtros', [])
 
         }
     })
+    .filter('filtroKardex', function () {
+
+        // In the return function, we must pass in a single parameter which will be the data we will work on.
+        // We have the ability to support multiple other parameters that can be passed into the filter optionally
+        return function (input, optional1, optional2) {
+            var datos = []
+            if (optional1.lote != "") {
+                if (optional1.datos) {
+                    optional1.datos.forEach(function (dato, index, array) {
+                        if (dato.lote == optional1.lote) {
+                            datos.push(dato)
+                        }
+
+                    })
+                    var output = datos;
+                }else{
+                var output = input}
+            } else {
+                var output = optional1.datos;
+            }
+
+            // Do filter work here
+
+            return output;
+
+        }
+
+    })
     .filter('groupBy',
         function () {
             return function (collection, key) {
@@ -44,38 +72,38 @@ angular.module('agil.filtros', [])
             }
         };
     })
-    .filter('orderObjectBy', function() {
-        return function(items, field,reverse,tipo) {
-          var filtered = [];
-          angular.forEach(items, function(item) {
-            filtered.push(item);
-          });
-          filtered.sort(function /* (a, b) { */
-            (a, b) {
-                if(tipo=="cliente"){
-                    return (reverse)?(a.despacho.cliente[field] > b.despacho.cliente[field])? 1:(a.despacho.cliente[field] < b.despacho.cliente[field])?-1 :0:(a.despacho.cliente[field] > b.despacho.cliente[field])? -1:(a.despacho.cliente[field] < b.despacho.cliente[field])?1 :0
-                }else if(tipo=="vendedor"){
-                    return (reverse)?(a.despacho.usuario.persona[field] > b.despacho.usuario.persona[field])? 1:(a.despacho.usuario.persona[field] < b.despacho.usuario.persona[field])?-1 :0:(a.despacho.usuario.persona[field] > b.despacho.usuario.persona[field])? -1:(a.despacho.usuario.persona[field] < b.despacho.usuario.persona[field])?1 :0
-                }else if(tipo=="destino"){
-                    return (reverse)?(a.despacho.destino[field] > b.despacho.destino[field])? 1:(a.despacho.destino[field] < b.despacho.destino[field])?-1 :0:(a.despacho.destino[field] > b.despacho.destino[field])? -1:(a.despacho.destino[field] < b.despacho.destino[field])?1 :0
-                }else if(tipo=="fecha"){
-                    return (reverse)?(a.despacho[field] > b.despacho[field])? 1:(a.despacho[field] < b.despacho[field])?-1 :0:(a.despacho[field] > b.despacho[field])? -1:(a.despacho[field] < b.despacho[field])?1 :0
-                }else if(tipo=="producto"){
-                    return (reverse)?(a.producto[field] > b.producto[field])? 1:(a.producto[field] < b.producto[field])?-1 :0:(a.producto[field] > b.producto[field])? -1:(a.producto[field] < b.producto[field])?1 :0
-                }else{
+    .filter('orderObjectBy', function () {
+        return function (items, field, reverse, tipo) {
+            var filtered = [];
+            angular.forEach(items, function (item) {
+                filtered.push(item);
+            });
+            filtered.sort(function /* (a, b) { */
+                (a, b) {
+                if (tipo == "cliente") {
+                    return (reverse) ? (a.despacho.cliente[field] > b.despacho.cliente[field]) ? 1 : (a.despacho.cliente[field] < b.despacho.cliente[field]) ? -1 : 0 : (a.despacho.cliente[field] > b.despacho.cliente[field]) ? -1 : (a.despacho.cliente[field] < b.despacho.cliente[field]) ? 1 : 0
+                } else if (tipo == "vendedor") {
+                    return (reverse) ? (a.despacho.usuario.persona[field] > b.despacho.usuario.persona[field]) ? 1 : (a.despacho.usuario.persona[field] < b.despacho.usuario.persona[field]) ? -1 : 0 : (a.despacho.usuario.persona[field] > b.despacho.usuario.persona[field]) ? -1 : (a.despacho.usuario.persona[field] < b.despacho.usuario.persona[field]) ? 1 : 0
+                } else if (tipo == "destino") {
+                    return (reverse) ? (a.despacho.destino[field] > b.despacho.destino[field]) ? 1 : (a.despacho.destino[field] < b.despacho.destino[field]) ? -1 : 0 : (a.despacho.destino[field] > b.despacho.destino[field]) ? -1 : (a.despacho.destino[field] < b.despacho.destino[field]) ? 1 : 0
+                } else if (tipo == "fecha") {
+                    return (reverse) ? (a.despacho[field] > b.despacho[field]) ? 1 : (a.despacho[field] < b.despacho[field]) ? -1 : 0 : (a.despacho[field] > b.despacho[field]) ? -1 : (a.despacho[field] < b.despacho[field]) ? 1 : 0
+                } else if (tipo == "producto") {
+                    return (reverse) ? (a.producto[field] > b.producto[field]) ? 1 : (a.producto[field] < b.producto[field]) ? -1 : 0 : (a.producto[field] > b.producto[field]) ? -1 : (a.producto[field] < b.producto[field]) ? 1 : 0
+                } else {
                     return 0;
                 }
-              
-              /* } */
-           /*  return (a[field] > b[field] ? -1 : 1); */
-          });
-          /* items.sort(function (a, b) {
-            return a.localeCompare(b);
-          }); */
-          //if(reverse) filtered.reverse();
-          return filtered;
+
+                /* } */
+                /*  return (a[field] > b[field] ? -1 : 1); */
+            });
+            /* items.sort(function (a, b) {
+              return a.localeCompare(b);
+            }); */
+            //if(reverse) filtered.reverse();
+            return filtered;
         };
-      });
+    });
 var uniqueItems = function (data, key) {
     var result = [];
     for (var i = 0; i < data.length; i++) {
@@ -87,4 +115,3 @@ var uniqueItems = function (data, key) {
     return result;
 }
 
-  

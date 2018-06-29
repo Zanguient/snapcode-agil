@@ -321,7 +321,11 @@ z
 			}
 			$scope.kardexproduto = dato;
 		}
-
+$scope.verificarLote=function(filtro,alma){
+	if(filtro.lote==""){
+		$scope.buscarKardexProducto($scope.producto.id,alma,filtro)
+	}
+}
 		$scope.obtenerSaldo = function (detMovs) {
 			var dato = {};
 			dato.detallesMovimiento = detMovs;
