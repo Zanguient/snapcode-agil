@@ -12,7 +12,7 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 					id_compra: null
 				}, include: [{ model: Proveedor, as: 'proveedor' }, { model: Almacen, as: 'almacen' }, { model: Sucursal, as: 'sucursal' }, {
 					model: DetallesPedido, as: 'detallesPedido', include: [{
-						model: Producto, as: 'producto', nclude: [
+						model: Producto, as: 'producto', include: [
 							{ model: Clase, as: 'tipoProducto' },
 						]
 					}]
@@ -1485,7 +1485,11 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 		var cantidadTotal = cantidad;
 		if (inventarios.length == 0) {
 			return Inventario.findAll({
-				where: { id_producto: producto.id }, transaccion: t
+				where: {
+					id_producto: producto.id, id_almacen: venta.id_almacen,
+					cantidad: { $gt: 0 }
+				}, transaccion: t
+
 			}).then(function (encontrado) {
 				inventarios = encontrado
 
@@ -2212,11 +2216,20 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 
 			});
 		});
+
 	router.route('/actualizarMovimientos/empresa/:id_empresa')
-		.get(function (req, res) {
+		.put(function (req, res) {
+			req.body.mensaje = ""
+			var inicio = new Date(2018, 05, 25)
+			var fin = new Date()
+			inicio.setHours(0, 0, 0, 0, 0);
+			fin.setHours(23, 0, 0, 0, 0);
+			req.body.actualizados=0
 			sequelize.transaction(function (t) {
-				var promises = []
+				var promises1 = [];
+				var a = 0
 				return Venta.findAll({
+
 					include: [{
 						model: Almacen, as: 'almacen',
 						include: [{
@@ -2225,37 +2238,97 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 						}]
 					}, {
 						model: DetalleVenta, as: 'detallesVenta',
-						include: [{ model: Producto, as: 'producto' }
+						include: [{
+							model: Producto, as: 'producto', include: [
+								{ model: Clase, as: 'tipoProducto' }, {
+									model: ProductoBase, as: 'productosBase',
+									include: [{ model: Producto, as: 'productoBase' }]
+								}
+							]
+						}
 						]
-					}],transaccion:t
+					}], transaccion: t, where: { fecha: { $between: [inicio, fin] } }
 				}).then(function (Ventas) {
 					Ventas.forEach(function (venta, index, array) {
 						for (var i = 0; i < venta.detallesVenta.length; i++) {
-							var detalle = venta.detallesVenta[i];						
-								promises.push(DetalleMovimiento.findAll({
-									where: { id_movimiento: venta.id_movimiento },transaccion:t
-								}).then(function (detalleMovimientoEncontrado) {
-									if (detalleMovimientoEncontrado.length == 0) {
-										return Movimiento.find({
-											where: { id: venta.id_movimiento },transaccion:t
-										}).then(function (movimientoEncontrado) {
-											promises.push(calcularCostosEgresos(detalle, detalle.producto, detalle.cantidad, {}, movimientoEncontrado, index, array, res, venta, t))
-										})
+							var detalle = venta.detallesVenta[i];
+							promises1.push(DetalleMovimiento.findAll({
+								where: { id_movimiento: venta.id_movimiento}, transaccion: t
+							}).then(function (detalleMovimientoEncontrado) {
+								if (detalleMovimientoEncontrado.length==0) {
+									req.body.actualizados++
+									return Movimiento.find({
+										where: { id: venta.id_movimiento }, transaccion: t
+									}).then(function (movimientoEncontrado) {
+										var arrgloInv = []/* promises.push(calcularCostosEgresos(detalle, detalle.producto, detalle.cantidad, arrgloInv, movimientoEncontrado, index, array, res, venta, t)) */
+										if (detalle.producto.tipoProducto.nombre_corto == Diccionario.TIPO_PRODUCTO_BASE) {
+											return calcularCostosEgresos(detalle, detalle.producto, detalle.cantidad, arrgloInv,
+												movimientoEncontrado, index, array, res, venta, t)
+										} else if (detalle.producto.tipoProducto.nombre_corto == Diccionario.TIPO_PRODUCTO_INTERMEDIO) {
+											var promises = [];
+											for (var i = 0; i < detalle.producto.productosBase.length; i++) {
+												if ((i + 1) == detalle.producto.productosBase.length) {
+													promises.push(calcularCostosEgresos(detalle, detalle.producto.productosBase[i].productoBase, detalle.producto.productosBase[i].formulacion * detalle.cantidad, arrgloInv,
+														movimientoEncontrado, index, array, res, venta, t));
+												} else {
+													promises.push(calcularCostosEgresos(detalle, detalle.producto.productosBase[i].productoBase, detalle.producto.productosBase[i].formulacion * detalle.cantidad, arrgloInv,
+														movimientoEncontrado, index - 1, array, res, venta, t));
+												}
+											}
 
-									}
-								}))
+										} else {
+											var promises = [];
+											for (var i = 0; i < detalle.producto.productosBase.length; i++) {
+												if (detalle.producto.productosBase[i].productoBase.tipoProducto.nombre_corto == Diccionario.TIPO_PRODUCTO_BASE) {
+													if ((i + 1) == detalle.producto.productosBase.length) {
+														promises.push(calcularCostosEgresos(detalle, detalle.producto.productosBase[i].productoBase, detalle.producto.productosBase[i].formulacion * detalle.cantidad, detalle.producto.productosBase[i].productoBase.inventarios,
+															movimientoEncontrado, index, array, res, venta, t));
+													} else {
+														promises.push(calcularCostosEgresos(detalle, detalle.producto.productosBase[i].productoBase, detalle.producto.productosBase[i].formulacion * detalle.cantidad, detalle.producto.productosBase[i].productoBase.inventarios,
+															movimientoEncontrado, index - 1, array, res, venta, t));
+													}
+												} else if (detalle.producto.productosBase[i].productoBase.tipoProducto.nombre_corto == Diccionario.TIPO_PRODUCTO_INTERMEDIO) {
+													var innerpromises = [];
+													for (var j = 0; j < detalle.producto.productosBase[i].productoBase.productosBase.length; j++) {
+														if ((j + 1) == detalle.producto.productosBase[i].productoBase.productosBase.length) {
+															innerpromises.push(calcularCostosEgresos(detalle, detalle.producto.productosBase[i].productoBase.productosBase[j].productoBase,
+																detalle.producto.productosBase[i].formulacion * detalle.producto.productosBase[i].productoBase.productosBase[j].formulacion * detalle.cantidad,
+																detalle.producto.productosBase[i].productoBase.productosBase[j].productoBase.inventarios, movimientoEncontrado, index, array, res, venta, t));
+														} else {
+															innerpromises.push(calcularCostosEgresos(detalle, detalle.producto.productosBase[i].productoBase.productosBase[j].productoBase,
+																detalle.producto.productosBase[i].formulacion * detalle.producto.productosBase[i].productoBase.productosBase[j].formulacion * detalle.cantidad,
+																detalle.producto.productosBase[i].productoBase.productosBase[j].productoBase.inventarios, movimientoEncontrado, index - 1, array, res, venta, t));
+														}
+													}
+													promises.push(Promise.all(innerpromises));
+												}
+											}
+											promises1.push(Promise.all(promises));
+										}
+									})
 
-						
+								} else {	
+									var promises = [];								
+									promises1.push(Promise.all(promises));
+								}
+							}))
+
+
 						}
 
-					})
+					});
+					return Promise.all(promises1);
+				})
+				/* return Promise.all(promises1); */
 
-				});
-				return Promise.all(promises);
 			}).then(function (result) {
-				res.json({ mensaje: "movimientos actualizados satisfactoriamente" })
+				
+					res.json({ mensaje: "Movimientos Creados de los detalles de las Ventas total movimientos creados ="+req.body.actualizados });
+			
 			}).catch(function (err) {
-				res.json({ hasError: true, message: err.stack });
+				var error = (err.stack) ? err.stack : err
+				res.json({ hasError: true, mensaje: error });
 			});
+
 		});
 }
