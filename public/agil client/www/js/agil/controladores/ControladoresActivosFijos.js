@@ -1,19 +1,22 @@
 angular.module('agil.controladores')
 
-    .controller('ControladorActivosFijos', function ($scope, $localStorage, $location, blockUI, ListaSubGruposProductoEmpresa, FieldViewer, GuardarConfiguracionActivosFijos, ObtenerConfiguracionActivosFijos) {
+    .controller('ControladorActivosFijos', function ($scope, Paginator, $localStorage, $location, blockUI, ListaSubGruposProductoEmpresa, FieldViewer, GuardarConfiguracionActivosFijos, ObtenerConfiguracionActivosFijos,
+        ActivosFijosEmpresa, RevaluarActivo) {
 
         $scope.idModalconfiguracionActivos = 'modal-configuracion-activos';
+        $scope.idModalRevaluarActivo = 'modal-revaluar-activos';
         $scope.usuarioSesion = JSON.parse($localStorage.usuario);
 
         $scope.$on('$viewContentLoaded', function () {
             resaltarPestaña($location.path().substring(1));
-            ejecutarScriptsActivos($scope.idModalconfiguracionActivos);
+            ejecutarScriptsActivos($scope.idModalconfiguracionActivos, $scope.idModalRevaluarActivo);
             $scope.buscarAplicacion($scope.usuarioSesion.aplicacionesUsuario, $location.path().substring(1));
             $scope.obtenerColumnasAplicacion();
         });
 
         $scope.$on('$routeChangeStart', function (next, current) {
             $scope.eliminarPopup($scope.idModalconfiguracionActivos);
+            $scope.eliminarPopup($scope.idModalRevaluarActivo);
         });
 
         // $scope.mesesVidaUtil = Array.apply(null, new Array(12)).map(function (_, i) {
@@ -33,8 +36,11 @@ angular.module('agil.controladores')
         }
 
         $scope.inicio = function () {
-            $scope.obtenerSubGruposProductosEmpresaUsuario();
+            $scope.configuracionActivosFijos = []
             $scope.obtenerConfiguracionActivos()
+            $scope.filtro = { mes: new Date().getMonth() + 1, anio: new Date().getFullYear(), subgrupo: 0, codigo: 0, estado: 0, vida_util: 0 }
+            $scope.obtenerSubGruposProductosEmpresaUsuario();
+            $scope.obtenerPaginadorActivos();
             $scope.listaEstados = [
                 { id: 1, nombre: 'Activo' },
                 { id: 2, nombre: 'Inactivo' }];
@@ -46,7 +52,7 @@ angular.module('agil.controladores')
             })) {
                 var detalleConfiguracion = {
                     subgrupo: detalle.subgrupo,
-                    vida_util: detalle.vida_util.id,
+                    vida_util: detalle.vida_util,
                     factor: detalle.factor.id
                 }
                 $scope.configuracionActivosFijos.push(detalleConfiguracion)
@@ -127,19 +133,62 @@ angular.module('agil.controladores')
         $scope.obtenerPaginadorActivos = function () {
             $scope.paginatorProductosAsignados = Paginator();
             $scope.paginatorProductosAsignados.column = "nombre";
-            $scope.paginatorProductosAsignados.filter = $scope.filtro;
+            $scope.paginatorProductosAsignados.direccion = "asc"
             $scope.paginatorProductosAsignados.callBack = $scope.buscarActivos;
             $scope.paginatorProductosAsignados.getSearch("", null, null);
         };
 
+        $scope.filtrarFiltro = function (filtro, _, __) {
+            if (__ !== undefined) {
+                for (var key in filtro) {
+                    if (filtro[key] == 0) {
+                        filtro[key] = ""
+                    }
+                }
+            } else {
+                for (var key in filtro) {
+                    if (filtro[key] === "" || filtro[key] === null || filtro[key] === undefined) {
+                        filtro[key] = 0
+                    }
+                }
+            }
+            // for (var key in filtro) {
+            //     if (filtro[key] === "" || filtro[key] === null) {
+            //         filtro[key] = 0
+            //     }
+            // }
+            if (_ === undefined || !_) {
+                $scope.buscarActivos()
+                // $scope.recargarItemsTabla()
+            } else {
+                return filtro
+            }
+        }
+
         $scope.buscarActivos = function () {
             blockUI.start()
-            var prom = ActivosFijosEmpresa($scope.usuarioSesion.id_empresa, $scope.usuarioSesion.id)
+            $scope.filtro = $scope.filtrarFiltro($scope.filtro, true)
+            $scope.paginatorProductosAsignados.filter = $scope.filtro
+            var prom = ActivosFijosEmpresa($scope.usuarioSesion.id_empresa, $scope.paginatorProductosAsignados)
             prom.then(function (res) {
                 if (res.hasErr) {
                     $scope.mostrarMensaje(res.mensaje);
                 } else {
-                    $scope.activosFijos = res.configuracion;
+                    $scope.activosFijos = res.activos;
+                    var indx = -1
+                    if ($scope.configuracionActivosFijos.length > 0) {
+                        $scope.activosFijos.forEach(function (activo, i) {
+                            if ($scope.configuracionActivosFijos.some(function (config, i) {
+                                indx = i
+                                return config.subgrupo.id == activo.activo.subgrupo.id
+                            })) {
+                                var diff = new Date().getMonth() - new Date(activo.fecha_ingreso).getMonth() + (12 * (new Date().getFullYear() - new Date(activo.fecha_ingreso).getFullYear()));
+                                // var diff = new Date().getTime() - new Date(activo.fecha_ingreso).getMonth() 
+                                $scope.activosFijos[i].vida_util = $scope.configuracionActivosFijos[indx].vida_util
+                                $scope.activosFijos[i].vida_restante = $scope.configuracionActivosFijos[indx].vida_util - diff
+                            }
+                        })
+                    }
                 }
                 blockUI.stop()
             }).catch(function (err) {
@@ -147,6 +196,23 @@ angular.module('agil.controladores')
                 var memo = (err.stack !== undefined && err.stack !== null && err.stack !== "") ? err.stack : (err.data !== null && err.data !== undefined & err.data !== "") ? err.data : "Error: se perdio la conexión con el servidor.";
                 $scope.mostrarMensaje(memo);
             })
+        }
+
+        $scope.revaluarActivo = function () {
+            blockUI.start()
+            var prom = RevaluarActivo($scope.activo, $scope.usuarioSesion.id_empresa, $scope.usuarioSesion.id)
+            prom.then(function (res) {
+                if (res.hasErr) {
+                    $scope.mostrarMensaje(res.mensaje);
+                } else {
+
+                }
+                blockUI.stop();
+            }).catch(function (err) {
+                blockUI.stop();
+                var msg = (err.stack !== undefined && err.stack !== null) ? err.stack : (err.message !== undefined && err.message !== null) ? err.message : 'Se perdió la conexión.'
+                $scope.mostrarMensaje(msg)
+            });
         }
 
         $scope.guardarConfiguracionActivos = function () {
@@ -169,7 +235,19 @@ angular.module('agil.controladores')
             } else {
                 $scope.mostrarMensaje('No hay cambios para guardar.')
             }
-
         };
+        $scope.abrirDialogRevaluarActivo = function (activo) {
+            if (activo !== undefined && activo !== null) {
+                $scope.activo = activo
+                $scope.abrirPopup($scope.idModalRevaluarActivo);
+            } else {
+                $scope.mostrarMensaje('La información del activo es incorrecta.')
+            }
+        }
+
+        $scope.cerrarDialogRevaluarActivo = function () {
+            $scope.cerrarPopup($scope.idModalRevaluarActivo);
+        }
+
         $scope.inicio();
     });

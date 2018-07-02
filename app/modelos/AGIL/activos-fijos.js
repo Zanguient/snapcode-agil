@@ -16,6 +16,10 @@ module.exports = function (sequelize, Sequelize) {
             type: Sequelize.DATE,
             field: 'fecha_ingreso'
         },
+        ultima_actualizacion : {
+            type: Sequelize.DATE,
+            field: 'ultima_actualizacion'
+        },
         revaluado: {
             type: Sequelize.BOOLEAN,
             field: 'revaluado'

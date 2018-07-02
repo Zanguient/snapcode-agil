@@ -743,8 +743,8 @@
 										<th>p/u</th>
 										<th>Fisico</th>
 										<th>Valuado</th>
-										<th ng-if="usuario.empresa.usar_vencimientos">Lote</th>
-										<th ng-if="usuario.empresa.usar_vencimientos">Fecha Vencimiento</th>
+										<th ng-if="usuario.empresa.usar_vencimientos==true">Lote</th>
+										<th ng-if="usuario.empresa.usar_vencimientos==true">Fecha Vencimiento</th>
 									</tr>
 								</thead>
 
@@ -798,10 +798,10 @@
 												</tbody>
 											</table>
 										</td>
-										<td ng-if="usuario.empresa.usar_vencimientos">
+										<td ng-if="usuario.empresa.usar_vencimientos==true">
 											{{detalleMovimiento.lote}}
 										</td>
-										<td ng-if="usuario.empresa.usar_vencimientos">
+										<td ng-if="usuario.empresa.usar_vencimientos==true">
 											{{detalleMovimiento.inventario.fecha_vencimiento | date:"dd/MM/yyyy"}}
 										</td>
 									</tr>

@@ -803,7 +803,6 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 									promesa.then(function (dato) {
 										$scope.mostrarMensaje(dato.message)
 									})
-
 								}
 							} else if (fechaAnteriorMes == 11 && fechaActualMes == 0) {
 								sucursalesParaActualizar.push(sucursal)
@@ -3294,6 +3293,19 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 			//Finalmente, calculamos redondeando y ajustando por la naturaleza de los números en JS:
 			return Math.ceil((((d - new Date(d.getFullYear(), 0, 1)) / 8.64e7) + 1) / 7);
 		};
+
+		$scope.verificarActivosFijos = function () {
+			if ($scope.usuario.empresa.usar_funciones_erp) {
+				var hoy = new Date()
+
+			}
+			
+			
+		}
+
+		$scope.actualizarActivosFijos = function () {
+			
+		}
 
 		$scope.inicio = function () {
 			$scope.loadData();

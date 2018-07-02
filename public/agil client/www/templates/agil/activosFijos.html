@@ -86,7 +86,7 @@
                                 </td>
                                 <td>
                                     <select class="form-control" style="width:150px;" ng-change="filtrarProductosSeleccionadosPorGrupo()" id="selectGruposProductos"
-                                        name="selectGruposProductos" ng-model="filtro.grupo" ng-options="grupo.id as grupo.nombre for grupo in subGruposProducto track by grupo.id"
+                                        name="selectGruposProductos" ng-model="filtro.subGrupo" ng-options="subGrupo.id as subGrupo.nombre for subGrupo in subGruposProducto track by subGrupo.id"
                                         data-placeholder="Click para escoger">
                                         <option value="" selected>Todos</option>
                                     </select>
@@ -96,7 +96,7 @@
                                 </td>
                                 <td style="max-width: 20%; width: 20%">
                                     <select style="max-width: 180px;width: 180px" ng-options="estado as estado.nombre for estado in listaEstados track by estado.id"
-                                        ng-model="filtro.activo">
+                                        ng-model="filtro.estado">
                                         <option value="" selected>TODOS</option>
                                     </select>
                                 </td>
@@ -177,27 +177,27 @@
                         </td>
                         <td class="center" ng-if="fieldViewer.getConfiguration().numero.show"> {{$index+1}}
                         </td>
-                        <td ng-if="fieldViewer.getConfiguration().activo.show">{{activoFijo.producto.nombre}}</td>
-                        <td ng-if="fieldViewer.getConfiguration().codigo.show">{{activoFijo.producto.codigo}}</td>
+                        <td ng-if="fieldViewer.getConfiguration().activo.show">{{activoFijo.activo.nombre}}</td>
+                        <td ng-if="fieldViewer.getConfiguration().codigo.show">{{activoFijo.activo.codigo}}</td>
                         <td ng-if="fieldViewer.getConfiguration().cantidad.show">{{activoFijo.cantidad}}</td>
-                        <td class="hidden-480" ng-if="fieldViewer.getConfiguration().mes.show">{{activoFijo.mesDepreciacion}}</td>
-                        <td class="hidden-480" ng-if="fieldViewer.getConfiguration().anio.show">{{activoFijo.anioDepreciacion}}</td>
-                        <td ng-if="fieldViewer.getConfiguration().fecha_ingreso.show">{{activoFijo.fecha_ingreso}}</td>
-                        <td ng-if="fieldViewer.getConfiguration().valor.show">{{activoFijo.valor}}</td>
-                        <td ng-if="fieldViewer.getConfiguration().actualizacion.show">{{activoFijo.Actualizacion}}</td>
-                        <td ng-if="fieldViewer.getConfiguration().valor_actualizado.show">{{activoFijo.totalActualizacion}}</td>
-                        <td ng-if="fieldViewer.getConfiguration().depreciacion_acumulada.show">{{activoFijo.depreciacion_acumulada}}</td>
-                        <td ng-if="fieldViewer.getConfiguration().actualizacion_depreciacion_acumulada.show">{{activoFijo.actualizacionDepreciacionAcumulada}}</td>
-                        <td ng-if="fieldViewer.getConfiguration().depreciacion_acumulada_actualizada.show">{{activoFijo.depreciacionAcumuladaActualizada}}</td>
-                        <td ng-if="fieldViewer.getConfiguration().depreciacion_mes.show">{{activoFijo.depreciacionMes}}</td>
-                        <td ng-if="fieldViewer.getConfiguration().total_depreciacion.show">{{activoFijo.totalDepreciacion}}</td>
-                        <td ng-if="fieldViewer.getConfiguration().valor_neto.show">{{activoFijo.valorNeto}}</td>
-                        <td ng-if="fieldViewer.getConfiguration().vida_util.show">{{activoFijo.vidaUtil}}</td>
-                        <td ng-if="fieldViewer.getConfiguration().vida_restante.show">{{activoFijo.vidaRestante}}</td>
-                        <td ng-if="fieldViewer.getConfiguration().revaluado.show">{{activoFijo.revaluado}}</td>
+                        <td class="hidden-480" ng-if="fieldViewer.getConfiguration().mes.show">{{activoFijo.valores[0].mes +1}}</td>
+                        <td class="hidden-480" ng-if="fieldViewer.getConfiguration().anio.show">{{activoFijo.valores[0].anio}}</td>
+                        <td ng-if="fieldViewer.getConfiguration().fecha_ingreso.show">{{activoFijo.fecha_ingreso | date : "dd/MM/yyyy"}}</td>
+                        <td ng-if="fieldViewer.getConfiguration().valor.show">{{activoFijo.valores[0].valor}}</td>
+                        <td ng-if="fieldViewer.getConfiguration().actualizacion.show">{{activoFijo.valores[0].incremento_actualizacion}}</td>
+                        <td ng-if="fieldViewer.getConfiguration().valor_actualizado.show">{{activoFijo.valores[0].valor_actualizado}}</td>
+                        <td ng-if="fieldViewer.getConfiguration().depreciacion_acumulada.show">{{activoFijo.valores[0].depreciacion_acumulada}}</td>
+                        <td ng-if="fieldViewer.getConfiguration().actualizacion_depreciacion_acumulada.show">{{activoFijo.valores[0].incremento_actualizacion_depreciacion_acumulada}}</td>
+                        <td ng-if="fieldViewer.getConfiguration().depreciacion_acumulada_actualizada.show">{{activoFijo.valores[0].depreciacion_acumulada_actualizada}}</td>
+                        <td ng-if="fieldViewer.getConfiguration().depreciacion_mes.show">{{activoFijo.valores[0].depreciacion}}</td>
+                        <td ng-if="fieldViewer.getConfiguration().total_depreciacion.show">{{activoFijo.valores[0].total_depreciacion_acumulada}}</td>
+                        <td ng-if="fieldViewer.getConfiguration().valor_neto.show">{{activoFijo.valores[0].valor_neto}}</td>
+                        <td ng-if="fieldViewer.getConfiguration().vida_util.show">{{activoFijo.vida_util}}</td>
+                        <td ng-if="fieldViewer.getConfiguration().vida_restante.show">{{activoFijo.vida_restante}}</td>
+                        <td ng-if="fieldViewer.getConfiguration().revaluado.show">{{activoFijo.revaluado ? 'Sí' : 'No'}}</td>
                         <td>
-                            <a class="orange" href="javascript:void(0)" e-disabled="!aplicacion.puede_ver" ng-click="ver(transaccion)" data-rel="tooltip"
-                                tooltip-placement="top" uib-tooltip="Ver">
+                            <a class="orange" href="javascript:void(0)" e-disabled="!aplicacion.puede_modificar" ng-click="abrirDialogRevaluarActivo(activoFijo)"
+                                data-rel="tooltip" tooltip-placement="top" uib-tooltip="Ver">
                                 <i class="ace-icon fa fa-file-text bigger-130"></i>
                             </a>
                         </td>
@@ -276,11 +276,7 @@
                                         </td>
                                         <td>
                                             &nbsp; &nbsp;
-                                            <input type="text" class="form-control form-inline" ng-model="configuracion.vida_util" placeholder="Vida util en meses." step="1" min="1">
-                                            <!-- <select class="form-control form-inline" ng-options="vida.id for vida in mesesVidaUtil track by vida.id" ng-model="configuracion.vida_util">
-                                                <option value="" selected>--Vida util (Meses)--</option>
-                                            </select> -->
-                                            &nbsp; &nbsp;
+                                            <input type="number" class="form-control form-inline" ng-model="configuracion.vida_util"> &nbsp; &nbsp;
                                         </td>
                                         <td>
                                             &nbsp; &nbsp;
@@ -332,5 +328,61 @@
                 </div>
             </form>
         </div>
+    </div>
+</div>
+
+<div id="modal-revaluar-activos" class="modal">
+    <div class="modal-dialog">
+        <div class="modal-header blue">
+            <h2>Revaluar Activo {{activo.activo.nombre}}</h2>
+        </div>
+        <form ng-submit="revaluarActivo()">
+            <div class="modal-body container-fluid">
+                <div class="row">
+                    <div class="form-group">
+                        <div class="md-6">
+                            <label for="Valor">Valor</label>
+                        </div>
+                        <div class="md-6">
+                            <input type="number" ng-model="activo.valor_revaluacion" step="0.01">
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group">
+                        <div class="md-6">
+                            <label for="Depreciacion">Depreciación</label>
+                        </div>
+                        <div class="md-6">
+                            <input type="number" class="form-control" ng-model="activo.depreciacion_acumulada_actual" step="0.01">
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group">
+                        <div class="md-6">
+                            <label for="Valor">Fecha</label>
+                        </div>
+                        <div class="md-6">
+                            <input type="text" class="date-picker form-control" ng-update-hidden data-date-format="dd/mm/yyyy" ng-model="activo.fecha_revaluacion" step="0.01">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="container-fluid">
+                    <div class="md-6">
+                        <button type="button" class="btn btn-danger" ng-click="cerrarDialogRevaluarActivo()">
+                            Cancelar
+                        </button>
+                    </div>
+                    <div class="md-6">
+                        <button type="submit" class="btn btn-success">
+                            Revaluar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </form>
     </div>
 </div>

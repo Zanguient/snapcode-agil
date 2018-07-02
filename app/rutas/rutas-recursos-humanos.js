@@ -2482,7 +2482,8 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                                                                 id_tipo_documento: TexpClase.dataValues.id,
                                                                 designacion_empresa: pacienteActual.designacion_empresa,
                                                                 eliminado: pacienteActual.eliminado,
-                                                                es_empleado: true
+                                                                es_empleado: true,
+                                                                eliminado:pacienteActual.estado
                                                             }, {
                                                                     where: { id: pacienteFound.id },
                                                                     transaction: t
@@ -2554,7 +2555,8 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                                                                                             haber_basico: pacienteActual.haber_basico,
                                                                                             matricula_seguro: pacienteActual.matricula_seguro,
                                                                                             id_seguro_salud: idSeguroSalud,
-                                                                                            seguro_salud_carnet: true
+                                                                                            seguro_salud_carnet: true,
+                                                                                            fecha_expiracion:pacienteActual.fecha_expiracion
                                                                                         },
                                                                                             {
                                                                                                 where: {
@@ -2910,7 +2912,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                                                                         id_tipo_documento: TexpClase.dataValues.id,
                                                                         id_campo: id,
                                                                         designacion_empresa: pacienteActual.designacion_empresa,
-                                                                        eliminado: false,
+                                                                        eliminado: pacienteActual.estado,
                                                                         es_empleado: pacienteActual.es_empleado
                                                                         //comentario: pacienteActual.comentario
                                                                     },
@@ -2967,7 +2969,8 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                                                                                                 haber_basico: pacienteActual.haber_basico,
                                                                                                 matricula_seguro: pacienteActual.matricula_seguro,
                                                                                                 id_seguro_salud: idSeguroSalud,
-                                                                                                seguro_salud_carnet: true
+                                                                                                seguro_salud_carnet: true,
+                                                                                                fecha_expiracion:pacienteActual.fecha_expiracion
                                                                                             },
                                                                                                 { transaction: t }).then(function (Creado) {
                                                                                                     return Tipo.find({

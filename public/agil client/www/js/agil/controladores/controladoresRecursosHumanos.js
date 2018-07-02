@@ -2085,6 +2085,9 @@ angular.module('agil.controladores')
                         paciente.haber_basico = worksheet['AB' + row] != undefined && worksheet['AB' + row] != "" ? parseFloat(worksheet['AB' + row].v.toString()) : null;
                         paciente.matricula_seguro = worksheet['AC' + row] != undefined && worksheet['AC' + row] != "" ? worksheet['AC' + row].v.toString() : null;
                         paciente.seguro_salud = worksheet['AD' + row] != undefined && worksheet['AD' + row] != "" ? worksheet['AD' + row].v.toString() : null;
+                        paciente.estadoTexto = worksheet['AE' + row] != undefined && worksheet['AE' + row] != "" ? worksheet['AE' + row].v.toString() : null;
+                        paciente.estado = (paciente.estadoTexto === "Activo") ? false : true;
+                        paciente.fecha_expiracion = worksheet['AF' + row] != undefined && worksheet['AF' + row] != "" ? $scope.fecha_excel_angular(worksheet['AF' + row].v.toString()) : null;
                         paciente.imagen = "img/icon-user-default.png"
                         paciente.es_empleado = true
                         var a = new Date(paciente.fecha_inicio)
@@ -9163,13 +9166,13 @@ angular.module('agil.controladores')
                     var columns = [];
                     var Historial = vacacion.ficha.historialVacaciones[k]
                     columns.push(vacacion.ficha.empleado.persona.nombre_completo);
-                    var textoCargo=""
+                    var textoCargo = ""
                     for (var d = 0; d < vacacion.ficha.cargos.length; d++) {
                         var cargo = vacacion.ficha.cargos[d];
-                        if(d>0){
-                            textoCargo+=", "
+                        if (d > 0) {
+                            textoCargo += ", "
                         }
-                        textoCargo+=cargo.cargo.nombre
+                        textoCargo += cargo.cargo.nombre
                     }
                     columns.push(textoCargo);
                     columns.push(vacacion.ficha.empleado.campo.nombre);

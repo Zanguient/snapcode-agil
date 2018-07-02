@@ -1,12 +1,12 @@
-module.exports = function (router, sequelize, Sequelize, Usuario, ActivosFijos, ActivosFijosValores, ActivosFijosConfiguracion, Clase, Producto, Inventario) {
+module.exports = function (router, sequelize, Sequelize, Usuario, ActivosFijos, ActivosFijosValores, ActivosFijosConfiguracion, Clase, Producto, Inventario, MonedaTipoCambio) {
 
-    router.route('/activos/empresa/:id_empresa')
+    router.route('/activos/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/mes/:mes/year/:anio/codigo/:codigo/estado/:estado/vida/:vida_util')
         .get(function (req, res) {
             ActivosFijos.findAll({
                 where: {
                     id_empresa: req.params.id_empresa
                 },
-                include: [{ model: ActivosFijosValores, as: 'valores' }, {model: Producto, as: 'activo', attributes: ['nombre', 'codigo', 'id_subgrupo'], include:[{model: Inventario, as: 'inventarios'}]}]
+                include: [{ model: ActivosFijosValores, as: 'valores' }, {model: Producto, as: 'activo', attributes: ['nombre', 'codigo', 'id_subgrupo'], include:[{model: Inventario, as: 'inventarios'},{model: Clase, as: 'subgrupo'}]}]
             }).then(function (activos) {
                 res.json({ activos: activos });
             }).catch(function (err) {
@@ -73,6 +73,45 @@ module.exports = function (router, sequelize, Sequelize, Usuario, ActivosFijos, 
             }).catch(function (err) {
                 res.json({ mensaje: (err.stack !== undefined) ? err.stack : err, hasErr: true });
             })
+        });
+
+        router.route('/activos/revaluacion/:id_empresa/user/:id_usuario')
+        .put(function (req, res) {
+            var fecha_revaluacion = new Date(req.body.fecha_revaluacion.split('/').reverse())
+            var mesAnterior = new Date(fecha_revaluacion.getFullYear(), fecha_revaluacion.getMonth(), 0)
+            var mesActual = new Date(fecha_revaluacion.getFullYear(), fecha_revaluacion.getMonth(), 1, 23,59,59)
+			MonedaTipoCambio.findAll({
+				where: {
+					fecha: {
+						$between: [mesAnterior, mesActual]
+					}
+				}
+			}).then(function (MonedaCambio) {
+				ActivosFijosValores.update({
+                    id_usuario: req.params.id_usuario,
+                    id_activo: req.body.activo.id,
+                    mes: new Date(req.body.fecha_revaluacion.split('/').reverse()).getMonth(),
+                    anio: new Date(req.body.fecha_revaluacion.split('/').reverse()).getFullYear(),
+                    valor: req.body.valor_revaluacion,
+                    incremento_actualizacion: 0,
+                    valor_actualizado: 0,
+                    depreciacion_acumulada: 0,
+                    incremento_actualizacion_depreciacion_acumulada: 0,
+                    depreciacion_acumulada_actualizada: 0,
+                    depreciacion: 0,
+                    total_depreciacion_acumulada: 0,
+                    valor_neto: 0,
+                    eliminado: false
+                },{
+                    where: {
+                        id_activo: req.body.id
+                    }
+                }).then(function (configuracion) {
+                    res.json({ configuracion: configuracion });
+                }).catch(function (err) {
+                    res.json({ mensaje: (err.stack !== undefined) ? err.stack : err, hasErr: true });
+                });
+			})
         });
 
     function crearDetalleConfiguracion(detalle, t, params) {
