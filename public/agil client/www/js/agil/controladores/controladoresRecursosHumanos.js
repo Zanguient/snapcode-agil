@@ -6,7 +6,7 @@ angular.module('agil.controladores')
         ListaAnticiposEmpleado, CrearNuevosAnticiposEmpleados, ActualizarAnticipoEmpleado, NuevaAusenciaEmpleado, HistorialEmpleadoAusencias, HistorialEmpresaEmpleadosAusencias, NuevaVacacionEmpleado, HistorialEmpleadoVacaciones, HistorialEmpresaVacaciones, NuevoFeriado,
         ListaFeriados, GuardarClasesAusencias, Tipos, ListaBancos, ConfiguracionesVacacion, HistorialGestionesVacacion, GuardarTr3, ListaTr3Empresa, GuardarHistorialVacacion, CrearBeneficioSocial, ListaBeneficiosEmpleado, GuardarBitacoraFicha, VerBitacoraFicha, ObtenerFiniquitoEmpleado,
         ClasesTipoEmpresa, GuardarConfiguracionRopaCargo, ListaConfiguracionRopaCargo, DatosReporteConfiguracionRopa, FichasEmpleadoEmpresa, ListaCargosEmpleado, ListaRopaTrabajoProductos, GuardarDotacionRopa, ListaDotacionRopa, EliminarDotacionRopa, ListaDotacionRopaEmpresa, ActualizarDotacionRopa,
-        FamiliaresEmpleadoEmpresa, ListaRolTurnosEmpresa, ListaChoferesViaje, GuardarViajeRrhh, ListaViajeRrhh, ListaRolTurnosCalendario, ViajeRrhhLista, BeneficioEmpresa, GuardarConductoresEmpresa) {
+        FamiliaresEmpleadoEmpresa, ListaRolTurnosEmpresa, ListaChoferesViaje, GuardarViajeRrhh, ListaViajeRrhh, ListaRolTurnosCalendario, ViajeRrhhLista, BeneficioEmpresa, GuardarConductoresEmpresa, ListaHijosEmpleadosEmpresa) {
         $scope.usuario = JSON.parse($localStorage.usuario);
         $scope.idModalPrerequisitos = 'dialog-pre-requisitos';
         $scope.idModalEmpleado = 'dialog-empleado';
@@ -6283,17 +6283,17 @@ angular.module('agil.controladores')
                 columns.push(empleados[i].designacion_empresa);
                 columns.push(empleados[i].ci);
                 columns.push(empleados[i].extension);
-                columns.push(empleados[i].ficha.tipoContrato.nombre);
+                columns.push(empleados[i].tipoContrato);
                 columns.push(empleados[i].campo);
-                var cargostexto = empleados[i].cargos[0].cargo.nombre
+                var cargostexto = empleados[i].cargos
                 iu.push(i)
-                empleados[i].cargos.forEach(function (cargo, index, array) {
-                    if (cargostexto == "") {
-                        cargostexto = cargo
-                    } else {
-                        cargostexto = cargostexto + "-" + cargo.cargo.nombre
-                    }
-                });
+                /*  empleados[i].cargos.forEach(function (cargo, index, array) {
+                     if (cargostexto == "") {
+                         cargostexto = cargo
+                     } else {
+                         cargostexto = cargostexto + "-" + cargo.cargo.nombre
+                     }
+                 }); */
 
                 columns.push(cargostexto);
                 data.push(columns);
@@ -9278,6 +9278,89 @@ angular.module('agil.controladores')
                     }
                 })
             })
+        }
+
+        $scope.ReporteDehijos = function (desde, hasta, todos) {
+            var promesa = ListaHijosEmpleadosEmpresa($scope.usuario.id_empresa)
+            promesa.then(function (datos) {
+                var fechaActual = new Date()
+                var hijosReporte = []
+                datos.forEach(function (hijo, index, array) {
+                    console.log("falta funcionalidad")
+                    fechaNacimiento = new Date(hijo.persona.fecha_nacimiento)
+                    var dato = $scope.diferenciaEntreDiasEnDias(fechaNacimiento, fechaActual)
+                    hijo.edad = Math.trunc(dato / 365);
+                    if (index === (array.length - 1)) {
+                        datos.forEach(function (hijo, index, array) {
+                            if (todos) {
+                                if (hijo.edad >= desde && hijo.edad <= hasta) {
+                                    hijosReporte.push(hijo)
+                                    if (index == array.length - 1) {
+                                        $scope.generarReproteHijos(hijosReporte)
+                                    }
+                                } else {
+                                    if (index == array.length - 1) {
+                                        $scope.generarReproteHijos(hijosReporte)
+                                    }
+                                }
+                            } else {
+                                if (hijo.edad >= desde && hijo.edad <= hasta) {
+                                    hijosReporte.push(hijo)
+                                    if (index == array.length - 1) {
+                                        $scope.generarReproteHijos(hijosReporte)
+                                    }
+                                } else {
+                                    if (index == array.length - 1) {
+                                        $scope.generarReproteHijos(hijosReporte)
+                                    }
+                                }
+                            }
+
+                        })
+                    }
+                })
+                console.log(datos)
+            })
+        }
+        $scope.generarReproteHijos = function (datos) {
+
+            var data = [["CODIGO", "EMPLEADO", "L_APORTE", "DEPARTAMENTO", "PROVINCIA",
+                "LOCALIDAD", "RECIDENCIA", "CAMPO", "ESTADO", "NOMBRES", "APELLIDO PATERNO", "APELLIDO MATERNO", "FECHA_NAC", "SEXO", "EDAD", "AFILIADO", "RELACION"]]
+            var iu = []
+            for (var i = 0; i < datos.length; i++) {
+                var columns = [];
+                columns.push(datos[i].empleado.codigo);
+                columns.push(datos[i].empleado.persona.nombre_completo);
+                columns.push(datos[i].empleado.empleadosFichas[datos[i].empleado.empleadosFichas.length-1].aporteSeguroLargoPlazo.nombre);
+                columns.push((datos[i].empleado.persona.ciudad)?datos[i].empleado.persona.ciudad.nombre:"");
+                columns.push((datos[i].empleado.persona.provincia)?datos[i].empleado.persona.provincia.nombre:"");
+                columns.push((datos[i].empleado.persona.localidad)?datos[i].empleado.persona.localidad.nombre:"");
+                columns.push(datos[i].empleado.persona.direccion_numero);
+                columns.push(datos[i].empleado.campo.nombre);               
+                columns.push("");
+                columns.push(datos[i].persona.nombres);
+                columns.push(datos[i].persona.apellido_paterno);
+                columns.push(datos[i].persona.apellido_materno);
+                columns.push(new Date(datos[i].persona.fecha_nacimiento));
+                columns.push(datos[i].persona.genero.nombre);
+                columns.push(datos[i].edad);
+                columns.push((datos[i].afiliado != null) ? (datos[i].afiliado) ? "si" : "no" : "no");
+                columns.push(datos[i].relacion.nombre);
+
+                iu.push(i)
+
+                data.push(columns);
+            }
+
+            var ws_name = "SheetJS";
+            var wb = new Workbook(), ws = sheet_from_array_of_arrays(data);
+            /* add worksheet to workbook */
+            wb.SheetNames.push(ws_name);
+            wb.Sheets[ws_name] = ws;
+            var wbout = XLSX.write(wb, { bookType: 'xlsx', bookSST: true, type: 'binary' });
+            saveAs(new Blob([s2ab(wbout)], { type: "application/octet-stream" }), "EMPLEADO RRHH.xlsx");
+            blockUI.stop();
+
         }
         $scope.inicio()
     });

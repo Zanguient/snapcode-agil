@@ -1,0 +1,1 @@
+ALTER TABLE agil_activos_fijos add ultima_actualizacion DATE;

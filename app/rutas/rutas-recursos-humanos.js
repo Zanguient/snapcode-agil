@@ -148,7 +148,19 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
             }
 
         })
-
+    router.route('/recursos-humanos-familiar/empresa/:id_empresa')
+        .get(function (req, res) {          
+            RrhhEmpleadoFichaFamiliar.findAll({
+                include: [{ model: Clase, as: 'relacion' },{model:Persona,as:'persona',include:[{ model: Clase, as: 'genero' }]},{ model: MedicoPaciente, as: "empleado", where: { id_empresa: req.params.id_empresa },include: [{ model: Clase, as: 'campo' }, { model: RrhhEmpleadoFicha, as: 'empleadosFichas', include: [{ model: Clase, as: "aporteSeguroLargoPlazo" },{ model: RrhhEmpleadoCargo, as: 'cargos', include: [{ model: Clase, as: "cargo" }] }] }, { model: Clase, as: 'extension' }, { model: Persona, as: 'persona',   include: [{ model: Clase, as: 'genero' },
+                { model: Clase, as: 'pais' },
+                { model: Clase, as: 'ciudad' },
+                { model: Clase, as: 'provincia' },
+                { model: Clase, as: 'localidad' },
+                { model: Clase, as: 'estadoCivil' }] }] }]
+            }).then(function (FamiliaresEncontrados) {
+                res.json(FamiliaresEncontrados);
+            });
+        })
     router.route('/recursos-humanos-familiar/:id_persona/familiar-relacion/:id_familiar')
         .put(function (req, res) {
 
@@ -2483,7 +2495,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                                                                 designacion_empresa: pacienteActual.designacion_empresa,
                                                                 eliminado: pacienteActual.eliminado,
                                                                 es_empleado: true,
-                                                                eliminado:pacienteActual.estado
+                                                                eliminado: pacienteActual.estado
                                                             }, {
                                                                     where: { id: pacienteFound.id },
                                                                     transaction: t
@@ -2556,7 +2568,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                                                                                             matricula_seguro: pacienteActual.matricula_seguro,
                                                                                             id_seguro_salud: idSeguroSalud,
                                                                                             seguro_salud_carnet: true,
-                                                                                            fecha_expiracion:pacienteActual.fecha_expiracion
+                                                                                            fecha_expiracion: pacienteActual.fecha_expiracion
                                                                                         },
                                                                                             {
                                                                                                 where: {
@@ -2970,7 +2982,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                                                                                                 matricula_seguro: pacienteActual.matricula_seguro,
                                                                                                 id_seguro_salud: idSeguroSalud,
                                                                                                 seguro_salud_carnet: true,
-                                                                                                fecha_expiracion:pacienteActual.fecha_expiracion
+                                                                                                fecha_expiracion: pacienteActual.fecha_expiracion
                                                                                             },
                                                                                                 { transaction: t }).then(function (Creado) {
                                                                                                     return Tipo.find({
@@ -3501,7 +3513,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
             var condicionEmpleado = { id_empresa: req.params.id_empresa }
             if (req.params.estado != 2) {
                 if (req.params.estado == 0) {
-                      wwwwwwcondicionEmpleado = { eliminado: true, id_empresa: req.params.id_empresa }
+                    wwwwwwcondicionEmpleado = { eliminado: true, id_empresa: req.params.id_empresa }
                 } else {
                     condicionEmpleado = { eliminado: false, id_empresa: req.params.id_empresa }
                 }
@@ -3515,8 +3527,11 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
             }
             RrhhEmpleadoVacaciones.findAll({
                 where: condicionVacaciones,
-                include: [{ model: RrhhEmpleadoDescuentoVacacionHistorial, as: 'detalleDescuentosVacacionHistorial', include: [{ model: RrhhEmpleadoHistorialVacacion, as: 'historialVacacion' }] }, { model: RrhhEmpleadoFicha, as: 'ficha', include: [{
-                    model: RrhhEmpleadoCargo, as: 'cargos', include: [{ model: Clase, as: 'cargo' }]},{ model: RrhhEmpleadoHistorialVacacion, as: 'historialVacaciones' },{ model: MedicoPaciente, as: 'empleado', where: condicionEmpleado, include: [{ model: Persona, as: 'persona' },{ model: Clase, as: 'campo' }] }] }]
+                include: [{ model: RrhhEmpleadoDescuentoVacacionHistorial, as: 'detalleDescuentosVacacionHistorial', include: [{ model: RrhhEmpleadoHistorialVacacion, as: 'historialVacacion' }] }, {
+                    model: RrhhEmpleadoFicha, as: 'ficha', include: [{
+                        model: RrhhEmpleadoCargo, as: 'cargos', include: [{ model: Clase, as: 'cargo' }]
+                    }, { model: RrhhEmpleadoHistorialVacacion, as: 'historialVacaciones' }, { model: MedicoPaciente, as: 'empleado', where: condicionEmpleado, include: [{ model: Persona, as: 'persona' }, { model: Clase, as: 'campo' }] }]
+                }]
             }).then(function (vacaciones) {
                 res.json(vacaciones)
             })

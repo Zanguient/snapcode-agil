@@ -1164,3 +1164,23 @@ angular.module('agil.servicios')
     };
     return res;
 }])
+.factory('ListaHijosEmpresa', function ($resource) {
+    return $resource(restServer + "recursos-humanos-familiar/empresa/:id_empresa", null ,
+        {
+            'update': { method: 'PUT' }
+        });
+})
+.factory('ListaHijosEmpleadosEmpresa', ['ListaHijosEmpresa', '$q', function (ListaHijosEmpresa, $q) {
+    var res = function (idEmpresa) {
+        var delay = $q.defer();
+        ListaHijosEmpresa.query({
+            id_empresa:idEmpresa
+        }, function (entidad) {
+            delay.resolve(entidad);
+        }, function (error) {
+            delay.reject(error);
+        });
+        return delay.promise;
+    };
+    return res;
+}])
