@@ -398,7 +398,7 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 																});
 															});
 														} else {
-															crearDetalleCompra(detalleCompra, compra.movimiento.id, compra.id, compra.almacen.id, detalleCompra.producto.id, detalleCompra.centroCosto.id,res,compra)
+															crearDetalleCompra(detalleCompra, compra.movimiento.id, compra.id, compra.almacen.id, productoCreado.id, detalleCompra.centroCosto.id,res,compra)
 														}
 													});
 												} else {
