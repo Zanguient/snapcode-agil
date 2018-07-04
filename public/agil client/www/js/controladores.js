@@ -3296,16 +3296,13 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 
 		$scope.verificarActivosFijos = function () {
 			if ($scope.usuario.empresa.usar_funciones_erp) {
-				var hoy = new Date()
-
+				var prom = VerificacionMensualActivos($scope.usuario.id_empresa)
 			}
-			
-			
 		}
 
-		$scope.actualizarActivosFijos = function () {
+		// $scope.actualizarActivosFijos = function () {
 			
-		}
+		// }
 
 		$scope.inicio = function () {
 			$scope.loadData();

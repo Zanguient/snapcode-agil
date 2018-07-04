@@ -59,15 +59,35 @@ angular.module('agil.servicios')
 
     .factory('Revaluacion', function ($resource) {
         return $resource(restServer + "activos/revaluacion/:id_empresa/user/:id_usuario", null,
-        {
-			'update': { method: 'PUT' }
-		});
+            {
+                'update': { method: 'PUT' }
+            });
     })
 
     .factory('RevaluarActivo', ['Revaluacion', '$q', function (Revaluacion, $q) {
         var res = function (activo, idEmpresa, usuario) {
             var delay = $q.defer();
             Revaluacion.update({ id_empresa: idEmpresa, id_usuario: usuario }, activo, function (entidades) {
+                delay.resolve(entidades);
+            }, function (error) {
+                delay.reject(error);
+            });
+            return delay.promise;
+        };
+        return res;
+    }])
+
+    .factory('ActualizacionMensualActivos', function ($resource) {
+        return $resource(restServer + "activos/mensual/:id_empresa", null,
+            {
+                'update': { method: 'PUT' }
+            });
+    })
+
+    .factory('VerificacionMensualActivos', ['ActualizacionMensualActivos', '$q', function (ActualizacionMensualActivos, $q) {
+        var res = function (idEmpresa) {
+            var delay = $q.defer();
+            ActualizacionMensualActivos.get({ id_empresa: idEmpresa }, function (entidades) {
                 delay.resolve(entidades);
             }, function (error) {
                 delay.reject(error);

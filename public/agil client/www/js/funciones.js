@@ -719,7 +719,10 @@ function ejecutarScriptsActivos(idModalconfiguracionActivos, idModalRevaluarActi
 	crearPopup(idModalconfiguracionActivos, 'auto', 'auto');
 	crearPopup(idModalRevaluarActivo, 'auto', 'auto');
 }
-
+function ejecutarScriptGeoLocalizacion(ModalVendedorMapa,ModalFiltroMapa){
+	crearPopup(ModalVendedorMapa, "80%", 600);
+	crearPopup(ModalFiltroMapa, "auto", "auto");
+}
 function aplicarMultiSelect() {
 	$('.multiselect').multiselect({
 		enableFiltering: true,

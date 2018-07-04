@@ -159,7 +159,7 @@ module.exports=function(sequelize,Sequelize){
 		sequelize.query("INSERT IGNORE INTO sys_aplicacion SET id = 47,titulo = 'PROFORMAS',atributo_clase='fa-file-powerpoint-o',url='proformas',createdAt = NOW(),updatedAt = NOW();").spread(function(results, metadata) {
 		  //console.log(metadata+" rows affected in sys_application");
 		});
-		sequelize.query("INSERT IGNORE INTO sys_aplicacion SET id = 48,titulo = 'POLIFUNCIONALIDAD',atributo_clase='fa fa-street-view',url='polifuncionalidad',createdAt = NOW(),updatedAt = NOW();").spread(function(results, metadata) {
+		sequelize.query("INSERT IGNORE INTO sys_aplicacion SET id = 48,titulo = 'POLIFUNCIONALIDAD',atributo_clase='fa-street-view',url='polifuncionalidad',createdAt = NOW(),updatedAt = NOW();").spread(function(results, metadata) {
 		  //console.log(metadata+" rows affected in sys_application");
 		});
 		sequelize.query("INSERT IGNORE INTO sys_aplicacion SET id = 49,titulo = 'TRANSACCIONES',atributo_clase='glyphicon-euro',url='transacciones',createdAt = NOW(),updatedAt = NOW();").spread(function(results, metadata) {
@@ -169,6 +169,9 @@ module.exports=function(sequelize,Sequelize){
 		  //console.log(metadata+" rows affected in sys_application");
 		});
 		sequelize.query("INSERT IGNORE INTO sys_aplicacion SET id = 51,titulo = 'ACTIVOS',atributo_clase='glyphicon-euro',url='activos-fijos',createdAt = NOW(),updatedAt = NOW();").spread(function(results, metadata) {
+		  //console.log(metadata+" rows affected in sys_application");
+		});
+		sequelize.query("INSERT IGNORE INTO sys_aplicacion SET id = 52,titulo = 'GEO LOCALIZACIÓN',atributo_clase='fa-map-marker',url='geo-localizacion',padre=41,createdAt = NOW(),updatedAt = NOW();").spread(function(results, metadata) {
 		  //console.log(metadata+" rows affected in sys_application");
 		});
 	});

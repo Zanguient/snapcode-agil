@@ -802,7 +802,7 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 		.get(function (req, res) {
 			sequelize.query("SELECT MAX(CAST(SUBSTRING(codigo, 3, 5) AS UNSIGNED)) as ultimo_codigo FROM agil_producto where empresa=" + req.params.id_empresa, { type: sequelize.QueryTypes.SELECT })
 				.then(function (dato) {
-					res.json(dato[0]);;
+					res.json(dato[0]);
 				});
 		});
 

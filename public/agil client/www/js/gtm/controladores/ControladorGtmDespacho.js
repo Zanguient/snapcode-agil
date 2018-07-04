@@ -16,7 +16,7 @@ angular.module('agil.controladores')
         $scope.IdModalCobros = 'modal-cobros';
         $scope.IdModalHistorialCobros = 'modal-historial-cobros'
         $scope.idModalConceptoEdicion = 'dialog-conceptos';
-        $scope.usuario = JSON.parse($localStorage.usuario);
+       
 
         $scope.$on('$viewContentLoaded', function () {
             resaltarPestaña($location.path().substring(1));

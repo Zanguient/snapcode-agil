@@ -178,8 +178,8 @@ angular.module('agil.controladores')
                     var indx = -1
                     if ($scope.configuracionActivosFijos.length > 0) {
                         $scope.activosFijos.forEach(function (activo, i) {
-                            if ($scope.configuracionActivosFijos.some(function (config, i) {
-                                indx = i
+                            if ($scope.configuracionActivosFijos.some(function (config, j) {
+                                indx = j
                                 return config.subgrupo.id == activo.activo.subgrupo.id
                             })) {
                                 var diff = new Date().getMonth() - new Date(activo.fecha_ingreso).getMonth() + (12 * (new Date().getFullYear() - new Date(activo.fecha_ingreso).getFullYear()));
@@ -205,7 +205,7 @@ angular.module('agil.controladores')
                 if (res.hasErr) {
                     $scope.mostrarMensaje(res.mensaje);
                 } else {
-
+                    $scope.cerrarDialogRevaluarActivo()
                 }
                 blockUI.stop();
             }).catch(function (err) {
@@ -248,6 +248,5 @@ angular.module('agil.controladores')
         $scope.cerrarDialogRevaluarActivo = function () {
             $scope.cerrarPopup($scope.idModalRevaluarActivo);
         }
-
         $scope.inicio();
     });

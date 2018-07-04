@@ -9295,24 +9295,28 @@ angular.module('agil.controladores')
                             if (todos) {
                                 if (hijo.edad >= desde && hijo.edad <= hasta) {
                                     hijosReporte.push(hijo)
-                                    if (index == array.length - 1) {
+                                    if (index === (array.length - 1)) {
                                         $scope.generarReproteHijos(hijosReporte)
                                     }
                                 } else {
-                                    if (index == array.length - 1) {
+                                    if (index === (array.length - 1)) {
+                                        $scope.generarReproteHijos(hijosReporte)
+                                    }
+                                }
+                            } else if (hijo.empleado.eliminado == false) {
+                                if (hijo.edad >= desde && hijo.edad <= hasta) {
+                                    hijosReporte.push(hijo)
+                                    if (index === (array.length - 1)) {
+                                        $scope.generarReproteHijos(hijosReporte)
+                                    }
+                                } else {
+                                    if (index === (array.length - 1)) {
                                         $scope.generarReproteHijos(hijosReporte)
                                     }
                                 }
                             } else {
-                                if (hijo.edad >= desde && hijo.edad <= hasta) {
-                                    hijosReporte.push(hijo)
-                                    if (index == array.length - 1) {
-                                        $scope.generarReproteHijos(hijosReporte)
-                                    }
-                                } else {
-                                    if (index == array.length - 1) {
-                                        $scope.generarReproteHijos(hijosReporte)
-                                    }
+                                if (index === (array.length - 1)) {
+                                    $scope.generarReproteHijos(hijosReporte)
                                 }
                             }
 
@@ -9331,12 +9335,12 @@ angular.module('agil.controladores')
                 var columns = [];
                 columns.push(datos[i].empleado.codigo);
                 columns.push(datos[i].empleado.persona.nombre_completo);
-                columns.push(datos[i].empleado.empleadosFichas[datos[i].empleado.empleadosFichas.length-1].aporteSeguroLargoPlazo.nombre);
-                columns.push((datos[i].empleado.persona.ciudad)?datos[i].empleado.persona.ciudad.nombre:"");
-                columns.push((datos[i].empleado.persona.provincia)?datos[i].empleado.persona.provincia.nombre:"");
-                columns.push((datos[i].empleado.persona.localidad)?datos[i].empleado.persona.localidad.nombre:"");
+                columns.push(datos[i].empleado.empleadosFichas[datos[i].empleado.empleadosFichas.length - 1].aporteSeguroLargoPlazo.nombre);
+                columns.push((datos[i].empleado.persona.ciudad) ? datos[i].empleado.persona.ciudad.nombre : "");
+                columns.push((datos[i].empleado.persona.provincia) ? datos[i].empleado.persona.provincia.nombre : "");
+                columns.push((datos[i].empleado.persona.localidad) ? datos[i].empleado.persona.localidad.nombre : "");
                 columns.push(datos[i].empleado.persona.direccion_numero);
-                columns.push(datos[i].empleado.campo.nombre);               
+                columns.push(datos[i].empleado.campo.nombre);
                 columns.push("");
                 columns.push(datos[i].persona.nombres);
                 columns.push(datos[i].persona.apellido_paterno);

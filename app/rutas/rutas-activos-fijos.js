@@ -6,7 +6,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, ActivosFijos, 
                 where: {
                     id_empresa: req.params.id_empresa
                 },
-                include: [{ model: ActivosFijosValores, as: 'valores' }, {model: Producto, as: 'activo', attributes: ['nombre', 'codigo', 'id_subgrupo'], include:[{model: Inventario, as: 'inventarios'},{model: Clase, as: 'subgrupo'}]}]
+                include: [{ model: ActivosFijosValores, as: 'valores' }, { model: Producto, as: 'activo', attributes: ['nombre', 'codigo', 'id_subgrupo'], include: [{ model: Inventario, as: 'inventarios' }, { model: Clase, as: 'subgrupo' }] }]
             }).then(function (activos) {
                 res.json({ activos: activos });
             }).catch(function (err) {
@@ -23,12 +23,12 @@ module.exports = function (router, sequelize, Sequelize, Usuario, ActivosFijos, 
             //     })
             //     ///producto.publicar_panel,,producto.activar_inventario
             //     // sequelize.query("select producto.id,producto.codigo,producto.nombre as nombre,producto.precio_unitario,producto.inventario_minimo,producto.descripcion,tipoProducto.nombre as tipoProducto,grupo.nombre as grupo, grupo.id as id_grupo,subgrupo.nombre as subgrupo, subgrupo.id as id_subgrupo\
-			// 	// 		from agil_producto as producto\
-			// 	// 		LEFT OUTER JOIN gl_clase AS tipoProducto ON (producto.tipo_producto = tipoProducto.id)\
-			// 	// 		LEFT OUTER JOIN gl_clase AS grupo ON (producto.grupo = grupo.id)\
-			// 	// 		LEFT OUTER JOIN gl_clase AS subgrupo ON (producto.subgrupo = subgrupo.id)\
-			// 	// 		WHERE "+ condicionProducto + " and producto.grupo in (" + gruposProductos + ") \
-			// 	// 		ORDER BY producto."+ req.params.columna + " " + req.params.direccion + limit, { type: sequelize.QueryTypes.SELECT })
+            // 	// 		from agil_producto as producto\
+            // 	// 		LEFT OUTER JOIN gl_clase AS tipoProducto ON (producto.tipo_producto = tipoProducto.id)\
+            // 	// 		LEFT OUTER JOIN gl_clase AS grupo ON (producto.grupo = grupo.id)\
+            // 	// 		LEFT OUTER JOIN gl_clase AS subgrupo ON (producto.subgrupo = subgrupo.id)\
+            // 	// 		WHERE "+ condicionProducto + " and producto.grupo in (" + gruposProductos + ") \
+            // 	// 		ORDER BY producto."+ req.params.columna + " " + req.params.direccion + limit, { type: sequelize.QueryTypes.SELECT })
             //     //     .then(function (productos) {
             //     //         res.json({ productos: productos, paginas: paginas });
             //     //     }).catch(function (err) {
@@ -75,19 +75,19 @@ module.exports = function (router, sequelize, Sequelize, Usuario, ActivosFijos, 
             })
         });
 
-        router.route('/activos/revaluacion/:id_empresa/user/:id_usuario')
+    router.route('/activos/revaluacion/:id_empresa/user/:id_usuario')
         .put(function (req, res) {
             var fecha_revaluacion = new Date(req.body.fecha_revaluacion.split('/').reverse())
             var mesAnterior = new Date(fecha_revaluacion.getFullYear(), fecha_revaluacion.getMonth(), 0)
-            var mesActual = new Date(fecha_revaluacion.getFullYear(), fecha_revaluacion.getMonth(), 1, 23,59,59)
-			MonedaTipoCambio.findAll({
-				where: {
-					fecha: {
-						$between: [mesAnterior, mesActual]
-					}
-				}
-			}).then(function (MonedaCambio) {
-				ActivosFijosValores.update({
+            var mesActual = new Date(fecha_revaluacion.getFullYear(), fecha_revaluacion.getMonth(), 1, 23, 59, 59)
+            MonedaTipoCambio.findAll({
+                where: {
+                    fecha: {
+                        $between: [mesAnterior, mesActual]
+                    }
+                }
+            }).then(function (MonedaCambio) {
+                ActivosFijosValores.update({
                     id_usuario: req.params.id_usuario,
                     id_activo: req.body.activo.id,
                     mes: new Date(req.body.fecha_revaluacion.split('/').reverse()).getMonth(),
@@ -102,16 +102,16 @@ module.exports = function (router, sequelize, Sequelize, Usuario, ActivosFijos, 
                     total_depreciacion_acumulada: 0,
                     valor_neto: 0,
                     eliminado: false
-                },{
-                    where: {
-                        id_activo: req.body.id
-                    }
-                }).then(function (configuracion) {
-                    res.json({ configuracion: configuracion });
-                }).catch(function (err) {
-                    res.json({ mensaje: (err.stack !== undefined) ? err.stack : err, hasErr: true });
-                });
-			})
+                }, {
+                        where: {
+                            id_activo: req.body.id
+                        }
+                    }).then(function (configuracion) {
+                        res.json({ configuracion: configuracion });
+                    }).catch(function (err) {
+                        res.json({ mensaje: (err.stack !== undefined) ? err.stack : err, hasErr: true });
+                    });
+            })
         });
 
     function crearDetalleConfiguracion(detalle, t, params) {
@@ -151,4 +151,53 @@ module.exports = function (router, sequelize, Sequelize, Usuario, ActivosFijos, 
             });
         })
     }
+
+    router.route('/activos/mensual/:id_empresa')
+        .get(function (req, res) {
+            var mes = new Date().getMonth() + 1
+            var year = new Date().getFullYear()
+            var prevDate = new Date(year, mes - 2, 1)
+            var curDate = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0, 23, 59, 59, 999)
+            sequelize.transaction(function (t) {
+
+            })
+            ActivosFijos.findAll({
+                where: {
+                    id_empresa: req.params.id_empresa,
+                    $or: [{ ultima_actualizacion: { $between: [prevDate, curDate] } }, { ultima_actualizacion: { $eq: null } }],
+                    fecha_ingreso: { $notBetween: [new Date(new Date().getFullYear(), new Date().getMonth(), 1), new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0)] }
+                },
+                include: [{ model: ActivosFijosValores, as: 'valores' }, { model: Producto, as: 'activo', attributes: ['nombre', 'codigo', 'id_subgrupo'], include: [{ model: Inventario, as: 'inventarios' }, { model: Clase, as: 'subgrupo' }] }],
+                transaction: t
+            }).then(function (activosFijos) {
+                if (activosFijos.length > 0) {
+                    activosFijos.forEach(function (activo) {
+                        
+                    })
+                    ActivosFijosValores.create({
+                        id_usuario: req.params.id_usuario,
+                        id_activo: req.body.activo.id,
+                        mes: new Date(req.body.fecha_revaluacion.split('/').reverse()).getMonth(),
+                        anio: new Date(req.body.fecha_revaluacion.split('/').reverse()).getFullYear(),
+                        valor: req.body.valor_revaluacion,
+                        incremento_actualizacion: 0,
+                        valor_actualizado: 0,
+                        depreciacion_acumulada: 0,
+                        incremento_actualizacion_depreciacion_acumulada: 0,
+                        depreciacion_acumulada_actualizada: 0,
+                        depreciacion: 0,
+                        total_depreciacion_acumulada: 0,
+                        valor_neto: 0,
+                        eliminado: false
+                    }, { transaction: t }).then(function (valorCreado) {
+
+                    })
+                } else {
+
+                }
+                res.json({ configuracion: activosFijos });
+            }).catch(function (err) {
+                res.json({ mensaje: (err.stack !== undefined) ? err.stack : err, hasErr: true });
+            });
+        })
 }

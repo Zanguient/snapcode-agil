@@ -737,7 +737,7 @@ module.exports = function (sequelize, Usuario, Persona, Rol, UsuarioRol, Tipo, C
 	RrhhEmpleadoFichaOtrosSeguros.belongsTo(RrhhEmpleadoFicha, { foreignKey: 'id_ficha', as: 'otroSeguro' });
 	RrhhEmpleadoFichaOtrosSeguros.belongsTo(Clase, { foreignKey: 'id_tipo_seguro', as: 'tipoSeguro' });
 
-	RrhhEmpleadoFichaFamiliar.belongsTo(MedicoPaciente, { foreignKey: 'id_empleado', as: 'empleadoFamiliar' });
+	RrhhEmpleadoFichaFamiliar.belongsTo(MedicoPaciente, { foreignKey: 'id_empleado', as: 'empleado' });//empleadoFamiliar
 	RrhhEmpleadoFichaFamiliar.belongsTo(Clase, { foreignKey: 'id_relacion', as: 'relacion' });
 	RrhhEmpleadoFichaFamiliar.belongsTo(Persona, { foreignKey: 'id_persona_familiar', as: 'persona' });
 

@@ -161,6 +161,8 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                 res.json(FamiliaresEncontrados);
             });
         })
+       
+      
     router.route('/recursos-humanos-familiar/:id_persona/familiar-relacion/:id_familiar')
         .put(function (req, res) {
 

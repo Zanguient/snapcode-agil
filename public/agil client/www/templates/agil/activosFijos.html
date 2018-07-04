@@ -179,7 +179,8 @@
                         </td>
                         <td ng-if="fieldViewer.getConfiguration().activo.show">{{activoFijo.activo.nombre}}</td>
                         <td ng-if="fieldViewer.getConfiguration().codigo.show">{{activoFijo.activo.codigo}}</td>
-                        <td ng-if="fieldViewer.getConfiguration().cantidad.show">{{activoFijo.cantidad}}</td>
+                        <td ng-if="fieldViewer.getConfiguration().cantidad.show && activoFijo.activo.inventarios.length >0">{{activoFijo.activo.inventarios[0].cantidad}}</td>
+                        <td ng-if="activoFijo.activo.inventarios.length === 0"><label class="bg-red">El activo no ha sido inventariado!</label></td>
                         <td class="hidden-480" ng-if="fieldViewer.getConfiguration().mes.show">{{activoFijo.valores[0].mes +1}}</td>
                         <td class="hidden-480" ng-if="fieldViewer.getConfiguration().anio.show">{{activoFijo.valores[0].anio}}</td>
                         <td ng-if="fieldViewer.getConfiguration().fecha_ingreso.show">{{activoFijo.fecha_ingreso | date : "dd/MM/yyyy"}}</td>

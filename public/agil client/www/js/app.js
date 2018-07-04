@@ -233,6 +233,9 @@ angular.module('agil', ['ngRoute', 'agil.controladores',
             .when('/activos-fijos', {
                 controller:'ControladorActivosFijos',
                 templateUrl:'templates/agil/activosFijos.html'
+            }).when('/geo-localizacion', {
+                controller:'ControladorGtmGeoLocalizacion',
+                templateUrl:'templates/agil/geoLocalizacion.html'
             })
         .otherwise({
           redirectTo:'/'

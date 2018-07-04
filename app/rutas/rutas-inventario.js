@@ -266,91 +266,159 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 									compra.detallesCompra.forEach(function (detalleCompra, index, array) {
 										if (detalleCompra.id) {
 											if (!detalleCompra.eliminado) {
-												DetalleCompra.update({
-													cantidad: detalleCompra.cantidad,
-													costo_unitario: detalleCompra.costo_unitario,
-													importe: detalleCompra.importe,
-													total: detalleCompra.total,
-												}, {
-														where: {
-															id: detalleCompra.id
-														}
-													}).then(function (detalleCompraActualizado) {
-														DetalleMovimiento.find({
+												if (detalleCompra.centroCosto.nombre_corto == "ALM") {
+													DetalleCompra.update({
+														cantidad: detalleCompra.cantidad,
+														costo_unitario: detalleCompra.costo_unitario,
+														importe: detalleCompra.importe,
+														total: detalleCompra.total,
+													}, {
 															where: {
-																id_inventario: detalleCompra.id_inventario,
-																id_movimiento: compra.movimiento.id,
-																id_producto: detalleCompra.producto.id
+																id: detalleCompra.id
 															}
-														}).then(function (detalleMovimiento) {
-															Inventario.find({
-																where: {
-																	id: detalleCompra.id_inventario
-																}
-															}).then(function (inventario) {
-																var diferencia = 0, cantidadInventario = inventario.cantidad;
-																if (detalleCompra.cantidad > detalleMovimiento.cantidad) {
-																	diferencia = detalleCompra.cantidad - detalleMovimiento.cantidad;
-																	cantidadInventario = cantidadInventario + diferencia;
-																} else if (detalleCompra.cantidad < detalleMovimiento.cantidad) {
-																	diferencia = detalleMovimiento.cantidad - detalleCompra.cantidad;
-																	cantidadInventario = cantidadInventario - diferencia;
-																}
-																Inventario.update({
-																	cantidad: cantidadInventario,
-																	costo_unitario: detalleCompra.costo_unitario,
-																	costo_total: detalleCompra.costo_unitario * cantidadInventario,
-																	fecha_vencimiento: (detalleCompra.inventario.fechaVencimientoTexto ? new Date(detalleCompra.inventario.fechaVencimientoTexto.split('/')[1] + "/" + detalleCompra.inventario.fechaVencimientoTexto.split('/')[0] + "/" + detalleCompra.inventario.fechaVencimientoTexto.split('/')[2]) : null),
-																	lote: detalleCompra.inventario.lote
-																}, {
-																		where: {
-																			id: inventario.id
-																		}
-																	}).then(function (inventarioActualizado) {
-																		DetalleMovimiento.update({
-																			cantidad: detalleCompra.cantidad,
-																			costo_unitario: detalleCompra.costo_unitario,
-																			importe: detalleCompra.importe,
-																			total: detalleCompra.total
-																		}, {
-																				where: {
-																					id: detalleMovimiento.id
-																				}
-																			}).then(function (detalleMovimientoActualizado) {
+														}).then(function (detalleCompraActualizado) {
 
-																			});
-																	});
+															DetalleMovimiento.find({
+																where: {
+																	id_inventario: detalleCompra.id_inventario,
+																	id_movimiento: compra.movimiento.id,
+																	id_producto: detalleCompra.producto.id
+																}
+															}).then(function (detalleMovimiento) {
+																Inventario.find({
+																	where: {
+																		id: detalleCompra.id_inventario
+																	}
+																}).then(function (inventario) {
+																	var diferencia = 0, cantidadInventario = inventario.cantidad;
+																	if (detalleCompra.cantidad > detalleMovimiento.cantidad) {
+																		diferencia = detalleCompra.cantidad - detalleMovimiento.cantidad;
+																		cantidadInventario = cantidadInventario + diferencia;
+																	} else if (detalleCompra.cantidad < detalleMovimiento.cantidad) {
+																		diferencia = detalleMovimiento.cantidad - detalleCompra.cantidad;
+																		cantidadInventario = cantidadInventario - diferencia;
+																	}
+																	Inventario.update({
+																		cantidad: cantidadInventario,
+																		costo_unitario: detalleCompra.costo_unitario,
+																		costo_total: detalleCompra.costo_unitario * cantidadInventario,
+																		fecha_vencimiento: (detalleCompra.inventario.fechaVencimientoTexto ? new Date(detalleCompra.inventario.fechaVencimientoTexto.split('/')[1] + "/" + detalleCompra.inventario.fechaVencimientoTexto.split('/')[0] + "/" + detalleCompra.inventario.fechaVencimientoTexto.split('/')[2]) : null),
+																		lote: detalleCompra.inventario.lote
+																	}, {
+																			where: {
+																				id: inventario.id
+																			}
+																		}).then(function (inventarioActualizado) {
+																			DetalleMovimiento.update({
+																				cantidad: detalleCompra.cantidad,
+																				costo_unitario: detalleCompra.costo_unitario,
+																				importe: detalleCompra.importe,
+																				total: detalleCompra.total
+																			}, {
+																					where: {
+																						id: detalleMovimiento.id
+																					}
+																				}).then(function (detalleMovimientoActualizado) {
+
+																				});
+																		});
+																});
 															});
+
+														});
+												} else {
+													DetalleCompra.update({
+														cantidad: detalleCompra.cantidad,
+														costo_unitario: detalleCompra.costo_unitario,
+														importe: detalleCompra.importe,
+														total: detalleCompra.total,
+													}, {
+															where: {
+																id: detalleCompra.id
+															}
+														}).then(function (detalleCompraActualizado) {
+
+														})
+												}
+											} else {
+												if (detalleCompra.centroCosto.nombre_corto == "ALM") {
+													DetalleMovimiento.destroy({
+														where: {
+															id_inventario: detalleCompra.id_inventario,
+															id_movimiento: compra.movimiento.id,
+															id_producto: detalleCompra.producto.id
+														}
+													}).then(function (detalleMovimientoEliminado) {
+														DetalleCompra.destroy({
+															where: {
+																id: detalleCompra.id
+															}
+														}).then(function (detalleCompraEliminado) {
+															Inventario.update(
+																{
+																	cantidad: 0
+																}, {
+																	where: {
+																		id: detalleCompra.id_inventario
+																	}
+																}).then(function (inventarioEliminado) {
+
+																});
 														});
 													});
-											} else {
-												DetalleMovimiento.destroy({
-													where: {
-														id_inventario: detalleCompra.id_inventario,
-														id_movimiento: compra.movimiento.id,
-														id_producto: detalleCompra.producto.id
-													}
-												}).then(function (detalleMovimientoEliminado) {
+												} else {
 													DetalleCompra.destroy({
 														where: {
 															id: detalleCompra.id
 														}
 													}).then(function (detalleCompraEliminado) {
-														Inventario.update(
-															{
-																cantidad: 0
-															}, {
-																where: {
-																	id: detalleCompra.id_inventario
-																}
-															}).then(function (inventarioEliminado) {
-
-															});
-													});
-												});
+													})
+												}
 											}
 										} else {
-											crearDetalleCompra(detalleCompra, compra.movimiento.id, compra.id, compra.almacen.id, detalleCompra.producto.id, detalleCompra.centroCosto.id)
+											if (detalleCompra.centroCosto.nombre_corto == "ALM") {
+												crearDetalleCompra(detalleCompra, compra.movimiento.id, compra.id, compra.almacen.id, detalleCompra.producto.id, detalleCompra.centroCosto.id)
+											} else {
+												if (!detalleCompra.producto.id) {
+													Producto.create({
+														nombre: detalleCompra.producto.nombre,
+														codigo: detalleCompra.producto.codigo,
+														unidad_medida: detalleCompra.producto.unidad_medida,
+														id_empresa: compra.id_empresa,
+													}).then(function (productoCreado) {
+														if (!detalleCompra.centroCosto.id) {
+															Tipo.find({
+																where: { nombre_corto: 'CCO' }
+															}).then(function (tipoCentroCosto) {
+																Clase.create({
+																	nombre: detalleCompra.centroCosto.nombre,
+																	id_tipo: tipoCentroCosto.id
+																}).then(function (centroCostoCreado) {
+																	crearDetalleCompra(detalleCompra, compra.movimiento.id, compra.id, compra.almacen.id, productoCreado.id, detalleCompra.centroCosto.id,res,compra)
+																});
+															});
+														} else {
+															crearDetalleCompra(detalleCompra, compra.movimiento.id, compra.id, compra.almacen.id, detalleCompra.producto.id, detalleCompra.centroCosto.id,res,compra)
+														}
+													});
+												} else {
+													if (!detalleCompra.centroCosto.id) {
+														Tipo.find({
+															where: { nombre_corto: 'CCO' }
+														}).then(function (tipoCentroCosto) {
+															Clase.create({
+																nombre: detalleCompra.centroCosto.nombre,
+																id_tipo: tipoCentroCosto.id
+															}).then(function (centroCostoCreado) {
+																crearDetalleCompra(detalleCompra, compra.movimiento.id, compra.id, compra.almacen.id, detalleCompra.producto.id, detalleCompra.centroCosto.id,res,compra)
+															});
+														});
+													} else {
+														crearDetalleCompra(detalleCompra, compra.movimiento.id, compra.id, compra.almacen.id, detalleCompra.producto.id, detalleCompra.centroCosto.id,res,compra)
+													}
+												}
+												
+											}
 										}
 
 
@@ -931,7 +999,10 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 							fecha: new Date()
 						}).then(function (movimientoCreado) {
 							var productos = req.body.productos;
-							var mensajeRegistrados = "Los inventarios de los siguientes productos fueron registrados: ", mensajeNoRegistrados = "Ocurrio un problema al registrar los inventarios de los siguientes productos: ";
+							var mensajeRegistrados = "Los inventarios de los siguientes productos fueron registrados: "
+							var lenRegistrados = mensajeRegistrados.length
+							var mensajeNoRegistrados = "Ocurrio un problema al registrar los inventarios de los siguientes productos: ";
+							var lenNoRegistrados = mensajeNoRegistrados.length
 							productos.forEach(function (producto, index, array) {
 								Producto.find({
 									where: {
@@ -971,7 +1042,7 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 										mensajeNoRegistrados = mensajeNoRegistrados + " " + producto.codigo;
 									}
 									if (index == (array.length - 1)) {
-										res.json({ message: mensajeRegistrados + " - " + mensajeNoRegistrados });
+										res.json({ message: mensajeRegistrados.length > lenRegistrados && mensajeNoRegistrados.length === mensajeRegistrados + " - " + mensajeNoRegistrados });
 									}
 								});
 							});
@@ -979,7 +1050,7 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 					});
 				});
 			} else {
-				res.json({ message: "Ningun Item se actualizo!" });
+				res.json({ message: "Ningún Item se actualizo!" });
 			}
 		});
 
@@ -2224,7 +2295,8 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 			var fin = new Date()
 			inicio.setHours(0, 0, 0, 0, 0);
 			fin.setHours(23, 0, 0, 0, 0);
-			req.body.actualizados=0
+			req.body.actualizados = 0
+			req.body.ids = []
 			sequelize.transaction(function (t) {
 				var promises1 = [];
 				var a = 0
@@ -2253,9 +2325,9 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 						for (var i = 0; i < venta.detallesVenta.length; i++) {
 							var detalle = venta.detallesVenta[i];
 							promises1.push(DetalleMovimiento.findAll({
-								where: { id_movimiento: venta.id_movimiento}, transaccion: t
+								where: { id_movimiento: venta.id_movimiento }, transaccion: t
 							}).then(function (detalleMovimientoEncontrado) {
-								if (detalleMovimientoEncontrado.length==0) {
+								if (detalleMovimientoEncontrado.length == 0) {
 									req.body.actualizados++
 									return Movimiento.find({
 										where: { id: venta.id_movimiento }, transaccion: t
@@ -2307,8 +2379,8 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 										}
 									})
 
-								} else {	
-									var promises = [];								
+								} else {
+									var promises = [];
 									promises1.push(Promise.all(promises));
 								}
 							}))
@@ -2322,9 +2394,9 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 				/* return Promise.all(promises1); */
 
 			}).then(function (result) {
-				
-					res.json({ mensaje: "Movimientos Creados de los detalles de las Ventas total movimientos creados ="+req.body.actualizados });
-			
+
+				res.json({ mensaje: "Movimientos Creados de los detalles de las Ventas total movimientos creados =" + req.body.actualizados });
+
 			}).catch(function (err) {
 				var error = (err.stack) ? err.stack : err
 				res.json({ hasError: true, mensaje: error });

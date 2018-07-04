@@ -103,7 +103,15 @@ module.exports = function (sequelize, Sequelize) {
         id_movimiento: {
             type: Sequelize.INTEGER,
             field: 'movimiento'
-        }
+        },
+        latitud: {
+			type: Sequelize.DECIMAL(30, 20),
+			field: 'latitud'
+		},
+		longitud: {
+			type: Sequelize.DECIMAL(30, 20),
+			field: 'longitud'
+		},
     }, {
             freezeTableName: true
         });

@@ -753,21 +753,21 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, forEach, j
 			}
 			if (req.params.texto_busqueda != 0) {
 				var datonumerico = parseInt(req.params.texto_busqueda)
-				if(!isNaN(datonumerico)){
+				if (!isNaN(datonumerico)) {
 					condicionDespacho.numero_correlativo = req.params.texto_busqueda
-				}else{
+				} else {
 					condicionCliente =
-					{
-						$or: [
-							{
-								razon_social: {
-									$like: "%" + req.params.texto_busqueda + "%"
-								},
+						{
+							$or: [
+								{
+									razon_social: {
+										$like: "%" + req.params.texto_busqueda + "%"
+									},
 
-							}
+								}
 
-						]
-					}
+							]
+						}
 				}
 			}
 			GtmDespachoDetalle.findAndCountAll({
@@ -1003,7 +1003,7 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, forEach, j
 				where: {
 					id: { $lt: req.params.id_detalle_despacho },
 					id_padre: req.params.id_padre,
-					eliminado:false
+					eliminado: false
 				}
 			}).then(function (detallesDespacho) {
 				res.json({ detallesDespacho: detallesDespacho });
@@ -1092,7 +1092,7 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, forEach, j
 				});
 		})
 
-		router.route('/gtm-detalle-despacho-alerta/empresa/:id_empresa/inicio/:inicio/fin/:fin/empleado/:empleado/cliente/:cliente/usuario/:id_usuario')
+	router.route('/gtm-detalle-despacho-alerta/empresa/:id_empresa/inicio/:inicio/fin/:fin/empleado/:empleado/cliente/:cliente/usuario/:id_usuario')
 		.get(function (req, res) {
 			var condicionDetalleDespacho = {
 				despachado: false,
@@ -1101,7 +1101,7 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, forEach, j
 			}
 			var condicionCliente = {}
 			var condicionEmpleado = {}
-			var condicionDespacho = { id_empresa: req.params.id_empresa, id_usuario: req.params.id_usuario}
+			var condicionDespacho = { id_empresa: req.params.id_empresa, id_usuario: req.params.id_usuario }
 			if (req.params.inicio != 0 && req.params.fin != 0) {
 				var inicio = new Date(req.params.inicio); inicio.setHours(0, 0, 0, 0, 0);
 				var fin = new Date(req.params.fin); fin.setHours(23, 59, 59, 0, 0);
@@ -1128,13 +1128,151 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, forEach, j
 					{ model: GtmDestino, as: 'destino' }]
 				},
 				{ model: Producto, as: 'producto' },
-				{ model: GtmVentaKardexDetalle, as: 'detalle_Kardex'}]
+				{ model: GtmVentaKardexDetalle, as: 'detalle_Kardex' }]
 			}).then(function (detallesDespacho) {
 				res.json(detallesDespacho);
 			});
 		});
 
+	router.route('/gtm-detalle-despacho-ubicacion/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion/inicio/:inicio/fin/:fin/cliente/:cliente/vendedor/:vendedor')
+		.get(function (req, res) {
+			var condicionDespacho = { id_padre: null, eliminado: false }
+			var condicionEstibaje = {}
+			var condicionGrupoEstibaje = {}
+			var condicionTrabajador = {}
+			var condicionCliente = {}
+			var condicionVendedor = {}
+			if (req.params.inicio != 0) {
+				var inicio = new Date(req.params.inicio); inicio.setHours(4, 0, 0, 0, 0);
+				var fin = new Date(req.params.fin); fin.setHours(19, 59, 59, 0, 0);
+				condicionDespacho = { id_padre: { $ne: null }, eliminado: false, fecha: { $between: [inicio, fin] } };
+			}
 
+			if (req.params.vendedor != 0) {
 
+				condicionVendedor =
+					{
+						$or: [
+							{
+								nombre_completo: {
+									$like: "%" + req.params.vendedor + "%"
+								}
+							}
 
+						]
+					}
+			}
+			if (req.params.texto_busqueda != 0) {
+				var datonumerico = parseInt(req.params.texto_busqueda)
+				if (!isNaN(datonumerico)) {
+					condicionDespacho.numero_correlativo = req.params.texto_busqueda
+				} else {
+					condicionCliente =
+						{
+							$or: [
+								{
+									razon_social: {
+										$like: "%" + req.params.texto_busqueda + "%"
+									},
+
+								}
+
+							]
+						}
+				}
+			}
+			GtmDespachoDetalle.findAndCountAll({
+				where: condicionDespacho,
+
+				include: [{ model: GtmDespachoDetalleResivo, as: 'recivos', required: false, include: [{ model: Sucursal, as: 'sucursal', required: false, include: [{ model: Clase, as: 'departamento', required: false }] }, { model: Clase, as: 'tipoPago', required: false }, { model: Clase, as: 'otroBanco', required: false }, { model: Banco, as: 'banco', required: false }] }, {
+					model: GtmDespacho, as: 'despacho',
+					where: { id_empresa: req.params.id_empresa },
+					include: [{ model: Usuario, as: 'usuario', include: [{ model: Persona, as: 'persona', where: condicionVendedor }] },
+					{ model: ClienteRazon, as: 'cliente_razon' },
+					{ model: Cliente, as: 'cliente', where: condicionCliente },
+					{ model: GtmDestino, as: 'destino' }]
+				},
+				{ model: Producto, as: 'producto' },
+				],
+				order: [['id', 'asc']]
+			}).then(function (data) {
+
+				if (req.params.items_pagina != 0) {
+					GtmDespachoDetalle.findAll({
+						subQuery: false,
+						offset: (req.params.items_pagina * (req.params.pagina - 1)), limit: req.params.items_pagina,
+						where: condicionDespacho,
+						include: [{
+							model: GtmDespacho, as: 'despacho',
+							where: { id_empresa: req.params.id_empresa },
+							include: [{ model: Usuario, as: 'usuario', include: [{ model: Persona, as: 'persona', where: condicionVendedor }] },
+							{ model: ClienteRazon, as: 'cliente_razon' },
+							{ model: Cliente, as: 'cliente', where: condicionCliente },
+							{ model: GtmDestino, as: 'destino' }]
+						},
+						{ model: Producto, as: 'producto' },
+						],
+						order: [['id', 'asc']]
+					}).then(function (detallesDespacho) {
+						res.json({ detallesDespacho: detallesDespacho, paginas: Math.ceil(data.count / req.params.items_pagina) });
+					});
+				} else {
+					GtmDespachoDetalle.findAll({
+						subQuery: false,
+						offset: (req.params.items_pagina * (req.params.pagina - 1)),
+						where: condicionDespacho,
+						include: [{
+							model: GtmDespacho, as: 'despacho',
+							where: { id_empresa: req.params.id_empresa },
+							include: [{ model: Usuario, as: 'usuario', include: [{ model: Persona, as: 'persona', where: condicionVendedor }] },
+							{ model: ClienteRazon, as: 'cliente_razon' },
+							{ model: Cliente, as: 'cliente', where: condicionCliente },
+							{ model: GtmDestino, as: 'destino' }]
+						},
+						{ model: Producto, as: 'producto' },
+						],
+						order: [['id', 'asc']]
+					}).then(function (detallesDespacho) {
+						res.json({ detallesDespacho: detallesDespacho, paginas: 1 });
+					});
+				}
+			});
+		});
+		router.route('/gtm-detalle-despacho-ubicacion/vendedor/:id_vendedor/fecha/:fecha')
+        .get(function (req, res) {  
+			var inicio = new Date(req.params.fecha); inicio.setHours(0, 0, 0, 0, 0);
+				var fin = new Date(req.params.fecha); fin.setHours(23, 59, 59, 0, 0);
+
+			var condicionDespacho = { id_padre: null, eliminado: false, fecha: { $between: [inicio, fin] }}        
+            GtmDespachoDetalle.findAll({
+				subQuery: false,				
+				where: condicionDespacho,
+				include: [{
+					model: GtmDespacho, as: 'despacho',
+					where: { id_usuario:req.params.id_vendedor},
+					include: [{ model: Usuario, as: 'usuario', include: [{ model: Persona, as: 'persona'}] },
+					{ model: ClienteRazon, as: 'cliente_razon' },
+					{ model: Cliente, as: 'cliente'},
+					{ model: GtmDestino, as: 'destino' }]
+				},
+				{ model: Producto, as: 'producto' }],
+				order: [['id', 'asc']]
+			}).then(function (detallesDespacho) {
+				res.json({ detallesDespacho: detallesDespacho});
+			});
+        })
+		router.route('/gtm-detalle-despacho-ubicacion/empresa/:id_empresa/vendedor/:nombre')
+        .get(function (req, res) {  
+			var inicio = new Date(req.params.fecha); inicio.setHours(0, 0, 0, 0, 0);
+				var fin = new Date(req.params.fecha); fin.setHours(23, 59, 59, 0, 0);
+
+			var condicionDespacho = { id_padre: null, eliminado: false, fecha: { $between: [inicio, fin] }}        
+            Usuario.findAll({
+				where:{id_empresa:req.params.id_empresa}							
+				,include:[{model:Persona,as:'persona',where:{nombre_completo: { $like: req.params.nombre + "%" }}}]
+			
+			}).then(function (vendedores) {
+				res.json(vendedores);
+			});
+        })
 }

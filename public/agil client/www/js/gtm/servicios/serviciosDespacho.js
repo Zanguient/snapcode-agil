@@ -260,3 +260,78 @@ angular.module('agil.servicios')
 		};
 		return res;
 	}])
+	.factory('GtmDespachoUbicacion', function ($resource) {
+		return $resource(restServer + "gtm-detalle-despacho-ubicacion/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion/inicio/:inicio/fin/:fin/cliente/:cliente/vendedor/:vendedor", null,
+			{
+				'update': { method: 'PUT' }
+			});
+	})
+
+	.factory('GtmDespachosUbicacion', ['GtmDespachoUbicacion', '$q', function (GtmDespachoUbicacion, $q) {
+		var res = function (paginator) {
+			var delay = $q.defer();
+			GtmDespachoUbicacion.get({
+				id_empresa: paginator.filter.id_empresa,
+				pagina: paginator.currentPage,
+				items_pagina: paginator.itemsPerPage,
+				texto_busqueda: paginator.search,
+				columna: paginator.column,
+				direccion: paginator.direction,
+				inicio: paginator.filter.inicio,
+				fin: paginator.filter.fin,
+				cliente: paginator.filter.cliente,			
+				vendedor: paginator.filter.vendedor,
+			}, function (entidad) {
+				delay.resolve(entidad);
+			}, function (error) {
+				delay.reject(error);
+			});
+			return delay.promise;
+		};
+		return res;
+	}])
+	.factory('DespachosVendedor', function ($resource) {
+		return $resource(restServer + "gtm-detalle-despacho-ubicacion/vendedor/:id_vendedor/fecha/:fecha", null,
+			{
+				'update': { method: 'PUT' }
+			});
+	})
+
+	.factory('BuscarDespachosVendedor', ['DespachosVendedor', '$q', function (DespachosVendedor, $q) {
+		var res = function (filtro) {
+			var delay = $q.defer();
+			DespachosVendedor.get({
+				id_vendedor: filtro.vendedor.id,
+				fecha: filtro.fechaBusqueda,
+			}, function (entidad) {
+				delay.resolve(entidad);
+			}, function (error) {
+				delay.reject(error);
+			});
+			return delay.promise;
+		};
+		return res;
+	}])
+	.factory('FiltrarVendedor', function ($resource) {
+		return $resource(restServer + "gtm-detalle-despacho-ubicacion/empresa/:id_empresa/vendedor/:nombre", null,
+			{
+				'update': { method: 'PUT' }
+			});
+	})
+
+	.factory('FiltrarVendedorEmpresa', ['FiltrarVendedor', '$q', function (FiltrarVendedor, $q) {
+		var res = function (idEmpresa,texto) {
+			var delay = $q.defer();
+			FiltrarVendedor.query({
+				id_empresa: idEmpresa,
+				nombre: texto,
+			}, function (entidad) {
+				delay.resolve(entidad);
+			}, function (error) {
+				delay.reject(error);
+			});
+			return delay.promise;
+		};
+		return res;
+	}])
+	
