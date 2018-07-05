@@ -1,7 +1,7 @@
 angular.module('agil.controladores')
 
 	.controller('ControladorInventarios', function ($scope, $timeout, $filter, $window, $localStorage, $location, $templateCache, $route, blockUI, ListaInventariosProducto,
-		Inventario, InventarioPaginador, Productos, ActualizacionInventario, ListaProductosEmpresa, IngresosPorInventario, ActualizarDetalleMovimiento, ListaGruposProductoUsuario, ProductosUsuario) {
+		Inventario, InventarioPaginador, Productos, ActualizacionInventario, ListaProductosEmpresa, IngresosPorInventario, ActualizarDetalleMovimiento, ListaGruposProductoUsuario, ProductosUsuario,IngPorInventario) {
 		blockUI.start();
 
 		$scope.usuario = JSON.parse($localStorage.usuario);
@@ -383,20 +383,29 @@ angular.module('agil.controladores')
 		}
 
 		$scope.compraIngresosPorInventario = function () {
-			IngresosPorInventario.get({ id_empresa: $scope.usuario.id_empresa }, function (dato) {
-				console.log(dato)
-				for (var i = 0; i < dato.length; i++) {
-					for (var j = 0; j < dato[i].detallesMovimiento.length; j++) {
-						dato[i].detallesMovimiento[j].inventario.fecha_vencimiento = new Date(dato[i].detallesMovimiento[j].inventario.fecha_vencimiento);
-						dato[i].detallesMovimiento[j].inventario.fecha_vencimientoTexto = dato[i].detallesMovimiento[j].inventario.fecha_vencimiento.getDate() + "/" + (dato[i].detallesMovimiento[j].inventario.fecha_vencimiento.getMonth() + 1) + "/" + dato[i].detallesMovimiento[j].inventario.fecha_vencimiento.getFullYear();
-					}
-
+			var ptom = IngPorInventario($scope.usuario.id_empresa)
+			ptom.then(function (res) {
+				if (res.hasErr) {
+					$scope.mostrarMensaje(res.mensaje)
+					$scope.ingPorInventario=[]	
+				} else {
+					$scope.ingPorInventario=res;
 				}
-				console.log(dato)
-				$scope.ingPorInventario = dato;
+			})
+			// IngresosPorInventario.get({ id_empresa: $scope.usuario.id_empresa }, function (dato) {
+			// 	console.log(dato)
+			// 	for (var i = 0; i < dato.length; i++) {
+			// 		for (var j = 0; j < dato[i].detallesMovimiento.length; j++) {
+			// 			dato[i].detallesMovimiento[j].inventario.fecha_vencimiento = new Date(dato[i].detallesMovimiento[j].inventario.fecha_vencimiento);
+			// 			dato[i].detallesMovimiento[j].inventario.fecha_vencimientoTexto = dato[i].detallesMovimiento[j].inventario.fecha_vencimiento.getDate() + "/" + (dato[i].detallesMovimiento[j].inventario.fecha_vencimiento.getMonth() + 1) + "/" + dato[i].detallesMovimiento[j].inventario.fecha_vencimiento.getFullYear();
+			// 		}
+
+			// 	}
+			// 	console.log(dato)
+			// 	$scope.ingPorInventario = dato;
 
 
-			});
+			// });
 
 
 		}

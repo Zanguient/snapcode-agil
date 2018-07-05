@@ -110,11 +110,30 @@ angular.module('agil.servicios')
 				'update': { method: 'PUT' }
 			});
 	})
+	.factory('InventariosIncial', function ($resource) {
+		return $resource(restServer + "inventarios", null,
+			{
+				'update': { method: 'PUT' }
+			});
+	})
 
 	.factory('Inventarios', ['Inventario', '$q', function (Inventario, $q) {
 		var res = function (id_empresa) {
 			var delay = $q.defer();
 			Inventario.query({ id_empresa: id_empresa }, function (entidades) {
+				delay.resolve(entidades);
+			}, function (error) {
+					delay.reject(error);
+				});
+			return delay.promise;
+		};
+		return res;
+	}])
+
+	.factory('InventarioInicial', ['InventariosIncial', '$q', function (InventariosIncial, $q) {
+		var res = function (producto) {
+			var delay = $q.defer();
+			InventariosIncial.save(producto, function (entidades) {
 				delay.resolve(entidades);
 			}, function (error) {
 					delay.reject(error);
@@ -297,6 +316,22 @@ angular.module('agil.servicios')
 				get: { method: 'GET', isArray: true }
 			});
 	})
+	.factory('IngPorInventario', ['IngresosPorInventario','$q',function(IngresosPorInventario, $q) 
+		{
+		var res = function(idEmpresa) 
+		{
+			var delay = $q.defer();
+			IngresosPorInventario.get({id_empresa:idEmpresa},function(entidades) 
+			{        
+				delay.resolve(entidades);
+			}, function(error) 
+				{
+					delay.reject(error);
+				});
+			return delay.promise;
+		};
+			return res;
+		}])
 	/*.factory('IngPorInventario', function($resource) {
 			return $resource(restServer+"ingreso-por-inventario/:id_empresa", null,
 			{

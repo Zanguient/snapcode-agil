@@ -985,74 +985,186 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 
 	router.route('/inventarios')
 		.post(function (req, res) {
+			var promesas = []
+			var mensajeRegistrados = "Los inventarios de los siguientes productos fueron registrados: "
+			var len_Registrados = mensajeRegistrados.length
+			var mensajeNoRegistrados = "Ocurrio un problema al registrar los inventarios de los siguientes productos: ";
+			var len_no_registrados = mensajeNoRegistrados.length
 			if (req.body.productos.length > 0) {
-				Tipo.find({
-					where: { nombre_corto: 'MOVING' }
-				}).then(function (tipoMovimiento) {
-					Clase.find({
-						where: { nombre_corto: 'III' }
-					}).then(function (conceptoMovimiento) {
-						Movimiento.create({
-							id_tipo: tipoMovimiento.id,
-							id_clase: conceptoMovimiento.id,
-							id_almacen: req.body.id_almacen,
-							fecha: new Date()
-						}).then(function (movimientoCreado) {
-							var productos = req.body.productos;
-							var mensajeRegistrados = "Los inventarios de los siguientes productos fueron registrados: "
-							var lenRegistrados = mensajeRegistrados.length
-							var mensajeNoRegistrados = "Ocurrio un problema al registrar los inventarios de los siguientes productos: ";
-							var lenNoRegistrados = mensajeNoRegistrados.length
-							productos.forEach(function (producto, index, array) {
-								Producto.find({
-									where: {
-										codigo: producto.codigo,
-										id_empresa: req.body.id_empresa
-									}
-								}).then(function (productoEncontrado) {
-									if (productoEncontrado) {
-										Inventario.create({
-											id_almacen: req.body.id_almacen,
-											id_producto: productoEncontrado.id,
-											cantidad: producto.cantidad,
-											costo_unitario: producto.costo_unitario,
-											fecha_vencimiento: producto.fecha_vencimiento,
-											lote: producto.lote ? producto.lote.toString() : null,
-											costo_total: (producto.cantidad * producto.costo_unitario)
-										}).then(function (inventarioCreado) {
-											DetalleMovimiento.create({
-												id_movimiento: movimientoCreado.id,
-												id_producto: productoEncontrado.id,
-												costo_unitario: producto.costo_unitario,
-												cantidad: producto.cantidad,
-												importe: (producto.costo_unitario * producto.cantidad),
-												descuento: 0,
-												recargo: 0,
-												ice: 0,
-												excento: 0,
-												tipo_descuento: 0,
-												tipo_recargo: 0,
-												total: (producto.costo_unitario * producto.cantidad),
-												id_inventario: inventarioCreado.id
-											}).then(function (detalleMovimientoCreado) {
-												mensajeRegistrados = mensajeRegistrados + " " + producto.codigo;
-											});
-										});
-									} else {
-										mensajeNoRegistrados = mensajeNoRegistrados + " " + producto.codigo;
-									}
-									if (index == (array.length - 1)) {
-										res.json({ message: mensajeRegistrados.length > lenRegistrados && mensajeNoRegistrados.length === mensajeRegistrados + " - " + mensajeNoRegistrados });
-									}
+				sequelize.transaction(function (t) {
+					return Tipo.find({
+						where: { nombre_corto: 'MOVING' },
+						transaction: t
+					}).then(function (tipoMovimiento) {
+						return Clase.find({
+							where: { nombre_corto: 'III' },
+							transaction: t
+						}).then(function (conceptoMovimiento) {
+							return Movimiento.create({
+								id_tipo: tipoMovimiento.id,
+								id_clase: conceptoMovimiento.id,
+								id_almacen: req.body.id_almacen,
+								fecha: new Date()
+							}).then(function (movimientoCreado) {
+								req.body.productos.forEach(function (producto, index, array) {
+									promesas.push(
+										Producto.findAll({
+											where: {
+												codigo: producto.codigo,
+												id_empresa: req.body.id_empresa
+											}, transaction: t
+										}).then(function (productoEncontrado) {
+											if (productoEncontrado.length > 0) {
+												if (productoEncontrado.dataValues.activo_fijo) {
+													return Inventario.findAll({
+														where: { id_producto: productoEncontrado.id },
+														transaccion: t
+													}).then(function (inventario) {
+														if (inventario.length > 0) {
+															mensajeNoRegistrados = mensajeNoRegistrados + " " + producto.codigo;
+															return new Promise(function (fulfill, reject) {
+																reject('Solo se puede realizar la compra de activos fijos una sola vez.')
+															})
+															// res.json('Solo se puede realizar la compra de activos fijos una sola vez.')
+														} else {
+															return Inventario.create({
+																id_almacen: req.body.id_almacen,
+																id_producto: productoEncontrado.id,
+																cantidad: producto.cantidad,
+																costo_unitario: producto.costo_unitario,
+																fecha_vencimiento: producto.fecha_vencimiento,
+																lote: producto.lote ? producto.lote.toString() : null,
+																costo_total: (producto.cantidad * producto.costo_unitario)
+															},{ transaction: t}).then(function (inventarioCreado) {
+																return DetalleMovimiento.create({
+																	id_movimiento: movimientoCreado.id,
+																	id_producto: productoEncontrado.id,
+																	costo_unitario: producto.costo_unitario,
+																	cantidad: producto.cantidad,
+																	importe: (producto.costo_unitario * producto.cantidad),
+																	descuento: 0,
+																	recargo: 0,
+																	ice: 0,
+																	excento: 0,
+																	tipo_descuento: 0,
+																	tipo_recargo: 0,
+																	total: (producto.costo_unitario * producto.cantidad),
+																	id_inventario: inventarioCreado.id
+																},{ transaction: t}).then(function (detalleMovimientoCreado) {
+																	mensajeRegistrados = mensajeRegistrados + " " + producto.codigo;
+																	return new Promise(function (fulfill, reject) {
+																		fulfill('Movimiento de inventario creado')
+																	})
+																});
+															});
+														}
+													}).catch(function (err) {
+														mensajeNoRegistrados = mensajeNoRegistrados + " " + producto.codigo;
+														return new Promise(function (fulfill, reject) {
+															reject((err.stack !== undefined) ? err.stack : err)
+														})
+													})
+												} else {
+													return Inventario.findAll({
+														where: { id_producto: productoEncontrado.id },
+														transaccion: t
+													}).then(function (inventario) {
+														if (inventario.length > 0) {
+															mensajeNoRegistrados = mensajeNoRegistrados + " " + producto.codigo;
+															return new Promise(function (fulfill, reject) {
+																reject('El producto con código '+ productoEncontrado.codigo+' ya tiene inventario, el inventario inicial solo se puede cargar una sola vez.')
+															})
+														} else {
+															return Inventario.create({
+																id_almacen: req.body.id_almacen,
+																id_producto: productoEncontrado.id,
+																cantidad: producto.cantidad,
+																costo_unitario: producto.costo_unitario,
+																fecha_vencimiento: producto.fecha_vencimiento,
+																lote: producto.lote ? producto.lote.toString() : null,
+																costo_total: (producto.cantidad * producto.costo_unitario)
+															}).then(function (inventarioCreado) {
+																return DetalleMovimiento.create({
+																	id_movimiento: movimientoCreado.id,
+																	id_producto: productoEncontrado.id,
+																	costo_unitario: producto.costo_unitario,
+																	cantidad: producto.cantidad,
+																	importe: (producto.costo_unitario * producto.cantidad),
+																	descuento: 0,
+																	recargo: 0,
+																	ice: 0,
+																	excento: 0,
+																	tipo_descuento: 0,
+																	tipo_recargo: 0,
+																	total: (producto.costo_unitario * producto.cantidad),
+																	id_inventario: inventarioCreado.id
+																}).then(function (detalleMovimientoCreado) {
+																	mensajeRegistrados = mensajeRegistrados + " " + producto.codigo;
+																	return new Promise(function (fulfill, reject) {
+																		fulfill('Movimiento de inventario creado.')
+																	})
+																});
+															});
+														}
+													})
+												}
+											} else {
+												mensajeNoRegistrados = mensajeNoRegistrados + " " + producto.codigo;
+												return new Promise(function (fulfill, reject) {
+													reject('Error Existen 2 o más productos con el mismo código.')
+												})
+											}
+										})
+									)
 								});
+								Promise.all(promesas)
 							});
 						});
 					});
-				});
+					// Promises.all(promesas)
+				}).then(function (result) {
+					var mensaje = (mensajeRegistrados.length > len_Registrados) ? mensajeRegistrados + mensajeNoRegistrados.length > len_no_registrados ? mensajeNoRegistrados: "" :  mensajeNoRegistrados.length > len_no_registrados ? mensajeNoRegistrados: ""
+					res.json({ message: mensaje   });
+				}).catch(function (err) {
+					res.json({ message: (err.stack !== undefined) ? err.stack : err, hasErr: true })
+				})
 			} else {
 				res.json({ message: "Ningún Item se actualizo!" });
 			}
 		});
+
+		function crearInventario(){
+			return Inventario.create({
+				id_almacen: req.body.id_almacen,
+				id_producto: productoEncontrado.id,
+				cantidad: producto.cantidad,
+				costo_unitario: producto.costo_unitario,
+				fecha_vencimiento: producto.fecha_vencimiento,
+				lote: producto.lote ? producto.lote.toString() : null,
+				costo_total: (producto.cantidad * producto.costo_unitario)
+			}).then(function (inventarioCreado) {
+				return DetalleMovimiento.create({
+					id_movimiento: movimientoCreado.id,
+					id_producto: productoEncontrado.id,
+					costo_unitario: producto.costo_unitario,
+					cantidad: producto.cantidad,
+					importe: (producto.costo_unitario * producto.cantidad),
+					descuento: 0,
+					recargo: 0,
+					ice: 0,
+					excento: 0,
+					tipo_descuento: 0,
+					tipo_recargo: 0,
+					total: (producto.costo_unitario * producto.cantidad),
+					id_inventario: inventarioCreado.id
+				}).then(function (detalleMovimientoCreado) {
+					return new Promise(function (fulfill, reject) {
+						fulfill('Inventario creado...')
+					})
+					// mensajeRegistrados = mensajeRegistrados + " " + producto.codigo;
+				});
+			});
+		}
 
 	function formatearFecha(fecha) {
 		var mes = fecha.split('/')[1];
@@ -2222,7 +2334,9 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 				}]
 			}).then(function (productos) {
 				res.json(productos);
-			});
+			}).catch(function (err) {
+                res.json({ mensaje: (err.stack !== undefined) ? err.stack : err, hasErr: true })
+            })
 		});
 	router.route('/actualizar-movimiento-detalle/:id')
 		.put(function (req, res) {
