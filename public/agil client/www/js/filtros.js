@@ -21,7 +21,7 @@ angular.module('agil.filtros', [])
         // We have the ability to support multiple other parameters that can be passed into the filter optionally
         return function (input, optional1, optional2) {
             var datos = []
-            if (optional1.lote != "") {
+            if (optional1.lote != "" && optional1.lote!=undefined) {
                 if (optional1.datos) {
                     optional1.datos.forEach(function (dato, index, array) {
                         if (dato.lote == optional1.lote) {
