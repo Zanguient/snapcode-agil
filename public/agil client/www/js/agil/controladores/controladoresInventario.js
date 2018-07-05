@@ -400,6 +400,34 @@ angular.module('agil.controladores')
 					
 			
 		}
+		$scope.excelIngPorInventario = function () {
+			var cabecera = ["Compra", "Fecha", "Código", "Cantidad", "Unidad", "Detalle", "Lote", "Vencimiento", "Costo Unitario", "Total"]
+			var data = []
+			data.push(cabecera)
+
+			for (var i = 0; i < $scope.ingPorInventario.length; i++) {
+				var columns = [];
+				for (let index = 0; index < $scope.ingPorInventario[i].detallesMovimiento.length; index++) {
+					columns.push($scope.ingPorInventario[i].id);
+					columns.push($scope.ingPorInventario[i].fecha.split("T")[0].split('-').reverse().join("/"));
+					columns.push($scope.ingPorInventario[i].detallesMovimiento[index].producto.codigo);
+					columns.push($scope.ingPorInventario[i].detallesMovimiento[index].cantidad);
+					columns.push($scope.ingPorInventario[i].detallesMovimiento[index].producto.unidad_medida);
+					columns.push($scope.ingPorInventario[i].detallesMovimiento[index].producto.nombre);
+					columns.push($scope.ingPorInventario[i].detallesMovimiento[index].inventario.lote);
+					columns.push($scope.ingPorInventario[i].detallesMovimiento[index].inventario.fecha_vencimientoTexto);
+					columns.push($scope.ingPorInventario[i].detallesMovimiento[index].costo_unitario);
+					columns.push($scope.ingPorInventario[i].detallesMovimiento[index].total);
+					data.push(columns);
+				}
+			}
+			var ws_name = "SheetJS";
+			var wb = new Workbook(), ws = sheet_from_array_of_arrays(data);
+			wb.SheetNames.push(ws_name);
+			wb.Sheets[ws_name] = ws;
+			var wbout = XLSX.write(wb, { bookType: 'xlsx', bookSST: true, type: 'binary' });
+			saveAs(new Blob([s2ab(wbout)], { type: "application/octet-stream" }), "INGRESOS POR INVENTARIO.xlsx");
+		}
 		$scope.cerrarPopupActualizacionInventario = function () {
 			$scope.cerrarPopup($scope.idModalActualizacionInventario);
 		}
