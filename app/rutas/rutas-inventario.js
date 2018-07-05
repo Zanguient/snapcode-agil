@@ -1669,7 +1669,7 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 		if (inventarios.length == 0) {
 			return Inventario.findAll({
 				where: {
-					id_producto: producto.id, id_almacen: venta.id_almacen,
+					id_producto: producto.id, id_almacen: venta.almacen.id,
 					cantidad: { $gt: 0 }
 				}, transaccion: t
 

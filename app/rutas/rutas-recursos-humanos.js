@@ -149,20 +149,24 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
 
         })
     router.route('/recursos-humanos-familiar/empresa/:id_empresa')
-        .get(function (req, res) {          
+        .get(function (req, res) {
             RrhhEmpleadoFichaFamiliar.findAll({
-                include: [{ model: Clase, as: 'relacion' },{model:Persona,as:'persona',include:[{ model: Clase, as: 'genero' }]},{ model: MedicoPaciente, as: "empleado", where: { id_empresa: req.params.id_empresa },include: [{ model: Clase, as: 'campo' }, { model: RrhhEmpleadoFicha, as: 'empleadosFichas', include: [{ model: Clase, as: "aporteSeguroLargoPlazo" },{ model: RrhhEmpleadoCargo, as: 'cargos', include: [{ model: Clase, as: "cargo" }] }] }, { model: Clase, as: 'extension' }, { model: Persona, as: 'persona',   include: [{ model: Clase, as: 'genero' },
-                { model: Clase, as: 'pais' },
-                { model: Clase, as: 'ciudad' },
-                { model: Clase, as: 'provincia' },
-                { model: Clase, as: 'localidad' },
-                { model: Clase, as: 'estadoCivil' }] }] }]
+                include: [{ model: Clase, as: 'relacion' }, { model: Persona, as: 'persona', include: [{ model: Clase, as: 'genero' }] }, {
+                    model: MedicoPaciente, as: "empleado", where: { id_empresa: req.params.id_empresa }, include: [{ model: Clase, as: 'campo' }, { model: RrhhEmpleadoFicha, as: 'empleadosFichas', include: [{ model: Clase, as: "aporteSeguroLargoPlazo" }, { model: RrhhEmpleadoCargo, as: 'cargos', include: [{ model: Clase, as: "cargo" }] }] }, { model: Clase, as: 'extension' }, {
+                        model: Persona, as: 'persona', include: [{ model: Clase, as: 'genero' },
+                        { model: Clase, as: 'pais' },
+                        { model: Clase, as: 'ciudad' },
+                        { model: Clase, as: 'provincia' },
+                        { model: Clase, as: 'localidad' },
+                        { model: Clase, as: 'estadoCivil' }]
+                    }]
+                }]
             }).then(function (FamiliaresEncontrados) {
                 res.json(FamiliaresEncontrados);
             });
         })
-       
-      
+
+
     router.route('/recursos-humanos-familiar/:id_persona/familiar-relacion/:id_familiar')
         .put(function (req, res) {
 
@@ -2557,110 +2561,128 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                                                                                         limit: 1,
                                                                                         order: [['id', 'desc']]
                                                                                     }).then(function (fichaEncontrada) {
+                                                                                        return Persona.Destroy({
+                                                                                            where: { id: fichaEncontrada.id_persona_referencia },
+                                                                                            transaction: t,
+                                                                                        }).then(function (personaReferenciaEliminada) {
 
-                                                                                        pacienteActual.fecha_inicio = new Date(pacienteActual.fecha_inicio); pacienteActual.fecha_inicio.setHours(0, 0, 0, 0, 0);
-                                                                                        var fechaFichaEncontrada = new Date(fichaEncontrada[0].dataValues.fecha_inicio)
-                                                                                        var fecha1 = fechaATexto(fechaFichaEncontrada)
-                                                                                        var fecha2 = fechaATexto(pacienteActual.fecha_inicio)
-                                                                                        /* if (fecha1 == fecha2) { */
-                                                                                        return RrhhEmpleadoFicha.update({
-                                                                                            id_tipo_contrato: idcontratoClase,
-                                                                                            fecha_inicio: pacienteActual.fecha_inicio,
-                                                                                            haber_basico: pacienteActual.haber_basico,
-                                                                                            matricula_seguro: pacienteActual.matricula_seguro,
-                                                                                            id_seguro_salud: idSeguroSalud,
-                                                                                            seguro_salud_carnet: true,
-                                                                                            fecha_expiracion: pacienteActual.fecha_expiracion
-                                                                                        },
-                                                                                            {
-                                                                                                where: {
-                                                                                                    id: fichaEncontrada[0].dataValues.id
-                                                                                                }, transaction: t
-                                                                                            }).then(function (Creado) {
-                                                                                                return Tipo.find({
-                                                                                                    where: {
-                                                                                                        nombre_corto: 'RRHH_CARGO',
-                                                                                                        id_empresa: req.body.id_empresa
-                                                                                                    },
+                                                                                            /* if (fecha1 == fecha2) { */
+                                                                                            return Persona.create({
+                                                                                                nombres: pacienteActual.personaReferencia.nombre_referencia,
+                                                                                                telefono: pacienteActual.personaReferencia.telefonos_referencia,
+                                                                                                telefono_movil: pacienteActual.personaReferencia.celular_referencia,
+                                                                                                direccion_ciudad: pacienteActual.personaReferencia.ciudad_referencia,
+                                                                                                direccion_zona: pacienteActual.personaReferencia.zona_referencia,
+                                                                                                direccion_localidad: pacienteActual.personaReferencia.calle_av_referencia,
+                                                                                                direccion_numero: pacienteActual.personaReferencia.direccion_numero
+                                                                                            },
+                                                                                                {
                                                                                                     transaction: t
-                                                                                                }).then(function (tipoCargo) {
-                                                                                                    var nombre_corto = pacienteActual.cargo.substr(0, 3);
-                                                                                                    return Clase.findOrCreate({
-                                                                                                        where: {
-                                                                                                            nombre: pacienteActual.cargo,
-                                                                                                            id_tipo: tipoCargo.dataValues.id,
-                                                                                                        },
-                                                                                                        transaction: t,
-                                                                                                        lock: t.LOCK.UPDATE,
-                                                                                                        defaults: {
-                                                                                                            id_tipo: tipoCargo.dataValues.id,
-                                                                                                            nombre: pacienteActual.cargo,
-                                                                                                            nombre_corto: nombre_corto
-                                                                                                        }
-                                                                                                    }).spread(function (cargoClase, created4) {
-                                                                                                        return RrhhEmpleadoCargo.destroy({
+                                                                                                }).then(function (personaReferenciaCreada) {
+                                                                                                    pacienteActual.fecha_inicio = new Date(pacienteActual.fecha_inicio); pacienteActual.fecha_inicio.setHours(0, 0, 0, 0, 0);
+                                                                                                    var fechaFichaEncontrada = new Date(fichaEncontrada[0].dataValues.fecha_inicio)
+                                                                                                    var fecha1 = fechaATexto(fechaFichaEncontrada)
+                                                                                                    var fecha2 = fechaATexto(pacienteActual.fecha_inicio)
+                                                                                                    return RrhhEmpleadoFicha.update({
+                                                                                                        id_tipo_contrato: idcontratoClase,
+                                                                                                        fecha_inicio: pacienteActual.fecha_inicio,
+                                                                                                        haber_basico: pacienteActual.haber_basico,
+                                                                                                        matricula_seguro: pacienteActual.matricula_seguro,
+                                                                                                        id_seguro_salud: idSeguroSalud,
+                                                                                                        seguro_salud_carnet: true,
+                                                                                                        fecha_expiracion: pacienteActual.fecha_expiracion
+                                                                                                    },
+                                                                                                        {
                                                                                                             where: {
-                                                                                                                id_ficha: fichaEncontrada[0].dataValues.id
-                                                                                                            }
-                                                                                                        }).then(function (cargoDestruido) {
-                                                                                                            return RrhhEmpleadoCargo.create({
-                                                                                                                /* id_empleado: medicoPacienteActualizado.id, */
-                                                                                                                id_cargo: cargoClase.id,
-                                                                                                                id_ficha: fichaEncontrada[0].dataValues.id
-
-                                                                                                            }, {
-                                                                                                                    transaction: t
-                                                                                                                }).then(function (params) {
-                                                                                                                    return RrhhEmpleadoHistorialVacacion.destroy({
-                                                                                                                        where: { id_ficha: fichaEncontrada[0].dataValues.id }, transaction: t
-                                                                                                                    }).then(function (historialvacacionEliminado) {
-                                                                                                                        if (pacienteActual.historialVacacion.length > 0) {
-                                                                                                                            var contador = 0
-                                                                                                                            for (var i = 0; i < pacienteActual.historialVacacion.length; i++) {
-                                                                                                                                var historial = pacienteActual.historialVacacion[i];
-                                                                                                                                promises.push(RrhhEmpleadoHistorialVacacion.create({
-                                                                                                                                    aplicadas: historial.aplicadas,
-                                                                                                                                    tomadas: historial.tomadas,
-                                                                                                                                    anio: historial.anio,
-                                                                                                                                    gestion: historial.gestion,
-
-                                                                                                                                    eliminado: false,
-                                                                                                                                    id_ficha: fichaEncontrada[0].dataValues.id
-                                                                                                                                },
-                                                                                                                                    { transaction: t }).then(function (historialCreado) {
-
-                                                                                                                                        if (contador == (pacienteActual.historialVacacion.length - 1)) {
-
-                                                                                                                                            if (index === (array.length - 1)) {
-
-                                                                                                                                                res.json({ mensaje: "¡Datos de empleado actualizados satisfactoriamente!" });
-                                                                                                                                            }
-
-                                                                                                                                        }
-                                                                                                                                        contador++
-                                                                                                                                    }))
-                                                                                                                            }
-
-
-                                                                                                                        } else {
-                                                                                                                            if (index === (array.length - 1)) {
-
-                                                                                                                                res.json({ mensaje: "¡Datos de empleado actualizados satisfactoriamente!" });
-                                                                                                                            }
-
+                                                                                                                id: fichaEncontrada[0].dataValues.id
+                                                                                                            }, transaction: t
+                                                                                                        }).then(function (Creado) {
+                                                                                                            return Tipo.find({
+                                                                                                                where: {
+                                                                                                                    nombre_corto: 'RRHH_CARGO',
+                                                                                                                    id_empresa: req.body.id_empresa
+                                                                                                                },
+                                                                                                                transaction: t
+                                                                                                            }).then(function (tipoCargo) {
+                                                                                                                var nombre_corto = pacienteActual.cargo.substr(0, 3);
+                                                                                                                return Clase.findOrCreate({
+                                                                                                                    where: {
+                                                                                                                        nombre: pacienteActual.cargo,
+                                                                                                                        id_tipo: tipoCargo.dataValues.id,
+                                                                                                                    },
+                                                                                                                    transaction: t,
+                                                                                                                    lock: t.LOCK.UPDATE,
+                                                                                                                    defaults: {
+                                                                                                                        id_tipo: tipoCargo.dataValues.id,
+                                                                                                                        nombre: pacienteActual.cargo,
+                                                                                                                        nombre_corto: nombre_corto
+                                                                                                                    }
+                                                                                                                }).spread(function (cargoClase, created4) {
+                                                                                                                    return RrhhEmpleadoCargo.destroy({
+                                                                                                                        where: {
+                                                                                                                            id_ficha: fichaEncontrada[0].dataValues.id
                                                                                                                         }
+                                                                                                                    }).then(function (cargoDestruido) {
+                                                                                                                        return RrhhEmpleadoCargo.create({
+                                                                                                                            /* id_empleado: medicoPacienteActualizado.id, */
+                                                                                                                            id_cargo: cargoClase.id,
+                                                                                                                            id_ficha: fichaEncontrada[0].dataValues.id
+
+                                                                                                                        }, {
+                                                                                                                                transaction: t
+                                                                                                                            }).then(function (params) {
+                                                                                                                                return RrhhEmpleadoHistorialVacacion.destroy({
+                                                                                                                                    where: { id_ficha: fichaEncontrada[0].dataValues.id }, transaction: t
+                                                                                                                                }).then(function (historialvacacionEliminado) {
+                                                                                                                                    if (pacienteActual.historialVacacion.length > 0) {
+                                                                                                                                        var contador = 0
+                                                                                                                                        for (var i = 0; i < pacienteActual.historialVacacion.length; i++) {
+                                                                                                                                            var historial = pacienteActual.historialVacacion[i];
+                                                                                                                                            promises.push(RrhhEmpleadoHistorialVacacion.create({
+                                                                                                                                                aplicadas: historial.aplicadas,
+                                                                                                                                                tomadas: historial.tomadas,
+                                                                                                                                                anio: historial.anio,
+                                                                                                                                                gestion: historial.gestion,
+
+                                                                                                                                                eliminado: false,
+                                                                                                                                                id_ficha: fichaEncontrada[0].dataValues.id
+                                                                                                                                            },
+                                                                                                                                                { transaction: t }).then(function (historialCreado) {
+
+                                                                                                                                                    if (contador == (pacienteActual.historialVacacion.length - 1)) {
+
+                                                                                                                                                        if (index === (array.length - 1)) {
+
+                                                                                                                                                            res.json({ mensaje: "¡Datos de empleado actualizados satisfactoriamente!" });
+                                                                                                                                                        }
+
+                                                                                                                                                    }
+                                                                                                                                                    contador++
+                                                                                                                                                }))
+                                                                                                                                        }
+
+
+                                                                                                                                    } else {
+                                                                                                                                        if (index === (array.length - 1)) {
+
+                                                                                                                                            res.json({ mensaje: "¡Datos de empleado actualizados satisfactoriamente!" });
+                                                                                                                                        }
+
+                                                                                                                                    }
+                                                                                                                                })
+
+
+
+
+
+                                                                                                                            })
                                                                                                                     })
 
-
-
-
-
                                                                                                                 })
+                                                                                                            })
                                                                                                         })
-
-                                                                                                    })
                                                                                                 })
-                                                                                            })
+                                                                                        })
                                                                                         /*  } else  {
                                                                                               var fechaNueva = new Date()
         
@@ -2975,87 +2997,101 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                                                                                             if (SeguroSalud) {
                                                                                                 idSeguroSalud = SeguroSalud.dataValues.id
                                                                                             }
-                                                                                            return RrhhEmpleadoFicha.create({
-                                                                                                fecha: medicoPacienteActualizado.dataValues.createdAt,
-                                                                                                id_empleado: medicoPacienteActualizado.dataValues.id,
-                                                                                                id_tipo_contrato: idcontratoClase,
-                                                                                                fecha_inicio: pacienteActual.fecha_inicio,
-                                                                                                haber_basico: pacienteActual.haber_basico,
-                                                                                                matricula_seguro: pacienteActual.matricula_seguro,
-                                                                                                id_seguro_salud: idSeguroSalud,
-                                                                                                seguro_salud_carnet: true,
-                                                                                                fecha_expiracion: pacienteActual.fecha_expiracion
+                                                                                            return Persona.create({
+                                                                                                nombres: pacienteActual.personaReferencia.nombre_referencia,
+                                                                                                telefono: pacienteActual.personaReferencia.telefonos_referencia,
+                                                                                                telefono_movil: pacienteActual.personaReferencia.celular_referencia,
+                                                                                                direccion_ciudad: pacienteActual.personaReferencia.ciudad_referencia,
+                                                                                                direccion_zona: pacienteActual.personaReferencia.zona_referencia,
+                                                                                                direccion_localidad: pacienteActual.personaReferencia.calle_av_referencia,
+                                                                                                direccion_numero: pacienteActual.personaReferencia.direccion_numero
                                                                                             },
-                                                                                                { transaction: t }).then(function (Creado) {
-                                                                                                    return Tipo.find({
-                                                                                                        where: {
-                                                                                                            nombre_corto: 'RRHH_CARGO',
-                                                                                                            id_empresa: req.body.id_empresa
-                                                                                                        },
-                                                                                                        transaction: t
-                                                                                                    }).then(function (tipoCargo) {
-                                                                                                        var nombre_corto = pacienteActual.cargo.substr(0, 3);
-                                                                                                        return Clase.find({
-                                                                                                            where: {
-                                                                                                                nombre: pacienteActual.cargo,
-                                                                                                                id_tipo: tipoCargo.dataValues.id,
-                                                                                                            },
-                                                                                                            transaction: t,
+                                                                                                {
+                                                                                                    transaction: t
+                                                                                                }).then(function (personaReferenciaCreada) {
+                                                                                                    return RrhhEmpleadoFicha.create({
+                                                                                                        fecha: medicoPacienteActualizado.dataValues.createdAt,
+                                                                                                        id_empleado: medicoPacienteActualizado.dataValues.id,
+                                                                                                        id_tipo_contrato: idcontratoClase,
+                                                                                                        fecha_inicio: pacienteActual.fecha_inicio,
+                                                                                                        haber_basico: pacienteActual.haber_basico,
+                                                                                                        matricula_seguro: pacienteActual.matricula_seguro,
+                                                                                                        id_seguro_salud: idSeguroSalud,
+                                                                                                        seguro_salud_carnet: true,
+                                                                                                        fecha_expiracion: pacienteActual.fecha_expiracion,
+                                                                                                        id_persona_referencia: personaReferenciaCreada.id
+                                                                                                    },
+                                                                                                        { transaction: t }).then(function (Creado) {
+                                                                                                            return Tipo.find({
+                                                                                                                where: {
+                                                                                                                    nombre_corto: 'RRHH_CARGO',
+                                                                                                                    id_empresa: req.body.id_empresa
+                                                                                                                },
+                                                                                                                transaction: t
+                                                                                                            }).then(function (tipoCargo) {
+                                                                                                                var nombre_corto = pacienteActual.cargo.substr(0, 3);
+                                                                                                                return Clase.find({
+                                                                                                                    where: {
+                                                                                                                        nombre: pacienteActual.cargo,
+                                                                                                                        id_tipo: tipoCargo.dataValues.id,
+                                                                                                                    },
+                                                                                                                    transaction: t,
 
-                                                                                                        }).then(function (cargoClase) {
-                                                                                                            return RrhhEmpleadoCargo.create({
-                                                                                                                /* id_empleado: medicoPacienteActualizado.id, */
-                                                                                                                id_cargo: cargoClase.id,
-                                                                                                                id_ficha: Creado.id
-                                                                                                            },
-                                                                                                                { transaction: t }).then(function (params) {
-                                                                                                                    if (pacienteActual.historialVacacion.length > 0) {
-                                                                                                                        /* RrhhEmpleadoHistorialVacacion.update({
-                                                                                                                            eliminado: true,
-                                                                                                                        }, {
-                                                                                                                                where: { id_empleado: medicoPacienteActualizado.id }
-                                                                                                                            }).then(function (historialActualizado) { */
-                                                                                                                        /* req.body.historialVacacion.forEach(function (historial, index, array) { */
-                                                                                                                        var contador = 0
-                                                                                                                        for (var i = 0; i < pacienteActual.historialVacacion.length; i++) {
-                                                                                                                            var historial = pacienteActual.historialVacacion[i];
-                                                                                                                            promises.push(RrhhEmpleadoHistorialVacacion.create({
-                                                                                                                                aplicadas: historial.aplicadas,
-                                                                                                                                tomadas: historial.tomadas,
-                                                                                                                                anio: historial.anio,
-                                                                                                                                gestion: historial.gestion,
-                                                                                                                                /*  id_empleado: medicoPacienteActualizado.id, */
-                                                                                                                                eliminado: false,
-                                                                                                                                id_ficha: Creado.id
-                                                                                                                            },
-                                                                                                                                { transaction: t }).then(function (historialCreado) {
+                                                                                                                }).then(function (cargoClase) {
+                                                                                                                    return RrhhEmpleadoCargo.create({
+                                                                                                                        /* id_empleado: medicoPacienteActualizado.id, */
+                                                                                                                        id_cargo: cargoClase.id,
+                                                                                                                        id_ficha: Creado.id
+                                                                                                                    },
+                                                                                                                        { transaction: t }).then(function (params) {
+                                                                                                                            if (pacienteActual.historialVacacion.length > 0) {
+                                                                                                                                /* RrhhEmpleadoHistorialVacacion.update({
+                                                                                                                                    eliminado: true,
+                                                                                                                                }, {
+                                                                                                                                        where: { id_empleado: medicoPacienteActualizado.id }
+                                                                                                                                    }).then(function (historialActualizado) { */
+                                                                                                                                /* req.body.historialVacacion.forEach(function (historial, index, array) { */
+                                                                                                                                var contador = 0
+                                                                                                                                for (var i = 0; i < pacienteActual.historialVacacion.length; i++) {
+                                                                                                                                    var historial = pacienteActual.historialVacacion[i];
+                                                                                                                                    promises.push(RrhhEmpleadoHistorialVacacion.create({
+                                                                                                                                        aplicadas: historial.aplicadas,
+                                                                                                                                        tomadas: historial.tomadas,
+                                                                                                                                        anio: historial.anio,
+                                                                                                                                        gestion: historial.gestion,
+                                                                                                                                        /*  id_empleado: medicoPacienteActualizado.id, */
+                                                                                                                                        eliminado: false,
+                                                                                                                                        id_ficha: Creado.id
+                                                                                                                                    },
+                                                                                                                                        { transaction: t }).then(function (historialCreado) {
 
-                                                                                                                                    if (contador == (pacienteActual.historialVacacion.length - 1)) {
+                                                                                                                                            if (contador == (pacienteActual.historialVacacion.length - 1)) {
 
-                                                                                                                                        if (index === (array.length - 1)) {
+                                                                                                                                                if (index === (array.length - 1)) {
 
-                                                                                                                                            res.json({ mensaje: "¡Datos de empleado actualizados satisfactoriamente!" });
-                                                                                                                                        }
+                                                                                                                                                    res.json({ mensaje: "¡Datos de empleado actualizados satisfactoriamente!" });
+                                                                                                                                                }
 
-                                                                                                                                    }
-                                                                                                                                    contador++
-                                                                                                                                }))
-                                                                                                                        }
+                                                                                                                                            }
+                                                                                                                                            contador++
+                                                                                                                                        }))
+                                                                                                                                }
 
-                                                                                                                        /* }) */
-                                                                                                                        /*  }); */
-                                                                                                                    } else {
-                                                                                                                        if (index === (array.length - 1)) {
+                                                                                                                                /* }) */
+                                                                                                                                /*  }); */
+                                                                                                                            } else {
+                                                                                                                                if (index === (array.length - 1)) {
 
-                                                                                                                            res.json({ mensaje: "¡Datos de empleado actualizados satisfactoriamente!" });
-                                                                                                                        }
+                                                                                                                                    res.json({ mensaje: "¡Datos de empleado actualizados satisfactoriamente!" });
+                                                                                                                                }
 
-                                                                                                                    }
+                                                                                                                            }
 
 
+                                                                                                                        })
                                                                                                                 })
+                                                                                                            })
                                                                                                         })
-                                                                                                    })
                                                                                                 })
                                                                                         })
                                                                                     })

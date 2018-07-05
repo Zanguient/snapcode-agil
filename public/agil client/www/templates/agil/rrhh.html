@@ -229,7 +229,7 @@
                                 <li>
                                     <div class="clearfix">
                                         <span class="pull-left" style="color:rgb(85, 128, 163) !important">
-                                            Fichas
+                                            Cuentas Bancarioas
                                         </span>
                                         <a href="/recursos/EJEMPLO-DATOS-FICHAS-EMPLEADOS.xlsx" class="boton-importar pull-right">
                                             <i class="fa  fa-cloud-download green"></i>
@@ -244,6 +244,36 @@
                                     <div class="clearfix">
                                         <span class="pull-left" style="color:rgb(85, 128, 163) !important">
                                             Familiares
+                                        </span>
+                                        <a href="/recursos/EJEMPLO-DATOS-FICHAS-EMPLEADOS-FAMILIARES.xlsx" class="boton-importar pull-right">
+                                            <i class="fa  fa-cloud-download green"></i>
+                                        </a>
+                                        <div class="fileUpload boton-importar pull-right">
+                                            <span class="fileUpload-button ace-icon fa fa-cloud-upload blue"></span>
+                                            <input ng-disabled="!aplicacion.puede_crear" class="upload" type="file" custom-on-file-change="subirExcelFichaEmpleadoFamiliares"
+                                            />
+                                        </div>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="clearfix">
+                                        <span class="pull-left" style="color:rgb(85, 128, 163) !important">
+                                            Ficha Empleados
+                                        </span>
+                                        <a href="/recursos/EJEMPLO-DATOS-FICHAS-EMPLEADOS-FAMILIARES.xlsx" class="boton-importar pull-right">
+                                            <i class="fa  fa-cloud-download green"></i>
+                                        </a>
+                                        <div class="fileUpload boton-importar pull-right">
+                                            <span class="fileUpload-button ace-icon fa fa-cloud-upload blue"></span>
+                                            <input ng-disabled="!aplicacion.puede_crear" class="upload" type="file" custom-on-file-change="subirExcelFichaEmpleadoFamiliares"
+                                            />
+                                        </div>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="clearfix">
+                                        <span class="pull-left" style="color:rgb(85, 128, 163) !important">
+                                            Roles de turno
                                         </span>
                                         <a href="/recursos/EJEMPLO-DATOS-FICHAS-EMPLEADOS-FAMILIARES.xlsx" class="boton-importar pull-right">
                                             <i class="fa  fa-cloud-download green"></i>
@@ -5075,14 +5105,14 @@
                     <div class="form-group form-row">
                         <label class="col-sm-3" for="todos">Tipo</label>
                         <label>
-                                <input name="" class="ace ace-switch ace-switch-5 big-switch" type="checkbox" ng-model="filtro.todos" ng-click="paginator.getSearch(paginator.search,filtroBeneficioEmpresa,null)">
-                                <span class="lbl" data-lbl="Todos&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Activos"></span>
+                            <input name="" class="ace ace-switch ace-switch-5 big-switch" type="checkbox" ng-model="filtro.todos" ng-click="paginator.getSearch(paginator.search,filtroBeneficioEmpresa,null)">
+                            <span class="lbl" data-lbl="Todos&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Activos"></span>
                         </label>
                     </div>
                     <div class="form-group">
                         <label class="col-sm-3" for="rango">Rango</label>
                         <div class="input-group col-sm-9">
-                            <input type="number" class="input-sm form-control" ng-model="filtro.desde"name="start">
+                            <input type="number" class="input-sm form-control" ng-model="filtro.desde" name="start">
                             <span class="input-group-addon">
                                 <span class="fa fa-exchange"></span>
                             </span>
@@ -5395,8 +5425,7 @@
                         <tr>
                             <th rowspan="2" class="text-center">Incluir Prorreteo
                                 <label class="pos-rel">
-                                    <input name="switch-field-1" type="checkbox" class="ace" ng-model="prorreteo" ng-change="AgregarProrreteo(prorreteo)"
-                                    />
+                                    <input name="switch-field-1" type="checkbox" class="ace" ng-model="prorreteo" ng-change="AgregarProrreteo(prorreteo)" />
                                     <span class="lbl"></span>
                                 </label>
                             </th>
