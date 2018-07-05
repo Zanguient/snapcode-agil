@@ -164,30 +164,21 @@
                             <td class="center">
                                 {{$index+1}}
                             </td>
-                            <td>{{gtm_detalle_despacho.fecha | date:"dd/MM/yyyy"}}</td>
+                            <td>{{gtm_detalle_despacho.fecha | date:"dd/MM/yyyy"}} </td>
 
                             <td>{{gtm_detalle_despacho.despacho.usuario.persona.nombre_completo}}</td>
                             <td>{{gtm_detalle_despacho.despacho.cliente.razon_social}}</td>
                             <td class="center">
-
+                                    <p>LATITUD:{{gtm_detalle_despacho.cordenada_latitud}}</p>
+                                <p>LONGITUD:{{gtm_detalle_despacho.cordenada_longitud}}</p>
                             </td>
-
+                   
                             <td>
                                 <div class="action-buttons">
-                                    <a class="blue" href="javascript:void(0)" ng-click="imprimir(gtm_detalle_despacho)">
-                                        <i class="ace-icon fa fa-print bigger-130"></i>
-                                    </a>
-
-                                    <a class="green" e-disabled="!aplicacion.puede_modificar" ng-if="!gtm_detalle_despacho.factura" href="javascript:void(0)"
-                                        ng-click="abrirModalAsignacionFactura(gtm_detalle_despacho)">
-                                        <i class="ace-icon fa fa-unlock bigger-130"></i>
-                                    </a>
-                                    <a class="red" e-disabled="!aplicacion.puede_modificar" ng-if="gtm_detalle_despacho.factura" href="javascript:void(0)" ng-click="abrirModalVerificarCuenta(gtm_detalle_despacho,'despacho')">
-                                        <i class="ace-icon fa fa-lock bigger-130"></i>
-                                    </a>
-                                    <a class="red" e-disabled="!aplicacion.puede_eliminar" ng-if="!gtm_detalle_despacho.factura" href="javascript:void(0)" ng-click="abrirPopupConfirmacionEliminacion(removerDetalleDespacho,gtm_detalle_despacho)">
-                                        <i class="ace-icon fa fa-trash-o bigger-130"></i>
-                                    </a>
+                                    <a href="javascript:void(0)"
+                                    class="tooltip-info"
+                                        data-rel="tooltip" data-placement="top" uib-tooltip="Rastrear Pedido"><img height="60" width="55" src="img/Map-icon.png" style="padding-bottom: 5px" ng-click="verUbicacionDespacho(gtm_detalle_despacho)"></a>
+                                 </div>  
                             </td>
                         </tr>
                     </tbody>

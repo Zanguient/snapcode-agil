@@ -2745,7 +2745,7 @@
 					</thead>
 					<tbody>
 						<tr ng-repeat="proforma in alertasProformas">
-							<td>{{proforma.id}}</td>
+							<td>{{proforma.correlativo}}</td>
 							<td>{{proforma.cliente.nit}}</td>
 							<td>{{proforma.cliente.razon_social}}</td>
 							<td>{{proforma.actividadEconomica.nombre}}</td>
@@ -2804,7 +2804,7 @@
 							<tbody>
 								<tr ng-repeat="proforma in facturaProformas.datosProformas">
 									<td>
-										{{proforma.id}}
+										{{proforma.correlativo}}
 									</td>
 									<td>
 										{{proforma.fecha_proforma | date:"dd/MM/yyyy" }}

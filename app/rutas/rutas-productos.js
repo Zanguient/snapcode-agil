@@ -178,6 +178,7 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 				condicionInventario = {id_producto: req.params.id_producto, lote: req.params.lote }
 			}
 			DetalleMovimiento.findAll({
+				subQuery:false,
 				where: { id_producto: req.params.id_producto },
 				include: [{ model: Inventario, as: 'inventario'},
 				{
@@ -187,19 +188,19 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 						fecha: { $between: [fechaInicial, fechaFinal] }
 					},
 					include: [{
-						model: Compra, as: 'compra',
+						model: Compra, as: 'compra',required:false,
 						include: [{ model: Proveedor, as: 'proveedor' }]
 					},
 					{
-						model: Venta, as: 'venta',
+						model: Venta, as: 'venta',required:false,
 						include: [{ model: Cliente, as: 'cliente' }]
 					},
 					{
-						model: Almacen, as: 'almacen',
+						model: Almacen, as: 'almacen',required:false,
 						include: [{ model: Sucursal, as: 'sucursal' }]
 					},
-					{ model: Tipo, as: 'tipo' },
-					{ model: Clase, as: 'clase' }]
+					{ model: Tipo, as: 'tipo',required:false },
+					{ model: Clase, as: 'clase',required:false }]
 				}],
 				order: [[{ model: Movimiento, as: 'movimiento' }, 'id', 'ASC']]
 			}).then(function (productos) {

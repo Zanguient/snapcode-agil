@@ -95,6 +95,11 @@ module.exports = function (sequelize, Sequelize) {
             field: 'tipo_pago',
             defaultValue: null
         },
+        correlativo: {
+            type: Sequelize.INTEGER,
+            field: 'correlativo',
+            defaultValue: null
+        },
         eliminado: {
             type: Sequelize.BOOLEAN,
             field: 'eliminado'

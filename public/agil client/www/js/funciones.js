@@ -1574,3 +1574,26 @@ function dayssInmonths(date) {
 	date = new Date(date);
 	return 32 - new Date(date.getFullYear(), date.getMonth(), 32).getDate();
 }
+
+function dec2gms(valor, tipo)
+{
+	grados    = Math.abs(parseInt(valor));
+	minutos   = (Math.abs(valor) - grados) * 60;
+	segundos  = minutos;
+	minutos   = Math.abs(parseInt(minutos));
+	segundos  = Math.round((segundos - minutos) * 60 * 1000000) / 1000000;
+	signo     = (valor < 0) ? -1 : 1; 	direccion = (tipo == "LATITUD") ?
+                    ((signo > 0) ? 'N' : 'S') :
+	            ((signo > 0) ? 'E' : 'W');
+
+	if(isNaN(direccion))
+		grados = grados * signo;
+
+	return {
+		'grados'   : grados,
+		'minutos'  : minutos,
+		'segundos' : segundos,
+		'direccion': direccion,
+		'valor'    : grados + "° " + minutos + "' "+ segundos +"'" + ((isNaN(direccion)) ? (' ' + direccion) : '')
+	};
+}

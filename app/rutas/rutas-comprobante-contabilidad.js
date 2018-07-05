@@ -573,7 +573,7 @@ module.exports = function (router, ComprobanteContabilidad, AsientoContabilidad,
 																			}
 																		})
 																	} else {
-																		req.body.mensaje += " la cuenta " + asientoContable.numero_cuenta + "del comprobante N° " + comprobanteEncontrado.numero
+																		req.body.mensaje += "del comprobante N° " + comprobanteEncontrado.numero+" la cuenta " + asientoContable.numero_cuenta + "no se ingreso por que no existe"
 																		if (index === (array.length - 1)) {
 																			if (req.body.mensaje == "") {
 																				res.json({ mensaje: "Comprobantes importados satisfactoriamente!" })
@@ -682,7 +682,7 @@ module.exports = function (router, ComprobanteContabilidad, AsientoContabilidad,
 																	}
 																})
 															} else {
-																req.body.mensaje += " la cuenta " + asientoContable.numero_cuenta + "no existe del comprobante N° " + ComprobanteCreado.numero
+																req.body.mensaje += "del comprobante N° " + ComprobanteCreado.numero+" la cuenta " + asientoContable.numero_cuenta + "no se ingreso por que no existe"
 																if (index === (array.length - 1)) {
 																	if (req.body.mensaje == "") {
 																		res.json({ mensaje: "Comprobantes importados satisfactoriamente!" })

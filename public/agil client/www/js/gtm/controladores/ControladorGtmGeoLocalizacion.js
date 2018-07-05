@@ -78,12 +78,11 @@ angular.module('agil.controladores')
                 $scope.despachos = dato.detallesDespacho;
                 $scope.totalesDespachos = { producto: 0, servicio_transporte: 0, total: 0 }
                 $scope.despachos.forEach(function (despacho, index, array) {
-                    $scope.totalesDespachos.producto += despacho.precio_unitario * despacho.cantidad_despacho
-                    $scope.totalesDespachos.servicio_transporte += despacho.servicio_transporte
-                    if (index === (array.length - 1)) {
-                        $scope.totalesDespachos.total = $scope.totalesDespachos.producto + $scope.totalesDespachos.servicio_transporte
-                    }
-
+                    r1 = dec2gms(despacho.latitud, "LATITUD");
+                    r2 = dec2gms(despacho.latitud, "LONGITUD");
+                    despacho.cordenada_latitud=r1.valor
+                    despacho.cordenada_longitud=r2.valor
+                   
                 })
                 blockUI.stop();
             });
@@ -107,7 +106,29 @@ angular.module('agil.controladores')
 				return promesa;
 			}
         }       
-       
+       $scope.verUbicacionDespacho=function(detalle){
+        $scope.markers = []; 
+        var Marker=   {
+          "id": 1,
+          "coords": {
+            "latitude": detalle.latitud,
+            "longitude": detalle.longitud
+          },
+          "window": {
+            "title": detalle.despacho.cliente.razon_social
+          }
+        }
+        $scope.markers.push(Marker)
+        $scope.map = {
+            center: { latitude: detalle.latitud, longitude: detalle.longitud }, zoom: 13, bounds: {
+                northeast: {
+                    latitude: detalle.latitud,
+                    longitude: detalle.longitud
+                }
+            }
+        }
+        $scope.abrirDialogVendedorMapa()
+       }
         $scope.GenerarMapaDespachosVendedor=function(filtro){
             $scope.markers = []; 
             filtro.fechaBusqueda=new Date($scope.convertirFecha(filtro.fecha))

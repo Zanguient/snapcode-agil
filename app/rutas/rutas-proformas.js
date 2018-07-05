@@ -38,7 +38,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
                 }
             }
             if (req.params.numero != "0") {
-                condicion.id = req.params.numero
+                condicion.correlativo = req.params.numero
             }
             if (req.params.id_opcion != "0") {
                 if (req.params.id_opcion == "1") {
@@ -66,43 +66,78 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
                 });
         })
         .post(function (req, res) {
-            Proforma.create({
-                fecha_proforma: req.body.fecha_proforma,
-                // fecha_proforma_ok:null,
-                // fecha_recepcion:null,
-                // fecha_factura:null,
-                // fecha_cobro:null,
-                id_empresa: req.body.id_empresa,
-                detalle: req.body.detalle,
-                periodo_mes: req.body.periodo_mes.id,
-                periodo_anio: req.body.periodo_anio.id,
-                id_sucursal: req.body.sucursal.id,
-                id_actividad: req.body.actividadEconomica.id,
-                id_cliente: req.body.cliente.id,
-                id_usuario: req.body.usuarioProforma.id,
-                totalImporteBs: req.body.totalImporteBs,
-                // dias: null,
-                eliminado: false
-            }).then(function (proformaCreada) {
-                req.body.detallesProformas.map(function (detalle, i) {
-                    DetallesProformas.create({
-                        id_proforma: proformaCreada.id,
-                        id_servicio: detalle.id_servicio,
-                        precio_unitario: detalle.precio_unitario,
-                        cantidad: detalle.cantidad,
-                        importe: detalle.importe,
-                        id_centro_costo: detalle.centroCosto !== undefined && detalle.centroCosto !== null ? detalle.centroCosto.id : null,
-                        eliminado: false
-                    }).then(function (detalleCreado) {
-                        if (i === req.body.detallesProformas.length - 1) {
-                            res.json({ mensaje: 'Proforma creada satisfactoriamente!' })
-                        }
-                    }).catch(function (err) {
-                        res.json({ mensaje: err.stack !== undefined ? err.stack : err.message, hasError: true, proforma: req.body })
+            sequelize.transaction(function (t) {
+                var detalles = []
+                return Sucursal.find({
+                    where: { id: req.body.sucursal.id }
+                }).then(function (sucursal) {
+                    return Sucursal.update({
+                        correlativo_proforma: sucursal.dataValues.correlativo_proforma + 1
+                    }, {
+                            where: {id: sucursal.dataValues.id},
+                            transaction: t
+                        }).then(function (sucursalActualizada) {
+                            return Proforma.create({
+                                fecha_proforma: req.body.fecha_proforma,
+                                // fecha_proforma_ok:null,
+                                // fecha_recepcion:null,
+                                // fecha_factura:null,
+                                // fecha_cobro:null,
+                                id_empresa: req.body.id_empresa,
+                                detalle: req.body.detalle,
+                                periodo_mes: req.body.periodo_mes.id,
+                                periodo_anio: req.body.periodo_anio.id,
+                                id_sucursal: req.body.sucursal.id,
+                                id_actividad: req.body.actividadEconomica.id,
+                                id_cliente: req.body.cliente.id,
+                                id_usuario: req.body.usuarioProforma.id,
+                                totalImporteBs: req.body.totalImporteBs,
+                                correlativo: sucursal.dataValues.correlativo_proforma,
+                                eliminado: false
+                            }, { transaction: t }).then(function (proformaCreada) {
+                                req.body.detallesProformas.map(function (detalle, i) {
+                                    detalles.push(DetallesProformas.create({
+                                        id_proforma: proformaCreada.id,
+                                        id_servicio: detalle.id_servicio,
+                                        precio_unitario: detalle.precio_unitario,
+                                        cantidad: detalle.cantidad,
+                                        importe: detalle.importe,
+                                        id_centro_costo: detalle.centroCosto !== undefined && detalle.centroCosto !== null ? detalle.centroCosto.id : null,
+                                        eliminado: false
+                                    }, { transaction: t }).then(function (detalleCreado) {
+                                        return new Promise(function (fulfill, reject) {
+                                            fulfill('Detalle creado...')
+                                        });
+                                    }).catch(function (err) {
+                                        return new Promise(function (fulfill, reject) {
+                                            reject((err.stack !== undefined) ? err.stack : err);
+                                        });
+                                    }))
+                                })
+                                return Promise.all(detalles)
+                            }).catch(function (err) {
+                                return new Promise(function (fulfill, reject) {
+                                    reject((err.stack !== undefined) ? err.stack : err);
+                                });
+                            });
+                        }).catch(function (err) {
+                            return new Promise(function (fulfill, reject) {
+                                reject((err.stack !== undefined) ? err.stack : err);
+                            });
+                        })
+                }).catch(function (err) {
+                    return new Promise(function (fulfill, reject) {
+                        reject((err.stack !== undefined) ? err.stack : err);
                     });
-                })
+                });
+            }).then(function (result) {
+                if (result !== undefined) {
+                    res.json({ mensaje: 'Proforma creada satisfactoriamente!' })
+                } else {
+                    res.json({ mensaje: 'Existe un error!' })
+                }
             }).catch(function (err) {
-                res.json({ mensaje: err.stack !== undefined ? err.stack : err.message, hasError: true, proforma: req.body })
+                res.json({ mensaje: (err.stack !== undefined) ? err.stack : err, hasErr: true })
             });
         })
 
@@ -520,31 +555,31 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
                 });
         })
 
-        router.route('/factura/:id_factura/proforma/facturada/:id_empresa')
+    router.route('/factura/:id_factura/proforma/facturada/:id_empresa')
         .get(function (req, res) {
             Proforma.findAll({
-                    where: {
-                        factura: req.params.id_factura
-                    },
-                    include: [
-                        { model: Clase, as: 'actividadEconomica' },
-                        { model: DetallesProformas, as: 'detallesProformas', where: { eliminado: false }, include: [{ model: Servicios, as: 'servicio' }, { model: Clase, as: 'centroCosto' }] },
-                        { model: Usuario, as: 'usuarioProforma' },
-                        { model: Cliente, as: 'cliente' },
-                        {
-                            model: Sucursal, as: 'sucursal', include: [
-                                {
-                                    model: SucursalActividadDosificacion, as: 'actividadesDosificaciones',
-                                    include: [{ model: Dosificacion, as: 'dosificacion' },
-                                    { model: Clase, as: 'actividad' }]
-                                }]
-                        }
-                    ]
-                }).then(function (facturadas) {
-                    res.json({ datosProformas: facturadas })
-                }).catch(function (err) {
-                    res.json({ mensaje: err.stack !== undefined ? err.stack : err.message, hasErr: true })
-                });
+                where: {
+                    factura: req.params.id_factura
+                },
+                include: [
+                    { model: Clase, as: 'actividadEconomica' },
+                    { model: DetallesProformas, as: 'detallesProformas', where: { eliminado: false }, include: [{ model: Servicios, as: 'servicio' }, { model: Clase, as: 'centroCosto' }] },
+                    { model: Usuario, as: 'usuarioProforma' },
+                    { model: Cliente, as: 'cliente' },
+                    {
+                        model: Sucursal, as: 'sucursal', include: [
+                            {
+                                model: SucursalActividadDosificacion, as: 'actividadesDosificaciones',
+                                include: [{ model: Dosificacion, as: 'dosificacion' },
+                                { model: Clase, as: 'actividad' }]
+                            }]
+                    }
+                ]
+            }).then(function (facturadas) {
+                res.json({ datosProformas: facturadas })
+            }).catch(function (err) {
+                res.json({ mensaje: err.stack !== undefined ? err.stack : err.message, hasErr: true })
+            });
         })
 
     router.route('/alertas/proformas/:id_empresa')
@@ -918,7 +953,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
 
             sequelize.transaction(function (t) {
                 var factura = req.body;
-                
+
                 return SucursalActividadDosificacion.find({
                     where: {
                         id_actividad: req.body.actividad.id,
@@ -1100,7 +1135,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
                                 res.json({ mensaje: 'Operación correcta.' })
                             })
                     }).catch(function (err) {
-                        res.json({mensaje: err.stack})
+                        res.json({ mensaje: err.stack })
                     })
             }
         })

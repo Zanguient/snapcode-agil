@@ -1431,7 +1431,7 @@ angular.module('agil.controladores')
             doc.font('Helvetica', 8);
             doc.font('Helvetica-Bold', 14);
             doc.text("N°", 380, 60, { align: "center" });
-            doc.text(proforma.id, 510, 60);
+            doc.text(proforma.correlativo, 510, 60);
             doc.rect(40, 80 + 80 + separacionExtra, 540, 25).stroke()
                 .fill('silver')
             doc.rect(0, 0, 0, 0).stroke()
