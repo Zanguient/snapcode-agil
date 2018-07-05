@@ -37,7 +37,7 @@ angular.module('agil.controladores')
             $timeout(function () {
 				$scope.$apply(function () {
 					google.maps.event.trigger($scope.map, 'resize');
-				});
+                });
 			}, 2000);
             $scope.abrirPopup($scope.ModalVendedorMapa)
         }

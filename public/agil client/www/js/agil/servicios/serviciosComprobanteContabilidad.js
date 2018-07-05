@@ -79,5 +79,24 @@ angular.module('agil.servicios')
 		};
 		return res;
 	}])
+	.factory('ImportarComprobantes', function ($resource) {
+		return $resource(restServer + "importar-comprobantes/usuario/:id_usuario/empresa/:id_empresa", null,
+		{
+			'update': { method: 'PUT' }
+		});
+	})
 
+	.factory('GuardarComprobantesImportados', ['ImportarComprobantes', '$q', function (ImportarComprobantes, $q) {
+		var res = function (comprobantes,idusuario,idEmpresa) {
+			var delay = $q.defer();
+			var delay = $q.defer();
+			ImportarComprobantes.save({id_empresa:idEmpresa, id_usuario: idusuario },comprobantes, function (entidades) {
+				delay.resolve(entidades);
+			}, function (error) {
+				delay.reject(error);
+			});
+			return delay.promise;
+		};
+		return res;
+	}])
 	

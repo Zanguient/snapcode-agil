@@ -1,4 +1,4 @@
-module.exports = function (router, ComprobanteContabilidad, AsientoContabilidad, ContabilidadCuenta, ClasificacionCuenta, Sucursal, Clase, Usuario, Diccionario, Empresa, Persona, Compra, Venta, MonedaTipoCambio, NumeroLiteral, ContabilidadCuentaAuxiliar) {
+module.exports = function (router, ComprobanteContabilidad, AsientoContabilidad, ContabilidadCuenta, ClasificacionCuenta, Sucursal, Clase, Usuario, Diccionario, Empresa, Persona, Compra, Venta, MonedaTipoCambio, NumeroLiteral, ContabilidadCuentaAuxiliar, Tipo) {
 
 	router.route('/comprobantes/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/fecha-inicio/:inicio/fecha-fin/:fin/columna/:columna/direccion/:direccion/monto/:monto/tipo-comprobante/:tipo_comprobante/sucursal/:sucursal/usuario/:usuario/numero/:numero/busqueda/:busqueda')
 		.get(function (req, res) {
@@ -417,12 +417,12 @@ module.exports = function (router, ComprobanteContabilidad, AsientoContabilidad,
 					$or: [
 						{
 							nombre: {
-								$like:  req.params.buscar + "%"
+								$like: req.params.buscar + "%"
 							}
 						},
 						{
 							codigo: {
-								$like:  req.params.buscar + "%"
+								$like: req.params.buscar + "%"
 							}
 						}
 					]
@@ -487,6 +487,241 @@ module.exports = function (router, ComprobanteContabilidad, AsientoContabilidad,
 
 
 	// })
+	router.route('/importar-comprobantes/usuario/:id_usuario/empresa/:id_empresa')
+		.post(function (req, res) {
+			req.body.mensaje=""
+			req.body.forEach(function (comprobante, index, array) {
+				var fechaBusqueda = new Date(comprobante.fecha)
+				fechaBusqueda.setHours(0, 0, 0, 0, 0);
+				ComprobanteContabilidad.find({
+					where: { fecha: fechaBusqueda, numero: comprobante.codigo },
+					include: [{ model: Clase, as: 'tipoComprobante', where: { nombre: comprobante.tipo_comprobante } }]
+				}).then(function (comprobanteEncontrado) {
+					if (comprobanteEncontrado) {
+						Tipo.find(
+							{
+								where: { nombre_corto: 'TCMC' }
+							}).then(function (tipoEncontrado) {
+								Clase.find({
+									where: { nombre: comprobante.tipo_comprobante, id_tipo: tipoEncontrado.id }
+								}).then(function (tipoComprobanteEncontrado) {
+									if (tipoComprobanteEncontrado) {
+										Sucursal.find({
+											where: {
+												id_empresa: req.params.id_empresa,
+												nombre: comprobante.sucursal//your where conditions, or without them if you need ANY entry
+											}
+										}).then(function (SucursalEncontrada) {
+											if (SucursalEncontrada) {
+												ComprobanteContabilidad.update({
+													id_tipo: tipoComprobanteEncontrado.id,
+													abierto: false,
+													numero: comprobante.codigo,
+													fecha: comprobante.fecha,
+													id_sucursal: SucursalEncontrada.id,
+													gloza: comprobante.gloza,
+													id_usuario: req.params.id_usuario,
+													eliminado: false,
+													importe: comprobante.importe,
+													id_tipo_cambio: comprobante.tipoCambio.id,
+													//fecha_creacion: comprobante.fechaActual
+												}, {
+														where: { id: comprobanteEncontrado.id }
+													}).then(function (ComprobanteActualizado) {
+														AsientoContabilidad.destroy({
+															where: { id_comprobante: comprobanteEncontrado.id }
+														}).then(function (AsientosEliminados) {
+															for (var i = 0; i < comprobante.asientosContables.length; i++) {
+																var asientoContable = comprobante.asientosContables[i];
+																if (asientoContable.debe_bs == null) {
+																	asientoContable.debe_bs = "0";
+																}
+																if (asientoContable.debe_sus == null) {
+																	asientoContable.debe_sus = "0";
+																}
+																if (asientoContable.haber_bs == null) {
+																	asientoContable.haber_bs = "0";
+																}
+																if (asientoContable.haber_sus == null) {
+																	asientoContable.haber_sus = "0";
+																}
+																var idCentroCosto = null
+																if (asientoContable.centroCosto) {
+																	idCentroCosto = asientoContable.centroCosto.id
+																}
+																ContabilidadCuenta.find({
+																	where: { codigo: asientoContable.numero_cuenta }
+																}).then(function (cuentaEncontrada) {
+																	if (cuentaEncontrada) {
+																		AsientoContabilidad.create({
+																			id_comprobante: comprobanteEncontrado.id,
+																			id_cuenta: cuentaEncontrada.id,
+																			glosa: asientoContable.gloza,
+																			debe_bs: parseFloat(asientoContable.debe_bs),
+																			haber_bs: parseFloat(asientoContable.haber_bs),
+																			debe_sus: parseFloat(asientoContable.debe_sus),
+																			haber_sus: parseFloat(asientoContable.haber_sus),
+																			eliminado: false,
+																			id_centro_costo: idCentroCosto
+																		}).then(function (asientroCreado) {
+																			if (index === (array.length - 1)) {
+																				if (req.body.mensaje == "") {
+																					res.json({ mensaje: "Comprobantes importados satisfactoriamente!" })
+																				} else {
+																					res.json({ mensaje: req.body.mensaje })
+																				}
+																			}
+																		})
+																	} else {
+																		req.body.mensaje += " la cuenta " + asientoContable.numero_cuenta + "del comprobante N° " + comprobanteEncontrado.numero
+																		if (index === (array.length - 1)) {
+																			if (req.body.mensaje == "") {
+																				res.json({ mensaje: "Comprobantes importados satisfactoriamente!" })
+																			} else {
+																				res.json({ mensaje: req.body.mensaje })
+																			}
+																		}
+																	}
+																})
+															}
+														})
+													})
+											} else {
+												req.body.mensaje += "el comprobante N° " + comprobante.codigo + "no se ingreso por que la sucursal" + comprobante.sucursal + "no existe, "
+												if (index === (array.length - 1)) {
+													if (req.body.mensaje == "") {
+														res.json({ mensaje: "Comprobantes importados satisfactoriamente!" })
+													} else {
+														res.json({ mensaje: req.body.mensaje })
+													}
+												}
+											}
+										})
+									} else {
+										req.body.mensaje += "el comprobante N° " + comprobante.codigo + "no se ingreso por el tipo de comprobante:" + comprobante.tipo_comprobante + "no existe, "
+										if (index === (array.length - 1)) {
+											if (req.body.mensaje == "") {
+												res.json({ mensaje: "Comprobantes importados satisfactoriamente!" })
+											} else {
+												res.json({ mensaje: req.body.mensaje })
+											}
+										}
+									}
+								})
+							})
+					} else {
+						Tipo.find(
+							{
+								where: { nombre_corto: 'TCMC' }
+							}).then(function (tipoEncontrado) {
+								Clase.find({
+									where: { nombre: comprobante.tipo_comprobante, id_tipo: tipoEncontrado.id }
+								}).then(function (tipoComprobanteEncontrado) {
+									if (tipoComprobanteEncontrado) {
+
+										Sucursal.find({
+											where: {
+												id_empresa: req.params.id_empresa,
+												nombre: comprobante.sucursal//your where conditions, or without them if you need ANY entry
+											}
+										}).then(function (SucursalEncontrada) {
+											if (SucursalEncontrada) {
+												ComprobanteContabilidad.create({
+													id_tipo: tipoComprobanteEncontrado.id,
+													abierto: false,
+													numero: comprobante.codigo,
+													fecha: comprobante.fecha,
+													id_sucursal: SucursalEncontrada.id,
+													gloza: comprobante.gloza,
+													id_usuario: req.params.id_usuario,
+													eliminado: comprobante.eliminado,
+													importe: comprobante.importe,
+													id_tipo_cambio: comprobante.tipoCambio.id,
+													fecha_creacion: comprobante.fechaActual,
+													eliminado: false
+												}).then(function (ComprobanteCreado) {
+													for (var i = 0; i < comprobante.asientosContables.length; i++) {
+														var asientoContable = comprobante.asientosContables[i];
+														if (asientoContable.debe_bs == null) {
+															asientoContable.debe_bs = "0";
+														}
+														if (asientoContable.debe_sus == null) {
+															asientoContable.debe_sus = "0";
+														}
+														if (asientoContable.haber_bs == null) {
+															asientoContable.haber_bs = "0";
+														}
+														if (asientoContable.haber_sus == null) {
+															asientoContable.haber_sus = "0";
+														}
+														var idCentroCosto = null
+														if (asientoContable.centroCosto) {
+															idCentroCosto = asientoContable.centroCosto.id
+														}
+														ContabilidadCuenta.find({
+															where: { codigo: asientoContable.numero_cuenta }
+														}).then(function (cuentaEncontrada) {
+															if (cuentaEncontrada) {
+																AsientoContabilidad.create({
+																	id_comprobante: ComprobanteCreado.id,
+																	id_cuenta: cuentaEncontrada.id,
+																	glosa: asientoContable.gloza,
+																	debe_bs: parseFloat(asientoContable.debe_bs),
+																	haber_bs: parseFloat(asientoContable.haber_bs),
+																	debe_sus: parseFloat(asientoContable.debe_sus),
+																	haber_sus: parseFloat(asientoContable.haber_sus),
+																	eliminado: false,
+																	id_centro_costo: idCentroCosto
+																}).then(function (asientroCreado) {
+																	if (index === (array.length - 1)) {
+																		if (req.body.mensaje == "") {
+																			res.json({ mensaje: "Comprobantes importados satisfactoriamente!" })
+																		} else {
+																			res.json({ mensaje: req.body.mensaje })
+																		}
+																	}
+																})
+															} else {
+																req.body.mensaje += " la cuenta " + asientoContable.numero_cuenta + "no existe del comprobante N° " + ComprobanteCreado.numero
+																if (index === (array.length - 1)) {
+																	if (req.body.mensaje == "") {
+																		res.json({ mensaje: "Comprobantes importados satisfactoriamente!" })
+																	} else {
+																		res.json({ mensaje: req.body.mensaje })
+																	}
+																}
+															}
+														})
+													}
+												})
+											} else {
+												req.body.mensaje += "el comprobante N° " + comprobante.codigo + "no se ingreso por que la sucursal "+comprobante.sucursal+" no existe, "
+												if (index === (array.length - 1)) {
+													if (req.body.mensaje == "") {
+														res.json({ mensaje: "Comprobantes importados satisfactoriamente!" })
+													} else {
+														res.json({ mensaje: req.body.mensaje })
+													}
+												}
+											}
+										})
+									} else {
+										req.body.mensaje += "el comprobante N° " + comprobante.codigo + "no se ingreso por el tipo de comprobante:" + comprobante.tipo_comprobante + "no existe, "
+										if (index === (array.length - 1)) {
+											if (req.body.mensaje == "") {
+												res.json({ mensaje: "Comprobantes importados satisfactoriamente!" })
+											} else {
+												res.json({ mensaje: req.body.mensaje })
+											}
+										}
+									}
+								})
+							})
+					}
+				})
+
+			})
+		})
 	router.route('/comprobante-contabolidad')
 		.post(function (req, res) {
 			var d1 = new Date(req.body.fecha)
@@ -587,36 +822,36 @@ module.exports = function (router, ComprobanteContabilidad, AsientoContabilidad,
 											}, {
 													where: { id: asientoContable.cuenta.id }
 												}).then(function (CuentaActualizada) {
-														if (asientoContable.id_venta) {
-															var t = true;
-															Venta.update({
-																contabilizado: t
-															}, {
-																	where: {
-																		id: asientoContable.id_venta,
-																	}
-																}).then(function (ventaActualizada) {
-																	res.json({ mensaje: "¡Comprobante creado satisfactoriamente!", comprobante: ComprobanteCreado });
-																})
-														} else if (asientoContable.id_compra) {
-															var t = true;
-															Compra.update({
-																contabilizado: t
-															}, {
-																	where: {
-																		id: asientoContable.id_compra,
-																	}
-																}).then(function (compraActualizada) {																	
-																	res.json({ mensaje: "¡Comprobante creado satisfactoriamente!", comprobante: ComprobanteCreado });																
-																	
-																})
-														} else {
-															res.json({ mensaje: "¡Comprobante creado satisfactoriamente!", comprobante: ComprobanteCreado });
-														}
+													if (asientoContable.id_venta) {
+														var t = true;
+														Venta.update({
+															contabilizado: t
+														}, {
+																where: {
+																	id: asientoContable.id_venta,
+																}
+															}).then(function (ventaActualizada) {
+																res.json({ mensaje: "¡Comprobante creado satisfactoriamente!", comprobante: ComprobanteCreado });
+															})
+													} else if (asientoContable.id_compra) {
+														var t = true;
+														Compra.update({
+															contabilizado: t
+														}, {
+																where: {
+																	id: asientoContable.id_compra,
+																}
+															}).then(function (compraActualizada) {
+																res.json({ mensaje: "¡Comprobante creado satisfactoriamente!", comprobante: ComprobanteCreado });
+
+															})
+													} else {
+														res.json({ mensaje: "¡Comprobante creado satisfactoriamente!", comprobante: ComprobanteCreado });
+													}
 
 
 
-													
+
 												})
 										})
 									})
@@ -818,102 +1053,102 @@ module.exports = function (router, ComprobanteContabilidad, AsientoContabilidad,
 				var fechaComprobante = new Date(ComprobanteEncontrado[0].dataValues.fecha)
 				var diaComprobante = fechaComprobante.getDate()
 				if (diaGuardado >= diaComprobante) {
-					if(diaGuardado == diaComprobante)					
-					ComprobanteContabilidad.update({
-						id_tipo: req.body.tipoComprobante.id,
-						fecha: req.body.fecha,
-						id_sucursal: req.body.id_sucursal.id,
-						gloza: req.body.gloza,						
-						id_usuario: req.body.id_usuario,
-						importe: req.body.importe,
-						id_tipo_cambio: req.body.tipoCambio.id,
-						abierto: req.body.abierto
-					}, {
-							where: {
-								id: req.body.id
-							}
-						}).then(function (ComprobanteCreado) {
-							req.body.asientosContables.forEach(function (asientoContable, index, array) {
-								if (asientoContable.eliminado != true && asientoContable.cuenta != "") {
-									if (asientoContable.debe_bs == null) {
-										asientoContable.debe_bs = "0";
-									}
-									if (asientoContable.debe_sus == null) {
-										asientoContable.debe_sus = "0";
-									}
-									if (asientoContable.haber_bs == null) {
-										asientoContable.haber_bs = "0";
-									}
-									if (asientoContable.haber_sus == null) {
-										asientoContable.haber_sus = "0";
-									}
-									var idCentroCosto = null
-									if (asientoContable.centroCosto) {
-										idCentroCosto = asientoContable.centroCosto.id
-									}
-									if (asientoContable.id) {
+					if (diaGuardado == diaComprobante)
+						ComprobanteContabilidad.update({
+							id_tipo: req.body.tipoComprobante.id,
+							fecha: req.body.fecha,
+							id_sucursal: req.body.id_sucursal.id,
+							gloza: req.body.gloza,
+							id_usuario: req.body.id_usuario,
+							importe: req.body.importe,
+							id_tipo_cambio: req.body.tipoCambio.id,
+							abierto: req.body.abierto
+						}, {
+								where: {
+									id: req.body.id
+								}
+							}).then(function (ComprobanteCreado) {
+								req.body.asientosContables.forEach(function (asientoContable, index, array) {
+									if (asientoContable.eliminado != true && asientoContable.cuenta != "") {
+										if (asientoContable.debe_bs == null) {
+											asientoContable.debe_bs = "0";
+										}
+										if (asientoContable.debe_sus == null) {
+											asientoContable.debe_sus = "0";
+										}
+										if (asientoContable.haber_bs == null) {
+											asientoContable.haber_bs = "0";
+										}
+										if (asientoContable.haber_sus == null) {
+											asientoContable.haber_sus = "0";
+										}
+										var idCentroCosto = null
+										if (asientoContable.centroCosto) {
+											idCentroCosto = asientoContable.centroCosto.id
+										}
+										if (asientoContable.id) {
+											AsientoContabilidad.update({
+												id_cuenta: asientoContable.cuenta.id,
+												glosa: asientoContable.glosa,
+												debe_bs: parseFloat(asientoContable.debe_bs),
+												haber_bs: parseFloat(asientoContable.haber_bs),
+												debe_sus: parseFloat(asientoContable.debe_sus),
+												haber_sus: parseFloat(asientoContable.haber_sus),
+												eliminado: asientoContable.eliminado,
+												id_centro_costo: idCentroCosto
+											}, {
+													where: {
+														id: asientoContable.id
+													}
+												}).then(function (asientoActualizado) {
+													if (asientoContable.cuentaAux) {
+														crearCuentaAuxiliar(asientoContable, res, index, array)
+													}
+													if (index === (array.length - 1)) {
+														res.json({ mensaje: "¡Comprobante actualizado satisfactoriamente!" });
+													}
+												})
+										} else {
+											AsientoContabilidad.create({
+												id_cuenta: asientoContable.cuenta.id,
+												id_comprobante: req.body.id,
+												glosa: asientoContable.glosa,
+												debe_bs: parseFloat(asientoContable.debe_bs),
+												haber_bs: parseFloat(asientoContable.haber_bs),
+												debe_sus: parseFloat(asientoContable.debe_sus),
+												haber_sus: parseFloat(asientoContable.haber_sus),
+												eliminado: asientoContable.eliminado,
+												id_centro_costo: idCentroCosto
+											}).then(function (asientoCreado) {
+												if (asientoContable.cuentaAux) {
+													crearCuentaAuxiliar(asientoContable, res, index, array, asientoCreado)
+												}
+												if (index === (array.length - 1)) {
+													res.json({ mensaje: "¡Comprobante actualizado satisfactoriamente!" });
+												}
+
+											})
+										}
+									} else {
 										AsientoContabilidad.update({
-											id_cuenta: asientoContable.cuenta.id,
-											glosa: asientoContable.glosa,
-											debe_bs: parseFloat(asientoContable.debe_bs),
-											haber_bs: parseFloat(asientoContable.haber_bs),
-											debe_sus: parseFloat(asientoContable.debe_sus),
-											haber_sus: parseFloat(asientoContable.haber_sus),
 											eliminado: asientoContable.eliminado,
-											id_centro_costo: idCentroCosto
 										}, {
 												where: {
 													id: asientoContable.id
 												}
 											}).then(function (asientoActualizado) {
-												if (asientoContable.cuentaAux) {
-													crearCuentaAuxiliar(asientoContable, res, index, array)
-												}
 												if (index === (array.length - 1)) {
 													res.json({ mensaje: "¡Comprobante actualizado satisfactoriamente!" });
 												}
 											})
-									} else {
-										AsientoContabilidad.create({
-											id_cuenta: asientoContable.cuenta.id,
-											id_comprobante: req.body.id,
-											glosa: asientoContable.glosa,
-											debe_bs: parseFloat(asientoContable.debe_bs),
-											haber_bs: parseFloat(asientoContable.haber_bs),
-											debe_sus: parseFloat(asientoContable.debe_sus),
-											haber_sus: parseFloat(asientoContable.haber_sus),
-											eliminado: asientoContable.eliminado,
-											id_centro_costo: idCentroCosto
-										}).then(function (asientoCreado) {
-											if (asientoContable.cuentaAux) {
-												crearCuentaAuxiliar(asientoContable, res, index, array, asientoCreado)
-											}
-											if (index === (array.length - 1)) {
-												res.json({ mensaje: "¡Comprobante actualizado satisfactoriamente!" });
-											}
-
-										})
 									}
-								} else {
-									AsientoContabilidad.update({
-										eliminado: asientoContable.eliminado,
-									}, {
-											where: {
-												id: asientoContable.id
-											}
-										}).then(function (asientoActualizado) {
-											if (index === (array.length - 1)) {
-												res.json({ mensaje: "¡Comprobante actualizado satisfactoriamente!" });
-											}
-										})
-								}
 
-							});
-							/* }) */
-						})
-					} else {
-						res.json({ mensaje: "¡Ya Existe comprobanes con fechas posteriores no se puede guardar!" })
-					}
+								});
+								/* }) */
+							})
+				} else {
+					res.json({ mensaje: "¡Ya Existe comprobanes con fechas posteriores no se puede guardar!" })
+				}
 			})
 		})
 		.get(function (req, res) {

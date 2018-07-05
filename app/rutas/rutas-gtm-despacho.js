@@ -1092,6 +1092,66 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, forEach, j
 				});
 		})
 
+	// router.route('/gtm-detalle-despacho-alerta-eliminar/:id_detalle_despacho')
+
+	// 	.delete(function (req, res) {
+	// 		// === actualizar detalle despacho =====
+	// 		GtmDespachoDetalle.update({
+	// 			cantidad:,
+	// 			precio_unitario:,
+	// 			servicio_transporte:
+
+	// 		}, {
+	// 				where: {
+	// 					id: req.params.id_detalle_despacho
+	// 				}
+	// 			}).then(function (detallesDespacho) {
+	// 				// === obteniendo el padre par aactualizar =======
+	// 				GtmDespachoDetalle.find({
+	// 					where: {
+	// 						id: req.params.id_detalle_despacho
+	// 					},
+	// 					include: [{
+	// 						model: GtmVentaKardexDetalle, as: 'detalle_Kardex',
+	// 						where: {
+	// 							eliminado: false
+	// 						},
+	// 						include: [{ model: GtmVentaKardexDetalle, as: 'padre' }]
+	// 					}]
+	// 				})
+	// 					.then(function (despacho) {
+	// 						// === obtener el detalle del hijo para obtener el padre 
+	// 						// 			// ==== actualizar kardex padre sumar saldo de despacho eliminado
+	// 						if (despacho != null) {
+	// 							GtmVentaKardexDetalle.update({
+	// 								saldo: despacho.dataValues.detalle_Kardex.padre.saldo + despacho.dataValues.detalle_Kardex.cantidad_despachada
+	// 							}, {
+	// 									where: {
+	// 										id: despacho.dataValues.detalle_Kardex.id_padre
+	// 									}
+	// 								}).then(function (detallesDespachos) {
+	// 									// 			// === eliminar hijo
+	// 									GtmVentaKardexDetalle.update({
+	// 										eliminado: true
+	// 									}, {
+	// 											where: {
+	// 												id: despacho.dataValues.detalle_Kardex.id
+	// 											}
+	// 										}).then(function (affectedRows) {
+	// 											res.json({ message: "Eliminado Satisfactoriamente!" });
+	// 										});
+	// 								});
+	// 						} else {
+	// 							res.json({ message: "Eliminado Satisfactoriamente!" });
+	// 						}
+	// 						// console.log("los datos de despacho ", despacho.dataValues.detalle_Kardex);
+
+	// 					});
+
+
+	// 			});
+	// 	})
+
 	router.route('/gtm-detalle-despacho-alerta/empresa/:id_empresa/inicio/:inicio/fin/:fin/empleado/:empleado/cliente/:cliente/usuario/:id_usuario')
 		.get(function (req, res) {
 			var condicionDetalleDespacho = {
