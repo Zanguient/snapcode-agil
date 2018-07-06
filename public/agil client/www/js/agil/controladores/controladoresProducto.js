@@ -23,6 +23,7 @@ angular.module('agil.controladores')
 			$scope.obtenerSucursales();
 			$scope.obtenerGruposProductosEmpresaUsuario();
 			$scope.obtenerSubGruposProductosEmpresa();
+			$scope.usarValuado = true
 		}
 
 		$scope.obtenerGruposProductosEmpresaUsuario = function () {
@@ -301,14 +302,14 @@ angular.module('agil.controladores')
 				else {
 					if (dato.detallesMovimiento[i].movimiento.tipo.nombre_corto == $scope.diccionario.MOV_ING) {
 						if (i > 0) {
-						dato.detallesMovimiento[i].saldoFisico = dato.detallesMovimiento[i - 1].saldoFisico + dato.detallesMovimiento[i].cantidad;
-						dato.detallesMovimiento[i].saldoValuado = Math.round((dato.detallesMovimiento[i - 1].saldoValuado + (dato.detallesMovimiento[i].cantidad * dato.detallesMovimiento[i].costo_unitario)) * 100) / 100;
-						dato.detallesMovimiento[i].tipo = dato.detallesMovimiento[i].movimiento.clase.nombre
-					} else {
-						dato.detallesMovimiento[i].saldoFisico = dato.detallesMovimiento[i].cantidad;
-						dato.detallesMovimiento[i].saldoValuado = Math.round(((dato.detallesMovimiento[i].cantidad * dato.detallesMovimiento[i].costo_unitario)) * 100) / 100;
-						dato.detallesMovimiento[i].tipo = dato.detallesMovimiento[i].movimiento.clase.nombre
-					}
+							dato.detallesMovimiento[i].saldoFisico = dato.detallesMovimiento[i - 1].saldoFisico + dato.detallesMovimiento[i].cantidad;
+							dato.detallesMovimiento[i].saldoValuado = Math.round((dato.detallesMovimiento[i - 1].saldoValuado + (dato.detallesMovimiento[i].cantidad * dato.detallesMovimiento[i].costo_unitario)) * 100) / 100;
+							dato.detallesMovimiento[i].tipo = dato.detallesMovimiento[i].movimiento.clase.nombre
+						} else {
+							dato.detallesMovimiento[i].saldoFisico = dato.detallesMovimiento[i].cantidad;
+							dato.detallesMovimiento[i].saldoValuado = Math.round(((dato.detallesMovimiento[i].cantidad * dato.detallesMovimiento[i].costo_unitario)) * 100) / 100;
+							dato.detallesMovimiento[i].tipo = dato.detallesMovimiento[i].movimiento.clase.nombre
+						}
 					} else {
 						if (dato.detallesMovimiento[i].movimiento.venta) {
 							//dato.detallesMovimiento[i].costo_unitario=dato.detallesMovimiento[i].costo_unitario*0.87;
@@ -408,7 +409,7 @@ angular.module('agil.controladores')
 			}
 		}
 
-		$scope.generarPdfKardexProducto = function (kardexproduto) {
+		$scope.generarPdfKardexProducto = function (kardexproduto, tipo) {
 			blockUI.start();
 			var detalleMovimiento = kardexproduto.detallesMovimiento;
 
@@ -420,7 +421,7 @@ angular.module('agil.controladores')
 			var saldoValuado = 0;
 
 			var y = 200, itemsPorPagina = 17, items = 0, pagina = 1, totalPaginas = Math.ceil(detalleMovimiento.length / itemsPorPagina);
-			$scope.dibujarCabeceraPDFKardexProducto(doc, 1, totalPaginas, kardexproduto);
+			$scope.dibujarCabeceraPDFKardexProducto(doc, 1, totalPaginas, kardexproduto, tipo);
 			for (var i = 0; i < detalleMovimiento.length && items <= itemsPorPagina; i++) {
 
 				doc.rect(30, y - 10, 555, 30).stroke();
@@ -432,9 +433,11 @@ angular.module('agil.controladores')
 					doc.text(detalleMovimiento[i].cantidad, 265, y - 2, { width: 50, align: "right" });
 					saldoFisico = saldoFisico + detalleMovimiento[i].cantidad;
 					doc.text(detalleMovimiento[i].saldoFisico, 360, y - 2, { width: 50, align: "right" });
-					doc.text(Math.round((detalleMovimiento[i].cantidad * detalleMovimiento[i].costo_unitario) * 100) / 100, 420, y - 2, { width: 50, align: "right" });
-					saldoValuado = saldoValuado + saldoFisico * detalleMovimiento[i].costo_unitario;
-					doc.text(detalleMovimiento[i].saldoV, 510, y - 2, { width: 50, align: "right" });
+					if (tipo) {
+						doc.text(Math.round((detalleMovimiento[i].cantidad * detalleMovimiento[i].costo_unitario) * 100) / 100, 420, y - 2, { width: 50, align: "right" });
+						dsaldoValuado = saldoValuado + saldoFisico * detalleMovimiento[i].costo_unitario;
+						doc.text(detalleMovimiento[i].saldoV, 510, y - 2, { width: 50, align: "right" });
+					}
 				}
 				else {
 					doc.text(detalleMovimiento[i].tipo, 90, y - 6);
@@ -446,9 +449,11 @@ angular.module('agil.controladores')
 						doc.text(detalleMovimiento[i].cantidad, 265, y - 2, { width: 50, align: "right" });
 						saldoFisico = saldoFisico + detalleMovimiento[i].cantidad;
 						doc.text(detalleMovimiento[i].saldoFisico, 360, y - 2, { width: 50, align: "right" });
-						doc.text(Math.round((detalleMovimiento[i].cantidad * detalleMovimiento[i].costo_unitario) * 100) / 100, 420, y - 2, { width: 50, align: "right" });
-						saldoValuado = saldoValuado + saldoFisico * detalleMovimiento[i].costo_unitario;
-						doc.text(detalleMovimiento[i].saldoV, 510, y - 2, { width: 50, align: "right" });
+						if (tipo) {
+							doc.text(Math.round((detalleMovimiento[i].cantidad * detalleMovimiento[i].costo_unitario) * 100) / 100, 420, y - 2, { width: 50, align: "right" });
+							saldoValuado = saldoValuado + saldoFisico * detalleMovimiento[i].costo_unitario;
+							doc.text(detalleMovimiento[i].saldoV, 510, y - 2, { width: 50, align: "right" });
+						}
 					} else {
 						if (detalleMovimiento[i].movimiento.venta.cliente) {
 							doc.text(detalleMovimiento[i].movimiento.venta.cliente.razon_social, 90, y + 2, { width: 150 })
@@ -457,10 +462,12 @@ angular.module('agil.controladores')
 						doc.text(detalleMovimiento[i].cantidad, 310, y - 2, { width: 50, align: "right" });
 						saldoFisico = saldoFisico - detalleMovimiento[i].cantidad;
 						doc.text(detalleMovimiento[i].saldoFisico, 360, y - 2, { width: 50, align: "right" });
-						doc.text(detalleMovimiento[i].total, 460, y - 2, { width: 50, align: "right" });
-						saldoValuado = Math.round((saldoValuado + saldoFisico * detalleMovimiento[i].costo_unitario) * 100) / 100;
+						if (tipo) {
+							doc.text(detalleMovimiento[i].total, 460, y - 2, { width: 50, align: "right" });
+							saldoValuado = Math.round((saldoValuado + saldoFisico * detalleMovimiento[i].costo_unitario) * 100) / 100;
 
-						doc.text(detalleMovimiento[i].saldoV, 510, y - 2, { width: 50, align: "right" });
+							doc.text(detalleMovimiento[i].saldoV, 510, y - 2, { width: 50, align: "right" });
+						}
 					}
 
 				}
@@ -474,7 +481,7 @@ angular.module('agil.controladores')
 					items = 0;
 					pagina = pagina + 1;
 
-					$scope.dibujarCabeceraPDFKardexProducto(doc, pagina, totalPaginas, kardexproduto);
+					$scope.dibujarCabeceraPDFKardexProducto(doc, pagina, totalPaginas, kardexproduto, tipo);
 
 					doc.font('Helvetica', 8);
 				}
@@ -487,8 +494,10 @@ angular.module('agil.controladores')
 			blockUI.stop();
 
 		}
-
-		$scope.dibujarCabeceraPDFKardexProducto = function (doc, pagina, totalPaginas, kardexproduto) {
+		$scope.usarValuadoKardex = function () {
+			$scope.usarValuado = ($scope.usarValuado) ? false : true
+		}
+		$scope.dibujarCabeceraPDFKardexProducto = function (doc, pagina, totalPaginas, kardexproduto, tipo) {
 
 			doc.font('Helvetica-Bold', 8);
 			doc.text($scope.usuario.empresa.razon_social, 30, 15);
@@ -497,41 +506,77 @@ angular.module('agil.controladores')
 			if (min < 10) {
 				min = "0" + min;
 			}
-			doc.font('Helvetica-Bold', 10);
-			doc.text(kardexproduto.detallesMovimiento[0].movimiento.almacen.sucursal.nombre, 30, 25, { align: "left" });
-			doc.text("KARDEX PRODUCTO", 0, 65, { align: "center" });
-			doc.font('Helvetica', 10);
-			doc.text(kardexproduto.detallesMovimiento[0].movimiento.almacen.sucursal.direccion, 30, 35, { align: "left" });
-			doc.text("TELF.: " + kardexproduto.detallesMovimiento[0].movimiento.almacen.sucursal.telefono1 + "-" + kardexproduto.detallesMovimiento[0].movimiento.almacen.sucursal.telefono2 + "-" + kardexproduto.detallesMovimiento[0].movimiento.almacen.sucursal.telefono3, 30, 45, { align: "left" });
-			doc.font('Helvetica-Bold', 8);
-			doc.text("PÁGINA " + pagina + " DE " + totalPaginas, 0, 740, { align: "center" });
-			doc.rect(30, 90, 555, 70).stroke();
-			doc.font('Helvetica-Bold', 8);
-			doc.text("Producto : ", 45, 100);
-			doc.text("Descripcion : ", 45, 120);
-			doc.text("Unidad de Medida : ", 45, 140);
-			doc.font('Helvetica', 7);
-			doc.text("Sucursal : " + kardexproduto.detallesMovimiento[0].movimiento.almacen.sucursal.nombre, 475, 100);
-			doc.text("Almacen : " + kardexproduto.detallesMovimiento[0].movimiento.almacen.nombre, 475, 110);
-			doc.text(kardexproduto.nombre, 120, 100);
-			doc.text(kardexproduto.descripcion, 120, 120);
-			doc.text(kardexproduto.unidad_medida, 120, 140);
-			doc.rect(30, 160, 555, 30).stroke();
-			doc.font('Helvetica-Bold', 8);
-			doc.text("Fecha", 45, 170);
-			doc.text("Detalle", 100, 170, { width: 50 });
-			doc.text("c/u", 250, 170, { width: 60 });
-			doc.rect(275, 160, 150, 30).stroke();
-			doc.text("Fisico", 340, 165, { width: 50 });
-			doc.text("Valuado", 485, 165, { width: 50 });
-			doc.rect(275, 160, 150, 15).stroke();
-			doc.text("Ingreso", 290, 180, { width: 50 });
-			doc.text("Salida", 340, 180, { width: 50 });
-			doc.text("Saldo", 390, 180, { width: 50 });
-			doc.rect(425, 160, 160, 15).stroke();
-			doc.text("Ingreso", 440, 180, { width: 50 });
-			doc.text("salida", 490, 180, { width: 50 });
-			doc.text("Saldo", 540, 180, { width: 50 });
+			if (tipo == true) {
+				doc.font('Helvetica-Bold', 10);
+				doc.text(kardexproduto.detallesMovimiento[0].movimiento.almacen.sucursal.nombre, 30, 25, { align: "left" });
+				doc.text("KARDEX PRODUCTO", 0, 65, { align: "center" });
+				doc.font('Helvetica', 10);
+				doc.text(kardexproduto.detallesMovimiento[0].movimiento.almacen.sucursal.direccion, 30, 35, { align: "left" });
+				doc.text("TELF.: " + kardexproduto.detallesMovimiento[0].movimiento.almacen.sucursal.telefono1 + "-" + kardexproduto.detallesMovimiento[0].movimiento.almacen.sucursal.telefono2 + "-" + kardexproduto.detallesMovimiento[0].movimiento.almacen.sucursal.telefono3, 30, 45, { align: "left" });
+				doc.font('Helvetica-Bold', 8);
+				doc.text("PÁGINA " + pagina + " DE " + totalPaginas, 0, 740, { align: "center" });
+				doc.rect(30, 90, 555, 70).stroke();
+				doc.font('Helvetica-Bold', 8);
+				doc.text("Producto : ", 45, 100);
+				doc.text("Descripcion : ", 45, 120);
+				doc.text("Unidad de Medida : ", 45, 140);
+				doc.font('Helvetica', 7);
+				doc.text("Sucursal : " + kardexproduto.detallesMovimiento[0].movimiento.almacen.sucursal.nombre, 475, 100);
+				doc.text("Almacen : " + kardexproduto.detallesMovimiento[0].movimiento.almacen.nombre, 475, 110);
+				doc.text(kardexproduto.nombre, 120, 100);
+				doc.text(kardexproduto.descripcion, 120, 120);
+				doc.text(kardexproduto.unidad_medida, 120, 140);
+				doc.rect(30, 160, 555, 30).stroke();
+				doc.font('Helvetica-Bold', 8);
+				doc.text("Fecha", 45, 170);
+				doc.text("Detalle", 100, 170, { width: 50 });
+				doc.text("c/u", 250, 170, { width: 60 });
+				doc.rect(275, 160, 150, 30).stroke();
+				doc.text("Fisico", 340, 165, { width: 50 });
+				doc.text("Valuado", 485, 165, { width: 50 });
+				doc.rect(275, 160, 150, 15).stroke();
+				doc.text("Ingreso", 290, 180, { width: 50 });
+				doc.text("Salida", 340, 180, { width: 50 });
+				doc.text("Saldo", 390, 180, { width: 50 });
+				doc.rect(425, 160, 160, 15).stroke();
+				doc.text("Ingreso", 440, 180, { width: 50 });
+				doc.text("salida", 490, 180, { width: 50 });
+				doc.text("Saldo", 540, 180, { width: 50 });
+
+			} else {
+				doc.font('Helvetica-Bold', 10);
+				doc.text(kardexproduto.detallesMovimiento[0].movimiento.almacen.sucursal.nombre, 30, 25, { align: "left" });
+				doc.text("KARDEX PRODUCTO", 0, 65, { align: "center" });
+				doc.font('Helvetica', 10);
+				doc.text(kardexproduto.detallesMovimiento[0].movimiento.almacen.sucursal.direccion, 30, 35, { align: "left" });
+				doc.text("TELF.: " + kardexproduto.detallesMovimiento[0].movimiento.almacen.sucursal.telefono1 + "-" + kardexproduto.detallesMovimiento[0].movimiento.almacen.sucursal.telefono2 + "-" + kardexproduto.detallesMovimiento[0].movimiento.almacen.sucursal.telefono3, 30, 45, { align: "left" });
+				doc.font('Helvetica-Bold', 8);
+				doc.text("PÁGINA " + pagina + " DE " + totalPaginas, 0, 740, { align: "center" });
+				doc.rect(30, 90, 555, 70).stroke();
+				doc.font('Helvetica-Bold', 8);
+				doc.text("Producto : ", 45, 100);
+				doc.text("Descripcion : ", 45, 120);
+				doc.text("Unidad de Medida : ", 45, 140);
+				doc.font('Helvetica', 7);
+				doc.text("Sucursal : " + kardexproduto.detallesMovimiento[0].movimiento.almacen.sucursal.nombre, 475, 100);
+				doc.text("Almacen : " + kardexproduto.detallesMovimiento[0].movimiento.almacen.nombre, 475, 110);
+				doc.text(kardexproduto.nombre, 120, 100);
+				doc.text(kardexproduto.descripcion, 120, 120);
+				doc.text(kardexproduto.unidad_medida, 120, 140);
+				doc.rect(30, 160, 555, 30).stroke();
+				doc.font('Helvetica-Bold', 8);
+				doc.text("Fecha", 45, 170);
+				doc.text("Detalle", 100, 170, { width: 50 });
+				doc.text("c/u", 250, 170, { width: 60 });
+				doc.rect(275, 160, 150, 30).stroke();
+				doc.text("Fisico", 340, 165, { width: 50 });
+
+				doc.rect(275, 160, 150, 15).stroke();
+				doc.text("Ingreso", 290, 180, { width: 50 });
+				doc.text("Salida", 340, 180, { width: 50 });
+				doc.text("Saldo", 390, 180, { width: 50 });
+
+			}
 			doc.font('Helvetica', 7);
 			doc.text("usuario : " + $scope.usuario.nombre_usuario, 475, 740);
 			doc.text("fecha : " + fechaActual.getDate() + "/" + (fechaActual.getMonth() + 1) + "/" + fechaActual.getFullYear() + "  " + fechaActual.getHours() + ":" + min, 475, 750);
