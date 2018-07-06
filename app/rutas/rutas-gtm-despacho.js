@@ -1092,24 +1092,24 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, forEach, j
 				});
 		})
 
-	router.route('/gtm-detalle-despacho-alerta-actualizar/:id_detalle_despacho')
+	router.route('/gtm-detalle-despacho-alerta-actualizar')
 
 		.put(function (req, res) {
 			// === actualizar detalle despacho =====
 			// recibir cantidad, precio unitario, servicio transporte y id_detalle_despacho
 			GtmDespachoDetalle.update({
-				cantidad: req.params.cantidad,
-				precio_unitario: req.params.precio_unitario,
-				servicio_transporte: req.params.servicio_transporte
+				cantidad: req.body.cantidad,
+				precio_unitario: req.body.precio_unitario,
+				servicio_transporte: req.body.servicio_transporte
 			}, {
 					where: {
-						id: req.params.id_detalle_despacho
+						id: req.body.id_detalle_despacho
 					}
 				}).then(function (detallesDespacho) {
 					// === obteniendo el padre par aactualizar =======
 					GtmDespachoDetalle.find({
 						where: {
-							id: req.params.id_detalle_despacho
+							id: req.body.id_detalle_despacho
 						},
 						include: [{
 							model: GtmVentaKardexDetalle, as: 'detalle_Kardex',
@@ -1125,7 +1125,7 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, forEach, j
 							if (despacho != null) {
 								// sumar la candidad cantidad despachada y restar la cantidad 
 								GtmVentaKardexDetalle.update({
-									saldo: despacho.dataValues.detalle_Kardex.padre.saldo + despacho.dataValues.detalle_Kardex.cantidad_despachada - req.params.cantidad
+									saldo: despacho.dataValues.detalle_Kardex.padre.saldo + despacho.dataValues.detalle_Kardex.cantidad_despachada - req.body.cantidad
 								}, {
 										where: {
 											id: despacho.dataValues.detalle_Kardex.id_padre
@@ -1134,7 +1134,7 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, forEach, j
 										// 			// === actualizar  hijo cantida despachada y saldo
 										GtmVentaKardexDetalle.update({
 											cantidad_despachada: req.params.cantidad,
-											saldo: despacho.dataValues.detalle_Kardex.saldo + despacho.dataValues.detalle_Kardex.cantidad_despachada - req.params.cantidad
+											saldo: despacho.dataValues.detalle_Kardex.saldo + despacho.dataValues.detalle_Kardex.cantidad_despachada - req.body.cantidad
 										}, {
 												where: {
 													id: despacho.dataValues.detalle_Kardex.id
