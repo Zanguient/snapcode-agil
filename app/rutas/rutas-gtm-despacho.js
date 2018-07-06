@@ -1092,9 +1092,9 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, forEach, j
 				});
 		})
 
-	router.route('/gtm-detalle-despacho-alerta-eliminar/:id_detalle_despacho')
+	router.route('/gtm-detalle-despacho-alerta-actualizar/:id_detalle_despacho')
 
-		.delete(function (req, res) {
+		.put(function (req, res) {
 			// === actualizar detalle despacho =====
 			// recibir cantidad, precio unitario, servicio transporte y id_detalle_despacho
 			GtmDespachoDetalle.update({
