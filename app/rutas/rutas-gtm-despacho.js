@@ -1098,9 +1098,9 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, forEach, j
 			// === actualizar detalle despacho =====
 			// recibir cantidad, precio unitario, servicio transporte y id_detalle_despacho
 			GtmDespachoDetalle.update({
-				cantidad: req.body.cantidad,
-				precio_unitario: req.body.precio_unitario,
-				servicio_transporte: req.body.servicio_transporte
+				cantidad: parseFloat(req.body.cantidad),
+				precio_unitario: parseFloat(req.body.precio_unitario),
+				servicio_transporte: parseFloat(req.body.servicio_transporte)
 			}, {
 					where: {
 						id: req.body.id_detalle_despacho
@@ -1125,7 +1125,7 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, forEach, j
 							if (despacho != null) {
 								// sumar la candidad cantidad despachada y restar la cantidad 
 								GtmVentaKardexDetalle.update({
-									saldo: despacho.dataValues.detalle_Kardex.padre.saldo + despacho.dataValues.detalle_Kardex.cantidad_despachada - req.body.cantidad
+									saldo: despacho.dataValues.detalle_Kardex.padre.saldo + despacho.dataValues.detalle_Kardex.cantidad_despachada - parseFloat(req.body.cantidad)
 								}, {
 										where: {
 											id: despacho.dataValues.detalle_Kardex.id_padre
@@ -1134,7 +1134,7 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, forEach, j
 										// 			// === actualizar  hijo cantida despachada y saldo
 										GtmVentaKardexDetalle.update({
 											cantidad_despachada: req.params.cantidad,
-											saldo: despacho.dataValues.detalle_Kardex.saldo + despacho.dataValues.detalle_Kardex.cantidad_despachada - req.body.cantidad
+											saldo: despacho.dataValues.detalle_Kardex.saldo + despacho.dataValues.detalle_Kardex.cantidad_despachada - parseFloat(req.body.cantidad)
 										}, {
 												where: {
 													id: despacho.dataValues.detalle_Kardex.id
