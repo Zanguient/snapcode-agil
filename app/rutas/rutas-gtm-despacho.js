@@ -1099,6 +1099,7 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, forEach, j
 			// recibir cantidad, precio unitario, servicio transporte y id_detalle_despacho
 			GtmDespachoDetalle.update({
 				cantidad: parseFloat(req.body.cantidad),
+				saldo: parseFloat(req.body.cantidad),
 				precio_unitario: parseFloat(req.body.precio_unitario),
 				servicio_transporte: parseFloat(req.body.servicio_transporte)
 			}, {
@@ -1140,11 +1141,33 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, forEach, j
 													id: despacho.dataValues.detalle_Kardex.id
 												}
 											}).then(function (affectedRows) {
-												res.json({ message: "Eliminado Satisfactoriamente!" });
+												console.log("los datos ffffffff ",  req.body.destino);
+												GtmDespacho.update({
+													id_destino: parseInt(req.body.destino),
+													observacion: req.body.observacion
+												},{
+													where: {
+														id: despacho.dataValues.id_despacho
+													}
+												}).then(function (despachoActualizado) {
+													res.json({ message: "Actualizado Satisfactoriamente!" });
+												});
+
 											});
 									});
 							} else {
-								res.json({ message: "Eliminado Satisfactoriamente!" });
+								GtmDespacho.update({
+									id_destino: req.body.destino,
+									id_cliente_razon: req.body.cliente_razon,
+									observacion: req.body.observacion
+								},{
+									where: {
+										id: req.body.id_despacho
+									}
+								}).then(function (despachoActualizado) {
+									res.json({ message: "Actualizado Satisfactoriamente!" });
+								});
+								
 							}
 						});
 				});
