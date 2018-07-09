@@ -1101,6 +1101,7 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, forEach, j
 				cantidad: parseFloat(req.body.cantidad),
 				saldo: parseFloat(req.body.cantidad),
 				precio_unitario: parseFloat(req.body.precio_unitario),
+				importe: parseFloat(req.body.total),
 				servicio_transporte: parseFloat(req.body.servicio_transporte)
 			}, {
 					where: {
