@@ -2356,6 +2356,7 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 					}]}], transaccion: t
 				}).then(function (detallesVenta) {
 					detallesVenta.forEach(function (detalleVenta, index, array) {
+						if(detalleVenta.venta.activa){
 						/* for (var i = 0; i < venta.detallesVenta.length; i++) { */
 							/* var detalle = venta.detallesVenta[i]; */
 							promises1.push(DetalleMovimiento.find({
@@ -2421,7 +2422,9 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 									promises1.push(Promise.all(promises));
 								}
 							}))
-
+						}else{
+							console.log(detalleVenta.venta.factura)
+						}
 
 					/* 	} */
 

@@ -2619,9 +2619,11 @@ angular.module('agil.servicios')
 					doc.text(traspaso.detallesVenta[i].producto.codigo, 10, yDesc, { width: 25 });
 					doc.text(traspaso.detallesVenta[i].cantidad, 38, y);
 					doc.text(traspaso.detallesVenta[i].producto.nombre, 57, y, { width: 70 });
+					if(traspaso.detallesVenta[i].inventario){
 					var fecha_vencimiento = new Date(traspaso.detallesVenta[i].inventario.fecha_vencimiento); console.log(new Date().getFullYear().toString().substr(-2));
 					doc.text(fecha_vencimiento.getDate() + "/" + (fecha_vencimiento.getMonth() + 1) + "/" + fecha_vencimiento.getFullYear().toString().substr(-2), 128, y);
 					doc.text(traspaso.detallesVenta[i].inventario.lote, 164, y);
+				}
 					doc.text(traspaso.detallesVenta[i].total.toFixed(2), 187, y, { width: 100 });
 					y = y + 30;
 					items++;
