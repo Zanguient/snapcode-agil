@@ -435,7 +435,8 @@
 								<div class="row container-fluid">
 									<label class="no-padding-left pull-right"> Activo fijo</label>
 									<label uib-tooltip="Activo fijo" class="no-padding-left pull-right">
-										<input ng-model="producto.activo_fijo" type="checkbox" class="ace ace-switch ace-switch-5 ng-pristine ng-untouched ng-valid ng-empty" ng-change="activoFijoAplicarDatePicker()">
+										<input ng-model="producto.activo_fijo" type="checkbox" class="ace ace-switch ace-switch-5 ng-pristine ng-untouched ng-valid ng-empty"
+										 ng-change="activoFijoAplicarDatePicker()">
 										<span class="lbl" data-lbl="Si&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;No"></span>
 									</label>
 								</div>
@@ -488,9 +489,9 @@
 											&nbsp;
 										</td>
 										<td>
-												<!-- <input id="producto-Fecha_ingreso" class="date-picker" type="text" ng-update-hidden data-date-format="dd/MM/yyyy" name="fecha" ng-model="segumiento.fecha"> -->
-											<input id="producto-Fecha_ingreso" required ng-update-hidden class="form-control date-picker"
-											 type="text" data-date-format="dd/mm/yyyy" ng-model="producto.fecha_ingreso" placeholder="Ingrese la fecha">
+											<!-- <input id="producto-Fecha_ingreso" class="date-picker" type="text" ng-update-hidden data-date-format="dd/MM/yyyy" name="fecha" ng-model="segumiento.fecha"> -->
+											<input id="producto-Fecha_ingreso" required ng-update-hidden class="form-control date-picker" type="text" data-date-format="dd/mm/yyyy"
+											 ng-model="producto.fecha_ingreso" placeholder="Ingrese la fecha">
 										</td>
 									</tbody>
 								</table>
@@ -820,7 +821,15 @@
 					Cancelar
 				</button>
 				<div ALIGN=center>
-					<a class="blue" href="javascript:void(0)" ng-click="generarPdfKardexProducto(kardexproduto)">
+					<span>
+						<label class="inline">
+							<small class="muted smaller-90">Usar Valuado:</small>
+
+							<input id="id-button-borders" ng-click="usarValuadoKardex()"checked="checked" type="checkbox" class="ace ace-switch ace-switch-5">
+							<span class="lbl middle check-descuento"></span>
+						</label>
+					</span>
+					<a class="blue" href="javascript:void(0)" ng-click="generarPdfKardexProducto(kardexproduto,usarValuado)">
 						<i class="fa fa-print bigger-280"></i>
 					</a>
 				</div>
