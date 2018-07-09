@@ -489,7 +489,7 @@ module.exports = function (router, ComprobanteContabilidad, AsientoContabilidad,
 	// })
 	router.route('/importar-comprobantes/usuario/:id_usuario/empresa/:id_empresa')
 		.post(function (req, res) {
-			req.body.mensaje=""
+			req.body.mensaje = ""
 			req.body.forEach(function (comprobante, index, array) {
 				var fechaBusqueda = new Date(comprobante.fecha)
 				fechaBusqueda.setHours(0, 0, 0, 0, 0);
@@ -528,62 +528,116 @@ module.exports = function (router, ComprobanteContabilidad, AsientoContabilidad,
 												}, {
 														where: { id: comprobanteEncontrado.id }
 													}).then(function (ComprobanteActualizado) {
-														AsientoContabilidad.destroy({
+														AsientoContabilidad.findAll({
 															where: { id_comprobante: comprobanteEncontrado.id }
-														}).then(function (AsientosEliminados) {
-															for (var i = 0; i < comprobante.asientosContables.length; i++) {
-																var asientoContable = comprobante.asientosContables[i];
-																if (asientoContable.debe_bs == null) {
-																	asientoContable.debe_bs = "0";
-																}
-																if (asientoContable.debe_sus == null) {
-																	asientoContable.debe_sus = "0";
-																}
-																if (asientoContable.haber_bs == null) {
-																	asientoContable.haber_bs = "0";
-																}
-																if (asientoContable.haber_sus == null) {
-																	asientoContable.haber_sus = "0";
-																}
-																var idCentroCosto = null
-																if (asientoContable.centroCosto) {
-																	idCentroCosto = asientoContable.centroCosto.id
-																}
+														}).then(function (AsientosEncontrados) {
+															AsientosEncontrados.forEach(function (dato, index, array) {
 																ContabilidadCuenta.find({
-																	where: { codigo: asientoContable.numero_cuenta }
+																	where: { id: dato.id_cuenta, id_empresa: req.params.id_empresa }
 																}).then(function (cuentaEncontrada) {
-																	if (cuentaEncontrada) {
-																		AsientoContabilidad.create({
-																			id_comprobante: comprobanteEncontrado.id,
-																			id_cuenta: cuentaEncontrada.id,
-																			glosa: asientoContable.gloza,
-																			debe_bs: parseFloat(asientoContable.debe_bs),
-																			haber_bs: parseFloat(asientoContable.haber_bs),
-																			debe_sus: parseFloat(asientoContable.debe_sus),
-																			haber_sus: parseFloat(asientoContable.haber_sus),
-																			eliminado: false,
-																			id_centro_costo: idCentroCosto
-																		}).then(function (asientroCreado) {
+																	cuentaEncontrada.debe = (cuentaEncontrada.debe == null) ? 0 : cuentaEncontrada.debe - dato.debe_bs;
+																	cuentaEncontrada.haber = (cuentaEncontrada.haber == null) ? 0 : cuentaEncontrada.haber - dato.haber_bs;
+
+																	if (cuentaEncontrada.debe > cuentaEncontrada.haber) {
+																		cuentaEncontrada.saldo = cuentaEncontrada.debe - cuentaEncontrada.haber
+																	} else {
+																		cuentaEncontrada.saldo = cuentaEncontrada.haber - cuentaEncontrada.debe
+																	}
+																	ContabilidadCuenta.update({
+																		debe: cuentaEncontrada.debe,
+																		haber: cuentaEncontrada.haber,
+																		saldo: cuentaEncontrada.saldo
+																	}, {
+																			where: { id: cuentaEncontrada.id }
+																		}).then(function (CuentaActualizada) {
 																			if (index === (array.length - 1)) {
-																				if (req.body.mensaje == "") {
-																					res.json({ mensaje: "Comprobantes importados satisfactoriamente!" })
-																				} else {
-																					res.json({ mensaje: req.body.mensaje })
-																				}
+																				AsientoContabilidad.destroy({
+																					where: { id_comprobante: comprobanteEncontrado.id }
+																				}).then(function (AsientosEliminados) {
+																					comprobante.asientosContables.forEach(function(dato,index,array){
+																						ContabilidadCuenta.find({
+																							where: { codigo: dato.numero_cuenta, id_empresa: req.params.id_empresa }
+																						}).then(function (cuentaEncontrada) {
+																							dato.cuentaEncontrada=cuentaEncontrada
+																							if(index===(array.length-1)){
+																								for (var i = 0; i < comprobante.asientosContables.length; i++) {
+																									var asientoContable = comprobante.asientosContables[i];
+																									if (asientoContable.debe_bs == null) {
+																										asientoContable.debe_bs = "0";
+																									}
+																									if (asientoContable.debe_sus == null) {
+																										asientoContable.debe_sus = "0";
+																									}
+																									if (asientoContable.haber_bs == null) {
+																										asientoContable.haber_bs = "0";
+																									}
+																									if (asientoContable.haber_sus == null) {
+																										asientoContable.haber_sus = "0";
+																									}
+																									var idCentroCosto = null
+																									if (asientoContable.centroCosto) {
+																										idCentroCosto = asientoContable.centroCosto.id
+																									}
+																									
+																										if (asientoContable.cuentaEncontrada) {
+																											AsientoContabilidad.create({
+																												id_comprobante: comprobanteEncontrado.id,
+																												id_cuenta: asientoContable.cuentaEncontrada.id,
+																												glosa: asientoContable.gloza,
+																												debe_bs: parseFloat(asientoContable.debe_bs),
+																												haber_bs: parseFloat(asientoContable.haber_bs),
+																												debe_sus: parseFloat(asientoContable.debe_sus),
+																												haber_sus: parseFloat(asientoContable.haber_sus),
+																												eliminado: false,
+																												id_centro_costo: idCentroCosto
+																											}).then(function (asientroCreado) {
+																												asientoContable.cuentaEncontrada.debe = (asientoContable.cuentaEncontrada.debe == null) ? 0 : asientoContable.cuentaEncontrada.debe;
+																												asientoContable.cuentaEncontrada.haber = (asientoContable.cuentaEncontrada.haber == null) ? 0 : asientoContable.cuentaEncontrada.haber;
+																												asientoContable.cuentaEncontrada.debe += parseFloat(asientoContable.debe_bs)
+																												asientoContable.cuentaEncontrada.haber += parseFloat(asientoContable.haber_bs)
+																												if (asientoContable.cuentaEncontrada.debe > asientoContable.cuentaEncontrada.haber) {
+																													asientoContable.cuentaEncontrada.saldo = asientoContable.cuentaEncontrada.debe - cuentaEncontrada.haber
+																												} else {
+																													asientoContable.cuentaEncontrada.saldo = asientoContable.cuentaEncontrada.haber - cuentaEncontrada.debe
+																												}
+																												ContabilidadCuenta.update({
+																													debe: asientoContable.cuentaEncontrada.debe,
+																													haber: asientoContable.cuentaEncontrada.haber,
+																													saldo: asientoContable.cuentaEncontrada.saldo
+																												}, {
+																														where: { id: asientoContable.cuentaEncontrada.id }
+																													}).then(function (CuentaActualizada) {
+																														if (index === (array.length - 1)) {
+																															if (req.body.mensaje == "") {
+																																res.json({ mensaje: "Comprobantes importados satisfactoriamente!" })
+																															} else {
+																																res.json({ mensaje: req.body.mensaje })
+																															}
+																														}
+																													})
+																											})
+																										} else {
+																											req.body.mensaje += "del comprobante N° " + comprobanteEncontrado.numero + " la cuenta " + asientoContable.numero_cuenta + "no se ingreso por que no existe"
+																											if (index === (array.length - 1)) {
+																												if (req.body.mensaje == "") {
+																													res.json({ mensaje: "Comprobantes importados satisfactoriamente!" })
+																												} else {
+																													res.json({ mensaje: req.body.mensaje })
+																												}
+																											}
+																										}
+																									
+																								}
+																							}
+																						})
+																					})
+																					
+																				})
 																			}
 																		})
-																	} else {
-																		req.body.mensaje += "del comprobante N° " + comprobanteEncontrado.numero+" la cuenta " + asientoContable.numero_cuenta + "no se ingreso por que no existe"
-																		if (index === (array.length - 1)) {
-																			if (req.body.mensaje == "") {
-																				res.json({ mensaje: "Comprobantes importados satisfactoriamente!" })
-																			} else {
-																				res.json({ mensaje: req.body.mensaje })
-																			}
-																		}
-																	}
 																})
-															}
+															})
+
 														})
 													})
 											} else {
@@ -640,62 +694,117 @@ module.exports = function (router, ComprobanteContabilidad, AsientoContabilidad,
 													fecha_creacion: comprobante.fechaActual,
 													eliminado: false
 												}).then(function (ComprobanteCreado) {
-													for (var i = 0; i < comprobante.asientosContables.length; i++) {
-														var asientoContable = comprobante.asientosContables[i];
-														if (asientoContable.debe_bs == null) {
-															asientoContable.debe_bs = "0";
+													var mes = new Date(comprobante.fecha).getMonth()+1
+													var mes2 = new Date().getMonth()+1
+													if (mes == mes2) {
+														if (comprobante.tipo_comprobante == "TRASPASO") {
+															SucursalEncontrada.comprobante_traspaso_correlativo = comprobante.codigo + 1
 														}
-														if (asientoContable.debe_sus == null) {
-															asientoContable.debe_sus = "0";
+														if (comprobante.tipo_comprobante == "CAJA CHICA") {
+															SucursalEncontrada.comprobante_caja_chica_correlativo = comprobante.codigo + 1
 														}
-														if (asientoContable.haber_bs == null) {
-															asientoContable.haber_bs = "0";
+														if (comprobante.tipo_comprobante == "EGRESO") {
+															SucursalEncontrada.comprobante_egreso_correlativo = comprobante.codigo + 1
 														}
-														if (asientoContable.haber_sus == null) {
-															asientoContable.haber_sus = "0";
+														if (comprobante.tipo_comprobante == "INGRESO") {
+															SucursalEncontrada.comprobante_ingreso_correlativo = comprobante.codigo + 1
 														}
-														var idCentroCosto = null
-														if (asientoContable.centroCosto) {
-															idCentroCosto = asientoContable.centroCosto.id
-														}
-														ContabilidadCuenta.find({
-															where: { codigo: asientoContable.numero_cuenta }
-														}).then(function (cuentaEncontrada) {
-															if (cuentaEncontrada) {
-																AsientoContabilidad.create({
-																	id_comprobante: ComprobanteCreado.id,
-																	id_cuenta: cuentaEncontrada.id,
-																	glosa: asientoContable.gloza,
-																	debe_bs: parseFloat(asientoContable.debe_bs),
-																	haber_bs: parseFloat(asientoContable.haber_bs),
-																	debe_sus: parseFloat(asientoContable.debe_sus),
-																	haber_sus: parseFloat(asientoContable.haber_sus),
-																	eliminado: false,
-																	id_centro_costo: idCentroCosto
-																}).then(function (asientroCreado) {
-																	if (index === (array.length - 1)) {
-																		if (req.body.mensaje == "") {
-																			res.json({ mensaje: "Comprobantes importados satisfactoriamente!" })
-																		} else {
-																			res.json({ mensaje: req.body.mensaje })
+													}
+													Sucursal.update({
+														comprobante_caja_chica_correlativo: SucursalEncontrada.comprobante_caja_chica_correlativo,
+														comprobante_egreso_correlativo: SucursalEncontrada.comprobante_egreso_correlativo,
+														comprobante_ingreso_correlativo: SucursalEncontrada.comprobante_ingreso_correlativo,
+														comprobante_traspaso_correlativo: SucursalEncontrada.comprobante_traspaso_correlativo
+													}, {
+															where: { id: SucursalEncontrada.id }
+														}).then(function (sucursalUpdate) {
+															comprobante.asientosContables.forEach(function(dato,index,array){
+																ContabilidadCuenta.find({
+																	where: { codigo: dato.numero_cuenta, id_empresa: req.params.id_empresa }
+																}).then(function (cuentaEncontrada) {
+																	dato.cuentaEncontrada=cuentaEncontrada
+																	if(index===(array.length-1)){
+																		for (var i = 0; i < comprobante.asientosContables.length; i++) {
+																			var asientoContable = comprobante.asientosContables[i];
+																			if (asientoContable.debe_bs == null) {
+																				asientoContable.debe_bs = "0";
+																			}
+																			if (asientoContable.debe_sus == null) {
+																				asientoContable.debe_sus = "0";
+																			}
+																			if (asientoContable.haber_bs == null) {
+																				asientoContable.haber_bs = "0";
+																			}
+																			if (asientoContable.haber_sus == null) {
+																				asientoContable.haber_sus = "0";
+																			}
+																			var idCentroCosto = null
+																			if (asientoContable.centroCosto) {
+																				idCentroCosto = asientoContable.centroCosto.id
+																			}
+																			/* ContabilidadCuenta.find({
+																				where: { codigo: asientoContable.numero_cuenta, id_empresa: req.params.id_empresa }
+																			}).then(function (cuentaEncontrada) { */
+																				if (asientoContable.cuentaEncontrada) {
+																					AsientoContabilidad.create({
+																						id_comprobante: ComprobanteCreado.id,
+																						id_cuenta: asientoContable.cuentaEncontrada.id,
+																						glosa: asientoContable.gloza,
+																						debe_bs: parseFloat(asientoContable.debe_bs),
+																						haber_bs: parseFloat(asientoContable.haber_bs),
+																						debe_sus: parseFloat(asientoContable.debe_sus),
+																						haber_sus: parseFloat(asientoContable.haber_sus),
+																						eliminado: false,
+																						id_centro_costo: idCentroCosto
+																					}).then(function (asientroCreado) {
+			
+																						asientoContable.cuentaEncontrada.debe = (asientoContable.cuentaEncontrada.debe == null) ? 0 : asientoContable.cuentaEncontrada.debe;
+																						asientoContable.cuentaEncontrada.haber = (asientoContable.cuentaEncontrada.haber == null) ? 0 : asientoContable.cuentaEncontrada.haber;
+																						asientoContable.cuentaEncontrada.debe += parseFloat(asientoContable.debe_bs)
+																						asientoContable.cuentaEncontrada.haber += parseFloat(asientoContable.haber_bs)
+																						if (asientoContable.cuentaEncontrada.debe > asientoContable.cuentaEncontrada.haber) {
+																							asientoContable.cuentaEncontrada.saldo = asientoContable.cuentaEncontrada.debe - asientoContable.cuentaEncontrada.haber
+																						} else {
+																							cuentaEncontrada.saldo = cuentaEncontrada.haber - cuentaEncontrada.debe
+																						}
+																						ContabilidadCuenta.update({
+																							debe: asientoContable.cuentaEncontrada.debe,
+																							haber: asientoContable.cuentaEncontrada.haber,
+																							saldo: asientoContable.cuentaEncontrada.saldo
+																						}, {
+																								where: { id: asientoContable.cuentaEncontrada.id }
+																							}).then(function (CuentaActualizada) {
+																								if (index === (array.length - 1)) {
+																									if (req.body.mensaje == "") {
+																										res.json({ mensaje: "Comprobantes importados satisfactoriamente!" })
+																									} else {
+																										res.json({ mensaje: req.body.mensaje })
+																									}
+																								}
+																							})
+																					})
+			
+			
+																				} else {
+																					req.body.mensaje += "del comprobante N° " + ComprobanteCreado.numero + " la cuenta " + asientoContable.numero_cuenta + "no se ingreso por que no existe"
+																					if (index === (array.length - 1)) {
+																						if (req.body.mensaje == "") {
+																							res.json({ mensaje: "Comprobantes importados satisfactoriamente!" })
+																						} else {
+																							res.json({ mensaje: req.body.mensaje })
+																						}
+																					}
+																				}
+																			/* }) */
 																		}
 																	}
 																})
-															} else {
-																req.body.mensaje += "del comprobante N° " + ComprobanteCreado.numero+" la cuenta " + asientoContable.numero_cuenta + "no se ingreso por que no existe"
-																if (index === (array.length - 1)) {
-																	if (req.body.mensaje == "") {
-																		res.json({ mensaje: "Comprobantes importados satisfactoriamente!" })
-																	} else {
-																		res.json({ mensaje: req.body.mensaje })
-																	}
-																}
-															}
+															})
+															
 														})
-													}
 												})
 											} else {
-												req.body.mensaje += "el comprobante N° " + comprobante.codigo + "no se ingreso por que la sucursal "+comprobante.sucursal+" no existe, "
+												req.body.mensaje += "el comprobante N° " + comprobante.codigo + "no se ingreso por que la sucursal " + comprobante.sucursal + " no existe, "
 												if (index === (array.length - 1)) {
 													if (req.body.mensaje == "") {
 														res.json({ mensaje: "Comprobantes importados satisfactoriamente!" })
