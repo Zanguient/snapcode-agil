@@ -2196,6 +2196,25 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                         arregloSucursales.push(rol.campo)
                    
                 }
+                var bandera2 = false
+                if (arregloGrupos.length > 0) {
+                    for (var i = 0; i < arregloGrupos.length; i++) {
+                        var element = arregloGrupos[i];
+                        if (rol.grupo != null) {
+                            if (element == rol.grupo) {
+                                bandera2 = true
+                            }
+                        }
+                    }
+                    if (!bandera2) {
+
+                        arregloGrupos.push(rol.grupo)
+
+                    }
+                } else {                   
+                        arregloGrupos.push(rol.grupo)
+                   
+                }
                 if(index===(array.length-1)){
                     arregloSucursales.forEach(function (sucursal, index2, array2) {
                         Tipo.find({
@@ -2217,77 +2236,103 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                                 }
                             }).spread(function(dato,created){
                                 if(index2===(array2.length-1)){
-                                    req.body.forEach(function (rol, index, array) {
-                                        MedicoPaciente.find({
-                                            where: { codigo: rol.codigo, id_empresa: req.params.id_empresa }
-                                            , include: [{ model: RrhhEmpleadoFicha, as: 'empleadosFichas', required: false, limit: 1, order: [["id", "desc"]] }]
-                                        }).then(function (pacienteFound) {
-                                            var sucursal = rol.campo
-                                            if (pacienteFound != null) {
-                                                Tipo.find({
-                                                    where: {
-                                                        nombre_corto: 'CENCOS',
-                                                        id_empresa: req.params.id_empresa
-                                                    }
-                                                }).then(function (tipo) {
-                                                    Clase.find({
-                                                        where: {
-                                                            nombre: sucursal,
-                                                            id_tipo: tipo.id
-                                                        }
-                                                    }).then(function (CentroCosto) {
-                                                        if(CentroCosto){
-                                                        Tipo.find({
-                                                            where: {
-                                                                nombre_corto: 'RRHH_GROL',
-                                                                id_empresa: req.params.id_empresa
-                                                            }
-                                                        }).then(function (tipo) {
-                                                            Clase.find({
-                                                                where: {
-                                                                    nombre_corto: rol.grupo,
-                                                                    id_tipo: tipo.dataValues.id
-                                                                }
-                                                            }).then(function (Grupo) {
-                                                                if (Grupo) {
-                                                                    RrhhEmpleadoRolTurno.create({
-                                                                        /* id_empleado: req.params.id_empleado, */
-                                                                        id_ficha: pacienteFound.empleadosFichas[0].id,
-                                                                        id_campo: CentroCosto.id,
-                                                                        fecha_inicio: rol.fecha_inicio,
-                                                                        fecha_fin: rol.fecha_fin,
-                                                                        tipo: rol.tipo,
-                                                                        dias_trabajado: rol.dias_trabajo,
-                                                                        dias_descanso: rol.dias_descanso,
-                                                                        id_grupo: Grupo.id,
-                                                                        eliminado: false
-                                                                    }).then(function (empleadoRolTurnoCreado) {
+                                    arregloGrupos.forEach(function (grupo, index3, array3) {
+                                        Tipo.find({
+                                            where: {
+                                                nombre_corto: 'RRHH_GROL',
+                                                id_empresa: req.params.id_empresa
+                                            }
+                                        }).then(function (tipo) {
+                                             Clase.findOrCreate({
+                                                where: {
+                                                   
+                                                    nombre_corto: grupo,
+                                                    id_tipo: tipo.dataValues.id
+                                                },
+                                                defaults: {
+                                                    nombre: "GRUPO "+ grupo,
+                                                    nombre_corto:grupo,
+                                                    id_tipo: tipo.dataValues.id,
+                                                    habilitado: true
+                                                }
+                                            }).spread(function(dato,created){
+                                                if(index3===(array3.length-1)){
+                                                    req.body.forEach(function (rol, index, array) {
+                                                        MedicoPaciente.find({
+                                                            where: { codigo: rol.codigo, id_empresa: req.params.id_empresa }
+                                                            , include: [{ model: RrhhEmpleadoFicha, as: 'empleadosFichas', required: false, limit: 1, order: [["id", "desc"]] }]
+                                                        }).then(function (pacienteFound) {
+                                                            var sucursal = rol.campo
+                                                            if (pacienteFound != null) {
+                                                                Tipo.find({
+                                                                    where: {
+                                                                        nombre_corto: 'CENCOS',
+                                                                        id_empresa: req.params.id_empresa
+                                                                    }
+                                                                }).then(function (tipo) {
+                                                                    Clase.find({
+                                                                        where: {
+                                                                            nombre: sucursal,
+                                                                            id_tipo: tipo.id
+                                                                        }
+                                                                    }).then(function (CentroCosto) {
+                                                                        if(CentroCosto){
+                                                                        Tipo.find({
+                                                                            where: {
+                                                                                nombre_corto: 'RRHH_GROL',
+                                                                                id_empresa: req.params.id_empresa
+                                                                            }
+                                                                        }).then(function (tipo) {
+                                                                            Clase.find({
+                                                                                where: {
+                                                                                    nombre_corto: rol.grupo,
+                                                                                    id_tipo: tipo.dataValues.id
+                                                                                }
+                                                                            }).then(function (Grupo) {
+                                                                                if (Grupo) {
+                                                                                    RrhhEmpleadoRolTurno.create({
+                                                                                        /* id_empleado: req.params.id_empleado, */
+                                                                                        id_ficha: pacienteFound.empleadosFichas[0].id,
+                                                                                        id_campo: CentroCosto.id,
+                                                                                        fecha_inicio: rol.fecha_inicio,
+                                                                                        fecha_fin: rol.fecha_fin,
+                                                                                        tipo: rol.tipo,
+                                                                                        dias_trabajado: rol.dias_trabajo,
+                                                                                        dias_descanso: rol.dias_descanso,
+                                                                                        id_grupo: Grupo.id,
+                                                                                        eliminado: false
+                                                                                    }).then(function (empleadoRolTurnoCreado) {
+                                                                                        if (index === (array.length - 1)) {
+                                                                                            res.json({ mensaje: "Importacion satisfactoria!" })
+                                                                                        }
+                                        
+                                                                                    })
+                                                                                }else{
+                                                                                    if (index === (array.length - 1)) {
+                                                                                        res.json({ mensaje: "Importacion satisfactoria!" })
+                                                                                    }
+                                                                                }
+                                                                            })
+                                                                        })
+                                                                    }else{
                                                                         if (index === (array.length - 1)) {
                                                                             res.json({ mensaje: "Importacion satisfactoria!" })
                                                                         }
-                        
-                                                                    })
-                                                                }else{
-                                                                    if (index === (array.length - 1)) {
-                                                                        res.json({ mensaje: "Importacion satisfactoria!" })
                                                                     }
+                                                                    })
+                                                                })
+                                                            } else {
+                                                                if (index === (array.length - 1)) {
+                                                                    res.json({ mensaje: "Importacion satisfactoria!" })
                                                                 }
-                                                            })
+                                                            }
                                                         })
-                                                    }else{
-                                                        if (index === (array.length - 1)) {
-                                                            res.json({ mensaje: "Importacion satisfactoria!" })
-                                                        }
-                                                    }
                                                     })
-                                                })
-                                            } else {
-                                                if (index === (array.length - 1)) {
-                                                    res.json({ mensaje: "Importacion satisfactoria!" })
                                                 }
-                                            }
+                                                })
+                                            })
                                         })
-                                    })
+                                    
                                 }
                             })
                         })

@@ -1184,3 +1184,43 @@ angular.module('agil.servicios')
     };
     return res;
 }])
+.factory('ImportacionFichaEmpleados', function ($resource) {
+    return $resource(restServer + "empleados/empresa/:id_empresa/fichas/excel/upload", null ,
+        {
+            'update': { method: 'PUT' }
+        });
+})
+.factory('GuardarImportacionFichaEmpleados', ['ImportacionFichaEmpleados', '$q', function (ImportacionFichaEmpleados, $q) {
+    var res = function (datos,idEmpresa) {
+        var delay = $q.defer();
+        ImportacionFichaEmpleados.save({
+        id_empresa:idEmpresa
+        },datos, function (entidad) {
+            delay.resolve(entidad);
+        }, function (error) {
+            delay.reject(error);
+        });
+        return delay.promise;
+    };
+    return res;
+}])
+.factory('ImportacionRolTurnoEmpleados', function ($resource) {
+    return $resource(restServer + "empleados/empresa/:id_empresa/rolTurnos/excel/upload", null ,
+        {
+            'update': { method: 'PUT' }
+        });
+})
+.factory('GuardarImportacionRolTurnoEmpleados', ['ImportacionRolTurnoEmpleados', '$q', function (ImportacionRolTurnoEmpleados, $q) {
+    var res = function (datos,idEmpresa) {
+        var delay = $q.defer();
+        ImportacionRolTurnoEmpleados.save({
+        id_empresa:idEmpresa
+        },datos, function (entidad) {
+            delay.resolve(entidad);
+        }, function (error) {
+            delay.reject(error);
+        });
+        return delay.promise;
+    };
+    return res;
+}])
