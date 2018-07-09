@@ -1087,29 +1087,29 @@ angular.module('agil.servicios')
 					doc.text(venta.total.toFixed(2), 520, y);
 
 					doc.text("SON : " + venta.numero_literal, 55, y);
-				
-					
-						doc.text("CÓDIGO DE CONTROL : " + venta.codigo_control, 55, y + 30);
-						venta.fecha_limite_emision = new Date(venta.fecha_limite_emision);
-						doc.text("FECHA LÍMITE DE EMISIÓN: " + venta.fecha_limite_emision.getDate() + "/" + (venta.fecha_limite_emision.getMonth() + 1) + "/" + venta.fecha_limite_emision.getFullYear(), 55, y + 60);
 
-						if (completa || vacia) {
-							doc.rect(50, y - 15, 520, 30).stroke();
-							doc.rect(50, y + 25, 400, 20).stroke();
-							doc.rect(50, y + 55, 400, 20).stroke();
-						}
 
-						qr.canvas({
-							canvas: canvas,
-							value: usuario.empresa.nit + "|" + venta.factura + "|" + venta.autorizacion + "|" + venta.fechaTexto + "|" + venta.total.toFixed(2) + "|" + venta.total.toFixed(2) + "|" + venta.codigo_control + "|" + venta.cliente.nit + "|" + "0" + "|" + "0" + "|" + "0" + "|" + "0"
-						}, function () { });
-						var qrImage = canvas.toDataURL('image/png');
-						doc.image(qrImage, 470, y + 20, { width: 70, height: 70 });
-						if (completa || vacia) {
-							doc.text(venta.pieFactura !== undefined && venta.pieFactura !== null ? venta.pieFactura.nombre : "", 50, papel[1] - 60);
-							doc.text("\"ESTA FACTURA CONTRIBUYE AL DESARROLLO DEL PAIS. EL USO ILICITO DE ESTA SERA SANCIONADO DE ACUERDO A LEY\"", 50, papel[1] - 40);
-						}
-				
+					doc.text("CÓDIGO DE CONTROL : " + venta.codigo_control, 55, y + 30);
+					venta.fecha_limite_emision = new Date(venta.fecha_limite_emision);
+					doc.text("FECHA LÍMITE DE EMISIÓN: " + venta.fecha_limite_emision.getDate() + "/" + (venta.fecha_limite_emision.getMonth() + 1) + "/" + venta.fecha_limite_emision.getFullYear(), 55, y + 60);
+
+					if (completa || vacia) {
+						doc.rect(50, y - 15, 520, 30).stroke();
+						doc.rect(50, y + 25, 400, 20).stroke();
+						doc.rect(50, y + 55, 400, 20).stroke();
+					}
+
+					qr.canvas({
+						canvas: canvas,
+						value: usuario.empresa.nit + "|" + venta.factura + "|" + venta.autorizacion + "|" + venta.fechaTexto + "|" + venta.total.toFixed(2) + "|" + venta.total.toFixed(2) + "|" + venta.codigo_control + "|" + venta.cliente.nit + "|" + "0" + "|" + "0" + "|" + "0" + "|" + "0"
+					}, function () { });
+					var qrImage = canvas.toDataURL('image/png');
+					doc.image(qrImage, 470, y + 20, { width: 70, height: 70 });
+					if (completa || vacia) {
+						doc.text(venta.pieFactura !== undefined && venta.pieFactura !== null ? venta.pieFactura.nombre : "", 50, papel[1] - 60);
+						doc.text("\"ESTA FACTURA CONTRIBUYE AL DESARROLLO DEL PAIS. EL USO ILICITO DE ESTA SERA SANCIONADO DE ACUERDO A LEY\"", 50, papel[1] - 40);
+					}
+
 				}
 
 				doc.end();
@@ -2451,9 +2451,12 @@ angular.module('agil.servicios')
 							doc.font('Helvetica', 6);
 							doc.text(traspaso.detallesVenta[i].producto.nombre, 210, yDesc, { width: 175 });
 							doc.font('Helvetica', 7);
-							var fecha_vencimiento = new Date(traspaso.detallesVenta[i].inventario.fecha_vencimiento);
-							doc.text(fecha_vencimiento.getDate() + "/" + (fecha_vencimiento.getMonth() + 1) + "/" + fecha_vencimiento.getFullYear(), 390, y);
+							if (traspaso.detallesVenta[i].inventario) {
+								var fecha_vencimiento = new Date(traspaso.detallesVenta[i].inventario.fecha_vencimiento);
+								doc.text(fecha_vencimiento.getDate() + "/" + (fecha_vencimiento.getMonth() + 1) + "/" + fecha_vencimiento.getFullYear(), 390, y);
+							
 							doc.text(traspaso.detallesVenta[i].inventario.lote, 455, y);
+						}
 						} else {
 							doc.text(traspaso.detallesVenta[i].producto.nombre, 210, yDesc, { width: 250 });
 						}

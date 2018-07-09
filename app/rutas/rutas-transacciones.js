@@ -1181,7 +1181,7 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, forEach, j
         .get(function (req, res) {
             var desde = req.params.fecha_desde.split('/').reverse()//new Date(req.params.fecha_desde.split('/')[2],req.params.fecha_desde.split('/')[1] -1, req.params.fecha_desde.split('/')[0])
             var hasta = req.params.fecha_hasta.split('/').reverse()//new Date(req.params.fecha_hasta.split('/')[2],req.params.fecha_hasta.split('/')[1] -1, req.params.fecha_hasta.split('/')[0]-1)
-            sequelize.query("SELECT MAX(agil_cuenta_transaccion.id), agil_cuenta_transaccion.saldo from agil_cuenta_transaccion where cuenta =" + req.params.id_cuenta + " and empresa =" + req.params.id_empresa, { type: sequelize.QueryTypes.SELECT })
+            sequelize.query("SELECT MAX(agil_cuenta_transaccion.id), agil_cuenta_transaccion.saldo from agil_cuenta_transaccion where cuenta =" + req.params.id_cuenta + " and empresa =" + req.params.id_empresa + "GROUP BY agil_cuenta_transaccion.id", { type: sequelize.QueryTypes.SELECT })
                 .then(function (dato) {
                     res.json({ cuenta: dato });
                 }).catch(function (err) {
