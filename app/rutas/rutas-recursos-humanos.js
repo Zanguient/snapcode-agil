@@ -2074,10 +2074,233 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                         }
                     })
                 })
-
             })
+        })
+
+    router.route('empleados/empresas/excel/upload')
+        .post(function (req, res) {
+            sequelize.transaction(function (t) {
+                req.body.forEach(function (pacienteActual, index, array) {
+                    return MedicoPaciente.find({
+                        where: { codigo: pacienteActual.codigo, id_empresa: req.body.id_empresa },
+                        transaction: t
+                    }).then(function (pacienteFound) {
+                        if (pacienteFound != null) {
+
+                        } else {
+
+                        }
+                    })
+                })
+                return Promise.all(promises);
+            }).then(function (result) {
+                res.json({ mensaje: "¡Datos de empleados actualizados satisfactoriamente!" });
+            }).catch(function (err) {
+                res.json({ hasError: true, message: err.stack });
+            });
+        })
+    router.route('/empleados/empresa/:id_empresa/fichas/excel/upload')
+        .post(function (req, res) {
+            var promises = []
+            sequelize.transaction(function (t) {
+                req.body.forEach(function (empleado, index, array) {
+                    promises.push(MedicoPaciente.find({
+                        where: { codigo: empleado.codigo, id_empresa: req.params.id_empresa },
+                        transaction: t
+                        , include: [{ model: RrhhEmpleadoFicha, as: 'empleadosFichas', required: false, limit: 1, order: [["id", "desc"]] }]
+                    }).then(function (pacienteFound) {
+                        if (pacienteFound != null) {
+                            return tipo.find({
+                                where: { nombre_corto: 'RRHH_EC', id_empresa: req.params.id_empresa }, transaction: t
+                            }).then(function (tipoEncontrado) {
+                                return Clase.find({
+                                    where: { nombre_corto: empleado.estado_civil, tipo: tipoEncontrado.id }, transaction: t
+                                }).then(function (ClaseEncontrada) {
+                                    return Persona.update({
+                                        id_estado_civil: claseEncontrada.id
+                                    }, {
+                                            transaction: t
+                                        }).then(function (PersonaActualizada) {
+                                            /*  RrhhEmpleadoFicha.update({
+                                                 discapacidad: req.body.discapacidad,
+                                                 detalle_discapacidades: req.body.detalle_discapacidades,
+                                                 id_empleado: req.body.empleado.id,
+                                                 fecha: req.body.fecha_elaboracion,
+                                                 //codigo_empleado: req.body.codigo_empleado,
+                                                 id_tipo_contrato: req.body.tipoContrato.id,
+                                                 fecha_inicio: req.body.fecha_inicio2,
+                                                 fecha_fin: req.body.fecha_fin2,
+                                                 id_tipo_personal: req.body.tipoPersonal.id,
+                                                 id_carga_horarios: req.body.cargaHorario.id,
+                                                 id_area: req.body.area.id,
+                                                 id_ubicacion: req.body.ubicacion.id,
+                                                 haber_basico: haber,
+                                                 haber_basico_literal: numero_literal,
+                                                 //contrato: req.body.alergia_quimico,
+                                                 jubilacion: req.body.jubilacion,
+                                                 fecha_jubilacion: req.body.fecha_jubilacion,
+                                                 id_persona_referencia: personaReferenciaCreada.id,
+                                                 matricula_seguro: req.body.matricula_seguro,
+                                                 id_seguro_salud: req.body.seguroSalud.id,
+                                                 id_lugar_seguro_salud: req.body.lugarSeguroSalud.id,
+                                                 seguro_salud_carnet: req.body.seguro_salud_carnet,
+                                                 nua_seguro_largo_plazo: req.body.nua_seguro_largo_plazo,
+                                                 id_aporte_seguro_largo_plazo: req.body.aporteSeguroLargoPlazo.id,
+                                                 id_lugar_seguro_largo_plazo: req.body.lugarSeguroLargoPlazo.id,
+                                                 numero_cuenta: req.body.numero_cuenta,
+                                                 id_banco: req.body.banco.id,
+     
+                                             }).then(function (medicoPacientefichaCreado) {
+                                             }) */
+                                        })
+
+
+                                })
+                            })
+                        } else {
+
+                        }
+                    }))
+
+                })
+                return Promise.all(promises);
+            }).then(function (result) {
+                res.json({ mensaje: "¡Datos de empleados actualizados satisfactoriamente!" });
+            }).catch(function (err) {
+                res.json({ hasError: true, message: err.stack });
+            });
+        })
+    router.route('/empleados/empresa/:id_empresa/rolTurnos/excel/upload')
+        .post(function (req, res) {
+            var arregloSucursales=[]
+            var arregloGrupos=[]
+          
+               
+            req.body.forEach(function (rol, index, array) {
+                var bandera = false
+                if (arregloSucursales.length > 0) {
+                    for (var i = 0; i < arregloSucursales.length; i++) {
+                        var element = arregloSucursales[i];
+                        if (rol.campo != null) {
+                            if (element == rol.campo) {
+                                bandera = true
+                            }
+                        }
+                    }
+                    if (!bandera) {
+
+                        arregloSucursales.push(rol.campo)
+
+                    }
+                } else {                   
+                        arregloSucursales.push(rol.campo)
+                   
+                }
+                if(index===(array.length-1)){
+                    arregloSucursales.forEach(function (sucursal, index2, array2) {
+                        Tipo.find({
+                            where: {
+                                nombre_corto: 'CENCOS',
+                                id_empresa: req.params.id_empresa
+                            }
+                        }).then(function (tipo) {
+                             Clase.findOrCreate({
+                                where: {
+                                    nombre: sucursal,
+                                    nombre_corto: sucursal,
+                                    id_tipo: tipo.dataValues.id
+                                },
+                                defaults: {
+                                    nombre: sucursal,
+                                    id_tipo: tipo.dataValues.id,
+                                    habilitado: true
+                                }
+                            }).spread(function(dato,created){
+                                if(index2===(array2.length-1)){
+                                    req.body.forEach(function (rol, index, array) {
+                                        MedicoPaciente.find({
+                                            where: { codigo: rol.codigo, id_empresa: req.params.id_empresa }
+                                            , include: [{ model: RrhhEmpleadoFicha, as: 'empleadosFichas', required: false, limit: 1, order: [["id", "desc"]] }]
+                                        }).then(function (pacienteFound) {
+                                            var sucursal = rol.campo
+                                            if (pacienteFound != null) {
+                                                Tipo.find({
+                                                    where: {
+                                                        nombre_corto: 'CENCOS',
+                                                        id_empresa: req.params.id_empresa
+                                                    }
+                                                }).then(function (tipo) {
+                                                    Clase.find({
+                                                        where: {
+                                                            nombre: sucursal,
+                                                            id_tipo: tipo.id
+                                                        }
+                                                    }).then(function (CentroCosto) {
+                                                        if(CentroCosto){
+                                                        Tipo.find({
+                                                            where: {
+                                                                nombre_corto: 'RRHH_GROL',
+                                                                id_empresa: req.params.id_empresa
+                                                            }
+                                                        }).then(function (tipo) {
+                                                            Clase.find({
+                                                                where: {
+                                                                    nombre_corto: rol.grupo,
+                                                                    id_tipo: tipo.dataValues.id
+                                                                }
+                                                            }).then(function (Grupo) {
+                                                                if (Grupo) {
+                                                                    RrhhEmpleadoRolTurno.create({
+                                                                        /* id_empleado: req.params.id_empleado, */
+                                                                        id_ficha: pacienteFound.empleadosFichas[0].id,
+                                                                        id_campo: CentroCosto.id,
+                                                                        fecha_inicio: rol.fecha_inicio,
+                                                                        fecha_fin: rol.fecha_fin,
+                                                                        tipo: rol.tipo,
+                                                                        dias_trabajado: rol.dias_trabajo,
+                                                                        dias_descanso: rol.dias_descanso,
+                                                                        id_grupo: Grupo.id,
+                                                                        eliminado: false
+                                                                    }).then(function (empleadoRolTurnoCreado) {
+                                                                        if (index === (array.length - 1)) {
+                                                                            res.json({ mensaje: "Importacion satisfactoria!" })
+                                                                        }
+                        
+                                                                    })
+                                                                }else{
+                                                                    if (index === (array.length - 1)) {
+                                                                        res.json({ mensaje: "Importacion satisfactoria!" })
+                                                                    }
+                                                                }
+                                                            })
+                                                        })
+                                                    }else{
+                                                        if (index === (array.length - 1)) {
+                                                            res.json({ mensaje: "Importacion satisfactoria!" })
+                                                        }
+                                                    }
+                                                    })
+                                                })
+                                            } else {
+                                                if (index === (array.length - 1)) {
+                                                    res.json({ mensaje: "Importacion satisfactoria!" })
+                                                }
+                                            }
+                                        })
+                                    })
+                                }
+                            })
+                        })
+                       
+                    })
+                }
+            })
+            
+
 
         })
+
+
     router.route('/empleados/empresa/excel/upload')
         .post(function (req, res) {
             sequelize.transaction(function (t) {

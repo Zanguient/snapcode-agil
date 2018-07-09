@@ -6,7 +6,7 @@ angular.module('agil.controladores')
         ListaAnticiposEmpleado, CrearNuevosAnticiposEmpleados, ActualizarAnticipoEmpleado, NuevaAusenciaEmpleado, HistorialEmpleadoAusencias, HistorialEmpresaEmpleadosAusencias, NuevaVacacionEmpleado, HistorialEmpleadoVacaciones, HistorialEmpresaVacaciones, NuevoFeriado,
         ListaFeriados, GuardarClasesAusencias, Tipos, ListaBancos, ConfiguracionesVacacion, HistorialGestionesVacacion, GuardarTr3, ListaTr3Empresa, GuardarHistorialVacacion, CrearBeneficioSocial, ListaBeneficiosEmpleado, GuardarBitacoraFicha, VerBitacoraFicha, ObtenerFiniquitoEmpleado,
         ClasesTipoEmpresa, GuardarConfiguracionRopaCargo, ListaConfiguracionRopaCargo, DatosReporteConfiguracionRopa, FichasEmpleadoEmpresa, ListaCargosEmpleado, ListaRopaTrabajoProductos, GuardarDotacionRopa, ListaDotacionRopa, EliminarDotacionRopa, ListaDotacionRopaEmpresa, ActualizarDotacionRopa,
-        FamiliaresEmpleadoEmpresa, ListaRolTurnosEmpresa, ListaChoferesViaje, GuardarViajeRrhh, ListaViajeRrhh, ListaRolTurnosCalendario, ViajeRrhhLista, BeneficioEmpresa, GuardarConductoresEmpresa, ListaHijosEmpleadosEmpresa) {
+        FamiliaresEmpleadoEmpresa, ListaRolTurnosEmpresa, ListaChoferesViaje, GuardarViajeRrhh, ListaViajeRrhh, ListaRolTurnosCalendario, ViajeRrhhLista, BeneficioEmpresa, GuardarConductoresEmpresa, ListaHijosEmpleadosEmpresa,GuardarImportacionFichaEmpleados,GuardarImportacionRolTurnoEmpleados) {
         $scope.usuario = JSON.parse($localStorage.usuario);
         $scope.idModalPrerequisitos = 'dialog-pre-requisitos';
         $scope.idModalEmpleado = 'dialog-empleado';
@@ -2123,6 +2123,119 @@ angular.module('agil.controladores')
                 reader.readAsBinaryString(f);
                 //console.log('pacientes obtenidos')
             }
+        }
+        $scope.subirExcelFichaEmpleados=function(event){
+            blockUI.start();
+            //console.log('iniciando carga de pacientes')
+            var files = event.target.files;
+            var i, f;
+            for (i = 0, f = files[i]; i != files.length; ++i) {
+                //console.log('iniciando lectura de excel(s)')
+                var reader = new FileReader();
+                var name = f.name;
+                reader.onload = function (e) {
+                    // blockUI.start();
+                    var data = e.target.result;
+
+                    var workbook = XLSX.read(data, { type: 'binary' });
+                    var first_sheet_name = workbook.SheetNames[0];
+                    var row = 2, i = 0;
+                    var worksheet = workbook.Sheets[first_sheet_name];
+                    var fichas = [];
+                    do {
+                        var ficha = {seguros:[]};
+                        ficha.codigo = worksheet['A' + row] != undefined && worksheet['A' + row] != "" ? worksheet['A' + row].v.toString() : null;
+                        ficha.apellido_paterno = worksheet['B' + row] != undefined && worksheet['B' + row] != "" ? worksheet['B' + row].v.toString() : null;
+                        ficha.apellido_materno = worksheet['C' + row] != undefined && worksheet['C' + row] != "" ? worksheet['C' + row].v.toString() : null;
+                        ficha.nombres = worksheet['D' + row] != undefined && worksheet['D' + row] != "" ? worksheet['D' + row].v.toString() : null;
+                        ficha.segundo_nombre = worksheet['E' + row] != undefined && worksheet['E' + row] != "" ? worksheet['E' + row].v.toString() : null;                        
+                        ficha.estado_civil = worksheet['F' + row] != undefined && worksheet['F' + row] != "" ? worksheet['F' + row].v.toString() : null;
+                        ficha.departamento = worksheet['G' + row] != undefined && worksheet['G' + row] != "" ? worksheet['G' + row].v.toString() : null;
+                        ficha.provincia = worksheet['H' + row] != undefined && worksheet['H' + row] != "" ? worksheet['H' + row].v.toString() : null;
+                        ficha.localidad = worksheet['I' + row] != undefined && worksheet['I' + row] != "" ? $scope.fecha_excel_angular(worksheet['I' + row].v.toString()) : null;
+                        ficha.tipo_personal = worksheet['J' + row] != undefined && worksheet['J' + row] != "" ? worksheet['J' + row].v.toString() : null;
+                        ficha.carga_horario = worksheet['K' + row] != undefined && worksheet['K' + row] != "" ? worksheet['K' + row].v.toString() : null;
+                        ficha.area = worksheet['L' + row] != undefined && worksheet['L' + row] != "" ? worksheet['L' + row].v.toString() : null;
+                        ficha.ubicacion = worksheet['M' + row] != undefined && worksheet['M' + row] != "" ? worksheet['M' + row].v.toString() : null;
+                        ficha.lugar_seguro = worksheet['N' + row] != undefined && worksheet['N' + row] != "" ? worksheet['N' + row].v.toString() : null;
+                        ficha.nua_cua = worksheet['O' + row] != undefined && worksheet['O' + row] != "" ? worksheet['O' + row].v.toString() : null;
+                        ficha.afp_aporte = worksheet['P' + row] != undefined && worksheet['P' + row] != "" ? worksheet['P' + row].v.toString() : null;
+                        ficha.lugar_afp = worksheet['Q' + row] != undefined && worksheet['Q' + row] != "" ? worksheet['Q' + row].v.toString() : null;
+                        //aqui me qquede 2:49 de la tarde 06/07/08
+                        var seguro={}
+                        seguro.seguro = worksheet['R' + row] != undefined && worksheet['R' + row] != "" ? worksheet['R' + row].v.toString() : null;
+                        seguro.observacion = worksheet['S' + row] != undefined && worksheet['S' + row] != "" ? worksheet['S' + row].v.toString() : null;
+                        seguro.monto = worksheet['T' + row] != undefined && worksheet['T' + row] != "" ? worksheet['T' + row].v.toString() : null;
+                        ficha.seguros.push(seguro)
+                        seguro={}
+                        seguro.seguro  = worksheet['U' + row] != undefined && worksheet['U' + row] != "" ? worksheet['U' + row].v.toString() : null;
+                        seguro.observacion = worksheet['V' + row] != undefined && worksheet['V' + row] != "" ? worksheet['V' + row].v.toString() : null;
+                        seguro.monto = worksheet['W' + row] != undefined && worksheet['W' + row] != "" ? worksheet['W' + row].v.toString() : null;
+                        ficha.seguros.push(seguro)                       
+                        fichas.push(ficha);
+                        row++;
+                        i++;
+
+                    } while (worksheet['A' + row] != undefined);
+                    $scope.guardarFichasEmpleados(fichas);
+                };
+                reader.readAsBinaryString(f);
+                //console.log('pacientes obtenidos')
+            }
+        }
+        $scope.guardarFichasEmpleados=function(fichas){
+           var promesa = GuardarImportacionFichaEmpleados(fichas,$scope.usuario.id_empresa)
+           promesa.then(function(dato){
+               $scope.mostrarMensaje(dato.mensaje)
+               blockUI.stop();
+           })
+        }
+        $scope.subirExcelRTurnoEmpleados=function(event){
+            blockUI.start();
+            //console.log('iniciando carga de pacientes')
+            var files = event.target.files;
+            var i, f;
+            for (i = 0, f = files[i]; i != files.length; ++i) {
+                //console.log('iniciando lectura de excel(s)')
+                var reader = new FileReader();
+                var name = f.name;
+                reader.onload = function (e) {
+                    // blockUI.start();
+                    var data = e.target.result;
+
+                    var workbook = XLSX.read(data, { type: 'binary' });
+                    var first_sheet_name = workbook.SheetNames[0];
+                    var row = 2, i = 0;
+                    var worksheet = workbook.Sheets[first_sheet_name];
+                    var rolturnos = [];
+                    do {
+                        var rolturno = {};
+                        rolturno.codigo = worksheet['A' + row] != undefined && worksheet['A' + row] != "" ? worksheet['A' + row].v.toString() : null;
+                        rolturno.tipo = worksheet['F' + row] != undefined && worksheet['F' + row] != "" ? (worksheet['F' + row].v.toString()=="Fijo")?1:0 : null;
+                        rolturno.campo = worksheet['G' + row] != undefined && worksheet['G' + row] != "" ? worksheet['G' + row].v.toString() : null;
+                        rolturno.fecha_inicio = worksheet['H' + row] != undefined && worksheet['H' + row] != "" ? new Date($scope.convertirFecha(worksheet['H' + row].w.toString())) : null;
+                        rolturno.fecha_fin = worksheet['I' + row] != undefined && worksheet['I' + row] != "" ? new Date($scope.convertirFecha(worksheet['I' + row].w.toString())) : null;
+                        rolturno.grupo = worksheet['J' + row] != undefined && worksheet['J' + row] != "" ? worksheet['J' + row].v.toString() : null;
+                        rolturno.dias_trabajo = worksheet['K' + row] != undefined && worksheet['K' + row] != "" ? worksheet['K' + row].v.toString() : null;
+                        rolturno.dias_descanso = worksheet['L' + row] != undefined && worksheet['L' + row] != "" ? worksheet['L' + row].v.toString() : null;
+                                
+                        rolturnos.push(rolturno);
+                        row++;
+                        i++;
+
+                    } while (worksheet['A' + row] != undefined);
+                    $scope.guardarRolTurnoEmpleados(rolturnos);
+                };
+                reader.readAsBinaryString(f);
+                //console.log('pacientes obtenidos')
+            }
+        }
+        $scope.guardarRolTurnoEmpleados=function(rolturnos){
+           var promesa = GuardarImportacionRolTurnoEmpleados(rolturnos,$scope.usuario.id_empresa)
+           promesa.then(function(dato){
+               $scope.mostrarMensaje(dato.mensaje)
+               blockUI.stop();
+           })
         }
         $scope.subirExcelFichaEmpleadoFamiliares = function (event) {
             blockUI.start();
