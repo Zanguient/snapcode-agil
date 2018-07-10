@@ -495,7 +495,7 @@ module.exports = function (router, ComprobanteContabilidad, AsientoContabilidad,
 				fechaBusqueda.setHours(0, 0, 0, 0, 0);
 				ComprobanteContabilidad.find({
 					where: { fecha: fechaBusqueda, numero: comprobante.codigo },
-					include: [{ model: Clase, as: 'tipoComprobante', where: { nombre: comprobante.tipo_comprobante } }]
+					include: [{model:Sucursal,as:'sucursal',where:{id_empresa:req.params.id_empresa}},{ model: Clase, as: 'tipoComprobante', where: { nombre: comprobante.tipo_comprobante } }]
 				}).then(function (comprobanteEncontrado) {
 					if (comprobanteEncontrado) {
 						Tipo.find(
@@ -514,17 +514,18 @@ module.exports = function (router, ComprobanteContabilidad, AsientoContabilidad,
 										}).then(function (SucursalEncontrada) {
 											if (SucursalEncontrada) {
 												ComprobanteContabilidad.update({
-													id_tipo: tipoComprobanteEncontrado.id,
+												id_tipo: tipoComprobanteEncontrado.id,
 													abierto: false,
 													numero: comprobante.codigo,
 													fecha: comprobante.fecha,
 													id_sucursal: SucursalEncontrada.id,
 													gloza: comprobante.gloza,
 													id_usuario: req.params.id_usuario,
-													eliminado: false,
+													eliminado: comprobante.eliminado,
 													importe: comprobante.importe,
 													id_tipo_cambio: comprobante.tipoCambio.id,
-													//fecha_creacion: comprobante.fechaActual
+													//fecha_creacion: comprobante.fechaActual,
+													//eliminado: false
 												}, {
 														where: { id: comprobanteEncontrado.id }
 													}).then(function (ComprobanteActualizado) {
