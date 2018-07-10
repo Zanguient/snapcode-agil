@@ -2110,56 +2110,46 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                         , include: [{ model: RrhhEmpleadoFicha, as: 'empleadosFichas', required: false, limit: 1, order: [["id", "desc"]] }]
                     }).then(function (pacienteFound) {
                         if (pacienteFound != null) {
-                            return tipo.find({
+                            return Tipo.find({
                                 where: { nombre_corto: 'RRHH_EC', id_empresa: req.params.id_empresa }, transaction: t
                             }).then(function (tipoEncontrado) {
                                 return Clase.find({
                                     where: { nombre_corto: empleado.estado_civil, tipo: tipoEncontrado.id }, transaction: t
-                                }).then(function (ClaseEncontrada) {
+                                }).then(function (claseEncontrada) {
                                     return Persona.update({
                                         id_estado_civil: claseEncontrada.id
                                     }, {
                                             transaction: t
                                         }).then(function (PersonaActualizada) {
-                                            /*  RrhhEmpleadoFicha.update({
-                                                 discapacidad: req.body.discapacidad,
-                                                 detalle_discapacidades: req.body.detalle_discapacidades,
-                                                 id_empleado: req.body.empleado.id,
-                                                 fecha: req.body.fecha_elaboracion,
-                                                 //codigo_empleado: req.body.codigo_empleado,
-                                                 id_tipo_contrato: req.body.tipoContrato.id,
-                                                 fecha_inicio: req.body.fecha_inicio2,
-                                                 fecha_fin: req.body.fecha_fin2,
-                                                 id_tipo_personal: req.body.tipoPersonal.id,
-                                                 id_carga_horarios: req.body.cargaHorario.id,
-                                                 id_area: req.body.area.id,
-                                                 id_ubicacion: req.body.ubicacion.id,
-                                                 haber_basico: haber,
-                                                 haber_basico_literal: numero_literal,
-                                                 //contrato: req.body.alergia_quimico,
-                                                 jubilacion: req.body.jubilacion,
-                                                 fecha_jubilacion: req.body.fecha_jubilacion,
-                                                 id_persona_referencia: personaReferenciaCreada.id,
-                                                 matricula_seguro: req.body.matricula_seguro,
-                                                 id_seguro_salud: req.body.seguroSalud.id,
-                                                 id_lugar_seguro_salud: req.body.lugarSeguroSalud.id,
-                                                 seguro_salud_carnet: req.body.seguro_salud_carnet,
-                                                 nua_seguro_largo_plazo: req.body.nua_seguro_largo_plazo,
-                                                 id_aporte_seguro_largo_plazo: req.body.aporteSeguroLargoPlazo.id,
-                                                 id_lugar_seguro_largo_plazo: req.body.lugarSeguroLargoPlazo.id,
-                                                 numero_cuenta: req.body.numero_cuenta,
-                                                 id_banco: req.body.banco.id,
-     
-                                             }).then(function (medicoPacientefichaCreado) {
-                                             }) */
-                                        })
+                                            return new Promise(function (fulfill, reject) {
+                                                fulfill({});
+                                            });
+                                        }).catch(function (err) {
+                                            return new Promise(function (fulfill, reject) {
+                                                reject(err);
+                                            });
+                                        });
 
 
-                                })
-                            })
+                                }).catch(function (err) {
+                                    return new Promise(function (fulfill, reject) {
+                                        reject(err);
+                                    });
+                                });
+                            }).catch(function (err) {
+                                return new Promise(function (fulfill, reject) {
+                                    reject(err);
+                                });
+                            });
                         } else {
-
+                            return new Promise(function (fulfill, reject) {
+                                fulfill({});
+                            });
                         }
+                    }).catch(function (err) {
+                        return new Promise(function (fulfill, reject) {
+                            reject(err);
+                        });
                     }))
 
                 })
@@ -2167,15 +2157,17 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
             }).then(function (result) {
                 res.json({ mensaje: "¡Datos de empleados actualizados satisfactoriamente!" });
             }).catch(function (err) {
-                res.json({ hasError: true, message: err.stack });
+                if(err.stack){
+                res.json({ hasError: true, mensaje: err.stack });
+            }else{
+                res.json({ hasError: true, mensaje: err });
+            }
             });
         })
-    router.route('/empleados/empresa/:id_empresa/rolTurnos/excel/upload')
+    router.route('/empleados/empresa/:id_empresa/rolTurnos/tipo/:tipo/excel/upload')
         .post(function (req, res) {
             var arregloSucursales=[]
             var arregloGrupos=[]
-          
-               
             req.body.forEach(function (rol, index, array) {
                 var bandera = false
                 if (arregloSucursales.length > 0) {
@@ -2290,23 +2282,73 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                                                                                 }
                                                                             }).then(function (Grupo) {
                                                                                 if (Grupo) {
-                                                                                    RrhhEmpleadoRolTurno.create({
-                                                                                        /* id_empleado: req.params.id_empleado, */
-                                                                                        id_ficha: pacienteFound.empleadosFichas[0].id,
-                                                                                        id_campo: CentroCosto.id,
-                                                                                        fecha_inicio: rol.fecha_inicio,
-                                                                                        fecha_fin: rol.fecha_fin,
-                                                                                        tipo: rol.tipo,
-                                                                                        dias_trabajado: rol.dias_trabajo,
-                                                                                        dias_descanso: rol.dias_descanso,
-                                                                                        id_grupo: Grupo.id,
-                                                                                        eliminado: false
-                                                                                    }).then(function (empleadoRolTurnoCreado) {
-                                                                                        if (index === (array.length - 1)) {
-                                                                                            res.json({ mensaje: "Importacion satisfactoria!" })
+                                                                                    RrhhEmpleadoRolTurno.find({where:{
+                                                                                        id_ficha: pacienteFound.empleadosFichas[0].id,                                                                                        
+                                                                                        tipo:rol.tipo},
+                                                                                        limit:1,
+                                                                                        order:[['id','desc']]
+                                                                                    }).then(function(rolEncontrado){
+                                                                                        if(req.params.tipo!='false'){
+                                                                                            RrhhEmpleadoRolTurno.update({                                                                                   
+                                                                                                id_ficha: pacienteFound.empleadosFichas[0].id,
+                                                                                                id_campo: CentroCosto.id,
+                                                                                                fecha_inicio: rol.fecha_inicio,
+                                                                                                fecha_fin: rol.fecha_fin,
+                                                                                                tipo: rol.tipo,
+                                                                                                dias_trabajado: rol.dias_trabajo,
+                                                                                                dias_descanso: rol.dias_descanso,
+                                                                                                id_grupo: Grupo.id,
+                                                                                                eliminado: false},{where:{id:rolEncontrado.id}
+                                                                                            }).then(function (empleadoRolTurnoActualizado) {
+                                                                                                if (index === (array.length - 1)) {
+                                                                                                    res.json({ mensaje: "Registros actualizados satisfactoria!" })
+                                                                                                }
+                                                
+                                                                                            })
+                                                                                        }else{
+                                                                                            if(rolEncontrado){
+                                                                                            RrhhEmpleadoRolTurno.update({
+                                                                                                fecha_fin: rol.fecha_inicio
+                                                                                            },{
+                                                                                                where:{id:rolEncontrado.id}
+                                                                                            }).then(function (empleadoRolTurnoActualizado) {
+                                                                                                RrhhEmpleadoRolTurno.create({
+                                                                                                    id_ficha: pacienteFound.empleadosFichas[0].id,
+                                                                                                    id_campo: CentroCosto.id,
+                                                                                                    fecha_inicio: rol.fecha_inicio,
+                                                                                                    fecha_fin: rol.fecha_fin,
+                                                                                                    tipo: rol.tipo,
+                                                                                                    dias_trabajado: rol.dias_trabajo,
+                                                                                                    dias_descanso: rol.dias_descanso,
+                                                                                                    id_grupo: Grupo.id,
+                                                                                                    eliminado: false
+                                                                                                }).then(function (empleadoRolTurnoCreado) {
+                                                                                                    if (index === (array.length - 1)) {
+                                                                                                        res.json({ mensaje: "Nuevos registros creados satisfactoria!" })
+                                                                                                    }
+                                                    
+                                                                                                })
+                                                                                            })}else{
+                                                                                                RrhhEmpleadoRolTurno.create({
+                                                                                                    id_ficha: pacienteFound.empleadosFichas[0].id,
+                                                                                                    id_campo: CentroCosto.id,
+                                                                                                    fecha_inicio: rol.fecha_inicio,
+                                                                                                    fecha_fin: rol.fecha_fin,
+                                                                                                    tipo: rol.tipo,
+                                                                                                    dias_trabajado: rol.dias_trabajo,
+                                                                                                    dias_descanso: rol.dias_descanso,
+                                                                                                    id_grupo: Grupo.id,
+                                                                                                    eliminado: false
+                                                                                                }).then(function (empleadoRolTurnoCreado) {
+                                                                                                    if (index === (array.length - 1)) {
+                                                                                                        res.json({ mensaje: "Nuevos registros creados satisfactoria!" })
+                                                                                                    }
+                                                    
+                                                                                                })
+                                                                                            }                                                                                            
                                                                                         }
-                                        
                                                                                     })
+                                                                                    
                                                                                 }else{
                                                                                     if (index === (array.length - 1)) {
                                                                                         res.json({ mensaje: "Importacion satisfactoria!" })

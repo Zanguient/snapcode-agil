@@ -279,9 +279,10 @@
                                             <i class="fa  fa-cloud-download green"></i>
                                         </a>
                                         <div class="fileUpload boton-importar pull-right">
-                                            <span class="fileUpload-button ace-icon fa fa-cloud-upload blue"></span>
-                                            <input ng-disabled="!aplicacion.puede_crear" class="upload" type="file" custom-on-file-change="subirExcelRTurnoEmpleados"
-                                            />
+                                            <a ng-click="abrirDialogTipoImportacionRol()">
+                                                <span class="fileUpload-button ace-icon fa fa-cloud-upload blue"></span>
+                                            </a>
+
                                         </div>
                                     </div>
                                 </li>
@@ -7155,6 +7156,25 @@
 
     </div>
     <!-- ========= fin modal eliminar ropa  empleado ========= -->
+    <!-- ========= inicio  modal IMPORTAR ROL TURNO ========= -->
+    <div id="dialog-tipo-importacion-rol" title="¿Eliminación de Seguro?">
+        <p>
+            <span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>¿desea realizar una actualizacion del ultimo rol de turno o ingresar un nuevo registro?
+        </p>
+        <div>
+            <div class="fileUpload boton-importar pull-right" ng-click="actualizarImportacionRoles()">
+                <span class="fileUpload-button ace-icon fa fa-cloud-upload blue"></span>Actualizacion
+                <input ng-disabled="!aplicacion.puede_crear" class="upload" type="file" custom-on-file-change="subirExcelRTurnoEmpleados"
+                />
+            </div>
+            <div class="fileUpload boton-importar pull-right" ng-click="importarNuevosRoles()">
+                <span class="fileUpload-button ace-icon fa fa-cloud-upload blue"></span>Nuevo Registro
+                <input ng-disabled="!aplicacion.puede_crear" class="upload" type="file" custom-on-file-change="subirExcelRTurnoEmpleados"
+                />
+            </div>
+        </div>
+    </div>
+    <!-- ========= fin modal eliminar seguro empleado ========= -->
     <!--ver empleado-->
     <div id="dialog-rh-vista" class="modal wizard-posicion">
         <div class="modal-dialog">

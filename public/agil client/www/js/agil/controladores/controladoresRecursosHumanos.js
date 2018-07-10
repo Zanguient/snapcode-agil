@@ -95,6 +95,7 @@ angular.module('agil.controladores')
         $scope.idModalDesabilitarPasajero = 'dialog-motivo-desabilitar-viajero'
         $scope.idModalCerrarRolDeTurno = 'modal-cerrar-rol-de-turno'
         $scope.idModalHistorialGestionesVacaciones = 'dialog-historial-gestiones-vacaciones'
+        $scope.idModalTipoImportacionRol ='dialog-tipo-importacion-rol'
         $scope.$on('$viewContentLoaded', function () {
             // resaltarPestaña($location.path().substring(1));
             resaltarPestaña($location.path().substring(1));
@@ -116,7 +117,7 @@ angular.module('agil.controladores')
                 $scope.idModalEditarPrerequisito, $scope.idModalDialogConfirmacionEntregaAdelantado, $scope.IdEntregaPrerequisito, $scope.IdModalVerificarCuenta, $scope.idModalImpresionHojaVida, $scope.idModalNuevoAnticipoRegularTodos,
                 $scope.idModalTr3BancoMsc, $scope.idModalTr3BancoUnion, $scope.idModalHistorialTr3, $scope.IdModalVerificarCuentaRrhh, $scope.idModalConfirmarDesabilitacion, $scope.idModalReingresoEmpleado,
                 $scope.idModalHistorialBeneficios, $scope.idModalConfiguracionRopaDeTrabajo, $scope.idModalReporteRopaDeTrabajo, $scope.idmodalWizardContainerConfiguracionRopaTrabajo, $scope.idModalRopaTrabajo, $scope.idModalNuevaRopaTrabajo, $scope.idModalItemsNuevaRopaTrabajo,
-                $scope.idModalEliminarRopaTrabajo, $scope.idModalConceptoEdicion, $scope.idModalVisitaSalida, $scope.idModalDesabilitarPasajero, $scope.idModalCerrarRolDeTurno, $scope.idModalConductoresViaje, $scope.idModalHistorialGestionesVacaciones);
+                $scope.idModalEliminarRopaTrabajo, $scope.idModalConceptoEdicion, $scope.idModalVisitaSalida, $scope.idModalDesabilitarPasajero, $scope.idModalCerrarRolDeTurno, $scope.idModalConductoresViaje, $scope.idModalHistorialGestionesVacaciones,$scope.idModalTipoImportacionRol);
             $scope.buscarAplicacion($scope.usuario.aplicacionesUsuario, $location.path().substring(1));
             $scope.obtenerColumnasAplicacion()
             blockUI.stop();
@@ -250,6 +251,15 @@ angular.module('agil.controladores')
         $scope.cerrarDialogConductoresViaje = function () {
             $scope.cerrarPopup($scope.idModalConductoresViaje);
         }
+        $scope.abrirDialogTipoImportacionRol = function (roles) {
+            $scope.rolesTurno=roles
+            $scope.tipoImportacionRol=true           
+            $scope.abrirPopup($scope.idModalTipoImportacionRol);
+        }
+        $scope.cerrarDialogTipoImportacionRol = function () {
+            $scope.cerrarPopup($scope.idModalTipoImportacionRol);
+        }
+        
         $scope.abrirDialogHistorialGestionesVacaciones = function () {
             $scope.conductor = {};
             var filtroVacacion = {}
@@ -2211,10 +2221,10 @@ angular.module('agil.controladores')
                     do {
                         var rolturno = {};
                         rolturno.codigo = worksheet['A' + row] != undefined && worksheet['A' + row] != "" ? worksheet['A' + row].v.toString() : null;
-                        rolturno.tipo = worksheet['F' + row] != undefined && worksheet['F' + row] != "" ? (worksheet['F' + row].v.toString()=="Fijo")?1:0 : null;
+                        rolturno.tipo = worksheet['F' + row] != undefined && worksheet['F' + row] != "" ? (worksheet['F' + row].v.toString()=="Fijo")?true:false : null;
                         rolturno.campo = worksheet['G' + row] != undefined && worksheet['G' + row] != "" ? worksheet['G' + row].v.toString() : null;
-                        rolturno.fecha_inicio = worksheet['H' + row] != undefined && worksheet['H' + row] != "" ? new Date($scope.convertirFecha(worksheet['H' + row].w.toString())) : null;
-                        rolturno.fecha_fin = worksheet['I' + row] != undefined && worksheet['I' + row] != "" ? new Date($scope.convertirFecha(worksheet['I' + row].w.toString())) : null;
+                        rolturno.fecha_inicio = worksheet['H' + row] != undefined && worksheet['H' + row] != "" ? $scope.fecha_excel_angular(worksheet['H' + row].v.toString()) : null;
+                        rolturno.fecha_fin = worksheet['I' + row] != undefined && worksheet['I' + row] != "" ? $scope.fecha_excel_angular(worksheet['I' + row].v.toString()) : null;
                         rolturno.grupo = worksheet['J' + row] != undefined && worksheet['J' + row] != "" ? worksheet['J' + row].v.toString() : null;
                         rolturno.dias_trabajo = worksheet['K' + row] != undefined && worksheet['K' + row] != "" ? worksheet['K' + row].v.toString() : null;
                         rolturno.dias_descanso = worksheet['L' + row] != undefined && worksheet['L' + row] != "" ? worksheet['L' + row].v.toString() : null;
@@ -2224,14 +2234,20 @@ angular.module('agil.controladores')
                         i++;
 
                     } while (worksheet['A' + row] != undefined);
-                    $scope.guardarRolTurnoEmpleados(rolturnos);
+                    $scope.guardarRolTurnoEmpleados(rolturnos,$scope.tipoImportacionRol);
                 };
                 reader.readAsBinaryString(f);
                 //console.log('pacientes obtenidos')
             }
         }
-        $scope.guardarRolTurnoEmpleados=function(rolturnos){
-           var promesa = GuardarImportacionRolTurnoEmpleados(rolturnos,$scope.usuario.id_empresa)
+        $scope.actualizarImportacionRoles=function(){
+            $scope.tipoImportacionRol=true
+        }
+        $scope.importarNuevosRoles=function(){
+            $scope.tipoImportacionRol=false
+        }
+        $scope.guardarRolTurnoEmpleados=function(rolturnos,actualizacion){
+           var promesa = GuardarImportacionRolTurnoEmpleados(rolturnos,$scope.usuario.id_empresa,actualizacion)
            promesa.then(function(dato){
                $scope.mostrarMensaje(dato.mensaje)
                blockUI.stop();

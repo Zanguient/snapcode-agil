@@ -1205,16 +1205,16 @@ angular.module('agil.servicios')
     return res;
 }])
 .factory('ImportacionRolTurnoEmpleados', function ($resource) {
-    return $resource(restServer + "empleados/empresa/:id_empresa/rolTurnos/excel/upload", null ,
+    return $resource(restServer + "empleados/empresa/:id_empresa/rolTurnos/tipo/:tipo/excel/upload", null ,
         {
             'update': { method: 'PUT' }
         });
 })
 .factory('GuardarImportacionRolTurnoEmpleados', ['ImportacionRolTurnoEmpleados', '$q', function (ImportacionRolTurnoEmpleados, $q) {
-    var res = function (datos,idEmpresa) {
+    var res = function (datos,idEmpresa,tipo) {
         var delay = $q.defer();
         ImportacionRolTurnoEmpleados.save({
-        id_empresa:idEmpresa
+        id_empresa:idEmpresa,tipo:tipo
         },datos, function (entidad) {
             delay.resolve(entidad);
         }, function (error) {
