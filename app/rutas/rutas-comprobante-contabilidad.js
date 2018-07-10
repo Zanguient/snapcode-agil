@@ -557,12 +557,12 @@ module.exports = function (router, ComprobanteContabilidad, AsientoContabilidad,
 																				AsientoContabilidad.destroy({
 																					where: { id_comprobante: comprobanteEncontrado.id }
 																				}).then(function (AsientosEliminados) {
-																					/* comprobante.asientosContables.forEach(function(dato,index,array){
+																					comprobante.asientosContables.forEach(function(dato,index,array){
 																						ContabilidadCuenta.find({
 																							where: { codigo: dato.numero_cuenta, id_empresa: req.params.id_empresa }
 																						}).then(function (cuentaEncontrada) {
 																							dato.cuentaEncontrada=cuentaEncontrada
-																							if(index===(array.length-1)){ */
+																							if(index===(array.length-1)){
 																								for (var i = 0; i < comprobante.asientosContables.length; i++) {
 																									var asientoContable = comprobante.asientosContables[i];
 																									if (asientoContable.debe_bs == null) {
@@ -581,10 +581,7 @@ module.exports = function (router, ComprobanteContabilidad, AsientoContabilidad,
 																									if (asientoContable.centroCosto) {
 																										idCentroCosto = asientoContable.centroCosto.id
 																									}
-																									ContabilidadCuenta.find({
-																										where: { codigo: asientoContable.numero_cuenta, id_empresa: req.params.id_empresa }
-																									}).then(function (cuentaEncontrada) {
-																										asientoContable.cuentaEncontrada=cuentaEncontrada
+																									
 																										if (asientoContable.cuentaEncontrada) {
 																											AsientoContabilidad.create({
 																												id_comprobante: comprobanteEncontrado.id,
@@ -632,11 +629,11 @@ module.exports = function (router, ComprobanteContabilidad, AsientoContabilidad,
 																												}
 																											}
 																										}
-																									})
+																									
 																								}
-																						/* 	}
+																							}
 																						})
-																					}) */
+																					})
 																					
 																				})
 																			}
@@ -724,12 +721,12 @@ module.exports = function (router, ComprobanteContabilidad, AsientoContabilidad,
 													}, {
 															where: { id: SucursalEncontrada.id }
 														}).then(function (sucursalUpdate) {
-															/* comprobante.asientosContables.forEach(function(dato,index,array){
+															comprobante.asientosContables.forEach(function(dato,index,array){
 																ContabilidadCuenta.find({
 																	where: { codigo: dato.numero_cuenta, id_empresa: req.params.id_empresa }
 																}).then(function (cuentaEncontrada) {
 																	dato.cuentaEncontrada=cuentaEncontrada
-																	if(index===(array.length-1)){ */
+																	if(index===(array.length-1)){
 																		for (var i = 0; i < comprobante.asientosContables.length; i++) {
 																			var asientoContable = comprobante.asientosContables[i];
 																			if (asientoContable.debe_bs == null) {
@@ -748,10 +745,9 @@ module.exports = function (router, ComprobanteContabilidad, AsientoContabilidad,
 																			if (asientoContable.centroCosto) {
 																				idCentroCosto = asientoContable.centroCosto.id
 																			}
-																			ContabilidadCuenta.find({
+																			/* ContabilidadCuenta.find({
 																				where: { codigo: asientoContable.numero_cuenta, id_empresa: req.params.id_empresa }
-																			}).then(function (cuentaEncontrada) {
-																				asientoContable.cuentaEncontrada=cuentaEncontrada
+																			}).then(function (cuentaEncontrada) { */
 																				if (asientoContable.cuentaEncontrada) {
 																					AsientoContabilidad.create({
 																						id_comprobante: ComprobanteCreado.id,
@@ -802,11 +798,11 @@ module.exports = function (router, ComprobanteContabilidad, AsientoContabilidad,
 																						}
 																					}
 																				}
-																			})
+																			/* }) */
 																		}
-																/* 	}
+																	}
 																})
-															}) */
+															})
 															
 														})
 												})

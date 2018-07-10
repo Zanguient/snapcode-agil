@@ -361,7 +361,7 @@ angular.module('agil.controladores')
                         comprobante.importe=0
                         comprobante.gloza = worksheet['E' + row] != undefined && worksheet['E' + row] != "" ? worksheet['E' + row].v.toString() : null;
                         do {
-                            var asiento = {}
+                            var asiento = {cuentaEncontrada:{}}
                             asiento.numero_cuenta = worksheet['F' + row2] != undefined && worksheet['F' + row2] != "" ? worksheet['F' + row2].v.toString() : null;
                             asiento.codigo = worksheet['G' + row2] != undefined && worksheet['G' + row2] != "" ? worksheet['G' + row2].v.toString() : null;
                             asiento.gloza = worksheet['H' + row2] != undefined && worksheet['H' + row2] != "" ? worksheet['H' + row2].v.toString() : null;
