@@ -354,7 +354,7 @@ angular.module('agil.controladores')
                         tipo = comprobante.tipo_comprobante
                         comprobante.codigo = worksheet['B' + row] != undefined && worksheet['B' + row] != "" ? worksheet['B' + row].v.toString() : null;
                         codigo = comprobante.codigo
-                        comprobante.fecha = worksheet['C' + row] != undefined && worksheet['C' + row] != "" ? new Date($scope.convertirFecha(worksheet['C' + row].w.toString())) : null;
+                        comprobante.fecha = worksheet['C' + row] != undefined && worksheet['C' + row] != "" ? new Date($scope.fecha_excel_angular(worksheet['C' + row].v.toString())) : null;
                         comprobante.fechaActual=new Date()
                         comprobante.sucursal = worksheet['D' + row] != undefined && worksheet['D' + row] != "" ? worksheet['D' + row].v.toString() : null;
                         fecha = worksheet['C' + row] != undefined && worksheet['C' + row] != "" ? $scope.fecha_excel_angular(worksheet['C' + row].v.toString()) : null;
