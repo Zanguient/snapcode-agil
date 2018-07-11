@@ -201,7 +201,7 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 					{ model: Tipo, as: 'tipo' },
 					{ model: Clase, as: 'clase' }]
 				}],
-				order: [[{ model: Movimiento, as: 'movimiento' }, 'id', 'ASC']]
+				order: [[{ model: Movimiento, as: 'movimiento' }, 'fecha', 'ASC']]
 			}).then(function (productos) {
 				res.json(productos);
 			});
