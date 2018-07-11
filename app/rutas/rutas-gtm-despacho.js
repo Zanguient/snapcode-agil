@@ -338,8 +338,8 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, forEach, j
 						saldo: parseFloat(detalle_despacho.cantidad),
 						despachado: false,
 						eliminado: false,
-						latitud: detalle_despacho.latitud,
-						longitud: detalle_despacho.longitud,
+						latitud: parseFloat(detalle_despacho.latitud),
+						longitud: parseFloat(detalle_despacho.longitud),
 						fecha: new Date(req.body.fecha.split("/")[2], req.body.fecha.split("/")[1] - 1, req.body.fecha.split("/")[0]),
 						servicio_transporte: (detalle_despacho.servicio_transporte ? parseFloat(detalle_despacho.servicio_transporte) * parseFloat(detalle_despacho.cantidad) : 0)
 					}).then(function (detalleDespachoCreado) {
