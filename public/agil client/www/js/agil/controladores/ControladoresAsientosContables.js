@@ -386,7 +386,7 @@ angular.module('agil.controladores')
 
                         if (comprobantes.length == 0) {
                             comprobantes.push(comprobante);
-                        } else if (comprobantes[comprobantes.length - 1].codigo != codigo) {
+                        } else if (comprobantes[comprobantes.length - 1].codigo != codigo || comprobantes[comprobantes.length - 1].tipo_comprobante != tipo) {
                             comprobantes.push(comprobante);
                         }
                         row++;
