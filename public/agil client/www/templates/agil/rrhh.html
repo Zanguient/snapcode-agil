@@ -5575,7 +5575,7 @@
         </div>
         <div class="modal-body">
             <div class="row">
-                <form ng-submit="obtenerlistaRolTurnoEmpresa(filtroRol)">
+                <form ng-submit="paginator.getSearch(paginator.search,filtroRol,null)">
                     <div class="form-group col-sm-3">
                         <label for="nombres">Desde</label>
                         <input type="text" ng-update-hidden data-date-format="dd/mm/yyyy" class="form-control date-picker" ng-model="filtroRol.inicio"
@@ -5595,7 +5595,14 @@
                             </select>
                         </div>
                     </div>
-                    <div class="form-group col-sm-4">
+                    <div class="form-group col-sm-2">
+                        <label for="ap-paterno">Campamento</label>
+                        <select  id="campo-rol" class="form-control" name="centroDeCostos" ng-options="centroCosto.id as centroCosto.nombre for centroCosto in centrosDeCostos | filter:{habilitado:true} track by centroCosto.id"
+                            ng-model="filtroRol.campo">
+                            <option value="">--seleccionar--</option>
+                        </select>
+                    </div>
+                    <div class="form-group col-sm-2">
                         <div class="buttons-align">
                             <button type="submit" class="btn btn-primary btn-sm">
                                 <i class=" fa fa-search-plus align-top "></i>
@@ -5641,7 +5648,9 @@
 
                     </tbody>
                 </table>
+              
             </div>
+            <div class="row" ng-include src="'/templates/gral/paginator.html'"></div>
         </div>
         <div class="modal-footer wizard-actions">
             <button type="button" class="btn btn-danger btn-sm">

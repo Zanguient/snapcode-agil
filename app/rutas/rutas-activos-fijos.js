@@ -6,7 +6,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, ActivosFijos, 
             var year = new Date().getFullYear()
             var condicionProducto = { id_empresa: req.params.id_empresa };
             var condicionValores = { eliminado: false, mes: mes, anio: year }
-            var condicionConfiguracion = {id_empresa: req.params.id_empresa}
+            var condicionConfiguracion = { id_empresa: req.params.id_empresa }
             if (req.params.activo !== "0") {
                 condicionProducto.nombre = { $like: req.params.activo + '%' }
             }
@@ -25,7 +25,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, ActivosFijos, 
             if (req.params.codigo !== "0") {
                 condicionProducto.codigo = req.params.codigo
             }
-            ActivosFijos.findAll({
+            ActivosFijos.findAndCountAll({
                 where: {
                     id_empresa: req.params.id_empresa
                 },
@@ -35,8 +35,23 @@ module.exports = function (router, sequelize, Sequelize, Usuario, ActivosFijos, 
                     include: [{ model: Inventario, as: 'inventarios' },
                     { model: Clase, as: 'subgrupo', include: [{ model: ActivosFijosConfiguracion, as: 'configuracion', where: condicionConfiguracion, required: false }] }], where: condicionProducto
                 }]
-            }).then(function (activos) {
-                res.json({ activos: activos });
+            }).then(function (activosCount) {
+                ActivosFijos.findAll({
+                    offset: (req.params.items_pagina * (req.params.pagina - 1)), limit: req.params.items_pagina,
+                    where: {
+                        id_empresa: req.params.id_empresa
+                    },
+                    include: [{ model: ActivosFijosValores, as: 'valores', where: condicionValores },
+                    {
+                        model: Producto, as: 'activo', attributes: ['nombre', 'codigo', 'id_subgrupo'],
+                        include: [{ model: Inventario, as: 'inventarios' },
+                        { model: Clase, as: 'subgrupo', include: [{ model: ActivosFijosConfiguracion, as: 'configuracion', where: condicionConfiguracion, required: false }] }], where: condicionProducto
+                    }]
+                }).then(function (activos) {
+                    res.json({ activos: activos, paginas: Math.ceil(activosCount.count / req.params.items_pagina) });
+                }).catch(function (err) {
+                    res.json({ mensaje: err.stack, hasErr: true });
+                });
             }).catch(function (err) {
                 res.json({ mensaje: err.stack, hasErr: true });
             });
@@ -188,10 +203,10 @@ module.exports = function (router, sequelize, Sequelize, Usuario, ActivosFijos, 
                         return ActivosFijos.findAll({
                             where: {
                                 id_empresa: req.params.id_empresa,
-                                $or: [{ ultima_actualizacion: { $between: [new Date((new Date().getMonth() > 0 ? new Date().getFullYear(): new Date().getFullYear() -1), (new Date().getMonth() > 0 ? new Date().getMonth() -1: 11), 1, 0, 0), new Date(new Date().getFullYear(), (new Date().getMonth()), 0, 23, 59, 59, 999)] } }, { ultima_actualizacion: { $eq: null } }],
-                                fecha_ingreso: { $notBetween: [new Date(new Date().getFullYear(), new Date().getMonth(), 1, 0, 0, 0, 0), new Date(new Date().getFullYear(), new Date().getMonth()+1, 0, 23, 59, 59, 999)] }
+                                $or: [{ ultima_actualizacion: { $between: [new Date((new Date().getMonth() > 0 ? new Date().getFullYear() : new Date().getFullYear() - 1), (new Date().getMonth() > 0 ? new Date().getMonth() - 1 : 11), 1, 0, 0), new Date(new Date().getFullYear(), (new Date().getMonth()), 0, 23, 59, 59, 999)] } }, { ultima_actualizacion: { $eq: null } }],
+                                fecha_ingreso: { $notBetween: [new Date(new Date().getFullYear(), new Date().getMonth(), 1, 0, 0, 0, 0), new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0, 23, 59, 59, 999)] }
                             },
-                            include: [{ model: ActivosFijosValores, as: 'valores', where: { anio: new Date().getFullYear(), $or: [{ mes: (new Date().getMonth()) }, { mes: (new Date().getMonth()+1) }] } }, { model: Producto, as: 'activo', attributes: ['nombre', 'codigo', 'id_subgrupo'], include: [{ model: Inventario, as: 'inventarios' }, { model: Clase, as: 'subgrupo', include: [{ model: ActivosFijosConfiguracion, as: 'configuracion', required: false }] }] }],
+                            include: [{ model: ActivosFijosValores, as: 'valores', where: { anio: new Date().getFullYear(), $or: [{ mes: (new Date().getMonth()) }, { mes: (new Date().getMonth() + 1) }] } }, { model: Producto, as: 'activo', attributes: ['nombre', 'codigo', 'id_subgrupo'], include: [{ model: Inventario, as: 'inventarios' }, { model: Clase, as: 'subgrupo', include: [{ model: ActivosFijosConfiguracion, as: 'configuracion', required: false }] }] }],
                             transaction: t
                         }).then(function (activosFijos) {
                             if (activosFijos.length > 0) {
@@ -200,7 +215,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, ActivosFijos, 
                                 }
                             } else {
                                 var po = new Promise(function (fulfill, reject) {
-                                    fulfill({mensaje:'No hay activos fijos para actualizar.', normal: true})
+                                    fulfill({ mensaje: 'No hay activos fijos para actualizar.', normal: true })
                                 })
                                 promesas.push(po)
                             }
@@ -217,18 +232,18 @@ module.exports = function (router, sequelize, Sequelize, Usuario, ActivosFijos, 
                             if (result.length > 0) {
                                 result.forEach(function (obj) {
                                     if (obj.err) {
-                                        mensaje+= '|' +obj.mensaje + ' | ';
+                                        mensaje += '|' + obj.mensaje + ' | ';
                                         err = true;
                                     }
                                 })
                                 if (err) {
                                     res.json({ mensaje: mensaje, hasErr: true })
-                                }else{
+                                } else {
 
                                 }
-                                res.json({mensaje: 'No es necesario actualizar los activos fijos'})
-                            }else{
-                                res.json({mensaje: 'No es necesario actualizar los activos fijos'})
+                                res.json({ mensaje: 'No es necesario actualizar los activos fijos' })
+                            } else {
+                                res.json({ mensaje: 'No es necesario actualizar los activos fijos' })
                             }
                         }
                     }).catch(function (err) {
@@ -249,9 +264,9 @@ module.exports = function (router, sequelize, Sequelize, Usuario, ActivosFijos, 
         } else {
             return new Promise(function (fulfill, reject) {
                 if (activo.valores.length > 2) {
-                    reject({mensaje: 'El activo fijo con código "' + activo.activo.codigo + '" contiene datos en conflicto. No se puede actualizar la depreciación.', err: true});
-                } else if(activo.valores.length == 2) {
-                    fulfill({mensaje: 'El activo fijo con código "' + activo.activo.codigo + '" ya fué depreciado el mes actual.', normal: true});
+                    reject({ mensaje: 'El activo fijo con código "' + activo.activo.codigo + '" contiene datos en conflicto. No se puede actualizar la depreciación.', err: true });
+                } else if (activo.valores.length == 2) {
+                    fulfill({ mensaje: 'El activo fijo con código "' + activo.activo.codigo + '" ya fué depreciado el mes actual.', normal: true });
                 }
             });
         }
@@ -273,7 +288,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, ActivosFijos, 
                 valor_neto: ((((valorAnterior.dataValues.valor / ufv1) * ufv2) - valorAnterior.dataValues.valor) + valorAnterior.dataValues.valor) - ((valorAnterior.dataValues.total_depreciacion_acumulada + (((valorAnterior.dataValues.depreciacion_acumulada / ufv1) * ufv2) - valorAnterior.dataValues.total_depreciacion_acumulada)) + (((((valorAnterior.dataValues.valor / ufv1) * ufv2) - valorAnterior.dataValues.valor) + valorAnterior.dataValues.valor) / activo.activo.subgrupo.configuracion.factor / 12)),
                 eliminado: false
             }, { transaction: t }).then(function (valorCreado) {
-                var fechaActualizacion = new Date(year, mes-1, new Date().getDate(), 0,0,0,0)
+                var fechaActualizacion = new Date(year, mes - 1, new Date().getDate(), 0, 0, 0, 0)
                 return ActivosFijos.update({
                     ultima_actualizacion: fechaActualizacion
                 }, {

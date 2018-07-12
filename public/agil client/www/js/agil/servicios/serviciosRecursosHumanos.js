@@ -1000,15 +1000,26 @@ angular.module('agil.servicios')
     return res;
 }])
 .factory('FiltroRolTurno', function ($resource) {
-    return $resource(restServer + "recursos-humanos/empresa/:id_empresa/rolTurno/inicio/:inicio/fin/:fin/grupo/:grupo",{ id_empleado: '@id_empleado' },
+    return $resource(restServer + "recursos-humanos/empresa/:id_empresa/rolTurno/inicio/:inicio/fin/:fin/grupo/:grupo/pagina/:pagina/items/:items_pagina/campo/:campo/texto_busqueda/:texto_busqueda/direccion/:direccion/columna/:columna",{ id_empleado: '@id_empleado' },
         {
             'update': { method: 'PUT' }
         });
 })
 .factory('ListaRolTurnosEmpresa', ['FiltroRolTurno', '$q', function (FiltroRolTurno, $q) {
-    var res = function (idEmpresa,filtro) {
+    var res = function (paginator) {
         var delay = $q.defer();
-        FiltroRolTurno.get({ id_empresa: idEmpresa,inicio:filtro.inicio,fin:filtro.fin,grupo:filtro.grupo}, function (entidad) {
+        FiltroRolTurno.get({    
+             grupo:paginator.filter.grupo,
+             campo:paginator.filter.campo,
+             id_empresa: paginator.filter.empresa,
+             inicio: paginator.filter.inicio,
+             fin: paginator.filter.fin,                       
+             pagina: paginator.currentPage,
+             items_pagina: paginator.itemsPerPage,
+             texto_busqueda: paginator.search,
+             columna: paginator.column,
+             direccion: paginator.direction,
+            }, function (entidad) {
             delay.resolve(entidad);
         }, function (error) {
             delay.reject(error);

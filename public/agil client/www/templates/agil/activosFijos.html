@@ -114,11 +114,6 @@
         </div>
         <div class="table-header">
             Cuadro de activos fijos
-            <label class="pull-left" data-rel="tooltip" tooltip-placement="top" uib-tooltip="Configuración">
-                <a class="blue" ng-click="abrirConfiguracionActivos()">
-                    <i class="ace-icon fa fa-cogs text-white bigger-130"></i>
-                </a>
-            </label>
             <style type="text/css" scoped>
                 .dropdown-menu {
                     min-width: 400px !important;
@@ -126,6 +121,11 @@
             </style>
             <label class="pull-right">
                 <div class="col-xs-10" ng-include src="'/templates/gral/fields-viewer.html'"></div>
+            </label>
+            <label class="pull-right" data-rel="tooltip" tooltip-placement="top" uib-tooltip="Configuración">
+                <a class="blue" ng-click="abrirConfiguracionActivos()">
+                    <i class="ace-icon fa fa-cogs text-white bigger-130"></i>
+                </a>
             </label>
         </div>
         <div id="tabla-activos-fijos" class="dataTables_wrapper form-inline no-footer">
@@ -160,7 +160,7 @@
                         <th ng-if="fieldViewer.getConfiguration().valor_neto.show">Valor Net.</th>
                         <th ng-if="fieldViewer.getConfiguration().vida_util.show">Vida U.</th>
                         <th ng-if="fieldViewer.getConfiguration().vida_restante.show">Vida R.</th>
-                        <th ng-if="fieldViewer.getConfiguration().revaluado.show">revaluó</th>
+                        <th ng-if="fieldViewer.getConfiguration().revaluado.show">Revaluó</th>
                         <th>Acciones</th>
                     </tr>
                 </thead>
@@ -192,8 +192,8 @@
                         <td ng-if="fieldViewer.getConfiguration().depreciacion_mes.show">{{activoFijo.valores[0].depreciacion | number:2}}</td>
                         <td ng-if="fieldViewer.getConfiguration().total_depreciacion.show">{{activoFijo.valores[0].total_depreciacion_acumulada | number:2}}</td>
                         <td ng-if="fieldViewer.getConfiguration().valor_neto.show">{{activoFijo.valores[0].valor_neto | number:2}}</td>
-                        <td ng-if="fieldViewer.getConfiguration().vida_util.show">{{activoFijo.vida_util}}</td>
-                        <td ng-if="fieldViewer.getConfiguration().vida_restante.show">{{activoFijo.vida_restante}}</td>
+                        <td ng-if="fieldViewer.getConfiguration().vida_util.show">{{activoFijo.vida_util ? activoFijo.vida_util : 'Sin configurar'}}</td>
+                        <td ng-if="fieldViewer.getConfiguration().vida_restante.show">{{activoFijo.vida_restante ? activoFijo.vida_restante : 'Sin configurar'}}</td>
                         <td ng-if="fieldViewer.getConfiguration().revaluado.show">{{activoFijo.revaluado ? 'Sí' : 'No'}}</td>
                         <td>
                             <a class="orange" href="javascript:void(0)" e-disabled="!aplicacion.puede_modificar" ng-click="abrirDialogRevaluarActivo(activoFijo)"

@@ -156,11 +156,11 @@ angular.module('agil.controladores')
         };
 
         $scope.obtenerPaginadorActivos = function () {
-            $scope.paginatorProductosAsignados = Paginator();
-            $scope.paginatorProductosAsignados.column = "nombre";
-            $scope.paginatorProductosAsignados.direccion = "asc"
-            $scope.paginatorProductosAsignados.callBack = $scope.buscarActivos;
-            $scope.paginatorProductosAsignados.getSearch("", null, null);
+            $scope.paginator = Paginator();
+            $scope.paginator.column = "nombre";
+            $scope.paginator.direccion = "asc"
+            $scope.paginator.callBack = $scope.buscarActivos;
+            $scope.paginator.getSearch("", null, null);
         };
 
         $scope.filtrarFiltro = function (filtro, _, __) {
@@ -193,14 +193,15 @@ angular.module('agil.controladores')
         $scope.buscarActivos = function () {
             blockUI.start()
             $scope.filtro = $scope.filtrarFiltro($scope.filtro, true)
-            $scope.paginatorProductosAsignados.filter = $scope.filtro
-            var prom = ActivosFijosEmpresa($scope.usuarioSesion.id_empresa, $scope.paginatorProductosAsignados)
+            $scope.paginator.filter = $scope.filtro
+            var prom = ActivosFijosEmpresa($scope.usuarioSesion.id_empresa, $scope.paginator)
             prom.then(function (res) {
                 if (res.hasErr) {
                     $scope.mostrarMensaje(res.mensaje);
                 } else {
                     if (res.activos.length > 0) {
                         $scope.activosFijos = res.activos;
+                        $scope.paginator.setPages(res.paginas)
                         var indx = -1
                         if ($scope.configuracionActivosFijos.length > 0) {
                             $scope.activosFijos.forEach(function (activo, i) {

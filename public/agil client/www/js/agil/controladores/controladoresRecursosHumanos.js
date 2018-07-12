@@ -1751,16 +1751,27 @@ angular.module('agil.controladores')
             $scope.cerrarPopup($scope.idModalReporteBajasMedicas);
         }
         $scope.abrirDialogReporteRolTurnos = function () {
-            $scope.filtroRol = { inicio: 0, fin: 0, grupo: 0 }
-            $scope.obtenerlistaRolTurnoCal()
-            $scope.obtenerlistaRolTurnoEmpresa($scope.filtroRol)
+        /*     $scope.filtroRol = { inicio: 0, fin: 0, grupo: 0 } */
+            $scope.paginator = Paginator();
+            $scope.paginator.column = "id";
+            $scope.paginator.direccion = "asc";
+            $scope.filtroRol = {
+                empresa: $scope.usuario.id_empresa,
+                inicio: "",
+                fin: "",
+                grupo: "",    
+                campo:""          
+            }
+            $scope.paginator.callBack = $scope.obtenerlistaRolTurnoEmpresa;
+            $scope.paginator.getSearch("",  $scope.filtroRol, null);
+            /* $scope.obtenerlistaRolTurnoEmpresa($scope.filtroRol) */
             $scope.abrirPopup($scope.idModalReporteRolTurnos);
         }
         $scope.cerrarDialogReporteRolTurnos = function () {
             $scope.cerrarPopup($scope.idModalReporteRolTurnos);
         }
         $scope.abrirDialogReporteTurnosDetallado = function () {
-
+            $scope.obtenerlistaRolTurnoCal()
             $scope.abrirPopup($scope.idModalReporteTurnosDetallado);
         }
         $scope.cambiarFecha = function (filtro) {
@@ -4921,24 +4932,11 @@ angular.module('agil.controladores')
                 blockUI.stop()
             })
         }
-        $scope.obtenerlistaRolTurnoEmpresa = function (filtro) {
-            if (filtro.inicio != 0) {
-                filtro.inicio = new Date($scope.convertirFecha(filtro.inicio))
-                filtro.fin = new Date($scope.convertirFecha(filtro.fin))
-            } else if (filtro.inicio == "") {
-                filtro.inicio = 0
-                filtro.fin = 0
-            }
-            var promesa = ListaRolTurnosEmpresa($scope.usuario.id_empresa, filtro)
+        $scope.obtenerlistaRolTurnoEmpresa = function () {          
+            var promesa = ListaRolTurnosEmpresa($scope.paginator)
             promesa.then(function (datos) {
-                $scope.listaRolTurnoFiltro = datos.rolesTurno
-                if (filtro.inicio == 0) {
-                    filtro.inicio = ""
-                    filtro.fin = ""
-                } else {
-                    filtro.inicio = $scope.fechaATexto(filtro.inicio)
-                    filtro.fin = $scope.fechaATexto(filtro.fin)
-                }
+                $scope.paginator.setPages(datos.paginas);
+                $scope.listaRolTurnoFiltro = datos.rolesTurno              
             })
         }
         //fin rol turno
