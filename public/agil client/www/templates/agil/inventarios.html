@@ -272,7 +272,7 @@
 												<input ng-update-hidden class="form-control date-picker" type="text" data-date-format="dd/mm/yyyy" ng-model="producto.fechaVencimientoTexto"
 												 placeholder="Ingrese la fecha" />
 											</td>
-											<td>
+											<td ng-if="usuario.empresa.usar_vencimientos">
 												<input type="text" ng-model="producto.lote" class="col-xs-12" />
 											</td>
 											<td>

@@ -33,7 +33,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, ActivosFijos, 
                 {
                     model: Producto, as: 'activo', attributes: ['nombre', 'codigo', 'id_subgrupo'],
                     include: [{ model: Inventario, as: 'inventarios' },
-                    { model: Clase, as: 'subgrupo', include: [{ model: ActivosFijosConfiguracion, as: 'configuracion', where: condicionConfiguracion }] }], where: condicionProducto
+                    { model: Clase, as: 'subgrupo', include: [{ model: ActivosFijosConfiguracion, as: 'configuracion', where: condicionConfiguracion, required: false }] }], where: condicionProducto
                 }]
             }).then(function (activos) {
                 res.json({ activos: activos });
