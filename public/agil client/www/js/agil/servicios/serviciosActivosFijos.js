@@ -1,6 +1,6 @@
 angular.module('agil.servicios')
     .factory('ActivosPaginador', function ($resource) {
-        return $resource(restServer + "activos/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/mes/:mes/year/:anio/codigo/:codigo/estado/:estado/vida/:vida_util");
+        return $resource(restServer + "activos/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/subgrupo/:subgrupo/mes/:mes/year/:anio/codigo/:codigo/activo/:activo/vida/:vida_util");
     })
 
     .factory('ActivosFijosEmpresa', ['ActivosPaginador', '$q', function (ActivosPaginador, $q) {
@@ -11,11 +11,11 @@ angular.module('agil.servicios')
                 pagina: paginador.currentPage,
                 items_pagina: paginador.itemsPerPage,
                 texto_busqueda: paginador.search,
-                mes: paginador.filter.mes,
-                anio: paginador.filter.anio,
-                subGrupo: paginador.filter.subGrupo,
+                mes: paginador.filter.mes.id,
+                anio: paginador.filter.anio.id,
+                subgrupo: paginador.filter.subgrupo.id ? paginador.filter.subgrupo.id : 0 ,
                 codigo: paginador.filter.codigo,
-                estado: paginador.filter.estado,
+                activo: paginador.filter.activo,
                 vida_util: paginador.filter.vida_util
             }, function (entidades) {
                 delay.resolve(entidades);

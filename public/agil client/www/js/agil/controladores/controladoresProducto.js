@@ -38,10 +38,8 @@ angular.module('agil.controladores')
 					$scope.mostrarMensaje('Parece que el usuario actual no cuenta con grupos de productos.')
 				}
 			}).catch(function (err) {
-				blockUI.stop()
+				
 				$scope.gruposProducto = []
-				var mensaje = (err.stack !== undefined && err.stack !== null) ? err.stack : (err.data !== undefined && err.data !== null && err.data !== "") ? err.data : 'Error: Se perdio la conexión.'
-				$scope.mostrarMensaje(mensaje)
 			})
 		}
 
@@ -823,7 +821,6 @@ angular.module('agil.controladores')
 			var promesa = ProductosPaginador($scope.usuario.id_empresa, $scope.paginator, $scope.usuario.id);
 			promesa.then(function (dato) {
 				if (dato.hasErr) {
-					blockUI.stop();
 					$scope.mostrarMensaje(dato.mensaje)
 				} else {
 					$scope.paginator.setPages(dato.paginas);
@@ -832,12 +829,12 @@ angular.module('agil.controladores')
 						$scope.productos[i].publicar_panel = $scope.productos[i].publicar_panel == 1 ? true : false;
 						$scope.productos[i].activar_inventario = $scope.productos[i].activar_inventario == 1 ? true : false;
 					}
-					blockUI.stop();
 				}
-			}).catch(function (err) {
 				blockUI.stop();
+			}).catch(function (err) {
 				var memo = (err.stack !== undefined && err.stack !== null && err.stack !== "") ? err.stack : (err.data !== null && err.data !== undefined & err.data !== "") ? err.data : "Error: se perdio la conexión con el servidor."
 				$scope.mostrarMensaje(memo)
+				blockUI.stop();
 			})
 		}
 

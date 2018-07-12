@@ -113,6 +113,9 @@ angular.module('agil.controladores')
 				$scope.pedido = {};
 			}
 			$scope.pedido.proveedor = proveedor;
+			$scope.productosAsignadosProveedor = []
+			$scope.paginatorProductosAsignados.setPages(1);
+
 			if (modal !== undefined) {
 				$scope.cerrarModalBusquedaProveedor();
 			}
@@ -609,6 +612,7 @@ angular.module('agil.controladores')
 					columns.push(reporteEx[i].total.toFixed(2));
 					data.push(columns);
 				}
+				blockUI.stop();
 			} else {
 				var cabecera = ["Nro.", "Sucursal", "proveedor", "Hora-fecha", "Estado"];
 				var data = [];
@@ -625,9 +629,11 @@ angular.module('agil.controladores')
 					// columns.push(($scope.listaPedidos[i].activo ? 'Abierto' : 'Cerrado'));
 					data.push(columns);
 				}
+				blockUI.stop();
 			}
 			if (pdf) {
 				$scope.reportePdf(data);
+				blockUI.stop();
 			} else {
 				var ws_name = "SheetJS";
 				var wb = new Workbook();
@@ -1174,6 +1180,7 @@ angular.module('agil.controladores')
 			}
 			if ($scope.pedido === undefined) {
 				$scope.pedido = {};
+				blockUI.stop();
 			} else {
 				if ($scope.pedido.proveedor) {
 					$scope.paginatorProductosAsignados.filter = $scope.productosAsignadosPorveedor.grupo ? $scope.productosAsignadosPorveedor.grupo : { id: 0 };

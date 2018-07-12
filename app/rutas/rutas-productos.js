@@ -57,7 +57,7 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 						ActivosFijosValores.create({
 							id_usuario: req.body.usuario,
 							id_activo: ACtivoCreado.dataValues.id,
-							mes: (new Date(req.body.fecha_ingreso.split('/').reverse()).getMonth()),
+							mes: (new Date(req.body.fecha_ingreso.split('/').reverse()).getMonth()+1),
 							anio: (new Date(req.body.fecha_ingreso.split('/').reverse()).getFullYear()),
 							valor: req.body.valor_actualizado,
 							incremento_actualizacion: 0,
@@ -65,9 +65,9 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 							depreciacion_acumulada: req.body.depreciacion_acumulada,
 							incremento_actualizacion_depreciacion_acumulada: 0,
 							depreciacion_acumulada_actualizada: req.body.depreciacion_acumulada,
-							depreciacion: (req.body.depreciacion_acumulada/10)/12,
-							total_depreciacion_acumulada: req.body.depreciacion_acumulada + ((req.body.depreciacion_acumulada/10)/12),
-							valor_neto: req.body.valor_actualizado - req.body.depreciacion_acumulada + ((req.body.depreciacion_acumulada/10)/12),
+							depreciacion: 0,//(req.body.depreciacion_acumulada/10)/12,
+							total_depreciacion_acumulada: req.body.depreciacion_acumulada,
+							valor_neto: req.body.valor_actualizado,
 							eliminado: false
 						});
 					})
@@ -798,11 +798,22 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 			});
 		});
 
-	router.route('/producto/empresa/:id_empresa/siguiente-codigo')
+		router.route('/producto/empresa/:id_empresa/siguiente-codigo')
 		.get(function (req, res) {
 			sequelize.query("SELECT MAX(CAST(SUBSTRING(codigo, 3, 5) AS UNSIGNED)) as ultimo_codigo FROM agil_producto where empresa=" + req.params.id_empresa, { type: sequelize.QueryTypes.SELECT })
 				.then(function (dato) {
-					res.json(dato[0]);
+					if (dato[0].ultimo_codigo = 99999) {
+						sequelize.query("SELECT MAX(CAST(SUBSTRING(codigo, 3, 6) AS UNSIGNED)) as ultimo_codigo FROM agil_producto where empresa=" + req.params.id_empresa + " and SUBSTRING(codigo,1,2) = 'FC'", { type: sequelize.QueryTypes.SELECT })
+							.then(function (dato2) {
+								if (dato[0].ultimo_codigo < dato2[0].ultimo_codigo) {
+									res.json(dato2[0]);
+								} else {
+									res.json(dato[0]);
+								}
+							});
+					} else {
+						res.json(dato[0]);
+					}
 				});
 		});
 

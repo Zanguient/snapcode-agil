@@ -414,16 +414,12 @@ angular.module('agil.controladores')
 			promesa.then(function (solicitudes) {
 				$scope.paginator.setPages(solicitudes.paginas);
 				$scope.solicitudesOperaciones = solicitudes.solicitudes
-				$scope.solicitudesOperaciones
 				blockUI.stop()
-			}, function (error) {
-				setTimeout(function () {
-					$scope.$apply(function () {
-						$scope.mostrarMensaje(err.stack ? err.stack : err.message)
-					});
-				}, 600)
-				blockUI.stop()
-			})
+			}).catch(function (err) {
+                blockUI.stop();
+                var memo = (err.stack !== undefined && err.stack !== null && err.stack !== "") ? err.stack : (err.data !== null && err.data !== undefined & err.data !== "") ? err.data : "Error: se perdio la conexión con el servidor.";
+                $scope.mostrarMensaje(memo);
+            })
 		}
 
 		$scope.obtenerSucursales = function () {
@@ -802,6 +798,7 @@ angular.module('agil.controladores')
 				})
 			} else {
 				$scope.mostrarMensaje('Complete los campos requeridos')
+				blockUI.stop();
 			}
 		}
 
@@ -1502,6 +1499,7 @@ angular.module('agil.controladores')
 					columns.push(reporteEx[i].total.toFixed(2));
 					data.push(columns);
 				}
+				blockUI.stop();
 			} else {
 				var cabecera = ["Nro.", "Sucursal", "Hora-fecha", "Monto", "Usuario", "Estado"]
 				var data = []
@@ -1519,9 +1517,11 @@ angular.module('agil.controladores')
 					columns.push(($scope.solicitudesOperaciones[i].activo ? 'Abierto' : 'Cerrado'));
 					data.push(columns);
 				}
+				blockUI.stop();
 			}
 			if (pdf) {
 				$scope.reportePdf(data)
+				blockUI.stop();
 			} else {
 				var ws_name = "SheetJS";
 				var wb = new Workbook()
@@ -1843,6 +1843,7 @@ angular.module('agil.controladores')
 			}
 			if ($scope.pedido === undefined) {
 				$scope.pedido = {};
+				blockUI.stop();
 			} else {
 				if ($scope.pedido.proveedor) {
 					$scope.paginatorProductosAsignados.filter = $scope.productosAsignadosPorveedor.grupo ? $scope.productosAsignadosPorveedor.grupo : { id: 0 };
@@ -1996,13 +1997,14 @@ angular.module('agil.controladores')
 				}
 				var prom = GuardarPedido($scope.usuario.id_empresa, sendPedido, $scope.usuarioSesion.id)
 				prom.then(function (res) {
+					blockUI.stop()
 					if (res.hasErr) {
 						$scope.mostrarMensaje(res.mensaje)
 					} else {
 						$scope.mostrarMensaje(res.mensaje)
 						$scope.recargarItemsTabla()
 					}
-					blockUI.stop()
+					
 				}).catch(function (err) {
 					blockUI.stop()
 					var msg = (err.stack !== undefined && err.stack !== null) ? err.stack : (err.data !== undefined && err.data !== null) ? err.data : (err.message !== undefined && err.message !== null) ? err.message : 'Se perdió la conexión.'

@@ -7,7 +7,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 		ImprimirSalida, Diccionario, VentasComprobantesEmpresa, ComprasComprobantesEmpresa, LibroMayorCuenta, Paginator, ComprobanteRevisarPaginador, AsignarComprobanteFavorito, ListaCuentasComprobanteContabilidad, NuevoComprobanteContabilidad, NuevoComprobante, ComprasComprobante,
 		ConfiguracionesCuentasEmpresa, ContabilidadCambioMoneda, ObtenerCambioMoneda, AsignarCuentaCiente, AsignarCuentaProveedor,
 		GtmTransportistas, GtmEstibajes, GtmGrupoEstibajes, ListasCuentasAuxiliares, GtmDetallesDespachoAlerta, $interval, GuardarGtmDetalleDespachoAlerta, GtmDetalleDespacho, VerificarCorrelativosSucursale, ReiniciarCorrelativoSucursales, ClasesTipoEmpresa, alertasProformasLista, UltimaFechaTipoComprobante,
-		FacturaProforma, ListaDetallesProformasAFacturar, ProformaInfo, FacturarProformas, ImprimirPdfAlertaDespacho, ExportarExelAlarmasDespachos, VencimientoDosificaciones, EmpresaDatosInicio) {
+		FacturaProforma, ListaDetallesProformasAFacturar, ProformaInfo, FacturarProformas, ImprimirPdfAlertaDespacho, ExportarExelAlarmasDespachos, VencimientoDosificaciones, EmpresaDatosInicio, VerificacionMensualActivos) {
 		$scope.idModalTablaVencimientoProductos = "tabla-vencimiento-productos";
 		$scope.idModalTablaDespachos = "tabla-gtm-despachos";
 		$scope.idModalTablaAsignacionDespacho = "tabla-gtm-asignacion-despachos";
@@ -3302,12 +3302,27 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 
 		$scope.verificarActivosFijos = function () {
 			if ($scope.usuario.empresa.usar_funciones_erp) {
+				blockUI.start()
 				var prom = VerificacionMensualActivos($scope.usuario.id_empresa)
+				prom.then(function (res) {
+					if (res.hasErr) {
+						$timeout(function () {
+							$scope.mostrarMensaje('Error al verificar los activos fijos para actualizar: ' + res.mensaje)
+						}, 5000)
+						blockUI.stop()
+					}else {
+						//$scope.mostrarMensaje(res.mensaje)
+					}
+				}).catch(function (err) {
+					var mensaje = (err.stack !== undefined && err.stack !== null) ? err.stack : (err.data !== undefined && err.data !== null && err.data !== "") ? err.data : 'Error: Se perdio la conexión.'
+					$scope.mostrarMensaje(mensaje)
+					blockUI.stop()
+				})
 			}
 		}
 
 		// $scope.actualizarActivosFijos = function () {
-			
+
 		// }
 
 		$scope.inicio = function () {
@@ -3315,10 +3330,10 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 			$rootScope.abs = $window.Math.abs;
 			if ($localStorage.usuario) {
 				$scope.usuario = JSON.parse($localStorage.usuario);
-
+				$scope.verificarActivosFijos()
 				$scope.ComprobanteGuardado = $localStorage.nuevoComprobante
-				console.log($scope.ComprobanteGuardado)
-				console.log($scope.usuario)
+				// console.log($scope.ComprobanteGuardado)
+				// console.log($scope.usuario)
 				if (!$scope.aplicaciones) {
 					$scope.cargarPagina();
 				}

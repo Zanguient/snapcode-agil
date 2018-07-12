@@ -2,7 +2,7 @@
     <div class="col-xs-12">
         <h3 class="header smaller lighter blue">ACTIVOS FIJOS</h3>
         <div>
-            <form name="formularioFiltroActivosFijos" novalidate ng-submit="filtrarActivosFijos(filtro)">
+            <form name="formularioFiltroActivosFijos" novalidate ng-submit="buscarActivos()">
                 <fieldset>
                     <br>
                     <legend>Filtro de Activos</legend>
@@ -86,7 +86,7 @@
                                 </td>
                                 <td>
                                     <select class="form-control" style="width:150px;" ng-change="filtrarProductosSeleccionadosPorGrupo()" id="selectGruposProductos"
-                                        name="selectGruposProductos" ng-model="filtro.subGrupo" ng-options="subGrupo.id as subGrupo.nombre for subGrupo in subGruposProducto track by subGrupo.id"
+                                        name="selectGruposProductos" ng-model="filtro.subgrupo" ng-options="subGrupo as subGrupo.nombre for subGrupo in subGruposProducto track by subGrupo.id"
                                         data-placeholder="Click para escoger">
                                         <option value="" selected>Todos</option>
                                     </select>
@@ -95,10 +95,7 @@
                                     <input type="text" name="filtro-activos-codigo" id="filtro-activos-codigo" ng-model="filtro.codigo">
                                 </td>
                                 <td style="max-width: 20%; width: 20%">
-                                    <select style="max-width: 180px;width: 180px" ng-options="estado as estado.nombre for estado in listaEstados track by estado.id"
-                                        ng-model="filtro.estado">
-                                        <option value="" selected>TODOS</option>
-                                    </select>
+                                    <input type="text" name="filtro-activos-activo" id="filtro-activos-activo" ng-model="filtro.activo">
                                 </td>
                                 <td>
                                     <input type="text" name="filtro-vida-util" id="filtro-vida-util" ng-model="filtro.vida_util">
@@ -179,20 +176,22 @@
                         </td>
                         <td ng-if="fieldViewer.getConfiguration().activo.show">{{activoFijo.activo.nombre}}</td>
                         <td ng-if="fieldViewer.getConfiguration().codigo.show">{{activoFijo.activo.codigo}}</td>
-                        <td ng-if="fieldViewer.getConfiguration().cantidad.show && activoFijo.activo.inventarios.length >0">{{activoFijo.activo.inventarios[0].cantidad}}</td>
-                        <td ng-if="activoFijo.activo.inventarios.length === 0"><label class="bg-red">El activo no ha sido inventariado!</label></td>
-                        <td class="hidden-480" ng-if="fieldViewer.getConfiguration().mes.show">{{activoFijo.valores[0].mes +1}}</td>
+                        <td ng-if="fieldViewer.getConfiguration().cantidad.show && activoFijo.activo.inventarios.length > 0">{{activoFijo.activo.inventarios[0].cantidad}}</td>
+                        <td ng-if="fieldViewer.getConfiguration().cantidad.show && activoFijo.activo.inventarios.length === 0">
+                            <label class="bg-red">&nbsp;Este item no tiene inventario&nbsp;</label>
+                        </td>
+                        <td class="hidden-480" ng-if="fieldViewer.getConfiguration().mes.show">{{activoFijo.valores[0].mes}}</td>
                         <td class="hidden-480" ng-if="fieldViewer.getConfiguration().anio.show">{{activoFijo.valores[0].anio}}</td>
                         <td ng-if="fieldViewer.getConfiguration().fecha_ingreso.show">{{activoFijo.fecha_ingreso | date : "dd/MM/yyyy"}}</td>
-                        <td ng-if="fieldViewer.getConfiguration().valor.show">{{activoFijo.valores[0].valor}}</td>
-                        <td ng-if="fieldViewer.getConfiguration().actualizacion.show">{{activoFijo.valores[0].incremento_actualizacion}}</td>
-                        <td ng-if="fieldViewer.getConfiguration().valor_actualizado.show">{{activoFijo.valores[0].valor_actualizado}}</td>
-                        <td ng-if="fieldViewer.getConfiguration().depreciacion_acumulada.show">{{activoFijo.valores[0].depreciacion_acumulada}}</td>
-                        <td ng-if="fieldViewer.getConfiguration().actualizacion_depreciacion_acumulada.show">{{activoFijo.valores[0].incremento_actualizacion_depreciacion_acumulada}}</td>
-                        <td ng-if="fieldViewer.getConfiguration().depreciacion_acumulada_actualizada.show">{{activoFijo.valores[0].depreciacion_acumulada_actualizada}}</td>
-                        <td ng-if="fieldViewer.getConfiguration().depreciacion_mes.show">{{activoFijo.valores[0].depreciacion}}</td>
-                        <td ng-if="fieldViewer.getConfiguration().total_depreciacion.show">{{activoFijo.valores[0].total_depreciacion_acumulada}}</td>
-                        <td ng-if="fieldViewer.getConfiguration().valor_neto.show">{{activoFijo.valores[0].valor_neto}}</td>
+                        <td ng-if="fieldViewer.getConfiguration().valor.show">{{activoFijo.valores[0].valor | number:2}}</td>
+                        <td ng-if="fieldViewer.getConfiguration().actualizacion.show">{{activoFijo.valores[0].incremento_actualizacion | number:2}}</td>
+                        <td ng-if="fieldViewer.getConfiguration().valor_actualizado.show">{{activoFijo.valores[0].valor_actualizado | number:2}}</td>
+                        <td ng-if="fieldViewer.getConfiguration().depreciacion_acumulada.show">{{activoFijo.valores[0].depreciacion_acumulada | number:2}}</td>
+                        <td ng-if="fieldViewer.getConfiguration().actualizacion_depreciacion_acumulada.show">{{activoFijo.valores[0].incremento_actualizacion_depreciacion_acumulada | number:2}}</td>
+                        <td ng-if="fieldViewer.getConfiguration().depreciacion_acumulada_actualizada.show">{{activoFijo.valores[0].depreciacion_acumulada_actualizada | number:2}}</td>
+                        <td ng-if="fieldViewer.getConfiguration().depreciacion_mes.show">{{activoFijo.valores[0].depreciacion | number:2}}</td>
+                        <td ng-if="fieldViewer.getConfiguration().total_depreciacion.show">{{activoFijo.valores[0].total_depreciacion_acumulada | number:2}}</td>
+                        <td ng-if="fieldViewer.getConfiguration().valor_neto.show">{{activoFijo.valores[0].valor_neto | number:2}}</td>
                         <td ng-if="fieldViewer.getConfiguration().vida_util.show">{{activoFijo.vida_util}}</td>
                         <td ng-if="fieldViewer.getConfiguration().vida_restante.show">{{activoFijo.vida_restante}}</td>
                         <td ng-if="fieldViewer.getConfiguration().revaluado.show">{{activoFijo.revaluado ? 'Sí' : 'No'}}</td>
@@ -203,9 +202,9 @@
                             </a>
                         </td>
                     </tr>
-                    <tr>
-                        <td class="center">
-
+                    <tr class="blue">
+                        <td class="blue center">
+                            <b class="pull-right">TOTALES</b>
                         </td>
                         <td class="center" ng-if="fieldViewer.getConfiguration().numero.show">
                         </td>
@@ -215,21 +214,38 @@
                         <td class="hidden-480" ng-if="fieldViewer.getConfiguration().mes.show"></td>
                         <td class="hidden-480" ng-if="fieldViewer.getConfiguration().anio.show"></td>
                         <td ng-if="fieldViewer.getConfiguration().fecha_ingreso.show"></td>
-                        <td ng-if="fieldViewer.getConfiguration().valor.show"></td>
-                        <td ng-if="fieldViewer.getConfiguration().actualizacion.show"></td>
-                        <td ng-if="fieldViewer.getConfiguration().valor_actualizado.show"></td>
-                        <td ng-if="fieldViewer.getConfiguration().depreciacion_acumulada.show"></td>
-                        <td ng-if="fieldViewer.getConfiguration().actualizacion_depreciacion_acumulada.show"></td>
-                        <td ng-if="fieldViewer.getConfiguration().depreciacion_acumulada_actualizada.show"></td>
-                        <td ng-if="fieldViewer.getConfiguration().depreciacion_mes.show"></td>
-                        <td ng-if="fieldViewer.getConfiguration().total_depreciacion.show"></td>
-                        <td ng-if="fieldViewer.getConfiguration().valor_neto.show"></td>
-                        <td ng-if="fieldViewer.getConfiguration().vida_util.show"></td>
+                        <td class="blue" ng-if="fieldViewer.getConfiguration().valor.show">
+                            <b>{{totalesActivosFijos.totalValores | number: 2 }}</b>
+                        </td>
+                        <td class="blue" ng-if="fieldViewer.getConfiguration().actualizacion.show">
+                            <b>{{totalesActivosFijos.totalActualizacion | number: 2 }}</b>
+                        </td>
+                        <td class="blue" ng-if="fieldViewer.getConfiguration().valor_actualizado.show">
+                            <b>{{totalesActivosFijos.totalActualizado | number: 2 }}</b>
+                        </td>
+                        <td class="blue" ng-if="fieldViewer.getConfiguration().depreciacion_acumulada.show">
+                            <b>{{totalesActivosFijos.totalDepreciacionAcumulada | number: 2 }}</b>
+                        </td>
+                        <td class="blue" ng-if="fieldViewer.getConfiguration().actualizacion_depreciacion_acumulada.show">
+                            <b>{{totalesActivosFijos.totalActualizacionDepreciacionAcumulada | number: 2 }}</b>
+                        </td>
+                        <td class="blue" ng-if="fieldViewer.getConfiguration().depreciacion_acumulada_actualizada.show">
+                            <b>{{totalesActivosFijos.totalDepreciacionActualizada | number: 2 }}</b>
+                        </td>
+                        <td class="blue" ng-if="fieldViewer.getConfiguration().depreciacion_mes.show">
+                            <b>{{totalesActivosFijos.totalDepreciacionMensual | number: 2 }}</b>
+                        </td>
+                        <td class="blue" ng-if="fieldViewer.getConfiguration().total_depreciacion.show">
+                            <b>{{totalesActivosFijos.totalDepreciacion | number: 2 }}</b>
+                        </td>
+                        <td class="blue" ng-if="fieldViewer.getConfiguration().valor_neto.show">
+                            <b>{{totalesActivosFijos.totalNeto | number: 2 }}</b>
+                        </td>
+                        <!-- <td class="blue" ng-if="fieldViewer.getConfiguration().vida_util.show"></td>
                         <td ng-if="fieldViewer.getConfiguration().vida_restante.show"></td>
                         <td ng-if="fieldViewer.getConfiguration().revaluado.show"></td>
                         <td>
-
-                        </td>
+                        </td> -->
                     </tr>
                 </tbody>
             </table>
@@ -259,7 +275,7 @@
                                             <label>Vida útil</label>
                                         </th>
                                         <th>
-                                            <label>Factor</label>
+                                            <label>Factor %</label>
                                         </th>
                                         <th></th>
                                     </tr>
@@ -271,7 +287,7 @@
                                             <select class="form-control form-inline" style="width:150px;" ng-change="filtrarProductosSeleccionadosPorGrupo()" id="selectGruposProductos"
                                                 name="selectGruposProductos" ng-model="configuracion.subgrupo" ng-options="subgrupo as subgrupo.nombre for subgrupo in subGruposProducto track by subgrupo.id"
                                                 data-placeholder="Click para escoger">
-                                                <option value="" selected>Todos</option>
+                                                <option disabled value="" selected>Seleccione subgrupo</option>
                                             </select>
                                             &nbsp; &nbsp;
                                         </td>
@@ -281,10 +297,7 @@
                                         </td>
                                         <td>
                                             &nbsp; &nbsp;
-                                            <select class="form-control form-inline" ng-options="factor.id for factor in factorConfiguracion track by factor.id" ng-model="configuracion.factor">
-                                                <option value="" selected>--Factor %--</option>
-                                            </select>
-                                            &nbsp; &nbsp;
+                                            <input type="number" class="form-control form-inline" ng-model="configuracion.factor" step="0.05" min="0.05" max="100"> &nbsp; &nbsp;
                                         </td>
                                         <td>
                                             &nbsp; &nbsp;
@@ -365,7 +378,8 @@
                             <label for="Valor">Fecha</label>
                         </div>
                         <div class="md-6">
-                            <input type="text" class="date-picker form-control" ng-update-hidden data-date-format="dd/mm/yyyy" ng-model="activo.fecha_revaluacion" step="0.01">
+                            <input type="text" class="date-picker form-control" ng-update-hidden data-date-format="dd/mm/yyyy" ng-model="activo.fecha_revaluacion"
+                                step="0.01">
                         </div>
                     </div>
                 </div>
