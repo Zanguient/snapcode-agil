@@ -752,8 +752,13 @@ angular.module('agil.controladores')
 			$scope.compra.almacen = pedido.almacen
 			$scope.compra.sucursal = pedido.sucursal
 			$scope.pedido.detallesPedido.forEach(function (detalle) {
-
-				$scope.establecerProductoPedido(detalle, detalle.producto)
+				var costoDetalleAnterior = 0
+				if (detalle.producto.inventarios.length > 0) {
+					costoDetalleAnterior = detalle.producto.inventarios[detalle.producto.inventarios.length-1].costo_unitario ? detalle.producto.inventarios[detalle.producto.inventarios.length-1].costo_unitario : 0;
+				}
+				detalle.producto.costoanterior = costoDetalleAnterior
+				$scope.establecerProductoPedido(detalle, detalle.producto, costoDetalleAnterior)
+				
 			})
 			$scope.abrirPopup($scope.idModalDetallePedidos);
 		}
@@ -768,7 +773,7 @@ angular.module('agil.controladores')
 			$scope.cerrarDialogDetallePedidos()
 		}
 
-		$scope.establecerProductoPedido = function (detalle, producto) {
+		$scope.establecerProductoPedido = function (detalle, producto, costo) {
 			producto.tipoProducto = producto['tipoProducto'] == null ? { id: producto['tipoProducto.id'], nombre: producto['tipoProducto.nombre'], nombre_corto: producto['tipoProducto.nombre_corto'] } : producto.tipoProducto;
 			var centroCostos = {}
 			$scope.centrosCosto.forEach(function (centro, index, array) {
@@ -777,7 +782,7 @@ angular.module('agil.controladores')
 				}
 				if (index === (array.length - 1)) {
 					detalle.detalleCompra = {
-						centroCosto: centroCostos, producto: producto, precio_unitario: producto.precio_unitario,
+						centroCosto: centroCostos, producto: producto, costo_unitario: costo,
 						cantidad: 1, descuento: producto.descuento, recargo: 0, ice: 0, excento: 0, tipo_descuento: (producto.descuento > 0 ? true : false), tipo_recargo: false
 					};
 				}

@@ -872,7 +872,15 @@ angular.module('agil.controladores')
 				} else {
 					$scope.productosProcesados = productos;
 				}
-				// ===== Fin save localstorage ====
+				// $scope.productosProcesados.sort(function(a, b){
+				// 	var nameA=a.nombre.toLowerCase(), nameB=b.nombre.toLowerCase();
+				// 	if (nameA < nameB) //sort string ascending
+				// 	 return -1;
+				// 	if (nameA > nameB)
+				// 	 return 1;
+				// 	return 0; //default return value (no sorting)
+				//    });
+				//===== Fin save localstorage ====
 				setTimeout(function () {
 					aplicarSwiper(4, 3, true, 2);
 				}, 1000);

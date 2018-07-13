@@ -77,7 +77,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Producto, Dicc
 
             if (req.params.rol === "ADMINISTRADOR") {
                 //:desde/:hasta/:sucursal/:almacen/:movimimento/:estado/:valuado
-                condicion.eliminado = false
+                // condicion.eliminado = false
                 if (req.params.items_pagina !== "0") {
                     SolicitudReposicion.findAndCountAll({
                         where: condicion,
@@ -136,7 +136,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Producto, Dicc
                 }
 
             } else {
-                condicion.eliminado = false
+                // condicion.eliminado = false
                 condicion.id_usuario = req.params.id_usuario
                 if (req.params.items_pagina !== "0") {
                     SolicitudReposicion.findAndCountAll({
@@ -583,7 +583,8 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Producto, Dicc
                                 }]
                             }]
                         }],
-                    order: [[{ model: Inventario, as: 'inventarios' }, 'updatedAt', 'DESC']]
+                    // order: [[{ model: Inventario, as: 'inventarios' }, 'updatedAt', 'DESC']]
+                    order: [['nombre', 'ASC']]
                 }).then(function (productos) {
                     res.json(productos);
                 }).catch(function (err) {

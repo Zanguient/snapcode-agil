@@ -169,7 +169,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr ng-if="!solicitud.eliminado" ng-repeat="solicitud in solicitudesOperaciones">
+                    <tr ng-repeat="solicitud in solicitudesOperaciones">
                         <td>{{$index+1}}</td>
                         <!-- <td>SOLICITUD</td> -->
                         <td>{{solicitud.almacen.sucursal.nombre}}</td>
@@ -178,27 +178,28 @@
                         <td>{{solicitud.monto | number:2}}</td>
                         <td>{{solicitud.usuario.persona.nombre_completo}}</td>
                         <td>
-                            <label class="bg-green" ng-if="solicitud.activo">&nbsp &nbsp Abierto &nbsp &nbsp</label>
-                            <label class="bg-red" ng-if="!solicitud.activo">&nbsp &nbsp Cerrado &nbsp &nbsp</label>
-                            <label class="bg-red" ng-if="solicitud.id_pedido == null">&nbsp &nbsp Pendiente &nbsp &nbsp</label>
-                            <label class="bg-yellow" ng-if="solicitud.id_pedido > 0">&nbsp &nbsp Parcial &nbsp &nbsp</label>
-                            <label class="bg-green" ng-if="solicitud.pedido && solicitud.compra">&nbsp &nbsp Total &nbsp &nbsp</label>
-                            <label class="bg-yellow" ng-if="!solicitud.compra">&nbsp &nbsp Pendiente &nbsp &nbsp</label>
-                            <label class="bg-green" ng-if="solicitud.comprobante && solicitud.compra">&nbsp &nbsp Contabilizado &nbsp &nbsp</label>
+                            <label class="bg-green" ng-if="solicitud.activo && !solicitud.eliminado">&nbsp &nbsp Abierto &nbsp &nbsp</label>
+                            <label class="bg-red" ng-if="!solicitud.activo && !solicitud.eliminado">&nbsp &nbsp Cerrado &nbsp &nbsp</label>
+                            <label class="bg-red" ng-if="solicitud.eliminado">&nbsp &nbsp Anulado &nbsp &nbsp</label>
+                            <label class="bg-red" ng-if="solicitud.id_pedido == null && !solicitud.eliminado">&nbsp &nbsp Pendiente &nbsp &nbsp</label>
+                            <label class="bg-yellow" ng-if="solicitud.id_pedido > 0 && !solicitud.eliminado">&nbsp &nbsp Parcial &nbsp &nbsp</label>
+                            <label class="bg-green" ng-if="solicitud.pedido && solicitud.compra && !solicitud.eliminado">&nbsp &nbsp Total &nbsp &nbsp</label>
+                            <label class="bg-yellow" ng-if="!solicitud.compra && !solicitud.eliminado">&nbsp &nbsp Pendiente &nbsp &nbsp</label>
+                            <label class="bg-green" ng-if="solicitud.comprobante && solicitud.compra && !solicitud.eliminado">&nbsp &nbsp Contabilizado &nbsp &nbsp</label>
                         </td>
                         <!-- <td><label><input id="estadoSolicitud" name="estadoSolicitud" ng-updated-hidden ng-model="solicitud.activo" class="ace ace-switch ace-switch-5" type="checkbox">
                             <span class="lbl check-descuento"> <label class="bg-green" ng-if="solicitud.activo">&nbsp &nbspActivo&nbsp &nbsp</label><label class="bg-red" ng-if="!solicitud.activo">&nbsp &nbspInactivo&nbsp &nbsp</label></span></label></td>-->
                         <td>
                             <div class="hidden-sm hidden-xs action-buttons">
-                                <a ng-if="solicitud.activo" class="green" href="javascript:void(0)" ng-click="confirmarEntrega(solicitud)" data-rel="tooltip"
+                                <a ng-if="solicitud.activo && !solicitud.eliminado" class="green" href="javascript:void(0)" ng-click="confirmarEntrega(solicitud)" data-rel="tooltip"
                                     tooltip-placement="top" uib-tooltip="Confirmar Entrega">
                                     <i class="ace-icon fa fa-unlock bigger-130"></i>
                                 </a>
-                                <a ng-if="solicitud.activo" class="orange" href="javascript:void(0)" ng-click="editar(solicitud)" data-rel="tooltip" tooltip-placement="top"
+                                <a ng-if="solicitud.activo && !solicitud.eliminado" class="orange" href="javascript:void(0)" ng-click="editar(solicitud)" data-rel="tooltip" tooltip-placement="top"
                                     uib-tooltip="Modificar">
                                     <i class="ace-icon fa fa-pencil-square-o bigger-130"></i>
                                 </a>
-                                <a ng-if="!solicitud.activo" class="red" href="javascript:void(0)" data-rel="tooltip" tooltip-placement="top" uib-tooltip="Entregado">
+                                <a ng-if="!solicitud.activo && !solicitud.eliminado" class="red" href="javascript:void(0)" data-rel="tooltip" tooltip-placement="top" uib-tooltip="Entregado">
                                     <i class="ace-icon fa fa-lock bigger-130"></i>
                                 </a>
                                 <a class="green" href="javascript:void(0)" ng-click="generarPdfSolicitud(solicitud)" data-rel="tooltip" tooltip-placement="top"
@@ -211,7 +212,7 @@
                                 <a class="blue" href="javascript:void(0)" ng-click="copiar(solicitud)" data-rel="tooltip" tooltip-placement="top" uib-tooltip="Copiar">
                                     <i class="ace-icon fa fa-files-o bigger-130"></i>
                                 </a>
-                                <a class="red" ng-if="solicitud.activo" href="javascript:void(0)" ng-click="abrirPopupConfirmacionEliminacion(eliminar,solicitud)"
+                                <a class="red" ng-if="solicitud.activo && !solicitud.eliminado" href="javascript:void(0)" ng-click="abrirPopupConfirmacionEliminacion(eliminar,solicitud)"
                                     data-rel="tooltip" tooltip-placement="top" uib-tooltip="Eliminar">
                                     <i class="ace-icon fa fa-trash-o bigger-130"></i>
                                 </a>
@@ -224,15 +225,15 @@
 
                                     <ul class="dropdown-menu dropdown-only-icon dropdown-yellow dropdown-menu-right dropdown-caret dropdown-close">
                                         <li>
-                                            <a ng-if="solicitud.activo" class="green" href="javascript:void(0)" ng-click="confirmarEntrega(solicitud)">
+                                            <a ng-if="solicitud.activo && !solicitud.eliminado" class="green" href="javascript:void(0)" ng-click="confirmarEntrega(solicitud)">
                                                 <i class="ace-icon fa fa-unlock bigger-130"></i>
                                             </a>
-                                            <a ng-if="!solicitud.activo" class="red" href="javascript:void(0)">
+                                            <a ng-if="!solicitud.activo && !solicitud.eliminado" class="red" href="javascript:void(0)">
                                                 <i class="ace-icon fa fa-lock bigger-130"></i>
                                             </a>
                                         </li>
                                         <li>
-                                            <a ng-if="solicitud.activo" class="orange" href="javascript:void(0)" ng-click="editar(solicitud)">
+                                            <a ng-if="solicitud.activo && !solicitud.eliminado" class="orange" href="javascript:void(0)" ng-click="editar(solicitud)">
                                                 <i class="ace-icon fa fa-pencil-square-o bigger-130"></i>
                                             </a>
                                         </li>
@@ -252,7 +253,7 @@
                                             </a>
                                         </li>
                                         <li>
-                                            <a class="red" ng-if="solicitud.activo" ng-click="eliminar(solicitud)">
+                                            <a class="red" ng-if="solicitud.activo && !solicitud.eliminado" ng-click="eliminar(solicitud)">
                                                 <i class="ace-icon fa fa-trash-o bigger-130"></i>
                                             </a>
                                         </li>

@@ -2261,6 +2261,7 @@ angular.module('agil.controladores')
            var promesa = GuardarImportacionRolTurnoEmpleados(rolturnos,$scope.usuario.id_empresa,actualizacion)
            promesa.then(function(dato){
                $scope.mostrarMensaje(dato.mensaje)
+               $scope.cerrarDialogTipoImportacionRol()
                blockUI.stop();
            })
         }

@@ -13,7 +13,9 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 				}, include: [{ model: Proveedor, as: 'proveedor' }, { model: Almacen, as: 'almacen' }, { model: Sucursal, as: 'sucursal' }, {
 					model: DetallesPedido, as: 'detallesPedido', include: [{
 						model: Producto, as: 'producto', include: [
-							{ model: Clase, as: 'tipoProducto' },
+							{ model: Clase, as: 'tipoProducto' },{
+								model: Inventario, as: 'inventarios', required: false, attributes: ['id', 'costo_unitario']
+							}
 						]
 					}]
 				}]
