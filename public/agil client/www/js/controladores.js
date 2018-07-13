@@ -99,6 +99,9 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 				}
 			})
 		}
+		$scope.AbrirNuevoPedido = function (mensaje) {
+			alert("llegooooo");
+		}
 		$scope.AbrirMensajeConfirmacionComprobante = function (mensaje, form, form2) {
 			$scope.mensajeConfirmacion = mensaje
 			$scope.formUno = form

@@ -6,7 +6,7 @@ angular.module('agil.controladores')
         ListaAnticiposEmpleado, CrearNuevosAnticiposEmpleados, ActualizarAnticipoEmpleado, NuevaAusenciaEmpleado, HistorialEmpleadoAusencias, HistorialEmpresaEmpleadosAusencias, NuevaVacacionEmpleado, HistorialEmpleadoVacaciones, HistorialEmpresaVacaciones, NuevoFeriado,
         ListaFeriados, GuardarClasesAusencias, Tipos, ListaBancos, ConfiguracionesVacacion, HistorialGestionesVacacion, GuardarTr3, ListaTr3Empresa, GuardarHistorialVacacion, CrearBeneficioSocial, ListaBeneficiosEmpleado, GuardarBitacoraFicha, VerBitacoraFicha, ObtenerFiniquitoEmpleado,
         ClasesTipoEmpresa, GuardarConfiguracionRopaCargo, ListaConfiguracionRopaCargo, DatosReporteConfiguracionRopa, FichasEmpleadoEmpresa, ListaCargosEmpleado, ListaRopaTrabajoProductos, GuardarDotacionRopa, ListaDotacionRopa, EliminarDotacionRopa, ListaDotacionRopaEmpresa, ActualizarDotacionRopa,
-        FamiliaresEmpleadoEmpresa, ListaRolTurnosEmpresa, ListaChoferesViaje, GuardarViajeRrhh, ListaViajeRrhh, ListaRolTurnosCalendario, ViajeRrhhLista, BeneficioEmpresa, GuardarConductoresEmpresa, ListaHijosEmpleadosEmpresa,GuardarImportacionFichaEmpleados,GuardarImportacionRolTurnoEmpleados) {
+        FamiliaresEmpleadoEmpresa, ListaRolTurnosEmpresa, ListaChoferesViaje, GuardarViajeRrhh, ListaViajeRrhh, ListaRolTurnosCalendario, ViajeRrhhLista, BeneficioEmpresa, GuardarConductoresEmpresa, ListaHijosEmpleadosEmpresa, GuardarImportacionFichaEmpleados, GuardarImportacionRolTurnoEmpleados) {
         $scope.usuario = JSON.parse($localStorage.usuario);
         $scope.idModalPrerequisitos = 'dialog-pre-requisitos';
         $scope.idModalEmpleado = 'dialog-empleado';
@@ -95,7 +95,7 @@ angular.module('agil.controladores')
         $scope.idModalDesabilitarPasajero = 'dialog-motivo-desabilitar-viajero'
         $scope.idModalCerrarRolDeTurno = 'modal-cerrar-rol-de-turno'
         $scope.idModalHistorialGestionesVacaciones = 'dialog-historial-gestiones-vacaciones'
-        $scope.idModalTipoImportacionRol ='dialog-tipo-importacion-rol'
+        $scope.idModalTipoImportacionRol = 'dialog-tipo-importacion-rol'
         $scope.$on('$viewContentLoaded', function () {
             // resaltarPestaña($location.path().substring(1));
             resaltarPestaña($location.path().substring(1));
@@ -117,7 +117,7 @@ angular.module('agil.controladores')
                 $scope.idModalEditarPrerequisito, $scope.idModalDialogConfirmacionEntregaAdelantado, $scope.IdEntregaPrerequisito, $scope.IdModalVerificarCuenta, $scope.idModalImpresionHojaVida, $scope.idModalNuevoAnticipoRegularTodos,
                 $scope.idModalTr3BancoMsc, $scope.idModalTr3BancoUnion, $scope.idModalHistorialTr3, $scope.IdModalVerificarCuentaRrhh, $scope.idModalConfirmarDesabilitacion, $scope.idModalReingresoEmpleado,
                 $scope.idModalHistorialBeneficios, $scope.idModalConfiguracionRopaDeTrabajo, $scope.idModalReporteRopaDeTrabajo, $scope.idmodalWizardContainerConfiguracionRopaTrabajo, $scope.idModalRopaTrabajo, $scope.idModalNuevaRopaTrabajo, $scope.idModalItemsNuevaRopaTrabajo,
-                $scope.idModalEliminarRopaTrabajo, $scope.idModalConceptoEdicion, $scope.idModalVisitaSalida, $scope.idModalDesabilitarPasajero, $scope.idModalCerrarRolDeTurno, $scope.idModalConductoresViaje, $scope.idModalHistorialGestionesVacaciones,$scope.idModalTipoImportacionRol);
+                $scope.idModalEliminarRopaTrabajo, $scope.idModalConceptoEdicion, $scope.idModalVisitaSalida, $scope.idModalDesabilitarPasajero, $scope.idModalCerrarRolDeTurno, $scope.idModalConductoresViaje, $scope.idModalHistorialGestionesVacaciones, $scope.idModalTipoImportacionRol);
             $scope.buscarAplicacion($scope.usuario.aplicacionesUsuario, $location.path().substring(1));
             $scope.obtenerColumnasAplicacion()
             blockUI.stop();
@@ -252,14 +252,14 @@ angular.module('agil.controladores')
             $scope.cerrarPopup($scope.idModalConductoresViaje);
         }
         $scope.abrirDialogTipoImportacionRol = function (roles) {
-            $scope.rolesTurno=roles
-            $scope.tipoImportacionRol=true           
+            $scope.rolesTurno = roles
+            $scope.tipoImportacionRol = true
             $scope.abrirPopup($scope.idModalTipoImportacionRol);
         }
         $scope.cerrarDialogTipoImportacionRol = function () {
             $scope.cerrarPopup($scope.idModalTipoImportacionRol);
         }
-        
+
         $scope.abrirDialogHistorialGestionesVacaciones = function () {
             $scope.conductor = {};
             var filtroVacacion = {}
@@ -1751,7 +1751,7 @@ angular.module('agil.controladores')
             $scope.cerrarPopup($scope.idModalReporteBajasMedicas);
         }
         $scope.abrirDialogReporteRolTurnos = function () {
-        /*     $scope.filtroRol = { inicio: 0, fin: 0, grupo: 0 } */
+            /*     $scope.filtroRol = { inicio: 0, fin: 0, grupo: 0 } */
             $scope.paginator = Paginator();
             $scope.paginator.column = "id";
             $scope.paginator.direccion = "asc";
@@ -1759,11 +1759,11 @@ angular.module('agil.controladores')
                 empresa: $scope.usuario.id_empresa,
                 inicio: "",
                 fin: "",
-                grupo: "",    
-                campo:""          
+                grupo: "",
+                campo: ""
             }
             $scope.paginator.callBack = $scope.obtenerlistaRolTurnoEmpresa;
-            $scope.paginator.getSearch("",  $scope.filtroRol, null);
+            $scope.paginator.getSearch("", $scope.filtroRol, null);
             /* $scope.obtenerlistaRolTurnoEmpresa($scope.filtroRol) */
             $scope.abrirPopup($scope.idModalReporteRolTurnos);
         }
@@ -2075,7 +2075,7 @@ angular.module('agil.controladores')
                     var worksheet = workbook.Sheets[first_sheet_name];
                     var pacientes = [];
                     do {
-                        var paciente = {personaReferencia:{}};
+                        var paciente = { personaReferencia: {} };
                         paciente.codigo = worksheet['A' + row] != undefined && worksheet['A' + row] != "" ? worksheet['A' + row].v.toString() : null;
                         paciente.apellido_paterno = worksheet['B' + row] != undefined && worksheet['B' + row] != "" ? worksheet['B' + row].v.toString() : null;
                         paciente.apellido_materno = worksheet['C' + row] != undefined && worksheet['C' + row] != "" ? worksheet['C' + row].v.toString() : null;
@@ -2145,7 +2145,7 @@ angular.module('agil.controladores')
                 //console.log('pacientes obtenidos')
             }
         }
-        $scope.subirExcelFichaEmpleados=function(event){
+        $scope.subirExcelFichaEmpleados = function (event) {
             blockUI.start();
             //console.log('iniciando carga de pacientes')
             var files = event.target.files;
@@ -2164,54 +2164,282 @@ angular.module('agil.controladores')
                     var worksheet = workbook.Sheets[first_sheet_name];
                     var fichas = [];
                     do {
-                        var ficha = {seguros:[]};
+                        var ficha = { seguros: [] };
                         ficha.codigo = worksheet['A' + row] != undefined && worksheet['A' + row] != "" ? worksheet['A' + row].v.toString() : null;
                         ficha.apellido_paterno = worksheet['B' + row] != undefined && worksheet['B' + row] != "" ? worksheet['B' + row].v.toString() : null;
                         ficha.apellido_materno = worksheet['C' + row] != undefined && worksheet['C' + row] != "" ? worksheet['C' + row].v.toString() : null;
                         ficha.nombres = worksheet['D' + row] != undefined && worksheet['D' + row] != "" ? worksheet['D' + row].v.toString() : null;
-                        ficha.segundo_nombre = worksheet['E' + row] != undefined && worksheet['E' + row] != "" ? worksheet['E' + row].v.toString() : null;                        
+                        ficha.segundo_nombre = worksheet['E' + row] != undefined && worksheet['E' + row] != "" ? worksheet['E' + row].v.toString() : null;
                         ficha.estado_civil = worksheet['F' + row] != undefined && worksheet['F' + row] != "" ? worksheet['F' + row].v.toString() : null;
-                        ficha.departamento = worksheet['G' + row] != undefined && worksheet['G' + row] != "" ? worksheet['G' + row].v.toString() : null;
-                        ficha.provincia = worksheet['H' + row] != undefined && worksheet['H' + row] != "" ? worksheet['H' + row].v.toString() : null;
-                        ficha.localidad = worksheet['I' + row] != undefined && worksheet['I' + row] != "" ? $scope.fecha_excel_angular(worksheet['I' + row].v.toString()) : null;
-                        ficha.tipo_personal = worksheet['J' + row] != undefined && worksheet['J' + row] != "" ? worksheet['J' + row].v.toString() : null;
-                        ficha.carga_horario = worksheet['K' + row] != undefined && worksheet['K' + row] != "" ? worksheet['K' + row].v.toString() : null;
-                        ficha.area = worksheet['L' + row] != undefined && worksheet['L' + row] != "" ? worksheet['L' + row].v.toString() : null;
-                        ficha.ubicacion = worksheet['M' + row] != undefined && worksheet['M' + row] != "" ? worksheet['M' + row].v.toString() : null;
-                        ficha.lugar_seguro = worksheet['N' + row] != undefined && worksheet['N' + row] != "" ? worksheet['N' + row].v.toString() : null;
-                        ficha.nua_cua = worksheet['O' + row] != undefined && worksheet['O' + row] != "" ? worksheet['O' + row].v.toString() : null;
-                        ficha.afp_aporte = worksheet['P' + row] != undefined && worksheet['P' + row] != "" ? worksheet['P' + row].v.toString() : null;
-                        ficha.lugar_afp = worksheet['Q' + row] != undefined && worksheet['Q' + row] != "" ? worksheet['Q' + row].v.toString() : null;
-                        //aqui me qquede 2:49 de la tarde 06/07/08
-                        var seguro={}
-                        seguro.seguro = worksheet['R' + row] != undefined && worksheet['R' + row] != "" ? worksheet['R' + row].v.toString() : null;
-                        seguro.observacion = worksheet['S' + row] != undefined && worksheet['S' + row] != "" ? worksheet['S' + row].v.toString() : null;
-                        seguro.monto = worksheet['T' + row] != undefined && worksheet['T' + row] != "" ? worksheet['T' + row].v.toString() : null;
-                        ficha.seguros.push(seguro)
-                        seguro={}
-                        seguro.seguro  = worksheet['U' + row] != undefined && worksheet['U' + row] != "" ? worksheet['U' + row].v.toString() : null;
-                        seguro.observacion = worksheet['V' + row] != undefined && worksheet['V' + row] != "" ? worksheet['V' + row].v.toString() : null;
-                        seguro.monto = worksheet['W' + row] != undefined && worksheet['W' + row] != "" ? worksheet['W' + row].v.toString() : null;
-                        ficha.seguros.push(seguro)                       
+                        ficha.nacionalidad = worksheet['G' + row] != undefined && worksheet['G' + row] != "" ? worksheet['G' + row].v.toString() : null;
+                        ficha.departamento = worksheet['H' + row] != undefined && worksheet['H' + row] != "" ? worksheet['H' + row].v.toString() : null;
+                        ficha.provincia = worksheet['I' + row] != undefined && worksheet['I' + row] != "" ?worksheet['I' + row].v.toString() : null;
+                        ficha.localidad = worksheet['J' + row] != undefined && worksheet['J' + row] != "" ?  $scope.fecha_excel_angular(worksheet['J' + row].v.toString()) : null;
+                        ficha.tipo_personal = worksheet['K' + row] != undefined && worksheet['K' + row] != "" ? worksheet['K' + row].v.toString() : null;
+                        ficha.carga_horario = worksheet['L' + row] != undefined && worksheet['L' + row] != "" ? worksheet['L' + row].v.toString() : null;
+                        ficha.area = worksheet['M' + row] != undefined && worksheet['M' + row] != "" ? worksheet['M' + row].v.toString() : null;
+                        ficha.ubicacion = worksheet['N' + row] != undefined && worksheet['N' + row] != "" ? worksheet['N' + row].v.toString() : null;
+                        ficha.lugar_seguro= worksheet['O' + row] != undefined && worksheet['O' + row] != "" ? worksheet['O' + row].v.toString() : null;
+                        ficha.nua_cua = worksheet['P' + row] != undefined && worksheet['P' + row] != "" ? worksheet['P' + row].v.toString() : null;
+                        ficha.afp_aporte = worksheet['Q' + row] != undefined && worksheet['Q' + row] != "" ? worksheet['Q' + row].v.toString() : null;
+                        ficha.lugar_afp = worksheet['R' + row] != undefined && worksheet['R' + row] != "" ? worksheet['R' + row].v.toString() : null;
+                        ficha.seguro1 = worksheet['S' + row] != undefined && worksheet['S' + row] != "" ? worksheet['S' + row].v.toString() : null;
+                        ficha.monto1 = worksheet['T' + row] != undefined && worksheet['T' + row] != "" ? parseFloat(worksheet['T' + row].v.toString()) : null;
+                        ficha.observacion1 = worksheet['U' + row] != undefined && worksheet['U' + row] != "" ? worksheet['U' + row].v.toString() : null;
+                        ficha.seguro2 = worksheet['V' + row] != undefined && worksheet['V' + row] != "" ? worksheet['V' + row].v.toString() : null;
+                        ficha.monto2 = worksheet['W' + row] != undefined && worksheet['W' + row] != "" ? parseFloat(worksheet['W' + row].v.toString()) : null;
+                        ficha.observacion2= worksheet['X' + row] != undefined && worksheet['X' + row] != "" ? worksheet['X' + row].v.toString() : null;
                         fichas.push(ficha);
+
                         row++;
                         i++;
 
                     } while (worksheet['A' + row] != undefined);
-                    $scope.guardarFichasEmpleados(fichas);
+                    var arregloAporteAfp = []
+                    var arregloLugarAfp = []
+                    var arregloLugarSeguroSalud = []
+                    var arregloTipoPersona = []
+                    var arregloCargaHorario = []
+                    var arregloArega = []
+                    var arregloUbicacion = []
+                    var arregloEstadoCivil = []
+                    var arregloOtrosSeguros1=[]
+                    var arregloOtrosSeguros2=[]
+                    fichas.forEach(function (ficha, index, array) {
+                        var bandera = false
+                        if (arregloAporteAfp.length > 0) {
+                            for (var i = 0; i < arregloAporteAfp.length; i++) {
+                                var element = arregloAporteAfp[i];
+                                if (ficha.afp_aporte != null) {
+                                    if (element == ficha.afp_aporte) {
+                                        bandera = true
+                                    }
+                                }
+                            }
+                            if (!bandera) {
+
+                                arregloAporteAfp.push(ficha.afp_aporte)
+
+                            }
+                        } else {
+                            arregloAporteAfp.push(ficha.afp_aporte)
+
+                        }
+                        var bandera2 = false
+                        if (arregloLugarAfp.length > 0) {
+                            for (var i = 0; i < arregloLugarAfp.length; i++) {
+                                var element = arregloLugarAfp[i];
+                                if (ficha.lugar_afp != null) {
+                                    if (element == ficha.lugar_afp) {
+                                        bandera2 = true
+                                    }
+                                }
+                            }
+                            if (!bandera2) {
+
+                                arregloLugarAfp.push(ficha.lugar_afp)
+
+                            }
+                        } else {
+                            arregloLugarAfp.push(ficha.lugar_afp)
+
+                        }
+                        var bandera3 = false
+                        if (arregloLugarSeguroSalud.length > 0) {
+                            for (var i = 0; i < arregloLugarSeguroSalud.length; i++) {
+                                var element = arregloLugarSeguroSalud[i];
+                                if (ficha.lugar_seguro != null) {
+                                    if (element == ficha.lugar_seguro) {
+                                        bandera3 = true
+                                    }
+                                }
+                            }
+                            if (!bandera3) {
+
+                                arregloLugarSeguroSalud.push(ficha.lugar_seguro)
+
+                            }
+                        } else {
+                            arregloLugarSeguroSalud.push(ficha.lugar_seguro)
+
+                        }
+                        var bandera4 = false
+                        if (arregloTipoPersona.length > 0) {
+                            for (var i = 0; i < arregloTipoPersona.length; i++) {
+                                var element = arregloTipoPersona[i];
+                                if (ficha.tipo_personal != null) {
+                                    if (element == ficha.tipo_personal) {
+                                        bandera4 = true
+                                    }
+                                }
+                            }
+                            if (!bandera4) {
+
+                                arregloTipoPersona.push(ficha.tipo_personal)
+
+                            }
+                        } else {
+                            arregloTipoPersona.push(ficha.tipo_personal)
+
+                        }
+                        var bandera5 = false
+                        if (arregloCargaHorario.length > 0) {
+                            for (var i = 0; i < arregloCargaHorario.length; i++) {
+                                var element = arregloCargaHorario[i];
+                                if (ficha.carga_horario != null) {
+                                    if (element == ficha.carga_horario) {
+                                        bandera5 = true
+                                    }
+                                }
+                            }
+                            if (!bandera5) {
+
+                                arregloCargaHorario.push(ficha.carga_horario)
+
+                            }
+                        } else {
+                            arregloCargaHorario.push(ficha.carga_horario)
+
+                        }
+                        var bandera6 = false
+                        if (arregloArega.length > 0) {
+                            for (var i = 0; i < arregloArega.length; i++) {
+                                var element = arregloArega[i];
+                                if (ficha.area != null) {
+                                    if (element == ficha.area) {
+                                        bandera6 = true
+                                    }
+                                }
+                            }
+                            if (!bandera6) {
+
+                                arregloArega.push(ficha.area)
+
+                            }
+                        } else {
+                            arregloArega.push(ficha.area)
+
+                        }
+                        var bandera7 = false
+                        if (arregloUbicacion.length > 0) {
+                            for (var i = 0; i < arregloUbicacion.length; i++) {
+                                var element = arregloUbicacion[i];
+                                if (ficha.ubicacion != null) {
+                                    if (element == ficha.ubicacion) {
+                                        bandera7 = true
+                                    }
+                                }
+                            }
+                            if (!bandera7) {
+
+                                arregloUbicacion.push(ficha.ubicacion)
+
+                            }
+                        } else {
+                            arregloUbicacion.push(ficha.ubicacion)
+
+                        }
+                        var bandera8 = false
+                        if (arregloEstadoCivil.length > 0) {
+                            for (var i = 0; i < arregloEstadoCivil.length; i++) {
+                                var element = arregloEstadoCivil[i];
+                                if (ficha.estado_civil != null) {
+                                    if (element == ficha.estado_civil) {
+                                        bandera8 = true
+                                    }
+                                }
+                            }
+                            if (!bandera8) {
+
+                                arregloEstadoCivil.push(ficha.estado_civil)
+
+                            }
+                        } else {
+                            arregloEstadoCivil.push(ficha.estado_civil)
+
+                        }
+                        var bandera9 = false
+                        if (arregloOtrosSeguros1.length > 0) {
+                            for (var i = 0; i < arregloOtrosSeguros1.length; i++) {
+                                var element = arregloOtrosSeguros1[i];
+                                if (ficha.seguro1 != null) {
+                                    if (element == ficha.seguro1) {
+                                        bandera9 = true
+                                    }
+                                }
+                            }
+                            if (!bandera9) {
+
+                                arregloOtrosSeguros1.push(ficha.seguro1)
+
+                            }
+                        } else {
+                            arregloOtrosSeguros1.push(ficha.seguro1)
+
+                        }
+                        var bandera10 = false
+                        if (arregloOtrosSeguros2.length > 0) {
+                            for (var i = 0; i < arregloOtrosSeguros2.length; i++) {
+                                var element = arregloOtrosSeguros2[i];
+                                if (ficha.seguro2 != null) {
+                                    if (element == ficha.seguro2) {
+                                        bandera10 = true
+                                    }
+                                }
+                            }
+                            if (!bandera10) {
+
+                                arregloOtrosSeguros2.push(ficha.seguro2)
+
+                            }
+                        } else {
+                            arregloOtrosSeguros2.push(ficha.seguro2)
+
+                        }
+                        if (index === (array.length - 1)) {
+                            $scope.guardarFichasEmpleados(fichas, arregloAporteAfp,
+                                arregloLugarAfp,
+                                arregloLugarSeguroSalud,
+                                arregloTipoPersona,
+                                arregloCargaHorario,
+                                arregloArega,
+                                arregloUbicacion,
+                                arregloEstadoCivil,
+                                arregloOtrosSeguros1,
+                                arregloOtrosSeguros2);
+                        }
+                    })
+
                 };
                 reader.readAsBinaryString(f);
                 //console.log('pacientes obtenidos')
             }
         }
-        $scope.guardarFichasEmpleados=function(fichas){
-           var promesa = GuardarImportacionFichaEmpleados(fichas,$scope.usuario.id_empresa)
-           promesa.then(function(dato){
-               $scope.mostrarMensaje(dato.mensaje)
-               blockUI.stop();
-           })
+        $scope.guardarFichasEmpleados = function (fichas, arregloAporteAfp, arregloLugarAfp,
+            arregloLugarSeguroSalud,
+            arregloTipoPersona,
+            arregloCargaHorario, arregloArega,
+            arregloUbicacion,
+            arregloEstadoCivil,
+            arregloOtrosSeguros1,
+            arregloOtrosSeguros2) {
+            var promesa = GuardarImportacionFichaEmpleados(fichas, $scope.usuario.id_empresa, arregloAporteAfp,
+                arregloLugarAfp,
+                arregloLugarSeguroSalud,
+                arregloTipoPersona,
+                arregloCargaHorario,
+                 arregloArega,
+                arregloUbicacion,
+                arregloEstadoCivil,
+                arregloOtrosSeguros1,
+                arregloOtrosSeguros2)
+            promesa.then(function (dato) {
+                $scope.recargarItemsTabla();
+                $scope.mostrarMensaje(dato.mensaje)
+                blockUI.stop();
+            })
         }
-        $scope.subirExcelRTurnoEmpleados=function(event){
+        $scope.subirExcelRTurnoEmpleados = function (event) {
             blockUI.start();
             //console.log('iniciando carga de pacientes')
             var files = event.target.files;
@@ -2232,38 +2460,38 @@ angular.module('agil.controladores')
                     do {
                         var rolturno = {};
                         rolturno.codigo = worksheet['A' + row] != undefined && worksheet['A' + row] != "" ? worksheet['A' + row].v.toString() : null;
-                        rolturno.tipo = worksheet['F' + row] != undefined && worksheet['F' + row] != "" ? (worksheet['F' + row].v.toString()=="Fijo")?true:false : null;
+                        rolturno.tipo = worksheet['F' + row] != undefined && worksheet['F' + row] != "" ? (worksheet['F' + row].v.toString() == "Fijo") ? true : false : null;
                         rolturno.campo = worksheet['G' + row] != undefined && worksheet['G' + row] != "" ? worksheet['G' + row].v.toString() : null;
                         rolturno.fecha_inicio = worksheet['H' + row] != undefined && worksheet['H' + row] != "" ? $scope.fecha_excel_angular(worksheet['H' + row].v.toString()) : null;
                         rolturno.fecha_fin = worksheet['I' + row] != undefined && worksheet['I' + row] != "" ? $scope.fecha_excel_angular(worksheet['I' + row].v.toString()) : null;
                         rolturno.grupo = worksheet['J' + row] != undefined && worksheet['J' + row] != "" ? worksheet['J' + row].v.toString() : null;
                         rolturno.dias_trabajo = worksheet['K' + row] != undefined && worksheet['K' + row] != "" ? worksheet['K' + row].v.toString() : null;
                         rolturno.dias_descanso = worksheet['L' + row] != undefined && worksheet['L' + row] != "" ? worksheet['L' + row].v.toString() : null;
-                                
+
                         rolturnos.push(rolturno);
                         row++;
                         i++;
 
                     } while (worksheet['A' + row] != undefined);
-                    $scope.guardarRolTurnoEmpleados(rolturnos,$scope.tipoImportacionRol);
+                    $scope.guardarRolTurnoEmpleados(rolturnos, $scope.tipoImportacionRol);
                 };
                 reader.readAsBinaryString(f);
                 //console.log('pacientes obtenidos')
             }
         }
-        $scope.actualizarImportacionRoles=function(){
-            $scope.tipoImportacionRol=true
+        $scope.actualizarImportacionRoles = function () {
+            $scope.tipoImportacionRol = true
         }
-        $scope.importarNuevosRoles=function(){
-            $scope.tipoImportacionRol=false
+        $scope.importarNuevosRoles = function () {
+            $scope.tipoImportacionRol = false
         }
-        $scope.guardarRolTurnoEmpleados=function(rolturnos,actualizacion){
-           var promesa = GuardarImportacionRolTurnoEmpleados(rolturnos,$scope.usuario.id_empresa,actualizacion)
-           promesa.then(function(dato){
-               $scope.mostrarMensaje(dato.mensaje)
-               $scope.cerrarDialogTipoImportacionRol()
-               blockUI.stop();
-           })
+        $scope.guardarRolTurnoEmpleados = function (rolturnos, actualizacion) {
+            var promesa = GuardarImportacionRolTurnoEmpleados(rolturnos, $scope.usuario.id_empresa, actualizacion)
+            promesa.then(function (dato) {
+                $scope.mostrarMensaje(dato.mensaje)
+                $scope.cerrarDialogTipoImportacionRol()
+                blockUI.stop();
+            })
         }
         $scope.subirExcelFichaEmpleadoFamiliares = function (event) {
             blockUI.start();
@@ -2417,7 +2645,7 @@ angular.module('agil.controladores')
             // });
 
         }
-        
+
 
         $scope.modificarEmpleado = function (elpaciente) {
             $scope.steps = [{ cabeza: "cabeza-nuevo-datos-personales", cuerpo: "cuerpo-nuevo-datos-personales" },
@@ -4933,11 +5161,11 @@ angular.module('agil.controladores')
                 blockUI.stop()
             })
         }
-        $scope.obtenerlistaRolTurnoEmpresa = function () {          
+        $scope.obtenerlistaRolTurnoEmpresa = function () {
             var promesa = ListaRolTurnosEmpresa($scope.paginator)
             promesa.then(function (datos) {
                 $scope.paginator.setPages(datos.paginas);
-                $scope.listaRolTurnoFiltro = datos.rolesTurno              
+                $scope.listaRolTurnoFiltro = datos.rolesTurno
             })
         }
         //fin rol turno

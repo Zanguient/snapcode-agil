@@ -2800,7 +2800,7 @@ angular.module('agil.servicios')
 				if (filtro.razon_social != "") {
 					cliente = despachos[0].despacho.cliente.razon_social
 				} */
-				var data = [["", "", "REPORTE DE DESPACHOS "]/*,  ["Vendedor :" +vendedor], ["Cliente :" + cliente] */, ["cod. dest", "Destino", "Direccion", "Cod Cliente", "Cliente", "cod dest.factura", "Razón social", "NIT", "Vendedor", "Nro. pedido", "F. Pedido", "Factura SAP", "fecha fact.", "No. Despacho", "fecha desp.", "Transportista", "doc. Cobranza", "Fecha Pago", "Cod. prodcuto", "Producto", "cant. pedido", "cant. Despacho", "P/U", "Total", "Costo", "Grupo de Estibaje", "Tipo de Estibaje", "Costo Estibaje", "C.S. transporte", "Total Pedido"]]
+				var data = [["", "", "REPORTE DE DESPACHOS "]/*,  ["Vendedor :" +vendedor], ["Cliente :" + cliente] */, ["cod. dest", "Destino", "Direccion", "Cod Cliente", "Cliente", "cod dest.factura", "Razón social", "NIT", "Vendedor", "Nro. pedido", "F. Pedido", "Factura SAP", "fecha fact.", "No. Despacho", "fecha desp.", "Transportista", "doc. Cobranza", "Fecha Pago", "Cod. prodcuto", "Producto", "cant. pedido", "cant. Despacho", "P/U", "Total", "Costo Transportista", "Grupo de Estibaje", "Tipo de Estibaje", "Costo Estibaje", "Precio Transporte", "Total Pedido"]]
 				var totalCosto = 0;
 				for (var i = 0; i < despachos.length; i++) {
 					var detalle_despacho = despachos[i]
