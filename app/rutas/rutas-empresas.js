@@ -301,11 +301,20 @@ module.exports = function (router, decodeBase64Image, fs, Empresa, Sucursal, Cla
 		});
 	router.route('/sistema/aplicaciones')
 		.get(function (req, res) {
-			Aplicacion.findAll({
-
-			}).then(function (Aplicaciones) {
-				res.json(Aplicaciones);
-			});
+			if (req.query.app.length > 0) {
+				Aplicacion.findAll({
+					where:{id:{ $in:req.query.app.split(',') }}
+				}).then(function (Aplicaciones) {
+					res.json(Aplicaciones);
+				});
+			} else {
+				Aplicacion.findAll({
+				
+				}).then(function (Aplicaciones) {
+					res.json(Aplicaciones);
+				});
+			}
+			
 		})
 	router.route('/sistema/aplicaciones/empresa/:id_empresa')
 		.get(function (req, res) {

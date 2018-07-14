@@ -13,8 +13,8 @@ angular.module('agil.servicios')
 			Empresa.query({ idEmpresa: idEmpresa }, function (empresas) {
 				delay.resolve(empresas);
 			}, function (error) {
-					delay.reject(error);
-				});
+				delay.reject(error);
+			});
 			return delay.promise;
 		};
 		return res;
@@ -26,8 +26,8 @@ angular.module('agil.servicios')
 			Empresa.query({ idEmpresa: idEmpresa }, function (empresas) {
 				delay.resolve(empresas);
 			}, function (error) {
-					delay.reject(error);
-				});
+				delay.reject(error);
+			});
 			return delay.promise;
 		};
 		return res;
@@ -39,13 +39,13 @@ angular.module('agil.servicios')
 			});
 	})
 	.factory('ListaAplicacionesSistema', ['AplicacionesSistema', '$q', function (AplicacionesSistema, $q) {
-		var res = function () {
+		var res = function (app) {
 			var delay = $q.defer();
-			AplicacionesSistema.query({},function (empresas) {
+			AplicacionesSistema.query({ app: app }, function (empresas) {
 				delay.resolve(empresas);
 			}, function (error) {
-					delay.reject(error);
-				});
+				delay.reject(error);
+			});
 			return delay.promise;
 		};
 		return res;
@@ -59,11 +59,11 @@ angular.module('agil.servicios')
 	.factory('ListaAplicacionesSistemaEmpresa', ['AplicacionesSistemaEmpresa', '$q', function (AplicacionesSistemaEmpresa, $q) {
 		var res = function (idEmpresa) {
 			var delay = $q.defer();
-			AplicacionesSistemaEmpresa.query({id_empresa:idEmpresa},function (empresas) {
+			AplicacionesSistemaEmpresa.query({ id_empresa: idEmpresa }, function (empresas) {
 				delay.resolve(empresas);
 			}, function (error) {
-					delay.reject(error);
-				});
+				delay.reject(error);
+			});
 			return delay.promise;
 		};
 		return res;

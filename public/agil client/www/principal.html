@@ -2719,6 +2719,501 @@
 		</div>
 	</div>
 
+	<div id="modal-nuevo-pedido" class="modal wizard-posicion">
+		<div class="row">
+			<div class="col-sm-4">
+				<div class="widget-box">
+					<form id="formularioVenta" name="formularioVenta" novalidate ng-submit="guardarVenta(formularioVenta.$valid,venta)">
+						<div class="widget-header">
+							<h4 class="widget-title">DATOS DE PEDIDO</h4>
+							&nbsp;
+							<div class="row">
+							
+							<div class="col-sm-4" style=" margin-left: -40px;">
+								<label>FECHA</label>
+								<div class="input-group">
+								<input name="fecha" required ng-update-hidden class="form-control date-picker" type="text" data-date-format="dd/mm/yyyy"
+								 id="fecha" ng-model="venta.fechaTexto" placeholder="Ingrese la fecha" />
+								<span class="red">(*)</span>
+								<span class="invalid-message" ng-show="formularioVenta.fecha.$dirty && formularioVenta.fecha.$invalid">
+									Dato requerido.
+								</span>
+								</div>
+							</div>
+							<div class="col-sm-8" style=" margin-top: 20px;">
+									<button id="guardarV" type="submit"  ng-disabled="venta.detallesVenta.length==0" class="btn btn-primary">
+										<i class="ace-icon fa fa-floppy-o align-top bigger-125"></i>
+										GUARDAR
+									</button>
+									<button id="cerrarV" type="button" class="btn btn-primary btn-danger" ng-click="cerrarNuevoPedido()">
+										<i class="ace-icon fa fa-times red2 align-top bigger-125"></i>
+										CERRAR
+							</div>
+							</div>
+
+
+
+						</div>
+
+						<div class="widget-body">
+							<div class="widget-main">
+								<table class="table table-striped table-bordered table-hover">
+									<tr>
+										<td>
+											<label>MOVIMIENTO</label>
+											<select data-validate="validate(required)" required id="movimiento" name="movimiento" ng-model="venta.movimiento" data-placeholder="Click para escoger"
+											 ng-change="obtenerTipoEgreso(venta.movimiento)" ng-options="movimiento as movimiento.nombre for movimiento in movimientosEgreso track by movimiento.id">
+											</select>
+											<span class="red">(*)</span>
+										
+										</td>
+										<td>
+											<label>RAZÓN SOCIAL CLIENTE</label>
+											<input ng-keypress="interceptarTecla($event,'id_producto',true)" autocomplete="off" data-validate="validate(required)" id="razon_social"
+											 name="razon_social" required type="text" ng-model="venta.cliente.razon_social" placeholder="Ingrese la Razon Social"
+											 uib-typeahead="cliente as cliente.razon_social for cliente in buscarCliente($viewValue)" typeahead-wait-ms="2000"
+											 typeahead-template-url="templates/autocompletar.html" typeahead-show-hint="false" typeahead-min-length="0" typeahead-on-select="establecerCliente($item, $model, $label, $event)">
+											<span class="red">(*)</span>
+											<span class="invalid-message" ng-show="formularioVenta.razon_social.$dirty && formularioVenta.razon_social.$invalid">
+												Dato requerido.
+											</span>
+										</td>
+									</tr>
+									<tr >
+										<td>
+											<label>FACTURAR A:</label>
+											<select data-validate="validate(required)" id="sucursalOrigen" name="sucursalOrigen" required ng-options="sucursal as sucursal.nombre for sucursal in sucursales track by sucursal.id"
+											 ng-model="venta.sucursal" ng-change="obtenerAlmacenesSucursalesDiferente(venta.sucursal.id)">
+											</select>
+											<span class="red">(*)</span>
+										</td>
+										<td>
+											<label>NIT CLIENTE</label>
+											<input   id="nit" name="nit"
+											  type="number" min="0" ng-model="venta.cliente.nit" placeholder="Ingrese el NIT" disabled> 
+										</td>
+									</tr>
+								
+									<tr>
+										<td>
+											<label>DESTINO</label>
+											<select ng-disabled="venta.detallesVenta.length>0" data-validate="validate(required)" required id="sucursal" name="sucursal" ng-options="sucursal as sucursal.nombre for sucursal in sucursales track by sucursal.id"
+											 ng-model="venta.sucursal" ng-change="obtenerAlmacenesActividades(venta.sucursal.id)">
+												<option value="" disabled selected>Selec. Sucursal</option>
+											</select>
+											<span class="red">(*)</span>
+											<span class="invalid-message" ng-show="formularioVenta.sucursal.$dirty && formularioVenta.sucursal.$invalid">
+												Debe seleccionar una Sucursal.
+											</span>
+										</td>
+										<td>
+											<label>DIRECCION</label>
+											<input  id="nit" name="nit"
+											 type="number" min="0" ng-model="venta.cliente.nit" placeholder="Ingrese el NIT" disabled>
+										</td>
+									</tr>
+									
+									
+									<tr>
+										<td>
+											<label>FECHA</label>
+											<input name="fecha" required ng-update-hidden class="form-control date-picker" type="text" data-date-format="dd/mm/yyyy"
+											 id="fecha" ng-model="venta.fechaTexto" placeholder="Ingrese la fecha" />
+											<span class="red">(*)</span>
+											<span class="invalid-message" ng-show="formularioVenta.fecha.$dirty && formularioVenta.fecha.$invalid">
+												Dato requerido.
+											</span>
+										</td>
+									</tr>
+									
+									
+									<tr>
+										<td colspan="2">
+											<label >OBSERVACIONES</label>
+											<textarea ng-model="venta.observaciones" class="form-control limited" id="form-field-9" maxlength="100" style=" height: 50px;"></textarea>
+										</td>
+									</tr>
+
+								</table>
+								<div style="overflow: scroll;overflow-x: hidden;width: 405px;height: 480px;"  class="row">
+									<div class="col-xs-12 table-responsive">
+										<table class="table table-striped table-bordered table-hover">
+											<thead>
+												<tr>
+													<th>
+														<label>#</label>
+													</th>
+													<th>
+														<label>Cant.</label>
+													</th>
+													<th>
+														<label>Producto</label>
+													</th>
+													<th>
+														<label>P. U. (Bs)</label>
+													</th>
+													<th>
+														<label>Imp. (Bs)</label>
+													</th>
+													<th>
+														<label>Acciones</label>
+													</th>
+												</tr>
+											</thead>
+											<tbody>
+												<tr ng-repeat="detalleVenta in venta.detallesVenta">
+													<td>
+														{{$index+1}}
+													</td>
+													<td>
+														{{detalleVenta.cantidad}}
+													</td>
+													<td>
+														{{detalleVenta.producto.nombre}}
+													</td>
+													<td>
+														{{detalleVenta.precio_unitario}}
+													</td>
+													<td>
+														{{detalleVenta.total}}
+													</td>
+													<td>
+														<div class="row">
+															<div class="col-sm-6">
+																<button type="button" ng-click="disminuirDetalleVenta(detalleVenta)" class="button-style btn red-style-button btn-xs">
+																	<i class="ace-icon fa fa-minus bigger-110"></i>
+																</button>
+															</div>
+															<div class="col-sm-6">
+																<button type="button" ng-click="eliminarDetalleVenta(detalleVenta)" class="button-style btn red-style-button btn-xs">
+																	<i class="ace-icon fa fa-trash-o bigger-110"></i>
+																</button>
+															</div>
+														</div>
+
+													</td>
+												</tr>
+												<tr>
+													<td>
+
+													</td>
+													<td>
+
+													</td>
+													<td>
+
+													</td>
+													<td>
+														<b>TOTALES</b>
+													</td>
+													<td>
+														{{venta.total}}
+													</td>
+													<td>
+
+													</td>
+												</tr>
+											</tbody>
+										</table>
+									</div>
+								</div>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+			<div class="col-sm-8">
+				<div class="widget-box">
+					<div class="widget-header">
+						<h4 class="widget-title">BUSQUEDA PRODUCTO</h4>
+
+					</div>
+					<div class="widget-body">
+						<div class="widget-main">
+							
+						</div>
+					</div>
+				</div>
+				<div class="widget-box">
+					<div class="widget-header" ng-if="venta.detallesVenta.length>0">
+						<div class="row">
+							<div class="col-sm-6">
+								<h4 class="widget-title">DETALLE DE VENTA</h4>
+							</div>
+							<div class="col-sm-6">
+								<div class="inline pos-rel pull-right">
+									<a data-toggle="dropdown" href="javascript:void(0)" class="dropdown-toggle">
+										<i class="glyphicon  glyphicon-list-alt"></i>
+									</a>
+
+									<ul id="campos-detalle-venta" class="dropdown-menu-right dropdown-menu dropdown-yellow dropdown-caret">
+										<li>
+											<label>
+												<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionVentaVista.mostrar_producto" ng-change="guardarConfiguracionVentaVista()"
+												/>
+												<span class="lbl check-descuento"></span>
+											</label>
+											<label>NOMBRE</label>
+										</li>
+										<li>
+											<label>
+												<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionVentaVista.mostrar_codigo_producto" ng-change="guardarConfiguracionVentaVista()"
+												/>
+												<span class="lbl check-descuento"></span>
+											</label>
+											<label>CÓD. ITEM</label>
+										</li>
+										<li>
+											<label>
+												<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionVentaVista.mostrar_unidad_producto" ng-change="guardarConfiguracionVentaVista()"
+												/>
+												<span class="lbl check-descuento"></span>
+											</label>
+											<label>UNID. MED.</label>
+										</li>
+										<li>
+											<label>
+												<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionVentaVista.mostrar_precio_unitario" ng-change="guardarConfiguracionVentaVista()"
+												/>
+												<span class="lbl check-descuento"></span>
+											</label>
+											<label>P.U. (Bs/u)</label>
+										</li>
+										<li>
+											<label>
+												<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionVentaVista.mostrar_cantidad" ng-change="guardarConfiguracionVentaVista()"
+												/>
+												<span class="lbl check-descuento"></span>
+											</label>
+											<label>CANT. (u)</label>
+										</li>
+										<li ng-if="usuario.empresa.usar_vencimientos">
+											<label>
+												<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionVentaVista.mostrar_fecha_vencimiento" ng-change="guardarConfiguracionVentaVista()"
+												/>
+												<span class="lbl check-descuento"></span>
+											</label>
+											<label>VENC.</label>
+										</li>
+										<li ng-if="usuario.empresa.usar_vencimientos">
+											<label>
+												<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionVentaVista.mostrar_lote" ng-change="guardarConfiguracionVentaVista()"
+												/>
+												<span class="lbl check-descuento"></span>
+											</label>
+											<label>LOTE</label>
+										</li>
+										<li>
+											<label>
+												<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionVentaVista.mostrar_importe" ng-change="guardarConfiguracionVentaVista()"
+												/>
+												<span class="lbl check-descuento"></span>
+											</label>
+											<label>IMP. (Bs)</label>
+										</li>
+										<li>
+											<label>
+												<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionVentaVista.mostrar_descuento" ng-change="guardarConfiguracionVentaVista()"
+												/>
+												<span class="lbl check-descuento"></span>
+											</label>
+											<label>DESC. (-)</label>
+										</li>
+										<li>
+											<label>
+												<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionVentaVista.mostrar_recargo" ng-change="guardarConfiguracionVentaVista()"
+												/>
+												<span class="lbl check-descuento"></span>
+											</label>
+											<label>REC. (+)</label>
+										</li>
+										<li>
+											<label>
+												<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionVentaVista.mostrar_ice" ng-change="guardarConfiguracionVentaVista()"
+												/>
+												<span class="lbl check-descuento"></span>
+											</label>
+											<label>ICE (-)</label>
+										</li>
+										<li>
+											<label>
+												<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionVentaVista.mostrar_excento" ng-change="guardarConfiguracionVentaVista()"
+												/>
+												<span class="lbl check-descuento"></span>
+											</label>
+											<label>EXC. (-)</label>
+										</li>
+										<li>
+											<label>
+												<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionVentaVista.mostrar_total" ng-change="guardarConfiguracionVentaVista()"
+												/>
+												<span class="lbl check-descuento"></span>
+											</label>
+											<label>SUJETO A DF</label>
+										</li>
+										<li class="divider"></li>
+									</ul>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="widget-body" ng-if="venta.detallesVenta.length>0">
+						<div class="widget-main">
+							<table class="table table-striped table-bordered table-hover">
+								<thead>
+									<tr>
+										<th>
+											<label>#</label>
+										</th>
+										<th ng-if="configuracionVentaVista.mostrar_producto">
+											<label>NOMBRE</label>
+										</th>
+										<th ng-if="configuracionVentaVista.mostrar_codigo_producto">
+											<label>CÓD. ITEM</label>
+										</th>
+										<th ng-if="configuracionVentaVista.mostrar_unidad_producto">
+											<label>UNID. MED.</label>
+										</th>
+										<th ng-if="configuracionVentaVista.mostrar_precio_unitario">
+											<label>P.U. (Bs/u)</label>
+										</th>
+										<th ng-if="configuracionVentaVista.mostrar_cantidad">
+											<label>CANT. (u)</label>
+										</th>
+										<th ng-if="configuracionVentaVista.mostrar_fecha_vencimiento && usuario.empresa.usar_vencimientos">
+											<label>VENC.</label>
+										</th>
+										<th ng-if="configuracionVentaVista.mostrar_lote && usuario.empresa.usar_vencimientos">
+											<label>LOTE</label>
+										</th>
+										<th ng-if="configuracionVentaVista.mostrar_importe">
+											<label>IMP. (Bs)</label>
+										</th>
+										<th ng-if="configuracionVentaVista.mostrar_descuento">
+											<label>DESC. (-)</label>
+										</th>
+										<th ng-if="configuracionVentaVista.mostrar_recargo">
+											<label>REC. (+)</label>
+										</th>
+										<th ng-if="configuracionVentaVista.mostrar_ice">
+											<label>ICE (-)</label>
+										</th>
+										<th ng-if="configuracionVentaVista.mostrar_excento">
+											<label>EXC. (-)</label>
+										</th>
+										<th ng-if="configuracionVentaVista.mostrar_total">
+											<label>SUJETO A DF</label>
+										</th>
+										<th>
+											<label>ACCIONES</label>
+										</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr ng-repeat="detalleVenta in venta.detallesVenta">
+										<td>
+											{{$index+1}}
+										</td>
+										<td ng-if="configuracionVentaVista.mostrar_producto">
+											{{detalleVenta.producto.nombre}}
+										</td>
+										<td ng-if="configuracionVentaVista.mostrar_codigo_producto">
+											{{detalleVenta.producto.codigo}}
+										</td>
+										<td ng-if="configuracionVentaVista.mostrar_unidad_producto">
+											{{detalleVenta.producto.unidad_medida}}
+										</td>
+										<td ng-if="configuracionVentaVista.mostrar_precio_unitario">
+											{{detalleVenta.precio_unitario}}
+										</td>
+										<td ng-if="configuracionVentaVista.mostrar_cantidad">
+											{{detalleVenta.cantidad}}
+										</td>
+										<td ng-if="configuracionVentaVista.mostrar_fecha_vencimiento && usuario.empresa.usar_vencimientos">
+											{{detalleVenta.fecha_vencimiento | date:"dd/MM/yyyy"}}
+										</td>
+										<td ng-if="configuracionVentaVista.mostrar_lote && usuario.empresa.usar_vencimientos">
+											{{detalleVenta.lote}}
+										</td>
+										<td ng-if="configuracionVentaVista.mostrar_importe">
+											{{detalleVenta.importe}}
+										</td>
+										<td ng-if="configuracionVentaVista.mostrar_descuento">
+											{{detalleVenta.descuento}}
+										</td>
+										<td ng-if="configuracionVentaVista.mostrar_recargo">
+											{{detalleVenta.recargo}}
+										</td>
+										<td ng-if="configuracionVentaVista.mostrar_ice">
+											{{detalleVenta.ice}}
+										</td>
+										<td ng-if="configuracionVentaVista.mostrar_excento">
+											{{detalleVenta.excento}}
+										</td>
+										<td ng-if="configuracionVentaVista.mostrar_total">
+											{{detalleVenta.total}}
+										</td>
+										<td>
+											<a class="red" href="javascript:void(0)" ng-click="eliminarDetalleVenta(detalleVenta)">
+												<i class="ace-icon fa fa-trash-o bigger-130"></i>
+											</a>
+										</td>
+									</tr>
+									<tr>
+										<td>
+
+										</td>
+										<td ng-if="configuracionVentaVista.mostrar_producto">
+											<b>TOTALES</b>
+										</td>
+										<td ng-if="configuracionVentaVista.mostrar_codigo_producto">
+
+										</td>
+										<td ng-if="configuracionVentaVista.mostrar_unidad_producto">
+
+										</td>
+										<td ng-if="configuracionVentaVista.mostrar_precio_unitario">
+
+										</td>
+										<td ng-if="configuracionVentaVista.mostrar_cantidad">
+
+										</td>
+										<td ng-if="configuracionVentaVista.mostrar_fecha_vencimiento && usuario.empresa.usar_vencimientos">
+
+										</td>
+										<td ng-if="configuracionVentaVista.mostrar_lote && usuario.empresa.usar_vencimientos">
+
+										</td>
+										<td ng-if="configuracionVentaVista.mostrar_importe">
+											{{venta.importe}}
+										</td>
+										<td ng-if="configuracionVentaVista.mostrar_descuento">
+
+										</td>
+										<td ng-if="configuracionVentaVista.mostrar_recargo">
+
+										</td>
+										<td ng-if="configuracionVentaVista.mostrar_ice">
+
+										</td>
+										<td ng-if="configuracionVentaVista.mostrar_excento">
+										</td>
+										<td ng-if="configuracionVentaVista.mostrar_total">
+											{{venta.total}}
+										</td>
+										<td>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
 	<div id="dialog-alertas-proforma">
 		<canvas id="qr-code" style="display:none" width="100" height="100"></canvas>
 		<div>

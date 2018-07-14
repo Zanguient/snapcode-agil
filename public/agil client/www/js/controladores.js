@@ -23,6 +23,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 		$scope.idmodalActualizarCreditoDeuda = "dialog-actualizar-deudas";
 		$scope.idModalDescuento = "dialog-edicion-descuento";
 		$scope.idModalInicioSesion = "popup-inicio-sesion";
+		$scope.idModalNuevoPedido = "modal-nuevo-pedido";
 
 		//nuevo comprobante
 		$scope.idModalWizardComprobanteEdicion = 'modal-wizard-comprobante-edicion';
@@ -44,7 +45,8 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 				$scope.idmodalActualizarCreditoCliente, $scope.idmodalActualizarCreditoDeuda, $scope.idModalPagoDeuda, $scope.idModalDescuento, $scope.idModalTablaVentasPendientes,
 				$scope.idModalTablaComprasPendientes, $scope.idModalTablaBancosPendientes, $scope.idModalTablaOtrosPendientes, $scope.idModalInicioSesion,
 				$scope.idModalWizardComprobanteEdicion, $scope.IdModalOpcionesQr, $scope.IdModalRegistrarComprobante, $scope.IdModalRevisarComprobante, $scope.IdModalLibroMayor, $scope.IdModalAsignarCuenta,
-				$scope.idModalTablaDespachos, $scope.idModalTablaAsignacionDespacho, $scope.IdModalEliminarProductoVencido, $scope.dialogAlertasProformas, $scope.facturarProformas, $scope.mensajeConfirmacionComprobante);
+				$scope.idModalTablaDespachos, $scope.idModalTablaAsignacionDespacho, $scope.IdModalEliminarProductoVencido, $scope.dialogAlertasProformas, $scope.facturarProformas, $scope.mensajeConfirmacionComprobante,
+				$scope.idModalNuevoPedido);
 
 			$scope.inicio();
 			blockUI.stop();
@@ -99,9 +101,16 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 				}
 			})
 		}
+
 		$scope.AbrirNuevoPedido = function (mensaje) {
-			alert("llegooooo");
+			// alert("llegooooo");
+			$scope.abrirPopup($scope.idModalNuevoPedido);
 		}
+
+		$scope.cerrarNuevoPedido = function () {
+			$scope.cerrarPopup($scope.idModalNuevoPedido)
+		}
+
 		$scope.AbrirMensajeConfirmacionComprobante = function (mensaje, form, form2) {
 			$scope.mensajeConfirmacion = mensaje
 			$scope.formUno = form
