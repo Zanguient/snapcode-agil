@@ -334,4 +334,11 @@ angular.module('agil.servicios')
 		};
 		return res;
 	}])
+
+	.factory('Pedidos', function ($resource) {
+		return $resource(restServer + "/gtm-despacho/empresa/:id_empresa", { id_empresa: '@id_empresa' },
+			{
+				'update': { method: 'PUT' }
+			});
+	})
 	

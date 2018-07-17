@@ -38,7 +38,14 @@ function ejecutarScriptDestino(idModalWizardDestinoEdicion, idContenedorEdicionD
 	}, 3000);
 
 }
-
+function ejecutarScriptsConfiguracionEstadosFinacioneros(idModalConfiguracionGestion,idModalDetalleImpresion){
+	crearPopup(idModalConfiguracionGestion, "auto", 'auto');
+	crearPopup(idModalDetalleImpresion,  'auto', 'auto');
+	setTimeout(function () {
+		aplicarDatePickers();
+	}, 200);
+	
+}
 function ejecutarScriptsPolifuncionalidad(modalNuevaEvaluacion, modalNuevaEvaluacionWizard, modalBusquedaPersonal, modalParametrosPolifuncionalidad,
 	modalParametrosPolifuncionalidadWizard, idModalReportes, reporteGraficoPolifuncional, modalBusquedaCentroCosto) {
 	crearPopup(modalNuevaEvaluacion, 'auto', 'auto');
@@ -149,7 +156,7 @@ function ejecutarScriptsOperaciones(idDialogDialogPanelOperaciones, idDialogEntr
 function ejecutarScriptsInicio(idPopupTablaProductos, idPopupTablaCreditos, idPopupTablaDeudas, idPopupPago,
 	idPopupActualizarCreditoCliente, idPopupActualizarCreditoDeuda, idPopupDeuda, idModalDescuento, idModalTablaVentasPendientes,
 	idModalTablaComprasPendientes, idModalTablaBancosPendientes, idModalTablaOtrosPendientes, idModalInicioSesion, idModalWizardComprobanteEdicion, IdModalOpcionesQr, IdModalRegistrarComprobante, IdModalRevisarComprobante, IdModalLibroMayor, IdModalAsignarCuenta,
-	idModalTablaDespachos, idModalTablaAsignacionDespacho, IdModalEliminarProductoVencido, dialogAlertasProformas, facturarProformas, mensajeConfirmacionComprobante, idModalNuevoPedido) {
+	idModalTablaDespachos, idModalTablaAsignacionDespacho, IdModalEliminarProductoVencido, dialogAlertasProformas, facturarProformas, mensajeConfirmacionComprobante, idModalNuevoPedido, idModalDatosProducto) {
 	crearPopup(idPopupTablaProductos, "70%", "auto");
 	crearPopup(idModalWizardComprobanteEdicion, "100%", "auto");
 	crearPopup(idPopupTablaCreditos, "auto", "auto");
@@ -178,6 +185,7 @@ function ejecutarScriptsInicio(idPopupTablaProductos, idPopupTablaCreditos, idPo
 		crearPopup(idModalTablaDespachos, screen.width, screen.height);
 		crearPopup(idModalTablaAsignacionDespacho, "auto", "auto");
 		crearPopup(idModalNuevoPedido, screen.width, screen.height);
+		crearPopup(idModalDatosProducto, "36%", 370 )
 		aplicarDatePickers();
 
 	}, 2000)

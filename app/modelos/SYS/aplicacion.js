@@ -174,6 +174,15 @@ module.exports=function(sequelize,Sequelize){
 		sequelize.query("INSERT IGNORE INTO sys_aplicacion SET id = 52,titulo = 'GEO LOCALIZACIÓN',atributo_clase='fa-map-marker',url='geo-localizacion',padre=41,createdAt = NOW(),updatedAt = NOW();").spread(function(results, metadata) {
 		  //console.log(metadata+" rows affected in sys_application");
 		});
+		sequelize.query("INSERT IGNORE INTO sys_aplicacion SET id = 53,titulo = 'ESTADOS FINANCIEROS',atributo_clase='fa-usd',url='estados-financieros',createdAt = NOW(),updatedAt = NOW();").spread(function(results, metadata) {
+		  //console.log(metadata+" rows affected in sys_application");
+		});
+		sequelize.query("INSERT IGNORE INTO sys_aplicacion SET id = 54,titulo = 'CONFIGURACIONES',atributo_clase='fa-cogs',url='configuraciones-estados-financieros',padre=53,createdAt = NOW(),updatedAt = NOW();").spread(function(results, metadata) {
+		  //console.log(metadata+" rows affected in sys_application");
+		});
+		sequelize.query("INSERT IGNORE INTO sys_aplicacion SET id = 55,titulo = 'BALANCE GENERAL',atributo_clase='fa-file-text',url='balance-general',padre=53,createdAt = NOW(),updatedAt = NOW();").spread(function(results, metadata) {
+		  //console.log(metadata+" rows affected in sys_application");
+		});
 	});
 	
 	return Aplicacion;

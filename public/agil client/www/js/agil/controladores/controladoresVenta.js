@@ -408,7 +408,7 @@ angular.module('agil.controladores')
 				detalleVenta.lote = detalleVenta.inventarioProducto.lote;
 			} else {
 				detalleVenta.inventario_disponible = $scope.obtenerInventarioTotal(detalleVenta.producto);
-				detalleVenta.costos = $scope.inventarioProducto;
+				detalleVenta.costos = detalleVenta.producto.inventarios;
 				detalleVenta.lote = "";
 			}
 			$scope.colorearInventarioDisponible(detalleVenta.inventario_disponible, detalleVenta.producto);

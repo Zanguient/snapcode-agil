@@ -1269,7 +1269,10 @@ angular.module('agil.controladores')
 					compra.proveedor = compra.proveedor.nit;
 				}
 				//compra.codigo_control=$scope.formatearCodigoControl(compra.codigo_control);
-				compra.fecha = new Date($scope.convertirFecha(compra.fechaTexto));
+				compra.fecha = new Date($scope.convertirFecha(compra.fechaTexto));				
+				compra.fecha.setHours(new Date().getHours())
+				compra.fecha.setMinutes(new Date().getMinutes())
+				compra.fecha.setSeconds(new Date().getSeconds())
 				blockUI.start();
 				if (compra.id) {
 					compra.esModificacion = true;

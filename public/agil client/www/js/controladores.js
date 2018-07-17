@@ -7,7 +7,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 		ImprimirSalida, Diccionario, VentasComprobantesEmpresa, ComprasComprobantesEmpresa, LibroMayorCuenta, Paginator, ComprobanteRevisarPaginador, AsignarComprobanteFavorito, ListaCuentasComprobanteContabilidad, NuevoComprobanteContabilidad, NuevoComprobante, ComprasComprobante,
 		ConfiguracionesCuentasEmpresa, ContabilidadCambioMoneda, ObtenerCambioMoneda, AsignarCuentaCiente, AsignarCuentaProveedor,
 		GtmTransportistas, GtmEstibajes, GtmGrupoEstibajes, ListasCuentasAuxiliares, GtmDetallesDespachoAlerta, $interval, GuardarGtmDetalleDespachoAlerta, GtmDetalleDespacho, VerificarCorrelativosSucursale, ReiniciarCorrelativoSucursales, ClasesTipoEmpresa, alertasProformasLista, UltimaFechaTipoComprobante,
-		FacturaProforma, ListaDetallesProformasAFacturar, ProformaInfo, FacturarProformas, ImprimirPdfAlertaDespacho, ExportarExelAlarmasDespachos, VencimientoDosificaciones, EmpresaDatosInicio, VerificacionMensualActivos) {
+		FacturaProforma, ListaDetallesProformasAFacturar, ProformaInfo, FacturarProformas, ImprimirPdfAlertaDespacho, ExportarExelAlarmasDespachos, VencimientoDosificaciones, EmpresaDatosInicio, VerificacionMensualActivos, ProductosPaginador, Pedidos) {
 		$scope.idModalTablaVencimientoProductos = "tabla-vencimiento-productos";
 		$scope.idModalTablaDespachos = "tabla-gtm-despachos";
 		$scope.idModalTablaAsignacionDespacho = "tabla-gtm-asignacion-despachos";
@@ -24,6 +24,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 		$scope.idModalDescuento = "dialog-edicion-descuento";
 		$scope.idModalInicioSesion = "popup-inicio-sesion";
 		$scope.idModalNuevoPedido = "modal-nuevo-pedido";
+		$scope.idModalDatosProducto = "modal-dato-producto";
 
 		//nuevo comprobante
 		$scope.idModalWizardComprobanteEdicion = 'modal-wizard-comprobante-edicion';
@@ -46,7 +47,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 				$scope.idModalTablaComprasPendientes, $scope.idModalTablaBancosPendientes, $scope.idModalTablaOtrosPendientes, $scope.idModalInicioSesion,
 				$scope.idModalWizardComprobanteEdicion, $scope.IdModalOpcionesQr, $scope.IdModalRegistrarComprobante, $scope.IdModalRevisarComprobante, $scope.IdModalLibroMayor, $scope.IdModalAsignarCuenta,
 				$scope.idModalTablaDespachos, $scope.idModalTablaAsignacionDespacho, $scope.IdModalEliminarProductoVencido, $scope.dialogAlertasProformas, $scope.facturarProformas, $scope.mensajeConfirmacionComprobante,
-				$scope.idModalNuevoPedido);
+				$scope.idModalNuevoPedido, $scope.idModalDatosProducto);
 
 			$scope.inicio();
 			blockUI.stop();
@@ -102,8 +103,100 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 			})
 		}
 
+
+		$scope.buscarProductos = function () {
+			blockUI.start();
+			$scope.paginator.filter = $scope.grupo !== undefined ? $scope.grupo : { id: 0 }
+			$scope.paginator.itemsPerPage = 15;
+			var promesa = ProductosPaginador($scope.usuario.id_empresa, $scope.paginator, $scope.usuario.id);
+			promesa.then(function (dato) {
+				if (dato.hasErr) {
+					$scope.mostrarMensaje(dato.mensaje)
+				} else {
+					$scope.paginator.setPages(dato.paginas);
+					$scope.productos = dato.productos;
+				}
+
+				setTimeout(function () {
+					aplicarSwiper(4, 3, true, 2);
+				}, 1000);
+				blockUI.stop();
+			}).catch(function (err) {
+				var memo = (err.stack !== undefined && err.stack !== null && err.stack !== "") ? err.stack : (err.data !== null && err.data !== undefined & err.data !== "") ? err.data : "Error: se perdio la conexión con el servidor."
+				$scope.mostrarMensaje(memo)
+				blockUI.stop();
+			})
+		}
+
+		$scope.obtenerProductos = function () {
+			$scope.paginator = Paginator();
+			$scope.paginator.column = "nombre";
+			$scope.paginator.filter = $scope.grupo
+			$scope.paginator.callBack = $scope.buscarProductos;
+			$scope.paginator.getSearch("", null, null);
+		}
+
+		$scope.AbrirProducto = function (producto) {
+			console.log("elproductos es: ", producto);
+			$scope.Datoproducto = producto;
+			$scope.Datoproducto.cantidad = 1;
+			$scope.Datoproducto.transporte = 0;
+			// la ventana ===
+			$scope.abrirPopup($scope.idModalDatosProducto);
+		}
+
+		$scope.cerrarDatoProducto = function () {
+			$scope.cerrarPopup($scope.idModalDatosProducto)
+		}
+
+		$scope.agregarDetallePedido = function (producto) {
+			//console.log("producto sssssssssss ", producto);
+			//if (producto.activar_inventario) {
+			var detallePedido;
+			$scope.cantidadInventario = 0;
+
+			detallePedido = {
+				producto: producto,
+				id_producto: producto.id, 
+				cantidad: producto.cantidad,
+				precio_unitario: producto.precio_unitario,
+				total: producto.cantidad * producto.precio_unitario,
+				servicio_transporte: producto.transporte,
+				latitud: 0,
+				longitud: 0,
+			};
+
+
+			$scope.pedido.detalles_despacho.push(detallePedido);
+			// $scope.calcularImporteDetalleVenta(detallePedido);
+				
+			$scope.cerrarDatoProducto();
+
+			// $scope.sumarTotal();
+			// $scope.sumarTotalImporte();
+			// $scope.calcularSaldo();
+			// $scope.capturarInteraccion();
+			
+		}
+
+		$scope.eliminarDetallePedido = function (detallePedido) {
+			$scope.pedido.detalles_despacho.splice($scope.pedido.detalles_despacho.indexOf(detallePedido), 1);
+			// $scope.sumarTotal();
+			// $scope.sumarTotalImporte();
+			// $scope.calcularSaldo();
+			// $scope.calcularCambio();
+			// $scope.capturarInteraccion();
+		}
+
+
 		$scope.AbrirNuevoPedido = function (mensaje) {
 			// alert("llegooooo");
+			$scope.obtenerProductos();
+			$scope.pedido = new Pedidos({
+				id_empresa: $scope.usuario.id_empresa, id_usuario: $scope.usuario.id,
+				detalles_despacho: []
+			});
+
 			$scope.abrirPopup($scope.idModalNuevoPedido);
 		}
 
@@ -3323,6 +3416,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 						}, 5000)
 						blockUI.stop()
 					}else {
+						blockUI.stop()
 						//$scope.mostrarMensaje(res.mensaje)
 					}
 				}).catch(function (err) {

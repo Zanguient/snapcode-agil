@@ -179,6 +179,13 @@
     border-bottom: 35px #e3403d solid !important;
 }
 
+ .red-style .swiper-slide {
+    background-color: white !important;
+    color: #e3403d !important;
+    border: 3px #e3403d solid !important; 
+    border-bottom: 35px #e3403d solid !important;
+}
+
 #dialog-panel-ventas .skyblue-style .swiper-slide {
     background-color: white !important;
     color: #0086ae !important;

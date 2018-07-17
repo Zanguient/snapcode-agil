@@ -3197,7 +3197,7 @@ angular.module('agil.controladores')
         }
         $scope.obtenerTiposEstadosPasajeros = function () {
             blockUI.start();
-            var promesa = ClasesTipo("RRHH_EPVIA");
+            var promesa = ClasesTipoEmpresa("RRHH_EPVIA", $scope.usuario.id_empresa);
             promesa.then(function (entidad) {
                 $scope.tiposPasajerosViaje = entidad.clases
 

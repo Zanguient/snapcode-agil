@@ -1,0 +1,90 @@
+angular.module('agil.controladores')
+
+    .controller('ControladorConfiguracionesEstadosFinancieros', function ($scope, $localStorage, $location, $templateCache, $route, blockUI,
+        ClasesTipoEmpresa, ClasesTipo, ObtenerGestionesEEFF, GuardarGestionesEEFF) {
+
+
+        $scope.usuario = JSON.parse($localStorage.usuario);
+        $scope.idModalConfiguracionGestion = 'dialog-configuracion-gestiones'
+        $scope.idModalDetalleImpresion = 'dialog-detalles-impesion'
+        $scope.inicio = function () {
+            $scope.obtenerTipoNumeracion()
+            $scope.obtenerGestionesEEFF()
+        }
+
+
+        $scope.$on('$viewContentLoaded', function () {
+            resaltarPestaña($location.path().substring(1));
+            ejecutarScriptsConfiguracionEstadosFinacioneros($scope.idModalConfiguracionGestion, $scope.idModalDetalleImpresion);
+            $scope.buscarAplicacion($scope.usuario.aplicacionesUsuario, $location.path().substring(1));
+            blockUI.stop();
+        });
+
+        $scope.abrirModalConfiguracionGestion = function () {
+            blockUI.start()
+            $scope.gestionesEF = []
+            var promesa = ObtenerGestionesEEFF($scope.usuario.id_empresa)
+            promesa.then(function (datos) {
+                if (datos.length > 0) {
+                    $scope.gestionesEF = datos
+                } else {
+                    $scope.ClasesGestionesEF.forEach(function (gestion, index, array) {
+                        var gestion = { tipoGestion: gestion, inicio: "", fin: "" }
+                        $scope.gestionesEF.push(gestion)
+                        if(index==(array.length-1)){
+                            setTimeout(function () {
+                                aplicarDatePickers();
+                            }, 300);
+                        }
+                    });
+                }
+                blockUI.stop()
+            })
+
+            $scope.abrirPopup($scope.idModalConfiguracionGestion)
+        }
+        $scope.cerrarModalConfiguracionGestion = function () {
+            $scope.cerrarPopup($scope.idModalConfiguracionGestion)
+        }
+        $scope.abrirModalDetalleImpresion = function () {
+            $scope.abrirPopup($scope.idModalDetalleImpresion)
+        }
+        $scope.cerrarModalDetalleImpresion = function () {
+            $scope.cerrarPopup($scope.idModalDetalleImpresion)
+        }
+
+        $scope.obtenerTipoNumeracion = function () {
+            blockUI.start();
+            var promesa = ClasesTipo("NEF");
+            promesa.then(function (entidad) {
+                $scope.TiposNumeraciones = entidad
+                blockUI.stop();
+            });
+        }
+        $scope.obtenerGestionesEEFF = function () {
+            blockUI.start();
+            var promesa = ClasesTipoEmpresa("GESTIÓN EEFF", $scope.usuario.id_empresa);
+            promesa.then(function (entidad) {
+                $scope.ClasesGestionesEF = entidad.clases
+                blockUI.stop();
+            });
+        }
+        $scope.guardarGestionesEEFF = function (datos) {
+            blockUI.start()
+            var promesa = GuardarGestionesEEFF($scope.usuario.id_empresa, datos)
+            promesa.then(function(dato){
+                $scope.mostrarMensaje(dato.mensaje)
+                blockUI.stop()
+            })
+        }
+        $scope.$on('$routeChangeStart', function (next, current) {
+            $scope.eliminarPopup($scope.idModalConfiguracionGestion);
+            $scope.eliminarPopup($scope.idModalDetalleImpresion)
+
+        });
+
+        $scope.inicio();
+    });
+
+
+

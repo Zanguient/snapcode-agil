@@ -499,6 +499,24 @@ module.exports = function (sequelize, Sequelize) {
 		sequelize.query("INSERT IGNORE INTO sys_rol_aplicacion SET id=151,rol=3,aplicacion=52,puede_ver=1,puede_crear=1,puede_modificar=1,puede_eliminar=1,createdAt = NOW(),updatedAt = NOW();").spread(function (results, metadata) {
 
 		});
+		sequelize.query("INSERT IGNORE INTO sys_rol_aplicacion SET id=152,rol=2,aplicacion=53,puede_ver=1,puede_crear=1,puede_modificar=1,puede_eliminar=1,createdAt = NOW(),updatedAt = NOW();").spread(function (results, metadata) {
+
+		});
+		sequelize.query("INSERT IGNORE INTO sys_rol_aplicacion SET id=153,rol=3,aplicacion=53,puede_ver=1,puede_crear=1,puede_modificar=1,puede_eliminar=1,createdAt = NOW(),updatedAt = NOW();").spread(function (results, metadata) {
+
+		});
+		sequelize.query("INSERT IGNORE INTO sys_rol_aplicacion SET id=154,rol=2,aplicacion=54,puede_ver=1,puede_crear=1,puede_modificar=1,puede_eliminar=1,createdAt = NOW(),updatedAt = NOW();").spread(function (results, metadata) {
+
+		});
+		sequelize.query("INSERT IGNORE INTO sys_rol_aplicacion SET id=155,rol=3,aplicacion=54,puede_ver=1,puede_crear=1,puede_modificar=1,puede_eliminar=1,createdAt = NOW(),updatedAt = NOW();").spread(function (results, metadata) {
+
+		});
+		sequelize.query("INSERT IGNORE INTO sys_rol_aplicacion SET id=156,rol=2,aplicacion=55,puede_ver=1,puede_crear=1,puede_modificar=1,puede_eliminar=1,createdAt = NOW(),updatedAt = NOW();").spread(function (results, metadata) {
+
+		});
+		sequelize.query("INSERT IGNORE INTO sys_rol_aplicacion SET id=157,rol=3,aplicacion=55,puede_ver=1,puede_crear=1,puede_modificar=1,puede_eliminar=1,createdAt = NOW(),updatedAt = NOW();").spread(function (results, metadata) {
+
+		});
 	});
 
 	return RolAplicacion;

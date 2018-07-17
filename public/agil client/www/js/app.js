@@ -233,9 +233,18 @@ angular.module('agil', ['ngRoute', 'agil.controladores',
             .when('/activos-fijos', {
                 controller:'ControladorActivosFijos',
                 templateUrl:'templates/agil/activosFijos.html'
-            }).when('/geo-localizacion', {
+            })
+            .when('/geo-localizacion', {
                 controller:'ControladorGtmGeoLocalizacion',
                 templateUrl:'templates/agil/geoLocalizacion.html'
+            })
+            .when('/configuraciones-estados-financieros', {
+                controller:'ControladorConfiguracionesEstadosFinancieros',
+                templateUrl:'templates/estadosFinancierosAgil/configuraciones-estados-financieros.html'
+            })
+            .when('/balance-general', {
+                controller:'ControladorBalanceGeneral',
+                templateUrl:'templates/estadosFinancierosAgil/balance-general.html'
             })
         .otherwise({
           redirectTo:'/'

@@ -1,0 +1,162 @@
+<div class="conteiner">
+    <h3 class="header smaller lighter blue">CONFIGURACIÓN IMPRESIONES</h3>
+    <div>
+        <a href="javascript:void(0)" class="blue" ng-click="abrirModalConfiguracionGestion()">
+            <i class="fa fa-cog bigger-210"></i>Gestiones
+        </a>
+        <a href="javascript:void(0)" class="green" ng-click="abrirModalDetalleImpresion()">
+            <i class="fa fa-file-text bigger-210"></i>Detalles De Impesion
+        </a>
+    </div>
+</div>
+<!-- inicio configuracion gestiones -->
+<div class="modal" id="dialog-configuracion-gestiones">
+    <div class="modal-content">
+        <div class="modal-header bg-primary">
+            <button type="button" ng-click="cerrarModalConfiguracionGestion()" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            <h4 class="modal-title" id="advertenciaPrestamoPersonal">Gestión</h4>
+        </div>
+        <form  name="form-gestiones" id="form-gestiones"ng-submit="guardarGestionesEEFF(gestionesEF)">
+        <div class="modal-body">
+            <table class="table table-striped table-bordered table-hover">
+                <thead>
+                    <tr>
+                        <th>
+                            <strong>Tipo</strong>
+                        </th>
+                        <th>Fecha inicio</th>
+                        <th>Fecha fin</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="gestion in gestionesEF">
+                        <td>{{gestion.tipoGestion.nombre}}</td>
+
+                        <td>
+                            <input type="text" ng-model="gestion.inicio" ng-update-hidden data-date-format="dd/mm" class="from-control date-picker">
+                        </td>
+
+                        <td>
+                            <input type="text"  ng-model="gestion.fin" ng-update-hidden data-date-format="dd/mm" class="from-control date-picker">
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-danger" ng-click="cerrarModalConfiguracionGestion()">Cerrar</button>
+            <button type="submit" class="btn btn-primary">Guardar</button>
+        </div>
+    </form>
+    </div>
+</div>
+</div>
+<!-- fin configuracion gestiones -->
+<!-- inicio configuracion gestiones -->
+<div class="modal" id="dialog-detalles-impesion">
+    <div class="modal-content">
+        <div class="modal-header bg-primary">
+            <button type="button" ng-click="cerrarModalDetalleImpresion()" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            <h4 class="modal-title">detalles de impresión</h4>
+        </div>
+        <form>
+            <div class="modal-body">
+
+                <div class="row">
+                    <div class="col-md-6"><label class="inline">
+                            <input type="checkbox" class="ace">
+                            <span class="lbl">Lugar de Emisión:</span>
+                        </label></div>
+                    <div class="col-md-6">
+                        <input type="text" class="form-control">
+                    </div>
+                </div>
+                <div class="space-4"></div>
+                <div class="row">
+                    <div class="col-md-6"><label class="inline">
+                            <input type="checkbox" class="ace">
+                            <span class="lbl">Fecha de Emisión:</span>
+                        </label></div>
+                    <div class="col-md-6">
+                        <input type="text" class="form-control date-picker">
+                    </div>
+                </div>
+                <div class="space-4"></div>
+                <div class="row">
+                    
+                    <div class="col-md-6"><label class="inline">
+                            <input type="checkbox" class="ace">
+                            <span class="lbl">Tipo de Numeración:</span>
+                        </label></div>
+                    <div class="col-md-6">
+                        <input type="text" class="form-control">
+                    </div>
+                </div>
+                <div class="space-4"></div>
+                <div class="row">
+                        <div class="col-md-6"><label class="inline">
+                                <input type="checkbox" class="ace">
+                                <span class="lbl">Empezar en:</span>
+                            </label></div>
+                        <div class="col-md-6">
+                            <input type="text" class="form-control">
+                        </div>
+                    </div>
+                <div class="space-4"></div>
+                <div class="row">
+                    <div class="col-md-6"><label class="inline">
+                            <input type="checkbox" class="ace">
+                            <span class="lbl">Firma 1:</span>
+                        </label></div>
+
+                    <div class="col-md-6">Cargo:</div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <input type="text" class="form-control">
+                    </div>
+                    <div class="col-md-6">
+                        <input type="text" class="form-control">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6"><label class="inline">
+                            <input type="checkbox" class="ace">
+                            <span class="lbl">Firma 2:</span>
+                        </label></div>
+
+                    <div class="col-md-6">Cargo:</div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <input type="text" class="form-control">
+                    </div>
+                    <div class="col-md-6">
+                        <input type="text" class="form-control">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12"><label class="inline">
+                            <input type="checkbox" class="ace">
+                            <span class="lbl">Frase de pie de página:</span>
+                        </label>
+                        
+                    </div>
+                    <div class="col-md-12">
+                        <input type="text" class="form-control">
+                    </div>
+                </div>
+            </div>
+    
+    <div class="modal-footer">
+        <button type="button" class="btn btn-danger" ng-click="cerrarModalDetalleImpresion()">Cerrar</button>
+    </div>
+    </form>
+</div>
+</div>
+</div>
+<!-- fin configuracion gestiones -->

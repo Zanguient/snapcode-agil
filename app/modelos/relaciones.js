@@ -15,7 +15,8 @@ module.exports = function (sequelize, Usuario, Persona, Rol, UsuarioRol, Tipo, C
 	RrhhEmpleadoHojaVida, RrhhEmpleadoFormacionAcademica, RrhhEmpleadoExperienciaLaboral, RrhhEmpleadoLogroInternoExterno, RrhhEmpleadoCapacidadInternaExterna, SolicitudReposicion, DetalleSolicitudProducto, DetalleSolicitudProductoBase, MonedaTipoCambio, ContabilidadCuentaAuxiliar, GtmDespachoDetalle, RrhhEmpleadoPrestamo, RrhhEmpleadoPrestamoPago, Proforma, DetallesProformas, Servicios, Farmacia, RRHHParametros, RrhhEmpleadoRolTurno, RrhhEmpleadoHorasExtra, RRHHPlanillaSueldos, RRHHDetallePlanillaSueldos, RrhhAnticipo, EvaluacionPolifuncional,
 	RrhhEmpleadoAusencia, RrhhEmpleadoVacaciones, RrhhEmpleadoCompensacionAusencia, RrhhClaseAsuencia, RrhhEmpleadoHistorialVacacion, RrhhEmpleadoTr3, RrhhEmpleadoAnticipoTr3, RrhhEmpleadoDeduccionIngreso,
 	RrhhEmpleadoBeneficioSocial, RrhhEmpleadoBitacoraFicha, UsuarioGrupos, RrhhEmpleadoConfiguracionRopa, GtmVentaKardex, GtmVentaKardexDetalle, RrhhEmpleadoDotacionRopaItem,
-	RrhhEmpleadoDotacionRopa, RrhhViajeDetalle, RrhhViaje, RrhhViajeDestino, RrhhViajeConductor, TransaccionSeguimiento, CuentaTransaccion, GtmDespachoDetalleResivo, RRHHPlanillaRcIva, RRHHDetallePlanillaRcIva, EmpresaAplicacion, Pedido, DetallesPedido, RrhhEmpleadoDescuentoVacacionHistorial, ActivosFijos, ActivosFijosValores, ActivosFijosConfiguracion) {
+	RrhhEmpleadoDotacionRopa, RrhhViajeDetalle, RrhhViaje, RrhhViajeDestino, RrhhViajeConductor, TransaccionSeguimiento, CuentaTransaccion, GtmDespachoDetalleResivo, RRHHPlanillaRcIva, RRHHDetallePlanillaRcIva, EmpresaAplicacion, Pedido, DetallesPedido, RrhhEmpleadoDescuentoVacacionHistorial, ActivosFijos, ActivosFijosValores, ActivosFijosConfiguracion,
+	EstadoFinancieroConfiguracionImpresion,EstadoFinancieroGestion) {
 	Persona.belongsTo(Clase, { foreignKey: 'id_lugar_nacimiento', as: 'lugar_nacimiento' });
 	Persona.belongsTo(Clase, { foreignKey: 'id_genero', as: 'genero' });
 	Persona.belongsTo(Clase, { foreignKey: 'id_lenguaje', as: 'lenguaje' });
@@ -1047,5 +1048,13 @@ module.exports = function (sequelize, Usuario, Persona, Rol, UsuarioRol, Tipo, C
 	ActivosFijosValores.belongsTo(ActivosFijos, {foreignKey: 'id_activo', as: 'valoracion'})
 	Clase.hasOne(ActivosFijosConfiguracion, {foreignKey: 'id_subgrupo', as: 'configuracion'})
 	ActivosFijosConfiguracion.belongsTo(Clase, {foreignKey: 'id_subgrupo', as: 'subgrupo'})
+
+	//estados financieros
+	EstadoFinancieroConfiguracionImpresion.belongsTo(Clase, {foreignKey: 'id_tipo_numeracion', as: 'tipoNumeracion'})
+	Clase.hasOne(EstadoFinancieroConfiguracionImpresion, {foreignKey: 'id_tipo_numeracion', as: 'configuracionImpresion'})
+	EstadoFinancieroConfiguracionImpresion.belongsTo(Empresa, { foreignKey: 'id_empresa', as: 'empresa' })
+	Empresa.hasOne(EstadoFinancieroConfiguracionImpresion, { foreignKey: 'id_empresa', as: 'configuracionImpresion' })
+	EstadoFinancieroGestion.belongsTo(Clase, {foreignKey: 'id_tipo', as: 'tipoGestion'})
+	Clase.hasOne(EstadoFinancieroGestion, {foreignKey: 'id_tipo', as: 'gestion'})
 }
 

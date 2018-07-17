@@ -2,7 +2,7 @@ angular.module('agil.controladores')
 
 .controller('ControladorDosificaciones', function($scope,$localStorage,$location,$templateCache,$route,blockUI,Dosificacion,Dosificaciones,
 												DosificacionesEmpresa,ClasesTipo){
-	blockUI.start();
+	
 	
 	$scope.idModalWizardDosificacionEdicion='modal-wizard-dosificacion-edicion';
 	$scope.idModalWizardDosificacionVista='modal-wizard-dosificacion-vista';
