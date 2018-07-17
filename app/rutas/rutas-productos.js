@@ -173,9 +173,9 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 		.get(function (req, res) {
 			var fechaInicial = req.params.fecha_inicio == 0 ? new Date(2016, 0, 1, 0, 0, 0) : new Date(req.params.fecha_inicio);
 			var fechaFinal = req.params.fecha_fin == 0 ? new Date() : new Date(req.params.fecha_fin);
-			var condcicionMovimiento={}
+			var condicionMovimiento={id_almacen: req.params.id_almacen}
 			if(req.params.fecha_inicio !=0){
-				condcicionMovimiento = { $between: [fechaInicial, fechaFinal] }
+				condicionMovimiento.fecha = { $between: [fechaInicial, fechaFinal] }
 			}
 			var condicionInventario = {};
 			if (req.params.lote != "0") {
@@ -186,10 +186,7 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 				include: [{ model: Inventario, as: 'inventario',required:false},
 				{
 					model: Movimiento, as: 'movimiento',required:false,
-					where: {
-						id_almacen: req.params.id_almacen,
-						fecha: condcicionMovimiento
-					},
+					where: condicionMovimiento,
 					include: [{
 						model: Compra, as: 'compra',required:false,
 						include: [{ model: Proveedor, as: 'proveedor',required:false }]
