@@ -359,13 +359,13 @@ angular.module('agil.controladores')
 
 				// === para colocar el costo unitario de inventario == 
 				$scope.precio_inventario;
-				if (producto.inventarios.length > 0) {
-					$scope.precio_inventario = producto.inventarios.pop().costo_unitario + " Bs";
+				 if (producto.inventarios.length > 0) {
+					$scope.precio_inventario = producto.inventarios[producto.inventarios.length-1].costo_unitario + " Bs";
 
 				}else{
 					$scope.precio_inventario = "Sin histórico";
 				}
-
+				$scope.inventarioProducto= producto.activar_inventario ? producto.inventarios : []
 				$scope.colorearInventarioDisponible(inventarioDisponible, producto);
 				//	$scope.enfocar('cantidad');
 				document.getElementById("cantidad").focus();
@@ -408,7 +408,7 @@ angular.module('agil.controladores')
 				detalleVenta.lote = detalleVenta.inventarioProducto.lote;
 			} else {
 				detalleVenta.inventario_disponible = $scope.obtenerInventarioTotal(detalleVenta.producto);
-				detalleVenta.costos = detalleVenta.producto.inventarios;
+				detalleVenta.costos = $scope.inventarioProducto;
 				detalleVenta.lote = "";
 			}
 			$scope.colorearInventarioDisponible(detalleVenta.inventario_disponible, detalleVenta.producto);

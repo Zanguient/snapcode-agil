@@ -1604,14 +1604,13 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 
 			condicionInventario.fecha_vencimiento={ $between: [inicio, fin] }
 		} 
-	/* 	if (inventarios.length == 0) { */
+		if (inventarios.length == 0) {
 			return Inventario.findAll({
 				where:condicionInventario , transaccion: t,
 				order:[['id','asc']]
 
 			}).then(function (encontrado) {
 				inventarios = encontrado
-
 				if (producto.activar_inventario) {
 					if (inventarios.length > 0) {
 						var promises = [];
@@ -1666,61 +1665,61 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 					//}
 				}
 			})
-		// } else {
-		// 	if (producto.activar_inventario) {
-		// 		if (inventarios.length > 0) {
-		// 			var promises = [];
+		} else {
+			if (producto.activar_inventario) {
+				if (inventarios.length > 0) {
+					var promises = [];
 
-		// 			for (var i = 0; i < inventarios.length; i++) {
-		// 				if (cantidadTotal > 0) {
-		// 					var cantidadParcial;
-		// 					if (cantidadTotal > inventarios[i].cantidad) {
-		// 						cantidadParcial = inventarios[i].cantidad;
-		// 						cantidadTotal = cantidadTotal - inventarios[i].cantidad
-		// 					} else {
-		// 						cantidadParcial = cantidadTotal;
-		// 						cantidadTotal = 0;
-		// 					}
+					for (var i = 0; i < inventarios.length; i++) {
+						if (cantidadTotal > 0) {
+							var cantidadParcial;
+							if (cantidadTotal > inventarios[i].cantidad) {
+								cantidadParcial = inventarios[i].cantidad;
+								cantidadTotal = cantidadTotal - inventarios[i].cantidad
+							} else {
+								cantidadParcial = cantidadTotal;
+								cantidadTotal = 0;
+							}
 
-		// 					if (cantidadParcial > 0) {
-		// 						var rrr = crearMovimientoEgresoYActualizarInventario(movimientoCreado, detalleVenta, producto, cantidad, inventarios, cantidadParcial, inventarios[i], index, array, i, res, venta, t);
-		// 						//console.log(rrr);
-		// 						promises.push(new Promise(function (fulfill, reject) {
-		// 							fulfill(venta);
-		// 						}));
-		// 					} /*else {
-		// 				//if (index == (array.length - 1) && i == (inventarios.length - 1)) {
-		// 					//res.json(venta);
-		// 					promises.push(new Promise(function (fulfill, reject){
-		// 						fulfill(venta);
-		// 					}));
-		// 				//}
-		// 			}*/
-		// 				} else {
-		// 					//if (index == (array.length - 1) && i == (inventarios.length - 1)) {
-		// 					//res.json(venta);
-		// 					/*promises.push(new Promise(function (fulfill, reject){
-		// 						fulfill(venta);
-		// 					}));*/
-		// 					//}
-		// 				}
-		// 			}
-		// 			return Promise.all(promises);
-		// 		} else {
-		// 			//if (index == (array.length - 1)) {
-		// 			return new Promise(function (fulfill, reject) {
-		// 				fulfill(venta);
-		// 			});
-		// 			//}
-		// 		}
-		// 	} else {
-		// 		//if (index == (array.length - 1)) {
-		// 		return new Promise(function (fulfill, reject) {
-		// 			fulfill(venta);
-		// 		});
-		// 		//}
-		// 	}
-		// }
+							if (cantidadParcial > 0) {
+								var rrr = crearMovimientoEgresoYActualizarInventario(movimientoCreado, detalleVenta, producto, cantidad, inventarios, cantidadParcial, inventarios[i], index, array, i, res, venta, t);
+								//console.log(rrr);
+								promises.push(new Promise(function (fulfill, reject) {
+									fulfill(venta);
+								}));
+							} /*else {
+						//if (index == (array.length - 1) && i == (inventarios.length - 1)) {
+							//res.json(venta);
+							promises.push(new Promise(function (fulfill, reject){
+								fulfill(venta);
+							}));
+						//}
+					}*/
+						} else {
+							//if (index == (array.length - 1) && i == (inventarios.length - 1)) {
+							//res.json(venta);
+							/*promises.push(new Promise(function (fulfill, reject){
+								fulfill(venta);
+							}));*/
+							//}
+						}
+					}
+					return Promise.all(promises);
+				} else {
+					//if (index == (array.length - 1)) {
+					return new Promise(function (fulfill, reject) {
+						fulfill(venta);
+					});
+					//}
+				}
+			} else {
+				//if (index == (array.length - 1)) {
+				return new Promise(function (fulfill, reject) {
+					fulfill(venta);
+				});
+				//}
+			}
+		}
 	}
 
 	function crearDetalleVenta(movimientoCreado, ventaCreada, detalleVenta, precio_unitario, importe, total, index, array, res, venta, t) {
