@@ -1591,12 +1591,23 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 
 	function calcularCostosEgresos(detalleVenta, producto, cantidad, inventarios, movimientoCreado, index, array, res, venta, t) {
 		var cantidadTotal = cantidad;
-		if (inventarios.length == 0) {
+		var condicionInventario={
+			id_producto: producto.id, id_almacen: venta.almacen.id,
+			cantidad: { $gt: 0 }
+		}
+		if(detalleVenta.lote){
+			condicionInventario.lote=detalleVenta.lote
+		} 
+		if(detalleVenta.fecha_vencimiento){
+			var inicio = new Date(detalleVenta.fecha_vencimiento); inicio.setHours(0, 0, 0, 0, 0);
+			var fin = new Date(detalleVenta.fecha_vencimiento); fin.setHours(23, 59, 59, 0, 0);
+
+			condicionInventario.fecha_vencimiento={ $between: [inicio, fin] }
+		} 
+	/* 	if (inventarios.length == 0) { */
 			return Inventario.findAll({
-				where: {
-					id_producto: producto.id, id_almacen: venta.almacen.id,
-					cantidad: { $gt: 0 }
-				}, transaccion: t
+				where:condicionInventario , transaccion: t,
+				order:[['id','asc']]
 
 			}).then(function (encontrado) {
 				inventarios = encontrado
@@ -1655,61 +1666,61 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 					//}
 				}
 			})
-		} else {
-			if (producto.activar_inventario) {
-				if (inventarios.length > 0) {
-					var promises = [];
+		// } else {
+		// 	if (producto.activar_inventario) {
+		// 		if (inventarios.length > 0) {
+		// 			var promises = [];
 
-					for (var i = 0; i < inventarios.length; i++) {
-						if (cantidadTotal > 0) {
-							var cantidadParcial;
-							if (cantidadTotal > inventarios[i].cantidad) {
-								cantidadParcial = inventarios[i].cantidad;
-								cantidadTotal = cantidadTotal - inventarios[i].cantidad
-							} else {
-								cantidadParcial = cantidadTotal;
-								cantidadTotal = 0;
-							}
+		// 			for (var i = 0; i < inventarios.length; i++) {
+		// 				if (cantidadTotal > 0) {
+		// 					var cantidadParcial;
+		// 					if (cantidadTotal > inventarios[i].cantidad) {
+		// 						cantidadParcial = inventarios[i].cantidad;
+		// 						cantidadTotal = cantidadTotal - inventarios[i].cantidad
+		// 					} else {
+		// 						cantidadParcial = cantidadTotal;
+		// 						cantidadTotal = 0;
+		// 					}
 
-							if (cantidadParcial > 0) {
-								var rrr = crearMovimientoEgresoYActualizarInventario(movimientoCreado, detalleVenta, producto, cantidad, inventarios, cantidadParcial, inventarios[i], index, array, i, res, venta, t);
-								//console.log(rrr);
-								promises.push(new Promise(function (fulfill, reject) {
-									fulfill(venta);
-								}));
-							} /*else {
-						//if (index == (array.length - 1) && i == (inventarios.length - 1)) {
-							//res.json(venta);
-							promises.push(new Promise(function (fulfill, reject){
-								fulfill(venta);
-							}));
-						//}
-					}*/
-						} else {
-							//if (index == (array.length - 1) && i == (inventarios.length - 1)) {
-							//res.json(venta);
-							/*promises.push(new Promise(function (fulfill, reject){
-								fulfill(venta);
-							}));*/
-							//}
-						}
-					}
-					return Promise.all(promises);
-				} else {
-					//if (index == (array.length - 1)) {
-					return new Promise(function (fulfill, reject) {
-						fulfill(venta);
-					});
-					//}
-				}
-			} else {
-				//if (index == (array.length - 1)) {
-				return new Promise(function (fulfill, reject) {
-					fulfill(venta);
-				});
-				//}
-			}
-		}
+		// 					if (cantidadParcial > 0) {
+		// 						var rrr = crearMovimientoEgresoYActualizarInventario(movimientoCreado, detalleVenta, producto, cantidad, inventarios, cantidadParcial, inventarios[i], index, array, i, res, venta, t);
+		// 						//console.log(rrr);
+		// 						promises.push(new Promise(function (fulfill, reject) {
+		// 							fulfill(venta);
+		// 						}));
+		// 					} /*else {
+		// 				//if (index == (array.length - 1) && i == (inventarios.length - 1)) {
+		// 					//res.json(venta);
+		// 					promises.push(new Promise(function (fulfill, reject){
+		// 						fulfill(venta);
+		// 					}));
+		// 				//}
+		// 			}*/
+		// 				} else {
+		// 					//if (index == (array.length - 1) && i == (inventarios.length - 1)) {
+		// 					//res.json(venta);
+		// 					/*promises.push(new Promise(function (fulfill, reject){
+		// 						fulfill(venta);
+		// 					}));*/
+		// 					//}
+		// 				}
+		// 			}
+		// 			return Promise.all(promises);
+		// 		} else {
+		// 			//if (index == (array.length - 1)) {
+		// 			return new Promise(function (fulfill, reject) {
+		// 				fulfill(venta);
+		// 			});
+		// 			//}
+		// 		}
+		// 	} else {
+		// 		//if (index == (array.length - 1)) {
+		// 		return new Promise(function (fulfill, reject) {
+		// 			fulfill(venta);
+		// 		});
+		// 		//}
+		// 	}
+		// }
 	}
 
 	function crearDetalleVenta(movimientoCreado, ventaCreada, detalleVenta, precio_unitario, importe, total, index, array, res, venta, t) {
