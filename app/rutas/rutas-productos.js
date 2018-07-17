@@ -179,27 +179,27 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 			}
 			DetalleMovimiento.findAll({
 				where: { id_producto: req.params.id_producto },
-				include: [{ model: Inventario, as: 'inventario'},
+				include: [{ model: Inventario, as: 'inventario',required:false},
 				{
-					model: Movimiento, as: 'movimiento',
+					model: Movimiento, as: 'movimiento',required:false,
 					where: {
 						id_almacen: req.params.id_almacen,
 						fecha: { $between: [fechaInicial, fechaFinal] }
 					},
 					include: [{
-						model: Compra, as: 'compra',
-						include: [{ model: Proveedor, as: 'proveedor' }]
+						model: Compra, as: 'compra',required:false,
+						include: [{ model: Proveedor, as: 'proveedor',required:false }]
 					},
 					{
-						model: Venta, as: 'venta',
-						include: [{ model: Cliente, as: 'cliente' }]
+						model: Venta, as: 'venta',required:false,
+						include: [{ model: Cliente, as: 'cliente',required:false }]
 					},
 					{
-						model: Almacen, as: 'almacen',
-						include: [{ model: Sucursal, as: 'sucursal' }]
+						model: Almacen, as: 'almacen',required:false,
+						include: [{ model: Sucursal, as: 'sucursal',required:false }]
 					},
-					{ model: Tipo, as: 'tipo' },
-					{ model: Clase, as: 'clase' }]
+					{ model: Tipo, as: 'tipo',required:false },
+					{ model: Clase, as: 'clase',required:false }]
 				}],
 				order: [[{ model: Movimiento, as: 'movimiento' }, 'fecha', 'ASC']]
 			}).then(function (productos) {
