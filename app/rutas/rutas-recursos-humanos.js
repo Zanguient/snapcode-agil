@@ -2307,12 +2307,16 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                                                         Clase.find({
                                                             where: {habilitado:true, nombre: empleado.estado_civil, id_tipo: tipoEncontrado.dataValues.id }
                                                         }).then(function (claseEncontrada) {
+                                                            idNac=(claseNacEncontrada)?claseNacEncontrada.id:null
+                                                            idDep==(claseDepEncontrada)?claseDepEncontrada.id:null
+                                                            idProv==(claseMunEncontrada)?claseMunEncontrada.id:null
+                                                            idLoc==(claseLocEncontrada)?claseLocEncontrada.id:null
                                                             Persona.update({
                                                                 id_estado_civil: claseEncontrada.id,
-                                                                id_pais_nacimiento: claseNacEncontrada.id,
-                                                                id_ciudad_nacimiento: claseDepEncontrada.id,
-                                                                id_provincia_nacimiento: claseMunEncontrada.id,
-                                                                id_localidad_nacimiento: claseLocEncontrada.id
+                                                                id_pais_nacimiento: idNac,
+                                                                id_ciudad_nacimiento: idDep,
+                                                                id_provincia_nacimiento: idProv,
+                                                                id_localidad_nacimiento: idLoc
                                                             }, {
                                                                     where: { id: pacienteFound.persona.id }
                                                                 }).then(function (PersonaActualizada) {
