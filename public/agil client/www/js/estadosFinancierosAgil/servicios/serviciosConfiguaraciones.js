@@ -28,5 +28,36 @@ angular.module('agil.servicios')
                 });
             return delay.promise;
         };
+      
+        return res;
+    }])
+    .factory('ConfiguracionImp', function ($resource) {
+        return $resource(restServer + "configuracion-impresion/:id_empresa'", null, {
+            'update': { method: 'PUT' }
+        });
+    })
+
+    .factory('ObtenerConfiguracionImpresion', ['ConfiguracionImp', '$q', function (ConfiguracionImp, $q) {
+        var res = function (idEmpresa) {
+            var delay = $q.defer();
+            ConfiguracionImp.get({id_empresa:idEmpresa},function (entidades) {
+                delay.resolve(entidades);
+            }, function (error) {
+                    delay.reject(error);
+                });
+            return delay.promise;
+        };
+        return res;
+    }])
+    .factory('GuardarConfiguracionImpresion', ['ConfiguracionImp', '$q', function (ConfiguracionImp, $q) {
+        var res = function (idEmpresa,datos) {
+            var delay = $q.defer();
+            ConfiguracionImp.save({id_empresa:idEmpresa},datos,function (entidades) {
+                delay.resolve(entidades);
+            }, function (error) {
+                    delay.reject(error);
+                });
+            return delay.promise;
+        };
         return res;
     }]);

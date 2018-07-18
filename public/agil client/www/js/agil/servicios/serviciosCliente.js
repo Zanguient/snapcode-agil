@@ -32,6 +32,25 @@ angular.module('agil.servicios')
 		});
 })
 
+.factory('GetCliente', ['Cliente','$q',function(Cliente, $q) 
+  {
+	var res = function(idCliente) 
+	{
+		var delay = $q.defer();
+		Cliente.get({idCliente:idCliente},function(entidades) 
+		{        
+			delay.resolve(entidades);
+		}, function(error) 
+			{
+				delay.reject(error);
+			});
+		return delay.promise;
+	};
+    return res;
+	}])
+
+
+
 .factory('ClientesEmpresa', function($resource) {
 		return $resource(restServer+"clientes/empresa/:idEmpresa");
 })

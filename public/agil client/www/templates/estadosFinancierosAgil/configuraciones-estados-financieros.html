@@ -18,38 +18,39 @@
             </button>
             <h4 class="modal-title" id="advertenciaPrestamoPersonal">Gestión</h4>
         </div>
-        <form  name="form-gestiones" id="form-gestiones"ng-submit="guardarGestionesEEFF(gestionesEF)">
-        <div class="modal-body">
-            <table class="table table-striped table-bordered table-hover">
-                <thead>
-                    <tr>
-                        <th>
-                            <strong>Tipo</strong>
-                        </th>
-                        <th>Fecha inicio</th>
-                        <th>Fecha fin</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr ng-repeat="gestion in gestionesEF">
-                        <td>{{gestion.tipoGestion.nombre}}</td>
+        <form name="form-gestiones" id="form-gestiones" ng-submit="guardarGestionesEEFF(gestionesEF)">
+            <div class="modal-body">
+                <table class="table table-striped table-bordered table-hover">
+                    <thead>
+                        <tr>
+                            <th>
+                                <strong>Tipo</strong>
+                            </th>
+                            <th>Fecha inicio</th>
+                            <th>Fecha fin</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="gestion in gestionesEF">
+                            <td>{{gestion.tipoGestion.nombre}}</td>
 
-                        <td>
-                            <input type="text" ng-model="gestion.inicio" ng-update-hidden data-date-format="dd/mm" class="from-control date-picker">
-                        </td>
+                            <td>
+                                <input type="text" ng-model="gestion.inicio" ng-update-hidden data-date-format="dd/mm" class="from-control date-picker">
+                            </td>
 
-                        <td>
-                            <input type="text"  ng-model="gestion.fin" ng-update-hidden data-date-format="dd/mm" class="from-control date-picker">
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-danger" ng-click="cerrarModalConfiguracionGestion()">Cerrar</button>
-            <button type="submit" class="btn btn-primary">Guardar</button>
-        </div>
-    </form>
+                            <td>
+                                <input type="text" ng-model="gestion.fin" ng-update-hidden data-date-format="dd/mm" class="from-control date-picker">
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-primary">Guardar</button>
+                <button type="button" class="btn btn-danger" ng-click="cerrarModalConfiguracionGestion()">Cerrar</button>
+
+            </div>
+        </form>
     </div>
 </div>
 </div>
@@ -63,100 +64,118 @@
             </button>
             <h4 class="modal-title">detalles de impresión</h4>
         </div>
-        <form>
+        <form id="form-conf-imp" name="form-conf-imp" ng-submit="guardarConfiguracionImpresion(configuracionImpresion)">
             <div class="modal-body">
 
                 <div class="row">
-                    <div class="col-md-6"><label class="inline">
-                            <input type="checkbox" class="ace">
+                    <div class="col-md-6">
+                        <label class="inline">
+                            <input type="checkbox" ng-model="configuracionImpresion.usar_lugar_emision" class="ace">
                             <span class="lbl">Lugar de Emisión:</span>
-                        </label></div>
+                        </label>
+                    </div>
                     <div class="col-md-6">
-                        <input type="text" class="form-control">
+                        <input type="text" ng-model="configuracionImpresion.lugar_emision" class="form-control">
                     </div>
                 </div>
                 <div class="space-4"></div>
                 <div class="row">
-                    <div class="col-md-6"><label class="inline">
-                            <input type="checkbox" class="ace">
+                    <div class="col-md-6">
+                        <label class="inline">
+                            <input type="checkbox" ng-model="configuracionImpresion.usar_fecha_emision" class="ace">
                             <span class="lbl">Fecha de Emisión:</span>
-                        </label></div>
+                        </label>
+                    </div>
                     <div class="col-md-6">
-                        <input type="text" class="form-control date-picker">
+                        <input type="text" ng-model="configuracionImpresion.fecha_emision" class="form-control date-picker">
                     </div>
                 </div>
                 <div class="space-4"></div>
                 <div class="row">
-                    
-                    <div class="col-md-6"><label class="inline">
-                            <input type="checkbox" class="ace">
+
+                    <div class="col-md-6">
+                        <label class="inline">
+                            <input type="checkbox" ng-model="configuracionImpresion.usar_tipo_numeracion" class="ace">
                             <span class="lbl">Tipo de Numeración:</span>
-                        </label></div>
+                        </label>
+                    </div>
                     <div class="col-md-6">
-                        <input type="text" class="form-control">
+                            <select ng-model="configuracionImpresion.tipoNumeracion" class="form-control"
+                                    ng-options="numeracion as numeracion.nombre for numeracion in TiposNumeraciones.clases track by numeracion.id">
+                                      <option value="">Seleccionar</option>
+                                   </select>
                     </div>
                 </div>
                 <div class="space-4"></div>
                 <div class="row">
-                        <div class="col-md-6"><label class="inline">
-                                <input type="checkbox" class="ace">
-                                <span class="lbl">Empezar en:</span>
-                            </label></div>
-                        <div class="col-md-6">
-                            <input type="text" class="form-control">
-                        </div>
+                    <div class="col-md-6">
+                        <label class="inline">
+                            <input type="checkbox" ng-model="configuracionImpresion.usar_empesar_numeracion" class="ace">
+                            <span class="lbl">Empezar en:</span>
+                        </label>
                     </div>
+                    <div class="col-md-6">
+                        <input type="text" ng-model="configuracionImpresion.empesar_numeracion" class="form-control">
+                    </div>
+                </div>
                 <div class="space-4"></div>
                 <div class="row">
-                    <div class="col-md-6"><label class="inline">
-                            <input type="checkbox" class="ace">
+                    <div class="col-md-6">
+                        <label class="inline">
+                            <input type="checkbox" ng-model="configuracionImpresion.usar_firma_uno" class="ace">
                             <span class="lbl">Firma 1:</span>
-                        </label></div>
+                        </label>
+                    </div>
 
                     <div class="col-md-6">Cargo:</div>
                 </div>
                 <div class="row">
                     <div class="col-md-6">
-                        <input type="text" class="form-control">
+                        <input type="text" ng-model="configuracionImpresion.firma_uno" class="form-control">
                     </div>
                     <div class="col-md-6">
-                        <input type="text" class="form-control">
+                        <input type="text" ng-model="configuracionImpresion.cargo_uno" class="form-control">
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-md-6"><label class="inline">
-                            <input type="checkbox" class="ace">
+                    <div class="col-md-6">
+                        <label class="inline">
+                            <input type="checkbox" ng-model="configuracionImpresion.usar_firma_dos" class="ace">
                             <span class="lbl">Firma 2:</span>
-                        </label></div>
+                        </label>
+                    </div>
 
                     <div class="col-md-6">Cargo:</div>
                 </div>
                 <div class="row">
                     <div class="col-md-6">
-                        <input type="text" class="form-control">
+                        <input type="text" ng-model="configuracionImpresion.firma_dos" class="form-control">
                     </div>
                     <div class="col-md-6">
-                        <input type="text" class="form-control">
+                        <input type="text" ng-model="configuracionImpresion.cargo_dos" class="form-control">
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-md-12"><label class="inline">
-                            <input type="checkbox" class="ace">
+                    <div class="col-md-12">
+                        <label class="inline">
+                            <input type="checkbox" g-model="configuracionImpresion.usar_frase_pie_pagina" class="ace">
                             <span class="lbl">Frase de pie de página:</span>
                         </label>
-                        
+
                     </div>
                     <div class="col-md-12">
-                        <input type="text" class="form-control">
+                        <input type="text" ng-model="configuracionImpresion.frase_pie_pagina" class="form-control">
                     </div>
                 </div>
             </div>
-    
-    <div class="modal-footer">
-        <button type="button" class="btn btn-danger" ng-click="cerrarModalDetalleImpresion()">Cerrar</button>
+
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-primary">Guardar</button>
+                <button type="button" class="btn btn-danger" ng-click="cerrarModalDetalleImpresion()">Cerrar</button>
+
+            </div>
+        </form>
     </div>
-    </form>
-</div>
 </div>
 </div>
 <!-- fin configuracion gestiones -->

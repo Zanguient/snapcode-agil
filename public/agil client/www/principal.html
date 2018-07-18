@@ -2727,7 +2727,7 @@
 		<div class="row">
 			<div class="col-sm-4">
 				<div class="widget-box">
-					<form id="formularioVenta" name="formularioVenta" novalidate ng-submit="guardarVenta(formularioVenta.$valid,venta)">
+					<form id="formularioVenta" name="formularioVenta" novalidate ng-submit="guardarPedido(formularioVenta.$valid,venta)">
 						<div class="widget-header">
 							<h4 class="widget-title">DATOS DE PEDIDO</h4>
 							&nbsp;
@@ -2737,7 +2737,7 @@
 								<label>FECHA</label>
 								<div class="input-group">
 								<input name="fecha" required ng-update-hidden class="form-control date-picker" type="text" data-date-format="dd/mm/yyyy"
-								 id="fecha" ng-model="venta.fechaTexto" placeholder="Ingrese la fecha" />
+								 id="fecha" ng-model="pedido.fechaTexto" placeholder="Ingrese la fecha" />
 								<span class="red">(*)</span>
 								<span class="invalid-message" ng-show="formularioVenta.fecha.$dirty && formularioVenta.fecha.$invalid">
 									Dato requerido.
@@ -2786,24 +2786,25 @@
 									<tr >
 										<td>
 											<label>FACTURAR A:</label>
-											<select data-validate="validate(required)" id="sucursalOrigen" name="sucursalOrigen" required ng-options="sucursal as sucursal.nombre for sucursal in sucursales track by sucursal.id"
-											 ng-model="venta.sucursal" ng-change="obtenerAlmacenesSucursalesDiferente(venta.sucursal.id)">
+											<select data-validate="validate(required)" id="sucursalOrigen" name="sucursalOrigen" required ng-options="razon as razon.razon_social for razon in pedido.clientes_razon track by razon.id"
+											 ng-model="pedido.cliente_razon" ng-change="obtenerNit(pedido.cliente_razon)">
+											 <option value="" disabled selected>Selec. CLiente</option>
 											</select>
 											<span class="red">(*)</span>
 										</td>
 										<td>
 											<label>NIT CLIENTE</label>
 											<input   id="nit" name="nit"
-											  type="number" min="0" ng-model="venta.cliente.nit" placeholder="Ingrese el NIT" disabled> 
+											  type="number" min="0" ng-model="pedido.cliente_nit" placeholder="Ingrese el NIT" disabled> 
 										</td>
 									</tr>
 								
 									<tr>
 										<td>
 											<label>DESTINO</label>
-											<select ng-disabled="venta.detallesVenta.length>0" data-validate="validate(required)" required id="sucursal" name="sucursal" ng-options="sucursal as sucursal.nombre for sucursal in sucursales track by sucursal.id"
-											 ng-model="venta.sucursal" ng-change="obtenerAlmacenesActividades(venta.sucursal.id)">
-												<option value="" disabled selected>Selec. Sucursal</option>
+											<select ng-disabled="venta.detallesVenta.length>0" data-validate="validate(required)" required id="sucursal" name="sucursal" ng-options="d as d.destino.destino for d in pedido.destinos track by d.destino.id"
+											 ng-model="pedido.cliente_destino" ng-change="obtenerDireccion(pedido.cliente_destino)">
+												<option value="" disabled selected>Selec. Destino</option>
 											</select>
 											<span class="red">(*)</span>
 											<span class="invalid-message" ng-show="formularioVenta.sucursal.$dirty && formularioVenta.sucursal.$invalid">
@@ -2812,15 +2813,15 @@
 										</td>
 										<td>
 											<label>DIRECCION</label>
-											<input  id="nit" name="nit"
-											 type="number" min="0" ng-model="venta.cliente.nit" placeholder="Ingrese el NIT" disabled>
+											<input  id="destino_direccion" name="destino_direccion"
+											 type="text" min="0" ng-model="pedido.destino_direccion" placeholder="Ingrese el NIT" disabled>
 										</td>
 									</tr>			
 									
 									<tr>
 										<td colspan="2">
 											<label >OBSERVACIONES</label>
-											<textarea ng-model="venta.observaciones" class="form-control limited" id="form-field-9" maxlength="100" style=" height: 35px;"></textarea>
+											<textarea ng-model="pedido.observaciones" class="form-control limited" id="form-field-9" maxlength="100" style=" height: 35px;"></textarea>
 										</td>
 									</tr>
 

@@ -508,12 +508,16 @@ module.exports = function (router, ComprobanteContabilidad, AsientoContabilidad,
 			if (asientoContable.centroCosto) {
 				idCentroCosto = asientoContable.centroCosto.id
 			}
-			promises.push(crearAsiento(req, res, comprobante, ComprobanteCreado, arrayDatos, t, asientoContable,idCentroCosto))
+			if (asientoContable.cuentaEncontrada) {
+				promises.push(crearAsiento(req, res, comprobante, ComprobanteCreado, arrayDatos, t, asientoContable, idCentroCosto))
+			} else {
+				console.log(asientoContable)
+			}
 		}
 		return Promise.all(promises);
 	}
-	function crearAsiento(req, res, comprobante, ComprobanteCreado, arrayDatos, t, asientoContable,idCentroCosto) {
-	
+	function crearAsiento(req, res, comprobante, ComprobanteCreado, arrayDatos, t, asientoContable, idCentroCosto) {
+
 		return AsientoContabilidad.create({
 			id_comprobante: ComprobanteCreado.id,
 			id_cuenta: asientoContable.cuentaEncontrada.id,
@@ -528,14 +532,14 @@ module.exports = function (router, ComprobanteContabilidad, AsientoContabilidad,
 				transaction: t
 			}).then(function (asientroCreado) {
 
-				return actualizarCuenta(req, res, comprobante, ComprobanteCreado, arrayDatos, t,asientoContable)
+				return actualizarCuenta(req, res, comprobante, ComprobanteCreado, arrayDatos, t, asientoContable)
 
 			}).catch(function (err) {
 				return new Promise(function (fulfill, reject) {
 					reject(err);
 				});
 			});
-		
+
 	}
 	function actualizarCuenta(req, res, comprobante, ComprobanteCreado, arrayDatos, t, asientoContable) {
 		asientoContable.cuentaEncontrada.debe = (asientoContable.cuentaEncontrada.debe == null) ? 0 : asientoContable.cuentaEncontrada.debe;
@@ -652,13 +656,13 @@ module.exports = function (router, ComprobanteContabilidad, AsientoContabilidad,
 					transaction: t,
 					where: { id_comprobante: comprobanteEncontrado.id }
 				}).then(function (AsientosEncontrados) {
-				
-					return eliminarYActulizarCuentas(req,res, tipoComprobanteEncontrado,comprobante,comprobanteEncontrado,AsientosEncontrados,t)
+
+					return eliminarYActulizarCuentas(req, res, tipoComprobanteEncontrado, comprobante, comprobanteEncontrado, AsientosEncontrados, t)
 				})
 			})
 
 	}
-	function eliminarYActulizarCuentas(req, res,tipoComprobanteEncontrado, comprobante, comprobanteEncontrado, AsientosEncontrados, t) {
+	function eliminarYActulizarCuentas(req, res, tipoComprobanteEncontrado, comprobante, comprobanteEncontrado, AsientosEncontrados, t) {
 		var promises = []
 		AsientosEncontrados.forEach(function (dato, index, array) {
 			promises.push(ContabilidadCuenta.find({
@@ -678,7 +682,7 @@ module.exports = function (router, ComprobanteContabilidad, AsientoContabilidad,
 					haber: cuentaEncontrada.haber,
 					saldo: cuentaEncontrada.saldo
 				}, {
-					transaction: t,
+						transaction: t,
 						where: { id: cuentaEncontrada.id }
 					}).then(function (CuentaActualizada) {
 						if (index === (array.length - 1)) {
@@ -719,7 +723,7 @@ module.exports = function (router, ComprobanteContabilidad, AsientoContabilidad,
 		var arrayDatos = [], promises = []
 		comprobante.asientosContables.forEach(function (dato, index, array) {
 			promises.push(ContabilidadCuenta.find({
-				where: { codigo: dato.numero_cuenta, id_empresa: req.params.id_empresa }
+				where: { codigo: dato.numero_cuenta, id_empresa: req.params.id_empresa },transaction:t
 			}).then(function (cuentaEncontrada) {
 				dato.cuentaEncontrada = cuentaEncontrada
 				arrayDatos.push(dato)

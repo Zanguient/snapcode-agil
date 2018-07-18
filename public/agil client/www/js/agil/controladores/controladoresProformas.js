@@ -954,17 +954,20 @@ angular.module('agil.controladores')
             //     }
             // }
             if (_ === undefined || !_) {
-                $scope.obtenerProformas()
+                $scope.obtenerProformas(true)
                 // $scope.recargarItemsTabla()
             } else {
                 return filtro
             }
         }
 
-        $scope.obtenerProformas = function () {
+        $scope.obtenerProformas = function (filtrar) {
             blockUI.start()
             $scope.filtro = $scope.filtrarProformasOperaciones($scope.filtro, true)
             $scope.paginator.filter = $scope.filtro
+            if (filtrar) {
+                $scope.paginator.currentPage = 1
+            }
             var prom = FiltroProformas($scope.paginator)
             prom.then(function (res) {
                 $scope.proformas = res.proformas

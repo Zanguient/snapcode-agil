@@ -7,7 +7,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 		ImprimirSalida, Diccionario, VentasComprobantesEmpresa, ComprasComprobantesEmpresa, LibroMayorCuenta, Paginator, ComprobanteRevisarPaginador, AsignarComprobanteFavorito, ListaCuentasComprobanteContabilidad, NuevoComprobanteContabilidad, NuevoComprobante, ComprasComprobante,
 		ConfiguracionesCuentasEmpresa, ContabilidadCambioMoneda, ObtenerCambioMoneda, AsignarCuentaCiente, AsignarCuentaProveedor,
 		GtmTransportistas, GtmEstibajes, GtmGrupoEstibajes, ListasCuentasAuxiliares, GtmDetallesDespachoAlerta, $interval, GuardarGtmDetalleDespachoAlerta, GtmDetalleDespacho, VerificarCorrelativosSucursale, ReiniciarCorrelativoSucursales, ClasesTipoEmpresa, alertasProformasLista, UltimaFechaTipoComprobante,
-		FacturaProforma, ListaDetallesProformasAFacturar, ProformaInfo, FacturarProformas, ImprimirPdfAlertaDespacho, ExportarExelAlarmasDespachos, VencimientoDosificaciones, EmpresaDatosInicio, VerificacionMensualActivos, ProductosPaginador, Pedidos) {
+		FacturaProforma, ListaDetallesProformasAFacturar, ProformaInfo, FacturarProformas, ImprimirPdfAlertaDespacho, ExportarExelAlarmasDespachos, VencimientoDosificaciones, EmpresaDatosInicio, VerificacionMensualActivos, ProductosPaginador, Pedidos, ClientesNit, GetCliente) {
 		$scope.idModalTablaVencimientoProductos = "tabla-vencimiento-productos";
 		$scope.idModalTablaDespachos = "tabla-gtm-despachos";
 		$scope.idModalTablaAsignacionDespacho = "tabla-gtm-asignacion-despachos";
@@ -188,14 +188,99 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 			// $scope.capturarInteraccion();
 		}
 
+		$scope.buscarCliente = function (query) {
+			if (query != "" && query != undefined) {
+				var promesa = ClientesNit($scope.usuario.id_empresa, query);
+				return promesa;
+			}
+		};
+
+		$scope.establecerCliente = function (cliente) {
+			$scope.venta.cliente = cliente;
+			
+			var promesa = GetCliente(cliente.id);
+			promesa.then(function (dato) {
+				console.log("los datos cliente", dato);
+				$scope.pedido.clientes_razon = dato.clientes_razon;
+				$scope.pedido.destinos = dato.cliente_destinos;
+				
+				blockUI.stop();
+			});
+			// $scope.enfocar('razon_social');
+			// $scope.capturarInteraccion();
+		}
+
+		$scope.obtenerNit = function (razon) {
+			$scope.pedido.cliente_nit = razon.nit;
+		} 
+
+		$scope.obtenerDireccion = function (d) {
+			console.log("su destino ", d);
+			$scope.pedido.destino_direccion = d.destino.direccion;
+		} 
+
+		$scope.guardarPedido = function (valido, venta) {
+			if (valido) {
+				$scope.ocultarMensajesValidacion();
+				var tiempoActual = new Date();
+				venta.fecha = new Date($scope.convertirFecha(venta.fechaTexto));
+				venta.fecha.setHours(tiempoActual.getHours());
+				venta.fecha.setMinutes(tiempoActual.getMinutes());
+				//venta.receptor=(venta.receptor!=undefined && venta.receptor!=null)?venta.receptor:((venta.receptor==undefined || venta.receptor==null)?(venta.textoVendedor!=""?{nombre_completo:venta.textoVendedor}:null):venta.receptor);
+				blockUI.start();
+				if (venta.id) {
+					Venta.update({ idCompra: compra.id }, compra, function (res) {
+						blockUI.stop();
+						$scope.cerrarPopPupEdicion();
+						$scope.mostrarMensaje('Actualizado Exitosamente!');
+						$scope.recargarItemsTabla();
+					});
+				} else {
+					var movimiento = venta.movimiento.nombre_corto;
+					venta.$save(function (res) {
+						if (res.hasError) {
+							blockUI.stop();
+							$scope.crearNuevaVenta(res);
+							$scope.mostrarMensaje(res.message);
+						} else {
+							blockUI.stop();
+							$scope.cerrarPopPupEdicion();
+							if ($scope.usuario.empresa.usar_vencimientos) {
+								$scope.impresion = {
+									movimiento: movimiento,
+									res: res,
+									al_guardar: true,
+									usuario: $scope.usuario
+								}
+								$scope.abrirPopup($scope.idModalImpresionVencimiento);
+								//ImprimirSalida(movimiento, res, true, $scope.usuario);
+							} else {
+								ImprimirSalida(movimiento, res, true, $scope.usuario, false);
+							}
+							$scope.crearNuevaVenta(res);
+							$scope.mostrarMensaje('Venta registrada exitosamente!');
+						}
+					}, function (error) {
+						blockUI.stop();
+						$scope.cerrarPopPupEdicion();
+						$scope.mostrarMensaje('Ocurrio un problema al momento de guardar!');
+						$scope.recargarItemsTabla();
+					});
+				}
+			}
+		}
+
 
 		$scope.AbrirNuevoPedido = function (mensaje) {
 			// alert("llegooooo");
 			$scope.obtenerProductos();
+			var fechaActual = new Date();
+			
 			$scope.pedido = new Pedidos({
 				id_empresa: $scope.usuario.id_empresa, id_usuario: $scope.usuario.id,
 				detalles_despacho: []
 			});
+			$scope.pedido.fechaTexto = fechaActual.getDate() + "/" + ("0" + (fechaActual.getMonth() + 1)).slice(-2) + "/" + fechaActual.getFullYear();
 
 			$scope.abrirPopup($scope.idModalNuevoPedido);
 		}

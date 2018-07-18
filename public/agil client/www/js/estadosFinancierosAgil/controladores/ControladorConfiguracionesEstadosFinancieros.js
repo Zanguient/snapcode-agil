@@ -1,7 +1,7 @@
 angular.module('agil.controladores')
 
     .controller('ControladorConfiguracionesEstadosFinancieros', function ($scope, $localStorage, $location, $templateCache, $route, blockUI,
-        ClasesTipoEmpresa, ClasesTipo, ObtenerGestionesEEFF, GuardarGestionesEEFF) {
+        ClasesTipoEmpresa, ClasesTipo, ObtenerGestionesEEFF, GuardarGestionesEEFF,GuardarConfiguracionImpresion,ObtenerConfiguracionImpresion) {
 
 
         $scope.usuario = JSON.parse($localStorage.usuario);
@@ -47,6 +47,15 @@ angular.module('agil.controladores')
             $scope.cerrarPopup($scope.idModalConfiguracionGestion)
         }
         $scope.abrirModalDetalleImpresion = function () {
+            $scope.configuracionImpresion={}
+            var promesa = ObtenerConfiguracionImpresion($scope.usuario.id_empresa)
+            promesa.then(function (dato) {
+                if (dato) {
+                    dato.fecha_emision=$scope.fechaATexto(dato.fecha_emision)
+                    $scope.configuracionImpresion = dato
+                }
+                blockUI.stop()
+            })
             $scope.abrirPopup($scope.idModalDetalleImpresion)
         }
         $scope.cerrarModalDetalleImpresion = function () {
@@ -68,6 +77,15 @@ angular.module('agil.controladores')
                 $scope.ClasesGestionesEF = entidad.clases
                 blockUI.stop();
             });
+        }
+        $scope.guardarConfiguracionImpresion = function (datos) {
+            blockUI.start()
+            datos.fecha_emision=new Date($scope.convertirFecha(datos.fecha_emision))
+            var promesa = GuardarConfiguracionImpresion($scope.usuario.id_empresa, datos)
+            promesa.then(function(dato){
+                $scope.mostrarMensaje(dato.mensaje)
+                blockUI.stop()
+            })
         }
         $scope.guardarGestionesEEFF = function (datos) {
             blockUI.start()
