@@ -2307,10 +2307,14 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                                                         Clase.find({
                                                             where: {habilitado:true, nombre: empleado.estado_civil, id_tipo: tipoEncontrado.dataValues.id }
                                                         }).then(function (claseEncontrada) {
-                                                            idNac=(claseNacEncontrada)?claseNacEncontrada.id:null
-                                                            idDep==(claseDepEncontrada)?claseDepEncontrada.id:null
-                                                            idProv==(claseMunEncontrada)?claseMunEncontrada.id:null
-                                                            idLoc==(claseLocEncontrada)?claseLocEncontrada.id:null
+                                                            var idNac=(claseNacEncontrada)?claseNacEncontrada.id:null
+                                                            var idDep=(claseDepEncontrada)?claseDepEncontrada.id:null
+                                                            var idProv=(claseMunEncontrada)?claseMunEncontrada.id:null
+                                                            var idLoc=(claseLocEncontrada)?claseLocEncontrada.id:null
+                                                            if(!pacienteFound.persona){
+                                                                console.log(pacienteFound)
+                                                                console.log("pacienteFound")
+                                                            }
                                                             Persona.update({
                                                                 id_estado_civil: claseEncontrada.id,
                                                                 id_pais_nacimiento: idNac,
@@ -2359,15 +2363,24 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                                                                                                                     Clase.find({
                                                                                                                         where: {habilitado:true, nombre: empleado.afp_aporte, id_tipo: tipoEncontrado.dataValues.id }
                                                                                                                     }).then(function (claseAfpEncontrada) {
+
+                                                                                                                        var id_tipo_personal= (clasePersonaEncontrada)?clasePersonaEncontrada.id:null,
+                                                                                                                            id_carga_horarios= (clasePersonaEncontrada)?claseCargaEncontrada.id:null,
+                                                                                                                            id_area= (clasePersonaEncontrada)?claseAreaEncontrada.id:null,
+                                                                                                                            id_ubicacion= (clasePersonaEncontrada)?claseUbicacionEncontrada.id:null,
+                                                                                                                            nua_seguro_largo_plazo= (clasePersonaEncontrada)?empleado.nua_cua:null,
+                                                                                                                            id_aporte_seguro_largo_plazo= (clasePersonaEncontrada)?claseAfpEncontrada.id:null,
+                                                                                                                            id_lugar_seguro_largo_plazo= (clasePersonaEncontrada)?claseLugarSeguroAfpEncontrada.id:null,
+                                                                                                                            id_lugar_seguro_salud= (clasePersonaEncontrada)?claseLugarSeguroEncontrada.id:null;
                                                                                                                         RrhhEmpleadoFicha.update({
-                                                                                                                            id_tipo_personal: clasePersonaEncontrada.id,
-                                                                                                                            id_carga_horarios: claseCargaEncontrada.id,
-                                                                                                                            id_area: claseAreaEncontrada.id,
-                                                                                                                            id_ubicacion: claseUbicacionEncontrada.id,
-                                                                                                                            nua_seguro_largo_plazo: empleado.nua_cua,
-                                                                                                                            id_aporte_seguro_largo_plazo: claseAfpEncontrada.id,
-                                                                                                                            id_lugar_seguro_largo_plazo: claseLugarSeguroAfpEncontrada.id,
-                                                                                                                            id_lugar_seguro_salud: claseLugarSeguroEncontrada.id,
+                                                                                                                            id_tipo_personal: id_tipo_personal,
+                                                                                                                            id_carga_horarios: id_carga_horarios,
+                                                                                                                            id_area: id_area,
+                                                                                                                            id_ubicacion: id_ubicacion,
+                                                                                                                            nua_seguro_largo_plazo: nua_seguro_largo_plazo,
+                                                                                                                            id_aporte_seguro_largo_plazo: id_aporte_seguro_largo_plazo,
+                                                                                                                            id_lugar_seguro_largo_plazo: id_lugar_seguro_largo_plazo,
+                                                                                                                            id_lugar_seguro_salud: id_lugar_seguro_salud,
                                                                                                                         }, {
 
                                                                                                                                 where: {

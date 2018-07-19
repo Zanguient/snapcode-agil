@@ -201,6 +201,23 @@ function ejecutarScriptsInicio(idPopupTablaProductos, idPopupTablaCreditos, idPo
 
 
 }
+
+// function aplicarDatePickers() {
+// 	$('.date-picker').datepicker({
+// 		autoclose: true,
+// 		todayHighlight: true,
+// 		defaultDate: new Date($('#' + $(this).attr('id')).val()),
+// 		onSelect: function (dateText) {
+// 			console.log("3333");
+// 			$('#' + $(this).attr('id')).trigger('change');
+// 		}
+// 	})
+// 		//show datepicker when clicking on the icon
+// 		.next().on(ace.click_event, function () {
+// 			$(this).prev().focus();
+// 		});
+// } 
+
 function quitarScrollInputNumber() {
 	$('.input-fix-mousewheel1').on('focus', function (e) {
 		$(this).on('mousewheel.disableScroll', function (e) {
