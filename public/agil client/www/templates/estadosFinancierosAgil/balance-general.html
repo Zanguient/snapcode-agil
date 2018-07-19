@@ -7,13 +7,31 @@
 
                     <span class="lbl"> PERIODO</span>
                 </label>
-                <select>
+                <select ng-model="configuracionImpresion.tipoPerido" ng-change="cargarFechasFiltro(configuracionImpresion.tipoPerido.nombre)"
+                    class="form-control" ng-options="periodo as periodo.nombre for periodo in TiposPeriodos.clases track by periodo.id">
                     <option value="">SELECCIONAR</option>
                 </select>
-                <select>
+                <select ng-if="configuracionImpresion.tipoPerido.nombre=='GESTIÓN' ||configuracionImpresion.tipoPerido.nombre=='MES'||configuracionImpresion.tipoPerido.nombre=='COMPARATIVO'"
+                    required  class="form-control" ng-options="gestion.nombre_corto as gestion.nombre for gestion in gestiones track by gestion.id"
+                    ng-model="configuracionImpresion.gestion">
                     <option value="">SELECCIONAR</option>
                 </select>
-
+                <select ng-if="configuracionImpresion.tipoPerido.nombre=='COMPARATIVO'" class="form-control" required 
+                    ng-options="gestion.nombre_corto as gestion.nombre for gestion in gestiones track by gestion.id" ng-model="configuracionImpresion.gestion_fin">
+                    <option value="">SELECCIONAR</option>
+                </select>
+                <select ng-if="configuracionImpresion.tipoPerido.nombre=='MES'" required  class="form-control" ng-options="mes.nombre_corto as mes.nombre for mes in mesesFiltro track by mes.id"
+                    ng-model="configuracionImpresion.MES">
+                    <option value="">SELECCIONAR</option>
+                </select>
+                <label>
+                    <input id="fecha_uno" ng-if="configuracionImpresion.tipoPerido.nombre=='FECHAS'" type="text" ng-model="configuracionImpresion.fecha_inicio"
+                        ng-update-hidden data-date-format="dd/mm/yyyy" class="from-control date-picker">
+                </label>
+                <label>
+                    <input id="fecha_dos" ng-if="configuracionImpresion.tipoPerido.nombre=='FECHAS'" type="text" ng-model="configuracionImpresion.fecha_fin"
+                        ng-update-hidden data-date-format="dd/mm/yyyy" class="from-control date-picker">
+                </label>
             </div>
             <div class="space-6"></div>
             <div class="form-inline">
@@ -33,25 +51,26 @@
 
                     <span class="lbl"> DETALLE DE BALANCE</span>
                 </label>
-                <select>
-                    <option value="">SELECCIONAR</option>
-                </select>
+                <select name="filtroTipo_cuenta" id="filtroTipo_cuenta" ng-model="configuracionImpresion.tipo_cuenta" ng-options="cuentaTipo.id as cuentaTipo.nombre for cuentaTipo in cuentaTipos">
+                        <option value="">SELECCIONAR</option>
+                    </select>
+                   
 
             </div>
             <div class="space-4"></div>
             <div class="form-inline">
-                <button ng-disabled="!ventas" class="btn btn-app btn-danger btn-xs" ng-click="imprimirFiltroCajaCartaOficio(ventas)">
+                <button  class="btn btn-app btn-danger btn-xs" ng-click="generarPdfBalanceGeneral(ventas)">
                     <i class="ace-icon fa fa-print bigger-160"></i>
                     PDF
                 </button>
-                <button ng-disabled="!ventas" class="btn btn-app btn-success btn-xs" ng-click="imprimirFiltroExcelCajaCartaOficio(ventas)">
+                <button  class="btn btn-app btn-success btn-xs" ng-click="generarExelBalanceGeneral(ventas)">
                     <i class="ace-icon fa fa-print bigger-160"></i>
                     Excel
                 </button>
-                <button ng-disabled="!ventas" class="btn btn-app btn-primary btn-xs" ng-click="imprimirFiltroExcelCajaCartaOficio(ventas)">
-                        <i class="ace-icon fa fa-print bigger-160"></i>
-                        Word
-                    </button>
+                <button  class="btn btn-app btn-primary btn-xs" ng-click="generarWordBalanceGeneral(ventas)">
+                    <i class="ace-icon fa fa-print bigger-160"></i>
+                    Word
+                </button>
             </div>
         </div>
     </div>

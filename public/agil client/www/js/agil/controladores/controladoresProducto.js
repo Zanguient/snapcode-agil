@@ -38,7 +38,7 @@ angular.module('agil.controladores')
 					$scope.mostrarMensaje('Parece que el usuario actual no cuenta con grupos de productos.')
 				}
 			}).catch(function (err) {
-				
+
 				$scope.gruposProducto = []
 			})
 		}
@@ -275,66 +275,71 @@ angular.module('agil.controladores')
 			dato.detallesMovimiento = detMovs;
 			$scope.Math = Math;
 			for (var i = 0; i < dato.detallesMovimiento.length; i++) {
-				dato.detallesMovimiento[i].costo_unitario = Math.round((dato.detallesMovimiento[i].costo_unitario * 0.87) * 100) / 100;
-				if (i == 0 && dato.detallesMovimiento[i].tipo == "SALDO ANTERIOR") {
-					dato.detallesMovimiento[i].saldoFisico = dato.detallesMovimiento[i].saldoFisico;
-					dato.detallesMovimiento[i].saldoValuado = dato.detallesMovimiento[i].saldoValuado;
-					dato.detallesMovimiento[i].costo_unitario = Math.round((dato.detallesMovimiento[i].costo_unitario * 100 / 87) * 100) / 100;
-				} else if (i == 0 && dato.detallesMovimiento[i].movimiento.tipo.nombre_corto == $scope.diccionario.MOV_ING && dato.detallesMovimiento[i].movimiento.clase.nombre_corto == $scope.diccionario.ING_INV_INICIAL) {
-					dato.detallesMovimiento[i].saldoFisico = dato.detallesMovimiento[i].cantidad;
-					dato.detallesMovimiento[i].saldoValuado = Math.round((dato.detallesMovimiento[i].saldoFisico * dato.detallesMovimiento[i].costo_unitario) * 100) / 100;
-					if (dato.detallesMovimiento[i].movimiento.compra != null) {
-						dato.detallesMovimiento[i].tipo = dato.detallesMovimiento[i].movimiento.clase.nombre + " Nro. " + dato.detallesMovimiento[i].movimiento.compra.factura;
-					} else {
-						dato.detallesMovimiento[i].tipo = dato.detallesMovimiento[i].movimiento.clase.nombre;
-					}
-				} else if (i == 0 && dato.detallesMovimiento[i].movimiento.tipo.nombre_corto == $scope.diccionario.MOV_ING) {
-					dato.detallesMovimiento[i].saldoFisico = dato.detallesMovimiento[i].cantidad;
-					dato.detallesMovimiento[i].saldoValuado = Math.round((dato.detallesMovimiento[i].saldoFisico * dato.detallesMovimiento[i].costo_unitario) * 100) / 100;
-					if (dato.detallesMovimiento[i].movimiento.compra != null) {
-						dato.detallesMovimiento[i].tipo = dato.detallesMovimiento[i].movimiento.clase.nombre + " Nro. " + dato.detallesMovimiento[i].movimiento.compra.factura;
-					} else {
-						dato.detallesMovimiento[i].tipo = dato.detallesMovimiento[i].movimiento.clase.nombre;
-					}
-				}
-				else {
-					if (dato.detallesMovimiento[i].movimiento.tipo.nombre_corto == $scope.diccionario.MOV_ING) {
-						if (i > 0) {
-							dato.detallesMovimiento[i].saldoFisico = dato.detallesMovimiento[i - 1].saldoFisico + dato.detallesMovimiento[i].cantidad;
-							dato.detallesMovimiento[i].saldoValuado = Math.round((dato.detallesMovimiento[i - 1].saldoValuado + (dato.detallesMovimiento[i].cantidad * dato.detallesMovimiento[i].costo_unitario)) * 100) / 100;
-							dato.detallesMovimiento[i].tipo = dato.detallesMovimiento[i].movimiento.clase.nombre
+				if (dato.detallesMovimiento[i].movimiento) {
+					dato.detallesMovimiento[i].costo_unitario = Math.round((dato.detallesMovimiento[i].costo_unitario * 0.87) * 100) / 100;
+					if (i == 0 && dato.detallesMovimiento[i].tipo == "SALDO ANTERIOR") {
+						dato.detallesMovimiento[i].saldoFisico = dato.detallesMovimiento[i].saldoFisico;
+						dato.detallesMovimiento[i].saldoValuado = dato.detallesMovimiento[i].saldoValuado;
+						dato.detallesMovimiento[i].costo_unitario = Math.round((dato.detallesMovimiento[i].costo_unitario * 100 / 87) * 100) / 100;
+					} else if (i == 0 && dato.detallesMovimiento[i].movimiento.tipo.nombre_corto == $scope.diccionario.MOV_ING && dato.detallesMovimiento[i].movimiento.clase.nombre_corto == $scope.diccionario.ING_INV_INICIAL) {
+						dato.detallesMovimiento[i].saldoFisico = dato.detallesMovimiento[i].cantidad;
+						dato.detallesMovimiento[i].saldoValuado = Math.round((dato.detallesMovimiento[i].saldoFisico * dato.detallesMovimiento[i].costo_unitario) * 100) / 100;
+						if (dato.detallesMovimiento[i].movimiento.compra != null) {
+							dato.detallesMovimiento[i].tipo = dato.detallesMovimiento[i].movimiento.clase.nombre + " Nro. " + dato.detallesMovimiento[i].movimiento.compra.factura;
 						} else {
-							dato.detallesMovimiento[i].saldoFisico = dato.detallesMovimiento[i].cantidad;
-							dato.detallesMovimiento[i].saldoValuado = Math.round(((dato.detallesMovimiento[i].cantidad * dato.detallesMovimiento[i].costo_unitario)) * 100) / 100;
-							dato.detallesMovimiento[i].tipo = dato.detallesMovimiento[i].movimiento.clase.nombre
+							dato.detallesMovimiento[i].tipo = dato.detallesMovimiento[i].movimiento.clase.nombre;
 						}
-					} else {
-						if (dato.detallesMovimiento[i].movimiento.venta) {
-							//dato.detallesMovimiento[i].costo_unitario=dato.detallesMovimiento[i].costo_unitario*0.87;
-							if (i > 0) {
-								dato.detallesMovimiento[i].saldoFisico = dato.detallesMovimiento[i - 1].saldoFisico - dato.detallesMovimiento[i].cantidad;
-								dato.detallesMovimiento[i].saldoValuado = Math.round((dato.detallesMovimiento[i - 1].saldoValuado - (dato.detallesMovimiento[i].cantidad * dato.detallesMovimiento[i].costo_unitario)) * 100) / 100;
-								dato.detallesMovimiento[i].tipo = dato.detallesMovimiento[i].movimiento.clase.nombre + " Nro. " + dato.detallesMovimiento[i].movimiento.venta.factura;
-							} else {
-								dato.detallesMovimiento[i].saldoFisico = dato.detallesMovimiento[i].cantidad;
-								dato.detallesMovimiento[i].saldoValuado = Math.round(((dato.detallesMovimiento[i].cantidad * dato.detallesMovimiento[i].costo_unitario)) * 100) / 100;
-								dato.detallesMovimiento[i].tipo = dato.detallesMovimiento[i].movimiento.clase.nombre + " Nro. " + dato.detallesMovimiento[i].movimiento.venta.factura;
-							}
+					} else if (i == 0 && dato.detallesMovimiento[i].movimiento.tipo.nombre_corto == $scope.diccionario.MOV_ING) {
+						dato.detallesMovimiento[i].saldoFisico = dato.detallesMovimiento[i].cantidad;
+						dato.detallesMovimiento[i].saldoValuado = Math.round((dato.detallesMovimiento[i].saldoFisico * dato.detallesMovimiento[i].costo_unitario) * 100) / 100;
+						if (dato.detallesMovimiento[i].movimiento.compra != null) {
+							dato.detallesMovimiento[i].tipo = dato.detallesMovimiento[i].movimiento.clase.nombre + " Nro. " + dato.detallesMovimiento[i].movimiento.compra.factura;
 						} else {
+							dato.detallesMovimiento[i].tipo = dato.detallesMovimiento[i].movimiento.clase.nombre;
+						}
+					}
+					else {
+						if (dato.detallesMovimiento[i].movimiento.tipo.nombre_corto == $scope.diccionario.MOV_ING) {
 							if (i > 0) {
-								dato.detallesMovimiento[i].saldoFisico = dato.detallesMovimiento[i - 1].saldoFisico - dato.detallesMovimiento[i].cantidad;
-								dato.detallesMovimiento[i].saldoValuado = Math.round((dato.detallesMovimiento[i - 1].saldoValuado - (dato.detallesMovimiento[i].cantidad * dato.detallesMovimiento[i].costo_unitario)) * 100) / 100;
+								dato.detallesMovimiento[i].saldoFisico = dato.detallesMovimiento[i - 1].saldoFisico + dato.detallesMovimiento[i].cantidad;
+								dato.detallesMovimiento[i].saldoValuado = Math.round((dato.detallesMovimiento[i - 1].saldoValuado + (dato.detallesMovimiento[i].cantidad * dato.detallesMovimiento[i].costo_unitario)) * 100) / 100;
 								dato.detallesMovimiento[i].tipo = dato.detallesMovimiento[i].movimiento.clase.nombre
 							} else {
 								dato.detallesMovimiento[i].saldoFisico = dato.detallesMovimiento[i].cantidad;
 								dato.detallesMovimiento[i].saldoValuado = Math.round(((dato.detallesMovimiento[i].cantidad * dato.detallesMovimiento[i].costo_unitario)) * 100) / 100;
 								dato.detallesMovimiento[i].tipo = dato.detallesMovimiento[i].movimiento.clase.nombre
 							}
+						} else {
+							if (dato.detallesMovimiento[i].movimiento.venta) {
+								//dato.detallesMovimiento[i].costo_unitario=dato.detallesMovimiento[i].costo_unitario*0.87;
+								if (i > 0) {
+									dato.detallesMovimiento[i].saldoFisico = dato.detallesMovimiento[i - 1].saldoFisico - dato.detallesMovimiento[i].cantidad;
+									dato.detallesMovimiento[i].saldoValuado = Math.round((dato.detallesMovimiento[i - 1].saldoValuado - (dato.detallesMovimiento[i].cantidad * dato.detallesMovimiento[i].costo_unitario)) * 100) / 100;
+									dato.detallesMovimiento[i].tipo = dato.detallesMovimiento[i].movimiento.clase.nombre + " Nro. " + dato.detallesMovimiento[i].movimiento.venta.factura;
+								} else {
+									dato.detallesMovimiento[i].saldoFisico = dato.detallesMovimiento[i].cantidad;
+									dato.detallesMovimiento[i].saldoValuado = Math.round(((dato.detallesMovimiento[i].cantidad * dato.detallesMovimiento[i].costo_unitario)) * 100) / 100;
+									dato.detallesMovimiento[i].tipo = dato.detallesMovimiento[i].movimiento.clase.nombre + " Nro. " + dato.detallesMovimiento[i].movimiento.venta.factura;
+								}
+							} else {
+								if (i > 0) {
+									dato.detallesMovimiento[i].saldoFisico = dato.detallesMovimiento[i - 1].saldoFisico - dato.detallesMovimiento[i].cantidad;
+									dato.detallesMovimiento[i].saldoValuado = Math.round((dato.detallesMovimiento[i - 1].saldoValuado - (dato.detallesMovimiento[i].cantidad * dato.detallesMovimiento[i].costo_unitario)) * 100) / 100;
+									dato.detallesMovimiento[i].tipo = dato.detallesMovimiento[i].movimiento.clase.nombre
+								} else {
+									dato.detallesMovimiento[i].saldoFisico = dato.detallesMovimiento[i].cantidad;
+									dato.detallesMovimiento[i].saldoValuado = Math.round(((dato.detallesMovimiento[i].cantidad * dato.detallesMovimiento[i].costo_unitario)) * 100) / 100;
+									dato.detallesMovimiento[i].tipo = dato.detallesMovimiento[i].movimiento.clase.nombre
+								}
+							}
 						}
-					}
 
-				}
+					}
+			
 				dato.detallesMovimiento[i].saldoV = dato.detallesMovimiento[i].saldoValuado.toFixed(2);
+					} else {
+					console.log(dato.detallesMovimiento[i])
+				}
 			}
 			$scope.kardexproduto = dato;
 		}

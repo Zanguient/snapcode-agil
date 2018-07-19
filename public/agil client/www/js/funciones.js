@@ -184,9 +184,9 @@ function ejecutarScriptsInicio(idPopupTablaProductos, idPopupTablaCreditos, idPo
 	setTimeout(function name(params) {
 		crearPopup(idModalTablaDespachos, screen.width, screen.height);
 		crearPopup(idModalTablaAsignacionDespacho, "auto", "auto");
-		crearPopup(idModalNuevoPedido, screen.width, screen.height);
-		crearPopup(idModalDatosProducto, "36%", 370 )
 		aplicarDatePickers();
+		crearPopup(idModalNuevoPedido, screen.width, screen.height);
+		crearPopup(idModalDatosProducto, "36%", 370 );
 
 	}, 2000)
 

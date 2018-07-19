@@ -62,11 +62,11 @@ angular.module('agil.controladores')
             $scope.cerrarPopup($scope.idModalDetalleImpresion)
         }
 
-        $scope.obtenerTipoNumeracion = function () {
+        $scope.obtenerTipoPeriodos = function () {
             blockUI.start();
-            var promesa = ClasesTipo("NEF");
+            var promesa = ClasesTipo("EEFF_TP");
             promesa.then(function (entidad) {
-                $scope.TiposNumeraciones = entidad
+                $scope.TiposPeriodos = entidad
                 blockUI.stop();
             });
         }

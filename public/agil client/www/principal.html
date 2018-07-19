@@ -227,8 +227,7 @@
 	<script src="js/agil/servicios/serviciosPlanillas.js"></script>
 	<script src="js/agil/servicios/serviciosPedidos.js"></script>
 	<script src="js/agil/servicios/serviciosActivosFijos.js"></script>
-	<script src="js/estadosFinancierosAgil/servicios/serviciosBalanceGeneral.js"></script>
-	<script src="js/estadosFinancierosAgil/servicios/serviciosConfiguaraciones.js"></script>
+	<script src="js/estadosFinancierosAgil/servicios/serviciosEstadosFinancieros.js"></script>
 
 </head>
 
@@ -2727,7 +2726,7 @@
 		<div class="row">
 			<div class="col-sm-4">
 				<div class="widget-box">
-					<form id="formularioVenta" name="formularioVenta" novalidate ng-submit="guardarPedido(formularioVenta.$valid,venta)">
+					<form id="formularioVenta" name="formularioVenta" novalidate ng-submit="guardarPedido(formularioVenta.$valid,pedido)">
 						<div class="widget-header">
 							<h4 class="widget-title">DATOS DE PEDIDO</h4>
 							&nbsp;
@@ -2736,16 +2735,16 @@
 							<div class="col-sm-4" >
 								<label>FECHA</label>
 								<div class="input-group">
-								<input name="fecha" required ng-update-hidden class="form-control date-picker" type="text" data-date-format="dd/mm/yyyy"
-								 id="fecha" ng-model="pedido.fechaTexto" placeholder="Ingrese la fecha" />
+								<input name="fechaTexto" required ng-update-hidden class="form-control date-picker" type="text" data-date-format="dd/mm/yyyy"
+								 id="fechaTexto" ng-model="pedido.fechaTexto" placeholder="Ingrese la fecha"/>
 								<span class="red">(*)</span>
-								<span class="invalid-message" ng-show="formularioVenta.fecha.$dirty && formularioVenta.fecha.$invalid">
+								<span class="invalid-message" ng-show="formularioVenta.fechaTexto.$dirty && formularioVenta.fechaTexto.$invalid">
 									Dato requerido.
 								</span>
 								</div>
 							</div>
 							<div class="col-sm-8" style=" margin-top: 20px;vmargin-left: 0px;">
-									<button id="guardarV" type="submit"  ng-disabled="venta.detallesVenta.length==0" class="btn btn-primary">
+									<button id="guardarV" type="submit"  ng-disabled="pedido.detalles_despacho.length==0" class="btn btn-primary">
 										<i class="ace-icon fa fa-floppy-o align-top bigger-125"></i>
 										GUARDAR
 									</button>
@@ -2765,8 +2764,7 @@
 									<tr>
 										<td>
 											<label>MOVIMIENTO</label>
-											<select data-validate="validate(required)" required id="movimiento" name="movimiento" ng-model="venta.movimiento" data-placeholder="Click para escoger"
-											 ng-change="obtenerTipoEgreso(venta.movimiento)" ng-options="movimiento as movimiento.nombre for movimiento in movimientosEgreso track by movimiento.id">
+											<select   id="movimiento" name="movimiento" ng-model="pedido.movimiento" data-placeholder="Click para escoger">
 											</select>
 											<span class="red">(*)</span>
 										
@@ -2774,7 +2772,7 @@
 										<td>
 											<label>RAZÓN SOCIAL CLIENTE</label>
 											<input ng-keypress="interceptarTecla($event,'id_producto',true)" autocomplete="off" data-validate="validate(required)" id="razon_social"
-											 name="razon_social" required type="text" ng-model="venta.cliente.razon_social" placeholder="Ingrese la Razon Social"
+											 name="razon_social" required type="text" ng-model="pedido.cliente.razon_social" placeholder="Ingrese la Razon Social"
 											 uib-typeahead="cliente as cliente.razon_social for cliente in buscarCliente($viewValue)" typeahead-wait-ms="2000"
 											 typeahead-template-url="templates/autocompletar.html" typeahead-show-hint="false" typeahead-min-length="0" typeahead-on-select="establecerCliente($item, $model, $label, $event)">
 											<span class="red">(*)</span>
@@ -2821,7 +2819,7 @@
 									<tr>
 										<td colspan="2">
 											<label >OBSERVACIONES</label>
-											<textarea ng-model="pedido.observaciones" class="form-control limited" id="form-field-9" maxlength="100" style=" height: 35px;"></textarea>
+											<textarea ng-model="pedido.observacion" class="form-control limited" id="form-field-9" maxlength="100" style=" height: 35px;"></textarea>
 										</td>
 									</tr>
 

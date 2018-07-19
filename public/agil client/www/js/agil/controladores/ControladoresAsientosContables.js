@@ -337,7 +337,7 @@ angular.module('agil.controladores')
                 var reader = new FileReader();
                 var name = f.name;
                 reader.onload = function (e) {
-                    // blockUI.start();
+                    blockUI.start();
                     var data = e.target.result;
 
                     var workbook = XLSX.read(data, { type: 'binary' });
@@ -402,6 +402,7 @@ angular.module('agil.controladores')
         $scope.GuardarComprobantesImportacion = function (comprobantes) {
             var promesa =GuardarComprobantesImportados(comprobantes,$scope.usuario.id,$scope.usuario.id_empresa)
             promesa.then(function(dato){
+                blockUI.stop()
                 $scope.mostrarMensaje(dato.mensaje)
             })
             

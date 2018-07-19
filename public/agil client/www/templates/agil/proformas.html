@@ -192,7 +192,9 @@
                     </thead>
                     <tbody>
                         <tr ng-if="!proforma.eliminado" ng-repeat="proforma in proformas">
-                            <td>{{$index+1}}</td>
+                            <td data-label="N°:">
+                                {{($index+1)+(paginator.itemsPerPage*(paginator.currentPage-1))}}
+                            </td>
                             <td>{{proforma.correlativo}}</td>
                             <td>{{proforma.cliente.razon_social}}</td>
                             <td>{{meses[proforma.periodo_mes].nombre}}/{{proforma.periodo_anio}}</td>
