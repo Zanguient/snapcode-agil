@@ -982,7 +982,7 @@ angular.module('agil.controladores')
 			if ($scope.compra.sucursal) {
 				$scope.obtenerAlmacenes($scope.compra.sucursal.id);
 			}
-			$scope.compra.detallesCompra.descuento = 0;
+
 			var fechaActual = new Date();
 			$scope.compra.fechaTexto = fechaActual.getDate() + "/" + (fechaActual.getMonth() + 1) + "/" + fechaActual.getFullYear();
 			$scope.abrirPopup($scope.idModalWizardCompraEdicion);
@@ -1320,6 +1320,10 @@ angular.module('agil.controladores')
 
 			} else {
 				$scope.precio_inventario = "Sin histórico";
+			}
+			
+			if (producto.descuento==null) {
+				producto.descuento=0;
 			}
 
 			$scope.detalleCompra = {
