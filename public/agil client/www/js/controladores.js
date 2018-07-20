@@ -270,7 +270,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 				id_empresa: $scope.usuario.id_empresa, id_usuario: $scope.usuario.id, fechaTexto: "",
 				detalles_despacho: []
 			});
-			$scope.pedido.fechaTexto = fechaActual.getDate() + "/" + ("0" + (fechaActual.getMonth() + 1)).slice(-2) + "/" + fechaActual.getFullYear();
+			$scope.pedido.fechaTexto = (fechaActual.getDate() + 1) + "/" + ("0" + (fechaActual.getMonth() + 1)).slice(-2) + "/" + fechaActual.getFullYear();
 
 			$scope.abrirPopup($scope.idModalNuevoPedido);
 			$scope.pedido.totalPedido = 0;
@@ -285,7 +285,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 		}
 
 		$scope.cerrarNuevoPedido = function () {
-			$scope.cerrarPopup($scope.idModalNuevoPedido)
+			$scope.cerrarPopup($scope.idModalNuevoPedido);
 		}
 
 		$scope.AbrirMensajeConfirmacionComprobante = function (mensaje, form, form2) {

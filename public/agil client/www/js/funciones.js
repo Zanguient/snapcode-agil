@@ -186,11 +186,8 @@ function ejecutarScriptsInicio(idPopupTablaProductos, idPopupTablaCreditos, idPo
 		crearPopup(idModalTablaAsignacionDespacho, "auto", "auto");
 		aplicarDatePickers();
 		crearPopup(idModalNuevoPedido, screen.width, screen.height);
-		
+		aplicarDatePickerPedido();
 		crearPopup(idModalDatosProducto, "36%", 370 );
-		// aplicarDatePickerPedido();
-
-
 
 	}, 2000)
 
@@ -201,25 +198,17 @@ function ejecutarScriptsInicio(idPopupTablaProductos, idPopupTablaCreditos, idPo
 	$(document).on('click', '#field-viewer', function (e) {
 		e.stopPropagation();
 	});
-
-
-
 }
 
-// $('#fechaTexto').datepicker("hide");
-// $('#fechaTexto').blur();
-
-// function aplicarDatePickerPedido() {
-// 	$('.date-picker-pedido').datepicker({
-// 		autoclose: true,
-	
-// 		todayHighlight: true
-	
-
-// 	});
-
-
-// } 
+function aplicarDatePickerPedido() {
+	$('.date-picker-pedido').datetimepicker({
+		format: 'DD/MM/YYYY',//use this option to display seconds
+		autoclose: true,
+		pickTime: false
+	}).on('changeDate', function (e) {
+        $(this).datetimepicker('hide');
+  	});
+} 
 
 function quitarScrollInputNumber() {
 	$('.input-fix-mousewheel1').on('focus', function (e) {

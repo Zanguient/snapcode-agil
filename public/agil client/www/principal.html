@@ -2735,7 +2735,7 @@
 							<div class="col-sm-4" >
 								<label>FECHA</label>
 								<div class="input-group">
-								<input name="fechaTexto" required ng-update-hidden class="form-control date-picker-pedido" type="text" data-date-format="dd/mm/yyyy"
+								<input name="fechaTexto" required ng-update-hidden autocomplete="off" class="form-control date-picker-pedido" type="text" 
 								 id="fechaTexto" ng-model="pedido.fechaTexto" placeholder="Ingrese la fecha"/>
 								<span class="red">(*)</span>
 								<span class="invalid-message" ng-show="formularioVenta.fechaTexto.$dirty && formularioVenta.fechaTexto.$invalid">
