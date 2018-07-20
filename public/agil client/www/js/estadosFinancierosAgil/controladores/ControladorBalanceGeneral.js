@@ -10,12 +10,13 @@ angular.module('agil.controladores')
 			$scope.obtenerTiposPeriodos()
 			$scope.obtenerGestiones()
 			$scope.obtenerTiposCuenta()
+			$scope.obtenerConfiguracionImpresion()
 		}
 
 
 		$scope.$on('$viewContentLoaded', function () {
 			resaltarPestaña($location.path().substring(1));
-			
+
 			$scope.buscarAplicacion($scope.usuario.aplicacionesUsuario, $location.path().substring(1));
 			blockUI.stop();
 		});
@@ -40,10 +41,17 @@ angular.module('agil.controladores')
 			var promesa = ObtenerConfiguracionImpresion($scope.usuario.id_empresa)
 			promesa.then(function (dato) {
 				$scope.configuracionImpresion = dato
+				$scope.configuracionImpresion.bimonetario = true
+				$scope.configuracionImpresion.tioPeriodo = ""
+				$scope.configuracionImpresion.gestion = ""
+				$scope.configuracionImpresion.gestion_fin = ""
+				$scope.configuracionImpresion.mes = ""
+				$scope.configuracionImpresion.fecha_inicio = ""
+				$scope.configuracionImpresion.fecha_fin = ""
 				blockUI.stop()
 			})
 		}
-		$scope.cargarFechasFiltro = function(filtro){
+		$scope.cargarFechasFiltro = function (filtro) {
 			if (filtro == 'FECHAS') {
 				setTimeout(function () {
 					aplicarDatePickers();
@@ -66,10 +74,10 @@ angular.module('agil.controladores')
 			var stream = doc.pipe(blobStream());
 			// draw some text
 			var totalCosto = 0;
-			var datos=[{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}]
-			var datosPasivo=[{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}]
-			var y = 120, itemsPorPagina = 33, items = 0, pagina = 1, totalPaginas = Math.ceil((datos.length+datosPasivo.length) / itemsPorPagina);
-			$scope.dibujarCabeceraPDFBalanceGeneral(doc, 1, totalPaginas,"ACTIVO");
+			var datos = [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}]
+			var datosPasivo = [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}]
+			var y = 120, itemsPorPagina = 33, items = 0, pagina = ($scope.configuracionImpresion.usar_empesar_numeracion)?$scope.configuracionImpresion.empesar_numeracion:1, totalPaginas = ($scope.configuracionImpresion.usar_empesar_numeracion)?($scope.configuracionImpresion.empesar_numeracion-1)+Math.ceil((datos.length + datosPasivo.length) / itemsPorPagina):Math.ceil((datos.length + datosPasivo.length) / itemsPorPagina);
+			$scope.dibujarCabeceraPDFBalanceGeneral(doc, pagina, totalPaginas, "ACTIVO");
 			doc.font('Helvetica', 8);
 			for (var i = 0; i < datos.length && items <= itemsPorPagina; i++) {
 				y = y + 20;
@@ -80,17 +88,17 @@ angular.module('agil.controladores')
 					y = 120;
 					items = 0;
 					pagina = pagina + 1;
-					$scope.dibujarCabeceraPDFBalanceGeneral(doc, pagina, totalPaginas,"ACTIVO");
+					$scope.dibujarCabeceraPDFBalanceGeneral(doc, pagina, totalPaginas, "ACTIVO");
 					doc.font('Helvetica', 8);
 				}
-				if(i===(datos.length-1)){
+				if (i === (datos.length - 1)) {
 					doc.font('Helvetica-Bold', 8);
-					doc.text("TOTAL ACTIVOS", 30, y);	
-					doc.text("PASIVO Y PATRIMONIO", 0, y+10, { align: "center" });	
-					for (var j = 0;j < datosPasivo.length && items <= itemsPorPagina; j++) {
+					doc.text("TOTAL ACTIVOS", 30, y);
+					doc.text("PASIVO Y PATRIMONIO", 0, y + 10, { align: "center" });
+					for (var j = 0; j < datosPasivo.length && items <= itemsPorPagina; j++) {
 						y = y + 20;
 						items++;
-						if(j===(datosPasivo.length-1)){
+						if (j === (datosPasivo.length - 1)) {
 							doc.font('Helvetica-Bold', 8);
 							doc.text("TOTAL PASIVO", 30, y)
 						}
@@ -99,13 +107,13 @@ angular.module('agil.controladores')
 							y = 120;
 							items = 0;
 							pagina = pagina + 1;
-							$scope.dibujarCabeceraPDFBalanceGeneral(doc, pagina, totalPaginas,"PASIVO Y PATRIMONIO");
+							$scope.dibujarCabeceraPDFBalanceGeneral(doc, pagina, totalPaginas, "PASIVO Y PATRIMONIO");
 							doc.font('Helvetica', 8);
 						}
 					}
 				}
 			}
-			
+
 			doc.end();
 			stream.on('finish', function () {
 				var fileURL = stream.toBlobURL('application/pdf');
@@ -114,7 +122,7 @@ angular.module('agil.controladores')
 			blockUI.stop();
 
 		}
-		$scope.generarExcelBalanceGeneral = function () {
+		$scope.generarExcelBalanceGeneral = function (configuracionImpresion) {
 			var data = [["", "", "ESTADO CUENTAS PROVEEDOR"], ["Deudor :" + proveedor.razon_social], ["Fecha", "N Recibo", "Descripción", "monto", "total", "total General"]]
 			var totalCosto = 0;
 			for (var i = 0; i < proveedor.compras.length; i++) {
@@ -145,35 +153,48 @@ angular.module('agil.controladores')
 
 		}
 
-		$scope.dibujarCabeceraPDFBalanceGeneral = function (doc, pagina, totalPaginas,nombreTipo) {
-		
+		$scope.dibujarCabeceraPDFBalanceGeneral = function (doc, pagina, totalPaginas, nombreTipo) {
+
 			doc.font('Helvetica-Bold', 8);
 			/* doc.rect(30, 20, 200, 60).stroke(); */
-			doc.text($scope.usuario.empresa.razon_social, 40, 30,{ width: 220 });
+			doc.text($scope.usuario.empresa.razon_social, 40, 30, { width: 220 });
 			doc.text("DE : ", 40, 40);
 			doc.text("NIT : ", 40, 50);
-			doc.text($scope.usuario.empresa.direccion, 40, 60,{ width: 220 });
-			doc.text($scope.usuario.empresa.nit, 55, 50);	
+			doc.text($scope.usuario.empresa.direccion, 40, 60, { width: 220 });
+			doc.text($scope.usuario.empresa.nit, 55, 50);
 			doc.font('Helvetica-Bold', 12);
-			doc.text("BALANCE GENERAL", 0, 75, { align: "center" });	
+			doc.text("BALANCE GENERAL", 0, 75, { align: "center" });
 			doc.font('Helvetica-Bold', 8);
-			doc.text("FORMATO DE TIPO PERIODO", 0, 85, { align: "center" });	
-			doc.text("TIPO BI-MONETARIO", 0, 95, { align: "center" });	
-			doc.text(nombreTipo, 0, 105, { align: "center" });	
+			if ($scope.configuracionImpresion.tipoPeriodo.nombre_corto == 'GES') {
+				var anioActual = new Date().getFullYear()
+				var mesActual = new Date().getMonth()
+				var ultimoDiaMes = new Date(anioActual, mesActual - 1, 0).getDate();
+				if ($scope.configuracionImpresion.gestion.nombre < anioActual) {
+					doc.text("Al 31 de Diciembre de " + $scope.configuracionImpresion.gestion.nombre, 0, 85, { align: "center" });
+				} else {
+					doc.text("Al " + ultimoDiaMes + " de " + $scope.meses[mesActual].nombre + " de " + $scope.configuracionImpresion.gestion.nombre, 0, 85, { align: "center" });
+				}
+
+			} else if ($scope.configuracionImpresion.tipoPeriodo.nombre_corto == 'MES') {
+				doc.text($scope.configuracionImpresion.mes.nombre + " de " + $scope.configuracionImpresion.gestion.nombre, 0, 85, { align: "center" });
+			} else if ($scope.configuracionImpresion.tipoPeriodo.nombre_corto == 'FECHAS') {
+				var fechaInicio = new Date($scope.convertirFecha($scope.configuracionImpresion.fecha_inicio))
+				var FechaFin = new Date($scope.convertirFecha($scope.configuracionImpresion.fecha_fin))
+				doc.text("Desde el " + fechaInicio.getDate() + " de " + $scope.meses[fechaInicio.getMonth()].nombre + " " + fechaInicio.getFullYear() + " al " + FechaFin.getDate() + " de " + $scope.meses[FechaFin.getMonth()].nombre + " de " + FechaFin.getFullYear(), 0, 85, { align: "center" });
+			} else if ($scope.configuracionImpresion.tipoPeriodo.nombre_corto == 'COMP') {
+				doc.text("Gestión " + $scope.configuracionImpresion.gestion.nombre + "- Gestión " + $scope.configuracionImpresion.gestion_fin.nombre, 0, 85, { align: "center" });
+			}
+			if ($scope.configuracionImpresion.bimonetario) {
+				doc.text("Expresado en Bolivianos y Dólares", 0, 95, { align: "center" });
+			} else {
+				doc.text("Expresado en Bolivianos", 0, 95, { align: "center" });
+			}
+			doc.text(nombreTipo, 0, 105, { align: "center" });
 			doc.text("PÁGINA " + pagina + " DE " + totalPaginas, 0, 740, { align: "center" });
-/* 			doc.rect(30, 50, 555, 30).stroke();
-			doc.font('Helvetica-Bold', 8);
-			doc.text("Acreedor : ", 45, 60);
-			doc.font('Helvetica', 8);
-			//doc.text(proveedor.razon_social, 140, 60);
-			doc.rect(30, 80, 555, 30).stroke();
-			doc.font('Helvetica-Bold', 8);
-			doc.text("Fecha", 45, 90);
-			doc.text("Nro. Recibo", 170, 90, { width: 50 });
-			doc.text("Descripción", 240, 90, { width: 60 });
-			doc.text("Monto", 470, 90, { width: 50 });
-			doc.text("Total", 530, 90, { width: 50 });
-			doc.font('Helvetica', 8); */
+			doc.font('Helvetica', 5);
+			doc.text($scope.configuracionImpresion.frase_pie_pagina, 40, 740);
+			doc.text((($scope.configuracionImpresion.usar_lugar_emision)?$scope.configuracionImpresion.lugar_emision+", ":"")+(($scope.configuracionImpresion.usar_fecha_emision)?$scope.fechaATexto($scope.configuracionImpresion.fecha_emision):""), 40, 750);
+			
 		}
 
 		$scope.$on('$routeChangeStart', function (next, current) {

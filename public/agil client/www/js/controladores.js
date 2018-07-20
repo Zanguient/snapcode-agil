@@ -141,8 +141,13 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 			$scope.Datoproducto = producto;
 			$scope.Datoproducto.cantidad = 1;
 			$scope.Datoproducto.transporte = 0;
+			$scope.Datoproducto.totalTransporte = 0;
 			// la ventana ===
 			$scope.abrirPopup($scope.idModalDatosProducto);
+		}
+
+		$scope.calcularTransporte = function () {
+			$scope.Datoproducto.totalTransporte = Math.round(($scope.Datoproducto.cantidad * $scope.Datoproducto.transporte) * 1000) / 1000;
 		}
 
 		$scope.cerrarDatoProducto = function () {
@@ -151,7 +156,6 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 
 		$scope.agregarDetallePedido = function (producto) {
 			//console.log("producto sssssssssss ", producto);
-			//if (producto.activar_inventario) {
 			var detallePedido;
 			$scope.cantidadInventario = 0;
 
@@ -168,24 +172,24 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 
 
 			$scope.pedido.detalles_despacho.push(detallePedido);
-			// $scope.calcularImporteDetalleVenta(detallePedido);
 				
 			$scope.cerrarDatoProducto();
 
-			// $scope.sumarTotal();
-			// $scope.sumarTotalImporte();
-			// $scope.calcularSaldo();
-			// $scope.capturarInteraccion();
+			$scope.sumarTotalPedido();
 			
+		}
+
+		$scope.sumarTotalPedido = function () {
+			var sumaTotal = 0;
+			for (var i = 0; i < $scope.pedido.detalles_despacho.length; i++) {
+				sumaTotal = sumaTotal + $scope.pedido.detalles_despacho[i].total;
+			}
+			$scope.pedido.totalPedido = Math.round((sumaTotal) * 1000) / 1000;
 		}
 
 		$scope.eliminarDetallePedido = function (detallePedido) {
 			$scope.pedido.detalles_despacho.splice($scope.pedido.detalles_despacho.indexOf(detallePedido), 1);
-			// $scope.sumarTotal();
-			// $scope.sumarTotalImporte();
-			// $scope.calcularSaldo();
-			// $scope.calcularCambio();
-			// $scope.capturarInteraccion();
+			$scope.sumarTotalPedido();
 		}
 
 		$scope.buscarCliente = function (query) {
@@ -241,6 +245,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 					} else {
 						blockUI.stop();
 						$scope.cerrarNuevoPedido();
+						$scope.verificarDespachos($scope.usuario.id_empresa);
 						
 						// $scope.crearNuevaVenta(res);
 						$scope.mostrarMensaje('Venta registrada exitosamente!');
@@ -265,10 +270,11 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 				id_empresa: $scope.usuario.id_empresa, id_usuario: $scope.usuario.id, fechaTexto: "",
 				detalles_despacho: []
 			});
-			
+			$scope.pedido.fechaTexto = fechaActual.getDate() + "/" + ("0" + (fechaActual.getMonth() + 1)).slice(-2) + "/" + fechaActual.getFullYear();
 
 			$scope.abrirPopup($scope.idModalNuevoPedido);
-			$scope.pedido.fechaTexto = fechaActual.getDate() + "/" + ("0" + (fechaActual.getMonth() + 1)).slice(-2) + "/" + fechaActual.getFullYear();
+			$scope.pedido.totalPedido = 0;
+			
 			$scope.enfocar("razon_social");
 		}
 

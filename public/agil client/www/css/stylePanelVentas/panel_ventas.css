@@ -146,6 +146,13 @@
 
 }
 
+#modal-nuevo-pedido .red-style-button {
+    background-color: #e3403d !important;
+    border-color: #e3403d !important;
+    border-radius: 0px;
+    margin-top: 5px;
+}
+
 .btn-order {
     display: inline-block;
     color: red!important;
@@ -436,4 +443,13 @@ h2.ssb-title {
 
 #dialog-pago {
 	z-index: 1080 !important;
+}
+
+.form-pedido{
+    background-color: #428bca;
+    color: white;
+}
+.header-pedido{
+    color: #428bca;
+    text-align: center;
 }

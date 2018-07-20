@@ -11,7 +11,7 @@ angular.module('agil.controladores')
             $scope.obtenerTipoNumeracion()
             $scope.obtenerGestionesEEFF()
         }
-
+       
 
         $scope.$on('$viewContentLoaded', function () {
             resaltarPestaña($location.path().substring(1));
@@ -70,6 +70,14 @@ angular.module('agil.controladores')
                 blockUI.stop();
             });
         }
+        $scope.obtenerTipoNumeracion = function () {
+			blockUI.start();
+			var promesa = ClasesTipo("NEEFF");
+			promesa.then(function (entidad) {
+				$scope.TiposNumeraciones = entidad
+				blockUI.stop();
+			});
+		}
         $scope.obtenerGestionesEEFF = function () {
             blockUI.start();
             var promesa = ClasesTipoEmpresa("GESTIÓN EEFF", $scope.usuario.id_empresa);

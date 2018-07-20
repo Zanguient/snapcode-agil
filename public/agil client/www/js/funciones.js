@@ -186,7 +186,11 @@ function ejecutarScriptsInicio(idPopupTablaProductos, idPopupTablaCreditos, idPo
 		crearPopup(idModalTablaAsignacionDespacho, "auto", "auto");
 		aplicarDatePickers();
 		crearPopup(idModalNuevoPedido, screen.width, screen.height);
+		
 		crearPopup(idModalDatosProducto, "36%", 370 );
+		// aplicarDatePickerPedido();
+
+
 
 	}, 2000)
 
@@ -202,20 +206,19 @@ function ejecutarScriptsInicio(idPopupTablaProductos, idPopupTablaCreditos, idPo
 
 }
 
-// function aplicarDatePickers() {
-// 	$('.date-picker').datepicker({
+// $('#fechaTexto').datepicker("hide");
+// $('#fechaTexto').blur();
+
+// function aplicarDatePickerPedido() {
+// 	$('.date-picker-pedido').datepicker({
 // 		autoclose: true,
-// 		todayHighlight: true,
-// 		defaultDate: new Date($('#' + $(this).attr('id')).val()),
-// 		onSelect: function (dateText) {
-// 			console.log("3333");
-// 			$('#' + $(this).attr('id')).trigger('change');
-// 		}
-// 	})
-// 		//show datepicker when clicking on the icon
-// 		.next().on(ace.click_event, function () {
-// 			$(this).prev().focus();
-// 		});
+	
+// 		todayHighlight: true
+	
+
+// 	});
+
+
 // } 
 
 function quitarScrollInputNumber() {

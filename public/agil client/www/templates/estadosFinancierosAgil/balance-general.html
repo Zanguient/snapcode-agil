@@ -7,29 +7,29 @@
 
                     <span class="lbl"> PERIODO</span>
                 </label>
-                <select ng-model="configuracionImpresion.tipoPerido" ng-change="cargarFechasFiltro(configuracionImpresion.tipoPerido.nombre)"
+                <select ng-model="configuracionImpresion.tipoPeriodo" ng-change="cargarFechasFiltro(configuracionImpresion.tipoPeriodo.nombre)"
                     class="form-control" ng-options="periodo as periodo.nombre for periodo in TiposPeriodos.clases track by periodo.id">
                     <option value="">SELECCIONAR</option>
                 </select>
-                <select ng-if="configuracionImpresion.tipoPerido.nombre=='GESTIÓN' ||configuracionImpresion.tipoPerido.nombre=='MES'||configuracionImpresion.tipoPerido.nombre=='COMPARATIVO'"
-                    required  class="form-control" ng-options="gestion.nombre_corto as gestion.nombre for gestion in gestiones track by gestion.id"
+                <select ng-if="configuracionImpresion.tipoPeriodo.nombre=='GESTIÓN' ||configuracionImpresion.tipoPeriodo.nombre=='MES'||configuracionImpresion.tipoPeriodo.nombre=='COMPARATIVO'"
+                    required  class="form-control" ng-options="gestion as gestion.nombre for gestion in gestiones track by gestion.id"
                     ng-model="configuracionImpresion.gestion">
                     <option value="">SELECCIONAR</option>
                 </select>
-                <select ng-if="configuracionImpresion.tipoPerido.nombre=='COMPARATIVO'" class="form-control" required 
-                    ng-options="gestion.nombre_corto as gestion.nombre for gestion in gestiones track by gestion.id" ng-model="configuracionImpresion.gestion_fin">
+                <select ng-if="configuracionImpresion.tipoPeriodo.nombre=='COMPARATIVO'" class="form-control" required 
+                    ng-options="gestion as gestion.nombre for gestion in gestiones track by gestion.id" ng-model="configuracionImpresion.gestion_fin">
                     <option value="">SELECCIONAR</option>
                 </select>
-                <select ng-if="configuracionImpresion.tipoPerido.nombre=='MES'" required  class="form-control" ng-options="mes.nombre_corto as mes.nombre for mes in mesesFiltro track by mes.id"
-                    ng-model="configuracionImpresion.MES">
+                <select ng-if="configuracionImpresion.tipoPeriodo.nombre=='MES'" required  class="form-control" ng-options="mes as mes.nombre for mes in mesesFiltro track by mes.id"
+                    ng-model="configuracionImpresion.mes">
                     <option value="">SELECCIONAR</option>
                 </select>
                 <label>
-                    <input id="fecha_uno" ng-if="configuracionImpresion.tipoPerido.nombre=='FECHAS'" type="text" ng-model="configuracionImpresion.fecha_inicio"
+                    <input id="fecha_uno" ng-if="configuracionImpresion.tipoPeriodo.nombre=='FECHAS'" type="text" ng-model="configuracionImpresion.fecha_inicio"
                         ng-update-hidden data-date-format="dd/mm/yyyy" class="from-control date-picker">
                 </label>
                 <label>
-                    <input id="fecha_dos" ng-if="configuracionImpresion.tipoPerido.nombre=='FECHAS'" type="text" ng-model="configuracionImpresion.fecha_fin"
+                    <input id="fecha_dos" ng-if="configuracionImpresion.tipoPeriodo.nombre=='FECHAS'" type="text" ng-model="configuracionImpresion.fecha_fin"
                         ng-update-hidden data-date-format="dd/mm/yyyy" class="from-control date-picker">
                 </label>
             </div>
@@ -40,7 +40,7 @@
                     <span class="lbl">BIMONETARIO</span>
 
 
-                    <input id="skip-validation" type="checkbox" class="ace ace-switch ace-switch-4">
+                    <input id="skip-validation" ng-model="configuracionImpresion.bimonetario" type="checkbox" class="ace ace-switch ace-switch-4">
                     <span class="lbl middle"></span>
                 </label>
 
