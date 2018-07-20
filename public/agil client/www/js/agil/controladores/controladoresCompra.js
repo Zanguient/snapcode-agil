@@ -1321,14 +1321,10 @@ angular.module('agil.controladores')
 			} else {
 				$scope.precio_inventario = "Sin histórico";
 			}
-			
-			if (producto.descuento==null) {
-				producto.descuento=0;
-			}
 
 			$scope.detalleCompra = {
 				centroCosto: centroCostos, producto: producto, precio_unitario: producto.precio_unitario,
-				cantidad: 1, descuento: producto.descuento, recargo: 0, ice: 0, excento: 0, tipo_descuento: (producto.descuento > 0 ? true : false), tipo_recargo: false
+				cantidad: 1, descuento: 0, recargo: 0, ice: 0, excento: 0, tipo_descuento: (producto.descuento > 0 ? true : false), tipo_recargo: false
 			};
 			$scope.cerrarPopup($scope.idModalInventario);
 			$scope.enfocar('cantidad');
