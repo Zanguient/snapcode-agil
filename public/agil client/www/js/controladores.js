@@ -1711,6 +1711,16 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 			}
 		}
 
+
+		$scope.OcultarMenu = function (){
+			
+			if($scope.ocultarMenu == true){
+				$scope.ocultarMenu = false;
+			}else {
+				$scope.ocultarMenu = true;
+			}
+		}
+
 		$scope.abrirm = function () {
 			$('#modal-wizard-comprobante-edicion').modal('show');
 		}
@@ -3530,5 +3540,6 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 			} else {
 				$scope.abrirPopup($scope.idModalInicioSesion);
 			}
+			$scope.ocultarMenu = true;
 		}
 	});

@@ -151,3 +151,19 @@
 #dialog-pantalla-cliente .swiper-wrapper {
     width: 1447px !important;
 }
+
+.deployment{
+    display:block;
+    margin-left: auto;
+    margin-right: auto;
+    background-color: #E3403D;
+    outline:none;
+    border: none;
+    border-radius: 50%;
+    width: 2%;
+
+}
+
+.icon{
+    color: white;
+}

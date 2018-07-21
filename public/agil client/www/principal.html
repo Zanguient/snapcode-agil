@@ -532,13 +532,13 @@
 			<div class="main-content-inner">
 				<div class="page-content">
 
-					<div class="hidden">
+					<div  class="hidden" >
 						<button data-target="#sidebar2" data-toggle="collapse" type="button" class="pull-left navbar-toggle collapsed">
 							<span class="sr-only">Toggle sidebar</span>
 							<i class="ace-icon fa fa-dashboard white bigger-125"></i>
 						</button>
-						<div id="sidebar2" class="sidebar h-sidebar navbar-collapse collapse">
-							<ul id="menu2" class="nav nav-list">
+						<div id="sidebar2" class="sidebar h-sidebar navbar-collapse collapse" >
+							<ul id="menu2" class="nav nav-list" ng-hide="ocultarMenu">
 								<li id="{{aplicacion.url}}2" class="hover" ng-repeat="aplicacion in aplicaciones" ng-class="{'menu-hidden':((aplicacion.titulo==diccionario.MENU_RUTAS || 
 																aplicacion.titulo==diccionario.MENU_SEGUIMIENTOAPP) && 
 																usuario.empresa && 
@@ -584,9 +584,14 @@
 								</li>
 
 							</ul>
-
+							<!--<div class="sidebar-toggle sidebar-collapse" id="sidebar-collapse">
+								<i class="ace-icon fa fa-angle-double-left" data-icon1="ace-icon fa fa-angle-double-left" data-icon2="ace-icon fa fa-angle-double-right"></i>
+							</div>-->
+							
 						</div>
-
+					</div>
+					<div class="deployment-row">
+						<button class="deployment" ng-click="OcultarMenu()"><i class="menu-icon fa fa-arrows-v icon" ></i></button>
 					</div>
 					<div ng-view>
 					</div>
@@ -594,6 +599,7 @@
 
 			</div>
 		</div>
+		
 
 		<div class="footer">
 			<div class="footer-inner">
