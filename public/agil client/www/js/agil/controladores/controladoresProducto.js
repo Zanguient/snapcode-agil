@@ -528,7 +528,7 @@ angular.module('agil.controladores')
 				doc.text("Almacen : " + kardexproduto.detallesMovimiento[0].movimiento.almacen.nombre, 475, 110);
 				doc.font('Helvetica-Bold', 11);
 				doc.text("Codigo : " + kardexproduto.codigo, 475, 120);				
-				doc.font('Helvetica', 10);
+				doc.font('Helvetica', 8);
 				doc.text(kardexproduto.nombre, 120, 100);
 				doc.text(kardexproduto.descripcion, 120, 120);
 				doc.text(kardexproduto.unidad_medida, 120, 140);
