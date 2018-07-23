@@ -330,7 +330,7 @@ angular.module('agil.controladores')
     $scope.filtrarListaPlanillaSueldos=function(planilla){
         console.log('cabezera generalllllll ', planilla);
         // $scope.usuario.id_empresa, reporte.gestion, reporte.mes.split("-")[0]
-        var promesa = RRHHlistaPlanillaSueldos($scope.usuario.id_empresa, planilla.gestion, planilla.mes.split("-")[0]);
+        var promesa = RRHHlistaPlanillaSueldos($scope.usuario.id_empresa, planilla.gestion, planilla.mes);
         promesa.then(function (dato) {
             console.log('empleadossssstt ', dato);
             planilla.planillas = dato.planillas;

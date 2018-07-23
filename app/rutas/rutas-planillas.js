@@ -307,7 +307,9 @@ module.exports = function (router, sequelize, Sequelize, Usuario, RRHHParametros
 		.get(function (req, res) {
     		RRHHPlanillaSueldos.findAll({
             	where: {
-                    id_empresa:req.params.id_empresa
+                    id_empresa:req.params.id_empresa,
+                    anio:req.params.gestion,
+                    mes:req.params.mes
                 }
             }).then(function (planillas) {
             	res.json({ planillas: planillas });
@@ -466,7 +468,8 @@ module.exports = function (router, sequelize, Sequelize, Usuario, RRHHParametros
                 			// attributes: [sequelize.literal('`empleado.persona`.`nombre_completo`'), 'empleado'],
                 			include: [
                 				{model: MedicoPaciente, as: 'empleado',
-                				include: [{model: Persona, as: 'persona'}]
+                				// attributes: ["id","cargo", "persona"],
+                				include: [{model: Persona, as: 'persona', duplicating: false}]
                 			 	}
                 			]
                 							    

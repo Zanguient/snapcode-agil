@@ -338,40 +338,38 @@ angular.module('agil.controladores')
 
 			var promesa = ListaInventariosProducto(producto.id, $scope.venta.almacen.id);
 			promesa.then(function (inventarios) {
-				console.log("entrooooooo a lista inventarios ======= ");
 				producto.inventarios = inventarios;
-				for (var i = 0; i < producto.inventarios.length; i++) {
-					producto.inventarios[i].fecha_vencimiento = (producto.inventarios[i].fecha_vencimiento ? new Date(producto.inventarios[i].fecha_vencimiento) : null);
-					producto.inventarios[i].fechaVencimientoTexto = (producto.inventarios[i].fecha_vencimiento ? producto.inventarios[i].fecha_vencimiento.getDate() + "/" + (producto.inventarios[i].fecha_vencimiento.getMonth() + 1) + "/" + producto.inventarios[i].fecha_vencimiento.getFullYear() : "");
-					producto.inventarios[i].detallesMovimiento[0].movimiento.fecha = new Date(producto.inventarios[i].detallesMovimiento[0].movimiento.fecha);
-					producto.inventarios[i].detallesMovimiento[0].movimiento.fechaTexto = producto.inventarios[i].detallesMovimiento[0].movimiento.fecha.getDate() + "/" + (producto.inventarios[i].detallesMovimiento[0].movimiento.fecha.getMonth() + 1) + "/" + producto.inventarios[i].detallesMovimiento[0].movimiento.fecha.getFullYear();
-				}
+					for (var i = 0; i < producto.inventarios.length; i++) {
+						producto.inventarios[i].fecha_vencimiento = (producto.inventarios[i].fecha_vencimiento ? new Date(producto.inventarios[i].fecha_vencimiento) : null);
+						producto.inventarios[i].fechaVencimientoTexto = (producto.inventarios[i].fecha_vencimiento ? producto.inventarios[i].fecha_vencimiento.getDate() + "/" + (producto.inventarios[i].fecha_vencimiento.getMonth() + 1) + "/" + producto.inventarios[i].fecha_vencimiento.getFullYear() : "");
+						producto.inventarios[i].detallesMovimiento[0].movimiento.fecha = new Date(producto.inventarios[i].detallesMovimiento[0].movimiento.fecha);
+						producto.inventarios[i].detallesMovimiento[0].movimiento.fechaTexto = producto.inventarios[i].detallesMovimiento[0].movimiento.fecha.getDate() + "/" + (producto.inventarios[i].detallesMovimiento[0].movimiento.fecha.getMonth() + 1) + "/" + producto.inventarios[i].detallesMovimiento[0].movimiento.fecha.getFullYear();
+					}
 
-				$scope.inventariosDisponibleProducto = [];
-				$scope.inventariosDisponibleProducto.push({ id: 0, fecha_vencimiento: "TODOS", fechaVencimientoTexto: "TODOS" });
-				$scope.inventariosDisponibleProducto = $scope.inventariosDisponibleProducto.concat(producto.inventarios);
-				var inventarioDisponible = $scope.obtenerInventarioTotal(producto);
-				$scope.detalleVenta = {
-					producto: producto, precio_unitario: producto.precio_unitario, inventarioProducto: $scope.inventariosDisponibleProducto[0],
-					inventario_disponible: inventarioDisponible, costos: producto.activar_inventario ? producto.inventarios : [],
-					cantidad: 1, descuento: producto.descuento, recargo: 0, ice: 0, excento: 0, tipo_descuento: (producto.descuento > 0 ? true : false), tipo_recargo: false
-				};
+					$scope.inventariosDisponibleProducto = [];
+					$scope.inventariosDisponibleProducto.push({ id: 0, fecha_vencimiento: "TODOS", fechaVencimientoTexto: "TODOS" });
+					$scope.inventariosDisponibleProducto = $scope.inventariosDisponibleProducto.concat(producto.inventarios);
+					var inventarioDisponible = $scope.obtenerInventarioTotal(producto);
+					$scope.detalleVenta = {
+						producto: producto, precio_unitario: producto.precio_unitario, inventarioProducto: $scope.inventariosDisponibleProducto[0],
+						inventario_disponible: inventarioDisponible, costos: producto.activar_inventario ? producto.inventarios : [],
+						cantidad: 1, descuento: producto.descuento, recargo: 0, ice: 0, excento: 0, tipo_descuento: (producto.descuento > 0 ? true : false), tipo_recargo: false
+					};
 
-				// === para colocar el costo unitario de inventario == 
-				$scope.precio_inventario;
-				 if (producto.inventarios.length > 0) {
-					$scope.precio_inventario = producto.inventarios[producto.inventarios.length-1].costo_unitario + " Bs";
+					// === para colocar el costo unitario de inventario == 
+					$scope.precio_inventario;
+					if (producto.inventarios.length > 0) {
+						$scope.precio_inventario = producto.inventarios[producto.inventarios.length - 1].costo_unitario + " Bs";
 
-				}else{
-					$scope.precio_inventario = "Sin histórico";
-				}
-				$scope.inventarioProducto= producto.activar_inventario ? producto.inventarios : []
-				$scope.colorearInventarioDisponible(inventarioDisponible, producto);
-				//	$scope.enfocar('cantidad');
-				document.getElementById("cantidad").focus();
-				$scope.calcularImporte();
-				$scope.cerrarPopup($scope.idModalInventario);
-
+					} else {
+						$scope.precio_inventario = "Sin histórico";
+					}
+					$scope.inventarioProducto = producto.activar_inventario ? producto.inventarios : []
+					$scope.colorearInventarioDisponible(inventarioDisponible, producto);
+					//	$scope.enfocar('cantidad');
+					document.getElementById("cantidad").focus();
+					$scope.calcularImporte();
+					$scope.cerrarPopup($scope.idModalInventario);
 			});
 		}
 
@@ -455,64 +453,109 @@ angular.module('agil.controladores')
 		}
 
 		$scope.obtenerInventarioTotalPorFechaVencimiento = function (detalleVenta) {
-			var cantidadTotal = detalleVenta.inventarioProducto.cantidad;
+			if ($scope.usuario.empresa.usar_peps) {
+				var cantidadTotal = detalleVenta.inventarioProducto.cantidad;
 			for (var j = 0; j < $scope.venta.detallesVenta.length; j++) {
 				if ($scope.venta.detallesVenta[j].producto.id == detalleVenta.producto.id && $scope.venta.detallesVenta[j].costos[0].id == detalleVenta.inventarioProducto.id) {
 					cantidadTotal = cantidadTotal - $scope.venta.detallesVenta[j].cantidad;
 				}
 			}
 			return cantidadTotal;
+			} else {
+				var cantidadTotal = detalleVenta.inventario_disponible;
+			for (var j = 0; j < $scope.venta.detallesVenta.length; j++) {
+				if ($scope.venta.detallesVenta[j].producto.id == detalleVenta.producto.id && $scope.venta.detallesVenta[j].costos[0].id == detalleVenta.inventarioProducto.id) {
+					cantidadTotal = cantidadTotal - $scope.venta.detallesVenta[j].cantidad;
+				}
+			}
+			return cantidadTotal;
+			}
+			
 		}
 
 		$scope.agregarDetalleVenta = function (detalleVenta) {
 			if (detalleVenta.producto.id) {
 				if (detalleVenta.producto.activar_inventario) {
-					if (detalleVenta.costos.length > 1) {
-						var cantidadTotal = detalleVenta.cantidad, i = 0, detalleVentaOriginal = JSON.parse(JSON.stringify(detalleVenta));
-						while (i < detalleVenta.costos.length && cantidadTotal > 0) {
-							detalleVenta.inventarioProducto = detalleVenta.costos[i];
-							var cantidadDisponible = $scope.obtenerInventarioTotalPorFechaVencimiento(detalleVenta);
-							if (cantidadDisponible > 0) {
-								var nuevoDetalleVenta = JSON.parse(JSON.stringify(detalleVentaOriginal));
-								var cantidadParcial;
-								/* if (i > 0) {
-									nuevoDetalleVenta.descuento = 0;
-									nuevoDetalleVenta.recargo = 0;
-									nuevoDetalleVenta.ice = 0;
-									nuevoDetalleVenta.excento = 0;
-								} */
-								$scope.detalleVenta = nuevoDetalleVenta;
-								if (cantidadTotal > cantidadDisponible) {
-									cantidadParcial = cantidadDisponible;
-									cantidadTotal = cantidadTotal - cantidadDisponible
-								} else {
-									cantidadParcial = cantidadTotal;
-									cantidadTotal = 0;
+					if ($scope.usuario.empresa.usar_peps) {
+						if (detalleVenta.costos.length > 1) {
+							var cantidadTotal = detalleVenta.cantidad, i = 0, detalleVentaOriginal = JSON.parse(JSON.stringify(detalleVenta));
+							while (i < detalleVenta.costos.length && cantidadTotal > 0) {
+								detalleVenta.inventarioProducto = detalleVenta.costos[i];
+								var cantidadDisponible = $scope.obtenerInventarioTotalPorFechaVencimiento(detalleVenta);
+								if (cantidadDisponible > 0) {
+									var nuevoDetalleVenta = JSON.parse(JSON.stringify(detalleVentaOriginal));
+									var cantidadParcial;
+									/* if (i > 0) {
+										nuevoDetalleVenta.descuento = 0;
+										nuevoDetalleVenta.recargo = 0;
+										nuevoDetalleVenta.ice = 0;
+										nuevoDetalleVenta.excento = 0;
+									} */
+									$scope.detalleVenta = nuevoDetalleVenta;
+									if (cantidadTotal > cantidadDisponible) {
+										cantidadParcial = cantidadDisponible;
+										cantidadTotal = cantidadTotal - cantidadDisponible
+									} else {
+										cantidadParcial = cantidadTotal;
+										cantidadTotal = 0;
+									}
+									nuevoDetalleVenta.cantidad = cantidadParcial;
+									if ($scope.usuario.empresa.usar_vencimientos) {
+										nuevoDetalleVenta.fecha_vencimiento = detalleVenta.costos[i].fecha_vencimiento;
+										nuevoDetalleVenta.lote = detalleVenta.costos[i].lote;
+									}
+									nuevoDetalleVenta.costos = [];
+									nuevoDetalleVenta.costos.push(detalleVenta.costos[i]);
+									nuevoDetalleVenta.inventario = detalleVenta.costos[i];
+									$scope.calcularImporte();
+									$scope.venta.detallesVenta.push(nuevoDetalleVenta);
 								}
-								nuevoDetalleVenta.cantidad = cantidadParcial;
-								if ($scope.usuario.empresa.usar_vencimientos) {
-									nuevoDetalleVenta.fecha_vencimiento = detalleVenta.costos[i].fecha_vencimiento;
-									nuevoDetalleVenta.lote = detalleVenta.costos[i].lote;
-								}
-								nuevoDetalleVenta.costos = [];
-								nuevoDetalleVenta.costos.push(detalleVenta.costos[i]);
-								nuevoDetalleVenta.inventario = detalleVenta.costos[i];
-								$scope.calcularImporte();
-								$scope.venta.detallesVenta.push(nuevoDetalleVenta);
+								i++;
 							}
-							i++;
+						} else {
+							if (detalleVenta.costos.length > 0) {
+								if ($scope.usuario.empresa.usar_vencimientos) {
+									detalleVenta.fecha_vencimiento = detalleVenta.costos[0].fecha_vencimiento;
+									detalleVenta.lote = detalleVenta.costos[0].lote;
+									detalleVenta.inventario = detalleVenta.costos[0];
+								}
+							}
+							$scope.venta.detallesVenta.push(detalleVenta);
 						}
 					} else {
-						if (detalleVenta.costos.length > 0) {
-							if ($scope.usuario.empresa.usar_vencimientos) {
-								detalleVenta.fecha_vencimiento = detalleVenta.costos[0].fecha_vencimiento;
-								detalleVenta.lote = detalleVenta.costos[0].lote;
-								detalleVenta.inventario = detalleVenta.costos[0];
+						var cantidadTotal = detalleVenta.cantidad, i = 0, detalleVentaOriginal = JSON.parse(JSON.stringify(detalleVenta));
+						detalleVenta.inventarioProducto = detalleVenta.costos[i];
+						var cantidadDisponible = $scope.obtenerInventarioTotalPorFechaVencimiento(detalleVenta);
+						if (cantidadDisponible > 0) {
+							var nuevoDetalleVenta = JSON.parse(JSON.stringify(detalleVentaOriginal));
+							var cantidadParcial;
+							/* if (i > 0) {
+								nuevoDetalleVenta.descuento = 0;
+								nuevoDetalleVenta.recargo = 0;
+								nuevoDetalleVenta.ice = 0;
+								nuevoDetalleVenta.excento = 0;
+							} */
+							$scope.detalleVenta = nuevoDetalleVenta;
+							if (cantidadTotal > cantidadDisponible) {
+								cantidadParcial = cantidadDisponible;
+								cantidadTotal = cantidadTotal - cantidadDisponible
+							} else {
+								cantidadParcial = cantidadTotal;
+								cantidadTotal = 0;
 							}
+							nuevoDetalleVenta.cantidad = cantidadParcial;
+							if ($scope.usuario.empresa.usar_vencimientos) {
+								nuevoDetalleVenta.fecha_vencimiento = detalleVenta.costos[i].fecha_vencimiento;
+								nuevoDetalleVenta.lote = detalleVenta.costos[i].lote;
+							}
+							nuevoDetalleVenta.costos = [];
+							nuevoDetalleVenta.costos.push(detalleVenta.costos[i]);
+							nuevoDetalleVenta.inventario = detalleVenta.costos[i];
+							$scope.calcularImporte();
+							$scope.venta.detallesVenta.push(nuevoDetalleVenta);
 						}
-
-						$scope.venta.detallesVenta.push(detalleVenta);
 					}
+
 				} else {
 					$scope.venta.detallesVenta.push(detalleVenta);
 				}
@@ -1524,6 +1567,7 @@ angular.module('agil.controladores')
 				venta.fecha = new Date($scope.convertirFecha(venta.fechaTexto));
 				venta.fecha.setHours(tiempoActual.getHours());
 				venta.fecha.setMinutes(tiempoActual.getMinutes());
+				venta.fecha.setSeconds(tiempoActual.getSeconds())
 				//venta.receptor=(venta.receptor!=undefined && venta.receptor!=null)?venta.receptor:((venta.receptor==undefined || venta.receptor==null)?(venta.textoVendedor!=""?{nombre_completo:venta.textoVendedor}:null):venta.receptor);
 				blockUI.start();
 				if (venta.id) {
@@ -1535,6 +1579,7 @@ angular.module('agil.controladores')
 					});
 				} else {
 					var movimiento = venta.movimiento.nombre_corto;
+					venta.usar_peps = $scope.usuario.empresa.usar_peps;
 					venta.$save(function (res) {
 						if (res.hasError) {
 							blockUI.stop();

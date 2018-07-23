@@ -1270,10 +1270,12 @@ angular.module('agil.controladores')
 					compra.proveedor = compra.proveedor.nit;
 				}
 				//compra.codigo_control=$scope.formatearCodigoControl(compra.codigo_control);
+				compra.usar_peps = $scope.usuario.empresa.usar_peps
+				var tiempoActual = new Date();
 				compra.fecha = new Date($scope.convertirFecha(compra.fechaTexto));				
-				compra.fecha.setHours(new Date().getHours())
-				compra.fecha.setMinutes(new Date().getMinutes())
-				compra.fecha.setSeconds(new Date().getSeconds())
+				compra.fecha.setHours(tiempoActual.getHours())
+				compra.fecha.setMinutes(tiempoActual.getMinutes())
+				compra.fecha.setSeconds(tiempoActual.getSeconds())
 				blockUI.start();
 				if (compra.id) {
 					compra.esModificacion = true;

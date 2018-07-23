@@ -128,6 +128,11 @@ module.exports = function (sequelize, Sequelize) {
 			type: Sequelize.BOOLEAN,
 			field: 'usar_estado_resultados_no_contables'
 		},
+		usar_peps: {
+			type: Sequelize.BOOLEAN,
+			field: 'usar_peps',
+			default: true
+		}
 	}, {
 			freezeTableName: true
 		});

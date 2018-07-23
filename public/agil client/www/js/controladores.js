@@ -3509,11 +3509,12 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 						$timeout(function () {
 							$scope.mostrarMensaje('Error al verificar los activos fijos para actualizar: ' + res.mensaje)
 						}, 5000)
-						blockUI.stop()
+						
 					}else {
 						blockUI.stop()
 						//$scope.mostrarMensaje(res.mensaje)
 					}
+					blockUI.stop()
 				}).catch(function (err) {
 					var mensaje = (err.stack !== undefined && err.stack !== null) ? err.stack : (err.data !== undefined && err.data !== null && err.data !== "") ? err.data : 'Error: Se perdio la conexión.'
 					$scope.mostrarMensaje(mensaje)
