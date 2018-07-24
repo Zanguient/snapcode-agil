@@ -1500,7 +1500,8 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 								where: {
 									id: venta.sucursal.id
 								},
-								transaction: t
+								transaction: t,
+								include: [{ model: Empresa, as: 'empresa' }]
 							}).then(function (sucursal) {
 								venta.factura = sucursal.nota_baja_correlativo;
 								return Venta.create({
@@ -1577,7 +1578,8 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 								where: {
 									id: venta.sucursal.id
 								},
-								transaction: t
+								transaction: t,
+								include: [{ model: Empresa, as: 'empresa' }]
 							}).then(function (sucursal) {
 								venta.factura = sucursal.nota_traspaso_correlativo;
 								return Venta.create({
@@ -2218,6 +2220,7 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 			lote: detalleVenta.lote,
 			id_inventario: (detalleVenta.costos.length > 0) ? detalleVenta.costos[0].id : null
 		}, { transaction: t }).then(function (detalleVentaCreada) {
+			console.log("la sucursalllllll ============================================== ", sucursal);
 			if (sucursal.empresa.dataValues.usar_peps) {
 				if (detalleVenta.producto.tipoProducto.nombre_corto == Diccionario.TIPO_PRODUCTO_BASE) {
 					return calcularCostosEgresos(detalleVenta, detalleVenta.producto, detalleVenta.cantidad, detalleVenta.costos,
