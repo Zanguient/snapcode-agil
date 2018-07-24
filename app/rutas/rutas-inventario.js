@@ -1983,12 +1983,12 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 			var costoUnitario = 0.0
 			var ids = []
 			if (producto.activar_inventario) {
-				if (inventarios.length > 0) {
+				if (inventariados.length > 0) {
 					var promises = [];
 					for (var i = 0; i < inventariados.length; i++) {
 						if (cantidadETotal > inventariados[i].cantidad) {
 							cantidadE += inventariados[i].cantidad
-							cantidadEParcial = cantidad - inventarios[i].cantidad
+							cantidadEParcial = cantidad - inventariados[i].cantidad
 							cantidadETotal = cantidadEParcial
 							ids.push({ id: inventariados[i].id, cantidad: inventariados[i].cantidad })
 							costoUnitario += inventariados[i].cantidad * inventariados[i].costo_unitario
