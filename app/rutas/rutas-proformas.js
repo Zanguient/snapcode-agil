@@ -8,7 +8,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
             var condicionUsuario = {}
             var condicionActividad = {}
             condicion.id_empresa = req.params.id_empresa
-            condicion.eliminado = false
+            // condicion.eliminado = false
             if (req.params.mes != "0") {
                 condicion.periodo_mes = parseInt(req.params.mes) - 1
             }
@@ -65,81 +65,8 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
                     res.json({ proformas: [], mensaje: err.stack !== undefined ? err.stack : err.message, hasErr: true })
                 });
         })
-        .post(function (req, res) {
-            sequelize.transaction(function (t) {
-                var detalles = []
-                return Sucursal.find({
-                    where: { id: req.body.sucursal.id }
-                }).then(function (sucursal) {
-                    return Sucursal.update({
-                        correlativo_proforma: sucursal.dataValues.correlativo_proforma + 1
-                    }, {
-                            where: {id: sucursal.dataValues.id},
-                            transaction: t
-                        }).then(function (sucursalActualizada) {
-                            return Proforma.create({
-                                fecha_proforma: req.body.fecha_proforma,
-                                // fecha_proforma_ok:null,
-                                // fecha_recepcion:null,
-                                // fecha_factura:null,
-                                // fecha_cobro:null,
-                                id_empresa: req.body.id_empresa,
-                                detalle: req.body.detalle,
-                                periodo_mes: req.body.periodo_mes.id,
-                                periodo_anio: req.body.periodo_anio.id,
-                                id_sucursal: req.body.sucursal.id,
-                                id_actividad: req.body.actividadEconomica.id,
-                                id_cliente: req.body.cliente.id,
-                                id_usuario: req.body.usuarioProforma.id,
-                                totalImporteBs: req.body.totalImporteBs,
-                                correlativo: sucursal.dataValues.correlativo_proforma,
-                                eliminado: false
-                            }, { transaction: t }).then(function (proformaCreada) {
-                                req.body.detallesProformas.map(function (detalle, i) {
-                                    detalles.push(DetallesProformas.create({
-                                        id_proforma: proformaCreada.id,
-                                        id_servicio: detalle.id_servicio,
-                                        precio_unitario: detalle.precio_unitario,
-                                        cantidad: detalle.cantidad,
-                                        importe: detalle.importe,
-                                        id_centro_costo: detalle.centroCosto !== undefined && detalle.centroCosto !== null ? detalle.centroCosto.id : null,
-                                        eliminado: false
-                                    }, { transaction: t }).then(function (detalleCreado) {
-                                        return new Promise(function (fulfill, reject) {
-                                            fulfill('Detalle creado...')
-                                        });
-                                    }).catch(function (err) {
-                                        return new Promise(function (fulfill, reject) {
-                                            reject((err.stack !== undefined) ? err.stack : err);
-                                        });
-                                    }))
-                                })
-                                return Promise.all(detalles)
-                            }).catch(function (err) {
-                                return new Promise(function (fulfill, reject) {
-                                    reject((err.stack !== undefined) ? err.stack : err);
-                                });
-                            });
-                        }).catch(function (err) {
-                            return new Promise(function (fulfill, reject) {
-                                reject((err.stack !== undefined) ? err.stack : err);
-                            });
-                        })
-                }).catch(function (err) {
-                    return new Promise(function (fulfill, reject) {
-                        reject((err.stack !== undefined) ? err.stack : err);
-                    });
-                });
-            }).then(function (result) {
-                if (result !== undefined) {
-                    res.json({ mensaje: 'Proforma creada satisfactoriamente!' })
-                } else {
-                    res.json({ mensaje: 'Existe un error!' })
-                }
-            }).catch(function (err) {
-                res.json({ mensaje: (err.stack !== undefined) ? err.stack : err, hasErr: true })
-            });
-        })
+
+
 
     router.route('/proforma-sucursales/:id_usuario')
         .get(function (req, res) {
@@ -164,19 +91,86 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
             });
         });
 
-    // router.route('/sucursales/proforma/:id_empresa/id:usuario')
-    //     .get(function (req, res) {
-    //         Sucursales.findAll({
-    //             where: {
-    //                 id_empresa: req.params.id_empresa
-    //             },
-    //             include: [{ model: clase }]
-    //         }).then(function (sucursales) {
-    //             res.json({ sucursales: sucursales })
-    //         }).catch(function (err) {
-    //             res.json({ mensaje:  err.stack !== undefined ? err.stack : err.message, hasErr: true })
-    //         });
-    //     })
+    router.route('/guardar/proforma/:id_empresa/:usuario')
+        .post(function (req, res) {
+            var detalles = []
+            sequelize.transaction(function (t) {
+                return Sucursal.find({
+                    where: { id: req.body.sucursal.id }
+                }).then(function (sucursal) {
+                    var conteo = sucursal.dataValues.correlativo_proforma + 1
+                    return Sucursal.update({
+                        correlativo_proforma: conteo
+                    }, {
+                            where: { id: sucursal.dataValues.id },
+                            transaction: t
+                        }).then(function (sucursalActualizada) {
+                            return Proforma.create({
+                                fecha_proforma: req.body.fecha_proforma,
+                                // fecha_proforma_ok:null,
+                                // fecha_recepcion:null,
+                                // fecha_factura:null,
+                                // fecha_cobro:null,
+                                id_empresa: req.body.id_empresa,
+                                detalle: req.body.detalle,
+                                periodo_mes: req.body.periodo_mes.id,
+                                periodo_anio: req.body.periodo_anio.id,
+                                id_sucursal: req.body.sucursal.id,
+                                id_actividad: req.body.actividadEconomica.id,
+                                id_cliente: req.body.cliente.id,
+                                id_usuario: req.body.usuarioProforma.id,
+                                totalImporteBs: req.body.totalImporteBs,
+                                correlativo: sucursal.dataValues.correlativo_proforma,
+                                eliminado: false
+                            }, { transaction: t }).then(function (proformaCreada) {
+                                req.body.detallesProformas.map(function (detalle, i) {
+                                    detalles.push(crearDetalleProforma(proformaCreada, detalle, t))
+                                })
+                                return Promise.all(detalles)
+                            }).catch(function (err) {
+                                return new Promise(function (fulfill, reject) {
+                                    reject((err.stack !== undefined) ? err.stack : err);
+                                });
+                            })
+                        }).catch(function (err) {
+                            return new Promise(function (fulfill, reject) {
+                                reject((err.stack !== undefined) ? err.stack : err);
+                            });
+                        })
+                }).catch(function (err) {
+                    return new Promise(function (fulfill, reject) {
+                        reject((err.stack !== undefined) ? err.stack : err);
+                    });
+                });
+            }).then(function (result) {
+                if (result.length === req.body.detallesProformas.length) {
+                    res.json({ mensaje: 'Proforma creada satisfactoriamente!' })
+                } else {
+                    res.json({ mensaje: 'Existe un error no identificado!' })
+                }
+            }).catch(function (err) {
+                res.json({ mensaje: (err.stack !== undefined) ? err.stack : err, hasErr: true })
+            });
+        })
+    function crearDetalleProforma(proformaCreada, detalle, t) {
+        return DetallesProformas.create({
+            id_proforma: proformaCreada.id,
+            id_servicio: detalle.id_servicio,
+            precio_unitario: detalle.precio_unitario,
+            cantidad: detalle.cantidad,
+            importe: detalle.importe,
+            id_centro_costo: detalle.centroCosto !== undefined && detalle.centroCosto !== null ? detalle.centroCosto.id : null,
+            eliminado: false
+        }, { transaction: t }).then(function (detalleCreado) {
+            return new Promise(function (fulfill, reject) {
+                fulfill(detalleCreado)
+            });
+        }).catch(function (err) {
+            return new Promise(function (fulfill, reject) {
+                reject((err.stack !== undefined) ? err.stack : err);
+            });
+        })
+    }
     router.route('/fechas/proforma/:id')
         .post(function (req, res) {
             // if (req.body.fecha_recepcion !== null) {
@@ -235,7 +229,6 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
                 });
         })
         .put(function (req, res) {
-
             Proforma.update({
                 fecha_proforma: req.body.fecha_proforma,
                 // fecha_proforma_ok:null,
@@ -253,18 +246,12 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
                 totalImporteBs: req.body.totalImporteBs,
                 eliminado: false
             }, { where: { id: req.params.id } }).then(function (proformaActualizada) {
-                req.body.detallesProformas.map(function (detalle, i) {
-                    if (detalle.id !== undefined) {
-                        if (detalle.eliminado) {
-                            DetallesProformas.destroy({
-                                where: { id: detalle.id }
-                            }).then(function (detalleEliminado) {
-                                if (i === req.body.detallesProformas.length - 1) {
-                                    res.json({ mensaje: 'Proforma actualizada!' })
-                                }
-                            })
-                        } else {
-                            DetallesProformas.update({
+                DetallesProformas.destroy({
+                    where: { id_proforma: proformaActualizada.id }
+                }).then(function (detalleEliminado) {
+                    req.body.detallesProformas.map(function (detalle, i) {
+                        if (!detalle.eliminado) {
+                            DetallesProformas.create({
                                 id_proforma: req.params.id,
                                 id_servicio: detalle.id_servicio,
                                 precio_unitario: detalle.precio_unitario,
@@ -272,31 +259,14 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
                                 importe: detalle.importe,
                                 id_centro_costo: detalle.centroCosto !== undefined && detalle.centroCosto !== null ? detalle.centroCosto.id : null,
                                 eliminado: false
-                            }, { where: { id: detalle.id } }).then(function (detalleActializado) {
+                            }).then(function (detalleActializado) {
                                 if (i === req.body.detallesProformas.length - 1) {
                                     res.json({ mensaje: 'Proforma actualizada!' })
                                 }
-                            }).catch(function (err) {
-                                res.json({ mensaje: err.stack !== undefined ? err.stack : err.message, hasErr: true })
-                            });
+                            })
                         }
-                    } else {
-                        DetallesProformas.create({
-                            id_proforma: req.params.id,
-                            id_servicio: detalle.id_servicio,
-                            precio_unitario: detalle.precio_unitario,
-                            cantidad: detalle.cantidad,
-                            importe: detalle.importe,
-                            id_centro_costo: detalle.centroCosto !== undefined && detalle.centroCosto !== null ? detalle.centroCosto.id : null,
-                            eliminado: false
-                        }).then(function (detalleActializado) {
-                            if (i === req.body.detallesProformas.length - 1) {
-                                res.json({ mensaje: 'Proforma actualizada!' })
-                            }
-                        })
-                    }
+                    })
                 })
-
             }).catch(function (err) {
                 res.json({ mensaje: err.stack !== undefined ? err.stack : err.message, hasErr: true })
             });
@@ -541,18 +511,28 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
 
     router.route('/eliminar/proforma/:id')
         .post(function (req, res) {
-            Proforma.update({
-                eliminado: true
-            }, {
-                    where: {
-                        id: req.body.id
-                        // fecha_proforma_ok: { $not: null }
-                    }
-                }).then(function (fechasActualizadas) {
-                    res.json({ mensaje: 'Proforma eliminada.' })
-                }).catch(function (err) {
-                    res.json({ mensaje: err.stack !== undefined ? err.stack : err.message, hasErr: true })
-                });
+            Proforma.find({
+                where: req.body.id
+            }).then(function (prof) {
+                if(prof.fecha_proforma_ok || prof.fecha_factura || prof.fecha_cobro){
+                    res.json({ mensaje: 'La proforma no se puede anular, debido a que ya fué aceptada, facturada y/o cobrada. Si no ha sido aceptada, facturada o cobrada pongase en contacto con servicio.', hasErr: true })
+                }else{
+                    Proforma.update({
+                        eliminado: true
+                    }, {
+                            where: {
+                                id: req.body.id
+                                // fecha_proforma_ok: { $not: null }
+                            }
+                        }).then(function (fechasActualizadas) {
+                            res.json({ mensaje: 'Proforma Anulada.' })
+                        }).catch(function (err) {
+                            res.json({ mensaje: err.stack !== undefined ? err.stack : err.message, hasErr: true })
+                        });
+                }
+            }).catch(function (err) {
+                res.json({ mensaje: err.stack !== undefined ? err.stack : err.message, hasErr: true })
+            });     
         })
 
     router.route('/factura/:id_factura/proforma/facturada/:id_empresa')
@@ -1116,27 +1096,27 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
                 res.json({ mensaje: err.stack !== undefined ? err.stack : err.message, hasError: true, factura: req.body })
             });
         })
-    router.route('/reestablecer/proforma/:id_proforma/hash/:id_hash')
-        .get(function (req, res) {
-            if (req.params.id_hash !== "728free728") {
-                res.json('ACCESO DENEGADO!')
-            } else {
-                Proforma.update({
-                    eliminado: false
-                    , fecha_factura: null
-                }, {
-                        where: { id: req.params.id_proforma }
-                    }).then(function (proformaReestablecida) {
-                        DetallesProformas.update({
-                            eliminado: false
-                        }, {
-                                where: { id_proforma: req.params.id_proforma }
-                            }).then(function (detallesReestablecidos) {
-                                res.json({ mensaje: 'Operación correcta.' })
-                            })
-                    }).catch(function (err) {
-                        res.json({ mensaje: err.stack })
-                    })
-            }
-        })
+    // router.route('/reestablecer/proforma/:id_proforma/hash/:id_hash')
+    //     .get(function (req, res) {
+    //         if (req.params.id_hash !== "728free728") {
+    //             res.json('ACCESO DENEGADO!')
+    //         } else {
+    //             Proforma.update({
+    //                 eliminado: false
+    //                 , fecha_factura: null
+    //             }, {
+    //                     where: { id: req.params.id_proforma }
+    //                 }).then(function (proformaReestablecida) {
+    //                     DetallesProformas.update({
+    //                         eliminado: false
+    //                     }, {
+    //                             where: { id_proforma: req.params.id_proforma }
+    //                         }).then(function (detallesReestablecidos) {
+    //                             res.json({ mensaje: 'Operación correcta.' })
+    //                         })
+    //                 }).catch(function (err) {
+    //                     res.json({ mensaje: err.stack })
+    //                 })
+    //         }
+    //     })
 }

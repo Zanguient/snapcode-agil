@@ -191,7 +191,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr ng-if="!proforma.eliminado" ng-repeat="proforma in proformas">
+                        <tr class="{{proforma.color}}"  ng-repeat="proforma in proformas">
                             <td data-label="N°:">
                                 {{($index+1)+(paginator.itemsPerPage*(paginator.currentPage-1))}}
                             </td>
@@ -207,46 +207,46 @@
                             <td>{{proforma.totalImporteBs | number:2}}</td>
                             <td>{{proforma.fecha_proforma | date:"dd/MM/yyyy"}}</td>
                             <td>{{proforma.fecha_recepcion | date:"dd/MM/yyyy"}}
-                                <div ng-if="(proforma.fecha_recepcion===undefined || proforma.fecha_recepcion===null)">
+                                <div ng-if="((proforma.fecha_recepcion===undefined || proforma.fecha_recepcion===null) && !proforma.eliminado)">
                                     <a ng-disabled="!aplicacion.puede_modificar" class="orange" href="javascript:void(0)" ng-click="abrirdialogmodalFechas(proforma,0)">
                                         <i class="ace-icon fa fa-circle-o bigger-130"></i>
                                     </a>
                                 </div>
                             </td>
                             <td>{{proforma.fecha_proforma_ok | date:"dd/MM/yyyy"}}
-                                <div ng-if="(proforma.fecha_proforma_ok===undefined || proforma.fecha_proforma_ok===null)">
-                                    <a ng-disabled="!aplicacion.puede_modificar" class="orange" href="javascript:void(0)" ng-click="abrirdialogmodalFechas(proforma,1)">
+                                <div ng-if="((proforma.fecha_proforma_ok===undefined || proforma.fecha_proforma_ok===null) && !proforma.eliminado)">
+                                    <a ng-disabled="!aplicacion.puede_modificar && proforma.eliminado" class="orange" href="javascript:void(0)" ng-click="abrirdialogmodalFechas(proforma,1)">
                                         <i class="ace-icon fa fa-circle-o bigger-130"></i>
                                     </a>
                                 </div>
                             </td>
                             <td>{{proforma.fecha_factura | date:"dd/MM/yyyy"}}
-                                <div ng-if="(proforma.fecha_factura===undefined || proforma.fecha_factura===null)">
+                                <div ng-if="((proforma.fecha_factura===undefined || proforma.fecha_factura===null) && !proforma.eliminado)">
                                     <a ng-disabled="!aplicacion.puede_modificar" class="orange" href="javascript:void(0)" ng-click="abrirdialogmodalFechas(proforma,2)">
                                         <i class="ace-icon fa fa-circle-o bigger-130"></i>
                                     </a>
                                 </div>
                             </td>
                             <td>{{proforma.fecha_cobro | date:"dd/MM/yyyy"}}
-                                <div ng-if="(proforma.fecha_cobro===undefined || proforma.fecha_cobro===null)">
+                                <div ng-if="((proforma.fecha_cobro===undefined || proforma.fecha_cobro===null) && !proforma.eliminado)">
                                     <a ng-disabled="!aplicacion.puede_modificar" class="orange" href="javascript:void(0)" ng-click="abrirdialogmodalFechas(proforma,3)">
                                         <i class="ace-icon fa fa-circle-o bigger-130"></i>
                                     </a>
                                 </div>
+                                <label class="bg-orange" ng-if="proforma.eliminado">&nbsp;ANULADO&nbsp;</label>
                             </td>
-
                             <td>
                                 <div class="hidden-sm hidden-xs action-buttons">
-                                    <a ng-disabled="!aplicacion.puede_modificar" class="orange" href="javascript:void(0)" ng-click="editar(proforma)"  data-rel="tooltip" tooltip-placement="top" uib-tooltip="Editar">
+                                    <a ng-if="!proforma.eliminado" ng-disabled="!aplicacion.puede_modificar" class="orange" href="javascript:void(0)" ng-click="editar(proforma)" data-rel="tooltip"
+                                        tooltip-placement="top" uib-tooltip="Editar">
                                         <i class="ace-icon fa fa-pencil-square-o bigger-130"></i>
                                     </a>
-                                    <a popover-trigger="outsideClick : outsideClick" uib-popover-template="impresiones.templateUrl" popover-placement="left" data-rel="tooltip" tooltip-placement="left" uib-tooltip="Imprimir proforma"
-                                        class="green" href="javascript:void(0)" >
+                                    <a ng-if="!proforma.eliminado" popover-trigger="outsideClick : outsideClick" uib-popover-template="impresiones.templateUrl" popover-placement="left"
+                                        data-rel="tooltip" tooltip-placement="left" uib-tooltip="Imprimir proforma" class="green"
+                                        href="javascript:void(0)">
                                         <span class="ace-icon fa fa-print bigger-130"></span>
-                                        
                                     </a>
                                     <script type="text/ng-template" id="impresiones.html">													
-                                                
                                              <div class="form-control">                            
                                                         <a  class="blue" ng-click="imprimir(proforma,0)">Sin detalle</a>
                                                     </div>
@@ -256,17 +256,17 @@
                                                     <div class="form-control">   
                                                             <a  class="blue" ng-click="imprimir(proforma,2)">Mixta</a>
                                                         </div>
-                                               
                                             </script>
                                     <a ng-disabled="!aplicacion.puede_ver" class="blue" href="javascript:void(0)" ng-click="ver(proforma)" data-rel="tooltip"
                                         tooltip-placement="top" uib-tooltip="Ver">
                                         <i class="ace-icon fa fa-search-plus bigger-130"></i>
                                     </a>
-                                    <a ng-disabled="!aplicacion.puede_eliminar" class="red" ng-click="abrirPopupConfirmacionEliminacion(eliminar,proforma)" data-rel="tooltip"
+                                    <a ng-if="!proforma.eliminado" ng-disabled="!aplicacion.puede_eliminar" class="red" ng-click="abrirPopupConfirmacionEliminacion(eliminar,proforma)" data-rel="tooltip"
                                         tooltip-placement="top" uib-tooltip="Eliminar">
                                         <i class="ace-icon fa fa-trash-o bigger-130"></i>
                                     </a>
-                                    <a  class="red" href="javascript:void(0)" ng-click="imprimirFactura(proforma)"  data-rel="tooltip" tooltip-placement="left" uib-tooltip="Imprimir factura">
+                                    <a ng-if="!proforma.eliminado" class="red" href="javascript:void(0)" ng-click="imprimirFactura(proforma)" data-rel="tooltip" tooltip-placement="left"
+                                        uib-tooltip="Imprimir factura">
                                         <i class="ace-icon fa fa-print bigger-130"></i>
                                     </a>
                                 </div>
@@ -276,16 +276,15 @@
                                             <i class="ace-icon fa fa-caret-down icon-only bigger-120"></i>
                                         </button>
                                         <ul class="dropdown-menu dropdown-only-icon dropdown-yellow dropdown-menu-right dropdown-caret dropdown-close">
-                                            <li>
+                                            <li ng-if="!proforma.eliminado">
                                                 <a ng-disabled="!aplicacion.puede_modificar" class="orange" href="javascript:void(0)" ng-click="editar(proforma)">
                                                     <i class="ace-icon fa fa-pencil-square-o bigger-130"></i>
                                                 </a>
                                             </li>
-                                            <li>
+                                            <li ng-if="!proforma.eliminado">
                                                 <a popover-trigger="outsideClick : outsideClick" uib-popover-template="impresiones.templateUrl" popover-placement="left"
-                                                    class="green" href="javascript:void(0)" >
-                                                    <i class="ace-icon fa fa-print bigger-130" data-rel="tooltip" tooltip-placement="top"
-                                                    uib-tooltip="Imprimir"></i>
+                                                    class="green" href="javascript:void(0)">
+                                                    <i class="ace-icon fa fa-print bigger-130" data-rel="tooltip" tooltip-placement="top" uib-tooltip="Imprimir"></i>
                                                 </a>
                                                 <script type="text/ng-template" id="impresiones.html">													
                                                             
@@ -306,7 +305,7 @@
                                                     <i class="ace-icon fa fa-search-plus bigger-130"></i>
                                                 </a>
                                             </li>
-                                            <li>
+                                            <li ng-if="!proforma.eliminado">
                                                 <a ng-disabled="!aplicacion.puede_eliminar" class="red" ng-if="solicitud.activo" ng-click="abrirPopupConfirmacionEliminacion(eliminar,proforma)">
                                                     <i class="ace-icon fa fa-trash-o bigger-130"></i>
                                                 </a>
@@ -319,7 +318,7 @@
                     </tbody>
                 </table>
             </div>
-            <div class="row" ng-include src="'/templates/gral/paginator.html'" ng-if="proformas.length > 0">
+            <div class="row" ng-include src="'/templates/gral/paginator.html'">
             </div>
         </div>
     </div>
@@ -636,7 +635,8 @@
                             Anterior
                         </button> -->
 
-                    <button ng-disabled="!aplicacion.puede_crear" id="siguiente-wizard-configuracion-proforma" class="btn btn-success btn-sm btn-next" data-last="Finish">
+                    <button ng-disabled="!aplicacion.puede_crear" id="siguiente-wizard-configuracion-proforma" class="btn btn-success btn-sm btn-next"
+                        data-last="Finish">
                         Siguiente
                         <i class="ace-icon fa fa-arrow-right icon-on-right"></i>
                     </button>
@@ -726,7 +726,7 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    
+
                                     <td>
                                         <label>RAZÓN SOCIAL CLIENTE</label>
                                         <input ng-disabled="proforma.ver !== undefined" ng-keypress="interceptarTecla($event,'id_servicio',true)" autocomplete="off"
@@ -745,18 +745,18 @@
                                         </span> -->
                                     </td>
                                     <td>
-                                            <label>NIT CLIENTE</label>
-                                            <input ng-disabled="proforma.ver !== undefined" ng-keypress="interceptarTecla($event,'razon_social',true)" data-validate="validate(required)"
-                                                id="nit" name="nit" required type="number" min="0" ng-model="proforma.cliente.nit"
-                                                placeholder="Ingrese el NIT" uib-typeahead="cliente as cliente.nit for cliente in buscarCliente($viewValue)"
-                                                typeahead-wait-ms="2000" typeahead-template-url="templates/autocompletar.html" typeahead-show-hint="false"
-                                                typeahead-min-length="0" typeahead-on-select="establecerCliente($item, $model, $label, $event)">
-                                            <span class="red">(*)</span>
-                                            <!-- <span class="invalid-message" ng-show="formularioProforma.nit.$dirty && formularioProforma.nit.$invalid">
+                                        <label>NIT CLIENTE</label>
+                                        <input ng-disabled="proforma.ver !== undefined" ng-keypress="interceptarTecla($event,'razon_social',true)" data-validate="validate(required)"
+                                            id="nit" name="nit" required type="number" min="0" ng-model="proforma.cliente.nit"
+                                            placeholder="Ingrese el NIT" uib-typeahead="cliente as cliente.nit for cliente in buscarCliente($viewValue)"
+                                            typeahead-wait-ms="2000" typeahead-template-url="templates/autocompletar.html" typeahead-show-hint="false"
+                                            typeahead-min-length="0" typeahead-on-select="establecerCliente($item, $model, $label, $event)">
+                                        <span class="red">(*)</span>
+                                        <!-- <span class="invalid-message" ng-show="formularioProforma.nit.$dirty && formularioProforma.nit.$invalid">
                                                 Debe ingresar un número mayor o igual a 0.
                                             </span> -->
-    
-                                        </td>
+
+                                    </td>
                                 </tr>
                                 <tr>
                                     <td colspan="2">
@@ -1288,8 +1288,7 @@
                                     <label for="">Cobro</label>
                                 </div>
                                 <div class="col-md-8">
-                                    <input autocomplete="off" disabled
-                                        ng-update-hidden type="text" data-date-format="dd/mm/yyyy" class="form-control date-picker"
+                                    <input autocomplete="off" disabled ng-update-hidden type="text" data-date-format="dd/mm/yyyy" class="form-control date-picker"
                                         id="fecha-cobro" ng-model="proformaFechas.fecha_cobro" name="fecha-cobro">
                                 </div>
                             </div>

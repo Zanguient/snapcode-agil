@@ -1,0 +1,3 @@
+ALTER TABLE agil_contabilidad_clasificacion_cuenta drop empresa;
+ALTER TABLE agil_contabilidad_cuenta drop cuenta_activo;
+ALTER TABLE sys_usuario drop autorizacion_caja_chica;

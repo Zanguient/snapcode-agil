@@ -86,7 +86,8 @@ function s2ab(s) {
 function convertUrlToBase64Image(url,callBack)
 {
 	var img = new Image();
-    img.crossOrigin = 'Anonymous';
+	img.crossOrigin = 'Anonymous';
+	img.src = url;
     img.onload = function(){
         var canvas = document.createElement('CANVAS'),
         ctx = canvas.getContext('2d'), dataURL;
@@ -96,8 +97,10 @@ function convertUrlToBase64Image(url,callBack)
         dataURL = canvas.toDataURL('image/jpg');
         callBack(dataURL);
         canvas = null; 
-    };
-    img.src = url;
+	};
+	img.onerror = function () {
+		callBack('error')
+	}
 }
 
 function reproducirVideo(input){

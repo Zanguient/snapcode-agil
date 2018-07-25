@@ -6,6 +6,13 @@ angular.module('agil.servicios')
                 'update': { method: 'PUT' }
             });
     })
+    .factory('GenerarProformas', function ($resource) {
+        return $resource(restServer + "guardar/proforma/:id_empresa/:usuario",
+            {
+                'update': { method: 'PUT' }
+            });
+    })
+    
 
     .factory('FiltroProformas', ['Proformas', '$q', function (Proformas, $q) {
         // :desde/:hasta/:sucursal/:almacen/:movimimento/:estado/:valuado
@@ -16,6 +23,20 @@ angular.module('agil.servicios')
                 anio: filtro.filter.anio !== 0 && filtro.filter.anio !== undefined ? filtro.filter.anio.id !== undefined ? filtro.filter.anio.id : filtro.filter.anio : 0, sucursal: filtro.filter.sucursal.id !== undefined ? filtro.filter.sucursal.id : 0, actividad: filtro.filter.actividadEconomica !== undefined ? filtro.filter.actividadEconomica.id !== undefined ? filtro.filter.actividadEconomica.id : 0 : 0, monto: filtro.filter.monto, razon: filtro.filter.razon,
                 servicio: filtro.filter.servicio.id !== undefined ? filtro.filter.servicio.id : 0, pagina: filtro.currentPage, items_pagina: filtro.itemsPerPage, busqueda: filtro.search, numero: filtro.filter.numero !== undefined ? filtro.filter.numero : 0, id_opcion: filtro.filter.proformaFacturadas !== undefined ? filtro.filter.proformaFacturadas.id ? filtro.filter.proformaFacturadas.id : 0  : 0
             }, function (entidades) {
+                delay.resolve(entidades);
+            }, function (error) {
+                delay.reject(error);
+            });
+            return delay.promise;
+        };
+        return res;
+    }])
+    .factory('GuardarProformas', ['GenerarProformas', '$q', function (GenerarProformas, $q) {
+        // :desde/:hasta/:sucursal/:almacen/:movimimento/:estado/:valuado
+        var res = function (id_empresa, usuario, proforma) {
+            var delay = $q.defer();
+            GenerarProformas.save({
+                id_empresa: id_empresa, usuario: usuario}, proforma, function (entidades) {
                 delay.resolve(entidades);
             }, function (error) {
                 delay.reject(error);
@@ -46,6 +67,20 @@ angular.module('agil.servicios')
         return res;
     }])
 
+    .factory('GuardarActividadesEmpresa', ['ActividadEmpresa', '$q', function (ActividadEmpresa, $q) {
+        // :desde/:hasta/:sucursal/:almacen/:movimimento/:estado/:valuado
+        var res = function (idEmpresa, nuevasActividades) {
+            var delay = $q.defer();
+            ActividadEmpresa.save({ id_empresa: idEmpresa }, nuevasActividades, function (entidades) {
+                delay.resolve(entidades);
+            }, function (error) {
+                delay.reject(error);
+            });
+            return delay.promise;
+        };
+        return res;
+    }])
+
     .factory('ActividadServicio', function ($resource) {
         return $resource(restServer + "actividades/servicios/empresa/:id_empresa/:id_actividad", {},
             {
@@ -66,6 +101,19 @@ angular.module('agil.servicios')
         };
         return res;
     }])
+    .factory('GuardarActividadServicio', ['ActividadServicio', '$q', function (ActividadServicio, $q) {
+        // :desde/:hasta/:sucursal/:almacen/:movimimento/:estado/:valuado
+        var res = function (idEmpresa, actividad) {
+            var delay = $q.defer();
+            ActividadServicio.save({ id_empresa: idEmpresa, id_actividad: actividad }, function (entidades) {
+                delay.resolve(entidades);
+            }, function (error) {
+                delay.reject(error);
+            });
+            return delay.promise;
+        };
+        return res;
+    }])
 
     .factory('Proforma', function ($resource) {
         return $resource(restServer + "proforma/:id", {},
@@ -73,6 +121,19 @@ angular.module('agil.servicios')
                 'update': { method: 'PUT' }
             });
     })
+
+    .factory('ActualizarProforma', ['Proforma', '$q', function (Proforma, $q) {
+        var res = function (id, proforma) {
+            var delay = $q.defer();
+            Proforma.update({ id: id }, proforma, function (entidades) {
+                delay.resolve(entidades);
+            }, function (error) {
+                delay.reject(error);
+            });
+            return delay.promise;
+        };
+        return res;
+    }])
 
     .factory('ProformaInfo', ['Proforma', '$q', function (Proforma, $q) {
         var res = function (idProforma, id_actividad) {
@@ -100,6 +161,32 @@ angular.module('agil.servicios')
                 'update': { method: 'PUT' }
             });
     })
+
+    .factory('ProformaEliminar', ['eliminarProforma', '$q', function (eliminarProforma, $q) {
+        var res = function (proforma) {
+            var delay = $q.defer();
+            eliminarProforma.save({ id: proforma.id }, proforma, function (entidades) {
+                delay.resolve(entidades);
+            }, function (error) {
+                delay.reject(error);
+            });
+            return delay.promise;
+        };
+        return res;
+    }])
+
+    .factory('alertasProformasLista', ['alertas', '$q', function (alertas, $q) {
+        var res = function (idEmpresa) {
+            var delay = $q.defer();
+            alertas.get({ id_empresa: (idEmpresa !== null && idEmpresa !== undefined && idEmpresa !== "") ? idEmpresa : 0 }, function (entidades) {
+                delay.resolve(entidades);
+            }, function (error) {
+                delay.reject(error);
+            });
+            return delay.promise;
+        };
+        return res;
+    }])
 
     .factory('alertas', function ($resource) {
         return $resource(restServer + "alertas/proformas/:id_empresa", {},

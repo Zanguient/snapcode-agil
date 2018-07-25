@@ -736,28 +736,28 @@
                             </td>
                             <td>{{$index+1}}</td>
                             <td>{{empleado.rrhhDetallePlanillaRcIva.empleado.persona.nombre_completo}}</td>
-                            <td>{{empleado.ci}}</td>
+                            <td>{{empleado.rrhhDetallePlanillaRcIva.empleado.persona.ci}}</td>
                             <td>
                                 <!-- <label ng-repeat="cargo in empleado.cargos">{{cargo.cargo.nombre}}</label> -->
-                                {{empleado.cargos}}
+                                {{empleado.rrhhDetallePlanillaRcIva.empleado.cargo}}
                             </td>
-                            <td>{{empleado.campo}}</td>
-                            <td>{{empleado.matricula_seguro}}</td>
-                            <td>{{empleado.netoImponible}}</td>
-                            <td>{{empleado.dos_SMN}}</td>
+                            <td>{{empleado.rrhhDetallePlanillaRcIva.empleado.campo.nombre}}</td>
+                            <td>{{empleado.rrhhDetallePlanillaRcIva.matricula_seguro}}</td>
+                            <td>{{empleado.neto_imponible}}</td>
+                            <td>{{empleado.dos_smn}}</td>
                             <td>{{empleado.diferencia}}</td>
-                            <td>{{empleado.rcIva13}}</td>
-                            <td>{{empleado.dos_SMN13}}</td>
+                            <td>{{empleado.rc_iva}}</td>
+                            <td>{{empleado.dos_smn13}}</td>
                             <td>{{empleado.f110}}</td>
-                            <td>{{empleado.rcIvaFisco}}</td>
-                            <td>{{empleado.saldoDependiente}}</td>
-                            <td>{{empleado.saldoAnterior}}</td>
+                            <td>{{empleado.rc_iva_fisico}}</td>
+                            <td>{{empleado.saldo_dependiente}}</td>
+                            <td>{{empleado.saldo_anterior}}</td>
                             <td>{{empleado.actualizacion}}</td>
-                            <td>{{empleado.saldoActualizado}}</td>
-                            <td>{{empleado.saldoTotal}}</td>
-                            <td>{{empleado.saldoUtilizado}}</td>
-                            <td>{{empleado.rcIvaMes}}</td>
-                            <td>{{empleado.saldoNuevo}}</td>
+                            <td>{{empleado.saldo_actualizado}}</td>
+                            <td>{{empleado.saldo_total}}</td>
+                            <td>{{empleado.saldo_utilizado}}</td>
+                            <td>{{empleado.rc_iva_mes}}</td>
+                            <td>{{empleado.nuevo_saldo}}</td>
                             <td ng-class="{ 'selectedRow' : empleado.checked }" class="table__side-rc-iva">
                                 <div class="hidden-sm hidden-xs action-buttons">
                                     <a class="blue" href="javascript:void(0)">

@@ -945,9 +945,9 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 								});
 							} else {
 								if (empresaEncontrada.dataValues.usar_peps) {
-									crearDetalleCompra(detalleCompra, idMovimiento, compraCreada.id, compra.almacen.id, productoCreado.id, centroCostoCreado.id, res, compra);
+									crearDetalleCompra(detalleCompra, idMovimiento, compraCreada.id, compra.almacen.id, productoCreado.id, detalleCompra.centroCosto.id, res, compra);
 								} else {
-									crearDetalleCompraPonderado(detalleCompra, idMovimiento, compraCreada.id, compra.almacen.id, productoCreado.id, centroCostoCreado.id, res, compra);
+									crearDetalleCompraPonderado(detalleCompra, idMovimiento, compraCreada.id, compra.almacen.id, productoCreado.id, detalleCompra.centroCosto.id, res, compra);
 								}
 							}
 						});
