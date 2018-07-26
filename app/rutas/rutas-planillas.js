@@ -465,21 +465,18 @@ module.exports = function (router, sequelize, Sequelize, Usuario, RRHHParametros
                 		include: [
                 			{ model: RrhhEmpleadoFicha, as: 'rrhhDetallePlanillaRcIva',
                 			// attributes: [sequelize.literal('`empleado.persona`.`nombre_completo`'), 'empleado'],
-                			include: [
-                				{ model: MedicoPaciente, as: 'empleado',
-                				// attributes: ["id","cargo", "persona"],
-                					include: [
-                					{ model: Clase, as: 'campo' },
-                					{model: Persona, as: 'persona'}
+	                			include: [
+	                				{ model: MedicoPaciente, as: 'empleado',
+	                				// attributes: ["id","cargo", "persona"],
+	                					include: [
+	                					{ model: Clase, as: 'campo' },
+	                					{model: Persona, as: 'persona'}
 
-                					]
-                			 	},
-                			 	{ model: RrhhEmpleadoCargo, as: 'cargos', include: [{ model: Clase, as: "cargo" }] }
-                			]
-                							    
+	                					]
+	                			 	},
+	                			 	{ model: RrhhEmpleadoCargo, as: 'cargos', include: [{ model: Clase, as: "cargo" }] }
+	                			]			    
                 			}
-
-
                 		]
                 		
         //         		as: 'empleadosFichas', 

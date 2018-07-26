@@ -23,13 +23,16 @@ angular.module('agil.controladores')
 
 		$scope.$on('$viewContentLoaded', function () {
 			resaltarPestaña($location.path().substring(1));
-			ejecutarScriptsOperaciones($scope.idDialogDialogPanelOperaciones, $scope.idDialogEntregaViveres, $scope.idConfirmacionCierre, $scope.idDialogTotalIngredientes,
-				$scope.idDialogoListadoPedido, $scope.idDialogoNuevoPedido, $scope.idDialogProductosProveedor, $scope.idDialogBusquedaProveedor, $scope.idDialogProductosAsigandosProveedor);
-			$scope.buscarAplicacion($scope.usuarioSesion.aplicacionesUsuario, $location.path().substring(1));
+			$timeout(function () {
+				ejecutarScriptsOperaciones($scope.idDialogDialogPanelOperaciones, $scope.idDialogDatos, $scope.idDialogEntregaViveres, $scope.idConfirmacionCierre, $scope.idDialogTotalIngredientes,
+					$scope.idDialogoListadoPedido, $scope.idDialogoNuevoPedido, $scope.idDialogProductosProveedor, $scope.idDialogBusquedaProveedor, $scope.idDialogProductosAsigandosProveedor);
+				$scope.buscarAplicacion($scope.usuarioSesion.aplicacionesUsuario, $location.path().substring(1));
+			}, 500)
 		});
 
 		$scope.$on('$routeChangeStart', function (next, current) {
 			$scope.eliminarPopup($scope.idDialogDialogPanelOperaciones);
+			$scope.eliminarPopup($scope.idDialogDatos);
 			$scope.eliminarPopup($scope.idDialogEntregaViveres);
 			$scope.eliminarPopup($scope.idConfirmacionCierre)
 			$scope.eliminarPopup($scope.idDialogTotalIngredientes)
@@ -106,6 +109,7 @@ angular.module('agil.controladores')
 		};
 
 		$scope.establecerProveedor = function (proveedor, modal) {
+			$scope.productosAsignadosProveedor = []
 			if ($scope.pedido === undefined) {
 				$scope.pedido = {};
 			}

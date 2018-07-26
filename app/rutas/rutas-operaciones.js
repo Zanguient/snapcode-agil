@@ -565,7 +565,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Producto, Dicc
                 Producto.findAll({
                     where: { id_empresa: req.params.id_empresa, publicar_panel: true, id_grupo: { $in: gruposUsuario } },
                     include: [
-                        { model: Inventario, as: 'inventarios', required: false, where: { id_almacen: req.params.id_almacen, cantidad: { $gte: 0 } } },
+                        { model: Inventario, as: 'inventarios', where: { id_almacen: req.params.id_almacen, cantidad: { $gte: 0 } } },
                         { model: Clase, as: 'tipoProducto', required: false },
                         {
                             model: ProductoBase, as: 'productosBase', required: false,

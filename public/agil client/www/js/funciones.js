@@ -141,9 +141,10 @@ function ejecutarScriptsInventario(idModalActualizacionInventario, idModalCreaci
 	}, 200);
 }
 
-function ejecutarScriptsOperaciones(idDialogDialogPanelOperaciones, idDialogEntregaViveres, idConfirmacionCierre, idDialogTotalIngredientes, idDialogoListadoPedido, idDialogoNuevoPedido,
+function ejecutarScriptsOperaciones(idDialogDialogPanelOperaciones, idDialogDatos, idDialogEntregaViveres, idConfirmacionCierre, idDialogTotalIngredientes, idDialogoListadoPedido, idDialogoNuevoPedido,
 	idDialogProductosProveedor, idDialogBusquedaProveedor, idDialogProductosAsigandosProveedor) {
 	crearPopup(idDialogDialogPanelOperaciones, "100%", screen.height);
+	crearPopup(idDialogDatos, "auto", 'auto');
 	crearPopup(idDialogEntregaViveres, "60%", 'auto');
 	crearPopup(idConfirmacionCierre, "40%", 'auto');
 	crearPopup(idDialogTotalIngredientes, "60%", 'auto');
@@ -1073,7 +1074,7 @@ function crearPopup(idPopup, ancho, altura) {
 
 
 	$("#" + idPopup).siblings('.ui-dialog-titlebar').remove();
-	$("#" + idPopup).dialog("moveToTop");
+	// $("#" + idPopup).dialog("moveToTop");
 	// $("#" + idPopup).draggable({
 	// 	handle: ".modal-header"
 	// });
