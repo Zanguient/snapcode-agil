@@ -1,0 +1,1 @@
+ALTER TABLE agil_configuracion_general_factura ADD formato_papel_factura INT(11);

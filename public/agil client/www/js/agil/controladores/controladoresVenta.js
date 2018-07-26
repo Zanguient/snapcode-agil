@@ -24,7 +24,7 @@ angular.module('agil.controladores')
 		$scope.idModalPanelVentasCobro = 'dialog-panel-cobro';
 		$scope.idModalEdicionVendedor = 'dialog-edicion-vendedor';
 		$scope.idModalImpresionVencimiento = 'dialog-imprimir-con-fecha-vencimiento';
-
+		
 		$scope.$on('$viewContentLoaded', function () {
 			resaltarPestaña($location.path().substring(1));
 			ejecutarScriptsVenta($scope.idModalWizardCompraEdicion, $scope.idModalWizardVentaVista,
@@ -48,7 +48,7 @@ angular.module('agil.controladores')
 			$scope.sucursales = []//$scope.obtenerSucursales();
 			$scope.obtenerSucursales();
 			$scope.sucursalesUsuario = "";
-
+			$scope.obtenerFormatoFactura();
 			// for (var i = 0; i < $scope.usuario.sucursalesUsuario.length; i++) {
 			// 	$scope.sucursalesUsuario = $scope.sucursalesUsuario + $scope.usuario.sucursalesUsuario[i].sucursal.id;
 			// 	if (i + 1 != $scope.usuario.sucursalesUsuario.length) {
@@ -1546,9 +1546,12 @@ angular.module('agil.controladores')
 				ventaConsultada.numero_literal = datos.numero_literal;
 				ventaConsultada.pieFactura = datos.pieFactura;
 				ventaConsultada.sucursalDestino = datos.sucursalDestino;
+				
 				var fecha = new Date(ventaConsultada.fecha);
 				ventaConsultada.fechaTexto = fecha.getDate() + "/" + (fecha.getMonth() + 1) + "/" + fecha.getFullYear();
-				ImprimirSalida(ventaConsultada.movimiento.clase.nombre_corto, ventaConsultada, false, $scope.usuario, false);
+						
+				ImprimirSalida(ventaConsultada.movimiento.clase.nombre_corto, ventaConsultada, false, $scope.usuario, false,$scope.formatosFactura);
+	
 			});
 		}
 
@@ -1558,6 +1561,15 @@ angular.module('agil.controladores')
 
 		$scope.establecerPrecio = function () {
 			$scope.editar_precio = false;
+		}
+
+		$scope.obtenerFormatoFactura = function () {
+			blockUI.start();
+			var promesa = ClasesTipo("FORM_IMP_FAC");
+			promesa.then(function (entidad) {
+				$scope.formatosFactura = entidad.clases;
+				blockUI.stop();
+			});
 		}
 
 		$scope.guardarVenta = function (valido, venta) {

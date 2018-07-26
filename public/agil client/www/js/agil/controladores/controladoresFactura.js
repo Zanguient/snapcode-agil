@@ -66,6 +66,15 @@ angular.module('agil.controladores')
 		});
 	}
 	
+	$scope.obtenerFormatoFactura = function () {
+		blockUI.start();
+		var promesa = ClasesTipo("FORM_IMP_FAC");
+		promesa.then(function (entidad) {
+			$scope.formatosFactura = entidad.clases;
+			blockUI.stop();
+		});
+	}
+
 	$scope.obtenerConfiguracionesFactura=function(){
 		blockUI.start();
 		var promesa=ConfiguracionesFactura($scope.usuario.id_empresa);
@@ -80,7 +89,7 @@ angular.module('agil.controladores')
 		var promesa=ConfiguracionGeneralFacturaDato($scope.usuario.id_empresa);
 		promesa.then(function(configuracion_general){
 			$scope.configuracion_general=configuracion_general;
-			//console.log($scope.configuracion_general)
+			console.log($scope.configuracion_general)
 			blockUI.stop();
 		});
 	}
@@ -99,6 +108,7 @@ angular.module('agil.controladores')
 		$scope.obtenerTitulosFactura();
 		$scope.obtenerSubtitulosFactura();
 		$scope.obtenerPiesFactura();
+		$scope.obtenerFormatoFactura();
 		setTimeout(function() {
 			ejecutarScriptsTabla('tabla-configuraciones',7);
 			ejecutarScriptsTabla('tabla-configuracion-general',7);
@@ -157,7 +167,7 @@ angular.module('agil.controladores')
 			});
 		}
 	}
-	
+
 	$scope.inicio();
 });
 

@@ -51,7 +51,8 @@ module.exports = function (router, Sucursal, ConfiguracionFactura, Clase, Config
 				id_tamano_papel_nota_baja: req.body.tamanoPapelNotaBaja.id,
 				id_tamano_papel_nota_pedido: req.body.tamanoPapelNotaPedido.id,
 				id_tamano_papel_cierre_caja: req.body.tamanoPapelCierreCaja.id,
-				id_tamano_papel_cotizacion: req.body.tamanoPapelCotizacion.id
+				id_tamano_papel_cotizacion: req.body.tamanoPapelCotizacion.id,
+				id_formato_papel_factura: req.body.formatoPapelFactura.id
 			}, {
 					where: { id: req.params.id_configuracion }
 				}).then(function (score) {
@@ -140,7 +141,8 @@ module.exports = function (router, Sucursal, ConfiguracionFactura, Clase, Config
 											id_tamano_papel_nota_baja: tipoPapelFactura.id,
 											id_tamano_papel_nota_pedido: tipoPapelFactura.id,
 											id_tamano_papel_cierre_caja: tipoPapelFactura.id,
-											id_tamano_papel_cotizacion: tipoPapelFactura.id
+											id_tamano_papel_cotizacion: tipoPapelFactura.id,
+											
 										}).then(function (score) {
 											if (index === (array.length - 1)) {
 												obtenerConfiguracionesFacturaEmpresa(req, res, false);
@@ -276,28 +278,34 @@ module.exports = function (router, Sucursal, ConfiguracionFactura, Clase, Config
 							where: { nombre_corto: "DERCREFIS" }
 						}).then(function (subtituloFactura) {
 							Clase.find({
-								where: { nombre_corto: "L453" }
-							}).then(function (pieFactura) {
-								ConfiguracionGeneralFactura.create({
-									id_empresa: req.params.id_empresa,
-									id_impresion_factura: impresionFactura.id,
-									id_tipo_facturacion: tipoFactura.id,
-									id_tamano_papel_factura: tipoPapelFactura.id,
-									id_titulo_factura: tituloFactura.id,
-									id_subtitulo_factura: subtituloFactura.id,
-									id_pie_factura: pieFactura.id,
-									maximo_items: 5,
-									usar_pf: false,
-									imprimir_al_guardar: true,
-									id_tamano_papel_nota_venta: tipoPapelFactura.id,
-									id_tamano_papel_nota_traspaso: tipoPapelFactura.id,
-									id_tamano_papel_nota_baja: tipoPapelFactura.id,
-									id_tamano_papel_nota_pedido: tipoPapelFactura.id,
-									id_tamano_papel_cierre_caja: tipoPapelFactura.id,
-									id_tamano_papel_cotizacion: tipoPapelFactura.id
-								}).then(function (score) {
-									obtenerConfiguracionGeneralFacturaEmpresa(req, res);
-								});
+								where: { nombre_corto: "FORM_C_MAR" }
+							}).then(function (formatoPapelImpresion){
+								Clase.find({
+									where: { nombre_corto: "L453" }
+								}).then(function (pieFactura) {
+									ConfiguracionGeneralFactura.create({
+										id_empresa: req.params.id_empresa,
+										id_impresion_factura: impresionFactura.id,
+										id_tipo_facturacion: tipoFactura.id,
+										id_tamano_papel_factura: tipoPapelFactura.id,
+										id_titulo_factura: tituloFactura.id,
+										id_formato_papel_factura: formatoPapelImpresion.id,
+										id_subtitulo_factura: subtituloFactura.id,
+										id_pie_factura: pieFactura.id,
+										maximo_items: 5,
+										usar_pf: false,
+										imprimir_al_guardar: true,
+										id_tamano_papel_nota_venta: tipoPapelFactura.id,
+										id_tamano_papel_nota_traspaso: tipoPapelFactura.id,
+										id_tamano_papel_nota_baja: tipoPapelFactura.id,
+										id_tamano_papel_nota_pedido: tipoPapelFactura.id,
+										id_tamano_papel_cierre_caja: tipoPapelFactura.id,
+										id_tamano_papel_cotizacion: tipoPapelFactura.id
+
+									}).then(function (score) {
+										obtenerConfiguracionGeneralFacturaEmpresa(req, res);
+									});
+								})
 							})
 						})
 					})

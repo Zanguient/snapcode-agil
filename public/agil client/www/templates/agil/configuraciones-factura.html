@@ -255,7 +255,7 @@
 							<label class="control-label col-xs-12 col-sm-6 no-padding-right">Tamaño Papel Nota Venta</label>
 
 							<div class="col-sm-6">
-								<select required ng-options="tamanoPapelFactura as tamanoPapelFactura.nombre for tamanoPapelFactura in tamanosPapelFactura track by tamanoPapelFactura.id" ng-model="configuracion_general.tamanoPapelNotaVenta"></select>
+								<select required ng-options="tamanoPapelFactura as tamanoPapelFactura.nombre for tamanoPapelFactura in tamanosPapelFactura track by tamanoPapelFactura.id" ng-model="configuracion_general.tamanoPapelNotaVenta" ></select>
 							</div>
 						</div>
 						<div class="form-group">
@@ -291,6 +291,13 @@
 
 							<div class="col-xs-12 col-sm-6">
 								<select required ng-options="tamanoPapelFactura as tamanoPapelFactura.nombre for tamanoPapelFactura in tamanosPapelFactura track by tamanoPapelFactura.id" ng-model="configuracion_general.tamanoPapelCotizacion"></select>
+							</div>
+						</div>
+						<div class="form-group" ng-if="configuracion_general.tamanoPapelNotaVenta.nombre == 'CARTA'">
+							<label class="control-label col-xs-12 col-sm-6 no-padding-right">Formato</label>
+
+							<div class="col-xs-12 col-sm-6">
+								<select required ng-options="formatoFactura as formatoFactura.nombre for formatoFactura in formatosFactura track by formatoFactura.id" ng-model="configuracion_general.formatoPapelFactura"></select>
 							</div>
 						</div>
 					</div>

@@ -1,0 +1,1 @@
+ALTER TABLE agil_configuracion_general_factura DROP formato_papel_factura;

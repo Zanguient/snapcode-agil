@@ -67,7 +67,11 @@ module.exports=function(sequelize,Sequelize){
 		id_tamano_papel_cotizacion:{
 			type: Sequelize.INTEGER,
 			field: 'tamano_papel_cotizacion' 
-			}
+		},
+		id_formato_papel_factura:{
+			type: Sequelize.INTEGER,
+			field: 'formato_papel_factura' 		
+		}
 	}, {
 	  freezeTableName: true 
 	});
@@ -78,3 +82,5 @@ module.exports=function(sequelize,Sequelize){
 	
 	return ConfiguracionGeneralFactura;
 }
+
+

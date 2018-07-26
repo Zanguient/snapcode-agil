@@ -808,9 +808,9 @@ angular.module('agil.servicios')
 
 	.factory('ImprimirSalida', ['Diccionario', 'ImprimirFactura', 'ImprimirProforma', 'ImprimirNotaBaja', 'ImprimirNotaTraspaso',
 		function (Diccionario, ImprimirFactura, ImprimirProforma, ImprimirNotaBaja, ImprimirNotaTraspaso) {
-			var res = function (movimiento, salida, esAccionGuardar, usuario, llevar) {
-				if (movimiento == Diccionario.EGRE_FACTURACION) {
-					ImprimirFactura(salida, esAccionGuardar, usuario);
+			var res = function (movimiento, salida, esAccionGuardar, usuario, llevar,IdsFormatoImpresion) {
+				if (movimiento == Diccionario.EGRE_FACTURACION) {			
+					ImprimirFactura(salida, esAccionGuardar, usuario,IdsFormatoImpresion);				
 				} else if (movimiento == Diccionario.EGRE_PROFORMA) {
 					ImprimirProforma(salida, esAccionGuardar, usuario, llevar);
 				}
@@ -822,11 +822,12 @@ angular.module('agil.servicios')
 				}
 			};
 			return res;
-		}])
+		}])	
 
-	.factory('ImprimirFactura', ['Diccionario', 'ImprimirFacturaCartaOficio', 'ImprimirPedido', 'ImprimirFacturaRollo', '$timeout',
-		function (Diccionario, ImprimirFacturaCartaOficio, ImprimirPedido, ImprimirFacturaRollo, $timeout) {
-			var res = function (salida, esAccionGuardar, usuario) {
+		
+	.factory('ImprimirFactura', ['Diccionario', 'ImprimirFacturaCartaOficio','ImprimirFacturaCartaOficioSinFormato', 'ImprimirPedido', 'ImprimirFacturaRollo', '$timeout',
+		function (Diccionario, ImprimirFacturaCartaOficio,ImprimirFacturaCartaOficioSinFormato, ImprimirPedido, ImprimirFacturaRollo, $timeout) {
+			var res = function (salida, esAccionGuardar, usuario, idFormatoImpresion) {
 				var papel, doc, stream;
 				if (salida.configuracion.tamanoPapelFactura.nombre_corto == Diccionario.FACT_PAPEL_OFICIO) {
 					papel = [612, 936];
@@ -840,7 +841,22 @@ angular.module('agil.servicios')
 				} else if (salida.configuracion.tamanoPapelFactura.nombre_corto == Diccionario.FACT_PAPEL_CARTA) {
 					papel = [612, 792];
 					if (salida.configuracion.impresionFactura.nombre_corto == Diccionario.FACT_IMPRESION_VACIA) {
-						ImprimirFacturaCartaOficio(salida, papel, true, false, false, usuario);
+						//var formatoConMargen = idFormatoImpresion.filter(elem => id)
+						//var formatoSinMargen = $filter('id')(idFormatoImpresion,'FORMATO SIN MARGEN');
+						//var idConf = idFormatoImpresion[0].id; 
+						if (idFormatoImpresion[0].nombre_corto === 'FORM_C_MAR') {
+							var idConFormato = idFormatoImpresion[0].id; 
+						}
+						 if (idFormatoImpresion[1].nombre_corto === 'FORM_S_MAR') {
+							var idSinFormato = idFormatoImpresion[1].id; 
+						}
+						
+						if (salida.configuracion.id_formato_papel_factura === idConFormato) {
+							ImprimirFacturaCartaOficio(salida, papel, true, false, false, usuario);
+						}else if (salida.configuracion.id_formato_papel_factura === idSinFormato) {
+							ImprimirFacturaCartaOficioSinFormato(salida, papel, true, false, false, usuario);
+						}	
+
 					} else if (salida.configuracion.impresionFactura.nombre_corto == Diccionario.FACT_IMPRESION_COMPLETA) {
 						ImprimirFacturaCartaOficio(salida, papel, false, true, false, usuario);
 					} else if (salida.configuracion.impresionFactura.nombre_corto == Diccionario.FACT_IMPRESION_SEMICOMPLETA) {
@@ -897,8 +913,376 @@ angular.module('agil.servicios')
 			return res;
 		}])
 
+	//Imprimir Factura con formato de margen
 	.factory('ImprimirFacturaCartaOficio', ['blockUI', 'VerificarDescuentos', 'Diccionario', 'DibujarCabeceraFacturaNVCartaOficio', 'DibujarCabeceraFacturaNVmedioOficio', '$timeout',
-		function (blockUI, VerificarDescuentos, Diccionario, DibujarCabeceraFacturaNVCartaOficio, DibujarCabeceraFacturaNVmedioOficio, $timeout) {
+	function (blockUI, VerificarDescuentos, Diccionario, DibujarCabeceraFacturaNVCartaOficio, DibujarCabeceraFacturaNVmedioOficio, $timeout) {
+		var res = function (venta, papel, vacia, completa, semicompleta, usuario) {
+			var doc = new PDFDocument({ compress: false, size: papel, margin: 10 });
+			var stream = doc.pipe(blobStream());
+
+			if (venta.configuracion.usar_pf) {
+				var itemsPorPagina = 0;
+				if (venta.configuracion.tamanoPapelFactura.nombre_corto == Diccionario.FACT_PAPEL_OFICIO) {
+					itemsPorPagina = 19;
+				} else if (venta.configuracion.tamanoPapelFactura.nombre_corto == Diccionario.FACT_PAPEL_CARTA) {
+					itemsPorPagina = 16;
+				} else if (venta.configuracion.tamanoPapelFactura.nombre_corto == Diccionario.FACT_PAPEL_MEDIOOFICIO) {
+					itemsPorPagina = 3;
+				}
+				var y = 240, items = 0, pagina = 1, totalPaginas = Math.ceil(venta.detallesVenta.length / itemsPorPagina);
+				DibujarCabeceraFacturaNVCartaOficio(doc, vacia, completa, venta, papel, pagina, totalPaginas, usuario);
+				for (var i = 0; i < venta.detallesVenta.length && items <= itemsPorPagina; i++) {
+					doc.font('Helvetica', 8);
+					if (venta.detallesVenta[i].producto) {
+						venta.detallesVenta[i].fecha_vencimiento = new Date(venta.detallesVenta[i].fecha_vencimiento);
+						var fechaVencimientoTexto = venta.detallesVenta[i].fecha_vencimiento.getDate() + "/" + (venta.detallesVenta[i].fecha_vencimiento.getMonth() + 1) + "/" + venta.detallesVenta[i].fecha_vencimiento.getFullYear().toString().substring(2);
+
+						doc.text(venta.detallesVenta[i].producto.codigo, 55, y, { width: 70 });
+						doc.text(venta.detallesVenta[i].cantidad, 135, y);
+						doc.text(venta.detallesVenta[i].producto.unidad_medida, 160, y - 3, { width: 43 });
+						var longitudCaracteres = venta.detallesVenta[i].producto.nombre.length;
+						var yDesc = (longitudCaracteres <= 24) ? y : ((longitudCaracteres > 24 && longitudCaracteres <= 60) ? y - 4 : y - 11);
+						doc.text(venta.detallesVenta[i].producto.nombre, 198, yDesc, { width: 130 });
+
+						if (venta.con_vencimiento) {
+							doc.text(fechaVencimientoTexto, 340, y);
+							doc.text(venta.detallesVenta[i].lote, 380, y);
+						}
+
+						doc.text(venta.detallesVenta[i].precio_unitario.toFixed(2), 410, y);
+						//doc.text(venta.detallesVenta[i].importe.toFixed(2), 450, y);
+						//doc.text((venta.detallesVenta[i].descuento ? venta.detallesVenta[i].descuento.toFixed(2) : "0.00"), 490, y);
+						doc.text(venta.detallesVenta[i].total.toFixed(2), 530, y);
+						if (completa || vacia) {
+							doc.rect(50, y - 15, 520, 30).stroke();
+						}
+					} else {
+						venta.detallesVenta[i].fecha_vencimiento = new Date(venta.detallesVenta[i].fecha_vencimiento);
+						var fechaVencimientoTexto = venta.detallesVenta[i].fecha_vencimiento.getDate() + "/" + (venta.detallesVenta[i].fecha_vencimiento.getMonth() + 1) + "/" + venta.detallesVenta[i].fecha_vencimiento.getFullYear().toString().substring(2);
+
+						doc.text(venta.detallesVenta[i].servicio.codigo, 55, y, { width: 70 });
+						doc.text(venta.detallesVenta[i].cantidad, 130, y);
+						// 							doc.text(venta.detallesVenta[i].servicio.unidad_medida, 155, y - 3, { width: 43 });
+						var longitudCaracteres = venta.detallesVenta[i].servicio.nombre.length;
+						var yDesc = (longitudCaracteres <= 24) ? y : ((longitudCaracteres > 24 && longitudCaracteres <= 60) ? y - 4 : y - 11);
+						doc.text(venta.detallesVenta[i].servicio.nombre, 198, yDesc, { width: 130 });
+
+						if (venta.con_vencimiento) {
+							doc.text(fechaVencimientoTexto, 340, y);
+							doc.text(venta.detallesVenta[i].lote, 380, y);
+						}
+
+						// doc.text(venta.detallesVenta[i].precio_unitario.toFixed(2), 410, y);
+						doc.text(venta.detallesVenta[i].importe.toFixed(2), 450, y);
+						// doc.text((venta.detallesVenta[i].descuento ? venta.detallesVenta[i].descuento.toFixed(2) : "0.00"), 490, y);
+						doc.text(venta.detallesVenta[i].total.toFixed(2), 530, y);
+						if (completa || vacia) {
+							doc.rect(50, y - 15, 520, 30).stroke();
+						}
+					}
+					y = y + 30;
+					items++;
+					if (items == itemsPorPagina) {
+						doc.addPage({ size: papel, margin: 10 });
+						y = 240;
+						items = 0;
+						pagina = pagina + 1;
+						DibujarCabeceraFacturaNVCartaOficio(doc, vacia, completa, venta, papel, pagina, totalPaginas, usuario);
+					}
+				}
+				if (completa || vacia) {
+					doc.font('Helvetica-Bold', 8);
+					doc.text("TOTAL", 485, y);
+				}
+				doc.font('Helvetica', 8);
+				doc.text(venta.total.toFixed(2), 530, y);
+
+				doc.text("SON : " + venta.numero_literal, 55, y);
+
+				if (completa || vacia) {
+					doc.rect(50, y - 15, 520, 30).stroke();
+				}
+				var fechaActual = new Date();
+				var min = fechaActual.getMinutes();
+				if (min < 10) {
+					min = "0" + min;
+				}
+
+				doc.text("usuario : " + usuario.nombre_usuario, 55, y + 20);
+				doc.text("fecha : " + fechaActual.getDate() + "/" + (fechaActual.getMonth() + 1) + "/" + fechaActual.getFullYear() + "  " + fechaActual.getHours() + ":" + min, 180, y + 20);
+
+			} else {
+				var canvas = document.getElementById('qr-code');
+				// draw some text
+				var existenDescuentos = VerificarDescuentos(venta.detallesVenta);
+
+				doc.font('Helvetica', 8);
+				var itemsPorPagina = 0;
+				if (venta.configuracion.tamanoPapelFactura.nombre_corto == Diccionario.FACT_PAPEL_OFICIO) {
+					itemsPorPagina = 19;
+				} else if (venta.configuracion.tamanoPapelFactura.nombre_corto == Diccionario.FACT_PAPEL_CARTA) {
+					itemsPorPagina = 16;
+				} else if (venta.configuracion.tamanoPapelFactura.nombre_corto == Diccionario.FACT_PAPEL_MEDIOOFICIO) {
+					itemsPorPagina = 3;
+				}
+				var detalles = venta.detallesVenta !== undefined ? venta.detallesVenta : venta.detallesProformas
+				var y = 240, items = 0, pagina = 1, totalPaginas = Math.ceil(venta.detallesVenta.length / itemsPorPagina);
+				DibujarCabeceraFacturaNVmedioOficio(doc, vacia, completa, venta, papel, pagina, totalPaginas, usuario);
+				for (var i = 0; i < venta.detallesVenta.length && items <= itemsPorPagina; i++) {
+					doc.font('Helvetica', 8);
+					if (venta.detallesVenta[i].producto) {
+						if (existenDescuentos) {
+							doc.text(venta.detallesVenta[i].producto.codigo, 55, y);
+							doc.text(venta.detallesVenta[i].cantidad, 115, y);
+							doc.text(venta.detallesVenta[i].producto.unidad_medida, 140, y);
+							doc.text(venta.detallesVenta[i].producto.nombre, 180, y - 6, { width: 120 });
+							doc.text(venta.detallesVenta[i].precio_unitario.toFixed(2), 300, y);
+							doc.text(venta.detallesVenta[i].importe.toFixed(2), 335, y);
+							doc.text(venta.detallesVenta[i].tipo_descuento ? "%" : "Bs", 385, y - 10);
+							doc.text(venta.detallesVenta[i].descuento.toFixed(2), 385, y);
+							doc.text(venta.detallesVenta[i].tipo_recargo ? "%" : "Bs", 420, y - 10);
+							doc.text(venta.detallesVenta[i].recargo.toFixed(2), 420, y);
+							doc.text(venta.detallesVenta[i].ice.toFixed(2), 455, y);
+							doc.text(venta.detallesVenta[i].excento.toFixed(2), 490, y);
+							doc.text(venta.detallesVenta[i].total.toFixed(2), 520, y);
+						} else {
+							doc.text(venta.detallesVenta[i].producto.codigo, 55, y);
+							doc.text(venta.detallesVenta[i].cantidad, 110, y);
+							doc.text(venta.detallesVenta[i].producto.unidad_medida, 165, y);
+							var longitudCaracteres = venta.detallesVenta[i].producto.nombre.length;
+							var yDesc = (longitudCaracteres <= 45) ? y : ((longitudCaracteres > 45 && longitudCaracteres <= 90) ? y - 4 : y - 11);
+							doc.text(venta.detallesVenta[i].producto.nombre, 220, yDesc, { width: 225 });
+							doc.text(venta.detallesVenta[i].precio_unitario.toFixed(2), 450, y);
+							doc.text(venta.detallesVenta[i].total.toFixed(2), 520, y);
+						}
+					} else {
+						if (existenDescuentos) {
+							doc.text(venta.detallesVenta[i].servicio.codigo, 55, y);
+							doc.text(venta.detallesVenta[i].cantidad, 115, y);
+							// doc.text(venta.detallesVenta[i].servicio.unidad_medida, 140, y);
+							doc.text(venta.detallesVenta[i].servicio.nombre, 180, y - 6, { width: 120 });
+							doc.text(venta.detallesVenta[i].precio_unitario.toFixed(2), 300, y);
+							doc.text(venta.detallesVenta[i].importe.toFixed(2), 335, y);
+							// doc.text(venta.detallesVenta[i].tipo_descuento ? "%" : "Bs", 385, y - 10);
+							// doc.text(venta.detallesVenta[i].descuento.toFixed(2), 385, y);
+							// doc.text(venta.detallesVenta[i].tipo_recargo ? "%" : "Bs", 420, y - 10);
+							// doc.text(venta.detallesVenta[i].recargo.toFixed(2), 420, y);
+							// doc.text(venta.detallesVenta[i].ice.toFixed(2), 455, y);
+							// doc.text(venta.detallesVenta[i].excento.toFixed(2), 490, y);
+							doc.text(venta.detallesVenta[i].total.toFixed(2), 520, y);
+						} else {
+							doc.text(venta.detallesVenta[i].servicio.codigo, 55, y);
+							doc.text(venta.detallesVenta[i].cantidad, 110, y);
+							// doc.text(venta.detallesVenta[i].servicio.unidad_medida, 165, y);
+							var longitudCaracteres = venta.detallesVenta[i].servicio.nombre.length;
+							var yDesc = (longitudCaracteres <= 45) ? y : ((longitudCaracteres > 45 && longitudCaracteres <= 90) ? y - 4 : y - 11);
+							doc.text(venta.detallesVenta[i].servicio.nombre, 220, yDesc, { width: 225 });
+							doc.text(venta.detallesVenta[i].precio_unitario.toFixed(2), 450, y);
+							doc.text(venta.detallesVenta[i].total.toFixed(2), 520, y);
+						}
+					}
+
+					if (completa || vacia) {
+						doc.rect(50, y - 15, 520, 30).stroke();
+					}
+					y = y + 30;
+					items++;
+
+					if (items > itemsPorPagina) {
+						doc.addPage({ size: papel, margin: 10 });
+						y = 240;
+						items = 0;
+						pagina = pagina + 1;
+						DibujarCabeceraFacturaNVmedioOficio(doc, vacia, completa, venta, papel, pagina, totalPaginas, usuario);
+					}
+				}
+				if (completa || vacia) {
+					doc.font('Helvetica-Bold', 8);
+					doc.text("TOTAL", 455, y);
+				}
+				doc.font('Helvetica', 8);
+				doc.text(venta.total.toFixed(2), 520, y);
+
+				doc.text("SON : " + venta.numero_literal, 55, y);
+
+
+				doc.text("CÓDIGO DE CONTROL : " + venta.codigo_control, 55, y + 30);
+				venta.fecha_limite_emision = new Date(venta.fecha_limite_emision);
+				doc.text("FECHA LÍMITE DE EMISIÓN: " + venta.fecha_limite_emision.getDate() + "/" + (venta.fecha_limite_emision.getMonth() + 1) + "/" + venta.fecha_limite_emision.getFullYear(), 55, y + 60);
+
+				if (completa || vacia) {
+					doc.rect(50, y - 15, 520, 30).stroke();
+					doc.rect(50, y + 25, 400, 20).stroke();
+					doc.rect(50, y + 55, 400, 20).stroke();
+				}
+
+				qr.canvas({
+					canvas: canvas,
+					value: usuario.empresa.nit + "|" + venta.factura + "|" + venta.autorizacion + "|" + venta.fechaTexto + "|" + venta.total.toFixed(2) + "|" + venta.total.toFixed(2) + "|" + venta.codigo_control + "|" + venta.cliente.nit + "|" + "0" + "|" + "0" + "|" + "0" + "|" + "0"
+				}, function () { });
+				var qrImage = canvas.toDataURL('image/png');
+				doc.image(qrImage, 470, y + 20, { width: 70, height: 70 });
+				if (completa || vacia) {
+					doc.text(venta.pieFactura !== undefined && venta.pieFactura !== null ? venta.pieFactura.nombre : "", 50, papel[1] - 60);
+					doc.text("\"ESTA FACTURA CONTRIBUYE AL DESARROLLO DEL PAIS. EL USO ILICITO DE ESTA SERA SANCIONADO DE ACUERDO A LEY\"", 50, papel[1] - 40);
+				}
+
+			}
+
+			doc.end();
+			stream.on('finish', function () {
+				var fileURL = stream.toBlobURL('application/pdf');
+				var w = window.open(fileURL, '_blank', 'location=no');
+				$timeout(function () {
+					w.print();
+				}, 500);
+			});
+			blockUI.stop();
+		};
+		return res;
+	}])
+
+	.factory('DibujarCabeceraFacturaNVCartaOficio', [function () {
+		var res = function (doc, vacia, completa, venta, papel, pagina, totalPaginas, usuario) {
+			if (venta.configuracion.usar_pf) {
+				if (vacia) {
+					if (usuario.empresa.imagen.length > 100) { doc.image(usuario.empresa.imagen, 60, 40, { fit: [65, 65] }); } //{ width: 50, height: 50 }
+					doc.font('Helvetica-Bold', 8);
+					doc.text(usuario.empresa.razon_social.toUpperCase(), 60, 105);
+					doc.font('Helvetica', 7);
+					doc.text(venta.sucursal.nombre.toUpperCase(), 60, 113);
+					var longitudCaracteres = venta.sucursal.direccion.length;
+					var yDesc = (longitudCaracteres <= 45) ? 129 : ((longitudCaracteres > 45 && longitudCaracteres <= 90) ? 139 : 145);
+					doc.text(venta.sucursal.direccion.toUpperCase(), 60, 121);
+					var telefono = (venta.sucursal.telefono1 != null ? venta.sucursal.telefono1 : "") +
+						(venta.sucursal.telefono2 != null ? "-" + venta.sucursal.telefono2 : "") +
+						(venta.sucursal.telefono3 != null ? "-" + venta.sucursal.telefono3 : "");
+					doc.text("TELF.: " + telefono, 60, yDesc);
+					doc.text("COCHABAMBA - BOLIVIA", 60, yDesc + 8);
+				}
+				doc.font('Helvetica-Bold', 16);
+				doc.text(venta.configuracion.tituloFactura.nombre.toUpperCase(), 250, 90);
+				doc.font('Helvetica-Bold', 8);
+				if (completa || vacia) {
+					doc.rect(380, 40, 190, 50).stroke();
+					doc.text("NIT : ", 400, 50);
+					doc.text("Nota No : ", 400, 60);
+				}
+				doc.text(usuario.empresa.nit, 500, 50);
+				doc.text(venta.factura, 500, 60);
+				if (completa || vacia) {
+					doc.rect(50, 160, 520, 40).stroke();
+					doc.text("FECHA : ", 60, 165);
+					doc.text("SEÑOR(ES) : ", 60, 175);
+					doc.text("NIT : ", 360, 165);
+				}
+				doc.text(venta.fechaTexto, 120, 165);
+				doc.text(venta.cliente.razon_social, 120, 175);
+				doc.text(venta.cliente.nit, 400, 165);
+
+				if (completa || vacia) {
+					doc.rect(50, 200, 520, 25).stroke();
+					//doc.rect(50,225,520,papel[1]-175-225).stroke();
+					doc.text("CODIGO", 55, 210, { width: 70 });
+					doc.text("CANT.", 125, 210);
+					if (venta.detallesVenta[0].producto) {
+						doc.text("UNIDAD", 155, 210);
+					}
+					doc.text("DETALLE", 198, 210);
+
+					if (venta.con_vencimiento) {
+						doc.text("VENC.", 340, 210);
+						doc.text("LOTE", 380, 210);
+					}
+					if (venta.detallesVenta[0].producto) {
+						doc.text("P.UNIT.", 410, 210);
+					}
+					/*doc.text("IMP.", 450, 210);
+					if (venta.detallesVenta[0].producto) {
+						doc.text("DESC.", 490, 210);
+					}*/
+					doc.text("TOTAL", 530, 210);
+				}
+				doc.font('Helvetica', 7);
+
+				doc.text("PÁGINA " + pagina + " DE " + totalPaginas, 500, papel[1] - 60);
+
+			} else {
+				if (vacia) {
+					if (usuario.empresa.imagen.length > 100) { doc.image(usuario.empresa.imagen, 60, 40, { fit: [65, 65] }); } //{ width: 50, height: 50 }
+					doc.font('Helvetica-Bold', 8);
+					doc.text(usuario.empresa.razon_social.toUpperCase(), 60, 105);
+					doc.font('Helvetica', 7);
+					doc.text(venta.sucursal.nombre.toUpperCase(), 60, 113);
+					var longitudCaracteres = venta.sucursal.direccion.length;
+					var yDesc = (longitudCaracteres <= 45) ? 129 : ((longitudCaracteres > 45 && longitudCaracteres <= 90) ? 139 : 145);
+					doc.text(venta.sucursal.direccion.toUpperCase(), 60, 121);
+					var telefono = (venta.sucursal.telefono1 != null ? venta.sucursal.telefono1 : "") +
+						(venta.sucursal.telefono2 != null ? "-" + venta.sucursal.telefono2 : "") +
+						(venta.sucursal.telefono3 != null ? "-" + venta.sucursal.telefono3 : "");
+					doc.text("TELF.: " + telefono, 60, yDesc);
+					doc.text("COCHABAMBA - BOLIVIA", 60, yDesc + 8);
+				}
+				doc.font('Helvetica-Bold', 16);
+				doc.text(venta.configuracion.tituloFactura.nombre.toUpperCase(), 250, 90);
+				doc.font('Helvetica-Bold', 8);
+				doc.text(venta.actividad.nombre, 380, 95, { width: 200 });
+
+
+				if (completa || vacia) {
+					doc.rect(380, 40, 190, 50).stroke();
+					doc.text("NIT : ", 390, 50);
+					doc.text("FACTURA No : ", 390, 60);
+					doc.text("AUTORIZACIÓN No : ", 390, 70);
+				}
+				doc.text(usuario.empresa.nit, 500, 50);
+				doc.text(venta.factura, 500, 60);
+				doc.text(venta.autorizacion, 500, 70);
+
+				if (completa || vacia) {
+					doc.rect(50, 160, 520, 40).stroke();
+					doc.text("FECHA : ", 60, 165);
+					doc.text("SEÑOR(ES) : ", 60, 175);
+					doc.text("NIT : ", 360, 165);
+				}
+				doc.text(venta.fechaTexto, 120, 165);
+				doc.text(venta.cliente.razon_social, 120, 175);
+				doc.text(venta.cliente.nit, 400, 165);
+
+				if (completa || vacia) {
+					doc.rect(50, 200, 520, 25).stroke();
+					//doc.rect(50,225,520,papel[1]-175-225).stroke();
+					doc.text("CODIGO", 55, 210, { width: 70 });
+					doc.text("CANT.", 125, 210);
+					if (venta.detallesVenta[0].producto) {
+						doc.text("UNIDAD", 155, 210);
+					}
+					doc.text("DETALLE", 198, 210);
+
+					if (venta.con_vencimiento) {
+						doc.text("VENC.", 340, 210);
+						doc.text("LOTE", 380, 210);
+					}
+					if (venta.detallesVenta[0].producto) {
+						doc.text("P.UNIT.", 410, 210);
+					}
+					doc.text("IMP.", 450, 210);
+					if (venta.detallesVenta[0].producto) {
+						doc.text("DESC.", 490, 210);
+					}
+					doc.text("TOTAL", 530, 210);
+				}
+				doc.font('Helvetica', 7);
+
+				doc.text("PÁGINA " + pagina + " DE " + totalPaginas, 500, papel[1] - 60);
+			}
+		};
+		return res;
+	}])
+
+	//Imprimir formato Sin Formato del margen
+	.factory('ImprimirFacturaCartaOficioSinFormato', ['blockUI', 'VerificarDescuentos', 'Diccionario', 'DibujarCabeceraFacturaNVCartaOficioSinFormato', 'DibujarCabeceraFacturaNVmedioOficio', '$timeout',
+		function (blockUI, VerificarDescuentos, Diccionario, DibujarCabeceraFacturaNVCartaOficioSinFormato, DibujarCabeceraFacturaNVmedioOficio, $timeout) {
 			var res = function (venta, papel, vacia, completa, semicompleta, usuario) {
 				var doc = new PDFDocument({ compress: false, size: papel, margin: 10 });
 				var stream = doc.pipe(blobStream());
@@ -913,19 +1297,19 @@ angular.module('agil.servicios')
 						itemsPorPagina = 3;
 					}
 					var y = 240, items = 0, pagina = 1, totalPaginas = Math.ceil(venta.detallesVenta.length / itemsPorPagina);
-					DibujarCabeceraFacturaNVCartaOficio(doc, vacia, completa, venta, papel, pagina, totalPaginas, usuario);
+					DibujarCabeceraFacturaNVCartaOficioSinFormato(doc, vacia, completa, venta, papel, pagina, totalPaginas, usuario);
 					for (var i = 0; i < venta.detallesVenta.length && items <= itemsPorPagina; i++) {
 						doc.font('Helvetica', 8);
 						if (venta.detallesVenta[i].producto) {
 							venta.detallesVenta[i].fecha_vencimiento = new Date(venta.detallesVenta[i].fecha_vencimiento);
 							var fechaVencimientoTexto = venta.detallesVenta[i].fecha_vencimiento.getDate() + "/" + (venta.detallesVenta[i].fecha_vencimiento.getMonth() + 1) + "/" + venta.detallesVenta[i].fecha_vencimiento.getFullYear().toString().substring(2);
-
+							
 							doc.text(venta.detallesVenta[i].producto.codigo, 55, y, { width: 70 });
-							doc.text(venta.detallesVenta[i].cantidad, 130, y);
-							doc.text(venta.detallesVenta[i].producto.unidad_medida, 155, y - 3, { width: 43 });
+							doc.text(venta.detallesVenta[i].cantidad, 135, y);
+							doc.text(venta.detallesVenta[i].producto.unidad_medida, 180, y - 3, { width: 43 });
 							var longitudCaracteres = venta.detallesVenta[i].producto.nombre.length;
 							var yDesc = (longitudCaracteres <= 24) ? y : ((longitudCaracteres > 24 && longitudCaracteres <= 60) ? y - 4 : y - 11);
-							doc.text(venta.detallesVenta[i].producto.nombre, 198, yDesc, { width: 130 });
+							doc.text(venta.detallesVenta[i].producto.nombre, 240, yDesc, { width: 130 });
 
 							if (venta.con_vencimiento) {
 								doc.text(fechaVencimientoTexto, 340, y);
@@ -933,11 +1317,11 @@ angular.module('agil.servicios')
 							}
 
 							doc.text(venta.detallesVenta[i].precio_unitario.toFixed(2), 410, y);
-							doc.text(venta.detallesVenta[i].importe.toFixed(2), 450, y);
-							doc.text((venta.detallesVenta[i].descuento ? venta.detallesVenta[i].descuento.toFixed(2) : "0.00"), 490, y);
+							//doc.text(venta.detallesVenta[i].importe.toFixed(2), 450, y);
+							//doc.text((venta.detallesVenta[i].descuento ? venta.detallesVenta[i].descuento.toFixed(2) : "0.00"), 490, y);
 							doc.text(venta.detallesVenta[i].total.toFixed(2), 530, y);
 							if (completa || vacia) {
-								doc.rect(50, y - 15, 520, 30).stroke();
+								//doc.rect(50, y - 15, 520, 30).stroke();
 							}
 						} else {
 							venta.detallesVenta[i].fecha_vencimiento = new Date(venta.detallesVenta[i].fecha_vencimiento);
@@ -959,9 +1343,9 @@ angular.module('agil.servicios')
 							doc.text(venta.detallesVenta[i].importe.toFixed(2), 450, y);
 							// doc.text((venta.detallesVenta[i].descuento ? venta.detallesVenta[i].descuento.toFixed(2) : "0.00"), 490, y);
 							doc.text(venta.detallesVenta[i].total.toFixed(2), 530, y);
-							if (completa || vacia) {
-								doc.rect(50, y - 15, 520, 30).stroke();
-							}
+					/*if (completa || vacia) {
+						doc.rect(50, y - 15, 520, 30).stroke();
+					}*/
 						}
 						y = y + 30;
 						items++;
@@ -970,21 +1354,21 @@ angular.module('agil.servicios')
 							y = 240;
 							items = 0;
 							pagina = pagina + 1;
-							DibujarCabeceraFacturaNVCartaOficio(doc, vacia, completa, venta, papel, pagina, totalPaginas, usuario);
+							DibujarCabeceraFacturaNVCartaOficioSinFormato(doc, vacia, completa, venta, papel, pagina, totalPaginas, usuario);
 						}
 					}
 					if (completa || vacia) {
 						doc.font('Helvetica-Bold', 8);
-						doc.text("TOTAL", 455, y);
+						doc.text("TOTAL", 485, y);
 					}
 					doc.font('Helvetica', 8);
-					doc.text(venta.total.toFixed(2), 520, y);
+					doc.text(venta.total.toFixed(2), 530, y);
 
 					doc.text("SON : " + venta.numero_literal, 55, y);
 
-					if (completa || vacia) {
+					/*if (completa || vacia) {
 						doc.rect(50, y - 15, 520, 30).stroke();
-					}
+					}*/
 					var fechaActual = new Date();
 					var min = fechaActual.getMinutes();
 					if (min < 10) {
@@ -1014,7 +1398,7 @@ angular.module('agil.servicios')
 					for (var i = 0; i < venta.detallesVenta.length && items <= itemsPorPagina; i++) {
 						doc.font('Helvetica', 8);
 						if (venta.detallesVenta[i].producto) {
-							if (existenDescuentos) {
+							if (existenDescuentos) {								
 								doc.text(venta.detallesVenta[i].producto.codigo, 55, y);
 								doc.text(venta.detallesVenta[i].cantidad, 115, y);
 								doc.text(venta.detallesVenta[i].producto.unidad_medida, 140, y);
@@ -1124,8 +1508,8 @@ angular.module('agil.servicios')
 			};
 			return res;
 		}])
-
-	.factory('DibujarCabeceraFacturaNVCartaOficio', [function () {
+		
+	.factory('DibujarCabeceraFacturaNVCartaOficioSinFormato', [function () {
 		var res = function (doc, vacia, completa, venta, papel, pagina, totalPaginas, usuario) {
 			if (venta.configuracion.usar_pf) {
 				if (vacia) {
@@ -1136,7 +1520,7 @@ angular.module('agil.servicios')
 					doc.text(venta.sucursal.nombre.toUpperCase(), 60, 113);
 					var longitudCaracteres = venta.sucursal.direccion.length;
 					var yDesc = (longitudCaracteres <= 45) ? 129 : ((longitudCaracteres > 45 && longitudCaracteres <= 90) ? 139 : 145);
-					doc.text(venta.sucursal.direccion.toUpperCase(), 60, 121);
+					doc.text(venta.sucursal.direccion.toUpperCase(), 60, 121,{width: 100});
 					var telefono = (venta.sucursal.telefono1 != null ? venta.sucursal.telefono1 : "") +
 						(venta.sucursal.telefono2 != null ? "-" + venta.sucursal.telefono2 : "") +
 						(venta.sucursal.telefono3 != null ? "-" + venta.sucursal.telefono3 : "");
@@ -1145,16 +1529,19 @@ angular.module('agil.servicios')
 				}
 				doc.font('Helvetica-Bold', 16);
 				doc.text(venta.configuracion.tituloFactura.nombre.toUpperCase(), 250, 90);
-				doc.font('Helvetica-Bold', 8);
+				doc.font('Helvetica-Bold', 10);
 				if (completa || vacia) {
-					doc.rect(380, 40, 190, 50).stroke();
-					doc.text("NIT : ", 390, 50);
-					doc.text("Nota No : ", 390, 60);
+				//doc.rect(380, 40, 190, 50).stroke();
+					doc.text("NIT : ", 410, 50);
+					doc.text("Nota No : ", 410, 60);
 				}
+				
 				doc.text(usuario.empresa.nit, 500, 50);
+				doc.font('Helvetica-Bold', 13);
 				doc.text(venta.factura, 500, 60);
+				doc.font('Helvetica-Bold', 10);
 				if (completa || vacia) {
-					doc.rect(50, 160, 520, 40).stroke();
+				//doc.rect(50, 160, 520, 40).stroke();
 					doc.text("FECHA : ", 60, 165);
 					doc.text("SEÑOR(ES) : ", 60, 175);
 					doc.text("NIT : ", 360, 165);
@@ -1169,9 +1556,9 @@ angular.module('agil.servicios')
 					doc.text("CODIGO", 55, 210, { width: 70 });
 					doc.text("CANT.", 125, 210);
 					if (venta.detallesVenta[0].producto) {
-						doc.text("UNIDAD", 155, 210);
+						doc.text("UNIDAD", 175, 210);
 					}
-					doc.text("DETALLE", 198, 210);
+					doc.text("DETALLE", 250, 210);
 
 					if (venta.con_vencimiento) {
 						doc.text("VENC.", 340, 210);
@@ -1180,11 +1567,11 @@ angular.module('agil.servicios')
 					if (venta.detallesVenta[0].producto) {
 						doc.text("P.UNIT.", 410, 210);
 					}
-					doc.text("IMP.", 450, 210);
+					/*doc.text("IMP.", 450, 210);
 					if (venta.detallesVenta[0].producto) {
 						doc.text("DESC.", 490, 210);
-					}
-					doc.text("TOTAL", 530, 210);
+					}*/
+					doc.text("TOTAL", 525, 210);
 				}
 				doc.font('Helvetica', 7);
 
@@ -1213,7 +1600,7 @@ angular.module('agil.servicios')
 
 
 				if (completa || vacia) {
-					doc.rect(380, 40, 190, 50).stroke();
+					//doc.rect(380, 40, 190, 50).stroke();
 					doc.text("NIT : ", 390, 50);
 					doc.text("FACTURA No : ", 390, 60);
 					doc.text("AUTORIZACIÓN No : ", 390, 70);
@@ -1223,7 +1610,7 @@ angular.module('agil.servicios')
 				doc.text(venta.autorizacion, 500, 70);
 
 				if (completa || vacia) {
-					doc.rect(50, 160, 520, 40).stroke();
+					//doc.rect(50, 160, 520, 40).stroke();
 					doc.text("FECHA : ", 60, 165);
 					doc.text("SEÑOR(ES) : ", 60, 175);
 					doc.text("NIT : ", 360, 165);
@@ -1233,7 +1620,7 @@ angular.module('agil.servicios')
 				doc.text(venta.cliente.nit, 400, 165);
 
 				if (completa || vacia) {
-					doc.rect(50, 200, 520, 25).stroke();
+				//doc.rect(50, 200, 520, 25).stroke();
 					//doc.rect(50,225,520,papel[1]-175-225).stroke();
 					doc.text("CODIGO", 55, 210, { width: 70 });
 					doc.text("CANT.", 125, 210);
@@ -1249,10 +1636,10 @@ angular.module('agil.servicios')
 					if (venta.detallesVenta[0].producto) {
 						doc.text("P.UNIT.", 410, 210);
 					}
-					doc.text("IMP.", 450, 210);
+					/*doc.text("IMP.", 450, 210);
 					if (venta.detallesVenta[0].producto) {
 						doc.text("DESC.", 490, 210);
-					}
+					}*/
 					doc.text("TOTAL", 530, 210);
 				}
 				doc.font('Helvetica', 7);
