@@ -38,7 +38,6 @@ angular.module('agil.controladores')
 		});
 
 		$scope.inicio = function () {
-
 			$scope.ordenProductos = true;
 			$scope.esContado = true;
 			//$scope.obtenerClientes();
@@ -1155,8 +1154,19 @@ angular.module('agil.controladores')
 			var data = [["N°", "Tipo de Transaccion", "Sucursal", "Razon Social", "N° DE LA FACTURA", "Nit Cliente", "Fac.", "Fecha-Fact.", "Hora-Fecha", "Monto", "Tipo de Pago", "Pago", "Sucursal dest"]]
 			/*var sumaImporte=0,sumaImporteNo=0,sumaTotal=0,sumaDescuentos=0,sumaImporteBase=0,sumaCredito=0;*/
 			for (var i = 0; i < ventas.length; i++) {
-				var columns = [];
 				ventas[i].fecha = new Date(ventas[i].fecha);
+			}
+			ventas.sort(function(a, b) {
+				if (a.fecha > b.fecha) {
+				  return 1;
+				}
+				if (a.fecha < b.fecha) {
+				  return -1;
+				}
+				return 0;
+			  })
+			for (var i = 0; i < ventas.length; i++) {
+				var columns = [];
 				columns.push(i + 1);
 				columns.push(ventas[i].movimiento.clase.nombre);
 				columns.push(ventas[i].almacen.sucursal.nombre);
@@ -1198,12 +1208,11 @@ angular.module('agil.controladores')
 						columns.push("");
 						columns.push("");
 						columns.push(j + 1);
-						columns.push(ventas[i].detallesVenta[j].producto.nombre);
-						columns.push(ventas[i].detallesVenta[j].producto.id);
-						columns.push(ventas[i].detallesVenta[j].producto.unidad_medida);
-						columns.push(ventas[i].detallesVenta[j].cantidad);
-						columns.push(ventas[i].detallesVenta[j].importe);
-
+						columns.push(ventas[i].detallesVenta[j].producto ? ventas[i].detallesVenta[j].producto.nombre : 'ERROR SIN NOMBRE');
+						columns.push(ventas[i].detallesVenta[j].producto ? ventas[i].detallesVenta[j].producto.codigo : 'ERROR SIN NOMBRE');
+						columns.push(ventas[i].detallesVenta[j].producto ? ventas[i].detallesVenta[j].producto.unidad_medida : 'ERROR SIN NOMBRE');
+						columns.push(ventas[i].detallesVenta[j].producto ? ventas[i].detallesVenta[j].cantidad : 'ERROR SIN NOMBRE');
+						columns.push(ventas[i].detallesVenta[j].producto ? ventas[i].detallesVenta[j].importe : 'ERROR SIN NOMBRE');
 						data.push(columns);
 					}
 				}

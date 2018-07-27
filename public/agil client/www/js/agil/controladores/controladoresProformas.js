@@ -46,8 +46,10 @@ angular.module('agil.controladores')
             promesa.then(function (res) {
                 $scope.totalProformas = 0
                 for (var i = 0; i < $scope.proformas.length; i++) {
-                    $scope.totalProformas += $scope.proformas[i].totalImporteBs
-                    $scope.totalProformasDolar = $scope.totalProformas / res.monedaCambio.dolar
+                    if (!$scope.proformas[i].eliminado) {
+                        $scope.totalProformas += $scope.proformas[i].totalImporteBs
+                        $scope.totalProformasDolar = $scope.totalProformas / res.monedaCambio.dolar
+                    }
                 }
             }, function (err) {
                 $scope.mostrarMensaje('Hubo un problema al recuperar el cambio de dolar para ' + hoy.toLocaleDateString)
@@ -81,8 +83,10 @@ angular.module('agil.controladores')
             var prom = ProformaEliminar(proforma)
             prom.then(function (res) {
                 if (!res.hasErr) {
-                    proforma.eliminado = true
+                    proforma.eliminado = true;
+                    $scope.calcularTotalProformas();
                 }
+                
                 $scope.mostrarMensaje(res.mensaje)
                 blockUI.stop()
             }).catch(function (err) {
@@ -338,7 +342,7 @@ angular.module('agil.controladores')
         }
 
         $scope.establecerCliente = function (cliente) {
-            $scope.proforma.cliente = cliente;
+            $scope.proforma.cliente = cliente
         }
 
         $scope.enfocar = function (elemento) {
@@ -925,7 +929,8 @@ angular.module('agil.controladores')
         }
 
         $scope.seleccionarcliente = function (client) {
-            $scope.proforma.cliente = client
+            var sel = Object.assign({}, client);
+            $scope.proforma.cliente = sel
             $scope.cerrardialogClientesProforma()
         }
 
@@ -1279,7 +1284,7 @@ angular.module('agil.controladores')
                                     $scope.imprimirMixto($scope.proforma, imagen)
                                 }
                             } else {
-                                convertUrlToBase64Image("img/agilsoftware.png", function (imagenEmpresa) {                                  
+                                convertUrlToBase64Image("img/agilsoftware.png", function (imagenEmpresa) {
                                     if (imagenEmpresa.length > 0 && imagenEmpresa !== "error") {
                                         $scope.mostrarMensaje('No se encuentra la imagen de la empresa. Se usara la imagen del software.')
                                         var imagen = imagenEmpresa;

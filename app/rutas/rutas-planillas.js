@@ -478,22 +478,6 @@ module.exports = function (router, sequelize, Sequelize, Usuario, RRHHParametros
 	                			]			    
                 			}
                 		]
-                		
-        //         		as: 'empleadosFichas', 
-
-                		
-        //         		where: {
-                			
-				    //     	haber_basico: {$ne: null} 
-				    //     },
-				        
-				        
-        //         		include: [{ model: RrhhEmpleadoCargo, as: 'cargos', include: [{ model: Clase, as: "cargo" }] }],
-                		
-        //         		order: [['id', 'DESC']],
-                		
-                		
-                		
                 	}  
                 	
                 ]
