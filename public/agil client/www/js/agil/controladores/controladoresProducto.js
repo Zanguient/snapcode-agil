@@ -198,9 +198,26 @@ angular.module('agil.controladores')
 		}
 
 		$scope.verProducto = function (producto) {
-			$scope.producto = producto;
+			var promesa = DatosProducto(producto.id);
+			promesa.then(function (datosProducto) {
+				$scope.producto = datosProducto;
+				$scope.producto.publicar_panel = $scope.producto.publicar_panel == 1 ? true : false;
+				$scope.producto.activar_inventario = $scope.producto.activar_inventario == 1 ? true : false;
 
-			$scope.abrirPopup($scope.idModalWizardProductoVista);
+				$scope.producto.totalBase = 0;
+				for (var i = 0; i < $scope.producto.productosBase.length; i++) {
+					$scope.producto.totalBase = $scope.producto.totalBase + ($scope.producto.productosBase[i].productoBase.precio_unitario * $scope.producto.productosBase[i].formulacion);
+
+
+				}
+				$scope.productoBaseSeleccion = {};
+
+				if ($scope.producto.almacenErp) {
+					$scope.producto.sucursal_erp = $scope.producto.almacenErp.sucursal;
+					$scope.obtenerAlmacenes($scope.producto.sucursal_erp.id);
+				}
+				$scope.abrirPopup($scope.idModalWizardProductoVista);
+			});
 		}
 
 		$scope.cerrarPopPupVista = function () {
