@@ -351,8 +351,8 @@
 							<div class="form-group">
 								<label class="col-sm-3 control-label no-padding-right">Grupo</label>
 								<div class="col-sm-9">
-									<select required name="grupo_producto" id="grupo_producto" ng-model="producto.grupo" ng-options="grupoProducto as grupoProducto.nombre for grupoProducto in gruposProducto | filter:{habilitado:1} track by grupoProducto.id">
-									</select>
+										<select required name="grupo_producto" id="grupo_producto" ng-model="producto.grupo" ng-options="grupoProducto as grupoProducto.nombre for grupoProducto in gruposProducto | filter:{habilitado:1} track by grupoProducto.id">
+											</select>
 								</div>
 							</div>
 							<div class="form-group">
@@ -751,7 +751,7 @@
 
 								<tbody>
 									<tr ng-repeat="detalleMovimiento in kardexproduto.detallesMovimiento | filter:search:strict| filtroKardex:{lote:filtro.lote,datos:kardexproduto.detallesMovimiento}">
-										<td>{{detalleMovimiento.movimiento.fecha | date:"dd/MM/yyyy "}}</td>
+										<td>{{detalleMovimiento.id}}</td>
 										<td>
 											<p ng-if="detalleMovimiento.movimiento.id_tipo != '7'">{{detalleMovimiento.tipo}} {{detalleMovimiento.movimiento.compra.proveedor.razon_social}}</p>
 											<p ng-if="detalleMovimiento.movimiento.id_tipo != '6'">{{detalleMovimiento.tipo}} {{detalleMovimiento.movimiento.venta.cliente.razon_social}}</p>
@@ -927,14 +927,16 @@
 							<label class="col-sm-3 control-label no-padding-right" for="grupo">Grupo</label>
 
 							<div class="col-sm-9">
-								<input disabled type="text" id="grupo" ng-model="producto.grupo" placeholder="Grupo" class="form-control" />
+									<select required disabled name="grupo_producto" id="grupo_producto" ng-model="producto.grupo" ng-options="grupoProducto as grupoProducto.nombre for grupoProducto in gruposProducto | filter:{habilitado:1} track by grupoProducto.id">
+										</select>
 							</div>
 						</div>
 						<div class="form-group">
 							<label class="col-sm-3 control-label no-padding-right" for="subgrupo">Sub-Grupo</label>
 
 							<div class="col-sm-9">
-								<input disabled type="text" id="subgrupo" ng-model="producto.subgrupo" placeholder="Sub-Grupo" class="form-control" />
+									<select required disabled name="subgrupo_producto" id="subgrupo_producto" ng-model="producto.subgrupo" ng-options="subgrupoProducto as subgrupoProducto.nombre for subgrupoProducto in subgruposProducto | filter:{habilitado:1} track by subgrupoProducto.id">
+										</select>
 							</div>
 						</div>
 						<div class="form-group">
