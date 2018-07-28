@@ -453,12 +453,14 @@ module.exports = function (router, sequelize, Sequelize, Usuario, RRHHParametros
 
     	router.route('/rrhh-planilla-rc-iva/:id_empresa/gestion/:gestion/mes/:mes')
 		.get(function (req, res) {
+			var condicionRCIVA={ id_empresa:req.params.id_empresa, anio:req.params.gestion, mes:req.params.mes };
+
+			if (req.params.mes == "TODOS") {
+				condicionRCIVA={ id_empresa:req.params.id_empresa, anio:req.params.gestion};
+			}
+
     		RRHHPlanillaRcIva.findAll({
-            	where: {
-                    id_empresa:req.params.id_empresa, 
-                    anio:req.params.gestion,
-                    mes:req.params.mes
-                },
+            	where: condicionRCIVA,
                 include: [
                 	{ 
                 		model: RRHHDetallePlanillaRcIva, as: 'rrhhPlanillaRcIva',
