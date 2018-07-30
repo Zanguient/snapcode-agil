@@ -183,25 +183,26 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 			}
 			DetalleMovimiento.findAll({
 				where: { id_producto: req.params.id_producto },
-				include: [{ model: Inventario, as: 'inventario',required:false},
+				include: [{ model: Inventario, as: 'inventario'},
 				{
-					model: Movimiento, as: 'movimiento',required:false,
+					model: Movimiento, as: 'movimiento',
 					where: condicionMovimiento,
 					include: [{
-						model: Compra, as: 'compra',required:false,
-						include: [{ model: Proveedor, as: 'proveedor',required:false }]
+						model: Compra, as: 'compra', required: false,
+						include: [{ model: Proveedor, as: 'proveedor' }]
 					},
 					{
-						model: Venta, as: 'venta',required:false,
-						include: [{ model: Cliente, as: 'cliente',required:false }]
+						model: Venta, as: 'venta', required: false,
+						include: [{ model: Cliente, as: 'cliente' }]
 					},
 					{
-						model: Almacen, as: 'almacen',required:false,
-						include: [{ model: Sucursal, as: 'sucursal',required:false }]
+						model: Almacen, as: 'almacen', required: false,
+						include: [{ model: Sucursal, as: 'sucursal' }]
 					},
-					{ model: Tipo, as: 'tipo',required:false },
-					{ model: Clase, as: 'clase',required:false }]
-				}],
+					{ model: Tipo, as: 'tipo'},
+					{ model: Clase, as: 'clase' }]
+				}
+				],
 				order: [[{ model: Movimiento, as: 'movimiento' }, 'fecha', 'ASC']]
 			}).then(function (productos) {
 				res.json(productos);
