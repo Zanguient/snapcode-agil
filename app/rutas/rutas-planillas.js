@@ -462,6 +462,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, RRHHParametros
     		RRHHPlanillaRcIva.findAll({
             	where: condicionRCIVA,
                 include: [
+                	{model: Empresa, as: 'empresa'},
                 	{ 
                 		model: RRHHDetallePlanillaRcIva, as: 'rrhhPlanillaRcIva',
                 		include: [
@@ -480,7 +481,8 @@ module.exports = function (router, sequelize, Sequelize, Usuario, RRHHParametros
 	                			]			    
                 			}
                 		]
-                	}  
+                	}
+
                 	
                 ]
             }).then(function (planillas) {

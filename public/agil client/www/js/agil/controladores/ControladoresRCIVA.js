@@ -73,6 +73,148 @@ angular.module('agil.controladores')
         $scope.cerrarPopup($scope.idModalNuevoPlanillaRCIVA); 
     }
 
+    $scope.generarPdfPLanillaRCIVA = function (planillaRcIva) {
+            blockUI.start();
+            var promesa = ListaRRHHPlanillaRCIVA($scope.usuario.id_empresa, planillaRcIva.gestion, planillaRcIva.mes);
+            promesa.then(function (datos) {
+                var DetalleplanillaRcIva = datos.planillas
+                var doc = new PDFDocument({ compress: false, margin: 10, size: 'A4', layout: 'landscape' });
+                var stream = doc.pipe(blobStream());
+                // draw some text
+                $scope.dibujarCabeceraPDFPlanillaRCIVA(doc, $scope.usuario, planillaRcIva, 1);
+                doc.font('Helvetica', 8);
+                var y = 170, itemsPorPagina = 12, items = 0, pagina = 1;
+                var sumaImporte = 0, sumaImporteIce = 0, sumaImporteExp = 0, sumaImporteGrab = 0, sumaTotal = 0, sumaDescuentos = 0, sumaImporteBase = 0, sumaCredito = 0;
+                var sumaSubImporte = 0, sumaSubImporteIce = 0, sumaSubImporteExp = 0, sumaSubImporteGrab = 0, sumaSubTotal = 0, sumaSubDescuentos = 0, sumaSubImporteBase = 0, sumaSubCredito = 0;
+                for (var i = 0; i < DetalleplanillaRcIva.length && items <= itemsPorPagina; i++) {
+                    doc.rect(40, y - 10, 760, 30).stroke();
+                    // ventas[i].fecha = new Date(ventas[i].fecha);
+                    doc.text(i + 1, 45, y);
+                    doc.text(DetalleplanillaRcIva[i].anio, 60, y);
+                    doc.text(DetalleplanillaRcIva[i].mes.split("-")[1], 90, y);
+                    doc.text(DetalleplanillaRcIva[i].neto_imponible, 140, y);
+                    doc.text((DetalleplanillaRcIva[i].dos_smn), 190, y);
+                    doc.text(DetalleplanillaRcIva[i].diferencia, 230, y);
+                    doc.text(DetalleplanillaRcIva[i].rc_iva, 283, y);
+                    doc.text(DetalleplanillaRcIva[i].dos_smn13, 325, y);
+                    doc.text(DetalleplanillaRcIva[i].f110, 365, y);
+                    doc.text(DetalleplanillaRcIva[i].rc_iva_fisico, 400, y);
+                    doc.text(DetalleplanillaRcIva[i].saldo_dependiente, 440, y);
+                    doc.text(DetalleplanillaRcIva[i].saldo_anterior, 490, y);
+                    doc.text(DetalleplanillaRcIva[i].actualizacion, 530, y);
+                    doc.text(DetalleplanillaRcIva[i].saldo_actualizado, 580, y);
+                    doc.text(DetalleplanillaRcIva[i].saldo_total, 625, y);
+                    doc.text(DetalleplanillaRcIva[i].saldo_utilizado, 665, y);
+                    doc.text(DetalleplanillaRcIva[i].rc_iva_mes, 705, y);
+                    doc.text(DetalleplanillaRcIva[i].nuevo_saldo, 740, y);
+                    y = y + 30;
+                    // sumaSubImporte = sumaSubImporte + ventas[i].importe;
+                    // sumaSubImporteIce = 0;
+                    // sumaSubImporteExp = 0;
+                    // sumaSubImporteGrab = 0;
+                    // sumaSubTotal = sumaSubTotal + ventas[i].importe;
+                    // sumaSubDescuentos = sumaSubDescuentos + 0;
+                    // sumaSubImporteBase = sumaSubImporteBase + ventas[i].total;
+                    // sumaSubCredito = sumaSubCredito + (Math.round((ventas[i].total * 0.13) * 100) / 100);
+                    // sumaImporte = sumaImporte + ventas[i].importe;
+                    // sumaImporteIce = 0;
+                    // sumaImporteExp = 0;
+                    // sumaImporteGrab = 0;
+                    // sumaTotal = sumaTotal + ventas[i].importe;
+                    // sumaDescuentos = sumaDescuentos + 0;
+                    // sumaImporteBase = sumaImporteBase + ventas[i].total;
+                    // sumaCredito = sumaCredito + (Math.round((ventas[i].total * 0.13) * 100) / 100);
+                    // items++;
+
+                    // if (items == itemsPorPagina || i + 1 == ventas.length) {
+                    //     doc.font('Helvetica-Bold', 8);
+                    //     doc.text("SUBTOTALES", 283, y);
+                    //     doc.text(Math.round((sumaSubImporte) * 100) / 100, 385, y);
+                    //     doc.text(Math.round((sumaSubImporteIce) * 100) / 100, 430, y);
+                    //     doc.text(Math.round((sumaSubImporteExp) * 100) / 100, 465, y);
+                    //     doc.text(Math.round((sumaSubImporteGrab) * 100) / 100, 507, y);
+                    //     doc.text(Math.round((sumaSubTotal) * 100) / 100, 540, y);
+                    //     doc.text(Math.round((sumaSubDescuentos) * 100) / 100, 580, y);
+                    //     doc.text(Math.round((sumaSubImporteBase) * 100) / 100, 615, y);
+                    //     doc.text(Math.round((sumaSubCredito) * 100) / 100, 650, y);
+                    //     doc.rect(40, y - 10, 720, 30).stroke();
+                    //     doc.font('Helvetica', 8);
+                    //     sumaSubImporte = 0; sumaSubImporteNo = 0; sumaSubTotal = 0; sumaSubDescuentos = 0; sumaSubImporteBase = 0; sumaSubCredito = 0;
+
+                    //     if (i + 1 == ventas.length) {
+                    //         doc.font('Helvetica-Bold', 8);
+                    //         doc.text("TOTALES", 283, y + 30);
+                    //         doc.text(Math.round((sumaImporte) * 100) / 100, 385, y + 30);
+                    //         doc.text(Math.round((sumaImporteIce) * 100) / 100, 430, y + 30);
+                    //         doc.text(Math.round((sumaImporteExp) * 100) / 100, 465, y + 30);
+                    //         doc.text(Math.round((sumaImporteGrab) * 100) / 100, 507, y + 30);
+                    //         doc.text(Math.round((sumaTotal) * 100) / 100, 540, y + 30);
+                    //         doc.text(Math.round((sumaDescuentos) * 100) / 100, 580, y + 30);
+                    //         doc.text(Math.round((sumaImporteBase) * 100) / 100, 615, y + 30);
+                    //         doc.text(Math.round((sumaCredito) * 100) / 100, 650, y + 30);
+                    //         doc.rect(40, y - 10 + 30, 720, 30).stroke();
+                    //         doc.font('Helvetica', 8);
+                    //     } else {
+                    //         doc.addPage({ margin: 0, bufferPages: true, layout: 'landscape' });
+                    //         y = 170;
+                    //         items = 0;
+                    //         pagina = pagina + 1;
+                    //         $scope.dibujarCabeceraPDFLibroVentas(doc, datos, reporte, pagina);
+                    //         doc.font('Helvetica', 8);
+                    //     }
+                    // }
+                }
+                doc.end();
+                stream.on('finish', function () {
+                    var fileURL = stream.toBlobURL('application/pdf');
+                    window.open(fileURL, '_blank', 'location=no');
+                });
+                blockUI.stop();
+            });
+        }
+
+    $scope.dibujarCabeceraPDFPlanillaRCIVA = function (doc, datos, reporte, pagina) {
+        doc.font('Helvetica-Bold', 12);
+        doc.text("PLANILLAS RC-IVA", 0, 25, { align: "center" });
+        doc.font('Helvetica-Bold', 8);
+        doc.text("FOLIO " + pagina, 760, 25);
+        doc.rect(40, 60, 760, 40).stroke();
+        doc.text("PERIÓDO FISCAL : ", 65, 70);
+        doc.text("NOMBRE O RAZÓN SOCIAL : ", 65, 85);
+        doc.text("NIT : ", 440, 85);
+        doc.font('Helvetica', 8);
+        doc.text("AÑO " + reporte.gestion, 140, 70);
+
+        var mesReporte = reporte.mes.split("-")[1];
+        if (reporte.mes == "TODOS") {
+           mesReporte = reporte.mes;
+        }
+        doc.text("MES " + mesReporte, 200, 70); 
+        doc.text(datos.empresa.razon_social, 195, 85);
+        doc.text(datos.empresa.nit, 460, 85);
+
+        doc.rect(40, 100, 760, 60).stroke();
+        doc.font('Helvetica-Bold', 8);
+        doc.text("Nº", 45, 110);
+        doc.text("Año", 60, 110, { width: 20 });
+        doc.text("Mes", 90, 110, { width: 50 });
+        doc.text("Neto Imponible", 140, 110, { width: 50 });
+        doc.text("2 SMN", 190, 110, { width: 35 });
+        doc.text("Diferencia", 230, 110, { width: 50 });
+        doc.text("RC-IVA 13%", 280, 110, { width: 35 });
+        doc.text("13% de 2 SMN", 325, 110, { width: 35 });
+        doc.text("F-110", 365, 110, { width: 35 });
+        doc.text("RC-IVA Fisco", 400, 110, { width: 42 });
+        doc.text("Saldo Dependiente", 440, 110, { width: 42 });
+        doc.text("Saldo Anterior", 490, 110, { width: 40 });
+        doc.text("Actualización", 530, 110, { width: 37 });
+        doc.text("Saldo Actualizado", 580, 110, { width: 35 });
+        doc.text("Saldo Total", 625, 110, { width: 35 });
+        doc.text("Saldo Utilizado", 665, 110, { width: 35 });
+        doc.text("RC-IVA Mes", 705, 110, { width: 35 });
+        doc.text("Saldo Nuevo", 740, 110);
+    }
+
     $scope.filtrarSueldos=function(planilla){
         console.log('cabezera', planilla);
         // $scope.mostrarMensaje('Venta registrada exitosamente!')

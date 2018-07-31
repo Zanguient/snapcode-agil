@@ -967,11 +967,11 @@ angular.module('agil.controladores')
                 $scope.obtenerProformas(true)
                 // $scope.recargarItemsTabla()
             } else {
-                if (___) {
-                    $scope.obtenerProformas(false, true)
-                } else {
-                    return filtro
-                }
+                // if (___) {
+                //     $scope.obtenerProformas(false, true)
+                // } else {
+                return filtro
+                // }
             }
         }
 
@@ -982,20 +982,20 @@ angular.module('agil.controladores')
             if (filtrar) {
                 $scope.paginator.currentPage = 1
             }
-            if (getLastPage) {
-                var offf = $scope.paginator.itemsPerPage * ($scope.paginator.currentPage - 1)
+            // if (getLastPage) {
+            //     var offf = $scope.paginator.itemsPerPage * ($scope.paginator.currentPage - 1)
 
-                if ($scope.paginator.itemsPerPage > $scope.proformas.length) {
-                    $scope.paginator.currentPage = $scope.paginator.pages.length
-                } else {
-                    if ($scope.paginator.currentPage == $scope.paginator.pages) {
-                        $scope.paginator.currentPage = $scope.paginator.pages.length + 1
-                    } else {
-                        $scope.paginator.currentPage = $scope.paginator.pages.length
-                    }
-                }
-                // $scope.paginator.getLastPage()
-            }
+            //     if ($scope.paginator.itemsPerPage > $scope.proformas.length) {
+            //         $scope.paginator.currentPage = $scope.paginator.pages.length
+            //     } else {
+            //         if ($scope.paginator.currentPage == $scope.paginator.pages) {
+            //             $scope.paginator.currentPage = $scope.paginator.pages.length + 1
+            //         } else {
+            //             $scope.paginator.currentPage = $scope.paginator.pages.length
+            //         }
+            //     }
+            //     // $scope.paginator.getLastPage()
+            // }
             var prom = FiltroProformas($scope.paginator)
             prom.then(function (res) {
                 $scope.proformas = res.proformas.map(function (prof) {
@@ -1012,9 +1012,9 @@ angular.module('agil.controladores')
                     $scope.mostrarMensaje(res.mensaje)
                 }
                 $scope.filtro = $scope.filtrarProformasOperaciones($scope.filtro, true, true)
-                if ($scope.paginator.currentPage < $scope.paginator.pages.length && $scope.paginator.currentPage > 1 && getLastPage) {
-                    $scope.filtrarProformasOperaciones($scope.filtro, true, false, true)
-                }
+                // if ($scope.paginator.currentPage < $scope.paginator.pages.length && $scope.paginator.currentPage > 1 && getLastPage) {
+                //     $scope.filtrarProformasOperaciones($scope.filtro, true, false, true)
+                // }
                 $timeout(function () {
                     $scope.$apply(function () {
                         $scope.totalProformas = 0
@@ -1044,7 +1044,7 @@ angular.module('agil.controladores')
                         $scope.mostrarMensaje(res.mensaje)
                         if (res.hasError === undefined) {
                             $scope.cerrardialogProformaEdicion()
-                            // $scope.filtrarProformasOperaciones($scope.filtro, true, false, true)
+                            // $scope.filtrarProformasOperaciones($scope.filtro)
                         } else {
                             $scope.proforma = res.proforma
                             proforma.fecha_proforma = new Date($scope.convertirFecha(proforma.fecha_proforma))
@@ -1064,7 +1064,7 @@ angular.module('agil.controladores')
                         $scope.mostrarMensaje(res.mensaje)
                         if (res.hasErr === undefined) {
                             $scope.cerrardialogProformaEdicion()
-                            $scope.filtrarProformasOperaciones($scope.filtro, true, false, true)
+                            $scope.filtrarProformasOperaciones($scope.filtro)
                         } else {
                             proforma.fecha_proforma = $scope.fechaATexto(proforma.fecha_proforma)
                         }
