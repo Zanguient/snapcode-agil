@@ -16,7 +16,7 @@ module.exports = function (sequelize, Usuario, Persona, Rol, UsuarioRol, Tipo, C
 	RrhhEmpleadoAusencia, RrhhEmpleadoVacaciones, RrhhEmpleadoCompensacionAusencia, RrhhClaseAsuencia, RrhhEmpleadoHistorialVacacion, RrhhEmpleadoTr3, RrhhEmpleadoAnticipoTr3, RrhhEmpleadoDeduccionIngreso,
 	RrhhEmpleadoBeneficioSocial, RrhhEmpleadoBitacoraFicha, UsuarioGrupos, RrhhEmpleadoConfiguracionRopa, GtmVentaKardex, GtmVentaKardexDetalle, RrhhEmpleadoDotacionRopaItem,
 	RrhhEmpleadoDotacionRopa, RrhhViajeDetalle, RrhhViaje, RrhhViajeDestino, RrhhViajeConductor, TransaccionSeguimiento, CuentaTransaccion, GtmDespachoDetalleResivo, RRHHPlanillaRcIva, RRHHDetallePlanillaRcIva, EmpresaAplicacion, Pedido, DetallesPedido, RrhhEmpleadoDescuentoVacacionHistorial, ActivosFijos, ActivosFijosValores, ActivosFijosConfiguracion,
-	EstadoFinancieroConfiguracionImpresion,EstadoFinancieroGestion) {
+	EstadoFinancieroConfiguracionImpresion,EstadoFinancieroGestion, ClienteCentroCostos) {
 	Persona.belongsTo(Clase, { foreignKey: 'id_lugar_nacimiento', as: 'lugar_nacimiento' });
 	Persona.belongsTo(Clase, { foreignKey: 'id_genero', as: 'genero' });
 	Persona.belongsTo(Clase, { foreignKey: 'id_lenguaje', as: 'lenguaje' });
@@ -860,8 +860,12 @@ module.exports = function (sequelize, Usuario, Persona, Rol, UsuarioRol, Tipo, C
 	Proforma.belongsTo(Cliente, { foreignKey: 'id_cliente', as: 'cliente' })
 	Usuario.hasMany(Proforma, { foreignKey: 'id_usuario', as: 'usuarios' })
 	Proforma.belongsTo(Usuario, { foreignKey: 'id_usuario', as: 'usuarioProforma' })
-	Clase.hasMany(DetallesProformas, { foreignKey: 'id_centro_costo', as: 'centrosCostos' })
-	DetallesProformas.belongsTo(Clase, { foreignKey: 'id_centro_costo', as: 'centroCosto' })
+	Clase.hasMany(DetallesProformas, { foreignKey: 'id_centro_costo', as: 'centrosCostos'})
+	DetallesProformas.belongsTo(Clase, { foreignKey: 'id_centro_costo', as: 'centroCosto'})
+	Cliente.hasMany(ClienteCentroCostos, {foreignKey: 'id_cliente', as: 'clientes'})
+	ClienteCentroCostos.belongsTo(Cliente, {foreignKey: 'id_cliente', as: 'cliente'})
+	Clase.hasMany(ClienteCentroCostos, {foreignKey: 'id_centro', as: 'centroCostos'})
+	ClienteCentroCostos.belongsTo(Clase,{ foreignKey: 'id_centro', as: 'centroCosto'})
 
 	//RrhhEmpleadoAusencia.belongsTo(MedicoPaciente, { foreignKey: 'id_empleado', as: 'empleado' })//ya no funciona 12/03/2018
 

@@ -70,7 +70,7 @@ function ejecutarScriptsTransacciones(modalNuevoIngreso, modalNuevoEgreso, modal
 }
 
 function ejecutarScriptsProformas(modalConfiguracionActividadesServicios, wizardConfiguracionActividadesServicios, dialogProformaEdicion, dialogClientesProforma, modalConfiguracionActividades, wizardConfiguracionActividades,
-	dialogmodalFechas, dialogBusquedaServicio, dialogDosificacionesDisponibles, confirmarDosificacion) {
+	dialogmodalFechas, dialogBusquedaServicio, dialogDosificacionesDisponibles, confirmarDosificacion, asignacionCentroCostoCliente) {
 	crearPopup(modalConfiguracionActividadesServicios, 'auto', 'auto');
 	crearPopup(modalConfiguracionActividades, 'auto', 'auto');
 	crearPopup(dialogProformaEdicion, 'auto', 'auto');
@@ -79,6 +79,7 @@ function ejecutarScriptsProformas(modalConfiguracionActividadesServicios, wizard
 	crearPopup(dialogBusquedaServicio, 'auto', 'auto');
 	crearPopup(dialogDosificacionesDisponibles, 'auto', 'auto');
 	crearPopup(confirmarDosificacion, 'auto', 'auto');
+	crearPopup(asignacionCentroCostoCliente, 'auto', 'auto');
 
 	aplicarWizardFormulario(wizardConfiguracionActividadesServicios);
 	aplicarWizardFormulario(wizardConfiguracionActividades);

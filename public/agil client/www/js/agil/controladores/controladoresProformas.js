@@ -2,7 +2,7 @@ angular.module('agil.controladores')
     .controller('controladorProformas', function ($scope, $filter, $rootScope, $route, $templateCache, $location, $window, $localStorage, Paginator, $timeout,
         blockUI, ClasesTipo, socket, ObtenerCambioMoneda, ClientesNit, FiltroProformas, ActividadServicio, ActividadesEmpresa,
         ServiciosEmpresa, ProformaInfo, Clientes, fechasProforma, ListaSucursalesActividadesDosificacionEmpresa, DosificacionesDisponibles, ListaSucursalesUsuario, ListaHistorialActividad, ImprimirSalida, ConfiguracionesFacturasProformas, ProformasFacturadas,
-        ActualizarProforma, GuardarProformas, ProformaEliminar, GuardarActividadesEmpresa) {
+        ActualizarProforma, GuardarProformas, ProformaEliminar, GuardarActividadesEmpresa, obtenerAsignacionCentroCosto, GuardarAsignacionCentroCosto) {
 
         $scope.usuario = JSON.parse($localStorage.usuario);
 
@@ -17,12 +17,13 @@ angular.module('agil.controladores')
         $scope.dialogBusquedaServicio = 'dialog-Busqueda-servicio-proforma'
         $scope.dialogDosificacionesDisponibles = 'dialog-dosificaciones-disponibles'
         $scope.confirmarDosificacion = 'dialog-dosificar-actividad'
+        $scope.asignacionCentroCostoCliente = 'modalEmpresaCentroCosto'
 
         $scope.$on('$viewContentLoaded', function () {
             resaltarPestaña($location.path().substring(1));
             ejecutarScriptsProformas($scope.modalConfiguracionActividadesServicios, $scope.wizardConfiguracionActividadesServicios, $scope.dialogProformaEdicion,
                 $scope.dialogClientesProforma, $scope.modalConfiguracionActividades, $scope.wizardConfiguracionActividades, $scope.dialogmodalFechas,
-                $scope.dialogBusquedaServicio, $scope.dialogDosificacionesDisponibles, $scope.confirmarDosificacion);
+                $scope.dialogBusquedaServicio, $scope.dialogDosificacionesDisponibles, $scope.confirmarDosificacion, $scope.asignacionCentroCostoCliente);
             $scope.buscarAplicacion($scope.usuario.aplicacionesUsuario, $location.path().substring(1));
         });
 
@@ -35,6 +36,7 @@ angular.module('agil.controladores')
             $scope.eliminarPopup($scope.dialogBusquedaServicio)
             $scope.eliminarPopup($scope.dialogDosificacionesDisponibles)
             $scope.eliminarPopup($scope.confirmarDosificacion)
+            $scope.eliminarPopup($scope.asignacionCentroCostoCliente)
         })
 
         $scope.calcularTotalProformas = function () {
@@ -72,7 +74,6 @@ angular.module('agil.controladores')
                 } else {
                     return false
                 }
-
             } else {
                 return false
             }
@@ -86,7 +87,6 @@ angular.module('agil.controladores')
                     proforma.eliminado = true;
                     $scope.calcularTotalProformas();
                 }
-                
                 $scope.mostrarMensaje(res.mensaje)
                 blockUI.stop()
             }).catch(function (err) {
@@ -343,6 +343,7 @@ angular.module('agil.controladores')
 
         $scope.establecerCliente = function (cliente) {
             $scope.proforma.cliente = cliente
+            $scope.obtenercentroCostosClienteEmpresa(cliente)
         }
 
         $scope.enfocar = function (elemento) {
@@ -352,6 +353,7 @@ angular.module('agil.controladores')
         }
 
         $scope.inicio = function () {
+            $scope.listaCentroCostosClienteEmpresa = []
             $scope.actividadesSucursal = []
             $scope.nActividad = {}
             $scope.proforma = {}
@@ -931,6 +933,7 @@ angular.module('agil.controladores')
         $scope.seleccionarcliente = function (client) {
             var sel = Object.assign({}, client);
             $scope.proforma.cliente = sel
+            $scope.obtenercentroCostosClienteEmpresa(client)
             $scope.cerrardialogClientesProforma()
         }
 
@@ -1215,6 +1218,77 @@ angular.module('agil.controladores')
             $scope.configuracionActividadServicio = []
             $scope.recargarItemsTabla()
             $scope.cerrarPopup($scope.modalConfiguracionActividadesServicios);
+        }
+
+        $scope.abrirConfiguracionCentrosCostos = function () {
+            $scope.abrirPopup($scope.asignacionCentroCostoCliente);
+        }
+
+        $scope.cerrarConfiguracionCentrosCostos = function () {
+            $scope.listaCentroCostosClienteEmpresa = []
+            $scope.centroCostosClienteEmpresa = {}
+            $scope.cerrarPopup($scope.asignacionCentroCostoCliente);
+        }
+
+        $scope.agregarDetalleCentroCostosCliente = function (info) {
+            if (!$scope.listaCentroCostosClienteEmpresa.some(function (data) {
+                return data.id == info.centroCosto.id
+            })) {
+                var detalle = Object.assign({}, info.centroCosto)
+                detalle.nuevo = true
+                $scope.listaCentroCostosClienteEmpresa.push(detalle)
+            } else {
+                $scope.mostrarMensaje('El centro ya fué asigando. No se puede duplicar.')
+            }
+        }
+
+        $scope.eliminarAsignacionCentroCosto = function (asignacion) {
+            $scope.listaCentroCostosClienteEmpresa[$scope.listaCentroCostosClienteEmpresa.indexOf(asignacion)].eliminado = true
+            // if (!$scope.listaCentroCostosClienteEmpresa.some(function (data, index) {
+            //     return data.id == info.centroCosto.id
+            // })) {
+            //     var detalle =Object.assign({}, info.centroCosto)
+            //     $scope.listaCentroCostosClienteEmpresa.push(detalle)
+            // }
+        }
+
+        $scope.guardarAsignacionCentroCostos = function (empresa) {
+            var button = $('#siguiente').text().trim();
+            if (button != "Siguiente") {
+                var datos = []
+                $scope.listaCentroCostosClienteEmpresa.forEach(function (centro) {
+                    if (centro.nuevo || centro.eliminado) {
+                        datos.push(centro)
+                    }
+                })
+                var prom = GuardarAsignacionCentroCosto(empresa.id, datos)
+                prom.then(function (res) {
+                    $scope.mostrarMensaje(res.mensaje)
+                    if (!res.hasErr) {
+                        $scope.cerrarConfiguracionCentrosCostos()
+                    }
+                }).catch(function (err) {
+                    var msg = (err.stack !== undefined && err.stack !== null) ? err.stack : (err.message !== undefined && err.message !== null) ? err.message : 'Se perdió la conexión.'
+                    $scope.mostrarMensaje(msg)
+                })
+            }
+        }
+
+        $scope.obtenercentroCostosClienteEmpresa = function (empresa) {
+            $scope.listaCentroCostosClienteEmpresa = []
+            var prom = obtenerAsignacionCentroCosto(empresa.id)
+            prom.then(function (res) {
+                if (res.hasErr) {
+                    $scope.mostrarMensaje(res.mensaje)
+                } else {
+                    $scope.listaCentroCostosClienteEmpresa = res.centros.map(function (centro) {
+                        return centro.centroCosto
+                    })
+                }
+            }).catch(function (err) {
+                var msg = (err.stack !== undefined && err.stack !== null) ? err.stack : (err.message !== undefined && err.message !== null) ? err.message : 'Se perdió la conexión.'
+                $scope.mostrarMensaje(msg)
+            })
         }
 
         $scope.showInHist = function (actOne, actTwo) {

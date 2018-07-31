@@ -83,7 +83,7 @@ angular.module('agil.controladores')
                 // draw some text
                 $scope.dibujarCabeceraPDFPlanillaRCIVA(doc, $scope.usuario, planillaRcIva, 1);
                 doc.font('Helvetica', 8);
-                var y = 170, itemsPorPagina = 12, items = 0, pagina = 1;
+                var y = 150, itemsPorPagina = 12, items = 0, pagina = 1;
                 var sumaImporte = 0, sumaImporteIce = 0, sumaImporteExp = 0, sumaImporteGrab = 0, sumaTotal = 0, sumaDescuentos = 0, sumaImporteBase = 0, sumaCredito = 0;
                 var sumaSubImporte = 0, sumaSubImporteIce = 0, sumaSubImporteExp = 0, sumaSubImporteGrab = 0, sumaSubTotal = 0, sumaSubDescuentos = 0, sumaSubImporteBase = 0, sumaSubCredito = 0;
                 for (var i = 0; i < DetalleplanillaRcIva.length && items <= itemsPorPagina; i++) {
@@ -193,7 +193,7 @@ angular.module('agil.controladores')
         doc.text(datos.empresa.razon_social, 195, 85);
         doc.text(datos.empresa.nit, 460, 85);
 
-        doc.rect(40, 100, 760, 60).stroke();
+        doc.rect(40, 100, 760, 40).stroke();
         doc.font('Helvetica-Bold', 8);
         doc.text("Nº", 45, 110);
         doc.text("Año", 60, 110, { width: 20 });

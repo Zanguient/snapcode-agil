@@ -378,3 +378,37 @@ angular.module('agil.servicios')
         };
         return res;
     }])
+
+    .factory('asignacionCentroCostosCliente', function ($resource) {
+        return $resource(restServer + "clientes/centroCostos/:id_cliente",
+            {
+                'update': { method: 'PUT' }
+            });
+    })
+    .factory('obtenerAsignacionCentroCosto', ['asignacionCentroCostosCliente', '$q', function (asignacionCentroCostosCliente, $q) {
+        // :desde/:hasta/:sucursal/:almacen/:movimimento/:estado/:valuado
+        var res = function (clienteId) {
+            var delay = $q.defer();
+            asignacionCentroCostosCliente.get({
+                id_cliente: clienteId}, function (entidades) {
+                delay.resolve(entidades);
+            }, function (error) {
+                delay.reject(error);
+            });
+            return delay.promise;
+        };
+        return res;
+    }]).factory('GuardarAsignacionCentroCosto', ['asignacionCentroCostosCliente', '$q', function (asignacionCentroCostosCliente, $q) {
+        // :desde/:hasta/:sucursal/:almacen/:movimimento/:estado/:valuado
+        var res = function (clienteId, listaAsignacion) {
+            var delay = $q.defer();
+            asignacionCentroCostosCliente.save({
+                id_cliente: clienteId}, listaAsignacion, function (entidades) {
+                delay.resolve(entidades);
+            }, function (error) {
+                delay.reject(error);
+            });
+            return delay.promise;
+        };
+        return res;
+    }])

@@ -1,5 +1,5 @@
 module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Proforma, DetallesProformas, Servicios, Clase, Sucursal, SucursalActividadDosificacion, Dosificacion,
-    CodigoControl, NumeroLiteral, Empresa, ConfiguracionGeneralFactura, Tipo, UsuarioSucursal, Almacen, Venta, DetalleVenta, ConfiguracionGeneralFactura, ConfiguracionFactura, Movimiento) {
+    CodigoControl, NumeroLiteral, Empresa, ConfiguracionGeneralFactura, Tipo, UsuarioSucursal, Almacen, Venta, DetalleVenta, ConfiguracionGeneralFactura, ConfiguracionFactura, Movimiento, ClienteCentroCostos) {
     router.route('/proformas/empresa/:id_empresa/mes/:mes/anio/:anio/suc/:sucursal/act/:actividad/ser/:servicio/monto/:monto/razon/:razon/usuario/:usuario/pagina/:pagina/items-pagina/:items_pagina/busqueda/:busqueda/num/:numero/facturas/:id_opcion')
         .get(function (req, res) {
             var condicion = {}
@@ -515,9 +515,9 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
             Proforma.find({
                 where: req.body.id
             }).then(function (prof) {
-                if(prof.fecha_proforma_ok || prof.fecha_factura || prof.fecha_cobro){
+                if (prof.fecha_proforma_ok || prof.fecha_factura || prof.fecha_cobro) {
                     res.json({ mensaje: 'La proforma no se puede anular, debido a que ya fué aceptada, facturada y/o cobrada. Si no ha sido aceptada, facturada o cobrada pongase en contacto con servicio.', hasErr: true })
-                }else{
+                } else {
                     Proforma.update({
                         eliminado: true
                     }, {
@@ -533,7 +533,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
                 }
             }).catch(function (err) {
                 res.json({ mensaje: err.stack !== undefined ? err.stack : err.message, hasErr: true })
-            });     
+            });
         })
 
     router.route('/factura/:id_factura/proforma/facturada/:id_empresa')
@@ -625,80 +625,100 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
             });
         })
 
-        // router.route('/clientes/centroCostos/:id_cliente')
-        // .get(function (req, res) {
-        //     ClienteCentroCostos.findAll({
-        //         where: {
-        //             id_cliente: req.params.id_cliente
-        //         },
-        //         include: [{ model: Clase, as: 'centroCostos'}]
-        //     }).then(function (centroCostos) {
-        //         res.json({ centros: centroCostos })
-        //     }).catch(function (err) {
-        //         res.json({ mensaje: err.stack !== undefined ? err.stack : err.message, hasErr: true })
-        //     });
-        // })
-        // .post(function (req, res) {
-        //     sequelize.transaction(function (t) {
-        //         var promises = []
-        //         if (req.body.length > 0) {
-        //             for (var index = 0; index < req.body.length; index++) {
-        //                 promises.push(AsignarCentroCostoCliente(req.params.id_cliente, req.body[index], t))
-        //             }
-        //         } else {
-        //             return new Promise(function (fulfill, reject) {
-        //                 reject('No hay información para guardar.')
-        //             })
-        //         }
-        //         return Promise.all(promises)
-        //     }).then(function (result) {
-        //         if (result.length > 0) {
-        //             res.json({mensaje: 'Actualizado correctamente'})
-        //         }else{
-        //             throw new Error('Error al guardar los datos.')
-        //         }
-        //     }).catch(function (err) {
-        //         res.json({ mensaje: err.stack !== undefined ? err.stack : err, hasErr: true })
-        //     });
-        // })
-        // .put(function (req, res) {
-        //     sequelize.transaction(function (t) {
-        //         var promises = []
-        //         if (req.body.length > 0) {
-        //             for (var index = 0; index < req.body.length; index++) {
-        //                 promises.push(AsignarCentroCostoCliente(req.params.id_cliente, req.body[index], t))
-        //             }
-        //         } else {
-        //             return new Promise(function (fulfill, reject) {
-        //                 reject('No hay información para guardar.')
-        //             })
-        //         }
-        //         return Promise.all(promises)
-        //     }).then(function (result) {
-        //         if (result.length > 0) {
-        //             res.json({mensaje: 'Actualizado correctamente'})
-        //         }else{
-        //             throw new Error('Error al guardar los datos.')
-        //         }
-        //     }).catch(function (err) {
-        //         res.json({ mensaje: err.stack !== undefined ? err.stack : err, hasErr: true })
-        //     });
-        // })
+    router.route('/clientes/centroCostos/:id_cliente')
+        .get(function (req, res) {
+            ClienteCentroCostos.findAll({
+                where: {
+                    id_cliente: req.params.id_cliente
+                },
+                include: [{ model: Clase, as: 'centroCosto' }]
+            }).then(function (centroCostos) {
+                res.json({ centros: centroCostos })
+            }).catch(function (err) {
+                res.json({ mensaje: err.stack !== undefined ? err.stack : err.message, hasErr: true })
+            });
+        })
+        .post(function (req, res) {
+            sequelize.transaction(function (t) {
+                var promises = []
+                if (req.body.length > 0) {
+                    for (var index = 0; index < req.body.length; index++) {
+                        if (req.body[index].eliminado) {
+                            promises.push(eliminarAsignacionCentroCostoCliente(req.params.id_cliente, req.body[index], t))
+                        } else {
+                            promises.push(AsignarCentroCostoCliente(req.params.id_cliente, req.body[index], t))
+                        }
+                    }
+                } else {
+                    return new Promise(function (fulfill, reject) {
+                        reject('No hay información para guardar.')
+                    })
+                }
+                return Promise.all(promises)
+            }).then(function (result) {
+                if (result.length > 0) {
+                    res.json({ mensaje: 'Actualizado correctamente' })
+                } else {
+                    throw new Error('Error al guardar los datos.')
+                }
+            }).catch(function (err) {
+                res.json({ mensaje: err.stack !== undefined ? err.stack : err, hasErr: true })
+            });
+        })
+    // .put(function (req, res) {
+    //     sequelize.transaction(function (t) {
+    //         var promises = []
+    //         if (req.body.length > 0) {
+    //             for (var index = 0; index < req.body.length; index++) {
+    //                 promises.push(AsignarCentroCostoCliente(req.params.id_cliente, req.body[index], t))
+    //             }
+    //         } else {
+    //             return new Promise(function (fulfill, reject) {
+    //                 reject('No hay información para guardar.')
+    //             })
+    //         }
+    //         return Promise.all(promises)
+    //     }).then(function (result) {
+    //         if (result.length > 0) {
+    //             res.json({mensaje: 'Actualizado correctamente'})
+    //         }else{
+    //             throw new Error('Error al guardar los datos.')
+    //         }
+    //     }).catch(function (err) {
+    //         res.json({ mensaje: err.stack !== undefined ? err.stack : err, hasErr: true })
+    //     });
+    // })
 
-        // function AsignarCentroCostoCliente(clienteId, centro, t) {
-        //     ClienteCentroCostos.create({
-        //         id_cliente: clienteId,
-        //         id_centro: centro
-        //     },{transaction: t}).then(function (centroCreado) {
-        //         return new Promise(function (fullfil, reject) {
-        //             fullfil(centroCreado)
-        //         })
-        //     }).catch(function (err) {
-        //         return new Promise(function (fullfil, reject) {
-        //             reject(err)
-        //         })
-        //     });
-        // }
+    function AsignarCentroCostoCliente(clienteId, centro, t) {
+        ClienteCentroCostos.create({
+            id_cliente: clienteId,
+            id_centro: centro.id
+        }, { transaction: t }).then(function (centroCreado) {
+            return new Promise(function (fullfil, reject) {
+                fullfil(centroCreado)
+            })
+        }).catch(function (err) {
+            return new Promise(function (fullfil, reject) {
+                reject(err)
+            })
+        });
+    }
+    function eliminarAsignacionCentroCostoCliente(clienteId, centro, t) {
+        ClienteCentroCostos.destroy({
+            where: {
+                id_cliente: clienteId,
+                id_centro: centro.id
+            }
+        }, { transaction: t }).then(function (AsiganacionEliminada) {
+            return new Promise(function (fullfil, reject) {
+                fullfil(centroCreado)
+            })
+        }).catch(function (err) {
+            return new Promise(function (fullfil, reject) {
+                reject(err)
+            })
+        });
+    }
 
 
     router.route('/ventas/factura/proformas')
