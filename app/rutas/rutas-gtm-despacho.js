@@ -441,10 +441,11 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, forEach, j
 		});
 	}
 
-	function calcularCostosEgresos(tipoMovimiento, tipoEgreso, producto, cantidad, inventarios, index, array, res, t, req, detalle_despacho, a) {
+	function calcularCostosEgresos(tipoMovimiento, tipoEgreso, producto, cantidad, inventarios, index, array, res, t, req, detalle_despacho, numero) {
 		var cantidadTotal = cantidad;
 		if (producto.activar_inventario) {
 			if (inventarios.length > 0) {
+				req.body.a++
 				var promises = [];
 				var totalInventario = 0
 				for (var p = 0; p < inventarios.length; p++) {
@@ -490,9 +491,9 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, forEach, j
 														id: req.body.id_sucursal,//your where conditions, or without them if you need ANY entry
 													}
 												}, { transaction: t }).then(function (SucursalEncontrada) {
-													var numero = 0;
-													numero = SucursalEncontrada.despacho_correlativo + a
-													a++
+													/* var numero = 0; */
+													/* numero = SucursalEncontrada.despacho_correlativo + a
+													a++ */
 													var total = detalle_despacho.servicio_transporte + (detalle_despacho.precio_unitario * detalle_despacho.cantidad_despacho2)
 													return GtmDespachoDetalle.create({
 														cantidad_despacho: detalle_despacho.cantidad_despacho2,
@@ -519,9 +520,9 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, forEach, j
 														id_movimiento: movimientoCreado.id
 
 													}, { transaction: t }).then(function (detalleDespachoCreado) {
-														SucursalEncontrada.despacho_correlativo = SucursalEncontrada.despacho_correlativo + a
+														
 														return Sucursal.update({
-															despacho_correlativo: SucursalEncontrada.despacho_correlativo
+															despacho_correlativo: numero+1
 														}, {
 																where: {
 																	id: req.body.id_sucursal,
@@ -582,6 +583,7 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, forEach, j
 				//}
 			}
 		} else {
+			req.body.a++
 			return Movimiento.create({
 				id_tipo: tipoMovimiento.id,
 				id_clase: tipoEgreso.id,
@@ -616,9 +618,9 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, forEach, j
 								id: req.body.id_sucursal,//your where conditions, or without them if you need ANY entry
 							}
 						}, { transaction: t }).then(function (SucursalEncontrada) {
-							var numero = 0;
+							/* var numero = 0;
 							numero = SucursalEncontrada.despacho_correlativo + a
-							a++
+							a++ */
 							var total = detalle_despacho.servicio_transporte + (detalle_despacho.precio_unitario * detalle_despacho.cantidad_despacho2)
 							return GtmDespachoDetalle.create({
 								cantidad_despacho: detalle_despacho.cantidad_despacho2,
@@ -644,9 +646,9 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, forEach, j
 								id_almacen: req.body.id_almacen
 
 							}, { transaction: t }).then(function (detalleDespachoCreado) {
-								SucursalEncontrada.despacho_correlativo = SucursalEncontrada.despacho_correlativo + a
+								/* SucursalEncontrada.despacho_correlativo = SucursalEncontrada.despacho_correlativo + a */
 								return Sucursal.update({
-									despacho_correlativo: SucursalEncontrada.despacho_correlativo
+									despacho_correlativo:numero+1
 								}, {
 										where: {
 											id: req.body.id_sucursal,
@@ -671,7 +673,7 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, forEach, j
 			req.body.mensaje = ""
 			sequelize.transaction(function (t) {
 				var promises = [];
-				var a = 0
+				req.body.a = 0
 				req.body.detalles_despacho.forEach(function (detalle_despacho, index, array) {
 					promises.push(Producto.find({
 						include: [{
@@ -693,9 +695,16 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, forEach, j
 								where: { nombre_corto: Diccionario.EGRE_PROFORMA },
 								transaction: t
 							}).then(function (tipoEgreso) {
-
-								return calcularCostosEgresos(tipoMovimiento, tipoEgreso, producto, detalle_despacho.cantidad_despacho2, producto.inventarios, index, array, res, t, req, detalle_despacho, a);
-
+								return Sucursal.find({
+									where: {
+										id: req.body.id_sucursal,//your where conditions, or without them if you need ANY entry
+									}
+								}, { transaction: t }).then(function (SucursalEncontrada) {
+									var numero = 0;
+									numero = SucursalEncontrada.despacho_correlativo + req.body.a
+									
+								return calcularCostosEgresos(tipoMovimiento, tipoEgreso, producto, detalle_despacho.cantidad_despacho2, producto.inventarios, index, array, res, t, req, detalle_despacho, numero);
+							});
 							});
 						});
 					}));
