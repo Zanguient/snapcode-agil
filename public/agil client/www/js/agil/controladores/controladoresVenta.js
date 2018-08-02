@@ -1636,13 +1636,13 @@ angular.module('agil.controladores')
 
 		$scope.imprimirConVencimiento = function () {
 			$scope.impresion.res.con_vencimiento = true;
-			ImprimirSalida($scope.impresion.movimiento, $scope.impresion.res, $scope.impresion.al_guardar, $scope.impresion.usuario, false);
+			ImprimirSalida($scope.impresion.movimiento, $scope.impresion.res, $scope.impresion.al_guardar, $scope.impresion.usuario, false,$scope.formatosFactura);
 			$scope.cerrarPopup($scope.idModalImpresionVencimiento);
 		}
 
 		$scope.imprimirSinVencimiento = function () {
 			$scope.impresion.res.con_vencimiento = false;
-			ImprimirSalida($scope.impresion.movimiento, $scope.impresion.res, $scope.impresion.al_guardar, $scope.impresion.usuario, false);
+			ImprimirSalida($scope.impresion.movimiento, $scope.impresion.res, $scope.impresion.al_guardar, $scope.impresion.usuario, false,$scope.formatosFactura);
 			$scope.cerrarPopup($scope.idModalImpresionVencimiento);
 		}
 
