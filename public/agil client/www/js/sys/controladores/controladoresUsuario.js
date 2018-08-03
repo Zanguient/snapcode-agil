@@ -43,6 +43,7 @@ angular.module('agil.controladores')
 			/* setTimeout(function() {
 				ejecutarScriptsTabla('tabla-usuarios',9);
 			},2000); */
+			
 		}
 
 		$scope.$on('$viewContentLoaded', function () {
@@ -1019,6 +1020,173 @@ angular.module('agil.controladores')
 				blockUI.stop()
 			})
 		}
+
+		$scope.reporteExcel = function (pdf) {
+			blockUI.start()
+
+			var cabecera = ["Nombre","Primer Apellido","Segundo Apellido","Nombre Usuario","Rol","Empresa","Usuario","Sucursal","Activo"];
+			var data = [];
+			data.push(cabecera);
+			var column = [];
+			for (var i = 0; i < $scope.usuarios.length; i++){
+				columns = [];
+				columns.push(i + 1);
+				if ($scope.usuarios[i].persona) {
+					if ($scope.usuarios[i].persona.nombres !== null) {
+						columns.push($scope.usuarios[i].persona.nombres);
+						columns.push($scope.usuarios[i].persona.apellido_paterno);
+						columns.push($scope.usuarios[i].persona.apellido_materno);
+					}
+				}
+							
+				columns.push($scope.usuarios[i].nombre_usuario);
+				if ($scope.usuarios[i].rolesUsuario[0]) {
+					if ($scope.usuarios[i].rolesUsuario[0].rol.nombre !== null) {
+						columns.push($scope.usuarios[i].rolesUsuario[0].rol.nombre);
+					}else{
+						columns.push("No Asignado");
+					}
+				}
+						
+				columns.push($scope.usuarios[i].empresa.razon_social);
+				if ($scope.usuarios[i].sucursalesUsuario.length > 1) {
+					columns.push("Varios");
+				}else if ($scope.usuarios[i].sucursalesUsuario.length === 1) {
+					columns.push($scope.usuarios[i].sucursalesUsuario[0].sucursal.nombre);
+				}
+				if ($scope.usuarios[i].activo === true) {
+					columns.push("Si");
+				}else if ($scope.usuarios[i].activo === false) {
+					columns.push("No");					
+				}
+				
+				data.push(columns);	
+			}
+			var ws_name = "SheetJS";
+			var wb = new Workbook(), ws = sheet_from_array_of_arrays(data);
+			/* add worksheet to workbook */
+			wb.SheetNames.push(ws_name);
+			wb.Sheets[ws_name] = ws;
+			var wbout = XLSX.write(wb, { bookType: 'xlsx', bookSST: true, type: 'binary' });
+			saveAs(new Blob([s2ab(wbout)], { type: "application/octet-stream" }), "REPORTE-USUARIOS.xlsx");
+			blockUI.stop();
+
+			
+		}
+
+		$scope.reportePdf = function () {
+			var doc = new PDFDocument({ size: 'letter', margin: 10, compress: false }); //[612, 792]
+			var stream = doc.pipe(blobStream());
+			var date = new Date().toLocaleDateString();
+			doc.fontSize(25).text("REPORTE USUARIOs",0,80,{ align: "center" });
+			doc.fontSize(10).text("Fecha: ",30,150);
+			doc.fontSize(10).text(date ,63,150);
+			
+			doc.font('Helvetica-Bold').text("N°",30,180);
+			doc.font('Helvetica-Bold').text("Nombres",50,180);
+			doc.font('Helvetica-Bold').text("Apellido Paterno",120,180);
+			doc.font('Helvetica-Bold').text("Apellido Materno",210,180);
+			doc.font('Helvetica-Bold').text("Usuario",300,180);
+			doc.font('Helvetica-Bold').text("Rol",390,180);
+			doc.font('Helvetica-Bold').text("Empresa",460,180);
+			doc.font('Helvetica-Bold').text("Sucursal",520,180);
+			//doc.font('Helvetica-Bold').text("Empresa",550,180);
+			doc.rect(27, 170, 545, 25).stroke();
+			var y = 200;
+			var index = 1;
+			for (let i = 0; i < $scope.usuarios.length; i++) {
+				doc.font('Helvetica').text(index++,30,y);
+				if ($scope.usuarios[i].persona) {				
+					if ($scope.usuarios[i].persona.nombres !== null) {
+						doc.font('Helvetica').text($scope.usuarios[i].persona.nombres,50,y);
+						doc.font('Helvetica').text($scope.usuarios[i].persona.apellido_paterno,120,y);
+						doc.font('Helvetica').text($scope.usuarios[i].persona.apellido_materno,210,y);
+					}
+				}
+
+				doc.font('Helvetica').text($scope.usuarios[i].nombre_usuario,300,y);
+				if ($scope.usuarios[i].rolesUsuario[0]) {
+					if ($scope.usuarios[i].rolesUsuario[0].rol.nombre !== null) {
+						doc.font('Helvetica').text($scope.usuarios[i].rolesUsuario[0].rol.nombre,370,y);
+					}else{
+						doc.font('Helvetica').text("No Asignado",370,y);
+					}
+				}
+						
+				doc.font('Helvetica').text($scope.usuarios[i].empresa.razon_social,470,y);
+				if ($scope.usuarios[i].sucursalesUsuario.length > 1) {
+					doc.font('Helvetica').text("Varios",520,y);
+				}else if ($scope.usuarios[i].sucursalesUsuario.length === 1) {
+					doc.font('Helvetica').text($scope.usuarios[i].sucursalesUsuario[0].sucursal.nombre,520,y);
+				}
+				/*if ($scope.usuarios[i].activo === true) {
+					columns.push("Si");
+				}else if ($scope.usuarios[i].activo === false) {
+					columns.push("No");					
+				}*/
+
+				y+=17;				
+			}
+			doc.end();
+			stream.on('finish', function () {
+				var fileURL = stream.toBlobURL('application/pdf');
+				window.open(fileURL, '_blank', 'location=no');
+			});
+			blockUI.stop();
+			
+		}
+
+		$scope.dibujarCabeceraReportePdf = function (doc, reporte) {
+			doc.font('Helvetica-Bold', 12);
+			doc.text("REPORTE OPERACIONES", 0, 25, { align: "center" });
+			
+			doc.font('Helvetica-Bold', 8);
+			doc.text("NOMBRE : ", 40, 60, { width: 40 });
+			doc.font('APELLIDO PATERNO', 8);
+			doc.font('APELLIDO MATERNO', 8);
+			
+			doc.text(new Date().toLocaleDateString(), 75, 60, { width: 40 });
+	
+			doc.rect(40, 80, 540, 25).stroke();
+			doc.font('Helvetica-Bold', 8);
+			/*if ($scope.imprimir.detalle) {
+				px = 50
+				for (let i = 0; i < reporte[0].length; i++) {
+					doc.text(reporte[0][i], px, 90);
+					if (i == 0) {
+						px += reporte[0][i].length * 4 + 5
+						$scope.posXforPdf.push(px)
+					} else {
+						if ($scope.imprimir.detalle) {
+							px += reporte[0][i].length * 4 + 15
+							$scope.posXforPdf.push(px)
+						} else {
+							px += reporte[0][i].length * 4 + 15
+							$scope.posXforPdf.push(px)
+						}
+					}
+				}
+			} else {
+				px = 65
+				for (let i = 0; i < reporte[0].length; i++) {
+					doc.text(reporte[0][i], px, 90);
+					if (i == 0) {
+						px += 20
+						$scope.posXforPdf.push(px)
+					} else {
+						if ($scope.imprimir.detalle) {
+							px += 40
+							// $scope.posXforPdf.push(px) 
+						} else {
+							px += 60
+							// $scope.posXforPdf.push(px)
+						}
+					}
+				}
+			}*/
+			doc.font('Helvetica', 8);
+		}
+
 		/* $scope.obtenerUsuarios=function(){
 			blockUI.start();
 			var promesa=UsuariosEmpresa($scope.usuarioSesion.id_empresa);

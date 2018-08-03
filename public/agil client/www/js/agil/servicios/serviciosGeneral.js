@@ -1316,10 +1316,10 @@ angular.module('agil.servicios')
 								doc.text(venta.detallesVenta[i].lote, 380, y);
 							}
 
-							doc.text(venta.detallesVenta[i].precio_unitario.toFixed(2), 410, y);
+							doc.text(venta.detallesVenta[i].precio_unitario.toFixed(2), 460, y);
 							//doc.text(venta.detallesVenta[i].importe.toFixed(2), 450, y);
 							//doc.text((venta.detallesVenta[i].descuento ? venta.detallesVenta[i].descuento.toFixed(2) : "0.00"), 490, y);
-							doc.text(venta.detallesVenta[i].total.toFixed(2), 530, y);
+							doc.text(venta.detallesVenta[i].total.toFixed(2), 560, y);
 							if (completa || vacia) {
 								//doc.rect(50, y - 15, 520, 30).stroke();
 							}
@@ -1342,7 +1342,7 @@ angular.module('agil.servicios')
 							// doc.text(venta.detallesVenta[i].precio_unitario.toFixed(2), 410, y);
 							doc.text(venta.detallesVenta[i].importe.toFixed(2), 450, y);
 							// doc.text((venta.detallesVenta[i].descuento ? venta.detallesVenta[i].descuento.toFixed(2) : "0.00"), 490, y);
-							doc.text(venta.detallesVenta[i].total.toFixed(2), 530, y);
+							doc.text(venta.detallesVenta[i].total.toFixed(2), 580, y);
 					/*if (completa || vacia) {
 						doc.rect(50, y - 15, 520, 30).stroke();
 					}*/
@@ -1359,10 +1359,10 @@ angular.module('agil.servicios')
 					}
 					if (completa || vacia) {
 						doc.font('Helvetica-Bold', 8);
-						doc.text("TOTAL", 485, y);
+						doc.text("TOTAL", 500, y);
 					}
 					doc.font('Helvetica', 8);
-					doc.text(venta.total.toFixed(2), 530, y);
+					doc.text(venta.total.toFixed(2), 560, y);
 
 					doc.text("SON : " + venta.numero_literal, 55, y);
 
@@ -1551,7 +1551,7 @@ angular.module('agil.servicios')
 				doc.text(venta.cliente.nit, 400, 165);
 
 				if (completa || vacia) {
-					doc.rect(50, 200, 520, 25).stroke();
+					doc.rect(50, 200, 545, 25).stroke();
 					//doc.rect(50,225,520,papel[1]-175-225).stroke();
 					doc.text("CODIGO", 55, 210, { width: 70 });
 					doc.text("CANT.", 125, 210);
@@ -1565,13 +1565,13 @@ angular.module('agil.servicios')
 						doc.text("LOTE", 380, 210);
 					}
 					if (venta.detallesVenta[0].producto) {
-						doc.text("P.UNIT.", 410, 210);
+						doc.text("P.UNIT.", 450, 210);
 					}
 					/*doc.text("IMP.", 450, 210);
 					if (venta.detallesVenta[0].producto) {
 						doc.text("DESC.", 490, 210);
 					}*/
-					doc.text("TOTAL", 525, 210);
+					doc.text("TOTAL", 555, 210);
 				}
 				doc.font('Helvetica', 7);
 

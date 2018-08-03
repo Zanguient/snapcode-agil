@@ -419,11 +419,8 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 														crearDetalleCompra(detalleCompra, compra.movimiento.id, compra.id, compra.almacen.id, detalleCompra.producto.id, detalleCompra.centroCosto.id, res, compra)
 													}
 												}
-
 											}
 										}
-
-
 										if (index == (array.length - 1)) {
 											res.json({ mensaje: "Compra actualizada satisfactoriamente!" });
 										}
@@ -1377,6 +1374,74 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 		return fecha.split('/')[2] + mes + dia;
 	}
 
+	router.route('/ventasN')
+		.post(function (req, res) {
+			Tipo.find({
+				where: { nombre_corto: Diccionario.MOV_EGRE },
+				transaction: t
+			}).then(function (tipoMovimiento) {
+				sequelize.transaction(function (t) {
+					return Movimiento.create({
+						id_tipo: tipoMovimiento.dataValues.id,
+						id_clase: req.body.movimiento.id,
+						id_almacen: req.body.almacen.id,
+						fecha: req.body.fecha
+					}, { transaction: t }).then(function (movimientoCreado) {
+						if (req.body.movimiento.nombre_corto === Diccionario.EGRE_FACTURACION) {
+							return SucursalActividadDosificacion.find({
+								where:{
+									id_actividad: venta.actividad.id,
+									id_sucursal: venta.sucursal.id,
+									expirado: false
+								}
+							}).then(function (sucursalActividadDosificacion) {
+								var dosificacion = sucursalActividadDosificacion.dosificacion;
+								venta.factura = dosificacion.correlativo;
+								venta.pieFactura = dosificacion.pieFactura;
+								venta.codigo_control = CodigoControl.obtenerCodigoControl(dosificacion.autorizacion.toString(),
+									dosificacion.correlativo.toString(),
+									venta.cliente.nit.toString(),
+									formatearFecha(venta.fechaTexto).toString(),
+									parseFloat(venta.total).toFixed(2),
+									dosificacion.llave_digital.toString());
+								venta.autorizacion = dosificacion.autorizacion.toString();
+								venta.fecha_limite_emision = dosificacion.fecha_limite_emision;
+								venta.numero_literal = NumeroLiteral.Convertir(parseFloat(venta.total).toFixed(2).toString());
+								if (sucursalActividadDosificacion.sucursal.empresa.usar_pedidos) {
+									venta.pedido = sucursalActividadDosificacion.sucursal.pedido_correlativo;
+								}
+								if (!venta.cliente.id) {
+									return Cliente.create({
+										id_empresa: venta.id_empresa,
+										nit: venta.cliente.nit,
+										razon_social: venta.cliente.razon_social
+									}, { transaction: t }).then(function (clienteCreado) {
+										return crearVenta(venta, res, clienteCreado.id, movimientoCreado, dosificacion, true, sucursalActividadDosificacion.sucursal, t);
+									});
+								} else {
+									return crearVenta(venta, res, venta.cliente.id, movimientoCreado, dosificacion, true, sucursalActividadDosificacion.sucursal, t);
+								}
+							})
+						}
+						if (req.body.movimiento.nombre_corto === Diccionario.EGRE_PROFORMA) {
+
+						}
+						if (req.body.movimiento.nombre_corto === Diccionario.EGRE_BAJA) {
+
+						}
+						if (req.body.movimiento.nombre_corto === Diccionario.EGRE_TRASPASO) {
+
+						}
+					})
+				}).then(function (result) {
+
+				}).catch(function (err) {
+
+				})
+			})
+
+		})
+
 	router.route('/ventas')
 		.post(function (req, res) {
 			sequelize.transaction(function (t) {
@@ -1409,7 +1474,7 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 								{ model: Sucursal, as: 'sucursal', include: [{ model: Empresa, as: 'empresa' }] }]
 							}).then(function (sucursalActividadDosificacion) {
 								var dosificacion = sucursalActividadDosificacion.dosificacion;
-								venta.factura = dosificacion.correlativo;
+								venta.factura  =dosificacion.correlativo;
 								venta.pieFactura = dosificacion.pieFactura;
 								venta.codigo_control = CodigoControl.obtenerCodigoControl(dosificacion.autorizacion.toString(),
 									dosificacion.correlativo.toString(),
@@ -1915,16 +1980,16 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 			id_inventario: costo.id[costo.id.length - 1].id
 		}, { transaction: t }).then(function (detalleMovimientoCreado) {
 			// sequelize.transaction({ isolationLevel: Sequelize.Transaction.ISOLATION_LEVELS.READ_COMMITTED }, function (tu) {
-				var promisesPonderado = []
-				if (costo.id.length > 0) {
-					for (let l = 0; l < costo.id.length; l++) {
-						promisesPonderado.push(actualizarInventario(costo.id[l], cantidadParcial, t))
-					}
+			var promisesPonderado = []
+			if (costo.id.length > 0) {
+				for (let l = 0; l < costo.id.length; l++) {
+					promisesPonderado.push(actualizarInventario(costo.id[l], cantidadParcial, t))
 				}
-				// return Promise.all(promisesPonderado)
-				return new Promise(function (fulfill, reject) {
-							fulfill(datosVenta);
-						});
+			}
+			// return Promise.all(promisesPonderado)
+			return new Promise(function (fulfill, reject) {
+				fulfill(datosVenta);
+			});
 			// }).then(function (result) {
 			// 	return new Promise(function (fulfill, reject) {
 			// 		fulfill(datosVenta);
@@ -1976,60 +2041,60 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 
 		}).then(function (encontrado) {
 			return sequelize.query('select costo_unitario from inv_detalle_movimiento where producto = ' + producto.id + ' ORDER BY id DESC limit 1', { type: sequelize.QueryTypes.SELECT, transaction: t }).then(function (UltimoCostoUnitaro) {
-			var inventariados = encontrado
-			var cantidadE = 0
-			var cantidadEParcial = 0
-			var cantidadETotal = cantidad
-			var costoUnitario = 0.0
-			var ids = []
-			if (producto.activar_inventario) {
-				if (inventariados.length > 0) {
-					var promises = [];
-					for (var i = 0; i < inventariados.length; i++) {
-						if (cantidadETotal > inventariados[i].cantidad) {
-							cantidadE += inventariados[i].cantidad
-							cantidadEParcial = cantidad - inventariados[i].cantidad
-							cantidadETotal = cantidadEParcial
-							ids.push({ id: inventariados[i].id, cantidad: inventariados[i].cantidad })
-							costoUnitario += inventariados[i].cantidad * inventariados[i].costo_unitario
-						} else {
-							ids.push({ id: inventariados[i].id, cantidad: cantidadTotal })
-							cantidadE = cantidadTotal
-							costoUnitario += cantidadETotal * inventariados[i].costo_unitario
+				var inventariados = encontrado
+				var cantidadE = 0
+				var cantidadEParcial = 0
+				var cantidadETotal = cantidad
+				var costoUnitario = 0.0
+				var ids = []
+				if (producto.activar_inventario) {
+					if (inventariados.length > 0) {
+						var promises = [];
+						for (var i = 0; i < inventariados.length; i++) {
+							if (cantidadETotal > inventariados[i].cantidad) {
+								cantidadE += inventariados[i].cantidad
+								cantidadEParcial = cantidad - inventariados[i].cantidad
+								cantidadETotal = cantidadEParcial
+								ids.push({ id: inventariados[i].id, cantidad: inventariados[i].cantidad })
+								costoUnitario += inventariados[i].cantidad * inventariados[i].costo_unitario
+							} else {
+								ids.push({ id: inventariados[i].id, cantidad: cantidadTotal })
+								cantidadE = cantidadTotal
+								costoUnitario += cantidadETotal * inventariados[i].costo_unitario
+							}
 						}
-					}
-					var costoUnitarioPonderado = costoUnitario / cantidadE
-					var costoPonderado = { id: ids, costo_unitario: UltimoCostoUnitaro[0].costo_unitario }
+						var costoUnitarioPonderado = costoUnitario / cantidadE
+						var costoPonderado = { id: ids, costo_unitario: UltimoCostoUnitaro[0].costo_unitario }
 
-					if (cantidadTotal > 0) {
-						var cantidadParcial;
-						if (cantidadTotal > cantidad) {
-							cantidadParcial = cantidad;
-							cantidadTotal = cantidadTotal - cantidad
-						} else {
-							cantidadParcial = cantidadTotal;
-							cantidadTotal = 0;
-						}
+						if (cantidadTotal > 0) {
+							var cantidadParcial;
+							if (cantidadTotal > cantidad) {
+								cantidadParcial = cantidad;
+								cantidadTotal = cantidadTotal - cantidad
+							} else {
+								cantidadParcial = cantidadTotal;
+								cantidadTotal = 0;
+							}
 
-						if (cantidadParcial > 0) {
-							var rrr = crearMovimientoEgresoYActualizarInventarioPonderado(movimientoCreado, detalleVenta, producto, cantidad, inventarios, cantidadParcial, costoPonderado, index, array, i, res, venta, t);
-							// promises.push(rrr)
-							promises.push(new Promise(function (fulfill, reject) {
-								fulfill(venta);
-							}));
+							if (cantidadParcial > 0) {
+								var rrr = crearMovimientoEgresoYActualizarInventarioPonderado(movimientoCreado, detalleVenta, producto, cantidad, inventarios, cantidadParcial, costoPonderado, index, array, i, res, venta, t);
+								// promises.push(rrr)
+								promises.push(new Promise(function (fulfill, reject) {
+									fulfill(venta);
+								}));
+							}
 						}
+						return Promise.all(promises);
+					} else {
+						return new Promise(function (fulfill, reject) {
+							fulfill(venta);
+						});
 					}
-					return Promise.all(promises);
 				} else {
 					return new Promise(function (fulfill, reject) {
 						fulfill(venta);
 					});
 				}
-			} else {
-				return new Promise(function (fulfill, reject) {
-					fulfill(venta);
-				});
-			}
 			})
 		})
 		// } else {
@@ -2087,8 +2152,7 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 		if (inventarios.length == 0) {
 			return Inventario.findAll({
 				where: condicionInventario, transaction: t,
-				order: [['fecha', 'asc']]
-
+				order: [['id', 'asc']]
 			}).then(function (encontrado) {
 				inventarios = encontrado
 				if (producto.activar_inventario) {
@@ -2867,7 +2931,7 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 		.put(function (req, res) {
 			req.body.mensaje = ""
 			var inicio = new Date(2018, 05, 25)
-			var fin = new Date()
+			var fin = new Date(2018, 06, 30)
 			inicio.setHours(0, 0, 0, 0, 0);
 			fin.setHours(23, 0, 0, 0, 0);
 			req.body.actualizados = 0
