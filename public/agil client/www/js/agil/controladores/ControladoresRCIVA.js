@@ -44,8 +44,65 @@ angular.module('agil.controladores')
             console.log("la cabezeraaa ", planillaR);
        
             $scope.planillasRcIva=planillaR.planillas;
+            $scope.sumarTotalesPlanillaRcIva($scope.planillasRcIva);
           
         });
+    }
+
+    $scope.sumarTotalesPlanillaRcIva=function(planilla){
+        $scope.sumaNetoImponible = 0;
+        $scope.sumaDosSmn = 0;
+        $scope.sumaDiferencia = 0;
+        $scope.sumaRcIva = 0; 
+        $scope.sumaDosSmn13 = 0;
+        $scope.sumaF110 = 0;
+        $scope.sumaRcIvaFisico = 0;
+        $scope.sumaSaldoDependiente = 0; 
+        $scope.sumaSaldoAnterior = 0;
+        $scope.sumaActualizacion = 0; 
+        $scope.sumaSaldoActualizado = 0; 
+        $scope.sumaSaldoTotal = 0;
+        $scope.sumaSaldoUtilizado = 0; 
+        $scope.sumaRcIvaMes = 0;
+        $scope.sumaNuevoSaldo = 0; 
+
+        if (planilla != undefined) {
+            for(var i=0;i<planilla.length;i++){
+                $scope.sumaNetoImponible=$scope.sumaNetoImponible+planilla[i].neto_imponible;
+                $scope.sumaDosSmn=$scope.sumaDosSmn+planilla[i].dos_smn;
+                $scope.sumaDiferencia=$scope.sumaDiferencia+planilla[i].diferencia;
+                $scope.sumaRcIva=$scope.sumaRcIva+planilla[i].rc_iva;
+                $scope.sumaDosSmn13=$scope.sumaDosSmn13+planilla[i].dos_smn13;
+                $scope.sumaF110=$scope.sumaF110+planilla[i].f110;
+                $scope.sumaRcIvaFisico=$scope.sumaRcIvaFisico+planilla[i].rc_iva_fisico;
+                $scope.sumaSaldoDependiente=round($scope.sumaSaldoDependiente+planilla[i].saldo_dependiente, 2);
+                $scope.sumaSaldoAnterior=round($scope.sumaSaldoAnterior+planilla[i].saldo_anterior, 2);
+                $scope.sumaActualizacion=round($scope.sumaActualizacion+planilla[i].actualizacion, 2);
+                
+                $scope.sumaSaldoActualizado=round($scope.sumaSaldoActualizado+planilla[i].saldo_actualizado, 2);
+                $scope.sumaSaldoTotal=round($scope.sumaSaldoTotal+planilla[i].saldo_total, 2);
+                $scope.sumaSaldoUtilizado=round($scope.sumaSaldoUtilizado+planilla[i].saldo_utilizado, 2);
+                $scope.sumaRcIvaMes=round($scope.sumaRcIvaMes+planilla[i].rc_iva_mes, 2);
+                $scope.sumaNuevoSaldo=round($scope.sumaNuevoSaldo+planilla[i].nuevo_saldo, 2);
+            }
+        }
+
+        $scope.planillaRcIva.sumaNetoImponible = $scope.sumaNetoImponible;
+        $scope.planillaRcIva.sumaRcIva = $scope.sumaRcIva;
+        $scope.planillaRcIva.sumaDosSmn = $scope.sumaDosSmn;
+        $scope.planillaRcIva.sumaDiferencia = $scope.sumaDiferencia; 
+        $scope.planillaRcIva.sumaDosSmn13 = $scope.sumaDosSmn13;
+        $scope.planillaRcIva.sumaF110 = $scope.sumaF110;
+        $scope.planillaRcIva.sumaRcIvaFisico = $scope.sumaRcIvaFisico;
+        $scope.planillaRcIva.sumaSaldoDependiente = $scope.sumaSaldoDependiente; 
+        $scope.planillaRcIva.sumaSaldoAnterior = $scope.sumaSaldoAnterior;
+        $scope.planillaRcIva.sumaActualizacion = $scope.sumaActualizacion; 
+        $scope.planillaRcIva.sumaSaldoActualizado = $scope.sumaSaldoActualizado; 
+        $scope.planillaRcIva.sumaSaldoTotal = $scope.sumaSaldoTotal;
+        $scope.planillaRcIva.sumaSaldoUtilizado = $scope.sumaSaldoUtilizado; 
+        $scope.planillaRcIva.sumaRcIvaMes = $scope.sumaRcIvaMes;
+        $scope.planillaRcIva.sumaNuevoSaldo = $scope.sumaNuevoSaldo;
+        
     }
 
 //  ==== para editar planilla =====================================
@@ -84,11 +141,12 @@ angular.module('agil.controladores')
                 $scope.dibujarCabeceraPDFPlanillaRCIVA(doc, $scope.usuario, planillaRcIva, 1);
                 doc.font('Helvetica', 8);
                 var y = 150, itemsPorPagina = 12, items = 0, pagina = 1;
-                var sumaImporte = 0, sumaImporteIce = 0, sumaImporteExp = 0, sumaImporteGrab = 0, sumaTotal = 0, sumaDescuentos = 0, sumaImporteBase = 0, sumaCredito = 0;
-                var sumaSubImporte = 0, sumaSubImporteIce = 0, sumaSubImporteExp = 0, sumaSubImporteGrab = 0, sumaSubTotal = 0, sumaSubDescuentos = 0, sumaSubImporteBase = 0, sumaSubCredito = 0;
+                var sumaNetoImponible = 0, sumaSubRcIva = 0, sumaDosSmn = 0, sumaDiferencia = 0, sumaDosSmn13 = 0, sumaF110 = 0, sumaRcIvaFisico = 0, sumaSaldoDependiente = 0;
+                var sumaSaldoAnterior = 0, sumaActualizacion = 0, sumaSaldoActualizado = 0, sumaSaldoTotal = 0, sumaSaldoUtilizado = 0, sumaRcIvaMes = 0, sumaNuevoSaldo = 0;
+                var sumaSubSaldoAnterior = 0, sumaSubdos_smn = 0, sumaSubDiferencia = 0, sumaSubNetoImponible = 0, sumaSubDos_smn13 = 0, sumaSubF110 = 0, sumaSubRcIvaFisico = 0, sumaSubSaldoDependiente = 0;
+                var sumaSubActualizacion = 0, sumaSubSaldoActualizado = 0, sumaSubSaldoTotal = 0, sumaSubSaldoUtilizado = 0, sumaSubRcIvaMes = 0, sumaSubNuevoSaldo = 0;
                 for (var i = 0; i < DetalleplanillaRcIva.length && items <= itemsPorPagina; i++) {
                     doc.rect(40, y - 10, 760, 30).stroke();
-                    // ventas[i].fecha = new Date(ventas[i].fecha);
                     doc.text(i + 1, 45, y);
                     doc.text(DetalleplanillaRcIva[i].anio, 60, y);
                     doc.text(DetalleplanillaRcIva[i].mes.split("-")[1], 90, y);
@@ -108,61 +166,90 @@ angular.module('agil.controladores')
                     doc.text(DetalleplanillaRcIva[i].rc_iva_mes, 705, y);
                     doc.text(DetalleplanillaRcIva[i].nuevo_saldo, 740, y);
                     y = y + 30;
-                    // sumaSubImporte = sumaSubImporte + ventas[i].importe;
-                    // sumaSubImporteIce = 0;
-                    // sumaSubImporteExp = 0;
-                    // sumaSubImporteGrab = 0;
-                    // sumaSubTotal = sumaSubTotal + ventas[i].importe;
-                    // sumaSubDescuentos = sumaSubDescuentos + 0;
-                    // sumaSubImporteBase = sumaSubImporteBase + ventas[i].total;
-                    // sumaSubCredito = sumaSubCredito + (Math.round((ventas[i].total * 0.13) * 100) / 100);
-                    // sumaImporte = sumaImporte + ventas[i].importe;
-                    // sumaImporteIce = 0;
-                    // sumaImporteExp = 0;
-                    // sumaImporteGrab = 0;
-                    // sumaTotal = sumaTotal + ventas[i].importe;
-                    // sumaDescuentos = sumaDescuentos + 0;
-                    // sumaImporteBase = sumaImporteBase + ventas[i].total;
-                    // sumaCredito = sumaCredito + (Math.round((ventas[i].total * 0.13) * 100) / 100);
-                    // items++;
+                    sumaSubNetoImponible = sumaSubNetoImponible + DetalleplanillaRcIva[i].neto_imponible;
+                    sumaSubdos_smn = sumaSubdos_smn + DetalleplanillaRcIva[i].dos_smn;
+                    sumaSubDiferencia = sumaSubDiferencia + DetalleplanillaRcIva[i].diferencia;
+                    sumaSubRcIva = sumaSubRcIva + DetalleplanillaRcIva[i].rc_iva;
+                    sumaSubDos_smn13 = sumaSubDos_smn13 + DetalleplanillaRcIva[i].dos_smn13;
+                    sumaSubF110 = sumaSubF110 + DetalleplanillaRcIva[i].f110;
+                    sumaSubRcIvaFisico = sumaSubRcIvaFisico + DetalleplanillaRcIva[i].rc_iva_fisico;
+                    sumaSubSaldoDependiente = sumaSubSaldoDependiente + DetalleplanillaRcIva[i].saldo_dependiente;
+                    sumaSubSaldoAnterior = sumaSubSaldoAnterior + DetalleplanillaRcIva[i].saldo_anterior;
+                    sumaSubActualizacion = sumaSubActualizacion + DetalleplanillaRcIva[i].actualizacion;
+                    sumaSubSaldoActualizado = sumaSubSaldoActualizado + DetalleplanillaRcIva[i].saldo_actualizado;
+                    sumaSubSaldoTotal = sumaSubSaldoTotal + DetalleplanillaRcIva[i].saldo_total;
+                    sumaSubSaldoUtilizado = sumaSubSaldoUtilizado + DetalleplanillaRcIva[i].saldo_utilizado;
+                    sumaSubRcIvaMes = sumaSubRcIvaMes + DetalleplanillaRcIva[i].rc_iva_mes;
+                    sumaSubNuevoSaldo = sumaSubNuevoSaldo + DetalleplanillaRcIva[i].nuevo_saldo;
 
-                    // if (items == itemsPorPagina || i + 1 == ventas.length) {
-                    //     doc.font('Helvetica-Bold', 8);
-                    //     doc.text("SUBTOTALES", 283, y);
-                    //     doc.text(Math.round((sumaSubImporte) * 100) / 100, 385, y);
-                    //     doc.text(Math.round((sumaSubImporteIce) * 100) / 100, 430, y);
-                    //     doc.text(Math.round((sumaSubImporteExp) * 100) / 100, 465, y);
-                    //     doc.text(Math.round((sumaSubImporteGrab) * 100) / 100, 507, y);
-                    //     doc.text(Math.round((sumaSubTotal) * 100) / 100, 540, y);
-                    //     doc.text(Math.round((sumaSubDescuentos) * 100) / 100, 580, y);
-                    //     doc.text(Math.round((sumaSubImporteBase) * 100) / 100, 615, y);
-                    //     doc.text(Math.round((sumaSubCredito) * 100) / 100, 650, y);
-                    //     doc.rect(40, y - 10, 720, 30).stroke();
-                    //     doc.font('Helvetica', 8);
-                    //     sumaSubImporte = 0; sumaSubImporteNo = 0; sumaSubTotal = 0; sumaSubDescuentos = 0; sumaSubImporteBase = 0; sumaSubCredito = 0;
+                    sumaNetoImponible = sumaNetoImponible + DetalleplanillaRcIva[i].neto_imponible;
+                    sumaDosSmn = sumaDosSmn + DetalleplanillaRcIva[i].dos_smn;
+                    sumaDiferencia = sumaDiferencia + DetalleplanillaRcIva[i].diferencia;
+                    sumaDosSmn13 = sumaDosSmn13 + DetalleplanillaRcIva[i].dos_smn13;
+                    sumaF110 = sumaF110 + DetalleplanillaRcIva[i].f110;
+                    sumaRcIvaFisico = sumaRcIvaFisico + DetalleplanillaRcIva[i].rc_iva_fisico;
+                    sumaSaldoDependiente = sumaSaldoDependiente + DetalleplanillaRcIva[i].saldo_dependiente;
+                    sumaSaldoAnterior = sumaSaldoAnterior + DetalleplanillaRcIva[i].saldo_anterior;
+                    sumaActualizacion = sumaActualizacion + DetalleplanillaRcIva[i].actualizacion;
+                    sumaSaldoActualizado = sumaSaldoActualizado + DetalleplanillaRcIva[i].saldo_actualizado;
+                    sumaSaldoTotal = sumaSaldoTotal + DetalleplanillaRcIva[i].saldo_total;
+                    sumaSaldoUtilizado = sumaSaldoUtilizado + DetalleplanillaRcIva[i].saldo_utilizado;
+                    sumaRcIvaMes = sumaRcIvaMes + DetalleplanillaRcIva[i].rc_iva_mes;
+                    sumaNuevoSaldo = sumaNuevoSaldo + DetalleplanillaRcIva[i].nuevo_saldo;
+          
+                    items++;
 
-                    //     if (i + 1 == ventas.length) {
-                    //         doc.font('Helvetica-Bold', 8);
-                    //         doc.text("TOTALES", 283, y + 30);
-                    //         doc.text(Math.round((sumaImporte) * 100) / 100, 385, y + 30);
-                    //         doc.text(Math.round((sumaImporteIce) * 100) / 100, 430, y + 30);
-                    //         doc.text(Math.round((sumaImporteExp) * 100) / 100, 465, y + 30);
-                    //         doc.text(Math.round((sumaImporteGrab) * 100) / 100, 507, y + 30);
-                    //         doc.text(Math.round((sumaTotal) * 100) / 100, 540, y + 30);
-                    //         doc.text(Math.round((sumaDescuentos) * 100) / 100, 580, y + 30);
-                    //         doc.text(Math.round((sumaImporteBase) * 100) / 100, 615, y + 30);
-                    //         doc.text(Math.round((sumaCredito) * 100) / 100, 650, y + 30);
-                    //         doc.rect(40, y - 10 + 30, 720, 30).stroke();
-                    //         doc.font('Helvetica', 8);
-                    //     } else {
-                    //         doc.addPage({ margin: 0, bufferPages: true, layout: 'landscape' });
-                    //         y = 170;
-                    //         items = 0;
-                    //         pagina = pagina + 1;
-                    //         $scope.dibujarCabeceraPDFLibroVentas(doc, datos, reporte, pagina);
-                    //         doc.font('Helvetica', 8);
-                    //     }
-                    // }
+                    if (items == itemsPorPagina || i + 1 == DetalleplanillaRcIva.length) {
+                        doc.font('Helvetica-Bold', 8);
+                        doc.text("SUBTOTALES", 75, y);
+                        doc.text(Math.round((sumaSubNetoImponible) * 100) / 100, 140, y);
+                        doc.text(Math.round((sumaSubdos_smn) * 100) / 100, 190, y);
+                        doc.text(Math.round((sumaSubDiferencia) * 100) / 100, 230, y);
+                        doc.text(Math.round((sumaSubRcIva) * 100) / 100, 283, y);
+                        doc.text(Math.round((sumaSubDos_smn13) * 100) / 100, 325, y);
+                        doc.text(Math.round((sumaSubF110) * 100) / 100, 365, y);
+                        doc.text(Math.round((sumaSubRcIvaFisico) * 100) / 100, 400, y);
+                        doc.text(Math.round((sumaSubSaldoDependiente) * 100) / 100, 440, y);
+                        doc.text(Math.round((sumaSubSaldoAnterior) * 100) / 100, 490, y);
+                        doc.text(Math.round((sumaSubActualizacion) * 100) / 100, 530, y);
+                        doc.text(Math.round((sumaSubSaldoActualizado) * 100) / 100, 580, y);
+                        doc.text(Math.round((sumaSubSaldoTotal) * 100) / 100, 625, y);
+                        doc.text(Math.round((sumaSubSaldoUtilizado) * 100) / 100, 665, y);
+                        doc.text(Math.round((sumaSubRcIvaMes) * 100) / 100, 705, y);
+                        doc.text(Math.round((sumaSubNuevoSaldo) * 100) / 100, 740, y);
+                        doc.rect(40, y - 10, 760, 30).stroke();
+                        doc.font('Helvetica', 8);
+
+                        if (i + 1 == DetalleplanillaRcIva.length) {
+                            doc.font('Helvetica-Bold', 8);
+                            doc.text("TOTALES", 75, y + 30);
+                            doc.text(Math.round((sumaNetoImponible) * 100) / 100, 140, y + 30); 
+                            doc.text(Math.round((sumaDosSmn) * 100) / 100, 190, y + 30);
+                            doc.text(Math.round((sumaDiferencia) * 100) / 100, 230, y + 30);
+                            doc.text(Math.round((sumaSubRcIva) * 100) / 100, 283, y + 30);
+                            doc.text(Math.round((sumaDosSmn13) * 100) / 100, 325, y + 30);
+                            doc.text(Math.round((sumaF110) * 100) / 100, 365, y + 30);
+                            doc.text(Math.round((sumaRcIvaFisico) * 100) / 100, 400, y + 30);
+                            doc.text(Math.round((sumaSaldoDependiente) * 100) / 100, 440, y + 30);
+                            doc.text(Math.round((sumaSaldoAnterior) * 100) / 100, 490, y + 30);
+                            doc.text(Math.round((sumaActualizacion) * 100) / 100, 530, y + 30);
+                            doc.text(Math.round((sumaSaldoActualizado) * 100) / 100, 580, y + 30);
+                            doc.text(Math.round((sumaSaldoTotal) * 100) / 100, 625, y + 30);
+                            doc.text(Math.round((sumaSaldoUtilizado) * 100) / 100, 665, y + 30);
+                            doc.text(Math.round((sumaRcIvaMes) * 100) / 100, 705, y + 30);
+                            doc.text(Math.round((sumaNuevoSaldo) * 100) / 100, 740, y + 30);
+
+                            doc.rect(40, y - 10 + 30, 760, 30).stroke();
+                            doc.font('Helvetica', 8);
+                        } else {
+                            doc.addPage({ margin: 0, bufferPages: true, layout: 'landscape' });
+                            y = 170;
+                            items = 0;
+                            pagina = pagina + 1;
+                            $scope.dibujarCabeceraPDFLibroVentas(doc, datos, reporte, pagina);
+                            doc.font('Helvetica', 8);
+                        }
+                    }
                 }
                 doc.end();
                 stream.on('finish', function () {
@@ -214,6 +301,89 @@ angular.module('agil.controladores')
         doc.text("RC-IVA Mes", 705, 110, { width: 35 });
         doc.text("Saldo Nuevo", 740, 110);
     }
+
+
+    $scope.generarExcelPlanillaRcIva = function (planillaRcIva) {
+        blockUI.start();
+        var promesa = ListaRRHHPlanillaRCIVA($scope.usuario.id_empresa, planillaRcIva.gestion, planillaRcIva.mes);
+        promesa.then(function (datos) {
+            var DetalleplanillaRcIva = datos.planillas
+            var data = [["N°", "Año", "Mes", "Neto Imponible", "2 SMN", "Diferencia", "RC-IVA 13%", "13% de 2 SMN", "F-110", "RC-IVA Fisco", "Saldo Dependiente", "Saldo Anterior", "Actualización", "Saldo Actualizado", "Saldo Total", "Saldo Utilizado", "RC-IVA Mes", "Saldo Nuevo"]]
+            var sumaNetoImponible = 0, sumaSubRcIva = 0, sumaDosSmn = 0, sumaDiferencia = 0, sumaDosSmn13 = 0, sumaF110 = 0, sumaRcIvaFisico = 0, sumaSaldoDependiente = 0;
+            var sumaSaldoAnterior = 0, sumaActualizacion = 0, sumaSaldoActualizado = 0, sumaSaldoTotal = 0, sumaSaldoUtilizado = 0, sumaRcIvaMes = 0, sumaNuevoSaldo = 0;
+
+            for (var i = 0; i < DetalleplanillaRcIva.length; i++) {
+                var columns = [];
+                columns.push(i + 1);
+                columns.push(DetalleplanillaRcIva[i].anio);
+                columns.push(DetalleplanillaRcIva[i].mes.split("-")[1]);
+                columns.push(DetalleplanillaRcIva[i].neto_imponible);
+                columns.push((DetalleplanillaRcIva[i].dos_smn));
+                columns.push(DetalleplanillaRcIva[i].diferencia);
+                columns.push(DetalleplanillaRcIva[i].rc_iva);
+                columns.push(DetalleplanillaRcIva[i].dos_smn13);
+                columns.push(DetalleplanillaRcIva[i].f110);
+                columns.push(DetalleplanillaRcIva[i].rc_iva_fisico);
+                columns.push(DetalleplanillaRcIva[i].saldo_dependiente);
+                columns.push(DetalleplanillaRcIva[i].saldo_anterior);
+                columns.push(DetalleplanillaRcIva[i].actualizacion);
+                columns.push(DetalleplanillaRcIva[i].saldo_actualizado);
+                columns.push(DetalleplanillaRcIva[i].saldo_total);
+                columns.push(DetalleplanillaRcIva[i].saldo_utilizado);
+                columns.push(DetalleplanillaRcIva[i].rc_iva_mes);
+                columns.push(DetalleplanillaRcIva[i].nuevo_saldo);
+                
+                sumaNetoImponible = sumaNetoImponible + DetalleplanillaRcIva[i].neto_imponible;
+                sumaDosSmn = sumaDosSmn + DetalleplanillaRcIva[i].dos_smn;
+                sumaDiferencia = sumaDiferencia + DetalleplanillaRcIva[i].diferencia;
+                sumaDosSmn13 = sumaDosSmn13 + DetalleplanillaRcIva[i].dos_smn13;
+                sumaF110 = sumaF110 + DetalleplanillaRcIva[i].f110;
+                sumaRcIvaFisico = sumaRcIvaFisico + DetalleplanillaRcIva[i].rc_iva_fisico;
+                sumaSaldoDependiente = sumaSaldoDependiente + DetalleplanillaRcIva[i].saldo_dependiente;
+                sumaSaldoAnterior = sumaSaldoAnterior + DetalleplanillaRcIva[i].saldo_anterior;
+                sumaActualizacion = sumaActualizacion + DetalleplanillaRcIva[i].actualizacion;
+                sumaSaldoActualizado = sumaSaldoActualizado + DetalleplanillaRcIva[i].saldo_actualizado;
+                sumaSaldoTotal = sumaSaldoTotal + DetalleplanillaRcIva[i].saldo_total;
+                sumaSaldoUtilizado = sumaSaldoUtilizado + DetalleplanillaRcIva[i].saldo_utilizado;
+                sumaRcIvaMes = sumaRcIvaMes + DetalleplanillaRcIva[i].rc_iva_mes;
+                sumaNuevoSaldo = sumaNuevoSaldo + DetalleplanillaRcIva[i].nuevo_saldo;
+              
+                data.push(columns);
+                if (i + 1 == DetalleplanillaRcIva.length) {
+                    columns = [];
+                    columns.push("");
+                    columns.push("");
+                    columns.push("TOTALES");
+                    columns.push(Math.round((sumaNetoImponible) * 100) / 100); 
+                    columns.push(Math.round((sumaDosSmn) * 100) / 100);
+                    columns.push(Math.round((sumaDiferencia) * 100) / 100);
+                    columns.push(Math.round((sumaSubRcIva) * 100) / 100);
+                    columns.push(Math.round((sumaDosSmn13) * 100) / 100);
+                    columns.push(Math.round((sumaF110) * 100) / 100);
+                    columns.push(Math.round((sumaRcIvaFisico) * 100) / 100);
+                    columns.push(Math.round((sumaSaldoDependiente) * 100) / 100);
+                    columns.push(Math.round((sumaSaldoAnterior) * 100) / 100);
+                    columns.push(Math.round((sumaActualizacion) * 100) / 100);
+                    columns.push(Math.round((sumaSaldoActualizado) * 100) / 100);
+                    columns.push(Math.round((sumaSaldoTotal) * 100) / 100);
+                    columns.push(Math.round((sumaSaldoUtilizado) * 100) / 100);
+                    columns.push(Math.round((sumaRcIvaMes) * 100) / 100);
+                    columns.push(Math.round((sumaNuevoSaldo) * 100) / 100);
+                    data.push(columns);
+                }
+            }
+
+            var ws_name = "SheetJS";
+            var wb = new Workbook(), ws = sheet_from_array_of_arrays(data);
+            /* add worksheet to workbook */
+            wb.SheetNames.push(ws_name);
+            wb.Sheets[ws_name] = ws;
+            var wbout = XLSX.write(wb, { bookType: 'xlsx', bookSST: true, type: 'binary' });
+            saveAs(new Blob([s2ab(wbout)], { type: "application/octet-stream" }), "PLANILLA-RCIVA.xlsx");
+            blockUI.stop();
+        });
+    }
+
 
     $scope.filtrarSueldos=function(planilla){
         console.log('cabezera', planilla);

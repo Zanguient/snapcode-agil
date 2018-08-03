@@ -67,7 +67,7 @@
 									<i class="ace-icon fa fa-print align-top bigger-125"></i>
 										PDF
 								</button>
-                                <button class="btn btn-success btn-md">
+                                <button class="btn btn-success btn-md" ng-click="generarExcelPlanillaRcIva(planillaRcIva)">
 									<i class="ace-icon fa fa-print bigger-125"></i>
 										Excel
                                 </button>
@@ -143,27 +143,25 @@
                                     </a>   
                                 </div>
                             </td>
-                        </tr>
-                        
                         <tr>
                             <td></td>
                             <td></td>
                             <td>TOTALES</td>
-                            <td>800000</td>
-                            <td>40000</td>
-                            <td>760000</td>
-                            <td>98800</td>
-                            <td>50000</td>
-                            <td>5200</td>
-                            <td>0</td>
-                            <td>10000</td>
-                            <td>5000</td>
-                            <td>100</td>
-                            <td>5100</td>
-                            <td>10200</td>
-                            <td>5200</td>
-                            <td>0</td>
-                            <td>5000</td>
+                            <td>{{planillaRcIva.sumaNetoImponible}}</td>
+                            <td>{{planillaRcIva.sumaDosSmn}}</td>
+                            <td>{{planillaRcIva.sumaDiferencia}}</td>
+                            <td>{{planillaRcIva.sumaRcIva}}</td>
+                            <td>{{planillaRcIva.sumaDosSmn13}}</td>
+                            <td>{{planillaRcIva.sumaF110}}</td>
+                            <td>{{planillaRcIva.sumaRcIvaFisico}}</td>
+                            <td>{{planillaRcIva.sumaSaldoDependiente}}</td>
+                            <td>{{planillaRcIva.sumaSaldoAnterior}}</td>
+                            <td>{{planillaRcIva.sumaActualizacion}}</td>
+                            <td>{{planillaRcIva.sumaSaldoActualizado}}</td>
+                            <td>{{planillaRcIva.sumaSaldoTotal}}</td>
+                            <td>{{planillaRcIva.sumaSaldoUtilizado}}</td>
+                            <td>{{planillaRcIva.sumaRcIvaMes}}</td>
+                            <td>{{planillaRcIva.sumaNuevoSaldo}}</td>
                         </tr>
                     </tbody>
                 </table>

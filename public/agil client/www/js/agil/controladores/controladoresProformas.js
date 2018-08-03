@@ -78,6 +78,7 @@ angular.module('agil.controladores')
                 return false
             }
         }
+
         $scope.eliminar = function (proforma) {
             blockUI.start()
             // proforma.eliminado = true
@@ -126,12 +127,7 @@ angular.module('agil.controladores')
                     $scope.proforma.ver = true
                 }
                 if (proformaE.mensaje !== undefined) {
-                    $timeout(function () {
-                        $scope.$apply(function () {
-                            $scope.mostrarMensaje(proformaE.mensaje)
-                        });
-                    }, 500);
-
+                    $scope.mostrarMensaje(proformaE.mensaje)
                 } else {
                     $scope.proforma.fecha_proforma = $scope.fechaATexto(new Date($scope.proforma.fecha_proforma))
                     var dat = new Date($scope.convertirFecha($scope.proforma.fecha_proforma))
@@ -139,20 +135,22 @@ angular.module('agil.controladores')
                     var dolores = $scope.moneda.dolar
                     $scope.proforma.periodo_mes = { id: $scope.proforma.periodo_mes }
                     $scope.proforma.periodo_anio = { id: $scope.proforma.periodo_anio }
-
+                    $scope.obtenercentroCostosClienteEmpresa($scope.proforma.cliente)
                     $scope.detallesProformas = $scope.proforma.detallesProformas
                     $scope.detallesProformas.map(function (det, i) {
                         $scope.detalleProforma = det
                         $scope.calcularImporte()
                         $scope.detalleProforma = undefined
                     })
+                    $scope.proforma.totalImporteSus = $scope.proforma.totalImporteBs / dolores
                     $scope.proforma.importeLiteral = ConvertirALiteral($scope.proforma.totalImporteBs.toFixed(2));
                     // $scope.obtenerServiciosActividadEmpresaPrincipal($scope.proforma.actividadEconomica)
                 }
                 blockUI.stop()
-            }, function (err) {
-                $scope.mostrarMensaje(err.message === undefined ? err.stack : err.message)
+            }).catch(function (err) {
                 blockUI.stop()
+                var msg = (err.stack !== undefined && err.stack !== null) ? err.stack : (err.message !== undefined && err.message !== null) ? err.message : 'Se perdió la conexión.'
+                $scope.mostrarMensaje(msg)
             })
             $scope.detalleProforma = undefined
             $scope.abrirdialogProformaEdicion($scope.proforma)
@@ -183,7 +181,7 @@ angular.module('agil.controladores')
                 promConfigFact.then(function (configuracionFactura) {
                     var promMov = ClasesTipo('MOVEGR')
                     promMov.then(function (dato) {
-                        dato.clases.map(function (clase) {
+                        dato.clases.forEach(function (clase) {
                             if (clase.nombre == "FACTURACIÓN" && clase.nombre_corto == "FACT") {
                                 movimiento = clase
                             }
@@ -252,6 +250,9 @@ angular.module('agil.controladores')
                                             if (i == $scope.facturaProformas.datosProformas.length - 1) {
                                                 if ($scope.checkResourceImg($scope.usuario.empresa.imagen, $scope.usuario.empresa.imageLoaded)) {
                                                     convertUrlToBase64Image($scope.usuario.empresa.imagen, function (imagenEmpresa) {
+                                                        if (condition) {
+                                                            
+                                                        }
                                                         $scope.usuario.empresa.imagen = imagenEmpresa
                                                         $scope.usuario.empresa.imageLoaded = true
                                                         ImprimirSalida("FACT", $scope.facturaProformas, false, $scope.usuario)
@@ -273,6 +274,10 @@ angular.module('agil.controladores')
                                         }
                                     })
                                     // blockUI.stop()
+                                }).catch(function (err) {
+                                    blockUI.stop()
+                                    var msg = (err.stack !== undefined && err.stack !== null) ? err.stack : (err.message !== undefined && err.message !== null) ? err.message : 'Se perdió la conexión.'
+                                    $scope.mostrarMensaje(msg)
                                 })
                             });
                             blockUI.stop()
@@ -287,9 +292,20 @@ angular.module('agil.controladores')
                             //         blockUI.stop()
                             //     })
                             // })
-                        });
-
+                        }).catch(function (err) {
+                            blockUI.stop()
+                            var msg = (err.stack !== undefined && err.stack !== null) ? err.stack : (err.message !== undefined && err.message !== null) ? err.message : 'Se perdió la conexión.'
+                            $scope.mostrarMensaje(msg)
+                        })
+                    }).catch(function (err) {
+                        blockUI.stop()
+                        var msg = (err.stack !== undefined && err.stack !== null) ? err.stack : (err.message !== undefined && err.message !== null) ? err.message : 'Se perdió la conexión.'
+                        $scope.mostrarMensaje(msg)
                     })
+                }).catch(function (err) {
+                    blockUI.stop()
+                    var msg = (err.stack !== undefined && err.stack !== null) ? err.stack : (err.message !== undefined && err.message !== null) ? err.message : 'Se perdió la conexión.'
+                    $scope.mostrarMensaje(msg)
                 })
             }).catch(function (err) {
                 var msg = (err.stack !== undefined && err.stack !== null) ? err.stack : (err.message !== undefined && err.message !== null) ? err.message : 'Se perdió la conexión.'
@@ -430,8 +446,13 @@ angular.module('agil.controladores')
             if (detalleProforma.id_servicio !== undefined) {
                 $scope.proforma.totalImporteBs = 0
                 $scope.proforma.totalImporteSus = 0
-                var ser = { servicio: detalleProforma }
-                $scope.detallesProformas.push(detalleProforma)
+                if (!detalleProforma.editar) {
+                    $scope.detallesProformas.push(detalleProforma)
+                } else {
+                    $scope.detallesProformas[$scope.detallesProformas.indexOf(detalleProforma)] = detalleProforma
+                    $scope.detalleProforma.editar = undefined
+                }
+
                 $scope.detalleProforma = {}
                 $scope.detallesProformas.forEach(function (detalle) {
                     if (!detalle.eliminado) {
@@ -565,7 +586,21 @@ angular.module('agil.controladores')
         }
 
         $scope.establecerservicio = function (servico, modal) {
-            $scope.detalleProforma = { id_servicio: servico.id, cantidad: 1, servicio: servico, precio_unitario: servico.precio, actividad_id: servico.actividad.id, actividad: servico.actividad }
+            if ($scope.detalleProforma) {
+                if ($scope.detalleProforma.servicio) {
+                    $scope.detalleProforma.id_servicio = servico.id
+                    $scope.detalleProforma.servicio = servico
+                    $scope.detalleProforma.precio_unitario = servico.precio
+                    $scope.detalleProforma.actividad_id = servico.actividad.id
+                    $scope.detalleProforma.actividad = servico.actividad
+                } else {
+                    $scope.detalleProforma = { id_servicio: servico.id, cantidad: 1, servicio: servico, precio_unitario: servico.precio, actividad_id: servico.actividad.id, actividad: servico.actividad }
+                }
+            } else {
+                $scope.detalleProforma = { id_servicio: servico.id, cantidad: 1, servicio: servico, precio_unitario: servico.precio, actividad_id: servico.actividad.id, actividad: servico.actividad }
+            }
+
+
             $scope.detalleProforma.importe = $scope.detalleProforma.precio_unitario * $scope.detalleProforma.cantidad
             if ($scope.moneda !== undefined) {
                 if ($scope.moneda.dolar !== null && $scope.moneda.dolar !== "--") {
@@ -748,7 +783,13 @@ angular.module('agil.controladores')
             }
         }
 
+        $scope.editarDetalleProforma = function (detalle) {
+            detalle.editar = true
+            $scope.detalleProforma = detalle
+        }
+
         $scope.obtenerServiciosActividadEmpresaPrincipal = function (actividad, op) {
+            $scope.detalleProforma = {}
             if (actividad == undefined) {
                 $scope.serviciosProcesados = []
                 return
@@ -766,8 +807,11 @@ angular.module('agil.controladores')
                     if (services.mensaje !== undefined) {
                         $scope.mostrarMensaje(services.mensaje)
                     }
-                }, function (err) {
-                    $scope.mostrarMensaje(err.message)
+                }).catch(function (err) {
+                    proforma.fecha_proforma = $scope.fechaATexto(proforma.fecha_proforma)
+                    blockUI.stop()
+                    var msg = (err.stack !== undefined && err.stack !== null) ? err.stack : (err.message !== undefined && err.message !== null) ? err.message : 'Se perdió la conexión.'
+                    $scope.mostrarMensaje(msg)
                 })
             }
         }
@@ -788,8 +832,10 @@ angular.module('agil.controladores')
                     return _.sucursal
                 })
                 blockUI.stop();
-            }, function (err) {
-                $scope.mostrarMensaje(err.stack !== undefined ? err.stack : err.message ? err.message : 'No se recibio respuesta del servidor')
+            }).catch(function (err) {
+                blockUI.stop()
+                var msg = (err.stack !== undefined && err.stack !== null) ? err.stack : (err.message !== undefined && err.message !== null) ? err.message : 'Se perdió la conexión.'
+                $scope.mostrarMensaje(msg)
             })
         }
 
@@ -861,7 +907,11 @@ angular.module('agil.controladores')
             var promesa = DosificacionesDisponibles($scope.usuario.id_empresa);
             promesa.then(function (dosificaciones) {
                 $scope.dosificaciones = dosificaciones;
-            });
+            }).catch(function (err) {
+                blockUI.stop()
+                var msg = (err.stack !== undefined && err.stack !== null) ? err.stack : (err.message !== undefined && err.message !== null) ? err.message : 'Se perdió la conexión.'
+                $scope.mostrarMensaje(msg)
+            })
         }
 
         $scope.abrirBusquedaServiciosProforma = function () {
@@ -911,6 +961,7 @@ angular.module('agil.controladores')
                 }
             })
             $scope.proforma.totalImporteBs = importBs
+            $scope.proforma.totalImporteSus = importBs * 6.96
             $scope.proforma.importeLiteral = ConvertirALiteral($scope.proforma.totalImporteBs.toFixed(2));
         }
 
@@ -942,8 +993,10 @@ angular.module('agil.controladores')
             prom.then(function (cls) {
                 $scope.clientes = cls
                 $scope.clientesProcesados = cls
-            }, function (err) {
-                $scope.mostrarMensaje(err.message)
+            }).catch(function (err) {
+                blockUI.stop()
+                var msg = (err.stack !== undefined && err.stack !== null) ? err.stack : (err.message !== undefined && err.message !== null) ? err.message : 'Se perdió la conexión.'
+                $scope.mostrarMensaje(msg)
             })
         }
 
@@ -1026,16 +1079,24 @@ angular.module('agil.controladores')
                     })
                 }, 1000)
                 blockUI.stop()
-            }, function (err) {
-                $scope.mostrarMensaje(err.data)
+            }).catch(function (err) {
+                blockUI.stop()
+                var msg = (err.stack !== undefined && err.stack !== null) ? err.stack : (err.message !== undefined && err.message !== null) ? err.message : 'Se perdió la conexión.'
+                $scope.mostrarMensaje(msg)
             })
-            blockUI.stop()
         }
 
         $scope.guardarProforma = function (valid, proforma) {
             blockUI.start()
             // var filtro = { id_empresa: $scope.usuario.empresa.id, mes: 0, anio: 0, sucursal: 0, actividad: 0, servicio: 0, monto: 0, razon: 0, usuario: $scope.usuario.id, pagina: 1, items_pagina: 10, busqueda: 0, numero: 0, id_opcion: 0 }
             if (valid && $scope.detallesProformas.length > 0) {
+                if ($scope.detallesProformas.some(function (detalle) {
+                    return detalle.editar
+                })) {
+                    $scope.mostrarMensaje('No ha finalizado la edición de un detalle. No se puede guardar.')
+                    blockUI.stop()
+                    return
+                }
                 if (proforma.id !== undefined) {
                     proforma.detallesProformas = $scope.detallesProformas
                     proforma.usuarioProforma = $scope.usuario
@@ -1045,15 +1106,16 @@ angular.module('agil.controladores')
                     var prom = ActualizarProforma(proforma.id, proforma)
                     prom.then(function (res) {
                         $scope.mostrarMensaje(res.mensaje)
-                        if (res.hasError === undefined) {
+                        if (res.hasErr === undefined) {
                             $scope.cerrardialogProformaEdicion()
                             // $scope.filtrarProformasOperaciones($scope.filtro)
                         } else {
                             $scope.proforma = res.proforma
-                            proforma.fecha_proforma = new Date($scope.convertirFecha(proforma.fecha_proforma))
+                            // proforma.fecha_proforma = new Date($scope.convertirFecha(proforma.fecha_proforma))
                         }
                         blockUI.stop()
                     }).catch(function (err) {
+                        blockUI.stop()
                         var msg = (err.stack !== undefined && err.stack !== null) ? err.stack : (err.message !== undefined && err.message !== null) ? err.message : 'Se perdió la conexión.'
                         $scope.mostrarMensaje(msg)
                     })
@@ -1118,6 +1180,7 @@ angular.module('agil.controladores')
             $scope.proforma = {}
             $scope.configuracionActividadServicio = []
             $scope.actividadesSucursal = []
+            $scope.listaCentroCostosClienteEmpresaPro = []
             // $scope.obtenerProformas()
             $scope.cerrarPopup($scope.dialogProformaEdicion);
             // $scope.paginator.getLastPage()
@@ -1220,8 +1283,18 @@ angular.module('agil.controladores')
             $scope.cerrarPopup($scope.modalConfiguracionActividadesServicios);
         }
 
-        $scope.abrirConfiguracionCentrosCostos = function () {
-            $scope.abrirPopup($scope.asignacionCentroCostoCliente);
+        $scope.abrirConfiguracionCentrosCostos = function (empresa) {
+            if (empresa !== null && empresa !== undefined) {
+                if (!$scope.centroCostosClienteEmpresa) {
+                    $scope.centroCostosClienteEmpresa = {}
+                }
+                $scope.centroCostosClienteEmpresa.empresa = empresa
+                $scope.centroCostosClienteEmpresa.desdeProforma = true
+                $scope.obtenercentroCostosClienteEmpresa(empresa)
+                $scope.abrirPopup($scope.asignacionCentroCostoCliente);
+            } else {
+                $scope.abrirPopup($scope.asignacionCentroCostoCliente);
+            }
         }
 
         $scope.cerrarConfiguracionCentrosCostos = function () {
@@ -1244,15 +1317,9 @@ angular.module('agil.controladores')
 
         $scope.eliminarAsignacionCentroCosto = function (asignacion) {
             $scope.listaCentroCostosClienteEmpresa[$scope.listaCentroCostosClienteEmpresa.indexOf(asignacion)].eliminado = true
-            // if (!$scope.listaCentroCostosClienteEmpresa.some(function (data, index) {
-            //     return data.id == info.centroCosto.id
-            // })) {
-            //     var detalle =Object.assign({}, info.centroCosto)
-            //     $scope.listaCentroCostosClienteEmpresa.push(detalle)
-            // }
         }
 
-        $scope.guardarAsignacionCentroCostos = function (empresa) {
+        $scope.guardarAsignacionCentroCostos = function (empresa, pro) {
             var button = $('#siguiente').text().trim();
             if (button != "Siguiente") {
                 var datos = []
@@ -1265,6 +1332,19 @@ angular.module('agil.controladores')
                 prom.then(function (res) {
                     $scope.mostrarMensaje(res.mensaje)
                     if (!res.hasErr) {
+                        if ($scope.centroCostosClienteEmpresa.desdeProforma) {
+                            datos.forEach(function (dato) {
+                                if (dato.nuevo && !dato.eliminado) {
+                                    $scope.listaCentroCostosClienteEmpresaPro.push(dato)
+                                }
+                                if (dato.eliminado) {
+                                    var indx = $scope.listaCentroCostosClienteEmpresaPro.indexOf(dato)
+                                    if (indx > -1) {
+                                        $scope.listaCentroCostosClienteEmpresaPro.splice(indx, 1)
+                                    }
+                                }
+                            })
+                        }
                         $scope.cerrarConfiguracionCentrosCostos()
                     }
                 }).catch(function (err) {
@@ -1276,6 +1356,7 @@ angular.module('agil.controladores')
 
         $scope.obtenercentroCostosClienteEmpresa = function (empresa) {
             $scope.listaCentroCostosClienteEmpresa = []
+            $scope.listaCentroCostosClienteEmpresaPro = []
             var prom = obtenerAsignacionCentroCosto(empresa.id)
             prom.then(function (res) {
                 if (res.hasErr) {
@@ -1284,6 +1365,7 @@ angular.module('agil.controladores')
                     $scope.listaCentroCostosClienteEmpresa = res.centros.map(function (centro) {
                         return centro.centroCosto
                     })
+                    $scope.listaCentroCostosClienteEmpresaPro = Object.assign([], $scope.listaCentroCostosClienteEmpresa)
                 }
             }).catch(function (err) {
                 var msg = (err.stack !== undefined && err.stack !== null) ? err.stack : (err.message !== undefined && err.message !== null) ? err.message : 'Se perdió la conexión.'
@@ -1390,13 +1472,15 @@ angular.module('agil.controladores')
                             }
                         })
                         blockUI.stop()
-                    }, function (err) {
-                        $scope.mostrarMensaje(err.message === undefined ? err.stack : err.message)
+                    }).catch(function (err) {
+                        var msg = (err.stack !== undefined && err.stack !== null) ? err.stack : (err.message !== undefined && err.message !== null) ? err.message : 'Se perdió la conexión.'
+                        $scope.mostrarMensaje(msg)
                         blockUI.stop()
                     })
                 }
-            }, function (err) {
-                $scope.mostrarMensaje(err.message === undefined ? err.stack : err.message)
+            }).catch(function (err) {
+                var msg = (err.stack !== undefined && err.stack !== null) ? err.stack : (err.message !== undefined && err.message !== null) ? err.message : 'Se perdió la conexión.'
+                $scope.mostrarMensaje(msg)
                 blockUI.stop()
             })
         }
