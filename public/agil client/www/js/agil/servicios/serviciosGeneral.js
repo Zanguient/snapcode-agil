@@ -1308,15 +1308,15 @@ angular.module('agil.servicios')
 							doc.text(venta.detallesVenta[i].cantidad, 135, y);
 							doc.text(venta.detallesVenta[i].producto.unidad_medida, 180, y - 3, { width: 43 });
 							var longitudCaracteres = venta.detallesVenta[i].producto.nombre.length;
-							var yDesc = (longitudCaracteres <= 24) ? y : ((longitudCaracteres > 24 && longitudCaracteres <= 60) ? y - 4 : y - 11);
-							doc.text(venta.detallesVenta[i].producto.nombre, 240, yDesc, { width: 130 });
+							var yDesc = (longitudCaracteres <= 27) ? y : ((longitudCaracteres > 27 && longitudCaracteres <= 63) ? y - 4 : y - 11);
+							doc.text(venta.detallesVenta[i].producto.nombre, 240, yDesc, { width: 250 });
 
 							if (venta.con_vencimiento) {
 								doc.text(fechaVencimientoTexto, 340, y);
 								doc.text(venta.detallesVenta[i].lote, 380, y);
 							}
 
-							doc.text(venta.detallesVenta[i].precio_unitario.toFixed(2), 460, y);
+							doc.text(venta.detallesVenta[i].precio_unitario.toFixed(2), 505, y);
 							//doc.text(venta.detallesVenta[i].importe.toFixed(2), 450, y);
 							//doc.text((venta.detallesVenta[i].descuento ? venta.detallesVenta[i].descuento.toFixed(2) : "0.00"), 490, y);
 							doc.text(venta.detallesVenta[i].total.toFixed(2), 560, y);
@@ -1565,7 +1565,7 @@ angular.module('agil.servicios')
 						doc.text("LOTE", 380, 210);
 					}
 					if (venta.detallesVenta[0].producto) {
-						doc.text("P.UNIT.", 450, 210);
+						doc.text("P.UNIT.", 500, 210);
 					}
 					/*doc.text("IMP.", 450, 210);
 					if (venta.detallesVenta[0].producto) {

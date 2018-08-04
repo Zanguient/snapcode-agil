@@ -1041,7 +1041,7 @@ angular.module('agil.controladores')
 							
 				columns.push($scope.usuarios[i].nombre_usuario);
 				if ($scope.usuarios[i].rolesUsuario[0]) {
-					if ($scope.usuarios[i].rolesUsuario[0].rol.nombre !== null) {
+					if ($scope.usuarios[i].rolesUsuario[0].rol) {
 						columns.push($scope.usuarios[i].rolesUsuario[0].rol.nombre);
 					}else{
 						columns.push("No Asignado");
@@ -1078,20 +1078,23 @@ angular.module('agil.controladores')
 			var doc = new PDFDocument({ size: 'letter', margin: 10, compress: false }); //[612, 792]
 			var stream = doc.pipe(blobStream());
 			var date = new Date().toLocaleDateString();
-			doc.fontSize(25).text("REPORTE USUARIOs",0,80,{ align: "center" });
-			doc.fontSize(10).text("Fecha: ",30,150);
-			doc.fontSize(10).text(date ,63,150);
+			doc.fontSize(25).text("REPORTE DE USUARIOS",0,80,{ align: "center" });
+			doc.rect(150, 100, 303, 0).stroke();
+			doc.font('Helvetica-Bold',10);
+			doc.text("Fecha: ",30,150);
+			doc.font('Helvetica',10).text(date ,63,150);
 			
 			doc.font('Helvetica-Bold').text("N°",30,180);
 			doc.font('Helvetica-Bold').text("Nombres",50,180);
-			doc.font('Helvetica-Bold').text("Apellido Paterno",120,180);
-			doc.font('Helvetica-Bold').text("Apellido Materno",210,180);
-			doc.font('Helvetica-Bold').text("Usuario",300,180);
-			doc.font('Helvetica-Bold').text("Rol",390,180);
-			doc.font('Helvetica-Bold').text("Empresa",460,180);
-			doc.font('Helvetica-Bold').text("Sucursal",520,180);
+			doc.font('Helvetica-Bold').text("Apellido Paterno",110,180);
+			doc.font('Helvetica-Bold').text("Apellido Materno",195,180);
+			doc.font('Helvetica-Bold').text("Usuario",280,180);
+			doc.font('Helvetica-Bold').text("Rol",365,180);
+			doc.font('Helvetica-Bold').text("Empresa",450,180);
+			doc.font('Helvetica-Bold').text("Sucursal",510,180);
 			//doc.font('Helvetica-Bold').text("Empresa",550,180);
 			doc.rect(27, 170, 545, 25).stroke();
+			
 			var y = 200;
 			var index = 1;
 			for (let i = 0; i < $scope.usuarios.length; i++) {
@@ -1099,25 +1102,25 @@ angular.module('agil.controladores')
 				if ($scope.usuarios[i].persona) {				
 					if ($scope.usuarios[i].persona.nombres !== null) {
 						doc.font('Helvetica').text($scope.usuarios[i].persona.nombres,50,y);
-						doc.font('Helvetica').text($scope.usuarios[i].persona.apellido_paterno,120,y);
-						doc.font('Helvetica').text($scope.usuarios[i].persona.apellido_materno,210,y);
+						doc.font('Helvetica').text($scope.usuarios[i].persona.apellido_paterno,110,y);
+						doc.font('Helvetica').text($scope.usuarios[i].persona.apellido_materno,195,y);
 					}
 				}
 
-				doc.font('Helvetica').text($scope.usuarios[i].nombre_usuario,300,y);
+				doc.font('Helvetica').text($scope.usuarios[i].nombre_usuario,280,y);
 				if ($scope.usuarios[i].rolesUsuario[0]) {
-					if ($scope.usuarios[i].rolesUsuario[0].rol.nombre !== null) {
-						doc.font('Helvetica').text($scope.usuarios[i].rolesUsuario[0].rol.nombre,370,y);
+					if ($scope.usuarios[i].rolesUsuario[0].rol) {
+						doc.font('Helvetica').text($scope.usuarios[i].rolesUsuario[0].rol.nombre,345,y);
 					}else{
 						doc.font('Helvetica').text("No Asignado",370,y);
 					}
 				}
 						
-				doc.font('Helvetica').text($scope.usuarios[i].empresa.razon_social,470,y);
+				doc.font('Helvetica').text($scope.usuarios[i].empresa.razon_social,450,y);
 				if ($scope.usuarios[i].sucursalesUsuario.length > 1) {
-					doc.font('Helvetica').text("Varios",520,y);
+					doc.font('Helvetica').text("Varios",510,y);
 				}else if ($scope.usuarios[i].sucursalesUsuario.length === 1) {
-					doc.font('Helvetica').text($scope.usuarios[i].sucursalesUsuario[0].sucursal.nombre,520,y);
+					doc.font('Helvetica').text($scope.usuarios[i].sucursalesUsuario[0].sucursal.nombre,510,y);
 				}
 				/*if ($scope.usuarios[i].activo === true) {
 					columns.push("Si");
