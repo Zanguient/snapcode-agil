@@ -200,7 +200,7 @@
                         </thead>
 
                         <tbody>
-                            <tr ng-repeat="solicitud in solicitudesCajaChica" ng-style="{'background-color': (solicitud.estado.nombre=='ANULADO')?'red' : 'auto','color': (solicitud.estado.nombre=='ANULADO')?'White' : 'auto'}">
+                            <tr ng-repeat="solicitud in solicitudesCajaChica" >
                                 <td>
                                     {{($index+1)+(paginator.itemsPerPage*(paginator.currentPage-1))}}
                                 </td>
@@ -215,7 +215,7 @@
                                 </td>
                                 <td>{{solicitud.concepto.nombre}}</td>
                                 <td>{{solicitud.detalle}}</td>
-                                <td>{{solicitud.estado.nombre}}</td>
+                                <td ng-style="{'background-color': (solicitud.estado.nombre==='ANULADO')?'red' : 'auto','color': (solicitud.estado.nombre=='ANULADO')?'White' : 'auto'}">{{solicitud.estado.nombre}}</td>
                                 <td>
                                     <span ng-if="tipoFiltro=='TODOS'"> {{solicitud.monto|number:2}} .-</span>
                                     <span ng-if="tipoFiltro!='TODOS'"> {{solicitud.cajasChicas[0].saldo|number:2}} .-</span>
@@ -233,7 +233,7 @@
                                             <i class="ace-icon fa fa-pencil bigger-130"></i>
                                         </a>
 
-                                        <a ng-if="solicitud.cajasChicas.length==0" class="red tooltip-info " uib-tooltip="Eliminar" href="javascript:void(0)" e-disabled="!aplicacion.puede_eliminar"
+                                        <a ng-hide="solicitud.eliminado"  ng-if="solicitud.cajasChicas.length==0" class="red tooltip-info " uib-tooltip="Eliminar" href="javascript:void(0)" e-disabled="!aplicacion.puede_eliminar"
                                             ng-click="abrirModalEliminarSolicitud(solicitud)">
                                             <i class="ace-icon fa fa-trash-o bigger-130"></i>
                                         </a>
@@ -246,11 +246,11 @@
                                             ng-click="abrirModalRegistroCajaChica(solicitud)">
                                             <i class="ace-icon fa fa-folder  bigger-130"></i>
                                         </a>
-                                        <a ng-if="!solicitud.eliminado &&  solicitud.concepto.concepto.nombre=='KARDEX'" class="orange tooltip-info " uib-tooltip="kardex solicitud"
+                                        <a ng-hide="solicitud.eliminado" ng-if="solicitud.concepto.concepto.nombre=='KARDEX'" class="orange tooltip-info " uib-tooltip="kardex solicitud"
                                             href="javascript:void(0)" e-disabled="!aplicacion.puede_crear" ng-click="abrirModalKardexCajaChica(solicitud)">
                                             <i class="ace-icon fa fa-file-text-o  bigger-130"></i>
                                         </a>
-                                        <a  class="red tooltip-info " uib-tooltip="Imprimir Recivo"
+                                        <a  class="red tooltip-info " ng-if="!solicitud.eliminado" uib-tooltip="Imprimir Recivo"
                                             href="javascript:void(0)"  ng-click="generarPdfBoletaCajaChica(solicitud,solicitud.cajasChicas[0])">
                                             <i class="ace-icon fa fa-print  bigger-130"></i>
                                         </a>
