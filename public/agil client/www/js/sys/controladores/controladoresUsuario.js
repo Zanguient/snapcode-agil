@@ -1024,7 +1024,7 @@ angular.module('agil.controladores')
 		$scope.reporteExcel = function (pdf) {
 			blockUI.start()
 
-			var cabecera = ["Nombre","Primer Apellido","Segundo Apellido","Nombre Usuario","Rol","Empresa","Usuario","Sucursal","Activo"];
+			var cabecera = [" N°","Nombre","Primer Apellido","Segundo Apellido","Nombre Usuario","Rol","Empresa","Usuario","Sucursal","Activo"];
 			var data = [];
 			data.push(cabecera);
 			var column = [];
@@ -1095,7 +1095,7 @@ angular.module('agil.controladores')
 			//doc.font('Helvetica-Bold').text("Empresa",550,180);
 			doc.rect(27, 170, 545, 25).stroke();
 			
-			var y = 200;
+			var y = 205;
 			var index = 1;
 			for (let i = 0; i < $scope.usuarios.length; i++) {
 				doc.font('Helvetica').text(index++,30,y);
@@ -1119,8 +1119,10 @@ angular.module('agil.controladores')
 				doc.font('Helvetica').text($scope.usuarios[i].empresa.razon_social,450,y);
 				if ($scope.usuarios[i].sucursalesUsuario.length > 1) {
 					doc.font('Helvetica').text("Varios",510,y);
-				}else if ($scope.usuarios[i].sucursalesUsuario.length === 1) {
-					doc.font('Helvetica').text($scope.usuarios[i].sucursalesUsuario[0].sucursal.nombre,510,y);
+				}else if ($scope.usuarios[i].sucursalesUsuario.length === 1) {	
+					var longitudCaracteres = $scope.usuarios[i].sucursalesUsuario[0].sucursal.nombre.length;
+					var yDesc = (longitudCaracteres <= 27) ? y : ((longitudCaracteres > 27 && longitudCaracteres <= 63) ? y - 4 : y - 11);		
+					doc.font('Helvetica').text($scope.usuarios[i].sucursalesUsuario[0].sucursal.nombre,510,yDesc,{width: 150});
 				}
 				/*if ($scope.usuarios[i].activo === true) {
 					columns.push("Si");

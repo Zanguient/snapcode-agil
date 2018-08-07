@@ -108,8 +108,8 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr ng-repeat="p in planillasRcIva">
-                            <td>{{$index+1}}</td>
+                        <tr ng-repeat="p in planillasRcIva" ng-class="{'red':$last}">
+                            <td >{{$index+1}}</td>
                             <td>{{p.anio}}</td>
                             <td>{{p.mes.split('-')[1]}}</td>
                             <td>{{p.neto_imponible}}</td>
