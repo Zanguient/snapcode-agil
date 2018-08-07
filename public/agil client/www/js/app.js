@@ -246,6 +246,14 @@ angular.module('agil', ['ngRoute', 'agil.controladores',
                 controller:'ControladorBalanceGeneral',
                 templateUrl:'templates/estadosFinancierosAgil/balance-general.html'
             })
+            .when('/caja-chica', {
+                controller:'ControladorCajaChica',
+                templateUrl:'templates/agil/caja-chica.html'
+            })
+            .when('/solicitud-caja-chica', {
+                controller:'ControladorSolicitudCajaChica',
+                templateUrl:'templates/agil/solicitud-caja-chica.html'
+            })
         .otherwise({
           redirectTo:'/'
         });

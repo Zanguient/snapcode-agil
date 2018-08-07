@@ -145,7 +145,8 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Sucu
 				reiniciar_comprobante_egreso_correlativo: req.body.reiniciar_comprobante_egreso_correlativo,
 				reiniciar_comprobante_traspaso_correlativo: req.body.reiniciar_comprobante_traspaso_correlativo,
 				reiniciar_comprobante_caja_chica_correlativo: req.body.reiniciar_comprobante_caja_chica_correlativo,
-				//correlativo_proforma: req.body.correlativo_proforma
+				caja_chica_ingreso_correlativo:req.body.caja_chica_ingreso_correlativo,
+				caja_chica_egreso_correlativo:req.body.caja_chica_egreso_correlativo
 			}, {
 					where: {
 						id: req.params.id_sucursal

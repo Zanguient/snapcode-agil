@@ -986,6 +986,26 @@
 							</div>
 						</div>
 					</div>
+					<div class="form-group">
+							<div class="row">
+								<label class="col-sm-6 control-label no-padding-right" for="caja_chica_ingreso_correlativo">Número Correlativo Ingreso Caja Chica</label>
+	
+								<div class="col-sm-6">
+									<input required type="number" id="caja_chica_ingreso_correlativo" ng-model="sucursal.caja_chica_ingreso_correlativo" placeholder="Correlativo ingreso caja chica"
+									 class="form-control" />
+								</div>
+							</div>
+						</div>
+						<div class="form-group">
+								<div class="row">
+									<label class="col-sm-6 control-label no-padding-right" for="caja_chica_egreso_correlativo">Número Correlativo Egreso Caja Chica</label>
+		
+									<div class="col-sm-6">
+										<input required type="number" id="caja_chica_egreso_correlativo" ng-model="sucursal.caja_chica_egreso_correlativo" placeholder="Correlativo egreso caja chica"
+										 class="form-control" />
+									</div>
+								</div>
+							</div>
 					<div class="form-group" ng-if="usuario.empresa.usar_pedidos">
 						<div class="row">
 							<label class="col-sm-6 control-label no-padding-right" for="frase_pedido">Frase Pedido</label>

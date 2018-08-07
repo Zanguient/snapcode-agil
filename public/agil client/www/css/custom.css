@@ -15,6 +15,7 @@
 	.table-responsive-actual {
 	  border: 0;
 	}
+	
   
 	.table-responsive-actual caption {
 	  font-size: 1.3em;
@@ -1065,7 +1066,11 @@ background-color:white !important;
 	border-bottom: 0px solid transparent;
 	color: #2C1796;
 }
-
+.bg-sky-blue{
+	background-color:	#31b0d5;
+	border-bottom: 0px solid transparent;
+	color: #FFFFFF;
+}
 .canvasjs-chart-credit {
    display: none;
 }

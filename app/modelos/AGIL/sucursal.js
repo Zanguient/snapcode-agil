@@ -133,6 +133,14 @@ module.exports = function (sequelize, Sequelize) {
 		correlativo_proforma: {
 			type: Sequelize.INTEGER,
 			field: 'correlativo_proforma'
+		},
+		caja_chica_ingreso_correlativo: {
+			type: Sequelize.INTEGER,
+			field: 'caja_chica_ingreso_correlativo'
+		},
+		caja_chica_egreso_correlativo: {
+			type: Sequelize.INTEGER,
+			field: 'caja_chica_egreso_correlativo'
 		}
 	}, {
 			freezeTableName: true

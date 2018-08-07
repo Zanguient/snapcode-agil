@@ -87,7 +87,11 @@ module.exports = function (sequelize, Sequelize) {
 		vincular_cuenta:{
 			type: Sequelize.BOOLEAN,
 			field: 'vincular_cuenta'
-		}
+		},
+		cuenta_activo: {
+			type: Sequelize.BOOLEAN,
+			field: 'cuenta_activo'
+		},
 	}, {
 			freezeTableName: true
 		});

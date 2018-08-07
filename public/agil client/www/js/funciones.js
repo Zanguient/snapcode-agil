@@ -46,6 +46,36 @@ function ejecutarScriptsConfiguracionEstadosFinacioneros(idModalConfiguracionGes
 	}, 200);
 	
 }
+function  ejecutarScriptsSolicitudCajaChicas(idModalSolicitudCajaChica,idModalConceptosMovimiento,idModalEliminarSolicitud,idModalVerificarAutorizacion){
+	crearPopup(idModalSolicitudCajaChica, "auto", 'auto');
+	crearPopup(idModalConceptosMovimiento, "auto", 'auto');
+	crearPopup(idModalEliminarSolicitud, "auto", 'auto');
+	crearPopup(idModalVerificarAutorizacion, "auto", 'auto');
+	setTimeout(function () {
+		aplicarDatePickers();
+	}, 200);
+	
+}
+function  ejecutarScriptsCajaChicas(idModalSolicitudCajaChica,idModalConceptosMovimiento,idModalEliminarSolicitud,idModalVerificarAutorizacion,idModalRegistroCajaChica,
+	idModalKardexCajaChica,idModalIngresosCajaChica,idModalRegistroIngresoCajaChica,idModalHistorialCierreCajaChica){
+	crearPopup(idModalSolicitudCajaChica, "auto", 'auto');
+	crearPopup(idModalConceptosMovimiento, "auto", 'auto');
+	crearPopup(idModalEliminarSolicitud, "auto", 'auto');
+	crearPopup(idModalVerificarAutorizacion, "auto", 'auto');
+	crearPopup(idModalIngresosCajaChica, "auto", 'auto');
+	crearPopup(idModalKardexCajaChica, "auto", 'auto');
+	crearPopup(idModalRegistroCajaChica, "auto", 'auto');
+	crearPopup(idModalRegistroIngresoCajaChica, "auto", 'auto');
+	crearPopup(idModalHistorialCierreCajaChica, "auto", 'auto');
+	
+	setTimeout(function () {
+		aplicarDatePickers();
+	}, 200);
+	
+}
+	
+	
+
 function ejecutarScriptsPolifuncionalidad(modalNuevaEvaluacion, modalNuevaEvaluacionWizard, modalBusquedaPersonal, modalParametrosPolifuncionalidad,
 	modalParametrosPolifuncionalidadWizard, idModalReportes, reporteGraficoPolifuncional, modalBusquedaCentroCosto) {
 	crearPopup(modalNuevaEvaluacion, 'auto', 'auto');
@@ -142,10 +172,9 @@ function ejecutarScriptsInventario(idModalActualizacionInventario, idModalCreaci
 	}, 200);
 }
 
-function ejecutarScriptsOperaciones(idDialogDialogPanelOperaciones, idDialogDatos, idDialogEntregaViveres, idConfirmacionCierre, idDialogTotalIngredientes, idDialogoListadoPedido, idDialogoNuevoPedido,
-	idDialogProductosProveedor, idDialogBusquedaProveedor, idDialogProductosAsigandosProveedor) {
+function ejecutarScriptsOperaciones(idDialogDialogPanelOperaciones, idDialogEntregaViveres, idConfirmacionCierre, idDialogTotalIngredientes, idDialogoListadoPedido, idDialogoNuevoPedido,
+	idDialogProductosProveedor, idDialogBusquedaProveedor, idDialogProductosAsigandosProveedor,idDialogDatos) {
 	crearPopup(idDialogDialogPanelOperaciones, "100%", screen.height);
-	crearPopup(idDialogDatos, "auto", 'auto');
 	crearPopup(idDialogEntregaViveres, "60%", 'auto');
 	crearPopup(idConfirmacionCierre, "40%", 'auto');
 	crearPopup(idDialogTotalIngredientes, "60%", 'auto');
@@ -154,6 +183,7 @@ function ejecutarScriptsOperaciones(idDialogDialogPanelOperaciones, idDialogDato
 	crearPopup(idDialogProductosProveedor, "auto", 'auto');
 	crearPopup(idDialogBusquedaProveedor, "auto", 'auto');
 	crearPopup(idDialogProductosAsigandosProveedor, "auto", 'auto');
+	crearPopup(idDialogDatos, "auto", 'auto');
 }
 function ejecutarScriptsInicio(idPopupTablaProductos, idPopupTablaCreditos, idPopupTablaDeudas, idPopupPago,
 	idPopupActualizarCreditoCliente, idPopupActualizarCreditoDeuda, idPopupDeuda, idModalDescuento, idModalTablaVentasPendientes,
@@ -1075,7 +1105,7 @@ function crearPopup(idPopup, ancho, altura) {
 
 
 	$("#" + idPopup).siblings('.ui-dialog-titlebar').remove();
-	// $("#" + idPopup).dialog("moveToTop");
+	/* $("#" + idPopup).dialog("moveToTop"); */
 	// $("#" + idPopup).draggable({
 	// 	handle: ".modal-header"
 	// });

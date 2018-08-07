@@ -178,7 +178,7 @@
 	<script src="js/gtm/controladores/ControladorGtmDespacho.js"></script>
 	<script src="js/gtm/controladores/ControladorGtmGeoLocalizacion.js"></script>
 	<script src="js/agil/controladores/ControladoresFarmacia.js"></script>
-
+	<script src="js/agil/controladores/ControladoresCajaChica.js"></script>
 	<script src="js/agil/controladores/controladoresProformas.js"></script>
 	<script src="js/agil/controladores/controladoresPolifuncionalidad.js"></script>
 	<script src="js/agil/controladores/controladoresTransacciones.js"></script>
@@ -228,6 +228,7 @@
 	<script src="js/agil/servicios/serviciosPedidos.js"></script>
 	<script src="js/agil/servicios/serviciosActivosFijos.js"></script>
 	<script src="js/estadosFinancierosAgil/servicios/serviciosEstadosFinancieros.js"></script>
+	<script src="js/agil/servicios/serviciosSolicitudCajaChica.js"></script>
 
 </head>
 
@@ -2749,7 +2750,7 @@
 								</span>
 								</div>
 							</div>
-							<div class="col-sm-8" style=" margin-top: 20px;vmargin-left: 0px;">
+							<div class="col-sm-8" style=" margin-top: 20px;margin-left: 0px;">
 									<button id="guardarV" type="submit"  ng-disabled="pedido.detalles_despacho.length==0" class="btn btn-primary">
 										<i class="ace-icon fa fa-floppy-o align-top bigger-125"></i>
 										GUARDAR
@@ -3052,7 +3053,7 @@
 		</div>
 	</div>
 
-	<div id="tabla-gtm-despachos" ng-include src="'/templates/gtm/notifications/despachos.html'"></div>
+	<div id="tabla-gtm-despachos" style="overflow: hidden" ng-include src="'/templates/gtm/notifications/despachos.html'"></div>
 
 	<div id="tabla-gtm-asignacion-despachos" ng-include src="'/templates/gtm/notifications/asignacion-despacho.html'"></div>
 	<!-- Factura facturar proforma -->

@@ -1127,13 +1127,27 @@
 								</div>
 								<div class="form-group">
 									<div class="row">
-										<label class="col-sm-4 control-label no-padding-right" for="presupuestaria">Usar Cuentas Auxiliares</label>
+										<label class="col-sm-4 control-label no-padding-right" >Usar Cuentas Auxiliares</label>
 
 										<div class="col-sm-6">
 											<select id="cuentaaux" name="cuentaaux" class="col-xs-10 col-sm-8" ng-options="tipoAuxiliar as tipoAuxiliar.nombre for tipoAuxiliar in tiposCuentasAuxiliares track by tipoAuxiliar.id"
 											 ng-model="cuenta.tipoAuxiliar">
 												<option value="">--ninguno--</option>
 											</select>
+
+										</div>
+									</div>
+								</div>
+								<div class="form-group">
+									<div class="row">
+										<label class="col-sm-4 control-label no-padding-right" >Cuenta de Activo</label>
+
+										<div class="col-sm-8">
+											<label>
+												<input id="bimonetariaC" name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="cuenta.cuenta_activo"
+												 value="0" />
+												<span id=check_bimonetaria class="lbl check-descuento" class="col-xs-10 col-sm-8"></span>
+											</label>
 
 										</div>
 									</div>

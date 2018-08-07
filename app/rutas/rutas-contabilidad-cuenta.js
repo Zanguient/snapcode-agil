@@ -440,7 +440,8 @@ module.exports = function (router, ContabilidadCuenta, ClasificacionCuenta, Tipo
 				id_especifica_texto2: id_texto2,
 				id_especifica_texto3: id_texto3,
 				tipo_especifica: req.body.tipo_especifica,
-				vincular_cuenta: req.body.vincular_cuenta
+				vincular_cuenta: req.body.vincular_cuenta,
+				cuenta_activo:req.body.cuenta_activo
 			}, {
 					where: {
 						id: req.body.id
@@ -528,7 +529,8 @@ module.exports = function (router, ContabilidadCuenta, ClasificacionCuenta, Tipo
 				id_especifica_texto2: id_texto2,
 				id_especifica_texto3: id_texto3,
 				tipo_especifica: req.body.tipo_especifica,
-				vincular_cuenta: req.body.vincular_cuenta
+				vincular_cuenta: req.body.vincular_cuenta,
+				cuenta_activo: req.body.cuenta_activo,
 			}).then(function (cuentaCreada) {
 				if (req.body.cliente != null) {
 					ClienteCuenta.create({
@@ -596,10 +598,28 @@ module.exports = function (router, ContabilidadCuenta, ClasificacionCuenta, Tipo
 				})
 			});
 		})
+	router.route('/contabilidad-cuentas/clasificaciones/id/:id_empresa')
+		.get(function (req, res) {
+			ClasificacionCuenta.findAll({
+				where: { id_empresa: req.params.id_empresa },
+				include: [{ model: Clase, as: 'saldo' }, { model: Clase, as: 'movimiento' }],
 
+			}).then(function (clasificacionesCuenta) {
+				Clase.findAll({
+					where: [{
+						nombre_corto: {
+							$like: "%" + "CONTCLS" + "%"
+						}
+					}],
+				}).then(function (listaClasificaiones) {
+					res.json({ clasificaciones: clasificacionesCuenta });
+				})
+			});
+		})
 	router.route('/contabilidad-cuentas/clasificaciones')
 		.post(function (req, res) {
 			ClasificacionCuenta.create({
+				id_empresa:req.body.id_empresa,
 				nombre: req.body.nombre,
 				id_saldo: req.body.saldo.id,
 				id_movimiento: req.body.movimiento.id
@@ -608,7 +628,7 @@ module.exports = function (router, ContabilidadCuenta, ClasificacionCuenta, Tipo
 			});
 		})
 
-	router.route('/contabilidad-cuentas/clasificaciones/edicion')
+	router.route('/contabilidad-cuentas/clasificaciones/edicion/id/:id_empresa')
 		.put(function (req, res) {
 			req.body.forEach(function (clasificacion, index, array) {
 				if (!clasificacion.eliminado) {
@@ -624,6 +644,7 @@ module.exports = function (router, ContabilidadCuenta, ClasificacionCuenta, Tipo
 							});
 					} else {
 						ClasificacionCuenta.create({
+							id_empresa: req.params.id_empresa,
 							nombre: clasificacion.nombre,
 							id_saldo: (clasificacion.saldo ? clasificacion.saldo.id : null),
 							id_movimiento: (clasificacion.movimiento ? clasificacion.movimiento.id : null)
@@ -851,7 +872,8 @@ module.exports = function (router, ContabilidadCuenta, ClasificacionCuenta, Tipo
 											id_clasificacion: claficiacionEncontrada[0].id,
 											id_tipo_cuenta: claseEncontrada[0].id,
 											bimonetaria: cuenta.bimonetaria,
-											eliminado: false
+											eliminado: false,
+											
 										}, { transaction: t }).then(function (cuentaCreada) {
 											return sequelize.query("UPDATE agil_contabilidad_cuenta set cuenta_padre=" + cuentaCreada.id + " where LENGTH(codigo)=" + (cuentaCreada.codigo.length + 2) + " AND codigo LIKE '" + cuentaCreada.codigo + "%';", { transaction: t })
 												.then(function (act) {

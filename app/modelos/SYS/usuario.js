@@ -35,7 +35,11 @@ module.exports=function(sequelize,Sequelize){
 	  usar_lector_de_barra:{
 		type: Sequelize.BOOLEAN,
 		field: 'usar_lector_de_barra'  
-	  }
+		},
+		autorizacion_caja_chica:{
+			type: Sequelize.BOOLEAN,
+			field: 'autorizacion_caja_chica'  
+			}
 	}, {
 	  freezeTableName: true 
 	});

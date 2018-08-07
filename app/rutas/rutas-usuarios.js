@@ -28,7 +28,8 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, decodeBase
 							id_empresa: req.body.id_empresa,
 							nombre_usuario: req.body.nombre_usuario,
 							clave: md5(req.body.clave),
-							activo: req.body.activo
+							activo: req.body.activo,
+							autorizacion_caja_chica: req.body.autorizacion_caja_chica
 						}).then(function (usuarioCreado) {
 							Usuario.update({
 								token: jwt.sign(usuarioCreado, 'shhhhh')
@@ -347,7 +348,8 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, decodeBase
 									id_empresa: req.body.id_empresa,
 									nombre_usuario: req.body.nombre_usuario,
 									clave: clave,
-									activo: req.body.activo
+									activo: req.body.activo,
+									autorizacion_caja_chica: req.body.autorizacion_caja_chica
 								}, {
 										where: {
 											id: req.body.id

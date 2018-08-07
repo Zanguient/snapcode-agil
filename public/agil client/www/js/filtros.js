@@ -15,6 +15,39 @@ angular.module('agil.filtros', [])
 
         }
     })
+    .filter('filtroIngresos', function() {
+        return function(input) {
+            var salida = [];
+            angular.forEach(input, function(movimiento) {
+                if (movimiento.concepto.nombre === 'INGRESO') {
+                salida.push(movimiento)
+                }
+            })
+            return salida;
+        }
+    })
+    .filter('filtroEgresos', function() {
+        return function(input) {
+            var salida = [];
+            angular.forEach(input, function(movimiento) {
+                if (movimiento.concepto.nombre === 'GASTO') {
+                salida.push(movimiento)
+                }
+            })
+            return salida;
+        }
+    })
+    .filter('filtroSolicitud', function() {
+        return function(input) {
+            var salida = [];
+            angular.forEach(input, function(movimiento) {
+                if (movimiento.concepto.nombre === 'GASTO' || movimiento.concepto.nombre === 'KARDEX') {
+                salida.push(movimiento)
+                }
+            })
+            return salida;
+        }
+    })
     .filter('filtroKardex', function () {
 
         // In the return function, we must pass in a single parameter which will be the data we will work on.

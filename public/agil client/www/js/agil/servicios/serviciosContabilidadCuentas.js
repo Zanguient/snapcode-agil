@@ -122,18 +122,23 @@ angular.module('agil.servicios')
 				'update': { method: 'PUT' }
 			});
 	})
-
+	.factory('CuentasClasificaciones2', function ($resource) {
+		return $resource(restServer + "contabilidad-cuentas/clasificaciones/id/:id_empresa",null,
+			{
+				'update': { method: 'PUT' }
+			});
+	})
 	.factory('CuentasClasificacionesEdicion', function ($resource) {
-		return $resource(restServer + "contabilidad-cuentas/clasificaciones/edicion", { id: '@id' },
+		return $resource(restServer + "contabilidad-cuentas/clasificaciones/edicion/id/:id_empresa", null,
 			{
 				'update': { method: 'PUT' }
 			});
 	})
 
-	.factory('lasClasificaciones', ['CuentasClasificaciones', '$q', function (CuentasClasificaciones, $q) {
-		var res = function () {
+	.factory('lasClasificaciones', ['CuentasClasificaciones2', '$q', function (CuentasClasificaciones2, $q) {
+		var res = function (idEmpresa) {
 			var delay = $q.defer();
-			CuentasClasificaciones.get(function (entidades) {
+			CuentasClasificaciones2.get({id_empresa:idEmpresa},function (entidades) {
 				delay.resolve(entidades);
 			}, function (error) {
 				delay.reject(error);

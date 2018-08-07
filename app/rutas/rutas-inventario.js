@@ -149,20 +149,20 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 			Compra.findAll({
 				where: condicionCompra,
 				include: [/* {model:Clase,as:'tipoMovimiento'},{ model: Sucursal, as: 'sucursal',where: condicionSucursal }, */ {
-					model: Movimiento, as: 'movimiento',
-					include: [{ model: Clase, as: 'clase' }]
+					model: Movimiento, as: 'movimiento',required:false,
+					include: [{ model: Clase, as: 'clase',required:false, }]
 				}, {
-					model: DetalleCompra, as: 'detallesCompra',
-					include: [{ model: Producto, as: 'producto' },
-					{ model: Clase, as: 'centroCosto',/*,where:{nombre_corto:'ALM'}*/ }]
+					model: DetalleCompra, as: 'detallesCompra',required:false,
+					include: [{ model: Producto, as: 'producto',required:false },
+					{ model: Clase, as: 'centroCosto',required:false,/*,where:{nombre_corto:'ALM'}*/ }]
 				},
-				{ model: Clase, as: 'tipoPago', },
-				{ model: Usuario, as: 'usuario', where: condicionUsuario },
-				{ model: Proveedor, as: 'proveedor', where: condicionProveedor },
+				{ model: Clase, as: 'tipoPago',required:false, },
+				{ model: Usuario, as: 'usuario',required:false, where: condicionUsuario },
+				{ model: Proveedor, as: 'proveedor',required:false, where: condicionProveedor },
 				{
-					model: Almacen, as: 'almacen',
+					model: Almacen, as: 'almacen',required:false,
 					include: [{
-						model: Sucursal, as: 'sucursal',
+						model: Sucursal, as: 'sucursal',required:false,
 						where: condicionSucursal
 					}]
 				}]

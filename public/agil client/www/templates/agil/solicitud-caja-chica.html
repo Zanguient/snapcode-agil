@@ -1,0 +1,437 @@
+<div class="conteiner">
+    <h3 class="header smaller lighter blue">SOLICITUD CAJA CHICA</h3>
+    <div>
+        <button id="nuevo" ng-disabled="!aplicacion.puede_crear" class="btn btn-primary" ng-click="abrirModalSolicitudCajaChica()">
+            <i class="ace-icon fa fa-plus align-top bigger-125"></i>
+            Nuevo
+        </button>
+        <form name="formularioFiltroCuentas" novalidate ng-submit="paginator.getSearch(paginator.search,filtro,null)">
+            <fieldset>
+                <legend>Filtro Solicitudes</legend>
+                <div style="overflow-x:auto;">
+                    <table class="table table-striped table-bordered table-hover">
+                        <tbody>
+                            <tr>
+                                <td>
+
+                                </td>
+                                <td>
+                                    <label>Desde</label>&nbsp
+                                </td>
+                                <td>
+                                    <label>Hasta</label>&nbsp
+                                </td>
+                                <td>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <label>PERIODO</label>&nbsp
+                                </td>
+                                <td>
+                                    <input ng-update-hidden class="form-control date-picker" type="text" data-date-format="dd/mm/yyyy" id="fechainicio" ng-model="filtro.fechaInicioTexto"
+                                        placeholder="Ingrese la fecha inicial" />
+                                </td>
+                                <td>
+                                    <input ng-update-hidden class="form-control date-picker" type="text" data-date-format="dd/mm/yyyy" id="fechafin" ng-model="filtro.fechaFinTexto"
+                                        placeholder="Ingrese la fecha final" /> &nbsp
+                                </td>
+                                <td>
+                                    <button id="Buscar" type="submit" ng-disabled="formularioFiltroCuentas.$invalid" class="btn-primary btn btn-app btn-xs">
+                                        <i class="ace-icon fa fa-search align-top bigger-125"></i>
+                                        BUSCAR
+                                    </button>
+                                    <button id="pdf" ng-disabled="!Cuentas" class="btn btn-app btn-danger btn-xs" ng-click="imprimirFiltroCajaCartaOficio(Cuentas)">
+                                        <i class="ace-icon fa fa-print bigger-160"></i>
+                                        PDF
+                                    </button>
+                                    <button id="pdf" ng-disabled="!Cuentas" class="btn btn-app btn-success btn-xs" ng-click="imprimirFiltroExcelCajaCartaOficio(Cuentas)">
+                                        <i class="ace-icon fa fa-print bigger-160"></i>
+                                        Excel
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    &nbsp
+                                </td>
+                                <td>
+                                    <label>Solicitante</label>&nbsp
+                                </td>
+                                <td>
+                                    <label>Usuario</label>&nbsp
+                                </td>
+                                <td>
+                                    <label>Estado</label>&nbsp
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    FILTRO
+                                </td>
+                                <td>
+                                    <input type="text" ng-model="filtro.solicitante">
+                                </td>
+                                <td>
+                                    <input type="text" ng-model="filtro.usuario">
+                                </td>
+                                <td>
+                                    <select ng-disabled ng-model="filtro.estado" class="form-control" ng-options="estado.id as estado.nombre for estado in tiposEstados | filter:{habilitado:true} track by estado.id">
+                                        <option value="">Seleccionar</option>
+                                    </select>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </fieldset>
+        </form>
+        <div class="table-header">
+            <div class="row">
+                <div class="col-sm-12">
+                    <h4 class="col-sm-4 widget-title">Lista de Solicitudes</h4>
+                    <div class="col-sm-8 inline pos-rel pull-right">
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- div.table-responsive -->
+
+        <!-- div.dataTables_borderWrap -->
+        <div>
+            <div id="tabla-productos_wrapper" class="dataTables_wrapper form-inline no-footer">
+                <div class="row" ng-include src="'/templates/gral/paginator-header-1.html'">
+                </div>
+                <div style="overflow-x:auto;">
+                    <table id="tabla-contabilidadCuentas" class="table table-striped table-bordered">
+                        <thead>
+                            <tr>
+                                <th class="center">N°</th>
+                                <th class="center">
+                                    <a href="javascript:void(0)" ng-click="paginator.sortColumn('usuario',obtenerLista)">Usuario
+                                        <span id="codigo" class="sort fa fa-sort icon-only"></span>
+                                    </a>
+                                </th>
+                                <th class="center">
+                                    <a href="javascript:void(0)" ng-click="paginator.sortColumn('fecha',obtenerLista)">Fecha
+                                        <span id="nombre" class="sort fa fa-sort icon-only"></span>
+                                    </a>
+                                </th>
+                                <th class="center">
+                                    <a href="javascript:void(0)" ng-click="paginator.sortColumn('solicitud',obtenerLista)">Solicitud
+                                        <span id="debe" class="sort fa fa-sort icon-only"></span>
+                                    </a>
+                                </th>
+                                <th class="center">
+                                    concepto
+
+                                </th>
+                                <th class="center">
+                                    detalle
+
+                                </th>
+                                <th class="center">
+                                    <a href="javascript:void(0)" ng-click="paginator.sortColumn('estado',obtenerLista)">Estado
+                                        <span id="clasificacion" class="sort fa fa-sort icon-only"></span>
+                                    </a>
+                                </th>
+                                <th class="center">
+                                    Monto
+
+                                </th>
+                                <th class="center">
+                                    Acciones
+
+                                </th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            <tr ng-repeat="solicitud in solicitudesCajaChica" >
+                                <td>
+                                    {{($index+1)+(paginator.itemsPerPage*(paginator.currentPage-1))}}
+                                </td>
+                                <td>
+                                    {{solicitud.usuario.persona.nombre_completo}}
+                                </td>
+                                <td>
+                                    {{solicitud.fecha|date:'dd/MM/yyyy'}}
+                                </td>
+                                <td>
+                                    {{solicitud.solicitante.persona.nombre_completo}}
+                                </td>
+                                <td>{{solicitud.concepto.nombre}}</td>
+                                <td>{{solicitud.detalle}}</td>
+                                <td ng-style="{'background-color': (solicitud.estado.nombre==='ANULADO')?'red' : 'auto','color': (solicitud.estado.nombre=='ANULADO')?'White' : 'auto'}">{{solicitud.estado.nombre}}</td>
+                                <td>
+                                    {{solicitud.monto|number:2}} .-
+                                </td>
+
+                                <td>
+                                    <div class="action-buttons">
+                                        <a class="blue tooltip-info" uib-tooltip="Ver Datos" href="javascript:void(0)" e-disabled="!aplicacion.puede_ver" ng-click="verSolicitudCajaChica(solicitud)">
+                                            <i class="ace-icon fa fa-search-plus bigger-130"></i>
+                                        </a>
+                                        <a ng-if="!solicitud.eliminado  && solicitud.estado.nombre!='PROCESADO'&& solicitud.estado.nombre!='ANULADO'" class="green tooltip-info" uib-tooltip="Editar Datos" href="javascript:void(0)" e-disabled="!aplicacion.puede_modificar"
+                                            ng-click="editarSolicitudCajaChica(solicitud)">
+                                            <i class="ace-icon fa fa-pencil bigger-130"></i>
+                                        </a>
+
+                                        <a ng-if="!solicitud.eliminado && solicitud.estado.nombre!='PROCESADO'&& solicitud.estado.nombre!='ANULADO'" class="red tooltip-info " uib-tooltip="Eliminar" href="javascript:void(0)" e-disabled="!aplicacion.puede_eliminar"
+                                            ng-click="abrirModalEliminarSolicitud(solicitud)">
+                                            <i class="ace-icon fa fa-trash-o bigger-130"></i>
+                                        </a>
+                                        <a ng-if="!solicitud.eliminado && solicitud.estado.nombre=='PENDIENTE'" class="blue tooltip-info " uib-tooltip="Autorizar Solicitud"
+                                            href="javascript:void(0)" e-disabled="!aplicacion.puede_crear" ng-click="abrirModalVerificarAutorizacion(solicitud)">
+                                            <i class="ace-icon fa fa-pencil-square  bigger-130"></i>
+                                        </a>
+
+                                    </div>
+
+
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="row" ng-include src="'/templates/gral/paginator.html'">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- inicio solicitud -->
+<div class="modal" id="dialog-solicitud">
+    <div class="modal-content">
+        <div class="modal-header bg-primary">
+            <button type="button" ng-click="cerrarModalSolicitudCajaChica()" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            <h4 class="modal-title">SOLICITUD DE CAJA CHICA</h4>
+        </div>
+        <form id="form-conf-imp" name="form-conf-imp" ng-submit="guardarSolicitudCajaChica()">
+            <div class="modal-body">
+
+                <div class="row">
+                    <div class="col-md-4">
+                        <label class="inline">
+
+                            <span class="lbl">Usuario:</span>
+                        </label>
+                    </div>
+                    <div class="col-md-8">
+                        {{usuario.persona.nombre_completo}}
+                    </div>
+                </div>
+                <div class="space-4"></div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <label class="inline">
+
+                            <span class="lbl">Fecha:</span>
+                        </label>
+                    </div>
+                    <div class="col-md-8">
+                        {{solicitud.fecha|date:'dd/MM/yyyy'}}
+                    </div>
+                </div>
+                <div class="space-4"></div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <label class="inline">
+
+                            <span class="lbl">Solicitante:</span>
+                        </label>
+                    </div>
+                    <div class="col-md-8">
+                        <input ng-disabled="solicitud.ver" ng-disabled="evaluacion.ver != undefined" ng-keypress="interceptarTecla($event,'id_servicio',true)"
+                            autocomplete="off" required type="text" ng-model="solicitud.solicitante" placeholder="Busqueda de personal..."
+                            uib-typeahead="personal as personal.persona.nombre_completo for personal in buscarPersonal($viewValue)"
+                            typeahead-wait-ms="2000" typeahead-template-url="templates/autocompletar.html" typeahead-show-hint="false"
+                            typeahead-min-length="1" typeahead-on-select="establecerPersonal($item, $model, $label, $event)">
+                    </div>
+                </div>
+                <div class="space-4"></div>
+                <div class="row">
+
+                    <div class="col-md-4">
+                        <label class="inline">
+
+                            <span class="lbl">Concepto</span>
+                        </label>
+                    </div>
+
+                    <div class="col-md-8">
+                        <div class="row">
+
+                            <div class="col-md-10">
+                                <select ng-disabled="solicitud.ver" ng-model="solicitud.concepto" class="form-control" ng-options="concepto as concepto.nombre for concepto in ConceptosMovimiento | filter:{habilitado:true}|filtroSolicitud track by concepto.id">
+                                    <option value="">Seleccionar</option>
+                                </select>
+                            </div>
+                            <div class="col-md-1" align=? "left">
+                                <div class="space-4"></div>
+                                <span ng-hide="solicitud.ver" class="fa fa-pencil bigger-160" ng-click="abrirModalConceptosMovimiento(tiposConceptos)"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="space-4"></div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <label class="inline">
+
+                            <span class="lbl">Detalle</span>
+                        </label>
+                    </div>
+                    <div class="col-md-8">
+                        <textarea ng-disabled="solicitud.ver" class="form-control" cols="30" rows="4" ng-model="solicitud.detalle"></textarea>
+                    </div>
+                </div>
+                <div class="space-4"></div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <label class="inline">
+                            <span class="lbl">Monto:</span>
+                        </label>
+                    </div>
+                    <div class="col-md-8">
+                        <input ng-disabled="solicitud.ver" type="number" ng-model="solicitud.monto" class="form-control">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button ng-hide="solicitud.ver" type="submit" class="btn btn-primary">Guardar</button>
+                <button type="button" class="btn btn-danger" ng-click="cerrarModalSolicitudCajaChica()">Cerrar</button>
+
+            </div>
+        </form>
+    </div>
+</div>
+</div>
+<!-- fin solicitud -->
+
+<!-- === modal conceptos movimiento"==== -->
+<div id="dialog-conceptos-movimiento" class="modal" item-width="500">
+    <div class="modal-header bg-primary">
+        <h4 class='smaller text-white text-uppercase'>
+            <i class='icono-prerequisito'></i>
+            <label> &nbsp;CONCEPTOS MOVIMIENTO</label>
+        </h4>
+    </div>
+    <form ng-submit="AgregarConceptosMovimientoCajaChica(clase)">
+        <div class="row">
+
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <label for="ciudad">Nombre</label>
+                    <input type="text" ng-model="clase.nombre" type="text" ng-model-options="{updateOn: 'submit'}" capitalize style="text-transform:uppercase;"
+                        class="form-control" id="ciudad" name="ciudad" placeholder="Bolivia">
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label for="ciudad">Movimiento</label>
+                    <select class="form-control" ng-model="clase.concepto" ng-model-options="{updateOn: 'submit'}" ng-options="movimiento as movimiento.nombre for movimiento in tiposMovimientos.clases | filter:{habilitado:true} track by movimiento.id">
+                    </select>
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <br>
+                <div class="form-group">
+                    <!-- <button type="button" class="btn btn-success" ng-click="AgregarDepartamento(clase)">
+                        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                    </button> -->
+                    <button ng-if="!clase.edit" type="submit" class="btn btn-success">
+                        <span class="glyphicon glyphicon-plus" aria-hidden="true">Agregar</span>
+                    </button>
+                    <button ng-if="clase.edit" type="submit" class="btn btn-primary">
+                        <span class="glyphicon glyphicon-plus" aria-hidden="true">Modificar</span>
+                    </button>
+                    <button ng-if="clase.edit" type="button" class="btn btn-danger" ng-click="cancelarEdicionConcepotMovimientoCajaChica(clase)">
+                        <span class="" aria-hidden="true">Cancelar</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </form>
+    <table class="table table-striped table-hover">
+        <thead>
+            <tr>
+                <th>nombre</th>
+                <th>Movimiento</th>
+                <th>Habilitar</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="concepto in ConceptosMovimiento track by $index">
+                <th scope="row">{{concepto.nombre}}</th>
+                <th scope="row">{{concepto.concepto.nombre}}</th>
+
+                <td>
+                    <label>
+                        <input name="switch-field-1" class="ace ace-switch ace-switch-5" type="checkbox" ng-model="concepto.habilitado">
+                        <span class="lbl check-espaniol"></span>
+                    </label>
+                </td>
+                <td>
+                    <a ng-click="editarConceptoMovimientoCajaChica(concepto)">
+                        <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
+                    </a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <div class="row">
+        <div class="modal-footer wizard-actions">
+            <button class="btn btn-primary btn-sm" ng-click="guardarConceptoMovimientoCajaChica()">
+                <i class="glyphicon glyphicon-floppy-disk"></i>Guardar
+            </button>
+            <button class="btn btn-danger btn-sm" ng-click="cerrarModalConceptosMovimiento()">
+                <i class="ace-icon fa fa-times"></i>Cancelar
+            </button>
+        </div>
+    </div>
+</div>
+<!-- ========= fin departamento estado ========= -->
+<!-- =========eliminar solicitud ========= -->
+<div id="dialog-eliminar-solicitud" title="¿Eliminación de Seguro?">
+    <p>
+        <span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>¿Esta seguro de eliminar la solicitud seleccionado?
+    </p>
+    <button type="button" class="btn btn-danger" ng-click="eliminarSolicitud()">Si</button>
+    <button type="button" class="btn btn-success" ng-click="cerrarDialogEliminarSolicitud()">No</button>
+</div>
+<!-- ========= fin modal eliminar solicitud ========= -->
+<!-- inicio confirmar usuario Autorizado-->
+<div id="modal-verificar-autorizacion" title="Asignar Cuenta">
+    <form name="formularioAsignarCuenta" ng-submit="verificarPerimisoAutorizacion(cuenta)">
+        <div class="modal-header">
+            <p>
+                <h3>Verificar Permiso de Autorizacion</h3>
+            </p>
+        </div>
+        <div class="modal-body">
+            <div>
+                <span>Clave</span>
+                <input required class="form-control" type="password" name="contra" ng-model="cuenta.clave">
+            </div>
+        </div>
+        <div class="modal-footer">
+            <div class="col-sm-6">
+                <button type="submit" class="btn btn-success">Autorizar</button>
+            </div>
+
+
+            <div class="col-sm-6">
+                <button type="button" class="btn btn-danger" ng-click="cerrarModalVerificarAutorizacion()">Cancelar</button>
+            </div>
+        </div>
+    </form>
+</div>
+<!-- fin  confirmar usuario Autorizado -->

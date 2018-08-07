@@ -20,7 +20,7 @@
                     ng-options="gestion as gestion.nombre for gestion in gestiones track by gestion.id" ng-model="configuracionImpresion.gestion_fin">
                     <option value="">SELECCIONAR</option>
                 </select>
-                <select ng-if="configuracionImpresion.tipoPeriodo.nombre=='MES'" required  class="form-control" ng-options="mes as mes.nombre for mes in mesesFiltro track by mes.id"
+                <select ng-if="configuracionImpresion.tipoPeriodo.nombre=='MES'" required  class="form-control" ng-options="mes as mes.nombre for mes in meses track by mes.id"
                     ng-model="configuracionImpresion.mes">
                     <option value="">SELECCIONAR</option>
                 </select>
@@ -51,8 +51,8 @@
 
                     <span class="lbl"> DETALLE DE BALANCE</span>
                 </label>
-                <select name="filtroTipo_cuenta" id="filtroTipo_cuenta" ng-model="configuracionImpresion.tipo_cuenta" ng-options="cuentaTipo.id as cuentaTipo.nombre for cuentaTipo in cuentaTipos">
-                        <option value="">SELECCIONAR</option>
+                <select name="filtroTipo_cuenta" id="filtroTipo_cuenta" ng-model="configuracionImpresion.tipo_cuenta" ng-options="cuentaTipo as cuentaTipo.nombre for cuentaTipo in cuentaTipos">
+                        <option value="PREESTABLECIDO">PREESTABLECIDO</option>
                     </select>
                    
 
