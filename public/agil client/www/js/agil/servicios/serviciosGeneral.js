@@ -1519,8 +1519,8 @@ angular.module('agil.servicios')
 					doc.font('Helvetica', 7);
 					doc.text(venta.sucursal.nombre.toUpperCase(), 60, 113);
 					var longitudCaracteres = venta.sucursal.direccion.length;
-					var yDesc = (longitudCaracteres <= 45) ? 129 : ((longitudCaracteres > 45 && longitudCaracteres <= 90) ? 139 : 145);
-					doc.text(venta.sucursal.direccion.toUpperCase(), 60, 121,{width: 100});
+					var yDesc = (longitudCaracteres <= 24) ? 129 : ((longitudCaracteres > 45 && longitudCaracteres <= 90) ? 139 : 145);
+					doc.text(venta.sucursal.direccion.toUpperCase(), 60, 121,{width: 150});
 					var telefono = (venta.sucursal.telefono1 != null ? venta.sucursal.telefono1 : "") +
 						(venta.sucursal.telefono2 != null ? "-" + venta.sucursal.telefono2 : "") +
 						(venta.sucursal.telefono3 != null ? "-" + venta.sucursal.telefono3 : "");
