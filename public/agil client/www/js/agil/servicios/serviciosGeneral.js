@@ -1366,9 +1366,9 @@ angular.module('agil.servicios')
 
 					doc.text("SON : " + venta.numero_literal, 55, y);
 
-					/*if (completa || vacia) {
-						doc.rect(50, y - 15, 520, 30).stroke();
-					}*/
+					if (completa || vacia) {
+						doc.rect(50, y-10, 545, 25).stroke();
+					}
 					var fechaActual = new Date();
 					var min = fechaActual.getMinutes();
 					if (min < 10) {

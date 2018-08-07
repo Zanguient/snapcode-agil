@@ -1024,7 +1024,7 @@ angular.module('agil.controladores')
 		$scope.reporteExcel = function (pdf) {
 			blockUI.start()
 
-			var cabecera = [" N°","Nombre","Primer Apellido","Segundo Apellido","Nombre Usuario","Rol","Empresa","Usuario","Sucursal","Activo"];
+			var cabecera = [" N°","Nombre","Primer Apellido","Segundo Apellido","Nombre Usuario","Rol","Empresa","Sucursal","Activo"];
 			var data = [];
 			data.push(cabecera);
 			var column = [];
@@ -1034,26 +1034,59 @@ angular.module('agil.controladores')
 				if ($scope.usuarios[i].persona) {
 					if ($scope.usuarios[i].persona.nombres !== null) {
 						columns.push($scope.usuarios[i].persona.nombres);
+						//columns.push($scope.usuarios[i].persona.apellido_paterno);
+						//columns.push($scope.usuarios[i].persona.apellido_materno);
+					}
+				}else{
+					columns.push(" ");
+				}
+				if ($scope.usuarios[i].persona) {
+					if ($scope.usuarios[i].persona.apellido_paterno !== null) {
+						//columns.push($scope.usuarios[i].persona.nombres);
 						columns.push($scope.usuarios[i].persona.apellido_paterno);
+						//columns.push($scope.usuarios[i].persona.apellido_materno);
+					}
+				}else{
+					columns.push(" ");
+				}
+				if ($scope.usuarios[i].persona) {
+					if ($scope.usuarios[i].persona.apellido_paterno !== null) {
+						//columns.push($scope.usuarios[i].persona.nombres);
+						//columns.push($scope.usuarios[i].persona.apellido_paterno);
 						columns.push($scope.usuarios[i].persona.apellido_materno);
 					}
+				}else{
+					columns.push(" ");
 				}
-							
-				columns.push($scope.usuarios[i].nombre_usuario);
+					
+				if ($scope.usuarios[i].nombre_usuario !== null) {
+					columns.push($scope.usuarios[i].nombre_usuario);
+				}else{
+					columns.push(" ")
+				}
+				
 				if ($scope.usuarios[i].rolesUsuario[0]) {
 					if ($scope.usuarios[i].rolesUsuario[0].rol) {
 						columns.push($scope.usuarios[i].rolesUsuario[0].rol.nombre);
 					}else{
 						columns.push("No Asignado");
 					}
+				}else{
+					columns.push(" ");
 				}
 						
 				columns.push($scope.usuarios[i].empresa.razon_social);
-				if ($scope.usuarios[i].sucursalesUsuario.length > 1) {
-					columns.push("Varios");
-				}else if ($scope.usuarios[i].sucursalesUsuario.length === 1) {
-					columns.push($scope.usuarios[i].sucursalesUsuario[0].sucursal.nombre);
+
+				if ($scope.usuarios[i].sucursalesUsuario[0]) {
+					if ($scope.usuarios[i].sucursalesUsuario.length > 1) {
+						columns.push("Varios");
+					}else if ($scope.usuarios[i].sucursalesUsuario.length === 1) {
+						columns.push($scope.usuarios[i].sucursalesUsuario[0].sucursal.nombre);
+					}
+				}else{
+					columns.push("No Asignado");
 				}
+				
 				if ($scope.usuarios[i].activo === true) {
 					columns.push("Si");
 				}else if ($scope.usuarios[i].activo === false) {

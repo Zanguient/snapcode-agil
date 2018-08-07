@@ -480,12 +480,12 @@ angular.module('agil.controladores')
             doc.text("CI/NIT:", 40, y + 120 + a);
             doc.text("Teléfono:", 200, y + 120 + a);
             doc.text("Dirección:", 40, y + 130 + a);
-            doc.text("observacion:", 40, y + 140 + a);
+            doc.text("observaciones:", 40, y + 140 + a);
             doc.font('Helvetica', 8);
             doc.text(gtm_despacho.despacho.cliente_razon.nit, 80, y + 120 + a);
             if (gtm_despacho.despacho.cliente.telefono1) doc.text(gtm_despacho.despacho.cliente.telefono1, 240, y + 120 + a);
             doc.text(gtm_despacho.despacho.destino.direccion, 80, y + 130 + a);
-            if(gtm_despacho.despacho.destino.observacion)doc.text(gtm_despacho.despacho.destino.observacion, 100, y + 140 + a);
+            if(gtm_despacho.despacho.observacion)doc.text(gtm_despacho.despacho.observacion, 100, y + 140 + a);
             if (gtm_despacho.despacho.destino !== null && gtm_despacho.despacho.destino !== undefined) {
                 doc.text(texto, 120, y + 100, { width: 320 });
             } else {
