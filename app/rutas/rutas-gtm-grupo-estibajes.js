@@ -6,7 +6,8 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, forEach, j
 			GtmGrupoEstibaje.findAll({
 				where: {
 					id_empresa: req.params.id_empresa,
-					eliminado:false
+					eliminado:false,
+					activo:true
 				}
 			}).then(function (entity) {
 				res.json(entity);
@@ -21,6 +22,7 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, forEach, j
 				codigo: req.body.codigo,
 				nombre: req.body.nombre,
 				descripcion: req.body.descripcion,
+				activo:true
 			}).then(function (grupoEstibajeCreado) {
 				res.json(grupoEstibajeCreado);
 			});
@@ -33,7 +35,8 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, forEach, j
 				codigo: req.body.codigo,
 				nombre: req.body.nombre,
 				descripcion: req.body.descripcion,
-				eliminado:req.body.eliminado
+				eliminado:req.body.eliminado,
+				activo:req.body.activo
 			},
 				{
 					where: {

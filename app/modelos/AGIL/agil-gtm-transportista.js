@@ -35,6 +35,10 @@ module.exports = function (sequelize, Sequelize) {
 		eliminado: {
 			type: Sequelize.BOOLEAN,
 			field: 'eliminado'
+		},
+		activo: {
+			type: Sequelize.BOOLEAN,
+			field: 'activo'
 		}
 	}, {
 			freezeTableName: true

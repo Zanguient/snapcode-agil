@@ -36,6 +36,7 @@
 							<th class="center">
 								N°
 							</th>
+							<th>Activo</th>
 							<th>Código</th>
 							<th>Nombre del Grupo</th>
 							<th>Características</th>
@@ -48,6 +49,13 @@
 							<td data-label="N°:">
 								{{$index+1}}
 							</td>
+							<td>
+									<label>
+										<input ng-change="guardarEstadoGrupoEstibaje(grupo_estibaje)" name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox"
+										 ng-model="grupo_estibaje.activo" />
+										<span class="lbl check-descuento"></span>
+									</label>
+								</td>
 						<!-- Falta modificar-->
 							<td data-label="Código:">
 								{{grupo_estibaje.codigo}}

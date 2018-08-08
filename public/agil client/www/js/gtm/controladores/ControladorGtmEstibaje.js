@@ -31,7 +31,7 @@ angular.module('agil.controladores')
             });
         }
 
-        $scope.crearNuevoEstibaje = function () {
+        $scope.crearNuevoEstibaje = function (datos,ver) {
             $scope.estibaje=new GtmEstibaje({id_empresa:$scope.usuario.id_empresa});
             $scope.abrirPopup($scope.idModalWizardEstibajeEdicion);
         }
@@ -44,8 +44,9 @@ angular.module('agil.controladores')
 			$scope.cerrarPopup($scope.idModalWizardEstibajeVista);
         }
 
-        $scope.modificarEstibaje=function(estibaje){
+        $scope.modificarEstibaje=function(estibaje,ver){
             $scope.estibaje=estibaje;
+            $scope.estibaje.verDatos=(ver)?true:false
             $scope.abrirPopup($scope.idModalWizardEstibajeEdicion);
         }
 
@@ -57,7 +58,15 @@ angular.module('agil.controladores')
                 $scope.mostrarMensaje(res.mensaje);
             });
         }
-        
+        $scope.guardarEstadoEstibaje=function(estibaje){
+            GtmEstibajeItem.update({ id_estibaje: estibaje.id }, estibaje, function (res) {
+                $scope.obtenerEstibajes();
+                blockUI.stop();
+              
+                $scope.mostrarMensaje(res.mensaje);
+                $scope.recargarItemsTabla();
+            });
+        }
         $scope.guardarEstibaje=function(estibaje){
             var button = $('#siguiente').text().trim();
 			if (button != "Siguiente") {

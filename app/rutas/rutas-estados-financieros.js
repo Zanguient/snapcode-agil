@@ -146,9 +146,28 @@ module.exports = function (router, sequelize, Sequelize, EstadoFinancieroConfigu
             }
             if (req.params.periodo != 'COMPARATIVO') {
 
-                ContabilidadCuenta.findAll(
-                    datosCuenta
-                ).then(function (cuentas) {
+                ContabilidadCuenta.findAll({
+                    where: condicionCuenta,
+                include: [
+                    {
+                        model: ClasificacionCuenta, as: "clasificacion",
+                        include: [{ model: Clase, as: 'saldo' }, { model: Clase, as: 'movimiento' }]
+                    },
+                    {
+                        model: Clase, as: 'tipoCuenta'
+                    },
+                    {
+                        model: Clase, as: 'claseCalculo'
+                    },
+                    {
+                        model: Clase, as: 'tipoAuxiliar'
+                    }
+                    ,
+                    {
+                        model: AsientoContabilidad, as: 'cuenta', include: [{ model: ComprobanteContabilidad, as: 'comprobante', where: condicionComprobante }]
+                    }
+                ]
+                }).then(function (cuentas) {
                     MonedaTipoCambio.find({
                         where: {
                             fecha: {

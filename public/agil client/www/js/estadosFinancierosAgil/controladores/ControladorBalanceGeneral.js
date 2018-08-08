@@ -215,7 +215,7 @@ angular.module('agil.controladores')
 				$scope.dibujarCabeceraPDFBalanceGeneral(doc, pagina, totalPaginas, "ACTIVO");
 				doc.font('Helvetica', 8);
 				for (var i = 0; i < dato.arregleActivos.length && items <= itemsPorPagina; i++) {
-					cuenta = dato.arregleActivos[i]
+					var cuenta = dato.arregleActivos[i]
 
 					if (cuenta.tipoCuenta.nombre_corto === "2") {
 						doc.text(cuenta.nombre, 30, y)
@@ -224,26 +224,35 @@ angular.module('agil.controladores')
 						y = y + 20;
 						items++;
 						for (var L = 0; L < dato.arregleActivos.length && items <= itemsPorPagina; L++) {
-							cuenta3 = dato.arregleActivos[L]
+							var cuenta3 = dato.arregleActivos[L]
 							if (cuenta3.tipoCuenta.nombre_corto === "3") {
 								var cod = String(cuenta3.codigo).substr(0, 3)
 								if (cuenta.codigo == cod) {
-									doc.text(cuenta3.nombre, 60, y)
-									doc.text(number_format(cuenta3.saldo, 2), x, y);
-									var saldoSus = cuenta3.saldo / $scope.moneda.dolar;
-									if ($scope.configuracionImpresion.bimonetario) doc.text(number_format(saldoSus, 2), x + 130, y);
-									cuenta.total += cuenta3.saldo
-									totalActivos += cuenta3.saldo
-									y = y + 20;
-									items++;
-									if (items == itemsPorPagina) {
-										doc.addPage({ margin: 0, bufferPages: true });
-										y = 120;
-										items = 0;
-										pagina = pagina + 1;
-										$scope.dibujarCabeceraPDFBalanceGeneral(doc, pagina, totalPaginas, "ACTIVO");
-										doc.font('Helvetica', 8);
+									for (var p = 0; p < dato.arregleActivos.length && items <= itemsPorPagina; p++) {
+										var cuenta2 = dato.arregleActivos[p]
+										if (cuenta2.tipoCuenta.nombre_corto === "4") {
+											var cod2 = String(cuenta2.codigo).substr(0, 5)
+											if (cuenta3.codigo == cod2) {
+												doc.text(cuenta2.nombre, 60, y)
+												doc.text(number_format(cuenta2.saldo, 2), x, y);
+												var saldoSus = cuenta2.saldo / $scope.moneda.dolar;
+												if ($scope.configuracionImpresion.bimonetario) doc.text(number_format(saldoSus, 2), x + 130, y);
+												cuenta.total += cuenta2.saldo
+												totalActivos += cuenta2.saldo
+												y = y + 20;
+												items++;
+												if (items == itemsPorPagina) {
+													doc.addPage({ margin: 0, bufferPages: true });
+													y = 120;
+													items = 0;
+													pagina = pagina + 1;
+													$scope.dibujarCabeceraPDFBalanceGeneral(doc, pagina, totalPaginas, "ACTIVO");
+													doc.font('Helvetica', 8);
+												}
+											}
+										}
 									}
+
 								} else {
 									if (items == itemsPorPagina) {
 										doc.addPage({ margin: 0, bufferPages: true });
@@ -303,7 +312,7 @@ angular.module('agil.controladores')
 				});
 				blockUI.stop();
 			} else {
-				var totalActivos={totalActivosprimerAno:0,totalActivossegundoAno:0}
+				var totalActivos = { totalActivosprimerAno: 0, totalActivossegundoAno: 0 }
 				var doc = new PDFDocument({ size: 'letter', margin: 10 });
 				var stream = doc.pipe(blobStream());
 				// draw some text
@@ -336,7 +345,7 @@ angular.module('agil.controladores')
 									var saldosegundoAnoSus = cuenta3.segundoAno.saldo / $scope.moneda.dolar;
 									if ($scope.configuracionImpresion.bimonetario) doc.text(number_format(saldoprimerAnoSus, 2), x + 60, y);
 									if ($scope.configuracionImpresion.bimonetario) doc.text(number_format(saldosegundoAnoSus, 2), x + 150, y);
-								
+
 									cuenta.primerAno.total += cuenta3.primerAno.saldo
 									totalActivos.totalActivosprimerAno += cuenta3.primerAno.saldo
 									cuenta.segundoAno.total += cuenta3.segundoAno.saldo
@@ -376,7 +385,7 @@ angular.module('agil.controladores')
 						}
 						doc.text("TOTAL " + cuenta.primerAno.nombre, 90, y);
 						doc.text(number_format(cuenta.primerAno.total, 2), x, y);
-						doc.text(number_format(cuenta.primerAno.total, 2), x+100, y);
+						doc.text(number_format(cuenta.primerAno.total, 2), x + 100, y);
 						var cuentatotalprimerAnoSus = cuenta.primerAno.total / $scope.moneda.dolar
 						var cuentatotalsegundoAnoSus = cuenta.primerAno.total / $scope.moneda.dolar
 						if ($scope.configuracionImpresion.bimonetario) doc.text(number_format(cuentatotalprimerAnoSus, 2), x + 60, y);
@@ -493,12 +502,12 @@ angular.module('agil.controladores')
 					}
 				}
 			} else {
-				var totales={totalPasivoPrimerAno:0,totalPasivoSegundoAno:0}
+				var totales = { totalPasivoPrimerAno: 0, totalPasivoSegundoAno: 0 }
 				var totalPasivo = 0
 				doc.font('Helvetica-Bold', 8);
 				doc.text("TOTAL ACTIVOS  ", 30, y);
 				doc.text(number_format(totalActivos.totalActivosprimerAno, 2), x, y);
-				doc.text(number_format(totalActivos.totalActivossegundoAno, 2), x+100, y);
+				doc.text(number_format(totalActivos.totalActivossegundoAno, 2), x + 100, y);
 				var cuentatotalPrimerAnoSus = totalActivos.totalActivosprimerAno / $scope.moneda.dolar
 				var cuentatotalSegundoAnoSus = totalActivos.totalActivossegundoAno / $scope.moneda.dolar
 				if ($scope.configuracionImpresion.bimonetario) doc.text(number_format(cuentatotalPrimerAnoSus, 2), x + 60, y);
@@ -526,7 +535,7 @@ angular.module('agil.controladores')
 									var saldoSegundoAnoSus = Math.round((cuenta4.segundoAno.saldo / $scope.moneda.dolar) * 10000) / 10000;
 									if ($scope.configuracionImpresion.bimonetario) doc.text(number_format(saldoPrimerAnoSus, 2), x + 60, y);
 									if ($scope.configuracionImpresion.bimonetario) doc.text(number_format(saldoSegundoAnoSus, 2), x + 150, y);
-									
+
 									cuenta.primerAno.total += cuenta4.primerAno.saldo
 									totales.totalPasivoPrimerAno += cuenta4.primerAno.saldo
 									cuenta.segundoAno.total += cuenta4.segundoAno.saldo
@@ -566,7 +575,7 @@ angular.module('agil.controladores')
 						}
 						doc.text("TOTAL " + cuenta2.primerAno.nombre, 90, y);
 						doc.text(number_format(cuenta2.primerAno.total, 2), x, y);
-						doc.text(number_format(cuenta2.segundoAno.total, 2), x+100, y);
+						doc.text(number_format(cuenta2.segundoAno.total, 2), x + 100, y);
 						var saldoPrimerAnoSus = Math.round((cuenta2.primerAno.total / $scope.moneda.dolar) * 10000) / 10000;
 						var saldoSegundoAnoSus = Math.round((cuenta2.segundoAno.total / $scope.moneda.dolar) * 10000) / 10000;
 						if ($scope.configuracionImpresion.bimonetario) doc.text(number_format(saldoPrimerAnoSus, 2), x + 60, y);
@@ -578,7 +587,7 @@ angular.module('agil.controladores')
 						doc.font('Helvetica-Bold', 8);
 						doc.text("TOTAL PASIVO:  ", 30, y)
 						doc.text(number_format(totales.totalPasivoPrimerAno, 2), x, y)
-						doc.text(number_format(totales.totalPasivoSegundoAno, 2), x+100, y)
+						doc.text(number_format(totales.totalPasivoSegundoAno, 2), x + 100, y)
 						var saldoPrimerAnoSus = Math.round((totales.totalPasivoPrimerAno / $scope.moneda.dolar) * 10000) / 10000;
 						var saldoSegundoAnoSus = Math.round((totales.totalPasivoSegundoAno / $scope.moneda.dolar) * 10000) / 10000;
 						if ($scope.configuracionImpresion.bimonetario) doc.text(number_format(saldoPrimerAnoSus, 2), x + 60, y);

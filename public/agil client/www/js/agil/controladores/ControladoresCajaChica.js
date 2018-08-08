@@ -633,7 +633,7 @@ angular.module('agil.controladores')
                 promesa.then(function (dato) {
                     blockUI.stop()
                     $scope.generarPdfBoletaCajaChica($scope.cajaChica.solicitud,dato.cajaChica)
-                    $scope.obtenerListaSolicitudes()
+                    $scope.obtenerListaIngresos()
                     $scope.mostrarMensaje(dato.mensaje)
                     $scope.cerrarModalRegistroIngresoCajaChica()
                 })

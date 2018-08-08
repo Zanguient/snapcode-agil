@@ -146,6 +146,7 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 				condicionUsuario.nombre_usuario = { $like: "%" + req.params.usuario + "%" };
 			}
 			condicionCompra.usar_producto = true
+			var compras=[]
 			Compra.findAll({
 				where: condicionCompra,
 				include: [/* {model:Clase,as:'tipoMovimiento'},{ model: Sucursal, as: 'sucursal',where: condicionSucursal }, */ {
@@ -167,32 +168,49 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 					}]
 				}]
 			}).then(function (entity) {
-				condicionCompra.usar_producto = false
 				Compra.findAll({
 					where: condicionCompra,
-					include: [{ model: Clase, as: 'tipoMovimiento' }, { model: Sucursal, as: 'sucursal', where: condicionSucursal }, {
-						model: DetalleCompra, as: 'detallesCompra',
-						include: [{ model: Clase, as: 'servicio' }
-						]
+					include: [/* {model:Clase,as:'tipoMovimiento'},{ model: Sucursal, as: 'sucursal',where: condicionSucursal }, */ {
+						model: Movimiento, as: 'movimiento',
+						include: [{ model: Clase, as: 'clase', }]
 					},
 					{ model: Clase, as: 'tipoPago', },
 					{ model: Usuario, as: 'usuario', where: condicionUsuario },
 					{ model: Proveedor, as: 'proveedor', where: condicionProveedor },
-					]
-				}).then(function (entity2) {
-					var compras = entity.concat(entity2);
+					{
+						model: Sucursal, as: 'sucursal',
+						where: condicionSucursal
+					}]
+				}).then(function (entity3) {
+					
+					condicionCompra.usar_producto = false
+					Compra.findAll({
+						where: condicionCompra,
+						include: [{ model: Clase, as: 'tipoMovimiento' }, { model: Sucursal, as: 'sucursal', where: condicionSucursal }, {
+							model: DetalleCompra, as: 'detallesCompra',
+							include: [{ model: Clase, as: 'servicio' }
+							]
+						},
+						{ model: Clase, as: 'tipoPago', },
+						{ model: Usuario, as: 'usuario', where: condicionUsuario },
+						{ model: Proveedor, as: 'proveedor', where: condicionProveedor },
+						]
+					}).then(function (entity2) {
+						
+						entity = entity.concat(entity3);
+						compras = entity.concat(entity2);
 
-					if (req.params.tipo == 'productos') {
-						res.json(entity);
-					} else if (req.params.tipo == 'servicios') {
-						res.json(entity2);
-					} else {
-						compras = compras.sort(function (a, b) {
-							return a.fecha - b.fecha;
-						});
-						res.json(compras);
-					}
-
+						if (req.params.tipo == 'productos') {
+							res.json(entity);
+						} else if (req.params.tipo == 'servicios') {
+							res.json(entity2);
+						} else {
+							compras = compras.sort(function (a, b) {
+								return a.fecha - b.fecha;
+							});
+							res.json(compras);
+						}
+					});
 				});
 			});
 		});
@@ -1389,7 +1407,7 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 					}, { transaction: t }).then(function (movimientoCreado) {
 						if (req.body.movimiento.nombre_corto === Diccionario.EGRE_FACTURACION) {
 							return SucursalActividadDosificacion.find({
-								where:{
+								where: {
 									id_actividad: venta.actividad.id,
 									id_sucursal: venta.sucursal.id,
 									expirado: false
@@ -1474,7 +1492,7 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 								{ model: Sucursal, as: 'sucursal', include: [{ model: Empresa, as: 'empresa' }] }]
 							}).then(function (sucursalActividadDosificacion) {
 								var dosificacion = sucursalActividadDosificacion.dosificacion;
-								venta.factura  =dosificacion.correlativo;
+								venta.factura = dosificacion.correlativo;
 								venta.pieFactura = dosificacion.pieFactura;
 								venta.codigo_control = CodigoControl.obtenerCodigoControl(dosificacion.autorizacion.toString(),
 									dosificacion.correlativo.toString(),

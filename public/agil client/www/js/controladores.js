@@ -1498,6 +1498,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 				$scope.actualizarVencimientoDosificaciones()
 				$scope.obtenerCentroCostos();
 				$scope.obtenerMovimientoEgresoBaja();
+				$scope.obtenerEstadosPagoDespachos()
 				$scope.obtenerTiposComprobante();
 				$scope.reiniciarCorrelativoComprobantes()
 				if (screen.width > 960) {
@@ -2011,7 +2012,15 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 				blockUI.stop();
 			});
 		}
-
+		$scope.obtenerEstadosPagoDespachos = function () {
+			blockUI.start();
+			var promesa = ClasesTipo("ES_DESP_PAGO");
+			promesa.then(function (entidad) {
+			$scope.estadosDespacho=entidad.clases
+				blockUI.stop();
+			});
+		}
+		
 		$scope.abrirVentanaBaja = function (inventario) {
 			var inventarios = []; inventarios.push(inventario);
 			$scope.bajaInventario = new Venta({

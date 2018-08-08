@@ -7,7 +7,9 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, forEach, j
 				include: [{ model: Persona, as: 'persona' }],
 				where: {
 					id_empresa: req.params.id_empresa,
-					eliminado: false
+					eliminado: false,
+					activo:true
+					
 				}
 			}).then(function (entity) {
 				res.json(entity);
@@ -28,7 +30,8 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, forEach, j
 						nit: transportista.nit,
 						costo_transporte: transportista.costo_transporte,
 						id_empresa: req.params.id_empresa,
-						observacion: transportista.observacion
+						observacion: transportista.observacion,
+						activo:true
 					}).then(function (transportistaCreado) {
 						if (index === (array.length - 1)) {
 							res.json({ mensaje: "Datos importados Satisfactoriamente!" });
@@ -53,7 +56,8 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, forEach, j
 					nit: req.body.nit,
 					costo_transporte: req.body.costo_transporte,
 					id_empresa: req.body.id_empresa,
-					observacion: req.body.observacion
+					observacion: req.body.observacion,
+					activo:true
 				}).then(function (transportistaCreado) {
 					res.json(transportistaCreado);
 				});
@@ -79,7 +83,8 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, forEach, j
 						nit: req.body.nit,
 						costo_transporte: req.body.costo_transporte,
 						eliminado: req.body.eliminado,
-						observacion: req.body.observacion
+						observacion: req.body.observacion,
+						activo:req.body.activo
 					},
 						{
 							where: {

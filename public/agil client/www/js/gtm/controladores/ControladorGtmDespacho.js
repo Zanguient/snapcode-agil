@@ -16,7 +16,7 @@ angular.module('agil.controladores')
         $scope.IdModalCobros = 'modal-cobros';
         $scope.IdModalHistorialCobros = 'modal-historial-cobros'
         $scope.idModalConceptoEdicion = 'dialog-conceptos';
-       
+
 
         $scope.$on('$viewContentLoaded', function () {
             resaltarPestaña($location.path().substring(1));
@@ -61,7 +61,8 @@ angular.module('agil.controladores')
                 tipo: "",
                 grupo: "",
                 estado: "",
-                vendedor: ""
+                vendedor: "",
+                admin: ($scope.usuario.rolesUsuario[0].rol.nombre == 'ADMINISTRADOR') ? "" : $scope.usuario.id
             }
             $scope.paginator.callBack = $scope.buscarDespachados;
             $scope.paginator.getSearch("", $scope.filtro, null);
@@ -486,7 +487,7 @@ angular.module('agil.controladores')
             doc.text(gtm_despacho.despacho.cliente_razon.nit, 80, y + 120 + a);
             if (gtm_despacho.despacho.cliente.telefono1) doc.text(gtm_despacho.despacho.cliente.telefono1, 240, y + 120 + a);
             doc.text(gtm_despacho.despacho.destino.direccion, 80, y + 130 + a);
-            if(gtm_despacho.despacho.observacion)doc.text(gtm_despacho.despacho.observacion, 100, y + 140 + a);
+            if (gtm_despacho.despacho.observacion) doc.text(gtm_despacho.despacho.observacion, 100, y + 140 + a);
             if (gtm_despacho.despacho.destino !== null && gtm_despacho.despacho.destino !== undefined) {
                 doc.text(texto, 120, y + 100, { width: 320 });
             } else {
@@ -1130,19 +1131,33 @@ angular.module('agil.controladores')
                 dato.pago_ac = $scope.detalle_despacho.pago_ac + dato.monto
                 dato.saldo_pago_ac = $scope.detalle_despacho.total - dato.pago_ac
             }
-            var promesa = CrearDespachoResivo($scope.detalle_despacho.id, dato)
-            promesa.then(function (dato) {
-                $scope.mostrarMensaje(dato.mensaje)
-                if (dato.recivo.eliminado == false) {
-                    $scope.imprimirResivo(dato.recivo)
-                }
-                $scope.cerrarModalCobros()
-                if ($scope.paginator.search) {
-                    $scope.paginator.getSearch($scope.paginator.search, $scope.paginator.filter, null);
+            $scope.estadosDespacho.forEach(function (estado, index, array) {
+                if ($scope.detalle_despacho.saldo_pago_ac == dato.monto) {
+                    if (estado.nombre == "PAGADO") {
+                        dato.estado = estado
+                    }
                 } else {
-                    $scope.paginator.getSearch("", $scope.paginator.filter, null);
+                    if (estado.nombre == "PARCIAL") {
+                        dato.estado = estado
+                    }
                 }
-            })
+                if (index === (array.length - 1)) {
+                    var promesa = CrearDespachoResivo($scope.detalle_despacho.id, dato)
+                    promesa.then(function (dato) {
+                        $scope.mostrarMensaje(dato.mensaje)
+                        if (dato.recivo.eliminado == false) {
+                            $scope.imprimirResivo(dato.recivo)
+                        }
+                        $scope.cerrarModalCobros()
+                        if ($scope.paginator.search) {
+                            $scope.paginator.getSearch($scope.paginator.search, $scope.paginator.filter, null);
+                        } else {
+                            $scope.paginator.getSearch("", $scope.paginator.filter, null);
+                        }
+                    })
+                }
+            });
+
         }
         $scope.obtenerCuentasBancos = function () {
             blockUI.start();

@@ -1018,6 +1018,9 @@ module.exports = function (sequelize, Usuario, Persona, Rol, UsuarioRol, Tipo, C
 	GtmDespachoDetalle.belongsTo(Sucursal, { foreignKey: 'id_sucursal', as: 'sucursal' })
 	GtmDespachoDetalle.belongsTo(Almacen, { foreignKey: 'id_almacen', as: 'almacen' })
 
+	GtmDespachoDetalle.belongsTo(Clase, { foreignKey: 'id_estado', as: 'estado' })
+	Clase.hasMany(GtmDespachoDetalle, { foreignKey: 'id_estado', as: 'despachos' })
+
 	Sucursal.hasMany(GtmDespachoDetalle, { foreignKey: 'id_sucursal', as: 'despachos' })
 	Almacen.hasMany(GtmDespachoDetalle, { foreignKey: 'id_almacen', as: 'despachos' })
 

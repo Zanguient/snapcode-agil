@@ -6,7 +6,8 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, forEach, j
 			GtmEstibaje.findAll({
 				where: {
 					id_empresa: req.params.id_empresa,
-					eliminado:false
+					eliminado:false,
+					activo:true
 				}
 			}).then(function (entity) {
 				res.json(entity);
@@ -22,7 +23,8 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, forEach, j
 				nombre: req.body.nombre,
 				descripcion: req.body.descripcion,
 				costo: req.body.costo,
-				eliminado:false
+				eliminado:false,
+				activo:true
 			}).then(function (estibajeCreado) {
 				res.json(estibajeCreado);
 			});
@@ -36,7 +38,8 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, forEach, j
 				nombre: req.body.nombre,
 				descripcion: req.body.descripcion,
 				costo: req.body.costo,
-				eliminado:req.body.eliminado
+				eliminado:req.body.eliminado,
+				activo:req.body.activo
 			},
 				{
 					where: {

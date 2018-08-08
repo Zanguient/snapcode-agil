@@ -51,7 +51,15 @@ angular.module('agil.controladores')
                 $scope.mostrarMensaje(res.mensaje);
             });
         }
-        
+        $scope.guardarEstadoGrupoEstibaje=function(grupo_estibaje){
+            GtmGrupoEstibajeItem.update({ id_grupo_estibaje: grupo_estibaje.id }, grupo_estibaje, function (res) {
+                $scope.obtenerGrupoEstibajes();
+                blockUI.stop();
+               
+                $scope.mostrarMensaje(res.mensaje);
+                $scope.recargarItemsTabla();
+            });
+        }
         $scope.guardarGrupoEstibaje=function(grupo_estibaje){
             var button = $('#siguiente').text().trim();
 			if (button != "Siguiente") {

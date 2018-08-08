@@ -111,7 +111,11 @@ module.exports = function (sequelize, Sequelize) {
 		longitud: {
 			type: Sequelize.DECIMAL(30, 20),
 			field: 'longitud'
-		},
+        },
+        id_estado: {
+            type: Sequelize.INTEGER,
+            field: 'estado'
+        },
     }, {
             freezeTableName: true
         });

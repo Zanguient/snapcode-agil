@@ -103,7 +103,9 @@
 							</select> -->
 								</td>
 								<td>
-									<input type="text" ng-model="filtro.estado">
+										<select required class="form-control" required ng-model="filtro.estado" ng-options="estado.id as estado.nombre for estado in estadosDespacho">
+												<option value="">--Seleccionar--</option>
+											</select>
 								</td>
 								<td>
 									<input type="text" ng-model="filtro.vendedor">
@@ -225,15 +227,17 @@
 								{{gtm_detalle_despacho.saldo_pago_ac|number:2}}
 							</td>
 							<td ng-if="verDatosCobroDespachos">
-								<p ng-if="gtm_detalle_despacho.saldo_pago_ac==gtm_detalle_despacho.total">
-									<span class="label label-danger arrowed-in arrowed-in-right">Deuda</span>
+								<p>
+									<span ng-class="gtm_detalle_despacho.estado.nombre=='DEUDA'?'label-danger':
+									gtm_detalle_despacho.estado.nombre=='PARCIAL'?'label-warning':
+									gtm_detalle_despacho.estado.nombre=='PAGADO'?'label-success':'label-danger'" class="label arrowed-in arrowed-in-right">{{gtm_detalle_despacho.estado.nombre}}</span>
 								</p>
-								<p ng-if="gtm_detalle_despacho.saldo_pago_ac>0 && gtm_detalle_despacho.total>gtm_detalle_despacho.saldo_pago_ac">
+								<!-- <p ng-if="gtm_detalle_despacho.saldo_pago_ac>0 && gtm_detalle_despacho.total>gtm_detalle_despacho.saldo_pago_ac">
 									<span class="label label-warning arrowed-in arrowed-in-right">Parcial</span>
 								</p>
 								<p ng-if="gtm_detalle_despacho.saldo_pago_ac==0">
 									<span class="label label-success arrowed-in arrowed-in-right">Pagado</span>
-								</p>
+								</p> -->
 
 							</td>
 							<td>{{gtm_detalle_despacho.factura}}</td>
