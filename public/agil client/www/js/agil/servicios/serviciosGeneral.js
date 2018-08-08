@@ -1347,7 +1347,7 @@ angular.module('agil.servicios')
 						doc.rect(50, y - 15, 520, 30).stroke();
 					}*/
 						}
-						y = y + 30;
+						y = y + 15;
 						items++;
 						if (items == itemsPorPagina) {
 							doc.addPage({ size: papel, margin: 10 });
@@ -1367,7 +1367,7 @@ angular.module('agil.servicios')
 					doc.text("SON : " + venta.numero_literal, 55, y);
 
 					if (completa || vacia) {
-						doc.rect(50, y-10, 545, 25).stroke();
+						doc.rect(50, y-5, 545, 15).stroke();
 					}
 					var fechaActual = new Date();
 					var min = fechaActual.getMinutes();
@@ -1518,14 +1518,19 @@ angular.module('agil.servicios')
 					doc.text(usuario.empresa.razon_social.toUpperCase(), 60, 105);
 					doc.font('Helvetica', 7);
 					doc.text(venta.sucursal.nombre.toUpperCase(), 60, 113);
+					//var longitudCaracteres = venta.sucursal.direccion.length;
+					//var yDesc = (longitudCaracteres <= 45) ? 129 : ((longitudCaracteres > 45 && longitudCaracteres <= 90) ? 139 : 145);
+					//doc.text(venta.sucursal.direccion.toUpperCase(), 60, 121);
 					var longitudCaracteres = venta.sucursal.direccion.length;
-					var yDesc = (longitudCaracteres <= 24) ? 129 : ((longitudCaracteres > 45 && longitudCaracteres <= 90) ? 139 : 145);
-					doc.text(venta.sucursal.direccion.toUpperCase(), 60, 121,{width: 150});
+					var yDesc = (longitudCaracteres <= 24) ? 119 : ((longitudCaracteres > 45 && longitudCaracteres <= 90) ? 139 : 145);
+					doc.text(venta.sucursal.direccion.toUpperCase(), 60, yDesc,{width: 150});
 					var telefono = (venta.sucursal.telefono1 != null ? venta.sucursal.telefono1 : "") +
 						(venta.sucursal.telefono2 != null ? "-" + venta.sucursal.telefono2 : "") +
 						(venta.sucursal.telefono3 != null ? "-" + venta.sucursal.telefono3 : "");
+						yDesc+=9
 					doc.text("TELF.: " + telefono, 60, yDesc);
-					doc.text("COCHABAMBA - BOLIVIA", 60, yDesc + 8);
+					yDesc+=9
+					doc.text("COCHABAMBA - BOLIVIA", 60, yDesc);
 				}
 				doc.font('Helvetica-Bold', 16);
 				doc.text(venta.configuracion.tituloFactura.nombre.toUpperCase(), 250, 90);
@@ -1584,9 +1589,13 @@ angular.module('agil.servicios')
 					doc.text(usuario.empresa.razon_social.toUpperCase(), 60, 105);
 					doc.font('Helvetica', 7);
 					doc.text(venta.sucursal.nombre.toUpperCase(), 60, 113);
+					//var longitudCaracteres = venta.sucursal.direccion.length;
+					//var yDesc = (longitudCaracteres <= 45) ? 129 : ((longitudCaracteres > 45 && longitudCaracteres <= 90) ? 139 : 145);
+					//doc.text(venta.sucursal.direccion.toUpperCase(), 60, 121);
 					var longitudCaracteres = venta.sucursal.direccion.length;
-					var yDesc = (longitudCaracteres <= 45) ? 129 : ((longitudCaracteres > 45 && longitudCaracteres <= 90) ? 139 : 145);
-					doc.text(venta.sucursal.direccion.toUpperCase(), 60, 121);
+					var yDesc = (longitudCaracteres <= 24) ? 129 : ((longitudCaracteres > 45 && longitudCaracteres <= 90) ? 139 : 145);
+					doc.text(venta.sucursal.direccion.toUpperCase(), 60, yDesc,{width: 150});
+
 					var telefono = (venta.sucursal.telefono1 != null ? venta.sucursal.telefono1 : "") +
 						(venta.sucursal.telefono2 != null ? "-" + venta.sucursal.telefono2 : "") +
 						(venta.sucursal.telefono3 != null ? "-" + venta.sucursal.telefono3 : "");
