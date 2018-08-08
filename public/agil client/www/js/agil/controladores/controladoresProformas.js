@@ -115,43 +115,55 @@ angular.module('agil.controladores')
             }
             blockUI.start()
             var dat = new Date(proforma.fecha_proforma)
-            $scope.obtenerCambioMonedaProforma(dat)
-            var prom = ProformaInfo(proforma.id, proforma.actividadEconomica.id)
-            prom.then(function (proformaE) {
-                $scope.proforma = proformaE.proforma
-                $scope.proforma.sucursal = proformaE.proforma.sucursal
-                $scope.obtenerActividadesSucursal($scope.proforma.sucursal.id)
-                $scope.proforma.actividadEconomica = proformaE.proforma.actividadEconomica
-                $scope.obtenerServiciosActividadEmpresaPrincipal($scope.proforma.actividadEconomica)
-                if (ver !== undefined) {
-                    $scope.proforma.ver = true
-                }
-                if (proformaE.mensaje !== undefined) {
-                    $scope.mostrarMensaje(proformaE.mensaje)
-                } else {
-                    $scope.proforma.fecha_proforma = $scope.fechaATexto(new Date($scope.proforma.fecha_proforma))
-                    var dat = new Date($scope.convertirFecha($scope.proforma.fecha_proforma))
-                    $scope.obtenerCambioMonedaProforma(dat)
-                    var dolores = $scope.moneda.dolar
-                    $scope.proforma.periodo_mes = { id: $scope.proforma.periodo_mes }
-                    $scope.proforma.periodo_anio = { id: $scope.proforma.periodo_anio }
-                    $scope.obtenercentroCostosClienteEmpresa($scope.proforma.cliente)
-                    $scope.detallesProformas = $scope.proforma.detallesProformas
-                    $scope.detallesProformas.map(function (det, i) {
-                        $scope.detalleProforma = det
+            var promesa = ObtenerCambioMoneda(dat)
+            promesa.then(function (dato) {
+                if (dato.monedaCambio) {
+                    $scope.moneda = dato.monedaCambio;
+                    if ($scope.detalleProforma !== undefined) {
                         $scope.calcularImporte()
-                        $scope.detalleProforma = undefined
-                    })
-                    $scope.proforma.totalImporteSus = $scope.proforma.totalImporteBs / dolores
-                    $scope.proforma.importeLiteral = ConvertirALiteral($scope.proforma.totalImporteBs.toFixed(2));
-                    // $scope.obtenerServiciosActividadEmpresaPrincipal($scope.proforma.actividadEconomica)
+                    }
+                } else {
+                    $scope.moneda = { ufv: "--", dolar: "--" }
+                    $scope.mostrarMensaje('La fecha ' + $scope.proforma.fecha_proforma + ' no tiene datos del tipo de cambio de dolar. El tipo de cambio de dolar no afecta la información de la proforma y puede continuar sin problema.')
                 }
-                blockUI.stop()
-            }).catch(function (err) {
-                blockUI.stop()
-                var msg = (err.stack !== undefined && err.stack !== null) ? err.stack : (err.message !== undefined && err.message !== null) ? err.message : 'Se perdió la conexión.'
-                $scope.mostrarMensaje(msg)
+                var prom = ProformaInfo(proforma.id, proforma.actividadEconomica.id)
+                prom.then(function (proformaE) {
+                    $scope.proforma = proformaE.proforma
+                    $scope.proforma.sucursal = proformaE.proforma.sucursal
+                    $scope.obtenerActividadesSucursal($scope.proforma.sucursal.id)
+                    $scope.proforma.actividadEconomica = proformaE.proforma.actividadEconomica
+                    $scope.obtenerServiciosActividadEmpresaPrincipal($scope.proforma.actividadEconomica)
+                    if (ver !== undefined) {
+                        $scope.proforma.ver = true
+                    }
+                    if (proformaE.mensaje !== undefined) {
+                        $scope.mostrarMensaje(proformaE.mensaje)
+                    } else {
+                        $scope.proforma.fecha_proforma = $scope.fechaATexto(new Date($scope.proforma.fecha_proforma))
+                        var dat = new Date($scope.convertirFecha($scope.proforma.fecha_proforma))
+                        $scope.obtenerCambioMonedaProforma(dat)
+                        var dolores = $scope.moneda.dolar
+                        $scope.proforma.periodo_mes = { id: $scope.proforma.periodo_mes }
+                        $scope.proforma.periodo_anio = { id: $scope.proforma.periodo_anio }
+                        $scope.obtenercentroCostosClienteEmpresa($scope.proforma.cliente)
+                        $scope.detallesProformas = $scope.proforma.detallesProformas
+                        $scope.detallesProformas.map(function (det, i) {
+                            $scope.detalleProforma = det
+                            $scope.calcularImporte()
+                            $scope.detalleProforma = undefined
+                        })
+                        $scope.proforma.totalImporteSus = $scope.proforma.totalImporteBs / dolores
+                        $scope.proforma.importeLiteral = ConvertirALiteral($scope.proforma.totalImporteBs.toFixed(2));
+                        // $scope.obtenerServiciosActividadEmpresaPrincipal($scope.proforma.actividadEconomica)
+                    }
+                    blockUI.stop()
+                }).catch(function (err) {
+                    blockUI.stop()
+                    var msg = (err.stack !== undefined && err.stack !== null) ? err.stack : (err.message !== undefined && err.message !== null) ? err.message : 'Se perdió la conexión.'
+                    $scope.mostrarMensaje(msg)
+                })
             })
+            // $scope.obtenerCambioMonedaProforma(dat)
             $scope.detalleProforma = undefined
             $scope.abrirdialogProformaEdicion($scope.proforma)
         }
@@ -251,7 +263,7 @@ angular.module('agil.controladores')
                                                 if ($scope.checkResourceImg($scope.usuario.empresa.imagen, $scope.usuario.empresa.imageLoaded)) {
                                                     convertUrlToBase64Image($scope.usuario.empresa.imagen, function (imagenEmpresa) {
                                                         if (condition) {
-                                                            
+
                                                         }
                                                         $scope.usuario.empresa.imagen = imagenEmpresa
                                                         $scope.usuario.empresa.imageLoaded = true
@@ -1098,6 +1110,17 @@ angular.module('agil.controladores')
                     return
                 }
                 if (proforma.id !== undefined) {
+                    var delCount = 0
+                    $scope.detallesProformas.forEach(function (detalle) {
+                        if (detalle.eliminado) {
+                            delCount += 1
+                        }
+                    })
+                    if (delCount === $scope.detallesProformas.length) {
+                        $scope.mostrarMensaje('Se requiere al menos un dellate.')
+                        blockUI.stop()
+                        return
+                    }
                     proforma.detallesProformas = $scope.detallesProformas
                     proforma.usuarioProforma = $scope.usuario
                     proforma.id_empresa = $scope.usuario.empresa.id
@@ -1108,6 +1131,7 @@ angular.module('agil.controladores')
                         $scope.mostrarMensaje(res.mensaje)
                         if (res.hasErr === undefined) {
                             $scope.cerrardialogProformaEdicion()
+                            $scope.recargarItemsTabla()
                             // $scope.filtrarProformasOperaciones($scope.filtro)
                         } else {
                             $scope.proforma = res.proforma
@@ -1129,7 +1153,8 @@ angular.module('agil.controladores')
                         $scope.mostrarMensaje(res.mensaje)
                         if (res.hasErr === undefined) {
                             $scope.cerrardialogProformaEdicion()
-                            $scope.filtrarProformasOperaciones($scope.filtro)
+                            $scope.recargarItemsTabla()
+                            // $scope.filtrarProformasOperaciones($scope.filtro)
                         } else {
                             proforma.fecha_proforma = $scope.fechaATexto(proforma.fecha_proforma)
                         }
