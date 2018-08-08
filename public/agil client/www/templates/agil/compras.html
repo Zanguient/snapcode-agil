@@ -31,12 +31,12 @@
 									<label>PERIODO</label>&nbsp
 								</td>
 								<td>
-									<input required ng-update-hidden class="form-control date-picker" type="text" data-date-format="dd/mm/yyyy" id="fechainicio"
+									<input required ng-update-hidden autocomplete="off" class="form-control date-picker" type="text" data-date-format="dd/mm/yyyy" id="fechainicio"
 									 ng-model="filtro.fechaInicioTexto" placeholder="Ingrese la fecha inicial" />
 								</td>
 								<td>
 									<input required ng-update-hidden class="form-control date-picker" type="text" data-date-format="dd/mm/yyyy" id="fechafin"
-									 ng-model="filtro.fechaFinTexto" placeholder="Ingrese la fecha final" /> &nbsp
+									 ng-model="filtro.fechaFinTexto" autocomplete="off" placeholder="Ingrese la fecha final" /> &nbsp
 								</td>
 								<td>
 									<button type="submit" ng-disabled="formularioFiltroCompras.$invalid" class="btn btn-primary">
