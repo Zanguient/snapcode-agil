@@ -1522,12 +1522,12 @@ angular.module('agil.servicios')
 					//var yDesc = (longitudCaracteres <= 45) ? 129 : ((longitudCaracteres > 45 && longitudCaracteres <= 90) ? 139 : 145);
 					//doc.text(venta.sucursal.direccion.toUpperCase(), 60, 121);
 					var longitudCaracteres = venta.sucursal.direccion.length;
-					var yDesc = (longitudCaracteres <= 24) ? 119 : ((longitudCaracteres > 45 && longitudCaracteres <= 90) ? 139 : 145);
-					doc.text(venta.sucursal.direccion.toUpperCase(), 60, yDesc,{width: 150});
+					var yDesc = (longitudCaracteres <= 45) ? 129 : ((longitudCaracteres > 45 && longitudCaracteres <= 90) ? 139 : 145);
+					doc.text(venta.sucursal.direccion.toUpperCase(), 60, yDesc-8,{width: 150});
 					var telefono = (venta.sucursal.telefono1 != null ? venta.sucursal.telefono1 : "") +
 						(venta.sucursal.telefono2 != null ? "-" + venta.sucursal.telefono2 : "") +
 						(venta.sucursal.telefono3 != null ? "-" + venta.sucursal.telefono3 : "");
-						yDesc+=9
+					yDesc+=9
 					doc.text("TELF.: " + telefono, 60, yDesc);
 					yDesc+=9
 					doc.text("COCHABAMBA - BOLIVIA", 60, yDesc);
