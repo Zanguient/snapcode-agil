@@ -6,8 +6,7 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, forEach, j
 			GtmGrupoEstibaje.findAll({
 				where: {
 					id_empresa: req.params.id_empresa,
-					eliminado:false,
-					activo:true
+					eliminado:false
 				}
 			}).then(function (entity) {
 				res.json(entity);

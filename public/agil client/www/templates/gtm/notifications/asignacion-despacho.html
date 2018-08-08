@@ -9,20 +9,20 @@
 
   <div class="form-group">
     <label for="ciudad">Transportista</label>
-    <select required ng-model="asignacion.id_transportista" ng-options="gtm_transportista.id as gtm_transportista.persona.nombre_completo for gtm_transportista in gtm_transportistas"></select>
+    <select required ng-model="asignacion.id_transportista" ng-options="gtm_transportista.id as gtm_transportista.persona.nombre_completo for gtm_transportista in gtm_transportistas|filter:{activo:true}"></select>
   </div>
 
 
 
   <div class="form-group">
     <label for="ciudad">Estibaje</label>
-    <select required ng-model="asignacion.id_estibaje" ng-options="gtm_estibaje.id as gtm_estibaje.nombre for gtm_estibaje in gtm_estibajes"></select>
+    <select required ng-model="asignacion.id_estibaje" ng-options="gtm_estibaje.id as gtm_estibaje.nombre for gtm_estibaje in gtm_estibajes|filter:{activo:true}"></select>
   </div>
 
 
   <div class="form-group">
     <label for="ciudad">Grupo Estibaje</label>
-    <select required ng-model="asignacion.id_grupo_estibaje" ng-options="gtm_grupo_estibaje.id as gtm_grupo_estibaje.nombre for gtm_grupo_estibaje in gtm_grupo_estibajes"></select>
+    <select required ng-model="asignacion.id_grupo_estibaje" ng-options="gtm_grupo_estibaje.id as gtm_grupo_estibaje.nombre for gtm_grupo_estibaje in gtm_grupo_estibajes|filter:{activo:true}"></select>
   </div>
 
 </div>

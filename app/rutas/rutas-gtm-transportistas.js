@@ -8,7 +8,6 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, forEach, j
 				where: {
 					id_empresa: req.params.id_empresa,
 					eliminado: false,
-					activo:true
 					
 				}
 			}).then(function (entity) {
