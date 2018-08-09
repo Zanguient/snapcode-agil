@@ -7,7 +7,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 		ImprimirSalida, Diccionario, VentasComprobantesEmpresa, ComprasComprobantesEmpresa, LibroMayorCuenta, Paginator, ComprobanteRevisarPaginador, AsignarComprobanteFavorito, ListaCuentasComprobanteContabilidad, NuevoComprobanteContabilidad, NuevoComprobante, ComprasComprobante,
 		ConfiguracionesCuentasEmpresa, ContabilidadCambioMoneda, ObtenerCambioMoneda, AsignarCuentaCiente, AsignarCuentaProveedor,
 		GtmTransportistas, GtmEstibajes, GtmGrupoEstibajes, ListasCuentasAuxiliares, GtmDetallesDespachoAlerta, $interval, GuardarGtmDetalleDespachoAlerta, GtmDetalleDespacho, VerificarCorrelativosSucursale, ReiniciarCorrelativoSucursales, ClasesTipoEmpresa, alertasProformasLista, UltimaFechaTipoComprobante,
-		FacturaProforma, ListaDetallesProformasAFacturar, ProformaInfo, FacturarProformas, ImprimirPdfAlertaDespacho, ExportarExelAlarmasDespachos, VencimientoDosificaciones, EmpresaDatosInicio, VerificacionMensualActivos, ProductosPaginador, Pedidos, ClientesNit, GetCliente) {
+		FacturaProforma, ListaDetallesProformasAFacturar, ProformaInfo, FacturarProformas, ImprimirPdfAlertaDespacho, ExportarExelAlarmasDespachos, VencimientoDosificaciones, EmpresaDatosInicio, VerificacionMensualActivos, ProductosPaginador, Pedidos, ClientesNit, GetCliente, ClientePedido) {
 		$scope.idModalTablaVencimientoProductos = "tabla-vencimiento-productos";
 		$scope.idModalTablaDespachos = "tabla-gtm-despachos";
 		$scope.idModalTablaAsignacionDespacho = "tabla-gtm-asignacion-despachos";
@@ -25,6 +25,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 		$scope.idModalInicioSesion = "popup-inicio-sesion";
 		$scope.idModalNuevoPedido = "modal-nuevo-pedido";
 		$scope.idModalDatosProducto = "modal-dato-producto";
+		$scope.idModalNuevoClientePedido = "modal-nuevo-cliente-pedido";
 
 		//nuevo comprobante
 		$scope.idModalWizardComprobanteEdicion = 'modal-wizard-comprobante-edicion';

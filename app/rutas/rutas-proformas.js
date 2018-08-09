@@ -211,7 +211,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
                     where: { id: req.params.id },
                     include: [
                         { model: Clase, as: 'actividadEconomica' },
-                        { model: DetallesProformas, as: 'detallesProformas', where: { eliminado: false }, include: [{ model: Servicios, as: 'servicio' }, { model: Clase, as: 'centroCosto' }] },
+                        { model: DetallesProformas, as: 'detallesProformas', include: [{ model: Servicios, as: 'servicio' }, { model: Clase, as: 'centroCosto' }] },
                         { model: Usuario, as: 'usuarioProforma' },
                         { model: Cliente, as: 'cliente' },
                         {

@@ -663,12 +663,12 @@
                         <h4 class="widget-title">DATOS DE PROFORMA</h4>
                         &nbsp;
                         <div class="row">
-                            |<button ng-disabled="(proforma.ver !== undefined || detallesProformas.length==0)" id="guardarProforma" type="submit"
+                            |<button tabindex="-1" ng-disabled="(proforma.ver !== undefined || detallesProformas.length==0)" id="guardarProforma" type="submit"
                             class="btn btn-primary">
                             <i class="ace-icon fa fa-floppy-o align-top bigger-125"></i>
                             GUARDAR
                             </button>
-                            <button id="cerrarV" type="button" class="btn btn-primary btn-danger" ng-click="cerrardialogProformaEdicion()">
+                            <button tabindex="-1" id="cerrarV" type="button" class="btn btn-primary btn-danger" ng-click="cerrardialogProformaEdicion()">
                             <i class="ace-icon fa fa-times red2 align-top bigger-125"></i>
                             CERRAR
                             </button>
@@ -682,13 +682,13 @@
                                         <div class="row">
                                             <div class="container-fluid">
                                                 <label>SUCURSAL</label>
-                                                <div ng-if="!verificarBloqueoServicios()">
+                                                <div ng-if="(!verificarBloqueoServicios())">
                                                     <select class="form-control" data-validate="validate(required)" required id="sucursal" name="sucursal" ng-options="sucursal as sucursal.nombre for sucursal in sucursales track by sucursal.id"
-                                                    ng-disabled="(proforma.ver !== undefined || detallesProformas.length>0)" ng-model="proforma.sucursal" ng-change="obtenerActividadesSucursal(proforma.sucursal.id)">
+                                                    ng-disabled="(proforma.ver !== undefined || $scope.verificarDetallesProformas())" ng-model="proforma.sucursal" ng-change="obtenerActividadesSucursal(proforma.sucursal.id)">
                                                         <option value="" disabled selected>Selec. Sucursal</option>
                                                     </select>
                                                 </div>
-                                                <div ng-if="verificarBloqueoServicios()">
+                                                <div ng-if="(verificarBloqueoServicios())">
                                                     <select class="form-control" data-validate="validate(required)" required id="sucursalProformaDisabled" name="sucursal" ng-options="sucursal as sucursal.nombre for sucursal in sucursales track by sucursal.id"
                                                         ng-model="proforma.sucursal" disabled>
                                                         <option value="" disabled selected>Selec. Sucursal</option>
@@ -705,17 +705,17 @@
                                                 <div class="">
                                                     <label>ACTIVIDAD</label>
                                                 </div>
-                                                <div ng-if="!verificarBloqueoServicios()">
+                                                <div ng-if="(!verificarBloqueoServicios())">
                                                     <select autofocus class="form-control" style="width:150px;" data-validate="validate(required)" ng-change="obtenerServiciosActividadEmpresaPrincipal(proforma.actividadEconomica)"
                                                         required id="actividadProforma" name="actividad" ng-model="proforma.actividadEconomica"
-                                                        ng-options="actividad as actividad.nombre for actividad in actividadesSucursal track by actividad.id" ng-disabled="(proforma.ver !== undefined || detallesProformas.length>0)"
+                                                        ng-options="actividad as actividad.nombre for actividad in actividadesSucursal track by actividad.id" ng-disabled="(proforma.ver !== undefined || $scope.verificarDetallesProformas())"
                                                         data-placeholder="Click para escoger">
                                                         <option value="" disabled selected>Selec. Actividad</option>
                                                     </select>
                                                     <span class="red">(*)</span>
                                                     <span ng-if="dosificacionesExpiradas" style="color: red">Las Actividades con dosificaciones expiradas no se muestran</span>
                                                 </div>
-                                                <div ng-if="verificarBloqueoServicios()">
+                                                <div ng-if="(verificarBloqueoServicios())">
                                                     <select class="form-control" data-validate="validate(required)" required id="actividadProformaDisable" name="actividad" ng-model="proforma.actividadEconomica"
                                                         disabled ng-options="actividad as actividad.nombre for actividad in actividadesSucursal track by actividad.id"
                                                         data-placeholder="Click para escoger">
@@ -731,17 +731,24 @@
                                     </td>
                                 </tr>
                                 <tr>
-
                                     <td>
                                         <label>RAZÓN SOCIAL CLIENTE</label>
-                                        <input ng-disabled="(proforma.ver !== undefined || detallesProformas.length>0)" ng-keypress="interceptarTecla($event,'id_servicio',true)" autocomplete="off"
-                                            data-validate="validate(required)" id="razon_social" name="razon_social" required
-                                            type="text" ng-model="proforma.cliente.razon_social" placeholder="Ingrese la Razon Social"
-                                            uib-typeahead="cliente as cliente.razon_social for cliente in buscarCliente($viewValue)"
-                                            typeahead-wait-ms="2000" typeahead-template-url="templates/autocompletar.html" typeahead-show-hint="false"
-                                            typeahead-min-length="0" typeahead-on-select="establecerCliente($item, $model, $label, $event)">
+                                        <div ng-if="(!verificarBloqueoServicios())">
+                                                <input ng-disabled="($scope.verificarDetallesProformas())" ng-keypress="interceptarTecla($event,'proformaDetalle',true)" autocomplete="off"
+                                                data-validate="validate(required)" id="razon_social" name="razon_social" required
+                                                type="text" ng-model="proforma.cliente.razon_social" placeholder="Ingrese la Razon Social"
+                                                uib-typeahead="cliente as cliente.razon_social for cliente in buscarCliente($viewValue)"
+                                                typeahead-wait-ms="2000" typeahead-template-url="templates/autocompletar.html" typeahead-show-hint="false"
+                                                typeahead-min-length="0" typeahead-on-select="establecerCliente($item, $model, $label, $event)">
+                                        </div>
+                                        <div ng-if="(verificarBloqueoServicios())">
+                                                <input autocomplete="off"
+                                                data-validate="validate(required)" id="razon_socialDisabled" name="razon_social" required
+                                                type="text" ng-model="proforma.cliente.razon_social" disabled>
+                                        </div>
+                                        
                                         <span class="red">(*)</span>
-                                        <button ng-disabled="(proforma.ver !== undefined || detallesProformas.length>0)" id="mostrar_clientes_proforma" type="button" ng-click="abrirdialogClientesProforma()"
+                                        <button tabindex="-1" ng-disabled="($scope.verificarDetallesProformas())" id="mostrar_clientes_proforma" type="button" ng-click="abrirdialogClientesProforma()"
                                             class="btn btn-info btn-sm">
                                             <i class="ace-icon fa fa-search-plus bigger-110"></i>
                                         </button>
@@ -751,11 +758,18 @@
                                     </td>
                                     <td>
                                         <label>NIT CLIENTE</label>
-                                        <input ng-disabled="(proforma.ver !== undefined || detallesProformas.length>0)" ng-keypress="interceptarTecla($event,'razon_social',true)" data-validate="validate(required)"
-                                            id="nit" name="nit" required type="number" min="0" ng-model="proforma.cliente.nit"
-                                            placeholder="Ingrese el NIT" uib-typeahead="cliente as cliente.nit for cliente in buscarCliente($viewValue)"
-                                            typeahead-wait-ms="2000" typeahead-template-url="templates/autocompletar.html" typeahead-show-hint="false"
-                                            typeahead-min-length="0" typeahead-on-select="establecerCliente($item, $model, $label, $event)">
+                                        <div ng-if="(!verificarBloqueoServicios())">
+                                                <input ng-disabled="($scope.verificarDetallesProformas())" ng-keypress="interceptarTecla($event,'proformaDetalle',true)" data-validate="validate(required)"
+                                                id="nit" name="nit" required type="number" min="0" ng-model="proforma.cliente.nit"
+                                                placeholder="Ingrese el NIT" uib-typeahead="cliente as cliente.nit for cliente in buscarCliente($viewValue)"
+                                                typeahead-wait-ms="2000" typeahead-template-url="templates/autocompletar.html" typeahead-show-hint="false"
+                                                typeahead-min-length="0" typeahead-on-select="establecerCliente($item, $model, $label, $event)">
+                                        </div>
+                                        <div ng-if="(verificarBloqueoServicios())">
+                                                <input
+                                                id="nit" name="nit" required type="number" min="0" ng-model="proforma.cliente.nit" disabled
+                                                >
+                                        </div>
                                         <span class="red">(*)</span>
                                         <!-- <span class="invalid-message" ng-show="formularioProforma.nit.$dirty && formularioProforma.nit.$invalid">
                                                 Debe ingresar un número mayor o igual a 0.
@@ -770,7 +784,7 @@
                                             <label class="row">DETALLE</label>
 
 
-                                            <textarea ng-disabled="proforma.ver !== undefined" class="form-control" row="3" required name="detalle" id="proformaDetalle"
+                                            <textarea ng-disabled="proforma.ver !== undefined" class="form-control" row="3" required name="detalle" id="proformaDetalle" ng-keypress="interceptarTecla($event,'id_servicioProforma',true)"
                                                 ng-model="proforma.detalle"></textarea>
                                             <span class="red">(*)</span>
                                             <!-- <span class="invalid-message" ng-show="formularioProforma.detalle.$dirty && formularioProforma.detalle.$invalid">
@@ -887,13 +901,13 @@
                                 <tbody>
                                     <tr>
                                         <td>
-                                            <input ng-disabled="proforma.ver !== undefined" autocomplete="off" ng-keypress="interceptarTecla($event,'cantidad',true)"
+                                            <input ng-disabled="proforma.ver" autocomplete="off" ng-keypress="interceptarTecla($event,'cantidad',true)"
                                                 id="id_servicioProforma" required type="text" ng-model="detalleProforma.servicio.nombre"
                                                 placeholder="Ingrese el nombre del servicio..." uib-typeahead="servicio as (servicio.codigo+' - '+servicio.nombre) for servicio in buscarservicio($viewValue)"
                                                 typeahead-wait-ms="1000" typeahead-template-url="templates/autocompletar.html"
                                                 typeahead-show-hint="false" typeahead-min-length="1" typeahead-on-select="establecerservicio($item, $model, $label, $event)">
                                             <div class="space-6"></div>
-                                            <button ng-disabled="facturaProformas.ver !== undefined || proforma.actividadEconomica === undefined" id="mostrar_servicios_proforma"
+                                            <button ng-disabled="(facturaProformas.ver || proforma.actividadEconomica === undefined)" id="mostrar_servicios_proforma"
                                                 type="button" ng-click="abrirBusquedaServiciosProforma(proforma.actividadEconomica)"
                                                 class="btn btn-info btn-sm">
                                                 <i class="ace-icon fa fa-search-plus bigger-110"></i>
@@ -903,7 +917,7 @@
                                             {{detalleProforma.servicio.codigo}}
                                         </td>
                                         <td>
-                                            <input ng-disabled="proforma.ver !== undefined" onfocus="this.select();" ng-keypress="interceptarTecla($event,'agregar_detalle_venta',false)"
+                                            <input ng-disabled="proforma.ver !== undefined" onfocus="this.select();" ng-keypress="interceptarTecla($event,'agregar_detalle_asignacion_centro_costo',false)"
                                                 id="cantidad" name="cantidad" step="1" min="1" required class="col-xs-12" ng-change="calcularImporte()"
                                                 ng-model="detalleProforma.cantidad" type="number" />
                                         </td>
@@ -939,7 +953,7 @@
                                             {{detalleProforma.importeSus | number:2}}
                                         </td>
                                         <td> 
-                                            <select ng-disabled="proforma.ver !== undefined" required id="centroCosto" name="centroCosto" ng-options="centroCosto as centroCosto.nombre for centroCosto in listaCentroCostosClienteEmpresaPro track by centroCosto.id"
+                                            <select ng-disabled="proforma.ver" required id="centroCosto" name="centroCosto" ng-options="centroCosto as centroCosto.nombre for centroCosto in listaCentroCostosClienteEmpresaPro track by centroCosto.id"
                                                 ng-model="detalleProforma.centroCosto">
                                             </select>
                                             <a href="javascript:void(0)" ng-if="proforma.cliente" ng-click="abrirConfiguracionCentrosCostos(proforma.cliente)"><i class="blue ace-icon fa fa-pencil-square-o bigger-130"></i></a>
@@ -948,7 +962,7 @@
                                             </select> -->
                                         </td>
                                         <td>
-                                            <button ng-disabled="proforma.ver !== undefined" id="agregar_detalle_asignacion_centro_costo" type="button" ng-disabled="formularioBusquedaservicio.$invalid"
+                                            <button ng-disabled="proforma.ver" id="agregar_detalle_asignacion_centro_costo" type="button" ng-disabled="formularioBusquedaservicio.$invalid"
                                                 ng-click="agregardetalleProforma(detalleProforma)" class="btn btn-success btn-sm">
                                                 <i class="ace-icon fa fa-plus bigger-110"></i>
                                             </button>
@@ -1046,10 +1060,10 @@
                                     </td>
 
                                     <td>
-                                        <a ng-disabled="proforma.ver !== undefined" class="red" href="javascript:void(0)" ng-click="abrirPopupConfirmacionEliminacion(eliminarDetalleProforma,detalle)">
+                                        <a e-disabled="proforma.ver" class="red" href="javascript:void(0)" ng-click="abrirPopupConfirmacionEliminacion(eliminarDetalleProforma,detalle)">
                                             <i class="ace-icon fa fa-trash-o bigger-130"></i>
                                         </a>
-                                        <a ng-disabled="proforma.ver !== undefined" class="blue" href="javascript:void(0)" ng-click="editarDetalleProforma(detalle)">
+                                        <a e-disabled="proforma.ver" class="blue" href="javascript:void(0)" ng-click="editarDetalleProforma(detalle)">
                                                 <i class="ace-icon fa fa-pencil-square-o bigger-130"></i>
                                             </a>
                                     </td>
@@ -1095,7 +1109,7 @@
             <div class="container-fluid">
                 <div class="col-md-8">
                     <label>Búsqueda:
-                        <input type="search" class="form-control input-sm" ng-model="textoBusquedaServicio" ng-change="filtrarServicios(textoBusquedaServicio)">
+                        <input focus tabindex="1" type="search" class="form-control input-sm" ng-model="textoBusquedaServicio" ng-change="filtrarServicios(textoBusquedaServicio)">
                     </label>
                 </div>
                 <div class="col-md-4">
@@ -1149,7 +1163,7 @@
                                             {{servicio.precio}}
                                         </td>
                                         <td>
-                                            <a ng-click="establecerservicio(servicio,true)">SELECCIONAR</a>
+                                            <a tabindex="{{$index+2}}" href="javascript:void(0)" ng-click="establecerservicio(servicio,true)" ng-keypress="interceptarTecla($event,'agregar_detalle_venta',false)">SELECCIONAR</a>
                                         </td>
                                     </tr>
                                 </tbody>
@@ -1170,7 +1184,7 @@
             <div class="container-fluid">
                 <div class="col-md-8">
                     <label>Búsqueda:
-                        <input type="search" class="form-control input-sm" ng-model="textoBusqueda" ng-change="filtrarClientes(textoBusqueda)">
+                        <input focus tabindex="1" type="search" class="form-control input-sm" ng-model="textoBusqueda" ng-change="filtrarClientes(textoBusqueda)">
                     </label>
                 </div>
                 <div class="col-md-4">
@@ -1218,7 +1232,7 @@
                                             {{cliente.nit}}
                                         </td>
                                         <td>
-                                            <a ng-click="seleccionarcliente(cliente)">SELECCIONAR</a>
+                                            <a tabindex="{{$index+2}}" href="javascript:void(0)" ng-keypress="interceptarTecla($event,'agregar_detalle_venta',false)" ng-click="seleccionarcliente(cliente)">SELECCIONAR</a>
                                         </td>
                                     </tr>
                                 </tbody>

@@ -67,6 +67,31 @@ angular.module('agil.controladores')
             }
         }
 
+        $scope.verificarDetallesProformas = function () {
+            if ($scope.detallesProformas.length > 0) {
+                var delCount = 0
+                $scope.detallesProformas.forEach(function (det) {
+                    if (det.eliminado) {
+                        delCount += 1
+                    }
+                })
+                if (delCount === $scope.detallesProformas.length) {
+                    return false
+                } else {
+                    return true
+                }
+            } else {
+                if ($scope.proforma.ver) {
+                    return false
+                } else if ($scope.proforma.cliente) {
+                    return true
+                } else {
+                    return false
+                }
+
+            }
+        }
+
         $scope.verificarBloqueoServicios = function () {
             if (($scope.proformaFechas !== undefined)) {
                 if ($scope.proformaFechas.ver !== undefined) {
@@ -75,7 +100,15 @@ angular.module('agil.controladores')
                     return false
                 }
             } else {
-                return false
+                if ($scope.proforma.editar) {
+                    return $scope.verificarDetallesProformas()
+                } else {
+                    if ($scope.proforma.nueva) {
+                        return false
+                    } else {
+                        return true
+                    }
+                }
             }
         }
 
@@ -129,6 +162,7 @@ angular.module('agil.controladores')
                 var prom = ProformaInfo(proforma.id, proforma.actividadEconomica.id)
                 prom.then(function (proformaE) {
                     $scope.proforma = proformaE.proforma
+                    $scope.proforma.editar = true
                     $scope.proforma.sucursal = proformaE.proforma.sucursal
                     $scope.obtenerActividadesSucursal($scope.proforma.sucursal.id)
                     $scope.proforma.actividadEconomica = proformaE.proforma.actividadEconomica
@@ -370,8 +404,13 @@ angular.module('agil.controladores')
         }
 
         $scope.establecerCliente = function (cliente) {
-            $scope.proforma.cliente = cliente
-            $scope.obtenercentroCostosClienteEmpresa(cliente)
+            if (!$scope.proforma.ver && $scope.verificarDetallesProformas()) {
+                $scope.proforma.cliente = cliente
+                $scope.obtenercentroCostosClienteEmpresa(cliente)
+                $scope.enfocar('proformaDetalle')
+            }else {
+                $scope.mostrarMensaje('No se permite.')
+            }
         }
 
         $scope.enfocar = function (elemento) {
@@ -475,6 +514,7 @@ angular.module('agil.controladores')
                 $scope.proforma.importeLiteral = ConvertirALiteral($scope.proforma.totalImporteBs.toFixed(2));
                 $scope.modificarProformaPrecioUnitarioServicio(detalleProforma)
             }
+            $scope.enfocar('id_servicioProforma')
         }
 
         $scope.obtenerCambioMonedaProforma = function (fechaMoneda) {
@@ -723,6 +763,24 @@ angular.module('agil.controladores')
                         $scope.mostrarMensaje('Revise los datos e intente nuevamente.')
                     }
 
+                }
+            }
+        }
+
+        $scope.interceptarTecla = function (keyEvent, elemento, esEnfocar) {
+            if (keyEvent.which === 13) {
+                if (esEnfocar) {
+                    if (!$scope.proforma.cliente) {
+                        $scope.abrirdialogClientesProforma()
+                    } else if (!$scope.detalleProforma.servicio) {
+                        $scope.abrirBusquedaServiciosProforma($scope.proforma.actividadEconomica)
+                    } else {
+                        $scope.enfocar(elemento);
+                    }
+                } else {
+                    $timeout(function () {
+                        $('#' + elemento).trigger('click');
+                    }, 0);
                 }
             }
         }
@@ -994,10 +1052,14 @@ angular.module('agil.controladores')
         }
 
         $scope.seleccionarcliente = function (client) {
-            var sel = Object.assign({}, client);
-            $scope.proforma.cliente = sel
-            $scope.obtenercentroCostosClienteEmpresa(client)
-            $scope.cerrardialogClientesProforma()
+            if (!$scope.proforma.ver && !$scope.verificarDetallesProformas()) {
+                var sel = Object.assign({}, client);
+                $scope.proforma.cliente = sel
+                $scope.obtenercentroCostosClienteEmpresa(client)
+                $scope.cerrardialogClientesProforma()
+            }else{
+                $scope.mostrarMensaje('No se permite.')
+            }
         }
 
         $scope.obtenerClientes = function () {
@@ -1185,6 +1247,7 @@ angular.module('agil.controladores')
                 $scope.detalleProforma = undefined
 
             } else {
+                $scope.proforma.nueva = true
                 $scope.proforma.sucursal = $scope.sucursales[0]
                 // $scope.proforma = { sucursal: $scope.sucursales[0], fecha_proforma: new Date(), periodo_mes: { id: new Date().getMonth() }, periodo_anio: { id: new Date().getFullYear() } }
                 $scope.proforma.fecha_proforma = new Date().toLocaleDateString()
