@@ -366,7 +366,7 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 														where: {
 															id_inventario: detalleCompra.id_inventario,
 															id_movimiento: compra.movimiento.id,
-															id_producto: detalleCompra.producto.id
+															id_producto: detalleCompra.producto?detalleCompra.producto.id:null
 														}
 													}).then(function (detalleMovimientoEliminado) {
 														DetalleCompra.destroy({
