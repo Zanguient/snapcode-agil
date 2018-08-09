@@ -487,11 +487,11 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, forEach, j
 												}/*,
 											transaction: t*/
 											}, { transaction: t }).then(function (desact) {
-												return tipo.find({
+												return Tipo.find({
 													where: {
 														nombre_corto: 'ES_DESP_PAGO',//your where conditions, or without them if you need ANY entry
 													},
-													include: [{ model: Clase, as: 'estado', where: { nombre_corto: 'DEUDA' } }]
+													include: [{ model: Clase, as: 'clases', where: { nombre_corto: 'DEUDA' } }]
 												}, { transaction: t }).then(function (tipoEncontrado) {
 													return Sucursal.find({
 														where: {
@@ -621,11 +621,11 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, forEach, j
 						}/*,
 					transaction: t*/
 					}, { transaction: t }).then(function (desact) {
-						return tipo.find({
+						return Tipo.find({
 							where: {
 								nombre_corto: 'ES_DESP_PAGO',//your where conditions, or without them if you need ANY entry
 							},
-							include: [{ model: Clase, as: 'estado', where: { nombre_corto: 'DEUDA' } }]
+							include: [{ model: Clase, as: 'clases', where: { nombre_corto: 'DEUDA' } }]
 						}, { transaction: t }).then(function (tipoEncontrado) {
 							return Sucursal.find({
 								where: {
