@@ -1292,7 +1292,7 @@ angular.module('agil.servicios')
 					if (venta.configuracion.tamanoPapelFactura.nombre_corto == Diccionario.FACT_PAPEL_OFICIO) {
 						itemsPorPagina = 19;
 					} else if (venta.configuracion.tamanoPapelFactura.nombre_corto == Diccionario.FACT_PAPEL_CARTA) {
-						itemsPorPagina = 19;
+						itemsPorPagina = 23;
 					} else if (venta.configuracion.tamanoPapelFactura.nombre_corto == Diccionario.FACT_PAPEL_MEDIOOFICIO) {
 						itemsPorPagina = 3;
 					}
@@ -1388,7 +1388,7 @@ angular.module('agil.servicios')
 					if (venta.configuracion.tamanoPapelFactura.nombre_corto == Diccionario.FACT_PAPEL_OFICIO) {
 						itemsPorPagina = 19;
 					} else if (venta.configuracion.tamanoPapelFactura.nombre_corto == Diccionario.FACT_PAPEL_CARTA) {
-						itemsPorPagina = 16;
+						itemsPorPagina = 20;
 					} else if (venta.configuracion.tamanoPapelFactura.nombre_corto == Diccionario.FACT_PAPEL_MEDIOOFICIO) {
 						itemsPorPagina = 3;
 					}
@@ -1527,10 +1527,10 @@ angular.module('agil.servicios')
 					var telefono = (venta.sucursal.telefono1 != null ? venta.sucursal.telefono1 : "") +
 						(venta.sucursal.telefono2 != null ? "-" + venta.sucursal.telefono2 : "") +
 						(venta.sucursal.telefono3 != null ? "-" + venta.sucursal.telefono3 : "");
-					yDesc+=9
+					
 					doc.text("TELF.: " + telefono, 60, yDesc);
-					yDesc+=9
-					doc.text("COCHABAMBA - BOLIVIA", 60, yDesc);
+					yDesc+=11
+					doc.font('Helvetica-Bold').text("COCHABAMBA - BOLIVIA", 60, yDesc);
 				}
 				doc.font('Helvetica-Bold', 16);
 				doc.text(venta.configuracion.tituloFactura.nombre.toUpperCase(), 250, 90);
@@ -1549,11 +1549,11 @@ angular.module('agil.servicios')
 				//doc.rect(50, 160, 520, 40).stroke();
 					doc.text("FECHA : ", 60, 165);
 					doc.text("SEÑOR(ES) : ", 60, 175);
-					doc.text("NIT : ", 360, 165);
+					doc.text("NIT : ", 470, 165);
 				}
 				doc.text(venta.fechaTexto, 120, 165);
-				doc.text(venta.cliente.razon_social, 120, 175);
-				doc.text(venta.cliente.nit, 400, 165);
+				doc.text(venta.cliente.razon_social, 130, 175);
+				doc.text(venta.cliente.nit, 530, 165);
 
 				if (completa || vacia) {
 					doc.rect(50, 200, 545, 25).stroke();
@@ -1589,10 +1589,7 @@ angular.module('agil.servicios')
 					doc.text(usuario.empresa.razon_social.toUpperCase(), 60, 105);
 					doc.font('Helvetica', 7);
 					doc.text(venta.sucursal.nombre.toUpperCase(), 60, 113);
-					//var longitudCaracteres = venta.sucursal.direccion.length;
-					//var yDesc = (longitudCaracteres <= 45) ? 129 : ((longitudCaracteres > 45 && longitudCaracteres <= 90) ? 139 : 145);
-					//doc.text(venta.sucursal.direccion.toUpperCase(), 60, 121);
-					var longitudCaracteres = venta.sucursal.direccion.length;
+					/*var longitudCaracteres = venta.sucursal.direccion.length;
 					var yDesc = (longitudCaracteres <= 24) ? 129 : ((longitudCaracteres > 45 && longitudCaracteres <= 90) ? 139 : 145);
 					doc.text(venta.sucursal.direccion.toUpperCase(), 60, yDesc,{width: 150});
 
@@ -1600,7 +1597,17 @@ angular.module('agil.servicios')
 						(venta.sucursal.telefono2 != null ? "-" + venta.sucursal.telefono2 : "") +
 						(venta.sucursal.telefono3 != null ? "-" + venta.sucursal.telefono3 : "");
 					doc.text("TELF.: " + telefono, 60, yDesc);
-					doc.text("COCHABAMBA - BOLIVIA", 60, yDesc + 8);
+					doc.text("COCHABAMBA - BOLIVIA", 60, yDesc + 8);*/
+					var longitudCaracteres = venta.sucursal.direccion.length;
+					var yDesc = (longitudCaracteres <= 45) ? 129 : ((longitudCaracteres > 45 && longitudCaracteres <= 90) ? 139 : 145);
+					doc.text(venta.sucursal.direccion.toUpperCase(), 60, yDesc-8,{width: 150});
+					var telefono = (venta.sucursal.telefono1 != null ? venta.sucursal.telefono1 : "") +
+						(venta.sucursal.telefono2 != null ? "-" + venta.sucursal.telefono2 : "") +
+						(venta.sucursal.telefono3 != null ? "-" + venta.sucursal.telefono3 : "");
+					
+					doc.text("TELF.: " + telefono, 60, yDesc);
+					yDesc+=11
+					doc.font('Helvetica-Bold').text("COCHABAMBA - BOLIVIA", 60, yDesc);
 				}
 				doc.font('Helvetica-Bold', 16);
 				doc.text(venta.configuracion.tituloFactura.nombre.toUpperCase(), 250, 90);
@@ -1625,8 +1632,8 @@ angular.module('agil.servicios')
 					doc.text("NIT : ", 360, 165);
 				}
 				doc.text(venta.fechaTexto, 120, 165);
-				doc.text(venta.cliente.razon_social, 120, 175);
-				doc.text(venta.cliente.nit, 400, 165);
+				doc.text(venta.cliente.razon_social, 130, 175);
+				doc.text(venta.cliente.nit, 410, 165);
 
 				if (completa || vacia) {
 				//doc.rect(50, 200, 520, 25).stroke();
