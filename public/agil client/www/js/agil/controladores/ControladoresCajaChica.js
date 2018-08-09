@@ -1060,7 +1060,7 @@ angular.module('agil.controladores')
                 estado: "",
                 concepto: "",
                 movimiento: "",
-                id_usuario_no_autorizado:($scope.usuario.autorizacion_caja_chica)?$scope.usuario.id:""
+                id_usuario_no_autorizado:($scope.usuario.autorizacion_caja_chica)?"":$scope.usuario.id
             }
             $scope.paginator.callBack = $scope.listaSolicitudesCajaChica;
             $scope.paginator.getSearch("", $scope.filtro, null);
