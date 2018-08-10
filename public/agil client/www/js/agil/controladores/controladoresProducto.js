@@ -624,7 +624,7 @@ angular.module('agil.controladores')
 					//column.push(kardexproduto.detallesMovimiento[i].movimiento.venta.fecha);
 					var fecha = new Date(kardexproduto.detallesMovimiento[i].movimiento.fecha);
 
-					column.push(fecha.getDate() + "/" + fecha.getMonth() + "/" + fecha.getFullYear());
+					column.push(fecha.getDate() + "/" + (fecha.getMonth() + 1)  + "/" + fecha.getFullYear());
 				}else{
 					column.push(" ")
 				}
