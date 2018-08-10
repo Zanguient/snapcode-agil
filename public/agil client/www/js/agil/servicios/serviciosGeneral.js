@@ -1292,7 +1292,7 @@ angular.module('agil.servicios')
 					if (venta.configuracion.tamanoPapelFactura.nombre_corto == Diccionario.FACT_PAPEL_OFICIO) {
 						itemsPorPagina = 19;
 					} else if (venta.configuracion.tamanoPapelFactura.nombre_corto == Diccionario.FACT_PAPEL_CARTA) {
-						itemsPorPagina = 23;
+						itemsPorPagina = 30;
 					} else if (venta.configuracion.tamanoPapelFactura.nombre_corto == Diccionario.FACT_PAPEL_MEDIOOFICIO) {
 						itemsPorPagina = 3;
 					}
@@ -1388,7 +1388,7 @@ angular.module('agil.servicios')
 					if (venta.configuracion.tamanoPapelFactura.nombre_corto == Diccionario.FACT_PAPEL_OFICIO) {
 						itemsPorPagina = 19;
 					} else if (venta.configuracion.tamanoPapelFactura.nombre_corto == Diccionario.FACT_PAPEL_CARTA) {
-						itemsPorPagina = 20;
+						itemsPorPagina = 30;
 					} else if (venta.configuracion.tamanoPapelFactura.nombre_corto == Diccionario.FACT_PAPEL_MEDIOOFICIO) {
 						itemsPorPagina = 3;
 					}
@@ -1523,7 +1523,7 @@ angular.module('agil.servicios')
 					//doc.text(venta.sucursal.direccion.toUpperCase(), 60, 121);
 					var longitudCaracteres = venta.sucursal.direccion.length;
 					var yDesc = (longitudCaracteres <= 45) ? 129 : ((longitudCaracteres > 45 && longitudCaracteres <= 90) ? 139 : 145);
-					doc.text(venta.sucursal.direccion.toUpperCase(), 60, yDesc-8,{width: 150});
+					doc.text(venta.sucursal.direccion.toUpperCase(), 60, 120,{width: 150});
 					var telefono = (venta.sucursal.telefono1 != null ? venta.sucursal.telefono1 : "") +
 						(venta.sucursal.telefono2 != null ? "-" + venta.sucursal.telefono2 : "") +
 						(venta.sucursal.telefono3 != null ? "-" + venta.sucursal.telefono3 : "");
@@ -1600,7 +1600,7 @@ angular.module('agil.servicios')
 					doc.text("COCHABAMBA - BOLIVIA", 60, yDesc + 8);*/
 					var longitudCaracteres = venta.sucursal.direccion.length;
 					var yDesc = (longitudCaracteres <= 45) ? 129 : ((longitudCaracteres > 45 && longitudCaracteres <= 90) ? 139 : 145);
-					doc.text(venta.sucursal.direccion.toUpperCase(), 60, yDesc-8,{width: 150});
+					doc.text(venta.sucursal.direccion.toUpperCase(), 60, 120,{width: 150});
 					var telefono = (venta.sucursal.telefono1 != null ? venta.sucursal.telefono1 : "") +
 						(venta.sucursal.telefono2 != null ? "-" + venta.sucursal.telefono2 : "") +
 						(venta.sucursal.telefono3 != null ? "-" + venta.sucursal.telefono3 : "");
