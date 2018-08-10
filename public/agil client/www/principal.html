@@ -2784,13 +2784,9 @@
 											 uib-typeahead="cliente as cliente.razon_social for cliente in buscarCliente($viewValue)" typeahead-wait-ms="2000"
 											 typeahead-template-url="templates/autocompletar.html" typeahead-show-hint="false" typeahead-min-length="0" typeahead-on-select="establecerCliente($item, $model, $label, $event)">
 											<span class="red">(*)</span>
-												<button  type="button" class="btn btn-success btn-xs" ng-click="nuevoClientePedido()">
-	                                            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-	                                        </button>
 											<span class="invalid-message" ng-show="formularioVenta.razon_social.$dirty && formularioVenta.razon_social.$invalid">
 												Dato requerido.
 											</span>
-
 										</td>
 									</tr>
 									<tr >
@@ -2806,9 +2802,6 @@
 											<label>NIT CLIENTE</label>
 											<input   id="nit" name="nit"
 											  type="number" min="0" ng-model="pedido.cliente_nit" placeholder="Ingrese el NIT" disabled> 
-												 <button type="button" class="btn btn-success btn-xs" ng-click="agregarSeguro(seguro)">
-		                                            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-		                                        </button>
 										</td>
 									</tr>
 								
@@ -2828,9 +2821,6 @@
 											<label>DIRECCION</label>
 											<input  id="destino_direccion" name="destino_direccion"
 											 type="text" min="0" ng-model="pedido.destino_direccion" placeholder="Ingrese el NIT" disabled>
-											<button type="button" class="btn btn-success btn-xs" ng-click="agregarSeguro(seguro)">
-		                                        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-		                                    </button>
 										</td>
 									</tr>			
 									
@@ -3375,50 +3365,6 @@
 		</div>
 	</div>
 	<!-- Factura facturar proforma fin-->
-
-	<div id="modal-nuevo-cliente-pedido">
-		<form name="asig" ng-submit="establecerDespacho(asignacion)">
-			<div class="modal-header" style="background-color: #f2f2f2;">
-			  <h4 class='smaller text-uppercase' style="color: #3e3c3c;">
-			  	<i class="fa fa-user bigger-110  fa-3"></i> 
-			    <b>Nuevo Cliente</b>
-
-			  </h4>
-			</div>
-
-			<div class="modal-body bg-primary">
-
-				<div class="form-group row">
-                    <label class="col-sm-4" for="monto">Nombre Completo</label>
-                    <div class="col-sm-8">                    
-                        <input type="text" class="form-control ng-pristine ng-not-empty ng-valid ng-valid-required ng-touched" ng-model="Datoproducto.cantidad"  name="monto" placeholder="1000" data-validate="validate(required)" required="">
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label class="col-sm-4" for="monto">Telefono</label>
-                    <div class="col-sm-8">                    
-                        <input type="number" class="form-control ng-pristine ng-not-empty ng-valid ng-valid-required ng-touched" ng-model="Datoproducto.cantidad"  name="monto" placeholder="1000" data-validate="validate(required)" required="">
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label class="col-sm-4" for="monto">Contacto</label>
-                    <div class="col-sm-8">                    
-                        <input type="text" class="form-control ng-pristine ng-not-empty ng-valid ng-valid-required ng-touched" ng-model="Datoproducto.cantidad"  name="monto" placeholder="1000" data-validate="validate(required)" required="">
-                    </div>
-                </div>
-
-			</div>
-			<div class="modal-footer wizard-actions">
-			  <button ng-disabled="asig.$invalid" type="submit" class="btn btn-primary btn-sm">
-			    <i class="glyphicon glyphicon-floppy-disk"></i>Guardar
-			  </button>
-			  <button type="button" class="btn btn-danger btn-sm" ng-click="cerrarAsignacionDespacho()">
-			    <i class="ace-icon fa fa-times"></i>Cancelar
-			  </button>
-			</div>
-
-		</form>
-	</div>
 
 
 	<!--[if !IE]> -->

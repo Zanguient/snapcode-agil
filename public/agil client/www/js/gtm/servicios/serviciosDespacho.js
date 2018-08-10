@@ -342,8 +342,4 @@ angular.module('agil.servicios')
 				'update': { method: 'PUT' }
 			});
 	})
-
-	.factory('ClientePedido', function ($resource) {
-		return $resource(restServer + "clientes-pedido/:id_empresa");
-	})
 	

@@ -608,6 +608,78 @@ angular.module('agil.controladores')
 			doc.text("fecha : " + fechaActual.getDate() + "/" + (fechaActual.getMonth() + 1) + "/" + fechaActual.getFullYear() + "  " + fechaActual.getHours() + ":" + min, 475, 750);
 		}
 
+		$scope.generarExcelKardexProducto = function (kardexproduto, valuado){
+			var detalleMovimiento = kardexproduto.detallesMovimiento;
+			blockUI.start()
+			var cabecera = ["Codigo","Producto","Fecha","Detalle","Ingreso","Salida","Lote","Fecha Vencimiento"];
+			var data = [];
+			data.push(cabecera);
+			
+		
+			for (var i = 0; i < kardexproduto.detallesMovimiento.length; i++) {
+				var column = [];
+				column.push(kardexproduto.codigo);
+				column.push(kardexproduto.nombre);
+				if (kardexproduto.detallesMovimiento[i].movimiento.fecha) {
+					//column.push(kardexproduto.detallesMovimiento[i].movimiento.venta.fecha);
+					var fecha = new Date(kardexproduto.detallesMovimiento[i].movimiento.fecha);
+
+					column.push(fecha.getDate() + "/" + fecha.getMonth() + "/" + fecha.getFullYear());
+				}else{
+					column.push(" ")
+				}
+
+				if (kardexproduto.detallesMovimiento[i].movimiento.venta) {
+					column.push(kardexproduto.detallesMovimiento[i].tipo+" "+kardexproduto.detallesMovimiento[i].movimiento.venta.cliente.razon_social);
+				}else if (!kardexproduto.detallesMovimiento[i].movimiento.venta) {
+					column.push(kardexproduto.detallesMovimiento[i].tipo);
+				}else{
+					column.push(" ")
+				}
+
+				if (kardexproduto.detallesMovimiento[i].movimiento.id_tipo != 7) {
+					if(kardexproduto.detallesMovimiento[i].cantidad){
+						column.push(kardexproduto.detallesMovimiento[i].cantidad);
+					}else{
+						column.push(" ");
+					}
+					
+				}else{
+					column.push(" ")
+				}
+				if (kardexproduto.detallesMovimiento[i].movimiento.id_tipo != 6) {
+					if(kardexproduto.detallesMovimiento[i].cantidad){
+						column.push(kardexproduto.detallesMovimiento[i].cantidad);
+					}else{
+						column.push(" ");
+					}
+					
+				}else{
+					column.push(" ")
+				}
+				if (kardexproduto.detallesMovimiento[i].lote) {
+					column.push(kardexproduto.detallesMovimiento[i].lote);
+				}else{
+					column.push(" ")
+				}
+				if (kardexproduto.detallesMovimiento[i].fecha_vencimiento) {
+					column.push(kardexproduto.detallesMovimiento[i].fecha_vencimiento);
+				}else{
+					column.push(" ")
+				}	
+
+				data.push(column);
+			} 
+			var ws_name = "SheetJS";
+			var wb = new Workbook(), ws = sheet_from_array_of_arrays(data);
+			/* add worksheet to workbook */
+			wb.SheetNames.push(ws_name);
+			wb.Sheets[ws_name] = ws;
+			var wbout = XLSX.write(wb, { bookType: 'xlsx', bookSST: true, type: 'binary' });
+			saveAs(new Blob([s2ab(wbout)], { type: "application/octet-stream" }), "REPORTE-USUARIOS.xlsx");
+			blockUI.stop();
+		}
+
 		$scope.modificarProducto = function (producto) {
 			$scope.steps = [{ cabeza: "cabeza-datos-producto", cuerpo: "cuerpo-datos-producto" },
 			{ cabeza: "cabeza-datos-adicionales", cuerpo: "cuerpo-datos-adicionales" },
