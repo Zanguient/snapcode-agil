@@ -630,7 +630,11 @@ angular.module('agil.controladores')
 				}
 
 				if (kardexproduto.detallesMovimiento[i].movimiento.venta) {
-					column.push(kardexproduto.detallesMovimiento[i].tipo+" "+kardexproduto.detallesMovimiento[i].movimiento.venta.cliente.razon_social);
+					if (kardexproduto.detallesMovimiento[i].movimiento.venta.cliente) {
+						column.push(kardexproduto.detallesMovimiento[i].tipo+" "+kardexproduto.detallesMovimiento[i].movimiento.venta.cliente.razon_social);	
+					}else{
+						column.push(kardexproduto.detallesMovimiento[i].tipo);
+					}
 				}else if (!kardexproduto.detallesMovimiento[i].movimiento.venta) {
 					column.push(kardexproduto.detallesMovimiento[i].tipo);
 				}else{
