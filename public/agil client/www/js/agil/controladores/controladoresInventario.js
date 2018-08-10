@@ -410,13 +410,14 @@ angular.module('agil.controladores')
 
 		}
 		$scope.excelIngPorInventario = function () {
-			var data = [["Compra", "Fecha", "Código", "Cantidad", "Unidad", "Detalle", "Lote", "Vencimiento", "Costo Unitario", "Total"]]			
+			var data = [["Compra", "Fecha",'Sucursal', "Código", "Cantidad", "Unidad", "Detalle", "Lote", "Vencimiento", "Costo Unitario", "Total"]]			
 			for (var i = 0; i < $scope.ingPorInventario.length; i++) {		
 			
 				for (var index = 0; index < $scope.ingPorInventario[i].detallesMovimiento.length; index++) {
 					var columns = [];		
 					columns.push($scope.ingPorInventario[i].id);
 					columns.push($scope.ingPorInventario[i].fecha.split("T")[0].split('-').reverse().join("/"));
+					columns.push($scope.ingPorInventario[i].almacen.sucursal.nombre);
 					columns.push($scope.ingPorInventario[i].detallesMovimiento[index].producto.codigo);
 					columns.push($scope.ingPorInventario[i].detallesMovimiento[index].cantidad);
 					columns.push($scope.ingPorInventario[i].detallesMovimiento[index].producto.unidad_medida);
