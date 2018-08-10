@@ -53,6 +53,7 @@ module.exports = function (router, Sucursal, ConfiguracionFactura, Clase, Config
 				id_tamano_papel_cierre_caja: req.body.tamanoPapelCierreCaja.id,
 				id_tamano_papel_cotizacion: req.body.tamanoPapelCotizacion.id,
 				id_formato_papel_factura: req.body.formatoPapelFactura.id
+
 			}, {
 					where: { id: req.params.id_configuracion }
 				}).then(function (score) {

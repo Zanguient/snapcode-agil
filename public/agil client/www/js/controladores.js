@@ -48,7 +48,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 				$scope.idModalTablaComprasPendientes, $scope.idModalTablaBancosPendientes, $scope.idModalTablaOtrosPendientes, $scope.idModalInicioSesion,
 				$scope.idModalWizardComprobanteEdicion, $scope.IdModalOpcionesQr, $scope.IdModalRegistrarComprobante, $scope.IdModalRevisarComprobante, $scope.IdModalLibroMayor, $scope.IdModalAsignarCuenta,
 				$scope.idModalTablaDespachos, $scope.idModalTablaAsignacionDespacho, $scope.IdModalEliminarProductoVencido, $scope.dialogAlertasProformas, $scope.facturarProformas, $scope.mensajeConfirmacionComprobante,
-				$scope.idModalNuevoPedido, $scope.idModalDatosProducto);
+				$scope.idModalNuevoPedido, $scope.idModalDatosProducto, $scope.idModalNuevoClientePedido);
 
 			$scope.inicio();
 			blockUI.stop();
@@ -3536,6 +3536,10 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 		// $scope.actualizarActivosFijos = function () {
 
 		// }
+
+		$scope.nuevoClientePedido = function () {
+			$scope.abrirPopup($scope.idModalNuevoClientePedido);
+		}
 
 		$scope.inicio = function () {
 			$scope.loadData();

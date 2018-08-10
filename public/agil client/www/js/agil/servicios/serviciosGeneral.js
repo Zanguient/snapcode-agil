@@ -1292,7 +1292,7 @@ angular.module('agil.servicios')
 					if (venta.configuracion.tamanoPapelFactura.nombre_corto == Diccionario.FACT_PAPEL_OFICIO) {
 						itemsPorPagina = 19;
 					} else if (venta.configuracion.tamanoPapelFactura.nombre_corto == Diccionario.FACT_PAPEL_CARTA) {
-						itemsPorPagina = 30;
+						itemsPorPagina = 32;
 					} else if (venta.configuracion.tamanoPapelFactura.nombre_corto == Diccionario.FACT_PAPEL_MEDIOOFICIO) {
 						itemsPorPagina = 3;
 					}
@@ -1388,7 +1388,7 @@ angular.module('agil.servicios')
 					if (venta.configuracion.tamanoPapelFactura.nombre_corto == Diccionario.FACT_PAPEL_OFICIO) {
 						itemsPorPagina = 19;
 					} else if (venta.configuracion.tamanoPapelFactura.nombre_corto == Diccionario.FACT_PAPEL_CARTA) {
-						itemsPorPagina = 30;
+						itemsPorPagina = 32;
 					} else if (venta.configuracion.tamanoPapelFactura.nombre_corto == Diccionario.FACT_PAPEL_MEDIOOFICIO) {
 						itemsPorPagina = 3;
 					}
