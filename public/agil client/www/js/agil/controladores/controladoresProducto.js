@@ -661,13 +661,13 @@ angular.module('agil.controladores')
 				}else{
 					column.push(" ")
 				}
-				if (kardexproduto.detallesMovimiento[i].lote) {
-					column.push(kardexproduto.detallesMovimiento[i].lote);
+				if (kardexproduto.detallesMovimiento[i].inventario.lote) {
+					column.push(kardexproduto.detallesMovimiento[i].inventario.lote);
 				}else{
 					column.push(" ")
 				}
-				if (kardexproduto.detallesMovimiento[i].fecha_vencimiento) {
-					column.push(kardexproduto.detallesMovimiento[i].fecha_vencimiento);
+				if (kardexproduto.detallesMovimiento[i].inventario.fecha_vencimiento) {
+					column.push(kardexproduto.detallesMovimiento[i].inventario.fecha_vencimiento);
 				}else{
 					column.push(" ")
 				}	
