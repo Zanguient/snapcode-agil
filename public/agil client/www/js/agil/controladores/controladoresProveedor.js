@@ -8,6 +8,7 @@ angular.module('agil.controladores')
 		$scope.inicio = function () {
 			$scope.obtenerEmpresas();
 			$scope.obtenerProveedores();
+			$scope.buscarTodosProveedores();
 			/*setTimeout(function() {
 				ejecutarScriptsTabla('tabla-proveedores',10);
 			},2000);*/
@@ -227,6 +228,7 @@ angular.module('agil.controladores')
 				$scope.buscarProveedores(1, $scope.itemsPorPagina, textoBusqueda);
 			}
 		}
+
 		$scope.buscarProveedores = function (pagina, itemsPagina, texto) {
 			blockUI.start();
 			$scope.itemsPorPagina = itemsPagina;
@@ -245,6 +247,168 @@ angular.module('agil.controladores')
 				$scope.proveedores = dato.proveedores;
 				blockUI.stop();
 			});
+		}
+
+		$scope.buscarTodosProveedores = function () {
+			var promesa = Proveedores($scope.usuario.id_empresa);
+			promesa.then(function (dato){
+				$scope.TodoProveedores = dato;
+			})
+			blockUI.stop();
+		}
+
+		$scope.reporteExcel = function(){
+			//console.log("Reporte Excel "+ $scope.proveedores);
+			
+			//var proveedores = $scope.proveedores;
+			var todosProveedores = $scope.TodoProveedores;
+			blockUI.start()
+
+			var cabecera = ["Codigo","Razón Social","Nit","Direccion","Telefono1","Telefono2","Contacto","Ubicacion Geo.","Rubro","Categoria","Fecha Imp.1","Fecha Imp.2","Texto1","Texto2"];
+			var data = [];
+			data.push(cabecera);
+
+			for (var i = 0; i < todosProveedores.length; i++){
+				columns = [];
+				columns.push(todosProveedores[i].codigo);
+				columns.push(todosProveedores[i].razon_social);
+				columns.push(todosProveedores[i].nit);
+				columns.push(todosProveedores[i].direccion);
+				columns.push(todosProveedores[i].telefono1);
+				columns.push(todosProveedores[i].telefono2);
+				columns.push(todosProveedores[i].contacto);
+				if(todosProveedores[i].ubicacion_geografica){
+					columns.push(todosProveedores[i].ubicacion_geografica);
+				}else{
+					columns.push(" ")
+				}
+				columns.push(todosProveedores[i].rubro);
+				
+				if (todosProveedores[i].categoria) {
+					columns.push(todosProveedores[i].categoria);	
+				}else{
+					columns.push(" ");
+				}
+				if(todosProveedores[i].fecha1){	
+					columns.push(new Date(todosProveedores[i].fecha1));
+				}else{
+					columns.push(" ")
+				}
+				if(todosProveedores[i].fecha2){
+					columns.push(new Date(todosProveedores[i].fecha2));
+				}else{
+					columns.push(" ")
+				}
+				if(todosProveedores[i].texto1){
+					columns.push(todosProveedores[i].texto1);
+				}else{
+					columns.push(" ")
+				}
+				if(todosProveedores[i].texto2){
+					columns.push(todosProveedores[i].texto2);
+				}else{
+					columns.push(" ")
+				}
+				data.push(columns);
+			}
+			var ws_name = "SheetJS";
+			var wb = new Workbook(), ws = sheet_from_array_of_arrays(data);
+			/* add worksheet to workbook */
+			wb.SheetNames.push(ws_name);
+			wb.Sheets[ws_name] = ws;
+			var wbout = XLSX.write(wb, { bookType: 'xlsx', bookSST: true, type: 'binary' });
+			saveAs(new Blob([s2ab(wbout)], { type: "application/octet-stream" }), "REPORTE-USUARIOS.xlsx");
+			blockUI.stop();
+		}
+
+		$scope.dibujarCabeceraPDFProveedores = function (doc, pagina, totalPaginas, cliente){
+			var date = new Date().toLocaleDateString();		
+			doc.fontSize(23).text("REPORTE DE PROVEEDORES",0,80,{ align: "center" });			
+			doc.rect(133, 100, 335, 0).stroke();			
+			doc.font('Helvetica-Bold',10);		
+			doc.text("Fecha: ",30,140);			
+			doc.font('Helvetica',10).text(date ,63,140);		
+			doc.font('Helvetica-Bold',10).text('N°',30,160);			
+			doc.font('Helvetica-Bold',10).text('Código',52,160);			
+			doc.font('Helvetica-Bold',10).text('Razón Social',100,160);			
+			doc.font('Helvetica-Bold',10).text('Nit',230,160);			
+			doc.font('Helvetica-Bold',10).text('Direccion',300,160);			
+			doc.font('Helvetica-Bold',10).text('Telefono',390,160);
+			doc.font('Helvetica-Bold',10).text('Rubro',470,160);
+			doc.text("PÁGINA " + pagina + " DE " + totalPaginas, 0, 740, { align: "center" });
+		}
+		$scope.reportePdf = function(){
+			var todosProveedores = /*$scope.proveedores;*/$scope.TodoProveedores;
+			blockUI.start();
+			//console.log($scope.usuario.empresa)
+
+			var doc = new PDFDocument({ size: 'letter', margin: 10 });
+			var stream = doc.pipe(blobStream());
+			// draw some text
+			var totalCosto = 0;
+
+			var y = 200, itemsPorPagina = 15, items = 0, pagina = 1, totalPaginas = Math.ceil(todosProveedores.length / itemsPorPagina);
+			$scope.dibujarCabeceraPDFProveedores(doc, 1, totalPaginas, todosProveedores);
+			doc.font('Helvetica', 8);
+			var tam = todosProveedores.length - 1;
+			for (var i = 0; i < tam && items <= itemsPorPagina; i++) {
+				var indice = i + 1;
+				doc.font('Helvetica',9).text(indice,30,y);
+				if (todosProveedores[i].codigo) {
+					doc.font('Helvetica',9).text(todosProveedores[i].codigo,52,y);
+				}else{
+					doc.font('Helvetica',9).text("null",52,y);
+				}
+				if (todosProveedores[i].razon_social) {
+					doc.font('Helvetica',9).text(todosProveedores[i].razon_social,100,y,{width:130});				
+				}else{
+					doc.font('Helvetica',9).text("null",100,y);
+				}
+
+				if (todosProveedores[i].nit) {		
+					doc.font('Helvetica',9).text(todosProveedores[i].nit,230,y);			
+				}else{
+					doc.font('Helvetica',9).text("null",230,y);
+				}
+
+				if (todosProveedores[i].direccion) {			
+					doc.font('Helvetica',9).text(todosProveedores[i].direccion,300,y,{width:80} );
+					console.log(todosProveedores[i].direccion.length);
+				}else{
+					doc.font('Helvetica',9).text("null",300,y);					
+				}
+
+				if (todosProveedores[i].telefono1) {			
+					doc.font('Helvetica',9).text(todosProveedores[i].telefono1,390,y);
+				}else{
+					doc.font('Helvetica',9).text("null",390,y);					
+				}
+
+				if (todosProveedores[i].rubro) {			
+					doc.font('Helvetica',9).text(todosProveedores[i].rubro,470,y);
+				}else{
+					doc.font('Helvetica',9).text("null",470,y);					
+				}
+				
+				y = y + 33;
+
+				items++;
+				if (items == itemsPorPagina) {
+					doc.addPage({ margin: 0, bufferPages: true });
+					y = 200;
+					items = 0;
+					pagina = pagina + 1;
+					$scope.dibujarCabeceraPDFProveedores(doc, pagina, totalPaginas, todosProveedores);
+					doc.font('Helvetica', 8);
+				}
+			}
+			
+			doc.end();
+			stream.on('finish', function () {
+				var fileURL = stream.toBlobURL('application/pdf');
+				window.open(fileURL, '_blank', 'location=no');
+			});
+			blockUI.stop();
 		}
 
 		$scope.subirExcelProveedores = function (event) {
