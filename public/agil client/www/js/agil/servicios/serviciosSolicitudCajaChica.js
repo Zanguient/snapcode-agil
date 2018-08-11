@@ -86,8 +86,40 @@ angular.module('agil.servicios')
     };
     return res;
 }])
+
+.factory('CajaChicaPaginador', function ($resource) {
+    return $resource(restServer + "caja-chica/sucursal/:id_sucursal/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion/solicitante/:solicitante/usuario/:usuario/estado/:estado/concepto/:concepto/movimiento/:movimiento/usuario-no-autorizado/:id_usuario_no_autorizado");
+})
+
+.factory('SolicitudesCajaChicaPaginador', ['CajaChicaPaginador', '$q', function (CajaChicaPaginador, $q) {
+    var res = function (paginator)//idEmpresa, xxx
+    {        
+        var delay = $q.defer();
+        CajaChicaPaginador.get({
+            id_empresa: paginator.filter.empresa,
+            pagina: paginator.currentPage,
+            items_pagina: paginator.itemsPerPage,
+            texto_busqueda: paginator.search,
+            columna: paginator.column,
+            direccion: paginator.direction,
+            solicitante:paginator.filter.solicitante,
+            usuario:paginator.filter.usuario,
+            estado:paginator.filter.estado,
+            concepto:paginator.filter.concepto,
+            movimiento:paginator.filter.movimiento,
+            id_usuario_no_autorizado:paginator.filter.id_usuario_no_autorizado,
+            id_sucursal:paginator.filter.id_sucursal
+        }, function (entidades) {
+            delay.resolve(entidades);
+        }, function (error) {
+            delay.reject(error);
+        });
+        return delay.promise;
+    };
+    return res;
+}])
 .factory('IngresosCajaChicaPaginador', function ($resource) {
-    return $resource(restServer + "caja-chica/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion");
+    return $resource(restServer + "caja-chica/sucursal/:id_sucursal/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion");
 })
 
 .factory('IngresosCajaPaginador', ['IngresosCajaChicaPaginador', '$q', function (IngresosCajaChicaPaginador, $q) {
@@ -100,7 +132,8 @@ angular.module('agil.servicios')
             items_pagina: paginator.itemsPerPage,
             texto_busqueda: paginator.search,
             columna: paginator.column,
-            direccion: paginator.direction           
+            direccion: paginator.direction,
+            id_sucursal:paginator.filter.id_sucursal   
         }, function (entidades) {
             delay.resolve(entidades);
         }, function (error) {
@@ -131,17 +164,17 @@ angular.module('agil.servicios')
 }])
 
 .factory('DatosCierreCaja', function ($resource) {
-    return $resource(restServer + "caja-chica/empresa/:id_empresa/fecha/:fecha/saldoInicial/:saldo", null,
+    return $resource(restServer + "caja-chica/sucursal/:id_sucursal/empresa/:id_empresa/fecha/:fecha/saldoInicial/:saldo", null,
         {
             'update': { method: 'PUT' }
         });
 })
 .factory('ObtenerDatosCierreCaja', ['DatosCierreCaja', '$q', function (DatosCierreCaja, $q) {
-    var res = function (idEmpleado,fecha,saldo)//idEmpresa, xxx
+    var res = function (idEmpleado,fecha,saldo,idSucursal)//idEmpresa, xxx
     {
         var delay = $q.defer();
         DatosCierreCaja.get({
-            id_empresa: idEmpleado,fecha:fecha,saldo:saldo
+            id_empresa: idEmpleado,fecha:fecha,saldo:saldo,id_sucursal:idSucursal
         }, function (entidades) {
             delay.resolve(entidades);
         }, function (error) {
@@ -152,7 +185,7 @@ angular.module('agil.servicios')
     return res;
 }])
 .factory('CierreCajaChicaPaginador', function ($resource) {
-    return $resource(restServer + "cierre-caja-chica/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion");
+    return $resource(restServer + "cierre-caja-chica/sucursal/:id_sucursal/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion");
 })
 
 .factory('CierreCajaCPaginador', ['CierreCajaChicaPaginador', '$q', function (CierreCajaChicaPaginador, $q) {
@@ -165,7 +198,8 @@ angular.module('agil.servicios')
             items_pagina: paginator.itemsPerPage,
             texto_busqueda: paginator.search,
             columna: paginator.column,
-            direccion: paginator.direction           
+            direccion: paginator.direction,
+            id_sucursal:paginator.filter.id_sucursal
         }, function (entidades) {
             delay.resolve(entidades);
         }, function (error) {

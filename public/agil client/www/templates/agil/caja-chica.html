@@ -5,18 +5,24 @@
             <i class="ace-icon fa fa-plus align-top bigger-125"></i>
             Nuevo
         </button> -->
-        <button type="button" class="btn btn-warning btn-sm pull-center" ng-click="abrirModalRegistroIngresoCajaChica(undefined,false,false)">
+        <button type="button" ng-disabled="!usuario.autorizacion_caja_chica" class="btn btn-warning btn-sm pull-center" ng-click="abrirModalRegistroIngresoCajaChica(undefined,false,false)">
             <i class="ace-icon fa fa-plus-circle align-top bigger-125"></i>Ingreso
         </button>&nbsp&nbsp
         <button type="button" class="btn btn-warning btn-sm pull-center" ng-click="abrirModalIngresosCajaChica()">
             <i class="ace-icon fa fa-h-square  bigger-125"></i>Ingresos
         </button>&nbsp&nbsp
-        <button type="button" class="btn btn-danger btn-sm pull-center" ng-click="obtenerDatosCierreCaja()">
+        <button type="button" ng-disabled="!usuario.autorizacion_caja_chica" class="btn btn-danger btn-sm pull-center" ng-click="obtenerDatosCierreCaja()">
             <i class="ace-icon fa fa-print bigger-125"></i> Cierre Caja
         </button>
-        <button type="button" class="btn btn-danger btn-sm pull-center" ng-click="abrirModalHistorialCierreCajaChica()">
+        <button type="button"  class="btn btn-danger btn-sm pull-center" ng-click="abrirModalHistorialCierreCajaChica()">
             <i class="ace-icon fa fa-h-square  bigger-125"></i>Cierres Caja
         </button>&nbsp&nbsp
+        <select required data-validate="validate(required)"  ng-change="obtenerListaSolicitudes(filtro,sucursalPrincipal)" required
+         ng-options="sucursal as sucursal.nombre for sucursal in sucursales track by sucursal.id"
+        ng-model="sucursalPrincipal" 
+        >
+        <option value="">Seleccionar</option>
+    </select>
         <form name="formularioFiltroCuentas" novalidate ng-submit="obtenerListaSolicitudes(filtro)">
             <fieldset>
 
@@ -133,7 +139,7 @@
             </fieldset>
         </form>
         <div class="table-header" ng-class="tipoFiltro=='TODOS' ? 'bg-green' : tipoFiltro=='INGRESO' ? 'bg-yellow' : tipoFiltro=='KARDEX' ? 'bg-sky-blue' : 'bg-sky-blue'">
-            <div class="row">
+            <!-- <div class="row">
                 <div class="col-sm-12">
                     <h4 class="col-sm-4 widget-title">Lista de
                         <span ng-if="tipoFiltro=='TODOS'">Solicitudes</span>
@@ -141,11 +147,17 @@
                         <span ng-if="tipoFiltro=='INGRESO'">Ingresos</span>
                     </h4>
                     <div class="col-sm-8 inline pos-rel pull-right">
-
+                        <span ng-hide="solicitud.ver" class="fa fa-pencil bigger-160" ng-click="abrirModalConceptosMovimiento(tiposConceptos)"></span>
                     </div>
                 </div>
 
-            </div>
+            </div> -->
+            Lista de <span ng-if="tipoFiltro=='TODOS'">Solicitudes</span>
+            <span ng-if="tipoFiltro=='KARDEX'">Fondos a Rendir</span>
+            <span ng-if="tipoFiltro=='INGRESO'">Ingresos</span>
+                <div class="pos-rel pull-right">
+                    <span ng-hide="solicitud.ver" class="fa fa-pencil bigger-160" ng-click="abrirModalConceptosMovimiento(tiposConceptos)"></span>
+                </div>
         </div>
 
         <!-- div.table-responsive -->
@@ -213,7 +225,7 @@
                                 <td>
                                     {{solicitud.solicitante.persona.nombre_completo}}
                                 </td>
-                                <td>{{solicitud.concepto.nombre}}</td>
+                                <td>{{solicitud.concepto.concepto.nombre}}</td>
                                 <td>{{solicitud.detalle}}</td>
                                 <td ng-style="{'background-color': (solicitud.estado.nombre==='ANULADO')?'red' : 'auto','color': (solicitud.estado.nombre=='ANULADO')?'White' : 'auto'}">{{solicitud.estado.nombre}}</td>
                                 <td>
@@ -223,27 +235,40 @@
 
                                 <td>
                                     <div class="action-buttons">
-                                        <a class="blue tooltip-info" ng-if="solicitud.cajasChicas.length>0 && solicitud.concepto.concepto.nombre!='KARDEX'" uib-tooltip="Ver Datos"
+                                        <a class="blue tooltip-info" ng-if="solicitud.cajasChicas.length>0 && (solicitud.concepto.concepto.nombre!='KARDEX')" uib-tooltip="Ver Datos"
                                             href="javascript:void(0)" e-disabled="!aplicacion.puede_ver" ng-click="abrirModalRegistroCajaChica(solicitud,true,true)">
                                             <i class="ace-icon fa fa-search-plus bigger-130"></i>
                                         </a>
-                                        <a ng-if="!solicitud.eliminado && solicitud.cajasChicas.length>0" 
+                                        <a class="blue tooltip-info" ng-if="solicitud.cajasChicas.length>0 && (solicitud.concepto.concepto.nombre=='KARDEX')" uib-tooltip="Ver Datos"
+                                            href="javascript:void(0)" e-disabled="!aplicacion.puede_ver" ng-click="abrirModalRegistroDesembolsoCajaChica(solicitud,true,true)">
+                                            <i class="ace-icon fa fa-search-plus bigger-130"></i>
+                                        </a>
+                                        <a ng-hide="!solicitud.concepto.concepto.nombre!='KARDEX'" ng-if="!solicitud.eliminado && solicitud.cajasChicas.length>0" 
                                             class="green tooltip-info" uib-tooltip="Editar Datos" href="javascript:void(0)" e-disabled="!aplicacion.puede_modificar"
                                             ng-click="abrirModalRegistroCajaChica(solicitud,true)">
                                             <i class="ace-icon fa fa-pencil bigger-130"></i>
                                         </a>
-
+                                        <a ng-hide="solicitud.concepto.concepto.nombre!='KARDEX'" ng-if="!solicitud.eliminado && solicitud.cajasChicas.length>0" 
+                                            class="green tooltip-info" uib-tooltip="Editar Datos" href="javascript:void(0)" e-disabled="!aplicacion.puede_modificar"
+                                            ng-click="abrirModalRegistroDesembolsoCajaChica(solicitud,false,true)">
+                                            <i class="ace-icon fa fa-pencil bigger-130"></i>
+                                        </a>
                                         <a ng-hide="solicitud.eliminado"  ng-if="solicitud.cajasChicas.length==0" class="red tooltip-info " uib-tooltip="Eliminar" href="javascript:void(0)" e-disabled="!aplicacion.puede_eliminar"
                                             ng-click="abrirModalEliminarSolicitud(solicitud)">
                                             <i class="ace-icon fa fa-trash-o bigger-130"></i>
                                         </a>
                                         <a ng-if="!solicitud.eliminado && solicitud.estado.nombre=='PENDIENTE'" class="blue tooltip-info " uib-tooltip="Autorizar Solicitud"
-                                            href="javascript:void(0)" e-disabled="!aplicacion.puede_crear" ng-click="abrirModalVerificarAutorizacion(solicitud)">
+                                            href="javascript:void(0)" e-disabled="!aplicacion.puede_crear " ng-click="abrirModalVerificarAutorizacion(solicitud)">
                                             <i class="ace-icon fa fa-pencil-square  bigger-130"></i>
                                         </a>
-                                        <a ng-if="!solicitud.eliminado && solicitud.estado.nombre=='AUTORIZADO' && solicitud.cajasChicas[0].saldo!=0" class="blue tooltip-info "
+                                        <a  ng-if="!solicitud.eliminado && (solicitud.estado.nombre=='AUTORIZADO'||solicitud.estado.nombre=='DESEMBOLSADO') && solicitud.cajasChicas[0].saldo!=0" ng-hide="solicitud.concepto.concepto.nombre=='KARDEX' && solicitud.cajasChicas.length==0"  class="blue tooltip-info "
                                             uib-tooltip="Cobrar" href="javascript:void(0)" e-disabled="!aplicacion.puede_crear"
                                             ng-click="abrirModalRegistroCajaChica(solicitud)">
+                                            <i class="ace-icon fa fa-folder  bigger-130"></i>
+                                        </a>
+                                        <a  ng-hide="solicitud.cajasChicas[0].length>0 || solicitud.concepto.concepto.nombre!='KARDEX'" ng-if="!solicitud.eliminado && solicitud.estado.nombre=='AUTORIZADO' && solicitud.cajasChicas[0].saldo!=0" class="red tooltip-info "
+                                            uib-tooltip="Cobrar" href="javascript:void(0)" e-disabled="!aplicacion.puede_crear"
+                                            ng-click="abrirModalRegistroDesembolsoCajaChica(solicitud,false,false)">
                                             <i class="ace-icon fa fa-folder  bigger-130"></i>
                                         </a>
                                         <a ng-hide="solicitud.eliminado" ng-if="solicitud.concepto.concepto.nombre=='KARDEX'" class="orange tooltip-info " uib-tooltip="kardex solicitud"
@@ -703,10 +728,10 @@
                                     <tr>
                                         <td>
                                             <label>SUCURSAL</label>
-                                            <select required data-validate="validate(required)" ng-disabled="cajaChica.ver" ng-model-options="{updateOn: 'submit'}" required
-                                                id="sucursal" name="sucursal" ng-options="sucursal as sucursal.nombre for sucursal in sucursales track by sucursal.id"
-                                                ng-model="cajaChica.compra.sucursal" ng-change="obtenerAlmacenes(cajaChica.compra.sucursal.id)"
-                                                ng-disabled="cajaChica.compra.id">
+                                            <select required data-validate="validate(required)"  ng-model-options="{updateOn: 'submit'}" required
+                                                 ng-options="sucursal as sucursal.nombre for sucursal in sucursales track by sucursal.id"
+                                                ng-model="cajaChica.compra.sucursal" 
+                                                disabled>
                                                 <option value="">Seleccionar</option>
                                             </select>
                                             <span class="red">(*)</span>
@@ -715,7 +740,7 @@
                                         <td>
                                             <label>DESCUENTOS GENERALES</label>
                                             <label>
-                                                <input class="ace ace-switch ace-switch-4" e-disabled="cajaChica.ver" ng-model-options="{updateOn: 'submit'}" type="checkbox"
+                                                <input ng-click="generarDescuentoGasolina()" class="ace ace-switch ace-switch-4" e-disabled="cajaChica.ver" ng-model-options="{updateOn: 'submit'}" type="checkbox"
                                                     ng-disabled="compra.detallesCompra.length>0||compra.movimiento.clase.nombre===diccionario.MOVING_POR_IMPORTACION||compra.movimiento.clase.nombre===diccionario.MOVING_POR_RETENCION_BIENES||compra.movimiento.clase.nombre===diccionario.MOVING_POR_RETENCION_SERVICIOS"
                                                     ng-model="cajaChica.compra.descuento_general" />
                                                 <span id="descuentos_generales" class="lbl check-descuento"></span>
@@ -936,7 +961,7 @@
                                 <a class="blue tooltip-info" uib-tooltip="Ver Datos" href="javascript:void(0)" e-disabled="!aplicacion.puede_ver" ng-click="abrirModalRegistroIngresoCajaChica(detalle,true)">
                                     <i class="ace-icon fa fa-search-plus bigger-130"></i>
                                 </a>
-                                <a class="green tooltip-info" uib-tooltip="Editar Datos" href="javascript:void(0)" e-disabled="!aplicacion.puede_modificar"
+                                <a class="green tooltip-info" ng-disabled="!usuario.autorizacion_caja_chica" uib-tooltip="Editar Datos" href="javascript:void(0)" e-disabled="!aplicacion.puede_modificar"
                                     ng-click="abrirModalRegistroIngresoCajaChica(detalle,false)">
                                     <i class="ace-icon fa fa-pencil bigger-130"></i>
                                 </a>
@@ -1059,7 +1084,7 @@
                 <span aria-hidden="true">&times;</span>
             </button>
             <P>
-                <h4 class="modal-title">REGISTRO CAJA CHICA</h4>
+                <h4 class="modal-title">REGISTRO INGRESO CAJA CHICA</h4>
             </P>
             <P>{{solicitud.solicitante.persona.nombre_completo}}</P>
 
@@ -1160,8 +1185,135 @@
                                 </label>
                             </div>
                             <div class="col-md-9">
-                                    <select required data-validate="validate(required)" ng-disabled="cajaChica.ver" ng-model-options="{updateOn: 'submit'}" required
-                                    id="sucursal" name="sucursal" ng-options="sucursal as sucursal.nombre for sucursal in sucursales track by sucursal.id"
+                                    <select disabled required data-validate="validate(required)"  required
+                                     ng-options="sucursal as sucursal.nombre for sucursal in sucursales track by sucursal.id"
+                                    ng-model="cajaChica.sucursal"
+                                    >
+                                    <option value="">Seleccionar</option>
+                                </select>
+                            </div>
+                        </div>
+                      
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button ng-hide="cajaChica.ver" type="submit" class="btn btn-primary">Guardar</button>
+                <button type="button" class="btn btn-danger" ng-click="cerrarModalRegistroIngresoCajaChica()">Cerrar</button>
+            </div>
+        </form>
+    </div>
+</div>
+</div>
+<!-- fin registro caja chica -->
+<!-- inicio DESEMBOLSO caja chica -->
+<div class="modal" id="dialog-registro-desembolso-caja-chica">
+    <div class="modal-content">
+        <div class="modal-header bg-primary">
+            <button type="button" ng-click="cerrarModalRegistroDesembolsoCajaChica()" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            <P>
+                <h4 class="modal-title">REGISTRO DESEMBOLSO CAJA CHICA</h4>
+            </P>
+            <P>{{solicitud.solicitante.persona.nombre_completo}}</P>
+
+        </div>
+        <form ng-submit="guardarCajaChica()">
+            <div class="modal-body">
+                <div class="row">
+                    <div ng-class="cajaChica.verDatosCompra ? 'col-md-6' : 'col-md-12'">
+                        <div class="row">
+                            <div class=col-md-10>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <label class="inline">
+
+                                            <span class="lbl">Fecha:</span>
+                                        </label>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <input type="text" ng-disabled="cajaChica.ver" ng-model-options="{updateOn: 'submit'}" ng-model="cajaChica.fecha" ng-update-hidden
+                                            data-date-format="dd/mm/yyyy" class="date-picker form-control">
+                                    </div>
+                                </div>
+                                <div class="space-4"></div>
+                                <div class="row">
+
+                                    <div class="col-md-4">
+                                        <label class="inline">
+
+                                            <span class="lbl">Concepto</span>
+                                        </label>
+                                    </div>
+
+                                    <div class="col-md-8">
+                                        <select  required ng-disabled="cajaChica.ver"  ng-model="cajaChica.concepto"
+                                            class="form-control" ng-options="concepto as concepto.nombre for concepto in ConceptosMovimiento | filter:{habilitado:true}|filtroSolicitud track by concepto.id">
+                                            <option value="">Seleccionar</option>
+                                        </select>
+                                       
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <a href="javascript:void(0)" ng-if="cajaChica.solicitud" ng-click="verDatosCompra()" class="red tooltip-info" tooltip-placement="left"
+                                    uib-tooltip="Editar Datos Compra">
+                                    <i class="ace-icon icono-impuestos bigger-260 icon-only "></i>
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="space-4"></div>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <label class="inline">
+
+                                    <span class="lbl">Detalle</span>
+                                </label>
+                            </div>
+                            <div class="col-md-9">
+                                <textarea class="form-control" ng-disabled="cajaChica.ver" ng-model-options="{updateOn: 'submit'}" cols="30" rows="4" ng-model="cajaChica.detalle"></textarea>
+                            </div>
+                        </div>
+                        <div class="space-4"></div>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <label class="inline">
+
+                                    <span class="lbl">Cuenta:</span>
+                                </label>
+                            </div>
+                            <div class="col-md-9">
+                                <input enter autocomplete="off" ng-disabled="cajaChica.ver" typeahead-append-to-body="true" ng-keypress="interceptarTecla($event,'cantidad',true)"
+                                    required type="text" ng-model="cajaChica.cuenta" placeholder="Busqueda..." uib-typeahead="cuenta as (cuenta.codigo+'-'+cuenta.nombre) for cuenta in buscarCuentasCajaChica($viewValue)"
+                                    typeahead-wait-ms="1000" typeahead-template-url="templates/autocompletar.html" typeahead-show-hint="false"
+                                    typeahead-min-length="1">
+                            </div>
+                        </div>
+                        <div class="space-4"></div>
+                        <div class="row" >
+                            <div class="col-md-3">
+                                <label class="inline">
+
+                                    <span class="lbl">Monto:</span>
+                                </label>
+                            </div>
+                            <div class="col-md-9">
+                                <input class="form-control" ng-model-options="{updateOn: 'submit'}" type="number" ng-model="cajaChica.total">
+                            </div>
+                        </div>
+                        <div class="space-4"></div>
+                        <div class="row" >
+                            <div class="col-md-3">
+                                <label class="inline">
+
+                                    <span class="lbl">SUCURSAL:</span>
+                                </label>
+                            </div>
+                            <div class="col-md-9">
+                                    <select disabled required data-validate="validate(required)" ng-disabled="cajaChica.ver" ng-model-options="{updateOn: 'submit'}" required
+                                     ng-options="sucursal as sucursal.nombre for sucursal in sucursales track by sucursal.id"
                                     ng-model="cajaChica.sucursal" ng-change="obtenerAlmacenes(cajaChica.compra.sucursal.id)"
                                     ng-disabled="cajaChica.compra.id">
                                     <option value="">Seleccionar</option>
@@ -1174,7 +1326,7 @@
             </div>
             <div class="modal-footer">
                 <button ng-hide="cajaChica.ver" type="submit" class="btn btn-primary">Guardar</button>
-                <button type="button" class="btn btn-danger" ng-click="cerrarModalRegistroIngresoCajaChica()">Cerrar</button>
+                <button type="button" class="btn btn-danger" ng-click="cerrarModalRegistroDesembolsoCajaChica()">Cerrar</button>
             </div>
         </form>
     </div>

@@ -51,13 +51,14 @@ function  ejecutarScriptsSolicitudCajaChicas(idModalSolicitudCajaChica,idModalCo
 	crearPopup(idModalConceptosMovimiento, "auto", 'auto');
 	crearPopup(idModalEliminarSolicitud, "auto", 'auto');
 	crearPopup(idModalVerificarAutorizacion, "auto", 'auto');
+	
 	setTimeout(function () {
 		aplicarDatePickers();
 	}, 200);
 	
 }
 function  ejecutarScriptsCajaChicas(idModalSolicitudCajaChica,idModalConceptosMovimiento,idModalEliminarSolicitud,idModalVerificarAutorizacion,idModalRegistroCajaChica,
-	idModalKardexCajaChica,idModalIngresosCajaChica,idModalRegistroIngresoCajaChica,idModalHistorialCierreCajaChica){
+	idModalKardexCajaChica,idModalIngresosCajaChica,idModalRegistroIngresoCajaChica,idModalHistorialCierreCajaChica,idModalRegistroDesembolsoCajaChica){
 	crearPopup(idModalSolicitudCajaChica, "auto", 'auto');
 	crearPopup(idModalConceptosMovimiento, "auto", 'auto');
 	crearPopup(idModalEliminarSolicitud, "auto", 'auto');
@@ -67,7 +68,7 @@ function  ejecutarScriptsCajaChicas(idModalSolicitudCajaChica,idModalConceptosMo
 	crearPopup(idModalRegistroCajaChica, "auto", 'auto');
 	crearPopup(idModalRegistroIngresoCajaChica, "auto", 'auto');
 	crearPopup(idModalHistorialCierreCajaChica, "auto", 'auto');
-	
+	crearPopup(idModalRegistroDesembolsoCajaChica, "auto", 'auto');
 	setTimeout(function () {
 		aplicarDatePickers();
 	}, 200);

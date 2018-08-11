@@ -214,6 +214,41 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, decodeBase
 				}
 			});
 		});
+		router.route('/verificar-autorizacion/usuarios/empresa/:id_empresa')
+		.post(function (req, res) {
+			Usuario.find({
+				where: {
+					nombre_usuario: req.body.nombre_usuario,
+					clave: md5(req.body.clave),
+					id_empresa: req.params.id_empresa
+				},
+				include: [{ model: Persona, as: 'persona' },
+				{
+					model: UsuarioRol, as: 'rolesUsuario',
+					include: [{ model: Rol, as: 'rol'}]
+				}]
+			}).then(function (entidad) {
+				if (entidad) {
+					if(entidad.autorizacion_caja_chica){
+						res.json({
+							type: true,
+							message: "Autorizacion Satisfactoriamente!"
+						});
+					}else{
+						res.json({
+							type: false,
+							message: "¡Usuario sin permiso!"
+						});
+					}
+
+				} else {
+					res.json({
+						type: false,
+						message: "¡Usuario sin permiso!"
+					});
+				}
+			});
+		});
 	router.route('/usuario/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion')
 		.get(function (req, res) {
 			if (req.params.id_empresa == "0") {

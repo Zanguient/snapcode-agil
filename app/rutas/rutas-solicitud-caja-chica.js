@@ -13,6 +13,7 @@ module.exports = function (router, sequelize, Sequelize, ensureAuthorizedAdminis
                     eliminado: req.body.eliminado,
                     id_estado: req.body.estado.id,
                     detalle: req.body.detalle,
+                    id_sucursal:req.body.sucursal.id
                 }, {
                         where: { id: req.body.id }
                     }).then(function (SolicitudCreada) {
@@ -28,7 +29,7 @@ module.exports = function (router, sequelize, Sequelize, ensureAuthorizedAdminis
                     monto: req.body.monto,
                     eliminado: false,
                     id_estado: req.body.estado.id,
-
+                    id_sucursal:req.body.sucursal.id
                 }).then(function (SolicitudCreada) {
                     res.json({ mensaje: 'Creado Satisfactoriamente!' });
                 });
@@ -78,10 +79,10 @@ module.exports = function (router, sequelize, Sequelize, ensureAuthorizedAdminis
             });
         })
 
-    router.route('/caja-chica/empresa/:id_empresa/fecha/:fecha/saldoInicial/:saldo')
+    router.route('/caja-chica/sucursal/:id_sucursal/empresa/:id_empresa/fecha/:fecha/saldoInicial/:saldo')
         .get(function (req, res) {
             CajaChica.findAll({
-                include: [{ model: SolicitudCajaChica, as: 'solicitud', include: [{ model: Clase, as: 'estado' }, { model: MedicoPaciente, as: 'solicitante', include: [{ model: Persona, as: 'persona' }] }] }, { model: ConceptoMovimientoCajaChica, as: 'concepto', where: { id_empresa: req.params.id_empresa }, include: [{ model: Clase, as: 'concepto' }] }, { model: ContabilidadCuenta, as: 'cuenta' }, { model: Compra, as: 'compra', include: [{ model: Proveedor, as: 'proveedor' }, { model: Sucursal, as: 'sucursal' }, { model: Movimiento, as: 'movimiento', required: false, include: [{ model: Clase, as: 'clase' }] }] }],
+                include: [{ model: Sucursal, as: 'sucursal',where:{id:req.params.id_sucursal} },{ model: SolicitudCajaChica, as: 'solicitud', include: [{ model: Clase, as: 'estado' }, { model: MedicoPaciente, as: 'solicitante', include: [{ model: Persona, as: 'persona' }] }] }, { model: ConceptoMovimientoCajaChica, as: 'concepto', where: { id_empresa: req.params.id_empresa }, include: [{ model: Clase, as: 'concepto' }] }, { model: ContabilidadCuenta, as: 'cuenta' }, { model: Compra, as: 'compra', include: [{ model: Proveedor, as: 'proveedor' }, { model: Sucursal, as: 'sucursal' }, { model: Movimiento, as: 'movimiento', required: false, include: [{ model: Clase, as: 'clase' }] }] }],
                 where: { id_padre: null, cerrada: false },
                 order: [['fecha', 'asc']]
             }).then(function (cajas) {
@@ -104,7 +105,7 @@ module.exports = function (router, sequelize, Sequelize, ensureAuthorizedAdminis
                                             where: { id: cierreCajaChicaCreado.id },
                                             include: [{
                                                 model: CajaChica, as: 'detalleCierreCaja',
-                                                include: [{
+                                                include: [{ model: Sucursal, as: 'sucursal',where:{id:req.params.id_sucursal}},{
                                                     model: SolicitudCajaChica, as: 'solicitud',
                                                     include: [{ model: Clase, as: 'estado' },
                                                     {
@@ -142,12 +143,12 @@ module.exports = function (router, sequelize, Sequelize, ensureAuthorizedAdminis
             });
 
         })
-    router.route('/cierre-caja-chica/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion')
+    router.route('/cierre-caja-chica/sucursal/:id_sucursal/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion')
         .get(function (req, res) {
             CierreCajaChica.findAndCountAll({
                 include: [{
                     model: CajaChica, as: 'detalleCierreCaja',
-                    include: [{
+                    include: [ { model: Sucursal, as: 'sucursal', where:{id:req.params.id_sucursal} },{
                         model: SolicitudCajaChica, as: 'solicitud',
                         include: [{ model: Clase, as: 'estado' },
                         {
@@ -174,7 +175,7 @@ module.exports = function (router, sequelize, Sequelize, ensureAuthorizedAdminis
                     offset: (req.params.items_pagina * (req.params.pagina - 1)), limit: req.params.items_pagina,
                     include: [{
                         model: CajaChica, as: 'detalleCierreCaja',
-                        include: [{
+                        include: [{ model: Sucursal, as: 'sucursal', where:{id:req.params.id_sucursal} },{
                             model: SolicitudCajaChica, as: 'solicitud',
                             include: [{ model: Clase, as: 'estado' },
                             {
@@ -204,15 +205,15 @@ module.exports = function (router, sequelize, Sequelize, ensureAuthorizedAdminis
             })
         })
     //start pagator caja chica
-    router.route('/caja-chica/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion')
+    router.route('/caja-chica/sucursal/:id_sucursal/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion')
         .get(function (req, res) {
             CajaChica.findAndCountAll({
-                include: [{ model: Sucursal, as: 'sucursal' }, { model: ConceptoMovimientoCajaChica, as: 'concepto', where: { id_empresa: req.params.id_empresa }, include: [{ model: Clase, as: 'concepto', where: { nombre_corto: 'INGRESO' } }] }, { model: ContabilidadCuenta, as: 'cuenta' }, { model: Compra, as: 'compra', include: [{ model: Proveedor, as: 'proveedor' }, { model: Sucursal, as: 'sucursal' }, { model: Movimiento, as: 'movimiento', required: false, include: [{ model: Clase, as: 'clase' }] }] }],
+                include: [{ model: Sucursal, as: 'sucursal', where:{id:req.params.id_sucursal} }, { model: ConceptoMovimientoCajaChica, as: 'concepto', where: { id_empresa: req.params.id_empresa }, include: [{ model: Clase, as: 'concepto', where: { nombre_corto: 'INGRESO' } }] }, { model: ContabilidadCuenta, as: 'cuenta' }, { model: Compra, as: 'compra', include: [{ model: Proveedor, as: 'proveedor' }, { model: Sucursal, as: 'sucursal' }, { model: Movimiento, as: 'movimiento', required: false, include: [{ model: Clase, as: 'clase' }] }] }],
                 where: { id_solicitud: null }
             }).then(function (data) {
                 CajaChica.findAll({
                     offset: (req.params.items_pagina * (req.params.pagina - 1)), limit: req.params.items_pagina,
-                    include: [{ model: Sucursal, as: 'sucursal' }, { model: ConceptoMovimientoCajaChica, as: 'concepto', where: { id_empresa: req.params.id_empresa }, include: [{ model: Clase, as: 'concepto', where: { nombre_corto: 'INGRESO' } }] }, { model: ContabilidadCuenta, as: 'cuenta' }, { model: Compra, as: 'compra', include: [{ model: Proveedor, as: 'proveedor' }, { model: Sucursal, as: 'sucursal' }, { model: Movimiento, as: 'movimiento', required: false, include: [{ model: Clase, as: 'clase' }] }] }],
+                    include: [{ model: Sucursal, as: 'sucursal', where:{id:req.params.id_sucursal} }, { model: ConceptoMovimientoCajaChica, as: 'concepto', where: { id_empresa: req.params.id_empresa }, include: [{ model: Clase, as: 'concepto', where: { nombre_corto: 'INGRESO' } }] }, { model: ContabilidadCuenta, as: 'cuenta' }, { model: Compra, as: 'compra', include: [{ model: Proveedor, as: 'proveedor' }, { model: Sucursal, as: 'sucursal' }, { model: Movimiento, as: 'movimiento', required: false, include: [{ model: Clase, as: 'clase' }] }] }],
                     where: { id_solicitud: null }
                 }).then(function (solicitudes) {
                     res.json({ ingresos: solicitudes, paginas: Math.ceil(data.count / req.params.items_pagina) });
@@ -245,7 +246,7 @@ module.exports = function (router, sequelize, Sequelize, ensureAuthorizedAdminis
             if (req.params.id_usuario_no_autorizado != 0) {
                 condicionCajaChica.id_usuario = parseInt(req.params.id_usuario_no_autorizado)
             }
-            
+
             if (req.params.texto_busqueda != 0) {
                 condicionCajaChica = {
                     $or: [
@@ -265,19 +266,19 @@ module.exports = function (router, sequelize, Sequelize, ensureAuthorizedAdminis
                 var datosbusqueda = {
                     offset: (req.params.items_pagina * (req.params.pagina - 1)), limit: req.params.items_pagina,
                     where: condicionCajaChica,
-                    include: [{ model: CajaChica, as: 'cajasChicas', required: false, include: [{ model: Sucursal, as: 'sucursal' }, { model: ConceptoMovimientoCajaChica, as: 'concepto', include: [{ model: Clase, as: 'concepto' }] }, { model: ContabilidadCuenta, as: 'cuenta' }, { model: Compra, as: 'compra', include: [{ model: Proveedor, as: 'proveedor' }, { model: Sucursal, as: 'sucursal' }, { model: Movimiento, as: 'movimiento', required: false, include: [{ model: Clase, as: 'clase' }] }] }] }, { model: MedicoPaciente, as: 'solicitante', include: [{ model: Persona, as: 'persona', where: condicionPersonaSolicitanter }] }, { model: ConceptoMovimientoCajaChica, as: 'concepto', include: [{ model: Clase, as: 'concepto', where: condicionConceptoClase }] }, { model: Clase, as: 'estado' }, { model: Usuario, as: 'usuario', where: { id_empresa: req.params.id_empresa }, include: [{ model: Persona, as: 'persona', where: condicionPersonaUsuario }] }],
+                    include: [{ model: Sucursal, as: 'sucursal' },{ model: CajaChica, as: 'cajasChicas', required: false, include: [{ model: Sucursal, as: 'sucursal' }, { model: ConceptoMovimientoCajaChica, as: 'concepto', include: [{ model: Clase, as: 'concepto' }] }, { model: ContabilidadCuenta, as: 'cuenta' }, { model: Compra, as: 'compra', include: [{ model: Proveedor, as: 'proveedor' }, { model: Sucursal, as: 'sucursal' }, { model: Movimiento, as: 'movimiento', required: false, include: [{ model: Clase, as: 'clase' }] }] }] }, { model: MedicoPaciente, as: 'solicitante', include: [{ model: Persona, as: 'persona', where: condicionPersonaSolicitanter }] }, { model: ConceptoMovimientoCajaChica, as: 'concepto', include: [{ model: Clase, as: 'concepto', where: condicionConceptoClase }] }, { model: Clase, as: 'estado' }, { model: Usuario, as: 'usuario', where: { id_empresa: req.params.id_empresa }, include: [{ model: Persona, as: 'persona', where: condicionPersonaUsuario }] }],
                     //order: [['nombre', 'asc']]
                 }
             } else {
                 var datosbusqueda = {
                     where: condicionCajaChica,
-                    include: [{ model: CajaChica, as: 'cajasChicas', required: false, include: [{ model: Sucursal, as: 'sucursal' }, { model: ConceptoMovimientoCajaChica, as: 'concepto', include: [{ model: Clase, as: 'concepto' }] }, { model: ContabilidadCuenta, as: 'cuenta' }, { model: Compra, as: 'compra', include: [{ model: Proveedor, as: 'proveedor' }, { model: Sucursal, as: 'sucursal' }, { model: Movimiento, as: 'movimiento', required: false, include: [{ model: Clase, as: 'clase' }] }] }] }, { model: MedicoPaciente, as: 'solicitante', include: [{ model: Persona, as: 'persona', where: condicionPersonaSolicitanter }] }, { model: ConceptoMovimientoCajaChica, as: 'concepto', include: [{ model: Clase, as: 'concepto', where: condicionConceptoClase }] }, { model: Clase, as: 'estado' }, { model: Usuario, as: 'usuario', where: { id_empresa: req.params.id_empresa }, include: [{ model: Persona, as: 'persona', where: condicionPersonaUsuario }] }],
+                    include: [{ model: Sucursal, as: 'sucursal' },{ model: CajaChica, as: 'cajasChicas', required: false, include: [{ model: Sucursal, as: 'sucursal' }, { model: ConceptoMovimientoCajaChica, as: 'concepto', include: [{ model: Clase, as: 'concepto' }] }, { model: ContabilidadCuenta, as: 'cuenta' }, { model: Compra, as: 'compra', include: [{ model: Proveedor, as: 'proveedor' }, { model: Sucursal, as: 'sucursal' }, { model: Movimiento, as: 'movimiento', required: false, include: [{ model: Clase, as: 'clase' }] }] }] }, { model: MedicoPaciente, as: 'solicitante', include: [{ model: Persona, as: 'persona', where: condicionPersonaSolicitanter }] }, { model: ConceptoMovimientoCajaChica, as: 'concepto', include: [{ model: Clase, as: 'concepto', where: condicionConceptoClase }] }, { model: Clase, as: 'estado' }, { model: Usuario, as: 'usuario', where: { id_empresa: req.params.id_empresa }, include: [{ model: Persona, as: 'persona', where: condicionPersonaUsuario }] }],
                     //order: [['nombre', 'asc']]
                 }
             }
             SolicitudCajaChica.findAndCountAll({
                 where: condicionCajaChica,
-                include: [{ model: CajaChica, as: 'cajasChicas', required: false, include: [{ model: Sucursal, as: 'sucursal' }, { model: ConceptoMovimientoCajaChica, as: 'concepto', include: [{ model: Clase, as: 'concepto' }] }, { model: ContabilidadCuenta, as: 'cuenta' }, { model: Compra, as: 'compra', include: [{ model: Proveedor, as: 'proveedor' }, { model: Sucursal, as: 'sucursal' }, { model: Movimiento, as: 'movimiento', required: false, include: [{ model: Clase, as: 'clase' }] }] }] }, { model: MedicoPaciente, as: 'solicitante', include: [{ model: Persona, as: 'persona', where: condicionPersonaSolicitanter }] }, { model: ConceptoMovimientoCajaChica, as: 'concepto', include: [{ model: Clase, as: 'concepto', where: condicionConceptoClase }] }, { model: Clase, as: 'estado' }, { model: Usuario, as: 'usuario', where: { id_empresa: req.params.id_empresa }, include: [{ model: Persona, as: 'persona', where: condicionPersonaUsuario }] }],
+                include: [{ model: Sucursal, as: 'sucursal' },{ model: CajaChica, as: 'cajasChicas', required: false, include: [{ model: Sucursal, as: 'sucursal' }, { model: ConceptoMovimientoCajaChica, as: 'concepto', include: [{ model: Clase, as: 'concepto' }] }, { model: ContabilidadCuenta, as: 'cuenta' }, { model: Compra, as: 'compra', include: [{ model: Proveedor, as: 'proveedor' }, { model: Sucursal, as: 'sucursal' }, { model: Movimiento, as: 'movimiento', required: false, include: [{ model: Clase, as: 'clase' }] }] }] }, { model: MedicoPaciente, as: 'solicitante', include: [{ model: Persona, as: 'persona', where: condicionPersonaSolicitanter }] }, { model: ConceptoMovimientoCajaChica, as: 'concepto', include: [{ model: Clase, as: 'concepto', where: condicionConceptoClase }] }, { model: Clase, as: 'estado' }, { model: Usuario, as: 'usuario', where: { id_empresa: req.params.id_empresa }, include: [{ model: Persona, as: 'persona', where: condicionPersonaUsuario }] }],
 
             }).then(function (data) {
                 SolicitudCajaChica.findAll(
@@ -321,108 +322,318 @@ module.exports = function (router, sequelize, Sequelize, ensureAuthorizedAdminis
             });
         });
     //End paginador
+    //paginator caja chica
+    router.route('/caja-chica/sucursal/:id_sucursal/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion/solicitante/:solicitante/usuario/:usuario/estado/:estado/concepto/:concepto/movimiento/:movimiento/usuario-no-autorizado/:id_usuario_no_autorizado')
+        .get(function (req, res) {
+            var condicionCajaChica = {id_sucursal:req.params.id_sucursal};
+           //  var condicionSolicitud={}
+            var condicionPersonaUsuario = {};
+            var condicionPersonaSolicitanter = {};
+            if (req.params.estado != 0) {
+                condicionCajaChica.id_estado = req.params.estado
+            }
+            if (req.params.concepto != 0) {
+                condicionCajaChica.id_concepto = req.params.concepto
+            }
+            if (req.params.usuario != 0) {
+                condicionPersonaUsuario.nombre_completo = {
+                    $like: "%" + req.params.usuario + "%"
+                }
+            }
+            if (req.params.solicitante != 0) {
+                condicionPersonaSolicitanter.nombre_completo = {
+                    $like: "%" + req.params.solicitante + "%"
+                }
+            }
+            /* if (req.params.id_usuario_no_autorizado != 0) {
+                condicionCajaChica.id_usuario = parseInt(req.params.id_usuario_no_autorizado)
+            } */
+
+            if (req.params.texto_busqueda != 0) {
+                condicionCajaChica = {
+                    $or: [
+                        {
+                            detalle: {
+                                $like: "%" + req.params.texto_busqueda + "%"
+                            }
+                        }
+                    ]
+                };
+            }
+            var condicionConceptoClase = {}
+            if (req.params.movimiento != '0') {
+                condicionConceptoClase.id = req.params.movimiento
+            }
+            if (req.params.items_pagina != '0') {
+                var datosbusqueda = {
+                    offset: (req.params.items_pagina * (req.params.pagina - 1)), limit: req.params.items_pagina,
+                    where: condicionCajaChica,
+                    include: [{ model: Sucursal, as: 'sucursal' },{ model: CajaChica, as: 'cajasChicas', required: false, include: [{ model: Sucursal, as: 'sucursal' }, { model: ConceptoMovimientoCajaChica, as: 'concepto', include: [{ model: Clase, as: 'concepto' }] }, { model: ContabilidadCuenta, as: 'cuenta' }, { model: Compra, as: 'compra', include: [{ model: Proveedor, as: 'proveedor' }, { model: Sucursal, as: 'sucursal' }, { model: Movimiento, as: 'movimiento', required: false, include: [{ model: Clase, as: 'clase' }] }] }] }, { model: MedicoPaciente, as: 'solicitante', include: [{ model: Persona, as: 'persona', where: condicionPersonaSolicitanter }] }, { model: ConceptoMovimientoCajaChica, as: 'concepto', include: [{ model: Clase, as: 'concepto', where: condicionConceptoClase }] }, { model: Clase, as: 'estado' }, { model: Usuario, as: 'usuario', where: { id_empresa: req.params.id_empresa }, include: [{ model: Persona, as: 'persona', where: condicionPersonaUsuario }] }],
+                    //order: [['nombre', 'asc']]
+                }
+            } else {
+                var datosbusqueda = {
+                    where: condicionCajaChica,
+                    include: [{ model: Sucursal, as: 'sucursal' },{ model: CajaChica, as: 'cajasChicas', required: false, include: [{ model: Sucursal, as: 'sucursal' }, { model: ConceptoMovimientoCajaChica, as: 'concepto', include: [{ model: Clase, as: 'concepto' }] }, { model: ContabilidadCuenta, as: 'cuenta' }, { model: Compra, as: 'compra', include: [{ model: Proveedor, as: 'proveedor' }, { model: Sucursal, as: 'sucursal' }, { model: Movimiento, as: 'movimiento', required: false, include: [{ model: Clase, as: 'clase' }] }] }] }, { model: MedicoPaciente, as: 'solicitante', include: [{ model: Persona, as: 'persona', where: condicionPersonaSolicitanter }] }, { model: ConceptoMovimientoCajaChica, as: 'concepto', include: [{ model: Clase, as: 'concepto', where: condicionConceptoClase }] }, { model: Clase, as: 'estado' }, { model: Usuario, as: 'usuario', where: { id_empresa: req.params.id_empresa }, include: [{ model: Persona, as: 'persona', where: condicionPersonaUsuario }] }],
+                    //order: [['nombre', 'asc']]
+                }
+            }
+            SolicitudCajaChica.findAndCountAll({
+                where: condicionCajaChica,
+                include: [{ model: Sucursal, as: 'sucursal' },{ model: CajaChica, as: 'cajasChicas', required: false, include: [{ model: Sucursal, as: 'sucursal' }, { model: ConceptoMovimientoCajaChica, as: 'concepto', include: [{ model: Clase, as: 'concepto' }] }, { model: ContabilidadCuenta, as: 'cuenta' }, { model: Compra, as: 'compra', include: [{ model: Proveedor, as: 'proveedor' }, { model: Sucursal, as: 'sucursal' }, { model: Movimiento, as: 'movimiento', required: false, include: [{ model: Clase, as: 'clase' }] }] }] }, { model: MedicoPaciente, as: 'solicitante', include: [{ model: Persona, as: 'persona', where: condicionPersonaSolicitanter }] }, { model: ConceptoMovimientoCajaChica, as: 'concepto', include: [{ model: Clase, as: 'concepto', where: condicionConceptoClase }] }, { model: Clase, as: 'estado' }, { model: Usuario, as: 'usuario', where: { id_empresa: req.params.id_empresa }, include: [{ model: Persona, as: 'persona', where: condicionPersonaUsuario }] }],
+
+            }).then(function (data) {
+                SolicitudCajaChica.findAll(
+                    datosbusqueda
+                ).then(function (solicitudes) {
+                    sequelize.query("SELECT SUM(c.monto) as total from agil_caja_chica as c inner JOIN agil_concepto_movimiento_caja_chica as m on c.concepto=m.id INNER JOIN gl_clase as g on m.movimiento=g.id\
+                where g.nombre='INGRESO'and c.cerrada = false and c.padre is null and m.empresa ="+ req.params.id_empresa + " and c.sucursal=" + req.params.id_sucursal, { type: sequelize.QueryTypes.SELECT })
+                        .then(function (ingreso) {
+                            sequelize.query("SELECT SUM(c.monto) as total from agil_caja_chica as c inner JOIN agil_concepto_movimiento_caja_chica as m on c.concepto=m.id INNER JOIN gl_clase as g on m.movimiento=g.id\
+                where g.nombre='INGRESO'and c.cerrada = true and c.padre is null and m.empresa ="+ req.params.id_empresa + " and c.sucursal=" + req.params.id_sucursal, { type: sequelize.QueryTypes.SELECT })
+                                .then(function (ingresoCerrados) {
+                                    sequelize.query("SELECT SUM(c.monto) as total from agil_caja_chica as c inner JOIN agil_concepto_movimiento_caja_chica as m on c.concepto=m.id INNER JOIN gl_clase as g on m.movimiento=g.id\
+                    where g.nombre='GASTO' and c.cerrada = false and c.padre is null and m.empresa ="+ req.params.id_empresa + " and c.sucursal=" + req.params.id_sucursal, { type: sequelize.QueryTypes.SELECT })
+                                        .then(function (egreso) {
+                                            sequelize.query("SELECT SUM(c.monto) as total from agil_caja_chica as c inner JOIN agil_concepto_movimiento_caja_chica as m on c.concepto=m.id INNER JOIN gl_clase as g on m.movimiento=g.id\
+                    where g.nombre='GASTO' and c.cerrada = true and c.padre is null and m.empresa ="+ req.params.id_empresa + " and c.sucursal=" + req.params.id_sucursal, { type: sequelize.QueryTypes.SELECT })
+                                                .then(function (egresosCerrados) {
+                                                    var total = 0
+                                                    var totalRlCaja = 0
+                                                    if (ingreso[0].total != null) {
+                                                        total = ingreso[0].total
+                                                        // totalRlCaja = ingreso[0].total
+                                                    }
+                                                    if (egresosCerrados[0].total != null) {
+                                                        total -= egresosCerrados[0].total
+                                                        totalRlCaja -= egresosCerrados[0].total
+                                                    }
+                                                    if (egreso[0].total != null) {
+                                                        total -= egreso[0].total
+                                                    }
+                                                    if (ingresoCerrados[0].total != null) {
+                                                        total += ingresoCerrados[0].total
+                                                        totalRlCaja += ingresoCerrados[0].total
+                                                    }
+                                                    res.json({ totalRlCaja: totalRlCaja, total: total, solicitudes: solicitudes, paginas: Math.ceil(data.count / req.params.items_pagina) });
+                                                });
+                                        });
+                                });
+                        });
+                });
+            });
+        });
+    //fin paginator
     router.route('/caja-chica/:id_empresa')
         .post(function (req, res) {
             sequelize.transaction(function (t) {
                 var promises = [];
                 var a = 0
                 if (req.body.solicitud) {
-                    var compra = req.body.compra;
-                    if (!compra.id) {
-                        return Tipo.find({
-                            where: { nombre_corto: 'MOVING' }, transaction: t
-                        }).then(function (tipoMovimiento) {
-                            return Clase.find({
-                                where: { nombre_corto: 'ID' }, transaction: t
-                            }).then(function (conceptoMovimiento) {
-                                if (compra.movimiento.clase.id) {
-                                    conceptoMovimiento = compra.movimiento.clase
-                                }
-                                return Movimiento.create({
-                                    id_tipo: tipoMovimiento.id,
-                                    id_clase: conceptoMovimiento.id,
-                                    fecha: compra.fecha
+                    if (req.body.Desembolso) {
+                        if (!req.body.id) {
+                            return Sucursal.find({
+                                where: {
+                                    id: req.body.sucursal.id,//your where conditions, or without them if you need ANY entry
+                                },
+                                transaction: t
+                            }).then(function (SucursalEncontrada) {
+                                return CajaChica.create({
+                                    fecha: req.body.fecha,
+                                    id_sucursal: req.body.sucursal.id,
+                                    id_cuenta: req.body.cuenta.id,
+                                    eliminado: false,
+                                    monto: req.body.total,
+                                    saldo: req.body.total,
+                                    pagado: 0,
+                                    detalle: req.body.detalle,
+                                    id_concepto: req.body.concepto.id,
+                                    cerrada: false,
+                                    id_solicitud:req.body.solicitud.id,
+                                    numero_correlativo: SucursalEncontrada.caja_chica_egreso_correlativo
                                 }, {
                                         transaction: t
-                                    }).then(function (movimientoCreado) {
-                                        if (!compra.proveedor.id) {
-                                            return Proveedor.create({
-                                                id_empresa: req.params.id_empresa,
-                                                nit: compra.proveedor.nit,
-                                                razon_social: compra.proveedor.razon_social
-                                            }, {
-                                                    transaction: t
-                                                }).then(function (proveedorCreado) {
-                                                    return crearCompra(compra, res, proveedorCreado.id, movimientoCreado.id, conceptoMovimiento.id, req, t);
+                                    }).then(function (CajaCreada) {
+                                        return Sucursal.update({
+                                            caja_chica_egreso_correlativo: SucursalEncontrada.caja_chica_egreso_correlativo + 1
+                                        }, {
+                                                where: {
+                                                    id: req.body.sucursal.id,
+                                                }
 
+                                                , transaction: t
+                                            }).then(function (actualizado) {
+                                                return SolicitudCajaChica.update({
+                                                    id_estado: req.body.solicitud.estado.id,
+                                                }, {
+                                                        where: { id: req.body.solicitud.id }, transaction: t
+                                                    }).then(function (SolicitudCreada) {
+                                                        return CajaChica.find({
+                                                            where: { id: CajaCreada.id }, transaction: t,
+                                                            include: [{ model: Sucursal, as: 'sucursal' }, { model: ConceptoMovimientoCajaChica, as: 'concepto', include: [{ model: Clase, as: 'concepto' }] }, { model: ContabilidadCuenta, as: 'cuenta' }, { model: Compra, as: 'compra', include: [{ model: Proveedor, as: 'proveedor' }, { model: Sucursal, as: 'sucursal' }, { model: Movimiento, as: 'movimiento', required: false, include: [{ model: Clase, as: 'clase' }] }] }]
+                                                        }, { model: MedicoPaciente, as: 'solicitante', include: [{ model: Persona, as: 'persona' }] }, { model: ConceptoMovimientoCajaChica, as: 'concepto', include: [{ model: Clase, as: 'concepto' }] }, { model: Clase, as: 'estado' }, {
+                                                                model: Usuario, as: 'usuario', include: [{ model: Persona, as: 'persona' }]
+
+                                                            }).then(function (data) {
+                                                                return new Promise(function (fulfill, reject) {
+                                                                    fulfill(data)
+                                                                });
+                                                            }).catch(function (err) {
+                                                                return new Promise(function (fulfill, reject) {
+                                                                    reject((err.stack !== undefined) ? err.stack : err);
+                                                                });
+                                                            });
+                                                    }).catch(function (err) {
+                                                        return new Promise(function (fulfill, reject) {
+                                                            reject((err.stack !== undefined) ? err.stack : err);
+                                                        });
+                                                    });
+                                            }).catch(function (err) {
+                                                return new Promise(function (fulfill, reject) {
+                                                    reject((err.stack !== undefined) ? err.stack : err);
                                                 });
-                                        } else {
-                                            return crearCompra(compra, res, compra.proveedor.id, movimientoCreado.id, conceptoMovimiento.id, req, t);
-
-                                        }
+                                            });
                                     }).catch(function (err) {
                                         return new Promise(function (fulfill, reject) {
                                             reject((err.stack !== undefined) ? err.stack : err);
                                         });
                                     });
-                            }).catch(function (err) {
-                                return new Promise(function (fulfill, reject) {
-                                    reject((err.stack !== undefined) ? err.stack : err);
+                            });
+                        } else {
+                            return CajaChica.update({
+                                fecha: req.body.fecha,
+                                id_sucursal: req.body.sucursal.id,
+                                id_cuenta: req.body.cuenta.id,
+                                eliminado: req.body.eliminado,
+                                monto: req.body.total,
+                                saldo: req.body.total,
+                                pagado: 0,
+                                detalle: req.body.detalle,
+                                id_concepto: req.body.concepto.id,
+                                cerrada: req.body.cerrada,
+                            }, {
+                                    where: { id: req.body.id },
+                                    transaction: t
+                                }).then(function (CajaActualizada) {
+                                    return CajaChica.find({
+                                        where: { id: req.body.id }, transaction: t,
+                                        include: [{ model: Sucursal, as: 'sucursal' }, { model: ConceptoMovimientoCajaChica, as: 'concepto', include: [{ model: Clase, as: 'concepto' }] }, { model: ContabilidadCuenta, as: 'cuenta' }, { model: Compra, as: 'compra', include: [{ model: Proveedor, as: 'proveedor' }, { model: Sucursal, as: 'sucursal' }, { model: Movimiento, as: 'movimiento', required: false, include: [{ model: Clase, as: 'clase' }] }] }]
+                                    }, { model: MedicoPaciente, as: 'solicitante', include: [{ model: Persona, as: 'persona' }] }, { model: ConceptoMovimientoCajaChica, as: 'concepto', include: [{ model: Clase, as: 'concepto' }] }, { model: Clase, as: 'estado' }, {
+                                            model: Usuario, as: 'usuario', include: [{ model: Persona, as: 'persona' }]
+
+                                        }).then(function (data) {
+                                            return new Promise(function (fulfill, reject) {
+                                                fulfill(data)
+                                            });
+                                        }).catch(function (err) {
+                                            return new Promise(function (fulfill, reject) {
+                                                reject((err.stack !== undefined) ? err.stack : err);
+                                            });
+                                        });
+                                }).catch(function (err) {
+                                    return new Promise(function (fulfill, reject) {
+                                        reject((err.stack !== undefined) ? err.stack : err);
+                                    });
                                 });
-                            });
-                        }).catch(function (err) {
-                            return new Promise(function (fulfill, reject) {
-                                reject((err.stack !== undefined) ? err.stack : err);
-                            });
-                        });
+                        }
                     } else {
-                        return Tipo.find({
-                            where: { nombre_corto: 'MOVING' }, transaction: t
-                        }).then(function (tipoMovimiento) {
-                            return Clase.find({
-                                where: { nombre_corto: 'ID' }, transaction: t
-                            }).then(function (conceptoMovimiento) {
-                                if (compra.movimiento.clase.id) {
-                                    conceptoMovimiento = compra.movimiento.clase
-                                }
-                                return Movimiento.update({
-                                    id_tipo: tipoMovimiento.id,
-                                    id_clase: conceptoMovimiento.id,
-                                    fecha: compra.fecha
-                                }, {
-                                    where: { id: compra.movimiento.id },
-                                        transaction: t
-                                    }).then(function (movimientoActualizado) {
-                                        if (!compra.proveedor.id) {
-                                            return Proveedor.create({
-                                                id_empresa: req.params.id_empresa,
-                                                nit: compra.proveedor.nit,
-                                                razon_social: compra.proveedor.razon_social
-                                            }, {
-                                                    transaction: t
-                                                }).then(function (proveedorCreado) {
-                                                    return crearCompra(compra, res, proveedorCreado.id, compra.movimiento.id, conceptoMovimiento.id, req, t);
+                        var compra = req.body.compra;
+                        if (!compra.id) {
+                            return Tipo.find({
+                                where: { nombre_corto: 'MOVING' }, transaction: t
+                            }).then(function (tipoMovimiento) {
+                                return Clase.find({
+                                    where: { nombre_corto: 'ID' }, transaction: t
+                                }).then(function (conceptoMovimiento) {
+                                    if (compra.movimiento.clase.id) {
+                                        conceptoMovimiento = compra.movimiento.clase
+                                    }
+                                    return Movimiento.create({
+                                        id_tipo: tipoMovimiento.id,
+                                        id_clase: conceptoMovimiento.id,
+                                        fecha: compra.fecha
+                                    }, {
+                                            transaction: t
+                                        }).then(function (movimientoCreado) {
+                                            if (!compra.proveedor.id) {
+                                                return Proveedor.create({
+                                                    id_empresa: req.params.id_empresa,
+                                                    nit: compra.proveedor.nit,
+                                                    razon_social: compra.proveedor.razon_social
+                                                }, {
+                                                        transaction: t
+                                                    }).then(function (proveedorCreado) {
+                                                        return crearCompra(compra, res, proveedorCreado.id, movimientoCreado.id, conceptoMovimiento.id, req, t);
 
-                                                });
-                                        } else {
-                                           return crearCompra(compra, res, compra.proveedor.id, compra.movimiento.id, conceptoMovimiento.id, req, t);
+                                                    });
+                                            } else {
+                                                return crearCompra(compra, res, compra.proveedor.id, movimientoCreado.id, conceptoMovimiento.id, req, t);
 
-                                        }
-                                    }).catch(function (err) {
-                                        return new Promise(function (fulfill, reject) {
-                                            reject((err.stack !== undefined) ? err.stack : err);
+                                            }
+                                        }).catch(function (err) {
+                                            return new Promise(function (fulfill, reject) {
+                                                reject((err.stack !== undefined) ? err.stack : err);
+                                            });
                                         });
+                                }).catch(function (err) {
+                                    return new Promise(function (fulfill, reject) {
+                                        reject((err.stack !== undefined) ? err.stack : err);
                                     });
+                                });
                             }).catch(function (err) {
                                 return new Promise(function (fulfill, reject) {
                                     reject((err.stack !== undefined) ? err.stack : err);
                                 });
                             });
-                        }).catch(function (err) {
-                            return new Promise(function (fulfill, reject) {
-                                reject((err.stack !== undefined) ? err.stack : err);
+                        } else {
+                            return Tipo.find({
+                                where: { nombre_corto: 'MOVING' }, transaction: t
+                            }).then(function (tipoMovimiento) {
+                                return Clase.find({
+                                    where: { nombre_corto: 'ID' }, transaction: t
+                                }).then(function (conceptoMovimiento) {
+                                    if (compra.movimiento.clase.id) {
+                                        conceptoMovimiento = compra.movimiento.clase
+                                    }
+                                    return Movimiento.update({
+                                        id_tipo: tipoMovimiento.id,
+                                        id_clase: conceptoMovimiento.id,
+                                        fecha: compra.fecha
+                                    }, {
+                                            where: { id: compra.movimiento.id },
+                                            transaction: t
+                                        }).then(function (movimientoActualizado) {
+                                            if (!compra.proveedor.id) {
+                                                return Proveedor.create({
+                                                    id_empresa: req.params.id_empresa,
+                                                    nit: compra.proveedor.nit,
+                                                    razon_social: compra.proveedor.razon_social
+                                                }, {
+                                                        transaction: t
+                                                    }).then(function (proveedorCreado) {
+                                                        return crearCompra(compra, res, proveedorCreado.id, compra.movimiento.id, conceptoMovimiento.id, req, t);
+
+                                                    });
+                                            } else {
+                                                return crearCompra(compra, res, compra.proveedor.id, compra.movimiento.id, conceptoMovimiento.id, req, t);
+
+                                            }
+                                        }).catch(function (err) {
+                                            return new Promise(function (fulfill, reject) {
+                                                reject((err.stack !== undefined) ? err.stack : err);
+                                            });
+                                        });
+                                }).catch(function (err) {
+                                    return new Promise(function (fulfill, reject) {
+                                        reject((err.stack !== undefined) ? err.stack : err);
+                                    });
+                                });
+                            }).catch(function (err) {
+                                return new Promise(function (fulfill, reject) {
+                                    reject((err.stack !== undefined) ? err.stack : err);
+                                });
                             });
-                        });
+                        }
                     }
                 } else {
                     if (!req.body.id) {
@@ -430,7 +641,8 @@ module.exports = function (router, sequelize, Sequelize, ensureAuthorizedAdminis
                             where: {
                                 id: req.body.sucursal.id,//your where conditions, or without them if you need ANY entry
                             },
-                        transaction: t }).then(function (SucursalEncontrada) {
+                            transaction: t
+                        }).then(function (SucursalEncontrada) {
                             return CajaChica.create({
                                 fecha: req.body.fecha,
                                 id_sucursal: req.body.sucursal.id,
@@ -494,7 +706,7 @@ module.exports = function (router, sequelize, Sequelize, ensureAuthorizedAdminis
                             id_concepto: req.body.concepto.id,
                             cerrada: req.body.cerrada,
                         }, {
-                            where: { id: req.body.id },
+                                where: { id: req.body.id },
                                 transaction: t
                             }).then(function (CajaActualizada) {
                                 return CajaChica.find({
@@ -522,11 +734,11 @@ module.exports = function (router, sequelize, Sequelize, ensureAuthorizedAdminis
 
 
             }).then(function (result) {
-                var mensaje=""
-                if(req.body.id){
-                    mensaje="Actualizado Satisfactoriamente"
-                }else{
-                    mensaje="Creado Satisfactoriamente"
+                var mensaje = ""
+                if (req.body.id) {
+                    mensaje = "Actualizado Satisfactoriamente"
+                } else {
+                    mensaje = "Creado Satisfactoriamente"
                 }
                 res.json({ mensaje: mensaje, cajaChica: result });
             }).catch(function (err) {
@@ -659,7 +871,7 @@ module.exports = function (router, sequelize, Sequelize, ensureAuthorizedAdminis
                                                         include: [{ model: Sucursal, as: 'sucursal' }, { model: ConceptoMovimientoCajaChica, as: 'concepto', include: [{ model: Clase, as: 'concepto' }] }, { model: ContabilidadCuenta, as: 'cuenta' }, { model: Compra, as: 'compra', include: [{ model: Proveedor, as: 'proveedor' }, { model: Sucursal, as: 'sucursal' }, { model: Movimiento, as: 'movimiento', required: false, include: [{ model: Clase, as: 'clase' }] }] }]
                                                     }, { model: MedicoPaciente, as: 'solicitante', include: [{ model: Persona, as: 'persona' }] }, { model: ConceptoMovimientoCajaChica, as: 'concepto', include: [{ model: Clase, as: 'concepto' }] }, { model: Clase, as: 'estado' }, {
                                                             model: Usuario, as: 'usuario', include: [{ model: Persona, as: 'persona' }]
-    
+
                                                         }).then(function (data) {
                                                             return new Promise(function (fulfill, reject) {
                                                                 fulfill(data)
@@ -719,7 +931,7 @@ module.exports = function (router, sequelize, Sequelize, ensureAuthorizedAdminis
                 dui: compra.dui,
                 id_sucursal: compra.sucursal.id
             }, {
-                where: { id: compra.id },
+                    where: { id: compra.id },
                     transaction: t
                 }).then(function (compraCreada) {
                     if (req.body.solicitud.cajasChicas.length > 0) {
@@ -753,7 +965,8 @@ module.exports = function (router, sequelize, Sequelize, ensureAuthorizedAdminis
                         cerrada: false,
                         id_sucursal: compra.sucursal.id,
                         // numero_correlativo: SucursalEncontrada.caja_chica_egreso_correlativo
-                    }, {where:{id:req.body.id},
+                    }, {
+                            where: { id: req.body.id },
                             transaction: t
                         }).then(function (CajaCreada) {
                             if (padre) {

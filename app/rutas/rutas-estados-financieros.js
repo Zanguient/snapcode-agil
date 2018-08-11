@@ -1,5 +1,5 @@
 module.exports = function (router, sequelize, Sequelize, EstadoFinancieroConfiguracionImpresion, EstadoFinancieroGestion, Tipo, Clase, ProveedorCuenta
-    , Proveedor, ClienteCuenta, Cliente, ClasificacionCuenta, ContabilidadCuenta, AsientoContabilidad, ComprobanteContabilidad,MonedaTipoCambio) {
+    , Proveedor, ClienteCuenta, Cliente, ClasificacionCuenta, ContabilidadCuenta, AsientoContabilidad, ComprobanteContabilidad, MonedaTipoCambio) {
 
     router.route('/gestiones/:id_empresa')
         .get(function (req, res) {
@@ -129,7 +129,7 @@ module.exports = function (router, sequelize, Sequelize, EstadoFinancieroConfigu
                         include: [{ model: Clase, as: 'saldo' }, { model: Clase, as: 'movimiento' }]
                     },
                     {
-                        model: Clase, as: 'tipoCuenta'
+                        model: Clase, as: 'tipoCuenta', where: { nombre_corto: "4" }
                     },
                     {
                         model: Clase, as: 'claseCalculo'
@@ -139,35 +139,14 @@ module.exports = function (router, sequelize, Sequelize, EstadoFinancieroConfigu
                     }
                     ,
                     {
-                        model: AsientoContabilidad, as: 'cuenta', include: [{ model: ComprobanteContabilidad, as: 'comprobante', where: condicionComprobante }]
+                        model: AsientoContabilidad, required: true, as: 'cuenta', include: [{ model: ComprobanteContabilidad, as: 'comprobante', where: condicionComprobante }]
                     }
                 ],
 
             }
             if (req.params.periodo != 'COMPARATIVO') {
 
-                ContabilidadCuenta.findAll({
-                    where: condicionCuenta,
-                include: [
-                    {
-                        model: ClasificacionCuenta, as: "clasificacion",
-                        include: [{ model: Clase, as: 'saldo' }, { model: Clase, as: 'movimiento' }]
-                    },
-                    {
-                        model: Clase, as: 'tipoCuenta'
-                    },
-                    {
-                        model: Clase, as: 'claseCalculo'
-                    },
-                    {
-                        model: Clase, as: 'tipoAuxiliar'
-                    }
-                    ,
-                    {
-                        model: AsientoContabilidad, as: 'cuenta', include: [{ model: ComprobanteContabilidad, as: 'comprobante', where: condicionComprobante }]
-                    }
-                ]
-                }).then(function (cuentas) {
+                ContabilidadCuenta.findAll(datosCuenta).then(function (cuentas) {
                     MonedaTipoCambio.find({
                         where: {
                             fecha: {
@@ -175,10 +154,77 @@ module.exports = function (router, sequelize, Sequelize, EstadoFinancieroConfigu
                             }
                         }
                     }).then(function (MonedaCambio) {
-                        res.json({ cuentas: cuentas, monedaCambio: MonedaCambio })
+                        ContabilidadCuenta.findAll(
+                            {
+                                where: condicionCuenta,
+                                include: [
+                                    {
+                                        model: ClasificacionCuenta, as: "clasificacion",
+                                        include: [{ model: Clase, as: 'saldo' }, { model: Clase, as: 'movimiento' }]
+                                    },
+                                    {
+                                        model: Clase, as: 'tipoCuenta', where: { nombre_corto: "1" }
+                                    },
+                                    {
+                                        model: Clase, as: 'claseCalculo'
+                                    },
+                                    {
+                                        model: Clase, as: 'tipoAuxiliar'
+                                    }
+
+                                ],
+
+                            }
+                        ).then(function (cuentasGrupo) {
+                            ContabilidadCuenta.findAll(
+                                {
+                                    where: condicionCuenta,
+                                    include: [
+                                        {
+                                            model: ClasificacionCuenta, as: "clasificacion",
+                                            include: [{ model: Clase, as: 'saldo' }, { model: Clase, as: 'movimiento' }]
+                                        },
+                                        {
+                                            model: Clase, as: 'tipoCuenta', where: { nombre_corto: "2" }
+                                        },
+                                        {
+                                            model: Clase, as: 'claseCalculo'
+                                        },
+                                        {
+                                            model: Clase, as: 'tipoAuxiliar'
+                                        }
+
+                                    ],
+
+                                }
+                            ).then(function (cuentasSubGrupo) {
+                                ContabilidadCuenta.findAll(
+                                    {
+                                        where: condicionCuenta,
+                                        include: [
+                                            {
+                                                model: ClasificacionCuenta, as: "clasificacion",
+                                                include: [{ model: Clase, as: 'saldo' }, { model: Clase, as: 'movimiento' }]
+                                            },
+                                            {
+                                                model: Clase, as: 'tipoCuenta', where: { nombre_corto: "3" }
+                                            },
+                                            {
+                                                model: Clase, as: 'claseCalculo'
+                                            },
+                                            {
+                                                model: Clase, as: 'tipoAuxiliar'
+                                            }
+
+                                        ],
+
+                                    }
+                                ).then(function (cuentasGenericas) {
+                                    res.json({ cuentas: cuentas,cuentasGrupo:cuentasGrupo,cuentasSubGrupo:cuentasSubGrupo,cuentasGenericas:cuentasGenericas, monedaCambio: MonedaCambio })
+                                })
+                            })
+                        })
                     })
-
-
                 });
             } else {
                 var inicio = new Date(req.params.gestion, 0, 1)

@@ -309,7 +309,13 @@ angular.module('agil.servicios')
 			'update': { method:'PUT' }
 		});
 })
-	/* .factory('VerificarUsuarioEmpresa', ['VerificarUsuariosEmpresa','$q',function(VerificarUsuariosEmpresa, $q) 
+.factory('VerificarAutorizacionUsuarioEmpresa', function($resource) {
+	return $resource(restServer+"verificar-autorizacion/usuarios/empresa/:id_empresa", { id_empresa: '@id_empresa' },
+	{
+		'update': { method:'PUT' }
+	});
+})
+	.factory('VerificarUsuarioEmpresaCaja', ['VerificarAutorizacionUsuarioEmpresa','$q',function(VerificarAutorizacionUsuarioEmpresa, $q) 
   {
 	var res = function(id_empresa,usuario) 
 	{
@@ -317,7 +323,7 @@ angular.module('agil.servicios')
 			id_empresa=0;
 		}
 		var delay = $q.defer();
-		VerificarUsuariosEmpresa.get({id_empresa:id_empresa},usuario,function(entidades) 
+		VerificarAutorizacionUsuarioEmpresa.save({id_empresa:id_empresa},usuario,function(entidades) 
 		{        
 			delay.resolve(entidades);
 		}, function(error) 
@@ -328,7 +334,7 @@ angular.module('agil.servicios')
 	};
     return res;
   }])
-   */
+  
 	.factory('UsarLectorDeBarra', function($resource) {
 		return $resource(restServer+"usar-lector-de-barra/usuario",null,
 		{

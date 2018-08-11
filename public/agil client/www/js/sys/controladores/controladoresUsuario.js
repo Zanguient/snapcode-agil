@@ -1,7 +1,7 @@
 angular.module('agil.controladores')
 
 	.controller('ControladorUsuarios', function ($scope, $location, $window, $localStorage, $templateCache, $route, blockUI, Usuario, Empresas, Roles, $timeout,
-		UsuariosEmpresa, Rutas, UsuarioRutas, Diccionario, UsuarioComision, UsuarioComisiones, Sucursales, UsuariosEmpresaPaginador, validarUsuario, Paginator, ListaGruposProductoEmpresa, ObtenerUsuario, ListaAplicacionesSistemaEmpresa,EliminarUsuario) {
+		UsuariosEmpresa, Rutas, UsuarioRutas, Diccionario, UsuarioComision, UsuarioComisiones, Sucursales, UsuariosEmpresaPaginador, validarUsuario, Paginator, ListaGruposProductoEmpresa, ObtenerUsuario, ListaAplicacionesSistemaEmpresa, EliminarUsuario) {
 
 		$scope.idModalWizardUsuarioEdicion = 'modal-wizard-usuario';
 		$scope.idModalWizardUsuarioVista = 'modal-wizard-usuario-vista';
@@ -43,7 +43,7 @@ angular.module('agil.controladores')
 			/* setTimeout(function() {
 				ejecutarScriptsTabla('tabla-usuarios',9);
 			},2000); */
-			
+
 		}
 
 		$scope.$on('$viewContentLoaded', function () {
@@ -135,8 +135,8 @@ angular.module('agil.controladores')
 							}
 							var sucursales;
 							//subido
-							$scope.selectRol=JSON.stringify(usuario.rolesUsuario[0]);
-							$scope.aplicacionesEmpresa=$scope.usuario.empresa.aplicacionesEmpresa
+							$scope.selectRol = JSON.stringify(usuario.rolesUsuario[0]);
+							$scope.aplicacionesEmpresa = $scope.usuario.empresa.aplicacionesEmpresa
 							$scope.usuario.aplicacionesUsuario = $scope.verificarAplicacionesUsuario()
 							$scope.seleccionarGrupos($scope.usuario.grupos);
 							// //$scope.obtenerGruposProductoEmpresa()
@@ -161,7 +161,7 @@ angular.module('agil.controladores')
 
 						})
 					} else {
-						var indexAplicacion=[]
+						var indexAplicacion = []
 						$scope.llenarGrupos($scope.gruposProducto)
 						$scope.usuario = res.usuario;
 						$scope.usuario.aplicacionesUsuario = $scope.verificarAplicacionesUsuario()
@@ -233,9 +233,9 @@ angular.module('agil.controladores')
 			// 	});
 			// }
 		}
-		$scope.verificarAplicacionesUsuario=function () {
-			var indexAplicacion=[]
-			$scope.usuario.aplicacionesUsuario.map(function (app,index,array) {
+		$scope.verificarAplicacionesUsuario = function () {
+			var indexAplicacion = []
+			$scope.usuario.aplicacionesUsuario.map(function (app, index, array) {
 				if (app.puede_ver == true) {
 					app.editable = true
 				} else {
@@ -429,11 +429,11 @@ angular.module('agil.controladores')
 				}
 				return app
 			})
-			indexAplicacion.reverse().forEach(function(dato,index,array){
-				$scope.usuario.aplicacionesUsuario.splice(dato,1)
+			indexAplicacion.reverse().forEach(function (dato, index, array) {
+				$scope.usuario.aplicacionesUsuario.splice(dato, 1)
 			})
 			return $scope.usuario.aplicacionesUsuario
-			
+
 		}
 		$scope.validarUsuario = function (usuarioNombre) {
 			var nombre = usuarioNombre;
@@ -532,10 +532,10 @@ angular.module('agil.controladores')
 			$scope.cerrarConfirmacionEliminacion();
 			/* usuario.$delete(); */
 			var promesa = EliminarUsuario(usuario.id)
-			promesa.then(function(dato){
+			promesa.then(function (dato) {
 				$scope.mostrarMensaje(dato.message);
 			})
-		
+
 			$scope.recargarItemsTabla();
 			blockUI.stop();
 		}
@@ -551,6 +551,7 @@ angular.module('agil.controladores')
 
 			});
 		}
+
 		$scope.verificarSelecionado = function (aplicacion) {
 			if (aplicacion.puede_ver) {
 				aplicacion.puede_crear = true
@@ -599,10 +600,10 @@ angular.module('agil.controladores')
 			return modelo
 		}
 		$scope.buscarRol = function (idRol) {
-		/* 	var datosRol = JSON.parse(rol);
-			var idRol = datosRol.id
-			var rol = JSON.parse($scope.usuario.rol)
-			$scope.usuario.id_rol = rol.id */
+			/* 	var datosRol = JSON.parse(rol);
+				var idRol = datosRol.id
+				var rol = JSON.parse($scope.usuario.rol)
+				$scope.usuario.id_rol = rol.id */
 			var roles = $.grep($scope.roles, function (e) { return e.id == idRol; });
 			$scope.rol = roles[0];
 			$scope.usuario.aplicacionesUsuario = [];
@@ -704,14 +705,14 @@ angular.module('agil.controladores')
 								$scope.usuario.aplicacionesUsuario.push($scope.CargarAplicacion(i, true, true, false, true));
 							}
 						}
-					}else if ($scope.rol.aplicacionesRol[i].aplicacion.titulo == Diccionario.MENU_COMPRA) {
+					} else if ($scope.rol.aplicacionesRol[i].aplicacion.titulo == Diccionario.MENU_COMPRA) {
 						for (var k = 0; k < $scope.aplicacionesEmpresa.length; k++) {
 							var element = $scope.aplicacionesEmpresa[k];
 							if (element.id_aplicacion == $scope.rol.aplicacionesRol[i].aplicacion.id) {
 								$scope.usuario.aplicacionesUsuario.push($scope.CargarAplicacion(i, true, true, true, true));
 							}
 						}
-					}  else if ($scope.rol.aplicacionesRol[i].aplicacion.titulo == Diccionario.MENU_CONFIGURACION) {
+					} else if ($scope.rol.aplicacionesRol[i].aplicacion.titulo == Diccionario.MENU_CONFIGURACION) {
 						for (var k = 0; k < $scope.aplicacionesEmpresa.length; k++) {
 							var element = $scope.aplicacionesEmpresa[k];
 							if (element.id_aplicacion == $scope.rol.aplicacionesRol[i].aplicacion.id) {
@@ -773,14 +774,14 @@ angular.module('agil.controladores')
 								$scope.usuario.aplicacionesUsuario.push($scope.CargarAplicacion(i, true, true, false, true));
 							}
 						}
-					}else if ($scope.rol.aplicacionesRol[i].aplicacion.titulo == Diccionario.MENU_COMPRA) {
+					} else if ($scope.rol.aplicacionesRol[i].aplicacion.titulo == Diccionario.MENU_COMPRA) {
 						for (var k = 0; k < $scope.aplicacionesEmpresa.length; k++) {
 							var element = $scope.aplicacionesEmpresa[k];
 							if (element.id_aplicacion == $scope.rol.aplicacionesRol[i].aplicacion.id) {
 								$scope.usuario.aplicacionesUsuario.push($scope.CargarAplicacion(i, true, true, true, true));
 							}
 						}
-					}  else if ($scope.rol.aplicacionesRol[i].aplicacion.titulo == Diccionario.MENU_CONFIGURACION) {
+					} else if ($scope.rol.aplicacionesRol[i].aplicacion.titulo == Diccionario.MENU_CONFIGURACION) {
 						for (var k = 0; k < $scope.aplicacionesEmpresa.length; k++) {
 							var element = $scope.aplicacionesEmpresa[k];
 							if (element.id_aplicacion == $scope.rol.aplicacionesRol[i].aplicacion.id) {
@@ -948,9 +949,9 @@ angular.module('agil.controladores')
 			var promesa = Roles();
 			promesa.then(function (roles) {
 				$scope.roles = roles;
-				$scope.roles.forEach(function(rol,index,array){
-					if(rol.nombre==="SUPER-ADMINISTRADOR"){
-						$scope.roles.splice(index,1)
+				$scope.roles.forEach(function (rol, index, array) {
+					if (rol.nombre === "SUPER-ADMINISTRADOR") {
+						$scope.roles.splice(index, 1)
 					}
 				})
 				blockUI.stop();
@@ -1024,11 +1025,11 @@ angular.module('agil.controladores')
 		$scope.reporteExcel = function (pdf) {
 			blockUI.start()
 
-			var cabecera = [" N°","Nombre","Primer Apellido","Segundo Apellido","Nombre Usuario","Rol","Empresa","Sucursal","Activo"];
+			var cabecera = [" N°", "Nombre", "Primer Apellido", "Segundo Apellido", "Nombre Usuario", "Rol", "Empresa", "Sucursal", "Activo"];
 			var data = [];
 			data.push(cabecera);
 			var column = [];
-			for (var i = 0; i < $scope.usuarios.length; i++){
+			for (var i = 0; i < $scope.usuarios.length; i++) {
 				columns = [];
 				columns.push(i + 1);
 				if ($scope.usuarios[i].persona) {
@@ -1037,7 +1038,7 @@ angular.module('agil.controladores')
 						//columns.push($scope.usuarios[i].persona.apellido_paterno);
 						//columns.push($scope.usuarios[i].persona.apellido_materno);
 					}
-				}else{
+				} else {
 					columns.push(" ");
 				}
 				if ($scope.usuarios[i].persona) {
@@ -1046,7 +1047,7 @@ angular.module('agil.controladores')
 						columns.push($scope.usuarios[i].persona.apellido_paterno);
 						//columns.push($scope.usuarios[i].persona.apellido_materno);
 					}
-				}else{
+				} else {
 					columns.push(" ");
 				}
 				if ($scope.usuarios[i].persona) {
@@ -1055,45 +1056,45 @@ angular.module('agil.controladores')
 						//columns.push($scope.usuarios[i].persona.apellido_paterno);
 						columns.push($scope.usuarios[i].persona.apellido_materno);
 					}
-				}else{
+				} else {
 					columns.push(" ");
 				}
-					
+
 				if ($scope.usuarios[i].nombre_usuario !== null) {
 					columns.push($scope.usuarios[i].nombre_usuario);
-				}else{
+				} else {
 					columns.push(" ")
 				}
-				
+
 				if ($scope.usuarios[i].rolesUsuario[0]) {
 					if ($scope.usuarios[i].rolesUsuario[0].rol) {
 						columns.push($scope.usuarios[i].rolesUsuario[0].rol.nombre);
-					}else{
+					} else {
 						columns.push("No Asignado");
 					}
-				}else{
+				} else {
 					columns.push(" ");
 				}
-						
+
 				columns.push($scope.usuarios[i].empresa.razon_social);
 
 				if ($scope.usuarios[i].sucursalesUsuario[0]) {
 					if ($scope.usuarios[i].sucursalesUsuario.length > 1) {
 						columns.push("Varios");
-					}else if ($scope.usuarios[i].sucursalesUsuario.length === 1) {
+					} else if ($scope.usuarios[i].sucursalesUsuario.length === 1) {
 						columns.push($scope.usuarios[i].sucursalesUsuario[0].sucursal.nombre);
 					}
-				}else{
+				} else {
 					columns.push("No Asignado");
 				}
-				
+
 				if ($scope.usuarios[i].activo === true) {
 					columns.push("Si");
-				}else if ($scope.usuarios[i].activo === false) {
-					columns.push("No");					
+				} else if ($scope.usuarios[i].activo === false) {
+					columns.push("No");
 				}
-				
-				data.push(columns);	
+
+				data.push(columns);
 			}
 			var ws_name = "SheetJS";
 			var wb = new Workbook(), ws = sheet_from_array_of_arrays(data);
@@ -1104,58 +1105,58 @@ angular.module('agil.controladores')
 			saveAs(new Blob([s2ab(wbout)], { type: "application/octet-stream" }), "REPORTE-USUARIOS.xlsx");
 			blockUI.stop();
 
-			
+
 		}
 
 		$scope.reportePdf = function () {
 			var doc = new PDFDocument({ size: 'letter', margin: 10, compress: false }); //[612, 792]
 			var stream = doc.pipe(blobStream());
 			var date = new Date().toLocaleDateString();
-			doc.fontSize(25).text("REPORTE DE USUARIOS",0,80,{ align: "center" });
+			doc.fontSize(25).text("REPORTE DE USUARIOS", 0, 80, { align: "center" });
 			doc.rect(150, 100, 303, 0).stroke();
-			doc.font('Helvetica-Bold',10);
-			doc.text("Fecha: ",30,150);
-			doc.font('Helvetica',10).text(date ,63,150);
-			
-			doc.font('Helvetica-Bold').text("N°",30,180);
-			doc.font('Helvetica-Bold').text("Nombres",50,180);
-			doc.font('Helvetica-Bold').text("Apellido Paterno",110,180);
-			doc.font('Helvetica-Bold').text("Apellido Materno",195,180);
-			doc.font('Helvetica-Bold').text("Usuario",280,180);
-			doc.font('Helvetica-Bold').text("Rol",365,180);
-			doc.font('Helvetica-Bold').text("Empresa",450,180);
-			doc.font('Helvetica-Bold').text("Sucursal",510,180);
+			doc.font('Helvetica-Bold', 10);
+			doc.text("Fecha: ", 30, 150);
+			doc.font('Helvetica', 10).text(date, 63, 150);
+
+			doc.font('Helvetica-Bold').text("N°", 30, 180);
+			doc.font('Helvetica-Bold').text("Nombres", 50, 180);
+			doc.font('Helvetica-Bold').text("Apellido Paterno", 110, 180);
+			doc.font('Helvetica-Bold').text("Apellido Materno", 195, 180);
+			doc.font('Helvetica-Bold').text("Usuario", 280, 180);
+			doc.font('Helvetica-Bold').text("Rol", 365, 180);
+			doc.font('Helvetica-Bold').text("Empresa", 450, 180);
+			doc.font('Helvetica-Bold').text("Sucursal", 510, 180);
 			//doc.font('Helvetica-Bold').text("Empresa",550,180);
 			doc.rect(27, 170, 545, 25).stroke();
-			
+
 			var y = 205;
 			var index = 1;
 			for (let i = 0; i < $scope.usuarios.length; i++) {
-				doc.font('Helvetica').text(index++,30,y);
-				if ($scope.usuarios[i].persona) {				
+				doc.font('Helvetica').text(index++, 30, y);
+				if ($scope.usuarios[i].persona) {
 					if ($scope.usuarios[i].persona.nombres !== null) {
-						doc.font('Helvetica').text($scope.usuarios[i].persona.nombres,50,y);
-						doc.font('Helvetica').text($scope.usuarios[i].persona.apellido_paterno,110,y);
-						doc.font('Helvetica').text($scope.usuarios[i].persona.apellido_materno,195,y);
+						doc.font('Helvetica').text($scope.usuarios[i].persona.nombres, 50, y);
+						doc.font('Helvetica').text($scope.usuarios[i].persona.apellido_paterno, 110, y);
+						doc.font('Helvetica').text($scope.usuarios[i].persona.apellido_materno, 195, y);
 					}
 				}
 
-				doc.font('Helvetica').text($scope.usuarios[i].nombre_usuario,280,y);
+				doc.font('Helvetica').text($scope.usuarios[i].nombre_usuario, 280, y);
 				if ($scope.usuarios[i].rolesUsuario[0]) {
 					if ($scope.usuarios[i].rolesUsuario[0].rol) {
-						doc.font('Helvetica').text($scope.usuarios[i].rolesUsuario[0].rol.nombre,345,y);
-					}else{
-						doc.font('Helvetica').text("No Asignado",370,y);
+						doc.font('Helvetica').text($scope.usuarios[i].rolesUsuario[0].rol.nombre, 345, y);
+					} else {
+						doc.font('Helvetica').text("No Asignado", 370, y);
 					}
 				}
-						
-				doc.font('Helvetica').text($scope.usuarios[i].empresa.razon_social,450,y);
+
+				doc.font('Helvetica').text($scope.usuarios[i].empresa.razon_social, 450, y);
 				if ($scope.usuarios[i].sucursalesUsuario.length > 1) {
-					doc.font('Helvetica').text("Varios",510,y);
-				}else if ($scope.usuarios[i].sucursalesUsuario.length === 1) {	
+					doc.font('Helvetica').text("Varios", 510, y);
+				} else if ($scope.usuarios[i].sucursalesUsuario.length === 1) {
 					var longitudCaracteres = $scope.usuarios[i].sucursalesUsuario[0].sucursal.nombre.length;
-					var yDesc = (longitudCaracteres <= 27) ? y : ((longitudCaracteres > 27 && longitudCaracteres <= 63) ? y - 4 : y - 11);		
-					doc.font('Helvetica').text($scope.usuarios[i].sucursalesUsuario[0].sucursal.nombre,510,yDesc,{width: 150});
+					var yDesc = (longitudCaracteres <= 27) ? y : ((longitudCaracteres > 27 && longitudCaracteres <= 63) ? y - 4 : y - 11);
+					doc.font('Helvetica').text($scope.usuarios[i].sucursalesUsuario[0].sucursal.nombre, 510, yDesc, { width: 150 });
 				}
 				/*if ($scope.usuarios[i].activo === true) {
 					columns.push("Si");
@@ -1163,7 +1164,7 @@ angular.module('agil.controladores')
 					columns.push("No");					
 				}*/
 
-				y+=17;				
+				y += 17;
 			}
 			doc.end();
 			stream.on('finish', function () {
@@ -1171,20 +1172,20 @@ angular.module('agil.controladores')
 				window.open(fileURL, '_blank', 'location=no');
 			});
 			blockUI.stop();
-			
+
 		}
 
 		$scope.dibujarCabeceraReportePdf = function (doc, reporte) {
 			doc.font('Helvetica-Bold', 12);
 			doc.text("REPORTE OPERACIONES", 0, 25, { align: "center" });
-			
+
 			doc.font('Helvetica-Bold', 8);
 			doc.text("NOMBRE : ", 40, 60, { width: 40 });
 			doc.font('APELLIDO PATERNO', 8);
 			doc.font('APELLIDO MATERNO', 8);
-			
+
 			doc.text(new Date().toLocaleDateString(), 75, 60, { width: 40 });
-	
+
 			doc.rect(40, 80, 540, 25).stroke();
 			doc.font('Helvetica-Bold', 8);
 			/*if ($scope.imprimir.detalle) {
