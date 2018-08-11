@@ -800,7 +800,11 @@
 											</table>
 										</td>
 										<td ng-if="usuario.empresa.usar_vencimientos==true">
+											<label ng-if="detalleMovimiento.lote==null">
+												{{detalleMovimiento.inventario.lote}}
+											</label>
 											{{detalleMovimiento.lote}}
+											
 										</td>
 										<td ng-if="usuario.empresa.usar_vencimientos==true">
 											{{detalleMovimiento.inventario.fecha_vencimiento | date:"dd/MM/yyyy"}}

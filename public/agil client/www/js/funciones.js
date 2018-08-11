@@ -188,7 +188,8 @@ function ejecutarScriptsOperaciones(idDialogDialogPanelOperaciones, idDialogEntr
 function ejecutarScriptsInicio(idPopupTablaProductos, idPopupTablaCreditos, idPopupTablaDeudas, idPopupPago,
 	idPopupActualizarCreditoCliente, idPopupActualizarCreditoDeuda, idPopupDeuda, idModalDescuento, idModalTablaVentasPendientes,
 	idModalTablaComprasPendientes, idModalTablaBancosPendientes, idModalTablaOtrosPendientes, idModalInicioSesion, idModalWizardComprobanteEdicion, IdModalOpcionesQr, IdModalRegistrarComprobante, IdModalRevisarComprobante, IdModalLibroMayor, IdModalAsignarCuenta,
-	idModalTablaDespachos, idModalTablaAsignacionDespacho, IdModalEliminarProductoVencido, dialogAlertasProformas, facturarProformas, mensajeConfirmacionComprobante, idModalNuevoPedido, idModalDatosProducto) {
+	idModalTablaDespachos, idModalTablaAsignacionDespacho, IdModalEliminarProductoVencido, dialogAlertasProformas, facturarProformas, mensajeConfirmacionComprobante, idModalNuevoPedido, idModalDatosProducto, idModalNuevoClientePedido, idModalNuevaRazonCliente,
+	idModalNuevoDestino) {
 	crearPopup(idPopupTablaProductos, "70%", "auto");
 	crearPopup(idModalWizardComprobanteEdicion, "100%", "auto");
 	crearPopup(idPopupTablaCreditos, "auto", "auto");
@@ -220,7 +221,9 @@ function ejecutarScriptsInicio(idPopupTablaProductos, idPopupTablaCreditos, idPo
 		crearPopup(idModalNuevoPedido, screen.width, screen.height);
 		aplicarDatePickerPedido();
 		crearPopup(idModalDatosProducto, "36%", 370 );
-
+		crearPopup(idModalNuevoClientePedido, "36%", 330);
+		crearPopup(idModalNuevaRazonCliente, "36%", 275);
+		crearPopup(idModalNuevoDestino, "36%", 275);
 	}, 2000)
 
 	crearPopup(IdModalEliminarProductoVencido, "60%", 550)
