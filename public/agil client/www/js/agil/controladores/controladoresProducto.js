@@ -303,16 +303,36 @@ angular.module('agil.controladores')
 						dato.detallesMovimiento[i].saldoValuado = Math.round((dato.detallesMovimiento[i].saldoFisico * dato.detallesMovimiento[i].costo_unitario) * 100) / 100;
 						if (dato.detallesMovimiento[i].movimiento.compra != null) {
 							dato.detallesMovimiento[i].tipo = dato.detallesMovimiento[i].movimiento.clase.nombre + " Nro. " + dato.detallesMovimiento[i].movimiento.compra.factura;
+							if (dato.detallesMovimiento[i].inventario != null) {
+								dato.detallesMovimiento[i].lote = dato.detallesMovimiento[i].inventario.lote
+							}else{
+								dato.detallesMovimiento[i].lote = ""
+							}
 						} else {
 							dato.detallesMovimiento[i].tipo = dato.detallesMovimiento[i].movimiento.clase.nombre;
+							if (dato.detallesMovimiento[i].inventario != null) {
+								dato.detallesMovimiento[i].lote = dato.detallesMovimiento[i].inventario.lote
+							}else{
+								dato.detallesMovimiento[i].lote = ""
+							}
 						}
 					} else if (i == 0 && dato.detallesMovimiento[i].movimiento.tipo.nombre_corto == $scope.diccionario.MOV_ING) {
 						dato.detallesMovimiento[i].saldoFisico = dato.detallesMovimiento[i].cantidad;
 						dato.detallesMovimiento[i].saldoValuado = Math.round((dato.detallesMovimiento[i].saldoFisico * dato.detallesMovimiento[i].costo_unitario) * 100) / 100;
 						if (dato.detallesMovimiento[i].movimiento.compra != null) {
 							dato.detallesMovimiento[i].tipo = dato.detallesMovimiento[i].movimiento.clase.nombre + " Nro. " + dato.detallesMovimiento[i].movimiento.compra.factura;
+							if (dato.detallesMovimiento[i].inventario != null) {
+								dato.detallesMovimiento[i].lote = dato.detallesMovimiento[i].inventario.lote
+							}else{
+								dato.detallesMovimiento[i].lote = ""
+							}
 						} else {
 							dato.detallesMovimiento[i].tipo = dato.detallesMovimiento[i].movimiento.clase.nombre;
+							if (dato.detallesMovimiento[i].inventario != null) {
+								dato.detallesMovimiento[i].lote = dato.detallesMovimiento[i].inventario.lote
+							}else{
+								dato.detallesMovimiento[i].lote = ""
+							}
 						}
 					}
 					else {
@@ -321,10 +341,21 @@ angular.module('agil.controladores')
 								dato.detallesMovimiento[i].saldoFisico = dato.detallesMovimiento[i - 1].saldoFisico + dato.detallesMovimiento[i].cantidad;
 								dato.detallesMovimiento[i].saldoValuado = Math.round((dato.detallesMovimiento[i - 1].saldoValuado + (dato.detallesMovimiento[i].cantidad * dato.detallesMovimiento[i].costo_unitario)) * 100) / 100;
 								dato.detallesMovimiento[i].tipo = dato.detallesMovimiento[i].movimiento.clase.nombre
+								
+								if (dato.detallesMovimiento[i].inventario != null) {
+									dato.detallesMovimiento[i].lote = dato.detallesMovimiento[i].inventario.lote
+								}else{
+									dato.detallesMovimiento[i].lote = ""
+								}
 							} else {
 								dato.detallesMovimiento[i].saldoFisico = dato.detallesMovimiento[i].cantidad;
 								dato.detallesMovimiento[i].saldoValuado = Math.round(((dato.detallesMovimiento[i].cantidad * dato.detallesMovimiento[i].costo_unitario)) * 100) / 100;
 								dato.detallesMovimiento[i].tipo = dato.detallesMovimiento[i].movimiento.clase.nombre
+								if (dato.detallesMovimiento[i].inventario != null) {
+									dato.detallesMovimiento[i].lote = dato.detallesMovimiento[i].inventario.lote
+								}else{
+									dato.detallesMovimiento[i].lote = ""
+								}
 							}
 						} else {
 							if (dato.detallesMovimiento[i].movimiento.venta) {
@@ -661,12 +692,12 @@ angular.module('agil.controladores')
 				}else{
 					column.push(" ")
 				}
-				if (kardexproduto.detallesMovimiento[i].inventario.lote) {
+				if (kardexproduto.detallesMovimiento[i].inventario != null) {
 					column.push(kardexproduto.detallesMovimiento[i].inventario.lote);
 				}else{
 					column.push(" ")
 				}
-				if (kardexproduto.detallesMovimiento[i].inventario.fecha_vencimiento) {
+				if (kardexproduto.detallesMovimiento[i].inventario != null) {
 					column.push(kardexproduto.detallesMovimiento[i].inventario.fecha_vencimiento);
 				}else{
 					column.push(" ")
