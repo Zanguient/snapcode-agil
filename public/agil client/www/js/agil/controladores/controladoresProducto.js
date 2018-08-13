@@ -694,14 +694,17 @@ angular.module('agil.controladores')
 				}
 				if (kardexproduto.detallesMovimiento[i].inventario != null) {
 					column.push(kardexproduto.detallesMovimiento[i].inventario.lote);
-				}else{
-					column.push(" ")
-				}
-				if (kardexproduto.detallesMovimiento[i].inventario != null) {
 					column.push(kardexproduto.detallesMovimiento[i].inventario.fecha_vencimiento);
 				}else{
+					column.push(kardexproduto.detallesMovimiento[i].lote);
 					column.push(" ")
-				}	
+				}
+
+				// if (kardexproduto.detallesMovimiento[i].inventario != null) {
+				// 	column.push(kardexproduto.detallesMovimiento[i].inventario.fecha_vencimiento);
+				// }else{
+				// 	column.push(" ")
+				// }	
 
 				data.push(column);
 			} 

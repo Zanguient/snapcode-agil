@@ -4,7 +4,7 @@ angular.module('agil.controladores')
 		Venta, Ventas, Clientes, ClientesNit, ProductosNombre, ClasesTipo, VentasContado, VentasCredito,
 		PagosVenta, DatosVenta, VentaEmpresaDatos, ProductosPanel, ListaProductosEmpresaUsuario, ListaInventariosProducto,
 		socket, ConfiguracionVentaVistaDatos, ConfiguracionVentaVista, ListaGruposProductoEmpresa,
-		ConfiguracionImpresionEmpresaDato, ImprimirSalida, ListaVendedorVenta, VendedorVenta, VendedorVentaActualizacion, GuardarUsuarLectorDeBarra, VerificarLimiteCredito, ListaSucursalesUsuario, ListaGruposProductoUsuario) {
+		ConfiguracionImpresionEmpresaDato,VerificarUsuarioEmpresa, ImprimirSalida, ListaVendedorVenta, VendedorVenta, VendedorVentaActualizacion, GuardarUsuarLectorDeBarra, VerificarLimiteCredito, ListaSucursalesUsuario, ListaGruposProductoUsuario) {
 		blockUI.start();
 		$scope.usuario = JSON.parse($localStorage.usuario);
 		convertUrlToBase64Image($scope.usuario.empresa.imagen, function (imagenEmpresa) {
@@ -1200,7 +1200,7 @@ angular.module('agil.controladores')
 
 				data.push(columns);
 				if ($scope.trueDetalle) {
-					data.push(["", "", "", "", "N°", "Nombre", "Codigo Item", "Unidad de Med", "Cantidad", "Importe"]);
+					data.push(["", "", "", "", "N°", "Nombre", "Codigo Item", "Unidad de Med", "Cantidad", "Importe","lote"]);
 					for (var j = 0; j < ventas[i].detallesVenta.length; j++) {
 						columns = [];
 						columns.push("");
@@ -1213,6 +1213,7 @@ angular.module('agil.controladores')
 						columns.push(ventas[i].detallesVenta[j].producto ? ventas[i].detallesVenta[j].producto.unidad_medida : 'ERROR SIN NOMBRE');
 						columns.push(ventas[i].detallesVenta[j].producto ? ventas[i].detallesVenta[j].cantidad : 'ERROR SIN NOMBRE');
 						columns.push(ventas[i].detallesVenta[j].producto ? ventas[i].detallesVenta[j].importe : 'ERROR SIN NOMBRE');
+						columns.push(ventas[i].detallesVenta[j].producto ? ventas[i].detallesVenta[j].lote : 'ERROR SIN NOMBRE');
 						data.push(columns);
 					}
 				}
@@ -2208,6 +2209,26 @@ angular.module('agil.controladores')
 				}
 			}
 		}
+
+		$scope.verificarCuentaAdmin = function (cuenta) {
+            VerificarUsuarioEmpresa.save({ id_empresa: $scope.usuario.id_empresa }, cuenta, function (dato) {
+
+                if (dato.type) {
+                    $scope.mostrarMensaje(dato.message)
+                    /*  cuenta.abierto= cuenta.abierto; */
+                    if ($scope.tipoDatosPermiso == "venta") {
+                        if (!$scope.dato.montoEdit) {
+                            $scope.dato.montoEdit = true
+                        } else {
+                            $scope.dato.montoEdit = false
+                        }
+                    }
+                    $scope.cerrarModalVerificarCuenta();
+                } else {
+                    $scope.mostrarMensaje(dato.message)
+                }
+            })
+        }
 
 		$scope.$on('$routeChangeStart', function (next, current) {
 			$scope.eliminarPopup($scope.idModalWizardCompraEdicion);
