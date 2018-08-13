@@ -3540,11 +3540,49 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 		// }
 
 		$scope.nuevoClientePedido = function () {
+			$scope.pedidocliente = new ClientePedido({id_empresa:$scope.usuario.id_empresa});
 			$scope.abrirPopup($scope.idModalNuevoClientePedido);
 		}
 
 		$scope.cerrarClientePedido = function () {
 			$scope.cerrarPopup($scope.idModalNuevoClientePedido)
+		}
+
+		$scope.guardarClientePedido = function (valido, pedidocliente) {
+			console.log("llegooooo a clientee guardar ", pedidocliente);
+			if (valido) {
+				// $scope.ocultarMensajesValidacion();
+				// var tiempoActual = new Date();
+				// pedido.fecha = pedido.fechaTexto;
+				
+    //             pedido.id_cliente = pedido.cliente.id;
+    //             pedido.id_destino = pedido.cliente_destino.id_destino;
+    //             pedido.id_cliente_razon = pedido.cliente_razon.id;
+				//venta.receptor=(venta.receptor!=undefined && venta.receptor!=null)?venta.receptor:((venta.receptor==undefined || venta.receptor==null)?(venta.textoVendedor!=""?{nombre_completo:venta.textoVendedor}:null):venta.receptor);
+				blockUI.start();
+				
+				pedidocliente.$save(function (res) {
+					if (res.hasError) {
+						blockUI.stop();
+						// $scope.crearNuevaVenta(res);
+						$scope.mostrarMensaje(res.message);
+					} else {
+						blockUI.stop();
+						$scope.cerrarClientePedido();
+						// $scope.verificarDespachos($scope.usuario.id_empresa);
+						$scope.establecerCliente(res);
+						// $scope.crearNuevaVenta(res);
+						console.log("registradooooo ", res);
+						$scope.mostrarMensaje('Cliente registrado exitosamente!');
+					}
+				}, function (error) {
+					blockUI.stop();
+					$scope.cerrarClientePedido();
+					$scope.mostrarMensaje('Ocurrio un problema al momento de guardar!');
+					// $scope.recargarItemsTabla();
+				});
+				
+			}
 		}
 
 		$scope.nuevaRazonCliente = function () {

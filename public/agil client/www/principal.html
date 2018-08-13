@@ -3377,7 +3377,7 @@
 	<!-- Factura facturar proforma fin-->
 
 	<div id="modal-nuevo-cliente-pedido">
-		<form name="nuevoCliente" ng-submit="establecerDespacho(asignacion)">
+		<form name="nuevoCliente" ng-submit="guardarClientePedido(nuevoCliente.$valid, pedidocliente)">
 			<div class="modal-header" style="background-color: #f2f2f2;">
 			  <h4 class='smaller text-uppercase' style="color: #3e3c3c;">
 			  	<i class="fa fa-user bigger-110  fa-3"></i> 
@@ -3391,25 +3391,25 @@
 				<div class="form-group row">
                     <label class="col-sm-4" for="monto">Nombre Completo</label>
                     <div class="col-sm-8">                    
-                        <input type="text" class="form-control ng-pristine ng-not-empty ng-valid ng-valid-required ng-touched" ng-model="Datoproducto.cantidad"  name="monto" placeholder="1000" data-validate="validate(required)" required="">
+                        <input type="text" class="form-control" ng-model="pedidocliente.razon_social"  name="razonSocial" placeholder="Nombre Completo"  required="">
                     </div>
                 </div>
                 <div class="form-group row">
                     <label class="col-sm-4" for="monto">Telefono</label>
                     <div class="col-sm-8">                    
-                        <input type="number" class="form-control ng-pristine ng-not-empty ng-valid ng-valid-required ng-touched" ng-model="Datoproducto.cantidad"  name="monto" placeholder="1000" data-validate="validate(required)" required="">
+                        <input type="number" class="form-control" ng-model="pedidocliente.telefono1"  name="telefono1" placeholder="Telefono"  required="">
                     </div>
                 </div>
                 <div class="form-group row">
                     <label class="col-sm-4" for="monto">Contacto</label>
                     <div class="col-sm-8">                    
-                        <input type="text" class="form-control ng-pristine ng-not-empty ng-valid ng-valid-required ng-touched" ng-model="Datoproducto.cantidad"  name="monto" placeholder="1000" data-validate="validate(required)" required="">
+                        <input type="text" class="form-control" ng-model="pedidocliente.contacto"  name="contacto" placeholder="Contacto" data-validate="validate(required)" required="">
                     </div>
                 </div>
 
 			</div>
 			<div class="modal-footer wizard-actions">
-			  <button ng-disabled="nuevoCliente.$invalid" type="submit" class="btn btn-primary btn-sm">
+			  <button  type="submit" class="btn btn-primary btn-sm">
 			    <i class="glyphicon glyphicon-floppy-disk"></i>Guardar
 			  </button>
 			  <button type="button" class="btn btn-danger btn-sm" ng-click="cerrarClientePedido()">
