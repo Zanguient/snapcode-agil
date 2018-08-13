@@ -393,10 +393,12 @@ module.exports = function (router, sequelize, Sequelize, ensureAuthorizedAdminis
                 where g.nombre='INGRESO'and c.cerrada = true and c.padre is null and m.empresa ="+ req.params.id_empresa + " and c.sucursal=" + req.params.id_sucursal, { type: sequelize.QueryTypes.SELECT })
                                 .then(function (ingresoCerrados) {
                                     sequelize.query("SELECT SUM(c.monto) as total from agil_caja_chica as c inner JOIN agil_concepto_movimiento_caja_chica as m on c.concepto=m.id INNER JOIN gl_clase as g on m.movimiento=g.id\
-                    where g.nombre='GASTO' and c.cerrada = false and c.padre is null and m.empresa ="+ req.params.id_empresa + " and c.sucursal=" + req.params.id_sucursal, { type: sequelize.QueryTypes.SELECT })
+                    where g.nombre='GASTO' and c.cerrada = false and c.padre is null and m.empresa ="+ req.params.id_empresa + " and c.sucursal=" + req.params.id_sucursal+
+                    " or g.nombre='KARDEX' and c.cerrada = false and c.padre is null and m.empresa ="+ req.params.id_empresa + " and c.sucursal=" + req.params.id_sucursal, { type: sequelize.QueryTypes.SELECT })
                                         .then(function (egreso) {
                                             sequelize.query("SELECT SUM(c.monto) as total from agil_caja_chica as c inner JOIN agil_concepto_movimiento_caja_chica as m on c.concepto=m.id INNER JOIN gl_clase as g on m.movimiento=g.id\
-                    where g.nombre='GASTO' and c.cerrada = true and c.padre is null and m.empresa ="+ req.params.id_empresa + " and c.sucursal=" + req.params.id_sucursal, { type: sequelize.QueryTypes.SELECT })
+                    where g.nombre='GASTO' and c.cerrada = true and c.padre is null and m.empresa ="+ req.params.id_empresa + " and c.sucursal=" + req.params.id_sucursal+
+                    " or g.nombre='KARDEX' and c.cerrada = true and c.padre is null and m.empresa ="+ req.params.id_empresa + " and c.sucursal=" + req.params.id_sucursal, { type: sequelize.QueryTypes.SELECT })
                                                 .then(function (egresosCerrados) {
                                                     var total = 0
                                                     var totalRlCaja = 0

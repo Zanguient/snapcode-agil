@@ -498,6 +498,7 @@ angular.module('agil.controladores')
             })
         }
         $scope.verDatosCompra = function () {
+            $scope.cajaChica.compra.fechaTexto=$scope.fechaATexto(new Date())
             $scope.cajaChica.verDatosCompra = ($scope.cajaChica.verDatosCompra) ? false : true
         }
         $scope.obtenerMovimientosIngreso = function (compra) {

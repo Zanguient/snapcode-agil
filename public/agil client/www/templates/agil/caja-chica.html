@@ -267,7 +267,7 @@
                                             <i class="ace-icon fa fa-folder  bigger-130"></i>
                                         </a>
                                         <a  ng-hide="solicitud.cajasChicas[0].length>0 || solicitud.concepto.concepto.nombre!='KARDEX'" ng-if="!solicitud.eliminado && solicitud.estado.nombre=='AUTORIZADO' && solicitud.cajasChicas[0].saldo!=0" class="red tooltip-info "
-                                            uib-tooltip="Cobrar" href="javascript:void(0)" e-disabled="!aplicacion.puede_crear"
+                                            uib-tooltip="Desembolso" href="javascript:void(0)" e-disabled="!aplicacion.puede_crear"
                                             ng-click="abrirModalRegistroDesembolsoCajaChica(solicitud,false,false)">
                                             <i class="ace-icon fa fa-folder  bigger-130"></i>
                                         </a>
@@ -275,7 +275,7 @@
                                             href="javascript:void(0)" e-disabled="!aplicacion.puede_crear" ng-click="abrirModalKardexCajaChica(solicitud)">
                                             <i class="ace-icon fa fa-file-text-o  bigger-130"></i>
                                         </a>
-                                        <a  class="red tooltip-info " ng-if="!solicitud.eliminado" uib-tooltip="Imprimir Recivo"
+                                        <a  class="red tooltip-info " ng-if="!solicitud.eliminado" uib-tooltip="IMprimir Recibo"
                                             href="javascript:void(0)"  ng-click="generarPdfBoletaCajaChica(solicitud,solicitud.cajasChicas[0])">
                                             <i class="ace-icon fa fa-print  bigger-130"></i>
                                         </a>
@@ -658,14 +658,14 @@
                                         </td>
                                         <td>
                                             <label>MONTO</label>
-                                            <input ng-if="cajaChica.solicitud!=null && cajaChica.solicitud.cajasChicas.length>0" required class="form-control" ng-model-options="{updateOn: 'submit'}"
+                                            <input ng-if="cajaChica.solicitud!=null && cajaChica.solicitud.cajasChicas.length>0" required class="form-control" 
                                                 ng-disabled="cajaChica.ver || cajaChica.solicitud.concepto.concepto.nombre=='GASTO'" type="number"
                                                 max="{{cajaChica.solicitud.cajasChicas[0].saldo}}" ng-model="cajaChica.compra.total">
                                                
-                                            <input ng-if="cajaChica.solicitud!=null && cajaChica.solicitud.cajasChicas.length==0" required class="form-control" ng-model-options="{updateOn: 'submit'}"
+                                            <input ng-if="cajaChica.solicitud!=null && cajaChica.solicitud.cajasChicas.length==0" required class="form-control" 
                                                 ng-disabled="cajaChica.ver || cajaChica.solicitud.cajasChicas.length==0" type="number"
                                                 ng-model="cajaChica.compra.total">
-                                            <input ng-if="cajaChica.solicitud==null" required class="form-control" ng-model-options="{updateOn: 'submit'}" ng-disabled="cajaChica.ver"
+                                            <input ng-if="cajaChica.solicitud==null" required class="form-control"  ng-disabled="cajaChica.ver"
                                                 type="number" ng-model="cajaChica.compra.total">
                                         </td>
                                     </tr>
@@ -878,7 +878,7 @@
                                 e-disabled="!aplicacion.puede_modificar" ng-click="abrirModalRegistroCajaChica(solicitud,true,undefined,detalle)">
                                 <i class="ace-icon fa fa-pencil bigger-130"></i>
                             </a>
-                            <a  class="red tooltip-info " tooltip-placement="left" uib-tooltip="Imprimir Recivo"
+                            <a  class="red tooltip-info " tooltip-placement="left" uib-tooltip="IMprimir Recibo"
                             href="javascript:void(0)"  ng-click="generarPdfBoletaCajaChica(solicitud,detalle)">
                             <i class="ace-icon fa fa-print  bigger-130"></i>
                         </a>
@@ -965,7 +965,7 @@
                                     ng-click="abrirModalRegistroIngresoCajaChica(detalle,false)">
                                     <i class="ace-icon fa fa-pencil bigger-130"></i>
                                 </a>
-                                 <a  class="red tooltip-info " tooltip-placement="left" uib-tooltip="Imprimir Recivo"
+                                 <a  class="red tooltip-info " tooltip-placement="left" uib-tooltip="IMprimir Recibo"
                                             href="javascript:void(0)"  ng-click="generarPdfBoletaCajaChica(undefined,detalle)">
                                             <i class="ace-icon fa fa-print  bigger-130"></i>
                                         </a>
@@ -1130,10 +1130,10 @@
                                 </div>
                             </div>
                             <div class="col-md-2">
-                                <a href="javascript:void(0)" ng-if="cajaChica.solicitud" ng-click="verDatosCompra()" class="red tooltip-info" tooltip-placement="left"
+                                <!-- <a href="javascript:void(0)" ng-if="cajaChica.solicitud" ng-click="verDatosCompra()" class="red tooltip-info" tooltip-placement="left"
                                     uib-tooltip="Editar Datos Compra">
                                     <i class="ace-icon icono-impuestos bigger-260 icon-only "></i>
-                                </a>
+                                </a> -->
                             </div>
                         </div>
 
@@ -1257,10 +1257,10 @@
                                 </div>
                             </div>
                             <div class="col-md-2">
-                                <a href="javascript:void(0)" ng-if="cajaChica.solicitud" ng-click="verDatosCompra()" class="red tooltip-info" tooltip-placement="left"
+                               <!--  <a href="javascript:void(0)" ng-if="cajaChica.solicitud" ng-click="verDatosCompra()" class="red tooltip-info" tooltip-placement="left"
                                     uib-tooltip="Editar Datos Compra">
                                     <i class="ace-icon icono-impuestos bigger-260 icon-only "></i>
-                                </a>
+                                </a> -->
                             </div>
                         </div>
 

@@ -146,7 +146,7 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 				condicionUsuario.nombre_usuario = { $like: "%" + req.params.usuario + "%" };
 			}
 			condicionCompra.usar_producto = true
-			var compras=[]
+			var compras = []
 			Compra.findAll({
 				where: condicionCompra,
 				include: [/* {model:Clase,as:'tipoMovimiento'},{ model: Sucursal, as: 'sucursal',where: condicionSucursal }, */ {
@@ -182,7 +182,7 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 						where: condicionSucursal
 					}]
 				}).then(function (entity3) {
-					
+
 					condicionCompra.usar_producto = false
 					Compra.findAll({
 						where: condicionCompra,
@@ -196,7 +196,7 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 						{ model: Proveedor, as: 'proveedor', where: condicionProveedor },
 						]
 					}).then(function (entity2) {
-						
+
 						entity = entity.concat(entity3);
 						compras = entity.concat(entity2);
 
@@ -366,7 +366,7 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 														where: {
 															id_inventario: detalleCompra.id_inventario,
 															id_movimiento: compra.movimiento.id,
-															id_producto: detalleCompra.producto?detalleCompra.producto.id:null
+															id_producto: detalleCompra.producto ? detalleCompra.producto.id : null
 														}
 													}).then(function (detalleMovimientoEliminado) {
 														DetalleCompra.destroy({
@@ -1093,6 +1093,8 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 								tipo_descuento: detalleCompra.tipo_descuento,
 								tipo_recargo: detalleCompra.tipo_recargo,
 								total: detalleCompra.total,
+								fecha_vencimiento: detalleCompra.fecha_vencimiento,
+								lote: detalleCompra.lote,
 								id_inventario: inventarioCreado.id
 							}).then(function (detalleMovimientoCreado) {
 								res.json({ mensaje: "creado satisfactoriamente" })
@@ -1140,6 +1142,8 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 								tipo_descuento: detalleCompra.tipo_descuento,
 								tipo_recargo: detalleCompra.tipo_recargo,
 								total: detalleCompra.total,
+								fecha_vencimiento: detalleCompra.fecha_vencimiento,
+								lote: detalleCompra.lote,
 								id_inventario: inventarioCreado.id
 							}).then(function (detalleMovimientoCreado) {
 								res.json({ mensaje: "creado satisfactoriamente" })
@@ -1216,6 +1220,8 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 						tipo_descuento: detalleCompra.tipo_descuento,
 						tipo_recargo: detalleCompra.tipo_recargo,
 						total: detalleCompra.total,
+						fecha_vencimiento: detalleCompra.fecha_vencimiento,
+						lote: detalleCompra.lote,
 						id_inventario: inventarioCreado.id
 					}).then(function (detalleMovimientoCreado) {
 						res.json({ mensaje: "creado satisfactoriamente" })
