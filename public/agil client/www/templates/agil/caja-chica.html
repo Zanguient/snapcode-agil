@@ -266,7 +266,7 @@
                                             ng-click="abrirModalRegistroCajaChica(solicitud)">
                                             <i class="ace-icon fa fa-folder  bigger-130"></i>
                                         </a>
-                                        <a ng-hide="solicitud.cajasChicas[0].length>0 || solicitud.concepto.concepto.nombre!='KARDEX'" ng-if="!solicitud.eliminado && solicitud.estado.nombre=='AUTORIZADO' && solicitud.cajasChicas[0].saldo!=0"
+                                        <a ng-hide="solicitud.cajasChicas[0].length>0" ng-if="!solicitud.eliminado && solicitud.estado.nombre=='AUTORIZADO' && solicitud.cajasChicas[0].saldo!=0 && solicitud.concepto.concepto.nombre=='KARDEX'"
                                             class="red tooltip-info " uib-tooltip="Desembolso" href="javascript:void(0)" e-disabled="!aplicacion.puede_crear"
                                             ng-click="abrirModalRegistroDesembolsoCajaChica(solicitud,false,false)">
                                             <i class="ace-icon fa fa-folder  bigger-130"></i>
@@ -1130,17 +1130,17 @@
                                                 {{detalleCompra.producto.nombre}}
                                             </td>
                                            
-                                            <td ng-if="!compra.id && configuracionCompraVista.mostrar_costo_unitario">
+                                            <td ng-if="!cajaChica.compra.id && configuracionCompraVista.mostrar_costo_unitario">
                                                 {{detalleCompra.costo_unitario}}
                                             </td>
-                                            <td ng-if="!compra.id && configuracionCompraVista.mostrar_cantidad">
+                                            <td ng-if="!cajaChica.compra.id && configuracionCompraVista.mostrar_cantidad">
                                                 {{detalleCompra.cantidad}}
                                             </td>
-                                            <td ng-if="compra.id && configuracionCompraVista.mostrar_costo_unitario">
+                                            <td ng-if="cajaChica.compra.id && configuracionCompraVista.mostrar_costo_unitario">
                                                 <input required class="col-xs-12" ng-change="calcularImporteDetalleEdicion(detalleCompra)" step="0.001" ng-model="detalleCompra.costo_unitario"
                                                  type="number" min="0.001" />
                                             </td>
-                                            <td ng-if="compra.id && configuracionCompraVista.mostrar_cantidad">
+                                            <td ng-if="cajaChica.compra.id && configuracionCompraVista.mostrar_cantidad">
                                                 <input required class="col-xs-12" ng-change="calcularImporteDetalleEdicion(detalleCompra)" step="0.001" ng-model="detalleCompra.cantidad"
                                                  type="number" min="0.001" />
                                             </td>
@@ -1148,28 +1148,28 @@
                                             <td ng-if="configuracionCompraVista.mostrar_importe">
                                                 {{detalleCompra.importe|number:2}}
                                             </td>
-                                            <td ng-if="!compra.descuento_general && configuracionCompraVista.mostrar_descuento">
+                                            <td ng-if="!cajaChica.compra.descuento_general && configuracionCompraVista.mostrar_descuento">
                                                 {{detalleCompra.descuento|number:2}}
                                             </td>
-                                            <td ng-if="!compra.descuento_general && configuracionCompraVista.mostrar_recargo">
+                                            <td ng-if="!cajaChica.compra.descuento_general && configuracionCompraVista.mostrar_recargo">
                                                 {{detalleCompra.recargo|number:2}}
                                             </td>
-                                            <td ng-if="!compra.descuento_general && configuracionCompraVista.mostrar_ice">
+                                            <td ng-if="!cajaChica.compra.descuento_general && configuracionCompraVista.mostrar_ice">
                                                 {{detalleCompra.ice|number:2}}
                                             </td>
-                                            <td ng-if="!compra.descuento_general && configuracionCompraVista.mostrar_excento">
+                                            <td ng-if="!cajaChica.compra.descuento_general && configuracionCompraVista.mostrar_excento">
                                                 {{detalleCompra.excento|number:2}}
                                             </td>
-                                            <td ng-if="compra.descuento_general && configuracionCompraVista.mostrar_descuento">
+                                            <td ng-if="cajaChica.compra.descuento_general && configuracionCompraVista.mostrar_descuento">
                                                 {{compra.descuento|number:2}}
                                             </td>
-                                            <td ng-if="compra.descuento_general && configuracionCompraVista.mostrar_recargo">
+                                            <td ng-if="cajaChica.compra.descuento_general && configuracionCompraVista.mostrar_recargo">
                                                 {{compra.recargo|number:2}}
                                             </td>
-                                            <td ng-if="compra.descuento_general && configuracionCompraVista.mostrar_ice">
+                                            <td ng-if="cajaChica.compra.descuento_general && configuracionCompraVista.mostrar_ice">
                                                 {{compra.ice|number:2}}
                                             </td>
-                                            <td ng-if="compra.descuento_general && configuracionCompraVista.mostrar_excento">
+                                            <td ng-if="cajaChica.compra.descuento_general && configuracionCompraVista.mostrar_excento">
                                                 {{compra.excento|number:2}}
                                             </td>
                                             <td ng-if="configuracionCompraVista.mostrar_total && cajaChica.compra.movimiento.clase.nombre!=diccionario.MOVING_POR_RETENCION_BIENES">
