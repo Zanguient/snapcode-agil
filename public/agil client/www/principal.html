@@ -2806,7 +2806,7 @@
 											<label>NIT CLIENTE</label>
 											<input   id="nit" name="nit"
 											  type="number" min="0" ng-model="pedido.cliente_nit" placeholder="Ingrese el NIT" disabled> 
-												 <button type="button" class="btn btn-success btn-xs" ng-click="nuevaRazonCliente()">
+												 <button type="button" class="btn btn-success btn-xs" ng-click="nuevaRazonCliente(pedido.cliente.id)">
 		                                            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
 		                                        </button>
 										</td>
@@ -2828,7 +2828,7 @@
 											<label>DIRECCION</label>
 											<input  id="destino_direccion" name="destino_direccion"
 											 type="text" min="0" ng-model="pedido.destino_direccion" placeholder="Ingrese el NIT" disabled>
-											<button type="button" class="btn btn-success btn-xs" ng-click="nuevoDestino()">
+											<button type="button" class="btn btn-success btn-xs" ng-click="nuevoDestino(pedido.cliente.id)">
 		                                        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
 		                                    </button>
 										</td>
@@ -3403,16 +3403,16 @@
                 <div class="form-group row">
                     <label class="col-sm-4" for="monto">Contacto</label>
                     <div class="col-sm-8">                    
-                        <input type="text" class="form-control" ng-model="pedidocliente.contacto"  name="contacto" placeholder="Contacto" data-validate="validate(required)" required="">
+                        <input type="text" class="form-control" ng-model="pedidocliente.contacto"  name="contacto" placeholder="Contacto">
                     </div>
                 </div>
 
 			</div>
 			<div class="modal-footer wizard-actions">
-			  <button  type="submit" class="btn btn-primary btn-sm">
+			  <button  type="submit" ng-disabled="nuevoCliente.$invalid" class="btn btn-primary btn-sm">
 			    <i class="glyphicon glyphicon-floppy-disk"></i>Guardar
 			  </button>
-			  <button type="button" class="btn btn-danger btn-sm" ng-click="cerrarClientePedido()">
+			  <button type="button"  class="btn btn-danger btn-sm" ng-click="cerrarClientePedido()">
 			    <i class="ace-icon fa fa-times"></i>Cancelar
 			  </button>
 			</div>
@@ -3421,7 +3421,7 @@
 	</div>
 
 	<div id="modal-nueva-razon-cliente">
-		<form name="asig" ng-submit="establecerDespacho(asignacion)">
+		<form name="clienteRazon" ng-submit="guardarClienteRazonSocial(clienteRazon.$valid, clienteRS)">
 			<div class="modal-header" style="background-color: #f2f2f2;">
 			  <h4 class='smaller text-uppercase' style="color: #3e3c3c;">
 			  	<i class="fa fa-home bigger-110  fa-3"></i> 
@@ -3435,19 +3435,19 @@
 				<div class="form-group row">
                     <label class="col-sm-4" for="monto">Nombre Completo</label>
                     <div class="col-sm-8">                    
-                        <input type="text" class="form-control ng-pristine ng-not-empty ng-valid ng-valid-required ng-touched" ng-model="Datoproducto.cantidad"  name="monto" placeholder="1000" data-validate="validate(required)" required="">
+                        <input type="text" class="form-control ng-pristine ng-not-empty ng-valid ng-valid-required ng-touched" ng-model="clienteRS.razon_social"  name="monto" placeholder="Nombre Completo" data-validate="validate(required)" required="">
                     </div>
                 </div>
                 <div class="form-group row">
                     <label class="col-sm-4" for="monto">Número de NIT</label>
                     <div class="col-sm-8">                    
-                        <input type="number" class="form-control ng-pristine ng-not-empty ng-valid ng-valid-required ng-touched" ng-model="Datoproducto.cantidad"  name="monto" placeholder="1000" data-validate="validate(required)" required="">
+                        <input type="number" class="form-control ng-pristine ng-not-empty ng-valid ng-valid-required ng-touched" ng-model="clienteRS.nit"  name="monto" placeholder="Número de NIT" data-validate="validate(required)" required="">
                     </div>
                 </div>
 
 			</div>
 			<div class="modal-footer wizard-actions">
-			  <button ng-disabled="asig.$invalid" type="submit" class="btn btn-primary btn-sm">
+			  <button ng-disabled="clienteRazon.$invalid" type="submit" class="btn btn-primary btn-sm">
 			    <i class="glyphicon glyphicon-floppy-disk"></i>Guardar
 			  </button>
 			  <button type="button" class="btn btn-danger btn-sm" ng-click="cerrarRazonCliente()">
@@ -3459,7 +3459,7 @@
 	</div>
 
 	<div id="modal-nuevo-destino">
-		<form name="asig" ng-submit="establecerDespacho(asignacion)">
+		<form name="clienteDes" ng-submit="guardarClienteDestino(clienteDes.$valid, clienteDestino)">
 			<div class="modal-header" style="background-color: #f2f2f2;">
 			  <h4 class='smaller text-uppercase' style="color: #3e3c3c;">
 			  	<i class="fa fa-road bigger-110  fa-3"></i> 
@@ -3473,19 +3473,19 @@
 				<div class="form-group row">
                     <label class="col-sm-4" for="monto">Nombre Destino</label>
                     <div class="col-sm-8">                    
-                        <input type="text" class="form-control ng-pristine ng-not-empty ng-valid ng-valid-required ng-touched" ng-model="Datoproducto.cantidad"  name="monto" placeholder="1000" data-validate="validate(required)" required="">
+                        <input type="text" class="form-control ng-pristine ng-not-empty ng-valid ng-valid-required ng-touched" ng-model="clienteDestino.destino"  name="Nombre Destino" placeholder="1000" data-validate="validate(required)" required="">
                     </div>
                 </div>
                 <div class="form-group row">
                     <label class="col-sm-4" for="monto">Direccion</label>
                     <div class="col-sm-8">                    
-                        <input type="number" class="form-control ng-pristine ng-not-empty ng-valid ng-valid-required ng-touched" ng-model="Datoproducto.cantidad"  name="monto" placeholder="1000" data-validate="validate(required)" required="">
+                        <input type="text" class="form-control ng-pristine ng-not-empty ng-valid ng-valid-required ng-touched" ng-model="clienteDestino.direccion"  name="Direccion" placeholder="Direccion" data-validate="validate(required)" required="">
                     </div>
                 </div>
 
 			</div>
 			<div class="modal-footer wizard-actions">
-			  <button ng-disabled="asig.$invalid" type="submit" class="btn btn-primary btn-sm">
+			  <button ng-disabled="clienteDes.$invalid" type="submit" class="btn btn-primary btn-sm">
 			    <i class="glyphicon glyphicon-floppy-disk"></i>Guardar
 			  </button>
 			  <button type="button" class="btn btn-danger btn-sm" ng-click="cerrarNuevoDestino()">

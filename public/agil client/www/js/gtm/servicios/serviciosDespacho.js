@@ -349,4 +349,18 @@ angular.module('agil.servicios')
 			'update': { method: 'PUT' }
 		});
 	})
+
+	.factory('ClientePedidoRazonSocial', function ($resource) {
+		return $resource(restServer + "clientes-razon/:id_cliente", { id_cliente: '@id_cliente' },
+		{
+			'update': { method: 'PUT' }
+		});
+	})
+
+	.factory('ClientePedidoDestino', function ($resource) {
+		return $resource(restServer + "clientes-destino/:id_cliente", { id_cliente: '@id_cliente' },
+		{
+			'update': { method: 'PUT' }
+		});
+	})
 	

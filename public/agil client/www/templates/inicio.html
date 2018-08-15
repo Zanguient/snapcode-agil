@@ -7,7 +7,7 @@
 		<!-- PAGE CONTENT BEGINS -->
 		<div class="row">
 			<div class="col-xs-12">
-				<a href="#/{{aplicacion.url}}" class="btn btn-app btn-success opcion-inicio" ng-repeat="aplicacion in aplicaciones" ng-class="{'menu-hidden':((aplicacion.titulo==diccionario.MENU_RUTAS || 
+				<a ng-if="aplicacion.subaplicaciones.length==0" href="#/{{aplicacion.url}}" class="btn btn-app btn-success opcion-inicio" ng-repeat="aplicacion in aplicaciones" ng-class="{'menu-hidden':((aplicacion.titulo==diccionario.MENU_RUTAS || 
 						aplicacion.titulo==diccionario.MENU_SEGUIMIENTOAPP) && 
 						usuario.empresa && 
 						!usuario.empresa.usar_georeferenciacion || 
@@ -32,6 +32,50 @@
 					<i class="ace-icon fa {{aplicacion.atributo_clase}} bigger-230"></i>
 					{{aplicacion.titulo}}
 				</a>
+
+				<a ng-if="aplicacion.subaplicaciones.length>0" class="btn btn-app btn-success opcion-inicio" ng-repeat="aplicacion in aplicaciones" ng-class="{'menu-hidden':((aplicacion.titulo==diccionario.MENU_RUTAS || 
+						
+					aplicacion.titulo==diccionario.MENU_SEGUIMIENTOAPP) && 
+						usuario.empresa && 
+						!usuario.empresa.usar_georeferenciacion || 
+						((aplicacion.titulo==diccionario.MENU_MESAS) && 
+						usuario.empresa && 
+						!usuario.empresa.usar_mesas) || 
+						((aplicacion.titulo==diccionario.MENU_PLAN_CUENTAS) && 
+						usuario.empresa && 
+						!usuario.empresa.usar_contabilidad) || 
+						((aplicacion.titulo==diccionario.MENU_COMPROBANTES) && 
+						usuario.empresa && 
+						!usuario.empresa.usar_contabilidad) || 
+						((aplicacion.titulo==diccionario.MENU_MEDICO) && 
+						usuario.empresa && 
+						!usuario.empresa.usar_medico)|| 
+						((aplicacion.titulo==diccionario.MENU_VEHICULOS) && 
+						usuario.empresa && 
+						!usuario.empresa.usar_mantenimiento)|| 
+						((aplicacion.titulo==diccionario.MENU_PROFORMAS) && 
+						usuario.empresa && 
+						!usuario.empresa.usar_proformas))}"
+						popover-trigger="outsideClick : outsideClick" uib-popover-template="PopoverSubMenus.templateUrl" popover-placement="right">
+					<i class="ace-icon fa {{aplicacion.atributo_clase}} bigger-230"></i>
+					{{aplicacion.titulo}}
+
+					<script type="text/ng-template" id="PopoverSubMenus.html">																			
+							<div ng-repeat="subaplicacion in aplicacion.subaplicaciones" ng-class="{'menu-hidden':((subaplicacion.titulo==diccionario.MENU_APPMOVIL) && usuario.empresa && !usuario.empresa.usar_georeferenciacion)
+							|| ((subaplicacion.titulo==diccionario.MENU_PANTALLACLIENTE) && usuario.empresa && !usuario.empresa.usar_pantalla_cliente)
+							|| ((subaplicacion.titulo==diccionario.MENU_PANTALLADESPACHO) && usuario.empresa && !usuario.empresa.usar_pantalla_despacho)||((subaplicacion.titulo==diccionario.MENU_ESTADO_RESULTADOS) && 
+							usuario.empresa && 
+							!usuario.empresa.usar_estado_resultados_no_contables)}">
+								<a href="#/{{subaplicacion.url}}">
+									{{subaplicacion.titulo}}
+								</a>
+							</div>									
+					</script>
+				</a>
+
+
+			
+				
 			</div>
 		</div>
 	</div><!-- /.col -->

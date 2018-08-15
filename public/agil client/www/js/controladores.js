@@ -7,7 +7,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 		ImprimirSalida, Diccionario, VentasComprobantesEmpresa, ComprasComprobantesEmpresa, LibroMayorCuenta, Paginator, ComprobanteRevisarPaginador, AsignarComprobanteFavorito, ListaCuentasComprobanteContabilidad, NuevoComprobanteContabilidad, NuevoComprobante, ComprasComprobante,
 		ConfiguracionesCuentasEmpresa, ContabilidadCambioMoneda, ObtenerCambioMoneda, AsignarCuentaCiente, AsignarCuentaProveedor,
 		GtmTransportistas, GtmEstibajes, GtmGrupoEstibajes, ListasCuentasAuxiliares, GtmDetallesDespachoAlerta, $interval, GuardarGtmDetalleDespachoAlerta, GtmDetalleDespacho, VerificarCorrelativosSucursale, ReiniciarCorrelativoSucursales, ClasesTipoEmpresa, alertasProformasLista, UltimaFechaTipoComprobante,
-		FacturaProforma, ListaDetallesProformasAFacturar, ProformaInfo, FacturarProformas, ImprimirPdfAlertaDespacho, ExportarExelAlarmasDespachos, VencimientoDosificaciones, EmpresaDatosInicio, VerificacionMensualActivos, ProductosPaginador, Pedidos, ClientesNit, GetCliente, ClientePedido) {
+		FacturaProforma, ListaDetallesProformasAFacturar, ProformaInfo, FacturarProformas, ImprimirPdfAlertaDespacho, ExportarExelAlarmasDespachos, VencimientoDosificaciones, EmpresaDatosInicio, VerificacionMensualActivos, ProductosPaginador, Pedidos, ClientesNit, GetCliente, ClientePedido, ClientePedidoRazonSocial, ClientePedidoDestino, $filter) {
 		$scope.idModalTablaVencimientoProductos = "tabla-vencimiento-productos";
 		$scope.idModalTablaDespachos = "tabla-gtm-despachos";
 		$scope.idModalTablaAsignacionDespacho = "tabla-gtm-asignacion-despachos";
@@ -1530,6 +1530,12 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 			$scope.ocultarFormularioInicioSesion();
 		}
 
+		$scope.PopoverSubMenus = {
+            templateUrl: 'PopoverSubMenus.html',
+            title: 'Sub Menus',
+            isOpen: false
+		};
+		
 		$scope.actualizarVencimientoDosificaciones = function () {
 			var prom = VencimientoDosificaciones($scope.usuario.id_empresa)
 			prom.then(function (res) {
@@ -3549,16 +3555,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 		}
 
 		$scope.guardarClientePedido = function (valido, pedidocliente) {
-			console.log("llegooooo a clientee guardar ", pedidocliente);
 			if (valido) {
-				// $scope.ocultarMensajesValidacion();
-				// var tiempoActual = new Date();
-				// pedido.fecha = pedido.fechaTexto;
-				
-    //             pedido.id_cliente = pedido.cliente.id;
-    //             pedido.id_destino = pedido.cliente_destino.id_destino;
-    //             pedido.id_cliente_razon = pedido.cliente_razon.id;
-				//venta.receptor=(venta.receptor!=undefined && venta.receptor!=null)?venta.receptor:((venta.receptor==undefined || venta.receptor==null)?(venta.textoVendedor!=""?{nombre_completo:venta.textoVendedor}:null):venta.receptor);
 				blockUI.start();
 				
 				pedidocliente.$save(function (res) {
@@ -3569,23 +3566,31 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 					} else {
 						blockUI.stop();
 						$scope.cerrarClientePedido();
-						// $scope.verificarDespachos($scope.usuario.id_empresa);
 						$scope.establecerCliente(res);
-						// $scope.crearNuevaVenta(res);
-						console.log("registradooooo ", res);
 						$scope.mostrarMensaje('Cliente registrado exitosamente!');
 					}
 				}, function (error) {
 					blockUI.stop();
 					$scope.cerrarClientePedido();
 					$scope.mostrarMensaje('Ocurrio un problema al momento de guardar!');
-					// $scope.recargarItemsTabla();
 				});
 				
 			}
 		}
 
-		$scope.nuevaRazonCliente = function () {
+		$scope.establecerDatosCliente = function (clienteid) {
+			var promesa = GetCliente(clienteid);
+			promesa.then(function (dato) {
+				console.log("los datos cliente", dato);
+				$scope.pedido.clientes_razon = dato.clientes_razon;
+				$scope.pedido.destinos = dato.cliente_destinos;
+				
+				blockUI.stop();
+			});
+		}
+
+		$scope.nuevaRazonCliente = function (id_cliente) {
+			$scope.clienteRS = new ClientePedidoRazonSocial({id_cliente:id_cliente});
 			$scope.abrirPopup($scope.idModalNuevaRazonCliente);
 		}
 
@@ -3593,12 +3598,70 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 			$scope.cerrarPopup($scope.idModalNuevaRazonCliente);
 		}
 
-		$scope.nuevoDestino = function () {
+		$scope.guardarClienteRazonSocial = function (valido, clienteRS) {
+			if (valido) {
+				blockUI.start();
+				
+				clienteRS.$save(function (res) {
+					if (res.hasError) {
+						blockUI.stop();
+						// $scope.crearNuevaVenta(res);
+						$scope.mostrarMensaje(res.message);
+					} else {
+						blockUI.stop();
+						$scope.cerrarRazonCliente();
+						$scope.pedido.cliente_nit = res.nit;
+						$scope.establecerDatosCliente(res.id_cliente);
+						$scope.pedido.cliente_razon = res;
+						$scope.mostrarMensaje('Cliente registrado exitosamente!');
+					}
+				}, function (error) {
+					blockUI.stop();
+					$scope.cerrarRazonCliente();
+					$scope.mostrarMensaje('Ocurrio un problema al momento de guardar!');
+				});
+				
+			}
+		}
+
+		$scope.nuevoDestino = function (id_cliente) {
+			$scope.clienteDestino = new ClientePedidoDestino({id_cliente:id_cliente, id_empresa:$scope.usuario.id_empres});
 			$scope.abrirPopup($scope.idModalNuevoDestino);
 		}
 
 		$scope.cerrarNuevoDestino = function () {
 			$scope.cerrarPopup($scope.idModalNuevoDestino);
+		}
+
+		$scope.guardarClienteDestino = function (valido, clienteDestino) {
+			console.log("llegooooo a clientee destino ", clienteDestino);
+			if (valido) {
+				blockUI.start();
+				
+				clienteDestino.$save(function (res) {
+					if (res.hasError) {
+						blockUI.stop();
+						// $scope.crearNuevaVenta(res);
+						$scope.mostrarMensaje(res.message);
+					} else {
+						blockUI.stop();
+						$scope.cerrarNuevoDestino();
+						// $scope.pedido.destino_direccion = res.nit;
+						$scope.establecerDatosCliente(res.id_cliente);
+						$scope.pedido.cliente_destino = res;
+						var obj = $filter('filter')($scope.pedido.destinos, {id: res.id}, true)[0];
+						
+						console.log("el seleccionadooooooooooo ", obj);
+						console.log("registradooooo destino", res);
+						$scope.mostrarMensaje('Destino registrado exitosamente!');
+					}
+				}, function (error) {
+					blockUI.stop();
+					$scope.cerrarNuevoDestino();
+					$scope.mostrarMensaje('Ocurrio un problema al momento de guardar!');
+				});
+				
+			}
 		}
 
 		$scope.inicio = function () {
