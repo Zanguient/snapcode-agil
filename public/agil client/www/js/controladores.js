@@ -201,7 +201,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 				return promesa;
 			}
 		};
-
+		$scope.habilitarDatos = true;
 		$scope.establecerCliente = function (cliente) {
 			$scope.pedido.cliente = cliente;
 			
@@ -210,7 +210,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 				console.log("los datos cliente", dato);
 				$scope.pedido.clientes_razon = dato.clientes_razon;
 				$scope.pedido.destinos = dato.cliente_destinos;
-				
+				$scope.habilitarDatos = false;
 				blockUI.stop();
 			});
 			// $scope.enfocar('razon_social');
@@ -3561,7 +3561,6 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 				pedidocliente.$save(function (res) {
 					if (res.hasError) {
 						blockUI.stop();
-						// $scope.crearNuevaVenta(res);
 						$scope.mostrarMensaje(res.message);
 					} else {
 						blockUI.stop();
@@ -3578,16 +3577,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 			}
 		}
 
-		$scope.establecerDatosCliente = function (clienteid) {
-			var promesa = GetCliente(clienteid);
-			promesa.then(function (dato) {
-				console.log("los datos cliente", dato);
-				$scope.pedido.clientes_razon = dato.clientes_razon;
-				$scope.pedido.destinos = dato.cliente_destinos;
-				
-				blockUI.stop();
-			});
-		}
+		
 
 		$scope.nuevaRazonCliente = function (id_cliente) {
 			$scope.clienteRS = new ClientePedidoRazonSocial({id_cliente:id_cliente});
@@ -3605,7 +3595,6 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 				clienteRS.$save(function (res) {
 					if (res.hasError) {
 						blockUI.stop();
-						// $scope.crearNuevaVenta(res);
 						$scope.mostrarMensaje(res.message);
 					} else {
 						blockUI.stop();
@@ -3633,26 +3622,37 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 			$scope.cerrarPopup($scope.idModalNuevoDestino);
 		}
 
+
+		$scope.establecerDatosCliente = function (clienteid, destinoid) {
+			var promesa = GetCliente(clienteid);
+			promesa.then(function (dato) {
+				$scope.pedido.clientes_razon = dato.clientes_razon;
+				$scope.pedido.destinos = dato.cliente_destinos;
+
+				if (destinoid) {
+					var destinoF = $filter('filter')($scope.pedido.destinos, {id: destinoid}, true)[0];
+					$scope.pedido.cliente_destino = destinoF;
+					$scope.obtenerDireccion(destinoF);
+				}
+
+				blockUI.stop();
+			});
+		}
+
 		$scope.guardarClienteDestino = function (valido, clienteDestino) {
-			console.log("llegooooo a clientee destino ", clienteDestino);
 			if (valido) {
 				blockUI.start();
 				
 				clienteDestino.$save(function (res) {
 					if (res.hasError) {
 						blockUI.stop();
-						// $scope.crearNuevaVenta(res);
 						$scope.mostrarMensaje(res.message);
 					} else {
 						blockUI.stop();
 						$scope.cerrarNuevoDestino();
-						// $scope.pedido.destino_direccion = res.nit;
-						$scope.establecerDatosCliente(res.id_cliente);
+						$scope.establecerDatosCliente(res.id_cliente, res.id);
 						$scope.pedido.cliente_destino = res;
-						var obj = $filter('filter')($scope.pedido.destinos, {id: res.id}, true)[0];
-						
-						console.log("el seleccionadooooooooooo ", obj);
-						console.log("registradooooo destino", res);
+
 						$scope.mostrarMensaje('Destino registrado exitosamente!');
 					}
 				}, function (error) {

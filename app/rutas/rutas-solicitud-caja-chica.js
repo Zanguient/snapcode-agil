@@ -368,19 +368,19 @@ module.exports = function (router, sequelize, Sequelize, ensureAuthorizedAdminis
                 var datosbusqueda = {
                     offset: (req.params.items_pagina * (req.params.pagina - 1)), limit: req.params.items_pagina,
                     where: condicionCajaChica,
-                    include: [{ model: Sucursal, as: 'sucursal' }, { model: CajaChica, as: 'cajasChicas', required: false, include: [{ model: Sucursal, as: 'sucursal' }, { model: ConceptoMovimientoCajaChica, as: 'concepto', include: [{ model: Clase, as: 'concepto' }] }, { model: ContabilidadCuenta, as: 'cuenta' }, { model: Compra, as: 'compra', include: [{ model: DetalleCompra, as: 'detallesCompra', include: [{ model: Clase, as: 'servicio' },{ model: Producto, as: 'producto' }, { model: Clase, as: 'centroCosto' }] }, { model: Proveedor, as: 'proveedor' }, { model: Sucursal, as: 'sucursal' }, { model: Movimiento, as: 'movimiento', required: false, include: [{ model: Clase, as: 'clase' }] }] }] }, { model: MedicoPaciente, as: 'solicitante', include: [{ model: Persona, as: 'persona', where: condicionPersonaSolicitanter }] }, { model: ConceptoMovimientoCajaChica, as: 'concepto', include: [{ model: Clase, as: 'concepto', where: condicionConceptoClase }] }, { model: Clase, as: 'estado' }, { model: Usuario, as: 'usuario', where: { id_empresa: req.params.id_empresa }, include: [{ model: Persona, as: 'persona', where: condicionPersonaUsuario }] }],
+                    include: [{ model: Sucursal, as: 'sucursal' }, { model: CajaChica, as: 'cajasChicas', required: false, include: [{ model: Sucursal, as: 'sucursal' }, { model: ConceptoMovimientoCajaChica, as: 'concepto', include: [{ model: Clase, as: 'concepto' }] }, { model: ContabilidadCuenta, as: 'cuenta' }, { model: Compra, as: 'compra', include: [{ model: Clase, as: 'tipoMovimiento', required: false }, { model: DetalleCompra, as: 'detallesCompra', include: [{ model: Clase, as: 'servicio' }, { model: Producto, as: 'producto' }, { model: Clase, as: 'centroCosto' }] }, { model: Proveedor, as: 'proveedor' }, { model: Sucursal, as: 'sucursal' }, { model: Movimiento, as: 'movimiento', required: false, include: [{ model: Clase, as: 'clase' }] }] }] }, { model: MedicoPaciente, as: 'solicitante', include: [{ model: Persona, as: 'persona', where: condicionPersonaSolicitanter }] }, { model: ConceptoMovimientoCajaChica, as: 'concepto', include: [{ model: Clase, as: 'concepto', where: condicionConceptoClase }] }, { model: Clase, as: 'estado' }, { model: Usuario, as: 'usuario', where: { id_empresa: req.params.id_empresa }, include: [{ model: Persona, as: 'persona', where: condicionPersonaUsuario }] }],
                     //order: [['nombre', 'asc']]
                 }
             } else {
                 var datosbusqueda = {
                     where: condicionCajaChica,
-                    include: [{ model: Sucursal, as: 'sucursal' }, { model: CajaChica, as: 'cajasChicas', required: false, include: [{ model: Sucursal, as: 'sucursal' }, { model: ConceptoMovimientoCajaChica, as: 'concepto', include: [{ model: Clase, as: 'concepto' }] }, { model: ContabilidadCuenta, as: 'cuenta' }, { model: Compra, as: 'compra', include: [{ model: DetalleCompra, as: 'detallesCompra', include: [{ model: Clase, as: 'servicio' },{ model: Producto, as: 'producto' }, { model: Clase, as: 'centroCosto' }] }, { model: Proveedor, as: 'proveedor' }, { model: Sucursal, as: 'sucursal' }, { model: Movimiento, as: 'movimiento', required: false, include: [{ model: Clase, as: 'clase' }] }] }] }, { model: MedicoPaciente, as: 'solicitante', include: [{ model: Persona, as: 'persona', where: condicionPersonaSolicitanter }] }, { model: ConceptoMovimientoCajaChica, as: 'concepto', include: [{ model: Clase, as: 'concepto', where: condicionConceptoClase }] }, { model: Clase, as: 'estado' }, { model: Usuario, as: 'usuario', where: { id_empresa: req.params.id_empresa }, include: [{ model: Persona, as: 'persona', where: condicionPersonaUsuario }] }],
+                    include: [{ model: Sucursal, as: 'sucursal' }, { model: CajaChica, as: 'cajasChicas', required: false, include: [{ model: Sucursal, as: 'sucursal' }, { model: ConceptoMovimientoCajaChica, as: 'concepto', include: [{ model: Clase, as: 'concepto' }] }, { model: ContabilidadCuenta, as: 'cuenta' }, { model: Compra, as: 'compra', include: [{ model: Clase, as: 'tipoMovimiento', required: false }, { model: DetalleCompra, as: 'detallesCompra', include: [{ model: Clase, as: 'servicio' }, { model: Producto, as: 'producto' }, { model: Clase, as: 'centroCosto' }] }, { model: Proveedor, as: 'proveedor' }, { model: Sucursal, as: 'sucursal' }, { model: Movimiento, as: 'movimiento', required: false, include: [{ model: Clase, as: 'clase' }] }] }] }, { model: MedicoPaciente, as: 'solicitante', include: [{ model: Persona, as: 'persona', where: condicionPersonaSolicitanter }] }, { model: ConceptoMovimientoCajaChica, as: 'concepto', include: [{ model: Clase, as: 'concepto', where: condicionConceptoClase }] }, { model: Clase, as: 'estado' }, { model: Usuario, as: 'usuario', where: { id_empresa: req.params.id_empresa }, include: [{ model: Persona, as: 'persona', where: condicionPersonaUsuario }] }],
                     //order: [['nombre', 'asc']]
                 }
             }
             SolicitudCajaChica.findAndCountAll({
                 where: condicionCajaChica,
-                include: [{ model: Sucursal, as: 'sucursal' }, { model: CajaChica, as: 'cajasChicas', required: false, include: [{ model: Sucursal, as: 'sucursal' }, { model: ConceptoMovimientoCajaChica, as: 'concepto', include: [{ model: Clase, as: 'concepto' }] }, { model: ContabilidadCuenta, as: 'cuenta' }, { model: Compra, as: 'compra', include: [{ model: DetalleCompra, as: 'detallesCompra', include: [{ model: Clase, as: 'servicio' },{ model: Producto, as: 'producto' }, { model: Clase, as: 'centroCosto' }] }, { model: Proveedor, as: 'proveedor' }, { model: Sucursal, as: 'sucursal' }, { model: Movimiento, as: 'movimiento', required: false, include: [{ model: Clase, as: 'clase' }] }] }] }, { model: MedicoPaciente, as: 'solicitante', include: [{ model: Persona, as: 'persona', where: condicionPersonaSolicitanter }] }, { model: ConceptoMovimientoCajaChica, as: 'concepto', include: [{ model: Clase, as: 'concepto', where: condicionConceptoClase }] }, { model: Clase, as: 'estado' }, { model: Usuario, as: 'usuario', where: { id_empresa: req.params.id_empresa }, include: [{ model: Persona, as: 'persona', where: condicionPersonaUsuario }] }],
+                include: [{ model: Sucursal, as: 'sucursal' }, { model: CajaChica, as: 'cajasChicas', required: false, include: [{ model: Sucursal, as: 'sucursal' }, { model: ConceptoMovimientoCajaChica, as: 'concepto', include: [{ model: Clase, as: 'concepto' }] }, { model: ContabilidadCuenta, as: 'cuenta' }, { model: Compra, as: 'compra', include: [{ model: Clase, as: 'tipoMovimiento', required: false }, { model: DetalleCompra, as: 'detallesCompra', include: [{ model: Clase, as: 'servicio' }, { model: Producto, as: 'producto' }, { model: Clase, as: 'centroCosto' }] }, { model: Proveedor, as: 'proveedor' }, { model: Sucursal, as: 'sucursal' }, { model: Movimiento, as: 'movimiento', required: false, include: [{ model: Clase, as: 'clase' }] }] }] }, { model: MedicoPaciente, as: 'solicitante', include: [{ model: Persona, as: 'persona', where: condicionPersonaSolicitanter }] }, { model: ConceptoMovimientoCajaChica, as: 'concepto', include: [{ model: Clase, as: 'concepto', where: condicionConceptoClase }] }, { model: Clase, as: 'estado' }, { model: Usuario, as: 'usuario', where: { id_empresa: req.params.id_empresa }, include: [{ model: Persona, as: 'persona', where: condicionPersonaUsuario }] }],
 
             }).then(function (data) {
                 SolicitudCajaChica.findAll(
@@ -428,141 +428,178 @@ module.exports = function (router, sequelize, Sequelize, ensureAuthorizedAdminis
     //fin paginator
 
     function crearCompraServicio(compra, req, idProveedor, idtipo, t) {
+        if (!compra.id) {
+            return Compra.create({
+                id_sucursal: compra.sucursal.id,
+                id_tipo_movimiento: idtipo,
+                id_proveedor: idProveedor,
+                factura: compra.factura,
+                autorizacion: compra.autorizacion,
+                fecha: compra.fecha,
+                codigo_control: compra.codigo_control,
+                importe: compra.importe,
+                id_tipo_pago: compra.id_tipo_pago,
+                dias_credito: compra.dias_credito,
+                a_cuenta: compra.a_cuenta,
+                saldo: compra.saldo,
+                descuento_general: compra.descuento_general,
+                descuento: compra.descuento,
+                recargo: compra.recargo,
+                ice: compra.ice,
+                excento: compra.excento,
+                tipo_descuento: compra.tipo_descuento,
+                tipo_recargo: compra.tipo_recargo,
+                total: compra.total,
+                id_usuario: compra.id_usuario,
+                usar_producto: compra.usar_producto,
+                observacion: compra.observacion,
+                dui: compra.dui,
+                tipo_retencion: compra.tipo_retencion
+            }, {
+                    transaction: t
+                }).then(function (compraCreada) {
+                    if (req.body.solicitud.cajasChicas.length > 0) {
+                        padre = req.body.solicitud.cajasChicas[0].id
+                        pagado = compra.total
+                        monto = req.body.solicitud.cajasChicas[0].monto
+                        saldo = req.body.solicitud.cajasChicas[0].saldo - pagado
+                    } else {
+                        padre = null
+                        monto = compra.total
+                        saldo = compra.total
+                    }
+                    if (req.body.solicitud.concepto.concepto.nombre == "GASTO") {
+                        padre = null
+                        monto = compra.total
+                        pagado = compra.total
+                        saldo = 0
+                    }
+                    return Sucursal.find({
+                        where: {
+                            id: compra.sucursal.id,//your where conditions, or without them if you need ANY entry
+                        }, transaction: t
+                    }).then(function (SucursalEncontrada) {
+                        return CajaChica.create({
+                            id_solicitud: req.body.solicitud.id,
+                            fecha: req.body.fecha,
+                            id_cuenta: req.body.cuenta.id,
+                            id_compra: compraCreada.id,
+                            eliminado: false,
+                            detalle: req.body.detalle,
+                            monto: monto,
+                            pagado: pagado,
+                            saldo: saldo,
+                            id_padre: padre,
+                            id_concepto: req.body.concepto.id,
+                            cerrada: false,
+                            id_sucursal: compra.sucursal.id,
+                            numero_correlativo: SucursalEncontrada.caja_chica_egreso_correlativo
+                        }, {
+                                transaction: t
+                            }).then(function (CajaCreada) {
+                                req.body.CajaCreadaid = CajaCreada.id
+                                return Sucursal.update({
+                                    caja_chica_egreso_correlativo: SucursalEncontrada.caja_chica_egreso_correlativo + 1
+                                }, {
+                                        where: {
+                                            id: compra.sucursal.id,
+                                        }
 
-        return Compra.create({
-            id_sucursal: compra.sucursal.id,
-            id_tipo_movimiento: idtipo,
-            id_proveedor: idProveedor,
-            factura: compra.factura,
-            autorizacion: compra.autorizacion,
-            fecha: compra.fecha,
-            codigo_control: compra.codigo_control,
-            importe: compra.importe,
-            id_tipo_pago: compra.id_tipo_pago,
-            dias_credito: compra.dias_credito,
-            a_cuenta: compra.a_cuenta,
-            saldo: compra.saldo,
-            descuento_general: compra.descuento_general,
-            descuento: compra.descuento,
-            recargo: compra.recargo,
-            ice: compra.ice,
-            excento: compra.excento,
-            tipo_descuento: compra.tipo_descuento,
-            tipo_recargo: compra.tipo_recargo,
-            total: compra.total,
-            id_usuario: compra.id_usuario,
-            usar_producto: compra.usar_producto,
-            observacion: compra.observacion,
-            dui: compra.dui,
-            tipo_retencion: compra.tipo_retencion
-        }, {
-                transaction: t
-            }).then(function (compraCreada) {
-                if (req.body.solicitud.cajasChicas.length > 0) {
-                    padre = req.body.solicitud.cajasChicas[0].id
-                    pagado = compra.total
-                    monto = req.body.solicitud.cajasChicas[0].monto
-                    saldo = req.body.solicitud.cajasChicas[0].saldo - pagado
-                } else {
-                    padre = null
-                    monto = compra.total
-                    saldo = compra.total
-                }
-                if (req.body.solicitud.concepto.concepto.nombre == "GASTO") {
-                    padre = null
-                    monto = compra.total
-                    pagado = compra.total
-                    saldo = 0
-                }
-                return Sucursal.find({
-                    where: {
-                        id: compra.sucursal.id,//your where conditions, or without them if you need ANY entry
-                    }, transaction: t
-                }).then(function (SucursalEncontrada) {
-                    return CajaChica.create({
-                        id_solicitud: req.body.solicitud.id,
-                        fecha: req.body.fecha,
-                        id_cuenta: req.body.cuenta.id,
-                        id_compra: compraCreada.id,
-                        eliminado: false,
-                        detalle: req.body.detalle,
-                        monto: monto,
-                        pagado: pagado,
-                        saldo: saldo,
-                        id_padre: padre,
-                        id_concepto: req.body.concepto.id,
-                        cerrada: false,
-                        id_sucursal: compra.sucursal.id,
-                        numero_correlativo: SucursalEncontrada.caja_chica_egreso_correlativo
-                    }, {
-                            transaction: t
-                        }).then(function (CajaCreada) {
-                            req.body.CajaCreadaid = CajaCreada.id
-                            return Sucursal.update({
-                                caja_chica_egreso_correlativo: SucursalEncontrada.caja_chica_egreso_correlativo + 1
-                            }, {
-                                    where: {
-                                        id: compra.sucursal.id,
-                                    }
-
-                                    , transaction: t
-                                }).then(function (actualizado) {
-                                    if (padre) {
-                                        return CajaChica.update({
-                                            pagado: req.body.solicitud.cajasChicas[0].pagado + pagado,
-                                            saldo: req.body.solicitud.cajasChicas[0].saldo - pagado,
-                                        }, {
-                                                where: { id: padre }, transaction: t
-                                            }).then(function (dato) {
-                                                return SolicitudCajaChica.update({
-                                                    id_estado: req.body.solicitud.estado.id,
-                                                }, {
-                                                        where: { id: req.body.solicitud.id }, transaction: t
-                                                    }).then(function (SolicitudActualizada) {
-                                                        return crearDetalleCompraServicio(compra,compraCreada.id, req, t);
-                                                    }).catch(function (err) {
-                                                        return new Promise(function (fulfill, reject) {
-                                                            reject((err.stack !== undefined) ? err.stack : err);
+                                        , transaction: t
+                                    }).then(function (actualizado) {
+                                        if (padre) {
+                                            return CajaChica.update({
+                                                pagado: req.body.solicitud.cajasChicas[0].pagado + pagado,
+                                                saldo: req.body.solicitud.cajasChicas[0].saldo - pagado,
+                                            }, {
+                                                    where: { id: padre }, transaction: t
+                                                }).then(function (dato) {
+                                                    return SolicitudCajaChica.update({
+                                                        id_estado: req.body.solicitud.estado.id,
+                                                    }, {
+                                                            where: { id: req.body.solicitud.id }, transaction: t
+                                                        }).then(function (SolicitudActualizada) {
+                                                            return crearDetalleCompraServicio(compra, compraCreada.id, req, t);
+                                                        }).catch(function (err) {
+                                                            return new Promise(function (fulfill, reject) {
+                                                                reject((err.stack !== undefined) ? err.stack : err);
+                                                            });
                                                         });
+                                                }).catch(function (err) {
+                                                    return new Promise(function (fulfill, reject) {
+                                                        reject((err.stack !== undefined) ? err.stack : err);
                                                     });
-                                            }).catch(function (err) {
-                                                return new Promise(function (fulfill, reject) {
-                                                    reject((err.stack !== undefined) ? err.stack : err);
+                                                })
+                                        } else {
+                                            return SolicitudCajaChica.update({
+                                                id_estado: req.body.solicitud.estado.id,
+                                            }, {
+                                                    where: { id: req.body.solicitud.id }, transaction: t
+                                                }).then(function (SolicitudActualizada) {
+                                                    return crearDetalleCompraServicio(compra, compraCreada.id, req, t);
+                                                }).catch(function (err) {
+                                                    return new Promise(function (fulfill, reject) {
+                                                        reject((err.stack !== undefined) ? err.stack : err);
+                                                    });
                                                 });
-                                            })
-                                    } else {
-                                        return SolicitudCajaChica.update({
-                                            id_estado: req.body.solicitud.estado.id,
-                                        }, {
-                                                where: { id: req.body.solicitud.id }, transaction: t
-                                            }).then(function (SolicitudActualizada) {
-                                                return crearDetalleCompraServicio(compra,compraCreada.id, req, t);
-                                            }).catch(function (err) {
-                                                return new Promise(function (fulfill, reject) {
-                                                    reject((err.stack !== undefined) ? err.stack : err);
-                                                });
-                                            });
-                                    }
-                                }).catch(function (err) {
-                                    return new Promise(function (fulfill, reject) {
-                                        reject((err.stack !== undefined) ? err.stack : err);
+                                        }
+                                    }).catch(function (err) {
+                                        return new Promise(function (fulfill, reject) {
+                                            reject((err.stack !== undefined) ? err.stack : err);
+                                        });
                                     });
+                            }).catch(function (err) {
+                                return new Promise(function (fulfill, reject) {
+                                    reject((err.stack !== undefined) ? err.stack : err);
                                 });
-                        }).catch(function (err) {
-                            return new Promise(function (fulfill, reject) {
-                                reject((err.stack !== undefined) ? err.stack : err);
                             });
+                    }).catch(function (err) {
+                        return new Promise(function (fulfill, reject) {
+                            reject((err.stack !== undefined) ? err.stack : err);
                         });
+                    });
                 }).catch(function (err) {
                     return new Promise(function (fulfill, reject) {
                         reject((err.stack !== undefined) ? err.stack : err);
                     });
                 });
-            }).catch(function (err) {
-                return new Promise(function (fulfill, reject) {
-                    reject((err.stack !== undefined) ? err.stack : err);
+        } else {
+            return Compra.update({
+                id_sucursal: compra.sucursal.id,
+                id_tipo_movimiento: compra.movimiento.clase.id,
+                id_proveedor: compra.proveedor.id,
+                factura: compra.factura,
+                autorizacion: compra.autorizacion,
+                fecha: compra.fecha,
+                codigo_control: compra.codigo_control,
+                importe: compra.importe,
+                id_tipo_pago: compra.id_tipo_pago,
+                dias_credito: compra.dias_credito,
+                a_cuenta: compra.a_cuenta,
+                saldo: compra.saldo,
+                descuento_general: compra.descuento_general,
+                descuento: compra.descuento,
+                recargo: compra.recargo,
+                ice: compra.ice,
+                excento: compra.excento,
+                tipo_descuento: compra.tipo_descuento,
+                tipo_recargo: compra.tipo_recargo,
+                total: compra.total,
+                id_usuario: compra.id_usuario,
+                usar_producto: compra.usar_producto,
+                observacion: compra.observacion,
+                dui: compra.dui,
+                tipo_retencion: compra.tipo_retencion,
+            }, {
+                    where: {
+                        id: compra.id
+                    }, transaction: t
+                }).then(function (compraActualizada) {
+                    return ActualizarDetalleCompra(req, compra, t)
+
+
                 });
-            });
+        }
     }
 
     function crearDetalleCompraServicio(compra, idCompra, req, t) {
@@ -743,7 +780,11 @@ module.exports = function (router, sequelize, Sequelize, ensureAuthorizedAdminis
                                                         }).then(function (proveedorCreado) {
                                                             return crearCompra(compra, res, proveedorCreado.id, movimientoCreado.id, conceptoMovimiento.id, req, t);
 
-                                                        });
+                                                        }).catch(function (err) {
+                                                            return new Promise(function (fulfill, reject) {
+                                                                reject((err.stack !== undefined) ? err.stack : err);
+                                                            });
+                                                        });;
                                                 } else {
                                                     return crearCompra(compra, res, compra.proveedor.id, movimientoCreado.id, conceptoMovimiento.id, req, t);
 
@@ -773,6 +814,16 @@ module.exports = function (router, sequelize, Sequelize, ensureAuthorizedAdminis
                                         if (compra.movimiento.clase) {
                                             conceptoMovimiento = compra.movimiento.clase
                                         }
+                                        if (compra.movimiento.clase.id) {
+                                            conceptoMovimiento = compra.movimiento.clase
+                                        }
+                                        /*   return Movimiento.create({
+                                              id_tipo: tipoMovimiento.id,
+                                              id_clase: conceptoMovimiento.id,
+                                              fecha: compra.fecha
+                                          }, {
+                                                  transaction: t
+                                              }).then(function (movimientoCreado) { */
                                         if (!compra.proveedor.id) {
                                             return Proveedor.create({
                                                 id_empresa: compra.id_empresa,
@@ -782,61 +833,131 @@ module.exports = function (router, sequelize, Sequelize, ensureAuthorizedAdminis
                                                     transaction: t
                                                 }).then(function (proveedorCreado) {
                                                     return crearCompraServicio(compra, req, proveedorCreado.id, conceptoMovimiento.id, t)
+                                                }).catch(function (err) {
+                                                    return new Promise(function (fulfill, reject) {
+                                                        reject((err.stack !== undefined) ? err.stack : err);
+                                                    });
                                                 });
                                         } else {
                                             return crearCompraServicio(compra, req, compra.proveedor.id, conceptoMovimiento.id, t)
                                         }
-                                    })
-                                })
-                            }
-                        } else {
-                            return Tipo.find({
-                                where: { nombre_corto: 'MOVING' }, transaction: t
-                            }).then(function (tipoMovimiento) {
-                                return Clase.find({
-                                    where: { nombre_corto: 'ID' }, transaction: t
-                                }).then(function (conceptoMovimiento) {
-                                    if (compra.movimiento.clase.id) {
-                                        conceptoMovimiento = compra.movimiento.clase
-                                    }
-                                    return Movimiento.update({
-                                        id_tipo: tipoMovimiento.id,
-                                        id_clase: conceptoMovimiento.id,
-                                        fecha: compra.fecha
-                                    }, {
-                                            where: { id: compra.movimiento.id },
-                                            transaction: t
-                                        }).then(function (movimientoActualizado) {
-                                            if (!compra.proveedor.id) {
-                                                return Proveedor.create({
-                                                    id_empresa: req.params.id_empresa,
-                                                    nit: compra.proveedor.nit,
-                                                    razon_social: compra.proveedor.razon_social
-                                                }, {
-                                                        transaction: t
-                                                    }).then(function (proveedorCreado) {
-                                                        return crearCompra(compra, res, proveedorCreado.id, compra.movimiento.id, conceptoMovimiento.id, req, t);
-
-                                                    });
-                                            } else {
-                                                return crearCompra(compra, res, compra.proveedor.id, compra.movimiento.id, conceptoMovimiento.id, req, t);
-
-                                            }
-                                        }).catch(function (err) {
+                                        /* }).catch(function (err) {
                                             return new Promise(function (fulfill, reject) {
                                                 reject((err.stack !== undefined) ? err.stack : err);
                                             });
+                                        }); */
+                                    }).catch(function (err) {
+                                        return new Promise(function (fulfill, reject) {
+                                            reject((err.stack !== undefined) ? err.stack : err);
                                         });
+                                    });
                                 }).catch(function (err) {
                                     return new Promise(function (fulfill, reject) {
                                         reject((err.stack !== undefined) ? err.stack : err);
                                     });
                                 });
-                            }).catch(function (err) {
-                                return new Promise(function (fulfill, reject) {
-                                    reject((err.stack !== undefined) ? err.stack : err);
+                            }
+                        } else {
+                            if (compra.usar_producto) {
+                                return Tipo.find({
+                                    where: { nombre_corto: 'MOVING' }, transaction: t
+                                }).then(function (tipoMovimiento) {
+                                    return Clase.find({
+                                        where: { nombre_corto: 'ID' }, transaction: t
+                                    }).then(function (conceptoMovimiento) {
+                                        if (compra.movimiento.clase.id) {
+                                            conceptoMovimiento = compra.movimiento.clase
+                                        }
+                                        return Movimiento.update({
+                                            id_tipo: tipoMovimiento.id,
+                                            id_clase: conceptoMovimiento.id,
+                                            fecha: compra.fecha
+                                        }, {
+                                                where: { id: compra.movimiento.id },
+                                                transaction: t
+                                            }).then(function (movimientoActualizado) {
+                                                if (!compra.proveedor.id) {
+                                                    return Proveedor.create({
+                                                        id_empresa: req.params.id_empresa,
+                                                        nit: compra.proveedor.nit,
+                                                        razon_social: compra.proveedor.razon_social
+                                                    }, {
+                                                            transaction: t
+                                                        }).then(function (proveedorCreado) {
+                                                            return crearCompra(compra, res, proveedorCreado.id, compra.movimiento.id, conceptoMovimiento.id, req, t);
+
+                                                        });
+                                                } else {
+                                                    return crearCompra(compra, res, compra.proveedor.id, compra.movimiento.id, conceptoMovimiento.id, req, t);
+
+                                                }
+                                            }).catch(function (err) {
+                                                return new Promise(function (fulfill, reject) {
+                                                    reject((err.stack !== undefined) ? err.stack : err);
+                                                });
+                                            });
+                                    }).catch(function (err) {
+                                        return new Promise(function (fulfill, reject) {
+                                            reject((err.stack !== undefined) ? err.stack : err);
+                                        });
+                                    });
+                                }).catch(function (err) {
+                                    return new Promise(function (fulfill, reject) {
+                                        reject((err.stack !== undefined) ? err.stack : err);
+                                    });
                                 });
-                            });
+                            } else {
+                                return Tipo.find({
+                                    where: { nombre_corto: 'MOVING' }, transaction: t
+                                }).then(function (tipoMovimiento) {
+                                    return Clase.find({
+                                        where: { nombre_corto: 'ID' }, transaction: t
+                                    }).then(function (conceptoMovimiento) {
+                                        if (compra.movimiento.clase) {
+                                            conceptoMovimiento = compra.movimiento.clase
+                                        }
+                                        /* return Movimiento.update({
+                                            id_tipo: tipoMovimiento.id,
+                                            id_clase: conceptoMovimiento.id,
+                                            fecha: compra.fecha
+                                        }, {
+                                                where: { id: compra.movimiento.id },
+                                                transaction: t
+                                            }).then(function (movimientoActualizado) { */
+                                        if (!compra.proveedor.id) {
+
+                                            return Proveedor.create({
+                                                id_empresa: compra.id_empresa,
+                                                nit: compra.proveedor.nit,
+                                                razon_social: compra.proveedor.razon_social
+                                            }, {
+                                                    transaction: t
+                                                }).then(function (proveedorCreado) {
+                                                    return crearCompraServicio(compra, req, proveedorCreado.id, conceptoMovimiento.id, t)
+                                                }).catch(function (err) {
+                                                    return new Promise(function (fulfill, reject) {
+                                                        reject((err.stack !== undefined) ? err.stack : err);
+                                                    })
+                                                });
+                                        } else {
+                                            return crearCompraServicio(compra, req, compra.proveedor.id, conceptoMovimiento.id, t)
+                                        }
+                                        /*   }).catch(function (err) {
+                                              return new Promise(function (fulfill, reject) {
+                                                  reject((err.stack !== undefined) ? err.stack : err);
+                                              })
+                                          }) */
+                                    }).catch(function (err) {
+                                        return new Promise(function (fulfill, reject) {
+                                            reject((err.stack !== undefined) ? err.stack : err);
+                                        })
+                                    })
+                                }).catch(function (err) {
+                                    return new Promise(function (fulfill, reject) {
+                                        reject((err.stack !== undefined) ? err.stack : err);
+                                    })
+                                })
+                            }
                         }
                     }
                 } else {
@@ -1021,7 +1142,121 @@ module.exports = function (router, sequelize, Sequelize, ensureAuthorizedAdminis
                 });
             });
     }
+    function ActualizarDetalleCompra(req, compra, t) {
+        var promises = []
+        compra.detallesCompra.forEach(function (detalleCompra, index, array) {
+            if (detalleCompra.id) {
+                if (!detalleCompra.eliminado) {
+                    promises.push(DetalleCompra.update({
+                        cantidad: detalleCompra.cantidad,
+                        costo_unitario: detalleCompra.costo_unitario,
+                        importe: detalleCompra.importe,
+                        total: detalleCompra.total,
+                    }, {
+                            where: {
+                                id: detalleCompra.id
+                            }, transaction: t
+                        }).then(function (detalleCompraActualizado) {
+                            return new Promise(function (fulfill, reject) {
+                                fulfill()
+                            });
+                        }).catch(function (err) {
+                            return new Promise(function (fulfill, reject) {
+                                reject((err.stack !== undefined) ? err.stack : err);
+                            });
+                        }))
 
+                } else {
+
+                    promises.push(DetalleCompra.destroy({
+                        where: {
+                            id: detalleCompra.id
+                        }, transaction: t
+                    }).then(function (detalleCompraEliminado) {
+                        return new Promise(function (fulfill, reject) {
+                            fulfill()
+                        });
+                    }).catch(function (err) {
+                        return new Promise(function (fulfill, reject) {
+                            reject((err.stack !== undefined) ? err.stack : err);
+                        });
+                    }))
+
+                }
+            } else {
+                if (compra.usar_producto) {
+                    if (!detalleCompra.producto.id) {
+                        promises.push(Producto.create({
+                            nombre: detalleCompra.producto.nombre,
+                            codigo: detalleCompra.producto.codigo,
+                            unidad_medida: detalleCompra.producto.unidad_medida,
+                            id_empresa: compra.id_empresa
+                        }, {
+                                transaction: t
+                            }).then(function (productoCreado) {
+                                if (!detalleCompra.centroCosto.id) {
+                                    return Tipo.find({
+                                        where: { nombre_corto: 'CCO' }, transaction: t
+                                    }).then(function (tipoCentroCosto) {
+                                        return Clase.create({
+                                            nombre: detalleCompra.centroCosto.nombre,
+                                            id_tipo: tipoCentroCosto.id
+                                        }, {
+                                                transaction: t
+                                            }).then(function (centroCostoCreado) {
+                                                return crearDetalleCompra(detalleCompra, compra.movimiento.id, compra.id, null, productoCreado.id, detalleCompra.centroCosto.id, res, compra)
+                                            }).catch(function (err) {
+                                                return new Promise(function (fulfill, reject) {
+                                                    reject((err.stack !== undefined) ? err.stack : err);
+                                                });
+                                            });
+                                    }).catch(function (err) {
+                                        return new Promise(function (fulfill, reject) {
+                                            reject((err.stack !== undefined) ? err.stack : err);
+                                        });
+                                    });
+                                } else {
+                                    return crearDetalleCompra(detalleCompra, compra.movimiento.id, compra.id, null, productoCreado.id, detalleCompra.centroCosto.id, res, compra)
+                                }
+                            }).catch(function (err) {
+                                return new Promise(function (fulfill, reject) {
+                                    reject((err.stack !== undefined) ? err.stack : err);
+                                });
+                            }));
+                    } else {
+                        if (!detalleCompra.centroCosto.id) {
+                            promises.push(Tipo.find({
+                                where: { nombre_corto: 'CCO' }
+                            }).then(function (tipoCentroCosto) {
+                                return Clase.create({
+                                    nombre: detalleCompra.centroCosto.nombre,
+                                    id_tipo: tipoCentroCosto.id
+                                }, {
+                                        transaction: t
+                                    }).then(function (centroCostoCreado) {
+                                        return crearDetalleCompra(detalleCompra, compra.movimiento.id, compra.id, null, detalleCompra.producto.id, detalleCompra.centroCosto.id, res, compra)
+                                    }).catch(function (err) {
+                                        return new Promise(function (fulfill, reject) {
+                                            reject((err.stack !== undefined) ? err.stack : err);
+                                        });
+                                    });
+                            }).catch(function (err) {
+                                return new Promise(function (fulfill, reject) {
+                                    reject((err.stack !== undefined) ? err.stack : err);
+                                });
+                            }));
+                        } else {
+                            return crearDetalleCompra(detalleCompra, compra.movimiento.id, compra.id, null, detalleCompra.producto.id, detalleCompra.centroCosto.id, res, compra)
+                        }
+
+                    }
+                } else {                    
+                    crearDetalleCompraServicio(detalleCompra, compra.id, res);
+                }
+            }
+        });
+        return Promise.all(promises)
+    }
     function crearDatosDetalle(compra, idMovimiento, res, t, empresaEncontrada, compraCreada) {
         var promises = []
         compra.detallesCompra.forEach(function (detalleCompra, index, array) {
@@ -1109,7 +1344,137 @@ module.exports = function (router, sequelize, Sequelize, ensureAuthorizedAdminis
             }
         });
         return Promise.all(promises);
-    }
+    } /* function crearCompra2(compra, res, idProveedor, idMovimiento, idTipo, req, t) {
+        return Compra.update({
+            id_tipo_movimiento: idTipo,
+            id_proveedor: idProveedor,
+            id_movimiento: idMovimiento,
+            factura: compra.factura,
+            autorizacion: compra.autorizacion,
+            fecha: compra.fecha,
+            codigo_control: compra.codigo_control,
+            importe: compra.importe,
+            id_tipo_pago: compra.id_tipo_pago,
+            descuento_general: compra.descuento_general,
+            descuento: compra.descuento,
+            recargo: compra.recargo,
+            ice: compra.ice,
+            excento: compra.excento,
+            tipo_descuento: compra.tipo_descuento,
+            tipo_recargo: compra.tipo_recargo,
+            total: compra.total,
+            id_usuario: compra.id_usuario,
+            observacion: compra.observacion,
+            dui: compra.dui,
+            id_sucursal: compra.sucursal.id
+        }, {
+                where: { id: compra.id },
+                transaction: t
+            }).then(function (compraCreada) {
+                if (req.body.solicitud.cajasChicas.length > 0) {
+                    padre = req.body.solicitud.cajasChicas[0].id
+                    pagado = compra.total
+                    monto = req.body.solicitud.cajasChicas[0].monto
+                    saldo = req.body.solicitud.cajasChicas[0].saldo - pagado
+                } else {
+                    padre = null
+                    monto = compra.total
+                    saldo = compra.total
+                }
+                if (req.body.solicitud.concepto.concepto.nombre == "GASTO") {
+                    padre = null
+                    monto = compra.total
+                    pagado = compra.total
+                    saldo = 0
+                }
+                return CajaChica.update({
+                    //id_solicitud: req.body.solicitud.id,
+                    fecha: req.body.fecha,
+                    id_cuenta: req.body.cuenta.id,
+                    id_compra: compraCreada.id,
+                    eliminado: false,
+                    detalle: req.body.detalle,
+                    monto: monto,
+                    pagado: pagado,
+                    saldo: saldo,
+                    id_padre: padre,
+                    id_concepto: req.body.concepto.id,
+                    cerrada: false,
+                    id_sucursal: compra.sucursal.id,
+                    // numero_correlativo: SucursalEncontrada.caja_chica_egreso_correlativo
+                }, {
+                        where: { id: req.body.id },
+                        transaction: t
+                    }).then(function (CajaCreada) {
+                        req.body.CajaCreadaid = req.body.id
+                        if (padre) {
+                            return CajaChica.update({
+                                pagado: req.body.solicitud.cajasChicas[0].pagado + pagado,
+                                saldo: req.body.solicitud.cajasChicas[0].saldo - pagado,
+                            }, {
+                                    where: { id: padre }, transaction: t
+                                }).then(function (dato) {
+                                    return SolicitudCajaChica.update({
+                                        id_estado: req.body.solicitud.estado.id,
+                                    }, {
+                                            where: { id: req.body.solicitud.id }, transaction: t
+                                        }).then(function (SolicitudCreada) {
+                                            return Movimiento.update({
+                                                id_almacen: compra.almacen.id,
+                                                fecha: compra.fecha,
+                                            }, {
+                                                    where: {
+                                                        id: compra.movimiento.id
+                                                    }, transaction: t
+                                                }).then(function (movimientoActualizado) {
+                                                    return ActualizarDetalleCompra(req, compra, t)
+                                                });
+                                        }).catch(function (err) {
+                                            return new Promise(function (fulfill, reject) {
+                                                reject((err.stack !== undefined) ? err.stack : err);
+                                            });
+                                        });
+                                }).catch(function (err) {
+                                    return new Promise(function (fulfill, reject) {
+                                        reject((err.stack !== undefined) ? err.stack : err);
+                                    });
+                                })
+                        } else {
+                            return SolicitudCajaChica.update({
+                                id_estado: req.body.solicitud.estado.id,
+                            }, {
+                                    where: { id: req.body.solicitud.id }, transaction: t
+                                }).then(function (SolicitudCreada) {
+                                    return Movimiento.update({
+                                        id_almacen: compra.almacen.id,
+                                        fecha: compra.fecha,
+                                    }, {
+                                            where: {
+                                                id: compra.movimiento.id
+                                            }, transaction: t
+                                        }).then(function (movimientoActualizado) {
+                                            return ActualizarDetalleCompra(req, compra, t)
+                                        });
+                                }).catch(function (err) {
+                                    return new Promise(function (fulfill, reject) {
+                                        reject((err.stack !== undefined) ? err.stack : err);
+                                    });
+                                });
+                        }
+                    }).catch(function (err) {
+                        return new Promise(function (fulfill, reject) {
+                            console.log(err)
+                            reject((err.stack !== undefined) ? err.stack : err);
+                        });
+                    });
+
+            }).catch(function (err) {
+                return new Promise(function (fulfill, reject) {
+                    reject((err.stack !== undefined) ? err.stack : err);
+                });
+            });
+
+    } */
     function crearCompra(compra, res, idProveedor, idMovimiento, idTipo, req, t) {
         var pagado = 0, saldo = 0, monto = 0, padre = null;
         var promises = []
@@ -1364,21 +1729,19 @@ module.exports = function (router, sequelize, Sequelize, ensureAuthorizedAdminis
                                         }, {
                                                 where: { id: req.body.solicitud.id }, transaction: t
                                             }).then(function (SolicitudCreada) {
-                                                return CajaChica.find({
-                                                    where: { id: req.body.id }, transaction: t,
-                                                    include: [{ model: Sucursal, as: 'sucursal' }, { model: ConceptoMovimientoCajaChica, as: 'concepto', include: [{ model: Clase, as: 'concepto' }] }, { model: ContabilidadCuenta, as: 'cuenta' }, { model: Compra, as: 'compra', include: [{ model: Proveedor, as: 'proveedor' }, { model: Sucursal, as: 'sucursal' }, { model: Movimiento, as: 'movimiento', required: false, include: [{ model: Clase, as: 'clase' }] }] }]
-                                                }, { model: MedicoPaciente, as: 'solicitante', include: [{ model: Persona, as: 'persona' }] }, { model: ConceptoMovimientoCajaChica, as: 'concepto', include: [{ model: Clase, as: 'concepto' }] }, { model: Clase, as: 'estado' }, {
-                                                        model: Usuario, as: 'usuario', include: [{ model: Persona, as: 'persona' }]
-
-                                                    }).then(function (data) {
-                                                        return new Promise(function (fulfill, reject) {
-                                                            fulfill(data)
-                                                        });
+                                                return Movimiento.update({
+                                                    fecha: compra.fecha,
+                                                }, {
+                                                        where: {
+                                                            id: compra.movimiento.id
+                                                        }, transaction: t
+                                                    }).then(function (movimientoActualizado) {
+                                                        return ActualizarDetalleCompra(req, compra, t)
                                                     }).catch(function (err) {
                                                         return new Promise(function (fulfill, reject) {
                                                             reject((err.stack !== undefined) ? err.stack : err);
                                                         });
-                                                    });
+                                                    })
                                             }).catch(function (err) {
                                                 return new Promise(function (fulfill, reject) {
                                                     reject((err.stack !== undefined) ? err.stack : err);
@@ -1395,21 +1758,19 @@ module.exports = function (router, sequelize, Sequelize, ensureAuthorizedAdminis
                                 }, {
                                         where: { id: req.body.solicitud.id }, transaction: t
                                     }).then(function (SolicitudCreada) {
-                                        return CajaChica.find({
-                                            where: { id: req.body.id }, transaction: t,
-                                            include: [{ model: Sucursal, as: 'sucursal' }, { model: ConceptoMovimientoCajaChica, as: 'concepto', include: [{ model: Clase, as: 'concepto' }] }, { model: ContabilidadCuenta, as: 'cuenta' }, { model: Compra, as: 'compra', include: [{ model: Proveedor, as: 'proveedor' }, { model: Sucursal, as: 'sucursal' }, { model: Movimiento, as: 'movimiento', required: false, include: [{ model: Clase, as: 'clase' }] }] }]
-                                        }, { model: MedicoPaciente, as: 'solicitante', include: [{ model: Persona, as: 'persona' }] }, { model: ConceptoMovimientoCajaChica, as: 'concepto', include: [{ model: Clase, as: 'concepto' }] }, { model: Clase, as: 'estado' }, {
-                                                model: Usuario, as: 'usuario', include: [{ model: Persona, as: 'persona' }]
-
-                                            }).then(function (data) {
-                                                return new Promise(function (fulfill, reject) {
-                                                    fulfill(data)
-                                                });
+                                        return Movimiento.update({
+                                            fecha: compra.fecha,
+                                        }, {
+                                                where: {
+                                                    id: compra.movimiento.id
+                                                }, transaction: t
+                                            }).then(function (movimientoActualizado) {
+                                                return ActualizarDetalleCompra(req, compra, t)
                                             }).catch(function (err) {
                                                 return new Promise(function (fulfill, reject) {
                                                     reject((err.stack !== undefined) ? err.stack : err);
                                                 });
-                                            });
+                                            })
                                     }).catch(function (err) {
                                         return new Promise(function (fulfill, reject) {
                                             reject((err.stack !== undefined) ? err.stack : err);
@@ -1418,6 +1779,7 @@ module.exports = function (router, sequelize, Sequelize, ensureAuthorizedAdminis
                             }
                         }).catch(function (err) {
                             return new Promise(function (fulfill, reject) {
+                                console.log(err)
                                 reject((err.stack !== undefined) ? err.stack : err);
                             });
                         });

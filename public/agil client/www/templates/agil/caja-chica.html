@@ -224,7 +224,7 @@
                                 <td>
                                     {{solicitud.solicitante.persona.nombre_completo}}
                                 </td>
-                                <td>{{solicitud.concepto.concepto.nombre}}</td>
+                                <td>{{solicitud.concepto.nombre}}</td>
                                 <td>{{solicitud.detalle}}</td>
                                 <td ng-style="{'background-color': (solicitud.estado.nombre==='ANULADO')?'red' : 'auto','color': (solicitud.estado.nombre=='ANULADO')?'White' : 'auto'}">{{solicitud.estado.nombre}}</td>
                                 <td>
@@ -266,7 +266,7 @@
                                             ng-click="abrirModalRegistroCajaChica(solicitud)">
                                             <i class="ace-icon fa fa-folder  bigger-130"></i>
                                         </a>
-                                        <a ng-hide="solicitud.cajasChicas[0].length>0" ng-if="!solicitud.eliminado && solicitud.estado.nombre=='AUTORIZADO' && solicitud.cajasChicas[0].saldo!=0 && solicitud.concepto.concepto.nombre=='KARDEX'"
+                                        <a ng-hide="solicitud.cajasChicas.length>0" ng-if="!solicitud.eliminado && solicitud.estado.nombre=='AUTORIZADO' && solicitud.cajasChicas[0].saldo!=0 && solicitud.concepto.concepto.nombre=='KARDEX'"
                                             class="red tooltip-info " uib-tooltip="Desembolso" href="javascript:void(0)" e-disabled="!aplicacion.puede_crear"
                                             ng-click="abrirModalRegistroDesembolsoCajaChica(solicitud,false,false)">
                                             <i class="ace-icon fa fa-folder  bigger-130"></i>
@@ -647,8 +647,8 @@
                                                             <input id="id_producto" ng-keypress="interceptarTecla($event,'fecha_vencimiento',true)"
                                                                 type="text" ng-model="detalleCompra.producto.nombre" placeholder="Ingrese el nombre del producto..."
                                                                 uib-typeahead="producto as (producto.codigo+'-'+producto.nombre+'-'+producto.unidad_medida+'-'+producto.descripcion) for producto in buscarProducto($viewValue)"
-                                                                typeahead-wait-ms="1000" typeahead-template-url="templates/autocompletar.html"
-                                                                typeahead-show-hint="false" typeahead-min-length="3" typeahead-on-select="establecerProducto($item, $model, $label, $event);verificarCamposDetalleCompra(detalleCompra)">
+                                                                typeahead-wait-ms="1000" typeahead-template-url="templates/autocompletar.html"ng-change="verificarCamposDetalleCompra(detalleCompra)"
+                                                                typeahead-show-hint="false" typeahead-min-length="3" typeahead-on-select="establecerProducto($item, $model, $label, $event)">
                                                         </td>
                                                         <td>
                                                             <p>C. U. (Bs/u)</p>

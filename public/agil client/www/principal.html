@@ -2751,7 +2751,7 @@
 								</div>
 							</div>
 							<div class="col-sm-8" style=" margin-top: 20px;margin-left: 0px;">
-									<button id="guardarV" type="submit"  ng-disabled="pedido.detalles_despacho.length==0" class="btn btn-primary">
+									<button id="guardarV" type="submit"  ng-disabled="formularioVenta.$invalid || pedido.detalles_despacho.length==0" class="btn btn-primary">
 										<i class="ace-icon fa fa-floppy-o align-top bigger-125"></i>
 										GUARDAR
 									</button>
@@ -2805,8 +2805,8 @@
 										<td>
 											<label>NIT CLIENTE</label>
 											<input   id="nit" name="nit"
-											  type="number" min="0" ng-model="pedido.cliente_nit" placeholder="Ingrese el NIT" disabled> 
-												 <button type="button" class="btn btn-success btn-xs" ng-click="nuevaRazonCliente(pedido.cliente.id)">
+											  type="number" min="0"  ng-model="pedido.cliente_nit" required placeholder="Ingrese el NIT" disabled> 
+												 <button type="button" ng-disabled="habilitarDatos || !pedido.cliente.razon_social" class="btn btn-success btn-xs" ng-click="nuevaRazonCliente(pedido.cliente.id)">
 		                                            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
 		                                        </button>
 										</td>
@@ -2827,8 +2827,8 @@
 										<td>
 											<label>DIRECCION</label>
 											<input  id="destino_direccion" name="destino_direccion"
-											 type="text" min="0" ng-model="pedido.destino_direccion" placeholder="Ingrese el NIT" disabled>
-											<button type="button" class="btn btn-success btn-xs" ng-click="nuevoDestino(pedido.cliente.id)">
+											 type="text" min="0" ng-model="pedido.destino_direccion" required placeholder="Ingrese el NIT" disabled>
+											<button type="button" ng-disabled="habilitarDatos || !pedido.cliente.razon_social" class="btn btn-success btn-xs" ng-click="nuevoDestino(pedido.cliente.id)">
 		                                        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
 		                                    </button>
 										</td>

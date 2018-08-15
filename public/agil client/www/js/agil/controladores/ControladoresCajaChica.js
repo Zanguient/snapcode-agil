@@ -114,7 +114,20 @@ angular.module('agil.controladores')
                         if ($scope.cajaChica.fecha.length > 10) $scope.cajaChica.fecha = $scope.fechaATexto($scope.cajaChica.fecha)
                         $scope.cajaChica.compra.fechaTexto = $scope.fechaATexto(datos.cajasChicas[0].compra.fecha)
                     }
-
+                    if ($scope.cajaChica.compra.movimiento == undefined) {
+                        $scope.cajaChica.compra.movimiento = { clase: {} }
+                        $scope.cajaChica.compra.movimiento.clase = $scope.cajaChica.compra.tipoMovimiento
+                    }
+                    if ($scope.cajaChica.compra.movimiento.clase.nombre == $scope.diccionario.MOVING_POR_RETENCION_BIENES || $scope.cajaChica.compra.movimiento.clase.nombre == $scope.diccionario.MOVING_POR_RETENCION_SERVICIOS) {
+                        $scope.configuracionCompraVista.mostrar_it_retencion = true
+                        $scope.configuracionCompraVista.mostrar_iue = true
+                        $scope.configuracionCompraVista.mostrar_pagado = true
+                    } else {
+                        $scope.configuracionCompraVista.mostrar_it_retencion = false
+                        $scope.configuracionCompraVista.mostrar_iue = false
+                        $scope.configuracionCompraVista.mostrar_pagado = false
+                    }
+                   // $scope.cambiarTipoPago($scope.cajaChica.compra.tipoPago);
                 } else {
                     if (datos.cajasChicas.length > 0) {
                         var total = 0
@@ -1154,6 +1167,7 @@ angular.module('agil.controladores')
                 centroCosto: centroCostos, producto: producto, precio_unitario: producto.precio_unitario,
                 cantidad: 1, descuento: 0, recargo: 0, ice: 0, excento: 0, tipo_descuento: (producto.descuento > 0 ? true : false), tipo_recargo: false
             };
+
             $scope.cerrarPopup($scope.idModalInventario);
             $scope.enfocar('cantidad');
 
