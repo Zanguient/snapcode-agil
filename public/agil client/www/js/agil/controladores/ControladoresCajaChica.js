@@ -3,7 +3,7 @@ angular.module('agil.controladores')
     .controller('ControladorCajaChica', function ($scope, $localStorage, $location, $templateCache, $route, blockUI,
         ClasesTipoEmpresa, ClasesTipo, GuardarSolicitudCajaChica, GuardarConceptoMovimientoCajaChica,
         ObtenerConceptoMovimientoCajaChica, SolicitudesCajaPaginador, SolicitudesCajaChicaPaginador, ObtenerTodoPersonal, $filter, Paginator, VerificarUsuarioEmpresa,
-        NuevoComprobante, ProveedoresNit, GuardarCajaChica, VerificarUsuarioEmpresaCaja, IngresosCajaPaginador, ObtenerDatosCierreCaja, CierreCajaCPaginador) {
+        NuevoComprobante, ConfiguracionCompraVista, ConfiguracionesCuentasEmpresa, ConfiguracionCompraVistaDatos, ProveedoresNit, GuardarCajaChica, ListaProductosEmpresaUsuario, VerificarUsuarioEmpresaCaja, IngresosCajaPaginador, ObtenerDatosCierreCaja, CierreCajaCPaginador) {
 
 
         $scope.usuario = JSON.parse($localStorage.usuario);
@@ -17,6 +17,7 @@ angular.module('agil.controladores')
         $scope.idModalRegistroIngresoCajaChica = 'dialog-registro-ingreso-caja-chica'
         $scope.idModalHistorialCierreCajaChica = 'dialog-kardex-cierre-caja-chica'
         $scope.idModalRegistroDesembolsoCajaChica = 'dialog-registro-desembolso-caja-chica'
+        $scope.idModalServicios = 'dialog-servicios'
         $scope.inicio = function () {
             $scope.sucursales = $scope.obtenerSucursales();
             $scope.sucursalPrincipal = $scope.usuario.sucursalesUsuario[0].sucursal
@@ -26,9 +27,13 @@ angular.module('agil.controladores')
             $scope.obtenerListaSolicitudes()
             $scope.obtenerMovimientosIngreso()
             $scope.obtenerTiposDePago()
-
+            $scope.obtenerCentrosDeCosto()
+            $scope.obtenerConfiguracionCompraVista()
+            $scope.obtenerconfiuracionCuentas()
+            $scope.obtenerServicios()
             $scope.ConceptosMovimiento = []
             $scope.tipoFiltro = "TODOS"
+            $scope.verificacionDatos = true
         }
 
 
@@ -36,7 +41,7 @@ angular.module('agil.controladores')
             resaltarPestaña($location.path().substring(1));
             ejecutarScriptsCajaChicas($scope.idModalSolicitudCajaChica, $scope.idModalConceptosMovimiento, $scope.idModalEliminarSolicitud, $scope.idModalVerificarAutorizacion,
                 $scope.idModalRegistroCajaChica, $scope.idModalKardexCajaChica, $scope.idModalIngresosCajaChica, $scope.idModalRegistroIngresoCajaChica, $scope.idModalHistorialCierreCajaChica,
-                $scope.idModalRegistroDesembolsoCajaChica);
+                $scope.idModalRegistroDesembolsoCajaChica, $scope.idModalServicios);
             $scope.buscarAplicacion($scope.usuario.aplicacionesUsuario, $location.path().substring(1));
             blockUI.stop();
         });
@@ -118,6 +123,8 @@ angular.module('agil.controladores')
                     }
                     $scope.cajaChica = {
                         fecha: $scope.fechaATexto(new Date()),
+                        concepto: datos.concepto,
+                        detalle: datos.detalle,
                         compra: {
                             sucursal: $scope.sucursalPrincipal,
                             fecha: $scope.fechaATexto(new Date()),
@@ -165,7 +172,18 @@ angular.module('agil.controladores')
                     $scope.cajaChica.ver = false
                 }
             }
+            $scope.detalleCompra = { producto: {}, centroCosto: {}, cantidad: 1, descuento: 0, recargo: 0, ice: 0, excento: 0, tipo_descuento: false, tipo_recargo: false }
+            $scope.cargarCentroCosto($scope.detalleCompra)
             $scope.abrirPopup($scope.idModalRegistroCajaChica);
+        }
+        $scope.cargarCentroCosto = function (detalleCompra) {
+            $scope.centrosCosto.forEach(function (dato, index, array) {
+                if (dato.nombre == $scope.cajaChica.concepto.nombre) {
+                    detalleCompra.centroCosto = dato
+                } else {
+                    detalleCompra.centroCosto.nombre = $scope.cajaChica.concepto.nombre
+                }
+            })
         }
         $scope.abrirModalRegistroIngresoCajaChica = function (datos, ver) {
             if (datos) {
@@ -498,7 +516,7 @@ angular.module('agil.controladores')
             })
         }
         $scope.verDatosCompra = function () {
-            $scope.cajaChica.compra.fechaTexto=$scope.fechaATexto(new Date())
+            $scope.cajaChica.compra.fechaTexto = $scope.fechaATexto(new Date())
             $scope.cajaChica.verDatosCompra = ($scope.cajaChica.verDatosCompra) ? false : true
         }
         $scope.obtenerMovimientosIngreso = function (compra) {
@@ -780,10 +798,10 @@ angular.module('agil.controladores')
                     doc.font('Helvetica', 8);
                 }
             }
-            doc.rect(350, y+25, 200, 0).dash(1, { space: 5 }).stroke();
-                doc.text("Encargado Caja Chica", 350, y + 30,{width:200,align: "center"});
-                doc.text($scope.usuario.persona.nombre_completo, 350, y + 40,{width:200,align: "center"});
-   
+            doc.rect(350, y + 25, 200, 0).dash(1, { space: 5 }).stroke();
+            doc.text("Encargado Caja Chica", 350, y + 30, { width: 200, align: "center" });
+            doc.text($scope.usuario.persona.nombre_completo, 350, y + 40, { width: 200, align: "center" });
+
             doc.end();
             stream.on('finish', function () {
                 var fileURL = stream.toBlobURL('application/pdf');
@@ -930,6 +948,471 @@ angular.module('agil.controladores')
             /*  doc.rect(30, y - 10, 555, 20).stroke(); */
 
         }
+        $scope.verificarProducto = function (detalleCompra) {
+
+            if ($scope.cajaChica.compra.movimiento.clase != undefined) {
+                if ($scope.cajaChica.compra.movimiento.clase.nombre == $scope.diccionario.MOVING_POR_RETENCION_BIENES) {
+                    detalleCompra.descuento = 0
+                    detalleCompra.ice = 0
+                    detalleCompra.recargo = 0
+                    detalleCompra.excento = 0
+                    $scope.configuracionCompraVista.mostrar_it_retencion = true
+                    $scope.configuracionCompraVista.mostrar_iue = true
+                    $scope.configuracionCompraVista.mostrar_pagado = true
+                    $scope.agregarDetalleCompra(detalleCompra);
+                } else {
+                    $scope.agregarDetalleCompra(detalleCompra);
+                }
+            } else {
+                $scope.agregarDetalleCompra(detalleCompra);
+            }
+
+        }
+
+        $scope.verificarServicio = function (detalleCompra) {
+
+            if (detalleCompra.servicio.id) {
+                if ($scope.cajaChica.compra.movimiento.clase != undefined) {
+                    if ($scope.cajaChica.compra.movimiento.clase.nombre == $scope.diccionario.MOVING_POR_RETENCION_SERVICIOS) {
+                        detalleCompra.descuento = 0
+                        detalleCompra.ice = 0
+                        detalleCompra.recargo = 0
+                        detalleCompra.excento = 0
+                        $scope.configuracionCompraVista.mostrar_it_retencion = true
+                        $scope.configuracionCompraVista.mostrar_iue = true
+                        $scope.configuracionCompraVista.mostrar_pagado = true
+                        $scope.agregarDetalleCompraServicio(detalleCompra);
+                    } else {
+                        $scope.agregarDetalleCompraServicio(detalleCompra);
+                    }
+                } else {
+                    $scope.agregarDetalleCompraServicio(detalleCompra);
+                }
+
+            } else {
+                $scope.mostrarMensaje("El producto no se encuentra en el catalogo")
+            }
+
+
+        }
+        $scope.agregarDetalleCompra = function (detalleCompra) {
+            if (detalleCompra.producto.nombre.id) {
+                detalleCompra.producto = detalleCompra.producto.nombre;
+            }
+            if (detalleCompra.centroCosto.nombre.id) {
+                detalleCompra.centroCosto = detalleCompra.centroCosto.nombre;
+            } else {
+                if (detalleCompra.centroCosto.nombre == $scope.diccionario.CENTRO_COSTO_ALMACEN) {
+                    var centroCostoAlmacen = $.grep($scope.centrosCosto, function (e) { return e.nombre == $scope.diccionario.CENTRO_COSTO_ALMACEN; })[0];
+                    detalleCompra.centroCosto = centroCostoAlmacen;
+                }
+            }
+            if (detalleCompra.fechaVencimientoTexto) {
+                detalleCompra.fecha_vencimiento = new Date($scope.convertirFecha(detalleCompra.fechaVencimientoTexto));
+            }
+
+            $scope.cajaChica.compra.detallesCompra.push(detalleCompra);
+            $scope.sumarTotal();
+            $scope.sumarTotalImporte();
+            if ($scope.cajaChica.compra.descuento_general) {
+                $scope.calcularImporteGeneral();
+            }
+            if ($scope.cajaChica.compra.tipoPago.nombre == $scope.diccionario.TIPO_PAGO_CREDITO) {
+                $scope.calcularSaldo();
+            }
+            $scope.detalleCompra = { producto: {}, centroCosto: {}, cantidad: 1, descuento: 0, recargo: 0, ice: 0, excento: 0, tipo_descuento: false, tipo_recargo: false }
+            $scope.cargarCentroCosto($scope.detalleCompra)
+
+        }
+        $scope.agregarDetalleCompraServicio = function (detalleCompra) {
+
+            $scope.cajaChica.compra.detallesCompra.push(detalleCompra);
+            $scope.sumarTotal();
+            $scope.sumarTotalImporte();
+            if ($scope.cajaChica.compra.descuento_general) {
+                $scope.calcularImporteGeneral();
+            }
+            if ($scope.cajaChica.compra.tipoPago.nombre == $scope.diccionario.TIPO_PAGO_CREDITO) {
+                $scope.calcularSaldo();
+            }
+            $scope.detalleCompra = { producto: {}, centroCosto: {}, cantidad: 1, descuento: 0, recargo: 0, ice: 0, excento: 0, tipo_descuento: false, tipo_recargo: false }
+            $scope.cargarCentroCosto($scope.detalleCompra)
+
+        }
+        $scope.obtenerConfiguracionCompraVista = function () {
+            blockUI.start();
+            var promise = ConfiguracionCompraVistaDatos($scope.usuario.id_empresa);
+            promise.then(function (configuracion) {
+                $scope.configuracionCompraVista = configuracion;
+                blockUI.stop();
+            });
+        }
+        $scope.guardarConfiguracionCompraVista = function () {
+            ConfiguracionCompraVista.update({ id_empresa: $scope.usuario.id_empresa }, $scope.configuracionCompraVista, function (res) {
+
+            });
+        }
+        $scope.eliminarDetalleCompra = function (detalleCompra) {
+            if ($scope.cajaChica.compra.id) {
+                detalleCompra.eliminado = true;
+            } else {
+                $scope.cajaChica.compra.detallesCompra.splice($scope.cajaChica.compra.detallesCompra.indexOf(detalleCompra), 1);
+            }
+            $scope.sumarTotal();
+            $scope.sumarTotalImporte();
+            if ($scope.cajaChica.compra.descuento_general) {
+                $scope.calcularImporteGeneral();
+            }
+            if ($scope.cajaChica.compra.tipoPago.nombre == $scope.diccionario.TIPO_PAGO_CREDITO) {
+                $scope.calcularSaldo();
+            }
+        }
+
+        $scope.sumarTotalImporte = function () {
+            var sumaImporte = 0;
+            for (var i = 0; i < $scope.cajaChica.compra.detallesCompra.length; i++) {
+                if (!$scope.cajaChica.compra.detallesCompra[i].eliminado) {
+                    sumaImporte = sumaImporte + $scope.cajaChica.compra.detallesCompra[i].importe;
+                }
+            }
+            $scope.cajaChica.compra.importe = Math.round((sumaImporte) * 1000) / 1000;
+        }
+
+        $scope.sumarTotal = function () {
+            var sumaTotal = 0;
+            for (var i = 0; i < $scope.cajaChica.compra.detallesCompra.length; i++) {
+                if (!$scope.cajaChica.compra.detallesCompra[i].eliminado) {
+                    sumaTotal = sumaTotal + $scope.cajaChica.compra.detallesCompra[i].total;
+                }
+            }
+            $scope.cajaChica.compra.total = Math.round((sumaTotal) * 1000) / 1000;
+        }
+
+        $scope.calcularSaldo = function () {
+            $scope.cajaChica.compra.saldo = $scope.cajaChica.compra.total - $scope.cajaChica.compra.a_cuenta;
+        }
+
+        $scope.calcularImporteGeneral = function () {
+            var descuento, recargo;
+            if ($scope.compra.tipo_descuento) {
+                descuento = $scope.cajaChica.compra.importe * ($scope.cajaChica.compra.descuento / 100);
+            } else {
+                descuento = $scope.cajaChica.compra.descuento;
+            }
+            if ($scope.cajaChica.compra.tipo_recargo) {
+                recargo = $scope.cajaChica.compra.importe * ($scope.cajaChica.compra.recargo / 100);
+            } else {
+                recargo = $scope.cajaChica.compra.recargo;
+            }
+            $scope.cajaChica.compra.total = Math.round(($scope.cajaChica.compra.importe - descuento + recargo - $scope.cajaChica.compra.ice - $scope.cajaChica.compra.excento) * 1000) / 1000;
+        }
+        $scope.eliminarDetalleCompra = function (detalleCompra) {
+            if ($scope.cajaChica.compra.id) {
+                detalleCompra.eliminado = true;
+            } else {
+                $scope.cajaChica.compra.detallesCompra.splice($scope.cajaChica.compra.detallesCompra.indexOf(detalleCompra), 1);
+            }
+            $scope.sumarTotal();
+            $scope.sumarTotalImporte();
+            if ($scope.cajaChica.compra.descuento_general) {
+                $scope.calcularImporteGeneral();
+            }
+            if ($scope.cajaChica.compra.tipoPago.nombre == $scope.diccionario.TIPO_PAGO_CREDITO) {
+                $scope.calcularSaldo();
+            }
+        }
+
+        $scope.cambiarTipoPago = function (tipoPago) {
+            var tipoPago = $.grep($scope.tiposPago, function (e) { return e.id == tipoPago.id; })[0];
+            $scope.esContado = tipoPago.nombre_corto == 'CONT' ? true : false;
+            $scope.cajaChica.compra.id_tipo_pago = tipoPago.id;
+            if (!$scope.esContado) {
+                $scope.calcularSaldo();
+            }
+
+        }
+        $scope.buscarProducto = function (query) {
+            if (query != "" && query != undefined && $scope.busquedaProductoHabilidato) {
+                var promesa = ListaProductosEmpresaUsuario($scope.usuario.id_empresa, query, $scope.usuario.id, $scope.compra.almacen.id);
+                return promesa;
+            }
+        };
+        $scope.establecerProducto = function (producto) {
+
+            producto.tipoProducto = producto['tipoProducto'] == null ? { id: producto['tipoProducto.id'], nombre: producto['tipoProducto.nombre'], nombre_corto: producto['tipoProducto.nombre_corto'] } : producto.tipoProducto;
+            var centroCostos = $scope.detalleCompra.centroCosto;
+            // === para colocar el costo unitario de inventario == 
+            $scope.precio_inventario;
+            if (producto.inventarios.length > 0) {
+                $scope.precio_inventario = producto.inventarios.pop().costo_unitario + " Bs";
+
+            } else {
+                $scope.precio_inventario = "Sin histórico";
+            }
+
+            $scope.detalleCompra = {
+                centroCosto: centroCostos, producto: producto, precio_unitario: producto.precio_unitario,
+                cantidad: 1, descuento: 0, recargo: 0, ice: 0, excento: 0, tipo_descuento: (producto.descuento > 0 ? true : false), tipo_recargo: false
+            };
+            $scope.cerrarPopup($scope.idModalInventario);
+            $scope.enfocar('cantidad');
+
+        }
+
+        $scope.calcularImporte = function () {
+            $scope.detalleCompra.importe = Math.round(($scope.detalleCompra.cantidad * $scope.detalleCompra.costo_unitario) * 1000) / 1000;
+            var descuento, recargo;
+            if ($scope.cajaChica.compra.movimiento.clase.nombre == $scope.diccionario.MOVING_POR_RETENCION_BIENES) {
+                if ($scope.cajaChica.compra.tipo_retencion) {
+
+                    $scope.detalleCompra.total = $scope.detalleCompra.importe
+                    $scope.detalleCompra.importe = ($scope.detalleCompra.total * ($scope.plantilla.retencionBienesGasto.it.porsentaje + $scope.plantilla.retencionBienesGasto.iue.porsentaje) / (100 - ($scope.plantilla.retencionBienesGasto.it.porsentaje + $scope.plantilla.retencionBienesGasto.iue.porsentaje))) + $scope.detalleCompra.total
+                    $scope.detalleCompra.it = ($scope.detalleCompra.importe * $scope.plantilla.retencionBienesGasto.it.porsentaje) / 100
+                    $scope.detalleCompra.iue = ($scope.detalleCompra.importe * $scope.plantilla.retencionBienesGasto.iue.porsentaje) / 100
+                    //$scope.detalleCompra.total =($scope.detalleCompra.importe *$scope.plantilla.retencionBienesGasto.gasto.porsentaje)/100
+
+                } else {
+
+                    $scope.detalleCompra.it = ($scope.detalleCompra.importe * $scope.plantilla.retencionBienesGasto.it.porsentaje) / 100
+                    $scope.detalleCompra.iue = ($scope.detalleCompra.importe * $scope.plantilla.retencionBienesGasto.iue.porsentaje) / 100
+                    $scope.detalleCompra.total = ($scope.detalleCompra.importe * $scope.plantilla.retencionBienesGasto.gasto.porsentaje) / 100
+
+
+                }
+                /* $scope.detalleCompra.total = $scope.detalleCompra.importe */
+            } else if ($scope.cajaChica.compra.movimiento.clase.nombre == $scope.diccionario.MOVING_POR_IMPORTACION) {
+                $scope.detalleCompra.total = $scope.detalleCompra.importe
+            } else if ($scope.cajaChica.compra.movimiento.clase.nombre == $scope.diccionario.MOVING_POR_RETENCION_SERVICIOS) {
+                if ($scope.cajaChica.compra.tipo_retencion) {
+
+                    $scope.detalleCompra.total = $scope.detalleCompra.importe
+                    $scope.detalleCompra.importe = ($scope.detalleCompra.total * ($scope.plantilla.retencionServicios.it.porsentaje + $scope.plantilla.retencionServicios.iue.porsentaje) / (100 - ($scope.plantilla.retencionServicios.it.porsentaje + $scope.plantilla.retencionServicios.iue.porsentaje))) + $scope.detalleCompra.total
+                    $scope.detalleCompra.it = ($scope.detalleCompra.importe * $scope.plantilla.retencionServicios.it.porsentaje) / 100
+                    $scope.detalleCompra.iue = ($scope.detalleCompra.importe * $scope.plantilla.retencionServicios.iue.porsentaje) / 100
+
+                } else {
+
+                    $scope.detalleCompra.it = ($scope.detalleCompra.importe * $scope.plantilla.retencionServicios.it.porsentaje) / 100
+                    $scope.detalleCompra.iue = ($scope.detalleCompra.importe * $scope.plantilla.retencionServicios.iue.porsentaje) / 100
+                    $scope.detalleCompra.total = ($scope.detalleCompra.importe * $scope.plantilla.retencionServicios.servicio.porsentaje) / 100
+
+
+                }
+            } else {
+                if (!$scope.cajaChica.compra.descuento_general) {
+                    if ($scope.detalleCompra.tipo_descuento) {
+                        descuento = $scope.detalleCompra.importe * ($scope.detalleCompra.descuento / 100);
+                    } else {
+                        descuento = $scope.detalleCompra.descuento;
+                    }
+                    if ($scope.detalleCompra.tipo_recargo) {
+                        recargo = $scope.detalleCompra.importe * ($scope.detalleCompra.recargo / 100);
+                    } else {
+                        recargo = $scope.detalleCompra.recargo;
+                    }
+
+                    $scope.detalleCompra.total = $scope.detalleCompra.importe - descuento + recargo - $scope.detalleCompra.ice - $scope.detalleCompra.excento;
+                } else {
+                    if ($scope.cajaChica.compra.tipo_descuento) {
+                        descuento = $scope.detalleCompra.importe * ($scope.cajaChica.compra.descuento / 100);
+                    } else {
+                        descuento = $scope.cajaChica.compra.descuento;
+                    }
+                    if ($scope.cajaChica.compra.tipo_recargo) {
+                        recargo = $scope.detalleCompra.importe * ($scope.cajaChica.compra.recargo / 100);
+                    } else {
+                        recargo = $scope.cajaChica.compra.recargo;
+                    }
+
+                    $scope.detalleCompra.total = $scope.detalleCompra.importe - descuento + recargo - $scope.cajaChica.compra.ice - $scope.cajaChica.compra.excento;
+                }
+            }
+        }
+
+        $scope.calcularImporteDetalleEdicion = function (detalleCompra) {
+            detalleCompra.importe = Math.round((detalleCompra.cantidad * detalleCompra.costo_unitario) * 1000) / 1000;
+            var descuento, recargo;
+            if (detalleCompra.tipo_descuento) {
+                descuento = detalleCompra.importe * (detalleCompra.descuento / 100);
+            } else {
+                descuento = detalleCompra.descuento;
+            }
+            if (detalleCompra.tipo_recargo) {
+                recargo = detalleCompra.importe * (detalleCompra.recargo / 100);
+            } else {
+                recargo = detalleCompra.recargo;
+            }
+            detalleCompra.total = detalleCompra.importe - descuento + recargo - detalleCompra.ice - detalleCompra.excento;
+            $scope.sumarTotal();
+            $scope.sumarTotalImporte();
+            if ($scope.cajaChica.compra.descuento_general) {
+                $scope.calcularImporteGeneral();
+            }
+            if ($scope.cajaChica.compra.tipoPago.nombre == $scope.diccionario.TIPO_PAGO_CREDITO) {
+                $scope.calcularSaldo();
+            }
+        }
+
+        $scope.sumarMonto = function (compras) {
+            var suma = 0;
+            for (var i = 0; i < compras.length; i++) {
+                suma = suma + compras[i].total;
+
+            }
+            return Math.round(suma * 100) / 100;
+        }
+
+        $scope.obtenerCentrosDeCosto = function () {
+            blockUI.start();
+            var promesa = ClasesTipo("CCO");
+            promesa.then(function (entidad) {
+                $scope.centrosCosto = entidad.clases;
+                if ($scope.usuario.empresa.usar_funciones_erp) {
+                    var ids = []
+                    $scope.centrosCosto.forEach(function (dato, index, array) {
+                        if (dato.nombre_corto == "ALM") {
+
+                        } else if (dato.nombre_corto == "VR") { } else {
+                            ids.push(index)
+                        }
+
+                    })
+                    ids.reverse().forEach(function (dato, index, array) {
+                        $scope.centrosCosto.splice(dato, 1)
+                    })
+                }
+                blockUI.stop();
+            });
+        }
+
+        $scope.obtenerconfiuracionCuentas = function () {
+            var promesa = ConfiguracionesCuentasEmpresa($scope.usuario.id_empresa);
+            var a = false;
+            $scope.plantilla = { retencionServicios: { it: {}, iue: {}, servicio: {} }, retencionBienesGasto: { it: {}, iue: {}, gasto: {} }, retencionBienes: { it: {}, iue: {}, almacen: {} }, egreso: { ivacf: {}, cajaBanco: {} }, ingreso: { ivadf: {}, it: {}, itPorPagar: {}, cajaBanco: {} } }
+            promesa.then(function (entidad) {
+
+                entidad.lista.forEach(function (lista) {
+                    if ($scope.diccionario.IVA_DF == lista.nombre) {
+                        $scope.plantilla.ingreso.ivadf = { porsentaje: parseFloat(lista.valor), cuenta: lista.cuenta }
+                    }
+                    if ($scope.diccionario.IT == lista.nombre) {
+                        $scope.plantilla.ingreso.it = { porsentaje: parseFloat(lista.valor), cuenta: lista.cuenta }
+                    }
+                    if ($scope.diccionario.IT_POR_PAGAR == lista.nombre) {
+                        $scope.plantilla.ingreso.itPorPagar = { porsentaje: parseFloat(lista.valor), cuenta: lista.cuenta }
+                    }
+                    if ($scope.diccionario.CAJA_BANCOS == lista.nombre) {
+                        $scope.plantilla.ingreso.cajaBanco = { porsentaje: parseFloat(lista.valor), cuenta: lista.cuenta }
+                    }
+                    if ($scope.diccionario.IVA_CF == lista.nombre) {
+                        $scope.plantilla.egreso.ivacf = { porsentaje: parseFloat(lista.valor), cuenta: lista.cuenta }
+                    }
+                    if ($scope.diccionario.CAJA_BANCOS == lista.nombre) {
+                        $scope.plantilla.egreso.cajaBanco = { porsentaje: parseFloat(lista.valor), cuenta: lista.cuenta }
+                    }
+                    if ($scope.diccionario.IT_RETENCION_BIEN == lista.nombre) {
+                        $scope.plantilla.retencionBienes.it = { porsentaje: parseFloat(lista.valor), cuenta: lista.cuenta }
+                    }
+                    if ($scope.diccionario.IUE_RETENCION_BIEN == lista.nombre) {
+                        $scope.plantilla.retencionBienes.iue = { porsentaje: parseFloat(lista.valor), cuenta: lista.cuenta }
+                    }
+                    if ($scope.diccionario.CUENTA_ALMACEN_RETENCION_BIEN == lista.nombre) {
+                        $scope.plantilla.retencionBienes.almacen = { porsentaje: parseFloat(lista.valor), cuenta: lista.cuenta }
+                    }
+                    if ($scope.diccionario.IT_RETENCION_BIEN_GASTO == lista.nombre) {
+                        $scope.plantilla.retencionBienesGasto.it = { porsentaje: parseFloat(lista.valor), cuenta: lista.cuenta }
+                    }
+                    if ($scope.diccionario.IUE_RETENCION_BIEN_GASTO == lista.nombre) {
+                        $scope.plantilla.retencionBienesGasto.iue = { porsentaje: parseFloat(lista.valor), cuenta: lista.cuenta }
+                    }
+                    if ($scope.diccionario.CUENTA_GASTO_RETENCION_BIEN == lista.nombre) {
+                        $scope.plantilla.retencionBienesGasto.gasto = { porsentaje: parseFloat(lista.valor), cuenta: lista.cuenta }
+                    }
+                    if ($scope.diccionario.IT_RETENCION_SERVICIO == lista.nombre) {
+                        $scope.plantilla.retencionServicios.it = { porsentaje: parseFloat(lista.valor), cuenta: lista.cuenta }
+                    }
+                    if ($scope.diccionario.IUE_RETENCION_SERVICIO == lista.nombre) {
+                        $scope.plantilla.retencionServicios.iue = { porsentaje: parseFloat(lista.valor), cuenta: lista.cuenta }
+                    }
+                    if ($scope.diccionario.CUENTA_RETENCION_SERVICIO == lista.nombre) {
+                        $scope.plantilla.retencionServicios.servicio = { porsentaje: parseFloat(lista.valor), cuenta: lista.cuenta }
+                    }
+                }, this);
+            })
+        }
+
+        $scope.obtenerServicios = function () {
+            blockUI.start();
+            var promesa = ClasesTipoEmpresa("SERVICIOS_COMPRA", $scope.usuario.id_empresa);
+            promesa.then(function (entidad) {
+                $scope.datosServicios = entidad
+                blockUI.stop();
+            });
+        }
+
+        $scope.abrirDialogServicios = function (tipo) {
+            $scope.tipo_edicion = tipo;
+            $scope.clase = {};
+            $scope.abrirPopup($scope.idModalServicios);
+        }
+
+        $scope.cerrarDialogServicios = function () {
+            $scope.cerrarPopup($scope.idModalServicios);
+        }
+        $scope.agregarConceptoEdicion = function (clase) {
+            if (clase.nombre && clase.nombre_corto) {
+                if ($scope.tipo_edicion.clases.indexOf(clase) == -1) {
+                    $scope.tipo_edicion.clases.push(clase);
+                }
+                $scope.clase = {}
+            }
+        }
+        $scope.modificarConceptoEdicion = function (clase) {
+            $scope.clase = clase;
+        }
+
+        $scope.removerConceptoEdicion = function (clase) {
+            clase.eliminado = true;
+        }
+        $scope.guardarConceptoEdicion = function (tipo) {
+            blockUI.start();
+            Tipos.update({ id_tipo: tipo.id }, tipo, function (res) {
+                var promesa = ClasesTipo(tipo.nombre_corto);
+                promesa.then(function (entidad) {
+                    tipo = entidad
+                    blockUI.stop();
+                    $scope.cerrarDialogServicios();
+                    $scope.mostrarMensaje('Guardado Exitosamente!');
+                });
+            });
+        }
+
+        $scope.establecerServicioSeleccionado = function (clase) {
+            $scope.establecerServicio(clase)
+            $scope.cerrarDialogServicios()
+        }
+        $scope.establecerServicio = function (producto) {
+            producto.tipoProducto = producto['tipoProducto'] == null ? { id: producto['tipoProducto.id'], nombre: producto['tipoProducto.nombre'], nombre_corto: producto['tipoProducto.nombre_corto'] } : producto.tipoProducto;
+            var centroCostos = $scope.detalleCompra.centroCosto;
+            $scope.detalleCompra = {
+                centroCosto: null, servicio: producto, precio_unitario: producto.precio_unitario,
+                cantidad: 1, descuento: 0, recargo: 0, ice: 0, excento: 0, tipo_descuento: false, tipo_recargo: false
+            };
+            $scope.cerrarPopup($scope.idModalInventario);
+            $scope.enfocar('cantidad');
+
+        }
+        $scope.verificarCamposDetalleCompra = function (detalle) {
+            $scope.verificacionDatos = false
+            $scope.verificacionDatos = (detalle.producto.nombre) ? false : true
+            if ($scope.verificacionDatos == false) {
+                $scope.verificacionDatos = (detalle.cantidad >= 1) ? false : true
+                if ($scope.verificacionDatos == false) {
+                    $scope.verificacionDatos = (detalle.costo_unitario >= 0.0001) ? false : true
+                }
+            }
+
+        }
         $scope.$on('$routeChangeStart', function (next, current) {
             $scope.eliminarPopup($scope.idModalSolicitudCajaChica);
             $scope.eliminarPopup($scope.idModalConceptosMovimiento)
@@ -941,6 +1424,7 @@ angular.module('agil.controladores')
             $scope.eliminarPopup($scope.idModalHistorialCierreCajaChica)
             $scope.eliminarPopup($scope.idModalRegistroIngresoCajaChica)
             $scope.eliminarPopup($scope.idModalRegistroDesembolsoCajaChica)
+            $scope.eliminarPopup($scope.idModalServicios)
         });
 
         $scope.inicio();
@@ -976,6 +1460,7 @@ angular.module('agil.controladores')
             $scope.obtenerTiposEstados()
             $scope.obtenerListaSolicitudes()
             $scope.ConceptosMovimiento = []
+
         }
 
 
@@ -1203,6 +1688,8 @@ angular.module('agil.controladores')
                 }
             })
         }
+
+
 
         $scope.$on('$routeChangeStart', function (next, current) {
             $scope.eliminarPopup($scope.idModalSolicitudCajaChica);

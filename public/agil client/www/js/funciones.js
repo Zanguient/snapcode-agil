@@ -58,17 +58,19 @@ function  ejecutarScriptsSolicitudCajaChicas(idModalSolicitudCajaChica,idModalCo
 	
 }
 function  ejecutarScriptsCajaChicas(idModalSolicitudCajaChica,idModalConceptosMovimiento,idModalEliminarSolicitud,idModalVerificarAutorizacion,idModalRegistroCajaChica,
-	idModalKardexCajaChica,idModalIngresosCajaChica,idModalRegistroIngresoCajaChica,idModalHistorialCierreCajaChica,idModalRegistroDesembolsoCajaChica){
+	idModalKardexCajaChica,idModalIngresosCajaChica,idModalRegistroIngresoCajaChica,idModalHistorialCierreCajaChica,idModalRegistroDesembolsoCajaChica,
+	idModalServicios){
 	crearPopup(idModalSolicitudCajaChica, "auto", 'auto');
 	crearPopup(idModalConceptosMovimiento, "auto", 'auto');
 	crearPopup(idModalEliminarSolicitud, "auto", 'auto');
 	crearPopup(idModalVerificarAutorizacion, "auto", 'auto');
 	crearPopup(idModalIngresosCajaChica, "auto", 'auto');
 	crearPopup(idModalKardexCajaChica, "auto", 'auto');
-	crearPopup(idModalRegistroCajaChica, "auto", 'auto');
+	crearPopup(idModalRegistroCajaChica, "auto", 'auto',20,50);
 	crearPopup(idModalRegistroIngresoCajaChica, "auto", 'auto');
 	crearPopup(idModalHistorialCierreCajaChica, "auto", 'auto');
 	crearPopup(idModalRegistroDesembolsoCajaChica, "auto", 'auto');
+	crearPopup(idModalServicios, "auto", 'auto');
 	setTimeout(function () {
 		aplicarDatePickers();
 	}, 200);
@@ -1065,7 +1067,7 @@ function aplicarWizardFormulario(idPopup, idContenedor) {
 }
 
 var numDialog = 0;
-function crearPopup(idPopup, ancho, altura) {
+function crearPopup(idPopup, ancho, altura,positionX,positionY) {
 	/*$.widget("ui.dialog", $.ui.dialog,
 	{
 	    open: function ()
@@ -1099,14 +1101,26 @@ function crearPopup(idPopup, ancho, altura) {
 	        return this._super();
 	    }
 	});*/
-
+if(positionX){
 	var dialog = $("#" + idPopup).dialog({
 		modal: true,
 		width: ancho,
 		height: altura,
 		autoOpen: false,
 		resizable: true,
+		position: [positionX,positionY],
 	});
+}else{
+	var dialog = $("#" + idPopup).dialog({
+		modal: true,
+		width: ancho,
+		height: altura,
+		autoOpen: false,
+		resizable: true,
+		
+	});
+}
+	
 
 
 	$("#" + idPopup).siblings('.ui-dialog-titlebar').remove();
