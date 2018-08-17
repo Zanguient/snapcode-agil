@@ -46,7 +46,18 @@ angular.module('agil.servicios')
 				'update': { method: 'PUT' }
 			});
 	})
-
+	.factory('ModificarVenta', ['Venta', '$q', function (Venta, $q) {
+		var res = function (venta) {
+			var delay = $q.defer();
+			Venta.update({ id: venta.id},venta, function (entidad) {
+				delay.resolve(entidad);
+			}, function (error) {
+					delay.reject(error);
+				});
+			return delay.promise;
+		};
+		return res;
+	}])
 	.factory('CompraEmpresaDatos', function ($resource) {
 		return $resource(restServer + "compras/:id/empresa/:id_empresa", null,
 			{
@@ -441,7 +452,7 @@ angular.module('agil.servicios')
 		return res;
 	}])
 
-	.factory('VentaServico', function ($resource) {
+	/* .factory('VentaServico', function ($resource) {
 		return $resource(restServer + "venta/servicios/:id", { id: '@id' },
 			{
 				'update': { method: 'PUT' }
@@ -459,3 +470,4 @@ angular.module('agil.servicios')
 		};
 		return res;
 	}]);
+ */
