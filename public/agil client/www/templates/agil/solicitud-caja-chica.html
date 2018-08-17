@@ -172,19 +172,19 @@
 
                                 <td>
                                     <div class="action-buttons">
-                                        <a class="blue tooltip-info" uib-tooltip="Ver Datos" href="javascript:void(0)" e-disabled="!aplicacion.puede_ver" ng-click="verSolicitudCajaChica(solicitud)">
+                                        <a class="blue tooltip-info" uib-tooltip="Ver Datos" href="javascript:void(0)" tooltip-placement="left" e-disabled="!aplicacion.puede_ver" ng-click="verSolicitudCajaChica(solicitud)">
                                             <i class="ace-icon fa fa-search-plus bigger-130"></i>
                                         </a>
                                         <a ng-if="!solicitud.eliminado  && solicitud.estado.nombre!='PROCESADO'&& solicitud.estado.nombre!='ANULADO'" class="green tooltip-info" uib-tooltip="Editar Datos" href="javascript:void(0)" e-disabled="!aplicacion.puede_modificar"
-                                            ng-click="editarSolicitudCajaChica(solicitud)">
+                                            ng-click="editarSolicitudCajaChica(solicitud)" tooltip-placement="left">
                                             <i class="ace-icon fa fa-pencil bigger-130"></i>
                                         </a>
 
-                                        <a ng-if="!solicitud.eliminado && solicitud.estado.nombre!='PROCESADO'&& solicitud.estado.nombre!='ANULADO'" class="red tooltip-info " uib-tooltip="Eliminar" href="javascript:void(0)" e-disabled="!aplicacion.puede_eliminar"
+                                        <a tooltip-placement="left" ng-if="!solicitud.eliminado && solicitud.estado.nombre!='PROCESADO'&& solicitud.estado.nombre!='ANULADO'" class="red tooltip-info " uib-tooltip="Eliminar" href="javascript:void(0)" e-disabled="!aplicacion.puede_eliminar"
                                             ng-click="abrirModalEliminarSolicitud(solicitud)">
                                             <i class="ace-icon fa fa-trash-o bigger-130"></i>
                                         </a>
-                                        <a ng-if="!solicitud.eliminado && solicitud.estado.nombre=='PENDIENTE'" class="blue tooltip-info " uib-tooltip="Autorizar Solicitud"
+                                        <a tooltip-placement="left" ng-if="!solicitud.eliminado && solicitud.estado.nombre=='PENDIENTE'" class="blue tooltip-info " uib-tooltip="Autorizar Solicitud"
                                             href="javascript:void(0)" e-disabled="!aplicacion.puede_crear" ng-click="abrirModalVerificarAutorizacion(solicitud)">
                                             <i class="ace-icon fa fa-pencil-square  bigger-130"></i>
                                         </a>

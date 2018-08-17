@@ -29,7 +29,8 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, decodeBase
 							nombre_usuario: req.body.nombre_usuario,
 							clave: md5(req.body.clave),
 							activo: req.body.activo,
-							autorizacion_caja_chica: req.body.autorizacion_caja_chica
+							autorizacion_caja_chica: req.body.autorizacion_caja_chica,
+							encargado_caja_chica:req.body.encargado_caja_chica
 						}).then(function (usuarioCreado) {
 							Usuario.update({
 								token: jwt.sign(usuarioCreado, 'shhhhh')
@@ -222,7 +223,7 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, decodeBase
 					clave: md5(req.body.clave),
 					id_empresa: req.params.id_empresa
 				},
-				include: [{ model: Persona, as: 'persona' },
+				include: [{ model: Persona, as: 'persona',required:false },
 				{
 					model: UsuarioRol, as: 'rolesUsuario',
 					include: [{ model: Rol, as: 'rol'}]
@@ -384,7 +385,8 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, decodeBase
 									nombre_usuario: req.body.nombre_usuario,
 									clave: clave,
 									activo: req.body.activo,
-									autorizacion_caja_chica: req.body.autorizacion_caja_chica
+									autorizacion_caja_chica: req.body.autorizacion_caja_chica,
+									encargado_caja_chica:req.body.encargado_caja_chica
 								}, {
 										where: {
 											id: req.body.id

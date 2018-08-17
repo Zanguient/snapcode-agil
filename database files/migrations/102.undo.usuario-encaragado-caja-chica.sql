@@ -1,0 +1,1 @@
+ALTER TABLE sys_usuario drop encargado_caja_chica;

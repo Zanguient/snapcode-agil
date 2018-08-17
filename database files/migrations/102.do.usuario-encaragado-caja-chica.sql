@@ -1,0 +1,1 @@
+ALTER TABLE sys_usuario add encargado_caja_chica tinyint default 0;

@@ -5,13 +5,13 @@
             <i class="ace-icon fa fa-plus align-top bigger-125"></i>
             Nuevo
         </button> -->
-        <button type="button" ng-disabled="!usuario.autorizacion_caja_chica" class="btn btn-warning btn-sm pull-center" ng-click="abrirModalRegistroIngresoCajaChica(undefined,false,false)">
+        <button type="button" ng-disabled="!usuario.encargado_caja_chica" class="btn btn-warning btn-sm pull-center" ng-click="abrirModalRegistroIngresoCajaChica(undefined,false,false)">
             <i class="ace-icon fa fa-plus-circle align-top bigger-125"></i>Ingreso
         </button>&nbsp&nbsp
         <button type="button" class="btn btn-warning btn-sm pull-center" ng-click="abrirModalIngresosCajaChica()">
             <i class="ace-icon fa fa-h-square  bigger-125"></i>Ingresos
         </button>&nbsp&nbsp
-        <button type="button" ng-disabled="!usuario.autorizacion_caja_chica" class="btn btn-danger btn-sm pull-center" ng-click="obtenerDatosCierreCaja()">
+        <button type="button" ng-disabled="!usuario.encargado_caja_chica" class="btn btn-danger btn-sm pull-center" ng-click="obtenerDatosCierreCaja()">
             <i class="ace-icon fa fa-print bigger-125"></i> Cierre Caja
         </button>
         <button type="button" class="btn btn-danger btn-sm pull-center" ng-click="abrirModalHistorialCierreCajaChica()">
@@ -234,16 +234,16 @@
 
                                 <td>
                                     <div class="action-buttons">
-                                        <a class="blue tooltip-info" ng-if="solicitud.cajasChicas.length>0 && (solicitud.concepto.concepto.nombre!='KARDEX')" uib-tooltip="Ver Datos"
+                                        <a class="blue tooltip-info" ng-if="solicitud.cajasChicas.length>0 && (solicitud.concepto.concepto.nombre!='KARDEX')" tooltip-placement="left" uib-tooltip="Ver Datos"
                                             href="javascript:void(0)" e-disabled="!aplicacion.puede_ver" ng-click="abrirModalRegistroCajaChica(solicitud,true,true)">
                                             <i class="ace-icon fa fa-search-plus bigger-130"></i>
                                         </a>
-                                        <a class="blue tooltip-info" ng-if="solicitud.cajasChicas.length>0 && (solicitud.concepto.concepto.nombre=='KARDEX')" uib-tooltip="Ver Datos"
+                                        <a class="blue tooltip-info" ng-if="solicitud.cajasChicas.length>0 && (solicitud.concepto.concepto.nombre=='KARDEX')"tooltip-placement="left" uib-tooltip="Ver Datos"
                                             href="javascript:void(0)" e-disabled="!aplicacion.puede_ver" ng-click="abrirModalRegistroDesembolsoCajaChica(solicitud,true,true)">
                                             <i class="ace-icon fa fa-search-plus bigger-130"></i>
                                         </a>
-                                        <a ng-hide="solicitud.concepto.concepto.nombre!='GASTO'" ng-if="!solicitud.eliminado && solicitud.cajasChicas.length>0"
-                                            class="green tooltip-info" uib-tooltip="Editar Datos" href="javascript:void(0)" e-disabled="!aplicacion.puede_modificar"
+                                       <!--  <a ng-hide="solicitud.concepto.concepto.nombre!='GASTO'" ng-if="!solicitud.eliminado && solicitud.cajasChicas.length>0" class="green tooltip-info"
+                                            uib-tooltip="Editar Datos" href="javascript:void(0)" e-disabled="!aplicacion.puede_modificar"
                                             ng-click="abrirModalRegistroCajaChica(solicitud,true)">
                                             <i class="ace-icon fa fa-pencil bigger-130"></i>
                                         </a>
@@ -251,31 +251,31 @@
                                             class="green tooltip-info" uib-tooltip="Editar Datos" href="javascript:void(0)" e-disabled="!aplicacion.puede_modificar"
                                             ng-click="abrirModalRegistroDesembolsoCajaChica(solicitud,false,true)">
                                             <i class="ace-icon fa fa-pencil bigger-130"></i>
-                                        </a>
-                                        <a ng-hide="solicitud.eliminado" ng-if="solicitud.cajasChicas.length==0" class="red tooltip-info " uib-tooltip="Eliminar"
+                                        </a> -->
+                                        <a ng-hide="solicitud.eliminado" ng-if="solicitud.cajasChicas.length==0" class="red tooltip-info "tooltip-placement="left"  uib-tooltip="Eliminar"
                                             href="javascript:void(0)" e-disabled="!aplicacion.puede_eliminar" ng-click="abrirModalEliminarSolicitud(solicitud)">
                                             <i class="ace-icon fa fa-trash-o bigger-130"></i>
                                         </a>
-                                        <a ng-if="!solicitud.eliminado && solicitud.estado.nombre=='PENDIENTE'" class="blue tooltip-info " uib-tooltip="Autorizar Solicitud"
+                                        <a ng-if="!solicitud.eliminado && solicitud.estado.nombre=='PENDIENTE'" class="blue tooltip-info "tooltip-placement="left"  uib-tooltip="Autorizar Solicitud"
                                             href="javascript:void(0)" e-disabled="!aplicacion.puede_crear " ng-click="abrirModalVerificarAutorizacion(solicitud)">
                                             <i class="ace-icon fa fa-pencil-square  bigger-130"></i>
                                         </a>
                                         <a ng-if="!solicitud.eliminado && (solicitud.estado.nombre=='AUTORIZADO'||solicitud.estado.nombre=='DESEMBOLSADO') && solicitud.cajasChicas[0].saldo!=0"
                                             ng-hide="solicitud.concepto.concepto.nombre=='KARDEX' && solicitud.cajasChicas.length==0"
-                                            class="blue tooltip-info " uib-tooltip="Cobrar" href="javascript:void(0)" e-disabled="!aplicacion.puede_crear"
+                                            class="blue tooltip-info " uib-tooltip="Cobrar" href="javascript:void(0)" tooltip-placement="left" e-disabled="!aplicacion.puede_crear || !usuario.encargado_caja_chica"
                                             ng-click="abrirModalRegistroCajaChica(solicitud)">
                                             <i class="ace-icon fa fa-folder  bigger-130"></i>
                                         </a>
                                         <a ng-hide="solicitud.cajasChicas.length>0" ng-if="!solicitud.eliminado && solicitud.estado.nombre=='AUTORIZADO' && solicitud.cajasChicas[0].saldo!=0 && solicitud.concepto.concepto.nombre=='KARDEX'"
-                                            class="red tooltip-info " uib-tooltip="Desembolso" href="javascript:void(0)" e-disabled="!aplicacion.puede_crear"
+                                            class="red tooltip-info " uib-tooltip="Desembolso" href="javascript:void(0)" tooltip-placement="left" e-disabled="!aplicacion.puede_crear || !usuario.encargado_caja_chica"
                                             ng-click="abrirModalRegistroDesembolsoCajaChica(solicitud,false,false)">
                                             <i class="ace-icon fa fa-folder  bigger-130"></i>
                                         </a>
-                                        <a ng-hide="solicitud.eliminado" ng-if="solicitud.concepto.concepto.nombre=='KARDEX'" class="orange tooltip-info " uib-tooltip="kardex solicitud"
+                                        <a ng-hide="solicitud.eliminado"  ng-if="solicitud.concepto.concepto.nombre=='KARDEX'" class="orange tooltip-info " tooltip-placement="left" uib-tooltip="kardex solicitud"
                                             href="javascript:void(0)" e-disabled="!aplicacion.puede_crear" ng-click="abrirModalKardexCajaChica(solicitud)">
                                             <i class="ace-icon fa fa-file-text-o  bigger-130"></i>
                                         </a>
-                                        <a class="red tooltip-info " ng-if="!solicitud.eliminado" uib-tooltip="IMprimir Recibo" href="javascript:void(0)" ng-click="generarPdfBoletaCajaChica(solicitud,solicitud.cajasChicas[0])">
+                                        <a class="red tooltip-info " ng-if="!solicitud.eliminado" uib-tooltip="IMprimir Recibo" href="javascript:void(0)" tooltip-placement="left" ng-click="generarPdfBoletaCajaChica(solicitud,solicitud.cajasChicas[0])">
                                             <i class="ace-icon fa fa-print  bigger-130"></i>
                                         </a>
 
@@ -495,7 +495,7 @@
         <span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>¿Esta seguro de eliminar la solicitud seleccionado?
     </p>
     <button type="button" class="btn btn-danger" ng-click="eliminarSolicitud()">Si</button>
-    <button type="button" class="btn btn-success" ng-click="cerrarDialogEliminarSolicitud()">No</button>
+    <button type="button" class="btn btn-success" ng-click="cerrarModalEliminarSolicitud()">No</button>
 </div>
 <!-- ========= fin modal eliminar solicitud ========= -->
 <!-- inicio confirmar usuario Autorizado-->
@@ -635,53 +635,53 @@
                                 </div>
                                 <div class="widget-body">
                                     <div class="widget-main">
-                                        
-                                            <table class="table table-striped table-bordered table-hover">
+
+                                        <table class="table table-striped table-bordered table-hover">
 
 
 
-                                                <tbody>
-                                                    <tr>
-                                                        <td>
-                                                            <p>PRODUCTO</p>
-                                                            <input id="id_producto" ng-keypress="interceptarTecla($event,'fecha_vencimiento',true)"
-                                                                type="text" ng-model="detalleCompra.producto.nombre" placeholder="Ingrese el nombre del producto..."
-                                                                uib-typeahead="producto as (producto.codigo+'-'+producto.nombre+'-'+producto.unidad_medida+'-'+producto.descripcion) for producto in buscarProducto($viewValue)"
-                                                                typeahead-wait-ms="1000" typeahead-template-url="templates/autocompletar.html"ng-change="verificarCamposDetalleCompra(detalleCompra)"
-                                                                typeahead-show-hint="false" typeahead-min-length="3" typeahead-on-select="establecerProducto($item, $model, $label, $event)">
-                                                        </td>
-                                                        <td>
-                                                            <p>C. U. (Bs/u)</p>
-                                                            <input onfocus="this.select();" id="costo_unitario" ng-keypress="interceptarTecla($event,'cantidad',true)" class="col-xs-12"
-                                                                ng-change="calcularImporte();verificarCamposDetalleCompra(detalleCompra)" step="0.001" ng-model="detalleCompra.costo_unitario"
-                                                                value="{{detalleCompra.producto.inventarios.length>0?detalleCompra.producto.nombre.inventarios[0].costo_unitario:0}}"
-                                                                type="number" />
+                                            <tbody>
+                                                <tr>
+                                                    <td>
+                                                        <p>PRODUCTO</p>
+                                                        <input id="id_producto" ng-keypress="interceptarTecla($event,'fecha_vencimiento',true)" type="text" ng-model="detalleCompra.producto.nombre"
+                                                            placeholder="Ingrese el nombre del producto..." uib-typeahead="producto as (producto.codigo+'-'+producto.nombre+'-'+producto.unidad_medida+'-'+producto.descripcion) for producto in buscarProducto($viewValue)"
+                                                            typeahead-wait-ms="1000" typeahead-template-url="templates/autocompletar.html"
+                                                            ng-change="verificarCamposDetalleCompra(detalleCompra)" typeahead-show-hint="false"
+                                                            typeahead-min-length="3" typeahead-on-select="establecerProducto($item, $model, $label, $event)">
+                                                    </td>
+                                                    <td>
+                                                        <p>C. U. (Bs/u)</p>
+                                                        <input onfocus="this.select();" id="costo_unitario" ng-keypress="interceptarTecla($event,'cantidad',true)" class="col-xs-12"
+                                                            ng-change="calcularImporte();verificarCamposDetalleCompra(detalleCompra)"
+                                                            step="0.001" ng-model="detalleCompra.costo_unitario" value="{{detalleCompra.producto.inventarios.length>0?detalleCompra.producto.nombre.inventarios[0].costo_unitario:0}}"
+                                                            type="number" />
 
 
-                                                        </td>
-                                                        <td>
-                                                            <p>CANT. (u)</p>
-                                                            <input onfocus="this.select();" id="cantidad" ng-keypress="interceptarTecla($event,'agregar_detalle_compra',false)" 
-                                                                class="col-xs-12" ng-change="calcularImporte();verificarCamposDetalleCompra(detalleCompra)" ng-model="detalleCompra.cantidad"
-                                                                type="number" />
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>
-                                                            <p>IMP. (Bs)</p>
-                                                            {{detalleCompra.importe|number:2}}
-                                                        </td>
-                                                        <td>
-                                                            <p>ACC.</p>
-                                                            <button id="agregar_detalle_compra" type="button" ng-disabled="verificacionDatos" ng-click="verificarProducto(detalleCompra)"
-                                                                class="btn btn-success btn-sm">
-                                                                <i class="ace-icon fa fa-plus bigger-110"></i>
-                                                            </button>
-                                                        </td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                        
+                                                    </td>
+                                                    <td>
+                                                        <p>CANT. (u)</p>
+                                                        <input onfocus="this.select();" id="cantidad" ng-keypress="interceptarTecla($event,'agregar_detalle_compra',false)" class="col-xs-12"
+                                                            ng-change="calcularImporte();verificarCamposDetalleCompra(detalleCompra)"
+                                                            ng-model="detalleCompra.cantidad" type="number" />
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <p>IMP. (Bs)</p>
+                                                        {{detalleCompra.importe|number:2}}
+                                                    </td>
+                                                    <td>
+                                                        <p>ACC.</p>
+                                                        <button id="agregar_detalle_compra" type="button" ng-disabled="verificacionDatos" ng-click="verificarProducto(detalleCompra)"
+                                                            class="btn btn-success btn-sm">
+                                                            <i class="ace-icon fa fa-plus bigger-110"></i>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+
                                     </div>
                                 </div>
                             </div>
@@ -691,53 +691,53 @@
                                 </div>
                                 <div class="widget-body">
                                     <div class="widget-main">
-                                        <form id="formularioBusquedaServicio" name="formularioBusquedaServicio" novalidate>
-                                            <table class="table table-striped table-bordered table-hover">
-                                               
-                                                    <tr>
-                                                        <td>
-                                                            <p>SERVICIO</p>
-                                                            <label class="input-group">
-                                                                    <span class="input-group-addon glyphicon glyphicon-pencil point-edit green" ng-click="abrirDialogServicios(datosServicios)"></span>
-    
-    
-                                                                    <input id="id_servicio" autocomplete="off" ng-keypress="interceptarTecla($event,'fecha_vencimiento',true)" required ng-disabled="!cajaChica.compra.movimiento.clase.id"
-                                                                        type="text" ng-model="detalleCompra.servicio" placeholder="Ingrese el nombre del servicio..."
-                                                                        uib-typeahead="servicio as (servicio.nombre+'-'+servicio.nombre_corto) for servicio in datosServicios.clases"
-                                                                        typeahead-wait-ms="1000" typeahead-template-url="templates/autocompletar.html"
-                                                                        typeahead-show-hint="false" typeahead-min-length="3" typeahead-on-select="establecerServicio($item, $model, $label, $event)">
-                                                                </label>
-                                                        </td>
-                                                        <td>
-                                                            <p>C. U. (Bs/u)</p>
-                                                            <input autofocus onfocus="this.select();" id="costo_unitario" ng-keypress="interceptarTecla($event,'cantidad',true)" required
-                                                            class="col-xs-12" ng-change="calcularImporte()" step="0.001"
-                                                            ng-model="detalleCompra.costo_unitario" type="number" />
-                                                        </td>
-                                                        <td>
-                                                            <p>CANT. (u)</p>
-                                                            <input id="cantidad" ng-keypress="interceptarTecla($event,'agregar_detalle_compra',false)" required class="col-xs-12" ng-change="calcularImporte()"
-                                                                ng-model="detalleCompra.cantidad" type="number" />
-                                                        </td>
-                                                      
-                                                    </tr>
-                                                    <tr>
-                                                     
-                                                            <td>
-                                                                <p>IMP. (Bs)</p>
-                                                                {{detalleCompra.importe|number:2}}
-                                                            </td>
-                                                            <td>
-                                                                <p>ACC.</p>
-                                                                <button id="agregar_detalle_compra" type="button" ng-disabled="formularioBusquedaServicio.$invalid" ng-click="verificarServicio(detalleCompra)"
-                                                                class="btn btn-success btn-sm">
-                                                                <i class="ace-icon fa fa-plus bigger-110"></i>
-                                                            </button>
-                                                            </td>
-                                                        </tr>
-                                               
-                                            </table>
-                                        </form>
+
+                                        <table class="table table-striped table-bordered table-hover">
+
+                                            <tr>
+                                                <td>
+                                                    <p>SERVICIO</p>
+                                                    <label class="input-group">
+                                                        <span class="input-group-addon glyphicon glyphicon-pencil point-edit green" ng-click="abrirDialogServicios(datosServicios)"></span>
+
+
+                                                        <input id="id_servicio" autocomplete="off" ng-keypress="interceptarTecla($event,'fecha_vencimiento',true)" ng-disabled="!cajaChica.compra.movimiento.clase.id"
+                                                            type="text" ng-model="detalleCompra.servicio.nombre" placeholder="Ingrese el nombre del servicio..."
+                                                            uib-typeahead="servicio as (servicio.nombre+'-'+servicio.nombre_corto) for servicio in datosServicios.clases"
+                                                            typeahead-wait-ms="1000" typeahead-template-url="templates/autocompletar.html"
+                                                            typeahead-show-hint="false" typeahead-min-length="3" typeahead-on-select="establecerServicio($item, $model, $label, $event)">
+                                                    </label>
+                                                </td>
+                                                <td>
+                                                    <p>C. U. (Bs/u)</p>
+                                                    <input autofocus onfocus="this.select();" id="costo_unitario" ng-keypress="interceptarTecla($event,'cantidad',true)" class="col-xs-12"
+                                                        ng-change="calcularImporte();verificarCamposDetalleCompra(detalleCompra,true)" step="0.001" ng-model="detalleCompra.costo_unitario"
+                                                        type="number" />
+                                                </td>
+                                                <td>
+                                                    <p>CANT. (u)</p>
+                                                    <input id="cantidad" ng-keypress="interceptarTecla($event,'agregar_detalle_compra',false)" class="col-xs-12" ng-change="calcularImporte();verificarCamposDetalleCompra(detalleCompra,true)"
+                                                        ng-model="detalleCompra.cantidad" type="number" />
+                                                </td>
+
+                                            </tr>
+                                            <tr>
+
+                                                <td>
+                                                    <p>IMP. (Bs)</p>
+                                                    {{detalleCompra.importe|number:2}}
+                                                </td>
+                                                <td>
+                                                    <p>ACC.</p>
+                                                    <button id="agregar_detalle_compra" type="button" ng-disabled="verificacionDatos" ng-click="verificacionDatos(detalleCompra)"
+                                                        class="btn btn-success btn-sm">
+                                                        <i class="ace-icon fa fa-plus bigger-110"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+
+                                        </table>
+
                                     </div>
                                 </div>
                             </div>
@@ -903,8 +903,8 @@
                                         <span id="descuentos" class="lbl check-compra"></span>
                                     </label>
                                     <input required ng-change="calcularImporteGeneral()" ng-disabled="cajaChica.ver" ng-model-options="{updateOn: 'submit'}"
-                                        ng-model="cajaChica.compra.descuento" class="form-control" step="0.001" class="col-xs-12" type="number" value="0.0"
-                                    />
+                                        ng-model="cajaChica.compra.descuento" class="form-control" step="0.001" class="col-xs-12"
+                                        type="number" value="0.0" />
                                     <span class="red">(*)</span>
                                 </td>
                                 <td ng-if="cajaChica.compra.descuento_general">
@@ -915,622 +915,622 @@
                                         <span id="recargos" class="lbl check-compra"></span>
                                     </label>
                                     <input required ng-change="calcularImporteGeneral()" ng-disabled="cajaChica.ver" ng-model-options="{updateOn: 'submit'}"
-                                        ng-model="cajaChica.compra.recargo" step="0.001" class="col-xs-12 form-control" type="number" value="0"
-                                    />
+                                        ng-model="cajaChica.compra.recargo" step="0.001" class="col-xs-12 form-control" type="number"
+                                        value="0" />
                                     <span class="red">(*)</span>
                                 </td>
                             </tr>
                             <tr>
-                                    <td ng-if="cajaChica.compra.descuento_general">
-                                        <label>ICE (-)</label>
-                                        <input required ng-change="calcularImporteGeneral()" ng-disabled="cajaChica.ver" ng-model-options="{updateOn: 'submit'}"
-                                            ng-model="cajaChica.compra.ice" step="0.001" class="col-xs-12 form-control" type="number"
-                                            value="0" />
-                                        <span class="red">(*)</span>
+                                <td ng-if="cajaChica.compra.descuento_general">
+                                    <label>ICE (-)</label>
+                                    <input required ng-change="calcularImporteGeneral()" ng-disabled="cajaChica.ver" ng-model-options="{updateOn: 'submit'}"
+                                        ng-model="cajaChica.compra.ice" step="0.001" class="col-xs-12 form-control" type="number"
+                                        value="0" />
+                                    <span class="red">(*)</span>
+                                </td>
+                                <td ng-if="cajaChica.compra.descuento_general">
+                                    <label>EXCENTOS (-)</label>
+                                    <input required ng-change="calcularImporteGeneral()" ng-disabled="cajaChica.ver" ng-model-options="{updateOn: 'submit'}"
+                                        ng-model="cajaChica.compra.excento" step="0.001" class="col-xs-12 form-control" type="number"
+                                        value="0" />
+                                    <span class="red">(*)</span>
+                                </td>
+                                <tr>
+                                    <td colspan="2">
+                                        <a class="green" href="javascript:void(0)" ng-disabled="cajaChica.ver" ng-click="cajaChica.compra.usarObservacion=(cajaChica.compra.usarObservacion)?false:true">
+                                            <i class="ace-icon fa fa-pencil-square-o bigger-130"></i>
+                                        </a>
+                                        <label ng-if="cajaChica.compra.usarObservacion">
+                                            <b>OBSERVACIÓN</b>
+                                        </label>
+                                        <input ng-if="cajaChica.compra.usarObservacion" ng-disabled="cajaChica.ver" ng-model-options="{updateOn: 'submit'}" ng-model="cajaChica.compra.observacion"
+                                            type="text" class="form-control">
                                     </td>
-                                    <td ng-if="cajaChica.compra.descuento_general">
-                                        <label>EXCENTOS (-)</label>
-                                        <input required ng-change="calcularImporteGeneral()" ng-disabled="cajaChica.ver" ng-model-options="{updateOn: 'submit'}"
-                                            ng-model="cajaChica.compra.excento" step="0.001" class="col-xs-12 form-control" type="number"
-                                            value="0" />
-                                        <span class="red">(*)</span>
-                                    </td>
-                                    <tr>
-                                        <td colspan="2">
-                                            <a class="green" href="javascript:void(0)" ng-disabled="cajaChica.ver" ng-click="cajaChica.compra.usarObservacion=(cajaChica.compra.usarObservacion)?false:true">
-                                                <i class="ace-icon fa fa-pencil-square-o bigger-130"></i>
-                                            </a>
-                                            <label ng-if="cajaChica.compra.usarObservacion">
-                                                <b>OBSERVACIÓN</b>
-                                            </label>
-                                            <input ng-if="cajaChica.compra.usarObservacion" ng-disabled="cajaChica.ver" ng-model-options="{updateOn: 'submit'}" ng-model="cajaChica.compra.observacion"
-                                                type="text" class="form-control">
-                                        </td>
-                                    </tr>
                                 </tr>
+                            </tr>
                         </table>
-                        
+
                     </div>
-                    
+
                 </div>
                 <div class="widget-box" ng-if="cajaChica.compra.usar_producto">
-                        <div class="widget-header" ng-if="cajaChica.compra.detallesCompra.length>0">
-                            <div class="row" >
-                                <div class="col-sm-6">
-                                    <h4 class="widget-title">DETALLE DE COMPRA</h4>
-                                </div>
-                                <div class="col-sm-6">
-                                    <div class="inline pos-rel pull-right">
-                                        <a data-toggle="dropdown" href="javascript:void(0)" class="dropdown-toggle">
-                                            <i class="glyphicon  glyphicon-list-alt"></i>
-                                        </a>
-        
-                                        <ul id="campos-detalle-compra" class="dropdown-menu-right dropdown-menu dropdown-yellow dropdown-caret">
-                                            <li>
-                                                <label>
-                                                    <input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionCompraVista.mostrar_producto" ng-change="guardarConfiguracionCompraVista()"
-                                                    />
-                                                    <span class="lbl check-descuento"></span>
-                                                </label>
-                                                <label>NOMBRE</label>
-                                            </li>
-                                            
-                                            <li>
-                                                <label>
-                                                    <input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionCompraVista.mostrar_costo_unitario" ng-change="guardarConfiguracionCompraVista()"
-                                                    />
-                                                    <span class="lbl check-descuento"></span>
-                                                </label>
-                                                <label>C.U. (Bs/u)</label>
-                                            </li>
-                                            <li>
-                                                <label>
-                                                    <input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionCompraVista.mostrar_cantidad" ng-change="guardarConfiguracionCompraVista()"
-                                                    />
-                                                    <span class="lbl check-descuento"></span>
-                                                </label>
-                                                <label>CANT. (u)</label>
-                                            </li>
-                                           
-                                            <li>
-                                                <label>
-                                                    <input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionCompraVista.mostrar_importe" ng-change="guardarConfiguracionCompraVista()"
-                                                    />
-                                                    <span class="lbl check-descuento"></span>
-                                                </label>
-                                                <label>IMP. (Bs)</label>
-                                            </li>
-                                            <li>
-                                                <label>
-                                                    <input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionCompraVista.mostrar_descuento" ng-change="guardarConfiguracionCompraVista()"
-                                                    />
-                                                    <span class="lbl check-descuento"></span>
-                                                </label>
-                                                <label>DESC. (-)</label>
-                                            </li>
-                                            <li>
-                                                <label>
-                                                    <input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionCompraVista.mostrar_recargo" ng-change="guardarConfiguracionCompraVista()"
-                                                    />
-                                                    <span class="lbl check-descuento"></span>
-                                                </label>
-                                                <label>REC. (+)</label>
-                                            </li>
-                                            <li>
-                                                <label>
-                                                    <input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionCompraVista.mostrar_ice" ng-change="guardarConfiguracionCompraVista()"
-                                                    />
-                                                    <span class="lbl check-descuento"></span>
-                                                </label>
-                                                <label>ICE (-)</label>
-                                            </li>
-                                            <li>
-                                                <label>
-                                                    <input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionCompraVista.mostrar_excento" ng-change="guardarConfiguracionCompraVista()"
-                                                    />
-                                                    <span class="lbl check-descuento"></span>
-                                                </label>
-                                                <label>EXC. (-)</label>
-                                            </li>
-                                            <li ng-if="cajaChica.compra.movimiento.clase.nombre!=diccionario.MOVING_POR_RETENCION_BIENES">
-                                                <label>
-                                                    <input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionCompraVista.mostrar_total" ng-change="guardarConfiguracionCompraVista()"
-                                                    />
-                                                    <span class="lbl check-descuento"></span>
-                                                </label>
-                                                <label>SUJETO A CF</label>
-                                            </li>
-                                            <li ng-if="usuario.empresa.usar_funciones_erp && cajaChica.compra.movimiento.clase.nombre==diccionario.MOVING_POR_RETENCION_BIENES">
-                                                <label>
-                                                    <input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionCompraVista.mostrar_it_retencion" ng-change="guardarConfiguracionCompraVista()"
-                                                    />
-                                                    <span class="lbl check-descuento"></span>
-                                                </label>
-                                                <label>IT</label>
-                                            </li>
-                                            <li ng-if="usuario.empresa.usar_funciones_erp && cajaChica.compra.movimiento.clase.nombre==diccionario.MOVING_POR_RETENCION_BIENES">
-                                                <label>
-                                                    <input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionCompraVista.mostrar_iue" ng-change="guardarConfiguracionCompraVista()"
-                                                    />
-                                                    <span class="lbl check-descuento"></span>
-                                                </label>
-                                                <label>IUE</label>
-                                            </li>
-                                            <li ng-if="usuario.empresa.usar_funciones_erp && cajaChica.compra.movimiento.clase.nombre==diccionario.MOVING_POR_RETENCION_BIENES">
-                                                <label>
-                                                    <input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionCompraVista.mostrar_pagado" ng-change="guardarConfiguracionCompraVista()"
-                                                    />
-                                                    <span class="lbl check-descuento"></span>
-                                                </label>
-                                                <label>PAGADO</label>
-                                            </li>
-                                            <li class="divider"></li>
-                                        </ul>
-                                    </div>
-                                </div>
+                    <div class="widget-header" ng-if="cajaChica.compra.detallesCompra.length>0">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <h4 class="widget-title">DETALLE DE COMPRA</h4>
                             </div>
-                        </div>
-                        <div class="widget-body" ng-if="cajaChica.compra.detallesCompra.length>0">
-                            <div class="widget-main">
-                                <table class="table table-striped table-bordered table-hover">
-                                    <thead>
-                                        <tr>
-                                            <th>
-                                                <label>#</label>
-                                            </th>
-                                            <th ng-if="configuracionCompraVista.mostrar_producto">
-                                                <label>PRODUCTO</label>
-                                            </th>
-                                            
-                                            <th ng-if="configuracionCompraVista.mostrar_costo_unitario">
-                                                <label>C.U. (Bs/u)</label>
-                                            </th>
-                                            <th ng-if="configuracionCompraVista.mostrar_cantidad">
-                                                <label>CANT. (u)</label>
-                                            </th>
-                                            
-                                            <th ng-if="configuracionCompraVista.mostrar_importe">
-                                                <label>IMP. (Bs)</label>
-                                            </th>
-                                            <th ng-if="configuracionCompraVista.mostrar_descuento">
-                                                <label>DESC. (-)</label>
-                                            </th>
-                                            <th ng-if="configuracionCompraVista.mostrar_recargo">
-                                                <label>REC. (+)</label>
-                                            </th>
-                                            <th ng-if="configuracionCompraVista.mostrar_ice">
-                                                <label>ICE (-)</label>
-                                            </th>
-                                            <th ng-if="configuracionCompraVista.mostrar_excento">
-                                                <label>EXC. (-)</label>
-                                            </th>
-                                            <th ng-if="configuracionCompraVista.mostrar_total && cajaChica.compra.movimiento.clase.nombre!=diccionario.MOVING_POR_RETENCION_BIENES">
-                                                <label>SUJETO A CF</label>
-                                            </th>
-                                            <th ng-if="configuracionCompraVista.mostrar_it_retencion && usuario.empresa.usar_funciones_erp && cajaChica.compra.movimiento.clase.nombre==diccionario.MOVING_POR_RETENCION_BIENES">
-                                                <label>IT</label>
-                                            </th>
-                                            <th ng-if="configuracionCompraVista.mostrar_iue && usuario.empresa.usar_funciones_erp && cajaChica.compra.movimiento.clase.nombre==diccionario.MOVING_POR_RETENCION_BIENES">
-                                                <label>IUE</label>
-                                            </th>
-                                            <th ng-if="configuracionCompraVista.mostrar_pagado && usuario.empresa.usar_funciones_erp && cajaChica.compra.movimiento.clase.nombre==diccionario.MOVING_POR_RETENCION_BIENES">
-                                                <label>Pagado</label>
-                                            </th>
-                                            <th>
-                                                <label>ACCIONES</label>
-                                            </th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr ng-repeat="detalleCompra in cajaChica.compra.detallesCompra" ng-if="!detalleCompra.eliminado">
-                                            <td>
-                                                {{$index+1}}
-                                            </td>
-                                            <td ng-if="configuracionCompraVista.mostrar_producto">
-                                                {{detalleCompra.producto.nombre}}
-                                            </td>
-                                           
-                                            <td ng-if="!cajaChica.compra.id && configuracionCompraVista.mostrar_costo_unitario">
-                                                {{detalleCompra.costo_unitario}}
-                                            </td>
-                                            <td ng-if="!cajaChica.compra.id && configuracionCompraVista.mostrar_cantidad">
-                                                {{detalleCompra.cantidad}}
-                                            </td>
-                                            <td ng-if="cajaChica.compra.id && configuracionCompraVista.mostrar_costo_unitario">
-                                                <input required class="col-xs-12" ng-change="calcularImporteDetalleEdicion(detalleCompra)" step="0.001" ng-model="detalleCompra.costo_unitario"
-                                                 type="number" min="0.001" />
-                                            </td>
-                                            <td ng-if="cajaChica.compra.id && configuracionCompraVista.mostrar_cantidad">
-                                                <input required class="col-xs-12" ng-change="calcularImporteDetalleEdicion(detalleCompra)" step="0.001" ng-model="detalleCompra.cantidad"
-                                                 type="number" min="0.001" />
-                                            </td>
-                                            
-                                            <td ng-if="configuracionCompraVista.mostrar_importe">
-                                                {{detalleCompra.importe|number:2}}
-                                            </td>
-                                            <td ng-if="!cajaChica.compra.descuento_general && configuracionCompraVista.mostrar_descuento">
-                                                {{detalleCompra.descuento|number:2}}
-                                            </td>
-                                            <td ng-if="!cajaChica.compra.descuento_general && configuracionCompraVista.mostrar_recargo">
-                                                {{detalleCompra.recargo|number:2}}
-                                            </td>
-                                            <td ng-if="!cajaChica.compra.descuento_general && configuracionCompraVista.mostrar_ice">
-                                                {{detalleCompra.ice|number:2}}
-                                            </td>
-                                            <td ng-if="!cajaChica.compra.descuento_general && configuracionCompraVista.mostrar_excento">
-                                                {{detalleCompra.excento|number:2}}
-                                            </td>
-                                            <td ng-if="cajaChica.compra.descuento_general && configuracionCompraVista.mostrar_descuento">
-                                                {{compra.descuento|number:2}}
-                                            </td>
-                                            <td ng-if="cajaChica.compra.descuento_general && configuracionCompraVista.mostrar_recargo">
-                                                {{compra.recargo|number:2}}
-                                            </td>
-                                            <td ng-if="cajaChica.compra.descuento_general && configuracionCompraVista.mostrar_ice">
-                                                {{compra.ice|number:2}}
-                                            </td>
-                                            <td ng-if="cajaChica.compra.descuento_general && configuracionCompraVista.mostrar_excento">
-                                                {{compra.excento|number:2}}
-                                            </td>
-                                            <td ng-if="configuracionCompraVista.mostrar_total && cajaChica.compra.movimiento.clase.nombre!=diccionario.MOVING_POR_RETENCION_BIENES">
-                                                {{detalleCompra.total|number:2}}
-                                            </td>
-                                            <td ng-if="configuracionCompraVista.mostrar_it_retencion && usuario.empresa.usar_funciones_erp && cajaChica.compra.movimiento.clase.nombre==diccionario.MOVING_POR_RETENCION_BIENES">
-                                                <label>{{detalleCompra.it|number:2}}</label>
-                                            </td>
-                                            <td ng-if="configuracionCompraVista.mostrar_iue && usuario.empresa.usar_funciones_erp && cajaChica.compra.movimiento.clase.nombre==diccionario.MOVING_POR_RETENCION_BIENES">
-                                                <label>{{detalleCompra.iue|number:2}}</label>
-                                            </td>
-                                            <td ng-if="configuracionCompraVista.mostrar_pagado && usuario.empresa.usar_funciones_erp && cajaChica.compra.movimiento.clase.nombre==diccionario.MOVING_POR_RETENCION_BIENES">
-                                                <label>{{detalleCompra.total|number:2}}</label>
-                                            </td>
-                                            <td>
-                                                <a class="red" href="javascript:void(0)" ng-click="eliminarDetalleCompra(detalleCompra)">
-                                                    <i class="ace-icon fa fa-trash-o bigger-130"></i>
-                                                </a>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-        
-                                            </td>
-                                            <td ng-if="configuracionCompraVista.mostrar_producto">
-                                                <b>TOTALES</b>
-                                            </td>
-                                            
-                                            <td ng-if="configuracionCompraVista.mostrar_costo_unitario">
-        
-                                            </td>
-                                            <td ng-if="configuracionCompraVista.mostrar_cantidad">
-        
-                                            </td>
-                                           
-                                            <td ng-if="configuracionCompraVista.mostrar_importe">
-                                                {{cajaChica.compra.importe|number:2}}
-                                            </td>
-                                            <td ng-if="configuracionCompraVista.mostrar_descuento">
-        
-                                            </td>
-                                            <td ng-if="configuracionCompraVista.mostrar_recargo">
-        
-                                            </td>
-                                            <td ng-if="configuracionCompraVista.mostrar_ice">
-        
-                                            </td>
-                                            <td ng-if="configuracionCompraVista.mostrar_excento">
-        
-                                            </td>
-                                            <td id="total_compra" ng-if="configuracionCompraVista.mostrar_total && cajaChica.compra.movimiento.clase.nombre!=diccionario.MOVING_POR_RETENCION_BIENES">
-                                                {{cajaChica.compra.total|number:2}}
-                                            </td>
-                                            <td ng-if="configuracionCompraVista.mostrar_it_retencion && usuario.empresa.usar_funciones_erp && cajaChica.compra.movimiento.clase.nombre==diccionario.MOVING_POR_RETENCION_BIENES">
-        
-                                            </td>
-                                            <td ng-if="configuracionCompraVista.mostrar_iue && usuario.empresa.usar_funciones_erp && cajaChica.compra.movimiento.clase.nombre==diccionario.MOVING_POR_RETENCION_BIENES">
-        
-                                            </td>
-                                            <td ng-if="configuracionCompraVista.mostrar_pagado && usuario.empresa.usar_funciones_erp && cajaChica.compra.movimiento.clase.nombre==diccionario.MOVING_POR_RETENCION_BIENES">
-                                                {{cajaChica.compra.total|number:2}}
-                                            </td>
-                                            <td>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                            <div class="col-sm-6">
+                                <div class="inline pos-rel pull-right">
+                                    <a data-toggle="dropdown" href="javascript:void(0)" class="dropdown-toggle">
+                                        <i class="glyphicon  glyphicon-list-alt"></i>
+                                    </a>
+
+                                    <ul id="campos-detalle-compra" class="dropdown-menu-right dropdown-menu dropdown-yellow dropdown-caret">
+                                        <li>
+                                            <label>
+                                                <input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionCompraVista.mostrar_producto" ng-change="guardarConfiguracionCompraVista()"
+                                                />
+                                                <span class="lbl check-descuento"></span>
+                                            </label>
+                                            <label>NOMBRE</label>
+                                        </li>
+
+                                        <li>
+                                            <label>
+                                                <input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionCompraVista.mostrar_costo_unitario" ng-change="guardarConfiguracionCompraVista()"
+                                                />
+                                                <span class="lbl check-descuento"></span>
+                                            </label>
+                                            <label>C.U. (Bs/u)</label>
+                                        </li>
+                                        <li>
+                                            <label>
+                                                <input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionCompraVista.mostrar_cantidad" ng-change="guardarConfiguracionCompraVista()"
+                                                />
+                                                <span class="lbl check-descuento"></span>
+                                            </label>
+                                            <label>CANT. (u)</label>
+                                        </li>
+
+                                        <li>
+                                            <label>
+                                                <input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionCompraVista.mostrar_importe" ng-change="guardarConfiguracionCompraVista()"
+                                                />
+                                                <span class="lbl check-descuento"></span>
+                                            </label>
+                                            <label>IMP. (Bs)</label>
+                                        </li>
+                                        <li>
+                                            <label>
+                                                <input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionCompraVista.mostrar_descuento" ng-change="guardarConfiguracionCompraVista()"
+                                                />
+                                                <span class="lbl check-descuento"></span>
+                                            </label>
+                                            <label>DESC. (-)</label>
+                                        </li>
+                                        <li>
+                                            <label>
+                                                <input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionCompraVista.mostrar_recargo" ng-change="guardarConfiguracionCompraVista()"
+                                                />
+                                                <span class="lbl check-descuento"></span>
+                                            </label>
+                                            <label>REC. (+)</label>
+                                        </li>
+                                        <li>
+                                            <label>
+                                                <input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionCompraVista.mostrar_ice" ng-change="guardarConfiguracionCompraVista()"
+                                                />
+                                                <span class="lbl check-descuento"></span>
+                                            </label>
+                                            <label>ICE (-)</label>
+                                        </li>
+                                        <li>
+                                            <label>
+                                                <input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionCompraVista.mostrar_excento" ng-change="guardarConfiguracionCompraVista()"
+                                                />
+                                                <span class="lbl check-descuento"></span>
+                                            </label>
+                                            <label>EXC. (-)</label>
+                                        </li>
+                                        <li ng-if="cajaChica.compra.movimiento.clase.nombre!=diccionario.MOVING_POR_RETENCION_BIENES">
+                                            <label>
+                                                <input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionCompraVista.mostrar_total" ng-change="guardarConfiguracionCompraVista()"
+                                                />
+                                                <span class="lbl check-descuento"></span>
+                                            </label>
+                                            <label>SUJETO A CF</label>
+                                        </li>
+                                        <li ng-if="usuario.empresa.usar_funciones_erp && cajaChica.compra.movimiento.clase.nombre==diccionario.MOVING_POR_RETENCION_BIENES">
+                                            <label>
+                                                <input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionCompraVista.mostrar_it_retencion" ng-change="guardarConfiguracionCompraVista()"
+                                                />
+                                                <span class="lbl check-descuento"></span>
+                                            </label>
+                                            <label>IT</label>
+                                        </li>
+                                        <li ng-if="usuario.empresa.usar_funciones_erp && cajaChica.compra.movimiento.clase.nombre==diccionario.MOVING_POR_RETENCION_BIENES">
+                                            <label>
+                                                <input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionCompraVista.mostrar_iue" ng-change="guardarConfiguracionCompraVista()"
+                                                />
+                                                <span class="lbl check-descuento"></span>
+                                            </label>
+                                            <label>IUE</label>
+                                        </li>
+                                        <li ng-if="usuario.empresa.usar_funciones_erp && cajaChica.compra.movimiento.clase.nombre==diccionario.MOVING_POR_RETENCION_BIENES">
+                                            <label>
+                                                <input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionCompraVista.mostrar_pagado" ng-change="guardarConfiguracionCompraVista()"
+                                                />
+                                                <span class="lbl check-descuento"></span>
+                                            </label>
+                                            <label>PAGADO</label>
+                                        </li>
+                                        <li class="divider"></li>
+                                    </ul>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <div class="widget-box" ng-if="!cajaChica.compra.usar_producto">
-                            <div class="widget-header" ng-if="cajaChica.compra.detallesCompra.length>0">
-                                <div class="row">
-                                    <div class="col-sm-6">
-                                        <h4 class="widget-title">DETALLE DE COMPRA</h4>
-                                    </div>
-                                    <div class="col-sm-6">
-                                        <div class="inline pos-rel pull-right">
-                                            <a data-toggle="dropdown" href="javascript:void(0)" class="dropdown-toggle">
-                                                <i class="glyphicon  glyphicon-list-alt"></i>
+                    <div class="widget-body" ng-if="cajaChica.compra.detallesCompra.length>0">
+                        <div class="widget-main">
+                            <table class="table table-striped table-bordered table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>
+                                            <label>#</label>
+                                        </th>
+                                        <th ng-if="configuracionCompraVista.mostrar_producto">
+                                            <label>PRODUCTO</label>
+                                        </th>
+
+                                        <th ng-if="configuracionCompraVista.mostrar_costo_unitario">
+                                            <label>C.U. (Bs/u)</label>
+                                        </th>
+                                        <th ng-if="configuracionCompraVista.mostrar_cantidad">
+                                            <label>CANT. (u)</label>
+                                        </th>
+
+                                        <th ng-if="configuracionCompraVista.mostrar_importe">
+                                            <label>IMP. (Bs)</label>
+                                        </th>
+                                        <th ng-if="configuracionCompraVista.mostrar_descuento">
+                                            <label>DESC. (-)</label>
+                                        </th>
+                                        <th ng-if="configuracionCompraVista.mostrar_recargo">
+                                            <label>REC. (+)</label>
+                                        </th>
+                                        <th ng-if="configuracionCompraVista.mostrar_ice">
+                                            <label>ICE (-)</label>
+                                        </th>
+                                        <th ng-if="configuracionCompraVista.mostrar_excento">
+                                            <label>EXC. (-)</label>
+                                        </th>
+                                        <th ng-if="configuracionCompraVista.mostrar_total && cajaChica.compra.movimiento.clase.nombre!=diccionario.MOVING_POR_RETENCION_BIENES">
+                                            <label>SUJETO A CF</label>
+                                        </th>
+                                        <th ng-if="configuracionCompraVista.mostrar_it_retencion && usuario.empresa.usar_funciones_erp && cajaChica.compra.movimiento.clase.nombre==diccionario.MOVING_POR_RETENCION_BIENES">
+                                            <label>IT</label>
+                                        </th>
+                                        <th ng-if="configuracionCompraVista.mostrar_iue && usuario.empresa.usar_funciones_erp && cajaChica.compra.movimiento.clase.nombre==diccionario.MOVING_POR_RETENCION_BIENES">
+                                            <label>IUE</label>
+                                        </th>
+                                        <th ng-if="configuracionCompraVista.mostrar_pagado && usuario.empresa.usar_funciones_erp && cajaChica.compra.movimiento.clase.nombre==diccionario.MOVING_POR_RETENCION_BIENES">
+                                            <label>Pagado</label>
+                                        </th>
+                                        <th>
+                                            <label>ACCIONES</label>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr ng-repeat="detalleCompra in cajaChica.compra.detallesCompra" ng-if="!detalleCompra.eliminado">
+                                        <td>
+                                            {{$index+1}}
+                                        </td>
+                                        <td ng-if="configuracionCompraVista.mostrar_producto">
+                                            {{detalleCompra.producto.nombre}}
+                                        </td>
+
+                                        <td ng-if="!cajaChica.compra.id && configuracionCompraVista.mostrar_costo_unitario">
+                                            {{detalleCompra.costo_unitario}}
+                                        </td>
+                                        <td ng-if="!cajaChica.compra.id && configuracionCompraVista.mostrar_cantidad">
+                                            {{detalleCompra.cantidad}}
+                                        </td>
+                                        <td ng-if="cajaChica.compra.id && configuracionCompraVista.mostrar_costo_unitario">
+                                            <input required class="col-xs-12" ng-change="calcularImporteDetalleEdicion(detalleCompra)" step="0.001" ng-model="detalleCompra.costo_unitario"
+                                                type="number" min="0.001" />
+                                        </td>
+                                        <td ng-if="cajaChica.compra.id && configuracionCompraVista.mostrar_cantidad">
+                                            <input required class="col-xs-12" ng-change="calcularImporteDetalleEdicion(detalleCompra)" step="0.001" ng-model="detalleCompra.cantidad"
+                                                type="number" min="0.001" />
+                                        </td>
+
+                                        <td ng-if="configuracionCompraVista.mostrar_importe">
+                                            {{detalleCompra.importe|number:2}}
+                                        </td>
+                                        <td ng-if="!cajaChica.compra.descuento_general && configuracionCompraVista.mostrar_descuento">
+                                            {{detalleCompra.descuento|number:2}}
+                                        </td>
+                                        <td ng-if="!cajaChica.compra.descuento_general && configuracionCompraVista.mostrar_recargo">
+                                            {{detalleCompra.recargo|number:2}}
+                                        </td>
+                                        <td ng-if="!cajaChica.compra.descuento_general && configuracionCompraVista.mostrar_ice">
+                                            {{detalleCompra.ice|number:2}}
+                                        </td>
+                                        <td ng-if="!cajaChica.compra.descuento_general && configuracionCompraVista.mostrar_excento">
+                                            {{detalleCompra.excento|number:2}}
+                                        </td>
+                                        <td ng-if="cajaChica.compra.descuento_general && configuracionCompraVista.mostrar_descuento">
+                                            {{compra.descuento|number:2}}
+                                        </td>
+                                        <td ng-if="cajaChica.compra.descuento_general && configuracionCompraVista.mostrar_recargo">
+                                            {{compra.recargo|number:2}}
+                                        </td>
+                                        <td ng-if="cajaChica.compra.descuento_general && configuracionCompraVista.mostrar_ice">
+                                            {{compra.ice|number:2}}
+                                        </td>
+                                        <td ng-if="cajaChica.compra.descuento_general && configuracionCompraVista.mostrar_excento">
+                                            {{compra.excento|number:2}}
+                                        </td>
+                                        <td ng-if="configuracionCompraVista.mostrar_total && cajaChica.compra.movimiento.clase.nombre!=diccionario.MOVING_POR_RETENCION_BIENES">
+                                            {{detalleCompra.total|number:2}}
+                                        </td>
+                                        <td ng-if="configuracionCompraVista.mostrar_it_retencion && usuario.empresa.usar_funciones_erp && cajaChica.compra.movimiento.clase.nombre==diccionario.MOVING_POR_RETENCION_BIENES">
+                                            <label>{{detalleCompra.it|number:2}}</label>
+                                        </td>
+                                        <td ng-if="configuracionCompraVista.mostrar_iue && usuario.empresa.usar_funciones_erp && cajaChica.compra.movimiento.clase.nombre==diccionario.MOVING_POR_RETENCION_BIENES">
+                                            <label>{{detalleCompra.iue|number:2}}</label>
+                                        </td>
+                                        <td ng-if="configuracionCompraVista.mostrar_pagado && usuario.empresa.usar_funciones_erp && cajaChica.compra.movimiento.clase.nombre==diccionario.MOVING_POR_RETENCION_BIENES">
+                                            <label>{{detalleCompra.total|number:2}}</label>
+                                        </td>
+                                        <td>
+                                            <a class="red" href="javascript:void(0)" ng-click="eliminarDetalleCompra(detalleCompra)">
+                                                <i class="ace-icon fa fa-trash-o bigger-130"></i>
                                             </a>
-            
-                                            <ul id="campos-detalle-compra" class="dropdown-menu-right dropdown-menu dropdown-yellow dropdown-caret">
-                                                <li>
-                                                    <label>
-                                                        <input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionCompraVista.mostrar_producto" ng-change="guardarConfiguracionCompraVista()"
-                                                        />
-                                                        <span class="lbl check-descuento"></span>
-                                                    </label>
-                                                    <label>NOMBRE</label>
-                                                </li>
-                                                
-                                                <li>
-                                                    <label>
-                                                        <input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionCompraVista.mostrar_costo_unitario" ng-change="guardarConfiguracionCompraVista()"
-                                                        />
-                                                        <span class="lbl check-descuento"></span>
-                                                    </label>
-                                                    <label>C.U. (Bs/u)</label>
-                                                </li>
-                                                <li>
-                                                    <label>
-                                                        <input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionCompraVista.mostrar_cantidad" ng-change="guardarConfiguracionCompraVista()"
-                                                        />
-                                                        <span class="lbl check-descuento"></span>
-                                                    </label>
-                                                    <label>CANT. (u)</label>
-                                                </li>
-                                               
-                                                <li>
-                                                    <label>
-                                                        <input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionCompraVista.mostrar_importe" ng-change="guardarConfiguracionCompraVista()"
-                                                        />
-                                                        <span class="lbl check-descuento"></span>
-                                                    </label>
-                                                    <label>IMP. (Bs)</label>
-                                                </li>
-                                                <li>
-                                                    <label>
-                                                        <input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionCompraVista.mostrar_descuento" ng-change="guardarConfiguracionCompraVista()"
-                                                        />
-                                                        <span class="lbl check-descuento"></span>
-                                                    </label>
-                                                    <label>DESC. (-)</label>
-                                                </li>
-                                                <li>
-                                                    <label>
-                                                        <input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionCompraVista.mostrar_recargo" ng-change="guardarConfiguracionCompraVista()"
-                                                        />
-                                                        <span class="lbl check-descuento"></span>
-                                                    </label>
-                                                    <label>REC. (+)</label>
-                                                </li>
-                                                <li>
-                                                    <label>
-                                                        <input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionCompraVista.mostrar_ice" ng-change="guardarConfiguracionCompraVista()"
-                                                        />
-                                                        <span class="lbl check-descuento"></span>
-                                                    </label>
-                                                    <label>ICE (-)</label>
-                                                </li>
-                                                <li>
-                                                    <label>
-                                                        <input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionCompraVista.mostrar_excento" ng-change="guardarConfiguracionCompraVista()"
-                                                        />
-                                                        <span class="lbl check-descuento"></span>
-                                                    </label>
-                                                    <label>EXC. (-)</label>
-                                                </li>
-                                                <li ng-if="cajaChica.compra.movimiento.clase.nombre!=diccionario.MOVING_POR_RETENCION_BIENES">
-                                                    <label>
-                                                        <input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionCompraVista.mostrar_total" ng-change="guardarConfiguracionCompraVista()"
-                                                        />
-                                                        <span class="lbl check-descuento"></span>
-                                                    </label>
-                                                    <label>SUJETO A CF</label>
-                                                </li>
-                                                <li ng-if="usuario.empresa.usar_funciones_erp && cajaChica.compra.movimiento.clase.nombre==diccionario.MOVING_POR_RETENCION_BIENES">
-                                                    <label>
-                                                        <input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionCompraVista.mostrar_it_retencion" ng-change="guardarConfiguracionCompraVista()"
-                                                        />
-                                                        <span class="lbl check-descuento"></span>
-                                                    </label>
-                                                    <label>IT</label>
-                                                </li>
-                                                <li ng-if="usuario.empresa.usar_funciones_erp && cajaChica.compra.movimiento.clase.nombre==diccionario.MOVING_POR_RETENCION_BIENES">
-                                                    <label>
-                                                        <input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionCompraVista.mostrar_iue" ng-change="guardarConfiguracionCompraVista()"
-                                                        />
-                                                        <span class="lbl check-descuento"></span>
-                                                    </label>
-                                                    <label>IUE</label>
-                                                </li>
-                                                <li ng-if="usuario.empresa.usar_funciones_erp && cajaChica.compra.movimiento.clase.nombre==diccionario.MOVING_POR_RETENCION_BIENES">
-                                                    <label>
-                                                        <input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionCompraVista.mostrar_pagado" ng-change="guardarConfiguracionCompraVista()"
-                                                        />
-                                                        <span class="lbl check-descuento"></span>
-                                                    </label>
-                                                    <label>PAGADO</label>
-                                                </li>
-                                                <li class="divider"></li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+
+                                        </td>
+                                        <td ng-if="configuracionCompraVista.mostrar_producto">
+                                            <b>TOTALES</b>
+                                        </td>
+
+                                        <td ng-if="configuracionCompraVista.mostrar_costo_unitario">
+
+                                        </td>
+                                        <td ng-if="configuracionCompraVista.mostrar_cantidad">
+
+                                        </td>
+
+                                        <td ng-if="configuracionCompraVista.mostrar_importe">
+                                            {{cajaChica.compra.importe|number:2}}
+                                        </td>
+                                        <td ng-if="configuracionCompraVista.mostrar_descuento">
+
+                                        </td>
+                                        <td ng-if="configuracionCompraVista.mostrar_recargo">
+
+                                        </td>
+                                        <td ng-if="configuracionCompraVista.mostrar_ice">
+
+                                        </td>
+                                        <td ng-if="configuracionCompraVista.mostrar_excento">
+
+                                        </td>
+                                        <td id="total_compra" ng-if="configuracionCompraVista.mostrar_total && cajaChica.compra.movimiento.clase.nombre!=diccionario.MOVING_POR_RETENCION_BIENES">
+                                            {{cajaChica.compra.total|number:2}}
+                                        </td>
+                                        <td ng-if="configuracionCompraVista.mostrar_it_retencion && usuario.empresa.usar_funciones_erp && cajaChica.compra.movimiento.clase.nombre==diccionario.MOVING_POR_RETENCION_BIENES">
+
+                                        </td>
+                                        <td ng-if="configuracionCompraVista.mostrar_iue && usuario.empresa.usar_funciones_erp && cajaChica.compra.movimiento.clase.nombre==diccionario.MOVING_POR_RETENCION_BIENES">
+
+                                        </td>
+                                        <td ng-if="configuracionCompraVista.mostrar_pagado && usuario.empresa.usar_funciones_erp && cajaChica.compra.movimiento.clase.nombre==diccionario.MOVING_POR_RETENCION_BIENES">
+                                            {{cajaChica.compra.total|number:2}}
+                                        </td>
+                                        <td>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="widget-box" ng-if="!cajaChica.compra.usar_producto">
+                    <div class="widget-header" ng-if="cajaChica.compra.detallesCompra.length>0">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <h4 class="widget-title">DETALLE DE COMPRA</h4>
                             </div>
-                            <div class="widget-body" ng-if="cajaChica.compra.detallesCompra.length>0">
-                                <div class="widget-main">
-                                    <table class="table table-striped table-bordered table-hover">
-                                        <thead>
-                                            <tr>
-                                                <th>
-                                                    <label>#</label>
-                                                </th>
-                                                <th ng-if="configuracionCompraVista.mostrar_producto">
-                                                    <label>SERVICIO</label>
-                                                </th>                                    
-                                                <th ng-if="configuracionCompraVista.mostrar_costo_unitario">
-                                                    <label>C.U. (Bs/u)</label>
-                                                </th>
-                                                <th ng-if="configuracionCompraVista.mostrar_cantidad">
-                                                    <label>CANT. (u)</label>
-                                                </th>
-                                                <th ng-if="configuracionCompraVista.mostrar_fecha_vencimiento && usuario.empresa.usar_vencimientos">
-                                                    <label>VENC</label>
-                                                </th>
-                                                <th ng-if="configuracionCompraVista.mostrar_lote && usuario.empresa.usar_vencimientos">
-                                                    <label>LOTE</label>
-                                                </th>
-                                                <th ng-if="configuracionCompraVista.mostrar_importe">
-                                                    <label>IMP. (Bs)</label>
-                                                </th>
-                                                <th ng-if="configuracionCompraVista.mostrar_descuento">
-                                                    <label>DESC. (-)</label>
-                                                </th>
-                                                <th ng-if="configuracionCompraVista.mostrar_recargo">
-                                                    <label>REC. (+)</label>
-                                                </th>
-                                                <th ng-if="configuracionCompraVista.mostrar_ice">
-                                                    <label>ICE (-)</label>
-                                                </th>
-                                                <th ng-if="configuracionCompraVista.mostrar_excento">
-                                                    <label>EXC. (-)</label>
-                                                </th>
-                                                <th ng-if="configuracionCompraVista.mostrar_total && cajaChica.compra.movimiento.clase.nombre!=diccionario.MOVING_POR_RETENCION_SERVICIOS">
-                                                    <label>SUJETO A CF</label>
-                                                </th>
-                                                <th ng-if="configuracionCompraVista.mostrar_it_retencion && usuario.empresa.usar_funciones_erp && cajaChica.compra.movimiento.clase.nombre==diccionario.MOVING_POR_RETENCION_SERVICIOS">
-                                                    <label>IT</label>
-                                                </th>
-                                                <th ng-if="configuracionCompraVista.mostrar_iue && usuario.empresa.usar_funciones_erp && cajaChica.compra.movimiento.clase.nombre==diccionario.MOVING_POR_RETENCION_SERVICIOS">
-                                                    <label>IUE</label>
-                                                </th>
-                                                <th ng-if="configuracionCompraVista.mostrar_pagado && usuario.empresa.usar_funciones_erp && cajaChica.compra.movimiento.clase.nombre==diccionario.MOVING_POR_RETENCION_SERVICIOS">
-                                                    <label>Pagado</label>
-                                                </th>
-                                                <th>
-                                                    <label>ACCIONES</label>
-                                                </th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr ng-repeat="detalleCompra in cajaChica.compra.detallesCompra" ng-if="!detalleCompra.eliminado">
-                                                <td>
-                                                    {{$index+1}}
-                                                </td>
-                                                <td ng-if="configuracionCompraVista.mostrar_producto">
-                                                    {{detalleCompra.servicio.nombre}}
-                                                </td>                                                
-                                                <td ng-if="!cajaChica.compra.id && configuracionCompraVista.mostrar_costo_unitario">
-                                                    {{detalleCompra.costo_unitario}}
-                                                </td>
-                                                <td ng-if="!cajaChica.compra.id && configuracionCompraVista.mostrar_cantidad">
-                                                    {{detalleCompra.cantidad}}
-                                                </td>
-                                                <td ng-if="cajaChica.compra.id && configuracionCompraVista.mostrar_costo_unitario">
-                                                    <input required class="col-xs-12" ng-change="calcularImporteDetalleEdicion(detalleCompra)" step="0.001" ng-model="detalleCompra.costo_unitario"
-                                                     type="number" min="0.001" />
-                                                </td>
-                                                <td ng-if="cajaChica.compra.id && configuracionCompraVista.mostrar_cantidad">
-                                                    <input required class="col-xs-12" ng-change="calcularImporteDetalleEdicion(detalleCompra)" step="0.001" ng-model="detalleCompra.cantidad"
-                                                     type="number" min="0.001" />
-                                                </td>
-                                                
-                                                <td ng-if="configuracionCompraVista.mostrar_importe">
-                                                    {{detalleCompra.importe|number:2}}
-                                                </td>
-                                                <td ng-if="!cajaChica.compra.descuento_general && configuracionCompraVista.mostrar_descuento">
-                                                    {{detalleCompra.descuento|number:2}}
-                                                </td>
-                                                <td ng-if="!cajaChica.compra.descuento_general && configuracionCompraVista.mostrar_recargo">
-                                                    {{detalleCompra.recargo|number:2}}
-                                                </td>
-                                                <td ng-if="!cajaChica.compra.descuento_general && configuracionCompraVista.mostrar_ice">
-                                                    {{detalleCompra.ice|number:2}}
-                                                </td>
-                                                <td ng-if="!cajaChica.compra.descuento_general && configuracionCompraVista.mostrar_excento">
-                                                    {{detalleCompra.excento|number:2}}
-                                                </td>
-                                                <td ng-if="cajaChica.compra.descuento_general && configuracionCompraVista.mostrar_descuento">
-                                                    {{cajaChica.compra.descuento|number:2}}
-                                                </td>
-                                                <td ng-if="cajaChica.compra.descuento_general && configuracionCompraVista.mostrar_recargo">
-                                                    {{cajaChica.compra.recargo|number:2}}
-                                                </td>
-                                                <td ng-if="cajaChica.compra.descuento_general && configuracionCompraVista.mostrar_ice">
-                                                    {{cajaChica.compra.ice|number:2}}
-                                                </td>
-                                                <td ng-if="cajaChica.compra.descuento_general && configuracionCompraVista.mostrar_excento">
-                                                    {{cajaChica.compra.excento|number:2}}
-                                                </td>
-                                                <td ng-if="configuracionCompraVista.mostrar_total && cajaChica.compra.movimiento.clase.nombre!=diccionario.MOVING_POR_RETENCION_SERVICIOS">
-                                                    {{detalleCompra.total|number:2}}
-                                                </td>
-                                                <td ng-if="configuracionCompraVista.mostrar_it_retencion && usuario.empresa.usar_funciones_erp && cajaChica.compra.movimiento.clase.nombre==diccionario.MOVING_POR_RETENCION_SERVICIOS">
-                                                    <label>{{detalleCompra.it|number:2}}</label>
-                                                </td>
-                                                <td ng-if="configuracionCompraVista.mostrar_iue && usuario.empresa.usar_funciones_erp && cajaChica.compra.movimiento.clase.nombre==diccionario.MOVING_POR_RETENCION_SERVICIOS">
-                                                    <label>{{detalleCompra.iue|number:2}}</label>
-                                                </td>
-                                                <td ng-if="configuracionCompraVista.mostrar_pagado && usuario.empresa.usar_funciones_erp && cajaChica.compra.movimiento.clase.nombre==diccionario.MOVING_POR_RETENCION_SERVICIOS">
-                                                    <label>{{detalleCompra.total|number:2}}</label>
-                                                </td>
-                                                <td>
-                                                    <a class="red" href="javascript:void(0)" ng-click="eliminarDetalleCompra(detalleCompra)">
-                                                        <i class="ace-icon fa fa-trash-o bigger-130"></i>
-                                                    </a>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-            
-                                                </td>
-                                                <td ng-if="configuracionCompraVista.mostrar_producto">
-                                                    <b>TOTALES</b>
-                                                </td>
-                                              
-                                                <td ng-if="configuracionCompraVista.mostrar_costo_unitario">
-            
-                                                </td>
-                                                <td ng-if="configuracionCompraVista.mostrar_cantidad">
-            
-                                                </td>
-                                                
-                                                <td ng-if="configuracionCompraVista.mostrar_importe">
-                                                    {{cajaChica.compra.importe|number:2}}
-                                                </td>
-                                                <td ng-if="configuracionCompraVista.mostrar_descuento">
-            
-                                                </td>
-                                                <td ng-if="configuracionCompraVista.mostrar_recargo">
-            
-                                                </td>
-                                                <td ng-if="configuracionCompraVista.mostrar_ice">
-            
-                                                </td>
-                                                <td ng-if="configuracionCompraVista.mostrar_excento">
-            
-                                                </td>
-                                                <td id="total_compra" ng-if="configuracionCompraVista.mostrar_total && cajaChica.compra.movimiento.clase.nombre!=diccionario.MOVING_POR_RETENCION_SERVICIOS">
-                                                    {{cajaChica.compra.total|number:2}}
-                                                </td>
-                                                <td ng-if="configuracionCompraVista.mostrar_it_retencion">
-            
-                                                </td>
-                                                <td ng-if="configuracionCompraVista.mostrar_iue">
-            
-                                                </td>
-                                                <td ng-if="configuracionCompraVista.mostrar_pagado && cajaChica.compra.movimiento.clase.nombre==diccionario.MOVING_POR_RETENCION_SERVICIOS">
-                                                    {{cajaChica.compra.total|number:2}}
-                                                </td>
-            
-                                                <td>
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
+                            <div class="col-sm-6">
+                                <div class="inline pos-rel pull-right">
+                                    <a data-toggle="dropdown" href="javascript:void(0)" class="dropdown-toggle">
+                                        <i class="glyphicon  glyphicon-list-alt"></i>
+                                    </a>
+
+                                    <ul id="campos-detalle-compra" class="dropdown-menu-right dropdown-menu dropdown-yellow dropdown-caret">
+                                        <li>
+                                            <label>
+                                                <input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionCompraVista.mostrar_producto" ng-change="guardarConfiguracionCompraVista()"
+                                                />
+                                                <span class="lbl check-descuento"></span>
+                                            </label>
+                                            <label>NOMBRE</label>
+                                        </li>
+
+                                        <li>
+                                            <label>
+                                                <input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionCompraVista.mostrar_costo_unitario" ng-change="guardarConfiguracionCompraVista()"
+                                                />
+                                                <span class="lbl check-descuento"></span>
+                                            </label>
+                                            <label>C.U. (Bs/u)</label>
+                                        </li>
+                                        <li>
+                                            <label>
+                                                <input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionCompraVista.mostrar_cantidad" ng-change="guardarConfiguracionCompraVista()"
+                                                />
+                                                <span class="lbl check-descuento"></span>
+                                            </label>
+                                            <label>CANT. (u)</label>
+                                        </li>
+
+                                        <li>
+                                            <label>
+                                                <input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionCompraVista.mostrar_importe" ng-change="guardarConfiguracionCompraVista()"
+                                                />
+                                                <span class="lbl check-descuento"></span>
+                                            </label>
+                                            <label>IMP. (Bs)</label>
+                                        </li>
+                                        <li>
+                                            <label>
+                                                <input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionCompraVista.mostrar_descuento" ng-change="guardarConfiguracionCompraVista()"
+                                                />
+                                                <span class="lbl check-descuento"></span>
+                                            </label>
+                                            <label>DESC. (-)</label>
+                                        </li>
+                                        <li>
+                                            <label>
+                                                <input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionCompraVista.mostrar_recargo" ng-change="guardarConfiguracionCompraVista()"
+                                                />
+                                                <span class="lbl check-descuento"></span>
+                                            </label>
+                                            <label>REC. (+)</label>
+                                        </li>
+                                        <li>
+                                            <label>
+                                                <input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionCompraVista.mostrar_ice" ng-change="guardarConfiguracionCompraVista()"
+                                                />
+                                                <span class="lbl check-descuento"></span>
+                                            </label>
+                                            <label>ICE (-)</label>
+                                        </li>
+                                        <li>
+                                            <label>
+                                                <input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionCompraVista.mostrar_excento" ng-change="guardarConfiguracionCompraVista()"
+                                                />
+                                                <span class="lbl check-descuento"></span>
+                                            </label>
+                                            <label>EXC. (-)</label>
+                                        </li>
+                                        <li ng-if="cajaChica.compra.movimiento.clase.nombre!=diccionario.MOVING_POR_RETENCION_BIENES">
+                                            <label>
+                                                <input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionCompraVista.mostrar_total" ng-change="guardarConfiguracionCompraVista()"
+                                                />
+                                                <span class="lbl check-descuento"></span>
+                                            </label>
+                                            <label>SUJETO A CF</label>
+                                        </li>
+                                        <li ng-if="usuario.empresa.usar_funciones_erp && cajaChica.compra.movimiento.clase.nombre==diccionario.MOVING_POR_RETENCION_BIENES">
+                                            <label>
+                                                <input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionCompraVista.mostrar_it_retencion" ng-change="guardarConfiguracionCompraVista()"
+                                                />
+                                                <span class="lbl check-descuento"></span>
+                                            </label>
+                                            <label>IT</label>
+                                        </li>
+                                        <li ng-if="usuario.empresa.usar_funciones_erp && cajaChica.compra.movimiento.clase.nombre==diccionario.MOVING_POR_RETENCION_BIENES">
+                                            <label>
+                                                <input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionCompraVista.mostrar_iue" ng-change="guardarConfiguracionCompraVista()"
+                                                />
+                                                <span class="lbl check-descuento"></span>
+                                            </label>
+                                            <label>IUE</label>
+                                        </li>
+                                        <li ng-if="usuario.empresa.usar_funciones_erp && cajaChica.compra.movimiento.clase.nombre==diccionario.MOVING_POR_RETENCION_BIENES">
+                                            <label>
+                                                <input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionCompraVista.mostrar_pagado" ng-change="guardarConfiguracionCompraVista()"
+                                                />
+                                                <span class="lbl check-descuento"></span>
+                                            </label>
+                                            <label>PAGADO</label>
+                                        </li>
+                                        <li class="divider"></li>
+                                    </ul>
                                 </div>
                             </div>
                         </div>
+                    </div>
+                    <div class="widget-body" ng-if="cajaChica.compra.detallesCompra.length>0">
+                        <div class="widget-main">
+                            <table class="table table-striped table-bordered table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>
+                                            <label>#</label>
+                                        </th>
+                                        <th ng-if="configuracionCompraVista.mostrar_producto">
+                                            <label>SERVICIO</label>
+                                        </th>
+                                        <th ng-if="configuracionCompraVista.mostrar_costo_unitario">
+                                            <label>C.U. (Bs/u)</label>
+                                        </th>
+                                        <th ng-if="configuracionCompraVista.mostrar_cantidad">
+                                            <label>CANT. (u)</label>
+                                        </th>
+                                        <th ng-if="configuracionCompraVista.mostrar_fecha_vencimiento && usuario.empresa.usar_vencimientos">
+                                            <label>VENC</label>
+                                        </th>
+                                        <th ng-if="configuracionCompraVista.mostrar_lote && usuario.empresa.usar_vencimientos">
+                                            <label>LOTE</label>
+                                        </th>
+                                        <th ng-if="configuracionCompraVista.mostrar_importe">
+                                            <label>IMP. (Bs)</label>
+                                        </th>
+                                        <th ng-if="configuracionCompraVista.mostrar_descuento">
+                                            <label>DESC. (-)</label>
+                                        </th>
+                                        <th ng-if="configuracionCompraVista.mostrar_recargo">
+                                            <label>REC. (+)</label>
+                                        </th>
+                                        <th ng-if="configuracionCompraVista.mostrar_ice">
+                                            <label>ICE (-)</label>
+                                        </th>
+                                        <th ng-if="configuracionCompraVista.mostrar_excento">
+                                            <label>EXC. (-)</label>
+                                        </th>
+                                        <th ng-if="configuracionCompraVista.mostrar_total && cajaChica.compra.movimiento.clase.nombre!=diccionario.MOVING_POR_RETENCION_SERVICIOS">
+                                            <label>SUJETO A CF</label>
+                                        </th>
+                                        <th ng-if="configuracionCompraVista.mostrar_it_retencion && usuario.empresa.usar_funciones_erp && cajaChica.compra.movimiento.clase.nombre==diccionario.MOVING_POR_RETENCION_SERVICIOS">
+                                            <label>IT</label>
+                                        </th>
+                                        <th ng-if="configuracionCompraVista.mostrar_iue && usuario.empresa.usar_funciones_erp && cajaChica.compra.movimiento.clase.nombre==diccionario.MOVING_POR_RETENCION_SERVICIOS">
+                                            <label>IUE</label>
+                                        </th>
+                                        <th ng-if="configuracionCompraVista.mostrar_pagado && usuario.empresa.usar_funciones_erp && cajaChica.compra.movimiento.clase.nombre==diccionario.MOVING_POR_RETENCION_SERVICIOS">
+                                            <label>Pagado</label>
+                                        </th>
+                                        <th>
+                                            <label>ACCIONES</label>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr ng-repeat="detalleCompra in cajaChica.compra.detallesCompra" ng-if="!detalleCompra.eliminado">
+                                        <td>
+                                            {{$index+1}}
+                                        </td>
+                                        <td ng-if="configuracionCompraVista.mostrar_producto">
+                                            {{detalleCompra.servicio.nombre}}
+                                        </td>
+                                        <td ng-if="!cajaChica.compra.id && configuracionCompraVista.mostrar_costo_unitario">
+                                            {{detalleCompra.costo_unitario}}
+                                        </td>
+                                        <td ng-if="!cajaChica.compra.id && configuracionCompraVista.mostrar_cantidad">
+                                            {{detalleCompra.cantidad}}
+                                        </td>
+                                        <td ng-if="cajaChica.compra.id && configuracionCompraVista.mostrar_costo_unitario">
+                                            <input required class="col-xs-12" ng-change="calcularImporteDetalleEdicion(detalleCompra)" step="0.001" ng-model="detalleCompra.costo_unitario"
+                                                type="number" min="0.001" />
+                                        </td>
+                                        <td ng-if="cajaChica.compra.id && configuracionCompraVista.mostrar_cantidad">
+                                            <input required class="col-xs-12" ng-change="calcularImporteDetalleEdicion(detalleCompra)" step="0.001" ng-model="detalleCompra.cantidad"
+                                                type="number" min="0.001" />
+                                        </td>
+
+                                        <td ng-if="configuracionCompraVista.mostrar_importe">
+                                            {{detalleCompra.importe|number:2}}
+                                        </td>
+                                        <td ng-if="!cajaChica.compra.descuento_general && configuracionCompraVista.mostrar_descuento">
+                                            {{detalleCompra.descuento|number:2}}
+                                        </td>
+                                        <td ng-if="!cajaChica.compra.descuento_general && configuracionCompraVista.mostrar_recargo">
+                                            {{detalleCompra.recargo|number:2}}
+                                        </td>
+                                        <td ng-if="!cajaChica.compra.descuento_general && configuracionCompraVista.mostrar_ice">
+                                            {{detalleCompra.ice|number:2}}
+                                        </td>
+                                        <td ng-if="!cajaChica.compra.descuento_general && configuracionCompraVista.mostrar_excento">
+                                            {{detalleCompra.excento|number:2}}
+                                        </td>
+                                        <td ng-if="cajaChica.compra.descuento_general && configuracionCompraVista.mostrar_descuento">
+                                            {{cajaChica.compra.descuento|number:2}}
+                                        </td>
+                                        <td ng-if="cajaChica.compra.descuento_general && configuracionCompraVista.mostrar_recargo">
+                                            {{cajaChica.compra.recargo|number:2}}
+                                        </td>
+                                        <td ng-if="cajaChica.compra.descuento_general && configuracionCompraVista.mostrar_ice">
+                                            {{cajaChica.compra.ice|number:2}}
+                                        </td>
+                                        <td ng-if="cajaChica.compra.descuento_general && configuracionCompraVista.mostrar_excento">
+                                            {{cajaChica.compra.excento|number:2}}
+                                        </td>
+                                        <td ng-if="configuracionCompraVista.mostrar_total && cajaChica.compra.movimiento.clase.nombre!=diccionario.MOVING_POR_RETENCION_SERVICIOS">
+                                            {{detalleCompra.total|number:2}}
+                                        </td>
+                                        <td ng-if="configuracionCompraVista.mostrar_it_retencion && usuario.empresa.usar_funciones_erp && cajaChica.compra.movimiento.clase.nombre==diccionario.MOVING_POR_RETENCION_SERVICIOS">
+                                            <label>{{detalleCompra.it|number:2}}</label>
+                                        </td>
+                                        <td ng-if="configuracionCompraVista.mostrar_iue && usuario.empresa.usar_funciones_erp && cajaChica.compra.movimiento.clase.nombre==diccionario.MOVING_POR_RETENCION_SERVICIOS">
+                                            <label>{{detalleCompra.iue|number:2}}</label>
+                                        </td>
+                                        <td ng-if="configuracionCompraVista.mostrar_pagado && usuario.empresa.usar_funciones_erp && cajaChica.compra.movimiento.clase.nombre==diccionario.MOVING_POR_RETENCION_SERVICIOS">
+                                            <label>{{detalleCompra.total|number:2}}</label>
+                                        </td>
+                                        <td>
+                                            <a class="red" href="javascript:void(0)" ng-click="eliminarDetalleCompra(detalleCompra)">
+                                                <i class="ace-icon fa fa-trash-o bigger-130"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+
+                                        </td>
+                                        <td ng-if="configuracionCompraVista.mostrar_producto">
+                                            <b>TOTALES</b>
+                                        </td>
+
+                                        <td ng-if="configuracionCompraVista.mostrar_costo_unitario">
+
+                                        </td>
+                                        <td ng-if="configuracionCompraVista.mostrar_cantidad">
+
+                                        </td>
+
+                                        <td ng-if="configuracionCompraVista.mostrar_importe">
+                                            {{cajaChica.compra.importe|number:2}}
+                                        </td>
+                                        <td ng-if="configuracionCompraVista.mostrar_descuento">
+
+                                        </td>
+                                        <td ng-if="configuracionCompraVista.mostrar_recargo">
+
+                                        </td>
+                                        <td ng-if="configuracionCompraVista.mostrar_ice">
+
+                                        </td>
+                                        <td ng-if="configuracionCompraVista.mostrar_excento">
+
+                                        </td>
+                                        <td id="total_compra" ng-if="configuracionCompraVista.mostrar_total && cajaChica.compra.movimiento.clase.nombre!=diccionario.MOVING_POR_RETENCION_SERVICIOS">
+                                            {{cajaChica.compra.total|number:2}}
+                                        </td>
+                                        <td ng-if="configuracionCompraVista.mostrar_it_retencion">
+
+                                        </td>
+                                        <td ng-if="configuracionCompraVista.mostrar_iue">
+
+                                        </td>
+                                        <td ng-if="configuracionCompraVista.mostrar_pagado && cajaChica.compra.movimiento.clase.nombre==diccionario.MOVING_POR_RETENCION_SERVICIOS">
+                                            {{cajaChica.compra.total|number:2}}
+                                        </td>
+
+                                        <td>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
                 <div class="modal-footer">
                     <button ng-hide="cajaChica.ver" type="submit" class="btn btn-primary">Guardar</button>
                     <button type="button" class="btn btn-danger" ng-click="cerrarModalRegistroCajaChica()">Cerrar</button>
@@ -1603,7 +1603,7 @@
                                 e-disabled="!aplicacion.puede_modificar" ng-click="abrirModalRegistroCajaChica(solicitud,true,undefined,detalle)">
                                 <i class="ace-icon fa fa-pencil bigger-130"></i>
                             </a>
-                            <a class="red tooltip-info " tooltip-placement="left" uib-tooltip="IMprimir Recibo" href="javascript:void(0)" ng-click="generarPdfBoletaCajaChica(solicitud,detalle)">
+                            <a class="red tooltip-info " tooltip-placement="left" uib-tooltip="IMprimir Recibo" href="javascript:void(0)" ng-click="generarPdfBoletaCajaChica(solicitud,detalle,true)">
                                 <i class="ace-icon fa fa-print  bigger-130"></i>
                             </a>
                         </td>
@@ -1685,7 +1685,7 @@
                                 <a class="blue tooltip-info" uib-tooltip="Ver Datos" href="javascript:void(0)" e-disabled="!aplicacion.puede_ver" ng-click="abrirModalRegistroIngresoCajaChica(detalle,true)">
                                     <i class="ace-icon fa fa-search-plus bigger-130"></i>
                                 </a>
-                                <a class="green tooltip-info" ng-disabled="!usuario.autorizacion_caja_chica" uib-tooltip="Editar Datos" href="javascript:void(0)"
+                                <a class="green tooltip-info" ng-disabled="!usuario.encargado_caja_chica" uib-tooltip="Editar Datos" href="javascript:void(0)"
                                     e-disabled="!aplicacion.puede_modificar" ng-click="abrirModalRegistroIngresoCajaChica(detalle,false)">
                                     <i class="ace-icon fa fa-pencil bigger-130"></i>
                                 </a>
@@ -2055,97 +2055,96 @@
 <!-- fin registro caja chica -->
 <!-- === modal SERVICIOS"==== -->
 <div id="dialog-servicios" class="modal" t item-width="500">
-        <div class="modal-header bg-primary">
-            <h4 class='smaller text-white text-uppercase'>
-                <i class='icono-prerequisito'></i>
-                <label> &nbsp;{{tipo_edicion.nombre}}:</label>
-            </h4>
-        </div>
-        <div class="modal-body">
-            <form ng-submit="agregarConceptoEdicion(clase)">
-    
-                <div class="row">
-    
-    
-                    <div class="col-sm-4">
-                        <div class="form-group">
-                            <label for="ciudad">Servicio</label>
-                            <input type="text" ng-model="clase.nombre" type="text" capitalize style="text-transform:uppercase;" class="form-control"
-                             id="ciudad" name="ciudad" placeholder="Bolivia">
-                        </div>
-                    </div>
-                    <div class="col-sm-4">
-                        <div class="form-group">
-                            <label for="ciudad">Comentario</label>
-                            <input type="text" ng-model="clase.nombre_corto" type="text" capitalize style="text-transform:uppercase;" class="form-control"
-                             id="ciudad" name="ciudad" placeholder="CBBA">
-                        </div>
-                    </div>
-                    <div class="col-sm-2">
-                        <br>
-                        <div class="form-group">
-                            <!-- <button type="button" class="btn btn-success" ng-click="AgregarDepartamento(clase)">
-                            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-                        </button> -->
-                            <button ng-if="!clase.edit" type="submit" class="btn btn-success">
-                                <span class="glyphicon glyphicon-plus" aria-hidden="true">Agregar</span>
-                            </button>
-                            <button ng-if="clase.edit" type="submit" class="btn btn-primary">
-                                <span class="glyphicon glyphicon-plus" aria-hidden="true">Modificar</span>
-                            </button>
-                            <button ng-if="clase.edit" type="button" class="btn btn-danger" ng-click="cancelarEdicionDepartamento(clase)">
-                                <span class="" aria-hidden="true">Cancelar</span>
-                            </button>
-                        </div>
+    <div class="modal-header bg-primary">
+        <h4 class='smaller text-white text-uppercase'>
+            <i class='icono-prerequisito'></i>
+            <label> &nbsp;{{tipo_edicion.nombre}}:</label>
+        </h4>
+    </div>
+    <div class="modal-body">
+        <form ng-submit="agregarConceptoEdicion(clase)">
+
+            <div class="row">
+
+
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <label for="ciudad">Servicio</label>
+                        <input type="text" ng-model="clase.nombre" type="text" capitalize style="text-transform:uppercase;" class="form-control"
+                            id="ciudad" name="ciudad" placeholder="Bolivia">
                     </div>
                 </div>
-            </form>
-            <table class="table table-striped table-hover">
-                <thead>
-                    <tr>
-                        <th>Servicio</th>
-                        <th>Comentario</th>
-                        <th>Editar</th>
-                        <th>Habilitar</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr ng-repeat="clase in tipo_edicion.clases">
-                        <th scope="row">{{clase.nombre}}</th>
-                        <th scope="row">{{clase.nombre_corto}}</th>
-                        <td>
-                            <a href="javascript:void(0)" ng-click="modificarConceptoEdicion(clase)">
-                                <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
-                            </a>
-                        </td>
-                        <td>
-                            <label>
-                                <input name="switch-field-1" class="ace ace-switch ace-switch-5" type="checkbox" ng-model="clase.habilitado">
-                                <span class="lbl check-espaniol"></span>
-                            </label>
-                        </td>
-                        <td>
-                            <a href="javascript:void(0)" role="button" data-rel="tooltip" data-placement="top" uib-tooltip="Anticipos Regulares" ng-click="establecerServicioSeleccionado(clase)">
-                                <span class="badge badge-success ">
-                                    <span class="fa fa-check bigger-200" aria-hidden="true"></span>
-                                </span>
-                            </a>
-    
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-        <div class="modal-footer wizard-actions">
-            <button class="btn btn-primary btn-sm" ng-click="guardarConceptoEdicion(tipo_edicion)">
-                <i class="glyphicon glyphicon-floppy-disk"></i>Guardar
-            </button>
-            <button class="btn btn-danger btn-sm" ng-click="cerrarDialogServicios()">
-                <i class="ace-icon fa fa-times"></i>Cancelar
-            </button>
-        </div>
-    
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <label for="ciudad">Comentario</label>
+                        <input type="text" ng-model="clase.nombre_corto" type="text" capitalize style="text-transform:uppercase;" class="form-control"
+                            id="ciudad" name="ciudad" placeholder="CBBA">
+                    </div>
+                </div>
+                <div class="col-sm-2">
+                    <br>
+                    <div class="form-group">
+                        <!-- <button type="button" class="btn btn-success" ng-click="AgregarDepartamento(clase)">
+                            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                        </button> -->
+                        <button ng-if="!clase.edit" type="submit" class="btn btn-success">
+                            <span class="glyphicon glyphicon-plus" aria-hidden="true">Agregar</span>
+                        </button>
+                        <button ng-if="clase.edit" type="submit" class="btn btn-primary">
+                            <span class="glyphicon glyphicon-plus" aria-hidden="true">Modificar</span>
+                        </button>
+                        <button ng-if="clase.edit" type="button" class="btn btn-danger" ng-click="cancelarEdicionDepartamento(clase)">
+                            <span class="" aria-hidden="true">Cancelar</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </form>
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th>Servicio</th>
+                    <th>Comentario</th>
+                    <th>Editar</th>
+                    <th>Habilitar</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="clase in tipo_edicion.clases">
+                    <th scope="row">{{clase.nombre}}</th>
+                    <th scope="row">{{clase.nombre_corto}}</th>
+                    <td>
+                        <a href="javascript:void(0)" ng-click="modificarConceptoEdicion(clase)">
+                            <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
+                        </a>
+                    </td>
+                    <td>
+                        <label>
+                            <input name="switch-field-1" class="ace ace-switch ace-switch-5" type="checkbox" ng-model="clase.habilitado">
+                            <span class="lbl check-espaniol"></span>
+                        </label>
+                    </td>
+                    <td>
+                        <a href="javascript:void(0)" role="button" data-rel="tooltip" data-placement="top" uib-tooltip="Anticipos Regulares" ng-click="establecerServicioSeleccionado(clase)">
+                            <span class="badge badge-success ">
+                                <span class="fa fa-check bigger-200" aria-hidden="true"></span>
+                            </span>
+                        </a>
+
+                    </td>
+                </tr>
+            </tbody>
+        </table>
     </div>
-    <!-- ========= fin SERVICIOS ========= -->
-    
+    <div class="modal-footer wizard-actions">
+        <button class="btn btn-primary btn-sm" ng-click="guardarConceptoEdicion(tipo_edicion)">
+            <i class="glyphicon glyphicon-floppy-disk"></i>Guardar
+        </button>
+        <button class="btn btn-danger btn-sm" ng-click="cerrarDialogServicios()">
+            <i class="ace-icon fa fa-times"></i>Cancelar
+        </button>
+    </div>
+
+</div>
+<!-- ========= fin SERVICIOS ========= -->

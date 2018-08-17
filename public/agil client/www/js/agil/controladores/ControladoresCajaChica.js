@@ -127,7 +127,7 @@ angular.module('agil.controladores')
                         $scope.configuracionCompraVista.mostrar_iue = false
                         $scope.configuracionCompraVista.mostrar_pagado = false
                     }
-                   // $scope.cambiarTipoPago($scope.cajaChica.compra.tipoPago);
+                    // $scope.cambiarTipoPago($scope.cajaChica.compra.tipoPago);
                 } else {
                     if (datos.cajasChicas.length > 0) {
                         var total = 0
@@ -185,7 +185,7 @@ angular.module('agil.controladores')
                     $scope.cajaChica.ver = false
                 }
             }
-            $scope.detalleCompra = { producto: {}, centroCosto: {}, cantidad: 1, descuento: 0, recargo: 0, ice: 0, excento: 0, tipo_descuento: false, tipo_recargo: false }
+            $scope.detalleCompra = { producto: {}, servicio: {}, centroCosto: {}, cantidad: 1, descuento: 0, recargo: 0, ice: 0, excento: 0, tipo_descuento: false, tipo_recargo: false }
             $scope.cargarCentroCosto($scope.detalleCompra)
             $scope.abrirPopup($scope.idModalRegistroCajaChica);
         }
@@ -389,7 +389,7 @@ angular.module('agil.controladores')
                     estado: "",
                     concepto: "",
                     movimiento: "",
-                    id_usuario_no_autorizado: ($scope.usuario.autorizacion_caja_chica) ? "" : $scope.usuario.id,
+                    id_usuario_no_autorizado: ($scope.usuario.encargado_caja_chica) ? "" : $scope.usuario.id,
                     id_sucursal: $scope.sucursalPrincipal.id
                 }
             }
@@ -516,15 +516,18 @@ angular.module('agil.controladores')
                             }
                             if (index === (array.length - 1)) {
                                 var promesa = GuardarSolicitudCajaChica($scope.solicitud)
-                                promesa.then(function (dato) {
+                                promesa.then(function (dato2) {
                                     $scope.obtenerListaSolicitudes()
                                     $scope.cerrarModalVerificarAutorizacion()
-                                    $scope.mostrarMensaje(dato.mensaje)
+                                    $scope.mostrarMensaje(dato2.mensaje)
                                 })
                             }
 
                         });
                     }
+                }else{
+                    $scope.cerrarModalVerificarAutorizacion()
+                    $scope.mostrarMensaje(dato.message)
                 }
             })
         }
@@ -677,7 +680,7 @@ angular.module('agil.controladores')
                                         promesa.then(function (dato) {
                                             blockUI.stop()
                                             $scope.obtenerListaSolicitudes()
-                                            $scope.generarPdfBoletaCajaChica($scope.cajaChica.solicitud, dato.cajaChica)
+                                            $scope.generarPdfBoletaCajaChica($scope.cajaChica.solicitud, dato.cajaChica,true)
                                             $scope.mostrarMensaje(dato.mensaje)
                                             $scope.cerrarModalRegistroCajaChica()
                                         })
@@ -847,7 +850,7 @@ angular.module('agil.controladores')
             doc.font('Helvetica', 8);
         }
 
-        $scope.generarPdfBoletaCajaChica = function (solicitud, caja) {
+        $scope.generarPdfBoletaCajaChica = function (solicitud, caja, kardex) {
 
             convertUrlToBase64Image($scope.usuario.empresa.imagen, function (imagenEmpresa) {
                 var imagen = imagenEmpresa;
@@ -856,11 +859,11 @@ angular.module('agil.controladores')
                 // draw some text
                 var totalCosto = 0;
                 var y = 45;
-                $scope.dibujarPDFBoletaCajaChica(doc, solicitud, caja, y, imagen);
+                $scope.dibujarPDFBoletaCajaChica(doc, solicitud, caja, y, imagen, kardex);
 
                 y += 370
                 doc.rect(0, y - 35, 650, 0).dash(2, { space: 5 }).stroke()
-                $scope.dibujarPDFBoletaCajaChica(doc, solicitud, caja, y, imagen);
+                $scope.dibujarPDFBoletaCajaChica(doc, solicitud, caja, y, imagen, kardex);
 
 
                 doc.end();
@@ -871,13 +874,20 @@ angular.module('agil.controladores')
 
             });
         }
-        $scope.dibujarPDFBoletaCajaChica = function (doc, solicitud, caja, y, imagen) {
+        $scope.dibujarPDFBoletaCajaChica = function (doc, solicitud, caja, y, imagen, kardex) {
             doc.font('Helvetica-Bold', 12);
             doc.image(imagen, 30, y - 20, { fit: [80, 80] });
             if (caja.concepto.concepto.nombre != "INGRESO") {
-                doc.text("SALIDA CAJA CHICA", 0, y + 20, { align: "center" });
+                if (!kardex) {
+                    doc.text("SALIDA CAJA CHICA", 0, y + 20, { align: "center" });
+                } else {
+                    doc.text("RENDICIÓN FONDOS CAJA CHICA", 0, y + 20, { align: "center" });
+                }
+               
             } else {
-                doc.text("INGRESO CAJA CHICA", 0, y + 20, { align: "center" });
+                
+                    doc.text("INGRESO CAJA CHICA", 0, y + 20, { align: "center" });
+            
             }
 
             doc.font('Helvetica-Bold', 8);
@@ -1001,7 +1011,7 @@ angular.module('agil.controladores')
                 } else {
                     $scope.agregarDetalleCompraServicio(detalleCompra);
                 }
-
+                $scope.verificarCamposDetalleCompra(detalleCompra, true)
             } else {
                 $scope.mostrarMensaje("El producto no se encuentra en el catalogo")
             }
@@ -1033,7 +1043,7 @@ angular.module('agil.controladores')
             if ($scope.cajaChica.compra.tipoPago.nombre == $scope.diccionario.TIPO_PAGO_CREDITO) {
                 $scope.calcularSaldo();
             }
-            $scope.detalleCompra = { producto: {}, centroCosto: {}, cantidad: 1, descuento: 0, recargo: 0, ice: 0, excento: 0, tipo_descuento: false, tipo_recargo: false }
+            $scope.detalleCompra = { producto: {}, servicio: {}, centroCosto: {}, cantidad: 1, descuento: 0, recargo: 0, ice: 0, excento: 0, tipo_descuento: false, tipo_recargo: false }
             $scope.cargarCentroCosto($scope.detalleCompra)
 
         }
@@ -1048,7 +1058,7 @@ angular.module('agil.controladores')
             if ($scope.cajaChica.compra.tipoPago.nombre == $scope.diccionario.TIPO_PAGO_CREDITO) {
                 $scope.calcularSaldo();
             }
-            $scope.detalleCompra = { producto: {}, centroCosto: {}, cantidad: 1, descuento: 0, recargo: 0, ice: 0, excento: 0, tipo_descuento: false, tipo_recargo: false }
+            $scope.detalleCompra = { producto: {}, servicio: {}, centroCosto: {}, cantidad: 1, descuento: 0, recargo: 0, ice: 0, excento: 0, tipo_descuento: false, tipo_recargo: false }
             $scope.cargarCentroCosto($scope.detalleCompra)
 
         }
@@ -1416,13 +1426,24 @@ angular.module('agil.controladores')
             $scope.enfocar('cantidad');
 
         }
-        $scope.verificarCamposDetalleCompra = function (detalle) {
-            $scope.verificacionDatos = false
-            $scope.verificacionDatos = (detalle.producto.nombre) ? false : true
-            if ($scope.verificacionDatos == false) {
-                $scope.verificacionDatos = (detalle.cantidad >= 1) ? false : true
+        $scope.verificarCamposDetalleCompra = function (detalle, servicio) {
+            if (servicio) {
+                $scope.verificacionDatos = false
+                $scope.verificacionDatos = (detalle.servicio.nombre) ? false : true
                 if ($scope.verificacionDatos == false) {
-                    $scope.verificacionDatos = (detalle.costo_unitario >= 0.0001) ? false : true
+                    $scope.verificacionDatos = (detalle.cantidad >= 1) ? false : true
+                    if ($scope.verificacionDatos == false) {
+                        $scope.verificacionDatos = (detalle.costo_unitario >= 0.0001) ? false : true
+                    }
+                }
+            } else {
+                $scope.verificacionDatos = false
+                $scope.verificacionDatos = (detalle.producto.nombre) ? false : true
+                if ($scope.verificacionDatos == false) {
+                    $scope.verificacionDatos = (detalle.cantidad >= 1) ? false : true
+                    if ($scope.verificacionDatos == false) {
+                        $scope.verificacionDatos = (detalle.costo_unitario >= 0.0001) ? false : true
+                    }
                 }
             }
 
@@ -1699,6 +1720,9 @@ angular.module('agil.controladores')
 
                         });
                     }
+                }else{
+                    $scope.cerrarModalVerificarAutorizacion()
+                    $scope.mostrarMensaje(dato.message)
                 }
             })
         }
