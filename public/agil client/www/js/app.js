@@ -254,6 +254,10 @@ angular.module('agil', ['ngRoute', 'agil.controladores',
                 controller:'ControladorSolicitudCajaChica',
                 templateUrl:'templates/agil/solicitud-caja-chica.html'
             })
+            .when('/comensales', {
+                controller:'controladorComensalesEmpresa',
+                templateUrl:'templates/agil/comensalesEmpresaExterna.html'
+            })
         .otherwise({
           redirectTo:'/'
         });

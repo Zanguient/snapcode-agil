@@ -6,7 +6,6 @@ angular.module('agil.controladores')
 
         $scope.usuario = JSON.parse($localStorage.usuario);
 
-
         $scope.modalConfiguracionActividadesServicios = 'modalConfiguracionActividadesServicios'
         $scope.wizardConfiguracionActividadesServicios = 'modal-wizard-panel-container'
         $scope.modalConfiguracionActividades = 'modalConfiguracionActividades'
@@ -18,12 +17,13 @@ angular.module('agil.controladores')
         $scope.dialogDosificacionesDisponibles = 'dialog-dosificaciones-disponibles'
         $scope.confirmarDosificacion = 'dialog-dosificar-actividad'
         $scope.asignacionCentroCostoCliente = 'modalEmpresaCentroCosto'
-
+        $scope.dialogClienteEmpresa = 'dialog-cliente-empresa'
         $scope.$on('$viewContentLoaded', function () {
             resaltarPestaña($location.path().substring(1));
             ejecutarScriptsProformas($scope.modalConfiguracionActividadesServicios, $scope.wizardConfiguracionActividadesServicios, $scope.dialogProformaEdicion,
                 $scope.dialogClientesProforma, $scope.modalConfiguracionActividades, $scope.wizardConfiguracionActividades, $scope.dialogmodalFechas,
-                $scope.dialogBusquedaServicio, $scope.dialogDosificacionesDisponibles, $scope.confirmarDosificacion, $scope.asignacionCentroCostoCliente);
+                $scope.dialogBusquedaServicio, $scope.dialogDosificacionesDisponibles, $scope.confirmarDosificacion, $scope.asignacionCentroCostoCliente,
+                $scope.dialogClienteEmpresa);
             $scope.buscarAplicacion($scope.usuario.aplicacionesUsuario, $location.path().substring(1));
         });
 
@@ -37,7 +37,15 @@ angular.module('agil.controladores')
             $scope.eliminarPopup($scope.dialogDosificacionesDisponibles)
             $scope.eliminarPopup($scope.confirmarDosificacion)
             $scope.eliminarPopup($scope.asignacionCentroCostoCliente)
+            $scope.eliminarPopup($scope.dialogClienteEmpresa)
         })
+
+        $scope.abrirdialogClienteEmpresa = function () {
+            $scope.abrirPopup($scope.dialogClienteEmpresa)
+        }
+        $scope.cerrardialogClienteEmpresa = function () {
+            $scope.cerrarPopup($scope.dialogClienteEmpresa)
+        }
 
         $scope.calcularTotalProformas = function () {
             $scope.totalProformas = 0
@@ -129,6 +137,7 @@ angular.module('agil.controladores')
                 blockUI.stop()
             })
         }
+
         $scope.editar = function (proforma, ver) {
             var dfecha = new Date(proforma.fecha_factura)
             if (proforma.fecha_factura !== null && proforma.fecha_factura !== undefined) {
@@ -443,7 +452,12 @@ angular.module('agil.controladores')
             }
             $scope.obtenerPaginador()
             $scope.obtenerCentroCosto()
+            // $scope.limiteListaClienteEmpresa = 10
         }
+
+        // $scope.cargarMasItemsListaClienteEmpresa = function () {
+        //     $scope.limiteListaClienteEmpresa += 10
+        // }
 
         $scope.verificarFechaRecepcion = function (fecha_recepcion) {
             if (fecha_recepcion !== null && fecha_recepcion !== undefined) {
@@ -1473,6 +1487,12 @@ angular.module('agil.controladores')
         $scope.PopoverConfiguracionActividad = {
             templateUrl: 'PopoverConfiguracionActividad.html',
             title: 'Menu',
+            isOpen: false
+        };
+
+        $scope.PopoverConfiguracionLlenarTabla = {
+            templateUrl: 'PopoverConfiguracionLlenarTabla.html',
+            title: 'Empresas',
             isOpen: false
         };
 

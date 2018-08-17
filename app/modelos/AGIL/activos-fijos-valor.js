@@ -55,7 +55,7 @@ module.exports = function (sequelize, Sequelize) {
         eliminado: {
             type: Sequelize.BOOLEAN,
             field: 'eliminado',
-            default: false
+            defaultValue: false
         }
     }, {
             freezeTableName: true

@@ -41,7 +41,7 @@ angular.module('agil.servicios')
 
 
 	.factory('Venta', function ($resource) {
-		return $resource(restServer + "ventas/:id", { id: '@id' },
+		return $resource(restServer + "ventasN/:id", { id: '@id' },
 			{
 				'update': { method: 'PUT' }
 			});
@@ -144,7 +144,7 @@ angular.module('agil.servicios')
 	}])
 
 	.factory('Venta', function ($resource) {
-		return $resource(restServer + "ventas/:id", { id: '@id' },
+		return $resource(restServer + "ventasN/:id", { id: '@id' },
 			{
 				'update': { method: 'PUT' }
 			});

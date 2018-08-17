@@ -179,6 +179,15 @@ module.exports = function (router, sequelize, Sequelize, jwt, md5, forEach, ensu
 	var SolicitudCajaChica = require('../modelos/AGIL/solicitud-caja-chica')(sequelize, Sequelize);
 	var ConceptoMovimientoCajaChica = require('../modelos/AGIL/concepto-movimiento-caja-chica')(sequelize, Sequelize);
 	var CierreCajaChica = require('../modelos/AGIL/cierre-caja-chica')(sequelize, Sequelize);
+
+	//Comensales cliente empresa.
+	var AliasClienteEmpresa = require('../modelos/AGIL/comensales-cliente-empresa-alias')(sequelize, Sequelize);
+	var ComensalesClienteEmpresa = require('../modelos/AGIL/comensales-cliente-empresa')(sequelize, Sequelize);
+	var GerenciasClienteEmpresa = require('../modelos/AGIL/comensales-gerencias-cliente-empresa')(sequelize, Sequelize);
+	var horarioComidasClienteEmpresa = require('../modelos/AGIL/comensales-horario-comidas-cliente-empresa')(sequelize, Sequelize);
+	var PrecioComidasClienteEmpresa = require('../modelos/AGIL/comensales-precio-comida-cliente-empresa')(sequelize, Sequelize);
+	var HistorialComidaClienteEmpresa = require('../modelos/AGIL/comensales-cliente-empresa-historial-comidas')(sequelize, Sequelize);
+
 	//*****RELATIONS*****
 	require('../modelos/relaciones.js')(sequelize, Usuario, Persona, Rol, UsuarioRol, Tipo, Clase, Aplicacion, RolAplicacion,
 		Empresa, Sucursal, UsuarioSucursal, Cliente, Proveedor, Producto, UsuarioAplicacion,
@@ -198,7 +207,8 @@ module.exports = function (router, sequelize, Sequelize, jwt, md5, forEach, ensu
 		RrhhEmpleadoAusencia, RrhhEmpleadoVacaciones, RrhhEmpleadoCompensacionAusencia, RrhhClaseAsuencia, RrhhEmpleadoHistorialVacacion, RrhhEmpleadoTr3, RrhhEmpleadoAnticipoTr3, RrhhEmpleadoDeduccionIngreso,
 		RrhhEmpleadoBeneficioSocial, RrhhEmpleadoBitacoraFicha, UsuarioGrupos, RrhhEmpleadoConfiguracionRopa, GtmVentaKardex, GtmVentaKardexDetalle, RrhhEmpleadoDotacionRopaItem,
 		RrhhEmpleadoDotacionRopa, RrhhViajeDetalle, RrhhViaje, RrhhViajeDestino, RrhhViajeConductor, TransaccionSeguimiento, CuentaTransaccion, GtmDespachoDetalleResivo, RRHHPlanillaRcIva, RRHHDetallePlanillaRcIva, EmpresaAplicacion, Pedido, DetallesPedido, RrhhEmpleadoDescuentoVacacionHistorial, ActivosFijos, ActivosFijosValores, ActivosFijosConfiguracion,
-		EstadoFinancieroConfiguracionImpresion,EstadoFinancieroGestion, ClienteCentroCostos, CajaChica, SolicitudCajaChica, ConceptoMovimientoCajaChica,CierreCajaChica);
+		EstadoFinancieroConfiguracionImpresion,EstadoFinancieroGestion, ClienteCentroCostos, CajaChica, SolicitudCajaChica, ConceptoMovimientoCajaChica,CierreCajaChica,
+		AliasClienteEmpresa, ComensalesClienteEmpresa, GerenciasClienteEmpresa, horarioComidasClienteEmpresa, PrecioComidasClienteEmpresa, HistorialComidaClienteEmpresa);
 	require('../sockets/pantallas.js')(io, socket);
 	//*****ROUTES*****
 	//SYS
@@ -285,6 +295,7 @@ module.exports = function (router, sequelize, Sequelize, jwt, md5, forEach, ensu
 		, Proveedor, ClienteCuenta, Cliente, ClasificacionCuenta, ContabilidadCuenta, AsientoContabilidad, ComprobanteContabilidad, MonedaTipoCambio)
 	require('./rutas-solicitud-caja-chica')(router,sequelize, Sequelize, ensureAuthorizedAdministrador, fs, forEach, jwt, md5, Tipo, Clase, CajaChica, SolicitudCajaChica, Empresa, ConceptoMovimientoCajaChica, MedicoPaciente, Usuario, Persona, ContabilidadCuenta,Movimiento,Proveedor,Compra,Sucursal,CierreCajaChica,
 		DetalleCompra,Producto)
+	require('./rutas-comensales')(router, sequelize, Persona, Cliente, AliasClienteEmpresa, ComensalesClienteEmpresa, GerenciasClienteEmpresa, horarioComidasClienteEmpresa, PrecioComidasClienteEmpresa, HistorialComidaClienteEmpresa)
 	router.route('/test')
 		.get(function (req, res) {
 			var rest;

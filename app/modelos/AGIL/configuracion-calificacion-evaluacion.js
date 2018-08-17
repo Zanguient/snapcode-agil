@@ -43,12 +43,12 @@ module.exports = function (sequelize, Sequelize) {
 		encargados: {
 			type: Sequelize.BOOLEAN,
 			field: 'encargado',
-			default: false
+			defaultValue: false
 		},
 		eliminado: {
 			type: Sequelize.BOOLEAN,
 			field: 'eliminado',
-			default: false
+			defaultValue: false
 		}
 	}, {
 			freezeTableName: true

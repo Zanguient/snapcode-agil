@@ -35,6 +35,18 @@ module.exports=function(sequelize,Sequelize){
 		id_sucursal: {
 			type: Sequelize.INTEGER,
 			field: 'id_sucursal'
+		},
+		estado: {
+			type: Sequelize.STRING,
+			field: 'estado'
+		},
+		fecha_estado: {
+			type: Sequelize.DATE,
+			field: 'fecha_estado'
+		},
+		id_cliente: {
+			type: Sequelize.INTEGER,
+			field: 'cliente' 
 		}
 	}, {
 		freezeTableName: true 

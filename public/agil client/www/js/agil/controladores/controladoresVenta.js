@@ -1603,24 +1603,24 @@ angular.module('agil.controladores')
 					var movimiento = venta.movimiento.nombre_corto;
 					venta.usar_peps = $scope.usuario.empresa.usar_peps;
 					venta.$save(function (res) {
-						if (res.hasError) {
+						if (res.hasErr) {
 							blockUI.stop();
-							$scope.crearNuevaVenta(res);
-							$scope.mostrarMensaje(res.message);
+							$scope.crearNuevaVenta(res.venta);
+							$scope.mostrarMensaje(res.mensaje);
 						} else {
 							blockUI.stop();
 							$scope.cerrarPopPupEdicion();
 							if ($scope.usuario.empresa.usar_vencimientos) {
 								$scope.impresion = {
 									movimiento: movimiento,
-									res: res,
+									res: res.venta,
 									al_guardar: true,
 									usuario: $scope.usuario
 								}
 								$scope.abrirPopup($scope.idModalImpresionVencimiento);
 								//ImprimirSalida(movimiento, res, true, $scope.usuario);
 							} else {
-								ImprimirSalida(movimiento, res, true, $scope.usuario, false);
+								ImprimirSalida(movimiento, res.venta, true, $scope.usuario, false);
 							}
 							$scope.crearNuevaVenta(res);
 							$scope.mostrarMensaje('Venta registrada exitosamente!');

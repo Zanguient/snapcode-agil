@@ -10,7 +10,8 @@ module.exports=function(sequelize,Sequelize){
 		},
 		eliminado: {
 			type: Sequelize.BOOLEAN,
-			field: 'eliminado'
+			field: 'eliminado',
+			defaultValue: false
 			}
 	}, {
 	  freezeTableName: true 

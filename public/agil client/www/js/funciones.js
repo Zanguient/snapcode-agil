@@ -102,8 +102,18 @@ function ejecutarScriptsTransacciones(modalNuevoIngreso, modalNuevoEgreso, modal
 	// aplicarWizardFormulario(idModalWizardDestinoEdicion, idContenedorEdicionDestino);
 }
 
+function ejecutarScriptsComensales(modalEdicionAlias, modalEdicionGerencias, modalEdicionComensales, modalEdicionComidas, modalEdicionPrecios, dialogClienteEmpresa) {
+	crearPopup(modalEdicionAlias, "auto", "auto");
+	crearPopup(modalEdicionGerencias, "auto", "auto");
+	crearPopup(modalEdicionComensales, "auto", "auto");
+	crearPopup(modalEdicionComidas, "auto", "auto");
+	crearPopup(modalEdicionPrecios, "auto", "auto");
+	crearPopup(dialogClienteEmpresa, "auto", "auto");
+	// aplicarWizardFormulario(idModalWizardDestinoEdicion, idContenedorEdicionDestino);
+}
+
 function ejecutarScriptsProformas(modalConfiguracionActividadesServicios, wizardConfiguracionActividadesServicios, dialogProformaEdicion, dialogClientesProforma, modalConfiguracionActividades, wizardConfiguracionActividades,
-	dialogmodalFechas, dialogBusquedaServicio, dialogDosificacionesDisponibles, confirmarDosificacion, asignacionCentroCostoCliente) {
+	dialogmodalFechas, dialogBusquedaServicio, dialogDosificacionesDisponibles, confirmarDosificacion, asignacionCentroCostoCliente, dialogClienteEmpresa) {
 	crearPopup(modalConfiguracionActividadesServicios, 'auto', 'auto');
 	crearPopup(modalConfiguracionActividades, 'auto', 'auto');
 	crearPopup(dialogProformaEdicion, 'auto', 'auto');
@@ -113,7 +123,7 @@ function ejecutarScriptsProformas(modalConfiguracionActividadesServicios, wizard
 	crearPopup(dialogDosificacionesDisponibles, 'auto', 'auto');
 	crearPopup(confirmarDosificacion, 'auto', 'auto');
 	crearPopup(asignacionCentroCostoCliente, 'auto', 'auto');
-
+	crearPopup(dialogClienteEmpresa, 'auto', 'auto');
 	aplicarWizardFormulario(wizardConfiguracionActividadesServicios);
 	aplicarWizardFormulario(wizardConfiguracionActividades);
 }

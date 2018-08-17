@@ -580,7 +580,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
                     },
                     include: [
                         { model: Clase, as: 'actividadEconomica' },
-                        { model: Cliente, as: 'cliente' },
+                        { model: Cliente, as: 'cliente' }
                     ]
 
                 }).then(function (proformasAlertas) {
@@ -603,7 +603,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
                     res.json({ mensaje: err.stack !== undefined ? err.stack : err.message, hasErr: true })
                 });
             } else {
-
+                res.json({ mensaje: 'No se ouede identificar la empresa.', hasErr: true })
             }
         })
     function formatearFecha(fecha) {

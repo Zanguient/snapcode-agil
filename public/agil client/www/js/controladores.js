@@ -314,6 +314,12 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 
 			}
 		}
+
+		$scope.asignarEmpresaExterna = function (clienteEmpresa) {
+			$scope.empresaExternaSeleccionada = clienteEmpresa
+			$location.path('/comensales')
+		}
+
 		$scope.fecha_excel_angular = function (fecha_desde_excel) {
             var fecha_minima_angular_indice_excel_1970 = 25569 - 1 //fecha minima angular. el -1 es para ajustar que el resultado da 1 anterior a la fecha real.
             var fecha_excel = new Date(1 / 1 / 1970)
