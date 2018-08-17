@@ -144,7 +144,7 @@ angular.module('agil.servicios')
 	}])
 
 	.factory('Venta', function ($resource) {
-		return $resource(restServer + "ventasN/:id", { id: '@id' },
+		return $resource(restServer + "ventas/:id", { id: '@id' },
 			{
 				'update': { method: 'PUT' }
 			});
@@ -433,6 +433,25 @@ angular.module('agil.servicios')
 			var delay = $q.defer();
 			CompraPedidosEmpresa.get({ id_empresa: idEmpresa }, function (entidades) {
 				delay.resolve(entidades);
+			}, function (error) {
+					delay.reject(error);
+				});
+			return delay.promise;
+		};
+		return res;
+	}])
+
+	.factory('VentaServico', function ($resource) {
+		return $resource(restServer + "venta/servicios/:id", { id: '@id' },
+			{
+				'update': { method: 'PUT' }
+			});
+	})
+	.factory('DatosCompra', ['VentaServico', '$q', function (VentaServico, $q) {
+		var res = function (id_compra, id_empresa) {
+			var delay = $q.defer();
+			VentaServico.get({ id: id_compra, id_empresa: id_empresa }, function (entidad) {
+				delay.resolve(entidad);
 			}, function (error) {
 					delay.reject(error);
 				});
