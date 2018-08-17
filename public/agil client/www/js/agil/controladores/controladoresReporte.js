@@ -1764,9 +1764,13 @@ angular.module('agil.controladores')
 
 					var doc = new PDFDocument({ margin: 10 });
 					var stream = doc.pipe(blobStream());
+					var fechaDesde = $scope.filtro.fechaInicioTexto;
+					var fechaHasta = $scope.filtro.fechaFinTexto;;
 					// draw some text
 					doc.font('Helvetica-Bold', 16);
 					doc.text("ESTADO DE RESULTADOS NO CONTABLE", 0, 60, { align: "center" });
+					doc.font('Helvetica-Bold', 10);
+					doc.text('Desde '+fechaDesde+' al '+fechaHasta,0,80,{align:"center"});
 					doc.font('Helvetica-Bold', 8);
 					doc.text("VENTAS", 100, 100);
 					doc.text(sumaVentasTotal, 300, 100);
