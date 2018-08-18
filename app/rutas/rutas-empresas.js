@@ -36,7 +36,8 @@ module.exports = function (router, decodeBase64Image, fs, Empresa, Sucursal, Cla
 				usar_correlativos_destinos: req.body.usar_correlativos_destinos,
 				usar_funciones_erp: req.body.usar_funciones_erp,
 				usar_estado_resultados_no_contables:req.body.usar_estado_resultados_no_contables,
-				usar_peps: req.body.usar_peps
+				usar_peps: req.body.usar_peps,
+				usar_edicion_venta:req.body.usar_edicion_venta
 			}).then(function (empresaCreada) {
 				Sucursal.create({
 					id_empresa: empresaCreada.id,
@@ -238,7 +239,8 @@ module.exports = function (router, decodeBase64Image, fs, Empresa, Sucursal, Cla
 				usar_correlativos_destinos: req.body.usar_correlativos_destinos,
 				usar_funciones_erp: req.body.usar_funciones_erp,
 				usar_estado_resultados_no_contables:req.body.usar_estado_resultados_no_contables,
-				usar_peps: req.body.usar_peps
+				usar_peps: req.body.usar_peps,
+				usar_edicion_venta:req.body.usar_edicion_venta
 			}, {
 					where: {
 						id: req.params.id_empresa

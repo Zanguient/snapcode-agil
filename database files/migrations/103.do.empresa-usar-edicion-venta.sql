@@ -1,0 +1,1 @@
+ALTER TABLE agil_empresa add usar_edicion_venta tinyint default 0;

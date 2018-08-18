@@ -116,6 +116,10 @@
                                     </a>
                                 </th>
                                 <th class="center">
+                                    Sucursal
+
+                                </th>
+                                <th class="center">
                                     <a href="javascript:void(0)" ng-click="paginator.sortColumn('fecha',obtenerLista)">Fecha
                                         <span id="nombre" class="sort fa fa-sort icon-only"></span>
                                     </a>
@@ -156,6 +160,9 @@
                                 </td>
                                 <td>
                                     {{solicitud.usuario.persona.nombre_completo}}
+                                </td>
+                                <td>
+                                    {{solicitud.sucursal.nombre}}
                                 </td>
                                 <td>
                                     {{solicitud.fecha|date:'dd/MM/yyyy'}}

@@ -132,6 +132,10 @@ module.exports = function (sequelize, Sequelize) {
 			type: Sequelize.BOOLEAN,
 			field: 'usar_peps',
 			default: true
+		},
+		usar_edicion_venta:{
+			type: Sequelize.BOOLEAN,
+			field: 'usar_edicion_venta'
 		}
 	}, {
 			freezeTableName: true

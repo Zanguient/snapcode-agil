@@ -323,7 +323,11 @@ angular.module('agil.controladores')
 					}
 					if (bandera) {
 						app.ver_puede_crear = true
-						app.ver_puede_modificar = false
+						if ($scope.usuario.empresa.usar_edicion_venta) {
+							app.ver_puede_modificar = true
+						} else {
+							app.ver_puede_modificar = false
+						}
 						app.ver_puede_eliminar = true
 					}
 					else {

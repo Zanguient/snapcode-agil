@@ -525,7 +525,7 @@ angular.module('agil.controladores')
 
                         });
                     }
-                }else{
+                } else {
                     $scope.cerrarModalVerificarAutorizacion()
                     $scope.mostrarMensaje(dato.message)
                 }
@@ -680,7 +680,7 @@ angular.module('agil.controladores')
                                         promesa.then(function (dato) {
                                             blockUI.stop()
                                             $scope.obtenerListaSolicitudes()
-                                            $scope.generarPdfBoletaCajaChica($scope.cajaChica.solicitud, dato.cajaChica,true)
+                                            $scope.generarPdfBoletaCajaChica($scope.cajaChica.solicitud, dato.cajaChica, true)
                                             $scope.mostrarMensaje(dato.mensaje)
                                             $scope.cerrarModalRegistroCajaChica()
                                         })
@@ -883,11 +883,11 @@ angular.module('agil.controladores')
                 } else {
                     doc.text("RENDICIÓN FONDOS CAJA CHICA", 0, y + 20, { align: "center" });
                 }
-               
+
             } else {
-                
-                    doc.text("INGRESO CAJA CHICA", 0, y + 20, { align: "center" });
-            
+
+                doc.text("INGRESO CAJA CHICA", 0, y + 20, { align: "center" });
+
             }
 
             doc.font('Helvetica-Bold', 8);
@@ -1672,13 +1672,17 @@ angular.module('agil.controladores')
             })
         }
         $scope.verSolicitudCajaChica = function (datos) {
+
             $scope.solicitud = datos
             $scope.solicitud.ver = true
             $scope.abrirModalSolicitudCajaChica(true)
+
         }
         $scope.editarSolicitudCajaChica = function (datos) {
-            $scope.solicitud = datos
-            $scope.abrirModalSolicitudCajaChica(true)
+            if ($scope.usuario.persona.id == datos.usuario.persona.id) {
+                $scope.solicitud = datos
+                $scope.abrirModalSolicitudCajaChica(true)
+            }
         }
         $scope.eliminarSolicitud = function () {
             $scope.tiposEstados.forEach(function (tipo, index, array) {
@@ -1720,7 +1724,7 @@ angular.module('agil.controladores')
 
                         });
                     }
-                }else{
+                } else {
                     $scope.cerrarModalVerificarAutorizacion()
                     $scope.mostrarMensaje(dato.message)
                 }
