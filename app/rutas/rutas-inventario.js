@@ -56,6 +56,59 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 
 		});
 
+	router.route('/ventasProductos/:idsSucursales/inicio/:inicio/fin/:fin/razon-social/:razon_social/nit/:nit/monto/:monto/tipo-venta/:tipo_venta/sucursal/:sucursal/transaccion/:transaccion/usuario/:usuario/estado/:estado')
+		.get(/*ensureAuthorized,*/function (req, res) {
+			var inicio = req.params.inicio.split('/').reverse().join('-'); //inicio.setHours(0, 0, 0, 0, 0);
+			var fin = req.params.fin.split('/').reverse().join('-'); //fin.setHours(23, 59, 59, 0, 0);
+				condicionSucursal = { id: { $in: req.params.idsSucursales.split(',') } };/-, condicionTransaccion = {},-/
+				condicionUsuario = {}, clienteRequerido = false;
+			if (req.params.razon_social != 0) {
+				condicionCliente.razon_social = { $like: "%" + req.params.razon_social + "%" };
+				clienteRequerido = true;
+			}
+			if (req.params.nit != 0) {
+				condicionCliente.nit = parseInt(req.params.nit);
+				clienteRequerido = true;
+			}
+			if (req.params.monto != 0) {
+				condicionVenta.total = parseFloat(req.params.monto);
+			}
+			if (req.params.tipo_venta != 0) {
+				condicionVenta.id_tipo_pago = req.params.tipo_venta;
+			}
+			if (req.params.sucursal != 0) {
+				condicionSucursal.id = req.params.sucursal;
+			}
+			if (req.params.transaccion != 0) {
+				condicionTransaccion.id = req.params.transaccion;
+			}
+			if (req.params.estado != 0) {
+				condicionVenta.activa = (req.params.estado == "true") ? true : false;
+			}
+			if (req.params.usuario != 0) {
+				condicionUsuario.nombre_usuario = { $like: "%" + req.params.usuario + "%" };
+			}
+			sequelize.query("SELECT \
+			p.id,p.nombre,\
+			sum(d.cantidad) AS cantidad,p.unidad_medida,\
+			sum(d.total) AS total\
+		FROM\
+			agil_producto AS p\
+		INNER JOIN inv_detalle_venta AS d ON p.id = d.producto\
+		INNER JOIN inv_venta AS v ON d.venta = v.id\
+		INNER JOIN agil_almacen AS a ON v.almacen = a.id\
+		INNER JOIN agil_sucursal AS s ON a.sucursal = s.id\
+		WHERE\
+		v.fecha BETWEEN '"+ inicio +"' AND '"+ fin +"'\
+		AND s.id in ("+ req.params.idsSucursales.split(',') + ")\
+		GROUP BY\
+			p.nombre",
+				{ type: sequelize.QueryTypes.SELECT })
+				.then(function (data) {
+					res.json(data);
+				});
+		});
+
 	router.route('/inventarios/empresa/:id_empresa/almacen/:id_almacen/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion/cantidad/:cantidad/grupo/:id_grupo/user/:id_usuario')
 		.get(function (req, res) {
 			var condicionProducto = "empresa=" + req.params.id_empresa;
@@ -116,6 +169,20 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 					res.json({ productos: [], mensaje: 'El usuario no cuenta con grupos de productos asignados.', paginas: Math.ceil(productos.count / req.params.items_pagina) });
 				}
 			})
+		});
+
+	router.route('/detalle/:inicio/:fin/:id')
+		.get(function(req, res){
+			var inicio = new Date(req.params.inicio); inicio.setHours(0, 0, 0, 0, 0);
+			var fin = new Date(req.params.fin); fin.setHours(23, 0, 0, 0, 0);
+			var condicionCompra = { fecha: { $between: [inicio,fin] } };
+			DetalleVenta.findAll({
+				where: {id_producto: req.params.id},
+				include: [{model:Producto, as:'producto'},{model:Venta, as:'venta',where:condicionCompra}]
+			}).then(function (Detalle) {
+				res.json(Detalle);
+
+			});
 		});
 
 	router.route('/compras/:idsSucursales/inicio/:inicio/fin/:fin/razon-social/:razon_social/nit/:nit/monto/:monto/tipo-compra/:tipo_compra/sucursal/:sucursal/usuario/:usuario/user/:id_usuario/tipo/:tipo')
