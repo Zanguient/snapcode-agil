@@ -40,8 +40,8 @@ angular.module('agil.controladores')
                     precio_unitario: { value: "Precio Unitario", show: true },
                     inventario_minimo: { value: "Inventario Mínimo", show: true },
 					descripcion_uno: { value: "Descripcion", show: true },
-					Carac_Esp_uno: { value: "Carac. Esp. 1", show: true },
-					Carac_Esp_dos: { value: "Carac. Esp. 2", show: true },
+					carac_esp_uno: { value: "Carac. Esp. 1", show: true },
+					carac_esp_dos: { value: "Carac. Esp. 2", show: true },
 					grupo: { value: "Grupo", show: true },
 					subgrupo: { value: "Subgrupo", show: true },
 					tipo_producto: { value: "Tipo Producto", show: true }

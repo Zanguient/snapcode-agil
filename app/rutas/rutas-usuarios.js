@@ -290,10 +290,10 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, decodeBase
 			Usuario.findAndCountAll({
 
 				where: condicionUsuario,
-				include: [{ model: Persona, as: 'persona' },
-				{ model: UsuarioRol, as: 'rolesUsuario', include: [{ model: Rol, as: 'rol' }] },
-				{ model: Empresa, as: 'empresa', include: [{ model: Sucursal, as: 'sucursales' }] },
-				{ model: UsuarioSucursal, as: 'sucursalesUsuario', include: [{ model: Sucursal, as: 'sucursal' }] }
+				include: [{ model: Persona, as: 'persona',attributes: ['id', 'nombres'] },
+				{ model: UsuarioRol, as: 'rolesUsuario', include: [{ model: Rol, as: 'rol',attributes: ['id', 'nombre'] }] },
+				{ model: Empresa, as: 'empresa',attributes: ['id', 'razon_social']/* , include: [{ model: Sucursal, as: 'sucursales' }] */ },
+				{ model: UsuarioSucursal, as: 'sucursalesUsuario', include: [{ model: Sucursal, as: 'sucursal',attributes: ['id', 'nombre'] }] }
 					// { model: UsuarioAplicacion, as: 'aplicacionesUsuario', include: [{ model: Aplicacion, as: 'aplicacion' }] },
 					// { model: UsuarioRuta, as: 'rutas', include: [{ model: Ruta, as: 'ruta' }] },
 					// { model: UsuarioGrupos, as: 'grupos', include: [{ model: Clase, as: 'grupo' }] }
@@ -303,10 +303,10 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, decodeBase
 				Usuario.findAll({
 					offset: (req.params.items_pagina * (req.params.pagina - 1)), limit: req.params.items_pagina,
 					where: condicionUsuario,
-					include: [{ model: Persona, as: 'persona' },
-					{ model: UsuarioRol, as: 'rolesUsuario', include: [{ model: Rol, as: 'rol' }] },
-					{ model: Empresa, as: 'empresa', include: [{ model: Sucursal, as: 'sucursales' }] },
-					{ model: UsuarioSucursal, as: 'sucursalesUsuario', include: [{ model: Sucursal, as: 'sucursal' }] },
+					include: [{ model: Persona, as: 'persona',attributes: ['id', 'nombres','apellido_materno','apellido_paterno','imagen']  },
+					{ model: UsuarioRol, as: 'rolesUsuario', include: [{ model: Rol, as: 'rol',attributes: ['id', 'nombre'] }] },
+					{ model: Empresa, as: 'empresa',attributes: ['id', 'razon_social']/* , include: [{ model: Sucursal, as: 'sucursales',attributes: ['id', 'nombre'] }] */ },
+					 { model: UsuarioSucursal, as: 'sucursalesUsuario', include: [{ model: Sucursal, as: 'sucursal',attributes: ['id', 'nombre'] }] },
 						// { model: UsuarioAplicacion, as: 'aplicacionesUsuario', include: [{ model: Aplicacion, as: 'aplicacion' }] },
 						// { model: UsuarioRuta, as: 'rutas', include: [{ model: Ruta, as: 'ruta' }] },
 						// { model: UsuarioGrupos, as: 'grupos', include: [{ model: Clase, as: 'grupo' }]} 

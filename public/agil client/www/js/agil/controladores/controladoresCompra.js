@@ -306,6 +306,10 @@ angular.module('agil.controladores')
 			}
 			if ($scope.compra.tipoPago.nombre == $scope.diccionario.TIPO_PAGO_CREDITO) {
 				$scope.calcularSaldo();
+			}else{
+				$scope.compra.a_cuenta=null
+				$scope.compra.saldo=null
+				$scope.compra.dias_credito=null
 			}
 			$scope.detalleCompra = { producto: {}, centroCosto: {}, cantidad: 1, descuento: 0, recargo: 0, ice: 0, excento: 0, tipo_descuento: false, tipo_recargo: false }
 			$scope.enfocar('centro_costo');
@@ -320,6 +324,10 @@ angular.module('agil.controladores')
 			}
 			if ($scope.compra.tipoPago.nombre == $scope.diccionario.TIPO_PAGO_CREDITO) {
 				$scope.calcularSaldo();
+			}else{
+				$scope.compra.a_cuenta=null
+				$scope.compra.saldo=null
+				$scope.compra.dias_credito=null
 			}
 			$scope.detalleCompra = { producto: {}, centroCosto: {}, cantidad: 1, descuento: 0, recargo: 0, ice: 0, excento: 0, tipo_descuento: false, tipo_recargo: false }
 			$scope.enfocar('centro_costo');
@@ -337,6 +345,10 @@ angular.module('agil.controladores')
 			}
 			if ($scope.compra.tipoPago.nombre == $scope.diccionario.TIPO_PAGO_CREDITO) {
 				$scope.calcularSaldo();
+			}else{
+				$scope.compra.a_cuenta=null
+				$scope.compra.saldo=null
+				$scope.compra.dias_credito=null
 			}
 		}
 
@@ -346,6 +358,10 @@ angular.module('agil.controladores')
 			$scope.compra.id_tipo_pago = tipoPago.id;
 			if (!$scope.esContado) {
 				$scope.calcularSaldo();
+			}else{
+				$scope.compra.a_cuenta=null
+				$scope.compra.saldo=null
+				$scope.compra.dias_credito=null
 			}
 
 		}
@@ -547,6 +563,10 @@ angular.module('agil.controladores')
 			}
 			if ($scope.compra.tipoPago.nombre == $scope.diccionario.TIPO_PAGO_CREDITO) {
 				$scope.calcularSaldo();
+			}else{
+				$scope.compra.a_cuenta=null
+				$scope.compra.saldo=null
+				$scope.compra.dias_credito=null
 			}
 		}
 
