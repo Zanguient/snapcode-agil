@@ -4,7 +4,7 @@ angular.module('agil.controladores')
 		$route, blockUI, Producto, Productos, ProductosPaginador, ProductosEmpresa,
 		ClasesTipo, Clases, ProductoKardex, ProductosEmpresaCreacion, DatoCodigoSiguienteProductoEmpresa, ListaProductosEmpresa,
 		Paginator, ListaCuentasComprobanteContabilidad, DatosProducto, CatalogoProductos,
-		ListaGruposProductoEmpresa, ListaSubGruposProductoEmpresa, ListaGruposProductoUsuario, ReporteProductosKardex) {
+		ListaGruposProductoEmpresa,FieldViewer, ListaSubGruposProductoEmpresa, ListaGruposProductoUsuario, ReporteProductosKardex) {
 		blockUI.start();
 		$scope.idModalWizardProductoKardex = 'modal-wizard-producto-kardex';
 		$scope.idModalWizardProductoEdicion = 'modal-wizard-producto-edicion';
@@ -23,9 +23,32 @@ angular.module('agil.controladores')
 			$scope.obtenerSucursales();
 			$scope.obtenerGruposProductosEmpresaUsuario();
 			$scope.obtenerSubGruposProductosEmpresa();
+			
 			$scope.usarValuado = true
 		}
-
+		$scope.obtenerColumnasAplicacion = function () {
+            $scope.fieldViewer = FieldViewer({
+                crear: true,
+                id_empresa: $scope.usuario.id_empresa,
+                configuracion: {
+                    publicado_panel: { value: "¿Publicado Panel?", show: true },
+                    inventario_activado: { value: "¿Inventario Activado?", show: true },
+                    codigo: { value: "Código", show: true },
+                    nombre: { value: "Nombre", show: true },
+                    imagen: { value: "Imagen", show: true },
+                    unidad_medida: { value: "Unidad de Medida", show: true },
+                    precio_unitario: { value: "Precio Unitario", show: true },
+                    inventario_minimo: { value: "Inventario Mínimo", show: true },
+					descripcion_uno: { value: "Descripcion", show: true },
+					Carac_Esp_uno: { value: "Carac. Esp. 1", show: true },
+					Carac_Esp_dos: { value: "Carac. Esp. 2", show: true },
+					grupo: { value: "Grupo", show: true },
+					subgrupo: { value: "Subgrupo", show: true },
+					tipo_producto: { value: "Tipo Producto", show: true }
+                }
+            }, $scope.aplicacion.aplicacion.id);
+            $scope.fieldViewer.updateObject();
+        }
 		$scope.obtenerGruposProductosEmpresaUsuario = function () {
 			blockUI.start()
 			var promesa = ListaGruposProductoUsuario($scope.usuario.id_empresa, $scope.usuario.id);
@@ -177,6 +200,7 @@ angular.module('agil.controladores')
 				$scope.idImagenProducto,
 				$scope.idModalReporteProductosKardex);
 			$scope.buscarAplicacion($scope.usuario.aplicacionesUsuario, $location.path().substring(1));
+			$scope.obtenerColumnasAplicacion()
 			blockUI.stop();
 		});
 

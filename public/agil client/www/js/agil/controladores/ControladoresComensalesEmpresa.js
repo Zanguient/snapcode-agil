@@ -1,6 +1,6 @@
 angular.module('agil.controladores')
 
-    .controller('controladorComensalesEmpresa', function ($scope, $timeout, $localStorage, $location, blockUI, Clientes, ClientesNit, GuardarAlias, ObtenerAlias, GuardarGerencias, ObtenerGerencias, GuardarComensales, ObtenerComensales, GuardarComidas, ObtenerComidas, GuardarPrecioComidas, ObtenerPrecioComidas, GuardarComensalesExcel, ObtenerHistorial) {
+    .controller('controladorComensalesEmpresa', function ($scope, $timeout, $localStorage, $location, blockUI, Clientes, ClientesNit, GuardarAlias, ObtenerAlias, GuardarGerencias, ObtenerGerencias, GuardarComensales, ObtenerComensales, GuardarComidas, ObtenerComidas, GuardarPrecioComidas, ObtenerPrecioComidas, GuardarHistorialExcel, GuardarComensalesExcel, ObtenerHistorial) {
 
         $scope.modalEdicionAlias = 'modalAliasEmpresasCliente'
         $scope.modalEdicionGerencias = 'modalGerenciaEmpresasCliente'
@@ -186,9 +186,14 @@ angular.module('agil.controladores')
             })
         }
 
-        $scope.obtenerGerencias = function () {
+        $scope.obtenerGerencias = function (empresa) {
             blockUI.start()
-            var prom = ObtenerGerencias($scope.usuario.id_empresa, $scope.usuario.id)
+            var prom;
+            if (empresa) {
+                prom = ObtenerGerencias($scope.usuario.id_empresa, $scope.usuario.id, $scope.clienteEmpresaEdicionComensales.empresaCliente.id )
+            } else {
+                prom = ObtenerGerencias($scope.usuario.id_empresa, $scope.usuario.id, $scope.empresaExternaSeleccionada.id)
+            }
             prom.then(function (res) {
                 if (res.hasErr) {
                     $scope.mostrarMensaje(res.mensaje)
@@ -203,9 +208,14 @@ angular.module('agil.controladores')
             })
         }
 
-        $scope.obtenerComensales = function () {
+        $scope.obtenerComensales = function (empresa) {
             blockUI.start()
-            var prom = ObtenerComensales($scope.usuario.id_empresa, $scope.usuario.id)
+            var prom;
+            if (empresa) {
+                prom = ObtenerComensales($scope.usuario.id_empresa, $scope.usuario.id, $scope.clienteEmpresaEdicionComensales.empresaCliente.id )
+            } else {
+                prom = ObtenerComensales($scope.usuario.id_empresa, $scope.usuario.id, $scope.empresaExternaSeleccionada.id)
+            }
             prom.then(function (res) {
                 if (res.hasErr) {
                     $scope.mostrarMensaje(res.mensaje)
@@ -226,7 +236,7 @@ angular.module('agil.controladores')
             if (empresa) {
                 prom = ObtenerComidas($scope.usuario.id_empresa, $scope.usuario.id, $scope.clienteEmpresaPreciosComidas.empresaCliente.id )
             } else {
-                prom = ObtenerComidas($scope.usuario.id_empresa, $scope.usuario.id, 0)
+                prom = ObtenerComidas($scope.usuario.id_empresa, $scope.usuario.id, $scope.empresaExternaSeleccionada.id)
             }
             prom.then(function (res) {
                 if (res.hasErr) {
@@ -248,7 +258,7 @@ angular.module('agil.controladores')
             if (empresa) {
                 prom = ObtenerPrecioComidas($scope.usuario.id_empresa, $scope.usuario.id, $scope.clienteEmpresaPreciosComidas.empresaCliente.id )
             } else {
-                prom = ObtenerPrecioComidas($scope.usuario.id_empresa, $scope.usuario.id, 0)
+                prom = ObtenerPrecioComidas($scope.usuario.id_empresa, $scope.usuario.id, $scope.empresaExternaSeleccionada.id)
             }
             prom.then(function (res) {
                 if (res.hasErr) {
@@ -275,6 +285,38 @@ angular.module('agil.controladores')
             })
         }
 
+        $scope.subirExcelHistorial = function (event) {
+            blockUI.start();
+            var files = event.target.files;
+            var i, f;
+            for (i = 0, f = files[i]; i != files.length; ++i) {
+                var reader = new FileReader();
+                var name = f.name;
+                reader.onload = function (e) {
+                    var data = e.target.result;
+                    var workbook = XLSX.read(data, { type: 'binary' });
+                    var first_sheet_name = workbook.SheetNames[0];
+                    var row = 2, i = 0;
+                    var worksheet = workbook.Sheets[first_sheet_name];
+                    var Historial = [];
+                    do {
+                        var comensal = {};
+                        comensal.tarjeta = worksheet['A' + row] != undefined && worksheet['A' + row] != "" ? worksheet['A' + row].v.toString() : null;
+                        comensal.nombre = worksheet['B' + row] != undefined && worksheet['B' + row] != "" ? worksheet['B' + row].v.toString() : null;
+                        comensal.fecha_hora = worksheet['C' + row] != undefined && worksheet['C' + row] != "" ? worksheet['C' + row].v.toString() : null;
+                        comensal.lectora = worksheet['D' + row] != undefined && worksheet['D' + row] != "" ? worksheet['D' + row].v.toString() : null;
+                        comensal.alias = worksheet['E' + row] != undefined && worksheet['E' + row] != "" ? worksheet['E' + row].v.toString() : null;
+                        Historial.push(comensal);
+                        row++;
+                        i++;
+                    } while (worksheet['A' + row] != undefined);
+                    blockUI.stop();
+                    $scope.guardarHistorialExcel(Historial);
+                };
+                reader.readAsBinaryString(f);
+            }
+        }
+
         $scope.subirExcelComensales = function (event) {
             blockUI.start();
             var files = event.target.files;
@@ -291,11 +333,12 @@ angular.module('agil.controladores')
                     var comensales = [];
                     do {
                         var comensal = {};
-                        comensal.tarjeta = worksheet['A' + row] != undefined && worksheet['A' + row] != "" ? worksheet['A' + row].v.toString() : null;
-                        comensal.nombre = worksheet['B' + row] != undefined && worksheet['B' + row] != "" ? worksheet['B' + row].v.toString() : null;
-                        comensal.fecha_hora = worksheet['C' + row] != undefined && worksheet['C' + row] != "" ? worksheet['C' + row].v.toString() : null;
-                        comensal.lectora = worksheet['D' + row] != undefined && worksheet['D' + row] != "" ? worksheet['D' + row].v.toString() : null;
-                        comensal.alias = worksheet['E' + row] != undefined && worksheet['E' + row] != "" ? worksheet['E' + row].v.toString() : null;
+                        comensal.codigo = worksheet['A' + row] != undefined && worksheet['A' + row] != "" ? worksheet['A' + row].v.toString() : null;
+                        comensal.tarjeta = worksheet['B' + row] != undefined && worksheet['B' + row] != "" ? worksheet['B' + row].v.toString() : null;
+                        comensal.nombre = worksheet['C' + row] != undefined && worksheet['C' + row] != "" ? worksheet['C' + row].v.toString() : null;
+                        comensal.empresaCliente = worksheet['D' + row] != undefined && worksheet['D' + row] != "" ? worksheet['D' + row].v.toString() : null;
+                        comensal.gerencia = worksheet['E' + row] != undefined && worksheet['E' + row] != "" ? worksheet['E' + row].v.toString() : null;
+                        comensal.tipo = worksheet['F' + row] != undefined && worksheet['F' + row] != "" ? worksheet['F' + row].v.toString() : null;
                         comensales.push(comensal);
                         row++;
                         i++;
@@ -321,9 +364,33 @@ angular.module('agil.controladores')
         }
 
         $scope.guardarComensalesExcel = function (comensales) {
-            var datos = []
             if (comensales.length > 0) {
-                comensales.forEach(function (comensal) {
+                var prom = GuardarComensalesExcel($scope.usuario.id_empresa, comensales, $scope.usuario.id)
+                prom.then(function (res) {
+                    $scope.obtenerComensales()
+                    if (!res.hasErr) {
+                        if (res.mensajes) {
+                            $scope.mostrarMensaje(res.mensaje + res.mensajes)
+                        }else{
+                            $scope.mostrarMensaje(res.mensaje)
+                        }
+                    }else{
+                        $scope.mostrarMensaje(res.mensajes)
+                    }
+                }).catch(function (err) {
+                    var msg = (err.data !== undefined && err.data !== null) ? err.data : (err.message !== undefined && err.message !== null) ? err.message : 'Se perdió la conexión.'
+                    $scope.mostrarMensaje(msg)
+                    blockUI.stop()
+                })
+            }else{
+                $scope.mostrarMensaje('Sin cambios.')
+            }
+        }
+
+        $scope.guardarHistorialExcel = function (Historial) {
+            var datos = []
+            if (Historial.length > 0) {
+                Historial.forEach(function (comensal) {
                     if (!datos.some(function(dato){
                         var fdato = $scope.extraerFechaExcel(dato.fecha_hora)
                         var fcomensal = $scope.extraerFechaExcel(comensal.fecha_hora)
@@ -349,7 +416,7 @@ angular.module('agil.controladores')
                 })
             }
             if (datos.length > 0) {
-                var prom = GuardarComensalesExcel($scope.usuario.id_empresa, datos, $scope.usuario.id)
+                var prom = GuardarHistorialExcel($scope.usuario.id_empresa, datos, $scope.usuario.id)
                 prom.then(function (res) {
                     $scope.obtenerHistoriales()
                     if (!res.hasErr) {

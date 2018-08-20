@@ -226,7 +226,7 @@
                                 </td>
                                 <td>{{solicitud.concepto.nombre}}</td>
                                 <td>{{solicitud.detalle}}</td>
-                                <td ng-style="{'background-color': (solicitud.estado.nombre==='ANULADO')?'red' : 'auto','color': (solicitud.estado.nombre=='ANULADO')?'White' : 'auto'}">{{solicitud.estado.nombre}}</td>
+                                <td ng-style="{'background-color': (solicitud.estado.nombre===diccionario.CC_ESTADO_ANULADO)?'red' : 'auto','color': (solicitud.estado.nombre==diccionario.CC_ESTADO_ANULADO)?'White' : 'auto'}">{{solicitud.estado.nombre}}</td>
                                 <td>
                                     <span ng-if="tipoFiltro=='TODOS'"> {{solicitud.monto|number:2}} .-</span>
                                     <span ng-if="tipoFiltro!='TODOS'"> {{solicitud.cajasChicas[0].saldo|number:2}} .-</span>
@@ -256,17 +256,17 @@
                                             href="javascript:void(0)" e-disabled="!aplicacion.puede_eliminar" ng-click="abrirModalEliminarSolicitud(solicitud)">
                                             <i class="ace-icon fa fa-trash-o bigger-130"></i>
                                         </a>
-                                        <a ng-if="!solicitud.eliminado && solicitud.estado.nombre=='PENDIENTE'" class="blue tooltip-info "tooltip-placement="left"  uib-tooltip="Autorizar Solicitud"
+                                        <a ng-if="!solicitud.eliminado && solicitud.estado.nombre==diccionario.CC_ESTADO_PENDIENTE" class="blue tooltip-info "tooltip-placement="left"  uib-tooltip="Autorizar Solicitud"
                                             href="javascript:void(0)" e-disabled="!aplicacion.puede_crear " ng-click="abrirModalVerificarAutorizacion(solicitud)">
                                             <i class="ace-icon fa fa-pencil-square  bigger-130"></i>
                                         </a>
-                                        <a ng-if="!solicitud.eliminado && (solicitud.estado.nombre=='AUTORIZADO'||solicitud.estado.nombre=='DESEMBOLSADO') && solicitud.cajasChicas[0].saldo!=0"
+                                        <a ng-if="!solicitud.eliminado && (solicitud.estado.nombre==diccionario.CC_ESTADO_AUTORIZADO||solicitud.estado.nombre==diccionario.CC_ESTADO_DESEMBOLSADO) && solicitud.cajasChicas[0].saldo!=0"
                                             ng-hide="solicitud.concepto.concepto.nombre=='KARDEX' && solicitud.cajasChicas.length==0"
                                             class="blue tooltip-info " uib-tooltip="Cobrar" href="javascript:void(0)" tooltip-placement="left" e-disabled="!aplicacion.puede_crear || !usuario.encargado_caja_chica"
                                             ng-click="abrirModalRegistroCajaChica(solicitud)">
                                             <i class="ace-icon fa fa-folder  bigger-130"></i>
                                         </a>
-                                        <a ng-hide="solicitud.cajasChicas.length>0" ng-if="!solicitud.eliminado && solicitud.estado.nombre=='AUTORIZADO' && solicitud.cajasChicas[0].saldo!=0 && solicitud.concepto.concepto.nombre=='KARDEX'"
+                                        <a ng-hide="solicitud.cajasChicas.length>0" ng-if="!solicitud.eliminado && solicitud.estado.nombre==diccionario.CC_ESTADO_AUTORIZADO && solicitud.cajasChicas[0].saldo!=0 && solicitud.concepto.concepto.nombre=='KARDEX'"
                                             class="red tooltip-info " uib-tooltip="Desembolso" href="javascript:void(0)" tooltip-placement="left" e-disabled="!aplicacion.puede_crear || !usuario.encargado_caja_chica"
                                             ng-click="abrirModalRegistroDesembolsoCajaChica(solicitud,false,false)">
                                             <i class="ace-icon fa fa-folder  bigger-130"></i>
@@ -390,7 +390,7 @@
                         </label>
                     </div>
                     <div class="col-md-8">
-                        <input ng-disabled="solicitud.ver" type="number" ng-model="solicitud.monto" class="form-control">
+                        <input ng-disabled="solicitud.ver" type="number" step="0.001" min="0" ng-model="solicitud.monto" class="form-control">
                     </div>
                 </div>
             </div>
@@ -624,7 +624,7 @@
                                 </label>
                             </div>
                             <div class="col-md-9">
-                                <input class="form-control" ng-model-options="{updateOn: 'submit'}" type="number" ng-model="cajaChica.total">
+                                <input class="form-control" step="0.01" min="0" ng-model-options="{updateOn: 'submit'}" type="number" ng-model="cajaChica.total">
                             </div>
                         </div>
                         <div class="space-4"></div>
@@ -810,10 +810,10 @@
                                 <td>
                                     <label>MONTO</label>
                                     <input ng-if="cajaChica.solicitud!=null && cajaChica.solicitud.cajasChicas.length>0" required class="form-control" ng-disabled="cajaChica.ver || cajaChica.solicitud.concepto.concepto.nombre=='GASTO'"
-                                        type="number" max="{{cajaChica.solicitud.cajasChicas[0].saldo}}" ng-model="cajaChica.compra.total">
+                                        type="number" step="0.001" min="0" max="{{cajaChica.solicitud.cajasChicas[0].saldo}}" ng-model="cajaChica.compra.total">
 
                                     <input ng-if="cajaChica.solicitud!=null && cajaChica.solicitud.cajasChicas.length==0" required class="form-control" ng-disabled="cajaChica.ver || cajaChica.solicitud.cajasChicas.length==0"
-                                        type="number" ng-model="cajaChica.compra.total">
+                                        type="number" step="0.001" min="0" ng-model="cajaChica.compra.total">
                                     <input ng-if="cajaChica.solicitud==null" required class="form-control" ng-disabled="cajaChica.ver" type="number" ng-model="cajaChica.compra.total">
                                 </td>
                             </tr>
@@ -823,7 +823,7 @@
                                 <td>
                                     <label>NIT</label>
                                     <input id="nit" ng-disabled="cajaChica.ver" class="form-control" ng-keypress="interceptarTecla($event,'razon_social',true)"
-                                        data-validate="validate(required)" required type="number" min="0" ng-model="cajaChica.compra.proveedor.nit"
+                                        data-validate="validate(required)" required type="number" step="0.001" min="0" ng-model="cajaChica.compra.proveedor.nit"
                                         placeholder="Ingrese el NIT..." uib-typeahead="proveedor as proveedor.nit for proveedor in buscarProveedor($viewValue)"
                                         typeahead-wait-ms="2000" typeahead-template-url="templates/autocompletar.html" typeahead-show-hint="false"
                                         typeahead-min-length="0" typeahead-on-select="establecerProveedor($item, $model, $label, $event)">
@@ -1896,7 +1896,7 @@
                                 </label>
                             </div>
                             <div class="col-md-9">
-                                <input class="form-control" ng-model-options="{updateOn: 'submit'}" type="number" ng-model="cajaChica.total">
+                                <input class="form-control" step="0.001" min="0" ng-model-options="{updateOn: 'submit'}" type="number" ng-model="cajaChica.total">
                             </div>
                         </div>
                         <div class="space-4"></div>
@@ -2020,7 +2020,7 @@
                                 </label>
                             </div>
                             <div class="col-md-9">
-                                <input class="form-control" ng-model-options="{updateOn: 'submit'}" type="number" ng-model="cajaChica.total">
+                                <input class="form-control" step="0.001" min="0" ng-model-options="{updateOn: 'submit'}" type="number" ng-model="cajaChica.total">
                             </div>
                         </div>
                         <div class="space-4"></div>

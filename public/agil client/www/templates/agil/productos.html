@@ -22,7 +22,14 @@
 
 		<div class="table-header">
 			Lista de Productos
+			<div class="inline pos-rel pull-right">
+				<!--   <a data-toggle="dropdown" href="javascript:void(0)" class="dropdown-toggle button-columna" aria-expanded="false">
+					<i class="glyphicon  glyphicon-list-alt"></i>
+				</a> -->
+				<div class="col-sm-10" ng-include src="'/templates/gral/fields-viewer.html'"></div>
+			</div>
 		</div>
+
 		<span>Grupos: &nbsp;</span>
 		<select class="form-control" style="width:150px;" ng-change="buscarProductos(grupo)" required id="selectGruposProductos"
 		 name="selectGruposProductos" ng-model="grupo" ng-options="grupo as grupo.nombre for grupo in gruposProducto track by grupo.id"
@@ -43,59 +50,66 @@
 								<th class="center">
 									Nº
 								</th>
-								<th ng-if="usuario.empresa.usar_panel" class="center">
+								<th ng-if="usuario.empresa.usar_panel" class="center" ng-if="fieldViewer.getConfiguration().publicado_pabel.show">
 									<a href="javascript:void(0)" ng-click="paginator.sortColumn('publicar_panel')">¿Publicado Panel?
 										<span id="publicar_panel" class="sort fa fa-sort icon-only"></span>
 									</a>
 								</th>
-								<th class="center">
+								<th class="center" ng-if="fieldViewer.getConfiguration().inventario_activado.show">
 									<a href="javascript:void(0)" ng-click="paginator.sortColumn('activar_inventario')">¿Inventario Activado?
 										<span id="activar_inventario" class="sort fa fa-sort icon-only"></span>
 									</a>
 								</th>
-								<th class="center">
+								<th class="center" ng-if="fieldViewer.getConfiguration().codigo.show">
 									<a href="javascript:void(0)" ng-click="paginator.sortColumn('codigo')">Código
 										<span id="codigo" class="sort fa fa-sort icon-only"></span>
 									</a>
 								</th>
-								<th class="center">
+								<th class="center" ng-if="fieldViewer.getConfiguration().nombre.show">
 									<a href="javascript:void(0)" ng-click="paginator.sortColumn('nombre')">Nombre
 										<span id="nombre" class="sort fa fa-sort icon-only"></span>
 									</a>
 								</th>
 								<th>Imagen</th>
-								<th class="center">
+								<th class="center" ng-if="fieldViewer.getConfiguration().unidad_medida.show">
 									<a href="javascript:void(0)" ng-click="paginator.sortColumn('unidad_medida')">Unidad de Medida
 										<span id="unidad_medida" class="sort fa fa-sort icon-only"></span>
 									</a>
 								</th>
-								<th class="center">
+								<th class="center" ng-if="fieldViewer.getConfiguration().precio_unitario.show">
 									<a href="javascript:void(0)" ng-click="paginator.sortColumn('precio_unitario')">Precio Unitario
 										<span id="precio_unitario" class="sort fa fa-sort icon-only"></span>
 									</a>
 								</th>
-								<th class="center">
+								<th class="center" ng-if="fieldViewer.getConfiguration().inventario_minimo.show">
 									<a href="javascript:void(0)" ng-click="paginator.sortColumn('inventario_minimo')">Inventario Mínimo
 										<span id="inventario_minimo" class="sort fa fa-sort icon-only"></span>
 									</a>
 								</th>
-								<th class="center">
+								<th class="center" ng-if="fieldViewer.getConfiguration().descripcion_uno.show">
 									<a href="javascript:void(0)" ng-click="paginator.sortColumn('descripcion')">Descripcion
 										<span id="descripcion" class="sort fa fa-sort icon-only"></span>
 									</a>
 								</th>
+								<th class="center" ng-if="fieldViewer.getConfiguration().carac_esp_uno.show">
+									caracteristica especial 1
 
-								<th class="center">
+								</th>
+								<th class="center" ng-if="fieldViewer.getConfiguration().carac_esp_dos.show">
+									caracteristica especial 2
+
+								</th>
+								<th class="center" ng-if="fieldViewer.getConfiguration().grupo.show">
 									<a href="javascript:void(0)" ng-click="paginator.sortColumn('grupo')">Grupo
 										<span id="grupo" class="sort fa fa-sort icon-only"></span>
 									</a>
 								</th>
-								<th class="center">
+								<th class="center" ng-if="fieldViewer.getConfiguration().subgrupo.show">
 									<a href="javascript:void(0)" ng-click="paginator.sortColumn('subgrupo')">Subgrupo
 										<span id="subgrupo" class="sort fa fa-sort icon-only"></span>
 									</a>
 								</th>
-								<th class="center">
+								<th class="center" ng-if="fieldViewer.getConfiguration().tipo_producto.show">
 									Tipo Producto
 								</th>
 								<th>Acciones</th>
@@ -107,46 +121,51 @@
 								<td class="center">
 									{{($index+1)+(paginator.itemsPerPage*(paginator.currentPage-1))}}
 								</td>
-								<td ng-if="usuario.empresa.usar_panel">
+								<td ng-if="usuario.empresa.usar_panel" ng-if="fieldViewer.getConfiguration().publicado_pabel.show">
 									<label>
 										<input ng-change="actualizarProducto(producto)" name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox"
 										 ng-model="producto.publicar_panel" />
 										<span class="lbl check-descuento"></span>
 									</label>
 								</td>
-								<td>
+								<td ng-if="fieldViewer.getConfiguration().inventario_activado.show">
 									<label>
 										<input ng-change="actualizarProducto(producto)" name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox"
 										 ng-model="producto.activar_inventario" />
 										<span class="lbl check-descuento"></span>
 									</label>
 								</td>
-								<td>
+								<td ng-if="fieldViewer.getConfiguration().codigo.show">
 									{{producto.codigo}}
 								</td>
-								<td>
+								<td ng-if="fieldViewer.getConfiguration().nombre.show">
 									{{producto.nombre}}
 								</td>
-								<td>
+								<td ng-if="fieldViewer.getConfiguration().imagen.show">
 									<img src="{{producto.imagen}}" width="50">
 								</td>
-								<td>{{producto.unidad_medida}}</td>
-								<td>{{producto.precio_unitario | number:2}}</td>
+								<td ng-if="fieldViewer.getConfiguration().unidad_medida.show">{{producto.unidad_medida}}</td>
+								<td ng-if="fieldViewer.getConfiguration().precio_unitario.show">{{producto.precio_unitario | number:2}}</td>
 
-								<td>
+								<td ng-if="fieldViewer.getConfiguration().inventario_minimo.show">
 									{{producto.inventario_minimo}}
 								</td>
-								<td>
+								<td ng-if="fieldViewer.getConfiguration().descripcion_uno.show">
 									{{producto.descripcion}}
 								</td>
-
-								<td>
+								<td ng-if="fieldViewer.getConfiguration().carac_esp_uno.show">
+									{{producto.caracteristica_especial1}}
+								</td>
+								<td ng-if="fieldViewer.getConfiguration().carac_esp_uno.show">
+									{{producto.caracteristica_especial2}}
+								</td>
+								<td ng-if="fieldViewer.getConfiguration().grupo.show">
 									{{producto.grupo}}
 								</td>
-								<td>
+								<td ng-if="fieldViewer.getConfiguration().subgrupo.show">
 									{{producto.subgrupo}}
 								</td>
-								<td>
+								<td ng-if="fieldViewer.getConfiguration().tipo_producto.show">
 									{{producto.tipoProducto}}
 								</td>
 								<td>
@@ -351,8 +370,8 @@
 							<div class="form-group">
 								<label class="col-sm-3 control-label no-padding-right">Grupo</label>
 								<div class="col-sm-9">
-										<select required name="grupo_producto" id="grupo_producto" ng-model="producto.grupo" ng-options="grupoProducto as grupoProducto.nombre for grupoProducto in gruposProducto | filter:{habilitado:1} track by grupoProducto.id">
-											</select>
+									<select required name="grupo_producto" id="grupo_producto" ng-model="producto.grupo" ng-options="grupoProducto as grupoProducto.nombre for grupoProducto in gruposProducto | filter:{habilitado:1} track by grupoProducto.id">
+									</select>
 								</div>
 							</div>
 							<div class="form-group">
@@ -800,7 +819,7 @@
 											</table>
 										</td>
 										<td ng-if="usuario.empresa.usar_vencimientos==true">
-											{{detalleMovimiento.lote}}									
+											{{detalleMovimiento.lote}}
 										</td>
 										<td ng-if="usuario.empresa.usar_vencimientos==true">
 											{{detalleMovimiento.inventario.fecha_vencimiento | date:"dd/MM/yyyy"}}
@@ -825,7 +844,7 @@
 						<label class="inline">
 							<small class="muted smaller-90">Usar Valuado:</small>
 
-							<input id="id-button-borders" ng-click="usarValuadoKardex()"checked="checked" type="checkbox" class="ace ace-switch ace-switch-5">
+							<input id="id-button-borders" ng-click="usarValuadoKardex()" checked="checked" type="checkbox" class="ace ace-switch ace-switch-5">
 							<span class="lbl middle check-descuento"></span>
 						</label>
 					</span>
@@ -930,16 +949,16 @@
 							<label class="col-sm-3 control-label no-padding-right" for="grupo">Grupo</label>
 
 							<div class="col-sm-9">
-									<select required disabled name="grupo_producto" id="grupo_producto" ng-model="producto.grupo" ng-options="grupoProducto as grupoProducto.nombre for grupoProducto in gruposProducto | filter:{habilitado:1} track by grupoProducto.id">
-										</select>
+								<select required disabled name="grupo_producto" id="grupo_producto" ng-model="producto.grupo" ng-options="grupoProducto as grupoProducto.nombre for grupoProducto in gruposProducto | filter:{habilitado:1} track by grupoProducto.id">
+								</select>
 							</div>
 						</div>
 						<div class="form-group">
 							<label class="col-sm-3 control-label no-padding-right" for="subgrupo">Sub-Grupo</label>
 
 							<div class="col-sm-9">
-									<select required disabled name="subgrupo_producto" id="subgrupo_producto" ng-model="producto.subgrupo" ng-options="subgrupoProducto as subgrupoProducto.nombre for subgrupoProducto in subgruposProducto | filter:{habilitado:1} track by subgrupoProducto.id">
-										</select>
+								<select required disabled name="subgrupo_producto" id="subgrupo_producto" ng-model="producto.subgrupo" ng-options="subgrupoProducto as subgrupoProducto.nombre for subgrupoProducto in subgruposProducto | filter:{habilitado:1} track by subgrupoProducto.id">
+								</select>
 							</div>
 						</div>
 						<div class="form-group">

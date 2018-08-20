@@ -59,17 +59,16 @@
                                 <input class="date-picker" type="text" ng-update-hidden data-date-format="dd/mm/yy" ng-model="filtro.fecha_final">
                             </td>
                             <td>
-                                <select  id="periodoFiltroComensales" name="anio" ng-options="anio as anio.nombre for anio in anios track by anio.id"
-                                    ng-model="filtro.anio">
+                                <select id="periodoFiltroComensales" name="anio" ng-options="anio as anio.nombre for anio in anios track by anio.id" ng-model="filtro.anio">
                                     <option value="" selected>TODOS</option>
                                 </select>
                             </td>
                             <td>
-                                    <div class="fileUpload btn btn-primary btn-success">
-                                            <span class="fileUpload-button ace-icon fa fa-cloud-upload align-top bigger-125">&nbsp&nbspImportar</span>
-                                            <!-- CAMBIAR aplicacion POR !aplicacion -->
-                                            <input ng-disabled="!aplicacion.puede_crear" class="upload" type="file" custom-on-file-change="subirExcelComensales" />&nbsp&nbsp
-                                        </div>
+                                <div class="fileUpload btn btn-primary btn-success">
+                                    <span class="fileUpload-button ace-icon fa fa-cloud-upload align-top bigger-125">&nbsp&nbspImportar</span>
+                                    <!-- CAMBIAR aplicacion POR !aplicacion -->
+                                    <input ng-disabled="!aplicacion.puede_crear" class="upload" type="file" custom-on-file-change="subirExcelHistorial" />&nbsp&nbsp
+                                </div>
                                 <a href="javascript:void(0)" class="blue" ng-click="mostrarMensaje('Sin funcionalidad')">
                                     <i class="ace-icon fa fa-cloud-download align-top bigger-300"></i>
                                 </a>
@@ -103,16 +102,17 @@
                                 <input ng-model="filtro.razon" type="text">
                             </td>
                             <td>
-                                    <select ng-options="comida as (comida.nombre + '--' + comida.empresaCliente.razon_social) for comida in listaComidasclienteEmpresa track by comida.id" ng-model="filtro.comida">
-                                            <option disables value="">Seleccione la comida...</option>
-                                        </select>
+                                <select ng-options="comida as (comida.nombre + '--' + comida.empresaCliente.razon_social) for comida in listaComidasclienteEmpresa track by comida.id"
+                                    ng-model="filtro.comida">
+                                    <option disables value="">Seleccione la comida...</option>
+                                </select>
                             </td>
                             <td>&nbsp
-                                    <select ng-model="filtro.generar">
-                                            <option selected value="1">Reporte Comedor</option>
-                                            <option selected value="2">Empresa</option>
-                                            <option selected value="2">Comensal</option>
-                                        </select>
+                                <select ng-model="filtro.generar">
+                                    <option selected value="1">Reporte Comedor</option>
+                                    <option selected value="2">Empresa</option>
+                                    <option selected value="2">Comensal</option>
+                                </select>
                             </td>
                             <td style="max-width: 200px; width: 200px">
                                 <button class="btn btn-app btn-danger" type="submit">PDF
@@ -266,9 +266,9 @@
                                             <label>Empresa</label>
                                         </div>
                                         <div class="col-lg-7">
-                                            <input ng-keypress="interceptarTecla($event,'proformaDetalle',true)"
-                                                autocomplete="off" data-validate="validate()"  type="text" ng-model="clienteEmpresaAsignacionAlias.empresaCliente"
-                                                placeholder="Ingrese la Razon Social" uib-typeahead="cliente as cliente.razon_social for cliente in buscarCliente($viewValue)"
+                                            <input ng-keypress="interceptarTecla($event,'proformaDetalle',true)" autocomplete="off" data-validate="validate()" type="text"
+                                                ng-model="clienteEmpresaAsignacionAlias.empresaCliente" placeholder="Ingrese la Razon Social"
+                                                uib-typeahead="cliente as cliente.razon_social for cliente in buscarCliente($viewValue)"
                                                 typeahead-wait-ms="2000" typeahead-template-url="templates/autocompletar.html"
                                                 typeahead-show-hint="false" typeahead-min-length="0" typeahead-on-select="establecerCliente($item, $model, $label, $event)">
                                             <button tabindex="-1" type="button" ng-click="abrirdialogClientesComensales()" class="btn btn-info btn-sm">
@@ -392,8 +392,7 @@
                                             <label>Empresa</label>
                                         </div>
                                         <div class="col-lg-7">
-                                                <input
-                                                autocomplete="off" data-validate="validate()"  type="text" ng-model="clienteEmpresaEdicionGerencias.empresaCliente"
+                                            <input autocomplete="off" data-validate="validate()" type="text" ng-model="clienteEmpresaEdicionGerencias.empresaCliente"
                                                 placeholder="Ingrese la Razon Social" uib-typeahead="cliente as cliente.razon_social for cliente in buscarCliente($viewValue)"
                                                 typeahead-wait-ms="2000" typeahead-template-url="templates/autocompletar.html"
                                                 typeahead-show-hint="false" typeahead-min-length="0" typeahead-on-select="establecerCliente($item, $model, $label, $event)">
@@ -509,12 +508,14 @@
                                         </div>
                                         <div class="col-lg-7">
                                             <input type="text" ng-model="clienteEmpresaEdicionComensales.codigo">
-                                            <a href="javascript:void(0)" class="blue" ng-click="mostrarMensaje('Sin funcionalidad')">
-                                                <i class="ace-icon fa fa-cloud-upload align-top bigger-200"></i>
-                                            </a>
-                                            <a href="javascript:void(0)" class="green" ng-click="mostrarMensaje('Sin funcionalidad')">
-                                                <i class="ace-icon fa fa-cloud-download align-top bigger-200"></i>
-                                            </a>
+                                            <div class="fileUpload green">
+                                                <span class="fileUpload-button ace-icon fa fa-cloud-upload align-top bigger-200"></span>
+                                                <input ng-disabled="!aplicacion.puede_crear" class="upload" type="file" custom-on-file-change="subirExcelComensales" />
+                                            </div>
+                                            <div class="fileUpload blue">
+                                                <span class="fileUpload-button ace-icon fa fa-cloud-upload align-top bigger-200"></span>
+                                                <input ng-disabled="!aplicacion.puede_crear" class="upload" type="file" custom-on-file-change="subirExcelComensales" />
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="row form-group">
@@ -537,14 +538,14 @@
                                         <div class="col-lg-5">
                                             <label>Empresa</label>
                                         </div>
-                                        <div class="col-lg-7"><input
-                                            autocomplete="off" data-validate="validate()"  type="text" ng-model="clienteEmpresaEdicionComensales.empresaCliente"
-                                            placeholder="Ingrese la Razon Social" uib-typeahead="cliente as cliente.razon_social for cliente in buscarCliente($viewValue)"
-                                            typeahead-wait-ms="2000" typeahead-template-url="templates/autocompletar.html"
-                                            typeahead-show-hint="false" typeahead-min-length="0" typeahead-on-select="establecerCliente($item, $model, $label, $event)">
-                                        <button tabindex="-1" type="button" ng-click="abrirdialogClientesComensales()" class="btn btn-info btn-sm">
-                                            <i class="ace-icon fa fa-search-plus bigger-110"></i>
-                                        </button>
+                                        <div class="col-lg-7">
+                                            <input autocomplete="off" data-validate="validate()" type="text" ng-model="clienteEmpresaEdicionComensales.empresaCliente"
+                                                placeholder="Ingrese la Razon Social" uib-typeahead="cliente as cliente.razon_social for cliente in buscarCliente($viewValue)"
+                                                typeahead-wait-ms="2000" typeahead-template-url="templates/autocompletar.html"
+                                                typeahead-show-hint="false" typeahead-min-length="0" typeahead-on-select="establecerCliente($item, $model, $label, $event)">
+                                            <button tabindex="-1" type="button" ng-click="abrirdialogClientesComensales()" class="btn btn-info btn-sm">
+                                                <i class="ace-icon fa fa-search-plus bigger-110"></i>
+                                            </button>
                                         </div>
                                     </div>
                                     <div class="row form-group">
@@ -552,7 +553,7 @@
                                             <label>Gerencia</label>
                                         </div>
                                         <div class="col-lg-7">
-                                            <select class="form-control" style="width:170px;"  ng-model="clienteEmpresaEdicionComensales.gerencia" ng-options="gerencia as gerencia.nombre for gerencia in listaGerenciasClienteEmpresa track by gerencia.id">
+                                            <select class="form-control" style="width:170px;" ng-model="clienteEmpresaEdicionComensales.gerencia" ng-options="gerencia as gerencia.nombre for gerencia in listaGerenciasClienteEmpresa track by gerencia.id">
                                                 <option disabled value="" selected>Seleccione gerencia...</option>
                                             </select>
                                             <!-- <input type="text" ng-model="clienteEmpresaEdicionComensales.Gerencia"> -->
@@ -690,7 +691,7 @@
                                             <label>Comida</label>
                                         </div>
                                         <div class="col-lg-7">
-                                            <input  type="text" ng-model="clienteEmpresaComidas.nombre">
+                                            <input type="text" ng-model="clienteEmpresaComidas.nombre">
                                         </div>
                                     </div>
                                     <div class="row form-group">
@@ -698,9 +699,8 @@
                                             <label>Empresa</label>
                                         </div>
                                         <div class="col-lg-7">
-                                                <input
-                                                autocomplete="off" data-validate="validate()"  type="text" ng-model="clienteEmpresaComidas.empresaCliente"
-                                                placeholder="Ingrese la Razon Social" uib-typeahead="cliente as cliente.razon_social for cliente in buscarCliente($viewValue)"
+                                            <input autocomplete="off" data-validate="validate()" type="text" ng-model="clienteEmpresaComidas.empresaCliente" placeholder="Ingrese la Razon Social"
+                                                uib-typeahead="cliente as cliente.razon_social for cliente in buscarCliente($viewValue)"
                                                 typeahead-wait-ms="2000" typeahead-template-url="templates/autocompletar.html"
                                                 typeahead-show-hint="false" typeahead-min-length="0" typeahead-on-select="establecerCliente($item, $model, $label, $event)">
                                             <button tabindex="-1" type="button" ng-click="abrirdialogClientesComensales()" class="btn btn-info btn-sm">
@@ -713,7 +713,8 @@
                                             <label>Hora inicio</label>
                                         </div>
                                         <div class="col-lg-7">
-                                            <input type="time" data-date-format="HH:mm:ss" min="00:00" max="23:59" type="text" ng-model="clienteEmpresaComidas.inicio" value="06:00">
+                                            <input type="time" data-date-format="HH:mm:ss" min="00:00" max="23:59" type="text" ng-model="clienteEmpresaComidas.inicio"
+                                                value="06:00">
                                         </div>
                                     </div>
                                     <div class="row form-group">
@@ -721,7 +722,7 @@
                                             <label>Hora final</label>
                                         </div>
                                         <div class="col-lg-7">
-                                            <input  type="time" data-date-format="HH:mm:ss" min="00:00" max="23:59" ng-model="clienteEmpresaComidas.final">
+                                            <input type="time" data-date-format="HH:mm:ss" min="00:00" max="23:59" ng-model="clienteEmpresaComidas.final">
                                         </div>
                                     </div>
                                     <div class="row form-group">
@@ -840,26 +841,26 @@
                                         </div>
                                     </div>
                                     <div class="row form-group">
-                                            <div class="col-lg-5">
-                                                <label>Empresa</label>
-                                            </div>
-                                            <div class="col-lg-7">
-                                                    <input
-                                                    autocomplete="off" data-validate="validate()"  type="text" ng-model="clienteEmpresaPreciosComidas.empresaCliente"
-                                                    placeholder="Ingrese la Razon Social" uib-typeahead="cliente as cliente.razon_social for cliente in buscarCliente($viewValue)"
-                                                    typeahead-wait-ms="2000" typeahead-template-url="templates/autocompletar.html"
-                                                    typeahead-show-hint="false" typeahead-min-length="0" typeahead-on-select="establecerCliente($item, $model, $label, $event)">
-                                                <button tabindex="-1" type="button" ng-click="abrirdialogClientesComensales()" class="btn btn-info btn-sm">
-                                                    <i class="ace-icon fa fa-search-plus bigger-110"></i>
-                                                </button>
-                                            </div>
+                                        <div class="col-lg-5">
+                                            <label>Empresa</label>
                                         </div>
+                                        <div class="col-lg-7">
+                                            <input autocomplete="off" data-validate="validate()" type="text" ng-model="clienteEmpresaPreciosComidas.empresaCliente" placeholder="Ingrese la Razon Social"
+                                                uib-typeahead="cliente as cliente.razon_social for cliente in buscarCliente($viewValue)"
+                                                typeahead-wait-ms="2000" typeahead-template-url="templates/autocompletar.html"
+                                                typeahead-show-hint="false" typeahead-min-length="0" typeahead-on-select="establecerCliente($item, $model, $label, $event)">
+                                            <button tabindex="-1" type="button" ng-click="abrirdialogClientesComensales()" class="btn btn-info btn-sm">
+                                                <i class="ace-icon fa fa-search-plus bigger-110"></i>
+                                            </button>
+                                        </div>
+                                    </div>
                                     <div class="row form-group">
                                         <div class="col-lg-5">
                                             <label>Comida</label>
                                         </div>
                                         <div class="col-lg-7">
-                                            <select ng-options="comida as (comida.nombre + '--' + comida.empresaCliente.razon_social) for comida in listaComidasclienteEmpresa track by comida.id" ng-model="clienteEmpresaPreciosComidas.comida">
+                                            <select ng-options="comida as (comida.nombre + '--' + comida.empresaCliente.razon_social) for comida in listaComidasclienteEmpresa track by comida.id"
+                                                ng-model="clienteEmpresaPreciosComidas.comida">
                                                 <option disables value="">Seleccione la comida...</option>
                                             </select>
                                         </div>
@@ -869,7 +870,7 @@
                                             <label>Precio</label>
                                         </div>
                                         <div class="col-lg-7">
-                                            <input  type="number" min="0.0" step="0.1" ng-model="clienteEmpresaPreciosComidas.precio">
+                                            <input type="number" min="0.0" step="0.1" ng-model="clienteEmpresaPreciosComidas.precio">
                                         </div>
                                     </div>
 

@@ -322,11 +322,11 @@ angular.module('agil.controladores')
             $scope.solicitud.usuario = $scope.usuario
             $scope.tiposEstados.forEach(function (tipo, index, array) {
                 if ($scope.usuario.autorizacion_caja_chica) {
-                    if (tipo.nombre === 'AUTORIZADO') {
+                    if (tipo.nombre === $scope.diccionario.CC_ESTADO_AUTORIZADO) {
                         $scope.solicitud.estado = tipo
                     }
                 } else {
-                    if (tipo.nombre === 'PENDIENTE') {
+                    if (tipo.nombre === $scope.diccionario.CC_ESTADO_PENDIENTE) {
                         $scope.solicitud.estado = tipo
                     }
 
@@ -485,7 +485,7 @@ angular.module('agil.controladores')
          } */
         $scope.eliminarSolicitud = function () {
             $scope.tiposEstados.forEach(function (tipo, index, array) {
-                if (tipo.nombre === 'ANULADO') {
+                if (tipo.nombre === $scope.diccionario.CC_ESTADO_ANULADO) {
                     $scope.solicitud.estado = tipo
                 }
                 if (index === (array.length - 1)) {
@@ -511,7 +511,7 @@ angular.module('agil.controladores')
                     /*  cuenta.abierto= cuenta.abierto; */
                     if ($scope.tipoDatosPermiso == "autorizacion") {
                         $scope.tiposEstados.forEach(function (tipo, index, array) {
-                            if (tipo.nombre === 'AUTORIZADO') {
+                            if (tipo.nombre === $scope.diccionario.CC_ESTADO_AUTORIZADO) {
                                 $scope.solicitud.estado = tipo
                             }
                             if (index === (array.length - 1)) {
@@ -636,7 +636,7 @@ angular.module('agil.controladores')
                     $scope.cajaChica.fecha.setMinutes(tiempoActual.getMinutes())
                     $scope.cajaChica.fecha.setSeconds(tiempoActual.getSeconds())
                     $scope.tiposEstados.forEach(function (tipo, index, array) {
-                        if (tipo.nombre === 'DESEMBOLSADO') {
+                        if (tipo.nombre === $scope.diccionario.CC_ESTADO_DESEMBOLSADO) {
                             $scope.cajaChica.solicitud.estado = tipo
                         }
                         if (index === (array.length - 1)) {
@@ -672,7 +672,7 @@ angular.module('agil.controladores')
                             }
                             if ($scope.cajaChica.compra.total == varlorcomparar) {
                                 $scope.tiposEstados.forEach(function (tipo, index, array) {
-                                    if (tipo.nombre === 'PROCESADO') {
+                                    if (tipo.nombre === $scope.diccionario.CC_ESTADO_PROCESADO) {
                                         $scope.cajaChica.solicitud.estado = tipo
                                     }
                                     if (index === (array.length - 1)) {
@@ -693,13 +693,13 @@ angular.module('agil.controladores')
                                     blockUI.stop()
                                     $scope.obtenerListaSolicitudes()
                                     $scope.mostrarMensaje(dato.mensaje)
-                                    $scope.generarPdfBoletaCajaChica($scope.cajaChica.solicitud, dato.cajaChica)
+                                    $scope.generarPdfBoletaCajaChica($scope.cajaChica.solicitud, dato.cajaChica, true)
                                     $scope.cerrarModalRegistroCajaChica()
                                 })
                             }
                         } else {
                             $scope.tiposEstados.forEach(function (tipo, index, array) {
-                                if (tipo.nombre === 'PROCESADO') {
+                                if (tipo.nombre === $scope.diccionario.CC_ESTADO_PROCESADO) {
                                     $scope.cajaChica.solicitud.estado = tipo
                                 }
                                 if (index === (array.length - 1)) {
@@ -1592,11 +1592,11 @@ angular.module('agil.controladores')
             $scope.solicitud.usuario = $scope.usuario
             $scope.tiposEstados.forEach(function (tipo, index, array) {
                 if ($scope.usuario.autorizacion_caja_chica) {
-                    if (tipo.nombre === 'AUTORIZADO') {
+                    if (tipo.nombre === $scope.diccionario.CC_ESTADO_AUTORIZADO) {
                         $scope.solicitud.estado = tipo
                     }
                 } else {
-                    if (tipo.nombre === 'PENDIENTE') {
+                    if (tipo.nombre === $scope.diccionario.CC_ESTADO_PENDIENTE) {
                         $scope.solicitud.estado = tipo
                     }
 
@@ -1686,7 +1686,7 @@ angular.module('agil.controladores')
         }
         $scope.eliminarSolicitud = function () {
             $scope.tiposEstados.forEach(function (tipo, index, array) {
-                if (tipo.nombre === 'ANULADO') {
+                if (tipo.nombre === $scope.diccionario.CC_ESTADO_ANULADO) {
                     $scope.solicitud.estado = tipo
                 }
                 if (index === (array.length - 1)) {
@@ -1711,7 +1711,7 @@ angular.module('agil.controladores')
                     /*  cuenta.abierto= cuenta.abierto; */
                     if ($scope.tipoDatosPermiso == "autorizacion") {
                         $scope.tiposEstados.forEach(function (tipo, index, array) {
-                            if (tipo.nombre === 'AUTORIZADO') {
+                            if (tipo.nombre === $scope.diccionario.CC_ESTADO_AUTORIZADO) {
                                 $scope.solicitud.estado = tipo
                             }
                             if (index === (array.length - 1)) {

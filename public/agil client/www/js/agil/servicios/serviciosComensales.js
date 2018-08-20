@@ -20,12 +20,16 @@ angular.module('agil.servicios')
     return $resource(restServer + "cliente/empresa/precio/comida/:id_empresa/:id_usuario/:id_cliente");
 })
 
-.factory('ComensalesExcel', function ($resource) {
-    return $resource(restServer + "cliente/empresa/excel/comida/:id_empresa/:id_usuario/:id_cliente");
+.factory('HistorialExcel', function ($resource) {
+    return $resource(restServer + "cliente/empresa/excel/historial/:id_empresa/:id_usuario/:id_cliente");
 })
 
 .factory('Historial', function ($resource) {
     return $resource(restServer + "cliente/empresa/historial/:id_empresa/:id_usuario/:id_cliente");
+})
+
+.factory('ComensalesExcel', function ($resource) {
+    return $resource(restServer + "cliente/empresa/excel/comensal/:id_empresa/:id_usuario");
 })
 
 .factory('GuardarAlias', ['Alias', '$q', function (Alias, $q) {
@@ -184,19 +188,6 @@ angular.module('agil.servicios')
     return res;
 }])
 
-.factory('GuardarComensalesExcel', ['ComensalesExcel', '$q', function (ComensalesExcel, $q) {
-    var res = function (idEmpresa, lista, usuario, cliente) {
-        var delay = $q.defer();
-        ComensalesExcel.save({ id_empresa: idEmpresa, id_usuario: usuario, id_cliente: cliente }, lista, function (entidades) {
-            delay.resolve(entidades);
-        }, function (error) {
-            delay.reject(error);
-        });
-        return delay.promise;
-    };
-    return res;
-}])
-
 .factory('ObtenerHistorial', ['Historial', '$q', function (Historial, $q) {
     var res = function (idEmpresa, usuario,cliente) {
         var delay = $q.defer();
@@ -209,3 +200,29 @@ angular.module('agil.servicios')
     };
     return res;
 }])
+
+.factory('GuardarHistorialExcel', ['HistorialExcel', '$q', function (HistorialExcel, $q) {
+    var res = function (idEmpresa, lista, usuario, cliente) {
+        var delay = $q.defer();
+        HistorialExcel.save({ id_empresa: idEmpresa, id_usuario: usuario, id_cliente: cliente }, lista, function (entidades) {
+            delay.resolve(entidades);
+        }, function (error) {
+            delay.reject(error);
+        });
+        return delay.promise;
+    };
+    return res;
+
+}]).factory('GuardarComensalesExcel', ['ComensalesExcel', '$q', function (ComensalesExcel, $q) {
+    var res = function (idEmpresa, lista, usuario, cliente) {
+        var delay = $q.defer();
+        ComensalesExcel.save({ id_empresa: idEmpresa, id_usuario: usuario, id_cliente: cliente }, lista, function (entidades) {
+            delay.resolve(entidades);
+        }, function (error) {
+            delay.reject(error);
+        });
+        return delay.promise;
+    };
+    return res;
+}])
+ComensalesExcel

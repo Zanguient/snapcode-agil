@@ -172,7 +172,7 @@
                                 </td>
                                 <td>{{solicitud.concepto.nombre}}</td>
                                 <td>{{solicitud.detalle}}</td>
-                                <td ng-style="{'background-color': (solicitud.estado.nombre==='ANULADO')?'red' : 'auto','color': (solicitud.estado.nombre=='ANULADO')?'White' : 'auto'}">{{solicitud.estado.nombre}}</td>
+                                <td ng-style="{'background-color': (solicitud.estado.nombre===diccionario.CC_ESTADO_ANULADO)?'red' : 'auto','color': (solicitud.estado.nombre==diccionario.CC_ESTADO_ANULADO)?'White' : 'auto'}">{{solicitud.estado.nombre}}</td>
                                 <td>
                                     {{solicitud.monto|number:2}} .-
                                 </td>
@@ -182,16 +182,16 @@
                                         <a class="blue tooltip-info" uib-tooltip="Ver Datos" href="javascript:void(0)" tooltip-placement="left" e-disabled="!aplicacion.puede_ver" ng-click="verSolicitudCajaChica(solicitud)">
                                             <i class="ace-icon fa fa-search-plus bigger-130"></i>
                                         </a>
-                                        <a ng-if="!solicitud.eliminado  && solicitud.estado.nombre!='PROCESADO'&& solicitud.estado.nombre!='ANULADO'" class="green tooltip-info" uib-tooltip="Editar Datos" href="javascript:void(0)" e-disabled="!aplicacion.puede_modificar"
+                                        <a ng-if="!solicitud.eliminado  && solicitud.estado.nombre!=diccionario.CC_ESTADO_PROCESADO&& solicitud.estado.nombre!=diccionario.CC_ESTADO_ANULADO" class="green tooltip-info" uib-tooltip="Editar Datos" href="javascript:void(0)" e-disabled="!aplicacion.puede_modificar"
                                             ng-click="editarSolicitudCajaChica(solicitud)" tooltip-placement="left">
                                             <i class="ace-icon fa fa-pencil bigger-130"></i>
                                         </a>
 
-                                        <a tooltip-placement="left" ng-if="!solicitud.eliminado && solicitud.estado.nombre!='PROCESADO'&& solicitud.estado.nombre!='ANULADO'" class="red tooltip-info " uib-tooltip="Eliminar" href="javascript:void(0)" e-disabled="!aplicacion.puede_eliminar"
+                                        <a tooltip-placement="left" ng-if="!solicitud.eliminado && solicitud.estado.nombre!=diccionario.CC_ESTADO_PROCESADO&& solicitud.estado.nombre!=diccionario.CC_ESTADO_ANULADO" class="red tooltip-info " uib-tooltip="Eliminar" href="javascript:void(0)" e-disabled="!aplicacion.puede_eliminar"
                                             ng-click="abrirModalEliminarSolicitud(solicitud)">
                                             <i class="ace-icon fa fa-trash-o bigger-130"></i>
                                         </a>
-                                        <a tooltip-placement="left" ng-if="!solicitud.eliminado && solicitud.estado.nombre=='PENDIENTE'" class="blue tooltip-info " uib-tooltip="Autorizar Solicitud"
+                                        <a tooltip-placement="left" ng-if="!solicitud.eliminado && solicitud.estado.nombre==diccionario.CC_ESTADO_PENDIENTE" class="blue tooltip-info " uib-tooltip="Autorizar Solicitud"
                                             href="javascript:void(0)" e-disabled="!aplicacion.puede_crear" ng-click="abrirModalVerificarAutorizacion(solicitud)">
                                             <i class="ace-icon fa fa-pencil-square  bigger-130"></i>
                                         </a>
@@ -307,7 +307,7 @@
                         </label>
                     </div>
                     <div class="col-md-8">
-                        <input ng-disabled="solicitud.ver" type="number" ng-model="solicitud.monto" class="form-control">
+                        <input ng-disabled="solicitud.ver" type="number" step="0.001" min="0" ng-model="solicitud.monto" class="form-control">
                     </div>
                 </div>
                 <div class="space-4"></div>
