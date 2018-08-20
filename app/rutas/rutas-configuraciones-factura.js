@@ -258,7 +258,8 @@ module.exports = function (router, Sucursal, ConfiguracionFactura, Clase, Config
 			{ model: Clase, as: 'tamanoPapelNotaBaja' },
 			{ model: Clase, as: 'tamanoPapelNotaPedido' },
 			{ model: Clase, as: 'tamanoPapelCierreCaja' },
-			{ model: Clase, as: 'tamanoPapelCotizacion' }]
+			{ model: Clase, as: 'tamanoPapelCotizacion' },
+			{ model: Clase, as: 'formatoPapelFactura' },]
 		});
 	}
 

@@ -1263,6 +1263,7 @@ angular.module('agil.controladores')
 						} else {
 							$scope.solicitud.nueva = true
 						}
+						
 					} else {
 						$scope.solicitud.id = undefined
 						$scope.solicitud.fecha = new Date().toLocaleDateString()

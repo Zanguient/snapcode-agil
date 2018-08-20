@@ -12,7 +12,7 @@
 			Panel de Ventas
 		</button>
 
-		<form name="formularioFiltroVentas" novalidate ng-submit="filtrarVentas(sucursalesUsuario,fechaInicioTexto,fechaFinTexto,filtro.razon_social,filtro.nit,filtro.monto,filtro.tipo_pago,filtro.sucursal,filtro.transaccion,filtro.usuario,filtro.estado)">
+		<form name="formularioFiltroVentas" novalidate ng-submit="filtrarVentas(sucursalesUsuario,fechaInicioTexto,fechaFinTexto,filtro.razon_social,filtro.nit,filtro.monto,filtro.tipo_pago,filtro.sucursal,filtro.transaccion,filtro.usuario,filtro.estado,false)">
 			<fieldset>
 				<legend>Filtro Ventas</legend>
 				<div style="overflow-x:auto;">
@@ -160,7 +160,23 @@
 		</div>
 		<div class="table-header">
 			Lista de Ventas
+
+			<div class="pos-rel pull-right">
+			<a class="btn btn-primary btn-xs" popover-trigger="outsideClick : outsideClick" 
+				uib-popover-template="PopoverReportesRapido.templateUrl" popover-placement="left">
+				<i class="glyphicon glyphicon-list-alt"></i>
+			</a>
+			</div>
+			<script type="text/ng-template" id="PopoverReportesRapido.html">													                               
+				<div class="form-control">                            
+					<a href="javascript:void(0)" class="blue" ng-click="abrirReporteProductos()">Productos</a>
+				</div>			  
+			</script>
+			
+                    
+               
 		</div>
+
 
 		<!-- div.table-responsive -->
 
@@ -238,6 +254,10 @@
 								<a class="green" href="javascript:void(0)" ng-click="imprimirVenta(venta)">
 									<i class="ace-icon fa fa-print bigger-130"></i>
 								</a>
+								<!--<a class="orange"  href="javascript:void(0)" ng-click="editar(venta)" data-rel="tooltip" tooltip-placement="top"
+									uib-tooltip="Modificar">
+									<i class="ace-icon fa fa-pencil-square-o bigger-130"></i>
+								</a>-->
 								<a class="blue" href="javascript:void(0)" ng-click="verVenta(venta)">
 									<i class="ace-icon fa fa-search-plus bigger-130"></i>
 								</a>
@@ -460,7 +480,7 @@
 									<td>
 										<label>FECHA</label>
 										<input ng-disabled="venta.editable" name="fecha" required ng-update-hidden class="form-control date-picker" type="text" data-date-format="dd/mm/yyyy"
-										 id="fecha" ng-model="venta.fechaTexto" placeholder="Ingrese la fecha" />
+										 id="fecha" ng-model="venta.fechaTexto" placeholder="Ingrese la fecha" autocomplete="off"/>
 										<span class="red">(*)</span>
 										<span class="invalid-message" ng-show="formularioVenta.fecha.$dirty && formularioVenta.fecha.$invalid">
 											Dato requerido.
@@ -1988,6 +2008,81 @@
 	<button type="button" class="btn btn-danger" ng-click="imprimirConVencimiento()">Si</button>
 	<button type="button" class="btn btn-success" ng-click="imprimirSinVencimiento()">No</button>
 </div>
+
+<!-- ========= inicio  modal reporte productos ========= -->
+<div class="modal" id="dialog-reportes-productos">
+		<div class="modal-content">
+			<div class="modal-header bg-primary">
+				<button type="button" ng-click="cerrarReporteProductos()" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+				<center>
+				<h4 class="modal-title" id="advertenciaPrestamoPersonal">Productos Vencidos</h4>
+				<h5>Del{{fechaInicioTexto}} al {{fechaFinTexto}}</h5>
+				<div><span>Sucursal: {{sucursal}}</span></div>
+				<div><span>Razon Socials: {{razonSocial}}</span></div>
+				</center>
+			</div>
+			<div class="modal-body">
+				<div class="table-header">
+					<div class="row">
+						<div class="col-sm-12">
+							<h4 class="widget-title">Lista de Tipo de Cambio</h4>
+						</div>
+					</div>
+				</div>
+				<div class="table-fixed-header">
+					<table class="table table-striped table-bordered table-hover ">
+						<thead fix-head class="table-head-color">
+							<tr>
+								<th>N°</th>
+								<th>Producto</th>
+								<th>Unid. Medida</th>
+								<th>Cantidad</th>
+								<th>Monto</th>
+								<th style="width:5px">Acciones</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr ng-repeat="producto in ventasPopUp">
+								<td>{{$index+1}}</td>
+								<td >								
+									{{producto.nombre}}															
+								</td>
+								<td>
+									{{producto.medida}}
+								</td>
+								<td >
+									{{producto.cantidad}}
+								</td>
+								<td >
+									{{producto.total}}
+								</td>
+								
+								<td>	
+									<a ng-if="!moneda.edit" class="blue tooltip-info" href="javascript:void(0)" uib-tooltip="Imprimir" ng-click="ImprimirSimpleReporte(producto.id)">
+										<i class="ace-icon fa fa-print bigger-130"></i>
+									</a>
+									
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button id="pdf" class="btn btn-app btn-danger btn-xs" ng-click="generarPdfVentasMensuales()">
+					<i class="ace-icon fa fa-print bigger-160"></i>
+					PDF
+				</button>
+				<button id="pdf" class="btn btn-app btn-success btn-xs" ng-click="generarExcelVentasMensuales()">
+					<i class="ace-icon fa fa-print bigger-160"></i>
+					Excel
+				</button>
+				<button type="button" class="btn btn-danger" ng-click="cerrarReporteProductos()">Cerrar</button>		
+			</div>
+		</div>
+	</div></div>
 
 <!-- inicio confirmar usuario -->
 <div id="modal-verificar-cuenta" title="Asignar Cuenta">

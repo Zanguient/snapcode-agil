@@ -571,6 +571,7 @@
 										<span class="menu-text">{{aplicacion.titulo}}</span>
 									</a>
 									<b class="arrow"></b>
+									
 									<ul class="submenu" ng-if="aplicacion.subaplicaciones.length>0">
 										<li class="hover" ng-repeat="subaplicacion in aplicacion.subaplicaciones" ng-class="{'menu-hidden':((subaplicacion.titulo==diccionario.MENU_APPMOVIL) && usuario.empresa && !usuario.empresa.usar_georeferenciacion)
 																	  || ((subaplicacion.titulo==diccionario.MENU_PANTALLACLIENTE) && usuario.empresa && !usuario.empresa.usar_pantalla_cliente)
@@ -587,9 +588,6 @@
 								</li>
 
 							</ul>
-							<!--<div class="sidebar-toggle sidebar-collapse" id="sidebar-collapse">
-								<i class="ace-icon fa fa-angle-double-left" data-icon1="ace-icon fa fa-angle-double-left" data-icon2="ace-icon fa fa-angle-double-right"></i>
-							</div>-->
 							
 						</div>
 					</div>

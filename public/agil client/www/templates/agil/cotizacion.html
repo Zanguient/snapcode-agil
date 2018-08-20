@@ -694,56 +694,25 @@
 											<span class="pull-right">Usar servicios</span>
 										</div> -->
 									</td>
-									<td ng-if="tipoEgreso==diccionario.EGRE_FACTURACION || tipoEgreso==diccionario.EGRE_PROFORMA">
-										<label>PAGADO (Bs): </label>
-										<input id="pagado" name="pagado" ng-disabled="venta.editable" data-validate="validate(required)" required type="number" step="0.01" min="{{pagoMinimo}}"
-										 ng-model="venta.pagado" ng-change="calcularCambio()" />
+									<td >
+										<label>NIT CLIENTE</label>
+										<input  ng-keypress="interceptarTecla($event,'razon_social',true)"  id="nit" name="nit"
+										  type="number" min="0" ng-model="venta.cliente.nit" placeholder="Ingrese el NIT" uib-typeahead="cliente as cliente.nit for cliente in buscarCliente($viewValue)"
+										 typeahead-wait-ms="2000" typeahead-template-url="templates/autocompletar.html" typeahead-show-hint="false" typeahead-min-length="0"
+										 typeahead-on-select="establecerCliente($item, $model, $label, $event)">
 										<span class="red">(*)</span>
-										<span class="invalid-message" ng-show="formularioVenta.pagado.$dirty && formularioVenta.pagado.$invalid">
-											El pago debe ser superior a {{pagoMinimo}}.
+										<span class="invalid-message" ng-show="formularioVenta.nit.$dirty && formularioVenta.nit.$invalid">
+											Debe ingresar un número mayor o igual a 0.
 										</span>
-										<label>CAMBIO (Bs): </label>
-										<input disabled type="number" step="0.01" ng-model="venta.cambio" />
 									</td>
 								</tr>
-								<tr ng-if="tipoEgreso==diccionario.EGRE_TRASPASO">
-									<td>
-										<label>SUCURSAL ORIGEN</label>
-										<select data-validate="validate(required)" id="sucursalOrigen" name="sucursalOrigen" required ng-options="sucursal as sucursal.nombre for sucursal in sucursales track by sucursal.id"
-										 ng-model="venta.sucursal" ng-change="obtenerAlmacenesSucursalesDiferente(venta.sucursal.id)" ng-disabled="venta.editable">
-										</select>
-										<span class="red">(*)</span>
-									</td>
-									<td ng-if="tipoEgreso==diccionario.EGRE_TRASPASO">
-										<label>SUCURSAL DESTINO</label>
-										<select ng-disabled="venta.editable" data-validate="validate(required)" id="sucursalDestino" name="sucursalDestino" required ng-options="sucursalDiferente as sucursalDiferente.nombre for sucursalDiferente in sucursalesDiferente track by sucursalDiferente.id"
-										 ng-model="venta.sucursalDestino" ng-change="obtenerAlmacenesDiferente(venta.sucursalDestino.id)">
-										</select>
-										<span class="red">(*)</span>
-									</td>
-								</tr>
-								<tr ng-if="tipoEgreso==diccionario.EGRE_TRASPASO">
-									<td>
-										<label>ALMACEN ORIGEN</label>
-										<select ng-disabled="venta.editable" data-validate="validate(required)" required id="almacen" name="almacen" ng-model="venta.almacen" ng-options="almacen as almacen.nombre for almacen in almacenes track by almacen.id"
-										 data-placeholder="Click para escoger"></select>
-										<span class="red">(*)</span>
-									</td>
-									<td>
-										<label>ALMACEN DESTINO</label>
-										<select ng-disabled="venta.editable" data-validate="validate(required)" required id="almacenDiferente" name="almacenDiferente" ng-model="venta.almacenDestino"
-										 ng-options="almacenDiferente as almacenDiferente.nombre for almacenDiferente in almacenesDiferente track by almacenDiferente.id"
-										 data-placeholder="Click para escoger"></select>
-										<span class="red">(*)</span>
-									</td>
-								</tr>
-								<tr ng-if="tipoEgreso!=diccionario.EGRE_TRASPASO">
+								
+								<tr>
 									<td>
 										<label>SUCURSAL</label>
-										<select ng-disabled="venta.editable" ng-disabled="venta.detallesVenta.length>0" data-validate="validate(required)" required id="sucursal" name="sucursal" ng-options="sucursal as sucursal.nombre for sucursal in sucursales track by sucursal.id"
-										 ng-model="venta.sucursal" ng-change="obtenerAlmacenesActividades(venta.sucursal.id)">
-											<option value="" disabled selected>Selec. Sucursal</option>
-										</select>
+
+										<select required id="sucursal" ng-keypress="interceptarTecla($event,'fechaSM',true)" ng-options="sucursal.id as sucursal.nombre for sucursal in sucursales track by sucursal.id"
+								 ng-model="cotizacion.sucursal"></select>
 										<span class="red">(*)</span>
 										<span class="invalid-message" ng-show="formularioVenta.sucursal.$dirty && formularioVenta.sucursal.$invalid">
 											Debe seleccionar una Sucursal.
@@ -751,7 +720,7 @@
 									</td>
 									<td ng-if="tipoEgreso!=diccionario.EGRE_TRASPASO">
 										<label>ALMACEN</label>
-										<select ng-disabled="venta.editable || venta.detallesVenta.length>0" data-validate="validate(required)" required id="almacen" name="almacen" ng-model="venta.almacen" ng-options="almacen as almacen.nombre for almacen in almacenes track by almacen.id"
+										<select ng-disabled="venta.editable || venta.detallesVenta.length>0"   id="almacen" name="almacen" ng-model="venta.almacen" ng-options="almacen as almacen.nombre for almacen in almacenes track by almacen.id"
 										 data-placeholder="Click para escoger">
 											<option value="" disabled selected>Selec. Almacen</option>
 										</select>
@@ -761,124 +730,20 @@
 										</span>
 									</td>
 								</tr>
-								<tr ng-if="tipoEgreso!=diccionario.EGRE_TRASPASO">
-									<td ng-if="tipoEgreso==diccionario.EGRE_FACTURACION">
-										<label>ACTIVIDAD</label>
-									</td>
-									<td ng-if="tipoEgreso==diccionario.EGRE_FACTURACION">
-										<select style="width:150px;" ng-disabled="venta.editable" data-validate="validate(required)" required id="actividad" name="actividad" ng-model="venta.actividad"
-										 ng-options="actividad as actividad.nombre for actividad in actividades track by actividad.id" data-placeholder="Click para escoger">
-											<option value="" disabled selected>Selec. Actividad</option>
-										</select>
-										<span class="red">(*)</span>
-										<span ng-if="dosificacionesExpiradas" style="color: red">Las Actividades con dosificaciones expiradas no se muestran</span>
-										<div class="invalid-message help-block" ng-messages="formularioVenta.actividad.$error" ng-if=" (formularioVenta.$submitted && formularioVenta.actividad.$invalid)">
-											<div ng-messages-include="/templates/GRAL/messages.html"></div>
-										</div>
-									</td>
-								</tr>
-								<tr>
-									<td ng-if="tipoEgreso==diccionario.EGRE_FACTURACION || tipoEgreso==diccionario.EGRE_PROFORMA">
-										<label>NIT CLIENTE</label>
-										<input ng-disabled="venta.editable" ng-keypress="interceptarTecla($event,'razon_social',true)" data-validate="validate(required)" id="nit" name="nit"
-										 required type="number" min="0" ng-model="venta.cliente.nit" placeholder="Ingrese el NIT" uib-typeahead="cliente as cliente.nit for cliente in buscarCliente($viewValue)"
-										 typeahead-wait-ms="2000" typeahead-template-url="templates/autocompletar.html" typeahead-show-hint="false" typeahead-min-length="0"
-										 typeahead-on-select="establecerCliente($item, $model, $label, $event)">
-										<span class="red">(*)</span>
-										<span class="invalid-message" ng-show="formularioVenta.nit.$dirty && formularioVenta.nit.$invalid">
-											Debe ingresar un número mayor o igual a 0.
-										</span>
-									</td>
-									<td ng-if="tipoEgreso==diccionario.EGRE_FACTURACION || tipoEgreso==diccionario.EGRE_PROFORMA">
-										<label>RAZÓN SOCIAL CLIENTE</label>
-										<input ng-disabled="venta.editable" ng-keypress="interceptarTecla($event,'id_producto',true)" autocomplete="off" data-validate="validate(required)" id="razon_social"
-										 name="razon_social" required type="text" ng-model="venta.cliente.razon_social" placeholder="Ingrese la Razon Social"
-										 uib-typeahead="cliente as cliente.razon_social for cliente in buscarCliente($viewValue)" typeahead-wait-ms="2000"
-										 typeahead-template-url="templates/autocompletar.html" typeahead-show-hint="false" typeahead-min-length="0" typeahead-on-select="establecerCliente($item, $model, $label, $event)">
-										<span class="red">(*)</span>
-										<span class="invalid-message" ng-show="formularioVenta.razon_social.$dirty && formularioVenta.razon_social.$invalid">
-											Dato requerido.
-										</span>
-									</td>
-								</tr>
+								
+								
 								<tr>
 									<td>
 										<label>FECHA</label>
-										<input ng-disabled="venta.editable" name="fecha" required ng-update-hidden class="form-control date-picker" type="text" data-date-format="dd/mm/yyyy"
-										 id="fecha" ng-model="venta.fechaTexto" placeholder="Ingrese la fecha" />
+
+										 <input ng-keypress="interceptarTecla($event,'id_productoTB',true)" class="date-picker" type="text" data-date-format="dd/mm/yyyy"
+								 id="fechaSM" ng-model="cotizacion.fechaTexto" placeholder="Ingrese la fecha" />
 										<span class="red">(*)</span>
 										<span class="invalid-message" ng-show="formularioVenta.fecha.$dirty && formularioVenta.fecha.$invalid">
 											Dato requerido.
 										</span>
 									</td>
-									<td ng-if="tipoEgreso==diccionario.EGRE_FACTURACION || tipoEgreso==diccionario.EGRE_PROFORMA">
-										<label>TIPO DE PAGO</label>
-										<select data-validate="validate(required)" required id="pago" name="pago" ng-model="venta.tipoPago" data-placeholder="Elija un tipo de pago"
-										 ng-change="cambiarTipoPago(venta)" ng-options="tipoPago as tipoPago.nombre for tipoPago in tiposPago track by tipoPago.id">
-										</select>
-										<span class="red">(*)</span>
-									</td>
-								</tr>
-								<tr ng-if="tipoEgreso==diccionario.EGRE_FACTURACION || tipoEgreso==diccionario.EGRE_PROFORMA">
-									<td ng-if="!esContado">
-										<label>DIAS</label>
-										<input required type="number" min="1" name="dias" ng-model="venta.dias_credito" />
-										<span class="red">(*)</span>
-										<span class="invalid-message" ng-show="formularioVenta.dias.$dirty && formularioVenta.dias.$invalid">
-											Debe especificar un valor numérico mayor a 0.
-										</span>
-									</td>
-									<td ng-if="!esContado">
-										<label>SUJETO A CF</label>
-										<input disabled type="number" step="0.001" ng-model="venta.total" />
-									</td>
-								</tr>
-								<tr ng-if="tipoEgreso==diccionario.EGRE_FACTURACION || tipoEgreso==diccionario.EGRE_PROFORMA">
-									<td ng-if="!esContado">
-										<label>A CUENTA (Bs)</label>
-										<input min="0" name="acuenta" required type="number" step="0.001" ng-model="venta.a_cuenta" value="0.0" ng-change="calcularSaldo()"
-										/>
-										<span class="red">(*)</span>
-										<span class="invalid-message" ng-show="formularioVenta.acuenta.$dirty && formularioVenta.acuenta.$invalid">
-											Debe especificar un valor numérico mayor o igual a 0.
-										</span>
-									</td>
-									<td ng-if="!esContado">
-										<label>SALDO</label>
-										<input disabled type="number" step="0.001" ng-model="venta.saldo" />
-									</td>
-								</tr>
-								<tr ng-if="tipoEgreso==diccionario.EGRE_FACTURACION || tipoEgreso==diccionario.EGRE_PROFORMA">
-									<td>
-										<div class="row">
-											<div class="col-sm-6">
-												<label>VENDEDOR</label>
-											</div>
-											<div class="col-sm-6">
-												<div class="col-sm-1">
-													<a class="blue" href="javascript:void(0)" ng-click="abrirPopuEdicionVendedor()">
-														<i class="ace-icon fa fa-plus bigger-130"></i>
-													</a>
-												</div>
-											</div>
-										</div>
-										<div class="row">
-											<div class="col-sm-10">
-												<select class="col-sm-10" ng-options="vendedor as vendedor.persona.nombre_completo for vendedor in vendedores" ng-model="venta.vendedor"></select>
-											</div>
-											<div class="col-sm-1" ng-if="venta.vendedor">
-												<a class="green" href="javascript:void(0)" ng-click="modificarVendedor(venta.vendedor)">
-													<i class="ace-icon fa fa-pencil-square-o bigger-130"></i>
-												</a>
-											</div>
-											<div class="col-sm-1" ng-if="venta.vendedor">
-												<a class="red" href="javascript:void(0)" ng-click="abrirPopupConfirmacionEliminacion(eliminarVendedor,venta.vendedor)">
-													<i class="ace-icon fa fa-trash-o bigger-130"></i>
-												</a>
-											</div>
-										</div>
-									</td>
-									<td></td>
+									
 								</tr>
 							</table>
 						</div>
