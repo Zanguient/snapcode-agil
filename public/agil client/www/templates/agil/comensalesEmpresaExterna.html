@@ -65,10 +65,11 @@
                                 </select>
                             </td>
                             <td>
-                                <button type="submit" class="btn btn-primary">
-                                    <i class="ace-icon fa fa-search align-top bigger-125"></i>
-                                    Importar
-                                </button>
+                                    <div class="fileUpload btn btn-primary btn-success">
+                                            <span class="fileUpload-button ace-icon fa fa-cloud-upload align-top bigger-125">&nbsp&nbspImportar</span>
+                                            <!-- CAMBIAR aplicacion POR !aplicacion -->
+                                            <input ng-disabled="!aplicacion.puede_crear" class="upload" type="file" custom-on-file-change="subirExcelComensales" />&nbsp&nbsp
+                                        </div>
                                 <a href="javascript:void(0)" class="blue" ng-click="mostrarMensaje('Sin funcionalidad')">
                                     <i class="ace-icon fa fa-cloud-download align-top bigger-300"></i>
                                 </a>
@@ -159,10 +160,10 @@
                                 <input ng-model="filtro.comida" type="text">
                             </td>
                             <td>
-                                    <select id="filtrocomensalesestado" ng-model="filtro.estado" ng-change="">
-                                            <option value="1" selected>Vigente</option>
-                                            <option value="1" selected>Sin asignacion</option>
-                                        </select>
+                                <select id="filtrocomensalesestado" ng-model="filtro.estado" ng-change="">
+                                    <option value="1" selected>Vigente</option>
+                                    <option value="1" selected>Sin asignacion</option>
+                                </select>
                             </td>
                             <td>
                                 <input ng-model="filtro.usuario" type="text">&nbsp
@@ -196,19 +197,17 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr class="{{proforma.color}}" ng-repeat="proforma in Comensales">
-                            <td data-label="N°:">
-                                {{($index+1)+(paginator.itemsPerPage*(paginator.currentPage-1))}}
-                            </td>
-                            <td>{{proforma.correlativo}}</td>
-                            <td>{{proforma.cliente.razon_social}}</td>
-                            <td>{{meses[proforma.periodo_mes].nombre}}/{{proforma.periodo_anio}}</td>
-                            <td>{{proforma.sucursal.nombre}}</td>
-                            <td>{{proforma.actividadEconomica.nombre}}</td>
+                        <tr ng-repeat="historial in historialesComedor">
+                            <td>{{historial.tarjeta}}</td>
+                            <td>{{historial.comensal.nombre}}</td>
+                            <td>{{historial.empresaCliente.razon_social}}</td>
+                            <td>{{historial.gerencia.nombre}}</td>
+                            <td>{{historial.comida.nombre}}</td>
+                            <td>{{historial.fecha | date: "dd/MM/yy HH:MM"}}</td>
                             <td>
-                                {{proforma.detallesComensales[0].servicio.nombre}}
+                                {{historial.usuario.nombre_usuario}}
                             </td>
-                            <td>{{proforma.usuarioProforma.nombre_usuario}}</td>
+                            <td>{{historial.empresaCliente ? 'Vigente' : 'No asignado'}}</td>
                         </tr>
                     </tbody>
                 </table>

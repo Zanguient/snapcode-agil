@@ -12,8 +12,8 @@ module.exports = function (sequelize, Sequelize) {
             type: Sequelize.DATE,
             field: 'fecha'
         },
-        id_tarjeta: {
-            type: Sequelize.INTEGER,
+        tarjeta: {
+            type: Sequelize.INTEGER.UNSIGNED,
             field: 'tarjeta'
         },
         id_gerencia: {

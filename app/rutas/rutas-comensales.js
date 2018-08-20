@@ -1,10 +1,10 @@
-module.exports = function (router, sequelize, Persona, Cliente, AliasClienteEmpresa, ComensalesClienteEmpresa, GerenciasClienteEmpresa, horarioComidasClienteEmpresa, PrecioComidasClienteEmpresa) {
+module.exports = function (router, sequelize, Persona, Cliente, AliasClienteEmpresa, ComensalesClienteEmpresa, GerenciasClienteEmpresa, horarioComidasClienteEmpresa, PrecioComidasClienteEmpresa, HistorialComidaClienteEmpresa, Usuario) {
 
     function crearAlias(alias, empresa, t) {
         if (alias.id) {
             if (alias.eliminado) {
                 return AliasClienteEmpresa.destroy({
-                    where:{id: alias.id},
+                    where: { id: alias.id },
                     transaction: t
                 })
             } else {
@@ -13,7 +13,7 @@ module.exports = function (router, sequelize, Persona, Cliente, AliasClienteEmpr
                     id_cliente: alias.empresaCliente.id,
                     nombre: alias.nombre,
                     id_empresa: empresa
-                }, { where:{id: alias.id}, transaction: t })
+                }, { where: { id: alias.id }, transaction: t })
             }
         } else {
             return AliasClienteEmpresa.create({
@@ -130,6 +130,125 @@ module.exports = function (router, sequelize, Persona, Cliente, AliasClienteEmpr
             }, { transaction: t })
         }
     }
+    function crearHistorial(historial, empresa, t) {
+        if (historial.id) {
+            if (historial.eliminado) {
+                return HistorialComidaClienteEmpresa.destroy({
+                    where: { id: historial.id }
+                }, { transaction: t }).catch(function (err) {
+                    return new Promise(function (fullfil, reject) {
+                        fullfil({hasErr: true, mensaje: err.stack, index: i+2, tipo: 'Error' })
+                    })
+                })
+            } else {
+                return HistorialComidaClienteEmpresa.update({
+                    tarjeta: historial.tarjeta,
+                id_cliente: historial.alias.empresaCliente.id,
+                id_comensal: historial.comensal.id,
+                id_empresa: empresa,
+                id_gerencia: historial.comensal.gerencia.id,
+                id_comida: historial.comida.id,
+                fecha: historial.fecha,
+                id_usuario: historial.id_usuario
+                }, { where: { id: historial.id }, transaction: t }).then(function (hisltorial) {
+                    return new Promise(function (fullfil, reject) {
+                        fullfil(historial)
+                    })
+                }).catch(function (err) {
+                    return new Promise(function (fullfil, reject) {
+                        fullfil({hasErr: true, mensaje: err.stack, index: i+2, tipo: 'Error' })
+                    })
+                })
+            }
+        } else {
+            return HistorialComidaClienteEmpresa.create({
+                tarjeta: historial.tarjeta,
+                id_cliente: historial.alias.id_cliente,
+                id_comensal: historial.comensal.id,
+                id_empresa: empresa,
+                id_gerencia: historial.comensal.gerencia.id,
+                id_comida: historial.comida ? historial.comida.id : null,
+                fecha: historial.fecha,
+                id_usuario: historial.id_usuario},{
+                transaction: t
+            })/*.then(function (historial) {
+                return new Promise(function (fullfil, reject) {
+                    fullfil({hasErr: false, historial: historial})
+                })
+            }).catch(function (err) {
+                return new Promise(function (fullfil, reject) {
+                    fullfil({hasErr: true, mensaje: err.stack, index: i+2, tipo: 'Error' })
+                })
+            })*/
+        }
+    }
+    function verificarDatosExcel(historial, empresa, t, i) {
+        var erro = false
+        var promises = []
+        return AliasClienteEmpresa.find({
+            where: { nombre: historial.alias },
+            transaction: t
+        }).then(function (alias) {
+            if (alias) {
+                historial.alias = alias.dataValues
+                return ComensalesClienteEmpresa.find({
+                    where: { nombre: historial.nombre },
+                    include: [{model: GerenciasClienteEmpresa, as: 'gerencia'}],
+                    transaction: t
+                }).then(function (comensal) {
+                    if (comensal) {
+                        if (!historial.fecha) {
+                            historial.fecha = extraerFechaExcel(historial.fecha_hora)
+                        }
+                        var condicionTiempo = {inicio :{lte: historial.fecha.split('T')[1].split('.')[0]}, final:{gte: historial.fecha.split('T')[1].split('.')[0]}, empresa: historial.id_empresa}
+                        historial.comensal = comensal.dataValues
+                        return horarioComidasClienteEmpresa.find({
+                            where: condicionTiempo,
+                            transaction: t
+                        }).then(function (comida) {
+                            historial.comida = comida ? comida.dataValues : null
+                            return crearHistorial(historial, empresa, t)
+                        }).catch(function (err) {
+                            return new Promise(function (fullfil, reject) {
+                                fullfil({hasErr: true, mensaje: err.stack, index: i+2, tipo: 'Error' })
+                            })
+                        })
+                    } else {
+                        erro = true
+                        return new Promise(function (fullfil, reject) {
+                            fullfil({hasErr: true, mensaje: 'No se encuentra en la Base de Datos el registro comensal : ' + historial.nombre, index: i+2, tipo: 'Comensal -> No registrado.' })
+                        })
+                    }
+                    
+                }).catch(function (err) {
+                    return new Promise(function (fullfil, reject) {
+                        fullfil({hasErr: true, mensaje: err.stack, index: i+2, tipo: 'Error' })
+                    })
+                })
+            } else {
+                erro = true
+                return new Promise(function (fullfil, reject) {
+                    fullfil({hasErr: true, mensaje: 'No se encuentra en la Base de Datos el registro alias empresa -> NAME: ' + historial.alias, index: i+2, tipo: 'Empresa -> alias -> NAME' })
+                })
+            }
+        }).catch(function (err) {
+            return new Promise(function (fullfil, reject) {
+                fullfil({hasErr: true, mensaje: err.stack, index: i+2, tipo: 'Error' })
+            })
+        })
+    }
+    function extraerFechaExcel (datoFecha) {
+        var horas = datoFecha.split(' ')[datoFecha.split(' ').length -1]
+        var fecha = datoFecha.split(' ')[0].split('/').reverse()
+        if (horas.indexOf('AM')>0) {
+            horas = horas.split('A')[0].split(':')
+        } else if(horas.indexOf('PM')>0){
+            horas = horas.split('P')[0].split(':')
+            horas[0] = (parseInt(horas[0])+12) + ''
+        }
+        var fechaCompleta = fecha[0]+'-'+(fecha[2].length == 2 ?fecha[2]:'0'+fecha[2])+'-'+(fecha[1].length == 2 ?fecha[1]:'0'+fecha[1])+'T'+horas[0]+':'+horas[1]+':'+horas[2]+'.000Z'
+        return fechaCompleta
+    }
     router.route('/cliente/empresa/gerencias/:id_empresa/:id_usuario')
         .post(function (req, res) {
             sequelize.transaction(function (t) {
@@ -221,79 +340,124 @@ module.exports = function (router, sequelize, Persona, Cliente, AliasClienteEmpr
         })
 
     router.route('/cliente/empresa/horarios/comida/:id_empresa/:id_usuario/:id_cliente')
-    .post(function (req, res) {
-        sequelize.transaction(function (t) {
-            var promises = []
-            for (let i = 0; i < req.body.length; i++) {
-                promises.push(crearComida(req.body[i], req.params.id_empresa, t))
-            }
-            return Promise.all(promises)
-        }).then(function (result) {
-            if (result.length > 0) {
-                res.json({ mensaje: 'Guardado correctamente.' })
-            }
-        }).catch(function (err) {
-            res.json({ mensaje: err.stack, hasErr: true })
+        .post(function (req, res) {
+            sequelize.transaction(function (t) {
+                var promises = []
+                for (let i = 0; i < req.body.length; i++) {
+                    promises.push(crearComida(req.body[i], req.params.id_empresa, t))
+                }
+                return Promise.all(promises)
+            }).then(function (result) {
+                if (result.length > 0) {
+                    res.json({ mensaje: 'Guardado correctamente.' })
+                }
+            }).catch(function (err) {
+                res.json({ mensaje: err.stack, hasErr: true })
+            })
         })
-    })
-    .get(function (req, res) {
-        var condicion = { id_empresa: req.params.id_empresa }
-        if (req.params.id_cliente && req.params.id_cliente !== "0") {
-            condicion.id_cliente = req.params.id_cliente
-        }
-        horarioComidasClienteEmpresa.findAll({
-            where: condicion,
-            include: [{ model: Cliente, as: 'empresaCliente' }]
-        }).then(function (result) {
-            res.json({ lista: result })
-        }).catch(function (err) {
-            res.json({ mensaje: err.stack, hasErr: true })
+        .get(function (req, res) {
+            var condicion = { id_empresa: req.params.id_empresa }
+            if (req.params.id_cliente && req.params.id_cliente !== "0") {
+                condicion.id_cliente = req.params.id_cliente
+            }
+            horarioComidasClienteEmpresa.findAll({
+                where: condicion,
+                include: [{ model: Cliente, as: 'empresaCliente' }]
+            }).then(function (result) {
+                res.json({ lista: result })
+            }).catch(function (err) {
+                res.json({ mensaje: err.stack, hasErr: true })
+            })
         })
-    })
         .put(function (req, res) {
             res.json({ mensaje: 'sin funcionalidad' })
         })
 
     router.route('/cliente/empresa/precio/comida/:id_empresa/:id_usuario/:id_cliente')
-    .post(function (req, res) {
-        sequelize.transaction(function (t) {
-            var promises = []
-            for (let i = 0; i < req.body.length; i++) {
-                promises.push(crearPrecioComida(req.body[i], req.params.id_empresa, t))
-            }
-            return Promise.all(promises)
-        }).then(function (result) {
-            if (result.length > 0) {
-                res.json({ mensaje: 'Guardado correctamente.' })
-            }
-        }).catch(function (err) {
-            res.json({ mensaje: err.stack, hasErr: true })
+        .post(function (req, res) {
+            sequelize.transaction(function (t) {
+                var promises = []
+                for (let i = 0; i < req.body.length; i++) {
+                    promises.push(crearPrecioComida(req.body[i], req.params.id_empresa, t))
+                }
+                return Promise.all(promises)
+            }).then(function (result) {
+                if (result.length > 0) {
+                    res.json({ mensaje: 'Guardado correctamente.' })
+                }
+            }).catch(function (err) {
+                res.json({ mensaje: err.stack, hasErr: true })
+            })
         })
-    })
-    .get(function (req, res) {
-        var condicion = { id_empresa: req.params.id_empresa }
-        if (req.params.id_cliente && req.params.id_cliente !== "0") {
-            condicion.id_cliente = req.params.id_cliente
-        }
-        PrecioComidasClienteEmpresa.findAll({
-            where: condicion,
-            include: [{ model: Cliente, as: 'empresaCliente' }]
-        }).then(function (result) {
-            res.json({ lista: result })
-        }).catch(function (err) {
-            res.json({ mensaje: err.stack, hasErr: true })
+        .get(function (req, res) {
+            var condicion = { id_empresa: req.params.id_empresa }
+            if (req.params.id_cliente && req.params.id_cliente !== "0") {
+                condicion.id_cliente = req.params.id_cliente
+            }
+            PrecioComidasClienteEmpresa.findAll({
+                where: condicion,
+                include: [{ model: Cliente, as: 'empresaCliente' }]
+            }).then(function (result) {
+                res.json({ lista: result })
+            }).catch(function (err) {
+                res.json({ mensaje: err.stack, hasErr: true })
+            })
         })
-    })
         .put(function (req, res) {
             res.json({ mensaje: 'sin funcionalidad' })
         })
 
-    router.route('/cliente/empresa/historial/:id_empresa/:id_usuario')
+    router.route('/cliente/empresa/excel/comida/:id_empresa/:id_usuario')
+        .post(function (req, res) {
+            var Errors = []
+            var promises = []
+            sequelize.transaction(function (t) {
+                for (let i = 0; i < req.body.length; i++) {
+                    req.body[i].id_usuario = req.params.id_usuario
+                    req.body[i].id_empresa = req.params.id_empresa
+                    promises.push(verificarDatosExcel(req.body[i], req.params.id_empresa, t, i))
+                }
+                return Promise.all(promises)
+            }).then(function (result) {
+                if (result.length > 0) {
+                    var mensajes = []
+                    result.forEach(function(dato) {
+                        if (dato!==undefined) {
+                            if (dato.hasErr) {
+                                mensajes.push(dato.mensaje)
+                            }
+                        }
+                    });
+                    if (mensajes.length === result.length) {
+                        mensajes.unshift('No se guardo')
+                        res.json({hasErr: true, mensaje: 'No se guardo', mensajes: mensajes })
+                    }else if(mensajes.length === 0){
+                        res.json({ mensaje: 'Guardado correctamente.' })
+                    }else{
+                        mensajes.unshift('Cantidad guardados correctamente: ' + (result.length - mensajes.length) + ', Cantidad no guardados: ' + mensajes.length)
+                        res.json({hasErr: true, mensaje: 'Cantidad guardados correctamente: ' + (result.length - mensajes.length) + ', Cantidad no guardados: ' + mensajes.length, mensajes: mensajes})
+                    }  
+                }else{
+                    res.json({ mensaje: 'No se guardo, ocurrio un error.'})
+                }
+            }).catch(function (err) {
+                res.json({ mensaje: err.stack, hasErr: true })
+            })
+        })
+
+    router.route('/cliente/empresa/historial/:id_empresa/:id_usuario/:id_cliente')
         .post(function (req, res) {
             res.json({ mensaje: 'sin funcionalidad' })
         })
         .get(function (req, res) {
-            res.json({ mensaje: 'sin funcionalidad' })
+            HistorialComidaClienteEmpresa.findAll({
+                where: { id_empresa: req.params.id_empresa, id_cliente: req.params.id_cliente},
+                include:[{model: GerenciasClienteEmpresa, as :'gerencia',required: false}, {model: Cliente, as: 'empresaCliente', required: false}, {model: ComensalesClienteEmpresa, as:'comensal'},{model:Usuario, as:'usuario'}, {model: horarioComidasClienteEmpresa, as: 'comida'}]
+            }).then(function (historial) {
+                res.json({ historial: historial })
+            }).catch(function (err) {
+                res.json({ mensaje: err.stack, hasErr: true })
+            })
         })
         .put(function (req, res) {
             res.json({ mensaje: 'sin funcionalidad' })

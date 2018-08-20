@@ -295,7 +295,7 @@ module.exports = function (router, sequelize, Sequelize, jwt, md5, forEach, ensu
 		, Proveedor, ClienteCuenta, Cliente, ClasificacionCuenta, ContabilidadCuenta, AsientoContabilidad, ComprobanteContabilidad, MonedaTipoCambio)
 	require('./rutas-solicitud-caja-chica')(router,sequelize, Sequelize, ensureAuthorizedAdministrador, fs, forEach, jwt, md5, Tipo, Clase, CajaChica, SolicitudCajaChica, Empresa, ConceptoMovimientoCajaChica, MedicoPaciente, Usuario, Persona, ContabilidadCuenta,Movimiento,Proveedor,Compra,Sucursal,CierreCajaChica,
 		DetalleCompra,Producto)
-	require('./rutas-comensales')(router, sequelize, Persona, Cliente, AliasClienteEmpresa, ComensalesClienteEmpresa, GerenciasClienteEmpresa, horarioComidasClienteEmpresa, PrecioComidasClienteEmpresa, HistorialComidaClienteEmpresa)
+	require('./rutas-comensales')(router, sequelize, Persona, Cliente, AliasClienteEmpresa, ComensalesClienteEmpresa, GerenciasClienteEmpresa, horarioComidasClienteEmpresa, PrecioComidasClienteEmpresa, HistorialComidaClienteEmpresa, Usuario)
 	router.route('/test')
 		.get(function (req, res) {
 			var rest;

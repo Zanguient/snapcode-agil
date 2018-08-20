@@ -1134,5 +1134,7 @@ module.exports = function (sequelize, Usuario, Persona, Rol, UsuarioRol, Tipo, C
 	ComensalesClienteEmpresa.hasMany(HistorialComidaClienteEmpresa, {foreignKey: 'id_comensal', as: 'historial'})
 	HistorialComidaClienteEmpresa.belongsTo(horarioComidasClienteEmpresa, {foreignKey: 'id_comida', as: 'comida'})
 	horarioComidasClienteEmpresa.hasMany(HistorialComidaClienteEmpresa, {foreignKey: 'id_comida', as: 'historial'})
+	HistorialComidaClienteEmpresa.belongsTo(Usuario, {foreignKey: 'id_usuario', as: 'usuario'})
+	horarioComidasClienteEmpresa.hasMany(HistorialComidaClienteEmpresa, {foreignKey: 'id_usuario', as: 'historial'})
 }
 

@@ -1,6 +1,6 @@
 angular.module('agil.controladores')
 
-    .controller('controladorComensalesEmpresa', function ($scope, $timeout, $localStorage, $location, blockUI, Clientes, ClientesNit, GuardarAlias, ObtenerAlias, GuardarGerencias, ObtenerGerencias, GuardarComensales, ObtenerComensales, GuardarComidas, ObtenerComidas, GuardarPrecioComidas, ObtenerPrecioComidas) {
+    .controller('controladorComensalesEmpresa', function ($scope, $timeout, $localStorage, $location, blockUI, Clientes, ClientesNit, GuardarAlias, ObtenerAlias, GuardarGerencias, ObtenerGerencias, GuardarComensales, ObtenerComensales, GuardarComidas, ObtenerComidas, GuardarPrecioComidas, ObtenerPrecioComidas, GuardarComensalesExcel, ObtenerHistorial) {
 
         $scope.modalEdicionAlias = 'modalAliasEmpresasCliente'
         $scope.modalEdicionGerencias = 'modalGerenciaEmpresasCliente'
@@ -60,6 +60,7 @@ angular.module('agil.controladores')
             $scope.listaPrecioComidasclienteEmpresa = []
             $scope.obtenerClientes()
             $scope.obtenerGerencias()
+            $scope.obtenerHistoriales()
         }
 
         $scope.PopoverConfiguracionComensales = {
@@ -86,7 +87,7 @@ angular.module('agil.controladores')
                 $scope.clientesProcesados = cls
             }).catch(function (err) {
                 blockUI.stop()
-                var msg = (err.stack !== undefined && err.stack !== null) ? err.stack : (err.message !== undefined && err.message !== null) ? err.message : 'Se perdió la conexión.'
+                var msg = (err.data !== undefined && err.data !== null) ? err.data : (err.message !== undefined && err.message !== null) ? err.message : 'Se perdió la conexión.'
                 $scope.mostrarMensaje(msg)
             })
         }
@@ -179,7 +180,7 @@ angular.module('agil.controladores')
                 }
                 blockUI.stop()
             }).catch(function (err) {
-                var msg = (err.stack !== undefined && err.stack !== null) ? err.stack : (err.message !== undefined && err.message !== null) ? err.message : 'Se perdió la conexión.'
+                var msg = (err.data !== undefined && err.data !== null) ? err.data : (err.message !== undefined && err.message !== null) ? err.message : 'Se perdió la conexión.'
                 $scope.mostrarMensaje(msg)
                 blockUI.stop()
             })
@@ -196,7 +197,7 @@ angular.module('agil.controladores')
                 }
                 blockUI.stop()
             }).catch(function (err) {
-                var msg = (err.stack !== undefined && err.stack !== null) ? err.stack : (err.message !== undefined && err.message !== null) ? err.message : 'Se perdió la conexión.'
+                var msg = (err.data !== undefined && err.data !== null) ? err.data : (err.message !== undefined && err.message !== null) ? err.message : 'Se perdió la conexión.'
                 $scope.mostrarMensaje(msg)
                 blockUI.stop()
             })
@@ -213,7 +214,7 @@ angular.module('agil.controladores')
                 }
                 blockUI.stop()
             }).catch(function (err) {
-                var msg = (err.stack !== undefined && err.stack !== null) ? err.stack : (err.message !== undefined && err.message !== null) ? err.message : 'Se perdió la conexión.'
+                var msg = (err.data !== undefined && err.data !== null) ? err.data : (err.message !== undefined && err.message !== null) ? err.message : 'Se perdió la conexión.'
                 $scope.mostrarMensaje(msg)
                 blockUI.stop()
             })
@@ -235,7 +236,7 @@ angular.module('agil.controladores')
                 }
                 blockUI.stop()
             }).catch(function (err) {
-                var msg = (err.stack !== undefined && err.stack !== null) ? err.stack : (err.message !== undefined && err.message !== null) ? err.message : 'Se perdió la conexión.'
+                var msg = (err.data !== undefined && err.data !== null) ? err.data : (err.message !== undefined && err.message !== null) ? err.message : 'Se perdió la conexión.'
                 $scope.mostrarMensaje(msg)
                 blockUI.stop()
             })
@@ -257,10 +258,118 @@ angular.module('agil.controladores')
                 }
                 blockUI.stop()
             }).catch(function (err) {
-                var msg = (err.stack !== undefined && err.stack !== null) ? err.stack : (err.message !== undefined && err.message !== null) ? err.message : 'Se perdió la conexión.'
+                var msg = (err.data !== undefined && err.data !== null) ? err.data : (err.message !== undefined && err.message !== null) ? err.message : 'Se perdió la conexión.'
                 $scope.mostrarMensaje(msg)
                 blockUI.stop()
             })
+        }
+
+        $scope.obtenerHistoriales = function () {
+            var prom = ObtenerHistorial($scope.usuario.id_empresa, $scope.usuario.id, $scope.empresaExternaSeleccionada.id)
+            prom.then(function (res) {
+                if (res.hasErr) {
+                    res.mostrarMensaje(res.mensaje)
+                } else {
+                    $scope.historialesComedor = res.historial
+                }
+            })
+        }
+
+        $scope.subirExcelComensales = function (event) {
+            blockUI.start();
+            var files = event.target.files;
+            var i, f;
+            for (i = 0, f = files[i]; i != files.length; ++i) {
+                var reader = new FileReader();
+                var name = f.name;
+                reader.onload = function (e) {
+                    var data = e.target.result;
+                    var workbook = XLSX.read(data, { type: 'binary' });
+                    var first_sheet_name = workbook.SheetNames[0];
+                    var row = 2, i = 0;
+                    var worksheet = workbook.Sheets[first_sheet_name];
+                    var comensales = [];
+                    do {
+                        var comensal = {};
+                        comensal.tarjeta = worksheet['A' + row] != undefined && worksheet['A' + row] != "" ? worksheet['A' + row].v.toString() : null;
+                        comensal.nombre = worksheet['B' + row] != undefined && worksheet['B' + row] != "" ? worksheet['B' + row].v.toString() : null;
+                        comensal.fecha_hora = worksheet['C' + row] != undefined && worksheet['C' + row] != "" ? worksheet['C' + row].v.toString() : null;
+                        comensal.lectora = worksheet['D' + row] != undefined && worksheet['D' + row] != "" ? worksheet['D' + row].v.toString() : null;
+                        comensal.alias = worksheet['E' + row] != undefined && worksheet['E' + row] != "" ? worksheet['E' + row].v.toString() : null;
+                        comensales.push(comensal);
+                        row++;
+                        i++;
+                    } while (worksheet['A' + row] != undefined);
+                    blockUI.stop();
+                    $scope.guardarComensalesExcel(comensales);
+                };
+                reader.readAsBinaryString(f);
+            }
+        }
+
+        $scope.extraerFechaExcel = function (datoFecha) {
+            var horas = datoFecha.split(' ')[datoFecha.split(' ').length -1]
+            var fecha = datoFecha.split(' ')[0].split('/').reverse()
+            if (horas.indexOf('AM')>0) {
+                horas = horas.split('A')[0].split(':')
+            } else if(horas.indexOf('PM')>0){
+                horas = horas.split('P')[0].split(':')
+                horas[0] = (parseInt(horas[0])+12) + ''
+            }
+            var fechaCompleta = new Date(fecha[0], fecha[2] -1, fecha[1], horas[0], horas[1], horas[2])
+            return fechaCompleta
+        }
+
+        $scope.guardarComensalesExcel = function (comensales) {
+            var datos = []
+            if (comensales.length > 0) {
+                comensales.forEach(function (comensal) {
+                    if (!datos.some(function(dato){
+                        var fdato = $scope.extraerFechaExcel(dato.fecha_hora)
+                        var fcomensal = $scope.extraerFechaExcel(comensal.fecha_hora)
+                        dato.fecha = $scope.extraerFechaExcel(dato.fecha_hora)
+                        if(!dato.fecha){
+                           console.log(dato)
+                        }
+                        var diffSec = (fcomensal - fdato) / 1000
+                        if (diffSec < 0) {
+                            diffSec *= -1
+                        }
+                        // var hrs = ~~(diff / 3600);
+                        // var mins = ~~((diff % 3600) / 60);
+                        // var secs = diff % 60;
+                        if (!(dato.tarjeta === comensal.tarjeta && dato.nombre === comensal.nombre && diffSec > 60)) {
+                            return false
+                        } else {
+                            return true
+                        }
+                    })) {
+                        datos.push(comensal)
+                    }
+                })
+            }
+            if (datos.length > 0) {
+                var prom = GuardarComensalesExcel($scope.usuario.id_empresa, datos, $scope.usuario.id)
+                prom.then(function (res) {
+                    $scope.obtenerHistoriales()
+                    if (!res.hasErr) {
+                        $scope.obtenerAliasEmpresa()
+                        if (res.mensajes) {
+                            $scope.mostrarMensaje(res.mensaje + res.mensajes)
+                        }else{
+                            $scope.mostrarMensaje(res.mensaje)
+                        }
+                    }else{
+                        $scope.mostrarMensaje(res.mensajes)
+                    }
+                }).catch(function (err) {
+                    var msg = (err.data !== undefined && err.data !== null) ? err.data : (err.message !== undefined && err.message !== null) ? err.message : 'Se perdió la conexión.'
+                    $scope.mostrarMensaje(msg)
+                    blockUI.stop()
+                })
+            }else{
+                $scope.mostrarMensaje('Sin cambios.')
+            }
         }
 
         $scope.guardarAliasClienteEmpresa = function () {
@@ -280,7 +389,7 @@ angular.module('agil.controladores')
                         $scope.obtenerAliasEmpresa()
                     }
                 }).catch(function (err) {
-                    var msg = (err.stack !== undefined && err.stack !== null) ? err.stack : (err.message !== undefined && err.message !== null) ? err.message : 'Se perdió la conexión.'
+                    var msg = (err.data !== undefined && err.data !== null) ? err.data : (err.message !== undefined && err.message !== null) ? err.message : 'Se perdió la conexión.'
                     $scope.mostrarMensaje(msg)
                     blockUI.stop()
                 })
@@ -345,7 +454,7 @@ angular.module('agil.controladores')
                         $scope.obtenerGerencias()
                     }
                 }).catch(function (err) {
-                    var msg = (err.stack !== undefined && err.stack !== null) ? err.stack : (err.message !== undefined && err.message !== null) ? err.message : 'Se perdió la conexión.'
+                    var msg = (err.data !== undefined && err.data !== null) ? err.data : (err.message !== undefined && err.message !== null) ? err.message : 'Se perdió la conexión.'
                     $scope.mostrarMensaje(msg)
                     blockUI.stop()
                 })
@@ -389,7 +498,7 @@ angular.module('agil.controladores')
                         $scope.obtenerComensales()
                     }
                 }).catch(function (err) {
-                    var msg = (err.stack !== undefined && err.stack !== null) ? err.stack : (err.message !== undefined && err.message !== null) ? err.message : 'Se perdió la conexión.'
+                    var msg = (err.data !== undefined && err.data !== null) ? err.data : (err.message !== undefined && err.message !== null) ? err.message : 'Se perdió la conexión.'
                     $scope.mostrarMensaje(msg)
                     blockUI.stop()
                 })
@@ -455,7 +564,7 @@ angular.module('agil.controladores')
                         $scope.obtenerComidas()
                     }
                 }).catch(function (err) {
-                    var msg = (err.stack !== undefined && err.stack !== null) ? err.stack : (err.message !== undefined && err.message !== null) ? err.message : 'Se perdió la conexión.'
+                    var msg = (err.data !== undefined && err.data !== null) ? err.data : (err.message !== undefined && err.message !== null) ? err.message : 'Se perdió la conexión.'
                     $scope.mostrarMensaje(msg)
                     blockUI.stop()
                 })
@@ -498,7 +607,7 @@ angular.module('agil.controladores')
                         $scope.obtenerPrecioComidas()
                     }
                 }).catch(function (err) {
-                    var msg = (err.stack !== undefined && err.stack !== null) ? err.stack : (err.message !== undefined && err.message !== null) ? err.message : 'Se perdió la conexión.'
+                    var msg = (err.data !== undefined && err.data !== null) ? err.data : (err.message !== undefined && err.message !== null) ? err.message : 'Se perdió la conexión.'
                     $scope.mostrarMensaje(msg)
                     blockUI.stop()
                 })
