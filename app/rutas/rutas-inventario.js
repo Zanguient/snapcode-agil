@@ -88,7 +88,7 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 			if (req.params.usuario != 0) {
 				condicionUsuario.nombre_usuario = { $like: "%" + req.params.usuario + "%" };
 			}
-			sequelize.query("SELECT \
+			sequelize.query("SELECT\
 			p.id,p.nombre,\
 			sum(d.cantidad) AS cantidad,p.unidad_medida,\
 			sum(d.total) AS total\
