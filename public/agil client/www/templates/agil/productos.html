@@ -50,7 +50,7 @@
 								<th class="center">
 									Nº
 								</th>
-								<th ng-if="usuario.empresa.usar_panel" class="center" ng-if="fieldViewer.getConfiguration().publicado_pabel.show">
+								<th ng-if="usuario.empresa.usar_panel || fieldViewer.getConfiguration().publicado_pabel.show" class="center">
 									<a href="javascript:void(0)" ng-click="paginator.sortColumn('publicar_panel')">¿Publicado Panel?
 										<span id="publicar_panel" class="sort fa fa-sort icon-only"></span>
 									</a>
@@ -70,7 +70,7 @@
 										<span id="nombre" class="sort fa fa-sort icon-only"></span>
 									</a>
 								</th>
-								<th>Imagen</th>
+								<th ng-if="fieldViewer.getConfiguration().imagen.show">Imagen</th>
 								<th class="center" ng-if="fieldViewer.getConfiguration().unidad_medida.show">
 									<a href="javascript:void(0)" ng-click="paginator.sortColumn('unidad_medida')">Unidad de Medida
 										<span id="unidad_medida" class="sort fa fa-sort icon-only"></span>
@@ -121,7 +121,7 @@
 								<td class="center">
 									{{($index+1)+(paginator.itemsPerPage*(paginator.currentPage-1))}}
 								</td>
-								<td ng-if="usuario.empresa.usar_panel" ng-if="fieldViewer.getConfiguration().publicado_pabel.show">
+								<td ng-if="usuario.empresa.usar_panel || fieldViewer.getConfiguration().publicado_pabel.show">
 									<label>
 										<input ng-change="actualizarProducto(producto)" name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox"
 										 ng-model="producto.publicar_panel" />
