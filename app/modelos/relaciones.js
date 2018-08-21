@@ -332,6 +332,7 @@ module.exports = function (sequelize, Usuario, Persona, Rol, UsuarioRol, Tipo, C
 	Almacen.hasMany(Venta, { foreignKey: 'id_almacen', as: 'ventas' });
 	Almacen.hasMany(Venta, { foreignKey: 'id_almacen_traspaso', as: 'ventasTraspaso' });
 	Almacen.hasMany(Producto, { foreignKey: 'id_almacen_erp', as: 'productos' });
+	Almacen.hasMany(Cotizacion, { foreignKey: 'id_almacen', as: 'cotizacionAlmacen' });
 
 	//operaciones solicitud viveres
 	Almacen.hasMany(SolicitudReposicion, { foreignKey: 'id_almacen', as: 'almacenes' })
@@ -650,6 +651,10 @@ module.exports = function (sequelize, Usuario, Persona, Rol, UsuarioRol, Tipo, C
 	Cotizacion.hasMany(DetalleCotizacion, { foreignKey: 'id_cotizacion', as: 'detallesCotizacion' });
 	Cotizacion.belongsTo(Usuario, { foreignKey: 'id_usuario', as: 'usuario' });
 	Cotizacion.belongsTo(Sucursal, { foreignKey: 'id_sucursal', as: 'sucursal' });
+	Cotizacion.belongsTo(Almacen, { foreignKey: 'id_almacen', as: 'almacen' });
+	Cotizacion.belongsTo(Cliente, { foreignKey: 'id_cliente', as: 'cliente' });
+
+	Cliente.hasMany(Cotizacion, { foreignKey: 'id_cliente', as: 'cotizacionCliente' });
 
 
 	DetalleCotizacion.belongsTo(Cotizacion, { foreignKey: 'id_cotizacion', as: 'cotizacion' });

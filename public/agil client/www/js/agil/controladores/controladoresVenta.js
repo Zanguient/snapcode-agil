@@ -2619,7 +2619,7 @@ angular.module('agil.controladores')
 				var doc = new PDFDocument({ compress: false, margin: 10 });
 				var stream = doc.pipe(blobStream());
 				doc.font('Helvetica', 8);
-				var y = 150, itemsPorPagina = 25, items = 0, pagina = 1;
+				var y = 150, itemsPorPagina = 20, items = 0, pagina = 1;
 				$scope.dibujarCabeceraPDFDetalleProductos(doc, datos, pagina);
 				var indice = 0;
 				for (var i = 0; i < $scope.detallePorProducto.length && items <= itemsPorPagina; i++) {
@@ -2627,7 +2627,7 @@ angular.module('agil.controladores')
 					doc.font('Helvetica', 8);
 					doc.text(indice, 45, y);
 					doc.font('Helvetica', 8);
-					doc.text($scope.detallePorProducto[i].producto.nombre, 75, y);
+					doc.text($scope.detallePorProducto[i].producto.nombre, 75, y, { width: 150 });
 					doc.font('Helvetica', 8);
 					doc.text($scope.detallePorProducto[i].producto.unidad_medida, 250, y);
 					doc.font('Helvetica', 8);

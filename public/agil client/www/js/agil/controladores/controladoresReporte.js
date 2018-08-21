@@ -1498,10 +1498,12 @@ angular.module('agil.controladores')
 			var promesa = ReporteVentasMensualesDatos($scope.usuario.id_empresa, reporte.sucursal.id, inicio, fin);
 			promesa.then(function (datos) {
 				var detallesVenta = JSON.parse(datos.detallesVenta);
+
+				console.log("ventasssss ===== ", detallesVenta);
 				var data = [["FECHA DE LA FACTURA", "N° DE LA FACTURA", "N° DE AUTORIZACION", "NIT/CI CLIENTE", "NOMBRE O RAZON SOCIAL", "UBICACION CLIENTE",
 					"CODIGO", "DETALLE", "UNIDAD", "GRUPO", "CANTIDAD", "PU", "TOTAL", "IMPORTE ICE/IEHD/TASAS", "EXPORTACIONES Y OPERACIONES EXENTAS",
 					"VENTAS GRAVADAS A TASA CERO", "SUBTOTAL", "DESCUENTOS, BONIFICACIONES Y REBAJAS OBTENIDAS",
-					"IMPORTE BASE PARA DEBITO FISCAL", "DEBITO FISCAL", "SUCURSAL", "USUARIO"]]
+					"IMPORTE BASE PARA DEBITO FISCAL", "DEBITO FISCAL", "SUCURSAL", "USUARIO", "TIPO DE PAGO"]]
 				if ($scope.usuario.empresa.usar_vencimientos) {
 					data[0].push('FECHA VENCIMIENTO');
 					data[0].push('LOTE');
@@ -1537,6 +1539,7 @@ angular.module('agil.controladores')
 					columns.push(Math.round((detallesVenta[i].total * 0.13) * 100) / 100);
 					columns.push(detallesVenta[i].venta.almacen.sucursal.nombre);
 					columns.push(detallesVenta[i].venta.usuario.nombre_usuario);
+					columns.push(detallesVenta[i].venta.tipoPago.nombre);
 
 					if ($scope.usuario.empresa.usar_vencimientos) {
 						if (detallesVenta[i].inventario) {

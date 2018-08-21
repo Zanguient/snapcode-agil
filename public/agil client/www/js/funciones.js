@@ -608,7 +608,7 @@ function ejecutarScriptsVenta(idPopupEdicion, idPopupVista, idPopupEliminacion,
 	crearPopup(idModalImpresionVencimiento, "30%", 150);
 	crearPopup(idModalVendedor, "50%", 250);
 	crearPopup(IdModalVerificarCuenta, "auto", "auto");
-	crearPopup(modalReportesProductos, "35%",500);
+	crearPopup(modalReportesProductos, "auto","auto");
 
 	$(document).on('click', '#campos-detalle-venta', function (e) {
 		e.stopPropagation();

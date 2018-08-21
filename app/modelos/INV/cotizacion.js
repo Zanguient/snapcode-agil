@@ -47,6 +47,30 @@ module.exports=function(sequelize,Sequelize){
 		id_cliente: {
 			type: Sequelize.INTEGER,
 			field: 'cliente' 
+		},
+		plazo: {
+			type: Sequelize.STRING,
+			field: 'plazo'
+		},
+		nota: {
+			type: Sequelize.STRING,
+			field: 'nota'
+		},
+		observacion: {
+			type: Sequelize.STRING,
+			field: 'observacion'
+		},
+		firma: {
+			type: Sequelize.STRING,
+			field: 'firma'
+		},
+		cargo: {
+			type: Sequelize.STRING,
+			field: 'cargo'
+		},
+		id_almacen: {
+			type: Sequelize.INTEGER,
+			field: 'almacen'
 		}
 	}, {
 		freezeTableName: true 

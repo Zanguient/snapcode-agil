@@ -225,6 +225,7 @@ module.exports = function (router, sequelize, Sequelize, Compra, Proveedor, Alma
 					{
 						model: Venta, as: 'venta', where: { fecha: { $between: [inicio, fin] }, activa: true },
 						include: [{ model: Cliente, as: 'cliente', required: true },
+						{ model: Clase, as : 'tipoPago' },
 						{ model: Usuario, as: 'usuario', required: true, attributes: ['id', 'id_persona', 'id_empresa', 'nombre_usuario'] },
 						{
 							model: VendedorVenta, as: 'vendedor', required: false,
