@@ -25,11 +25,15 @@ angular.module('agil.servicios')
 })
 
 .factory('Historial', function ($resource) {
-    return $resource(restServer + "cliente/empresa/historial/:id_empresa/:id_usuario/:id_cliente");
+    return $resource(restServer + "cliente/empresa/historial/:id_empresa/:id_usuario/:id_cliente/:desde/:hasta");
 })
 
 .factory('ComensalesExcel', function ($resource) {
     return $resource(restServer + "cliente/empresa/excel/comensal/:id_empresa/:id_usuario");
+})
+
+.factory('AliasExcel', function ($resource) {
+    return $resource(restServer + "cliente/empresa/excel/alias/:id_empresa/:id_usuario/:id_cliente/:desde/:hasta");
 })
 
 .factory('GuardarAlias', ['Alias', '$q', function (Alias, $q) {
@@ -191,7 +195,7 @@ angular.module('agil.servicios')
 .factory('ObtenerHistorial', ['Historial', '$q', function (Historial, $q) {
     var res = function (idEmpresa, usuario,cliente) {
         var delay = $q.defer();
-        Historial.get({ id_empresa: idEmpresa, id_usuario: usuario, id_cliente: cliente}, function (entidades) {
+        Historial.get({ id_empresa: idEmpresa, id_usuario: usuario, id_cliente: cliente, desde: 0, hasta: 0 }, function (entidades) {
             delay.resolve(entidades);
         }, function (error) {
             delay.reject(error);
@@ -213,10 +217,11 @@ angular.module('agil.servicios')
     };
     return res;
 
-}]).factory('GuardarComensalesExcel', ['ComensalesExcel', '$q', function (ComensalesExcel, $q) {
+}])
+.factory('GuardarComensalesExcel', ['ComensalesExcel', '$q', function (ComensalesExcel, $q) {
     var res = function (idEmpresa, lista, usuario, cliente) {
         var delay = $q.defer();
-        ComensalesExcel.save({ id_empresa: idEmpresa, id_usuario: usuario, id_cliente: cliente }, lista, function (entidades) {
+        ComensalesExcel.save({ id_empresa: idEmpresa, id_usuario: usuario, id_cliente: cliente}, lista, function (entidades) {
             delay.resolve(entidades);
         }, function (error) {
             delay.reject(error);
@@ -225,4 +230,16 @@ angular.module('agil.servicios')
     };
     return res;
 }])
-ComensalesExcel
+
+.factory('GuardarEmpresasExcel', ['AliasExcel', '$q', function (AliasExcel, $q) {
+    var res = function (idEmpresa, lista, usuario, cliente) {
+        var delay = $q.defer();
+        AliasExcel.save({ id_empresa: idEmpresa, id_usuario: usuario, id_cliente: cliente}, lista, function (entidades) {
+            delay.resolve(entidades);
+        }, function (error) {
+            delay.reject(error);
+        });
+        return delay.promise;
+    };
+    return res;
+}])

@@ -67,7 +67,7 @@
                                 <div class="fileUpload btn btn-primary btn-success">
                                     <span class="fileUpload-button ace-icon fa fa-cloud-upload align-top bigger-125">&nbsp&nbspImportar</span>
                                     <!-- CAMBIAR aplicacion POR !aplicacion -->
-                                    <input ng-disabled="!aplicacion.puede_crear" class="upload" type="file" custom-on-file-change="subirExcelHistorial" />&nbsp&nbsp
+                                    <input id="fileUpload-Historial" class="upload" type="file" custom-on-file-change="subirExcelHistorial" />&nbsp&nbsp
                                 </div>
                                 <a href="javascript:void(0)" class="blue" ng-click="mostrarMensaje('Sin funcionalidad')">
                                     <i class="ace-icon fa fa-cloud-download align-top bigger-300"></i>
@@ -253,9 +253,10 @@
                                         </div>
                                         <div class="col-lg-7">
                                             <input type="text" ng-model="clienteEmpresaAsignacionAlias.codigo">
-                                            <a href="javascript:void(0)" class="blue" ng-click="mostrarMensaje('Sin funcionalidad')">
-                                                <i class="ace-icon fa fa-cloud-upload align-top bigger-200"></i>
-                                            </a>
+                                            <div class="fileUpload green">
+                                                <span class="fileUpload-button ace-icon fa fa-cloud-upload align-top bigger-200"></span>
+                                                <input id="fileUpload-Empresas" class="upload" type="file" custom-on-file-change="subirExcelEmpresas" />
+                                            </div>
                                             <a href="javascript:void(0)" class="green" ng-click="mostrarMensaje('Sin funcionalidad')">
                                                 <i class="ace-icon fa fa-cloud-download align-top bigger-200"></i>
                                             </a>
@@ -297,7 +298,7 @@
                                                 <thead>
                                                     <th>Código</th>
                                                     <th>Empresa</th>
-                                                    <th>Alias</th>
+                                                    <th>Alias/NAME</th>
                                                     <th>Acciones</th>
                                                 </thead>
                                                 <tbody ng-if="!aliasEmpresa.eliminado" ng-repeat="aliasEmpresa in listaAliasclientesEmpresa">
@@ -510,11 +511,11 @@
                                             <input type="text" ng-model="clienteEmpresaEdicionComensales.codigo">
                                             <div class="fileUpload green">
                                                 <span class="fileUpload-button ace-icon fa fa-cloud-upload align-top bigger-200"></span>
-                                                <input ng-disabled="!aplicacion.puede_crear" class="upload" type="file" custom-on-file-change="subirExcelComensales" />
+                                                <input id="fileUploadComensales" class="upload" type="file" custom-on-file-change="subirExcelComensales" />
                                             </div>
                                             <div class="fileUpload blue">
                                                 <span class="fileUpload-button ace-icon fa fa-cloud-upload align-top bigger-200"></span>
-                                                <input ng-disabled="!aplicacion.puede_crear" class="upload" type="file" custom-on-file-change="subirExcelComensales" />
+                                                <input class="upload" type="file" custom-on-file-change="subirExcelComensales" />
                                             </div>
                                         </div>
                                     </div>

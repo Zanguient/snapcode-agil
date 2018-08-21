@@ -1,6 +1,6 @@
 angular.module('agil.controladores')
 
-    .controller('controladorComensalesEmpresa', function ($scope, $timeout, $localStorage, $location, blockUI, Clientes, ClientesNit, GuardarAlias, ObtenerAlias, GuardarGerencias, ObtenerGerencias, GuardarComensales, ObtenerComensales, GuardarComidas, ObtenerComidas, GuardarPrecioComidas, ObtenerPrecioComidas, GuardarHistorialExcel, GuardarComensalesExcel, ObtenerHistorial) {
+    .controller('controladorComensalesEmpresa', function ($scope, $timeout, $localStorage, $location, blockUI, Clientes, ClientesNit, GuardarAlias, ObtenerAlias, GuardarGerencias, ObtenerGerencias, GuardarComensales, ObtenerComensales, GuardarComidas, ObtenerComidas, GuardarPrecioComidas, ObtenerPrecioComidas, GuardarHistorialExcel, GuardarComensalesExcel, ObtenerHistorial, GuardarEmpresasExcel) {
 
         $scope.modalEdicionAlias = 'modalAliasEmpresasCliente'
         $scope.modalEdicionGerencias = 'modalGerenciaEmpresasCliente'
@@ -311,6 +311,7 @@ angular.module('agil.controladores')
                         i++;
                     } while (worksheet['A' + row] != undefined);
                     blockUI.stop();
+                    $('fileUpload-Historial').val(null)
                     $scope.guardarHistorialExcel(Historial);
                 };
                 reader.readAsBinaryString(f);
@@ -318,13 +319,13 @@ angular.module('agil.controladores')
         }
 
         $scope.subirExcelComensales = function (event) {
-            blockUI.start();
             var files = event.target.files;
             var i, f;
             for (i = 0, f = files[i]; i != files.length; ++i) {
                 var reader = new FileReader();
                 var name = f.name;
                 reader.onload = function (e) {
+                    blockUI.start();
                     var data = e.target.result;
                     var workbook = XLSX.read(data, { type: 'binary' });
                     var first_sheet_name = workbook.SheetNames[0];
@@ -344,7 +345,39 @@ angular.module('agil.controladores')
                         i++;
                     } while (worksheet['A' + row] != undefined);
                     blockUI.stop();
+                    $('fileUploadComensales').val(null)
                     $scope.guardarComensalesExcel(comensales);
+                };
+                reader.readAsBinaryString(f);
+            }
+        }
+
+        $scope.subirExcelEmpresas = function (event) {
+            var files = event.target.files;
+            var i, f;
+            for (i = 0, f = files[i]; i != files.length; ++i) {
+                var reader = new FileReader();
+                var name = f.name;
+                reader.onload = function (e) {
+                    blockUI.start();
+                    var data = e.target.result;
+                    var workbook = XLSX.read(data, { type: 'binary' });
+                    var first_sheet_name = workbook.SheetNames[0];
+                    var row = 2, i = 0;
+                    var worksheet = workbook.Sheets[first_sheet_name];
+                    var empresas = [];
+                    do {
+                        var empresa = {};
+                        empresa.codigo = worksheet['A' + row] != undefined && worksheet['A' + row] != "" ? worksheet['A' + row].v.toString() : null;
+                        empresa.empresaCliente = worksheet['B' + row] != undefined && worksheet['B' + row] != "" ? worksheet['B' + row].v.toString() : null;
+                        empresa.nombre = worksheet['C' + row] != undefined && worksheet['C' + row] != "" ? worksheet['C' + row].v.toString() : null;
+                        empresas.push(empresa);
+                        row++;
+                        i++;
+                    } while (worksheet['A' + row] != undefined);
+                    blockUI.stop();
+                    $('fileUpload-Empresas').val(null)
+                    $scope.guardarEmpresasExcel(empresas);
                 };
                 reader.readAsBinaryString(f);
             }
@@ -421,6 +454,30 @@ angular.module('agil.controladores')
                     $scope.obtenerHistoriales()
                     if (!res.hasErr) {
                         $scope.obtenerAliasEmpresa()
+                        if (res.mensajes) {
+                            $scope.mostrarMensaje(res.mensaje + res.mensajes)
+                        }else{
+                            $scope.mostrarMensaje(res.mensaje)
+                        }
+                    }else{
+                        $scope.mostrarMensaje(res.mensajes)
+                    }
+                }).catch(function (err) {
+                    var msg = (err.data !== undefined && err.data !== null) ? err.data : (err.message !== undefined && err.message !== null) ? err.message : 'Se perdió la conexión.'
+                    $scope.mostrarMensaje(msg)
+                    blockUI.stop()
+                })
+            }else{
+                $scope.mostrarMensaje('Sin cambios.')
+            }
+        }
+
+        $scope.guardarEmpresasExcel = function (empresas) {
+            if (empresas.length > 0) {
+                var prom = GuardarEmpresasExcel($scope.usuario.id_empresa, empresas, $scope.usuario.id)
+                prom.then(function (res) {
+                    $scope.obtenerAliasEmpresa()
+                    if (!res.hasErr) {
                         if (res.mensajes) {
                             $scope.mostrarMensaje(res.mensaje + res.mensajes)
                         }else{
