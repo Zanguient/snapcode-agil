@@ -665,15 +665,17 @@
 						<h4 class="widget-title" ng-if="cotizacion.id">Modificar Cotización</h4>
 						&nbsp;
 						<p>
-							<button id="guardarV" type="submit" ng-if="blockerVenta" ng-disabled="venta.detallesVenta.length==0" class="btn btn-primary">
+							<button id="guardarV" type="submit" ng-disabled="cotizacion.detallesCotizacion.length==0" class="btn btn-primary">
 								<i class="ace-icon fa fa-floppy-o align-top bigger-125"></i>
 								GUARDAR
 							</button>
-							<button id="cerrarV" type="button" class="btn btn-primary btn-danger" ng-click="cerrarPopupEdicion()">
+							<button id="cerrarV" type="button" class="btn btn-primary btn-danger" ng-click="cerrarNuevaCotizacion()">
 								<i class="ace-icon fa fa-times red2 align-top bigger-125"></i>
 								CERRAR
 							</button>
 						</p>
+
+						
 
 					</div>
 
@@ -760,41 +762,18 @@
 				<div class="widget-body">
 					<div class="widget-main">
 						<!-- <form id="formularioBusquedaProducto" name="formularioBusquedaProducto" novalidate> -->
-						<table class="table table-striped table-bordered table-hover">
+						<!-- visible en md lg xl  -->
+						<table class="table table-striped table-bordered table-hover hidden-xs hidden-sm visible-md-block visible-lg-block">
 							<thead>
 								<tr>
 									<th>
 										<label>PRODUCTO</label>
-										<div>
-											<div class="col-md-1">
-												<a class="green">
-													<i class="ace-icon fa fa-barcode dark bigger-250 fa-stack-2x"></i>
-													<i class="ace-icon fa  fa-filter red bigger-200 fa-stack-1x"></i>
-													<!-- <img class="bg-orange text-cut" style="width:25%;height:25%" src="img/iconos-polifuncional/asistencia-capacitacion.png"> -->
-												</a>
-											</div>
-
-											<label class="col-md-3 pull-left" uib-tooltip="Usar lector de barra">
-
-												<input ng-model="usuario.usar_lector_de_barra" ng-change="UsarLectorDeBarra()" checked="checked" type="checkbox" class="ace ace-switch ace-switch-5">
-												<span class="lbl" data-lbl="Si&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;No"></span>
-											</label>
-										</div>
 									</th>
 									<th>
 										<label>CÓD. ITEM</label>
 									</th>
 									<th>
 										<label>UNID. MED.</label>
-									</th>
-									<th ng-if="usuario.empresa.usar_vencimientos">
-										<label>VENCIMIENTO</label>
-									</th>
-									<th ng-if="usuario.empresa.usar_vencimientos">
-										<label>LOTE</label>
-									</th>
-									<th>
-										<label>INVENTARIO DISPONIBLE</label>
 									</th>
 									<th>
 										<label>P.U. (Bs/u)</label>
@@ -812,154 +791,90 @@
 							</thead>
 							<tbody>
 								<tr>
-									<td>
-										<input ng-if="usuario.usar_lector_de_barra" ng-keypress="interceptarTecla($event,'cantidad',true)" id="id_producto" required
-										 ng-disabled="!venta.almacen" type="text" ng-model="detalleVenta.producto.nombre" placeholder="Ingrese el nombre del producto..."
-										 uib-typeahead="producto as (producto.codigo+'-'+producto.nombre+'-'+producto.grupo+'-'+producto.subgrupo) for producto in buscarProductoLectorBarra($viewValue)"
-										 typeahead-wait-ms="100" typeahead-template-url="templates/autocompletar.html" typeahead-show-hint="false" typeahead-min-length="3"
+									<td class="col-md-2">
+										<input  required ng-keypress="interceptarTecla($event,'cantidadTB',true)" id="id_productoTB" required type="text" ng-model="detalleCotizacion.producto.nombre"
+										 placeholder="Ingrese el nombre del producto..." uib-typeahead="producto as (producto.codigo+'-'+producto.nombre+'-'+producto.grupo+'-'+producto.subgrupo) for producto in buscarProducto($viewValue)"
+										 typeahead-wait-ms="1000" typeahead-template-url="templates/autocompletar.html" typeahead-show-hint="false" typeahead-min-length="3"
 										 typeahead-on-select="establecerProducto($item, $model, $label, $event)">
 
-										<input ng-if="!usuario.usar_lector_de_barra" autocomplete="off" ng-keypress="interceptarTecla($event,'cantidad',true)" id="id_producto"
-										 required ng-disabled="!venta.almacen" type="text" ng-model="detalleVenta.producto.nombre" placeholder="Ingrese el nombre del producto..."
-										 uib-typeahead="producto as (producto.codigo+'-'+producto.nombre+'-'+producto.grupo+'-'+producto.subgrupo) for producto in buscarProducto($viewValue)"
-										 typeahead-wait-ms="1000" typeahead-template-url="templates/autocompletar.html" typeahead-show-hint="false" typeahead-select-on-exact="true"
-										 typeahead-min-length="3" typeahead-on-select="establecerProducto($item, $model, $label, $event)">
-
 										<div class="space-6"></div>
-										<button ng-disabled="!venta.almacen" id="mostrar_inv" type="button" ng-click="abrirPopupInventario()" class="btn btn-info btn-sm">
-											<i class="ace-icon fa fa-search-plus bigger-110"></i>
-										</button>
-										<span class="red" ng-if="!detalleVenta.producto.activar_inventario">Inventario Desactivado</span>
+										<!-- <button id="mostrar_inv" type="button" ng-click="abrirPopupInventario()" class="btn btn-info btn-sm">
+													<i class="ace-icon fa fa-search-plus bigger-110"></i>
+												</button>
+										<span class="red" ng-if="!detalleCotizacion.producto.activar_inventario">Inventario Desactivado</span> -->
 									</td>
-									<td>
-										{{detalleVenta.producto.codigo}}
+									<td class="col-md-2">
+										{{detalleCotizacion.producto.codigo}}
 									</td>
-									<td>
-										{{detalleVenta.producto.unidad_medida}}
-									</td>
-									<td ng-if="usuario.empresa.usar_vencimientos">
-										<select style="width:95px;" id="fechaVencimiento" name="fechaVencimiento" ng-if="detalleVenta.producto.activar_inventario"
-										 ng-model="detalleVenta.inventarioProducto" data-placeholder="Elija la fecha de vencimiento" ng-change="actualizarInventarioDisponibleFechaVencimiento(detalleVenta)"
-										 ng-options="inventario as ('FV:'+inventario.fechaVencimientoTexto+'-'+'F:'+inventario.detallesMovimiento[0].movimiento.fechaTexto+'-'+inventario.detallesMovimiento[0].movimiento.clase.nombre) for inventario in inventariosDisponibleProducto track by inventario.id">
-										</select>
-									</td>
-									<td ng-if="usuario.empresa.usar_vencimientos">
-										{{detalleVenta.lote}}
-									</td>
-									<td>
-										<div class="c100 p{{porcentaje}} small {{color}}" ng-if="detalleVenta.producto.activar_inventario">
-											<span id="CantProd" style="color:black !important;">{{detalleVenta.inventario_disponible}}</span>
-											<div class="slice">
-												<div class="bar"></div>
-												<div class="fill"></div>
-											</div>
-										</div>
+									<td class="col-md-2">
+										{{detalleCotizacion.producto.unidad_medida}}
 									</td>
 									<td ng-if="!editar_precio">
 										<div clas="row">
-											<div id="Precio" class="col-sm-12">
-												{{detalleVenta.precio_unitario}}
-											</div>
-										</div>
-										<div clas="row">
 											<div class="col-sm-12">
-												<a class="green" href="javascript:void(0)" e-disabled="!aplicacion.puede_modificar" ng-click="modificarPrecio()">
-													<i class="ace-icon fa fa-pencil-square-o bigger-130"></i>
-												</a>
+												{{detalleCotizacion.precio_unitario}}
 											</div>
 										</div>
-
-										<span class="blue">
-                                    	Último precio
-                                		</span>
-										<span class="label label-danger label-white middle tooltip-info" ng-if="precio_inventario"  data-rel="tooltip" tooltip-placement="top" uib-tooltip="Último precio de compra">{{precio_inventario}}</span>
+										
 									</td>
 									<td ng-if="editar_precio">
-										<form ng-submit="establecerPrecio()">
-											<div class="row">
-												<div class="col-sm-12">
-													<input required name="precio_unitario" step="0.001" min="{{detalleVenta.producto.rango_negativo?detalleVenta.producto.rango_negativo:0}}"
-													 max="{{detalleVenta.producto.rango_positivo?detalleVenta.producto.rango_positivo:10000000}}" required class="col-xs-12"
-													 ng-change="calcularImporte()" ng-model="detalleVenta.precio_unitario" type="number" />
-												</div>
+										<div class="row">
+											<div class="col-sm-12">
+												<input required ng-disabled name="precio_unitario" step="0.001" min="0.1" required class="col-xs-12" ng-change="calcularImporte()"
+												 ng-model="detalleCotizacion.precio_unitario" type="number" />
 											</div>
-											<div class="row">
-												<div class="col-sm-12">
-													<button class="blue" type "submit">
-														<i class="ace-icon fa fa-check-square-o bigger-130"></i>
-													</button>
-												</div>
+										</div>
+										<div class="row">
+											<div class="col-sm-12">
+												<a class="blue" href="javascript:void(0)" ng-click="establecerPrecio()">
+															<i class="ace-icon fa fa-check-square-o bigger-130"></i>
+														</a>
 											</div>
-										</form>
-									</td>
-									<td>
-										<input onfocus="this.select();" ng-keypress="interceptarTecla($event,'agregar_detalle_venta',false)" id="cantidad" name="cantidad"
-										 step="0.001" min="0.1" max="{{detalleVenta.inventario_disponible}}" required class="col-xs-12" ng-change="calcularImporte()"
-										 ng-model="detalleVenta.cantidad" type="number" />
-										<div ng-show="formularioBusquedaProducto.cantidad.$dirty && formularioBusquedaProducto.cantidad.$invalid">
-											<span class="invalid-message">La cantidad debe estar entre 0.1 y {{detalleVenta.inventario_disponible}}.</span>
 										</div>
 									</td>
 									<td>
-										{{detalleVenta.importe}}
+										<input onfocus="this.select();" ng-keypress="interceptarTecla($event,'agregar_detalle_cotizacionTB',true)" id="cantidadTB"
+										 name="cantidad" step="0.001" min="0.1" max="{{detalleCotizacion.inventario_disponible}}" required class="col-xs-12"
+										 ng-change="calcularImporte()" ng-model="detalleCotizacion.cantidad" type="number" />
+										<div ng-show="formularioBusquedaProducto.cantidad.$dirty && formularioBusquedaProducto.cantidad.$invalid">
+											<span class="invalid-message">La cantidad debe estar entre 0.1 y {{detalleCotizacion.inventario_disponible}}.</span>
+										</div>
 									</td>
+
 									<td>
-										<button id="agregar_detalle_venta" type="button" ng-disabled="formularioBusquedaProducto.$invalid" ng-click="agregarDetalleVenta(detalleVenta)"
+										{{detalleCotizacion.importe}}
+									</td>
+
+									<td>
+										<button ng-disabled="!productoSeleccionado" ng-keypress="interceptarTecla($event,'id_productoTB',true)" id="agregar_detalle_cotizacionTB" type="button" ng-click="agregarDetalleCotizacion(detalleCotizacion)"
 										 class="btn btn-success btn-sm">
-											<i class="ace-icon fa fa-plus bigger-110"></i>
-										</button>
+													<i class="ace-icon fa fa-plus bigger-110"></i>
+												</button>
 										<div class="space-6"></div>
-										<button id="mostrar_desc" type="button" ng-click="mostrarDescuentos()" class="btn btn-info btn-sm">
-											<i class="ace-icon fa fa-exchange bigger-110"></i>
-										</button>
+										<!-- <button id="mostrar_desc" type="button" ng-click="mostrarDescuentos()" class="btn btn-info btn-sm">
+													<i class="ace-icon fa fa-exchange bigger-110"></i>
+												</button> -->
 									</td>
 								</tr>
 								<tr class="des-datos" style="display:none;">
-									<th>
-										<label>DESCUENTOS (-)</label>
-										<label>
-											<input ng-disabled="detalleVenta.producto.descuento_fijo" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="detalleVenta.tipo_descuento"
-											 ng-change="recalcular()" />
-											<span class="lbl check-compra"></span>
-										</label>
-									</th>
-									<th>
-										<label>RECARGOS (+)</label>
-										<label>
-											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="detalleVenta.tipo_recargo" ng-change="recalcular()"
-											/>
-											<span class="lbl check-compra"></span>
-										</label>
-									</th>
-									<th>
-										<label>ICE (-)</label>
-									</th>
-									<th>
-										<label>EXCENTOS (-)</label>
-									</th>
-									<th>
-										<label>SUJETO A DF</label>
-									</th>
-								</tr>
-								<tr class="des-datos" style="display:none;">
 									<td>
-										<input ng-disabled="detalleVenta.producto.descuento_fijo" required ng-change="calcularImporte()" ng-model="detalleVenta.descuento"
-										 ng-value="detalleVenta.producto.descuento" step="0.001" class="col-xs-12" type="number" value="0" />
+										<input ng-disabled="detalleCotizacion.producto.descuento_fijo" required ng-change="calcularImporte()" ng-model="detalleCotizacion.descuento"
+										 ng-value="detalleCotizacion.producto.descuento" step="0.001" class="col-xs-12" type="number" value="0" />
 									</td>
 									<td>
-										<input required ng-change="calcularImporte()" ng-model="detalleVenta.recargo" step="0.001" class="col-xs-12" type="number"
+										<input required ng-change="calcularImporte()" ng-model="detalleCotizacion.recargo" step="0.001" class="col-xs-12" type="number"
 										 value="0" />
 									</td>
 									<td>
-										<input required ng-change="calcularImporte()" ng-model="detalleVenta.ice" step="0.001" class="col-xs-12" type="number" value="0"
-										/>
-									</td>
-									<td>
-										<input required ng-change="calcularImporte()" ng-model="detalleVenta.excento" step="0.001" class="col-xs-12" type="number"
+										<input required ng-change="calcularImporte()" ng-model="detalleCotizacion.ice" step="0.001" class="col-xs-12" type="number"
 										 value="0" />
 									</td>
 									<td>
-										{{detalleVenta.total}}
+										<input required ng-change="calcularImporte()" ng-model="detalleCotizacion.excento" step="0.001" class="col-xs-12" type="number"
+										 value="0" />
+									</td>
+									<td>
+										{{detalleCotizacion.total}}
 									</td>
 								</tr>
 							</tbody>
@@ -1091,155 +1006,91 @@
 						</div>
 					</div>
 				</div>
-				<div class="widget-body" ng-if="venta.detallesVenta.length>0">
+				<div class="widget-body" ng-if="cotizacion.detallesCotizacion.length >0">
 					<div class="widget-main">
-						<table class="table table-striped table-bordered table-hover">
-							<thead>
-								<tr>
-									<th>
-										<label>#</label>
-									</th>
-									<th ng-if="configuracionVentaVista.mostrar_producto">
-										<label>NOMBRE</label>
-									</th>
-									<th ng-if="configuracionVentaVista.mostrar_codigo_producto">
-										<label>CÓD. ITEM</label>
-									</th>
-									<th ng-if="configuracionVentaVista.mostrar_unidad_producto">
-										<label>UNID. MED.</label>
-									</th>
-									<th ng-if="configuracionVentaVista.mostrar_precio_unitario">
-										<label>P.U. (Bs/u)</label>
-									</th>
-									<th ng-if="configuracionVentaVista.mostrar_cantidad">
-										<label>CANT. (u)</label>
-									</th>
-									<th ng-if="configuracionVentaVista.mostrar_fecha_vencimiento && usuario.empresa.usar_vencimientos">
-										<label>VENC.</label>
-									</th>
-									<th ng-if="configuracionVentaVista.mostrar_lote && usuario.empresa.usar_vencimientos">
-										<label>LOTE</label>
-									</th>
-									<th ng-if="configuracionVentaVista.mostrar_importe">
-										<label>IMP. (Bs)</label>
-									</th>
-									<th ng-if="configuracionVentaVista.mostrar_descuento">
-										<label>DESC. (-)</label>
-									</th>
-									<th ng-if="configuracionVentaVista.mostrar_recargo">
-										<label>REC. (+)</label>
-									</th>
-									<th ng-if="configuracionVentaVista.mostrar_ice">
-										<label>ICE (-)</label>
-									</th>
-									<th ng-if="configuracionVentaVista.mostrar_excento">
-										<label>EXC. (-)</label>
-									</th>
-									<th ng-if="configuracionVentaVista.mostrar_total">
-										<label>SUJETO A DF</label>
-									</th>
-									<th>
-										<label>ACCIONES</label>
-									</th>
-								</tr>
-							</thead>
-							<tbody>
-								<tr ng-repeat="detalleVenta in venta.detallesVenta|filter:{eliminado:false}">
-									<td>
-										{{$index+1}}
-									</td>
-									<td ng-if="configuracionVentaVista.mostrar_producto">
-										{{detalleVenta.producto.nombre}}
-									</td>
-									<td ng-if="configuracionVentaVista.mostrar_codigo_producto">
-										{{detalleVenta.producto.codigo}}
-									</td>
-									<td ng-if="configuracionVentaVista.mostrar_unidad_producto">
-										{{detalleVenta.producto.unidad_medida}}
-									</td>
-									<td ng-if="configuracionVentaVista.mostrar_precio_unitario">
-										{{detalleVenta.precio_unitario}}
-									</td>
-									<td ng-if="configuracionVentaVista.mostrar_cantidad">
-										{{detalleVenta.cantidad}}
-									</td>
-									<td ng-if="configuracionVentaVista.mostrar_fecha_vencimiento && usuario.empresa.usar_vencimientos">
-										{{detalleVenta.fecha_vencimiento | date:"dd/MM/yyyy"}}
-									</td>
-									<td ng-if="configuracionVentaVista.mostrar_lote && usuario.empresa.usar_vencimientos">
-										{{detalleVenta.lote}}
-									</td>
-									<td ng-if="configuracionVentaVista.mostrar_importe">
-										{{detalleVenta.importe}}
-									</td>
-									<td ng-if="configuracionVentaVista.mostrar_descuento">
-										{{detalleVenta.descuento}}
-									</td>
-									<td ng-if="configuracionVentaVista.mostrar_recargo">
-										{{detalleVenta.recargo}}
-									</td>
-									<td ng-if="configuracionVentaVista.mostrar_ice">
-										{{detalleVenta.ice}}
-									</td>
-									<td ng-if="configuracionVentaVista.mostrar_excento">
-										{{detalleVenta.excento}}
-									</td>
-									<td ng-if="configuracionVentaVista.mostrar_total">
-										{{detalleVenta.total}}
-									</td>
-									<td>
-										<a class="red" href="javascript:void(0)" ng-click="eliminarDetalleVenta(detalleVenta)">
+						<table class="table table-striped table-bordered table-hover table-responsive hidden-xs hidden-sm visible-md-block visible-lg-block">
+					<thead>
+						<tr>
+							<th>
+								<label>#</label>
+							</th>
+							<th>
+								<label>NOMBRE</label>
+							</th>
+							<th>
+								<label>CÓD. ITEM</label>
+							</th>
+							<th>
+								<label>UNID. MED.</label>
+							</th>
+							<th>
+								<label>P.U. (Bs/u)</label>
+							</th>
+							<th>
+								<label>CANT. (u)</label>
+							</th>
+							<th>
+								<label>IMP. (Bs)</label>
+							</th>
+							<th>
+								<label>ACCIONES</label>
+							</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr ng-if="!detalleCotizacion.eliminado" ng-repeat="detalleCotizacion in cotizacion.detallesCotizacion">
+							<td>
+								{{$index+1}}
+							</td>
+							<td>
+								{{detalleCotizacion.producto.nombre}}
+							</td>
+							<td>
+								{{detalleCotizacion.producto.codigo}}
+							</td>
+							<td>
+								{{detalleCotizacion.producto.unidad_medida}}
+							</td>
+							<td>
+								{{detalleCotizacion.precio_unitario}}
+							</td>
+							<td>
+								{{detalleCotizacion.cantidad}}
+							</td>
+							<td>
+								{{detalleCotizacion.importe}}
+							</td>
+							<td>
+								<a class="red" href="javascript:void(0)" ng-click="eliminarDetalleCotizacion(detalleCotizacion)">
 											<i class="ace-icon fa fa-trash-o bigger-130"></i>
 										</a>
-									</td>
-								</tr>
-								<tr>
-									<td>
+							</td>
+						</tr>
+						<tr>
+							<td>
 
-									</td>
-									<td ng-if="configuracionVentaVista.mostrar_producto">
-										<b>TOTALES</b>
-									</td>
-									<td ng-if="configuracionVentaVista.mostrar_codigo_producto">
+							</td>
+							<td>
+								<b>TOTALES</b>
+							</td>
+							<td>
 
-									</td>
-									<td ng-if="configuracionVentaVista.mostrar_unidad_producto">
+							</td>
+							<td>
 
-									</td>
-									<td ng-if="configuracionVentaVista.mostrar_precio_unitario">
+							</td>
+							<td>
 
-									</td>
-									<td ng-if="configuracionVentaVista.mostrar_cantidad">
+							</td>
+							<td>
 
-									</td>
-									<td ng-if="configuracionVentaVista.mostrar_fecha_vencimiento && usuario.empresa.usar_vencimientos">
-
-									</td>
-									<td ng-if="configuracionVentaVista.mostrar_lote && usuario.empresa.usar_vencimientos">
-
-									</td>
-									<td ng-if="configuracionVentaVista.mostrar_importe">
-										{{venta.importe}}
-									</td>
-									<td ng-if="configuracionVentaVista.mostrar_descuento">
-
-									</td>
-									<td ng-if="configuracionVentaVista.mostrar_recargo">
-
-									</td>
-									<td ng-if="configuracionVentaVista.mostrar_ice">
-
-									</td>
-									<td ng-if="configuracionVentaVista.mostrar_excento">
-									</td>
-									<td ng-if="configuracionVentaVista.mostrar_total">
-										{{venta.total}}
-									</td>
-									<td>
-									</td>
-								</tr>
-							</tbody>
-						</table>
+							</td>
+							<td>
+								{{cotizacion.importe}}
+							</td>
+						</tr>
+					</tbody>
+				</table>
 					</div>
 				</div>
 			</div>

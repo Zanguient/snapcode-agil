@@ -1,0 +1,11 @@
+ALTER TABLE inv_cotizacion add estado varchar(255);
+ALTER TABLE inv_cotizacion add plazo varchar(255);
+ALTER TABLE inv_cotizacion add nota varchar(255);
+ALTER TABLE inv_cotizacion add observacion varchar(255);
+ALTER TABLE inv_cotizacion add firma varchar(255);
+ALTER TABLE inv_cotizacion add cargo varchar(255);
+ALTER TABLE inv_cotizacion ADD fecha_estado datetime;
+ALTER TABLE inv_cotizacion ADD cliente int(11);
+ALTER TABLE inv_cotizacion ADD almacen int(11);
+ALTER TABLE inv_cotizacion ADD CONSTRAINT inv_cotizacion_ibfk_2 FOREIGN KEY (cliente) REFERENCES agil_cliente (id);
+ALTER TABLE inv_cotizacion ADD CONSTRAINT inv_cotizacion_ibfk_3 FOREIGN KEY (almacen) REFERENCES agil_almacen (id);

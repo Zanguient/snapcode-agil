@@ -99,10 +99,10 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 		INNER JOIN agil_almacen AS a ON v.almacen = a.id\
 		INNER JOIN agil_sucursal AS s ON a.sucursal = s.id\
 		WHERE\
-		v.fecha BETWEEN '"+ inicio +"' AND '"+ fin +"'\
+		date(v.fecha) BETWEEN '"+ inicio +"' AND '"+ fin +"'\
 		AND s.id in ("+ req.params.idsSucursales.split(',') + ")\
 		GROUP BY\
-			p.nombre",
+			p.nombre;",
 				{ type: sequelize.QueryTypes.SELECT })
 				.then(function (data) {
 					res.json(data);
@@ -3252,6 +3252,18 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 			// 			});
 			// 	});
 		});
+
+	router.route('/movimientos')
+	.get(function(req,res){
+		Movimiento.findAll({
+
+		}).then(function(movimiento){
+			res.json(movimiento);
+		})
+	});
+
+	
+
 	router.route('/cliente/verificar-credito/:id_cliente/tipo/:id_tipo')
 		.get(function (req, res) {
 			Venta.findAll({
