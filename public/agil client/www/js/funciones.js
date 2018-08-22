@@ -59,7 +59,7 @@ function  ejecutarScriptsSolicitudCajaChicas(idModalSolicitudCajaChica,idModalCo
 }
 function  ejecutarScriptsCajaChicas(idModalSolicitudCajaChica,idModalConceptosMovimiento,idModalEliminarSolicitud,idModalVerificarAutorizacion,idModalRegistroCajaChica,
 	idModalKardexCajaChica,idModalIngresosCajaChica,idModalRegistroIngresoCajaChica,idModalHistorialCierreCajaChica,idModalRegistroDesembolsoCajaChica,
-	idModalServicios){
+	idModalServicios,idModalRegistroAnticipoCajaChica){
 	crearPopup(idModalSolicitudCajaChica, "auto", 'auto');
 	crearPopup(idModalConceptosMovimiento, "auto", 'auto');
 	crearPopup(idModalEliminarSolicitud, "auto", 'auto');
@@ -70,6 +70,7 @@ function  ejecutarScriptsCajaChicas(idModalSolicitudCajaChica,idModalConceptosMo
 	crearPopup(idModalRegistroIngresoCajaChica, "auto", 'auto');
 	crearPopup(idModalHistorialCierreCajaChica, "auto", 'auto');
 	crearPopup(idModalRegistroDesembolsoCajaChica, "auto", 'auto');
+	crearPopup(idModalRegistroAnticipoCajaChica, "auto", 'auto');
 	crearPopup(idModalServicios, "auto", 'auto');
 	setTimeout(function () {
 		aplicarDatePickers();
@@ -202,7 +203,7 @@ function ejecutarScriptsInicio(idPopupTablaProductos, idPopupTablaCreditos, idPo
 	idPopupActualizarCreditoCliente, idPopupActualizarCreditoDeuda, idPopupDeuda, idModalDescuento, idModalTablaVentasPendientes,
 	idModalTablaComprasPendientes, idModalTablaBancosPendientes, idModalTablaOtrosPendientes, idModalInicioSesion, idModalWizardComprobanteEdicion, IdModalOpcionesQr, IdModalRegistrarComprobante, IdModalRevisarComprobante, IdModalLibroMayor, IdModalAsignarCuenta,
 	idModalTablaDespachos, idModalTablaAsignacionDespacho, IdModalEliminarProductoVencido, dialogAlertasProformas, facturarProformas, mensajeConfirmacionComprobante, idModalNuevoPedido, idModalDatosProducto, idModalNuevoClientePedido, idModalNuevaRazonCliente,
-	idModalNuevoDestino) {
+	idModalNuevoDestino,idModalVerificacionCajaChica) {
 	crearPopup(idPopupTablaProductos, "70%", "auto");
 	crearPopup(idModalWizardComprobanteEdicion, "100%", "auto");
 	crearPopup(idPopupTablaCreditos, "auto", "auto");
@@ -226,7 +227,7 @@ function ejecutarScriptsInicio(idPopupTablaProductos, idPopupTablaCreditos, idPo
 	crearPopup(IdModalRevisarComprobante, "60%", "auto");
 	crearPopup(IdModalLibroMayor, "70%", "auto");
 	crearPopup(IdModalAsignarCuenta, "30%", 270);
-
+	crearPopup(idModalVerificacionCajaChica,  "auto",  "auto");
 	setTimeout(function name(params) {
 		crearPopup(idModalTablaDespachos, screen.width, screen.height);
 		crearPopup(idModalTablaAsignacionDespacho, "auto", "auto");

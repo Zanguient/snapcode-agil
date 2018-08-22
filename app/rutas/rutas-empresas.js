@@ -323,7 +323,8 @@ module.exports = function (router, decodeBase64Image, fs, Empresa, Sucursal, Cla
 	router.route('/sistema/aplicaciones/empresa/:id_empresa')
 		.get(function (req, res) {
 			EmpresaAplicacion.findAll({
-				where: { id_empresa: req.params.id_empresa }
+				where: { id_empresa: req.params.id_empresa },
+				include:[{model:Aplicacion,as:'aplicacion'}]
 			}).then(function (Aplicaciones) {
 				res.json(Aplicaciones);
 			});

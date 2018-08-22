@@ -3,7 +3,8 @@ angular.module('agil.controladores')
     .controller('ControladorCajaChica', function ($scope, $localStorage, $location, $templateCache, $route, blockUI,
         ClasesTipoEmpresa, ClasesTipo, GuardarSolicitudCajaChica, GuardarConceptoMovimientoCajaChica,
         ObtenerConceptoMovimientoCajaChica, SolicitudesCajaPaginador, SolicitudesCajaChicaPaginador, ObtenerTodoPersonal, $filter, Paginator, VerificarUsuarioEmpresa,
-        NuevoComprobante, ConfiguracionCompraVista, ConfiguracionesCuentasEmpresa, ConfiguracionCompraVistaDatos, ProveedoresNit, GuardarCajaChica, ListaProductosEmpresaUsuario, VerificarUsuarioEmpresaCaja, IngresosCajaPaginador, ObtenerDatosCierreCaja, CierreCajaCPaginador) {
+        NuevoComprobante, ConfiguracionCompraVista, ConfiguracionesCuentasEmpresa, ConfiguracionCompraVistaDatos, ProveedoresNit, GuardarCajaChica, ListaProductosEmpresaUsuario, VerificarUsuarioEmpresaCaja, IngresosCajaPaginador, ObtenerDatosCierreCaja, CierreCajaCPaginador,
+        FieldViewer) {
 
 
         $scope.usuario = JSON.parse($localStorage.usuario);
@@ -18,6 +19,7 @@ angular.module('agil.controladores')
         $scope.idModalHistorialCierreCajaChica = 'dialog-kardex-cierre-caja-chica'
         $scope.idModalRegistroDesembolsoCajaChica = 'dialog-registro-desembolso-caja-chica'
         $scope.idModalServicios = 'dialog-servicios'
+        $scope.idModalRegistroAnticipoCajaChica = 'dialog-registro-anticipo-caja-chica'
         $scope.inicio = function () {
             $scope.sucursales = $scope.obtenerSucursales();
             $scope.sucursalPrincipal = $scope.usuario.sucursalesUsuario[0].sucursal
@@ -41,11 +43,31 @@ angular.module('agil.controladores')
             resaltarPestaña($location.path().substring(1));
             ejecutarScriptsCajaChicas($scope.idModalSolicitudCajaChica, $scope.idModalConceptosMovimiento, $scope.idModalEliminarSolicitud, $scope.idModalVerificarAutorizacion,
                 $scope.idModalRegistroCajaChica, $scope.idModalKardexCajaChica, $scope.idModalIngresosCajaChica, $scope.idModalRegistroIngresoCajaChica, $scope.idModalHistorialCierreCajaChica,
-                $scope.idModalRegistroDesembolsoCajaChica, $scope.idModalServicios);
+                $scope.idModalRegistroDesembolsoCajaChica, $scope.idModalServicios, $scope.idModalRegistroAnticipoCajaChica);
             $scope.buscarAplicacion($scope.usuario.aplicacionesUsuario, $location.path().substring(1));
+            $scope.obtenerColumnasAplicacion()
             blockUI.stop();
         });
-
+        $scope.obtenerColumnasAplicacion = function () {
+            $scope.fieldViewer = FieldViewer({
+                crear: true,
+                id_empresa: $scope.usuario.id_empresa,
+                configuracion: {
+                    usuario_solicitante: { value: "usuario_solicitante", show: true },
+                    fecha: { value: "fecha", show: true },
+                    beneficiario: { value: "Beneficiario", show: true },
+                    autorizador: { value: "Autorizador", show: true },
+                    verificador: { value: "Verificador", show: true },
+                    movimiento: { value: "Movimiento", show: true },
+                    concepto: { value: "Concepto", show: true },
+                    detalle: { value: "Detalle", show: true },
+					estado: { value: "Estado", show: true },
+					monto: { value: "Monto", show: true },
+					
+                }
+            }, $scope.aplicacion.aplicacion.id);
+            $scope.fieldViewer.updateObject();
+        }
         /* $scope.abrirModalSolicitudCajaChica = function (verOEditar) {
             if (verOEditar == undefined) {
                 $scope.solicitud = { fecha: new Date() }
@@ -92,8 +114,11 @@ angular.module('agil.controladores')
             $scope.cerrarPopup($scope.idModalEliminarSolicitud);
         }
 
+
         $scope.abrirModalRegistroCajaChica = function (datos, edicion, ver, hijo) {
+
             if (datos) {
+                $scope.solicitud = datos
                 if (edicion) {
                     if (hijo) {
                         $scope.cajaChica = Object.assign({}, hijo)
@@ -216,6 +241,33 @@ angular.module('agil.controladores')
 
 
             $scope.abrirPopup($scope.idModalRegistroIngresoCajaChica);
+        }
+        $scope.abrirModalRegistroAnticipoCajaChica = function (datos, ver) {
+
+            if (datos) {
+            $scope.cajaChica = {}
+                $scope.cajaChica.solicitud = datos
+                $scope.cajaChica.concepto = datos.concepto
+                $scope.cajaChica.fecha = $scope.fechaATexto(new Date(datos.fecha))
+                $scope.cajaChica.total = datos.monto
+                $scope.cajaChica.sucursal = $scope.sucursalPrincipal
+            } else {
+                $scope.cajaChica = {
+                    fecha: $scope.fechaATexto(new Date()),
+                    solicitud: null, verDatosCompra: false, descuentoGasolina: false, sucursal: $scope.sucursalPrincipal
+                }
+            }
+            if (ver) {
+                $scope.cajaChica.ver = true
+            }
+
+            $scope.cajaChica.Desembolso = true
+            $scope.cajaChica.Anticipo = true
+            $scope.abrirPopup($scope.idModalRegistroAnticipoCajaChica);
+        }
+        $scope.cerrarModalRegistroAnticipoCajaChica = function () {
+
+            $scope.cerrarPopup($scope.idModalRegistroAnticipoCajaChica);
         }
         $scope.cerrarModalRegistroIngresoCajaChica = function () {
 
@@ -389,7 +441,7 @@ angular.module('agil.controladores')
                     estado: "",
                     concepto: "",
                     movimiento: "",
-                    id_usuario_no_autorizado: ($scope.usuario.encargado_caja_chica) ? "" : $scope.usuario.id,
+                    id_usuario_no_autorizado: ($scope.usuario.encargado_caja_chica) ? "" : ($scope.usuario.encargado_rendicion_caja_chica) ? "" : $scope.usuario.id,
                     id_sucursal: $scope.sucursalPrincipal.id
                 }
             }
@@ -490,6 +542,7 @@ angular.module('agil.controladores')
                 }
                 if (index === (array.length - 1)) {
                     $scope.solicitud.eliminado = true
+                    $scope.solicitud.autorizador = $scope.usuario.id
                     var promesa = GuardarSolicitudCajaChica($scope.solicitud)
                     promesa.then(function (dato) {
                         $scope.obtenerListaSolicitudes()
@@ -515,6 +568,7 @@ angular.module('agil.controladores')
                                 $scope.solicitud.estado = tipo
                             }
                             if (index === (array.length - 1)) {
+                                $scope.solicitud.autorizador = $scope.usuario.id
                                 var promesa = GuardarSolicitudCajaChica($scope.solicitud)
                                 promesa.then(function (dato2) {
                                     $scope.obtenerListaSolicitudes()
@@ -636,9 +690,14 @@ angular.module('agil.controladores')
                     $scope.cajaChica.fecha.setMinutes(tiempoActual.getMinutes())
                     $scope.cajaChica.fecha.setSeconds(tiempoActual.getSeconds())
                     $scope.tiposEstados.forEach(function (tipo, index, array) {
+                        if($scope.cajaChica.Anticipo){
+                            if (tipo.nombre === $scope.diccionario.CC_ESTADO_PROCESADO) {
+                                $scope.cajaChica.solicitud.estado = tipo
+                            }
+                        }else{
                         if (tipo.nombre === $scope.diccionario.CC_ESTADO_DESEMBOLSADO) {
                             $scope.cajaChica.solicitud.estado = tipo
-                        }
+                        }}
                         if (index === (array.length - 1)) {
                             var promesa = GuardarCajaChica($scope.cajaChica, $scope.usuario.id_empresa)
                             promesa.then(function (dato) {
@@ -646,7 +705,12 @@ angular.module('agil.controladores')
                                 $scope.generarPdfBoletaCajaChica($scope.cajaChica.solicitud, dato.cajaChica)
                                 $scope.obtenerListaSolicitudes()
                                 $scope.mostrarMensaje(dato.mensaje)
-                                $scope.cerrarModalRegistroDesembolsoCajaChica()
+                                if($scope.cajaChica.Anticipo){
+                                    $scope.cerrarModalRegistroAnticipoCajaChica()
+                                }else{
+                                    $scope.cerrarModalRegistroDesembolsoCajaChica()
+                                }
+                              
 
                             })
                         }
@@ -1460,6 +1524,7 @@ angular.module('agil.controladores')
             $scope.eliminarPopup($scope.idModalRegistroIngresoCajaChica)
             $scope.eliminarPopup($scope.idModalRegistroDesembolsoCajaChica)
             $scope.eliminarPopup($scope.idModalServicios)
+            $scope.eliminarPopup($scope.idModalRegistroAnticipoCajaChica)
         });
 
         $scope.inicio();
@@ -1592,6 +1657,7 @@ angular.module('agil.controladores')
             $scope.solicitud.usuario = $scope.usuario
             $scope.tiposEstados.forEach(function (tipo, index, array) {
                 if ($scope.usuario.autorizacion_caja_chica) {
+                    $scope.solicitud.autorizador = $scope.usuario.id
                     if (tipo.nombre === $scope.diccionario.CC_ESTADO_AUTORIZADO) {
                         $scope.solicitud.estado = tipo
                     }
@@ -1715,6 +1781,7 @@ angular.module('agil.controladores')
                                 $scope.solicitud.estado = tipo
                             }
                             if (index === (array.length - 1)) {
+                                $scope.solicitud.autorizador = $scope.usuario.id
                                 var promesa = GuardarSolicitudCajaChica($scope.solicitud)
                                 promesa.then(function (dato) {
                                     $scope.cerrarModalVerificarAutorizacion()

@@ -7,7 +7,8 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 		ImprimirSalida, Diccionario, VentasComprobantesEmpresa, ComprasComprobantesEmpresa, LibroMayorCuenta, Paginator, ComprobanteRevisarPaginador, AsignarComprobanteFavorito, ListaCuentasComprobanteContabilidad, NuevoComprobanteContabilidad, NuevoComprobante, ComprasComprobante,
 		ConfiguracionesCuentasEmpresa, ContabilidadCambioMoneda, ObtenerCambioMoneda, AsignarCuentaCiente, AsignarCuentaProveedor,
 		GtmTransportistas, GtmEstibajes, GtmGrupoEstibajes, ListasCuentasAuxiliares, GtmDetallesDespachoAlerta, $interval, GuardarGtmDetalleDespachoAlerta, GtmDetalleDespacho, VerificarCorrelativosSucursale, ReiniciarCorrelativoSucursales, ClasesTipoEmpresa, alertasProformasLista, UltimaFechaTipoComprobante,
-		FacturaProforma, ListaDetallesProformasAFacturar, ProformasInfo, FacturarProformas, ImprimirPdfAlertaDespacho, ExportarExelAlarmasDespachos, VencimientoDosificaciones, EmpresaDatosInicio, VerificacionMensualActivos, ProductosPaginador, Pedidos, ClientesNit, GetCliente, ClientePedido, ClientePedidoRazonSocial, ClientePedidoDestino, $filter) {
+		FacturaProforma, ListaDetallesProformasAFacturar, ProformasInfo, FacturarProformas, ImprimirPdfAlertaDespacho, ExportarExelAlarmasDespachos, VencimientoDosificaciones, EmpresaDatosInicio, VerificacionMensualActivos, ProductosPaginador, Pedidos, ClientesNit, GetCliente, ClientePedido, ClientePedidoRazonSocial, ClientePedidoDestino, $filter,
+		ObtenerAlertasCajaChica, GuardarVerificadorSolicitud) {
 		$scope.idModalTablaVencimientoProductos = "tabla-vencimiento-productos";
 		$scope.idModalTablaDespachos = "tabla-gtm-despachos";
 		$scope.idModalTablaAsignacionDespacho = "tabla-gtm-asignacion-despachos";
@@ -28,7 +29,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 		$scope.idModalNuevoClientePedido = "modal-nuevo-cliente-pedido";
 		$scope.idModalNuevaRazonCliente = "modal-nueva-razon-cliente";
 		$scope.idModalNuevoDestino = "modal-nuevo-destino";
-
+		$scope.idModalVerificacionCajaChica = "tabla-verificacion-caja-chica"
 		//nuevo comprobante
 		$scope.idModalWizardComprobanteEdicion = 'modal-wizard-comprobante-edicion';
 		$scope.idPopupQr = 'modal-wizard-comprobante-edicions';
@@ -44,13 +45,15 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 		$scope.dialogAlertasProformas = 'dialog-alertas-proforma'
 		$scope.facturarProformas = 'proforma-facturacion'
 		$scope.mensajeConfirmacionComprobante = 'comprobante-mensaje-confirmacion'
+		$scope.idModalTablaComprasPendientes = "tabla-compras-pendientes";
+
 		$scope.$on('$viewContentLoaded', function () {
 			ejecutarScriptsInicio($scope.idModalTablaVencimientoProductos, $scope.idModalTablaVencimientoCreditos, $scope.idModalTablaVencimientoDeudas, $scope.idModalPagoP,
 				$scope.idmodalActualizarCreditoCliente, $scope.idmodalActualizarCreditoDeuda, $scope.idModalPagoDeuda, $scope.idModalDescuento, $scope.idModalTablaVentasPendientes,
 				$scope.idModalTablaComprasPendientes, $scope.idModalTablaBancosPendientes, $scope.idModalTablaOtrosPendientes, $scope.idModalInicioSesion,
 				$scope.idModalWizardComprobanteEdicion, $scope.IdModalOpcionesQr, $scope.IdModalRegistrarComprobante, $scope.IdModalRevisarComprobante, $scope.IdModalLibroMayor, $scope.IdModalAsignarCuenta,
 				$scope.idModalTablaDespachos, $scope.idModalTablaAsignacionDespacho, $scope.IdModalEliminarProductoVencido, $scope.dialogAlertasProformas, $scope.facturarProformas, $scope.mensajeConfirmacionComprobante,
-				$scope.idModalNuevoPedido, $scope.idModalDatosProducto, $scope.idModalNuevoClientePedido, $scope.idModalNuevaRazonCliente, $scope.idModalNuevoDestino);
+				$scope.idModalNuevoPedido, $scope.idModalDatosProducto, $scope.idModalNuevoClientePedido, $scope.idModalNuevaRazonCliente, $scope.idModalNuevoDestino, $scope.idModalVerificacionCajaChica);
 
 			$scope.inicio();
 			blockUI.stop();
@@ -73,7 +76,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 			}
 			return sucursales;
 		}
-		
+
 
 
 
@@ -1519,7 +1522,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 				$scope.sucursales = $scope.obtenerSucursales();
 
 
-				if ($scope.usuario.empresa.usar_vencimientos) {
+				/* if ($scope.usuario.empresa.usar_vencimientos) {
 					$scope.verificarVencimientosProductos($scope.usuario.id_empresa);
 					$scope.verificarVencimientosCreditos($scope.usuario.id_empresa);
 					$scope.verificarVencimientosDeudas($scope.usuario.id_empresa);
@@ -1528,11 +1531,13 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 				if ($scope.usuario.empresa.usar_contabilidad) {
 					$scope.verificarVentasComprobantes($scope.usuario.id_empresa)
 					$scope.verificarComprasComprobantes($scope.usuario.id_empresa)
-				}
-				//$scope.verificarNotificaciones()
-				if ($scope.usuario.empresa.usar_proformas) {
+				} */
+				//para obtener las alertas de algun nuevo modulo
+				// ingresar el consumo del servicio en VerificarNotificaciones
+				$scope.verificarNotificaciones()
+				/* if ($scope.usuario.empresa.usar_proformas) {
 					$scope.verificarAlertasProformas($scope.usuario.id_empresa)
-				}
+				} */
 			}
 			$scope.ocultarFormularioInicioSesion();
 		}
@@ -1558,7 +1563,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 			prom.then(function (proformas) {
 				$scope.alertasProformas = proformas.proformas
 				$scope.vencimientoTotal += $scope.alertasProformas.length
-			}).catch(function(err){
+			}).catch(function (err) {
 				$scope.mostrarMensaje(err.data !== undefined ? err.data : err.message)
 			})
 
@@ -1576,14 +1581,21 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 					$scope.verificarVencimientosProductos($scope.usuario.id_empresa);
 					$scope.verificarVencimientosCreditos($scope.usuario.id_empresa);
 					$scope.verificarVencimientosDeudas($scope.usuario.id_empresa);
+
 				}
 				$scope.verificarDespachos($scope.usuario.id_empresa);
 				if ($scope.usuario.empresa.usar_contabilidad) {
 					$scope.verificarVentasComprobantes($scope.usuario.id_empresa)
 					$scope.verificarComprasComprobantes($scope.usuario.id_empresa)
 				}
+				if ($scope.usuario.encargado_verificacion_caja_chica) {
+					$scope.verificarAlertasCajaChica()
 
+				}
 				/* $scope.verificarNotificaciones() */
+			}
+			if ($scope.usuario.empresa.usar_proformas) {
+				$scope.verificarAlertasProformas($scope.usuario.id_empresa)
 			}
 			/* 	console.log("cargando notificaciones")
 			}, 100000); */
@@ -1772,12 +1784,17 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 				//blockUI.stop();
 			});
 		}
-		$scope.verificarVencimientosProductos = function (idEmpresa) {
+		$scope.verificarAlertasCajaChica = function (filtro2) {
 			//blockUI.start();
-			var promesa = VencimientosProductosEmpresa(idEmpresa);
-			promesa.then(function (vencimientosProductos) {
-				$scope.vencimientoTotal = $scope.vencimientoTotal + vencimientosProductos.length;
-				$scope.vencimientosProductos = vencimientosProductos;
+			if (filtro2) {
+				var filtro = filtro2
+			} else {
+				var filtro = { id_empresa: $scope.usuario.id_empresa, historico: false, mes: "", anio: "" }
+			}
+			var promesa = ObtenerAlertasCajaChica(filtro, $scope.usuario.id);
+			promesa.then(function (dato) {
+
+				$scope.alertasCajaChica = dato;
 				//blockUI.stop();
 			});
 		}
@@ -2279,7 +2296,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 						} else {
 							$scope.mostrarMensaje('Existe un problema con la imagen, no se incluira en la impresión.')
 							$timeout(function () {
-								ImprimirSalida("FACT", res.factura, false, $scope.usuario,)
+								ImprimirSalida("FACT", res.factura, false, $scope.usuario, )
 							}, 1500)
 						}
 						// ImprimirSalida("FACT", res.factura, false, $scope.usuario)
@@ -2395,10 +2412,10 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 						proforma.importe = proforma.importeTotalBs
 						proforma.detallesProformas.forEach(function (det, c) {
 							det.tc = proforma.tc
-							if (c === proforma.detallesProformas.length -1) {
+							if (c === proforma.detallesProformas.length - 1) {
 								Array.prototype.push.apply($scope.facturaProformas.detallesVenta, proforma.detallesProformas);
 							}
-							if (y === $scope.facturaProformas.datosProformas.length - 1 && c === proforma.detallesProformas.length -1) {
+							if (y === $scope.facturaProformas.datosProformas.length - 1 && c === proforma.detallesProformas.length - 1) {
 								$scope.mostrarMensaje('Por favor espere...')
 								$timeout(function () {
 									$scope.abrirPopup($scope.facturarProformas)
@@ -2501,7 +2518,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 			}).catch(function (err) {
 				$scope.mostrarMensaje(err.data !== undefined ? err.data : err.message)
 			})
-			
+
 		}
 		$scope.abrirListaVencimientoProductos = function () {
 			$scope.abrirPopup($scope.idModalTablaVencimientoProductos);
@@ -3627,7 +3644,16 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 		$scope.cerrarNuevoDestino = function () {
 			$scope.cerrarPopup($scope.idModalNuevoDestino);
 		}
+		$scope.abrirModalVerificacionCajaChica = function () {
+			$scope.obtenerGestiones()
+			$scope.solicitudesSeleccionadas = []
+			$scope.filtroVerificacionCajaChica = { id_empresa: $scope.usuario.id_empresa, historico: false, mes: "", anio: "" }
+			$scope.abrirPopup($scope.idModalVerificacionCajaChica);
+		}
 
+		$scope.cerrarModalVerificacionCajaChica = function () {
+			$scope.cerrarPopup($scope.idModalVerificacionCajaChica);
+		}
 
 		$scope.establecerDatosCliente = function (clienteid, destinoid) {
 			var promesa = GetCliente(clienteid);
@@ -3670,6 +3696,39 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 			}
 		}
 
+		$scope.guardarVerificadorSolicitudes = function (solicitud) {
+			if (solicitud) {
+				if (solicitud.select) {
+					var datos = { solicitudes: $scope.solicitudesSeleccionadas, id_verificador: $scope.usuario.id }
+					var promesa = GuardarVerificadorSolicitud($scope.usuario.id_empresa, datos)
+					promesa.then(function (dato) {
+						$scope.mostrarMensaje(dato.mensaje)
+						$scope.verificarAlertasCajaChica()
+						$scope.solicitudesSeleccionadas = []
+					})
+				}
+			} else {
+				if ($scope.solicitudesSeleccionadas.length > 0) {
+					var datos = { solicitudes: $scope.solicitudesSeleccionadas, id_verificador: $scope.usuario.id }
+					var promesa = GuardarVerificadorSolicitud($scope.usuario.id_empresa, datos)
+					promesa.then(function (dato) {
+						$scope.mostrarMensaje(dato.mensaje)
+						$scope.verificarAlertasCajaChica()
+						$scope.solicitudesSeleccionadas = []
+					})
+				}
+			}
+		}
+		$scope.seleccionarSolicitudesAVerificar = function (solicitud) {
+			if (solicitud.select == false) {
+				solicitud.select = false
+				$scope.solicitudesSeleccionadas.splice($scope.solicitudesSeleccionadas.indexOf(solicitud))
+			} else {
+				solicitud.select = true
+				$scope.solicitudesSeleccionadas.push(solicitud)
+
+			}
+		}
 		$scope.inicio = function () {
 			$scope.loadData();
 			$rootScope.abs = $window.Math.abs;

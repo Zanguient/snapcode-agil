@@ -1114,7 +1114,11 @@ module.exports = function (sequelize, Usuario, Persona, Rol, UsuarioRol, Tipo, C
 	Sucursal.hasMany(CajaChica, { foreignKey: 'id_sucursal', as: 'cajasChicas' })
 	SolicitudCajaChica.belongsTo(Sucursal, { foreignKey: 'id_sucursal', as: 'sucursal' })
 	Sucursal.hasMany(SolicitudCajaChica, { foreignKey: 'id_sucursal', as: 'solicitudesCajaChica' })
-
+	SolicitudCajaChica.belongsTo(Usuario, { foreignKey: 'id_autorizador', as: 'autorizador' })
+	Usuario.hasMany(SolicitudCajaChica, { foreignKey: 'id_autorizador', as: 'solicitudesCajasChicas' })
+	SolicitudCajaChica.belongsTo(Usuario, { foreignKey: 'id_verificador', as: 'verificador' })
+	Usuario.hasMany(SolicitudCajaChica, { foreignKey: 'id_verificador', as: 'solicitudesCajasChicas' })
+	
 	GerenciasClienteEmpresa.belongsTo(Cliente, {foreignKey: 'id_cliente', as: 'empresaCliente'})
 	Cliente.hasMany(GerenciasClienteEmpresa, {foreignKey: 'id_cliente', as: 'gerencias'})
 	GerenciasClienteEmpresa.belongsTo(Empresa, {foreignKey: 'id_cliente', as: 'empresa'})

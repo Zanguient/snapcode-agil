@@ -36,6 +36,14 @@ module.exports = function (sequelize, Sequelize) {
         id_estado: {
             type: Sequelize.INTEGER,
             field: 'estado'
+        },
+        id_autorizador: {
+            type: Sequelize.INTEGER,
+            field: 'autorizador'
+        },
+        id_verificador: {
+            type: Sequelize.INTEGER,
+            field: 'verificador'
         }
     }, {
             freezeTableName: true

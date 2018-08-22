@@ -37,11 +37,22 @@ angular.module('agil.filtros', [])
             return salida;
         }
     })
+    .filter('filtroAnticipos', function() {
+        return function(input) {
+            var salida = [];
+            angular.forEach(input, function(movimiento) {
+                if (movimiento.concepto.nombre === 'ANTICIPO') {
+                salida.push(movimiento)
+                }
+            })
+            return salida;
+        }
+    })
     .filter('filtroSolicitud', function() {
         return function(input) {
             var salida = [];
             angular.forEach(input, function(movimiento) {
-                if (movimiento.concepto.nombre === 'GASTO' || movimiento.concepto.nombre === 'KARDEX') {
+                if (movimiento.concepto.nombre === 'ANTICIPO' ||movimiento.concepto.nombre === 'GASTO' || movimiento.concepto.nombre === 'KARDEX') {
                 salida.push(movimiento)
                 }
             })

@@ -209,3 +209,49 @@ angular.module('agil.servicios')
     };
     return res;
 }])
+.factory('AlertasCajaChica', function ($resource) {
+    return $resource(restServer + "alertas-solicitud-caja-chica/empresa/:id_empresa/historico/:historico/mes/:mes/anio/:anio/verificador/:id_verificador", null,
+        {
+            'update': { method: 'PUT' }
+        });
+})
+.factory('ObtenerAlertasCajaChica', ['AlertasCajaChica', '$q', function (AlertasCajaChica, $q) {
+    var res = function (filtro,idUsuario)//idEmpresa, xxx
+    {
+        var delay = $q.defer();
+        AlertasCajaChica.query({
+            id_empresa: filtro.id_empresa,
+            historico:(filtro.historico)?1:0,
+            mes:(filtro.mes=="")?0:filtro.mes,
+            anio:(filtro.anio=="")?0:filtro.anio,
+            id_verificador:idUsuario
+        }, function (entidades) {
+            delay.resolve(entidades);
+        }, function (error) {
+            delay.reject(error);
+        });
+        return delay.promise;
+    };
+    return res;
+}])
+.factory('VerificacionCajaChica', function ($resource) {
+    return $resource(restServer + "verificar-solicitudes-caja-chica", null,
+        {
+            'update': { method: 'PUT' }
+        });
+})
+
+.factory('GuardarVerificadorSolicitud', ['VerificacionCajaChica', '$q', function (VerificacionCajaChica, $q) {
+    var res = function (idEmpleado,datos)//idEmpresa, xxx
+    {
+        var delay = $q.defer();
+        VerificacionCajaChica.update({},datos, function (entidades) {
+            delay.resolve(entidades);
+        }, function (error) {
+            delay.reject(error);
+        });
+        return delay.promise;
+    };
+    return res;
+}])
+

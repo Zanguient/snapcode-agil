@@ -1,0 +1,4 @@
+
+INSERT INTO gl_clase(tipo,nombre,nombre_corto,createdAt,updatedAt,habilitado) VALUES ((SELECT gl_tipo.id from gl_tipo where nombre_corto = 'ES_CCH'), 'DESEMBOLSADO', 'DESEMBOLSADO', '2018-07-25 12:28:22', '2018-07-25 12:28:22',1);
+INSERT INTO gl_clase(tipo,nombre,nombre_corto,createdAt,updatedAt,habilitado) VALUES ((SELECT gl_tipo.id from gl_tipo where nombre_corto = 'ES_CCH'), 'VERIFICADO', 'VERIFICADO', '2018-07-25 12:28:22', '2018-07-25 12:28:22',1);
+INSERT INTO gl_clase(tipo,nombre,nombre_corto,createdAt,updatedAt,habilitado) VALUES ((SELECT gl_tipo.id from gl_tipo where nombre_corto = 'CM_CCH'), 'ANTICIPO', 'ANTICIPO', '2018-07-25 12:28:22', '2018-07-25 12:28:22',1);

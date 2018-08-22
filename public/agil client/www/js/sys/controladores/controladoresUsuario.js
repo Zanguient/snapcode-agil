@@ -40,12 +40,22 @@ angular.module('agil.controladores')
 			/* var sucursales=($scope.usuarioSesion.empresa)?$scope.usuarioSesion.empresa.sucursales:[];
 			$scope.llenarSucursales(sucursales); */
 			$scope.buscarSucursales($scope.usuarioSesion.id_empresa)
+			
 			/* setTimeout(function() {
 				ejecutarScriptsTabla('tabla-usuarios',9);
 			},2000); */
 
 		}
 
+		$scope.verificarModulos=function(){
+			$scope.aplicacionesEmpresa.forEach(function(dato){
+				if(dato.aplicacion.titulo=="CAJA CHICA" ||dato.aplicacion.titulo=="SOLICITUD CAJA CHICA"  ){
+					$scope.verdatosCajaChica=true
+				}else{
+					$scope.verdatosCajaChica=true
+				}
+			})
+		}
 		$scope.$on('$viewContentLoaded', function () {
 			resaltarPestaña($location.path().substring(1));
 			ejecutarScriptsUsuario($scope.idModalWizardUsuarioEdicion,
@@ -945,6 +955,7 @@ angular.module('agil.controladores')
 			var promesa = ListaAplicacionesSistemaEmpresa(idEmpresa);
 			promesa.then(function (datos) {
 				$scope.aplicacionesEmpresa = datos;
+				$scope.verificarModulos()
 				blockUI.stop();
 			});
 		}

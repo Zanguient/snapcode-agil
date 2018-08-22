@@ -120,7 +120,7 @@ module.exports = function (router, Cotizacion, DetalleCotizacion, Usuario, Produ
 					cargo: req.body.cargo,
 					nota: req.body.nota,
 					observacion: req.body.observacion,
-					id_almacen: req.body.almacen
+					id_almacen: req.body.almacen.id
 				}).then(function (cotizacionCreada) {
 					req.body.detallesCotizacion.forEach(function (detallescotizacion, index, array) {
 						DetalleCotizacion.create({

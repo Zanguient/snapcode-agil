@@ -399,7 +399,18 @@
 											</div>
 										</a>
 									</li>
-
+									<li ng-if="usuario.encargado_verificacion_caja_chica">
+										<!-- ng-if="usuario.empresa.usar_caja_chica" -->
+										<a href="#" ng-click="abrirModalVerificacionCajaChica()">
+											<div class="clearfix">
+												<span class="pull-left">
+													<i class="btn btn-xs no-hover btn-success fa fa-plus"></i>
+													Verificacion Caja Chica
+												</span>
+												<span class="pull-right badge badge-warning">+26</span>
+											</div>
+										</a>
+									</li>
 								</ul>
 							</li>
 
@@ -1456,13 +1467,120 @@
 		</form>
 	</div>
 
-	<div id="tabla-compras-pendientes" class="modal">
+	<div id="tabla-verificacion-caja-chica" class="modal">
 
 		<div class="modal-header bg-primary">
 
 
+			<div align="center">
+				<h4 class='text-uppercase'>Verificacion Caja Chica</h4>
+			</div>
+
+
+		</div>
+
+		<div class="modal-body">
+			<div>
+				<label>
+					<b>historico:&nbsp</b>
+				</label>&nbsp&nbsp
+				<label>
+					<input name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox"
+					 ng-model="filtroVerificacionCajaChica.historico" />
+					<span class="lbl check-descuento"></span>
+				</label>
+				<label ng-if="filtroVerificacionCajaChica.historico">
+					
+					<label>Año:&nbsp</label>
+					<label>
+						<select ng-model="filtroVerificacionCajaChica.anio" required id="anio" name="anio" ng-options="gestion.nombre_corto as gestion.nombre for gestion in gestiones track by gestion.id">
+							<option value="" selected>todos</option>
+						</select>
+					</label>
+					<label>Mes:&nbsp</label>
+					<label>
+						<select ng-model="filtroVerificacionCajaChica.mes" id="mes" name="mes" ng-options="mes.id as mes.nombre for mes in mesesFiltro track by mes.id">
+							<option value="" selected>todos</option>
+						</select>
+					</label>
+					<label>
+						<button class="btn btn-primary" ng-click="verificarAlertasCajaChica(filtroVerificacionCajaChica)">Filtrar</button>
+					</label>
+				</label>
+			</div>
+			<label align="right" ng-if="!filtroVerificacionCajaChica.historico" >
+				<a class="blue" href="javascript:void(0)" ng-click="guardarVerificadorSolicitudes()">
+					<i class="ace-icon fa fa-sign-out bigger-130"></i>Verificar
+				</a>
+			</label>
+
+			<div class="clearfix"></div>
+
+			<div class="table-fixed-header">
+				<table id="tabla-comprobante-revision" class="table table-responsive-actual table-striped table-bordered table-hover">
+					<thead fix-head class="table-head-color">
+						<tr>
+							<th>#</th>
+							<th ng-if="!filtroVerificacionCajaChica.historico">
+
+							</th>
+							<th>fecha</th>
+							<th>beneficiario</th>
+							<th>detalle</th>
+							<th>Monto</th>
+							<th>Acciones</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr ng-repeat="solicitud in alertasCajaChica track by $index">
+							<td data-label="N°:">{{$index+1}}</td>
+							<td ng-if="!filtroVerificacionCajaChica.historico" data-label="Seleccionar:" >
+								<label class="pos-rel">
+									<input name="switch-field-1" type="checkbox" class="ace" ng-model="solicitud.select" ng-change="seleccionarSolicitudesAVerificar(solicitud)" />
+									<span class="lbl"></span>
+								</label>
+							</td>
+							<td>{{solicitud.fecha | date:"dd/MM/yyyy"}}</td>
+
+							<td>{{solicitud.solicitante.persona.nombre_completo}}</td>
+							<td>{{solicitud.detalle}}</td>
+							<td>{{solicitud.monto|number:2}}</td>
+							<td>
+								<div class="action-buttons" >
+									<a ng-if="!filtroVerificacionCajaChica.historico" class="blue" href="javascript:void(0)" e-disabled="solicitudesSeleccionadas.length>1"  ng-click="guardarVerificadorSolicitudes(solicitud)">
+										<i class="ace-icon fa fa-sign-out bigger-130"></i>
+									</a>
+
+
+								</div>
+							</td>
+
+						</tr>
+					</tbody>
+				</table>
+			</div>
+
+
+		</div>
+		<div class="modal-footer wizard-actions">
+			<button class="btn btn-primary" type="button" ng-click="">
+				<i class="ace-icon fa fa-print align-top bigger-125"></i>Imprimir
+			</button>
+
+			<button class="btn btn-danger" type="button" ng-click="cerrarModalVerificacionCajaChica()">
+				<i class="ace-icon fa fa-times red2 align-top bigger-125"></i>Cancelar
+			</button>
+		</div>
+
+	</div>
+
+	<div id="tabla-compras-pendientes" class="modal">
+
+		<div class="modal-header">
+
+
 			<div class="table-header" align="center">
-				<h4 class='smaller text-white text-uppercase'>Compras Pendientes</h4>
+				<h4 class='text-white text-uppercase'>Compras Pendientes</h4>
 			</div>
 
 

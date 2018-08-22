@@ -1,6 +1,6 @@
 module.exports = function (router, ensureAuthorizedAdministrador, fs, decodeBase64Image, forEach, jwt, md5, Usuario, Persona, UsuarioRol, Rol, Tipo, Clase,
 	Aplicacion, RolAplicacion, Empresa, UsuarioSucursal, Sucursal, UsuarioAplicacion,
-	Almacen, SucursalActividadDosificacion, Dosificacion, UsuarioRuta, Ruta, VistaColumnasAplicacion, Diccionario, ComprobanteContabilidad, UsuarioGrupos, EmpresaAplicacion,sequelize) {
+	Almacen, SucursalActividadDosificacion, Dosificacion, UsuarioRuta, Ruta, VistaColumnasAplicacion, Diccionario, ComprobanteContabilidad, UsuarioGrupos, EmpresaAplicacion, sequelize) {
 
 	router.route('/usuarios')
 		.post(function (req, res) {
@@ -30,7 +30,9 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, decodeBase
 							clave: md5(req.body.clave),
 							activo: req.body.activo,
 							autorizacion_caja_chica: req.body.autorizacion_caja_chica,
-							encargado_caja_chica:req.body.encargado_caja_chica
+							encargado_caja_chica: req.body.encargado_caja_chica,
+							encargado_rendicion_caja_chica: req.body.encargado_rendicion_caja_chica,
+							encargado_verificacion_caja_chica: req.body.encargado_verificacion_caja_chica,
 						}).then(function (usuarioCreado) {
 							Usuario.update({
 								token: jwt.sign(usuarioCreado, 'shhhhh')
@@ -215,7 +217,7 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, decodeBase
 				}
 			});
 		});
-		router.route('/verificar-autorizacion/usuarios/empresa/:id_empresa')
+	router.route('/verificar-autorizacion/usuarios/empresa/:id_empresa')
 		.post(function (req, res) {
 			Usuario.find({
 				where: {
@@ -223,19 +225,19 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, decodeBase
 					clave: md5(req.body.clave),
 					id_empresa: req.params.id_empresa
 				},
-				include: [{ model: Persona, as: 'persona',required:false },
+				include: [{ model: Persona, as: 'persona', required: false },
 				{
 					model: UsuarioRol, as: 'rolesUsuario',
-					include: [{ model: Rol, as: 'rol'}]
+					include: [{ model: Rol, as: 'rol' }]
 				}]
 			}).then(function (entidad) {
 				if (entidad) {
-					if(entidad.autorizacion_caja_chica){
+					if (entidad.autorizacion_caja_chica) {
 						res.json({
 							type: true,
 							message: "Autorizacion Satisfactoriamente!"
 						});
-					}else{
+					} else {
 						res.json({
 							type: false,
 							message: "¡Usuario sin permiso!"
@@ -290,10 +292,10 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, decodeBase
 			Usuario.findAndCountAll({
 
 				where: condicionUsuario,
-				include: [{ model: Persona, as: 'persona',attributes: ['id', 'nombres'] },
-				{ model: UsuarioRol, as: 'rolesUsuario', include: [{ model: Rol, as: 'rol',attributes: ['id', 'nombre'] }] },
-				{ model: Empresa, as: 'empresa',attributes: ['id', 'razon_social']/* , include: [{ model: Sucursal, as: 'sucursales' }] */ },
-				{ model: UsuarioSucursal, as: 'sucursalesUsuario', include: [{ model: Sucursal, as: 'sucursal',attributes: ['id', 'nombre'] }] }
+				include: [{ model: Persona, as: 'persona', attributes: ['id', 'nombres'] },
+				{ model: UsuarioRol, as: 'rolesUsuario', include: [{ model: Rol, as: 'rol', attributes: ['id', 'nombre'] }] },
+				{ model: Empresa, as: 'empresa', attributes: ['id', 'razon_social']/* , include: [{ model: Sucursal, as: 'sucursales' }] */ },
+				{ model: UsuarioSucursal, as: 'sucursalesUsuario', include: [{ model: Sucursal, as: 'sucursal', attributes: ['id', 'nombre'] }] }
 					// { model: UsuarioAplicacion, as: 'aplicacionesUsuario', include: [{ model: Aplicacion, as: 'aplicacion' }] },
 					// { model: UsuarioRuta, as: 'rutas', include: [{ model: Ruta, as: 'ruta' }] },
 					// { model: UsuarioGrupos, as: 'grupos', include: [{ model: Clase, as: 'grupo' }] }
@@ -303,10 +305,10 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, decodeBase
 				Usuario.findAll({
 					offset: (req.params.items_pagina * (req.params.pagina - 1)), limit: req.params.items_pagina,
 					where: condicionUsuario,
-					include: [{ model: Persona, as: 'persona',attributes: ['id', 'nombres','apellido_materno','apellido_paterno','imagen']  },
-					{ model: UsuarioRol, as: 'rolesUsuario', include: [{ model: Rol, as: 'rol',attributes: ['id', 'nombre'] }] },
-					{ model: Empresa, as: 'empresa',attributes: ['id', 'razon_social']/* , include: [{ model: Sucursal, as: 'sucursales',attributes: ['id', 'nombre'] }] */ },
-					 { model: UsuarioSucursal, as: 'sucursalesUsuario', include: [{ model: Sucursal, as: 'sucursal',attributes: ['id', 'nombre'] }] },
+					include: [{ model: Persona, as: 'persona', attributes: ['id', 'nombres', 'apellido_materno', 'apellido_paterno', 'imagen'] },
+					{ model: UsuarioRol, as: 'rolesUsuario', include: [{ model: Rol, as: 'rol', attributes: ['id', 'nombre'] }] },
+					{ model: Empresa, as: 'empresa', attributes: ['id', 'razon_social']/* , include: [{ model: Sucursal, as: 'sucursales',attributes: ['id', 'nombre'] }] */ },
+					{ model: UsuarioSucursal, as: 'sucursalesUsuario', include: [{ model: Sucursal, as: 'sucursal', attributes: ['id', 'nombre'] }] },
 						// { model: UsuarioAplicacion, as: 'aplicacionesUsuario', include: [{ model: Aplicacion, as: 'aplicacion' }] },
 						// { model: UsuarioRuta, as: 'rutas', include: [{ model: Ruta, as: 'ruta' }] },
 						// { model: UsuarioGrupos, as: 'grupos', include: [{ model: Clase, as: 'grupo' }]} 
@@ -386,7 +388,9 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, decodeBase
 									clave: clave,
 									activo: req.body.activo,
 									autorizacion_caja_chica: req.body.autorizacion_caja_chica,
-									encargado_caja_chica:req.body.encargado_caja_chica
+									encargado_caja_chica: req.body.encargado_caja_chica,
+									encargado_rendicion_caja_chica: req.body.encargado_rendicion_caja_chica,
+									encargado_verificacion_caja_chica: req.body.encargado_verificacion_caja_chica,
 								}, {
 										where: {
 											id: req.body.id
@@ -502,32 +506,32 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, decodeBase
 				promises.push(UsuarioAplicacion.destroy({
 					where: {
 						id_usuario: req.params.id_usuario
-					},  transaction: t
+					}, transaction: t
 				}).then(function (affectedRows) {
 					return UsuarioSucursal.destroy({
 						where: {
 							id_usuario: req.params.id_usuario
-						},  transaction: t
+						}, transaction: t
 					}).then(function (affectedRows) {
 						return UsuarioRol.destroy({
 							where: {
 								id_usuario: req.params.id_usuario
-							},  transaction: t
+							}, transaction: t
 						}).then(function (affectedRows) {
 							return Usuario.find({
 								where: {
 									id: req.params.id_usuario
-								},  transaction: t
+								}, transaction: t
 							}).then(function (usuario) {
 								return Persona.destroy({
 									where: {
 										id: usuario.id_persona
-									},  transaction: t
+									}, transaction: t
 								}).then(function (affectedRows) {
 									return Usuario.destroy({
 										where: {
 											id: req.params.id_usuario
-										},  transaction: t
+										}, transaction: t
 									}).then(function (affectedRows) {
 										res.json({ message: "Eliminado Satisfactoriamente!" });
 									});

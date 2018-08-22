@@ -44,6 +44,14 @@ module.exports = function (sequelize, Sequelize) {
 			type: Sequelize.BOOLEAN,
 			field: 'encargado_caja_chica'
 		},
+		encargado_rendicion_caja_chica: {
+			type: Sequelize.BOOLEAN,
+			field: 'encargado_rendicion_caja_chica'
+		},
+		encargado_verificacion_caja_chica: {
+			type: Sequelize.BOOLEAN,
+			field: 'encargado_verificacion_caja_chica'
+		},
 	}, {
 			freezeTableName: true
 		});
