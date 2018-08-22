@@ -1,6 +1,6 @@
 angular.module('agil.controladores')
 	.controller('ControladorCotizacion', function ($scope, blockUI, $localStorage, $location, $templateCache, $route, $timeout, ListaCotizacion, Cotizaciones, Cotizacion, filtroCotizaciones, Diccionario,
-		ListaInventariosProducto, ClasesTipo, $window, ListaProductosEmpresa, InventarioPaginador, ConfiguracionCotizacionVista, ConfiguracionCotizacionVistaDatos, FiltroCotizacionPaginador, Paginator, DatosImpresion, ultimaCotizacion, ListaSucursalesUsuario) {
+		ListaInventariosProducto, ClasesTipo, $window, ListaProductosEmpresa, InventarioPaginador, ConfiguracionCotizacionVista, ConfiguracionCotizacionVistaDatos, FiltroCotizacionPaginador, Paginator, DatosImpresion, ultimaCotizacion, ListaSucursalesUsuario, ClientesNit) {
 
 		$scope.usuario = JSON.parse($localStorage.usuario);
 		$scope.idModalWizardCotizacionNueva = 'modal-wizard-cotizacion-nueva';
@@ -231,6 +231,20 @@ angular.module('agil.controladores')
 			// 	}
 			// }
 		}
+
+
+		$scope.buscarCliente = function (query) {
+			if (query != "" && query != undefined) {
+				var promesa = ClientesNit($scope.usuario.id_empresa, query);
+				return promesa;
+			}
+		};
+
+		$scope.establecerCliente = function (cliente) {
+			$scope.cotizacion.cliente = cliente;
+			$scope.enfocar('razon_social');
+		}
+
 
 		$scope.mostrarDescuentos = function () {
 			var style = $(".des-datos").css("display");

@@ -214,16 +214,25 @@ angular.module('agil.servicios')
 	}])
 
 	.factory('VentaFiltroProducto', function ($resource) {
-		return $resource(restServer + "ventasProductos/:idsSucursales/inicio/:inicio/fin/:fin/razon-social/:razon_social/nit/:nit/monto/:monto/tipo-venta/:tipo_venta/sucursal/:sucursal/transaccion/:transaccion/usuario/:usuario/estado/:estado", null,
+		return $resource(restServer + "ventasProductos/:idsSucursales/inicio/:inicio/fin/:fin/sucursal/:sucursal/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion", null,
 			{
 				'update': { method: 'PUT' }
 			});
 	})
 
 	.factory('VentasProductos', ['VentaFiltroProducto', '$q', function (VentaFiltro, $q) {
-		var res = function (sucursales, inicio, fin, razon_social, nit, monto, tipo_pago, sucursal, transaccion, usuario, estado) {
+		var res = function (paginador) {
 			var delay = $q.defer();
-			VentaFiltro.query({ idsSucursales: sucursales, inicio: inicio, fin: fin, razon_social: razon_social, nit: nit, monto: monto, tipo_venta: tipo_pago, sucursal: sucursal, transaccion: transaccion, usuario: usuario, estado: estado }, function (entidades) {
+			VentaFiltro.get({ idsSucursales: paginador.filter.sucursalUsuario,
+				 inicio: paginador.filter.inicio,
+				  fin: paginador.filter.fin, 				 
+				  pagina: paginador.currentPage,
+				  items_pagina: paginador.itemsPerPage,
+				  texto_busqueda: paginador.search,
+				  columna: paginador.column,
+				  direccion: paginador.direction,
+				  sucursal: paginador.filter.sucursal
+				}, function (entidades) {
 				delay.resolve(entidades);
 			}, function (error) {
 					delay.reject(error);

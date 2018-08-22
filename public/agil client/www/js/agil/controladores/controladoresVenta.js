@@ -2,7 +2,7 @@ angular.module('agil.controladores')
 
 	.controller('ControladorVentas', function ($scope, $filter, $localStorage, $location, $templateCache, $route, blockUI, $timeout, $window, InventarioPaginador,
 		Venta, Ventas, VentasProductos, detalle, Clientes, ClientesNit, ProductosNombre, ClasesTipo, VentasContado, VentasCredito,
-		PagosVenta, DatosVenta, VentaEmpresaDatos, ProductosPanel, ListaProductosEmpresaUsuario, ListaInventariosProducto,
+		PagosVenta, DatosVenta, VentaEmpresaDatos, ProductosPanel, ListaProductosEmpresaUsuario, ListaInventariosProducto,Paginator,
 		socket, ConfiguracionVentaVistaDatos, ConfiguracionVentaVista, ListaGruposProductoEmpresa, ReporteVentasMensualesDatos,
 		ConfiguracionImpresionEmpresaDato, VerificarUsuarioEmpresa, ImprimirSalida, ModificarVenta, ListaVendedorVenta, VendedorVenta, VendedorVentaActualizacion, GuardarUsuarLectorDeBarra, VerificarLimiteCredito, ListaSucursalesUsuario, ListaGruposProductoUsuario) {
 		blockUI.start();
@@ -2302,10 +2302,8 @@ angular.module('agil.controladores')
 			})
 		}
 
+		
 		$scope.abrirReporteProductos = function () {
-
-			$scope.fechaInicioTexto;
-			$scope.fechaFinTexto;
 
 			if ($scope.filtro != undefined) {
 				if ($scope.filtro.razon_social) {
@@ -2377,22 +2375,47 @@ angular.module('agil.controladores')
 				$scope.razonSocial = "Todos";
 			}
 
-			$scope.filtrarDetalles($scope.sucursalesUsuario, $scope.fechaInicioTexto, $scope.fechaFinTexto, $scope.razon_social, $scope.nit, $scope.monto, $scope.tipo_pago, $scope.sucursal, $scope.transaccion, $scope.usuario_elegido, $scope.estado);
-
-			$scope.abrirPopup($scope.modalReportesProductos);
+			if ($scope.fechaInicioTexto === undefined && $scope.fechaFinTexto === undefined) {
+				$scope.mostrarMensaje("Ingrese primero las fechas !");
+			}else{
+				$scope.fechaInicioTexto;
+				$scope.fechaFinTexto;
+				var columna = "nombre";
+				var direccion = "ASC";
+				$scope.obtenerDetalles();
+				//$scope.filtrarDetalles($scope.sucursalesUsuario, $scope.fechaInicioTexto, $scope.fechaFinTexto, $scope.sucursal,columna,direccion);
+				$scope.abrirPopup($scope.modalReportesProductos);
+			}
+			
 
 
 		}
 
-		$scope.filtrarDetalles = function (sucursalesUsuario, inicio, fin, razon_social, nit, monto, tipoPago, sucursalesSeleccionar, transaccion, usuario, estado) {
+		$scope.obtenerDetalles = function () {
+            $scope.paginator = Paginator();
+            $scope.paginator.column = "nombre";
+            $scope.paginator.direccion = "asc";
+            $scope.filtroDetallesProducto = {
+                sucursalUsuario: $scope.sucursalesUsuario,
+                inicio: $scope.fechaInicioTexto,
+                fin: $scope.fechaFinTexto,
+                sucursal: $scope.sucursal,
+            }
+            $scope.paginator.callBack = $scope.filtrarDetalles;
+            $scope.paginator.getSearch("", $scope.filtroDetallesProducto, null);
+
+
+		}
+		
+		$scope.filtrarDetalles = function () {
 
 			blockUI.start();
 			//$scope.Feinicio = new Date($scope.convertirFecha(inicio));
 			//$scope.Fefin = new Date($scope.convertirFecha(fin));
-			var promesa = VentasProductos(sucursalesUsuario, inicio, fin, razon_social, nit, monto, tipoPago, sucursalesSeleccionar, transaccion, usuario, estado);
-			promesa.then(function (ventas) {
-				$scope.ventasPopUp = ventas;
-
+			var promesa = VentasProductos($scope.paginator);
+			promesa.then(function (datos) {
+				$scope.ventasPopUp = datos.ventas;
+				$scope.paginator.setPages(datos.paginas);
 				blockUI.stop();
 			});
 		}

@@ -264,13 +264,18 @@
 								<tr>
 									<td>
 										<label>Nombre</label>
-										<input ng-keypress="interceptarTecla($event,'descripcion',true)" type="text" id="nombre" ng-model="cotizacion.nombre">
+
+										<input ng-keypress="interceptarTecla($event,'id_producto',true)" autocomplete="off" data-validate="validate(required)" id="razon_social"
+										 name="razon_social" required type="text" ng-model="cotizacion.cliente.razon_social" placeholder="Ingrese la Razon Social"
+										 uib-typeahead="cliente as cliente.razon_social for cliente in buscarCliente($viewValue)" typeahead-wait-ms="2000"
+										 typeahead-template-url="templates/autocompletar.html" typeahead-show-hint="false" typeahead-min-length="0" typeahead-on-select="establecerCliente($item, $model, $label, $event)">
+
 										<span class="red">(*)</span>
 									</td>
 									<td >
 										<label>NIT CLIENTE</label>
 										<input  ng-keypress="interceptarTecla($event,'razon_social',true)"  id="nit" name="nit"
-										  type="number" min="0" ng-model="venta.cliente.nit" placeholder="Ingrese el NIT" uib-typeahead="cliente as cliente.nit for cliente in buscarCliente($viewValue)"
+										  type="number" min="0" ng-model="cotizacion.cliente.nit" placeholder="Ingrese el NIT" uib-typeahead="cliente as cliente.nit for cliente in buscarCliente($viewValue)"
 										 typeahead-wait-ms="2000" typeahead-template-url="templates/autocompletar.html" typeahead-show-hint="false" typeahead-min-length="0"
 										 typeahead-on-select="establecerCliente($item, $model, $label, $event)">
 										<span class="red">(*)</span>
