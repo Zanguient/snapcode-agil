@@ -114,7 +114,13 @@ module.exports = function (router, Cotizacion, DetalleCotizacion, Usuario, Produ
 					fecha: req.body.fecha,
 					importe: req.body.importe,
 					id_usuario: req.body.id_usuario,
-					id_sucursal: req.body.sucursal
+					id_sucursal: req.body.sucursal,
+					plazo: req.body.plazo,
+					firma: req.body.firma,
+					cargo: req.body.cargo,
+					nota: req.body.nota,
+					observacion: req.body.observacion,
+					id_almacen: req.body.almacen
 				}).then(function (cotizacionCreada) {
 					req.body.detallesCotizacion.forEach(function (detallescotizacion, index, array) {
 						DetalleCotizacion.create({

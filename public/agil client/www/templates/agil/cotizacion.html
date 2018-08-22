@@ -1,4 +1,4 @@
-<div class="container container-fluid">
+<div class="">
 	<div class='device-check visible-xs' data-device='xs'></div>
 	<div class='device-check visible-sm' data-device='sm'></div>
 	<div class='device-check visible-md' data-device='md'></div>
@@ -232,424 +232,6 @@
 <!-- fin de vista principal cotizaciones -->
 
 <!-- Imodal de nueva cotizacion -->
-
-<div class="container container-fluid form-inline">
-	<div id="modal-wizard-cotizacion-nueva22" class="modal-wizard-posicion" style="overflow:visible !important;">
-		<div class="row" style="overflow-y: auto">
-			<div class="modal-body col-xs-12" style="overflow-y: visible !important;">
-				<div class="row form-group col col- col-lg-4 col-md-6" style="overflow-y: auto">
-					<!-- visible sm md lg xl -->
-					<div class="widget-header">
-						<h4 class="widget-title" ng-if="!cotizacion.id">Nueva Cotización</h4>
-						<h4 class="widget-title" ng-if="cotizacion.id">Modificar Cotización</h4>
-					</div>
-					<form id="formularioCotizacion" name="formularioCotizacion" novalidate ng-submit="guardarCotizacion(formularioCotizacion.$valid,cotizacion)">
-						<br>
-						<div class="row form-group col-md-12 col-lg-8">
-							<div class="col col-xs-4 col-sm-2 col-md-6 col-lg-6">
-								<span>Nombre</span>
-							</div>
-							<div class="col col-xs-4 col-sm-2 col-md-6 col-lg-6">
-								<input ng-keypress="interceptarTecla($event,'descripcion',true)" type="text" id="nombre" ng-model="cotizacion.nombre">
-							</div>
-						</div>
-						<div class="row form-group col-md-12 col-lg-8">
-							<div class="col col-xs-4 col-sm-2 col-md-6 col-lg-6">
-								<span>Descripción</span>
-							</div>
-							<div class="col col-xs-4 col-sm-2 col-md-6 col-lg-6">
-								<input ng-keypress="interceptarTecla($event,'sucursal',true)" id="descripcion" type="text" ng-model="cotizacion.descripcion">
-							</div>
-						</div>
-						<div class="row form-group col-md-12 col-lg-8">
-							<div class="col col-xs-4 col-sm-2 col-md-6 col-lg-6">
-								<label>Sucursal</label>
-							</div>
-							<div class="col col-xs-4 col-sm-2 col-md-6 col-lg-6">
-								<select required id="sucursal" ng-keypress="interceptarTecla($event,'fechaSM',true)" ng-options="sucursal.id as sucursal.nombre for sucursal in sucursales track by sucursal.id"
-								 ng-model="cotizacion.sucursal"></select>
-							</div>
-						</div>
-						<div class="row form-group col-md-12 col-lg-8">
-							<div class="col col-xs-4 col-sm-2 col-md-6 col-lg-6">
-								<span>Fecha</span>
-							</div>
-							<div class="col col-xs-4 col-sm-2 col-md-6 col-lg-6">
-								<input ng-keypress="interceptarTecla($event,'id_productoTB',true)" class="date-picker" type="text" data-date-format="dd/mm/yyyy"
-								 id="fechaSM" ng-model="cotizacion.fechaTexto" placeholder="Ingrese la fecha" />
-							</div>
-						</div>
-						<br>
-						<div class="row form-group col-md-12 col-lg-8">
-							<div class="col col-sm-5 col-md-5 col-lg-5">
-								<button id="guardarCotizacion" type="submit" ng-disabled="cotizacion.detallesCotizacion.length==0" class="btn btn-primary">
-									<i class="ace-icon fa fa-floppy-o align-top bigger-125">GUARDAR</i>	
-									</button>
-							</div>
-							<div class="col col-sm-2 col-md-2 col-lg-2"></div>
-							<div class="col col-sm-5 col-md-5 col-lg-5">
-								<button type="button" class="btn btn-primary btn-danger" ng-click="cerrarNuevaCotizacion()">
-									<i class="ace-icon fa fa-times white align-top bigger-125">CERRAR</i>
-									</button>
-							</div>
-						</div>
-					</form>
-				</div>
-				<!-- busqueda de producto -->
-				<!-- visible sm md lg-->
-				<div class="row form-group col col-md-6 col-lg-8">
-					<div class="widget-header">
-						<h4 class="widget-title">Busqueda de producto</h4>
-					</div>
-					<form id="formularioBusquedaProductoCotizacion" name="formularioBusquedaProducto" novalidate>
-						<div class="col col-sm-2 col-md-2 col-lg-2 hidden-lg hidden-md visible-sm-block visible-xs-block">
-							<div class="row form-group">
-								<div class="row col-lg-2">
-									<label>PRODUCTO</label>
-								</div>
-								<!-- visible sm -->
-								<div class="row col-lg-2">
-									<input required ng-keypress="interceptarTecla($event,'cantidadSM',true)" id="id_producto" required type="text" ng-model="detalleCotizacion.producto.nombre"
-									 placeholder="Ingrese el nombre del producto..." uib-typeahead="producto as (producto.codigo+'-'+producto.nombre+'-'+producto.grupo+'-'+producto.subgrupo) for producto in buscarProducto($viewValue)"
-									 typeahead-wait-ms="1000" typeahead-template-url="templates/autocompletar.html" typeahead-show-hint="false" typeahead-min-length="3"
-									 typeahead-on-select="establecerProducto($item, $model, $label, $event)">
-
-									<button ng-disabled="!productoSeleccionado" id="agregar_detalle_cotizacion" type="button" ng-click="agregarDetalleCotizacion(detalleCotizacion)"
-									 class="btn btn-success btn-sm">
-												<i class="ace-icon fa fa-plus bigger-110"></i>
-											</button>
-								</div>
-								<!-- <div class="row col-lg-2">
-									
-								</div> -->
-							</div>
-							<div ng-if="productoSeleccionado" class="blue">
-								<div class="row form-group">
-									<div class="col-xs-6">
-										<label class="green">CÓD. ITEM</label>
-									</div>
-									<div class="col-xs-6">
-										{{detalleCotizacion.producto.codigo}}
-									</div>
-								</div>
-								<div class="row form-group">
-									<div class="col-xs-6">
-										<label class="green">UNID. MED.</label>
-									</div>
-									<div class="col-xs-6">
-										{{detalleCotizacion.producto.unidad_medida}}
-									</div>
-								</div>
-								<div class="row form-group">
-									<div class="col-xs-6">
-										<label class="green">P.U. (Bs/u)</label>
-									</div>
-									<div class="col-xs-6">
-										{{detalleCotizacion.producto.precio_unitario}}
-									</div>
-								</div>
-								<div class="row form-group">
-									<div class="col-xs-6">
-										<label class="green">CANT. (u)</label>
-									</div>
-									<div class="col-xs-6">
-										<div class="row">
-											<div class="col-sm-12">
-												<input ng-keypress="interceptarTecla($event,'agregar_detalle_cotizacion',true)" id="cantidad" name="cantidad" step="0.001"
-												 min="0.1" max="{{detalleCotizacion.inventario_disponible}}" required class="col-xs-12" ng-change="calcularImporte()"
-												 ng-model="detalleCotizacion.cantidad" type="number" />
-												<div ng-show="formularioBusquedaProductoCotizacion.cantidad.$dirty && formularioBusquedaProductoCotizacion.cantidad.$invalid">
-													<span class="invalid-message">La cantidad debe estar entre 0.1 y {{detalleCotizacion.inventario_disponible}}.</span>
-												</div>
-											</div>
-										</div>
-										<div class="row">
-											<div class="col-sm-12">
-												<a class="blue" href="javascript:void(0)" ng-click="establecerPrecio()">
-																<i class="ace-icon fa fa-check-square-o bigger-130"></i>
-															</a>
-											</div>
-										</div>
-									</div>
-								</div>
-								<div class="row form-group">
-									<div class="col-xs-6">
-										<label class="green">IMP. (Bs)</label>
-									</div>
-									<div class="col-xs-6">
-										{{detalleCotizacion.importe}}
-									</div>
-								</div>
-							</div>
-						</div>
-
-						<!-- visible en md lg xl  -->
-						<table class="table table-striped table-bordered table-hover hidden-xs hidden-sm visible-md-block visible-lg-block">
-							<thead>
-								<tr>
-									<th>
-										<label>PRODUCTO</label>
-									</th>
-									<th>
-										<label>CÓD. ITEM</label>
-									</th>
-									<th>
-										<label>UNID. MED.</label>
-									</th>
-									<th>
-										<label>P.U. (Bs/u)</label>
-									</th>
-									<th>
-										<label>CANT. (u)</label>
-									</th>
-									<th>
-										<label>IMP. (Bs)</label>
-									</th>
-									<th>
-										<label>ACC.</label>
-									</th>
-								</tr>
-							</thead>
-							<tbody>
-								<tr>
-									<td class="col-md-2">
-										<input  required ng-keypress="interceptarTecla($event,'cantidadTB',true)" id="id_productoTB" required type="text" ng-model="detalleCotizacion.producto.nombre"
-										 placeholder="Ingrese el nombre del producto..." uib-typeahead="producto as (producto.codigo+'-'+producto.nombre+'-'+producto.grupo+'-'+producto.subgrupo) for producto in buscarProducto($viewValue)"
-										 typeahead-wait-ms="1000" typeahead-template-url="templates/autocompletar.html" typeahead-show-hint="false" typeahead-min-length="3"
-										 typeahead-on-select="establecerProducto($item, $model, $label, $event)">
-
-										<div class="space-6"></div>
-										<!-- <button id="mostrar_inv" type="button" ng-click="abrirPopupInventario()" class="btn btn-info btn-sm">
-													<i class="ace-icon fa fa-search-plus bigger-110"></i>
-												</button>
-										<span class="red" ng-if="!detalleCotizacion.producto.activar_inventario">Inventario Desactivado</span> -->
-									</td>
-									<td class="col-md-2">
-										{{detalleCotizacion.producto.codigo}}
-									</td>
-									<td class="col-md-2">
-										{{detalleCotizacion.producto.unidad_medida}}
-									</td>
-									<td ng-if="!editar_precio">
-										<div clas="row">
-											<div class="col-sm-12">
-												{{detalleCotizacion.precio_unitario}}
-											</div>
-										</div>
-										<!-- <div clas="row">
-											<div class="col-sm-12">
-												<a class="green" href="javascript:void(0)" e-disabled="!aplicacion.puede_modificar" ng-click="modificarPrecio()">
-															<i class="ace-icon fa fa-pencil-square-o bigger-130"></i>
-														</a>
-											</div>
-										</div> -->
-									</td>
-									<td ng-if="editar_precio">
-										<div class="row">
-											<div class="col-sm-12">
-												<input required ng-disabled name="precio_unitario" step="0.001" min="0.1" required class="col-xs-12" ng-change="calcularImporte()"
-												 ng-model="detalleCotizacion.precio_unitario" type="number" />
-											</div>
-										</div>
-										<div class="row">
-											<div class="col-sm-12">
-												<a class="blue" href="javascript:void(0)" ng-click="establecerPrecio()">
-															<i class="ace-icon fa fa-check-square-o bigger-130"></i>
-														</a>
-											</div>
-										</div>
-									</td>
-									<td>
-										<input onfocus="this.select();" ng-keypress="interceptarTecla($event,'agregar_detalle_cotizacionTB',true)" id="cantidadTB"
-										 name="cantidad" step="0.001" min="0.1" max="{{detalleCotizacion.inventario_disponible}}" required class="col-xs-12"
-										 ng-change="calcularImporte()" ng-model="detalleCotizacion.cantidad" type="number" />
-										<div ng-show="formularioBusquedaProducto.cantidad.$dirty && formularioBusquedaProducto.cantidad.$invalid">
-											<span class="invalid-message">La cantidad debe estar entre 0.1 y {{detalleCotizacion.inventario_disponible}}.</span>
-										</div>
-									</td>
-
-									<td>
-										{{detalleCotizacion.importe}}
-									</td>
-
-									<td>
-										<button ng-disabled="!productoSeleccionado" ng-keypress="interceptarTecla($event,'id_productoTB',true)" id="agregar_detalle_cotizacionTB" type="button" ng-click="agregarDetalleCotizacion(detalleCotizacion)"
-										 class="btn btn-success btn-sm">
-													<i class="ace-icon fa fa-plus bigger-110"></i>
-												</button>
-										<div class="space-6"></div>
-										<!-- <button id="mostrar_desc" type="button" ng-click="mostrarDescuentos()" class="btn btn-info btn-sm">
-													<i class="ace-icon fa fa-exchange bigger-110"></i>
-												</button> -->
-									</td>
-								</tr>
-								<tr class="des-datos" style="display:none;">
-									<td>
-										<input ng-disabled="detalleCotizacion.producto.descuento_fijo" required ng-change="calcularImporte()" ng-model="detalleCotizacion.descuento"
-										 ng-value="detalleCotizacion.producto.descuento" step="0.001" class="col-xs-12" type="number" value="0" />
-									</td>
-									<td>
-										<input required ng-change="calcularImporte()" ng-model="detalleCotizacion.recargo" step="0.001" class="col-xs-12" type="number"
-										 value="0" />
-									</td>
-									<td>
-										<input required ng-change="calcularImporte()" ng-model="detalleCotizacion.ice" step="0.001" class="col-xs-12" type="number"
-										 value="0" />
-									</td>
-									<td>
-										<input required ng-change="calcularImporte()" ng-model="detalleCotizacion.excento" step="0.001" class="col-xs-12" type="number"
-										 value="0" />
-									</td>
-									<td>
-										{{detalleCotizacion.total}}
-									</td>
-								</tr>
-							</tbody>
-						</table>
-					</form>
-				</div>
-			</div>
-		</div>
-		<!-- visible sm -->
-		<div class="row form-group" ng-if="cotizacion.detallesCotizacion.length > 0">
-			<div class="col-xs-12">
-				<div class="widget-header">
-					<h4 class="widget-title">Detalles de Cotización</h4>
-				</div>
-				<div class="container container-fluid visible-xs-block visible-sm-block hidden-lg hidden-md">
-					<div ng-if="cotizacion.importe>0">
-						<label class="blue">Total:</label>
-						<p>{{cotizacion.importe}}</p>
-					</div>
-					<div class="row div-table" ng-if="!detalleCotizacion.eliminado" ng-repeat="detalleCotizacion in cotizacion.detallesCotizacion">
-						<div class="col col-xs-4 col-sm-2">
-							<label class="blue">#</label>
-							<p>{{$index+1}}</p>
-						</div>
-						<div class="col col-xs-4 col-sm-2">
-							<label class="blue">Nombre</label>
-							<p>{{detalleCotizacion.producto.nombre}}</p>
-						</div>
-						<div class="col col-xs-4 col-sm-2">
-							<label class="blue">Código</label>
-							<p>{{detalleCotizacion.producto.codigo}}</p>
-						</div>
-						<div class="col col-xs-4 col-sm-2">
-							<label class="blue">UNID. MED.</label>
-							<p>{{detalleCotizacion.producto.unidad_medida}}</p>
-						</div>
-						<div class="col col-xs-4 col-sm-2">
-							<label class="blue">P.U. (Bs/u)</label>
-							<p>{{detalleCotizacion.precio_unitario}}</p>
-						</div>
-						<div class="col col-xs-4 col-sm-2">
-							<label class="blue">CANT. (u)</label>
-							<p>{{detalleCotizacion.cantidad}}</p>
-						</div>
-						<div class="col col-xs-4 col-sm-2">
-							<label class="blue">IMP. (Bs)</label>
-							<p>{{detalleCotizacion.importe}}</p>
-						</div>
-						<div class="col col- col-md-auto col-lg-2"><label class="blue">Acciones:</label>
-							<a class="red" href="javascript:void(0)" ng-click="eliminarDetalleCotizacion(detalleCotizacion)">
-									<i class="ace-icon fa fa-trash-o bigger-130"></i>
-								</a>
-						</div>
-					</div>
-					<div ng-if="cotizacion.importe > 0">
-						<label class="blue">Total:</label>
-						<p>{{cotizacion.importe}}</p>
-					</div>
-				</div>
-				<!-- visible md lg xl -->
-				<table class="table table-striped table-bordered table-hover table-responsive hidden-xs hidden-sm visible-md-block visible-lg-block">
-					<thead>
-						<tr>
-							<th>
-								<label>#</label>
-							</th>
-							<th>
-								<label>NOMBRE</label>
-							</th>
-							<th>
-								<label>CÓD. ITEM</label>
-							</th>
-							<th>
-								<label>UNID. MED.</label>
-							</th>
-							<th>
-								<label>P.U. (Bs/u)</label>
-							</th>
-							<th>
-								<label>CANT. (u)</label>
-							</th>
-							<th>
-								<label>IMP. (Bs)</label>
-							</th>
-							<th>
-								<label>ACCIONES</label>
-							</th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr ng-if="!detalleCotizacion.eliminado" ng-repeat="detalleCotizacion in cotizacion.detallesCotizacion">
-							<td>
-								{{$index+1}}
-							</td>
-							<td>
-								{{detalleCotizacion.producto.nombre}}
-							</td>
-							<td>
-								{{detalleCotizacion.producto.codigo}}
-							</td>
-							<td>
-								{{detalleCotizacion.producto.unidad_medida}}
-							</td>
-							<td>
-								{{detalleCotizacion.precio_unitario}}
-							</td>
-							<td>
-								{{detalleCotizacion.cantidad}}
-							</td>
-							<td>
-								{{detalleCotizacion.importe}}
-							</td>
-							<td>
-								<a class="red" href="javascript:void(0)" ng-click="eliminarDetalleCotizacion(detalleCotizacion)">
-											<i class="ace-icon fa fa-trash-o bigger-130"></i>
-										</a>
-							</td>
-						</tr>
-						<tr>
-							<td>
-
-							</td>
-							<td>
-								<b>TOTALES</b>
-							</td>
-							<td>
-
-							</td>
-							<td>
-
-							</td>
-							<td>
-
-							</td>
-							<td>
-
-							</td>
-							<td>
-								{{cotizacion.importe}}
-							</td>
-						</tr>
-					</tbody>
-				</table>
-			</div>
-		</div>
-	</div>
-</div>
-
 <div id="modal-wizard-cotizacion-nueva" class="modal wizard-posicion">
 	<div class="row">
 		<div class="col-sm-4">
@@ -674,9 +256,6 @@
 								CERRAR
 							</button>
 						</p>
-
-						
-
 					</div>
 
 					<div class="widget-body">
@@ -687,14 +266,6 @@
 										<label>Nombre</label>
 										<input ng-keypress="interceptarTecla($event,'descripcion',true)" type="text" id="nombre" ng-model="cotizacion.nombre">
 										<span class="red">(*)</span>
-										<!-- <div class="row">
-												
-											<label uib-tooltip="Usar servicios">
-												<input ng-model="venta.usar_servicios" ng-change="UsarLectorDeBarra()" checked="checked" type="checkbox" class="ace ace-switch ace-switch-5">
-												<span class="lbl" data-lbl="Si&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;No"></span>
-											</label>
-											<span class="pull-right">Usar servicios</span>
-										</div> -->
 									</td>
 									<td >
 										<label>NIT CLIENTE</label>
@@ -714,15 +285,15 @@
 										<label>SUCURSAL</label>
 
 										<select required id="sucursal" ng-keypress="interceptarTecla($event,'fechaSM',true)" ng-options="sucursal.id as sucursal.nombre for sucursal in sucursales track by sucursal.id"
-								 ng-model="cotizacion.sucursal"></select>
+								 ng-model="cotizacion.sucursal"  ng-change="obtenerAlmacenes(cotizacion.sucursal)"></select>
 										<span class="red">(*)</span>
 										<span class="invalid-message" ng-show="formularioVenta.sucursal.$dirty && formularioVenta.sucursal.$invalid">
 											Debe seleccionar una Sucursal.
 										</span>
 									</td>
-									<td ng-if="tipoEgreso!=diccionario.EGRE_TRASPASO">
+									<td>
 										<label>ALMACEN</label>
-										<select ng-disabled="venta.editable || venta.detallesVenta.length>0"   id="almacen" name="almacen" ng-model="venta.almacen" ng-options="almacen as almacen.nombre for almacen in almacenes track by almacen.id"
+										<select ng-disabled="venta.editable || venta.detallesVenta.length>0"   id="almacen" name="almacen" ng-model="cotizacion.almacen" ng-options="almacen as almacen.nombre for almacen in almacenes track by almacen.id"
 										 data-placeholder="Click para escoger">
 											<option value="" disabled selected>Selec. Almacen</option>
 										</select>
@@ -732,8 +303,6 @@
 										</span>
 									</td>
 								</tr>
-								
-								
 								<tr>
 									<td>
 										<label>FECHA</label>
@@ -745,7 +314,54 @@
 											Dato requerido.
 										</span>
 									</td>
-									
+									<td>
+										<label>PLAZO COTIZACION</label>
+										<input type="text" id="nombre" ng-model="cotizacion.plazo">
+										<span class="red">(*)</span>
+										<span class="invalid-message" ng-show="formularioVenta.fecha.$dirty && formularioVenta.fecha.$invalid">
+											Dato requerido.
+										</span>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<label>FIRMA</label>
+
+										 <input type="text"  ng-model="cotizacion.firma" placeholder="Ingrese la nota" />
+										<span class="red">(*)</span>
+										<span class="invalid-message" ng-show="formularioVenta.fecha.$dirty && formularioVenta.fecha.$invalid">
+											Dato requerido.
+										</span>
+									</td>
+									<td>
+										<label>CARGO</label>
+										<input type="text" id="nombre" ng-model="cotizacion.cargo">
+										<span class="red">(*)</span>
+										<span class="invalid-message" ng-show="formularioVenta.fecha.$dirty && formularioVenta.fecha.$invalid">
+											Dato requerido.
+										</span>
+									</td>
+								</tr>
+								<tr>
+									<td colspan="2">
+										<label>NOTA</label>
+
+										<textarea ng-model="cotizacion.nota" class="form-control limited ng-pristine ng-untouched ng-valid ng-empty ng-valid-maxlength" id="form-field-9" maxlength="100" style=" height: 35px;"></textarea>
+										<span class="red">(*)</span>
+										<span class="invalid-message" ng-show="formularioVenta.fecha.$dirty && formularioVenta.fecha.$invalid">
+											Dato requerido.
+										</span>
+									</td>
+								</tr>
+								<tr>
+									<td colspan="2">
+										<label>OBSERVACIÓN</label>
+										<textarea ng-model="cotizacion.observacion" class="form-control limited ng-pristine ng-untouched ng-valid ng-empty ng-valid-maxlength" id="form-field-9" maxlength="100" style=" height: 35px;"></textarea>
+										<span class="red">(*)</span>
+										<span class="invalid-message" ng-show="formularioVenta.fecha.$dirty && formularioVenta.fecha.$invalid">
+											Dato requerido.
+										</span>
+									</td>
 								</tr>
 							</table>
 						</div>

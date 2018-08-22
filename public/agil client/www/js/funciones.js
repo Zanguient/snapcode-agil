@@ -216,7 +216,7 @@ function ejecutarScriptsInicio(idPopupTablaProductos, idPopupTablaCreditos, idPo
 	crearPopup(idModalTablaComprasPendientes, "60%", 550);
 	crearPopup(idModalTablaBancosPendientes, "60%", 550);
 	crearPopup(idModalTablaOtrosPendientes, "60%", 550);
-	crearPopup(dialogAlertasProformas, "80%", 'auto');
+	crearPopup(dialogAlertasProformas, 'auto', 'auto');
 	crearPopup(idModalInicioSesion, "100%", screen.height);
 	crearPopup(mensajeConfirmacionComprobante, "40%", "auto");
 	crearPopup(facturarProformas, "80%", 'auto');

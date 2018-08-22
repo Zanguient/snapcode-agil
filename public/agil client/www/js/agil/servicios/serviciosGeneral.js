@@ -760,7 +760,23 @@ angular.module('agil.servicios')
 				'update': { method: 'PUT' }
 			});
 	})
-
+	.factory('FormatoImpresion', function ($resource) {
+		return $resource(restServer + "tipos/:nombre_corto", { nombre_corto: '@nombre_corto'},
+			{
+				'update': { method: 'PUT' }
+			});
+	}).factory('IdsFormatoImpresion', ['FormatoImpresion', '$q', function (FormatoImpresion, $q) {
+		var res = function () {
+			var delay = $q.defer();
+			FormatoImpresion.get({ nombre_corto: 'FORM_IMP_FAC' }, function (entidades) {
+				delay.resolve(entidades);
+			}, function (error) {
+				delay.reject(error);
+			});
+			return delay.promise;
+		};
+		return res;
+	}])
 	.factory('ListaAsientosComprobanteContabilidad', ['AsientosComprobanteContabilidad', '$q', function (AsientosComprobanteContabilidad, $q) {
 		var res = function (id_cuenta) {
 			var delay = $q.defer();
@@ -811,20 +827,25 @@ angular.module('agil.servicios')
 	}])
 	//fin factory para nuevos comprobantes
 
-	.factory('ImprimirSalida', ['Diccionario', 'ImprimirFactura', 'ImprimirProforma', 'ImprimirNotaBaja', 'ImprimirNotaTraspaso',
-		function (Diccionario, ImprimirFactura, ImprimirProforma, ImprimirNotaBaja, ImprimirNotaTraspaso) {
-			var res = function (movimiento, salida, esAccionGuardar, usuario, llevar,IdsFormatoImpresion) {
-				if (movimiento == Diccionario.EGRE_FACTURACION) {			
-					ImprimirFactura(salida, esAccionGuardar, usuario,IdsFormatoImpresion);				
-				} else if (movimiento == Diccionario.EGRE_PROFORMA) {
-					ImprimirProforma(salida, esAccionGuardar, usuario, llevar);
-				}
-				else if (movimiento == Diccionario.EGRE_BAJA) {
-					ImprimirNotaBaja(salida, usuario);
-				}
-				else if (movimiento == Diccionario.EGRE_TRASPASO) {
-					ImprimirNotaTraspaso(salida, usuario);
-				}
+	.factory('ImprimirSalida', ['Diccionario', 'ImprimirFactura', 'ImprimirProforma', 'ImprimirNotaBaja', 'ImprimirNotaTraspaso', 'IdsFormatoImpresion',
+		function (Diccionario, ImprimirFactura, ImprimirProforma, ImprimirNotaBaja, ImprimirNotaTraspaso, IdsFormatoImpresion) {
+			var res = function (movimiento, salida, esAccionGuardar, usuario, llevar) {
+				var prom = IdsFormatoImpresion()
+				var formatos
+				prom.then(function (res) {
+					formatos = res.clases
+					if (movimiento == Diccionario.EGRE_FACTURACION) {
+						ImprimirFactura(salida, esAccionGuardar, usuario, formatos);				
+					} else if (movimiento == Diccionario.EGRE_PROFORMA) {
+						ImprimirProforma(salida, esAccionGuardar, usuario, llevar);
+					}
+					else if (movimiento == Diccionario.EGRE_BAJA) {
+						ImprimirNotaBaja(salida, usuario);
+					}
+					else if (movimiento == Diccionario.EGRE_TRASPASO) {
+						ImprimirNotaTraspaso(salida, usuario);
+					}
+				})				
 			};
 			return res;
 		}])	

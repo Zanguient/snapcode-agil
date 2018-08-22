@@ -1,5 +1,5 @@
 module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Proforma, DetallesProformas, Servicios, Clase, Sucursal, SucursalActividadDosificacion, Dosificacion,
-    CodigoControl, NumeroLiteral, Empresa, ConfiguracionGeneralFactura, Tipo, UsuarioSucursal, Almacen, Venta, DetalleVenta, ConfiguracionGeneralFactura, ConfiguracionFactura, Movimiento, ClienteCentroCostos) {
+    CodigoControl, NumeroLiteral, Empresa, ConfiguracionGeneralFactura, Tipo, UsuarioSucursal, Almacen, Venta, DetalleVenta, ConfiguracionGeneralFactura, ConfiguracionFactura, Movimiento, ClienteCentroCostos, MonedaTipoCambio) {
     router.route('/proformas/empresa/:id_empresa/mes/:mes/anio/:anio/suc/:sucursal/act/:actividad/ser/:servicio/monto/:monto/razon/:razon/usuario/:usuario/pagina/:pagina/items-pagina/:items_pagina/busqueda/:busqueda/num/:numero/facturas/:id_opcion')
         .get(function (req, res) {
             var condicion = {}
@@ -256,14 +256,14 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
                     }).then(function (detalleEliminado) {
                         req.body.detallesProformas.forEach(function (detalle) {
                             if (!detalle.eliminado) {
-                                promesas.push(crearDetalleProforma({id: req.params.id}, detalle, t))
+                                promesas.push(crearDetalleProforma({ id: req.params.id }, detalle, t))
                             }
                         })
                         return Promise.all(promesas)
                     }).catch(function (err) {
-                       return new Promise(function (fulfill, reject) {
-                           reject(err)
-                       })
+                        return new Promise(function (fulfill, reject) {
+                            reject(err)
+                        })
                     });
                 }).catch(function (err) {
                     return new Promise(function (fulfill, reject) {
@@ -1029,21 +1029,170 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
         return Promise.all(promises)
     }
 
+    // router.route('/proforma/facturar/:id_empresa')
+    //     .post(function (req, res) {
+    //         var factura = req.body;
+    //         sequelize.transaction(function (t) {
+    //             return SucursalActividadDosificacion.find({
+    //                 where: {
+    //                     id_actividad: req.body.actividad.id,
+    //                     id_sucursal: req.body.sucursal.id,
+    //                     expirado: false
+    //                 },
+    //                 include: [{ model: Dosificacion, as: 'dosificacion', where: { expirado: false }, include: [{ model: Clase, as: 'pieFactura' }] },
+    //                 { model: Sucursal, as: 'sucursal', include: [{ model: Empresa, as: 'empresa' }] }],
+    //                 transaction: t
+    //             }).then(function (sucursalActividadDosificacion) {
+    //                 if (sucursalActividadDosificacion) {
+    //                     if (sucursalActividadDosificacion.dosificacion) {
+    //                         var dosificacion = sucursalActividadDosificacion.dosificacion;
+    //                         factura.factura = dosificacion.correlativo;
+    //                         factura.pieFactura = dosificacion.pieFactura;
+    //                         factura.codigo_control = CodigoControl.obtenerCodigoControl(dosificacion.autorizacion.toString(),
+    //                             dosificacion.correlativo.toString(),
+    //                             factura.cliente.nit.toString(),
+    //                             formatearFecha(factura.fecha_factura).toString(),
+    //                             parseFloat(factura.totalImporteBs).toFixed(2),
+    //                             dosificacion.llave_digital.toString());
+    //                         factura.autorizacion = dosificacion.autorizacion.toString();
+    //                         factura.fecha_limite_emision = dosificacion.fecha_limite_emision;
+    //                         factura.numero_literal = NumeroLiteral.Convertir(parseFloat(factura.totalImporteBs).toFixed(2).toString());
+    //                         var laFecha = factura.fecha_factura.split("/")
+    //                         var fecha_factura = new Date(laFecha[2], laFecha[1] - 1, laFecha[0])
+    //                         var promisse = []
+    //                         factura.datosProformas.map(function (prof, i) {
+    //                             promisse.push(Proforma.update({
+    //                                 movimiento: factura.movimiento.id,
+    //                                 factura: factura.factura,
+    //                                 autorizacion: factura.autorizacion,
+    //                                 fecha_limite_emision: factura.fecha_limite_emision,
+    //                                 codigo_control: factura.codigo_control,
+    //                                 descripcion: factura.descripcion,
+    //                                 fecha_factura: fecha_factura,
+    //                                 dias_credito: factura.dias_credito,
+    //                                 a_cuenta: factura.a_cuenta,
+    //                                 id_tipo_pago: factura.tipoPago.id
+    //                             }, {
+    //                                     where: { id: prof.id },
+    //                                     transaction: t
+    //                                 }).then(function (proformaActualizada) {
+    //                                     if (i === factura.datosProformas.length - 1) {
+    //                                         return Dosificacion.update({
+    //                                             correlativo: (factura.factura + 1)
+    //                                         }, {
+    //                                                 where: { id: dosificacion.id },
+    //                                                 transaction: t
+    //                                             }).then(function (correlativoActualizado) {
+    //                                                 return ConfiguracionGeneralFactura.find({
+    //                                                     where: {
+    //                                                         id_empresa: prof.id_empresa
+    //                                                     },
+    //                                                     include: [{ model: Clase, as: 'impresionFactura' },
+    //                                                     { model: Clase, as: 'tipoFacturacion' },
+    //                                                     { model: Clase, as: 'tamanoPapelFactura' },
+    //                                                     { model: Clase, as: 'tituloFactura' },
+    //                                                     { model: Clase, as: 'subtituloFactura' },
+    //                                                     { model: Clase, as: 'tamanoPapelNotaVenta' },
+    //                                                     { model: Clase, as: 'tamanoPapelNotaTraspaso' },
+    //                                                     { model: Clase, as: 'tamanoPapelNotaBaja' },
+    //                                                     { model: Clase, as: 'tamanoPapelNotaPedido' },
+    //                                                     { model: Clase, as: 'tamanoPapelCierreCaja' },
+    //                                                     { model: Clase, as: 'formatoPapelFactura' }
+    //                                                     ],
+    //                                                     transaction: t
+    //                                                 }).then(function (configuracionGeneralFactura) {
+    //                                                     factura.configuracion = configuracionGeneralFactura
+    //                                                     var total = 0
+    //                                                     factura.detallesVenta = factura.detallesVenta.map(function (det, i) {
+    //                                                         var producto = { codigo: det.servicio.codigo, nombre: det.servicio.nombre, unidad_medida: "" }
+    //                                                         total += det.importe
+    //                                                         det.total = det.precio_unitario * det.cantidad
+    //                                                         det.producto = producto
+    //                                                         return det
+    //                                                     })
+    //                                                     factura.total = total
+    //                                                     // factura.cliente = factura.cliente
+    //                                                     return new Promise(function (fulfill, reject) {
+    //                                                         fulfill(factura);
+    //                                                     });
+    //                                                 }).catch(function (err) {
+    //                                                     res.json({ mensaje: err.stack !== undefined ? err.stack : err.message, hasErr: true, factura: req.body })
+    //                                                 });
+    //                                             }).catch(function (err) {
+    //                                                 if (typeof err === 'string' || err instanceof String) {
+    //                                                     res.json({ mensaje: err, hasErr: true, factura: req.body })
+    //                                                 } else {
+    //                                                     res.json({ mensaje: err.stack !== undefined ? err.stack : err.message, hasErr: true, factura: req.body })
+    //                                                 }
+    //                                             });
+    //                                     }
+    //                                 }).catch(function (err) {
+    //                                     res.json({ mensaje: err.stack !== undefined ? err.stack : err.message, hasErr: true, factura: req.body })
+    //                                 }))
+    //                         })
+    //                         return Promise.all(promisse);
+    //                     } else {
+    //                         res.json({ mensaje: 'La actividad no tiene asignada una dosificación activa. No se puede generar factura!', hasErr: true, factura: req.body })
+    //                     }
+    //                 } else {
+    //                     res.json({ mensaje: 'La actividad no tiene asignada una dosificación activa para la sucursal actual. No se puede generar factura!', hasErr: true, factura: req.body })
+    //                 }
+    //             }).catch(function (err) {
+    //                 res.json({ mensaje: err.stack !== undefined ? err.stack : err.message, hasErr: true, factura: req.body })
+    //             });
+    //         }).then(function (tranTermino) {
+    //             if (tranTermino === undefined) {
+    //                 res.json({ mensaje: 'La actividad no tiene asignada una dosificación activa. No se puede generar factura!', hasErr: true, factura: req.body })
+    //             } else {
+    //                 res.json({ mensaje: 'Factura generada...', factura: req.body })
+    //             }
+    //         }).catch(function (err) {
+    //             if (typeof err === 'string' || err instanceof String) {
+    //                 res.json({ mensaje: err, hasErr: true, factura: req.body })
+    //             } else {
+    //                 res.json({ mensaje: err.stack !== undefined ? err.stack : err.message, hasErr: true, factura: req.body })
+    //             }
+    //         })
+    //     })
+
     router.route('/proforma/facturar/:id_empresa')
         .post(function (req, res) {
-
-            sequelize.transaction(function (t) {
-                var factura = req.body;
-
-                return SucursalActividadDosificacion.find({
+            var factura = req.body;
+            ConfiguracionGeneralFactura.find({
+                where: {
+                    id_empresa: req.params.id_empresa
+                },
+                include: [{ model: Clase, as: 'impresionFactura' },
+                { model: Clase, as: 'tipoFacturacion' },
+                { model: Clase, as: 'tamanoPapelFactura' },
+                { model: Clase, as: 'tituloFactura' },
+                { model: Clase, as: 'subtituloFactura' },
+                { model: Clase, as: 'tamanoPapelNotaVenta' },
+                { model: Clase, as: 'tamanoPapelNotaTraspaso' },
+                { model: Clase, as: 'tamanoPapelNotaBaja' },
+                { model: Clase, as: 'tamanoPapelNotaPedido' },
+                { model: Clase, as: 'tamanoPapelCierreCaja' },
+                { model: Clase, as: 'formatoPapelFactura' }
+                ]
+            }).then(function (configuracionGeneralFactura) {
+                factura.configuracion = configuracionGeneralFactura
+                var total = 0
+                factura.detallesVenta = factura.detallesVenta.map(function (det, i) {
+                    var producto = { codigo: det.servicio.codigo, nombre: det.servicio.nombre, unidad_medida: "" }
+                    total += det.importe
+                    det.total = det.precio_unitario * det.cantidad
+                    det.producto = producto
+                    return det
+                })
+                factura.total = total
+                SucursalActividadDosificacion.find({
                     where: {
                         id_actividad: req.body.actividad.id,
                         id_sucursal: req.body.sucursal.id,
                         expirado: false
                     },
                     include: [{ model: Dosificacion, as: 'dosificacion', where: { expirado: false }, include: [{ model: Clase, as: 'pieFactura' }] },
-                    { model: Sucursal, as: 'sucursal', include: [{ model: Empresa, as: 'empresa' }] }],
-                    transaction: t
+                    { model: Sucursal, as: 'sucursal', include: [{ model: Empresa, as: 'empresa' }] }]
                 }).then(function (sucursalActividadDosificacion) {
                     if (sucursalActividadDosificacion) {
                         if (sucursalActividadDosificacion.dosificacion) {
@@ -1062,75 +1211,25 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
                             var laFecha = factura.fecha_factura.split("/")
                             var fecha_factura = new Date(laFecha[2], laFecha[1] - 1, laFecha[0])
                             var promisse = []
-                            factura.datosProformas.map(function (prof, i) {
-                                promisse.push(Proforma.update({
-                                    movimiento: factura.movimiento.id,
-                                    factura: factura.factura,
-                                    autorizacion: factura.autorizacion,
-                                    fecha_limite_emision: factura.fecha_limite_emision,
-                                    codigo_control: factura.codigo_control,
-                                    descripcion: factura.descripcion,
-                                    fecha_factura: fecha_factura,
-                                    dias_credito: factura.dias_credito,
-                                    a_cuenta: factura.a_cuenta,
-                                    id_tipo_pago: factura.tipoPago.id
-                                }, {
-                                        where: { id: prof.id },
-                                        transaction: t
-                                    }).then(function (proformaActualizada) {
-                                        if (i === factura.datosProformas.length - 1) {
-                                            return Dosificacion.update({
-                                                correlativo: (factura.factura + 1)
-                                            }, {
-                                                    where: { id: dosificacion.id },
-                                                    transaction: t
-                                                }).then(function (correlativoActualizado) {
-                                                    return ConfiguracionGeneralFactura.find({
-                                                        where: {
-                                                            id_empresa: prof.id_empresa
-                                                        },
-                                                        include: [{ model: Clase, as: 'impresionFactura' },
-                                                        { model: Clase, as: 'tipoFacturacion' },
-                                                        { model: Clase, as: 'tamanoPapelFactura' },
-                                                        { model: Clase, as: 'tituloFactura' },
-                                                        { model: Clase, as: 'subtituloFactura' },
-                                                        { model: Clase, as: 'tamanoPapelNotaVenta' },
-                                                        { model: Clase, as: 'tamanoPapelNotaTraspaso' },
-                                                        { model: Clase, as: 'tamanoPapelNotaBaja' },
-                                                        { model: Clase, as: 'tamanoPapelNotaPedido' },
-                                                        { model: Clase, as: 'tamanoPapelCierreCaja' }],
-                                                        transaction: t
-                                                    }).then(function (configuracionGeneralFactura) {
-                                                        factura.configuracion = configuracionGeneralFactura
-                                                        var total = 0
-                                                        factura.detallesVenta = factura.detallesVenta.map(function (det, i) {
-                                                            var producto = { codigo: det.servicio.codigo, nombre: det.servicio.nombre, unidad_medida: "" }
-                                                            total += det.importe
-                                                            det.total = det.precio_unitario * det.cantidad
-                                                            det.producto = producto
-                                                            return det
-                                                        })
-                                                        factura.total = total
-                                                        // factura.cliente = factura.cliente
-                                                        return new Promise(function (fulfill, reject) {
-                                                            fulfill({});
-                                                        });
-                                                    }).catch(function (err) {
-                                                        res.json({ mensaje: err.stack !== undefined ? err.stack : err.message, hasErr: true, factura: req.body })
-                                                    });
-                                                }).catch(function (err) {
-                                                    if (typeof err === 'string' || err instanceof String) {
-                                                        res.json({ mensaje: err, hasErr: true, factura: req.body })
-                                                    } else {
-                                                        res.json({ mensaje: err.stack !== undefined ? err.stack : err.message, hasErr: true, factura: req.body })
-                                                    }
-                                                });
-                                        }
-                                    }).catch(function (err) {
-                                        res.json({ mensaje: err.stack !== undefined ? err.stack : err.message, hasErr: true, factura: req.body })
-                                    }))
+                            sequelize.transaction(function (t) {
+                                factura.datosProformas.forEach(function (prof, i) {
+                                    promisse.push(updateProforma(factura, prof, t, fecha_factura))
+                                })
+                                promisse.push(updateDosificacionCorrelativo(factura, t, dosificacion))
+                                return Promise.all(promisse);
+                            }).then(function (tranTermino) {
+                                if (tranTermino === undefined) {
+                                    res.json({ mensaje: 'La actividad no tiene asignada una dosificación activa. No se puede generar factura!', hasErr: true, factura: req.body })
+                                } else {
+                                    res.json({ mensaje: 'Factura generada...', factura: req.body })
+                                }
+                            }).catch(function (err) {
+                                if (typeof err === 'string' || err instanceof String) {
+                                    res.json({ mensaje: err, hasErr: true, factura: req.body })
+                                } else {
+                                    res.json({ mensaje: err.stack !== undefined ? err.stack : err.message, hasErr: true, factura: factura })
+                                }
                             })
-                            return Promise.all(promisse);
                         } else {
                             res.json({ mensaje: 'La actividad no tiene asignada una dosificación activa. No se puede generar factura!', hasErr: true, factura: req.body })
                         }
@@ -1140,20 +1239,36 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
                 }).catch(function (err) {
                     res.json({ mensaje: err.stack !== undefined ? err.stack : err.message, hasErr: true, factura: req.body })
                 });
-            }).then(function (tranTermino) {
-                if (tranTermino === undefined) {
-                    res.json({ mensaje: 'La actividad no tiene asignada una dosificación activa. No se puede generar factura!', hasErr: true, factura: req.body })
-                } else {
-                    res.json({ mensaje: 'Factura generada...', factura: req.body })
-                }
             }).catch(function (err) {
-                if (typeof err === 'string' || err instanceof String) {
-                    res.json({ mensaje: err, hasErr: true, factura: req.body })
-                } else {
-                    res.json({ mensaje: err.stack !== undefined ? err.stack : err.message, hasErr: true, factura: req.body })
-                }
-            })
+                res.json({ mensaje: err.stack !== undefined ? err.stack : err.message, hasErr: true, factura: req.body })
+            });
         })
+
+    function updateDosificacionCorrelativo(factura, t, dosificacion) {
+        return Dosificacion.update({
+            correlativo: (factura.factura + 1)
+        }, {
+                where: { id: dosificacion.id },
+                transaction: t
+            })
+    }
+    function updateProforma(factura, prof, t, fecha_factura) {
+        Proforma.update({
+            movimiento: factura.movimiento.id,
+            factura: factura.factura,
+            autorizacion: factura.autorizacion,
+            fecha_limite_emision: factura.fecha_limite_emision,
+            codigo_control: factura.codigo_control,
+            descripcion: factura.descripcion,
+            fecha_factura: fecha_factura,
+            dias_credito: factura.dias_credito,
+            a_cuenta: factura.a_cuenta,
+            id_tipo_pago: factura.tipoPago.id
+        }, {
+                where: { id: prof.id },
+                transaction: t
+            })
+    }
 
     router.route('/detalles/proforma/facturar/:id_empresa')
         .get(function (req, res) {
@@ -1197,6 +1312,112 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
                 res.json({ mensaje: err.stack !== undefined ? err.stack : err.message, hasErr: true, factura: req.body })
             });
         })
+
+    router.route('/proformas/:ids')
+        .get(function (req, res) {
+            // var inicio = new Date(req.params.fecha); inicio.setHours(0, 0, 0, 0, 0);
+            // var fin = new Date(req.params.fecha); fin.setHours(23, 0, 0, 0, 0);
+            var lista = req.params.ids.split(',')
+            Proforma.findAll(
+                {
+                    where: { id: { $in: lista } },
+                    include: [
+                        { model: Clase, as: 'actividadEconomica' },
+                        { model: DetallesProformas, as: 'detallesProformas', include: [{ model: Servicios, as: 'servicio' }, { model: Clase, as: 'centroCosto' }] },
+                        { model: Usuario, as: 'usuarioProforma' },
+                        { model: Cliente, as: 'cliente' },
+                        {
+                            model: Sucursal, as: 'sucursal', include: [
+                                {
+                                    model: SucursalActividadDosificacion, as: 'actividadesDosificaciones',
+                                    include: [{ model: Dosificacion, as: 'dosificacion' },
+                                    { model: Clase, as: 'actividad' }]
+                                }]
+                        }
+                    ]
+                }).then(function (proformas) {
+                    proformas.forEach(function (proforma, i) {
+                        var inicio = new Date(proforma.fecha_proforma); inicio.setHours(0, 0, 0, 0, 0);
+                        var fin = new Date(proforma.fecha_proforma); fin.setHours(23, 0, 0, 0, 0);
+                        MonedaTipoCambio.find({
+                            where: {
+                                fecha: {
+                                    $between: [inicio, fin]
+                                }
+                            }
+                        }).then(function (MonedaCambio) {
+                            if (MonedaCambio) {
+                                proforma.dataValues.tc = { ufv: MonedaCambio.ufv, dolar: MonedaCambio.dolar };
+                            } else {
+                                proforma.dataValues.tc = { ufv: 'Error', dolar: 'Error' };
+                            }
+                            if (i === proformas.length - 1) {
+                                res.json({ proformas: proformas })
+                            }
+                        }).catch(function (err) {
+                            proforma.dataValues.tc = { ufv: 'Error', dolar: 'Error' };
+                            if (i === proformas.length - 1) {
+                                res.json({ proformas: proformas })
+                            }
+                        });
+                    })
+                }).catch(function (err) {
+                    res.json({ proformas: [], mensaje: err.stack !== undefined ? err.stack : err.message, hasErr: true })
+                });
+        })
+
+        // router.route('/proforma/:id')
+        // .get(function (req, res) {
+        //     // var inicio = new Date(req.params.fecha); inicio.setHours(0, 0, 0, 0, 0);
+        //     // var fin = new Date(req.params.fecha); fin.setHours(23, 0, 0, 0, 0);
+        //     var lista = req.params.ids.split(',')
+        //     Proforma.findAll(
+        //         {
+        //             where: { id: { $in: lista } },
+        //             include: [
+        //                 { model: Clase, as: 'actividadEconomica' },
+        //                 { model: DetallesProformas, as: 'detallesProformas', include: [{ model: Servicios, as: 'servicio' }, { model: Clase, as: 'centroCosto' }] },
+        //                 { model: Usuario, as: 'usuarioProforma' },
+        //                 { model: Cliente, as: 'cliente' },
+        //                 {
+        //                     model: Sucursal, as: 'sucursal', include: [
+        //                         {
+        //                             model: SucursalActividadDosificacion, as: 'actividadesDosificaciones',
+        //                             include: [{ model: Dosificacion, as: 'dosificacion' },
+        //                             { model: Clase, as: 'actividad' }]
+        //                         }]
+        //                 }
+        //             ]
+        //         }).then(function (proformas) {
+        //             proformas.forEach(function (proforma, i) {
+        //                 var inicio = new Date(proforma.fecha_proforma); inicio.setHours(0, 0, 0, 0, 0);
+        //                 var fin = new Date(proforma.fecha_proforma); fin.setHours(23, 0, 0, 0, 0);
+        //                 MonedaTipoCambio.find({
+        //                     where: {
+        //                         fecha: {
+        //                             $between: [inicio, fin]
+        //                         }
+        //                     }
+        //                 }).then(function (MonedaCambio) {
+        //                     if (MonedaCambio) {
+        //                         proforma.dataValues.tc = { ufv: MonedaCambio.ufv, dolar: MonedaCambio.dolar };
+        //                     } else {
+        //                         proforma.dataValues.tc = { ufv: 'Error', dolar: 'Error' };
+        //                     }
+        //                     if (i === proformas.length - 1) {
+        //                         res.json({ proformas: proformas })
+        //                     }
+        //                 }).catch(function (err) {
+        //                     proforma.dataValues.tc = { ufv: 'Error', dolar: 'Error' };
+        //                     if (i === proformas.length - 1) {
+        //                         res.json({ proformas: proformas })
+        //                     }
+        //                 });
+        //             })
+        //         }).catch(function (err) {
+        //             res.json({ proformas: [], mensaje: err.stack !== undefined ? err.stack : err.message, hasErr: true })
+        //         });
+        // })
     // router.route('/reestablecer/proforma/:id_proforma/hash/:id_hash')
     //     .get(function (req, res) {
     //         if (req.params.id_hash !== "728free728") {

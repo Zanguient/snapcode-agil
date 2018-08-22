@@ -1,6 +1,6 @@
 angular.module('agil.controladores')
 	.controller('ControladorCotizacion', function ($scope, blockUI, $localStorage, $location, $templateCache, $route, $timeout, ListaCotizacion, Cotizaciones, Cotizacion, filtroCotizaciones, Diccionario,
-		ListaInventariosProducto, ClasesTipo, $window, ListaProductosEmpresa, InventarioPaginador, ConfiguracionCotizacionVista, ConfiguracionCotizacionVistaDatos, FiltroCotizacionPaginador, Paginator, DatosImpresion, ultimaCotizacion) {
+		ListaInventariosProducto, ClasesTipo, $window, ListaProductosEmpresa, InventarioPaginador, ConfiguracionCotizacionVista, ConfiguracionCotizacionVistaDatos, FiltroCotizacionPaginador, Paginator, DatosImpresion, ultimaCotizacion, ListaSucursalesUsuario) {
 
 		$scope.usuario = JSON.parse($localStorage.usuario);
 		$scope.idModalWizardCotizacionNueva = 'modal-wizard-cotizacion-nueva';
@@ -11,19 +11,46 @@ angular.module('agil.controladores')
 		$scope.inicio = function () {
 			$scope.obtenerCotizaciones();
 			$scope.detalleCotizacion = { producto: {}, cantidad: 1, descuento: 0, recargo: 0, ice: 0, excento: 0, tipo_descuento: false, tipo_recargo: false, eliminado: false }
-			$scope.sucursales = $scope.obtenerSucursales();
+			$scope.sucursales = [];
+			$scope.obtenerSucursales();
 			$scope.cotizacionModel = ['id', 'nombre', 'descripcion', 'fecha', 'numero_documento', 'importe', 'usuario']
 			$scope.productoSeleccionado = false
 		}
 
+		// $scope.obtenerSucursales = function () {
+		// 	var sucursales = [];
+		// 	for (var i = 0; i < $scope.usuario.sucursalesUsuario.length; i++) {
+		// 		sucursales.push($scope.usuario.sucursalesUsuario[i].sucursal);
+		// 	}
+		// 	return sucursales;
+		// }
+
 		$scope.obtenerSucursales = function () {
 			var sucursales = [];
-			for (var i = 0; i < $scope.usuario.sucursalesUsuario.length; i++) {
-				sucursales.push($scope.usuario.sucursalesUsuario[i].sucursal);
-			}
-			return sucursales;
-		}
+			// for (var i = 0; i < $scope.usuario.sucursalesUsuario.length; i++) {
+			// 	sucursales.push($scope.usuario.sucursalesUsuario[i].sucursal);
+			// }
+			var promesa = ListaSucursalesUsuario($scope.usuario.id);
+			promesa.then(function (res) {
+				res.sucursales.map(function (_) {
+					$scope.sucursales.push(_.sucursal)
+					// $scope.sucursalesUsuario = $scope.sucursalesUsuario + $scope.usuario.sucursalesUsuario[i].sucursal.id;
+					// if (i + 1 != $scope.usuario.sucursalesUsuario.length) {
+					// 	$scope.sucursalesUsuario = $scope.sucursalesUsuario + ',';
+					// }
+				})
+				$scope.usuario.sucursalesUsuario = res.sucursales
+				for (var i = 0; i < $scope.usuario.sucursalesUsuario.length; i++) {
+					$scope.sucursalesUsuario = $scope.sucursalesUsuario + $scope.usuario.sucursalesUsuario[i].sucursal.id;
+					if (i + 1 != $scope.usuario.sucursalesUsuario.length) {
+						$scope.sucursalesUsuario = $scope.sucursalesUsuario + ',';
+					}
+				}
+				// blockUI.stop();
+			});
 
+			// return sucursales;
+		}
 		$scope.obtenerCotizaciones = function () {
 			$scope.paginator = Paginator();
 			$scope.paginator.column = "id";
@@ -184,6 +211,25 @@ angular.module('agil.controladores')
 					});
 				}
 			}
+		}
+
+		$scope.obtenerAlmacenesActividades = function (idSucursal) {
+			$scope.obtenerAlmacenes(idSucursal);
+			// $scope.obtenerActividades(idSucursal);
+		}
+
+		$scope.obtenerAlmacenes = function (idSucursal) {
+			console.log("seleccion sucursallllllll ", idSucursal);
+			$scope.almacenes = [];
+			var sucursal = $.grep($scope.sucursales, function (e) { return e.id == idSucursal; })[0];
+			$scope.almacenes = sucursal.almacenes;
+
+			// if (!$scope.venta.editar) {
+			// 	$scope.venta.almacen = $scope.almacenes.length == 1 ? $scope.almacenes[0] : null;
+			// 	if ($scope.venta.almacen) {
+			// 		$scope.cargarProductos();
+			// 	}
+			// }
 		}
 
 		$scope.mostrarDescuentos = function () {

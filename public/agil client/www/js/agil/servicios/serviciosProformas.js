@@ -121,6 +121,12 @@ angular.module('agil.servicios')
                 'update': { method: 'PUT' }
             });
     })
+    .factory('ProformasDetail', function ($resource) {
+        return $resource(restServer + "proformas/:ids", {},
+            {
+                'update': { method: 'PUT' }
+            });
+    })
 
     .factory('ActualizarProforma', ['Proforma', '$q', function (Proforma, $q) {
         var res = function (id, proforma) {
@@ -135,8 +141,21 @@ angular.module('agil.servicios')
         return res;
     }])
 
+    .factory('ProformasInfo', ['ProformasDetail', '$q', function (ProformasDetail, $q) {
+        var res = function (idProforma) {
+            var delay = $q.defer();
+            ProformasDetail.get({ ids: idProforma}, function (entidades) {
+                delay.resolve(entidades);
+            }, function (error) {
+                delay.reject(error);
+            });
+            return delay.promise;
+        };
+        return res;
+    }])
+
     .factory('ProformaInfo', ['Proforma', '$q', function (Proforma, $q) {
-        var res = function (idProforma, id_actividad) {
+        var res = function (idProforma) {
             var delay = $q.defer();
             Proforma.get({ id: idProforma}, function (entidades) {
                 delay.resolve(entidades);
