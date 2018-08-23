@@ -268,10 +268,10 @@
 								<a class="red" href="javascript:void(0)" ng-if="usuario.empresa.usar_vencimientos" ng-click="imprimirVentaConVencimiento(venta)">
 									<i class="ace-icon fa fa-print bigger-130"></i>
 								</a>
-								<a e-disabled="!aplicacion.puede_modificar" ng-if="venta.movimiento.clase.nombre_corto==diccionario.EGRE_FACTURACION || venta.movimiento.clase.nombre_corto==diccionario.EGRE_PROFORMA" class="blue" uib-tooltip="Permitir Edición" href="javascript:void(0)"
-								ng-click="abrirModalVerificarCuenta(venta,'venta')">
-								<i class="ace-icon fa fa-pencil bigger-130"></i>
-							</a>
+								<a e-disabled="!aplicacion.puede_modificar" ng-if="(venta.movimiento.clase.nombre_corto==diccionario.EGRE_FACTURACION || venta.movimiento.clase.nombre_corto==diccionario.EGRE_PROFORMA) && usuario.empresa.usar_edicion_venta"
+								 class="blue" uib-tooltip="Permitir Edición" href="javascript:void(0)" ng-click="abrirModalVerificarCuenta(venta,'venta')">
+									<i class="ace-icon fa fa-pencil bigger-130"></i>
+								</a>
 							</div>
 
 							<div class="hidden-md hidden-lg">
