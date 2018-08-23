@@ -99,7 +99,7 @@ angular.module('agil.controladores')
 		var button=$('#siguiente').text().trim();
 		if(button!="Siguiente"){
 			blockUI.start();
-			dosificacion.fecha_limite_emision=new Date(dosificacion.fechaTexto);
+			dosificacion.fecha_limite_emision=new Date($scope.convertirFecha(dosificacion.fechaTexto));
 			if(dosificacion.id){
 				Dosificacion.update({ idDosificacion:dosificacion.id }, dosificacion,function(res){
 					blockUI.stop();
