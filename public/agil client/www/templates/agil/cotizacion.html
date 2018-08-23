@@ -193,23 +193,33 @@
 
 					<thead>
 						<tr>
-							<th class="center"><a href="javascript:void(0)" ng-click="paginator.sortColumn('nombre',obtenerLista)">Nombre <span id="nombreTab" class="sort fa fa-sort icon-only"></span></a></th>
-							<th class="center"><a href="javascript:void(0)" ng-click="paginator.sortColumn('descripcion',obtenerLista)">Descripción <span id="descripcionTab" class="sort fa fa-sort icon-only"></span></a></th>
+							<th>Nº</th>
+							<th class="center"><a href="javascript:void(0)" ng-click="paginator.sortColumn('nombre',obtenerLista)">Sucursal <span id="nombreTab" class="sort fa fa-sort icon-only"></span></a></th>
+							<th class="center"><a href="javascript:void(0)" ng-click="paginator.sortColumn('descripcion',obtenerLista)">Razon social <span id="descripcionTab" class="sort fa fa-sort icon-only"></span></a></th>
+							<th class="center"><a href="javascript:void(0)" ng-click="paginator.sortColumn('descripcion',obtenerLista)">NIT Cliente <span id="descripcionTab" class="sort fa fa-sort icon-only"></span></a></th>
 							<th class="center"><a href="javascript:void(0)" ng-click="paginator.sortColumn('fecha',obtenerLista)">Fecha <span id="fechaTab" class="sort fa fa-sort icon-only"></span></a></th>
-							<th class="center"><a href="javascript:void(0)" ng-click="paginator.sortColumn('numero_documento',obtenerLista)">Número de documento <span id="numero_documento" class="sort fa fa-sort icon-only"></span></a></th>
 							<th class="center"><a href="javascript:void(0)" ng-click="paginator.sortColumn('importe',obtenerLista)">Importe <span id="importeTab" class="sort fa fa-sort icon-only"></span></a></th>
 							<th class="center"><a href="javascript:void(0)" ng-click="paginator.sortColumn('usuario',obtenerLista)">Usuario <span id="usuarioTab" class="sort fa fa-sort icon-only"></span></a></th>
+							<th class="center"><a href="javascript:void(0)" ng-click="paginator.sortColumn('usuario',obtenerLista)">Estado <span id="usuarioTab" class="sort fa fa-sort icon-only"></span></a></th>
 							<th class="center">Acciones</th>
 						</tr>
 					</thead>
 					<tbody>
 						<tr ng-repeat="cotizacion in cotizaciones">
-							<td>{{cotizacion.nombre}}</td>
-							<td>{{cotizacion.descripcion}}</td>
+							<td>{{$index+1}}</td>
+							<td>{{cotizacion.sucursal.nombre}}</td>
+							<td>{{cotizacion.cliente.razon_social}}</td>
+							<td>{{cotizacion.cliente.nit}}</td>
 							<td>{{cotizacion.fecha | date:"dd/MM/yyyy"}}</td>
-							<td>{{cotizacion.numero_documento}}</td>
 							<td>{{cotizacion.importe}}</td>
 							<td>{{cotizacion.usuario.nombre_usuario}}</td>
+							<td>
+							
+								<span class="badge badge-info" ng-if="cotizacion.estado=='PENDIENTE'">{{cotizacion.estado}}</span>
+								<span class="badge badge-success" ng-if="cotizacion.estado=='ACEPTADO'">{{cotizacion.estado}}</span>
+								<span class="badge badge-danger" ng-if="cotizacion.estado=='RECHAZADO'">{{cotizacion.estado}}</span>
+								<span class="badge badge-warning" ng-if="cotizacion.estado=='RECHAZADO'"><i class="fa fa-info"></i></span>
+							</td>
 							<td><a class="red" href="javascript:void(0)" ng-click="ModificarCotizacion(cotizacion)">
 											<i class="ace-icon fa fa-pencil-square-o bigger-130"></i>
 										</a>
@@ -413,7 +423,7 @@
 							<tbody>
 								<tr>
 									<td class="col-md-2">
-										<input  required ng-keypress="interceptarTecla($event,'cantidadTB',true)" id="id_productoTB" required type="text" ng-model="detalleCotizacion.producto.nombre"
+										<input  required ng-keypress="interceptarTecla($event,'cantidadTB',true)" ng-disabled="!cotizacion.almacen" id="id_productoTB" required type="text" ng-model="detalleCotizacion.producto.nombre"
 										 placeholder="Ingrese el nombre del producto..." uib-typeahead="producto as (producto.codigo+'-'+producto.nombre+'-'+producto.grupo+'-'+producto.subgrupo) for producto in buscarProducto($viewValue)"
 										 typeahead-wait-ms="1000" typeahead-template-url="templates/autocompletar.html" typeahead-show-hint="false" typeahead-min-length="3"
 										 typeahead-on-select="establecerProducto($item, $model, $label, $event)">

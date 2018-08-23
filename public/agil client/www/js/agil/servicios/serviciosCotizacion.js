@@ -146,18 +146,18 @@ var res = function(idEmpresa,paginator,inicio,fin)
 	};
     return res;
   }])
-  	.factory('DatosConfiguracion', function($resource) {
-		return $resource(restServer+"cotizacion/:id/empresa/:id_empresa", {id:'@id',id_empresa:'@id_empresa'},
+  	.factory('DatosConfiguracionCotizacion', function($resource) {
+		return $resource(restServer+"cotizacion/:id/empresa/:id_empresa", null,
 		{
 			'update': { method:'PUT' }
 		});
 	})
-	.factory('DatosImpresion', ['DatosConfiguracion','$q',function(DatosConfiguracion, $q) 
+	.factory('DatosImpresionCotizacion', ['DatosConfiguracionCotizacion','$q',function(DatosConfiguracionCotizacion, $q) 
 		{
 		var res = function(id_cotizacion,id_empresa) 
 		{
 			var delay = $q.defer();
-			DatosConfiguracion.get({id:id_cotizacion,id_empresa:id_empresa},function(entidad) 
+			DatosConfiguracionCotizacion.get({id:id_cotizacion,id_empresa:id_empresa},function(entidad) 
 			{        
 				delay.resolve(entidad);
 			}, function(error) 

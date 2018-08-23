@@ -1,4 +1,4 @@
-module.exports = function (router, Cotizacion, DetalleCotizacion, Usuario, Producto, Diccionario, Clase, ConfiguracionGeneralFactura, Sucursal) {
+module.exports = function (router, Cotizacion, DetalleCotizacion, Usuario, Producto, Diccionario, Clase, ConfiguracionGeneralFactura, Sucursal, Cliente, Almacen) {
 
 	router.route('/cotizaciones/empresa/:id_empresa')
 		.get(function (req, res) {
@@ -228,7 +228,10 @@ module.exports = function (router, Cotizacion, DetalleCotizacion, Usuario, Produ
 				Cotizacion.findAll({
 					offset: (req.params.items_pagina * (req.params.pagina - 1)), limit: req.params.items_pagina,
 					where: condicionCotizacion,
-					include: [{ model: Usuario, as: 'usuario' }, { model: Sucursal, as: 'sucursal' },
+					include: [{ model: Usuario, as: 'usuario' }, 
+					{ model: Sucursal, as: 'sucursal' },
+					{ model: Cliente, as: 'cliente' },
+					{ model: Almacen, as: 'almacen'},
 					{
 						model: DetalleCotizacion, as: "detallesCotizacion",
 						include: [{ model: Producto, as: 'producto' }]
@@ -299,6 +302,7 @@ module.exports = function (router, Cotizacion, DetalleCotizacion, Usuario, Produ
 					id: req.params.id
 				},
 				include: [
+					{ model: Cliente, as: 'cliente' },
 					{
 						model: DetalleCotizacion, as: "detallesCotizacion",
 						include: [{ model: Producto, as: 'producto' },

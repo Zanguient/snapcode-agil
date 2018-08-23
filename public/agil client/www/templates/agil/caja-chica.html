@@ -162,14 +162,14 @@
             <span ng-if="tipoFiltro=='KARDEX'">Fondos a Rendir</span>
             <span ng-if="tipoFiltro=='INGRESO'">Ingresos</span>
             <div class="inline pos-rel pull-right">
-                    
-                    <div class="col-sm-10" ng-include src="'/templates/gral/fields-viewer.html'"></div>
-                </div>
+
+                <div class="col-sm-10" ng-include src="'/templates/gral/fields-viewer.html'"></div>
+            </div>
             <div class="pos-rel pull-right">
                 <span ng-hide="solicitud.ver" class="fa fa-pencil bigger-160" ng-click="abrirModalConceptosMovimiento(tiposConceptos)"></span>
             </div>
         </div>
-        
+
         <!-- div.table-responsive -->
 
         <!-- div.dataTables_borderWrap -->
@@ -183,7 +183,7 @@
                             <tr>
                                 <th class="center">N°</th>
                                 <th class="center" ng-if="fieldViewer.getConfiguration().usuario_solicitante.show">
-                                    <a href="javascript:void(0)" ng-click="paginator.sortColumn('usuario',obtenerLista)">Usuario Solicitante
+                                    <a href="javascript:void(0)" ng-click="paginator.sortColumn('usuario_solicitante',obtenerLista)">Usuario Solicitante
                                         <span id="codigo" class="sort fa fa-sort icon-only"></span>
                                     </a>
                                 </th>
@@ -193,29 +193,39 @@
                                     </a>
                                 </th>
                                 <th class="center" ng-if="fieldViewer.getConfiguration().beneficiario.show">
-                                    <a href="javascript:void(0)" ng-click="paginator.sortColumn('solicitud',obtenerLista)">Beneficiario
+                                    <a href="javascript:void(0)" ng-click="paginator.sortColumn('beneficiario',obtenerLista)">Beneficiario
                                         <span id="debe" class="sort fa fa-sort icon-only"></span>
                                     </a>
                                 </th>
                                 <th class="center" ng-if="fieldViewer.getConfiguration().autorizador.show">
-                                    Autorizador
+                                    <a href="javascript:void(0)" ng-click="paginator.sortColumn('autorizador',obtenerLista)">Autorizador
+                                        <span id="debe" class="sort fa fa-sort icon-only"></span>
+                                    </a>
 
                                 </th>
                                 <th class="center" ng-if="fieldViewer.getConfiguration().verificador.show">
-                                    Verificador
+                                    <a href="javascript:void(0)" ng-click="paginator.sortColumn('verificador',obtenerLista)">Verificador
+                                        <span id="debe" class="sort fa fa-sort icon-only"></span>
+                                    </a>
 
                                 </th>
                                 <th class="center" ng-if="fieldViewer.getConfiguration().movimiento.show">
-                                    Movimiento
+                                    <a href="javascript:void(0)" ng-click="paginator.sortColumn('movimiento',obtenerLista)">Movimiento
+                                        <span id="debe" class="sort fa fa-sort icon-only"></span>
+                                    </a>
 
                                 </th>
 
                                 <th class="center" ng-if="fieldViewer.getConfiguration().concepto.show">
-                                    Concepto
+                                    <a href="javascript:void(0)" ng-click="paginator.sortColumn('concepto',obtenerLista)">Concepto
+                                        <span id="clasificacion" class="sort fa fa-sort icon-only"></span>
+                                    </a>
 
                                 </th>
                                 <th class="center" ng-if="fieldViewer.getConfiguration().detalle.show">
-                                    Detalle
+                                    <a href="javascript:void(0)" ng-click="paginator.sortColumn('detalle',obtenerLista)">Detalle
+                                        <span id="nombre" class="sort fa fa-sort icon-only"></span>
+                                    </a>
 
                                 </th>
                                 <th class="center" ng-if="fieldViewer.getConfiguration().estado.show">
@@ -223,8 +233,10 @@
                                         <span id="clasificacion" class="sort fa fa-sort icon-only"></span>
                                     </a>
                                 </th>
-                                <th class="center"ng-if="fieldViewer.getConfiguration().monto.show" >
-                                    Monto
+                                <th class="center" ng-if="fieldViewer.getConfiguration().monto.show">
+                                    <a href="javascript:void(0)" ng-click="paginator.sortColumn('monto',obtenerLista)">Monto
+                                        <span id="clasificacion" class="sort fa fa-sort icon-only"></span>
+                                    </a>
 
                                 </th>
                                 <th class="center">
@@ -239,7 +251,7 @@
                                 <td>
                                     {{($index+1)+(paginator.itemsPerPage*(paginator.currentPage-1))}}
                                 </td>
-                                <td ng-if="fieldViewer.getConfiguration().usuario_solicitante.show" >
+                                <td ng-if="fieldViewer.getConfiguration().usuario_solicitante.show">
                                     {{solicitud.usuario.persona.nombre_completo}}
                                 </td>
                                 <td ng-if="fieldViewer.getConfiguration().fecha.show">
@@ -1976,132 +1988,132 @@
 <!-- fin registro caja chica -->
 <!-- inicio registro  anticipo caja chica -->
 <div class="modal" id="dialog-registro-anticipo-caja-chica">
-        <div class="modal-content">
-            <div class="modal-header bg-primary">
-                <button type="button" ng-click="cerrarModalRegistroAnticipoCajaChica()" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-                <P>
-                    <h4 class="modal-title">REGISTRO ANTICIPO CAJA CHICA</h4>
-                </P>
-                <P>{{solicitud.solicitante.persona.nombre_completo}}</P>
-    
-            </div>
-            <form ng-submit="guardarCajaChica()">
-                <div class="modal-body">
-                    <div class="row">
-                        <div ng-class="cajaChica.verDatosCompra ? 'col-md-6' : 'col-md-12'">
-                            <div class="row">
-                                <div class=col-md-10>
-                                    <div class="row">
-                                        <div class="col-md-4">
-                                            <label class="inline">
-    
-                                                <span class="lbl">Fecha:</span>
-                                            </label>
-                                        </div>
-                                        <div class="col-md-8">
-                                            <input type="text" ng-disabled="cajaChica.ver" ng-model-options="{updateOn: 'submit'}" ng-model="cajaChica.fecha" ng-update-hidden
-                                                data-date-format="dd/mm/yyyy" class="date-picker form-control">
-                                        </div>
+    <div class="modal-content">
+        <div class="modal-header bg-primary">
+            <button type="button" ng-click="cerrarModalRegistroAnticipoCajaChica()" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            <P>
+                <h4 class="modal-title">REGISTRO ANTICIPO CAJA CHICA</h4>
+            </P>
+            <P>{{solicitud.solicitante.persona.nombre_completo}}</P>
+
+        </div>
+        <form ng-submit="guardarCajaChica()">
+            <div class="modal-body">
+                <div class="row">
+                    <div ng-class="cajaChica.verDatosCompra ? 'col-md-6' : 'col-md-12'">
+                        <div class="row">
+                            <div class=col-md-10>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <label class="inline">
+
+                                            <span class="lbl">Fecha:</span>
+                                        </label>
                                     </div>
-                                    <div class="space-4"></div>
-                                    <div class="row">
-    
-                                        <div class="col-md-4">
-                                            <label class="inline">
-    
-                                                <span class="lbl">Concepto</span>
-                                            </label>
-                                        </div>
-    
-                                        <div class="col-md-8">
-                                            <!-- <select ng-if="cajaChica.solicitud!=null" required ng-disabled="cajaChica.ver" ng-model-options="{updateOn: 'submit'}" ng-model="cajaChica.concepto"
+                                    <div class="col-md-8">
+                                        <input type="text" ng-disabled="cajaChica.ver" ng-model-options="{updateOn: 'submit'}" ng-model="cajaChica.fecha" ng-update-hidden
+                                            data-date-format="dd/mm/yyyy" class="date-picker form-control">
+                                    </div>
+                                </div>
+                                <div class="space-4"></div>
+                                <div class="row">
+
+                                    <div class="col-md-4">
+                                        <label class="inline">
+
+                                            <span class="lbl">Concepto</span>
+                                        </label>
+                                    </div>
+
+                                    <div class="col-md-8">
+                                        <!-- <select ng-if="cajaChica.solicitud!=null" required ng-disabled="cajaChica.ver" ng-model-options="{updateOn: 'submit'}" ng-model="cajaChica.concepto"
                                                 class="form-control" ng-options="concepto as concepto.nombre for concepto in ConceptosMovimiento | filter:{habilitado:true}|filtroAnticipos track by concepto.id">
                                                 <option value="">Seleccionar</option>
                                             </select> -->
-                                            <select  required ng-disabled="cajaChica.ver" ng-model-options="{updateOn: 'submit'}" ng-model="cajaChica.concepto"
-                                                class="form-control" ng-options="concepto as concepto.nombre for concepto in ConceptosMovimiento | filter:{habilitado:true}|filtroAnticipos track by concepto.id">
-                                                <option value="">Seleccionar</option>
-                                            </select>
-                                        </div>
+                                        <select required ng-disabled="cajaChica.ver" ng-model-options="{updateOn: 'submit'}" ng-model="cajaChica.concepto" class="form-control"
+                                            ng-options="concepto as concepto.nombre for concepto in ConceptosMovimiento | filter:{habilitado:true}|filtroAnticipos track by concepto.id">
+                                            <option value="">Seleccionar</option>
+                                        </select>
                                     </div>
                                 </div>
-                                <div class="col-md-2">
-                                    <!-- <a href="javascript:void(0)" ng-if="cajaChica.solicitud" ng-click="verDatosCompra()" class="red tooltip-info" tooltip-placement="left"
+                            </div>
+                            <div class="col-md-2">
+                                <!-- <a href="javascript:void(0)" ng-if="cajaChica.solicitud" ng-click="verDatosCompra()" class="red tooltip-info" tooltip-placement="left"
                                         uib-tooltip="Editar Datos Compra">
                                         <i class="ace-icon icono-impuestos bigger-260 icon-only "></i>
                                     </a> -->
-                                </div>
                             </div>
-    
-                            <div class="space-4"></div>
-                            <div class="row">
-                                <div class="col-md-3">
-                                    <label class="inline">
-    
-                                        <span class="lbl">Detalle</span>
-                                    </label>
-                                </div>
-                                <div class="col-md-9">
-                                    <textarea class="form-control" ng-disabled="cajaChica.ver" ng-model-options="{updateOn: 'submit'}" cols="30" rows="4" ng-model="cajaChica.detalle"></textarea>
-                                </div>
-                            </div>
-                            <div class="space-4"></div>
-                            <div class="row">
-                                <div class="col-md-3">
-                                    <label class="inline">
-    
-                                        <span class="lbl">Cuenta:</span>
-                                    </label>
-                                </div>
-                                <div class="col-md-9">
-                                    <input enter autocomplete="off" ng-disabled="cajaChica.ver" typeahead-append-to-body="true" ng-keypress="interceptarTecla($event,'cantidad',true)"
-                                        required type="text" ng-model="cajaChica.cuenta" placeholder="Busqueda..." uib-typeahead="cuenta as (cuenta.codigo+'-'+cuenta.nombre) for cuenta in buscarCuentasCajaChica($viewValue)"
-                                        typeahead-wait-ms="1000" typeahead-template-url="templates/autocompletar.html" typeahead-show-hint="false"
-                                        typeahead-min-length="1">
-                                </div>
-                            </div>
-                            <div class="space-4"></div>
-                            <div class="row" >
-                                <div class="col-md-3">
-                                    <label class="inline">
-    
-                                        <span class="lbl">Monto:</span>
-                                    </label>
-                                </div>
-                                <div class="col-md-9">
-                                    <input class="form-control" step="0.001" min="0" ng-model-options="{updateOn: 'submit'}" type="number" ng-model="cajaChica.total">
-                                </div>
-                            </div>
-                            <div class="space-4"></div>
-                            <div class="row">
-                                <div class="col-md-3">
-                                    <label class="inline">
-    
-                                        <span class="lbl">SUCURSAL:</span>
-                                    </label>
-                                </div>
-                                <div class="col-md-9">
-                                    <select disabled required data-validate="validate(required)" required ng-options="sucursal as sucursal.nombre for sucursal in sucursales track by sucursal.id"
-                                        ng-model="cajaChica.sucursal">
-                                        <option value="">Seleccionar</option>
-                                    </select>
-                                </div>
-                            </div>
-    
                         </div>
+
+                        <div class="space-4"></div>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <label class="inline">
+
+                                    <span class="lbl">Detalle</span>
+                                </label>
+                            </div>
+                            <div class="col-md-9">
+                                <textarea class="form-control" ng-disabled="cajaChica.ver" ng-model-options="{updateOn: 'submit'}" cols="30" rows="4" ng-model="cajaChica.detalle"></textarea>
+                            </div>
+                        </div>
+                        <div class="space-4"></div>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <label class="inline">
+
+                                    <span class="lbl">Cuenta:</span>
+                                </label>
+                            </div>
+                            <div class="col-md-9">
+                                <input enter autocomplete="off" ng-disabled="cajaChica.ver" typeahead-append-to-body="true" ng-keypress="interceptarTecla($event,'cantidad',true)"
+                                    required type="text" ng-model="cajaChica.cuenta" placeholder="Busqueda..." uib-typeahead="cuenta as (cuenta.codigo+'-'+cuenta.nombre) for cuenta in buscarCuentasCajaChica($viewValue)"
+                                    typeahead-wait-ms="1000" typeahead-template-url="templates/autocompletar.html" typeahead-show-hint="false"
+                                    typeahead-min-length="1">
+                            </div>
+                        </div>
+                        <div class="space-4"></div>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <label class="inline">
+
+                                    <span class="lbl">Monto:</span>
+                                </label>
+                            </div>
+                            <div class="col-md-9">
+                                <input class="form-control" step="0.001" min="0" ng-model-options="{updateOn: 'submit'}" type="number" ng-model="cajaChica.total">
+                            </div>
+                        </div>
+                        <div class="space-4"></div>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <label class="inline">
+
+                                    <span class="lbl">SUCURSAL:</span>
+                                </label>
+                            </div>
+                            <div class="col-md-9">
+                                <select disabled required data-validate="validate(required)" required ng-options="sucursal as sucursal.nombre for sucursal in sucursales track by sucursal.id"
+                                    ng-model="cajaChica.sucursal">
+                                    <option value="">Seleccionar</option>
+                                </select>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button ng-hide="cajaChica.ver" type="submit" class="btn btn-primary">Guardar</button>
-                    <button type="button" class="btn btn-danger" ng-click="cerrarModalRegistroAnticipoCajaChica()">Cerrar</button>
-                </div>
-            </form>
-        </div>
+            </div>
+            <div class="modal-footer">
+                <button ng-hide="cajaChica.ver" type="submit" class="btn btn-primary">Guardar</button>
+                <button type="button" class="btn btn-danger" ng-click="cerrarModalRegistroAnticipoCajaChica()">Cerrar</button>
+            </div>
+        </form>
     </div>
-    </div>
-    <!-- fin registro anticipo caja chica -->
+</div>
+</div>
+<!-- fin registro anticipo caja chica -->
 <!-- inicio DESEMBOLSO caja chica -->
 <div class="modal" id="dialog-registro-desembolso-caja-chica">
     <div class="modal-content">

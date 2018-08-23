@@ -1,6 +1,6 @@
 angular.module('agil.controladores')
 	.controller('ControladorCotizacion', function ($scope, blockUI, $localStorage, $location, $templateCache, $route, $timeout, ListaCotizacion, Cotizaciones, Cotizacion, filtroCotizaciones, Diccionario,
-		ListaInventariosProducto, ClasesTipo, $window, ListaProductosEmpresa, InventarioPaginador, ConfiguracionCotizacionVista, ConfiguracionCotizacionVistaDatos, FiltroCotizacionPaginador, Paginator, DatosImpresion, ultimaCotizacion, ListaSucursalesUsuario, ClientesNit) {
+		ListaInventariosProducto, ClasesTipo, $window, ListaProductosEmpresa, InventarioPaginador, ConfiguracionCotizacionVista, ConfiguracionCotizacionVistaDatos, FiltroCotizacionPaginador, Paginator, DatosImpresionCotizacion, ultimaCotizacion, ListaSucursalesUsuario, ClientesNit) {
 
 		$scope.usuario = JSON.parse($localStorage.usuario);
 		$scope.idModalWizardCotizacionNueva = 'modal-wizard-cotizacion-nueva';
@@ -105,6 +105,7 @@ angular.module('agil.controladores')
 
 		$scope.ModificarCotizacion = function (cotizacion) {
 			$scope.cotizacion = cotizacion;
+			$scope.obtenerAlmacenes(cotizacion.sucursal.id);
 			$scope.cotizacion.fecha = new Date($scope.cotizacion.fecha);
 			$scope.cotizacion.fechaTexto = $scope.cotizacion.fecha.getDate() + "/" + ($scope.cotizacion.fecha.getMonth() + 1) + "/" + $scope.cotizacion.fecha.getFullYear();
 			$scope.abrirPopup($scope.idModalWizardCotizacionNueva);
@@ -322,32 +323,44 @@ angular.module('agil.controladores')
 			var yCabecera = 80;
 			var yEspacio = 10;
 			if ($scope.usuario.empresa.imagen.length > 100) {
-				doc.image($scope.usuario.empresa.imagen, 60, yCuerpo - yCabecera, { width: 50, height: 50 });
+				// doc.image($scope.usuario.empresa.imagen, 20,  60, 40, { width: 50, height: 50 });
+				doc.image($scope.usuario.empresa.imagen, 60, 40, { fit: [65, 65] });
 			}
 			doc.font('Helvetica-Bold', 16);
-			doc.text("COTIZACIÓN N°" + cotizacion.numero_documento, 220, yCuerpo - yCabecera);
-			doc.font('Helvetica-Bold', 7);
-			doc.text("Nombre: ", 80, yCuerpo - (yEspacio * 2));
-			doc.text("Descripción: ", 240, yCuerpo - (yEspacio * 2));
-			doc.text("Fecha: ", 380, yCuerpo - (yEspacio * 2));
-			doc.font('Helvetica', 7);
-			doc.text('' + cotizacion.nombre, 110, yCuerpo - (yEspacio * 2));
-			doc.text('' + cotizacion.descripcion, 285, yCuerpo - (yEspacio * 2));
-			doc.text('' + cotizacion.fechaTexto, 405, yCuerpo - (yEspacio * 2));
+			doc.text("COTIZACIÓN", 250, 90); 
+			
 			doc.font('Helvetica-Bold', 8);
-			doc.text($scope.usuario.empresa.razon_social.toUpperCase(), 485, yCuerpo - yCabecera + (yEspacio * 1));
+			
+			doc.text($scope.usuario.empresa.razon_social.toUpperCase(), 60, 105);
+
 			doc.font('Helvetica', 7);
-			doc.text('NIT ' + $scope.usuario.empresa.nit, 490, yCuerpo - yCabecera + (yEspacio * 2));
-			sucurTel = {}
-			for (var i = 0; i < $scope.sucursales.length; i++) {
-				if ($scope.sucursales[i].id == cotizacion.id_sucursal) {
-					sucurTel = $scope.sucursales[i].telefono1
-				}
-			}
-			doc.text("TELF.: " + sucurTel, 490, yCuerpo - yCabecera + (yEspacio * 3));
-			doc.text("COCHABAMBA - BOLIVIA", 480, yCuerpo - yCabecera + (yEspacio * 4));
-			doc.rect(35, yCuerpo - yEspacio, 540, (yEspacio * 2)).stroke();//nombres de columna de tablas
-			doc.text("N°", 40, yCuerpo);
+			doc.text(cotizacion.sucursal.nombre.toUpperCase(), 60, 113);
+			var longitudCaracteres = cotizacion.sucursal.direccion.length;
+			var yDesc = (longitudCaracteres <= 45) ? 129 : ((longitudCaracteres > 45 && longitudCaracteres <= 90) ? 139 : 145);
+			doc.text(cotizacion.sucursal.direccion.toUpperCase(), 60, 121);
+			var telefono = (cotizacion.sucursal.telefono1 != null ? cotizacion.sucursal.telefono1 : "") +
+				(cotizacion.sucursal.telefono2 != null ? "-" + cotizacion.sucursal.telefono2 : "") +
+				(cotizacion.sucursal.telefono3 != null ? "-" + cotizacion.sucursal.telefono3 : "");
+			doc.text("TELF.: " + telefono, 60, yDesc);
+			doc.text("COCHABAMBA - BOLIVIA", 60, yDesc + 8);
+
+			doc.font('Helvetica-Bold', 8);
+			doc.rect(380, 40, 190, 50).stroke();
+			doc.text("NRO : ", 400, 60);
+			doc.text(cotizacion.numero_documento, 500, 60);
+
+			doc.rect(50, 160, 520, 40).stroke();
+			doc.text("FECHA : ", 60, 165);
+			doc.text("SEÑOR(ES) : ", 60, 175);
+			doc.text("NIT : ", 360, 165);
+			doc.text(cotizacion.fechaTexto, 120, 165);
+			doc.text(cotizacion.cliente.razon_social, 120, 175);
+			doc.text(cotizacion.cliente.nit, 400, 165);
+			
+
+
+			doc.rect(50, 200, 520, 25).stroke();
+			
 			if (existenDescuentos) {
 				doc.text("CODIGO", 55, yCuerpo);
 				doc.text("CANT.", 105, yCuerpo);
@@ -361,12 +374,16 @@ angular.module('agil.controladores')
 				doc.text("EXC.", 490, yCuerpo);
 				doc.text("TOTAL", 520, yCuerpo);
 			} else {
-				doc.text("CODIGO", 55, yCuerpo);
-				doc.text("CANT.", 135, yCuerpo);
-				doc.text("UNID.", 165, yCuerpo);
-				doc.text("DETALLE", 210, yCuerpo);
-				doc.text("P.UNIT.", 495, yCuerpo);
-				doc.text("TOTAL", 540, yCuerpo);
+				doc.text("CODIGO", 55, 210, { width: 70 });
+				doc.text("CANT.", 125, 210);
+				if (cotizacion.detallesCotizacion[0].producto) {
+					doc.text("UNIDAD", 155, 210);
+				}
+				doc.text("DETALLE", 198, 210);
+				if (cotizacion.detallesCotizacion[0].producto) {
+					doc.text("P.UNIT.", 470, 210);
+				}
+				doc.text("TOTAL", 530, 210);
 			}
 			doc.font('Helvetica', 8);
 			var currentDate = new Date();
@@ -374,11 +391,11 @@ angular.module('agil.controladores')
 
 		$scope.imprimirCotizacionCartaOficio = function (papel, cotizacion, itemsPorPagina) {
 			//cabecera para: oficio, 1/2 oficio, carta.
-			var doc = new PDFDocument({ size: papel, margin: 10 });
+			var doc = new PDFDocument({ size: papel, compress: false, margin: 10 });
 			var stream = doc.pipe(blobStream());
 			cotizacion.fecha = new Date(cotizacion.fecha);
 			cotizacion.fechaTexto = cotizacion.fecha.getDate() + "/" + (cotizacion.fecha.getMonth() + 1) + "/" + cotizacion.fecha.getFullYear();
-			var yCuerpo = 140, totalAray = 0, items = 0, pagina = 1, totalPaginas = Math.ceil(cotizacion.detallesCotizacion.length / itemsPorPagina);
+			var yCuerpo = 240, totalAray = 0, items = 0, pagina = 1, totalPaginas = Math.ceil(cotizacion.detallesCotizacion.length / itemsPorPagina);
 			var existenDescuentos = $scope.verificarDescuentos(cotizacion.detallesCotizacion);
 			$scope.dibujarCabeceraImpresionCotizacion(doc, cotizacion, pagina, totalPaginas, existenDescuentos, yCuerpo - 20);
 			var totalBS = 0.0
@@ -402,8 +419,8 @@ angular.module('agil.controladores')
 					doc.text(cotizacion.detallesCotizacion[i].total.toFixed(2), 520, yCuerpo);
 				} else {
 					doc.text(cotizacion.detallesCotizacion[i].producto.codigo, 55, yCuerpo, { width: 70 });
-					doc.text(cotizacion.detallesCotizacion[i].cantidad, 140, yCuerpo);
-					doc.text(cotizacion.detallesCotizacion[i].producto.unidad_medida, 165, yCuerpo);
+					doc.text(cotizacion.detallesCotizacion[i].cantidad, 135, yCuerpo);
+					doc.text(cotizacion.detallesCotizacion[i].producto.unidad_medida, 155, yCuerpo);
 					var longitudCaracteres = cotizacion.detallesCotizacion[i].producto.nombre.length;
 					var yDesc = (longitudCaracteres <= 45) ? yCuerpo : ((longitudCaracteres > 45 && longitudCaracteres <= 90) ? yCuerpo - 7 : yCuerpo - 14);
 					if ($scope.usuario.empresa.usar_vencimientos) {
@@ -413,17 +430,26 @@ angular.module('agil.controladores')
 							doc.text(cotizacion.detallesCotizacion[i].inventario.fechaVencimientoTexto, 400, yCuerpo);
 							doc.text(cotizacion.detallesCotizacion[i].inventario.lote, 460, yCuerpo);
 						}
-						doc.text(cotizacion.detallesCotizacion[i].producto.nombre, 210, yDesc - 5, { width: 185 });/////
+						doc.text(cotizacion.detallesCotizacion[i].producto.nombre, 200, yDesc - 5, { width: 185 });/////
 					} else {
-						doc.text(cotizacion.detallesCotizacion[i].producto.nombre, 210, yDesc - 5, { width: 225 });//////
+						doc.text(cotizacion.detallesCotizacion[i].producto.nombre, 240, yDesc - 5, { width: 225 });//////
 					}
-					doc.text((cotizacion.detallesCotizacion[i].precio_unitario===null)?'null':cotizacion.detallesCotizacion[i].precio_unitario.toFixed(2), 500, yCuerpo);
-					doc.text(cotizacion.detallesCotizacion[i].total.toFixed(2), 540, yCuerpo);
+					doc.text((cotizacion.detallesCotizacion[i].precio_unitario===null)?'null':cotizacion.detallesCotizacion[i].precio_unitario.toFixed(2), 470, yCuerpo);
+					doc.text(cotizacion.detallesCotizacion[i].total.toFixed(2), 530, yCuerpo);
 				}
-				doc.text(indx, 40, yCuerpo)//, 555, 25)
 				ancho = longitudCaracteres <= 80 ? 20 : 30
-				doc.rect(35, yCuerpo - 10, 540, ancho).stroke(); /// fila de detalle
+				// doc.rect(35, yCuerpo - 10, 540, ancho).stroke(); /// fila de detalle
+				doc.rect(50, yCuerpo - 15, 520, 30).stroke();
 				yCuerpo = yCuerpo + 20;
+
+				var fechaActual = new Date();
+				var min = fechaActual.getMinutes();
+				if (min < 10) {
+					min = "0" + min;
+				}
+
+				doc.text("usuario : " + $scope.usuario.nombre_usuario, 55, yCuerpo + 20);
+				doc.text("fecha : " + fechaActual.getDate() + "/" + (fechaActual.getMonth() + 1) + "/" + fechaActual.getFullYear() + "  " + fechaActual.getHours() + ":" + min, 180, yCuerpo + 20);
 				items = items + 1;
 
 				if (items == itemsPorPagina) {
@@ -439,11 +465,18 @@ angular.module('agil.controladores')
 				}
 			}
 			//TOTAL
+			
+
+
 			doc.font('Helvetica-Bold', 8);
-			doc.text("TOTAL", 455, yCuerpo);
-			doc.text(totalBS.toFixed(2), 540, yCuerpo);
-			ancho = longitudCaracteres <= 80 ? 20 : 30
-			doc.rect(445, yCuerpo - 10, 130, ancho).stroke();
+			doc.text("TOTAL", 470, yCuerpo);
+			
+			doc.font('Helvetica', 8);
+			doc.text(totalBS.toFixed(2), 530, yCuerpo);
+
+			doc.text("SON : " + cotizacion.numero_literal, 55, yCuerpo);
+			doc.rect(50, yCuerpo-5, 520, 30).stroke();
+		
 			if (totalPaginas > 1) {
 				doc.text('Pag. ' + pagina + ' de ' + totalPaginas, 520, papel[1] - 40);
 			}
@@ -516,7 +549,7 @@ angular.module('agil.controladores')
 
 		$scope.imprimirCotizacionRollo = function (papel, cotizacion) {
 			///impresion rollo, cuarto carta
-			var doc = new PDFDocument({ size: papel, margin: 10 });
+			var doc = new PDFDocument({ size: papel, compress: false, margin: 10 });
 			var stream = doc.pipe(blobStream());
 			cotizacion.fecha = new Date(cotizacion.fecha);
 			cotizacion.fechaTexto = cotizacion.fecha.getDate() + "/" + (cotizacion.fecha.getMonth() + 1) + "/" + cotizacion.fecha.getFullYear();
@@ -578,7 +611,7 @@ angular.module('agil.controladores')
 
 		$scope.imprimirCotizacionCuartoCarta = function (papel, cotizacion, itemsPorPagina) {
 			///impresion rollo, cuarto carta
-			var doc = new PDFDocument({ size: papel, margin: 10 });
+			var doc = new PDFDocument({ size: papel, compress: false, margin: 10 });
 			var stream = doc.pipe(blobStream());
 			cotizacion.fecha = new Date(cotizacion.fecha);
 			cotizacion.fechaTexto = cotizacion.fecha.getDate() + "/" + (cotizacion.fecha.getMonth() + 1) + "/" + cotizacion.fecha.getFullYear();
@@ -648,7 +681,7 @@ angular.module('agil.controladores')
 		$scope.imprimirCotizacion = function (cotizacionId) {
 			console.log('cotizacion id')
 			console.log(cotizacionId)
-			var promesa = DatosImpresion(cotizacionId.id, $scope.usuario.id_empresa);
+			var promesa = DatosImpresionCotizacion(cotizacionId.id, $scope.usuario.id_empresa);
 			promesa.then(function (datos) {
 				console.log('datos')
 				console.log(datos.cotizacion)

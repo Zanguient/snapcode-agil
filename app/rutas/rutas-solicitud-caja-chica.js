@@ -45,11 +45,11 @@ module.exports = function (router, sequelize, Sequelize, ensureAuthorizedAdminis
                 where: { nombre_corto: 'ES_CCH' }
             }).then(function (tipoE) {
                 Clase.find({
-                    where:{id_tipo:tipoE.id,nombre_corto:'VERIFICADO'}
+                    where: { id_tipo: tipoE.id, nombre_corto: 'VERIFICADO' }
                 }).then(function (claseE) {
                     req.body.solicitudes.forEach(function (solicitud, index, array) {
                         SolicitudCajaChica.update({
-                            id_estado:claseE.id,
+                            id_estado: claseE.id,
                             id_verificador: req.body.id_verificador
                         }, {
                                 where: { id: solicitud.id }
@@ -98,7 +98,7 @@ module.exports = function (router, sequelize, Sequelize, ensureAuthorizedAdminis
                     include: [{ model: Sucursal, as: 'sucursal' },
                     {
                         model: ConceptoMovimientoCajaChica, as: 'concepto',
-                        include: [{ model: Clase, as: 'concepto'}]
+                        include: [{ model: Clase, as: 'concepto' }]
                     },
                     { model: ContabilidadCuenta, as: 'cuenta' },
                     {
@@ -117,7 +117,7 @@ module.exports = function (router, sequelize, Sequelize, ensureAuthorizedAdminis
                 },
                 {
                     model: ConceptoMovimientoCajaChica, as: 'concepto',
-                    include: [{ model: Clase, as: 'concepto', where:{nombre_corto:"KARDEX"} }]
+                    include: [{ model: Clase, as: 'concepto', where: { nombre_corto: "KARDEX" } }]
                 },
                 { model: Clase, as: 'estado' },
                 {
@@ -462,6 +462,27 @@ module.exports = function (router, sequelize, Sequelize, ensureAuthorizedAdminis
             if (req.params.movimiento != '0') {
                 condicionConceptoClase.id = req.params.movimiento
             }
+            var ordenArreglo = []
+            var textOrder=""
+            if (req.params.columna == 'usuario_solicitante') {
+                textOrder="`usuario.persona.nombre_completo` "+req.params.direccion     
+            } else  if (req.params.columna == 'concepto') {
+                textOrder="`concepto.nombre` "+req.params.direccion      
+            } else if (req.params.columna == 'beneficiario') {
+                textOrder="`solicitante.persona.nombre_completo` "+req.params.direccion     
+            } else if (req.params.columna == 'autorizador') {
+                textOrder="`autorizador.persona.nombre_completo` "+req.params.direccion     
+            } else if (req.params.columna == 'verificador') {
+                textOrder="`verificador.persona.nombre_completo` "+req.params.direccion     
+            } else if (req.params.columna == 'movimiento') {
+                textOrder="`concepto.concepto.nombre` "+req.params.direccion     
+            } else if (req.params.columna == 'estado') {
+                textOrder="`estado.nombre` "+req.params.direccion     
+            } else{
+                textOrder=req.params.columna+" "+req.params.direccion                
+            }
+
+
             if (req.params.items_pagina != '0') {
                 var datosbusqueda = {
                     offset: (req.params.items_pagina * (req.params.pagina - 1)), limit: req.params.items_pagina,
@@ -469,8 +490,12 @@ module.exports = function (router, sequelize, Sequelize, ensureAuthorizedAdminis
                     include: [{ model: Sucursal, as: 'sucursal' }, {
                         model: Usuario, as: 'autorizador',
                         include: [{ model: Persona, as: 'persona' }]
+                    },
+                    {
+                        model: Usuario, as: 'verificador',
+                        include: [{ model: Persona, as: 'persona' }]
                     }, { model: CajaChica, as: 'cajasChicas', required: false, include: [{ model: Sucursal, as: 'sucursal' }, { model: ConceptoMovimientoCajaChica, as: 'concepto', include: [{ model: Clase, as: 'concepto' }] }, { model: ContabilidadCuenta, as: 'cuenta' }, { model: Compra, as: 'compra', include: [{ model: Clase, as: 'tipoMovimiento', required: false }, { model: DetalleCompra, as: 'detallesCompra', include: [{ model: Clase, as: 'servicio' }, { model: Producto, as: 'producto' }, { model: Clase, as: 'centroCosto' }] }, { model: Proveedor, as: 'proveedor' }, { model: Sucursal, as: 'sucursal' }, { model: Movimiento, as: 'movimiento', required: false, include: [{ model: Clase, as: 'clase' }] }] }] }, { model: MedicoPaciente, as: 'solicitante', include: [{ model: Persona, as: 'persona', where: condicionPersonaSolicitanter }] }, { model: ConceptoMovimientoCajaChica, as: 'concepto', include: [{ model: Clase, as: 'concepto', where: condicionConceptoClase }] }, { model: Clase, as: 'estado' }, { model: Usuario, as: 'usuario', where: { id_empresa: req.params.id_empresa }, include: [{ model: Persona, as: 'persona', where: condicionPersonaUsuario }] }],
-                    //order: [['nombre', 'asc']]
+                    order: sequelize.literal(textOrder)
                 }
             } else {
                 var datosbusqueda = {
@@ -478,8 +503,12 @@ module.exports = function (router, sequelize, Sequelize, ensureAuthorizedAdminis
                     include: [{ model: Sucursal, as: 'sucursal' }, {
                         model: Usuario, as: 'autorizador',
                         include: [{ model: Persona, as: 'persona' }]
+                    },
+                    {
+                        model: Usuario, as: 'verificador',
+                        include: [{ model: Persona, as: 'persona' }]
                     }, { model: CajaChica, as: 'cajasChicas', required: false, include: [{ model: Sucursal, as: 'sucursal' }, { model: ConceptoMovimientoCajaChica, as: 'concepto', include: [{ model: Clase, as: 'concepto' }] }, { model: ContabilidadCuenta, as: 'cuenta' }, { model: Compra, as: 'compra', include: [{ model: Clase, as: 'tipoMovimiento', required: false }, { model: DetalleCompra, as: 'detallesCompra', include: [{ model: Clase, as: 'servicio' }, { model: Producto, as: 'producto' }, { model: Clase, as: 'centroCosto' }] }, { model: Proveedor, as: 'proveedor' }, { model: Sucursal, as: 'sucursal' }, { model: Movimiento, as: 'movimiento', required: false, include: [{ model: Clase, as: 'clase' }] }] }] }, { model: MedicoPaciente, as: 'solicitante', include: [{ model: Persona, as: 'persona', where: condicionPersonaSolicitanter }] }, { model: ConceptoMovimientoCajaChica, as: 'concepto', include: [{ model: Clase, as: 'concepto', where: condicionConceptoClase }] }, { model: Clase, as: 'estado' }, { model: Usuario, as: 'usuario', where: { id_empresa: req.params.id_empresa }, include: [{ model: Persona, as: 'persona', where: condicionPersonaUsuario }] }],
-                    //order: [['nombre', 'asc']]
+                    order: sequelize.literal(textOrder)
                 }
             }
             SolicitudCajaChica.findAndCountAll({
@@ -503,6 +532,10 @@ module.exports = function (router, sequelize, Sequelize, ensureAuthorizedAdminis
                 },
                 {
                     model: Usuario, as: 'autorizador',
+                    include: [{ model: Persona, as: 'persona' }]
+                },
+                {
+                    model: Usuario, as: 'verificador',
                     include: [{ model: Persona, as: 'persona' }]
                 },
                 {
@@ -552,7 +585,20 @@ module.exports = function (router, sequelize, Sequelize, ensureAuthorizedAdminis
                                                         total += ingresoCerrados[0].total
                                                         totalRlCaja += ingresoCerrados[0].total
                                                     }
-                                                    res.json({ totalRlCaja: totalRlCaja, total: total, solicitudes: solicitudes, paginas: Math.ceil(data.count / req.params.items_pagina) });
+                                                    if (req.params.columna = "usuario_solicitante") {
+                                                        solicitudes = solicitudes.sort(function (a, b) {
+                                                            if (req.params.direccion) {
+                                                                return a.usuario.persona.nombre_completo < b.usuario.persona.nombre_completo;
+                                                            } else {
+                                                                return a.usuario.persona.nombre_completo > b.usuario.persona.nombre_completo;
+                                                            }
+
+                                                        });
+                                                        res.json({ totalRlCaja: totalRlCaja, total: total, solicitudes: solicitudes, paginas: Math.ceil(data.count / req.params.items_pagina) });
+                                                    } else if (req.params.columna = "id") {
+                                                        res.json({ totalRlCaja: totalRlCaja, total: total, solicitudes: solicitudes, paginas: Math.ceil(data.count / req.params.items_pagina) });
+                                                    }
+
                                                 });
                                         });
                                 });
