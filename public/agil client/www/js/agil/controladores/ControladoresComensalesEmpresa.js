@@ -1,6 +1,6 @@
 angular.module('agil.controladores')
 
-    .controller('controladorComensalesEmpresa', function ($scope, $timeout, $localStorage, $location, blockUI, Clientes, ClientesNit, GuardarAlias, ObtenerAlias, GuardarGerencias, ObtenerGerencias, GuardarComensales, ObtenerComensales, GuardarComidas, ObtenerComidas, GuardarPrecioComidas, ObtenerPrecioComidas, GuardarHistorialExcel, GuardarComensalesExcel, ObtenerHistorial, GuardarEmpresasExcel) {
+    .controller('controladorComensalesEmpresa', function ($scope, $timeout, $localStorage, $location, blockUI, Clientes, ClientesNit, GuardarAlias, ObtenerAlias, GuardarGerencias, ObtenerGerencias, GuardarComensales, ObtenerComensales, GuardarComidas, ObtenerComidas, GuardarPrecioComidas, ObtenerPrecioComidas, GuardarHistorialExcel, GuardarComensalesExcel, ObtenerHistorial, GuardarEmpresasExcel, GuardarGerenciasExcel, GuardarComidasExcel, GuardarPreciosExcel) {
 
         $scope.modalEdicionAlias = 'modalAliasEmpresasCliente'
         $scope.modalEdicionGerencias = 'modalGerenciaEmpresasCliente'
@@ -311,7 +311,8 @@ angular.module('agil.controladores')
                         i++;
                     } while (worksheet['A' + row] != undefined);
                     blockUI.stop();
-                    $('fileUpload-Historial').val(null)
+                    angular.element($('fileUpload-Historial').val(null)).triggerHandler('change');
+                    // $('fileUpload-Historial').val(null)
                     $scope.guardarHistorialExcel(Historial);
                 };
                 reader.readAsBinaryString(f);
@@ -345,7 +346,8 @@ angular.module('agil.controladores')
                         i++;
                     } while (worksheet['A' + row] != undefined);
                     blockUI.stop();
-                    $('fileUploadComensales').val(null)
+                    angular.element($('fileUploadComensales').val(null)).triggerHandler('change');
+                    // $('fileUploadComensales').val(null)
                     $scope.guardarComensalesExcel(comensales);
                 };
                 reader.readAsBinaryString(f);
@@ -376,8 +378,108 @@ angular.module('agil.controladores')
                         i++;
                     } while (worksheet['A' + row] != undefined);
                     blockUI.stop();
-                    $('fileUpload-Empresas').val(null)
+                    angular.element($('fileUpload-Empresas').val(null)).triggerHandler('change');
+                    // $('fileUpload-Empresas').val(null)
                     $scope.guardarEmpresasExcel(empresas);
+                };
+                reader.readAsBinaryString(f);
+            }
+        }
+
+        $scope.subirExcelGerencias = function (event) {
+            var files = event.target.files;
+            var i, f;
+            for (i = 0, f = files[i]; i != files.length; ++i) {
+                var reader = new FileReader();
+                var name = f.name;
+                reader.onload = function (e) {
+                    blockUI.start();
+                    var data = e.target.result;
+                    var workbook = XLSX.read(data, { type: 'binary' });
+                    var first_sheet_name = workbook.SheetNames[0];
+                    var row = 2, i = 0;
+                    var worksheet = workbook.Sheets[first_sheet_name];
+                    var gerencias = [];
+                    do {
+                        var gerencia = {};
+                        gerencia.codigo = worksheet['A' + row] != undefined && worksheet['A' + row] != "" ? worksheet['A' + row].v.toString() : null;
+                        gerencia.empresaCliente = worksheet['B' + row] != undefined && worksheet['B' + row] != "" ? worksheet['B' + row].v.toString() : null;
+                        gerencia.nombre = worksheet['C' + row] != undefined && worksheet['C' + row] != "" ? worksheet['C' + row].v.toString() : null;
+                        gerencias.push(gerencia);
+                        row++;
+                        i++;
+                    } while (worksheet['A' + row] != undefined);
+                    blockUI.stop();
+                    angular.element($('fileUpload-Gerencias').val(null)).triggerHandler('change');
+                    // $('fileUpload-Gerencias').val(null)
+                    $scope.guardarGerenciasExcel(gerencias);
+                };
+                reader.readAsBinaryString(f);
+            }
+        }
+
+        $scope.subirExcelComidas = function (event) {
+            var files = event.target.files;
+            var i, f;
+            for (i = 0, f = files[i]; i != files.length; ++i) {
+                var reader = new FileReader();
+                var name = f.name;
+                reader.onload = function (e) {
+                    blockUI.start();
+                    var data = e.target.result;
+                    var workbook = XLSX.read(data, { type: 'binary' });
+                    var first_sheet_name = workbook.SheetNames[0];
+                    var row = 2, i = 0;
+                    var worksheet = workbook.Sheets[first_sheet_name];
+                    var comidas = [];
+                    do {
+                        var comida = {};
+                        comida.codigo = worksheet['A' + row] != undefined && worksheet['A' + row] != "" ? worksheet['A' + row].v.toString() : null;
+                        comida.nombre = worksheet['B' + row] != undefined && worksheet['B' + row] != "" ? worksheet['B' + row].v.toString() : null;
+                        comida.inicio = worksheet['C' + row] != undefined && worksheet['C' + row] != "" ? worksheet['C' + row].w.toString() : null;
+                        comida.final = worksheet['D' + row] != undefined && worksheet['D' + row] != "" ? worksheet['D' + row].w.toString() : null;
+                        comida.empresaCliente = worksheet['E' + row] != undefined && worksheet['E' + row] != "" ? worksheet['E' + row].v.toString() : null;
+                        comidas.push(comida);
+                        row++;
+                        i++;
+                    } while (worksheet['A' + row] != undefined);
+                    blockUI.stop();
+                    angular.element($('fileUpload-Comidas').val('')).triggerHandler('change');
+                    // $('fileUpload-Comidas').val(null)
+                    $scope.guardarComidasExcel(comidas);
+                };
+                reader.readAsBinaryString(f);
+            }
+        }
+
+        $scope.subirExcelPrecios = function (event) {
+            var files = event.target.files;
+            var i, f;
+            for (i = 0, f = files[i]; i != files.length; ++i) {
+                var reader = new FileReader();
+                var name = f.name;
+                reader.onload = function (e) {
+                    blockUI.start();
+                    var data = e.target.result;
+                    var workbook = XLSX.read(data, { type: 'binary' });
+                    var first_sheet_name = workbook.SheetNames[0];
+                    var row = 2, i = 0;
+                    var worksheet = workbook.Sheets[first_sheet_name];
+                    var precios = [];
+                    do {
+                        var precio = {};
+                        precio.codigo = worksheet['A' + row] != undefined && worksheet['A' + row] != "" ? worksheet['A' + row].v.toString() : null;
+                        precio.nombre = worksheet['B' + row] != undefined && worksheet['B' + row] != "" ? worksheet['B' + row].v.toString() : null;
+                        precio.empresaCliente = worksheet['C' + row] != undefined && worksheet['C' + row] != "" ? worksheet['C' + row].v.toString() : null;
+                        precio.precio = worksheet['D' + row] != undefined && worksheet['D' + row] != "" ? worksheet['D' + row].v.toString() : null;
+                        precios.push(precio);
+                        row++;
+                        i++;
+                    } while (worksheet['A' + row] != undefined);
+                    blockUI.stop();
+                    angular.element($('fileUpload-Precios').val('')).triggerHandler('change');
+                    // $('fileUpload-Comidas').val(null)
+                    $scope.guardarPreciosExcel(precios);
                 };
                 reader.readAsBinaryString(f);
             }
@@ -399,6 +501,30 @@ angular.module('agil.controladores')
         $scope.guardarComensalesExcel = function (comensales) {
             if (comensales.length > 0) {
                 var prom = GuardarComensalesExcel($scope.usuario.id_empresa, comensales, $scope.usuario.id)
+                prom.then(function (res) {
+                    $scope.obtenerComensales()
+                    if (!res.hasErr) {
+                        if (res.mensajes) {
+                            $scope.mostrarMensaje(res.mensaje + res.mensajes)
+                        }else{
+                            $scope.mostrarMensaje(res.mensaje)
+                        }
+                    }else{
+                        $scope.mostrarMensaje(res.mensajes)
+                    }
+                }).catch(function (err) {
+                    var msg = (err.data !== undefined && err.data !== null) ? err.data : (err.message !== undefined && err.message !== null) ? err.message : 'Se perdió la conexión.'
+                    $scope.mostrarMensaje(msg)
+                    blockUI.stop()
+                })
+            }else{
+                $scope.mostrarMensaje('Sin cambios.')
+            }
+        }
+
+        $scope.guardarPreciosExcel = function (precios) {
+            if (precios.length > 0) {
+                var prom = GuardarPreciosExcel($scope.usuario.id_empresa, precios, $scope.usuario.id)
                 prom.then(function (res) {
                     $scope.obtenerComensales()
                     if (!res.hasErr) {
@@ -472,11 +598,59 @@ angular.module('agil.controladores')
             }
         }
 
+        $scope.guardarGerenciasExcel = function (gerencias) {
+            if (gerencias.length > 0) {
+                var prom = GuardarGerenciasExcel($scope.usuario.id_empresa, gerencias, $scope.usuario.id)
+                prom.then(function (res) {
+                    $scope.obtenerGerencias()
+                    if (!res.hasErr) {
+                        if (res.mensajes) {
+                            $scope.mostrarMensaje(res.mensaje + res.mensajes)
+                        }else{
+                            $scope.mostrarMensaje(res.mensaje)
+                        }
+                    }else{
+                        $scope.mostrarMensaje(res.mensajes)
+                    }
+                }).catch(function (err) {
+                    var msg = (err.data !== undefined && err.data !== null) ? err.data : (err.message !== undefined && err.message !== null) ? err.message : 'Se perdió la conexión.'
+                    $scope.mostrarMensaje(msg)
+                    blockUI.stop()
+                })
+            }else{
+                $scope.mostrarMensaje('Sin cambios.')
+            }
+        }
+
         $scope.guardarEmpresasExcel = function (empresas) {
             if (empresas.length > 0) {
                 var prom = GuardarEmpresasExcel($scope.usuario.id_empresa, empresas, $scope.usuario.id)
                 prom.then(function (res) {
                     $scope.obtenerAliasEmpresa()
+                    if (!res.hasErr) {
+                        if (res.mensajes) {
+                            $scope.mostrarMensaje(res.mensaje + res.mensajes)
+                        }else{
+                            $scope.mostrarMensaje(res.mensaje)
+                        }
+                    }else{
+                        $scope.mostrarMensaje(res.mensajes)
+                    }
+                }).catch(function (err) {
+                    var msg = (err.data !== undefined && err.data !== null) ? err.data : (err.message !== undefined && err.message !== null) ? err.message : 'Se perdió la conexión.'
+                    $scope.mostrarMensaje(msg)
+                    blockUI.stop()
+                })
+            }else{
+                $scope.mostrarMensaje('Sin cambios.')
+            }
+        }
+
+        $scope.guardarComidasExcel = function (comidas) {
+            if (comidas.length > 0) {
+                var prom = GuardarComidasExcel($scope.usuario.id_empresa, comidas, $scope.usuario.id)
+                prom.then(function (res) {
+                    $scope.obtenerComidas()
                     if (!res.hasErr) {
                         if (res.mensajes) {
                             $scope.mostrarMensaje(res.mensaje + res.mensajes)
@@ -779,6 +953,9 @@ angular.module('agil.controladores')
         }
 
         $scope.abrirModalEdicionAlias = function () {
+            $scope.clienteEmpresaAsignacionAlias = {}
+            $scope.clienteEmpresaAsignacionAlias.empresaCliente = Object.assign({}, $scope.empresaExternaSeleccionada)
+            $scope.clienteEmpresaEdicionGerencias
             $scope.obtenerAliasEmpresa()
             $scope.activeModal = 1
             $scope.abrirPopup($scope.modalEdicionAlias);
@@ -789,6 +966,8 @@ angular.module('agil.controladores')
             $scope.cerrarPopup($scope.modalEdicionAlias);
         }
         $scope.abrirModalEdicionGerencias = function () {
+            $scope.clienteEmpresaEdicionGerencias = {}
+            $scope.clienteEmpresaEdicionGerencias.empresaCliente = Object.assign({}, $scope.empresaExternaSeleccionada)
             $scope.obtenerGerencias()
             $scope.activeModal = 2
             $scope.abrirPopup($scope.modalEdicionGerencias);
@@ -798,6 +977,8 @@ angular.module('agil.controladores')
             $scope.cerrarPopup($scope.modalEdicionGerencias);
         }
         $scope.abrirModalEdicionComensales = function () {
+            $scope.clienteEmpresaEdicionComensales = {}
+            $scope.clienteEmpresaEdicionComensales.empresaCliente = Object.assign({}, $scope.empresaExternaSeleccionada)
             $scope.obtenerGerencias()
             $scope.obtenerComensales()
             $scope.activeModal = 3
@@ -808,6 +989,8 @@ angular.module('agil.controladores')
             $scope.cerrarPopup($scope.modalEdicionComensales);
         }
         $scope.abrirModalEdicionComidas = function () {
+            $scope.clienteEmpresaComidas = {}
+            $scope.clienteEmpresaComidas.empresaCliente = Object.assign({}, $scope.empresaExternaSeleccionada)
             $scope.obtenerComidas()
             $scope.activeModal = 4
             $scope.abrirPopup($scope.modalEdicionComidas);
@@ -817,6 +1000,8 @@ angular.module('agil.controladores')
             $scope.cerrarPopup($scope.modalEdicionComidas);
         }
         $scope.abrirModalEdicionPrecios = function () {
+            $scope.clienteEmpresaPreciosComidas = {}
+            $scope.clienteEmpresaPreciosComidas.empresaCliente = Object.assign({}, $scope.empresaExternaSeleccionada)
             $scope.activeModal = 5
             $scope.obtenerComidas()
             $scope.abrirPopup($scope.modalEdicionPrecios);

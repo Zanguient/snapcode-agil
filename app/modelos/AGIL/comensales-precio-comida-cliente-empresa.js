@@ -2,7 +2,7 @@ module.exports = function (sequelize, Sequelize) {
 	var PrecioComidasClienteEmpresa = sequelize.define('agil_comensales_precio_comidas_cliente_empresa', {
 		id_comida: {
 			type: Sequelize.INTEGER,
-			field: 'cliente'
+			field: 'comida'
 		},
 		codigo: {
 			type: Sequelize.STRING,
@@ -18,7 +18,7 @@ module.exports = function (sequelize, Sequelize) {
 		},
 		precio: {
 			type: Sequelize.DECIMAL(20, 4),
-			field: 'nombre'
+			field: 'precio'
 		},
 		habilitado: {
 			type: Sequelize.BOOLEAN,

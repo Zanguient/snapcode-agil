@@ -331,18 +331,18 @@ angular.module('agil.controladores')
 			
 			doc.font('Helvetica-Bold', 8);
 			
-			doc.text($scope.usuario.empresa.razon_social.toUpperCase(), 60, 105);
+			doc.text($scope.usuario.empresa.razon_social.toUpperCase(), 60, 110);
 
 			doc.font('Helvetica', 7);
-			doc.text(cotizacion.sucursal.nombre.toUpperCase(), 60, 113);
+			doc.text(cotizacion.sucursal.nombre.toUpperCase(), 60, 118);
 			var longitudCaracteres = cotizacion.sucursal.direccion.length;
 			var yDesc = (longitudCaracteres <= 45) ? 129 : ((longitudCaracteres > 45 && longitudCaracteres <= 90) ? 139 : 145);
-			doc.text(cotizacion.sucursal.direccion.toUpperCase(), 60, 121);
+			doc.text(cotizacion.sucursal.direccion.toUpperCase(), 60, 126);
 			var telefono = (cotizacion.sucursal.telefono1 != null ? cotizacion.sucursal.telefono1 : "") +
 				(cotizacion.sucursal.telefono2 != null ? "-" + cotizacion.sucursal.telefono2 : "") +
 				(cotizacion.sucursal.telefono3 != null ? "-" + cotizacion.sucursal.telefono3 : "");
-			doc.text("TELF.: " + telefono, 60, yDesc);
-			doc.text("COCHABAMBA - BOLIVIA", 60, yDesc + 8);
+			doc.text("TELF.: " + telefono, 60, yDesc + 5);
+			doc.text("COCHABAMBA - BOLIVIA", 60, yDesc + 13);
 
 			doc.font('Helvetica-Bold', 8);
 			doc.rect(380, 40, 190, 50).stroke();
@@ -448,8 +448,8 @@ angular.module('agil.controladores')
 					min = "0" + min;
 				}
 
-				doc.text("usuario : " + $scope.usuario.nombre_usuario, 55, yCuerpo + 20);
-				doc.text("fecha : " + fechaActual.getDate() + "/" + (fechaActual.getMonth() + 1) + "/" + fechaActual.getFullYear() + "  " + fechaActual.getHours() + ":" + min, 180, yCuerpo + 20);
+				doc.text("usuario : " + $scope.usuario.nombre_usuario, 55, papel[1] - 60);
+				doc.text("fecha : " + fechaActual.getDate() + "/" + (fechaActual.getMonth() + 1) + "/" + fechaActual.getFullYear() + "  " + fechaActual.getHours() + ":" + min, 180, papel[1] - 60);
 				items = items + 1;
 
 				if (items == itemsPorPagina) {

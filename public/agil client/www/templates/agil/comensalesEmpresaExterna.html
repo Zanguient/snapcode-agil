@@ -69,8 +69,8 @@
                                     <!-- CAMBIAR aplicacion POR !aplicacion -->
                                     <input id="fileUpload-Historial" class="upload" type="file" custom-on-file-change="subirExcelHistorial" />&nbsp&nbsp
                                 </div>
-                                <a href="javascript:void(0)" class="blue" ng-click="mostrarMensaje('Sin funcionalidad')">
-                                    <i class="ace-icon fa fa-cloud-download align-top bigger-300"></i>
+                                <a href="/recursos/EJEMPLO-HISTORIAL-COMENSALES.xlsx" class="red">
+                                    <i class="ace-icon fa fa-cloud-download align-top bigger-200"></i>
                                 </a>
                                 <a href="javascript:void(0)" class="blue" ng-click="mostrarMensaje('Sin funcionalidad')">
                                     <i class="ace-icon fa fa-file-text-o align-top bigger-300"></i>
@@ -257,7 +257,7 @@
                                                 <span class="fileUpload-button ace-icon fa fa-cloud-upload align-top bigger-200"></span>
                                                 <input id="fileUpload-Empresas" class="upload" type="file" custom-on-file-change="subirExcelEmpresas" />
                                             </div>
-                                            <a href="javascript:void(0)" class="green" ng-click="mostrarMensaje('Sin funcionalidad')">
+                                            <a href="/recursos/EJEMPLO-EMPRESAS-COMENSALES.xlsx" class="red">
                                                 <i class="ace-icon fa fa-cloud-download align-top bigger-200"></i>
                                             </a>
                                         </div>
@@ -380,12 +380,13 @@
                                         </div>
                                         <div class="col-lg-7">
                                             <input type="text" ng-model="clienteEmpresaEdicionGerencias.codigo">
-                                            <a href="javascript:void(0)" class="blue" ng-click="mostrarMensaje('Sin funcionalidad')">
-                                                <i class="ace-icon fa fa-cloud-upload align-top bigger-200"></i>
-                                            </a>
-                                            <a href="javascript:void(0)" class="green" ng-click="mostrarMensaje('Sin funcionalidad')">
-                                                <i class="ace-icon fa fa-cloud-download align-top bigger-200"></i>
-                                            </a>
+                                            <div class="fileUpload green">
+                                                    <span class="fileUpload-button ace-icon fa fa-cloud-upload align-top bigger-200"></span>
+                                                    <input id="fileUpload-Gerencias" class="upload" type="file" custom-on-file-change="subirExcelGerencias" />
+                                                </div>
+                                                <a href="/recursos/EJEMPLO-GERENCIAS-COMENSALES.xlsx" class="red">
+                                                    <i class="ace-icon fa fa-cloud-download align-top bigger-200"></i>
+                                                </a>
                                         </div>
                                     </div>
                                     <div class="row form-group">
@@ -513,10 +514,9 @@
                                                 <span class="fileUpload-button ace-icon fa fa-cloud-upload align-top bigger-200"></span>
                                                 <input id="fileUploadComensales" class="upload" type="file" custom-on-file-change="subirExcelComensales" />
                                             </div>
-                                            <div class="fileUpload blue">
-                                                <span class="fileUpload-button ace-icon fa fa-cloud-upload align-top bigger-200"></span>
-                                                <input class="upload" type="file" custom-on-file-change="subirExcelComensales" />
-                                            </div>
+                                            <a href="/recursos/EJEMPLO-COMENSALES-COMENSALES.xlsx" class="red">
+                                                <i class="ace-icon fa fa-cloud-download align-top bigger-200"></i>
+                                            </a>
                                         </div>
                                     </div>
                                     <div class="row form-group">
@@ -679,10 +679,12 @@
                                         </div>
                                         <div class="col-lg-7">
                                             <input type="text" ng-model="clienteEmpresaComidas.codigo">
-                                            <a href="javascript:void(0)" class="blue" ng-click="mostrarMensaje('Sin funcionalidad')">
-                                                <i class="ace-icon fa fa-cloud-upload align-top bigger-200"></i>
-                                            </a>
-                                            <a href="javascript:void(0)" class="green" ng-click="mostrarMensaje('Sin funcionalidad')">
+                                            
+                                            <div class="fileUpload green">
+                                                <span class="fileUpload-button ace-icon fa fa-cloud-upload align-top bigger-200"></span>
+                                                <input id="fileUpload-Comidas" class="upload" type="file" custom-on-file-change="subirExcelComidas" />
+                                            </div>
+                                            <a href="/recursos/EJEMPLO-COMIDAS-COMENSALES.xlsx" class="red">
                                                 <i class="ace-icon fa fa-cloud-download align-top bigger-200"></i>
                                             </a>
                                         </div>
@@ -833,10 +835,11 @@
                                         </div>
                                         <div class="col-lg-7">
                                             <input type="text" ng-model="clienteEmpresaPreciosComidas.codigo">
-                                            <a href="javascript:void(0)" class="blue" ng-click="mostrarMensaje('Sin funcionalidad')">
-                                                <i class="ace-icon fa fa-cloud-upload align-top bigger-200"></i>
-                                            </a>
-                                            <a href="javascript:void(0)" class="green" ng-click="mostrarMensaje('Sin funcionalidad')">
+                                            <div class="fileUpload green">
+                                                <span class="fileUpload-button ace-icon fa fa-cloud-upload align-top bigger-200"></span>
+                                                <input id="fileUpload-Precios" class="upload" type="file" custom-on-file-change="subirExcelPrecios" />
+                                            </div>
+                                            <a href="/recursos/EJEMPLO-PRECIOS-COMIDAS-COMENSALES.xlsx" class="red">
                                                 <i class="ace-icon fa fa-cloud-download align-top bigger-200"></i>
                                             </a>
                                         </div>

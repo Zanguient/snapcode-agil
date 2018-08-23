@@ -36,6 +36,18 @@ angular.module('agil.servicios')
     return $resource(restServer + "cliente/empresa/excel/alias/:id_empresa/:id_usuario/:id_cliente/:desde/:hasta");
 })
 
+.factory('GerenciasExcel', function ($resource) {
+    return $resource(restServer + "cliente/empresa/excel/gerencias/:id_empresa/:id_usuario/:id_cliente");
+})
+
+.factory('ComidasExcel', function ($resource) {
+    return $resource(restServer + "cliente/empresa/excel/comidas/:id_empresa/:id_usuario/:id_cliente");
+})
+
+.factory('PreciosExcel', function ($resource) {
+    return $resource(restServer + "cliente/empresa/excel/precios/:id_empresa/:id_usuario/:id_cliente");
+})
+
 .factory('GuardarAlias', ['Alias', '$q', function (Alias, $q) {
     var res = function (idEmpresa, alias, usuario) {
         var delay = $q.defer();
@@ -235,6 +247,45 @@ angular.module('agil.servicios')
     var res = function (idEmpresa, lista, usuario, cliente) {
         var delay = $q.defer();
         AliasExcel.save({ id_empresa: idEmpresa, id_usuario: usuario, id_cliente: cliente}, lista, function (entidades) {
+            delay.resolve(entidades);
+        }, function (error) {
+            delay.reject(error);
+        });
+        return delay.promise;
+    };
+    return res;
+}])
+
+.factory('GuardarGerenciasExcel', ['GerenciasExcel', '$q', function (GerenciasExcel, $q) {
+    var res = function (idEmpresa, lista, usuario, cliente) {
+        var delay = $q.defer();
+        GerenciasExcel.save({ id_empresa: idEmpresa, id_usuario: usuario, id_cliente: cliente}, lista, function (entidades) {
+            delay.resolve(entidades);
+        }, function (error) {
+            delay.reject(error);
+        });
+        return delay.promise;
+    };
+    return res;
+}])
+
+.factory('GuardarComidasExcel', ['ComidasExcel', '$q', function (ComidasExcel, $q) {
+    var res = function (idEmpresa, lista, usuario, cliente) {
+        var delay = $q.defer();
+        ComidasExcel.save({ id_empresa: idEmpresa, id_usuario: usuario, id_cliente: cliente}, lista, function (entidades) {
+            delay.resolve(entidades);
+        }, function (error) {
+            delay.reject(error);
+        });
+        return delay.promise;
+    };
+    return res;
+}])
+
+.factory('GuardarPreciosExcel', ['PreciosExcel', '$q', function (PreciosExcel, $q) {
+    var res = function (idEmpresa, lista, usuario, cliente) {
+        var delay = $q.defer();
+        PreciosExcel.save({ id_empresa: idEmpresa, id_usuario: usuario, id_cliente: cliente}, lista, function (entidades) {
             delay.resolve(entidades);
         }, function (error) {
             delay.reject(error);

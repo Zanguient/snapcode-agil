@@ -113,20 +113,18 @@ module.exports = function (router, sequelize, Persona, Cliente, AliasClienteEmpr
                 return PrecioComidasClienteEmpresa.update({
                     codigo: precioComida.codigo,
                     id_cliente: precioComida.empresaCliente.id,
-                    nombre: precioComida.nombre,
+                    id_comida: precioComida.comida.id,
                     id_empresa: empresa,
-                    inicio: precioComida.inicio,
-                    final: precioComida.final
+                    precio: parseFloat(precioComida.precio)
                 }, { where: { id: precioComida.id }, transaction: t })
             }
         } else {
             return PrecioComidasClienteEmpresa.create({
                 codigo: precioComida.codigo,
                 id_cliente: precioComida.empresaCliente.id,
-                nombre: precioComida.nombre,
+                id_comida: precioComida.comida.id,
                 id_empresa: empresa,
-                inicio: precioComida.inicio,
-                final: precioComida.final
+                precio: parseFloat(precioComida.precio)
             }, { transaction: t })
         }
     }
@@ -187,7 +185,7 @@ module.exports = function (router, sequelize, Persona, Cliente, AliasClienteEmpr
         var erro = false
         var promises = []
         return AliasClienteEmpresa.find({
-            where: { nombre: historial.alias },
+            where: { nombre: historial.alias, id_empresa: empresa },
             transaction: t
         }).then(function (alias) {
             if (alias) {
@@ -240,7 +238,7 @@ module.exports = function (router, sequelize, Persona, Cliente, AliasClienteEmpr
     }
     function verificarDatosComensalExcel(comensal, empresa, t, i) {
         return AliasClienteEmpresa.find({
-            where: { nombre: comensal.tipo },
+            where: { nombre: comensal.tipo, id_empresa: empresa },
             transaction: t
         }).then(function (alias) {
             if (alias) {
@@ -276,12 +274,12 @@ module.exports = function (router, sequelize, Persona, Cliente, AliasClienteEmpr
     }
     function verificarDatosAliasExcel(alias, empresa, t, i) {
         return AliasClienteEmpresa.find({
-            where: { $or: [{nombre:{$like: '%' + alias.nombre}},{codigo: alias.codigo }] },
+            where: { $or: [{ nombre: { $like: '%' + alias.nombre } }, { codigo: alias.codigo }], id_empresa: empresa },
             transaction: t
         }).then(function (aliasEncontrado) {
             if (aliasEncontrado) {
                 return new Promise(function (fullfil, reject) {
-                    fullfil({ hasErr: true, mensaje: 'El código y/o alias NAME:'+alias.nombre+' código: ' + alias.codigo + ' ya existe en la base de datos', index: i + 2, tipo: 'Error' })
+                    fullfil({ hasErr: true, mensaje: 'El código y/o alias NAME:' + alias.nombre + ' código: ' + alias.codigo + ' ya existe en la base de datos', index: i + 2, tipo: 'Error' })
                 })
             } else {
                 return Cliente.find({
@@ -296,6 +294,97 @@ module.exports = function (router, sequelize, Persona, Cliente, AliasClienteEmpr
                             fullfil({ hasErr: true, mensaje: 'No se encuentra la información del cliente/empresa: ' + alias.empresaCliente, index: i + 2, tipo: 'Error' })
                         })
                     }
+                })
+            }
+        }).catch(function (err) {
+            return new Promise(function (fullfil, reject) {
+                fullfil({ hasErr: true, mensaje: err.stack, index: i + 2, tipo: 'Error' })
+            })
+        })
+    }
+    function verificarDatosGerenciasExcel(gerencia, empresa, t, i) {
+        return Cliente.find({
+            where: { razon_social: { $like: '%' + gerencia.empresaCliente } },
+            transaction: t
+        }).then(function (aliasEncontrado) {
+            if (aliasEncontrado) {
+                gerencia.empresaCliente = aliasEncontrado.dataValues
+                return GerenciasClienteEmpresa.find({
+                    where: { $or: [{ nombre: { $like: '%' + gerencia.nombre }, codigo: gerencia.codigo }], id_empresa: empresa },
+                    transaction: t
+                }).then(function (gerenciaEncontrado) {
+                    if (gerenciaEncontrado) {
+                        return new Promise(function (fullfil, reject) {
+                            fullfil({ hasErr: true, mensaje: 'El código y/o gerencia NAME:' + gerencia.nombre + ' código: ' + gerencia.codigo + ' ya existe en la base de datos', index: i + 2, tipo: 'Error' })
+                        })
+                    } else {
+                        return crearGerencia(gerencia, empresa, t)
+                    }
+                })
+            } else {
+                return new Promise(function (fullfil, reject) {
+                    fullfil({ hasErr: true, mensaje: 'No se encuentra la información del cliente/empresa: ' + gerencia.empresaCliente, index: i + 2, tipo: 'Error' })
+                })
+            }
+        }).catch(function (err) {
+            return new Promise(function (fullfil, reject) {
+                fullfil({ hasErr: true, mensaje: err.stack, index: i + 2, tipo: 'Error' })
+            })
+        })
+    }
+    function verificarDatosComidasExcel(comida, empresa, t, i) {
+        return Cliente.find({
+            where: { razon_social: { $like: '%' + comida.empresaCliente } },
+            transaction: t
+        }).then(function (aliasEncontrado) {
+            if (aliasEncontrado) {
+                comida.empresaCliente = aliasEncontrado.dataValues
+                return horarioComidasClienteEmpresa.find({
+                    where: { $or: [{ nombre: { $like: comida.nombre }, codigo: comida.codigo }], id_empresa: empresa },
+                    transaction: t
+                }).then(function (comidaEncontrada) {
+                    if (comidaEncontrada) {
+                        return new Promise(function (fullfil, reject) {
+                            fullfil({ hasErr: true, mensaje: 'El código y/o comida Nombre:' + comida.nombre + ' código: ' + comida.codigo + ' ya existe en la base de datos', index: i + 2, tipo: 'Error' })
+                        })
+                    } else {
+                        return crearComida(comida, empresa, t)
+                    }
+                })
+            } else {
+                return new Promise(function (fullfil, reject) {
+                    fullfil({ hasErr: true, mensaje: 'No se encuentra la información del cliente/empresa: ' + comida.empresaCliente, index: i + 2, tipo: 'Error' })
+                })
+            }
+        }).catch(function (err) {
+            return new Promise(function (fullfil, reject) {
+                fullfil({ hasErr: true, mensaje: err.stack, index: i + 2, tipo: 'Error' })
+            })
+        })
+    }
+    function verificarDatosPreciosExcel(precio, empresa, t, i) {
+        return Cliente.find({
+            where: { razon_social: { $like: '%' + precio.empresaCliente } },
+            transaction: t
+        }).then(function (aliasEncontrado) {
+            if (aliasEncontrado) {
+                precio.empresaCliente = aliasEncontrado.dataValues
+                return horarioComidasClienteEmpresa.find({
+                    where: { nombre: { $like: '%' + precio.nombre }, id_empresa: empresa },
+                    transaction: t
+                }).then(function (comidaEncontrada) {
+                    if (comidaEncontrada) {
+                        precio.comida = comidaEncontrada.dataValues
+                        return crearPrecioComida(precio, empresa, t)
+                    } else {
+                        return new Promise(function (fullfil, reject) {
+                            fullfil({ hasErr: true, mensaje: 'No se encuentra la información del comida/empresa: ' + precio.nombre, index: i + 2, tipo: 'Error' })
+                        })
+                    }
+                })
+            } else {
+                return new Promise(function (fullfil, reject) {
+                    fullfil({ hasErr: true, mensaje: 'No se encuentra la información del cliente/empresa: ' + precio.empresaCliente, index: i + 2, tipo: 'Error' })
                 })
             }
         }).catch(function (err) {
@@ -582,6 +671,120 @@ module.exports = function (router, sequelize, Persona, Cliente, AliasClienteEmpr
                     }
                 } else {
                     res.json({ mensaje: 'No se guardo, ocurrio un error.' })
+                }
+            }).catch(function (err) {
+                res.json({ mensaje: err.stack, hasErr: true })
+            })
+        })
+
+    router.route('/cliente/empresa/excel/gerencias/:id_empresa/:id_usuario')
+        .post(function (req, res) {
+            var Errors = []
+            var promises = []
+            sequelize.transaction(function (t) {
+                for (let i = 0; i < req.body.length; i++) {
+                    req.body[i].id_usuario = req.params.id_usuario
+                    req.body[i].id_empresa = req.params.id_empresa
+                    promises.push(verificarDatosGerenciasExcel(req.body[i], req.params.id_empresa, t, i))
+                }
+                return Promise.all(promises)
+            }).then(function (result) {
+                if (result.length > 0) {
+                    var mensajes = []
+                    result.forEach(function (dato) {
+                        if (dato !== undefined) {
+                            if (dato.hasErr) {
+                                mensajes.push(dato.mensaje)
+                            }
+                        }
+                    });
+                    if (mensajes.length === result.length) {
+                        mensajes.unshift('No se guardo')
+                        res.json({ hasErr: true, mensaje: 'No se guardo', mensajes: mensajes })
+                    } else if (mensajes.length === 0) {
+                        res.json({ mensaje: 'Guardado correctamente.' })
+                    } else {
+                        mensajes.unshift('Cantidad guardados correctamente: ' + (result.length - mensajes.length) + ', Cantidad no guardados: ' + mensajes.length)
+                        res.json({ hasErr: true, mensaje: 'Cantidad guardados correctamente: ' + (result.length - mensajes.length) + ', Cantidad no guardados: ' + mensajes.length, mensajes: mensajes })
+                    }
+                } else {
+                    res.json({ mensaje: 'No se guardo, ocurrió un error.' })
+                }
+            }).catch(function (err) {
+                res.json({ mensaje: err.stack, hasErr: true })
+            })
+        })
+
+    router.route('/cliente/empresa/excel/comidas/:id_empresa/:id_usuario')
+        .post(function (req, res) {
+            var Errors = []
+            var promises = []
+            sequelize.transaction(function (t) {
+                for (let i = 0; i < req.body.length; i++) {
+                    req.body[i].id_usuario = req.params.id_usuario
+                    req.body[i].id_empresa = req.params.id_empresa
+                    promises.push(verificarDatosComidasExcel(req.body[i], req.params.id_empresa, t, i))
+                }
+                return Promise.all(promises)
+            }).then(function (result) {
+                if (result.length > 0) {
+                    var mensajes = []
+                    result.forEach(function (dato) {
+                        if (dato !== undefined) {
+                            if (dato.hasErr) {
+                                mensajes.push(dato.mensaje)
+                            }
+                        }
+                    });
+                    if (mensajes.length === result.length) {
+                        mensajes.unshift('No se guardo')
+                        res.json({ hasErr: true, mensaje: 'No se guardo', mensajes: mensajes })
+                    } else if (mensajes.length === 0) {
+                        res.json({ mensaje: 'Guardado correctamente.' })
+                    } else {
+                        mensajes.unshift('Cantidad guardados correctamente: ' + (result.length - mensajes.length) + ', Cantidad no guardados: ' + mensajes.length)
+                        res.json({ hasErr: true, mensaje: 'Cantidad guardados correctamente: ' + (result.length - mensajes.length) + ', Cantidad no guardados: ' + mensajes.length, mensajes: mensajes })
+                    }
+                } else {
+                    res.json({ mensaje: 'No se guardo, ocurrió un error.' })
+                }
+            }).catch(function (err) {
+                res.json({ mensaje: err.stack, hasErr: true })
+            })
+        })
+
+    router.route('/cliente/empresa/excel/precios/:id_empresa/:id_usuario')
+        .post(function (req, res) {
+            var Errors = []
+            var promises = []
+            sequelize.transaction(function (t) {
+                for (let i = 0; i < req.body.length; i++) {
+                    req.body[i].id_usuario = req.params.id_usuario
+                    req.body[i].id_empresa = req.params.id_empresa
+                    promises.push(verificarDatosPreciosExcel(req.body[i], req.params.id_empresa, t, i))
+                }
+                return Promise.all(promises)
+            }).then(function (result) {
+                if (result.length > 0) {
+                    var mensajes = []
+                    result.forEach(function (dato) {
+                        if (dato !== undefined) {
+                            if (dato.hasErr) {
+                                mensajes.push(dato.mensaje)
+                            }
+                        }
+                    });
+                    if (mensajes.length === result.length) {
+                        mensajes.unshift('No se guardo')
+                        res.json({ hasErr: true, mensaje: 'No se guardo', mensajes: mensajes })
+                    } else if (mensajes.length === 0) {
+                        res.json({ mensaje: 'Guardado correctamente.' })
+                    } else {
+                        mensajes.unshift('Cantidad guardados correctamente: ' + (result.length - mensajes.length) + ', Cantidad no guardados: ' + mensajes.length)
+                        res.json({ hasErr: true, mensaje: 'Cantidad guardados correctamente: ' + (result.length - mensajes.length) + ', Cantidad no guardados: ' + mensajes.length, mensajes: mensajes })
+                    }
+                } else {
+                    res.json({ mensaje: 'No se guardo, ocurrió un error.' })
                 }
             }).catch(function (err) {
                 res.json({ mensaje: err.stack, hasErr: true })
