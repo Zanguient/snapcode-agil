@@ -442,14 +442,26 @@ angular.module('agil.controladores')
 				doc.rect(50, yCuerpo - 15, 520, 30).stroke();
 				yCuerpo = yCuerpo + 20;
 
+				doc.rect(50, yCuerpo + 40, 420, 25).stroke();
+				doc.font('Helvetica', 8);
+				doc.text("Plazo de cotizacion: "+cotizacion.plazo, 55, yCuerpo+50);
+
+				doc.rect(50, yCuerpo + 80, 420, 25).stroke();
+				doc.font('Helvetica', 8);
+				doc.text("Nota: "+cotizacion.nota, 55, yCuerpo+90);
+
+				doc.rect(50, yCuerpo + 120, 420, 25).stroke();
+				doc.font('Helvetica', 8);
+				doc.text("Observaciones: "+cotizacion.observacion, 55, yCuerpo+130);
+
 				var fechaActual = new Date();
 				var min = fechaActual.getMinutes();
 				if (min < 10) {
 					min = "0" + min;
 				}
 
-				doc.text("usuario : " + $scope.usuario.nombre_usuario, 55, papel[1] - 60);
-				doc.text("fecha : " + fechaActual.getDate() + "/" + (fechaActual.getMonth() + 1) + "/" + fechaActual.getFullYear() + "  " + fechaActual.getHours() + ":" + min, 180, papel[1] - 60);
+				doc.text("usuario : " + $scope.usuario.nombre_usuario, 380, papel[1] - 40);
+				doc.text("fecha : " + fechaActual.getDate() + "/" + (fechaActual.getMonth() + 1) + "/" + fechaActual.getFullYear() + "  " + fechaActual.getHours() + ":" + min, 480, papel[1] - 40);
 				items = items + 1;
 
 				if (items == itemsPorPagina) {

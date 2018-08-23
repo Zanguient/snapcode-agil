@@ -2421,185 +2421,287 @@ angular.module('agil.controladores')
 		}
 
 		$scope.generarExcelVentasMensuales = function () {
-			blockUI.start();
-			inicio = new Date($scope.convertirFecha($scope.fechaInicioTexto));
-			fin = new Date($scope.convertirFecha($scope.fechaFinTexto));
-			if ($scope.filtro != undefined) {
-				if ($scope.filtro.sucursal) {
-					$scope.sucursal = $scope.filtro.sucursal;
+			if ($scope.verDetalle === true) {
+
+				blockUI.start();
+				inicio = new Date($scope.convertirFecha($scope.fechaInicioTexto));
+				fin = new Date($scope.convertirFecha($scope.fechaFinTexto));
+				if ($scope.filtro != undefined) {
+					if ($scope.filtro.sucursal) {
+						$scope.sucursal = $scope.filtro.sucursal;
+					} else {
+						$scope.sucursal = 0;
+					}
 				} else {
 					$scope.sucursal = 0;
 				}
-			} else {
-				$scope.sucursal = 0;
-			}
 
 
-			var promesa = ReporteVentasMensualesDatos($scope.usuario.id_empresa, $scope.sucursal, inicio, fin);
-			promesa.then(function (datos) {
-				var detallesVenta = JSON.parse(datos.detallesVenta);
-				var data = [["FECHA DE LA FACTURA", "N° DE LA FACTURA", "N° DE AUTORIZACION", "NIT/CI CLIENTE", "NOMBRE O RAZON SOCIAL", "UBICACION CLIENTE",
-					"CODIGO", "DETALLE", "UNIDAD", "GRUPO", "CANTIDAD", "PU", "TOTAL", "IMPORTE ICE/IEHD/TASAS", "EXPORTACIONES Y OPERACIONES EXENTAS",
-					"VENTAS GRAVADAS A TASA CERO", "SUBTOTAL", "DESCUENTOS, BONIFICACIONES Y REBAJAS OBTENIDAS",
-					"IMPORTE BASE PARA DEBITO FISCAL", "DEBITO FISCAL", "SUCURSAL", "USUARIO"]]
-				if ($scope.usuario.empresa.usar_vencimientos) {
-					data[0].push('FECHA VENCIMIENTO');
-					data[0].push('LOTE');
-				}
-				data[0].push('VENDEDOR');
-				for (var i = 0; i < detallesVenta.length; i++) {
-					var columns = [];
-					detallesVenta[i].venta.fecha = new Date(detallesVenta[i].venta.fecha);
-					columns.push(detallesVenta[i].venta.fecha);
-					columns.push(detallesVenta[i].venta.factura);
-					columns.push(detallesVenta[i].venta.autorizacion);
-					columns.push(detallesVenta[i].venta.cliente.nit);
-					columns.push(detallesVenta[i].venta.cliente.razon_social);
-					columns.push(detallesVenta[i].venta.cliente.ubicacion_geografica);
-					columns.push(detallesVenta[i].producto.codigo);
-					columns.push(detallesVenta[i].producto.nombre);
-					columns.push(detallesVenta[i].producto.unidad_medida);
-					if (detallesVenta[i].producto.grupo) {
-						columns.push(detallesVenta[i].producto.grupo.nombre);
-					} else {
-						columns.push("");
-					}
-					columns.push(detallesVenta[i].cantidad);
-					columns.push(detallesVenta[i].precio_unitario);
-					columns.push(detallesVenta[i].importe);
-					columns.push(detallesVenta[i].ice);
-					columns.push(0);
-					columns.push(0);
-					columns.push(detallesVenta[i].importe - detallesVenta[i].ice);
-					var descuento = detallesVenta[i].importe - detallesVenta[i].ice - detallesVenta[i].excento + detallesVenta[i].recargo;
-					columns.push(descuento);
-					columns.push(detallesVenta[i].total);
-					columns.push(Math.round((detallesVenta[i].total * 0.13) * 100) / 100);
-					columns.push(detallesVenta[i].venta.almacen.sucursal.nombre);
-					columns.push(detallesVenta[i].venta.usuario.nombre_usuario);
-
+				var promesa = ReporteVentasMensualesDatos($scope.usuario.id_empresa, $scope.sucursal, inicio, fin);
+				promesa.then(function (datos) {
+					var detallesVenta = JSON.parse(datos.detallesVenta);
+					var data = [["FECHA DE LA FACTURA", "N° DE LA FACTURA", "N° DE AUTORIZACION", "NIT/CI CLIENTE", "NOMBRE O RAZON SOCIAL", "UBICACION CLIENTE",
+						"CODIGO", "DETALLE", "UNIDAD", "GRUPO", "CANTIDAD", "PU", "TOTAL", "IMPORTE ICE/IEHD/TASAS", "EXPORTACIONES Y OPERACIONES EXENTAS",
+						"VENTAS GRAVADAS A TASA CERO", "SUBTOTAL", "DESCUENTOS, BONIFICACIONES Y REBAJAS OBTENIDAS",
+						"IMPORTE BASE PARA DEBITO FISCAL", "DEBITO FISCAL", "SUCURSAL", "USUARIO"]]
 					if ($scope.usuario.empresa.usar_vencimientos) {
-						if (detallesVenta[i].inventario) {
-							detallesVenta[i].inventario.fecha_vencimiento = new Date(detallesVenta[i].inventario.fecha_vencimiento);
-							columns.push(detallesVenta[i].inventario.fecha_vencimiento);
-							columns.push(detallesVenta[i].inventario.lote);
-						} else if (detallesVenta[i].lote != null) {
-							detallesVenta[i].fecha_vencimiento = new Date(detallesVenta[i].fecha_vencimiento);
-							columns.push(detallesVenta[i].fecha_vencimiento);
-							columns.push(detallesVenta[i].lote);
+						data[0].push('FECHA VENCIMIENTO');
+						data[0].push('LOTE');
+					}
+					data[0].push('VENDEDOR');
+					for (var i = 0; i < detallesVenta.length; i++) {
+						var columns = [];
+						detallesVenta[i].venta.fecha = new Date(detallesVenta[i].venta.fecha);
+						columns.push(detallesVenta[i].venta.fecha);
+						columns.push(detallesVenta[i].venta.factura);
+						columns.push(detallesVenta[i].venta.autorizacion);
+						columns.push(detallesVenta[i].venta.cliente.nit);
+						columns.push(detallesVenta[i].venta.cliente.razon_social);
+						columns.push(detallesVenta[i].venta.cliente.ubicacion_geografica);
+						columns.push(detallesVenta[i].producto.codigo);
+						columns.push(detallesVenta[i].producto.nombre);
+						columns.push(detallesVenta[i].producto.unidad_medida);
+						if (detallesVenta[i].producto.grupo) {
+							columns.push(detallesVenta[i].producto.grupo.nombre);
 						} else {
 							columns.push("");
-							columns.push("");
 						}
+						columns.push(detallesVenta[i].cantidad);
+						columns.push(detallesVenta[i].precio_unitario);
+						columns.push(detallesVenta[i].importe);
+						columns.push(detallesVenta[i].ice);
+						columns.push(0);
+						columns.push(0);
+						columns.push(detallesVenta[i].importe - detallesVenta[i].ice);
+						var descuento = detallesVenta[i].importe - detallesVenta[i].ice - detallesVenta[i].excento + detallesVenta[i].recargo;
+						columns.push(descuento);
+						columns.push(detallesVenta[i].total);
+						columns.push(Math.round((detallesVenta[i].total * 0.13) * 100) / 100);
+						columns.push(detallesVenta[i].venta.almacen.sucursal.nombre);
+						columns.push(detallesVenta[i].venta.usuario.nombre_usuario);
+
+						if ($scope.usuario.empresa.usar_vencimientos) {
+							if (detallesVenta[i].inventario) {
+								detallesVenta[i].inventario.fecha_vencimiento = new Date(detallesVenta[i].inventario.fecha_vencimiento);
+								columns.push(detallesVenta[i].inventario.fecha_vencimiento);
+								columns.push(detallesVenta[i].inventario.lote);
+							} else if (detallesVenta[i].lote != null) {
+								detallesVenta[i].fecha_vencimiento = new Date(detallesVenta[i].fecha_vencimiento);
+								columns.push(detallesVenta[i].fecha_vencimiento);
+								columns.push(detallesVenta[i].lote);
+							} else {
+								columns.push("");
+								columns.push("");
+							}
+						}
+
+						columns.push((detallesVenta[i].venta.vendedor ? detallesVenta[i].venta.vendedor.persona.nombre_completo : ""));
+
+						data.push(columns);
 					}
 
-					columns.push((detallesVenta[i].venta.vendedor ? detallesVenta[i].venta.vendedor.persona.nombre_completo : ""));
+					var ws_name = "SheetJS";
+					var wb = new Workbook(), ws = sheet_from_array_of_arrays(data);
+					/* add worksheet to workbook */
+					wb.SheetNames.push(ws_name);
+					wb.Sheets[ws_name] = ws;
+					var wbout = XLSX.write(wb, { bookType: 'xlsx', bookSST: true, type: 'binary' });
+					saveAs(new Blob([s2ab(wbout)], { type: "application/octet-stream" }), "VENTAS-MENSUALES.xlsx");
+					blockUI.stop();
+				});
+			}else{
+				blockUI.start();
+				inicio = new Date($scope.convertirFecha($scope.fechaInicioTexto));
+				fin = new Date($scope.convertirFecha($scope.fechaFinTexto));
+				
+				$scope.paginator.itemsPerPage=0;			
+				var reporte = [inicio,fin];
+				var promesa = VentasProductos($scope.paginator);
+				promesa.then(function (datos) {
+					$scope.ventasExcelDetalle = datos.ventas;
+					var data = [];
 
-					data.push(columns);
-				}
+					var cabecera = ["Producto","Unidad Medida","Cantidad","Monto","Razon Social"];
+					data.push(cabecera)
+					for (let i = 0; i < $scope.ventasExcelDetalle.length; i++) {
+						columns = [];
 
-				var ws_name = "SheetJS";
-				var wb = new Workbook(), ws = sheet_from_array_of_arrays(data);
-				/* add worksheet to workbook */
-				wb.SheetNames.push(ws_name);
-				wb.Sheets[ws_name] = ws;
-				var wbout = XLSX.write(wb, { bookType: 'xlsx', bookSST: true, type: 'binary' });
-				saveAs(new Blob([s2ab(wbout)], { type: "application/octet-stream" }), "VENTAS-MENSUALES.xlsx");
-				blockUI.stop();
-			});
+						columns.push($scope.ventasExcelDetalle[i].nombre);
+						columns.push($scope.ventasExcelDetalle[i].unidad_medida);
+						columns.push($scope.ventasExcelDetalle[i].cantidad);
+						columns.push($scope.ventasExcelDetalle[i].total);
+						columns.push($scope.ventasExcelDetalle[i].razon_social);
+						data.push(columns);
+					}
+					
+					var ws_name = "SheetJS";
+					var wb = new Workbook(), ws = sheet_from_array_of_arrays(data);
+					/* add worksheet to workbook */
+					wb.SheetNames.push(ws_name);
+					wb.Sheets[ws_name] = ws;
+					var wbout = XLSX.write(wb, { bookType: 'xlsx', bookSST: true, type: 'binary' });
+					saveAs(new Blob([s2ab(wbout)], { type: "application/octet-stream" }), "VENTAS-DETALLE-PRODUCTO.xlsx");
+					blockUI.stop();
+				});
+				
+			}
 		}
 
 		$scope.generarPdfVentasMensuales = function () {
-
-			blockUI.start();
-			inicio = new Date($scope.convertirFecha($scope.fechaInicioTexto));
-			fin = new Date($scope.convertirFecha($scope.fechaFinTexto));
-			if ($scope.filtro != undefined) {
-				if ($scope.filtro.sucursal) {
-					$scope.sucursal = $scope.filtro.sucursal;
+			if ($scope.verDetalle === true) {				
+				blockUI.start();
+				inicio = new Date($scope.convertirFecha($scope.fechaInicioTexto));
+				fin = new Date($scope.convertirFecha($scope.fechaFinTexto));
+				if ($scope.filtro != undefined) {
+					if ($scope.filtro.sucursal) {
+						$scope.sucursal = $scope.filtro.sucursal;
+					} else {
+						$scope.sucursal = 0;
+					}
 				} else {
 					$scope.sucursal = 0;
 				}
-			} else {
-				$scope.sucursal = 0;
-			}
-			var reporte = [inicio, fin, $scope.sucursal];
-			var promesa = ReporteVentasMensualesDatos($scope.usuario.id_empresa, $scope.sucursal, inicio, fin);
-			promesa.then(function (datos) {
+				var reporte = [inicio, fin, $scope.sucursal];
+				var promesa = ReporteVentasMensualesDatos($scope.usuario.id_empresa, $scope.sucursal, inicio, fin);
+				promesa.then(function (datos) {
 
-				var detallesVenta = JSON.parse(datos.detallesVenta);
-				//console.log(detallesVenta)
-				var doc = new PDFDocument({ compress: false, margin: 10 });
-				var stream = doc.pipe(blobStream());
-				// draw some text
+					var detallesVenta = JSON.parse(datos.detallesVenta);
+					//console.log(detallesVenta)
+					var doc = new PDFDocument({ compress: false, margin: 10 });
+					var stream = doc.pipe(blobStream());
+					// draw some text
 
-				doc.font('Helvetica', 8);
-				var y = 150, itemsPorPagina = 15, items = 0, pagina = 1;
-				$scope.dibujarCabeceraPDFVentasMensuales(doc, datos, reporte, pagina);
-				var sumaImporte = 0, sumaImporteIce = 0, sumaImporteExp = 0, sumaImporteGrab = 0, sumaTotal = 0, sumaDescuentos = 0, sumaImporteBase = 0, sumaCredito = 0;
-				var sumaSubImporte = 0, sumaSubImporteIce = 0, sumaSubImporteExp = 0, sumaSubImporteGrab = 0, sumaSubTotal = 0, sumaSubDescuentos = 0, sumaSubImporteBase = 0, sumaSubCredito = 0;
-				for (var i = 0; i < detallesVenta.length && items <= itemsPorPagina; i++) {
-					doc.rect(40, y - 10, 540, 40).stroke();
 					doc.font('Helvetica', 8);
-					detallesVenta[i].venta.fecha = new Date(detallesVenta[i].venta.fecha); //console.log(new Date().getFullYear().toString().substr(-2));
-					doc.text(detallesVenta[i].venta.fecha.getDate() + "/" + (detallesVenta[i].venta.fecha.getMonth() + 1) + "/" + detallesVenta[i].venta.fecha.getFullYear().toString().substr(-2), 45, y);
-					doc.text((detallesVenta[i].venta.factura ? detallesVenta[i].venta.factura : ""), 80, y);
-					doc.font('Helvetica', 7);
-					doc.text(detallesVenta[i].venta.cliente.razon_social, 115, y - 2, { width: 80 });
-					doc.text(detallesVenta[i].producto.nombre, 205, y - 2, { width: 80 });
-					doc.font('Helvetica', 8);
-					doc.text(detallesVenta[i].cantidad, 300, y, { width: 50 });
-					doc.text(detallesVenta[i].producto.unidad_medida, 330, y, { width: 50 });
-					if ($scope.usuario.empresa.usar_vencimientos) {
-						if (detallesVenta[i].inventario) {
-							detallesVenta[i].inventario.fecha_vencimiento = new Date(detallesVenta[i].inventario.fecha_vencimiento);
-							doc.text(detallesVenta[i].inventario.fecha_vencimiento.getDate() + "/" + (detallesVenta[i].inventario.fecha_vencimiento.getMonth() + 1) + "/" + detallesVenta[i].inventario.fecha_vencimiento.getFullYear().toString().substr(-2), 385, y);
-							//var descuento=detallesVenta[i].importe-detallesVenta[i].ice-detallesVenta[i].excento+detallesVenta[i].recargo;
-							doc.text(detallesVenta[i].inventario.lote, 435, y);
+					var y = 150, itemsPorPagina = 15, items = 0, pagina = 1;
+					$scope.dibujarCabeceraPDFVentasMensuales(doc, datos, reporte, pagina);
+					var sumaImporte = 0, sumaImporteIce = 0, sumaImporteExp = 0, sumaImporteGrab = 0, sumaTotal = 0, sumaDescuentos = 0, sumaImporteBase = 0, sumaCredito = 0;
+					var sumaSubImporte = 0, sumaSubImporteIce = 0, sumaSubImporteExp = 0, sumaSubImporteGrab = 0, sumaSubTotal = 0, sumaSubDescuentos = 0, sumaSubImporteBase = 0, sumaSubCredito = 0;
+					for (var i = 0; i < detallesVenta.length && items <= itemsPorPagina; i++) {
+						doc.rect(40, y - 10, 540, 40).stroke();
+						doc.font('Helvetica', 8);
+						detallesVenta[i].venta.fecha = new Date(detallesVenta[i].venta.fecha); //console.log(new Date().getFullYear().toString().substr(-2));
+						doc.text(detallesVenta[i].venta.fecha.getDate() + "/" + (detallesVenta[i].venta.fecha.getMonth() + 1) + "/" + detallesVenta[i].venta.fecha.getFullYear().toString().substr(-2), 45, y);
+						doc.text((detallesVenta[i].venta.factura ? detallesVenta[i].venta.factura : ""), 80, y);
+						doc.font('Helvetica', 7);
+						doc.text(detallesVenta[i].venta.cliente.razon_social, 115, y - 2, { width: 80 });
+						doc.text(detallesVenta[i].producto.nombre, 205, y - 2, { width: 80 });
+						doc.font('Helvetica', 8);
+						doc.text(detallesVenta[i].cantidad, 300, y, { width: 50 });
+						doc.text(detallesVenta[i].producto.unidad_medida, 330, y, { width: 50 });
+						if ($scope.usuario.empresa.usar_vencimientos) {
+							if (detallesVenta[i].inventario) {
+								detallesVenta[i].inventario.fecha_vencimiento = new Date(detallesVenta[i].inventario.fecha_vencimiento);
+								doc.text(detallesVenta[i].inventario.fecha_vencimiento.getDate() + "/" + (detallesVenta[i].inventario.fecha_vencimiento.getMonth() + 1) + "/" + detallesVenta[i].inventario.fecha_vencimiento.getFullYear().toString().substr(-2), 385, y);
+								//var descuento=detallesVenta[i].importe-detallesVenta[i].ice-detallesVenta[i].excento+detallesVenta[i].recargo;
+								doc.text(detallesVenta[i].inventario.lote, 435, y);
+							}
+						}
+						doc.text(detallesVenta[i].descuento, 475, y);
+						doc.text(detallesVenta[i].recargo, 505, y);
+						doc.text(detallesVenta[i].total, 535, y);
+						//doc.text(detallesVenta[i].total,705,y);
+						y = y + 40;
+						items++;
+
+						if (items == itemsPorPagina || i + 1 == detallesVenta.length) {
+							if (i + 1 == detallesVenta.length) {
+
+							} else {
+								doc.addPage({ margin: 0, bufferPages: true });
+								y = 150;
+								items = 0;
+								pagina = pagina + 1;
+								$scope.dibujarCabeceraPDFVentasMensuales(doc, datos, reporte, pagina);
+								doc.font('Helvetica', 8);
+							}
 						}
 					}
-					doc.text(detallesVenta[i].descuento, 475, y);
-					doc.text(detallesVenta[i].recargo, 505, y);
-					doc.text(detallesVenta[i].total, 535, y);
-					//doc.text(detallesVenta[i].total,705,y);
-					y = y + 40;
-					items++;
-
-					if (items == itemsPorPagina || i + 1 == detallesVenta.length) {
-						if (i + 1 == detallesVenta.length) {
-
-						} else {
-							doc.addPage({ margin: 0, bufferPages: true });
-							y = 150;
-							items = 0;
-							pagina = pagina + 1;
-							$scope.dibujarCabeceraPDFVentasMensuales(doc, datos, reporte, pagina);
-							doc.font('Helvetica', 8);
-						}
+					var fechaActual = new Date();
+					var min = fechaActual.getMinutes();
+					if (min < 10) {
+						min = "0" + min;
 					}
-				}
-				var fechaActual = new Date();
-				var min = fechaActual.getMinutes();
-				if (min < 10) {
-					min = "0" + min;
-				}
-				doc.text("USUARIO: " + $scope.usuario.nombre_usuario, 45, y);
-				doc.text("IMPRESION : " + fechaActual.getDate() + "/" + (fechaActual.getMonth() + 1) + "/" + fechaActual.getFullYear() + " Hr. " + fechaActual.getHours() + ":" + min, 175, y);
-				doc.end();
-				stream.on('finish', function () {
-					var fileURL = stream.toBlobURL('application/pdf');
-					window.open(fileURL, '_blank', 'location=no');
+					doc.text("USUARIO: " + $scope.usuario.nombre_usuario, 45, y);
+					doc.text("IMPRESION : " + fechaActual.getDate() + "/" + (fechaActual.getMonth() + 1) + "/" + fechaActual.getFullYear() + " Hr. " + fechaActual.getHours() + ":" + min, 175, y);
+					doc.end();
+					stream.on('finish', function () {
+						var fileURL = stream.toBlobURL('application/pdf');
+						window.open(fileURL, '_blank', 'location=no');
+					});
+					blockUI.stop();
 				});
-				blockUI.stop();
-			});
+			}else{
+				blockUI.start();
+				inicio = new Date($scope.convertirFecha($scope.fechaInicioTexto));
+				fin = new Date($scope.convertirFecha($scope.fechaFinTexto));
+				$scope.paginator.itemsPerPage=0;
+			
+				var reporte = [inicio,fin];
+				var promesa = VentasProductos($scope.paginator);
+				promesa.then(function (datos) {
+					
+					$scope.ventaSinDetalle = datos.ventas;	
+					var doc = new PDFDocument({ compress: false, margin: 10 });
+					var stream = doc.pipe(blobStream());
+					doc.font('Helvetica', 8);
+					var y = 150, itemsPorPagina = 20, items = 0, pagina = 1;
+					var totalPaginas = Math.ceil($scope.ventaSinDetalle.length / itemsPorPagina);
+					$scope.dibujarCabeceraPDFVentasMensualesSinDetalle(doc, $scope.ventaSinDetalle,reporte, pagina,totalPaginas);
+					var indice = 0;
+					for (var i = 0; i < $scope.ventaSinDetalle.length && items <= itemsPorPagina; i++) {
+						indice = i + 1;
+						doc.font('Helvetica', 8);
+						doc.text(indice, 45, y);
+						doc.font('Helvetica', 8);
+						doc.text($scope.ventaSinDetalle[i].nombre, 65, y, { width: 150 });
+						doc.font('Helvetica', 8);
+						doc.text($scope.ventaSinDetalle[i].unidad_medida, 250, y);
+						doc.font('Helvetica', 8);
+						doc.text($scope.ventaSinDetalle[i].cantidad, 335, y);
+						doc.font('Helvetica', 8);
+						doc.text($scope.ventaSinDetalle[i].total, 395, y);
+						doc.font('Helvetica', 8);
+						doc.text($scope.ventaSinDetalle[i].razon_social, 450, y);
+						y = y + 30;
+						items++;
+
+						if (items == itemsPorPagina || i + 1 == $scope.ventaSinDetalle.length) {
+							if (i + 1 == $scope.ventaSinDetalle.length) {
+
+							} else {
+								doc.addPage({ margin: 0, bufferPages: true });
+								y = 150;
+								items = 0;
+								pagina = pagina + 1;
+								$scope.dibujarCabeceraPDFDetalleProductos(doc, $scope.ventaSinDetalle,reporte, pagina,totalPaginas);
+								doc.font('Helvetica', 8);
+							}
+						}
+					}
+					var fechaActual = new Date();
+					var min = fechaActual.getMinutes();
+					if (min < 10) {
+						min = "0" + min;
+					}
+					doc.text("USUARIO: " + $scope.usuario.nombre_usuario, 45, 750);
+					doc.text("IMPRESION : " + fechaActual.getDate() + "/" + (fechaActual.getMonth() + 1) + "/" + fechaActual.getFullYear() + " Hr. " + fechaActual.getHours() + ":" + min, 175, 750);
+					
+					doc.end();
+					stream.on('finish', function () {
+						var fileURL = stream.toBlobURL('application/pdf');
+						window.open(fileURL, '_blank', 'location=no');
+					});
+					blockUI.stop();
+				});
+			}
 		}
 
 		$scope.dibujarCabeceraPDFVentasMensuales = function (doc, datos, reporte, pagina) {
 			doc.font('Helvetica-Bold', 12);
 			doc.text("REPORTE DE VENTAS", 0, 25, { align: "center" });
 			doc.font('Helvetica', 8);
-			doc.text("Desde  " + reporte.fechaInicioTexto, -70, 40, { align: "center" });
-			doc.text("Hasta " + reporte.fechaFinTexto, 70, 40, { align: "center" });
+			doc.text("Desde  " + reporte.inicio, -70, 40, { align: "center" });
+			doc.text("Hasta " + reporte.fin, 70, 40, { align: "center" });
 			doc.text("FOLIO " + pagina, 550, 25);
 			doc.rect(40, 60, 540, 40).stroke();
 			doc.font('Helvetica-Bold', 8);
@@ -2625,6 +2727,28 @@ angular.module('agil.controladores')
 
 		}
 
+		$scope.dibujarCabeceraPDFVentasMensualesSinDetalle = function (doc, datos, reporte, pagina,totalPaginas) {
+			doc.font('Helvetica-Bold', 12);
+			doc.text("REPORTE DE VENTAS POR PRODUCTOS SIN DETALLE", 0, 25, { align: "center" });
+			doc.font('Helvetica', 8);
+			doc.text("Desde  " + reporte.fechaInicioTexto, -70, 40, { align: "center" });
+			doc.text("Hasta " + reporte.fechaFinTexto, 70, 40, { align: "center" });
+			doc.text("FOLIO " + pagina, 550, 25);
+
+			doc.rect(40, 100, 540, 40).stroke();
+			doc.font('Helvetica-Bold', 8);
+
+			doc.text("N°",45,110);
+			doc.text("Producto", 65, 110);
+			doc.text("Unidad Medida.", 248, 110);
+			doc.text("Cantidad", 310, 110);
+			doc.text("Monto", 395, 110);
+			doc.text("Razon Social", 445, 110);
+
+			doc.font('Helvetica', 8);
+			doc.text("Pagina "+pagina+" de "+totalPaginas,500,750);
+		}
+
 		$scope.PopoverReportesRapido = {
 			templateUrl: 'PopoverReportesRapido.html',
             title: 'Reportes Rapidos',
@@ -2632,66 +2756,72 @@ angular.module('agil.controladores')
 		}
 
 		$scope.ImprimirSimpleReporte = function (id) {
-			blockUI.start();
-			inicio = new Date($scope.convertirFecha($scope.fechaInicioTexto));
-			fin = new Date($scope.convertirFecha($scope.fechaFinTexto));
-			var promesa = detalle(inicio, fin, id);
-			promesa.then(function (datos) {
-				$scope.detallePorProducto = datos;
+				blockUI.start();
+				var idEmpresa = 0;
+				idEmpresa =  $scope.usuario.id_empresa;
+				inicio = new Date($scope.convertirFecha($scope.fechaInicioTexto));
+				fin = new Date($scope.convertirFecha($scope.fechaFinTexto));
+				var promesa = detalle(inicio, fin,idEmpresa, id);
+				promesa.then(function (datos) {
+					$scope.detallePorProducto = datos;
 
-				var doc = new PDFDocument({ compress: false, margin: 10 });
-				var stream = doc.pipe(blobStream());
-				doc.font('Helvetica', 8);
-				var y = 150, itemsPorPagina = 20, items = 0, pagina = 1;
-				$scope.dibujarCabeceraPDFDetalleProductos(doc, datos, pagina);
-				var indice = 0;
-				for (var i = 0; i < $scope.detallePorProducto.length && items <= itemsPorPagina; i++) {
-					indice = i + 1;
+					var doc = new PDFDocument({ compress: false, margin: 10 });
+					var stream = doc.pipe(blobStream());
 					doc.font('Helvetica', 8);
-					doc.text(indice, 45, y);
-					doc.font('Helvetica', 8);
-					doc.text($scope.detallePorProducto[i].producto.nombre, 75, y, { width: 150 });
-					doc.font('Helvetica', 8);
-					doc.text($scope.detallePorProducto[i].producto.unidad_medida, 250, y);
-					doc.font('Helvetica', 8);
-					doc.text($scope.detallePorProducto[i].cantidad, 325, y);
-					doc.font('Helvetica', 8);
-					doc.text($scope.detallePorProducto[i].venta.total, 395, y);
-					y = y + 30;
-					items++;
+					var y = 150, itemsPorPagina = 20, items = 0, pagina = 1;
+					var totalPaginas = Math.ceil($scope.detallePorProducto.length / itemsPorPagina);
+					$scope.dibujarCabeceraPDFDetalleProductos(doc, datos, pagina,totalPaginas);
+					var indice = 0;
+					for (var i = 0; i < $scope.detallePorProducto.length && items <= itemsPorPagina; i++) {
+						indice = i + 1;
+						doc.font('Helvetica', 8);
+						doc.text(indice, 45, y);
+						doc.font('Helvetica', 8);
+						doc.text($scope.detallePorProducto[i].producto.nombre, 75, y, { width: 150 });
+						doc.font('Helvetica', 8);
+						doc.text($scope.detallePorProducto[i].producto.unidad_medida, 250, y);
+						doc.font('Helvetica', 8);
+						doc.text($scope.detallePorProducto[i].cantidad, 325, y);
+						doc.font('Helvetica', 8);
+						doc.text($scope.detallePorProducto[i].venta.total, 395, y);
+						doc.font('Helvetica', 8);
+						doc.text($scope.detallePorProducto[i].venta.cliente.razon_social,450,y);
+						y = y + 30;
+						items++;
 
-					if (items == itemsPorPagina || i + 1 == $scope.detallePorProducto.length) {
-						if (i + 1 == $scope.detallePorProducto.length) {
+						if (items == itemsPorPagina || i + 1 == $scope.detallePorProducto.length) {
+							if (i + 1 == $scope.detallePorProducto.length) {
 
-						} else {
-							doc.addPage({ margin: 0, bufferPages: true });
-							y = 150;
-							items = 0;
-							pagina = pagina + 1;
-							$scope.dibujarCabeceraPDFDetalleProductos(doc, datos, pagina);
-							doc.font('Helvetica', 8);
+							} else {
+								doc.addPage({ margin: 0, bufferPages: true });
+								y = 150;
+								items = 0;
+								pagina = pagina + 1;
+								$scope.dibujarCabeceraPDFDetalleProductos(doc, datos, pagina,totalPaginas);
+								doc.font('Helvetica', 8);
+							}
 						}
-					}
 
-				}
-				var fechaActual = new Date();
-				var min = fechaActual.getMinutes();
-				if (min < 10) {
-					min = "0" + min;
-				}
-				doc.text("USUARIO: " + $scope.usuario.nombre_usuario, 45, 750);
-				doc.text("IMPRESION : " + fechaActual.getDate() + "/" + (fechaActual.getMonth() + 1) + "/" + fechaActual.getFullYear() + " Hr. " + fechaActual.getHours() + ":" + min, 175, 750);
-				doc.end();
-				stream.on('finish', function () {
-					var fileURL = stream.toBlobURL('application/pdf');
-					window.open(fileURL, '_blank', 'location=no');
+					}
+					var fechaActual = new Date();
+					var min = fechaActual.getMinutes();
+					if (min < 10) {
+						min = "0" + min;
+					}
+					doc.text("USUARIO: " + $scope.usuario.nombre_usuario, 45, 750);
+					doc.text("IMPRESION : " + fechaActual.getDate() + "/" + (fechaActual.getMonth() + 1) + "/" + fechaActual.getFullYear() + " Hr. " + fechaActual.getHours() + ":" + min, 175, 750);
+					
+					doc.end();
+					stream.on('finish', function () {
+						var fileURL = stream.toBlobURL('application/pdf');
+						window.open(fileURL, '_blank', 'location=no');
+					});
+					blockUI.stop();
 				});
-				blockUI.stop();
-			});
 
 		}
 
-		$scope.dibujarCabeceraPDFDetalleProductos = function (doc, datos, pagina) {
+		$scope.dibujarCabeceraPDFDetalleProductos = function (doc, datos, pagina,totalPaginas) {
 			doc.font('Helvetica-Bold', 12);
 			doc.text("DETALLE DEL PRODUCTO", 0, 25, { align: "center" });
 			doc.font('Helvetica', 8);
@@ -2712,12 +2842,26 @@ angular.module('agil.controladores')
 			doc.text("Unidad Medida", 240, 110);
 			doc.text("Cantidad", 310, 110);
 			doc.text("Monto", 390, 110, );
+			doc.text("Razon Social",450,110);
+
+			doc.font('Helvetica', 8);
+			doc.text("Pagina "+pagina+" de "+totalPaginas, 500,750);
 
 		}
 
 		$scope.cerrarReporteProductos = function () {
 			$scope.cerrarPopup($scope.modalReportesProductos);
 		}
+
+		$scope.verDetalle = true;
+		$scope.conDetalle = function(){
+			if ($scope.verDetalle === true) {
+				$scope.verDetalle = false;
+			}else if($scope.verDetalle === false){
+				$scope.verDetalle = true;
+			}
+		}
+
 		$scope.modificarVenta = function (venta) {
 			//console.log("venta ressss =========== ", venta);
 

@@ -1353,7 +1353,7 @@ angular.module('agil.controladores')
 				min = "0" + min;
 			}
 			doc.font('Helvetica', 8);
-			var y = 115, itemsPorPagina = 29, items = 0, pagina = 1, totalPaginas = Math.ceil($scope.totalViveresSolicitados.length / itemsPorPagina);
+			var y = 115, itemsPorPagina = 29, items = 0, pagina = 1, totalPaginas = Math.ceil($scope.totalViveresSolicitados.productos.length / itemsPorPagina);
 			$scope.dibujarCabeceraPDFSolicitud(doc, pagina, totalPaginas);
 
 			for (var i = 0; i < $scope.totalViveresSolicitados.productos.length && items <= itemsPorPagina; i++) {

@@ -243,16 +243,16 @@ angular.module('agil.servicios')
 	}])
 
 	.factory('detalleProductos', function ($resource) {
-		return $resource(restServer + "detalle/:inicio/:fin/:id", null,
+		return $resource(restServer + "detalle/:inicio/:fin/:idEmpresa/:id", null,
 			{
 				'update': { method: 'PUT' }
 			});
 	})
 
 	.factory('detalle', ['detalleProductos', '$q', function (detalle, $q) {
-		var res = function (inicio, fin, id) {
+		var res = function (inicio, fin,idEmpresa, id) {
 			var delay = $q.defer();
-			detalle.query({ inicio: inicio, fin: fin, id: id }, function (entidades) {
+			detalle.query({ inicio: inicio, fin: fin,idEmpresa:idEmpresa, id: id }, function (entidades) {
 				delay.resolve(entidades);
 			}, function (error) {
 					delay.reject(error);
