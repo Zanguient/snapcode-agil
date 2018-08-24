@@ -150,8 +150,10 @@ angular.module('agil.controladores')
                     }
                     else {
                         // date is valid
-                        $scope.mostrarMensaje('Esta proforma no se puede editar, ya fué facturada.')
-                        return
+                        if (!ver) {
+                            $scope.mostrarMensaje('Esta proforma no se puede editar, ya fué facturada.')
+                            return  
+                        }
                     }
                 }
             }
@@ -305,12 +307,18 @@ angular.module('agil.controladores')
                                             if (i == $scope.facturaProformas.datosProformas.length - 1) {
                                                 if ($scope.checkResourceImg($scope.usuario.empresa.imagen, $scope.usuario.empresa.imageLoaded)) {
                                                     convertUrlToBase64Image($scope.usuario.empresa.imagen, function (imagenEmpresa) {
-                                                        if (condition) {
-
+                                                        if (imagenEmpresa.length > 0 && imagenEmpresa !== "error") {
+                                                            $scope.usuario.empresa.imagen = imagenEmpresa
+                                                            $scope.usuario.empresa.imageLoaded = true
+                                                            ImprimirSalida("FACT", $scope.facturaProformas, false, $scope.usuario)
+                                                        } else {
+                                                            convertUrlToBase64Image("img/agilsoftware.png", function (imagenEmpresa) {
+                                                                $scope.mostrarMensaje('No se encuentra la imagen de la empresa. Se usara la imagen del software.')
+                                                                $scope.usuario.empresa.imagen = imagenEmpresa
+                                                                $scope.usuario.empresa.imageLoaded = true
+                                                                ImprimirSalida("FACT", $scope.facturaProformas, false, $scope.usuario)
+                                                            })
                                                         }
-                                                        $scope.usuario.empresa.imagen = imagenEmpresa
-                                                        $scope.usuario.empresa.imageLoaded = true
-                                                        ImprimirSalida("FACT", $scope.facturaProformas, false, $scope.usuario)
                                                     })
                                                 } else {
                                                     $scope.mostrarMensaje('Existe un problema con la imagen, no se incluira en la impresión.')
@@ -417,7 +425,7 @@ angular.module('agil.controladores')
                 $scope.proforma.cliente = cliente
                 $scope.obtenercentroCostosClienteEmpresa(cliente)
                 $scope.enfocar('proformaDetalle')
-            }else {
+            } else {
                 $scope.mostrarMensaje('No se permite.')
             }
         }
@@ -1071,7 +1079,7 @@ angular.module('agil.controladores')
                 $scope.proforma.cliente = sel
                 $scope.obtenercentroCostosClienteEmpresa(client)
                 $scope.cerrardialogClientesProforma()
-            }else{
+            } else {
                 $scope.mostrarMensaje('No se permite.')
             }
         }
