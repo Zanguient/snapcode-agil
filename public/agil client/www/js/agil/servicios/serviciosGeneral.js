@@ -1205,7 +1205,7 @@ angular.module('agil.servicios')
 					doc.text("SEÑOR(ES) : ", 60, 175);
 					doc.text("NIT : ", 360, 165);
 				}
-				doc.text(venta.fechaTexto, 120, 165);
+				doc.text(venta.fecha_factura ? venta.fecha_factura : venta.fechaTexto, 120, 165);
 				doc.text(venta.cliente.razon_social, 120, 175);
 				doc.text(venta.cliente.nit, 400, 165);
 
@@ -1274,7 +1274,7 @@ angular.module('agil.servicios')
 					doc.text("SEÑOR(ES) : ", 60, 175);
 					doc.text("NIT : ", 360, 165);
 				}
-				doc.text(venta.fechaTexto, 120, 165);
+				doc.text(venta.fecha_factura ? venta.fecha_factura : venta.fechaTexto, 120, 165);
 				doc.text(venta.cliente.razon_social, 120, 175);
 				doc.text(venta.cliente.nit, 400, 165);
 
@@ -1580,7 +1580,7 @@ angular.module('agil.servicios')
 					doc.text("SEÑOR(ES) : ", 60, 175);
 					doc.text("NIT : ", 470, 165);
 				}
-				doc.text(venta.fechaTexto, 120, 165);
+				doc.text(venta.fecha_factura ? venta.fecha_factura : venta.fechaTexto, 120, 165);
 				doc.text(venta.cliente.razon_social, 130, 175);
 				doc.text(venta.cliente.nit, 530, 165);
 
@@ -1660,7 +1660,7 @@ angular.module('agil.servicios')
 					doc.text("SEÑOR(ES) : ", 60, 175);
 					doc.text("NIT : ", 360, 165);
 				}
-				doc.text(venta.fechaTexto, 120, 165);
+				doc.text(venta.fecha_factura ? venta.fecha_factura : venta.fechaTexto, 120, 165);
 				doc.text(venta.cliente.razon_social, 130, 175);
 				doc.text(venta.cliente.nit, 410, 165);
 
@@ -1733,7 +1733,7 @@ angular.module('agil.servicios')
 					doc.text("SEÑOR(ES) : ", 60, 175);
 					doc.text("NIT : ", 360, 165);
 				}
-				doc.text(venta.fechaTexto, 120, 165);
+				doc.text(venta.fecha_factura ? venta.fecha_factura : venta.fechaTexto, 120, 165);
 				doc.text(venta.cliente.razon_social, 120, 175);
 				doc.text(venta.cliente.nit, 400, 165);
 				if (completa || vacia) {
@@ -1801,7 +1801,7 @@ angular.module('agil.servicios')
 					doc.text("SEÑOR(ES) : ", 60, 175);
 					doc.text("NIT : ", 360, 165);
 				}
-				doc.text(venta.fechaTexto, 120, 165);
+				doc.text(venta.fecha_factura ? venta.fecha_factura : venta.fechaTexto, 120, 165);
 				doc.text(venta.cliente.razon_social, 120, 175);
 				doc.text(venta.cliente.nit, 400, 165);
 				if (completa || vacia) {
@@ -2409,7 +2409,7 @@ angular.module('agil.servicios')
 					doc.text("NIT : ", 360, 165);
 				}
 				doc.font('Helvetica', 8);
-				doc.text(venta.fechaTexto, 120, 165);
+				doc.text(venta.fecha_factura ? venta.fecha_factura : venta.fechaTexto, 120, 165);
 				doc.text(venta.cliente.razon_social, 120, 175);
 				doc.text(venta.cliente.nit, 400, 165);
 				doc.font('Helvetica-Bold', 7);
