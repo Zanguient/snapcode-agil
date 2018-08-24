@@ -218,7 +218,17 @@
 								<span class="badge badge-info" ng-if="cotizacion.estado=='PENDIENTE'">{{cotizacion.estado}}</span>
 								<span class="badge badge-success" ng-if="cotizacion.estado=='ACEPTADO'">{{cotizacion.estado}}</span>
 								<span class="badge badge-danger" ng-if="cotizacion.estado=='RECHAZADO'">{{cotizacion.estado}}</span>
-								<span class="badge badge-warning" ng-if="cotizacion.estado=='RECHAZADO'"><i class="fa fa-info"></i></span>
+								<span class="badge badge-warning" ng-if="cotizacion.estado=='RECHAZADO'" popover-placement="right" uib-popover-template="dynamicPopoverRechazo.templateUrl" popover-trigger="outsideClick: outsideClick"
+                                            popover-title="RECHAZADO">
+									<i class="fa fa-info"></i>
+								</span>
+								<script type="text/ng-template" id="myPopoverTemplate.html">                                           
+                                    <div class="form-group">                                              
+                                      <p>Fecha: {{cotizacion.fecha_estado}}</p>
+                                      <p>Observacion: {{cotizacion.observacion}}</p>
+                                    </div>                                           
+                                </script>
+
 							</td>
 							<td><a class="red" href="javascript:void(0)" ng-click="ModificarCotizacion(cotizacion)">
 											<i class="ace-icon fa fa-pencil-square-o bigger-130"></i>

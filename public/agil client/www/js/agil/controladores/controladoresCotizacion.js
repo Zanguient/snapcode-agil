@@ -55,6 +55,9 @@ angular.module('agil.controladores')
 			$scope.paginator = Paginator();
 			$scope.paginator.column = "id";
 			$scope.paginator.direction = "desc";
+			$scope.dynamicPopoverRechazo = {
+                    templateUrl: 'myPopoverTemplate.html',
+            };
 			$scope.paginator.callBack = $scope.obtenerLista;
 			$scope.filtro = { empresa: $scope.usuario.id_empresa, inicio: "", fin: "", fecha_inicio: new Date(), fecha_fin: new Date(), busqueda: "", importe: 0 };
 			$scope.paginator.getSearch("", $scope.filtro, null);
@@ -344,17 +347,18 @@ angular.module('agil.controladores')
 			doc.text("TELF.: " + telefono, 60, yDesc + 5);
 			doc.text("COCHABAMBA - BOLIVIA", 60, yDesc + 13);
 
-			doc.font('Helvetica-Bold', 8);
-			doc.rect(380, 40, 190, 50).stroke();
-			doc.text("NRO : ", 400, 60);
+			doc.font('Helvetica-Bold', 10);
+			doc.rect(450, 40, 120, 50).stroke();
+			doc.text("NRO : ", 460, 60);
 			doc.text(cotizacion.numero_documento, 500, 60);
 
+			doc.font('Helvetica-Bold', 8);
 			doc.rect(50, 160, 520, 40).stroke();
 			doc.text("FECHA : ", 60, 165);
-			doc.text("SEÑOR(ES) : ", 60, 175);
+			doc.text("SEÑOR(ES) : ", 60, 180);
 			doc.text("NIT : ", 360, 165);
 			doc.text(cotizacion.fechaTexto, 120, 165);
-			doc.text(cotizacion.cliente.razon_social, 120, 175);
+			doc.text(cotizacion.cliente.razon_social, 120, 180);
 			doc.text(cotizacion.cliente.nit, 400, 165);
 			
 
@@ -440,28 +444,9 @@ angular.module('agil.controladores')
 				ancho = longitudCaracteres <= 80 ? 20 : 30
 				// doc.rect(35, yCuerpo - 10, 540, ancho).stroke(); /// fila de detalle
 				doc.rect(50, yCuerpo - 15, 520, 30).stroke();
-				yCuerpo = yCuerpo + 20;
+				yCuerpo = yCuerpo + 30;
 
-				doc.rect(50, yCuerpo + 40, 420, 25).stroke();
-				doc.font('Helvetica', 8);
-				doc.text("Plazo de cotizacion: "+cotizacion.plazo, 55, yCuerpo+50);
-
-				doc.rect(50, yCuerpo + 80, 420, 25).stroke();
-				doc.font('Helvetica', 8);
-				doc.text("Nota: "+cotizacion.nota, 55, yCuerpo+90);
-
-				doc.rect(50, yCuerpo + 120, 420, 25).stroke();
-				doc.font('Helvetica', 8);
-				doc.text("Observaciones: "+cotizacion.observacion, 55, yCuerpo+130);
-
-				var fechaActual = new Date();
-				var min = fechaActual.getMinutes();
-				if (min < 10) {
-					min = "0" + min;
-				}
-
-				doc.text("usuario : " + $scope.usuario.nombre_usuario, 380, papel[1] - 40);
-				doc.text("fecha : " + fechaActual.getDate() + "/" + (fechaActual.getMonth() + 1) + "/" + fechaActual.getFullYear() + "  " + fechaActual.getHours() + ":" + min, 480, papel[1] - 40);
+				
 				items = items + 1;
 
 				if (items == itemsPorPagina) {
@@ -487,7 +472,31 @@ angular.module('agil.controladores')
 			doc.text(totalBS.toFixed(2), 530, yCuerpo);
 
 			doc.text("SON : " + cotizacion.numero_literal, 55, yCuerpo);
-			doc.rect(50, yCuerpo-5, 520, 30).stroke();
+			doc.rect(50, yCuerpo-15, 520, 30).stroke();
+
+			doc.rect(50, yCuerpo + 40, 420, 25).stroke();
+			doc.font('Helvetica', 8);
+			doc.text("Plazo de cotizacion: "+cotizacion.plazo, 55, yCuerpo+50);
+
+			doc.rect(50, yCuerpo + 80, 420, 25).stroke();
+			doc.font('Helvetica', 8);
+			doc.text("Nota: "+cotizacion.nota, 55, yCuerpo+90);
+
+			doc.rect(50, yCuerpo + 120, 420, 25).stroke();
+			doc.font('Helvetica', 8);
+			doc.text("Observaciones: "+cotizacion.observacion, 55, yCuerpo+130);
+
+			var fechaActual = new Date();
+			var min = fechaActual.getMinutes();
+			if (min < 10) {
+				min = "0" + min;
+			}
+			doc.font('Helvetica', 8);
+			doc.text(cotizacion.firma, 55, papel[1] - 90);
+			doc.text(cotizacion.cargo.toUpperCase(), 55, papel[1] - 80);
+
+			doc.text("usuario : " + $scope.usuario.nombre_usuario, 380, papel[1] - 40);
+			doc.text("fecha : " + fechaActual.getDate() + "/" + (fechaActual.getMonth() + 1) + "/" + fechaActual.getFullYear() + "  " + fechaActual.getHours() + ":" + min, 480, papel[1] - 40);
 		
 			if (totalPaginas > 1) {
 				doc.text('Pag. ' + pagina + ' de ' + totalPaginas, 520, papel[1] - 40);

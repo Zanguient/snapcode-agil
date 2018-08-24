@@ -2028,9 +2028,14 @@
 				</div>
 				<div class="table-header">
 					<div class="row">
-						<div class="col-sm-12">
+						<div class="col-sm-10">
 							<h4 class="widget-title">Lista de Productos</h4>
 						</div>
+						<div class="col-sm-2">
+							<button type="button" class="btn btn-primary btn-sm btn-grafico" ng-click="graficar()">
+								<i class="ace-icon fa fa-bar-chart-o align-top bigger-100"></i>
+							</button>
+						</div>						
 					</div>
 				</div>
 
@@ -2059,11 +2064,6 @@
 										<span id="total" class="sort fa fa-sort icon-only"></span>
 									</a>
 								</th>
-								<th>
-									<a href="javascript:void(0)" ng-click="paginator.sortColumn('razon_social',obtenerLista)">Razon Social
-										<span id="razon_social" class="sort fa fa-sort icon-only"></span>
-									</a>
-								</th>
 								<th style="width:5px">Acciones</th>
 							</tr>
 						</thead>
@@ -2081,9 +2081,6 @@
 								</td>
 								<td >
 									{{producto.total}}
-								</td>
-								<td >
-									{{producto.razon_social}}
 								</td>
 								<td>	
 									<a ng-if="!moneda.edit" class="blue tooltip-info" href="javascript:void(0)" uib-tooltip="Imprimir" ng-click="ImprimirSimpleReporte(producto.id)">

@@ -791,16 +791,84 @@ module.exports = function (router, sequelize, Persona, Cliente, AliasClienteEmpr
             })
         })
 
-    router.route('/cliente/empresa/historial/:id_empresa/:id_usuario/:id_cliente/:desde/:hasta')
+    router.route('/cliente/empresa/historial/:id_empresa/:id_usuario/:id_cliente/:desde/:hasta/:periodoMes/:periodoAnio/:empresaCliente/:gerencia/:empleado/:comida/:estado')
         .post(function (req, res) {
             res.json({ mensaje: 'sin funcionalidad' })
         })
         .get(function (req, res) {
-            HistorialComidaClienteEmpresa.findAll({
-                where: { id_empresa: req.params.id_empresa, id_cliente: req.params.id_cliente },
-                include: [{ model: GerenciasClienteEmpresa, as: 'gerencia', required: false }, { model: Cliente, as: 'empresaCliente', required: false }, { model: ComensalesClienteEmpresa, as: 'comensal' }, { model: Usuario, as: 'usuario' }, { model: horarioComidasClienteEmpresa, as: 'comida' }]
-            }).then(function (historial) {
-                res.json({ historial: historial })
+            var condicionHistorial = {}
+            condicionHistorial.id_empresa = req.params.id_empresa
+            condicionHistorial.id_cliente = req.params.id_cliente
+            var desde = false
+            var hasta = false
+            if (req.params.periodoMes != "0" && req.params.periodoAnio != "0") {
+                var fecha_desde = new Date(parseInt(req.params.periodoAnio), parseInt(req.params.periodoMes), 1, 0, 0, 0)
+                var fecha_hasta = new Date(parseInt(req.params.periodoAnio), parseInt(req.params.periodoMes) + 1, 0, 23, 59, 0)
+                condicionHistorial.fecha = { $between: [fecha_desde, fecha_hasta] }
+            }else{
+                if (req.params.desde != "0") {
+                    var inicio = new Date(req.params.desde.split('/').reverse()); inicio.setHours(0, 0, 0, 0, 0);
+                    desde = true
+                }
+                if (req.params.hasta != "0") {
+                    var fin = new Date(req.params.hasta.split('/').reverse()); fin.setHours(23, 59, 0, 0, 0);
+                    hasta = true
+                }
+            }
+            if (desde && hasta) {
+                condicionHistorial.fecha = { $between: [inicio, fin] }
+            } else if (desde && !hasta) {
+                condicionHistorial.fecha = {
+                    $gte: [inicio]
+                }
+            } else if (!desde && hasta) {
+                condicionHistorial.fecha = {
+                    $lte: [fin]
+                }
+            } else if (!desde && !hasta) {
+
+            }
+            
+            if (req.params.empresaCliente != "0") {
+                condicionHistorial.id_cliente = req.params.empresaCliente
+            }
+            if (req.params.gerencia != "0") {
+
+            }
+            if (req.params.empleado != "0") {
+
+            }
+            if (req.params.comida != "0") {
+
+            }
+            if (req.params.estado != "0") {
+
+            }
+            HistorialComidaClienteEmpresa.findAndCountAll({
+                where: condicionHistorial,
+                include: [
+                    { model: GerenciasClienteEmpresa, as: 'gerencia', required: false },
+                    { model: Cliente, as: 'empresaCliente', required: false },
+                    { model: ComensalesClienteEmpresa, as: 'comensal' },
+                    { model: Usuario, as: 'usuario' },
+                    { model: horarioComidasClienteEmpresa, as: 'comida' }
+                ]
+            }).then(function (historialCount) {
+                HistorialComidaClienteEmpresa.findAll({
+                    offset: (req.params.items_pagina * (req.params.pagina - 1)), limit: req.params.items_pagina,
+                    where: condicionHistorial,
+                    include: [
+                        { model: GerenciasClienteEmpresa, as: 'gerencia', required: false },
+                        { model: Cliente, as: 'empresaCliente', required: false },
+                        { model: ComensalesClienteEmpresa, as: 'comensal' },
+                        { model: Usuario, as: 'usuario' },
+                        { model: horarioComidasClienteEmpresa, as: 'comida' }
+                    ]
+                }).then(function (historial) {
+                    res.json({ historial: historial, paginas: Math.ceil(historialCount.count / req.params.items_pagina) })
+                }).catch(function (err) {
+                    res.json({ mensaje: err.stack, hasErr: true })
+                })
             }).catch(function (err) {
                 res.json({ mensaje: err.stack, hasErr: true })
             })

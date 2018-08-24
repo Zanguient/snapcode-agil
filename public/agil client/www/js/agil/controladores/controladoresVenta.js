@@ -2777,15 +2777,17 @@ angular.module('agil.controladores')
 						doc.font('Helvetica', 8);
 						doc.text(indice, 45, y);
 						doc.font('Helvetica', 8);
-						doc.text($scope.detallePorProducto[i].producto.nombre, 75, y, { width: 150 });
+						doc.text($scope.detallePorProducto[i].venta.factura, 65, y, { width: 150 });
 						doc.font('Helvetica', 8);
-						doc.text($scope.detallePorProducto[i].producto.unidad_medida, 250, y);
+						doc.text($scope.detallePorProducto[i].producto.nombre, 120, y, { width: 150 });
 						doc.font('Helvetica', 8);
-						doc.text($scope.detallePorProducto[i].cantidad, 325, y);
+						doc.text($scope.detallePorProducto[i].producto.unidad_medida, 320, y);
 						doc.font('Helvetica', 8);
-						doc.text($scope.detallePorProducto[i].venta.total, 395, y);
+						doc.text($scope.detallePorProducto[i].cantidad, 385, y);
 						doc.font('Helvetica', 8);
-						doc.text($scope.detallePorProducto[i].venta.cliente.razon_social,450,y);
+						doc.text($scope.detallePorProducto[i].venta.total, 420, y);
+						doc.font('Helvetica', 8);
+						doc.text($scope.detallePorProducto[i].venta.cliente.razon_social,470,y);
 						y = y + 30;
 						items++;
 
@@ -2838,15 +2840,19 @@ angular.module('agil.controladores')
 			doc.rect(40, 100, 540, 40).stroke();
 			doc.font('Helvetica-Bold', 8);
 			doc.text("Nº", 45, 110);
-			doc.text("Producto", 75, 110);
-			doc.text("Unidad Medida", 240, 110);
-			doc.text("Cantidad", 310, 110);
-			doc.text("Monto", 390, 110, );
-			doc.text("Razon Social",450,110);
+			doc.text("N° Factura",65,110);
+			doc.text("Producto", 120, 110);
+			doc.text("Unidad Medida", 300, 110);
+			doc.text("Cantidad", 370, 110);
+			doc.text("Monto", 420, 110, );
+			doc.text("Razon Social",470,110);
 
 			doc.font('Helvetica', 8);
 			doc.text("Pagina "+pagina+" de "+totalPaginas, 500,750);
+		}
 
+		$scope.graficar = function(){
+			var cabecera = []
 		}
 
 		$scope.cerrarReporteProductos = function () {

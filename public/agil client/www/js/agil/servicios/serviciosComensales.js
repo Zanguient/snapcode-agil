@@ -25,7 +25,7 @@ angular.module('agil.servicios')
 })
 
 .factory('Historial', function ($resource) {
-    return $resource(restServer + "cliente/empresa/historial/:id_empresa/:id_usuario/:id_cliente/:desde/:hasta");
+    return $resource(restServer + "cliente/empresa/historial/:id_empresa/:id_usuario/:id_cliente/:desde/:hasta/:periodoMes/:periodoAnio/:empresaCliente/:gerencia/:empleado/:comida/:estado");
 })
 
 .factory('ComensalesExcel', function ($resource) {
@@ -205,9 +205,21 @@ angular.module('agil.servicios')
 }])
 
 .factory('ObtenerHistorial', ['Historial', '$q', function (Historial, $q) {
-    var res = function (idEmpresa, usuario,cliente) {
+    var res = function (idEmpresa, usuario, cliente, filtro) {
         var delay = $q.defer();
-        Historial.get({ id_empresa: idEmpresa, id_usuario: usuario, id_cliente: cliente, desde: 0, hasta: 0 }, function (entidades) {
+        Historial.get({ 
+            id_empresa: idEmpresa, 
+            id_usuario: usuario, 
+            id_cliente: cliente, 
+            desde: 0, 
+            hasta: 0, 
+            periodoMes: 0, 
+            periodoAnio: 0,
+            empresaCliente: 0, 
+            gerencia: 0, 
+            empleado: 0, 
+            comida: 0, 
+            estado: 0 }, function (entidades) {
             delay.resolve(entidades);
         }, function (error) {
             delay.reject(error);

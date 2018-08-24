@@ -53,13 +53,13 @@
                                 <label>PERIODO</label>&nbsp
                             </td>
                             <td>
-                                <input class="date-picker" type="text" ng-update-hidden data-date-format="dd/mm/yy" ng-model="filtro.fecha_inicio">
+                                <input class="date-picker" type="text" ng-update-hidden data-date-format="dd/mm/yy" ng-model="filtroComensales.fecha_inicio">
                             </td>
                             <td>
-                                <input class="date-picker" type="text" ng-update-hidden data-date-format="dd/mm/yy" ng-model="filtro.fecha_final">
+                                <input class="date-picker" type="text" ng-update-hidden data-date-format="dd/mm/yy" ng-model="filtroComensales.fecha_final">
                             </td>
                             <td>
-                                <select id="periodoFiltroComensales" name="anio" ng-options="anio as anio.nombre for anio in anios track by anio.id" ng-model="filtro.anio">
+                                <select id="periodoFiltroComensales" name="anio" ng-options="anio as anio.nombre for anio in anios track by anio.id" ng-model="filtroComensales.anio">
                                     <option value="" selected>TODOS</option>
                                 </select>
                             </td>
@@ -99,16 +99,16 @@
                                 FILTRO
                             </td>
                             <td>
-                                <input ng-model="filtro.razon" type="text">
+                                <input ng-model="filtroComensales.razon" type="text">
                             </td>
                             <td>
                                 <select ng-options="comida as (comida.nombre + '--' + comida.empresaCliente.razon_social) for comida in listaComidasclienteEmpresa track by comida.id"
-                                    ng-model="filtro.comida">
+                                    ng-model="filtroComensales.comida">
                                     <option disables value="">Seleccione la comida...</option>
                                 </select>
                             </td>
                             <td>&nbsp
-                                <select ng-model="filtro.generar">
+                                <select ng-model="filtroComensales.generar">
                                     <option selected value="1">Reporte Comedor</option>
                                     <option selected value="2">Empresa</option>
                                     <option selected value="2">Comensal</option>
@@ -145,28 +145,28 @@
                             <td>
                             </td>
                             <td>
-                                <div ng-if="filtro.actividadEconomica.id !==undefined">
-                                    <select id="filtroServicio" ng-model="filtro.servicio" ng-change="" ng-options="servicio as servicio.nombre for servicio in filser track by servicio.id">
+                                <div ng-if="filtroComensales.actividadEconomica.id !==undefined">
+                                    <select id="filtroServicio" ng-model="filtroComensales.servicio" ng-change="" ng-options="servicio as servicio.nombre for servicio in filser track by servicio.id">
                                         <option value="" selected>TODOS</option>
                                     </select>
                                 </div>
-                                <div ng-if="filtro.actividadEconomica.id ===undefined">
-                                    <select id="filtroServicio" ng-model="filtro.servicio">
+                                <div ng-if="filtroComensales.actividadEconomica.id ===undefined">
+                                    <select id="filtroServicio" ng-model="filtroComensales.servicio">
                                         <option disabled selected value="">Seleccione una actividad</option>
                                     </select>
                                 </div>
                             </td>
                             <td>&nbsp
-                                <input ng-model="filtro.comida" type="text">
+                                <input ng-model="filtroComensales.comida" type="text">
                             </td>
                             <td>
-                                <select id="filtrocomensalesestado" ng-model="filtro.estado" ng-change="">
+                                <select id="filtrocomensalesestado" ng-model="filtroComensales.estado" ng-change="">
                                     <option value="1" selected>Vigente</option>
                                     <option value="1" selected>Sin asignacion</option>
                                 </select>
                             </td>
                             <td>
-                                <input ng-model="filtro.usuario" type="text">&nbsp
+                                <input ng-model="filtroComensales.usuario" type="text">&nbsp
                             </td>
                         </tr>
                     </tbody>

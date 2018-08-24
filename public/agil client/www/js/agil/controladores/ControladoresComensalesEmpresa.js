@@ -1,6 +1,6 @@
 angular.module('agil.controladores')
 
-    .controller('controladorComensalesEmpresa', function ($scope, $timeout, $localStorage, $location, blockUI, Clientes, ClientesNit, GuardarAlias, ObtenerAlias, GuardarGerencias, ObtenerGerencias, GuardarComensales, ObtenerComensales, GuardarComidas, ObtenerComidas, GuardarPrecioComidas, ObtenerPrecioComidas, GuardarHistorialExcel, GuardarComensalesExcel, ObtenerHistorial, GuardarEmpresasExcel, GuardarGerenciasExcel, GuardarComidasExcel, GuardarPreciosExcel) {
+    .controller('controladorComensalesEmpresa', function ($scope, $timeout, $localStorage, $location, blockUI, Clientes, ClientesNit, GuardarAlias, ObtenerAlias, GuardarGerencias, ObtenerGerencias, GuardarComensales, ObtenerComensales, GuardarComidas, ObtenerComidas, GuardarPrecioComidas, ObtenerPrecioComidas, GuardarHistorialExcel, GuardarComensalesExcel, ObtenerHistorial, GuardarEmpresasExcel, GuardarGerenciasExcel, GuardarComidasExcel, GuardarPreciosExcel, Paginator) {
 
         $scope.modalEdicionAlias = 'modalAliasEmpresasCliente'
         $scope.modalEdicionGerencias = 'modalGerenciaEmpresasCliente'
@@ -275,14 +275,45 @@ angular.module('agil.controladores')
         }
 
         $scope.obtenerHistoriales = function () {
+            $scope.filtro = $scope.filtrarTransacciones($scope.filtro, true)
+            $scope.paginator.filter = $scope.filtro
             var prom = ObtenerHistorial($scope.usuario.id_empresa, $scope.usuario.id, $scope.empresaExternaSeleccionada.id)
             prom.then(function (res) {
                 if (res.hasErr) {
                     res.mostrarMensaje(res.mensaje)
                 } else {
-                    $scope.historialesComedor = res.historial
+                    $scope.historialesComedor = res.historial.rows
                 }
             })
+        }
+
+        $scope.obtenerPaginador = function () {
+            $scope.paginator = Paginator()
+            $scope.paginator.column = "fecha"
+            $scope.paginator.direccion = "asc"
+            $scope.paginator.callBack = $scope.obtenerHistoriales
+            $scope.paginator.getSearch("")
+        }
+
+        $scope.filtrarHistorial = function (filtro, _, __) {
+            if (__ !== undefined) {
+                for (var key in filtro) {
+                    if (filtro[key] == 0) {
+                        filtro[key] = ""
+                    }
+                }
+            } else {
+                for (var key in filtro) {
+                    if (filtro[key] === "" || filtro[key] === null) {
+                        filtro[key] = 0
+                    }
+                }
+            }
+            if (_ === undefined || !_) {
+                $scope.obtenerHistoriales(true)
+            } else {
+                return filtro
+            }
         }
 
         $scope.subirExcelHistorial = function (event) {
