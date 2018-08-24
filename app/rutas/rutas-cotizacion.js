@@ -295,6 +295,21 @@ module.exports = function (router, Cotizacion, DetalleCotizacion, Usuario, Produ
 			})
 		})
 
+	router.route('/cotizacion-rechazo/:id_cotizacion')
+		.put(function (req, res) {
+			Cotizacion.update({
+				estado: 'RECHAZADO',
+				fecha_estado: req.body.fecha_estado,
+				observacion: req.body.observacion,
+			}, { where: {
+					id: req.params.id_cotizacion
+				}
+			}).then(function (Cotizacion) {
+				res.json({ cotizacion: Cotizacion });
+
+			})
+		})
+
 	router.route('/cotizacion/:id/empresa/:id_empresa')
 		.get(function (req, res) {
 			Cotizacion.find({

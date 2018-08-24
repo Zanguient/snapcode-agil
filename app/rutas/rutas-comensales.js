@@ -144,7 +144,7 @@ module.exports = function (router, sequelize, Persona, Cliente, AliasClienteEmpr
                     id_cliente: historial.alias.empresaCliente.id,
                     id_comensal: historial.comensal.id,
                     id_empresa: empresa,
-                    id_gerencia: historial.comensal.gerencia.id,
+                    id_gerencia: historial.gerencia.id,
                     id_comida: historial.comida.id,
                     fecha: historial.fecha,
                     id_usuario: historial.id_usuario
@@ -206,7 +206,17 @@ module.exports = function (router, sequelize, Persona, Cliente, AliasClienteEmpr
                             transaction: t
                         }).then(function (comida) {
                             historial.comida = comida ? comida.dataValues : null
-                            return crearHistorial(historial, empresa, t)
+                            GerenciasClienteEmpresa.find({
+                                where: {nombre: historial.gerencia}
+                            }).then(function (gerenciaEncontrada) {
+                                if (gerenciaEncontrada) {
+                                    historial.gerencia = gerenciaEncontrada.dataValues
+                                    return crearHistorial(historial, empresa, t)
+                                } else {
+                                    
+                                }
+                            })
+                            
                         }).catch(function (err) {
                             return new Promise(function (fullfil, reject) {
                                 fullfil({ hasErr: true, mensaje: err.stack, index: i + 2, tipo: 'Error' })
@@ -791,7 +801,7 @@ module.exports = function (router, sequelize, Persona, Cliente, AliasClienteEmpr
             })
         })
 
-    router.route('/cliente/empresa/historial/:id_empresa/:id_usuario/:id_cliente/:desde/:hasta/:periodoMes/:periodoAnio/:empresaCliente/:gerencia/:empleado/:comida/:estado')
+    router.route('/cliente/empresa/historial/:id_empresa/:id_usuario/:id_cliente/:desde/:hasta/:periodoMes/:periodoAnio/:empresaCliente/:gerencia/:empleado/:comida/:estado/:pagina/:items_pagina')
         .post(function (req, res) {
             res.json({ mensaje: 'sin funcionalidad' })
         })

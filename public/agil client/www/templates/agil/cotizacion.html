@@ -218,7 +218,7 @@
 								<span class="badge badge-info" ng-if="cotizacion.estado=='PENDIENTE'">{{cotizacion.estado}}</span>
 								<span class="badge badge-success" ng-if="cotizacion.estado=='ACEPTADO'">{{cotizacion.estado}}</span>
 								<span class="badge badge-danger" ng-if="cotizacion.estado=='RECHAZADO'">{{cotizacion.estado}}</span>
-								<span class="badge badge-warning" ng-if="cotizacion.estado=='RECHAZADO'" popover-placement="right" uib-popover-template="dynamicPopoverRechazo.templateUrl" popover-trigger="outsideClick: outsideClick"
+								<span class="badge badge-warning puntero" ng-if="cotizacion.estado=='RECHAZADO'" popover-placement="right" uib-popover-template="dynamicPopoverRechazo.templateUrl" popover-trigger="outsideClick: outsideClick"
                                             popover-title="RECHAZADO">
 									<i class="fa fa-info"></i>
 								</span>
@@ -230,12 +230,16 @@
                                 </script>
 
 							</td>
-							<td><a class="red" href="javascript:void(0)" ng-click="ModificarCotizacion(cotizacion)">
-											<i class="ace-icon fa fa-pencil-square-o bigger-130"></i>
-										</a>
+							<td>
+								<a class="blue" href="javascript:void(0)" ng-click="ModificarCotizacion(cotizacion)">
+									<i class="ace-icon fa fa-pencil-square-o bigger-130"></i>
+								</a>
 								<a class="green" href="javascript:void(0)" ng-click="imprimirCotizacion(cotizacion)">
-													<i class="ace-icon fa fa-print bigger-130"></i>
-											</a>
+									<i class="ace-icon fa fa-print bigger-130"></i>
+								</a>
+								<a class="red" ng-if="cotizacion.estado=='PENDIENTE'" href="javascript:void(0)" ng-click="abrirDialogDialogRechazo(cotizacion)">
+									<i class="ace-icon fa fa-ban bigger-130"></i>
+								</a>
 							</td>
 						</tr>
 					</tbody>
@@ -381,7 +385,7 @@
 								<tr>
 									<td colspan="2">
 										<label>OBSERVACIÓN</label>
-										<textarea ng-model="cotizacion.observacion" class="form-control limited ng-pristine ng-untouched ng-valid ng-empty ng-valid-maxlength" id="form-field-9" maxlength="100" style=" height: 35px;"></textarea>
+										<textarea ng-model="cotizacion.descripcion" class="form-control limited ng-pristine ng-untouched ng-valid ng-empty ng-valid-maxlength" id="form-field-9" maxlength="100" style=" height: 35px;"></textarea>
 										<span class="red">(*)</span>
 										<span class="invalid-message" ng-show="formularioVenta.fecha.$dirty && formularioVenta.fecha.$invalid">
 											Dato requerido.
@@ -738,3 +742,68 @@
 		</div>
 	</div>
 </div>
+
+<!-- =========== panel editar comentario ==================== -->
+<div id="dialog-editar-rechazo" class="wizard-posicion">
+    <!-- TOPBAR -->
+    <div class="ui-dialog-titlebar ui-widget-header ui-corner-all ui-helper-clearfix ui-draggable-handle">
+        <span id="ui-id-1" class="ui-dialog-title">
+            <div>
+                <h4 class="smaller">
+                    <i class="ace-icon fa fa-ban"></i>
+                    <label>RECHAZO
+                    </label>
+                </h4>
+            </div>
+        </span>
+        <button type="button" ng-click="cerrarDialogDialogRechazo()" class="ui-dialog-titlebar-close">
+        </button>
+    </div>
+    <!-- TOPBAR -->
+    <div class="container-fluid">
+        <div class="row">
+            <h4 class="blue titulo-pre-requisito">{{paciente.nombre_completo}}</h4>
+        </div>
+        <!-- <div class="row">
+            <h4 class="blue titulo-pre-requisito">{{paciente.cargo}}</h4>
+        </div>
+        <div class="row">
+            <h4 class="blue titulo-pre-requisito">{{paciente.designacion_empresa}}</h4>
+        </div> -->
+    </div>
+    <form name="form" ng-submit="saveRechazo(rechazo)" novalidate>
+        <div class="row">
+        	<div class="col-lg-12">
+                <label for="form-field-select-1">Fecha</label>
+
+            	<input class="form-control date-picker" autocomplete="off" type="text" data-date-format="dd/mm/yyyy"
+								 id="fechaSM" ng-model="rechazo.fecha_estado" placeholder="Ingrese la fecha" />
+				<span class="red">(*)</span>
+            </div>
+            <div class="col-lg-12">
+                <label for="form-field-select-1">Observacion</label>
+                <textarea required="" ng-model="rechazo.observacion" class="form-control limited ng-pristine ng-empty ng-invalid ng-invalid-required ng-valid-maxlength ng-touched"
+                    id="form-field-9" maxlength="100" style=" height: 90px;">
+            </textarea>
+            </div>
+
+        </div>
+        <div class="space-6"></div>
+        <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix">
+            <div class="ui-dialog-buttonset">
+
+                <button  type="submit" id="guardarRequisitos" class="btn btn-primary" data-last="Finish">
+                    <i class="ace-icon fa fa-floppy-o bigger-110"></i>
+                    Guardar
+                </button>
+
+                <button type="button" ng-click="cerrarDialogDialogRechazo()" class="btn btn-danger" data-dismiss="modal">
+                    <i class="ace-icon fa fa-times"></i>
+                    Cancelar
+                </button>
+            </div>
+        </div>
+    </form>
+
+</div>
+<!-- ===== fin panel ============================= -->

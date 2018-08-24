@@ -53,6 +53,8 @@ angular.module('agil.controladores')
                 redirectProformas = true
                 return
             }
+            $scope.filtro = {desde: "", hasta: "", empresaCliente: "", id_usuario: "", id_cliente: "", periodoMes: "", periodoAnio: "", gerencia: "", comida: "" }
+            $scope.obtenerPaginador()
             $scope.listaAliasclientesEmpresa = []
             $scope.listaComensalesclienteEmpresa = []
             $scope.listaGerenciasClienteEmpresa = []
@@ -275,14 +277,14 @@ angular.module('agil.controladores')
         }
 
         $scope.obtenerHistoriales = function () {
-            $scope.filtro = $scope.filtrarTransacciones($scope.filtro, true)
+            $scope.filtro = $scope.filtrarHistorial($scope.filtro, true)
             $scope.paginator.filter = $scope.filtro
-            var prom = ObtenerHistorial($scope.usuario.id_empresa, $scope.usuario.id, $scope.empresaExternaSeleccionada.id)
+            var prom = ObtenerHistorial($scope.usuario.id_empresa, $scope.usuario.id, $scope.empresaExternaSeleccionada.id, $scope.paginator)
             prom.then(function (res) {
                 if (res.hasErr) {
                     res.mostrarMensaje(res.mensaje)
                 } else {
-                    $scope.historialesComedor = res.historial.rows
+                    $scope.historialesComedor = res.historial
                 }
             })
         }

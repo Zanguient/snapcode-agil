@@ -1077,3 +1077,7 @@ background-color:white !important;
 .canvasjs-chart-trial {
    display: none;
 }
+
+.puntero{
+	cursor: pointer;
+}

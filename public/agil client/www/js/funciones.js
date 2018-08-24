@@ -278,8 +278,9 @@ function ejecutarScriptsComprobante(IdModalVerificarCuenta, IdModalEliminarCompr
 
 }
 
-function ejecutarScriptsCotizacion(idModalWizardCotizacionEdicion) {
+function ejecutarScriptsCotizacion(idModalWizardCotizacionEdicion, idModalInventario, idModalDialogRechazo) {
 	crearPopup(idModalWizardCotizacionEdicion, "100%", 1800);
+	crearPopup(idModalDialogRechazo, "40%", 'auto');
 	aplicarDatePickers();
 }
 function ejecutarScriptsPacientes(idModalDialogVacunas, idModalDialogConsulta, idModalwizardContainerConsulta,

@@ -191,3 +191,10 @@ var res = function(idEmpresa,paginator,inicio,fin)
 		};
 		return res;
 	}])
+
+	.factory('CotizacionRechazo', function ($resource) {
+        return $resource(restServer + "cotizacion-rechazo/:id_cotizacion", { id_cotizacion: '@id_cotizacion' },
+            {
+                'update': { method: 'PUT' }
+            });
+    })

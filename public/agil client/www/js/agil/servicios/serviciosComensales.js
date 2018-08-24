@@ -25,7 +25,7 @@ angular.module('agil.servicios')
 })
 
 .factory('Historial', function ($resource) {
-    return $resource(restServer + "cliente/empresa/historial/:id_empresa/:id_usuario/:id_cliente/:desde/:hasta/:periodoMes/:periodoAnio/:empresaCliente/:gerencia/:empleado/:comida/:estado");
+    return $resource(restServer + "cliente/empresa/historial/:id_empresa/:id_usuario/:id_cliente/:desde/:hasta/:periodoMes/:periodoAnio/:empresaCliente/:gerencia/:empleado/:comida/:estado/:pagina/:items_pagina");
 })
 
 .factory('ComensalesExcel', function ($resource) {
@@ -211,15 +211,18 @@ angular.module('agil.servicios')
             id_empresa: idEmpresa, 
             id_usuario: usuario, 
             id_cliente: cliente, 
-            desde: 0, 
-            hasta: 0, 
+            desde: filtro.filter.desde ? filtro.filter.desde !== "" ? filtro.filter.desde : 0 : 0, 
+            hasta: filtro.filter.hasta ? filtro.filter.hasta !== "" ? filtro.filter.hasta : 0 : 0, 
             periodoMes: 0, 
             periodoAnio: 0,
             empresaCliente: 0, 
             gerencia: 0, 
             empleado: 0, 
             comida: 0, 
-            estado: 0 }, function (entidades) {
+            estado: 0,
+            pagina: filtro.currentPage,
+            items_pagina: filtro.itemsPerPage
+        }, function (entidades) {
             delay.resolve(entidades);
         }, function (error) {
             delay.reject(error);

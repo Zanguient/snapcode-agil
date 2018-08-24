@@ -1,11 +1,12 @@
 angular.module('agil.controladores')
 	.controller('ControladorCotizacion', function ($scope, blockUI, $localStorage, $location, $templateCache, $route, $timeout, ListaCotizacion, Cotizaciones, Cotizacion, filtroCotizaciones, Diccionario,
-		ListaInventariosProducto, ClasesTipo, $window, ListaProductosEmpresa, InventarioPaginador, ConfiguracionCotizacionVista, ConfiguracionCotizacionVistaDatos, FiltroCotizacionPaginador, Paginator, DatosImpresionCotizacion, ultimaCotizacion, ListaSucursalesUsuario, ClientesNit) {
+		ListaInventariosProducto, ClasesTipo, $window, ListaProductosEmpresa, InventarioPaginador, ConfiguracionCotizacionVista, ConfiguracionCotizacionVistaDatos, FiltroCotizacionPaginador, Paginator, DatosImpresionCotizacion, ultimaCotizacion, ListaSucursalesUsuario, ClientesNit, CotizacionRechazo) {
 
 		$scope.usuario = JSON.parse($localStorage.usuario);
 		$scope.idModalWizardCotizacionNueva = 'modal-wizard-cotizacion-nueva';
 		// $scope.idModalWizardCotizacionModificar = 'modal-wizard-cotizacion-modificar';
 		$scope.idModalInventario = "dialog-productos-venta";
+		$scope.idModalDialogRechazo = "dialog-editar-rechazo";
 		// $scope.cotizacion = new Cotizacion({detallesCotizacion:[]});
 
 		$scope.inicio = function () {
@@ -80,7 +81,7 @@ angular.module('agil.controladores')
 
 		$scope.$on('$viewContentLoaded', function () {
 			resaltarPestaña($location.path().substring(1));
-			ejecutarScriptsCotizacion($scope.idModalWizardCotizacionNueva, $scope.idModalInventario, $scope.idModalWizardCotizacionModificar);
+			ejecutarScriptsCotizacion($scope.idModalWizardCotizacionNueva, $scope.idModalInventario, $scope.idModalDialogRechazo);
 			$scope.buscarAplicacion($scope.usuario.aplicacionesUsuario, $location.path().substring(1));
 		});
 
@@ -484,7 +485,7 @@ angular.module('agil.controladores')
 
 			doc.rect(50, yCuerpo + 120, 420, 25).stroke();
 			doc.font('Helvetica', 8);
-			doc.text("Observaciones: "+cotizacion.observacion, 55, yCuerpo+130);
+			doc.text("Observaciones: "+cotizacion.descripcion, 55, yCuerpo+130);
 
 			var fechaActual = new Date();
 			var min = fechaActual.getMinutes();
@@ -748,5 +749,27 @@ angular.module('agil.controladores')
 				}
 			});
 		}
+
+		 $scope.abrirDialogDialogRechazo = function (cotizacion) {
+            $scope.rechazo = cotizacion;
+            $scope.abrirPopup($scope.idModalDialogRechazo);
+        }
+
+        $scope.cerrarDialogDialogRechazo = function () {
+            $scope.cerrarPopup($scope.idModalDialogRechazo);
+        }
+
+
+        $scope.saveRechazo = function (rechazo) {
+        	console.log("rechazo ssssss ", rechazo);
+            CotizacionRechazo.update({ id_cotizacion: rechazo.id }, rechazo, function (res) {
+                $scope.mostrarMensaje('Comentario actualizado Exitosamente!');
+            }, function (error) {
+                $scope.mostrarMensaje('Hubo un problema al guardar su comentario.');
+            });
+            blockUI.stop();
+            $scope.cerrarDialogDialogRechazo();
+        }
+
 		$scope.inicio();
 	});
