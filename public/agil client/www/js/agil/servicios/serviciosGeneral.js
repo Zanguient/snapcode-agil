@@ -1146,7 +1146,7 @@ angular.module('agil.servicios')
 					}
 					var detalles = venta.detallesVenta !== undefined ? venta.detallesVenta : venta.detallesProformas
 					var y = 240, items = 0, pagina = 1, totalPaginas = Math.ceil(venta.detallesVenta.length / itemsPorPagina);
-					DibujarCabeceraFacturaNVmedioOficio(doc, vacia, completa, venta, papel, pagina, totalPaginas, usuario,Diccionario);
+					DibujarCabeceraFacturaNVmedioOficio(doc, vacia, completa, venta, papel, pagina, totalPaginas, usuario, Diccionario);
 					for (var i = 0; i < venta.detallesVenta.length && items <= itemsPorPagina; i++) {
 						doc.font('Helvetica', 8);
 						if (venta.detallesVenta[i].producto) {
@@ -1247,7 +1247,7 @@ angular.module('agil.servicios')
 							y = 240;
 							items = 0;
 							pagina = pagina + 1;
-							DibujarCabeceraFacturaNVmedioOficio(doc, vacia, completa, venta, papel, pagina, totalPaginas, usuario,Diccionario);
+							DibujarCabeceraFacturaNVmedioOficio(doc, vacia, completa, venta, papel, pagina, totalPaginas, usuario, Diccionario);
 						}
 					}
 					if (completa || vacia) {
@@ -1548,7 +1548,7 @@ angular.module('agil.servicios')
 					}
 					var detalles = venta.detallesVenta !== undefined ? venta.detallesVenta : venta.detallesProformas
 					var y = 240, items = 0, pagina = 1, totalPaginas = Math.ceil(venta.detallesVenta.length / itemsPorPagina);
-					DibujarCabeceraFacturaNVmedioOficio(doc, vacia, completa, venta, papel, pagina, totalPaginas, usuario,Diccionario);
+					DibujarCabeceraFacturaNVmedioOficio(doc, vacia, completa, venta, papel, pagina, totalPaginas, usuario, Diccionario);
 					for (var i = 0; i < venta.detallesVenta.length && items <= itemsPorPagina; i++) {
 						doc.font('Helvetica', 8);
 						if (venta.detallesVenta[i].producto) {
@@ -1577,29 +1577,65 @@ angular.module('agil.servicios')
 								doc.text(venta.detallesVenta[i].total.toFixed(2), 520, y);
 							}
 						} else {
-							if (existenDescuentos) {
-								doc.text(venta.detallesVenta[i].servicio.codigo, 55, y);
-								doc.text(venta.detallesVenta[i].cantidad, 115, y);
-								// doc.text(venta.detallesVenta[i].servicio.unidad_medida, 140, y);
-								doc.text(venta.detallesVenta[i].servicio.nombre, 180, y - 6, { width: 120 });
-								doc.text(venta.detallesVenta[i].precio_unitario.toFixed(2), 300, y);
-								doc.text(venta.detallesVenta[i].importe.toFixed(2), 335, y);
-								// doc.text(venta.detallesVenta[i].tipo_descuento ? "%" : "Bs", 385, y - 10);
-								// doc.text(venta.detallesVenta[i].descuento.toFixed(2), 385, y);
-								// doc.text(venta.detallesVenta[i].tipo_recargo ? "%" : "Bs", 420, y - 10);
-								// doc.text(venta.detallesVenta[i].recargo.toFixed(2), 420, y);
-								// doc.text(venta.detallesVenta[i].ice.toFixed(2), 455, y);
-								// doc.text(venta.detallesVenta[i].excento.toFixed(2), 490, y);
-								doc.text(venta.detallesVenta[i].total.toFixed(2), 520, y);
+							if (venta.movimiento) {
+								venta.movimientoServicio = venta.movimiento.nombre_corto == Diccionario.EGRE_SERVICIO ? venta.movimiento : null
+							}
+							if (venta.movimientoServicio) {
+								venta.detallesVenta[i].fecha_vencimiento = new Date(venta.detallesVenta[i].fecha_vencimiento);
+								var fechaVencimientoTexto = venta.detallesVenta[i].fecha_vencimiento.getDate() + "/" + (venta.detallesVenta[i].fecha_vencimiento.getMonth() + 1) + "/" + venta.detallesVenta[i].fecha_vencimiento.getFullYear().toString().substring(2);
+
+								if (existenDescuentos) {
+									var longitudCaracteres = venta.detallesVenta[i].servicio.nombre.length;
+									var yDesc = (longitudCaracteres <= 24) ? y : ((longitudCaracteres > 24 && longitudCaracteres <= 60) ? y - 4 : y - 11);
+									doc.text(venta.detallesVenta[i].servicio.nombre, 55, yDesc, { width: 130 });
+									//doc.text(venta.detallesVenta[i].precio_unitario.toFixed(2), 300, y);
+									doc.text(venta.detallesVenta[i].importe.toFixed(2), 335, y);
+									doc.text(venta.detallesVenta[i].descuento.toFixed(2), 385, y);
+									doc.text(venta.detallesVenta[i].recargo.toFixed(2), 420, y);
+									doc.text(venta.detallesVenta[i].ice.toFixed(2), 455, y);
+									doc.text(venta.detallesVenta[i].excento.toFixed(2), 490, y);
+									//doc.text(venta.detallesVenta[i].importe.toFixed(2), 450, y);
+									//doc.text((venta.detallesVenta[i].descuento ? venta.detallesVenta[i].descuento.toFixed(2) : "0.00"), 490, y);
+									doc.text(venta.detallesVenta[i].total.toFixed(2), 530, y);
+									if (completa || vacia) {
+										doc.rect(50, y - 15, 520, 30).stroke();
+									}
+								} else {
+									var longitudCaracteres = venta.detallesVenta[i].servicio.nombre.length;
+									var yDesc = (longitudCaracteres <= 24) ? y : ((longitudCaracteres > 24 && longitudCaracteres <= 60) ? y - 4 : y - 11);
+									doc.text(venta.detallesVenta[i].servicio.nombre, 55, yDesc, { width: 130 });
+									//doc.text(venta.detallesVenta[i].importe.toFixed(2), 450, y);
+									//doc.text((venta.detallesVenta[i].descuento ? venta.detallesVenta[i].descuento.toFixed(2) : "0.00"), 490, y);
+									doc.text(venta.detallesVenta[i].total.toFixed(2), 530, y);
+									if (completa || vacia) {
+										doc.rect(50, y - 15, 520, 30).stroke();
+									}
+								}
 							} else {
-								doc.text(venta.detallesVenta[i].servicio.codigo, 55, y);
-								doc.text(venta.detallesVenta[i].cantidad, 110, y);
-								// doc.text(venta.detallesVenta[i].servicio.unidad_medida, 165, y);
-								var longitudCaracteres = venta.detallesVenta[i].servicio.nombre.length;
-								var yDesc = (longitudCaracteres <= 45) ? y : ((longitudCaracteres > 45 && longitudCaracteres <= 90) ? y - 4 : y - 11);
-								doc.text(venta.detallesVenta[i].servicio.nombre, 220, yDesc, { width: 225 });
-								doc.text(venta.detallesVenta[i].precio_unitario.toFixed(2), 450, y);
-								doc.text(venta.detallesVenta[i].total.toFixed(2), 520, y);
+								if (existenDescuentos) {
+									doc.text(venta.detallesVenta[i].servicio.codigo, 55, y);
+									doc.text(venta.detallesVenta[i].cantidad, 115, y);
+									// doc.text(venta.detallesVenta[i].servicio.unidad_medida, 140, y);
+									doc.text(venta.detallesVenta[i].servicio.nombre, 180, y - 6, { width: 120 });
+									doc.text(venta.detallesVenta[i].precio_unitario.toFixed(2), 300, y);
+									doc.text(venta.detallesVenta[i].importe.toFixed(2), 335, y);
+									// doc.text(venta.detallesVenta[i].tipo_descuento ? "%" : "Bs", 385, y - 10);
+									// doc.text(venta.detallesVenta[i].descuento.toFixed(2), 385, y);
+									// doc.text(venta.detallesVenta[i].tipo_recargo ? "%" : "Bs", 420, y - 10);
+									// doc.text(venta.detallesVenta[i].recargo.toFixed(2), 420, y);
+									// doc.text(venta.detallesVenta[i].ice.toFixed(2), 455, y);
+									// doc.text(venta.detallesVenta[i].excento.toFixed(2), 490, y);
+									doc.text(venta.detallesVenta[i].total.toFixed(2), 520, y);
+								} else {
+									doc.text(venta.detallesVenta[i].servicio.codigo, 55, y);
+									doc.text(venta.detallesVenta[i].cantidad, 110, y);
+									// doc.text(venta.detallesVenta[i].servicio.unidad_medida, 165, y);
+									var longitudCaracteres = venta.detallesVenta[i].servicio.nombre.length;
+									var yDesc = (longitudCaracteres <= 45) ? y : ((longitudCaracteres > 45 && longitudCaracteres <= 90) ? y - 4 : y - 11);
+									doc.text(venta.detallesVenta[i].servicio.nombre, 220, yDesc, { width: 225 });
+									doc.text(venta.detallesVenta[i].precio_unitario.toFixed(2), 450, y);
+									doc.text(venta.detallesVenta[i].total.toFixed(2), 520, y);
+								}
 							}
 						}
 
@@ -1614,7 +1650,7 @@ angular.module('agil.servicios')
 							y = 240;
 							items = 0;
 							pagina = pagina + 1;
-							DibujarCabeceraFacturaNVmedioOficio(doc, vacia, completa, venta, papel, pagina, totalPaginas, usuario,Diccionario);
+							DibujarCabeceraFacturaNVmedioOficio(doc, vacia, completa, venta, papel, pagina, totalPaginas, usuario, Diccionario);
 						}
 					}
 					if (completa || vacia) {
@@ -1821,7 +1857,7 @@ angular.module('agil.servicios')
 	}])
 
 	.factory('DibujarCabeceraFacturaNVmedioOficio', ['VerificarDescuentos', function (VerificarDescuentos) {
-		var res = function (doc, vacia, completa, venta, papel, pagina, totalPaginas, usuario,Diccionario) {
+		var res = function (doc, vacia, completa, venta, papel, pagina, totalPaginas, usuario, Diccionario) {
 			if (venta.configuracion.usar_pf) {
 				if (vacia) {
 					if (usuario.empresa.imagen.length > 100) { doc.image(usuario.empresa.imagen, 60, 40, { fit: [65, 65] }); } //width: 50, height: 50
