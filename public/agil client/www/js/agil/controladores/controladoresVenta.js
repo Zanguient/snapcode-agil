@@ -1692,17 +1692,21 @@ angular.module('agil.controladores')
 						} else {
 							blockUI.stop();
 							$scope.cerrarPopPupEdicion();
-							if ($scope.usuario.empresa.usar_vencimientos) {
-								$scope.impresion = {
-									movimiento: movimiento,
-									res: res,
-									al_guardar: true,
-									usuario: $scope.usuario
-								}
-								$scope.abrirPopup($scope.idModalImpresionVencimiento);
-								//ImprimirSalida(movimiento, res, true, $scope.usuario);
-							} else {
+							if (movimiento == $scope.diccionario.EGRE_SERVICIO) {
 								ImprimirSalida(movimiento, res, true, $scope.usuario, false);
+							} else {
+								if ($scope.usuario.empresa.usar_vencimientos) {
+									$scope.impresion = {
+										movimiento: movimiento,
+										res: res,
+										al_guardar: true,
+										usuario: $scope.usuario
+									}
+									$scope.abrirPopup($scope.idModalImpresionVencimiento);
+									//ImprimirSalida(movimiento, res, true, $scope.usuario);
+								} else {
+									ImprimirSalida(movimiento, res, true, $scope.usuario, false);
+								}
 							}
 							$scope.crearNuevaVenta(res);
 							$scope.mostrarMensaje('Venta registrada exitosamente!');

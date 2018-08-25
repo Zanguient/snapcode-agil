@@ -36,10 +36,10 @@
 									<option value="12-DICIEMBRE">DICIEMBRE</option>
 								</select>&nbsp
 							</td>
-							<td>
+							<td ng-if="usuario.empresa.usar_venta_servicio" >
 								MOVIMIENTO
 							</td>
-							<td>
+							<td ng-if="usuario.empresa.usar_venta_servicio">
 									<select id="transaccion" name="transaccion" ng-model="reporte.movimiento" ng-options="transaccion.nombre_corto as transaccion.nombre for transaccion in movimientosEgreso|filtroMovLibroVenta track by transaccion.id" data-placeholder="Elija un tipo de transaccion">
 											<option value="">TODOS</option>
 											

@@ -271,7 +271,7 @@
 								 class="red" href="javascript:void(0)" e-disabled="!aplicacion.puede_eliminar" ng-click="mostrarConfirmacionEliminacionVenta(venta)">
 									<i class="ace-icon fa fa-trash-o bigger-130"></i>
 								</a>
-								<a class="red" href="javascript:void(0)" ng-if="usuario.empresa.usar_vencimientos" ng-click="imprimirVentaConVencimiento(venta)">
+								<a class="red" href="javascript:void(0)" ng-if="usuario.empresa.usar_vencimientos && venta.movimiento!=undefined" ng-click="imprimirVentaConVencimiento(venta)">
 									<i class="ace-icon fa fa-print bigger-130"></i>
 								</a>
 								<a e-disabled="!aplicacion.puede_modificar" ng-if="(venta.movimiento.clase.nombre_corto==diccionario.EGRE_FACTURACION || venta.movimiento.clase.nombre_corto==diccionario.EGRE_PROFORMA) && usuario.empresa.usar_edicion_venta"
