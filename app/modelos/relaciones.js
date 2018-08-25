@@ -16,8 +16,8 @@ module.exports = function (sequelize, Usuario, Persona, Rol, UsuarioRol, Tipo, C
 	RrhhEmpleadoAusencia, RrhhEmpleadoVacaciones, RrhhEmpleadoCompensacionAusencia, RrhhClaseAsuencia, RrhhEmpleadoHistorialVacacion, RrhhEmpleadoTr3, RrhhEmpleadoAnticipoTr3, RrhhEmpleadoDeduccionIngreso,
 	RrhhEmpleadoBeneficioSocial, RrhhEmpleadoBitacoraFicha, UsuarioGrupos, RrhhEmpleadoConfiguracionRopa, GtmVentaKardex, GtmVentaKardexDetalle, RrhhEmpleadoDotacionRopaItem,
 	RrhhEmpleadoDotacionRopa, RrhhViajeDetalle, RrhhViaje, RrhhViajeDestino, RrhhViajeConductor, TransaccionSeguimiento, CuentaTransaccion, GtmDespachoDetalleResivo, RRHHPlanillaRcIva, RRHHDetallePlanillaRcIva, EmpresaAplicacion, Pedido, DetallesPedido, RrhhEmpleadoDescuentoVacacionHistorial, ActivosFijos, ActivosFijosValores, ActivosFijosConfiguracion,
-	EstadoFinancieroConfiguracionImpresion,EstadoFinancieroGestion, ClienteCentroCostos, CajaChica, SolicitudCajaChica, ConceptoMovimientoCajaChica,CierreCajaChica,
-	AliasClienteEmpresa, ComensalesClienteEmpresa, GerenciasClienteEmpresa, horarioComidasClienteEmpresa, PrecioComidasClienteEmpresa, HistorialComidaClienteEmpresa) {
+	EstadoFinancieroConfiguracionImpresion, EstadoFinancieroGestion, ClienteCentroCostos, CajaChica, SolicitudCajaChica, ConceptoMovimientoCajaChica, CierreCajaChica,
+	AliasClienteEmpresa, ComensalesClienteEmpresa, GerenciasClienteEmpresa, horarioComidasClienteEmpresa, PrecioComidasClienteEmpresa, HistorialComidaClienteEmpresa,ServicioVenta) {
 	Persona.belongsTo(Clase, { foreignKey: 'id_lugar_nacimiento', as: 'lugar_nacimiento' });
 	Persona.belongsTo(Clase, { foreignKey: 'id_genero', as: 'genero' });
 	Persona.belongsTo(Clase, { foreignKey: 'id_lenguaje', as: 'lenguaje' });
@@ -414,7 +414,10 @@ module.exports = function (sequelize, Usuario, Persona, Rol, UsuarioRol, Tipo, C
 	Venta.hasMany(VentaReprogramacionPago, { foreignKey: 'id_venta', as: 'ventaReprogramacionPagos' });
 	Venta.belongsTo(VendedorVenta, { foreignKey: 'id_vendedor', as: 'vendedor' });
 	Venta.hasOne(Farmacia, { foreignKey: 'id_venta', as: 'farmacia' });
-
+	Venta.belongsTo(Sucursal, { foreignKey: 'id_sucursal', as: 'sucursal' });
+	Sucursal.hasMany(Venta, { foreignKey: 'id_sucursal', as: 'ventas' });
+	Venta.belongsTo(Clase, { foreignKey: 'id_tipo_movimiento', as: 'movimientoServicio' });
+	Clase.hasMany(Venta, { foreignKey: 'id_tipo_movimiento', as: 'ventas' });
 
 	Farmacia.belongsTo(Venta, { foreignKey: 'id_venta', as: 'venta' });
 	Farmacia.belongsTo(MedicoPaciente, { foreignKey: 'id_paciente', as: 'paciente' });
@@ -1145,5 +1148,12 @@ module.exports = function (sequelize, Usuario, Persona, Rol, UsuarioRol, Tipo, C
 	horarioComidasClienteEmpresa.hasMany(HistorialComidaClienteEmpresa, {foreignKey: 'id_comida', as: 'historial'})
 	HistorialComidaClienteEmpresa.belongsTo(Usuario, {foreignKey: 'id_usuario', as: 'usuario'})
 	horarioComidasClienteEmpresa.hasMany(HistorialComidaClienteEmpresa, {foreignKey: 'id_usuario', as: 'historial'})
+	horarioComidasClienteEmpresa.hasMany(PrecioComidasClienteEmpresa,{foreignKey: 'id_comida', as:'precios'})
+	PrecioComidasClienteEmpresa.belongsTo(horarioComidasClienteEmpresa,{foreignKey: 'id_comida', as:'comida'})
+
+	ServicioVenta.belongsTo(Empresa, {foreignKey: 'id_empresa', as: 'empresa'})
+	Empresa.hasMany(ServicioVenta, {foreignKey: 'id_empresa', as: 'serviciosVenta'})
+	ServicioVenta.hasMany(DetalleVenta, {foreignKey: 'id_servicio', as: 'detallesVenta'})
+	DetalleVenta.belongsTo(ServicioVenta, {foreignKey: 'id_servicio', as: 'servicio'})
 }
 

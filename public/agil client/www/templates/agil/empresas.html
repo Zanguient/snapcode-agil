@@ -566,6 +566,17 @@
 							</label>
 						</div>
 					</div>
+					<div class="form-group" ng-if="usuario.rolesUsuario[0].rol.nombre==diccionario.USUARIO_SUPERADMIN">
+							<label class="control-label col-xs-6 no-padding-right">¿Usar Ventas de Servicios?</label>
+	
+							<div class="col-xs-6">
+								<label>
+									<input name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="empresa.usar_venta_servicio"
+									/>
+									<span class="lbl check-descuento"></span>
+								</label>
+							</div>
+						</div>
 					<!-- </div> -->
 				</div>
 				<div class="step-pane" data-step="3" ng-if="esNuevo">

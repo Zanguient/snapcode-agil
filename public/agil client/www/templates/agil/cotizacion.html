@@ -224,7 +224,7 @@
 								</span>
 								<script type="text/ng-template" id="myPopoverTemplate.html">                                           
                                     <div class="form-group">                                              
-                                      <p>Fecha: {{cotizacion.fecha_estado}}</p>
+                                      <p>Fecha: {{cotizacion.fecha_estado | date:"dd/MM/yyyy"}}</p>
                                       <p>Observacion: {{cotizacion.observacion}}</p>
                                     </div>                                           
                                 </script>
@@ -271,7 +271,7 @@
 						<h4 class="widget-title" ng-if="cotizacion.id">Modificar Cotización</h4>
 						&nbsp;
 						<p>
-							<button id="guardarV" type="submit" ng-disabled="cotizacion.detallesCotizacion.length==0" class="btn btn-primary">
+							<button id="guardarV" type="submit" ng-disabled="formularioCotizacion.$invalid ||cotizacion.detallesCotizacion.length==0" class="btn btn-primary">
 								<i class="ace-icon fa fa-floppy-o align-top bigger-125"></i>
 								GUARDAR
 							</button>
@@ -322,7 +322,7 @@
 									</td>
 									<td>
 										<label>ALMACEN</label>
-										<select ng-disabled="venta.editable || venta.detallesVenta.length>0"   id="almacen" name="almacen" ng-model="cotizacion.almacen" ng-options="almacen as almacen.nombre for almacen in almacenes track by almacen.id"
+										<select  required ng-disabled="venta.editable || venta.detallesVenta.length>0"   id="almacen" name="almacen" ng-model="cotizacion.almacen" ng-options="almacen as almacen.nombre for almacen in almacenes track by almacen.id"
 										 data-placeholder="Click para escoger">
 											<option value="" disabled selected>Selec. Almacen</option>
 										</select>
@@ -336,7 +336,7 @@
 									<td>
 										<label>FECHA</label>
 
-										 <input ng-keypress="interceptarTecla($event,'id_productoTB',true)" class="date-picker" type="text" data-date-format="dd/mm/yyyy"
+										 <input required ng-keypress="interceptarTecla($event,'id_productoTB',true)" class="date-picker" type="text" data-date-format="dd/mm/yyyy"
 								 id="fechaSM" ng-model="cotizacion.fechaTexto" placeholder="Ingrese la fecha" />
 										<span class="red">(*)</span>
 										<span class="invalid-message" ng-show="formularioVenta.fecha.$dirty && formularioVenta.fecha.$invalid">
@@ -345,7 +345,7 @@
 									</td>
 									<td>
 										<label>PLAZO COTIZACION</label>
-										<input type="text" id="nombre" ng-model="cotizacion.plazo">
+										<input type="text" id="nombre" required ng-model="cotizacion.plazo" placeholder="15 Dias">
 										<span class="red">(*)</span>
 										<span class="invalid-message" ng-show="formularioVenta.fecha.$dirty && formularioVenta.fecha.$invalid">
 											Dato requerido.
@@ -356,7 +356,7 @@
 									<td>
 										<label>FIRMA</label>
 
-										 <input type="text"  ng-model="cotizacion.firma" placeholder="Ingrese la nota" />
+										 <input type="text" required  ng-model="cotizacion.firma" placeholder="Ingrese la nota" />
 										<span class="red">(*)</span>
 										<span class="invalid-message" ng-show="formularioVenta.fecha.$dirty && formularioVenta.fecha.$invalid">
 											Dato requerido.
@@ -364,7 +364,7 @@
 									</td>
 									<td>
 										<label>CARGO</label>
-										<input type="text" id="nombre" ng-model="cotizacion.cargo">
+										<input type="text" id="nombre" required ng-model="cotizacion.cargo">
 										<span class="red">(*)</span>
 										<span class="invalid-message" ng-show="formularioVenta.fecha.$dirty && formularioVenta.fecha.$invalid">
 											Dato requerido.
@@ -375,7 +375,7 @@
 									<td colspan="2">
 										<label>NOTA</label>
 
-										<textarea ng-model="cotizacion.nota" class="form-control limited ng-pristine ng-untouched ng-valid ng-empty ng-valid-maxlength" id="form-field-9" maxlength="100" style=" height: 35px;"></textarea>
+										<textarea required ng-model="cotizacion.nota" placeholder="Los precios incluyen impuestos de ley" class="form-control limited ng-pristine ng-untouched ng-valid ng-empty ng-valid-maxlength" id="form-field-9" maxlength="100" style=" height: 35px;"></textarea>
 										<span class="red">(*)</span>
 										<span class="invalid-message" ng-show="formularioVenta.fecha.$dirty && formularioVenta.fecha.$invalid">
 											Dato requerido.
@@ -386,10 +386,6 @@
 									<td colspan="2">
 										<label>OBSERVACIÓN</label>
 										<textarea ng-model="cotizacion.descripcion" class="form-control limited ng-pristine ng-untouched ng-valid ng-empty ng-valid-maxlength" id="form-field-9" maxlength="100" style=" height: 35px;"></textarea>
-										<span class="red">(*)</span>
-										<span class="invalid-message" ng-show="formularioVenta.fecha.$dirty && formularioVenta.fecha.$invalid">
-											Dato requerido.
-										</span>
 									</td>
 								</tr>
 							</table>
@@ -762,22 +758,17 @@
     <!-- TOPBAR -->
     <div class="container-fluid">
         <div class="row">
-            <h4 class="blue titulo-pre-requisito">{{paciente.nombre_completo}}</h4>
+            <h4 class="blue titulo-pre-requisito">{{rechazo.cliente.razon_social}}</h4>
         </div>
-        <!-- <div class="row">
-            <h4 class="blue titulo-pre-requisito">{{paciente.cargo}}</h4>
-        </div>
-        <div class="row">
-            <h4 class="blue titulo-pre-requisito">{{paciente.designacion_empresa}}</h4>
-        </div> -->
     </div>
-    <form name="form" ng-submit="saveRechazo(rechazo)" novalidate>
+    <form name="formRechazo" ng-submit="saveRechazo(rechazo)" novalidate>
         <div class="row">
         	<div class="col-lg-12">
                 <label for="form-field-select-1">Fecha</label>
+				<input ng-update-hidden required="" autocomplete="off"  type="text"
+                                            data-date-format="dd/mm/yyyy" class="form-control date-picker" id="fecha-inicial"
+                                            ng-update-hidden ng-model="rechazo.fechaTexto" name="fecha-inicial" >
 
-            	<input class="form-control date-picker" autocomplete="off" type="text" data-date-format="dd/mm/yyyy"
-								 id="fechaSM" ng-model="rechazo.fecha_estado" placeholder="Ingrese la fecha" />
 				<span class="red">(*)</span>
             </div>
             <div class="col-lg-12">
@@ -792,7 +783,7 @@
         <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix">
             <div class="ui-dialog-buttonset">
 
-                <button  type="submit" id="guardarRequisitos" class="btn btn-primary" data-last="Finish">
+                <button  type="submit" ng-disabled="formRechazo.$invalid" id="guardarRequisitos" class="btn btn-primary" data-last="Finish">
                     <i class="ace-icon fa fa-floppy-o bigger-110"></i>
                     Guardar
                 </button>

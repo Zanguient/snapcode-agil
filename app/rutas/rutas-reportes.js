@@ -26,11 +26,19 @@ module.exports = function (router, sequelize, Sequelize, Compra, Proveedor, Alma
 			});
 		});
 
-	router.route('/reportes/libro-ventas/:id_empresa/gestion/:gestion/mes/:mes')
+	router.route('/reportes/libro-ventas/:id_empresa/gestion/:gestion/mes/:mes/movimiento/:id_movimiento')
 		.get(/*ensureAuthorized,*/function (req, res) {
 			var mes = new Date(req.params.gestion, parseInt(req.params.mes), 0);
 			var primerDia = new Date(req.params.gestion, parseInt(req.params.mes) - 1, 1, 0, 0, 0);
 			var ultimoDia = new Date(req.params.gestion, parseInt(req.params.mes) - 1, mes.getDate(), 23, 59, 59);
+			var condicionMovimiento = {}
+			if (req.params.id_movimiento == "SERV") {
+				condicionMovimiento=	{ nombre_corto:{$in: ["SERV"]}  }
+			} else if (req.params.id_movimiento == "FACT") {
+				condicionMovimiento={ nombre_corto:{$in: ["FACT"]}  }
+			}else{
+				condicionMovimiento={ nombre_corto:{$in: ["FACT", "SERV"]}  }
+			}
 			Empresa.find({
 				where: {
 					id: req.params.id_empresa
@@ -41,13 +49,32 @@ module.exports = function (router, sequelize, Sequelize, Compra, Proveedor, Alma
 						fecha: { $between: [primerDia, ultimoDia] }
 					},
 					include: [{ model: Cliente, as: 'cliente' },
-					{ model: Movimiento, as: 'movimiento', include: [{ model: Clase, as: 'clase', where: { nombre_corto: "FACT" } }] },
+					{ model: Movimiento, as: 'movimiento', include: [{ model: Clase, as: 'clase', where:condicionMovimiento  }] },
 					{
 						model: Almacen, as: 'almacen',
 						include: [{ model: Sucursal, as: 'sucursal', where: { id_empresa: req.params.id_empresa } }]
 					}]
 				}).then(function (ventas) {
-					res.json({ ventas: ventas, empresa: empresa });
+					Venta.findAll({
+						where: {
+							fecha: { $between: [primerDia, ultimoDia] }
+						},
+						include: [{ model: Cliente, as: 'cliente' },
+						{ model: Clase, as: 'movimientoServicio', condicionMovimiento },
+						{
+							model: Sucursal, as: 'sucursal', where: { id_empresa: req.params.id_empresa }
+						}]
+					}).then(function (ventas2) {
+
+						var  entity = ventas.concat(ventas2);
+
+						entity = entity.sort(function (a, b) {
+							return a.fecha - b.fecha;
+						});
+						res.json({ ventas: entity, empresa: empresa });
+
+
+					});
 				});
 			});
 		});
@@ -225,7 +252,7 @@ module.exports = function (router, sequelize, Sequelize, Compra, Proveedor, Alma
 					{
 						model: Venta, as: 'venta', where: { fecha: { $between: [inicio, fin] }, activa: true },
 						include: [{ model: Cliente, as: 'cliente', required: true },
-						{ model: Clase, as : 'tipoPago' },
+						{ model: Clase, as: 'tipoPago' },
 						{ model: Usuario, as: 'usuario', required: true, attributes: ['id', 'id_persona', 'id_empresa', 'nombre_usuario'] },
 						{
 							model: VendedorVenta, as: 'vendedor', required: false,

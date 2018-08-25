@@ -37,6 +37,15 @@
 								</select>&nbsp
 							</td>
 							<td>
+								MOVIMIENTO
+							</td>
+							<td>
+									<select id="transaccion" name="transaccion" ng-model="reporte.movimiento" ng-options="transaccion.nombre_corto as transaccion.nombre for transaccion in movimientosEgreso|filtroMovLibroVenta track by transaccion.id" data-placeholder="Elija un tipo de transaccion">
+											<option value="">TODOS</option>
+											
+										</select>
+							</td>
+							<td>
 								<button ng-disabled="formularioReporte.$invalid" class="btn btn-primary" type="button" ng-click="generarPdfLibroVentas(reporte)">
 									<i class="ace-icon fa fa-plus align-top bigger-125"></i>
 									Descargar PDF

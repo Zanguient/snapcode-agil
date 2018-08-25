@@ -5,6 +5,7 @@ module.exports=function(){
 		EGRE_BAJA:"BAJA",
 		EGRE_PROFORMA:"PFR",
 		EGRE_TRASPASO:"TRAS",
+		EGRE_SERVICIO:"SERV",
 		EGRE_AJUSTE:"AJU",
 		MOV_ING:"MOVING",
 		MOV_EGRE:"MOVEGR",

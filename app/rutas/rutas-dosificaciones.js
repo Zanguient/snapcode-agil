@@ -10,6 +10,7 @@ module.exports = function (router, forEach, fs, sequelize, Empresa, Dosificacion
 				autorizacion: req.body.autorizacion,
 				llave_digital: req.body.llave_digital,
 				id_pie_factura: req.body.pieFactura.id,
+				tipo_dosificacion:req.body.tipo_dosificacion,
 				expirado: (new Date(req.body.fecha_limite_emision) > new Date()) ? false : true
 
 			}).then(function (dosificacionCreada) {
@@ -56,8 +57,8 @@ module.exports = function (router, forEach, fs, sequelize, Empresa, Dosificacion
 				fecha_limite_emision: req.body.fecha_limite_emision,
 				autorizacion: req.body.autorizacion,
 				llave_digital: req.body.llave_digital,
-				id_pie_factura: req.body.pieFactura.id
-
+				id_pie_factura: req.body.pieFactura.id,
+				tipo_dosificacion:req.body.tipo_dosificacion,
 			}, {
 					where: {
 						id: req.params.id_dosificacion

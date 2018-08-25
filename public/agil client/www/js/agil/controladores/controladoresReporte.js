@@ -541,6 +541,7 @@ angular.module('agil.controladores')
 
 		$scope.inicio = function () {
 			$scope.obtenerGestiones();
+			$scope.obtenerMovimientosEgreso()
 		}
 
 		$scope.obtenerGestiones = function () {
@@ -551,7 +552,14 @@ angular.module('agil.controladores')
 				blockUI.stop();
 			});
 		}
-
+		$scope.obtenerMovimientosEgreso = function () {
+			blockUI.start();
+			var promesa = ClasesTipo("MOVEGR");
+			promesa.then(function (entidad) {
+				$scope.movimientosEgreso = entidad.clases;
+				blockUI.stop();
+			});
+		}
 		$scope.generarTXTLibroVentas = function (reporte) {
 			blockUI.start();
 			var promesa = ReporteLibroVentasDatos($scope.usuario.id_empresa, reporte.gestion, reporte.mes.split("-")[0]);
@@ -596,7 +604,7 @@ angular.module('agil.controladores')
 					columns.push(i + 1);
 					columns.push(ventas[i].fecha.getDate() + "/" + (ventas[i].fecha.getMonth() + 1) + "/" + ventas[i].fecha.getFullYear());
 					columns.push(ventas[i].factura);
-					columns.push(ventas[i].autorizacion);
+					columns.push((ventas[i].autorizacion) ? ventas[i].autorizacion : "");
 					columns.push((ventas[i].activa ? "V" : "A"));
 					columns.push(ventas[i].cliente.nit);
 					columns.push(ventas[i].cliente.razon_social);
@@ -608,7 +616,7 @@ angular.module('agil.controladores')
 					columns.push(0);
 					columns.push(ventas[i].total);
 					columns.push(Math.round((ventas[i].total * 0.13) * 100) / 100);
-					columns.push(ventas[i].codigo_control);
+					columns.push((ventas[i].codigo_control) ? ventas[i].codigo_control : "");
 					sumaImporte = sumaImporte + ventas[i].importe;
 					sumaImporteIce = 0;
 					sumaImporteExp = 0;
@@ -652,7 +660,7 @@ angular.module('agil.controladores')
 
 		$scope.generarPdfLibroVentas = function (reporte) {
 			blockUI.start();
-			var promesa = ReporteLibroVentasDatos($scope.usuario.id_empresa, reporte.gestion, reporte.mes.split("-")[0]);
+			var promesa = ReporteLibroVentasDatos($scope.usuario.id_empresa, reporte.gestion, reporte.mes.split("-")[0], reporte.movimiento);
 			promesa.then(function (datos) {
 				var ventas = datos.ventas;
 				var doc = new PDFDocument({ compress: false, margin: 10, layout: 'landscape' });
@@ -815,7 +823,7 @@ angular.module('agil.controladores')
 				var linea = "";
 				var numeral = 1
 				for (var i = 0; i < compras.length; i++) {
-					if (compras[i].movimiento.clase.nombre !== $scope.diccionario.MOVING_POR_COMPRA_SIN_FACTURA &&compras[i].movimiento.clase.nombre !== $scope.diccionario.MOVING_POR_RETENCION_BIENES) {
+					if (compras[i].movimiento.clase.nombre !== $scope.diccionario.MOVING_POR_COMPRA_SIN_FACTURA && compras[i].movimiento.clase.nombre !== $scope.diccionario.MOVING_POR_RETENCION_BIENES) {
 						compras[i].fecha = new Date(compras[i].fecha);
 						linea = linea + "1|";
 						linea = linea + (numeral) + "|";
@@ -855,7 +863,7 @@ angular.module('agil.controladores')
 				var numeral = 1
 				for (var i = 0; i < compras.length; i++) {
 					var columns = [];
-					if (compras[i].movimiento.clase.nombre !== $scope.diccionario.MOVING_POR_COMPRA_SIN_FACTURA &&compras[i].movimiento.clase.nombre !== $scope.diccionario.MOVING_POR_RETENCION_BIENES) {
+					if (compras[i].movimiento.clase.nombre !== $scope.diccionario.MOVING_POR_COMPRA_SIN_FACTURA && compras[i].movimiento.clase.nombre !== $scope.diccionario.MOVING_POR_RETENCION_BIENES) {
 						compras[i].fecha = new Date(compras[i].fecha);
 						columns.push(numeral);
 						columns.push(compras[i].fecha.getDate() + "/" + (compras[i].fecha.getMonth() + 1) + "/" + compras[i].fecha.getFullYear());
@@ -1718,42 +1726,71 @@ angular.module('agil.controladores')
 			promesa.then(function (ventasEmpresa) {//console.log(ventasEmpresa);
 				promesa = GastosVariosLista($scope.usuario.id_empresa, inicio, fin);
 				promesa.then(function (gastosVariosEmpresa) {
-					var sumaVentasCredito = 0, sumaVentasContado = 0, sumaVentasTotal = 0, costoVentas = 0, sumaVentasFacturacion = 0, sumaVentasProforma = 0;
+					var sumaVentaProductosTotal = 0, sumaVentaServiciosTotal = 0,
+						sumaVentasCredito = 0, sumaVentasContado = 0,
+						sumaVentasCreditoProducto = 0, sumaVentasContadoServicio = 0,
+						sumaVentasCreditoServicio = 0, sumaVentasContadoProducto = 0,
+						sumaVentasTotal = 0, costoVentas = 0,
+						sumaVentasFacturacion = 0, sumaVentasProforma = 0;
 					for (var i = 0; i < ventasEmpresa.length; i++) {
-						if (ventasEmpresa[i].movimiento.clase.nombre_corto == $scope.diccionario.EGRE_FACTURACION ||
-							ventasEmpresa[i].movimiento.clase.nombre_corto == $scope.diccionario.EGRE_PROFORMA) {
+						if (ventasEmpresa[i].movimiento) {
+							if (ventasEmpresa[i].movimiento.clase.nombre_corto == $scope.diccionario.EGRE_FACTURACION ||
+								ventasEmpresa[i].movimiento.clase.nombre_corto == $scope.diccionario.EGRE_PROFORMA) {
 
-							if (ventasEmpresa[i].movimiento.clase.nombre_corto == $scope.diccionario.EGRE_FACTURACION) {
-								sumaVentasTotal = sumaVentasTotal + (ventasEmpresa[i].total * 0.87);
+								if (ventasEmpresa[i].movimiento.clase.nombre_corto == $scope.diccionario.EGRE_FACTURACION) {
+									sumaVentasTotal = sumaVentasTotal + (ventasEmpresa[i].total * 0.87);
+									sumaVentaProductosTotal = sumaVentaProductosTotal + (ventasEmpresa[i].total * 0.87);
+									if (ventasEmpresa[i].tipoPago != null) {
+										if (ventasEmpresa[i].tipoPago.nombre == $scope.diccionario.TIPO_PAGO_CREDITO) {
+											sumaVentasCredito = sumaVentasCredito + (ventasEmpresa[i].total * 0.87);
+											sumaVentasCreditoProducto = sumaVentasCreditoProducto + (ventasEmpresa[i].total * 0.87);
+										} else if (ventasEmpresa[i].tipoPago.nombre == $scope.diccionario.TIPO_PAGO_CONTADO) {
+											sumaVentasContado = sumaVentasContado + (ventasEmpresa[i].total * 0.87);
+											sumaVentasContadoProducto = sumaVentasContadoProducto + (ventasEmpresa[i].total * 0.87);
+										}
+									}
 
-								if (ventasEmpresa[i].tipoPago != null) {
-									if (ventasEmpresa[i].tipoPago.nombre == $scope.diccionario.TIPO_PAGO_CREDITO) {
-										sumaVentasCredito = sumaVentasCredito + (ventasEmpresa[i].total * 0.87);
-									} else if (ventasEmpresa[i].tipoPago.nombre == $scope.diccionario.TIPO_PAGO_CONTADO) {
-										sumaVentasContado = sumaVentasContado + (ventasEmpresa[i].total * 0.87);
+								} else {
+									sumaVentasTotal = sumaVentasTotal + (ventasEmpresa[i].total);
+									sumaVentaProductosTotal = sumaVentaProductosTotal + (ventasEmpresa[i].total);
+									if (ventasEmpresa[i].tipoPago != null) {
+										if (ventasEmpresa[i].tipoPago.nombre == $scope.diccionario.TIPO_PAGO_CREDITO) {
+											sumaVentasCredito = sumaVentasCredito + ventasEmpresa[i].total;
+											sumaVentasCreditoProducto = sumaVentasCreditoProducto + ventasEmpresa[i].total;
+										} else if (ventasEmpresa[i].tipoPago.nombre == $scope.diccionario.TIPO_PAGO_CONTADO) {
+											sumaVentasContado = sumaVentasContado + ventasEmpresa[i].total;
+											sumaVentasContadoProducto = sumaVentasContadoProducto + ventasEmpresa[i].total;
+										}
 									}
 								}
 
-							} else {
-								sumaVentasTotal = sumaVentasTotal + (ventasEmpresa[i].total);
-
-								if (ventasEmpresa[i].tipoPago != null) {
-									if (ventasEmpresa[i].tipoPago.nombre == $scope.diccionario.TIPO_PAGO_CREDITO) {
-										sumaVentasCredito = sumaVentasCredito + ventasEmpresa[i].total;
-									} else if (ventasEmpresa[i].tipoPago.nombre == $scope.diccionario.TIPO_PAGO_CONTADO) {
-										sumaVentasContado = sumaVentasContado + ventasEmpresa[i].total;
-									}
+								for (var j = 0; j < ventasEmpresa[i].movimiento.detallesMovimiento.length; j++) {
+									costoVentas = costoVentas + ventasEmpresa[i].movimiento.detallesMovimiento[j].total;
 								}
 							}
-
-							for (var j = 0; j < ventasEmpresa[i].movimiento.detallesMovimiento.length; j++) {
-								costoVentas = costoVentas + ventasEmpresa[i].movimiento.detallesMovimiento[j].total;
+						} else {
+							sumaVentasTotal = sumaVentasTotal + (ventasEmpresa[i].total * 0.87);
+							sumaVentaServiciosTotal = sumaVentaServiciosTotal + (ventasEmpresa[i].total * 0.87);
+							if (ventasEmpresa[i].tipoPago != null) {
+								if (ventasEmpresa[i].tipoPago.nombre == $scope.diccionario.TIPO_PAGO_CREDITO) {
+									sumaVentasCredito = sumaVentasCredito + (ventasEmpresa[i].total * 0.87);
+									sumaVentasCreditoServicio = sumaVentasCreditoServicio + (ventasEmpresa[i].total * 0.87);
+								} else if (ventasEmpresa[i].tipoPago.nombre == $scope.diccionario.TIPO_PAGO_CONTADO) {
+									sumaVentasContado = sumaVentasContado + (ventasEmpresa[i].total * 0.87);
+									sumaVentasContadoServicio = sumaVentasContadoServicio + (ventasEmpresa[i].total * 0.87);
+								}
 							}
 						}
 
 					}
 					sumaVentasTotal = Math.round((sumaVentasTotal) * 100) / 100;
 					costoVentas = Math.round((costoVentas) * 100) / 100;
+					sumaVentaProductosTotal = Math.round((sumaVentaProductosTotal) * 100) / 100;
+					sumaVentaServiciosTotal = Math.round((sumaVentaServiciosTotal) * 100) / 100;
+					sumaVentasCreditoProducto = Math.round((sumaVentasCreditoProducto) * 100) / 100;
+					sumaVentasContadoServicio = Math.round((sumaVentasContadoServicio) * 100) / 100;
+					sumaVentasCreditoServicio = Math.round((sumaVentasCreditoServicio) * 100) / 100;
+					sumaVentasContadoProducto = Math.round((sumaVentasContadoProducto) * 100) / 100;
 					var utilidadVentas = Math.round((sumaVentasTotal - costoVentas) * 100) / 100;
 					var sumaGastos = 0;
 					for (var i = 0; i < gastosVariosEmpresa.length; i++) {
@@ -1773,22 +1810,39 @@ angular.module('agil.controladores')
 					doc.font('Helvetica-Bold', 16);
 					doc.text("ESTADO DE RESULTADOS NO CONTABLE", 0, 60, { align: "center" });
 					doc.font('Helvetica-Bold', 10);
-					doc.text('Desde '+fechaDesde+' al '+fechaHasta,0,80,{align:"center"});
+					doc.text('Desde ' + fechaDesde + ' al ' + fechaHasta, 0, 80, { align: "center" });
 					doc.font('Helvetica-Bold', 8);
 					doc.text("VENTAS", 100, 100);
 					doc.text(sumaVentasTotal, 300, 100);
+					doc.font('Helvetica', 8);
+					doc.text("PRODUCTO", 100, 110);
+					doc.text(sumaVentaProductosTotal, 170, 110);
+					doc.text("SERVICIO", 100, 120);
+					doc.text(sumaVentaServiciosTotal, 170, 120);
+					doc.font('Helvetica-Bold', 8);
 					doc.text("COSTO DE VENTAS", 100, 200);
 					doc.text(costoVentas, 300, 200);
 					doc.text("UTILIDAD BRUTA EN VENTAS", 100, 250);
 					doc.text(utilidadVentas, 300, 250);
 					doc.text("GASTOS", 100, 300);
 					doc.text(sumaGastos, 300, 300);
-					doc.font('Helvetica', 8);
+					doc.font('Helvetica-Bold', 8);
 					doc.text("VENTAS CONTADO", 150, 130);
 					doc.text(Math.round(sumaVentasContado * 100) / 100, 250, 130);
+					doc.font('Helvetica', 8);
+					doc.text("PRODUCTOS", 150, 140);
+					doc.text(sumaVentasContadoProducto, 250, 140);
+					doc.text("SERVICIOS", 150, 150);
+					doc.text(sumaVentasContadoServicio, 250, 150);
+					doc.font('Helvetica-Bold', 8);
 					doc.text("VENTAS CREDITO", 150, 160);
 					doc.text(Math.round(sumaVentasCredito * 100) / 100, 250, 160);
-
+					doc.font('Helvetica', 8);
+					doc.text("PRODUCTOS", 150, 170);
+					doc.text(sumaVentasCreditoProducto, 250, 170);
+					doc.text("SERVICIOS", 150, 180);
+					doc.text(sumaVentasCreditoServicio, 250, 180);
+					doc.font('Helvetica-Bold', 8);
 					var y = 330, totalGasto = 0;
 					for (var i = 0; i < gastosVariosEmpresa.length; i++) {
 						doc.text(gastosVariosEmpresa[i].nombre, 130, y);
@@ -1947,7 +2001,7 @@ angular.module('agil.controladores')
 					//columns.push(0);
 					//columns.push(0);
 					console.log(i)
-					columns.push((detallesCompra[i].compra.almacen.sucursal)?detallesCompra[i].compra.almacen.sucursal.nombre:"");
+					columns.push((detallesCompra[i].compra.almacen.sucursal) ? detallesCompra[i].compra.almacen.sucursal.nombre : "");
 					columns.push($scope.usuario.nombre_usuario);
 					columns.push(detallesCompra[i].centroCosto.nombre_corto);
 
@@ -1987,10 +2041,10 @@ angular.module('agil.controladores')
 					detallesCompra[i].compra.fecha = new Date(detallesCompra[i].compra.fecha);
 					doc.text(detallesCompra[i].compra.fecha.getDate() + "/" + (detallesCompra[i].compra.fecha.getMonth() + 1) + "/" + detallesCompra[i].compra.fecha.getFullYear(), 45, y);
 					doc.text((detallesCompra[i].compra.factura ? detallesCompra[i].compra.factura : ""), 90, y);
-					doc.text((detallesCompra[i].compra.proveedor)?detallesCompra[i].compra.proveedor.razon_social:"", 135, y - 6, { width: 80 });
+					doc.text((detallesCompra[i].compra.proveedor) ? detallesCompra[i].compra.proveedor.razon_social : "", 135, y - 6, { width: 80 });
 					console.log(i)
-					doc.text((detallesCompra[i].producto)?detallesCompra[i].producto.nombre:(detallesCompra[i].servicio)?detallesCompra[i].servicio.nombre:"", 225, y - 6, { width: 80 });
-					doc.text((detallesCompra[i].producto)?detallesCompra[i].producto.unidad_medida:"", 300, y, { width: 50 });
+					doc.text((detallesCompra[i].producto) ? detallesCompra[i].producto.nombre : (detallesCompra[i].servicio) ? detallesCompra[i].servicio.nombre : "", 225, y - 6, { width: 80 });
+					doc.text((detallesCompra[i].producto) ? detallesCompra[i].producto.unidad_medida : "", 300, y, { width: 50 });
 					if (detallesCompra[i].inventario) {
 						detallesCompra[i].inventario.fecha_vencimiento = new Date(detallesCompra[i].inventario.fecha_vencimiento);
 						doc.text(detallesCompra[i].inventario.fecha_vencimiento.getDate() + "/" + (detallesCompra[i].inventario.fecha_vencimiento.getMonth() + 1) + "/" + detallesCompra[i].inventario.fecha_vencimiento.getFullYear(), 345, y);

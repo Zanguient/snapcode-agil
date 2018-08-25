@@ -60,7 +60,7 @@ module.exports = function (router, sequelize, Persona, Cliente, AliasClienteEmpr
                     id_cliente: comensal.empresaCliente.id,
                     nombre: comensal.nombre,
                     id_empresa: empresa,
-                    id_gerencia: comensal.gerencia.id,
+                    id_gerencia: comensal.gerencia ? comensal.gerencia.id : null,
                     tipo: comensal.tipo
                 }, { where: { id: comensal.id }, transaction: t })
             }
@@ -71,7 +71,7 @@ module.exports = function (router, sequelize, Persona, Cliente, AliasClienteEmpr
                 id_cliente: comensal.empresaCliente.id,
                 nombre: comensal.nombre,
                 id_empresa: empresa,
-                id_gerencia: comensal.gerencia.id,
+                id_gerencia: comensal.gerencia ? comensal.gerencia.id : null,
                 tipo: comensal.tipo
             }, { transaction: t })
         }
@@ -144,7 +144,7 @@ module.exports = function (router, sequelize, Persona, Cliente, AliasClienteEmpr
                     id_cliente: historial.alias.empresaCliente.id,
                     id_comensal: historial.comensal.id,
                     id_empresa: empresa,
-                    id_gerencia: historial.gerencia.id,
+                    id_gerencia: historial.gerencia ? historial.gerencia.id : null,
                     id_comida: historial.comida.id,
                     fecha: historial.fecha,
                     id_usuario: historial.id_usuario
@@ -164,7 +164,7 @@ module.exports = function (router, sequelize, Persona, Cliente, AliasClienteEmpr
                 id_cliente: historial.alias.id_cliente,
                 id_comensal: historial.comensal.id,
                 id_empresa: empresa,
-                id_gerencia: historial.comensal.gerencia.id,
+                id_gerencia: historial.gerencia ? historial.gerencia.id : null,
                 id_comida: historial.comida ? historial.comida.id : null,
                 fecha: historial.fecha,
                 id_usuario: historial.id_usuario
@@ -191,7 +191,7 @@ module.exports = function (router, sequelize, Persona, Cliente, AliasClienteEmpr
             if (alias) {
                 historial.alias = alias.dataValues
                 return ComensalesClienteEmpresa.find({
-                    where: { nombre: historial.nombre },
+                    where: { nombre: historial.nombre, id_empresa: empresa, id_cliente: historial.alias.id_cliente },
                     include: [{ model: GerenciasClienteEmpresa, as: 'gerencia' }],
                     transaction: t
                 }).then(function (comensal) {
@@ -199,24 +199,24 @@ module.exports = function (router, sequelize, Persona, Cliente, AliasClienteEmpr
                         if (!historial.fecha) {
                             historial.fecha = extraerFechaExcel(historial.fecha_hora)
                         }
-                        var condicionTiempo = { inicio: { lte: historial.fecha.split('T')[1].split('.')[0] }, final: { gte: historial.fecha.split('T')[1].split('.')[0] }, empresa: historial.id_empresa }
+                        var condicionTiempo = { inicio: { lte: historial.fecha.split('T')[1].split('.')[0] }, final: { gte: historial.fecha.split('T')[1].split('.')[0] }, id_empresa: empresa, id_cliente: historial.alias.id_cliente }
                         historial.comensal = comensal.dataValues
                         return horarioComidasClienteEmpresa.find({
                             where: condicionTiempo,
                             transaction: t
                         }).then(function (comida) {
-                            historial.comida = comida ? comida.dataValues : null
+                            historial.comida = comida ? comida.dataValues : {id: null}
                             GerenciasClienteEmpresa.find({
-                                where: {nombre: historial.gerencia}
+                                where: { nombre: historial.gerencia }
                             }).then(function (gerenciaEncontrada) {
                                 if (gerenciaEncontrada) {
                                     historial.gerencia = gerenciaEncontrada.dataValues
                                     return crearHistorial(historial, empresa, t)
                                 } else {
-                                    
+                                    historial.gerencia = {id: null}
+                                    return crearHistorial(historial, empresa, t)
                                 }
                             })
-                            
                         }).catch(function (err) {
                             return new Promise(function (fullfil, reject) {
                                 fullfil({ hasErr: true, mensaje: err.stack, index: i + 2, tipo: 'Error' })
@@ -228,7 +228,6 @@ module.exports = function (router, sequelize, Persona, Cliente, AliasClienteEmpr
                             fullfil({ hasErr: true, mensaje: 'No se encuentra en la Base de Datos el registro comensal : ' + historial.nombre, index: i + 2, tipo: 'Comensal -> No registrado.' })
                         })
                     }
-
                 }).catch(function (err) {
                     return new Promise(function (fullfil, reject) {
                         fullfil({ hasErr: true, mensaje: err.stack, index: i + 2, tipo: 'Error' })
@@ -254,7 +253,7 @@ module.exports = function (router, sequelize, Persona, Cliente, AliasClienteEmpr
             if (alias) {
                 comensal.empresaCliente = { id: alias.dataValues.id_cliente }
                 return ComensalesClienteEmpresa.find({
-                    where: { codigo: comensal.codigo },
+                    where: { codigo: comensal.codigo, id_empresa: empresa, id_cliente: comensal.empresaCliente.id },
                     include: [{ model: GerenciasClienteEmpresa, as: 'gerencia' }],
                     transaction: t
                 }).then(function (comensalEncontrado) {
@@ -263,7 +262,12 @@ module.exports = function (router, sequelize, Persona, Cliente, AliasClienteEmpr
                             fullfil({ hasErr: true, mensaje: 'El código ' + comensal.codigo + ' ya existe en la base de datos', index: i + 2, tipo: 'Error' })
                         })
                     } else {
-                        return crearComensal(comensal, empresa, t)
+                        GerenciasClienteEmpresa.find({
+                            where: {nombre: comensal.gerencia, id_empresa: empresa, id_cliente: comensal.empresaCliente.id}
+                        }).then(function (gerenciaEncontrada) {
+                            comensal.gerencia = gerenciaEncontrada ? gerenciaEncontrada.dataValues : {id: null}
+                            return crearComensal(comensal, empresa, t)
+                        })
                     }
                 }).catch(function (err) {
                     return new Promise(function (fullfil, reject) {
@@ -415,7 +419,7 @@ module.exports = function (router, sequelize, Persona, Cliente, AliasClienteEmpr
         var fechaCompleta = fecha[0] + '-' + (fecha[2].length == 2 ? fecha[2] : '0' + fecha[2]) + '-' + (fecha[1].length == 2 ? fecha[1] : '0' + fecha[1]) + 'T' + horas[0] + ':' + horas[1] + ':' + horas[2] + '.000Z'
         return fechaCompleta
     }
-    router.route('/cliente/empresa/gerencias/:id_empresa/:id_usuario')
+    router.route('/cliente/empresa/gerencias/:id_empresa/:id_usuario/:id_cliente')
         .post(function (req, res) {
             sequelize.transaction(function (t) {
                 var promises = []
@@ -432,8 +436,12 @@ module.exports = function (router, sequelize, Persona, Cliente, AliasClienteEmpr
             })
         })
         .get(function (req, res) {
+            var condicion = { id_empresa: req.params.id_empresa }
+            if (req.params.id_cliente != "0") {
+                condicion.id_cliente = req.params.id_cliente
+            }
             GerenciasClienteEmpresa.findAll({
-                where: { id_empresa: req.params.id_empresa },
+                where: condicion,
                 include: [{ model: Cliente, as: 'empresaCliente' }]
             }).then(function (result) {
                 res.json({ lista: result })
@@ -475,7 +483,7 @@ module.exports = function (router, sequelize, Persona, Cliente, AliasClienteEmpr
             res.json({ mensaje: 'sin funcionalidad' })
         })
 
-    router.route('/cliente/empresa/comensales/:id_empresa/:id_usuario')
+    router.route('/cliente/empresa/comensales/:id_empresa/:id_usuario/:id_cliente')
         .post(function (req, res) {
             sequelize.transaction(function (t) {
                 var promises = []
@@ -492,8 +500,12 @@ module.exports = function (router, sequelize, Persona, Cliente, AliasClienteEmpr
             })
         })
         .get(function (req, res) {
+            var condicion = { id_empresa: req.params.id_empresa }
+            if (req.params.id_cliente != "0") {
+                condicion.id_cliente = req.params.id_cliente
+            }
             ComensalesClienteEmpresa.findAll({
-                where: { id_empresa: req.params.id_empresa },
+                where: condicion,
                 include: [{ model: Cliente, as: 'empresaCliente' }, { model: GerenciasClienteEmpresa, as: 'gerencia' }]
             }).then(function (result) {
                 res.json({ lista: result })
@@ -562,7 +574,7 @@ module.exports = function (router, sequelize, Persona, Cliente, AliasClienteEmpr
             }
             PrecioComidasClienteEmpresa.findAll({
                 where: condicion,
-                include: [{ model: Cliente, as: 'empresaCliente' }]
+                include: [{ model: Cliente, as: 'empresaCliente' }, {model: horarioComidasClienteEmpresa, as: 'comida'}]
             }).then(function (result) {
                 res.json({ lista: result })
             }).catch(function (err) {
@@ -815,7 +827,7 @@ module.exports = function (router, sequelize, Persona, Cliente, AliasClienteEmpr
                 var fecha_desde = new Date(parseInt(req.params.periodoAnio), parseInt(req.params.periodoMes), 1, 0, 0, 0)
                 var fecha_hasta = new Date(parseInt(req.params.periodoAnio), parseInt(req.params.periodoMes) + 1, 0, 23, 59, 0)
                 condicionHistorial.fecha = { $between: [fecha_desde, fecha_hasta] }
-            }else{
+            } else {
                 if (req.params.desde != "0") {
                     var inicio = new Date(req.params.desde.split('/').reverse()); inicio.setHours(0, 0, 0, 0, 0);
                     desde = true
@@ -838,7 +850,7 @@ module.exports = function (router, sequelize, Persona, Cliente, AliasClienteEmpr
             } else if (!desde && !hasta) {
 
             }
-            
+
             if (req.params.empresaCliente != "0") {
                 condicionHistorial.id_cliente = req.params.empresaCliente
             }

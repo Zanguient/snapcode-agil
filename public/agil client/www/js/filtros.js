@@ -15,45 +15,67 @@ angular.module('agil.filtros', [])
 
         }
     })
-    .filter('filtroIngresos', function() {
-        return function(input) {
+    .filter('filtroIngresos', function () {
+        return function (input) {
             var salida = [];
-            angular.forEach(input, function(movimiento) {
+            angular.forEach(input, function (movimiento) {
                 if (movimiento.concepto.nombre === 'INGRESO') {
-                salida.push(movimiento)
+                    salida.push(movimiento)
                 }
             })
             return salida;
         }
     })
-    .filter('filtroEgresos', function() {
-        return function(input) {
+    .filter('filtroEgresos', function () {
+        return function (input) {
             var salida = [];
-            angular.forEach(input, function(movimiento) {
+            angular.forEach(input, function (movimiento) {
                 if (movimiento.concepto.nombre === 'GASTO') {
-                salida.push(movimiento)
+                    salida.push(movimiento)
                 }
             })
             return salida;
         }
     })
-    .filter('filtroAnticipos', function() {
-        return function(input) {
+    .filter('filtroAnticipos', function () {
+        return function (input) {
             var salida = [];
-            angular.forEach(input, function(movimiento) {
+            angular.forEach(input, function (movimiento) {
                 if (movimiento.concepto.nombre === 'ANTICIPO') {
-                salida.push(movimiento)
+                    salida.push(movimiento)
                 }
             })
             return salida;
         }
     })
-    .filter('filtroSolicitud', function() {
-        return function(input) {
+    .filter('filtroMovVenta', function () {
+        return function (input) {
             var salida = [];
-            angular.forEach(input, function(movimiento) {
-                if (movimiento.concepto.nombre === 'ANTICIPO' ||movimiento.concepto.nombre === 'GASTO' || movimiento.concepto.nombre === 'KARDEX') {
-                salida.push(movimiento)
+            angular.forEach(input, function (movimiento) {
+                if (movimiento.nombre != 'SERVICIO') {
+                    salida.push(movimiento)
+                }
+            })
+            return salida;
+        }
+    })
+    .filter('filtroMovLibroVenta', function () {
+        return function (input) {
+            var salida = [];
+            angular.forEach(input, function (movimiento) {
+                if (movimiento.nombre_corto == 'SERV' || movimiento.nombre_corto == 'FACT') {
+                    salida.push(movimiento)
+                }
+            })
+            return salida;
+        }
+    })
+    .filter('filtroSolicitud', function () {
+        return function (input) {
+            var salida = [];
+            angular.forEach(input, function (movimiento) {
+                if (movimiento.concepto.nombre === 'ANTICIPO' || movimiento.concepto.nombre === 'GASTO' || movimiento.concepto.nombre === 'KARDEX') {
+                    salida.push(movimiento)
                 }
             })
             return salida;
@@ -65,7 +87,7 @@ angular.module('agil.filtros', [])
         // We have the ability to support multiple other parameters that can be passed into the filter optionally
         return function (input, optional1, optional2) {
             var datos = []
-            if (optional1.lote != "" && optional1.lote!=undefined) {
+            if (optional1.lote != "" && optional1.lote != undefined) {
                 if (optional1.datos) {
                     optional1.datos.forEach(function (dato, index, array) {
                         if (dato.lote == optional1.lote) {
@@ -74,8 +96,9 @@ angular.module('agil.filtros', [])
 
                     })
                     var output = datos;
-                }else{
-                var output = input}
+                } else {
+                    var output = input
+                }
             } else {
                 var output = optional1.datos;
             }

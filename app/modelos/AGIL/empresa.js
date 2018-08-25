@@ -136,6 +136,10 @@ module.exports = function (sequelize, Sequelize) {
 		usar_edicion_venta:{
 			type: Sequelize.BOOLEAN,
 			field: 'usar_edicion_venta'
+		},
+		usar_venta_servicio:{
+			type: Sequelize.BOOLEAN,
+			field: 'usar_venta_servicio'
 		}
 	}, {
 			freezeTableName: true

@@ -5,11 +5,11 @@ angular.module('agil.servicios')
 })
 
 .factory('Gerencia', function ($resource) {
-    return $resource(restServer + "cliente/empresa/gerencias/:id_empresa/:id_usuario");
+    return $resource(restServer + "cliente/empresa/gerencias/:id_empresa/:id_usuario/:id_cliente");
 })
 
 .factory('Comensal', function ($resource) {
-    return $resource(restServer + "cliente/empresa/comensales/:id_empresa/:id_usuario");
+    return $resource(restServer + "cliente/empresa/comensales/:id_empresa/:id_usuario/:id_cliente");
 })
 
 .factory('Comida', function ($resource) {
@@ -75,9 +75,9 @@ angular.module('agil.servicios')
 }])
 
 .factory('GuardarGerencias', ['Gerencia', '$q', function (Gerencia, $q) {
-    var res = function (idEmpresa, comensal, usuario) {
+    var res = function (idEmpresa, gerencias, usuario) {
         var delay = $q.defer();
-        Gerencia.save({ id_empresa: idEmpresa, id_usuario: usuario }, comensal, function (entidades) {
+        Gerencia.save({ id_empresa: idEmpresa, id_usuario: usuario, id_cliente: 0 }, gerencias, function (entidades) {
             delay.resolve(entidades);
         }, function (error) {
             delay.reject(error);
@@ -88,9 +88,9 @@ angular.module('agil.servicios')
 }])
 
 .factory('ObtenerGerencias', ['Gerencia', '$q', function (Gerencia, $q) {
-    var res = function (idEmpresa, usuario) {
+    var res = function (idEmpresa, usuario, cliente) {
         var delay = $q.defer();
-        Gerencia.get({ id_empresa: idEmpresa, id_usuario: usuario}, function (entidades) {
+        Gerencia.get({ id_empresa: idEmpresa, id_usuario: usuario, id_cliente: cliente ? cliente : 0}, function (entidades) {
             delay.resolve(entidades);
         }, function (error) {
             delay.reject(error);
@@ -114,9 +114,9 @@ angular.module('agil.servicios')
 }])
 
 .factory('ObtenerComensales', ['Comensal', '$q', function (Comensal, $q) {
-    var res = function (idEmpresa, usuario) {
+    var res = function (idEmpresa, usuario, cliente) {
         var delay = $q.defer();
-        Comensal.get({ id_empresa: idEmpresa, id_usuario: usuario}, function (entidades) {
+        Comensal.get({ id_empresa: idEmpresa, id_usuario: usuario, id_cliente: cliente ? cliente : 0}, function (entidades) {
             delay.resolve(entidades);
         }, function (error) {
             delay.reject(error);

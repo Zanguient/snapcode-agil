@@ -107,12 +107,14 @@ angular.module('agil.controladores')
                         $scope.clienteEmpresaEdicionGerencias = {}
                     }
                     $scope.clienteEmpresaEdicionGerencias.empresaCliente = Object.assign({}, cliente)
+                    $scope.obtenerGerencias()
                     break;
                 case 3:
                     if (!$scope.clienteEmpresaEdicionComensales) {
                         $scope.clienteEmpresaEdicionComensales = {}
                     }
                     $scope.clienteEmpresaEdicionComensales.empresaCliente = Object.assign({}, cliente)
+                    $scope.obtenerComensales()
                     break;
                 case 4:
                     if (!$scope.clienteEmpresaComidas) {
@@ -126,6 +128,7 @@ angular.module('agil.controladores')
                         $scope.clienteEmpresaPreciosComidas = {}
                     }
                     $scope.clienteEmpresaPreciosComidas.empresaCliente = Object.assign({}, cliente)
+                    $scope.obtenerPrecioComidas()
                     break;
                 default:
                     $scope.mostrarMensaje('Ocurrio un error al asignar')
@@ -145,25 +148,28 @@ angular.module('agil.controladores')
                         $scope.clienteEmpresaEdicionGerencias = {}
                     }
                     $scope.clienteEmpresaEdicionGerencias.empresaCliente = Object.assign({}, cliente)
+                    $scope.obtenerGerencias(true)
                     break;
                 case 3:
                     if (!$scope.clienteEmpresaEdicionComensales) {
                         $scope.clienteEmpresaEdicionComensales = {}
                     }
                     $scope.clienteEmpresaEdicionComensales.empresaCliente = Object.assign({}, cliente)
+                    $scope.obtenerComensales(true)
                     break;
                 case 4:
                     if (!$scope.clienteEmpresaComidas) {
                         $scope.clienteEmpresaComidas = {}
                     }
                     $scope.clienteEmpresaComidas.empresaCliente = Object.assign({}, cliente)
+                    $scope.obtenerComidas(true)
                     break;
                 case 5:
                     if (!$scope.clienteEmpresaPreciosComidas) {
                         $scope.clienteEmpresaPreciosComidas = {}
                     }
                     $scope.clienteEmpresaPreciosComidas.empresaCliente = Object.assign({}, cliente)
-                    $scope.obtenerComidas(true)
+                    $scope.obtenerPrecioComidas(true)
                     break;
                 default:
                     $scope.mostrarMensaje('Ocurrio un error al asignar')
@@ -192,7 +198,7 @@ angular.module('agil.controladores')
             blockUI.start()
             var prom;
             if (empresa) {
-                prom = ObtenerGerencias($scope.usuario.id_empresa, $scope.usuario.id, $scope.clienteEmpresaEdicionComensales.empresaCliente.id )
+                prom = ObtenerGerencias($scope.usuario.id_empresa, $scope.usuario.id, $scope.clienteEmpresaEdicionGerencias.empresaCliente.id )
             } else {
                 prom = ObtenerGerencias($scope.usuario.id_empresa, $scope.usuario.id, $scope.empresaExternaSeleccionada.id)
             }
@@ -236,7 +242,7 @@ angular.module('agil.controladores')
             blockUI.start()
             var prom;
             if (empresa) {
-                prom = ObtenerComidas($scope.usuario.id_empresa, $scope.usuario.id, $scope.clienteEmpresaPreciosComidas.empresaCliente.id )
+                prom = ObtenerComidas($scope.usuario.id_empresa, $scope.usuario.id, $scope.clienteEmpresaComidas.empresaCliente.id )
             } else {
                 prom = ObtenerComidas($scope.usuario.id_empresa, $scope.usuario.id, $scope.empresaExternaSeleccionada.id)
             }
@@ -1030,13 +1036,14 @@ angular.module('agil.controladores')
         }
         $scope.cerrarModalEdicionComidas = function () {
             $scope.clienteEmpresaComidas = {}
+
             $scope.cerrarPopup($scope.modalEdicionComidas);
         }
         $scope.abrirModalEdicionPrecios = function () {
             $scope.clienteEmpresaPreciosComidas = {}
             $scope.clienteEmpresaPreciosComidas.empresaCliente = Object.assign({}, $scope.empresaExternaSeleccionada)
             $scope.activeModal = 5
-            $scope.obtenerComidas()
+            $scope.obtenerPrecioComidas()
             $scope.abrirPopup($scope.modalEdicionPrecios);
         }
         $scope.cerrarModalEdicionPrecios = function () {

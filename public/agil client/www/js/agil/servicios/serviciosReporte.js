@@ -57,15 +57,18 @@ angular.module('agil.servicios')
   }])
   
 .factory('ReporteLibroVentas', function($resource) {
-		return $resource(restServer+"reportes/libro-ventas/:id_empresa/gestion/:gestion/mes/:mes");
+		return $resource(restServer+"reportes/libro-ventas/:id_empresa/gestion/:gestion/mes/:mes/movimiento/:id_movimiento");
 })
 
 .factory('ReporteLibroVentasDatos', ['ReporteLibroVentas','$q',function(ReporteLibroVentas, $q) 
   {
-	var res = function(id_empresa,gestion,mes) 
+	var res = function(id_empresa,gestion,mes,idMov) 
 	{
+		if(!idMov){
+			idMov=0
+		}
 		var delay = $q.defer();
-		ReporteLibroVentas.get({id_empresa:id_empresa,gestion:gestion,mes:mes},function(entidades) 
+		ReporteLibroVentas.get({id_empresa:id_empresa,gestion:gestion,mes:mes,id_movimiento:idMov},function(entidades) 
 		{        
 			delay.resolve(entidades);
 		}, function(error) 

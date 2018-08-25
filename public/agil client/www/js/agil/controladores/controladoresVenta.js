@@ -2,9 +2,10 @@ angular.module('agil.controladores')
 
 	.controller('ControladorVentas', function ($scope, $filter, $localStorage, $location, $templateCache, $route, blockUI, $timeout, $window, InventarioPaginador,
 		Venta, Ventas, VentasProductos, detalle, Clientes, ClientesNit, ProductosNombre, ClasesTipo, VentasContado, VentasCredito,
-		PagosVenta, DatosVenta, VentaEmpresaDatos, ProductosPanel, ListaProductosEmpresaUsuario, ListaInventariosProducto,Paginator,
+		PagosVenta, DatosVenta, VentaEmpresaDatos, ProductosPanel, ListaProductosEmpresaUsuario, ListaInventariosProducto, Paginator,
 		socket, ConfiguracionVentaVistaDatos, ConfiguracionVentaVista, ListaGruposProductoEmpresa, ReporteVentasMensualesDatos,
-		ConfiguracionImpresionEmpresaDato, VerificarUsuarioEmpresa, ImprimirSalida, ModificarVenta, ListaVendedorVenta, VendedorVenta, VendedorVentaActualizacion, GuardarUsuarLectorDeBarra, VerificarLimiteCredito, ListaSucursalesUsuario, ListaGruposProductoUsuario) {
+		ConfiguracionImpresionEmpresaDato, VerificarUsuarioEmpresa, ImprimirSalida, ModificarVenta, ListaVendedorVenta, VendedorVenta, VendedorVentaActualizacion, GuardarUsuarLectorDeBarra, VerificarLimiteCredito, ListaSucursalesUsuario, ListaGruposProductoUsuario, ListaServiciosVentas, GuardarListaServiciosVentas,
+		EliminarVentaServicio) {
 		blockUI.start();
 		$scope.usuario = JSON.parse($localStorage.usuario);
 		convertUrlToBase64Image($scope.usuario.empresa.imagen, function (imagenEmpresa) {
@@ -26,7 +27,7 @@ angular.module('agil.controladores')
 		$scope.idModalImpresionVencimiento = 'dialog-imprimir-con-fecha-vencimiento';
 		$scope.IdModalVerificarCuenta = 'modal-verificar-cuenta';
 		$scope.modalReportesProductos = 'dialog-reportes-productos';
-
+		$scope.modalServicioVenta = 'dialog-servicios-venta'
 		$scope.$on('$viewContentLoaded', function () {
 			resaltarPestaña($location.path().substring(1));
 			ejecutarScriptsVenta($scope.idModalWizardCompraEdicion, $scope.idModalWizardVentaVista,
@@ -34,7 +35,7 @@ angular.module('agil.controladores')
 				$scope.idModalContenedorVentaVista, $scope.idInputCompletar, $scope.url, $scope.idModalPago,
 				$scope.idModalCierre,
 				$scope.idModalPanelVentas, $scope.idModalConfirmacionEliminacionVenta, $scope.idModalInventario, $scope.idModalPanelVentasCobro,
-				$scope.idModalEdicionVendedor, $scope.idModalImpresionVencimiento,$scope.IdModalVerificarCuenta, $scope.modalReportesProductos);
+				$scope.idModalEdicionVendedor, $scope.idModalImpresionVencimiento, $scope.IdModalVerificarCuenta, $scope.modalReportesProductos, $scope.modalServicioVenta);
 			$scope.buscarAplicacion($scope.usuario.aplicacionesUsuario, $location.path().substring(1));
 			blockUI.stop();
 		});
@@ -62,7 +63,7 @@ angular.module('agil.controladores')
 
 			$scope.obtenerVendedores();
 
-			$scope.detalleVenta = { eliminado: false, producto: {}, centroCosto: {}, cantidad: 1, descuento: 0, recargo: 0, ice: 0, excento: 0, tipo_descuento: false, tipo_recargo: false }
+			$scope.detalleVenta = { eliminado: false, producto: {}, centroCosto: {}, cantidad: 1, descuento: 0, recargo: 0, ice: 0, excento: 0, tipo_descuento: false, tipo_recargo: false, servicio: {} }
 		}
 
 		$scope.obtenerConfiguracionVentaVista = function () {
@@ -274,6 +275,9 @@ angular.module('agil.controladores')
 		$scope.obtenerTipoEgreso = function (movimiento) {
 			var nombre_corto = movimiento.nombre_corto;
 			$scope.tipoEgreso = nombre_corto;
+			if ($scope.venta.sucursal) {
+				$scope.obtenerActividades($scope.venta.sucursal.id)
+			}
 		}
 
 		$scope.buscarCliente = function (query) {
@@ -473,7 +477,22 @@ angular.module('agil.controladores')
 			}
 
 		}
-
+		$scope.agregarDetalleVentaServicio = function (detalleVenta) {
+			if (detalleVenta.servicio.id && detalleVenta.importe) {
+				$scope.calcularImporteServicio()
+				$scope.venta.detallesVenta.push(detalleVenta);
+				$scope.inventariosDisponibleProducto = [];
+				$scope.sumarTotal();
+				$scope.sumarTotalImporte();
+				$scope.calcularSaldo();
+				$scope.calcularCambio();
+				$scope.detalleVenta = { eliminado: false, producto: { activar_inventario: true }, cantidad: 1, descuento: 0, recargo: 0, ice: 0, excento: 0, tipo_descuento: false, tipo_recargo: false, servicio: {} }
+				$scope.enfocar('id_servicio');
+			}
+		}
+		$scope.calcularImporteServicio = function () {
+			$scope.detalleVenta.total = Math.round(($scope.detalleVenta.importe - $scope.detalleVenta.descuento + $scope.detalleVenta.recargo - $scope.detalleVenta.ice - $scope.detalleVenta.excento) * 1000) / 1000;
+		}
 		$scope.agregarDetalleVenta = function (detalleVenta) {
 			if (detalleVenta.producto.id) {
 				if (detalleVenta.producto.activar_inventario) {
@@ -566,7 +585,7 @@ angular.module('agil.controladores')
 				$scope.calcularSaldo();
 				$scope.calcularCambio();
 				$scope.precio_inventario = "Sin histórico";
-				$scope.detalleVenta = { eliminado: false, producto: { activar_inventario: true }, cantidad: 1, descuento: 0, recargo: 0, ice: 0, excento: 0, tipo_descuento: false, tipo_recargo: false }
+				$scope.detalleVenta = { eliminado: false, producto: { activar_inventario: true }, cantidad: 1, descuento: 0, recargo: 0, ice: 0, excento: 0, tipo_descuento: false, tipo_recargo: false, servicio: {} }
 				$scope.enfocar('id_producto');
 			}
 		}
@@ -745,10 +764,26 @@ angular.module('agil.controladores')
 			$scope.actividades = [];
 			for (var i = 0; i < $scope.actividadesDosificaciones.length; i++) {
 				if ($scope.actividadesDosificaciones[i].dosificacion) {
-					if (!$scope.actividadesDosificaciones[i].expirado && !$scope.actividadesDosificaciones[i].dosificacion.expirado) {
-						$scope.actividades.push($scope.actividadesDosificaciones[i].actividad);
+					if ($scope.venta.movimiento) {
+						if ($scope.venta.movimiento.nombre_corto == "SERV") {
+							if (!$scope.actividadesDosificaciones[i].expirado && !$scope.actividadesDosificaciones[i].dosificacion.expirado && $scope.actividadesDosificaciones[i].dosificacion.tipo_dosificacion == true) {
+								$scope.actividades.push($scope.actividadesDosificaciones[i].actividad);
+							} else {
+								$scope.dosificacionesExpiradas = true
+							}
+						} else {
+							if (!$scope.actividadesDosificaciones[i].expirado && !$scope.actividadesDosificaciones[i].dosificacion.expirado && $scope.actividadesDosificaciones[i].dosificacion.tipo_dosificacion == false) {
+								$scope.actividades.push($scope.actividadesDosificaciones[i].actividad);
+							} else {
+								$scope.dosificacionesExpiradas = true
+							}
+						}
 					} else {
-						$scope.dosificacionesExpiradas = true
+						if (!$scope.actividadesDosificaciones[i].expirado && !$scope.actividadesDosificaciones[i].dosificacion.expirado && $scope.actividadesDosificaciones[i].dosificacion.tipo_dosificacion == false) {
+							$scope.actividades.push($scope.actividadesDosificaciones[i].actividad);
+						} else {
+							$scope.dosificacionesExpiradas = true
+						}
 					}
 				}
 			}
@@ -1009,8 +1044,8 @@ angular.module('agil.controladores')
 
 				doc.text(i + 1, 55, y + 20);
 				doc.font('Helvetica', 6);
-				doc.text(ventas[i].movimiento.clase.nombre, 65, y + 20);
-				doc.text(ventas[i].almacen.sucursal.nombre, 120, y + 20, { width: 60 });
+				doc.text((ventas[i].movimiento) ? ventas[i].movimiento.clase.nombre : ventas[i].movimientoServicio.nombre, 65, y + 20);
+				doc.text((ventas[i].almacen) ? ventas[i].almacen.sucursal.nombre : ventas[i].sucursal.nombre, 120, y + 20, { width: 60 });
 				if (ventas[i].cliente) {
 					doc.font('Helvetica', 6);
 					doc.text(ventas[i].cliente.razon_social, 170, y + 15, { width: 75 });
@@ -1053,10 +1088,10 @@ angular.module('agil.controladores')
 						doc.font('Helvetica', 7);
 
 						doc.text(j + 1, 105, y + 20);
-						doc.text(ventas[i].detallesVenta[j].producto.nombre, 115, y + 20, { width: 55 });
-						doc.text(ventas[i].detallesVenta[j].producto.id, 170, y + 20);
-						doc.text(ventas[i].detallesVenta[j].producto.unidad_medida, 230, y + 20);
-						doc.text(ventas[i].detallesVenta[j].cantidad, 295, y + 20);
+						doc.text((ventas[i].detallesVenta[j].producto) ? ventas[i].detallesVenta[j].producto.nombre : ventas[i].detallesVenta[j].servicio.nombre, 115, y + 20, { width: 55 });
+						doc.text((ventas[i].detallesVenta[j].producto) ? ventas[i].detallesVenta[j].producto.id : "0", 170, y + 20);
+						doc.text((ventas[i].detallesVenta[j].producto) ? ventas[i].detallesVenta[j].producto.unidad_medida : "0", 230, y + 20);
+						doc.text((ventas[i].detallesVenta[j].producto) ? ventas[i].detallesVenta[j].cantidad : "0", 295, y + 20);
 						doc.text(ventas[i].detallesVenta[j].importe, 355, y + 20);
 
 						y = y + 24
@@ -1191,8 +1226,8 @@ angular.module('agil.controladores')
 			for (var i = 0; i < ventas.length; i++) {
 				var columns = [];
 				columns.push(i + 1);
-				columns.push(ventas[i].movimiento.clase.nombre);
-				columns.push(ventas[i].almacen.sucursal.nombre);
+				columns.push((ventas[i].movimiento) ? ventas[i].movimiento.clase.nombre : ventas[i].movimientoServicio.nombre);
+				columns.push((ventas[i].almacen) ? ventas[i].almacen.sucursal.nombre : ventas[i].sucursal.nombre);
 				if (ventas[i].cliente) {
 					columns.push(ventas[i].cliente.razon_social);
 					columns.push(ventas[i].factura);
@@ -1215,12 +1250,13 @@ angular.module('agil.controladores')
 				} else {
 					columns.push("");
 				}
-				if (ventas[i].movimiento.clase.nombre == "TRASPASO") {
-					columns.push("");
+				if (ventas[i].movimiento) {
+					if (ventas[i].movimiento.clase.nombre == "TRASPASO") {
+						columns.push("");
 
-					columns.push(ventas[i].almacenTraspaso.sucursal.nombre);
+						columns.push(ventas[i].almacenTraspaso.sucursal.nombre);
+					}
 				}
-
 				data.push(columns);
 				if ($scope.trueDetalle) {
 					data.push(["", "", "", "", "N°", "Nombre", "Codigo Item", "Unidad de Med", "Cantidad", "Importe", "lote"]);
@@ -1231,12 +1267,12 @@ angular.module('agil.controladores')
 						columns.push("");
 						columns.push("");
 						columns.push(j + 1);
-						columns.push(ventas[i].detallesVenta[j].producto ? ventas[i].detallesVenta[j].producto.nombre : 'ERROR SIN NOMBRE');
-						columns.push(ventas[i].detallesVenta[j].producto ? ventas[i].detallesVenta[j].producto.codigo : 'ERROR SIN NOMBRE');
-						columns.push(ventas[i].detallesVenta[j].producto ? ventas[i].detallesVenta[j].producto.unidad_medida : 'ERROR SIN NOMBRE');
-						columns.push(ventas[i].detallesVenta[j].producto ? ventas[i].detallesVenta[j].cantidad : 'ERROR SIN NOMBRE');
+						columns.push(ventas[i].detallesVenta[j].producto ? ventas[i].detallesVenta[j].producto.nombre : ventas[i].detallesVenta[j].servicio ? ventas[i].detallesVenta[j].servicio.nombre : 'ERROR SIN NOMBRE');
+						columns.push(ventas[i].detallesVenta[j].producto ? ventas[i].detallesVenta[j].producto.codigo : ventas[i].detallesVenta[j].servicio ? "0" : 'ERROR SIN NOMBRE');
+						columns.push(ventas[i].detallesVenta[j].producto ? ventas[i].detallesVenta[j].producto.unidad_medida : ventas[i].detallesVenta[j].servicio ? "0" : 'ERROR SIN NOMBRE');
+						columns.push(ventas[i].detallesVenta[j].producto ? ventas[i].detallesVenta[j].cantidad : ventas[i].detallesVenta[j].servicio ? "0" : 'ERROR SIN NOMBRE');
 						columns.push(ventas[i].detallesVenta[j].producto ? ventas[i].detallesVenta[j].importe : 'ERROR SIN NOMBRE');
-						columns.push(ventas[i].detallesVenta[j].producto ? ventas[i].detallesVenta[j].lote : 'ERROR SIN NOMBRE');
+						columns.push(ventas[i].detallesVenta[j].producto ? ventas[i].detallesVenta[j].lote : ventas[i].detallesVenta[j].servicio ? "0" : 'ERROR SIN NOMBRE');
 						data.push(columns);
 					}
 				}
@@ -1450,9 +1486,15 @@ angular.module('agil.controladores')
 		$scope.sumarMonto = function () {
 			var suma = 0;
 			for (var i = 0; i < $scope.ventas.length; i++) {
-				if (($scope.ventas[i].movimiento.clase.nombre_corto == $scope.diccionario.EGRE_FACTURACION ||
-					$scope.ventas[i].movimiento.clase.nombre_corto == $scope.diccionario.EGRE_PROFORMA) && $scope.ventas[i].activa) {
-					suma = suma + $scope.ventas[i].total;
+				if ($scope.ventas[i].movimiento) {
+					if (($scope.ventas[i].movimiento.clase.nombre_corto == $scope.diccionario.EGRE_FACTURACION ||
+						$scope.ventas[i].movimiento.clase.nombre_corto == $scope.diccionario.EGRE_PROFORMA) && $scope.ventas[i].activa) {
+						suma = suma + $scope.ventas[i].total;
+					}
+				} else {
+					if ($scope.ventas[i].movimientoServicio.nombre_corto == $scope.diccionario.EGRE_SERVICIO && $scope.ventas[i].activa) {
+						suma = suma + $scope.ventas[i].total;
+					}
 				}
 			}
 			return Math.round(suma * 100) / 100;
@@ -1460,7 +1502,7 @@ angular.module('agil.controladores')
 
 		$scope.crearNuevaVenta = function (venta) {
 			//console.log("venta ressss =========== ", venta);
-
+			$scope.obtenerListaServiciosVentas()
 			$scope.blockerVenta = true
 			$scope.venta = new Venta({
 				id_empresa: $scope.usuario.id_empresa, id_usuario: $scope.usuario.id, cliente: {},
@@ -1476,8 +1518,10 @@ angular.module('agil.controladores')
 
 			if ($scope.venta.sucursal) {
 				$scope.obtenerAlmacenesActividades($scope.venta.sucursal.id);
-				if (al.id) {
-					$scope.venta.almacen = al;
+				if (al != null) {
+					if (al.id) {
+						$scope.venta.almacen = al;
+					}
 				}
 			}
 			$scope.venta.movimiento = $scope.movimientosEgreso[0];
@@ -1488,7 +1532,7 @@ angular.module('agil.controladores')
 			$scope.venta.tipoPago = $scope.tiposPago[0];
 			$scope.cambiarTipoPago($scope.venta);
 			$scope.editar_precio = false;
-			$scope.detalleVenta = { eliminado: false, producto: { activar_inventario: true }, cantidad: 1, descuento: 0, recargo: 0, ice: 0, excento: 0, tipo_descuento: false, tipo_recargo: false }
+			$scope.detalleVenta = { eliminado: false, producto: { activar_inventario: true }, cantidad: 1, descuento: 0, recargo: 0, ice: 0, excento: 0, tipo_descuento: false, tipo_recargo: false, servicio: {} }
 			$scope.abrirPopup($scope.idModalWizardCompraEdicion);
 			angular.element($window).unbind("keydown");
 			angular.element($window).bind("keydown", function (e) {
@@ -1583,26 +1627,20 @@ angular.module('agil.controladores')
 				var fecha = new Date(ventaConsultada.fecha);
 				ventaConsultada.fechaTexto = fecha.getDate() + "/" + (fecha.getMonth() + 1) + "/" + fecha.getFullYear();
 
-				$scope.imprimirVenta = function (venta) {
-					var promesa = DatosVenta(venta.id, $scope.usuario.id_empresa);
-					promesa.then(function (datos) {
-						var ventaConsultada = datos.venta;
-						ventaConsultada.configuracion = datos.configuracion;
-						ventaConsultada.sucursal = datos.sucursal;
-						ventaConsultada.numero_literal = datos.numero_literal;
-						ventaConsultada.pieFactura = datos.pieFactura;
-						ventaConsultada.sucursalDestino = datos.sucursalDestino;
+				if ($scope.formatosFactura) {
+					if (ventaConsultada.movimiento) {
+						ImprimirSalida(ventaConsultada.movimiento.clase.nombre_corto, ventaConsultada, false, $scope.usuario, false, $scope.formatosFactura);
+					} else {
+						ImprimirSalida(ventaConsultada.movimientoServicio.nombre_corto, ventaConsultada, false, $scope.usuario, false, $scope.formatosFactura);
+					}
 
-						var fecha = new Date(ventaConsultada.fecha);
-						ventaConsultada.fechaTexto = fecha.getDate() + "/" + (fecha.getMonth() + 1) + "/" + fecha.getFullYear();
+				} else {
+					if (ventaConsultada.movimiento) {
+						ImprimirSalida(ventaConsultada.movimiento.clase.nombre_corto, ventaConsultada, false, $scope.usuario, false);
+					} else {
+						ImprimirSalida(ventaConsultada.movimientoServicio.nombre_corto, ventaConsultada, false, $scope.usuario, false);
+					}
 
-						if ($scope.formatosFactura) {
-							ImprimirSalida(ventaConsultada.movimiento.clase.nombre_corto, ventaConsultada, false, $scope.usuario, false, $scope.formatosFactura);
-						} else {
-							ImprimirSalida(ventaConsultada.movimiento.clase.nombre_corto, ventaConsultada, false, $scope.usuario, false);
-						}
-
-					});
 				}
 
 			});
@@ -2146,13 +2184,13 @@ angular.module('agil.controladores')
 						} else {
 							if ($scope.formatosFactura) {
 								//ImprimirSalida(ventaConsultada.movimiento.clase.nombre_corto, ventaConsultada, false, $scope.usuario, false, $scope.formatosFactura);
-								ImprimirSalida(movimiento, res, true, $scope.usuario, llevar,$scope.formatosFactura);
+								ImprimirSalida(movimiento, res, true, $scope.usuario, llevar, $scope.formatosFactura);
 							} else {
 								//ImprimirSalida(ventaConsultada.movimiento.clase.nombre_corto, ventaConsultada, false, $scope.usuario, false);
 								ImprimirSalida(movimiento, res, true, $scope.usuario, llevar);
 							}
-	
-							
+
+
 							$scope.mostrarMensaje('Venta registrada exitosamente!');
 							$scope.cargarProductos();
 							$scope.abrirPopupPanel(venta.sucursal, venta.almacen, venta.actividad, venta.tipoPago, venta.movimiento);
@@ -2178,7 +2216,14 @@ angular.module('agil.controladores')
 		$scope.eliminarVenta = function (venta) {
 			blockUI.start();
 			$scope.cerrarConfirmacionEliminacionVenta();
-			venta.$delete();
+			if (venta.movimientoServicio) {
+				var promesa = EliminarVentaServicio(venta)
+				promesa.then(function (dato) {
+					$scope.mostrarMensaje(dato.mensaje);
+				})
+			} else {
+				venta.$delete();
+			}
 			$scope.mostrarMensaje('Anulado exitosamente!');
 			$scope.recargarItemsTabla();
 			blockUI.stop();
@@ -2302,7 +2347,7 @@ angular.module('agil.controladores')
 			})
 		}
 
-		
+
 		$scope.abrirReporteProductos = function () {
 
 			if ($scope.filtro != undefined) {
@@ -2377,7 +2422,7 @@ angular.module('agil.controladores')
 
 			if ($scope.fechaInicioTexto === undefined && $scope.fechaFinTexto === undefined) {
 				$scope.mostrarMensaje("Ingrese primero las fechas !");
-			}else{
+			} else {
 				$scope.fechaInicioTexto;
 				$scope.fechaFinTexto;
 				var columna = "nombre";
@@ -2386,27 +2431,27 @@ angular.module('agil.controladores')
 				//$scope.filtrarDetalles($scope.sucursalesUsuario, $scope.fechaInicioTexto, $scope.fechaFinTexto, $scope.sucursal,columna,direccion);
 				$scope.abrirPopup($scope.modalReportesProductos);
 			}
-			
+
 
 
 		}
 
 		$scope.obtenerDetalles = function () {
-            $scope.paginator = Paginator();
-            $scope.paginator.column = "nombre";
-            $scope.paginator.direccion = "asc";
-            $scope.filtroDetallesProducto = {
-                sucursalUsuario: $scope.sucursalesUsuario,
-                inicio: $scope.fechaInicioTexto,
-                fin: $scope.fechaFinTexto,
-                sucursal: $scope.sucursal,
-            }
-            $scope.paginator.callBack = $scope.filtrarDetalles;
-            $scope.paginator.getSearch("", $scope.filtroDetallesProducto, null);
+			$scope.paginator = Paginator();
+			$scope.paginator.column = "nombre";
+			$scope.paginator.direccion = "asc";
+			$scope.filtroDetallesProducto = {
+				sucursalUsuario: $scope.sucursalesUsuario,
+				inicio: $scope.fechaInicioTexto,
+				fin: $scope.fechaFinTexto,
+				sucursal: $scope.sucursal,
+			}
+			$scope.paginator.callBack = $scope.filtrarDetalles;
+			$scope.paginator.getSearch("", $scope.filtroDetallesProducto, null);
 
 
 		}
-		
+
 		$scope.filtrarDetalles = function () {
 
 			blockUI.start();
@@ -2509,19 +2554,19 @@ angular.module('agil.controladores')
 					saveAs(new Blob([s2ab(wbout)], { type: "application/octet-stream" }), "VENTAS-MENSUALES.xlsx");
 					blockUI.stop();
 				});
-			}else{
+			} else {
 				blockUI.start();
 				inicio = new Date($scope.convertirFecha($scope.fechaInicioTexto));
 				fin = new Date($scope.convertirFecha($scope.fechaFinTexto));
-				
-				$scope.paginator.itemsPerPage=0;			
-				var reporte = [inicio,fin];
+
+				$scope.paginator.itemsPerPage = 0;
+				var reporte = [inicio, fin];
 				var promesa = VentasProductos($scope.paginator);
 				promesa.then(function (datos) {
 					$scope.ventasExcelDetalle = datos.ventas;
 					var data = [];
 
-					var cabecera = ["Producto","Unidad Medida","Cantidad","Monto","Razon Social"];
+					var cabecera = ["Producto", "Unidad Medida", "Cantidad", "Monto", "Razon Social"];
 					data.push(cabecera)
 					for (let i = 0; i < $scope.ventasExcelDetalle.length; i++) {
 						columns = [];
@@ -2533,7 +2578,7 @@ angular.module('agil.controladores')
 						columns.push($scope.ventasExcelDetalle[i].razon_social);
 						data.push(columns);
 					}
-					
+
 					var ws_name = "SheetJS";
 					var wb = new Workbook(), ws = sheet_from_array_of_arrays(data);
 					/* add worksheet to workbook */
@@ -2543,12 +2588,12 @@ angular.module('agil.controladores')
 					saveAs(new Blob([s2ab(wbout)], { type: "application/octet-stream" }), "VENTAS-DETALLE-PRODUCTO.xlsx");
 					blockUI.stop();
 				});
-				
+
 			}
 		}
 
 		$scope.generarPdfVentasMensuales = function () {
-			if ($scope.verDetalle === true) {				
+			if ($scope.verDetalle === true) {
 				blockUI.start();
 				inicio = new Date($scope.convertirFecha($scope.fechaInicioTexto));
 				fin = new Date($scope.convertirFecha($scope.fechaFinTexto));
@@ -2630,23 +2675,23 @@ angular.module('agil.controladores')
 					});
 					blockUI.stop();
 				});
-			}else{
+			} else {
 				blockUI.start();
 				inicio = new Date($scope.convertirFecha($scope.fechaInicioTexto));
 				fin = new Date($scope.convertirFecha($scope.fechaFinTexto));
-				$scope.paginator.itemsPerPage=0;
-			
-				var reporte = [inicio,fin];
+				$scope.paginator.itemsPerPage = 0;
+
+				var reporte = [inicio, fin];
 				var promesa = VentasProductos($scope.paginator);
 				promesa.then(function (datos) {
-					
-					$scope.ventaSinDetalle = datos.ventas;	
+
+					$scope.ventaSinDetalle = datos.ventas;
 					var doc = new PDFDocument({ compress: false, margin: 10 });
 					var stream = doc.pipe(blobStream());
 					doc.font('Helvetica', 8);
 					var y = 150, itemsPorPagina = 20, items = 0, pagina = 1;
 					var totalPaginas = Math.ceil($scope.ventaSinDetalle.length / itemsPorPagina);
-					$scope.dibujarCabeceraPDFVentasMensualesSinDetalle(doc, $scope.ventaSinDetalle,reporte, pagina,totalPaginas);
+					$scope.dibujarCabeceraPDFVentasMensualesSinDetalle(doc, $scope.ventaSinDetalle, reporte, pagina, totalPaginas);
 					var indice = 0;
 					for (var i = 0; i < $scope.ventaSinDetalle.length && items <= itemsPorPagina; i++) {
 						indice = i + 1;
@@ -2673,7 +2718,7 @@ angular.module('agil.controladores')
 								y = 150;
 								items = 0;
 								pagina = pagina + 1;
-								$scope.dibujarCabeceraPDFDetalleProductos(doc, $scope.ventaSinDetalle,reporte, pagina,totalPaginas);
+								$scope.dibujarCabeceraPDFDetalleProductos(doc, $scope.ventaSinDetalle, reporte, pagina, totalPaginas);
 								doc.font('Helvetica', 8);
 							}
 						}
@@ -2685,7 +2730,7 @@ angular.module('agil.controladores')
 					}
 					doc.text("USUARIO: " + $scope.usuario.nombre_usuario, 45, 750);
 					doc.text("IMPRESION : " + fechaActual.getDate() + "/" + (fechaActual.getMonth() + 1) + "/" + fechaActual.getFullYear() + " Hr. " + fechaActual.getHours() + ":" + min, 175, 750);
-					
+
 					doc.end();
 					stream.on('finish', function () {
 						var fileURL = stream.toBlobURL('application/pdf');
@@ -2727,7 +2772,7 @@ angular.module('agil.controladores')
 
 		}
 
-		$scope.dibujarCabeceraPDFVentasMensualesSinDetalle = function (doc, datos, reporte, pagina,totalPaginas) {
+		$scope.dibujarCabeceraPDFVentasMensualesSinDetalle = function (doc, datos, reporte, pagina, totalPaginas) {
 			doc.font('Helvetica-Bold', 12);
 			doc.text("REPORTE DE VENTAS POR PRODUCTOS SIN DETALLE", 0, 25, { align: "center" });
 			doc.font('Helvetica', 8);
@@ -2738,7 +2783,7 @@ angular.module('agil.controladores')
 			doc.rect(40, 100, 540, 40).stroke();
 			doc.font('Helvetica-Bold', 8);
 
-			doc.text("N°",45,110);
+			doc.text("N°", 45, 110);
 			doc.text("Producto", 65, 110);
 			doc.text("Unidad Medida.", 248, 110);
 			doc.text("Cantidad", 310, 110);
@@ -2746,84 +2791,84 @@ angular.module('agil.controladores')
 			doc.text("Razon Social", 445, 110);
 
 			doc.font('Helvetica', 8);
-			doc.text("Pagina "+pagina+" de "+totalPaginas,500,750);
+			doc.text("Pagina " + pagina + " de " + totalPaginas, 500, 750);
 		}
 
 		$scope.PopoverReportesRapido = {
 			templateUrl: 'PopoverReportesRapido.html',
-            title: 'Reportes Rapidos',
-            isOpen: false
+			title: 'Reportes Rapidos',
+			isOpen: false
 		}
 
 		$scope.ImprimirSimpleReporte = function (id) {
-				blockUI.start();
-				var idEmpresa = 0;
-				idEmpresa =  $scope.usuario.id_empresa;
-				inicio = new Date($scope.convertirFecha($scope.fechaInicioTexto));
-				fin = new Date($scope.convertirFecha($scope.fechaFinTexto));
-				var promesa = detalle(inicio, fin,idEmpresa, id);
-				promesa.then(function (datos) {
-					$scope.detallePorProducto = datos;
+			blockUI.start();
+			var idEmpresa = 0;
+			idEmpresa = $scope.usuario.id_empresa;
+			inicio = new Date($scope.convertirFecha($scope.fechaInicioTexto));
+			fin = new Date($scope.convertirFecha($scope.fechaFinTexto));
+			var promesa = detalle(inicio, fin, idEmpresa, id);
+			promesa.then(function (datos) {
+				$scope.detallePorProducto = datos;
 
-					var doc = new PDFDocument({ compress: false, margin: 10 });
-					var stream = doc.pipe(blobStream());
+				var doc = new PDFDocument({ compress: false, margin: 10 });
+				var stream = doc.pipe(blobStream());
+				doc.font('Helvetica', 8);
+				var y = 150, itemsPorPagina = 20, items = 0, pagina = 1;
+				var totalPaginas = Math.ceil($scope.detallePorProducto.length / itemsPorPagina);
+				$scope.dibujarCabeceraPDFDetalleProductos(doc, datos, pagina, totalPaginas);
+				var indice = 0;
+				for (var i = 0; i < $scope.detallePorProducto.length && items <= itemsPorPagina; i++) {
+					indice = i + 1;
 					doc.font('Helvetica', 8);
-					var y = 150, itemsPorPagina = 20, items = 0, pagina = 1;
-					var totalPaginas = Math.ceil($scope.detallePorProducto.length / itemsPorPagina);
-					$scope.dibujarCabeceraPDFDetalleProductos(doc, datos, pagina,totalPaginas);
-					var indice = 0;
-					for (var i = 0; i < $scope.detallePorProducto.length && items <= itemsPorPagina; i++) {
-						indice = i + 1;
-						doc.font('Helvetica', 8);
-						doc.text(indice, 45, y);
-						doc.font('Helvetica', 8);
-						doc.text($scope.detallePorProducto[i].venta.factura, 65, y, { width: 150 });
-						doc.font('Helvetica', 8);
-						doc.text($scope.detallePorProducto[i].producto.nombre, 120, y, { width: 150 });
-						doc.font('Helvetica', 8);
-						doc.text($scope.detallePorProducto[i].producto.unidad_medida, 320, y);
-						doc.font('Helvetica', 8);
-						doc.text($scope.detallePorProducto[i].cantidad, 385, y);
-						doc.font('Helvetica', 8);
-						doc.text($scope.detallePorProducto[i].venta.total, 420, y);
-						doc.font('Helvetica', 8);
-						doc.text($scope.detallePorProducto[i].venta.cliente.razon_social,470,y);
-						y = y + 30;
-						items++;
+					doc.text(indice, 45, y);
+					doc.font('Helvetica', 8);
+					doc.text($scope.detallePorProducto[i].venta.factura, 65, y, { width: 150 });
+					doc.font('Helvetica', 8);
+					doc.text($scope.detallePorProducto[i].producto.nombre, 120, y, { width: 150 });
+					doc.font('Helvetica', 8);
+					doc.text($scope.detallePorProducto[i].producto.unidad_medida, 320, y);
+					doc.font('Helvetica', 8);
+					doc.text($scope.detallePorProducto[i].cantidad, 385, y);
+					doc.font('Helvetica', 8);
+					doc.text($scope.detallePorProducto[i].venta.total, 420, y);
+					doc.font('Helvetica', 8);
+					doc.text($scope.detallePorProducto[i].venta.cliente.razon_social, 470, y);
+					y = y + 30;
+					items++;
 
-						if (items == itemsPorPagina || i + 1 == $scope.detallePorProducto.length) {
-							if (i + 1 == $scope.detallePorProducto.length) {
+					if (items == itemsPorPagina || i + 1 == $scope.detallePorProducto.length) {
+						if (i + 1 == $scope.detallePorProducto.length) {
 
-							} else {
-								doc.addPage({ margin: 0, bufferPages: true });
-								y = 150;
-								items = 0;
-								pagina = pagina + 1;
-								$scope.dibujarCabeceraPDFDetalleProductos(doc, datos, pagina,totalPaginas);
-								doc.font('Helvetica', 8);
-							}
+						} else {
+							doc.addPage({ margin: 0, bufferPages: true });
+							y = 150;
+							items = 0;
+							pagina = pagina + 1;
+							$scope.dibujarCabeceraPDFDetalleProductos(doc, datos, pagina, totalPaginas);
+							doc.font('Helvetica', 8);
 						}
+					}
 
-					}
-					var fechaActual = new Date();
-					var min = fechaActual.getMinutes();
-					if (min < 10) {
-						min = "0" + min;
-					}
-					doc.text("USUARIO: " + $scope.usuario.nombre_usuario, 45, 750);
-					doc.text("IMPRESION : " + fechaActual.getDate() + "/" + (fechaActual.getMonth() + 1) + "/" + fechaActual.getFullYear() + " Hr. " + fechaActual.getHours() + ":" + min, 175, 750);
-					
-					doc.end();
-					stream.on('finish', function () {
-						var fileURL = stream.toBlobURL('application/pdf');
-						window.open(fileURL, '_blank', 'location=no');
-					});
-					blockUI.stop();
+				}
+				var fechaActual = new Date();
+				var min = fechaActual.getMinutes();
+				if (min < 10) {
+					min = "0" + min;
+				}
+				doc.text("USUARIO: " + $scope.usuario.nombre_usuario, 45, 750);
+				doc.text("IMPRESION : " + fechaActual.getDate() + "/" + (fechaActual.getMonth() + 1) + "/" + fechaActual.getFullYear() + " Hr. " + fechaActual.getHours() + ":" + min, 175, 750);
+
+				doc.end();
+				stream.on('finish', function () {
+					var fileURL = stream.toBlobURL('application/pdf');
+					window.open(fileURL, '_blank', 'location=no');
 				});
+				blockUI.stop();
+			});
 
 		}
 
-		$scope.dibujarCabeceraPDFDetalleProductos = function (doc, datos, pagina,totalPaginas) {
+		$scope.dibujarCabeceraPDFDetalleProductos = function (doc, datos, pagina, totalPaginas) {
 			doc.font('Helvetica-Bold', 12);
 			doc.text("DETALLE DEL PRODUCTO", 0, 25, { align: "center" });
 			doc.font('Helvetica', 8);
@@ -2840,18 +2885,18 @@ angular.module('agil.controladores')
 			doc.rect(40, 100, 540, 40).stroke();
 			doc.font('Helvetica-Bold', 8);
 			doc.text("Nº", 45, 110);
-			doc.text("N° Factura",65,110);
+			doc.text("N° Factura", 65, 110);
 			doc.text("Producto", 120, 110);
 			doc.text("Unidad Medida", 300, 110);
 			doc.text("Cantidad", 370, 110);
 			doc.text("Monto", 420, 110, );
-			doc.text("Razon Social",470,110);
+			doc.text("Razon Social", 470, 110);
 
 			doc.font('Helvetica', 8);
-			doc.text("Pagina "+pagina+" de "+totalPaginas, 500,750);
+			doc.text("Pagina " + pagina + " de " + totalPaginas, 500, 750);
 		}
 
-		$scope.graficar = function(){
+		$scope.graficar = function () {
 			var cabecera = []
 		}
 
@@ -2860,10 +2905,10 @@ angular.module('agil.controladores')
 		}
 
 		$scope.verDetalle = true;
-		$scope.conDetalle = function(){
+		$scope.conDetalle = function () {
 			if ($scope.verDetalle === true) {
 				$scope.verDetalle = false;
-			}else if($scope.verDetalle === false){
+			} else if ($scope.verDetalle === false) {
 				$scope.verDetalle = true;
 			}
 		}
@@ -2906,6 +2951,63 @@ angular.module('agil.controladores')
 			$scope.venta.id_empresa = $scope.usuario.id_empresa
 			$scope.enfocar('nit');
 		}
+
+		$scope.abrirmodalServicioVenta = function () {
+			$scope.servicio = { habilitado: true, eliminado: false }
+			$scope.abrirPopup($scope.modalServicioVenta)
+		}
+		$scope.cerrarmodalServicioVenta = function () {
+			$scope.cerrarPopup($scope.modalServicioVenta)
+		}
+
+		$scope.obtenerListaServiciosVentas = function () {
+			var promesa = ListaServiciosVentas($scope.usuario.id_empresa)
+			promesa.then(function (dato) {
+				$scope.serviciosVentas = dato.servicios
+			})
+		}
+		$scope.establecerServicioSeleccionado = function (servicio) {
+			$scope.establecerServicio(servicio)
+			$scope.cerrarmodalServicioVenta()
+		}
+		$scope.establecerServicio = function (servicio) {
+			$scope.detalleVenta = {
+				centroCosto: null, servicio: servicio
+				, importe: servicio.precio, descuento: servicio.descuento, recargo: 0, ice: 0, excento: 0, tipo_descuento: false, tipo_recargo: false
+				, eliminado: false
+			};
+
+			$scope.enfocar('cantidad');
+
+		}
+		$scope.agregarServicioVenta = function (servicio) {
+			if (servicio.id) {
+				$scope.servicio = { habilitado: true, eliminado: false }
+			} else {
+				if (servicio.edit) {
+					$scope.servicio = { habilitado: true, eliminado: false }
+				} else {
+					$scope.serviciosVentas.push(servicio)
+					$scope.servicio = { habilitado: true, eliminado: false }
+				}
+			}
+		}
+		$scope.modificarServicioVenta = function (servicio) {
+			$scope.servicio = servicio
+			$scope.servicio.edit = true
+		}
+		$scope.cancelarEdicionVentaServicio = function (servicio) {
+			$scope.servicio = { habilitado: true, eliminado: false }
+		}
+		$scope.guardarServiciosVenta = function (datos) {
+			var promesa = GuardarListaServiciosVentas($scope.usuario.id_empresa, datos)
+			promesa.then(function (dato) {
+				$scope.obtenerListaServiciosVentas()
+				$scope.mostrarMensaje(dato.mensaje)
+				$scope.cerrarmodalServicioVenta()
+
+			})
+		}
 		$scope.$on('$routeChangeStart', function (next, current) {
 			$scope.eliminarPopup($scope.idModalWizardCompraEdicion);
 			$scope.eliminarPopup($scope.idModalWizardVentaVista);
@@ -2919,6 +3021,7 @@ angular.module('agil.controladores')
 			$scope.eliminarPopup($scope.idModalImpresionVencimiento);
 			$scope.eliminarPopup($scope.IdModalVerificarCuenta);
 			$scope.eliminarPopup($scope.modalReportesProductos);
+			$scope.eliminarPopup($scope.modalServicioVenta)
 		});
 
 

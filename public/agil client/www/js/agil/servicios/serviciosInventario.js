@@ -46,6 +46,19 @@ angular.module('agil.servicios')
 				'update': { method: 'PUT' }
 			});
 	})
+	
+	.factory('EliminarVentaServicio', ['Venta', '$q', function (Venta, $q) {
+		var res = function (venta) {
+			var delay = $q.defer();
+			Venta.save({ id: venta.id},venta, function (entidad) {
+				delay.resolve(entidad);
+			}, function (error) {
+					delay.reject(error);
+				});
+			return delay.promise;
+		};
+		return res;
+	}])
 	.factory('ModificarVenta', ['Venta', '$q', function (Venta, $q) {
 		var res = function (venta) {
 			var delay = $q.defer();
@@ -512,7 +525,37 @@ angular.module('agil.servicios')
 		};
 		return res;
 	}])
+	.factory('ServiciosVentas', function ($resource) {
+		return $resource(restServer + "servicios-venta/empresa/:id_empresa", null,
+			{
+				'update': { method: 'PUT' }
+			});
+	})
 
+	.factory('ListaServiciosVentas', ['ServiciosVentas', '$q', function (ServiciosVentas, $q) {
+		var res = function (idEmpresa) {
+			var delay = $q.defer();
+			ServiciosVentas.get({ id_empresa: idEmpresa }, function (entidades) {
+				delay.resolve(entidades);
+			}, function (error) {
+					delay.reject(error);
+				});
+			return delay.promise;
+		};
+		return res;
+	}])
+	.factory('GuardarListaServiciosVentas', ['ServiciosVentas', '$q', function (ServiciosVentas, $q) {
+		var res = function (idEmpresa,datos) {
+			var delay = $q.defer();
+			ServiciosVentas.save({ id_empresa: idEmpresa },datos, function (entidades) {
+				delay.resolve(entidades);
+			}, function (error) {
+					delay.reject(error);
+				});
+			return delay.promise;
+		};
+		return res;
+	}])
 	/* .factory('VentaServico', function ($resource) {
 		return $resource(restServer + "venta/servicios/:id", { id: '@id' },
 			{

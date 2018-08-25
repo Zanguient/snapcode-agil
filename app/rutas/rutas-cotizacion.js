@@ -1,4 +1,4 @@
-module.exports = function (router, Cotizacion, DetalleCotizacion, Usuario, Producto, Diccionario, Clase, ConfiguracionGeneralFactura, Sucursal, Cliente, Almacen) {
+module.exports = function (router, Cotizacion, DetalleCotizacion, Usuario, Producto, Diccionario, Clase, ConfiguracionGeneralFactura, Sucursal, Cliente, Almacen, NumeroLiteral) {
 
 	router.route('/cotizaciones/empresa/:id_empresa')
 		.get(function (req, res) {
@@ -327,6 +327,8 @@ module.exports = function (router, Cotizacion, DetalleCotizacion, Usuario, Produ
 				]
 
 			}).then(function (cotizacion) {
+				console.log("lllegooooo aqui cotiiiiiiiii ==========================================================", cotizacion);
+				
 				ConfiguracionGeneralFactura.find({
 					where: {
 						id_empresa: req.params.id_empresa
@@ -334,7 +336,8 @@ module.exports = function (router, Cotizacion, DetalleCotizacion, Usuario, Produ
 					include: [{ model: Clase, as: 'tamanoPapelCotizacion' }
 					]
 				}).then(function (configuracionGeneralFactura) {
-					res.json({ cotizacion: cotizacion, configuracionGeneralFactura: configuracionGeneralFactura })
+					var numero_literal = NumeroLiteral.Convertir(parseFloat(cotizacion.dataValues.importe).toFixed(2).toString());
+					res.json({ cotizacion: cotizacion, configuracionGeneralFactura: configuracionGeneralFactura, numero_literal: numero_literal })
 				});
 			});
 		})

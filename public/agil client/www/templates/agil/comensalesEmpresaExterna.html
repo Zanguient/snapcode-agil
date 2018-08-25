@@ -381,12 +381,12 @@
                                         <div class="col-lg-7">
                                             <input type="text" ng-model="clienteEmpresaEdicionGerencias.codigo">
                                             <div class="fileUpload green">
-                                                    <span class="fileUpload-button ace-icon fa fa-cloud-upload align-top bigger-200"></span>
-                                                    <input id="fileUpload-Gerencias" class="upload" type="file" custom-on-file-change="subirExcelGerencias" />
-                                                </div>
-                                                <a href="/recursos/EJEMPLOS-GERENCIAS-COMENSALES.xlsx" class="red">
-                                                    <i class="ace-icon fa fa-cloud-download align-top bigger-200"></i>
-                                                </a>
+                                                <span class="fileUpload-button ace-icon fa fa-cloud-upload align-top bigger-200"></span>
+                                                <input id="fileUpload-Gerencias" class="upload" type="file" custom-on-file-change="subirExcelGerencias" />
+                                            </div>
+                                            <a href="/recursos/EJEMPLOS-GERENCIAS-COMENSALES.xlsx" class="red">
+                                                <i class="ace-icon fa fa-cloud-download align-top bigger-200"></i>
+                                            </a>
                                         </div>
                                     </div>
                                     <div class="row form-group">
@@ -577,43 +577,45 @@
                                     </div>
                                     <div class="row form-group">
                                         <div class="container-fluid">
-                                            <table class="table table-striped table-bordered table-hover">
-                                                <thead>
-                                                    <th>Código</th>
-                                                    <th>Tarjeta</th>
-                                                    <th>Nombre Completo</th>
-                                                    <th>Empresa</th>
-                                                    <th>Gerencia</th>
-                                                    <th>Tipo</th>
-                                                    <th>Acciones</th>
-                                                </thead>
-                                                <tbody ng-if="!comensalEmpresa.eliminado" ng-repeat="comensalEmpresa in listaComensalesclienteEmpresa">
-                                                    <td>
-                                                        {{comensalEmpresa.codigo}}
-                                                    </td>
-                                                    <td>
-                                                        {{comensalEmpresa.tarjeta}}
-                                                    </td>
-                                                    <td>
-                                                        {{comensalEmpresa.nombre}}
-                                                    </td>
-                                                    <td>
-                                                        {{comensalEmpresa.empresaCliente.razon_social}}
-                                                    </td>
-                                                    <td>
-                                                        {{comensalEmpresa.gerencia.nombre}}
-                                                    </td>
-                                                    <td>
-                                                        {{comensalEmpresa.tipo}}
-                                                    </td>
-                                                    <td>
-                                                        <a e-disabled="!aplicacion.puede_eliminar" class="red" ng-click="abrirPopupConfirmacionEliminacion(eliminarAsignacioncomensalClienteEmpresa,comensalEmpresa)"
-                                                            data-rel="tooltip" tooltip-placement="top" uib-tooltip="Eliminar">
-                                                            <i class="ace-icon fa fa-trash-o bigger-130"></i>
-                                                        </a>
-                                                    </td>
-                                                </tbody>
-                                            </table>
+                                            <div class="table-fixed-header">
+                                                <table class="table table-striped table-bordered table-hover">
+                                                    <thead>
+                                                        <th>Código</th>
+                                                        <th>Tarjeta</th>
+                                                        <th>Nombre Completo</th>
+                                                        <th>Empresa</th>
+                                                        <th>Gerencia</th>
+                                                        <th>Tipo</th>
+                                                        <th>Acciones</th>
+                                                    </thead>
+                                                    <tbody ng-if="!comensalEmpresa.eliminado" ng-repeat="comensalEmpresa in listaComensalesclienteEmpresa">
+                                                        <td>
+                                                            {{comensalEmpresa.codigo}}
+                                                        </td>
+                                                        <td>
+                                                            {{comensalEmpresa.tarjeta}}
+                                                        </td>
+                                                        <td>
+                                                            {{comensalEmpresa.nombre}}
+                                                        </td>
+                                                        <td>
+                                                            {{comensalEmpresa.empresaCliente.razon_social}}
+                                                        </td>
+                                                        <td>
+                                                            {{comensalEmpresa.gerencia.nombre}}
+                                                        </td>
+                                                        <td>
+                                                            {{comensalEmpresa.tipo}}
+                                                        </td>
+                                                        <td>
+                                                            <a e-disabled="!aplicacion.puede_eliminar" class="red" ng-click="abrirPopupConfirmacionEliminacion(eliminarAsignacioncomensalClienteEmpresa,comensalEmpresa)"
+                                                                data-rel="tooltip" tooltip-placement="top" uib-tooltip="Eliminar">
+                                                                <i class="ace-icon fa fa-trash-o bigger-130"></i>
+                                                            </a>
+                                                        </td>
+                                                    </tbody>
+                                                </table>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -624,10 +626,8 @@
                                 <h4 class="blue">Finalización</h4>
                             </div>
                         </div>
-
                     </div>
                 </div>
-
                 <div class="modal-footer wizard-actions">
                     <button id="siguiente4CCC" type="submit" ng-disabled="!aplicacion.puede_crear" class="btn btn-success btn-sm btn-next" data-last="Finish">
                         Siguiente
@@ -679,7 +679,7 @@
                                         </div>
                                         <div class="col-lg-7">
                                             <input type="text" ng-model="clienteEmpresaComidas.codigo">
-                                            
+
                                             <div class="fileUpload green">
                                                 <span class="fileUpload-button ace-icon fa fa-cloud-upload align-top bigger-200"></span>
                                                 <input id="fileUpload-Comidas" class="upload" type="file" custom-on-file-change="subirExcelComidas" />
@@ -895,7 +895,7 @@
                                                     <th>Precio</th>
                                                     <th>Acciones</th>
                                                 </thead>
-                                                <tbody ng-if="!precioComida.eliminado" ng-repeat="precioComida in listaPrecioComidasclienteEmpresa">
+                                                <tbody ng-if="!precioComida.eliminado" ng-repeat="precioComida in listaPreciosComidasclienteEmpresa">
                                                     <td>
                                                         {{precioComida.codigo}}
                                                     </td>
