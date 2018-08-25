@@ -721,7 +721,7 @@ angular.module('agil.controladores')
 		}
 
 		 $scope.abrirDialogDialogRechazo = function (cotizacion) {
-            $scope.rechazo = cotizacion;
+            $scope.cotizacion = cotizacion;
             // $scope.rechazo.fechaTexto = "";
             $scope.abrirPopup($scope.idModalDialogRechazo);
         }
@@ -731,12 +731,13 @@ angular.module('agil.controladores')
         }
 
 
-        $scope.saveRechazo = function (rechazo) {
-        	console.log("rechazo ssssss ", rechazo);
-        	rechazo.fecha_estado = new Date($scope.convertirFecha(rechazo.fechaTexto));
-            CotizacionRechazo.update({ id_cotizacion: rechazo.id }, rechazo, function (res) {
-            	$scope.cotizacion=rechazo;
+        $scope.saveRechazo = function (cotizacion) {
+        	console.log("cotizacion ssssss ", cotizacion);
+        	cotizacion.fecha_estado = new Date($scope.convertirFecha(cotizacion.fechaTexto));
+            CotizacionRechazo.update({ id_cotizacion: cotizacion.id }, cotizacion, function (res) {
+            	// $scope.cotizacion=rechazo;
             	// $scope.obtenerCotizaciones();
+            	cotizacion.estado = "RECHAZADO";
                 $scope.mostrarMensaje('actualizado Exitosamente!');
             }, function (error) {
                 $scope.mostrarMensaje('Hubo un problema al guardar.');

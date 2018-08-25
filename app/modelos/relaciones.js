@@ -852,8 +852,8 @@ module.exports = function (sequelize, Usuario, Persona, Rol, UsuarioRol, Tipo, C
 	Clase.hasMany(Proforma, { foreignKey: 'id_actividad', as: 'actividadesEconomicas' })
 	Clase.hasOne(Servicios, { foreignKey: 'id_actividad', as: 'actividades' })
 	Servicios.belongsTo(Clase, { foreignKey: 'id_actividad', as: 'actividad' })
-	Servicios.hasMany(DetalleVenta, { foreignKey: 'id_servicio', as: 'detallesVenta' });
-	DetalleVenta.belongsTo(Servicios, { foreignKey: 'id_servicio', as: 'servicio' });
+	/* Servicios.hasMany(DetalleVenta, { foreignKey: 'id_servicio', as: 'detallesVenta' }); 25/08/08 nunca se uso
+	DetalleVenta.belongsTo(Servicios, { foreignKey: 'id_servicio', as: 'servicio' }); */
 
 	// Proforma.hasMany(DetallesProformas, { foreignKey: 'id_proforma', as: 'detallesProformas' })
 	// DetallesProformas.belongsTo(Proforma, { foreignKey: 'id_proforma', as: 'detallesProforma' })

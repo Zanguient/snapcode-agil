@@ -1548,7 +1548,7 @@ angular.module('agil.servicios')
 					}
 					var detalles = venta.detallesVenta !== undefined ? venta.detallesVenta : venta.detallesProformas
 					var y = 240, items = 0, pagina = 1, totalPaginas = Math.ceil(venta.detallesVenta.length / itemsPorPagina);
-					DibujarCabeceraFacturaNVmedioOficio(doc, vacia, completa, venta, papel, pagina, totalPaginas, usuario);
+					DibujarCabeceraFacturaNVmedioOficio(doc, vacia, completa, venta, papel, pagina, totalPaginas, usuario,Diccionario);
 					for (var i = 0; i < venta.detallesVenta.length && items <= itemsPorPagina; i++) {
 						doc.font('Helvetica', 8);
 						if (venta.detallesVenta[i].producto) {
@@ -1614,7 +1614,7 @@ angular.module('agil.servicios')
 							y = 240;
 							items = 0;
 							pagina = pagina + 1;
-							DibujarCabeceraFacturaNVmedioOficio(doc, vacia, completa, venta, papel, pagina, totalPaginas, usuario);
+							DibujarCabeceraFacturaNVmedioOficio(doc, vacia, completa, venta, papel, pagina, totalPaginas, usuario,Diccionario);
 						}
 					}
 					if (completa || vacia) {

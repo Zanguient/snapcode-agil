@@ -761,19 +761,19 @@
             <h4 class="blue titulo-pre-requisito">{{rechazo.cliente.razon_social}}</h4>
         </div>
     </div>
-    <form name="formRechazo" ng-submit="saveRechazo(rechazo)" novalidate>
+    <form name="formRechazo" ng-submit="saveRechazo(cotizacion)" novalidate>
         <div class="row">
         	<div class="col-lg-12">
                 <label for="form-field-select-1">Fecha</label>
 				<input ng-update-hidden required="" autocomplete="off"  type="text"
                                             data-date-format="dd/mm/yyyy" class="form-control date-picker" id="fecha-inicial"
-                                            ng-update-hidden ng-model="rechazo.fechaTexto" name="fecha-inicial" >
+                                            ng-update-hidden ng-model="cotizacion.fechaTexto" name="fecha-inicial" >
 
 				<span class="red">(*)</span>
             </div>
             <div class="col-lg-12">
                 <label for="form-field-select-1">Observacion</label>
-                <textarea required="" ng-model="rechazo.observacion" class="form-control limited ng-pristine ng-empty ng-invalid ng-invalid-required ng-valid-maxlength ng-touched"
+                <textarea required="" ng-model="cotizacion.observacion" class="form-control limited ng-pristine ng-empty ng-invalid ng-invalid-required ng-valid-maxlength ng-touched"
                     id="form-field-9" maxlength="100" style=" height: 90px;">
             </textarea>
             </div>
