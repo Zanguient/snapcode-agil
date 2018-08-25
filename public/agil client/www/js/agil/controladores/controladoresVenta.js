@@ -27,6 +27,8 @@ angular.module('agil.controladores')
 		$scope.idModalImpresionVencimiento = 'dialog-imprimir-con-fecha-vencimiento';
 		$scope.IdModalVerificarCuenta = 'modal-verificar-cuenta';
 		$scope.modalReportesProductos = 'dialog-reportes-productos';
+		$scope.modelGraficaProductos = 'reporte-grafico-productos';
+
 		$scope.modalServicioVenta = 'dialog-servicios-venta'
 		$scope.$on('$viewContentLoaded', function () {
 			resaltarPestaña($location.path().substring(1));
@@ -35,7 +37,7 @@ angular.module('agil.controladores')
 				$scope.idModalContenedorVentaVista, $scope.idInputCompletar, $scope.url, $scope.idModalPago,
 				$scope.idModalCierre,
 				$scope.idModalPanelVentas, $scope.idModalConfirmacionEliminacionVenta, $scope.idModalInventario, $scope.idModalPanelVentasCobro,
-				$scope.idModalEdicionVendedor, $scope.idModalImpresionVencimiento, $scope.IdModalVerificarCuenta, $scope.modalReportesProductos, $scope.modalServicioVenta);
+				$scope.idModalEdicionVendedor, $scope.idModalImpresionVencimiento,$scope.IdModalVerificarCuenta, $scope.modalReportesProductos,$scope.modalServicioVenta,$scope.modelGraficaProductos);
 			$scope.buscarAplicacion($scope.usuario.aplicacionesUsuario, $location.path().substring(1));
 			blockUI.stop();
 		});
@@ -2900,8 +2902,91 @@ angular.module('agil.controladores')
 			doc.text("Pagina " + pagina + " de " + totalPaginas, 500, 750);
 		}
 
-		$scope.graficar = function () {
-			var cabecera = []
+		$scope.abrirReporteGraficoProductos = function(){
+			$scope.abrirPopup($scope.modelGraficaProductos);
+		}
+		$scope.cerrarReporteGraficoProductos = function(){
+			$scope.cerrarPopup($scope.modelGraficaProductos);
+		}
+
+		$scope.graficar = function(){
+	
+			blockUI.start();
+			//var cabecera = ["N°","Producto","Unidad Medida","Cantidad","Total"];
+			var data = [];
+			inicio = new Date($scope.convertirFecha($scope.fechaInicioTexto));
+			fin = new Date($scope.convertirFecha($scope.fechaFinTexto));
+			
+			$scope.paginator.itemsPerPage=0;			
+			var promesa = VentasProductos($scope.paginator);
+			promesa.then(function (datos) {
+				$scope.datosProductosGrafico = datos.ventas.sort(function(a,b){
+					return b.total - a.total;
+					});
+				
+				for (let i = 0; i < $scope.datosProductosGrafico.length; i++) {
+					var columns = [];
+					columns.push($scope.datosProductosGrafico[i].nombre);
+					columns.push($scope.datosProductosGrafico[i].unidad_medida);	
+					columns.push($scope.datosProductosGrafico[i].cantidad);
+					columns.push($scope.datosProductosGrafico[i].total);
+					data.push(columns);					
+				}
+				var contenedor = [];
+				var continido = [];
+				
+				contenido = data.map(function(row,i){
+					if (contenedor.length >= 10) {
+						
+					}else{
+						contenedor.push(row); 
+					}			
+				})				
+
+				$scope.reporteGrafico(contenedor);
+				blockUI.stop();
+			});
+			
+		}
+
+		$scope.reporteGrafico = function(reporte){
+		   $scope.abrirReporteGraficoProductos();
+			var contenedor = [];
+			var legend = [];
+			var datasReporte = [];
+			
+		   if (reporte.length != 0) {
+				datasReporte = reporte.map(function(dato,i){					
+					var variable = {label:dato[0],y:dato[3]};	
+					return variable;
+		
+				})
+		   }
+
+
+			var chart = new CanvasJS.Chart("tablaReportes", {
+				animationEnabled: true,
+				exportEnabled: true,
+				theme: "light1", // "light1", "light2", "dark1", "dark2"
+				title:{
+					text: "Reporte de los 10 mas vendidos",
+					fontSize: 10              
+				},
+				data: [
+					{
+					
+						// Change type to "doughnut", "line", "splineArea", etc.
+						type: "column",
+						dataPoints:datasReporte
+						
+					}
+				],
+				axisY:{
+					prefix: "",
+					suffix: " Bs."
+				  }   
+			});
+			chart.render();
 		}
 
 		$scope.cerrarReporteProductos = function () {
@@ -3025,6 +3110,7 @@ angular.module('agil.controladores')
 			$scope.eliminarPopup($scope.idModalImpresionVencimiento);
 			$scope.eliminarPopup($scope.IdModalVerificarCuenta);
 			$scope.eliminarPopup($scope.modalReportesProductos);
+			$scope.eliminarPopup($scope.modelGraficaProductos);
 			$scope.eliminarPopup($scope.modalServicioVenta)
 		});
 

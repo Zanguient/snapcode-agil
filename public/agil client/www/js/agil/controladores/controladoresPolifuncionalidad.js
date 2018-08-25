@@ -402,11 +402,11 @@ angular.module('agil.controladores')
         $scope.reportePorMesGrafico = function (reporte, mesesReporte) {
             $scope.abriridModalReportesGrafico()
             var dataPointsReporte = []
-            reporte.map(function (row, i) {
+            reporte.forEach(function (row, i) {
                 if (i != 0) {
                     var x = 10
                     var datosCampo = []
-                    row.map(function (dat, j) {
+                    row.forEach(function (dat, j) {
                         if (j > 5 && j <= row.length - 2) {
                             var col = { y: dat !== '-' ? dat : 0, label: row.length - 2 != j ? mesesReporte[j - 6] : 'TOTAL' }
                             datosCampo.push(col)

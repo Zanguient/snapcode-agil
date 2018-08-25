@@ -183,8 +183,8 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 			}).then(function (Detalle) {
 				res.json(Detalle);
 
-			});
 		});
+	});
 
 	router.route('/compras/:idsSucursales/inicio/:inicio/fin/:fin/razon-social/:razon_social/nit/:nit/monto/:monto/tipo-compra/:tipo_compra/sucursal/:sucursal/usuario/:usuario/user/:id_usuario/tipo/:tipo')
 		.get(/*ensureAuthorized,*/function (req, res) {

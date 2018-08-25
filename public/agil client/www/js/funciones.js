@@ -586,6 +586,7 @@ function ejecutarScriptsSeguimiento(idPopupSeguimiento, idPopupFiltro, idPopupFi
 	crearPopup(idPopupFiltroGraficos, "80%", 650);
 	crearPopup(idPopupComisiones, "80%", 650);
 };
+
 function ejecutarScriptsVentasMensuales() {
 	aplicarDatePickers();
 }
@@ -593,7 +594,8 @@ function ejecutarScriptsVentasMensuales() {
 function ejecutarScriptsVenta(idPopupEdicion, idPopupVista, idPopupEliminacion,
 	idContenedorEdicion, idContenedorVista, idInput, url,
 	idPopupPago, idPopupCierre, idPopupPanel, idPopupEliminacion, idModalInventario, idModalPanelCobro,
-	idModalVendedor, idModalImpresionVencimiento,IdModalVerificarCuenta,modalReportesProductos,modalServicioVenta) {
+	idModalVendedor, idModalImpresionVencimiento,IdModalVerificarCuenta,modalReportesProductos,modalServicioVenta,
+	modelGraficaProductos) {
 	crearPopup(idPopupEdicion, "100%", 'auto');
 	crearPopup(idPopupVista, "100%", 600);
 	crearPopup(idModalInventario, "85%", 550);
@@ -611,6 +613,7 @@ function ejecutarScriptsVenta(idPopupEdicion, idPopupVista, idPopupEliminacion,
 	crearPopup(idModalVendedor, "50%", 250);
 	crearPopup(IdModalVerificarCuenta, "auto", "auto");
 	crearPopup(modalReportesProductos, "auto","auto");
+	crearPopup(modelGraficaProductos,"50%",500);
 	crearPopup(modalServicioVenta, "auto","auto");
 	
 
