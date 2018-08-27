@@ -1081,3 +1081,7 @@ background-color:white !important;
 .puntero{
 	cursor: pointer;
 }
+
+.swipe-pedido .swiper-wrapper {
+    width: 999px  !important;
+}
