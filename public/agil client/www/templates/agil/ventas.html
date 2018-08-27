@@ -146,7 +146,7 @@
 										<select id="transaccion" name="transaccion"
 										ng-options="transaccion.id as transaccion.nombre for transaccion in movimientosEgreso"
 										ng-model="filtro.transaccion">
-											<option value="0">TODOS</option>
+											<option value="">TODOS</option>
 											
 										</select>
 									</label>
@@ -154,7 +154,7 @@
 										<select id="transaccion" name="transaccion"
 										ng-options="transaccion.id as transaccion.nombre for transaccion in movimientosEgreso|filtroMovVenta"
 										ng-model="filtro.transaccion">
-											<option value="0">TODOS</option>
+											<option value="">TODOS</option>
 											
 										</select>
 									</label>
