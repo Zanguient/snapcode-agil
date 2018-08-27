@@ -133,14 +133,31 @@
 									</select>
 								</td>
 								<td>
-									<select ng-if="!usuario.empresa.usar_venta_servicio" id="transaccion" name="transaccion" ng-model="filtro.transaccion" data-placeholder="Elija un tipo de transaccion">
-										<option value="0">TODOS</option>
-										<option ng-repeat="transaccion in movimientosEgreso|filtroMovVenta" value="{{transaccion.id}}">{{transaccion.nombre}}</option>
+									<!-- <select  id="transaccion" name="transaccion" ng-model="filtro.transaccion" 
+									ng-options="transaccion as transaccion.nombre for transaccion in movimientosEgreso|filtroMovVenta" data-placeholder="Elija un tipo de transaccion">
+										<option value="">TODOS</option>
+										
 									</select>
-									<select ng-if="usuario.empresa.usar_venta_servicio" id="transaccion" name="transaccion" ng-model="filtro.transaccion" data-placeholder="Elija un tipo de transaccion">
+									<select ng-if="usuario.empresa.usar_venta_servicio"ng-options="transaccion as transaccion.nombre for transaccion in movimientosEgreso" id="transaccion" name="transaccion" ng-model="filtro.transaccion" data-placeholder="Elija un tipo de transaccion">
+											<option value="">TODOS</option>
+											
+										</select> -->
+										<label ng-show="usuario.empresa.usar_venta_servicio">
+										<select id="transaccion" name="transaccion"
+										ng-options="transaccion.id as transaccion.nombre for transaccion in movimientosEgreso"
+										ng-model="filtro.transaccion">
 											<option value="0">TODOS</option>
-											<option ng-repeat="transaccion in movimientosEgreso" value="{{transaccion.id}}">{{transaccion.nombre}}</option>
+											
 										</select>
+									</label>
+									<label ng-show="!usuario.empresa.usar_venta_servicio">
+										<select id="transaccion" name="transaccion"
+										ng-options="transaccion.id as transaccion.nombre for transaccion in movimientosEgreso|filtroMovVenta"
+										ng-model="filtro.transaccion">
+											<option value="0">TODOS</option>
+											
+										</select>
+									</label>
 								</td>
 								<td>
 									<input type="text" ng-model="filtro.usuario">
@@ -350,6 +367,10 @@
 							<button id="cerrarV" type="button" class="btn btn-primary btn-danger" ng-click="cerrarPopupEdicion()">
 								<i class="ace-icon fa fa-times red2 align-top bigger-125"></i>
 								CERRAR
+							</button>
+
+							<button id="cerrarV" type="button" class="btn btn-success pull-right" ng-click="cerrarPopupEdicion()">
+								<i class="ace-icon fa fa-times red2 align-top bigger-125"></i>
 							</button>
 						</p>
 
@@ -2789,7 +2810,7 @@
 						</label>
 					</td>
 					<td>
-						<a href="javascript:void(0)" role="button" data-rel="tooltip" data-placement="top" uib-tooltip="Anticipos Regulares" ng-click="establecerServicioSeleccionado(servicio)">
+						<a href="javascript:void(0)" role="button" ng-click="establecerServicioSeleccionado(servicio)">
 							<span class="badge badge-success ">
 								<span class="fa fa-check bigger-200" aria-hidden="true"></span>
 							</span>
