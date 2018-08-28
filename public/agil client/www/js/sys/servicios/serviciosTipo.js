@@ -60,8 +60,26 @@ angular.module('agil.servicios')
 		return delay.promise;
 	};
     return res;
+	}])
+	.factory('ClaseEmpresa', function($resource) {
+		return $resource(restServer+"clases/:nombre_corto/:id_empresa");
+})
+	.factory('ClasesEmpresa', ['ClaseEmpresa','$q',function(ClaseEmpresa, $q) 
+  {
+	var res = function(nombre_corto,id_empresa) 
+	{
+		var delay = $q.defer();
+		ClaseEmpresa.query({nombre_corto:nombre_corto,id_empresa:id_empresa},function(entidad) 
+		{        
+			delay.resolve(entidad);
+		}, function(error) 
+			{
+				delay.reject(error);
+			});
+		return delay.promise;
+	};
+    return res;
   }])
-	
 	.factory('Pais', function($resource) {
 		return $resource(restServer+"paises/:nombre_corto");
 })

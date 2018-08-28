@@ -28,6 +28,7 @@
                             </th>
                             <th>Fecha inicio</th>
                             <th>Fecha fin</th>
+                            <th>Habilitar</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -40,6 +41,12 @@
 
                             <td>
                                 <input type="text" ng-model="gestion.fin" ng-update-hidden data-date-format="dd/mm" class="from-control date-picker">
+                            </td>
+                            <td>
+                                <label>
+                                    <input id="skip-validation" ng-model="gestion.habilitado" ng-change="habilitarGestion(gestion)" type="checkbox" class="ace ace-switch ace-switch-4">
+                                    <span class="lbl middle"></span>
+                                </label>
                             </td>
                         </tr>
                     </tbody>

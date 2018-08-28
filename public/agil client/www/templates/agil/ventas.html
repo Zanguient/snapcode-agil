@@ -1654,8 +1654,11 @@
 								<td>
 									<label>SUCURSAL</label>
 								</td>
-								<td>
+								<td ng-if="venta.almacen">
 									{{venta.almacen.sucursal.nombre}}
+								</td>
+								<td ng-if="venta.sucursal">
+									{{venta.sucursal.nombre}}
 								</td>
 								<td>
 									<label>ALMACEN</label>
@@ -1745,8 +1748,9 @@
 						</thead>
 						<tbody>
 							<tr ng-repeat="detalleVenta in venta.detallesVenta">
-								<td>
-									{{detalleVenta.producto.nombre}}
+								<td >
+									<p>{{detalleVenta.producto.nombre}}</p>
+									<p>{{detalleVenta.servicio.nombre}}</p>
 								</td>
 								<td>
 									{{detalleVenta.producto.codigo}}

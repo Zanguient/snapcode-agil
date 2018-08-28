@@ -29,7 +29,7 @@ angular.module('agil.controladores')
                     $scope.gestionesEF = datos
                 } else {
                     $scope.ClasesGestionesEF.forEach(function (gestion, index, array) {
-                        var gestion = { tipoGestion: gestion, inicio: "", fin: "" }
+                        var gestion = { index:index,tipoGestion: gestion, inicio: "", fin: "",habilitado:false }
                         $scope.gestionesEF.push(gestion)
                         if(index==(array.length-1)){
                             setTimeout(function () {
@@ -42,6 +42,19 @@ angular.module('agil.controladores')
             })
 
             $scope.abrirPopup($scope.idModalConfiguracionGestion)
+        }
+        $scope.habilitarGestion=function(gestion){
+            $scope.gestionesEF.forEach(function(dato) {
+                if(dato.id){
+                    if(dato.id!=gestion.id){
+                        dato.habilitado=false
+                    }
+                }else{
+                    if(dato.index!=gestion.index){
+                        dato.habilitado=false
+                    }
+                }
+            });
         }
         $scope.cerrarModalConfiguracionGestion = function () {
             $scope.cerrarPopup($scope.idModalConfiguracionGestion)

@@ -71,7 +71,7 @@ angular.module('agil.servicios')
 	.factory('CuentasContabilidadEEFF', ['CuentaContabilidadFiltroEEFF', '$q', function (CuentaContabilidadFiltroEEFF, $q) {
 		var res = function (filtro,idEmpresa) {
 			var delay = $q.defer();
-			CuentaContabilidadFiltroEEFF.get({
+			CuentaContabilidadFiltroEEFF.save({
 				id_empresa: idEmpresa,
 				periodo: filtro.tipoPeriodo.nombre,
                 id_tipo: filtro.tipo_cuenta.id,
@@ -80,7 +80,7 @@ angular.module('agil.servicios')
                 inicio:(filtro.inicio2)?filtro.inicio2:0,
                 fin:(filtro.fin2)?filtro.fin2:0,
                 gestion_fin:(filtro.gestion_fin)?filtro.gestion_fin.nombre:0
-			}, function (entidades) {
+			},filtro, function (entidades) {
 				delay.resolve(entidades);
 			}, function (error) {
 				delay.reject(error);

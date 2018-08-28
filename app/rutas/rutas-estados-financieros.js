@@ -15,7 +15,8 @@ module.exports = function (router, sequelize, Sequelize, EstadoFinancieroConfigu
                     EstadoFinancieroGestion.update({
                         id_tipo: gestion.tipoGestion.id,
                         inicio: gestion.inicio,
-                        fin: gestion.fin
+                        fin: gestion.fin,
+                        habilitado:gestion.habilitado
                     }, {
                             where: { id: gestion.id }
                         }).then(function (entities) {
@@ -26,6 +27,7 @@ module.exports = function (router, sequelize, Sequelize, EstadoFinancieroConfigu
                         id_tipo: gestion.tipoGestion.id,
                         inicio: gestion.inicio,
                         fin: gestion.fin,
+                        habilitado:gestion.habilitado
                     }).then(function (entities) {
                         res.json({ mensaje: 'Guardado Satisfactoriamente!' });
                     });
@@ -93,15 +95,26 @@ module.exports = function (router, sequelize, Sequelize, EstadoFinancieroConfigu
 
         });
     router.route('/contabilidad-cuentas/empresa/:id_empresa/tipo_periodo/:periodo/tipo/:id_tipo/gestion/:gestion/mes/:mes/inicio/:inicio/fin/:fin/gestion_fin/:gestion_fin')
-        .get(/*ensureAuthorized,*/function (req, res) {
+        .post(/*ensureAuthorized,*/function (req, res) {
             var condicionCuenta = {}, condicionComprobante = {};
             condicionCuenta.id_empresa = parseInt(req.params.id_empresa);
             /* if (req.params.id_tipo != 0) {
                 condicionCuenta.id_tipo_cuenta = parseInt(req.params.id_tipo);
             } */
             if (req.params.periodo == 'GESTIÓN') {
-                var inicio = new Date(req.params.gestion, 0, 1)
-                var fin = new Date(req.params.gestion, 12, 0)
+                var diaInicio=req.body.fechasImpresion.inicio.split("/")[0]
+                var diafin=req.body.fechasImpresion.fin.split("/")[0]
+                var mesinico=parseInt(req.body.fechasImpresion.inicio.split("/")[1])-1
+                var mesfin=parseInt(req.body.fechasImpresion.fin.split("/")[1])-1
+                if(mesinico==0){
+                    var inicio = new Date(req.params.gestion, mesinico, diaInicio)
+                    var fin = new Date(req.params.gestion, mesfin, diafin)
+                }else{
+                    var anio=parseInt(req.params.gestion)+1
+                    var inicio = new Date(req.params.gestion, mesinico, diaInicio)
+                    var fin = new Date(anio, mesfin, diafin)
+                }
+               
                 inicio.setHours(0, 0, 0, 0, 0);
                 fin.setHours(23, 59, 59, 0, 0);
                 var condicionComprobante = { eliminado: false, fecha: { $between: [inicio, fin] } }

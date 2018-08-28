@@ -6,7 +6,7 @@ angular.module('agil.controladores')
         ListaAnticiposEmpleado, CrearNuevosAnticiposEmpleados, ActualizarAnticipoEmpleado, NuevaAusenciaEmpleado, HistorialEmpleadoAusencias, HistorialEmpresaEmpleadosAusencias, NuevaVacacionEmpleado, HistorialEmpleadoVacaciones, HistorialEmpresaVacaciones, NuevoFeriado,
         ListaFeriados, GuardarClasesAusencias, Tipos, ListaBancos, ConfiguracionesVacacion, HistorialGestionesVacacion, GuardarTr3, ListaTr3Empresa, GuardarHistorialVacacion, CrearBeneficioSocial, ListaBeneficiosEmpleado, GuardarBitacoraFicha, VerBitacoraFicha, ObtenerFiniquitoEmpleado,
         ClasesTipoEmpresa, GuardarConfiguracionRopaCargo, ListaConfiguracionRopaCargo, DatosReporteConfiguracionRopa, FichasEmpleadoEmpresa, ListaCargosEmpleado, ListaRopaTrabajoProductos, GuardarDotacionRopa, ListaDotacionRopa, EliminarDotacionRopa, ListaDotacionRopaEmpresa, ActualizarDotacionRopa,
-        FamiliaresEmpleadoEmpresa, ListaRolTurnosEmpresa, ListaChoferesViaje, GuardarViajeRrhh, ListaViajeRrhh, ListaRolTurnosCalendario, ViajeRrhhLista, BeneficioEmpresa, GuardarConductoresEmpresa, ListaHijosEmpleadosEmpresa, GuardarImportacionFichaEmpleados, GuardarImportacionRolTurnoEmpleados) {
+        FamiliaresEmpleadoEmpresa, ListaRolTurnosEmpresa,ClasesEmpresa, ListaChoferesViaje, GuardarViajeRrhh, ListaViajeRrhh, ListaRolTurnosCalendario, ViajeRrhhLista, BeneficioEmpresa, GuardarConductoresEmpresa, ListaHijosEmpleadosEmpresa, GuardarImportacionFichaEmpleados, GuardarImportacionRolTurnoEmpleados) {
         $scope.usuario = JSON.parse($localStorage.usuario);
         $scope.idModalPrerequisitos = 'dialog-pre-requisitos';
         $scope.idModalEmpleado = 'dialog-empleado';
@@ -3381,7 +3381,7 @@ angular.module('agil.controladores')
         }
         $scope.buscarRopaTrabajo = function () {
             var nombre_corto = 'ROPA DE TRABAJO-G';
-            var promesa = Clases(nombre_corto);
+            var promesa = ClasesEmpresa(nombre_corto,$scope.usuario.id_empresa);
             promesa.then(function (entidades) {
                 $scope.ropasDeTrabajo = entidades;
             });

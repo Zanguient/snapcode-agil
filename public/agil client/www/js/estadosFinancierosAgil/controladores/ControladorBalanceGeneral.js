@@ -1,7 +1,7 @@
 angular.module('agil.controladores')
 
 	.controller('ControladorBalanceGeneral', function ($scope, $localStorage, $location, $templateCache, $route, blockUI,
-		ClasesTipoEmpresa, ClasesTipo, ObtenerConfiguracionImpresion, CuentasContabilidadEEFF) {
+		ClasesTipoEmpresa, ClasesTipo, ObtenerConfiguracionImpresion, CuentasContabilidadEEFF, ObtenerGestionesEEFF) {
 
 
 		$scope.usuario = JSON.parse($localStorage.usuario);
@@ -11,6 +11,7 @@ angular.module('agil.controladores')
 			$scope.obtenerGestiones()
 			$scope.obtenerTiposCuenta()
 			$scope.obtenerConfiguracionImpresion()
+			$scope.obtenerGestionesImpresion()
 		}
 
 
@@ -67,13 +68,27 @@ angular.module('agil.controladores')
 				blockUI.stop();
 			});
 		}
+		$scope.obtenerGestionesImpresion = function () {
+			blockUI.start()
+			$scope.gestionesEF = []
+			var promesa = ObtenerGestionesEEFF($scope.usuario.id_empresa)
+			promesa.then(function (datos) {
+				blockUI.stop();
+				datos.forEach(function (dato) {
+					if (dato.habilitado) {
+						$scope.fechasImpresion = dato
+					}
+				})
 
+			})
+		}
 		$scope.generarPdfBalanceGeneral = function () {
 			blockUI.start();
 			if ($scope.configuracionImpresion.fecha_inicio) {
 				$scope.configuracionImpresion.inicio2 = new Date($scope.convertirFecha($scope.configuracionImpresion.fecha_inicio))
 				$scope.configuracionImpresion.fin2 = new Date($scope.convertirFecha($scope.configuracionImpresion.fecha_fin))
 			}
+			$scope.configuracionImpresion.fechasImpresion = $scope.fechasImpresion
 			var promesa = CuentasContabilidadEEFF($scope.configuracionImpresion, $scope.usuario.id_empresa);
 			promesa.then(function (dato) {
 				if (dato.monedaCambio) {
@@ -113,20 +128,20 @@ angular.module('agil.controladores')
 									dato.arregleCostos.push(cuenta)
 								}
 							}
-						
+
 							if (index === (array.length - 1)) {
-								dato.arregloPasivos = dato.arregloPasivos.concat(dato.arregloPatrimonio);								
+								dato.arregloPasivos = dato.arregloPasivos.concat(dato.arregloPatrimonio);
 								var x = ($scope.configuracionImpresion.bimonetario) ? 400 : 530
 								if ($scope.configuracionImpresion.tipo_cuenta.nombre == "PREESTABLECIDO") {
-									$scope.generarPdfPreestablecido(dato, x,dato.cuentasGrupo,dato.cuentasSubGrupo,dato.cuentasGenericas)
+									$scope.generarPdfPreestablecido(dato, x, dato.cuentasGrupo, dato.cuentasSubGrupo, dato.cuentasGenericas)
 								} else if ($scope.configuracionImpresion.tipo_cuenta.nombre == "GENERICA") {
-									$scope.generarPdfPreestablecido(dato, x,dato.cuentasGrupo,dato.cuentasSubGrupo,dato.cuentasGenericas)
+									$scope.generarPdfPreestablecido(dato, x, dato.cuentasGrupo, dato.cuentasSubGrupo, dato.cuentasGenericas)
 								} else if ($scope.configuracionImpresion.tipo_cuenta.nombre == "GRUPO") {
-									$scope.generarPdfGrupo(dato, x,dato.cuentasGrupo,dato.cuentasSubGrupo,dato.cuentasGenericas)
+									$scope.generarPdfGrupo(dato, x, dato.cuentasGrupo, dato.cuentasSubGrupo, dato.cuentasGenericas)
 								} else if ($scope.configuracionImpresion.tipo_cuenta.nombre == "SUB GRUPO") {
-									$scope.generarPdfsubGrupo(dato, x,dato.cuentasGrupo,dato.cuentasSubGrupo,dato.cuentasGenericas)
+									$scope.generarPdfsubGrupo(dato, x, dato.cuentasGrupo, dato.cuentasSubGrupo, dato.cuentasGenericas)
 								} else if ($scope.configuracionImpresion.tipo_cuenta.nombre == "APROPIACION") {
-									$scope.generarPdfApropiacion(dato, x,dato.cuentasGrupo,dato.cuentasSubGrupo,dato.cuentasGenericas)
+									$scope.generarPdfApropiacion(dato, x, dato.cuentasGrupo, dato.cuentasSubGrupo, dato.cuentasGenericas)
 								}
 							}
 						})
@@ -182,15 +197,15 @@ angular.module('agil.controladores')
 										if (index === (array.length - 1)) {
 											var x = ($scope.configuracionImpresion.bimonetario) ? 360 : 430
 											if ($scope.configuracionImpresion.tipo_cuenta.nombre == "PREESTABLECIDO") {
-												$scope.generarPdfPreestablecido(datos, x,dato.cuentasGrupo,dato.cuentasSubGrupo,dato.cuentasGenericas)
+												$scope.generarPdfPreestablecido(datos, x, dato.cuentasGrupo, dato.cuentasSubGrupo, dato.cuentasGenericas)
 											} else if ($scope.configuracionImpresion.tipo_cuenta.nombre == "GENERICA") {
-												$scope.generarPdfPreestablecido(datos, x,dato.cuentasGrupo,dato.cuentasSubGrupo,dato.cuentasGenericas)
+												$scope.generarPdfPreestablecido(datos, x, dato.cuentasGrupo, dato.cuentasSubGrupo, dato.cuentasGenericas)
 											} else if ($scope.configuracionImpresion.tipo_cuenta.nombre == "GRUPO") {
-												$scope.generarPdfGrupo(datos, x,dato.cuentasGrupo,dato.cuentasSubGrupo,dato.cuentasGenericas)
+												$scope.generarPdfGrupo(datos, x, dato.cuentasGrupo, dato.cuentasSubGrupo, dato.cuentasGenericas)
 											} else if ($scope.configuracionImpresion.tipo_cuenta.nombre == "SUB GRUPO") {
-												$scope.generarPdfsubGrupo(datos, x,dato.cuentasGrupo,dato.cuentasSubGrupo,dato.cuentasGenericas)
+												$scope.generarPdfsubGrupo(datos, x, dato.cuentasGrupo, dato.cuentasSubGrupo, dato.cuentasGenericas)
 											} else if ($scope.configuracionImpresion.tipo_cuenta.nombre == "APROPIACION") {
-												$scope.generarPdfApropiacion(datos, x,dato.cuentasGrupo,dato.cuentasSubGrupo,dato.cuentasGenericas)
+												$scope.generarPdfApropiacion(datos, x, dato.cuentasGrupo, dato.cuentasSubGrupo, dato.cuentasGenericas)
 											}
 										}
 									})
@@ -202,7 +217,7 @@ angular.module('agil.controladores')
 				}
 			})
 		}
-		$scope.generarPdfPreestablecido = function (dato, x,cuentasGrupo,cuentasSubGrupo,cuentasGenericas) {
+		$scope.generarPdfApropiacion = function (dato, x, cuentasGrupo, cuentasSubGrupo, cuentasGenericas) {
 			if ($scope.configuracionImpresion.tipoPeriodo.nombre != 'COMPARATIVO') {
 				var doc = new PDFDocument({ size: 'letter', margin: 10 });
 				var stream = doc.pipe(blobStream());
@@ -210,19 +225,19 @@ angular.module('agil.controladores')
 				var totalCosto = 0;
 				var datos = [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}]
 				var datosPasivo = [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}]
-				var y = 120, itemsPorPagina = 28, items = 0, pagina = ($scope.configuracionImpresion.usar_empesar_numeracion) ? $scope.configuracionImpresion.empesar_numeracion : 1, totalPaginas = ($scope.configuracionImpresion.usar_empesar_numeracion) ? ($scope.configuracionImpresion.empesar_numeracion - 1) + Math.ceil((datos.length + datosPasivo.length) / itemsPorPagina) : Math.ceil((datos.length + datosPasivo.length) / itemsPorPagina);
+				var y = 130, itemsPorPagina = 28, items = 0, pagina = ($scope.configuracionImpresion.usar_empesar_numeracion) ? $scope.configuracionImpresion.empesar_numeracion : 1, totalPaginas = ($scope.configuracionImpresion.usar_empesar_numeracion) ? ($scope.configuracionImpresion.empesar_numeracion - 1) + Math.ceil((datos.length + datosPasivo.length) / itemsPorPagina) : Math.ceil((datos.length + datosPasivo.length) / itemsPorPagina);
 				var totalActivos = 0
 				var totalPasivo = 0
 				$scope.dibujarCabeceraPDFBalanceGeneral(doc, pagina, totalPaginas, "ACTIVO");
 				doc.font('Helvetica', 8);
 				for (var i = 0; i < cuentasSubGrupo.length && items <= itemsPorPagina; i++) {
 					cuenta = cuentasSubGrupo[i]
-					cuenta.total=0
-					
+					cuenta.total = 0
+
 					if (cuenta.clasificacion.nombre === "Activo") {
 						if (items == itemsPorPagina) {
 							doc.addPage({ margin: 0, bufferPages: true });
-							y = 120;
+							y = 130;
 							items = 0;
 							pagina = pagina + 1;
 							$scope.dibujarCabeceraPDFBalanceGeneral(doc, pagina, totalPaginas, "ACTIVO");
@@ -233,60 +248,74 @@ angular.module('agil.controladores')
 						/* total+=cuenta.saldo */
 						y = y + 20;
 						items++;
-						
+
 						for (var L = 0; L < cuentasGenericas.length && items <= itemsPorPagina; L++) {
 							cuenta3 = cuentasGenericas[L]
 							if (cuenta3.tipoCuenta.nombre_corto === "3") {
 								var cod = String(cuenta3.codigo).substr(0, 3)
-								if (cuenta.codigo == cod) {									
-									for (var p = 0; p < dato.arregloActivos.length && items <= itemsPorPagina; p++) {
-										cuenta2 = dato.arregloActivos[p]
-										if (cuenta2.tipoCuenta.nombre_corto === "4") {
-											var cod = String(cuenta2.codigo).substr(0, 5)
-											if (cuenta3.codigo == cod) {									
-												doc.text(cuenta2.nombre, 60, y)
-												doc.text(number_format(cuenta2.saldo, 2), x, y);
-												var saldoSus = cuenta2.saldo / $scope.moneda.dolar;
-												if ($scope.configuracionImpresion.bimonetario) doc.text(number_format(saldoSus, 2), x + 130, y);
-												cuenta.total += cuenta2.saldo
-												totalActivos += cuenta2.saldo
-												y = y + 20;
-												items++;
-												if (items == itemsPorPagina) {
-													doc.addPage({ margin: 0, bufferPages: true });
-													y = 120;
-													items = 0;
-													pagina = pagina + 1;
-													$scope.dibujarCabeceraPDFBalanceGeneral(doc, pagina, totalPaginas, "ACTIVO");
-													doc.font('Helvetica', 8);
+								if (cuenta.codigo == cod) {
+									if (dato.arregloActivos.some(function (cuenta2) {
+										var cod = String(cuenta2.codigo).substr(0, 5)
+										if (cuenta3.codigo == cod) {
+											return true
+										} else {
+											return false
+										}
+									})) {
+										doc.text(cuenta3.nombre, 40, y)
+										y = y + 20;
+										items++;
+
+
+										for (var p = 0; p < dato.arregloActivos.length && items <= itemsPorPagina; p++) {
+											cuenta2 = dato.arregloActivos[p]
+											if (cuenta2.tipoCuenta.nombre_corto === "4") {
+												var cod = String(cuenta2.codigo).substr(0, 5)
+												if (cuenta3.codigo == cod) {
+													doc.text(cuenta2.nombre, 60, y)
+													doc.text(number_format(cuenta2.saldo, 2), x, y);
+													var saldoSus = cuenta2.saldo / $scope.moneda.dolar;
+													if ($scope.configuracionImpresion.bimonetario) doc.text(number_format(saldoSus, 2), x + 130, y);
+													cuenta.total += cuenta2.saldo
+													totalActivos += cuenta2.saldo
+													y = y + 20;
+													items++;
+													if (items == itemsPorPagina) {
+														doc.addPage({ margin: 0, bufferPages: true });
+														y = 130;
+														items = 0;
+														pagina = pagina + 1;
+														$scope.dibujarCabeceraPDFBalanceGeneral(doc, pagina, totalPaginas, "ACTIVO");
+														doc.font('Helvetica', 8);
+													}
+												} else {
+													if (items == itemsPorPagina) {
+														doc.addPage({ margin: 0, bufferPages: true });
+														y = 130;
+														items = 0;
+														pagina = pagina + 1;
+														$scope.dibujarCabeceraPDFBalanceGeneral(doc, pagina, totalPaginas, "ACTIVO");
+														doc.font('Helvetica', 8);
+													}
 												}
 											} else {
 												if (items == itemsPorPagina) {
 													doc.addPage({ margin: 0, bufferPages: true });
-													y = 120;
+													y = 130;
 													items = 0;
 													pagina = pagina + 1;
 													$scope.dibujarCabeceraPDFBalanceGeneral(doc, pagina, totalPaginas, "ACTIVO");
 													doc.font('Helvetica', 8);
 												}
 											}
-										} else {
-											if (items == itemsPorPagina) {
-												doc.addPage({ margin: 0, bufferPages: true });
-												y = 120;
-												items = 0;
-												pagina = pagina + 1;
-												$scope.dibujarCabeceraPDFBalanceGeneral(doc, pagina, totalPaginas, "ACTIVO");
-												doc.font('Helvetica', 8);
-											}
+
+
 										}
-			
-			
 									}
 								} else {
 									if (items == itemsPorPagina) {
 										doc.addPage({ margin: 0, bufferPages: true });
-										y = 120;
+										y = 130;
 										items = 0;
 										pagina = pagina + 1;
 										$scope.dibujarCabeceraPDFBalanceGeneral(doc, pagina, totalPaginas, "ACTIVO");
@@ -296,7 +325,7 @@ angular.module('agil.controladores')
 							} else {
 								if (items == itemsPorPagina) {
 									doc.addPage({ margin: 0, bufferPages: true });
-									y = 120;
+									y = 130;
 									items = 0;
 									pagina = pagina + 1;
 									$scope.dibujarCabeceraPDFBalanceGeneral(doc, pagina, totalPaginas, "ACTIVO");
@@ -342,115 +371,7 @@ angular.module('agil.controladores')
 				});
 				blockUI.stop();
 			} else {
-				var totalActivos={totalActivosprimerAno:0,totalActivossegundoAno:0}
-				var doc = new PDFDocument({ size: 'letter', margin: 10 });
-				var stream = doc.pipe(blobStream());
-				// draw some text
-				var totalCosto = 0;
-				var datos = [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}]
-				var datosPasivo = [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}]
-				var y = 120, itemsPorPagina = 33, items = 0, pagina = ($scope.configuracionImpresion.usar_empesar_numeracion) ? $scope.configuracionImpresion.empesar_numeracion : 1, totalPaginas = ($scope.configuracionImpresion.usar_empesar_numeracion) ? ($scope.configuracionImpresion.empesar_numeracion - 1) + Math.ceil((datos.length + datosPasivo.length) / itemsPorPagina) : Math.ceil((datos.length + datosPasivo.length) / itemsPorPagina);
-				var totalActivos = 0
-				var totalPasivo = 0
-				$scope.dibujarCabeceraPDFBalanceGeneral(doc, pagina, totalPaginas, "ACTIVO");
-				doc.font('Helvetica', 8);
-				for (var i = 0; i < dato.arregloActivos.length && items <= itemsPorPagina; i++) {
-					cuenta = dato.arregloActivos[i]
 
-					if (cuenta.primerAno.tipoCuenta.nombre_corto === "2") {
-						doc.text(cuenta.primerAno.nombre, 30, y)
-						/*doc.text(number_format(cuenta.saldo,2), 530, y); */
-						/* total+=cuenta.saldo */
-						y = y + 20;
-						items++;
-						for (var L = 0; L < dato.arregloActivos.length && items <= itemsPorPagina; L++) {
-							cuenta3 = dato.arregloActivos[L]
-							if (cuenta3.primerAno.tipoCuenta.nombre_corto === "3") {
-								var cod = String(cuenta3.primerAno.codigo).substr(0, 3)
-								if (cuenta.primerAno.codigo == cod) {
-									doc.text(cuenta3.primerAno.nombre, 60, y)
-									doc.text(number_format(cuenta3.primerAno.saldo, 2), x, y);
-									doc.text(number_format(cuenta3.segundoAno.saldo, 2), x + 100, y);
-									var saldoprimerAnoSus = cuenta3.primerAno.saldo / $scope.moneda.dolar;
-									var saldosegundoAnoSus = cuenta3.segundoAno.saldo / $scope.moneda.dolar;
-									if ($scope.configuracionImpresion.bimonetario) doc.text(number_format(saldoprimerAnoSus, 2), x + 60, y);
-									if ($scope.configuracionImpresion.bimonetario) doc.text(number_format(saldosegundoAnoSus, 2), x + 150, y);
-								
-									cuenta.primerAno.total += cuenta3.primerAno.saldo
-									totalActivos.totalActivosprimerAno += cuenta3.primerAno.saldo
-									cuenta.segundoAno.total += cuenta3.segundoAno.saldo
-									totalActivos.totalActivossegundoAno += cuenta3.segundoAno.saldo
-									y = y + 20;
-									items++;
-									if (items == itemsPorPagina) {
-										doc.addPage({ margin: 0, bufferPages: true });
-										y = 120;
-										items = 0;
-										pagina = pagina + 1;
-										$scope.dibujarCabeceraPDFBalanceGeneral(doc, pagina, totalPaginas, "ACTIVO");
-										doc.font('Helvetica', 8);
-									}
-								} else {
-									if (items == itemsPorPagina) {
-										doc.addPage({ margin: 0, bufferPages: true });
-										y = 120;
-										items = 0;
-										pagina = pagina + 1;
-										$scope.dibujarCabeceraPDFBalanceGeneral(doc, pagina, totalPaginas, "ACTIVO");
-										doc.font('Helvetica', 8);
-									}
-								}
-							} else {
-								if (items == itemsPorPagina) {
-									doc.addPage({ margin: 0, bufferPages: true });
-									y = 120;
-									items = 0;
-									pagina = pagina + 1;
-									$scope.dibujarCabeceraPDFBalanceGeneral(doc, pagina, totalPaginas, "ACTIVO");
-									doc.font('Helvetica', 8);
-								}
-							}
-
-
-						}
-						doc.text("TOTAL " + cuenta.primerAno.nombre, 90, y);
-						doc.text(number_format(cuenta.primerAno.total, 2), x, y);
-						doc.text(number_format(cuenta.primerAno.total, 2), x+100, y);
-						var cuentatotalprimerAnoSus = cuenta.primerAno.total / $scope.moneda.dolar
-						var cuentatotalsegundoAnoSus = cuenta.primerAno.total / $scope.moneda.dolar
-						if ($scope.configuracionImpresion.bimonetario) doc.text(number_format(cuentatotalprimerAnoSus, 2), x + 60, y);
-						if ($scope.configuracionImpresion.bimonetario) doc.text(number_format(cuentatotalsegundoAnoSus, 2), x + 150, y);
-						y = y + 20;
-						items++;
-						if (i === (dato.arregloActivos.length - 1)) {
-							$scope.dibujarPatrimonio(dato, totalActivos, doc, y, items, pagina, totalPaginas, itemsPorPagina, x)
-
-						}
-						/* 	y = y + 20;
-							items++; */
-					} else {
-						if (i === (dato.arregloActivos.length - 1)) {
-							$scope.dibujarPatrimonio(dato, totalActivos, doc, y, items, pagina, totalPaginas, itemsPorPagina, x)
-
-						}
-					}
-
-				}
-				if ($scope.configuracionImpresion.usar_firma_uno) {
-					doc.text($scope.configuracionImpresion.firma_uno, 170, 720);
-					doc.text($scope.configuracionImpresion.cargo_uno, 170, 730);
-				}
-				if ($scope.configuracionImpresion.usar_firma_dos) {
-					doc.text($scope.configuracionImpresion.firma_dos, 370, 720);
-					doc.text($scope.configuracionImpresion.cargo_dos, 370, 730);
-				}
-
-				doc.end();
-				stream.on('finish', function () {
-					var fileURL = stream.toBlobURL('application/pdf');
-					window.open(fileURL, '_blank', 'location=no');
-				});
-				blockUI.stop();
 			}
 		}
 		$scope.dibujarPatrimonio = function (dato, totalActivos, doc, y, items, pagina, totalPaginas, itemsPorPagina, x) {
@@ -465,18 +386,18 @@ angular.module('agil.controladores')
 				doc.text("PASIVO Y PATRIMONIO", 0, y, { align: "center" });
 				y += 20
 				for (var j = 0; j < dato.cuentasSubGrupo.length && items <= itemsPorPagina; j++) {
-					var cuenta =  dato.cuentasSubGrupo[j]
+					var cuenta = dato.cuentasSubGrupo[j]
 					if (cuenta.clasificacion.nombre === "Pasivo") {
 						if (items == itemsPorPagina) {
 							doc.addPage({ margin: 0, bufferPages: true });
-							y = 120;
+							y = 130;
 							items = 0;
 							pagina = pagina + 1;
 							$scope.dibujarCabeceraPDFBalanceGeneral(doc, pagina, totalPaginas, "PASIVO Y PATRIMONIO");
 							doc.font('Helvetica', 8);
 						}
 						doc.text(cuenta.nombre, 30, y)
-						cuenta.total=0
+						cuenta.total = 0
 						y = y + 20;
 						items++;
 						for (var L = 0; L < dato.cuentasGenericas.length && items <= itemsPorPagina; L++) {
@@ -484,54 +405,66 @@ angular.module('agil.controladores')
 							if (cuenta4.tipoCuenta.nombre_corto === "3") {
 								var cod = String(cuenta4.codigo).substr(0, 3)
 								if (cuenta.codigo == cod) {
-									for (var p = 0; p < dato.arregloPasivos.length && items <= itemsPorPagina; p++) {
-										var cuenta2 = dato.arregloPasivos[p]
-										if (cuenta2.tipoCuenta.nombre_corto === "4") {
-											var cod = String(cuenta2.codigo).substr(0, 5)
-											if (cuenta4.codigo == cod) {									
-												doc.text(cuenta2.nombre, 60, y)
-												doc.text(number_format(cuenta2.saldo, 2), x, y);
-												var saldoSus = cuenta2.saldo / $scope.moneda.dolar;
-												if ($scope.configuracionImpresion.bimonetario) doc.text(number_format(saldoSus, 2), x + 130, y);
-												cuenta.total += cuenta2.saldo
-												totalPasivo += cuenta2.saldo
-												y = y + 20;
-												items++;
-												if (items == itemsPorPagina) {
-													doc.addPage({ margin: 0, bufferPages: true });
-													y = 120;
-													items = 0;
-													pagina = pagina + 1;
-													$scope.dibujarCabeceraPDFBalanceGeneral(doc, pagina, totalPaginas, "PASIVO Y PATRIMONIO");
-													doc.font('Helvetica', 8);
+									if (dato.arregloPasivos.some(function (cuenta2) {
+										var cod = String(cuenta2.codigo).substr(0, 5)
+										if (cuenta4.codigo == cod) {
+											return true
+										} else {
+											return false
+										}
+									})) {
+										doc.text(cuenta4.nombre, 40, y)
+										y = y + 20;
+										items++;
+										for (var p = 0; p < dato.arregloPasivos.length && items <= itemsPorPagina; p++) {
+											var cuenta2 = dato.arregloPasivos[p]
+											if (cuenta2.tipoCuenta.nombre_corto === "4") {
+												var cod = String(cuenta2.codigo).substr(0, 5)
+												if (cuenta4.codigo == cod) {
+													doc.text(cuenta2.nombre, 60, y)
+													doc.text(number_format(cuenta2.saldo, 2), x, y);
+													var saldoSus = cuenta2.saldo / $scope.moneda.dolar;
+													if ($scope.configuracionImpresion.bimonetario) doc.text(number_format(saldoSus, 2), x + 130, y);
+													cuenta.total += cuenta2.saldo
+													totalPasivo += cuenta2.saldo
+													y = y + 20;
+													items++;
+													if (items == itemsPorPagina) {
+														doc.addPage({ margin: 0, bufferPages: true });
+														y = 130;
+														items = 0;
+														pagina = pagina + 1;
+														$scope.dibujarCabeceraPDFBalanceGeneral(doc, pagina, totalPaginas, "PASIVO Y PATRIMONIO");
+														doc.font('Helvetica', 8);
+													}
+												} else {
+													if (items == itemsPorPagina) {
+														doc.addPage({ margin: 0, bufferPages: true });
+														y = 130;
+														items = 0;
+														pagina = pagina + 1;
+														$scope.dibujarCabeceraPDFBalanceGeneral(doc, pagina, totalPaginas, "PASIVO Y PATRIMONIO");
+														doc.font('Helvetica', 8);
+													}
 												}
 											} else {
 												if (items == itemsPorPagina) {
 													doc.addPage({ margin: 0, bufferPages: true });
-													y = 120;
+													y = 130;
 													items = 0;
 													pagina = pagina + 1;
 													$scope.dibujarCabeceraPDFBalanceGeneral(doc, pagina, totalPaginas, "PASIVO Y PATRIMONIO");
 													doc.font('Helvetica', 8);
 												}
 											}
-										} else {
-											if (items == itemsPorPagina) {
-												doc.addPage({ margin: 0, bufferPages: true });
-												y = 120;
-												items = 0;
-												pagina = pagina + 1;
-												$scope.dibujarCabeceraPDFBalanceGeneral(doc, pagina, totalPaginas, "PASIVO Y PATRIMONIO");
-												doc.font('Helvetica', 8);
-											}
+
+
 										}
-			
-			
 									}
 								} else {
 									if (items == itemsPorPagina) {
 										doc.addPage({ margin: 0, bufferPages: true });
-										y = 120;
+										y = 130;
 										items = 0;
 										pagina = pagina + 1;
 										$scope.dibujarCabeceraPDFBalanceGeneral(doc, pagina, totalPaginas, "PASIVO Y PATRIMONIO");
@@ -542,7 +475,7 @@ angular.module('agil.controladores')
 
 								if (items == itemsPorPagina) {
 									doc.addPage({ margin: 0, bufferPages: true });
-									y = 120;
+									y = 130;
 									items = 0;
 									pagina = pagina + 1;
 									$scope.dibujarCabeceraPDFBalanceGeneral(doc, pagina, totalPaginas, "PASIVO Y PATRIMONIO");
@@ -552,9 +485,9 @@ angular.module('agil.controladores')
 
 
 						}
-						doc.text("TOTAL " + cuenta2.nombre, 90, y);
-						doc.text(number_format(cuenta2.total, 2), x, y);
-						var saldoSus = Math.round((cuenta2.total / $scope.moneda.dolar) * 10000) / 10000;
+						doc.text("TOTAL " + cuenta.nombre, 90, y);
+						doc.text(number_format(cuenta.total, 2), x, y);
+						var saldoSus = Math.round((cuenta.total / $scope.moneda.dolar) * 10000) / 10000;
 						if ($scope.configuracionImpresion.bimonetario) doc.text(number_format(saldoSus, 2), x + 130, y);
 						y = y + 20;
 						items++;
@@ -568,58 +501,109 @@ angular.module('agil.controladores')
 					}
 				}
 			} else {
-				var totales={totalPasivoPrimerAno:0,totalPasivoSegundoAno:0}
+
+			}
+		}
+		$scope.dibujarPatrimonioPredefinido = function (dato, totalActivos, doc, y, items, pagina, totalPaginas, itemsPorPagina, x) {
+			if ($scope.configuracionImpresion.tipoPeriodo.nombre != 'COMPARATIVO') {
 				var totalPasivo = 0
 				doc.font('Helvetica-Bold', 8);
 				doc.text("TOTAL ACTIVOS  ", 30, y);
-				doc.text(number_format(totalActivos.totalActivosprimerAno, 2), x, y);
-				doc.text(number_format(totalActivos.totalActivossegundoAno, 2), x+100, y);
-				var cuentatotalPrimerAnoSus = totalActivos.totalActivosprimerAno / $scope.moneda.dolar
-				var cuentatotalSegundoAnoSus = totalActivos.totalActivossegundoAno / $scope.moneda.dolar
-				if ($scope.configuracionImpresion.bimonetario) doc.text(number_format(cuentatotalPrimerAnoSus, 2), x + 60, y);
-				if ($scope.configuracionImpresion.bimonetario) doc.text(number_format(cuentatotalSegundoAnoSus, 2), x + 150, y);
+				doc.text(number_format(totalActivos, 2), x, y);
+
+				var cuentatotalSus = totalActivos / $scope.moneda.dolar
+				if ($scope.configuracionImpresion.bimonetario) doc.text(number_format(cuentatotalSus, 2), x + 130, y);
 				y += 20
 				doc.text("PASIVO Y PATRIMONIO", 0, y, { align: "center" });
 				y += 20
-				for (var j = 0; j < dato.arregloPasivos.length && items <= itemsPorPagina; j++) {
-					var cuenta2 = dato.arregloPasivos[j]
-					if (cuenta2.primerAno.tipoCuenta.nombre_corto === "2") {
-						doc.text(cuenta2.primerAno.nombre, 30, y)
-						/*doc.text(number_format(cuenta.saldo,2), 530, y); */
-						/* total+=cuenta.saldo */
+				for (var j = 0; j < dato.cuentasSubGrupo.length && items <= itemsPorPagina; j++) {
+					doc.font('Helvetica', 8);
+					var cuenta = dato.cuentasSubGrupo[j]
+					if (cuenta.clasificacion.nombre === "Pasivo") {
+						if (items == itemsPorPagina) {
+							doc.addPage({ margin: 0, bufferPages: true });
+							y = 130;
+							items = 0;
+							pagina = pagina + 1;
+							$scope.dibujarCabeceraPDFBalanceGeneral(doc, pagina, totalPaginas, "PASIVO Y PATRIMONIO");
+							doc.font('Helvetica', 8);
+						}
+						doc.text(cuenta.nombre, 30, y)
+						cuenta.total = 0
 						y = y + 20;
 						items++;
-						for (var L = 0; L < dato.arregloPasivos.length && items <= itemsPorPagina; L++) {
-							cuenta4 = dato.arregloPasivos[L]
-							if (cuenta4.primerAno.tipoCuenta.nombre_corto === "3") {
-								var cod = String(cuenta4.primerAno.codigo).substr(0, 3)
-								if (cuenta2.primerAno.codigo == cod) {
-									doc.text(cuenta4.primerAno.nombre, 60, y)
-									doc.text(number_format(cuenta4.primerAno.saldo, 2), x, y);
-									doc.text(number_format(cuenta4.segundoAno.saldo, 2), x, y);
-									var saldoPrimerAnoSus = Math.round((cuenta4.primerAno.saldo / $scope.moneda.dolar) * 10000) / 10000;
-									var saldoSegundoAnoSus = Math.round((cuenta4.segundoAno.saldo / $scope.moneda.dolar) * 10000) / 10000;
-									if ($scope.configuracionImpresion.bimonetario) doc.text(number_format(saldoPrimerAnoSus, 2), x + 60, y);
-									if ($scope.configuracionImpresion.bimonetario) doc.text(number_format(saldoSegundoAnoSus, 2), x + 150, y);
-									
-									cuenta.primerAno.total += cuenta4.primerAno.saldo
-									totales.totalPasivoPrimerAno += cuenta4.primerAno.saldo
-									cuenta.segundoAno.total += cuenta4.segundoAno.saldo
-									totales.totalPasivoSegundoAno += cuenta4.segundoAno.saldo
-									y = y + 20;
-									items++;
-									if (items == itemsPorPagina) {
-										doc.addPage({ margin: 0, bufferPages: true });
-										y = 120;
-										items = 0;
-										pagina = pagina + 1;
-										$scope.dibujarCabeceraPDFBalanceGeneral(doc, pagina, totalPaginas, "PASIVO Y PATRIMONIO");
-										doc.font('Helvetica', 8);
+						for (var L = 0; L < dato.cuentasGenericas.length && items <= itemsPorPagina; L++) {
+							var cuenta4 = dato.cuentasGenericas[L]
+							if (cuenta4.tipoCuenta.nombre_corto === "3") {
+								var cod = String(cuenta4.codigo).substr(0, 3)
+								if (cuenta.codigo == cod) {
+									if (dato.arregloPasivos.some(function (cuenta2) {
+										var cod = String(cuenta2.codigo).substr(0, 5)
+										if (cuenta4.codigo == cod) {
+											return true
+										} else {
+											return false
+										}
+									})) {
+										doc.text(cuenta4.nombre, 40, y)
+										cuenta4.total = 0
+										cuenta4.totalSus = 0
+										/* y = y + 20;
+										items++; */
+										for (var p = 0; p < dato.arregloPasivos.length && items <= itemsPorPagina; p++) {
+											var cuenta2 = dato.arregloPasivos[p]
+											if (cuenta2.tipoCuenta.nombre_corto === "4") {
+												var cod = String(cuenta2.codigo).substr(0, 5)
+												if (cuenta4.codigo == cod) {
+													/* doc.text(cuenta2.nombre, 60, y)
+													doc.text(number_format(cuenta2.saldo, 2), x, y);
+													var saldoSus = cuenta2.saldo / $scope.moneda.dolar;
+													if ($scope.configuracionImpresion.bimonetario) doc.text(number_format(saldoSus, 2), x + 130, y); */
+													cuenta4.total += cuenta2.saldo
+													cuenta4.totalSus += cuenta2.saldo / $scope.moneda.dolar;
+													cuenta.total += cuenta2.saldo
+													totalPasivo += cuenta2.saldo
+
+													if (items == itemsPorPagina) {
+														doc.addPage({ margin: 0, bufferPages: true });
+														y = 130;
+														items = 0;
+														pagina = pagina + 1;
+														$scope.dibujarCabeceraPDFBalanceGeneral(doc, pagina, totalPaginas, "PASIVO Y PATRIMONIO");
+														doc.font('Helvetica', 8);
+													}
+												} else {
+													if (items == itemsPorPagina) {
+														doc.addPage({ margin: 0, bufferPages: true });
+														y = 130;
+														items = 0;
+														pagina = pagina + 1;
+														$scope.dibujarCabeceraPDFBalanceGeneral(doc, pagina, totalPaginas, "PASIVO Y PATRIMONIO");
+														doc.font('Helvetica', 8);
+													}
+												}
+											} else {
+												if (items == itemsPorPagina) {
+													doc.addPage({ margin: 0, bufferPages: true });
+													y = 130;
+													items = 0;
+													pagina = pagina + 1;
+													$scope.dibujarCabeceraPDFBalanceGeneral(doc, pagina, totalPaginas, "PASIVO Y PATRIMONIO");
+													doc.font('Helvetica', 8);
+												}
+											}
+
+
+										}
+										doc.text(cuenta4.total, x, y)
+										if ($scope.configuracionImpresion.bimonetario) doc.text(number_format(cuenta4.totalSus, 2), x + 130, y);
+										y = y + 20;
+										items++;
 									}
 								} else {
 									if (items == itemsPorPagina) {
 										doc.addPage({ margin: 0, bufferPages: true });
-										y = 120;
+										y = 130;
 										items = 0;
 										pagina = pagina + 1;
 										$scope.dibujarCabeceraPDFBalanceGeneral(doc, pagina, totalPaginas, "PASIVO Y PATRIMONIO");
@@ -627,9 +611,10 @@ angular.module('agil.controladores')
 									}
 								}
 							} else {
+
 								if (items == itemsPorPagina) {
 									doc.addPage({ margin: 0, bufferPages: true });
-									y = 120;
+									y = 130;
 									items = 0;
 									pagina = pagina + 1;
 									$scope.dibujarCabeceraPDFBalanceGeneral(doc, pagina, totalPaginas, "PASIVO Y PATRIMONIO");
@@ -639,27 +624,104 @@ angular.module('agil.controladores')
 
 
 						}
-						doc.text("TOTAL " + cuenta2.primerAno.nombre, 90, y);
-						doc.text(number_format(cuenta2.primerAno.total, 2), x, y);
-						doc.text(number_format(cuenta2.segundoAno.total, 2), x+100, y);
-						var saldoPrimerAnoSus = Math.round((cuenta2.primerAno.total / $scope.moneda.dolar) * 10000) / 10000;
-						var saldoSegundoAnoSus = Math.round((cuenta2.segundoAno.total / $scope.moneda.dolar) * 10000) / 10000;
-						if ($scope.configuracionImpresion.bimonetario) doc.text(number_format(saldoPrimerAnoSus, 2), x + 60, y);
-						if ($scope.configuracionImpresion.bimonetario) doc.text(number_format(saldoSegundoAnoSus, 2), x + 150, y);
+						doc.text("TOTAL " + cuenta.nombre, 90, y);
+						doc.text(number_format(cuenta.total, 2), x, y);
+						var saldoSus = Math.round((cuenta.total / $scope.moneda.dolar) * 10000) / 10000;
+						if ($scope.configuracionImpresion.bimonetario) doc.text(number_format(saldoSus, 2), x + 130, y);
 						y = y + 20;
 						items++;
 					}
-					if (j === (dato.arregloPasivos.length - 1)) {
+					if (j === (dato.cuentasSubGrupo.length - 1)) {
 						doc.font('Helvetica-Bold', 8);
 						doc.text("TOTAL PASIVO:  ", 30, y)
-						doc.text(number_format(totales.totalPasivoPrimerAno, 2), x, y)
-						doc.text(number_format(totales.totalPasivoSegundoAno, 2), x+100, y)
-						var saldoPrimerAnoSus = Math.round((totales.totalPasivoPrimerAno / $scope.moneda.dolar) * 10000) / 10000;
-						var saldoSegundoAnoSus = Math.round((totales.totalPasivoSegundoAno / $scope.moneda.dolar) * 10000) / 10000;
-						if ($scope.configuracionImpresion.bimonetario) doc.text(number_format(saldoPrimerAnoSus, 2), x + 60, y);
-						if ($scope.configuracionImpresion.bimonetario) doc.text(number_format(saldoSegundoAnoSus, 2), x + 150, y);
+						doc.text(number_format(totalPasivo, 2), x, y)
+						var saldoSus = Math.round((totalPasivo / $scope.moneda.dolar) * 10000) / 10000;
+						if ($scope.configuracionImpresion.bimonetario) doc.text(number_format(saldoSus, 2), x + 130, y);
 					}
 				}
+			} else {
+
+			}
+		}
+		$scope.dibujarPatrimonioSubGrupo = function (dato, totalActivos, doc, y, items, pagina, totalPaginas, itemsPorPagina, x) {
+			if ($scope.configuracionImpresion.tipoPeriodo.nombre != 'COMPARATIVO') {
+				var totalPasivo = 0
+				doc.font('Helvetica-Bold', 8);
+				doc.text("TOTAL ACTIVOS  ", 30, y);
+				doc.text(number_format(totalActivos, 2), x, y);
+
+				var cuentatotalSus = totalActivos / $scope.moneda.dolar
+				if ($scope.configuracionImpresion.bimonetario) doc.text(number_format(cuentatotalSus, 2), x + 130, y);
+				y += 20
+				doc.text("PASIVO Y PATRIMONIO", 0, y, { align: "center" });
+				y += 20
+				for (var j = 0; j < dato.cuentasSubGrupo.length && items <= itemsPorPagina; j++) {
+					doc.font('Helvetica', 8);
+					var cuenta = dato.cuentasSubGrupo[j]
+					if (cuenta.clasificacion.nombre === "Pasivo") {
+						if (items == itemsPorPagina) {
+							doc.addPage({ margin: 0, bufferPages: true });
+							y = 130;
+							items = 0;
+							pagina = pagina + 1;
+							$scope.dibujarCabeceraPDFBalanceGeneral(doc, pagina, totalPaginas, "PASIVO Y PATRIMONIO");
+							doc.font('Helvetica', 8);
+						}
+						doc.text(cuenta.nombre, 30, y)
+						cuenta.total = 0
+						cuenta.totalSus=0
+						/* y = y + 20;
+						items++; */
+						for (var L = 0; L < dato.cuentasGenericas.length && items <= itemsPorPagina; L++) {
+							var cuenta4 = dato.cuentasGenericas[L]
+							if (cuenta4.tipoCuenta.nombre_corto === "3") {
+								var cod = String(cuenta4.codigo).substr(0, 3)
+								if (cuenta.codigo == cod) {
+									if (dato.arregloPasivos.some(function (cuenta2) {
+										var cod = String(cuenta2.codigo).substr(0, 5)
+										if (cuenta4.codigo == cod) {
+											return true
+										} else {
+											return false
+										}
+									})) {
+
+										for (var p = 0; p < dato.arregloPasivos.length && items <= itemsPorPagina; p++) {
+											var cuenta2 = dato.arregloPasivos[p]
+											if (cuenta2.tipoCuenta.nombre_corto === "4") {
+												var cod = String(cuenta2.codigo).substr(0, 5)
+												if (cuenta4.codigo == cod) {
+													cuenta.totalSus += cuenta2.saldo / $scope.moneda.dolar;
+													cuenta.total += cuenta2.saldo
+													totalPasivo += cuenta2.saldo
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+						doc.text(cuenta.total, x, y)
+						if ($scope.configuracionImpresion.bimonetario) doc.text(number_format(cuenta.totalSus, 2), x + 130, y);
+						y = y + 20;
+						items++;
+						doc.text("TOTAL " + cuenta.nombre, 90, y);
+						doc.text(number_format(cuenta.total, 2), x, y);
+						var saldoSus = Math.round((cuenta.total / $scope.moneda.dolar) * 10000) / 10000;
+						if ($scope.configuracionImpresion.bimonetario) doc.text(number_format(saldoSus, 2), x + 130, y);
+						y = y + 20;
+						items++;
+					}
+					if (j === (dato.cuentasSubGrupo.length - 1)) {
+						doc.font('Helvetica-Bold', 8);
+						doc.text("TOTAL PASIVO:  ", 30, y)
+						doc.text(number_format(totalPasivo, 2), x, y)
+						var saldoSus = Math.round((totalPasivo / $scope.moneda.dolar) * 10000) / 10000;
+						if ($scope.configuracionImpresion.bimonetario) doc.text(number_format(saldoSus, 2), x + 130, y);
+					}
+				}
+			} else {
+
 			}
 		}
 		$scope.generarPdfPreComparativo = function (dato, totalActivos, doc, y, items, pagina, totalPaginas, itemsPorPagina, x) {
@@ -796,80 +858,105 @@ angular.module('agil.controladores')
 				}
 			}
 		}
-		$scope.generarPdfsubGrupo = function (dato, x) {
-			var doc = new PDFDocument({ size: 'letter', margin: 10 });
-			var stream = doc.pipe(blobStream());
-			// draw some text
-			var totalCosto = 0;
-			var datos = [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}]
-			var datosPasivo = [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}]
-			var y = 120, itemsPorPagina = 33, items = 0, pagina = ($scope.configuracionImpresion.usar_empesar_numeracion) ? $scope.configuracionImpresion.empesar_numeracion : 1, totalPaginas = ($scope.configuracionImpresion.usar_empesar_numeracion) ? ($scope.configuracionImpresion.empesar_numeracion - 1) + Math.ceil((datos.length + datosPasivo.length) / itemsPorPagina) : Math.ceil((datos.length + datosPasivo.length) / itemsPorPagina);
-			var totalActivos = 0
-			var totalPasivo = 0
-			$scope.dibujarCabeceraPDFBalanceGeneral(doc, pagina, totalPaginas, "ACTIVO");
-			doc.font('Helvetica', 8);
-			for (var i = 0; i < dato.arregloActivos.length && items <= itemsPorPagina; i++) {
-				cuenta = dato.arregloActivos[i]
-				if ($scope.configuracionImpresion.tipoPeriodo.nombre != 'COMPARATIVO') {
-					if (cuenta.tipoCuenta.nombre_corto === "2") {
+		$scope.generarPdfsubGrupo = function (dato, x, cuentasGrupo, cuentasSubGrupo, cuentasGenericas) {
+			if ($scope.configuracionImpresion.tipoPeriodo.nombre != 'COMPARATIVO') {
+				var doc = new PDFDocument({ size: 'letter', margin: 10 });
+				var stream = doc.pipe(blobStream());
+				// draw some text
+				var totalCosto = 0;
+				var datos = []
+				var datosPasivo = []
+				var y = 130, itemsPorPagina = 28, items = 0, pagina = ($scope.configuracionImpresion.usar_empesar_numeracion) ? $scope.configuracionImpresion.empesar_numeracion : 1, totalPaginas = ($scope.configuracionImpresion.usar_empesar_numeracion) ? ($scope.configuracionImpresion.empesar_numeracion - 1) + Math.ceil((datos.length + datosPasivo.length) / itemsPorPagina) : Math.ceil((datos.length + datosPasivo.length) / itemsPorPagina);
+				var totalActivos = 0
+				var totalPasivo = 0
+				$scope.dibujarCabeceraPDFBalanceGeneral(doc, pagina, totalPaginas, "ACTIVO");
+				doc.font('Helvetica', 8);
+				for (var i = 0; i < cuentasSubGrupo.length && items <= itemsPorPagina; i++) {
+					cuenta = cuentasSubGrupo[i]
+					cuenta.total = 0
+
+					if (cuenta.clasificacion.nombre === "Activo") {
+						if (items == itemsPorPagina) {
+							doc.addPage({ margin: 0, bufferPages: true });
+							y = 130;
+							items = 0;
+							pagina = pagina + 1;
+							$scope.dibujarCabeceraPDFBalanceGeneral(doc, pagina, totalPaginas, "ACTIVO");
+							doc.font('Helvetica', 8);
+						}
 						doc.text(cuenta.nombre, 30, y)
-						y = y + 20;
-						items++;
-						for (var p = 0; p < dato.arregloActivos.length && items <= itemsPorPagina; p++) {
-							cuenta2 = dato.arregloActivos[p]
-							if (cuenta2.tipoCuenta.nombre_corto === "3") {
-								var cod = String(cuenta2.codigo).substr(0, 3)
+						for (var L = 0; L < cuentasGenericas.length && items <= itemsPorPagina; L++) {
+							cuenta3 = cuentasGenericas[L]
+							if (cuenta3.tipoCuenta.nombre_corto === "3") {
+								var cod = String(cuenta3.codigo).substr(0, 3)
 								if (cuenta.codigo == cod) {
-									/* for (var L = 0; L < dato.arregloActivos.length && items <= itemsPorPagina; L++) {
-										cuenta3 = dato.arregloActivos[L]
-										if (cuenta3.tipoCuenta.nombre_corto === "3") {
-											var cod = String(cuenta3.codigo).substr(0, 3)
-											if (cuenta2.codigo == cod) { */
-									cuenta.total += cuenta2.saldo
-									totalActivos += cuenta2.saldo
-									/* 		}
+									if (dato.arregloActivos.some(function (cuenta2) {
+										var cod = String(cuenta2.codigo).substr(0, 5)
+										if (cuenta3.codigo == cod) {
+											return true
+										} else {
+											return false
 										}
-									} */
+									})) {
+										for (var p = 0; p < dato.arregloActivos.length && items <= itemsPorPagina; p++) {
+											cuenta2 = dato.arregloActivos[p]
+											if (cuenta2.tipoCuenta.nombre_corto === "4") {
+												var cod = String(cuenta2.codigo).substr(0, 5)
+												if (cuenta3.codigo == cod) {
+													cuenta.total += cuenta2.saldo
+													cuenta.totalSus += cuenta2.saldo
+													totalActivos += cuenta2.saldo
+												}
+											}
+										}
+
+									}
 								}
 							}
+
 						}
+						if ($scope.configuracionImpresion.bimonetario) doc.text(number_format(cuenta.totalSus, 2), x + 130, y);
+						doc.text(number_format(cuenta.total, 2), x, y)
+						y = y + 20;
+						items++;
 						doc.text("TOTAL " + cuenta.nombre, 90, y);
 						doc.text(number_format(cuenta.total, 2), x, y);
 						var cuentatotalSus = cuenta.total / $scope.moneda.dolar
 						if ($scope.configuracionImpresion.bimonetario) doc.text(number_format(cuentatotalSus, 2), x + 130, y);
 						y = y + 20;
 						items++;
-						if (i === (dato.arregloActivos.length - 1)) {
-							$scope.dibujarSubGrupos(dato, totalActivos, doc, y, items, pagina, totalPaginas, itemsPorPagina, x)
+						if (i === (cuentasSubGrupo.length - 1)) {
+							$scope.dibujarPatrimonioSubGrupo(dato, totalActivos, doc, y, items, pagina, totalPaginas, itemsPorPagina, x)
 
 						}
 						/* 	y = y + 20;
 							items++; */
 					} else {
-						if (i === (dato.arregloActivos.length - 1)) {
-							$scope.dibujarSubGrupos(dato, totalActivos, doc, y, items, pagina, totalPaginas, itemsPorPagina, x)
+						if (i === (cuentasSubGrupo.length - 1)) {
+							$scope.dibujarPatrimonioSubGrupo(dato, totalActivos, doc, y, items, pagina, totalPaginas, itemsPorPagina, x)
 
 						}
 					}
-				} else {
-					$$scope.generarPdfPreComparativo()
-				}
-			}
-			if ($scope.configuracionImpresion.usar_firma_uno) {
-				doc.text($scope.configuracionImpresion.firma_uno, 170, 720);
-				doc.text($scope.configuracionImpresion.cargo_uno, 170, 730);
-			}
-			if ($scope.configuracionImpresion.usar_firma_dos) {
-				doc.text($scope.configuracionImpresion.firma_dos, 370, 720);
-				doc.text($scope.configuracionImpresion.cargo_dos, 370, 730);
-			}
 
-			doc.end();
-			stream.on('finish', function () {
-				var fileURL = stream.toBlobURL('application/pdf');
-				window.open(fileURL, '_blank', 'location=no');
-			});
-			blockUI.stop();
+				}
+				if ($scope.configuracionImpresion.usar_firma_uno) {
+					doc.text($scope.configuracionImpresion.firma_uno, 170, 720);
+					doc.text($scope.configuracionImpresion.cargo_uno, 170, 730);
+				}
+				if ($scope.configuracionImpresion.usar_firma_dos) {
+					doc.text($scope.configuracionImpresion.firma_dos, 370, 720);
+					doc.text($scope.configuracionImpresion.cargo_dos, 370, 730);
+				}
+
+				doc.end();
+				stream.on('finish', function () {
+					var fileURL = stream.toBlobURL('application/pdf');
+					window.open(fileURL, '_blank', 'location=no');
+				});
+				blockUI.stop();
+			} else {
+
+			}
 		}
 		$scope.dibujarSubGrupos = function (dato, totalActivos, doc, y, items, pagina, totalPaginas, itemsPorPagina, x) {
 			var totalPasivo = 0
@@ -916,8 +1003,168 @@ angular.module('agil.controladores')
 				}
 			}
 		}
-		$scope.generarPdfApropiacion = function (cuentas) {
+		$scope.generarPdfPreestablecido = function (dato, x, cuentasGrupo, cuentasSubGrupo, cuentasGenericas) {
+			if ($scope.configuracionImpresion.tipoPeriodo.nombre != 'COMPARATIVO') {
+				var doc = new PDFDocument({ size: 'letter', margin: 10 });
+				var stream = doc.pipe(blobStream());
+				// draw some text
+				var totalCosto = 0;
+				var datos = []
+				var datosPasivo = []
+				var y = 130, itemsPorPagina = 28, items = 0, pagina = ($scope.configuracionImpresion.usar_empesar_numeracion) ? $scope.configuracionImpresion.empesar_numeracion : 1, totalPaginas = ($scope.configuracionImpresion.usar_empesar_numeracion) ? ($scope.configuracionImpresion.empesar_numeracion - 1) + Math.ceil((datos.length + datosPasivo.length) / itemsPorPagina) : Math.ceil((datos.length + datosPasivo.length) / itemsPorPagina);
+				var totalActivos = 0
+				var totalPasivo = 0
+				$scope.dibujarCabeceraPDFBalanceGeneral(doc, pagina, totalPaginas, "ACTIVO");
+				doc.font('Helvetica', 8);
+				for (var i = 0; i < cuentasSubGrupo.length && items <= itemsPorPagina; i++) {
+					cuenta = cuentasSubGrupo[i]
+					cuenta.total = 0
 
+					if (cuenta.clasificacion.nombre === "Activo") {
+						if (items == itemsPorPagina) {
+							doc.addPage({ margin: 0, bufferPages: true });
+							y = 130;
+							items = 0;
+							pagina = pagina + 1;
+							$scope.dibujarCabeceraPDFBalanceGeneral(doc, pagina, totalPaginas, "ACTIVO");
+							doc.font('Helvetica', 8);
+						}
+						doc.text(cuenta.nombre, 30, y)
+						/*doc.text(number_format(cuenta.saldo,2), 530, y); */
+						/* total+=cuenta.saldo */
+						y = y + 20;
+						items++;
+
+						for (var L = 0; L < cuentasGenericas.length && items <= itemsPorPagina; L++) {
+							cuenta3 = cuentasGenericas[L]
+							if (cuenta3.tipoCuenta.nombre_corto === "3") {
+								var cod = String(cuenta3.codigo).substr(0, 3)
+								if (cuenta.codigo == cod) {
+									if (dato.arregloActivos.some(function (cuenta2) {
+										var cod = String(cuenta2.codigo).substr(0, 5)
+										if (cuenta3.codigo == cod) {
+											return true
+										} else {
+											return false
+										}
+									})) {
+										doc.text(cuenta3.nombre, 40, y)
+										cuenta3.total = 0
+										cuenta3.totalSus = 0
+										/* y = y + 20;
+										items++; */
+
+
+										for (var p = 0; p < dato.arregloActivos.length && items <= itemsPorPagina; p++) {
+											cuenta2 = dato.arregloActivos[p]
+											if (cuenta2.tipoCuenta.nombre_corto === "4") {
+												var cod = String(cuenta2.codigo).substr(0, 5)
+												if (cuenta3.codigo == cod) {
+													/* doc.text(cuenta2.nombre, 60, y) */
+													/* doc.text(number_format(cuenta2.saldo, 2), x, y); */
+													cuenta3.totalSus += cuenta2.saldo / $scope.moneda.dolar;
+													//if ($scope.configuracionImpresion.bimonetario) doc.text(number_format(saldoSus, 2), x + 130, y);
+													cuenta3.total += cuenta2.saldo
+													cuenta.total += cuenta2.saldo
+													totalActivos += cuenta2.saldo
+
+													if (items == itemsPorPagina) {
+														doc.addPage({ margin: 0, bufferPages: true });
+														y = 130;
+														items = 0;
+														pagina = pagina + 1;
+														$scope.dibujarCabeceraPDFBalanceGeneral(doc, pagina, totalPaginas, "ACTIVO");
+														doc.font('Helvetica', 8);
+													}
+												} else {
+													if (items == itemsPorPagina) {
+														doc.addPage({ margin: 0, bufferPages: true });
+														y = 130;
+														items = 0;
+														pagina = pagina + 1;
+														$scope.dibujarCabeceraPDFBalanceGeneral(doc, pagina, totalPaginas, "ACTIVO");
+														doc.font('Helvetica', 8);
+													}
+												}
+											} else {
+												if (items == itemsPorPagina) {
+													doc.addPage({ margin: 0, bufferPages: true });
+													y = 130;
+													items = 0;
+													pagina = pagina + 1;
+													$scope.dibujarCabeceraPDFBalanceGeneral(doc, pagina, totalPaginas, "ACTIVO");
+													doc.font('Helvetica', 8);
+												}
+											}
+
+
+										}
+										if ($scope.configuracionImpresion.bimonetario) doc.text(number_format(cuenta3.totalSus, 2), x + 130, y);
+										doc.text(number_format(cuenta3.total, 2), x, y)
+										y = y + 20;
+										items++;
+									}
+								} else {
+									if (items == itemsPorPagina) {
+										doc.addPage({ margin: 0, bufferPages: true });
+										y = 130;
+										items = 0;
+										pagina = pagina + 1;
+										$scope.dibujarCabeceraPDFBalanceGeneral(doc, pagina, totalPaginas, "ACTIVO");
+										doc.font('Helvetica', 8);
+									}
+								}
+							} else {
+								if (items == itemsPorPagina) {
+									doc.addPage({ margin: 0, bufferPages: true });
+									y = 130;
+									items = 0;
+									pagina = pagina + 1;
+									$scope.dibujarCabeceraPDFBalanceGeneral(doc, pagina, totalPaginas, "ACTIVO");
+									doc.font('Helvetica', 8);
+								}
+							}
+
+
+						}
+						doc.text("TOTAL " + cuenta.nombre, 90, y);
+						doc.text(number_format(cuenta.total, 2), x, y);
+						var cuentatotalSus = cuenta.total / $scope.moneda.dolar
+						if ($scope.configuracionImpresion.bimonetario) doc.text(number_format(cuentatotalSus, 2), x + 130, y);
+						y = y + 20;
+						items++;
+						if (i === (cuentasSubGrupo.length - 1)) {
+							$scope.dibujarPatrimonioPredefinido(dato, totalActivos, doc, y, items, pagina, totalPaginas, itemsPorPagina, x)
+
+						}
+						/* 	y = y + 20;
+							items++; */
+					} else {
+						if (i === (cuentasSubGrupo.length - 1)) {
+							$scope.dibujarPatrimonioPredefinido(dato, totalActivos, doc, y, items, pagina, totalPaginas, itemsPorPagina, x)
+
+						}
+					}
+
+				}
+				if ($scope.configuracionImpresion.usar_firma_uno) {
+					doc.text($scope.configuracionImpresion.firma_uno, 170, 720);
+					doc.text($scope.configuracionImpresion.cargo_uno, 170, 730);
+				}
+				if ($scope.configuracionImpresion.usar_firma_dos) {
+					doc.text($scope.configuracionImpresion.firma_dos, 370, 720);
+					doc.text($scope.configuracionImpresion.cargo_dos, 370, 730);
+				}
+
+				doc.end();
+				stream.on('finish', function () {
+					var fileURL = stream.toBlobURL('application/pdf');
+					window.open(fileURL, '_blank', 'location=no');
+				});
+				blockUI.stop();
+			} else {
+
+			}
 		}
 		$scope.generarExcelBalanceGeneral = function (configuracionImpresion) {
 			var promesa = CuentasContabilidadEEFF($scope.configuracionImpresion, $scope.usuario.id_empresa);
@@ -988,6 +1235,9 @@ angular.module('agil.controladores')
 			}
 			if ($scope.configuracionImpresion.bimonetario) {
 				doc.text("Expresado en Bolivianos y Dólares", 0, 95, { align: "center" });
+				doc.text('Bolivianos', 400, 115);
+				doc.text('Dolares', 520, 115);
+
 			} else {
 				doc.text("Expresado en Bolivianos", 0, 95, { align: "center" });
 			}
