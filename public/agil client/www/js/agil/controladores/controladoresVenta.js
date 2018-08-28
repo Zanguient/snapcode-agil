@@ -5,7 +5,7 @@ angular.module('agil.controladores')
 		PagosVenta, DatosVenta, VentaEmpresaDatos, ProductosPanel, ListaProductosEmpresaUsuario, ListaInventariosProducto, Paginator,
 		socket, ConfiguracionVentaVistaDatos, ConfiguracionVentaVista, ListaGruposProductoEmpresa, ReporteVentasMensualesDatos,
 		ConfiguracionImpresionEmpresaDato, VerificarUsuarioEmpresa, ImprimirSalida, ModificarVenta, ListaVendedorVenta, VendedorVenta, VendedorVentaActualizacion, GuardarUsuarLectorDeBarra, VerificarLimiteCredito, ListaSucursalesUsuario, ListaGruposProductoUsuario, ListaServiciosVentas, GuardarListaServiciosVentas,
-		EliminarVentaServicio) {
+		EliminarVentaServicio,ventasDetalleEmpresa) {
 		blockUI.start();
 		$scope.usuario = JSON.parse($localStorage.usuario);
 		convertUrlToBase64Image($scope.usuario.empresa.imagen, function (imagenEmpresa) {
@@ -2838,9 +2838,9 @@ angular.module('agil.controladores')
 						doc.text($scope.detallePorProducto[i].venta.cliente.razon_social, 120, y);
 					}
 					doc.font('Helvetica', 8);
-					doc.text($scope.detallePorProducto[i].cantidad, 260, y);
+					doc.text($scope.detallePorProducto[i].cantidad, 470, y);
 					doc.font('Helvetica', 8);
-					doc.text($scope.detallePorProducto[i].total, 320, y);
+					doc.text($scope.detallePorProducto[i].total, 520, y);
 		
 					
 					y = y + 30;
@@ -2903,8 +2903,8 @@ angular.module('agil.controladores')
 			doc.text("Nº", 45, 110);
 			doc.text("N° Factura", 65, 110);
 			doc.text("Razon Social", 120, 110);
-			doc.text("Cantidad", 250, 110);
-			doc.text("Monto", 320, 110);
+			doc.text("Cantidad", 450, 110);
+			doc.text("Monto", 520, 110);
 
 			doc.font('Helvetica', 8);
 			doc.text("Pagina " + pagina + " de " + totalPaginas, 500, 750);
@@ -3013,6 +3013,19 @@ angular.module('agil.controladores')
 		}
 
 		$scope.abrirReporteEmpresas = function(){
+			$scope.fechaInicioTexto;
+			$scope.fechaFinTexto;
+			$scope.idEmpresa = $scope.usuario.id_empresa;
+
+			if($scope.filtro != undefined){
+				if ($scope.filtro.sucursal) {
+					$scope.sucursalSelec = $scope.filtro.sucursal;
+				} else {
+					$scope.sucursalSelec = 0;
+				}
+			}else{
+				$scope.sucursalSelec = 0
+			}
 
 			for (var i = 0; i < $scope.sucursales.length; i++) {
 				if ($scope.sucursal) {
@@ -3035,16 +3048,22 @@ angular.module('agil.controladores')
 			if ($scope.fechaInicioTexto === undefined && $scope.fechaFinTexto === undefined) {
 				$scope.mostrarMensaje("Ingrese primero las fechas !");
 			} else {
-				$scope.fechaInicioTexto;
-				$scope.fechaFinTexto;
-				var columna = "nombre";
-				var direccion = "ASC";
-				//$scope.obtenerDetalles();
-				//$scope.filtrarDetalles($scope.sucursalesUsuario, $scope.fechaInicioTexto, $scope.fechaFinTexto, $scope.sucursal,columna,direccion);
-				//$scope.abrirPopup($scope.modalReportesProductos);
+				
+				//var columna = "nombre";
+				//var direccion = "ASC";
+				
+				$scope.filtroDetalleEmpresa($scope.sucursalesUsuario,$scope.fechaInicioTexto,$scope.fechaFinTexto,$scope.sucursalSelec,$scope.idEmpresa);
 				$scope.abrirReportePorEmpresa();
 			}
 			
+		}
+
+		$scope.filtroDetalleEmpresa = function(idsSucursales,inicio,fin,sucursal,idEmpresa){
+			var promesa = ventasDetalleEmpresa(idsSucursales,inicio,fin,sucursal,idEmpresa);
+			promesa.then(function(datos){
+				$scope.detalleEmpresa = datos;
+			})
+
 		}
 
 		$scope.abrirReportePorEmpresa = function(){
