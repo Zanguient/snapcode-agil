@@ -2970,13 +2970,15 @@ angular.module('agil.controladores')
 				theme: "light1", // "light1", "light2", "dark1", "dark2"
 				title:{
 					text: "Reporte de los 10 mas vendidos",
-					fontSize: 10              
-				},
+					fontSize: 14,
+					horizontalAlign: "center"         
+				},		
 				data: [
 					{
 					
 						// Change type to "doughnut", "line", "splineArea", etc.
 						type: "column",
+						//showInLegend: true,
 						dataPoints:datasReporte
 						
 					}
