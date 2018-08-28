@@ -7610,7 +7610,7 @@ angular.module('agil.controladores')
         }
         $scope.obtenerPeriodosDotacion = function () {
             blockUI.start();
-            var promesa = ClasesTipo("RRHH_PDR");
+            var promesa = ClasesTipoEmpresa("RRHH_PDR", $scope.usuario.id_empresa);
             promesa.then(function (entidad) {
                 $scope.periodoDotacion = entidad
                 blockUI.stop();

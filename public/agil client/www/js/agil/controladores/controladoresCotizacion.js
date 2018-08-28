@@ -734,10 +734,11 @@ angular.module('agil.controladores')
         $scope.saveRechazo = function (cotizacion) {
         	console.log("cotizacion ssssss ", cotizacion);
         	cotizacion.fecha_estado = new Date($scope.convertirFecha(cotizacion.fechaTexto));
+        	cotizacion.estado = "RECHAZADO";
             CotizacionRechazo.update({ id_cotizacion: cotizacion.id }, cotizacion, function (res) {
             	// $scope.cotizacion=rechazo;
             	// $scope.obtenerCotizaciones();
-            	cotizacion.estado = "RECHAZADO";
+
                 $scope.mostrarMensaje('actualizado Exitosamente!');
             }, function (error) {
                 $scope.mostrarMensaje('Hubo un problema al guardar.');

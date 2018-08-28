@@ -3,7 +3,7 @@
         <h3 class="header lighter blue">Comensales
             <b>{{empresaExternaSeleccionada.razon_social}}</b>
         </h3>
-        <form name="formularioFiltroComensales" novalidate ng-submit="filtrarComensales(filtro)">
+        <form name="formularioFiltroComensales" novalidate ng-submit="obtenerHistoriales()">
             <fieldset>
                 <table class="table table-striped table-bordered table-hover">
                     <tbody>
@@ -53,15 +53,25 @@
                                 <label>PERIODO</label>&nbsp
                             </td>
                             <td>
-                                <input class="date-picker" type="text" ng-update-hidden data-date-format="dd/mm/yy" ng-model="filtroComensales.fecha_inicio">
+                                <input ng-disabled="filtroComensales.anio || filtroComensales.mes" class="date-picker" type="text" ng-update-hidden data-date-format="dd/mm/yyyy"
+                                    ng-model="filtroComensales.desde">
                             </td>
                             <td>
-                                <input class="date-picker" type="text" ng-update-hidden data-date-format="dd/mm/yy" ng-model="filtroComensales.fecha_final">
+                                <input ng-disabled="filtroComensales.anio || filtroComensales.mes" class="date-picker" type="text" ng-update-hidden data-date-format="dd/mm/yyyy"
+                                    ng-model="filtroComensales.hasta">
                             </td>
                             <td>
-                                <select id="periodoFiltroComensales" name="anio" ng-options="anio as anio.nombre for anio in anios track by anio.id" ng-model="filtroComensales.anio">
-                                    <option value="" selected>TODOS</option>
+                                <select ng-disabled="filtroComensales.desde || filtroComensales.hasta" id="periodoFiltroComensales" name="anio" ng-options="anio as anio.nombre for anio in anios track by anio.id"
+                                    ng-model="filtroComensales.anio">
+                                    <option disabled value="" selected>Año</option>
                                 </select>
+                                <select ng-disabled="filtroComensales.desde || filtroComensales.hasta" id="periodoFiltroComensales" name="mes" ng-options="mes as mes.nombre for mes in mesesFiltro track by mes.id"
+                                    ng-model="filtroComensales.mes">
+                                    <option disabled value="" selected>Mes</option>
+                                </select>
+                                <button class="btn btn-primary" type="submit">Filtrar
+                                    <i class="ace-icon fa fa-search align-top bigger-125"></i>
+                                </button>
                             </td>
                             <td>
                                 <div class="fileUpload btn btn-primary btn-success">
@@ -99,29 +109,33 @@
                                 FILTRO
                             </td>
                             <td>
-                                <input ng-model="filtroComensales.razon" type="text">
+                                <input ng-keypress="interceptarTecla($event,'clienteEmpresa',true)" autocomplete="off" data-validate="validate()" type="text"
+                                    ng-model="filtroComensales.empresaCliente" placeholder="Ingrese la Razon Social" uib-typeahead="cliente as cliente.razon_social for cliente in buscarCliente($viewValue)"
+                                    typeahead-wait-ms="1500" typeahead-template-url="templates/autocompletar.html" typeahead-show-hint="false"
+                                    typeahead-min-length="2" typeahead-on-select="establecerCliente($item, $model, $label, $event)"
+                                    value="{{empresaExternaSeleccionada.razon_social}}">
+                                <button tabindex="-1" type="button" ng-click="abrirdialogClientesComensales()" class="btn btn-info btn-sm">
+                                    <i class="ace-icon fa fa-search-plus bigger-110"></i>
+                                </button>
                             </td>
                             <td>
-                                <select ng-options="comida as (comida.nombre + '--' + comida.empresaCliente.razon_social) for comida in listaComidasclienteEmpresa track by comida.id"
-                                    ng-model="filtroComensales.comida">
-                                    <option disables value="">Seleccione la comida...</option>
+                                <select ng-options="gerencia.id as (gerencia.nombre) for gerencia in listaGerenciasClienteEmpresa track by gerencia.id" ng-model="filtroComensales.gerencia">
+                                    <option value="">Todos</option>
                                 </select>
                             </td>
                             <td>&nbsp
-                                <select ng-model="filtroComensales.generar">
-                                    <option selected value="1">Reporte Comedor</option>
-                                    <option selected value="2">Empresa</option>
-                                    <option selected value="2">Comensal</option>
+                                <select ng-model="filtroComensales.generar" ng-options="reporte.id as reporte.nombre for reporte in reportes track by reporte.id">
+                                    <option disabled value="">Seleccione reporte...</option>
                                 </select>
+                                <button class="btn btn-app btn-danger" type="button" ng-click="generarReportePDF()">PDF
+                                    <i class="fa fa-print bigger-100"> </i>
+                                </button>
+                                <button class="btn btn-app btn-success" type="button" ng-click="generarReporteEXCEL">EXCEL
+                                    <i class="fa fa-print bigger-100"> </i>
+                                </button>
                             </td>
                             <td style="max-width: 200px; width: 200px">
-                                <button class="btn btn-app btn-danger" type="submit">PDF
-                                    <i class="fa fa-print bigger-100"> </i>
-                                </button>
-                                <button class="btn btn-app btn-success" type="submit">EXCEL
-                                    <i class="fa fa-print bigger-100"> </i>
 
-                                </button>
                             </td>
                         </tr>
                         <tr>
@@ -145,24 +159,23 @@
                             <td>
                             </td>
                             <td>
-                                <div ng-if="filtroComensales.actividadEconomica.id !==undefined">
-                                    <select id="filtroServicio" ng-model="filtroComensales.servicio" ng-change="" ng-options="servicio as servicio.nombre for servicio in filser track by servicio.id">
-                                        <option value="" selected>TODOS</option>
-                                    </select>
-                                </div>
-                                <div ng-if="filtroComensales.actividadEconomica.id ===undefined">
-                                    <select id="filtroServicio" ng-model="filtroComensales.servicio">
-                                        <option disabled selected value="">Seleccione una actividad</option>
-                                    </select>
-                                </div>
+                                <input ng-keypress="interceptarTecla($event,'comensal',true)" autocomplete="off" data-validate="validate()" type="text" ng-model="filtroComensales.comensal"
+                                    placeholder="Ingrese el nombre" uib-typeahead="comensal as comensal.nombre for comensal in buscarComensales($viewValue)"
+                                    typeahead-wait-ms="1500" typeahead-template-url="templates/autocompletar.html" typeahead-show-hint="false"
+                                    typeahead-min-length="2" typeahead-on-select="establecerComensal($item, $model, $label, $event)">
+                                <button tabindex="-1" type="button" ng-click="abrirdialogBusquedaComensales()" class="btn btn-info btn-sm">
+                                    <i class="ace-icon fa fa-search-plus bigger-110"></i>
+                                </button>
                             </td>
                             <td>&nbsp
-                                <input ng-model="filtroComensales.comida" type="text">
+                                <select ng-options="comida.id as (comida.nombre) for comida in listaComidasclienteEmpresa track by comida.id" ng-model="filtroComensales.comida">
+                                    <option value="">Todos</option>
+                                </select>
                             </td>
                             <td>
-                                <select id="filtrocomensalesestado" ng-model="filtroComensales.estado" ng-change="">
+                                <select id="filtrocomensalesestado" ng-model="filtroComensales.estado">
                                     <option value="1" selected>Vigente</option>
-                                    <option value="1" selected>Sin asignacion</option>
+                                    <option value="2" selected>Sin asignacion</option>
                                 </select>
                             </td>
                             <td>
@@ -203,7 +216,8 @@
                             <td>{{historial.empresaCliente.razon_social}}</td>
                             <td>{{historial.gerencia.nombre}}</td>
                             <td>{{historial.comida.nombre}}</td>
-                            <td>{{historial.fecha | date: "dd/MM/yy HH:MM"}}</td>
+                            <td>{{historial.fecha | date: "dd/MM/yyyy"}}&nbsp;&nbsp;/&nbsp;&nbsp;{{historial.fecha | date: "HH:mm:ss
+                                a"}} </td>
                             <td>
                                 {{historial.usuario.nombre_usuario}}
                             </td>
@@ -267,11 +281,11 @@
                                             <label>Empresa</label>
                                         </div>
                                         <div class="col-lg-7">
-                                            <input ng-keypress="interceptarTecla($event,'proformaDetalle',true)" autocomplete="off" data-validate="validate()" type="text"
+                                            <input ng-keypress="interceptarTecla($event,'clienteEmpresa',true)" autocomplete="off" data-validate="validate()" type="text"
                                                 ng-model="clienteEmpresaAsignacionAlias.empresaCliente" placeholder="Ingrese la Razon Social"
                                                 uib-typeahead="cliente as cliente.razon_social for cliente in buscarCliente($viewValue)"
-                                                typeahead-wait-ms="2000" typeahead-template-url="templates/autocompletar.html"
-                                                typeahead-show-hint="false" typeahead-min-length="0" typeahead-on-select="establecerCliente($item, $model, $label, $event)">
+                                                typeahead-wait-ms="1500" typeahead-template-url="templates/autocompletar.html"
+                                                typeahead-show-hint="false" typeahead-min-length="2" typeahead-on-select="establecerCliente($item, $model, $label, $event)">
                                             <button tabindex="-1" type="button" ng-click="abrirdialogClientesComensales()" class="btn btn-info btn-sm">
                                                 <i class="ace-icon fa fa-search-plus bigger-110"></i>
                                             </button>
@@ -865,7 +879,7 @@
                                         <div class="col-lg-7">
                                             <select ng-options="comida as (comida.nombre + '--' + comida.empresaCliente.razon_social) for comida in listaComidasclienteEmpresa track by comida.id"
                                                 ng-model="clienteEmpresaPreciosComidas.comida">
-                                                <option disables value="">Seleccione la comida...</option>
+                                                <option disabled value="">Seleccione la comida...</option>
                                             </select>
                                         </div>
                                     </div>
@@ -1001,6 +1015,69 @@
                                         <td>
                                             <a tabindex="{{$index+2}}" href="javascript:void(0)" ng-keypress="interceptarTecla($event,'agregar_detalle_venta',false)"
                                                 ng-click="seleccionarcliente(cliente)">SELECCIONAR</a>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="dialog-comensales-empresa" style="overflow-x:hidden;">
+    <div class="row">
+        <div class="widget-header">
+            <div class="container-fluid">
+                <div class="col-md-8">
+                    <label>Búsqueda:
+                        <input focus tabindex="1" type="search" class="form-control input-sm" ng-model="textoBusqueda" ng-change="filtrarComensales(textoBusqueda)">
+                    </label>
+                </div>
+                <div class="col-md-4">
+                    <button type="button" ng-click="cerrardialogBusquedaComensales()" class="btn btn-danger">
+                        <i class="ace-icon fa fa-close align-top bigger-125"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="container-fluid">
+            <div class="widget-box">
+                <div class="widget-body">
+                    <div class="widget-main">
+                        <div class="table-fixed-header">
+                            <table class="table table-striped table-bordered table-hover ">
+                                <thead fix-head class="table-head-color">
+                                    <tr>
+                                        <th>
+                                            <label for="">N°</label>
+                                        </th>
+                                        <th>
+                                            <label for="">
+                                                Razon social
+                                            </label>
+                                        </th>
+                                        <th>
+                                            Acciones
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr ng-repeat="comensal in comensalesProcesados">
+                                        <td>
+                                            {{$index+1}}
+                                        </td>
+                                        <td>
+                                            {{comensal.nombre}}
+                                        </td>
+                                        <td>
+                                            <a tabindex="{{$index+2}}" href="javascript:void(0)" ng-keypress="interceptarTecla($event,'agregar_detalle_venta',false)"
+                                                ng-click="establecerComensal(comensal, true)">SELECCIONAR</a>
                                         </td>
                                     </tr>
                                 </tbody>

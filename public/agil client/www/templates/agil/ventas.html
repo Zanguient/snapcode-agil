@@ -191,7 +191,10 @@
 			<script type="text/ng-template" id="PopoverReportesRapido.html">													                               
 				<div class="form-control">                            
 					<a href="javascript:void(0)" class="blue" ng-click="abrirReporteProductos()">Productos</a>
-				</div>			  
+				</div>	
+				<!--<div class="form-control">                            
+					<a href="javascript:void(0)" class="blue" ng-click="abrirReporteEmpresas()">Empresas</a>
+				</div>	-->	  
 			</script>
 
 
@@ -2658,6 +2661,7 @@
 	</div>
 	
 </div>
+<!-- Fin modal reporte productos -->
 
 <!-- inicio confirmar usuario -->
 <div id="modal-verificar-cuenta" title="Asignar Cuenta">
@@ -2833,3 +2837,99 @@
 
 </div>
 <!-- ========= fin SERVICIOS ========= -->
+
+<!-- ========= inicio  modal reporte empresas ========= -->
+<div class="modal" id="dialog-reporte-por-empresas">
+	<div class="modal-content">
+		<div class="modal-header bg-primary">
+			<button type="button" ng-click="cerrarReportePorEmpresa()" class="close" data-dismiss="modal" aria-label="Close">
+				<span aria-hidden="true">&times;</span>
+			</button>
+			<center>
+				<h4 class="modal-title" id="advertenciaPrestamoPersonal">Productos Vendidos</h4>
+				<h5>Del{{fechaInicioTexto}} al {{fechaFinTexto}}</h5>
+				<div>
+					<span>Sucursal: {{sucursal}}</span>
+				</div>
+				<div>
+					<span>Razon Socials: {{razonSocial}}</span>
+				</div>
+			</center>
+		</div>
+		<div class="modal-body">
+			<div class="row" ng-include src="'/templates/gral/paginator-header-1.html'">
+			</div>
+			<div class="table-header">
+				<div class="row">
+					<div class="col-sm-10">
+						<h4 class="widget-title">Lista de Productos</h4>
+					</div>
+					<div class="col-sm-2">
+						<button type="button" class="btn btn-primary btn-sm btn-grafico" ng-click="graficar()">
+							<i class="ace-icon fa fa-bar-chart-o align-top bigger-100"></i>
+						</button>
+					</div>
+				</div>
+			</div>
+
+			<div class="table-fixed-header">
+				<table class="table table-striped table-bordered table-hover ">
+					<thead fix-head class="table-head-color">
+						<tr>
+							<th>N°</th>
+							<th>
+								<a href="javascript:void(0)" ng-click="paginator.sortColumn('nombre',obtenerLista)">Empresa
+									<span id="nombre" class="sort fa fa-sort icon-only"></span>
+								</a>
+							</th>
+							<th>
+								<a href="javascript:void(0)" ng-click="paginator.sortColumn('total',obtenerLista)">Monto
+									<span id="total" class="sort fa fa-sort icon-only"></span>
+								</a>
+							</th>
+							<th style="width:5px">Acciones</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr ng-repeat="producto in ventasPopUp">
+							<td>{{$index+1}}</td>
+							<td>
+								{{producto.nombre}}
+							</td>
+							<td>
+								{{producto.total}}
+							</td>
+							<td>
+								<a ng-if="!moneda.edit" class="blue tooltip-info" href="javascript:void(0)" uib-tooltip="Imprimir" ng-click="ImprimirSimpleReporte(producto.id)">
+									<i class="ace-icon fa fa-print bigger-130"></i>
+								</a>
+
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<div class="row" ng-include src="'/templates/gral/paginator.html'">
+			</div>
+		</div>
+		<div class="modal-footer">
+			<label class="pull-lefth inline">
+				<small class="muted smaller-90">Ver Detalle Producto:</small>
+				<input id="id-button-detalle" ng-click="conDetalle()" name="switch-view-detail-products" checked="checked" type="checkbox"
+				 class="ace ace-switch ace-switch-4">
+				<span class="lbl check-detalle"></span>
+			</label>
+			<button id="pdf" class="btn btn-app btn-danger btn-xs" ng-click="generarPdfVentasMensuales()">
+				<i class="ace-icon fa fa-print bigger-160"></i>
+				PDF
+			</button>
+			<button id="pdf" class="btn btn-app btn-success btn-xs" ng-click="generarExcelVentasMensuales()">
+				<i class="ace-icon fa fa-print bigger-160"></i>
+				Excel
+			</button>
+			<button type="button" class="btn btn-danger" ng-click="cerrarReporteProductos()">Cerrar</button>
+		</div>
+	</div>
+	
+</div>
+<!-- Fin modal reporte empresas -->

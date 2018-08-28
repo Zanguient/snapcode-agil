@@ -29,7 +29,9 @@ angular.module('agil.controladores')
 		$scope.modalReportesProductos = 'dialog-reportes-productos';
 		$scope.modelGraficaProductos = 'reporte-grafico-productos';
 
-		$scope.modalServicioVenta = 'dialog-servicios-venta'
+		$scope.modalServicioVenta = 'dialog-servicios-venta';
+		$scope.modalReportesEmpresas = 'dialog-reporte-por-empresas';
+
 		$scope.$on('$viewContentLoaded', function () {
 			resaltarPestaña($location.path().substring(1));
 			ejecutarScriptsVenta($scope.idModalWizardCompraEdicion, $scope.idModalWizardVentaVista,
@@ -37,7 +39,8 @@ angular.module('agil.controladores')
 				$scope.idModalContenedorVentaVista, $scope.idInputCompletar, $scope.url, $scope.idModalPago,
 				$scope.idModalCierre,
 				$scope.idModalPanelVentas, $scope.idModalConfirmacionEliminacionVenta, $scope.idModalInventario, $scope.idModalPanelVentasCobro,
-				$scope.idModalEdicionVendedor, $scope.idModalImpresionVencimiento,$scope.IdModalVerificarCuenta, $scope.modalReportesProductos,$scope.modalServicioVenta,$scope.modelGraficaProductos);
+				$scope.idModalEdicionVendedor, $scope.idModalImpresionVencimiento,$scope.IdModalVerificarCuenta, $scope.modalReportesProductos,$scope.modalServicioVenta,
+				$scope.modelGraficaProductos,$scope.modalReportesEmpresas);
 			$scope.buscarAplicacion($scope.usuario.aplicacionesUsuario, $location.path().substring(1));
 			blockUI.stop();
 		});
@@ -2724,7 +2727,7 @@ angular.module('agil.controladores')
 								y = 150;
 								items = 0;
 								pagina = pagina + 1;
-								$scope.dibujarCabeceraPDFDetalleProductos(doc, $scope.ventaSinDetalle, reporte, pagina, totalPaginas);
+								$scope.dibujarCabeceraPDFVentasMensualesSinDetalle(doc, $scope.ventaSinDetalle, reporte, pagina, totalPaginas);
 								doc.font('Helvetica', 8);
 							}
 						}
@@ -2830,15 +2833,16 @@ angular.module('agil.controladores')
 					doc.font('Helvetica', 8);
 					doc.text($scope.detallePorProducto[i].venta.factura, 65, y, { width: 150 });
 					doc.font('Helvetica', 8);
-					doc.text($scope.detallePorProducto[i].producto.nombre, 120, y, { width: 150 });
+					if ($scope.detallePorProducto[i].venta.cliente) {
+						doc.font('Helvetica', 8);
+						doc.text($scope.detallePorProducto[i].venta.cliente.razon_social, 120, y);
+					}
 					doc.font('Helvetica', 8);
-					doc.text($scope.detallePorProducto[i].producto.unidad_medida, 320, y);
+					doc.text($scope.detallePorProducto[i].cantidad, 260, y);
 					doc.font('Helvetica', 8);
-					doc.text($scope.detallePorProducto[i].cantidad, 385, y);
-					doc.font('Helvetica', 8);
-					doc.text($scope.detallePorProducto[i].venta.total, 420, y);
-					doc.font('Helvetica', 8);
-					doc.text($scope.detallePorProducto[i].venta.cliente.razon_social, 470, y);
+					doc.text($scope.detallePorProducto[i].total, 320, y);
+		
+					
 					y = y + 30;
 					items++;
 
@@ -2880,6 +2884,12 @@ angular.module('agil.controladores')
 			doc.font('Helvetica', 8);
 			doc.text("Desde  " + $scope.fechaInicioTexto, -70, 40, { align: "center" });
 			doc.text("Hasta " + $scope.fechaFinTexto, 70, 40, { align: "center" });
+			doc.font('Helvetica-Bold', 8);
+			doc.text(datos[0].producto.nombre,0,55, { align: "center" });
+			doc.font('Helvetica-Bold', 8);
+			doc.text("Codigo: "+datos[0].producto.codigo,45,65);
+			doc.font('Helvetica-Bold', 8);
+			doc.text("Unidad Medida: "+datos[0].producto.unidad_medida,45,75);
 			/*doc.text("FOLIO " + pagina, 550, 25);
 			doc.rect(40, 60, 540, 40).stroke();
 			doc.font('Helvetica-Bold', 8);
@@ -2892,11 +2902,9 @@ angular.module('agil.controladores')
 			doc.font('Helvetica-Bold', 8);
 			doc.text("Nº", 45, 110);
 			doc.text("N° Factura", 65, 110);
-			doc.text("Producto", 120, 110);
-			doc.text("Unidad Medida", 300, 110);
-			doc.text("Cantidad", 370, 110);
-			doc.text("Monto", 420, 110, );
-			doc.text("Razon Social", 470, 110);
+			doc.text("Razon Social", 120, 110);
+			doc.text("Cantidad", 250, 110);
+			doc.text("Monto", 320, 110);
 
 			doc.font('Helvetica', 8);
 			doc.text("Pagina " + pagina + " de " + totalPaginas, 500, 750);
@@ -3002,6 +3010,49 @@ angular.module('agil.controladores')
 			} else if ($scope.verDetalle === false) {
 				$scope.verDetalle = true;
 			}
+		}
+
+		$scope.abrirReporteEmpresas = function(){
+
+			for (var i = 0; i < $scope.sucursales.length; i++) {
+				if ($scope.sucursal) {
+					if ($scope.sucursal == $scope.sucursales[i].id) {
+						$scope.sucursal = $scope.sucursales[i].nombre;
+					} else if ($scope.sucursal == 0) {
+						$scope.sucursal = "Todos";
+					}
+				} else {
+					$scope.sucursal = "Todos";
+				}
+			}
+
+			if ($scope.razonSocial) {
+				$scope.razonSocial;
+			} else {
+				$scope.razonSocial = "Todos";
+			}
+
+			if ($scope.fechaInicioTexto === undefined && $scope.fechaFinTexto === undefined) {
+				$scope.mostrarMensaje("Ingrese primero las fechas !");
+			} else {
+				$scope.fechaInicioTexto;
+				$scope.fechaFinTexto;
+				var columna = "nombre";
+				var direccion = "ASC";
+				//$scope.obtenerDetalles();
+				//$scope.filtrarDetalles($scope.sucursalesUsuario, $scope.fechaInicioTexto, $scope.fechaFinTexto, $scope.sucursal,columna,direccion);
+				//$scope.abrirPopup($scope.modalReportesProductos);
+				$scope.abrirReportePorEmpresa();
+			}
+			
+		}
+
+		$scope.abrirReportePorEmpresa = function(){
+			$scope.abrirPopup($scope.modalReportesEmpresas);
+		}
+
+		$scope.cerrarReportePorEmpresa = function(){
+			$scope.cerrarPopup($scope.modalReportesEmpresas);
 		}
 
 		$scope.modificarVenta = function (venta) {

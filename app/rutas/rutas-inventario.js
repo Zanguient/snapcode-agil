@@ -108,6 +108,31 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 						});
 				});
 		});
+
+
+	router.route("/ventasEmpresa/:idsSucursales/inicio/:inicio/fin/:fin/sucursal/:sucursal")
+		.get(function(req,res){
+			var inicio = req.params.inicio.split('/').reverse().join('-'); //inicio.setHours(0, 0, 0, 0, 0);
+			var fin = req.params.fin.split('/').reverse().join('-'); //fin.setHours(23, 59, 59, 0, 0);
+			condicionSucursal = { id: { $in: req.params.idsSucursales.split(',') } };
+			condicionUsuario = {}, clienteRequerido = false;
+			var busquedaQuery = (req.params.texto_busqueda === "0") ? "" : " AND p.nombre = '" + req.params.texto_busqueda + "'";
+
+			if (req.params.sucursal != 0) {
+				condicionSucursal.id = req.params.sucursal;
+			}
+			sequelize.query("SELECT cli.razon_social, sum(dv.total) as total FROM agil_cliente as cli INNER JOIN inv_venta as v on v.cliente = cli.id\
+				INNER JOIN inv_detalle_venta as dv on dv.venta = v.id\
+				INNER JOIN agil_almacen AS a ON v.almacen = a.id\
+				INNER JOIN agil_sucursal AS s ON a.sucursal = s.id\
+				WHERE date(v.fecha) BETWEEN '"+inicio+"' AND '"+fin+"'AND v.activa = true AND s.id in ("+ req.params.idsSucursales.split(',') + ") GROUP BY cli.razon_social",
+						{ type: sequelize.QueryTypes.SELECT })
+						.then(function (Ventas) {
+							res.json({ ventas: Ventas, paginas: Math.ceil(data.length / req.params.items_pagina) });
+						});
+		})
+
+		
 	router.route('/inventarios/empresa/:id_empresa/almacen/:id_almacen/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion/cantidad/:cantidad/grupo/:id_grupo/user/:id_usuario')
 		.get(function (req, res) {
 			var condicionProducto = "empresa=" + req.params.id_empresa;

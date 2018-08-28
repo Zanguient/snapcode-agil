@@ -103,13 +103,14 @@ function ejecutarScriptsTransacciones(modalNuevoIngreso, modalNuevoEgreso, modal
 	// aplicarWizardFormulario(idModalWizardDestinoEdicion, idContenedorEdicionDestino);
 }
 
-function ejecutarScriptsComensales(modalEdicionAlias, modalEdicionGerencias, modalEdicionComensales, modalEdicionComidas, modalEdicionPrecios, dialogClienteEmpresa) {
+function ejecutarScriptsComensales(modalEdicionAlias, modalEdicionGerencias, modalEdicionComensales, modalEdicionComidas, modalEdicionPrecios, dialogClienteEmpresa, busquedaComensalesEmpresa) {
 	crearPopup(modalEdicionAlias, "auto", "auto");
 	crearPopup(modalEdicionGerencias, "auto", "auto");
-	crearPopup(modalEdicionComensales, "auto", screen.height);
+	crearPopup(modalEdicionComensales, screen.width*0.80, screen.height);
 	crearPopup(modalEdicionComidas, "auto", "auto");
 	crearPopup(modalEdicionPrecios, "auto", "auto");
 	crearPopup(dialogClienteEmpresa, "auto", "auto");
+	crearPopup(busquedaComensalesEmpresa, "auto", "auto");
 	// aplicarWizardFormulario(idModalWizardDestinoEdicion, idContenedorEdicionDestino);
 }
 
@@ -595,7 +596,7 @@ function ejecutarScriptsVenta(idPopupEdicion, idPopupVista, idPopupEliminacion,
 	idContenedorEdicion, idContenedorVista, idInput, url,
 	idPopupPago, idPopupCierre, idPopupPanel, idPopupEliminacion, idModalInventario, idModalPanelCobro,
 	idModalVendedor, idModalImpresionVencimiento,IdModalVerificarCuenta,modalReportesProductos,modalServicioVenta,
-	modelGraficaProductos) {
+	modelGraficaProductos,modalReportesEmpresas) {
 	crearPopup(idPopupEdicion, "100%", 'auto');
 	crearPopup(idPopupVista, "100%", 600);
 	crearPopup(idModalInventario, "85%", 550);
@@ -615,6 +616,7 @@ function ejecutarScriptsVenta(idPopupEdicion, idPopupVista, idPopupEliminacion,
 	crearPopup(modalReportesProductos, "auto","auto");
 	crearPopup(modelGraficaProductos,"50%",500);
 	crearPopup(modalServicioVenta, "auto","auto");
+	crearPopup(modalReportesEmpresas,"50%",500);
 	
 
 	$(document).on('click', '#campos-detalle-venta', function (e) {

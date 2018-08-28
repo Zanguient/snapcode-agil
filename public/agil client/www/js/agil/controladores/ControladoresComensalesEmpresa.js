@@ -1,18 +1,19 @@
 angular.module('agil.controladores')
 
-    .controller('controladorComensalesEmpresa', function ($scope, $timeout, $localStorage, $location, blockUI, Clientes, ClientesNit, GuardarAlias, ObtenerAlias, GuardarGerencias, ObtenerGerencias, GuardarComensales, ObtenerComensales, GuardarComidas, ObtenerComidas, GuardarPrecioComidas, ObtenerPrecioComidas, GuardarHistorialExcel, GuardarComensalesExcel, ObtenerHistorial, GuardarEmpresasExcel, GuardarGerenciasExcel, GuardarComidasExcel, GuardarPreciosExcel, Paginator) {
-
+    .controller('controladorComensalesEmpresa', function ($scope, $timeout, $localStorage, $filter, $location, blockUI, Clientes, ClientesNit, GuardarAlias, ObtenerAlias, GuardarGerencias,
+        ObtenerGerencias, GuardarComensales, ObtenerComensales, GuardarComidas, ObtenerComidas, GuardarPrecioComidas, ObtenerPrecioComidas, GuardarHistorialExcel, GuardarComensalesExcel,
+        ObtenerHistorial, GuardarEmpresasExcel, GuardarGerenciasExcel, GuardarComidasExcel, GuardarPreciosExcel, Paginator, BusquedaComensales, ObtenerReporteComedor) {
+        
+        $scope.usuario = JSON.parse($localStorage.usuario);
         $scope.modalEdicionAlias = 'modalAliasEmpresasCliente'
         $scope.modalEdicionGerencias = 'modalGerenciaEmpresasCliente'
         $scope.modalEdicionComensales = 'modalComensalesEmpresasCliente'
         $scope.modalEdicionComidas = 'modalComidasEmpresasCliente'
         $scope.modalEdicionPrecios = 'modalPreciosComidasEmpresasCliente'
         $scope.dialogClienteEmpresa = 'dialog-cliente-empresa'
+        $scope.busquedaComensalesEmpresa = 'dialog-comensales-empresa'
         var redirectProformas;
-
-        // listaAliasclientesEmpresas
-        // listaGerenciasClienteEmpresa
-
+        $scope.imagenEmpresa;
         $scope.$on('$viewContentLoaded', function () {
             if (redirectProformas) {
                 $timeout(function () {
@@ -21,9 +22,9 @@ angular.module('agil.controladores')
                 }, 5000)
                 return
             }
-            ejecutarScriptsComensales($scope.modalEdicionAlias, $scope.modalEdicionGerencias, $scope.modalEdicionComensales, $scope.modalEdicionComidas, $scope.modalEdicionPrecios, $scope.dialogClienteEmpresa);
+            ejecutarScriptsComensales($scope.modalEdicionAlias, $scope.modalEdicionGerencias, $scope.modalEdicionComensales, $scope.modalEdicionComidas, $scope.modalEdicionPrecios,
+                $scope.dialogClienteEmpresa, $scope.busquedaComensalesEmpresa);
             // resaltarPestaña($location.path().substring(1));
-
             // $scope.buscarAplicacion($scope.usuario.aplicacionesUsuario, $location.path().substring(1));
             // $scope.obtenerColumnasAplicacion()
         });
@@ -36,11 +37,28 @@ angular.module('agil.controladores')
                 $scope.eliminarPopup($scope.modalEdicionComidas);
                 $scope.eliminarPopup($scope.modalEdicionPrecios);
                 $scope.eliminarPopup($scope.dialogClienteEmpresa);
+                $scope.eliminarPopup($scope.busquedaComensalesEmpresa);
             }
         });
 
+        convertUrlToBase64Image($scope.usuario.empresa.imagen, function (imagenEmpresa) {
+            if (imagenEmpresa.length > 0 && imagenEmpresa !== "error") {
+                $scope.imagenEmpresa = imagenEmpresa;
+            } else {
+                convertUrlToBase64Image("img/agilsoftware.png", function (imagenEmpresa) {
+                    if (imagenEmpresa.length > 0 && imagenEmpresa !== "error") {
+                        $scope.mostrarMensaje('No se encuentra la imagen de la empresa.')
+                        $scope.imagenEmpresa = imagenEmpresa;
+                    } else {
+                        $scope.mostrarMensaje('No se encuentra imagenen de la empresa.')
+                    }
+                })
+            }
+        })
+
         $scope.inicio = function () {
             blockUI.start()
+            $scope.activeModal = 0
             if ($scope.empresaExternaSeleccionada) {
                 if (!$scope.empresaExternaSeleccionada.id) {
                     redirectProformas = true
@@ -53,7 +71,9 @@ angular.module('agil.controladores')
                 redirectProformas = true
                 return
             }
-            $scope.filtro = {desde: "", hasta: "", empresaCliente: "", id_usuario: "", id_cliente: "", periodoMes: "", periodoAnio: "", gerencia: "", comida: "" }
+            var empresa = Object.assign({}, $scope.empresaExternaSeleccionada)
+            $scope.filtroComensales = { desde: "", hasta: "", empresaCliente: empresa, id_usuario: "", id_cliente: "", mes: "", anio: "", gerencia: "", comida: "", comensal: "" }
+            $scope.reportes = [{ id: 1, nombre: 'Reporte Comedor' }, { id: 2, nombre: 'Empresa' }, { id: 3, nombre: 'Por comensal' }]
             $scope.obtenerPaginador()
             $scope.listaAliasclientesEmpresa = []
             $scope.listaComensalesclienteEmpresa = []
@@ -61,8 +81,10 @@ angular.module('agil.controladores')
             $scope.listaComidasclienteEmpresa = []
             $scope.listaPrecioComidasclienteEmpresa = []
             $scope.obtenerClientes()
+            $scope.obtenerComidas()
             $scope.obtenerGerencias()
             $scope.obtenerHistoriales()
+            $scope.obtenerComensales()
         }
 
         $scope.PopoverConfiguracionComensales = {
@@ -78,8 +100,19 @@ angular.module('agil.controladores')
             }
         }
 
+        $scope.buscarComensales = function (query) {
+            if (query != "" && query != undefined) {
+                var promesa = BusquedaComensales($scope.usuario.id_empresa, $scope.usuario.id, $scope.empresaExternaSeleccionada.id, query);
+                return promesa;
+            }
+        }
+
         $scope.filtrarClientes = function (query) {
             $scope.clientesProcesados = $filter('filter')($scope.clientes, query);
+        }
+
+        $scope.filtrarComensales = function (query) {
+            $scope.comensalesProcesados = $filter('filter')($scope.comensalesBusqueda, query);
         }
 
         $scope.obtenerClientes = function () {
@@ -96,6 +129,12 @@ angular.module('agil.controladores')
 
         $scope.establecerCliente = function (cliente) {
             switch ($scope.activeModal) {
+                case 0:
+                    if (!$scope.filtroComensales) {
+                        $scope.filtroComensales = {}
+                    }
+                    $scope.filtroComensales.empresaCliente = Object.assign({}, cliente)
+                    break;
                 case 1:
                     if (!$scope.clienteEmpresaAsignacionAlias) {
                         $scope.clienteEmpresaAsignacionAlias = {}
@@ -107,14 +146,14 @@ angular.module('agil.controladores')
                         $scope.clienteEmpresaEdicionGerencias = {}
                     }
                     $scope.clienteEmpresaEdicionGerencias.empresaCliente = Object.assign({}, cliente)
-                    $scope.obtenerGerencias()
+                    $scope.obtenerGerencias(true)
                     break;
                 case 3:
                     if (!$scope.clienteEmpresaEdicionComensales) {
                         $scope.clienteEmpresaEdicionComensales = {}
                     }
                     $scope.clienteEmpresaEdicionComensales.empresaCliente = Object.assign({}, cliente)
-                    $scope.obtenerComensales()
+                    $scope.obtenerComensales(true)
                     break;
                 case 4:
                     if (!$scope.clienteEmpresaComidas) {
@@ -128,15 +167,28 @@ angular.module('agil.controladores')
                         $scope.clienteEmpresaPreciosComidas = {}
                     }
                     $scope.clienteEmpresaPreciosComidas.empresaCliente = Object.assign({}, cliente)
-                    $scope.obtenerPrecioComidas()
+                    $scope.obtenerPrecioComidas(true)
                     break;
                 default:
                     $scope.mostrarMensaje('Ocurrio un error al asignar')
             }
         }
 
+        $scope.establecerComensal = function (comensal, modal) {
+            $scope.filtroComensales.comensal = Object.assign({}, comensal)
+            if (modal) {
+                $scope.cerrardialogBusquedaComensales()
+            }
+        }
+
         $scope.seleccionarcliente = function (cliente) {
             switch ($scope.activeModal) {
+                case 0:
+                    if (!$scope.filtroComensales) {
+                        $scope.filtroComensales = {}
+                    }
+                    $scope.filtroComensales.empresaCliente = Object.assign({}, cliente)
+                    break;
                 case 1:
                     if (!$scope.clienteEmpresaAsignacionAlias) {
                         $scope.clienteEmpresaAsignacionAlias = {}
@@ -198,7 +250,7 @@ angular.module('agil.controladores')
             blockUI.start()
             var prom;
             if (empresa) {
-                prom = ObtenerGerencias($scope.usuario.id_empresa, $scope.usuario.id, $scope.clienteEmpresaEdicionGerencias.empresaCliente.id )
+                prom = ObtenerGerencias($scope.usuario.id_empresa, $scope.usuario.id, $scope.clienteEmpresaEdicionGerencias.empresaCliente.id)
             } else {
                 prom = ObtenerGerencias($scope.usuario.id_empresa, $scope.usuario.id, $scope.empresaExternaSeleccionada.id)
             }
@@ -220,7 +272,7 @@ angular.module('agil.controladores')
             blockUI.start()
             var prom;
             if (empresa) {
-                prom = ObtenerComensales($scope.usuario.id_empresa, $scope.usuario.id, $scope.clienteEmpresaEdicionComensales.empresaCliente.id )
+                prom = ObtenerComensales($scope.usuario.id_empresa, $scope.usuario.id, $scope.clienteEmpresaEdicionComensales.empresaCliente.id)
             } else {
                 prom = ObtenerComensales($scope.usuario.id_empresa, $scope.usuario.id, $scope.empresaExternaSeleccionada.id)
             }
@@ -229,6 +281,8 @@ angular.module('agil.controladores')
                     $scope.mostrarMensaje(res.mensaje)
                 } else {
                     $scope.listaComensalesclienteEmpresa = res.lista
+                    $scope.comensalesBusqueda = res.lista
+                    $scope.comensalesProcesados = res.lista
                 }
                 blockUI.stop()
             }).catch(function (err) {
@@ -242,7 +296,7 @@ angular.module('agil.controladores')
             blockUI.start()
             var prom;
             if (empresa) {
-                prom = ObtenerComidas($scope.usuario.id_empresa, $scope.usuario.id, $scope.clienteEmpresaComidas.empresaCliente.id )
+                prom = ObtenerComidas($scope.usuario.id_empresa, $scope.usuario.id, $scope.clienteEmpresaComidas.empresaCliente.id)
             } else {
                 prom = ObtenerComidas($scope.usuario.id_empresa, $scope.usuario.id, $scope.empresaExternaSeleccionada.id)
             }
@@ -264,7 +318,7 @@ angular.module('agil.controladores')
             blockUI.start()
             var prom;
             if (empresa) {
-                prom = ObtenerPrecioComidas($scope.usuario.id_empresa, $scope.usuario.id, $scope.clienteEmpresaPreciosComidas.empresaCliente.id )
+                prom = ObtenerPrecioComidas($scope.usuario.id_empresa, $scope.usuario.id, $scope.clienteEmpresaPreciosComidas.empresaCliente.id)
             } else {
                 prom = ObtenerPrecioComidas($scope.usuario.id_empresa, $scope.usuario.id, $scope.empresaExternaSeleccionada.id)
             }
@@ -282,15 +336,17 @@ angular.module('agil.controladores')
             })
         }
 
-        $scope.obtenerHistoriales = function () {
-            $scope.filtro = $scope.filtrarHistorial($scope.filtro, true)
-            $scope.paginator.filter = $scope.filtro
+        $scope.obtenerHistoriales = function (filtrar) {
+            $scope.filtroComensales = $scope.filtrarHistorial($scope.filtroComensales, true)
+            $scope.paginator.filter = $scope.filtroComensales
             var prom = ObtenerHistorial($scope.usuario.id_empresa, $scope.usuario.id, $scope.empresaExternaSeleccionada.id, $scope.paginator)
             prom.then(function (res) {
+                $scope.filtroComensales = $scope.filtrarHistorial($scope.filtroComensales, true, true)
                 if (res.hasErr) {
                     res.mostrarMensaje(res.mensaje)
                 } else {
                     $scope.historialesComedor = res.historial
+                    $scope.paginator.setPages(res.paginas)
                 }
             })
         }
@@ -300,7 +356,7 @@ angular.module('agil.controladores')
             $scope.paginator.column = "fecha"
             $scope.paginator.direccion = "asc"
             $scope.paginator.callBack = $scope.obtenerHistoriales
-            $scope.paginator.getSearch("")
+            // $scope.paginator.getSearch("")
         }
 
         $scope.filtrarHistorial = function (filtro, _, __) {
@@ -525,15 +581,15 @@ angular.module('agil.controladores')
         }
 
         $scope.extraerFechaExcel = function (datoFecha) {
-            var horas = datoFecha.split(' ')[datoFecha.split(' ').length -1]
+            var horas = datoFecha.split(' ')[datoFecha.split(' ').length - 1]
             var fecha = datoFecha.split(' ')[0].split('/').reverse()
-            if (horas.indexOf('AM')>0) {
+            if (horas.indexOf('AM') > 0) {
                 horas = horas.split('A')[0].split(':')
-            } else if(horas.indexOf('PM')>0){
+            } else if (horas.indexOf('PM') > 0) {
                 horas = horas.split('P')[0].split(':')
-                horas[0] = (parseInt(horas[0])+12) + ''
+                horas[0] = (parseInt(horas[0]) + 12) + ''
             }
-            var fechaCompleta = new Date(fecha[0], fecha[2] -1, fecha[1], horas[0], horas[1], horas[2])
+            var fechaCompleta = new Date(fecha[0], fecha[2] - 1, fecha[1], horas[0], horas[1], horas[2])
             return fechaCompleta
         }
 
@@ -545,10 +601,10 @@ angular.module('agil.controladores')
                     if (!res.hasErr) {
                         if (res.mensajes) {
                             $scope.mostrarMensaje(res.mensaje + res.mensajes)
-                        }else{
+                        } else {
                             $scope.mostrarMensaje(res.mensaje)
                         }
-                    }else{
+                    } else {
                         $scope.mostrarMensaje(res.mensajes)
                     }
                 }).catch(function (err) {
@@ -556,7 +612,7 @@ angular.module('agil.controladores')
                     $scope.mostrarMensaje(msg)
                     blockUI.stop()
                 })
-            }else{
+            } else {
                 $scope.mostrarMensaje('Sin cambios.')
             }
         }
@@ -569,10 +625,10 @@ angular.module('agil.controladores')
                     if (!res.hasErr) {
                         if (res.mensajes) {
                             $scope.mostrarMensaje(res.mensaje + res.mensajes)
-                        }else{
+                        } else {
                             $scope.mostrarMensaje(res.mensaje)
                         }
-                    }else{
+                    } else {
                         $scope.mostrarMensaje(res.mensajes)
                     }
                 }).catch(function (err) {
@@ -580,7 +636,7 @@ angular.module('agil.controladores')
                     $scope.mostrarMensaje(msg)
                     blockUI.stop()
                 })
-            }else{
+            } else {
                 $scope.mostrarMensaje('Sin cambios.')
             }
         }
@@ -589,12 +645,12 @@ angular.module('agil.controladores')
             var datos = []
             if (Historial.length > 0) {
                 Historial.forEach(function (comensal) {
-                    if (!datos.some(function(dato){
+                    if (!datos.some(function (dato) {
                         var fdato = $scope.extraerFechaExcel(dato.fecha_hora)
                         var fcomensal = $scope.extraerFechaExcel(comensal.fecha_hora)
                         dato.fecha = $scope.extraerFechaExcel(dato.fecha_hora)
-                        if(!dato.fecha){
-                           console.log(dato)
+                        if (!dato.fecha) {
+                            console.log(dato)
                         }
                         var diffSec = (fcomensal - fdato) / 1000
                         if (diffSec < 0) {
@@ -603,7 +659,7 @@ angular.module('agil.controladores')
                         // var hrs = ~~(diff / 3600);
                         // var mins = ~~((diff % 3600) / 60);
                         // var secs = diff % 60;
-                        if (!(dato.tarjeta === comensal.tarjeta && dato.nombre === comensal.nombre && diffSec > 60)) {
+                        if (!(dato.tarjeta === comensal.tarjeta && dato.nombre === comensal.nombre && diffSec < 100)) {
                             return false
                         } else {
                             return true
@@ -621,10 +677,10 @@ angular.module('agil.controladores')
                         $scope.obtenerAliasEmpresa()
                         if (res.mensajes) {
                             $scope.mostrarMensaje(res.mensaje + res.mensajes)
-                        }else{
+                        } else {
                             $scope.mostrarMensaje(res.mensaje)
                         }
-                    }else{
+                    } else {
                         $scope.mostrarMensaje(res.mensajes)
                     }
                 }).catch(function (err) {
@@ -632,7 +688,7 @@ angular.module('agil.controladores')
                     $scope.mostrarMensaje(msg)
                     blockUI.stop()
                 })
-            }else{
+            } else {
                 $scope.mostrarMensaje('Sin cambios.')
             }
         }
@@ -645,10 +701,10 @@ angular.module('agil.controladores')
                     if (!res.hasErr) {
                         if (res.mensajes) {
                             $scope.mostrarMensaje(res.mensaje + res.mensajes)
-                        }else{
+                        } else {
                             $scope.mostrarMensaje(res.mensaje)
                         }
-                    }else{
+                    } else {
                         $scope.mostrarMensaje(res.mensajes)
                     }
                 }).catch(function (err) {
@@ -656,7 +712,7 @@ angular.module('agil.controladores')
                     $scope.mostrarMensaje(msg)
                     blockUI.stop()
                 })
-            }else{
+            } else {
                 $scope.mostrarMensaje('Sin cambios.')
             }
         }
@@ -669,10 +725,10 @@ angular.module('agil.controladores')
                     if (!res.hasErr) {
                         if (res.mensajes) {
                             $scope.mostrarMensaje(res.mensaje + res.mensajes)
-                        }else{
+                        } else {
                             $scope.mostrarMensaje(res.mensaje)
                         }
-                    }else{
+                    } else {
                         $scope.mostrarMensaje(res.mensajes)
                     }
                 }).catch(function (err) {
@@ -680,7 +736,7 @@ angular.module('agil.controladores')
                     $scope.mostrarMensaje(msg)
                     blockUI.stop()
                 })
-            }else{
+            } else {
                 $scope.mostrarMensaje('Sin cambios.')
             }
         }
@@ -693,10 +749,10 @@ angular.module('agil.controladores')
                     if (!res.hasErr) {
                         if (res.mensajes) {
                             $scope.mostrarMensaje(res.mensaje + res.mensajes)
-                        }else{
+                        } else {
                             $scope.mostrarMensaje(res.mensaje)
                         }
-                    }else{
+                    } else {
                         $scope.mostrarMensaje(res.mensajes)
                     }
                 }).catch(function (err) {
@@ -704,7 +760,7 @@ angular.module('agil.controladores')
                     $scope.mostrarMensaje(msg)
                     blockUI.stop()
                 })
-            }else{
+            } else {
                 $scope.mostrarMensaje('Sin cambios.')
             }
         }
@@ -730,7 +786,7 @@ angular.module('agil.controladores')
                     $scope.mostrarMensaje(msg)
                     blockUI.stop()
                 })
-            }else{
+            } else {
                 $scope.mostrarMensaje('Sin cambios.')
             }
         }
@@ -742,8 +798,8 @@ angular.module('agil.controladores')
                     if (data.codigo === alias.codigo) {
                         extramsg += 'Código: ' + data.codigo + ' ya fué asigando. No se puede duplicar.'
                         return true
-                    } 
-                }else{
+                    }
+                } else {
                     extramsg += 'Código: Vacio'
                     return true
                 }
@@ -795,7 +851,7 @@ angular.module('agil.controladores')
                     $scope.mostrarMensaje(msg)
                     blockUI.stop()
                 })
-            }else{
+            } else {
                 $scope.mostrarMensaje('Sin cambios.')
             }
         }
@@ -815,7 +871,6 @@ angular.module('agil.controladores')
             } else {
                 $scope.mostrarMensaje(extramsg + ' ya fué asigando. No se puede duplicar.')
             }
-
         }
 
         $scope.guardarComensalesClienteEmpresa = function () {
@@ -839,7 +894,7 @@ angular.module('agil.controladores')
                     $scope.mostrarMensaje(msg)
                     blockUI.stop()
                 })
-            }else{
+            } else {
                 $scope.mostrarMensaje('Sin cambios.')
             }
         }
@@ -851,8 +906,8 @@ angular.module('agil.controladores')
                     if (data.codigo === comensal.codigo) {
                         extramsg += 'Código: ' + data.codigo + ' ya fué asigando. No se puede duplicar.'
                         return true
-                    } 
-                }else{
+                    }
+                } else {
                     extramsg += 'Código: Vacio'
                     return true
                 }
@@ -887,8 +942,8 @@ angular.module('agil.controladores')
             if ($scope.listaComidasclienteEmpresa.length > 0) {
                 $scope.listaComidasclienteEmpresa.forEach(function (comida) {
                     if (comida.nuevo || comida.eliminado || comida.editado) {
-                        comida.inicio = new Date(0,0,0,comida.inicio.getHours(),comida.inicio.getMinutes(),0).toLocaleTimeString('es-ES')
-                        comida.final = new Date(0,0,0,comida.final.getHours(),comida.final.getMinutes(),0).toLocaleTimeString('es-ES')
+                        comida.inicio = new Date(0, 0, 0, comida.inicio.getHours(), comida.inicio.getMinutes(), 0).toLocaleTimeString('es-ES')
+                        comida.final = new Date(0, 0, 0, comida.final.getHours(), comida.final.getMinutes(), 0).toLocaleTimeString('es-ES')
                         datos.push(comida)
                     }
                 })
@@ -905,7 +960,7 @@ angular.module('agil.controladores')
                     $scope.mostrarMensaje(msg)
                     blockUI.stop()
                 })
-            }else{
+            } else {
                 $scope.mostrarMensaje('Sin cambios.')
             }
         }
@@ -948,7 +1003,7 @@ angular.module('agil.controladores')
                     $scope.mostrarMensaje(msg)
                     blockUI.stop()
                 })
-            }else{
+            } else {
                 $scope.mostrarMensaje('Sin cambios.')
             }
         }
@@ -991,6 +1046,149 @@ angular.module('agil.controladores')
             $scope.listaPrecioComidasclienteEmpresa[$scope.listaPrecioComidasclienteEmpresa.indexOf(precioComida)].eliminado = true
         }
 
+        $scope.generarReportePDF = function () {
+            var reporte = [];
+            if (!$scope.filtroComensales.generar) {
+                $scope.mostrarMensaje('Seleccione un tipo de reporte.')
+                return
+            }
+            $scope.filtroComensales = $scope.filtrarHistorial($scope.filtroComensales, true)
+            $scope.paginator.filter = $scope.filtroComensales
+            var promComidas = ObtenerComidas($scope.usuario.id_empresa, $scope.usuario.id, $scope.filtroComensales.empresaCliente ? $scope.filtroComensales.empresaCliente.id ? $scope.filtroComensales.empresaCliente.id : $scope.empresaExternaSeleccionada.id : $scope.empresaExternaSeleccionada.id)
+            promComidas.then(function (comidas) {
+                var comidasEmpresa = comidas.lista
+                var cabecera = []
+                comidasEmpresa.forEach(function (comida) {
+                    cabecera.push(comida.nombre.toUpperCase())
+                })
+                cabecera.unshift('fecha'.toUpperCase())
+                cabecera.push('observación'.toUpperCase())
+                var promHistorial = ObtenerReporteComedor($scope.usuario.id_empresa, $scope.usuario.id, $scope.empresaExternaSeleccionada.id, $scope.paginator)
+                promHistorial.then(function (res) {
+                    $scope.filtroComensales = $scope.filtrarHistorial($scope.filtroComensales, true, true)
+                    if (res.hasErr) {
+                        res.mostrarMensaje(res.mensaje)
+                        return
+                    }
+                    var contador = 0
+                    if (res.reporte[contador].historial.length > 0) {
+                        var fechaConteo = new Date(res.reporte[0].historial[0].fecha.split('T')); fechaConteo.setHours(0); fechaConteo.setMinutes(0); fechaConteo.setSeconds(0)
+                        var strFecha = fechaConteo.toDateString().split('/').reverse()
+                        var nextFechaConteo = new Date(parseInt(strFecha[0]), parseInt(strFecha[1]), parseInt(strFecha[2]) + 1, )
+                    }
+                    res.reporte.forEach(function (comida, indexHistorial) {
+                        comida.historial.forEach(function (historial, indexReporte) {
+                            var conteoIndex = -1
+                            if (reporte.some(function name(dato) {
+                                conteoIndex += 1
+                                if (dato.fecha === historial.fecha.split('T')[0] && dato.comida.id === historial.comida.id) {
+                                    return true
+                                }
+                                return false
+                            })) {
+                                reporte[conteoIndex].cantidad += 1
+                            } else {
+                                var obj = { fecha: res.reporte[indexHistorial].historial[indexReporte].fecha.split('T'), precio: res.reporte[indexHistorial].historial[indexReporte].precio, comida: res.reporte[indexHistorial].historial[indexReporte].comida, cantidad: 1 }
+                                reporte.push(obj)
+                            }
+                        })
+                    })
+                    var doc = new PDFDocument({ size: 'letter', margin: 10, compress: false });//[612, 792] {compress: false},
+                    var stream = doc.pipe(blobStream());
+                    var y = 195
+                    var itemsPorPagina = 29
+                    var items = 0
+                    var pagina = 1
+                    var totalPaginas = Math.ceil(1 / itemsPorPagina);
+                    $scope.cabeceraReporteComedor(doc, pagina, totalPaginas, cabecera);
+                    for (let i = 0; i < reporte.length; i++) {
+                        doc.font('Helvetica', 8);
+                        doc.text(1, 70, y - 2);
+                        doc.text((reporte[i]), 150, y - 2, { width: 260 });
+                        y = y + 20;
+                        doc.rect(40, 705, 540, 15).stroke();
+                        doc.rect(40, 725, 540, 15).stroke();
+                        doc.rect(41, 725, 538, 14).fill("silver", "#000")
+                            .fill('black')
+                        items++;
+                        if (items > itemsPorPagina || (y > 700)) {
+                            doc.addPage({ size: [612, 792], margin: 10 });
+                            y = 115 + 80 + separacionExtra;
+                            items = 0;
+                            pagina = pagina + 1;
+                            $scope.dibujarCabeceraPDFImpresion(doc, pagina, totalPaginas, $scope.proforma, imagen);
+                        }
+                    }
+                    doc.end();
+                    stream.on('finish', function () {
+                        var fileURL = stream.toBlobURL('application/pdf');
+                        window.open(fileURL, '_blank', 'location=no');
+                    });
+                    blockUI.stop();
+                })
+            })
+        }
+
+        $scope.generarReporteEXCEL = function () {
+            $scope.mostrarMensaje('Sin funcionalidad')
+        }
+
+        $scope.cabeceraReporteComedor = function (doc, pagina, totalPaginas, cabecera) {
+            var yCabecera = 80;
+            var separacionExtra = 50
+            var fecha = new Date().getDate() + '/' + (new Date().getMonth() + 1) + '/' + new Date().getFullYear()
+            doc.rect(40, 80 + 80 + separacionExtra, 540, 25).fillAndStroke("silver", "#000");
+            doc.font('Helvetica-Bold', 12)
+                .fill('black')
+            doc.text("PROFORMA", 0, 80 + separacionExtra, { align: "center" });
+            doc.font('Helvetica-Bold', 8);
+            doc.font('Helvetica', 8);
+            doc.font('Helvetica-Bold', 8);
+            doc.font('Helvetica', 8);
+            if ($scope.imagenEmpresa) {
+                doc.image($scope.imagenEmpresa, 40, 30, { fit: [100, 100] });
+            }
+            doc.text($scope.usuario.empresa.telefono1, 80, 60 + separacionExtra);
+            doc.text($scope.usuario.empresa.direccion + ' Santa Cruz', 40, 70 + separacionExtra, { width: 90 });
+            doc.text('Santa Cruz,     ', 65, 115 + separacionExtra, { lineBreak: false }).font('Helvetica-Bold', 10).text(fecha.split('/')[0], { lineBreak: false }).font('Helvetica', 10).text('   de   ', { lineBreak: false }).font('Helvetica-Bold', 10).text($scope.meses[new Date($scope.convertirFecha(fecha)).getMonth()].nombre, { lineBreak: false }).font('Helvetica', 10).text('   de   ', { lineBreak: false }).font('Helvetica-Bold', 10).text(fecha.split('/')[2])
+            doc.font('Helvetica-Bold', 8);
+            doc.font('Helvetica', 8);
+            doc.font('Helvetica-Bold', 14);
+            doc.text("N°", 380, 60, { align: "center" });
+            doc.text('3', 510, 60);
+            doc.rect(40, 80 + 80 + separacionExtra, 540, 25).stroke()
+                .fill('silver')
+            doc.rect(0, 0, 0, 0).stroke()
+                .fill('black')
+            doc.font('Helvetica-Bold', 8);
+            doc.text("CANTIDAD", 55, 90 + yCabecera + separacionExtra);
+            doc.text("DETALLE", 200, 90 + yCabecera + separacionExtra);
+            doc.text("P.UNIT", 440, 90 + yCabecera + separacionExtra);
+            doc.text("IMPORTE BS", 510, 90 + yCabecera + separacionExtra);
+            doc.text("Señor (es):", 50, 143 + separacionExtra);
+            doc.text("CI/NIT:", 440, 145 + separacionExtra);
+            doc.text("Teléfono:", 40, 60 + separacionExtra);
+            doc.font('Helvetica', 8);
+            doc.text('1', 100, 143 + separacionExtra);
+
+            doc.text('2', 500, 145 + separacionExtra);
+            doc.rect(40, 110 + separacionExtra, 540, 20).stroke();
+            doc.rect(40, 135 + separacionExtra, 540, 20).stroke();
+            doc.rect(40, 210, 540, 490).stroke(); //235
+            doc.rect(120, 210, 0, 490).stroke(); //cant | det
+            doc.rect(430, 210, 0, 490).stroke();// det| punit
+            doc.rect(490, 210, 0, 490).stroke(); // punit | import
+            doc.text("Nota: La aprobación de la proforma deberá realizarse dentro de los próximos 7 días a partir de la fecha de recepción", 0, 750, { align: "center" })
+        }
+
+        $scope.cabeceraReporteEmpresa = function () {
+
+        }
+
+        $scope.cabeceraReportePorComensal = function () {
+
+        }
+
         $scope.abrirModalEdicionAlias = function () {
             $scope.clienteEmpresaAsignacionAlias = {}
             $scope.clienteEmpresaAsignacionAlias.empresaCliente = Object.assign({}, $scope.empresaExternaSeleccionada)
@@ -999,11 +1197,14 @@ angular.module('agil.controladores')
             $scope.activeModal = 1
             $scope.abrirPopup($scope.modalEdicionAlias);
         }
+
         $scope.cerrarModalEdicionAlias = function () {
+            $scope.activeModal = 0
             $scope.clienteEmpresaAsignacionAlias = {}
             // $scope.listaAliasclientesEmpresa = []
             $scope.cerrarPopup($scope.modalEdicionAlias);
         }
+
         $scope.abrirModalEdicionGerencias = function () {
             $scope.clienteEmpresaEdicionGerencias = {}
             $scope.clienteEmpresaEdicionGerencias.empresaCliente = Object.assign({}, $scope.empresaExternaSeleccionada)
@@ -1012,9 +1213,11 @@ angular.module('agil.controladores')
             $scope.abrirPopup($scope.modalEdicionGerencias);
         }
         $scope.cerrarModalEdicionGerencias = function () {
+            $scope.activeModal = 0
             $scope.clienteEmpresaEdicionGerencias = {}
             $scope.cerrarPopup($scope.modalEdicionGerencias);
         }
+
         $scope.abrirModalEdicionComensales = function () {
             $scope.clienteEmpresaEdicionComensales = {}
             $scope.clienteEmpresaEdicionComensales.empresaCliente = Object.assign({}, $scope.empresaExternaSeleccionada)
@@ -1023,10 +1226,13 @@ angular.module('agil.controladores')
             $scope.activeModal = 3
             $scope.abrirPopup($scope.modalEdicionComensales);
         }
+
         $scope.cerrarModalEdicionComensales = function () {
+            $scope.activeModal = 0
             $scope.clienteEmpresaEdicionComensales = {}
             $scope.cerrarPopup($scope.modalEdicionComensales);
         }
+
         $scope.abrirModalEdicionComidas = function () {
             $scope.clienteEmpresaComidas = {}
             $scope.clienteEmpresaComidas.empresaCliente = Object.assign({}, $scope.empresaExternaSeleccionada)
@@ -1034,11 +1240,13 @@ angular.module('agil.controladores')
             $scope.activeModal = 4
             $scope.abrirPopup($scope.modalEdicionComidas);
         }
+
         $scope.cerrarModalEdicionComidas = function () {
             $scope.clienteEmpresaComidas = {}
-
+            $scope.activeModal = 0
             $scope.cerrarPopup($scope.modalEdicionComidas);
         }
+
         $scope.abrirModalEdicionPrecios = function () {
             $scope.clienteEmpresaPreciosComidas = {}
             $scope.clienteEmpresaPreciosComidas.empresaCliente = Object.assign({}, $scope.empresaExternaSeleccionada)
@@ -1046,7 +1254,9 @@ angular.module('agil.controladores')
             $scope.obtenerPrecioComidas()
             $scope.abrirPopup($scope.modalEdicionPrecios);
         }
+
         $scope.cerrarModalEdicionPrecios = function () {
+            $scope.activeModal = 0
             $scope.clienteEmpresaPreciosComidas = {}
             $scope.cerrarPopup($scope.modalEdicionPrecios);
         }
@@ -1063,7 +1273,17 @@ angular.module('agil.controladores')
         }
 
         $scope.cerrardialogClientesComensales = function () {
+            $scope.activeModal = 0
             $scope.cerrarPopup($scope.dialogClienteEmpresa);
+        }
+
+        $scope.abrirdialogBusquedaComensales = function () {
+            $scope.abrirPopup($scope.busquedaComensalesEmpresa);
+        }
+
+        $scope.cerrardialogBusquedaComensales = function () {
+            $scope.activeModal = 0
+            $scope.cerrarPopup($scope.busquedaComensalesEmpresa);
         }
 
         $scope.inicio()
