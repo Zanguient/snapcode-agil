@@ -192,9 +192,9 @@
 				<div class="form-control">                            
 					<a href="javascript:void(0)" class="blue" ng-click="abrirReporteProductos()">Productos</a>
 				</div>	
-				<!--<div class="form-control">                            
+				<div class="form-control">                            
 					<a href="javascript:void(0)" class="blue" ng-click="abrirReporteEmpresas()">Empresas</a>
-				</div>-->	  
+				</div>	  
 			</script>
 
 
@@ -2846,7 +2846,7 @@
 				<span aria-hidden="true">&times;</span>
 			</button>
 			<center>
-				<h4 class="modal-title" id="advertenciaPrestamoPersonal">Empresas Veneficiadas</h4>
+				<h4 class="modal-title" id="advertenciaPrestamoPersonal" style="align:center;">Empresas Veneficiadas</h4>
 				<h5>Del{{fechaInicioTexto}} al {{fechaFinTexto}}</h5>
 				<div>
 					<span>Sucursal: {{sucursal}}</span>
@@ -2878,8 +2878,8 @@
 						<tr>
 							<th>N°</th>
 							<th>
-								<a href="javascript:void(0)" ng-click="paginator.sortColumn('nombre',obtenerLista)">Empresa
-									<span id="nombre" class="sort fa fa-sort icon-only"></span>
+								<a href="javascript:void(0)" ng-click="paginator.sortColumn('razon_social',obtenerLista)">Empresa
+									<span id="razon_social" class="sort fa fa-sort icon-only"></span>
 								</a>
 							</th>
 							<th>

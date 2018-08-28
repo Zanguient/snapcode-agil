@@ -2462,7 +2462,6 @@ angular.module('agil.controladores')
 		}
 
 		$scope.filtrarDetalles = function () {
-
 			blockUI.start();
 			//$scope.Feinicio = new Date($scope.convertirFecha(inicio));
 			//$scope.Fefin = new Date($scope.convertirFecha(fin));
@@ -3048,20 +3047,43 @@ angular.module('agil.controladores')
 			if ($scope.fechaInicioTexto === undefined && $scope.fechaFinTexto === undefined) {
 				$scope.mostrarMensaje("Ingrese primero las fechas !");
 			} else {
-				
-				//var columna = "nombre";
+
+				//$scope.fechaInicioTexto;
+				//$scope.fechaFinTexto;
+				//var columna = "razon_social";
 				//var direccion = "ASC";
-				
-				$scope.filtroDetalleEmpresa($scope.sucursalesUsuario,$scope.fechaInicioTexto,$scope.fechaFinTexto,$scope.sucursalSelec,$scope.idEmpresa);
+				$scope.obtenerDetallesEmpresa();
+
+				//$scope.filtroDetalleEmpresa($scope.sucursalesUsuario,$scope.fechaInicioTexto,$scope.fechaFinTexto,$scope.sucursalSelec,$scope.idEmpresa);
 				$scope.abrirReportePorEmpresa();
 			}
 			
 		}
 
-		$scope.filtroDetalleEmpresa = function(idsSucursales,inicio,fin,sucursal,idEmpresa){
-			var promesa = ventasDetalleEmpresa(idsSucursales,inicio,fin,sucursal,idEmpresa);
+		$scope.obtenerDetallesEmpresa = function () {
+			$scope.paginator = Paginator();
+			$scope.paginator.column = "razon_social";
+			$scope.paginator.direccion = "asc";
+			$scope.filtroDetallesProducto = {
+				idsSucursales: $scope.sucursalesUsuario,
+				inicio: $scope.fechaInicioTexto,
+				fin: $scope.fechaFinTexto,
+				sucursal: $scope.sucursalSelec,
+				idEmpresa: $scope.idEmpresa
+			}
+			$scope.paginator.callBack = $scope.filtroDetalleEmpresa;
+			$scope.paginator.getSearch("", $scope.filtroDetallesProducto, null);
+
+
+		}
+
+		$scope.filtroDetalleEmpresa = function(){
+			blockUI.start();
+			var promesa = ventasDetalleEmpresa($scope.paginator);
 			promesa.then(function(datos){
-				$scope.detalleEmpresa = datos;
+				$scope.detalleEmpresa = datos.detalle;
+				$scope.paginator.setPages(datos.paginas);
+				blockUI.stop();
 			})
 
 		}

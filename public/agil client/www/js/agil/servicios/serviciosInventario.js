@@ -255,6 +255,39 @@ angular.module('agil.servicios')
 		return res;
 	}])
 
+	.factory('detalleVentaEmpresa', function($resource) {
+		return $resource(restServer + "ventasDetalleEmpresa/:idsSucursales/inicio/:inicio/fin/:fin/sucursal/:sucursal/idEmpresa/:idEmpresa/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion", null,
+			{
+				'update': { method: 'PUT' }
+			});
+	})
+
+	.factory('ventasDetalleEmpresa',['detalleVentaEmpresa','$q',function(detalleEmpresa, $q){
+		var res = function(paginador){
+			var delay = $q.defer();
+				detalleEmpresa.get({ 
+					idsSucursales:paginador.filter.idsSucursales,
+					inicio: paginador.filter.inicio, 
+					fin: paginador.filter.fin, 	
+					sucursal:paginador.filter.sucursal,
+					idEmpresa:paginador.filter.idEmpresa,				 
+					pagina: paginador.currentPage,
+					items_pagina: paginador.itemsPerPage,
+					texto_busqueda: paginador.search,
+					columna: paginador.column,
+					direccion: paginador.direction,
+
+				}, function (entidades) {
+					delay.resolve(entidades);
+			}, function (error) {
+					delay.reject(error);
+				});
+			return delay.promise;
+		};
+		return res;
+	}])
+
+	
 	.factory('detalleProductos', function ($resource) {
 		return $resource(restServer + "detalle/:inicio/:fin/:idEmpresa/:id", null,
 			{
