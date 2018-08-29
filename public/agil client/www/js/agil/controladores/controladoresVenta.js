@@ -2577,7 +2577,7 @@ angular.module('agil.controladores')
 					$scope.ventasExcelDetalle = datos.ventas;
 					var data = [];
 
-					var cabecera = ["Producto", "Unidad Medida", "Cantidad", "Monto", "Razon Social"];
+					var cabecera = ["Producto", "Unidad Medida", "Cantidad", "Monto"];
 					data.push(cabecera)
 					for (let i = 0; i < $scope.ventasExcelDetalle.length; i++) {
 						columns = [];
@@ -2586,7 +2586,6 @@ angular.module('agil.controladores')
 						columns.push($scope.ventasExcelDetalle[i].unidad_medida);
 						columns.push($scope.ventasExcelDetalle[i].cantidad);
 						columns.push($scope.ventasExcelDetalle[i].total);
-						columns.push($scope.ventasExcelDetalle[i].razon_social);
 						data.push(columns);
 					}
 

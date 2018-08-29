@@ -62,7 +62,7 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 			var fin = req.params.fin.split('/').reverse().join('-'); //fin.setHours(23, 59, 59, 0, 0);
 			condicionSucursal = { id: { $in: req.params.idsSucursales.split(',') } };
 			condicionUsuario = {}, clienteRequerido = false;
-			var busquedaQuery = (req.params.texto_busqueda === "0") ? "" : " AND p.nombre = '" + req.params.texto_busqueda + "'";
+			var busquedaQuery = (req.params.texto_busqueda === "0") ? "" : " AND p.nombre like '%" + req.params.texto_busqueda + "%'";
 
 			if (req.params.sucursal != 0) {
 				condicionSucursal.id = req.params.sucursal;
@@ -116,7 +116,7 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 			var fin = req.params.fin.split('/').reverse().join('-'); //fin.setHours(23, 59, 59, 0, 0);
 			condicionSucursal = { id: { $in: req.params.idsSucursales.split(',') } };
 			condicionUsuario = {}, clienteRequerido = false;
-			var busquedaQuery = (req.params.texto_busqueda === "0") ? "" : " AND cli.razon_social = '" + req.params.texto_busqueda + "'";
+			var busquedaQuery = (req.params.texto_busqueda === "0") ? "" : " AND cli.razon_social like '%" + req.params.texto_busqueda + "%'";
 			var sucursalQuery ;
 
 			if (req.params.sucursal == 0) {
