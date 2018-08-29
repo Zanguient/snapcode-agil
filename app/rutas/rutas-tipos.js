@@ -34,6 +34,25 @@ module.exports = function (router, Tipo, Clase, Venta, DetalleVenta, Cliente, Al
 				res.json(entidad);
 			});
 		});
+		router.route('/clases/:nombre_corto/:id_empresa')
+		.get(function (req, res) {
+			Tipo.find({
+				where:{id_empresa:req.params.id_empresa},
+				include:[{model:Clase,as:'clases',where:{nombre_corto: req.params.nombre_corto, eliminado: false}}]
+				
+			}).then(function(tipoencontrado){
+				res.json(tipoencontrado.clases);
+			})
+			/* Clase.findAll({
+				where: {
+					nombre_corto: req.params.nombre_corto, eliminado: false
+				},
+				include:[{model:Tipo,as:'tipo',where:{id_empresa:req.params.id_empresa}}]
+			}).then(function (entidad) {
+				res.json(entidad);
+			}); */
+		});
+		
 	router.route('/clase/:nombre')
 		.get(function (req, res) {
 			Clase.find({
