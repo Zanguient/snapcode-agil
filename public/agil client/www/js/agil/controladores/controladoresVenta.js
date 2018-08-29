@@ -3026,11 +3026,11 @@ angular.module('agil.controladores')
 							// Change type to "doughnut", "line", "splineArea", etc.
 							type: "pie",
 							startAngle: 25,
-							toolTipContent: "<b>{label}</b>: {y}%",
+							toolTipContent: "<b>{label}</b>: {y} Bs.",
 							showInLegend: "true",
 							legendText: "{label}",
 							indexLabelFontSize: 10,
-							indexLabel: "{label} - {y}%",
+							indexLabel: "{label} - {y} Bs.",
 							dataPoints:datasReporte								
 						}
 					],
