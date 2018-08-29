@@ -28,9 +28,10 @@ angular.module('agil.controladores')
 		$scope.IdModalVerificarCuenta = 'modal-verificar-cuenta';
 		$scope.modalReportesProductos = 'dialog-reportes-productos';
 		$scope.modelGraficaProductos = 'reporte-grafico-productos';
-
+		
 		$scope.modalServicioVenta = 'dialog-servicios-venta';
 		$scope.modalReportesEmpresas = 'dialog-reporte-por-empresas';
+		$scope.modelGraficaEmpresas = 'reporte-grafico-empresas';
 
 		$scope.$on('$viewContentLoaded', function () {
 			resaltarPestaña($location.path().substring(1));
@@ -40,7 +41,7 @@ angular.module('agil.controladores')
 				$scope.idModalCierre,
 				$scope.idModalPanelVentas, $scope.idModalConfirmacionEliminacionVenta, $scope.idModalInventario, $scope.idModalPanelVentasCobro,
 				$scope.idModalEdicionVendedor, $scope.idModalImpresionVencimiento,$scope.IdModalVerificarCuenta, $scope.modalReportesProductos,$scope.modalServicioVenta,
-				$scope.modelGraficaProductos,$scope.modalReportesEmpresas);
+				$scope.modelGraficaProductos,$scope.modalReportesEmpresas,$scope.modelGraficaEmpresas);
 			$scope.buscarAplicacion($scope.usuario.aplicacionesUsuario, $location.path().substring(1));
 			blockUI.stop();
 		});
@@ -69,7 +70,8 @@ angular.module('agil.controladores')
 			$scope.obtenerVendedores();
 
 			$scope.detalleVenta = { eliminado: false, producto: {}, centroCosto: {}, cantidad: 1, descuento: 0, recargo: 0, ice: 0, excento: 0, tipo_descuento: false, tipo_recargo: false, servicio: {} }
-			$scope.estado = false;
+			$scope.estadoProducto = false;
+			$scope.estadoEmpresa = false;
 		}
 
 		$scope.obtenerConfiguracionVentaVista = function () {
@@ -2918,9 +2920,7 @@ angular.module('agil.controladores')
 		}
 
 		
-		$scope.graficar = function(value){
-			console.log(value);
-			console.log($scope.estado)
+		$scope.graficarProductos = function(value){
 			var estadoGrafico = value
 			blockUI.start();
 			//var cabecera = ["N°","Producto","Unidad Medida","Cantidad","Total"];
@@ -3012,6 +3012,144 @@ angular.module('agil.controladores')
 			
 			}else if (estadoGrafico == true) {
 				var chart = new CanvasJS.Chart("tablaReportes", {
+					animationEnabled: true,
+					exportEnabled: true,
+					theme: "light2", // "light1", "light2", "dark1", "dark2"
+					title:{
+						text: "",
+						//fontSize: 14,
+						//horizontalAlign: "center" ,
+						//fontColor:'blue'        
+					},		
+					data: [
+						{							
+							// Change type to "doughnut", "line", "splineArea", etc.
+							type: "pie",
+							startAngle: 25,
+							toolTipContent: "<b>{label}</b>: {y} Bs.",
+							showInLegend: "true",
+							legendText: "{label}",
+							indexLabelFontSize: 10,
+							indexLabel: "{label} - {y} Bs.",
+							dataPoints:datasReporte								
+						}
+					],
+					axisY:{
+						prefix: "",
+						suffix: " Bs."
+					},
+					axisX:{
+						labelFontColor:"black",
+						labelMaxWidth: 50,
+						labelWrap: true,   // change it to false
+						interval: 1,
+						//prefix: "Very long label "
+					}     
+				});
+				chart.render();
+			
+			}
+		}
+
+		$scope.abrirReporteGraficoEmpresa = function(){
+			$scope.abrirPopup($scope.modelGraficaEmpresas);
+		}
+		$scope.cerrarReporteGraficoEmpresa = function(){
+			$scope.cerrarPopup($scope.modelGraficaEmpresas);
+		}
+
+		$scope.graficarEmpresa = function(estado){
+			var estadoGrafico = estado;
+			blockUI.start();
+			//var cabecera = ["N°","Producto","Unidad Medida","Cantidad","Total"];
+			var data = [];
+			inicio = new Date($scope.convertirFecha($scope.fechaInicioTexto));
+			fin = new Date($scope.convertirFecha($scope.fechaFinTexto));
+			
+			$scope.paginator.itemsPerPage=0;			
+			var promesa = ventasDetalleEmpresa($scope.paginator);
+			promesa.then(function(datos){
+				$scope.datosReporteGraficoEmpresa = datos.detalle.sort(function(a,b){
+					return b.total - a.total;
+				});
+				
+				for (let i = 0; i < $scope.datosReporteGraficoEmpresa.length; i++) {
+					var columns = []
+					columns.push($scope.datosReporteGraficoEmpresa[i].razon_social);
+					columns.push($scope.datosReporteGraficoEmpresa[i].total);	
+					
+					data.push(columns);
+				}
+
+				var contenedor = [];
+				var contenido = [];
+
+				contenido = data.map(function(row, i){
+					
+					if (contenedor.length >= 10) {
+						
+					}else{
+						contenedor.push(row);
+					}
+				})
+
+				$scope.reporteGraficoEmpresas(contenedor,estadoGrafico);
+				blockUI.stop();
+			})
+		}
+
+		$scope.reporteGraficoEmpresas = function(reporte,estadoGrafico){
+		
+			$scope.abrirReporteGraficoEmpresa();
+			var contenedor = [];
+			var legend = [];
+			var datasReporte = [];
+				
+			if (reporte.length != 0) {
+					datasReporte = reporte.map(function(dato,i){					
+						var variable = {label:dato[0],y:dato[1]};	
+						return variable;
+			
+					})
+			}
+
+			if (estadoGrafico == false) {
+				var chart = new CanvasJS.Chart("tablaReportesEmpresas", {
+					animationEnabled: true,
+					exportEnabled: true,
+					theme: "light1", // "light1", "light2", "dark1", "dark2"
+					title:{
+						text: "",
+						//fontSize: 14,
+						//horizontalAlign: "center" ,
+						//fontColor:'blue'        
+					},		
+					data: [
+						{							
+							// Change type to "doughnut", "line", "splineArea", etc.
+							type: "column",
+							indexLabelFontSize: 10,
+							//showInLegend: true,
+							dataPoints:datasReporte								
+						}
+					],
+					axisY:{
+						prefix: "",
+						suffix: " Bs."
+					},
+					axisX:{
+						labelFontColor:"white",
+						labelMaxWidth: 50,
+						labelWrap: true,   // change it to false
+						interval: 1
+
+						//prefix: "Very long label "
+					}     
+				});
+				chart.render();
+			
+			}else if (estadoGrafico == true) {
+				var chart = new CanvasJS.Chart("tablaReportesEmpresas", {
 					animationEnabled: true,
 					exportEnabled: true,
 					theme: "light2", // "light1", "light2", "dark1", "dark2"

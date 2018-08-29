@@ -2578,7 +2578,7 @@
 						<h4 class="widget-title">Lista de Productos</h4>
 					</div>
 					<div class="col-sm-2">
-						<button type="button" class="btn btn-primary btn-sm btn-grafico" ng-click="graficar(false)">
+						<button type="button" class="btn btn-primary btn-sm btn-grafico" ng-click="graficarProductos(false)">
 							<i class="ace-icon fa fa-bar-chart-o align-top bigger-100"></i>
 						</button>
 					</div>
@@ -2716,7 +2716,7 @@
 			<div class="modal-footer">
 				<label>
 					<small class="muted smaller-90">Ver grafico de tortas: </small>
-					<input name="switch-field-1" ng-model="estado" ng-click="graficar(estado)" class="ace ace-switch ace-switch-4 ng-pristine ng-untouched ng-valid ng-not-empty" type="checkbox" >
+					<input name="switch-field-1" ng-model="estadoProducto" ng-click="graficarProductos(estadoProducto)" class="ace ace-switch ace-switch-4 ng-pristine ng-untouched ng-valid ng-not-empty" type="checkbox" >
 					<span class="lbl check-descuento"></span>
 				</label>
 			</div>
@@ -2876,7 +2876,7 @@
 						<h4 class="widget-title">Lista de Empresas</h4>
 					</div>
 					<div class="col-sm-2">
-						<button type="button" class="btn btn-primary btn-sm btn-grafico" ng-click="graficar()">
+						<button type="button" class="btn btn-primary btn-sm btn-grafico" ng-click="graficarEmpresa(false)">
 							<i class="ace-icon fa fa-bar-chart-o align-top bigger-100"></i>
 						</button>
 					</div>
@@ -2944,3 +2944,32 @@
 	
 </div>
 <!-- Fin modal reporte empresas -->
+
+<!--Reporte Grafico Empresa-->
+<div id="reporte-grafico-empresas" style="overflow-x:hidden;">
+		<div class="row">
+			<div class="modal-header">
+				<div class="container-fluid">
+					<button type="button" ng-click="cerrarReporteGraficoEmpresa()" class="pull-right">
+						<i class="ace-icon fa fa-close align-top bigger-125"></i>
+					</button>
+					<center>
+						<h2  class="blue">REPORTE GRAFÍCO</h2>
+						<h4 class="blue">Reporte a las 10 empresas mas vendidas</h4>
+					</center>
+					<br>
+					<div id="tablaReportesEmpresas" style="height: 300px; width: 100%; align:center;">
+	
+					</div>
+				</div>
+				<div class="modal-footer">
+					<label>
+						<small class="muted smaller-90">Ver grafico de tortas: </small>
+						<input name="switch-field-1" ng-model="estadoEmpresa" ng-click="graficarEmpresa(estadoEmpresa)" class="ace ace-switch ace-switch-4 ng-pristine ng-untouched ng-valid ng-not-empty" type="checkbox" >
+						<span class="lbl check-descuento"></span>
+					</label>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!--Fin reporte Grafico Empresa-->
