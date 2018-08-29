@@ -2578,7 +2578,7 @@
 						<h4 class="widget-title">Lista de Productos</h4>
 					</div>
 					<div class="col-sm-2">
-						<button type="button" class="btn btn-primary btn-sm btn-grafico" ng-click="graficar()">
+						<button type="button" class="btn btn-primary btn-sm btn-grafico" ng-click="graficar(false)">
 							<i class="ace-icon fa fa-bar-chart-o align-top bigger-100"></i>
 						</button>
 					</div>
@@ -2704,11 +2704,22 @@
                 <button type="button" ng-click="cerrarReporteGraficoProductos()" class="pull-right">
                     <i class="ace-icon fa fa-close align-top bigger-125"></i>
                 </button>
-                <h2 align="center" class="blue">REPORTE GRAFÍCO</h2>
+				<center>
+					<h2  class="blue">REPORTE GRAFÍCO</h2>
+					<h4 class="blue">Reporte de los 10 mas vendidos</h4>
+				</center>
+				<br>
 				<div id="tablaReportes" style="height: 300px; width: 100%; align:center;">
 
 				</div>
-            </div>
+			</div>
+			<div class="modal-footer">
+				<label>
+					<small class="muted smaller-90">Ver grafico de tortas: </small>
+					<input name="switch-field-1" ng-model="estado" ng-click="graficar(estado)" class="ace ace-switch ace-switch-4 ng-pristine ng-untouched ng-valid ng-not-empty" type="checkbox" >
+					<span class="lbl check-descuento"></span>
+				</label>
+			</div>
         </div>
     </div>
 </div>

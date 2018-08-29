@@ -69,6 +69,7 @@ angular.module('agil.controladores')
 			$scope.obtenerVendedores();
 
 			$scope.detalleVenta = { eliminado: false, producto: {}, centroCosto: {}, cantidad: 1, descuento: 0, recargo: 0, ice: 0, excento: 0, tipo_descuento: false, tipo_recargo: false, servicio: {} }
+			$scope.estado = false;
 		}
 
 		$scope.obtenerConfiguracionVentaVista = function () {
@@ -2706,16 +2707,16 @@ angular.module('agil.controladores')
 						doc.font('Helvetica', 8);
 						doc.text(indice, 45, y);
 						doc.font('Helvetica', 8);
-						doc.text($scope.ventaSinDetalle[i].nombre, 65, y, { width: 150 });
+						doc.text($scope.ventaSinDetalle[i].nombre, 65, y);
+						doc.font('Helvetica', 8,{ align: "center" });
+						doc.text($scope.ventaSinDetalle[i].unidad_medida, 390, y);
 						doc.font('Helvetica', 8);
-						doc.text($scope.ventaSinDetalle[i].unidad_medida, 250, y);
+						doc.text($scope.ventaSinDetalle[i].cantidad, 470, y);
 						doc.font('Helvetica', 8);
-						doc.text($scope.ventaSinDetalle[i].cantidad, 335, y);
-						doc.font('Helvetica', 8);
-						doc.text($scope.ventaSinDetalle[i].total, 395, y);
-						doc.font('Helvetica', 8);
-						doc.text($scope.ventaSinDetalle[i].razon_social, 450, y);
-						y = y + 30;
+						doc.text($scope.ventaSinDetalle[i].total, 500, y);
+						//doc.font('Helvetica', 8);
+						//doc.text($scope.ventaSinDetalle[i].razon_social, 450, y);
+						y = y + 25;
 						items++;
 
 						if (items == itemsPorPagina || i + 1 == $scope.ventaSinDetalle.length) {
@@ -2793,10 +2794,10 @@ angular.module('agil.controladores')
 
 			doc.text("N°", 45, 110);
 			doc.text("Producto", 65, 110);
-			doc.text("Unidad Medida.", 248, 110);
-			doc.text("Cantidad", 310, 110);
-			doc.text("Monto", 395, 110);
-			doc.text("Razon Social", 445, 110);
+			doc.text("Unidad Medida.", 370, 110);
+			doc.text("Cantidad", 450, 110);
+			doc.text("Monto", 500, 110);
+			//doc.text("Razon Social", 445, 110);
 
 			doc.font('Helvetica', 8);
 			doc.text("Pagina " + pagina + " de " + totalPaginas, 500, 750);
@@ -2916,8 +2917,11 @@ angular.module('agil.controladores')
 			$scope.cerrarPopup($scope.modelGraficaProductos);
 		}
 
-		$scope.graficar = function(){
-	
+		
+		$scope.graficar = function(value){
+			console.log(value);
+			console.log($scope.estado)
+			var estadoGrafico = value
 			blockUI.start();
 			//var cabecera = ["N°","Producto","Unidad Medida","Cantidad","Total"];
 			var data = [];
@@ -2950,52 +2954,101 @@ angular.module('agil.controladores')
 					}			
 				})				
 
-				$scope.reporteGrafico(contenedor);
+				$scope.reporteGrafico(contenedor,estadoGrafico);
 				blockUI.stop();
 			});
 			
 		}
 
-		$scope.reporteGrafico = function(reporte){
-		   $scope.abrirReporteGraficoProductos();
-			var contenedor = [];
-			var legend = [];
-			var datasReporte = [];
-			
-		   if (reporte.length != 0) {
-				datasReporte = reporte.map(function(dato,i){					
-					var variable = {label:dato[0],y:dato[3]};	
-					return variable;
+		$scope.reporteGrafico = function(reporte,estadoGrafico){
 		
-				})
-		   }
+			$scope.abrirReporteGraficoProductos();
+				var contenedor = [];
+				var legend = [];
+				var datasReporte = [];
+				
+			if (reporte.length != 0) {
+					datasReporte = reporte.map(function(dato,i){					
+						var variable = {label:dato[0],y:dato[3]};	
+						return variable;
+			
+					})
+			}
 
+			if (estadoGrafico == false) {
+				var chart = new CanvasJS.Chart("tablaReportes", {
+					animationEnabled: true,
+					exportEnabled: true,
+					theme: "light1", // "light1", "light2", "dark1", "dark2"
+					title:{
+						text: "",
+						//fontSize: 14,
+						//horizontalAlign: "center" ,
+						//fontColor:'blue'        
+					},		
+					data: [
+						{							
+							// Change type to "doughnut", "line", "splineArea", etc.
+							type: "column",
+							indexLabelFontSize: 10,
+							//showInLegend: true,
+							dataPoints:datasReporte								
+						}
+					],
+					axisY:{
+						prefix: "",
+						suffix: " Bs."
+					},
+					axisX:{
+						labelFontColor:"white",
+						labelMaxWidth: 50,
+						labelWrap: true,   // change it to false
+						interval: 1
 
-			var chart = new CanvasJS.Chart("tablaReportes", {
-				animationEnabled: true,
-				exportEnabled: true,
-				theme: "light1", // "light1", "light2", "dark1", "dark2"
-				title:{
-					text: "Reporte de los 10 mas vendidos",
-					fontSize: 14,
-					horizontalAlign: "center"         
-				},		
-				data: [
-					{
-					
-						// Change type to "doughnut", "line", "splineArea", etc.
-						type: "column",
-						//showInLegend: true,
-						dataPoints:datasReporte
-						
-					}
-				],
-				axisY:{
-					prefix: "",
-					suffix: " Bs."
-				  }   
-			});
-			chart.render();
+						//prefix: "Very long label "
+					}     
+				});
+				chart.render();
+			
+			}else if (estadoGrafico == true) {
+				var chart = new CanvasJS.Chart("tablaReportes", {
+					animationEnabled: true,
+					exportEnabled: true,
+					theme: "light2", // "light1", "light2", "dark1", "dark2"
+					title:{
+						text: "",
+						//fontSize: 14,
+						//horizontalAlign: "center" ,
+						//fontColor:'blue'        
+					},		
+					data: [
+						{							
+							// Change type to "doughnut", "line", "splineArea", etc.
+							type: "pie",
+							startAngle: 25,
+							toolTipContent: "<b>{label}</b>: {y}%",
+							showInLegend: "true",
+							legendText: "{label}",
+							indexLabelFontSize: 10,
+							indexLabel: "{label} - {y}%",
+							dataPoints:datasReporte								
+						}
+					],
+					axisY:{
+						prefix: "",
+						suffix: " Bs."
+					},
+					axisX:{
+						labelFontColor:"black",
+						labelMaxWidth: 50,
+						labelWrap: true,   // change it to false
+						interval: 1,
+						//prefix: "Very long label "
+					}     
+				});
+				chart.render();
+			
+			}
 		}
 
 		$scope.cerrarReporteProductos = function () {
