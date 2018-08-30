@@ -520,6 +520,7 @@ angular.module('agil.controladores')
 							columns.push($scope.clientes[i].contacto);
 							columns.push($scope.clientes[i].nit);
 							columns.push($scope.clientes[i].razon_social);
+							columns.push($scope.clientes[i].direccion);
 							columns.push($scope.clientes[i].ubicacion_geografica)
 							columns.push($scope.clientes[i].rubro)
 							columns.push($scope.clientes[i].categoria)
@@ -545,6 +546,7 @@ angular.module('agil.controladores')
 							columns.push($scope.clientes[i].contacto);
 							columns.push($scope.clientes[i].nit);
 							columns.push($scope.clientes[i].razon_social);
+							columns.push($scope.clientes[i].direccion);
 							columns.push($scope.clientes[i].ubicacion_geografica)
 							columns.push($scope.clientes[i].rubro)
 							columns.push($scope.clientes[i].categoria)
@@ -566,6 +568,7 @@ angular.module('agil.controladores')
 						columns.push($scope.clientes[i].contacto);
 						columns.push($scope.clientes[i].nit);
 						columns.push($scope.clientes[i].razon_social);
+						columns.push($scope.clientes[i].direccion);
 						columns.push($scope.clientes[i].ubicacion_geografica)
 						columns.push($scope.clientes[i].rubro)
 						columns.push($scope.clientes[i].categoria)
