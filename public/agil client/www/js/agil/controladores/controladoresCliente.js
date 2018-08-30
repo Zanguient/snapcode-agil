@@ -483,7 +483,7 @@ angular.module('agil.controladores')
 
 		$scope.generarExcelComprobacionDatosClientes = function (clientes, configuracion) {
 			$scope.obtenerClientes()
-			var data = [["N°", "CODIGO", "CLIENTE", "NIT PRINCIPAL", "RAZÓN SOCIAL PRINCIPAL","DIRECCION", "UBIC. GEO.", "RUBRO", "CATEGORIA", "FECHA IMP. 1", "FECHA IMP. 2", "TEXTO 1", "TEXTO 2", "RAZONES CLIENTE", "NIT -RAZON", "CODIGO SAP", "DESTINOS", "DIRECCION DESTINO"]]
+			var data = [["N°", "CODIGO", "CLIENTE", "NIT PRINCIPAL", "RAZÓN SOCIAL PRINCIPAL", "DIRECCION", "TELEFONO UNO", "TELEFONO DOS", "TELEFONO TRES", "UBIC. GEO.", "RUBRO", "CATEGORIA", "FECHA IMP. 1", "FECHA IMP. 2", "TEXTO 1", "TEXTO 2", "RAZONES CLIENTE", "NIT -RAZON", "CODIGO SAP", "DESTINOS", "DIRECCION DESTINO"]]
 			var iu = []
 			for (var i = 0; i < $scope.clientes.length; i++) {
 				var columns = [];
@@ -499,6 +499,9 @@ angular.module('agil.controladores')
 								columns.push($scope.clientes[i].nit);
 								columns.push($scope.clientes[i].razon_social);
 								columns.push($scope.clientes[i].direccion);
+								columns.push($scope.clientes[i].telefono1);
+								columns.push($scope.clientes[i].telefono2);
+								columns.push($scope.clientes[i].telefono3);
 								columns.push($scope.clientes[i].ubicacion_geografica)
 								columns.push($scope.clientes[i].rubro)
 								columns.push($scope.clientes[i].categoria)
@@ -521,6 +524,9 @@ angular.module('agil.controladores')
 							columns.push($scope.clientes[i].nit);
 							columns.push($scope.clientes[i].razon_social);
 							columns.push($scope.clientes[i].direccion);
+							columns.push($scope.clientes[i].telefono1);
+							columns.push($scope.clientes[i].telefono2);
+							columns.push($scope.clientes[i].telefono3);
 							columns.push($scope.clientes[i].ubicacion_geografica)
 							columns.push($scope.clientes[i].rubro)
 							columns.push($scope.clientes[i].categoria)
@@ -547,6 +553,9 @@ angular.module('agil.controladores')
 							columns.push($scope.clientes[i].nit);
 							columns.push($scope.clientes[i].razon_social);
 							columns.push($scope.clientes[i].direccion);
+							columns.push($scope.clientes[i].telefono1);
+							columns.push($scope.clientes[i].telefono2);
+							columns.push($scope.clientes[i].telefono3);
 							columns.push($scope.clientes[i].ubicacion_geografica)
 							columns.push($scope.clientes[i].rubro)
 							columns.push($scope.clientes[i].categoria)
@@ -569,6 +578,9 @@ angular.module('agil.controladores')
 						columns.push($scope.clientes[i].nit);
 						columns.push($scope.clientes[i].razon_social);
 						columns.push($scope.clientes[i].direccion);
+						columns.push($scope.clientes[i].telefono1);
+						columns.push($scope.clientes[i].telefono2);
+						columns.push($scope.clientes[i].telefono3);
 						columns.push($scope.clientes[i].ubicacion_geografica)
 						columns.push($scope.clientes[i].rubro)
 						columns.push($scope.clientes[i].categoria)
@@ -705,12 +717,12 @@ angular.module('agil.controladores')
 						b.correlativo_maximo = b.nombre_corto.split('-')[1]
 						return a.correlativo - b.correlativo
 					})
-					$scope.minimo=parseInt(entidad.clases[entidad.clases.length-1].correlativo_maximo)+1
-					
+					$scope.minimo = parseInt(entidad.clases[entidad.clases.length - 1].correlativo_maximo) + 1
+
 				} else if (entidad.clases.length == 1) {
 					entidad.clases[0].correlativo = entidad.clases[0].nombre_corto.split('-')[0]
 					entidad.clases[0].correlativo_maximo = entidad.clases[0].nombre_corto.split('-')[1]
-					$scope.minimo=parseInt(entidad.clases[0].correlativo_maximo)+1
+					$scope.minimo = parseInt(entidad.clases[0].correlativo_maximo) + 1
 				}
 				$scope.tipo_edicion = entidad;
 				$scope.clase = {};
@@ -728,14 +740,14 @@ angular.module('agil.controladores')
 			if ($scope.tipo_edicion.clases.indexOf(clase) == -1) {
 				if ($scope.tipo_edicion.clases.length > 0) {
 					/* if (clase.correlativo > $scope.tipo_edicion.clases[$scope.tipo_edicion.clases.length - 1].correlativo_maximo) { */
-						$scope.tipo_edicion.clases.push(clase);
-						$scope.minimo=clase.correlativo_maximo+1
+					$scope.tipo_edicion.clases.push(clase);
+					$scope.minimo = clase.correlativo_maximo + 1
 					/* } else {
 						$scope.mostrarMensaje("El valor de correlativo debe ser mayor al valor maximo del ultimo correlativo")
 					} */
 				} else {
 					$scope.tipo_edicion.clases.push(clase);
-					$scope.minimo=clase.correlativo_maximo+1
+					$scope.minimo = clase.correlativo_maximo + 1
 				}
 
 			}
@@ -743,8 +755,8 @@ angular.module('agil.controladores')
 
 		}
 		$scope.modificarConceptoEdicion = function (clase) {
-			clase.correlativo=parseInt(clase.correlativo)
-			clase.correlativo_maximo=parseInt(clase.correlativo_maximo)
+			clase.correlativo = parseInt(clase.correlativo)
+			clase.correlativo_maximo = parseInt(clase.correlativo_maximo)
 			$scope.clase = clase;
 		}
 		$scope.removerConceptoEdicion = function (clase) {
