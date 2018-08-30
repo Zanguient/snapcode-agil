@@ -483,7 +483,7 @@ angular.module('agil.controladores')
 
 		$scope.generarExcelComprobacionDatosClientes = function (clientes, configuracion) {
 			$scope.obtenerClientes()
-			var data = [["N°", "CODIGO", "CLIENTE", "NIT PRINCIPAL", "RAZÓN SOCIAL PRINCIPAL", "UBIC. GEO.", "RUBRO", "CATEGORIA", "FECHA IMP. 1", "FECHA IMP. 2", "TEXTO 1", "TEXTO 2", "RAZONES CLIENTE", "NIT -RAZON", "CODIGO SAP", "DESTINOS", "DIRECCION DESTINO"]]
+			var data = [["N°", "CODIGO", "CLIENTE", "NIT PRINCIPAL", "RAZÓN SOCIAL PRINCIPAL","DIRECCION", "UBIC. GEO.", "RUBRO", "CATEGORIA", "FECHA IMP. 1", "FECHA IMP. 2", "TEXTO 1", "TEXTO 2", "RAZONES CLIENTE", "NIT -RAZON", "CODIGO SAP", "DESTINOS", "DIRECCION DESTINO"]]
 			var iu = []
 			for (var i = 0; i < $scope.clientes.length; i++) {
 				var columns = [];
@@ -498,6 +498,7 @@ angular.module('agil.controladores')
 								columns.push($scope.clientes[i].contacto);
 								columns.push($scope.clientes[i].nit);
 								columns.push($scope.clientes[i].razon_social);
+								columns.push($scope.clientes[i].direccion);
 								columns.push($scope.clientes[i].ubicacion_geografica)
 								columns.push($scope.clientes[i].rubro)
 								columns.push($scope.clientes[i].categoria)

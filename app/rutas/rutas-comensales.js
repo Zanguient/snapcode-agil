@@ -148,7 +148,7 @@ module.exports = function (router, sequelize, Persona, Cliente, AliasClienteEmpr
                     id_comida: historial.comida.id,
                     fecha: historial.fecha,
                     id_usuario: historial.id_usuario,
-                    precio: historial.comida.precio
+                    precio: historial.comida.precio[0].precio
                 }, { where: { id: historial.id }, transaction: t }).then(function (historialActualizado) {
                     return new Promise(function (fullfil, reject) {
                         fullfil({ historial: historial, actualizado: historialActualizado })
@@ -169,7 +169,7 @@ module.exports = function (router, sequelize, Persona, Cliente, AliasClienteEmpr
                 id_comida: historial.comida ? historial.comida.id : null,
                 fecha: historial.fecha,
                 id_usuario: historial.id_usuario,
-                precio: historial.comida.precio
+                precio: historial.comida.precio[0].precio
             }, {
                     transaction: t
                 })/*.then(function (historial) {
@@ -205,6 +205,7 @@ module.exports = function (router, sequelize, Persona, Cliente, AliasClienteEmpr
                         historial.comensal = comensal.dataValues
                         return horarioComidasClienteEmpresa.find({
                             having: condicionTiempo,
+                            include: [{model: PrecioComidasClienteEmpresa, as: 'precio'}],
                             transaction: t
                         }).then(function (comida) {
                             historial.comida = comida ? comida.dataValues : { id: null }
@@ -542,7 +543,7 @@ module.exports = function (router, sequelize, Persona, Cliente, AliasClienteEmpr
             }
             horarioComidasClienteEmpresa.findAll({
                 where: condicion,
-                include: [{ model: Cliente, as: 'empresaCliente' }]
+                include: [{ model: Cliente, as: 'empresaCliente' }, {model: PrecioComidasClienteEmpresa, as: 'precio' }]
             }).then(function (result) {
                 res.json({ lista: result })
             }).catch(function (err) {
@@ -968,7 +969,7 @@ module.exports = function (router, sequelize, Persona, Cliente, AliasClienteEmpr
             }
             GerenciasClienteEmpresa.findAll({
                 where: condicion,
-                include: [{ model: HistorialComidaClienteEmpresa, as: 'historial', include: [{ model: horarioComidasClienteEmpresa, as: 'comida' }] }],
+                include: [{ model: HistorialComidaClienteEmpresa, as: 'historial', include: [{ model: horarioComidasClienteEmpresa, as: 'comida', include:[{model: PrecioComidasClienteEmpresa, as: 'precio'}] },{model: GerenciasClienteEmpresa, as: 'gerencia'}, {model: Cliente, as: 'empresaCliente'}] }],
                 order: [[{ model: HistorialComidaClienteEmpresa, as: 'historial' }, 'fecha', 'asc']]
             }).then(function (result) {
                 res.json({reporte: result})

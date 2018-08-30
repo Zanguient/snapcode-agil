@@ -17,7 +17,7 @@ module.exports = function (sequelize, Usuario, Persona, Rol, UsuarioRol, Tipo, C
 	RrhhEmpleadoBeneficioSocial, RrhhEmpleadoBitacoraFicha, UsuarioGrupos, RrhhEmpleadoConfiguracionRopa, GtmVentaKardex, GtmVentaKardexDetalle, RrhhEmpleadoDotacionRopaItem,
 	RrhhEmpleadoDotacionRopa, RrhhViajeDetalle, RrhhViaje, RrhhViajeDestino, RrhhViajeConductor, TransaccionSeguimiento, CuentaTransaccion, GtmDespachoDetalleResivo, RRHHPlanillaRcIva, RRHHDetallePlanillaRcIva, EmpresaAplicacion, Pedido, DetallesPedido, RrhhEmpleadoDescuentoVacacionHistorial, ActivosFijos, ActivosFijosValores, ActivosFijosConfiguracion,
 	EstadoFinancieroConfiguracionImpresion, EstadoFinancieroGestion, ClienteCentroCostos, CajaChica, SolicitudCajaChica, ConceptoMovimientoCajaChica, CierreCajaChica,
-	AliasClienteEmpresa, ComensalesClienteEmpresa, GerenciasClienteEmpresa, horarioComidasClienteEmpresa, PrecioComidasClienteEmpresa, HistorialComidaClienteEmpresa,ServicioVenta) {
+	AliasClienteEmpresa, ComensalesClienteEmpresa, GerenciasClienteEmpresa, horarioComidasClienteEmpresa, PrecioComidasClienteEmpresa, HistorialComidaClienteEmpresa, ServicioVenta) {
 	Persona.belongsTo(Clase, { foreignKey: 'id_lugar_nacimiento', as: 'lugar_nacimiento' });
 	Persona.belongsTo(Clase, { foreignKey: 'id_genero', as: 'genero' });
 	Persona.belongsTo(Clase, { foreignKey: 'id_lenguaje', as: 'lenguaje' });
@@ -871,12 +871,12 @@ module.exports = function (sequelize, Usuario, Persona, Rol, UsuarioRol, Tipo, C
 	Proforma.belongsTo(Cliente, { foreignKey: 'id_cliente', as: 'cliente' })
 	Usuario.hasMany(Proforma, { foreignKey: 'id_usuario', as: 'usuarios' })
 	Proforma.belongsTo(Usuario, { foreignKey: 'id_usuario', as: 'usuarioProforma' })
-	Clase.hasMany(DetallesProformas, { foreignKey: 'id_centro_costo', as: 'centrosCostos'})
-	DetallesProformas.belongsTo(Clase, { foreignKey: 'id_centro_costo', as: 'centroCosto'})
-	Cliente.hasMany(ClienteCentroCostos, {foreignKey: 'id_cliente', as: 'clientes'})
-	ClienteCentroCostos.belongsTo(Cliente, {foreignKey: 'id_cliente', as: 'cliente'})
-	Clase.hasMany(ClienteCentroCostos, {foreignKey: 'id_centro', as: 'centroCostos'})
-	ClienteCentroCostos.belongsTo(Clase,{ foreignKey: 'id_centro', as: 'centroCosto'})
+	Clase.hasMany(DetallesProformas, { foreignKey: 'id_centro_costo', as: 'centrosCostos' })
+	DetallesProformas.belongsTo(Clase, { foreignKey: 'id_centro_costo', as: 'centroCosto' })
+	Cliente.hasMany(ClienteCentroCostos, { foreignKey: 'id_cliente', as: 'clientes' })
+	ClienteCentroCostos.belongsTo(Cliente, { foreignKey: 'id_cliente', as: 'cliente' })
+	Clase.hasMany(ClienteCentroCostos, { foreignKey: 'id_centro', as: 'centroCostos' })
+	ClienteCentroCostos.belongsTo(Clase, { foreignKey: 'id_centro', as: 'centroCosto' })
 
 	//RrhhEmpleadoAusencia.belongsTo(MedicoPaciente, { foreignKey: 'id_empleado', as: 'empleado' })//ya no funciona 12/03/2018
 
@@ -1106,13 +1106,13 @@ module.exports = function (sequelize, Usuario, Persona, Rol, UsuarioRol, Tipo, C
 	Empresa.hasMany(ConceptoMovimientoCajaChica, { foreignKey: 'id_empresa', as: 'ConceptosMovimientosEmpresa' })
 	CajaChica.belongsTo(ConceptoMovimientoCajaChica, { foreignKey: 'id_concepto', as: 'concepto' })
 	ConceptoMovimientoCajaChica.hasMany(CajaChica, { foreignKey: 'id_concepto', as: 'Conceptos' })
-	
+
 	CajaChica.belongsTo(CajaChica, { foreignKey: 'id_padre', as: 'padre' })
 	CajaChica.hasMany(CajaChica, { foreignKey: 'id_padre', as: 'hijosDetalle' })
 
 	CajaChica.belongsTo(CierreCajaChica, { foreignKey: 'id_cierre_caja_chica', as: 'cierreCaja' })
 	CierreCajaChica.hasMany(CajaChica, { foreignKey: 'id_cierre_caja_chica', as: 'detalleCierreCaja' })
-	
+
 	CajaChica.belongsTo(Sucursal, { foreignKey: 'id_sucursal', as: 'sucursal' })
 	Sucursal.hasMany(CajaChica, { foreignKey: 'id_sucursal', as: 'cajasChicas' })
 	SolicitudCajaChica.belongsTo(Sucursal, { foreignKey: 'id_sucursal', as: 'sucursal' })
@@ -1122,38 +1122,40 @@ module.exports = function (sequelize, Usuario, Persona, Rol, UsuarioRol, Tipo, C
 	SolicitudCajaChica.belongsTo(Usuario, { foreignKey: 'id_verificador', as: 'verificador' })
 	Usuario.hasMany(SolicitudCajaChica, { foreignKey: 'id_verificador', as: 'solicitudesCajasChicas' })
 	
-	GerenciasClienteEmpresa.belongsTo(Cliente, {foreignKey: 'id_cliente', as: 'empresaCliente'})
-	Cliente.hasMany(GerenciasClienteEmpresa, {foreignKey: 'id_cliente', as: 'gerencias'})
-	GerenciasClienteEmpresa.belongsTo(Empresa, {foreignKey: 'id_cliente', as: 'empresa'})
-	Empresa.hasMany(GerenciasClienteEmpresa, {foreignKey: 'id_cliente', as: 'gerencias'})
-	AliasClienteEmpresa.belongsTo(Cliente, {foreignKey: 'id_cliente', as: 'empresaCliente'})
-	Cliente.hasMany(AliasClienteEmpresa, {foreignKey: 'id_cliente', as: 'alias'})
-	AliasClienteEmpresa.belongsTo(Empresa, {foreignKey: 'id_empresa', as: 'empresa'})
-	Empresa.hasMany(AliasClienteEmpresa, {foreignKey: 'id_empresa', as: 'alias'})
-	ComensalesClienteEmpresa.belongsTo(Cliente, {foreignKey: 'id_cliente', as: 'empresaCliente'})
-	Cliente.hasMany(ComensalesClienteEmpresa, { foreignKey: 'id_cliente', as: 'comensales'})
-	ComensalesClienteEmpresa.belongsTo(GerenciasClienteEmpresa, {foreignKey: 'id_gerencia', as: 'gerencia'})
-	GerenciasClienteEmpresa.hasMany(ComensalesClienteEmpresa, {foreignKey: 'id_gerencia', as: 'comensales'})
-	horarioComidasClienteEmpresa.belongsTo(Cliente, {foreignKey: 'id_cliente', as: 'empresaCliente'})
-	Cliente.hasMany(horarioComidasClienteEmpresa, {foreignKey: 'id_cliente', as: 'horarios'})
-	PrecioComidasClienteEmpresa.belongsTo(Cliente, {foreignKey: 'id_cliente', as: 'empresaCliente'})
-	Cliente.hasMany(PrecioComidasClienteEmpresa, {foreignKey: 'id_cliente', as: 'precios'})
-	HistorialComidaClienteEmpresa.belongsTo(Cliente, {foreignKey: 'id_cliente', as: 'empresaCliente'})
-	Cliente.hasMany(HistorialComidaClienteEmpresa, {foreignKey: 'id_cliente', as: 'historial'})
-	HistorialComidaClienteEmpresa.belongsTo(GerenciasClienteEmpresa, {foreignKey: 'id_gerencia', as: 'gerencia'})
-	GerenciasClienteEmpresa.hasMany(HistorialComidaClienteEmpresa, {foreignKey: 'id_gerencia', as: 'historial'})
-	HistorialComidaClienteEmpresa.belongsTo(ComensalesClienteEmpresa, {foreignKey: 'id_comensal', as: 'comensal'})
-	ComensalesClienteEmpresa.hasMany(HistorialComidaClienteEmpresa, {foreignKey: 'id_comensal', as: 'historial'})
-	HistorialComidaClienteEmpresa.belongsTo(horarioComidasClienteEmpresa, {foreignKey: 'id_comida', as: 'comida'})
-	horarioComidasClienteEmpresa.hasMany(HistorialComidaClienteEmpresa, {foreignKey: 'id_comida', as: 'historial'})
-	HistorialComidaClienteEmpresa.belongsTo(Usuario, {foreignKey: 'id_usuario', as: 'usuario'})
-	horarioComidasClienteEmpresa.hasMany(HistorialComidaClienteEmpresa, {foreignKey: 'id_usuario', as: 'historial'})
-	horarioComidasClienteEmpresa.hasMany(PrecioComidasClienteEmpresa,{foreignKey: 'id_comida', as:'precios'})
-	PrecioComidasClienteEmpresa.belongsTo(horarioComidasClienteEmpresa,{foreignKey: 'id_comida', as:'comida'})
 
-	ServicioVenta.belongsTo(Empresa, {foreignKey: 'id_empresa', as: 'empresa'})
-	Empresa.hasMany(ServicioVenta, {foreignKey: 'id_empresa', as: 'serviciosVenta'})
-	ServicioVenta.hasMany(DetalleVenta, {foreignKey: 'id_servicio', as: 'detallesVenta'})
-	DetalleVenta.belongsTo(ServicioVenta, {foreignKey: 'id_servicio', as: 'servicio'})
+	// COMENSALES
+	GerenciasClienteEmpresa.belongsTo(Cliente, { foreignKey: 'id_cliente', as: 'empresaCliente' })
+	Cliente.hasMany(GerenciasClienteEmpresa, { foreignKey: 'id_cliente', as: 'gerencias' })
+	GerenciasClienteEmpresa.belongsTo(Empresa, { foreignKey: 'id_cliente', as: 'empresa' })
+	Empresa.hasMany(GerenciasClienteEmpresa, { foreignKey: 'id_cliente', as: 'gerencias' })
+	AliasClienteEmpresa.belongsTo(Cliente, { foreignKey: 'id_cliente', as: 'empresaCliente' })
+	Cliente.hasMany(AliasClienteEmpresa, { foreignKey: 'id_cliente', as: 'alias' })
+	AliasClienteEmpresa.belongsTo(Empresa, { foreignKey: 'id_empresa', as: 'empresa' })
+	Empresa.hasMany(AliasClienteEmpresa, { foreignKey: 'id_empresa', as: 'alias' })
+	ComensalesClienteEmpresa.belongsTo(Cliente, { foreignKey: 'id_cliente', as: 'empresaCliente' })
+	Cliente.hasMany(ComensalesClienteEmpresa, { foreignKey: 'id_cliente', as: 'comensales' })
+	ComensalesClienteEmpresa.belongsTo(GerenciasClienteEmpresa, { foreignKey: 'id_gerencia', as: 'gerencia' })
+	GerenciasClienteEmpresa.hasMany(ComensalesClienteEmpresa, { foreignKey: 'id_gerencia', as: 'comensales' })
+	horarioComidasClienteEmpresa.belongsTo(Cliente, { foreignKey: 'id_cliente', as: 'empresaCliente' })
+	Cliente.hasMany(horarioComidasClienteEmpresa, { foreignKey: 'id_cliente', as: 'horarios' })
+	PrecioComidasClienteEmpresa.belongsTo(Cliente, { foreignKey: 'id_cliente', as: 'empresaCliente' })
+	Cliente.hasMany(PrecioComidasClienteEmpresa, { foreignKey: 'id_cliente', as: 'precios' })
+	HistorialComidaClienteEmpresa.belongsTo(Cliente, { foreignKey: 'id_cliente', as: 'empresaCliente' })
+	Cliente.hasMany(HistorialComidaClienteEmpresa, { foreignKey: 'id_cliente', as: 'historial' })
+	HistorialComidaClienteEmpresa.belongsTo(GerenciasClienteEmpresa, { foreignKey: 'id_gerencia', as: 'gerencia' })
+	GerenciasClienteEmpresa.hasMany(HistorialComidaClienteEmpresa, { foreignKey: 'id_gerencia', as: 'historial' })
+	HistorialComidaClienteEmpresa.belongsTo(ComensalesClienteEmpresa, { foreignKey: 'id_comensal', as: 'comensal' })
+	ComensalesClienteEmpresa.hasMany(HistorialComidaClienteEmpresa, { foreignKey: 'id_comensal', as: 'historial' })
+	HistorialComidaClienteEmpresa.belongsTo(horarioComidasClienteEmpresa, { foreignKey: 'id_comida', as: 'comida' })
+	horarioComidasClienteEmpresa.hasMany(HistorialComidaClienteEmpresa, { foreignKey: 'id_comida', as: 'historial' })
+	HistorialComidaClienteEmpresa.belongsTo(Usuario, { foreignKey: 'id_usuario', as: 'usuario' })
+	Usuario.hasMany(HistorialComidaClienteEmpresa, { foreignKey: 'id_usuario', as: 'historialComensales' })
+	horarioComidasClienteEmpresa.hasMany(PrecioComidasClienteEmpresa, { foreignKey: 'id_comida', as: 'precio' })
+	PrecioComidasClienteEmpresa.belongsTo(horarioComidasClienteEmpresa, { foreignKey: 'id_comida', as: 'comida' })
+
+	ServicioVenta.belongsTo(Empresa, { foreignKey: 'id_empresa', as: 'empresa' })
+	Empresa.hasMany(ServicioVenta, { foreignKey: 'id_empresa', as: 'serviciosVenta' })
+	ServicioVenta.hasMany(DetalleVenta, { foreignKey: 'id_servicio', as: 'detallesVenta' })
+	DetalleVenta.belongsTo(ServicioVenta, { foreignKey: 'id_servicio', as: 'servicio' })
 }
 
