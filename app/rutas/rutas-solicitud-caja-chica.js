@@ -421,14 +421,18 @@ module.exports = function (router, sequelize, Sequelize, ensureAuthorizedAdminis
         });
     //End paginador
     //paginator caja chica
-    router.route('/caja-chica/sucursal/:id_sucursal/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion/solicitante/:solicitante/usuario/:usuario/estado/:estado/concepto/:concepto/movimiento/:movimiento/usuario-no-autorizado/:id_usuario_no_autorizado')
+    router.route('/caja-chica/sucursal/:id_sucursal/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion/solicitante/:solicitante/usuario/:usuario/estado/:estado/concepto/:concepto/movimiento/:movimiento/usuario-no-autorizado/:id_usuario_no_autorizado/rendiciones/:rendiciones')
         .get(function (req, res) {
             var condicionCajaChica = { id_sucursal: req.params.id_sucursal };
             //  var condicionSolicitud={}
             var condicionPersonaUsuario = {};
             var condicionPersonaSolicitanter = {};
+            var condicionTipo={}
             if (req.params.estado != 0) {
                 condicionCajaChica.id_estado = req.params.estado
+            }
+            if(req.params.rendiciones !=0){
+                condicionTipo.nombre_corto="DESEMBOLSADO"
             }
             if (req.params.concepto != 0) {
                 condicionCajaChica.id_concepto = req.params.concepto
@@ -494,7 +498,7 @@ module.exports = function (router, sequelize, Sequelize, ensureAuthorizedAdminis
                     {
                         model: Usuario, as: 'verificador',
                         include: [{ model: Persona, as: 'persona' }]
-                    }, { model: CajaChica, as: 'cajasChicas', required: false, include: [{ model: Sucursal, as: 'sucursal' }, { model: ConceptoMovimientoCajaChica, as: 'concepto', include: [{ model: Clase, as: 'concepto' }] }, { model: ContabilidadCuenta, as: 'cuenta' }, { model: Compra, as: 'compra', include: [{ model: Clase, as: 'tipoMovimiento', required: false }, { model: DetalleCompra, as: 'detallesCompra', include: [{ model: Clase, as: 'servicio' }, { model: Producto, as: 'producto' }, { model: Clase, as: 'centroCosto' }] }, { model: Proveedor, as: 'proveedor' }, { model: Sucursal, as: 'sucursal' }, { model: Movimiento, as: 'movimiento', required: false, include: [{ model: Clase, as: 'clase' }] }] }] }, { model: MedicoPaciente, as: 'solicitante', include: [{ model: Persona, as: 'persona', where: condicionPersonaSolicitanter }] }, { model: ConceptoMovimientoCajaChica, as: 'concepto', include: [{ model: Clase, as: 'concepto', where: condicionConceptoClase }] }, { model: Clase, as: 'estado' }, { model: Usuario, as: 'usuario', where: { id_empresa: req.params.id_empresa }, include: [{ model: Persona, as: 'persona', where: condicionPersonaUsuario }] }],
+                    }, { model: CajaChica, as: 'cajasChicas', required: false, include: [{ model: Sucursal, as: 'sucursal' }, { model: ConceptoMovimientoCajaChica, as: 'concepto', include: [{ model: Clase, as: 'concepto' }] }, { model: ContabilidadCuenta, as: 'cuenta' }, { model: Compra, as: 'compra', include: [{ model: Clase, as: 'tipoMovimiento', required: false }, { model: DetalleCompra, as: 'detallesCompra', include: [{ model: Clase, as: 'servicio' }, { model: Producto, as: 'producto' }, { model: Clase, as: 'centroCosto' }] }, { model: Proveedor, as: 'proveedor' }, { model: Sucursal, as: 'sucursal' }, { model: Movimiento, as: 'movimiento', required: false, include: [{ model: Clase, as: 'clase' }] }] }] }, { model: MedicoPaciente, as: 'solicitante', include: [{ model: Persona, as: 'persona', where: condicionPersonaSolicitanter }] }, { model: ConceptoMovimientoCajaChica, as: 'concepto', include: [{ model: Clase, as: 'concepto', where: condicionConceptoClase }] }, { model: Clase, as: 'estado',where:condicionTipo }, { model: Usuario, as: 'usuario', where: { id_empresa: req.params.id_empresa }, include: [{ model: Persona, as: 'persona', where: condicionPersonaUsuario }] }],
                     order: sequelize.literal(textOrder)
                 }
             } else {
@@ -507,7 +511,7 @@ module.exports = function (router, sequelize, Sequelize, ensureAuthorizedAdminis
                     {
                         model: Usuario, as: 'verificador',
                         include: [{ model: Persona, as: 'persona' }]
-                    }, { model: CajaChica, as: 'cajasChicas', required: false, include: [{ model: Sucursal, as: 'sucursal' }, { model: ConceptoMovimientoCajaChica, as: 'concepto', include: [{ model: Clase, as: 'concepto' }] }, { model: ContabilidadCuenta, as: 'cuenta' }, { model: Compra, as: 'compra', include: [{ model: Clase, as: 'tipoMovimiento', required: false }, { model: DetalleCompra, as: 'detallesCompra', include: [{ model: Clase, as: 'servicio' }, { model: Producto, as: 'producto' }, { model: Clase, as: 'centroCosto' }] }, { model: Proveedor, as: 'proveedor' }, { model: Sucursal, as: 'sucursal' }, { model: Movimiento, as: 'movimiento', required: false, include: [{ model: Clase, as: 'clase' }] }] }] }, { model: MedicoPaciente, as: 'solicitante', include: [{ model: Persona, as: 'persona', where: condicionPersonaSolicitanter }] }, { model: ConceptoMovimientoCajaChica, as: 'concepto', include: [{ model: Clase, as: 'concepto', where: condicionConceptoClase }] }, { model: Clase, as: 'estado' }, { model: Usuario, as: 'usuario', where: { id_empresa: req.params.id_empresa }, include: [{ model: Persona, as: 'persona', where: condicionPersonaUsuario }] }],
+                    }, { model: CajaChica, as: 'cajasChicas', required: false, include: [{ model: Sucursal, as: 'sucursal' }, { model: ConceptoMovimientoCajaChica, as: 'concepto', include: [{ model: Clase, as: 'concepto' }] }, { model: ContabilidadCuenta, as: 'cuenta' }, { model: Compra, as: 'compra', include: [{ model: Clase, as: 'tipoMovimiento', required: false }, { model: DetalleCompra, as: 'detallesCompra', include: [{ model: Clase, as: 'servicio' }, { model: Producto, as: 'producto' }, { model: Clase, as: 'centroCosto' }] }, { model: Proveedor, as: 'proveedor' }, { model: Sucursal, as: 'sucursal' }, { model: Movimiento, as: 'movimiento', required: false, include: [{ model: Clase, as: 'clase' }] }] }] }, { model: MedicoPaciente, as: 'solicitante', include: [{ model: Persona, as: 'persona', where: condicionPersonaSolicitanter }] }, { model: ConceptoMovimientoCajaChica, as: 'concepto', include: [{ model: Clase, as: 'concepto', where: condicionConceptoClase }] }, { model: Clase, as: 'estado',where:condicionTipo }, { model: Usuario, as: 'usuario', where: { id_empresa: req.params.id_empresa }, include: [{ model: Persona, as: 'persona', where: condicionPersonaUsuario }] }],
                     order: sequelize.literal(textOrder)
                 }
             }
@@ -542,7 +546,7 @@ module.exports = function (router, sequelize, Sequelize, ensureAuthorizedAdminis
                     model: MedicoPaciente, as: 'solicitante',
                     include: [{ model: Persona, as: 'persona', where: condicionPersonaSolicitanter }]
                 },
-                { model: ConceptoMovimientoCajaChica, as: 'concepto', include: [{ model: Clase, as: 'concepto', where: condicionConceptoClase }] }, { model: Clase, as: 'estado' },
+                { model: ConceptoMovimientoCajaChica, as: 'concepto', include: [{ model: Clase, as: 'concepto', where: condicionConceptoClase }] }, { model: Clase, as: 'estado',where:condicionTipo },
                 {
                     model: Usuario, as: 'usuario', where: { id_empresa: req.params.id_empresa },
                     include: [{ model: Persona, as: 'persona', where: condicionPersonaUsuario }]

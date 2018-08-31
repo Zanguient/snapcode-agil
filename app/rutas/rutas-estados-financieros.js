@@ -16,7 +16,7 @@ module.exports = function (router, sequelize, Sequelize, EstadoFinancieroConfigu
                         id_tipo: gestion.tipoGestion.id,
                         inicio: gestion.inicio,
                         fin: gestion.fin,
-                        habilitado:gestion.habilitado
+                        habilitado: gestion.habilitado
                     }, {
                             where: { id: gestion.id }
                         }).then(function (entities) {
@@ -27,7 +27,7 @@ module.exports = function (router, sequelize, Sequelize, EstadoFinancieroConfigu
                         id_tipo: gestion.tipoGestion.id,
                         inicio: gestion.inicio,
                         fin: gestion.fin,
-                        habilitado:gestion.habilitado
+                        habilitado: gestion.habilitado
                     }).then(function (entities) {
                         res.json({ mensaje: 'Guardado Satisfactoriamente!' });
                     });
@@ -102,19 +102,19 @@ module.exports = function (router, sequelize, Sequelize, EstadoFinancieroConfigu
                 condicionCuenta.id_tipo_cuenta = parseInt(req.params.id_tipo);
             } */
             if (req.params.periodo == 'GESTIÓN') {
-                var diaInicio=req.body.fechasImpresion.inicio.split("/")[0]
-                var diafin=req.body.fechasImpresion.fin.split("/")[0]
-                var mesinico=parseInt(req.body.fechasImpresion.inicio.split("/")[1])-1
-                var mesfin=parseInt(req.body.fechasImpresion.fin.split("/")[1])-1
-                if(mesinico==0){
+                var diaInicio = req.body.fechasImpresion.inicio.split("/")[0]
+                var diafin = req.body.fechasImpresion.fin.split("/")[0]
+                var mesinico = parseInt(req.body.fechasImpresion.inicio.split("/")[1]) - 1
+                var mesfin = parseInt(req.body.fechasImpresion.fin.split("/")[1]) - 1
+                if (mesinico == 0) {
                     var inicio = new Date(req.params.gestion, mesinico, diaInicio)
                     var fin = new Date(req.params.gestion, mesfin, diafin)
-                }else{
-                    var anio=parseInt(req.params.gestion)+1
+                } else {
+                    var anio = parseInt(req.params.gestion) + 1
                     var inicio = new Date(req.params.gestion, mesinico, diaInicio)
                     var fin = new Date(anio, mesfin, diafin)
                 }
-               
+
                 inicio.setHours(0, 0, 0, 0, 0);
                 fin.setHours(23, 59, 59, 0, 0);
                 var condicionComprobante = { eliminado: false, fecha: { $between: [inicio, fin] } }
@@ -133,7 +133,8 @@ module.exports = function (router, sequelize, Sequelize, EstadoFinancieroConfigu
                 condicionComprobante.fecha = { $between: [inicio, fin] }
             }
             condicionCuenta.eliminado = false
-
+            condicionCuenta.cuenta_activo = true
+            var condicionTipo = {}
             var datosCuenta = {
                 where: condicionCuenta,
                 include: [
@@ -142,7 +143,7 @@ module.exports = function (router, sequelize, Sequelize, EstadoFinancieroConfigu
                         include: [{ model: Clase, as: 'saldo' }, { model: Clase, as: 'movimiento' }]
                     },
                     {
-                        model: Clase, as: 'tipoCuenta', where: { nombre_corto: "4" }
+                        model: Clase, as: 'tipoCuenta', where: condicionTipo
                     },
                     {
                         model: Clase, as: 'claseCalculo'
@@ -150,123 +151,193 @@ module.exports = function (router, sequelize, Sequelize, EstadoFinancieroConfigu
                     {
                         model: Clase, as: 'tipoAuxiliar'
                     }
-                    ,
-                    {
-                        model: AsientoContabilidad, required: true, as: 'cuenta', include: [{ model: ComprobanteContabilidad, as: 'comprobante', where: condicionComprobante }]
-                    }
+
                 ],
 
             }
+
             if (req.params.periodo != 'COMPARATIVO') {
-
-                ContabilidadCuenta.findAll(datosCuenta).then(function (cuentas) {
-                    MonedaTipoCambio.find({
-                        where: {
-                            fecha: {
-                                $between: [inicio, fin]
-                            }
+                MonedaTipoCambio.find({
+                    where: {
+                        fecha: {
+                            $between: [inicio, fin]
                         }
-                    }).then(function (MonedaCambio) {
+                    }
+                }).then(function (MonedaCambio) {
+                    condicionTipo.nombre_corto = "1"
+                    ContabilidadCuenta.findAll(
+                        datosCuenta
+                    ).then(function (cuentasGrupoFijo) {
+                        condicionTipo.nombre_corto = "2"
                         ContabilidadCuenta.findAll(
-                            {
-                                where: condicionCuenta,
-                                include: [
-                                    {
-                                        model: ClasificacionCuenta, as: "clasificacion",
-                                        include: [{ model: Clase, as: 'saldo' }, { model: Clase, as: 'movimiento' }]
-                                    },
-                                    {
-                                        model: Clase, as: 'tipoCuenta', where: { nombre_corto: "1" }
-                                    },
-                                    {
-                                        model: Clase, as: 'claseCalculo'
-                                    },
-                                    {
-                                        model: Clase, as: 'tipoAuxiliar'
-                                    }
-
-                                ],
-
-                            }
-                        ).then(function (cuentasGrupo) {
+                            datosCuenta
+                        ).then(function (cuentasSubGrupoFijo) {
+                            condicionTipo.nombre_corto = "3"
                             ContabilidadCuenta.findAll(
-                                {
-                                    where: condicionCuenta,
-                                    include: [
-                                        {
-                                            model: ClasificacionCuenta, as: "clasificacion",
-                                            include: [{ model: Clase, as: 'saldo' }, { model: Clase, as: 'movimiento' }]
-                                        },
-                                        {
-                                            model: Clase, as: 'tipoCuenta', where: { nombre_corto: "2" }
-                                        },
-                                        {
-                                            model: Clase, as: 'claseCalculo'
-                                        },
-                                        {
-                                            model: Clase, as: 'tipoAuxiliar'
-                                        }
-
-                                    ],
-
-                                }
-                            ).then(function (cuentasSubGrupo) {
+                                datosCuenta
+                            ).then(function (cuentasGenericasFijo) {
+                                condicionTipo.nombre_corto = "4"
                                 ContabilidadCuenta.findAll(
-                                    {
-                                        where: condicionCuenta,
-                                        include: [
-                                            {
-                                                model: ClasificacionCuenta, as: "clasificacion",
-                                                include: [{ model: Clase, as: 'saldo' }, { model: Clase, as: 'movimiento' }]
-                                            },
-                                            {
-                                                model: Clase, as: 'tipoCuenta', where: { nombre_corto: "3" }
-                                            },
-                                            {
-                                                model: Clase, as: 'claseCalculo'
-                                            },
-                                            {
-                                                model: Clase, as: 'tipoAuxiliar'
-                                            }
-
-                                        ],
-
-                                    }
-                                ).then(function (cuentasGenericas) {
-                                    res.json({ cuentas: cuentas,cuentasGrupo:cuentasGrupo,cuentasSubGrupo:cuentasSubGrupo,cuentasGenericas:cuentasGenericas, monedaCambio: MonedaCambio })
+                                    datosCuenta
+                                ).then(function (cuentasApropiacionFijo) {
+                                    condicionCuenta.cuenta_activo = false
+                                    condicionTipo.nombre_corto = "1"
+                                    ContabilidadCuenta.findAll(
+                                        datosCuenta
+                                    ).then(function (cuentasGrupo) {
+                                        condicionTipo.nombre_corto = "2"
+                                        ContabilidadCuenta.findAll(
+                                            datosCuenta
+                                        ).then(function (cuentasSubGrupo) {
+                                            condicionTipo.nombre_corto = "3"
+                                            ContabilidadCuenta.findAll(
+                                                datosCuenta
+                                            ).then(function (cuentasGenericas) {
+                                                condicionTipo.nombre_corto = "4"
+                                                ContabilidadCuenta.findAll(
+                                                    datosCuenta
+                                                ).then(function (cuentasApropiacion) {
+                                                    res.json({
+                                                        cuentasGrupo: cuentasGrupo, cuentasSubGrupo: cuentasSubGrupo, cuentasGenericas: cuentasGenericas, cuentasApropiacion: cuentasApropiacion,
+                                                        cuentasGrupoFijo: cuentasGrupoFijo, cuentasSubGrupoFijo: cuentasSubGrupoFijo, cuentasGenericasFijo: cuentasGenericasFijo, cuentasApropiacionFijo: cuentasApropiacionFijo
+                                                        , monedaCambio: MonedaCambio
+                                                    })
+                                                })
+                                            })
+                                        })
+                                    })
                                 })
-                            })
+                            });
                         })
                     })
                 });
             } else {
-                var inicio = new Date(req.params.gestion, 0, 1)
-                var fin = new Date(req.params.gestion, 12, 0)
+                var diaInicio = req.body.fechasImpresion.inicio.split("/")[0]
+                var diafin = req.body.fechasImpresion.fin.split("/")[0]
+                var mesinico = parseInt(req.body.fechasImpresion.inicio.split("/")[1]) - 1
+                var mesfin = parseInt(req.body.fechasImpresion.fin.split("/")[1]) - 1
+                if (mesinico == 0) {
+                    var inicio = new Date(req.params.gestion, mesinico, diaInicio)
+                    var fin = new Date(req.params.gestion, mesfin, diafin)
+                } else {
+                    var anio = parseInt(req.params.gestion) + 1
+                    var inicio = new Date(req.params.gestion, mesinico, diaInicio)
+                    var fin = new Date(anio, mesfin, diafin)
+                }
+                
+                condicionCuenta.cuenta_activo = true
+                /* var inicio = new Date(req.params.gestion, 0, 1)
+                var fin = new Date(req.params.gestion, 12, 0) */
                 inicio.setHours(0, 0, 0, 0, 0);
                 fin.setHours(23, 59, 59, 0, 0);
-                condicionComprobante.fecha = { $between: [inicio, fin] }
-                ContabilidadCuenta.findAll(
-                    datosCuenta
-                ).then(function (cuentas) {
-                    var inicio = new Date(req.params.gestion_fin, 0, 1)
-                    var fin = new Date(req.params.gestion_fin, 12, 0)
-                    inicio.setHours(0, 0, 0, 0, 0);
-                    fin.setHours(23, 59, 59, 0, 0);
-                    condicionComprobante.fecha = { $between: [inicio, fin] }
+                MonedaTipoCambio.find({
+                    where: {
+                        fecha: {
+                            $between: [inicio, fin]
+                        }
+                    }
+                }).then(function (MonedaCambio) {
+                    condicionTipo.nombre_corto = "1"
                     ContabilidadCuenta.findAll(
                         datosCuenta
-                    ).then(function (cuentas2) {
-                        MonedaTipoCambio.find({
-                            where: {
-                                fecha: {
-                                    $between: [inicio, fin]
-                                }
-                            }
-                        }).then(function (MonedaCambio) {
-                            res.json({ cuentas: cuentas, cuentas2: cuentas2, monedaCambio: MonedaCambio })
+                    ).then(function (cuentasGrupoFijo) {
+                        condicionTipo.nombre_corto = "2"
+                        ContabilidadCuenta.findAll(
+                            datosCuenta
+                        ).then(function (cuentasSubGrupoFijo) {
+                            condicionTipo.nombre_corto = "3"
+                            ContabilidadCuenta.findAll(
+                                datosCuenta
+                            ).then(function (cuentasGenericasFijo) {
+                                condicionTipo.nombre_corto = "4"
+                                ContabilidadCuenta.findAll(
+                                    datosCuenta
+                                ).then(function (cuentasApropiacionFijo) {
+                                    condicionCuenta.cuenta_activo = false
+                                    condicionTipo.nombre_corto = "1"
+                                    ContabilidadCuenta.findAll(
+                                        datosCuenta
+                                    ).then(function (cuentasGrupo) {
+                                        condicionTipo.nombre_corto = "2"
+                                        ContabilidadCuenta.findAll(
+                                            datosCuenta
+                                        ).then(function (cuentasSubGrupo) {
+                                            condicionTipo.nombre_corto = "3"
+                                            ContabilidadCuenta.findAll(
+                                                datosCuenta
+                                            ).then(function (cuentasGenericas) {
+                                                condicionTipo.nombre_corto = "4"
+                                                ContabilidadCuenta.findAll(
+                                                    datosCuenta
+                                                ).then(function (cuentasApropiacion) {
+                                                    condicionCuenta.cuenta_activo = true
+                                                    var inicio = new Date(req.params.gestion_fin, mesinico, diaInicio)
+                                                    var fin = new Date(req.params.gestion_fin, mesfin, diafin)
+                                                    inicio.setHours(0, 0, 0, 0, 0);
+                                                    fin.setHours(23, 59, 59, 0, 0);
+                                                    condicionComprobante.fecha = { $between: [inicio, fin] }
+                                                    condicionTipo.nombre_corto = "1"
+                                                    ContabilidadCuenta.findAll(
+                                                        datosCuenta
+                                                    ).then(function (cuentasGrupoFijoDos) {
+                                                        condicionTipo.nombre_corto = "2"
+                                                        ContabilidadCuenta.findAll(
+                                                            datosCuenta
+                                                        ).then(function (cuentasSubGrupoFijoDos) {
+                                                            condicionTipo.nombre_corto = "3"
+                                                            ContabilidadCuenta.findAll(
+                                                                datosCuenta
+                                                            ).then(function (cuentasGenericasFijoDos) {
+                                                                condicionTipo.nombre_corto = "4"
+                                                                ContabilidadCuenta.findAll(
+                                                                    datosCuenta
+                                                                ).then(function (cuentasApropiacionFijoDos) {
+                                                                    condicionCuenta.cuenta_activo = false
+                                                                    condicionTipo.nombre_corto = "1"
+                                                                    ContabilidadCuenta.findAll(
+                                                                        datosCuenta
+                                                                    ).then(function (cuentasGrupoDos) {
+                                                                        condicionTipo.nombre_corto = "2"
+                                                                        ContabilidadCuenta.findAll(
+                                                                            datosCuenta
+                                                                        ).then(function (cuentasSubGrupoDos) {
+                                                                            condicionTipo.nombre_corto = "3"
+                                                                            ContabilidadCuenta.findAll(
+                                                                                datosCuenta
+                                                                            ).then(function (cuentasGenericasDos) {
+                                                                                condicionTipo.nombre_corto = "4"
+                                                                                ContabilidadCuenta.findAll(
+                                                                                    datosCuenta
+                                                                                ).then(function (cuentasApropiacionDos) {
+                                                                                    res.json({
+                                                                                        primero: {
+                                                                                            cuentasGrupo: cuentasGrupo, cuentasSubGrupo: cuentasSubGrupo, cuentasGenericas: cuentasGenericas, cuentasApropiacion: cuentasApropiacion,
+                                                                                            cuentasGrupoFijo: cuentasGrupoFijo, cuentasSubGrupoFijo: cuentasSubGrupoFijo, cuentasGenericasFijo: cuentasGenericasFijo, cuentasApropiacionFijo: cuentasApropiacionFijo
+                                                                                            
+                                                                                        }, monedaCambio: MonedaCambio,
+                                                                                        segundo: {
+                                                                                            cuentasGrupo: cuentasGrupoDos, cuentasSubGrupo: cuentasSubGrupoDos, cuentasGenericas: cuentasGenericasDos, cuentasApropiacion: cuentasApropiacionDos,
+                                                                                            cuentasGrupoFijo: cuentasGrupoFijoDos, cuentasSubGrupoFijo: cuentasSubGrupoFijoDos, cuentasGenericasFijo: cuentasGenericasFijoDos, cuentasApropiacionFijo: cuentasApropiacionFijoDos
+                                                                                           
+                                                                                        }
+                                                                                    })
+                                                                                })
+                                                                            })
+                                                                        })
+                                                                    })
+                                                                })
+                                                            })
+                                                        })
+                                                    })
+                                                })
+                                            })
+                                        })
+                                    })
+                                })
+                            })
                         })
-                    });
-                });
+                    })
+                })
             }
         })
 }

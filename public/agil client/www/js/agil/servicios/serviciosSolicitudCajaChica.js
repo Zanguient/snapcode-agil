@@ -88,7 +88,7 @@ angular.module('agil.servicios')
 }])
 
 .factory('CajaChicaPaginador', function ($resource) {
-    return $resource(restServer + "caja-chica/sucursal/:id_sucursal/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion/solicitante/:solicitante/usuario/:usuario/estado/:estado/concepto/:concepto/movimiento/:movimiento/usuario-no-autorizado/:id_usuario_no_autorizado");
+    return $resource(restServer + "caja-chica/sucursal/:id_sucursal/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion/solicitante/:solicitante/usuario/:usuario/estado/:estado/concepto/:concepto/movimiento/:movimiento/usuario-no-autorizado/:id_usuario_no_autorizado/rendiciones/:rendiciones");
 })
 
 .factory('SolicitudesCajaChicaPaginador', ['CajaChicaPaginador', '$q', function (CajaChicaPaginador, $q) {
@@ -108,7 +108,8 @@ angular.module('agil.servicios')
             concepto:paginator.filter.concepto,
             movimiento:paginator.filter.movimiento,
             id_usuario_no_autorizado:paginator.filter.id_usuario_no_autorizado,
-            id_sucursal:paginator.filter.id_sucursal
+            id_sucursal:paginator.filter.id_sucursal,
+            rendiciones:paginator.filter.rendiciones,
         }, function (entidades) {
             delay.resolve(entidades);
         }, function (error) {

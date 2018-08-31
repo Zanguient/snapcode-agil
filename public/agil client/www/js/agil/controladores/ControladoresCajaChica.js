@@ -61,9 +61,9 @@ angular.module('agil.controladores')
                     movimiento: { value: "Movimiento", show: true },
                     concepto: { value: "Concepto", show: true },
                     detalle: { value: "Detalle", show: true },
-					estado: { value: "Estado", show: true },
-					monto: { value: "Monto", show: true },
-					
+                    estado: { value: "Estado", show: true },
+                    monto: { value: "Monto", show: true },
+
                 }
             }, $scope.aplicacion.aplicacion.id);
             $scope.fieldViewer.updateObject();
@@ -157,7 +157,7 @@ angular.module('agil.controladores')
                     if (datos.cajasChicas.length > 0) {
                         var total = 0
                     } else {
-                        var total = datos.monto
+                        var total = 0
                     }
                     $scope.cajaChica = {
                         fecha: $scope.fechaATexto(new Date()),
@@ -245,9 +245,10 @@ angular.module('agil.controladores')
         $scope.abrirModalRegistroAnticipoCajaChica = function (datos, ver) {
 
             if (datos) {
-            $scope.cajaChica = {}
+                $scope.cajaChica = {}
                 $scope.cajaChica.solicitud = datos
                 $scope.cajaChica.concepto = datos.concepto
+                $scope.cajaChica.detalle = datos.detalle
                 $scope.cajaChica.fecha = $scope.fechaATexto(new Date(datos.fecha))
                 $scope.cajaChica.total = datos.monto
                 $scope.cajaChica.sucursal = $scope.sucursalPrincipal
@@ -442,7 +443,8 @@ angular.module('agil.controladores')
                     concepto: "",
                     movimiento: "",
                     id_usuario_no_autorizado: ($scope.usuario.encargado_caja_chica) ? "" : ($scope.usuario.encargado_rendicion_caja_chica) ? "" : $scope.usuario.id,
-                    id_sucursal: $scope.sucursalPrincipal.id
+                    id_sucursal: $scope.sucursalPrincipal.id,
+                    rendiciones:($scope.usuario.encargado_rendicion_caja_chica) ? 1 : "",
                 }
             }
 
@@ -671,7 +673,7 @@ angular.module('agil.controladores')
                 $scope.cajaChica.compra.descuento = 0
                 $scope.cajaChica.compra.recargo = 0
                 $scope.cajaChica.compra.ice = 0
-                $scope.cajaChica.compra.excento = ($scope.cajaChica.compra.total * 30) / 100
+                $scope.cajaChica.compra.excento = ($scope.cajaChica.solicitud.monto * 30) / 100
             } else {
                 $scope.cajaChica.compra.descuento_general = false
                 $scope.cajaChica.compra.descuento = 0
@@ -690,14 +692,15 @@ angular.module('agil.controladores')
                     $scope.cajaChica.fecha.setMinutes(tiempoActual.getMinutes())
                     $scope.cajaChica.fecha.setSeconds(tiempoActual.getSeconds())
                     $scope.tiposEstados.forEach(function (tipo, index, array) {
-                        if($scope.cajaChica.Anticipo){
+                        if ($scope.cajaChica.Anticipo) {
                             if (tipo.nombre === $scope.diccionario.CC_ESTADO_PROCESADO) {
                                 $scope.cajaChica.solicitud.estado = tipo
                             }
-                        }else{
-                        if (tipo.nombre === $scope.diccionario.CC_ESTADO_DESEMBOLSADO) {
-                            $scope.cajaChica.solicitud.estado = tipo
-                        }}
+                        } else {
+                            if (tipo.nombre === $scope.diccionario.CC_ESTADO_DESEMBOLSADO) {
+                                $scope.cajaChica.solicitud.estado = tipo
+                            }
+                        }
                         if (index === (array.length - 1)) {
                             var promesa = GuardarCajaChica($scope.cajaChica, $scope.usuario.id_empresa)
                             promesa.then(function (dato) {
@@ -705,12 +708,12 @@ angular.module('agil.controladores')
                                 $scope.generarPdfBoletaCajaChica($scope.cajaChica.solicitud, dato.cajaChica)
                                 $scope.obtenerListaSolicitudes()
                                 $scope.mostrarMensaje(dato.mensaje)
-                                if($scope.cajaChica.Anticipo){
+                                if ($scope.cajaChica.Anticipo) {
                                     $scope.cerrarModalRegistroAnticipoCajaChica()
-                                }else{
+                                } else {
                                     $scope.cerrarModalRegistroDesembolsoCajaChica()
                                 }
-                              
+
 
                             })
                         }
@@ -1097,7 +1100,14 @@ angular.module('agil.controladores')
             if (detalleCompra.fechaVencimientoTexto) {
                 detalleCompra.fecha_vencimiento = new Date($scope.convertirFecha(detalleCompra.fechaVencimientoTexto));
             }
-
+            if ($scope.cajaChica.compra.descuento_general) {
+                detalleCompra.descuento=$scope.cajaChica.compra.descuento
+                detalleCompra.ice=$scope.cajaChica.compra.ice
+                detalleCompra.recargo=$scope.cajaChica.compra.recargo
+                detalleCompra.excento=$scope.cajaChica.compra.excento
+            }
+            
+            
             $scope.cajaChica.compra.detallesCompra.push(detalleCompra);
             $scope.sumarTotal();
             $scope.sumarTotalImporte();
@@ -1181,7 +1191,7 @@ angular.module('agil.controladores')
 
         $scope.calcularImporteGeneral = function () {
             var descuento, recargo;
-            if ($scope.compra.tipo_descuento) {
+            if ($scope.cajaChica.compra.tipo_descuento) {
                 descuento = $scope.cajaChica.compra.importe * ($scope.cajaChica.compra.descuento / 100);
             } else {
                 descuento = $scope.cajaChica.compra.descuento;
@@ -1315,6 +1325,16 @@ angular.module('agil.controladores')
                     $scope.detalleCompra.total = $scope.detalleCompra.importe - descuento + recargo - $scope.cajaChica.compra.ice - $scope.cajaChica.compra.excento;
                 }
             }
+            importe=($scope.cajaChica.compra.importe)?$scope.cajaChica.compra.importe:0
+            $scope.totalRestante=$scope.cajaChica.solicitud.monto-importe
+            if ($scope.cajaChica.solicitud) {
+                if ($scope.detalleCompra.importe >   $scope.totalRestante){
+                    $scope.detalleCompra.importe =NaN
+                    $scope.ErrorImporte=true
+                }else{
+                    $scope.ErrorImporte=false
+                }
+        }
         }
 
         $scope.calcularImporteDetalleEdicion = function (detalleCompra) {

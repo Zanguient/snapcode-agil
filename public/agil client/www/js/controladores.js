@@ -1795,6 +1795,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 			promesa.then(function (dato) {
 
 				$scope.alertasCajaChica = dato;
+				$scope.vencimientoTotal = $scope.vencimientoTotal + $scope.alertasCajaChica.length;
 				//blockUI.stop();
 			});
 		}
