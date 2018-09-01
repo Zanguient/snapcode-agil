@@ -33,6 +33,7 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, decodeBase
 							encargado_caja_chica: req.body.encargado_caja_chica,
 							encargado_rendicion_caja_chica: req.body.encargado_rendicion_caja_chica,
 							encargado_verificacion_caja_chica: req.body.encargado_verificacion_caja_chica,
+							usar_importacion_venta_servicio:req.body.usar_importacion_venta_servicio,
 						}).then(function (usuarioCreado) {
 							Usuario.update({
 								token: jwt.sign(usuarioCreado, 'shhhhh')
@@ -391,6 +392,7 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, decodeBase
 									encargado_caja_chica: req.body.encargado_caja_chica,
 									encargado_rendicion_caja_chica: req.body.encargado_rendicion_caja_chica,
 									encargado_verificacion_caja_chica: req.body.encargado_verificacion_caja_chica,
+									usar_importacion_venta_servicio:req.body.usar_importacion_venta_servicio,
 								}, {
 										where: {
 											id: req.body.id

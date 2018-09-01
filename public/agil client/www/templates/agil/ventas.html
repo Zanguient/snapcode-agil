@@ -67,6 +67,12 @@
 
 
 								</td>
+								<td ng-if="usuario.usar_importacion_venta_servicio">
+									<a href="javascript:void(0)" ng-click="abrirModalImportacionVentaServicio()" role="button" data-rel="tooltip" data-placement="top"
+									 uib-tooltip="Importacion Ventas Servicios">
+										<img height="70" width="70" src="img/importacion_venta_servicio.png">
+									</a>
+								</td>
 							</tr>
 							<tr>
 								<td>
@@ -142,20 +148,18 @@
 											<option value="">TODOS</option>
 											
 										</select> -->
-										<label ng-show="usuario.empresa.usar_venta_servicio">
-										<select id="transaccion" name="transaccion"
-										ng-options="transaccion.id as transaccion.nombre for transaccion in movimientosEgreso"
-										ng-model="filtro.transaccion">
+									<label ng-show="usuario.empresa.usar_venta_servicio">
+										<select id="transaccion" name="transaccion" ng-options="transaccion.id as transaccion.nombre for transaccion in movimientosEgreso"
+										 ng-model="filtro.transaccion">
 											<option value="">TODOS</option>
-											
+
 										</select>
 									</label>
 									<label ng-show="!usuario.empresa.usar_venta_servicio">
-										<select id="transaccion" name="transaccion"
-										ng-options="transaccion.id as transaccion.nombre for transaccion in movimientosEgreso|filtroMovVenta"
-										ng-model="filtro.transaccion">
+										<select id="transaccion" name="transaccion" ng-options="transaccion.id as transaccion.nombre for transaccion in movimientosEgreso|filtroMovVenta"
+										 ng-model="filtro.transaccion">
 											<option value="">TODOS</option>
-											
+
 										</select>
 									</label>
 								</td>
@@ -1751,7 +1755,7 @@
 						</thead>
 						<tbody>
 							<tr ng-repeat="detalleVenta in venta.detallesVenta">
-								<td >
+								<td>
 									<p>{{detalleVenta.producto.nombre}}</p>
 									<p>{{detalleVenta.servicio.nombre}}</p>
 								</td>
@@ -1854,7 +1858,8 @@
 	<form name="formularioCierre" novalidate ng-submit="cerrarCaja(cierre)">
 		<div class="col sm 12" align="center">
 			<p>
-				<span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>¿Ingrese los datos para el cierre de caja?</p>
+				<span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>¿Ingrese los datos para el cierre
+				de caja?</p>
 			<p<label>Saldo inicial en caja</label>
 			</p<label>
 		</div>
@@ -2470,7 +2475,8 @@
 	</div>
 	<div class="row">
 		<div class="col-xs-6">
-			<div class="dataTables_info" id="tabla-productos_info" role="status" aria-live="polite">Mostrando página {{paginaActual}} de {{paginas.length}}</div>
+			<div class="dataTables_info" id="tabla-productos_info" role="status" aria-live="polite">Mostrando página {{paginaActual}}
+				de {{paginas.length}}</div>
 		</div>
 		<div class="col-xs-6">
 			<div class="dataTables_paginate paging_simple_numbers" id="tabla-productos_paginate">
@@ -2659,7 +2665,7 @@
 			<button type="button" class="btn btn-danger" ng-click="cerrarReporteProductos()">Cerrar</button>
 		</div>
 	</div>
-	
+
 </div>
 <!-- Fin modal reporte productos -->
 
@@ -2699,13 +2705,13 @@
 <!--Reporte Grafico Productos-->
 <div id="reporte-grafico-productos" style="overflow-x:hidden;">
 	<div class="row">
-        <div class="modal-header">
-            <div class="container-fluid">
-                <button type="button" ng-click="cerrarReporteGraficoProductos()" class="pull-right">
-                    <i class="ace-icon fa fa-close align-top bigger-125"></i>
-                </button>
+		<div class="modal-header">
+			<div class="container-fluid">
+				<button type="button" ng-click="cerrarReporteGraficoProductos()" class="pull-right">
+					<i class="ace-icon fa fa-close align-top bigger-125"></i>
+				</button>
 				<center>
-					<h2  class="blue">REPORTE GRAFÍCO</h2>
+					<h2 class="blue">REPORTE GRAFÍCO</h2>
 					<h4 class="blue">Reporte de los 10 mas vendidos</h4>
 				</center>
 				<br>
@@ -2716,12 +2722,13 @@
 			<div class="modal-footer">
 				<label>
 					<small class="muted smaller-90">Ver grafico de tortas: </small>
-					<input name="switch-field-1" ng-model="estadoProducto" ng-click="graficarProductos(estadoProducto)" class="ace ace-switch ace-switch-4 ng-pristine ng-untouched ng-valid ng-not-empty" type="checkbox" >
+					<input name="switch-field-1" ng-model="estadoProducto" ng-click="graficarProductos(estadoProducto)" class="ace ace-switch ace-switch-4 ng-pristine ng-untouched ng-valid ng-not-empty"
+					 type="checkbox">
 					<span class="lbl check-descuento"></span>
 				</label>
 			</div>
-        </div>
-    </div>
+		</div>
+	</div>
 </div>
 <!--Fin reporte Grafico Productos-->
 <!-- fin confirmar usuario -->
@@ -2857,7 +2864,7 @@
 				<span aria-hidden="true">&times;</span>
 			</button>
 			<center>
-				<h4 class="modal-title" id="advertenciaPrestamoPersonal" style="align:center;">Empresas</h4>
+				<h4 class="modal-title" id="advertenciaPrestamoPersonal" style="align-content:center;">Empresas</h4>
 				<h5>Del{{fechaInicioTexto}} al {{fechaFinTexto}}</h5>
 				<div>
 					<span>Sucursal: {{sucursal}}</span>
@@ -2941,35 +2948,109 @@
 			<button type="button" class="btn btn-danger" ng-click="cerrarReportePorEmpresa()">Cerrar</button>
 		</div>
 	</div>
-	
+
 </div>
 <!-- Fin modal reporte empresas -->
 
 <!--Reporte Grafico Empresa-->
 <div id="reporte-grafico-empresas" style="overflow-x:hidden;">
-		<div class="row">
-			<div class="modal-header">
-				<div class="container-fluid">
-					<button type="button" ng-click="cerrarReporteGraficoEmpresa()" class="pull-right">
-						<i class="ace-icon fa fa-close align-top bigger-125"></i>
-					</button>
-					<center>
-						<h2  class="blue">REPORTE GRAFÍCO</h2>
-						<h4 class="blue">Reporte a las 10 empresas mas vendidas</h4>
-					</center>
-					<br>
-					<div id="tablaReportesEmpresas" style="height: 300px; width: 100%; align:center;">
-	
-					</div>
+	<div class="row">
+		<div class="modal-header">
+			<div class="container-fluid">
+				<button type="button" ng-click="cerrarReporteGraficoEmpresa()" class="pull-right">
+					<i class="ace-icon fa fa-close align-top bigger-125"></i>
+				</button>
+				<center>
+					<h2 class="blue">REPORTE GRAFÍCO</h2>
+					<h4 class="blue">Reporte a las 10 empresas mas vendidas</h4>
+				</center>
+				<br>
+				<div id="tablaReportesEmpresas" style="height: 300px; width: 100%; align-content:center;">
+
 				</div>
-				<div class="modal-footer">
-					<label>
-						<small class="muted smaller-90">Ver grafico de tortas: </small>
-						<input name="switch-field-1" ng-model="estadoEmpresa" ng-click="graficarEmpresa(estadoEmpresa)" class="ace ace-switch ace-switch-4 ng-pristine ng-untouched ng-valid ng-not-empty" type="checkbox" >
-						<span class="lbl check-descuento"></span>
-					</label>
-				</div>
+			</div>
+			<div class="modal-footer">
+				<label>
+					<small class="muted smaller-90">Ver grafico de tortas: </small>
+					<input name="switch-field-1" ng-model="estadoEmpresa" ng-click="graficarEmpresa(estadoEmpresa)" class="ace ace-switch ace-switch-4 ng-pristine ng-untouched ng-valid ng-not-empty"
+					 type="checkbox">
+					<span class="lbl check-descuento"></span>
+				</label>
 			</div>
 		</div>
 	</div>
-	<!--Fin reporte Grafico Empresa-->
+</div>
+<!--Fin reporte Grafico Empresa-->
+
+<!-- inicio importacion ventas servicios -->
+<div class="modal" id="dialog-importacion-ventas-servicios">
+	<div class="modal-content">
+		<div class="modal-header bg-primary">
+			<button type="button" ng-click="cerrarModalImportacionVentaServicio()" class="close" data-dismiss="modal" aria-label="Close">
+				<span aria-hidden="true">&times;</span>
+			</button>
+			<h4 class="modal-title">IMPORTACIÓN DE FACTURAS</h4>
+		</div>
+		<form id="formimpvent" name="formimpvent" ng-submit="guardarConfiguracionImpresion(configuracionImpresion)">
+			<div class="modal-body">
+				<div class="row">
+					<div class="col-md-6">
+						<p>SUCURSAL</p>
+						<select required class="form-control" name="sucServImp" ng-change="obtenerActividades(venta.sucursal.id)" ng-options="sucursal as sucursal.nombre for sucursal in sucursales track by sucursal.id"
+						 ng-model="venta.sucursal">
+							<option value="" disabled selected>Selec. Sucursal</option>
+						</select>
+						<p class="red" ng-show="formimpvent.sucServImp.$touched && formimpvent.sucServImp.$invalid">Este campo es requerido.</p>
+					</div>
+					<div class="col-md-6">
+						<p>FECHA</p>
+						<input required ng-update-hidden name="fechaSerImp"class="form-control date-picker" type="text" data-date-format="dd/mm/yyyy" ng-model="venta.fecha"
+						 placeholder="Ingrese la fecha" autocomplete="off" />
+						 <p class="red" ng-show="formimpvent.fechaSerImp.$touched && formimpvent.fechaSerImp.$invalid">Este campo es requerido.</p>
+					</div>
+				</div>
+				<div class="space-6"></div>
+				<div class="row">
+					<div class="col-md-6">
+						<p>ACTIVIDAD</p>
+						<select required ng-model="venta.actividad" name="activ" class="form-control" ng-options="actividad as actividad.nombre for actividad in actividades track by actividad.id"
+						 data-placeholder="Click para escoger">
+							<option value="" disabled selected>Selec. Actividad</option>
+						</select>
+						<p class="red" ng-show="formimpvent.activ.$touched && formimpvent.activ.$invalid">Este campo es requerido.</p>
+						<p ng-if="dosificacionesExpiradas" style="color: orangered">Las Actividades con dosificaciones expiradas no se muestran</p>
+					</div>
+					<div class="col-md-6">
+							<div class="space-6"></div>
+						<div class="btn btn-link pull-right">
+							<a href="/recursos/EJEMPLO-DATOS-VENTAS-SERVICIOS.xlsx" class="pull-right">
+								<span class="blue">
+									<img height="45" width="45" src="img/bajar-comprobante.png">
+								</span>
+							</a>
+						</div>
+						<div class="fileUpload btn btn-link pull-right" ng-click="verificarCamposForimImpServ(formimpvent)" uib-tooltip="Importación">
+							<img height="50" width="50" src="img/subir-comprobante.png">
+							<input ng-disabled="formimpvent.$invalid"  class="upload" type="file" custom-on-file-change="subirExcelVentasServicios" />&nbsp&nbsp
+						</div>
+					</div>
+				</div>
+
+
+
+
+
+
+
+
+
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-danger" ng-click="cerrarModalImportacionVentaServicio()">Cerrar</button>
+
+			</div>
+		</form>
+	</div>
+</div>
+</div>
+<!-- fin configuracion gestiones -->

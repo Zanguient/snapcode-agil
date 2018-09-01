@@ -52,6 +52,10 @@ module.exports = function (sequelize, Sequelize) {
 			type: Sequelize.BOOLEAN,
 			field: 'encargado_verificacion_caja_chica'
 		},
+		usar_importacion_venta_servicio: {
+			type: Sequelize.BOOLEAN,
+			field: 'usar_importacion_venta_servicio'
+		},
 	}, {
 			freezeTableName: true
 		});

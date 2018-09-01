@@ -4,8 +4,8 @@ angular.module('agil.controladores')
 		Venta, Ventas, VentasProductos, detalle, Clientes, ClientesNit, ProductosNombre, ClasesTipo, VentasContado, VentasCredito,
 		PagosVenta, DatosVenta, VentaEmpresaDatos, ProductosPanel, ListaProductosEmpresaUsuario, ListaInventariosProducto, Paginator,
 		socket, ConfiguracionVentaVistaDatos, ConfiguracionVentaVista, ListaGruposProductoEmpresa, ReporteVentasMensualesDatos,
-		ConfiguracionImpresionEmpresaDato, VerificarUsuarioEmpresa, ImprimirSalida, ModificarVenta, ListaVendedorVenta, VendedorVenta, VendedorVentaActualizacion, GuardarUsuarLectorDeBarra, VerificarLimiteCredito, ListaSucursalesUsuario, ListaGruposProductoUsuario, ListaServiciosVentas, GuardarListaServiciosVentas,
-		EliminarVentaServicio,ventasDetalleEmpresa) {
+		ConfiguracionImpresionEmpresaDato, VerificarUsuarioEmpresa, GuardarVentasImportados, ImprimirSalida, ModificarVenta, ListaVendedorVenta, VendedorVenta, VendedorVentaActualizacion, GuardarUsuarLectorDeBarra, VerificarLimiteCredito, ListaSucursalesUsuario, ListaGruposProductoUsuario, ListaServiciosVentas, GuardarListaServiciosVentas,
+		EliminarVentaServicio, ventasDetalleEmpresa) {
 		blockUI.start();
 		$scope.usuario = JSON.parse($localStorage.usuario);
 		convertUrlToBase64Image($scope.usuario.empresa.imagen, function (imagenEmpresa) {
@@ -28,11 +28,11 @@ angular.module('agil.controladores')
 		$scope.IdModalVerificarCuenta = 'modal-verificar-cuenta';
 		$scope.modalReportesProductos = 'dialog-reportes-productos';
 		$scope.modelGraficaProductos = 'reporte-grafico-productos';
-		
+
 		$scope.modalServicioVenta = 'dialog-servicios-venta';
 		$scope.modalReportesEmpresas = 'dialog-reporte-por-empresas';
 		$scope.modelGraficaEmpresas = 'reporte-grafico-empresas';
-
+		$scope.modelImportacionVentaServicio = 'dialog-importacion-ventas-servicios'
 		$scope.$on('$viewContentLoaded', function () {
 			resaltarPestaña($location.path().substring(1));
 			ejecutarScriptsVenta($scope.idModalWizardCompraEdicion, $scope.idModalWizardVentaVista,
@@ -40,8 +40,8 @@ angular.module('agil.controladores')
 				$scope.idModalContenedorVentaVista, $scope.idInputCompletar, $scope.url, $scope.idModalPago,
 				$scope.idModalCierre,
 				$scope.idModalPanelVentas, $scope.idModalConfirmacionEliminacionVenta, $scope.idModalInventario, $scope.idModalPanelVentasCobro,
-				$scope.idModalEdicionVendedor, $scope.idModalImpresionVencimiento,$scope.IdModalVerificarCuenta, $scope.modalReportesProductos,$scope.modalServicioVenta,
-				$scope.modelGraficaProductos,$scope.modalReportesEmpresas,$scope.modelGraficaEmpresas);
+				$scope.idModalEdicionVendedor, $scope.idModalImpresionVencimiento, $scope.IdModalVerificarCuenta, $scope.modalReportesProductos, $scope.modalServicioVenta,
+				$scope.modelGraficaProductos, $scope.modalReportesEmpresas, $scope.modelGraficaEmpresas, $scope.modelImportacionVentaServicio);
 			$scope.buscarAplicacion($scope.usuario.aplicacionesUsuario, $location.path().substring(1));
 			blockUI.stop();
 		});
@@ -2709,7 +2709,7 @@ angular.module('agil.controladores')
 						doc.text(indice, 45, y);
 						doc.font('Helvetica', 8);
 						doc.text($scope.ventaSinDetalle[i].nombre, 65, y);
-						doc.font('Helvetica', 8,{ align: "center" });
+						doc.font('Helvetica', 8, { align: "center" });
 						doc.text($scope.ventaSinDetalle[i].unidad_medida, 390, y);
 						doc.font('Helvetica', 8);
 						doc.text($scope.ventaSinDetalle[i].cantidad, 470, y);
@@ -2842,8 +2842,8 @@ angular.module('agil.controladores')
 					doc.text($scope.detallePorProducto[i].cantidad, 470, y);
 					doc.font('Helvetica', 8);
 					doc.text($scope.detallePorProducto[i].total, 520, y);
-		
-					
+
+
 					y = y + 30;
 					items++;
 
@@ -2886,11 +2886,11 @@ angular.module('agil.controladores')
 			doc.text("Desde  " + $scope.fechaInicioTexto, -70, 40, { align: "center" });
 			doc.text("Hasta " + $scope.fechaFinTexto, 70, 40, { align: "center" });
 			doc.font('Helvetica-Bold', 8);
-			doc.text(datos[0].producto.nombre,0,55, { align: "center" });
+			doc.text(datos[0].producto.nombre, 0, 55, { align: "center" });
 			doc.font('Helvetica-Bold', 8);
-			doc.text("Codigo: "+datos[0].producto.codigo,45,65);
+			doc.text("Codigo: " + datos[0].producto.codigo, 45, 65);
 			doc.font('Helvetica-Bold', 8);
-			doc.text("Unidad Medida: "+datos[0].producto.unidad_medida,45,75);
+			doc.text("Unidad Medida: " + datos[0].producto.unidad_medida, 45, 75);
 			/*doc.text("FOLIO " + pagina, 550, 25);
 			doc.rect(40, 60, 540, 40).stroke();
 			doc.font('Helvetica-Bold', 8);
@@ -2911,67 +2911,67 @@ angular.module('agil.controladores')
 			doc.text("Pagina " + pagina + " de " + totalPaginas, 500, 750);
 		}
 
-		$scope.abrirReporteGraficoProductos = function(){
+		$scope.abrirReporteGraficoProductos = function () {
 			$scope.abrirPopup($scope.modelGraficaProductos);
 		}
-		$scope.cerrarReporteGraficoProductos = function(){
+		$scope.cerrarReporteGraficoProductos = function () {
 			$scope.cerrarPopup($scope.modelGraficaProductos);
 		}
 
-		
-		$scope.graficarProductos = function(value){
+
+		$scope.graficarProductos = function (value) {
 			var estadoGrafico = value
 			blockUI.start();
 			//var cabecera = ["N°","Producto","Unidad Medida","Cantidad","Total"];
 			var data = [];
 			inicio = new Date($scope.convertirFecha($scope.fechaInicioTexto));
 			fin = new Date($scope.convertirFecha($scope.fechaFinTexto));
-			
-			$scope.paginator.itemsPerPage=0;			
+
+			$scope.paginator.itemsPerPage = 0;
 			var promesa = VentasProductos($scope.paginator);
 			promesa.then(function (datos) {
-				$scope.datosProductosGrafico = datos.ventas.sort(function(a,b){
+				$scope.datosProductosGrafico = datos.ventas.sort(function (a, b) {
 					return b.total - a.total;
-					});
-				
+				});
+
 				for (let i = 0; i < $scope.datosProductosGrafico.length; i++) {
 					var columns = [];
 					columns.push($scope.datosProductosGrafico[i].nombre);
-					columns.push($scope.datosProductosGrafico[i].unidad_medida);	
+					columns.push($scope.datosProductosGrafico[i].unidad_medida);
 					columns.push($scope.datosProductosGrafico[i].cantidad);
 					columns.push($scope.datosProductosGrafico[i].total);
-					data.push(columns);					
+					data.push(columns);
 				}
 				var contenedor = [];
 				var continido = [];
-				
-				contenido = data.map(function(row,i){
-					if (contenedor.length >= 10) {
-						
-					}else{
-						contenedor.push(row); 
-					}			
-				})				
 
-				$scope.reporteGrafico(contenedor,estadoGrafico);
+				contenido = data.map(function (row, i) {
+					if (contenedor.length >= 10) {
+
+					} else {
+						contenedor.push(row);
+					}
+				})
+
+				$scope.reporteGrafico(contenedor, estadoGrafico);
 				blockUI.stop();
 			});
-			
+
 		}
 
-		$scope.reporteGrafico = function(reporte,estadoGrafico){
-		
+		$scope.reporteGrafico = function (reporte, estadoGrafico) {
+
 			$scope.abrirReporteGraficoProductos();
-				var contenedor = [];
-				var legend = [];
-				var datasReporte = [];
-				
+			var contenedor = [];
+			var legend = [];
+			var datasReporte = [];
+
 			if (reporte.length != 0) {
-					datasReporte = reporte.map(function(dato,i){					
-						var variable = {label:dato[0],y:dato[3]};	
-						return variable;
-			
-					})
+				datasReporte = reporte.map(function (dato, i) {
+					var variable = { label: dato[0], y: dato[3] };
+					return variable;
+
+				})
 			}
 
 			if (estadoGrafico == false) {
@@ -2979,49 +2979,49 @@ angular.module('agil.controladores')
 					animationEnabled: true,
 					exportEnabled: true,
 					theme: "light1", // "light1", "light2", "dark1", "dark2"
-					title:{
+					title: {
 						text: "",
 						//fontSize: 14,
 						//horizontalAlign: "center" ,
 						//fontColor:'blue'        
-					},		
+					},
 					data: [
-						{							
+						{
 							// Change type to "doughnut", "line", "splineArea", etc.
 							type: "column",
 							indexLabelFontSize: 10,
 							//showInLegend: true,
-							dataPoints:datasReporte								
+							dataPoints: datasReporte
 						}
 					],
-					axisY:{
+					axisY: {
 						prefix: "",
 						suffix: " Bs."
 					},
-					axisX:{
-						labelFontColor:"white",
+					axisX: {
+						labelFontColor: "white",
 						labelMaxWidth: 50,
 						labelWrap: true,   // change it to false
 						interval: 1
 
 						//prefix: "Very long label "
-					}     
+					}
 				});
 				chart.render();
-			
-			}else if (estadoGrafico == true) {
+
+			} else if (estadoGrafico == true) {
 				var chart = new CanvasJS.Chart("tablaReportes", {
 					animationEnabled: true,
 					exportEnabled: true,
 					theme: "light2", // "light1", "light2", "dark1", "dark2"
-					title:{
+					title: {
 						text: "",
 						//fontSize: 14,
 						//horizontalAlign: "center" ,
 						//fontColor:'blue'        
-					},		
+					},
 					data: [
-						{							
+						{
 							// Change type to "doughnut", "line", "splineArea", etc.
 							type: "pie",
 							startAngle: 25,
@@ -3030,86 +3030,86 @@ angular.module('agil.controladores')
 							legendText: "{label}",
 							indexLabelFontSize: 10,
 							indexLabel: "{label} - {y} Bs.",
-							dataPoints:datasReporte								
+							dataPoints: datasReporte
 						}
 					],
-					axisY:{
+					axisY: {
 						prefix: "",
 						suffix: " Bs."
 					},
-					axisX:{
-						labelFontColor:"black",
+					axisX: {
+						labelFontColor: "black",
 						labelMaxWidth: 50,
 						labelWrap: true,   // change it to false
 						interval: 1,
 						//prefix: "Very long label "
-					}     
+					}
 				});
 				chart.render();
-			
+
 			}
 		}
 
-		$scope.abrirReporteGraficoEmpresa = function(){
+		$scope.abrirReporteGraficoEmpresa = function () {
 			$scope.abrirPopup($scope.modelGraficaEmpresas);
 		}
-		$scope.cerrarReporteGraficoEmpresa = function(){
+		$scope.cerrarReporteGraficoEmpresa = function () {
 			$scope.cerrarPopup($scope.modelGraficaEmpresas);
 		}
 
-		$scope.graficarEmpresa = function(estado){
+		$scope.graficarEmpresa = function (estado) {
 			var estadoGrafico = estado;
 			blockUI.start();
 			//var cabecera = ["N°","Producto","Unidad Medida","Cantidad","Total"];
 			var data = [];
 			inicio = new Date($scope.convertirFecha($scope.fechaInicioTexto));
 			fin = new Date($scope.convertirFecha($scope.fechaFinTexto));
-			
-			$scope.paginator.itemsPerPage=0;			
+
+			$scope.paginator.itemsPerPage = 0;
 			var promesa = ventasDetalleEmpresa($scope.paginator);
-			promesa.then(function(datos){
-				$scope.datosReporteGraficoEmpresa = datos.detalle.sort(function(a,b){
+			promesa.then(function (datos) {
+				$scope.datosReporteGraficoEmpresa = datos.detalle.sort(function (a, b) {
 					return b.total - a.total;
 				});
-				
+
 				for (let i = 0; i < $scope.datosReporteGraficoEmpresa.length; i++) {
 					var columns = []
 					columns.push($scope.datosReporteGraficoEmpresa[i].razon_social);
-					columns.push($scope.datosReporteGraficoEmpresa[i].total);	
-					
+					columns.push($scope.datosReporteGraficoEmpresa[i].total);
+
 					data.push(columns);
 				}
 
 				var contenedor = [];
 				var contenido = [];
 
-				contenido = data.map(function(row, i){
-					
+				contenido = data.map(function (row, i) {
+
 					if (contenedor.length >= 10) {
-						
-					}else{
+
+					} else {
 						contenedor.push(row);
 					}
 				})
 
-				$scope.reporteGraficoEmpresas(contenedor,estadoGrafico);
+				$scope.reporteGraficoEmpresas(contenedor, estadoGrafico);
 				blockUI.stop();
 			})
 		}
 
-		$scope.reporteGraficoEmpresas = function(reporte,estadoGrafico){
-		
+		$scope.reporteGraficoEmpresas = function (reporte, estadoGrafico) {
+
 			$scope.abrirReporteGraficoEmpresa();
 			var contenedor = [];
 			var legend = [];
 			var datasReporte = [];
-				
+
 			if (reporte.length != 0) {
-					datasReporte = reporte.map(function(dato,i){					
-						var variable = {label:dato[0],y:dato[1]};	
-						return variable;
-			
-					})
+				datasReporte = reporte.map(function (dato, i) {
+					var variable = { label: dato[0], y: dato[1] };
+					return variable;
+
+				})
 			}
 
 			if (estadoGrafico == false) {
@@ -3117,49 +3117,49 @@ angular.module('agil.controladores')
 					animationEnabled: true,
 					exportEnabled: true,
 					theme: "light1", // "light1", "light2", "dark1", "dark2"
-					title:{
+					title: {
 						text: "",
 						//fontSize: 14,
 						//horizontalAlign: "center" ,
 						//fontColor:'blue'        
-					},		
+					},
 					data: [
-						{							
+						{
 							// Change type to "doughnut", "line", "splineArea", etc.
 							type: "column",
 							indexLabelFontSize: 10,
 							//showInLegend: true,
-							dataPoints:datasReporte								
+							dataPoints: datasReporte
 						}
 					],
-					axisY:{
+					axisY: {
 						prefix: "",
 						suffix: " Bs."
 					},
-					axisX:{
-						labelFontColor:"white",
+					axisX: {
+						labelFontColor: "white",
 						labelMaxWidth: 50,
 						labelWrap: true,   // change it to false
 						interval: 1
 
 						//prefix: "Very long label "
-					}     
+					}
 				});
 				chart.render();
-			
-			}else if (estadoGrafico == true) {
+
+			} else if (estadoGrafico == true) {
 				var chart = new CanvasJS.Chart("tablaReportesEmpresas", {
 					animationEnabled: true,
 					exportEnabled: true,
 					theme: "light2", // "light1", "light2", "dark1", "dark2"
-					title:{
+					title: {
 						text: "",
 						//fontSize: 14,
 						//horizontalAlign: "center" ,
 						//fontColor:'blue'        
-					},		
+					},
 					data: [
-						{							
+						{
 							// Change type to "doughnut", "line", "splineArea", etc.
 							type: "pie",
 							startAngle: 25,
@@ -3168,23 +3168,23 @@ angular.module('agil.controladores')
 							legendText: "{label}",
 							indexLabelFontSize: 10,
 							indexLabel: "{label} - {y} Bs.",
-							dataPoints:datasReporte								
+							dataPoints: datasReporte
 						}
 					],
-					axisY:{
+					axisY: {
 						prefix: "",
 						suffix: " Bs."
 					},
-					axisX:{
-						labelFontColor:"black",
+					axisX: {
+						labelFontColor: "black",
 						labelMaxWidth: 50,
 						labelWrap: true,   // change it to false
 						interval: 1,
 						//prefix: "Very long label "
-					}     
+					}
 				});
 				chart.render();
-			
+
 			}
 		}
 
@@ -3201,18 +3201,18 @@ angular.module('agil.controladores')
 			}
 		}
 
-		$scope.abrirReporteEmpresas = function(){
+		$scope.abrirReporteEmpresas = function () {
 			$scope.fechaInicioTexto;
 			$scope.fechaFinTexto;
 			$scope.idEmpresa = $scope.usuario.id_empresa;
 
-			if($scope.filtro != undefined){
+			if ($scope.filtro != undefined) {
 				if ($scope.filtro.sucursal) {
 					$scope.sucursalSelec = $scope.filtro.sucursal;
 				} else {
 					$scope.sucursalSelec = 0;
 				}
-			}else{
+			} else {
 				$scope.sucursalSelec = 0
 			}
 
@@ -3247,7 +3247,7 @@ angular.module('agil.controladores')
 				//$scope.filtroDetalleEmpresa($scope.sucursalesUsuario,$scope.fechaInicioTexto,$scope.fechaFinTexto,$scope.sucursalSelec,$scope.idEmpresa);
 				$scope.abrirReportePorEmpresa();
 			}
-			
+
 		}
 
 		$scope.obtenerDetallesEmpresa = function () {
@@ -3267,10 +3267,10 @@ angular.module('agil.controladores')
 
 		}
 
-		$scope.filtroDetalleEmpresa = function(){
+		$scope.filtroDetalleEmpresa = function () {
 			blockUI.start();
 			var promesa = ventasDetalleEmpresa($scope.paginator);
-			promesa.then(function(datos){
+			promesa.then(function (datos) {
 				$scope.detalleEmpresa = datos.detalle;
 				$scope.paginator.setPages(datos.paginas);
 				blockUI.stop();
@@ -3278,11 +3278,11 @@ angular.module('agil.controladores')
 
 		}
 
-		$scope.abrirReportePorEmpresa = function(){
+		$scope.abrirReportePorEmpresa = function () {
 			$scope.abrirPopup($scope.modalReportesEmpresas);
 		}
 
-		$scope.cerrarReportePorEmpresa = function(){
+		$scope.cerrarReportePorEmpresa = function () {
 			$scope.cerrarPopup($scope.modalReportesEmpresas);
 		}
 
@@ -3333,6 +3333,16 @@ angular.module('agil.controladores')
 			$scope.cerrarPopup($scope.modalServicioVenta)
 		}
 
+		$scope.abrirModalImportacionVentaServicio = function () {
+			$scope.venta = { sucursal: "", actividad: "", fecha: "", movimiento: { nombre_corto: "SERV" } }
+
+			$scope.obtenerListaServiciosVentas()
+			$scope.abrirPopup($scope.modelImportacionVentaServicio)
+		}
+		$scope.cerrarModalImportacionVentaServicio = function () {
+			$scope.cerrarPopup($scope.modelImportacionVentaServicio)
+		}
+
 		$scope.obtenerListaServiciosVentas = function () {
 			var promesa = ListaServiciosVentas($scope.usuario.id_empresa)
 			promesa.then(function (dato) {
@@ -3381,6 +3391,185 @@ angular.module('agil.controladores')
 
 			})
 		}
+		$scope.verificarCamposForimImpServ = function (formimpvent) {
+			formimpvent.activ.$touched = (formimpvent.activ.$invalid) ? true : false
+			formimpvent.fechaSerImp.$touched = (formimpvent.fechaSerImp.$invalid) ? true : false
+			formimpvent.sucServImp.$touched = (formimpvent.sucServImp.$invalid) ? true : false
+
+		}
+		$scope.subirExcelVentasServicios = function (event) {
+
+			//console.log('iniciando carga de pacientes')
+			var files = event.target.files;
+			var i, f;
+			for (i = 0, f = files[i]; i != files.length; ++i) {
+				//console.log('iniciando lectura de excel(s)')
+				var reader = new FileReader();
+				var name = f.name;
+				reader.onload = function (e) {
+
+					var data = e.target.result;
+
+					var workbook = XLSX.read(data, { type: 'binary' });
+					var first_sheet_name = workbook.SheetNames[0];
+					var row = 2, i = 0, row2 = 2;
+					var worksheet = workbook.Sheets[first_sheet_name];
+					var ventas = [];
+					var arregloServicios = []
+					var arregloClientes= []
+					do {
+						row2 = 2
+						var venta = { tipoPago: {}, detallesVenta: [], cliente: {}, fechaTexto: $scope.venta.fecha, sucursal: $scope.venta.sucursal, actividad: $scope.venta.actividad };
+						var NumeroVenta = worksheet['A' + row] != undefined && worksheet['A' + row] != "" ? worksheet['A' + row].v.toString() : null;
+						if (row == 2) {
+							var NumeroVentaComparacion = worksheet['A' + row] != undefined && worksheet['A' + row] != "" ? worksheet['A' + row].v.toString() : null;
+						} else {
+							var NumeroVentaComparacion = worksheet['A' + (row - 1)] != undefined && worksheet['A' + (row - 1)] != "" ? worksheet['A' + (row - 1)].v.toString() : null;
+						}
+						venta.cliente.nit = worksheet['B' + row] != undefined && worksheet['B' + row] != "" ? worksheet['B' + row].v.toString() : null;
+						venta.cliente.razon_social = worksheet['C' + row] != undefined && worksheet['C' + row] != "" ? worksheet['C' + row].v.toString() : null;
+						var bandera = false
+							if (arregloClientes.length > 0) {
+								for (var i = 0; i < arregloClientes.length; i++) {
+									var element = arregloClientes[i].nit;
+									if (venta.cliente.nit != null) {
+										if (element == venta.cliente.nit) {
+											bandera = true
+										}
+									}
+								}
+								if (!bandera) {
+
+									arregloClientes.push(venta.cliente)
+
+								}
+							} else {
+								arregloClientes.push(venta.cliente)
+
+							}
+						venta.vendedor = worksheet['D' + row] != undefined && worksheet['D' + row] != "" ? worksheet['D' + row].v.toString() : null;
+						venta.observacion = worksheet['E' + row] != undefined && worksheet['E' + row] != "" ? worksheet['E' + row].v.toString() : null;
+						venta.tipoPago.nombre = worksheet['F' + row] != undefined && worksheet['F' + row] != "" ? worksheet['F' + row].v.toString() : null;
+						venta.dias_credito = worksheet['G' + row] != undefined && worksheet['G' + row] != "" ? parseInt(worksheet['G' + row].v.toString()) : null;
+						venta.a_cuenta = worksheet['H' + row] != undefined && worksheet['H' + row] != "" ? parseFloat(worksheet['H' + row].v.toString()) : null;
+
+						do {
+							var detalleVenta = { servicio: {} }
+							detalleVenta.servicio.nombre = worksheet['I' + row2] != undefined && worksheet['I' + row2] != "" ? worksheet['I' + row2].v.toString() : null;
+							detalleVenta.servicio.precio = worksheet['K' + row2] != undefined && worksheet['K' + row2] != "" ? parseFloat(worksheet['K' + row2].v.toString()) : null;
+							detalleVenta.servicio.id_empresa=$scope.usuario.id_empresa
+							var bandera = false
+							if (arregloServicios.length > 0) {
+								for (var i = 0; i < arregloServicios.length; i++) {
+									var element = arregloServicios[i].nombre;
+									if (detalleVenta.servicio.nombre != null) {
+										if (element == detalleVenta.servicio.nombre) {
+											bandera = true
+										}
+									}
+								}
+								if (!bandera) {
+
+									arregloServicios.push(detalleVenta.servicio)
+
+								}
+							} else {
+								arregloServicios.push(detalleVenta.servicio)
+
+							}
+							detalleVenta.observaciones = worksheet['J' + row2] != undefined && worksheet['J' + row2] != "" ? worksheet['J' + row2].v.toString() : null;
+							detalleVenta.importe = worksheet['K' + row2] != undefined && worksheet['K' + row2] != "" ? parseFloat(worksheet['K' + row2].v.toString()) : null;
+
+							detalleVenta.descuento = worksheet['L' + row2] != undefined && worksheet['L' + row2] != "" ? parseFloat(worksheet['L' + row2].v.toString()) : null;
+							detalleVenta.tipo_recargo = worksheet['M' + row2] != undefined && worksheet['M' + row2] != "" ? parseFloat(worksheet['M' + row2].v.toString()) : null;
+							detalleVenta.recargo = worksheet['N' + row2] != undefined && worksheet['N' + row2] != "" ? parseFloat(worksheet['N' + row2].v.toString()) : null;
+							detalleVenta.ice = worksheet['O' + row2] != undefined && worksheet['O' + row2] != "" ? parseFloat(worksheet['O' + row2].v.toString()) : null;
+							detalleVenta.excento = worksheet['P' + row2] != undefined && worksheet['P' + row2] != "" ? parseFloat(worksheet['P' + row2].v.toString()) : null;
+
+							var NumeroVentaA = worksheet['A' + row2] != undefined && worksheet['A' + row2] != "" ? worksheet['A' + row2].v.toString() : null;
+
+							if (NumeroVenta == NumeroVentaA) {
+								var recargo = detalleVenta.recargo
+								if (detalleVenta.tipo_recargo == "%") {
+									recargo = $scope.detalleVenta.importe * (detalleVenta.recargo / 100);
+								}
+								var serv = $scope.serviciosVentas.filter(function (dato) {
+									return dato.nombre == detalleVenta.servicio.nombre
+								})
+								if (serv.length > 0) {
+									detalleVenta.servicio = serv[0]
+								}
+								detalleVenta.total = Math.round((detalleVenta.importe - detalleVenta.descuento + recargo - detalleVenta.ice - detalleVenta.excento) * 1000) / 1000;
+
+								venta.detallesVenta.push(detalleVenta);
+							}
+							row2++;
+							/*  i++; */
+						} while (worksheet['A' + row2] != undefined);
+
+
+						if (NumeroVenta != NumeroVentaComparacion || row == 2) {
+							var sumaImporte = 0;
+							for (var i = 0; i < venta.detallesVenta.length; i++) {
+								if (!venta.detallesVenta[i].eliminado) {
+									sumaImporte = sumaImporte + venta.detallesVenta[i].importe;
+								}
+							}
+							venta.importe = Math.round((sumaImporte) * 1000) / 1000;
+							var sumaTotal = 0;
+							for (var i = 0; i < venta.detallesVenta.length; i++) {
+								if (!venta.detallesVenta[i].eliminado) {
+									sumaTotal = sumaTotal + venta.detallesVenta[i].total;
+								}
+							}
+							venta.total = Math.round((sumaTotal) * 1000) / 1000;
+							venta.pagado = venta.total;
+
+							var tipo_pago = $scope.tiposPago.filter(function (dato) {
+								return dato.nombre == venta.tipoPago.nombre
+							})
+							venta.tipoPago = tipo_pago[0]
+							if (venta.tipoPago.nombre == "CREDITO") {
+								venta.saldo = venta.total - venta.a_cuenta;
+							} else {
+								venta.saldo = null
+							}
+							venta.cambio = 0
+							venta.id_usuario = $scope.usuario.id
+							var mov = $scope.movimientosEgreso.filter(function (dato) {
+								return dato.nombre_corto == $scope.diccionario.EGRE_SERVICIO
+							})
+							var vend = $scope.vendedores.filter(function (dato) {
+								return dato.persona.nombre_completo == venta.vendedor
+							})
+							if (vend.length > 0) {
+								venta.vendedor = vend[0]
+							}
+							venta.movimiento = mov[0]
+							venta.id_empresa = $scope.usuario.id_empresa
+							venta.fecha = new Date($scope.convertirFecha(venta.fechaTexto))
+							ventas.push(venta);
+						}
+						row++;
+						i++;
+
+					} while (worksheet['A' + row] != undefined);
+					$scope.guardarImportacionVentasServicios(ventas, arregloServicios,arregloClientes);
+				};
+				reader.readAsBinaryString(f);
+
+			}
+		}
+		$scope.guardarImportacionVentasServicios = function (ventas, arregloServicios,arregloClientes) {
+			blockUI.start();
+			var promesa = GuardarVentasImportados(ventas, arregloServicios,arregloClientes)
+			promesa.then(function (dato) {
+				blockUI.stop()
+				$scope.mostrarMensaje(dato.mensaje)
+			})
+
+
+		}
 		$scope.$on('$routeChangeStart', function (next, current) {
 			$scope.eliminarPopup($scope.idModalWizardCompraEdicion);
 			$scope.eliminarPopup($scope.idModalWizardVentaVista);
@@ -3396,6 +3585,7 @@ angular.module('agil.controladores')
 			$scope.eliminarPopup($scope.modalReportesProductos);
 			$scope.eliminarPopup($scope.modelGraficaProductos);
 			$scope.eliminarPopup($scope.modalServicioVenta)
+			$scope.eliminarPopup($scope.modelImportacionVentaServicio)
 		});
 
 

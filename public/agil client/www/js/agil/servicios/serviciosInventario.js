@@ -589,6 +589,24 @@ angular.module('agil.servicios')
 		};
 		return res;
 	}])
+	.factory('VentasServicioImportados', function ($resource) {
+		return $resource(restServer + "importacion-ventas-servicio", { id: '@id' },
+			{
+				'update': { method: 'PUT' }
+			});
+	})
+	.factory('GuardarVentasImportados', ['VentasServicioImportados', '$q', function (VentasServicioImportados, $q) {
+		var res = function (ventas,arregloServicios,arregloClientes) {
+			var delay = $q.defer();
+			VentasServicioImportados.save(null,{ventas:ventas,arregloServicios:arregloServicios,arregloClientes:arregloClientes}, function (entidad) {
+				delay.resolve(entidad);
+			}, function (error) {
+					delay.reject(error);
+				});
+			return delay.promise;
+		};
+		return res;
+	}]);
 	/* .factory('VentaServico', function ($resource) {
 		return $resource(restServer + "venta/servicios/:id", { id: '@id' },
 			{

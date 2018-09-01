@@ -123,6 +123,15 @@ angular.module('agil.controladores')
 			// $scope.abrirPopup($scope.idModalWizardUsuarioVista);
 		}
 
+		$scope.verificarEmpresa=function(idEmpresa){
+			 var empresa = $scope.empresas.filter(function(dato){
+				
+					return dato.id==idEmpresa
+				
+				
+			})
+			$scope.empresaSeleccionada=empresa[0]
+		}
 		$scope.modificarUsuario = function (usuario) {
 
 			blockUI.start()
@@ -132,6 +141,8 @@ angular.module('agil.controladores')
 					if ($scope.usuarioSesion.id_empresa == null) {
 						var promesa = ListaGruposProductoEmpresa(usuario.id_empresa);
 						promesa.then(function (grupos) {
+							$scope.obtenerAplicacionesEmpresas(usuario.id_empresa)
+							$scope.verificarEmpresa(usuario.id_empresa)
 							$scope.gruposProducto = grupos
 							$scope.llenarGrupos(grupos);
 							$scope.llenarGrupos($scope.gruposProducto)

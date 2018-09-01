@@ -140,7 +140,11 @@ module.exports = function (sequelize, Sequelize) {
 		usar_venta_servicio:{
 			type: Sequelize.BOOLEAN,
 			field: 'usar_venta_servicio'
-		}
+		},
+		usar_facturacion_masiva:{
+			type: Sequelize.BOOLEAN,
+			field: 'usar_facturacion_masiva'
+		},
 	}, {
 			freezeTableName: true
 		});

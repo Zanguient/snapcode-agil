@@ -235,7 +235,8 @@
 				</div>
 			</div>
 			</div>
- --></div>
+ -->
+		</div>
 	</div>
 </div>
 
@@ -330,7 +331,7 @@
 									<label class="col-sm-3 control-label no-padding-right" for="empresa">Empresa</label>
 									<div class="col-sm-9">
 										<select ng-disabled="usuarioSesion.id_empresa!=null" required id="empresa" name="empresa" data-placeholder="Click para escoger"
-										 ng-model="usuario.id_empresa" ng-change="buscarSucursales(usuario.id_empresa);obtenerGruposProductoEmpresa(usuario.id_empresa);obtenerAplicacionesEmpresas(usuario.id_empresa)">
+										 ng-model="usuario.id_empresa" ng-change="buscarSucursales(usuario.id_empresa);obtenerGruposProductoEmpresa(usuario.id_empresa);obtenerAplicacionesEmpresas(usuario.id_empresa);obtenerAplicacionesEmpresas(usuario.id_empresa);verificarEmpresa(usuario.id_empresa)">
 											<option ng-selected="empresa.id==usuario.id_empresa" ng-repeat="empresa in empresas" value="{{empresa.id}}">{{empresa.razon_social}}</option>
 										</select>
 									</div>
@@ -410,6 +411,7 @@
 									</div>
 								</div>
 							</div>
+							<div class="form-group" ng-if="verdatosCajaChica"><b><h4>Atribuciones Caja Chica</h4></b></div>
 							<div class="row">
 								<div class="col-sm-6">
 									<div class="form-group" ng-if="verdatosCajaChica">
@@ -466,6 +468,27 @@
 											</div>
 										</div>
 									</div>
+								</div>
+							</div>
+							<div class="form-group" ng-if="usuarioSesion.empresa.usar_facturacion_masiva || empresaSeleccionada.usar_facturacion_masiva"><b><h4>Atribuciones Ventas</h4></b></div>
+
+							<div class="row">
+								<div class="col-sm-6">
+										<div class="form-group" ng-if="verdatosCajaChica">
+												<div class="row">
+													<label class="control-labelno-padding-right">¿Usar Importacion Ventas de Servicios?</label>
+		
+													<div class="">
+														<label>
+															<input name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="usuario.usar_importacion_venta_servicio"
+															/>
+															<span class="lbl check-descuento"></span>
+														</label>
+													</div>
+												</div>
+											</div>
+								</div>
+								<div class="col-sm-6">
 								</div>
 							</div>
 						</div>
@@ -811,7 +834,8 @@
 
 <div id="dialog-eliminar-usuario" title="¿Eliminación de Usuario?">
 	<p>
-		<span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>¿Esta seguro de eliminar el usuario seleccionado?</p>
+		<span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>¿Esta seguro de eliminar el usuario
+		seleccionado?</p>
 	<button type="button" class="btn btn-danger" ng-click="eliminarUsuario(usuario)">Si</button>
 	<button type="button" class="btn btn-success" ng-click="cerrarConfirmacionEliminacion()">No</button>
 </div>

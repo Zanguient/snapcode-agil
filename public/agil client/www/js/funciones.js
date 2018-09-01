@@ -596,7 +596,7 @@ function ejecutarScriptsVenta(idPopupEdicion, idPopupVista, idPopupEliminacion,
 	idContenedorEdicion, idContenedorVista, idInput, url,
 	idPopupPago, idPopupCierre, idPopupPanel, idPopupEliminacion, idModalInventario, idModalPanelCobro,
 	idModalVendedor, idModalImpresionVencimiento,IdModalVerificarCuenta,modalReportesProductos,modalServicioVenta,
-	modelGraficaProductos,modalReportesEmpresas,modelGraficaEmpresas) {
+	modelGraficaProductos,modalReportesEmpresas,modelGraficaEmpresas,modelImportacionVentaServicio) {
 	crearPopup(idPopupEdicion, "100%", 'auto');
 	crearPopup(idPopupVista, "100%", 600);
 	crearPopup(idModalInventario, "85%", 550);
@@ -618,7 +618,7 @@ function ejecutarScriptsVenta(idPopupEdicion, idPopupVista, idPopupEliminacion,
 	crearPopup(modalServicioVenta, "auto","auto");
 	crearPopup(modalReportesEmpresas,"50%","auto");
 	crearPopup(modelGraficaEmpresas,"50%","auto");
-
+	crearPopup(modelImportacionVentaServicio, "30%","auto");
 	$(document).on('click', '#campos-detalle-venta', function (e) {
 		e.stopPropagation();
 	});

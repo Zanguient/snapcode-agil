@@ -1,0 +1,2 @@
+ALTER TABLE agil_empresa drop usar_facturacion_masiva;
+ALTER TABLE sys_usuario drop usar_importacion_venta_servicio;
