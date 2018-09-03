@@ -41,6 +41,27 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 			});
 		});
 
+	router.route('/obtenerDetalleVenta/empresa/:id_empresa')
+		.get(function(req, res){
+			Venta.findAll({
+				include:[{
+					model: DetalleVenta, as:'detallesVenta'
+				},
+				{ 
+					model: Almacen, as: 'almacen', 
+					include: [
+						{
+							model: Sucursal, as: 'sucursal', where: { id_empresa: req.params.id_empresa } 
+						}] 
+					}
+			]
+			}).then(function(detalle){
+				res.json(detalle);
+			}).catch(function(error){
+				res.json([{mensaje:error.stack}]);
+			})
+		})
+
 	router.route('/inventario/:id')
 		.put(function (req, res) {
 			Inventario.update({
