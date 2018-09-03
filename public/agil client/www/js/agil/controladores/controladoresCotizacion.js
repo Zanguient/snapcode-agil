@@ -60,8 +60,8 @@ angular.module('agil.controladores')
                     templateUrl: 'myPopoverTemplate.html',
             };
 			$scope.paginator.callBack = $scope.obtenerLista;
-			$scope.filtro = { empresa: $scope.usuario.id_empresa, inicio: "", fin: "", fecha_inicio: new Date(), fecha_fin: new Date(), busqueda: "", importe: 0 };
-			$scope.paginator.getSearch("", $scope.filtro, null);
+			$scope.filtro = { empresa: $scope.usuario.id_empresa, inicio: "", fin: "", fecha_inicio: new Date(), fecha_fin: new Date(), busqueda: "", importe: 0, estado: "", sucursal: "", usuario: "", razon_social: "", nit: "" };
+			// $scope.paginator.getSearch("", $scope.filtro, null);
 		}
 
 		$scope.establecerFechas = function (inicio, fin) {
@@ -77,6 +77,15 @@ angular.module('agil.controladores')
 				$scope.cotizaciones = dato.cotizaciones;
 				blockUI.stop();
 			})
+		}
+
+
+		$scope.sumarMonto = function () {
+			var suma = 0;
+			for (var i = 0; i < $scope.cotizaciones.length; i++) {
+				suma = suma + $scope.cotizaciones[i].importe;
+			}
+			return Math.round(suma * 100) / 100;
 		}
 
 		$scope.$on('$viewContentLoaded', function () {
@@ -104,6 +113,7 @@ angular.module('agil.controladores')
 		$scope.$on('$routeChangeStart', function (next, current) {
 			$scope.eliminarPopup($scope.idModalWizardCotizacionNueva);
 			$scope.eliminarPopup($scope.idModalInventario);
+			$scope.eliminarPopup($scope.idModalDialogRechazo);
 
 		});
 
@@ -197,14 +207,21 @@ angular.module('agil.controladores')
 						$scope.mostrarMensaje('Actualizado exitosamente!');
 					});
 				} else {
+					var tiempoActual = new Date();
+					cotizacion.fecha = new Date($scope.convertirFecha(cotizacion.fechaTexto));
+					cotizacion.fecha.setHours(tiempoActual.getHours());
+					cotizacion.fecha.setMinutes(tiempoActual.getMinutes());
+					cotizacion.fecha.setSeconds(tiempoActual.getSeconds())
 					cotizacion.$save(function (res) {
+						console.log("cotizacion guardaoooo ", res);
 						blockUI.stop();
-						promesa = ultimaCotizacion()
-						promesa.then(function (dato) {
-							$scope.cotizacionImp = dato.cotizacion[0];
-							console.log(dato.cotizacion[0].id)
-							$scope.imprimirCotizacion($scope.cotizacionImp);
-						});
+						// promesa = ultimaCotizacion()
+						// promesa.then(function (dato) {
+						// 	$scope.cotizacionImp = dato.cotizacion[0];
+						// 	console.log(dato.cotizacion[0].id)
+						// 	$scope.imprimirCotizacion($scope.cotizacionImp);
+						// });
+						$scope.imprimirCotizacion(res.cotizacion);
 						$scope.cerrarNuevaCotizacion();
 						$scope.recargarItemsTabla();
 						$scope.mostrarMensaje('Cotización registrada exitosamente!');
@@ -417,7 +434,7 @@ angular.module('agil.controladores')
 					if (totalAray != cotizacion.detallesCotizacion.length) {
 						doc.text('Pag. ' + pagina + ' de ' + totalPaginas, 520, papel[1] - 40);
 						doc.addPage({ size: papel, margin: 10 });
-						yCuerpo = 140;
+						yCuerpo = 240;
 						items = 0;
 						pagina = pagina + 1;
 						$scope.dibujarCabeceraImpresionCotizacion(doc, cotizacion, pagina, totalPaginas, existenDescuentos, yCuerpo - 20);
@@ -461,8 +478,8 @@ angular.module('agil.controladores')
 			doc.text(cotizacion.firma, 55, papel[1] - 90);
 			doc.text(cotizacion.cargo.toUpperCase(), 55, papel[1] - 80);
 
-			doc.text("usuario : " + $scope.usuario.nombre_usuario, 380, papel[1] - 40);
-			doc.text("fecha : " + fechaActual.getDate() + "/" + (fechaActual.getMonth() + 1) + "/" + fechaActual.getFullYear() + "  " + fechaActual.getHours() + ":" + min, 480, papel[1] - 40);
+			doc.text("usuario : " + $scope.usuario.nombre_usuario, 380, papel[1] - 60);
+			doc.text("fecha : " + fechaActual.getDate() + "/" + (fechaActual.getMonth() + 1) + "/" + fechaActual.getFullYear() + "  " + fechaActual.getHours() + ":" + min, 480, papel[1] - 60);
 		
 			if (totalPaginas > 1) {
 				doc.text('Pag. ' + pagina + ' de ' + totalPaginas, 520, papel[1] - 40);
@@ -680,7 +697,7 @@ angular.module('agil.controladores')
 
 				console.log('impresion papel carta')
 				papel = [612, 792];
-				itemsPorPagina = 20;
+				itemsPorPagina = 10;
 				$scope.imprimirCotizacionCartaOficio(papel, cotizacionConsultada, itemsPorPagina, datos.numero_literal);
 				// if (cotizacionConsultada.configuracion.tamanoPapelCotizacion.nombre_corto == Diccionario.FACT_PAPEL_OFICIO) {
 				// 	console.log('impresion papel oficio')
@@ -746,6 +763,151 @@ angular.module('agil.controladores')
             blockUI.stop();
             $scope.cerrarDialogDialogRechazo();
         }
+
+        $scope.imprimirFiltroCajaCartaOficio = function (cotizaciones, fechaInicio, fechaFin) {
+			var doc = new PDFDocument({ compress: false, size: [612, 792], margin: 0 });
+			var stream = doc.pipe(blobStream());
+			
+			var itemsPorPagina = 20;
+			var totalPaginas = Math.ceil(cotizaciones.length / itemsPorPagina);
+			
+			var y = 100, items = 0, pagina = 1;
+			$scope.imprimirCabeceraFiltroCajaCartaOficio(doc, 1, totalPaginas, cotizaciones, fechaInicio, fechaFin);
+
+			doc.font('Helvetica', 7);
+
+			for (var i = 0; i < cotizaciones.length; i++) {
+				doc.font('Helvetica', 7);
+				doc.rect(50, y + 9, 520, 0).stroke();
+
+				doc.text(i + 1, 55, y + 20);
+				doc.font('Helvetica', 6);
+				doc.text(cotizaciones[i].sucursal.nombre, 80, y + 20);
+				if (cotizaciones[i].cliente) {
+					doc.font('Helvetica', 6);
+					doc.text(cotizaciones[i].cliente.razon_social, 150, y + 15, { width: 75 });
+					doc.font('Helvetica', 7);
+					doc.text(cotizaciones[i].cliente.nit, 270, y + 20);
+				} else {
+					doc.text("", 150, y + 16, { width: 75 });
+					doc.text("", 270, y + 20);
+				}
+				cotizaciones[i].fecha = new Date(cotizaciones[i].fecha);
+				doc.text(cotizaciones[i].fecha.getHours() + ":" + cotizaciones[i].fecha.getMinutes() + " - ", 340, y + 21, { width: 28 });
+				var widthFecha = 360;
+				if (cotizaciones[i].fecha.getMinutes() > 10) {
+					widthFecha = 365;
+				}
+				doc.text(cotizaciones[i].fecha.getDate() + "/" + (cotizaciones[i].fecha.getMonth() + 1) + "/" + cotizaciones[i].fecha.getFullYear(), widthFecha, y + 21, { width: 32 });
+				doc.text(cotizaciones[i].importe, 425, y + 20);
+				doc.text(cotizaciones[i].usuario.nombre_usuario, 455, y + 20);
+				doc.text(cotizaciones[i].estado, 500, y + 16, { width: 65 });
+
+				doc.font('Helvetica', 7);
+				y = y + 30;
+				items++;
+
+				if (items == itemsPorPagina) {
+					doc.text(pagina + " de " + totalPaginas, 520, 705);
+					var currentDate = new Date();
+					doc.text("FECHA : " + currentDate.getDate() + "/" + (currentDate.getMonth() + 1) + "/" + currentDate.getFullYear() + "   " + "Hr:" + currentDate.getHours() + ":" + currentDate.getMinutes(), 55, 705);
+					doc.text("USUARIO: " + $scope.usuario.nombre_usuario, 150, 705);
+
+					doc.addPage({ size: [612, 792], margin: 10 });
+					y = 100;
+					items = 0;
+					pagina = pagina + 1;
+					$scope.imprimirCabeceraFiltroCajaCartaOficio(doc, 1, totalPaginas, cotizaciones, fechaInicio, fechaFin);
+				}
+
+				
+			}
+			doc.font('Helvetica', 7);
+			doc.text(pagina + " de " + totalPaginas, 520, 705);
+			var currentDate = new Date();
+			doc.text("FECHA : " + currentDate.getDate() + "/" + (currentDate.getMonth() + 1) + "/" + currentDate.getFullYear() + "   " + "Hr:" + currentDate.getHours() + ":" + currentDate.getMinutes(), 55, 705);
+			doc.text("USUARIO: " + $scope.usuario.nombre_usuario, 150, 705);
+			doc.end();
+			stream.on('finish', function () {
+				var fileURL = stream.toBlobURL('application/pdf');
+				window.open(fileURL, '_blank', 'location=no');
+			});
+			blockUI.stop();
+		}
+		$scope.imprimirCabeceraFiltroCajaCartaOficio = function (doc, pagina, totalPaginas, cotizaciones, fechaInicio, fechaFin) {
+
+			doc.font('Helvetica-Bold', 16);
+			doc.text('REPORTE DE COTIZACIONES', 0, 40, { align: 'center' });
+			doc.font('Helvetica-Bold', 8);
+			doc.rect(50, 80, 520, 620).stroke();
+
+			doc.text("Desde: " + fechaInicio + " Hasta: " + fechaFin, 0, 55, { align: 'center' });
+
+			doc.font('Helvetica-Bold', 7);
+			//doc.rect(50,80,520,25).stroke();
+
+
+			doc.font('Helvetica-Bold', 8);
+
+			doc.text("N°", 55, 90);
+			doc.text("Sucursal", 80, 90);
+			doc.text("Razon Social", 150, 90);
+			doc.text("Nit Cliente", 270, 90);
+			doc.text("Fecha", 340, 90);
+			doc.text("Monto", 420, 90);
+			doc.text("Usuario", 455, 90);
+			doc.text("Estado", 500, 90);
+		}
+
+		$scope.imprimirFiltroExcelCajaCartaOficio = function (cotizacion) {
+			blockUI.start();
+
+			var data = [["N°", "Sucursal", "Razon Social", "Nit Cliente", "Fecha", "Monto", "Usuario", "Estado"]]
+			/*var sumaImporte=0,sumaImporteNo=0,sumaTotal=0,sumaDescuentos=0,sumaImporteBase=0,sumaCredito=0;*/
+			for (var i = 0; i < cotizacion.length; i++) {
+				cotizacion[i].fecha = new Date(cotizacion[i].fecha);
+			}
+			cotizacion.sort(function (a, b) {
+				if (a.fecha > b.fecha) {
+					return 1;
+				}
+				if (a.fecha < b.fecha) {
+					return -1;
+				}
+				return 0;
+			})
+			for (var i = 0; i < cotizacion.length; i++) {
+				var columns = [];
+				columns.push(i + 1);
+				columns.push(cotizacion[i].sucursal.nombre);
+				if (cotizacion[i].cliente) {
+					columns.push(cotizacion[i].cliente.razon_social);
+					columns.push(cotizacion[i].cliente.nit);
+				} else {
+					columns.push("");
+					columns.push("");
+				}
+				columns.push(cotizacion[i].fecha);
+				columns.push(cotizacion[i].importe);
+				columns.push(cotizacion[i].usuario.nombre_usuario);
+				columns.push(cotizacion[i].estado);
+				
+				
+				data.push(columns);
+
+			}
+
+			var ws_name = "SheetJS";
+			var wb = new Workbook(), ws = sheet_from_array_of_arrays(data);
+			/* add worksheet to workbook */
+			wb.SheetNames.push(ws_name);
+			wb.Sheets[ws_name] = ws;
+			var wbout = XLSX.write(wb, { bookType: 'xlsx', bookSST: true, type: 'binary' });
+			saveAs(new Blob([s2ab(wbout)], { type: "application/octet-stream" }), "Reporte-cotizaciones.xlsx");
+			blockUI.stop();
+
+		}
+
 
 		$scope.inicio();
 	});

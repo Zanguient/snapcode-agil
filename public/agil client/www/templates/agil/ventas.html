@@ -375,6 +375,9 @@
 								<i class="ace-icon fa fa-times red2 align-top bigger-125"></i>
 								CERRAR
 							</button>
+							<button id="" type="button" class="btn btn-success pull-right" ng-if="usuario.empresa.usar_cotizacion" ng-click="abrirPopupCotizaciones()" style="margin-right: -95px;">
+								<i class="ace-icon fa fa-file-text bigger-125"></i>
+							</button>
 						</p>
 
 					</div>
@@ -3035,15 +3038,6 @@
 						</div>
 					</div>
 				</div>
-
-
-
-
-
-
-
-
-
 			</div>
 			<div class="modal-footer">
 				<button type="button" class="btn btn-danger" ng-click="cerrarModalImportacionVentaServicio()">Cerrar</button>
@@ -3054,3 +3048,208 @@
 </div>
 </div>
 <!-- fin configuracion gestiones -->
+<!-- cotizaciones -->
+<div id="dialog-cotizaciones-venta">
+	<div class="table-header text-center">
+            Cotizaciones
+    </div>
+	<div class="row">
+		<form name="formularioBusquedaInventario" novalidate>
+			<div class="col-xs-10">
+				<div class="row" ng-include src="'/templates/gral/paginator-header-1.html'">
+				</div>
+			</div>
+			<div class="col-xs-2">
+				<button ng-disabled="formularioBusquedaInventario.$invalid" type="button" ng-click="cerrarPopupCotizaciones(idModalInventario)" class="btn btn-danger button-close">
+					<i class="ace-icon fa fa-close align-top bigger-125"></i>
+				</button>
+			</div>
+		</form>
+	</div>
+	<div class="row">
+		<table id="tabla-inventarios" class="table table-striped table-bordered table-hover">
+			<thead>
+				<tr>
+					<th class="center">
+						#
+					</th>
+					<th>
+						<a href="javascript:void(0)" ng-click="clasificarColumna('fecha')">Fecha
+							<span id="codigop" class="sort ace-icon fa fa-sort icon-only"></span>
+						</a>
+					</th>
+					<th>
+						<a href="javascript:void(0)" ng-click="clasificarColumna('razon_social')">Empresa
+							<span id="nombrep" class="sort ace-icon fa fa-sort icon-only"></span>
+						</a>
+					</th>
+					<th>
+						<a href="javascript:void(0)" ng-click="clasificarColumna('importe')">Monto
+							<span id="descripcionp" class="sort ace-icon fa fa-sort icon-only"></span>
+						</a>
+					</th>
+					
+					<th>Acciones</th>
+				</tr>
+			</thead>
+
+			<tbody>
+				<tr ng-repeat="cotizacion in cotizaciones">
+					<td class="center">
+						{{$index+1}}
+					</td>
+					<td>{{cotizacion.fecha | date:"dd/MM/yyyy"}}</td>
+					<td>{{cotizacion.cliente.razon_social}}</td>
+					<td>{{cotizacion.importe}}</td>
+					<td>
+						<button type="button" ng-click="obtenerDetalleCotizacion(cotizacion, false)" class="btn btn-primary btn-sm">
+							<i class="ace-icon fa fa-search icon-only"></i>
+						</button>
+
+						<button type="button" ng-click="obtenerDetalleCotizacion(cotizacion, true)" class="btn btn-success btn-sm">
+							<i class="ace-icon fa fa-chevron-right icon-only"></i>
+						</button>
+						<!--<button type="button" ng-click="verDetalleInventario(producto)" class="btn btn-info btn-sm">
+							<i class="ace-icon fa fa-search-plus icon-only"></i>
+						</button>-->
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	<div class="row" ng-include src="'/templates/GRAL/paginator.html'">
+	</div>
+</div>
+
+
+<div id="dialog-detalle-cotizaciones">
+	<div class="table-header text-center" style="background-color: #ffb752!important;">
+            Detalle Cotizacion
+    </div>
+	
+		<div class="row">
+            
+           <div class="col-xs-10">
+				<h5 class="blue titulo-pre-requisito ng-binding">
+            	{{cotizacion.cliente.razon_social}}
+	            </h5>
+	            <h5 class="blue titulo-pre-requisito ng-binding">
+	            	COTIZACION {{cotizacion.numero_documento}}
+	            </h5>
+	            <h5 class="blue titulo-pre-requisito ng-binding">
+	            	FECHA {{cotizacion.fecha | date:"dd/MM/yyyy"}}
+	            </h5>
+			</div>
+			<div class="col-xs-2">
+				<button  type="button" ng-if="editCoticacion" ng-disabled="isCheckedCotizacion(cotizacion)" ng-click="agregarVentaCotizacion(cotizacion)" class="btn btn-primary button-close">
+					<i class="ace-icon fa fa-check align-top bigger-125"></i>
+				</button>
+				<button ng-disabled="formularioBusquedaInventario.$invalid" type="button" ng-click="cerrarPopupDetalleCotizaciones(idModalInventario)" class="btn btn-danger button-close">
+					<i class="ace-icon fa fa-close align-top bigger-125"></i>
+				</button>
+			</div>
+        </div>
+		<div class="modal-body no-padding">
+
+			<table id="" class="table table-striped table-bordered table-hover no-margin-bottom no-border-top">
+				<thead>
+					<tr>
+						<th class="center">
+							#
+						</th>
+						<th>
+							Codigo
+						</th>
+						<th>
+							Producto
+						</th>
+						<th>
+							Cantidad Solicitada
+						</th>
+						<th>
+							Cantidad Disponible
+						</th>
+						<th>
+							Cantidad a entregar
+						</th>
+						<th>
+							Faltante
+						</th>
+						<th>
+							Precio
+						</th>
+						<th>
+							Total
+						</th>
+						
+						<th style="width: 12%;">Acciones</th>
+					</tr>
+				</thead>
+
+				<tbody>
+					<tr ng-repeat="c in cotizacion.detallesCotizacion">
+						<td class="center">
+							{{$index+1}}
+						</td>
+						<td>{{c.producto.codigo}}</td>
+						<td>{{c.producto.nombre}}</td>
+						<td>{{c.cantidad}}</td>
+						<td>{{c.disponible}}</td>
+						<td>{{c.entregar}}</td>
+						<td>{{c.faltante}}</td>
+						<td>{{c.precio_unitario}}</td>
+						<td>{{c.total}}</td>
+						<td >
+							<div class="hidden-sm hidden-xs btn-group" ng-if="c.entregar > 0 && editCoticacion ">
+								<button class="btn btn-xs " ng-class="c.aceptar ? 'btn-success' : 'btn-warning'" ng-click="aceptarDetalleCotizacion(c)">
+									<i class="ace-icon fa fa-check bigger-120"></i>
+								</button>
+								<button class="btn btn-xs btn-danger" ng-if="c.aceptar" ng-click="cancelarDetalleCotizacion(c)">
+									<i class="ace-icon fa fa-close bigger-120"></i>
+								</button>
+								<button class="btn btn-xs btn-info" ng-click="editarDetalleCotizacion(c)">
+									<i class="ace-icon fa fa-pencil bigger-120"></i>
+								</button>
+
+								
+							</div>
+
+							<span class="label label-danger" ng-if="c.entregar <= 0 ">
+								<i class="ace-icon fa fa-exclamation-triangle bigger-120"></i>
+								No tiene cantidad disponible
+							</span>
+
+							
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+</div>
+
+<div id="dialog-cotizacione-editar" title="Editar precio">
+
+	<form name="formularioEditarCotizacion" novalidate ng-submit="guardarEditarCotizacion(c)">
+		<div class="modal-header text-center text-white" style="background-color: #307ecc!important;">
+			<p>
+				<h5>{{c.producto.nombre}}</h5>
+			</p>
+		</div>
+		<div class="modal-body">
+			<div>
+				<span>Cambiar Precio </span>
+				<input required class="form-control" type="number" ng-model="c.precio_unitario">
+			</div>
+		</div>
+		<div class="modal-footer">
+			<div class="col-sm-6">
+				<button type="submit" class="btn btn-success" ng-disabled="formularioEditarCotizacion.$invalid">Guardar</button>
+			</div>
+
+
+			<div class="col-sm-6">
+				<button type="button" class="btn btn-danger" ng-click="cancelarPopupCotizacionEditar(c)">Cancelar</button>
+			</div>
+		</div>
+	</form>
+</div>

@@ -5,7 +5,7 @@ angular.module('agil.controladores')
 		PagosVenta, DatosVenta, VentaEmpresaDatos, ProductosPanel, ListaProductosEmpresaUsuario, ListaInventariosProducto, Paginator,
 		socket, ConfiguracionVentaVistaDatos, ConfiguracionVentaVista, ListaGruposProductoEmpresa, ReporteVentasMensualesDatos,
 		ConfiguracionImpresionEmpresaDato, VerificarUsuarioEmpresa, GuardarVentasImportados, ImprimirSalida, ModificarVenta, ListaVendedorVenta, VendedorVenta, VendedorVentaActualizacion, GuardarUsuarLectorDeBarra, VerificarLimiteCredito, ListaSucursalesUsuario, ListaGruposProductoUsuario, ListaServiciosVentas, GuardarListaServiciosVentas,
-		EliminarVentaServicio, ventasDetalleEmpresa) {
+		EliminarVentaServicio, ventasDetalleEmpresa, filtroCotizacionesPendientes, CotizacionRechazo) {
 		blockUI.start();
 		$scope.usuario = JSON.parse($localStorage.usuario);
 		convertUrlToBase64Image($scope.usuario.empresa.imagen, function (imagenEmpresa) {
@@ -32,7 +32,10 @@ angular.module('agil.controladores')
 		$scope.modalServicioVenta = 'dialog-servicios-venta';
 		$scope.modalReportesEmpresas = 'dialog-reporte-por-empresas';
 		$scope.modelGraficaEmpresas = 'reporte-grafico-empresas';
-		$scope.modelImportacionVentaServicio = 'dialog-importacion-ventas-servicios'
+		$scope.modelImportacionVentaServicio = 'dialog-importacion-ventas-servicios';
+		$scope.idModalCotizaciones = 'dialog-cotizaciones-venta';
+		$scope.idModalDetalleCotizaciones = 'dialog-detalle-cotizaciones';
+		$scope.idModalDetalleCotizacionEditar = 'dialog-cotizacione-editar';
 		$scope.$on('$viewContentLoaded', function () {
 			resaltarPestaña($location.path().substring(1));
 			ejecutarScriptsVenta($scope.idModalWizardCompraEdicion, $scope.idModalWizardVentaVista,
@@ -41,7 +44,7 @@ angular.module('agil.controladores')
 				$scope.idModalCierre,
 				$scope.idModalPanelVentas, $scope.idModalConfirmacionEliminacionVenta, $scope.idModalInventario, $scope.idModalPanelVentasCobro,
 				$scope.idModalEdicionVendedor, $scope.idModalImpresionVencimiento, $scope.IdModalVerificarCuenta, $scope.modalReportesProductos, $scope.modalServicioVenta,
-				$scope.modelGraficaProductos, $scope.modalReportesEmpresas, $scope.modelGraficaEmpresas, $scope.modelImportacionVentaServicio);
+				$scope.modelGraficaProductos, $scope.modalReportesEmpresas, $scope.modelGraficaEmpresas, $scope.modelImportacionVentaServicio, $scope.idModalCotizaciones, $scope.idModalDetalleCotizaciones, $scope.idModalDetalleCotizacionEditar);
 			$scope.buscarAplicacion($scope.usuario.aplicacionesUsuario, $location.path().substring(1));
 			blockUI.stop();
 		});
@@ -1703,6 +1706,15 @@ angular.module('agil.controladores')
 							if (movimiento == $scope.diccionario.EGRE_SERVICIO) {
 								ImprimirSalida(movimiento, res, true, $scope.usuario, false);
 							} else {
+								// guardar actualicacion cotizacion ====
+								if (venta.actualizarCotizacion) {
+						            CotizacionRechazo.update({ id_cotizacion: venta.cotizacion_id }, {estado: "ACEPTADO"}, function (res) {
+						  
+						            }, function (error) {
+						                $scope.mostrarMensaje('Hubo un problema al guardar.');
+						            });
+								}
+
 								if ($scope.usuario.empresa.usar_vencimientos) {
 									$scope.impresion = {
 										movimiento: movimiento,
@@ -3567,9 +3579,153 @@ angular.module('agil.controladores')
 				blockUI.stop()
 				$scope.mostrarMensaje(dato.mensaje)
 			})
-
-
 		}
+
+
+
+		$scope.obtenerCotizaciones = function () {
+			$scope.paginator = Paginator();
+			$scope.paginator.column = "nombre";
+			$scope.paginator.direction = "desc";
+			$scope.paginator.callBack = $scope.obtenerLista;
+			$scope.filtro = { empresa: $scope.usuario.id_empresa, inicio: "", fin: "", fecha_inicio: new Date($scope.convertirFecha("14/08/2018")), fecha_fin: new Date($scope.convertirFecha("27/08/2018")), busqueda: "", importe: 0 };
+			$scope.paginator.getSearch("", $scope.filtro, null);
+		}
+
+
+		$scope.obtenerLista = function () {
+			blockUI.start();
+			var promesa = filtroCotizacionesPendientes($scope.paginator);
+			promesa.then(function (dato) {
+				console.log("llegooo  cotissssssss", dato);
+				$scope.paginator.setPages(dato.paginas);
+				$scope.cotizaciones = dato.cotizaciones;
+				blockUI.stop();
+			})
+		}
+
+		$scope.abrirPopupCotizaciones = function () {
+			$scope.obtenerCotizaciones();
+			$scope.abrirPopup($scope.idModalCotizaciones);
+		}
+
+		$scope.cerrarPopupCotizaciones = function () {
+			$scope.cerrarPopup($scope.idModalCotizaciones);
+		}
+
+
+		$scope.obtenerDetalleCotizacion = function (cotizacion, editCoticacion) {
+			$scope.editCoticacion = editCoticacion;
+			console.log("datos usuarioooooooo ", $scope.usuario);
+			
+			for (var i = 0; i < cotizacion.detallesCotizacion.length; i++) {
+				var productoC = cotizacion.detallesCotizacion[i].producto;
+
+				
+				var inventarioDisponible = $scope.obtenerInventarioTotal(productoC);
+				cotizacion.detallesCotizacion[i].disponible = inventarioDisponible;
+				cotizacion.detallesCotizacion[i].aceptar = false;
+
+				if (inventarioDisponible < cotizacion.detallesCotizacion[i].cantidad) {
+					cotizacion.detallesCotizacion[i].faltante =  cotizacion.detallesCotizacion[i].cantidad - inventarioDisponible;
+					cotizacion.detallesCotizacion[i].entregar = inventarioDisponible;
+				}else{
+					cotizacion.detallesCotizacion[i].faltante =  0;
+					cotizacion.detallesCotizacion[i].entregar = cotizacion.detallesCotizacion[i].cantidad;
+				}
+
+				if (cotizacion.detallesCotizacion[i].entregar > 0) {
+					cotizacion.detallesCotizacion[i].aceptar = true;
+				}
+
+				if (cotizacion.detallesCotizacion[i].faltante > 0) {
+					cotizacion.detallesCotizacion[i].aceptar = false;
+				}
+				cotizacion.detallesCotizacion[i].total = cotizacion.detallesCotizacion[i].entregar * cotizacion.detallesCotizacion[i].precio_unitario;
+				console.log("disponibleeeeee ", inventarioDisponible);
+			
+			}
+
+			console.log("la cotizacvion recibidooo ", cotizacion.detallesCotizacion);
+
+			$scope.cotizacion = cotizacion;
+			// $scope.obtenerCotizaciones();
+			$scope.abrirPopup($scope.idModalDetalleCotizaciones);
+		}
+
+		$scope.isCheckedCotizacion = function(cotizacion) {
+			if (cotizacion) {
+				for(var e in cotizacion.detallesCotizacion) {
+		             var checkBox = cotizacion.detallesCotizacion[e];
+		            if(checkBox.aceptar)
+		                return false;
+		        }
+			}
+	        return true;
+	    };
+
+		$scope.cerrarPopupDetalleCotizaciones = function () {
+			$scope.cerrarPopup($scope.idModalDetalleCotizaciones);
+		}
+
+		$scope.aceptarDetalleCotizacion = function(cotizacion) {
+			cotizacion.aceptar = true;
+		}
+		$scope.cancelarDetalleCotizacion = function(cotizacion) {
+			cotizacion.aceptar = false;
+		}
+
+		$scope.agregarVentaCotizacion = function (cotizacion) {
+			console.log("la cotizacion para venta", cotizacion);
+			$scope.obtenerAlmacenesActividades(cotizacion.sucursal.id);
+			var fechaC = new Date();
+				cotizacion.fecha = fechaC.getDate() + "/" + (fechaC.getMonth() + 1) + "/" + fechaC.getFullYear();
+			$scope.detalleVenta = [];
+			var totalVenta = 0;
+			for (var i = 0; i < cotizacion.detallesCotizacion.length; i++) {
+
+				// corregir detalle a agregar =======
+				if (cotizacion.detallesCotizacion[i].aceptar) {
+					var detalleVentaC = {
+						eliminado: false,
+						producto: cotizacion.detallesCotizacion[i].producto, precio_unitario: cotizacion.detallesCotizacion[i].precio_unitario,
+						costos: cotizacion.detallesCotizacion[i].producto.activar_inventario ? cotizacion.detallesCotizacion[i].producto.inventarios : [],
+						cantidad: cotizacion.detallesCotizacion[i].cantidad, descuento: 0, recargo: 0, ice: 0, excento: 0, tipo_descuento: false, tipo_recargo: false, importe: cotizacion.detallesCotizacion[i].importe, total: cotizacion.detallesCotizacion[i].total
+					};
+					totalVenta = totalVenta + cotizacion.detallesCotizacion[i].total;
+					$scope.detalleVenta.push(detalleVentaC);
+				}
+			}
+				
+			$scope.venta = new Venta({
+				id_empresa: $scope.usuario.id_empresa, id_usuario: $scope.usuario.id, cliente: cotizacion.cliente,
+				sucursal: cotizacion.sucursal, almacen: cotizacion.almacen, fechaTexto: cotizacion.fecha, 
+				tipoPago: $scope.tiposPago[0], cotizacion_id : cotizacion.id, actualizarCotizacion: true,
+				detallesVenta:$scope.detalleVenta , detallesVentaNoConsolidadas: [], pagado: totalVenta, cambio: 0, despachado: false, vendedor: null, total: totalVenta
+			});
+			$scope.cerrarPopupDetalleCotizaciones();
+			$scope.cerrarPopupCotizaciones();
+		}
+		$scope.editarDetalleCotizacion = function (cotizacion) {
+			$scope.Cprecio_unitario = cotizacion.precio_unitario;
+			$scope.c = cotizacion;
+			$scope.abrirPopup($scope.idModalDetalleCotizacionEditar);
+		}
+		$scope.guardarEditarCotizacion = function(Cprecio_unitario){
+			$scope.c = Cprecio_unitario;
+			$scope.cerrarPopupCotizacionEditar();
+		}
+
+		$scope.cancelarPopupCotizacionEditar = function (cotizacion) {
+			// $scope.c = cotizacion;
+			$scope.c.precio_unitario = $scope.Cprecio_unitario;
+			$scope.cerrarPopup($scope.idModalDetalleCotizacionEditar);
+		}
+
+		$scope.cerrarPopupCotizacionEditar = function () {
+			$scope.cerrarPopup($scope.idModalDetalleCotizacionEditar);
+		}
+
 		$scope.$on('$routeChangeStart', function (next, current) {
 			$scope.eliminarPopup($scope.idModalWizardCompraEdicion);
 			$scope.eliminarPopup($scope.idModalWizardVentaVista);
@@ -3584,8 +3740,11 @@ angular.module('agil.controladores')
 			$scope.eliminarPopup($scope.IdModalVerificarCuenta);
 			$scope.eliminarPopup($scope.modalReportesProductos);
 			$scope.eliminarPopup($scope.modelGraficaProductos);
-			$scope.eliminarPopup($scope.modalServicioVenta)
-			$scope.eliminarPopup($scope.modelImportacionVentaServicio)
+			$scope.eliminarPopup($scope.modalServicioVenta);
+			$scope.eliminarPopup($scope.modelImportacionVentaServicio);
+			$scope.eliminarPopup($scope.idModalCotizaciones);
+			$scope.eliminarPopup($scope.idModalDetalleCotizaciones);
+			$scope.eliminarPopup($scope.idModalDetalleCotizacionEditar);
 		});
 
 

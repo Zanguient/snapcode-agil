@@ -1,0 +1,1 @@
+ALTER TABLE agil_empresa add usar_cotizacion tinyint default 0;

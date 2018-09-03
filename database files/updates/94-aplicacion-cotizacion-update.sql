@@ -1,0 +1,1 @@
+UPDATE `agil`.`sys_aplicacion` SET `atributo_clase` = 'fa-book' WHERE `id` = 34

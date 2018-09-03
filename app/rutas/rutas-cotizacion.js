@@ -1,4 +1,4 @@
-module.exports = function (router, Cotizacion, DetalleCotizacion, Usuario, Producto, Diccionario, Clase, ConfiguracionGeneralFactura, Sucursal, Cliente, Almacen, NumeroLiteral) {
+module.exports = function (router, Cotizacion, DetalleCotizacion, Usuario, Producto, Diccionario, Clase, ConfiguracionGeneralFactura, Sucursal, Cliente, Almacen, NumeroLiteral, Inventario, Movimiento, DetalleMovimiento, Tipo) {
 
 	router.route('/cotizaciones/empresa/:id_empresa')
 		.get(function (req, res) {
@@ -141,21 +141,25 @@ module.exports = function (router, Cotizacion, DetalleCotizacion, Usuario, Produ
 							fecha_vencimiento: detallescotizacion.fecha_vencimiento,
 							eliminado: false
 						}).then(function (detalleCreado) {
+							if (index == (array.length - 1)) {
+								res.json({ mensaje: 'cotizacion creada', cotizacion: cotizacionCreada });
+							}
 						});
+						
+						
 					})
-				}).then(function(detallesCreados)
-				{
+
 					
 				});
 				Sucursal.update({
 					cotizacion_correlativo: (sucursal.cotizacion_correlativo + 1)
 				}, {
-						where: {
-							id: sucursal.id
-						}
-					}).then(function (detallesCotizacion) {
-						res.json({ mensaje: 'cotizacion creada' })
-					});
+					where: {
+						id: sucursal.id
+					}
+				}).then(function (detallesCotizacion) {
+					
+				});
 			})
 		});
 
@@ -178,37 +182,96 @@ module.exports = function (router, Cotizacion, DetalleCotizacion, Usuario, Produ
 	// ]
 	// };
 
-	router.route('/cotizaciones/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/importe/:importe/busqueda/:busqueda/fecha-inicio/:inicio/fecha-fin/:fin/columna/:columna/direccion/:direccion')
+	router.route('/cotizaciones/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/importe/:importe/busqueda/:busqueda/fecha-inicio/:inicio/fecha-fin/:fin/columna/:columna/direccion/:direccion/estado/:estado/sucursal/:sucursal/usuario/:usuario/razon-social/:razon_social/nit/:nit')
 		.get(function (req, res) {
 			var inicio = new Date(req.params.inicio); inicio.setHours(0, 0, 0, 0, 0);
 			var fin = new Date(req.params.fin); fin.setHours(23, 0, 0, 0, 0);
-			var condicionCotizacion = {}, ordenArreglo = [];
+			var clienteRequerido = false, condicionCotizacion = {}, condicionSucursal = {}, condicionUsuario = {}, ordenArreglo = [], condicionCliente = {};
 			condicionCotizacion.id_empresa = parseInt(req.params.id_empresa)
-			condicionCotizacion.fecha = { $between: [inicio, fin] }
-			if (req.params.busqueda != 0) {
-				condicionCotizacion = {
-					id_empresa: parseInt(req.params.id_empresa),
-					fecha: { $between: [inicio, fin] },
-					$or: [
-						{
-							nombre: {
-								$like: "%" + req.params.busqueda + "%"
-							}
-						},
-						{
-							descripcion: {
-								$like: "%" + req.params.busqueda + "%"
-							}
-						}
-					]
-				}
-			} else {
-				condicionCotizacion = {
-					id_empresa: parseInt(req.params.id_empresa),
-					fecha: { $between: [inicio, fin] }
 
+			condicionCotizacion.fecha = { $between: [inicio, fin] }
+			condicionCotizacion = {
+				id_empresa: parseInt(req.params.id_empresa),
+				fecha: { $between: [inicio, fin] }
+			}
+			
+			if (req.params.columna == "usuario") {
+				ordenArreglo.push({ model: Ususario, as: 'usuario' });
+				req.params.columna = "nombre";
+			}
+			ordenArreglo.push(req.params.columna);
+			ordenArreglo.push(req.params.direccion);
+
+			if (req.params.importe != 0) {
+				condicionCotizacion.importe = parseFloat(req.params.importe);
+			}
+
+			if (req.params.sucursal != 0) {
+				condicionSucursal.id = req.params.sucursal;
+			}
+
+			if (req.params.estado != 0) {
+				condicionCotizacion.estado = req.params.estado;
+			}
+
+			if (req.params.usuario != 0) {
+				condicionUsuario.nombre_usuario = { $like: "%" + req.params.usuario + "%" };
+			}
+
+			if (req.params.razon_social != 0) {
+				condicionCliente.razon_social = { $like: "%" + req.params.razon_social + "%" };
+				clienteRequerido = true;
+			}
+			if (req.params.nit != 0) {
+				condicionCliente.nit = parseInt(req.params.nit);
+				clienteRequerido = true;
+			}
+
+			Cotizacion.findAndCountAll({
+				where: condicionCotizacion,
+				include: [{ model: DetalleCotizacion, as: 'detallesCotizacion' }],
+
+			}).then(function (data) {
+				Cotizacion.findAll({
+					where: condicionCotizacion,
+					include: [{ model: Usuario, as: 'usuario', where: condicionUsuario }, 
+					{ model: Sucursal, as: 'sucursal' ,
+					where: condicionSucursal
+					},
+					{ model: Cliente, as: 'cliente', where: condicionCliente, required: clienteRequerido},
+					{ model: Almacen, as: 'almacen'},
+					{
+						model: DetalleCotizacion, as: "detallesCotizacion",
+						include: [{ model: Producto, as: 'producto' }]
+					}],
+					order: [[req.params.columna, req.params.direccion]]
+				}).then(function (cotizaciones) {
+					res.json({ cotizaciones: cotizaciones, paginas: Math.ceil(data.count / req.params.items_pagina) });
+				});
+			});
+		});
+
+
+	router.route('/cotizaciones-pendientes/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/importe/:importe/busqueda/:busqueda/fecha-inicio/:inicio/fecha-fin/:fin/columna/:columna/direccion/:direccion')
+		.get(function (req, res) {
+			var condicionCotizacion = {}, ordenArreglo = [], condicionCliente = {};
+			condicionCotizacion.id_empresa = parseInt(req.params.id_empresa)
+			condicionCotizacion = {
+				id_empresa: parseInt(req.params.id_empresa),
+				estado: "PENDIENTE"
+			}
+			if (req.params.busqueda != 0) {
+				condicionCliente = {
+					razon_social: {
+						$like: "%" + req.params.busqueda + "%"
+					}
+				}
+
+			} else {
+				condicionCliente = {
 				}
 			}
+
 			if (req.params.columna == "usuario") {
 				ordenArreglo.push({ model: Ususario, as: 'usuario' });
 				req.params.columna = "nombre";
@@ -230,13 +293,33 @@ module.exports = function (router, Cotizacion, DetalleCotizacion, Usuario, Produ
 					where: condicionCotizacion,
 					include: [{ model: Usuario, as: 'usuario' }, 
 					{ model: Sucursal, as: 'sucursal' },
-					{ model: Cliente, as: 'cliente' },
+					{ model: Cliente, as: 'cliente', 
+					where: condicionCliente
+					},
 					{ model: Almacen, as: 'almacen'},
 					{
 						model: DetalleCotizacion, as: "detallesCotizacion",
-						include: [{ model: Producto, as: 'producto' }]
+						include: [{ model: Producto, as: 'producto',
+						// rescatar tipoProducto======
+
+							include: [
+								{ model: Clase, as: 'tipoProducto' },
+								{ model: Inventario, as: 'inventarios', required: false,
+									// include: [{
+									// 	model: DetalleMovimiento, as: "detallesMovimiento", required: false,
+									// 	include: [{
+									// 		model: Movimiento, as: 'movimiento', required: false,
+									// 		include: [{ model: Tipo, as: 'tipo', where: { nombre_corto: 'MOVING' } },
+									// 		{ model: Clase, as: 'clase' }]
+									// 	}]
+									// }]
+								}
+								
+							] 
+						}]
 					}],
-					order: [[req.params.columna, req.params.direccion]]
+					// order: [[req.params.columna, req.params.direccion]] 
+					order: [['id', 'desc']]
 				}).then(function (cotizaciones) {
 					res.json({ cotizaciones: cotizaciones, paginas: Math.ceil(data.count / req.params.items_pagina) });
 				});
@@ -298,7 +381,7 @@ module.exports = function (router, Cotizacion, DetalleCotizacion, Usuario, Produ
 	router.route('/cotizacion-rechazo/:id_cotizacion')
 		.put(function (req, res) {
 			Cotizacion.update({
-				estado: 'RECHAZADO',
+				estado: req.body.estado,
 				fecha_estado: req.body.fecha_estado,
 				observacion: req.body.observacion,
 			}, { where: {
@@ -327,7 +410,7 @@ module.exports = function (router, Cotizacion, DetalleCotizacion, Usuario, Produ
 				]
 
 			}).then(function (cotizacion) {
-				console.log("lllegooooo aqui cotiiiiiiiii ==========================================================", cotizacion);
+				// console.log("lllegooooo aqui cotiiiiiiiii ==========================================================", cotizacion);
 				
 				ConfiguracionGeneralFactura.find({
 					where: {

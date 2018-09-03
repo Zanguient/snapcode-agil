@@ -1085,3 +1085,10 @@ background-color:white !important;
 .swipe-pedido .swiper-wrapper {
     width: 999px  !important;
 }
+.text-center{
+	text-align: center;
+}
+
+.button-close{
+	    margin-top: 10px;
+}

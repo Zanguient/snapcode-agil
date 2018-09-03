@@ -596,8 +596,8 @@ function ejecutarScriptsVenta(idPopupEdicion, idPopupVista, idPopupEliminacion,
 	idContenedorEdicion, idContenedorVista, idInput, url,
 	idPopupPago, idPopupCierre, idPopupPanel, idPopupEliminacion, idModalInventario, idModalPanelCobro,
 	idModalVendedor, idModalImpresionVencimiento,IdModalVerificarCuenta,modalReportesProductos,modalServicioVenta,
-	modelGraficaProductos,modalReportesEmpresas,modelGraficaEmpresas,modelImportacionVentaServicio) {
-	crearPopup(idPopupEdicion, "100%", 'auto');
+	modelGraficaProductos,modalReportesEmpresas,modelGraficaEmpresas,modelImportacionVentaServicio, idModalCotizaciones, idModalDetalleCotizaciones, idModalDetalleCotizacionEditar) {
+	crearPopup(idPopupEdicion, "100%",  screen.height);
 	crearPopup(idPopupVista, "100%", 600);
 	crearPopup(idModalInventario, "85%", 550);
 	crearPopup(idPopupPago, "30%", 200);
@@ -619,6 +619,9 @@ function ejecutarScriptsVenta(idPopupEdicion, idPopupVista, idPopupEliminacion,
 	crearPopup(modalReportesEmpresas,"50%","auto");
 	crearPopup(modelGraficaEmpresas,"50%","auto");
 	crearPopup(modelImportacionVentaServicio, "30%","auto");
+	crearPopup(idModalCotizaciones, "85%", 550);
+	crearPopup(idModalDetalleCotizaciones, "79%", 480);
+	crearPopup(idModalDetalleCotizacionEditar, "30%", 270);
 	$(document).on('click', '#campos-detalle-venta', function (e) {
 		e.stopPropagation();
 	});

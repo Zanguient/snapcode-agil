@@ -117,7 +117,7 @@ module.exports=function(sequelize,Sequelize){
 		sequelize.query("INSERT IGNORE INTO sys_aplicacion SET id = 33,titulo = 'MESAS',atributo_clase='fa-cutlery',url='mesa',createdAt = NOW(),updatedAt = NOW();").spread(function(results, metadata) {
 		  //console.log(metadata+" rows affected in sys_application");
 		});
-		sequelize.query("INSERT IGNORE INTO sys_aplicacion SET id = 34,titulo = 'COTIZACIONES',atributo_clase='fa-map-pin',url='cotizacion',createdAt = NOW(),updatedAt = NOW();").spread(function(results, metadata) {
+		sequelize.query("INSERT IGNORE INTO sys_aplicacion SET id = 34,titulo = 'COTIZACIONES',atributo_clase='fa-book',url='cotizacion',createdAt = NOW(),updatedAt = NOW();").spread(function(results, metadata) {
 		  //console.log(metadata+" rows affected in sys_application");
 		});
 		sequelize.query("INSERT IGNORE INTO sys_aplicacion SET id = 35,titulo = 'PLAN DE CUENTAS',atributo_clase='fa-sort-amount-asc',url='contabilidad-cuenta',createdAt = NOW(),updatedAt = NOW();").spread(function(results, metadata) {

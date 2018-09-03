@@ -1,8 +1,4 @@
 <div class="">
-	<div class='device-check visible-xs' data-device='xs'></div>
-	<div class='device-check visible-sm' data-device='sm'></div>
-	<div class='device-check visible-md' data-device='md'></div>
-	<div class='device-check visible-lg' data-device='lg'></div>
 	<div class="row ">
 		<div class="col-xs-12">
 			<h3 class="header smaller lighter blue">COTIZACIONES</h3>
@@ -15,56 +11,9 @@
 				<fieldset>
 					<legend>Filtro Cotizaciones</legend>
 					<!-- visible xs sm  -->
-					<div class="hidden-lg hidden-md visible-xs-block">
-						<div class="row form-group">
-							<div class="row col-lg-2">
-								<button type="submit" ng-disabled="formularioFiltroCotizaciones.$invalid" class="btn-primary btn btn-app btn-xs">
-								<i class="ace-icon fa fa-search align-top bigger-125"></i>
-								BUSCAR
-							</button>
-								<button id="pdf" ng-disabled="formularioFiltroCotizaciones.$invalid" class="btn btn-app btn-danger btn-xs" ng-click="imprimirFiltroCajaCartaOficio(Cotizaciones)">
-								<i class="ace-icon fa fa-print bigger-160"></i>
-								PDF
-							</button>
-								<button id="pdfa" ng-disabled="formularioFiltroCotizaciones.$invalid" class="btn btn-app btn-success btn-xs" ng-click="imprimirFiltroExcelCajaCartaOficio(Cotizaciones)">
-								<i class="ace-icon fa fa-print bigger-160"></i>
-								Excel
-							</button>
-							</div>
-						</div>
-						<div class="row form-group">
-							<div class="row col-lg-2">
-								<label for="filtro.inicio">Desde</label>&nbsp
-							</div>
-							<div class="row col-lg-2">
-								<input ng-update-hidden class="form-control date-picker" type="text" data-date-format="dd/mm/yyyy" id="fechainicio" ng-change="establecerFechas(filtro.inicio,filtro.fin)"
-								 ng-model="filtro.inicio" placeholder="Ingrese la fecha inicial" required="" />
-							</div>
-							<div class="row col-lg-2">
-								<label for="filtro.inicio">Hasta</label>&nbsp
-							</div>
-							<div class="row col-lg-2">
-								<input ng-update-hidden class="form-control date-picker" required="" type="text" data-date-format="dd/mm/yyyy" id="fechafin" ng-change="establecerFechas(filtro.inicio,filtro.fin)"
-								 ng-model="filtro.fin" placeholder="Ingrese la fecha final" />
-							</div>
-						</div>
-						<div class="row form-group">
-							<div class="row col-lg-2">
-								<label for="filtro.busqueda">Busqueda</label>&nbsp
-							</div>
-							<div class="row col-lg-2">
-								<input class="form-control" type="text" ng-model="filtro.busqueda">
-							</div>
-							<div class="row col-lg-2">
-								<label for="filtro.importe">Importe</label>&nbsp
-							</div>
-							<div class="row col-lg-2">
-								<input class="form-control" type="number" ng-model="filtro.importe">
-							</div>
-						</div>
-					</div>
+					
 				<!-- visible md lg	 -->
-					<table class="table table-striped table-bordered table-hover hidden-xs hidden-sm visible-md-block visible-lg-block">
+					<table class="table table-striped table-bordered table-hover">
 						<tbody>
 							<tr>
 								<td>
@@ -84,11 +33,11 @@
 									<label>PERIODO</label>&nbsp
 								</td>
 								<td>
-									<input ng-update-hidden class="form-control date-picker" type="text" data-date-format="dd/mm/yyyy" id="fechainicioTab" ng-change="establecerFechas(filtro.inicio,filtro.fin)"
+									<input required="" ng-update-hidden autocomplete="off" class="form-control date-picker" type="text" data-date-format="dd/mm/yyyy" id="fechainicioTab" ng-change="establecerFechas(filtro.inicio,filtro.fin)"
 									 ng-model="filtro.inicio" placeholder="Ingrese la fecha inicial" />
 								</td>
 								<td>
-									<input ng-update-hidden class="form-control date-picker" type="text" data-date-format="dd/mm/yyyy" id="fechafinTab" ng-change="establecerFechas(filtro.inicio,filtro.fin)"
+									<input required="" ng-update-hidden autocomplete="off" class="form-control date-picker" type="text" data-date-format="dd/mm/yyyy" id="fechafinTab" ng-change="establecerFechas(filtro.inicio,filtro.fin)"
 									 ng-model="filtro.fin" placeholder="Ingrese la fecha final" /> &nbsp
 								</td>
 								<td>
@@ -96,7 +45,7 @@
 														<i class="ace-icon fa fa-search align-top bigger-125"></i>
 														BUSCAR
 													</button>
-									<button id="pdfb" ng-disabled="!cotizaciones" class="btn btn-app btn-danger btn-xs" ng-click="imprimirFiltroCajaCartaOficio(cotizaciones)">
+									<button id="pdfb" ng-disabled="!cotizaciones" class="btn btn-app btn-danger btn-xs" ng-click="imprimirFiltroCajaCartaOficio(cotizaciones,filtro.inicio,filtro.fin)">
 														<i class="ace-icon fa fa-print bigger-160"></i>
 														PDF
 													</button>
@@ -110,24 +59,74 @@
 								<td>
 									&nbsp
 								</td>
-								<!-- <td>
-									<label>Busqueda</label>&nbsp
-								</td> -->
-
 								<td>
-									<label>Importe</label>&nbsp
+									<label>Razon Social</label>&nbsp
 								</td>
+								<td>
+									<label>NIT</label>&nbsp
+								</td>
+								<td>
+									<label>Monto</label>&nbsp
+								</td>
+								
 							</tr>
 							<tr>
 								<td>
 									FILTRO
 								</td>
+								<td>
+									<input type="text" ng-model="filtro.razon_social">
+								</td>
+								<td>
+									<input type="number" ng-model="filtro.nit">
+								</td>
+								<td>
+									<input type="number" ng-model="filtro.importe">
+								</td>
+							</tr>
+							<tr>
+								<td>
+									&nbsp
+								</td>
+								<!-- <td>
+									<label>Busqueda</label>&nbsp
+								</td> -->
+
+								<td>
+									<label>Sucursal</label>&nbsp
+								</td>
+								<td>
+									<label>Estado</label>&nbsp
+								</td>
+								<td>
+									<label>Usuario</label>&nbsp
+								</td>
+							</tr>
+							<tr>
+								<td>
+									&nbsp
+								</td>
 								<!-- <td>
 									<input type="text" ng-model="filtro.busqueda">
 								</td> -->
 								<td>
-									<input type="number" ng-model="filtro.importe">
+									<select id="sucursal" name="sucursal" ng-model="filtro.sucursal" data-placeholder="Elija una sucursal">
+										<option value="0" selected>TODOS</option>
+										<option ng-repeat="sucursalFiltro in sucursales track by $index" value="{{sucursalFiltro.id}}">{{sucursalFiltro.nombre}}</option>
+									</select>
 								</td>
+								<td>
+									<select id="estado" name="estado" ng-model="filtro.estado">
+										<option value="0">TODOS</option>
+										<option value="ACEPTADO">ACEPTADO</option>
+										<option value="PENDIENTE">PENDIENTE</option>
+										<option value="RECHAZADO">RECHAZADO</option>
+									</select>
+								</td>
+								<td>
+									<input type="text" ng-model="filtro.usuario">
+								</td>
+								
 							</tr>
 						</tbody>
 					</table>
@@ -138,69 +137,21 @@
 			<div class="table-header">
 				Cotizaciones
 			</div>
-			<!-- <div class="row form-group hidden-lg hidden-md visible-xs-block">
-					<div class="row col-lg-2">
-						<label for="filtro.busqueda">Ordenar por:</label>&nbsp
-					</div>
-					<div class="row col-lg-2">
-						<select id="ordenarPor" ng-model="paginator.colum" ng-options="columna for columna in cotizacionModel" ng-change="paginator.sortColumn(paginator.colum,obtenerLista)"
-						 value='cotizacionModel[0]' class="col-xs-10 col-sm-8">
-									  </select>
-					</div>
-				</div> -->
-			<!-- visible xs sm -->
-			<div class="container visible-xs-block visible-sm-block hidden-lg hidden-md">
-				<div class="row div-table" ng-repeat="cotizacion in cotizaciones">
-					<div class="col col- col-sm-2 col-md-2 col-lg-2">
-						<label class="blue"><a href="javascript:void(0)" ng-click="paginator.sortColumn('nombre',obtenerLista)">Nombre <span id="nombre" class="sort fa fa-sort icon-only"></span></a> </label>
-						<p>{{cotizacion.nombre}}</p>
-					</div>
-					<div class="col col- col-sm-2 col-md-2 col-lg-2">
-						<label class="blue"><a href="javascript:void(0)" ng-click="paginator.sortColumn('descripcion',obtenerLista)">Descripción <span id="descripcion" class="sort fa fa-sort icon-only"></span></a></label>
-						<p>{{cotizacion.descripcion}}</p>
-					</div>
-					<div class="col col- col-sm-2 col-md-2 col-lg-2">
-						<label class="blue"><a href="javascript:void(0)" ng-click="paginator.sortColumn('fecha',obtenerLista)">Fecha <span id="fecha" class="sort fa fa-sort icon-only"></span></a></label>
-						<p>{{cotizacion.fecha | date:"dd/MM/yyyy"}}</p>
-					</div>
-					<div class="col col- col-sm-2 col-md-2 col-lg-2">
-						<label class="blue"><a href="javascript:void(0)" ng-click="paginator.sortColumn('numero_documento',obtenerLista)">Número de documento <span id="numero_documento" class="sort fa fa-sort icon-only"></span></a></label>
-						<p>{{cotizacion.numero_documento}}</p>
-					</div>
-					<div class="col col- col-sm-2 col-md-2 col-lg-2">
-						<label class="blue"><a href="javascript:void(0)" ng-click="paginator.sortColumn('importe',obtenerLista)">Importe <span id="importe" class="sort fa fa-sort icon-only"></span></a></label>
-						<p>{{cotizacion.importe}}</p>
-					</div>
-					<div class="col col- col-sm-2 col-md-2 col-lg-2">
-						<label class="blue"><a href="javascript:void(0)" ng-click="paginator.sortColumn('id_usuario',obtenerLista)">Usuario <span id="usuario" class="sort fa fa-sort icon-only"></span></a> </label>
-						<p>{{cotizacion.usuario.nombre_usuario}}</p>
-					</div>
-					<div class="col col- col-md-auto col-lg-2"><label>Acciones:</label>
-						<a class="red" href="javascript:void(0)" ng-click="ModificarCotizacion(cotizacion)">
-										<i class="ace-icon fa fa-pencil-square-o bigger-130"></i>
-									</a>
-						<a class="green" href="javascript:void(0)" ng-click="imprimirCotizacion(cotizacion)">
-												<i class="ace-icon fa fa-print bigger-130"></i>
-										</a>
-					</div>
-				</div>
-			</div>
+		
 		<!-- visible md lg xl -->
-			<div id="tabla-productos_wrapper" class="dataTables_wrapper form-inline no-footer hidden-xs hidden-sm visible-md-block visible-lg-block" ng-if="cotizaciones.length > 0">
-				<div class="row" ng-include src="'/templates/GRAL/paginator-header-1.html'">
-				</div>
+			<div id="tabla-productos_wrapper" class="dataTables_wrapper form-inline no-footer" >
 				<table id="tabla-cotizacion" class="table table-striped table-bordered table-hover">
 
 					<thead>
 						<tr>
 							<th>Nº</th>
-							<th class="center"><a href="javascript:void(0)" ng-click="paginator.sortColumn('nombre',obtenerLista)">Sucursal <span id="nombreTab" class="sort fa fa-sort icon-only"></span></a></th>
-							<th class="center"><a href="javascript:void(0)" ng-click="paginator.sortColumn('descripcion',obtenerLista)">Razon social <span id="descripcionTab" class="sort fa fa-sort icon-only"></span></a></th>
-							<th class="center"><a href="javascript:void(0)" ng-click="paginator.sortColumn('descripcion',obtenerLista)">NIT Cliente <span id="descripcionTab" class="sort fa fa-sort icon-only"></span></a></th>
-							<th class="center"><a href="javascript:void(0)" ng-click="paginator.sortColumn('fecha',obtenerLista)">Fecha <span id="fechaTab" class="sort fa fa-sort icon-only"></span></a></th>
-							<th class="center"><a href="javascript:void(0)" ng-click="paginator.sortColumn('importe',obtenerLista)">Importe <span id="importeTab" class="sort fa fa-sort icon-only"></span></a></th>
-							<th class="center"><a href="javascript:void(0)" ng-click="paginator.sortColumn('usuario',obtenerLista)">Usuario <span id="usuarioTab" class="sort fa fa-sort icon-only"></span></a></th>
-							<th class="center"><a href="javascript:void(0)" ng-click="paginator.sortColumn('usuario',obtenerLista)">Estado <span id="usuarioTab" class="sort fa fa-sort icon-only"></span></a></th>
+							<th class="center">Sucursal </th>
+							<th class="center">Razon social</th>
+							<th class="center">NIT Cliente </th>
+							<th class="center">Fecha</th>
+							<th class="center">Monto</th>
+							<th class="center">Usuario</th>
+							<th class="center">Estado</th>
 							<th class="center">Acciones</th>
 						</tr>
 					</thead>
@@ -242,11 +193,16 @@
 								</a>
 							</td>
 						</tr>
+						<tr ng-if="cotizaciones.length>0">
+							<td colspan="4"></td>
+							<td>
+								<b>TOTAL</b>
+							</td>
+							<td colspan="5">{{sumarMonto()|number:2 }}</td>
+						</tr>
 					</tbody>
 				</table>
-				<!-- paginador de vista principal -->
-				<div class="row" ng-include src="'/templates/GRAL/paginator.html'">
-				</div>
+				
 			</div>
 		</div>
 	</div>

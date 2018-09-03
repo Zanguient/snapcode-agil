@@ -145,6 +145,10 @@ module.exports = function (sequelize, Sequelize) {
 			type: Sequelize.BOOLEAN,
 			field: 'usar_facturacion_masiva'
 		},
+		usar_cotizacion:{
+			type: Sequelize.BOOLEAN,
+			field: 'usar_cotizacion'
+		}
 	}, {
 			freezeTableName: true
 		});

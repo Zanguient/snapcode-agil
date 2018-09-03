@@ -71,11 +71,9 @@ var res = function(idEmpresa,paginator,inicio,fin)
 }])
 
 
-
-
 ///////
 .factory('CotizacionesFiltro', function ($resource) {
-	return $resource(restServer + "cotizaciones/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/importe/:importe/busqueda/:busqueda/fecha-inicio/:inicio/fecha-fin/:fin/columna/:columna/direccion/:direccion", null,
+	return $resource(restServer + "cotizaciones/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/importe/:importe/busqueda/:busqueda/fecha-inicio/:inicio/fecha-fin/:fin/columna/:columna/direccion/:direccion/estado/:estado/sucursal/:sucursal/usuario/:usuario/razon-social/:razon_social/nit/:nit", null,
 		{
 			'update': { method: 'PUT' }
 		});
@@ -85,6 +83,39 @@ var res = function(idEmpresa,paginator,inicio,fin)
 	var res = function (paginator) {
 		var delay = $q.defer();
 		CotizacionesFiltro.get({ id_empresa: paginator.filter.empresa, 
+									pagina: paginator.currentPage, 
+									items_pagina: paginator.itemsPerPage,
+									importe: paginator.filter.importe, 
+									busqueda:paginator.search,
+									estado: paginator.filter.estado, 
+									inicio: paginator.filter.fecha_inicio,
+									fin: paginator.filter.fecha_fin,
+									columna:paginator.column,
+									sucursal: paginator.filter.sucursal,
+									usuario: paginator.filter.usuario,
+									razon_social: paginator.filter.razon_social,
+									nit: paginator.filter.nit,
+								direccion:paginator.direction }, function (entidades) {
+			delay.resolve(entidades);
+		}, function (error) {
+				delay.reject(error);
+			});
+		return delay.promise;
+	};
+	return res;
+}])
+
+.factory('CotizacionesPendientesFiltro', function ($resource) {
+	return $resource(restServer + "cotizaciones-pendientes/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/importe/:importe/busqueda/:busqueda/fecha-inicio/:inicio/fecha-fin/:fin/columna/:columna/direccion/:direccion", null,
+		{
+			'update': { method: 'PUT' }
+		});
+})
+
+.factory('filtroCotizacionesPendientes', ['CotizacionesPendientesFiltro', '$q', function (CotizacionesPendientesFiltro, $q) {
+	var res = function (paginator) {
+		var delay = $q.defer();
+		CotizacionesPendientesFiltro.get({ id_empresa: paginator.filter.empresa, 
 									pagina: paginator.currentPage, 
 									items_pagina: paginator.itemsPerPage,
 									importe: paginator.filter.importe, 
