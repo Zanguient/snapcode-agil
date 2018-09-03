@@ -1183,9 +1183,9 @@ angular.module('agil.servicios')
 								var fechaVencimientoTexto = venta.detallesVenta[i].fecha_vencimiento.getDate() + "/" + (venta.detallesVenta[i].fecha_vencimiento.getMonth() + 1) + "/" + venta.detallesVenta[i].fecha_vencimiento.getFullYear().toString().substring(2);
 
 								if (existenDescuentos) {
-									var longitudCaracteres = venta.detallesVenta[i].servicio.nombre.length;
+									var longitudCaracteres = venta.detallesVenta[i].observaciones.length;
 									var yDesc = (longitudCaracteres <= 24) ? y : ((longitudCaracteres > 24 && longitudCaracteres <= 60) ? y - 4 : y - 11);
-									doc.text(venta.detallesVenta[i].servicio.nombre, 55, yDesc, { width: 130 });
+									doc.text(venta.detallesVenta[i].observaciones, 55, yDesc, { width: 200 });
 									//doc.text(venta.detallesVenta[i].precio_unitario.toFixed(2), 300, y);
 									doc.text(venta.detallesVenta[i].importe.toFixed(2), 335, y);
 									doc.text(venta.detallesVenta[i].descuento.toFixed(2), 385, y);
@@ -1585,9 +1585,9 @@ angular.module('agil.servicios')
 								var fechaVencimientoTexto = venta.detallesVenta[i].fecha_vencimiento.getDate() + "/" + (venta.detallesVenta[i].fecha_vencimiento.getMonth() + 1) + "/" + venta.detallesVenta[i].fecha_vencimiento.getFullYear().toString().substring(2);
 
 								if (existenDescuentos) {
-									var longitudCaracteres = venta.detallesVenta[i].servicio.nombre.length;
+									var longitudCaracteres = venta.detallesVenta[i].observaciones.length;
 									var yDesc = (longitudCaracteres <= 24) ? y : ((longitudCaracteres > 24 && longitudCaracteres <= 60) ? y - 4 : y - 11);
-									doc.text(venta.detallesVenta[i].servicio.nombre, 55, yDesc, { width: 130 });
+									doc.text(venta.detallesVenta[i].observaciones, 55, yDesc, { width: 200 });
 									//doc.text(venta.detallesVenta[i].precio_unitario.toFixed(2), 300, y);
 									doc.text(venta.detallesVenta[i].importe.toFixed(2), 335, y);
 									doc.text(venta.detallesVenta[i].descuento.toFixed(2), 385, y);
