@@ -375,7 +375,14 @@ angular.module('agil.controladores')
 				// === para colocar el costo unitario de inventario == 
 				$scope.precio_inventario;
 				if (producto.inventarios.length > 0) {
-					$scope.precio_inventario = producto.inventarios[producto.inventarios.length - 1].costo_unitario + " Bs";
+					var pre =producto.inventarios.find(function(dato){
+						var inv= dato
+						if(inv.id<=dato.id){
+							inv=dato
+						}
+						return dato
+					});
+					$scope.precio_inventario = pre.costo_unitario + " Bs";
 
 				} else {
 					$scope.precio_inventario = "Sin histórico";

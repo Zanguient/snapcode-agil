@@ -406,28 +406,19 @@
 									<td class="col-md-2">
 										{{detalleCotizacion.producto.unidad_medida}}
 									</td>
-									<td ng-if="!editar_precio">
-										<div clas="row">
-											<div class="col-sm-12">
-												{{detalleCotizacion.precio_unitario}}
-											</div>
-										</div>
-										
-									</td>
-									<td ng-if="editar_precio">
+									
+									<td >
 										<div class="row">
 											<div class="col-sm-12">
 												<input required ng-disabled name="precio_unitario" step="0.001" min="0.1" required class="col-xs-12" ng-change="calcularImporte()"
 												 ng-model="detalleCotizacion.precio_unitario" type="number" />
 											</div>
 										</div>
-										<div class="row">
-											<div class="col-sm-12">
-												<a class="blue" href="javascript:void(0)" ng-click="establecerPrecio()">
-															<i class="ace-icon fa fa-check-square-o bigger-130"></i>
-														</a>
-											</div>
-										</div>
+										<span class="blue">
+											Último precio
+										</span>
+										<span class="label label-danger label-white middle tooltip-info" ng-if="precio_inventario" data-rel="tooltip" tooltip-placement="top"
+										 uib-tooltip="Último precio de compra">{{precio_inventario}}</span>
 									</td>
 									<td>
 										<input onfocus="this.select();" ng-keypress="interceptarTecla($event,'agregar_detalle_cotizacionTB',true)" id="cantidadTB"

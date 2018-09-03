@@ -143,9 +143,23 @@ angular.module('agil.controladores')
 			producto.tipoProducto = producto['tipoProducto'] == null ? { id: producto['tipoProducto.id'], nombre: producto['tipoProducto.nombre'], nombre_corto: producto['tipoProducto.nombre_corto'] } : producto.tipoProducto;
 			$scope.detalleCotizacion = { producto: producto, precio_unitario: producto.precio_unitario, cantidad: 1, descuento: 0, recargo: 0, ice: 0, excento: 0, descuento: producto.descuento, eliminado: false };
 			$scope.editar_precio = false;
-			producto.activar_inventario = false
-			$scope.calcularImporte()
-			$scope.productoSeleccionado = true
+			producto.activar_inventario = false;
+			$scope.calcularImporte();
+			$scope.productoSeleccionado = true;
+
+			var promesa = ListaInventariosProducto(producto.id, $scope.cotizacion.almacen.id);
+			promesa.then(function (inventarios) {
+				producto.inventarios = inventarios;
+				// === para colocar el costo unitario de inventario == 
+				$scope.precio_inventario;
+				if (producto.inventarios.length > 0) {
+					$scope.precio_inventario = producto.inventarios[producto.inventarios.length - 1].costo_unitario + " Bs";
+
+				} else {
+					$scope.precio_inventario = "Sin histórico";
+				}
+				
+			});
 		}
 
 		$scope.calcularImporte = function () {
