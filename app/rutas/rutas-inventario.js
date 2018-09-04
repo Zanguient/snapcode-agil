@@ -1665,6 +1665,7 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 			id_actividad: venta.actividad.id,
 			autorizacion: venta.autorizacion,
 			codigo_control: venta.codigo_control,
+			fecha_limite_emision:venta.fecha_limite_emision
 			/* pedido: venta.pedido, */
 			//despachado: venta.despachado,
 
