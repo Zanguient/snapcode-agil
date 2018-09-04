@@ -1860,9 +1860,11 @@ angular.module('agil.servicios')
 		var res = function (doc, vacia, completa, venta, papel, pagina, totalPaginas, usuario, Diccionario) {
 			if (venta.configuracion.usar_pf) {
 				if (vacia) {
-					if (usuario.empresa.imagen.length > 100) { doc.image(usuario.empresa.imagen, 60, 40, { fit: [65, 65] }); } //width: 50, height: 50
+					if (usuario.empresa.imagen.length > 100) { doc.image(usuario.empresa.imagen, 60, 40, { fit: [70, 70] }); } //width: 50, height: 50
 					doc.font('Helvetica-Bold', 8);
-					doc.text(usuario.empresa.razon_social.toUpperCase(), 60, 105);
+					var longitudCaracteres = usuario.empresa.razon_social.length;
+					var yDesc = (longitudCaracteres <= 35) ? 105 : ((longitudCaracteres > 36 && longitudCaracteres <= 72) ? 95 : 85);
+					doc.text(usuario.empresa.razon_social.toUpperCase(), 60, yDesc);
 					doc.font('Helvetica', 7);
 					doc.text(venta.sucursal.nombre.toUpperCase(), 60, 113);
 					var longitudCaracteres = venta.sucursal.direccion.length;
@@ -1930,7 +1932,9 @@ angular.module('agil.servicios')
 				if (vacia) {
 					if (usuario.empresa.imagen.length > 100) { doc.image(usuario.empresa.imagen, 60, 40, { fit: [65, 65] }); } //width: 50, height: 50
 					doc.font('Helvetica-Bold', 8);
-					doc.text(usuario.empresa.razon_social.toUpperCase(), 60, 105);
+					var longitudCaracteres = usuario.empresa.razon_social.length;
+					var yDesc = (longitudCaracteres <= 35) ? 105 : ((longitudCaracteres > 36 && longitudCaracteres <= 72) ? 95 : 85);
+					doc.text(usuario.empresa.razon_social.toUpperCase(), 60, yDesc);
 					doc.font('Helvetica', 7);
 					doc.text(venta.sucursal.nombre.toUpperCase(), 60, 113);
 					var longitudCaracteres = venta.sucursal.direccion.length;
