@@ -1185,7 +1185,7 @@ angular.module('agil.servicios')
 								if (existenDescuentos) {
 									var longitudCaracteres = venta.detallesVenta[i].observaciones.length;
 									var yDesc = (longitudCaracteres <= 24) ? y : ((longitudCaracteres > 24 && longitudCaracteres <= 60) ? y - 4 : y - 11);
-									doc.text(venta.detallesVenta[i].observaciones, 55, yDesc, { width: 200 });
+									doc.text(venta.detallesVenta[i].observaciones, 55, yDesc, { width: 300 });
 									//doc.text(venta.detallesVenta[i].precio_unitario.toFixed(2), 300, y);
 									doc.text(venta.detallesVenta[i].importe.toFixed(2), 335, y);
 									doc.text(venta.detallesVenta[i].descuento.toFixed(2), 385, y);
@@ -1201,7 +1201,7 @@ angular.module('agil.servicios')
 								} else {
 									var longitudCaracteres = venta.detallesVenta[i].observaciones.length;
 									var yDesc = (longitudCaracteres <= 24) ? y : ((longitudCaracteres > 24 && longitudCaracteres <= 60) ? y - 4 : y - 11);
-									doc.text(venta.detallesVenta[i].observaciones, 55, yDesc, { width: 130 });
+									doc.text(venta.detallesVenta[i].observaciones, 55, yDesc, { width: 400 });
 									doc.text(venta.detallesVenta[i].importe.toFixed(2), 450, y);
 									//doc.text((venta.detallesVenta[i].descuento ? venta.detallesVenta[i].descuento.toFixed(2) : "0.00"), 490, y);
 									doc.text(venta.detallesVenta[i].total.toFixed(2), 530, y);
@@ -1587,7 +1587,7 @@ angular.module('agil.servicios')
 								if (existenDescuentos) {
 									var longitudCaracteres = venta.detallesVenta[i].observaciones.length;
 									var yDesc = (longitudCaracteres <= 24) ? y : ((longitudCaracteres > 24 && longitudCaracteres <= 60) ? y - 4 : y - 11);
-									doc.text(venta.detallesVenta[i].observaciones, 55, yDesc, { width: 200 });
+									doc.text(venta.detallesVenta[i].observaciones , 55, yDesc, { width: 300 });
 									//doc.text(venta.detallesVenta[i].precio_unitario.toFixed(2), 300, y);
 									doc.text(venta.detallesVenta[i].importe.toFixed(2), 335, y);
 									doc.text(venta.detallesVenta[i].descuento.toFixed(2), 385, y);
@@ -1603,7 +1603,7 @@ angular.module('agil.servicios')
 								} else {
 									var longitudCaracteres = venta.detallesVenta[i].observaciones.length;
 									var yDesc = (longitudCaracteres <= 24) ? y : ((longitudCaracteres > 24 && longitudCaracteres <= 60) ? y - 4 : y - 11);
-									doc.text(venta.detallesVenta[i].observaciones, 55, yDesc, { width: 130 });
+									doc.text(venta.detallesVenta[i].observaciones, 55, yDesc, { width: 400 });
 									doc.text(venta.detallesVenta[i].importe.toFixed(2), 450, y);
 									//doc.text((venta.detallesVenta[i].descuento ? venta.detallesVenta[i].descuento.toFixed(2) : "0.00"), 490, y);
 									doc.text(venta.detallesVenta[i].total.toFixed(2), 530, y);
