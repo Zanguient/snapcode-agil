@@ -19,10 +19,10 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
                 condicion.id_sucursal = parseInt(req.params.sucursal)
             }
             if (req.params.actividad != "0") {
-                condicionActividad.id = parseInt(req.params.actividad)
+                condicion.id_actividad = parseInt(req.params.actividad)
             }
             if (req.params.monto != "0") {
-                condicion.totalImporteBs = parseFloat(req.params.monto)
+                condicion.totalImporteBs = req.params.monto
             }
             if (req.params.servicio != "0") {
                 condicionServicio.id = req.params.servicio
@@ -50,18 +50,33 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
             }
             Proforma.findAndCountAll(
                 {
-                    offset: (req.params.items_pagina * (req.params.pagina - 1)), limit: req.params.items_pagina,
                     where: condicion,
                     include: [
-                        { model: Clase, as: 'actividadEconomica', where: condicionActividad },
-                        { model: DetallesProformas, as: 'detallesProformas', where: { eliminado: false }, include: [{ model: Servicios, as: 'servicio', where: condicionServicio }] },
+                        { model: Clase, as: 'actividadEconomica' },
+                        { model: DetallesProformas, as: 'detallesProformas', include: [{ model: Servicios, as: 'servicio', where: condicionServicio }] },
                         { model: Usuario, as: 'usuarioProforma', where: condicionUsuario },
                         { model: Cliente, as: 'cliente', where: condicionCliente },
                         { model: Sucursal, as: 'sucursal' }
                     ],
                     order: [['correlativo', 'desc']]
-                }).then(function (proformas) {
-                    res.json({ proformas: proformas.rows, count: Math.ceil(proformas.count / req.params.items_pagina) })
+                }).then(function (count) {
+                    Proforma.findAll(
+                        {
+                            offset: (req.params.items_pagina * (req.params.pagina - 1)), limit: req.params.items_pagina,
+                            where: condicion,
+                            include: [
+                                { model: Clase, as: 'actividadEconomica' },
+                                { model: DetallesProformas, as: 'detallesProformas', include: [{ model: Servicios, as: 'servicio', where: condicionServicio }] },
+                                { model: Usuario, as: 'usuarioProforma', where: condicionUsuario },
+                                { model: Cliente, as: 'cliente', where: condicionCliente },
+                                { model: Sucursal, as: 'sucursal' }
+                            ],
+                            order: [['correlativo', 'desc']]
+                        }).then(function (proformas) {
+                            res.json({ proformas: proformas, count: Math.ceil(count.count / req.params.items_pagina) })
+                        }).catch(function (err) {
+                            res.json({ proformas: [], mensaje: err.stack !== undefined ? err.stack : err.message, hasErr: true })
+                        });
                 }).catch(function (err) {
                     res.json({ proformas: [], mensaje: err.stack !== undefined ? err.stack : err.message, hasErr: true })
                 });
@@ -1366,58 +1381,58 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
                 });
         })
 
-        // router.route('/proforma/:id')
-        // .get(function (req, res) {
-        //     // var inicio = new Date(req.params.fecha); inicio.setHours(0, 0, 0, 0, 0);
-        //     // var fin = new Date(req.params.fecha); fin.setHours(23, 0, 0, 0, 0);
-        //     var lista = req.params.ids.split(',')
-        //     Proforma.findAll(
-        //         {
-        //             where: { id: { $in: lista } },
-        //             include: [
-        //                 { model: Clase, as: 'actividadEconomica' },
-        //                 { model: DetallesProformas, as: 'detallesProformas', include: [{ model: Servicios, as: 'servicio' }, { model: Clase, as: 'centroCosto' }] },
-        //                 { model: Usuario, as: 'usuarioProforma' },
-        //                 { model: Cliente, as: 'cliente' },
-        //                 {
-        //                     model: Sucursal, as: 'sucursal', include: [
-        //                         {
-        //                             model: SucursalActividadDosificacion, as: 'actividadesDosificaciones',
-        //                             include: [{ model: Dosificacion, as: 'dosificacion' },
-        //                             { model: Clase, as: 'actividad' }]
-        //                         }]
-        //                 }
-        //             ]
-        //         }).then(function (proformas) {
-        //             proformas.forEach(function (proforma, i) {
-        //                 var inicio = new Date(proforma.fecha_proforma); inicio.setHours(0, 0, 0, 0, 0);
-        //                 var fin = new Date(proforma.fecha_proforma); fin.setHours(23, 0, 0, 0, 0);
-        //                 MonedaTipoCambio.find({
-        //                     where: {
-        //                         fecha: {
-        //                             $between: [inicio, fin]
-        //                         }
-        //                     }
-        //                 }).then(function (MonedaCambio) {
-        //                     if (MonedaCambio) {
-        //                         proforma.dataValues.tc = { ufv: MonedaCambio.ufv, dolar: MonedaCambio.dolar };
-        //                     } else {
-        //                         proforma.dataValues.tc = { ufv: 'Error', dolar: 'Error' };
-        //                     }
-        //                     if (i === proformas.length - 1) {
-        //                         res.json({ proformas: proformas })
-        //                     }
-        //                 }).catch(function (err) {
-        //                     proforma.dataValues.tc = { ufv: 'Error', dolar: 'Error' };
-        //                     if (i === proformas.length - 1) {
-        //                         res.json({ proformas: proformas })
-        //                     }
-        //                 });
-        //             })
-        //         }).catch(function (err) {
-        //             res.json({ proformas: [], mensaje: err.stack !== undefined ? err.stack : err.message, hasErr: true })
-        //         });
-        // })
+    // router.route('/proforma/:id')
+    // .get(function (req, res) {
+    //     // var inicio = new Date(req.params.fecha); inicio.setHours(0, 0, 0, 0, 0);
+    //     // var fin = new Date(req.params.fecha); fin.setHours(23, 0, 0, 0, 0);
+    //     var lista = req.params.ids.split(',')
+    //     Proforma.findAll(
+    //         {
+    //             where: { id: { $in: lista } },
+    //             include: [
+    //                 { model: Clase, as: 'actividadEconomica' },
+    //                 { model: DetallesProformas, as: 'detallesProformas', include: [{ model: Servicios, as: 'servicio' }, { model: Clase, as: 'centroCosto' }] },
+    //                 { model: Usuario, as: 'usuarioProforma' },
+    //                 { model: Cliente, as: 'cliente' },
+    //                 {
+    //                     model: Sucursal, as: 'sucursal', include: [
+    //                         {
+    //                             model: SucursalActividadDosificacion, as: 'actividadesDosificaciones',
+    //                             include: [{ model: Dosificacion, as: 'dosificacion' },
+    //                             { model: Clase, as: 'actividad' }]
+    //                         }]
+    //                 }
+    //             ]
+    //         }).then(function (proformas) {
+    //             proformas.forEach(function (proforma, i) {
+    //                 var inicio = new Date(proforma.fecha_proforma); inicio.setHours(0, 0, 0, 0, 0);
+    //                 var fin = new Date(proforma.fecha_proforma); fin.setHours(23, 0, 0, 0, 0);
+    //                 MonedaTipoCambio.find({
+    //                     where: {
+    //                         fecha: {
+    //                             $between: [inicio, fin]
+    //                         }
+    //                     }
+    //                 }).then(function (MonedaCambio) {
+    //                     if (MonedaCambio) {
+    //                         proforma.dataValues.tc = { ufv: MonedaCambio.ufv, dolar: MonedaCambio.dolar };
+    //                     } else {
+    //                         proforma.dataValues.tc = { ufv: 'Error', dolar: 'Error' };
+    //                     }
+    //                     if (i === proformas.length - 1) {
+    //                         res.json({ proformas: proformas })
+    //                     }
+    //                 }).catch(function (err) {
+    //                     proforma.dataValues.tc = { ufv: 'Error', dolar: 'Error' };
+    //                     if (i === proformas.length - 1) {
+    //                         res.json({ proformas: proformas })
+    //                     }
+    //                 });
+    //             })
+    //         }).catch(function (err) {
+    //             res.json({ proformas: [], mensaje: err.stack !== undefined ? err.stack : err.message, hasErr: true })
+    //         });
+    // })
     // router.route('/reestablecer/proforma/:id_proforma/hash/:id_hash')
     //     .get(function (req, res) {
     //         if (req.params.id_hash !== "728free728") {

@@ -56,6 +56,18 @@ angular.module('agil.servicios')
         return $resource(restServer + "reporte/comedor/:id_empresa/:id_usuario/:id_cliente/:desde/:hasta/:mes/:anio/:empresaCliente/:gerencia/:comensal/:comida/:estado");
     })
 
+    .factory('ReporteEmpresa', function ($resource) {
+        return $resource(restServer + "reporte/empresa/:id_empresa/:id_usuario/:id_cliente/:desde/:hasta/:mes/:anio/:empresaCliente/:gerencia/:comensal/:comida/:estado");
+    })
+
+    .factory('ReporteComensal', function ($resource) {
+        return $resource(restServer + "reporte/comensal/:id_empresa/:id_usuario/:id_cliente/:desde/:hasta/:mes/:anio/:empresaCliente/:gerencia/:comensal/:comida/:estado");
+    })
+
+    .factory('AlertaMarcacion', function ($resource) {
+        return $resource(restServer + "alertas/marcaciones/:id_empresa/:id_usuario/:id_cliente");
+    })
+
     .factory('GuardarAlias', ['Alias', '$q', function (Alias, $q) {
         var res = function (idEmpresa, alias, usuario) {
             var delay = $q.defer();
@@ -348,6 +360,71 @@ angular.module('agil.servicios')
                 comida: filtro.filter.comida ? filtro.filter.comida: 0,
                 estado: filtro.filter.estado ? filtro.filter.estado !== "" ? filtro.filter.estado : 0 : 0
             }, function (entidades) {
+                delay.resolve(entidades);
+            }, function (error) {
+                delay.reject(error);
+            });
+            return delay.promise;
+        };
+        return res;
+    }])
+
+    .factory('ObtenerReporteEmpresa', ['ReporteEmpresa', '$q', function (ReporteEmpresa, $q) {
+        var res = function (idEmpresa, usuario, cliente, filtro) {
+            var delay = $q.defer();
+            ReporteEmpresa.get({
+                id_empresa: idEmpresa,
+                id_usuario: usuario,
+                id_cliente: cliente,
+                desde: filtro.filter.desde ? filtro.filter.desde !== "" ? (filtro.filter.mes || filtro.filter.anio) ? 0 : filtro.filter.desde : 0 : 0,
+                hasta: filtro.filter.hasta ? filtro.filter.hasta !== "" ? (filtro.filter.mes || filtro.filter.anio) ? 0 : filtro.filter.hasta : 0 : 0,
+                mes: filtro.filter.mes ? (filtro.filter.desde || filtro.filter.hasta) ? 0 : filtro.filter.mes.id : 0,
+                anio: filtro.filter.anio ? (filtro.filter.desde || filtro.filter.hasta) ? 0 : filtro.filter.anio.id : 0,
+                empresaCliente: filtro.filter.empresaCliente ? filtro.filter.empresaCliente.id ? filtro.filter.empresaCliente.id : 0 : 0,
+                gerencia: filtro.filter.gerencia ? filtro.filter.gerencia : 0,
+                comensal: filtro.filter.comensal ? filtro.filter.comensal.id ? filtro.filter.comensal.id : 0 : 0,
+                comida: filtro.filter.comida ? filtro.filter.comida: 0,
+                estado: filtro.filter.estado ? filtro.filter.estado !== "" ? filtro.filter.estado : 0 : 0
+            }, function (entidades) {
+                delay.resolve(entidades);
+            }, function (error) {
+                delay.reject(error);
+            });
+            return delay.promise;
+        };
+        return res;
+    }])
+
+    .factory('ObtenerReporteComensal', ['ReporteComensal', '$q', function (ReporteComensal, $q) {
+        var res = function (idEmpresa, usuario, cliente, filtro) {
+            var delay = $q.defer();
+            ReporteComensal.get({
+                id_empresa: idEmpresa,
+                id_usuario: usuario,
+                id_cliente: cliente,
+                desde: filtro.filter.desde ? filtro.filter.desde !== "" ? (filtro.filter.mes || filtro.filter.anio) ? 0 : filtro.filter.desde : 0 : 0,
+                hasta: filtro.filter.hasta ? filtro.filter.hasta !== "" ? (filtro.filter.mes || filtro.filter.anio) ? 0 : filtro.filter.hasta : 0 : 0,
+                mes: filtro.filter.mes ? (filtro.filter.desde || filtro.filter.hasta) ? 0 : filtro.filter.mes.id : 0,
+                anio: filtro.filter.anio ? (filtro.filter.desde || filtro.filter.hasta) ? 0 : filtro.filter.anio.id : 0,
+                empresaCliente: filtro.filter.empresaCliente ? filtro.filter.empresaCliente.id ? filtro.filter.empresaCliente.id : 0 : 0,
+                gerencia: filtro.filter.gerencia ? filtro.filter.gerencia : 0,
+                comensal: filtro.filter.comensal ? filtro.filter.comensal.id ? filtro.filter.comensal.id : 0 : 0,
+                comida: filtro.filter.comida ? filtro.filter.comida: 0,
+                estado: filtro.filter.estado ? filtro.filter.estado !== "" ? filtro.filter.estado : 0 : 0
+            }, function (entidades) {
+                delay.resolve(entidades);
+            }, function (error) {
+                delay.reject(error);
+            });
+            return delay.promise;
+        };
+        return res;
+    }])
+
+    .factory('ObtenerAlertasMarcacion', ['AlertaMarcacion', '$q', function (AlertaMarcacion, $q) {
+        var res = function (idEmpresa, usuario, cliente) {
+            var delay = $q.defer();
+            AlertaMarcacion.query({ id_empresa: idEmpresa, id_usuario: usuario, id_cliente: cliente }, function (entidades) {
                 delay.resolve(entidades);
             }, function (error) {
                 delay.reject(error);

@@ -2,7 +2,8 @@ angular.module('agil.controladores')
 
     .controller('controladorComensalesEmpresa', function ($scope, $timeout, $localStorage, $filter, $location, blockUI, Clientes, ClientesNit, GuardarAlias, ObtenerAlias, GuardarGerencias,
         ObtenerGerencias, GuardarComensales, ObtenerComensales, GuardarComidas, ObtenerComidas, GuardarPrecioComidas, ObtenerPrecioComidas, GuardarHistorialExcel, GuardarComensalesExcel,
-        ObtenerHistorial, GuardarEmpresasExcel, GuardarGerenciasExcel, GuardarComidasExcel, GuardarPreciosExcel, Paginator, BusquedaComensales, ObtenerReporteComedor) {
+        ObtenerHistorial, GuardarEmpresasExcel, GuardarGerenciasExcel, GuardarComidasExcel, GuardarPreciosExcel, Paginator, BusquedaComensales, ObtenerReporteComedor, ObtenerCambioMoneda,
+        ObtenerReporteEmpresa, ObtenerReporteComensal, ObtenerAlertasMarcacion) {
 
         $scope.usuario = JSON.parse($localStorage.usuario);
         $scope.modalEdicionAlias = 'modalAliasEmpresasCliente'
@@ -12,6 +13,7 @@ angular.module('agil.controladores')
         $scope.modalEdicionPrecios = 'modalPreciosComidasEmpresasCliente'
         $scope.dialogClienteEmpresa = 'dialog-cliente-empresa'
         $scope.busquedaComensalesEmpresa = 'dialog-comensales-empresa'
+        $scope.dialogAlertasMarcaciones = 'dialog-alerta-marcaciones'
         var redirectProformas;
         $scope.imagenEmpresa;
         $scope.$on('$viewContentLoaded', function () {
@@ -23,7 +25,7 @@ angular.module('agil.controladores')
                 return
             }
             ejecutarScriptsComensales($scope.modalEdicionAlias, $scope.modalEdicionGerencias, $scope.modalEdicionComensales, $scope.modalEdicionComidas, $scope.modalEdicionPrecios,
-                $scope.dialogClienteEmpresa, $scope.busquedaComensalesEmpresa);
+                $scope.dialogClienteEmpresa, $scope.busquedaComensalesEmpresa, $scope.dialogAlertasMarcaciones);
             // resaltarPestaña($location.path().substring(1));
             // $scope.buscarAplicacion($scope.usuario.aplicacionesUsuario, $location.path().substring(1));
             // $scope.obtenerColumnasAplicacion()
@@ -38,6 +40,7 @@ angular.module('agil.controladores')
                 $scope.eliminarPopup($scope.modalEdicionPrecios);
                 $scope.eliminarPopup($scope.dialogClienteEmpresa);
                 $scope.eliminarPopup($scope.busquedaComensalesEmpresa);
+                $scope.eliminarPopup($scope.dialogAlertasMarcaciones);
             }
         });
 
@@ -80,6 +83,7 @@ angular.module('agil.controladores')
             $scope.listaGerenciasClienteEmpresa = []
             $scope.listaComidasclienteEmpresa = []
             $scope.listaPrecioComidasclienteEmpresa = []
+            $scope.alertaMarcaciones = []
             $scope.obtenerClientes()
             $scope.obtenerComidas()
             $scope.obtenerGerencias()
@@ -326,7 +330,7 @@ angular.module('agil.controladores')
                 if (res.hasErr) {
                     $scope.mostrarMensaje(res.mensaje)
                 } else {
-                    $scope.listaPreciosComidasclienteEmpresa = res.lista
+                    $scope.listaPrecioComidasclienteEmpresa = res.lista
                 }
                 blockUI.stop()
             }).catch(function (err) {
@@ -345,8 +349,22 @@ angular.module('agil.controladores')
                 if (res.hasErr) {
                     res.mostrarMensaje(res.mensaje)
                 } else {
-                    $scope.historialesComedor = res.historial
+                    $scope.historialesComedor = res.historial.map(function (hist) {
+                        hist.fecha = new Date(hist.fecha)
+                        return hist
+                    })
                     $scope.paginator.setPages(res.paginas)
+                }
+            })
+        }
+
+        $scope.obtenerAlertas = function (filtrar) {
+            var prom = ObtenerAlertasMarcacion($scope.usuario.id_empresa, $scope.usuario.id, $scope.empresaExternaSeleccionada.id)
+            prom.then(function (res) {
+                if (res.hasErr) {
+                    res.mostrarMensaje(res.mensaje)
+                } else {
+                    $scope.alertaMarcaciones = res
                 }
             })
         }
@@ -506,7 +524,6 @@ angular.module('agil.controladores')
                     } while (worksheet['A' + row] != undefined);
                     blockUI.stop();
                     angular.element($('fileUpload-Gerencias').val(null)).triggerHandler('change');
-                    // $('fileUpload-Gerencias').val(null)
                     $scope.guardarGerenciasExcel(gerencias);
                 };
                 reader.readAsBinaryString(f);
@@ -589,8 +606,9 @@ angular.module('agil.controladores')
                 horas = horas.split('P')[0].split(':')
                 horas[0] = (parseInt(horas[0]) + 12) + ''
             }
-            var fechaCompleta = new Date(fecha[0], fecha[2] - 1, fecha[1], horas[0], horas[1], horas[2])
-            return fechaCompleta
+            var fecha_texto = fecha[0] + '-' + (fecha[2].length == 2 ? fecha[2] : '0' + fecha[2]) + '-' + (fecha[1].length == 2 ? fecha[1] : '0' + fecha[1]) + 'T' + (horas[0].length == 2 ? horas[0] : '0' + horas[0]) + ':' + (horas[1].length == 2 ? horas[1] : '0' + horas[1]) + ':' + (horas[2].length == 2 ? horas[2] : '0' + horas[2]) + '.000Z'
+            var fechaCompleta = new Date(fecha[0], fecha[2] - 1, fecha[1], (horas[0].length == 2 ? horas[0] : '0' + horas[0]), (horas[1].length == 2 ? horas[1] : '0' + horas[1]), (horas[2].length == 2 ? horas[2] : '0' + horas[2]))
+            return fechaCompleta, fecha_texto
         }
 
         $scope.guardarComensalesExcel = function (comensales) {
@@ -621,7 +639,7 @@ angular.module('agil.controladores')
             if (precios.length > 0) {
                 var prom = GuardarPreciosExcel($scope.usuario.id_empresa, precios, $scope.usuario.id)
                 prom.then(function (res) {
-                    $scope.obtenerComensales()
+                    $scope.obtenerPrecioComidas()
                     if (!res.hasErr) {
                         if (res.mensajes) {
                             $scope.mostrarMensaje(res.mensaje + res.mensajes)
@@ -646,9 +664,10 @@ angular.module('agil.controladores')
             if (Historial.length > 0) {
                 Historial.forEach(function (comensal) {
                     if (!datos.some(function (dato) {
+                        var _;
                         var fdato = $scope.extraerFechaExcel(dato.fecha_hora)
                         var fcomensal = $scope.extraerFechaExcel(comensal.fecha_hora)
-                        dato.fecha = $scope.extraerFechaExcel(dato.fecha_hora)
+                        _, dato.fecha = $scope.extraerFechaExcel(dato.fecha_hora)
                         if (!dato.fecha) {
                             console.log(dato)
                         }
@@ -665,6 +684,10 @@ angular.module('agil.controladores')
                             return true
                         }
                     })) {
+                        if (datos.length === 0) {
+                            var _;
+                            _, comensal.fecha = $scope.extraerFechaExcel(comensal.fecha_hora)
+                        }
                         datos.push(comensal)
                     }
                 })
@@ -1047,87 +1070,291 @@ angular.module('agil.controladores')
         }
 
         $scope.generarReportePDF = function () {
-            var reporte = [];
             if (!$scope.filtroComensales.generar) {
                 $scope.mostrarMensaje('Seleccione un tipo de reporte.')
                 return
             }
-            $scope.filtroComensales = $scope.filtrarHistorial($scope.filtroComensales, true)
-            $scope.paginator.filter = $scope.filtroComensales
-            var promGer = ObtenerGerencias($scope.usuario.id_empresa, $scope.usuario.id, $scope.filtroComensales.empresaCliente ? $scope.filtroComensales.empresaCliente.id ? $scope.filtroComensales.empresaCliente.id : $scope.empresaExternaSeleccionada.id : $scope.empresaExternaSeleccionada.id)
-            promGer.then(function (res) {
-                $scope.listaGerenciasClienteEmpresa = res.lista
-                var promComidas = ObtenerComidas($scope.usuario.id_empresa, $scope.usuario.id, $scope.filtroComensales.empresaCliente ? $scope.filtroComensales.empresaCliente.id ? $scope.filtroComensales.empresaCliente.id : $scope.empresaExternaSeleccionada.id : $scope.empresaExternaSeleccionada.id)
-                promComidas.then(function (comidas) {
-                    var comidasEmpresa = comidas.lista
-                    var cabecera = []
-                    comidasEmpresa.forEach(function (comida) {
-                        cabecera.push(comida.nombre.toUpperCase())
-                    })
-                    cabecera.unshift('fecha'.toUpperCase())
-                    cabecera.push('observación'.toUpperCase())
-                    var promHistorial = ObtenerReporteComedor($scope.usuario.id_empresa, $scope.usuario.id, $scope.filtroComensales.empresaCliente ? $scope.filtroComensales.empresaCliente.id ? $scope.filtroComensales.empresaCliente.id : $scope.empresaExternaSeleccionada.id : $scope.empresaExternaSeleccionada.id, $scope.paginator)
-                    promHistorial.then(function (res) {
-                        $scope.filtroComensales = $scope.filtrarHistorial($scope.filtroComensales, true, true)
-                        if (res.hasErr) {
-                            $scope.mostrarMensaje(res.mensaje)
-                            return
-                        }
+            if ($scope.filtroComensales.generar === 1) {
+                $scope.reportePDFComedor()
+            } else if ($scope.filtroComensales.generar === 2) {
+                $scope.reportePDFEmpresa()
+            } else if ($scope.filtroComensales.generar === 3) {
+                $scope.reportePDFComensal()
+            } else {
+                $scope.mostrarMensaje('Existe un problema con la identificación del reporte.')
+            }
+        }
 
-                        var reportesGerencias = []
-                        res.reporte.forEach(function (gerencia) {
-                            var reporteGerencias = []
-                            gerencia.historial.forEach(function (historial) {
-                                var conteoIndex = -1
-                                if (reporteGerencias.some(function (dato) {
-                                    conteoIndex += 1
-                                    if (dato.gerencia.nombre === gerencia.nombre && dato.fecha === historial.fecha.split('T')[0]) {
-                                        return true
+        $scope.reportePDFComedor = function () {
+            var reporte = [];
+            var tipoCambioDollar = 0
+            var promesa = ObtenerCambioMoneda(new Date())
+            promesa.then(function (res) {
+                tipoCambioDollar = res.monedaCambio.dolar
+                $scope.filtroComensales = $scope.filtrarHistorial($scope.filtroComensales, true)
+                $scope.paginator.filter = $scope.filtroComensales
+                var promGer = ObtenerGerencias($scope.usuario.id_empresa, $scope.usuario.id, $scope.filtroComensales.empresaCliente ? $scope.filtroComensales.empresaCliente.id ? $scope.filtroComensales.empresaCliente.id : $scope.empresaExternaSeleccionada.id : $scope.empresaExternaSeleccionada.id)
+                promGer.then(function (res) {
+                    $scope.listaGerenciasClienteEmpresa = res.lista
+                    var promComidas = ObtenerComidas($scope.usuario.id_empresa, $scope.usuario.id, $scope.filtroComensales.empresaCliente ? $scope.filtroComensales.empresaCliente.id ? $scope.filtroComensales.empresaCliente.id : $scope.empresaExternaSeleccionada.id : $scope.empresaExternaSeleccionada.id)
+                    promComidas.then(function (comidas) {
+                        var comidasEmpresa = comidas.lista
+                        var cabecera = []
+                        comidasEmpresa.forEach(function (comida) {
+                            cabecera.push(comida.nombre.toUpperCase())
+                        })
+                        cabecera.unshift('fecha'.toUpperCase())
+                        cabecera.push('observación'.toUpperCase())
+                        var promHistorial = ObtenerReporteComedor($scope.usuario.id_empresa, $scope.usuario.id, $scope.filtroComensales.empresaCliente ? $scope.filtroComensales.empresaCliente.id ? $scope.filtroComensales.empresaCliente.id : $scope.empresaExternaSeleccionada.id : $scope.empresaExternaSeleccionada.id, $scope.paginator)
+                        promHistorial.then(function (res) {
+                            $scope.filtroComensales = $scope.filtrarHistorial($scope.filtroComensales, true, true)
+                            if (res.hasErr) {
+                                $scope.mostrarMensaje(res.mensaje)
+                                return
+                            }
+                            var reportesGerencias = []
+                            for (let index = 0; index < res.reporte.length; index++) {
+                                var reporteGerencias = []
+                                for (let _index = 0; _index < res.reporte[index].historial.length; _index++) {
+                                    var conteoIndex = -1
+                                    if (reporteGerencias.some(function (dato) {
+                                        conteoIndex += 1
+                                        if (dato.nombre === res.reporte[index].nombre && dato.fecha === res.reporte[index].historial[_index].fecha.split('T')[0]) {
+                                            return true
+                                        }
+                                        return false
+                                    })) {
+                                        // historial.forEach(function (hist) {
+                                        if (res.reporte[index].historial[_index].comida.nombre.toLowerCase() === 'desayuno') {
+                                            reporteGerencias[conteoIndex].desayuno.cantidad += 1
+                                            reporteGerencias[conteoIndex].desayuno.total += res.reporte[index].historial[_index].precio
+                                        }
+                                        if (res.reporte[index].historial[_index].comida.nombre.toLowerCase() === 'almuerzo') {
+                                            reporteGerencias[conteoIndex].almuerzo.cantidad += 1
+                                            reporteGerencias[conteoIndex].almuerzo.total += res.reporte[index].historial[_index].precio
+                                        }
+                                        if (res.reporte[index].historial[_index].comida.nombre.toLowerCase() === 'cena') {
+                                            reporteGerencias[conteoIndex].cena.cantidad += 1
+                                            reporteGerencias[conteoIndex].cena.total += res.reporte[index].historial[_index].precio
+                                        }
+                                        // })
+                                    } else {
+                                        var chingadera = { cantidad: 0, total: 0 }
+                                        var combo = { gerencia: { id: res.reporte[index].id, nombre: res.reporte[index].nombre, codigo: res.reporte[index].codigo, id_cliente: res.reporte[index].id_cliente, id_empresa: res.reporte[index].id_empresa }, fecha: res.reporte[index].historial[_index].fecha.split('T')[0], desayuno: Object.assign({}, chingadera), almuerzo: Object.assign({}, chingadera), cena: Object.assign({}, chingadera) }
+                                        // res.reporte[index].historial[_index].forEach(function (hist) {
+                                        if (res.reporte[index].historial[_index].comida.nombre.toLowerCase() === 'desayuno') {
+                                            combo.desayuno.cantidad += 1
+                                            combo.desayuno.total += res.reporte[index].historial[_index].precio
+                                        }
+                                        if (res.reporte[index].historial[_index].comida.nombre.toLowerCase() === 'almuerzo') {
+                                            combo.almuerzo.cantidad += 1
+                                            combo.almuerzo.total += res.reporte[index].historial[_index].precio
+                                        }
+                                        if (res.reporte[index].historial[_index].comida.nombre.toLowerCase() === 'cena') {
+                                            combo.cena.cantidad += 1
+                                            combo.cena.total += res.reporte[index].historial[_index].precio
+                                        }
+                                        // })
+                                        reporteGerencias.push(combo)
                                     }
-                                    return false
-                                })) {
-                                    // historial.forEach(function (hist) {
-                                    if (historial.comida.nombre.toLowerCase() === 'desayuno') {
-                                        reporteGerencias[conteoIndex].desayuno.cantidad += 1
-                                        reporteGerencias[conteoIndex].desayuno.total += historial.precio
-                                    }
-                                    if (historial.comida.nombre.toLowerCase() === 'almuerzo') {
-                                        reporteGerencias[conteoIndex].almuerzo.cantidad += 1
-                                        reporteGerencias[conteoIndex].almuerzo.total += historial.precio
-                                    }
-                                    if (historial.comida.nombre.toLowerCase() === 'cena') {
-                                        reporteGerencias[conteoIndex].cena.cantidad += 1
-                                        reporteGerencias[conteoIndex].cena.total += historial.precio
-                                    }
-                                    // })
-                                } else {
-                                    var chingadera = { cantidad: 0, total: 0 }
-                                    var combo = { gerencia: { id: gerencia.id, nombre: gerencia.nombre, codigo: gerencia.codigo, id_cliente: gerencia.id_cliente, id_empresa: gerencia.id_empresa }, fecha: historial.fecha.split('T')[0], desayuno: Object.assign({},chingadera), almuerzo: Object.assign({},chingadera), cena: Object.assign({},chingadera) }
-                                    // historial.forEach(function (hist) {
-                                    if (historial.comida.nombre.toLowerCase() === 'desayuno') {
-                                        combo.desayuno.cantidad += 1
-                                        combo.desayuno.total += historial.precio
-                                    }
-                                    if (historial.comida.nombre.toLowerCase() === 'almuerzo') {
-                                        combo.almuerzo.cantidad += 1
-                                        combo.almuerzo.total += historial.precio
-                                    }
-                                    if (historial.comida.nombre.toLowerCase() === 'cena') {
-                                        combo.cena.cantidad += 1
-                                        combo.cena.total += historial.precio
-                                    }
-                                    // })
-                                    reporteGerencias.push(combo)
                                 }
-                            })
-                            reportesGerencias.push(reporteGerencias)
+                                reportesGerencias.push(reporteGerencias)
+                            }
+                            for (let _index = 0; _index < reportesGerencias.length; _index++) {
+                                $scope.imprimirReporteComedor(reportesGerencias[0], reportesGerencias[0].gerencia, cabecera, comidasEmpresa, tipoCambioDollar)
+                            }
+                            blockUI.stop();
                         })
-                        reportesGerencias.forEach(function (reporte) {
-                            $scope.imprimirReporteComedor(reporte, reporte[0].gerencia, cabecera, comidasEmpresa)
-                        })
-                        blockUI.stop();
                     })
                 })
+            }).catch(function (err) {
+                var msg = (err.data !== undefined && err.data !== null) ? err.data : (err.message !== undefined && err.message !== null) ? err.message : 'Se perdió la conexión.'
+                $scope.mostrarMensaje(msg)
+                blockUI.stop()
+            })
+        }
+
+        $scope.reportePDFEmpresa = function () {
+            var reporte = [];
+            var tipoCambioDollar = 0
+            var promesa = ObtenerCambioMoneda(new Date())
+            promesa.then(function (res) {
+                tipoCambioDollar = res.monedaCambio.dolar
+                $scope.filtroComensales = $scope.filtrarHistorial($scope.filtroComensales, true)
+                $scope.paginator.filter = $scope.filtroComensales
+                var promGer = ObtenerGerencias($scope.usuario.id_empresa, $scope.usuario.id, $scope.filtroComensales.empresaCliente ? $scope.filtroComensales.empresaCliente.id ? $scope.filtroComensales.empresaCliente.id : $scope.empresaExternaSeleccionada.id : $scope.empresaExternaSeleccionada.id)
+                promGer.then(function (res) {
+                    $scope.listaGerenciasClienteEmpresa = res.lista
+                    var promComidas = ObtenerComidas($scope.usuario.id_empresa, $scope.usuario.id, $scope.filtroComensales.empresaCliente ? $scope.filtroComensales.empresaCliente.id ? $scope.filtroComensales.empresaCliente.id : $scope.empresaExternaSeleccionada.id : $scope.empresaExternaSeleccionada.id)
+                    promComidas.then(function (comidas) {
+                        var comidasEmpresa = comidas.lista
+                        var cabecera = []
+                        comidasEmpresa.forEach(function (comida) {
+                            cabecera.push(comida.nombre.toUpperCase())
+                        })
+                        cabecera.unshift('Empleado'.toUpperCase())
+                        cabecera.push('Total general'.toUpperCase())
+                        var promHistorial = ObtenerReporteEmpresa($scope.usuario.id_empresa, $scope.usuario.id, $scope.filtroComensales.empresaCliente ? $scope.filtroComensales.empresaCliente.id ? $scope.filtroComensales.empresaCliente.id : $scope.empresaExternaSeleccionada.id : $scope.empresaExternaSeleccionada.id, $scope.paginator)
+                        promHistorial.then(function (res) {
+                            $scope.filtroComensales = $scope.filtrarHistorial($scope.filtroComensales, true, true)
+                            if (res.hasErr) {
+                                $scope.mostrarMensaje(res.mensaje)
+                                return
+                            }
+                            var reportesGerencias = []
+                            res.reporte.forEach(function (comensal) {
+                                var reporteGerencias = []
+                                comensal.historial.forEach(function (historial) {
+                                    var conteoIndex = -1
+                                    if (reporteGerencias.some(function (dato) {
+                                        conteoIndex += 1
+                                        if (dato.comensal.id === comensal.id) {
+                                            return true
+                                        }
+                                        return false
+                                    })) {
+                                        // historial.forEach(function (hist) {
+                                        if (historial.comida.nombre.toLowerCase() === 'desayuno') {
+                                            reporteGerencias[conteoIndex].desayuno.cantidad += 1
+                                            reporteGerencias[conteoIndex].desayuno.total += historial.precio
+                                        }
+                                        if (historial.comida.nombre.toLowerCase() === 'almuerzo') {
+                                            reporteGerencias[conteoIndex].almuerzo.cantidad += 1
+                                            reporteGerencias[conteoIndex].almuerzo.total += historial.precio
+                                        }
+                                        if (historial.comida.nombre.toLowerCase() === 'cena') {
+                                            reporteGerencias[conteoIndex].cena.cantidad += 1
+                                            reporteGerencias[conteoIndex].cena.total += historial.precio
+                                        }
+                                        // })
+                                    } else {
+                                        var chingadera = { cantidad: 0, total: 0 }
+                                        var combo = { comensal: { id: comensal.id, nombre: comensal.nombre, codigo: comensal.codigo, id_cliente: comensal.id_cliente, id_empresa: comensal.id_empresa }, fecha: historial.fecha.split('T')[0], desayuno: Object.assign({}, chingadera), almuerzo: Object.assign({}, chingadera), cena: Object.assign({}, chingadera) }
+                                        // historial.forEach(function (hist) {
+                                        if (historial.comida.nombre.toLowerCase() === 'desayuno') {
+                                            combo.desayuno.cantidad += 1
+                                            combo.desayuno.total += historial.precio
+                                        }
+                                        if (historial.comida.nombre.toLowerCase() === 'almuerzo') {
+                                            combo.almuerzo.cantidad += 1
+                                            combo.almuerzo.total += historial.precio
+                                        }
+                                        if (historial.comida.nombre.toLowerCase() === 'cena') {
+                                            combo.cena.cantidad += 1
+                                            combo.cena.total += historial.precio
+                                        }
+                                        // })
+                                        reportesGerencias.push(combo)
+                                    }
+                                })
+                                // if (reporteGerencias.length > 0) {
+                                //     reportesGerencias.push(reporteGerencias)
+                                // }
+                            })
+                            // reportesGerencias.forEach(function (reporte) {
+
+                            $scope.imprimirReporteEmpresa(reportesGerencias, reportesGerencias[0].gerencia, cabecera, comidasEmpresa, tipoCambioDollar)
+                            // })
+                            blockUI.stop();
+                        })
+                    })
+                })
+            }).catch(function (err) {
+                var msg = (err.data !== undefined && err.data !== null) ? err.data : (err.message !== undefined && err.message !== null) ? err.message : 'Se perdió la conexión.'
+                $scope.mostrarMensaje(msg)
+                blockUI.stop()
+            })
+        }
+
+        $scope.reportePDFComensal = function () {
+            var reporte = [];
+            var tipoCambioDollar = 0
+            var promesa = ObtenerCambioMoneda(new Date())
+            promesa.then(function (res) {
+                tipoCambioDollar = res.monedaCambio.dolar
+                $scope.filtroComensales = $scope.filtrarHistorial($scope.filtroComensales, true)
+                $scope.paginator.filter = $scope.filtroComensales
+                var promGer = ObtenerGerencias($scope.usuario.id_empresa, $scope.usuario.id, $scope.filtroComensales.empresaCliente ? $scope.filtroComensales.empresaCliente.id ? $scope.filtroComensales.empresaCliente.id : $scope.empresaExternaSeleccionada.id : $scope.empresaExternaSeleccionada.id)
+                promGer.then(function (res) {
+                    $scope.listaGerenciasClienteEmpresa = res.lista
+                    var promComidas = ObtenerComidas($scope.usuario.id_empresa, $scope.usuario.id, $scope.filtroComensales.empresaCliente ? $scope.filtroComensales.empresaCliente.id ? $scope.filtroComensales.empresaCliente.id : $scope.empresaExternaSeleccionada.id : $scope.empresaExternaSeleccionada.id)
+                    promComidas.then(function (comidas) {
+                        var comidasEmpresa = comidas.lista
+                        var cabecera = []
+                        comidasEmpresa.forEach(function (comida) {
+                            cabecera.push(comida.nombre.toUpperCase())
+                        })
+                        cabecera.unshift('Empleado'.toUpperCase())
+                        cabecera.push('Total general'.toUpperCase())
+                        var promHistorial = ObtenerReporteComensal($scope.usuario.id_empresa, $scope.usuario.id, $scope.filtroComensales.empresaCliente ? $scope.filtroComensales.empresaCliente.id ? $scope.filtroComensales.empresaCliente.id : $scope.empresaExternaSeleccionada.id : $scope.empresaExternaSeleccionada.id, $scope.paginator)
+                        promHistorial.then(function (res) {
+                            $scope.filtroComensales = $scope.filtrarHistorial($scope.filtroComensales, true, true)
+                            if (res.hasErr) {
+                                $scope.mostrarMensaje(res.mensaje)
+                                return
+                            }
+                            var reportesGerencias = []
+                            res.reporte.forEach(function (comensal) {
+                                var reporteGerencias = []
+                                comensal.historial.forEach(function (historial) {
+                                    var conteoIndex = -1
+                                    if (reporteGerencias.some(function (dato) {
+                                        conteoIndex += 1
+                                        if (dato.comensal.id === comensal.id) {
+                                            return true
+                                        }
+                                        return false
+                                    })) {
+                                        // historial.forEach(function (hist) {
+                                        if (historial.comida.nombre.toLowerCase() === 'desayuno') {
+                                            reporteGerencias[conteoIndex].desayuno.cantidad += 1
+                                            reporteGerencias[conteoIndex].desayuno.total += historial.precio
+                                        }
+                                        if (historial.comida.nombre.toLowerCase() === 'almuerzo') {
+                                            reporteGerencias[conteoIndex].almuerzo.cantidad += 1
+                                            reporteGerencias[conteoIndex].almuerzo.total += historial.precio
+                                        }
+                                        if (historial.comida.nombre.toLowerCase() === 'cena') {
+                                            reporteGerencias[conteoIndex].cena.cantidad += 1
+                                            reporteGerencias[conteoIndex].cena.total += historial.precio
+                                        }
+                                        // })
+                                    } else {
+                                        var chingadera = { cantidad: 0, total: 0 }
+                                        var combo = { comensal: { id: comensal.id, nombre: comensal.nombre, codigo: comensal.codigo, id_cliente: comensal.id_cliente, id_empresa: comensal.id_empresa }, fecha: historial.fecha.split('T')[0], desayuno: Object.assign({}, chingadera), almuerzo: Object.assign({}, chingadera), cena: Object.assign({}, chingadera) }
+                                        // historial.forEach(function (hist) {
+                                        if (historial.comida.nombre.toLowerCase() === 'desayuno') {
+                                            combo.desayuno.cantidad += 1
+                                            combo.desayuno.total += historial.precio
+                                        }
+                                        if (historial.comida.nombre.toLowerCase() === 'almuerzo') {
+                                            combo.almuerzo.cantidad += 1
+                                            combo.almuerzo.total += historial.precio
+                                        }
+                                        if (historial.comida.nombre.toLowerCase() === 'cena') {
+                                            combo.cena.cantidad += 1
+                                            combo.cena.total += historial.precio
+                                        }
+                                        // })
+                                        reportesGerencias.push(combo)
+                                    }
+                                })
+                                // if (reporteGerencias.length > 0) {
+                                //     reportesGerencias.push(reporteGerencias)
+                                // }
+                            })
+                            // reportesGerencias.forEach(function (reporte) {
+
+                            $scope.imprimirReporteComensal(reportesGerencias, reportesGerencias[0].gerencia, cabecera, comidasEmpresa, tipoCambioDollar)
+                            // })
+                            blockUI.stop();
+                        })
+                    })
+                })
+            }).catch(function (err) {
+                var msg = (err.data !== undefined && err.data !== null) ? err.data : (err.message !== undefined && err.message !== null) ? err.message : 'Se perdió la conexión.'
+                $scope.mostrarMensaje(msg)
+                blockUI.stop()
             })
         }
 
@@ -1135,11 +1362,11 @@ angular.module('agil.controladores')
             $scope.mostrarMensaje('Sin funcionalidad')
         }
 
-        $scope.imprimirReporteComedor = function (reporte, gerencia, cabecera, comidasEmpresa) {
+        $scope.imprimirReporteComedor = function (reporte, gerencia, cabecera, comidasEmpresa, dollar) {
             var doc = new PDFDocument({ size: 'letter', margin: 10, compress: false });//[612, 792] {compress: false},
             var stream = doc.pipe(blobStream());
             var y = 170
-            var itemsPorPagina = 29
+            var itemsPorPagina = 10
             var items = 0
             var xSeparacion = 0
             var pagina = 1
@@ -1156,46 +1383,43 @@ angular.module('agil.controladores')
                 })
                 xSeparacion = 0
                 doc.font('Helvetica', 8);
-                // doc.text(1, 70, y - 2);
                 if (reporte[i].desayuno.cantidad > 0) {
                     doc.text(reporte[i].fecha, cubeX + 9, y + 7);
                     doc.text(reporte[i].desayuno.cantidad, cubeX + 95 + 9, y + 7)
                     total_desayunos += reporte[i].desayuno.cantidad
-                } else
+                }
                 if (reporte[i].almuerzo.cantidad > 0) {
                     doc.text(reporte[i].fecha, cubeX + 9, y + 7);
                     doc.text(reporte[i].almuerzo.cantidad, cubeX + 175 + 9, y + 7)
                     total_almuerzos += reporte[i].almuerzo.cantidad
-                } else
+                }
                 if (reporte[i].cena.cantidad > 0) {
-                    // doc.text((reporte[i].fecha), 100, y - 2, { width: 260 });
-                    // doc.text((reporte[i].cantidad), 350, y - 2, { width: 260 });
                     doc.text(reporte[i].fecha, cubeX + 9, y + 7);
                     doc.text(reporte[i].cena.cantidad, cubeX + 255 + 9, y + 7)
                     total_cenas += reporte[i].cena.cantidad
                 }
-                
                 y = y + 20;
-
-                // doc.rect(40, 705, 540, 15).stroke();
-                // doc.rect(40, 725, 540, 15).stroke();
-                // doc.rect(41, 725, 538, 14).fill("silver", "#000")
-                //     .fill('black')
                 items++;
                 if (items > itemsPorPagina || (y > 700)) {
                     doc.addPage({ size: [612, 792], margin: 10 });
                     y = 115 + 80;
                     items = 0;
                     pagina = pagina + 1;
-                    $scope.cabeceraReporteComedor(doc, pagina, totalPaginas, $scope.proforma, imagen);
+                    $scope.cabeceraReporteComedor(doc, pagina, totalPaginas, cabecera, $scope.filtroComensales.empresaCliente ? $scope.filtroComensales.empresaCliente.razon_social ? $scope.filtroComensales.empresaCliente.razon_social : $scope.empresaExternaSeleccionada.razon_social : $scope.empresaExternaSeleccionada.razon_social, gerencia ? gerencia.nombre.toUpperCase() : 'Sin asignación.'.toUpperCase());
                 }
             }
+            doc.rect(cubeX, y, 80, 20).stroke()
+            doc.rect(cubeX + 80, y, 80, 20).stroke()
+            doc.rect(cubeX + 160, y, 80, 20).stroke()
+            doc.rect(cubeX + 240, y, 80, 20).stroke()
+            doc.rect(cubeX + 320, y, 80, 20).stroke()
+            y = y + 20;
             var precio_total_desayunos = total_desayunos * (comidasEmpresa[0].nombre.toLowerCase() === 'desayuno' ? comidasEmpresa[0].precio[0].precio : comidasEmpresa[1].nombre.toLowerCase() === 'desayuno' ? comidasEmpresa[1].precio[0].precio : comidasEmpresa[2].nombre.toLowerCase() === 'desayuno' ? comidasEmpresa[2].precio[0].precio : 'ERROR')
             var precio_total_almuerzos = total_almuerzos * (comidasEmpresa[0].nombre.toLowerCase() === 'almuerzo' ? comidasEmpresa[0].precio[0].precio : comidasEmpresa[1].nombre.toLowerCase() === 'almuerzo' ? comidasEmpresa[1].precio[0].precio : comidasEmpresa[2].nombre.toLowerCase() === 'almuerzo' ? comidasEmpresa[2].precio[0].precio : 'ERROR')
             var precio_total_cenas = total_cenas * (comidasEmpresa[0].nombre.toLowerCase() === 'cena' ? comidasEmpresa[0].precio[0].precio : comidasEmpresa[1].nombre.toLowerCase() === 'cena' ? comidasEmpresa[1].precio[0].precio : comidasEmpresa[2].nombre.toLowerCase() === 'cena' ? comidasEmpresa[2].precio[0].precio : 'ERROR')
             doc.text('Total.-', cubeX + 15 + 9, y + 7)
-            doc.text('Total $us.-', cubeX + 15 + 9, y + 7 +20)
-            doc.text('Total General $us.-', cubeX + 15 + 9, y + 7 +40)
+            doc.text('Total $us.-', cubeX + 15 + 9, y + 7 + 20)
+            doc.text('Total General $us.-', cubeX + 15 + 9, y + 7 + 40)
             doc.rect(cubeX + 80, y, 80, 20).stroke()
             doc.text(total_desayunos, cubeX + 95 + 9, y + 7)
             doc.rect(cubeX + 160, y, 80, 20).stroke()
@@ -1209,25 +1433,188 @@ angular.module('agil.controladores')
             doc.text(precio_total_desayunos, cubeX + 95 + 9, y + 7 + 20)
             doc.text(precio_total_almuerzos, cubeX + 175 + 9, y + 7 + 20)
             doc.text(precio_total_cenas, cubeX + 255 + 9, y + 7 + 20)
-            doc.text((precio_total_desayunos + precio_total_almuerzos + precio_total_cenas), cubeX + 175 + 9, y + 7 +40)
+            doc.text((precio_total_desayunos + precio_total_almuerzos + precio_total_cenas), cubeX + 175 + 9, y + 7 + 40)
+            doc.rect(cubeX, y + 70, 80, 20).fill("yellow")
+            doc.rect(cubeX, y + 90, 80, 20).fill("yellow")
+            doc.rect(cubeX, y + 110, 80, 20).fill("yellow")
+            doc.rect(cubeX + 80, y + 70, 80, 20).fill("yellow")
+            doc.rect(cubeX + 80, y + 90, 80, 20).fill("yellow")
+            doc.rect(cubeX + 80, y + 110, 80, 20).fill("yellow")
+            doc.rect(cubeX + 240, y + 90, 160, 20).fill("yellow")
             doc.rect(cubeX, y + 70, 80, 20).stroke()
             doc.rect(cubeX, y + 90, 80, 20).stroke()
             doc.rect(cubeX, y + 110, 80, 20).stroke()
             doc.rect(cubeX + 80, y + 70, 80, 20).stroke()
             doc.rect(cubeX + 80, y + 90, 80, 20).stroke()
             doc.rect(cubeX + 80, y + 110, 80, 20).stroke()
-            doc.text('Desayuno', cubeX + 15 + 9, y + 7 + 70)
-            doc.text('almuerzo.-', cubeX + 15 + 9, y + 7 + 70)
-            doc.text('Cena', cubeX + 15 + 9, y + 7 + 70)
-            doc.text((comidasEmpresa[0].nombre.toLowerCase() === 'desayuno' ? comidasEmpresa[0].precio[0].precio : comidasEmpresa[1].nombre.toLowerCase() === 'desayuno' ? comidasEmpresa[1].precio[0].precio : comidasEmpresa[2].nombre.toLowerCase() === 'desayuno' ? comidasEmpresa[2].precio[0].precio : 'ERROR'), cubeX + 15 + 9, y + 7 + 70)
-            doc.text((comidasEmpresa[0].nombre.toLowerCase() === 'almuerzo' ? comidasEmpresa[0].precio[0].precio : comidasEmpresa[1].nombre.toLowerCase() === 'almuerzo' ? comidasEmpresa[1].precio[0].precio : comidasEmpresa[2].nombre.toLowerCase() === 'almuerzo' ? comidasEmpresa[2].precio[0].precio : 'ERROR'), cubeX + 15 + 9, y + 7 + 70)
-            doc.text((comidasEmpresa[0].nombre.toLowerCase() === 'cena' ? comidasEmpresa[0].precio[0].precio : comidasEmpresa[1].nombre.toLowerCase() === 'cena' ? comidasEmpresa[1].precio[0].precio : comidasEmpresa[2].nombre.toLowerCase() === 'cena' ? comidasEmpresa[2].precio[0].precio : 'ERROR'), cubeX + 15 + 9, y + 7 + 70)
+                .fill("black")
+            doc.text('Desayuno.-', cubeX + 15 + 9, y + 7 + 70)
+            doc.text('almuerzo.-', cubeX + 15 + 9, y + 7 + 90)
+            doc.text('Cena.-', cubeX + 15 + 9, y + 7 + 110)
+            doc.rect(cubeX + 240, y + 90, 160, 20).stroke()
+            doc.text(('T.C. ' + dollar + '       Bs ' + ((precio_total_desayunos + precio_total_almuerzos + precio_total_cenas) * dollar).toFixed(2)), cubeX + 15 + 9 + 240, y + 7 + 90)
+            doc.text((comidasEmpresa[0].nombre.toLowerCase() === 'desayuno' ? comidasEmpresa[0].precio[0].precio : comidasEmpresa[1].nombre.toLowerCase() === 'desayuno' ? comidasEmpresa[1].precio[0].precio : comidasEmpresa[2].nombre.toLowerCase() === 'desayuno' ? comidasEmpresa[2].precio[0].precio : 'ERROR'), cubeX + 15 + 9 + 80, y + 7 + 70)
+            doc.text((comidasEmpresa[0].nombre.toLowerCase() === 'almuerzo' ? comidasEmpresa[0].precio[0].precio : comidasEmpresa[1].nombre.toLowerCase() === 'almuerzo' ? comidasEmpresa[1].precio[0].precio : comidasEmpresa[2].nombre.toLowerCase() === 'almuerzo' ? comidasEmpresa[2].precio[0].precio : 'ERROR'), cubeX + 15 + 9 + 80, y + 7 + 90)
+            doc.text((comidasEmpresa[0].nombre.toLowerCase() === 'cena' ? comidasEmpresa[0].precio[0].precio : comidasEmpresa[1].nombre.toLowerCase() === 'cena' ? comidasEmpresa[1].precio[0].precio : comidasEmpresa[2].nombre.toLowerCase() === 'cena' ? comidasEmpresa[2].precio[0].precio : 'ERROR'), cubeX + 15 + 9 + 80, y + 7 + 110)
+            var literal = ConvertirALiteral((precio_total_desayunos + precio_total_almuerzos + precio_total_cenas).toFixed(2))
+            literal = literal.split('BOLIVIANOS')[0]
+            doc.text('Son: ' + literal + ' Dólares Americanos', cubeX + 15 + 9, y + 7 + 130)
+            doc.end();
+
+            stream.on('finish', function () {
+                var fileURL = stream.toBlobURL('application/pdf');
+                window.open(fileURL, '_blank', 'location=no');
+            });
+        }
+
+        $scope.imprimirReporteEmpresa = function (reporte, gerencia, cabecera, comidasEmpresa, dollar) {
+            var doc = new PDFDocument({ size: 'letter', margin: 10, compress: false });//[612, 792] {compress: false},
+            var stream = doc.pipe(blobStream());
+            var y = 150
+            var itemsPorPagina = 10
+            var items = 0
+            var xSeparacion = 0
+            var pagina = 1
+            var cubeX = 70
+            var totalPaginas = Math.ceil(1 / itemsPorPagina);
+            $scope.cabeceraReporteEmpresa(doc, pagina, totalPaginas, cabecera, $scope.filtroComensales.empresaCliente ? $scope.filtroComensales.empresaCliente.razon_social ? $scope.filtroComensales.empresaCliente.razon_social : $scope.empresaExternaSeleccionada.razon_social : $scope.empresaExternaSeleccionada.razon_social, gerencia ? gerencia.nombre.toUpperCase() : 'Sin asignación.'.toUpperCase());
+            var total_general_desayuno = 0
+            var total_general_almuerzo = 0
+            var total_general_cena = 0
+            var total_desayunos = 0
+            var total_almuerzos = 0
+            var total_cenas = 0
+            for (let i = 0; i < reporte.length; i++) {
+                var total_comensal = 0
+                doc.font('Helvetica', 8);
+
+                // cabecera.forEach(function (dato) {
+                //     doc.rect(cubeX + xSeparacion, y, 80, 20).stroke()
+                //     xSeparacion += 80
+                // })
+                total_general_desayuno += reporte[i].desayuno.cantidad
+                total_general_almuerzo += reporte[i].almuerzo.cantidad
+                total_general_cena += reporte[i].cena.cantidad
+                total_comensal = reporte[i].desayuno.cantidad + reporte[i].almuerzo.cantidad + reporte[i].cena.cantidad
+                total_desayunos += reporte[i].desayuno.cantidad
+                total_almuerzos += reporte[i].almuerzo.cantidad
+                total_cenas += reporte[i].cena.cantidad
+                xSeparacion = 0
+                doc.font('Helvetica', 8).fill('black')
+                doc.text(reporte[i].comensal.nombre, cubeX + 3, y + 7);
+                doc.text(reporte[i].desayuno.cantidad, cubeX + 80 + 95 + 9, y + 7)
+                doc.text(reporte[i].almuerzo.cantidad, cubeX + 80 + 175 + 9, y + 7)
+                doc.text(reporte[i].cena.cantidad, cubeX + 80 + 255 + 9, y + 7)
+                doc.text(total_comensal, cubeX + 80 + 335 + 9, y + 7)
+
+                doc.rect(cubeX, y + 3, 150, 20).stroke()
+                doc.rect(cubeX + 150, y + 3, 80, 20).stroke()
+                doc.rect(cubeX + 230, y + 3, 80, 20).stroke()
+                doc.rect(cubeX + 310, y + 3, 80, 20).stroke()
+                doc.rect(cubeX + 390, y + 3, 110, 20).stroke()
+                y = y + 20;
+                items++;
+                if (items > itemsPorPagina || (y > 700)) {
+                    doc.addPage({ size: [612, 792], margin: 10 });
+                    y = 115 + 80;
+                    items = 0;
+                    pagina = pagina + 1;
+                    $scope.cabeceraReporteEmpresa(doc, pagina, totalPaginas, cabecera, $scope.filtroComensales.empresaCliente ? $scope.filtroComensales.empresaCliente.razon_social ? $scope.filtroComensales.empresaCliente.razon_social : $scope.empresaExternaSeleccionada.razon_social : $scope.empresaExternaSeleccionada.razon_social, gerencia ? gerencia.nombre.toUpperCase() : 'Sin asignación.'.toUpperCase());
+                }
+            }
+            doc.text("Total general", cubeX + 6, y + 7);
+            doc.text(total_general_desayuno, cubeX + 80 + 95 + 9, y + 7)
+            doc.text(total_general_almuerzo, cubeX + 80 + 175 + 9, y + 7)
+            doc.text(total_general_cena, cubeX + 80 + 255 + 9, y + 7)
+            doc.text((total_general_desayuno + total_general_almuerzo + total_general_cena), cubeX + 80 + 335 + 9, y + 7)
+            doc.rect(cubeX, y + 3, 150, 20).stroke()
+            doc.rect(cubeX + 150, y + 3, 80, 20).stroke()
+            doc.rect(cubeX + 230, y + 3, 80, 20).stroke()
+            doc.rect(cubeX + 310, y + 3, 80, 20).stroke()
+            doc.rect(cubeX + 390, y + 3, 110, 20).stroke()
+            y = y + 20;
+
             doc.end();
             stream.on('finish', function () {
                 var fileURL = stream.toBlobURL('application/pdf');
                 window.open(fileURL, '_blank', 'location=no');
             });
         }
+
+        $scope.imprimirReporteComensal = function (reporte, gerencia, cabecera, comidasEmpresa, dollar) {
+            var doc = new PDFDocument({ size: 'letter', margin: 10, compress: false });//[612, 792] {compress: false},
+            var stream = doc.pipe(blobStream());
+            var y = 150
+            var itemsPorPagina = 10
+            var items = 0
+            var xSeparacion = 0
+            var pagina = 1
+            var cubeX = 70
+            var totalPaginas = Math.ceil(1 / itemsPorPagina);
+            $scope.cabeceraReporteComensal(doc, pagina, totalPaginas, cabecera, $scope.filtroComensales.empresaCliente ? $scope.filtroComensales.empresaCliente.razon_social ? $scope.filtroComensales.empresaCliente.razon_social : $scope.empresaExternaSeleccionada.razon_social : $scope.empresaExternaSeleccionada.razon_social, gerencia ? gerencia.nombre.toUpperCase() : 'Sin asignación.'.toUpperCase());
+            var total_general_desayuno = 0
+            var total_general_almuerzo = 0
+            var total_general_cena = 0
+            var total_desayunos = 0
+            var total_almuerzos = 0
+            var total_cenas = 0
+            for (let i = 0; i < reporte.length; i++) {
+                var total_comensal = 0
+                doc.font('Helvetica', 8);
+
+                // cabecera.forEach(function (dato) {
+                //     doc.rect(cubeX + xSeparacion, y, 80, 20).stroke()
+                //     xSeparacion += 80
+                // })
+                total_general_desayuno += reporte[i].desayuno.cantidad
+                total_general_almuerzo += reporte[i].almuerzo.cantidad
+                total_general_cena += reporte[i].cena.cantidad
+                total_comensal = reporte[i].desayuno.cantidad + reporte[i].almuerzo.cantidad + reporte[i].cena.cantidad
+                total_desayunos += reporte[i].desayuno.cantidad
+                total_almuerzos += reporte[i].almuerzo.cantidad
+                total_cenas += reporte[i].cena.cantidad
+                xSeparacion = 0
+                doc.font('Helvetica', 8).fill('black')
+                doc.text(reporte[i].fecha, cubeX + 3, y + 7);
+                doc.text(reporte[i].desayuno.cantidad, cubeX + 80 + 95 + 9, y + 7)
+                doc.text(reporte[i].almuerzo.cantidad, cubeX + 80 + 175 + 9, y + 7)
+                doc.text(reporte[i].cena.cantidad, cubeX + 80 + 255 + 9, y + 7)
+                doc.text(total_comensal, cubeX + 80 + 335 + 9, y + 7)
+
+                doc.rect(cubeX, y + 3, 150, 20).stroke()
+                doc.rect(cubeX + 150, y + 3, 80, 20).stroke()
+                doc.rect(cubeX + 230, y + 3, 80, 20).stroke()
+                doc.rect(cubeX + 310, y + 3, 80, 20).stroke()
+                doc.rect(cubeX + 390, y + 3, 110, 20).stroke()
+                y = y + 20;
+                items++;
+                if (items > itemsPorPagina || (y > 700)) {
+                    doc.addPage({ size: [612, 792], margin: 10 });
+                    y = 115 + 80;
+                    items = 0;
+                    pagina = pagina + 1;
+                    $scope.cabeceraReporteEmpresa(doc, pagina, totalPaginas, cabecera, $scope.filtroComensales.empresaCliente ? $scope.filtroComensales.empresaCliente.razon_social ? $scope.filtroComensales.empresaCliente.razon_social : $scope.empresaExternaSeleccionada.razon_social : $scope.empresaExternaSeleccionada.razon_social, gerencia ? gerencia.nombre.toUpperCase() : 'Sin asignación.'.toUpperCase());
+                }
+            }
+            doc.text("Total general", cubeX + 6, y + 7);
+            doc.text(total_general_desayuno, cubeX + 80 + 95 + 9, y + 7)
+            doc.text(total_general_almuerzo, cubeX + 80 + 175 + 9, y + 7)
+            doc.text(total_general_cena, cubeX + 80 + 255 + 9, y + 7)
+            doc.text((total_general_desayuno + total_general_almuerzo + total_general_cena), cubeX + 80 + 335 + 9, y + 7)
+            doc.rect(cubeX, y + 3, 150, 20).stroke()
+            doc.rect(cubeX + 150, y + 3, 80, 20).stroke()
+            doc.rect(cubeX + 230, y + 3, 80, 20).stroke()
+            doc.rect(cubeX + 310, y + 3, 80, 20).stroke()
+            doc.rect(cubeX + 390, y + 3, 110, 20).stroke()
+            y = y + 20;
+
+            doc.end();
+            stream.on('finish', function () {
+                var fileURL = stream.toBlobURL('application/pdf');
+                window.open(fileURL, '_blank', 'location=no');
+            });
+        }
+
         $scope.cabeceraReporteComedor = function (doc, pagina, totalPaginas, cabecera, empresa, comedor) {
             var y = 150;
             var xSeparacion = 0
@@ -1250,8 +1637,72 @@ angular.module('agil.controladores')
             }
         }
 
-        $scope.cabeceraReporteEmpresa = function () {
+        $scope.cabeceraReporteEmpresa = function (doc, pagina, totalPaginas, cabecera, empresa, comedor) {
+            var y = 150;
+            var x = 100
+            var xSeparacion = 0
+            var cubeX = 70
+            doc.font('Helvetica-Bold', 12)
+                .fill('black')
+            doc.font('Helvetica-Bold', 8);
+            doc.text("Empresa", 124, 80);
+            doc.text(empresa, 300, 80);
+            doc.text("Gerencia", 124, 100);
+            doc.text("Periodo", 124, 120);
+            doc.text("Empleado", 124, 140);
+            doc.text("DESAYUNO", 270 - 30, 140);
+            doc.text("ALMUERZO", 350- 30, 140);
+            doc.text("CENA", 430- 30, 140);
+            doc.text("TOTAL GENERAL", 510 - 30, 140);
+            doc.rect(cubeX, 73, 150, 20).stroke()
+            doc.rect(cubeX, 93, 150, 20).stroke()
+            doc.rect(cubeX, 113, 150, 20).stroke()
+            doc.rect(cubeX, 133, 150, 20).stroke()
+            doc.rect(cubeX + 150, 73, 350, 20).stroke()
+            doc.rect(cubeX + 150, 93, 350, 20).stroke()
+            doc.rect(cubeX + 150, 113, 350, 20).stroke()
+            doc.rect(cubeX + 150, 133, 80, 20).stroke()
+            doc.rect(cubeX + 230, 133, 80, 20).stroke()
+            doc.rect(cubeX + 310, 133, 80, 20).stroke()
+            doc.rect(cubeX + 390, 133, 110, 20).stroke()
+            doc.font('Helvetica', 8);
+            if ($scope.imagenEmpresa) {
+                doc.image($scope.imagenEmpresa, 40, 30, { fit: [100, 100] });
+            }
+        }
 
+        $scope.cabeceraReporteComensal = function (doc, pagina, totalPaginas, cabecera, empresa, comedor) {
+            var y = 150;
+            var x = 100
+            var xSeparacion = 0
+            var cubeX = 70
+            doc.font('Helvetica-Bold', 12)
+                .fill('black')
+            doc.font('Helvetica-Bold', 8);
+            doc.text("Empresa", 124, 80);
+            doc.text(empresa, 300, 80);
+            doc.text("Gerencia", 124, 100);
+            doc.text("Periodo", 124, 120);
+            doc.text("Empleado", 124, 140);
+            doc.text("DESAYUNO", 240, 140);
+            doc.text("ALMUERZO", 320, 140);
+            doc.text("CENA", 410, 140);
+            doc.text("TOTAL GENERAL", 490, 140);
+            doc.rect(cubeX, 73, 150, 20).stroke()
+            doc.rect(cubeX, 93, 150, 20).stroke()
+            doc.rect(cubeX, 113, 150, 20).stroke()
+            doc.rect(cubeX, 133, 150, 20).stroke()
+            doc.rect(cubeX + 150, 73, 350, 20).stroke()
+            doc.rect(cubeX + 150, 93, 350, 20).stroke()
+            doc.rect(cubeX + 150, 113, 350, 20).stroke()
+            doc.rect(cubeX + 150, 133, 80, 20).stroke()
+            doc.rect(cubeX + 230, 133, 80, 20).stroke()
+            doc.rect(cubeX + 310, 133, 80, 20).stroke()
+            doc.rect(cubeX + 390, 133, 110, 20).stroke()
+            doc.font('Helvetica', 8);
+            if ($scope.imagenEmpresa) {
+                doc.image($scope.imagenEmpresa, 40, 30, { fit: [100, 100] });
+            }
         }
 
         $scope.cabeceraReportePorComensal = function () {
@@ -1347,6 +1798,7 @@ angular.module('agil.controladores')
         }
 
         $scope.abrirdialogBusquedaComensales = function () {
+            $scope.activeModal = 0
             $scope.abrirPopup($scope.busquedaComensalesEmpresa);
         }
 
@@ -1355,5 +1807,16 @@ angular.module('agil.controladores')
             $scope.cerrarPopup($scope.busquedaComensalesEmpresa);
         }
 
+        $scope.abrirdialogAlertaMarcaciones = function () {
+            $scope.activeModal = 0
+            $scope.obtenerAlertas()
+            $scope.abrirPopup($scope.dialogAlertasMarcaciones);
+        }
+
+        $scope.cerrardialogAlertaMarcaciones = function () {
+            $scope.activeModal = 0
+            $scope.alertaMarcaciones = []
+            $scope.cerrarPopup($scope.dialogAlertasMarcaciones);
+        }
         $scope.inicio()
     });

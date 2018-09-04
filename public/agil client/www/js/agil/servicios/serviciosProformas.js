@@ -20,7 +20,7 @@ angular.module('agil.servicios')
             var delay = $q.defer();
             Proformas.get({
                 id_empresa: filtro.filter.empresa, usuario: filtro.filter.usuario, mes: filtro.filter.mes !== 0 && filtro.filter.mes !== undefined? filtro.filter.mes.id !== undefined ? filtro.filter.mes.id : filtro.filter.mes:0,
-                anio: filtro.filter.anio !== 0 && filtro.filter.anio !== undefined ? filtro.filter.anio.id !== undefined ? filtro.filter.anio.id : filtro.filter.anio : 0, sucursal: filtro.filter.sucursal.id !== undefined ? filtro.filter.sucursal.id : 0, actividad: filtro.filter.actividadEconomica !== undefined ? filtro.filter.actividadEconomica.id !== undefined ? filtro.filter.actividadEconomica.id : 0 : 0, monto: filtro.filter.monto, razon: filtro.filter.razon,
+                anio: filtro.filter.anio !== 0 && filtro.filter.anio !== undefined ? filtro.filter.anio.id !== undefined ? filtro.filter.anio.id : filtro.filter.anio : 0, sucursal: filtro.filter.sucursal.id !== undefined ? filtro.filter.sucursal.id : 0, actividad: filtro.filter.actividadEconomica !== undefined ? filtro.filter.actividadEconomica.id_actividad !== undefined ? filtro.filter.actividadEconomica.id_actividad : 0 : 0, monto: filtro.filter.monto, razon: filtro.filter.razon,
                 servicio: filtro.filter.servicio.id !== undefined ? filtro.filter.servicio.id : 0, pagina: filtro.currentPage, items_pagina: filtro.itemsPerPage, busqueda: filtro.search, numero: filtro.filter.numero !== undefined ? filtro.filter.numero : 0, id_opcion: filtro.filter.proformaFacturadas !== undefined ? filtro.filter.proformaFacturadas.id ? filtro.filter.proformaFacturadas.id : 0  : 0
             }, function (entidades) {
                 delay.resolve(entidades);

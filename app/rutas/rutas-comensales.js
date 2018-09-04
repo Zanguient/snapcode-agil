@@ -1,4 +1,5 @@
-module.exports = function (router, sequelize, Persona, Cliente, AliasClienteEmpresa, ComensalesClienteEmpresa, GerenciasClienteEmpresa, horarioComidasClienteEmpresa, PrecioComidasClienteEmpresa, HistorialComidaClienteEmpresa, Usuario) {
+module.exports = function (router, sequelize, Persona, Cliente, AliasClienteEmpresa, ComensalesClienteEmpresa, GerenciasClienteEmpresa, horarioComidasClienteEmpresa, PrecioComidasClienteEmpresa, HistorialComidaClienteEmpresa, Usuario,
+    ComensalesMarcacionesClienteEmpresa) {
 
     function crearAlias(alias, empresa, t) {
         if (alias.id) {
@@ -128,7 +129,7 @@ module.exports = function (router, sequelize, Persona, Cliente, AliasClienteEmpr
             }, { transaction: t })
         }
     }
-    function crearHistorial(historial, empresa, t) {
+    function crearHistorial(historial, empresa, t, i) {
         if (historial.id) {
             if (historial.eliminado) {
                 return HistorialComidaClienteEmpresa.destroy({
@@ -149,15 +150,13 @@ module.exports = function (router, sequelize, Persona, Cliente, AliasClienteEmpr
                     fecha: historial.fecha,
                     id_usuario: historial.id_usuario,
                     precio: historial.comida.precio[0].precio
-                }, { where: { id: historial.id }, transaction: t }).then(function (historialActualizado) {
-                    return new Promise(function (fullfil, reject) {
-                        fullfil({ historial: historial, actualizado: historialActualizado })
-                    })
-                }).catch(function (err) {
-                    return new Promise(function (fullfil, reject) {
-                        fullfil({ hasErr: true, mensaje: err.stack, index: i + 2, tipo: 'Error' })
-                    })
-                })
+                }, { where: { id: historial.id }, transaction: t })//.then(function (historialActualizado) {
+                    // return crearMarcacion(historial, empresa, t)
+                // }).catch(function (err) {
+                //     return new Promise(function (fullfil, reject) {
+                //         fullfil({ hasErr: true, mensaje: err.stack, index: i + 2, tipo: 'Error' })
+                //     })
+                // })
             }
         } else {
             return HistorialComidaClienteEmpresa.create({
@@ -169,18 +168,92 @@ module.exports = function (router, sequelize, Persona, Cliente, AliasClienteEmpr
                 id_comida: historial.comida ? historial.comida.id : null,
                 fecha: historial.fecha,
                 id_usuario: historial.id_usuario,
-                precio: historial.comida.precio[0].precio
+                precio: historial.comida.precio ? historial.comida.precio.length > 0 ? historial.comida.precio[0].precio : null : null
             }, {
                     transaction: t
-                })/*.then(function (historial) {
-                return new Promise(function (fullfil, reject) {
-                    fullfil({hasErr: false, historial: historial})
+                }).then(function (historialCreado) {
+                    return crearMarcacion(historial, empresa, t, i)
+                }).catch(function (err) {
+                    return new Promise(function (fullfil, reject) {
+                        fullfil({ hasErr: true, mensaje: err.stack, index: i + 2, tipo: 'Error' })
+                    })
                 })
+        }
+    }
+    function crearMarcacion(historial, empresa, t, i) {
+        if (historial.id) {
+            if (historial.eliminado) {
+                return ComensalesMarcacionesClienteEmpresa.destroy({
+                    where: { id: historial.id }
+                }, { transaction: t }).catch(function (err) {
+                    return new Promise(function (fullfil, reject) {
+                        fullfil({ hasErr: true, mensaje: err.stack, index: i + 2, tipo: 'Error' })
+                    })
+                })
+            } else {
+                return ComensalesMarcacionesClienteEmpresa.update({
+                    id_empresa: empresa,
+                    id_cliente: historial.alias.id_cliente,
+                    id_comensal: historial.comensal.id,
+                    fecha: historial.fecha,
+                    id_gerencia: historial.gerencia ? historial.gerencia.id : null,
+                    desayuno: historial.comida ? historial.comida.nombre ? historial.comida.nombre.toLowerCase() === "desayuno" ? 1 : 0 : 0 : 0,
+                    almuerzo: historial.comida ? historial.comida.nombre ? historial.comida.nombre.toLowerCase() === "almuerzo" ? 1 : 0 : 0 : 0,
+                    cena: historial.comida ? historial.comida.nombre ? historial.comida.nombre.toLowerCase() === "cena" ? 1 : 0 : 0 : 0,
+                }, { where: { fecha: historial.fecha, id_comensal: historial.comensal.id }, transaction: t }).then(function (historialActualizado) {
+                    return new Promise(function (fullfil, reject) {
+                        fullfil({ historial: historial, actualizado: historialActualizado })
+                    })
+                }).catch(function (err) {
+                    return new Promise(function (fullfil, reject) {
+                        fullfil({ hasErr: true, mensaje: err.stack, index: i + 2, tipo: 'Error' })
+                    })
+                })
+            }
+        } else {
+            return ComensalesMarcacionesClienteEmpresa.findOrCreate({
+                where: { fecha: historial.fecha, id_comensal: historial.comensal.id },
+                defaults: {
+                    id_empresa: empresa,
+                    id_cliente: historial.alias.id_cliente,
+                    id_comensal: historial.comensal.id,
+                    fecha: historial.fecha,
+                    id_gerencia: historial.gerencia ? historial.gerencia.id : null,
+                    desayuno: historial.comida ? historial.comida.nombre ? historial.comida.nombre.toLowerCase() === "desayuno" ? 1 : 0 : 0 : 0,
+                    almuerzo: historial.comida ? historial.comida.nombre ? historial.comida.nombre.toLowerCase() === "almuerzo" ? 1 : 0 : 0 : 0,
+                    cena: historial.comida ? historial.comida.nombre ? historial.comida.nombre.toLowerCase() === "cena" ? 1 : 0 : 0 : 0,
+                },
+                options: { transaction: t }
+            }).spread(function (Marcacion, created) {
+                if (!created) {
+                    return new Promise(function (fullfil, reject) {
+                        fullfil(Marcacion)
+                    })
+                } else {
+                    return ComensalesMarcacionesClienteEmpresa.update({
+                        id_empresa: empresa,
+                        id_cliente: historial.alias.id_cliente,
+                        id_comensal: historial.comensal.id,
+                        fecha: historial.fecha,
+                        id_gerencia: historial.gerencia ? historial.gerencia.id : null,
+                        desayuno: historial.comida ? historial.comida.nombre ? historial.comida.nombre.toLowerCase() === "desayuno" ? 1 : 0 : 0 : 0,
+                        almuerzo: historial.comida ? historial.comida.nombre ? historial.comida.nombre.toLowerCase() === "almuerzo" ? 1 : 0 : 0 : 0,
+                        cena: historial.comida ? historial.comida.nombre ? historial.comida.nombre.toLowerCase() === "cena" ? 1 : 0 : 0 : 0,
+                    }, { where: { fecha: historial.fecha, id_comensal: historial.comensal.id }, transaction: t }).then(function (historialActualizado) {
+                        return new Promise(function (fullfil, reject) {
+                            fullfil({ historial: historial, actualizado: historialActualizado })
+                        })
+                    }).catch(function (err) {
+                        return new Promise(function (fullfil, reject) {
+                            reject({ hasErr: true, mensaje: err.stack, index: i + 2, tipo: 'Error' })
+                        })
+                    })
+                }
             }).catch(function (err) {
                 return new Promise(function (fullfil, reject) {
-                    fullfil({hasErr: true, mensaje: err.stack, index: i+2, tipo: 'Error' })
+                    reject({ hasErr: true, mensaje: err.stack, index: i + 2, tipo: 'Error' })
                 })
-            })*/
+            })
         }
     }
     function verificarDatosHistorialExcel(historial, empresa, t, i) {
@@ -201,20 +274,23 @@ module.exports = function (router, sequelize, Persona, Cliente, AliasClienteEmpr
                         if (!historial.fecha) {
                             historial.fecha = extraerFechaExcel(historial.fecha_hora)
                         }
-                        var condicionTiempo = { inicio: { lte: historial.fecha.split('T')[1].split('.')[0] }, final: { gte: historial.fecha.split('T')[1].split('.')[0] }, id_empresa: empresa, id_cliente: historial.alias.id_cliente }
+                        var condicionTiempo = { inicio: { lte: historial.fecha.hasOwnProperty('split') ? historial.fecha.split('T')[1].split('.')[0] :historial.fecha }, final: { gte: historial.fecha.hasOwnProperty('split')? historial.fecha.split('T')[1].split('.')[0] : historial.fecha }, id_empresa: empresa, id_cliente: historial.alias.id_cliente }
                         historial.comensal = comensal.dataValues
                         return horarioComidasClienteEmpresa.find({
                             having: condicionTiempo,
-                            include: [{model: PrecioComidasClienteEmpresa, as: 'precio'}],
+                            include: [{ model: PrecioComidasClienteEmpresa, as: 'precio' }],
                             transaction: t
                         }).then(function (comida) {
                             historial.comida = comida ? comida.dataValues : { id: null }
+                            var condicionGerenciaComensal = historial.comensal.gerencia ? { nombre: historial.comensal.gerencia.nombre } : undefined
                             return GerenciasClienteEmpresa.find({
-                                where: { nombre: historial.comensal.gerencia.nombre }
+                                where: condicionGerenciaComensal
                             }).then(function (gerenciaEncontrada) {
                                 if (gerenciaEncontrada) {
                                     historial.gerencia = gerenciaEncontrada.dataValues
-                                    return crearHistorial(historial, empresa, t)
+                                    promises.push(crearHistorial(historial, empresa, t))
+                                    // promises.push(crearMarcacion(historial, empresa, t))
+                                    return Promise.all(promises)
                                 } else {
                                     historial.gerencia = historial.comensal.gerencia
                                     return crearHistorial(historial, empresa, t)
@@ -357,7 +433,7 @@ module.exports = function (router, sequelize, Persona, Cliente, AliasClienteEmpr
             if (aliasEncontrado) {
                 comida.empresaCliente = aliasEncontrado.dataValues
                 return horarioComidasClienteEmpresa.find({
-                    where: { $or: [{ nombre: { $like: comida.nombre }, codigo: comida.codigo }], id_empresa: empresa },
+                    where: { $or: [{ nombre: { $like: comida.nombre }, codigo: comida.codigo }], id_empresa: empresa, id_cliente: aliasEncontrado.id },
                     transaction: t
                 }).then(function (comidaEncontrada) {
                     if (comidaEncontrada) {
@@ -419,8 +495,8 @@ module.exports = function (router, sequelize, Persona, Cliente, AliasClienteEmpr
             horas = horas.split('P')[0].split(':')
             horas[0] = (parseInt(horas[0]) + 12) + ''
         }
-        var fechaCompleta = fecha[0] + '-' + (fecha[2].length == 2 ? fecha[2] : '0' + fecha[2]) + '-' + (fecha[1].length == 2 ? fecha[1] : '0' + fecha[1]) + 'T' + horas[0] + ':' + horas[1] + ':' + horas[2] + '.000Z'
-        return fechaCompleta
+        var fechaCompleta = fecha[0] + '-' + (fecha[2].length == 2 ? fecha[2] : '0' + fecha[2]) + '-' + (fecha[1].length == 2 ? fecha[1] : '0' + fecha[1]) + 'T' + (horas[0].length == 2 ? horas[0] : '0' + horas[0]) + ':' + (horas[1].length == 2 ? horas[1] : '0' + horas[1]) + ':' + (horas[2].length == 2 ? horas[2] : '0' + horas[2]) + '.000Z'
+        return new Date(fechaCompleta)
     }
     router.route('/cliente/empresa/gerencias/:id_empresa/:id_usuario/:id_cliente')
         .post(function (req, res) {
@@ -543,7 +619,7 @@ module.exports = function (router, sequelize, Persona, Cliente, AliasClienteEmpr
             }
             horarioComidasClienteEmpresa.findAll({
                 where: condicion,
-                include: [{ model: Cliente, as: 'empresaCliente' }, {model: PrecioComidasClienteEmpresa, as: 'precio' }]
+                include: [{ model: Cliente, as: 'empresaCliente' }, { model: PrecioComidasClienteEmpresa, as: 'precio' }]
             }).then(function (result) {
                 res.json({ lista: result })
             }).catch(function (err) {
@@ -929,6 +1005,7 @@ module.exports = function (router, sequelize, Persona, Cliente, AliasClienteEmpr
     router.route('/reporte/comedor/:id_empresa/:id_usuario/:id_cliente/:desde/:hasta/:mes/:anio/:empresaCliente/:gerencia/:comensal/:comida/:estado')
         .get(function (req, res) {
             var condicion = { id_empresa: req.params.id_empresa, id_cliente: req.params.id_cliente }
+            var condicionHistorial = { id: { $not: null } }
             var desde = false
             var hasta = false
             if (req.params.mes != "0" && req.params.anio != "0") {
@@ -967,12 +1044,114 @@ module.exports = function (router, sequelize, Persona, Cliente, AliasClienteEmpr
                 }
                 condicionHistorial.fecha = { $between: [inicio, fin] }
             }
+            if (req.params.gerencia !== "0") {
+                condicion.id = req.params.gerencia
+            }
             GerenciasClienteEmpresa.findAll({
                 where: condicion,
-                include: [{ model: HistorialComidaClienteEmpresa, as: 'historial', include: [{ model: horarioComidasClienteEmpresa, as: 'comida', include:[{model: PrecioComidasClienteEmpresa, as: 'precio'}] },{model: GerenciasClienteEmpresa, as: 'gerencia'}, {model: Cliente, as: 'empresaCliente'}] }],
+                include: [{ model: HistorialComidaClienteEmpresa, as: 'historial', include: [{ model: horarioComidasClienteEmpresa, as: 'comida', include: [{ model: PrecioComidasClienteEmpresa, as: 'precio' }] }, { model: GerenciasClienteEmpresa, as: 'gerencia' }, { model: Cliente, as: 'empresaCliente' }], where: condicionHistorial }],
                 order: [[{ model: HistorialComidaClienteEmpresa, as: 'historial' }, 'fecha', 'asc']]
             }).then(function (result) {
-                res.json({reporte: result})
+                if (result.length > 0) {
+                    var contador = 0
+                    if (result.some(function (gerencia) {
+                        if (gerencia.historial.length > 0) {
+                            return true
+                        }
+                        return false
+                    })) {
+                        res.json({ reporte: result })
+                        return
+                    }
+                }
+                HistorialComidaClienteEmpresa.findAll({
+                    where: condicionHistorial,
+                    include: [{ model: horarioComidasClienteEmpresa, as: 'comida', include: [{ model: PrecioComidasClienteEmpresa, as: 'precio' }] }, { model: GerenciasClienteEmpresa, as: 'gerencia' }, { model: Cliente, as: 'empresaCliente' }],
+                    order: [['fecha', 'asc']]
+                }).then(function (resuldato) {
+                    if (resuldato) {
+                        var sinAsignacion = { id: null, nombre: 'Sin asignación', id_cliente: req.params.id_cliente, id_empresa: req.params.id_empresa, historial: resuldato }
+                        res.json({ reporte: [sinAsignacion] })
+                    } else {
+                        res.json({ mensaje: 'No se puede generar el reporte, la consulta no arrojó ningún resultado.', hasErr: true })
+                    }
+                })
+            }).catch(function (err) {
+                res.json({ mensaje: err.stack, hasErr: true })
+            })
+        })
+        .put(function (req, res) {
+            res.json({ mensaje: 'sin funcionalidad' })
+        })
+
+    router.route('/reporte/empresa/:id_empresa/:id_usuario/:id_cliente/:desde/:hasta/:mes/:anio/:empresaCliente/:gerencia/:comensal/:comida/:estado')
+        .get(function (req, res) {
+            var condicion = { id_empresa: req.params.id_empresa, id_cliente: req.params.id_cliente }
+            var condicionHistorial = {}
+            var desde = false
+            var hasta = false
+            if (req.params.mes != "0" && req.params.anio != "0") {
+                var fecha_desde = new Date(parseInt(req.params.anio), parseInt(req.params.mes), 1, 0, 0, 0)
+                var fecha_hasta = new Date(parseInt(req.params.anio), parseInt(req.params.mes) + 1, 0, 23, 59, 0)
+                condicionHistorial.fecha = { $between: [fecha_desde, fecha_hasta] }
+            } else {
+                if (req.params.desde != "0") {
+                    var inicio = new Date(req.params.desde.split('/').reverse()); inicio.setHours(0, 0, 0, 0, 0);
+                    desde = true
+                }
+                if (req.params.hasta != "0") {
+                    var fin = new Date(req.params.hasta.split('/').reverse()); fin.setHours(23, 59, 0, 0, 0);
+                    hasta = true
+                }
+            }
+            if (desde && hasta) {
+                condicionHistorial.fecha = { $between: [inicio, fin] }
+            } else if (desde && !hasta) {
+                condicionHistorial.fecha = {
+                    $gte: [inicio]
+                }
+            } else if (!desde && hasta) {
+                condicionHistorial.fecha = {
+                    $lte: [fin]
+                }
+            } else if (!desde && !hasta && (req.params.anio != "0")) {
+                var inicio;
+                var fin;
+                if (req.params.mes != "0") {
+                    inicio = new Date(parseInt(req.params.anio), parseInt(req.params.mes) - 1, 1, 0, 0, 0, 0)
+                    fin = new Date(parseInt(req.params.anio), parseInt(req.params.mes), 1, 0, 0, 0, 0)
+                } else {
+                    inicio = new Date(parseInt(req.params.anio), 0, 1, 0, 0, 0, 0)
+                    fin = new Date(parseInt(req.params.anio), 11, 31, 23, 59, 59, 0)
+                }
+                condicionHistorial.fecha = { $between: [inicio, fin] }
+            }
+            if (req.params.gerencia !== "0") {
+                condicion.id = req.params.gerencia
+            }
+            ComensalesClienteEmpresa.findAll({
+                where: condicion,
+                include: [{ model: HistorialComidaClienteEmpresa, as: 'historial', required: true, include: [{ model: horarioComidasClienteEmpresa, as: 'comida', include: [{ model: PrecioComidasClienteEmpresa, as: 'precio' }] }, { model: GerenciasClienteEmpresa, as: 'gerencia' }, { model: Cliente, as: 'empresaCliente' }] }],
+                order: [[{ model: HistorialComidaClienteEmpresa, as: 'historial' }, 'fecha', 'asc']]
+            }).then(function (result) {
+                res.json({ reporte: result })
+            }).catch(function (err) {
+                res.json({ mensaje: err.stack, hasErr: true })
+            })
+        })
+        .put(function (req, res) {
+            res.json({ mensaje: 'sin funcionalidad' })
+        })
+
+    router.route('/alertas/marcaciones/:id_empresa/:id_usuario/:id_cliente')
+        .get(function (req, res) {
+            var condicion = { id_empresa: req.params.id_empresa, id_cliente: req.params.id_cliente, $or:[{desayuno: 0, almuerzo: 0, cena: 0}] }
+            ComensalesMarcacionesClienteEmpresa.findAll({
+                where: condicion,
+                include: [{ model: ComensalesClienteEmpresa, as: 'comensal'}],
+                order: [['fecha', 'asc']]
+            }).then(function (alertas) {
+                res.json(alertas)
             }).catch(function (err) {
                 res.json({ mensaje: err.stack, hasErr: true })
             })
