@@ -42,23 +42,23 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 		});
 
 	router.route('/obtenerDetalleVenta/empresa/:id_empresa')
-		.get(function(req, res){
+		.get(function (req, res) {
 			Venta.findAll({
-				include:[{
-					model: DetalleVenta, as:'detallesVenta'
+				include: [{
+					model: DetalleVenta, as: 'detallesVenta'
 				},
-				{ 
-					model: Almacen, as: 'almacen', 
+				{
+					model: Almacen, as: 'almacen',
 					include: [
 						{
-							model: Sucursal, as: 'sucursal', where: { id_empresa: req.params.id_empresa } 
-						}] 
-					}
-			]
-			}).then(function(detalle){
+							model: Sucursal, as: 'sucursal', where: { id_empresa: req.params.id_empresa }
+						}]
+				}
+				]
+			}).then(function (detalle) {
 				res.json(detalle);
-			}).catch(function(error){
-				res.json([{mensaje:error.stack}]);
+			}).catch(function (error) {
+				res.json([{ mensaje: error.stack }]);
 			})
 		})
 
@@ -239,7 +239,7 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 								});
 						});
 				} else {
-					res.json({ productos: [], mensaje: 'El usuario no cuenta con grupos de productos asignados.', paginas: Math.ceil(productos.count / req.params.items_pagina) });
+					res.json({ productos: [], mensaje: 'El usuario no cuenta con grupos de productos asignados.', paginas: 1 });
 				}
 			})
 		});
@@ -1665,7 +1665,7 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 			id_actividad: venta.actividad.id,
 			autorizacion: venta.autorizacion,
 			codigo_control: venta.codigo_control,
-			fecha_limite_emision:venta.fecha_limite_emision
+			fecha_limite_emision: venta.fecha_limite_emision
 			/* pedido: venta.pedido, */
 			//despachado: venta.despachado,
 
@@ -3917,41 +3917,158 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 	}
 	router.route('/importacion-ventas-servicio')
 		.post(function (req, res) {
+			var promesas = []
 			var promises2 = [];
+			var promises3 = []
 			sequelize.transaction(function (t) {
-				req.body.arregloServicios.forEach(function (servicio, index, array) {
-					promises2.push(ServicioVenta.findOrCreate({
+				//servicios
+				for (let index = 0; index < req.body.arregloServicios.length; index++) {
+					var ser = ServicioVenta.findOrCreate({
 						where: {
-							nombre: servicio.nombre,
-							id_empresa: servicio.id_empresa,
+							nombre: req.body.arregloServicios[index].nombre,
+							id_empresa: req.body.arregloServicios[index].id_empresa,
 						},
 						transaction: t,
 						lock: t.LOCK.UPDATE,
 						defaults: {
-							id_empresa: servicio.id_empresa,
-							nombre: servicio.nombre,
-							precio: servicio.precio,
+							id_empresa: req.body.arregloServicios[index].id_empresa,
+							nombre: req.body.arregloServicios[index].nombre,
+							precio: req.body.arregloServicios[index].precio,
 							descripcion: "",
 							descuento: 0,
 							descuento_fijo: false,
 							habilitado: true,
 							eliminado: false
 						}
-					}).spread(function (cargoClase, created4) {
+					})
+					promises2.push(ser)
+				}
+				//clientes
+				// for (let index = 0; index < req.body.arregloClientes.length; index++) {
+				// 	var cli = Cliente.findOrCreate({
+				// 		where: {
+				// 			nit: req.body.arregloClientes[index].nit,
+				// 			id_empresa: req.body.arregloServicios[0].id_empresa,
+				// 		},
+				// 		transaction: t,
+				// 		lock: t.LOCK.UPDATE,
+				// 		defaults: {
+				// 			id_empresa: req.body.arregloServicios[0].id_empresa,
+				// 			nit: req.body.arregloClientes[index].nit,
+				// 			razon_social: req.body.arregloClientes[index].razon_social
+				// 		}
+				// 	})
+				// 	promises3.push(cli)
+				// }
+				//ventas				
 
-						if (index == (array.length - 1)) {
-							return CrearClientesVentasMasivas(req, res, t,servicio.id_empresa)
-						}
-
-					}))
-				})
-				return Promise.all(promises2);
+				promesas.unshift(promises2)
+				promesas.unshift(promises3)
+				return Promise.all(promesas)
+				// req.body.arregloServicios.forEach(function (servicio, index, array) {
+				// 	promises2.push(ServicioVenta.findOrCreate({
+				// 		where: {
+				// 			nombre: servicio.nombre,
+				// 			id_empresa: servicio.id_empresa,
+				// 		},
+				// 		transaction: t,
+				// 		lock: t.LOCK.UPDATE,
+				// 		defaults: {
+				// 			id_empresa: servicio.id_empresa,
+				// 			nombre: servicio.nombre,
+				// 			precio: servicio.precio,
+				// 			descripcion: "",
+				// 			descuento: 0,
+				// 			descuento_fijo: false,
+				// 			habilitado: true,
+				// 			eliminado: false
+				// 		}
+				// 	}).spread(function (cargoClase, created4) {
+				// 		if (index == (array.length - 1)) {
+				// 			return CrearClientesVentasMasivas(req, res, t, servicio.id_empresa)
+				// 		}
+				// 	}))
+				// })5
+				// return Promise.all(promises2);
 			}).then(function (result) {
-				res.json({ mensaje: "Importación satisfactoriamente!" })
+				sequelize.transaction(function (y) {
+					var promm = []
+					for (let index = 0; index < req.body.ventas.length; index++) {
+						promm.push(aaaaaaaVentaServicio(req, index, y, res))
+
+						// promesas.push(vent)
+					}
+					return Promise.all(promm)
+				}).then(function name(result) {
+					res.json({ mensaje: "Importación satisfactoriamente!" })
+				}).catch(function (err) {
+					return new Promise(function (fulfill, reject) {
+						reject(err);
+					});
+				})
+
 			}).catch(function (err) {
 				res.json({ hasError: true, message: err.stack });
 			});
 		})
+	function aaaaaaaVentaServicio(req, index, y, res) {
+		var movimiento = req.body.ventas[index].movimiento.nombre_corto;
+		var id_movimiento = req.body.ventas[index].movimiento.id;
+		return SucursalActividadDosificacion.find({
+			where: {
+				id_actividad: req.body.ventas[index].actividad.id,
+				id_sucursal: req.body.ventas[index].sucursal.id,
+				expirado: false
+			},
+			transaction: y,
+			include: [{ model: Dosificacion, as: 'dosificacion', include: [{ model: Clase, as: 'pieFactura' }] },
+			{ model: Sucursal, as: 'sucursal', include: [{ model: Empresa, as: 'empresa' }] }]
+		}).then(function (sucursalActividadDosificacion) {
+			var dosificacion = sucursalActividadDosificacion.dosificacion;
+			req.body.ventas[index].factura = dosificacion.correlativo + (index);
+			req.body.ventas[index].pieFactura = dosificacion.pieFactura;
+			req.body.ventas[index].codigo_control = CodigoControl.obtenerCodigoControl(dosificacion.autorizacion.toString(),
+				(dosificacion.correlativo + (index)).toString(),
+				req.body.ventas[index].cliente.nit.toString(),
+				formatearFecha(req.body.ventas[index].fechaTexto).toString(),
+				parseFloat(req.body.ventas[index].total).toFixed(2),
+				dosificacion.llave_digital.toString());
+			req.body.ventas[index].autorizacion = dosificacion.autorizacion.toString();
+			req.body.ventas[index].fecha_limite_emision = dosificacion.fecha_limite_emision;
+			req.body.ventas[index].numero_literal = NumeroLiteral.Convertir(parseFloat(req.body.ventas[index].total).toFixed(2).toString());
+			return Cliente.find({
+				where: {
+					nit: req.body.ventas[index].cliente.nit,
+					razon_social: req.body.ventas[index].cliente.razon_social
+				}
+				, transaction: y
+			}).then(function (ClienteEncontrado) {
+				if (!ClienteEncontrado) {
+					return Cliente.create({
+						id_empresa: req.body.ventas[index].id_empresa,
+						nit: req.body.ventas[index].cliente.nit,
+						razon_social: req.body.ventas[index].cliente.razon_social
+					}, { transaction: y }).then(function (clienteCreado) {
+						return crearVentaServicio(req.body.ventas[index], res, clienteCreado.id, dosificacion, true, sucursalActividadDosificacion.sucursal, y, id_movimiento);
+					}).catch(function (err) {
+						return new Promise(function (fulfill, reject) {
+							reject(err);
+						});
+					});
+				} else {
+					return crearVentaServicio(req.body.ventas[index], res, ClienteEncontrado.id, dosificacion, true, sucursalActividadDosificacion.sucursal, y, id_movimiento);
+				}
+			}).catch(function (err) {
+				return new Promise(function (fulfill, reject) {
+					reject(err);
+				});
+			})
 
+		}).catch(function (err) {
+			return new Promise(function (fulfill, reject) {
+				reject(err);
+			});
+		})
+	}
 
 }
