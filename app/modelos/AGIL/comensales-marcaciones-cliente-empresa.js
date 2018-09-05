@@ -37,6 +37,18 @@ module.exports = function (sequelize, Sequelize) {
       field: 'habilitado',
       defaultValue: true
     },
+    observacion_desayuno: {
+      type: Sequelize.STRING,
+      field: 'observacion_desayuno'
+    },
+    observacion_almuerzo: {
+      type: Sequelize.STRING,
+      field: 'observacion_almuerzo'
+    },
+    observacion_cena: {
+      type: Sequelize.STRING,
+      field: 'observacion_cena'
+    },
     eliminado: {
       type: Sequelize.BOOLEAN,
       field: 'eliminado',

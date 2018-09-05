@@ -1930,10 +1930,49 @@ angular.module('agil.servicios')
 				}
 			} else {
 				if (vacia) {
+					// la altura en pixeles para convertir seria dividirlo entre 96;
+					var imgAltura;
+					
+
+
+
+					// function getMeta(url, callback) {
+					//     var img = new Image();
+					//     img.src = url;
+					//     img.onload = function() { 
+					//     	return callback(this.width, this.height); 
+					//     }
+					// }
+
+					// // altura 1368
+					// getMeta(usuario.empresa.imagen, function(width, height) { 
+					// 	imgAltura = height / 95;
+					//   	console.log("dimensiones de imagen ===========", width + 'px ' + height + 'px') 
+					//   }
+					// );
+
+
+
+
+					// var img = new Image();
+					// img.onload = function() {
+					//   console.log("dimensiones de imagen ===========", this.width + 'px ' + this.height + 'px');
+					// }
+					// img.src = usuario.empresa.imagen;
+
+
+
+
+					
+
+					// console.log("de imagenessssssss ===========",img.height) 
+
 					if (usuario.empresa.imagen.length > 100) { doc.image(usuario.empresa.imagen, 60, 40, { fit: [65, 65] }); } //width: 50, height: 50
 					doc.font('Helvetica-Bold', 8);
 					var longitudCaracteres = usuario.empresa.razon_social.length+30;
+					console.log("el datos longitudddd  ", longitudCaracteres);
 					var yDesc = (longitudCaracteres <= 35) ? 115 : ((longitudCaracteres > 36 && longitudCaracteres <= 52) ? 105 : 105);
+					console.log("el datos yyyyyyyyyyyy ", yDesc);
 					doc.text(usuario.empresa.razon_social.toUpperCase(), 60, yDesc,{width:170});
 					doc.font('Helvetica', 7);
 					doc.text(venta.sucursal.nombre.toUpperCase(), 60, yDesc + 22);

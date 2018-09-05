@@ -82,8 +82,6 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
                 });
         })
 
-
-
     router.route('/proforma-sucursales/:id_usuario')
         .get(function (req, res) {
             UsuarioSucursal.findAll({

@@ -41,6 +41,10 @@ module.exports = function (sequelize, Sequelize) {
             type: Sequelize.DECIMAL(20,4),
             field: 'precio'
         },
+        observacion: {
+            type: Sequelize.STRING,
+            field: 'observacion'
+        },
         eliminado: {
             type: Sequelize.BOOLEAN,
             field: 'eliminado',

@@ -3,7 +3,7 @@ angular.module('agil.controladores')
     .controller('controladorComensalesEmpresa', function ($scope, $timeout, $localStorage, $filter, $location, blockUI, Clientes, ClientesNit, GuardarAlias, ObtenerAlias, GuardarGerencias,
         ObtenerGerencias, GuardarComensales, ObtenerComensales, GuardarComidas, ObtenerComidas, GuardarPrecioComidas, ObtenerPrecioComidas, GuardarHistorialExcel, GuardarComensalesExcel,
         ObtenerHistorial, GuardarEmpresasExcel, GuardarGerenciasExcel, GuardarComidasExcel, GuardarPreciosExcel, Paginator, BusquedaComensales, ObtenerReporteComedor, ObtenerCambioMoneda,
-        ObtenerReporteEmpresa, ObtenerReporteComensal, ObtenerAlertasMarcacion) {
+        ObtenerReporteEmpresa, ObtenerReporteComensal, ObtenerAlertasMarcacion, EditarAlertasMarcacion) {
 
         $scope.usuario = JSON.parse($localStorage.usuario);
         $scope.modalEdicionAlias = 'modalAliasEmpresasCliente'
@@ -1049,6 +1049,20 @@ angular.module('agil.controladores')
             }
         }
 
+        $scope.agregarMarcacion = function(comensal, marca){
+            var prom = EditarAlertasMarcacion($scope.usuario.id_empresa, $scope.usuario.id, $scope.filtroComensales.empresaCliente ? $scope.filtroComensales.empresaCliente.id ? $scope.filtroComensales.empresaCliente.id : $scope.empresaExternaSeleccionada.id : $scope.empresaExternaSeleccionada.id, comensal, marca)
+            prom.then(function (res) {
+                $scope.mostrarMensaje(res.mensaje)
+                    if (!res.hasErr) {
+                        $scope.obtenerAlertas()
+                    }
+            }).catch(function (err) {
+                var msg = (err.data !== undefined && err.data !== null) ? err.data : (err.message !== undefined && err.message !== null) ? err.message : 'Se perdió la conexión.'
+                $scope.mostrarMensaje(msg)
+                blockUI.stop()
+            })
+        }
+
         $scope.eliminarAsignacionaliasClienteEmpresa = function (alias) {
             $scope.listaAliasclientesEmpresa[$scope.listaAliasclientesEmpresa.indexOf(alias)].eliminado = true
         }
@@ -1142,18 +1156,23 @@ angular.module('agil.controladores')
                                         var chingadera = { cantidad: 0, total: 0 }
                                         var combo = { gerencia: { id: res.reporte[index].id, nombre: res.reporte[index].nombre, codigo: res.reporte[index].codigo, id_cliente: res.reporte[index].id_cliente, id_empresa: res.reporte[index].id_empresa }, fecha: res.reporte[index].historial[_index].fecha.split('T')[0], desayuno: Object.assign({}, chingadera), almuerzo: Object.assign({}, chingadera), cena: Object.assign({}, chingadera) }
                                         // res.reporte[index].historial[_index].forEach(function (hist) {
-                                        if (res.reporte[index].historial[_index].comida.nombre.toLowerCase() === 'desayuno') {
-                                            combo.desayuno.cantidad += 1
-                                            combo.desayuno.total += res.reporte[index].historial[_index].precio
+                                        if (res.reporte[index].historial[_index].comida) {
+                                            if (res.reporte[index].historial[_index].comida.nombre.toLowerCase() === 'desayuno') {
+                                                combo.desayuno.cantidad += 1
+                                                combo.desayuno.total += res.reporte[index].historial[_index].precio
+                                            }
+                                            if (res.reporte[index].historial[_index].comida.nombre.toLowerCase() === 'almuerzo') {
+                                                combo.almuerzo.cantidad += 1
+                                                combo.almuerzo.total += res.reporte[index].historial[_index].precio
+                                            }
+                                            if (res.reporte[index].historial[_index].comida.nombre.toLowerCase() === 'cena') {
+                                                combo.cena.cantidad += 1
+                                                combo.cena.total += res.reporte[index].historial[_index].precio
+                                            }
+                                        } else {
+                                            combo.observacion = 'Fuera de horario, no se puede contabilizar.'
                                         }
-                                        if (res.reporte[index].historial[_index].comida.nombre.toLowerCase() === 'almuerzo') {
-                                            combo.almuerzo.cantidad += 1
-                                            combo.almuerzo.total += res.reporte[index].historial[_index].precio
-                                        }
-                                        if (res.reporte[index].historial[_index].comida.nombre.toLowerCase() === 'cena') {
-                                            combo.cena.cantidad += 1
-                                            combo.cena.total += res.reporte[index].historial[_index].precio
-                                        }
+
                                         // })
                                         reporteGerencias.push(combo)
                                     }
@@ -1201,60 +1220,31 @@ angular.module('agil.controladores')
                                 $scope.mostrarMensaje(res.mensaje)
                                 return
                             }
-                            var reportesGerencias = []
+                            var reportesEmpresas = []
                             res.reporte.forEach(function (comensal) {
-                                var reporteGerencias = []
+                                var reporteEmpresas = []
+                                comensal.desayuno = { cantidad: 0, total: 0 }
+                                comensal.almuerzo = { cantidad: 0, total: 0 }
+                                comensal.cena = { cantidad: 0, total: 0 }
+                                comensal.fueraHorario = 0
                                 comensal.historial.forEach(function (historial) {
-                                    var conteoIndex = -1
-                                    if (reporteGerencias.some(function (dato) {
-                                        conteoIndex += 1
-                                        if (dato.comensal.id === comensal.id) {
-                                            return true
-                                        }
-                                        return false
-                                    })) {
-                                        // historial.forEach(function (hist) {
+                                    if (historial.comida) {
                                         if (historial.comida.nombre.toLowerCase() === 'desayuno') {
-                                            reporteGerencias[conteoIndex].desayuno.cantidad += 1
-                                            reporteGerencias[conteoIndex].desayuno.total += historial.precio
+                                            comensal.desayuno.cantidad += 1
                                         }
                                         if (historial.comida.nombre.toLowerCase() === 'almuerzo') {
-                                            reporteGerencias[conteoIndex].almuerzo.cantidad += 1
-                                            reporteGerencias[conteoIndex].almuerzo.total += historial.precio
+                                            comensal.almuerzo.cantidad += 1
                                         }
                                         if (historial.comida.nombre.toLowerCase() === 'cena') {
-                                            reporteGerencias[conteoIndex].cena.cantidad += 1
-                                            reporteGerencias[conteoIndex].cena.total += historial.precio
+                                            comensal.cena.cantidad += 1
                                         }
-                                        // })
                                     } else {
-                                        var chingadera = { cantidad: 0, total: 0 }
-                                        var combo = { comensal: { id: comensal.id, nombre: comensal.nombre, codigo: comensal.codigo, id_cliente: comensal.id_cliente, id_empresa: comensal.id_empresa }, fecha: historial.fecha.split('T')[0], desayuno: Object.assign({}, chingadera), almuerzo: Object.assign({}, chingadera), cena: Object.assign({}, chingadera) }
-                                        // historial.forEach(function (hist) {
-                                        if (historial.comida.nombre.toLowerCase() === 'desayuno') {
-                                            combo.desayuno.cantidad += 1
-                                            combo.desayuno.total += historial.precio
-                                        }
-                                        if (historial.comida.nombre.toLowerCase() === 'almuerzo') {
-                                            combo.almuerzo.cantidad += 1
-                                            combo.almuerzo.total += historial.precio
-                                        }
-                                        if (historial.comida.nombre.toLowerCase() === 'cena') {
-                                            combo.cena.cantidad += 1
-                                            combo.cena.total += historial.precio
-                                        }
-                                        // })
-                                        reportesGerencias.push(combo)
+                                        comensal.fueraHorario += 1
                                     }
                                 })
-                                // if (reporteGerencias.length > 0) {
-                                //     reportesGerencias.push(reporteGerencias)
-                                // }
-                            })
-                            // reportesGerencias.forEach(function (reporte) {
 
-                            $scope.imprimirReporteEmpresa(reportesGerencias, reportesGerencias[0].gerencia, cabecera, comidasEmpresa, tipoCambioDollar)
-                            // })
+                            })
+                            $scope.imprimirReporteEmpresa(res.reporte, null, cabecera, comidasEmpresa, tipoCambioDollar)
                             blockUI.stop();
                         })
                     })
@@ -1294,59 +1284,72 @@ angular.module('agil.controladores')
                                 return
                             }
                             var reportesGerencias = []
-                            res.reporte.forEach(function (comensal) {
-                                var reporteGerencias = []
-                                comensal.historial.forEach(function (historial) {
+                            for (let index = 0; index < res.reporte.length; index++) {
+                                var reporteFechasPorComensal = []
+                                for (let _index = 0; _index < res.reporte[index].historial.length; _index++) {
+                                    // var historialFecha = { fecha: res.reporte[index].historial[_index].fecha, desayuno: 0, almuerzo: 0, cena: 0, fueraHorario: 0 }
                                     var conteoIndex = -1
-                                    if (reporteGerencias.some(function (dato) {
+                                    if (reporteFechasPorComensal.some(function (dato) {
                                         conteoIndex += 1
-                                        if (dato.comensal.id === comensal.id) {
+                                        if (dato.fecha.split('T')[0] === res.reporte[index].historial[_index].fecha.split('T')[0]) {
                                             return true
                                         }
                                         return false
                                     })) {
-                                        // historial.forEach(function (hist) {
-                                        if (historial.comida.nombre.toLowerCase() === 'desayuno') {
-                                            reporteGerencias[conteoIndex].desayuno.cantidad += 1
-                                            reporteGerencias[conteoIndex].desayuno.total += historial.precio
+                                        if (res.reporte[index].historial[_index].comida) {
+                                            if (res.reporte[index].historial[_index].comida.nombre.toLowerCase() === 'desayuno') {
+                                                reporteFechasPorComensal[conteoIndex].desayuno += 1
+                                            }
+                                            if (res.reporte[index].historial[_index].comida.nombre.toLowerCase() === 'almuerzo') {
+                                                reporteFechasPorComensal[conteoIndex].almuerzo += 1
+                                            }
+                                            if (res.reporte[index].historial[_index].comida.nombre.toLowerCase() === 'cena') {
+                                                reporteFechasPorComensal[conteoIndex].cena += 1
+                                            }
+                                        } else {
+                                            reporteFechasPorComensal[conteoIndex].fueraHorario += 1
                                         }
-                                        if (historial.comida.nombre.toLowerCase() === 'almuerzo') {
-                                            reporteGerencias[conteoIndex].almuerzo.cantidad += 1
-                                            reporteGerencias[conteoIndex].almuerzo.total += historial.precio
-                                        }
-                                        if (historial.comida.nombre.toLowerCase() === 'cena') {
-                                            reporteGerencias[conteoIndex].cena.cantidad += 1
-                                            reporteGerencias[conteoIndex].cena.total += historial.precio
-                                        }
-                                        // })
+                                        // reporteFechasPorComensal.push(historialFecha)
                                     } else {
-                                        var chingadera = { cantidad: 0, total: 0 }
-                                        var combo = { comensal: { id: comensal.id, nombre: comensal.nombre, codigo: comensal.codigo, id_cliente: comensal.id_cliente, id_empresa: comensal.id_empresa }, fecha: historial.fecha.split('T')[0], desayuno: Object.assign({}, chingadera), almuerzo: Object.assign({}, chingadera), cena: Object.assign({}, chingadera) }
-                                        // historial.forEach(function (hist) {
-                                        if (historial.comida.nombre.toLowerCase() === 'desayuno') {
-                                            combo.desayuno.cantidad += 1
-                                            combo.desayuno.total += historial.precio
+                                        var historialFecha = { fecha: res.reporte[index].historial[_index].fecha, desayuno: 0, almuerzo: 0, cena: 0, fueraHorario: 0 }
+                                        // var chingadera = { cantidad: 0, total: 0 }
+                                        // var combo = { gerencia: { id: res.reporte[index].id, nombre: res.reporte[index].nombre, codigo: res.reporte[index].codigo, id_cliente: res.reporte[index].id_cliente, id_empresa: res.reporte[index].id_empresa }, fecha: res.reporte[index].historial[_index].fecha.split('T')[0], desayuno: Object.assign({}, chingadera), almuerzo: Object.assign({}, chingadera), cena: Object.assign({}, chingadera) }
+                                        // res.reporte[index].historial[_index].forEach(function (hist) {
+                                        if (res.reporte[index].historial[_index].comida) {
+                                            if (res.reporte[index].historial[_index].comida.nombre.toLowerCase() === 'desayuno') {
+                                                historialFecha.desayuno += 1
+                                            }
+                                            if (res.reporte[index].historial[_index].comida.nombre.toLowerCase() === 'almuerzo') {
+                                                historialFecha.almuerzo += 1
+                                            }
+                                            if (res.reporte[index].historial[_index].comida.nombre.toLowerCase() === 'cena') {
+                                                historialFecha.cena += 1
+                                            }
+                                        } else {
+                                            historialFecha.observacion = 'Fuera de horario, no se puede contabilizar.'
                                         }
-                                        if (historial.comida.nombre.toLowerCase() === 'almuerzo') {
-                                            combo.almuerzo.cantidad += 1
-                                            combo.almuerzo.total += historial.precio
-                                        }
-                                        if (historial.comida.nombre.toLowerCase() === 'cena') {
-                                            combo.cena.cantidad += 1
-                                            combo.cena.total += historial.precio
-                                        }
-                                        // })
-                                        reportesGerencias.push(combo)
+                                        reporteFechasPorComensal.push(historialFecha)
                                     }
-                                })
-                                // if (reporteGerencias.length > 0) {
-                                //     reportesGerencias.push(reporteGerencias)
-                                // }
-                            })
-                            // reportesGerencias.forEach(function (reporte) {
-
-                            $scope.imprimirReporteComensal(reportesGerencias, reportesGerencias[0].gerencia, cabecera, comidasEmpresa, tipoCambioDollar)
-                            // })
+                                    // if (res.reporte[index].historial[_index].comida) {
+                                    //     if (res.reporte[index].historial[_index].comida.nombre.toLowerCase() === 'desayuno') {
+                                    //         historialFecha.desayuno += 1
+                                    //     }
+                                    //     if (res.reporte[index].historial[_index].comida.nombre.toLowerCase() === 'almuerzo') {
+                                    //         historialFecha.almuerzo += 1
+                                    //     }
+                                    //     if (res.reporte[index].historial[_index].comida.nombre.toLowerCase() === 'cena') {
+                                    //         historialFecha.cena += 1
+                                    //     }
+                                    // } else {
+                                    //     historialFecha.fueraHorario += 1
+                                    // }
+                                    // reporteFechasPorComensal.push(historialFecha)
+                                }
+                                res.reporte[index].reporte = reporteFechasPorComensal
+                            }
+                            for (let _index = 0; _index < res.reporte.length; _index++) {
+                                $scope.imprimirReporteComensal(res.reporte[_index], null, cabecera, comidasEmpresa, tipoCambioDollar)
+                            }
                             blockUI.stop();
                         })
                     })
@@ -1397,6 +1400,10 @@ angular.module('agil.controladores')
                     doc.text(reporte[i].fecha, cubeX + 9, y + 7);
                     doc.text(reporte[i].cena.cantidad, cubeX + 255 + 9, y + 7)
                     total_cenas += reporte[i].cena.cantidad
+                }
+                if (reporte[i].observacion) {
+                    doc.text(reporte[i].fecha, cubeX + 9, y + 7);
+                    doc.text(reporte[i].observacion, cubeX + 312 + 9, y + 3, { width: 80 })
                 }
                 y = y + 20;
                 items++;
@@ -1484,14 +1491,10 @@ angular.module('agil.controladores')
             var total_desayunos = 0
             var total_almuerzos = 0
             var total_cenas = 0
+            var total_fueraHorario = 0
             for (let i = 0; i < reporte.length; i++) {
                 var total_comensal = 0
                 doc.font('Helvetica', 8);
-
-                // cabecera.forEach(function (dato) {
-                //     doc.rect(cubeX + xSeparacion, y, 80, 20).stroke()
-                //     xSeparacion += 80
-                // })
                 total_general_desayuno += reporte[i].desayuno.cantidad
                 total_general_almuerzo += reporte[i].almuerzo.cantidad
                 total_general_cena += reporte[i].cena.cantidad
@@ -1501,12 +1504,12 @@ angular.module('agil.controladores')
                 total_cenas += reporte[i].cena.cantidad
                 xSeparacion = 0
                 doc.font('Helvetica', 8).fill('black')
-                doc.text(reporte[i].comensal.nombre, cubeX + 3, y + 7);
+                doc.text(reporte[i].nombre, cubeX + 3, y + 7);
                 doc.text(reporte[i].desayuno.cantidad, cubeX + 80 + 95 + 9, y + 7)
                 doc.text(reporte[i].almuerzo.cantidad, cubeX + 80 + 175 + 9, y + 7)
                 doc.text(reporte[i].cena.cantidad, cubeX + 80 + 255 + 9, y + 7)
                 doc.text(total_comensal, cubeX + 80 + 335 + 9, y + 7)
-
+                total_fueraHorario += reporte[i].fueraHorario
                 doc.rect(cubeX, y + 3, 150, 20).stroke()
                 doc.rect(cubeX + 150, y + 3, 80, 20).stroke()
                 doc.rect(cubeX + 230, y + 3, 80, 20).stroke()
@@ -1532,13 +1535,24 @@ angular.module('agil.controladores')
             doc.rect(cubeX + 230, y + 3, 80, 20).stroke()
             doc.rect(cubeX + 310, y + 3, 80, 20).stroke()
             doc.rect(cubeX + 390, y + 3, 110, 20).stroke()
+            if (total_fueraHorario > 0) {
+                doc.text("No contabilizados (fuera de horario):", cubeX + 80 + 320, y + 7 + 20)
+                doc.text("Cant.: " + total_fueraHorario, cubeX + 80 + 335 + 12, y + 7 + 40)
+            }
             y = y + 20;
-
             doc.end();
             stream.on('finish', function () {
                 var fileURL = stream.toBlobURL('application/pdf');
                 window.open(fileURL, '_blank', 'location=no');
             });
+        }
+
+        $scope.formatoFechaPDF = function (fecha) {
+            var MyDate = new Date(fecha);
+            var MyDateString;
+            MyDate.setDate(MyDate.getDate());
+            MyDateString = ('0' + MyDate.getDate()).slice(-2) + '/' + ('0' + (MyDate.getMonth() + 1)).slice(-2) + '/' + MyDate.getFullYear();
+            return MyDateString
         }
 
         $scope.imprimirReporteComensal = function (reporte, gerencia, cabecera, comidasEmpresa, dollar) {
@@ -1551,14 +1565,14 @@ angular.module('agil.controladores')
             var pagina = 1
             var cubeX = 70
             var totalPaginas = Math.ceil(1 / itemsPorPagina);
-            $scope.cabeceraReporteComensal(doc, pagina, totalPaginas, cabecera, $scope.filtroComensales.empresaCliente ? $scope.filtroComensales.empresaCliente.razon_social ? $scope.filtroComensales.empresaCliente.razon_social : $scope.empresaExternaSeleccionada.razon_social : $scope.empresaExternaSeleccionada.razon_social, gerencia ? gerencia.nombre.toUpperCase() : 'Sin asignación.'.toUpperCase());
+            $scope.cabeceraReporteComensal(doc, pagina, totalPaginas, reporte, $scope.filtroComensales.empresaCliente ? $scope.filtroComensales.empresaCliente.razon_social ? $scope.filtroComensales.empresaCliente.razon_social : $scope.empresaExternaSeleccionada.razon_social : $scope.empresaExternaSeleccionada.razon_social, gerencia ? gerencia.nombre.toUpperCase() : 'Sin asignación.'.toUpperCase());
             var total_general_desayuno = 0
             var total_general_almuerzo = 0
             var total_general_cena = 0
             var total_desayunos = 0
             var total_almuerzos = 0
             var total_cenas = 0
-            for (let i = 0; i < reporte.length; i++) {
+            for (let i = 0; i < reporte.reporte.length; i++) {
                 var total_comensal = 0
                 doc.font('Helvetica', 8);
 
@@ -1566,19 +1580,20 @@ angular.module('agil.controladores')
                 //     doc.rect(cubeX + xSeparacion, y, 80, 20).stroke()
                 //     xSeparacion += 80
                 // })
-                total_general_desayuno += reporte[i].desayuno.cantidad
-                total_general_almuerzo += reporte[i].almuerzo.cantidad
-                total_general_cena += reporte[i].cena.cantidad
-                total_comensal = reporte[i].desayuno.cantidad + reporte[i].almuerzo.cantidad + reporte[i].cena.cantidad
-                total_desayunos += reporte[i].desayuno.cantidad
-                total_almuerzos += reporte[i].almuerzo.cantidad
-                total_cenas += reporte[i].cena.cantidad
+                total_general_desayuno += reporte.reporte[i].desayuno
+                total_general_almuerzo += reporte.reporte[i].almuerzo
+                total_general_cena += reporte.reporte[i].cena
+                total_comensal = reporte.reporte[i].desayuno + reporte.reporte[i].almuerzo + reporte.reporte[i].cena
+                total_desayunos += reporte.reporte[i].desayuno
+                total_almuerzos += reporte.reporte[i].almuerzo
+                total_cenas += reporte.reporte[i].cena
                 xSeparacion = 0
+                var fecha
                 doc.font('Helvetica', 8).fill('black')
-                doc.text(reporte[i].fecha, cubeX + 3, y + 7);
-                doc.text(reporte[i].desayuno.cantidad, cubeX + 80 + 95 + 9, y + 7)
-                doc.text(reporte[i].almuerzo.cantidad, cubeX + 80 + 175 + 9, y + 7)
-                doc.text(reporte[i].cena.cantidad, cubeX + 80 + 255 + 9, y + 7)
+                doc.text($scope.formatoFechaPDF(reporte.reporte[i].fecha), cubeX + 8, y + 7);
+                doc.text(reporte.reporte[i].desayuno, cubeX + 80 + 95 + 9, y + 7)
+                doc.text(reporte.reporte[i].almuerzo, cubeX + 80 + 175 + 9, y + 7)
+                doc.text(reporte.reporte[i].cena, cubeX + 80 + 255 + 9, y + 7)
                 doc.text(total_comensal, cubeX + 80 + 335 + 9, y + 7)
 
                 doc.rect(cubeX, y + 3, 150, 20).stroke()
@@ -1593,7 +1608,7 @@ angular.module('agil.controladores')
                     y = 115 + 80;
                     items = 0;
                     pagina = pagina + 1;
-                    $scope.cabeceraReporteEmpresa(doc, pagina, totalPaginas, cabecera, $scope.filtroComensales.empresaCliente ? $scope.filtroComensales.empresaCliente.razon_social ? $scope.filtroComensales.empresaCliente.razon_social : $scope.empresaExternaSeleccionada.razon_social : $scope.empresaExternaSeleccionada.razon_social, gerencia ? gerencia.nombre.toUpperCase() : 'Sin asignación.'.toUpperCase());
+                    $scope.cabeceraReporteComensal(doc, pagina, totalPaginas, reporte, $scope.filtroComensales.empresaCliente ? $scope.filtroComensales.empresaCliente.razon_social ? $scope.filtroComensales.empresaCliente.razon_social : $scope.empresaExternaSeleccionada.razon_social : $scope.empresaExternaSeleccionada.razon_social, gerencia ? gerencia.nombre.toUpperCase() : 'Sin asignación.'.toUpperCase());
                 }
             }
             doc.text("Total general", cubeX + 6, y + 7);
@@ -1651,8 +1666,8 @@ angular.module('agil.controladores')
             doc.text("Periodo", 124, 120);
             doc.text("Empleado", 124, 140);
             doc.text("DESAYUNO", 270 - 30, 140);
-            doc.text("ALMUERZO", 350- 30, 140);
-            doc.text("CENA", 430- 30, 140);
+            doc.text("ALMUERZO", 350 - 30, 140);
+            doc.text("CENA", 430 - 30, 140);
             doc.text("TOTAL GENERAL", 510 - 30, 140);
             doc.rect(cubeX, 73, 150, 20).stroke()
             doc.rect(cubeX, 93, 150, 20).stroke()
@@ -1671,7 +1686,7 @@ angular.module('agil.controladores')
             }
         }
 
-        $scope.cabeceraReporteComensal = function (doc, pagina, totalPaginas, cabecera, empresa, comedor) {
+        $scope.cabeceraReporteComensal = function (doc, pagina, totalPaginas, reporte, empresa, comedor) {
             var y = 150;
             var x = 100
             var xSeparacion = 0
@@ -1679,9 +1694,10 @@ angular.module('agil.controladores')
             doc.font('Helvetica-Bold', 12)
                 .fill('black')
             doc.font('Helvetica-Bold', 8);
-            doc.text("Empresa", 124, 80);
-            doc.text(empresa, 300, 80);
-            doc.text("Gerencia", 124, 100);
+            doc.text("Empleado", 124, 80);
+            doc.text(reporte.nombre, 300, 80);
+            doc.text(empresa, 300, 100);
+            doc.text("Empresa", 124, 100);
             doc.text("Periodo", 124, 120);
             doc.text("Empleado", 124, 140);
             doc.text("DESAYUNO", 240, 140);

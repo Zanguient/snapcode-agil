@@ -219,7 +219,8 @@
                             <td>{{historial.empresaCliente.razon_social}}</td>
                             <td>{{historial.gerencia.nombre}}</td>
                             <td>{{historial.comida.nombre}}</td>
-                            <td>{{historial.fecha | date: "dd/MM/yyyy"}}&nbsp;&nbsp;/&nbsp;&nbsp;{{historial.fecha | date: "HH:mm:ss a": 'CET'}} </td>
+                            <td>{{historial.fecha | date: "dd/MM/yyyy"}}&nbsp;&nbsp;/&nbsp;&nbsp;{{historial.fecha | date: "HH:mm:ss
+                                a": 'CET'}} </td>
                             <td>
                                 {{historial.usuario.nombre_usuario}}
                             </td>
@@ -1122,9 +1123,11 @@
                         <td>
                             <input class="date-picker" type="text" ng-update-hidden data-date-format="dd/mm/yyyy" ng-model="filtroMarcaciones.hasta">
                         </td>
-                        <td><button class="btn btn-primary" type="submit">Filtrar
+                        <td>
+                            <button class="btn btn-primary" type="submit">Filtrar
                                 <i class="ace-icon fa fa-search align-top bigger-125"></i>
-                            </button></td>
+                            </button>
+                        </td>
                     </tr>
                 </tbody>
             </table>
@@ -1150,21 +1153,33 @@
                         <tr ng-repeat="comensal in alertaMarcaciones">
                             <td>{{$index+1}}</td>
                             <td>
-                               {{comensal.comensal.nombre}}
+                                {{comensal.comensal.nombre}}
                             </td>
                             <td>
                                 {{comensal.fecha | date: 'dd/MM/yyyy'}}
                             </td>
                             <td>
-                                {{comensal.cena == 0 ? 'Cena ' + () : }}
+                                <div ng-if="!comensal.desayuno">
+                                    Desayuno <a class="green tooltip-info" href="javascript:void(0)" ng-click="agregarMarcacion(comensal, 1)" uib-tooltip="Marcar">
+                                            <i class="glyphicon glyphicon-ok bigger-130"></i>
+                                        </a>
+                                </div>
+                                <div ng-if="!comensal.almuerzo">
+                                    Almuerzo <a class="green tooltip-info" href="javascript:void(0)" ng-click="agregarMarcacion(comensal, 2)" uib-tooltip="Marcar">
+                                            <i class="glyphicon glyphicon-ok bigger-130"></i>
+                                        </a>
+                                </div>
+                                <div ng-if="!comensal.cena">
+                                    Cena <a class="green tooltip-info" href="javascript:void(0)" ng-click="agregarMarcacion(comensal, 3)" uib-tooltip="Marcar">
+                                            <i class="glyphicon glyphicon-ok bigger-130"></i>
+                                        </a>
+                                </div>
                             </td>
                             <td>
                                 <a class="blue tooltip-info" href="javascript:void(0)" uib-tooltip="Editar">
                                     <i class="ace-icon fa fa-refresh bigger-130"></i>
                                 </a>
-                                <a class="green tooltip-info" href="javascript:void(0)" uib-tooltip="Guardar">
-                                    <i class="glyphicon glyphicon-ok bigger-130"></i>
-                                </a>
+                                
                                 <a class="red tooltip-info" href="javascript:void(0)" uib-tooltip="Cancelar">
                                     <i class="ace-icon fa fa-times-circle bigger-130"></i>
                                 </a>
