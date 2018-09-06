@@ -5,7 +5,7 @@ angular.module('agil.controladores')
 		PagosVenta, DatosVenta, VentaEmpresaDatos, ProductosPanel, ListaProductosEmpresaUsuario, ListaInventariosProducto, Paginator,
 		socket, ConfiguracionVentaVistaDatos, ConfiguracionVentaVista, ListaGruposProductoEmpresa, ReporteVentasMensualesDatos,
 		ConfiguracionImpresionEmpresaDato, VerificarUsuarioEmpresa, GuardarVentasImportados, ImprimirSalida, ModificarVenta, ListaVendedorVenta, VendedorVenta, VendedorVentaActualizacion, GuardarUsuarLectorDeBarra, VerificarLimiteCredito, ListaSucursalesUsuario, ListaGruposProductoUsuario, ListaServiciosVentas, GuardarListaServiciosVentas,
-		EliminarVentaServicio, ventasDetalleEmpresa, filtroCotizacionesPendientes, CotizacionRechazo) {
+		EliminarVentaServicio, ventasDetalleEmpresa, EliminarDetalleVentaEdicion, filtroCotizacionesPendientes, CotizacionRechazo, ListaInventariosProductoVentaEdicion) {
 		blockUI.start();
 		$scope.usuario = JSON.parse($localStorage.usuario);
 		convertUrlToBase64Image($scope.usuario.empresa.imagen, function (imagenEmpresa) {
@@ -346,6 +346,55 @@ angular.module('agil.controladores')
 			}
 
 		}
+		$scope.establecerProductoEdicionVenta = function (producto) {
+
+			producto.tipoProducto = producto['tipoProducto'] == null ? { id: producto['tipoProducto.id'], nombre: producto['tipoProducto.nombre'], nombre_corto: producto['tipoProducto.nombre_corto'] } : producto.tipoProducto;
+			$scope.editar_precio = false;
+
+			var promesa = ListaInventariosProducto(producto.id, $scope.venta.almacen.id);
+			promesa.then(function (inventarios) {
+				producto.inventarios = inventarios;
+				for (var i = 0; i < producto.inventarios.length; i++) {
+					producto.inventarios[i].fecha_vencimiento = (producto.inventarios[i].fecha_vencimiento ? new Date(producto.inventarios[i].fecha_vencimiento) : null);
+					producto.inventarios[i].fechaVencimientoTexto = (producto.inventarios[i].fecha_vencimiento ? producto.inventarios[i].fecha_vencimiento.getDate() + "/" + (producto.inventarios[i].fecha_vencimiento.getMonth() + 1) + "/" + producto.inventarios[i].fecha_vencimiento.getFullYear() : "");
+					producto.inventarios[i].detallesMovimiento[0].movimiento.fecha = new Date(producto.inventarios[i].detallesMovimiento[0].movimiento.fecha);
+					producto.inventarios[i].detallesMovimiento[0].movimiento.fechaTexto = producto.inventarios[i].detallesMovimiento[0].movimiento.fecha.getDate() + "/" + (producto.inventarios[i].detallesMovimiento[0].movimiento.fecha.getMonth() + 1) + "/" + producto.inventarios[i].detallesMovimiento[0].movimiento.fecha.getFullYear();
+				}
+
+				$scope.inventariosDisponibleProducto = [];
+				$scope.inventariosDisponibleProducto.push({ id: 0, fecha_vencimiento: "TODOS", fechaVencimientoTexto: "TODOS" });
+				$scope.inventariosDisponibleProducto = $scope.inventariosDisponibleProducto.concat(producto.inventarios);
+				var inventarioDisponible = $scope.obtenerInventarioTotal(producto);
+				$scope.detalleVenta = {
+					eliminado: false,
+					producto: producto, precio_unitario: producto.precio_unitario, inventarioProducto: $scope.inventariosDisponibleProducto[0],
+					inventario_disponible: inventarioDisponible, costos: producto.activar_inventario ? producto.inventarios : [],
+					cantidad: 1, descuento: producto.descuento, recargo: 0, ice: 0, excento: 0, tipo_descuento: (producto.descuento > 0 ? true : false), tipo_recargo: false
+				};
+
+				// === para colocar el costo unitario de inventario == 
+				$scope.precio_inventario;
+				if (producto.inventarios.length > 0) {
+					var pre = producto.inventarios.find(function (dato) {
+						var inv = dato
+						if (inv.id <= dato.id) {
+							inv = dato
+						}
+						return dato
+					});
+					$scope.precio_inventario = pre.costo_unitario + " Bs";
+
+				} else {
+					$scope.precio_inventario = "Sin histórico";
+				}
+				$scope.inventarioProducto = producto.activar_inventario ? producto.inventarios : []
+				$scope.colorearInventarioDisponible(inventarioDisponible, producto);
+				//	$scope.enfocar('cantidad');
+				document.getElementById("cantidad").focus();
+				$scope.calcularImporte();
+				$scope.cerrarPopup($scope.idModalInventario);
+			});
+		}
 		$scope.establecerProducto = function (producto) {
 
 			producto.tipoProducto = producto['tipoProducto'] == null ? { id: producto['tipoProducto.id'], nombre: producto['tipoProducto.nombre'], nombre_corto: producto['tipoProducto.nombre_corto'] } : producto.tipoProducto;
@@ -375,10 +424,10 @@ angular.module('agil.controladores')
 				// === para colocar el costo unitario de inventario == 
 				$scope.precio_inventario;
 				if (producto.inventarios.length > 0) {
-					var pre =producto.inventarios.find(function(dato){
-						var inv= dato
-						if(inv.id<=dato.id){
-							inv=dato
+					var pre = producto.inventarios.find(function (dato) {
+						var inv = dato
+						if (inv.id <= dato.id) {
+							inv = dato
 						}
 						return dato
 					});
@@ -465,7 +514,7 @@ angular.module('agil.controladores')
 					cantidadTotal += (producto.inventarios[i].cantidad);
 				}
 				for (var j = 0; j < $scope.venta.detallesVenta.length; j++) {
-					if ($scope.venta.detallesVenta[j].producto.id == producto.id) {
+					if ($scope.venta.detallesVenta[j].producto.id == producto.id && !$scope.venta.detallesVenta[j].id) {
 						cantidadTotal = cantidadTotal - $scope.venta.detallesVenta[j].cantidad;
 					}
 				}
@@ -479,7 +528,7 @@ angular.module('agil.controladores')
 			if ($scope.usuario.empresa.usar_peps) {
 				var cantidadTotal = detalleVenta.inventarioProducto.cantidad;
 				for (var j = 0; j < $scope.venta.detallesVenta.length; j++) {
-					if ($scope.venta.detallesVenta[j].producto.id == detalleVenta.producto.id && $scope.venta.detallesVenta[j].costos[0].id == detalleVenta.inventarioProducto.id) {
+					if ($scope.venta.detallesVenta[j].producto.id == detalleVenta.producto.id && $scope.venta.detallesVenta[j].costos[0].id == detalleVenta.inventarioProducto.id && !$scope.venta.detallesVenta[j].id) {
 						cantidadTotal = cantidadTotal - $scope.venta.detallesVenta[j].cantidad;
 					}
 				}
@@ -644,6 +693,32 @@ angular.module('agil.controladores')
 			}
 		}
 
+		$scope.eliminarDetalleVentaEdicion = function (detalleVenta) {
+			if (detalleVenta.id) {
+				$scope.CancelacionVentaEdicion=true
+				
+				var promesa = EliminarDetalleVentaEdicion(detalleVenta, $scope.venta.movimientoActual.id)
+				promesa.then(function (dato) {
+					if (dato.hasError == true) {
+					} else {
+						$scope.venta.detallesVenta.splice($scope.venta.detallesVenta.indexOf(detalleVenta), 1);
+						$scope.sumarTotal();
+						$scope.sumarTotalImporte();
+						$scope.calcularSaldo();
+						$scope.calcularCambio();
+						$scope.capturarInteraccion();
+					}
+					$scope.mostrarMensaje(dato.mensaje)
+				})
+			} else {
+				$scope.venta.detallesVenta.splice($scope.venta.detallesVenta.indexOf(detalleVenta), 1);
+				$scope.sumarTotal();
+				$scope.sumarTotalImporte();
+				$scope.calcularSaldo();
+				$scope.calcularCambio();
+				$scope.capturarInteraccion();
+			}
+		}
 		$scope.eliminarDetalleVentaPanel = function (detalleVenta) {
 			var indice = $scope.productosProcesados.indexOf(detalleVenta.producto);
 			$scope.productosProcesados[indice].inventario_disponible = $scope.productosProcesados[indice].inventario_disponible + detalleVenta.cantidad;
@@ -1698,6 +1773,7 @@ angular.module('agil.controladores')
 						$scope.cerrarPopPupEdicion();
 						$scope.mostrarMensaje(dato.mensaje);
 						$scope.recargarItemsTabla();
+						
 					});
 				} else {
 					var movimiento = venta.movimiento.nombre_corto;
@@ -1715,11 +1791,11 @@ angular.module('agil.controladores')
 							} else {
 								// guardar actualicacion cotizacion ====
 								if (venta.actualizarCotizacion) {
-						            CotizacionRechazo.update({ id_cotizacion: venta.cotizacion_id }, {estado: "ACEPTADO"}, function (res) {
-						  
-						            }, function (error) {
-						                $scope.mostrarMensaje('Hubo un problema al guardar.');
-						            });
+									CotizacionRechazo.update({ id_cotizacion: venta.cotizacion_id }, { estado: "ACEPTADO" }, function (res) {
+
+									}, function (error) {
+										$scope.mostrarMensaje('Hubo un problema al guardar.');
+									});
 								}
 
 								if ($scope.usuario.empresa.usar_vencimientos) {
@@ -3307,7 +3383,7 @@ angular.module('agil.controladores')
 
 		$scope.modificarVenta = function (venta) {
 			//console.log("venta ressss =========== ", venta);
-
+			$("#modal-wizard-venta-edicion").dialog({closeOnEscape: false});
 			$scope.blockerVenta = true
 			$scope.venta = new Venta(venta);
 			$scope.venta.editable = true
@@ -3435,7 +3511,7 @@ angular.module('agil.controladores')
 					var worksheet = workbook.Sheets[first_sheet_name];
 					var ventas = [];
 					var arregloServicios = []
-					var arregloClientes= []
+					var arregloClientes = []
 					do {
 						row2 = 2
 						var venta = { tipoPago: {}, detallesVenta: [], cliente: {}, fechaTexto: $scope.venta.fecha, sucursal: $scope.venta.sucursal, actividad: $scope.venta.actividad };
@@ -3448,24 +3524,24 @@ angular.module('agil.controladores')
 						venta.cliente.nit = worksheet['B' + row] != undefined && worksheet['B' + row] != "" ? worksheet['B' + row].v.toString() : null;
 						venta.cliente.razon_social = worksheet['C' + row] != undefined && worksheet['C' + row] != "" ? worksheet['C' + row].v.toString() : null;
 						var bandera = false
-							if (arregloClientes.length > 0) {
-								for (var i = 0; i < arregloClientes.length; i++) {
-									var element = arregloClientes[i].nit;
-									if (venta.cliente.nit != null) {
-										if (element == venta.cliente.nit) {
-											bandera = true
-										}
+						if (arregloClientes.length > 0) {
+							for (var i = 0; i < arregloClientes.length; i++) {
+								var element = arregloClientes[i].nit;
+								if (venta.cliente.nit != null) {
+									if (element == venta.cliente.nit) {
+										bandera = true
 									}
 								}
-								if (!bandera) {
+							}
+							if (!bandera) {
 
-									arregloClientes.push(venta.cliente)
-
-								}
-							} else {
 								arregloClientes.push(venta.cliente)
 
 							}
+						} else {
+							arregloClientes.push(venta.cliente)
+
+						}
 						venta.vendedor = worksheet['D' + row] != undefined && worksheet['D' + row] != "" ? worksheet['D' + row].v.toString() : null;
 						venta.observacion = worksheet['E' + row] != undefined && worksheet['E' + row] != "" ? worksheet['E' + row].v.toString() : null;
 						venta.tipoPago.nombre = worksheet['F' + row] != undefined && worksheet['F' + row] != "" ? worksheet['F' + row].v.toString() : null;
@@ -3476,7 +3552,7 @@ angular.module('agil.controladores')
 							var detalleVenta = { servicio: {} }
 							detalleVenta.servicio.nombre = worksheet['I' + row2] != undefined && worksheet['I' + row2] != "" ? worksheet['I' + row2].v.toString() : null;
 							detalleVenta.servicio.precio = worksheet['K' + row2] != undefined && worksheet['K' + row2] != "" ? parseFloat(worksheet['K' + row2].v.toString()) : null;
-							detalleVenta.servicio.id_empresa=$scope.usuario.id_empresa
+							detalleVenta.servicio.id_empresa = $scope.usuario.id_empresa
 							var bandera = false
 							if (arregloServicios.length > 0) {
 								for (var i = 0; i < arregloServicios.length; i++) {
@@ -3573,15 +3649,15 @@ angular.module('agil.controladores')
 						i++;
 
 					} while (worksheet['A' + row] != undefined);
-					$scope.guardarImportacionVentasServicios(ventas, arregloServicios,arregloClientes);
+					$scope.guardarImportacionVentasServicios(ventas, arregloServicios, arregloClientes);
 				};
 				reader.readAsBinaryString(f);
 
 			}
 		}
-		$scope.guardarImportacionVentasServicios = function (ventas, arregloServicios,arregloClientes) {
+		$scope.guardarImportacionVentasServicios = function (ventas, arregloServicios, arregloClientes) {
 			blockUI.start();
-			var promesa = GuardarVentasImportados(ventas, arregloServicios,arregloClientes)
+			var promesa = GuardarVentasImportados(ventas, arregloServicios, arregloClientes)
 			promesa.then(function (dato) {
 				blockUI.stop()
 				$scope.mostrarMensaje(dato.mensaje)
@@ -3624,20 +3700,20 @@ angular.module('agil.controladores')
 		$scope.obtenerDetalleCotizacion = function (cotizacion, editCoticacion) {
 			$scope.editCoticacion = editCoticacion;
 			console.log("datos usuarioooooooo ", $scope.usuario);
-			
+
 			for (var i = 0; i < cotizacion.detallesCotizacion.length; i++) {
 				var productoC = cotizacion.detallesCotizacion[i].producto;
 
-				
+
 				var inventarioDisponible = $scope.obtenerInventarioTotal(productoC);
 				cotizacion.detallesCotizacion[i].disponible = inventarioDisponible;
 				cotizacion.detallesCotizacion[i].aceptar = false;
 
 				if (inventarioDisponible < cotizacion.detallesCotizacion[i].cantidad) {
-					cotizacion.detallesCotizacion[i].faltante =  cotizacion.detallesCotizacion[i].cantidad - inventarioDisponible;
+					cotizacion.detallesCotizacion[i].faltante = cotizacion.detallesCotizacion[i].cantidad - inventarioDisponible;
 					cotizacion.detallesCotizacion[i].entregar = inventarioDisponible;
-				}else{
-					cotizacion.detallesCotizacion[i].faltante =  0;
+				} else {
+					cotizacion.detallesCotizacion[i].faltante = 0;
 					cotizacion.detallesCotizacion[i].entregar = cotizacion.detallesCotizacion[i].cantidad;
 				}
 
@@ -3650,7 +3726,7 @@ angular.module('agil.controladores')
 				}
 				cotizacion.detallesCotizacion[i].total = cotizacion.detallesCotizacion[i].entregar * cotizacion.detallesCotizacion[i].precio_unitario;
 				console.log("disponibleeeeee ", inventarioDisponible);
-			
+
 			}
 
 			console.log("la cotizacvion recibidooo ", cotizacion.detallesCotizacion);
@@ -3660,25 +3736,25 @@ angular.module('agil.controladores')
 			$scope.abrirPopup($scope.idModalDetalleCotizaciones);
 		}
 
-		$scope.isCheckedCotizacion = function(cotizacion) {
+		$scope.isCheckedCotizacion = function (cotizacion) {
 			if (cotizacion) {
-				for(var e in cotizacion.detallesCotizacion) {
-		             var checkBox = cotizacion.detallesCotizacion[e];
-		            if(checkBox.aceptar)
-		                return false;
-		        }
+				for (var e in cotizacion.detallesCotizacion) {
+					var checkBox = cotizacion.detallesCotizacion[e];
+					if (checkBox.aceptar)
+						return false;
+				}
 			}
-	        return true;
-	    };
+			return true;
+		};
 
 		$scope.cerrarPopupDetalleCotizaciones = function () {
 			$scope.cerrarPopup($scope.idModalDetalleCotizaciones);
 		}
 
-		$scope.aceptarDetalleCotizacion = function(cotizacion) {
+		$scope.aceptarDetalleCotizacion = function (cotizacion) {
 			cotizacion.aceptar = true;
 		}
-		$scope.cancelarDetalleCotizacion = function(cotizacion) {
+		$scope.cancelarDetalleCotizacion = function (cotizacion) {
 			cotizacion.aceptar = false;
 		}
 
@@ -3686,7 +3762,7 @@ angular.module('agil.controladores')
 			console.log("la cotizacion para venta", cotizacion);
 			$scope.obtenerAlmacenesActividades(cotizacion.sucursal.id);
 			var fechaC = new Date();
-				cotizacion.fecha = fechaC.getDate() + "/" + (fechaC.getMonth() + 1) + "/" + fechaC.getFullYear();
+			cotizacion.fecha = fechaC.getDate() + "/" + (fechaC.getMonth() + 1) + "/" + fechaC.getFullYear();
 			$scope.detalleVenta = [];
 			var totalVenta = 0;
 			for (var i = 0; i < cotizacion.detallesCotizacion.length; i++) {
@@ -3703,12 +3779,12 @@ angular.module('agil.controladores')
 					$scope.detalleVenta.push(detalleVentaC);
 				}
 			}
-				
+
 			$scope.venta = new Venta({
 				id_empresa: $scope.usuario.id_empresa, id_usuario: $scope.usuario.id, cliente: cotizacion.cliente,
-				sucursal: cotizacion.sucursal, almacen: cotizacion.almacen, fechaTexto: cotizacion.fecha, 
-				tipoPago: $scope.tiposPago[0], cotizacion_id : cotizacion.id, actualizarCotizacion: true,
-				detallesVenta:$scope.detalleVenta , detallesVentaNoConsolidadas: [], pagado: totalVenta, cambio: 0, despachado: false, vendedor: null, total: totalVenta
+				sucursal: cotizacion.sucursal, almacen: cotizacion.almacen, fechaTexto: cotizacion.fecha,
+				tipoPago: $scope.tiposPago[0], cotizacion_id: cotizacion.id, actualizarCotizacion: true,
+				detallesVenta: $scope.detalleVenta, detallesVentaNoConsolidadas: [], pagado: totalVenta, cambio: 0, despachado: false, vendedor: null, total: totalVenta
 			});
 			$scope.cerrarPopupDetalleCotizaciones();
 			$scope.cerrarPopupCotizaciones();
@@ -3718,7 +3794,7 @@ angular.module('agil.controladores')
 			$scope.c = cotizacion;
 			$scope.abrirPopup($scope.idModalDetalleCotizacionEditar);
 		}
-		$scope.guardarEditarCotizacion = function(Cprecio_unitario){
+		$scope.guardarEditarCotizacion = function (Cprecio_unitario) {
 			$scope.c = Cprecio_unitario;
 			$scope.cerrarPopupCotizacionEditar();
 		}

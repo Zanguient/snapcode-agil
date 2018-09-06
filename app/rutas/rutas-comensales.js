@@ -212,12 +212,12 @@ module.exports = function (router, sequelize, Persona, Cliente, AliasClienteEmpr
             }
         } else {
             return ComensalesMarcacionesClienteEmpresa.findOrCreate({
-                where: { fecha: historial.fecha.split('T')[0] +'00:00:00', id_comensal: historial.comensal.id },
+                where: { fecha: historial.fecha.split('T')[0], id_comensal: historial.comensal.id },
                 defaults: {
                     id_empresa: empresa,
                     id_cliente: historial.alias.id_cliente,
                     id_comensal: historial.comensal.id,
-                    fecha: historial.fecha.split('T')[0]+'00:00:00',
+                    fecha: historial.fecha.split('T')[0],
                     id_gerencia: historial.gerencia ? historial.gerencia.id : null,
                     desayuno: historial.comida ? historial.comida.nombre ? historial.comida.nombre.toLowerCase() === "desayuno" ? 1 : 0 : 0 : 0,
                     almuerzo: historial.comida ? historial.comida.nombre ? historial.comida.nombre.toLowerCase() === "almuerzo" ? 1 : 0 : 0 : 0,

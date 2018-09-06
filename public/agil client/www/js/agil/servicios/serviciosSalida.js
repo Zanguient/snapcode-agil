@@ -61,7 +61,8 @@ angular.module('agil.servicios')
 		return delay.promise;
 	};
     return res;
-  }])
+	}])
+	
   
   
 .factory('ConfiguracionVentaVista', function($resource) {
@@ -213,4 +214,24 @@ var res = function(id_empresa)
 	return delay.promise;
 };
 	return res;
-}]);
+}])
+.factory('InventariosProductosVentaEdicion', function($resource) {
+		return $resource(restServer+"inventarios-venta-edicion/producto/:id_producto/almacen/:id_almacen");
+})
+
+.factory('ListaInventariosProductoVentaEdicion', ['InventariosProductosVentaEdicion','$q',function(InventariosProductosVentaEdicion, $q) 
+  {
+	var res = function(id_producto,id_almacen) 
+	{
+		var delay = $q.defer();
+		InventariosProductosVentaEdicion.query({id_producto:id_producto,id_almacen:id_almacen},function(entidades) 
+		{        
+			delay.resolve(entidades);
+		}, function(error) 
+			{
+				delay.reject(error);
+			});
+		return delay.promise;
+	};
+    return res;
+	}]);

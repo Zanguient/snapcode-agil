@@ -4070,5 +4070,63 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 			});
 		})
 	}
+	router.route('/eliminar-detalle-venta/movimiento/:id_movimiento')
+		.put(function (req, res) {
+			var detalleVenta=req.body.detalleVenta
+			sequelize.transaction(function (t) {
+				return DetalleMovimiento.destroy({
+					where: {
+						id_inventario: detalleVenta.id_inventario,
+						id_movimiento: req.params.id_movimiento,
+						id_producto: detalleVenta.producto ? detalleVenta.producto.id : null
+					}, transaccion: t
+				}).then(function (detalleMovimientoEliminado) {
+					return DetalleVenta.destroy({
+						where: {
+							id: detalleVenta.id
+						}, transaccion: t
+					}).then(function (detalleCompraEliminado) {
+						return Inventario.find({
+							where: {
+								id: detalleVenta.id_inventario
+							}, transaccion: t
+						}).then(function (inventarioEncontrado) {
+							inventarioEncontrado.cantidad += detalleVenta.cantidad
+							return Inventario.update(
+								{
+									cantidad: inventarioEncontrado.cantidad
+								}, {
+									where: {
+										id: detalleVenta.id_inventario
+									}, transaccion: t
+								}).then(function (InventarioActualizado) {
+
+								}).catch(function (err) {
+									return new Promise(function (fulfill, reject) {
+										reject(err);
+									});
+								});
+						}).catch(function (err) {
+							return new Promise(function (fulfill, reject) {
+								reject(err);
+							});
+						});
+					}).catch(function (err) {
+						return new Promise(function (fulfill, reject) {
+							reject(err);
+						});
+					});
+				}).catch(function (err) {
+					return new Promise(function (fulfill, reject) {
+						reject(err);
+					});
+				});
+			}).then(function name(result) {
+				res.json({ mensaje: "detalle venta eliminado!" })
+			}).catch(function (err) {
+				res.json({ hasError: true, mensaje: err.stack });
+			});
+		})
+
 
 }

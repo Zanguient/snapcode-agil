@@ -606,7 +606,26 @@ angular.module('agil.servicios')
 			return delay.promise;
 		};
 		return res;
+	}])
+	.factory('EliminarDetalleVentaEdicionVenta', function ($resource) {
+		return $resource(restServer + "eliminar-detalle-venta/movimiento/:id_movimiento", { id: '@id' },
+			{
+				'update': { method: 'PUT' }
+			});
+	})
+	.factory('EliminarDetalleVentaEdicion', ['EliminarDetalleVentaEdicionVenta', '$q', function (EliminarDetalleVentaEdicionVenta, $q) {
+		var res = function (detalleVenta,idMov) {
+			var delay = $q.defer();
+			EliminarDetalleVentaEdicionVenta.update({id_movimiento:idMov},{detalleVenta:detalleVenta}, function (entidad) {
+				delay.resolve(entidad);
+			}, function (error) {
+					delay.reject(error);
+				});
+			return delay.promise;
+		};
+		return res;
 	}]);
+	
 	/* .factory('VentaServico', function ($resource) {
 		return $resource(restServer + "venta/servicios/:id", { id: '@id' },
 			{

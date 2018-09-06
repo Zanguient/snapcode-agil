@@ -353,7 +353,7 @@
 	</div>
 </div>
 
-<div id="modal-wizard-venta-edicion" class="modal wizard-posicion">
+<div id="modal-wizard-venta-edicion" class="modal wizard-posicion" >
 	<div class="row">
 		<div class="col-sm-4">
 			<label class="col-md-3 pull-right">
@@ -371,7 +371,7 @@
 								<i class="ace-icon fa fa-floppy-o align-top bigger-125"></i>
 								GUARDAR
 							</button>
-							<button id="cerrarV" type="button" class="btn btn-primary btn-danger" ng-click="cerrarPopupEdicion()">
+							<button ng-if="!CancelacionVentaEdicion" id="cerrarV" type="button" class="btn btn-primary btn-danger" ng-click="cerrarPopupEdicion()">
 								<i class="ace-icon fa fa-times red2 align-top bigger-125"></i>
 								CERRAR
 							</button>
@@ -1277,9 +1277,12 @@
 										{{detalleVenta.total}}
 									</td>
 									<td>
-										<a class="red" href="javascript:void(0)" ng-click="eliminarDetalleVenta(detalleVenta)">
+										<a ng-if="!detalleVenta.id" class="red" href="javascript:void(0)" ng-click="eliminarDetalleVenta(detalleVenta)">
 											<i class="ace-icon fa fa-trash-o bigger-130"></i>
 										</a>
+										<a ng-if="detalleVenta.id" class="red" href="javascript:void(0)" ng-click="eliminarDetalleVentaEdicion(detalleVenta)">
+												<i class="ace-icon fa fa-trash-o bigger-130"></i>
+											</a>
 									</td>
 								</tr>
 								<tr>

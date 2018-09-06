@@ -63,6 +63,23 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 			})
 		});
 
+	router.route('/inventarios-venta-edicion/producto/:id_producto/almacen/:id_almacen')
+		.get(function (req, res) {
+			Inventario.findAll({
+				where: { id_producto: req.params.id_producto, id_almacen: req.params.id_almacen, cantidad: { $gt: -1 } },
+				include: [{
+					model: DetalleMovimiento, as: "detallesMovimiento",
+					include: [{
+						model: Movimiento, as: 'movimiento',
+						include: [{ model: Tipo, as: 'tipo', where: { nombre_corto: 'MOVING' } },
+						{ model: Clase, as: 'clase' }]
+					}]
+				}],
+				order: [['fecha_vencimiento', 'ASC']]
+			}).then(function (inventarios) {
+				res.json(inventarios);
+			});
+		});
 	router.route('/inventarios/producto/:id_producto/almacen/:id_almacen')
 		.get(function (req, res) {
 			Inventario.findAll({

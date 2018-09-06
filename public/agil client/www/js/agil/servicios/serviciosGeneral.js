@@ -1931,7 +1931,7 @@ angular.module('agil.servicios')
 			} else {
 				if (vacia) {
 					// la altura en pixeles para convertir seria dividirlo entre 96;
-					var imgAltura;
+					// var imgAltura;
 					
 
 
@@ -1955,9 +1955,12 @@ angular.module('agil.servicios')
 
 
 					// var img = new Image();
-					// img.onload = onload;
-					// img.src = usuario.empresa.imagen;
-
+					// var alturaR;
+					// img.onload = function() { 
+					// 	alturaR = this.height; 
+					// }
+					// img.src = "http://localhost:8083/img/empresa-44.jpg";
+					// console.log("la altura  ", alturaR);
 
 					// // 53a5362f93736b4249b50452dca4d186
 
