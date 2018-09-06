@@ -1075,7 +1075,7 @@ angular.module('agil.servicios')
 							if (completa || vacia) {
 								doc.rect(50, y - 15, 520, 30).stroke();
 							}
-						} else {
+						} else if (venta.detallesVenta[i].servicio) {
 							venta.detallesVenta[i].fecha_vencimiento = new Date(venta.detallesVenta[i].fecha_vencimiento);
 							var fechaVencimientoTexto = venta.detallesVenta[i].fecha_vencimiento.getDate() + "/" + (venta.detallesVenta[i].fecha_vencimiento.getMonth() + 1) + "/" + venta.detallesVenta[i].fecha_vencimiento.getFullYear().toString().substring(2);
 
@@ -1955,17 +1955,16 @@ angular.module('agil.servicios')
 
 
 					// var img = new Image();
-					// img.onload = function() {
-					//   console.log("dimensiones de imagen ===========", this.width + 'px ' + this.height + 'px');
-					// }
+					// img.onload = onload;
 					// img.src = usuario.empresa.imagen;
 
 
-
+					// // 53a5362f93736b4249b50452dca4d186
 
 					
+					
 
-					// console.log("de imagenessssssss ===========",img.height) 
+					
 
 					if (usuario.empresa.imagen.length > 100) { doc.image(usuario.empresa.imagen, 60, 40, { fit: [65, 65] }); } //width: 50, height: 50
 					doc.font('Helvetica-Bold', 8);
