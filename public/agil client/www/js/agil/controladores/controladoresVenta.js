@@ -350,8 +350,8 @@ angular.module('agil.controladores')
 
 			producto.tipoProducto = producto['tipoProducto'] == null ? { id: producto['tipoProducto.id'], nombre: producto['tipoProducto.nombre'], nombre_corto: producto['tipoProducto.nombre_corto'] } : producto.tipoProducto;
 			$scope.editar_precio = false;
-
-			var promesa = ListaInventariosProducto(producto.id, $scope.venta.almacen.id);
+			var fecha = new Date($scope.convertirFecha($scope.venta.fechaTexto))
+			var promesa = ListaInventariosProductoVentaEdicion(producto.id, $scope.venta.almacen.id,fecha);
 			promesa.then(function (inventarios) {
 				producto.inventarios = inventarios;
 				for (var i = 0; i < producto.inventarios.length; i++) {
@@ -695,8 +695,8 @@ angular.module('agil.controladores')
 
 		$scope.eliminarDetalleVentaEdicion = function (detalleVenta) {
 			if (detalleVenta.id) {
-				$scope.CancelacionVentaEdicion=true
-				
+				$scope.CancelacionVentaEdicion = true
+
 				var promesa = EliminarDetalleVentaEdicion(detalleVenta, $scope.venta.movimientoActual.id)
 				promesa.then(function (dato) {
 					if (dato.hasError == true) {
@@ -1773,7 +1773,7 @@ angular.module('agil.controladores')
 						$scope.cerrarPopPupEdicion();
 						$scope.mostrarMensaje(dato.mensaje);
 						$scope.recargarItemsTabla();
-						
+
 					});
 				} else {
 					var movimiento = venta.movimiento.nombre_corto;
@@ -3383,7 +3383,7 @@ angular.module('agil.controladores')
 
 		$scope.modificarVenta = function (venta) {
 			//console.log("venta ressss =========== ", venta);
-			$("#modal-wizard-venta-edicion").dialog({closeOnEscape: false});
+			$("#modal-wizard-venta-edicion").dialog({ closeOnEscape: false });
 			$scope.blockerVenta = true
 			$scope.venta = new Venta(venta);
 			$scope.venta.editable = true
@@ -3403,7 +3403,7 @@ angular.module('agil.controladores')
 			$scope.venta.movimiento = $scope.venta.movimiento.clase;
 			// $scope.venta.sucursal =  $scope.sucursales[0];
 			$scope.obtenerTipoEgreso($scope.venta.movimiento);
-			var fechaActual = new Date();
+			var fechaActual = new Date($scope.venta.fecha);
 			$scope.venta.fechaTexto = fechaActual.getDate() + "/" + (fechaActual.getMonth() + 1) + "/" + fechaActual.getFullYear();
 			/* $scope.venta.tipoPago = $scope.tiposPago[0]; */
 			$scope.cambiarTipoPago($scope.venta);

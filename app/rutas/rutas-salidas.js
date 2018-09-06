@@ -63,11 +63,14 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 			})
 		});
 
-	router.route('/inventarios-venta-edicion/producto/:id_producto/almacen/:id_almacen')
+	router.route('/inventarios-venta-edicion/producto/:id_producto/almacen/:id_almacen/fecha/:fecha')
 		.get(function (req, res) {
+			var inicio = new Date(2014,1,1)
+			var fin = new Date(req.params.fecha); fin.setHours(23, 59, 59, 0, 0);
+
 			Inventario.findAll({
-				where: { id_producto: req.params.id_producto, id_almacen: req.params.id_almacen, cantidad: { $gt: -1 } },
-				include: [{
+				where: { id_producto: req.params.id_producto, id_almacen: req.params.id_almacen, cantidad: { $gt: 0 }},
+				include: [{model:DetalleCompra,as:'detallesCompra',include:[{model:Compra,as:'compra',where:{fecha:{ $between: [inicio, fin]} }}]},{
 					model: DetalleMovimiento, as: "detallesMovimiento",
 					include: [{
 						model: Movimiento, as: 'movimiento',

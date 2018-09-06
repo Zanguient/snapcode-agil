@@ -216,15 +216,15 @@ var res = function(id_empresa)
 	return res;
 }])
 .factory('InventariosProductosVentaEdicion', function($resource) {
-		return $resource(restServer+"inventarios-venta-edicion/producto/:id_producto/almacen/:id_almacen");
+		return $resource(restServer+"inventarios-venta-edicion/producto/:id_producto/almacen/:id_almacen/fecha/:fecha");
 })
 
 .factory('ListaInventariosProductoVentaEdicion', ['InventariosProductosVentaEdicion','$q',function(InventariosProductosVentaEdicion, $q) 
   {
-	var res = function(id_producto,id_almacen) 
+	var res = function(id_producto,id_almacen,fecha) 
 	{
 		var delay = $q.defer();
-		InventariosProductosVentaEdicion.query({id_producto:id_producto,id_almacen:id_almacen},function(entidades) 
+		InventariosProductosVentaEdicion.query({id_producto:id_producto,id_almacen:id_almacen,fecha:fecha},function(entidades) 
 		{        
 			delay.resolve(entidades);
 		}, function(error) 

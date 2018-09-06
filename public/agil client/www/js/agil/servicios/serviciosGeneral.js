@@ -1955,12 +1955,13 @@ angular.module('agil.servicios')
 
 
 					// var img = new Image();
-					// var alturaR;
+					// var alturaR = new Array();
 					// img.onload = function() { 
-					// 	alturaR = this.height; 
+					// 	// alturaR = this.height; 
+					// 	alturaR.push(this.height)
 					// }
-					// img.src = "http://localhost:8083/img/empresa-44.jpg";
-					// console.log("la altura  ", alturaR);
+					// img.src = usuario.empresa.imagen;
+					// console.log("la altura  ", alturaR;
 
 					// // 53a5362f93736b4249b50452dca4d186
 
