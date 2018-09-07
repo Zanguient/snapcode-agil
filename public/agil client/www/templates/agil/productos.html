@@ -701,9 +701,8 @@
 				<div class="modal-header" align="center">
 					<FONT SIZE=3 COLOR=#2980B9>{{producto.codigo}} -- {{producto.nombre}} -- {{producto.unidad_medida}} </FONT>
 				</div>
-				<div class="row" ng-include src="'/templates/gral/paginator-header-1.html'" >
-				</div> 
-				<div class="modal-body step-content" align="center">
+				
+				<div class="modal-body step-content" >
 					<form name="formularioProductosKardex" novalidate>
 						<fieldset>
 							<table>
@@ -756,7 +755,11 @@
 									</tr>
 								</tbody>
 							</table>
-							<br>							
+							<br>
+							
+							<div  class="row" ng-include src="'/templates/gral/paginator-header-1.html'" >
+							</div>
+							 							
 							<table id="tabla-kardex" class="table table-striped table-bordered table-hover">
 								<thead>
 									<tr>
